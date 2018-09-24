@@ -24,4 +24,4 @@ fun box(): String {
     return "O".doTheThing() + Level.K.doTheThing()
 }
 
-// 1 LOOKUPSWITCH
+// 1 TABLESWITCH

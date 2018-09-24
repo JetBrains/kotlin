@@ -1,0 +1,13 @@
+class Test {
+    var field = 1
+
+    fun foo() { // TARGET_BLOCK:
+        class O : Runnable {
+            override fun run() {
+                field = 2
+            }
+        }
+
+        O()
+    }
+}

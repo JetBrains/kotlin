@@ -44,7 +44,7 @@ public class JavaFieldImpl extends JavaMemberImpl<PsiField> implements JavaField
     @Nullable
     @Override
     public Object getInitializerValue() {
-        return JavaConstantExpressionEvaluator.computeConstantExpression(getPsi().getInitializer(), false);
+        return getPsi().computeConstantValue();
     }
 
     @Override

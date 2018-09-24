@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.idea.quickfix
 import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
-import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.psi.*
@@ -38,9 +37,9 @@ abstract class ReplaceCallFix(
 
     override fun getFamilyName() = text
 
-    override fun isAvailable(project: Project, editor: Editor?, file: PsiFile): Boolean {
+    override fun isAvailable(project: Project, editor: Editor?, file: KtFile): Boolean {
         val element = element ?: return false
-        return super.isAvailable(project, editor, file) && element.selectorExpression != null
+        return element.selectorExpression != null
     }
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
@@ -89,7 +88,7 @@ class ReplaceWithSafeCallFix(
                 return ReplaceWithSafeCallFix(qualifiedExpression, qualifiedExpression.shouldHaveNotNullType())
             }
             else {
-                psiElement as? KtNameReferenceExpression ?: return null
+                if (psiElement !is KtNameReferenceExpression) return null
                 if (psiElement.getResolvedCall(psiElement.analyze())?.getImplicitReceiverValue() != null) {
                     val expressionToReplace: KtExpression = psiElement.parent as? KtCallExpression ?: psiElement
                     return ReplaceImplicitReceiverCallFix(expressionToReplace, expressionToReplace.shouldHaveNotNullType())

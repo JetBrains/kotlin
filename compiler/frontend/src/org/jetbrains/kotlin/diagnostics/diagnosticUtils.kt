@@ -16,9 +16,6 @@
 
 package org.jetbrains.kotlin.diagnostics
 
-import com.intellij.mock.MockApplication
-import com.intellij.openapi.application.Application
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
@@ -38,6 +35,7 @@ import org.jetbrains.kotlin.resolve.calls.context.CallPosition
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
 import org.jetbrains.kotlin.resolve.calls.inference.isCaptured
 import org.jetbrains.kotlin.resolve.calls.inference.wrapWithCapturingSubstitution
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeConstructorSubstitution
@@ -47,42 +45,39 @@ import org.jetbrains.kotlin.types.typeUtil.isNothing
 import org.jetbrains.kotlin.types.typeUtil.isNullableNothing
 
 fun ResolutionContext<*>.reportTypeMismatchDueToTypeProjection(
-        expression: KtElement,
-        expectedType: KotlinType,
-        expressionType: KotlinType?
+    expression: KtElement,
+    expectedType: KotlinType,
+    expressionType: KotlinType?
 ): Boolean {
     if (!TypeUtils.contains(expectedType) { it.isAnyOrNullableAny() || it.isNothing() || it.isNullableNothing() }) return false
 
     val callPosition = this.callPosition
     val (resolvedCall, correspondingNotApproximatedTypeByDescriptor: (CallableDescriptor) -> KotlinType?) = when (callPosition) {
         is CallPosition.ValueArgumentPosition -> Pair(
-                callPosition.resolvedCall, {
-                    f: CallableDescriptor ->
-                    getEffectiveExpectedType(f.valueParameters[callPosition.valueParameter.index], callPosition.valueArgument, this)
-                })
-        is CallPosition.ExtensionReceiverPosition -> Pair(
-                callPosition.resolvedCall, {
-                    f: CallableDescriptor ->
-                    f.extensionReceiverParameter?.type
-                })
-        is CallPosition.PropertyAssignment -> Pair(
-                callPosition.leftPart.getResolvedCall(trace.bindingContext) ?: return false, {
-                    f: CallableDescriptor ->
-                    (f as? PropertyDescriptor)?.setter?.valueParameters?.get(0)?.type
-                })
+            callPosition.resolvedCall, { f: CallableDescriptor ->
+                getEffectiveExpectedType(f.valueParameters[callPosition.valueParameter.index], callPosition.valueArgument, this)
+            })
+        is CallPosition.ExtensionReceiverPosition -> Pair<ResolvedCall<*>, (CallableDescriptor) -> KotlinType?>(
+            callPosition.resolvedCall, { f: CallableDescriptor ->
+                f.extensionReceiverParameter?.type
+            })
+        is CallPosition.PropertyAssignment -> Pair<ResolvedCall<out CallableDescriptor>, (CallableDescriptor) -> KotlinType?>(
+            callPosition.leftPart.getResolvedCall(trace.bindingContext) ?: return false, { f: CallableDescriptor ->
+                (f as? PropertyDescriptor)?.setter?.valueParameters?.get(0)?.type
+            })
         is CallPosition.Unknown -> return false
     }
 
     val receiverType = resolvedCall.smartCastDispatchReceiverType
-                       ?: (resolvedCall.dispatchReceiver ?: return false).type
+            ?: (resolvedCall.dispatchReceiver ?: return false).type
 
     val callableDescriptor = resolvedCall.resultingDescriptor.original
 
     val substitutedDescriptor =
-            TypeConstructorSubstitution
-                    .create(receiverType)
-                    .wrapWithCapturingSubstitution(needApproximation = false)
-                    .buildSubstitutor().let { callableDescriptor.substitute(it) } ?: return false
+        TypeConstructorSubstitution
+            .create(receiverType)
+            .wrapWithCapturingSubstitution(needApproximation = false)
+            .buildSubstitutor().let { callableDescriptor.substitute(it) } ?: return false
 
     val nonApproximatedExpectedType = correspondingNotApproximatedTypeByDescriptor(substitutedDescriptor) ?: return false
     if (!TypeUtils.contains(nonApproximatedExpectedType) { it.isCaptured() }) return false
@@ -90,25 +85,26 @@ fun ResolutionContext<*>.reportTypeMismatchDueToTypeProjection(
     if (expectedType.isNothing()) {
         if (callPosition is CallPosition.PropertyAssignment) {
             trace.report(Errors.SETTER_PROJECTED_OUT.on(callPosition.leftPart ?: return false, resolvedCall.resultingDescriptor))
-        }
-        else {
+        } else {
             val call = resolvedCall.call
             val reportOn =
-                    if (resolvedCall is VariableAsFunctionResolvedCall)
-                        resolvedCall.variableCall.call.calleeExpression
-                    else
-                        call.calleeExpression
+                if (resolvedCall is VariableAsFunctionResolvedCall)
+                    resolvedCall.variableCall.call.calleeExpression
+                else
+                    call.calleeExpression
 
             trace.reportDiagnosticOnce(Errors.MEMBER_PROJECTED_OUT.on(reportOn ?: call.callElement, callableDescriptor, receiverType))
         }
-    }
-    else {
+    } else {
         // expressionType can be null when reporting CONSTANT_EXPECTED_TYPE_MISMATCH (see addAll.kt test)
         expressionType ?: return false
         trace.report(
-                Errors.TYPE_MISMATCH_DUE_TO_TYPE_PROJECTIONS.on(
-                        expression, TypeMismatchDueToTypeProjectionsData(
-                        expectedType, expressionType, receiverType, callableDescriptor)))
+            Errors.TYPE_MISMATCH_DUE_TO_TYPE_PROJECTIONS.on(
+                expression, TypeMismatchDueToTypeProjectionsData(
+                    expectedType, expressionType, receiverType, callableDescriptor
+                )
+            )
+        )
 
     }
 
@@ -122,16 +118,16 @@ fun BindingTrace.reportDiagnosticOnce(diagnostic: Diagnostic) {
 }
 
 class TypeMismatchDueToTypeProjectionsData(
-        val expectedType: KotlinType,
-        val expressionType: KotlinType,
-        val receiverType: KotlinType,
-        val callableDescriptor: CallableDescriptor
+    val expectedType: KotlinType,
+    val expressionType: KotlinType,
+    val receiverType: KotlinType,
+    val callableDescriptor: CallableDescriptor
 )
 
 fun ResolutionContext<*>.reportTypeMismatchDueToScalaLikeNamedFunctionSyntax(
-        expression: KtElement,
-        expectedType: KotlinType,
-        expressionType: KotlinType?
+    expression: KtElement,
+    expectedType: KotlinType,
+    expressionType: KotlinType?
 ): Boolean {
     if (expressionType == null) return false
 
@@ -144,21 +140,26 @@ fun ResolutionContext<*>.reportTypeMismatchDueToScalaLikeNamedFunctionSyntax(
 }
 
 private fun isScalaLikeEqualsBlock(expression: KtElement): Boolean =
-        expression is KtLambdaExpression &&
-        expression.parent.let { it is KtNamedFunction && it.equalsToken != null }
+    expression is KtLambdaExpression &&
+            expression.parent.let { it is KtNamedFunction && it.equalsToken != null }
 
 inline fun reportOnDeclaration(trace: BindingTrace, descriptor: DeclarationDescriptor, what: (PsiElement) -> Diagnostic) {
     DescriptorToSourceUtils.descriptorToDeclaration(descriptor)?.let { psiElement ->
         trace.report(what(psiElement))
     }
 }
+
 inline fun reportOnDeclarationOrFail(trace: BindingTrace, descriptor: DeclarationDescriptor, what: (PsiElement) -> Diagnostic) {
     DescriptorToSourceUtils.descriptorToDeclaration(descriptor)?.let { psiElement ->
         trace.report(what(psiElement))
     } ?: throw AssertionError("No declaration for $descriptor")
 }
 
-inline fun <reified T : KtDeclaration> reportOnDeclarationAs(trace: BindingTrace, descriptor: DeclarationDescriptor, what: (T) -> Diagnostic) {
+inline fun <reified T : KtDeclaration> reportOnDeclarationAs(
+    trace: BindingTrace,
+    descriptor: DeclarationDescriptor,
+    what: (T) -> Diagnostic
+) {
     DescriptorToSourceUtils.descriptorToDeclaration(descriptor)?.let { psiElement ->
         (psiElement as? T)?.let {
             trace.report(what(it))
@@ -167,19 +168,15 @@ inline fun <reified T : KtDeclaration> reportOnDeclarationAs(trace: BindingTrace
 }
 
 fun <D : Diagnostic> DiagnosticSink.reportFromPlugin(diagnostic: D, ext: DefaultErrorMessages.Extension) {
-    if (ApplicationManager.getApplication() !is MockApplication) {
-        return this.report(diagnostic)
-    }
-
     @Suppress("UNCHECKED_CAST")
     val renderer = ext.map[diagnostic.factory] as? DiagnosticRenderer<D>
-                   ?: error("Renderer not found for diagnostic ${diagnostic.factory.name}")
+            ?: error("Renderer not found for diagnostic ${diagnostic.factory.name}")
 
-    val text = renderer.render(diagnostic)
+    val renderedDiagnostic = RenderedDiagnostic(diagnostic, renderer)
 
     when (diagnostic.severity) {
-        Severity.ERROR -> report(Errors.PLUGIN_ERROR.on(diagnostic.psiElement, diagnostic.factory.name, text))
-        Severity.WARNING -> report(Errors.PLUGIN_WARNING.on(diagnostic.psiElement, diagnostic.factory.name, text))
-        Severity.INFO -> report(Errors.PLUGIN_INFO.on(diagnostic.psiElement, diagnostic.factory.name, text))
+        Severity.ERROR -> report(Errors.PLUGIN_ERROR.on(diagnostic.psiElement, renderedDiagnostic))
+        Severity.WARNING -> report(Errors.PLUGIN_WARNING.on(diagnostic.psiElement, renderedDiagnostic))
+        Severity.INFO -> report(Errors.PLUGIN_INFO.on(diagnostic.psiElement, renderedDiagnostic))
     }
 }

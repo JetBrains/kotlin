@@ -1,0 +1,43 @@
+description = 'Kotlin annotations for JVM'
+
+apply plugin: 'kotlin'
+apply plugin: 'pill-configurable'
+
+configureJvm6Project(project)
+configureDist(project)
+configurePublishing(project)
+
+pill {
+    importAsLibrary = true
+}
+
+sourceSets {
+    main {
+        java {
+            srcDir 'src'
+        }
+    }
+}
+
+artifacts {
+    archives sourcesJar
+    archives javadocJar
+}
+
+dist {
+    from (jar, sourcesJar)
+}
+
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile) {
+    kotlinOptions.jdkHome = JDK_16
+    kotlinOptions.jvmTarget = 1.6
+}
+
+compileKotlin {
+    kotlinOptions.freeCompilerArgs = [
+            "-Xallow-kotlin-package",
+            "-Xnormalize-constructor-calls=enable",
+            "-module-name", project.name
+    ]
+}
+

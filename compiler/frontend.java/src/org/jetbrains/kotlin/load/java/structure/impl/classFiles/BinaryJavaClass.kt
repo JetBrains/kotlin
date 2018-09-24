@@ -162,6 +162,12 @@ class BinaryJavaClass(
             object : FieldVisitor(ASM_API_VERSION_FOR_CLASS_READING) {
                 override fun visitAnnotation(desc: String, visible: Boolean) =
                         BinaryJavaAnnotation.addAnnotation(this@run.annotations, desc, context, signatureParser)
+
+                override fun visitTypeAnnotation(typeRef: Int, typePath: TypePath?, desc: String, visible: Boolean) =
+                        if (typePath == null)
+                            BinaryJavaAnnotation.addTypeAnnotation(type, desc, context, signatureParser)
+                        else
+                            null
             }
         }
     }

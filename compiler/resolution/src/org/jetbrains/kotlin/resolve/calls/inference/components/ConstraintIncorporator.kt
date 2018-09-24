@@ -1,27 +1,18 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.resolve.calls.inference.components
 
-import org.jetbrains.kotlin.resolve.calls.inference.model.*
+import org.jetbrains.kotlin.resolve.calls.inference.model.Constraint
+import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintKind
+import org.jetbrains.kotlin.resolve.calls.inference.model.NewTypeVariable
+import org.jetbrains.kotlin.resolve.calls.inference.model.VariableWithConstraints
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.CaptureStatus
 import org.jetbrains.kotlin.types.checker.NewCapturedType
 import org.jetbrains.kotlin.types.checker.NewCapturedTypeConstructor
-import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
 import org.jetbrains.kotlin.types.typeUtil.contains
 import org.jetbrains.kotlin.utils.SmartSet
 import org.jetbrains.kotlin.utils.addIfNotNull
@@ -102,30 +93,38 @@ class ConstraintIncorporator(val typeApproximator: TypeApproximator) {
     }
 
     private fun generateNewConstraint(
-            c: Context,
-            targetVariable: NewTypeVariable,
-            baseConstraint: Constraint,
-            otherVariable: NewTypeVariable,
-            otherConstraint: Constraint
+        c: Context,
+        targetVariable: NewTypeVariable,
+        baseConstraint: Constraint,
+        otherVariable: NewTypeVariable,
+        otherConstraint: Constraint
     ) {
         val typeForApproximation = when (otherConstraint.kind) {
             ConstraintKind.EQUALITY -> {
                 baseConstraint.type.substitute(otherVariable, otherConstraint.type)
             }
             ConstraintKind.UPPER -> {
-                val newCapturedTypeConstructor = NewCapturedTypeConstructor(TypeProjectionImpl(Variance.OUT_VARIANCE, otherConstraint.type),
-                                                                            listOf(otherConstraint.type))
-                val temporaryCapturedType = NewCapturedType(CaptureStatus.FOR_INCORPORATION,
-                                                            newCapturedTypeConstructor,
-                                                            lowerType = null)
+                val newCapturedTypeConstructor = NewCapturedTypeConstructor(
+                    TypeProjectionImpl(Variance.OUT_VARIANCE, otherConstraint.type),
+                    listOf(otherConstraint.type)
+                )
+                val temporaryCapturedType = NewCapturedType(
+                    CaptureStatus.FOR_INCORPORATION,
+                    newCapturedTypeConstructor,
+                    lowerType = null
+                )
                 baseConstraint.type.substitute(otherVariable, temporaryCapturedType)
             }
             ConstraintKind.LOWER -> {
-                val newCapturedTypeConstructor = NewCapturedTypeConstructor(TypeProjectionImpl(Variance.IN_VARIANCE, otherConstraint.type),
-                                                                            emptyList())
-                val temporaryCapturedType = NewCapturedType(CaptureStatus.FOR_INCORPORATION,
-                                                            newCapturedTypeConstructor,
-                                                            lowerType = otherConstraint.type)
+                val newCapturedTypeConstructor = NewCapturedTypeConstructor(
+                    TypeProjectionImpl(Variance.IN_VARIANCE, otherConstraint.type),
+                    emptyList()
+                )
+                val temporaryCapturedType = NewCapturedType(
+                    CaptureStatus.FOR_INCORPORATION,
+                    newCapturedTypeConstructor,
+                    lowerType = otherConstraint.type
+                )
                 baseConstraint.type.substitute(otherVariable, temporaryCapturedType)
             }
         }
@@ -139,14 +138,11 @@ class ConstraintIncorporator(val typeApproximator: TypeApproximator) {
     }
 
     private fun UnwrappedType.substitute(typeVariable: NewTypeVariable, value: UnwrappedType): UnwrappedType {
-        val substitutor = TypeSubstitutor.create(mapOf(typeVariable.freshTypeConstructor to value.asTypeProjection()))
-        val type = substitutor.substitute(this, Variance.INVARIANT) ?: error("Impossible to substitute in $this: $typeVariable -> $value")
-        return type.unwrap()
+        val substitutor = NewTypeSubstitutorByConstructorMap(mapOf(typeVariable.freshTypeConstructor to value))
+        return substitutor.safeSubstitute(this)
     }
 
     private fun approximateCapturedTypes(type: UnwrappedType, toSuper: Boolean): UnwrappedType =
-            if (toSuper) typeApproximator.approximateToSuperType(type, TypeApproximatorConfiguration.IncorporationConfiguration) ?: type
-            else typeApproximator.approximateToSubType(type, TypeApproximatorConfiguration.IncorporationConfiguration) ?: type
-
-
+        if (toSuper) typeApproximator.approximateToSuperType(type, TypeApproximatorConfiguration.IncorporationConfiguration) ?: type
+        else typeApproximator.approximateToSubType(type, TypeApproximatorConfiguration.IncorporationConfiguration) ?: type
 }

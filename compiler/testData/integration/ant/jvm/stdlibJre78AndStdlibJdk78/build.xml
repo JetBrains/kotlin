@@ -1,0 +1,15 @@
+<project name="Ant Task Test" default="build">
+    <taskdef resource="org/jetbrains/kotlin/ant/antlib.xml" classpath="${kotlin.lib}/kotlin-ant.jar"/>
+
+    <target name="build">
+        <kotlinc src="${test.data}/main.kt" output="${temp}/test.jar" nowarn="true">
+            <classpath>
+                <file file="${kotlin.stdlib.jre7.jar}"/>
+                <file file="${kotlin.stdlib.jre8.jar}"/>
+                <file file="${kotlin.stdlib.jdk7.jar}"/>
+                <file file="${kotlin.stdlib.jdk8.jar}"/>
+            </classpath>
+            <compilerarg line="-jvm-target 1.8"/>
+        </kotlinc>
+    </target>
+</project>

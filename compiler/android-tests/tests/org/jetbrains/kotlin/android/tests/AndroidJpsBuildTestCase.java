@@ -17,10 +17,12 @@
 package org.jetbrains.kotlin.android.tests;
 
 import org.jetbrains.kotlin.jps.build.BaseKotlinJpsBuildTestCase;
+import org.junit.Ignore;
 
 import java.io.File;
 import java.io.IOException;
 
+@Ignore
 public class AndroidJpsBuildTestCase extends BaseKotlinJpsBuildTestCase {
     private static final String PROJECT_NAME = "android-module";
     private static final String SDK_NAME = "Android_SDK";

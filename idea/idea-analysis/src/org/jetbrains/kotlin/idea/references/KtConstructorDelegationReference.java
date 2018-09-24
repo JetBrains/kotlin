@@ -17,7 +17,9 @@
 package org.jetbrains.kotlin.idea.references;
 
 import com.intellij.openapi.util.TextRange;
+import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.KtConstructorDelegationReferenceExpression;
 
@@ -38,5 +40,12 @@ public class KtConstructorDelegationReference extends KtSimpleReference<KtConstr
     @Override
     public Collection<Name> getResolvesByNames() {
         return Collections.emptyList();
+    }
+
+    @Nullable
+    @Override
+    public PsiElement handleElementRename(@Nullable String newElementName) {
+        // Class rename never affects this reference, so there is no need to fail with exception
+        return getExpression();
     }
 }

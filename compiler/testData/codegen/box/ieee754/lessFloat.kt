@@ -1,3 +1,7 @@
+// !LANGUAGE: -ProperIeee754Comparisons
+// IGNORE_BACKEND: JVM_IR
+// IGNORE_BACKEND: JS_IR
+
 fun less1(a: Float, b: Float) = a < b
 
 fun less2(a: Float?, b: Float?) = a!! < b!!
@@ -14,7 +18,9 @@ fun box(): String {
     if (less2(-0.0F, 0.0F)) return "fail 2"
     if (less3(-0.0F, 0.0F)) return "fail 3"
     if (less4(-0.0F, 0.0F)) return "fail 4"
-    if (less5(-0.0F, 0.0F)) return "fail 5"
+
+    // Smart casts behavior in 1.2
+    if (!less5(-0.0F, 0.0F)) return "fail 5"
 
     return "OK"
 }

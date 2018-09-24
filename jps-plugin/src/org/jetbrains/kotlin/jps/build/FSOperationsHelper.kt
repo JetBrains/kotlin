@@ -19,20 +19,23 @@ package org.jetbrains.kotlin.jps.build
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.jps.ModuleChunk
-import org.jetbrains.jps.builders.BuildRootIndex
 import org.jetbrains.jps.builders.BuildTarget
-import org.jetbrains.jps.builders.BuildTargetIndex
 import org.jetbrains.jps.builders.java.dependencyView.Mappings
 import org.jetbrains.jps.incremental.CompileContext
 import org.jetbrains.jps.incremental.FSOperations
+import org.jetbrains.jps.incremental.ModuleBuildTarget
 import org.jetbrains.jps.incremental.fs.CompilationRound
 import java.io.File
 import java.util.HashMap
 
+/**
+ * Entry point for safely marking files as dirty.
+ */
 class FSOperationsHelper(
-        private val compileContext: CompileContext,
-        private val chunk: ModuleChunk,
-        private val log: Logger
+    private val compileContext: CompileContext,
+    private val chunk: ModuleChunk,
+    private val dirtyFilesHolder: KotlinDirtySourceFilesHolder,
+    private val log: Logger
 ) {
     private val moduleBasedFilter = ModulesBasedFileFilter(compileContext, chunk)
 
@@ -43,7 +46,7 @@ class FSOperationsHelper(
 
     fun markChunk(recursively: Boolean, kotlinOnly: Boolean, excludeFiles: Set<File> = setOf()) {
         fun shouldMark(file: File): Boolean {
-            if (kotlinOnly && !KotlinSourceFileCollector.isKotlinSourceFile(file)) return false
+            if (kotlinOnly && !file.isKotlinSourceFile) return false
 
             if (file in excludeFiles) return false
 
@@ -53,39 +56,73 @@ class FSOperationsHelper(
 
         if (recursively) {
             FSOperations.markDirtyRecursively(compileContext, CompilationRound.NEXT, chunk, ::shouldMark)
-        }
-        else {
+        } else {
             FSOperations.markDirty(compileContext, CompilationRound.NEXT, chunk, ::shouldMark)
         }
     }
 
+    internal fun markFilesForCurrentRound(files: Iterable<File>) {
+        files.forEach {
+            val root = compileContext.projectDescriptor.buildRootIndex.findJavaRootDescriptor(compileContext, it)
+            if (root != null) dirtyFilesHolder.byTarget[root.target]?._markDirty(it, root)
+        }
+
+        markFilesImpl(files, currentRound = true) { it.exists() && moduleBasedFilter.accept(it) }
+    }
+
+    /**
+     * Marks given [files] as dirty for current round and given [target] of [chunk].
+     */
+    fun markFilesForCurrentRound(target: ModuleBuildTarget, files: Iterable<File>) {
+        require(target in chunk.targets)
+
+        val targetDirtyFiles = dirtyFilesHolder.byTarget[target]!!
+        files.forEach {
+            val root = compileContext.projectDescriptor.buildRootIndex.findJavaRootDescriptor(compileContext, it)!!
+            targetDirtyFiles._markDirty(it, root)
+        }
+
+        markFilesImpl(files, currentRound = true) { it.exists() }
+    }
+
     fun markFiles(files: Iterable<File>) {
-        markFilesImpl(files) { it.exists() }
+        markFilesImpl(files, currentRound = false) { it.exists() }
     }
 
     fun markInChunkOrDependents(files: Iterable<File>, excludeFiles: Set<File>) {
-        markFilesImpl(files) { it !in excludeFiles && it.exists() && moduleBasedFilter.accept(it) }
+        markFilesImpl(files, currentRound = false) {
+            it !in excludeFiles && it.exists() && moduleBasedFilter.accept(it)
+        }
     }
 
-    private inline fun markFilesImpl(files: Iterable<File>, shouldMark: (File)->Boolean) {
+    private inline fun markFilesImpl(
+        files: Iterable<File>,
+        currentRound: Boolean,
+        shouldMark: (File) -> Boolean
+    ) {
         val filesToMark = files.filterTo(HashSet(), shouldMark)
-
         if (filesToMark.isEmpty()) return
 
-        for (fileToMark in filesToMark) {
-            FSOperations.markDirty(compileContext, CompilationRound.NEXT, fileToMark)
+        val compilationRound = if (currentRound) {
+            buildLogger?.markedAsDirtyBeforeRound(filesToMark)
+            CompilationRound.CURRENT
+        } else {
+            buildLogger?.markedAsDirtyAfterRound(filesToMark)
+            hasMarkedDirty = true
+            CompilationRound.NEXT
         }
 
-        log.debug("Mark dirty: $filesToMark")
-        buildLogger?.markedAsDirty(filesToMark)
-        hasMarkedDirty = true
+        for (fileToMark in filesToMark) {
+            FSOperations.markDirty(compileContext, compilationRound, fileToMark)
+        }
+        log.debug("Mark dirty: $filesToMark ($compilationRound)")
     }
 
     // Based on `JavaBuilderUtil#ModulesBasedFileFilter` from Intellij
     private class ModulesBasedFileFilter(
-            private val context: CompileContext,
-            chunk: ModuleChunk
-    ): Mappings.DependentFilesFilter {
+        private val context: CompileContext,
+        chunk: ModuleChunk
+    ) : Mappings.DependentFilesFilter {
         private val chunkTargets = chunk.targets
         private val buildRootIndex = context.projectDescriptor.buildRootIndex
         private val buildTargetIndex = context.projectDescriptor.buildTargetIndex

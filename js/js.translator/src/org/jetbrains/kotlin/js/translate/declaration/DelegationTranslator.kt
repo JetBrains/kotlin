@@ -207,7 +207,7 @@ class DelegationTranslator(
             delegateName: JsName
     ) {
         val delegateRef = JsNameRef(delegateName, JsThisRef())
-        val statement = generateDelegateCall(classDescriptor, descriptor, overriddenDescriptor, delegateRef, context(), true, specifier)
+        val statement = generateDelegateCall(classDescriptor, descriptor, overriddenDescriptor, delegateRef, context().newDeclaration(overriddenDescriptor), true, specifier)
         context().addDeclarationStatement(statement)
     }
 }

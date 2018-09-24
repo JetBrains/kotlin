@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.types.expressions
 
+import gnu.trove.THashSet
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
 import org.jetbrains.kotlin.psi.KtLoopExpression
@@ -31,12 +32,17 @@ import java.util.*
  */
 class PreliminaryLoopVisitor private constructor() : AssignedVariablesSearcher() {
 
-    fun clearDataFlowInfoForAssignedLocalVariables(dataFlowInfo: DataFlowInfo,
-                                                   languageVersionSettings: LanguageVersionSettings): DataFlowInfo {
+    fun clearDataFlowInfoForAssignedLocalVariables(
+        dataFlowInfo: DataFlowInfo,
+        languageVersionSettings: LanguageVersionSettings
+    ): DataFlowInfo {
         var resultFlowInfo = dataFlowInfo
-        val nullabilityMap = resultFlowInfo.completeNullabilityInfo
+        val nonTrivialValues = THashSet<DataFlowValue>().apply {
+            addAll(dataFlowInfo.completeNullabilityInfo.iterator().map { it._1 })
+            addAll(dataFlowInfo.completeTypeInfo.iterator().map { it._1 })
+        }
         val valueSetToClear = LinkedHashSet<DataFlowValue>()
-        for (value in nullabilityMap.keys) {
+        for (value in nonTrivialValues) {
             // Only stable variables are under interest here
             val identifierInfo = value.identifierInfo
             if (value.kind == DataFlowValue.Kind.STABLE_VARIABLE && identifierInfo is IdentifierInfo.Variable) {

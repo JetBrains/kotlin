@@ -16,26 +16,26 @@
 
 package org.jetbrains.kotlin.cli.common.arguments
 
-import com.intellij.util.SmartList
+import org.jetbrains.kotlin.utils.SmartList
 import kotlin.reflect.KClass
 import kotlin.reflect.KMutableProperty1
-import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.memberProperties
 
+@Target(AnnotationTarget.PROPERTY)
 annotation class Argument(
-        val value: String,
-        val shortName: String = "",
-        val deprecatedName: String = "",
-        val delimiter: String = ",",
-        val valueDescription: String = "",
-        val description: String
+    val value: String,
+    val shortName: String = "",
+    val deprecatedName: String = "",
+    val delimiter: String = ",",
+    val valueDescription: String = "",
+    val description: String
 )
 
 val Argument.isAdvanced: Boolean
     get() = value.startsWith(ADVANCED_ARGUMENT_PREFIX) && value.length > ADVANCED_ARGUMENT_PREFIX.length
 
-private val ADVANCED_ARGUMENT_PREFIX = "-X"
-private val FREE_ARGS_DELIMITER = "--"
+private const val ADVANCED_ARGUMENT_PREFIX = "-X"
+private const val FREE_ARGS_DELIMITER = "--"
 
 data class ArgumentParseErrors(
     val unknownArgs: MutableList<String> = SmartList<String>(),
@@ -52,17 +52,27 @@ data class ArgumentParseErrors(
     // Arguments where [Argument.deprecatedName] was used; the key is the deprecated name, the value is the new name ([Argument.value])
     val deprecatedArguments: MutableMap<String, String> = mutableMapOf(),
 
-    var argumentWithoutValue: String? = null
+    var argumentWithoutValue: String? = null,
+
+    val argfileErrors: MutableList<String> = SmartList(),
+
+    // Reports from internal arguments parsers
+    val internalArgumentsParsingProblems: MutableList<String> = SmartList()
 )
 
 // Parses arguments into the passed [result] object. Errors related to the parsing will be collected into [CommonToolArguments.errors].
 fun <A : CommonToolArguments> parseCommandLineArguments(args: List<String>, result: A) {
+    val preprocessed = preprocessCommandLineArguments(args, result.errors)
+    parsePreprocessedCommandLineArguments(preprocessed, result)
+}
+
+private fun <A : CommonToolArguments> parsePreprocessedCommandLineArguments(args: List<String>, result: A) {
     data class ArgumentField(val property: KMutableProperty1<A, Any?>, val argument: Argument)
 
     @Suppress("UNCHECKED_CAST")
     val properties = result::class.memberProperties.mapNotNull { property ->
         if (property !is KMutableProperty1<*, *>) return@mapNotNull null
-        val argument = property.findAnnotation<Argument>() ?: return@mapNotNull null
+        val argument = property.annotations.firstOrNull { it is Argument } as Argument? ?: return@mapNotNull null
         ArgumentField(property as KMutableProperty1<A, Any?>, argument)
     }
 
@@ -89,7 +99,7 @@ fun <A : CommonToolArguments> parseCommandLineArguments(args: List<String>, resu
                 return true
             }
 
-            if (deprecatedName != null && arg.startsWith(deprecatedName + "=")) {
+            if (deprecatedName != null && arg.startsWith("$deprecatedName=")) {
                 errors.deprecatedArguments[deprecatedName] = argument.value
                 return true
             }
@@ -100,16 +110,34 @@ fun <A : CommonToolArguments> parseCommandLineArguments(args: List<String>, resu
         return argument.value == arg
     }
 
+    val freeArgs = ArrayList<String>()
+    val internalArguments = ArrayList<InternalArgument>()
+
     var i = 0
     loop@ while (i < args.size) {
         val arg = args[i++]
 
         if (freeArgsStarted) {
-            result.freeArgs.add(arg)
+            freeArgs.add(arg)
             continue
         }
         if (arg == FREE_ARGS_DELIMITER) {
             freeArgsStarted = true
+            continue
+        }
+
+        if (arg.startsWith(InternalArgumentParser.INTERNAL_ARGUMENT_PREFIX)) {
+            val matchingParsers = InternalArgumentParser.PARSERS.filter { it.canParse(arg) }
+            assert(matchingParsers.size <= 1) { "Internal error: internal argument $arg can be ambiguously parsed by parsers ${matchingParsers.joinToString()}" }
+
+            val parser = matchingParsers.firstOrNull()
+
+            if (parser == null) {
+                errors.unknownExtraFlags += arg
+            } else {
+                internalArguments.add(parser.parseInternalArgument(arg, errors) ?: continue)
+            }
+
             continue
         }
 
@@ -118,7 +146,7 @@ fun <A : CommonToolArguments> parseCommandLineArguments(args: List<String>, resu
             when {
                 arg.startsWith(ADVANCED_ARGUMENT_PREFIX) -> errors.unknownExtraFlags.add(arg)
                 arg.startsWith("-") -> errors.unknownArgs.add(arg)
-                else -> result.freeArgs.add(arg)
+                else -> freeArgs.add(arg)
             }
             continue
         }
@@ -142,12 +170,16 @@ fun <A : CommonToolArguments> parseCommandLineArguments(args: List<String>, resu
         }
 
         if ((argumentField.property.returnType.classifier as? KClass<*>)?.java?.isArray == false
-            && !visitedArgs.add(argument.value) && value is String && property.get(result) != value) {
-            errors.duplicateArguments.put(argument.value, value)
+            && !visitedArgs.add(argument.value) && value is String && property.get(result) != value
+        ) {
+            errors.duplicateArguments[argument.value] = value
         }
 
         updateField(property, result, value, argument.delimiter)
     }
+
+    result.freeArgs += freeArgs
+    result.internalArguments += internalArguments
 }
 
 private fun <A : CommonToolArguments> updateField(property: KMutableProperty1<A, Any?>, result: A, value: Any, delimiter: String) {

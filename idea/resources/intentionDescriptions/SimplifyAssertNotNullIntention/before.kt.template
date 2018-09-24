@@ -1,2 +1,0 @@
-val v = something()
-<spot>assert(v != null)</spot>

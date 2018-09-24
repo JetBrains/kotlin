@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.android.quickfix
 import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
-import com.intellij.psi.PsiFile
 import org.jetbrains.android.facet.AndroidFacet
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
@@ -43,9 +42,8 @@ class KotlinAndroidViewConstructorFix(element: KtSuperTypeEntry) : KotlinQuickFi
     override fun getText() = "Add Android View constructors using '@JvmOverloads'"
     override fun getFamilyName() = text
 
-    override fun isAvailable(project: Project, editor: Editor?, file: PsiFile): Boolean {
-        if (AndroidFacet.getInstance(file) == null) return false
-        return super.isAvailable(project, editor, file)
+    override fun isAvailable(project: Project, editor: Editor?, file: KtFile): Boolean {
+        return AndroidFacet.getInstance(file) != null
     }
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {

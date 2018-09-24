@@ -1,7 +1,0 @@
-<component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="All Tests" type="CompoundRunConfigurationType" factoryName="Compound Run Configuration">
-    <toRun type="CompoundRunConfigurationType" name="All Compiler Tests" />
-    <toRun type="JUnit" name="All Non Compiler Tests" />
-    <method />
-  </configuration>
-</component>

@@ -6,7 +6,9 @@
     <modelVersion>4.0.0</modelVersion>
     <properties>
         <maven.version>3.0.4</maven.version>
-        <annotation-processing.src>${basedir}/../../../plugins/kapt3/src</annotation-processing.src>
+        <annotation-processing.src>${basedir}/../../../plugins/kapt3/kapt3-compiler/src</annotation-processing.src>
+        <annotation-processing.base.src>${basedir}/../../../plugins/kapt3/kapt3-base/src</annotation-processing.base.src>
+        <annotation-processing.runtime.src>${basedir}/../../../plugins/kapt3/kapt3-runtime/src</annotation-processing.runtime.src>
         <annotation-processing.target-src>${basedir}/target/src/main/kotlin</annotation-processing.target-src>
         <annotation-processing.target-src-test>${basedir}/target/src/test/kotlin</annotation-processing.target-src-test>
         <annotation-processing.target-resource>${basedir}/target/resource</annotation-processing.target-resource>
@@ -15,7 +17,7 @@
     <parent>
         <groupId>org.jetbrains.kotlin</groupId>
         <artifactId>kotlin-project</artifactId>
-        <version>1.1-SNAPSHOT</version>
+        <version>1.3-SNAPSHOT</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
@@ -23,13 +25,6 @@
     <packaging>jar</packaging>
 
     <description>Annotation Processor wrapper for Kotlin Maven plugin</description>
-
-    <repositories>
-        <repository>
-            <id>jetbrains-utils</id>
-            <url>http://repository.jetbrains.com/utils</url>
-        </repository>
-    </repositories>
 
     <dependencies>
         <dependency>
@@ -41,12 +36,6 @@
             <groupId>org.jetbrains.kotlin</groupId>
             <artifactId>kotlin-compiler</artifactId>
             <version>${project.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.jetbrains.kotlin</groupId>
-            <artifactId>gradle-api</artifactId>
-            <version>1.6</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -81,6 +70,8 @@
                             <outputDirectory>${annotation-processing.target-src}</outputDirectory>
                             <resources>
                                 <resource><directory>${annotation-processing.src}</directory></resource>
+                                <resource><directory>${annotation-processing.base.src}</directory></resource>
+                                <resource><directory>${annotation-processing.runtime.src}</directory></resource>
                             </resources>
                         </configuration>
                     </execution>

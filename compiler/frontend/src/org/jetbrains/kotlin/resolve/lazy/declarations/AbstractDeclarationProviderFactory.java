@@ -34,13 +34,20 @@ public abstract class AbstractDeclarationProviderFactory implements DeclarationP
     @Nullable
     protected abstract PackageMemberDeclarationProvider createPackageMemberDeclarationProvider(@NotNull FqName name);
 
+    public abstract boolean packageExists(@NotNull FqName fqName);
+
     @Override
     public PackageMemberDeclarationProvider getPackageMemberDeclarationProvider(@NotNull FqName packageFqName) {
+        if (!packageExists(packageFqName)) return null;
         return packageDeclarationProviders.invoke(packageFqName);
     }
 
     @Override
-    public void diagnoseMissingPackageFragment(KtFile file) {
-        throw new IllegalStateException("Cannot find package fragment for file " + file.getName() + " with package " + file.getPackageFqName());
+    public void diagnoseMissingPackageFragment(@NotNull FqName fqName, @Nullable KtFile file) {
+        String message = "Cannot find package fragment " + fqName;
+        if (file != null) {
+            message += "\nvFile = " + file.getVirtualFilePath() + ", file package = '" + file.getPackageFqName() + "'";
+        }
+        throw new IllegalStateException(message);
     }
 }

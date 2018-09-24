@@ -18,28 +18,36 @@ package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
 import com.intellij.psi.tree.IElementType
-import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.copied
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
+import org.jetbrains.kotlin.idea.intentions.loopToCallChain.isTrueConstant
 import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.resolve.CompileTimeConstantUtils
 import org.jetbrains.kotlin.resolve.calls.callUtil.getType
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameOrNull
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode.PARTIAL
 import org.jetbrains.kotlin.types.isFlexible
 
 class SimplifyBooleanWithConstantsInspection : IntentionBasedInspection<KtBinaryExpression>(SimplifyBooleanWithConstantsIntention::class)
 
-class SimplifyBooleanWithConstantsIntention : SelfTargetingOffsetIndependentIntention<KtBinaryExpression>(KtBinaryExpression::class.java, "Simplify boolean expression") {
+class SimplifyBooleanWithConstantsIntention :
+    SelfTargetingOffsetIndependentIntention<KtBinaryExpression>(KtBinaryExpression::class.java, "Simplify boolean expression") {
 
     override fun isApplicableTo(element: KtBinaryExpression): Boolean {
-        val topBinary = PsiTreeUtil.getTopmostParentOfType(element, KtBinaryExpression::class.java) ?: element
-        return areThereExpressionsToBeSimplified(topBinary)
+        return areThereExpressionsToBeSimplified(element.topBinary())
     }
 
-    private fun areThereExpressionsToBeSimplified(element: KtExpression?) : Boolean {
+    private fun KtBinaryExpression.topBinary(): KtBinaryExpression {
+        return this.parentsWithSelf.takeWhile { it is KtBinaryExpression }.lastOrNull() as? KtBinaryExpression ?: this
+    }
+
+    private fun areThereExpressionsToBeSimplified(element: KtExpression?): Boolean {
         if (element == null) return false
         when (element) {
             is KtParenthesizedExpression -> return areThereExpressionsToBeSimplified(element.expression)
@@ -56,15 +64,25 @@ class SimplifyBooleanWithConstantsIntention : SelfTargetingOffsetIndependentInte
     }
 
     override fun applyTo(element: KtBinaryExpression, editor: Editor?) {
-        val topBinary = PsiTreeUtil.getTopmostParentOfType(element, KtBinaryExpression::class.java) ?: element
+        val topBinary = element.topBinary()
         val simplified = toSimplifiedExpression(topBinary)
-        topBinary.replace(KtPsiUtil.safeDeparenthesize(simplified, true))
+        val result = topBinary.replaced(KtPsiUtil.safeDeparenthesize(simplified, true))
+        removeRedundantAssertion(result)
+    }
+
+    internal fun removeRedundantAssertion(expression: KtExpression) {
+        val callExpression = expression.getNonStrictParentOfType<KtCallExpression>() ?: return
+        val fqName = callExpression.getCallableDescriptor()?.fqNameOrNull()
+        val valueArguments = callExpression.valueArguments
+        val isRedundant = fqName?.asString() == "kotlin.assert" &&
+                valueArguments.singleOrNull()?.getArgumentExpression().isTrueConstant()
+        if (isRedundant) callExpression.delete()
     }
 
     private fun toSimplifiedExpression(expression: KtExpression): KtExpression {
         val psiFactory = KtPsiFactory(expression)
 
-        when  {
+        when {
             expression.canBeReducedToTrue() -> {
                 return psiFactory.createExpression("true")
             }
@@ -80,8 +98,7 @@ class SimplifyBooleanWithConstantsIntention : SelfTargetingOffsetIndependentInte
                     return if (simplified is KtBinaryExpression) {
                         // wrap in new parentheses to keep the user's original format
                         psiFactory.createExpressionByPattern("($0)", simplified)
-                    }
-                    else {
+                    } else {
                         // if we now have a simpleName, constant, or parenthesized we don't need parentheses
                         simplified
                     }
@@ -89,6 +106,7 @@ class SimplifyBooleanWithConstantsIntention : SelfTargetingOffsetIndependentInte
             }
 
             expression is KtBinaryExpression -> {
+                if (!areThereExpressionsToBeSimplified(expression)) return expression.copied()
                 val left = expression.left
                 val right = expression.right
                 val op = expression.operationToken
@@ -116,7 +134,11 @@ class SimplifyBooleanWithConstantsIntention : SelfTargetingOffsetIndependentInte
         return expression.copied()
     }
 
-    private fun toSimplifiedBooleanBinaryExpressionWithConstantOperand(constantOperand: Boolean, otherOperand: KtExpression, operation: IElementType): KtExpression {
+    private fun toSimplifiedBooleanBinaryExpressionWithConstantOperand(
+        constantOperand: Boolean,
+        otherOperand: KtExpression,
+        operation: IElementType
+    ): KtExpression {
         val factory = KtPsiFactory(otherOperand)
         when (operation) {
             OROR -> {
@@ -136,12 +158,12 @@ class SimplifyBooleanWithConstantsIntention : SelfTargetingOffsetIndependentInte
     private fun simplifyExpression(expression: KtExpression) = expression.replaced(toSimplifiedExpression(expression))
 
     private fun KtExpression?.hasBooleanType(): Boolean {
-        val type = this?.getType(this.analyze()) ?: return false
+        val type = this?.getType(this.analyze(PARTIAL)) ?: return false
         return KotlinBuiltIns.isBoolean(type) && !type.isFlexible()
     }
 
     private fun KtExpression.canBeReducedToBooleanConstant(constant: Boolean? = null): Boolean {
-        return CompileTimeConstantUtils.canBeReducedToBooleanConstant(this, this.analyze(), constant)
+        return CompileTimeConstantUtils.canBeReducedToBooleanConstant(this, this.analyze(PARTIAL), constant)
     }
 
     private fun KtExpression.canBeReducedToTrue() = canBeReducedToBooleanConstant(true)

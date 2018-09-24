@@ -1,3 +1,4 @@
+// !WITH_NEW_INFERENCE
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 @DslMarker
 @Target(AnnotationTarget.TYPE)
@@ -59,7 +60,7 @@ fun test() {
         bar1t(this) {
             a()
             bar1 {
-                <!DSL_SCOPE_VIOLATION!>a<!>()
+                <!OI;DSL_SCOPE_VIOLATION!>a<!>()
                 b()
             }
 
@@ -75,7 +76,7 @@ fun test() {
         foo2 {
             bar1t(this) {
                 a()
-                <!DSL_SCOPE_VIOLATION!>b<!>()
+                <!OI;DSL_SCOPE_VIOLATION!>b<!>()
             }
         }
     }

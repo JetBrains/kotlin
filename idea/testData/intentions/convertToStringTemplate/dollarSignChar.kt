@@ -1,0 +1,3 @@
+fun test(): String {
+    return "" + '$' + "foo" + '$' + "bar" + '$'<caret>
+}

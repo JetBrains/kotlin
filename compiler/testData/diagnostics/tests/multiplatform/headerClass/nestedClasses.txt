@@ -2,7 +2,6 @@
 package
 
 public final expect class OuterClass {
-    public constructor OuterClass()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
@@ -14,7 +13,6 @@ public final expect class OuterClass {
     }
 
     public final expect inner class InnerClass {
-        public constructor InnerClass()
         public expect final val p: kotlin.String
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public final expect fun f(/*0*/ x: kotlin.Int): kotlin.Unit
@@ -23,19 +21,16 @@ public final expect class OuterClass {
     }
 
     public final expect class NestedClass {
-        public constructor NestedClass()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
         public final expect class DeepNested {
-            public constructor DeepNested()
             public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
             public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
             public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
             public final expect class Another {
-                public constructor Another()
                 public expect final val p: kotlin.Int
                 public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
                 public final expect fun f(/*0*/ s: kotlin.String): kotlin.Unit
@@ -47,7 +42,6 @@ public final expect class OuterClass {
 }
 
 public final expect class OuterClassWithNamedCompanion {
-    public constructor OuterClassWithNamedCompanion()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

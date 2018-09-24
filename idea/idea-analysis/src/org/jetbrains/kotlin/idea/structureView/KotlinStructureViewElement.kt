@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.idea.structureView
 
 import com.intellij.ide.structureView.StructureViewTreeElement
-import com.intellij.ide.util.treeView.smartTree.TreeElement
+import com.intellij.ide.structureView.impl.common.PsiTreeElementBase
 import com.intellij.navigation.ItemPresentation
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.ui.Queryable
@@ -30,71 +30,62 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.psi.*
+import javax.swing.Icon
+import kotlin.properties.ReadWriteProperty
+import kotlin.reflect.KProperty
 
-class KotlinStructureViewElement(val element: NavigatablePsiElement,
-                                 val isInherited: Boolean = false) : StructureViewTreeElement, Queryable {
-    private var presentation: KotlinStructureElementPresentation? = null
+class KotlinStructureViewElement(
+    element: NavigatablePsiElement,
+    private val isInherited: Boolean = false
+) : PsiTreeElementBase<NavigatablePsiElement>(element), Queryable {
 
-    constructor(element: NavigatablePsiElement, descriptor: DeclarationDescriptor, isInherited: Boolean) : this(element, isInherited){
+    private var kotlinPresentation
+            by AssignableLazyProperty {
+                KotlinStructureElementPresentation(isInherited, element, countDescriptor())
+            }
+
+    var isPublic
+            by AssignableLazyProperty {
+                isPublic(countDescriptor())
+            }
+        private set
+
+    constructor(element: NavigatablePsiElement, descriptor: DeclarationDescriptor, isInherited: Boolean) : this(element, isInherited) {
         if (element !is KtElement) {
             // Avoid storing descriptor in fields
-            presentation = KotlinStructureElementPresentation(isInherited, element, descriptor)
+            kotlinPresentation = KotlinStructureElementPresentation(isInherited, element, descriptor)
+            isPublic = isPublic(descriptor)
         }
     }
 
-    override fun getValue() = element
-
-    override fun navigate(requestFocus: Boolean) {
-        element.navigate(requestFocus)
-    }
-
-    override fun canNavigate() = element.canNavigate()
-
-    override fun canNavigateToSource() = element.canNavigateToSource()
-
-    override fun getPresentation(): ItemPresentation {
-        if (presentation == null) {
-            presentation = KotlinStructureElementPresentation(isInherited, element, descriptor)
-        }
-
-        return presentation!!
-    }
-
-    override fun getChildren(): Array<TreeElement> =
-        childrenDeclarations.map { KotlinStructureViewElement(it, false) }.toTypedArray()
+    override fun getPresentation(): ItemPresentation = kotlinPresentation
+    override fun getLocationString(): String? = kotlinPresentation.locationString
+    override fun getIcon(open: Boolean): Icon? = kotlinPresentation.getIcon(open)
+    override fun getPresentableText(): String? = kotlinPresentation.presentableText
 
     @TestOnly
     override fun putInfo(info: MutableMap<String, String?>) {
-        info.put("text", getPresentation().presentableText)
-        info.put("location", getPresentation().locationString)
+        // Sanity check for API consistency
+        assert(presentation.presentableText == presentableText) { "Two different ways of getting presentableText" }
+        assert(presentation.locationString == locationString) { "Two different ways of getting locationString" }
+
+        info["text"] = presentableText
+        info["location"] = locationString
     }
 
-    private val descriptor: DeclarationDescriptor?
-        get() {
-            if (!(element.isValid && element is KtDeclaration)) {
-                return null
-            }
+    override fun getChildrenBase(): Collection<StructureViewTreeElement> {
+        val element = element
 
-            if (element is KtAnonymousInitializer) {
-                return null
-            }
-
-            return runReadAction {
-                if (!DumbService.isDumb(element.getProject())) {
-                    return@runReadAction element.resolveToDescriptorIfAny()
-                }
-                null
-            }
-        }
-
-    private val childrenDeclarations: List<KtDeclaration>
-        get() = when (element) {
+        val children = when (element) {
             is KtFile -> element.declarations
             is KtClass -> element.getStructureDeclarations()
             is KtClassOrObject -> element.declarations
             is KtFunction, is KtClassInitializer, is KtProperty -> element.collectLocalDeclarations()
             else -> emptyList()
         }
+
+        return children.map { KotlinStructureViewElement(it, false) }
+    }
 
     private fun PsiElement.collectLocalDeclarations(): List<KtDeclaration> {
         val result = mutableListOf<KtDeclaration>()
@@ -112,9 +103,39 @@ class KotlinStructureViewElement(val element: NavigatablePsiElement,
         return result
     }
 
-    val isPublic: Boolean
-        get() = (descriptor as? DeclarationDescriptorWithVisibility)?.visibility == Visibilities.PUBLIC
+    private fun isPublic(descriptor: DeclarationDescriptor?) =
+        (descriptor as? DeclarationDescriptorWithVisibility)?.visibility == Visibilities.PUBLIC
+
+    private fun countDescriptor(): DeclarationDescriptor? {
+        val element = element
+        return when {
+            element == null -> null
+            !element.isValid -> null
+            element !is KtDeclaration -> null
+            element is KtAnonymousInitializer -> null
+            else -> runReadAction {
+                if (!DumbService.isDumb(element.getProject())) {
+                    element.resolveToDescriptorIfAny()
+                } else null
+            }
+        }
+    }
 }
 
-fun KtClassOrObject.getStructureDeclarations() = primaryConstructorParameters.filter { it.hasValOrVar() } + declarations
+private class AssignableLazyProperty<in R, T : Any>(val init: () -> T) : ReadWriteProperty<R, T> {
+    private var _value: T? = null
+
+    override fun getValue(thisRef: R, property: KProperty<*>): T {
+        return _value ?: init().also { _value = it }
+    }
+
+    override fun setValue(thisRef: R, property: KProperty<*>, value: T) {
+        _value = value
+    }
+}
+
+fun KtClassOrObject.getStructureDeclarations() =
+    (primaryConstructor?.let { listOf(it) } ?: emptyList()) +
+            primaryConstructorParameters.filter { it.hasValOrVar() } +
+            declarations
 

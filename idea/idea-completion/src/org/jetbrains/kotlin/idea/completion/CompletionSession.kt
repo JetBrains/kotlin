@@ -30,10 +30,10 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.util.ProcessingContext
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.idea.caches.resolve.ModuleOrigin
-import org.jetbrains.kotlin.idea.caches.resolve.OriginCapability
+import org.jetbrains.kotlin.idea.caches.project.ModuleOrigin
+import org.jetbrains.kotlin.idea.caches.project.OriginCapability
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
-import org.jetbrains.kotlin.idea.caches.resolve.getResolveScope
+import org.jetbrains.kotlin.idea.caches.resolve.util.getResolveScope
 import org.jetbrains.kotlin.idea.codeInsight.ReferenceVariantsHelper
 import org.jetbrains.kotlin.idea.core.*
 import org.jetbrains.kotlin.idea.imports.importableFqName
@@ -41,19 +41,19 @@ import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.util.*
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.calls.checkers.DslScopeViolationCallChecker.extractDslMarkerFqNames
+import org.jetbrains.kotlin.resolve.MultiTargetPlatform
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
+import org.jetbrains.kotlin.resolve.getMultiTargetPlatform
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
+import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import java.util.*
-import kotlin.collections.LinkedHashMap
 
 class CompletionSessionConfiguration(
         val useBetterPrefixMatcherForNonImportedClasses: Boolean,
@@ -145,10 +145,16 @@ abstract class CompletionSession(
 
     // LookupElementsCollector instantiation is deferred because virtual call to createSorter uses data from derived classes
     protected val collector: LookupElementsCollector by lazy(LazyThreadSafetyMode.NONE) {
-        LookupElementsCollector({ CompletionBenchmarkSink.instance.onFlush(this) }, prefixMatcher, parameters, resultSet, createSorter(), (file as? KtCodeFragment)?.extraCompletionFilter)
+        LookupElementsCollector(
+            { CompletionBenchmarkSink.instance.onFlush(this) },
+            prefixMatcher, parameters, resultSet,
+            createSorter(), (file as? KtCodeFragment)?.extraCompletionFilter,
+            moduleDescriptor.getMultiTargetPlatform() === MultiTargetPlatform.Common
+        )
     }
 
-    protected val searchScope: GlobalSearchScope = getResolveScope(parameters.originalFile as KtFile)
+    protected val searchScope: GlobalSearchScope =
+        getResolveScope(parameters.originalFile as KtFile)
 
     protected fun indicesHelper(mayIncludeInaccessible: Boolean): KotlinIndicesHelper {
         val filter = if (mayIncludeInaccessible) isVisibleFilter else isVisibleFilterCheckAlways
@@ -272,6 +278,12 @@ abstract class CompletionSession(
 
         sorter = sorter.weighAfter("kotlin.proximity", ByNameAlphabeticalWeigher, PreferLessParametersWeigher)
 
+        if (expectedInfos.all { it.fuzzyType?.type?.isUnit() == true }) {
+            sorter = sorter.weighBefore("prefix", PreferDslMembers)
+        } else {
+            sorter = sorter.weighAfter("kotlin.preferContextElements", PreferDslMembers)
+        }
+
         return sorter
     }
 
@@ -394,16 +406,13 @@ abstract class CompletionSession(
                                       nameExpression: KtSimpleNameExpression,
                                       callTypeAndReceiver: CallTypeAndReceiver<*, *>): Collection<ReceiverType>? {
         var receiverTypes = callTypeAndReceiver.receiverTypesWithIndex(
-                bindingContext, nameExpression, moduleDescriptor, resolutionFacade,
-                stableSmartCastsOnly = true, /* we don't include smart cast receiver types for "unstable" receiver value to mark members grayed */
-                withImplicitReceiversWhenExplicitPresent = true)
+            bindingContext, nameExpression, moduleDescriptor, resolutionFacade,
+            stableSmartCastsOnly = true, /* we don't include smart cast receiver types for "unstable" receiver value to mark members grayed */
+            withImplicitReceiversWhenExplicitPresent = true
+        )
 
         if (callTypeAndReceiver is CallTypeAndReceiver.SAFE || isDebuggerContext) {
             receiverTypes = receiverTypes?.map { ReceiverType(it.type.makeNotNullable(), it.receiverIndex) }
-        }
-
-        if (receiverTypes != null && nameExpression.languageVersionSettings.supportsFeature(LanguageFeature.DslMarkersSupport)) {
-            receiverTypes -= receiverTypes.shadowedByDslMarkers()
         }
 
         return receiverTypes

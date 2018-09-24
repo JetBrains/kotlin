@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 993
+// EXPECTED_REACHABLE_NODES: 1283
 package foo
 
 fun Int.sum0(other: Int): Int = this + other

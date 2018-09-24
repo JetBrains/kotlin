@@ -1,31 +1,35 @@
-FILE /varargWithImplicitCast.kt
-  FUN public fun testScalar(a: kotlin.Any): kotlin.IntArray
-    VALUE_PARAMETER value-parameter a: kotlin.Any
+FILE fqName:<root> fileName:/varargWithImplicitCast.kt
+  FUN name:testScalar visibility:public modality:FINAL <> (a:kotlin.Any) returnType:kotlin.IntArray flags:
+    VALUE_PARAMETER name:a index:0 type:kotlin.Any flags:
     BLOCK_BODY
       WHEN type=kotlin.Unit origin=null
         BRANCH
           if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=kotlin.Int
+            typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Int modality:FINAL visibility:public flags: superTypes:[kotlin.Number; kotlin.Comparable<kotlin.Int>; java.io.Serializable]
             GET_VAR 'value-parameter a: Any' type=kotlin.Any origin=null
           then: RETURN type=kotlin.Nothing from='testScalar(Any): IntArray'
             CALL 'intArrayOf(vararg Int): IntArray' type=kotlin.IntArray origin=null
       RETURN type=kotlin.Nothing from='testScalar(Any): IntArray'
         CALL 'intArrayOf(vararg Int): IntArray' type=kotlin.IntArray origin=null
-          elements: VARARG type=IntArray varargElementType=Int
+          elements: VARARG type=kotlin.IntArray varargElementType=kotlin.Int
             TYPE_OP type=kotlin.Int origin=IMPLICIT_CAST typeOperand=kotlin.Int
+              typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Int modality:FINAL visibility:public flags: superTypes:[kotlin.Number; kotlin.Comparable<kotlin.Int>; java.io.Serializable]
               GET_VAR 'value-parameter a: Any' type=kotlin.Any origin=null
-  FUN public fun testSpread(a: kotlin.Any): kotlin.IntArray
-    VALUE_PARAMETER value-parameter a: kotlin.Any
+  FUN name:testSpread visibility:public modality:FINAL <> (a:kotlin.Any) returnType:kotlin.IntArray flags:
+    VALUE_PARAMETER name:a index:0 type:kotlin.Any flags:
     BLOCK_BODY
       WHEN type=kotlin.Unit origin=null
         BRANCH
           if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=kotlin.IntArray
+            typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:IntArray modality:FINAL visibility:public flags: superTypes:[kotlin.Any; kotlin.Cloneable; java.io.Serializable]
             GET_VAR 'value-parameter a: Any' type=kotlin.Any origin=null
           then: RETURN type=kotlin.Nothing from='testSpread(Any): IntArray'
             CALL 'intArrayOf(vararg Int): IntArray' type=kotlin.IntArray origin=null
       RETURN type=kotlin.Nothing from='testSpread(Any): IntArray'
         CALL 'intArrayOf(vararg Int): IntArray' type=kotlin.IntArray origin=null
-          elements: VARARG type=IntArray varargElementType=Int
+          elements: VARARG type=kotlin.IntArray varargElementType=kotlin.Int
             SPREAD_ELEMENT
               TYPE_OP type=kotlin.IntArray origin=IMPLICIT_CAST typeOperand=kotlin.IntArray
+                typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:IntArray modality:FINAL visibility:public flags: superTypes:[kotlin.Any; kotlin.Cloneable; java.io.Serializable]
                 GET_VAR 'value-parameter a: Any' type=kotlin.Any origin=null
 

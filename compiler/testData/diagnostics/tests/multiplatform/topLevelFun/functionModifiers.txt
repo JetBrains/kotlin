@@ -14,5 +14,5 @@ package
 public external actual fun external(): kotlin.Unit
 public actual inline fun inline(): kotlin.Unit
 public actual tailrec fun tailrec(): kotlin.Unit
-public infix actual fun kotlin.String.and(/*0*/ other: kotlin.String): kotlin.String
-public operator actual fun kotlin.String.unaryMinus(): kotlin.String
+public actual infix fun kotlin.String.and(/*0*/ other: kotlin.String): kotlin.String
+public actual operator fun kotlin.String.unaryMinus(): kotlin.String

@@ -1,4 +1,4 @@
-// "Create actual class for platform JVM" "true"
+// "Create actual class for module testModule_JVM (JVM)" "true"
 
 expect class <caret>My {
     fun foo(param: String): Int

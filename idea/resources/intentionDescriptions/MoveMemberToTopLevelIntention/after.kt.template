@@ -1,0 +1,4 @@
+class A {
+}
+
+<spot>fun foo() = 1</spot>

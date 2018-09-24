@@ -27,20 +27,20 @@ import com.intellij.psi.search.EverythingGlobalScope
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.util.containers.ConcurrentFactoryMap
 import com.intellij.util.containers.ContainerUtil
-import org.jetbrains.kotlin.idea.caches.resolve.ScriptModuleSearchScope
+import org.jetbrains.kotlin.idea.caches.project.ScriptModuleSearchScope
 import org.jetbrains.kotlin.load.java.AbstractJavaClassFinder
 import org.jetbrains.kotlin.resolve.jvm.KotlinSafeClassFinder
+
+
 
 class KotlinScriptDependenciesClassFinder(project: Project,
                                           private val scriptDependenciesManager: ScriptDependenciesManager
 ) : NonClasspathClassFinder(project), KotlinSafeClassFinder {
 
     private val myCaches by lazy {
-        object : ConcurrentFactoryMap<VirtualFile, PackageDirectoryCache>() {
-            override fun create(file: VirtualFile): PackageDirectoryCache? {
-                val scriptClasspath = scriptDependenciesManager.getScriptClasspath(file)
-                return createCache(scriptClasspath)
-            }
+        ConcurrentFactoryMap.createMap<VirtualFile, PackageDirectoryCache> { file ->
+            val scriptClasspath = scriptDependenciesManager.getScriptClasspath(file)
+            createCache(scriptClasspath)
         }
     }
 

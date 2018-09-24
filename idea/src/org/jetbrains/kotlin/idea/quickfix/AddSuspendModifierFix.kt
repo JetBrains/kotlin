@@ -21,19 +21,20 @@ import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.cfg.pseudocode.containingDeclarationForPseudocode
 import org.jetbrains.kotlin.descriptors.ValueDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
-import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
-import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
-class AddSuspendModifierFix(element: KtModifierListOwner, private val name: String?): AddModifierFix(element, KtTokens.SUSPEND_KEYWORD) {
+class AddSuspendModifierFix(
+        element: KtModifierListOwner,
+        private val declarationName: String?
+): AddModifierFix(element, KtTokens.SUSPEND_KEYWORD) {
 
     override fun getText() =
             when (element) {
-                is KtNamedFunction -> "Make ${name ?: "containing function"} suspend"
-                is KtTypeReference -> "Make ${name ?: "receiver"} type suspend"
+                is KtNamedFunction -> "Make ${declarationName ?: "containing function"} suspend"
+                is KtTypeReference -> "Make ${declarationName ?: "receiver"} type suspend"
                 else -> super.getText()
             }
 
@@ -59,8 +60,7 @@ class AddSuspendModifierFix(element: KtModifierListOwner, private val name: Stri
             if (callParent !== qualifiedGrandParent.selectorExpression || refExpr !== callParent.calleeExpression) return null
             val receiver = qualifiedGrandParent.receiverExpression as? KtNameReferenceExpression ?: return null
 
-            val context = receiver.analyze(BodyResolveMode.PARTIAL)
-            val receiverDescriptor = context[BindingContext.REFERENCE_TARGET, receiver] as? ValueDescriptor ?: return null
+            val receiverDescriptor = receiver.resolveToCall()?.resultingDescriptor as? ValueDescriptor ?: return null
             if (!receiverDescriptor.type.isFunctionType) return null
             val declaration = DescriptorToSourceUtils.descriptorToDeclaration(receiverDescriptor) as? KtCallableDeclaration
                               ?: return null

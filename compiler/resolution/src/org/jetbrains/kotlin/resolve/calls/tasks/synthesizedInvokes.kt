@@ -22,7 +22,9 @@ import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.DescriptorFactory
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.resolve.descriptorUtil.setSingleOverridden
 import org.jetbrains.kotlin.types.TypeSubstitutor
@@ -43,17 +45,16 @@ fun createSynthesizedInvokes(functions: Collection<FunctionDescriptor>): Collect
         val containerClassId = (invoke.containingDeclaration as ClassDescriptor).classId
         val synthesized = if (containerClassId != null && isBuiltinFunctionClass(containerClassId)) {
             createSynthesizedFunctionWithFirstParameterAsReceiver(invoke)
-        }
-        else {
+        } else {
             val invokeDeclaration = invoke.overriddenDescriptors.singleOrNull()
-                                    ?: error("No single overridden invoke for $invoke: ${invoke.overriddenDescriptors}")
+                    ?: error("No single overridden invoke for $invoke: ${invoke.overriddenDescriptors}")
             val synthesizedSuperFun = createSynthesizedFunctionWithFirstParameterAsReceiver(invokeDeclaration)
             val fakeOverride = synthesizedSuperFun.copy(
-                    invoke.containingDeclaration,
-                    synthesizedSuperFun.modality,
-                    synthesizedSuperFun.visibility,
-                    CallableMemberDescriptor.Kind.FAKE_OVERRIDE,
-                    /* copyOverrides = */ false
+                invoke.containingDeclaration,
+                synthesizedSuperFun.modality,
+                synthesizedSuperFun.visibility,
+                CallableMemberDescriptor.Kind.FAKE_OVERRIDE,
+                /* copyOverrides = */ false
             )
             fakeOverride.setSingleOverridden(synthesizedSuperFun)
             fakeOverride
@@ -67,11 +68,15 @@ fun createSynthesizedInvokes(functions: Collection<FunctionDescriptor>): Collect
 
 private fun createSynthesizedFunctionWithFirstParameterAsReceiver(descriptor: FunctionDescriptor) =
     descriptor.original.newCopyBuilder().apply {
-        setExtensionReceiverType(descriptor.original.valueParameters.first().type)
+        setExtensionReceiverParameter(
+            DescriptorFactory.createExtensionReceiverParameterForCallable(
+                descriptor.original, descriptor.original.valueParameters.first().type, Annotations.EMPTY
+            )
+        )
         setValueParameters(
-                descriptor.original.valueParameters
-                        .drop(1)
-                        .map { p -> p.copy(descriptor.original, Name.identifier("p${p.index + 1}"), p.index - 1) }
+            descriptor.original.valueParameters
+                .drop(1)
+                .map { p -> p.copy(descriptor.original, Name.identifier("p${p.index + 1}"), p.index - 1) }
         )
     }.build()!!
 
@@ -85,5 +90,5 @@ fun isSynthesizedInvoke(descriptor: DeclarationDescriptor): Boolean {
     }
 
     return real.kind == CallableMemberDescriptor.Kind.SYNTHESIZED &&
-           real.containingDeclaration.getFunctionalClassKind() != null
+            real.containingDeclaration.getFunctionalClassKind() != null
 }

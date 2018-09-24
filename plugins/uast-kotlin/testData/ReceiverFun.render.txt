@@ -1,0 +1,8 @@
+public final class ReceiverFunKt {
+    public static final fun foo(@MyReceiverAnnotation @org.jetbrains.annotations.NotNull $receiver: java.lang.String) : int {
+        return this.length
+    }
+}
+
+public abstract annotation MyReceiverAnnotation {
+}

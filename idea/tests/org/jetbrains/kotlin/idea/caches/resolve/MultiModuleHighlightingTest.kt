@@ -31,21 +31,27 @@ import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.analyzer.ResolverForModuleComputationTracker
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
-import org.jetbrains.kotlin.config.JvmTarget
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersion
-import org.jetbrains.kotlin.config.TargetPlatformKind
+import org.jetbrains.kotlin.idea.caches.project.ModuleSourceInfo
+import org.jetbrains.kotlin.idea.caches.project.SdkInfo
+import org.jetbrains.kotlin.idea.compiler.configuration.KotlinCommonCompilerArgumentsHolder
+import org.jetbrains.kotlin.idea.compiler.configuration.KotlinCompilerSettings
 import org.jetbrains.kotlin.idea.completion.test.withServiceRegistered
 import org.jetbrains.kotlin.idea.facet.KotlinFacetConfiguration
 import org.jetbrains.kotlin.idea.facet.KotlinFacetType
 import org.jetbrains.kotlin.idea.framework.JSLibraryKind
 import org.jetbrains.kotlin.idea.project.KotlinCodeBlockModificationListener
 import org.jetbrains.kotlin.idea.project.KotlinModuleModificationTracker
+import org.jetbrains.kotlin.idea.project.getLanguageVersionSettings
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
+import org.jetbrains.kotlin.idea.test.allKotlinFiles
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.idea.util.projectStructure.sdk
 import org.jetbrains.kotlin.samWithReceiver.SamWithReceiverCommandLineProcessor.Companion.ANNOTATION_OPTION
 import org.jetbrains.kotlin.samWithReceiver.SamWithReceiverCommandLineProcessor.Companion.PLUGIN_ID
+import org.jetbrains.kotlin.test.MockLibraryUtil
 import org.jetbrains.kotlin.test.TestJdkKind.FULL_JDK
 
 open class MultiModuleHighlightingTest : AbstractMultiModuleHighlightingTest() {
@@ -57,7 +63,7 @@ open class MultiModuleHighlightingTest : AbstractMultiModuleHighlightingTest() {
 
         module2.addDependency(module1)
 
-        checkHighlightingInAllFiles()
+        checkHighlightingInProject()
     }
 
     fun testDependency() {
@@ -76,7 +82,7 @@ open class MultiModuleHighlightingTest : AbstractMultiModuleHighlightingTest() {
         module4.addDependency(module2)
         module4.addDependency(module3)
 
-        checkHighlightingInAllFiles()
+        checkHighlightingInProject()
     }
 
     fun testLazyResolvers() {
@@ -94,7 +100,7 @@ open class MultiModuleHighlightingTest : AbstractMultiModuleHighlightingTest() {
             assertTrue(module2 !in tracker.moduleResolversComputed)
             assertTrue(module3 !in tracker.moduleResolversComputed)
 
-            checkHighlightingInAllFiles { "m3" in file.name }
+            checkHighlightingInProject { project.allKotlinFiles().filter { "m3" in it.name } }
 
             assertTrue(module1 in tracker.moduleResolversComputed)
             assertTrue(module2 !in tracker.moduleResolversComputed)
@@ -129,7 +135,7 @@ open class MultiModuleHighlightingTest : AbstractMultiModuleHighlightingTest() {
 
             assertEquals(0, tracker.sdkResolversComputed.size)
 
-            checkHighlightingInAllFiles { "m2" in file.name }
+            checkHighlightingInProject { project.allKotlinFiles().filter { "m2" in it.name } }
 
             assertEquals(2, tracker.moduleResolversComputed.size)
 
@@ -156,14 +162,14 @@ open class MultiModuleHighlightingTest : AbstractMultiModuleHighlightingTest() {
             assertEquals(currentModCount, module2ModTracker.modificationCount)
             assertEquals(currentModCount, module3ModTracker.modificationCount)
 
-            checkHighlightingInAllFiles { "m2" in file.name }
+            checkHighlightingInProject { project.allKotlinFiles().filter { "m2" in it.name } }
 
             assertEquals(0, tracker.sdkResolversComputed.size)
             assertEquals(1, tracker.moduleResolversComputed.size)
 
             tracker.moduleResolversComputed.clear()
             (PsiModificationTracker.SERVICE.getInstance(myProject) as PsiModificationTrackerImpl).incOutOfCodeBlockModificationCounter()
-            checkHighlightingInAllFiles { "m2" in file.name }
+            checkHighlightingInProject { project.allKotlinFiles().filter { "m2" in it.name } }
             assertEquals(0, tracker.sdkResolversComputed.size)
             assertEquals(2, tracker.moduleResolversComputed.size)
         }
@@ -178,7 +184,7 @@ open class MultiModuleHighlightingTest : AbstractMultiModuleHighlightingTest() {
         module3.addDependency(module2, dependencyScope = DependencyScope.TEST)
         module2.addDependency(module1, dependencyScope = DependencyScope.COMPILE)
 
-        checkHighlightingInAllFiles()
+        checkHighlightingInProject()
     }
 
     fun testLanguageVersionsViaFacets() {
@@ -192,7 +198,7 @@ open class MultiModuleHighlightingTest : AbstractMultiModuleHighlightingTest() {
         m1.addDependency(m2)
         m2.addDependency(m1)
 
-        checkHighlightingInAllFiles()
+        checkHighlightingInProject()
     }
 
     fun testSamWithReceiverExtension() {
@@ -210,9 +216,73 @@ open class MultiModuleHighlightingTest : AbstractMultiModuleHighlightingTest() {
         module1.addDependency(module2)
         module2.addDependency(module1)
 
-        checkHighlightingInAllFiles()
+        checkHighlightingInProject()
     }
 
+    fun testJvmExperimentalLibrary() {
+        val lib = MockLibraryUtil.compileJvmLibraryToJar(
+            testDataPath + "${getTestName(true)}/lib", "lib",
+            extraOptions = listOf(
+                "-Xuse-experimental=kotlin.Experimental",
+                "-Xexperimental=lib.ExperimentalAPI"
+            )
+        )
+
+        module("usage").addLibrary(lib)
+        checkHighlightingInProject()
+    }
+
+    fun testJsExperimentalLibrary() {
+        val lib = MockLibraryUtil.compileJsLibraryToJar(
+            testDataPath + "${getTestName(true)}/lib", "lib", false,
+            extraOptions = listOf(
+                "-Xuse-experimental=kotlin.Experimental",
+                "-Xexperimental=lib.ExperimentalAPI"
+            )
+        )
+
+        module("usage").addLibrary(lib, kind = JSLibraryKind)
+        checkHighlightingInProject()
+    }
+
+    fun testCoroutineMixedReleaseStatus() {
+        KotlinCommonCompilerArgumentsHolder.getInstance(project).update { skipMetadataVersionCheck = true }
+        KotlinCompilerSettings.getInstance(project).update { additionalArguments = "-Xskip-metadata-version-check" }
+
+        val libOld = MockLibraryUtil.compileJvmLibraryToJar(
+            testDataPath + "${getTestName(true)}/libOld", "libOld",
+            extraOptions = listOf("-language-version", "1.2", "-api-version", "1.2")
+        )
+
+        val libNew = MockLibraryUtil.compileJvmLibraryToJar(
+            testDataPath + "${getTestName(true)}/libNew", "libNew",
+            extraOptions = listOf("-language-version", "1.3", "-api-version", "1.3")
+        )
+
+        val moduleNew = module("moduleNew").setupKotlinFacet {
+            settings.coroutineSupport = LanguageFeature.State.ENABLED
+            settings.languageLevel = LanguageVersion.KOTLIN_1_3
+            settings.apiLevel = LanguageVersion.KOTLIN_1_3
+        }
+
+        val moduleOld = module("moduleOld").setupKotlinFacet {
+            settings.coroutineSupport = LanguageFeature.State.ENABLED
+            settings.languageLevel = LanguageVersion.KOTLIN_1_2
+            settings.apiLevel = LanguageVersion.KOTLIN_1_2
+        }
+
+        moduleNew.addLibrary(libOld)
+        moduleNew.addLibrary(libNew)
+        moduleNew.addLibrary(ForTestCompileRuntime.runtimeJarForTests())
+
+        moduleOld.addLibrary(libNew)
+        moduleOld.addLibrary(libOld)
+        moduleOld.addLibrary(ForTestCompileRuntime.runtimeJarForTests())
+
+        moduleNew.addDependency(moduleOld)
+
+        checkHighlightingInProject()
+    }
 
     private fun Module.setupKotlinFacet(configure: KotlinFacetConfiguration.() -> Unit) = apply {
         runWriteAction {
@@ -225,70 +295,6 @@ open class MultiModuleHighlightingTest : AbstractMultiModuleHighlightingTest() {
             configuration.settings.useProjectSettings = false
 
             configuration.configure()
-        }
-    }
-
-    // Some tests are ignored below. They fail because <error> markers are not stripped correctly in multi-module highlighting tests.
-    // TODO: fix this in the test framework and unignore the tests
-    class MultiPlatform : AbstractMultiModuleHighlightingTest() {
-        override fun getTestDataPath() = "${PluginTestCaseBase.getTestDataPathBase()}/multiModuleHighlighting/multiplatform/"
-
-        fun testBasic() {
-            doMultiPlatformTest(TargetPlatformKind.Jvm[JvmTarget.JVM_1_6])
-        }
-
-        fun testHeaderClass() {
-            doMultiPlatformTest(TargetPlatformKind.Jvm[JvmTarget.JVM_1_6])
-        }
-
-        fun testHeaderWithoutImplForBoth() {
-            doMultiPlatformTest(TargetPlatformKind.Jvm[JvmTarget.JVM_1_6], TargetPlatformKind.JavaScript)
-        }
-
-        fun ignore_testHeaderPartiallyImplemented() {
-            doMultiPlatformTest(TargetPlatformKind.Jvm[JvmTarget.JVM_1_6])
-        }
-
-        fun testHeaderFunctionProperty() {
-            doMultiPlatformTest(TargetPlatformKind.Jvm[JvmTarget.JVM_1_6])
-        }
-
-        fun testSuppressHeaderWithoutImpl() {
-            doMultiPlatformTest(TargetPlatformKind.Jvm[JvmTarget.JVM_1_6])
-        }
-
-        fun testCatchHeaderExceptionInPlatformModule() {
-            doMultiPlatformTest(TargetPlatformKind.Jvm[JvmTarget.JVM_1_6], withStdlibCommon = true)
-        }
-
-        fun testWithOverrides() {
-            doMultiPlatformTest(TargetPlatformKind.Jvm[JvmTarget.JVM_1_6])
-        }
-
-        fun testUseCorrectBuiltInsForCommonModule() {
-            doMultiPlatformTest(TargetPlatformKind.Jvm[JvmTarget.JVM_1_8], TargetPlatformKind.JavaScript,
-                                withStdlibCommon = true, jdk = FULL_JDK, configureModule = { module, platform ->
-                if (platform == TargetPlatformKind.JavaScript) {
-                    module.addLibrary(ForTestCompileRuntime.stdlibJsForTests(), kind = JSLibraryKind)
-                    module.addLibrary(ForTestCompileRuntime.stdlibCommonForTests())
-                }
-            })
-        }
-
-        fun testHeaderClassImplTypealias() {
-            doMultiPlatformTest(TargetPlatformKind.Jvm[JvmTarget.JVM_1_6])
-        }
-
-        fun testHeaderFunUsesStdlibInSignature() {
-            doMultiPlatformTest(TargetPlatformKind.Jvm[JvmTarget.JVM_1_6], withStdlibCommon = true, configureModule = { module, platform ->
-                if (platform is TargetPlatformKind.Jvm) {
-                    module.addLibrary(ForTestCompileRuntime.runtimeJarForTests())
-                }
-            })
-        }
-
-        fun ignore_testNestedClassWithoutImpl() {
-            doMultiPlatformTest(TargetPlatformKind.Jvm[JvmTarget.JVM_1_6])
         }
     }
 }

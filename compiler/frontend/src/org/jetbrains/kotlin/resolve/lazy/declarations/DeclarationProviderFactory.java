@@ -34,5 +34,5 @@ public interface DeclarationProviderFactory {
     @Nullable
     PackageMemberDeclarationProvider getPackageMemberDeclarationProvider(@NotNull FqName packageFqName);
 
-    void diagnoseMissingPackageFragment(KtFile file);
+    void diagnoseMissingPackageFragment(@NotNull FqName fqName, @Nullable KtFile file);
 }

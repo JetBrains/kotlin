@@ -1,0 +1,7 @@
+bar
+  j/BarAsJKt
+  jj/JJ
+foo
+  foo/MultiFoo__FooMultiFileKt (foo/MultiFoo)
+  foo/FooKt
+  jjj/FooAsJJJKt

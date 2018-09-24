@@ -22,7 +22,13 @@ import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
-class IrExpressionBodyImpl(startOffset: Int, endOffset: Int) : IrElementBase(startOffset, endOffset), IrExpressionBody {
+class IrExpressionBodyImpl(
+    startOffset: Int,
+    endOffset: Int
+) :
+    IrElementBase(startOffset, endOffset),
+    IrExpressionBody {
+
     constructor(startOffset: Int, endOffset: Int, expression: IrExpression) : this(startOffset, endOffset) {
         this.expression = expression
     }
@@ -32,7 +38,7 @@ class IrExpressionBodyImpl(startOffset: Int, endOffset: Int) : IrElementBase(sta
     override lateinit var expression: IrExpression
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
-            visitor.visitExpressionBody(this, data)
+        visitor.visitExpressionBody(this, data)
 
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
         expression.accept(visitor, data)

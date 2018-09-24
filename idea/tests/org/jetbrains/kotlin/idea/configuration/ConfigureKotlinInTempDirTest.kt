@@ -19,48 +19,59 @@ package org.jetbrains.kotlin.idea.configuration
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.impl.ApplicationImpl
 import com.intellij.openapi.util.io.FileUtil
+import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.config.KotlinFacetSettingsProvider
 import org.jetbrains.kotlin.config.LanguageVersion
+import org.jetbrains.kotlin.idea.compiler.configuration.Kotlin2JsCompilerArgumentsHolder
+import org.jetbrains.kotlin.idea.compiler.configuration.KotlinCommonCompilerArgumentsHolder
 import org.jetbrains.kotlin.idea.project.getLanguageVersionSettings
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.junit.Assert
 import java.io.File
 import java.io.IOException
+import java.nio.file.Path
 
-class ConfigureKotlinInTempDirTest : AbstractConfigureKotlinTest() {
+open class ConfigureKotlinInTempDirTest : AbstractConfigureKotlinInTempDirTest() {
     @Throws(IOException::class)
-    override fun getIprFile(): File {
-        val tempDir = FileUtil.generateRandomTemporaryPath()
-        FileUtil.createTempDirectory("temp", null)
-
-        FileUtil.copyDir(File(projectRoot), tempDir)
-
-        val projectRoot = tempDir.path
-
-        val projectFilePath = projectRoot + "/projectFile.ipr"
-        if (!File(projectFilePath).exists()) {
-            val dotIdeaPath = projectRoot + "/.idea"
-            Assert.assertTrue("Project file or '.idea' dir should exists in " + projectRoot, File(dotIdeaPath).exists())
-            return File(projectRoot)
-        }
-        return File(projectFilePath)
+    fun testNoKotlincExistsNoSettingsRuntime10() {
+        val application = ApplicationManager.getApplication() as ApplicationImpl
+        application.isSaveAllowed = true
+        Assert.assertEquals(LanguageVersion.KOTLIN_1_0, module.languageVersionSettings.languageVersion)
+        Assert.assertEquals(LanguageVersion.KOTLIN_1_0, myProject.getLanguageVersionSettings(null).languageVersion)
+        application.saveAll()
+        Assert.assertTrue(project.baseDir.findFileByRelativePath(".idea/kotlinc.xml") == null)
     }
 
-    @Throws(IOException::class)
-    fun testKotlincExistsNoSettingsRuntime10() {
+    fun testNoKotlincExistsNoSettingsLatestRuntime() {
         val application = ApplicationManager.getApplication() as ApplicationImpl
-        application.doNotSave(false)
-        Assert.assertEquals(LanguageVersion.KOTLIN_1_0, myProject.getLanguageVersionSettings(null).languageVersion)
-        Assert.assertEquals(LanguageVersion.KOTLIN_1_0, module.languageVersionSettings.languageVersion)
+        application.isSaveAllowed = true
+        Assert.assertEquals(LanguageVersion.LATEST_STABLE, module.languageVersionSettings.languageVersion)
+        Assert.assertEquals(LanguageVersion.LATEST_STABLE, myProject.getLanguageVersionSettings(null).languageVersion)
+        application.saveAll()
+        Assert.assertTrue(project.baseDir.findFileByRelativePath(".idea/kotlinc.xml") == null)
+    }
+
+    fun testKotlincExistsNoSettingsLatestRuntimeNoVersionAutoAdvance() {
+        val application = ApplicationManager.getApplication() as ApplicationImpl
+        application.isSaveAllowed = true
+        Assert.assertEquals(LanguageVersion.LATEST_STABLE, module.languageVersionSettings.languageVersion)
+        Assert.assertEquals(LanguageVersion.LATEST_STABLE, myProject.getLanguageVersionSettings(null).languageVersion)
+        KotlinCommonCompilerArgumentsHolder.getInstance(project).update {
+            autoAdvanceLanguageVersion = false
+            autoAdvanceApiVersion = false
+        }
         application.saveAll()
         Assert.assertTrue(project.baseDir.findFileByRelativePath(".idea/kotlinc.xml") != null)
     }
 
-    fun testKotlincExistsNoSettingsRuntime11() {
+    fun testDropKotlincOnVersionAutoAdvance() {
         val application = ApplicationManager.getApplication() as ApplicationImpl
-        application.doNotSave(false)
-        Assert.assertEquals(LanguageVersion.KOTLIN_1_1, myProject.getLanguageVersionSettings(null).languageVersion)
-        Assert.assertEquals(LanguageVersion.KOTLIN_1_1, module.languageVersionSettings.languageVersion)
+        application.isSaveAllowed = true
+        Assert.assertEquals(LanguageVersion.LATEST_STABLE, module.languageVersionSettings.languageVersion)
+        KotlinCommonCompilerArgumentsHolder.getInstance(project).update {
+            autoAdvanceLanguageVersion = true
+            autoAdvanceApiVersion = true
+        }
         application.saveAll()
         Assert.assertTrue(project.baseDir.findFileByRelativePath(".idea/kotlinc.xml") == null)
     }
@@ -90,9 +101,31 @@ class ConfigureKotlinInTempDirTest : AbstractConfigureKotlinTest() {
     fun testLoadAndSaveProjectWithV2FacetConfig() {
         val moduleFileContentBefore = String(module.moduleFile!!.contentsToByteArray())
         val application = ApplicationManager.getApplication() as ApplicationImpl
-        application.doNotSave(false)
+        application.isSaveAllowed = true
         application.saveAll()
         val moduleFileContentAfter = String(module.moduleFile!!.contentsToByteArray())
         Assert.assertEquals(moduleFileContentBefore, moduleFileContentAfter)
     }
+
+    fun testApiVersionWithoutLanguageVersion() {
+        KotlinCommonCompilerArgumentsHolder.getInstance(myProject)
+        val settings = myProject.getLanguageVersionSettings()
+        Assert.assertEquals(ApiVersion.KOTLIN_1_1, settings.apiVersion)
+    }
+
+    fun testNoKotlincExistsNoSettingsLatestRuntimeNullizeEmptyStrings() {
+        val application = ApplicationManager.getApplication() as ApplicationImpl
+        application.isSaveAllowed = true
+        Kotlin2JsCompilerArgumentsHolder.getInstance(project).update {
+            sourceMapPrefix = ""
+            sourceMapEmbedSources = ""
+        }
+        application.saveAll()
+        Assert.assertTrue(project.baseDir.findFileByRelativePath(".idea/kotlinc.xml") == null)
+    }
+
+    //todo[Sedunov]: wait for fix in platform to avoid misunderstood from Java newbies (also PluginStartupComponent)
+    /*fun testKotlinSdkAdded() {
+        Assert.assertTrue(ProjectJdkTable.getInstance().allJdks.any { it.sdkType is KotlinSdkType })
+    }*/
 }

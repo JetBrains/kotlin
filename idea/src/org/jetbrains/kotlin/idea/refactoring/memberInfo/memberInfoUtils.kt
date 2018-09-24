@@ -24,19 +24,21 @@ import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.namedUnwrappedElement
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.idea.caches.resolve.getJavaClassDescriptor
-import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
+import org.jetbrains.kotlin.idea.caches.resolve.*
+import org.jetbrains.kotlin.idea.caches.resolve.util.getJavaClassDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.util.javaResolutionFacade
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.allChildren
 import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 fun PsiNamedElement.getClassDescriptorIfAny(resolutionFacade: ResolutionFacade? = null): ClassDescriptor? {
     return when (this) {
-        is KtClassOrObject -> (resolutionFacade ?: getResolutionFacade()).resolveToDescriptor(this) as ClassDescriptor
+        is KtClassOrObject -> resolutionFacade?.resolveToDescriptor(this) ?: resolveToDescriptorIfAny(BodyResolveMode.FULL)
         is PsiClass -> getJavaClassDescriptor()
         else -> null
-    }
+    } as? ClassDescriptor
 }
 
 // Applies to JetClassOrObject and PsiClass
@@ -66,8 +68,12 @@ fun KotlinMemberInfo.getChildrenToAnalyze(): List<PsiElement> {
 }
 
 internal fun KtNamedDeclaration.resolveToDescriptorWrapperAware(resolutionFacade: ResolutionFacade? = null): DeclarationDescriptor {
-    if (this is KtPsiClassWrapper) return psiClass.getJavaClassDescriptor(resolutionFacade)!!
-    return (resolutionFacade ?: getResolutionFacade()).resolveToDescriptor(this)
+    if (this is KtPsiClassWrapper) {
+        (resolutionFacade ?: psiClass.javaResolutionFacade())
+            ?.let { psiClass.getJavaClassDescriptor(it) }
+            ?.let { return it }
+    }
+    return resolutionFacade?.resolveToDescriptor(this) ?: unsafeResolveToDescriptor()
 }
 
 internal fun PsiMember.toKtDeclarationWrapperAware(): KtNamedDeclaration? {

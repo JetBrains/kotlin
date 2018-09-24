@@ -1,0 +1,243 @@
+== callsAndInverts ==
+fun callsAndInverts(b: Boolean, block: () -> Unit): Boolean {
+    contract {
+        callsInPlace(block, InvocationKind.EXACTLY_ONCE)
+        returns(true) implies (!b)
+        returns(false) implies b
+    }
+
+    block()
+    return !b
+}
+---------------------
+L0:
+  1 <START>                                                                                                                                           INIT: in: {} out: {}
+    v(b: Boolean)                                                                                                                                     INIT: in: {} out: {}
+    magic[FAKE_INITIALIZER](b: Boolean) -> <v0>                                                                                                       INIT: in: {} out: {}
+    w(b|<v0>)                                                                                                                                         INIT: in: {} out: {}
+    v(block: () -> Unit)                                                                                                                              INIT: in: {} out: {}
+    magic[FAKE_INITIALIZER](block: () -> Unit) -> <v1>                                                                                                INIT: in: {} out: {}
+    w(block|<v1>)                                                                                                                                     INIT: in: {} out: {}
+  2 mark({ contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) returns(true) implies (!b) returns(false) implies b } block() return !b })     INIT: in: {} out: {}
+    mark({ callsInPlace(block, InvocationKind.EXACTLY_ONCE) returns(true) implies (!b) returns(false) implies b })
+    jmp?(L2)
+    d({ callsInPlace(block, InvocationKind.EXACTLY_ONCE) returns(true) implies (!b) returns(false) implies b })
+L2 [after local declaration]:
+    r({ callsInPlace(block, InvocationKind.EXACTLY_ONCE) returns(true) implies (!b) returns(false) implies b }) -> <v2>
+    mark(contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) returns(true) implies (!b) returns(false) implies b })
+    call(contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) returns(true) implies (!b) returns(false) implies b }, contract|<v2>) -> <v3>
+    r(block) -> <v4>
+    mark(block())
+    call(block(), invoke|<v4>) -> <v5>
+    r(b) -> <v6>
+    mark(!b)
+    call(!b, not|<v6>) -> <v7>
+    ret(*|<v7>) L1
+L1:
+  1 <END>
+error:
+    <ERROR>
+sink:
+    <SINK>                                                                                                                                                                    USE: in: {} out: {}
+=====================
+== anonymous_0 ==
+{
+        callsInPlace(block, InvocationKind.EXACTLY_ONCE)
+        returns(true) implies (!b)
+        returns(false) implies b
+    }
+---------------------
+L3:
+  3 <START>                                                                                                       INIT: in: {} out: {}
+  4 mark(callsInPlace(block, InvocationKind.EXACTLY_ONCE) returns(true) implies (!b) returns(false) implies b)
+    magic[IMPLICIT_RECEIVER](callsInPlace(block, InvocationKind.EXACTLY_ONCE)) -> <v0>
+    r(block) -> <v1>
+    mark(InvocationKind.EXACTLY_ONCE)
+    r(EXACTLY_ONCE) -> <v2>
+    mark(callsInPlace(block, InvocationKind.EXACTLY_ONCE))
+    call(callsInPlace(block, InvocationKind.EXACTLY_ONCE), callsInPlace|<v0>, <v1>, <v2>) -> <v3>
+    magic[IMPLICIT_RECEIVER](returns(true)) -> <v4>
+    r(true) -> <v5>
+    mark(returns(true))
+    call(returns(true), returns|<v4>, <v5>) -> <v6>
+    mark((!b))
+    r(b) -> <v7>
+    mark(!b)
+    call(!b, not|<v7>) -> <v8>
+    mark(returns(true) implies (!b))
+    call(returns(true) implies (!b), implies|<v6>, <v8>) -> <v9>
+    magic[IMPLICIT_RECEIVER](returns(false)) -> <v10>
+    r(false) -> <v11>
+    mark(returns(false))
+    call(returns(false), returns|<v10>, <v11>) -> <v12>
+    r(b) -> <v13>
+    mark(returns(false) implies b)
+    call(returns(false) implies b, implies|<v12>, <v13>) -> <v14>
+L4:
+  3 <END>
+error:
+    <ERROR>
+sink:
+    <SINK>                                                                                                                                USE: in: {} out: {}
+=====================
+== smartcastAndInitialization ==
+fun smartcastAndInitialization(x: Any?) {
+    val y: Int
+
+    if (callsAndInverts(x !is String) { y = 42 }) {
+        println(y)
+        <!DEBUG_INFO_SMARTCAST!>x<!>.length
+    }
+    else {
+        println(y)
+        x.<!UNRESOLVED_REFERENCE!>length<!>
+    }
+    println(y)
+}
+---------------------
+L0:
+  1 <START>                                                                                                                                                                                     INIT: in: {} out: {}
+    v(x: Any?)                                                                                                                                                                                  INIT: in: {} out: {}
+    magic[FAKE_INITIALIZER](x: Any?) -> <v0>                                                                                                                                                    INIT: in: {} out: {}
+    w(x|<v0>)                                                                                                                                                                                   INIT: in: {} out: {}            USE: in: {} out: {}
+  2 mark({ val y: Int if (callsAndInverts(x !is String) { y = 42 }) { println(y) <!DEBUG_INFO_SMARTCAST!>x<!>.length } else { println(y) x.<!UNRESOLVED_REFERENCE!>length<!> } println(y) })    INIT: in: {} out: {}
+    v(val y: Int)                                                                                                                                                                               INIT: in: {} out: {y=D}
+    mark(if (callsAndInverts(x !is String) { y = 42 }) { println(y) <!DEBUG_INFO_SMARTCAST!>x<!>.length } else { println(y) x.<!UNRESOLVED_REFERENCE!>length<!> })                              INIT: in: {y=D} out: {y=D}
+    mark(x !is String)
+    r(x) -> <v1>
+    magic[IS](x !is String|<v1>) -> <v2>
+    mark({ y = 42 })
+    r({ y = 42 }) -> <v3>
+    mark(callsAndInverts(x !is String) { y = 42 })
+    call(callsAndInverts(x !is String) { y = 42 }, callsAndInverts|<v2>, <v3>) -> <v4>
+L2 [before inlined declaration]:
+    inlined({ y = 42 })                                                                                                                                                                         INIT: in: {y=ID} out: {y=ID}    USE: in: {y=WRITTEN_AFTER_READ} out: {y=WRITTEN_AFTER_READ}
+L3 [after inlined declaration]:
+    jf(L6|<v4>)
+  3 mark({ println(y) <!DEBUG_INFO_SMARTCAST!>x<!>.length })
+    r(y) -> <v5>
+    mark(println(y))
+    call(println(y), println|<v5>) -> <v6>
+    magic[UNRESOLVED_CALL](DEBUG_INFO_SMARTCAST) -> <v7>
+    mark(!DEBUG_INFO_SMARTCAST)
+    call(!DEBUG_INFO_SMARTCAST, <ERROR FUNCTION>|<v7>) -> <v8>
+  2 jmp(L7)
+L6 [else branch]:
+  3 mark({ println(y) x.<!UNRESOLVED_REFERENCE!>length<!> })
+    r(y) -> <v9>
+    mark(println(y))
+    call(println(y), println|<v9>) -> <v10>
+    mark(x.<)
+    r(x) -> <v11>
+    magic[UNSUPPORTED_ELEMENT](x.<|<v11>) -> <v12>
+L7 ['if' expression result]:
+  2 merge(if (callsAndInverts(x !is String) { y = 42 }) { println(y) <!DEBUG_INFO_SMARTCAST!>x<!>.length } else { println(y) x.<!UNRESOLVED_REFERENCE!>length<!> }|<v8>, <v12>) -> <v13>                                        USE: in: {y=READ} out: {y=READ}
+    r(y) -> <v14>                                                                                                                                                                                                               USE: in: {} out: {y=READ}
+    mark(println(y))
+    call(println(y), println|<v14>) -> <v15>
+L1:
+  1 <END>                                                                                                                                                                                       INIT: in: {} out: {}
+error:
+    <ERROR>
+sink:
+    <SINK>                                                                                                                                                                                                                      USE: in: {} out: {}
+=====================
+== inlined anonymous_1 ==
+{ y = 42 }
+---------------------
+L4:
+  3 <START>          INIT: in: {y=D} out: {y=D}
+  4 mark(y = 42)
+    r(42) -> <v0>                                    USE: in: {y=WRITTEN_AFTER_READ} out: {y=WRITTEN_AFTER_READ}
+    w(y|<v0>)        INIT: in: {y=D} out: {y=ID}     USE: in: {y=READ} out: {y=WRITTEN_AFTER_READ}
+L5:
+  3 <END>            INIT: in: {y=ID} out: {y=ID}    USE: in: {y=READ} out: {y=READ}
+error:
+-   <ERROR>
+sink:
+    <SINK>           INIT: in: {y=ID} out: {y=ID}    USE: in: {y=READ} out: {y=READ}
+=====================
+== inPresenceOfLazy ==
+fun inPresenceOfLazy(x: Any?, unknownBoolean: Boolean) {
+    val y: Int
+
+    if (unknownBoolean && callsAndInverts(x !is String) { y = 42 }) {
+        println(y)
+        <!DEBUG_INFO_SMARTCAST!>x<!>.length
+    }
+    else {
+        println(y)
+        x.<!UNRESOLVED_REFERENCE!>length<!>
+    }
+    println(y)
+}
+---------------------
+L0:
+  1 <START>                                                                                                                                                                                                       INIT: in: {} out: {}
+    v(x: Any?)                                                                                                                                                                                                    INIT: in: {} out: {}
+    magic[FAKE_INITIALIZER](x: Any?) -> <v0>                                                                                                                                                                      INIT: in: {} out: {}
+    w(x|<v0>)                                                                                                                                                                                                     INIT: in: {} out: {}
+    v(unknownBoolean: Boolean)                                                                                                                                                                                    INIT: in: {} out: {}
+    magic[FAKE_INITIALIZER](unknownBoolean: Boolean) -> <v1>                                                                                                                                                      INIT: in: {} out: {}
+    w(unknownBoolean|<v1>)                                                                                                                                                                                        INIT: in: {} out: {}              USE: in: {} out: {}
+  2 mark({ val y: Int if (unknownBoolean && callsAndInverts(x !is String) { y = 42 }) { println(y) <!DEBUG_INFO_SMARTCAST!>x<!>.length } else { println(y) x.<!UNRESOLVED_REFERENCE!>length<!> } println(y) })    INIT: in: {} out: {}
+    v(val y: Int)                                                                                                                                                                                                 INIT: in: {} out: {y=D}
+    mark(if (unknownBoolean && callsAndInverts(x !is String) { y = 42 }) { println(y) <!DEBUG_INFO_SMARTCAST!>x<!>.length } else { println(y) x.<!UNRESOLVED_REFERENCE!>length<!> })                              INIT: in: {y=D} out: {y=D}
+    r(unknownBoolean) -> <v2>
+    jf(L2|<v2>)                                                                                                                                                                                                                                     USE: in: {y=READ} out: {y=READ}
+    mark(x !is String)
+    r(x) -> <v3>
+    magic[IS](x !is String|<v3>) -> <v4>
+    mark({ y = 42 })
+    r({ y = 42 }) -> <v5>
+    mark(callsAndInverts(x !is String) { y = 42 })
+    call(callsAndInverts(x !is String) { y = 42 }, callsAndInverts|<v4>, <v5>) -> <v6>
+L3 [before inlined declaration]:
+    inlined({ y = 42 })                                                                                                                                                                                           INIT: in: {y=ID} out: {y=ID}      USE: in: {y=WRITTEN_AFTER_READ} out: {y=WRITTEN_AFTER_READ}
+L2 [result of boolean operation]:
+L4 [after inlined declaration]:
+    magic[AND](unknownBoolean && callsAndInverts(x !is String) { y = 42 }|<v2>, <v6>) -> <v7>                                                                                                                     INIT: in: {y=I?D} out: {y=I?D}
+    jf(L7|<v7>)
+  3 mark({ println(y) <!DEBUG_INFO_SMARTCAST!>x<!>.length })
+    r(y) -> <v8>
+    mark(println(y))
+    call(println(y), println|<v8>) -> <v9>
+    magic[UNRESOLVED_CALL](DEBUG_INFO_SMARTCAST) -> <v10>
+    mark(!DEBUG_INFO_SMARTCAST)
+    call(!DEBUG_INFO_SMARTCAST, <ERROR FUNCTION>|<v10>) -> <v11>
+  2 jmp(L8)
+L7 [else branch]:
+  3 mark({ println(y) x.<!UNRESOLVED_REFERENCE!>length<!> })
+    r(y) -> <v12>
+    mark(println(y))
+    call(println(y), println|<v12>) -> <v13>
+    mark(x.<)
+    r(x) -> <v14>
+    magic[UNSUPPORTED_ELEMENT](x.<|<v14>) -> <v15>
+L8 ['if' expression result]:
+  2 merge(if (unknownBoolean && callsAndInverts(x !is String) { y = 42 }) { println(y) <!DEBUG_INFO_SMARTCAST!>x<!>.length } else { println(y) x.<!UNRESOLVED_REFERENCE!>length<!> }|<v11>, <v15>) -> <v16>                                         USE: in: {y=READ} out: {y=READ}
+    r(y) -> <v17>                                                                                                                                                                                                                                   USE: in: {} out: {y=READ}
+    mark(println(y))
+    call(println(y), println|<v17>) -> <v18>
+L1:
+  1 <END>                                                                                                                                                                                                         INIT: in: {} out: {}
+error:
+    <ERROR>
+sink:
+    <SINK>                                                                                                                                                                                                                                          USE: in: {} out: {}
+=====================
+== inlined anonymous_2 ==
+{ y = 42 }
+---------------------
+L5:
+  3 <START>          INIT: in: {y=D} out: {y=D}
+  4 mark(y = 42)
+    r(42) -> <v0>                                    USE: in: {y=WRITTEN_AFTER_READ} out: {y=WRITTEN_AFTER_READ}
+    w(y|<v0>)        INIT: in: {y=D} out: {y=ID}     USE: in: {y=READ} out: {y=WRITTEN_AFTER_READ}
+L6:
+  3 <END>            INIT: in: {y=ID} out: {y=ID}    USE: in: {y=READ} out: {y=READ}
+error:
+-   <ERROR>
+sink:
+    <SINK>           INIT: in: {y=ID} out: {y=ID}    USE: in: {y=READ} out: {y=READ}
+=====================

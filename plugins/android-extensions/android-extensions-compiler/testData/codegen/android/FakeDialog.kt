@@ -3,5 +3,5 @@ package android.app
 import android.view.View
 
 open class Dialog {
-    open fun findViewById(id: Int): View? = null
+    open fun <T : View> findViewById(id: Int): T? = null
 }

@@ -1,0 +1,5 @@
+{
+  "mainFile": "test/test.kt",
+  "intentionClass": "org.jetbrains.kotlin.idea.intentions.AddJvmStaticIntention",
+  "withRuntime": "true"
+}

@@ -31,10 +31,13 @@ abstract class KtLightElementBase(private val parent: PsiElement): LightElement(
 
     override fun getText() = kotlinOrigin?.text ?: ""
     override fun getTextRange() = kotlinOrigin?.textRange ?: TextRange.EMPTY_RANGE
+    override fun getTextOffset() = kotlinOrigin?.textOffset ?: 0
+    override fun getStartOffsetInParent() = kotlinOrigin?.startOffsetInParent ?: 0
     override fun isWritable() = kotlinOrigin?.isWritable ?: false
     override fun getNavigationElement() = kotlinOrigin?.navigationElement ?: this
     override fun getUseScope() = kotlinOrigin?.useScope ?: super.getUseScope()
     override fun getContainingFile() = parent.containingFile
     override fun getPresentation() = (kotlinOrigin ?: this).let { ItemPresentationProviders.getItemPresentation(it) }
     override fun isValid() = parent.isValid
+    override fun findElementAt(offset: Int) = kotlinOrigin?.findElementAt(offset)
 }

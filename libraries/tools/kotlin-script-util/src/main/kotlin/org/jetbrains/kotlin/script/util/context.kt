@@ -1,51 +1,61 @@
 package org.jetbrains.kotlin.script.util
 
 import java.io.File
-import java.net.URI
-import java.net.URL
-import java.net.URLClassLoader
-import java.util.jar.Manifest
 import kotlin.reflect.KClass
+import kotlin.script.experimental.jvm.util.matchMaybeVersionedFile as newMatchMaybeVersionedFile
+import kotlin.script.experimental.jvm.util.hasParentNamed as newHasParentName
 
-private fun URL.toFile() =
-        try {
-            File(toURI().schemeSpecificPart)
-        }
-        catch (e: java.net.URISyntaxException) {
-            if (protocol != "file") null
-            else File(file)
-        }
-
+@Deprecated("Use the function from kotlin.script.experimental.jvm.util")
 fun classpathFromClassloader(classLoader: ClassLoader): List<File>? =
-        generateSequence(classLoader) { it.parent }.toList().flatMap { (it as? URLClassLoader)?.urLs?.mapNotNull(URL::toFile) ?: emptyList() }
+    kotlin.script.experimental.jvm.util.classpathFromClassloader(classLoader)
 
+@Deprecated("Use the function from kotlin.script.experimental.jvm.util")
 fun classpathFromClasspathProperty(): List<File>? =
-        System.getProperty("java.class.path")
-                ?.split(String.format("\\%s", File.pathSeparatorChar).toRegex())
-                ?.dropLastWhile(String::isEmpty)
-                ?.map(::File)
+    kotlin.script.experimental.jvm.util.classpathFromClasspathProperty()
 
-fun classpathFromClass(classLoader: ClassLoader, klass: KClass<out Any>): List<File>? {
-    val clp = "${klass.qualifiedName?.replace('.', '/')}.class"
-    val url = classLoader.getResource(clp)
-    return url?.toURI()?.path?.removeSuffix(clp)?.let {
-        listOf(File(it))
-    }
-}
+@Deprecated("Use the function from kotlin.script.experimental.jvm.util")
+fun classpathFromClass(classLoader: ClassLoader, klass: KClass<out Any>): List<File>? =
+    kotlin.script.experimental.jvm.util.classpathFromClass(classLoader, klass)
 
-// Maven runners sometimes place classpath into the manifest, so we can use it for a fallback search
-fun manifestClassPath(classLoader: ClassLoader): List<File>? =
-        classLoader.getResources("META-INF/MANIFEST.MF")
-                .asSequence()
-                .mapNotNull { ifFailed(null) { it.openStream().use { Manifest().apply { read(it) } } } }
-                .flatMap { it.mainAttributes?.getValue("Class-Path")?.splitToSequence(" ") ?: emptySequence() }
-                .mapNotNull { ifFailed(null) { File(URI.create(it)) } }
-                .toList()
-                .let { if (it.isNotEmpty()) it else null }
+@Deprecated("Use the function from kotlin.script.experimental.jvm.util")
+fun classpathFromFQN(classLoader: ClassLoader, fqn: String): List<File>? =
+    kotlin.script.experimental.jvm.util.classpathFromFQN(classLoader, fqn)
 
-private inline fun <R> ifFailed(default: R, block: () -> R) = try {
-    block()
-} catch (t: Throwable) {
-    default
-}
+@Deprecated("Use the function from kotlin.script.experimental.jvm.util")
+fun File.matchMaybeVersionedFile(baseName: String) = newMatchMaybeVersionedFile(baseName)
 
+@Deprecated("Use the function from kotlin.script.experimental.jvm.util")
+fun File.hasParentNamed(baseName: String): Boolean = newHasParentName(baseName)
+
+@Deprecated("Use the function from kotlin.script.experimental.jvm.util")
+fun scriptCompilationClasspathFromContextOrNull(
+    vararg keyNames: String,
+    classLoader: ClassLoader = Thread.currentThread().contextClassLoader,
+    wholeClasspath: Boolean = false
+): List<File>? =
+    kotlin.script.experimental.jvm.util.scriptCompilationClasspathFromContextOrNull(
+        *keyNames, classLoader = classLoader, wholeClasspath = wholeClasspath
+    )
+
+@Deprecated("Use the function from kotlin.script.experimental.jvm.util")
+fun scriptCompilationClasspathFromContextOrStlib(
+    vararg keyNames: String,
+    classLoader: ClassLoader = Thread.currentThread().contextClassLoader,
+    wholeClasspath: Boolean = false
+): List<File> =
+    kotlin.script.experimental.jvm.util.scriptCompilationClasspathFromContextOrStlib(
+        *keyNames, classLoader = classLoader, wholeClasspath = wholeClasspath
+    )
+
+@Deprecated("Use the function from kotlin.script.experimental.jvm.util")
+fun scriptCompilationClasspathFromContext(
+    vararg keyNames: String,
+    classLoader: ClassLoader = Thread.currentThread().contextClassLoader,
+    wholeClasspath: Boolean = false
+): List<File> =
+    kotlin.script.experimental.jvm.util.scriptCompilationClasspathFromContext(
+        *keyNames, classLoader = classLoader, wholeClasspath = wholeClasspath
+    )
+
+@Deprecated("Use the object from kotlin.script.experimental.jvm.util")
+val KotlinJars = kotlin.script.experimental.jvm.util.KotlinJars

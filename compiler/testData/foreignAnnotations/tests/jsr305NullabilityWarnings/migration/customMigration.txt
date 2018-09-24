@@ -1,0 +1,35 @@
+package
+
+public fun main(/*0*/ a: A): kotlin.Unit
+
+public open class A {
+    public constructor A()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open fun foo(/*0*/ @MyErrorNonnull bar: kotlin.String): kotlin.Unit
+    public open fun foo2(/*0*/ @MyWarnNonnull bar: kotlin.String!): kotlin.Unit
+    public open fun foo3(/*0*/ @MyIgnoreNonnull bar: kotlin.String!): kotlin.Unit
+    public open fun foo4(/*0*/ @MyMigrationNonnull bar: kotlin.String!): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+@kotlin.annotation.MustBeDocumented @javax.annotation.meta.TypeQualifierNickname @javax.annotation.Nonnull(when = When.ALWAYS) @kotlin.annotation.Retention(value = AnnotationRetention.RUNTIME) @kotlin.annotations.jvm.UnderMigration(status = MigrationStatus.STRICT) public final annotation class MyErrorNonnull : kotlin.Annotation {
+    public constructor MyErrorNonnull()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+@kotlin.annotation.MustBeDocumented @javax.annotation.meta.TypeQualifierNickname @javax.annotation.Nonnull(when = When.ALWAYS) @kotlin.annotation.Retention(value = AnnotationRetention.RUNTIME) @kotlin.annotations.jvm.UnderMigration(status = MigrationStatus.IGNORE) public final annotation class MyIgnoreNonnull : kotlin.Annotation {
+    public constructor MyIgnoreNonnull()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+@kotlin.annotation.MustBeDocumented @javax.annotation.meta.TypeQualifierNickname @javax.annotation.Nonnull(when = When.ALWAYS) @kotlin.annotation.Retention(value = AnnotationRetention.RUNTIME) @kotlin.annotations.jvm.UnderMigration(status = MigrationStatus.WARN) public final annotation class MyWarnNonnull : kotlin.Annotation {
+    public constructor MyWarnNonnull()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

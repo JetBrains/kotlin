@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.idea.quickfix.createFromUsage.createClass
 
 import org.jetbrains.kotlin.diagnostics.Diagnostic
-import org.jetbrains.kotlin.idea.caches.resolve.analyzeFullyAndGetResult
+import org.jetbrains.kotlin.idea.caches.resolve.analyzeAndGetResult
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.ParameterInfo
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.TypeInfo
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.getTypeInfoForTypeArguments
@@ -41,7 +41,7 @@ object CreateClassFromConstructorCallActionFactory: CreateClassFromUsageFactory<
     override fun getPossibleClassKinds(element: KtCallExpression, diagnostic: Diagnostic): List<ClassKind> {
         val inAnnotationEntry = diagnostic.psiElement.getNonStrictParentOfType<KtAnnotationEntry>() != null
 
-        val (context, moduleDescriptor) = element.analyzeFullyAndGetResult()
+        val (context, moduleDescriptor) = element.analyzeAndGetResult()
         val call = element.getCall(context) ?: return emptyList()
         val targetParents = getTargetParentsByCall(call, context).ifEmpty { return emptyList() }
 
@@ -71,7 +71,7 @@ object CreateClassFromConstructorCallActionFactory: CreateClassFromUsageFactory<
         val fullCallExpr =
                 if (callParent is KtQualifiedExpression && callParent.selectorExpression == callExpr) callParent else callExpr
 
-        val (context, moduleDescriptor) = callExpr.analyzeFullyAndGetResult()
+        val (context, moduleDescriptor) = callExpr.analyzeAndGetResult()
 
         val call = callExpr.getCall(context) ?: return null
         val targetParents = getTargetParentsByCall(call, context).ifEmpty { return null }

@@ -1,0 +1,25 @@
+package
+
+public fun br(/*0*/ y: kotlin.Any?): kotlin.Unit
+public fun branchedAndNested(/*0*/ x: kotlin.Any?, /*1*/ y: kotlin.Any?): kotlin.Unit
+public fun branchedAndNestedWithNativeOperators(/*0*/ x: kotlin.Any?, /*1*/ y: kotlin.Any?): kotlin.Unit
+public fun equalsTrue(/*0*/ x: kotlin.Boolean): kotlin.Boolean
+    Returns(TRUE) -> x
+
+public fun isInt(/*0*/ x: kotlin.Any?): kotlin.Boolean
+    Returns(TRUE) -> x is Int
+
+public fun isString(/*0*/ x: kotlin.Any?): kotlin.Boolean
+    Returns(TRUE) -> x is String
+
+public fun myAssert(/*0*/ condition: kotlin.Boolean): kotlin.Unit
+    Returns(WILDCARD) -> condition
+
+public fun nested1(/*0*/ x: kotlin.Any?): kotlin.Unit
+public fun nested2(/*0*/ x: kotlin.Any?): kotlin.Unit
+public fun nested3(/*0*/ x: kotlin.Any?): kotlin.Unit
+public fun notEqualsNull(/*0*/ x: kotlin.Any?): kotlin.Boolean
+    Returns(TRUE) -> x != null
+
+public fun nullWhenNotString(/*0*/ x: kotlin.Any?): kotlin.String?
+    Returns(NOT_NULL) -> x is String

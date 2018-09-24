@@ -26,7 +26,7 @@ import java.util.*;
 public class CompilerConfiguration {
     public static CompilerConfiguration EMPTY = new CompilerConfiguration();
 
-    private final Map<Key, Object> map = new HashMap<>();
+    private final Map<Key, Object> map = new LinkedHashMap<>();
     private boolean readOnly = false;
 
     static {
@@ -90,12 +90,16 @@ public class CompilerConfiguration {
     }
 
     public <T> void addAll(@NotNull CompilerConfigurationKey<List<T>> key, @NotNull Collection<T> values) {
+        addAll(key, getList(key).size(), values);
+    }
+
+    public <T> void addAll(@NotNull CompilerConfigurationKey<List<T>> key, int index, @NotNull Collection<T> values) {
         checkReadOnly();
         checkForNullElements(values);
         Key<List<T>> ideaKey = key.ideaKey;
         map.computeIfAbsent(ideaKey, k -> new ArrayList<T>());
         List<T> list = (List<T>) map.get(ideaKey);
-        list.addAll(values);
+        list.addAll(index, values);
     }
 
     public CompilerConfiguration copy() {
@@ -127,6 +131,9 @@ public class CompilerConfiguration {
         }
         else if (object instanceof Map) {
             return (T) Collections.unmodifiableMap((Map) object);
+        }
+        else if (object instanceof Set) {
+            return (T) Collections.unmodifiableSet((Set) object);
         }
         else if (object instanceof Collection) {
             return (T) Collections.unmodifiableCollection((Collection) object);

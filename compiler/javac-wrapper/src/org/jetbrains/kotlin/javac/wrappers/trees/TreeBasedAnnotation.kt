@@ -50,21 +50,26 @@ class TreeBasedLiteralAnnotationArgument(name: Name,
                                          override val value: Any?,
                                          javac: JavacWrapper) : TreeBasedAnnotationArgument(name, javac), JavaLiteralAnnotationArgument
 
-class TreeBasedReferenceAnnotationArgument(name: Name,
-                                           private val compilationUnit: CompilationUnitTree,
-                                           private val field: JCTree.JCFieldAccess,
-                                           javac: JavacWrapper,
-                                           private val onElement: JavaElement) : TreeBasedAnnotationArgument(name, javac), JavaEnumValueAnnotationArgument {
-    override val entryName: Name?
-        get() = name
+class TreeBasedReferenceAnnotationArgument(
+        name: Name,
+        private val compilationUnit: CompilationUnitTree,
+        private val field: JCTree.JCFieldAccess,
+        javac: JavacWrapper,
+        private val onElement: JavaElement
+) : TreeBasedAnnotationArgument(name, javac), JavaEnumValueAnnotationArgument {
+    // TODO: do not run resolve here
+    private val javaField: JavaField? by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        val javaClass = javac.resolve(field.selected, compilationUnit, onElement) as? JavaClass
+        val fieldName = Name.identifier(field.name.toString())
 
-    override fun resolve(): JavaField? {
-        val javaClass = javac.resolve(field.selected, compilationUnit, onElement) as? JavaClass ?: return null
-        val fieldName = field.name.toString().let { Name.identifier(it) }
-
-        return javaClass.fields.find { it.name == fieldName }
+        javaClass?.fields?.find { it.name == fieldName }
     }
 
+    override val enumClassId: ClassId?
+        get() = javaField?.containingClass?.classId
+
+    override val entryName: Name?
+        get() = javaField?.name
 }
 
 class TreeBasedArrayAnnotationArgument(val args: List<JavaAnnotationArgument>,

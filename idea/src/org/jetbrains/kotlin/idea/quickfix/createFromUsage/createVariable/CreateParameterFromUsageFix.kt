@@ -27,9 +27,9 @@ import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.Callab
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.CallablePlacement
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.PropertyInfo
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.createBuilder
+import org.jetbrains.kotlin.idea.refactoring.CompositeRefactoringRunner
 import org.jetbrains.kotlin.idea.refactoring.canRefactor
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.*
-import org.jetbrains.kotlin.idea.refactoring.runRefactoringWithPostprocessing
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.source.getPsi
@@ -61,11 +61,16 @@ open class CreateParameterFromUsageFix<E : KtElement>(
         val onComplete = data.onComplete
         if (onComplete == null) {
             runChangeSignature(project)
-        }
-        else {
-            { runChangeSignature(project) }.runRefactoringWithPostprocessing(project, "refactoring.changeSignature") {
-                onComplete(editor)
-            }
+        } else {
+            object : CompositeRefactoringRunner(project, "refactoring.changeSignature") {
+                override fun runRefactoring() {
+                    runChangeSignature(project)
+                }
+
+                override fun onRefactoringDone() {
+                    onComplete(editor)
+                }
+            }.run()
         }
     }
 
@@ -86,7 +91,7 @@ open class CreateParameterFromUsageFix<E : KtElement>(
                 if (element !is KtSimpleNameExpression) return null
 
                 val classOrObject = element.getStrictParentOfType<KtClassOrObject>() ?: return null
-                receiverClassDescriptor = classOrObject.resolveToDescriptorIfAny() as? ClassDescriptor ?: return null
+                receiverClassDescriptor = classOrObject.resolveToDescriptorIfAny() ?: return null
 
                 val paramInfo = CreateParameterByRefActionFactory.extractFixData(element)?.parameterInfo
                 if (paramInfo?.callableDescriptor == receiverClassDescriptor.unsubstitutedPrimaryConstructor) return null

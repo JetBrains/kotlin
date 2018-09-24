@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor;
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor;
 import org.jetbrains.kotlin.idea.MainFunctionDetector;
 import org.jetbrains.kotlin.js.backend.ast.*;
 import org.jetbrains.kotlin.js.backend.ast.metadata.MetadataProperties;
@@ -31,6 +32,8 @@ import org.jetbrains.kotlin.js.facade.TranslationUnit;
 import org.jetbrains.kotlin.js.facade.exceptions.TranslationException;
 import org.jetbrains.kotlin.js.facade.exceptions.TranslationRuntimeException;
 import org.jetbrains.kotlin.js.facade.exceptions.UnsupportedFeatureException;
+import org.jetbrains.kotlin.js.naming.NameSuggestion;
+import org.jetbrains.kotlin.js.sourceMap.SourceFilePathResolver;
 import org.jetbrains.kotlin.js.translate.callTranslator.CallTranslator;
 import org.jetbrains.kotlin.js.translate.context.Namer;
 import org.jetbrains.kotlin.js.translate.context.StaticContext;
@@ -39,22 +42,22 @@ import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.declaration.FileDeclarationVisitor;
 import org.jetbrains.kotlin.js.translate.expression.ExpressionVisitor;
 import org.jetbrains.kotlin.js.translate.expression.PatternTranslator;
+import org.jetbrains.kotlin.js.translate.reference.ReferenceTranslator;
 import org.jetbrains.kotlin.js.translate.test.JSTestGenerator;
-import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils;
-import org.jetbrains.kotlin.js.translate.utils.BindingUtils;
-import org.jetbrains.kotlin.js.translate.utils.JsAstUtils;
-import org.jetbrains.kotlin.js.translate.utils.TranslationUtils;
+import org.jetbrains.kotlin.js.translate.utils.*;
 import org.jetbrains.kotlin.js.translate.utils.mutator.AssignToExpressionMutator;
+import org.jetbrains.kotlin.name.FqNameUnsafe;
+import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.KtDeclaration;
 import org.jetbrains.kotlin.psi.KtExpression;
 import org.jetbrains.kotlin.psi.KtFile;
-import org.jetbrains.kotlin.psi.KtUnaryExpression;
+import org.jetbrains.kotlin.psi.KtSimpleNameExpression;
 import org.jetbrains.kotlin.resolve.BindingTrace;
+import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.bindingContextUtil.BindingContextUtilsKt;
-import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant;
-import org.jetbrains.kotlin.resolve.constants.ConstantValue;
-import org.jetbrains.kotlin.resolve.constants.NullValue;
+import org.jetbrains.kotlin.resolve.constants.*;
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator;
+import org.jetbrains.kotlin.resolve.scopes.MemberScope;
 import org.jetbrains.kotlin.serialization.js.ast.JsAstDeserializer;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.TypeUtils;
@@ -98,12 +101,30 @@ public final class Translation {
         }
 
         CompileTimeConstant<?> compileTimeValue = ConstantExpressionEvaluator.getConstant(expression, context.bindingContext());
-        if (compileTimeValue != null) {
+        if (compileTimeValue != null && !compileTimeValue.getUsesNonConstValAsConstant()) {
             KotlinType type = context.bindingContext().getType(expression);
-            if (type != null) {
-                if (KotlinBuiltIns.isLong(type) || (KotlinBuiltIns.isInt(type) && expression instanceof KtUnaryExpression)) {
-                    JsExpression constantResult = translateConstant(compileTimeValue, expression, context);
-                    if (constantResult != null) return constantResult.source(expression);
+            if (type != null && (KotlinBuiltIns.isLong(type) || KotlinBuiltIns.isInt(type))) {
+                JsExpression constantResult = translateConstant(compileTimeValue, expression, context);
+                if (constantResult != null) {
+                    constantResult.setSource(expression);
+
+                    if (KotlinBuiltIns.isLong(type)) {
+                        KtSimpleNameExpression referenceExpression = PsiUtils.getSimpleName(expression);
+                        if (referenceExpression != null) {
+                            DeclarationDescriptor descriptor =
+                                    BindingUtils.getDescriptorForReferenceExpression(context.bindingContext(), referenceExpression);
+                            if (descriptor != null) {
+                                return context.declareConstantValue(descriptor, referenceExpression, constantResult);
+                            }
+                        }
+
+                        String name = NameSuggestion.sanitizeName("L" + compileTimeValue.getValue(type).toString());
+                        return context.declareConstantValue(name, "constant:" + name, constantResult);
+                    }
+
+                    if (KotlinBuiltIns.isInt(type)) {
+                        return constantResult;
+                    }
                 }
             }
         }
@@ -124,7 +145,7 @@ public final class Translation {
     ) {
         KotlinType expectedType = context.bindingContext().getType(expression);
         ConstantValue<?> constant = compileTimeValue.toConstantValue(expectedType != null ? expectedType : TypeUtils.NO_EXPECTED_TYPE);
-        JsExpression result = translateConstantWithoutType(constant);
+        JsExpression result = translateConstantWithoutType(constant, context);
         if (result != null) {
             MetadataProperties.setType(result, expectedType);
         }
@@ -132,10 +153,14 @@ public final class Translation {
     }
 
     @Nullable
-    private static JsExpression translateConstantWithoutType(@NotNull ConstantValue<?> constant) {
+    private static JsExpression translateConstantWithoutType(@NotNull ConstantValue<?> constant, @NotNull TranslationContext context) {
         if (constant instanceof NullValue) {
             return new JsNullLiteral();
         }
+        if (constant instanceof UnsignedValueConstant<?>) {
+            return translateUnsignedConstant((UnsignedValueConstant<?>) constant, context);
+        }
+
         Object value = constant.getValue();
         if (value instanceof Integer || value instanceof Short || value instanceof Byte) {
             return new JsIntLiteral(((Number) value).intValue());
@@ -170,6 +195,29 @@ public final class Translation {
         }
 
         return null;
+    }
+
+    @Nullable
+    private static JsExpression translateUnsignedConstant(
+            @NotNull UnsignedValueConstant<?> unsignedConstant,
+            @NotNull TranslationContext context
+    ) {
+        if (unsignedConstant instanceof UByteValue) {
+            return JsAstUtils.byteToUByte(((UByteValue) unsignedConstant).getValue(), context);
+        }
+        else if (unsignedConstant instanceof UShortValue) {
+            return JsAstUtils.shortToUShort(((UShortValue) unsignedConstant).getValue(), context);
+        }
+        else if (unsignedConstant instanceof UIntValue) {
+            return JsAstUtils.intToUInt(((UIntValue) unsignedConstant).getValue(), context);
+        }
+        else if (unsignedConstant instanceof ULongValue) {
+            Long value = ((ULongValue) unsignedConstant).getValue();
+            JsExpression longExpression = JsAstUtils.newLong(value);
+            return JsAstUtils.longToULong(longExpression, context);
+        } else {
+            return null;
+        }
     }
 
     @NotNull
@@ -253,10 +301,11 @@ public final class Translation {
             @NotNull Collection<TranslationUnit> units,
             @NotNull MainCallParameters mainCallParameters,
             @NotNull ModuleDescriptor moduleDescriptor,
-            @NotNull JsConfig config
+            @NotNull JsConfig config,
+            @NotNull SourceFilePathResolver sourceFilePathResolver
     ) throws TranslationException {
         try {
-            return doGenerateAst(bindingTrace, units, mainCallParameters, moduleDescriptor, config);
+            return doGenerateAst(bindingTrace, units, mainCallParameters, moduleDescriptor, config, sourceFilePathResolver);
         }
         catch (UnsupportedOperationException e) {
             throw new UnsupportedFeatureException("Unsupported feature used.", e);
@@ -272,7 +321,8 @@ public final class Translation {
             @NotNull Collection<TranslationUnit> units,
             @NotNull MainCallParameters mainCallParameters,
             @NotNull ModuleDescriptor moduleDescriptor,
-            @NotNull JsConfig config
+            @NotNull JsConfig config,
+            @NotNull SourceFilePathResolver sourceFilePathResolver
     ) {
         JsProgram program = new JsProgram();
         JsFunction rootFunction = new JsFunction(program.getRootScope(), new JsBlock(), "root function");
@@ -290,7 +340,7 @@ public final class Translation {
         for (TranslationUnit unit : units) {
             if (unit instanceof TranslationUnit.SourceFile) {
                 KtFile file = ((TranslationUnit.SourceFile) unit).getFile();
-                StaticContext staticContext = new StaticContext(bindingTrace, config, moduleDescriptor);
+                StaticContext staticContext = new StaticContext(bindingTrace, config, moduleDescriptor, sourceFilePathResolver);
                 TranslationContext context = TranslationContext.rootContext(staticContext);
                 List<DeclarationDescriptor> fileMemberScope = new ArrayList<>();
                 translateFile(context, file, fileMemberScope);
@@ -308,7 +358,7 @@ public final class Translation {
             }
         }
 
-        JsProgramFragment testFragment = mayBeGenerateTests(config, bindingTrace, moduleDescriptor);
+        JsProgramFragment testFragment = mayBeGenerateTests(config, bindingTrace, moduleDescriptor, sourceFilePathResolver);
         fragments.add(testFragment);
         newFragments.add(testFragment);
         merger.addFragment(testFragment);
@@ -316,7 +366,7 @@ public final class Translation {
 
         if (mainCallParameters.shouldBeGenerated()) {
             JsProgramFragment mainCallFragment = generateCallToMain(
-                    bindingTrace, config, moduleDescriptor, mainCallParameters.arguments());
+                    bindingTrace, config, moduleDescriptor, sourceFilePathResolver, mainCallParameters.arguments());
             if (mainCallFragment != null) {
                 fragments.add(mainCallFragment);
                 newFragments.add(mainCallFragment);
@@ -400,9 +450,9 @@ public final class Translation {
     @NotNull
     private static JsProgramFragment mayBeGenerateTests(
             @NotNull JsConfig config, @NotNull BindingTrace trace,
-            @NotNull ModuleDescriptor moduleDescriptor
+            @NotNull ModuleDescriptor moduleDescriptor, @NotNull SourceFilePathResolver sourceFilePathResolver
     ) {
-        StaticContext staticContext = new StaticContext(trace, config, moduleDescriptor);
+        StaticContext staticContext = new StaticContext(trace, config, moduleDescriptor, sourceFilePathResolver);
         TranslationContext context = TranslationContext.rootContext(staticContext);
 
         new JSTestGenerator(context).generateTestCalls(moduleDescriptor);
@@ -414,17 +464,34 @@ public final class Translation {
     @Nullable
     private static JsProgramFragment generateCallToMain(
             @NotNull BindingTrace trace, @NotNull JsConfig config, @NotNull ModuleDescriptor moduleDescriptor,
+            @NotNull SourceFilePathResolver sourceFilePathResolver,
             @NotNull List<String> arguments
     ) {
-        StaticContext staticContext = new StaticContext(trace, config, moduleDescriptor);
+        StaticContext staticContext = new StaticContext(trace, config, moduleDescriptor, sourceFilePathResolver);
         TranslationContext context = TranslationContext.rootContext(staticContext);
-        MainFunctionDetector mainFunctionDetector = new MainFunctionDetector(context.bindingContext());
+        MainFunctionDetector mainFunctionDetector = new MainFunctionDetector(context.bindingContext(), config.getLanguageVersionSettings());
         FunctionDescriptor functionDescriptor = mainFunctionDetector.getMainFunction(moduleDescriptor);
         if (functionDescriptor == null) {
             return null;
         }
-        JsArrayLiteral argument = new JsArrayLiteral(toStringLiteralList(arguments));
-        JsExpression call = CallTranslator.INSTANCE.buildCall(context, functionDescriptor, Collections.singletonList(argument), null);
+
+        int parameterCount = functionDescriptor.getValueParameters().size();
+        assert parameterCount <= 1;
+
+        List<JsExpression> args = new ArrayList<>();
+        if (parameterCount != 0) {
+            args.add(new JsArrayLiteral(toStringLiteralList(arguments)));
+        }
+
+        if (functionDescriptor.isSuspend()) {
+            MemberScope scope = moduleDescriptor.getPackage(new FqNameUnsafe("kotlin.coroutines.js.internal").toSafe()).getMemberScope();
+            PropertyDescriptor emptyContinuation = DescriptorUtils.getPropertyByName(scope, Name.identifier("EmptyContinuation"));
+
+            args.add(ReferenceTranslator.translateAsValueReference(emptyContinuation, context));
+            args.add(new JsBooleanLiteral(false));
+        }
+
+        JsExpression call = CallTranslator.INSTANCE.buildCall(context, functionDescriptor, args, null);
         context.addTopLevelStatement(call.makeStmt());
         return staticContext.getFragment();
     }

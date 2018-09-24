@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 996
+// EXPECTED_REACHABLE_NODES: 1282
 package foo
 
 class Test(a: Int, b: Int) {

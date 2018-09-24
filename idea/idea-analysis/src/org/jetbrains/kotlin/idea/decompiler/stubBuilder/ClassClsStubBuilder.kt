@@ -25,6 +25,11 @@ import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.idea.decompiler.stubBuilder.flags.*
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.metadata.ProtoBuf
+import org.jetbrains.kotlin.metadata.deserialization.Flags
+import org.jetbrains.kotlin.metadata.deserialization.NameResolver
+import org.jetbrains.kotlin.metadata.deserialization.TypeTable
+import org.jetbrains.kotlin.metadata.deserialization.supertypes
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.KtClassBody
 import org.jetbrains.kotlin.psi.KtSuperTypeEntry
@@ -35,12 +40,9 @@ import org.jetbrains.kotlin.psi.stubs.impl.KotlinClassStubImpl
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinModifierListStubImpl
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinObjectStubImpl
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinPlaceHolderStubImpl
-import org.jetbrains.kotlin.serialization.Flags
-import org.jetbrains.kotlin.serialization.ProtoBuf
-import org.jetbrains.kotlin.serialization.deserialization.NameResolver
 import org.jetbrains.kotlin.serialization.deserialization.ProtoContainer
-import org.jetbrains.kotlin.serialization.deserialization.TypeTable
-import org.jetbrains.kotlin.serialization.deserialization.supertypes
+import org.jetbrains.kotlin.serialization.deserialization.getClassId
+import org.jetbrains.kotlin.serialization.deserialization.getName
 
 fun createClassStub(
         parent: StubElement<out PsiElement>,
@@ -110,6 +112,7 @@ private class ClassClsStubBuilder(
             relevantFlags.add(INNER)
             relevantFlags.add(DATA)
             relevantFlags.add(MODALITY)
+            relevantFlags.add(INLINE_CLASS)
         }
         val additionalModifiers = when (classKind) {
             ProtoBuf.Class.Kind.ENUM_CLASS -> listOf(KtTokens.ENUM_KEYWORD)
@@ -245,22 +248,21 @@ private class ClassClsStubBuilder(
     }
 
     private fun createNestedClassStub(classBody: StubElement<out PsiElement>, nestedClassId: ClassId) {
-        val classDataWithSource = c.components.classDataFinder.findClassData(nestedClassId)
-        if (classDataWithSource == null) {
-            val rootFile = c.components.virtualFileForDebug
-            LOG.error(
-                    "Could not find class data for nested class $nestedClassId of class ${nestedClassId.outerClassId}\n" +
-                    "Root file: ${rootFile.canonicalPath}\n" +
-                    "Dir: ${rootFile.parent.canonicalPath}\n" +
-                    "Children:\n" +
-                    rootFile.parent.children.sortedBy { it.name }.joinToString(separator = "\n") {
-                        "${it.name} (valid: ${it.isValid})"
-                    }
-            )
-            return
-        }
-        val (nameResolver, classProto) = classDataWithSource.classData
-        createClassStub(classBody, classProto, nameResolver, nestedClassId, classDataWithSource.sourceElement, c)
+        val (nameResolver, classProto, _, sourceElement) =
+                c.components.classDataFinder.findClassData(nestedClassId)
+                        ?: c.components.virtualFileForDebug.let { rootFile ->
+                            LOG.error(
+                                "Could not find class data for nested class $nestedClassId of class ${nestedClassId.outerClassId}\n" +
+                                        "Root file: ${rootFile.canonicalPath}\n" +
+                                        "Dir: ${rootFile.parent.canonicalPath}\n" +
+                                        "Children:\n" +
+                                        rootFile.parent.children.sortedBy { it.name }.joinToString(separator = "\n") {
+                                            "${it.name} (valid: ${it.isValid})"
+                                        }
+                            )
+                            return
+                        }
+        createClassStub(classBody, classProto, nameResolver, nestedClassId, sourceElement, c)
     }
 
     companion object {

@@ -1,4 +1,6 @@
+// !WITH_NEW_INFERENCE
 // !DIAGNOSTICS: -UNUSED_PARAMETER -DEBUG_INFO_SMARTCAST
+// NI_EXPECTED_FILE
 
 interface Data
 interface Item
@@ -7,7 +9,7 @@ class ListData<T : Item>(val list: List<T>) : Data
 
 fun <T> listOf(vararg items: T): List<T> = null!!
 
-fun test1(o: Any) = <!TYPE_INFERENCE_FAILED_ON_SPECIAL_CONSTRUCT!>when<!> (o) {
+fun test1(o: Any) = <!OI;TYPE_INFERENCE_FAILED_ON_SPECIAL_CONSTRUCT!>when<!> (o) {
     is List<*> ->
         ListData(listOf())
     is Int -> when {
@@ -34,7 +36,7 @@ fun test1x(o: Any): Data? = when (o) {
 }
 
 fun test2() =
-        <!TYPE_INFERENCE_FAILED_ON_SPECIAL_CONSTRUCT!>if<!> (true)
+        <!OI;TYPE_INFERENCE_FAILED_ON_SPECIAL_CONSTRUCT!>if<!> (true)
             ListData(listOf())
         else
             FlagData(true)

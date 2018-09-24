@@ -1,4 +1,5 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER -PARAMETER_NAME_CHANGED_ON_OVERRIDE
+// !WITH_NEW_INFERENCE
 // FULL_JDK
 
 class KotlinMap1<K, V> : java.util.AbstractMap<K, V>() {

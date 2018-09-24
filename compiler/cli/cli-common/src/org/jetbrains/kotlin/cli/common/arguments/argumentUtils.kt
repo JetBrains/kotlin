@@ -16,18 +16,21 @@
 
 package org.jetbrains.kotlin.cli.common.arguments
 
+import com.intellij.util.text.VersionComparatorUtil
 import java.util.*
 import kotlin.reflect.KClass
 import kotlin.reflect.KMutableProperty1
 import kotlin.reflect.KProperty1
 import kotlin.reflect.KVisibility
 import kotlin.reflect.full.declaredMemberProperties
-import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.memberProperties
 
 @Suppress("UNCHECKED_CAST")
-fun <T : Any> copyBean(bean: T) =
-        copyProperties(bean, bean::class.java.newInstance()!!, true, collectProperties(bean::class as KClass<T>, false))
+fun <T : Any> copyBean(bean: T) = copyBeanTo(bean, bean::class.java.newInstance()!!)
+
+@Suppress("UNCHECKED_CAST")
+fun <T : Any> copyBeanTo(from: T, to: T, filter: ((KProperty1<T, Any?>, Any?) -> Boolean)? = null) =
+    copyProperties(from, to, true, collectProperties(from::class as KClass<T>, false), filter)
 
 fun <From : Any, To : From> mergeBeans(from: From, to: To): To {
     // TODO: rewrite when updated version of com.intellij.util.xmlb is available on TeamCity
@@ -47,7 +50,8 @@ private fun <From : Any, To : Any> copyProperties(
         from: From,
         to: To,
         deepCopyWhenNeeded: Boolean,
-        propertiesToCopy: List<KProperty1<From, Any?>>
+        propertiesToCopy: List<KProperty1<From, Any?>>,
+        filter: ((KProperty1<From, Any?>, Any?) -> Boolean)? = null
 ): To {
     if (from == to) return to
 
@@ -56,6 +60,7 @@ private fun <From : Any, To : Any> copyProperties(
         val toProperty = to::class.memberProperties.firstOrNull { it.name == fromProperty.name } as? KMutableProperty1<To, Any?>
                          ?: continue
         val fromValue = fromProperty.get(from)
+        if (filter != null && !filter(fromProperty, fromValue)) continue
         toProperty.set(to, if (deepCopyWhenNeeded) fromValue?.copyValueIfNeeded() else fromValue)
     }
     return to
@@ -96,6 +101,12 @@ fun <T : Any> collectProperties(kClass: KClass<T>, inheritedOnly: Boolean): List
         properties.removeAll(kClass.declaredMemberProperties)
     }
     return properties.filter {
-        it.visibility == KVisibility.PUBLIC && it.findAnnotation<Transient>() == null
+        it.visibility == KVisibility.PUBLIC && (it.annotations.firstOrNull { it is Transient } as Transient?) == null
+    }
+}
+
+fun CommonCompilerArguments.setApiVersionToLanguageVersionIfNeeded() {
+    if (languageVersion != null && VersionComparatorUtil.compare(languageVersion, apiVersion) < 0) {
+        apiVersion = languageVersion
     }
 }

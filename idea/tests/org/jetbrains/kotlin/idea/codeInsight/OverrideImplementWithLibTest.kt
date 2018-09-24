@@ -16,8 +16,7 @@
 
 package org.jetbrains.kotlin.idea.codeInsight
 
-import com.intellij.testFramework.LightProjectDescriptor
-import org.jetbrains.kotlin.idea.test.JdkAndMockLibraryProjectDescriptor
+import org.jetbrains.kotlin.idea.test.SdkAndMockLibraryProjectDescriptor
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 
 class OverrideImplementWithLibTest : AbstractOverrideImplementTest() {
@@ -28,7 +27,8 @@ class OverrideImplementWithLibTest : AbstractOverrideImplementTest() {
         myFixture.testDataPath = TEST_PATH
     }
 
-    override fun getProjectDescriptor() = JdkAndMockLibraryProjectDescriptor(TEST_PATH + "/" + getTestName(true) + "Src", false)
+    override fun getProjectDescriptor() =
+        SdkAndMockLibraryProjectDescriptor(TEST_PATH + "/" + getTestName(true) + "Src", false)
 
     fun testFakeOverride() {
         doOverrideFileTest()

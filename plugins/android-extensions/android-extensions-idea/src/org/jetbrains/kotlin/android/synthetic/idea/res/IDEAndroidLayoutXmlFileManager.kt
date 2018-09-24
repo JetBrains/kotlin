@@ -16,15 +16,18 @@
 
 package org.jetbrains.kotlin.android.synthetic.idea.res
 
-import com.android.builder.model.SourceProvider
-import com.android.tools.idea.gradle.project.model.AndroidModuleModel
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.roots.ProjectRootModificationTracker
+import com.intellij.openapi.vfs.LocalFileSystem
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFile
+import com.intellij.psi.PsiManager
 import com.intellij.psi.impl.PsiTreeChangePreprocessor
 import com.intellij.psi.util.CachedValue
 import com.intellij.psi.util.CachedValueProvider
-import org.jetbrains.android.facet.AndroidFacet
+import org.jetbrains.kotlin.android.model.AndroidModuleInfoProvider
+import org.jetbrains.kotlin.android.model.AndroidModuleInfoProvider.SourceProviderMirror
 import org.jetbrains.kotlin.android.synthetic.AndroidConst.SYNTHETIC_PACKAGE_PATH_LENGTH
 import org.jetbrains.kotlin.android.synthetic.idea.AndroidPsiTreeChangePreprocessor
 import org.jetbrains.kotlin.android.synthetic.idea.AndroidXmlVisitor
@@ -34,10 +37,11 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
+import java.io.File
 
 class IDEAndroidLayoutXmlFileManager(val module: Module) : AndroidLayoutXmlFileManager(module.project) {
     override val androidModule: AndroidModule?
-        get() = AndroidFacet.getInstance(module)?.let { getAndroidModuleInfo(it) }
+        get() = AndroidModuleInfoProvider.getInstance(module)?.let { getAndroidModuleInfo(it) }
 
     @Volatile
     private var _moduleData: CachedValue<AndroidModuleData>? = null
@@ -63,15 +67,26 @@ class IDEAndroidLayoutXmlFileManager(val module: Module) : AndroidLayoutXmlFileM
     }
 
     override fun doExtractResources(layoutGroup: AndroidLayoutGroupData, module: ModuleDescriptor): AndroidLayoutGroup {
-        val layouts = layoutGroup.layouts.map { layout ->
+        val psiManager = PsiManager.getInstance(project)
+        val layouts = layoutGroup.layouts.map { psiFile ->
+            // Sometimes due to a race of later-invoked runnables, the PsiFile can be invalidated; make sure to refresh if possible,
+            val layout = if (psiFile.isValid) psiFile else psiManager.findFileSafe(psiFile.virtualFile)
+
             val resources = arrayListOf<AndroidResource>()
-            layout.accept(AndroidXmlVisitor { id, widgetType, attribute ->
+            layout?.accept(AndroidXmlVisitor { id, widgetType, attribute ->
                 resources += parseAndroidResource(id, widgetType, attribute.valueElement)
             })
             AndroidLayout(resources)
         }
 
         return AndroidLayoutGroup(layoutGroup.name, layouts)
+    }
+
+    private fun PsiManager.findFileSafe(virtualFile: VirtualFile): PsiFile? {
+        if (virtualFile.isValid)
+            return findFile(virtualFile)
+
+        return null
     }
 
     override fun propertyToXmlAttributes(propertyDescriptor: PropertyDescriptor): List<PsiElement> {
@@ -108,56 +123,45 @@ class IDEAndroidLayoutXmlFileManager(val module: Module) : AndroidLayoutXmlFileM
         return listOf()
     }
 
-    private fun SourceProvider.toVariant() = AndroidVariant(name, resDirectories.map { it.canonicalPath })
+    private fun SourceProviderMirror.toVariant() = AndroidVariant(name, resDirectories.map { it.canonicalPath })
 
-    private fun getAndroidModuleInfo(androidFacet: AndroidFacet): AndroidModule? {
-        if (androidFacet.module.androidExtensionsIsExperimental) {
-            return getAndroidModuleInfoExperimental(androidFacet)
+    private fun getAndroidModuleInfo(androidInfoProvider: AndroidModuleInfoProvider): AndroidModule? {
+        if (androidInfoProvider.module.androidExtensionsIsExperimental) {
+            return getAndroidModuleInfoExperimental(androidInfoProvider)
         }
 
-        val applicationPackage = androidFacet.manifest?.`package`?.toString()
+        val applicationPackage = androidInfoProvider.getApplicationPackage()
 
         if (applicationPackage != null) {
-            val mainVariant = androidFacet.mainSourceProvider.toVariant()
+            val mainVariant = androidInfoProvider.getMainSourceProvider()?.toVariant()
+            val variantsForFlavorts = androidInfoProvider.getFlavorSourceProviders().map { it.toVariant() }
+            val allVariants = listOfNotNull(mainVariant) + variantsForFlavorts
 
-            val method = try { androidFacet::class.java.getMethod("getFlavorSourceProviders") } catch (e: NoSuchMethodException) { null }
-            val variants: List<AndroidVariant>? = if (method != null) {
-                val sourceProviders = method.invoke(androidFacet) as List<SourceProvider>?
-                sourceProviders?.map { it.toVariant() } ?: listOf()
-            }
-            else {
-                val model = AndroidModuleModel.get(androidFacet.module)
-                model?.flavorSourceProviders?.map { it.toVariant() } ?: listOf(androidFacet.mainSourceProvider.toVariant())
-            }
-
-            if (variants != null) {
-                return AndroidModule(applicationPackage, listOf(mainVariant) + variants)
+            if (allVariants.isNotEmpty()) {
+                return AndroidModule(applicationPackage, allVariants)
             }
         }
         return null
     }
 
-    private fun getAndroidModuleInfoExperimental(androidFacet: AndroidFacet): AndroidModule? {
-        val applicationPackage = androidFacet.manifest?.`package`?.toString() ?: return null
-
-        val allResDirectories = androidFacet.getAppResources(true)?.resourceDirs.orEmpty().mapNotNull { it.canonicalPath }
+    private fun getAndroidModuleInfoExperimental(androidFacet: AndroidModuleInfoProvider): AndroidModule? {
+        val applicationPackage = androidFacet.getApplicationPackage() ?: return null
+        val appResourceDirectories = androidFacet.getApplicationResourceDirectories(true).mapNotNull { it.canonicalPath }
 
         val resDirectoriesForMainVariant = androidFacet.run {
-            val resDirsFromSourceProviders = AndroidModuleModel.get(this.module)?.allSourceProviders.orEmpty()
-                    .filter { it.name != "main" }
-                    .flatMap { it.resDirectories }
-                    .map { it.canonicalPath }
+            val resDirsFromSourceProviders = androidFacet.getAllSourceProviders()
+                .filter { it.name != "main" }
+                .flatMap { it.resDirectories }
+                .map { it.canonicalPath }
 
-            allResDirectories - resDirsFromSourceProviders
+            appResourceDirectories - resDirsFromSourceProviders
         }
 
         val variants = mutableListOf(AndroidVariant("main", resDirectoriesForMainVariant))
 
-        AndroidModuleModel.get(androidFacet.module)?.let { androidGradleModel ->
-            androidGradleModel.activeSourceProviders.filter { it.name != "main" }.forEach { sourceProvider ->
-                variants += sourceProvider.toVariant()
-            }
-        }
+        androidFacet.getActiveSourceProviders()
+            .filter { it.name != "main" }
+            .forEach { sourceProvider -> variants += sourceProvider.toVariant() }
 
         return AndroidModule(applicationPackage, variants)
     }

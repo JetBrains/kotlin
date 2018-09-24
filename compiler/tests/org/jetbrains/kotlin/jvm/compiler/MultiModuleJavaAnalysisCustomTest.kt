@@ -19,11 +19,9 @@ package org.jetbrains.kotlin.jvm.compiler
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.search.DelegatingGlobalSearchScope
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.analyzer.ModuleContent
-import org.jetbrains.kotlin.analyzer.ModuleInfo
-import org.jetbrains.kotlin.analyzer.ResolverForProject
-import org.jetbrains.kotlin.analyzer.ResolverForProjectImpl
+import org.jetbrains.kotlin.analyzer.*
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.jvm.JvmBuiltIns
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.LanguageFeature
@@ -32,16 +30,16 @@ import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.context.ProjectContext
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
+import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.platform.JvmBuiltIns
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.resolve.MultiTargetPlatform
 import org.jetbrains.kotlin.resolve.constants.EnumValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.annotationClass
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.jvm.JvmAnalyzerFacade
 import org.jetbrains.kotlin.resolve.jvm.JvmPlatformParameters
+import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestJdkKind
@@ -68,16 +66,22 @@ class MultiModuleJavaAnalysisCustomTest : KtUsefulTestCase() {
         val projectContext = ProjectContext(environment.project)
         val builtIns = JvmBuiltIns(projectContext.storageManager)
         val resolverForProject = ResolverForProjectImpl(
-                "test",
-                projectContext, modules, { JvmAnalyzerFacade },
-                { module -> ModuleContent(module.kotlinFiles, module.javaFilesScope) },
-                JvmPlatformParameters {
-                    javaClass ->
-                    val moduleName = javaClass.name.asString().toLowerCase().first().toString()
-                    modules.first { it._name == moduleName }
-                },
-                builtIns = builtIns,
-                modulePlatforms = { MultiTargetPlatform.Specific("JVM") }
+            "test",
+            projectContext, modules,
+            modulesContent = { module -> ModuleContent(module, module.kotlinFiles, module.javaFilesScope) },
+            modulePlatforms = { JvmPlatform.multiTargetPlatform },
+            moduleLanguageSettingsProvider = LanguageSettingsProvider.Default,
+            resolverForModuleFactoryByPlatform = { JvmAnalyzerFacade },
+            platformParameters = { _ ->
+                JvmPlatformParameters(
+                    packagePartProviderFactory = { PackagePartProvider.Empty },
+                    moduleByJavaClass = { javaClass ->
+                        val moduleName = javaClass.name.asString().toLowerCase().first().toString()
+                        modules.first { it._name == moduleName }
+                    }
+                )
+            },
+            builtIns = builtIns
         )
 
         builtIns.initialize(
@@ -169,8 +173,7 @@ class MultiModuleJavaAnalysisCustomTest : KtUsefulTestCase() {
             it.allValueArguments.forEach {
                 val argument = it.value
                 if (argument is EnumValue) {
-                    Assert.assertEquals("Enum entry name should be <module-name>X", "X", argument.value.name.identifier.last().toString())
-                    checkDescriptor(argument.value, callable)
+                    Assert.assertEquals("Enum entry name should be <module-name>X", "X", argument.enumEntryName.identifier.last().toString())
                 }
             }
         }

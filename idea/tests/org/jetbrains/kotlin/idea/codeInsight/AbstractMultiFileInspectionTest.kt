@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.idea.inspections.runInspection
 import org.jetbrains.kotlin.idea.jsonUtils.getString
 import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
 import org.jetbrains.kotlin.idea.test.KotlinMultiFileTestCase
-import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
+import org.jetbrains.kotlin.idea.test.PluginTestCaseBase.*
 import org.jetbrains.kotlin.idea.util.projectStructure.allModules
 import java.io.File
 
@@ -41,13 +41,13 @@ abstract class AbstractMultiFileInspectionTest : KotlinMultiFileTestCase() {
         isMultiModule = config["isMultiModule"]?.asBoolean ?: false
 
         doTest({ _, _ ->
+                   val sdk = if (withFullJdk) fullJdk() else mockJdk()
+                   addJdk(testRootDisposable) { sdk }
+
                    try {
                        if (withRuntime) {
                            project.allModules().forEach { module ->
-                               ConfigLibraryUtil.configureKotlinRuntimeAndSdk(
-                                       module,
-                                       if (withFullJdk) PluginTestCaseBase.fullJdk() else PluginTestCaseBase.mockJdk()
-                               )
+                               ConfigLibraryUtil.configureKotlinRuntimeAndSdk(module, sdk)
                            }
                        }
 
@@ -57,10 +57,7 @@ abstract class AbstractMultiFileInspectionTest : KotlinMultiFileTestCase() {
                    finally {
                        if (withRuntime) {
                            project.allModules().forEach { module ->
-                               ConfigLibraryUtil.unConfigureKotlinRuntimeAndSdk(
-                                       module,
-                                       if (withFullJdk) PluginTestCaseBase.fullJdk() else PluginTestCaseBase.mockJdk()
-                               )
+                               ConfigLibraryUtil.unConfigureKotlinRuntimeAndSdk(module, sdk)
                            }
                        }
                    }
@@ -73,6 +70,6 @@ abstract class AbstractMultiFileInspectionTest : KotlinMultiFileTestCase() {
     }
 
     override fun getTestDataPath() : String {
-        return PluginTestCaseBase.getTestDataPathBase()
+        return getTestDataPathBase()
     }
 }

@@ -28,24 +28,26 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.extensions.SyntheticResolveExtension
 import org.jetbrains.kotlin.resolve.source.PsiSourceElement
+import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.SimpleType
 
 open class ParcelableResolveExtension : SyntheticResolveExtension {
     companion object {
-        fun resolveParcelClassType(module: ModuleDescriptor): SimpleType {
-            return module.findClassAcrossModuleDependencies(
-                    ClassId.topLevel(FqName("android.os.Parcel")))?.defaultType ?: error("Can't resolve 'android.os.Parcel' class")
+        fun resolveParcelClassType(module: ModuleDescriptor): SimpleType? {
+            return module.findClassAcrossModuleDependencies(ClassId.topLevel(FqName("android.os.Parcel")))?.defaultType
         }
 
         fun createMethod(
                 classDescriptor: ClassDescriptor,
                 componentKind: ParcelableSyntheticComponent.ComponentKind,
+                modality: Modality,
                 returnType: KotlinType,
                 vararg parameters: Pair<String, KotlinType>
         ): SimpleFunctionDescriptor {
@@ -64,7 +66,7 @@ open class ParcelableResolveExtension : SyntheticResolveExtension {
 
             functionDescriptor.initialize(
                     null, classDescriptor.thisAsReceiverParameter, emptyList(), valueParameters,
-                    returnType, Modality.FINAL, Visibilities.PUBLIC)
+                    returnType, modality, Visibilities.PUBLIC)
 
             return functionDescriptor
         }
@@ -80,10 +82,11 @@ open class ParcelableResolveExtension : SyntheticResolveExtension {
     override fun getSyntheticCompanionObjectNameIfNeeded(thisDescriptor: ClassDescriptor) = null
 
     override fun generateSyntheticMethods(
-            clazz: ClassDescriptor,
-            name: Name,
-            fromSupertypes: List<SimpleFunctionDescriptor>,
-            result: MutableCollection<SimpleFunctionDescriptor>
+        clazz: ClassDescriptor,
+        name: Name,
+        bindingContext: BindingContext,
+        fromSupertypes: List<SimpleFunctionDescriptor>,
+        result: MutableCollection<SimpleFunctionDescriptor>
     ) {
         fun isExperimental(): Boolean {
             val sourceElement = (clazz.source as? PsiSourceElement)?.psi as? KtElement ?: return false
@@ -96,15 +99,16 @@ open class ParcelableResolveExtension : SyntheticResolveExtension {
                 && result.none { it.isDescribeContents() }
                 && fromSupertypes.none { it.isDescribeContents() }
         ) {
-            result += createMethod(clazz, DESCRIBE_CONTENTS, clazz.builtIns.intType)
+            result += createMethod(clazz, DESCRIBE_CONTENTS, Modality.OPEN, clazz.builtIns.intType)
         } else if (name.asString() == WRITE_TO_PARCEL.methodName
                 && clazz.isParcelize
                 && isExperimental()
                 && result.none { it.isWriteToParcel() }
         ) {
             val builtIns = clazz.builtIns
-            val parcelClassType = resolveParcelClassType(clazz.module)
-            result += createMethod(clazz, WRITE_TO_PARCEL, builtIns.unitType, "parcel" to parcelClassType, "flags" to builtIns.intType)
+            val parcelClassType = resolveParcelClassType(clazz.module) ?: ErrorUtils.createErrorType("Unresolved 'Parcel' type")
+            result += createMethod(clazz, WRITE_TO_PARCEL, Modality.OPEN,
+                                   builtIns.unitType, "parcel" to parcelClassType, "flags" to builtIns.intType)
         }
     }
 
@@ -113,18 +117,17 @@ open class ParcelableResolveExtension : SyntheticResolveExtension {
                && modality != Modality.ABSTRACT
                && typeParameters.isEmpty()
                && valueParameters.isEmpty()
-               && returnType?.let { type -> KotlinBuiltIns.isInt(type) } == true
+               // Unfortunately, we can't check the return type as it's unresolved in IDE light classes
     }
 }
 
 internal fun SimpleFunctionDescriptor.isWriteToParcel(): Boolean {
     return typeParameters.isEmpty()
            && valueParameters.size == 2
-           && valueParameters[0].type.isParcel()
+           // Unfortunately, we can't check the first parameter type as it's unresolved in IDE light classes
            && KotlinBuiltIns.isInt(valueParameters[1].type)
+           && returnType?.let { KotlinBuiltIns.isUnit(it) } == true
 }
-
-private fun KotlinType.isParcel() = constructor.declarationDescriptor?.fqNameSafe == ANDROID_PARCEL_CLASS_FQNAME
 
 interface ParcelableSyntheticComponent {
     val componentKind: ComponentKind

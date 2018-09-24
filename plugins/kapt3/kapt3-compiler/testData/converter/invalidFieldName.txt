@@ -1,0 +1,22 @@
+import java.lang.System;
+
+@kotlin.Metadata()
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+@Anno(color = Color.InvalidFieldName)
+public abstract @interface Anno {
+
+    public abstract Color color();
+}
+
+////////////////////
+
+
+import java.lang.System;
+
+@kotlin.Metadata()
+public enum Color {
+    /*public static final*/ BLACK /* = new Color() */;
+
+    Color() {
+    }
+}

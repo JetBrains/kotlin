@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 class A {
     val prop: Int
     constructor(arg: Boolean) {

@@ -5,7 +5,7 @@ Output:
 -- JVM --
 Exit code: COMPILATION_ERROR
 Output:
-compiler/testData/multiplatform/regressions/incompatibleClassScopesWithImplTypeAlias/jvm.kt:3:1: error: in class 'Writer' expected members have no actual ones:
+compiler/testData/multiplatform/regressions/incompatibleClassScopesWithImplTypeAlias/jvm.kt:3:18: error: actual class 'Writer' has no corresponding members for expected class members:
 
     protected constructor Writer()
 
@@ -15,4 +15,4 @@ compiler/testData/multiplatform/regressions/incompatibleClassScopesWithImplTypeA
         protected/*protected and package*/ constructor Writer(p0: Any!)
 
 actual typealias Writer = java.io.Writer
-^
+                 ^

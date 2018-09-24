@@ -43,6 +43,13 @@ object PriorityWeigher : LookupElementWeigher("kotlin.priority") {
             = element.getUserData(ITEM_PRIORITY_KEY) ?: ItemPriority.DEFAULT
 }
 
+object PreferDslMembers : LookupElementWeigher("kotlin.preferDsl") {
+    override fun weigh(element: LookupElement, context: WeighingContext): Boolean {
+        if (element.isDslMember == true) return false // high priority
+        return true // lower priority
+    }
+}
+
 class NotImportedWeigher(private val classifier: ImportableFqNameClassifier) : LookupElementWeigher("kotlin.notImported") {
     private enum class Weight {
         default,
@@ -154,7 +161,7 @@ object CallableWeigher : LookupElementWeigher("kotlin.callableWeight") {
         other
     }
 
-    private class CompoundWeight(val weight1: Weight1, val receiverIndex: Int, val weight2: Weight2) : Comparable<CompoundWeight> {
+    private data class CompoundWeight(val weight1: Weight1, val receiverIndex: Int, val weight2: Weight2) : Comparable<CompoundWeight> {
         override fun compareTo(other: CompoundWeight): Int {
             if (weight1 != other.weight1) return weight1.compareTo(other.weight1)
             if (receiverIndex != other.receiverIndex) return receiverIndex.compareTo(other.receiverIndex)

@@ -1,0 +1,12 @@
+package
+
+public fun test1(/*0*/ x: kotlin.Int): kotlin.Unit
+public fun test2(): kotlin.Unit
+public fun kotlin.Int.test3(): kotlin.Unit
+
+public final class OnType {
+    public constructor OnType(/*0*/ x: kotlin.Int)
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

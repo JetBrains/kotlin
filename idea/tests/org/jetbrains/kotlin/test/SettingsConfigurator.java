@@ -103,7 +103,7 @@ public class SettingsConfigurator {
 
     private static boolean setSettingWithField(String settingName, Object object, Object value) {
         try {
-            Field field = object.getClass().getDeclaredField(settingName);
+            Field field = object.getClass().getField(settingName);
             field.set(object, value);
             return true;
         }

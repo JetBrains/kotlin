@@ -2,7 +2,7 @@ package
 
 public fun bar(): kotlin.Unit
 public inline fun </*0*/ reified T> foo(/*0*/ x: T): kotlin.Unit
-public operator inline fun </*0*/ reified T> C.plus(/*0*/ other: T): C
+public inline operator fun </*0*/ reified T> C.plus(/*0*/ other: T): C
 
 public final external class C : I {
     public constructor C()

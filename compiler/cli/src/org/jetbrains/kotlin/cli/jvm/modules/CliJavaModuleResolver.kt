@@ -27,17 +27,17 @@ import org.jetbrains.kotlin.resolve.jvm.modules.JavaModule
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver
 
 class CliJavaModuleResolver(
-        private val moduleGraph: JavaModuleGraph,
-        private val userModules: List<JavaModule>,
-        private val systemModules: List<JavaModule.Explicit>
+    private val moduleGraph: JavaModuleGraph,
+    private val userModules: List<JavaModule>,
+    private val systemModules: List<JavaModule.Explicit>
 ) : JavaModuleResolver {
     init {
-        assert(userModules.count { !it.isBinary } <= 1) {
+        assert(userModules.count(JavaModule::isSourceModule) <= 1) {
             "Modules computed by ClasspathRootsResolver cannot have more than one source module: $userModules"
         }
     }
 
-    private val sourceModule: JavaModule? = userModules.firstOrNull { !it.isBinary }
+    private val sourceModule: JavaModule? = userModules.firstOrNull(JavaModule::isSourceModule)
 
     private fun findJavaModule(file: VirtualFile): JavaModule? {
         if (file.fileSystem.protocol == StandardFileSystems.JRT_PROTOCOL) {
@@ -46,16 +46,16 @@ class CliJavaModuleResolver(
 
         return when (file.fileType) {
             KotlinFileType.INSTANCE, JavaFileType.INSTANCE -> sourceModule
-            JavaClassFileType.INSTANCE -> userModules.firstOrNull { module -> module.isBinary && file in module }
+            JavaClassFileType.INSTANCE -> userModules.firstOrNull { module -> file in module }
             else -> null
         }
     }
 
     private operator fun JavaModule.contains(file: VirtualFile): Boolean =
-            VfsUtilCore.isAncestor(moduleRoot, file, false)
+        moduleRoots.any { (root, isBinary) -> isBinary && VfsUtilCore.isAncestor(root, file, false) }
 
     override fun checkAccessibility(
-            fileFromOurModule: VirtualFile?, referencedFile: VirtualFile, referencedPackage: FqName?
+        fileFromOurModule: VirtualFile?, referencedFile: VirtualFile, referencedPackage: FqName?
     ): JavaModuleResolver.AccessError? {
         val ourModule = fileFromOurModule?.let(this::findJavaModule)
         val theirModule = this.findJavaModule(referencedFile)

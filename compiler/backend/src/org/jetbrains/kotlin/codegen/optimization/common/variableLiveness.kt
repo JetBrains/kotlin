@@ -51,13 +51,14 @@ class VariableLivenessFrame(val maxLocals: Int) : VarFrame<VariableLivenessFrame
 
     override fun hashCode() = bitSet.hashCode()
 }
+
 fun analyzeLiveness(node: MethodNode): List<VariableLivenessFrame> {
     val typeAnnotatedFrames = MethodTransformer.analyze("fake", node, OptimizationBasicInterpreter())
     return analyze(node, object : BackwardAnalysisInterpreter<VariableLivenessFrame> {
         override fun newFrame(maxLocals: Int) = VariableLivenessFrame(maxLocals)
         override fun def(frame: VariableLivenessFrame, insn: AbstractInsnNode) = defVar(frame, insn)
         override fun use(frame: VariableLivenessFrame, insn: AbstractInsnNode) =
-                useVar(frame, insn, node, typeAnnotatedFrames[node.instructions.indexOf(insn)])
+            useVar(frame, insn, node, typeAnnotatedFrames[node.instructions.indexOf(insn)])
 
     })
 }
@@ -69,24 +70,23 @@ private fun defVar(frame: VariableLivenessFrame, insn: AbstractInsnNode) {
 }
 
 private fun useVar(
-        frame: VariableLivenessFrame,
-        insn: AbstractInsnNode,
-        node: MethodNode,
-        // May be null in case of dead code
-        typeAnnotatedFrame: Frame<BasicValue>?
+    frame: VariableLivenessFrame,
+    insn: AbstractInsnNode,
+    node: MethodNode,
+    // May be null in case of dead code
+    typeAnnotatedFrame: Frame<BasicValue>?
 ) {
     val index = node.instructions.indexOf(insn)
     node.localVariables.filter {
         node.instructions.indexOf(it.start) < index && index < node.instructions.indexOf(it.end) &&
-            Type.getType(it.desc).sort == typeAnnotatedFrame?.getLocal(it.index)?.type?.sort
+                Type.getType(it.desc).sort == typeAnnotatedFrame?.getLocal(it.index)?.type?.sort
     }.forEach {
-        frame.markAlive(it.index)
-    }
+            frame.markAlive(it.index)
+        }
 
     if (insn is VarInsnNode && insn.isLoadOperation()) {
         frame.markAlive(insn.`var`)
-    }
-    else if (insn is IincInsnNode) {
+    } else if (insn is IincInsnNode) {
         frame.markAlive(insn.`var`)
     }
 }

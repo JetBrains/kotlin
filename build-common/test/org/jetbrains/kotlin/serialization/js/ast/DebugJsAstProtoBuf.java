@@ -211,6 +211,26 @@ public final class DebugJsAstProtoBuf {
      * <code>UNBOX_CHAR = 4;</code>
      */
     UNBOX_CHAR(3, 4),
+    /**
+     * <code>SUSPEND_CALL = 5;</code>
+     */
+    SUSPEND_CALL(4, 5),
+    /**
+     * <code>COROUTINE_RESULT = 6;</code>
+     */
+    COROUTINE_RESULT(5, 6),
+    /**
+     * <code>COROUTINE_CONTROLLER = 7;</code>
+     */
+    COROUTINE_CONTROLLER(6, 7),
+    /**
+     * <code>COROUTINE_RECEIVER = 8;</code>
+     */
+    COROUTINE_RECEIVER(7, 8),
+    /**
+     * <code>SET_COROUTINE_RESULT = 9;</code>
+     */
+    SET_COROUTINE_RESULT(8, 9),
     ;
 
     /**
@@ -229,6 +249,26 @@ public final class DebugJsAstProtoBuf {
      * <code>UNBOX_CHAR = 4;</code>
      */
     public static final int UNBOX_CHAR_VALUE = 4;
+    /**
+     * <code>SUSPEND_CALL = 5;</code>
+     */
+    public static final int SUSPEND_CALL_VALUE = 5;
+    /**
+     * <code>COROUTINE_RESULT = 6;</code>
+     */
+    public static final int COROUTINE_RESULT_VALUE = 6;
+    /**
+     * <code>COROUTINE_CONTROLLER = 7;</code>
+     */
+    public static final int COROUTINE_CONTROLLER_VALUE = 7;
+    /**
+     * <code>COROUTINE_RECEIVER = 8;</code>
+     */
+    public static final int COROUTINE_RECEIVER_VALUE = 8;
+    /**
+     * <code>SET_COROUTINE_RESULT = 9;</code>
+     */
+    public static final int SET_COROUTINE_RESULT_VALUE = 9;
 
 
     public final int getNumber() { return value; }
@@ -239,6 +279,11 @@ public final class DebugJsAstProtoBuf {
         case 2: return WRAP_FUNCTION;
         case 3: return TO_BOXED_CHAR;
         case 4: return UNBOX_CHAR;
+        case 5: return SUSPEND_CALL;
+        case 6: return COROUTINE_RESULT;
+        case 7: return COROUTINE_CONTROLLER;
+        case 8: return COROUTINE_RECEIVER;
+        case 9: return SET_COROUTINE_RESULT;
         default: return null;
       }
     }
@@ -32537,6 +32582,28 @@ public final class DebugJsAstProtoBuf {
      */
     org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.StatementOrBuilder getStatementOrBuilder(
         int index);
+
+    /**
+     * <code>optional int32 fileId = 3;</code>
+     */
+    boolean hasFileId();
+    /**
+     * <code>optional int32 fileId = 3;</code>
+     */
+    int getFileId();
+
+    /**
+     * <code>optional .org.jetbrains.kotlin.serialization.js.ast.Location location = 4;</code>
+     */
+    boolean hasLocation();
+    /**
+     * <code>optional .org.jetbrains.kotlin.serialization.js.ast.Location location = 4;</code>
+     */
+    org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.Location getLocation();
+    /**
+     * <code>optional .org.jetbrains.kotlin.serialization.js.ast.Location location = 4;</code>
+     */
+    org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.LocationOrBuilder getLocationOrBuilder();
   }
   /**
    * Protobuf type {@code org.jetbrains.kotlin.serialization.js.ast.SwitchEntry}
@@ -32609,6 +32676,24 @@ public final class DebugJsAstProtoBuf {
                 mutable_bitField0_ |= 0x00000002;
               }
               statement_.add(input.readMessage(org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.Statement.PARSER, extensionRegistry));
+              break;
+            }
+            case 24: {
+              bitField0_ |= 0x00000002;
+              fileId_ = input.readInt32();
+              break;
+            }
+            case 34: {
+              org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.Location.Builder subBuilder = null;
+              if (((bitField0_ & 0x00000004) == 0x00000004)) {
+                subBuilder = location_.toBuilder();
+              }
+              location_ = input.readMessage(org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.Location.PARSER, extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom(location_);
+                location_ = subBuilder.buildPartial();
+              }
+              bitField0_ |= 0x00000004;
               break;
             }
           }
@@ -32710,9 +32795,47 @@ public final class DebugJsAstProtoBuf {
       return statement_.get(index);
     }
 
+    public static final int FILEID_FIELD_NUMBER = 3;
+    private int fileId_;
+    /**
+     * <code>optional int32 fileId = 3;</code>
+     */
+    public boolean hasFileId() {
+      return ((bitField0_ & 0x00000002) == 0x00000002);
+    }
+    /**
+     * <code>optional int32 fileId = 3;</code>
+     */
+    public int getFileId() {
+      return fileId_;
+    }
+
+    public static final int LOCATION_FIELD_NUMBER = 4;
+    private org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.Location location_;
+    /**
+     * <code>optional .org.jetbrains.kotlin.serialization.js.ast.Location location = 4;</code>
+     */
+    public boolean hasLocation() {
+      return ((bitField0_ & 0x00000004) == 0x00000004);
+    }
+    /**
+     * <code>optional .org.jetbrains.kotlin.serialization.js.ast.Location location = 4;</code>
+     */
+    public org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.Location getLocation() {
+      return location_;
+    }
+    /**
+     * <code>optional .org.jetbrains.kotlin.serialization.js.ast.Location location = 4;</code>
+     */
+    public org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.LocationOrBuilder getLocationOrBuilder() {
+      return location_;
+    }
+
     private void initFields() {
       label_ = org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.Expression.getDefaultInstance();
       statement_ = java.util.Collections.emptyList();
+      fileId_ = 0;
+      location_ = org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.Location.getDefaultInstance();
     }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
@@ -32732,6 +32855,12 @@ public final class DebugJsAstProtoBuf {
           return false;
         }
       }
+      if (hasLocation()) {
+        if (!getLocation().isInitialized()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
+      }
       memoizedIsInitialized = 1;
       return true;
     }
@@ -32744,6 +32873,12 @@ public final class DebugJsAstProtoBuf {
       }
       for (int i = 0; i < statement_.size(); i++) {
         output.writeMessage(2, statement_.get(i));
+      }
+      if (((bitField0_ & 0x00000002) == 0x00000002)) {
+        output.writeInt32(3, fileId_);
+      }
+      if (((bitField0_ & 0x00000004) == 0x00000004)) {
+        output.writeMessage(4, location_);
       }
       getUnknownFields().writeTo(output);
     }
@@ -32761,6 +32896,14 @@ public final class DebugJsAstProtoBuf {
       for (int i = 0; i < statement_.size(); i++) {
         size += org.jetbrains.kotlin.protobuf.CodedOutputStream
           .computeMessageSize(2, statement_.get(i));
+      }
+      if (((bitField0_ & 0x00000002) == 0x00000002)) {
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+          .computeInt32Size(3, fileId_);
+      }
+      if (((bitField0_ & 0x00000004) == 0x00000004)) {
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+          .computeMessageSize(4, location_);
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSerializedSize = size;
@@ -32873,6 +33016,7 @@ public final class DebugJsAstProtoBuf {
         if (org.jetbrains.kotlin.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
           getLabelFieldBuilder();
           getStatementFieldBuilder();
+          getLocationFieldBuilder();
         }
       }
       private static Builder create() {
@@ -32893,6 +33037,14 @@ public final class DebugJsAstProtoBuf {
         } else {
           statementBuilder_.clear();
         }
+        fileId_ = 0;
+        bitField0_ = (bitField0_ & ~0x00000004);
+        if (locationBuilder_ == null) {
+          location_ = org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.Location.getDefaultInstance();
+        } else {
+          locationBuilder_.clear();
+        }
+        bitField0_ = (bitField0_ & ~0x00000008);
         return this;
       }
 
@@ -32937,6 +33089,18 @@ public final class DebugJsAstProtoBuf {
           result.statement_ = statement_;
         } else {
           result.statement_ = statementBuilder_.build();
+        }
+        if (((from_bitField0_ & 0x00000004) == 0x00000004)) {
+          to_bitField0_ |= 0x00000002;
+        }
+        result.fileId_ = fileId_;
+        if (((from_bitField0_ & 0x00000008) == 0x00000008)) {
+          to_bitField0_ |= 0x00000004;
+        }
+        if (locationBuilder_ == null) {
+          result.location_ = location_;
+        } else {
+          result.location_ = locationBuilder_.build();
         }
         result.bitField0_ = to_bitField0_;
         onBuilt();
@@ -32983,6 +33147,12 @@ public final class DebugJsAstProtoBuf {
             }
           }
         }
+        if (other.hasFileId()) {
+          setFileId(other.getFileId());
+        }
+        if (other.hasLocation()) {
+          mergeLocation(other.getLocation());
+        }
         this.mergeUnknownFields(other.getUnknownFields());
         return this;
       }
@@ -32996,6 +33166,12 @@ public final class DebugJsAstProtoBuf {
         }
         for (int i = 0; i < getStatementCount(); i++) {
           if (!getStatement(i).isInitialized()) {
+            
+            return false;
+          }
+        }
+        if (hasLocation()) {
+          if (!getLocation().isInitialized()) {
             
             return false;
           }
@@ -33376,6 +33552,154 @@ public final class DebugJsAstProtoBuf {
           statement_ = null;
         }
         return statementBuilder_;
+      }
+
+      private int fileId_ ;
+      /**
+       * <code>optional int32 fileId = 3;</code>
+       */
+      public boolean hasFileId() {
+        return ((bitField0_ & 0x00000004) == 0x00000004);
+      }
+      /**
+       * <code>optional int32 fileId = 3;</code>
+       */
+      public int getFileId() {
+        return fileId_;
+      }
+      /**
+       * <code>optional int32 fileId = 3;</code>
+       */
+      public Builder setFileId(int value) {
+        bitField0_ |= 0x00000004;
+        fileId_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>optional int32 fileId = 3;</code>
+       */
+      public Builder clearFileId() {
+        bitField0_ = (bitField0_ & ~0x00000004);
+        fileId_ = 0;
+        onChanged();
+        return this;
+      }
+
+      private org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.Location location_ = org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.Location.getDefaultInstance();
+      private org.jetbrains.kotlin.protobuf.SingleFieldBuilder<
+          org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.Location, org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.Location.Builder, org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.LocationOrBuilder> locationBuilder_;
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.js.ast.Location location = 4;</code>
+       */
+      public boolean hasLocation() {
+        return ((bitField0_ & 0x00000008) == 0x00000008);
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.js.ast.Location location = 4;</code>
+       */
+      public org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.Location getLocation() {
+        if (locationBuilder_ == null) {
+          return location_;
+        } else {
+          return locationBuilder_.getMessage();
+        }
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.js.ast.Location location = 4;</code>
+       */
+      public Builder setLocation(org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.Location value) {
+        if (locationBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          location_ = value;
+          onChanged();
+        } else {
+          locationBuilder_.setMessage(value);
+        }
+        bitField0_ |= 0x00000008;
+        return this;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.js.ast.Location location = 4;</code>
+       */
+      public Builder setLocation(
+          org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.Location.Builder builderForValue) {
+        if (locationBuilder_ == null) {
+          location_ = builderForValue.build();
+          onChanged();
+        } else {
+          locationBuilder_.setMessage(builderForValue.build());
+        }
+        bitField0_ |= 0x00000008;
+        return this;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.js.ast.Location location = 4;</code>
+       */
+      public Builder mergeLocation(org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.Location value) {
+        if (locationBuilder_ == null) {
+          if (((bitField0_ & 0x00000008) == 0x00000008) &&
+              location_ != org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.Location.getDefaultInstance()) {
+            location_ =
+              org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.Location.newBuilder(location_).mergeFrom(value).buildPartial();
+          } else {
+            location_ = value;
+          }
+          onChanged();
+        } else {
+          locationBuilder_.mergeFrom(value);
+        }
+        bitField0_ |= 0x00000008;
+        return this;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.js.ast.Location location = 4;</code>
+       */
+      public Builder clearLocation() {
+        if (locationBuilder_ == null) {
+          location_ = org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.Location.getDefaultInstance();
+          onChanged();
+        } else {
+          locationBuilder_.clear();
+        }
+        bitField0_ = (bitField0_ & ~0x00000008);
+        return this;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.js.ast.Location location = 4;</code>
+       */
+      public org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.Location.Builder getLocationBuilder() {
+        bitField0_ |= 0x00000008;
+        onChanged();
+        return getLocationFieldBuilder().getBuilder();
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.js.ast.Location location = 4;</code>
+       */
+      public org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.LocationOrBuilder getLocationOrBuilder() {
+        if (locationBuilder_ != null) {
+          return locationBuilder_.getMessageOrBuilder();
+        } else {
+          return location_;
+        }
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.js.ast.Location location = 4;</code>
+       */
+      private org.jetbrains.kotlin.protobuf.SingleFieldBuilder<
+          org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.Location, org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.Location.Builder, org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.LocationOrBuilder> 
+          getLocationFieldBuilder() {
+        if (locationBuilder_ == null) {
+          locationBuilder_ = new org.jetbrains.kotlin.protobuf.SingleFieldBuilder<
+              org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.Location, org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.Location.Builder, org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.LocationOrBuilder>(
+                  getLocation(),
+                  getParentForChildren(),
+                  isClean());
+          location_ = null;
+        }
+        return locationBuilder_;
       }
 
       // @@protoc_insertion_point(builder_scope:org.jetbrains.kotlin.serialization.js.ast.SwitchEntry)
@@ -44802,6 +45126,19 @@ public final class DebugJsAstProtoBuf {
     int getSuperNameId();
 
     /**
+     * <code>repeated int32 interface_name_id = 4;</code>
+     */
+    java.util.List<java.lang.Integer> getInterfaceNameIdList();
+    /**
+     * <code>repeated int32 interface_name_id = 4;</code>
+     */
+    int getInterfaceNameIdCount();
+    /**
+     * <code>repeated int32 interface_name_id = 4;</code>
+     */
+    int getInterfaceNameId(int index);
+
+    /**
      * <code>optional .org.jetbrains.kotlin.serialization.js.ast.GlobalBlock post_declaration_block = 3;</code>
      */
     boolean hasPostDeclarationBlock();
@@ -44889,6 +45226,27 @@ public final class DebugJsAstProtoBuf {
               bitField0_ |= 0x00000004;
               break;
             }
+            case 32: {
+              if (!((mutable_bitField0_ & 0x00000004) == 0x00000004)) {
+                interfaceNameId_ = new java.util.ArrayList<java.lang.Integer>();
+                mutable_bitField0_ |= 0x00000004;
+              }
+              interfaceNameId_.add(input.readInt32());
+              break;
+            }
+            case 34: {
+              int length = input.readRawVarint32();
+              int limit = input.pushLimit(length);
+              if (!((mutable_bitField0_ & 0x00000004) == 0x00000004) && input.getBytesUntilLimit() > 0) {
+                interfaceNameId_ = new java.util.ArrayList<java.lang.Integer>();
+                mutable_bitField0_ |= 0x00000004;
+              }
+              while (input.getBytesUntilLimit() > 0) {
+                interfaceNameId_.add(input.readInt32());
+              }
+              input.popLimit(limit);
+              break;
+            }
           }
         }
       } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
@@ -44897,6 +45255,9 @@ public final class DebugJsAstProtoBuf {
         throw new org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException(
             e.getMessage()).setUnfinishedMessage(this);
       } finally {
+        if (((mutable_bitField0_ & 0x00000004) == 0x00000004)) {
+          interfaceNameId_ = java.util.Collections.unmodifiableList(interfaceNameId_);
+        }
         this.unknownFields = unknownFields.build();
         makeExtensionsImmutable();
       }
@@ -44959,6 +45320,28 @@ public final class DebugJsAstProtoBuf {
       return superNameId_;
     }
 
+    public static final int INTERFACE_NAME_ID_FIELD_NUMBER = 4;
+    private java.util.List<java.lang.Integer> interfaceNameId_;
+    /**
+     * <code>repeated int32 interface_name_id = 4;</code>
+     */
+    public java.util.List<java.lang.Integer>
+        getInterfaceNameIdList() {
+      return interfaceNameId_;
+    }
+    /**
+     * <code>repeated int32 interface_name_id = 4;</code>
+     */
+    public int getInterfaceNameIdCount() {
+      return interfaceNameId_.size();
+    }
+    /**
+     * <code>repeated int32 interface_name_id = 4;</code>
+     */
+    public int getInterfaceNameId(int index) {
+      return interfaceNameId_.get(index);
+    }
+
     public static final int POST_DECLARATION_BLOCK_FIELD_NUMBER = 3;
     private org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.GlobalBlock postDeclarationBlock_;
     /**
@@ -44983,6 +45366,7 @@ public final class DebugJsAstProtoBuf {
     private void initFields() {
       nameId_ = 0;
       superNameId_ = 0;
+      interfaceNameId_ = java.util.Collections.emptyList();
       postDeclarationBlock_ = org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.GlobalBlock.getDefaultInstance();
     }
     private byte memoizedIsInitialized = -1;
@@ -45017,6 +45401,9 @@ public final class DebugJsAstProtoBuf {
       if (((bitField0_ & 0x00000004) == 0x00000004)) {
         output.writeMessage(3, postDeclarationBlock_);
       }
+      for (int i = 0; i < interfaceNameId_.size(); i++) {
+        output.writeInt32(4, interfaceNameId_.get(i));
+      }
       getUnknownFields().writeTo(output);
     }
 
@@ -45037,6 +45424,15 @@ public final class DebugJsAstProtoBuf {
       if (((bitField0_ & 0x00000004) == 0x00000004)) {
         size += org.jetbrains.kotlin.protobuf.CodedOutputStream
           .computeMessageSize(3, postDeclarationBlock_);
+      }
+      {
+        int dataSize = 0;
+        for (int i = 0; i < interfaceNameId_.size(); i++) {
+          dataSize += org.jetbrains.kotlin.protobuf.CodedOutputStream
+            .computeInt32SizeNoTag(interfaceNameId_.get(i));
+        }
+        size += dataSize;
+        size += 1 * getInterfaceNameIdList().size();
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSerializedSize = size;
@@ -45160,12 +45556,14 @@ public final class DebugJsAstProtoBuf {
         bitField0_ = (bitField0_ & ~0x00000001);
         superNameId_ = 0;
         bitField0_ = (bitField0_ & ~0x00000002);
+        interfaceNameId_ = java.util.Collections.emptyList();
+        bitField0_ = (bitField0_ & ~0x00000004);
         if (postDeclarationBlockBuilder_ == null) {
           postDeclarationBlock_ = org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.GlobalBlock.getDefaultInstance();
         } else {
           postDeclarationBlockBuilder_.clear();
         }
-        bitField0_ = (bitField0_ & ~0x00000004);
+        bitField0_ = (bitField0_ & ~0x00000008);
         return this;
       }
 
@@ -45202,7 +45600,12 @@ public final class DebugJsAstProtoBuf {
           to_bitField0_ |= 0x00000002;
         }
         result.superNameId_ = superNameId_;
-        if (((from_bitField0_ & 0x00000004) == 0x00000004)) {
+        if (((bitField0_ & 0x00000004) == 0x00000004)) {
+          interfaceNameId_ = java.util.Collections.unmodifiableList(interfaceNameId_);
+          bitField0_ = (bitField0_ & ~0x00000004);
+        }
+        result.interfaceNameId_ = interfaceNameId_;
+        if (((from_bitField0_ & 0x00000008) == 0x00000008)) {
           to_bitField0_ |= 0x00000004;
         }
         if (postDeclarationBlockBuilder_ == null) {
@@ -45231,6 +45634,16 @@ public final class DebugJsAstProtoBuf {
         }
         if (other.hasSuperNameId()) {
           setSuperNameId(other.getSuperNameId());
+        }
+        if (!other.interfaceNameId_.isEmpty()) {
+          if (interfaceNameId_.isEmpty()) {
+            interfaceNameId_ = other.interfaceNameId_;
+            bitField0_ = (bitField0_ & ~0x00000004);
+          } else {
+            ensureInterfaceNameIdIsMutable();
+            interfaceNameId_.addAll(other.interfaceNameId_);
+          }
+          onChanged();
         }
         if (other.hasPostDeclarationBlock()) {
           mergePostDeclarationBlock(other.getPostDeclarationBlock());
@@ -45336,6 +45749,72 @@ public final class DebugJsAstProtoBuf {
         return this;
       }
 
+      private java.util.List<java.lang.Integer> interfaceNameId_ = java.util.Collections.emptyList();
+      private void ensureInterfaceNameIdIsMutable() {
+        if (!((bitField0_ & 0x00000004) == 0x00000004)) {
+          interfaceNameId_ = new java.util.ArrayList<java.lang.Integer>(interfaceNameId_);
+          bitField0_ |= 0x00000004;
+         }
+      }
+      /**
+       * <code>repeated int32 interface_name_id = 4;</code>
+       */
+      public java.util.List<java.lang.Integer>
+          getInterfaceNameIdList() {
+        return java.util.Collections.unmodifiableList(interfaceNameId_);
+      }
+      /**
+       * <code>repeated int32 interface_name_id = 4;</code>
+       */
+      public int getInterfaceNameIdCount() {
+        return interfaceNameId_.size();
+      }
+      /**
+       * <code>repeated int32 interface_name_id = 4;</code>
+       */
+      public int getInterfaceNameId(int index) {
+        return interfaceNameId_.get(index);
+      }
+      /**
+       * <code>repeated int32 interface_name_id = 4;</code>
+       */
+      public Builder setInterfaceNameId(
+          int index, int value) {
+        ensureInterfaceNameIdIsMutable();
+        interfaceNameId_.set(index, value);
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>repeated int32 interface_name_id = 4;</code>
+       */
+      public Builder addInterfaceNameId(int value) {
+        ensureInterfaceNameIdIsMutable();
+        interfaceNameId_.add(value);
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>repeated int32 interface_name_id = 4;</code>
+       */
+      public Builder addAllInterfaceNameId(
+          java.lang.Iterable<? extends java.lang.Integer> values) {
+        ensureInterfaceNameIdIsMutable();
+        org.jetbrains.kotlin.protobuf.AbstractMessageLite.Builder.addAll(
+            values, interfaceNameId_);
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>repeated int32 interface_name_id = 4;</code>
+       */
+      public Builder clearInterfaceNameId() {
+        interfaceNameId_ = java.util.Collections.emptyList();
+        bitField0_ = (bitField0_ & ~0x00000004);
+        onChanged();
+        return this;
+      }
+
       private org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.GlobalBlock postDeclarationBlock_ = org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.GlobalBlock.getDefaultInstance();
       private org.jetbrains.kotlin.protobuf.SingleFieldBuilder<
           org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.GlobalBlock, org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.GlobalBlock.Builder, org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.GlobalBlockOrBuilder> postDeclarationBlockBuilder_;
@@ -45343,7 +45822,7 @@ public final class DebugJsAstProtoBuf {
        * <code>optional .org.jetbrains.kotlin.serialization.js.ast.GlobalBlock post_declaration_block = 3;</code>
        */
       public boolean hasPostDeclarationBlock() {
-        return ((bitField0_ & 0x00000004) == 0x00000004);
+        return ((bitField0_ & 0x00000008) == 0x00000008);
       }
       /**
        * <code>optional .org.jetbrains.kotlin.serialization.js.ast.GlobalBlock post_declaration_block = 3;</code>
@@ -45368,7 +45847,7 @@ public final class DebugJsAstProtoBuf {
         } else {
           postDeclarationBlockBuilder_.setMessage(value);
         }
-        bitField0_ |= 0x00000004;
+        bitField0_ |= 0x00000008;
         return this;
       }
       /**
@@ -45382,7 +45861,7 @@ public final class DebugJsAstProtoBuf {
         } else {
           postDeclarationBlockBuilder_.setMessage(builderForValue.build());
         }
-        bitField0_ |= 0x00000004;
+        bitField0_ |= 0x00000008;
         return this;
       }
       /**
@@ -45390,7 +45869,7 @@ public final class DebugJsAstProtoBuf {
        */
       public Builder mergePostDeclarationBlock(org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.GlobalBlock value) {
         if (postDeclarationBlockBuilder_ == null) {
-          if (((bitField0_ & 0x00000004) == 0x00000004) &&
+          if (((bitField0_ & 0x00000008) == 0x00000008) &&
               postDeclarationBlock_ != org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.GlobalBlock.getDefaultInstance()) {
             postDeclarationBlock_ =
               org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.GlobalBlock.newBuilder(postDeclarationBlock_).mergeFrom(value).buildPartial();
@@ -45401,7 +45880,7 @@ public final class DebugJsAstProtoBuf {
         } else {
           postDeclarationBlockBuilder_.mergeFrom(value);
         }
-        bitField0_ |= 0x00000004;
+        bitField0_ |= 0x00000008;
         return this;
       }
       /**
@@ -45414,14 +45893,14 @@ public final class DebugJsAstProtoBuf {
         } else {
           postDeclarationBlockBuilder_.clear();
         }
-        bitField0_ = (bitField0_ & ~0x00000004);
+        bitField0_ = (bitField0_ & ~0x00000008);
         return this;
       }
       /**
        * <code>optional .org.jetbrains.kotlin.serialization.js.ast.GlobalBlock post_declaration_block = 3;</code>
        */
       public org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.GlobalBlock.Builder getPostDeclarationBlockBuilder() {
-        bitField0_ |= 0x00000004;
+        bitField0_ |= 0x00000008;
         onChanged();
         return getPostDeclarationBlockFieldBuilder().getBuilder();
       }
@@ -49274,97 +49753,103 @@ public final class DebugJsAstProtoBuf {
       "tch\022I\n\nexpression\030\001 \002(\01325.org.jetbrains." +
       "kotlin.serialization.js.ast.Expression\022E" +
       "\n\005entry\030\002 \003(\01326.org.jetbrains.kotlin.ser" +
-      "ialization.js.ast.SwitchEntry\"\234\001\n\013Switch" +
+      "ialization.js.ast.SwitchEntry\"\363\001\n\013Switch" +
       "Entry\022D\n\005label\030\001 \001(\01325.org.jetbrains.kot" +
       "lin.serialization.js.ast.Expression\022G\n\ts",
       "tatement\030\002 \003(\01324.org.jetbrains.kotlin.se" +
-      "rialization.js.ast.Statement\"\225\001\n\005While\022H" +
-      "\n\tcondition\030\001 \002(\01325.org.jetbrains.kotlin" +
-      ".serialization.js.ast.Expression\022B\n\004body" +
-      "\030\002 \002(\01324.org.jetbrains.kotlin.serializat" +
-      "ion.js.ast.Statement\"\227\001\n\007DoWhile\022H\n\tcond" +
-      "ition\030\001 \002(\01325.org.jetbrains.kotlin.seria" +
-      "lization.js.ast.Expression\022B\n\004body\030\002 \002(\013" +
-      "24.org.jetbrains.kotlin.serialization.js" +
-      ".ast.Statement\"\304\003\n\003For\022I\n\tvariables\030\001 \001(",
-      "\01324.org.jetbrains.kotlin.serialization.j" +
-      "s.ast.StatementH\000\022K\n\nexpression\030\002 \001(\01325." +
-      "org.jetbrains.kotlin.serialization.js.as" +
-      "t.ExpressionH\000\022E\n\005empty\030\003 \001(\01324.org.jetb" +
-      "rains.kotlin.serialization.js.ast.EmptyI" +
-      "nitH\000\022H\n\tcondition\030\004 \001(\01325.org.jetbrains" +
+      "rialization.js.ast.Statement\022\016\n\006fileId\030\003" +
+      " \001(\005\022E\n\010location\030\004 \001(\01323.org.jetbrains.k" +
+      "otlin.serialization.js.ast.Location\"\225\001\n\005" +
+      "While\022H\n\tcondition\030\001 \002(\01325.org.jetbrains" +
       ".kotlin.serialization.js.ast.Expression\022" +
-      "H\n\tincrement\030\005 \001(\01325.org.jetbrains.kotli" +
-      "n.serialization.js.ast.Expression\022B\n\004bod" +
-      "y\030\006 \002(\01324.org.jetbrains.kotlin.serializa",
-      "tion.js.ast.StatementB\006\n\004init\"\013\n\tEmptyIn" +
-      "it\"\374\001\n\005ForIn\022\020\n\006nameId\030\001 \001(\005H\000\022K\n\nexpres" +
-      "sion\030\002 \001(\01325.org.jetbrains.kotlin.serial" +
-      "ization.js.ast.ExpressionH\000\022G\n\010iterable\030" +
-      "\003 \002(\01325.org.jetbrains.kotlin.serializati" +
-      "on.js.ast.Expression\022B\n\004body\030\004 \002(\01324.org" +
-      ".jetbrains.kotlin.serialization.js.ast.S" +
-      "tatementB\007\n\005value\"\337\001\n\003Try\022F\n\010tryBlock\030\001 " +
-      "\002(\01324.org.jetbrains.kotlin.serialization" +
-      ".js.ast.Statement\022D\n\ncatchBlock\030\002 \001(\01320.",
-      "org.jetbrains.kotlin.serialization.js.as" +
-      "t.Catch\022J\n\014finallyBlock\030\003 \001(\01324.org.jetb" +
-      "rains.kotlin.serialization.js.ast.Statem" +
-      "ent\"\224\001\n\005Catch\022G\n\tparameter\030\001 \002(\01324.org.j" +
-      "etbrains.kotlin.serialization.js.ast.Par" +
-      "ameter\022B\n\004body\030\002 \002(\01324.org.jetbrains.kot" +
-      "lin.serialization.js.ast.Statement\"\007\n\005Em" +
-      "pty\"\327\005\n\010Fragment\022R\n\017imported_module\030\001 \003(" +
-      "\01329.org.jetbrains.kotlin.serialization.j" +
-      "s.ast.ImportedModule\022G\n\014import_entry\030\002 \003",
-      "(\01321.org.jetbrains.kotlin.serialization." +
-      "js.ast.Import\022Q\n\021declaration_block\030\003 \001(\013" +
-      "26.org.jetbrains.kotlin.serialization.js" +
-      ".ast.GlobalBlock\022L\n\014export_block\030\004 \001(\01326" +
-      ".org.jetbrains.kotlin.serialization.js.a" +
-      "st.GlobalBlock\022Q\n\021initializer_block\030\005 \001(" +
-      "\01326.org.jetbrains.kotlin.serialization.j" +
-      "s.ast.GlobalBlock\022L\n\014name_binding\030\006 \003(\0132" +
-      "6.org.jetbrains.kotlin.serialization.js." +
-      "ast.NameBinding\022J\n\013class_model\030\007 \003(\01325.o",
+      "B\n\004body\030\002 \002(\01324.org.jetbrains.kotlin.ser" +
+      "ialization.js.ast.Statement\"\227\001\n\007DoWhile\022" +
+      "H\n\tcondition\030\001 \002(\01325.org.jetbrains.kotli" +
+      "n.serialization.js.ast.Expression\022B\n\004bod",
+      "y\030\002 \002(\01324.org.jetbrains.kotlin.serializa" +
+      "tion.js.ast.Statement\"\304\003\n\003For\022I\n\tvariabl" +
+      "es\030\001 \001(\01324.org.jetbrains.kotlin.serializ" +
+      "ation.js.ast.StatementH\000\022K\n\nexpression\030\002" +
+      " \001(\01325.org.jetbrains.kotlin.serializatio" +
+      "n.js.ast.ExpressionH\000\022E\n\005empty\030\003 \001(\01324.o" +
       "rg.jetbrains.kotlin.serialization.js.ast" +
-      ".ClassModel\022P\n\021module_expression\030\010 \003(\01325" +
-      ".org.jetbrains.kotlin.serialization.js.a" +
-      "st.Expression\022N\n\rinline_module\030\t \003(\01327.o" +
+      ".EmptyInitH\000\022H\n\tcondition\030\004 \001(\01325.org.je" +
+      "tbrains.kotlin.serialization.js.ast.Expr" +
+      "ession\022H\n\tincrement\030\005 \001(\01325.org.jetbrain",
+      "s.kotlin.serialization.js.ast.Expression" +
+      "\022B\n\004body\030\006 \002(\01324.org.jetbrains.kotlin.se" +
+      "rialization.js.ast.StatementB\006\n\004init\"\013\n\t" +
+      "EmptyInit\"\374\001\n\005ForIn\022\020\n\006nameId\030\001 \001(\005H\000\022K\n" +
+      "\nexpression\030\002 \001(\01325.org.jetbrains.kotlin" +
+      ".serialization.js.ast.ExpressionH\000\022G\n\010it" +
+      "erable\030\003 \002(\01325.org.jetbrains.kotlin.seri" +
+      "alization.js.ast.Expression\022B\n\004body\030\004 \002(" +
+      "\01324.org.jetbrains.kotlin.serialization.j" +
+      "s.ast.StatementB\007\n\005value\"\337\001\n\003Try\022F\n\010tryB",
+      "lock\030\001 \002(\01324.org.jetbrains.kotlin.serial" +
+      "ization.js.ast.Statement\022D\n\ncatchBlock\030\002" +
+      " \001(\01320.org.jetbrains.kotlin.serializatio" +
+      "n.js.ast.Catch\022J\n\014finallyBlock\030\003 \001(\01324.o" +
       "rg.jetbrains.kotlin.serialization.js.ast" +
-      ".InlineModule\"\224\001\n\016ImportedModule\022\030\n\020exte" +
-      "rnal_name_id\030\001 \002(\005\022\030\n\020internal_name_id\030\002" +
-      " \002(\005\022N\n\017plain_reference\030\003 \001(\01325.org.jetb" +
-      "rains.kotlin.serialization.js.ast.Expres" +
-      "sion\"i\n\006Import\022\024\n\014signature_id\030\001 \002(\005\022I\n\n",
-      "expression\030\002 \002(\01325.org.jetbrains.kotlin." +
-      "serialization.js.ast.Expression\"3\n\013NameB" +
-      "inding\022\024\n\014signature_id\030\001 \002(\005\022\016\n\006nameId\030\002" +
-      " \002(\005\"\214\001\n\nClassModel\022\017\n\007name_id\030\001 \002(\005\022\025\n\r" +
-      "super_name_id\030\002 \001(\005\022V\n\026post_declaration_" +
-      "block\030\003 \001(\01326.org.jetbrains.kotlin.seria" +
-      "lization.js.ast.GlobalBlock\";\n\014InlineMod" +
-      "ule\022\024\n\014signature_id\030\001 \002(\005\022\025\n\rexpression_" +
-      "id\030\002 \002(\005\"\034\n\013StringTable\022\r\n\005entry\030\001 \003(\t\"K" +
-      "\n\tNameTable\022>\n\005entry\030\001 \003(\0132/.org.jetbrai",
-      "ns.kotlin.serialization.js.ast.Name\"\263\001\n\004" +
-      "Name\022\021\n\ttemporary\030\001 \002(\010\022\022\n\nidentifier\030\002 " +
-      "\001(\005\022\025\n\rlocal_name_id\030\003 \001(\005\022\027\n\010imported\030\004" +
-      " \001(\010:\005false\022T\n\020special_function\030\005 \001(\0162:." +
-      "org.jetbrains.kotlin.serialization.js.as" +
-      "t.SpecialFunction\"\346\001\n\005Chunk\022L\n\014string_ta" +
-      "ble\030\001 \002(\01326.org.jetbrains.kotlin.seriali" +
-      "zation.js.ast.StringTable\022H\n\nname_table\030" +
-      "\002 \002(\01324.org.jetbrains.kotlin.serializati" +
-      "on.js.ast.NameTable\022E\n\010fragment\030\003 \002(\01323.",
-      "org.jetbrains.kotlin.serialization.js.as" +
-      "t.Fragment*@\n\013SideEffects\022\021\n\rAFFECTS_STA" +
-      "TE\020\001\022\024\n\020DEPENDS_ON_STATE\020\002\022\010\n\004PURE\020\003*?\n\016" +
-      "InlineStrategy\022\017\n\013AS_FUNCTION\020\000\022\014\n\010IN_PL" +
-      "ACE\020\001\022\016\n\nNOT_INLINE\020\002*c\n\017SpecialFunction" +
-      "\022\032\n\026DEFINE_INLINE_FUNCTION\020\001\022\021\n\rWRAP_FUN" +
-      "CTION\020\002\022\021\n\rTO_BOXED_CHAR\020\003\022\016\n\nUNBOX_CHAR" +
-      "\020\004B\024B\022DebugJsAstProtoBuf"
+      ".Statement\"\224\001\n\005Catch\022G\n\tparameter\030\001 \002(\0132" +
+      "4.org.jetbrains.kotlin.serialization.js." +
+      "ast.Parameter\022B\n\004body\030\002 \002(\01324.org.jetbra" +
+      "ins.kotlin.serialization.js.ast.Statemen" +
+      "t\"\007\n\005Empty\"\327\005\n\010Fragment\022R\n\017imported_modu",
+      "le\030\001 \003(\01329.org.jetbrains.kotlin.serializ" +
+      "ation.js.ast.ImportedModule\022G\n\014import_en" +
+      "try\030\002 \003(\01321.org.jetbrains.kotlin.seriali" +
+      "zation.js.ast.Import\022Q\n\021declaration_bloc" +
+      "k\030\003 \001(\01326.org.jetbrains.kotlin.serializa" +
+      "tion.js.ast.GlobalBlock\022L\n\014export_block\030" +
+      "\004 \001(\01326.org.jetbrains.kotlin.serializati" +
+      "on.js.ast.GlobalBlock\022Q\n\021initializer_blo" +
+      "ck\030\005 \001(\01326.org.jetbrains.kotlin.serializ" +
+      "ation.js.ast.GlobalBlock\022L\n\014name_binding",
+      "\030\006 \003(\01326.org.jetbrains.kotlin.serializat" +
+      "ion.js.ast.NameBinding\022J\n\013class_model\030\007 " +
+      "\003(\01325.org.jetbrains.kotlin.serialization" +
+      ".js.ast.ClassModel\022P\n\021module_expression\030" +
+      "\010 \003(\01325.org.jetbrains.kotlin.serializati" +
+      "on.js.ast.Expression\022N\n\rinline_module\030\t " +
+      "\003(\01327.org.jetbrains.kotlin.serialization" +
+      ".js.ast.InlineModule\"\224\001\n\016ImportedModule\022" +
+      "\030\n\020external_name_id\030\001 \002(\005\022\030\n\020internal_na" +
+      "me_id\030\002 \002(\005\022N\n\017plain_reference\030\003 \001(\01325.o",
+      "rg.jetbrains.kotlin.serialization.js.ast" +
+      ".Expression\"i\n\006Import\022\024\n\014signature_id\030\001 " +
+      "\002(\005\022I\n\nexpression\030\002 \002(\01325.org.jetbrains." +
+      "kotlin.serialization.js.ast.Expression\"3" +
+      "\n\013NameBinding\022\024\n\014signature_id\030\001 \002(\005\022\016\n\006n" +
+      "ameId\030\002 \002(\005\"\247\001\n\nClassModel\022\017\n\007name_id\030\001 " +
+      "\002(\005\022\025\n\rsuper_name_id\030\002 \001(\005\022\031\n\021interface_" +
+      "name_id\030\004 \003(\005\022V\n\026post_declaration_block\030" +
+      "\003 \001(\01326.org.jetbrains.kotlin.serializati" +
+      "on.js.ast.GlobalBlock\";\n\014InlineModule\022\024\n",
+      "\014signature_id\030\001 \002(\005\022\025\n\rexpression_id\030\002 \002" +
+      "(\005\"\034\n\013StringTable\022\r\n\005entry\030\001 \003(\t\"K\n\tName" +
+      "Table\022>\n\005entry\030\001 \003(\0132/.org.jetbrains.kot" +
+      "lin.serialization.js.ast.Name\"\263\001\n\004Name\022\021" +
+      "\n\ttemporary\030\001 \002(\010\022\022\n\nidentifier\030\002 \001(\005\022\025\n" +
+      "\rlocal_name_id\030\003 \001(\005\022\027\n\010imported\030\004 \001(\010:\005" +
+      "false\022T\n\020special_function\030\005 \001(\0162:.org.je" +
+      "tbrains.kotlin.serialization.js.ast.Spec" +
+      "ialFunction\"\346\001\n\005Chunk\022L\n\014string_table\030\001 " +
+      "\002(\01326.org.jetbrains.kotlin.serialization",
+      ".js.ast.StringTable\022H\n\nname_table\030\002 \002(\0132" +
+      "4.org.jetbrains.kotlin.serialization.js." +
+      "ast.NameTable\022E\n\010fragment\030\003 \002(\01323.org.je" +
+      "tbrains.kotlin.serialization.js.ast.Frag" +
+      "ment*@\n\013SideEffects\022\021\n\rAFFECTS_STATE\020\001\022\024" +
+      "\n\020DEPENDS_ON_STATE\020\002\022\010\n\004PURE\020\003*?\n\016Inline" +
+      "Strategy\022\017\n\013AS_FUNCTION\020\000\022\014\n\010IN_PLACE\020\001\022" +
+      "\016\n\nNOT_INLINE\020\002*\327\001\n\017SpecialFunction\022\032\n\026D" +
+      "EFINE_INLINE_FUNCTION\020\001\022\021\n\rWRAP_FUNCTION" +
+      "\020\002\022\021\n\rTO_BOXED_CHAR\020\003\022\016\n\nUNBOX_CHAR\020\004\022\020\n",
+      "\014SUSPEND_CALL\020\005\022\024\n\020COROUTINE_RESULT\020\006\022\030\n" +
+      "\024COROUTINE_CONTROLLER\020\007\022\026\n\022COROUTINE_REC" +
+      "EIVER\020\010\022\030\n\024SET_COROUTINE_RESULT\020\tB\024B\022Deb" +
+      "ugJsAstProtoBuf"
     };
     org.jetbrains.kotlin.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new org.jetbrains.kotlin.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -49599,7 +50084,7 @@ public final class DebugJsAstProtoBuf {
     internal_static_org_jetbrains_kotlin_serialization_js_ast_SwitchEntry_fieldAccessorTable = new
       org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_org_jetbrains_kotlin_serialization_js_ast_SwitchEntry_descriptor,
-        new java.lang.String[] { "Label", "Statement", });
+        new java.lang.String[] { "Label", "Statement", "FileId", "Location", });
     internal_static_org_jetbrains_kotlin_serialization_js_ast_While_descriptor =
       getDescriptor().getMessageTypes().get(37);
     internal_static_org_jetbrains_kotlin_serialization_js_ast_While_fieldAccessorTable = new
@@ -49677,7 +50162,7 @@ public final class DebugJsAstProtoBuf {
     internal_static_org_jetbrains_kotlin_serialization_js_ast_ClassModel_fieldAccessorTable = new
       org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_org_jetbrains_kotlin_serialization_js_ast_ClassModel_descriptor,
-        new java.lang.String[] { "NameId", "SuperNameId", "PostDeclarationBlock", });
+        new java.lang.String[] { "NameId", "SuperNameId", "InterfaceNameId", "PostDeclarationBlock", });
     internal_static_org_jetbrains_kotlin_serialization_js_ast_InlineModule_descriptor =
       getDescriptor().getMessageTypes().get(50);
     internal_static_org_jetbrains_kotlin_serialization_js_ast_InlineModule_fieldAccessorTable = new

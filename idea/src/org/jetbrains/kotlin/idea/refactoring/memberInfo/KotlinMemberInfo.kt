@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.descriptors.MemberDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.idea.refactoring.isInterfaceClass
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.renderer.DescriptorRendererModifier
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
@@ -42,7 +43,7 @@ class KotlinMemberInfo @JvmOverloads constructor(
         val isCompanionMember: Boolean = false
 ) : MemberInfoBase<KtNamedDeclaration>(member) {
     companion object {
-        private val RENDERER = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.withOptions {
+        private val RENDERER = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_NO_ANNOTATIONS.withOptions {
             modifiers = setOf(DescriptorRendererModifier.INNER)
         }
     }
@@ -63,7 +64,7 @@ class KotlinMemberInfo @JvmOverloads constructor(
         }
         else {
             displayName = RENDERER.render(memberDescriptor)
-            if (memberDescriptor is MemberDescriptor && memberDescriptor.modality == Modality.ABSTRACT) {
+            if (member.hasModifier(KtTokens.ABSTRACT_KEYWORD)) {
                 displayName = "abstract $displayName"
             }
             if (isCompanionMember) {

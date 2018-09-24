@@ -23,15 +23,15 @@ import com.intellij.codeInsight.template.TemplateEditingAdapter
 import com.intellij.codeInsight.template.TemplateManager
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
+import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiDocumentManager
-import org.apache.commons.lang.StringEscapeUtils.escapeJava
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.intentions.ChooseStringExpression
 import org.jetbrains.kotlin.idea.intentions.SelfTargetingRangeIntention
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.convertToIfNotNullExpression
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.convertToIfNullExpression
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.introduceValueForCondition
-import org.jetbrains.kotlin.idea.intentions.branchedTransformations.isStable
+import org.jetbrains.kotlin.idea.intentions.branchedTransformations.isStableSimpleExpression
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtPostfixExpression
 import org.jetbrains.kotlin.psi.KtPsiFactory
@@ -56,7 +56,7 @@ class DoubleBangToIfThenIntention : SelfTargetingRangeIntention<KtPostfixExpress
         val defaultException = KtPsiFactory(element).createExpression("throw NullPointerException()")
 
         val isStatement = element.isUsedAsStatement(element.analyze())
-        val isStable = base.isStable()
+        val isStable = base.isStableSimpleExpression()
 
         val ifStatement = if (isStatement)
             element.convertToIfNullExpression(base, defaultException)
@@ -66,7 +66,7 @@ class DoubleBangToIfThenIntention : SelfTargetingRangeIntention<KtPostfixExpress
         val thrownExpression =
                 ((if (isStatement) ifStatement.then else ifStatement.`else`) as KtThrowExpression).thrownExpression!!
 
-        val message = escapeJava("Expression '$expressionText' must not be null")
+        val message = StringUtil.escapeStringCharacters("Expression '$expressionText' must not be null")
         val nullPtrExceptionText = "NullPointerException(\"$message\")"
         val kotlinNullPtrExceptionText = "KotlinNullPointerException()"
 
@@ -80,7 +80,7 @@ class DoubleBangToIfThenIntention : SelfTargetingRangeIntention<KtPostfixExpress
         editor.caretModel.moveToOffset(thrownExpression.node!!.startOffset)
 
         TemplateManager.getInstance(project).startTemplate(editor, builder.buildInlineTemplate(), object: TemplateEditingAdapter() {
-            override fun templateFinished(template: Template?, brokenOff: Boolean) {
+            override fun templateFinished(template: Template, brokenOff: Boolean) {
                 if (!isStable && !isStatement) {
                     ifStatement.introduceValueForCondition(ifStatement.then!!, editor)
                 }

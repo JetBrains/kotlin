@@ -63,10 +63,10 @@ class KotlinShortNamesCache(private val project: Project) : PsiShortNamesCache()
         val allFqNames = HashSet<FqName?>()
 
         KotlinClassShortNameIndex.getInstance().get(name, project, effectiveScope)
-                .mapTo(allFqNames) { it.fqName }
+            .mapTo(allFqNames) { it.fqName }
 
         KotlinFileFacadeShortNameIndex.INSTANCE.get(name, project, effectiveScope)
-                .mapTo(allFqNames) { it.javaFileFacadeFqName }
+            .mapTo(allFqNames) { it.javaFileFacadeFqName }
 
         val result = ArrayList<PsiClass>()
         for (fqName in allFqNames) {
@@ -111,15 +111,15 @@ class KotlinShortNamesCache(private val project: Project) : PsiShortNamesCache()
         val functionIndex = KotlinFunctionShortNameIndex.getInstance()
 
         val kotlinFunctionsPsi = functionIndex.get(name, project, scope).asSequence()
-                .flatMap { LightClassUtil.getLightClassMethods(it).asSequence() }
-                .filter { it.name == name }
+            .flatMap { LightClassUtil.getLightClassMethods(it).asSequence() }
+            .filter { it.name == name }
 
         val propertyAccessorsPsi = sequenceOfLazyValues({ getPropertyNamesCandidatesByAccessorName(Name.identifier(name)) })
-                .flatMap { it.asSequence() }
-                .flatMap { propertiesIndex.get(it.asString(), project, scope).asSequence() }
-                .flatMap { it.getAccessorLightMethods().allDeclarations.asSequence() }
-                .filter { it.name == name }
-                .map { it as? PsiMethod }
+            .flatMap { it.asSequence() }
+            .flatMap { propertiesIndex.get(it.asString(), project, scope).asSequence() }
+            .flatMap { it.getAccessorLightMethods().allDeclarations.asSequence() }
+            .filter { it.name == name }
+            .map { it as? PsiMethod }
 
         return sequenceOfLazyValues({ kotlinFunctionsPsi }, { propertyAccessorsPsi }).flatMap { it }.filterNotNull()
     }
@@ -142,8 +142,8 @@ class KotlinShortNamesCache(private val project: Project) : PsiShortNamesCache()
         return limitedByMaxCount.toTypedArray()
     }
 
-    override fun processMethodsWithName(name: String, scope: GlobalSearchScope, processor: Processor<PsiMethod>): Boolean
-            = ContainerUtil.process(getMethodsByName(name, scope), processor)
+    override fun processMethodsWithName(name: String, scope: GlobalSearchScope, processor: Processor<PsiMethod>): Boolean =
+        ContainerUtil.process(getMethodsByName(name, scope), processor)
 
     override fun getAllMethodNames(): Array<String> {
         val functionIndex = KotlinFunctionShortNameIndex.getInstance()
@@ -151,7 +151,7 @@ class KotlinShortNamesCache(private val project: Project) : PsiShortNamesCache()
 
         val propertiesIndex = KotlinPropertyShortNameIndex.getInstance()
         val propertyAccessorNames = propertiesIndex.getAllKeys(project)
-                .flatMap(::getAccessorNamesCandidatesByPropertyName)
+            .flatMap(::getAccessorNamesCandidatesByPropertyName)
 
         return (functionNames + propertyAccessorNames).toTypedArray()
     }
@@ -162,8 +162,8 @@ class KotlinShortNamesCache(private val project: Project) : PsiShortNamesCache()
 
     private fun getFieldSequenceByName(name: String, scope: GlobalSearchScope): Sequence<PsiField> {
         return KotlinPropertyShortNameIndex.getInstance().get(name, project, scope).asSequence()
-                .map { LightClassUtil.getLightClassBackingField(it) }
-                .filterNotNull()
+            .map { LightClassUtil.getLightClassBackingField(it) }
+            .filterNotNull()
     }
 
     override fun getFieldsByName(name: String, scope: GlobalSearchScope): Array<PsiField> {

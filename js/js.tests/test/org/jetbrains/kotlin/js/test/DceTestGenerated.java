@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.js.test;
@@ -32,25 +21,41 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 public class DceTestGenerated extends AbstractDceTest {
+    private void runTest(String testDataFilePath) throws Exception {
+        KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS, testDataFilePath);
+    }
+
     public void testAllFilesPresentInDce() throws Exception {
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("js/js.translator/testData/dce"), Pattern.compile("(.+)\\.js"), TargetBackend.JS, true);
     }
 
     @TestMetadata("amd.js")
     public void testAmd() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/dce/amd.js");
-        doTest(fileName);
+        runTest("js/js.translator/testData/dce/amd.js");
+    }
+
+    @TestMetadata("arrayAccess.js")
+    public void testArrayAccess() throws Exception {
+        runTest("js/js.translator/testData/dce/arrayAccess.js");
     }
 
     @TestMetadata("commonjs.js")
     public void testCommonjs() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/dce/commonjs.js");
-        doTest(fileName);
+        runTest("js/js.translator/testData/dce/commonjs.js");
     }
 
     @TestMetadata("cycle.js")
     public void testCycle() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/dce/cycle.js");
-        doTest(fileName);
+        runTest("js/js.translator/testData/dce/cycle.js");
+    }
+
+    @TestMetadata("localVarAndFunction.js")
+    public void testLocalVarAndFunction() throws Exception {
+        runTest("js/js.translator/testData/dce/localVarAndFunction.js");
+    }
+
+    @TestMetadata("typeOf.js")
+    public void testTypeOf() throws Exception {
+        runTest("js/js.translator/testData/dce/typeOf.js");
     }
 }

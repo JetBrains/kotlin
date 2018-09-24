@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.builtins.isFunctionTypeOrSubtype
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.backend.ast.metadata.*
+import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.config.JsConfig
 import org.jetbrains.kotlin.js.inline.util.*
 import org.jetbrains.kotlin.js.parser.OffsetToSourceMapping
@@ -30,6 +31,7 @@ import org.jetbrains.kotlin.js.parser.parseFunction
 import org.jetbrains.kotlin.js.parser.sourcemaps.*
 import org.jetbrains.kotlin.js.translate.context.Namer
 import org.jetbrains.kotlin.js.translate.expression.InlineMetadata
+import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 import org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils.getModuleName
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 import org.jetbrains.kotlin.resolve.inline.InlineStrategy
@@ -48,7 +50,10 @@ private val JS_IDENTIFIER_PART = "$JS_IDENTIFIER_START\\p{Pc}\\p{Mc}\\p{Mn}\\d"
 private val JS_IDENTIFIER="[$JS_IDENTIFIER_START][$JS_IDENTIFIER_PART]*"
 private val DEFINE_MODULE_PATTERN = ("($JS_IDENTIFIER)\\.defineModule\\(\\s*(['\"])([^'\"]+)\\2\\s*,\\s*(\\w+)\\s*\\)").toRegex().toPattern()
 private val DEFINE_MODULE_FIND_PATTERN = ".defineModule("
-private val WRAP_FUNCTION_PATTERN = Regex("var\\s+($JS_IDENTIFIER)\\s*=\\s*($JS_IDENTIFIER)\\.wrapFunction\\s*;").toPattern()
+
+private val specialFunctions = enumValues<SpecialFunction>().joinToString("|") { it.suggestedName }
+private val specialFunctionsByName = enumValues<SpecialFunction>().associateBy { it.suggestedName }
+private val SPECIAL_FUNCTION_PATTERN = Regex("var\\s+($JS_IDENTIFIER)\\s*=\\s*($JS_IDENTIFIER)\\.($specialFunctions)\\s*;").toPattern()
 
 class FunctionReader(
         private val reporter: JsConfig.Reporter,
@@ -71,19 +76,22 @@ class FunctionReader(
             val fileContent: String,
             val moduleVariable: String,
             val kotlinVariable: String,
-            val wrapFunctionVariable: String?,
+            val specialFunctions: Map<String, SpecialFunction>,
             offsetToSourceMappingProvider: () -> OffsetToSourceMapping,
-            val sourceMap: SourceMap?
+            val sourceMap: SourceMap?,
+            val outputDir: File?
     ) {
         val offsetToSourceMapping by lazy(offsetToSourceMappingProvider)
 
-        val wrapFunctionRegex = wrapFunctionVariable?.let { Regex("\\s*$it\\s*\\(\\s*").toPattern() }
+        val wrapFunctionRegex = specialFunctions.entries
+                .singleOrNull { (_, v) -> v == SpecialFunction.WRAP_FUNCTION }?.key
+                ?.let { Regex("\\s*$it\\s*\\(\\s*").toPattern() }
     }
 
     private val moduleNameToInfo by lazy {
         val result = HashMultimap.create<String, ModuleInfo>()
 
-        JsLibraryUtils.traverseJsLibraries(config.libraries.map(::File)) { (content, path, sourceMapContent) ->
+        JsLibraryUtils.traverseJsLibraries(config.libraries.map(::File)) { (content, path, sourceMapContent, file) ->
             var current = 0
 
             while (true) {
@@ -99,8 +107,12 @@ class FunctionReader(
                 val moduleVariable = preciseMatcher.group(4)
                 val kotlinVariable = preciseMatcher.group(1)
 
-                val wrapFunctionVariable = WRAP_FUNCTION_PATTERN.matcher(content).let { matcher ->
-                    if (matcher.find() && matcher.group(2) == kotlinVariable) matcher.group(1) else null
+                val matcher = SPECIAL_FUNCTION_PATTERN.matcher(content)
+                val specialFunctions = mutableMapOf<String, SpecialFunction>()
+                while (matcher.find()) {
+                    if (matcher.group(2) == kotlinVariable) {
+                        specialFunctions[matcher.group(1)] = specialFunctionsByName[matcher.group(3)]!!
+                    }
                 }
 
                 val sourceMap = sourceMapContent?.let {
@@ -119,9 +131,10 @@ class FunctionReader(
                         fileContent = content,
                         moduleVariable = moduleVariable,
                         kotlinVariable = kotlinVariable,
-                        wrapFunctionVariable = wrapFunctionVariable,
+                        specialFunctions = specialFunctions,
                         offsetToSourceMappingProvider = { OffsetToSourceMapping(content) },
-                        sourceMap = sourceMap
+                        sourceMap = sourceMap,
+                        outputDir = file?.parentFile
                 )
 
                 result.put(moduleName, moduleInfo)
@@ -132,6 +145,8 @@ class FunctionReader(
     }
 
     private val moduleNameMap: Map<String, JsExpression>
+    private val shouldRemapPathToRelativeForm = config.shouldGenerateRelativePathsInSourceMap()
+    private val relativePathCalculator = config.configuration[JSConfigurationKeys.OUTPUT_DIR]?.let { RelativePathCalculator(it) }
 
     init {
         moduleNameMap = buildModuleNameMap(fragments)
@@ -163,23 +178,22 @@ class FunctionReader(
         override fun toString() = text.substring(offset)
     }
 
+    private val emptyFunctionWrapper = FunctionWithWrapper(JsFunction(object : JsScope("") {}, ""), null)
+
     private val functionCache = object : SLRUCache<CallableDescriptor, FunctionWithWrapper>(50, 50) {
         override fun createValue(descriptor: CallableDescriptor): FunctionWithWrapper =
-                readFunction(descriptor).sure { "Could not read function: $descriptor" }
+            readFunction(descriptor) ?: emptyFunctionWrapper
     }
 
-    operator fun contains(descriptor: CallableDescriptor): Boolean {
-        val moduleName = getModuleName(descriptor)
-        val currentModuleName = config.moduleId
-        return currentModuleName != moduleName && moduleName in moduleNameToInfo.keys()
+    operator fun get(descriptor: CallableDescriptor): FunctionWithWrapper? {
+        val existed = functionCache.get(descriptor)
+        return if (existed == emptyFunctionWrapper) null else existed
     }
-
-    operator fun get(descriptor: CallableDescriptor): FunctionWithWrapper = functionCache.get(descriptor)
 
     private fun readFunction(descriptor: CallableDescriptor): FunctionWithWrapper? {
-        if (descriptor !in this) return null
-
         val moduleName = getModuleName(descriptor)
+
+        if (moduleName !in moduleNameToInfo.keys()) return null
 
         for (info in moduleNameToInfo[moduleName]) {
             val function = readFunctionFromSource(descriptor, info)
@@ -218,7 +232,8 @@ class FunctionReader(
         }
 
         val position = info.offsetToSourceMapping[offset]
-        val functionExpr = parseFunction(source, info.filePath, position, offset, ThrowExceptionOnErrorReporter, JsRootScope(JsProgram())) ?:
+        val jsScope = JsRootScope(JsProgram())
+        val functionExpr = parseFunction(source, info.filePath, position, offset, ThrowExceptionOnErrorReporter, jsScope) ?:
                            return null
         functionExpr.fixForwardNameReferences()
         val (function, wrapper) = if (isWrapped) {
@@ -232,7 +247,9 @@ class FunctionReader(
 
         val sourceMap = info.sourceMap
         if (sourceMap != null) {
-            val remapper = SourceMapLocationRemapper(sourceMap)
+            val remapper = SourceMapLocationRemapper(sourceMap) {
+                remapPath(removeRedundantPathPrefix(it), info)
+            }
             remapper.remap(function)
             wrapperStatements?.forEach { remapper.remap(it) }
         }
@@ -243,12 +260,8 @@ class FunctionReader(
         replaceExternalNames(function, replacements, allDefinedNames)
         wrapperStatements?.forEach { replaceExternalNames(it, replacements, allDefinedNames) }
         function.markInlineArguments(descriptor)
-
-        info.wrapFunctionVariable.let { wrapFunction ->
-            for (externalName in (collectReferencedNames(function) - allDefinedNames).filter { it.ident == wrapFunction }) {
-                externalName.specialFunction = SpecialFunction.WRAP_FUNCTION
-            }
-        }
+        markDefaultParams(function)
+        markSpecialFunctions(function, allDefinedNames, info, jsScope)
 
         val namesWithoutSizeEffects = wrapperStatements.orEmpty().asSequence()
                 .flatMap { collectDefinedNames(it).asSequence() }
@@ -263,12 +276,78 @@ class FunctionReader(
         })
 
         wrapperStatements?.forEach {
-            if (it is JsVars && it.vars.size == 1 && it.vars[0].initExpression?.let { extractImportTag(it) } != null) {
+            if (it is JsVars && it.vars.size == 1 && extractImportTag(it.vars[0]) != null) {
                 it.vars[0].name.imported = true
             }
         }
 
         return FunctionWithWrapper(function, wrapper)
+    }
+
+    private fun markSpecialFunctions(function: JsFunction, allDefinedNames: Set<JsName>, info: ModuleInfo, scope: JsScope) {
+        for (externalName in (collectReferencedNames(function) - allDefinedNames)) {
+            info.specialFunctions[externalName.ident]?.let {
+                externalName.specialFunction = it
+            }
+        }
+
+        function.body.accept(object : RecursiveJsVisitor() {
+            override fun visitNameRef(nameRef: JsNameRef) {
+                super.visitNameRef(nameRef)
+                markQualifiedSpecialFunction(nameRef)
+            }
+
+            private fun markQualifiedSpecialFunction(nameRef: JsNameRef) {
+                val qualifier = nameRef.qualifier as? JsNameRef ?: return
+                if (qualifier.ident != info.kotlinVariable || qualifier.qualifier != null) return
+                if (nameRef.name?.specialFunction != null) return
+
+                val specialFunction = specialFunctionsByName[nameRef.ident] ?: return
+                if (nameRef.name == null) {
+                    nameRef.name = scope.declareName(nameRef.ident)
+                }
+                nameRef.name!!.specialFunction = specialFunction
+            }
+        })
+    }
+
+    private fun markDefaultParams(function: JsFunction) {
+        val paramsByNames = function.parameters.associate { it.name to it }
+        for (ifStatement in function.body.statements) {
+            if (ifStatement !is JsIf || ifStatement.elseStatement != null) break
+            val thenStatement = ifStatement.thenStatement as? JsExpressionStatement ?: break
+            val testExpression = ifStatement.ifExpression as? JsBinaryOperation ?: break
+
+            if (testExpression.operator != JsBinaryOperator.REF_EQ) break
+            val testLhs = testExpression.arg1 as? JsNameRef ?: break
+            val param = paramsByNames[testLhs.name] ?: break
+            if (testLhs.qualifier != null) break
+            if ((testExpression.arg2 as? JsPrefixOperation)?.operator != JsUnaryOperator.VOID) break
+
+            val (assignLhs) = JsAstUtils.decomposeAssignmentToVariable(thenStatement.expression) ?: break
+            if (assignLhs != testLhs.name) break
+
+            param.hasDefaultValue = true
+        }
+    }
+
+    private fun removeRedundantPathPrefix(path: String): String {
+        var index = 0
+        while (index + 2 <= path.length && path.substring(index, index + 2) == "./") {
+            index += 2
+            while (index < path.length && path[index] == '/') {
+                ++index
+            }
+        }
+
+        return path.substring(index)
+    }
+
+    private fun remapPath(path: String, info: ModuleInfo): String {
+        if (!shouldRemapPathToRelativeForm) return path
+        val outputDir = info.outputDir ?: return path
+        val calculator = relativePathCalculator ?: return path
+        return calculator.calculateRelativePathTo(File(outputDir, path)) ?: path
     }
 }
 

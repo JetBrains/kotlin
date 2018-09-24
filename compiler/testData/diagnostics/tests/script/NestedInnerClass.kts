@@ -1,11 +1,12 @@
+// !WITH_NEW_INFERENCE
 // documents inconsistency between scripts and classes, see DeclarationScopeProviderImpl
 
 fun function() = 42
 val property = ""
 
 class Nested {
-    fun f() = <!INACCESSIBLE_OUTER_CLASS_EXPRESSION!>function()<!>
-    fun g() = <!INACCESSIBLE_OUTER_CLASS_EXPRESSION!>property<!>
+    fun f() = <!OI;INACCESSIBLE_OUTER_CLASS_EXPRESSION!>function()<!>
+    fun g() = <!OI;INACCESSIBLE_OUTER_CLASS_EXPRESSION!>property<!>
 }
 
 

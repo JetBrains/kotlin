@@ -1,8 +1,8 @@
 package test
 
-public val a: kotlin.Int = 0
+public val a: kotlin.Int
     public fun <get-a>(): kotlin.Int
-public val c: kotlin.Int = 0
+public val c: kotlin.Int
     public fun <get-c>(): kotlin.Int
 public fun a(): kotlin.Int
 public fun b(): kotlin.Int
@@ -10,9 +10,9 @@ public fun c(): kotlin.Int
 
 public final class A {
     /*primary*/ public constructor A()
-    public final val a: kotlin.Int = 0
+    public final val a: kotlin.Int
         public final fun <get-a>(): kotlin.Int
-    public final val c: kotlin.Int = 0
+    public final val c: kotlin.Int
         public final fun <get-c>(): kotlin.Int
     public final fun a(): kotlin.Int
     public final fun b(): kotlin.Int

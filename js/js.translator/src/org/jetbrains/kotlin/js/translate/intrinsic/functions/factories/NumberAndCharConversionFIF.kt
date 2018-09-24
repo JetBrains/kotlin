@@ -22,7 +22,10 @@ import org.jetbrains.kotlin.js.patterns.PatternBuilder.pattern
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
 import org.jetbrains.kotlin.js.translate.intrinsic.functions.basic.FunctionIntrinsicWithReceiverComputed
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils.*
-import org.jetbrains.kotlin.utils.identity
+import org.jetbrains.kotlin.js.translate.utils.jsAstUtils.invokeKotlinFunction
+import org.jetbrains.kotlin.js.translate.utils.jsAstUtils.toByte
+import org.jetbrains.kotlin.js.translate.utils.jsAstUtils.toChar
+import org.jetbrains.kotlin.js.translate.utils.jsAstUtils.toShort
 import java.util.function.Predicate
 
 object NumberAndCharConversionFIF : CompositeFIF() {
@@ -33,16 +36,18 @@ object NumberAndCharConversionFIF : CompositeFIF() {
             .or(pattern("Long.toLong"))
             .or(pattern("Char.toChar"))
 
-    private val convertOperations: Map<String, ConversionUnaryIntrinsic> =
+    private val convertOperations: Map<String, FunctionIntrinsicWithReceiverComputed> =
             mapOf(
-                    "Float|Double.toInt" to ConversionUnaryIntrinsic(::toInt32),
-                    "Int|Float|Double.toShort" to ConversionUnaryIntrinsic(::toShort),
-                    "Short|Int|Float|Double.toByte" to ConversionUnaryIntrinsic(::toByte),
+                    "Float|Double.toInt" to ConversionUnaryIntrinsic { invokeKotlinFunction("numberToInt", it) },
+                    "Float|Double.toShort" to ConversionUnaryIntrinsic { toShort(invokeKotlinFunction("numberToInt", it)) },
+                    "Int.toShort" to ConversionUnaryIntrinsic { toShort(it) },
+                    "Float|Double.toByte" to ConversionUnaryIntrinsic { toByte(invokeKotlinFunction("numberToInt", it)) },
+                    "Short|Int.toByte" to ConversionUnaryIntrinsic { toByte(it) },
 
-                    "Int|Short|Byte.toLong" to ConversionUnaryIntrinsic(::longFromInt),
-                    "Float|Double.toLong" to ConversionUnaryIntrinsic(::longFromNumber),
+                    "Int|Short|Byte.toLong" to ConversionUnaryIntrinsic { longFromInt(it) },
+                    "Float|Double.toLong" to ConversionUnaryIntrinsic { longFromNumber(it) },
 
-                    "Char.toDouble|toFloat|toInt" to ConversionUnaryIntrinsic(::charToInt),
+                    "Char.toDouble|toFloat|toInt" to ConversionUnaryIntrinsic { charToInt(it) },
                     "Char.toShort" to ConversionUnaryIntrinsic { toShort(charToInt(it)) },
                     "Char.toByte" to ConversionUnaryIntrinsic { toByte(charToInt(it)) },
                     "Char.toLong" to ConversionUnaryIntrinsic { longFromInt(charToInt(it)) },
@@ -54,7 +59,8 @@ object NumberAndCharConversionFIF : CompositeFIF() {
                     "Number.toFloat|toDouble" to ConversionUnaryIntrinsic { invokeKotlinFunction("numberToDouble", it) },
                     "Number.toLong" to ConversionUnaryIntrinsic { invokeKotlinFunction("numberToLong", it) },
 
-                    "Int|Short|Byte|Float|Double.toChar" to  ConversionUnaryIntrinsic(::toChar),
+                    "Float|Double.toChar" to ConversionUnaryIntrinsic { toChar(invokeKotlinFunction("numberToInt", it)) },
+                    "Int|Short|Byte.toChar" to ConversionUnaryIntrinsic { toChar(it) },
 
                     "Long.toFloat|toDouble" to  ConversionUnaryIntrinsic { invokeMethod(it, "toNumber") },
                     "Long.toInt" to  ConversionUnaryIntrinsic { invokeMethod(it, "toInt") },
@@ -64,16 +70,16 @@ object NumberAndCharConversionFIF : CompositeFIF() {
 
             )
 
-    class ConversionUnaryIntrinsic(val applyFun: (receiver: JsExpression) -> JsExpression) : FunctionIntrinsicWithReceiverComputed() {
+    class ConversionUnaryIntrinsic(val applyFun: TranslationContext.(receiver: JsExpression) -> JsExpression) : FunctionIntrinsicWithReceiverComputed() {
         override fun apply(receiver: JsExpression?, arguments: List<JsExpression>, context: TranslationContext): JsExpression {
             assert(receiver != null)
             assert(arguments.isEmpty())
-            return applyFun(receiver!!)
+            return context.applyFun(receiver!!)
         }
     }
 
     init {
-        add(USE_AS_IS, ConversionUnaryIntrinsic(identity()))
+        add(USE_AS_IS, ConversionUnaryIntrinsic { it })
         for((stringPattern, intrinsic) in convertOperations) {
             add(pattern(stringPattern), intrinsic)
         }

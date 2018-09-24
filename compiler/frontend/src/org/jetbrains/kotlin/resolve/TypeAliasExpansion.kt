@@ -22,10 +22,10 @@ import org.jetbrains.kotlin.types.TypeConstructor
 import org.jetbrains.kotlin.types.TypeProjection
 
 class TypeAliasExpansion private constructor(
-        val parent: TypeAliasExpansion?,
-        val descriptor: TypeAliasDescriptor,
-        val arguments: List<TypeProjection>,
-        val mapping: Map<TypeParameterDescriptor, TypeProjection>
+    val parent: TypeAliasExpansion?,
+    val descriptor: TypeAliasDescriptor,
+    val arguments: List<TypeProjection>,
+    val mapping: Map<TypeParameterDescriptor, TypeProjection>
 ) {
     fun getReplacement(constructor: TypeConstructor): TypeProjection? {
         val descriptor = constructor.declarationDescriptor
@@ -36,13 +36,13 @@ class TypeAliasExpansion private constructor(
     }
 
     fun isRecursion(descriptor: TypeAliasDescriptor): Boolean =
-            this.descriptor == descriptor || (parent?.isRecursion(descriptor) ?: false)
+        this.descriptor == descriptor || (parent?.isRecursion(descriptor) ?: false)
 
     companion object {
         fun create(
-                parent: TypeAliasExpansion?,
-                typeAliasDescriptor: TypeAliasDescriptor,
-                arguments: List<TypeProjection>
+            parent: TypeAliasExpansion?,
+            typeAliasDescriptor: TypeAliasDescriptor,
+            arguments: List<TypeProjection>
         ): TypeAliasExpansion {
             val typeParameters = typeAliasDescriptor.typeConstructor.parameters.map { it.original }
             val mappedArguments = typeParameters.zip(arguments).toMap()
@@ -50,6 +50,6 @@ class TypeAliasExpansion private constructor(
         }
 
         fun createWithFormalArguments(typeAliasDescriptor: TypeAliasDescriptor) =
-                create(null, typeAliasDescriptor, emptyList())
+            create(null, typeAliasDescriptor, emptyList())
     }
 }

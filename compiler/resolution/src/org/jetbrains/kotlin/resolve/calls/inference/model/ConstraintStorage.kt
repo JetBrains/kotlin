@@ -1,23 +1,13 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.resolve.calls.inference.model
 
+import org.jetbrains.kotlin.resolve.calls.inference.components.NewTypeSubstitutor
 import org.jetbrains.kotlin.resolve.calls.inference.substitute
-import org.jetbrains.kotlin.resolve.calls.model.*
+import org.jetbrains.kotlin.resolve.calls.model.KotlinCallDiagnostic
 import org.jetbrains.kotlin.types.TypeConstructor
 import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.types.UnwrappedType
@@ -51,7 +41,9 @@ interface ConstraintStorage {
     val initialConstraints: List<InitialConstraint>
     val maxTypeDepthFromInitialConstraints: Int
     val errors: List<KotlinCallDiagnostic>
+    val hasContradiction: Boolean
     val fixedTypeVariables: Map<TypeConstructor, UnwrappedType>
+    val postponedTypeVariables: List<NewTypeVariable>
 
     object Empty : ConstraintStorage {
         override val allTypeVariables: Map<TypeConstructor, NewTypeVariable> get() = emptyMap()
@@ -59,7 +51,9 @@ interface ConstraintStorage {
         override val initialConstraints: List<InitialConstraint> get() = emptyList()
         override val maxTypeDepthFromInitialConstraints: Int get() = 1
         override val errors: List<KotlinCallDiagnostic> get() = emptyList()
+        override val hasContradiction: Boolean get() = false
         override val fixedTypeVariables: Map<TypeConstructor, UnwrappedType> get() = emptyMap()
+        override val postponedTypeVariables: List<NewTypeVariable> get() = emptyList()
     }
 }
 
@@ -70,10 +64,10 @@ enum class ConstraintKind {
 }
 
 class Constraint(
-        val kind: ConstraintKind,
-        val type: UnwrappedType, // flexible types here is allowed
-        val position: IncorporationConstraintPosition,
-        val typeHashCode: Int = type.hashCode()
+    val kind: ConstraintKind,
+    val type: UnwrappedType, // flexible types here is allowed
+    val position: IncorporationConstraintPosition,
+    val typeHashCode: Int = type.hashCode()
 ) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -100,18 +94,18 @@ interface VariableWithConstraints {
 }
 
 class InitialConstraint(
-        val a: UnwrappedType,
-        val b: UnwrappedType,
-        val constraintKind: ConstraintKind, // see [checkConstraint]
-        val position: ConstraintPosition
+    val a: UnwrappedType,
+    val b: UnwrappedType,
+    val constraintKind: ConstraintKind, // see [checkConstraint]
+    val position: ConstraintPosition
 ) {
     override fun toString(): String {
         val sign =
-        when (constraintKind) {
-            ConstraintKind.EQUALITY -> "=="
-            ConstraintKind.LOWER -> ":>"
-            ConstraintKind.UPPER -> "<:"
-        }
+            when (constraintKind) {
+                ConstraintKind.EQUALITY -> "=="
+                ConstraintKind.LOWER -> ":>"
+                ConstraintKind.UPPER -> "<:"
+            }
         return "$a $sign $b from $position"
     }
 }

@@ -26,6 +26,7 @@
             <groupId>org.jetbrains.kotlin</groupId>
             <artifactId>kotlin-reflect</artifactId>
             <version>RELEASE</version>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
 

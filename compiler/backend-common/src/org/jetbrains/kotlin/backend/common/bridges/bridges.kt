@@ -56,7 +56,7 @@ fun <Function : FunctionHandle, Signature> generateBridges(
 
     val implementation = findConcreteSuperDeclaration(function)
 
-    val bridgesToGenerate = findAllReachableDeclarations(function).mapTo(HashSet<Signature>(), signature)
+    val bridgesToGenerate = findAllReachableDeclarations(function).mapTo(LinkedHashSet<Signature>(), signature)
 
     if (fake) {
         // If it's a concrete fake override, some of the bridges may be inherited from the super-classes. Specifically, bridges for all
@@ -85,7 +85,7 @@ fun <Function : FunctionHandle> findAllReachableDeclarations(function: Function)
     }
     @Suppress("UNCHECKED_CAST")
     DFS.dfs(listOf(function), { it.getOverridden() as Iterable<Function> }, collector)
-    return HashSet(collector.result())
+    return LinkedHashSet(collector.result())
 }
 
 /**

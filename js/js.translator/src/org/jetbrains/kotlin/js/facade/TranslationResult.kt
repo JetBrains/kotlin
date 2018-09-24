@@ -19,23 +19,28 @@ package org.jetbrains.kotlin.js.facade
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VfsUtilCore
 import org.jetbrains.kotlin.backend.common.output.*
+import org.jetbrains.kotlin.config.CommonConfigurationKeys
+import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.js.backend.JsToStringGenerationVisitor
 import org.jetbrains.kotlin.js.backend.NoOpSourceLocationConsumer
+import org.jetbrains.kotlin.js.backend.SourceLocationConsumer
 import org.jetbrains.kotlin.js.backend.ast.JsProgram
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.config.JsConfig
 import org.jetbrains.kotlin.js.config.SourceMapSourceEmbedding
 import org.jetbrains.kotlin.js.sourceMap.SourceFilePathResolver
 import org.jetbrains.kotlin.js.sourceMap.SourceMap3Builder
-import org.jetbrains.kotlin.js.backend.SourceLocationConsumer
 import org.jetbrains.kotlin.js.util.TextOutput
 import org.jetbrains.kotlin.js.util.TextOutputImpl
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
 import org.jetbrains.kotlin.serialization.js.JsModuleDescriptor
+import org.jetbrains.kotlin.serialization.js.JsSerializerProtocol
 import org.jetbrains.kotlin.serialization.js.KotlinJavascriptSerializationUtil
+import org.jetbrains.kotlin.utils.JsMetadataVersion
 import org.jetbrains.kotlin.utils.KotlinJavascriptMetadataUtils
 import java.io.File
 import java.util.*
@@ -65,10 +70,10 @@ abstract class TranslationResult protected constructor(val diagnostics: Diagnost
             val sourceMapBuilder = SourceMap3Builder(outputFile, output, config.sourceMapPrefix)
             val sourceMapBuilderConsumer =
                     if (config.configuration.getBoolean(JSConfigurationKeys.SOURCE_MAP)) {
-                        val sourceRoots = config.sourceMapRoots.map { File(it) }
                         val sourceMapContentEmbedding = config.sourceMapContentEmbedding
-                        val pathResolver = SourceFilePathResolver(sourceRoots)
+                        val pathResolver = SourceFilePathResolver.create(config)
                         SourceMapBuilderConsumer(
+                                File("."),
                                 sourceMapBuilder,
                                 pathResolver,
                                 sourceMapContentEmbedding == SourceMapSourceEmbedding.ALWAYS,
@@ -106,14 +111,18 @@ abstract class TranslationResult protected constructor(val diagnostics: Diagnost
                     kind = config.moduleKind,
                     imported = importedModules
                 )
-                val metaFileContent = KotlinJavascriptSerializationUtil.metadataAsString(bindingContext, moduleDescription)
+                val serializedMetadata = KotlinJavascriptSerializationUtil.serializeMetadata(
+                    bindingContext, moduleDescription,
+                    config.configuration.languageVersionSettings,
+                    config.configuration.get(CommonConfigurationKeys.METADATA_VERSION) as? JsMetadataVersion ?: JsMetadataVersion.INSTANCE
+                )
+                val metaFileContent = serializedMetadata.asString()
                 val sourceFilesForMetaFile = ArrayList(sourceFiles)
                 val jsMetaFile = SimpleOutputFile(sourceFilesForMetaFile, metaFileName, metaFileContent)
                 outputFiles.add(jsMetaFile)
 
-                KotlinJavascriptSerializationUtil.toContentMap(bindingContext, moduleDescriptor).forEach {
-                    // TODO Add correct source files
-                    outputFiles.add(SimpleOutputBinaryFile(emptyList(), config.moduleId + VfsUtilCore.VFS_SEPARATOR_CHAR + it.key, it.value))
+                for (serializedPackage in serializedMetadata.serializedPackages()) {
+                    outputFiles.add(kjsmFileForPackage(serializedPackage.fqName, serializedPackage.bytes))
                 }
             }
 
@@ -125,6 +134,15 @@ abstract class TranslationResult protected constructor(val diagnostics: Diagnost
             }
 
             return SimpleOutputFileCollection(outputFiles)
+        }
+
+        private fun kjsmFileForPackage(packageFqName: FqName, bytes: ByteArray): SimpleOutputBinaryFile {
+            val ktFiles = (bindingContext.get(BindingContext.PACKAGE_TO_FILES, packageFqName) ?: emptyList())
+            val sourceFiles = ktFiles.map { VfsUtilCore.virtualToIoFile(it.virtualFile) }
+            val relativePath = config.moduleId +
+                    VfsUtilCore.VFS_SEPARATOR_CHAR +
+                    JsSerializerProtocol.getKjsmFilePath(packageFqName)
+            return SimpleOutputBinaryFile(sourceFiles, relativePath, bytes)
         }
 
         private fun getCode(output: TextOutput, sourceLocationConsumer: SourceLocationConsumer?) {

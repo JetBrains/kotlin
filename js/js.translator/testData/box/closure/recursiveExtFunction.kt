@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 999
+// EXPECTED_REACHABLE_NODES: 1287
 package foo
 
 fun Int.foo(a: Int): Int {

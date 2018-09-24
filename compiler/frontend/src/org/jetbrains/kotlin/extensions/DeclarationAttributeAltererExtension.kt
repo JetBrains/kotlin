@@ -24,21 +24,35 @@ import org.jetbrains.kotlin.resolve.BindingContext
 
 interface DeclarationAttributeAltererExtension {
     companion object : ProjectExtensionDescriptor<DeclarationAttributeAltererExtension>(
-            "org.jetbrains.kotlin.declarationAttributeAltererExtension",
-            DeclarationAttributeAltererExtension::class.java
+        "org.jetbrains.kotlin.declarationAttributeAltererExtension",
+        DeclarationAttributeAltererExtension::class.java
     )
 
     /**
      * Returns the new modality for the [declaration], or null if the [currentModality] is good enough.
      */
     fun refineDeclarationModality(
-            modifierListOwner: KtModifierListOwner,
-            declaration: DeclarationDescriptor?,
-            containingDeclaration: DeclarationDescriptor?,
-            currentModality: Modality,
-            bindingContext: BindingContext,
-            isImplicitModality: Boolean
+        modifierListOwner: KtModifierListOwner,
+        declaration: DeclarationDescriptor?,
+        containingDeclaration: DeclarationDescriptor?,
+        currentModality: Modality,
+        bindingContext: BindingContext,
+        isImplicitModality: Boolean
     ): Modality? = null
 
-    fun shouldConvertFirstSAMParameterToReceiver(function: FunctionDescriptor) : Boolean = false
+    @Deprecated(
+        "Use refineDeclarationModality(modifierListOwner, declaration, containingDeclaration, currentModality, bindingContext, isImplicitModality)",
+        ReplaceWith("refineDeclarationModality(modifierListOwner, declaration, containingDeclaration, currentModality, bindingContext, false)")
+    )
+    fun refineDeclarationModality(
+        modifierListOwner: KtModifierListOwner,
+        declaration: DeclarationDescriptor?,
+        containingDeclaration: DeclarationDescriptor?,
+        currentModality: Modality,
+        bindingContext: BindingContext
+    ): Modality? {
+        return refineDeclarationModality(modifierListOwner, declaration, containingDeclaration, currentModality, bindingContext, false)
+    }
+
+    fun shouldConvertFirstSAMParameterToReceiver(function: FunctionDescriptor): Boolean = false
 }

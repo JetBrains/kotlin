@@ -32,9 +32,9 @@ import org.jetbrains.kotlin.utils.DFS
 object FiniteBoundRestrictionChecker {
     @JvmStatic
     fun check(
-            declaration: KtClass,
-            classDescriptor: ClassDescriptor,
-            diagnosticHolder: DiagnosticSink
+        declaration: KtClass,
+        classDescriptor: ClassDescriptor,
+        diagnosticHolder: DiagnosticSink
     ) {
         val typeConstructor = classDescriptor.typeConstructor
         if (typeConstructor.parameters.isEmpty()) return
@@ -102,7 +102,7 @@ object FiniteBoundRestrictionChecker {
         }
     }
 
-    private interface  Graph<T> {
+    private interface Graph<T> {
         val nodes: Set<T>
         fun getNeighbors(node: T): List<T>
     }

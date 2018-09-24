@@ -1,3 +1,4 @@
+// !WITH_NEW_INFERENCE
 // !DIAGNOSTICS: -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE -UNUSED_VALUE -UNUSED_PARAMETER
 
 package p
@@ -18,5 +19,5 @@ private fun foo() = run {
 
 fun test() {
     var x = foo(1)
-    x = <!TYPE_MISMATCH!>foo()<!>
+    x = <!NI;TYPE_MISMATCH, TYPE_MISMATCH!>foo()<!>
 }

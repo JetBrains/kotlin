@@ -26,9 +26,9 @@ open class ProjectExtensionDescriptor<T>(name: String, private val extensionClas
 
     fun registerExtensionPoint(project: Project) {
         Extensions.getArea(project).registerExtensionPoint(
-                extensionPointName.name,
-                extensionClass.name,
-                ExtensionPoint.Kind.INTERFACE
+            extensionPointName.name,
+            extensionClass.name,
+            ExtensionPoint.Kind.INTERFACE
         )
     }
 

@@ -2,6 +2,8 @@ package
 
 public external val baz: kotlin.Int
 public external val boo: kotlin.Int
+public val useBaz: kotlin.Int
+public val useBoo: kotlin.Int
 public external fun bar(): kotlin.Unit
 public external fun foo(): kotlin.Unit
 

@@ -31,17 +31,15 @@ import org.jetbrains.kotlin.script.KotlinScriptDefinitionFromAnnotatedTemplate
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestJdkKind
+import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase.resetApplicationToNull
-import org.junit.Test
 import java.io.Closeable
 import java.io.File
 import java.net.URLClassLoader
 import java.util.concurrent.atomic.AtomicInteger
 import java.util.concurrent.locks.ReentrantReadWriteLock
 
-class GenericReplTest : TestCase() {
-
-    @Test
+class GenericReplTest : KtUsefulTestCase() {
     fun testReplBasics() {
         TestRepl().use { repl ->
             val state = repl.createState()
@@ -80,7 +78,6 @@ class GenericReplTest : TestCase() {
         }
     }
 
-    @Test
     fun testReplErrors() {
         TestRepl().use { repl ->
             val state = repl.createState()
@@ -94,7 +91,6 @@ class GenericReplTest : TestCase() {
         }
     }
 
-    @Test
     fun testReplCodeFormat() {
         TestRepl().use { repl ->
             val state = repl.createState()
@@ -106,7 +102,6 @@ class GenericReplTest : TestCase() {
         }
     }
 
-    @Test
     fun testRepPackage() {
         TestRepl().use { repl ->
             val state = repl.createState()
@@ -133,7 +128,6 @@ class GenericReplTest : TestCase() {
         }
     }
 
-    @Test
     fun testCompilingReplEvaluator() {
         TestRepl().use { replBase ->
             val repl = GenericReplCompilingEvaluator(replBase.replCompiler, replBase.baseClasspath, fallbackScriptArgs = replBase.emptyScriptArgs)
@@ -148,7 +142,6 @@ class GenericReplTest : TestCase() {
         }
     }
 
-    @Test
     fun test256Evals() {
         TestRepl().use { repl ->
             val state = repl.createState()
@@ -164,11 +157,24 @@ class GenericReplTest : TestCase() {
             assertEquals(res.second.toString(), evals, (res.second as? ReplEvalResult.ValueResult)?.value)
         }
     }
+
+    fun testReplSlowdownKt22740() {
+        TestRepl().use { repl ->
+            val state = repl.createState()
+
+            repl.compileAndEval(state, ReplCodeLine(0, 0, "class Test<T>(val x: T) { fun <R> map(f: (T) -> R): R = f(x) }".trimIndent()))
+
+            // We expect that analysis time is not exponential
+            for (i in 1..60) {
+                repl.compileAndEval(state, ReplCodeLine(i, 0, "fun <T> Test<T>.map(f: (T) -> Double): List<Double> = listOf(f(this.x))"))
+            }
+        }
+    }
 }
 
 
 internal class TestRepl(
-        templateClasspath: List<File> = listOf(File(KotlinIntegrationTestBase.getCompilerLib(), "kotlin-runtime.jar")),
+        templateClasspath: List<File> = listOf(File(KotlinIntegrationTestBase.getCompilerLib(), "kotlin-stdlib.jar")),
         templateClassName: String = "kotlin.script.templates.standard.ScriptTemplateWithArgs",
         repeatingMode: ReplRepeatingMode = ReplRepeatingMode.NONE
 ) : Closeable {
@@ -191,7 +197,7 @@ internal class TestRepl(
     private fun makeScriptDefinition(templateClasspath: List<File>, templateClassName: String): KotlinScriptDefinition {
         val classloader = URLClassLoader(templateClasspath.map { it.toURI().toURL() }.toTypedArray(), this::class.java.classLoader)
         val cls = classloader.loadClass(templateClassName)
-        return KotlinScriptDefinitionFromAnnotatedTemplate(cls.kotlin, null, null, emptyMap())
+        return KotlinScriptDefinitionFromAnnotatedTemplate(cls.kotlin, emptyMap())
     }
 
     private val scriptDef = makeScriptDefinition(templateClasspath, templateClassName)

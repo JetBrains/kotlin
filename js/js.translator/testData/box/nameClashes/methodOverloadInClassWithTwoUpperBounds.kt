@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 1015
+// EXPECTED_REACHABLE_NODES: 1303
 package foo
 
 interface TraitA

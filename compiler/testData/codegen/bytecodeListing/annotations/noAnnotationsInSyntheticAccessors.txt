@@ -1,0 +1,22 @@
+@java.lang.annotation.Retention
+@kotlin.Metadata
+public annotation class Ann
+
+@kotlin.Metadata
+public final class Foo$Companion {
+    inner class Foo$Companion
+    private method <init>(): void
+    public synthetic method <init>(p0: kotlin.jvm.internal.DefaultConstructorMarker): void
+    public final method foo(): void
+}
+
+@kotlin.Metadata
+public final class Foo {
+    public final static field Companion: Foo$Companion
+    inner class Foo$Companion
+    static method <clinit>(): void
+    private @Ann method <init>(@Ann p0: java.lang.String): void
+    public synthetic method <init>(p0: java.lang.String, p1: kotlin.jvm.internal.DefaultConstructorMarker): void
+    public synthetic final static method access$foo(p0: Foo, p1: java.lang.String): void
+    private final @Ann method foo(@Ann p0: java.lang.String): void
+}

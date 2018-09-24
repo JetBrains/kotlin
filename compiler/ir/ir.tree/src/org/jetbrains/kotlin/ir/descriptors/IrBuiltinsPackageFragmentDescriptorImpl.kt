@@ -16,19 +16,15 @@
 
 package org.jetbrains.kotlin.ir.descriptors
 
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptorVisitor
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithSource
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.descriptors.SourceElement
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
-import org.jetbrains.kotlin.descriptors.IrBuiltinsPackageFragmentDescriptor
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 
 class IrBuiltinsPackageFragmentDescriptorImpl(
-        val containingModule: ModuleDescriptor,
-        override val fqName: FqName
+    val containingModule: ModuleDescriptor,
+    override val fqName: FqName
 ) : IrBuiltinsPackageFragmentDescriptor {
     private val shortName = fqName.shortName()
 
@@ -48,5 +44,16 @@ class IrBuiltinsPackageFragmentDescriptorImpl(
 
     override fun acceptVoid(visitor: DeclarationDescriptorVisitor<Void, Void>) {
         visitor.visitPackageFragmentDescriptor(this, null)
+    }
+
+    override fun equals(other: Any?): Boolean {
+        return this === other ||
+                other is IrBuiltinsPackageFragmentDescriptorImpl &&
+                fqName == other.fqName &&
+                containingModule == other.containingModule
+    }
+
+    override fun hashCode(): Int {
+        return containingModule.hashCode() * 31 + fqName.hashCode()
     }
 }

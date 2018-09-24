@@ -1,0 +1,43 @@
+kotlinx
+
+
+kotlinx.android
+
+
+kotlinx.android.synthetic
+
+    public fun android.app.Activity.clearFindViewByIdCache(): kotlin.Unit
+    public fun android.app.Fragment.clearFindViewByIdCache(): kotlin.Unit
+    public fun android.view.View.clearFindViewByIdCache(): kotlin.Unit
+    public fun kotlinx.android.extensions.LayoutContainer.clearFindViewByIdCache(): kotlin.Unit
+
+
+kotlinx.android.synthetic.main
+
+
+kotlinx.android.synthetic.main.test
+
+    public val android.app.Activity.log_i_n: android.widget.Button!
+    public val android.app.Dialog.log_i_n: android.widget.Button!
+    public val android.app.Fragment.log_i_n: android.widget.Button!
+    public val kotlinx.android.extensions.LayoutContainer.log_i_n: android.widget.Button!
+    public val android.app.Activity.sonuç: android.widget.TextView!
+    public val android.app.Dialog.sonuç: android.widget.TextView!
+    public val android.app.Fragment.sonuç: android.widget.TextView!
+    public val kotlinx.android.extensions.LayoutContainer.sonuç: android.widget.TextView!
+    public val android.app.Activity.привет: android.widget.EditText!
+    public val android.app.Dialog.привет: android.widget.EditText!
+    public val android.app.Fragment.привет: android.widget.EditText!
+    public val kotlinx.android.extensions.LayoutContainer.привет: android.widget.EditText!
+    public val android.app.Activity.こんにちは: android.widget.Button!
+    public val android.app.Dialog.こんにちは: android.widget.Button!
+    public val android.app.Fragment.こんにちは: android.widget.Button!
+    public val kotlinx.android.extensions.LayoutContainer.こんにちは: android.widget.Button!
+
+
+kotlinx.android.synthetic.main.test.view
+
+    public val android.view.View.log_i_n: android.widget.Button!
+    public val android.view.View.sonuç: android.widget.TextView!
+    public val android.view.View.привет: android.widget.EditText!
+    public val android.view.View.こんにちは: android.widget.Button!

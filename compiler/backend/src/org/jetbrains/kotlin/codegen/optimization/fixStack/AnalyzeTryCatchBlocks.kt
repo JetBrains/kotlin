@@ -30,15 +30,15 @@ import java.util.*
 
 private class DecompiledTryDescriptor(val tryStartLabel: LabelNode) {
     // Only used for assertions
-    var defaultHandlerTcb : TryCatchBlockNode? = null
+    var defaultHandlerTcb: TryCatchBlockNode? = null
     val handlerStartLabels = hashSetOf<LabelNode>()
 }
 
 private fun TryCatchBlockNode.isDefaultHandlerNode(): Boolean =
-        start == handler
+    start == handler
 
 private fun MethodNode.debugString(tcb: TryCatchBlockNode): String =
-        "TCB<${instructions.indexOf(tcb.start)}, ${instructions.indexOf(tcb.end)}, ${instructions.indexOf(tcb.handler)}>"
+    "TCB<${instructions.indexOf(tcb.start)}, ${instructions.indexOf(tcb.end)}, ${instructions.indexOf(tcb.handler)}>"
 
 internal fun insertTryCatchBlocksMarkers(methodNode: MethodNode): Map<AbstractInsnNode, AbstractInsnNode> {
     if (methodNode.tryCatchBlocks.isEmpty()) return emptyMap()
@@ -64,9 +64,9 @@ private fun transformTryCatchBlocks(methodNode: MethodNode, newTryStartLabels: H
 }
 
 private fun insertSaveRestoreStackMarkers(
-        decompiledTryDescriptorForStart: Map<LabelNode, DecompiledTryDescriptor>,
-        methodNode: MethodNode,
-        newTryStartLabels: MutableMap<LabelNode, LabelNode>
+    decompiledTryDescriptorForStart: Map<LabelNode, DecompiledTryDescriptor>,
+    methodNode: MethodNode,
+    newTryStartLabels: MutableMap<LabelNode, LabelNode>
 ): Map<AbstractInsnNode, AbstractInsnNode> {
     val restoreStackToSaveMarker = hashMapOf<AbstractInsnNode, AbstractInsnNode>()
     val saveStackMarkerByTryLabel = hashMapOf<LabelNode, AbstractInsnNode>()
@@ -92,8 +92,7 @@ private fun insertSaveRestoreStackMarkers(
                 methodNode.instructions.insertBefore(nopNode, saveStackMarker)
                 methodNode.instructions.insertBefore(nopNode, newTryStartLabel)
                 methodNode.instructions.insert(nopNode, restoreStackMarker)
-            }
-            else {
+            } else {
                 saveStackMarker = saveStackMarkerByTryLabel[tryStartLabel]!!
             }
 

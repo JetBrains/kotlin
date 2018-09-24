@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,21 +18,18 @@ package org.jetbrains.kotlin.idea.quickfix
 
 import com.intellij.codeInsight.daemon.quickFix.ActionHint
 import com.intellij.codeInsight.intention.IntentionAction
-import com.intellij.codeInspection.InspectionProfileEntry
-import com.intellij.codeInspection.LocalInspectionTool
 import com.intellij.codeInspection.SuppressableProblemGroup
 import com.intellij.openapi.command.CommandProcessor
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.CharsetToolkit
 import com.intellij.rt.execution.junit.FileComparisonFailure
-import com.intellij.testFramework.InspectionTestUtil
 import com.intellij.testFramework.LightPlatformTestCase
 import com.intellij.testFramework.LightProjectDescriptor
 import com.intellij.testFramework.UsefulTestCase
 import com.intellij.util.ui.UIUtil
 import junit.framework.TestCase
-import org.jetbrains.kotlin.idea.quickfix.utils.findInspectionFile
+import org.jetbrains.kotlin.idea.facet.KotlinFacet
 import org.jetbrains.kotlin.idea.test.*
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
@@ -40,13 +37,22 @@ import org.junit.Assert
 import java.io.File
 import java.io.IOException
 
-abstract class AbstractQuickFixTest : KotlinLightCodeInsightFixtureTestCase() {
+abstract class AbstractQuickFixTest : KotlinLightCodeInsightFixtureTestCase(), QuickFixTest {
     @Throws(Exception::class)
     protected fun doTest(beforeFileName: String) {
-        enableInspections(beforeFileName)
+        val beforeFileText = FileUtil.loadFile(File(beforeFileName))
+        configureCompilerOptions(beforeFileText, project, module)
 
-        doKotlinQuickFixTest(beforeFileName)
-        checkForUnexpectedErrors()
+        val inspections = parseInspectionsToEnable(beforeFileName, beforeFileText).toTypedArray()
+
+        try {
+            myFixture.enableInspections(*inspections)
+
+            doKotlinQuickFixTest(beforeFileName)
+            checkForUnexpectedErrors()
+        } finally {
+            myFixture.disableInspections(*inspections)
+        }
     }
 
     override fun getProjectDescriptor(): LightProjectDescriptor {
@@ -67,6 +73,13 @@ abstract class AbstractQuickFixTest : KotlinLightCodeInsightFixtureTestCase() {
 
     }
 
+    private fun getPathAccordingToPackage(name: String, text: String): String {
+        val packagePath = text.lines().let { it.find { it.trim().startsWith("package") } }
+                                  ?.removePrefix("package")
+                                  ?.trim()?.replace(".", "/") ?: ""
+        return packagePath + "/" + name
+    }
+
     private fun doKotlinQuickFixTest(beforeFileName: String) {
         val testFile = File(beforeFileName)
         CommandProcessor.getInstance().executeCommand(project, {
@@ -84,13 +97,29 @@ abstract class AbstractQuickFixTest : KotlinLightCodeInsightFixtureTestCase() {
 
                 expectedErrorMessage = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// SHOULD_FAIL_WITH: ")
                 val contents = StringUtil.convertLineSeparators(fileText)
-                myFixture.configureByText(testFile.canonicalFile.name, contents)
+                var fileName = testFile.canonicalFile.name
+                val putIntoPackageFolder = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// FORCE_PACKAGE_FOLDER") != null
+                if (putIntoPackageFolder) {
+                    fileName = getPathAccordingToPackage(fileName, contents)
+                    myFixture.addFileToProject(fileName, contents)
+                    myFixture.configureByFile(fileName)
+                }
+                else {
+                    myFixture.configureByText(fileName, contents)
+                }
 
                 checkForUnexpectedActions()
 
                 configExtra(fileText)
 
-                applyAction(contents, testFile.canonicalPath)
+                applyAction(contents, fileName)
+
+                val compilerArgumentsAfter = InTextDirectivesUtils.findStringWithPrefixes(fileText, "COMPILER_ARGUMENTS_AFTER: ")
+                if (compilerArgumentsAfter != null) {
+                    val facetSettings = KotlinFacet.get(module)!!.configuration.settings
+                    val compilerSettings = facetSettings.compilerSettings
+                    TestCase.assertEquals(compilerArgumentsAfter, compilerSettings?.additionalArguments)
+                }
 
                 UsefulTestCase.assertEmpty(expectedErrorMessage)
             }
@@ -101,9 +130,11 @@ abstract class AbstractQuickFixTest : KotlinLightCodeInsightFixtureTestCase() {
                 throw e
             }
             catch (e: Throwable) {
-                if (expectedErrorMessage == null || expectedErrorMessage != e.message) {
-                    e.printStackTrace()
-                    TestCase.fail(getTestName(true))
+                if (expectedErrorMessage == null) {
+                    throw e
+                }
+                else {
+                    Assert.assertEquals("Wrong exception message", expectedErrorMessage, e.message)
                 }
             }
             finally {
@@ -115,8 +146,7 @@ abstract class AbstractQuickFixTest : KotlinLightCodeInsightFixtureTestCase() {
         }, "", "")
     }
 
-    private fun applyAction(contents: String, testFullPath: String) {
-        val fileName = testFullPath.substringAfterLast(File.separatorChar, "")
+    private fun applyAction(contents: String, fileName: String) {
         val actionHint = ActionHint.parse(myFixture.file, contents.replace("\${file}", fileName, ignoreCase = true))
         val intention = findActionWithText(actionHint.expectedText)
         if (actionHint.shouldPresent()) {
@@ -129,41 +159,14 @@ abstract class AbstractQuickFixTest : KotlinLightCodeInsightFixtureTestCase() {
             UIUtil.dispatchAllInvocationEvents()
 
             if (!shouldBeAvailableAfterExecution()) {
-                assertNull("Action '${actionHint.expectedText}' is still available after its invocation in test " + testFullPath,
+                assertNull("Action '${actionHint.expectedText}' is still available after its invocation in test " + fileName,
                             findActionWithText(actionHint.expectedText))
             }
 
-            myFixture.checkResultByFile(File(testFullPath).name + ".after")
+            myFixture.checkResultByFile(File(fileName).name + ".after")
         }
         else {
             assertNull("Action with text ${actionHint.expectedText} is present, but should not", intention)
-        }
-    }
-
-    private fun enableInspections(beforeFileName: String) {
-        val beforeFileText = FileUtil.loadFile(File(beforeFileName))
-        val toolsStrings = InTextDirectivesUtils.findListWithPrefixes(beforeFileText, "TOOL:")
-        if (toolsStrings.isNotEmpty()) {
-            val inspections =  toolsStrings.map { toolFqName ->
-                try {
-                    val aClass = Class.forName(toolFqName)
-                    return@map aClass.newInstance() as LocalInspectionTool
-                }
-                catch (e: Exception) {
-                    throw IllegalArgumentException("Failed to create inspection for key '$toolFqName'", e)
-                }
-            }
-            myFixture.enableInspections(*inspections.toTypedArray())
-            return
-        }
-
-        val inspectionFile = findInspectionFile(File(beforeFileName).parentFile)
-        if (inspectionFile != null) {
-            val className = FileUtil.loadFile(inspectionFile).trim { it <= ' ' }
-            val inspectionClass = Class.forName(className) as Class<InspectionProfileEntry>
-            val tools = InspectionTestUtil.instantiateTools(
-                    listOf<Class<out InspectionProfileEntry>>(inspectionClass))
-            myFixture.enableInspections(*tools.toTypedArray())
         }
     }
 

@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.javac.wrappers.symbols
 import com.sun.tools.javac.code.Symbol
 import org.jetbrains.kotlin.javac.JavacWrapper
 import org.jetbrains.kotlin.load.java.structure.*
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import javax.lang.model.element.AnnotationMirror
 import javax.lang.model.element.AnnotationValue
@@ -63,16 +64,17 @@ class SymbolBasedReferenceAnnotationArgument(
         name: Name,
         javac: JavacWrapper
 ) : SymbolBasedAnnotationArgument(name, javac), JavaEnumValueAnnotationArgument {
-    override val entryName: Name?
-        get() = name
-
-    override fun resolve(): SymbolBasedField {
-        val containingClass = (element.enclosingElement as Symbol.ClassSymbol).let {
-            SymbolBasedClass(it, javac, null, it.classfile)
-        }
-        return SymbolBasedField(element, containingClass, javac)
+    // TODO: do not create extra objects here
+    private val javaField: JavaField? by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        val containingClass = element.enclosingElement as Symbol.ClassSymbol
+        SymbolBasedField(element, SymbolBasedClass(containingClass, javac, null, containingClass.classfile), javac)
     }
 
+    override val enumClassId: ClassId?
+        get() = javaField?.containingClass?.classId
+
+    override val entryName: Name?
+        get() = javaField?.name
 }
 
 class SymbolBasedClassObjectAnnotationArgument(

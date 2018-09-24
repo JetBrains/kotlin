@@ -29,28 +29,28 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingContextUtils
 
 class PseudocodeVariableDataCollector(
-        private val bindingContext: BindingContext,
-        private val pseudocode: Pseudocode
+    private val bindingContext: BindingContext,
+    private val pseudocode: Pseudocode
 ) {
     val blockScopeVariableInfo = computeBlockScopeVariableInfo(pseudocode)
 
     fun <I : ControlFlowInfo<*, *>> collectData(
-            traversalOrder: TraversalOrder,
-            initialInfo: I,
-            instructionDataMergeStrategy: (Instruction, Collection<I>) -> Edges<I>
+        traversalOrder: TraversalOrder,
+        initialInfo: I,
+        instructionDataMergeStrategy: (Instruction, Collection<I>) -> Edges<I>
     ): Map<Instruction, Edges<I>> {
         return pseudocode.collectData(
-                traversalOrder,
-                instructionDataMergeStrategy,
-                { from, to, info -> filterOutVariablesOutOfScope(from, to, info) },
-                initialInfo
+            traversalOrder,
+            instructionDataMergeStrategy,
+            { from, to, info -> filterOutVariablesOutOfScope(from, to, info) },
+            initialInfo
         )
     }
 
     private fun <I : ControlFlowInfo<*, *>> filterOutVariablesOutOfScope(
-            from: Instruction,
-            to: Instruction,
-            info: I
+        from: Instruction,
+        to: Instruction,
+        info: I
     ): I {
         // If an edge goes from deeper scope to a less deep one, this means that it points outside of the deeper scope.
         val toDepth = to.blockScope.depth
@@ -74,9 +74,11 @@ class PseudocodeVariableDataCollector(
                 val variableDeclarationElement = instruction.variableDeclarationElement
                 val descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, variableDeclarationElement) ?: return@traverse
                 val variableDescriptor = BindingContextUtils.variableDescriptorForDeclaration(descriptor)
-                                         ?: throw AssertionError("Variable or class descriptor should correspond to " +
-                                                                 "the instruction for ${instruction.element.text}.\n" +
-                                                                 "Descriptor: $descriptor")
+                        ?: throw AssertionError(
+                            "Variable or class descriptor should correspond to " +
+                                    "the instruction for ${instruction.element.text}.\n" +
+                                    "Descriptor: $descriptor"
+                        )
                 blockScopeVariableInfo.registerVariableDeclaredInScope(variableDescriptor, instruction.blockScope)
             }
         })
@@ -85,8 +87,8 @@ class PseudocodeVariableDataCollector(
 }
 
 interface BlockScopeVariableInfo {
-    val declaredIn : Map<VariableDescriptor, BlockScope>
-    val scopeVariables : Map<BlockScope, Collection<VariableDescriptor>>
+    val declaredIn: Map<VariableDescriptor, BlockScope>
+    val scopeVariables: Map<BlockScope, Collection<VariableDescriptor>>
 }
 
 class BlockScopeVariableInfoImpl : BlockScopeVariableInfo {

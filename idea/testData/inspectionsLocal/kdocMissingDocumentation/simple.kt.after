@@ -1,0 +1,6 @@
+// PROBLEM: "Class "A" is missing documentation"
+
+/**
+ * <caret>
+ */
+class A

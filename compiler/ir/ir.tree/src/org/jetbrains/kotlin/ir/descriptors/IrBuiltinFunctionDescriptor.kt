@@ -31,22 +31,23 @@ interface IrBuiltinOperatorDescriptor : SimpleFunctionDescriptor
 interface IrBuiltinValueParameterDescriptor : ValueParameterDescriptor
 
 abstract class IrBuiltinOperatorDescriptorBase(containingDeclaration: DeclarationDescriptor, name: Name) :
-        DeclarationDescriptorNonRootImpl(containingDeclaration, Annotations.EMPTY, name, SourceElement.NO_SOURCE),
-        IrBuiltinOperatorDescriptor
-{
+    DeclarationDescriptorNonRootImpl(containingDeclaration, Annotations.EMPTY, name, SourceElement.NO_SOURCE),
+    IrBuiltinOperatorDescriptor {
     override fun getDispatchReceiverParameter(): ReceiverParameterDescriptor? = null
     override fun getExtensionReceiverParameter(): ReceiverParameterDescriptor? = null
     override fun getOriginal(): SimpleFunctionDescriptor = this
     override fun substitute(substitutor: TypeSubstitutor): FunctionDescriptor = throw UnsupportedOperationException()
     override fun getOverriddenDescriptors(): Collection<FunctionDescriptor> = emptyList()
-    override fun setOverriddenDescriptors(overriddenDescriptors: Collection<CallableMemberDescriptor>) = throw UnsupportedOperationException()
+    override fun setOverriddenDescriptors(overriddenDescriptors: Collection<CallableMemberDescriptor>) =
+        throw UnsupportedOperationException()
+
     override fun getTypeParameters(): List<TypeParameterDescriptor> = emptyList()
     override fun getVisibility(): Visibility = Visibilities.PUBLIC
     override fun getModality(): Modality = Modality.FINAL
     override fun getKind(): CallableMemberDescriptor.Kind = CallableMemberDescriptor.Kind.SYNTHESIZED
     override fun getInitialSignatureDescriptor(): FunctionDescriptor? = null
     override fun isExternal(): Boolean = false
-    override fun <V : Any> getUserData(key: FunctionDescriptor.UserDataKey<V>?): V? = null
+    override fun <V : Any> getUserData(key: CallableDescriptor.UserDataKey<V>?): V? = null
     override fun isHiddenForResolutionEverywhereBesideSupercalls(): Boolean = false
     override fun isHiddenToOvercomeSignatureClash(): Boolean = false
     override fun isInfix(): Boolean = false
@@ -59,11 +60,14 @@ abstract class IrBuiltinOperatorDescriptorBase(containingDeclaration: Declaratio
     override fun hasStableParameterNames(): Boolean = true
     override fun hasSynthesizedParameterNames(): Boolean = false
 
-    override fun copy(newOwner: DeclarationDescriptor?, modality: Modality?, visibility: Visibility?,
-                      kind: CallableMemberDescriptor.Kind?, copyOverrides: Boolean) =
-            throw UnsupportedOperationException()
+    override fun copy(
+        newOwner: DeclarationDescriptor?, modality: Modality?, visibility: Visibility?,
+        kind: CallableMemberDescriptor.Kind?, copyOverrides: Boolean
+    ) =
+        throw UnsupportedOperationException()
+
     override fun newCopyBuilder() =
-            throw UnsupportedOperationException()
+        throw UnsupportedOperationException()
 
     override fun <R : Any?, D : Any?> accept(visitor: DeclarationDescriptorVisitor<R, D>, data: D): R {
         return visitor.visitFunctionDescriptor(this, data)
@@ -71,9 +75,9 @@ abstract class IrBuiltinOperatorDescriptorBase(containingDeclaration: Declaratio
 }
 
 class IrSimpleBuiltinOperatorDescriptorImpl(
-        containingDeclaration: DeclarationDescriptor,
-        name: Name,
-        private val returnType: KotlinType
+    containingDeclaration: DeclarationDescriptor,
+    name: Name,
+    private val returnType: KotlinType
 ) : IrBuiltinOperatorDescriptorBase(containingDeclaration, name), IrBuiltinOperatorDescriptor {
     private val valueParameters: MutableList<IrBuiltinValueParameterDescriptor> = ArrayList()
 
@@ -83,15 +87,27 @@ class IrSimpleBuiltinOperatorDescriptorImpl(
 
     override fun getReturnType(): KotlinType = returnType
     override fun getValueParameters(): List<ValueParameterDescriptor> = valueParameters
+
+    override fun equals(other: Any?): Boolean {
+        return this === other ||
+                other is IrSimpleBuiltinOperatorDescriptorImpl &&
+                name == other.name &&
+                valueParameters.map { it.type } == other.valueParameters.map { it.type } &&
+                containingDeclaration == other.containingDeclaration
+    }
+
+    override fun hashCode(): Int {
+        return (containingDeclaration.hashCode() * 31 + name.hashCode()) * 31 + valueParameters.map { it.type }.hashCode()
+    }
 }
 
 class IrBuiltinValueParameterDescriptorImpl(
-        private val containingDeclaration: CallableDescriptor,
-        name: Name,
-        override val index: Int,
-        outType: KotlinType
+    private val containingDeclaration: CallableDescriptor,
+    name: Name,
+    override val index: Int,
+    outType: KotlinType
 ) : VariableDescriptorImpl(containingDeclaration, Annotations.EMPTY, name, outType, SourceElement.NO_SOURCE),
-        IrBuiltinValueParameterDescriptor {
+    IrBuiltinValueParameterDescriptor {
 
     override fun getContainingDeclaration(): CallableDescriptor = containingDeclaration
 
@@ -106,12 +122,25 @@ class IrBuiltinValueParameterDescriptorImpl(
     override fun getVisibility(): Visibility = Visibilities.LOCAL
 
     override fun copy(newOwner: CallableDescriptor, newName: Name, newIndex: Int): ValueParameterDescriptor =
-            throw UnsupportedOperationException()
+        throw UnsupportedOperationException()
 
     override fun substitute(substitutor: TypeSubstitutor): ValueParameterDescriptor =
-            throw UnsupportedOperationException()
+        throw UnsupportedOperationException()
 
     override fun <R : Any?, D : Any?> accept(visitor: DeclarationDescriptorVisitor<R, D>, data: D): R {
         return visitor.visitValueParameterDescriptor(this, data)
+    }
+
+    override fun equals(other: Any?): Boolean {
+        return this === other ||
+                other is IrBuiltinValueParameterDescriptorImpl &&
+                name == other.name &&
+                index == other.index &&
+                type == other.type &&
+                containingDeclaration == other.containingDeclaration
+    }
+
+    override fun hashCode(): Int {
+        return (name.hashCode() * 31 + index) * 31 + type.hashCode()
     }
 }

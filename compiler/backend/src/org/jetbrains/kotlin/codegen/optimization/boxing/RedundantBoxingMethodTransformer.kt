@@ -21,10 +21,11 @@ import org.jetbrains.kotlin.codegen.inline.insnOpcodeText
 import org.jetbrains.kotlin.codegen.inline.insnText
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods
 import org.jetbrains.kotlin.codegen.optimization.common.StrictBasicValue
-import org.jetbrains.kotlin.codegen.optimization.common.*
+import org.jetbrains.kotlin.codegen.optimization.common.remapLocalVariables
 import org.jetbrains.kotlin.codegen.optimization.fixStack.peek
 import org.jetbrains.kotlin.codegen.optimization.fixStack.top
 import org.jetbrains.kotlin.codegen.optimization.transformer.MethodTransformer
+import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
@@ -32,13 +33,12 @@ import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 import org.jetbrains.org.objectweb.asm.tree.*
 import org.jetbrains.org.objectweb.asm.tree.analysis.BasicValue
 import org.jetbrains.org.objectweb.asm.tree.analysis.Frame
-
 import java.util.*
 
-class RedundantBoxingMethodTransformer : MethodTransformer() {
+class RedundantBoxingMethodTransformer(private val generationState: GenerationState) : MethodTransformer() {
 
     override fun transform(internalClassName: String, node: MethodNode) {
-        val interpreter = RedundantBoxingInterpreter(node.instructions)
+        val interpreter = RedundantBoxingInterpreter(node.instructions, generationState)
         val frames = MethodTransformer.analyze(internalClassName, node, interpreter)
 
         interpretPopInstructionsForBoxedValues(interpreter, node, frames)
@@ -58,9 +58,9 @@ class RedundantBoxingMethodTransformer : MethodTransformer() {
     }
 
     private fun interpretPopInstructionsForBoxedValues(
-            interpreter: RedundantBoxingInterpreter,
-            node: MethodNode,
-            frames: Array<out Frame<BasicValue>?>
+        interpreter: RedundantBoxingInterpreter,
+        node: MethodNode,
+        frames: Array<out Frame<BasicValue>?>
     ) {
         for (i in frames.indices) {
             val insn = node.instructions[i]
@@ -80,9 +80,9 @@ class RedundantBoxingMethodTransformer : MethodTransformer() {
     }
 
     private fun removeValuesClashingWithVariables(
-            values: RedundantBoxedValuesCollection,
-            node: MethodNode,
-            frames: Array<Frame<BasicValue>>
+        values: RedundantBoxedValuesCollection,
+        node: MethodNode,
+        frames: Array<Frame<BasicValue>>
     ) {
         while (removeValuesClashingWithVariablesPass(values, node, frames)) {
             // do nothing
@@ -90,9 +90,9 @@ class RedundantBoxingMethodTransformer : MethodTransformer() {
     }
 
     private fun removeValuesClashingWithVariablesPass(
-            values: RedundantBoxedValuesCollection,
-            node: MethodNode,
-            frames: Array<out Frame<BasicValue>?>
+        values: RedundantBoxedValuesCollection,
+        node: MethodNode,
+        frames: Array<out Frame<BasicValue>?>
     ): Boolean {
         var needToRepeat = false
 
@@ -123,13 +123,13 @@ class RedundantBoxingMethodTransformer : MethodTransformer() {
     }
 
     private fun isUnsafeToRemoveBoxingForConnectedValues(usedValues: List<BasicValue>, unboxedType: Type): Boolean =
-            usedValues.any { input ->
-                if (input === StrictBasicValue.UNINITIALIZED_VALUE) return@any false
-                if (input !is BoxedBasicValue) return@any true
+        usedValues.any { input ->
+            if (input === StrictBasicValue.UNINITIALIZED_VALUE) return@any false
+            if (input !is BoxedBasicValue) return@any true
 
-                val descriptor = input.descriptor
-                !descriptor.isSafeToRemove || descriptor.unboxedType != unboxedType
-            }
+            val descriptor = input.descriptor
+            !descriptor.isSafeToRemove || descriptor.unboxedType != unboxedType
+        }
 
     private fun adaptLocalVariableTableForBoxedValues(node: MethodNode, frames: Array<Frame<BasicValue>>) {
         for (localVariableNode in node.localVariables) {
@@ -148,9 +148,9 @@ class RedundantBoxingMethodTransformer : MethodTransformer() {
     }
 
     private fun getValuesStoredOrLoadedToVariable(
-            localVariableNode: LocalVariableNode,
-            node: MethodNode,
-            frames: Array<out Frame<BasicValue>?>
+        localVariableNode: LocalVariableNode,
+        node: MethodNode,
+        frames: Array<out Frame<BasicValue>?>
     ): List<BasicValue> {
         val values = ArrayList<BasicValue>()
         val insnList = node.instructions
@@ -171,8 +171,7 @@ class RedundantBoxingMethodTransformer : MethodTransformer() {
                 (insn as VarInsnNode).`var` == localVariableNode.index) {
                 if (insn.getOpcode() == Opcodes.ASTORE) {
                     values.add(frame.top()!!)
-                }
-                else {
+                } else {
                     values.add(frame.getLocal(insn.`var`))
                 }
             }
@@ -205,8 +204,8 @@ class RedundantBoxingMethodTransformer : MethodTransformer() {
     }
 
     private fun adaptInstructionsForBoxedValues(
-            node: MethodNode,
-            values: RedundantBoxedValuesCollection
+        node: MethodNode,
+        values: RedundantBoxedValuesCollection
     ) {
         for (value in values) {
             adaptInstructionsForBoxedValue(node, value)
@@ -228,8 +227,7 @@ class RedundantBoxingMethodTransformer : MethodTransformer() {
     private fun adaptBoxingInstruction(node: MethodNode, value: BoxedValueDescriptor) {
         if (!value.isFromProgressionIterator()) {
             node.instructions.remove(value.boxingInsn)
-        }
-        else {
+        } else {
             val iterator = value.progressionIterator ?: error("iterator should not be null because isFromProgressionIterator returns true")
 
             //add checkcast to kotlin/<T>Iterator before next() call
@@ -237,20 +235,20 @@ class RedundantBoxingMethodTransformer : MethodTransformer() {
 
             //invoke concrete method (kotlin/<T>iterator.next<T>())
             node.instructions.set(
-                    value.boxingInsn,
-                    MethodInsnNode(
-                            Opcodes.INVOKEVIRTUAL,
-                            iterator.type.internalName, iterator.nextMethodName, iterator.nextMethodDesc,
-                            false
-                    )
+                value.boxingInsn,
+                MethodInsnNode(
+                    Opcodes.INVOKEVIRTUAL,
+                    iterator.type.internalName, iterator.nextMethodName, iterator.nextMethodDesc,
+                    false
+                )
             )
         }
     }
 
     private fun adaptCastInstruction(
-            node: MethodNode,
-            value: BoxedValueDescriptor,
-            castWithType: Pair<AbstractInsnNode, Type>
+        node: MethodNode,
+        value: BoxedValueDescriptor,
+        castWithType: Pair<AbstractInsnNode, Type>
     ) {
         val castInsn = castWithType.getFirst()
         val castInsnsListener = MethodNode(Opcodes.ASM5)
@@ -264,7 +262,7 @@ class RedundantBoxingMethodTransformer : MethodTransformer() {
     }
 
     private fun adaptInstruction(
-            node: MethodNode, insn: AbstractInsnNode, value: BoxedValueDescriptor
+        node: MethodNode, insn: AbstractInsnNode, value: BoxedValueDescriptor
     ) {
         val isDoubleSize = value.isDoubleSize()
 
@@ -286,8 +284,8 @@ class RedundantBoxingMethodTransformer : MethodTransformer() {
 
             Opcodes.INSTANCEOF -> {
                 node.instructions.insertBefore(
-                        insn,
-                        InsnNode(if (isDoubleSize) Opcodes.POP2 else Opcodes.POP)
+                    insn,
+                    InsnNode(if (isDoubleSize) Opcodes.POP2 else Opcodes.POP)
                 )
                 node.instructions.set(insn, InsnNode(Opcodes.ICONST_1))
             }
@@ -299,7 +297,7 @@ class RedundantBoxingMethodTransformer : MethodTransformer() {
                     insn.isJavaLangComparableCompareTo() ->
                         adaptJavaLangComparableCompareTo(node, insn, value)
                     insn.isJavaLangClassBoxing() ||
-                    insn.isJavaLangClassUnboxing() ->
+                            insn.isJavaLangClassUnboxing() ->
                         node.instructions.remove(insn)
                     else ->
                         throwCannotAdaptInstruction(insn)
@@ -309,8 +307,7 @@ class RedundantBoxingMethodTransformer : MethodTransformer() {
             Opcodes.INVOKEINTERFACE -> {
                 if (insn.isJavaLangComparableCompareTo()) {
                     adaptJavaLangComparableCompareTo(node, insn, value)
-                }
-                else {
+                } else {
                     throwCannotAdaptInstruction(insn)
                 }
             }
@@ -325,12 +322,12 @@ class RedundantBoxingMethodTransformer : MethodTransformer() {
     }
 
     private fun throwCannotAdaptInstruction(insn: AbstractInsnNode): Nothing =
-            throw AssertionError("Cannot adapt instruction: ${insn.insnText}")
+        throw AssertionError("Cannot adapt instruction: ${insn.insnText}")
 
     private fun adaptAreEqualIntrinsic(
-            node: MethodNode,
-            insn: AbstractInsnNode,
-            value: BoxedValueDescriptor
+        node: MethodNode,
+        insn: AbstractInsnNode,
+        value: BoxedValueDescriptor
     ) {
         val unboxedType = value.unboxedType
 
@@ -339,8 +336,8 @@ class RedundantBoxingMethodTransformer : MethodTransformer() {
                 adaptAreEqualIntrinsicForInt(node, insn)
             Type.LONG ->
                 adaptAreEqualIntrinsicForLong(node, insn)
-            Type.OBJECT ->
-                {}
+            Type.OBJECT -> {
+            }
             else ->
                 throw AssertionError("Unexpected unboxed type kind: $unboxedType")
         }
@@ -353,8 +350,7 @@ class RedundantBoxingMethodTransformer : MethodTransformer() {
                 fuseAreEqualWithBranch(node, insn, Opcodes.IF_ICMPNE, Opcodes.IF_ICMPEQ)
                 remove(insn)
                 remove(next)
-            }
-            else {
+            } else {
                 ifEqual1Else0(node, insn, Opcodes.IF_ICMPNE)
                 remove(insn)
             }
@@ -369,8 +365,7 @@ class RedundantBoxingMethodTransformer : MethodTransformer() {
                 fuseAreEqualWithBranch(node, insn, Opcodes.IFNE, Opcodes.IFEQ)
                 remove(insn)
                 remove(next)
-            }
-            else {
+            } else {
                 ifEqual1Else0(node, insn, Opcodes.IFNE)
                 remove(insn)
             }
@@ -378,10 +373,10 @@ class RedundantBoxingMethodTransformer : MethodTransformer() {
     }
 
     private fun fuseAreEqualWithBranch(
-            node: MethodNode,
-            insn: AbstractInsnNode,
-            ifEqualOpcode: Int,
-            ifNotEqualOpcode: Int
+        node: MethodNode,
+        insn: AbstractInsnNode,
+        ifEqualOpcode: Int,
+        ifNotEqualOpcode: Int
     ) {
         node.instructions.run {
             val next = insn.next
@@ -412,22 +407,22 @@ class RedundantBoxingMethodTransformer : MethodTransformer() {
     }
 
     private fun adaptJavaLangComparableCompareTo(
-            node: MethodNode,
-            insn: AbstractInsnNode,
-            value: BoxedValueDescriptor
+        node: MethodNode,
+        insn: AbstractInsnNode,
+        value: BoxedValueDescriptor
     ) {
         val unboxedType = value.unboxedType
 
         when (unboxedType.sort) {
-            Type.BOOLEAN, Type.BYTE, Type.SHORT, Type.INT, Type.CHAR -> 
+            Type.BOOLEAN, Type.BYTE, Type.SHORT, Type.INT, Type.CHAR ->
                 adaptJavaLangComparableCompareToForInt(node, insn)
-            Type.LONG -> 
+            Type.LONG ->
                 adaptJavaLangComparableCompareToForLong(node, insn)
-            Type.FLOAT -> 
+            Type.FLOAT ->
                 adaptJavaLangComparableCompareToForFloat(node, insn)
-            Type.DOUBLE -> 
+            Type.DOUBLE ->
                 adaptJavaLangComparableCompareToForDouble(node, insn)
-            else -> 
+            else ->
                 throw AssertionError("Unexpected unboxed type kind: $unboxedType")
         }
     }
@@ -438,15 +433,15 @@ class RedundantBoxingMethodTransformer : MethodTransformer() {
             val next2 = next?.next
             when {
                 next != null && next2 != null &&
-                next.opcode == Opcodes.ICONST_0 &&
-                next2.opcode >= Opcodes.IF_ICMPEQ && next2.opcode <= Opcodes.IF_ICMPLE -> {
+                        next.opcode == Opcodes.ICONST_0 &&
+                        next2.opcode >= Opcodes.IF_ICMPEQ && next2.opcode <= Opcodes.IF_ICMPLE -> {
                     // Fuse: compareTo + ICONST_0 + IF_ICMPxx -> IF_ICMPxx
                     remove(insn)
                     remove(next)
                 }
 
                 next != null &&
-                next.opcode >= Opcodes.IFEQ && next.opcode <= Opcodes.IFLE -> {
+                        next.opcode >= Opcodes.IFEQ && next.opcode <= Opcodes.IFLE -> {
                     // Fuse: compareTo + IFxx -> IF_ICMPxx
                     val nextLabel = (next as JumpInsnNode).label
                     val ifCmpOpcode = next.opcode - Opcodes.IFEQ + Opcodes.IF_ICMPEQ

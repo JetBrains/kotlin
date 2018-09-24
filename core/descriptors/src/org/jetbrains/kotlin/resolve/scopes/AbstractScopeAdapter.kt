@@ -55,6 +55,11 @@ abstract class AbstractScopeAdapter : MemberScope {
 
     override fun getFunctionNames() = workerScope.getFunctionNames()
     override fun getVariableNames() = workerScope.getVariableNames()
+    override fun getClassifierNames() = workerScope.getClassifierNames()
+
+    override fun recordLookup(name: Name, location: LookupLocation) {
+        workerScope.recordLookup(name, location)
+    }
 
     override fun printScopeStructure(p: Printer) {
         p.println(this::class.java.simpleName, " {")

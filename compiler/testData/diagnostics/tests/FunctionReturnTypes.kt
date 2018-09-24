@@ -1,3 +1,4 @@
+// !WITH_NEW_INFERENCE
 // !DIAGNOSTICS: -UNREACHABLE_CODE
 
 fun none() {}
@@ -44,7 +45,7 @@ fun intFunctionLiteral(): Int = <!TYPE_MISMATCH_DUE_TO_EQUALS_LAMBDA_IN_FUN!>{ 1
 fun blockReturnUnitMismatch() : Int {<!RETURN_TYPE_MISMATCH!>return<!>}
 fun blockReturnValueTypeMismatch() : Int {return <!CONSTANT_EXPECTED_TYPE_MISMATCH!>3.4<!>}
 fun blockReturnValueTypeMatch() : Int {return 1}
-fun blockReturnValueTypeMismatchUnit() : Int {return <!TYPE_MISMATCH!>Unit<!>}
+fun blockReturnValueTypeMismatchUnit() : Int {return <!NI;TYPE_MISMATCH, TYPE_MISMATCH!>Unit<!>}
 
 fun blockAndAndMismatch() : Int {
     <!UNUSED_EXPRESSION!>true && false<!>
@@ -66,7 +67,7 @@ fun blockAndAndMismatch5() : Int {
     (return <!CONSTANT_EXPECTED_TYPE_MISMATCH!>true<!>) || (return <!CONSTANT_EXPECTED_TYPE_MISMATCH!>false<!>)
 }
 fun blockReturnValueTypeMatch1() : Int {
-    return if (1 > 2) <!CONSTANT_EXPECTED_TYPE_MISMATCH!>1.0<!> else <!CONSTANT_EXPECTED_TYPE_MISMATCH!>2.0<!>
+    return <!NI;TYPE_MISMATCH, NI;TYPE_MISMATCH!>if (1 > 2) <!OI;CONSTANT_EXPECTED_TYPE_MISMATCH!>1.0<!> else <!OI;CONSTANT_EXPECTED_TYPE_MISMATCH!>2.0<!><!>
 }
 fun blockReturnValueTypeMatch2() : Int {
     return <!TYPE_MISMATCH!><!INVALID_IF_AS_EXPRESSION!>if<!> (1 > 2) 1<!>
@@ -133,8 +134,8 @@ fun blockNoReturnIfUnitInOneBranch(): Int {
         }
     }
     <!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
-fun nonBlockReturnIfEmptyIf(): Int = if (1 < 2) <!TYPE_MISMATCH!>{}<!> else <!TYPE_MISMATCH!>{}<!>
-fun nonBlockNoReturnIfUnitInOneBranch(): Int = if (1 < 2) <!TYPE_MISMATCH!>{}<!> else 2
+fun nonBlockReturnIfEmptyIf(): Int = <!NI;TYPE_MISMATCH, NI;TYPE_MISMATCH!>if (1 < 2) <!OI;TYPE_MISMATCH!>{}<!> else <!OI;TYPE_MISMATCH!>{}<!><!>
+fun nonBlockNoReturnIfUnitInOneBranch(): Int = <!NI;TYPE_MISMATCH, NI;TYPE_MISMATCH!>if (1 < 2) <!OI;TYPE_MISMATCH!>{}<!> else 2<!>
 
 val a = <!RETURN_NOT_ALLOWED!>return<!> 1
 
@@ -145,14 +146,14 @@ fun illegalConstantBlock(): String {
     return <!CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!>
 }
 fun illegalIfBody(): Int =
-        if (1 < 2) <!CONSTANT_EXPECTED_TYPE_MISMATCH!>'a'<!> else { <!CONSTANT_EXPECTED_TYPE_MISMATCH!>1.0<!> }
+        <!NI;TYPE_MISMATCH, NI;TYPE_MISMATCH, NI;TYPE_MISMATCH!>if (1 < 2) <!OI;CONSTANT_EXPECTED_TYPE_MISMATCH!>'a'<!> else { <!OI;CONSTANT_EXPECTED_TYPE_MISMATCH!>1.0<!> }<!>
 fun illegalIfBlock(): Boolean {
     if (1 < 2)
         return false
     else { return <!CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!> }
 }
 fun illegalReturnIf(): Char {
-    return if (1 < 2) 'a' else { <!CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!> }
+    return <!NI;TYPE_MISMATCH!>if (1 < 2) 'a' else { <!OI;CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!> }<!>
 }
 
 fun returnNothing(): Nothing {

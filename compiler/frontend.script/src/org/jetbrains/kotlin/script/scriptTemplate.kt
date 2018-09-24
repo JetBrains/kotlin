@@ -65,7 +65,7 @@ fun KotlinScriptExternalDependencies?.asFuture(): PseudoFuture<KotlinScriptExter
             replaceWith = ReplaceWith("kotlin.script.dependencies.ScriptDependenciesResolver"))
 interface ScriptDependenciesResolver {
 
-    enum class ReportSeverity { ERROR, WARNING, INFO, DEBUG }
+    enum class ReportSeverity { FATAL, ERROR, WARNING, INFO, DEBUG }
 
     fun resolve(script: ScriptContents,
                 environment: Map<String, Any?>?,

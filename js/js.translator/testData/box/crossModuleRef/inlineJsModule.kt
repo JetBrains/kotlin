@@ -1,4 +1,5 @@
-// EXPECTED_REACHABLE_NODES: 1070
+// IGNORE_BACKEND: JS_IR
+// EXPECTED_REACHABLE_NODES: 1316
 // MODULE: lib1
 // FILE: lib1.js
 define("lib1", [], function() {

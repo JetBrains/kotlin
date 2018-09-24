@@ -16,11 +16,12 @@
 
 package org.jetbrains.kotlin.incremental
 
+import org.jetbrains.kotlin.metadata.ProtoBuf
+import org.jetbrains.kotlin.metadata.deserialization.Flags
+import org.jetbrains.kotlin.metadata.deserialization.NameResolver
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.protobuf.MessageLite
-import org.jetbrains.kotlin.serialization.Flags
-import org.jetbrains.kotlin.serialization.ProtoBuf
-import org.jetbrains.kotlin.serialization.deserialization.NameResolver
+import org.jetbrains.kotlin.serialization.deserialization.getClassId
 
 class ChangesCollector {
     private val removedMembers = hashMapOf<FqName, MutableSet<String>>()
@@ -72,13 +73,13 @@ class ChangesCollector {
         }
     }
 
-    fun collectProtoChanges(oldData: ProtoData?, newData: ProtoData?) {
+    fun collectProtoChanges(oldData: ProtoData?, newData: ProtoData?, collectAllMembersForNewClass: Boolean = false) {
         if (oldData == null && newData == null) {
             throw IllegalStateException("Old and new value are null")
         }
 
         if (oldData == null) {
-            newData!!.collectAll(isRemoved = false)
+            newData!!.collectAll(isRemoved = false, collectAllMembersForNewClass = collectAllMembersForNewClass)
             return
         }
 
@@ -120,10 +121,10 @@ class ChangesCollector {
     private fun <T> T.getNonPrivateNames(nameResolver: NameResolver, vararg members: T.() -> List<MessageLite>): Set<String> =
             members.flatMap { this.it().filterNot { it.isPrivate }.names(nameResolver) }.toSet()
 
-    private fun ProtoData.collectAll(isRemoved: Boolean) =
+    private fun ProtoData.collectAll(isRemoved: Boolean, collectAllMembersForNewClass: Boolean = false) =
         when (this) {
             is PackagePartProtoData -> collectAllFromPackage(isRemoved)
-            is ClassProtoData -> collectAllFromClass(isRemoved)
+            is ClassProtoData -> collectAllFromClass(isRemoved, collectAllMembersForNewClass)
         }
 
     private fun PackagePartProtoData.collectAllFromPackage(isRemoved: Boolean) {
@@ -142,26 +143,34 @@ class ChangesCollector {
         }
     }
 
-    private fun ClassProtoData.collectAllFromClass(isRemoved: Boolean) {
+    private fun ClassProtoData.collectAllFromClass(isRemoved: Boolean, collectAllMembersForNewClass: Boolean = false) {
         val classFqName = nameResolver.getClassId(proto.fqName).asSingleFqName()
         val kind = Flags.CLASS_KIND.get(proto.flags)
 
         if (kind == ProtoBuf.Class.Kind.COMPANION_OBJECT) {
-            val memberNames =
-                    proto.getNonPrivateNames(
-                            nameResolver,
-                            ProtoBuf.Class::getConstructorList,
-                            ProtoBuf.Class::getFunctionList,
-                            ProtoBuf.Class::getPropertyList
-                    ) + proto.enumEntryList.map { nameResolver.getString(it.name) }
+            val memberNames = getNonPrivateMemberNames()
 
             val collectMember = if (isRemoved) this@ChangesCollector::collectRemovedMember else this@ChangesCollector::collectChangedMember
             collectMember(classFqName.parent(), classFqName.shortName().asString())
             memberNames.forEach { collectMember(classFqName, it) }
         }
         else {
+            if (!isRemoved && collectAllMembersForNewClass) {
+                val memberNames = getNonPrivateMemberNames()
+                memberNames.forEach { this@ChangesCollector.collectChangedMember(classFqName, it) }
+            }
+
             collectSignature(classFqName, areSubclassesAffected = true)
         }
+    }
+
+    private fun ClassProtoData.getNonPrivateMemberNames(): Set<String> {
+        return proto.getNonPrivateNames(
+                nameResolver,
+                ProtoBuf.Class::getConstructorList,
+                ProtoBuf.Class::getFunctionList,
+                ProtoBuf.Class::getPropertyList
+        ) + proto.enumEntryList.map { nameResolver.getString(it.name) }
     }
 
     fun collectMemberIfValueWasChanged(scope: FqName, name: String, oldValue: Any?, newValue: Any?) {

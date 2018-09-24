@@ -62,3 +62,32 @@ fun foo8(a: Int) {
 
     if (a == 10) {} else if (a == -1) {} // both used
 }
+
+fun foo9() {
+    consumer.Consumer<Any?> { it == null } // used
+}
+
+fun foo9a() {
+    consumer.ConsumerVoid<Any?> { it == null } // not used
+}
+
+fun foo9b() {
+    consumer.ConsumerVoid<Any?> { it.equals(null) } // not used
+}
+
+fun myWith(it: Any?, f: Any?.() -> Unit) = it.f()
+
+fun foo9c() {
+    consumer.ConsumerVoid<Any?> { myWith (it) { equals(null) }} // not used
+}
+
+class Test(val successCondition: (Int) -> Boolean) {
+    fun pass(num: Int): Boolean = successCondition(num)
+}
+
+fun foo10() {
+    val t1 = Test({it == 69})
+    if (t1.pass(42)) {
+        //
+    }
+}

@@ -2,11 +2,6 @@ public final class cases/special/ClassWithLateInitMembers {
 	public final fun getPublicLateInitWithInternalSet ()Ljava/lang/String;
 }
 
-public final class cases/special/ClassWithOverloads {
-	public final fun getA ()I
-	public final fun getB ()Ljava/lang/String;
-}
-
 public final class cases/special/HiddenClass {
 	public synthetic fun <init> ()V
 	public final synthetic fun getHiddenVal ()I
@@ -50,12 +45,5 @@ public final class cases/special/JvmNamesKt {
 	public static final fun publicFun ()V
 	public static final fun publicVarGetter ()I
 	public static final fun publicVarSetter (I)V
-}
-
-public final class cases/special/JvmOverloadsKt {
-	public static final fun publicFunWithOverloads ()V
-	public static final fun publicFunWithOverloads (I)V
-	public static final fun publicFunWithOverloads (ILjava/lang/String;)V
-	public static synthetic fun publicFunWithOverloads$default (ILjava/lang/String;ILjava/lang/Object;)V
 }
 

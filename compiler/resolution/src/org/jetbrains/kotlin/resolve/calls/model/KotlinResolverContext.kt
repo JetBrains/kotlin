@@ -18,10 +18,11 @@ package org.jetbrains.kotlin.resolve.calls.model
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.ReflectionTypes
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.resolve.calls.components.*
-import org.jetbrains.kotlin.resolve.calls.inference.addSubsystemForArgument
+import org.jetbrains.kotlin.resolve.calls.inference.addSubsystemFromArgument
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintInjector
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
 import org.jetbrains.kotlin.resolve.calls.inference.model.NewConstraintSystemImpl
@@ -35,40 +36,47 @@ import org.jetbrains.kotlin.types.isDynamic
 
 
 class KotlinCallComponents(
-        val statelessCallbacks: KotlinResolutionStatelessCallbacks,
-        val argumentsToParametersMapper: ArgumentsToParametersMapper,
-        val typeArgumentsToParametersMapper: TypeArgumentsToParametersMapper,
-        val constraintInjector: ConstraintInjector,
-        val reflectionTypes: ReflectionTypes,
-        val builtIns: KotlinBuiltIns
+    val statelessCallbacks: KotlinResolutionStatelessCallbacks,
+    val argumentsToParametersMapper: ArgumentsToParametersMapper,
+    val typeArgumentsToParametersMapper: TypeArgumentsToParametersMapper,
+    val constraintInjector: ConstraintInjector,
+    val reflectionTypes: ReflectionTypes,
+    val builtIns: KotlinBuiltIns,
+    val languageVersionSettings: LanguageVersionSettings,
+    val samConversionTransformer: SamConversionTransformer
 )
 
 class SimpleCandidateFactory(
-        val callComponents: KotlinCallComponents,
-        val scopeTower: ImplicitScopeTower,
-        val kotlinCall: KotlinCall
-): CandidateFactory<KotlinResolutionCandidate> {
+    val callComponents: KotlinCallComponents,
+    val scopeTower: ImplicitScopeTower,
+    val kotlinCall: KotlinCall,
+    val resolutionCallbacks: KotlinResolutionCallbacks
+) : CandidateFactory<KotlinResolutionCandidate> {
+    val inferenceSession: InferenceSession = resolutionCallbacks.inferenceSession
+
     val baseSystem: ConstraintStorage
 
     init {
         val baseSystem = NewConstraintSystemImpl(callComponents.constraintInjector, callComponents.builtIns)
-        baseSystem.addSubsystemForArgument(kotlinCall.explicitReceiver)
-        baseSystem.addSubsystemForArgument(kotlinCall.dispatchReceiverForInvokeExtension)
+        baseSystem.addSubsystemFromArgument(kotlinCall.explicitReceiver)
+        baseSystem.addSubsystemFromArgument(kotlinCall.dispatchReceiverForInvokeExtension)
         for (argument in kotlinCall.argumentsInParenthesis) {
-            baseSystem.addSubsystemForArgument(argument)
+            baseSystem.addSubsystemFromArgument(argument)
         }
-        baseSystem.addSubsystemForArgument(kotlinCall.externalArgument)
+        baseSystem.addSubsystemFromArgument(kotlinCall.externalArgument)
+
+        baseSystem.addOtherSystem(inferenceSession.currentConstraintSystem())
 
         this.baseSystem = baseSystem.asReadOnlyStorage()
     }
 
     // todo: try something else, because current method is ugly and unstable
     private fun createReceiverArgument(
-            explicitReceiver: ReceiverKotlinCallArgument?,
-            fromResolution: ReceiverValueWithSmartCastInfo?
+        explicitReceiver: ReceiverKotlinCallArgument?,
+        fromResolution: ReceiverValueWithSmartCastInfo?
     ): SimpleKotlinCallArgument? =
-            explicitReceiver as? SimpleKotlinCallArgument ?: // qualifier receiver cannot be safe
-            fromResolution?.let { ReceiverExpressionKotlinCallArgument(it, isSafeCall = false) } // todo smartcast implicit this
+        explicitReceiver as? SimpleKotlinCallArgument ?: // qualifier receiver cannot be safe
+        fromResolution?.let { ReceiverExpressionKotlinCallArgument(it, isSafeCall = false) } // todo smartcast implicit this
 
     private fun KotlinCall.getExplicitDispatchReceiver(explicitReceiverKind: ExplicitReceiverKind) = when (explicitReceiverKind) {
         ExplicitReceiverKind.DISPATCH_RECEIVER -> explicitReceiver
@@ -84,45 +92,62 @@ class SimpleCandidateFactory(
     fun createCandidate(givenCandidate: GivenCandidate): KotlinResolutionCandidate {
         val isSafeCall = (kotlinCall.explicitReceiver as? SimpleKotlinCallArgument)?.isSafeCall ?: false
 
-        val explicitReceiverKind = if (givenCandidate.dispatchReceiver == null) ExplicitReceiverKind.NO_EXPLICIT_RECEIVER else ExplicitReceiverKind.DISPATCH_RECEIVER
+        val explicitReceiverKind =
+            if (givenCandidate.dispatchReceiver == null) ExplicitReceiverKind.NO_EXPLICIT_RECEIVER else ExplicitReceiverKind.DISPATCH_RECEIVER
         val dispatchArgumentReceiver = givenCandidate.dispatchReceiver?.let { ReceiverExpressionKotlinCallArgument(it, isSafeCall) }
-        return createCandidate(givenCandidate.descriptor, explicitReceiverKind, dispatchArgumentReceiver, null,
-                               listOf(), givenCandidate.knownTypeParametersResultingSubstitutor)
+        return createCandidate(
+            givenCandidate.descriptor, explicitReceiverKind, dispatchArgumentReceiver, null,
+            listOf(), givenCandidate.knownTypeParametersResultingSubstitutor
+        )
     }
 
     override fun createCandidate(
-            towerCandidate: CandidateWithBoundDispatchReceiver,
-            explicitReceiverKind: ExplicitReceiverKind,
-            extensionReceiver: ReceiverValueWithSmartCastInfo?
+        towerCandidate: CandidateWithBoundDispatchReceiver,
+        explicitReceiverKind: ExplicitReceiverKind,
+        extensionReceiver: ReceiverValueWithSmartCastInfo?
     ): KotlinResolutionCandidate {
-        val dispatchArgumentReceiver = createReceiverArgument(kotlinCall.getExplicitDispatchReceiver(explicitReceiverKind),
-                                                              towerCandidate.dispatchReceiver)
-        val extensionArgumentReceiver = createReceiverArgument(kotlinCall.getExplicitExtensionReceiver(explicitReceiverKind), extensionReceiver)
+        val dispatchArgumentReceiver = createReceiverArgument(
+            kotlinCall.getExplicitDispatchReceiver(explicitReceiverKind),
+            towerCandidate.dispatchReceiver
+        )
+        val extensionArgumentReceiver =
+            createReceiverArgument(kotlinCall.getExplicitExtensionReceiver(explicitReceiverKind), extensionReceiver)
 
-        return createCandidate(towerCandidate.descriptor, explicitReceiverKind, dispatchArgumentReceiver,
-                               extensionArgumentReceiver, towerCandidate.diagnostics, knownSubstitutor = null)
+        return createCandidate(
+            towerCandidate.descriptor, explicitReceiverKind, dispatchArgumentReceiver,
+            extensionArgumentReceiver, towerCandidate.diagnostics, knownSubstitutor = null
+        )
     }
 
     private fun createCandidate(
-            descriptor: CallableDescriptor,
-            explicitReceiverKind: ExplicitReceiverKind,
-            dispatchArgumentReceiver: SimpleKotlinCallArgument?,
-            extensionArgumentReceiver: SimpleKotlinCallArgument?,
-            initialDiagnostics: Collection<KotlinCallDiagnostic>,
-            knownSubstitutor: TypeSubstitutor?
+        descriptor: CallableDescriptor,
+        explicitReceiverKind: ExplicitReceiverKind,
+        dispatchArgumentReceiver: SimpleKotlinCallArgument?,
+        extensionArgumentReceiver: SimpleKotlinCallArgument?,
+        initialDiagnostics: Collection<KotlinCallDiagnostic>,
+        knownSubstitutor: TypeSubstitutor?
     ): KotlinResolutionCandidate {
-        val resolvedKtCall = MutableResolvedCallAtom(kotlinCall, descriptor, explicitReceiverKind,
-                                                     dispatchArgumentReceiver, extensionArgumentReceiver)
+        val resolvedKtCall = MutableResolvedCallAtom(
+            kotlinCall, descriptor, explicitReceiverKind,
+            dispatchArgumentReceiver, extensionArgumentReceiver
+        )
 
         if (ErrorUtils.isError(descriptor)) {
-            return KotlinResolutionCandidate(callComponents, scopeTower, baseSystem, resolvedKtCall, knownSubstitutor, listOf(ErrorDescriptorResolutionPart))
+            return KotlinResolutionCandidate(
+                callComponents,
+                scopeTower,
+                baseSystem,
+                resolvedKtCall,
+                knownSubstitutor,
+                listOf(ErrorDescriptorResolutionPart)
+            )
         }
 
         val candidate = KotlinResolutionCandidate(callComponents, scopeTower, baseSystem, resolvedKtCall, knownSubstitutor)
 
         initialDiagnostics.forEach(candidate::addDiagnostic)
 
-        if (callComponents.statelessCallbacks.isHiddenInResolution(descriptor, kotlinCall)) {
+        if (callComponents.statelessCallbacks.isHiddenInResolution(descriptor, kotlinCall, resolutionCallbacks)) {
             candidate.addDiagnostic(HiddenDescriptor)
         }
 
@@ -143,54 +168,59 @@ class SimpleCandidateFactory(
         val errorScope = ErrorUtils.createErrorScope("Error resolution candidate for call $kotlinCall")
         val errorDescriptor = if (kotlinCall.callKind == KotlinCallKind.VARIABLE) {
             errorScope.getContributedVariables(kotlinCall.name, scopeTower.location)
-        }
-        else {
+        } else {
             errorScope.getContributedFunctions(kotlinCall.name, scopeTower.location)
         }.first()
 
         val dispatchReceiver = createReceiverArgument(kotlinCall.explicitReceiver, fromResolution = null)
-        val explicitReceiverKind = if (dispatchReceiver == null) ExplicitReceiverKind.NO_EXPLICIT_RECEIVER else ExplicitReceiverKind.DISPATCH_RECEIVER
+        val explicitReceiverKind =
+            if (dispatchReceiver == null) ExplicitReceiverKind.NO_EXPLICIT_RECEIVER else ExplicitReceiverKind.DISPATCH_RECEIVER
 
-        return createCandidate(errorDescriptor, explicitReceiverKind, dispatchReceiver, extensionArgumentReceiver = null,
-                               initialDiagnostics = listOf(), knownSubstitutor = null)
+        return createCandidate(
+            errorDescriptor, explicitReceiverKind, dispatchReceiver, extensionArgumentReceiver = null,
+            initialDiagnostics = listOf(), knownSubstitutor = null
+        )
     }
 
 }
 
 enum class KotlinCallKind(vararg resolutionPart: ResolutionPart) {
     VARIABLE(
-            CheckVisibility,
-            CheckInfixResolutionPart,
-            CheckOperatorResolutionPart,
-            CheckAbstractSuperCallPart,
-            NoTypeArguments,
-            NoArguments,
-            CreateFreshVariablesSubstitutor,
-            CheckExplicitReceiverKindConsistency,
-            CheckReceivers
+        CheckVisibility,
+        CheckInfixResolutionPart,
+        CheckOperatorResolutionPart,
+        CheckSuperExpressionCallPart,
+        NoTypeArguments,
+        NoArguments,
+        CreateFreshVariablesSubstitutor,
+        CheckExplicitReceiverKindConsistency,
+        CheckReceivers,
+        PostponedVariablesInitializerResolutionPart
     ),
     FUNCTION(
-            CheckInstantiationOfAbstractClass,
-            CheckVisibility,
-            CheckInfixResolutionPart,
-            CheckAbstractSuperCallPart,
-            MapTypeArguments,
-            MapArguments,
-            ArgumentsToCandidateParameterDescriptor,
-            CreateFreshVariablesSubstitutor,
-            CheckExplicitReceiverKindConsistency,
-            CheckReceivers,
-            CheckArguments,
-            CheckExternalArgument
+        CheckInstantiationOfAbstractClass,
+        CheckVisibility,
+        CheckInfixResolutionPart,
+        CheckSuperExpressionCallPart,
+        MapTypeArguments,
+        MapArguments,
+        ArgumentsToCandidateParameterDescriptor,
+        CreateFreshVariablesSubstitutor,
+        CheckExplicitReceiverKindConsistency,
+        CheckReceivers,
+        CheckArguments,
+        CheckExternalArgument,
+        PostponedVariablesInitializerResolutionPart
     ),
+    INVOKE(*FUNCTION.resolutionSequence.toTypedArray()),
     UNSUPPORTED();
 
     val resolutionSequence = resolutionPart.asList()
 }
 
 class GivenCandidate(
-        val descriptor: FunctionDescriptor,
-        val dispatchReceiver: ReceiverValueWithSmartCastInfo?,
-        val knownTypeParametersResultingSubstitutor: TypeSubstitutor?
+    val descriptor: FunctionDescriptor,
+    val dispatchReceiver: ReceiverValueWithSmartCastInfo?,
+    val knownTypeParametersResultingSubstitutor: TypeSubstitutor?
 )
 

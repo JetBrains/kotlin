@@ -1,3 +1,5 @@
+// IGNORE_BACKEND: JVM_IR
+// IGNORE_BACKEND: JS_IR
 data class Test(val z1: Double, val z2: Double?)
 
 fun box(): String {

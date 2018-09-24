@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,6 +34,7 @@ import static org.jetbrains.kotlin.idea.highlighter.HtmlTabledDescriptorRenderer
 import static org.jetbrains.kotlin.idea.highlighter.IdeRenderers.*;
 import static org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm.ACCIDENTAL_OVERRIDE;
 import static org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm.CONFLICTING_JVM_DECLARATIONS;
+import static org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm.NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS;
 
 
 /**
@@ -61,6 +62,9 @@ public class IdeErrorMessages {
 
     static {
         MAP.put(TYPE_MISMATCH, "<html>Type mismatch.<table><tr><td>Required:</td><td>{0}</td></tr><tr><td>Found:</td><td>{1}</td></tr></table></html>",
+                HTML_RENDER_TYPE, HTML_RENDER_TYPE);
+
+        MAP.put(NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS, "<html>Type mismatch.<table><tr><td>Required:</td><td>{0}</td></tr><tr><td>Found:</td><td>{1}</td></tr></table></html>",
                 HTML_RENDER_TYPE, HTML_RENDER_TYPE);
 
         MAP.put(TYPE_MISMATCH_DUE_TO_TYPE_PROJECTIONS,
@@ -155,7 +159,7 @@ public class IdeErrorMessages {
         MAP.put(CONFLICTING_JVM_DECLARATIONS, "<html>Platform declaration clash: {0}</html>", HTML_CONFLICTING_JVM_DECLARATIONS_DATA);
         MAP.put(ACCIDENTAL_OVERRIDE, "<html>Accidental override: {0}</html>", HTML_CONFLICTING_JVM_DECLARATIONS_DATA);
 
-        URL errorIconUrl = AllIcons.class.getResource("/general/error.png");
+        URL errorIconUrl = AllIcons.class.getResource(ErrorIconUtil.getErrorIconUrl());
         MAP.put(EXCEPTION_FROM_ANALYZER, "<html>Internal Error occurred while analyzing this expression <br/>" +
                                          "<table cellspacing=\"0\" cellpadding=\"0\">" +
                                          "<tr>" +
@@ -175,12 +179,12 @@ public class IdeErrorMessages {
         MAP.put(EXPERIMENTAL_FEATURE_WARNING, "<html>{0}</html>", new LanguageFeatureMessageRenderer(LanguageFeatureMessageRenderer.Type.WARNING, true));
         MAP.put(EXPERIMENTAL_FEATURE_ERROR, "<html>{0}</html>", new LanguageFeatureMessageRenderer(LanguageFeatureMessageRenderer.Type.ERROR, true));
 
-        MAP.put(NO_ACTUAL_FOR_EXPECT, "<html>Expected {0} has no actual in module{1}{2}</html>", DECLARATION_NAME_WITH_KIND,
+        MAP.put(NO_ACTUAL_FOR_EXPECT, "<html>Expected {0} has no actual declaration in module{1}{2}</html>", DECLARATION_NAME_WITH_KIND,
                 PLATFORM, new PlatformIncompatibilityDiagnosticRenderer(IdeMultiplatformDiagnosticRenderingMode.INSTANCE));
-        MAP.put(ACTUAL_WITHOUT_EXPECT, "<html>Actual {0} has no corresponding expected declaration{1}</html>", DECLARATION_NAME_WITH_KIND,
+        MAP.put(ACTUAL_WITHOUT_EXPECT, "<html>{0} has no corresponding expected declaration{1}</html>", CAPITALIZED_DECLARATION_NAME_WITH_KIND_AND_PLATFORM,
                 new PlatformIncompatibilityDiagnosticRenderer(IdeMultiplatformDiagnosticRenderingMode.INSTANCE));
 
-        MAP.put(NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS, "<html>In class ''{0}'' expected members have no actual ones:{1}</html>",
+        MAP.put(NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS, "<html>Actual class ''{0}'' has no corresponding members for expected class members:{1}</html>",
                 NAME, new IncompatibleExpectedActualClassScopesRenderer(IdeMultiplatformDiagnosticRenderingMode.INSTANCE));
 
         MAP.setImmutable();

@@ -20,9 +20,9 @@ class R {
 class BaseView(ctx: Context) : View(ctx) {
     val buttonWidget = MyButton(ctx)
 
-    override fun findViewById(id: Int): View? {
+    override fun <T : View> findViewById(id: Int): T? {
         return when (id) {
-            R.id.login -> buttonWidget
+            R.id.login -> buttonWidget as T
             else -> null
         }
     }

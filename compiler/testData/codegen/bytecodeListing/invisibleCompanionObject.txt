@@ -22,7 +22,7 @@ final class TestPrivateCompanion$Test {
 
 @kotlin.Metadata
 public final class TestPrivateCompanion {
-    public deprecated final static @java.lang.Deprecated field Test: TestPrivateCompanion$Test
+    private final static field Test: TestPrivateCompanion$Test
     inner class TestPrivateCompanion$Test
     static method <clinit>(): void
     public method <init>(): void
@@ -37,7 +37,7 @@ public final class TestProtectedCompanion$Test {
 
 @kotlin.Metadata
 public class TestProtectedCompanion {
-    public deprecated final static @java.lang.Deprecated field Test: TestProtectedCompanion$Test
+    protected final static field Test: TestProtectedCompanion$Test
     inner class TestProtectedCompanion$Test
     static method <clinit>(): void
     public method <init>(): void

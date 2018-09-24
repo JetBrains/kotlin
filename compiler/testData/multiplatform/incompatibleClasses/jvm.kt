@@ -4,9 +4,8 @@ actual enum class PObject
 actual annotation class PEnumClass
 actual class PAnnotationClass
 
-private actual object InternalObject
 internal actual object PublicObject
-public actual object PrivateObject
+public actual object InternalObject
 
 final actual class OpenClass
 open actual class AbstractClass

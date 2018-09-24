@@ -19,19 +19,29 @@ package org.jetbrains.kotlin.cli.jvm.compiler
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.util.SmartList
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.LOGGING
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.index.JavaRoot
 import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.descriptors.PackagePartProvider
-import org.jetbrains.kotlin.load.kotlin.ModuleMapping
-import org.jetbrains.kotlin.load.kotlin.PackageParts
+import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
+import org.jetbrains.kotlin.load.kotlin.loadModuleMapping
+import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion
+import org.jetbrains.kotlin.metadata.jvm.deserialization.ModuleMapping
+import org.jetbrains.kotlin.metadata.jvm.deserialization.PackageParts
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.resolve.CompilerDeserializationConfiguration
+import org.jetbrains.kotlin.serialization.deserialization.MetadataPartProvider
+import java.io.ByteArrayOutputStream
 import java.io.EOFException
+import java.io.PrintStream
 
 class JvmPackagePartProvider(
-        languageVersionSettings: LanguageVersionSettings,
-        private val scope: GlobalSearchScope
-) : PackagePartProvider {
-    private data class ModuleMappingInfo(val root: VirtualFile, val mapping: ModuleMapping)
+    languageVersionSettings: LanguageVersionSettings,
+    private val scope: GlobalSearchScope
+) : PackagePartProvider, MetadataPartProvider {
+    private data class ModuleMappingInfo(val root: VirtualFile, val mapping: ModuleMapping, val name: String)
 
     private val deserializationConfiguration = CompilerDeserializationConfiguration(languageVersionSettings)
 
@@ -56,7 +66,7 @@ class JvmPackagePartProvider(
     }
 
     override fun findMetadataPackageParts(packageFqName: String): List<String> =
-            getPackageParts(packageFqName).values.flatMap(PackageParts::metadataParts).distinct()
+        getPackageParts(packageFqName).values.flatMap(PackageParts::metadataParts).distinct()
 
     @Synchronized
     private fun getPackageParts(packageFqName: String): Map<VirtualFile, PackageParts> {
@@ -68,7 +78,13 @@ class JvmPackagePartProvider(
         return result
     }
 
-    fun addRoots(roots: List<JavaRoot>) {
+    override fun getAnnotationsOnBinaryModule(moduleName: String): List<ClassId> {
+        return loadedModules.mapNotNull { (_, mapping, name) ->
+            if (name == moduleName) mapping.moduleData.annotations.map(ClassId::fromString) else null
+        }.flatten()
+    }
+
+    fun addRoots(roots: List<JavaRoot>, messageCollector: MessageCollector) {
         for ((root, type) in roots) {
             if (type != JavaRoot.RootType.BINARY) continue
             if (root !in scope) continue
@@ -77,13 +93,28 @@ class JvmPackagePartProvider(
             for (moduleFile in metaInf.children) {
                 if (!moduleFile.name.endsWith(ModuleMapping.MAPPING_FILE_EXT)) continue
 
-                val mapping = try {
-                    ModuleMapping.create(moduleFile.contentsToByteArray(), moduleFile.toString(), deserializationConfiguration)
+                try {
+                    val mapping = ModuleMapping.loadModuleMapping(
+                        moduleFile.contentsToByteArray(), moduleFile.toString(), deserializationConfiguration
+                    ) { incompatibleVersion ->
+                        messageCollector.report(
+                            ERROR,
+                            "Module was compiled with an incompatible version of Kotlin. The binary version of its metadata is " +
+                                    "$incompatibleVersion, expected version is ${JvmMetadataVersion.INSTANCE}.",
+                            CompilerMessageLocation.create(moduleFile.path)
+                        )
+                    }
+                    loadedModules.add(ModuleMappingInfo(root, mapping, moduleFile.nameWithoutExtension))
+                } catch (e: EOFException) {
+                    messageCollector.report(
+                        ERROR, "Error occurred when reading the module: ${e.message}", CompilerMessageLocation.create(moduleFile.path)
+                    )
+                    messageCollector.report(
+                        LOGGING,
+                        String(ByteArrayOutputStream().also { e.printStackTrace(PrintStream(it)) }.toByteArray()),
+                        CompilerMessageLocation.create(moduleFile.path)
+                    )
                 }
-                catch (e: EOFException) {
-                    throw RuntimeException("Error on reading package parts from $moduleFile in $root", e)
-                }
-                loadedModules.add(ModuleMappingInfo(root, mapping))
             }
         }
     }

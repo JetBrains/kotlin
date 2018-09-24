@@ -21,13 +21,12 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
-import com.intellij.refactoring.rename.inplace.VariableInplaceRenameHandler
 import org.jetbrains.kotlin.idea.intentions.ReplaceItWithExplicitFunctionLiteralParamIntention
 import org.jetbrains.kotlin.idea.intentions.isAutoCreatedItUsage
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.psi.KtNameReferenceExpression
 
-class RenameKotlinImplicitLambdaParameter : VariableInplaceRenameHandler() {
+class RenameKotlinImplicitLambdaParameter : KotlinVariableInplaceRenameHandler() {
     override fun isAvailable(element: PsiElement?, editor: Editor, file: PsiFile): Boolean {
         val nameExpression = file.findElementForRename<KtNameReferenceExpression>(editor.caretModel.offset)
 
@@ -41,7 +40,7 @@ class RenameKotlinImplicitLambdaParameter : VariableInplaceRenameHandler() {
         }
     }
 
-    override fun invoke(project: Project, elements: Array<out PsiElement>, dataContext: DataContext?) {
+    override fun invoke(project: Project, elements: Array<out PsiElement>, dataContext: DataContext) {
         // Do nothing: this method is called not from editor
     }
 }

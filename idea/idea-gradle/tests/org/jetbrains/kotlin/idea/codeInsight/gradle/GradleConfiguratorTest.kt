@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.codeInsight.gradle
@@ -22,37 +11,25 @@ import com.intellij.openapi.fileEditor.impl.LoadTextUtil
 import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.roots.DependencyScope
 import com.intellij.openapi.roots.ExternalLibraryDescriptor
+import com.intellij.openapi.vfs.VirtualFile
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.idea.configuration.*
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.idea.util.application.runReadAction
+import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.testFramework.runInEdtAndWait
 import org.jetbrains.kotlin.test.testFramework.runWriteAction
+import org.jetbrains.plugins.gradle.tooling.annotation.TargetVersions
+import org.jetbrains.plugins.gradle.util.GradleConstants
+import org.junit.Assert
 import org.junit.Test
+import java.io.File
 
 class GradleConfiguratorTest : GradleImportingTestCase() {
 
     @Test
     fun testProjectWithModule() {
-        createProjectSubFile("settings.gradle", "include ':app'")
-        createProjectSubFile("app/build.gradle", """
-        buildscript {
-            repositories {
-                jcenter()
-                mavenCentral()
-            }
-            dependencies {
-                classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.1.0"
-            }
-        }
-
-        apply plugin: 'kotlin'
-
-        dependencies {
-            compile "org.jetbrains.kotlin:kotlin-stdlib-0.0"   // intentionally invalid version
-        }
-        """.trimIndent())
-
-        importProject()
+        importProjectFromTestData()
 
         runInEdtAndWait {
             runWriteAction {
@@ -60,7 +37,7 @@ class GradleConfiguratorTest : GradleImportingTestCase() {
                 myProject.baseDir.createChildData(null, "build.gradle")
 
                 val module = ModuleManager.getInstance(myProject).findModuleByName("app")!!
-                val moduleGroup = ModuleSourceRootMap(myProject).toModuleGroup(module)
+                val moduleGroup = module.toModuleGroup()
                 // We have a Kotlin runtime in build.gradle but not in the classpath, so it doesn't make sense
                 // to suggest configuring it
                 assertEquals(ConfigureKotlinStatus.BROKEN, findGradleModuleConfigurator().getStatus(moduleGroup))
@@ -68,21 +45,23 @@ class GradleConfiguratorTest : GradleImportingTestCase() {
                 assertEquals(ConfigureKotlinStatus.BROKEN, findJsGradleModuleConfigurator().getStatus(moduleGroup))
             }
         }
+
+        Assert.assertEquals(
+            """
+            <p>The compiler bundled to Kotlin plugin (1.0.0) is older than external compiler used for building modules:</p>
+            <ul>
+            <li>app (1.1.0)</li>
+            </ul>
+            <p>This may cause different set of errors and warnings reported in IDE.</p>
+            <p><a href="update">Update</a>  <a href="ignore">Ignore</a></p>
+            """.trimIndent().lines().joinToString(separator = ""),
+            createOutdatedBundledCompilerMessage(myProject, "1.0.0")
+        )
     }
 
     @Test
     fun testConfigure10() {
-        createProjectSubFile("settings.gradle", "include ':app'")
-        val file = createProjectSubFile("app/build.gradle", """
-        buildscript {
-            repositories {
-                jcenter()
-                mavenCentral()
-            }
-        }
-        """.trimIndent())
-
-        importProject()
+        val files = importProjectFromTestData()
 
         runInEdtAndWait {
             runWriteAction {
@@ -91,50 +70,208 @@ class GradleConfiguratorTest : GradleImportingTestCase() {
                 val collector = createConfigureKotlinNotificationCollector(myProject)
                 configurator.configureWithVersion(myProject, listOf(module), "1.0.6", collector)
 
-                FileDocumentManager.getInstance().saveAllDocuments()
-                val content = LoadTextUtil.loadText(file).toString()
-                assertEquals("""
-                buildscript {
-                    ext.kotlin_version = '1.0.6'
-                    repositories {
-                        jcenter()
-                        mavenCentral()
-                    }
-                    dependencies {
-                        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${"$"}kotlin_version"
-                    }
-                }
-                apply plugin: 'kotlin'
-                repositories {
-                    mavenCentral()
-                }
-                dependencies {
-                    compile "org.jetbrains.kotlin:kotlin-stdlib:${"$"}kotlin_version"
-                }
-                """.trimIndent(), content)
+                checkFiles(files)
             }
         }
     }
 
-    private fun findGradleModuleConfigurator() = Extensions.findExtension(KotlinProjectConfigurator.EP_NAME,
-                                                                          KotlinGradleModuleConfigurator::class.java)
+    @Test
+    fun testConfigureKotlinWithPluginsBlock() {
+        val files = importProjectFromTestData()
 
-    private fun findJsGradleModuleConfigurator() = Extensions.findExtension(KotlinProjectConfigurator.EP_NAME,
-                                                                            KotlinJsGradleModuleConfigurator::class.java)
+        runInEdtAndWait {
+            runWriteAction {
+                val module = ModuleManager.getInstance(myProject).findModuleByName("app")!!
+                val configurator = findGradleModuleConfigurator()
+                val collector = createConfigureKotlinNotificationCollector(myProject)
+                configurator.configureWithVersion(myProject, listOf(module), "1.0.6", collector)
+
+                checkFiles(files)
+            }
+        }
+    }
+
+    @Test
+    fun testConfigureKotlinDevVersion() {
+        val files = importProjectFromTestData()
+
+        runInEdtAndWait {
+            runWriteAction {
+                val module = ModuleManager.getInstance(myProject).findModuleByName("app")!!
+                val configurator = findGradleModuleConfigurator()
+                val collector = createConfigureKotlinNotificationCollector(myProject)
+                configurator.configureWithVersion(myProject, listOf(module), "1.2.60-dev-286", collector)
+
+                checkFiles(files)
+            }
+        }
+    }
+
+    @Test
+    fun testConfigureGradleKtsKotlinDevVersion() {
+        val files = importProjectFromTestData()
+
+        runInEdtAndWait {
+            runWriteAction {
+                val module = ModuleManager.getInstance(myProject).findModuleByName("app")!!
+                val configurator = findGradleModuleConfigurator()
+                val collector = createConfigureKotlinNotificationCollector(myProject)
+                configurator.configureWithVersion(myProject, listOf(module), "1.2.60-dev-286", collector)
+
+                checkFiles(files)
+            }
+        }
+    }
+
+    @Test
+    @TargetVersions("4.4+")
+    fun testConfigureJvmWithBuildGradle() {
+        val files = importProjectFromTestData()
+
+        runInEdtAndWait {
+            runWriteAction {
+                val module = ModuleManager.getInstance(myProject).findModuleByName("app")!!
+                val configurator = findGradleModuleConfigurator()
+                val collector = createConfigureKotlinNotificationCollector(myProject)
+                configurator.configureWithVersion(myProject, listOf(module), "1.2.40", collector)
+
+                checkFiles(files)
+            }
+        }
+    }
+
+    @Test
+    @TargetVersions("4.4+")
+    fun testConfigureJvmWithBuildGradleKts() {
+        val files = importProjectFromTestData()
+
+        runInEdtAndWait {
+            runWriteAction {
+                val module = ModuleManager.getInstance(myProject).findModuleByName("app")!!
+                val configurator = findGradleModuleConfigurator()
+                val collector = createConfigureKotlinNotificationCollector(myProject)
+                configurator.configureWithVersion(myProject, listOf(module), "1.2.40", collector)
+
+                checkFiles(files)
+            }
+        }
+    }
+
+    @Test
+    @TargetVersions("4.4+")
+    fun testConfigureJvmEAPWithBuildGradle() {
+        val files = importProjectFromTestData()
+
+        runInEdtAndWait {
+            runWriteAction {
+                val module = ModuleManager.getInstance(myProject).findModuleByName("app")!!
+                val configurator = findGradleModuleConfigurator()
+                val collector = createConfigureKotlinNotificationCollector(myProject)
+                configurator.configureWithVersion(myProject, listOf(module), "1.2.40-eap-62", collector)
+
+                checkFiles(files)
+            }
+        }
+    }
+
+    @Test
+    @TargetVersions("4.4+")
+    fun testConfigureJvmEAPWithBuildGradleKts() {
+        val files = importProjectFromTestData()
+
+        runInEdtAndWait {
+            runWriteAction {
+                val module = ModuleManager.getInstance(myProject).findModuleByName("app")!!
+                val configurator = findGradleModuleConfigurator()
+                val collector = createConfigureKotlinNotificationCollector(myProject)
+                configurator.configureWithVersion(myProject, listOf(module), "1.2.40-eap-62", collector)
+
+                checkFiles(files)
+            }
+        }
+    }
+
+    @Test
+    @TargetVersions("4.4+")
+    fun testConfigureJsWithBuildGradle() {
+        val files = importProjectFromTestData()
+
+        runInEdtAndWait {
+            runWriteAction {
+                val module = ModuleManager.getInstance(myProject).findModuleByName("app")!!
+                val configurator = findJsGradleModuleConfigurator()
+                val collector = createConfigureKotlinNotificationCollector(myProject)
+                configurator.configureWithVersion(myProject, listOf(module), "1.2.40", collector)
+
+                checkFiles(files)
+            }
+        }
+    }
+
+    @Test
+    @TargetVersions("4.4+")
+    fun testConfigureJsWithBuildGradleKts() {
+        val files = importProjectFromTestData()
+
+        runInEdtAndWait {
+            runWriteAction {
+                val module = ModuleManager.getInstance(myProject).findModuleByName("app")!!
+                val configurator = findJsGradleModuleConfigurator()
+                val collector = createConfigureKotlinNotificationCollector(myProject)
+                configurator.configureWithVersion(myProject, listOf(module), "1.2.40", collector)
+
+                checkFiles(files)
+            }
+        }
+    }
+
+    @Test
+    @TargetVersions("4.4+")
+    fun testConfigureJsEAPWithBuildGradle() {
+        val files = importProjectFromTestData()
+
+        runInEdtAndWait {
+            runWriteAction {
+                val module = ModuleManager.getInstance(myProject).findModuleByName("app")!!
+                val configurator = findJsGradleModuleConfigurator()
+                val collector = createConfigureKotlinNotificationCollector(myProject)
+                configurator.configureWithVersion(myProject, listOf(module), "1.2.40-eap-62", collector)
+
+                checkFiles(files)
+            }
+        }
+    }
+
+    @Test
+    @TargetVersions("4.4+")
+    fun testConfigureJsEAPWithBuildGradleKts() {
+        val files = importProjectFromTestData()
+
+        runInEdtAndWait {
+            runWriteAction {
+                val module = ModuleManager.getInstance(myProject).findModuleByName("app")!!
+                val configurator = findJsGradleModuleConfigurator()
+                val collector = createConfigureKotlinNotificationCollector(myProject)
+                configurator.configureWithVersion(myProject, listOf(module), "1.2.40-eap-62", collector)
+
+                checkFiles(files)
+            }
+        }
+    }
+
+    private fun findGradleModuleConfigurator() = Extensions.findExtension(
+        KotlinProjectConfigurator.EP_NAME,
+        KotlinGradleModuleConfigurator::class.java
+    )
+
+    private fun findJsGradleModuleConfigurator() = Extensions.findExtension(
+        KotlinProjectConfigurator.EP_NAME,
+        KotlinJsGradleModuleConfigurator::class.java
+    )
 
     @Test
     fun testConfigureGSK() {
-        createProjectSubFile("settings.gradle", "include ':app'")
-        val file = createProjectSubFile("app/build.gradle.kts", """
-        buildscript {
-            repositories {
-                jcenter()
-                mavenCentral()
-            }
-        }
-        """.trimIndent())
-
-        importProject()
+        val files = importProjectFromTestData()
 
         runInEdtAndWait {
             runWriteAction {
@@ -143,66 +280,22 @@ class GradleConfiguratorTest : GradleImportingTestCase() {
                 val collector = createConfigureKotlinNotificationCollector(myProject)
                 configurator.configureWithVersion(myProject, listOf(module), "1.1.2", collector)
 
-                FileDocumentManager.getInstance().saveAllDocuments()
-                val content = LoadTextUtil.loadText(file).toString()
-                assertEquals("""
-                    import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
-                    val kotlin_version: String by extra
-                    buildscript {
-                        var kotlin_version: String by extra
-                        kotlin_version = "1.1.2"
-                        repositories {
-                            jcenter()
-                            mavenCentral()
-                        }
-                        dependencies {
-                            classpath(kotlinModule("gradle-plugin", kotlin_version))
-                        }
-                    }
-                    apply {
-                        plugin("kotlin")
-                    }
-                    dependencies {
-                        compile(kotlinModule("stdlib-jre8", kotlin_version))
-                    }
-                    repositories {
-                        mavenCentral()
-                    }
-                    val compileKotlin: KotlinCompile by tasks
-                    compileKotlin.kotlinOptions {
-                        jvmTarget = "1.8"
-                    }
-                    val compileTestKotlin: KotlinCompile by tasks
-                    compileTestKotlin.kotlinOptions {
-                        jvmTarget = "1.8"
-                    }
-                """.trimIndent(), content)
+                checkFiles(files)
             }
         }
     }
 
     @Test
     fun testListNonConfiguredModules() {
-        createProjectSubFile("settings.gradle", "include ':app'")
-        createProjectSubFile("app/build.gradle", """
-        buildscript {
-            repositories {
-                jcenter()
-                mavenCentral()
-            }
-        }
-
-        apply plugin: 'java'
-        """.trimIndent())
-        createProjectSubFile("app/src/main/java/foo.kt", "")
-
-        importProject()
+        importProjectFromTestData()
 
         runReadAction {
             val configurator = findGradleModuleConfigurator()
 
-            val moduleNames = getCanBeConfiguredModulesWithKotlinFiles(myProject).map { it.name }
+            val (modules, ableToRunConfigurators) = getConfigurationPossibilitiesForConfigureNotification(myProject)
+            assertTrue(ableToRunConfigurators.any { it is KotlinGradleModuleConfigurator })
+            assertTrue(ableToRunConfigurators.any { it is KotlinJsGradleModuleConfigurator })
+            val moduleNames = modules.map { it.baseModule.name }
             assertSameElements(moduleNames, "app")
 
             val moduleNamesFromConfigurator = getCanBeConfiguredModules(myProject, configurator).map { it.name }
@@ -214,604 +307,382 @@ class GradleConfiguratorTest : GradleImportingTestCase() {
     }
 
     @Test
-    fun testListNonConfiguredModules_Configured() {
-        createProjectSubFile("settings.gradle", "include ':app'")
-        createProjectSubFile("app/build.gradle", """
-        buildscript {
-            repositories {
-                jcenter()
-                mavenCentral()
-            }
-        }
-
-        apply plugin: 'java'
-
-        repositories {
-            jcenter()
-            mavenCentral()
-        }
-
-        dependencies {
-            compile "org.jetbrains.kotlin:kotlin-stdlib:1.1.3"
-        }
-        """.trimIndent())
-        createProjectSubFile("app/src/main/java/foo.kt", "")
-
-        importProject()
+    fun testListNonConfiguredModulesConfigured() {
+        importProjectFromTestData()
 
         runReadAction {
-            assertEmpty(getCanBeConfiguredModulesWithKotlinFiles(myProject))
+            assertEmpty(getConfigurationPossibilitiesForConfigureNotification(myProject).first)
         }
     }
 
     @Test
-    fun testListNonConfiguredModules_ConfiguredOnlyTest() {
-        createProjectSubFile("settings.gradle", "include ':app'")
-        createProjectSubFile("app/build.gradle", """
-        buildscript {
-            repositories {
-                jcenter()
-                mavenCentral()
-            }
-        }
-
-        apply plugin: 'java'
-
-        repositories {
-            jcenter()
-            mavenCentral()
-        }
-
-        dependencies {
-            testCompile "org.jetbrains.kotlin:kotlin-stdlib:1.1.3"
-        }
-        """.trimIndent())
-        createProjectSubFile("app/src/test/java/foo.kt", "")
-
-        importProject()
+    fun testListNonConfiguredModulesConfiguredWithImplementation() {
+        importProjectFromTestData()
 
         runReadAction {
-            assertEmpty(getCanBeConfiguredModulesWithKotlinFiles(myProject))
+            assertEmpty(getConfigurationPossibilitiesForConfigureNotification(myProject).first)
+        }
+    }
+
+    @Test
+    fun testListNonConfiguredModulesConfiguredOnlyTest() {
+        importProjectFromTestData()
+
+        runReadAction {
+            assertEmpty(getConfigurationPossibilitiesForConfigureNotification(myProject).first)
         }
     }
 
     @Test
     fun testAddNonKotlinLibraryGSK() {
-        val buildScript = createProjectSubFile("build.gradle.kts",
-                                  """
-                                                     |dependencies {
-                                                     |    testCompile("junit:junit:4.12")
-                                                     |    compile(kotlinModule("stdlib-jre8"))
-                                                     |}
-                                                     |""".trimMargin("|"))
-
-        importProject()
+        val files = importProjectFromTestData()
 
         runInEdtAndWait {
             myTestFixture.project.executeWriteCommand("") {
                 KotlinWithGradleConfigurator.addKotlinLibraryToModule(
-                        myTestFixture.module,
-                        DependencyScope.COMPILE,
-                        object: ExternalLibraryDescriptor("org.a.b", "lib", "1.0.0", "1.0.0") {
-                            override fun getLibraryClassesRoots() = emptyList<String>()
-                        })
+                    myTestFixture.module,
+                    DependencyScope.COMPILE,
+                    object : ExternalLibraryDescriptor("org.a.b", "lib", "1.0.0", "1.0.0") {
+                        override fun getLibraryClassesRoots() = emptyList<String>()
+                    })
             }
 
-            FileDocumentManager.getInstance().saveAllDocuments()
+            checkFiles(files)
         }
-
-        assertEquals(
-                """
-                 |dependencies {
-                 |    testCompile("junit:junit:4.12")
-                 |    compile(kotlinModule("stdlib-jre8"))
-                 |    compile("org.a.b:lib:1.0.0")
-                 |}
-                 |""".trimMargin("|"),
-                LoadTextUtil.loadText(buildScript).toString())
     }
 
+    @TargetVersions("3.5")
     @Test
-    fun testAddLibraryGSK_WithKotlinVersion() {
-        val buildScript = createProjectSubFile("build.gradle.kts",
-                                                    """
-                                                     |val kotlin_version: String by extra
-                                                     |dependencies {
-                                                     |    testCompile("junit:junit:4.12")
-                                                     |    compile(kotlinModule("stdlib-jre8", kotlin_version))
-                                                     |}
-                                                     |""".trimMargin("|"))
-
-        importProject()
+    fun testAddLibraryGSKWithKotlinVersion() {
+        val files = importProjectFromTestData()
 
         runInEdtAndWait {
             myTestFixture.project.executeWriteCommand("") {
                 val stdLibVersion = KotlinWithGradleConfigurator.getKotlinStdlibVersion(myTestFixture.module)
                 KotlinWithGradleConfigurator.addKotlinLibraryToModule(
-                        myTestFixture.module,
-                        DependencyScope.COMPILE,
-                        object : ExternalLibraryDescriptor("org.jetbrains.kotlin", "kotlin-reflect", stdLibVersion, stdLibVersion) {
-                            override fun getLibraryClassesRoots() = emptyList<String>()
-                        })
+                    myTestFixture.module,
+                    DependencyScope.COMPILE,
+                    object : ExternalLibraryDescriptor("org.jetbrains.kotlin", "kotlin-reflect", stdLibVersion, stdLibVersion) {
+                        override fun getLibraryClassesRoots() = emptyList<String>()
+                    })
             }
 
-            FileDocumentManager.getInstance().saveAllDocuments()
+            checkFiles(files)
         }
-
-        assertEquals(
-                """
-                 |val kotlin_version: String by extra
-                 |dependencies {
-                 |    testCompile("junit:junit:4.12")
-                 |    compile(kotlinModule("stdlib-jre8", kotlin_version))
-                 |    compile(kotlinModule("reflect", kotlin_version))
-                 |}
-                 |""".trimMargin("|"),
-                LoadTextUtil.loadText(buildScript).toString())
     }
 
     @Test
     fun testAddTestLibraryGSK() {
-        val buildScript = createProjectSubFile("build.gradle.kts",
-                                                    """
-                                                     |dependencies {
-                                                     |    compile(kotlinModule("stdlib-jre8"))
-                                                     |}
-                                                     |""".trimMargin("|"))
-
-        importProject()
+        val files = importProjectFromTestData()
 
         runInEdtAndWait {
             myTestFixture.project.executeWriteCommand("") {
                 KotlinWithGradleConfigurator.addKotlinLibraryToModule(
-                        myTestFixture.module,
-                        DependencyScope.TEST,
-                        object : ExternalLibraryDescriptor("junit", "junit", "4.12", "4.12") {
-                            override fun getLibraryClassesRoots() = emptyList<String>()
-                        })
+                    myTestFixture.module,
+                    DependencyScope.TEST,
+                    object : ExternalLibraryDescriptor("junit", "junit", "4.12", "4.12") {
+                        override fun getLibraryClassesRoots() = emptyList<String>()
+                    })
 
                 KotlinWithGradleConfigurator.addKotlinLibraryToModule(
-                        myTestFixture.module,
-                        DependencyScope.TEST,
-                        object : ExternalLibraryDescriptor("org.jetbrains.kotlin", "kotlin-test", "1.1.2", "1.1.2") {
-                            override fun getLibraryClassesRoots() = emptyList<String>()
-                        })
+                    myTestFixture.module,
+                    DependencyScope.TEST,
+                    object : ExternalLibraryDescriptor("org.jetbrains.kotlin", "kotlin-test", "1.1.2", "1.1.2") {
+                        override fun getLibraryClassesRoots() = emptyList<String>()
+                    })
             }
 
-            FileDocumentManager.getInstance().saveAllDocuments()
+            checkFiles(files)
         }
-
-        assertEquals(
-                """
-                 |dependencies {
-                 |    compile(kotlinModule("stdlib-jre8"))
-                 |    testCompile("junit:junit:4.12")
-                 |    testCompile(kotlinModule("test", "1.1.2"))
-                 |}
-                 |""".trimMargin("|"),
-                LoadTextUtil.loadText(buildScript).toString())
     }
 
     @Test
     fun testAddLibraryGSK() {
-        val buildScript = createProjectSubFile("build.gradle.kts",
-                                                    """
-                                                     |dependencies {
-                                                     |    testCompile("junit:junit:4.12")
-                                                     |    compile(kotlinModule("stdlib-jre8"))
-                                                     |}
-                                                     |""".trimMargin("|"))
-
-        importProject()
+        val files = importProjectFromTestData()
 
         runInEdtAndWait {
             myTestFixture.project.executeWriteCommand("") {
                 KotlinWithGradleConfigurator.addKotlinLibraryToModule(
-                        myTestFixture.module,
-                        DependencyScope.COMPILE,
-                        object: ExternalLibraryDescriptor("org.jetbrains.kotlin", "kotlin-reflect", "1.0.0", "1.0.0") {
-                            override fun getLibraryClassesRoots() = emptyList<String>()
-                        })
+                    myTestFixture.module,
+                    DependencyScope.COMPILE,
+                    object : ExternalLibraryDescriptor("org.jetbrains.kotlin", "kotlin-reflect", "1.0.0", "1.0.0") {
+                        override fun getLibraryClassesRoots() = emptyList<String>()
+                    })
             }
 
-            FileDocumentManager.getInstance().saveAllDocuments()
+            checkFiles(files)
         }
-
-        assertEquals(
-                """
-                 |dependencies {
-                 |    testCompile("junit:junit:4.12")
-                 |    compile(kotlinModule("stdlib-jre8"))
-                 |    compile(kotlinModule("reflect", "1.0.0"))
-                 |}
-                 |""".trimMargin("|"),
-                LoadTextUtil.loadText(buildScript).toString())
     }
 
     @Test
     fun testAddCoroutinesSupport() {
-        val buildScript = createProjectSubFile("build.gradle", """
-        buildscript {
-            repositories {
-                jcenter()
-                mavenCentral()
-            }
-            dependencies {
-                classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.1.0"
-            }
-        }
-
-        apply plugin: 'kotlin'
-
-        dependencies {
-            compile "org.jetbrains.kotlin:kotlin-stdlib-1.1.0"
-        }
-        """.trimIndent())
-
-        importProject()
+        val files = importProjectFromTestData()
 
         runInEdtAndWait {
             myTestFixture.project.executeWriteCommand("") {
                 KotlinWithGradleConfigurator.changeCoroutineConfiguration(myTestFixture.module, "enable")
             }
 
-            FileDocumentManager.getInstance().saveAllDocuments()
+            checkFiles(files)
         }
-
-        assertEquals("""
-                buildscript {
-                    repositories {
-                        jcenter()
-                        mavenCentral()
-                    }
-                    dependencies {
-                        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.1.0"
-                    }
-                }
-
-                apply plugin: 'kotlin'
-
-                dependencies {
-                    compile "org.jetbrains.kotlin:kotlin-stdlib-1.1.0"
-                }
-                kotlin {
-                    experimental {
-                        coroutines "enable"
-                    }
-                }
-                """.trimIndent(),
-                LoadTextUtil.loadText(buildScript).toString())
     }
 
     @Test
     fun testAddCoroutinesSupportGSK() {
-        val buildScript = createProjectSubFile("build.gradle.kts", "")
-
-        importProject()
+        val files = importProjectFromTestData()
 
         runInEdtAndWait {
             myTestFixture.project.executeWriteCommand("") {
                 KotlinWithGradleConfigurator.changeCoroutineConfiguration(myTestFixture.module, "enable")
             }
 
-            FileDocumentManager.getInstance().saveAllDocuments()
+            checkFiles(files)
         }
-
-        assertEquals(
-                """import org.jetbrains.kotlin.gradle.dsl.Coroutines
-                  |
-                  |kotlin {
-                  |    experimental.coroutines = Coroutines.ENABLE
-                  |}""".trimMargin("|"),
-                LoadTextUtil.loadText(buildScript).toString())
     }
 
     @Test
     fun testChangeCoroutinesSupport() {
-        val buildScript = createProjectSubFile("build.gradle", """
-            buildscript {
-                repositories {
-                    jcenter()
-                    mavenCentral()
-                }
-                dependencies {
-                    classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.1.0"
-                }
-            }
-
-            apply plugin: 'kotlin'
-
-            dependencies {
-                compile "org.jetbrains.kotlin:kotlin-stdlib-1.1.0"
-            }
-            kotlin {
-                experimental {
-                      coroutines "error"
-                }
-            }
-            """.trimIndent())
-
-        importProject()
+        val files = importProjectFromTestData()
 
         runInEdtAndWait {
             myTestFixture.project.executeWriteCommand("") {
                 KotlinWithGradleConfigurator.changeCoroutineConfiguration(myTestFixture.module, "enable")
             }
 
-            FileDocumentManager.getInstance().saveAllDocuments()
+            checkFiles(files)
         }
-
-        assertEquals("""
-            buildscript {
-                repositories {
-                    jcenter()
-                    mavenCentral()
-                }
-                dependencies {
-                    classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.1.0"
-                }
-            }
-
-            apply plugin: 'kotlin'
-
-            dependencies {
-                compile "org.jetbrains.kotlin:kotlin-stdlib-1.1.0"
-            }
-            kotlin {
-                experimental {
-                      coroutines "enable"
-                }
-            }
-            """.trimIndent(), LoadTextUtil.loadText(buildScript).toString())
     }
 
+    @TargetVersions("3.5")
     @Test
     fun testChangeCoroutinesSupportGSK() {
-        val buildScript = createProjectSubFile("build.gradle.kts",
-                                                    """import org.jetbrains.kotlin.gradle.dsl.Coroutines
-                  |
-                  |kotlin {
-                  |    experimental.coroutines = Coroutines.DISABLE
-                  |}
-                  |""".trimMargin("|"))
-
-        importProject()
+        val files = importProjectFromTestData()
 
         runInEdtAndWait {
             myTestFixture.project.executeWriteCommand("") {
                 KotlinWithGradleConfigurator.changeCoroutineConfiguration(myTestFixture.module, "enable")
             }
 
-            FileDocumentManager.getInstance().saveAllDocuments()
+            checkFiles(files)
         }
+    }
 
-        assertEquals(
-                """import org.jetbrains.kotlin.gradle.dsl.Coroutines
-                  |
-                  |kotlin {
-                  |    experimental.coroutines = Coroutines.ENABLE
-                  |}
-                  |""".trimMargin("|"),
-                LoadTextUtil.loadText(buildScript).toString())
+    @TargetVersions("4.4+")
+    @Test
+    fun testChangeCoroutinesSupportGSK49() {
+        val files = importProjectFromTestData()
+
+        runInEdtAndWait {
+            myTestFixture.project.executeWriteCommand("") {
+                KotlinWithGradleConfigurator.changeCoroutineConfiguration(myTestFixture.module, "enable")
+            }
+
+            checkFiles(files)
+        }
     }
 
     @Test
     fun testAddLanguageVersion() {
-        val buildScript = createProjectSubFile("build.gradle", """
-            buildscript {
-                repositories {
-                    jcenter()
-                    mavenCentral()
-                }
-                dependencies {
-                    classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.1.0"
-                }
-            }
-
-            apply plugin: 'kotlin'
-
-            dependencies {
-                compile "org.jetbrains.kotlin:kotlin-stdlib-1.1.0"
-            }
-            """.trimIndent())
-
-        importProject()
+        val files = importProjectFromTestData()
 
         runInEdtAndWait {
             myTestFixture.project.executeWriteCommand("") {
                 KotlinWithGradleConfigurator.changeLanguageVersion(myTestFixture.module, "1.1", null, false)
             }
 
-            FileDocumentManager.getInstance().saveAllDocuments()
+            checkFiles(files)
         }
-
-        assertEquals("""
-            buildscript {
-                repositories {
-                    jcenter()
-                    mavenCentral()
-                }
-                dependencies {
-                    classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.1.0"
-                }
-            }
-
-            apply plugin: 'kotlin'
-
-            dependencies {
-                compile "org.jetbrains.kotlin:kotlin-stdlib-1.1.0"
-            }
-            compileKotlin {
-                kotlinOptions {
-                    languageVersion = "1.1"
-                }
-            }
-            """.trimIndent(), LoadTextUtil.loadText(buildScript).toString())
     }
 
     @Test
     fun testAddLanguageVersionGSK() {
-        val buildScript = createProjectSubFile("build.gradle.kts", "")
-
-        importProject()
+        val files = importProjectFromTestData()
 
         runInEdtAndWait {
             myTestFixture.project.executeWriteCommand("") {
                 KotlinWithGradleConfigurator.changeLanguageVersion(myTestFixture.module, "1.1", null, false)
             }
 
-            FileDocumentManager.getInstance().saveAllDocuments()
+            checkFiles(files)
         }
-
-        assertEquals(
-                """import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-                 |
-                 |val compileKotlin: KotlinCompile by tasks
-                 |compileKotlin.kotlinOptions {
-                 |    languageVersion = "1.1"
-                 |}""".trimMargin("|"),
-                LoadTextUtil.loadText(buildScript).toString())
     }
 
     @Test
     fun testChangeLanguageVersion() {
-        val buildScript = createProjectSubFile("build.gradle", """
-            buildscript {
-                repositories {
-                    jcenter()
-                    mavenCentral()
-                }
-                dependencies {
-                    classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.1.0"
-                }
-            }
-
-            apply plugin: 'kotlin'
-
-            dependencies {
-                compile "org.jetbrains.kotlin:kotlin-stdlib-1.1.0"
-            }
-            compileKotlin {
-                kotlinOptions {
-                    languageVersion = "1.0"
-                }
-            }
-            """.trimIndent())
-
-        importProject()
+        val files = importProjectFromTestData()
 
         runInEdtAndWait {
             myTestFixture.project.executeWriteCommand("") {
                 KotlinWithGradleConfigurator.changeLanguageVersion(myTestFixture.module, "1.1", null, false)
             }
 
-            FileDocumentManager.getInstance().saveAllDocuments()
+            checkFiles(files)
         }
-
-        assertEquals("""
-            buildscript {
-                repositories {
-                    jcenter()
-                    mavenCentral()
-                }
-                dependencies {
-                    classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.1.0"
-                }
-            }
-
-            apply plugin: 'kotlin'
-
-            dependencies {
-                compile "org.jetbrains.kotlin:kotlin-stdlib-1.1.0"
-            }
-            compileKotlin {
-                kotlinOptions {
-                    languageVersion = "1.1"
-                }
-            }
-            """.trimIndent(), LoadTextUtil.loadText(buildScript).toString())
     }
 
     @Test
     fun testChangeLanguageVersionGSK() {
-        val buildScript = createProjectSubFile("build.gradle.kts",
-                                                    """val compileKotlin: KotlinCompile by tasks
-                                                     |compileKotlin.kotlinOptions {
-                                                     |   languageVersion = "1.0"
-                                                     |}
-                                                     |""".trimMargin("|"))
-
-        importProject()
+        val files = importProjectFromTestData()
 
         runInEdtAndWait {
             myTestFixture.project.executeWriteCommand("") {
                 KotlinWithGradleConfigurator.changeLanguageVersion(myTestFixture.module, "1.1", null, false)
             }
 
-            FileDocumentManager.getInstance().saveAllDocuments()
+            checkFiles(files)
         }
-
-        assertEquals(
-                """val compileKotlin: KotlinCompile by tasks
-                 |compileKotlin.kotlinOptions {
-                 |    languageVersion = "1.1"
-                 |}
-                 |""".trimMargin("|"),
-                LoadTextUtil.loadText(buildScript).toString())
     }
 
     @Test
     fun testAddLibrary() {
-        val buildScript = createProjectSubFile("build.gradle", """
-            buildscript {
-                repositories {
-                    jcenter()
-                    mavenCentral()
-                }
-                dependencies {
-                    classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.1.0"
-                }
-            }
-
-            apply plugin: 'kotlin'
-
-            dependencies {
-                compile "org.jetbrains.kotlin:kotlin-stdlib-1.1.0"
-            }
-            """.trimIndent())
-
-        importProject()
+        val files = importProjectFromTestData()
 
         runInEdtAndWait {
             myTestFixture.project.executeWriteCommand("") {
                 KotlinWithGradleConfigurator.addKotlinLibraryToModule(
-                        myTestFixture.module,
-                        DependencyScope.COMPILE,
-                        object: ExternalLibraryDescriptor("org.jetbrains.kotlin", "kotlin-reflect", "1.0.0", "1.0.0") {
-                            override fun getLibraryClassesRoots() = emptyList<String>()
-                        })
+                    myTestFixture.module,
+                    DependencyScope.COMPILE,
+                    object : ExternalLibraryDescriptor("org.jetbrains.kotlin", "kotlin-reflect", "1.0.0", "1.0.0") {
+                        override fun getLibraryClassesRoots() = emptyList<String>()
+                    })
             }
 
-            FileDocumentManager.getInstance().saveAllDocuments()
+            checkFiles(files)
         }
+    }
 
-        assertEquals("""
-            buildscript {
-                repositories {
-                    jcenter()
-                    mavenCentral()
-                }
-                dependencies {
-                    classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.1.0"
-                }
+    @Test
+    fun testChangeFeatureSupport() {
+        val files = importProjectFromTestData()
+
+        runInEdtAndWait {
+            myTestFixture.project.executeWriteCommand("") {
+                KotlinWithGradleConfigurator.changeFeatureConfiguration(
+                    myTestFixture.module, LanguageFeature.InlineClasses, LanguageFeature.State.ENABLED, false
+                )
             }
 
-            apply plugin: 'kotlin'
+            checkFiles(files)
+        }
+    }
 
-            dependencies {
-                compile "org.jetbrains.kotlin:kotlin-stdlib-1.1.0"
-                compile "org.jetbrains.kotlin:kotlin-reflect:1.0.0"
+    @Test
+    fun testDisableFeatureSupport() {
+        val files = importProjectFromTestData()
+
+        runInEdtAndWait {
+            myTestFixture.project.executeWriteCommand("") {
+                KotlinWithGradleConfigurator.changeFeatureConfiguration(
+                    myTestFixture.module, LanguageFeature.InlineClasses, LanguageFeature.State.DISABLED, false
+                )
             }
-            """.trimIndent(), LoadTextUtil.loadText(buildScript).toString())
+
+            checkFiles(files)
+        }
+    }
+
+    @Test
+    fun testEnableFeatureSupport() {
+        val files = importProjectFromTestData()
+
+        runInEdtAndWait {
+            myTestFixture.project.executeWriteCommand("") {
+                KotlinWithGradleConfigurator.changeFeatureConfiguration(
+                    myTestFixture.module, LanguageFeature.InlineClasses, LanguageFeature.State.ENABLED, false
+                )
+            }
+
+            checkFiles(files)
+        }
+    }
+
+    @Test
+    fun testEnableFeatureSupportToExistentArguments() {
+        val files = importProjectFromTestData()
+
+        runInEdtAndWait {
+            myTestFixture.project.executeWriteCommand("") {
+                KotlinWithGradleConfigurator.changeFeatureConfiguration(
+                    myTestFixture.module, LanguageFeature.InlineClasses, LanguageFeature.State.ENABLED, false
+                )
+            }
+
+            checkFiles(files)
+        }
+    }
+
+    @Test
+    fun testChangeFeatureSupportGSK() {
+        val files = importProjectFromTestData()
+
+        runInEdtAndWait {
+            myTestFixture.project.executeWriteCommand("") {
+                KotlinWithGradleConfigurator.changeFeatureConfiguration(
+                    myTestFixture.module, LanguageFeature.InlineClasses, LanguageFeature.State.DISABLED, false
+                )
+            }
+
+            checkFiles(files)
+        }
+    }
+
+    @Test
+    fun testDisableFeatureSupportGSK() {
+        val files = importProjectFromTestData()
+
+        runInEdtAndWait {
+            myTestFixture.project.executeWriteCommand("") {
+                KotlinWithGradleConfigurator.changeFeatureConfiguration(
+                    myTestFixture.module, LanguageFeature.InlineClasses, LanguageFeature.State.DISABLED, false
+                )
+            }
+
+            checkFiles(files)
+        }
+    }
+
+    @Test
+    fun testEnableFeatureSupportGSK() {
+        val files = importProjectFromTestData()
+
+        runInEdtAndWait {
+            myTestFixture.project.executeWriteCommand("") {
+                KotlinWithGradleConfigurator.changeFeatureConfiguration(
+                    myTestFixture.module, LanguageFeature.InlineClasses, LanguageFeature.State.ENABLED, false
+                )
+            }
+
+            checkFiles(files)
+        }
+    }
+
+    private fun importProjectFromTestData(): List<VirtualFile> {
+        val files = configureByFiles()
+        importProject()
+        return files
+    }
+
+    override fun testDataDirName(): String {
+        return "configurator"
+    }
+
+    private fun checkFiles(files: List<VirtualFile>) {
+        FileDocumentManager.getInstance().saveAllDocuments()
+
+        files.filter {
+            it.name == GradleConstants.DEFAULT_SCRIPT_NAME
+                    || it.name == GradleConstants.KOTLIN_DSL_SCRIPT_NAME
+                    || it.name == GradleConstants.SETTINGS_FILE_NAME
+        }
+            .forEach {
+                if (it.name == GradleConstants.SETTINGS_FILE_NAME && !File(testDataDirectory(), it.name + SUFFIX).exists()) return@forEach
+                val actualText = LoadTextUtil.loadText(it).toString()
+                val expectedFileName = if (File(testDataDirectory(), it.name + ".$gradleVersion" + SUFFIX).exists()) {
+                    it.name + ".$gradleVersion" + SUFFIX
+                } else {
+                    it.name + SUFFIX
+                }
+                KotlinTestUtils.assertEqualsToFile(File(testDataDirectory(), expectedFileName), actualText)
+            }
     }
 }

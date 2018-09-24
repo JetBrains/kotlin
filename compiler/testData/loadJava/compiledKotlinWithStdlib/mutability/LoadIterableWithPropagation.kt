@@ -1,7 +1,8 @@
+// JVM_ANNOTATIONS
 package test
 
 import java.util.ArrayList
-import org.jetbrains.annotations.*
+import kotlin.annotations.jvm.*
 
 public interface LoadIterableWithPropagation {
     public interface LoadIterable<T> {

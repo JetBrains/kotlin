@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 
-abstract class AssignedVariablesSearcher: KtTreeVisitorVoid() {
+abstract class AssignedVariablesSearcher : KtTreeVisitorVoid() {
 
     data class Writer(val assignment: KtBinaryExpression, val declaration: KtDeclaration?)
 

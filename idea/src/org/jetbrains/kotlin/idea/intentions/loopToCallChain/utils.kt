@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.idea.analysis.analyzeAsReplacement
 import org.jetbrains.kotlin.idea.analysis.analyzeInContext
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.core.copied
 import org.jetbrains.kotlin.idea.core.replaced
@@ -44,10 +45,13 @@ import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluat
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import java.util.*
 
-fun generateLambda(inputVariable: KtCallableDeclaration, expression: KtExpression): KtLambdaExpression {
+fun generateLambda(inputVariable: KtCallableDeclaration, expression: KtExpression, reformat: Boolean): KtLambdaExpression {
     val psiFactory = KtPsiFactory(expression)
 
-    val lambdaExpression = psiFactory.createExpressionByPattern("{ $0 -> $1 }", inputVariable.nameAsSafeName, expression) as KtLambdaExpression
+    val lambdaExpression = psiFactory.createExpressionByPattern(
+            "{ $0 -> $1 }", inputVariable.nameAsSafeName, expression,
+            reformat = reformat
+    ) as KtLambdaExpression
 
     val isItUsedInside = expression.anyDescendantOfType<KtNameReferenceExpression> {
         it.getQualifiedExpressionForSelector() == null && it.getReferencedName() == "it"
@@ -65,15 +69,21 @@ fun generateLambda(inputVariable: KtCallableDeclaration, expression: KtExpressio
         (usage.node as UserDataHolderBase).copyCopyableDataTo(replaced.node as UserDataHolderBase)
     }
 
-    return psiFactory.createExpressionByPattern("{ $0 }", lambdaExpression.bodyExpression!!) as KtLambdaExpression
+    val lambdaBodyExpression = lambdaExpression.bodyExpression!!.statements.single()
+    return psiFactory.createExpressionByPattern("{ $0 }", lambdaBodyExpression, reformat = reformat) as KtLambdaExpression
 }
 
-fun generateLambda(inputVariable: KtCallableDeclaration, indexVariable: KtCallableDeclaration?, expression: KtExpression): KtLambdaExpression {
+fun generateLambda(
+        inputVariable: KtCallableDeclaration,
+        indexVariable: KtCallableDeclaration?,
+        expression: KtExpression,
+        reformat: Boolean
+): KtLambdaExpression {
     if (indexVariable == null) {
-        return generateLambda(inputVariable, expression)
+        return generateLambda(inputVariable, expression, reformat)
     }
 
-    val lambdaExpression = generateLambda(expression, *arrayOf(indexVariable, inputVariable))
+    val lambdaExpression = generateLambda(expression, *arrayOf(indexVariable, inputVariable), reformat = reformat)
 
     // replace "index++" with "index" or "index + 1" (see IntroduceIndexMatcher)
     val indexPlusPlus = lambdaExpression.findDescendantOfType<KtUnaryExpression> { unaryExpression ->
@@ -89,23 +99,23 @@ fun generateLambda(inputVariable: KtCallableDeclaration, indexVariable: KtCallab
         }
     }
     if (indexPlusPlus != null) {
-        removePlusPlus(indexPlusPlus)
+        removePlusPlus(indexPlusPlus, reformat)
     }
 
     return lambdaExpression
 }
 
-fun removePlusPlus(indexPlusPlus: KtUnaryExpression) {
+fun removePlusPlus(indexPlusPlus: KtUnaryExpression, reformat: Boolean) {
     val operand = indexPlusPlus.baseExpression!!
     val replacement = if (indexPlusPlus is KtPostfixExpression) // index++
         operand
     else // ++index
-        KtPsiFactory(operand).createExpressionByPattern("$0 + 1", operand)
+        KtPsiFactory(operand).createExpressionByPattern("$0 + 1", operand, reformat = reformat)
     indexPlusPlus.replace(replacement)
 }
 
-fun generateLambda(expression: KtExpression, vararg inputVariables: KtCallableDeclaration): KtLambdaExpression {
-    return KtPsiFactory(expression).buildExpression {
+fun generateLambda(expression: KtExpression, vararg inputVariables: KtCallableDeclaration, reformat: Boolean): KtLambdaExpression {
+    return KtPsiFactory(expression).buildExpression(reformat = reformat) {
         appendFixedText("{")
 
         for ((index, variable) in inputVariables.withIndex()) {
@@ -195,8 +205,7 @@ fun KtExpression.isSimpleCollectionInstantiation(): CollectionKind? {
     val callExpression = this as? KtCallExpression ?: return null //TODO: it can be qualified too
     if (callExpression.valueArguments.isNotEmpty()) return null
 
-    val bindingContext = callExpression.analyze(BodyResolveMode.PARTIAL)
-    val resolvedCall = callExpression.getResolvedCall(bindingContext) ?: return null
+    val resolvedCall = callExpression.resolveToCall() ?: return null
     val descriptor = resolvedCall.resultingDescriptor
 
     when (descriptor) {
@@ -381,7 +390,7 @@ private fun isEmbeddedBreakOrContinue(expression: KtExpressionWithLabel): Boolea
 
         is KtContainerNode -> {
             val containerExpression = parent.parent as KtExpression
-            containerExpression.isUsedAsExpression(containerExpression.analyze(BodyResolveMode.PARTIAL))
+            containerExpression.isUsedAsExpression(containerExpression.analyze(BodyResolveMode.PARTIAL_WITH_CFA))
         }
 
         else -> true

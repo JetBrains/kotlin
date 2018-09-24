@@ -1,9 +1,11 @@
+/*
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
+ */
+
 package test.tuples
 
-import org.junit.Test
-import kotlin.test.assertTrue
-import kotlin.test.assertEquals
-import kotlin.test.assertNotEquals
+import kotlin.test.*
 
 class PairTest {
     val p = Pair(1, "a")

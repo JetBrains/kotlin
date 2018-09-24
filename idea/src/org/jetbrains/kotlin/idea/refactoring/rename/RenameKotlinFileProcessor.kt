@@ -23,6 +23,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.SearchScope
 import com.intellij.refactoring.rename.RenamePsiFileProcessor
+import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
@@ -30,9 +31,17 @@ import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
 import org.jetbrains.kotlin.psi.KtFile
 
 class RenameKotlinFileProcessor : RenamePsiFileProcessor() {
-    override fun canProcessElement(element: PsiElement) = element is KtFile && ProjectRootsUtil.isInProjectSource(element)
+    class FileRenamingPsiClassWrapper(
+        private val psiClass: KtLightClass,
+        private val file: KtFile
+    ) : KtLightClass by psiClass {
+        override fun isValid() = file.isValid
+    }
 
-    override fun prepareRenaming(element: PsiElement?,
+    override fun canProcessElement(element: PsiElement) =
+        element is KtFile && ProjectRootsUtil.isInProjectSource(element, includeScriptsOutsideSourceRoots = true)
+
+    override fun prepareRenaming(element: PsiElement,
                                  newName: String,
                                  allRenames: MutableMap<PsiElement, String>,
                                  scope: SearchScope) {
@@ -47,9 +56,10 @@ class RenameKotlinFileProcessor : RenamePsiFileProcessor() {
         if (!fileInfo.withJvmName) {
             val facadeFqName = fileInfo.facadeClassFqName
             val project = jetFile.project
-            val facadeClass = JavaPsiFacade.getInstance(project).findClass(facadeFqName.asString(), GlobalSearchScope.moduleScope(module))
+            val facadeClass = JavaPsiFacade.getInstance(project)
+                .findClass(facadeFqName.asString(), GlobalSearchScope.moduleScope(module)) as? KtLightClass
             if (facadeClass != null) {
-                allRenames[facadeClass] = PackagePartClassUtils.getFilePartShortName(newName)
+                allRenames[FileRenamingPsiClassWrapper(facadeClass, jetFile)] = PackagePartClassUtils.getFilePartShortName(newName)
             }
         }
     }

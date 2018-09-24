@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 994
+// EXPECTED_REACHABLE_NODES: 1283
 //FILE: nativeClassAsReifiedTypeArgument.kt
 
 var global = ""

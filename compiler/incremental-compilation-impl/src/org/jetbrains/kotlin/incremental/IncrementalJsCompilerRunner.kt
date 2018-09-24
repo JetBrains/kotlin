@@ -21,11 +21,14 @@ import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.js.K2JSCompiler
-import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.config.IncrementalCompilation
 import org.jetbrains.kotlin.config.Services
+import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.js.*
+import org.jetbrains.kotlin.incremental.storage.version.CacheVersionManager
+import org.jetbrains.kotlin.incremental.multiproject.EmptyModulesApiHistory
+import org.jetbrains.kotlin.incremental.multiproject.ModulesApiHistory
 import java.io.File
 
 fun makeJsIncrementally(
@@ -35,44 +38,47 @@ fun makeJsIncrementally(
         messageCollector: MessageCollector = MessageCollector.NONE,
         reporter: ICReporter = EmptyICReporter
 ) {
-    val versions = commonCacheVersions(cachesDir) + standaloneCacheVersion(cachesDir)
     val allKotlinFiles = sourceRoots.asSequence().flatMap { it.walk() }
             .filter { it.isFile && it.extension.equals("kt", ignoreCase = true) }.toList()
+    val buildHistoryFile = File(cachesDir, "build-history.bin")
 
     withJsIC {
-        val compiler = IncrementalJsCompilerRunner(cachesDir, versions, reporter)
-        compiler.compile(allKotlinFiles, args, messageCollector) {
-            it.inputsCache.sourceSnapshotMap.compareAndUpdate(allKotlinFiles)
-        }
+        val versions = commonCacheVersionsManagers(cachesDir, true) + standaloneCacheVersionManager(cachesDir, true)
+
+        val compiler = IncrementalJsCompilerRunner(
+            cachesDir, versions, reporter,
+            buildHistoryFile = buildHistoryFile,
+            modulesApiHistory = EmptyModulesApiHistory)
+        compiler.compile(allKotlinFiles, args, messageCollector, providedChangedFiles = null)
     }
 }
 
-inline fun <R> withJsIC(fn: ()->R): R {
+inline fun <R> withJsIC(fn: () -> R): R {
     val isJsEnabledBackup = IncrementalCompilation.isEnabledForJs()
     IncrementalCompilation.setIsEnabledForJs(true)
 
     try {
-        return withIC { fn() }
-    }
-    finally {
+        return fn()
+    } finally {
         IncrementalCompilation.setIsEnabledForJs(isJsEnabledBackup)
     }
 }
 
 class IncrementalJsCompilerRunner(
-        workingDir: File,
-        cacheVersions: List<CacheVersion>,
-        reporter: ICReporter
+    workingDir: File,
+    cachesVersionManagers: List<CacheVersionManager>,
+    reporter: ICReporter,
+        buildHistoryFile: File,
+        private val modulesApiHistory: ModulesApiHistory
 ) : IncrementalCompilerRunner<K2JSCompilerArguments, IncrementalJsCachesManager>(
-        workingDir,
-        "caches-js",
-        cacheVersions,
-        reporter,
-        artifactChangesProvider = null,
-        changesRegistry = null
+    workingDir,
+    "caches-js",
+    cachesVersionManagers,
+    reporter,
+        buildHistoryFile = buildHistoryFile
 ) {
     override fun isICEnabled(): Boolean =
-        IncrementalCompilation.isEnabled() && IncrementalCompilation.isEnabledForJs()
+        IncrementalCompilation.isEnabledForJs()
 
     override fun createCacheManager(args: K2JSCompilerArguments): IncrementalJsCachesManager =
         IncrementalJsCachesManager(cacheDirectory, reporter)
@@ -81,22 +87,50 @@ class IncrementalJsCompilerRunner(
         File(args.outputFile).parentFile
 
     override fun calculateSourcesToCompile(caches: IncrementalJsCachesManager, changedFiles: ChangedFiles.Known, args: K2JSCompilerArguments): CompilationMode {
-        if (BuildInfo.read(lastBuildInfoFile) == null) return CompilationMode.Rebuild { "No information on previous build" }
+        val lastBuildInfo = BuildInfo.read(lastBuildInfoFile)
+            ?: return CompilationMode.Rebuild { "No information on previous build" }
 
-        return CompilationMode.Incremental(getDirtyFiles(changedFiles))
+        val dirtyFiles = DirtyFilesContainer(caches, reporter, kotlinSourceFilesExtensions)
+        initDirtyFiles(dirtyFiles, changedFiles)
+
+        val libs = (args.libraries ?: "").split(File.pathSeparator).map { File(it) }
+        val classpathChanges = getClasspathChanges(libs, changedFiles, lastBuildInfo, modulesApiHistory, reporter)
+
+        @Suppress("UNUSED_VARIABLE") // for sealed when
+        val unused = when (classpathChanges) {
+            is ChangesEither.Unknown -> return CompilationMode.Rebuild {
+                // todo: we can recompile all files incrementally (not cleaning caches), so rebuild won't propagate
+                "Could not get classpath's changes${classpathChanges.reason?.let { ": $it" }}"
+            }
+            is ChangesEither.Known -> {
+                dirtyFiles.addByDirtySymbols(classpathChanges.lookupSymbols)
+                dirtyFiles.addByDirtyClasses(classpathChanges.fqNames)
+            }
+        }
+
+
+        val removedClassesChanges = getRemovedClassesChanges(caches, changedFiles)
+        dirtyFiles.addByDirtySymbols(removedClassesChanges.dirtyLookupSymbols)
+        dirtyFiles.addByDirtyClasses(removedClassesChanges.dirtyClassesFqNames)
+
+        return CompilationMode.Incremental(dirtyFiles)
     }
 
     override fun makeServices(
-            args: K2JSCompilerArguments,
-            lookupTracker: LookupTracker,
-            caches: IncrementalJsCachesManager,
-            compilationMode: CompilationMode
+        args: K2JSCompilerArguments,
+        lookupTracker: LookupTracker,
+        expectActualTracker: ExpectActualTracker,
+        caches: IncrementalJsCachesManager,
+        compilationMode: CompilationMode
     ): Services.Builder =
-        super.makeServices(args, lookupTracker, caches, compilationMode).apply {
+        super.makeServices(args, lookupTracker, expectActualTracker, caches, compilationMode).apply {
             register(IncrementalResultsConsumer::class.java, IncrementalResultsConsumerImpl())
 
             if (compilationMode is CompilationMode.Incremental) {
-                register(IncrementalDataProvider::class.java, IncrementalDataProviderFromCache(caches.platformCache))
+                register(
+                    IncrementalDataProvider::class.java,
+                    IncrementalDataProviderFromCache(caches.platformCache)
+                )
             }
         }
 
@@ -111,7 +145,8 @@ class IncrementalJsCompilerRunner(
         val jsCache = caches.platformCache
         jsCache.header = incrementalResults.headerMetadata
 
-        return jsCache.compareAndUpdate(incrementalResults, changesCollector)
+        jsCache.compareAndUpdate(incrementalResults, changesCollector)
+        jsCache.clearCacheForRemovedClasses(changesCollector)
     }
 
     override fun runCompiler(
@@ -121,10 +156,10 @@ class IncrementalJsCompilerRunner(
             services: Services,
             messageCollector: MessageCollector
     ): ExitCode {
-        val freeArgsBackup = args.freeArgs.toMutableList()
+        val freeArgsBackup = args.freeArgs
 
         try {
-            sourcesToCompile.mapTo(args.freeArgs) { it.absolutePath }
+            args.freeArgs += sourcesToCompile.map() { it.absolutePath }
             val exitCode = K2JSCompiler().exec(messageCollector, services, args)
             reporter.reportCompileIteration(sourcesToCompile, exitCode)
             return exitCode
@@ -133,4 +168,7 @@ class IncrementalJsCompilerRunner(
             args.freeArgs = freeArgsBackup
         }
     }
+
+    private val ChangedFiles.Known.allAsSequence: Sequence<File>
+        get() = modified.asSequence() + removed.asSequence()
 }

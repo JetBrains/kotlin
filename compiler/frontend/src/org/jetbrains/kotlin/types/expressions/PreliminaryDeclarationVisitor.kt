@@ -28,9 +28,9 @@ import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 
 class PreliminaryDeclarationVisitor(
-        val declaration: KtDeclaration,
-        val languageVersionSettings: LanguageVersionSettings
-): AssignedVariablesSearcher() {
+    val declaration: KtDeclaration,
+    val languageVersionSettings: LanguageVersionSettings
+) : AssignedVariablesSearcher() {
 
     override fun writers(variableDescriptor: VariableDescriptor): MutableSet<Writer> {
         lazyTrigger
@@ -48,20 +48,22 @@ class PreliminaryDeclarationVisitor(
         }
 
         private fun topMostNonClassDeclaration(declaration: KtDeclaration) =
-                declaration.parentsWithSelf.filterIsInstance<KtDeclaration>().findLast { it !is KtClassOrObject } ?: declaration
+            declaration.parentsWithSelf.filterIsInstance<KtDeclaration>().findLast { it !is KtClassOrObject } ?: declaration
 
         fun createForDeclaration(declaration: KtDeclaration, trace: BindingTrace, languageVersionSettings: LanguageVersionSettings) {
             val visitorOwner = topMostNonClassDeclaration(declaration)
             if (trace.get(BindingContext.PRELIMINARY_VISITOR, visitorOwner) != null) return
-            trace.record(BindingContext.PRELIMINARY_VISITOR, visitorOwner,
-                         PreliminaryDeclarationVisitor(visitorOwner, languageVersionSettings))
+            trace.record(
+                BindingContext.PRELIMINARY_VISITOR, visitorOwner,
+                PreliminaryDeclarationVisitor(visitorOwner, languageVersionSettings)
+            )
         }
 
         fun getVisitorByVariable(variableDescriptor: VariableDescriptor, bindingContext: BindingContext): PreliminaryDeclarationVisitor? {
             // Search for preliminary visitor of parent descriptor
             val containingDescriptor = variableDescriptor.containingDeclaration
             var currentDeclaration: KtDeclaration? =
-                    DescriptorToSourceUtils.descriptorToDeclaration(containingDescriptor) as? KtDeclaration ?: return null
+                DescriptorToSourceUtils.descriptorToDeclaration(containingDescriptor) as? KtDeclaration ?: return null
             var preliminaryVisitor = bindingContext.get(BindingContext.PRELIMINARY_VISITOR, currentDeclaration)
             while (preliminaryVisitor == null && currentDeclaration != null) {
                 currentDeclaration = currentDeclaration.getStrictParentOfType()

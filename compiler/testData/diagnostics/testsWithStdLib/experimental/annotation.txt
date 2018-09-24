@@ -1,0 +1,102 @@
+package
+
+package api {
+
+    @api.ExperimentalAPI @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.TYPE, AnnotationTarget.CLASS, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY, AnnotationTarget.TYPEALIAS, AnnotationTarget.VALUE_PARAMETER}) public final annotation class EAnno : kotlin.Annotation {
+        public constructor EAnno()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    @kotlin.Experimental(level = Level.WARNING) @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.TYPE, AnnotationTarget.CLASS, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY, AnnotationTarget.TYPEALIAS, AnnotationTarget.VALUE_PARAMETER}) public final annotation class ExperimentalAPI : kotlin.Annotation {
+        public constructor ExperimentalAPI()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+
+package usage1 {
+    @api.ExperimentalAPI public val inProperty: () -> kotlin.Unit
+    @api.ExperimentalAPI public val inPropertyAccessor: () -> kotlin.Unit
+    @api.ExperimentalAPI @api.EAnno public val property: kotlin.String = ""
+    @api.ExperimentalAPI @api.EAnno public fun function(): kotlin.Unit
+    @api.ExperimentalAPI public fun inDefaultArgument(/*0*/ f: () -> kotlin.Unit = ...): kotlin.Unit
+    @api.ExperimentalAPI public fun insideBody(): kotlin.Unit
+    @api.ExperimentalAPI public fun parameter(/*0*/ @api.EAnno p: kotlin.String): kotlin.Unit
+    @api.ExperimentalAPI public fun parameterType(/*0*/ p: @api.EAnno kotlin.String): kotlin.Unit
+    @api.ExperimentalAPI public fun returnType(): @api.EAnno kotlin.Unit
+
+    @api.ExperimentalAPI public final annotation class AnnotationArgument : kotlin.Annotation {
+        public constructor AnnotationArgument(/*0*/ p: api.EAnno)
+        public final val p: api.EAnno
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    @api.ExperimentalAPI @api.EAnno public final class Klass {
+        public constructor Klass()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+    @api.ExperimentalAPI @api.EAnno public typealias Typealias = kotlin.Unit
+}
+
+package usage2 {
+    @kotlin.UseExperimental(markerClass = {api.ExperimentalAPI::class}) public val inProperty: () -> kotlin.Unit
+    public val inPropertyAccessor: () -> kotlin.Unit
+    @kotlin.UseExperimental(markerClass = {api.ExperimentalAPI::class}) @api.EAnno public val property: kotlin.String = ""
+    @kotlin.UseExperimental(markerClass = {api.ExperimentalAPI::class}) @api.EAnno public fun function(): kotlin.Unit
+    public fun inDefaultArgument(/*0*/ @kotlin.UseExperimental(markerClass = {api.ExperimentalAPI::class}) f: () -> kotlin.Unit = ...): kotlin.Unit
+    public fun insideBody(): kotlin.Unit
+    @kotlin.UseExperimental(markerClass = {api.ExperimentalAPI::class}) public fun parameter(/*0*/ @api.EAnno p: kotlin.String): kotlin.Unit
+    @kotlin.UseExperimental(markerClass = {api.ExperimentalAPI::class}) public fun parameterType(/*0*/ p: @api.EAnno kotlin.String): kotlin.Unit
+    @kotlin.UseExperimental(markerClass = {api.ExperimentalAPI::class}) public fun returnType(): @api.EAnno kotlin.Unit
+
+    @kotlin.UseExperimental(markerClass = {api.ExperimentalAPI::class}) public final annotation class AnnotationArgument : kotlin.Annotation {
+        public constructor AnnotationArgument(/*0*/ p: api.EAnno)
+        public final val p: api.EAnno
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    @kotlin.UseExperimental(markerClass = {api.ExperimentalAPI::class}) @api.EAnno public final class Klass {
+        public constructor Klass()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+    @kotlin.UseExperimental(markerClass = {api.ExperimentalAPI::class}) @api.EAnno public typealias Typealias = kotlin.Unit
+}
+
+package usage3 {
+    public val inProperty: () -> kotlin.Unit
+    public val inPropertyAccessor: () -> kotlin.Unit
+    @api.EAnno public val property: kotlin.String = ""
+    @api.EAnno public fun function(): kotlin.Unit
+    public fun inDefaultArgument(/*0*/ f: () -> kotlin.Unit = ...): kotlin.Unit
+    public fun insideBody(): kotlin.Unit
+    public fun parameter(/*0*/ @api.EAnno p: kotlin.String): kotlin.Unit
+    public fun parameterType(/*0*/ p: @api.EAnno kotlin.String): kotlin.Unit
+    public fun returnType(): @api.EAnno kotlin.Unit
+
+    public final annotation class AnnotationArgument : kotlin.Annotation {
+        public constructor AnnotationArgument(/*0*/ p: api.EAnno)
+        public final val p: api.EAnno
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    @api.EAnno public final class Klass {
+        public constructor Klass()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+    @api.EAnno public typealias Typealias = kotlin.Unit
+}

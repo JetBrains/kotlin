@@ -63,7 +63,7 @@ open class KotlinJvmReplService(
 
         try {
             val cls = classloader.loadClass(templateClassName)
-            val def = KotlinScriptDefinitionFromAnnotatedTemplate(cls.kotlin, null, null, emptyMap())
+            val def = KotlinScriptDefinitionFromAnnotatedTemplate(cls.kotlin, emptyMap())
             messageCollector.report(INFO, "New script definition $templateClassName: files pattern = \"${def.scriptFilePattern}\", " +
                                           "resolver = ${def.dependencyResolver.javaClass.name}")
             return def

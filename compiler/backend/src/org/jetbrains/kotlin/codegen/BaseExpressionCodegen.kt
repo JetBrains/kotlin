@@ -20,12 +20,11 @@ import org.jetbrains.kotlin.codegen.inline.NameGenerator
 import org.jetbrains.kotlin.codegen.inline.ReifiedTypeParametersUsages
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
-import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
 interface BaseExpressionCodegen {
 
-    val frameMap: FrameMap
+    val frameMap: FrameMapBase<*>
 
     val visitor: InstructionAdapter
 
@@ -38,10 +37,10 @@ interface BaseExpressionCodegen {
     fun propagateChildReifiedTypeParametersUsages(reifiedTypeParametersUsages: ReifiedTypeParametersUsages)
 
     fun pushClosureOnStack(
-            classDescriptor: ClassDescriptor,
-            putThis: Boolean,
-            callGenerator: CallGenerator,
-            functionReferenceReceiver: StackValue?
+        classDescriptor: ClassDescriptor,
+        putThis: Boolean,
+        callGenerator: CallGenerator,
+        functionReferenceReceiver: StackValue?
     )
 
     fun markLineNumberAfterInlineIfNeeded()

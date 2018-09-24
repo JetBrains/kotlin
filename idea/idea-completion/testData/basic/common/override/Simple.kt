@@ -5,7 +5,7 @@ interface I {
 }
 
 class Base1 {
-    protected open fun bar(){}
+    protected open suspend fun bar(){}
 }
 
 open class Base2 : Base1() {
@@ -16,7 +16,7 @@ class A : Base2(), I {
 }
 
 // EXIST: { lookupString: "override", itemText: "override" }
-// EXIST: { itemText: "override fun bar() {...}", lookupString: "override", allLookupStrings: "bar, override", tailText: null, typeText: "Base1", attributes: "" }
+// EXIST: { itemText: "override suspend fun bar() {...}", lookupString: "override", allLookupStrings: "bar, override", tailText: null, typeText: "Base1", attributes: "" }
 // EXIST: { itemText: "override fun equals(other: Any?): Boolean {...}", lookupString: "override", allLookupStrings: "equals, override", tailText: null, typeText: "Any", attributes: "" }
 // EXIST: { itemText: "override fun foo(p: Int) {...}", lookupString: "override", allLookupStrings: "foo, override", tailText: null, typeText: "I", attributes: "bold" }
 // EXIST: { itemText: "override fun hashCode(): Int {...}", lookupString: "override", allLookupStrings: "hashCode, override", tailText: null, typeText: "Any", attributes: "" }

@@ -170,12 +170,12 @@ public final class JsDescriptorUtils {
     }
 
     @Nullable
-    private static FunctionDescriptor findRealDeclaration(@NotNull FunctionDescriptor descriptor) {
+    public static CallableMemberDescriptor findRealDeclaration(@NotNull CallableMemberDescriptor descriptor) {
         if (descriptor.getModality() == Modality.ABSTRACT) return null;
         if (descriptor.getKind().isReal()) return descriptor;
 
-        for (FunctionDescriptor o : descriptor.getOverriddenDescriptors()) {
-            FunctionDescriptor child = findRealDeclaration(o);
+        for (CallableMemberDescriptor o : descriptor.getOverriddenDescriptors()) {
+            CallableMemberDescriptor child = findRealDeclaration(o);
             if (child != null) {
                 return child;
             }

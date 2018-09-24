@@ -42,18 +42,18 @@ import com.intellij.util.IncorrectOperationException
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
-import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.idea.core.insertMember
 import org.jetbrains.kotlin.idea.core.overrideImplement.OverrideMemberChooserObject.BodyType
 import org.jetbrains.kotlin.idea.core.overrideImplement.generateUnsupportedOrSuperCall
-import org.jetbrains.kotlin.idea.core.quoteIfNeeded
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.setupEditorSelection
 import org.jetbrains.kotlin.idea.refactoring.j2k
 import org.jetbrains.kotlin.idea.testIntegration.findSuitableFrameworks
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.isIdentifier
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
+import org.jetbrains.kotlin.psi.psiUtil.quoteIfNeeded
 import org.jetbrains.kotlin.utils.ifEmpty
 
 abstract class KotlinGenerateTestSupportActionBase(
@@ -74,7 +74,7 @@ abstract class KotlinGenerateTestSupportActionBase(
             val list = JBList<TestFramework>(*frameworks.toTypedArray())
             list.cellRenderer = TestFrameworkListCellRenderer()
 
-            PopupChooserBuilder(list)
+            PopupChooserBuilder<TestFramework>(list)
                     .setFilteringEnabled { (it as TestFramework).name }
                     .setTitle("Choose Framework")
                     .setItemChoosenCallback { consumer(list.selectedValue as TestFramework) }
@@ -87,7 +87,7 @@ abstract class KotlinGenerateTestSupportActionBase(
         private val NAME_VAR = "\${NAME}"
 
         private val NAME_VALIDATOR = object : InputValidator {
-            override fun checkInput(inputString: String) = KotlinNameSuggester.isIdentifier(inputString.quoteIfNeeded())
+            override fun checkInput(inputString: String) = inputString.quoteIfNeeded().isIdentifier()
             override fun canClose(inputString: String) = true
         }
     }

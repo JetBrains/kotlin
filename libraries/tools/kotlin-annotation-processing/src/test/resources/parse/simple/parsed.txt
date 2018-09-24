@@ -1,1 +1,0 @@
-javax.inject.Inject org.test.SomeClass annotatedFunction

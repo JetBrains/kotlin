@@ -21,6 +21,8 @@ import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.Callab
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.FunctionInfo
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.TypeInfo
 import org.jetbrains.kotlin.lexer.KtToken
+import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.KtUnaryExpression
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
@@ -39,6 +41,11 @@ object CreateUnaryOperationActionFactory: CreateCallableMemberFromUsageFactory<K
 
         val receiverType = TypeInfo(receiverExpr, Variance.IN_VARIANCE)
         val returnType = if (incDec) TypeInfo.ByReceiverType(Variance.OUT_VARIANCE) else TypeInfo(element, Variance.OUT_VARIANCE)
-        return FunctionInfo(operationName.asString(), receiverType, returnType, isOperator = true)
+        return FunctionInfo(
+                operationName.asString(),
+                receiverType,
+                returnType,
+                modifierList = KtPsiFactory(element).createModifierList(KtTokens.OPERATOR_KEYWORD)
+        )
     }
 }

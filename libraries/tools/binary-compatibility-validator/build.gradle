@@ -6,17 +6,23 @@ configurations {
 
 dependencies {
     compile project(':kotlin-stdlib')
-    compile 'org.ow2.asm:asm-debug-all:5.0.4'
-    compile 'com.google.code.gson:gson:2.6.2'
+    compileOnly project(':kotlinx-metadata')
+    compileOnly project(':kotlinx-metadata-jvm')
+    compile 'org.ow2.asm:asm:6.0'
+    compile 'org.ow2.asm:asm-tree:6.0'
+
+    runtime project(path: ':kotlinx-metadata-jvm', configuration: 'runtime')
+
     testCompile project(':kotlin-test:kotlin-test-junit')
 
     testArtifacts project(':kotlin-stdlib')
     testArtifacts project(':kotlin-stdlib-jre7')
     testArtifacts project(':kotlin-stdlib-jre8')
+    testArtifacts project(':kotlin-stdlib-jdk7')
+    testArtifacts project(':kotlin-stdlib-jdk8')
     testArtifacts project(':kotlin-reflect')
     // legacy
     testArtifacts project(':kotlin-runtime')
-    testArtifacts files(project(':kotlin-stdlib').tasks.originalStdlibJar)
 }
 
 sourceSets {
@@ -29,15 +35,15 @@ sourceSets {
 
 compileTestKotlin {
     kotlinOptions {
-        freeCompilerArgs = ['-Xdump-declarations-to', "${buildDir}/cases-declarations.json"]
+        freeCompilerArgs = ["-Xnormalize-constructor-calls=enable"]
     }
 }
 
 test {
-    dependsOn cleanCompileTestKotlin
     dependsOn configurations.testArtifacts
 
     systemProperty 'overwrite.output', System.getProperty("overwrite.output", "false")
     systemProperty 'kotlinVersion', project.version
+    systemProperty 'testCasesClassesDirs', sourceSets.test.output.classesDirs.asPath
     jvmArgs '-ea'
 }

@@ -1,4 +1,5 @@
 source(new File(basedir, "../../../verify-common.bsh").getAbsolutePath());
 
 assertFileContains("target/js/test-js-sourceMapEmbedSources.js.map", "\"org/jetbrains/HelloWorld.kt\"");
-assertFileContains("target/js/test-js-sourceMapEmbedSources.js.map", "\"package org.jetbrains\\n\\nfun bar() = \\\"OK\\\"");
+assertFileContains("target/js/test-js-sourceMapEmbedSources.js.map", "\"package org.jetbrains");
+assertFileContains("target/js/test-js-sourceMapEmbedSources.js.map", "fun bar() = \\\"OK\\\"")

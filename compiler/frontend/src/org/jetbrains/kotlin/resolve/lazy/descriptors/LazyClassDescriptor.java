@@ -1,29 +1,19 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.resolve.lazy.descriptors;
 
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiNameIdentifierOwner;
+import kotlin.annotations.jvm.ReadOnly;
 import kotlin.collections.CollectionsKt;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.ReadOnly;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
+import org.jetbrains.kotlin.config.LanguageFeature;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.descriptors.impl.ClassDescriptorBase;
@@ -91,6 +81,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
     private final ClassKind kind;
     private final boolean isInner;
     private final boolean isData;
+    private final boolean isInline;
     private final boolean isExpect;
     private final boolean isActual;
 
@@ -166,6 +157,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
 
         this.isInner = modifierList != null && modifierList.hasModifier(INNER_KEYWORD) && !isIllegalInner(this);
         this.isData = modifierList != null && modifierList.hasModifier(KtTokens.DATA_KEYWORD);
+        this.isInline = modifierList != null && modifierList.hasModifier(KtTokens.INLINE_KEYWORD);
         this.isActual = modifierList != null && PsiUtilsKt.hasActualModifier(modifierList);
 
         this.isExpect = modifierList != null && PsiUtilsKt.hasExpectModifier(modifierList) ||
@@ -230,7 +222,12 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
             return null;
         }, null);
 
-        this.resolutionScopesSupport = new ClassResolutionScopesSupport(this, storageManager, this::getOuterScope);
+        this.resolutionScopesSupport = new ClassResolutionScopesSupport(
+                this,
+                storageManager,
+                c.getLanguageVersionSettings(),
+                this::getOuterScope
+        );
 
         this.parameters = c.getStorageManager().createLazyValue(() -> {
             KtClassLikeInfo classInfo = declarationProvider.getOwnerInfo();
@@ -438,11 +435,13 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
         Name syntheticCompanionName = c.getSyntheticResolveExtension().getSyntheticCompanionObjectNameIfNeeded(this);
         if (syntheticCompanionName == null)
             return null;
-        return new SyntheticClassOrObjectDescriptor(c,
+        SyntheticClassOrObjectDescriptor companionDescriptor = new SyntheticClassOrObjectDescriptor(c,
                 /* parentClassOrObject= */ classOrObject,
                 this, syntheticCompanionName, getSource(),
                 /* outerScope= */ getOuterScope(),
                 Modality.FINAL, PUBLIC, PRIVATE, ClassKind.OBJECT, true);
+        companionDescriptor.initialize();
+        return companionDescriptor;
     }
 
     @Nullable
@@ -490,6 +489,11 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
     @Override
     public boolean isData() {
         return isData;
+    }
+
+    @Override
+    public boolean isInline() {
+        return isInline;
     }
 
     @Override
@@ -607,6 +611,19 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
             }
         }
 
+        @Override
+        protected void reportScopesLoopError(@NotNull KotlinType type) {
+            PsiElement reportOn = DescriptorToSourceUtils.getSourceFromDescriptor(type.getConstructor().getDeclarationDescriptor());
+
+            if (reportOn instanceof KtClass) {
+                reportOn = ((KtClass) reportOn).getNameIdentifier();
+            }
+
+            if (reportOn != null) {
+                c.getTrace().report(CYCLIC_SCOPES_WITH_COMPANION.on(reportOn));
+            }
+        }
+
         private void reportCyclicInheritanceHierarchyError(
                 @NotNull BindingTrace trace,
                 @NotNull ClassDescriptor classDescriptor,
@@ -651,18 +668,13 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
         }
 
         @Override
-        public boolean isFinal() {
-            return getModality() == Modality.FINAL;
-        }
-
-        @Override
         public boolean isDenotable() {
             return true;
         }
 
         @Override
         @NotNull
-        public ClassifierDescriptor getDeclarationDescriptor() {
+        public ClassDescriptor getDeclarationDescriptor() {
             return LazyClassDescriptor.this;
         }
 

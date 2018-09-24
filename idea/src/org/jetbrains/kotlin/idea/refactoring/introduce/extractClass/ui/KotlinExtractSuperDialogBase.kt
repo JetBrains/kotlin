@@ -24,25 +24,24 @@ import com.intellij.refactoring.classMembers.MemberInfoChange
 import com.intellij.refactoring.extractSuperclass.JavaExtractSuperBaseDialog
 import com.intellij.refactoring.util.DocCommentPolicy
 import com.intellij.refactoring.util.RefactoringMessageUtil
-import com.intellij.ui.DocumentAdapter
 import com.intellij.ui.components.JBLabel
 import com.intellij.util.ui.FormBuilder
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.idea.KotlinFileType
-import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
-import org.jetbrains.kotlin.idea.core.quoteIfNeeded
 import org.jetbrains.kotlin.idea.core.unquote
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractClass.ExtractSuperInfo
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.KotlinMemberInfo
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.KotlinMemberSelectionPanel
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.KotlinUsesAndInterfacesDependencyMemberInfoModel
+import org.jetbrains.kotlin.idea.util.onTextChange
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
+import org.jetbrains.kotlin.psi.psiUtil.isIdentifier
+import org.jetbrains.kotlin.psi.psiUtil.quoteIfNeeded
 import java.awt.BorderLayout
 import javax.swing.*
-import javax.swing.event.DocumentEvent
 
 abstract class KotlinExtractSuperDialogBase(
         protected val originalClass: KtClassOrObject,
@@ -102,13 +101,7 @@ abstract class KotlinExtractSuperDialogBase(
 
     override fun createExtractedSuperNameField(): JTextField {
         return super.createExtractedSuperNameField().apply {
-            document.addDocumentListener(
-                    object : DocumentAdapter() {
-                        override fun textChanged(e: DocumentEvent?) {
-                            resetFileNameField()
-                        }
-                    }
-            )
+            onTextChange { resetFileNameField() }
         }
     }
 
@@ -175,7 +168,7 @@ abstract class KotlinExtractSuperDialogBase(
 
     override fun validateName(name: String): String? {
         return when {
-            !KotlinNameSuggester.isIdentifier(name.quoteIfNeeded()) -> RefactoringMessageUtil.getIncorrectIdentifierMessage(name)
+            !name.quoteIfNeeded().isIdentifier() -> RefactoringMessageUtil.getIncorrectIdentifierMessage(name)
             name.unquote() == mySourceClass.name -> "Different name expected"
             else -> null
         }

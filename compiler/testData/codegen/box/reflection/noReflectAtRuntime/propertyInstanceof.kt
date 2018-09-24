@@ -1,3 +1,5 @@
+// IGNORE_BACKEND: JVM_IR
+// IGNORE_BACKEND: JS_IR
 // WITH_RUNTIME
 
 import kotlin.reflect.*

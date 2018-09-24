@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.descriptors.impl;
@@ -23,6 +12,7 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.scopes.MemberScope;
 import org.jetbrains.kotlin.storage.LockBasedStorageManager;
+import org.jetbrains.kotlin.storage.StorageManager;
 import org.jetbrains.kotlin.types.ClassTypeConstructorImpl;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.TypeConstructor;
@@ -48,14 +38,15 @@ public class ClassDescriptorImpl extends ClassDescriptorBase {
             @NotNull ClassKind kind,
             @NotNull Collection<KotlinType> supertypes,
             @NotNull SourceElement source,
-            boolean isExternal
+            boolean isExternal,
+            @NotNull StorageManager storageManager
     ) {
-        super(LockBasedStorageManager.NO_LOCKS, containingDeclaration, name, source, isExternal);
+        super(storageManager, containingDeclaration, name, source, isExternal);
         assert modality != Modality.SEALED : "Implement getSealedSubclasses() for this class: " + getClass();
         this.modality = modality;
         this.kind = kind;
 
-        this.typeConstructor = new ClassTypeConstructorImpl(this, false, Collections.<TypeParameterDescriptor>emptyList(), supertypes);
+        this.typeConstructor = new ClassTypeConstructorImpl(this, Collections.<TypeParameterDescriptor>emptyList(), supertypes, storageManager);
     }
 
     public final void initialize(
@@ -144,6 +135,11 @@ public class ClassDescriptorImpl extends ClassDescriptorBase {
 
     @Override
     public boolean isData() {
+        return false;
+    }
+
+    @Override
+    public boolean isInline() {
         return false;
     }
 

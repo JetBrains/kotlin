@@ -1,0 +1,7 @@
+// NAME: NullableA
+
+class A
+
+typealias NullableA = A?
+
+fun f(p: A): NullableA = null

@@ -9,6 +9,10 @@
     <artifactId>test-project</artifactId>
     <version>1.0</version>
 
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>junit</groupId>
@@ -26,7 +30,7 @@
             <plugin>
                 <groupId>org.jetbrains.kotlin</groupId>
                 <artifactId>kotlin-maven-plugin</artifactId>
-                <version>1.1-SNAPSHOT</version>
+                <version>${kotlin.version}</version>
 
                 <executions>
                     <execution>

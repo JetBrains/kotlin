@@ -20,9 +20,7 @@ import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
-object IntComparisonGenerator : ComparisonGenerator {
-    override val comparedType: Type = Type.INT_TYPE
-
+abstract class IntegerComparisonGenerator(override val comparedType: Type) : ComparisonGenerator {
     override fun jumpIfGreaterOrEqual(v: InstructionAdapter, label: Label) {
         v.ificmpge(label)
     }
@@ -39,3 +37,7 @@ object IntComparisonGenerator : ComparisonGenerator {
         v.ificmplt(label)
     }
 }
+
+object IntComparisonGenerator : IntegerComparisonGenerator(Type.INT_TYPE)
+
+object CharComparisonGenerator : IntegerComparisonGenerator(Type.CHAR_TYPE)

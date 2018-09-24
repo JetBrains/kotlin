@@ -49,9 +49,11 @@ class OperatorCallChecker : CallChecker {
             call is CallTransformer.CallForImplicitInvoke && call.itIsVariableAsFunctionCall) {
             val outerCall = call.outerCall
             if (isConventionCall(outerCall) || isWrongCallWithExplicitTypeArguments(resolvedCall, outerCall)) {
-                throw AssertionError("Illegal resolved call to variable with invoke for $outerCall. " +
-                                     "Variable: ${resolvedCall.variableCall.resultingDescriptor}" +
-                                     "Invoke: ${resolvedCall.functionCall.resultingDescriptor}")
+                throw AssertionError(
+                    "Illegal resolved call to variable with invoke for $outerCall. " +
+                            "Variable: ${resolvedCall.variableCall.resultingDescriptor}" +
+                            "Invoke: ${resolvedCall.functionCall.resultingDescriptor}"
+                )
             }
         }
 
@@ -89,11 +91,11 @@ class OperatorCallChecker : CallChecker {
         }
 
         private fun isWrongCallWithExplicitTypeArguments(
-                resolvedCall: VariableAsFunctionResolvedCall,
-                outerCall: Call
+            resolvedCall: VariableAsFunctionResolvedCall,
+            outerCall: Call
         ): Boolean {
             val passedTypeArgumentsToInvoke = outerCall.typeArguments.isNotEmpty() &&
-                                              resolvedCall.functionCall.candidateDescriptor.typeParameters.isNotEmpty()
+                    resolvedCall.functionCall.candidateDescriptor.typeParameters.isNotEmpty()
             return passedTypeArgumentsToInvoke && resolvedCall.variableCall.candidateDescriptor.typeParameters.isNotEmpty()
         }
     }
@@ -108,24 +110,33 @@ fun shouldWarnAboutDeprecatedModFromBuiltIns(languageVersionSettings: LanguageVe
 }
 
 private fun checkModConvention(
-        descriptor: FunctionDescriptor, languageVersionSettings: LanguageVersionSettings,
-        diagnosticHolder: DiagnosticSink, modifier: PsiElement
+    descriptor: FunctionDescriptor, languageVersionSettings: LanguageVersionSettings,
+    diagnosticHolder: DiagnosticSink, modifier: PsiElement
 ) {
     if (!descriptor.isOperatorMod()) return
 
     if (KotlinBuiltIns.isUnderKotlinPackage(descriptor)) {
         if (shouldWarnAboutDeprecatedModFromBuiltIns(languageVersionSettings)) {
-            addWarningAboutDeprecatedMod(descriptor, diagnosticHolder, modifier)
+            warnAboutDeprecatedOrForbiddenMod(descriptor, diagnosticHolder, modifier, languageVersionSettings)
         }
-    }
-    else {
+    } else {
         if (languageVersionSettings.supportsFeature(LanguageFeature.OperatorRem)) {
-            addWarningAboutDeprecatedMod(descriptor, diagnosticHolder, modifier)
+            warnAboutDeprecatedOrForbiddenMod(descriptor, diagnosticHolder, modifier, languageVersionSettings)
         }
     }
 }
 
-private fun addWarningAboutDeprecatedMod(descriptor: FunctionDescriptor, diagnosticHolder: DiagnosticSink, reportOn: PsiElement) {
+private fun warnAboutDeprecatedOrForbiddenMod(
+    descriptor: FunctionDescriptor,
+    diagnosticHolder: DiagnosticSink,
+    reportOn: PsiElement,
+    languageVersionSettings: LanguageVersionSettings
+) {
+    val diagnosticFactory = if (languageVersionSettings.supportsFeature(LanguageFeature.ProhibitOperatorMod))
+        Errors.FORBIDDEN_BINARY_MOD_AS_REM
+    else
+        Errors.DEPRECATED_BINARY_MOD_AS_REM
+
     val newNameConvention = OperatorConventions.REM_TO_MOD_OPERATION_NAMES.inverse()[descriptor.name]
-    diagnosticHolder.report(Errors.DEPRECATED_BINARY_MOD_AS_REM.on(reportOn, descriptor, newNameConvention!!.asString()))
+    diagnosticHolder.report(diagnosticFactory.on(reportOn, descriptor, newNameConvention!!.asString()))
 }

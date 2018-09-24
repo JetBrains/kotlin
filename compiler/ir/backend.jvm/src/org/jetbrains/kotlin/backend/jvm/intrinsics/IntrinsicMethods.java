@@ -27,8 +27,10 @@ import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.FqNameUnsafe;
 import org.jetbrains.kotlin.name.Name;
+import org.jetbrains.kotlin.resolve.jvm.AsmTypes;
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType;
 import org.jetbrains.kotlin.types.expressions.OperatorConventions;
+import org.jetbrains.org.objectweb.asm.Type;
 
 import static org.jetbrains.kotlin.builtins.KotlinBuiltIns.*;
 import static org.jetbrains.org.objectweb.asm.Opcodes.*;
@@ -92,7 +94,13 @@ public class IntrinsicMethods {
 
         for (PrimitiveType type : PrimitiveType.values()) {
             FqName typeFqName = type.getTypeFqName();
-            declareIntrinsicFunction(typeFqName, "equals", 1, EQUALS);
+            Type asmPrimitiveType = AsmTypes.valueTypeForPrimitive(type);
+            if (asmPrimitiveType == Type.FLOAT_TYPE || asmPrimitiveType == Type.DOUBLE_TYPE) {
+                declareIntrinsicFunction(typeFqName, "equals", 1, new TotalOrderEquals(asmPrimitiveType));
+            }
+            else {
+                declareIntrinsicFunction(typeFqName, "equals", 1, EQUALS);
+            }
             declareIntrinsicFunction(typeFqName, "hashCode", 0, HASH_CODE);
             declareIntrinsicFunction(typeFqName, "toString", 0, TO_STRING);
 

@@ -24,10 +24,7 @@ import com.intellij.codeInsight.daemon.impl.DaemonListeners
 import com.intellij.codeInsight.daemon.impl.DaemonProgressIndicator
 import com.intellij.codeInsight.daemon.impl.HighlightingSessionImpl
 import com.intellij.codeInsight.intention.LowPriorityAction
-import com.intellij.codeInspection.InspectionManager
-import com.intellij.codeInspection.LocalQuickFix
-import com.intellij.codeInspection.ProblemDescriptor
-import com.intellij.codeInspection.ProblemHighlightType
+import com.intellij.codeInspection.*
 import com.intellij.lang.annotation.HighlightSeverity
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
@@ -39,16 +36,17 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiDocumentManager
+import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.util.PsiUtilBase
 import com.intellij.util.DocumentUtil
 import org.jetbrains.kotlin.idea.core.targetDescriptors
-import org.jetbrains.kotlin.idea.editor.fixers.end
 import org.jetbrains.kotlin.idea.imports.KotlinImportOptimizer
 import org.jetbrains.kotlin.idea.imports.OptimizedImportsBuilder
 import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
+import org.jetbrains.kotlin.idea.util.application.progressIndicatorNullable
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtCodeFragment
 import org.jetbrains.kotlin.psi.KtFile
@@ -58,26 +56,23 @@ import org.jetbrains.kotlin.resolve.ImportPath
 import java.util.*
 
 class KotlinUnusedImportInspection : AbstractKotlinInspection() {
-    data class ImportData(
-            val unusedImports: List<KtImportDirective>,
-            val optimizerData: OptimizedImportsBuilder.InputData
-    )
+    data class ImportData(val unusedImports: List<KtImportDirective>, val optimizerData: OptimizedImportsBuilder.InputData)
 
     companion object {
         fun analyzeImports(file: KtFile): ImportData? {
             if (file is KtCodeFragment) return null
-            if (!ProjectRootsUtil.isInProjectSource(file)) return null
+            if (!ProjectRootsUtil.isInProjectSource(file, true)) return null
             if (file.importDirectives.isEmpty()) return null
 
             val optimizerData = KotlinImportOptimizer.collectDescriptorsToImport(file)
 
             val directives = file.importDirectives
             val explicitlyImportedFqNames = directives
-                    .asSequence()
-                    .mapNotNull { it.importPath }
-                    .filter { !it.isAllUnder && !it.hasAlias() }
-                    .map { it.fqName }
-                    .toSet()
+                .asSequence()
+                .mapNotNull { it.importPath }
+                .filter { !it.isAllUnder && !it.hasAlias() }
+                .map { it.fqName }
+                .toSet()
 
             val fqNames = HashSet<FqName>()
             val parentFqNames = HashSet<FqName>()
@@ -128,11 +123,13 @@ class KotlinUnusedImportInspection : AbstractKotlinInspection() {
             if (!CodeInsightWorkspaceSettings.getInstance(file.project).optimizeImportsOnTheFly) {
                 fixes.add(EnableOptimizeImportsOnTheFlyFix(file))
             }
-            manager.createProblemDescriptor(it,
-                                            "Unused import directive",
-                                            isOnTheFly,
-                                            fixes.toTypedArray(),
-                                            ProblemHighlightType.LIKE_UNUSED_SYMBOL)
+            manager.createProblemDescriptor(
+                it,
+                "Unused import directive",
+                isOnTheFly,
+                fixes.toTypedArray(),
+                ProblemHighlightType.LIKE_UNUSED_SYMBOL
+            )
         }
 
         if (isOnTheFly) {
@@ -147,7 +144,7 @@ class KotlinUnusedImportInspection : AbstractKotlinInspection() {
         val optimizedImports = KotlinImportOptimizer.prepareOptimizedImports(file, data) ?: return // return if already optimized
 
         // unwrap progress indicator
-        val progress = generateSequence(ProgressManager.getInstance().progressIndicator) {
+        val progress = generateSequence(ProgressManager.getInstance().progressIndicatorNullable) {
             (it as? ProgressWrapper)?.originalProgressIndicator
         }.last() as DaemonProgressIndicator
         val highlightingSession = HighlightingSessionImpl.getHighlightingSession(file, progress)
@@ -165,6 +162,7 @@ class KotlinUnusedImportInspection : AbstractKotlinInspection() {
                 }
             }
 
+            if (Disposer.isDisposed(progress)) return
             Disposer.register(progress, invokeFixLater)
 
             if (progress.isCanceled) {
@@ -201,8 +199,7 @@ class KotlinUnusedImportInspection : AbstractKotlinInspection() {
             if (!importsRange.containsRange(highlightInfo.startOffset, highlightInfo.endOffset)) {
                 hasErrors = true
                 false
-            }
-            else {
+            } else {
                 true
             }
         })
@@ -219,24 +216,27 @@ class KotlinUnusedImportInspection : AbstractKotlinInspection() {
         }
     }
 
-    private class OptimizeImportsQuickFix(private val file: KtFile) : LocalQuickFix {
-        override fun getName() = "Optimize imports"
+    private class OptimizeImportsQuickFix(file: KtFile) : LocalQuickFixOnPsiElement(file) {
+        override fun getText() = "Optimize imports"
 
         override fun getFamilyName() = name
 
-        override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
+        override fun invoke(project: Project, file: PsiFile, startElement: PsiElement, endElement: PsiElement) {
             OptimizeImportsProcessor(project, file).run()
         }
     }
 
-    private class EnableOptimizeImportsOnTheFlyFix(private val file: KtFile) : LocalQuickFix, LowPriorityAction {
-        override fun getName() = QuickFixBundle.message("enable.optimize.imports.on.the.fly")
+    private class EnableOptimizeImportsOnTheFlyFix(file: KtFile) : LocalQuickFixOnPsiElement(file), LowPriorityAction {
+        override fun getText(): String = QuickFixBundle.message("enable.optimize.imports.on.the.fly")
 
         override fun getFamilyName() = name
 
-        override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
+        override fun invoke(project: Project, file: PsiFile, startElement: PsiElement, endElement: PsiElement) {
             CodeInsightWorkspaceSettings.getInstance(project).optimizeImportsOnTheFly = true
-            OptimizeImportsProcessor(project, file).run() // we optimize imports manually because on-the-fly import optimization won't work while the caret is in imports
+            OptimizeImportsProcessor(
+                project,
+                file
+            ).run() // we optimize imports manually because on-the-fly import optimization won't work while the caret is in imports
         }
     }
 }

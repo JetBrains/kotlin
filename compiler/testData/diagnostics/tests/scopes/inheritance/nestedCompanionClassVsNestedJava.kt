@@ -1,3 +1,5 @@
+// !LANGUAGE: -ProhibitVisibilityOfNestedClassifiersFromSupertypesOfCompanion
+
 // FILE: 1.kt
 open class A {
     class Y {
@@ -40,6 +42,6 @@ class Y: C() {
     init {
         Y().A_Y()
 
-        Z().A_C_Z()
+        <!DEPRECATED_ACCESS_BY_SHORT_NAME!>Z()<!>.A_C_Z()
     }
 }

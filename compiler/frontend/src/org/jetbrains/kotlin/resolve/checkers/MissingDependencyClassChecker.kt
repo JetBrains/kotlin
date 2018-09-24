@@ -17,12 +17,9 @@
 package org.jetbrains.kotlin.resolve.checkers
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors.*
-import org.jetbrains.kotlin.resolve.BindingTrace
-import org.jetbrains.kotlin.resolve.DeprecationResolver
 import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker
 import org.jetbrains.kotlin.resolve.calls.checkers.CallCheckerContext
 import org.jetbrains.kotlin.resolve.calls.checkers.isComputingDeferredType
@@ -92,17 +89,11 @@ object MissingDependencyClassChecker : CallChecker {
     }
 
     object ClassifierUsage : ClassifierUsageChecker {
-        override fun check(
-                targetDescriptor: ClassifierDescriptor,
-                trace: BindingTrace,
-                element: PsiElement,
-                languageVersionSettings: LanguageVersionSettings,
-                deprecationResolver: DeprecationResolver
-        ) {
-            diagnosticFor(targetDescriptor, element)?.let(trace::report)
+        override fun check(targetDescriptor: ClassifierDescriptor, element: PsiElement, context: ClassifierUsageCheckerContext) {
+            diagnosticFor(targetDescriptor, element)?.let(context.trace::report)
 
             val containerSource = (targetDescriptor as? DeserializedMemberDescriptor)?.containerSource
-            incompatibilityDiagnosticFor(containerSource, element)?.let(trace::report)
+            incompatibilityDiagnosticFor(containerSource, element)?.let(context.trace::report)
         }
     }
 }

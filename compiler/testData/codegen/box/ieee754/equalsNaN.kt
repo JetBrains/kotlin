@@ -1,3 +1,6 @@
+// !LANGUAGE: -ProperIeee754Comparisons
+// IGNORE_BACKEND: JVM_IR
+// IGNORE_BACKEND: JS_IR
 // WITH_RUNTIME
 
 import kotlin.test.*
@@ -77,6 +80,9 @@ fun box(): String {
     val dnq: Double? = dn
     val adnq: Any? = dn
 
+    // see https://bugs.openjdk.java.net/browse/JDK-8141407
+    val nanBug = dnq == dnq
+
     assertFalse(dn == dn, "Double: NaN == NaN")
     assertTrue(dn == adn, "Double: NaN != (Any)NaN")
     assertTrue(adn == dn, "Double: (Any)NaN != NaN")
@@ -92,7 +98,7 @@ fun box(): String {
     assertTrue(adnq == dn, "Double: (Any?)NaN != NaN")
     assertTrue(adnq == adn, "Double: (Any?)NaN != (Any)NaN")
 
-    assertFalse(dnq == dnq, "Double: NaN? == NaN?")
+    if (!nanBug) assertFalse(dnq == dnq, "Double: NaN? == NaN?")
     assertTrue(dnq == adnq, "Double: NaN? != (Any?)NaN")
     assertTrue(adnq == dnq, "Double: (Any?)NaN != NaN?")
     assertTrue(adnq == adnq, "Double: (Any?)NaN != (Any?)NaN")
@@ -112,19 +118,19 @@ fun box(): String {
     assertFalse(adnq != dn, "Double: (Any?)NaN != NaN")
     assertFalse(adnq != adn, "Double: (Any?)NaN != (Any)NaN")
 
-    assertTrue(dnq != dnq, "Double: NaN? == NaN?")
+    if (!nanBug) assertTrue(dnq != dnq, "Double: NaN? == NaN?")
     assertFalse(dnq != adnq, "Double: NaN? != (Any?)NaN")
     assertFalse(adnq != dnq, "Double: (Any?)NaN != NaN?")
     assertFalse(adnq != adnq, "Double: (Any?)NaN != (Any?)NaN")
 
-    // Stable smart-casts
+    // Stable smart-casts -- effectively not takein into account in 1.2
     if (adn is Double) {
-        assertFalse(adn == adn, "Double smart-cast: NaN == NaN")
-        assertTrue(adn != adn, "Double smart-cast: NaN == NaN")
+        assertTrue(adn == adn, "Double smart-cast: NaN == NaN")
+        assertFalse(adn != adn, "Double smart-cast: NaN == NaN")
     }
     if (adnq is Double?) {
-        assertFalse(adnq == adnq, "Double? smart-cast: NaN? == NaN?")
-        assertTrue(adnq != adnq, "Double? smart-cast: NaN? == NaN?")
+        assertTrue(adnq == adnq, "Double? smart-cast: NaN? == NaN?")
+        assertFalse(adnq != adnq, "Double? smart-cast: NaN? == NaN?")
     }
     // Unstable smart-casts
     if (gdn is Double) {
@@ -167,7 +173,7 @@ fun box(): String {
     assertTrue(afnq == fn, "Float: (Any?)NaN != NaN")
     assertTrue(afnq == afn, "Float: (Any?)NaN != (Any)NaN")
 
-    assertFalse(fnq == fnq, "Float: NaN? == NaN?")
+    if (!nanBug) assertFalse(fnq == fnq, "Float: NaN? == NaN?")
     assertTrue(fnq == afnq, "Float: NaN? != (Any?)NaN")
     assertTrue(afnq == fnq, "Float: (Any?)NaN != NaN?")
     assertTrue(afnq == afnq, "Float: (Any?)NaN != (Any?)NaN")
@@ -187,19 +193,19 @@ fun box(): String {
     assertFalse(afnq != fn, "Float: (Any?)NaN != NaN")
     assertFalse(afnq != afn, "Float: (Any?)NaN != (Any)NaN")
 
-    assertTrue(fnq != fnq, "Float: NaN? == NaN?")
+    if (!nanBug) assertTrue(fnq != fnq, "Float: NaN? == NaN?")
     assertFalse(fnq != afnq, "Float: NaN? != (Any?)NaN")
     assertFalse(afnq != fnq, "Float: (Any?)NaN != NaN?")
     assertFalse(afnq != afnq, "Float: (Any?)NaN != (Any?)NaN")
 
-    // Stable smart-casts
+    // Stable smart-casts -- effectively not takein into account in 1.2
     if (afn is Float) {
-        assertFalse(afn == afn, "Float smart-cast: NaN == NaN")
-        assertTrue(afn != afn, "Float smart-cast: NaN == NaN")
+        assertTrue(afn == afn, "Float smart-cast: NaN == NaN")
+        assertFalse(afn != afn, "Float smart-cast: NaN == NaN")
     }
     if (afnq is Float?) {
-        assertFalse(afnq == afnq, "Float? smart-cast: NaN? == NaN?")
-        assertTrue(afnq != afnq, "Float? smart-cast: NaN? == NaN?")
+        assertTrue(afnq == afnq, "Float? smart-cast: NaN? == NaN?")
+        assertFalse(afnq != afnq, "Float? smart-cast: NaN? == NaN?")
     }
     // Unstable smart-casts
     if (gfn is Float) {

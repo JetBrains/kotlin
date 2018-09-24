@@ -46,8 +46,8 @@ fun KtReturnExpression.getTargetFunctionDescriptor(context: BindingContext): Fun
     if (containingFunctionDescriptor == null) return null
 
     return generateSequence(containingFunctionDescriptor) { DescriptorUtils.getParentOfType(it, FunctionDescriptor::class.java) }
-            .dropWhile { it is AnonymousFunctionDescriptor }
-            .firstOrNull()
+        .dropWhile { it is AnonymousFunctionDescriptor }
+        .firstOrNull()
 }
 
 fun KtReturnExpression.getTargetFunction(context: BindingContext): KtCallableDeclaration? {
@@ -65,8 +65,7 @@ fun <C : ResolutionContext<C>> ResolutionContext<C>.recordDataFlowInfo(expressio
     val typeInfo = trace.get(BindingContext.EXPRESSION_TYPE_INFO, expression)
     if (typeInfo != null) {
         trace.record(BindingContext.EXPRESSION_TYPE_INFO, expression, typeInfo.replaceDataFlowInfo(dataFlowInfo))
-    }
-    else if (dataFlowInfo != DataFlowInfo.EMPTY) {
+    } else if (dataFlowInfo != DataFlowInfo.EMPTY) {
         // Don't store anything in BindingTrace if it's simply an empty DataFlowInfo
         trace.record(BindingContext.EXPRESSION_TYPE_INFO, expression, noTypeInfo(dataFlowInfo))
     }
@@ -93,8 +92,8 @@ fun BindingContext.getDataFlowInfoAfter(position: PsiElement): DataFlowInfo {
 fun BindingContext.getDataFlowInfoBefore(position: PsiElement): DataFlowInfo {
     for (element in position.parentsWithSelf) {
         (element as? KtExpression)
-                ?.let { this[BindingContext.DATA_FLOW_INFO_BEFORE, it] }
-                ?.let { return it }
+            ?.let { this[BindingContext.DATA_FLOW_INFO_BEFORE, it] }
+            ?.let { return it }
     }
     return DataFlowInfo.EMPTY
 }
@@ -107,7 +106,7 @@ fun KtExpression.getReferenceTargets(context: BindingContext): Collection<Declar
 }
 
 fun KtTypeReference.getAbbreviatedTypeOrType(context: BindingContext) =
-        context[BindingContext.ABBREVIATED_TYPE, this] ?: context[BindingContext.TYPE, this]
+    context[BindingContext.ABBREVIATED_TYPE, this] ?: context[BindingContext.TYPE, this]
 
 fun KtTypeElement.getAbbreviatedTypeOrType(context: BindingContext): KotlinType? {
     val parent = parent

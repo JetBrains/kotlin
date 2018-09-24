@@ -18,13 +18,13 @@ package org.jetbrains.kotlin.idea.highlighter
 
 import com.intellij.execution.lineMarker.ExecutorAction
 import com.intellij.execution.lineMarker.RunLineMarkerContributor
+import com.intellij.icons.AllIcons
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.idea.KotlinIcons
-import org.jetbrains.kotlin.idea.MainFunctionDetector
-import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
+import org.jetbrains.kotlin.idea.isMainFunction
+import org.jetbrains.kotlin.idea.platform.tooling
+import org.jetbrains.kotlin.idea.project.platform
+import org.jetbrains.kotlin.idea.util.module
 import org.jetbrains.kotlin.psi.KtNamedFunction
-
 
 class KotlinRunLineMarkerContributor : RunLineMarkerContributor() {
     override fun getInfo(element: PsiElement): Info? {
@@ -32,12 +32,11 @@ class KotlinRunLineMarkerContributor : RunLineMarkerContributor() {
 
         if (function.nameIdentifier != element) return null
 
-        val detector = MainFunctionDetector { someFunction ->
-            someFunction.resolveToDescriptorIfAny() as? FunctionDescriptor
-        }
+        if (function.isMainFunction()) {
+            val platform = function.containingKtFile.module?.platform ?: return null
+            if (!platform.kind.tooling.acceptsAsEntryPoint(function)) return null
 
-        if (detector.isMain(function)) {
-            return RunLineMarkerContributor.Info(KotlinIcons.SMALL_LOGO_13, null, ExecutorAction.getActions(0))
+            return RunLineMarkerContributor.Info(AllIcons.RunConfigurations.TestState.Run, null, ExecutorAction.getActions(0))
         }
 
         return null

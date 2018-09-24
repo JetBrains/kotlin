@@ -119,7 +119,7 @@ class NewDeclarationNameValidator(
         if (nameAsName != name) return false
         if (this is KtCallableDeclaration && receiverTypeReference != null) return false
         return when(target) {
-            Target.VARIABLES -> this is KtVariableDeclaration
+            Target.VARIABLES -> this is KtVariableDeclaration || this is KtParameter
             Target.FUNCTIONS_AND_CLASSES -> this is KtNamedFunction || this is KtClassOrObject || this is KtTypeAlias
         }
     }

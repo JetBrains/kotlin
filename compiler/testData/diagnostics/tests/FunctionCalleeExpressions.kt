@@ -1,3 +1,4 @@
+// !WITH_NEW_INFERENCE
 // !CHECK_TYPE
 
 package foo
@@ -36,15 +37,15 @@ fun main(args : Array<String>) {
     foo2()({})
     foo2()<!TOO_MANY_ARGUMENTS!>{}<!>
     (foo2()){}
-    (foo2()){<!EXPECTED_PARAMETERS_NUMBER_MISMATCH, CANNOT_INFER_PARAMETER_TYPE, UNUSED_ANONYMOUS_PARAMETER!>x<!> -> }
-    foo2()({<!EXPECTED_PARAMETERS_NUMBER_MISMATCH, CANNOT_INFER_PARAMETER_TYPE, UNUSED_ANONYMOUS_PARAMETER!>x<!> -> })
+    (foo2())<!NI;TYPE_MISMATCH!>{<!OI;CANNOT_INFER_PARAMETER_TYPE, OI;EXPECTED_PARAMETERS_NUMBER_MISMATCH, UNUSED_ANONYMOUS_PARAMETER!>x<!> -> }<!>
+    foo2()(<!NI;TYPE_MISMATCH!>{<!OI;CANNOT_INFER_PARAMETER_TYPE, OI;EXPECTED_PARAMETERS_NUMBER_MISMATCH, UNUSED_ANONYMOUS_PARAMETER!>x<!> -> }<!>)
 
     val a = fooT1(1)()
     checkSubtype<Int>(a)
 
     val b = fooT2<Int>()(1)
     checkSubtype<Int>(b)
-    <!TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>fooT2<!>()(1) // : Any?
+    <!OI;TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>fooT2<!>()(1) // : Any?
 
     <!FUNCTION_EXPECTED!>1<!>()
     <!FUNCTION_EXPECTED!>1<!>{}
@@ -58,7 +59,7 @@ fun main1() {
     {1}();
     (fun (x : Int) = x)(1)
     1.(fun Int.(x : Int) = x)(1);
-    l@{1}()
+    <!OI;REDUNDANT_LABEL_WARNING!>l@<!>{1}()
     1.((fun Int.() = 1))()
     1.(f())()
     1.if(true){f()}else{f()}()
@@ -74,7 +75,7 @@ fun main1() {
 fun test() {
     {<!UNUSED_ANONYMOUS_PARAMETER!>x<!> : Int -> 1}(<!NO_VALUE_FOR_PARAMETER!>)<!>;
     (fun Int.() = 1)(<!NO_VALUE_FOR_PARAMETER!>)<!>
-    <!TYPE_MISMATCH!>"sd"<!>.(fun Int.() = 1)()
+    <!OI;TYPE_MISMATCH!>"sd"<!>.<!NI;FUNCTION_EXPECTED!>(fun Int.() = 1)<!>()
     val i : Int? = null
     i<!UNSAFE_CALL!>.<!>(fun Int.() = 1)();
     {}<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><Int><!>()

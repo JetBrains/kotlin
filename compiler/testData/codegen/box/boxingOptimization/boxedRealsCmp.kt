@@ -1,4 +1,4 @@
-// IGNORE_BACKEND: JS, NATIVE
+// IGNORE_BACKEND: JS_IR
 
 inline fun ltx(a: Comparable<Any>, b: Any) = a < b
 inline fun lex(a: Comparable<Any>, b: Any) = a <= b

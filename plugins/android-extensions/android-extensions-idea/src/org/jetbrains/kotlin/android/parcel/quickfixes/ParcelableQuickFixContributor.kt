@@ -29,12 +29,15 @@ class ParcelableQuickFixContributor : QuickFixContributor {
 
         quickFixes.register(ErrorsAndroid.NO_PARCELABLE_SUPERTYPE, ParcelableAddSupertypeQuickfix.Factory)
         quickFixes.register(ErrorsAndroid.PARCELABLE_SHOULD_HAVE_PRIMARY_CONSTRUCTOR, ParcelableAddPrimaryConstructorQuickfix.Factory)
-        quickFixes.register(ErrorsAndroid.PROPERTY_WONT_BE_SERIALIZED, ParcelableAddTransientAnnotationQuickfix.Factory)
+        quickFixes.register(ErrorsAndroid.PROPERTY_WONT_BE_SERIALIZED, ParcelableAddIgnoreOnParcelAnnotationQuickfix.Factory)
 
         quickFixes.register(ErrorsAndroid.OVERRIDING_WRITE_TO_PARCEL_IS_NOT_ALLOWED, ParcelMigrateToParcelizeQuickFix.FactoryForWrite)
         quickFixes.register(ErrorsAndroid.OVERRIDING_WRITE_TO_PARCEL_IS_NOT_ALLOWED, ParcelRemoveCustomWriteToParcel.Factory)
 
         quickFixes.register(ErrorsAndroid.CREATOR_DEFINITION_IS_NOT_ALLOWED, ParcelMigrateToParcelizeQuickFix.FactoryForCREATOR)
         quickFixes.register(ErrorsAndroid.CREATOR_DEFINITION_IS_NOT_ALLOWED, ParcelRemoveCustomCreatorProperty.Factory)
+
+        quickFixes.register(ErrorsAndroid.REDUNDANT_TYPE_PARCELER, ParcelableRemoveDuplicatingTypeParcelerAnnotationQuickFix.Factory)
+        quickFixes.register(ErrorsAndroid.CLASS_SHOULD_BE_PARCELIZE, AnnotateWithParcelizeQuickFix.Factory)
     }
 }

@@ -13,6 +13,8 @@ public class InnerClassTypeAnnotation {
     public class Inner {
         public Inner(@Foo String foo) {
         }
+
+        public @Foo String bar(String x, @Foo String y) { return null; }
     }
 
     @Retention(RetentionPolicy.CLASS)

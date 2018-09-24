@@ -82,4 +82,12 @@ public class DataFlowInfoForArgumentsImpl extends MutableDataFlowInfoForArgument
         if (resultInfo == null) return initialDataFlowInfo;
         return initialDataFlowInfo.and(resultInfo);
     }
+
+    @Override
+    public void updateResultInfo(@NotNull DataFlowInfo dataFlowInfo) {
+        if (dataFlowInfo.equals(DataFlowInfo.Companion.getEMPTY())) return;
+
+        if (resultInfo == null) resultInfo = initialDataFlowInfo;
+        resultInfo = resultInfo.and(dataFlowInfo);
+    }
 }

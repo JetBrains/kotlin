@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 996
+// EXPECTED_REACHABLE_NODES: 1284
 package foo
 
 fun callWithArgs(sumFunc: (Int, Int) -> Int, a: Int, b: Int): Int {

@@ -1,0 +1,58 @@
+package
+
+package test {
+
+    public open class Base {
+        public constructor Base()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+        public companion object Companion : test.Java {
+            private constructor Companion()
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*fake_override*/ fun getInstanceSyntheticProperty(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun setInstanceSyntheticProperty(/*0*/ x: kotlin.Int): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        }
+    }
+
+    public final class Derived : test.Base {
+        public constructor Derived()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public final fun test(/*0*/ javaStaticInTypePosition: [ERROR : Classifier]): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+        public final class JavaStaticInSupertypeList {
+            public constructor JavaStaticInSupertypeList()
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        }
+    }
+
+    public open class Java {
+        public constructor Java()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open fun getInstanceSyntheticProperty(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open fun setInstanceSyntheticProperty(/*0*/ x: kotlin.Int): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+        public open class Classifier {
+            public constructor Classifier()
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        }
+
+        // Static members
+        public final var property: kotlin.Int
+        public open fun getStaticSyntheticProperty(): kotlin.Int
+        public open fun method(): kotlin.Unit
+        public open fun setStaticSyntheticProperty(/*0*/ x: kotlin.Int): kotlin.Int
+        public open fun syntheticSam(/*0*/ r: java.lang.Runnable!): kotlin.Unit
+    }
+}

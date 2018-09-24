@@ -21,20 +21,16 @@ import com.intellij.testFramework.UsefulTestCase
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import java.io.File
 
-fun CodeInsightTestFixture.configureWithExtraFileAbs(path: String, vararg extraNameParts: String) {
-    configureWithExtraFile(path, *extraNameParts, relativePaths = false)
-}
+fun CodeInsightTestFixture.configureWithExtraFile(path: String, vararg extraNameParts: String = arrayOf(".Data")) {
+    val fileName = File(path).name
 
-fun CodeInsightTestFixture.configureWithExtraFile(path: String, vararg extraNameParts: String = arrayOf(".Data"), relativePaths: Boolean = false) {
-    fun String.toFile(): File = if (relativePaths) File(testDataPath, this) else File(this)
-
-    val noExtensionPath = FileUtil.getNameWithoutExtension(path)
+    val noExtensionPath = FileUtil.getNameWithoutExtension(fileName)
     val extensions = arrayOf("kt", "java")
     val extraPaths: List<String> = extraNameParts
             .flatMap { extensions.map { ext -> "$noExtensionPath$it.$ext" } }
-            .filter { it.toFile().exists() }
+            .mapNotNull { File(testDataPath, it).takeIf { it.exists() }?.name }
 
-    configureByFiles(*(listOf(path) + extraPaths).toTypedArray())
+    configureByFiles(*(listOf(fileName) + extraPaths).toTypedArray())
 }
 
 @Suppress("unused") // Used in kotlin-ultimate

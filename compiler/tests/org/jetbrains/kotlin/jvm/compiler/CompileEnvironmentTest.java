@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.cli.common.ExitCode;
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler;
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase;
 import org.junit.Assert;
 
 import java.io.File;
@@ -52,5 +53,11 @@ public class CompileEnvironmentTest extends TestCase {
         finally {
             FileUtil.delete(tempDir);
         }
+    }
+
+    @Override
+    protected void tearDown() throws Exception {
+        super.tearDown();
+        KtUsefulTestCase.resetApplicationToNull();
     }
 }

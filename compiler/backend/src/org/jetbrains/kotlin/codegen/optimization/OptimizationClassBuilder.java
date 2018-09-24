@@ -20,16 +20,17 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.codegen.ClassBuilder;
 import org.jetbrains.kotlin.codegen.DelegatingClassBuilder;
+import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin;
 import org.jetbrains.org.objectweb.asm.MethodVisitor;
 
 public class OptimizationClassBuilder extends DelegatingClassBuilder {
     private final ClassBuilder delegate;
-    private final boolean disableOptimization;
+    private final GenerationState generationState;
 
-    public OptimizationClassBuilder(@NotNull ClassBuilder delegate, boolean disableOptimization) {
+    public OptimizationClassBuilder(@NotNull ClassBuilder delegate, @NotNull GenerationState generationState) {
         this.delegate = delegate;
-        this.disableOptimization = disableOptimization;
+        this.generationState = generationState;
     }
 
     @NotNull
@@ -50,8 +51,7 @@ public class OptimizationClassBuilder extends DelegatingClassBuilder {
     ) {
         return new OptimizationMethodVisitor(
                 super.newMethod(origin, access, name, desc, signature, exceptions),
-                disableOptimization,
-                access, name, desc, signature, exceptions
+                generationState, access, name, desc, signature, exceptions
         );
     }
 }

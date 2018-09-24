@@ -20,8 +20,9 @@ import com.intellij.util.indexing.*
 import com.intellij.util.io.DataExternalizer
 import com.intellij.util.io.IOUtil
 import com.intellij.util.io.KeyDescriptor
-import org.jetbrains.kotlin.load.kotlin.ModuleMapping
-import org.jetbrains.kotlin.load.kotlin.PackageParts
+import org.jetbrains.kotlin.load.kotlin.loadModuleMapping
+import org.jetbrains.kotlin.metadata.jvm.deserialization.ModuleMapping
+import org.jetbrains.kotlin.metadata.jvm.deserialization.PackageParts
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationConfiguration
 import java.io.DataInput
 import java.io.DataOutput
@@ -30,7 +31,7 @@ object KotlinModuleMappingIndex : FileBasedIndexExtension<String, PackageParts>(
 
     val KEY: ID<String, PackageParts> = ID.create(KotlinModuleMappingIndex::class.java.canonicalName)
 
-    private val KEY_DESCRIPTOR = object : KeyDescriptor<String> {
+    internal val STRING_KEY_DESCRIPTOR = object : KeyDescriptor<String> {
         override fun save(output: DataOutput, value: String) = IOUtil.writeUTF(output, value)
 
         override fun read(input: DataInput) = IOUtil.readUTF(input)
@@ -63,7 +64,7 @@ object KotlinModuleMappingIndex : FileBasedIndexExtension<String, PackageParts>(
 
     override fun dependsOnFileContent() = true
 
-    override fun getKeyDescriptor() = KEY_DESCRIPTOR
+    override fun getKeyDescriptor() = STRING_KEY_DESCRIPTOR
 
     override fun getValueExternalizer() = VALUE_EXTERNALIZER
 
@@ -72,20 +73,19 @@ object KotlinModuleMappingIndex : FileBasedIndexExtension<String, PackageParts>(
 
     override fun getVersion(): Int = 5
 
-    override fun getIndexer(): DataIndexer<String, PackageParts, FileContent> {
-        return DataIndexer<String, PackageParts, FileContent> { inputData ->
-            val content = inputData.content
-            val file = inputData.file
-            try {
-                val moduleMapping = ModuleMapping.create(content, file.toString(), DeserializationConfiguration.Default)
-                if (moduleMapping === ModuleMapping.CORRUPTED) {
-                    file.refresh(true, false)
-                }
-                return@DataIndexer moduleMapping.packageFqName2Parts
+    override fun getIndexer(): DataIndexer<String, PackageParts, FileContent> = DataIndexer { inputData ->
+        val content = inputData.content
+        val file = inputData.file
+        try {
+            val moduleMapping = ModuleMapping.loadModuleMapping(content, file.toString(), DeserializationConfiguration.Default) {
+                // Do nothing; it's OK for an IDE index to just ignore incompatible module files
             }
-            catch(e: Exception) {
-                throw RuntimeException("Error on indexing $file", e)
+            if (moduleMapping === ModuleMapping.CORRUPTED) {
+                file.refresh(true, false)
             }
+            return@DataIndexer moduleMapping.packageFqName2Parts
+        } catch (e: Exception) {
+            throw RuntimeException("Error on indexing $file", e)
         }
     }
 }

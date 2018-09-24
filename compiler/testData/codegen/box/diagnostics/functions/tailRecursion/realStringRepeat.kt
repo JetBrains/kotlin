@@ -1,4 +1,5 @@
-// IGNORE_BACKEND_WITHOUT_CHECK: JS
+// IGNORE_BACKEND: JS_IR
+// DONT_RUN_GENERATED_CODE: JS
 
 tailrec fun String.repeat(num : Int, acc : StringBuilder = StringBuilder()) : String =
         if (num == 0) acc.toString()

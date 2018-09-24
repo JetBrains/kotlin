@@ -2,5 +2,7 @@
 fun foo() {
     val list = 1..4
 
-    list.forEach { x -> x }
+    list.forEach { x ->
+        x
+    }
 }

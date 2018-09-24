@@ -1,0 +1,4 @@
+package
+
+public inline fun </*0*/ T, /*1*/ reified K> bar(): kotlin.Unit
+public fun foo(): kotlin.Unit

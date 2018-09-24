@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.asJava.classes.cannotModify
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.propertyNameByAccessor
 import org.jetbrains.kotlin.asJava.unwrapped
+import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -84,9 +85,17 @@ class KtLightMethodImpl private constructor(
         }
     }
 
+    override val isMangled: Boolean
+        get() {
+            val demangledName = KotlinTypeMapper.InternalNameMapper.demangleInternalName(name) ?: return false
+            val originalName = propertyNameByAccessor(demangledName, this) ?: demangledName
+            return originalName == kotlinOrigin?.name
+        }
+
     override fun setName(name: String): PsiElement? {
         val jvmNameAnnotation = modifierList.findAnnotation(DescriptorUtils.JVM_NAME.asString())
-        val newNameForOrigin = propertyNameByAccessor(name, this) ?: name
+        val demangledName = (if (isMangled) KotlinTypeMapper.InternalNameMapper.demangleInternalName(name) else null) ?: name
+        val newNameForOrigin = propertyNameByAccessor(demangledName, this) ?: demangledName
         if (newNameForOrigin == kotlinOrigin?.name) {
             jvmNameAnnotation?.delete()
             return this

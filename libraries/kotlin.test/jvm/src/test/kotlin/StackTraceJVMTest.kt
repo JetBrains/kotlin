@@ -1,3 +1,8 @@
+/*
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
+ */
+
 package kotlin.test.tests
 
 import org.junit.Test
@@ -11,7 +16,7 @@ class StackTraceJVMTest {
     fun testCurrentStackTrace() {
 /* <-- line number */ val topFrame = currentStackTrace()[0]
         assertEquals("StackTraceJVMTest.kt", topFrame.fileName)
-        assertEquals(12, topFrame.lineNumber)
+        assertEquals(17, topFrame.lineNumber)
     }
 
     @Test

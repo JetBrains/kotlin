@@ -18,8 +18,8 @@ package org.jetbrains.kotlin.gradle
 
 import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.api.artifacts.Dependency
 import org.gradle.api.artifacts.ProjectDependency
-import org.gradle.tooling.ModelBuilder
 import org.jetbrains.plugins.gradle.tooling.ErrorMessageBuilder
 import org.jetbrains.plugins.gradle.tooling.ModelBuilderService
 import java.io.File
@@ -27,7 +27,6 @@ import java.io.Serializable
 import java.lang.Exception
 import java.lang.reflect.InvocationTargetException
 import java.util.*
-import kotlin.collections.HashSet
 
 interface ArgsInfo : Serializable {
     val currentArguments: List<String>
@@ -48,8 +47,7 @@ interface KotlinGradleModel : Serializable {
     val compilerArgumentsBySourceSet: CompilerArgumentsBySourceSet
     val coroutines: String?
     val platformPluginId: String?
-    val implements: String?
-    val transitiveCommonDependencies: Set<String>
+    val implements: List<String>
 }
 
 class KotlinGradleModelImpl(
@@ -57,21 +55,20 @@ class KotlinGradleModelImpl(
         override val compilerArgumentsBySourceSet: CompilerArgumentsBySourceSet,
         override val coroutines: String?,
         override val platformPluginId: String?,
-        override val implements: String?,
-        override val transitiveCommonDependencies: Set<String>
+        override val implements: List<String>
 ) : KotlinGradleModel
 
 abstract class AbstractKotlinGradleModelBuilder : ModelBuilderService {
     companion object {
         val kotlinCompileTaskClasses = listOf("org.jetbrains.kotlin.gradle.tasks.KotlinCompile_Decorated",
-                                              "org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile_Decorated")
+                                              "org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile_Decorated",
+                                              "org.jetbrains.kotlin.gradle.tasks.KotlinCompileCommon_Decorated")
         val platformPluginIds = listOf("kotlin-platform-jvm", "kotlin-platform-js", "kotlin-platform-common")
         val pluginToPlatform = linkedMapOf(
                 "kotlin" to "kotlin-platform-jvm",
                 "kotlin2js" to "kotlin-platform-js"
         )
         val kotlinPluginIds = listOf("kotlin", "kotlin2js", "kotlin-android")
-        val kotlinPlatformCommonPluginId = "kotlin-platform-common"
         val ABSTRACT_KOTLIN_COMPILE_CLASS = "org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile"
 
         fun Task.getSourceSetName(): String {
@@ -91,41 +88,11 @@ class KotlinGradleModelBuilder : AbstractKotlinGradleModelBuilder() {
 
     override fun canBuild(modelName: String?): Boolean = modelName == KotlinGradleModel::class.java.name
 
-    private fun getImplements(project: Project): Project? {
-        val implementsConfiguration = project.configurations.findByName("implement") ?: return null
-        val implementsProjectDependency = implementsConfiguration.dependencies.filterIsInstance<ProjectDependency>().firstOrNull()
-        return implementsProjectDependency?.dependencyProject
-    }
-
-    private fun transitiveCommonDependencies(startingProject: Project): Set<String> {
-        val toProcess = LinkedList<Project>()
-        toProcess.add(startingProject)
-        val processed = HashSet<String>()
-        val result = HashSet<String>()
-        result.add(startingProject.pathOrName())
-
-        while (toProcess.isNotEmpty()) {
-            val project = toProcess.pollFirst()
-            processed.add(project.path)
-
-            if (!project.plugins.hasPlugin(kotlinPlatformCommonPluginId)) continue
-
-            result.add(project.pathOrName())
-
-            val compileConfiguration = project.configurations.findByName("compile") ?: continue
-            val dependencies = compileConfiguration
-                    .dependencies
-                    .filterIsInstance<ProjectDependency>()
-                    .map { it.dependencyProject }
-
-            for (dep in dependencies) {
-                if (dep.path !in processed) {
-                    toProcess.add(dep)
-                }
-            }
-        }
-
-        return result
+    private fun getImplementedProjects(project: Project): List<Project> {
+        return listOf("expectedBy", "implement")
+                .flatMap { project.configurations.findByName(it)?.dependencies ?: emptySet<Dependency>() }
+                .filterIsInstance<ProjectDependency>()
+                .mapNotNull { it.dependencyProject }
     }
 
     // see GradleProjectResolverUtil.getModuleId() in IDEA codebase
@@ -196,16 +163,14 @@ class KotlinGradleModelBuilder : AbstractKotlinGradleModelBuilder() {
         }
 
         val platform = platformPluginId ?: pluginToPlatform.entries.singleOrNull { project.plugins.findPlugin(it.key) != null }?.value
-        val implementedProject = getImplements(project)
-        val transitiveCommon = implementedProject?.let { transitiveCommonDependencies(it) } ?: emptySet()
+        val implementedProjects = getImplementedProjects(project)
 
         return KotlinGradleModelImpl(
                 kotlinPluginId != null || platformPluginId != null,
                 compilerArgumentsBySourceSet,
                 getCoroutines(project),
                 platform,
-                implementedProject?.pathOrName(),
-                transitiveCommon
+                implementedProjects.map { it.pathOrName() }
         )
     }
 }

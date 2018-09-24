@@ -1,11 +1,7 @@
 public final class User$Companion : java/lang/Object {
     private void <init>()
 
-    public void <init>(kotlin.jvm.internal.DefaultConstructorMarker p0)
-
-    public final static java.lang.StringBuilder access$getTest$p(User$Companion p0)
-
-    private final java.lang.StringBuilder getTest()
+    public void <init>(kotlin.jvm.internal.DefaultConstructorMarker $constructor_marker)
 
     private static void test$annotations()
 }
@@ -13,13 +9,13 @@ public final class User$Companion : java/lang/Object {
 public final class User$Creator : java/lang/Object, android/os/Parcelable$Creator {
     public void <init>()
 
-    public final java.lang.Object createFromParcel(android.os.Parcel p0)
+    public final java.lang.Object createFromParcel(android.os.Parcel in)
 
-    public final User[] newArray(int p0)
+    public final java.lang.Object[] newArray(int size)
 }
 
 public final class User : java/lang/Object, android/os/Parcelable {
-    public final static User$Creator CREATOR
+    public final static android.os.Parcelable$Creator CREATOR
 
     public final static User$Companion Companion
 
@@ -42,19 +38,15 @@ public final class User : java/lang/Object, android/os/Parcelable {
           NEW
           DUP
           INVOKESPECIAL (User$Creator, <init>, ()V)
-          PUTSTATIC (CREATOR, LUser$Creator;)
+          PUTSTATIC (CREATOR, Landroid/os/Parcelable$Creator;)
           RETURN
     }
 
-    public void <init>(java.lang.String p0)
+    public void <init>(java.lang.String firstName)
 
-    public final static java.lang.StringBuilder access$getTest$cp()
-
-    public final int describeContents()
+    public int describeContents()
 
     public final java.lang.String getFirstName()
 
-    private final static java.lang.StringBuilder getTest()
-
-    public final void writeToParcel(android.os.Parcel p0, int p1)
+    public void writeToParcel(android.os.Parcel parcel, int flags)
 }

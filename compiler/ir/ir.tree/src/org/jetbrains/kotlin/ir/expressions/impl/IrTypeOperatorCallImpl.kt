@@ -19,32 +19,39 @@ package org.jetbrains.kotlin.ir.expressions.impl
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
 import org.jetbrains.kotlin.ir.expressions.IrTypeOperatorCall
+import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
-import org.jetbrains.kotlin.types.KotlinType
 
 class IrTypeOperatorCallImpl(
-        startOffset: Int,
-        endOffset: Int,
-        type: KotlinType,
-        override val operator: IrTypeOperator,
-        override val typeOperand: KotlinType
-) : IrExpressionBase(startOffset, endOffset, type), IrTypeOperatorCall {
-    constructor(
-            startOffset: Int,
-            endOffset: Int,
-            type: KotlinType,
-            operator: IrTypeOperator,
-            typeOperand: KotlinType,
-            argument: IrExpression
-    ) : this(startOffset, endOffset, type, operator, typeOperand) {
-        this.argument = argument
-    }
+    startOffset: Int,
+    endOffset: Int,
+    type: IrType,
+    override val operator: IrTypeOperator,
+    override val typeOperand: IrType
+) :
+    IrExpressionBase(startOffset, endOffset, type),
+    IrTypeOperatorCall {
 
     override lateinit var argument: IrExpression
+    override lateinit var typeOperandClassifier: IrClassifierSymbol
+
+    constructor(
+        startOffset: Int,
+        endOffset: Int,
+        type: IrType,
+        operator: IrTypeOperator,
+        typeOperand: IrType,
+        typeOperandClassifier: IrClassifierSymbol,
+        argument: IrExpression
+    ) : this(startOffset, endOffset, type, operator, typeOperand) {
+        this.argument = argument
+        this.typeOperandClassifier = typeOperandClassifier
+    }
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
-            visitor.visitTypeOperator(this, data)
+        visitor.visitTypeOperator(this, data)
 
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
         argument.accept(visitor, data)

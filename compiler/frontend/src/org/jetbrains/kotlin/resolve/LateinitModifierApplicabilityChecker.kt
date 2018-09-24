@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.resolve
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.UnsignedTypes
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
@@ -45,11 +46,23 @@ object LateinitModifierApplicabilityChecker {
             trace.report(Errors.INAPPLICABLE_LATEINIT_MODIFIER.on(modifier, "is allowed only on mutable $variables"))
         }
 
+        if (type.isInlineClassType()) {
+            if (UnsignedTypes.isUnsignedType(type)) {
+                trace.report(Errors.INAPPLICABLE_LATEINIT_MODIFIER.on(modifier, "is not allowed on $variables of unsigned types"))
+            } else {
+                trace.report(Errors.INAPPLICABLE_LATEINIT_MODIFIER.on(modifier, "is not allowed on $variables of inline class types"))
+            }
+        }
+
         if (type.isMarkedNullable) {
             trace.report(Errors.INAPPLICABLE_LATEINIT_MODIFIER.on(modifier, "is not allowed on $variables of nullable types"))
-        }
-        else if (TypeUtils.isNullableType(type)) {
-            trace.report(Errors.INAPPLICABLE_LATEINIT_MODIFIER.on(modifier, "is not allowed on $variables of a type with nullable upper bound"))
+        } else if (TypeUtils.isNullableType(type)) {
+            trace.report(
+                Errors.INAPPLICABLE_LATEINIT_MODIFIER.on(
+                    modifier,
+                    "is not allowed on $variables of a type with nullable upper bound"
+                )
+            )
         }
 
         if (KotlinBuiltIns.isPrimitiveType(type)) {
@@ -59,8 +72,7 @@ object LateinitModifierApplicabilityChecker {
         if (ktDeclaration is KtProperty) {
             if (ktDeclaration.hasDelegateExpression()) {
                 trace.report(Errors.INAPPLICABLE_LATEINIT_MODIFIER.on(modifier, "is not allowed on delegated properties"))
-            }
-            else if (ktDeclaration.hasInitializer()) {
+            } else if (ktDeclaration.hasInitializer()) {
                 trace.report(Errors.INAPPLICABLE_LATEINIT_MODIFIER.on(modifier, "is not allowed on $variables with initializer"))
             }
         }
@@ -81,9 +93,13 @@ object LateinitModifierApplicabilityChecker {
 
             if (!hasDelegateExpressionOrInitializer) {
                 if (hasAccessorImplementation) {
-                    trace.report(Errors.INAPPLICABLE_LATEINIT_MODIFIER.on(modifier, "is not allowed on properties with a custom getter or setter"))
-                }
-                else if (!isAbstract && !hasBackingField) {
+                    trace.report(
+                        Errors.INAPPLICABLE_LATEINIT_MODIFIER.on(
+                            modifier,
+                            "is not allowed on properties with a custom getter or setter"
+                        )
+                    )
+                } else if (!isAbstract && !hasBackingField) {
                     trace.report(Errors.INAPPLICABLE_LATEINIT_MODIFIER.on(modifier, "is not allowed on properties without backing field"))
                 }
             }

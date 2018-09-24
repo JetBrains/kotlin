@@ -14,6 +14,7 @@ annotation class repann2(val f: Boolean)
 annotation class binrepann
 
 @Target(AnnotationTarget.EXPRESSION)
+@Retention(AnnotationRetention.SOURCE)
 @Repeatable
 annotation class repexpr
 
@@ -26,5 +27,5 @@ annotation class repexpr
 @binrepann <!NON_SOURCE_REPEATED_ANNOTATION!>@binrepann<!> class BinaryAnnotated
 
 @repann <!NON_SOURCE_REPEATED_ANNOTATION!>@repann<!> fun foo(@repann <!NON_SOURCE_REPEATED_ANNOTATION!>@repann<!> x: Int): Int {
-    @repexpr <!NON_SOURCE_REPEATED_ANNOTATION!>@repexpr<!> return x
+    @repexpr @repexpr return x
 }

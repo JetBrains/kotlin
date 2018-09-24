@@ -23,8 +23,10 @@ import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.CallableInfo
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.FunctionInfo
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.TypeInfo
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtForExpression
+import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
@@ -39,6 +41,11 @@ object CreateNextFunctionActionFactory : CreateCallableMemberFromUsageFactory<Kt
 
         val variableExpr = element.loopParameter ?: element.destructuringDeclaration ?: return null
         val returnType = TypeInfo(variableExpr as KtExpression, Variance.OUT_VARIANCE)
-        return FunctionInfo(OperatorNameConventions.NEXT.asString(), ownerType, returnType, isOperator = true)
+        return FunctionInfo(
+                OperatorNameConventions.NEXT.asString(),
+                ownerType,
+                returnType,
+                modifierList = KtPsiFactory(element).createModifierList(KtTokens.OPERATOR_KEYWORD)
+        )
     }
 }

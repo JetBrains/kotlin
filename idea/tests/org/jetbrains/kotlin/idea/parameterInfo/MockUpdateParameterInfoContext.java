@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.parameterInfo;
 import com.intellij.lang.parameterInfo.UpdateParameterInfoContext;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.UserDataHolderEx;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.testFramework.fixtures.JavaCodeInsightTestFixture;
@@ -87,6 +88,27 @@ public class MockUpdateParameterInfoContext implements UpdateParameterInfoContex
     }
 
     @Override
+    public boolean isPreservedOnHintHidden() {
+        return false;
+    }
+
+    @Override
+    public void setPreservedOnHintHidden(boolean value) {
+
+    }
+
+    @Override
+    public boolean isInnermostContext() {
+        return false;
+    }
+
+    //@Override since 181
+    //add `@Override` when BUNCH: 173 is dropped
+    public UserDataHolderEx getCustomContext() {
+        return null;
+    }
+
+    @Override
     public Project getProject() {
         return null;
     }
@@ -105,5 +127,11 @@ public class MockUpdateParameterInfoContext implements UpdateParameterInfoContex
     @Override
     public Editor getEditor() {
         return myFixture.getEditor();
+    }
+
+    //@Override since 183
+    //add `@Override` when BUNCH: 182 is dropped
+    public boolean isSingleParameterInfo() {
+        return false;
     }
 }

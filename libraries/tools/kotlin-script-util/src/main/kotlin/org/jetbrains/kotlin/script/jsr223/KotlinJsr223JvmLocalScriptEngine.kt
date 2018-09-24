@@ -16,14 +16,13 @@
 
 package org.jetbrains.kotlin.script.jsr223
 
-import com.intellij.openapi.Disposable
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector
 import org.jetbrains.kotlin.cli.common.repl.*
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
+import org.jetbrains.kotlin.cli.jvm.config.addJvmSdkRoots
 import org.jetbrains.kotlin.cli.jvm.repl.GenericReplCompiler
 import org.jetbrains.kotlin.config.*
-import org.jetbrains.kotlin.load.kotlin.JvmMetadataVersion
 import org.jetbrains.kotlin.script.KotlinScriptDefinition
 import org.jetbrains.kotlin.script.KotlinScriptDefinitionFromAnnotatedTemplate
 import org.jetbrains.kotlin.utils.PathUtil
@@ -35,7 +34,6 @@ import javax.script.ScriptEngineFactory
 import kotlin.reflect.KClass
 
 class KotlinJsr223JvmLocalScriptEngine(
-        disposable: Disposable,
         factory: ScriptEngineFactory,
         val templateClasspath: List<File>,
         templateClassName: String,
@@ -45,7 +43,6 @@ class KotlinJsr223JvmLocalScriptEngine(
 
     override val replCompiler: ReplCompiler by lazy {
        GenericReplCompiler(
-               disposable,
                makeScriptDefinition(templateClasspath, templateClassName),
                makeCompilerConfiguration(),
                PrintingMessageCollector(System.out, MessageRenderer.WITHOUT_PATHS, false))
@@ -64,11 +61,11 @@ class KotlinJsr223JvmLocalScriptEngine(
     private fun makeScriptDefinition(templateClasspath: List<File>, templateClassName: String): KotlinScriptDefinition {
         val classloader = URLClassLoader(templateClasspath.map { it.toURI().toURL() }.toTypedArray(), this.javaClass.classLoader)
         val cls = classloader.loadClass(templateClassName)
-        return KotlinScriptDefinitionFromAnnotatedTemplate(cls.kotlin, null, null, emptyMap())
+        return KotlinScriptDefinitionFromAnnotatedTemplate(cls.kotlin, emptyMap())
     }
 
     private fun makeCompilerConfiguration() = CompilerConfiguration().apply {
-        addJvmClasspathRoots(PathUtil.getJdkClassesRootsFromCurrentJre())
+        addJvmSdkRoots(PathUtil.getJdkClassesRootsFromCurrentJre())
         addJvmClasspathRoots(templateClasspath)
         put(CommonConfigurationKeys.MODULE_NAME, "kotlin-script")
         languageVersionSettings = LanguageVersionSettingsImpl(

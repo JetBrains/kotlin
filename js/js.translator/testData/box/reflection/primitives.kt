@@ -1,4 +1,6 @@
-// EXPECTED_REACHABLE_NODES: 1003
+// IGNORE_BACKEND: JS_IR
+// EXPECTED_REACHABLE_NODES: 1290
+// LANGUAGE_VERSION: 1.1
 import kotlin.reflect.KClass
 
 fun box(): String {
@@ -35,13 +37,12 @@ fun box(): String {
     assertEquals("RuntimeException", RuntimeException::class.simpleName)
     assertEquals("RuntimeException", RuntimeException()::class.simpleName)
     assertEquals("KClass", KClass::class.simpleName)
-    assertEquals("KClassImpl", Any::class::class.simpleName)
+    assertEquals("KClass", Any::class::class.simpleName)
 
     return "OK"
 }
 
 private fun check(nativeClass: dynamic, c: KClass<*>) {
-    assertEquals(null, c.simpleName, "Simple name of native class ${nativeClass.name} must be null")
     assertEquals(nativeClass, c.js, "Kotlin class does not correspond native class ${nativeClass.name}")
 }
 

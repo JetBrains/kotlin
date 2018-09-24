@@ -16,9 +16,10 @@
 
 package org.jetbrains.kotlin.resolve.calls.model;
 
-import com.google.common.collect.Maps;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.util.SmartList;
+import kotlin.Unit;
+import kotlin.jvm.functions.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.CallableDescriptor;
@@ -26,6 +27,7 @@ import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor;
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor;
 import org.jetbrains.kotlin.psi.Call;
 import org.jetbrains.kotlin.psi.ValueArgument;
+import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 import org.jetbrains.kotlin.resolve.DelegatingBindingTrace;
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.CallResolverUtilKt;
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystem;
@@ -81,6 +83,7 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements MutableRe
     private Boolean hasInferredReturnType = null;
     private boolean completed = false;
     private KotlinType smartCastDispatchReceiverType = null;
+    private Queue<Function0<Unit>> remainingTasks = null;
 
     private ResolvedCallImpl(
             @NotNull ResolutionCandidate<D> candidate,
@@ -129,17 +132,17 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements MutableRe
 
     @NotNull
     private static Map<ValueParameterDescriptor, ResolvedValueArgument> createValueArgumentsMap(CallableDescriptor descriptor) {
-        return descriptor.getValueParameters().isEmpty() ? Collections.emptyMap() : Maps.newLinkedHashMap();
+        return descriptor.getValueParameters().isEmpty() ? Collections.emptyMap() : new LinkedHashMap<>();
     }
 
     @NotNull
     private static Map<ValueArgument, ArgumentMatchImpl> createArgumentsToParameterMap(CallableDescriptor descriptor) {
-        return descriptor.getValueParameters().isEmpty() ? Collections.emptyMap() : Maps.newHashMap();
+        return descriptor.getValueParameters().isEmpty() ? Collections.emptyMap() : new HashMap<>();
     }
 
     @NotNull
     private static Map<TypeParameterDescriptor, KotlinType> createTypeArgumentsMap(CallableDescriptor descriptor) {
-        return descriptor.getTypeParameters().isEmpty() ? Collections.emptyMap() : Maps.newLinkedHashMap();
+        return descriptor.getTypeParameters().isEmpty() ? Collections.emptyMap() : new LinkedHashMap<>();
     }
 
     @Override
@@ -194,7 +197,14 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements MutableRe
     @Override
     public void setResultingSubstitutor(@NotNull TypeSubstitutor substitutor) {
         resultingDescriptor = (D) candidateDescriptor.substitute(substitutor);
-        assert resultingDescriptor != null : candidateDescriptor;
+        //noinspection ConstantConditions
+        if (resultingDescriptor == null) {
+            throw new AssertionError(
+                    "resultingDescriptor shouldn't be null:\n" +
+                    "candidateDescriptor: " + DescriptorRenderer.COMPACT_WITH_SHORT_TYPES.render(candidateDescriptor) + "\n" +
+                    "substitution: " + substitutor.getSubstitution()
+            );
+        }
 
         for (TypeParameterDescriptor typeParameter : candidateDescriptor.getTypeParameters()) {
             TypeProjection typeArgumentProjection = substitutor.getSubstitution().get(typeParameter.getDefaultType());
@@ -283,7 +293,7 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements MutableRe
         for (int i = 0; i < candidateDescriptor.getValueParameters().size(); ++i) {
             arguments.add(null);
         }
-        
+
         for (Map.Entry<ValueParameterDescriptor, ResolvedValueArgument> entry : valueArguments.entrySet()) {
             ValueParameterDescriptor parameterDescriptor = entry.getKey();
             ResolvedValueArgument value = entry.getValue();
@@ -299,7 +309,7 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements MutableRe
                 return null;
             }
         }
-        
+
         return arguments;
     }
 
@@ -353,6 +363,23 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements MutableRe
         constraintSystem = null;
         tracing = null;
         completed = true;
+        remainingTasks = null;
+    }
+
+    @Override
+    public void addRemainingTasks(Function0<Unit> task) {
+        if (remainingTasks == null) {
+            remainingTasks = new ArrayDeque<>();
+        }
+        remainingTasks.add(task);
+    }
+
+    @Override
+    public void performRemainingTasks() {
+        if (remainingTasks == null) return;
+        while (!remainingTasks.isEmpty()) {
+            remainingTasks.poll().invoke();
+        }
     }
 
     @Override

@@ -1,0 +1,3 @@
+[NotNull Values]
+8 	println("And now my name is '$<bold>name</bold>'")
+8 		println("And now my name is '$<bold>name</bold>'")

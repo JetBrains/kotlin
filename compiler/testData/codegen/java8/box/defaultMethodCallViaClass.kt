@@ -11,7 +11,7 @@ interface Simple {
 }
 
 // FILE: main.kt
-
+// JVM_TARGET: 1.8
 class Test : Simple {}
 
 fun box(): String {

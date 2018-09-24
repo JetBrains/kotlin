@@ -29,15 +29,15 @@ class TypeArgumentsToParametersMapper {
 
         object NoExplicitArguments : TypeArgumentsMapping(emptyList()) {
             override fun getTypeArgument(typeParameterDescriptor: TypeParameterDescriptor): TypeArgument =
-                    TypeArgumentPlaceholder
+                TypeArgumentPlaceholder
         }
 
         class TypeArgumentsMappingImpl(
-                diagnostics: List<KotlinCallDiagnostic>,
-                private val typeParameterToArgumentMap: Map<TypeParameterDescriptor, TypeArgument>
-        ): TypeArgumentsMapping(diagnostics) {
+            diagnostics: List<KotlinCallDiagnostic>,
+            private val typeParameterToArgumentMap: Map<TypeParameterDescriptor, TypeArgument>
+        ) : TypeArgumentsMapping(diagnostics) {
             override fun getTypeArgument(typeParameterDescriptor: TypeParameterDescriptor): TypeArgument =
-                    typeParameterToArgumentMap[typeParameterDescriptor] ?: TypeArgumentPlaceholder
+                typeParameterToArgumentMap[typeParameterDescriptor] ?: TypeArgumentPlaceholder
         }
     }
 
@@ -48,9 +48,9 @@ class TypeArgumentsToParametersMapper {
 
         if (call.typeArguments.size != descriptor.typeParameters.size) {
             return TypeArgumentsMapping.TypeArgumentsMappingImpl(
-                    listOf(WrongCountOfTypeArguments(descriptor, call.typeArguments.size)), emptyMap())
-        }
-        else {
+                listOf(WrongCountOfTypeArguments(descriptor, call.typeArguments.size)), emptyMap()
+            )
+        } else {
             val typeParameterToArgumentMap = descriptor.typeParameters.zip(call.typeArguments).associate { it }
             return TypeArgumentsMapping.TypeArgumentsMappingImpl(listOf(), typeParameterToArgumentMap)
         }

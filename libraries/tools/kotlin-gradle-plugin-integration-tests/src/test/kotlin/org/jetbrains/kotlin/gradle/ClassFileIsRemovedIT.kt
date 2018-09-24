@@ -41,8 +41,8 @@ class ClassFileIsRemovedIT : BaseGradleIT() {
         }
     }
 
-    fun doTest(buildOptions: BuildOptions, transformDummy: (File)->Unit) {
-        val project = Project("kotlinInJavaRoot", "2.10")
+    fun doTest(buildOptions: BuildOptions, transformDummy: (File) -> Unit) {
+        val project = Project("kotlinInJavaRoot")
         project.build("build", options = buildOptions) {
             assertSuccessful()
         }
@@ -59,7 +59,7 @@ class ClassFileIsRemovedIT : BaseGradleIT() {
         // check that class removal does not trigger rebuild
         project.build("build", options = buildOptions) {
             assertSuccessful()
-            assertContains(":compileKotlin UP-TO-DATE", ":compileJava UP-TO-DATE")
+            assertTasksUpToDate(":compileKotlin", ":compileJava")
         }
     }
 }

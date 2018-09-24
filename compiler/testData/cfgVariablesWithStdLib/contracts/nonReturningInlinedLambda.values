@@ -1,0 +1,73 @@
+== myRun ==
+inline fun myRun(block: () -> Unit): Unit {
+    contract {
+        callsInPlace(block, InvocationKind.EXACTLY_ONCE)
+    }
+    return block()
+}
+---------------------
+                                                                                   <v0>: {<: () -> Unit}                   NEW: magic[FAKE_INITIALIZER](block: () -> Unit) -> <v0>
+{ callsInPlace(block, InvocationKind.EXACTLY_ONCE) }                               <v1>: {<: ContractBuilder.() -> Unit}   NEW: r({ callsInPlace(block, InvocationKind.EXACTLY_ONCE) }) -> <v1>
+contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) }                      <v2>: *                                 NEW: call(contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) }, contract|<v1>) -> <v2>
+block                                                                              <v3>: {<: () -> Unit}                   NEW: r(block) -> <v3>
+block()                                                                            <v4>: Unit                              NEW: call(block(), invoke|<v3>) -> <v4>
+return block()                                                                     !<v5>: *
+{ contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) } return block() }   !<v5>: *                                COPY
+=====================
+== anonymous_0 ==
+{
+        callsInPlace(block, InvocationKind.EXACTLY_ONCE)
+    }
+---------------------
+                                                   <v0>: {<: ContractBuilder}   NEW: magic[IMPLICIT_RECEIVER](callsInPlace(block, InvocationKind.EXACTLY_ONCE)) -> <v0>
+block                                              <v1>: {<: Function<Unit>}    NEW: r(block) -> <v1>
+EXACTLY_ONCE                                       <v2>: {<: InvocationKind}    NEW: r(EXACTLY_ONCE) -> <v2>
+InvocationKind.EXACTLY_ONCE                        <v2>: {<: InvocationKind}    COPY
+callsInPlace(block, InvocationKind.EXACTLY_ONCE)   <v3>: *                      NEW: call(callsInPlace(block, InvocationKind.EXACTLY_ONCE), callsInPlace|<v0>, <v1>, <v2>) -> <v3>
+callsInPlace(block, InvocationKind.EXACTLY_ONCE)   <v3>: *                      COPY
+=====================
+== getBool ==
+fun getBool(): Boolean = false
+---------------------
+false   <v0>: Boolean   NEW: r(false) -> <v0>
+=====================
+== withLabeledReturn ==
+fun withLabeledReturn(y: Int) {
+    val x = myRun outer@ {
+        myRun { return@outer Unit }
+        println(y)
+    }
+
+    println(y)
+    println(x)
+}
+---------------------
+                                                                                            <v0>: Int               NEW: magic[FAKE_INITIALIZER](y: Int) -> <v0>
+{ myRun { return@outer Unit } println(y) }                                                  <v1>: {<: () -> Unit}   NEW: r({ myRun { return@outer Unit } println(y) }) -> <v1>
+outer@ { myRun { return@outer Unit } println(y) }                                           <v1>: {<: () -> Unit}   COPY
+myRun outer@ { myRun { return@outer Unit } println(y) }                                     <v2>: Unit              NEW: call(myRun outer@ { myRun { return@outer Unit } println(y) }, myRun|<v1>) -> <v2>
+y                                                                                           <v3>: Int               NEW: r(y) -> <v3>
+println(y)                                                                                  <v4>: *                 NEW: call(println(y), println|<v3>) -> <v4>
+x                                                                                           <v5>: *                 NEW: r(x) -> <v5>
+println(x)                                                                                  <v6>: *                 NEW: call(println(x), println|<v5>) -> <v6>
+{ val x = myRun outer@ { myRun { return@outer Unit } println(y) } println(y) println(x) }   <v6>: *                 COPY
+=====================
+== inlined anonymous_1 ==
+{
+        myRun { return@outer Unit }
+        println(y)
+    }
+---------------------
+{ return@outer Unit }                    <v0>: {<: () -> Unit}   NEW: r({ return@outer Unit }) -> <v0>
+myRun { return@outer Unit }              <v1>: *                 NEW: call(myRun { return@outer Unit }, myRun|<v0>) -> <v1>
+y                                        <v2>: Int               NEW: r(y) -> <v2>
+println(y)                               <v3>: *                 NEW: call(println(y), println|<v2>) -> <v3>
+myRun { return@outer Unit } println(y)   <v3>: *                 COPY
+=====================
+== inlined anonymous_2 ==
+{ return@outer Unit }
+---------------------
+Unit                <v0>: Unit   NEW: r(Unit) -> <v0>
+return@outer Unit   !<v1>: *
+return@outer Unit   !<v1>: *     COPY
+=====================

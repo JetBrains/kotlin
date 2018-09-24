@@ -1,0 +1,24 @@
+/*
+ * Copyright 2000-2017 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
+ */
+
+package org.jetbrains.kotlin.utils
+
+import com.intellij.openapi.diagnostic.Attachment
+import com.intellij.openapi.diagnostic.ExceptionWithAttachments
+
+open class KotlinExceptionWithAttachments : RuntimeException, ExceptionWithAttachments {
+    private val attachments = mutableListOf<Attachment>()
+
+    constructor(message: String) : super(message)
+
+    constructor(message: String?, cause: Throwable?) : super(message, cause)
+
+    override fun getAttachments(): Array<Attachment> = attachments.toTypedArray()
+
+    fun withAttachment(name: String, content: String?): KotlinExceptionWithAttachments {
+        attachments.add(Attachment(name, content ?: "<null>"))
+        return this
+    }
+}

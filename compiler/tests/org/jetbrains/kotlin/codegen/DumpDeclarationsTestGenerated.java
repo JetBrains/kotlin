@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.codegen;
@@ -32,61 +21,61 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 public class DumpDeclarationsTestGenerated extends AbstractDumpDeclarationsTest {
+    private void runTest(String testDataFilePath) throws Exception {
+        KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+    }
+
     public void testAllFilesPresentInDumpDeclarations() throws Exception {
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/dumpDeclarations"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
     }
 
     @TestMetadata("annotation.kt")
     public void testAnnotation() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/dumpDeclarations/annotation.kt");
-        doTest(fileName);
+        runTest("compiler/testData/codegen/dumpDeclarations/annotation.kt");
     }
 
     @TestMetadata("classMembers.kt")
     public void testClassMembers() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/dumpDeclarations/classMembers.kt");
-        doTest(fileName);
+        runTest("compiler/testData/codegen/dumpDeclarations/classMembers.kt");
     }
 
     @TestMetadata("classes.kt")
     public void testClasses() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/dumpDeclarations/classes.kt");
-        doTest(fileName);
+        runTest("compiler/testData/codegen/dumpDeclarations/classes.kt");
     }
 
     @TestMetadata("interfaces.kt")
     public void testInterfaces() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/dumpDeclarations/interfaces.kt");
-        doTest(fileName);
+        runTest("compiler/testData/codegen/dumpDeclarations/interfaces.kt");
+    }
+
+    @TestMetadata("intermediateAbstractSuspendFunction.kt")
+    public void testIntermediateAbstractSuspendFunction() throws Exception {
+        runTest("compiler/testData/codegen/dumpDeclarations/intermediateAbstractSuspendFunction.kt");
     }
 
     @TestMetadata("localClasses.kt")
     public void testLocalClasses() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/dumpDeclarations/localClasses.kt");
-        doTest(fileName);
+        runTest("compiler/testData/codegen/dumpDeclarations/localClasses.kt");
     }
 
     @TestMetadata("multifileFacadeMembers.kt")
     public void testMultifileFacadeMembers() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/dumpDeclarations/multifileFacadeMembers.kt");
-        doTest(fileName);
+        runTest("compiler/testData/codegen/dumpDeclarations/multifileFacadeMembers.kt");
     }
 
     @TestMetadata("suspendLambda.kt")
     public void testSuspendLambda() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/dumpDeclarations/suspendLambda.kt");
-        doTest(fileName);
+        runTest("compiler/testData/codegen/dumpDeclarations/suspendLambda.kt");
     }
 
     @TestMetadata("suspendOverride.kt")
     public void testSuspendOverride() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/dumpDeclarations/suspendOverride.kt");
-        doTest(fileName);
+        runTest("compiler/testData/codegen/dumpDeclarations/suspendOverride.kt");
     }
 
     @TestMetadata("topLevelMembers.kt")
     public void testTopLevelMembers() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/dumpDeclarations/topLevelMembers.kt");
-        doTest(fileName);
+        runTest("compiler/testData/codegen/dumpDeclarations/topLevelMembers.kt");
     }
 }

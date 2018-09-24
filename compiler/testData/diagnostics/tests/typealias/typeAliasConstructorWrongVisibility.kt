@@ -1,3 +1,6 @@
+// !WITH_NEW_INFERENCE
+// NI_EXPECTED_FILE
+
 open class MyClass private constructor(val x: Int) {
 
     protected constructor(x: String) : this(x.length)
@@ -20,7 +23,7 @@ class MyDerived : MyClass(1.0) {
     val test4 = <!INVISIBLE_MEMBER!>MyAlias<!>(1)
     val test4a = <!INVISIBLE_MEMBER!>MyClass<!>(1)
     val test5 = <!PROTECTED_CONSTRUCTOR_NOT_IN_SUPER_CALL!>MyAlias<!>("")
-    val test5a = <!PROTECTED_CONSTRUCTOR_NOT_IN_SUPER_CALL!>MyClass<!>("")
+    val test5a = <!OI;PROTECTED_CONSTRUCTOR_NOT_IN_SUPER_CALL!>MyClass<!>("")
     val test6 = MyAlias(1.0)
     val test6a = MyClass(1.0)
 }

@@ -1,0 +1,18 @@
+package
+
+public val x1: kotlin.String
+public val x2: kotlin.String
+public val x3: [ERROR : Type for fn2(::bar, ::foo)]
+public val x4: [ERROR : Type for fn2(::foo, ::bar)]
+public val x5: [ERROR : Type for fn2(::foo, ::foo)]
+public val x6: kotlin.Int
+public fun bar(/*0*/ s: kotlin.String): kotlin.String
+public fun fn1(/*0*/ x: kotlin.Int, /*1*/ f1: (kotlin.Int) -> kotlin.String, /*2*/ f2: (kotlin.String) -> kotlin.String): kotlin.String
+public fun fn2(/*0*/ f1: (kotlin.Int) -> kotlin.Int, /*1*/ f2: (kotlin.Int) -> kotlin.String): kotlin.String
+public fun fn2(/*0*/ f1: (kotlin.Int) -> kotlin.String, /*1*/ f2: (kotlin.String) -> kotlin.String): kotlin.String
+public fun fn2(/*0*/ f1: (kotlin.String) -> kotlin.String, /*1*/ f2: (kotlin.String) -> kotlin.String): kotlin.String
+public fun fn3(/*0*/ i: kotlin.Int, /*1*/ f: (kotlin.Int, kotlin.Int, kotlin.Int) -> kotlin.Int): kotlin.Int
+public fun foo(/*0*/ i: kotlin.Int): kotlin.String
+public fun foo(/*0*/ s: kotlin.String): kotlin.String
+public fun qux(/*0*/ i: kotlin.Int, /*1*/ j: kotlin.Int, /*2*/ k: kotlin.Int): kotlin.Int
+public fun qux(/*0*/ a: kotlin.String, /*1*/ b: kotlin.String, /*2*/ c: kotlin.String, /*3*/ d: kotlin.String): kotlin.Unit

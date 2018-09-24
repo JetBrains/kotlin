@@ -19,14 +19,35 @@ package org.jetbrains.kotlin.idea.js
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.roots.CompilerModuleExtension
 import org.jetbrains.jps.util.JpsPathUtil
-import org.jetbrains.kotlin.utils.KotlinJavascriptMetadataUtils
+import org.jetbrains.kotlin.idea.facet.KotlinFacet
+import org.jetbrains.kotlin.idea.framework.isGradleModule
+import org.jetbrains.kotlin.idea.project.platform
+import org.jetbrains.kotlin.platform.impl.isJavaScript
+import org.jetbrains.plugins.gradle.settings.GradleSystemRunningSettings
 
-fun getJsOutputFilePath(module: Module, isTests: Boolean, isMeta: Boolean): String? {
-    val compilerExtension = CompilerModuleExtension.getInstance(module)
-    val outputDir = (if (isTests) compilerExtension?.compilerOutputUrlForTests else compilerExtension?.compilerOutputUrl)
-                    ?: return null
-    val extension = if (isMeta) KotlinJavascriptMetadataUtils.META_JS_SUFFIX else KotlinJavascriptMetadataUtils.JS_EXT
-    return JpsPathUtil.urlToPath("$outputDir/${module.name}${suffix(isTests)}$extension")
-}
+val Module.jsTestOutputFilePath: String?
+    get() {
+        if (!shouldUseJpsOutput) {
+            (KotlinFacet.get(this)?.configuration?.settings?.testOutputPath)?.let { return it }
+        }
 
-private fun suffix(isTests: Boolean) = if (isTests) "_test" else ""
+        val compilerExtension = CompilerModuleExtension.getInstance(this)
+        val outputDir = compilerExtension?.compilerOutputUrlForTests ?: return null
+        return JpsPathUtil.urlToPath("$outputDir/${name}_test.js")
+    }
+
+val Module.jsProductionOutputFilePath: String?
+    get() {
+        if (!shouldUseJpsOutput) {
+            (KotlinFacet.get(this)?.configuration?.settings?.productionOutputPath)?.let { return it }
+        }
+
+        val compilerExtension = CompilerModuleExtension.getInstance(this)
+        val outputDir = compilerExtension?.compilerOutputUrl ?: return null
+        return JpsPathUtil.urlToPath("$outputDir/$name.js")
+    }
+
+fun Module.asJsModule(): Module? = takeIf { it.platform.isJavaScript }
+
+val Module.shouldUseJpsOutput: Boolean
+    get() = !(isGradleModule() && GradleSystemRunningSettings.getInstance().isUseGradleAwareMake)

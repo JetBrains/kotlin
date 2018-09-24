@@ -11,3 +11,5 @@ enum class Foo {
     _Foo,
     quuxDoo,
 }
+
+class `A B`

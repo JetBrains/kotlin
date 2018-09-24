@@ -40,6 +40,16 @@ import org.jetbrains.kotlin.idea.versions.bundledRuntimeVersion
 import java.io.File
 
 class UpdateConfigurationQuickFixTest : LightPlatformCodeInsightFixtureTestCase() {
+    fun testDisableInlineClasses() {
+        configureRuntime("mockRuntime11")
+        resetProjectSettings(LanguageVersion.KOTLIN_1_3)
+        myFixture.configureByText("foo.kt", "inline class My(val n: Int)")
+
+        assertEquals(LanguageFeature.State.ENABLED_WITH_WARNING, inlineClassesSupport)
+        myFixture.launchAction(myFixture.findSingleIntention("Disable inline classes support in the project"))
+        assertEquals(LanguageFeature.State.DISABLED, inlineClassesSupport)
+    }
+
     fun testEnableCoroutines() {
         configureRuntime("mockRuntime11")
         resetProjectSettings(LanguageVersion.KOTLIN_1_1)
@@ -64,7 +74,9 @@ class UpdateConfigurationQuickFixTest : LightPlatformCodeInsightFixtureTestCase(
 
     fun testEnableCoroutinesFacet() {
         configureRuntime("mockRuntime11")
-        val facet = configureKotlinFacet(myModule)
+        val facet = configureKotlinFacet(myModule) {
+            settings.languageLevel = LanguageVersion.KOTLIN_1_1
+        }
         resetProjectSettings(LanguageVersion.KOTLIN_1_1)
         myFixture.configureByText("foo.kt", "suspend fun foo()")
 
@@ -175,7 +187,7 @@ class UpdateConfigurationQuickFixTest : LightPlatformCodeInsightFixtureTestCase(
             val editor = NewLibraryEditor()
             editor.name = "KotlinJavaRuntime"
 
-            editor.addRoot(JarFileSystem.getInstance().getJarRootForLocalFile(tempVFile), OrderRootType.CLASSES)
+            editor.addRoot(JarFileSystem.getInstance().getJarRootForLocalFile(tempVFile)!!, OrderRootType.CLASSES)
 
             ConfigLibraryUtil.addLibrary(editor, model)
         }
@@ -191,6 +203,9 @@ class UpdateConfigurationQuickFixTest : LightPlatformCodeInsightFixtureTestCase(
 
     private val coroutineSupport: LanguageFeature.State
         get() = project.getLanguageVersionSettings().getFeatureSupport(LanguageFeature.Coroutines)
+
+    private val inlineClassesSupport: LanguageFeature.State
+        get() = project.getLanguageVersionSettings().getFeatureSupport(LanguageFeature.InlineClasses)
 
     override fun tearDown() {
         FacetManager.getInstance(myModule).getFacetByType(KotlinFacetType.TYPE_ID)?.let {

@@ -392,9 +392,7 @@ public class JsAstMapper {
                     JsUnaryOperator.DELETE, to);
         }
         else {
-            throw createParserException(
-                    "'delete' can only operate on property names and array elements",
-                    from);
+            return new JsNullLiteral();
         }
     }
 
@@ -464,7 +462,7 @@ public class JsAstMapper {
         }
     }
 
-    private JsExpression mapExpression(Node exprNode) throws JsParserException {
+    public JsExpression mapExpression(Node exprNode) throws JsParserException {
         JsNode unknown = map(exprNode);
 
         if (unknown instanceof JsExpression) {
@@ -538,12 +536,11 @@ public class JsAstMapper {
             JsNode init = map(fromInit);
             JsExpression condition = mapOptionalExpression(fromTest);
             JsExpression increment = mapOptionalExpression(fromIncr);
-            assert (init != null);
             if (init instanceof JsVars) {
                 toFor = new JsFor((JsVars) init, condition, increment);
             }
             else {
-                assert (init instanceof JsExpression);
+                assert (init == null || init instanceof JsExpression);
                 toFor = new JsFor((JsExpression) init, condition, increment);
             }
 
@@ -564,14 +561,17 @@ public class JsAstMapper {
         Node fromFnNameNode = fnNode.getFirstChild();
         Node fromParamNode = fnNode.getFirstChild().getNext().getFirstChild();
         Node fromBodyNode = fnNode.getFirstChild().getNext().getNext();
-        JsFunction toFn = scopeContext.enterFunction();
 
         // Decide the function's name, if any.
         //
         String fnNameIdent = fromFnNameNode.getString();
+        JsName functionName = null;
         if (fnNameIdent != null && fnNameIdent.length() > 0) {
-            toFn.setName(scopeContext.globalNameFor(fnNameIdent));
+            functionName = scopeContext.localNameFor(fnNameIdent);
         }
+
+        JsFunction toFn = scopeContext.enterFunction();
+        toFn.setName(functionName);
 
         while (fromParamNode != null) {
             String fromParamName = fromParamNode.getString();

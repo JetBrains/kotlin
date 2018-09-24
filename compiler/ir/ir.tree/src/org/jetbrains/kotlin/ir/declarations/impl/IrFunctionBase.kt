@@ -16,21 +16,31 @@
 
 package org.jetbrains.kotlin.ir.declarations.impl
 
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.expressions.IrBody
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.transform
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.SmartList
 
 abstract class IrFunctionBase(
-        startOffset: Int,
-        endOffset: Int,
-        origin: IrDeclarationOrigin
-) : IrDeclarationBase(startOffset, endOffset, origin), IrFunction {
+    startOffset: Int,
+    endOffset: Int,
+    origin: IrDeclarationOrigin,
+    override val name: Name,
+    override val visibility: Visibility,
+    override val isInline: Boolean,
+    override val isExternal: Boolean
+) :
+    IrDeclarationBase(startOffset, endOffset, origin),
+    IrFunction {
+
     override val typeParameters: MutableList<IrTypeParameter> = SmartList()
 
     override var dispatchReceiverParameter: IrValueParameter? = null
@@ -38,6 +48,8 @@ abstract class IrFunctionBase(
     override val valueParameters: MutableList<IrValueParameter> = ArrayList()
 
     final override var body: IrBody? = null
+
+    final override lateinit var returnType: IrType
 
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
         typeParameters.forEach { it.accept(visitor, data) }

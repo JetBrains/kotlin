@@ -1,7 +1,7 @@
 package test
 
 actual class Foo(s: String) {
-    constructor(/*rename*/n: Int): this("")
+    actual constructor(/*rename*/n: Int): this("")
 }
 
 fun test() {

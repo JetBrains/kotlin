@@ -28,5 +28,7 @@ abstract class KotlinUsageInfo<T : PsiElement> : UsageInfo {
     @Suppress("UNCHECKED_CAST")
     override fun getElement() = super.getElement() as T?
 
+    open fun preprocessUsage() {}
+
     abstract fun processUsage(changeInfo: KotlinChangeInfo, element: T, allUsages: Array<out UsageInfo>): Boolean
 }

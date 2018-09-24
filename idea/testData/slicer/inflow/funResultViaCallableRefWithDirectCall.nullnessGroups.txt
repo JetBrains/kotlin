@@ -1,0 +1,3 @@
+[NotNull Values]
+5 	val <bold>x = (::bar)(1)</bold>
+5 		val <bold>x = (::bar)(1)</bold>

@@ -19,28 +19,36 @@ package org.jetbrains.kotlin.codegen.range
 import org.jetbrains.kotlin.codegen.ExpressionCodegen
 import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.codegen.generateCallReceiver
-import org.jetbrains.kotlin.codegen.range.forLoop.ForInCharSequenceIndicesRangeLoopGenerator
+import org.jetbrains.kotlin.codegen.range.forLoop.ForInDefinitelySafeSimpleProgressionLoopGenerator
+import org.jetbrains.kotlin.codegen.range.forLoop.ForInSimpleProgressionLoopGenerator
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.psi.KtForExpression
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.org.objectweb.asm.Type
-import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
-class CharSequenceIndicesRangeValue(rangeCall: ResolvedCall<out CallableDescriptor>): PrimitiveNumberRangeIntrinsicRangeValue(rangeCall) {
+class CharSequenceIndicesRangeValue(rangeCall: ResolvedCall<out CallableDescriptor>) :
+    PrimitiveNumberRangeIntrinsicRangeValue(rangeCall), ReversableRangeValue {
+
     private val expectedReceiverType: KotlinType = ExpressionCodegen.getExpectedReceiverType(rangeCall)
 
     override fun getBoundedValue(codegen: ExpressionCodegen) =
-            object : AbstractBoundedValue(codegen, rangeCall, isHighInclusive = false) {
-                override fun putHighLow(v: InstructionAdapter, type: Type) {
-                    codegen.generateCallReceiver(rangeCall).put(codegen.asmType(expectedReceiverType), v)
-                    v.invokeinterface("java/lang/CharSequence", "length", "()I")
-                    StackValue.coerce(Type.INT_TYPE, type, v)
-
-                    StackValue.constant(0, asmElementType).put(type, v)
-                }
-            }
+        SimpleBoundedValue(
+            codegen.asmType(rangeCall.resultingDescriptor.returnType!!),
+            StackValue.constant(0, asmElementType),
+            true,
+            StackValue.operation(Type.INT_TYPE) { v ->
+                codegen.generateCallReceiver(rangeCall).put(codegen.asmType(expectedReceiverType), expectedReceiverType, v)
+                v.invokeinterface("java/lang/CharSequence", "length", "()I")
+            },
+            false
+        )
 
     override fun createForLoopGenerator(codegen: ExpressionCodegen, forExpression: KtForExpression) =
-            ForInCharSequenceIndicesRangeLoopGenerator(codegen, forExpression, rangeCall)
+        ForInSimpleProgressionLoopGenerator.fromBoundedValueWithStep1(codegen, forExpression, getBoundedValue(codegen))
+
+    override fun createForInReversedLoopGenerator(codegen: ExpressionCodegen, forExpression: KtForExpression) =
+        ForInDefinitelySafeSimpleProgressionLoopGenerator.fromBoundedValueWithStepMinus1(
+            codegen, forExpression, getBoundedValue(codegen)
+        )
 }

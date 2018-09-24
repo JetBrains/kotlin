@@ -2,7 +2,6 @@
 class JavaClass {
     var v = ""
     fun m(s: String) {
-        s.
-                this.v.
+        s.this.v.
     }
 }

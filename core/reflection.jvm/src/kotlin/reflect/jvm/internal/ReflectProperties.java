@@ -21,7 +21,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.ref.SoftReference;
-import java.lang.ref.WeakReference;
 
 public class ReflectProperties {
     public static abstract class Val<T> {
@@ -97,33 +96,6 @@ public class ReflectProperties {
         }
     }
 
-    // A delegate for a lazy property on a weak reference, whose initializer may be invoked multiple times
-    // including simultaneously from different threads
-    public static class LazyWeakVal<T> extends Val<T> {
-        private final Function0<T> initializer;
-        private WeakReference<Object> value = null;
-
-        public LazyWeakVal(@NotNull Function0<T> initializer) {
-            this.initializer = initializer;
-        }
-
-        @Override
-        public T invoke() {
-            WeakReference<Object> cached = value;
-            if (cached != null) {
-                Object result = cached.get();
-                if (result != null) {
-                    return unescape(result);
-                }
-            }
-
-            T result = initializer.invoke();
-            value = new WeakReference<Object>(escape(result));
-
-            return result;
-        }
-    }
-
     @NotNull
     public static <T> LazyVal<T> lazy(@NotNull Function0<T> initializer) {
         return new LazyVal<T>(initializer);
@@ -137,10 +109,5 @@ public class ReflectProperties {
     @NotNull
     public static <T> LazySoftVal<T> lazySoft(@NotNull Function0<T> initializer) {
         return lazySoft(null, initializer);
-    }
-
-    @NotNull
-    public static <T> LazyWeakVal<T> lazyWeak(@NotNull Function0<T> initializer) {
-        return new LazyWeakVal<T>(initializer);
     }
 }

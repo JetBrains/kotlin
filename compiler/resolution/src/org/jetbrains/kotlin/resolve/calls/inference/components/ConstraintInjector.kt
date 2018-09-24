@@ -38,6 +38,7 @@ class ConstraintInjector(val constraintIncorporator: ConstraintIncorporator, val
 
         var maxTypeDepthFromInitialConstraints: Int
         val notFixedTypeVariables: MutableMap<TypeConstructor, MutableVariableWithConstraints>
+        val fixedTypeVariables: MutableMap<TypeConstructor, UnwrappedType>
 
         fun addInitialConstraint(initialConstraint: InitialConstraint)
         fun addError(error: KotlinCallDiagnostic)
@@ -63,7 +64,12 @@ class ConstraintInjector(val constraintIncorporator: ConstraintIncorporator, val
     }
 
 
-    private fun addSubTypeConstraintAndIncorporateIt(c: Context, lowerType: UnwrappedType, upperType: UnwrappedType, incorporatePosition: IncorporationConstraintPosition) {
+    private fun addSubTypeConstraintAndIncorporateIt(
+        c: Context,
+        lowerType: UnwrappedType,
+        upperType: UnwrappedType,
+        incorporatePosition: IncorporationConstraintPosition
+    ) {
         val possibleNewConstraints = Stack<Pair<NewTypeVariable, Constraint>>()
         val typeCheckerContext = TypeCheckerContext(c, incorporatePosition, lowerType, upperType, possibleNewConstraints)
         typeCheckerContext.runIsSubtypeOf(lowerType, upperType)
@@ -72,7 +78,8 @@ class ConstraintInjector(val constraintIncorporator: ConstraintIncorporator, val
             val (typeVariable, constraint) = possibleNewConstraints.pop()
             if (c.shouldWeSkipConstraint(typeVariable, constraint)) continue
 
-            val constraints = c.notFixedTypeVariables[typeVariable.freshTypeConstructor] ?: typeCheckerContext.fixedTypeVariable(typeVariable)
+            val constraints =
+                c.notFixedTypeVariables[typeVariable.freshTypeConstructor] ?: typeCheckerContext.fixedTypeVariable(typeVariable)
 
             // it is important, that we add constraint here(not inside TypeCheckerContext), because inside incorporation we read constraints
             constraints.addConstraint(constraint)?.let {
@@ -105,14 +112,15 @@ class ConstraintInjector(val constraintIncorporator: ConstraintIncorporator, val
         return false
     }
 
-    private fun Context.isAllowedType(type: UnwrappedType) = type.typeDepth() <= maxTypeDepthFromInitialConstraints + ALLOWED_DEPTH_DELTA_FOR_INCORPORATION
+    private fun Context.isAllowedType(type: UnwrappedType) =
+        type.typeDepth() <= maxTypeDepthFromInitialConstraints + ALLOWED_DEPTH_DELTA_FOR_INCORPORATION
 
     private inner class TypeCheckerContext(
-            val c: Context,
-            val position: IncorporationConstraintPosition,
-            val baseLowerType: UnwrappedType,
-            val baseUpperType: UnwrappedType,
-            val possibleNewConstraints: MutableList<Pair<NewTypeVariable, Constraint>>
+        val c: Context,
+        val position: IncorporationConstraintPosition,
+        val baseLowerType: UnwrappedType,
+        val baseUpperType: UnwrappedType,
+        val possibleNewConstraints: MutableList<Pair<NewTypeVariable, Constraint>>
     ) : TypeCheckerContextForConstraintSystem(), ConstraintIncorporator.Context {
 
         fun runIsSubtypeOf(lowerType: UnwrappedType, upperType: UnwrappedType) {
@@ -126,36 +134,44 @@ class ConstraintInjector(val constraintIncorporator: ConstraintIncorporator, val
 
         // from TypeCheckerContextForConstraintSystem
         override fun isMyTypeVariable(type: SimpleType): Boolean = c.allTypeVariables.containsKey(type.constructor)
+
         override fun addUpperConstraint(typeVariable: TypeConstructor, superType: UnwrappedType) =
-                addConstraint(typeVariable, superType, UPPER)
+            addConstraint(typeVariable, superType, UPPER)
 
         override fun addLowerConstraint(typeVariable: TypeConstructor, subType: UnwrappedType) =
-                addConstraint(typeVariable, subType, LOWER)
+            addConstraint(typeVariable, subType, LOWER)
 
         private fun isCapturedTypeFromSubtyping(type: UnwrappedType) =
-                when ((type as? NewCapturedType)?.captureStatus) {
-                    null, CaptureStatus.FROM_EXPRESSION -> false
-                    CaptureStatus.FOR_SUBTYPING -> true
-                    CaptureStatus.FOR_INCORPORATION ->
-                        error("Captured type for incorporation shouldn't escape from incorporation: $type\n" + renderBaseConstraint())
-                }
+            when ((type as? NewCapturedType)?.captureStatus) {
+                null, CaptureStatus.FROM_EXPRESSION -> false
+                CaptureStatus.FOR_SUBTYPING -> true
+                CaptureStatus.FOR_INCORPORATION ->
+                    error("Captured type for incorporation shouldn't escape from incorporation: $type\n" + renderBaseConstraint())
+            }
 
         private fun addConstraint(typeVariableConstructor: TypeConstructor, type: UnwrappedType, kind: ConstraintKind) {
             val typeVariable = c.allTypeVariables[typeVariableConstructor]
-                               ?: error("Should by type variableConstructor: $typeVariableConstructor. ${c.allTypeVariables.values}")
+                    ?: error("Should by type variableConstructor: $typeVariableConstructor. ${c.allTypeVariables.values}")
 
             var targetType = type
+            if (targetType.isError) {
+                c.addError(ConstrainingTypeIsError(typeVariable, targetType, position))
+                return
+            }
+
             if (type.contains(this::isCapturedTypeFromSubtyping)) {
                 // TypeVariable <: type -> if TypeVariable <: subType => TypeVariable <: type
                 if (kind == UPPER) {
-                    val subType = typeApproximator.approximateToSubType(type, TypeApproximatorConfiguration.SubtypeCapturedTypesApproximation)
+                    val subType =
+                        typeApproximator.approximateToSubType(type, TypeApproximatorConfiguration.SubtypeCapturedTypesApproximation)
                     if (subType != null && !KotlinBuiltIns.isNothingOrNullableNothing(subType)) {
                         targetType = subType
                     }
                 }
 
                 if (kind == LOWER) {
-                    val superType = typeApproximator.approximateToSuperType(type, TypeApproximatorConfiguration.SubtypeCapturedTypesApproximation)
+                    val superType =
+                        typeApproximator.approximateToSuperType(type, TypeApproximatorConfiguration.SubtypeCapturedTypesApproximation)
                     if (superType != null && !KotlinBuiltIns.isAnyOrNullableAny(superType)) { // todo rethink error reporting for Any cases
                         targetType = superType
                     }
@@ -189,12 +205,14 @@ class ConstraintInjector(val constraintIncorporator: ConstraintIncorporator, val
         }
 
         override fun getConstraintsForVariable(typeVariable: NewTypeVariable) =
-                c.notFixedTypeVariables[typeVariable.freshTypeConstructor]?.constraints
-                ?: fixedTypeVariable(typeVariable)
+            c.notFixedTypeVariables[typeVariable.freshTypeConstructor]?.constraints
+                    ?: fixedTypeVariable(typeVariable)
 
         fun fixedTypeVariable(variable: NewTypeVariable): Nothing {
-            error("Type variable $variable should not be fixed!\n" +
-                  renderBaseConstraint())
+            error(
+                "Type variable $variable should not be fixed!\n" +
+                        renderBaseConstraint()
+            )
         }
 
         private fun renderBaseConstraint() = "Base constraint: $baseLowerType <: $baseUpperType from position: $position"

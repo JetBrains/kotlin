@@ -19,9 +19,7 @@ expect class Foo(
 
     var getSet: String
         <!EXPECTED_DECLARATION_WITH_BODY!>get()<!> = "no"
-        <!EXPECTED_DECLARATION_WITH_BODY!>set(value)<!> {}
-
-    fun defaultArg(<!EXPECTED_DECLARATION_WITH_DEFAULT_PARAMETER!>value: String = "no"<!>)
+        <!EXPECTED_DECLARATION_WITH_BODY!>set(<!UNUSED_PARAMETER!>value<!>)<!> {}
 
     <!EXPECTED_DECLARATION_WITH_BODY!>fun functionWithBody(x: Int): Int<!> {
         return x + 1

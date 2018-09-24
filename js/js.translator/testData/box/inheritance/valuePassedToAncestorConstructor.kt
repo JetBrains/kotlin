@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 999
+// EXPECTED_REACHABLE_NODES: 1289
 package foo
 
 open class C(a: Int) {

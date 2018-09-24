@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.codegen.ClassBuilderFactory
 import org.jetbrains.kotlin.codegen.DelegatingClassBuilder
 import org.jetbrains.kotlin.codegen.extensions.ClassBuilderInterceptorExtension
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
-import org.jetbrains.kotlin.psi.KtClass
+import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.org.objectweb.asm.*
@@ -45,7 +45,7 @@ class ParcelableClinitClassBuilderInterceptorExtension : ClassBuilderInterceptor
     ) : ClassBuilderFactory {
 
         override fun newClassBuilder(origin: JvmDeclarationOrigin): ClassBuilder {
-            return AndroidOnDestroyCollectorClassBuilder(delegateFactory.newClassBuilder(origin), bindingContext)
+            return AndroidOnDestroyCollectorClassBuilder(origin, delegateFactory.newClassBuilder(origin), bindingContext)
         }
 
         override fun getClassBuilderMode() = delegateFactory.classBuilderMode
@@ -64,10 +64,11 @@ class ParcelableClinitClassBuilderInterceptorExtension : ClassBuilderInterceptor
     }
 
     private inner class AndroidOnDestroyCollectorClassBuilder(
+            val declarationOrigin: JvmDeclarationOrigin,
             internal val delegateClassBuilder: ClassBuilder,
             val bindingContext: BindingContext
     ) : DelegatingClassBuilder() {
-        private var currentClass: KtClass? = null
+        private var currentClass: KtClassOrObject? = null
         private var currentClassName: String? = null
         private var isClinitGenerated = false
 
@@ -82,7 +83,7 @@ class ParcelableClinitClassBuilderInterceptorExtension : ClassBuilderInterceptor
                 superName: String,
                 interfaces: Array<out String>
         ) {
-            if (origin is KtClass) {
+            if (origin is KtClassOrObject) {
                 currentClass = origin
             } else {
                 currentClass = null
@@ -97,7 +98,7 @@ class ParcelableClinitClassBuilderInterceptorExtension : ClassBuilderInterceptor
         override fun done() {
             if (!isClinitGenerated && currentClass != null && currentClassName != null) {
                 val descriptor = bindingContext[BindingContext.CLASS, currentClass]
-                if (descriptor != null && descriptor.isParcelize) {
+                if (descriptor != null && declarationOrigin.descriptor == descriptor && descriptor.isParcelize) {
                     val baseVisitor = super.newMethod(JvmDeclarationOrigin.NO_ORIGIN, ACC_STATIC, "<clinit>", "()V", null, null)
                     val visitor = ClinitAwareMethodVisitor(currentClassName!!, baseVisitor)
 
@@ -122,7 +123,7 @@ class ParcelableClinitClassBuilderInterceptorExtension : ClassBuilderInterceptor
                 isClinitGenerated = true
 
                 val descriptor = bindingContext[BindingContext.CLASS, currentClass]
-                if (descriptor != null && descriptor.isParcelize) {
+                if (descriptor != null && declarationOrigin.descriptor == descriptor && descriptor.isParcelize) {
                     return ClinitAwareMethodVisitor(
                             currentClassName!!,
                             super.newMethod(origin, access, name, desc, signature, exceptions))
@@ -143,7 +144,7 @@ class ParcelableClinitClassBuilderInterceptorExtension : ClassBuilderInterceptor
                 iv.anew(creatorType)
                 iv.dup()
                 iv.invokespecial(creatorName, "<init>", "()V", false)
-                iv.putstatic(parcelableName, "CREATOR", creatorType.descriptor)
+                iv.putstatic(parcelableName, "CREATOR", "Landroid/os/Parcelable\$Creator;")
             }
 
             super.visitInsn(opcode)

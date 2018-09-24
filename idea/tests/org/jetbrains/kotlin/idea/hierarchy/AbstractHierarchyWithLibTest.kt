@@ -44,13 +44,14 @@ abstract class AbstractHierarchyWithLibTest : AbstractHierarchyTest() {
                 "// BASE_CLASS: "
         ).singleOrNull() ?: error("File should contain BASE_CLASS directive")
 
-        val targetClass = findTargetJavaClass(directive.trim())
         doHierarchyTest(
                 Computable {
+                    val targetClass = findTargetJavaClass(directive.trim())
+
                     TypeHierarchyTreeStructure(
                             project,
                             targetClass,
-                            if (folderName.contains("annotation")) HierarchyBrowserBaseEx.SCOPE_PROJECT else HierarchyBrowserBaseEx.SCOPE_ALL)
+                            HierarchyBrowserBaseEx.SCOPE_PROJECT)
                 }, *filesToConfigure)
     }
 

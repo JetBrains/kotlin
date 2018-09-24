@@ -41,6 +41,41 @@ public class CompilerSmokeTest extends CompilerSmokeTestBase {
         run("hello.run", "-cp", jar, "Hello.HelloKt");
     }
 
+    public void testHelloAppSuspendMain() throws Exception {
+        String jar = tmpdir.getAbsolutePath() + File.separator + "hello.jar";
+
+        assertEquals("compilation failed", 0, runCompiler("hello.compile", "-include-runtime", "hello.kt", "-d", jar));
+        run("hello.run", "-cp", jar, "Hello.HelloKt", "O", "K");
+    }
+
+    public void testHelloAppSuspendMainInMultifile() throws Exception {
+        String jar = tmpdir.getAbsolutePath() + File.separator + "hello.jar";
+
+        assertEquals("compilation failed", 0, runCompiler("hello.compile", "-include-runtime", "hello.kt", "-d", jar));
+        run("hello.run", "-cp", jar, "Hello.Foo", "O", "K");
+    }
+
+    public void testHelloAppParameterlessMain() throws Exception {
+        String jar = tmpdir.getAbsolutePath() + File.separator + "hello.jar";
+
+        assertEquals("compilation failed", 0, runCompiler("hello.compile", "-include-runtime", "hello.kt", "-d", jar));
+        run("hello.run", "-cp", jar, "Hello.HelloKt");
+    }
+
+    public void testHelloAppOldAndParameterlessMain() throws Exception {
+        String jar = tmpdir.getAbsolutePath() + File.separator + "hello.jar";
+
+        assertEquals("compilation failed", 0, runCompiler("hello.compile", "-include-runtime", "hello.kt", "-d", jar));
+        run("hello.run", "-cp", jar, "Hello.HelloKt");
+    }
+
+    public void testHelloAppSuspendParameterlessMain() throws Exception {
+        String jar = tmpdir.getAbsolutePath() + File.separator + "hello.jar";
+
+        assertEquals("compilation failed", 0, runCompiler("hello.compile", "-include-runtime", "hello.kt", "-d", jar));
+        run("hello.run", "-cp", jar, "Hello.HelloKt", "O", "K");
+    }
+
     public void testCompilationFailed() throws Exception {
         String jar = tmpdir.getAbsolutePath() + File.separator + "smoke.jar";
 
@@ -59,10 +94,6 @@ public class CompilerSmokeTest extends CompilerSmokeTestBase {
 
     public void testScriptDashedArgs() throws Exception {
         runCompiler("script", "-script", "script.kts", "--", "hi", "-name", "Marty", "--", "there");
-    }
-
-    public void testScriptWithClasspath() throws Exception {
-        runCompiler("script", "-cp", new File("lib/javax.inject.jar").getAbsolutePath(), "-script", "script.kts");
     }
 
     public void testScriptException() throws Exception {

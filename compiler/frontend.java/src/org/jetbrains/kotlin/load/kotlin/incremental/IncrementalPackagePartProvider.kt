@@ -16,9 +16,11 @@
 
 package org.jetbrains.kotlin.load.kotlin.incremental
 
-import org.jetbrains.kotlin.descriptors.PackagePartProvider
-import org.jetbrains.kotlin.load.kotlin.ModuleMapping
+import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache
+import org.jetbrains.kotlin.load.kotlin.loadModuleMapping
+import org.jetbrains.kotlin.metadata.jvm.deserialization.ModuleMapping
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationConfiguration
 import org.jetbrains.kotlin.storage.StorageManager
 
@@ -31,7 +33,10 @@ class IncrementalPackagePartProvider(
 
     private val moduleMappings = storageManager.createLazyValue {
         incrementalCaches.map { cache ->
-            ModuleMapping.create(cache.getModuleMappingData(), "<incremental>", deserializationConfiguration)
+            ModuleMapping.loadModuleMapping(cache.getModuleMappingData(), "<incremental>", deserializationConfiguration) { version ->
+                // Incremental compilation should fall back to full rebuild if the minor component of the metadata version has changed
+                throw IllegalStateException("Version of the generated module should not be incompatible: $version")
+            }
         }
     }
 
@@ -40,6 +45,7 @@ class IncrementalPackagePartProvider(
                 parent.findPackageParts(packageFqName)).distinct()
     }
 
-    // TODO
-    override fun findMetadataPackageParts(packageFqName: String): List<String> = TODO()
+    override fun getAnnotationsOnBinaryModule(moduleName: String): List<ClassId> {
+        return parent.getAnnotationsOnBinaryModule(moduleName)
+    }
 }

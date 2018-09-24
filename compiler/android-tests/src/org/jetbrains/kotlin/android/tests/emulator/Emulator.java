@@ -74,7 +74,10 @@ public class Emulator {
         commandLine.setExePath(pathManager.getToolsFolderInAndroidSdk() + "/" + emulatorCmdName);
         commandLine.addParameter("-avd");
         commandLine.addParameter("my_avd");
-        commandLine.addParameter("-no-audio");
+        if (platform != X86) {
+            //problem with qemu options
+            commandLine.addParameter("-no-audio");
+        }
         commandLine.addParameter("-no-window");
         return commandLine;
     }
@@ -154,7 +157,7 @@ public class Emulator {
         bootCheckCommand.addParameter("sys.boot_completed");
         int counter = 0;
         RunResult execute = RunUtils.execute(bootCheckCommand);
-        while (counter < 12) {
+        while (counter < 20) {
             String output = execute.getOutput();
             if (output.trim().endsWith("1")) {
                 System.out.println("Emulator fully booted!");

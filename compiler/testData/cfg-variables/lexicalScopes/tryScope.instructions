@@ -26,33 +26,33 @@ L0:
     call(foo(), foo) -> <v1>
   2 jmp?(L2)
     jmp?(L3)
-    jmp(L4)                                                                                                                                         USE: in: {} out: {}
+    jmp(L4)
 L2 [onException]:
-  3 v(e: Exception)                                                                                      INIT: in: {} out: {e=D}
-    magic[FAKE_INITIALIZER](e: Exception) -> <v2>                                                        INIT: in: {e=D} out: {e=D}
-    w(e|<v2>)                                                                                            INIT: in: {e=D} out: {e=ID}
-  4 mark({ val a = e })                                                                                  INIT: in: {e=ID} out: {e=ID}
-    v(val a = e)                                                                                         INIT: in: {e=ID} out: {a=D, e=ID}          USE: in: {e=READ} out: {e=READ}
-    r(e) -> <v3>                                                                                         INIT: in: {a=D, e=ID} out: {a=D, e=ID}     USE: in: {} out: {e=READ}
-    w(a|<v3>)                                                                                            INIT: in: {a=D, e=ID} out: {a=ID, e=ID}
-  3 jmp(L4)                                                                                              INIT: in: {e=ID} out: {e=ID}
+  3 v(e: Exception)                                                                                      INIT: in: {} out: {}
+    magic[FAKE_INITIALIZER](e: Exception) -> <v2>                                                        INIT: in: {} out: {}
+    w(e|<v2>)                                                                                            INIT: in: {} out: {}
+  4 mark({ val a = e })                                                                                  INIT: in: {} out: {}
+    v(val a = e)                                                                                         INIT: in: {} out: {}
+    r(e) -> <v3>                                                                                         INIT: in: {} out: {}
+    w(a|<v3>)                                                                                            INIT: in: {} out: {}
+  3 jmp(L4)                                                                                              INIT: in: {} out: {}
 L4 [afterCatches]:
-  2 jmp(L5)                                                                                              INIT: in: {} out: {}
+  2 jmp(L5)
 L3 [onExceptionToFinallyBlock]:
 L6 [start finally]:
   3 mark({ val a = 1 })
-    v(val a = 1)                                                                                         INIT: in: {} out: {a=D}
-    r(1) -> <v4>                                                                                         INIT: in: {a=D} out: {a=D}
-    w(a|<v4>)                                                                                            INIT: in: {a=D} out: {a=ID}
+    v(val a = 1)                                                                                         INIT: in: {} out: {}
+    r(1) -> <v4>                                                                                         INIT: in: {} out: {}
+    w(a|<v4>)                                                                                            INIT: in: {} out: {}
 L7 [finish finally]:
   2 jmp(error)                                                                                           INIT: in: {} out: {}
 L5 [skipFinallyToErrorBlock]:
 L8 [copy of L3, onExceptionToFinallyBlock]:
   3 mark({ val a = 1 })
-    v(val a = 1)                                                                                         INIT: in: {} out: {a=D}
-    r(1) -> <v4>                                                                                         INIT: in: {a=D} out: {a=D}
-    w(a|<v4>)                                                                                            INIT: in: {a=D} out: {a=ID}
-  2 merge(try { foo() } catch (e: Exception) { val a = e } finally { val a = 1 }|<v1>, !<v5>) -> <v6>    INIT: in: {} out: {}
+    v(val a = 1)
+    r(1) -> <v4>
+    w(a|<v4>)
+  2 merge(try { foo() } catch (e: Exception) { val a = e } finally { val a = 1 }|<v1>, !<v5>) -> <v6>
     mark("after")
     r("after") -> <v7>
 L1:
@@ -60,5 +60,5 @@ L1:
 error:
     <ERROR>
 sink:
-    <SINK>                                                                                                                                          USE: in: {} out: {}
+    <SINK>                                                                                                                       USE: in: {} out: {}
 =====================

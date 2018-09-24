@@ -17,14 +17,17 @@
 package org.jetbrains.uast.kotlin
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.KtBlockExpression
+import org.jetbrains.kotlin.psi.KtWhenEntry
+import org.jetbrains.kotlin.psi.KtWhenExpression
 import org.jetbrains.uast.*
+import org.jetbrains.uast.kotlin.declarations.KotlinUIdentifier
 import org.jetbrains.uast.kotlin.kinds.KotlinSpecialExpressionKinds
 
 class KotlinUSwitchExpression(
         override val psi: KtWhenExpression,
-        override val uastParent: UElement?
-) : KotlinAbstractUExpression(), USwitchExpression, KotlinUElementWithType {
+        givenParent: UElement?
+) : KotlinAbstractUExpression(givenParent), USwitchExpression, KotlinUElementWithType {
     override val expression by lz { KotlinConverter.convertOrNull(psi.subjectExpression, this) }
 
     override val body: UExpressionList by lz {
@@ -43,37 +46,15 @@ class KotlinUSwitchExpression(
     }
 
     override val switchIdentifier: UIdentifier
-        get() = UIdentifier(null, this)
+        get() = KotlinUIdentifier(null, this)
 }
 
 class KotlinUSwitchEntry(
         override val psi: KtWhenEntry,
-        override val uastParent: UExpression
-) : KotlinAbstractUExpression(), USwitchClauseExpressionWithBody {
+        givenParent: UElement?
+) : KotlinAbstractUExpression(givenParent), USwitchClauseExpressionWithBody {
     override val caseValues by lz {
-        psi.conditions.map { when (it) {
-            is KtWhenConditionInRange -> KotlinCustomUBinaryExpression(it, this).apply {
-                leftOperand = KotlinStringUSimpleReferenceExpression("it", this)
-                operator = when {
-                    it.isNegated -> KotlinBinaryOperators.NOT_IN
-                    else -> KotlinBinaryOperators.IN
-                }
-                rightOperand = KotlinConverter.convertOrEmpty(it.rangeExpression, this)
-            }
-            is KtWhenConditionIsPattern -> KotlinCustomUBinaryExpressionWithType(it, this).apply {
-                operand = KotlinStringUSimpleReferenceExpression("it", this)
-                operationKind = when {
-                    it.isNegated -> KotlinBinaryExpressionWithTypeKinds.NEGATED_INSTANCE_CHECK
-                    else -> UastBinaryExpressionWithTypeKind.INSTANCE_CHECK
-                }
-                val typeRef = it.typeReference
-                typeReference = typeRef?.let {
-                    LazyKotlinUTypeReferenceExpression(it, this) { typeRef.toPsiType(this, boxed = true) }
-                }
-            }
-            is KtWhenConditionWithExpression -> KotlinConverter.convertOrEmpty(it.expression, this)
-            else -> UastEmptyExpression
-        }}
+        psi.conditions.map { KotlinConverter.convertWhenCondition(it, this) ?: UastEmptyExpression }
     }
 
     override val body: UExpressionList by lz {
@@ -89,7 +70,9 @@ class KotlinUSwitchEntry(
                 is KtBlockExpression -> exprPsi.statements.map { KotlinConverter.convertOrEmpty(it, this) }
                 else -> listOf(KotlinConverter.convertOrEmpty(exprPsi, this))
             }
-            expressions = userExpressions + object : UBreakExpression {
+            expressions = userExpressions + object : UBreakExpression, JvmDeclarationUElementPlaceholder {
+                override val javaPsi: PsiElement? = null
+                override val sourcePsi: PsiElement? = null
                 override val psi: PsiElement?
                     get() = null
                 override val label: String?
@@ -100,5 +83,12 @@ class KotlinUSwitchEntry(
                     get() = emptyList()
             }
         }
+    }
+
+    override fun convertParent(): UElement? {
+        val result = KotlinConverter.unwrapElements(psi.parent)?.let { parentUnwrapped ->
+            KotlinUastLanguagePlugin().convertElementWithParent(parentUnwrapped, null)
+        }
+        return (result as? KotlinUSwitchExpression)?.body ?: result
     }
 }

@@ -1,5 +1,5 @@
 public final class C implements Tr {
-    private final int v = 1;
+    private final int v;
 
     @org.jetbrains.annotations.NotNull
     public java.lang.Integer foo() { /* compiled code */ }

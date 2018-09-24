@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.codegen.optimization.boxing
 
 import com.google.common.collect.ImmutableSet
+import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode
@@ -25,7 +26,10 @@ import org.jetbrains.org.objectweb.asm.tree.TypeInsnNode
 import org.jetbrains.org.objectweb.asm.tree.VarInsnNode
 import org.jetbrains.org.objectweb.asm.tree.analysis.BasicValue
 
-internal class RedundantBoxingInterpreter(insnList: InsnList) : BoxingInterpreter(insnList) {
+internal class RedundantBoxingInterpreter(
+    insnList: InsnList,
+    generationState: GenerationState
+) : BoxingInterpreter(insnList, generationState) {
 
     val candidatesBoxedValues = RedundantBoxedValuesCollection()
 
@@ -116,8 +120,7 @@ internal class RedundantBoxingInterpreter(insnList: InsnList) : BoxingInterprete
 
             if (!PERMITTED_OPERATIONS_OPCODES.contains(insnNode.opcode)) {
                 markValueAsDirty(value)
-            }
-            else {
+            } else {
                 addAssociatedInsn(value, insnNode)
             }
         }
@@ -129,22 +132,22 @@ internal class RedundantBoxingInterpreter(insnList: InsnList) : BoxingInterprete
 
     companion object {
         private val PERMITTED_OPERATIONS_OPCODES =
-                ImmutableSet.of(Opcodes.ASTORE, Opcodes.ALOAD, Opcodes.POP, Opcodes.DUP, Opcodes.CHECKCAST, Opcodes.INSTANCEOF)
+            ImmutableSet.of(Opcodes.ASTORE, Opcodes.ALOAD, Opcodes.POP, Opcodes.DUP, Opcodes.CHECKCAST, Opcodes.INSTANCEOF)
 
         private val PRIMITIVE_TYPES_SORTS_WITH_WRAPPER_EXTENDS_NUMBER =
-                ImmutableSet.of(Type.BYTE, Type.SHORT, Type.INT, Type.FLOAT, Type.LONG, Type.DOUBLE)
+            ImmutableSet.of(Type.BYTE, Type.SHORT, Type.INT, Type.FLOAT, Type.LONG, Type.DOUBLE)
 
         private fun isSafeCast(value: BoxedBasicValue, targetInternalName: String) =
-                when (targetInternalName) {
-                    Type.getInternalName(Any::class.java) ->
-                        true
-                    Type.getInternalName(Number::class.java) ->
-                        PRIMITIVE_TYPES_SORTS_WITH_WRAPPER_EXTENDS_NUMBER.contains(value.descriptor.unboxedType.sort)
-                    "java/lang/Comparable" ->
-                        true
-                    else ->
-                        value.type.internalName == targetInternalName
-                }
+            when (targetInternalName) {
+                Type.getInternalName(Any::class.java) ->
+                    true
+                Type.getInternalName(Number::class.java) ->
+                    PRIMITIVE_TYPES_SORTS_WITH_WRAPPER_EXTENDS_NUMBER.contains(value.descriptor.unboxedType.sort)
+                "java/lang/Comparable" ->
+                    true
+                else ->
+                    value.type.internalName == targetInternalName
+            }
 
         private fun addAssociatedInsn(value: BoxedBasicValue, insn: AbstractInsnNode) {
             value.descriptor.run {

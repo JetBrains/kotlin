@@ -1,0 +1,11 @@
+package
+
+public fun innerComputation(): kotlin.Int
+public fun innerFinallyInitializes(): kotlin.Unit
+public fun innerFinallyInitializesOuterRethrows(): kotlin.Unit
+public fun log(): kotlin.Unit
+public inline fun </*0*/ T> myRun(/*0*/ block: () -> T): T
+    CallsInPlace(block, EXACTLY_ONCE)
+
+public fun outerComputation(): kotlin.Int
+public fun outerFinallyInitializes(): kotlin.Unit

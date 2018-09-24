@@ -3,7 +3,7 @@ class B extends A {
         foo();
     }
 
-    public void foo() {
+    private void foo() {
 
     }
 }

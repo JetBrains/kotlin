@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.checkers;
@@ -32,64 +21,112 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 public class ForeignJava8AnnotationsTestGenerated extends AbstractForeignJava8AnnotationsTest {
+    private void runTest(String testDataFilePath) throws Exception {
+        KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+    }
+
     public void testAllFilesPresentInTests() throws Exception {
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/foreignAnnotationsJava8/tests"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
     }
 
     @TestMetadata("checkerFramework.kt")
     public void testCheckerFramework() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotationsJava8/tests/checkerFramework.kt");
-        doTest(fileName);
+        runTest("compiler/testData/foreignAnnotationsJava8/tests/checkerFramework.kt");
     }
 
     @TestMetadata("eclipse.kt")
     public void testEclipse() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotationsJava8/tests/eclipse.kt");
-        doTest(fileName);
+        runTest("compiler/testData/foreignAnnotationsJava8/tests/eclipse.kt");
     }
 
-    @TestMetadata("springNullableWithTypeUse.kt")
-    public void testSpringNullableWithTypeUse() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotationsJava8/tests/springNullableWithTypeUse.kt");
-        doTest(fileName);
+    @TestMetadata("typeUseOnObject.kt")
+    public void testTypeUseOnObject() throws Exception {
+        runTest("compiler/testData/foreignAnnotationsJava8/tests/typeUseOnObject.kt");
+    }
+
+    @TestMetadata("compiler/testData/foreignAnnotationsJava8/tests/jsr305")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Jsr305 extends AbstractForeignJava8AnnotationsTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInJsr305() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/foreignAnnotationsJava8/tests/jsr305"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("defaultAnnotationAppliedToType.kt")
+        public void testDefaultAnnotationAppliedToType() throws Exception {
+            runTest("compiler/testData/foreignAnnotationsJava8/tests/jsr305/defaultAnnotationAppliedToType.kt");
+        }
+
+        @TestMetadata("defaultAnnotationAppliedToTypeForCompiledJava.kt")
+        public void testDefaultAnnotationAppliedToTypeForCompiledJava() throws Exception {
+            runTest("compiler/testData/foreignAnnotationsJava8/tests/jsr305/defaultAnnotationAppliedToTypeForCompiledJava.kt");
+        }
+
+        @TestMetadata("springNullableWithTypeUse.kt")
+        public void testSpringNullableWithTypeUse() throws Exception {
+            runTest("compiler/testData/foreignAnnotationsJava8/tests/jsr305/springNullableWithTypeUse.kt");
+        }
+
+        @TestMetadata("typeArguments.kt")
+        public void testTypeArguments() throws Exception {
+            runTest("compiler/testData/foreignAnnotationsJava8/tests/jsr305/typeArguments.kt");
+        }
+
+        @TestMetadata("typeUseVsMethodConflict.kt")
+        public void testTypeUseVsMethodConflict() throws Exception {
+            runTest("compiler/testData/foreignAnnotationsJava8/tests/jsr305/typeUseVsMethodConflict.kt");
+        }
     }
 
     @TestMetadata("compiler/testData/foreignAnnotationsJava8/tests/typeEnhancement")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class TypeEnhancement extends AbstractForeignJava8AnnotationsTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
         public void testAllFilesPresentInTypeEnhancement() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/foreignAnnotationsJava8/tests/typeEnhancement"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("annotatedTypeArguments.kt")
         public void testAnnotatedTypeArguments() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotationsJava8/tests/typeEnhancement/annotatedTypeArguments.kt");
-            doTest(fileName);
+            runTest("compiler/testData/foreignAnnotationsJava8/tests/typeEnhancement/annotatedTypeArguments.kt");
         }
 
         @TestMetadata("methodWithTypeParameter.kt")
         public void testMethodWithTypeParameter() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotationsJava8/tests/typeEnhancement/methodWithTypeParameter.kt");
-            doTest(fileName);
+            runTest("compiler/testData/foreignAnnotationsJava8/tests/typeEnhancement/methodWithTypeParameter.kt");
+        }
+
+        @TestMetadata("notNullVarargsOverrides.kt")
+        public void testNotNullVarargsOverrides() throws Exception {
+            runTest("compiler/testData/foreignAnnotationsJava8/tests/typeEnhancement/notNullVarargsOverrides.kt");
+        }
+
+        @TestMetadata("nullableVarargsOverrides.kt")
+        public void testNullableVarargsOverrides() throws Exception {
+            runTest("compiler/testData/foreignAnnotationsJava8/tests/typeEnhancement/nullableVarargsOverrides.kt");
         }
 
         @TestMetadata("returnTypeDifferentConstructor.kt")
         public void testReturnTypeDifferentConstructor() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotationsJava8/tests/typeEnhancement/returnTypeDifferentConstructor.kt");
-            doTest(fileName);
+            runTest("compiler/testData/foreignAnnotationsJava8/tests/typeEnhancement/returnTypeDifferentConstructor.kt");
         }
 
         @TestMetadata("returnTypeOverrideInKotlin.kt")
         public void testReturnTypeOverrideInKotlin() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotationsJava8/tests/typeEnhancement/returnTypeOverrideInKotlin.kt");
-            doTest(fileName);
+            runTest("compiler/testData/foreignAnnotationsJava8/tests/typeEnhancement/returnTypeOverrideInKotlin.kt");
         }
 
         @TestMetadata("simple.kt")
         public void testSimple() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/foreignAnnotationsJava8/tests/typeEnhancement/simple.kt");
-            doTest(fileName);
+            runTest("compiler/testData/foreignAnnotationsJava8/tests/typeEnhancement/simple.kt");
         }
     }
 }

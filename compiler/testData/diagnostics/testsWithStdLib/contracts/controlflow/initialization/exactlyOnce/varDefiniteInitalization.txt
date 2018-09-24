@@ -1,0 +1,9 @@
+package
+
+public fun definiteVarInitialization(): kotlin.Unit
+public fun definiteVarReassignment(): kotlin.Unit
+public fun </*0*/ T> myRun(/*0*/ block: () -> T): T
+    CallsInPlace(block, EXACTLY_ONCE)
+
+public fun nestedVarInitialization(): kotlin.Unit
+public fun notAnExpression(): kotlin.Unit

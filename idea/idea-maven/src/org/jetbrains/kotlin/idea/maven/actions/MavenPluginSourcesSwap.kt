@@ -110,7 +110,11 @@ class MavenPluginSourcesMoveToBuild : PsiElementBaseIntentionAction() {
         }
     }
 
-    private fun tryInvoke(project: Project, element: PsiElement, block: (pom: PomFile, dir: String, execution: MavenDomPluginExecution, build: MavenDomBuild) -> Unit = { _, _, _, _ -> }): Boolean {
+    private fun tryInvoke(
+        project: Project,
+        element: PsiElement,
+        block: (pom: PomFile, dir: String, execution: MavenDomPluginExecution, build: MavenDomBuild) -> Unit = { _, _, _, _ -> }
+    ): Boolean {
         val file = element.containingFile
 
         if (file == null || !MavenDomUtil.isMavenFile(file) || (element !is XmlElement && element.parent !is XmlElement)) {
@@ -122,9 +126,9 @@ class MavenPluginSourcesMoveToBuild : PsiElementBaseIntentionAction() {
 
         val execution = domElement.getParentOfType(MavenDomPluginExecution::class.java, false) ?: return false
         tag.parentsWithSelf
-                .takeWhile { it != execution.xmlElement }
-                .filterIsInstance<XmlTag>()
-                .firstOrNull { it.localName == "sourceDirs" } ?: return false
+            .takeWhile { it != execution.xmlElement }
+            .filterIsInstance<XmlTag>()
+            .firstOrNull { it.localName == "sourceDirs" } ?: return false
 
         val pom = PomFile.forFileOrNull(element.containingFile as XmlFile) ?: return false
         val sourceDirsToMove = pom.executionSourceDirs(execution)
@@ -137,12 +141,12 @@ class MavenPluginSourcesMoveToBuild : PsiElementBaseIntentionAction() {
         var couldMove = 0
         if (shouldMoveCompileSourceRoot(execution)) {
             if (!build.sourceDirectory.exists() || build.sourceDirectory.stringValue == sourceDirsToMove.single()) {
-                couldMove ++
+                couldMove++
             }
         }
         if (shouldMoveTestSourceRoot(execution)) {
             if (!build.testSourceDirectory.exists() || build.testSourceDirectory.stringValue == sourceDirsToMove.single()) {
-                couldMove ++
+                couldMove++
             }
         }
 
@@ -158,5 +162,5 @@ class MavenPluginSourcesMoveToBuild : PsiElementBaseIntentionAction() {
         execution.goals.goals.any { it.stringValue == PomFile.KotlinGoals.Compile || it.stringValue == PomFile.KotlinGoals.Js }
 
     private fun shouldMoveTestSourceRoot(execution: MavenDomPluginExecution) =
-            execution.goals.goals.any { it.stringValue == PomFile.KotlinGoals.TestCompile || it.stringValue == PomFile.KotlinGoals.TestJs }
+        execution.goals.goals.any { it.stringValue == PomFile.KotlinGoals.TestCompile || it.stringValue == PomFile.KotlinGoals.TestJs }
 }

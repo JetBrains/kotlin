@@ -39,8 +39,8 @@ val Qualifier.expression: KtExpression
     get() = referenceExpression.getTopmostParentQualifiedExpressionForSelector() ?: referenceExpression
 
 class PackageQualifier(
-        override val referenceExpression: KtSimpleNameExpression,
-        override val descriptor: PackageViewDescriptor
+    override val referenceExpression: KtSimpleNameExpression,
+    override val descriptor: PackageViewDescriptor
 ) : Qualifier {
     override val classValueReceiver: ReceiverValue? get() = null
     override val staticScope: MemberScope get() = descriptor.memberScope
@@ -49,8 +49,8 @@ class PackageQualifier(
 }
 
 class TypeParameterQualifier(
-        override val referenceExpression: KtSimpleNameExpression,
-        override val descriptor: TypeParameterDescriptor
+    override val referenceExpression: KtSimpleNameExpression,
+    override val descriptor: TypeParameterDescriptor
 ) : Qualifier {
     override val classValueReceiver: ReceiverValue? get() = null
     override val staticScope: MemberScope get() = MemberScope.Empty
@@ -63,32 +63,33 @@ interface ClassifierQualifier : Qualifier {
 }
 
 class ClassQualifier(
-        override val referenceExpression: KtSimpleNameExpression,
-        override val descriptor: ClassDescriptor
+    override val referenceExpression: KtSimpleNameExpression,
+    override val descriptor: ClassDescriptor
 ) : ClassifierQualifier {
     override val classValueReceiver: ClassValueReceiver? = descriptor.classValueType?.let {
         ClassValueReceiver(this, it)
     }
 
-    override val staticScope: MemberScope get() {
-        val scopes = ArrayList<MemberScope>(2)
+    override val staticScope: MemberScope
+        get() {
+            val scopes = ArrayList<MemberScope>(2)
 
-        scopes.add(descriptor.staticScope)
+            scopes.add(descriptor.staticScope)
 
-        if (descriptor.kind != ClassKind.ENUM_ENTRY) {
-            scopes.add(descriptor.unsubstitutedInnerClassesScope)
+            if (descriptor.kind != ClassKind.ENUM_ENTRY) {
+                scopes.add(descriptor.unsubstitutedInnerClassesScope)
+            }
+
+            return ChainedMemberScope("Static scope for ${descriptor.name} as class or object", scopes)
         }
-
-        return ChainedMemberScope("Static scope for ${descriptor.name} as class or object", scopes)
-    }
 
     override fun toString() = "Class{$descriptor}"
 }
 
 class TypeAliasQualifier(
-        override val referenceExpression: KtSimpleNameExpression,
-        override val descriptor: TypeAliasDescriptor,
-        val classDescriptor: ClassDescriptor
+    override val referenceExpression: KtSimpleNameExpression,
+    override val descriptor: TypeAliasDescriptor,
+    val classDescriptor: ClassDescriptor
 ) : ClassifierQualifier {
     override val classValueReceiver: ClassValueReceiver?
         get() = classDescriptor.classValueType?.let {
@@ -98,17 +99,19 @@ class TypeAliasQualifier(
     override val staticScope: MemberScope
         get() = when {
             DescriptorUtils.isEnumClass(classDescriptor) ->
-                ChainedMemberScope("Static scope for typealias ${descriptor.name}",
-                                   listOf(classDescriptor.staticScope, EnumEntriesScope()))
+                ChainedMemberScope(
+                    "Static scope for typealias ${descriptor.name}",
+                    listOf(classDescriptor.staticScope, EnumEntriesScope())
+                )
             else ->
                 classDescriptor.staticScope
         }
 
     private inner class EnumEntriesScope : MemberScopeImpl() {
         override fun getContributedClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? =
-                classDescriptor.unsubstitutedInnerClassesScope
-                        .getContributedClassifier(name, location)
-                        ?.takeIf { DescriptorUtils.isEnumEntry(it) }
+            classDescriptor.unsubstitutedInnerClassesScope
+                .getContributedClassifier(name, location)
+                ?.takeIf { DescriptorUtils.isEnumEntry(it) }
 
         override fun printScopeStructure(p: Printer) {
             p.println(this::class.java.simpleName, " {")
@@ -120,11 +123,19 @@ class TypeAliasQualifier(
     }
 }
 
-class ClassValueReceiver(val classQualifier: ClassifierQualifier, private val type: KotlinType) : ExpressionReceiver {
+class ClassValueReceiver @JvmOverloads constructor(
+    val classQualifier: ClassifierQualifier,
+    private val type: KotlinType,
+    original: ClassValueReceiver? = null
+) : ExpressionReceiver {
+    private val original = original ?: this
+
     override fun getType() = type
 
     override val expression: KtExpression
         get() = classQualifier.expression
 
-    override fun replaceType(newType: KotlinType) = ClassValueReceiver(classQualifier, newType)
+    override fun replaceType(newType: KotlinType) = ClassValueReceiver(classQualifier, newType, original)
+
+    override fun getOriginal() = original
 }

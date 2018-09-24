@@ -7,7 +7,7 @@ import org.jetbrains.kotlin.daemon.common.LoopbackNetworkInterface
 import org.jetbrains.kotlin.daemon.common.SOCKET_ANY_FREE_PORT
 import org.jetbrains.kotlin.daemon.report.CompileIterationResult
 import org.jetbrains.kotlin.gradle.plugin.kotlinDebug
-import org.jetbrains.kotlin.incremental.pathsAsStringRelativeTo
+import org.jetbrains.kotlin.gradle.utils.pathsAsStringRelativeTo
 import java.io.Serializable
 import java.rmi.RemoteException
 import java.rmi.server.UnicastRemoteObject

@@ -58,9 +58,15 @@ abstract class KotlinCompilerRunner<in Env : CompilerEnvironment> {
             clientAliveFlagFile: File,
             sessionAliveFlagFile: File,
             environment: Env,
-            daemonOptions: DaemonOptions = configureDaemonOptions()
+            daemonOptions: DaemonOptions = configureDaemonOptions(),
+            additionalJvmParams: Array<String> = arrayOf()
     ): CompileServiceSession? {
-        val daemonJVMOptions = configureDaemonJVMOptions(inheritMemoryLimits = true, inheritOtherJvmOptions = false, inheritAdditionalProperties = true)
+        val daemonJVMOptions = configureDaemonJVMOptions(
+            additionalParams = *additionalJvmParams,
+            inheritMemoryLimits = true,
+            inheritOtherJvmOptions = false,
+            inheritAdditionalProperties = true
+        )
 
         val daemonReportMessages = ArrayList<DaemonReportMessage>()
         val daemonReportingTargets = DaemonReportingTargets(messages = daemonReportMessages)

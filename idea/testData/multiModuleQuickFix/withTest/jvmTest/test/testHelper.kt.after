@@ -1,5 +1,0 @@
-// testHelper: to be implemented
-
-package test
-
-actual fun testHelper() {}

@@ -28,6 +28,10 @@ class ExampleAnnotationProcessor : AbstractProcessor() {
             processAnnotation(roundEnv, annotation, prefix)
         }
 
+        for (errorElement in roundEnv.getElementsAnnotatedWith(GenError::class.java)) {
+            processingEnv.messager.printMessage(Diagnostic.Kind.ERROR, "GenError element", errorElement)
+        }
+
         return true
     }
 
@@ -67,7 +71,9 @@ class ExampleAnnotationProcessor : AbstractProcessor() {
 
     override fun getSupportedSourceVersion() = SourceVersion.RELEASE_6
 
-    override fun getSupportedAnnotationTypes() = ANNOTATION_TO_PREFIX.keys.map { it.java.canonicalName }.toSet()
+    override fun getSupportedAnnotationTypes(): Set<String> {
+        return ANNOTATION_TO_PREFIX.keys.map { it.java.canonicalName }.toSet() + GenError::class.java.canonicalName
+    }
 
     override fun getSupportedOptions() = setOf(SUFFIX_OPTION, GENERATE_KOTLIN_CODE_OPTION, GENERATE_ERROR)
 }

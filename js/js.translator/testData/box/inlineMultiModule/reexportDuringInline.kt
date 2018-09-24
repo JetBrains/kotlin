@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 993
+// EXPECTED_REACHABLE_NODES: 1283
 // MODULE: lib1
 // FILE: lib1.kt
 inline fun foo() = bar()

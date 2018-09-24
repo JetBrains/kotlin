@@ -83,8 +83,8 @@ public class VariableAccessTranslator extends AbstractTranslator implements Acce
         else if (original instanceof LocalVariableDescriptor) {
             LocalVariableDescriptor originalLocal = (LocalVariableDescriptor) original;
             if (originalLocal.isLateInit()) {
-                JsInvocation throwInvocation = new JsInvocation(Namer.throwUninitializedPropertyAccessExceptionFunRef(),
-                                                                new JsStringLiteral(originalLocal.getName().asString()));
+                JsExpression throwFunction = context().getReferenceToIntrinsic(Namer.THROW_UNINITIALIZED_PROPERTY_ACCESS_EXCEPTION);
+                JsInvocation throwInvocation = new JsInvocation(throwFunction, new JsStringLiteral(originalLocal.getName().asString()));
                 return new JsConditional(new JsBinaryOperation(JsBinaryOperator.EQ, e, new JsNullLiteral()), throwInvocation, e);
             }
         }

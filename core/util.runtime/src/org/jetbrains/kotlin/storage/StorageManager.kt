@@ -47,7 +47,11 @@ interface StorageManager {
      *                        The parameter to it is {@code true} for the first call, {@code false} otherwise.
      *                        If {@code onRecursiveCall} is {@code null}, an exception will be thrown on a recursive call,
      *                        otherwise it's executed and its result is returned
-     * @param postCompute is called after the value is computed, but before any other thread sees it
+     *
+     * @param postCompute is called after the value is computed AND published (and some clients rely on that
+     *                    behavior - notably, AbstractTypeConstructor). It means that it is up to particular implementation
+     *                    to provide (or not to provide) thread-safety guarantees on writes made in postCompute -- see javadoc for
+     *                    LockBasedLazyValue for details.
      */
     fun <T : Any> createLazyValueWithPostCompute(computable: () -> T, onRecursiveCall: ((Boolean) -> T)?, postCompute: (T) -> Unit): NotNullLazyValue<T>
 
@@ -56,8 +60,7 @@ interface StorageManager {
     fun <T : Any> createRecursionTolerantNullableLazyValue(computable: () -> T?, onRecursiveCall: T?): NullableLazyValue<T>
 
     /**
-     * {@code postCompute} is called after the value is computed, but before any other thread sees it (the current thread may
-     * see it in between)
+     * See javadoc for createLazyValueWithPostCompute
      */
     fun <T : Any> createNullableLazyValueWithPostCompute(computable: () -> T?, postCompute: (T?) -> Unit): NullableLazyValue<T>
 

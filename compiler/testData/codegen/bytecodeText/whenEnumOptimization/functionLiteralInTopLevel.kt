@@ -18,4 +18,4 @@ fun box() : String {
     }
 }
 
-// 1 LOOKUPSWITCH
+// 1 TABLESWITCH

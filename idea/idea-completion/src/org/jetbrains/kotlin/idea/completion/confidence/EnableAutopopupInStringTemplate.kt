@@ -25,10 +25,15 @@ import org.jetbrains.kotlin.psi.KtSimpleNameStringTemplateEntry
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.prevLeaf
+import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
 class EnableAutopopupInStringTemplate : CompletionConfidence() {
     override fun shouldSkipAutopopup(contextElement: PsiElement, psiFile: PsiFile, offset: Int): ThreeState {
         val stringTemplate = contextElement.prevLeaf()?.getParentOfType<KtSimpleNameStringTemplateEntry>(strict = false) ?: return ThreeState.UNSURE
+
+        // "$<caret>nameRef" stringTemplate here is "$nameRef", so offset are inside template, we should show lookup
+        if (offset in stringTemplate.startOffset until stringTemplate.endOffset) return ThreeState.NO
+
         val textRange = TextRange.create(stringTemplate.endOffset, offset)
         val containsWhitespaces = textRange.substring(psiFile.text).any { it.isWhitespace() }
         return if (containsWhitespaces) ThreeState.UNSURE else ThreeState.NO

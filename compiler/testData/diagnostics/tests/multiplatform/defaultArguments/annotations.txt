@@ -1,0 +1,100 @@
+// -- Module: <m1-common> --
+package
+
+@A1(x = 0) @A2 @A3(x = 0, y = "") @A4(x = 0, y = "") @A5(x = 0, y = "") public fun test(): kotlin.Unit
+
+public final expect annotation class A1 : kotlin.Annotation {
+    public constructor A1(/*0*/ x: kotlin.Int, /*1*/ y: kotlin.String = ...)
+    public expect final val x: kotlin.Int
+    public expect final val y: kotlin.String
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final expect annotation class A2 : kotlin.Annotation {
+    public constructor A2(/*0*/ x: kotlin.Int = ..., /*1*/ y: kotlin.String = ...)
+    public expect final val x: kotlin.Int
+    public expect final val y: kotlin.String
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final expect annotation class A3 : kotlin.Annotation {
+    public constructor A3(/*0*/ x: kotlin.Int, /*1*/ y: kotlin.String)
+    public expect final val x: kotlin.Int
+    public expect final val y: kotlin.String
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final expect annotation class A4 : kotlin.Annotation {
+    public constructor A4(/*0*/ x: kotlin.Int = ..., /*1*/ y: kotlin.String)
+    public expect final val x: kotlin.Int
+    public expect final val y: kotlin.String
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final expect annotation class A5 : kotlin.Annotation {
+    public constructor A5(/*0*/ x: kotlin.Int = ..., /*1*/ y: kotlin.String)
+    public expect final val x: kotlin.Int
+    public expect final val y: kotlin.String
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+
+// -- Module: <m2-jvm> --
+package
+
+@A1(x = 0) @A2 @A3(x = 0, y = "") @A4(x = 0, y = "") @A5(x = 0, y = "") public fun test(): kotlin.Unit
+
+public final actual annotation class A1 : kotlin.Annotation {
+    public constructor A1(/*0*/ x: kotlin.Int, /*1*/ y: kotlin.String)
+    public actual final val x: kotlin.Int
+    public actual final val y: kotlin.String
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final actual annotation class A2 : kotlin.Annotation {
+    public constructor A2(/*0*/ x: kotlin.Int, /*1*/ y: kotlin.String = ...)
+    public actual final val x: kotlin.Int
+    public actual final val y: kotlin.String
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final actual annotation class A3 : kotlin.Annotation {
+    public constructor A3(/*0*/ x: kotlin.Int = ..., /*1*/ y: kotlin.String = ...)
+    public actual final val x: kotlin.Int
+    public actual final val y: kotlin.String
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final actual annotation class A4 : kotlin.Annotation {
+    public constructor A4(/*0*/ x: kotlin.Int, /*1*/ y: kotlin.String = ...)
+    public actual final val x: kotlin.Int
+    public actual final val y: kotlin.String
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final actual annotation class A5 : kotlin.Annotation {
+    public constructor A5(/*0*/ x: kotlin.Int = ..., /*1*/ y: kotlin.String = ...)
+    public actual final val x: kotlin.Int
+    public actual final val y: kotlin.String
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

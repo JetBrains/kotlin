@@ -140,7 +140,7 @@ class KotlinChangeSignatureTest : KotlinLightCodeInsightFixtureTestCase() {
                 else -> throw e
             }
             val conflictsFile = File(testDataPath + getTestName(false) + "Messages.txt")
-            UsefulTestCase.assertSameLinesWithFile(conflictsFile.absolutePath, message)
+            UsefulTestCase.assertSameLinesWithFile(conflictsFile.absolutePath, message!!)
         }
     }
 
@@ -161,7 +161,7 @@ class KotlinChangeSignatureTest : KotlinLightCodeInsightFixtureTestCase() {
                 else -> throw e
             }
             val conflictsFile = File(testDataPath + getTestName(false) + "Messages.txt")
-            UsefulTestCase.assertSameLinesWithFile(conflictsFile.absolutePath, message)
+            UsefulTestCase.assertSameLinesWithFile(conflictsFile.absolutePath, message!!)
         }
     }
 
@@ -959,5 +959,57 @@ class KotlinChangeSignatureTest : KotlinLightCodeInsightFixtureTestCase() {
 
     fun testChangeReturnTypeToNonUnit() = doTest {
         newReturnTypeInfo = KotlinTypeInfo(true, BUILT_INS.intType)
+    }
+
+    fun testInvokeConventionRemoveParameter() = doTest { removeParameter(0) }
+
+    fun testInvokeConventionAddParameter() = doTest {
+        addParameter(
+                KotlinParameterInfo(
+                        originalBaseFunctionDescriptor,
+                        -1,
+                        "b",
+                        KotlinTypeInfo(false, BUILT_INS.booleanType),
+                        defaultValueForCall = KtPsiFactory(project).createExpression("false")
+                )
+        )
+    }
+
+    fun testInvokeConventionSwapParameters() = doTest { swapParameters(0, 1) }
+
+    fun testInvokeConventionParameterToReceiver() = doTestConflict { receiverParameterInfo = newParameters[0] }
+
+    fun testInvokeConventionReceiverToParameter() = doTest { receiverParameterInfo = null }
+
+    fun testInvokeConventionRenameToFoo() = doTest { newName = "foo" }
+
+    fun testInvokeConventionRenameToGet() = doTest { newName = "get" }
+
+    fun testGetConventionRemoveParameter() = doTest { removeParameter(0) }
+
+    fun testGetConventionAddParameter() = doTest {
+        addParameter(
+                KotlinParameterInfo(
+                        originalBaseFunctionDescriptor,
+                        -1,
+                        "b",
+                        KotlinTypeInfo(false, BUILT_INS.booleanType),
+                        defaultValueForCall = KtPsiFactory(project).createExpression("false")
+                )
+        )
+    }
+
+    fun testGetConventionSwapParameters() = doTest { swapParameters(0, 1) }
+
+    fun testGetConventionParameterToReceiver() = doTestConflict { receiverParameterInfo = newParameters[0] }
+
+    fun testGetConventionReceiverToParameter() = doTest { receiverParameterInfo = null }
+
+    fun testGetConventionRenameToFoo() = doTest { newName = "foo" }
+
+    fun testGetConventionRenameToInvoke() = doTest { newName = "invoke" }
+
+    fun testKotlinOverridingJavaWithDifferentParamName() = doJavaTest {
+        newParameters.add(ParameterInfoImpl(-1, "n", PsiType.INT))
     }
 }

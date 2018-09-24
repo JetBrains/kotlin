@@ -36,6 +36,7 @@ class KotlinAwareMoveFilesOrDirectoriesProcessor @JvmOverloads constructor (
         project: Project,
         private val elementsToMove: List<PsiElement>,
         private val targetDirectory: PsiDirectory,
+        private val searchReferences: Boolean,
         searchInComments: Boolean,
         searchInNonJavaFiles: Boolean,
         moveCallback: MoveCallback?,
@@ -55,7 +56,7 @@ class KotlinAwareMoveFilesOrDirectoriesProcessor @JvmOverloads constructor (
     override fun findUsages(): Array<UsageInfo> {
         try {
             markScopeToMove(elementsToMove)
-            return super.findUsages()
+            return if (searchReferences) super.findUsages() else UsageInfo.EMPTY_ARRAY
         }
         finally {
             markScopeToMove(null)

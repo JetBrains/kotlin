@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.resolve.calls.context;
@@ -24,8 +13,10 @@ import org.jetbrains.kotlin.psi.Call;
 import org.jetbrains.kotlin.psi.KtExpression;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.StatementFilter;
+import org.jetbrains.kotlin.resolve.calls.components.InferenceSession;
 import org.jetbrains.kotlin.resolve.calls.model.MutableDataFlowInfoForArguments;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory;
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
 import org.jetbrains.kotlin.types.KotlinType;
 
@@ -46,11 +37,13 @@ public class BasicCallResolutionContext extends CallResolutionContext<BasicCallR
             boolean collectAllCandidates,
             @NotNull CallPosition callPosition,
             @NotNull Function1<KtExpression, KtExpression> expressionContextProvider,
-            @NotNull LanguageVersionSettings languageVersionSettings
+            @NotNull LanguageVersionSettings languageVersionSettings,
+            @NotNull DataFlowValueFactory dataFlowValueFactory,
+            @NotNull InferenceSession inferenceSession
     ) {
         super(trace, scope, call, expectedType, dataFlowInfo, contextDependency, checkArguments, resolutionResultsCache,
               dataFlowInfoForArguments, statementFilter, isAnnotationContext, isDebuggerContext, collectAllCandidates,
-              callPosition, expressionContextProvider, languageVersionSettings);
+              callPosition, expressionContextProvider, languageVersionSettings, dataFlowValueFactory, inferenceSession);
     }
 
     @NotNull
@@ -63,12 +56,35 @@ public class BasicCallResolutionContext extends CallResolutionContext<BasicCallR
             @NotNull ContextDependency contextDependency,
             @NotNull CheckArgumentTypesMode checkArguments,
             boolean isAnnotationContext,
-            @NotNull LanguageVersionSettings languageVersionSettings
+            @NotNull LanguageVersionSettings languageVersionSettings,
+            @NotNull DataFlowValueFactory dataFlowValueFactory,
+            @NotNull InferenceSession inferenceSession
     ) {
         return new BasicCallResolutionContext(trace, scope, call, expectedType, dataFlowInfo, contextDependency, checkArguments,
                                               new ResolutionResultsCacheImpl(), null,
                                               StatementFilter.NONE, isAnnotationContext, false, false,
-                                              CallPosition.Unknown.INSTANCE, DEFAULT_EXPRESSION_CONTEXT_PROVIDER, languageVersionSettings);
+                                              CallPosition.Unknown.INSTANCE, DEFAULT_EXPRESSION_CONTEXT_PROVIDER, languageVersionSettings,
+                                              dataFlowValueFactory, inferenceSession);
+    }
+
+    @NotNull
+    public static BasicCallResolutionContext create(
+            @NotNull BindingTrace trace,
+            @NotNull LexicalScope scope,
+            @NotNull Call call,
+            @NotNull KotlinType expectedType,
+            @NotNull DataFlowInfo dataFlowInfo,
+            @NotNull ContextDependency contextDependency,
+            @NotNull CheckArgumentTypesMode checkArguments,
+            boolean isAnnotationContext,
+            @NotNull LanguageVersionSettings languageVersionSettings,
+            @NotNull DataFlowValueFactory dataFlowValueFactory
+    ) {
+        return new BasicCallResolutionContext(trace, scope, call, expectedType, dataFlowInfo, contextDependency, checkArguments,
+                                              new ResolutionResultsCacheImpl(), null,
+                                              StatementFilter.NONE, isAnnotationContext, false, false,
+                                              CallPosition.Unknown.INSTANCE, DEFAULT_EXPRESSION_CONTEXT_PROVIDER, languageVersionSettings,
+                                              dataFlowValueFactory, InferenceSession.Companion.getDefault());
     }
 
     @NotNull
@@ -80,7 +96,8 @@ public class BasicCallResolutionContext extends CallResolutionContext<BasicCallR
                 context.trace, context.scope, call, context.expectedType, context.dataFlowInfo, context.contextDependency, checkArguments,
                 context.resolutionResultsCache, dataFlowInfoForArguments,
                 context.statementFilter, context.isAnnotationContext, context.isDebuggerContext, context.collectAllCandidates,
-                context.callPosition, context.expressionContextProvider, context.languageVersionSettings);
+                context.callPosition, context.expressionContextProvider, context.languageVersionSettings, context.dataFlowValueFactory,
+                context.inferenceSession);
     }
 
     @NotNull
@@ -102,12 +119,14 @@ public class BasicCallResolutionContext extends CallResolutionContext<BasicCallR
             boolean collectAllCandidates,
             @NotNull CallPosition callPosition,
             @NotNull Function1<KtExpression, KtExpression> expressionContextProvider,
-            @NotNull LanguageVersionSettings languageVersionSettings
+            @NotNull LanguageVersionSettings languageVersionSettings,
+            @NotNull DataFlowValueFactory dataFlowValueFactory,
+            @NotNull InferenceSession inferenceSession
     ) {
         return new BasicCallResolutionContext(
                 trace, scope, call, expectedType, dataFlowInfo, contextDependency, checkArguments, resolutionResultsCache,
                 dataFlowInfoForArguments, statementFilter, isAnnotationContext, isDebuggerContext, collectAllCandidates,
-                callPosition, expressionContextProvider, languageVersionSettings);
+                callPosition, expressionContextProvider, languageVersionSettings, dataFlowValueFactory, inferenceSession);
     }
 
     @NotNull
@@ -115,6 +134,6 @@ public class BasicCallResolutionContext extends CallResolutionContext<BasicCallR
         return new BasicCallResolutionContext(
                 trace, scope, newCall, expectedType, dataFlowInfo, contextDependency, checkArguments, resolutionResultsCache,
                 dataFlowInfoForArguments, statementFilter, isAnnotationContext, isDebuggerContext, collectAllCandidates,
-                callPosition, expressionContextProvider, languageVersionSettings);
+                callPosition, expressionContextProvider, languageVersionSettings, dataFlowValueFactory, inferenceSession);
     }
 }

@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.types.expressions;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.Ref;
@@ -26,6 +25,8 @@ import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
+import org.jetbrains.kotlin.config.LanguageFeature;
+import org.jetbrains.kotlin.config.LanguageVersionSettings;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl;
@@ -116,7 +117,7 @@ public class ControlStructureTypingUtils {
         SimpleFunctionDescriptorImpl function = createFunctionDescriptorForSpecialConstruction(
                 construct, argumentNames, isArgumentNullable);
         TracingStrategy tracing = createTracingForSpecialConstruction(call, construct.getName(), context);
-        TypeSubstitutor knownTypeParameterSubstitutor = createKnownTypeParameterSubstitutorForSpecialCall(construct, function, context.expectedType);
+        TypeSubstitutor knownTypeParameterSubstitutor = createKnownTypeParameterSubstitutorForSpecialCall(construct, function, context.expectedType, context.languageVersionSettings);
         ResolutionCandidate<FunctionDescriptor> resolutionCandidate =
                 ResolutionCandidate.create(call, function, knownTypeParameterSubstitutor);
         OverloadResolutionResults<FunctionDescriptor> results = callResolver.resolveCallWithKnownCandidate(
@@ -128,9 +129,11 @@ public class ControlStructureTypingUtils {
     private static @Nullable TypeSubstitutor createKnownTypeParameterSubstitutorForSpecialCall(
             @NotNull ResolveConstruct construct,
             @NotNull SimpleFunctionDescriptorImpl function,
-            @NotNull KotlinType expectedType
+            @NotNull KotlinType expectedType,
+            @NotNull LanguageVersionSettings languageVersionSettings
     ) {
-        if (construct == ResolveConstruct.ELVIS
+        if (languageVersionSettings.supportsFeature(LanguageFeature.NewInference)
+            || construct == ResolveConstruct.ELVIS
             || TypeUtils.noExpectedType(expectedType)
             || TypeUtils.isDontCarePlaceholder(expectedType)
             || KotlinBuiltIns.isUnitOrNullableUnit(expectedType)
@@ -206,6 +209,9 @@ public class ControlStructureTypingUtils {
             dataFlowInfoForArgumentsMap.put(valueArgument, dataFlowInfo);
         }
 
+        @Override
+        public void updateResultInfo(@NotNull DataFlowInfo dataFlowInfo) { }
+
         @NotNull
         @Override
         public DataFlowInfo getInfo(@NotNull ValueArgument valueArgument) {
@@ -226,7 +232,7 @@ public class ControlStructureTypingUtils {
             @NotNull DataFlowInfo thenInfo,
             @NotNull DataFlowInfo elseInfo
     ) {
-        Map<ValueArgument, DataFlowInfo> dataFlowInfoForArgumentsMap = Maps.newHashMap();
+        Map<ValueArgument, DataFlowInfo> dataFlowInfoForArgumentsMap = new HashMap<>();
         dataFlowInfoForArgumentsMap.put(callForIf.getValueArguments().get(0), thenInfo);
         dataFlowInfoForArgumentsMap.put(callForIf.getValueArguments().get(1), elseInfo);
         return createIndependentDataFlowInfoForArgumentsForCall(conditionInfo, dataFlowInfoForArgumentsMap);
@@ -237,7 +243,7 @@ public class ControlStructureTypingUtils {
             @NotNull DataFlowInfo subjectDataFlowInfo,
             @NotNull List<DataFlowInfo> entryDataFlowInfos
     ) {
-        Map<ValueArgument, DataFlowInfo> dataFlowInfoForArgumentsMap = Maps.newHashMap();
+        Map<ValueArgument, DataFlowInfo> dataFlowInfoForArgumentsMap = new HashMap<>();
         int i = 0;
         for (ValueArgument argument : callForWhen.getValueArguments()) {
             DataFlowInfo entryDataFlowInfo = entryDataFlowInfos.get(i++);
@@ -358,7 +364,8 @@ public class ControlStructureTypingUtils {
                                 .replaceExpectedType(c.expectedType)
                                 .replaceDataFlowInfo(typeInfo.getDataFlowInfo())
                                 .replaceBindingTrace(c.trace),
-                        hasError
+                        hasError,
+                        true
                 );
                 return hasError.get();
             }

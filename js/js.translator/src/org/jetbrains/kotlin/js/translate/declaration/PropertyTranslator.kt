@@ -20,6 +20,8 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableAccessorDescriptor
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
 import org.jetbrains.kotlin.js.backend.ast.*
+import org.jetbrains.kotlin.js.backend.ast.metadata.synthetic
+import org.jetbrains.kotlin.js.backend.ast.metadata.type
 import org.jetbrains.kotlin.js.translate.callTranslator.CallTranslator
 import org.jetbrains.kotlin.js.translate.context.Namer
 import org.jetbrains.kotlin.js.translate.context.Namer.getReceiverParameterName
@@ -93,12 +95,14 @@ class DefaultPropertyTranslator(
 
         assert(!descriptor.isExtension) { "Unexpected extension property $descriptor}" }
         assert(descriptor is PropertyDescriptor) { "Property descriptor expected: $descriptor" }
-        val result = backingFieldReference(context(), descriptor as PropertyDescriptor)
+        var result: JsExpression = backingFieldReference(context(), descriptor as PropertyDescriptor)
         if (getterDescriptor is PropertyAccessorDescriptor && getterDescriptor.correspondingProperty.isLateInit) {
+            val throwFunction = context().getReferenceToIntrinsic(Namer.THROW_UNINITIALIZED_PROPERTY_ACCESS_EXCEPTION)
             function.body.statements += JsIf(JsBinaryOperation(JsBinaryOperator.EQ, result, JsNullLiteral()),
-                                             JsReturn(JsInvocation(Namer.throwUninitializedPropertyAccessExceptionFunRef(),
+                                             JsReturn(JsInvocation(throwFunction,
                                                                    JsStringLiteral(getterDescriptor.correspondingProperty.name.asString()))))
         }
+        result = TranslationUtils.coerce(context(), result, TranslationUtils.getReturnTypeForCoercion(getterDescriptor))
         function.body.statements += JsReturn(result).apply { source = descriptor.source.getPsi() }
     }
 
@@ -124,7 +128,8 @@ class DefaultPropertyTranslator(
         assert(setterDescriptor.valueParameters.size == 1) { "Setter must have 1 parameter" }
         val correspondingPropertyName = setterDescriptor.correspondingVariable.name.asString()
         val valueParameter = function.addParameter(correspondingPropertyName).name
-        val withAliased = context().innerContextWithAliased(setterDescriptor.valueParameters[0], valueParameter.makeRef())
+        val parameter = setterDescriptor.valueParameters[0]
+        val withAliased = context().innerContextWithAliased(parameter, valueParameter.makeRef())
         val delegatedCall = bindingContext()[BindingContext.DELEGATED_PROPERTY_RESOLVED_CALL, setterDescriptor]
 
         if (delegatedCall != null) {
@@ -140,7 +145,12 @@ class DefaultPropertyTranslator(
         else {
             assert(!descriptor.isExtension) { "Unexpected extension property $descriptor}" }
             assert(descriptor is PropertyDescriptor) { "Property descriptor expected: $descriptor" }
-            val assignment = assignmentToBackingField(withAliased, descriptor as PropertyDescriptor, valueParameter.makeRef())
+            var value: JsExpression = valueParameter.makeRef().apply {
+                type = TranslationUtils.getReturnTypeForCoercion(setterDescriptor.correspondingVariable)
+            }
+            value = TranslationUtils.coerce(
+                    context(), value, TranslationUtils.getReturnTypeForCoercion(setterDescriptor.correspondingVariable, true))
+            val assignment = assignmentToBackingField(withAliased, descriptor as PropertyDescriptor, value)
             function.addStatement(assignment.apply { source = descriptor.source.getPsi() }.makeStmt())
         }
     }
@@ -187,15 +197,15 @@ fun TranslationContext.contextWithPropertyMetadataCreationIntrinsified(
         property: VariableDescriptorWithAccessors,
         host: JsExpression
 ): TranslationContext {
-    val propertyNameLiteral = JsStringLiteral(property.name.asString())
     // 0th argument is instance, 1st is KProperty, 2nd (for setter) is value
     val hostExpression =
             (delegatedCall.valueArgumentsByIndex!![0] as ExpressionValueArgument).valueArgument!!.getArgumentExpression()
     val fakeArgumentExpression =
             (delegatedCall.valueArgumentsByIndex!![1] as ExpressionValueArgument).valueArgument!!.getArgumentExpression()
+    val metadataRef = pureFqn(getVariableForPropertyMetadata(property), null).apply { synthetic = true }
     return innerContextWithAliasesForExpressions(mapOf(
             hostExpression to host,
-            fakeArgumentExpression to JsNew(pureFqn("PropertyMetadata", Namer.kotlinObject()), listOf(propertyNameLiteral))
+            fakeArgumentExpression to metadataRef
     ))
 }
 

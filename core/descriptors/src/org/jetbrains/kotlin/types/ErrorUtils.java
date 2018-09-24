@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter;
 import org.jetbrains.kotlin.resolve.scopes.MemberScope;
+import org.jetbrains.kotlin.storage.LockBasedStorageManager;
 import org.jetbrains.kotlin.types.error.ErrorSimpleFunctionDescriptorImpl;
 import org.jetbrains.kotlin.utils.Printer;
 
@@ -75,6 +76,12 @@ public class ErrorUtils {
 
             @NotNull
             @Override
+            public Name getStableName() {
+                return Name.special("<ERROR MODULE>");
+            }
+
+            @NotNull
+            @Override
             public PackageViewDescriptor getPackage(@NotNull FqName fqName) {
                 throw new IllegalStateException("Should not be called!");
             }
@@ -87,8 +94,8 @@ public class ErrorUtils {
 
             @NotNull
             @Override
-            public Set<ModuleDescriptor> getAllImplementingModules() {
-                return emptySet();
+            public List<ModuleDescriptor> getExpectedByModules() {
+                return emptyList();
             }
 
             @Override
@@ -130,7 +137,7 @@ public class ErrorUtils {
 
             @Override
             public void assertValid() {
-                throw new IllegalStateException("ERROR_MODULE is not a valid module");
+                throw new InvalidModuleException("ERROR_MODULE is not a valid module");
             }
         };
     }
@@ -181,6 +188,14 @@ public class ErrorUtils {
             return createErrorClass(name.asString());
         }
 
+        @Nullable
+        @Override
+        public DescriptorWithDeprecation<ClassifierDescriptor> getContributedClassifierIncludeDeprecated(
+                @NotNull Name name, @NotNull LookupLocation location
+        ) {
+            return null;
+        }
+
         @NotNull
         @Override
         // TODO: Convert to Kotlin or add @JvmWildcard to MemberScope declarations
@@ -213,10 +228,26 @@ public class ErrorUtils {
 
         @NotNull
         @Override
+        public Set<Name> getClassifierNames() {
+            return emptySet();
+        }
+
+        @Override
+        public void recordLookup(@NotNull Name name, @NotNull LookupLocation location) {
+
+        }
+
+        @NotNull
+        @Override
         public Collection<DeclarationDescriptor> getContributedDescriptors(
                 @NotNull DescriptorKindFilter kindFilter, @NotNull Function1<? super Name, Boolean> nameFilter
         ) {
             return Collections.emptyList();
+        }
+
+        @Override
+        public boolean definitelyDoesNotContainName(@NotNull Name name) {
+            return false;
         }
 
         @Override
@@ -241,6 +272,14 @@ public class ErrorUtils {
         @Override
         public ClassifierDescriptor getContributedClassifier(@NotNull Name name, @NotNull LookupLocation location) {
             throw new IllegalStateException(debugMessage+", required name: " + name);
+        }
+
+        @Nullable
+        @Override
+        public DescriptorWithDeprecation<ClassifierDescriptor> getContributedClassifierIncludeDeprecated(
+                @NotNull Name name, @NotNull LookupLocation location
+        ) {
+            throw new IllegalStateException(debugMessage + ", required name: " + name);
         }
 
         @NotNull
@@ -280,6 +319,21 @@ public class ErrorUtils {
         }
 
         @Override
+        public Set<Name> getClassifierNames() {
+            throw new IllegalStateException();
+        }
+
+        @Override
+        public void recordLookup(@NotNull Name name, @NotNull LookupLocation location) {
+            throw new IllegalStateException();
+        }
+
+        @Override
+        public boolean definitelyDoesNotContainName(@NotNull Name name) {
+            return false;
+        }
+
+        @Override
         public String toString() {
             return "ThrowingScope{" + debugMessage + '}';
         }
@@ -296,7 +350,7 @@ public class ErrorUtils {
         public ErrorClassDescriptor(@NotNull Name name) {
             super(getErrorModule(), name,
                   Modality.OPEN, ClassKind.CLASS, Collections.<KotlinType>emptyList(), SourceElement.NO_SOURCE,
-                  /* isExternal = */ false
+                  /* isExternal = */ false, LockBasedStorageManager.NO_LOCKS
             );
 
             ClassConstructorDescriptorImpl
@@ -344,11 +398,6 @@ public class ErrorUtils {
     }
 
     @NotNull
-    public static ClassDescriptor createErrorClassWithExactName(@NotNull Name name) {
-        return new ErrorClassDescriptor(name);
-    }
-
-    @NotNull
     public static MemberScope createErrorScope(@NotNull String debugMessage) {
         return createErrorScope(debugMessage, false);
     }
@@ -382,11 +431,7 @@ public class ErrorUtils {
                 SourceElement.NO_SOURCE,
                 false, false, false, false, false, false
         );
-        descriptor.setType(ERROR_PROPERTY_TYPE,
-                           Collections.<TypeParameterDescriptor>emptyList(),
-                           null,
-                           (KotlinType) null
-        );
+        descriptor.setType(ERROR_PROPERTY_TYPE, Collections.<TypeParameterDescriptor>emptyList(), null, null);
 
         return descriptor;
     }

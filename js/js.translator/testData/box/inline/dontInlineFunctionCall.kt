@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 996
+// EXPECTED_REACHABLE_NODES: 1284
 package foo
 
 inline fun block(p: () -> Int) = p()

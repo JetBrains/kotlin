@@ -75,8 +75,8 @@ private class GlobalSyntheticPackageViewDescriptor(override val fqName: FqName, 
         override fun getContributedFunctions(name: Name, location: LookupLocation): Collection<SimpleFunctionDescriptor> = shouldNotBeCalled()
 
         override fun getFunctionNames(): Set<Name> = shouldNotBeCalled()
-
         override fun getVariableNames(): Set<Name> = shouldNotBeCalled()
+        override fun getClassifierNames(): Set<Name> = shouldNotBeCalled()
 
         override fun getContributedClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? = shouldNotBeCalled()
 
@@ -104,7 +104,7 @@ private class GlobalSyntheticPackageViewDescriptor(override val fqName: FqName, 
                 .filter { it.isChildOf(fqName) }
                 .filter { nameFilter(it.shortName()) }
                 .flatMap { KotlinTopLevelFunctionFqnNameIndex.getInstance()[it.asString(), project, scope].asSequence() }
-                .map { it.resolveToDescriptorIfAny() }
+                .map { it.resolveToDescriptorIfAny() as? DeclarationDescriptor }
 
         fun getSubpackages(nameFilter: (Name) -> Boolean) =
                 PackageIndexUtil.getSubPackageFqNames(fqName, scope, project, nameFilter)

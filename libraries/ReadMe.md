@@ -1,33 +1,40 @@
 ## Kotlin Libraries
 
-This area of the project is all written in Kotlin and assumes you've got the [Kotlin IDEA plugin installed](../ReadMe.md#installing-plugin).
+This part of the project contains the sources of the following libraries:
 
-This area of the project uses Gradle and Maven for its build. When you open this project directory in IDEA the first time, it suggests you to import both gradle and maven projects. After importing you'll be able to explore and run gradle tasks and maven goals directly from IDEA with the instruments on the right sidebar.
+  - [kotlin-stdlib](stdlib), the standard library for Kotlin/JVM, Kotlin/JS and its additional parts for JDK 7 and JDK 8
+  - [kotlin-reflect](reflect), the library for full reflection support
+  - [kotlin-test](kotlin.test), the library for multiplatform unit testing
+  - [kotlin-annotations-jvm](tools/kotlin-annotations-jvm), the annotations to improve types in the Java code to look better when being consumed in the Kotlin code.
+
+<!--  - [kotlin-annotations-android](tools/kotlin-annotations-android) -->
+
+These libraries are built as a part of the [root](../) Gradle project.
+
+
+## Kotlin Maven Tools
+
+<!-- TODO: Move to another root -->
+
+This area of the project is the root for Maven build.
+
+You can work with the maven modules of this maven project in IDEA from the [root IDEA project](../ReadMe.md#working-in-idea). After importing you'll be able to explore maven projects and run goals directly from IDEA with the instruments on the right sidebar.
 
 ### Building
 
-You need to install a recent [Maven](http://maven.apache.org/) distribution and setup environment variables as following:
+You need to install a recent (at least 3.3) [Maven](http://maven.apache.org/) distribution.
 
-    JAVA_HOME="path to JDK 1.8"
-    JDK_16="path to JDK 1.6"
-    JDK_17="path to JDK 1.7"
-    JDK_18="path to JDK 1.8"
+Before building this Maven project you need to build and install the required artifacts built with Gradle to the local maven repository, by issuing the following command in the root project:
 
-The main part of the Kotlin standard library, `kotlin-stdlib`, is compiled against JDK 1.6 and also there are two extensions
-for the standard library, `kotlin-stdlib-jre7` and `kotlin-stdlib-jre8`, which are compiled against JDK 1.7 and 1.8 respectively,
-so you need to have all these JDKs installed.
+    ./gradlew install
 
-Be sure to build Kotlin compiler distribution before launching Gradle and Maven: see [root ReadMe.md, section "Building"](../ReadMe.md#installing-plugin).
-
-Core libraries are built with gradle, you can run that build using the gradle wrapper script even without local gradle installation:
-    
-    ./gradlew build install
-    
 > Note: on Windows type `gradlew` without the leading `./`
-    
-This command executes the `build` task, which assembles the artifacts and run the tests, and the `install` task, which puts the artifacts to the local maven repository to be used by the subsequent maven build.
 
-The rest of tools and libraries are built with maven:
+This command assembles and puts the artifacts to the local maven repository to be used by the subsequent maven build.
+See also [root ReadMe.md, section "Building"](../ReadMe.md#building).
+
+
+Then you can build maven artifacts with Maven:
 
     mvn install
 
@@ -35,22 +42,3 @@ If your maven build is failing with Out-Of-Memory errors, set JVM options for ma
 
     MAVEN_OPTS="-Xmx2G"
 
-## Gradle Plugin
-
-Gradle plugin sources can be found at the [kotlin-gradle-plugin](tools/kotlin-gradle-plugin) module.
-
-To build the Gradle plugin and the subplugins, first build the core libraries and other tools (the Gradle and Maven builds above) and then, inside `tools/gradle-tools`, run:
-
-    gradlew clean install
-
-### Gradle integration tests
-
-Gradle integration tests can be found at the [kotlin-gradle-plugin-integration-tests](tools/kotlin-gradle-plugin-integration-tests) module.
-
-To run integration tests, run from `tools/gradle-tools`:
-
-    gradlew :kotlin-gradle-plugin-integration-tests:test
-    
-The tests that use the Gradle plugins DSL ([`PluginsDslIT`](https://github.com/JetBrains/kotlin/blob/master/libraries/tools/kotlin-gradle-plugin-integration-tests/src/test/kotlin/org/jetbrains/kotlin/gradle/PluginsDslIT.kt)) also require the Gradle plugin marker artifacts to be installed from `tools/gradle-tools`:
-
-    gradlew -Pmarker_version_suffix=-test :kotlin-gradle-plugin:plugin-marker:install :kotlin-noarg:plugin-marker:install :kotlin-allopen:plugin-marker:install

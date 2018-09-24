@@ -19,10 +19,10 @@ package org.jetbrains.kotlin.resolve.calls.tower
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.calls.USE_NEW_INFERENCE
 import org.jetbrains.kotlin.resolve.calls.smartcasts.getReceiverValueWithSmartCast
 import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject
 import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForTypeAliasObject
+import org.jetbrains.kotlin.resolve.calls.util.isLowPriorityFromStdlibJre7Or8
 import org.jetbrains.kotlin.resolve.descriptorUtil.HIDES_MEMBERS_NAME_LIST
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasClassValueDescriptor
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasHidesMembersAnnotation
@@ -39,38 +39,37 @@ import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.typeUtil.getImmediateSuperclassNotAny
 import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.addIfNotNull
-import java.util.*
+import kotlin.collections.ArrayList
 
 internal abstract class AbstractScopeTowerLevel(
-        protected val scopeTower: ImplicitScopeTower
-): ScopeTowerLevel {
+    protected val scopeTower: ImplicitScopeTower
+) : ScopeTowerLevel {
     protected val location: LookupLocation get() = scopeTower.location
 
     protected fun createCandidateDescriptor(
-            descriptor: CallableDescriptor,
-            dispatchReceiver: ReceiverValueWithSmartCastInfo?,
-            specialError: ResolutionDiagnostic? = null,
-            dispatchReceiverSmartCastType: KotlinType? = null
+        descriptor: CallableDescriptor,
+        dispatchReceiver: ReceiverValueWithSmartCastInfo?,
+        specialError: ResolutionDiagnostic? = null,
+        dispatchReceiverSmartCastType: KotlinType? = null
     ): CandidateWithBoundDispatchReceiver {
         val diagnostics = SmartList<ResolutionDiagnostic>()
         diagnostics.addIfNotNull(specialError)
 
         if (ErrorUtils.isError(descriptor)) {
             diagnostics.add(ErrorDescriptorDiagnostic)
-        }
-        else {
-            if (descriptor.hasLowPriorityInOverloadResolution()) diagnostics.add(LowPriorityDescriptorDiagnostic)
+        } else {
+            if (descriptor.hasLowPriorityInOverloadResolution() || descriptor.isLowPriorityFromStdlibJre7Or8()) {
+                diagnostics.add(LowPriorityDescriptorDiagnostic)
+            }
             if (dispatchReceiverSmartCastType != null) diagnostics.add(UsedSmartCastForDispatchReceiver(dispatchReceiverSmartCastType))
 
-            if (!USE_NEW_INFERENCE) {
-                val shouldSkipVisibilityCheck = scopeTower.isDebuggerContext
-                if (!shouldSkipVisibilityCheck) {
-                    Visibilities.findInvisibleMember(
-                            getReceiverValueWithSmartCast(dispatchReceiver?.receiverValue, dispatchReceiverSmartCastType),
-                            descriptor,
-                            scopeTower.lexicalScope.ownerDescriptor
-                    )?.let { diagnostics.add(VisibilityError(it)) }
-                }
+            val shouldSkipVisibilityCheck = scopeTower.isDebuggerContext || scopeTower.isNewInferenceEnabled
+            if (!shouldSkipVisibilityCheck) {
+                Visibilities.findInvisibleMember(
+                    getReceiverValueWithSmartCast(dispatchReceiver?.receiverValue, dispatchReceiverSmartCastType),
+                    descriptor,
+                    scopeTower.lexicalScope.ownerDescriptor
+                )?.let { diagnostics.add(VisibilityError(it)) }
             }
         }
         return CandidateWithBoundDispatchReceiverImpl(dispatchReceiver, descriptor, diagnostics)
@@ -81,14 +80,15 @@ internal abstract class AbstractScopeTowerLevel(
 // todo KT-9538 Unresolved inner class via subclass reference
 // todo add static methods & fields with error
 internal class MemberScopeTowerLevel(
-        scopeTower: ImplicitScopeTower,
-        val dispatchReceiver: ReceiverValueWithSmartCastInfo
-): AbstractScopeTowerLevel(scopeTower) {
+    scopeTower: ImplicitScopeTower,
+    val dispatchReceiver: ReceiverValueWithSmartCastInfo
+) : AbstractScopeTowerLevel(scopeTower) {
 
     private val syntheticScopes = scopeTower.syntheticScopes
+    private val isNewInferenceEnabled = scopeTower.isNewInferenceEnabled
 
     private fun collectMembers(
-            getMembers: ResolutionScope.(KotlinType?) -> Collection<CallableDescriptor>
+        getMembers: ResolutionScope.(KotlinType?) -> Collection<CallableDescriptor>
     ): Collection<CandidateWithBoundDispatchReceiver> {
         val result = ArrayList<CandidateWithBoundDispatchReceiver>(0)
         val receiverValue = dispatchReceiver.receiverValue
@@ -102,9 +102,9 @@ internal class MemberScopeTowerLevel(
         for (possibleType in dispatchReceiver.possibleTypes) {
             possibleType.memberScope.getMembers(possibleType).mapTo(unstableCandidates ?: result) {
                 createCandidateDescriptor(
-                        it,
-                        dispatchReceiver.smartCastReceiver(possibleType),
-                        unstableError, dispatchReceiverSmartCastType = possibleType
+                    it,
+                    dispatchReceiver.smartCastReceiver(possibleType),
+                    unstableError, dispatchReceiverSmartCastType = possibleType
                 )
             }
         }
@@ -112,8 +112,7 @@ internal class MemberScopeTowerLevel(
         if (dispatchReceiver.possibleTypes.isNotEmpty()) {
             if (unstableCandidates == null) {
                 result.retainAll(result.selectMostSpecificInEachOverridableGroup { descriptor.approximateCapturedTypes() })
-            }
-            else {
+            } else {
                 result.addAll(unstableCandidates.selectMostSpecificInEachOverridableGroup { descriptor.approximateCapturedTypes() })
             }
         }
@@ -134,15 +133,21 @@ internal class MemberScopeTowerLevel(
      * And we should chose get(Int): String.
      */
     private fun CallableDescriptor.approximateCapturedTypes(): CallableDescriptor {
-        if (!USE_NEW_INFERENCE) return this
+        if (!isNewInferenceEnabled) return this
 
         val approximator = TypeApproximator()
         val wrappedSubstitution = object : TypeSubstitution() {
             override fun get(key: KotlinType): TypeProjection? = null
             override fun prepareTopLevelType(topLevelType: KotlinType, position: Variance) = when (position) {
                 Variance.INVARIANT -> null
-                Variance.OUT_VARIANCE -> approximator.approximateToSuperType(topLevelType.unwrap(), TypeApproximatorConfiguration.CapturedTypesApproximation)
-                Variance.IN_VARIANCE -> approximator.approximateToSubType(topLevelType.unwrap(), TypeApproximatorConfiguration.CapturedTypesApproximation)
+                Variance.OUT_VARIANCE -> approximator.approximateToSuperType(
+                    topLevelType.unwrap(),
+                    TypeApproximatorConfiguration.CapturedTypesApproximation
+                )
+                Variance.IN_VARIANCE -> approximator.approximateToSubType(
+                    topLevelType.unwrap(),
+                    TypeApproximatorConfiguration.CapturedTypesApproximation
+                )
             } ?: topLevelType
         }
         return substitute(TypeSubstitutor.create(wrappedSubstitution))
@@ -155,81 +160,146 @@ internal class MemberScopeTowerLevel(
         return ReceiverValueWithSmartCastInfo(newReceiverValue, possibleTypes, isStable)
     }
 
-    override fun getVariables(name: Name, extensionReceiver: ReceiverValueWithSmartCastInfo?): Collection<CandidateWithBoundDispatchReceiver> {
+    override fun getVariables(
+        name: Name,
+        extensionReceiver: ReceiverValueWithSmartCastInfo?
+    ): Collection<CandidateWithBoundDispatchReceiver> {
         return collectMembers { getContributedVariables(name, location) }
     }
 
-    override fun getObjects(name: Name, extensionReceiver: ReceiverValueWithSmartCastInfo?): Collection<CandidateWithBoundDispatchReceiver> {
+    override fun getObjects(
+        name: Name,
+        extensionReceiver: ReceiverValueWithSmartCastInfo?
+    ): Collection<CandidateWithBoundDispatchReceiver> {
         return emptyList()
     }
 
-    override fun getFunctions(name: Name, extensionReceiver: ReceiverValueWithSmartCastInfo?): Collection<CandidateWithBoundDispatchReceiver> {
+    override fun getFunctions(
+        name: Name,
+        extensionReceiver: ReceiverValueWithSmartCastInfo?
+    ): Collection<CandidateWithBoundDispatchReceiver> {
         return collectMembers {
             getContributedFunctions(name, location) + it.getInnerConstructors(name, location) +
-            syntheticScopes.collectSyntheticMemberFunctions(listOfNotNull(it), name, location)
+                    syntheticScopes.collectSyntheticMemberFunctions(listOfNotNull(it), name, location)
+        }
+    }
+
+    override fun recordLookup(name: Name) {
+        dispatchReceiver.receiverValue.type.memberScope.recordLookup(name, location)
+        dispatchReceiver.possibleTypes.forEach {
+            it.memberScope.recordLookup(name, location)
         }
     }
 }
 
-internal class QualifierScopeTowerLevel(scopeTower: ImplicitScopeTower, val qualifier: QualifierReceiver) : AbstractScopeTowerLevel(scopeTower) {
+internal class QualifierScopeTowerLevel(scopeTower: ImplicitScopeTower, val qualifier: QualifierReceiver) :
+    AbstractScopeTowerLevel(scopeTower) {
     override fun getVariables(name: Name, extensionReceiver: ReceiverValueWithSmartCastInfo?) = qualifier.staticScope
-            .getContributedVariables(name, location).map {
-                createCandidateDescriptor(it, dispatchReceiver = null)
-            }
+        .getContributedVariables(name, location).map {
+        createCandidateDescriptor(it, dispatchReceiver = null)
+    }
 
     override fun getObjects(name: Name, extensionReceiver: ReceiverValueWithSmartCastInfo?) = qualifier.staticScope
-            .getContributedObjectVariables(name, location).map {
-                createCandidateDescriptor(it, dispatchReceiver = null)
-            }
+        .getContributedObjectVariables(name, location).map {
+            createCandidateDescriptor(it, dispatchReceiver = null)
+        }
 
     override fun getFunctions(name: Name, extensionReceiver: ReceiverValueWithSmartCastInfo?) = qualifier.staticScope
-            .getContributedFunctionsAndConstructors(name,
-                                                    location,
-                                                    scopeTower.syntheticScopes,
-                                                    qualifier.staticScope).map {
-                createCandidateDescriptor(it, dispatchReceiver = null)
-            }
+        .getContributedFunctionsAndConstructors(
+            name,
+            location,
+            scopeTower.syntheticScopes
+        ).map {
+        createCandidateDescriptor(it, dispatchReceiver = null)
+    }
+
+    override fun recordLookup(name: Name) {}
 }
 
 // KT-3335 Creating imported super class' inner class fails in codegen
 internal open class ScopeBasedTowerLevel protected constructor(
-        scopeTower: ImplicitScopeTower,
-        private val resolutionScope: ResolutionScope
+    scopeTower: ImplicitScopeTower,
+    private val resolutionScope: ResolutionScope
 ) : AbstractScopeTowerLevel(scopeTower) {
+
+    val deprecationDiagnosticOfThisScope: ResolutionDiagnostic? =
+        if (resolutionScope is DeprecatedLexicalScope) ResolvedUsingDeprecatedVisibility(resolutionScope, location) else null
 
     internal constructor(scopeTower: ImplicitScopeTower, lexicalScope: LexicalScope) : this(scopeTower, lexicalScope as ResolutionScope)
 
-    override fun getVariables(name: Name, extensionReceiver: ReceiverValueWithSmartCastInfo?): Collection<CandidateWithBoundDispatchReceiver>
-            = resolutionScope.getContributedVariables(name, location).map {
-                createCandidateDescriptor(it, dispatchReceiver = null)
-            }
+    override fun getVariables(
+        name: Name,
+        extensionReceiver: ReceiverValueWithSmartCastInfo?
+    ): Collection<CandidateWithBoundDispatchReceiver> = resolutionScope.getContributedVariables(name, location).map {
+        createCandidateDescriptor(
+            it,
+            dispatchReceiver = null,
+            specialError = deprecationDiagnosticOfThisScope
+        )
+    }
 
-    override fun getObjects(name: Name, extensionReceiver: ReceiverValueWithSmartCastInfo?): Collection<CandidateWithBoundDispatchReceiver>
-            = resolutionScope.getContributedObjectVariables(name, location).map {
-                createCandidateDescriptor(it, dispatchReceiver = null)
-            }
+    override fun getObjects(
+        name: Name,
+        extensionReceiver: ReceiverValueWithSmartCastInfo?
+    ): Collection<CandidateWithBoundDispatchReceiver> =
+        resolutionScope.getContributedObjectVariablesIncludeDeprecated(name, location).map { (classifier, isDeprecated) ->
+            createCandidateDescriptor(
+                classifier,
+                dispatchReceiver = null,
+                specialError = if (isDeprecated) ResolvedUsingDeprecatedVisibility(resolutionScope, location) else null
+            )
+        }
 
-    override fun getFunctions(name: Name, extensionReceiver: ReceiverValueWithSmartCastInfo?): Collection<CandidateWithBoundDispatchReceiver>
-            = resolutionScope.getContributedFunctionsAndConstructors(name,
-                                                                     location,
-                                                                     scopeTower.syntheticScopes,
-                                                                     resolutionScope).map {
-                createCandidateDescriptor(it, dispatchReceiver = null)
+    override fun getFunctions(
+        name: Name,
+        extensionReceiver: ReceiverValueWithSmartCastInfo?
+    ): Collection<CandidateWithBoundDispatchReceiver> {
+        val result: ArrayList<CandidateWithBoundDispatchReceiver> = ArrayList()
+
+        resolutionScope.getContributedFunctionsAndConstructors(name, location, scopeTower.syntheticScopes).mapTo(result) {
+            createCandidateDescriptor(
+                it,
+                dispatchReceiver = null,
+                specialError = deprecationDiagnosticOfThisScope
+            )
+        }
+
+        // Add constructors of deprecated classifier with an additional diagnostic
+        val descriptorWithDeprecation = resolutionScope.getContributedClassifierIncludeDeprecated(name, location)
+        if (descriptorWithDeprecation != null && descriptorWithDeprecation.isDeprecated) {
+            getConstructorsOfClassifier(descriptorWithDeprecation.descriptor).mapTo(result) {
+                createCandidateDescriptor(
+                    it,
+                    dispatchReceiver = null,
+                    specialError = ResolvedUsingDeprecatedVisibility(resolutionScope, location)
+                )
             }
+        }
+
+        return result
+    }
+
+    override fun recordLookup(name: Name) {
+        resolutionScope.recordLookup(name, location)
+    }
 }
+
 internal class ImportingScopeBasedTowerLevel(
-        scopeTower: ImplicitScopeTower,
-        importingScope: ImportingScope
-): ScopeBasedTowerLevel(scopeTower, importingScope)
+    scopeTower: ImplicitScopeTower,
+    importingScope: ImportingScope
+) : ScopeBasedTowerLevel(scopeTower, importingScope)
 
 internal class SyntheticScopeBasedTowerLevel(
-        scopeTower: ImplicitScopeTower,
-        private val syntheticScopes: SyntheticScopes
-): AbstractScopeTowerLevel(scopeTower) {
+    scopeTower: ImplicitScopeTower,
+    private val syntheticScopes: SyntheticScopes
+) : AbstractScopeTowerLevel(scopeTower) {
     private val ReceiverValueWithSmartCastInfo.allTypes: Set<KotlinType>
         get() = possibleTypes + receiverValue.type
 
-    override fun getVariables(name: Name, extensionReceiver: ReceiverValueWithSmartCastInfo?): Collection<CandidateWithBoundDispatchReceiver> {
+    override fun getVariables(
+        name: Name,
+        extensionReceiver: ReceiverValueWithSmartCastInfo?
+    ): Collection<CandidateWithBoundDispatchReceiver> {
         if (extensionReceiver == null) return emptyList()
 
         return syntheticScopes.collectSyntheticExtensionProperties(extensionReceiver.allTypes, name, location).map {
@@ -238,40 +308,46 @@ internal class SyntheticScopeBasedTowerLevel(
     }
 
     override fun getObjects(
-            name: Name, extensionReceiver: ReceiverValueWithSmartCastInfo?
+        name: Name, extensionReceiver: ReceiverValueWithSmartCastInfo?
     ): Collection<CandidateWithBoundDispatchReceiver> =
-            emptyList()
+        emptyList()
 
     override fun getFunctions(
-            name: Name,
-            extensionReceiver: ReceiverValueWithSmartCastInfo?
+        name: Name,
+        extensionReceiver: ReceiverValueWithSmartCastInfo?
     ): Collection<CandidateWithBoundDispatchReceiver> =
-            emptyList()
+        emptyList()
+
+    override fun recordLookup(name: Name) {
+
+    }
 }
 
-internal class HidesMembersTowerLevel(scopeTower: ImplicitScopeTower): AbstractScopeTowerLevel(scopeTower) {
-    override fun getVariables(name: Name, extensionReceiver: ReceiverValueWithSmartCastInfo?)
-            = getCandidates(name, extensionReceiver, LexicalScope::collectVariables)
+internal class HidesMembersTowerLevel(scopeTower: ImplicitScopeTower) : AbstractScopeTowerLevel(scopeTower) {
+    override fun getVariables(name: Name, extensionReceiver: ReceiverValueWithSmartCastInfo?) =
+        getCandidates(name, extensionReceiver, LexicalScope::collectVariables)
 
-    override fun getObjects(name: Name, extensionReceiver: ReceiverValueWithSmartCastInfo?)
-            = emptyList<CandidateWithBoundDispatchReceiver>()
+    override fun getObjects(name: Name, extensionReceiver: ReceiverValueWithSmartCastInfo?) =
+        emptyList<CandidateWithBoundDispatchReceiver>()
 
-    override fun getFunctions(name: Name, extensionReceiver: ReceiverValueWithSmartCastInfo?)
-            = getCandidates(name, extensionReceiver, LexicalScope::collectFunctions)
+    override fun getFunctions(name: Name, extensionReceiver: ReceiverValueWithSmartCastInfo?) =
+        getCandidates(name, extensionReceiver, LexicalScope::collectFunctions)
 
     private fun getCandidates(
-            name: Name,
-            extensionReceiver: ReceiverValueWithSmartCastInfo?,
-            collectCandidates: LexicalScope.(Name, LookupLocation) -> Collection<CallableDescriptor>
+        name: Name,
+        extensionReceiver: ReceiverValueWithSmartCastInfo?,
+        collectCandidates: LexicalScope.(Name, LookupLocation) -> Collection<CallableDescriptor>
     ): Collection<CandidateWithBoundDispatchReceiver> {
         if (extensionReceiver == null || name !in HIDES_MEMBERS_NAME_LIST) return emptyList()
 
         return scopeTower.lexicalScope.collectCandidates(name, location).filter {
             it.extensionReceiverParameter != null && it.hasHidesMembersAnnotation()
         }.map {
-            createCandidateDescriptor(it, dispatchReceiver = null)
-        }
+                createCandidateDescriptor(it, dispatchReceiver = null)
+            }
     }
+
+    override fun recordLookup(name: Name) {}
 }
 
 private fun KotlinType.getClassifierFromMeAndSuperclasses(name: Name, location: LookupLocation): ClassifierDescriptor? {
@@ -289,56 +365,65 @@ private fun KotlinType?.getInnerConstructors(name: Name, location: LookupLocatio
 }
 
 private fun ResolutionScope.getContributedFunctionsAndConstructors(
-        name: Name,
-        location: LookupLocation,
-        syntheticScopes: SyntheticScopes,
-        scope: ResolutionScope
+    name: Name,
+    location: LookupLocation,
+    syntheticScopes: SyntheticScopes
 ): Collection<FunctionDescriptor> {
     val result = ArrayList<FunctionDescriptor>(getContributedFunctions(name, location))
 
-    val classifier = getContributedClassifier(name, location)
+    getContributedClassifier(name, location)?.let {
+        result.addAll(getConstructorsOfClassifier(it))
+    }
+
+    result.addAll(syntheticScopes.collectSyntheticStaticFunctions(this, name, location))
+    result.addAll(syntheticScopes.collectSyntheticConstructors(this, name, location))
+
+    return result.toList()
+}
+
+private fun getConstructorsOfClassifier(classifier: ClassifierDescriptor?): List<ConstructorDescriptor> {
     val callableConstructors = when (classifier) {
         is TypeAliasDescriptor -> if (classifier.canHaveCallableConstructors) classifier.constructors else emptyList()
         is ClassDescriptor -> if (classifier.canHaveCallableConstructors) classifier.constructors else emptyList()
         else -> emptyList()
     }
 
-    callableConstructors.filterTo(result) { it.dispatchReceiverParameter == null }
-
-    result.addAll(syntheticScopes.collectSyntheticStaticFunctions(scope, name, location))
-    result.addAll(syntheticScopes.collectSyntheticConstructors(scope, name, location))
-
-    return result.toList()
+    return callableConstructors.filter { it.dispatchReceiverParameter == null }
 }
-
 
 private fun ResolutionScope.getContributedObjectVariables(name: Name, location: LookupLocation): Collection<VariableDescriptor> {
     val objectDescriptor = getFakeDescriptorForObject(getContributedClassifier(name, location))
     return listOfNotNull(objectDescriptor)
 }
 
+private fun ResolutionScope.getContributedObjectVariablesIncludeDeprecated(name: Name, location: LookupLocation): Collection<DescriptorWithDeprecation<VariableDescriptor>> {
+    val (classifier, isOwnerDeprecated) = getContributedClassifierIncludeDeprecated(name, location) ?: return emptyList()
+    val objectDescriptor = getFakeDescriptorForObject(classifier) ?: return emptyList()
+    return listOf(DescriptorWithDeprecation(objectDescriptor, isOwnerDeprecated))
+}
+
 fun getFakeDescriptorForObject(classifier: ClassifierDescriptor?): FakeCallableDescriptorForObject? =
-        when (classifier) {
-            is TypeAliasDescriptor ->
-                classifier.classDescriptor?.let { classDescriptor ->
-                    if (classDescriptor.hasClassValueDescriptor)
-                        FakeCallableDescriptorForTypeAliasObject(classifier)
-                    else
-                        null
-                }
-            is ClassDescriptor ->
-                if (classifier.hasClassValueDescriptor)
-                    FakeCallableDescriptorForObject(classifier)
+    when (classifier) {
+        is TypeAliasDescriptor ->
+            classifier.classDescriptor?.let { classDescriptor ->
+                if (classDescriptor.hasClassValueDescriptor)
+                    FakeCallableDescriptorForTypeAliasObject(classifier)
                 else
                     null
-            else -> null
-        }
+            }
+        is ClassDescriptor ->
+            if (classifier.hasClassValueDescriptor)
+                FakeCallableDescriptorForObject(classifier)
+            else
+                null
+        else -> null
+    }
 
 private fun getClassWithConstructors(classifier: ClassifierDescriptor?): ClassDescriptor? =
-        if (classifier !is ClassDescriptor || !classifier.canHaveCallableConstructors)
-            null
-        else
-            classifier
+    if (classifier !is ClassDescriptor || !classifier.canHaveCallableConstructors)
+        null
+    else
+        classifier
 
 private val ClassDescriptor.canHaveCallableConstructors: Boolean
     get() = !ErrorUtils.isError(this) && !kind.isSingleton

@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.js.translate.reference;
 
 import com.google.gwt.dev.js.ThrowExceptionOnErrorReporter;
+import com.google.gwt.dev.js.rhino.CodePosition;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.config.CommonConfigurationKeys;
@@ -30,6 +31,7 @@ import org.jetbrains.kotlin.js.resolve.BindingContextSlicesJsKt;
 import org.jetbrains.kotlin.js.resolve.diagnostics.JsCallChecker;
 import org.jetbrains.kotlin.js.translate.callTranslator.CallTranslator;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
+import org.jetbrains.kotlin.js.translate.utils.PsiUtils;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.KtCallExpression;
 import org.jetbrains.kotlin.psi.KtExpression;
@@ -40,6 +42,7 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.inline.InlineUtil;
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
 
+import java.io.IOException;
 import java.util.*;
 
 import static org.jetbrains.kotlin.js.resolve.diagnostics.JsCallChecker.isJsCall;
@@ -175,6 +178,18 @@ public final class CallExpressionTranslator extends AbstractCallExpressionTransl
         assert currentScope instanceof JsFunctionScope : "Usage of js outside of function is unexpected";
         JsScope temporaryRootScope = new JsRootScope(new JsProgram());
         JsScope scope = new DelegatingJsFunctionScopeWithTemporaryParent((JsFunctionScope) currentScope, temporaryRootScope);
-        return ParserUtilsKt.parse(jsCode, ThrowExceptionOnErrorReporter.INSTANCE, scope, jsCodeExpression.getContainingKtFile().getName());
+
+        JsLocation location;
+        try {
+            location = PsiUtils.extractLocationFromPsi(jsCodeExpression, context().getSourceFilePathResolver());
+        }
+        catch (IOException e) {
+            location = new JsLocation(jsCodeExpression.getContainingKtFile().getName(), 0, 0);
+        }
+
+        List<JsStatement> statements = ParserUtilsKt.parseExpressionOrStatement(
+                jsCode, ThrowExceptionOnErrorReporter.INSTANCE, scope,
+                new CodePosition(location.getStartLine(), location.getStartChar()), location.getFile());
+        return statements != null ? statements : Collections.emptyList();
     }
 }

@@ -17,8 +17,8 @@
 package org.jetbrains.kotlin.cli.jvm.javac
 
 import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
-import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.findFacadeClass
+import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.javac.JavacWrapperKotlinResolver
 import org.jetbrains.kotlin.javac.resolve.MockKotlinField
@@ -38,26 +38,24 @@ class JavacWrapperKotlinResolverImpl(private val lightClassGenerationSupport: Li
             return supersCache[classOrObject]!!
         }
 
-        val classDescriptor = lightClassGenerationSupport.analyze(classOrObject).get(BindingContext.CLASS, classOrObject) ?: return emptyList()
+        val classDescriptor =
+            lightClassGenerationSupport.analyze(classOrObject).get(BindingContext.CLASS, classOrObject) ?: return emptyList()
         val classIds = classDescriptor.defaultType.constructor.supertypes
-                .mapNotNull { (it.constructor.declarationDescriptor as? ClassDescriptor)?.classId }
+            .mapNotNull { (it.constructor.declarationDescriptor as? ClassDescriptor)?.classId }
         supersCache[classOrObject] = classIds
 
         return classIds
     }
 
     override fun findField(classOrObject: KtClassOrObject, name: String): JavaField? {
-        val lightClass = classOrObject.getLightClass() ?: return null
+        val lightClass = classOrObject.toLightClass() ?: return null
 
-        return lightClass.allFields.find { it.name == name}?.let(::MockKotlinField)
+        return lightClass.allFields.find { it.name == name }?.let(::MockKotlinField)
     }
 
     override fun findField(ktFile: KtFile?, name: String): JavaField? {
         val lightClass = ktFile?.findFacadeClass() ?: return null
 
-        return lightClass.allFields.find { it.name == name}?.let(::MockKotlinField)
+        return lightClass.allFields.find { it.name == name }?.let(::MockKotlinField)
     }
-
-    private fun KtClassOrObject.getLightClass(): KtLightClass? = lightClassGenerationSupport.getLightClass(this)
-
 }

@@ -28,67 +28,120 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.psi2ir.endOffsetOrUndefined
+import org.jetbrains.kotlin.psi2ir.pureEndOffsetOrUndefined
+import org.jetbrains.kotlin.psi2ir.pureStartOffsetOrUndefined
 import org.jetbrains.kotlin.psi2ir.startOffsetOrUndefined
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
+import org.jetbrains.kotlin.types.KotlinType
 
 class DeclarationGenerator(override val context: GeneratorContext) : Generator {
+
+    private val typeTranslator = context.typeTranslator
+
+    fun KotlinType.toIrType() = typeTranslator.translateType(this)
+
     fun generateMemberDeclaration(ktDeclaration: KtDeclaration): IrDeclaration =
-            when (ktDeclaration) {
-                is KtNamedFunction ->
-                    FunctionGenerator(this).generateFunctionDeclaration(ktDeclaration)
-                is KtProperty ->
-                    PropertyGenerator(this).generatePropertyDeclaration(ktDeclaration)
-                is KtClassOrObject ->
-                    generateClassOrObjectDeclaration(ktDeclaration)
-                is KtTypeAlias ->
-                    generateTypeAliasDeclaration(ktDeclaration)
-                else ->
-                    IrErrorDeclarationImpl(
-                            ktDeclaration.startOffset, ktDeclaration.endOffset,
-                            getOrFail(BindingContext.DECLARATION_TO_DESCRIPTOR, ktDeclaration)
-                    )
-            }
+        when (ktDeclaration) {
+            is KtNamedFunction ->
+                FunctionGenerator(this).generateFunctionDeclaration(ktDeclaration)
+            is KtProperty ->
+                PropertyGenerator(this).generatePropertyDeclaration(ktDeclaration)
+            is KtClassOrObject ->
+                generateClassOrObjectDeclaration(ktDeclaration)
+            is KtTypeAlias ->
+                generateTypeAliasDeclaration(ktDeclaration)
+            else ->
+                IrErrorDeclarationImpl(
+                    ktDeclaration.startOffset, ktDeclaration.endOffset,
+                    getOrFail(BindingContext.DECLARATION_TO_DESCRIPTOR, ktDeclaration)
+                )
+        }
+
+    fun generateSyntheticClassOrObject(syntheticDeclaration: KtPureClassOrObject): IrClass {
+        return generateClassOrObjectDeclaration(syntheticDeclaration)
+    }
 
     fun generateClassMemberDeclaration(ktDeclaration: KtDeclaration, classDescriptor: ClassDescriptor): IrDeclaration =
-            when (ktDeclaration) {
-                is KtAnonymousInitializer ->
-                    AnonymousInitializerGenerator(this).generateAnonymousInitializerDeclaration(ktDeclaration, classDescriptor)
-                is KtSecondaryConstructor ->
-                    FunctionGenerator(this).generateSecondaryConstructor(ktDeclaration)
-                is KtEnumEntry ->
-                    generateEnumEntryDeclaration(ktDeclaration)
-                else ->
-                    generateMemberDeclaration(ktDeclaration)
-            }
+        when (ktDeclaration) {
+            is KtAnonymousInitializer ->
+                AnonymousInitializerGenerator(this).generateAnonymousInitializerDeclaration(ktDeclaration, classDescriptor)
+            is KtSecondaryConstructor ->
+                FunctionGenerator(this).generateSecondaryConstructor(ktDeclaration)
+            is KtEnumEntry ->
+                generateEnumEntryDeclaration(ktDeclaration)
+            else ->
+                generateMemberDeclaration(ktDeclaration)
+        }
 
     private fun generateEnumEntryDeclaration(ktEnumEntry: KtEnumEntry): IrEnumEntry =
-            ClassGenerator(this).generateEnumEntry(ktEnumEntry)
+        ClassGenerator(this).generateEnumEntry(ktEnumEntry)
 
-    fun generateClassOrObjectDeclaration(ktClassOrObject: KtClassOrObject): IrClass =
-            ClassGenerator(this).generateClass(ktClassOrObject)
+    fun generateClassOrObjectDeclaration(ktClassOrObject: KtPureClassOrObject): IrClass =
+        ClassGenerator(this).generateClass(ktClassOrObject)
 
-    fun generateTypeAliasDeclaration(ktDeclaration: KtTypeAlias): IrDeclaration =
-            IrTypeAliasImpl(ktDeclaration.startOffset, ktDeclaration.endOffset, IrDeclarationOrigin.DEFINED,
-                            getOrFail(BindingContext.TYPE_ALIAS, ktDeclaration))
+    private fun generateTypeAliasDeclaration(ktDeclaration: KtTypeAlias): IrDeclaration =
+        IrTypeAliasImpl(
+            ktDeclaration.startOffset, ktDeclaration.endOffset, IrDeclarationOrigin.DEFINED,
+            getOrFail(BindingContext.TYPE_ALIAS, ktDeclaration)
+        )
 
 
-    fun generateTypeParameterDeclarations(
-            irTypeParametersOwner: IrTypeParametersContainer,
-            from: List<TypeParameterDescriptor>
+    fun generateGlobalTypeParametersDeclarations(
+        irTypeParametersOwner: IrTypeParametersContainer,
+        from: List<TypeParameterDescriptor>
+    ) {
+        generateTypeParameterDeclarations(irTypeParametersOwner, from) { startOffset, endOffset, typeParameterDescriptor ->
+            context.symbolTable.declareGlobalTypeParameter(
+                startOffset,
+                endOffset,
+                IrDeclarationOrigin.DEFINED,
+                typeParameterDescriptor
+            )
+        }
+    }
+
+    fun generateScopedTypeParameterDeclarations(
+        irTypeParametersOwner: IrTypeParametersContainer,
+        from: List<TypeParameterDescriptor>
+    ) {
+        generateTypeParameterDeclarations(irTypeParametersOwner, from) { startOffset, endOffset, typeParameterDescriptor ->
+            context.symbolTable.declareScopedTypeParameter(
+                startOffset,
+                endOffset,
+                IrDeclarationOrigin.DEFINED,
+                typeParameterDescriptor
+            )
+        }
+    }
+
+    private fun generateTypeParameterDeclarations(
+        irTypeParametersOwner: IrTypeParametersContainer,
+        from: List<TypeParameterDescriptor>,
+        declareTypeParameter: (Int, Int, TypeParameterDescriptor) -> IrTypeParameter
     ) {
         from.mapTo(irTypeParametersOwner.typeParameters) { typeParameterDescriptor ->
             val ktTypeParameterDeclaration = DescriptorToSourceUtils.getSourceFromDescriptor(typeParameterDescriptor)
             val startOffset = ktTypeParameterDeclaration.startOffsetOrUndefined
             val endOffset = ktTypeParameterDeclaration.endOffsetOrUndefined
-            context.symbolTable.declareTypeParameter(startOffset, endOffset, IrDeclarationOrigin.DEFINED, typeParameterDescriptor)
+            declareTypeParameter(
+                startOffset,
+                endOffset,
+                typeParameterDescriptor
+            )
+        }
+
+        for (irTypeParameter in irTypeParametersOwner.typeParameters) {
+            irTypeParameter.descriptor.upperBounds.mapTo(irTypeParameter.superTypes) {
+                it.toIrType()
+            }
         }
     }
 
     fun generateInitializerBody(scopeOwnerSymbol: IrSymbol, ktBody: KtExpression): IrExpressionBody =
-            createBodyGenerator(scopeOwnerSymbol).generateExpressionBody(ktBody)
+        createBodyGenerator(scopeOwnerSymbol).generateExpressionBody(ktBody)
 
-    fun generateFakeOverrideDeclaration(memberDescriptor: CallableMemberDescriptor, ktElement: KtElement): IrDeclaration {
+    fun generateFakeOverrideDeclaration(memberDescriptor: CallableMemberDescriptor, ktElement: KtPureElement): IrDeclaration {
         assert(memberDescriptor.kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
             "Fake override expected: $memberDescriptor"
         }
@@ -102,36 +155,25 @@ class DeclarationGenerator(override val context: GeneratorContext) : Generator {
         }
     }
 
-    private fun generateFakeOverrideProperty(propertyDescriptor: PropertyDescriptor, ktElement: KtElement): IrProperty =
-            IrPropertyImpl(
-                    ktElement.startOffsetOrUndefined, ktElement.endOffsetOrUndefined,
-                    IrDeclarationOrigin.FAKE_OVERRIDE,
-                    false,
-                    propertyDescriptor,
-                    if (propertyDescriptor.getter == null)
-                        context.symbolTable.declareField(
-                                ktElement.startOffsetOrUndefined, ktElement.endOffsetOrUndefined, IrDeclarationOrigin.FAKE_OVERRIDE,
-                                propertyDescriptor
-                        )
-                    else null,
-                    propertyDescriptor.getter?.let { generateFakeOverrideFunction(it, ktElement) },
-                    propertyDescriptor.setter?.let { generateFakeOverrideFunction(it, ktElement) }
-            )
+    private fun generateFakeOverrideProperty(propertyDescriptor: PropertyDescriptor, ktElement: KtPureElement): IrProperty =
+        PropertyGenerator(this).generateFakeOverrideProperty(propertyDescriptor, ktElement)
 
-    private fun generateFakeOverrideFunction(functionDescriptor: FunctionDescriptor, ktElement: KtElement): IrFunction =
-            FunctionGenerator(this).generateFakeOverrideFunction(functionDescriptor, ktElement)
+    private fun generateFakeOverrideFunction(functionDescriptor: FunctionDescriptor, ktElement: KtPureElement): IrSimpleFunction =
+        FunctionGenerator(this).generateFakeOverrideFunction(functionDescriptor, ktElement)
 }
 
 abstract class DeclarationGeneratorExtension(val declarationGenerator: DeclarationGenerator) : Generator {
     override val context: GeneratorContext get() = declarationGenerator.context
 
     inline fun <T : IrDeclaration> T.buildWithScope(builder: (T) -> Unit): T =
-            also { irDeclaration ->
-                context.symbolTable.withScope(irDeclaration.descriptor) {
-                    builder(irDeclaration)
-                }
+        also { irDeclaration ->
+            context.symbolTable.withScope(irDeclaration.descriptor) {
+                builder(irDeclaration)
             }
+        }
+
+    fun KotlinType.toIrType() = with(declarationGenerator) { toIrType() }
 }
 
 fun Generator.createBodyGenerator(scopeOwnerSymbol: IrSymbol) =
-        BodyGenerator(scopeOwnerSymbol, context)
+    BodyGenerator(scopeOwnerSymbol, context)

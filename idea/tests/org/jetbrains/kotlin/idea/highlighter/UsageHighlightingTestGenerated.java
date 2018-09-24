@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.highlighter;
@@ -32,37 +21,41 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 public class UsageHighlightingTestGenerated extends AbstractUsageHighlightingTest {
+    private void runTest(String testDataFilePath) throws Exception {
+        KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+    }
+
     public void testAllFilesPresentInUsageHighlighter() throws Exception {
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/usageHighlighter"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
     }
 
+    @TestMetadata("implicitIt.kt")
+    public void testImplicitIt() throws Exception {
+        runTest("idea/testData/usageHighlighter/implicitIt.kt");
+    }
+
     @TestMetadata("importAlias.kt")
     public void testImportAlias() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/usageHighlighter/importAlias.kt");
-        doTest(fileName);
+        runTest("idea/testData/usageHighlighter/importAlias.kt");
     }
 
     @TestMetadata("labeledAnonymousFun.kt")
     public void testLabeledAnonymousFun() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/usageHighlighter/labeledAnonymousFun.kt");
-        doTest(fileName);
+        runTest("idea/testData/usageHighlighter/labeledAnonymousFun.kt");
     }
 
     @TestMetadata("labeledLambda.kt")
     public void testLabeledLambda() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/usageHighlighter/labeledLambda.kt");
-        doTest(fileName);
+        runTest("idea/testData/usageHighlighter/labeledLambda.kt");
     }
 
     @TestMetadata("labeledLoop.kt")
     public void testLabeledLoop() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/usageHighlighter/labeledLoop.kt");
-        doTest(fileName);
+        runTest("idea/testData/usageHighlighter/labeledLoop.kt");
     }
 
     @TestMetadata("localVal.kt")
     public void testLocalVal() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/usageHighlighter/localVal.kt");
-        doTest(fileName);
+        runTest("idea/testData/usageHighlighter/localVal.kt");
     }
 }

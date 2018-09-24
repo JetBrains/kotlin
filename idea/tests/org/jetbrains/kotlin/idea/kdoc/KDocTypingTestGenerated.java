@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.kdoc;
@@ -32,55 +21,51 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 public class KDocTypingTestGenerated extends AbstractKDocTypingTest {
+    private void runTest(String testDataFilePath) throws Exception {
+        KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+    }
+
     public void testAllFilesPresentInTyping() throws Exception {
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/kdoc/typing"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
     }
 
     @TestMetadata("closingBracketNotInLink.kt")
     public void testClosingBracketNotInLink() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/kdoc/typing/closingBracketNotInLink.kt");
-        doTest(fileName);
+        runTest("idea/testData/kdoc/typing/closingBracketNotInLink.kt");
     }
 
     @TestMetadata("closingBracketOvertype.kt")
     public void testClosingBracketOvertype() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/kdoc/typing/closingBracketOvertype.kt");
-        doTest(fileName);
+        runTest("idea/testData/kdoc/typing/closingBracketOvertype.kt");
     }
 
     @TestMetadata("closingBracketOvertypeEmpty.kt")
     public void testClosingBracketOvertypeEmpty() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/kdoc/typing/closingBracketOvertypeEmpty.kt");
-        doTest(fileName);
+        runTest("idea/testData/kdoc/typing/closingBracketOvertypeEmpty.kt");
     }
 
     @TestMetadata("closingBracketRefLinkOvertype.kt")
     public void testClosingBracketRefLinkOvertype() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/kdoc/typing/closingBracketRefLinkOvertype.kt");
-        doTest(fileName);
+        runTest("idea/testData/kdoc/typing/closingBracketRefLinkOvertype.kt");
     }
 
     @TestMetadata("closingParenOvertype.kt")
     public void testClosingParenOvertype() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/kdoc/typing/closingParenOvertype.kt");
-        doTest(fileName);
+        runTest("idea/testData/kdoc/typing/closingParenOvertype.kt");
     }
 
     @TestMetadata("openingBracket.kt")
     public void testOpeningBracket() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/kdoc/typing/openingBracket.kt");
-        doTest(fileName);
+        runTest("idea/testData/kdoc/typing/openingBracket.kt");
     }
 
     @TestMetadata("openingBracketRefLink.kt")
     public void testOpeningBracketRefLink() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/kdoc/typing/openingBracketRefLink.kt");
-        doTest(fileName);
+        runTest("idea/testData/kdoc/typing/openingBracketRefLink.kt");
     }
 
     @TestMetadata("openingParen.kt")
     public void testOpeningParen() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/kdoc/typing/openingParen.kt");
-        doTest(fileName);
+        runTest("idea/testData/kdoc/typing/openingParen.kt");
     }
 }

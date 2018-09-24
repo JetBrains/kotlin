@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.codeInsight.smartEnter
@@ -1406,6 +1395,89 @@ class SmartEnterTest : KotlinLightCodeInsightFixtureTestCase() {
 
             val b = ""
             """
+    )
+
+    fun testEmptyLine() = doFileTest(
+        """fun foo() {}
+<caret>""",
+        """fun foo() {}
+
+<caret>"""
+    )
+
+    fun testValueArgumentList1() = doFileTest(
+        """
+        fun foo(i: Int) = 1
+        fun test1() {
+            foo(1<caret>
+        }
+        """,
+        """
+        fun foo(i: Int) = 1
+        fun test1() {
+            foo(1)<caret>
+        }
+        """
+    )
+
+    fun testValueArgumentList2() = doFileTest(
+        """
+        fun foo(i: Int) = 1
+        fun test2() {
+            foo(foo(1<caret>
+        }
+        """,
+        """
+        fun foo(i: Int) = 1
+        fun test2() {
+            foo(foo(1))<caret>
+        }
+        """
+    )
+
+    fun testValueArgumentList3() = doFileTest(
+        """
+        fun foo(i: Int) = 1
+        fun test3() {
+            foo(<caret>
+        }
+        """,
+        """
+        fun foo(i: Int) = 1
+        fun test3() {
+            foo(<caret>)
+        }
+        """
+    )
+
+    fun testValueArgumentList4() = doFileTest(
+        """
+        fun foo(i: Int) = 1
+        fun test4() {
+            foo(1,<caret>
+        }
+        """,
+        """
+        fun foo(i: Int) = 1
+        fun test4() {
+            foo(1, <caret>)
+        }
+        """
+    )
+
+    fun testValueArgumentList5() = doFileTest(
+        """
+        class Foo(i: Int)
+        fun test5() {
+            Foo(1<caret>
+        }
+        """,
+        """
+        class Foo(i: Int)
+        fun test5() {
+            Foo(1)<caret>
+        }
+        """
     )
 
     fun doFunTest(before: String, after: String) {

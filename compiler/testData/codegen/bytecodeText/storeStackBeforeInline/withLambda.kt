@@ -1,4 +1,10 @@
-inline fun bar(x: String, block: (String) -> String) = "def" + block(x)
+inline fun <T> runAfterLoop(fn: () -> T): T {
+    for (i in 1..2);
+    return fn()
+}
+
+inline fun bar(x: String, block: (String) -> String) = runAfterLoop { "def" + block(x) }
+
 fun foobar(x: String, y: String, z: String) = x + y + z
 
 fun foo() : String {
@@ -6,6 +12,6 @@ fun foo() : String {
 }
 
 // 6 ASTORE
-// 16 ALOAD
+// 18 ALOAD
 // 1 MAXLOCALS = 7
 // 0 InlineMarker

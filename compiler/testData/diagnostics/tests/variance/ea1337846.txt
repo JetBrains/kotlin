@@ -6,4 +6,4 @@ public interface ComputablePath</*0*/ NumberType : kotlin.Number, /*1*/ PointTyp
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
-public typealias EachSegmentComparator</*0*/ SegmentType>  = (currentSegment: SegmentType, otherSegment: SegmentType, relationship: kotlin.Int) -> kotlin.Boolean
+public typealias EachSegmentComparator</*0*/ SegmentType> = (currentSegment: SegmentType, otherSegment: SegmentType, relationship: kotlin.Int) -> kotlin.Boolean

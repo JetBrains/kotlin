@@ -18,14 +18,14 @@ package org.jetbrains.kotlin.diagnostics.rendering
 
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.MemberDescriptor
-import org.jetbrains.kotlin.resolve.checkers.ExpectedActualDeclarationChecker.Compatibility.Incompatible
+import org.jetbrains.kotlin.resolve.multiplatform.ExpectedActualResolver.Compatibility.Incompatible
 
 class PlatformIncompatibilityDiagnosticRenderer(
-        private val mode: MultiplatformDiagnosticRenderingMode
+    private val mode: MultiplatformDiagnosticRenderingMode
 ) : DiagnosticParameterRenderer<Map<Incompatible, Collection<MemberDescriptor>>> {
     override fun render(
-            obj: Map<Incompatible, Collection<MemberDescriptor>>,
-            renderingContext: RenderingContext
+        obj: Map<Incompatible, Collection<MemberDescriptor>>,
+        renderingContext: RenderingContext
     ): String {
         if (obj.isEmpty()) return ""
 
@@ -42,11 +42,11 @@ class PlatformIncompatibilityDiagnosticRenderer(
 }
 
 class IncompatibleExpectedActualClassScopesRenderer(
-        private val mode: MultiplatformDiagnosticRenderingMode
+    private val mode: MultiplatformDiagnosticRenderingMode
 ) : DiagnosticParameterRenderer<List<Pair<MemberDescriptor, Map<Incompatible, Collection<MemberDescriptor>>>>> {
     override fun render(
-            obj: List<Pair<MemberDescriptor, Map<Incompatible, Collection<MemberDescriptor>>>>,
-            renderingContext: RenderingContext
+        obj: List<Pair<MemberDescriptor, Map<Incompatible, Collection<MemberDescriptor>>>>,
+        renderingContext: RenderingContext
     ): String {
         if (obj.isEmpty()) return ""
 
@@ -82,10 +82,10 @@ open class MultiplatformDiagnosticRenderingMode {
 }
 
 private fun StringBuilder.renderIncompatibilityInformation(
-        map: Map<Incompatible, Collection<MemberDescriptor>>,
-        indent: String,
-        context: RenderingContext,
-        mode: MultiplatformDiagnosticRenderingMode
+    map: Map<Incompatible, Collection<MemberDescriptor>>,
+    indent: String,
+    context: RenderingContext,
+    mode: MultiplatformDiagnosticRenderingMode
 ) {
     for ((incompatibility, descriptors) in map) {
         append(indent)
@@ -101,7 +101,7 @@ private fun StringBuilder.renderIncompatibilityInformation(
 
         if (incompatibility is Incompatible.ClassScopes) {
             append(indent)
-            append("No actuals are found for expected members listed below:")
+            append("No actual members are found for expected members listed below:")
             mode.newLine(this)
             renderIncompatibleClassScopes(incompatibility.unfulfilled, indent, context, mode)
         }
@@ -109,10 +109,10 @@ private fun StringBuilder.renderIncompatibilityInformation(
 }
 
 private fun StringBuilder.renderIncompatibleClassScopes(
-        unfulfilled: List<Pair<MemberDescriptor, Map<Incompatible, Collection<MemberDescriptor>>>>,
-        indent: String,
-        context: RenderingContext,
-        mode: MultiplatformDiagnosticRenderingMode
+    unfulfilled: List<Pair<MemberDescriptor, Map<Incompatible, Collection<MemberDescriptor>>>>,
+    indent: String,
+    context: RenderingContext,
+    mode: MultiplatformDiagnosticRenderingMode
 ) {
     mode.renderList(this, unfulfilled.indices.map { index ->
         {

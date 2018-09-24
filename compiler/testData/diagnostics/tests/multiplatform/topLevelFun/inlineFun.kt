@@ -8,7 +8,7 @@ expect fun nonInlineFun()
 // MODULE: m2-jvm(m1-common)
 // FILE: jvm.kt
 
-<!ACTUAL_WITHOUT_EXPECT!>actual fun inlineFun()<!> { }
+<!ACTUAL_WITHOUT_EXPECT!>actual<!> fun inlineFun() { }
 actual fun nonInlineFun() { }
 
 // MODULE: m3-js(m1-common)

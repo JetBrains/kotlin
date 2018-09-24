@@ -28,12 +28,14 @@ import com.intellij.util.containers.MultiMap
 import org.jetbrains.kotlin.asJava.namedUnwrappedElement
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.refactoring.*
 import org.jetbrains.kotlin.idea.references.KtReference
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.idea.runSynchronouslyWithProgress
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
+import org.jetbrains.kotlin.idea.util.application.progressIndicatorNullable
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.load.java.JvmAbi
@@ -43,7 +45,6 @@ import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.siblings
-import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCall
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.utils.findFunction
@@ -97,7 +98,7 @@ class ConvertPropertyToFunctionIntention : SelfTargetingIntention<KtProperty>(Kt
                 runReadAction {
                     val progressStep = 1.0/callables.size
                     for ((i, callable) in callables.withIndex()) {
-                        ProgressManager.getInstance().progressIndicator.fraction = (i + 1)*progressStep
+                        ProgressManager.getInstance().progressIndicatorNullable!!.fraction = (i + 1)*progressStep
 
                         if (callable !is PsiNamedElement) continue
 
@@ -191,12 +192,11 @@ class ConvertPropertyToFunctionIntention : SelfTargetingIntention<KtProperty>(Kt
     override fun isApplicableTo(element: KtProperty, caretOffset: Int): Boolean {
         val identifier = element.nameIdentifier ?: return false
         if (!identifier.textRange.containsOffset(caretOffset)) return false
-        return element.delegate == null && !element.isVar && !element.isLocal
+        return element.delegate == null && !element.isVar && !element.isLocal && (element.initializer == null || element.getter == null)
     }
 
     override fun applyTo(element: KtProperty, editor: Editor?) {
-        val context = element.analyze()
-        val descriptor = context[BindingContext.DECLARATION_TO_DESCRIPTOR, element] as? CallableDescriptor ?: return
+        val descriptor = element.resolveToDescriptorIfAny(BodyResolveMode.FULL) as? CallableDescriptor ?: return
         Converter(element.project, descriptor).run()
     }
 }

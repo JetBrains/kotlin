@@ -1,4 +1,5 @@
-// EXPECTED_REACHABLE_NODES: 1016
+// IGNORE_BACKEND: JS_IR
+// EXPECTED_REACHABLE_NODES: 1303
 package foo
 
 fun foo(i: Int): String = "foo" + i

@@ -1,0 +1,3 @@
+[NotNull Values]
+7 	val <bold>x = foo</bold>
+7 		val <bold>x = foo</bold>

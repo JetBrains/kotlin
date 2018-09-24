@@ -1,5 +1,6 @@
 // FULL_JDK
 // WITH_RUNTIME
+// LANGUAGE_VERSION: 1.1
 import java.util.stream.*
 
 class B<F> : List<F> {

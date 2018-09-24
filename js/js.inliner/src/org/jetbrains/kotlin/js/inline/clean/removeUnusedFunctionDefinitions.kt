@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.backend.ast.metadata.isLocal
 import org.jetbrains.kotlin.js.backend.ast.metadata.staticRef
 import org.jetbrains.kotlin.js.inline.util.IdentitySet
-import org.jetbrains.kotlin.js.inline.util.collectFunctionReferencesInside
+import org.jetbrains.kotlin.js.inline.util.collectReferencedNames
 
 /**
  * Removes unused function definitions:
@@ -93,13 +93,13 @@ private class UnusedLocalFunctionsCollector(private val functions: Map<JsName, J
     }
 
     private fun processLocalFunction(name: JsName, function: JsFunction) {
-        for (referenced in collectFunctionReferencesInside(function)) {
+        for (referenced in collectReferencedNames(function)) {
             tracker.addRemovableReference(name, referenced)
         }
     }
 
     private fun processNonLocalFunction(function: JsFunction) {
-        for (referenced in collectFunctionReferencesInside(function)) {
+        for (referenced in collectReferencedNames(function)) {
             tracker.markReachable(referenced)
         }
     }

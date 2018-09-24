@@ -18,10 +18,10 @@ package org.jetbrains.kotlin.resolve;
 
 import kotlin.Pair;
 import kotlin.Unit;
+import kotlin.annotations.jvm.Mutable;
 import kotlin.collections.CollectionsKt;
 import kotlin.jvm.functions.Function1;
 import kotlin.jvm.functions.Function2;
-import org.jetbrains.annotations.Mutable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
@@ -625,7 +625,7 @@ public class OverridingUtil {
         boolean allInvisible = visibleOverridables.isEmpty();
         Collection<CallableMemberDescriptor> effectiveOverridden = allInvisible ? overridables : visibleOverridables;
 
-        Modality modality = determineModality(effectiveOverridden);
+        Modality modality = determineModalityForFakeOverride(effectiveOverridden, current);
         Visibility visibility = allInvisible ? Visibilities.INVISIBLE_FAKE : Visibilities.INHERITED;
 
         // FIXME doesn't work as expected for flexible types: should create a refined signature.
@@ -652,7 +652,10 @@ public class OverridingUtil {
     }
 
     @NotNull
-    private static Modality determineModality(@NotNull Collection<CallableMemberDescriptor> descriptors) {
+    private static Modality determineModalityForFakeOverride(
+            @NotNull Collection<CallableMemberDescriptor> descriptors,
+            @NotNull ClassDescriptor current
+    ) {
         // Optimization: avoid creating hash sets in frequent cases when modality can be computed trivially
         boolean hasOpen = false;
         boolean hasAbstract = false;
@@ -671,25 +674,44 @@ public class OverridingUtil {
             }
         }
 
-        if (hasOpen && !hasAbstract) return Modality.OPEN;
-        if (!hasOpen && hasAbstract) return Modality.ABSTRACT;
+        // Fake overrides of abstract members in non-abstract expected classes should not be abstract, because otherwise it would be
+        // impossible to inherit a non-expected class from that expected class in common code.
+        // We're making their modality that of the containing class, because this is the least confusing behavior for the users.
+        // However, it may cause problems if we reuse resolution results of common code when compiling platform code (see KT-15220)
+        boolean transformAbstractToClassModality =
+                current.isExpect() && (current.getModality() != Modality.ABSTRACT && current.getModality() != Modality.SEALED);
+
+        if (hasOpen && !hasAbstract) {
+            return Modality.OPEN;
+        }
+        if (!hasOpen && hasAbstract) {
+            return transformAbstractToClassModality ? current.getModality() : Modality.ABSTRACT;
+        }
 
         Set<CallableMemberDescriptor> allOverriddenDeclarations = new HashSet<CallableMemberDescriptor>();
         for (CallableMemberDescriptor descriptor : descriptors) {
             allOverriddenDeclarations.addAll(getOverriddenDeclarations(descriptor));
         }
-        return getMinimalModality(filterOutOverridden(allOverriddenDeclarations));
+        return getMinimalModality(filterOutOverridden(allOverriddenDeclarations), transformAbstractToClassModality, current.getModality());
     }
 
     @NotNull
-    private static Modality getMinimalModality(@NotNull Collection<CallableMemberDescriptor> descriptors) {
-        Modality modality = Modality.ABSTRACT;
+    private static Modality getMinimalModality(
+            @NotNull Collection<CallableMemberDescriptor> descriptors,
+            boolean transformAbstractToClassModality,
+            @NotNull Modality classModality
+    ) {
+        Modality result = Modality.ABSTRACT;
         for (CallableMemberDescriptor descriptor : descriptors) {
-            if (descriptor.getModality().compareTo(modality) < 0) {
-                modality = descriptor.getModality();
+            Modality effectiveModality =
+                    transformAbstractToClassModality && descriptor.getModality() == Modality.ABSTRACT
+                    ? classModality
+                    : descriptor.getModality();
+            if (effectiveModality.compareTo(result) < 0) {
+                result = effectiveModality;
             }
         }
-        return modality;
+        return result;
     }
 
     @NotNull
@@ -818,7 +840,11 @@ public class OverridingUtil {
         }
         else {
             assert memberDescriptor instanceof PropertyAccessorDescriptorImpl;
-            ((PropertyAccessorDescriptorImpl) memberDescriptor).setVisibility(visibilityToInherit);
+            PropertyAccessorDescriptorImpl propertyAccessorDescriptor = (PropertyAccessorDescriptorImpl) memberDescriptor;
+            propertyAccessorDescriptor.setVisibility(visibilityToInherit);
+            if (visibilityToInherit != propertyAccessorDescriptor.getCorrespondingProperty().getVisibility()) {
+                propertyAccessorDescriptor.setDefault(false);
+            }
         }
     }
 

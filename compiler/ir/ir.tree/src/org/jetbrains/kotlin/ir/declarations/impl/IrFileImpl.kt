@@ -22,25 +22,39 @@ import org.jetbrains.kotlin.ir.IrElementBase
 import org.jetbrains.kotlin.ir.SourceManager
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.symbols.IrFileSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrFileSymbolImpl
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.utils.SmartList
-import java.util.*
 
 class IrFileImpl(
-        override val fileEntry: SourceManager.FileEntry,
-        override val symbol: IrFileSymbol
-) : IrElementBase(0, fileEntry.maxOffset), IrFile {
-    constructor(fileEntry: SourceManager.FileEntry, packageFragmentDescriptor: PackageFragmentDescriptor)
-            : this(fileEntry, IrFileSymbolImpl(packageFragmentDescriptor))
+    override val fileEntry: SourceManager.FileEntry,
+    override val symbol: IrFileSymbol,
+    override val fqName: FqName
+) :
+    IrElementBase(0, fileEntry.maxOffset),
+    IrFile {
 
     constructor(
-            fileEntry: SourceManager.FileEntry,
-            packageFragmentDescriptor: PackageFragmentDescriptor,
-            fileAnnotations: List<AnnotationDescriptor>,
-            declarations: List<IrDeclaration>
+        fileEntry: SourceManager.FileEntry,
+        symbol: IrFileSymbol
+    ) :
+            this(fileEntry, symbol, symbol.descriptor.fqName)
+
+    constructor(
+        fileEntry: SourceManager.FileEntry,
+        packageFragmentDescriptor: PackageFragmentDescriptor
+    ) :
+            this(fileEntry, IrFileSymbolImpl(packageFragmentDescriptor), packageFragmentDescriptor.fqName)
+
+    constructor(
+        fileEntry: SourceManager.FileEntry,
+        packageFragmentDescriptor: PackageFragmentDescriptor,
+        fileAnnotations: List<AnnotationDescriptor>,
+        declarations: List<IrDeclaration>
     ) : this(fileEntry, packageFragmentDescriptor) {
         this.fileAnnotations.addAll(fileAnnotations)
         this.declarations.addAll(declarations)
@@ -56,8 +70,10 @@ class IrFileImpl(
 
     override val declarations: MutableList<IrDeclaration> = ArrayList()
 
+    override val annotations: MutableList<IrCall> = ArrayList()
+
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
-            visitor.visitFile(this, data)
+        visitor.visitFile(this, data)
 
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
         declarations.forEach { it.accept(visitor, data) }

@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 // LANGUAGE_VERSION: 1.2
 
 var result = ""
@@ -52,6 +53,34 @@ fun box(): String {
     result = ""
     val b = A().B().test()
     if (b != "A.amf,A.ef,A.amp,A.ep,B.mf,B.mp,B.ef,B.ep,") return "Fail $b"
+
+    result = ""
+    with(A()) {
+        (::memberFunction)()
+        (::aExtensionFunction)()
+
+        (::memberProperty)()
+        (::aExtensionProperty)()
+    }
+    if (result != "A.mf,A.ef,A.mp,A.ep,") return "Fail $result"
+
+    result = ""
+    with(A()) {
+        with(B()) {
+            (::aMemberFunction)()
+            (::aExtensionFunction)()
+
+            (::aMemberProperty)()
+            (::aExtensionProperty)()
+
+            (::memberFunction)()
+            (::memberProperty)()
+
+            (::bExtensionFunction)()
+            (::bExtensionProperty)()
+        }
+    }
+    if (result != "A.amf,A.ef,A.amp,A.ep,B.mf,B.mp,B.ef,B.ep,") return "Fail $result"
 
     return "OK"
 }

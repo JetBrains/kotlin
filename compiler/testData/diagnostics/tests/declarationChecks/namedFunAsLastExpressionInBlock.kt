@@ -1,3 +1,4 @@
+// !WITH_NEW_INFERENCE
 // !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_ANONYMOUS_PARAMETER -UNUSED_VARIABLE
 // !CHECK_TYPE
 fun foo(block: () -> (() -> Int)) {}
@@ -54,5 +55,5 @@ fun success() {
     run2 { fun named2() = 1 }
 
     val x = run { fun named3() = 1 }
-    x checkType { _<Unit>() }
+    x checkType { <!NI;DEBUG_INFO_UNRESOLVED_WITH_TARGET, NI;UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><Unit>() }
 }

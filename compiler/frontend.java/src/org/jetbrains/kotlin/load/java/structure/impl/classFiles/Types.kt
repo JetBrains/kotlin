@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.load.java.structure.impl.classFiles
 
+import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.load.java.structure.*
 import org.jetbrains.kotlin.name.FqName
@@ -39,9 +40,18 @@ internal class PlainJavaClassifierType(
         get() = typeArguments.isEmpty() &&
                 classifierResolverResult.classifier?.safeAs<JavaClass>()?.typeParameters?.isNotEmpty() == true
 
-    // TODO: support type annotations
-    override val annotations get() = emptyList<JavaAnnotation>()
-    override fun findAnnotation(fqName: FqName) = null
+    private var _annotations = emptyList<JavaAnnotation>()
+    override val annotations get() = _annotations
+
+    override fun findAnnotation(fqName: FqName) = annotations.find { it.classId?.asSingleFqName() == fqName }
+
+    internal fun addAnnotation(annotation: JavaAnnotation) {
+        if (_annotations.isEmpty()) {
+            _annotations = ContainerUtil.newSmartList()
+        }
+
+        (_annotations as MutableList).add(annotation)
+    }
 
     override val isDeprecatedInJavaDoc get() = false
 

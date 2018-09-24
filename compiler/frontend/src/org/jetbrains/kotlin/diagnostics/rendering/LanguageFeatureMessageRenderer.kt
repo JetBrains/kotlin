@@ -20,9 +20,9 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 
 class LanguageFeatureMessageRenderer @JvmOverloads constructor(
-        private val type: Type,
-        private val useHtml: Boolean = false
-): DiagnosticParameterRenderer<Pair<LanguageFeature, LanguageVersionSettings>> {
+    private val type: Type,
+    private val useHtml: Boolean = false
+) : DiagnosticParameterRenderer<Pair<LanguageFeature, LanguageVersionSettings>> {
 
     enum class Type {
         UNSUPPORTED,
@@ -58,8 +58,7 @@ class LanguageFeatureMessageRenderer @JvmOverloads constructor(
         if (hintUrl != null) {
             if (useHtml) {
                 sb.append(" (").append("see more <a href=\"").append(hintUrl).append("\">here</a>)")
-            }
-            else {
+            } else {
                 sb.append(" (see: ").append(hintUrl).append(")")
             }
         }

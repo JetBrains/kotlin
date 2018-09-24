@@ -1,0 +1,20 @@
+package
+
+public fun manyArguments(): Outer.Nested<kotlin.Any?>
+public fun nested(): Outer.Nested<kotlin.Int>
+public fun noArguments(): Outer.Nested<kotlin.Any?>
+public fun noArgumentsExpectedType(): Outer.Nested<kotlin.String>
+
+public final class Outer {
+    public constructor Outer()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    public final class Nested</*0*/ T> {
+        public constructor Nested</*0*/ T>()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

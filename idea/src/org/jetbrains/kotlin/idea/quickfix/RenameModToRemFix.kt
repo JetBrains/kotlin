@@ -41,7 +41,7 @@ class RenameModToRemFix(element: KtNamedFunction, val newName: Name) : KotlinQui
 
     companion object Factory : KotlinSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic): IntentionAction? {
-            if (diagnostic.factory != Errors.DEPRECATED_BINARY_MOD) return null
+            if (diagnostic.factory != Errors.DEPRECATED_BINARY_MOD && diagnostic.factory != Errors.FORBIDDEN_BINARY_MOD) return null
 
             val operatorMod = diagnostic.psiElement.getNonStrictParentOfType<KtNamedFunction>() ?: return null
             val newName = REM_TO_MOD_OPERATION_NAMES.inverse()[operatorMod.nameAsName] ?: return null

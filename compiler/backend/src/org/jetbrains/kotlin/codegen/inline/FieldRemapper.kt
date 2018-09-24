@@ -68,7 +68,7 @@ open class FieldRemapper(
 
         val insnNode = capturedFieldAccess[currentInstruction] as FieldInsnNode
         if (canProcess(insnNode.owner, insnNode.name, true)) {
-            insnNode.name = CAPTURED_FIELD_FOLD_PREFIX + getFieldNameForFolding(insnNode)
+            insnNode.name = Companion.foldName(getFieldNameForFolding(insnNode))
             insnNode.opcode = Opcodes.GETSTATIC
 
             node.remove(InsnSequence(capturedFieldAccess[0], insnNode))
@@ -95,4 +95,9 @@ open class FieldRemapper(
 
     open fun getFieldForInline(node: FieldInsnNode, prefix: StackValue?): StackValue? =
             MethodInliner.findCapturedField(node, this).remapValue
+
+    companion object {
+        fun foldName(fieldName: String) =
+                CAPTURED_FIELD_FOLD_PREFIX + fieldName
+    }
 }

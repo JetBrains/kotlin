@@ -1,6 +1,6 @@
 UFile (package = ) [public final class Simple {...]
     UClass (name = Simple) [public final class Simple {...}]
-        UField (name = property) [private final var property: java.lang.String = "Mary"]
+        UField (name = property) [@org.jetbrains.annotations.NotNull private final var property: java.lang.String = "Mary"]
             UAnnotation (fqName = org.jetbrains.annotations.NotNull) [@org.jetbrains.annotations.NotNull]
             ULiteralExpression (value = "Mary") ["Mary"] = "Mary"
         UAnnotationMethod (name = method) [public final fun method() : void {...}]

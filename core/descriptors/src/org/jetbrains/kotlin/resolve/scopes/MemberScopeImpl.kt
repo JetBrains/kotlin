@@ -42,6 +42,8 @@ abstract class MemberScopeImpl : MemberScope {
                     DescriptorKindFilter.VARIABLES, alwaysTrue()
             ).filterIsInstance<VariableDescriptor>().mapTo(mutableSetOf()) { it.name }
 
+    override fun getClassifierNames(): Set<Name>? = null
+
     // This method should not be implemented here by default: every scope class has its unique structure pattern
     abstract override fun printScopeStructure(p: Printer)
 }

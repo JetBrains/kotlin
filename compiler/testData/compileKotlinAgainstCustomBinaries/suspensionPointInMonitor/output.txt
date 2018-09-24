@@ -1,0 +1,10 @@
+compiler/testData/compileKotlinAgainstCustomBinaries/suspensionPointInMonitor/source.kt:10:13: error: the 'suspensionPoint' suspension point is inside a critical section
+            suspensionPoint()
+            ^
+compiler/testData/compileKotlinAgainstCustomBinaries/suspensionPointInMonitor/source.kt:14:13: error: the 'suspensionPoint' suspension point is inside a critical section
+            suspensionPoint()
+            ^
+compiler/testData/compileKotlinAgainstCustomBinaries/suspensionPointInMonitor/source.kt:19:15: error: the 'suspensionPoint' suspension point is inside a critical section
+            { suspensionPoint() }
+              ^
+COMPILATION_ERROR

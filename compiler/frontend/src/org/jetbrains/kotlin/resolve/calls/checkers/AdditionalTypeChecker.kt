@@ -25,17 +25,18 @@ import org.jetbrains.kotlin.types.KotlinType
 
 interface AdditionalTypeChecker {
     fun checkType(
-            expression: KtExpression,
-            expressionType: KotlinType,
-            expressionTypeWithSmartCast: KotlinType,
-            c: ResolutionContext<*>
+        expression: KtExpression,
+        expressionType: KotlinType,
+        expressionTypeWithSmartCast: KotlinType,
+        c: ResolutionContext<*>
     )
 
     fun checkReceiver(
-            receiverParameter: ReceiverParameterDescriptor,
-            receiverArgument: ReceiverValue,
-            safeAccess: Boolean,
-            c: CallResolutionContext<*>
-    ) { }
+        receiverParameter: ReceiverParameterDescriptor,
+        receiverArgument: ReceiverValue,
+        safeAccess: Boolean,
+        c: CallResolutionContext<*>
+    ) {
+    }
 
 }

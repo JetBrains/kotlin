@@ -1,4 +1,5 @@
-// EXPECTED_REACHABLE_NODES: 995
+// IGNORE_BACKEND: JS_IR
+// EXPECTED_REACHABLE_NODES: 1281
 import Test.test
 
 external object Test {

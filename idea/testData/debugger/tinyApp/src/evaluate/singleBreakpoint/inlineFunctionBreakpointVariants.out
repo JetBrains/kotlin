@@ -1,8 +1,7 @@
-LineBreakpoint created at inlineFunctionBreakpointVariants.kt:8 lambdaOrdinal = -1
+LineBreakpoint created at inlineFunctionBreakpointVariants.kt:7 lambdaOrdinal = -1
 Run Java
 Connected to the target VM
-inlineFunctionBreakpointVariants.kt:8
-inlineFunctionBreakpointVariants.kt:8
+inlineFunctionBreakpointVariants.kt:7
 Disconnected from the target VM
 
 Process finished with exit code 0

@@ -1,0 +1,6 @@
+// SKIP_ERRORS_BEFORE
+// SKIP_ERRORS_AFTER
+var x
+    set(value) {
+        field = value
+    }

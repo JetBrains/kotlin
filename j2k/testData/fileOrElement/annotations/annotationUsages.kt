@@ -13,7 +13,8 @@ import javaApi.*
 @Anon8(classes = arrayOf(String::class, StringBuilder::class))
 internal class C {
     @Anon5(1)
-    @Deprecated("") private val field1 = 0
+    @Deprecated("")
+    private val field1 = 0
 
     @Anon5(1)
     private val field2 = 0

@@ -130,36 +130,6 @@ public abstract class KotlinDebuggerTestCase extends DescriptorTestCase {
         super.setUp();
     }
 
-    @Override
-    protected void runTest() throws Throwable {
-        super.runTest();
-        if(getDebugProcess() != null) {
-            getDebugProcess().getProcessHandler().startNotify();
-            waitProcess(getDebugProcess().getProcessHandler());
-            waitForCompleted();
-            //disposeSession(myDebuggerSession);
-            assertNull(DebuggerManagerEx.getInstanceEx(myProject).getDebugProcess(getDebugProcess().getProcessHandler()));
-            myDebuggerSession = null;
-        }
-
-        if (getChecker().contains("JVMTI_ERROR_WRONG_PHASE(112)")) {
-            myRestart.incrementAndGet();
-            if (needsRestart()) {
-                return;
-            }
-        } else {
-            myRestart.set(0);
-        }
-
-        throwExceptionsIfAny();
-        checkTestOutput();
-    }
-
-    private boolean needsRestart() {
-        int restart = myRestart.get();
-        return restart > 0 && restart <= 3;
-    }
-
     private static void deleteLocalCacheDirectory(boolean assertDeleteSuccess) {
         System.out.println("-- Remove local cache directory --");
         boolean deleteResult = FilesKt.deleteRecursively(LOCAL_CACHE_DIR);
@@ -203,10 +173,14 @@ public abstract class KotlinDebuggerTestCase extends DescriptorTestCase {
             ourOutputRootField.setAccessible(true);
 
             if (!LOCAL_CACHE_DIR.exists()) {
+
+                LOCAL_CACHE_JAR_DIR.mkdirs();
+                LOCAL_CACHE_APP_DIR.mkdirs();
+
                 boolean result =
-                        LOCAL_CACHE_DIR.mkdir() &&
-                        LOCAL_CACHE_JAR_DIR.mkdir() &&
-                        LOCAL_CACHE_APP_DIR.mkdir();
+                        LOCAL_CACHE_DIR.exists() &&
+                        LOCAL_CACHE_JAR_DIR.exists() &&
+                        LOCAL_CACHE_APP_DIR.exists();
 
                 Assert.assertTrue("Failure on local cache directories creation", result);
 
@@ -278,7 +252,10 @@ public abstract class KotlinDebuggerTestCase extends DescriptorTestCase {
                 MockLibraryUtil.compileKotlin(sourcesDir, outDir, CUSTOM_LIBRARY_JAR.getPath());
 
                 List<String> options =
-                        Arrays.asList("-d", outputDirPath, "-classpath", ForTestCompileRuntime.runtimeJarForTests().getPath(), "-g");
+                        Arrays.asList("-d", outputDirPath, "-classpath",
+                                      ForTestCompileRuntime.runtimeJarForTests().getPath() + File.pathSeparator +
+                                      ForTestCompileRuntime.jetbrainsAnnotationsForTests().getPath(),
+                                      "-g");
                 KotlinTestUtils.compileJavaFiles(findJavaFiles(new File(sourcesDir)), options);
 
                 DexLikeBytecodePatchKt.patchDexTests(outDir);

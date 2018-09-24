@@ -1,0 +1,10 @@
+compiler/testData/cli/jvm/progressive/dataClassOverridingCopy.kt:5:1: warning: function 'copy' generated for the data class has default values for parameters, and conflicts with member of supertype 'WithCopy'
+data class Test(val str: String): WithCopy<String>
+^
+compiler/testData/cli/jvm/progressive/nonConstValueAsVarargInAnnotation.kt:5:15: warning: an annotation argument must be a compile-time constant
+@Anno(value = nonConstArray)
+              ^
+compiler/testData/cli/jvm/progressive/valReassignmentViaBackingField.kt:3:9: warning: reassignment of read-only property via backing field is deprecated
+        field++
+        ^
+OK

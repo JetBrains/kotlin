@@ -18,13 +18,14 @@ package org.jetbrains.kotlin.idea.quickfix.createFromUsage.createVariable
 
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
-import org.jetbrains.kotlin.idea.caches.resolve.analyzeFullyAndGetResult
+import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithAllCompilerChecks
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil
-import org.jetbrains.kotlin.idea.refactoring.canRefactor
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.guessTypes
+import org.jetbrains.kotlin.idea.refactoring.canRefactor
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinParameterInfo
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinTypeInfo
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinValVar
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
@@ -37,7 +38,7 @@ object CreateParameterByNamedArgumentActionFactory: CreateParameterFromUsageFact
     }
 
     override fun extractFixData(element: KtValueArgument, diagnostic: Diagnostic): CreateParameterData<KtValueArgument>? {
-        val result = (diagnostic.psiFile as? KtFile)?.analyzeFullyAndGetResult() ?: return null
+        val result = (diagnostic.psiFile as? KtFile)?.analyzeWithAllCompilerChecks() ?: return null
         val context = result.bindingContext
 
         val name = element.getArgumentName()?.text ?: return null
@@ -58,11 +59,14 @@ object CreateParameterByNamedArgumentActionFactory: CreateParameterFromUsageFact
         } ?: anyType
         if (paramType.hasTypeParametersToAdd(functionDescriptor, context)) return null
 
+        val needVal = callable is KtPrimaryConstructor && ((callable.getContainingClassOrObject() as? KtClass)?.isData() ?: false)
+
         val parameterInfo = KotlinParameterInfo(
                 callableDescriptor = functionDescriptor,
                 name = name,
                 originalTypeInfo = KotlinTypeInfo(false, paramType),
-                defaultValueForCall = argumentExpression
+                defaultValueForCall = argumentExpression,
+                valOrVar = if (needVal) KotlinValVar.Val else KotlinValVar.None
         )
 
         return CreateParameterData(parameterInfo, element)

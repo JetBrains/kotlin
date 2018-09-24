@@ -22,7 +22,7 @@ import org.jetbrains.uast.UThrowExpression
 
 class KotlinUThrowExpression(
         override val psi: KtThrowExpression,
-        override val uastParent: UElement?
-) : KotlinAbstractUExpression(), UThrowExpression, KotlinUElementWithType {
+        givenParent: UElement?
+) : KotlinAbstractUExpression(givenParent), UThrowExpression, KotlinUElementWithType {
     override val thrownExpression by lz { KotlinConverter.convertOrEmpty(psi.thrownExpression, this) }
 }

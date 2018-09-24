@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 1000
+// EXPECTED_REACHABLE_NODES: 1288
 package foo
 
 // workaround for Rhino

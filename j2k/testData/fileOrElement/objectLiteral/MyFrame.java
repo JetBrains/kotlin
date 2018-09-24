@@ -8,7 +8,9 @@ interface WindowListener {
 interface EmptyWindowListener {
 }
 
-open class EmptyWindowAdapter : EmptyWindowListener {}
+class EmptyWindowAdapter implements EmptyWindowListener {
+
+}
 
 class WindowAdapter implements WindowListener {
   public void windowClosing () {

@@ -2,6 +2,7 @@
   <dictionary name="Nikolay.Krasko">
     <words>
       <w>accessors</w>
+      <w>coroutines</w>
       <w>crossinline</w>
       <w>fqname</w>
       <w>goto</w>
@@ -12,6 +13,7 @@
       <w>memoize</w>
       <w>memoized</w>
       <w>multiline</w>
+      <w>navigatable</w>
       <w>preload</w>
       <w>preloader</w>
       <w>preloading</w>

@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.incremental
 
+import com.intellij.testFramework.UsefulTestCase
 import com.intellij.util.containers.HashMap
 import org.jetbrains.kotlin.TestWithWorkingDir
 import org.jetbrains.kotlin.cli.common.ExitCode
@@ -23,9 +24,6 @@ import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.incremental.testingUtils.*
 import org.jetbrains.kotlin.incremental.utils.TestCompilationResult
 import org.junit.Assert
-import org.junit.Test
-import org.junit.runner.RunWith
-import org.junit.runners.Parameterized
 import java.io.File
 
 abstract class AbstractIncrementalCompilerRunnerTestBase<Args : CommonCompilerArguments> : TestWithWorkingDir() {
@@ -83,7 +81,13 @@ abstract class AbstractIncrementalCompilerRunnerTestBase<Args : CommonCompilerAr
         }
 
         if (expectedSBWithoutErrors.toString() != actualSBWithoutErrors.toString()) {
-            Assert.assertEquals(expectedSB.toString(), actualSB.toString())
+            if (BuildLogFinder.isJpsLogFile(buildLogFile)) {
+                // JPS logs should be updated carefully, because standalone logs are a bit different (no removed classes, iterations, etc)
+                Assert.assertEquals(expectedSB.toString(), actualSB.toString())
+            }
+            else {
+                UsefulTestCase.assertSameLinesWithFile(buildLogFile.canonicalPath, actualSB.toString(), false)
+            }
         }
 
         // todo: also compare caches
@@ -97,7 +101,7 @@ abstract class AbstractIncrementalCompilerRunnerTestBase<Args : CommonCompilerAr
             Assert.assertEquals("Rebuild exit code differs from incremental exit code", rebuildExpectedToSucceed, rebuildSucceeded)
 
             if (rebuildSucceeded) {
-                assertEqualDirectories(outDir, rebuildOutDir, forgiveExtraFiles = rebuildSucceeded)
+                assertEqualDirectories(rebuildOutDir, outDir, forgiveExtraFiles = false)
             }
         }
     }
@@ -110,20 +114,17 @@ abstract class AbstractIncrementalCompilerRunnerTestBase<Args : CommonCompilerAr
     private fun stepLogAsString(step: Int, ktSources: Iterable<String>, errors: Collection<String>, includeErrors: Boolean = true): String {
         val sb = StringBuilder()
 
-        sb.appendLine("<======= STEP $step =======>")
+        sb.appendLine("================ Step #$step =================")
         sb.appendLine()
-        sb.appendLine("Compiled kotlin sources:")
-        ktSources.toSet().toTypedArray().sortedArray().forEach { sb.appendLine(it) }
-        sb.appendLine()
+        sb.appendLine("Compiling files:")
+        ktSources.toSet().toTypedArray().sortedArray().forEach { sb.appendLine("  $it") }
+        sb.appendLine("End of files")
+        sb.appendLine("Exit code: ${if (errors.isEmpty()) "OK" else "ABORT"}")
 
-        if (errors.isEmpty()) {
-            sb.appendLine("SUCCESS")
-        }
-        else {
-            sb.appendLine("FAILURE")
-            if (includeErrors) {
-                errors.filter(String::isNotEmpty).forEach { sb.appendLine(it) }
-            }
+        if (errors.isNotEmpty() && includeErrors) {
+            sb.appendLine("------------------------------------------")
+            sb.appendLine("COMPILATION FAILED")
+            errors.filter(String::isNotEmpty).forEach { sb.appendLine(it) }
         }
 
         return sb.toString()
@@ -136,6 +137,11 @@ abstract class AbstractIncrementalCompilerRunnerTestBase<Args : CommonCompilerAr
 
     companion object {
         @JvmStatic
-        protected val bootstrapKotlincLib: File = File("dependencies/bootstrap-compiler/Kotlin/kotlinc/lib")
+        private val distKotlincLib: File = File("dist/kotlinc/lib")
+
+        @JvmStatic
+        protected val kotlinStdlibJvm: File = File(distKotlincLib, "kotlin-stdlib.jar").also {
+            UsefulTestCase.assertExists(it)
+        }
     }
 }

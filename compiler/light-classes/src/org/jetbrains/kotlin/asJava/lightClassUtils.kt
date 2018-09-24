@@ -20,23 +20,19 @@ import com.intellij.psi.*
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
-import org.jetbrains.kotlin.asJava.classes.KtLightClassForScript
-import org.jetbrains.kotlin.asJava.elements.KtLightAnnotationForSourceEntry
-import org.jetbrains.kotlin.asJava.elements.KtLightElement
-import org.jetbrains.kotlin.asJava.elements.KtLightIdentifier
-import org.jetbrains.kotlin.asJava.elements.KtLightMethod
+import org.jetbrains.kotlin.asJava.elements.*
+import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.java.propertyNameByGetMethodName
 import org.jetbrains.kotlin.load.java.propertyNameBySetMethodName
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.isExtensionDeclaration
 
-fun KtClassOrObject.toLightClass(): KtLightClass? = LightClassGenerationSupport.getInstance(project).getLightClass(this)
+fun KtClassOrObject.toLightClass(): KtLightClass? = KotlinAsJavaSupport.getInstance(project).getLightClass(this)
 
 fun KtClassOrObject.toLightClassWithBuiltinMapping(): PsiClass? {
     toLightClass()?.let { return it }
@@ -48,18 +44,18 @@ fun KtClassOrObject.toLightClassWithBuiltinMapping(): PsiClass? {
 }
 
 fun KtFile.findFacadeClass(): KtLightClass? {
-    return LightClassGenerationSupport.getInstance(project)
+    return KotlinAsJavaSupport.getInstance(project)
             .getFacadeClassesInPackage(packageFqName, this.useScope as? GlobalSearchScope ?: GlobalSearchScope.projectScope(project))
             .firstOrNull { it is KtLightClassForFacade && this in it.files } as? KtLightClass
 }
 
-fun KtScript.toLightClass(): KtLightClassForScript? = LightClassGenerationSupport.getInstance(project).getLightClassForScript(this)
+fun KtScript.toLightClass(): KtLightClass? = KotlinAsJavaSupport.getInstance(project).getLightClassForScript(this)
 
 fun KtElement.toLightElements(): List<PsiNamedElement> =
         when (this) {
             is KtClassOrObject -> listOfNotNull(toLightClass())
             is KtNamedFunction,
-            is KtSecondaryConstructor -> LightClassUtil.getLightClassMethods(this as KtFunction)
+            is KtConstructor<*> -> LightClassUtil.getLightClassMethods(this as KtFunction)
             is KtProperty -> LightClassUtil.getLightClassPropertyMethods(this).allDeclarations
             is KtPropertyAccessor -> listOfNotNull(LightClassUtil.getLightClassAccessorMethod(this))
             is KtParameter -> mutableListOf<PsiNamedElement>().also { elements ->
@@ -119,6 +115,10 @@ private fun KtParameter.toAnnotationLightMethod(): PsiMethod? {
     return LightClassUtil.getLightClassMethod(this)
 }
 
+fun KtParameter.toLightGetter(): PsiMethod? = LightClassUtil.getLightClassPropertyMethods(this).getter
+
+fun KtParameter.toLightSetter(): PsiMethod? = LightClassUtil.getLightClassPropertyMethods(this).setter
+
 fun KtTypeParameter.toPsiTypeParameters(): List<PsiTypeParameter> {
     val paramList = getNonStrictParentOfType<KtTypeParameterList>() ?: return listOf()
 
@@ -136,7 +136,7 @@ val PsiElement.unwrapped: PsiElement?
     get() = when {
         this is KtLightElement<*, *> -> kotlinOrigin
         this is KtLightIdentifier -> origin
-        this is KtLightAnnotationForSourceEntry.LightExpressionValue<*> -> originalExpression
+        this is KtLightElementBase -> kotlinOrigin
         else -> this
     }
 
@@ -160,13 +160,29 @@ private val DEFAULT_IMPLS_CLASS_NAME = Name.identifier(JvmAbi.DEFAULT_IMPLS_CLAS
 fun FqName.defaultImplsChild() = child(DEFAULT_IMPLS_CLASS_NAME)
 
 @Suppress("unused")
-fun KtAnnotationEntry.toLightAnnotation(): PsiAnnotation? {
+fun KtElement.toLightAnnotation(): PsiAnnotation? {
     val ktDeclaration = getStrictParentOfType<KtModifierList>()?.parent as? KtDeclaration ?: return null
     for (lightElement in ktDeclaration.toLightElements()) {
         if (lightElement !is PsiModifierListOwner) continue
-        lightElement.modifierList?.annotations?.firstOrNull { it is KtLightAnnotationForSourceEntry && it.kotlinOrigin == this }?.let { return it }
+        for (rootAnnotation in lightElement.modifierList?.annotations ?: continue) {
+            for (annotation in rootAnnotation.withNestedAnnotations()) {
+                if (annotation is KtLightAnnotationForSourceEntry && annotation.kotlinOrigin == this)
+                    return annotation
+            }
+        }
     }
     return null
+}
+
+private fun PsiAnnotation.withNestedAnnotations(): Sequence<PsiAnnotation> {
+    fun handleValue(memberValue: PsiAnnotationMemberValue?): Sequence<PsiAnnotation> =
+        when (memberValue) {
+            is PsiArrayInitializerMemberValue ->
+                memberValue.initializers.asSequence().flatMap { handleValue(it) }
+            is PsiAnnotation -> memberValue.withNestedAnnotations()
+            else -> emptySequence()
+        }
+    return sequenceOf(this) + parameterList.attributes.asSequence().flatMap { handleValue(it.value) }
 }
 
 fun propertyNameByAccessor(name: String, accessor: KtLightMethod): String? {

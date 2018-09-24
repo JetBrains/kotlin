@@ -1,7 +1,7 @@
 // FLOW: IN
 
 open class A {
-    constructor(<caret>n: Int, s: String = "???")
+    @JvmOverloads constructor(<caret>n: Int, s: String = "???")
 }
 
 class B1: A(1)

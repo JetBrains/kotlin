@@ -1,4 +1,3 @@
-// FULL_JDK
 // WITH_RUNTIME
 
 fun test1() {

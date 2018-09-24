@@ -1,0 +1,8 @@
+package
+
+public fun a(): kotlin.Unit
+public fun b(): kotlin.Unit
+public fun c(): kotlin.Unit
+public fun d(): kotlin.Unit
+public fun e(): kotlin.Unit
+public fun </*0*/ T> materialize(): T

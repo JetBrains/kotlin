@@ -1,0 +1,3 @@
+[NotNull Values]
+17 	val <bold>y = b.foo</bold>
+17 		val <bold>y = b.foo</bold>

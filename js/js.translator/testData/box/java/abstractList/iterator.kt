@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 1053
+// EXPECTED_REACHABLE_NODES: 1340
 package foo
 
 class MyList<T>(vararg val data: T) : AbstractList<T>() {

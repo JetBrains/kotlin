@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.refactoring
 import com.google.gson.JsonParser
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.io.FileUtil
+import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.refactoring.BaseRefactoringProcessor
@@ -26,22 +27,14 @@ import com.intellij.refactoring.classMembers.MemberInfoBase
 import com.intellij.refactoring.util.CommonRefactoringUtil
 import com.intellij.testFramework.fixtures.JavaCodeInsightTestFixture
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.KtPsiClassWrapper
-import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
-import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
-import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.psi.NotNullableUserDataProperty
-import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.util.findElementsByCommentPrefix
 import java.io.File
 
 abstract class AbstractMemberPullPushTest : KotlinLightCodeInsightFixtureTestCase() {
-    override fun getProjectDescriptor() = KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
-
     val fixture: JavaCodeInsightTestFixture get() = myFixture
-
-    override fun getTestDataPath() = PluginTestCaseBase.getTestDataPathBase()
 
     protected fun doTest(path: String, action: (mainFile: PsiFile) -> Unit) {
         val mainFile = File(path)
@@ -58,11 +51,6 @@ abstract class AbstractMemberPullPushTest : KotlinLightCodeInsightFixtureTestCas
         val extraFilesToPsi = extraFiles.associateBy { fixture.configureByFile(it.name) }
         val file = fixture.configureByFile(mainFileName)
 
-        val addKotlinRuntime = InTextDirectivesUtils.findStringWithPrefixes(file.text, "// WITH_RUNTIME") != null
-        if (addKotlinRuntime) {
-            ConfigLibraryUtil.configureKotlinRuntimeAndSdk(myModule, PluginTestCaseBase.mockJdk())
-        }
-
         try {
             markMembersInfo(file)
             extraFilesToPsi.keys.forEach(::markMembersInfo)
@@ -70,6 +58,9 @@ abstract class AbstractMemberPullPushTest : KotlinLightCodeInsightFixtureTestCas
             action(file)
 
             assert(!conflictFile.exists()) { "Conflict file $conflictFile should not exist" }
+
+            PsiDocumentManager.getInstance(project).commitAllDocuments()
+
             KotlinTestUtils.assertEqualsToFile(afterFile, file.text!!)
             for ((extraPsiFile, extraFile) in extraFilesToPsi) {
                 KotlinTestUtils.assertEqualsToFile(File("${extraFile.path}.after"), extraPsiFile.text)
@@ -83,14 +74,7 @@ abstract class AbstractMemberPullPushTest : KotlinLightCodeInsightFixtureTestCas
             }
             KotlinTestUtils.assertEqualsToFile(conflictFile, message)
         }
-        finally {
-            if (addKotlinRuntime) {
-                ConfigLibraryUtil.unConfigureKotlinRuntimeAndSdk(myModule, PluginTestCaseBase.mockJdk())
-            }
-        }
     }
-
-
 }
 
 internal fun markMembersInfo(file: PsiFile) {

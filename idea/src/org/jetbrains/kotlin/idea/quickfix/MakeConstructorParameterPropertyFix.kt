@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.idea.quickfix
 import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
-import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinValVar
@@ -40,9 +39,9 @@ class MakeConstructorParameterPropertyFix(
     override fun getText() =
             "Make constructor parameter a property$suffix"
 
-    override fun isAvailable(project: Project, editor: Editor?, file: PsiFile): Boolean {
+    override fun isAvailable(project: Project, editor: Editor?, file: KtFile): Boolean {
         val element = element ?: return false
-        return super.isAvailable(project, editor, file) && !element.hasValOrVar()
+        return !element.hasValOrVar()
     }
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {

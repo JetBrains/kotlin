@@ -1,0 +1,16 @@
+class Foo {
+    companion object {
+        fun bar(n: Int) {}
+        operator fun invoke(n: Int) {}
+        operator fun get(n: Int) {}
+    }
+}
+
+fun test() {
+    val x = 1
+    Foo.bar(123)
+    Foo(123)
+    Foo[123]
+    val y: Foo.Companion
+    val z: Foo.Companion?
+}

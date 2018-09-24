@@ -1,0 +1,38 @@
+package
+
+public val u: kotlin.String
+public val x: [ERROR : No type, no body]
+public val x1: kotlin.Nothing
+public val x2: kotlin.String
+public var x3: kotlin.Int
+public val x4: [ERROR : Error function type]
+public val x5: kotlin.Nothing?
+public val y1: kotlin.collections.List<kotlin.Nothing>
+public val y2: kotlin.collections.List<kotlin.Int>
+public val y5: kotlin.Nothing
+public val z2: kotlin.collections.List<kotlin.Int>
+public fun </*0*/ E> bar(): kotlin.collections.List<E>
+public fun </*0*/ E> foo(): E
+public fun </*0*/ E> id(/*0*/ x: E): E
+public fun </*0*/ E> l(/*0*/ x: E): kotlin.collections.List<E>
+
+public final class A {
+    public constructor A()
+    public final val x: kotlin.Int
+    public final val y: kotlin.Int
+    public final val y2: kotlin.Int
+    public final val z: kotlin.collections.List<kotlin.String>
+    public final val z2: kotlin.collections.List<kotlin.collections.List<kotlin.String>>
+    public final val </*0*/ T> T.u: T
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public object Outer {
+    private constructor Outer()
+    private final var x: Outer.<get-x>.<no name provided>
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

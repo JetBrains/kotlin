@@ -17,14 +17,13 @@
 package org.jetbrains.kotlin.idea.quickfix.createFromUsage.createCallable
 
 import com.intellij.psi.PsiClass
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.CallableInfo
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.ParameterInfo
-import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.SecondaryConstructorInfo
+import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.ConstructorInfo
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.TypeInfo
 import org.jetbrains.kotlin.idea.refactoring.canRefactor
 import org.jetbrains.kotlin.psi.KtClass
@@ -45,7 +44,7 @@ object CreateConstructorFromDelegationCallActionFactory : CreateCallableMemberFr
 
         val project = currentClass.project
 
-        val classDescriptor = currentClass.resolveToDescriptorIfAny() as? ClassDescriptor ?: return null
+        val classDescriptor = currentClass.resolveToDescriptorIfAny() ?: return null
 
         val targetClass = if (calleeExpression.isThis) {
             currentClass
@@ -65,6 +64,6 @@ object CreateConstructorFromDelegationCallActionFactory : CreateCallableMemberFr
             )
         }
 
-        return SecondaryConstructorInfo(parameters, targetClass)
+        return ConstructorInfo(parameters, targetClass)
     }
 }

@@ -1,3 +1,4 @@
+// !WITH_NEW_INFERENCE
 package kt606_dependents
 
 //KT-1489 Code analyzer fails with assertion
@@ -18,7 +19,7 @@ class C {
     fun p() : Resource? = null
 
     fun bar() {
-        <!TYPE_INFERENCE_UPPER_BOUND_VIOLATED!>foo<!>(p()) {
+        <!OI;TYPE_INFERENCE_UPPER_BOUND_VIOLATED!>foo<!>(<!NI;TYPE_MISMATCH!>p()<!>) {
 
         }
     }

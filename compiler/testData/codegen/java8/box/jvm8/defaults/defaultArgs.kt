@@ -1,7 +1,9 @@
+// !API_VERSION: 1.3
+// !JVM_DEFAULT_MODE: enable
 // JVM_TARGET: 1.8
-// KOTLIN_CONFIGURATION_FLAGS: +JVM.JVM8_TARGET_WITH_DEFAULTS
-
+// WITH_RUNTIME
 interface Z {
+    @JvmDefault
     fun test(s: String = "OK"): String {
         return s
     }

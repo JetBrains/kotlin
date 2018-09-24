@@ -1,24 +1,17 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.codegen;
 
+import com.intellij.psi.PsiElement;
+import kotlin.collections.CollectionsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.backend.common.CodegenUtil;
 import org.jetbrains.kotlin.backend.common.bridges.ImplKt;
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.codegen.context.ClassContext;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.descriptors.*;
@@ -27,15 +20,24 @@ import org.jetbrains.kotlin.psi.synthetics.SyntheticClassOrObjectDescriptor;
 import org.jetbrains.kotlin.psi.synthetics.SyntheticClassOrObjectDescriptorKt;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
+import org.jetbrains.kotlin.resolve.InlineClassesUtilsKt;
+import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin;
+import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature;
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter;
 import org.jetbrains.kotlin.resolve.scopes.MemberScope;
+import org.jetbrains.kotlin.types.KotlinType;
+import org.jetbrains.org.objectweb.asm.Type;
+import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
+import org.jetbrains.org.objectweb.asm.commons.Method;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
+import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isJvmInterface;
 import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.enumEntryNeedSubclass;
+import static org.jetbrains.kotlin.resolve.DescriptorToSourceUtils.descriptorToDeclaration;
+import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE;
+import static org.jetbrains.kotlin.resolve.jvm.annotations.JvmAnnotationUtilKt.hasJvmDefaultAnnotation;
+import static org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind.CLASS_MEMBER_DELEGATION_TO_DEFAULT_IMPL;
 
 public abstract class ClassBodyCodegen extends MemberCodegen<KtPureClassOrObject> {
     @NotNull
@@ -63,7 +65,7 @@ public abstract class ClassBodyCodegen extends MemberCodegen<KtPureClassOrObject
     @Override
     protected void generateBody() {
         List<KtObjectDeclaration> companions = new ArrayList<>();
-        if (kind != OwnerKind.DEFAULT_IMPLS) {
+        if (kind != OwnerKind.DEFAULT_IMPLS && kind != OwnerKind.ERASED_INLINE_CLASS) {
             //generate nested classes first and only then generate class body. It necessary to access to nested CodegenContexts
             for (KtDeclaration declaration : myClass.getDeclarations()) {
                 if (shouldProcessFirst(declaration)) {
@@ -91,17 +93,13 @@ public abstract class ClassBodyCodegen extends MemberCodegen<KtPureClassOrObject
             generatePrimaryConstructorProperties();
             generateConstructors();
             generateDefaultImplsIfNeeded();
+            generateErasedInlineClassIfNeeded();
+            generateUnboxMethodForInlineClass();
         }
 
         // Generate _declared_ companions
         for (KtObjectDeclaration companion : companions) {
             genClassOrObject(companion);
-        }
-
-        // Generate synthetic (non-declared) companion if needed
-        ClassDescriptor companionObjectDescriptor = descriptor.getCompanionObjectDescriptor();
-        if (companionObjectDescriptor instanceof SyntheticClassOrObjectDescriptor) {
-            genSyntheticClassOrObject((SyntheticClassOrObjectDescriptor) companionObjectDescriptor);
         }
 
         // Generate synthetic nested classes
@@ -150,13 +148,13 @@ public abstract class ClassBodyCodegen extends MemberCodegen<KtPureClassOrObject
                state.getGenerateDeclaredClassFilter().shouldGenerateClassMembers((KtClassOrObject) myClass);
     }
 
-    protected void generateConstructors() {
+    protected void generateConstructors() {}
 
-    }
+    protected void generateDefaultImplsIfNeeded() {}
 
-    protected void generateDefaultImplsIfNeeded() {
+    protected void generateErasedInlineClassIfNeeded() {}
 
-    }
+    protected void generateUnboxMethodForInlineClass() {}
 
     private static boolean shouldProcessFirst(KtDeclaration declaration) {
         return !(declaration instanceof KtProperty || declaration instanceof KtNamedFunction);
@@ -178,16 +176,26 @@ public abstract class ClassBodyCodegen extends MemberCodegen<KtPureClassOrObject
     }
 
     private void generatePrimaryConstructorProperties() {
+        ClassConstructorDescriptor constructor = CollectionsKt.firstOrNull(descriptor.getConstructors());
+        if (constructor == null) return;
+
         boolean isAnnotation = descriptor.getKind() == ClassKind.ANNOTATION_CLASS;
+        FunctionDescriptor expectedAnnotationConstructor =
+                isAnnotation && constructor.isActual()
+                ? CodegenUtil.findExpectedFunctionForActual(constructor)
+                : null;
+
         for (KtParameter p : getPrimaryConstructorParameters()) {
             if (p.hasValOrVar()) {
                 PropertyDescriptor propertyDescriptor = bindingContext.get(BindingContext.PRIMARY_CONSTRUCTOR_PARAMETER, p);
                 if (propertyDescriptor != null) {
-                    if (!isAnnotation) {
-                        propertyCodegen.generatePrimaryConstructorProperty(p, propertyDescriptor);
+                    if (isAnnotation) {
+                        propertyCodegen.generateConstructorPropertyAsMethodForAnnotationClass(
+                                p, propertyDescriptor, expectedAnnotationConstructor
+                        );
                     }
                     else {
-                        propertyCodegen.generateConstructorPropertyAsMethodForAnnotationClass(p, propertyDescriptor);
+                        propertyCodegen.generatePrimaryConstructorProperty(p, propertyDescriptor);
                     }
                 }
             }
@@ -206,5 +214,122 @@ public abstract class ClassBodyCodegen extends MemberCodegen<KtPureClassOrObject
     @Override
     protected ClassDescriptor classForInnerClassRecord() {
         return InnerClassConsumer.Companion.classForInnerClassRecord(descriptor, false);
+    }
+
+    protected void generateDelegatesToDefaultImpl() {
+        if (isJvmInterface(descriptor)) return;
+
+        for (Map.Entry<FunctionDescriptor, FunctionDescriptor> entry : CodegenUtil.getNonPrivateTraitMethods(descriptor).entrySet()) {
+            FunctionDescriptor interfaceFun = entry.getKey();
+            //skip java 8 default methods
+            if (!CodegenUtilKt.isDefinitelyNotDefaultImplsMethod(interfaceFun) && !hasJvmDefaultAnnotation(interfaceFun)) {
+                generateDelegationToDefaultImpl(interfaceFun, entry.getValue());
+            }
+        }
+    }
+
+    private void generateDelegationToDefaultImpl(@NotNull FunctionDescriptor interfaceFun, @NotNull FunctionDescriptor inheritedFun) {
+
+        functionCodegen.generateMethod(
+                new JvmDeclarationOrigin(CLASS_MEMBER_DELEGATION_TO_DEFAULT_IMPL, descriptorToDeclaration(interfaceFun), interfaceFun),
+                inheritedFun,
+                new FunctionGenerationStrategy.CodegenBased(state) {
+                    @Override
+                    public void doGenerateBody(@NotNull ExpressionCodegen codegen, @NotNull JvmMethodSignature signature) {
+                        DeclarationDescriptor containingDeclaration = interfaceFun.getContainingDeclaration();
+                        if (!DescriptorUtils.isInterface(containingDeclaration)) return;
+
+                        DeclarationDescriptor declarationInheritedFun = inheritedFun.getContainingDeclaration();
+                        PsiElement classForInheritedFun = descriptorToDeclaration(declarationInheritedFun);
+                        if (classForInheritedFun instanceof KtDeclaration) {
+                            codegen.markLineNumber((KtElement) classForInheritedFun, false);
+                        }
+
+                        ClassDescriptor containingTrait = (ClassDescriptor) containingDeclaration;
+                        Type traitImplType = typeMapper.mapDefaultImpls(containingTrait);
+
+                        FunctionDescriptor originalInterfaceFun = interfaceFun.getOriginal();
+                        Method traitMethod = typeMapper.mapAsmMethod(originalInterfaceFun, OwnerKind.DEFAULT_IMPLS);
+
+                        putArgumentsOnStack(codegen, signature, traitMethod);
+                        InstructionAdapter iv = codegen.v;
+
+                        if (KotlinBuiltIns.isCloneable(containingTrait) && traitMethod.getName().equals("clone")) {
+                            // A special hack for Cloneable: there's no kotlin/Cloneable$DefaultImpls class at runtime,
+                            // and its 'clone' method is actually located in java/lang/Object
+                            iv.invokespecial("java/lang/Object", "clone", "()Ljava/lang/Object;", false);
+                        }
+                        else {
+                            iv.invokestatic(traitImplType.getInternalName(), traitMethod.getName(), traitMethod.getDescriptor(), false);
+                        }
+
+                        Type returnType = signature.getReturnType();
+                        StackValue.onStack(traitMethod.getReturnType(), originalInterfaceFun.getReturnType()).put(returnType, iv);
+                        iv.areturn(returnType);
+                    }
+
+                    private void putArgumentsOnStack(
+                            @NotNull ExpressionCodegen codegen,
+                            @NotNull JvmMethodSignature signature,
+                            @NotNull Method defaultImplsMethod
+                    ) {
+                        InstructionAdapter iv = codegen.v;
+                        Type[] myArgTypes = signature.getAsmMethod().getArgumentTypes();
+                        Type[] toArgTypes = defaultImplsMethod.getArgumentTypes();
+                        boolean isErasedInlineClass =
+                                InlineClassesUtilsKt.isInlineClass(descriptor) && kind == OwnerKind.ERASED_INLINE_CLASS;
+
+                        int myArgI = 0;
+                        int argVar = 0;
+
+                        Type receiverType = typeMapper.mapType(descriptor);
+                        KotlinType interfaceKotlinType = ((ClassDescriptor) inheritedFun.getContainingDeclaration()).getDefaultType();
+                        StackValue.local(argVar, receiverType, descriptor.getDefaultType())
+                                .put(OBJECT_TYPE, interfaceKotlinType, iv);
+                        if (isErasedInlineClass) myArgI++;
+                        argVar += receiverType.getSize();
+
+                        int toArgI = 1;
+
+                        List<ParameterDescriptor> myParameters = getParameters(inheritedFun);
+                        List<ParameterDescriptor> toParameters = getParameters(interfaceFun);
+                        assert myParameters.size() == toParameters.size() :
+                                "Inconsistent value parameters between delegating fun " + inheritedFun +
+                                "and interface fun " + interfaceFun;
+
+                        Iterator<ParameterDescriptor> myParametersIterator = myParameters.iterator();
+                        Iterator<ParameterDescriptor> toParametersIterator = toParameters.iterator();
+                        for (; myArgI < myArgTypes.length; myArgI++, toArgI++) {
+                            Type myArgType = myArgTypes[myArgI];
+                            Type toArgType = toArgTypes[toArgI];
+
+                            KotlinType myArgKotlinType = myParametersIterator.hasNext() ? myParametersIterator.next().getType() : null;
+                            KotlinType toArgKotlinType = toParametersIterator.hasNext() ? toParametersIterator.next().getType() : null;
+
+                            StackValue.local(argVar, myArgType, myArgKotlinType)
+                                    .put(toArgType, toArgKotlinType, iv);
+                            argVar += myArgType.getSize();
+                        }
+
+                        assert toArgI == toArgTypes.length :
+                                "Invalid trait implementation signature: " + signature +
+                                " vs " + defaultImplsMethod + " for " + interfaceFun;
+                    }
+
+                    private List<ParameterDescriptor> getParameters(FunctionDescriptor functionDescriptor) {
+                        List<ParameterDescriptor> valueParameterDescriptors =
+                                new ArrayList<>(functionDescriptor.getValueParameters().size() + 1);
+
+                        ReceiverParameterDescriptor extensionReceiverParameter = functionDescriptor.getExtensionReceiverParameter();
+                        if (extensionReceiverParameter != null) {
+                            valueParameterDescriptors.add(extensionReceiverParameter);
+                        }
+
+                        valueParameterDescriptors.addAll(functionDescriptor.getValueParameters());
+
+                        return valueParameterDescriptors;
+                    }
+                }
+        );
     }
 }

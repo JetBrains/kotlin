@@ -18,13 +18,19 @@ package org.jetbrains.kotlin.ir.declarations
 
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.types.Variance
 
 interface IrTypeParameter : IrSymbolDeclaration<IrTypeParameterSymbol> {
-    override val declarationKind: IrDeclarationKind
-        get() = IrDeclarationKind.TYPE_PARAMETER
-
     override val descriptor: TypeParameterDescriptor
+
+    val name: Name
+    val variance: Variance
+    val index: Int
+    val isReified: Boolean
+    val superTypes: MutableList<IrType>
 
     override fun <D> transform(transformer: IrElementTransformer<D>, data: D): IrTypeParameter
 }

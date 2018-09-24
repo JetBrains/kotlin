@@ -1,3 +1,8 @@
+/*
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
+ */
+
 package kotlin
 
 /**
@@ -43,20 +48,18 @@ public class KotlinVersion(val major: Int, val minor: Int, val patch: Int) : Com
      * Returns `true` if this version is not less than the version specified
      * with the provided [major] and [minor] components.
      */
-    public fun isAtLeast(major: Int, minor: Int): Boolean =
-            // or this.version >= versionOf(major, minor, 0)
-            this.major > major || (this.major == major &&
-                    this.minor >= minor)
+    public fun isAtLeast(major: Int, minor: Int): Boolean = // this.version >= versionOf(major, minor, 0)
+        this.major > major || (this.major == major &&
+                this.minor >= minor)
 
     /**
      * Returns `true` if this version is not less than the version specified
      * with the provided [major], [minor] and [patch] components.
      */
-    public fun isAtLeast(major: Int, minor: Int, patch: Int): Boolean =
-            // or this.version >= versionOf(major, minor, patch)
-            this.major > major || (this.major == major &&
-                    (this.minor > minor || this.minor == minor &&
-                            this.patch >= patch))
+    public fun isAtLeast(major: Int, minor: Int, patch: Int): Boolean = // this.version >= versionOf(major, minor, patch)
+        this.major > major || (this.major == major &&
+                (this.minor > minor || this.minor == minor &&
+                        this.patch >= patch))
 
     companion object {
         /**
@@ -68,8 +71,7 @@ public class KotlinVersion(val major: Int, val minor: Int, val patch: Int) : Com
         /**
          * Returns the current version of the Kotlin standard library.
          */
-        // TODO: get from metadata or hardcode automatically during build
         @kotlin.jvm.JvmField
-        public val CURRENT: KotlinVersion = KotlinVersion(1, 1, 50)
+        public val CURRENT: KotlinVersion = KotlinVersion(1, 3, 0) // value is written here automatically during build
     }
 }

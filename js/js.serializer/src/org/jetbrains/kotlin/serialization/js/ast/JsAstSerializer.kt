@@ -109,6 +109,7 @@ class JsAstSerializer(private val pathResolver: (File) -> String) {
         val builder = ClassModel.newBuilder()
         builder.nameId = serialize(classModel.name)
         classModel.superName?.let { builder.superNameId = serialize(it) }
+        classModel.interfaces.forEach { builder.addInterfaceNameId(serialize(it)) }
         if (classModel.postDeclarationBlock.statements.isNotEmpty()) {
             builder.postDeclarationBlock = serializeBlock(classModel.postDeclarationBlock)
         }
@@ -195,6 +196,7 @@ class JsAstSerializer(private val pathResolver: (File) -> String) {
                 switchBuilder.expression = serialize(x.expression)
                 for (case in x.cases) {
                     val entryBuilder = SwitchEntry.newBuilder()
+                    withLocation(case, { entryBuilder.fileId = it }, { entryBuilder.location = it }) {}
                     if (case is JsCase) {
                         entryBuilder.label = serialize(case.caseExpression)
                     }
@@ -262,7 +264,7 @@ class JsAstSerializer(private val pathResolver: (File) -> String) {
             }
         }
 
-        withLocation(statement, { visitor.builder.fileId = it }, {visitor.builder.location = it }) {
+        withLocation(statement, { visitor.builder.fileId = it }, { visitor.builder.location = it }) {
             statement.accept(visitor)
         }
 
@@ -558,6 +560,11 @@ class JsAstSerializer(private val pathResolver: (File) -> String) {
         SpecialFunction.WRAP_FUNCTION -> JsAstProtoBuf.SpecialFunction.WRAP_FUNCTION
         SpecialFunction.TO_BOXED_CHAR -> JsAstProtoBuf.SpecialFunction.TO_BOXED_CHAR
         SpecialFunction.UNBOX_CHAR -> JsAstProtoBuf.SpecialFunction.UNBOX_CHAR
+        SpecialFunction.SUSPEND_CALL -> JsAstProtoBuf.SpecialFunction.SUSPEND_CALL
+        SpecialFunction.COROUTINE_RESULT -> JsAstProtoBuf.SpecialFunction.COROUTINE_RESULT
+        SpecialFunction.COROUTINE_CONTROLLER -> JsAstProtoBuf.SpecialFunction.COROUTINE_CONTROLLER
+        SpecialFunction.COROUTINE_RECEIVER -> JsAstProtoBuf.SpecialFunction.COROUTINE_RECEIVER
+        SpecialFunction.SET_COROUTINE_RESULT -> JsAstProtoBuf.SpecialFunction.SET_COROUTINE_RESULT
     }
 
     private fun serialize(name: JsName): Int = nameMap.getOrPut(name) {

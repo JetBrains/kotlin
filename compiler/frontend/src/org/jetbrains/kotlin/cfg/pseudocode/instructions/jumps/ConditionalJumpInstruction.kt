@@ -26,11 +26,12 @@ import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionVisitorWithRe
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionVisitor
 
 class ConditionalJumpInstruction(
-        element: KtElement,
-        val onTrue: Boolean,
-        blockScope: BlockScope,
-        targetLabel: Label,
-        private val conditionValue: PseudoValue?) : AbstractJumpInstruction(element, targetLabel, blockScope) {
+    element: KtElement,
+    val onTrue: Boolean,
+    blockScope: BlockScope,
+    targetLabel: Label,
+    private val conditionValue: PseudoValue?
+) : AbstractJumpInstruction(element, targetLabel, blockScope) {
     private var _nextOnTrue: Instruction? = null
     private var _nextOnFalse: Instruction? = null
 
@@ -67,5 +68,5 @@ class ConditionalJumpInstruction(
     }
 
     override fun createCopy(newLabel: Label, blockScope: BlockScope): AbstractJumpInstruction =
-            ConditionalJumpInstruction(element, onTrue, blockScope, newLabel, conditionValue)
+        ConditionalJumpInstruction(element, onTrue, blockScope, newLabel, conditionValue)
 }

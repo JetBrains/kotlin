@@ -1,3 +1,4 @@
+// !WITH_NEW_INFERENCE
 // !DIAGNOSTICS: -UNUSED_EXPRESSION,-UNUSED_VARIABLE
 
 fun <T : CharSequence?> T.bar1() {}
@@ -20,7 +21,7 @@ fun <T : String?> foo(x: T) {
     x?.bar1()
     x?.bar2()
 
-    x.<!TYPE_INFERENCE_UPPER_BOUND_VIOLATED!>bar3<!>()
+    x<!NI;UNSAFE_CALL!>.<!><!OI;TYPE_INFERENCE_UPPER_BOUND_VIOLATED!>bar3<!>()
 
-    x?.let { it<!UNSAFE_CALL!>.<!>length }
+    x?.let { it<!OI;UNSAFE_CALL!>.<!>length }
 }

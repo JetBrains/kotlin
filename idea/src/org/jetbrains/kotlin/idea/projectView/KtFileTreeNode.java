@@ -46,7 +46,7 @@ public class KtFileTreeNode extends PsiFileNode {
         ArrayList<AbstractTreeNode> result = new ArrayList<AbstractTreeNode>();
 
         if (getSettings().isShowMembers()) {
-            List<KtDeclaration> declarations = file.getDeclarations();
+            @SuppressWarnings("ConstantConditions") List<KtDeclaration> declarations = (file.isScript() ? file.getScript() : file).getDeclarations();
 
             for (KtDeclaration declaration : declarations) {
                 if (declaration instanceof KtClassOrObject) {

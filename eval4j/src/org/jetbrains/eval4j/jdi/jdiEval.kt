@@ -89,6 +89,18 @@ class JDIEval(
         }
     }
 
+    fun loadClassByName(name: String, classLoader: ClassLoaderReference): jdi_Type {
+        val dimensions = name.count { it == '[' }
+        val baseTypeName = if (dimensions > 0) name.substring(0, name.indexOf('[')) else name
+
+        val baseType = primitiveTypes[baseTypeName] ?: Type.getType("L$baseTypeName;").asReferenceType(classLoader)
+
+        return if (dimensions == 0)
+            baseType
+        else
+            Type.getType("[".repeat(dimensions) + baseType.asType().descriptor).asReferenceType(classLoader)
+    }
+
     override fun loadString(str: String): Value = vm.mirrorOf(str).asValue()
 
     override fun newInstance(classType: Type): Value {
@@ -154,7 +166,7 @@ class JDIEval(
             return array.array().getValue(index.int).asValue()
         }
         catch (e: IndexOutOfBoundsException) {
-            throwEvalException(ArrayIndexOutOfBoundsException(e.message))
+            throwInterpretingException(ArrayIndexOutOfBoundsException(e.message))
         }
     }
 
@@ -163,17 +175,16 @@ class JDIEval(
             return array.array().setValue(index.int, newValue.asJdiValue(vm, array.asmType.arrayElementType))
         }
         catch (e: IndexOutOfBoundsException) {
-            throwEvalException(ArrayIndexOutOfBoundsException(e.message))
+            throwInterpretingException(ArrayIndexOutOfBoundsException(e.message))
         }
     }
 
-    private fun findField(fieldDesc: FieldDescription): Field {
-        val _class = fieldDesc.ownerType.asReferenceType()
-        val field = _class.fieldByName(fieldDesc.name)
-        if (field == null) {
-            throwBrokenCodeException(NoSuchFieldError("Field not found: $fieldDesc"))
+    private fun findField(fieldDesc: FieldDescription, receiver: ReferenceType? = null): Field {
+        for (owner in listOfNotNull(receiver, fieldDesc.ownerType.asReferenceType())) {
+            owner.fieldByName(fieldDesc.name)?.let { return it }
         }
-        return field
+
+        throwBrokenCodeException(NoSuchFieldError("Field not found: $fieldDesc"))
     }
 
     private fun findStaticField(fieldDesc: FieldDescription): Field {
@@ -256,18 +267,26 @@ class JDIEval(
     }
 
     override fun getField(instance: Value, fieldDesc: FieldDescription): Value {
-        val field = findField(fieldDesc)
-        val obj = instance.jdiObj.checkNull()
+        val receiver = instance.jdiObj.checkNull()
+        val field = findField(fieldDesc, receiver.referenceType())
 
-        return mayThrow { obj.getValue(field) }.ifFail(field, obj).asValue()
+        return mayThrow {
+            try {
+                receiver.getValue(field)
+            } catch (e: IllegalArgumentException) {
+                throw IllegalArgumentException("Possibly incompatible types: " +
+                                               "field declaring type = ${field.declaringType()}, " +
+                                               "instance type = ${receiver.referenceType()}")
+            }
+        }.ifFail(field, receiver).asValue()
     }
 
     override fun setField(instance: Value, fieldDesc: FieldDescription, newValue: Value) {
-        val field = findField(fieldDesc)
-        val obj = instance.jdiObj.checkNull()
+        val receiver = instance.jdiObj.checkNull()
+        val field = findField(fieldDesc, receiver.referenceType())
 
         val jdiValue = newValue.asJdiValue(vm, field.type().asType())
-        mayThrow { obj.setValue(field, jdiValue) }
+        mayThrow { receiver.setValue(field, jdiValue) }
     }
 
     fun unboxType(boxedValue: Value, type: Type): Value {
@@ -295,7 +314,7 @@ class JDIEval(
             Type.CHAR_TYPE -> MethodDescription("java/lang/Character", "valueOf", "(C)Ljava/lang/Character;", false)
             Type.FLOAT_TYPE -> MethodDescription("java/lang/Float", "valueOf", "(F)Ljava/lang/Float;", false)
             Type.DOUBLE_TYPE -> MethodDescription("java/lang/Double", "valueOf", "(D)Ljava/lang/Double;", false)
-            else -> throw UnsupportedOperationException("Couldn't box non primitive type ${value.asmType.internalName}")
+            else -> throw UnsupportedOperationException("Couldn't box non-primitive type ${value.asmType.internalName}")
         }
         return invokeStaticMethod(method, listOf(value))
     }
@@ -338,7 +357,17 @@ class JDIEval(
     }
 
     private fun shouldInvokeMethodWithReflection(method: Method, args: List<com.sun.jdi.Value?>): Boolean {
-        return !method.isVarArgs && args.zip(method.argumentTypes()).any { isArrayOfInterfaces(it.first?.type(), it.second) }
+        if (method.isVarArgs) {
+            return false
+        }
+
+        val argumentTypes = try {
+            method.argumentTypes()
+        } catch (e: ClassNotLoadedException) {
+            return false
+        }
+
+        return args.zip(argumentTypes).any { isArrayOfInterfaces(it.first?.type(), it.second) }
     }
 
     private fun isArrayOfInterfaces(valueType: jdi_Type?, expectedType: jdi_Type?): Boolean {
@@ -394,8 +423,8 @@ class JDIEval(
     }
 
 
-    private fun mapArguments(arguments: List<Value>, expecetedTypes: List<jdi_Type>): List<jdi_Value?> {
-        return arguments.zip(expecetedTypes).map {
+    private fun mapArguments(arguments: List<Value>, expectedTypes: List<jdi_Type>): List<jdi_Value?> {
+        return arguments.zip(expectedTypes).map {
             val (arg, expectedType) = it
             arg.asJdiValue(vm, expectedType.asType())
         }
@@ -404,19 +433,26 @@ class JDIEval(
     private fun Method.safeArgumentTypes(): List<jdi_Type> {
         try {
             return argumentTypes()
-        }
-        catch (e: ClassNotLoadedException) {
-            return argumentTypeNames()!!.map {
-                name ->
-                val dimensions = name.count { it == '[' }
-                val baseTypeName = if (dimensions > 0) name.substring(0, name.indexOf('[')) else name
+        } catch (e: ClassNotLoadedException) {
+            return argumentTypeNames()!!.map { name ->
+                val classLoader = declaringType()?.classLoader()
+                if (classLoader != null) {
+                    return@map loadClassByName(name, classLoader)
+                }
 
-                val baseType = primitiveTypes[baseTypeName] ?: Type.getType("L$baseTypeName;").asReferenceType(declaringType().classLoader())
-
-                if (dimensions == 0)
-                    baseType
-                else
-                    Type.getType("[".repeat(dimensions) + baseType.asType().descriptor).asReferenceType(declaringType().classLoader())
+                when (name) {
+                    "void" -> virtualMachine().mirrorOfVoid().type()
+                    "boolean" -> primitiveTypes.getValue(Type.BOOLEAN_TYPE.className)
+                    "byte" -> primitiveTypes.getValue(Type.BYTE_TYPE.className)
+                    "char" -> primitiveTypes.getValue(Type.CHAR_TYPE.className)
+                    "short" -> primitiveTypes.getValue(Type.SHORT_TYPE.className)
+                    "int" -> primitiveTypes.getValue(Type.INT_TYPE.className)
+                    "long" -> primitiveTypes.getValue(Type.LONG_TYPE.className)
+                    "float" -> primitiveTypes.getValue(Type.FLOAT_TYPE.className)
+                    "double" -> primitiveTypes.getValue(Type.DOUBLE_TYPE.className)
+                    else -> virtualMachine().classesByName(name).firstOrNull()
+                            ?: throw IllegalStateException("Unknown class $name")
+                }
             }
         }
     }

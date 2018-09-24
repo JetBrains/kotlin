@@ -1,47 +1,31 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.codegen;
 
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.psi.PsiElement;
-import kotlin.Unit;
 import kotlin.jvm.functions.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.backend.common.CodegenUtil;
-import org.jetbrains.kotlin.codegen.annotation.AnnotatedSimple;
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding;
 import org.jetbrains.kotlin.codegen.context.*;
 import org.jetbrains.kotlin.codegen.inline.DefaultSourceMapper;
 import org.jetbrains.kotlin.codegen.inline.NameGenerator;
 import org.jetbrains.kotlin.codegen.inline.ReifiedTypeParametersUsages;
 import org.jetbrains.kotlin.codegen.inline.SourceMapper;
-import org.jetbrains.kotlin.codegen.serialization.JvmSerializerExtension;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
 import org.jetbrains.kotlin.descriptors.*;
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget;
+import org.jetbrains.kotlin.descriptors.annotations.AnnotatedImpl;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl;
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil;
 import org.jetbrains.kotlin.load.java.JavaVisibilities;
 import org.jetbrains.kotlin.load.java.JvmAbi;
-import org.jetbrains.kotlin.load.java.JvmAnnotationNames;
-import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.name.SpecialNames;
 import org.jetbrains.kotlin.psi.*;
@@ -55,8 +39,6 @@ import org.jetbrains.kotlin.resolve.jvm.AsmTypes;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKt;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature;
 import org.jetbrains.kotlin.resolve.source.KotlinSourceElementKt;
-import org.jetbrains.kotlin.serialization.DescriptorSerializer;
-import org.jetbrains.kotlin.serialization.ProtoBuf;
 import org.jetbrains.kotlin.storage.LockBasedStorageManager;
 import org.jetbrains.kotlin.storage.NotNullLazyValue;
 import org.jetbrains.kotlin.types.ErrorUtils;
@@ -73,14 +55,15 @@ import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 
-import static org.jetbrains.kotlin.codegen.AsmUtil.*;
-import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isJvm8InterfaceWithDefaultsMember;
+import static org.jetbrains.kotlin.codegen.AsmUtil.calculateInnerClassAccessFlags;
+import static org.jetbrains.kotlin.codegen.AsmUtil.isPrimitive;
 import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isNonDefaultInterfaceMember;
 import static org.jetbrains.kotlin.codegen.inline.InlineCodegenUtilsKt.getInlineName;
 import static org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.SYNTHESIZED;
 import static org.jetbrains.kotlin.resolve.BindingContext.*;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.*;
 import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.*;
+import static org.jetbrains.kotlin.resolve.jvm.annotations.JvmAnnotationUtilKt.hasJvmDefaultAnnotation;
 import static org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin.NO_ORIGIN;
 import static org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKt.Synthetic;
 import static org.jetbrains.org.objectweb.asm.Opcodes.*;
@@ -103,6 +86,7 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
 
     private ExpressionCodegen clInit;
     private NameGenerator inlineNameGenerator;
+    private boolean jvmAssertFieldGenerated;
 
     private DefaultSourceMapper sourceMapper;
 
@@ -122,6 +106,7 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
         this.functionCodegen = new FunctionCodegen(context, v, state, this);
         this.propertyCodegen = new PropertyCodegen(context, v, functionCodegen, this);
         this.parentCodegen = parentCodegen;
+        this.jvmAssertFieldGenerated = false;
     }
 
     protected MemberCodegen(@NotNull MemberCodegen<T> wrapped, T declaration, FieldOwnerContext codegenContext) {
@@ -258,24 +243,23 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
     }
 
     private void genTypeAliasAnnotationsMethodIfRequired(TypeAliasDescriptor typeAliasDescriptor) {
-        boolean isAnnotationsMethodOwner = CodegenContextUtil.isImplClassOwner(context);
+        boolean isAnnotationsMethodOwner = CodegenContextUtil.isImplementationOwner(context, typeAliasDescriptor);
         Annotations annotations = typeAliasDescriptor.getAnnotations();
-        if (!isAnnotationsMethodOwner || annotations.getAllAnnotations().isEmpty()) return;
+        if (!isAnnotationsMethodOwner || annotations.isEmpty()) return;
 
         String name = JvmAbi.getSyntheticMethodNameForAnnotatedTypeAlias(typeAliasDescriptor.getName());
-        generateSyntheticAnnotationsMethod(typeAliasDescriptor, new Method(name, "()V"), annotations, null);
+        generateSyntheticAnnotationsMethod(typeAliasDescriptor, new Method(name, "()V"), annotations);
     }
 
     protected void generateSyntheticAnnotationsMethod(
             @NotNull MemberDescriptor descriptor,
             @NotNull Method syntheticMethod,
-            @NotNull Annotations annotations,
-            @Nullable AnnotationUseSiteTarget allowedTarget
+            @NotNull Annotations annotations
     ) {
         int flags = ACC_DEPRECATED | ACC_STATIC | ACC_SYNTHETIC | AsmUtil.getVisibilityAccessFlag(descriptor);
         MethodVisitor mv = v.newMethod(JvmDeclarationOriginKt.OtherOrigin(descriptor), flags, syntheticMethod.getName(),
                                        syntheticMethod.getDescriptor(), null, null);
-        AnnotationCodegen.forMethod(mv, this, typeMapper).genAnnotations(new AnnotatedSimple(annotations), Type.VOID_TYPE, allowedTarget);
+        AnnotationCodegen.forMethod(mv, this, typeMapper).genAnnotations(new AnnotatedImpl(annotations), Type.VOID_TYPE);
         mv.visitCode();
         mv.visitInsn(Opcodes.RETURN);
         mv.visitEnd();
@@ -418,7 +402,7 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
             ClassDescriptor classDescriptor = ((ClassContext) outermost).getContextDescriptor();
             if (context instanceof MethodContext) {
                 FunctionDescriptor functionDescriptor = ((MethodContext) context).getFunctionDescriptor();
-                if (isInterface(functionDescriptor.getContainingDeclaration()) && !isJvm8InterfaceWithDefaultsMember(functionDescriptor, state)) {
+                if (isInterface(functionDescriptor.getContainingDeclaration()) && !hasJvmDefaultAnnotation(functionDescriptor)) {
                     return typeMapper.mapDefaultImpls(classDescriptor);
                 }
             }
@@ -592,10 +576,10 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
                 if (type == Type.SHORT_TYPE && ((Number) value).shortValue() == 0) {
                     return true;
                 }
-                if (type == Type.DOUBLE_TYPE && ((Number) value).doubleValue() == 0d) {
+                if (type == Type.DOUBLE_TYPE && value.equals(0.0)) {
                     return true;
                 }
-                if (type == Type.FLOAT_TYPE && ((Number) value).floatValue() == 0f) {
+                if (type == Type.FLOAT_TYPE && value.equals(0.0f)) {
                     return true;
                 }
             }
@@ -706,10 +690,41 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
         }
     }
 
-    protected void generateSyntheticAccessors() {
+    protected final void generateSyntheticAccessors() {
         for (AccessorForCallableDescriptor<?> accessor : ((CodegenContext<?>) context).getAccessors()) {
-            generateSyntheticAccessor(accessor);
+            boolean hasJvmDefaultAnnotation = hasJvmDefaultAnnotation(accessor.getCalleeDescriptor());
+            OwnerKind kind = context.getContextKind();
+
+            if (!isInterface(context.getContextDescriptor()) ||
+                (hasJvmDefaultAnnotation && kind == OwnerKind.IMPLEMENTATION) ||
+                (!hasJvmDefaultAnnotation && kind == OwnerKind.DEFAULT_IMPLS)) {
+                generateSyntheticAccessor(accessor);
+            }
         }
+
+        AccessorForCompanionObjectInstanceFieldDescriptor accessorForCompanionObjectInstanceFieldDescriptor =
+                context.getAccessorForCompanionObjectDescriptorIfRequired();
+        if (accessorForCompanionObjectInstanceFieldDescriptor != null) {
+            generateSyntheticAccessorForCompanionObject(accessorForCompanionObjectInstanceFieldDescriptor);
+        }
+    }
+
+    private void generateSyntheticAccessorForCompanionObject(@NotNull AccessorForCompanionObjectInstanceFieldDescriptor accessor) {
+        ClassDescriptor companionObjectDescriptor = accessor.getCompanionObjectDescriptor();
+        DeclarationDescriptor hostClassDescriptor = companionObjectDescriptor.getContainingDeclaration();
+        assert hostClassDescriptor instanceof ClassDescriptor : "Class descriptor expected: " + hostClassDescriptor;
+        functionCodegen.generateMethod(
+                Synthetic(null, companionObjectDescriptor),
+                accessor,
+                new FunctionGenerationStrategy.CodegenBased(state) {
+                    @Override
+                    public void doGenerateBody(@NotNull ExpressionCodegen codegen, @NotNull JvmMethodSignature signature) {
+                        Type companionObjectType = typeMapper.mapClass(companionObjectDescriptor);
+                        StackValue.singleton(companionObjectDescriptor, typeMapper).put(companionObjectType, codegen.v);
+                        codegen.v.areturn(companionObjectType);
+                    }
+                }
+        );
     }
 
     private void generateSyntheticAccessor(@NotNull AccessorForCallableDescriptor<?> accessorForCallableDescriptor) {
@@ -720,10 +735,25 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
                     Synthetic(null, original), accessor,
                     new FunctionGenerationStrategy.CodegenBased(state) {
                         @Override
+                        public boolean skipNotNullAssertionsForParameters() {
+                            return true;
+                        }
+
+                        @Override
                         public void doGenerateBody(@NotNull ExpressionCodegen codegen, @NotNull JvmMethodSignature signature) {
                             markLineNumberForElement(element.getPsiOrParent(), codegen.v);
-
-                            generateMethodCallTo(original, accessor, codegen.v).coerceTo(signature.getReturnType(), codegen.v);
+                            if (accessorForCallableDescriptor.getAccessorKind() == AccessorKind.JVM_DEFAULT_COMPATIBILITY) {
+                                FunctionDescriptor descriptor = unwrapFakeOverrideToAnyDeclaration(original).getOriginal();
+                                if (descriptor != original) {
+                                    descriptor = descriptor
+                                            .copy(original.getContainingDeclaration(), descriptor.getModality(), descriptor.getVisibility(),
+                                                  descriptor.getKind(), false);
+                                }
+                                generateMethodCallTo(descriptor, accessor, codegen.v).coerceTo(signature.getReturnType(), null, codegen.v);
+                            }
+                            else {
+                                generateMethodCallTo(original, accessor, codegen.v).coerceTo(signature.getReturnType(), null, codegen.v);
+                            }
 
                             codegen.v.areturn(signature.getReturnType());
                         }
@@ -744,9 +774,26 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
 
                 @Override
                 public void doGenerateBody(@NotNull ExpressionCodegen codegen, @NotNull JvmMethodSignature signature) {
-                    FieldAccessorKind fieldAccessorKind = accessor instanceof AccessorForPropertyBackingField
-                                                          ? ((AccessorForPropertyBackingField) accessor).getFieldAccessorKind() : null;
-                    boolean syntheticBackingField = fieldAccessorKind == FieldAccessorKind.FIELD_FROM_LOCAL;
+                    if (accessorForCallableDescriptor.getAccessorKind() == AccessorKind.JVM_DEFAULT_COMPATIBILITY) {
+                        markLineNumberForElement(element.getPsiOrParent(), codegen.v);
+                        PropertyDescriptor descriptor = unwrapFakeOverrideToAnyDeclaration(original).getOriginal();
+                        if (descriptor != original) {
+                            descriptor = (PropertyDescriptor) descriptor
+                                    .copy(original.getContainingDeclaration(), descriptor.getModality(), descriptor.getVisibility(),
+                                          descriptor.getKind(), false);
+                        }
+                        boolean isGetter = callableDescriptor instanceof PropertyGetterDescriptor;
+                        PropertyAccessorDescriptor originalAccessor = isGetter ? descriptor.getGetter(): descriptor.getSetter();
+                        PropertyAccessorDescriptor accessorDescriptor = isGetter ? accessor.getGetter() : accessor.getSetter();
+                        generateMethodCallTo(originalAccessor, accessorDescriptor, codegen.v)
+                                .coerceTo(signature.getReturnType(), null, codegen.v);
+                        codegen.v.areturn(signature.getReturnType());
+                        return;
+                    }
+
+                    AccessorKind fieldAccessorKind = accessor instanceof AccessorForPropertyBackingField
+                                                          ? accessor.getAccessorKind() : null;
+                    boolean syntheticBackingField = fieldAccessorKind == AccessorKind.FIELD_FROM_LOCAL;
                     boolean forceFieldForCompanionProperty = JvmAbi.isPropertyWithBackingFieldInOuterClass(original) &&
                                                              !isCompanionObject(accessor.getContainingDeclaration());
                     boolean forceField = forceFieldForCompanionProperty ||
@@ -755,7 +802,7 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
                     StackValue property = codegen.intermediateValueForProperty(
                             original, forceField, syntheticBackingField, accessor.getSuperCallTarget(),
                             forceFieldForCompanionProperty, StackValue.none(), null,
-                            fieldAccessorKind == FieldAccessorKind.LATEINIT_INTRINSIC
+                            fieldAccessorKind == AccessorKind.LATEINIT_INTRINSIC
                     );
 
                     InstructionAdapter iv = codegen.v;
@@ -774,10 +821,15 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
                         property.put(signature.getReturnType(), iv);
                     }
                     else {
-                        property.store(StackValue.onStack(property.type), iv, true);
+                        property.store(StackValue.onStack(property.type, property.kotlinType), iv, true);
                     }
 
                     iv.areturn(signature.getReturnType());
+                }
+
+                @Override
+                public boolean skipNotNullAssertionsForParameters() {
+                    return true;
                 }
             }
 
@@ -809,49 +861,56 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
         CallableMethod callableMethod = typeMapper.mapToCallableMethod(
                 functionDescriptor,
                 accessorDescriptor instanceof AccessorForCallableDescriptor &&
-                ((AccessorForCallableDescriptor) accessorDescriptor).getSuperCallTarget() != null
+                (((AccessorForCallableDescriptor) accessorDescriptor).getSuperCallTarget() != null ||
+                 ((AccessorForCallableDescriptor) accessorDescriptor).getAccessorKind() == AccessorKind.JVM_DEFAULT_COMPATIBILITY)
         );
 
-        boolean hasDispatchReceiver = !isStaticDeclaration(functionDescriptor) && !isNonDefaultInterfaceMember(functionDescriptor, state);
-        int reg = hasDispatchReceiver ? 1 : 0;
+        boolean isJvmStaticInObjectOrClass = CodegenUtilKt.isJvmStaticInObjectOrClassOrInterface(functionDescriptor);
+        boolean hasDispatchReceiver = !isStaticDeclaration(functionDescriptor) &&
+                                      !isNonDefaultInterfaceMember(functionDescriptor) &&
+                                      !isJvmStaticInObjectOrClass;
         boolean accessorIsConstructor = accessorDescriptor instanceof AccessorForConstructorDescriptor;
+
+        int accessorParam = (hasDispatchReceiver && !accessorIsConstructor) ? 1 : 0;
+        int reg = hasDispatchReceiver ? 1 : 0;
         if (!accessorIsConstructor && functionDescriptor instanceof ConstructorDescriptor) {
             iv.anew(callableMethod.getOwner());
             iv.dup();
             reg = 0;
+            accessorParam = 0;
         }
-        else if (accessorIsConstructor || (accessorDescriptor != null && KotlinTypeMapper.isAccessor(accessorDescriptor) && hasDispatchReceiver)) {
-            if (!CodegenUtilKt.isJvmStaticInObjectOrClass(functionDescriptor)) {
+        else if (KotlinTypeMapper.isAccessor(accessorDescriptor) && (hasDispatchReceiver || accessorIsConstructor)) {
+            if (!isJvmStaticInObjectOrClass) {
                 iv.load(0, OBJECT_TYPE);
             }
         }
 
-        for (Type argType : callableMethod.getParameterTypes()) {
-            if (AsmTypes.DEFAULT_CONSTRUCTOR_MARKER.equals(argType)) {
+        Type[] calleeParameterTypes = callableMethod.getParameterTypes();
+        Type[] accessorParameterTypes = accessorDescriptor != null
+                                        ? typeMapper.mapToCallableMethod(accessorDescriptor, false).getParameterTypes()
+                                        : calleeParameterTypes;
+        for (Type calleeArgType: calleeParameterTypes) {
+            if (AsmTypes.DEFAULT_CONSTRUCTOR_MARKER.equals(calleeArgType)) {
                 iv.aconst(null);
             }
             else {
-                iv.load(reg, argType);
-                reg += argType.getSize();
+                Type accessorParameterType = accessorParameterTypes[accessorParam];
+                iv.load(reg, accessorParameterType);
+                StackValue.coerce(accessorParameterType, calleeArgType, iv);
+                reg += accessorParameterType.getSize();
             }
+            accessorParam++;
         }
 
         callableMethod.genInvokeInstruction(iv);
 
-        return StackValue.onStack(callableMethod.getReturnType());
+        return StackValue.onStack(callableMethod.getReturnType(), functionDescriptor.getReturnType());
     }
 
-    protected void generateKotlinClassMetadataAnnotation(@NotNull ClassDescriptor descriptor, boolean isScript) {
-        DescriptorSerializer serializer =
-                DescriptorSerializer.create(descriptor, new JvmSerializerExtension(v.getSerializationBindings(), state));
-
-        ProtoBuf.Class classProto = serializer.classProto(descriptor).build();
-
-        int flags = isScript ? JvmAnnotationNames.METADATA_SCRIPT_FLAG : 0;
-
-        WriteAnnotationUtilKt.writeKotlinMetadata(v, state, KotlinClassHeader.Kind.CLASS, flags, av -> {
-            writeAnnotationData(av, serializer, classProto);
-            return Unit.INSTANCE;
-        });
+    public void generateAssertField() {
+        if (jvmAssertFieldGenerated) return;
+        AssertCodegenUtilKt.generateAssertionsDisabledFieldInitialization(this);
+        jvmAssertFieldGenerated = true;
     }
+
 }

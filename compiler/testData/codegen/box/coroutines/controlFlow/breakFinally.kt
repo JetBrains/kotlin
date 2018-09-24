@@ -1,14 +1,17 @@
+// IGNORE_BACKEND: JS
+// IGNORE_BACKEND: JVM_IR
 // WITH_RUNTIME
 // WITH_COROUTINES
+// COMMON_COROUTINES_TEST
 import helpers.*
-import kotlin.coroutines.experimental.*
-import kotlin.coroutines.experimental.intrinsics.*
+import COROUTINES_PACKAGE.*
+import COROUTINES_PACKAGE.intrinsics.*
 
 
 class Controller {
     var result = ""
 
-    suspend fun <T> suspendWithResult(value: T): T = suspendCoroutineOrReturn { c ->
+    suspend fun <T> suspendWithResult(value: T): T = suspendCoroutineUninterceptedOrReturn { c ->
         c.resume(value)
         COROUTINE_SUSPENDED
     }
@@ -41,6 +44,18 @@ fun box(): String {
                 }
                 finally {
                     result += "@"
+                    for (y in listOf("F", "G")) {
+                        try {
+                            result += suspendWithResult(y)
+                            if (y == "G") {
+                                break
+                            }
+                        }
+                        finally {
+                            result += "?"
+                        }
+                        result += "H"
+                    }
                 }
                 result += "ignore"
             }
@@ -51,7 +66,7 @@ fun box(): String {
         }
         result += "."
     }
-    if (value != "AC!ED!@*finally.") return "fail: $value"
+    if (value != "AC!ED!@F?HG?*finally.") return "fail: $value"
 
     return "OK"
 }

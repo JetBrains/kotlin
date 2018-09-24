@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.types;
@@ -26,9 +15,13 @@ import org.jetbrains.kotlin.descriptors.ClassifierDescriptor;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
+import org.jetbrains.kotlin.name.FqName;
+import org.jetbrains.kotlin.name.FqNameUnsafe;
+import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.constants.IntegerValueTypeConstructor;
 import org.jetbrains.kotlin.resolve.scopes.MemberScope;
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
+import org.jetbrains.kotlin.types.checker.NewTypeVariableConstructor;
 
 import java.util.*;
 
@@ -197,7 +190,7 @@ public class TypeUtils {
         }
         TypeConstructor typeConstructor = classifierDescriptor.getTypeConstructor();
         List<TypeProjection> arguments = getDefaultTypeProjections(typeConstructor.getParameters());
-        return KotlinTypeFactory.simpleType(
+        return KotlinTypeFactory.simpleTypeWithNonTrivialMemberScope(
                 Annotations.Companion.getEMPTY(),
                 typeConstructor,
                 arguments,
@@ -275,6 +268,14 @@ public class TypeUtils {
         if (isTypeParameter(type)) {
             return hasNullableSuperType(type);
         }
+
+        TypeConstructor constructor = type.getConstructor();
+        if (constructor instanceof IntersectionTypeConstructor) {
+            for (KotlinType supertype : constructor.getSupertypes()) {
+                if (isNullableType(supertype)) return true;
+            }
+        }
+
         return false;
     }
 
@@ -346,7 +347,7 @@ public class TypeUtils {
     }
 
     public static boolean equalTypes(@NotNull KotlinType a, @NotNull KotlinType b) {
-        return KotlinTypeChecker.DEFAULT.isSubtypeOf(a, b) && KotlinTypeChecker.DEFAULT.isSubtypeOf(b, a);
+        return KotlinTypeChecker.DEFAULT.equalTypes(a, b);
     }
 
     public static boolean dependsOnTypeParameters(@NotNull KotlinType type, @NotNull Collection<TypeParameterDescriptor> typeParameters) {
@@ -392,6 +393,11 @@ public class TypeUtils {
         FlexibleType flexibleType = unwrappedType instanceof FlexibleType ? (FlexibleType) unwrappedType : null;
         if (flexibleType != null
             && (contains(flexibleType.getLowerBound(), isSpecialType) || contains(flexibleType.getUpperBound(), isSpecialType))) {
+            return true;
+        }
+
+        if (unwrappedType instanceof DefinitelyNotNullType &&
+            contains(((DefinitelyNotNullType) unwrappedType).getOriginal(), isSpecialType)) {
             return true;
         }
 
@@ -442,6 +448,27 @@ public class TypeUtils {
         if (supertypes.contains(longType)) {
             return longType;
         }
+
+        KotlinType uIntType = findByFqName(supertypes, KotlinBuiltIns.FQ_NAMES.uIntFqName);
+        if (uIntType != null) return uIntType;
+
+        KotlinType uLongType = findByFqName(supertypes, KotlinBuiltIns.FQ_NAMES.uLongFqName);
+        if (uLongType != null) return uLongType;
+
+        return null;
+    }
+
+    @Nullable
+    private static KotlinType findByFqName(@NotNull Collection<KotlinType> supertypes, FqName fqName) {
+        for (KotlinType supertype : supertypes) {
+            ClassifierDescriptor descriptor = supertype.getConstructor().getDeclarationDescriptor();
+            if (descriptor == null) continue;
+
+            FqNameUnsafe descriptorFqName = DescriptorUtils.getFqName(descriptor);
+            if (descriptorFqName.equals(fqName.toUnsafe())) {
+                return supertype;
+            }
+        }
         return null;
     }
 
@@ -462,7 +489,7 @@ public class TypeUtils {
     }
 
     public static boolean isTypeParameter(@NotNull KotlinType type) {
-        return getTypeParameterDescriptorOrNull(type) != null;
+        return getTypeParameterDescriptorOrNull(type) != null || type.getConstructor() instanceof NewTypeVariableConstructor;
     }
 
     public static boolean isReifiedTypeParameter(@NotNull KotlinType type) {

@@ -81,5 +81,7 @@ public class MessagesBundle extends ListResourceBundle {
         {"msg.catch.unreachable", "any catch clauses following an unqualified catch are unreachable"},
         {"msg.no.name.after.dot", "missing name after . operator"},
         {"msg.jsni.expected.identifier", "Expected an identifier in JSNI reference"},
+        {"msg.wrong.delete argument", "Wrong argument for ''delete'' operation. " +
+                                      "Must be either property reference or array subscript expression."},
     };
 }

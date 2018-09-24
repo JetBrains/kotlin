@@ -19,11 +19,12 @@ package org.jetbrains.kotlin.idea.intentions
 import com.intellij.codeInspection.CleanupLocalInspectionTool
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.openapi.editor.Editor
+import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.idea.editor.fixers.range
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
-import org.jetbrains.kotlin.psi.KtClass
-import org.jetbrains.kotlin.psi.KtClassBody
-import org.jetbrains.kotlin.psi.KtObjectDeclaration
-import org.jetbrains.kotlin.psi.KtSecondaryConstructor
+import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.getNextSiblingIgnoringWhitespaceAndComments
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 
@@ -34,7 +35,25 @@ class RemoveEmptyClassBodyInspection :
 }
 
 class RemoveEmptyClassBodyIntention : SelfTargetingOffsetIndependentIntention<KtClassBody>(KtClassBody::class.java, "Remove empty class body") {
-    override fun applyTo(element: KtClassBody, editor: Editor?) = element.delete()
+
+    override fun applyTo(element: KtClassBody, editor: Editor?) {
+        val parent = element.parent
+        element.delete()
+        addSemicolonAfterEmptyCompanion(parent, editor)
+    }
+
+    private fun addSemicolonAfterEmptyCompanion(element: PsiElement, editor: Editor?) {
+        if (element !is KtObjectDeclaration) return
+        if (!element.isCompanion() || element.nameIdentifier != null) return
+
+        val next = element.getNextSiblingIgnoringWhitespaceAndComments() ?: return
+        if (next.node.elementType == KtTokens.SEMICOLON) return
+        val firstChildNode = next.firstChild?.node ?: return
+        if (firstChildNode.elementType in KtTokens.KEYWORDS) return
+
+        element.parent.addAfter(KtPsiFactory(element).createSemicolon(), element)
+        editor?.caretModel?.moveToOffset(element.endOffset + 1)
+    }
 
     override fun isApplicableTo(element: KtClassBody): Boolean {
         element.getStrictParentOfType<KtObjectDeclaration>()?.let {

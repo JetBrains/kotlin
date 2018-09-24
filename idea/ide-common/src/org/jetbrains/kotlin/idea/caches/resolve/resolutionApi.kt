@@ -20,8 +20,7 @@ package org.jetbrains.kotlin.idea.caches.resolve
 
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.caches.resolve.KotlinCacheService
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
@@ -29,6 +28,8 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTraceContext
 import org.jetbrains.kotlin.resolve.ImportPath
 import org.jetbrains.kotlin.resolve.QualifiedExpressionResolver
+import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.lazy.NoDescriptorForDeclarationException
 
@@ -59,11 +60,28 @@ fun KtDeclaration.unsafeResolveToDescriptor(bodyResolveMode: BodyResolveMode = B
 fun KtDeclaration.resolveToDescriptorIfAny(bodyResolveMode: BodyResolveMode = BodyResolveMode.PARTIAL): DeclarationDescriptor? {
     //TODO: BodyResolveMode.PARTIAL is not quite safe!
     val context = analyze(bodyResolveMode)
-    if (this is KtParameter && this.hasValOrVar()) {
-        return context.get(BindingContext.PRIMARY_CONSTRUCTOR_PARAMETER, this)
+    return if (this is KtParameter && hasValOrVar()) {
+        context.get(BindingContext.PRIMARY_CONSTRUCTOR_PARAMETER, this)
+    } else {
+        context.get(BindingContext.DECLARATION_TO_DESCRIPTOR, this)
     }
-    return context.get(BindingContext.DECLARATION_TO_DESCRIPTOR, this)
 }
+
+fun KtClassOrObject.resolveToDescriptorIfAny(bodyResolveMode: BodyResolveMode = BodyResolveMode.PARTIAL): ClassDescriptor? {
+    return (this as KtDeclaration).resolveToDescriptorIfAny(bodyResolveMode) as? ClassDescriptor
+}
+
+fun KtNamedFunction.resolveToDescriptorIfAny(bodyResolveMode: BodyResolveMode = BodyResolveMode.PARTIAL): FunctionDescriptor? {
+    return (this as KtDeclaration).resolveToDescriptorIfAny(bodyResolveMode) as? FunctionDescriptor
+}
+
+fun KtParameter.resolveToParameterDescriptorIfAny(bodyResolveMode: BodyResolveMode = BodyResolveMode.PARTIAL): ValueParameterDescriptor? {
+    val context = analyze(bodyResolveMode)
+    return context.get(BindingContext.VALUE_PARAMETER, this) as? ValueParameterDescriptor
+}
+
+fun KtElement.resolveToCall(bodyResolveMode: BodyResolveMode = BodyResolveMode.PARTIAL): ResolvedCall<out CallableDescriptor>? =
+    getResolvedCall(analyze(bodyResolveMode))
 
 fun KtFile.resolveImportReference(fqName: FqName): Collection<DeclarationDescriptor> {
     val facade = getResolutionFacade()
@@ -71,15 +89,27 @@ fun KtFile.resolveImportReference(fqName: FqName): Collection<DeclarationDescrip
 }
 
 
-// This and next function are used for 'normal' element analysis
-// Their exact semantics is a bit unclear and depends on 'bodyResolveMode'
-// They are expected to provide correct descriptors for the element
-// but not diagnostics, trace slices are provided only partially
-// Element body analysis, if any, is not guaranteed
-// For compiler-compatible analysis, analyzeFully is recommended
-// See ResolveSessionForBodies, ResolveElementCache
-@JvmOverloads fun KtElement.analyze(bodyResolveMode: BodyResolveMode = BodyResolveMode.FULL): BindingContext =
-        getResolutionFacade().analyze(this, bodyResolveMode)
+// This and next functions are used for 'normal' element analysis
+// This analysis *should* provide all information extractable from this KtElement except:
+// - for declarations, it does not analyze their bodies
+// - for classes, it does not analyze their content
+// - for member / top-level properties, it does not analyze initializers / accessors
+// This information includes related descriptors, resolved calls (but not inside body, see above!)
+// and many other binding context slices.
+// Normally, the function is used on local declarations or statements / expressions
+// Any usage on non-local declaration is a bit suspicious,
+// consider replacing it with resolveToDescriptorIfAny and
+// remember that body / content is not analyzed;
+// if it's necessary, use analyzeWithContent()
+//
+// If you need diagnostics in result context, use BodyResolveMode.PARTIAL_WITH_DIAGNOSTICS.
+// BodyResolveMode.FULL analyzes all statements on the level of KtElement and above.
+// BodyResolveMode.PARTIAL analyzes only statements necessary for this KtElement precise analysis.
+//
+// See also: ResolveSessionForBodies, ResolveElementCache
+@JvmOverloads
+fun KtElement.analyze(bodyResolveMode: BodyResolveMode = BodyResolveMode.FULL): BindingContext =
+    getResolutionFacade().analyze(this, bodyResolveMode)
 
 fun KtElement.analyzeAndGetResult(): AnalysisResult {
     val resolutionFacade = getResolutionFacade()
@@ -88,15 +118,45 @@ fun KtElement.analyzeAndGetResult(): AnalysisResult {
 
 fun KtElement.findModuleDescriptor(): ModuleDescriptor = getResolutionFacade().moduleDescriptor
 
-// This and next function are expected to produce the same result as compiler
-// for the given element and its children (including diagnostics, trace slices, descriptors, etc.)
-// Not recommended to call both of them without real need
-// See also KotlinResolveCache, KotlinResolveDataProvider
-// In the future should be unified with 'analyze`
-fun KtElement.analyzeFully(): BindingContext = analyzeFullyAndGetResult().bindingContext
+// This function is used on declarations to make analysis not only declaration itself but also it content:
+// body for declaration with body, initializer & accessors for properties
+fun KtDeclaration.analyzeWithContent(): BindingContext =
+    getResolutionFacade().analyzeWithAllCompilerChecks(listOf(this)).bindingContext
 
-fun KtElement.analyzeFullyAndGetResult(vararg extraFiles: KtFile): AnalysisResult =
-        KotlinCacheService.getInstance(project).getResolutionFacade(listOf(this) + extraFiles.toList()).analyzeFullyAndGetResult(listOf(this))
+// This function is used to make full analysis of declaration container.
+// All its declarations, including their content (see above), are analyzed.
+inline fun <reified T> T.analyzeWithContent(): BindingContext where T : KtDeclarationContainer, T : KtElement =
+    getResolutionFacade().analyzeWithAllCompilerChecks(listOf(this)).bindingContext
+
+/**
+ * This function is expected to produce the same result as compiler for the whole file content (including diagnostics,
+ * trace slices, descriptors, etc.).
+ *
+ * It's not recommended to call this function without real need.
+ *
+ * @ref [KotlinCacheService]
+ * @ref [org.jetbrains.kotlin.idea.caches.resolve.PerFileAnalysisCache]
+ */
+fun KtFile.analyzeWithAllCompilerChecks(vararg extraFiles: KtFile): AnalysisResult =
+    KotlinCacheService.getInstance(project).getResolutionFacade(listOf(this) + extraFiles.toList()).analyzeWithAllCompilerChecks(listOf(this))
+
+/**
+ * This function is expected to produce the same result as compiler for the given element and its children (including diagnostics,
+ * trace slices, descriptors, etc.). For some expression element it actually performs analyze for some parent (usually declaration).
+ *
+ * It's not recommended to call this function without real need.
+ *
+ * NB: for statements / expressions, usually should be replaced with analyze(),
+ * for declarations, analyzeWithContent() will do what you want.
+ *
+ * @ref [KotlinCacheService]
+ * @ref [org.jetbrains.kotlin.idea.caches.resolve.PerFileAnalysisCache]
+ */
+@Deprecated(
+    "Use either KtFile.analyzeWithAllCompilerChecks() or KtElement.analyzeAndGetResult()",
+    ReplaceWith("analyzeAndGetResult()")
+)
+fun KtElement.analyzeWithAllCompilerChecks(): AnalysisResult = getResolutionFacade().analyzeWithAllCompilerChecks(listOf(this))
 
 // this method don't check visibility and collect all descriptors with given fqName
 fun ResolutionFacade.resolveImportReference(
@@ -108,3 +168,11 @@ fun ResolutionFacade.resolveImportReference(
     return qualifiedExpressionResolver.processImportReference(
             importDirective, moduleDescriptor, BindingTraceContext(), excludedImportNames = emptyList(), packageFragmentForVisibilityCheck = null)?.getContributedDescriptors() ?: emptyList()
 }
+
+@Suppress("DEPRECATION")
+@Deprecated(
+    "This method is going to be removed in 1.3.0 release",
+    ReplaceWith("analyzeWithAllCompilerChecks().bindingContext"),
+    DeprecationLevel.ERROR
+)
+fun KtElement.analyzeFully(): BindingContext = analyzeWithAllCompilerChecks().bindingContext

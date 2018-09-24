@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.maven
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.fileEditor.impl.LoadTextUtil
 import com.intellij.openapi.roots.ModuleRootManager
+import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.rt.execution.junit.FileComparisonFailure
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
@@ -32,7 +33,8 @@ import kotlin.reflect.KMutableProperty0
 class MavenUpdateConfigurationQuickFixTest : MavenImportingTestCase() {
     private lateinit var codeInsightTestFixture: CodeInsightTestFixture
 
-    fun getTestDataPath() = KotlinTestUtils.getHomeDirectory() + "/idea/idea-maven/testData/languageFeature/" + getTestName(true).substringBefore('_')
+    private fun getTestDataPath() =
+        KotlinTestUtils.getHomeDirectory() + "/idea/idea-maven/testData/languageFeature/" + getTestName(true).substringBefore('_')
 
     override fun setUpFixtures() {
         myTestFixture = IdeaTestFixtureFactory.getFixtureFactory().createFixtureBuilder(getName()).fixture
@@ -42,31 +44,43 @@ class MavenUpdateConfigurationQuickFixTest : MavenImportingTestCase() {
 
     override fun tearDownFixtures() {
         codeInsightTestFixture.tearDown()
+        @Suppress("UNCHECKED_CAST")
         (this::codeInsightTestFixture as KMutableProperty0<CodeInsightTestFixture?>).set(null)
         myTestFixture = null
     }
 
-    @Test fun testUpdateLanguageVersion() {
+    @Test
+    fun testUpdateLanguageVersion() {
         doTest("Set module language version to 1.1")
     }
 
-    @Test fun testUpdateLanguageVersionProperty() {
+    @Test
+    fun testUpdateLanguageVersionProperty() {
         doTest("Set module language version to 1.1")
     }
 
-    @Test fun testUpdateApiVersion() {
+    @Test
+    fun testUpdateApiVersion() {
         doTest("Set module API version to 1.1")
     }
 
-    @Test fun testUpdateLanguageAndApiVersion() {
+    @Test
+    fun testUpdateLanguageAndApiVersion() {
         doTest("Set module language version to 1.1")
     }
 
-    @Test fun testEnableCoroutines() {
+    @Test
+    fun testEnableCoroutines() {
         doTest("Enable coroutine support in the current module")
     }
 
-    @Test fun testAddKotlinReflect() {
+    @Test
+    fun testEnableInlineClasses() {
+        doTest("Enable inline classes support in the current module")
+    }
+
+    @Test
+    fun testAddKotlinReflect() {
         doTest("Add kotlin-reflect.jar to the classpath")
     }
 
@@ -87,7 +101,7 @@ class MavenUpdateConfigurationQuickFixTest : MavenImportingTestCase() {
 
     private fun checkResult(file: VirtualFile) {
         val expectedPath = File(getTestDataPath(), "pom.xml.after")
-        val expectedContent = expectedPath.readText()
+        val expectedContent = FileUtil.loadFile(expectedPath, true)
         val actualContent = LoadTextUtil.loadText(file).toString()
         if (actualContent != expectedContent) {
             throw FileComparisonFailure("pom.xml doesn't match", expectedContent, actualContent, expectedPath.path)

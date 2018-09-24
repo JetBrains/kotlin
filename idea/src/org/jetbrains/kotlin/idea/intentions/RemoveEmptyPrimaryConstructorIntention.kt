@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,17 +20,18 @@ import com.intellij.codeInspection.CleanupLocalInspectionTool
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.openapi.editor.Editor
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
+import org.jetbrains.kotlin.idea.util.isExpectDeclaration
 import org.jetbrains.kotlin.psi.KtPrimaryConstructor
 import org.jetbrains.kotlin.psi.psiUtil.containingClass
 
 class RemoveEmptyPrimaryConstructorInspection : IntentionBasedInspection<KtPrimaryConstructor>(
-        RemoveEmptyPrimaryConstructorIntention::class
+    RemoveEmptyPrimaryConstructorIntention::class
 ), CleanupLocalInspectionTool {
-    override fun problemHighlightType(element: KtPrimaryConstructor): ProblemHighlightType =
-            ProblemHighlightType.LIKE_UNUSED_SYMBOL
+    override fun problemHighlightType(element: KtPrimaryConstructor): ProblemHighlightType = ProblemHighlightType.LIKE_UNUSED_SYMBOL
 }
 
-class RemoveEmptyPrimaryConstructorIntention : SelfTargetingOffsetIndependentIntention<KtPrimaryConstructor>(KtPrimaryConstructor::class.java, "Remove empty primary constructor") {
+class RemoveEmptyPrimaryConstructorIntention :
+    SelfTargetingOffsetIndependentIntention<KtPrimaryConstructor>(KtPrimaryConstructor::class.java, "Remove empty primary constructor") {
 
     override fun applyTo(element: KtPrimaryConstructor, editor: Editor?) = element.delete()
 
@@ -39,6 +40,7 @@ class RemoveEmptyPrimaryConstructorIntention : SelfTargetingOffsetIndependentInt
         element.annotations.isNotEmpty() -> false
         element.modifierList?.text?.isBlank() == false -> false
         element.containingClass()?.secondaryConstructors?.isNotEmpty() == true -> false
+        element.isExpectDeclaration() -> false
         else -> true
     }
 }

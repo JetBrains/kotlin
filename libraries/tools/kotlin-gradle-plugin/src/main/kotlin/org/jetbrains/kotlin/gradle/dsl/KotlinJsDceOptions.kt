@@ -3,4 +3,16 @@
 package org.jetbrains.kotlin.gradle.dsl
 
 interface KotlinJsDceOptions  : org.jetbrains.kotlin.gradle.dsl.KotlinCommonToolOptions {
+
+    /**
+     * Development mode: don't strip out any code, just copy dependencies
+     * Default value: false
+     */
+     var devMode: kotlin.Boolean
+
+    /**
+     * Output directory
+     * Default value: null
+     */
+     var outputDirectory: kotlin.String?
 }

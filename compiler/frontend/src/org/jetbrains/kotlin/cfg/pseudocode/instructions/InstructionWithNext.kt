@@ -19,8 +19,8 @@ package org.jetbrains.kotlin.cfg.pseudocode.instructions
 import org.jetbrains.kotlin.psi.KtElement
 
 abstract class InstructionWithNext(
-        element: KtElement,
-        blockScope: BlockScope
+    element: KtElement,
+    blockScope: BlockScope
 ) : KtElementInstructionImpl(element, blockScope) {
     var next: Instruction? = null
         set(value) {

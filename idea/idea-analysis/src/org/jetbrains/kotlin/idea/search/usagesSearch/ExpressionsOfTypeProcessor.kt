@@ -35,14 +35,14 @@ import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.toLightClass
-import org.jetbrains.kotlin.caches.resolve.KotlinCacheService
+import org.jetbrains.kotlin.compatibility.ExecutorProcessor
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
+import org.jetbrains.kotlin.diagnostics.PsiDiagnosticUtils
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
+import org.jetbrains.kotlin.idea.caches.resolve.util.getJavaMemberDescriptor
 import org.jetbrains.kotlin.idea.refactoring.fqName.getKotlinFqName
 import org.jetbrains.kotlin.idea.references.KtDestructuringDeclarationReference
 import org.jetbrains.kotlin.idea.search.excludeFileTypes
@@ -57,7 +57,6 @@ import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
 import org.jetbrains.kotlin.load.java.sam.SingleAbstractMethodUtils
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
-import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.KotlinType
 import java.util.*
@@ -150,7 +149,7 @@ class ExpressionsOfTypeProcessor(
 
         runReadAction {
             val scopeElements = scopesToUsePlainSearch.values
-                    .flatMap { it }
+                    .flatten()
                     .filter { it.isValid }
                     .toTypedArray()
             if (scopeElements.isNotEmpty()) {
@@ -250,7 +249,7 @@ class ExpressionsOfTypeProcessor(
     private fun getFallbackDiagnosticsMessage(reference: PsiReference): String {
         val element = reference.element
         val document = PsiDocumentManager.getInstance(project).getDocument(element.containingFile)
-        val lineAndCol = DiagnosticUtils.offsetToLineAndColumn(document, element.startOffset)
+        val lineAndCol = PsiDiagnosticUtils.offsetToLineAndColumn(document, element.startOffset)
         return "Unsupported reference: '${element.text}' in ${element.containingFile.name} line ${lineAndCol.line} column ${lineAndCol.column}"
     }
 
@@ -266,7 +265,7 @@ class ExpressionsOfTypeProcessor(
     private class StaticMemberRequestResultProcessor(val psiMember: PsiMember, classes: List<PsiClass>) : RequestResultProcessor(psiMember) {
         val possibleClassesNames: Set<String> = runReadAction { classes.map { it.qualifiedName }.filterNotNullTo(HashSet()) }
 
-        override fun processTextOccurrence(element: PsiElement, offsetInElement: Int, consumer: Processor<PsiReference>): Boolean {
+        override fun processTextOccurrence(element: PsiElement, offsetInElement: Int, consumer: ExecutorProcessor<PsiReference>): Boolean {
             when (element) {
                 is KtQualifiedExpression -> {
                     val selectorExpression = element.selectorExpression ?: return true
@@ -335,10 +334,11 @@ class ExpressionsOfTypeProcessor(
                 val searchRequestCollector = SearchRequestCollector(SearchSession())
                 val resultProcessor = StaticMemberRequestResultProcessor(member, classes)
 
+                val memberName = runReadAction { member.name }
                 for (klass in classes) {
                     val request = klass.name + "." + declarationName
 
-                    testLog { "Searched references to static ${member.name} in non-Java files by request $request" }
+                    testLog { "Searched references to static $memberName in non-Java files by request $request" }
                     searchRequestCollector.searchWord(
                             request,
                             classUseScope(klass).intersectWith(memberScope), UsageSearchContext.IN_CODE, true, member, resultProcessor)
@@ -347,7 +347,7 @@ class ExpressionsOfTypeProcessor(
                     if (qualifiedName != null) {
                         val importAllUnderRequest = qualifiedName + ".*"
 
-                        testLog { "Searched references to static ${member.name} in non-Java files by request $importAllUnderRequest" }
+                        testLog { "Searched references to static $memberName in non-Java files by request $importAllUnderRequest" }
                         searchRequestCollector.searchWord(
                                 importAllUnderRequest,
                                 classUseScope(klass).intersectWith(memberScope), UsageSearchContext.IN_CODE, true, member, resultProcessor)
@@ -759,8 +759,7 @@ class ExpressionsOfTypeProcessor(
             if (psiClass != null) {
                 testLog { "Resolved java class to descriptor: ${psiClass.qualifiedName}" }
 
-                val resolutionFacade = KotlinCacheService.getInstance(project).getResolutionFacadeByFile(psiClass.containingFile, JvmPlatform)
-                val classDescriptor = psiClass.resolveToDescriptor(resolutionFacade) as? JavaClassDescriptor
+                val classDescriptor = psiClass.getJavaMemberDescriptor() as? JavaClassDescriptor
                 if (classDescriptor != null && SingleAbstractMethodUtils.getSingleAbstractMethodOrNull(classDescriptor) != null) {
                     addSamInterfaceToProcess(psiClass)
                     return true

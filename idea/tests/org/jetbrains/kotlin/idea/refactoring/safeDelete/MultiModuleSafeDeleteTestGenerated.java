@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.refactoring.safeDelete;
@@ -32,139 +21,136 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 public class MultiModuleSafeDeleteTestGenerated extends AbstractMultiModuleSafeDeleteTest {
+    private void runTest(String testDataFilePath) throws Exception {
+        KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+    }
+
     public void testAllFilesPresentInSafeDeleteMultiModule() throws Exception {
         KotlinTestUtils.assertAllTestsPresentInSingleGeneratedClass(this.getClass(), new File("idea/testData/refactoring/safeDeleteMultiModule"), Pattern.compile("^(.+)\\.test$"), TargetBackend.ANY);
     }
 
-    @TestMetadata("byHeaderClass/byHeaderClass.test")
-    public void testByHeaderClass_ByHeaderClass() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDeleteMultiModule/byHeaderClass/byHeaderClass.test");
-        doTest(fileName);
+    @TestMetadata("byActualClass/byActualClass.test")
+    public void testByActualClass_ByActualClass() throws Exception {
+        runTest("idea/testData/refactoring/safeDeleteMultiModule/byActualClass/byActualClass.test");
     }
 
-    @TestMetadata("byHeaderClassMemberFun/byHeaderClassMemberFun.test")
-    public void testByHeaderClassMemberFun_ByHeaderClassMemberFun() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDeleteMultiModule/byHeaderClassMemberFun/byHeaderClassMemberFun.test");
-        doTest(fileName);
+    @TestMetadata("byActualClassMemberFun/byActualClassMemberFun.test")
+    public void testByActualClassMemberFun_ByActualClassMemberFun() throws Exception {
+        runTest("idea/testData/refactoring/safeDeleteMultiModule/byActualClassMemberFun/byActualClassMemberFun.test");
     }
 
-    @TestMetadata("byHeaderClassMemberFunParameter/byHeaderClassMemberFunParameter.test")
-    public void testByHeaderClassMemberFunParameter_ByHeaderClassMemberFunParameter() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDeleteMultiModule/byHeaderClassMemberFunParameter/byHeaderClassMemberFunParameter.test");
-        doTest(fileName);
+    @TestMetadata("byActualClassMemberFunParameterLiftingToExpect/byActualClassMemberFunParameterLiftingToExpect.test")
+    public void testByActualClassMemberFunParameterLiftingToExpect_ByActualClassMemberFunParameterLiftingToExpect() throws Exception {
+        runTest("idea/testData/refactoring/safeDeleteMultiModule/byActualClassMemberFunParameterLiftingToExpect/byActualClassMemberFunParameterLiftingToExpect.test");
     }
 
-    @TestMetadata("byHeaderClassMemberVal/byHeaderClassMemberVal.test")
-    public void testByHeaderClassMemberVal_ByHeaderClassMemberVal() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDeleteMultiModule/byHeaderClassMemberVal/byHeaderClassMemberVal.test");
-        doTest(fileName);
+    @TestMetadata("byActualClassMemberVal/byActualClassMemberVal.test")
+    public void testByActualClassMemberVal_ByActualClassMemberVal() throws Exception {
+        runTest("idea/testData/refactoring/safeDeleteMultiModule/byActualClassMemberVal/byActualClassMemberVal.test");
     }
 
-    @TestMetadata("byHeaderClassPrimaryConstructorParameter/headersAndImplsByHeaderClassPrimaryConstructorParameter.test")
-    public void testByHeaderClassPrimaryConstructorParameter_HeadersAndImplsByHeaderClassPrimaryConstructorParameter() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDeleteMultiModule/byHeaderClassPrimaryConstructorParameter/headersAndImplsByHeaderClassPrimaryConstructorParameter.test");
-        doTest(fileName);
+    @TestMetadata("byActualClassPrimaryConstructorParameterLiftingToExpect/expectsAndActualsByActualClassPrimaryConstructorParameter.test")
+    public void testByActualClassPrimaryConstructorParameterLiftingToExpect_ExpectsAndActualsByActualClassPrimaryConstructorParameter() throws Exception {
+        runTest("idea/testData/refactoring/safeDeleteMultiModule/byActualClassPrimaryConstructorParameterLiftingToExpect/expectsAndActualsByActualClassPrimaryConstructorParameter.test");
     }
 
-    @TestMetadata("byHeaderClassSecondaryConstructor/byHeaderClassSecondaryConstructor.test")
-    public void testByHeaderClassSecondaryConstructor_ByHeaderClassSecondaryConstructor() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDeleteMultiModule/byHeaderClassSecondaryConstructor/byHeaderClassSecondaryConstructor.test");
-        doTest(fileName);
+    @TestMetadata("byActualClassPrimaryConstructorPropertyLiftingToExpect/expectsAndActualsByActualClassPrimaryConstructorProperty.test")
+    public void testByActualClassPrimaryConstructorPropertyLiftingToExpect_ExpectsAndActualsByActualClassPrimaryConstructorProperty() throws Exception {
+        runTest("idea/testData/refactoring/safeDeleteMultiModule/byActualClassPrimaryConstructorPropertyLiftingToExpect/expectsAndActualsByActualClassPrimaryConstructorProperty.test");
     }
 
-    @TestMetadata("byHeaderClassSecondaryConstructorParameter/headersAndImplsByHeaderClassSecondaryConstructorParameter.test")
-    public void testByHeaderClassSecondaryConstructorParameter_HeadersAndImplsByHeaderClassSecondaryConstructorParameter() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDeleteMultiModule/byHeaderClassSecondaryConstructorParameter/headersAndImplsByHeaderClassSecondaryConstructorParameter.test");
-        doTest(fileName);
+    @TestMetadata("byActualClassSecondaryConstructor/byActualClassSecondaryConstructor.test")
+    public void testByActualClassSecondaryConstructor_ByActualClassSecondaryConstructor() throws Exception {
+        runTest("idea/testData/refactoring/safeDeleteMultiModule/byActualClassSecondaryConstructor/byActualClassSecondaryConstructor.test");
     }
 
-    @TestMetadata("byHeaderFun/byHeaderFun.test")
-    public void testByHeaderFun_ByHeaderFun() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDeleteMultiModule/byHeaderFun/byHeaderFun.test");
-        doTest(fileName);
+    @TestMetadata("byActualClassSecondaryConstructorParameterLiftingToExpect/expectsAndActualsByActualClassSecondaryConstructorParameter.test")
+    public void testByActualClassSecondaryConstructorParameterLiftingToExpect_ExpectsAndActualsByActualClassSecondaryConstructorParameter() throws Exception {
+        runTest("idea/testData/refactoring/safeDeleteMultiModule/byActualClassSecondaryConstructorParameterLiftingToExpect/expectsAndActualsByActualClassSecondaryConstructorParameter.test");
     }
 
-    @TestMetadata("byHeaderFunParamerer/byHeaderFunParameter.test")
-    public void testByHeaderFunParamerer_ByHeaderFunParameter() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDeleteMultiModule/byHeaderFunParamerer/byHeaderFunParameter.test");
-        doTest(fileName);
+    @TestMetadata("byActualFun/byActualFun.test")
+    public void testByActualFun_ByActualFun() throws Exception {
+        runTest("idea/testData/refactoring/safeDeleteMultiModule/byActualFun/byActualFun.test");
     }
 
-    @TestMetadata("byHeaderFunVarargParamerer/byHeaderFunVarargParameter.test")
-    public void testByHeaderFunVarargParamerer_ByHeaderFunVarargParameter() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDeleteMultiModule/byHeaderFunVarargParamerer/byHeaderFunVarargParameter.test");
-        doTest(fileName);
+    @TestMetadata("byActualFunParamererLiftingToExpect/byActualFunParameterLiftingToExpect.test")
+    public void testByActualFunParamererLiftingToExpect_ByActualFunParameterLiftingToExpect() throws Exception {
+        runTest("idea/testData/refactoring/safeDeleteMultiModule/byActualFunParamererLiftingToExpect/byActualFunParameterLiftingToExpect.test");
     }
 
-    @TestMetadata("byHeaderVal/byHeaderVal.test")
-    public void testByHeaderVal_ByHeaderVal() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDeleteMultiModule/byHeaderVal/byHeaderVal.test");
-        doTest(fileName);
+    @TestMetadata("byActualFunParamererNoLiftingToExpect/byActualFunParameterNoLiftingToExpect.test")
+    public void testByActualFunParamererNoLiftingToExpect_ByActualFunParameterNoLiftingToExpect() throws Exception {
+        runTest("idea/testData/refactoring/safeDeleteMultiModule/byActualFunParamererNoLiftingToExpect/byActualFunParameterNoLiftingToExpect.test");
     }
 
-    @TestMetadata("byImplClass/byImplClass.test")
-    public void testByImplClass_ByImplClass() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDeleteMultiModule/byImplClass/byImplClass.test");
-        doTest(fileName);
+    @TestMetadata("byActualVal/byActualVal.test")
+    public void testByActualVal_ByActualVal() throws Exception {
+        runTest("idea/testData/refactoring/safeDeleteMultiModule/byActualVal/byActualVal.test");
     }
 
-    @TestMetadata("byImplClassMemberFun/byImplClassMemberFun.test")
-    public void testByImplClassMemberFun_ByImplClassMemberFun() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDeleteMultiModule/byImplClassMemberFun/byImplClassMemberFun.test");
-        doTest(fileName);
+    @TestMetadata("byExpectClass/byExpectClass.test")
+    public void testByExpectClass_ByExpectClass() throws Exception {
+        runTest("idea/testData/refactoring/safeDeleteMultiModule/byExpectClass/byExpectClass.test");
     }
 
-    @TestMetadata("byImplClassMemberFunParameterLiftingToHeader/byImplClassMemberFunParameterLiftingToHeader.test")
-    public void testByImplClassMemberFunParameterLiftingToHeader_ByImplClassMemberFunParameterLiftingToHeader() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDeleteMultiModule/byImplClassMemberFunParameterLiftingToHeader/byImplClassMemberFunParameterLiftingToHeader.test");
-        doTest(fileName);
+    @TestMetadata("byExpectClassMemberFun/byExpectClassMemberFun.test")
+    public void testByExpectClassMemberFun_ByExpectClassMemberFun() throws Exception {
+        runTest("idea/testData/refactoring/safeDeleteMultiModule/byExpectClassMemberFun/byExpectClassMemberFun.test");
     }
 
-    @TestMetadata("byImplClassMemberVal/byImplClassMemberVal.test")
-    public void testByImplClassMemberVal_ByImplClassMemberVal() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDeleteMultiModule/byImplClassMemberVal/byImplClassMemberVal.test");
-        doTest(fileName);
+    @TestMetadata("byExpectClassMemberFunParameter/byExpectClassMemberFunParameter.test")
+    public void testByExpectClassMemberFunParameter_ByExpectClassMemberFunParameter() throws Exception {
+        runTest("idea/testData/refactoring/safeDeleteMultiModule/byExpectClassMemberFunParameter/byExpectClassMemberFunParameter.test");
     }
 
-    @TestMetadata("byImplClassPrimaryConstructorParameterLiftingToHeader/headersAndImplsByImplClassPrimaryConstructorParameter.test")
-    public void testByImplClassPrimaryConstructorParameterLiftingToHeader_HeadersAndImplsByImplClassPrimaryConstructorParameter() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDeleteMultiModule/byImplClassPrimaryConstructorParameterLiftingToHeader/headersAndImplsByImplClassPrimaryConstructorParameter.test");
-        doTest(fileName);
+    @TestMetadata("byExpectClassMemberVal/byExpectClassMemberVal.test")
+    public void testByExpectClassMemberVal_ByExpectClassMemberVal() throws Exception {
+        runTest("idea/testData/refactoring/safeDeleteMultiModule/byExpectClassMemberVal/byExpectClassMemberVal.test");
     }
 
-    @TestMetadata("byImplClassSecondaryConstructor/byImplClassSecondaryConstructor.test")
-    public void testByImplClassSecondaryConstructor_ByImplClassSecondaryConstructor() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDeleteMultiModule/byImplClassSecondaryConstructor/byImplClassSecondaryConstructor.test");
-        doTest(fileName);
+    @TestMetadata("byExpectClassPrimaryConstructorParameter/expectsAndActualsByExpectClassPrimaryConstructorParameter.test")
+    public void testByExpectClassPrimaryConstructorParameter_ExpectsAndActualsByExpectClassPrimaryConstructorParameter() throws Exception {
+        runTest("idea/testData/refactoring/safeDeleteMultiModule/byExpectClassPrimaryConstructorParameter/expectsAndActualsByExpectClassPrimaryConstructorParameter.test");
     }
 
-    @TestMetadata("byImplClassSecondaryConstructorParameterLiftingToHeader/headersAndImplsByImplClassSecondaryConstructorParameter.test")
-    public void testByImplClassSecondaryConstructorParameterLiftingToHeader_HeadersAndImplsByImplClassSecondaryConstructorParameter() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDeleteMultiModule/byImplClassSecondaryConstructorParameterLiftingToHeader/headersAndImplsByImplClassSecondaryConstructorParameter.test");
-        doTest(fileName);
+    @TestMetadata("byExpectClassSecondaryConstructor/byExpectClassSecondaryConstructor.test")
+    public void testByExpectClassSecondaryConstructor_ByExpectClassSecondaryConstructor() throws Exception {
+        runTest("idea/testData/refactoring/safeDeleteMultiModule/byExpectClassSecondaryConstructor/byExpectClassSecondaryConstructor.test");
     }
 
-    @TestMetadata("byImplFun/byImplFun.test")
-    public void testByImplFun_ByImplFun() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDeleteMultiModule/byImplFun/byImplFun.test");
-        doTest(fileName);
+    @TestMetadata("byExpectClassSecondaryConstructorParameter/expectsAndActualsByExpectClassSecondaryConstructorParameter.test")
+    public void testByExpectClassSecondaryConstructorParameter_ExpectsAndActualsByExpectClassSecondaryConstructorParameter() throws Exception {
+        runTest("idea/testData/refactoring/safeDeleteMultiModule/byExpectClassSecondaryConstructorParameter/expectsAndActualsByExpectClassSecondaryConstructorParameter.test");
     }
 
-    @TestMetadata("byImplFunParamererLiftingToHeader/byImplFunParameterLiftingToHeader.test")
-    public void testByImplFunParamererLiftingToHeader_ByImplFunParameterLiftingToHeader() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDeleteMultiModule/byImplFunParamererLiftingToHeader/byImplFunParameterLiftingToHeader.test");
-        doTest(fileName);
+    @TestMetadata("byExpectCompanion/byExpectCompanion.test")
+    public void testByExpectCompanion_ByExpectCompanion() throws Exception {
+        runTest("idea/testData/refactoring/safeDeleteMultiModule/byExpectCompanion/byExpectCompanion.test");
     }
 
-    @TestMetadata("byImplFunParamererNoLiftingToHeader/byImplFunParameterNoLiftingToHeader.test")
-    public void testByImplFunParamererNoLiftingToHeader_ByImplFunParameterNoLiftingToHeader() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDeleteMultiModule/byImplFunParamererNoLiftingToHeader/byImplFunParameterNoLiftingToHeader.test");
-        doTest(fileName);
+    @TestMetadata("byExpectFun/byExpectFun.test")
+    public void testByExpectFun_ByExpectFun() throws Exception {
+        runTest("idea/testData/refactoring/safeDeleteMultiModule/byExpectFun/byExpectFun.test");
     }
 
-    @TestMetadata("byImplVal/byImplVal.test")
-    public void testByImplVal_ByImplVal() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/safeDeleteMultiModule/byImplVal/byImplVal.test");
-        doTest(fileName);
+    @TestMetadata("byExpectFunParamerer/byExpectFunParameter.test")
+    public void testByExpectFunParamerer_ByExpectFunParameter() throws Exception {
+        runTest("idea/testData/refactoring/safeDeleteMultiModule/byExpectFunParamerer/byExpectFunParameter.test");
+    }
+
+    @TestMetadata("byExpectFunVarargParamerer/byExpectFunVarargParameter.test")
+    public void testByExpectFunVarargParamerer_ByExpectFunVarargParameter() throws Exception {
+        runTest("idea/testData/refactoring/safeDeleteMultiModule/byExpectFunVarargParamerer/byExpectFunVarargParameter.test");
+    }
+
+    @TestMetadata("byExpectObject/byExpectObject.test")
+    public void testByExpectObject_ByExpectObject() throws Exception {
+        runTest("idea/testData/refactoring/safeDeleteMultiModule/byExpectObject/byExpectObject.test");
+    }
+
+    @TestMetadata("byExpectVal/byExpectVal.test")
+    public void testByExpectVal_ByExpectVal() throws Exception {
+        runTest("idea/testData/refactoring/safeDeleteMultiModule/byExpectVal/byExpectVal.test");
     }
 }

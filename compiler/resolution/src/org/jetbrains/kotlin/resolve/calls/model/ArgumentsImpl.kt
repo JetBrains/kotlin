@@ -16,35 +16,33 @@
 
 package org.jetbrains.kotlin.resolve.calls.model
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValueWithSmartCastInfo
-import org.jetbrains.kotlin.resolve.scopes.receivers.TransientReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.prepareReceiverRegardingCaptureTypes
 
 
 class FakeKotlinCallArgumentForCallableReference(
-        val index: Int
+    val index: Int
 ) : KotlinCallArgument {
     override val isSpread: Boolean get() = false
     override val argumentName: Name? get() = null
 }
 
 class ReceiverExpressionKotlinCallArgument private constructor(
-        override val receiver: ReceiverValueWithSmartCastInfo,
-        override val isSafeCall: Boolean = false,
-        val isVariableReceiverForInvoke: Boolean = false
+    override val receiver: ReceiverValueWithSmartCastInfo,
+    override val isSafeCall: Boolean = false,
+    val isForImplicitInvoke: Boolean = false
 ) : ExpressionKotlinCallArgument {
     override val isSpread: Boolean get() = false
     override val argumentName: Name? get() = null
-    override fun toString() = "$receiver" + if(isSafeCall) "?" else ""
+    override fun toString() = "$receiver" + if (isSafeCall) "?" else ""
 
     companion object {
         // we create ReceiverArgument and fix capture types
         operator fun invoke(
-                receiver: ReceiverValueWithSmartCastInfo,
-                   isSafeCall: Boolean = false,
-                   isVariableReceiverForInvoke: Boolean = false
-        ) = ReceiverExpressionKotlinCallArgument(receiver.prepareReceiverRegardingCaptureTypes(), isSafeCall, isVariableReceiverForInvoke)
+            receiver: ReceiverValueWithSmartCastInfo,
+            isSafeCall: Boolean = false,
+            isForImplicitInvoke: Boolean = false
+        ) = ReceiverExpressionKotlinCallArgument(receiver.prepareReceiverRegardingCaptureTypes(), isSafeCall, isForImplicitInvoke)
     }
 }

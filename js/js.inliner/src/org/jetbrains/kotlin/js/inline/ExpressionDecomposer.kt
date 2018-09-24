@@ -63,7 +63,9 @@ internal class ExpressionDecomposer private constructor(
             val decomposer = with (statement) {
                 val extractable = match(canBeExtractedByInliner)
                 val containsExtractable = withParentsOfNodes(extractable)
-                val nodesWithSideEffect = match { it !is JsLiteral.JsValueLiteral }
+                val nodesWithSideEffect = match {
+                    !(it is JsLiteral.JsValueLiteral || (it is JsExpression && it.sideEffects == SideEffectKind.PURE))
+                }
                 val containsNodeWithSideEffect = withParentsOfNodes(nodesWithSideEffect)
 
                 ExpressionDecomposer(containsExtractable, containsNodeWithSideEffect)

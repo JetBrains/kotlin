@@ -16,23 +16,18 @@
 
 package org.jetbrains.kotlin.codegen.range.forLoop
 
+import org.jetbrains.kotlin.codegen.AsmUtil.genIncrement
+import org.jetbrains.kotlin.codegen.ExpressionCodegen
+import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.psi.KtForExpression
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.Type
 
-import org.jetbrains.kotlin.codegen.AsmUtil.genIncrement
-import org.jetbrains.kotlin.codegen.ExpressionCodegen
-import org.jetbrains.kotlin.codegen.StackValue
-
-abstract class AbstractForInRangeLoopGenerator : AbstractForInProgressionOrRangeLoopGenerator {
-    private val step: Int
-
-    constructor(codegen: ExpressionCodegen, forExpression: KtForExpression, step: Int) : super(codegen, forExpression) {
-        assert(step == 1 || step == -1) { "'step' should be either 1 or -1: " + step }
-        this.step = step        
-    }
-
-    constructor(codegen: ExpressionCodegen, forExpression: KtForExpression) : this(codegen, forExpression, 1)
+abstract class AbstractForInRangeLoopGenerator(
+    codegen: ExpressionCodegen,
+    forExpression: KtForExpression,
+    protected val step: Int
+) : AbstractForInProgressionOrRangeLoopGenerator(codegen, forExpression) {
 
     override fun beforeLoop() {
         super.beforeLoop()
@@ -43,22 +38,19 @@ abstract class AbstractForInRangeLoopGenerator : AbstractForInProgressionOrRange
     protected abstract fun storeRangeStartAndEnd()
 
     override fun checkEmptyLoop(loopExit: Label) {
-        loopParameter().put(asmElementType, v)
+        loopParameter().put(asmElementType, elementType, v)
         v.load(endVar, asmElementType)
         if (asmElementType.sort == Type.LONG) {
             v.lcmp()
             if (step > 0) {
                 v.ifgt(loopExit)
-            }
-            else {
+            } else {
                 v.iflt(loopExit)
             }
-        }
-        else {
+        } else {
             if (step > 0) {
                 v.ificmpgt(loopExit)
-            }
-            else {
+            } else {
                 v.ificmplt(loopExit)
             }
         }
@@ -75,12 +67,15 @@ abstract class AbstractForInRangeLoopGenerator : AbstractForInProgressionOrRange
     protected fun incrementLoopVariable() {
         if (loopParameterType === Type.INT_TYPE) {
             v.iinc(loopParameterVar, step)
-        }
-        else {
+        } else {
             val loopParameter = loopParameter()
-            loopParameter.put(asmElementType, v)
+            loopParameter.put(asmElementType, elementType, v)
             genIncrement(asmElementType, step, v)
-            loopParameter.store(StackValue.onStack(asmElementType), v)
+            loopParameter.store(StackValue.onStack(asmElementType, elementType), v)
         }
+    }
+
+    init {
+        assert(step == 1 || step == -1) { "'step' should be either 1 or -1: " + step }
     }
 }

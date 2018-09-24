@@ -16,7 +16,14 @@
 
 package org.jetbrains.kotlin.resolve.lazy
 
+import com.intellij.openapi.components.ServiceManager
+import com.intellij.openapi.project.Project
+
 interface ProbablyNothingCallableNames {
     fun functionNames(): Collection<String>
     fun propertyNames(): Collection<String>
+
+    companion object {
+        fun getInstance(project: Project) = ServiceManager.getService(project, ProbablyNothingCallableNames::class.java)!!
+    }
 }

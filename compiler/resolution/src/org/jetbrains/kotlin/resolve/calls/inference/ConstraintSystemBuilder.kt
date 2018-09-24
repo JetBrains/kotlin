@@ -20,11 +20,9 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.resolve.calls.components.PostponedArgumentsAnalyzer
 import org.jetbrains.kotlin.resolve.calls.inference.components.NewTypeSubstitutor
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintPosition
+import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
 import org.jetbrains.kotlin.resolve.calls.inference.model.NewTypeVariable
-import org.jetbrains.kotlin.resolve.calls.model.CallableReferenceKotlinCallArgument
-import org.jetbrains.kotlin.resolve.calls.model.KotlinCallArgument
-import org.jetbrains.kotlin.resolve.calls.model.LHSResult
-import org.jetbrains.kotlin.resolve.calls.model.SubKotlinCallArgument
+import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.types.TypeConstructor
 import org.jetbrains.kotlin.types.UnwrappedType
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
@@ -32,12 +30,15 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 interface ConstraintSystemOperation {
     val hasContradiction: Boolean
     fun registerVariable(variable: NewTypeVariable)
+    fun markPostponedVariable(variable: NewTypeVariable)
+    fun unmarkPostponedVariable(variable: NewTypeVariable)
 
     fun addSubtypeConstraint(lowerType: UnwrappedType, upperType: UnwrappedType, position: ConstraintPosition)
     fun addEqualityConstraint(a: UnwrappedType, b: UnwrappedType, position: ConstraintPosition)
 
     fun isProperType(type: UnwrappedType): Boolean
     fun isTypeVariable(type: UnwrappedType): Boolean
+    fun isPostponedTypeVariable(typeVariable: NewTypeVariable): Boolean
 
     fun getProperSuperTypeConstructors(type: UnwrappedType): List<TypeConstructor>
 }
@@ -48,20 +49,26 @@ interface ConstraintSystemBuilder : ConstraintSystemOperation {
     fun runTransaction(runOperations: ConstraintSystemOperation.() -> Boolean): Boolean
 
     fun buildCurrentSubstitutor(): NewTypeSubstitutor
+
+    fun currentStorage(): ConstraintStorage
 }
 
-fun ConstraintSystemBuilder.addSubtypeConstraintIfCompatible(lowerType: UnwrappedType, upperType: UnwrappedType, position: ConstraintPosition) =
-        runTransaction {
-            if (!hasContradiction) addSubtypeConstraint(lowerType, upperType, position)
-            !hasContradiction
-        }
+fun ConstraintSystemBuilder.addSubtypeConstraintIfCompatible(
+    lowerType: UnwrappedType,
+    upperType: UnwrappedType,
+    position: ConstraintPosition
+) =
+    runTransaction {
+        if (!hasContradiction) addSubtypeConstraint(lowerType, upperType, position)
+        !hasContradiction
+    }
 
 
-fun PostponedArgumentsAnalyzer.Context.addSubsystemForArgument(argument: KotlinCallArgument?) {
+fun PostponedArgumentsAnalyzer.Context.addSubsystemFromArgument(argument: KotlinCallArgument?) {
     when (argument) {
         is SubKotlinCallArgument -> addOtherSystem(argument.callResult.constraintSystem)
         is CallableReferenceKotlinCallArgument -> {
-            addSubsystemForArgument(argument.lhsResult.safeAs<LHSResult.Expression>()?.lshCallArgument)
+            addSubsystemFromArgument(argument.lhsResult.safeAs<LHSResult.Expression>()?.lshCallArgument)
         }
     }
 }

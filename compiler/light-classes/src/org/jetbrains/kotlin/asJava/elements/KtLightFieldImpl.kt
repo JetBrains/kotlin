@@ -113,7 +113,7 @@ sealed class KtLightFieldImpl<D : PsiField>(
 
         fun lazy(
                 dummyDelegate: PsiField,
-                origin: LightMemberOriginForDeclaration,
+                origin: LightMemberOriginForDeclaration?,
                 containingClass: KtLightClass,
                 computeRealDelegate: () -> PsiField
         ): KtLightField {

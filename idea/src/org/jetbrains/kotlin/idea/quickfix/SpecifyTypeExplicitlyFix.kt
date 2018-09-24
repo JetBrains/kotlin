@@ -41,6 +41,7 @@ class SpecifyTypeExplicitlyFix : PsiElementBaseIntentionAction() {
 
     override fun isAvailable(project: Project, editor: Editor, element: PsiElement): Boolean {
         val declaration = declarationByElement(element)
+        if (declaration?.typeReference != null) return false
         text = when (declaration) {
             is KtProperty -> "Specify type explicitly"
             is KtNamedFunction -> "Specify return type explicitly"

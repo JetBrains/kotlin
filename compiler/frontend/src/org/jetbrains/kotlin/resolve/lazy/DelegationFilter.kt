@@ -23,7 +23,7 @@ interface DelegationFilter {
 
     fun filter(interfaceMember: CallableMemberDescriptor, languageVersionSettings: LanguageVersionSettings): Boolean
 
-    object DEFAULT : DelegationFilter {
+    object Default : DelegationFilter {
         override fun filter(interfaceMember: CallableMemberDescriptor, languageVersionSettings: LanguageVersionSettings) = true
     }
 }

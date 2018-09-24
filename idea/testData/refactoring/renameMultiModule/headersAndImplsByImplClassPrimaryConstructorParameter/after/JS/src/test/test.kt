@@ -1,6 +1,6 @@
 package test
 
-actual class Foo(x: Int) {
+actual class Foo actual constructor(x: Int) {
     constructor(s: String): this(0)
 }
 

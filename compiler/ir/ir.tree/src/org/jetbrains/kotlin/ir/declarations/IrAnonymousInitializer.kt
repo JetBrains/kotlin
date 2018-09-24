@@ -23,9 +23,6 @@ import org.jetbrains.kotlin.ir.symbols.IrAnonymousInitializerSymbol
 interface IrAnonymousInitializer : IrSymbolDeclaration<IrAnonymousInitializerSymbol> {
     override val descriptor: ClassDescriptor // TODO special descriptor for anonymous initializer blocks
 
-    override val declarationKind: IrDeclarationKind
-        get() = IrDeclarationKind.ANONYMOUS_INITIALIZER
-
     var body: IrBlockBody
 }
 

@@ -18,33 +18,20 @@ package org.jetbrains.kotlin.resolve.checkers
 
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.diagnostics.DiagnosticSink
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.psi.KtDeclaration
-import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.BindingTrace
+import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
 
 interface DeclarationChecker {
-    // TODO: Think about encapsulating these parameters into specific class like CheckerParameters when you're about to add another one
-    fun check(
-            declaration: KtDeclaration,
-            descriptor: DeclarationDescriptor,
-            diagnosticHolder: DiagnosticSink,
-            bindingContext: BindingContext,
-            languageVersionSettings: LanguageVersionSettings
-    )
+    fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext)
 }
 
-interface SimpleDeclarationChecker : DeclarationChecker {
-    override fun check(
-            declaration: KtDeclaration,
-            descriptor: DeclarationDescriptor,
-            diagnosticHolder: DiagnosticSink,
-            bindingContext: BindingContext, languageVersionSettings: LanguageVersionSettings
-    ) = check(declaration, descriptor, diagnosticHolder, bindingContext)
-
-    fun check(
-            declaration: KtDeclaration,
-            descriptor: DeclarationDescriptor,
-            diagnosticHolder: DiagnosticSink,
-            bindingContext: BindingContext
-    )
-}
+class DeclarationCheckerContext(
+    override val trace: BindingTrace,
+    override val languageVersionSettings: LanguageVersionSettings,
+    override val deprecationResolver: DeprecationResolver,
+    override val moduleDescriptor: ModuleDescriptor,
+    val expectActualTracker: ExpectActualTracker
+) : CheckerContext

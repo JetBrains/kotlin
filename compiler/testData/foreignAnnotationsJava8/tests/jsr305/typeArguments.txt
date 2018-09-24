@@ -1,0 +1,71 @@
+package test
+
+public open class A {
+    public constructor A()
+    public open fun bar(/*0*/ l: test.L<*, kotlin.Int>): kotlin.Unit
+    public open fun baz1(): test.L<kotlin.collections.(Mutable)Map<kotlin.String, kotlin.Int>, @spr.Nullable kotlin.Int?>
+    public open fun baz2(): test.L<*, kotlin.Int>
+    public open fun baz3(): test.L<out kotlin.collections.(Mutable)Map<kotlin.String, kotlin.Int>, kotlin.Int>
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open fun foo(/*0*/ l: test.L<kotlin.collections.(Mutable)Map<kotlin.String, kotlin.Int>, @spr.Nullable kotlin.Int?>): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public open class L</*0*/ T : kotlin.collections.(Mutable)Map<kotlin.String!, S!>!, /*1*/ S : kotlin.Any!> {
+    public constructor L</*0*/ T : kotlin.collections.(Mutable)Map<kotlin.String!, S!>!, /*1*/ S : kotlin.Any!>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open fun s(): S
+    public open fun setS(/*0*/ s: S): kotlin.Unit
+    public open fun setT(/*0*/ @spr.Nullable t: @spr.Nullable T?): kotlin.Unit
+    public open fun t(): T
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+package
+
+public fun main(/*0*/ a: test.A, /*1*/ l: test.L<kotlin.collections.Map<kotlin.String, kotlin.Int>, kotlin.Int?>, /*2*/ l1: test.L<kotlin.collections.Map<kotlin.String, kotlin.Int>, kotlin.Int>): kotlin.Unit
+
+package spr {
+
+    @kotlin.annotation.Target(allowedTargets = {}) @kotlin.annotation.Retention(value = AnnotationRetention.RUNTIME) @kotlin.annotation.MustBeDocumented @javax.annotation.Nonnull @javax.annotation.meta.TypeQualifierDefault(value = {ElementType.TYPE_USE}) public final annotation class NonNullApi : kotlin.Annotation {
+        public constructor NonNullApi()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.TYPE}) @kotlin.annotation.Retention(value = AnnotationRetention.RUNTIME) @kotlin.annotation.MustBeDocumented @javax.annotation.Nonnull(when = When.MAYBE) @javax.annotation.meta.TypeQualifierNickname public final annotation class Nullable : kotlin.Annotation {
+        public constructor Nullable()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+
+package test {
+
+    public open class A {
+        public constructor A()
+        public open fun bar(/*0*/ l: test.L<*, kotlin.Int>): kotlin.Unit
+        public open fun baz1(): test.L<kotlin.collections.(Mutable)Map<kotlin.String, kotlin.Int>, @spr.Nullable kotlin.Int?>
+        public open fun baz2(): test.L<*, kotlin.Int>
+        public open fun baz3(): test.L<out kotlin.collections.(Mutable)Map<kotlin.String, kotlin.Int>, kotlin.Int>
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open fun foo(/*0*/ l: test.L<kotlin.collections.(Mutable)Map<kotlin.String, kotlin.Int>, @spr.Nullable kotlin.Int?>): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public open class L</*0*/ T : kotlin.collections.(Mutable)Map<kotlin.String!, S!>!, /*1*/ S : kotlin.Any!> {
+        public constructor L</*0*/ T : kotlin.collections.(Mutable)Map<kotlin.String!, S!>!, /*1*/ S : kotlin.Any!>()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open fun s(): S
+        public open fun setS(/*0*/ s: S): kotlin.Unit
+        public open fun setT(/*0*/ @spr.Nullable t: @spr.Nullable T?): kotlin.Unit
+        public open fun t(): T
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

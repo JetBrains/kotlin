@@ -28,28 +28,31 @@ import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.reflect.KParameter
 import kotlin.reflect.full.memberFunctions
-import kotlin.script.experimental.dependencies.DependenciesResolver
+import kotlin.reflect.full.primaryConstructor
 import kotlin.script.dependencies.ScriptDependenciesResolver
 import kotlin.script.experimental.dependencies.AsyncDependenciesResolver
-import kotlin.script.templates.AcceptedAnnotations
+import kotlin.script.experimental.dependencies.DependenciesResolver
+import kotlin.script.experimental.location.ScriptExpectedLocations
+import kotlin.script.experimental.location.ScriptExpectedLocation
+import kotlin.script.templates.*
 
 open class KotlinScriptDefinitionFromAnnotatedTemplate(
         template: KClass<out Any>,
-        providedResolver: DependenciesResolver? = null,
-        providedScriptFilePattern: String? = null,
         val environment: Map<String, Any?>? = null,
         val templateClasspath: List<File> = emptyList()
 ) : KotlinScriptDefinition(template) {
-
-    val scriptFilePattern by lazy {
-        providedScriptFilePattern
-        ?: takeUnlessError { template.annotations.firstIsInstanceOrNull<kotlin.script.templates.ScriptTemplateDefinition>()?.scriptFilePattern }
-        ?: takeUnlessError { template.annotations.firstIsInstanceOrNull<org.jetbrains.kotlin.script.ScriptTemplateDefinition>()?.scriptFilePattern }
-        ?: DEFAULT_SCRIPT_FILE_PATTERN
+    val scriptFilePattern by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        val pattern =
+            takeUnlessError {
+                val ann = template.annotations.firstIsInstanceOrNull<kotlin.script.templates.ScriptTemplateDefinition>()
+                ann?.scriptFilePattern
+            }
+                    ?: takeUnlessError { template.annotations.firstIsInstanceOrNull<ScriptTemplateDefinition>()?.scriptFilePattern }
+                    ?: DEFAULT_SCRIPT_FILE_PATTERN
+        Regex(pattern)
     }
 
-    override val dependencyResolver: DependenciesResolver by lazy {
-        providedResolver ?:
+    override val dependencyResolver: DependenciesResolver by lazy(LazyThreadSafetyMode.PUBLICATION) {
         resolverFromAnnotation(template) ?:
         resolverFromLegacyAnnotation(template) ?:
         DependenciesResolver.NoDependencies
@@ -80,6 +83,9 @@ open class KotlinScriptDefinitionFromAnnotatedTemplate(
 
     private fun <T : Any> instantiateResolver(resolverClass: KClass<T>): T? {
         try {
+            resolverClass.objectInstance?.let {
+                return it
+            }
             val constructorWithoutParameters = resolverClass.constructors.find { it.parameters.all { it.isOptional } }
             if (constructorWithoutParameters == null) {
                 log.warn("[kts] ${resolverClass.qualifiedName} must have a constructor without required parameters")
@@ -93,12 +99,12 @@ open class KotlinScriptDefinitionFromAnnotatedTemplate(
         }
     }
 
-    private val samWithReceiverAnnotations: List<String>? by lazy {
+    private val samWithReceiverAnnotations: List<String>? by lazy(LazyThreadSafetyMode.PUBLICATION) {
         takeUnlessError { template.annotations.firstIsInstanceOrNull<kotlin.script.extensions.SamWithReceiverAnnotations>()?.annotations?.toList() }
         ?: takeUnlessError { template.annotations.firstIsInstanceOrNull<org.jetbrains.kotlin.script.SamWithReceiverAnnotations>()?.annotations?.toList() }
     }
 
-    override val acceptedAnnotations: List<KClass<out Annotation>> by lazy {
+    override val acceptedAnnotations: List<KClass<out Annotation>> by lazy(LazyThreadSafetyMode.PUBLICATION) {
 
         fun sameSignature(left: KFunction<*>, right: KFunction<*>): Boolean =
                 left.name == right.name &&
@@ -128,10 +134,16 @@ open class KotlinScriptDefinitionFromAnnotatedTemplate(
         }
     }
 
+    override val scriptExpectedLocations: List<ScriptExpectedLocation> by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        takeUnlessError {
+            template.annotations.firstIsInstanceOrNull<ScriptExpectedLocations>()
+        }?.value?.toList() ?: super.scriptExpectedLocations
+    }
+
     override val name = template.simpleName!!
 
     override fun isScript(fileName: String): Boolean =
-            scriptFilePattern.let { Regex(it).matches(fileName) }
+        scriptFilePattern.matches(fileName)
 
     // TODO: implement other strategy - e.g. try to extract something from match with ScriptFilePattern
     override fun getScriptName(script: KtScript): Name = NameUtils.getScriptNameForFile(script.containingKtFile.name)
@@ -140,6 +152,15 @@ open class KotlinScriptDefinitionFromAnnotatedTemplate(
 
     override val annotationsForSamWithReceivers: List<String>
         get() = samWithReceiverAnnotations ?: super.annotationsForSamWithReceivers
+
+    override val additionalCompilerArguments: Iterable<String>? by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        takeUnlessError {
+            template.annotations.firstIsInstanceOrNull<kotlin.script.templates.ScriptTemplateAdditionalCompilerArguments>()?.let {
+                val res = it.provider.primaryConstructor?.call(it.arguments.asIterable())
+                res
+            }
+        }?.getAdditionalCompilerArguments(environment)
+    }
 
     private inline fun<T> takeUnlessError(reportError: Boolean = true, body: () -> T?): T? =
             try {

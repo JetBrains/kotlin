@@ -1,0 +1,18 @@
+package
+
+public val x: [ERROR : Error function type]
+public fun </*0*/ E> id(/*0*/ x: E): E
+public fun </*0*/ E> l(/*0*/ x: E): kotlin.collections.List<E>
+
+public final class A {
+    public constructor A()
+    public final val a: [ERROR : Error function type]
+    public final val b: [ERROR : Error function type]
+    public final val u: [ERROR : Error function type]
+    public final val y: [ERROR : Error function type]
+    public final val z1: kotlin.Nothing
+    public final val z2: kotlin.collections.List<kotlin.Nothing>
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

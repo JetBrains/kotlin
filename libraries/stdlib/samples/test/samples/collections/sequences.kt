@@ -2,11 +2,10 @@ package samples.collections
 
 import samples.*
 import kotlin.test.*
-import kotlin.coroutines.experimental.buildIterator
-import kotlin.coroutines.experimental.buildSequence
 
 @RunWith(Enclosed::class)
 class Sequences {
+
     class Building {
 
         @Sample
@@ -40,8 +39,8 @@ class Sequences {
             class LinkedValue<T>(val value: T, val next: LinkedValue<T>? = null)
 
             fun <T> LinkedValue<T>?.asSequence(): Sequence<LinkedValue<T>> = generateSequence(
-                    seedFunction = { this },
-                    nextFunction = { it.next }
+                seedFunction = { this },
+                nextFunction = { it.next }
             )
 
             fun <T> LinkedValue<T>?.valueSequence(): Sequence<T> = asSequence().map { it.value }
@@ -93,12 +92,30 @@ class Sequences {
         }
 
         @Sample
+        fun sequenceFromEnumeration() {
+            val numbers = java.util.Hashtable<String, Int>()
+            numbers.put("one", 1)
+            numbers.put("two", 2)
+            numbers.put("three", 3)
+
+            // when you have an Enumeration from some old code
+            val enumeration: java.util.Enumeration<String> = numbers.keys()
+
+            // you can wrap it in a sequence and transform further with sequence operations
+            val sequence = enumeration.asSequence().sorted()
+            assertPrints(sequence.toList(), "[one, three, two]")
+
+            // the resulting sequence is one-shot
+            assertFails { sequence.toList() }
+        }
+
+        @Sample
         fun buildFibonacciSequence() {
-            fun fibonacci() = buildSequence {
+            fun fibonacci() = sequence {
                 var terms = Pair(0, 1)
 
                 // this sequence is infinite
-                while(true) {
+                while (true) {
                     yield(terms.first)
                     terms = Pair(terms.second, terms.first + terms.second)
                 }
@@ -109,7 +126,7 @@ class Sequences {
 
         @Sample
         fun buildSequenceYieldAll() {
-            val sequence = buildSequence {
+            val sequence = sequence {
                 val start = 0
                 // yielding a single value
                 yield(start)
@@ -128,7 +145,7 @@ class Sequences {
             val wrappedCollection = object : AbstractCollection<Any>() {
                 override val size: Int = collection.size + 2
 
-                override fun iterator(): Iterator<Any> = buildIterator {
+                override fun iterator(): Iterator<Any> = iterator {
                     yield("first")
                     yieldAll(collection)
                     yield("last")
@@ -140,5 +157,77 @@ class Sequences {
 
     }
 
+    class Usage {
+
+        @Sample
+        fun sequenceOrEmpty() {
+            val nullSequence: Sequence<Int>? = null
+            assertPrints(nullSequence.orEmpty().toList(), "[]")
+
+            val sequence: Sequence<Int>? = sequenceOf(1, 2, 3)
+            assertPrints(sequence.orEmpty().toList(), "[1, 2, 3]")
+        }
+
+        @Sample
+        fun sequenceIfEmpty() {
+            val empty = emptySequence<Int>()
+
+            val emptyOrDefault = empty.ifEmpty { sequenceOf("default") }
+            assertPrints(emptyOrDefault.toList(), "[default]")
+
+            val nonEmpty = sequenceOf("value")
+
+            val nonEmptyOrDefault = nonEmpty.ifEmpty { sequenceOf("default") }
+            assertPrints(nonEmptyOrDefault.toList(), "[value]")
+        }
+    }
+
+    class Transformations {
+
+        @Sample
+        fun takeWindows() {
+            val sequence = generateSequence(1) { it + 1 }
+
+            val windows = sequence.windowed(size = 5, step = 1)
+            assertPrints(windows.take(4).toList(), "[[1, 2, 3, 4, 5], [2, 3, 4, 5, 6], [3, 4, 5, 6, 7], [4, 5, 6, 7, 8]]")
+
+            val moreSparseWindows = sequence.windowed(size = 5, step = 3)
+            assertPrints(moreSparseWindows.take(4).toList(), "[[1, 2, 3, 4, 5], [4, 5, 6, 7, 8], [7, 8, 9, 10, 11], [10, 11, 12, 13, 14]]")
+
+            val fullWindows = sequence.take(10).windowed(size = 5, step = 3)
+            assertPrints(fullWindows.toList(), "[[1, 2, 3, 4, 5], [4, 5, 6, 7, 8]]")
+
+            val partialWindows = sequence.take(10).windowed(size = 5, step = 3, partialWindows = true)
+            assertPrints(partialWindows.toList(), "[[1, 2, 3, 4, 5], [4, 5, 6, 7, 8], [7, 8, 9, 10], [10]]")
+        }
+
+        @Sample
+        fun averageWindows() {
+            val dataPoints = sequenceOf(10, 15, 18, 25, 19, 21, 14, 8, 5)
+
+            val averaged = dataPoints.windowed(size = 4, step = 1, partialWindows = true) { window -> window.average() }
+            assertPrints(averaged.toList(), "[17.0, 19.25, 20.75, 19.75, 15.5, 12.0, 9.0, 6.5, 5.0]")
+
+            val averagedNoPartialWindows = dataPoints.windowed(size = 4, step = 1).map { it.average() }
+            assertPrints(averagedNoPartialWindows.toList(), "[17.0, 19.25, 20.75, 19.75, 15.5, 12.0]")
+        }
+
+        @Sample
+        fun zip() {
+            val sequenceA = ('a'..'z').asSequence()
+            val sequenceB = generateSequence(1) { it * 2 + 1 }
+
+            assertPrints((sequenceA zip sequenceB).take(4).toList(), "[(a, 1), (b, 3), (c, 7), (d, 15)]")
+        }
+
+        @Sample
+        fun zipWithTransform() {
+            val sequenceA = ('a'..'z').asSequence()
+            val sequenceB = generateSequence(1) { it * 2 + 1 }
+
+            val result = sequenceA.zip(sequenceB) { a, b -> "$a/$b" }
+            assertPrints(result.take(4).toList(), "[a/1, b/3, c/7, d/15]")
+        }
+    }
 
 }

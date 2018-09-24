@@ -1,3 +1,5 @@
+// !LANGUAGE: -ProhibitVisibilityOfNestedClassifiersFromSupertypesOfCompanion
+
 open class A {
     companion object {
         class B
@@ -5,33 +7,33 @@ open class A {
 }
 
 class C: A() {
-    val b: B = null!!
+    val b: <!DEPRECATED_ACCESS_BY_SHORT_NAME!>B<!> = null!!
 
     init {
-        B()
+        <!DEPRECATED_ACCESS_BY_SHORT_NAME!>B()<!>
     }
 
     object O {
-        val b: B = null!!
+        val b: <!DEPRECATED_ACCESS_BY_SHORT_NAME!>B<!> = null!!
 
         init {
-            B()
+            <!DEPRECATED_ACCESS_BY_SHORT_NAME!>B()<!>
         }
     }
 
     class K {
-        val b: B = null!!
+        val b: <!DEPRECATED_ACCESS_BY_SHORT_NAME!>B<!> = null!!
 
         init {
-            B()
+            <!DEPRECATED_ACCESS_BY_SHORT_NAME!>B()<!>
         }
     }
 
     inner class I {
-        val b: B = null!!
+        val b: <!DEPRECATED_ACCESS_BY_SHORT_NAME!>B<!> = null!!
 
         init {
-            B()
+            <!DEPRECATED_ACCESS_BY_SHORT_NAME!>B()<!>
         }
     }
 }

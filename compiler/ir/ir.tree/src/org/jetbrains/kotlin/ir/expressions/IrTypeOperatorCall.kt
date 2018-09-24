@@ -16,7 +16,8 @@
 
 package org.jetbrains.kotlin.ir.expressions
 
-import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
+import org.jetbrains.kotlin.ir.types.IrType
 
 enum class IrTypeOperator {
     CAST,
@@ -32,6 +33,7 @@ enum class IrTypeOperator {
 interface IrTypeOperatorCall : IrExpression {
     val operator: IrTypeOperator
     var argument: IrExpression
-    val typeOperand: KotlinType
+    val typeOperand: IrType
+    val typeOperandClassifier: IrClassifierSymbol
 }
 

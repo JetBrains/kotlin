@@ -1,4 +1,5 @@
-// EXPECTED_REACHABLE_NODES: 997
+// IGNORE_BACKEND: JS_IR
+// EXPECTED_REACHABLE_NODES: 1281
 fun box(): String {
     val a = CharArray(1)
     val aType = jsTypeOf(a.asDynamic()[0])

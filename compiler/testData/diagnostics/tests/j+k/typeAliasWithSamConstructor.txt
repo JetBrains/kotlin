@@ -27,5 +27,5 @@ public interface OnSubscribe</*0*/ T : kotlin.Any!> {
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
-public typealias ObservableAlias</*0*/ T>  = Observable<T>
+public typealias ObservableAlias</*0*/ T> = Observable<T>
 public typealias ObservableIntAlias = Observable<kotlin.Int>

@@ -1,15 +1,4 @@
--injars '<output>/kotlin-compiler-before-shrink.jar'(
-!com/thoughtworks/xstream/converters/extended/ISO8601**,
-!com/thoughtworks/xstream/converters/reflection/CGLIBEnhancedConverter**,
-!com/thoughtworks/xstream/io/xml/JDom**,
-!com/thoughtworks/xstream/io/xml/Dom4J**,
-!com/thoughtworks/xstream/io/xml/Xom**,
-!com/thoughtworks/xstream/io/xml/Wstx**,
-!com/thoughtworks/xstream/io/xml/KXml2**,
-!com/thoughtworks/xstream/io/xml/BEAStax**,
-!com/thoughtworks/xstream/io/json/Jettison**,
-!com/thoughtworks/xstream/mapper/CGLIBMapper**,
-!com/thoughtworks/xstream/mapper/LambdaMapper**,
+-injars '<kotlin-compiler-jar-before-shrink>'(
 !org/apache/log4j/jmx/Agent*,
 !org/apache/log4j/net/JMS*,
 !org/apache/log4j/net/SMTP*,
@@ -23,7 +12,7 @@
 META-INF/services/**,META-INF/native/**,META-INF/extensions/**,META-INF/MANIFEST.MF,
 messages/**)
 
--outjars '<kotlin-home>/lib/kotlin-compiler.jar'
+-outjars '<kotlin-compiler-jar>'
 
 -dontnote **
 -dontwarn com.intellij.util.ui.IsRetina*
@@ -52,19 +41,40 @@ messages/**)
 -dontwarn org.w3c.dom.ElementTraversal
 -dontwarn javaslang.match.annotation.Unapply
 -dontwarn javaslang.match.annotation.Patterns
+-dontwarn javaslang.*
 -dontwarn com.google.errorprone.**
 -dontwarn com.google.j2objc.**
 -dontwarn javax.crypto.**
 -dontwarn java.lang.invoke.MethodHandle
 -dontwarn org.jline.builtins.Nano$Buffer
--dontwarn net.jpountz.lz4.LZ4Factory
+-dontwarn org.jetbrains.annotations.ReadOnly
+-dontwarn org.jetbrains.annotations.Mutable
+-dontwarn com.intellij.util.io.TarUtil
+-dontwarn com.intellij.util.io.Compressor$Tar
 
--libraryjars '<rtjar>'
--libraryjars '<jssejar>'
--libraryjars '<bootstrap.runtime>'
--libraryjars '<bootstrap.reflect>'
--libraryjars '<bootstrap.script.runtime>'
--libraryjars '<tools.jar>'
+# Nullability annotations used in Guava
+-dontwarn org.checkerframework.checker.nullness.compatqual.NullableDecl
+-dontwarn org.checkerframework.checker.nullness.compatqual.MonotonicNonNullDecl
+-dontwarn org.checkerframework.checker.nullness.qual.Nullable
+-dontwarn org.checkerframework.checker.nullness.qual.MonotonicNonNull
+
+# Depends on apache batick which has lots of dependencies
+-dontwarn com.intellij.util.SVGLoader*
+-dontwarn org.apache.batik.script.rhino.RhinoInterpreter
+-dontwarn org.apache.batik.script.rhino.RhinoInterpreterFactory
+
+-dontwarn org.jdom.xpath.jaxen.*
+-dontwarn com.intellij.util.io.Decompressor*
+-dontwarn org.w3c.dom.Location
+-dontwarn org.w3c.dom.Window
+
+
+#-libraryjars '<rtjar>'
+#-libraryjars '<jssejar>'
+#-libraryjars '<bootstrap.runtime>'
+#-libraryjars '<bootstrap.reflect>'
+#-libraryjars '<bootstrap.script.runtime>'
+#-libraryjars '<tools.jar>'
 
 -dontoptimize
 -dontobfuscate
@@ -130,6 +140,8 @@ messages/**)
 # This is needed so that the platform code which parses XML wouldn't fail, see KT-16968
 # This API is used from org.jdom.input.SAXBuilder via reflection.
 -keep class org.jdom.input.JAXPParserFactory { public ** createParser(...); }
+# Without this class PluginManagerCore.loadDescriptorFromJar fails
+-keep class org.jdom.output.XMLOutputter { *; }
 
 # for kdoc & dokka
 -keep class com.intellij.openapi.util.TextRange { *; }
@@ -162,6 +174,7 @@ messages/**)
 -keep class gnu.trove.TIntHashSet { *; }
 -keep class gnu.trove.TIntIterator { *; }
 -keep class org.iq80.snappy.SlowMemory { *; }
+-keep class javaslang.match.PatternsProcessor { *; }
 
 -keepclassmembers enum * {
     public static **[] values();
@@ -201,6 +214,10 @@ messages/**)
     *** SKIP_FRAMES;
 }
 
+-keepclassmembers class com.intellij.openapi.project.Project {
+    ** getBasePath();
+}
+
 # for kotlin-android-extensions in maven
 -keep class com.intellij.openapi.module.ModuleServiceManager { public *; }
 
@@ -213,3 +230,14 @@ messages/**)
 
 # for coroutines
 -keep class kotlinx.coroutines.** { *; }
+
+# for webdemo
+-keep class com.intellij.openapi.progress.ProgressManager { *; }
+
+# for kapt
+-keep class com.intellij.openapi.project.Project { *; }
+
+# remove when KT-18563 would be fixed
+-keep class org.jetbrains.kotlin.psi.psiUtil.PsiUtilsKt { *; }
+
+-keep class net.jpountz.lz4.* { *; }

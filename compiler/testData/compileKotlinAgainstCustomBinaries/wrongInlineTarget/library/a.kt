@@ -7,15 +7,15 @@ inline fun inlineFun(p: () -> Unit) {
 
 var inlineGetter: Int
     inline get() = 1
-    set(varue) {}
+    set(varue) { varue.hashCode() }
 
 var inlineSetter: Int
     get() = 1
-    inline set(varue) {}
+    inline set(varue) { varue.hashCode() }
 
 var allInline: Int
     inline get() = 1
-    inline set(varue) {}
+    inline set(varue) { varue.hashCode() }
 
 
 
@@ -26,14 +26,14 @@ class A {
 
     var inlineGetter: Int
         inline get() = 1
-        set(varue) {}
+        set(varue) { varue.hashCode() }
 
     var inlineSetter: Int
         get() = 1
-        inline set(varue) {}
+        inline set(varue) { varue.hashCode() }
 
     var allInline: Int
         inline get() = 1
-        inline set(varue) {}
+        inline set(varue) { varue.hashCode() }
 
 }

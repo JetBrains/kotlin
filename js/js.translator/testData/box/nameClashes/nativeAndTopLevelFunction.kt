@@ -1,4 +1,5 @@
-// EXPECTED_REACHABLE_NODES: 992
+// IGNORE_BACKEND: JS_IR
+// EXPECTED_REACHABLE_NODES: 1282
 package test
 
 external fun foo(ignore: dynamic): String

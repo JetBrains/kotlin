@@ -24,6 +24,7 @@ import com.intellij.psi.PsiReferenceList.Role
 import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.classes.lazyPub
+import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.KtSuperTypeList
 import org.jetbrains.kotlin.psi.KtSuperTypeListEntry
@@ -42,7 +43,7 @@ class KtLightPsiReferenceList (
         override val kotlinOrigin by lazyPub {
             val superTypeList = this@KtLightPsiReferenceList.kotlinOrigin ?: return@lazyPub null
             val fqNameToFind = clsDelegate.qualifiedName ?: return@lazyPub null
-            val context = LightClassGenerationSupport.getInstance(project).analyzeFully(superTypeList)
+            val context = LightClassGenerationSupport.getInstance(project).analyzeWithContent(superTypeList.parent as KtClassOrObject)
             superTypeList.entries.firstOrNull {
                 val referencedType = context[BindingContext.TYPE, it.typeReference]
                 referencedType?.constructor?.declarationDescriptor?.fqNameUnsafe?.asString() == fqNameToFind

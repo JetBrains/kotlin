@@ -21,40 +21,37 @@ import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.module.ModuleUtil
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.projectRoots.JavaSdk
 import com.intellij.openapi.projectRoots.JavaSdkVersion
 import com.intellij.openapi.projectRoots.Sdk
-import com.intellij.openapi.roots.*
+import com.intellij.openapi.roots.LibraryOrderEntry
+import com.intellij.openapi.roots.ModuleRootManager
+import com.intellij.openapi.roots.OrderRootType
+import com.intellij.openapi.roots.ProjectFileIndex
 import com.intellij.openapi.roots.libraries.Library
 import com.intellij.openapi.ui.Messages
-import com.intellij.openapi.util.io.FileUtil
-import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.JarFileSystem
-import com.intellij.openapi.vfs.LocalFileSystem
+import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.JavaPsiFacade
 import com.intellij.psi.PsiClass
 import com.intellij.psi.search.GlobalSearchScope
-import com.intellij.util.PathUtil.getLocalFile
 import com.intellij.util.containers.MultiMap
 import com.intellij.util.indexing.FileBasedIndex
 import com.intellij.util.indexing.ScalarIndexExtension
 import com.intellij.util.text.VersionComparatorUtil
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.JvmTarget
-import org.jetbrains.kotlin.idea.KotlinPluginUtil
-import org.jetbrains.kotlin.idea.configuration.*
+import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.idea.framework.JavaRuntimeDetectionUtil
 import org.jetbrains.kotlin.idea.framework.isExternalLibrary
 import org.jetbrains.kotlin.idea.util.application.runReadAction
-import org.jetbrains.kotlin.idea.util.application.runWriteAction
-import org.jetbrains.kotlin.idea.util.projectStructure.allModules
+import org.jetbrains.kotlin.idea.util.projectStructure.version
 import org.jetbrains.kotlin.idea.util.runWithAlternativeResolveEnabled
 import org.jetbrains.kotlin.idea.vfilefinder.KotlinJavaScriptMetaFileIndex
 import org.jetbrains.kotlin.idea.vfilefinder.hasSomethingInPackage
-import org.jetbrains.kotlin.load.kotlin.JvmMetadataVersion
+import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
+import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.serialization.deserialization.BinaryVersion
 import org.jetbrains.kotlin.utils.JsMetadataVersion
 import org.jetbrains.kotlin.utils.KotlinPaths
 import org.jetbrains.kotlin.utils.LibraryUtils
@@ -68,82 +65,6 @@ fun getLibraryRootsWithAbiIncompatibleKotlinClasses(module: Module): Collection<
 
 fun getLibraryRootsWithAbiIncompatibleForKotlinJs(module: Module): Collection<BinaryVersionedFile<JsMetadataVersion>> {
     return getLibraryRootsWithAbiIncompatibleVersion(module, JsMetadataVersion.INSTANCE, KotlinJsMetadataVersionIndex)
-}
-
-fun updateLibraries(project: Project, libraries: Collection<Library>) {
-    if (project.allModules().any { module -> KotlinPluginUtil.isMavenModule(module) }) {
-        Messages.showMessageDialog(project, "Automatic library version update for Maven projects is currently unsupported. Please update your pom.xml manually.",
-                                   "Update Kotlin Runtime Library",
-                                   Messages.getErrorIcon())
-        return
-    }
-
-    if (project.allModules().any { module -> KotlinPluginUtil.isGradleModule(module) }) {
-        Messages.showMessageDialog(project, "Automatic library version update for Gradle projects is currently unsupported. Please update your build.gradle manually.",
-                                   "Update Kotlin Runtime Library",
-                                   Messages.getErrorIcon())
-        return
-    }
-
-    val kJvmConfigurator = getConfiguratorByName(KotlinJavaModuleConfigurator.NAME) as KotlinJavaModuleConfigurator? ?:
-                           error("Configurator with given name doesn't exists: " + KotlinJavaModuleConfigurator.NAME)
-
-    val kJsConfigurator = getConfiguratorByName(KotlinJsModuleConfigurator.NAME) as KotlinJsModuleConfigurator? ?:
-                          error("Configurator with given name doesn't exists: " + KotlinJsModuleConfigurator.NAME)
-
-    val collector = createConfigureKotlinNotificationCollector(project)
-    val sdk = ProjectRootManager.getInstance(project).projectSdk
-    // TODO use module SDK
-
-    for (library in libraries) {
-        val libraryJarDescriptors = if (JavaRuntimeDetectionUtil.getJavaRuntimeVersion(library) != null)
-            kJvmConfigurator.getLibraryJarDescriptors(sdk)
-        else
-            kJsConfigurator.getLibraryJarDescriptors(sdk)
-
-        for (libraryJarDescriptor in libraryJarDescriptors) {
-            updateJar(project, library, libraryJarDescriptor)
-        }
-    }
-
-    collector.showNotification()
-}
-
-private fun updateJar(
-        project: Project,
-        library: Library,
-        libraryJarDescriptor: LibraryJarDescriptor) {
-    val fileToReplace = libraryJarDescriptor.findExistingJar(library)
-
-    if (fileToReplace == null && !libraryJarDescriptor.shouldExist) {
-        return
-    }
-
-    val oldUrl = fileToReplace?.url
-    val jarPath: File = libraryJarDescriptor.getPathInPlugin()
-
-    if (!jarPath.exists()) {
-        showRuntimeJarNotFoundDialog(project, libraryJarDescriptor.jarName)
-        return
-    }
-
-    val jarFileToReplace = getLocalJar(fileToReplace)!!
-    val newVFile = replaceFile(jarPath, jarFileToReplace)
-    if (newVFile != null) {
-        val model = library.modifiableModel
-        runWriteAction {
-            try {
-                if (oldUrl != null) {
-                    model.removeRoot(oldUrl, libraryJarDescriptor.orderRootType)
-                }
-                val newRoot = JarFileSystem.getInstance().getJarRootForLocalFile(newVFile)!!
-                model.addRoot(newRoot, libraryJarDescriptor.orderRootType)
-            }
-            finally {
-                model.commit()
-            }
-        }
-    }
 }
 
 fun findAllUsedLibraries(project: Project): MultiMap<Library, Module> {
@@ -162,10 +83,12 @@ fun findAllUsedLibraries(project: Project): MultiMap<Library, Module> {
     return libraries
 }
 
-enum class LibraryJarDescriptor(val jarName: String,
-                                val orderRootType: OrderRootType,
-                                val shouldExist: Boolean,
-                                val getPath: (KotlinPaths) -> File = { paths -> File(paths.libPath, jarName) }) {
+enum class LibraryJarDescriptor(
+    val jarName: String,
+    val orderRootType: OrderRootType,
+    val shouldExist: Boolean,
+    val getPath: (KotlinPaths) -> File = { paths -> File(paths.libPath, jarName) }
+) {
     RUNTIME_JAR(PathUtil.KOTLIN_JAVA_STDLIB_JAR, OrderRootType.CLASSES, true, KotlinPaths::getStdlibPath) {
         override fun findExistingJar(library: Library): VirtualFile? {
             if (isExternalLibrary(library)) return null
@@ -176,15 +99,29 @@ enum class LibraryJarDescriptor(val jarName: String,
     REFLECT_JAR(PathUtil.KOTLIN_JAVA_REFLECT_JAR, OrderRootType.CLASSES, false, KotlinPaths::getReflectPath),
     SCRIPT_RUNTIME_JAR(PathUtil.KOTLIN_JAVA_SCRIPT_RUNTIME_JAR, OrderRootType.CLASSES, true, KotlinPaths::getScriptRuntimePath),
     TEST_JAR(PathUtil.KOTLIN_TEST_JAR, OrderRootType.CLASSES, false, KotlinPaths::getKotlinTestPath),
+
+    @Deprecated("RUNTIME_JDK7_JAR should be used since 1.2")
     RUNTIME_JRE7_JAR(PathUtil.KOTLIN_JAVA_RUNTIME_JRE7_JAR, OrderRootType.CLASSES, false),
+    RUNTIME_JDK7_JAR(PathUtil.KOTLIN_JAVA_RUNTIME_JDK7_JAR, OrderRootType.CLASSES, false),
+
+    @Deprecated("RUNTIME_JDK8_JAR should be used since 1.2")
     RUNTIME_JRE8_JAR(PathUtil.KOTLIN_JAVA_RUNTIME_JRE8_JAR, OrderRootType.CLASSES, false),
+    RUNTIME_JDK8_JAR(PathUtil.KOTLIN_JAVA_RUNTIME_JDK8_JAR, OrderRootType.CLASSES, false),
+
+    @Deprecated("RUNTIME_JDK7_SOURCES_JAR should be used since 1.2")
     RUNTIME_JRE7_SOURCES_JAR(PathUtil.KOTLIN_JAVA_RUNTIME_JRE7_SRC_JAR, OrderRootType.SOURCES, false),
+    RUNTIME_JDK7_SOURCES_JAR(PathUtil.KOTLIN_JAVA_RUNTIME_JDK7_SRC_JAR, OrderRootType.SOURCES, false),
+
+    @Deprecated("RUNTIME_JDK8_SOURCES_JAR should be used since 1.2")
     RUNTIME_JRE8_SOURCES_JAR(PathUtil.KOTLIN_JAVA_RUNTIME_JRE8_SRC_JAR, OrderRootType.SOURCES, false),
+    RUNTIME_JDK8_SOURCES_JAR(PathUtil.KOTLIN_JAVA_RUNTIME_JDK8_SRC_JAR, OrderRootType.SOURCES, false),
 
     RUNTIME_SRC_JAR(PathUtil.KOTLIN_JAVA_STDLIB_SRC_JAR, OrderRootType.SOURCES, false, KotlinPaths::getStdlibSourcesPath) {
         override fun findExistingJar(library: Library): VirtualFile? {
-            return super.findExistingJar(library) ?:
-                   LibraryUtils.getJarFile(library.getFiles(orderRootType).toList(), PathUtil.KOTLIN_JAVA_STDLIB_SRC_JAR_OLD)
+            return super.findExistingJar(library) ?: LibraryUtils.getJarFile(
+                library.getFiles(orderRootType).toList(),
+                PathUtil.KOTLIN_JAVA_STDLIB_SRC_JAR_OLD
+            )
         }
     },
     REFLECT_SRC_JAR(PathUtil.KOTLIN_REFLECT_SRC_JAR, OrderRootType.SOURCES, false),
@@ -201,40 +138,8 @@ enum class LibraryJarDescriptor(val jarName: String,
     fun getPathInPlugin() = getPath(PathUtil.kotlinPathsForIdeaPlugin)
 }
 
-fun bundledRuntimeVersion(): String {
-    return bundledRuntimeBuildNumber ?: pluginRuntimeVersion(KotlinPluginUtil.getPluginVersion())
-}
+fun bundledRuntimeVersion(): String = KotlinCompilerVersion.VERSION
 
-private val bundledRuntimeBuildNumber: String? by lazy {
-    val file = PathUtil.kotlinPathsForIdeaPlugin.buildNumberFile
-    if (file.exists()) file.readText().trim() else null
-}
-
-private val PLUGIN_VERSIONS_SEPARATORS = arrayOf("Idea", "IJ", "release", "dev", "Studio")
-
-fun pluginRuntimeVersion(pluginVersion: String): String {
-    var placeToSplit = -1
-
-    for (separator in PLUGIN_VERSIONS_SEPARATORS) {
-        val ideaPatternIndex = StringUtil.indexOf(pluginVersion, separator)
-        if (ideaPatternIndex >= 2 && Character.isDigit(pluginVersion[ideaPatternIndex - 2])) {
-            placeToSplit = ideaPatternIndex - 1
-            break
-        }
-    }
-
-    if (placeToSplit == -1) {
-        for (i in 1..pluginVersion.length - 1) {
-            val ch = pluginVersion[i]
-            if (Character.isLetter(ch) && pluginVersion[i - 1] == '.') {
-                placeToSplit = i - 1
-                break
-            }
-        }
-    }
-
-    return if (placeToSplit != -1) pluginVersion.substring(0, placeToSplit) else pluginVersion
-}
 
 fun getLocalJar(kotlinRuntimeJar: VirtualFile?): VirtualFile? {
     if (kotlinRuntimeJar == null) return null
@@ -246,46 +151,19 @@ fun getLocalJar(kotlinRuntimeJar: VirtualFile?): VirtualFile? {
     return kotlinRuntimeJar
 }
 
-internal fun replaceFile(updatedFile: File, jarFileToReplace: VirtualFile): VirtualFile? {
-    val jarIoFileToReplace = File(jarFileToReplace.path)
-
-    if (FileUtil.filesEqual(updatedFile, jarIoFileToReplace)) {
-        return null
-    }
-
-    FileUtil.copy(updatedFile, jarIoFileToReplace)
-    if (jarIoFileToReplace.name != updatedFile.name) {
-        val newFile = File(jarIoFileToReplace.parent, updatedFile.name)
-        if (!newFile.exists()) {
-            if (!jarIoFileToReplace.renameTo(newFile)) {
-                LOG.info("Failed to rename ${jarIoFileToReplace.path} to ${newFile.path}")
-                return null
-            }
-            val newVFile = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(newFile)
-            if (newVFile == null) {
-                LOG.info("Failed to find ${newFile.path} in VFS")
-                return null
-            }
-            newVFile.refresh(false, true)
-            return newVFile
-        }
-    }
-    jarFileToReplace.refresh(false, true)
-    return null
-}
-
 data class BinaryVersionedFile<out T : BinaryVersion>(val file: VirtualFile, val version: T, val supportedVersion: T)
 
 private fun <T : BinaryVersion> getLibraryRootsWithAbiIncompatibleVersion(
-        module: Module,
-        supportedVersion: T,
-        index: ScalarIndexExtension<T>
+    module: Module,
+    supportedVersion: T,
+    index: ScalarIndexExtension<T>
 ): Collection<BinaryVersionedFile<T>> {
     val id = index.name
 
     val moduleWithAllDependencies = setOf(module) + ModuleUtil.getAllDependentModules(module)
     val moduleWithAllDependentLibraries = GlobalSearchScope.union(
-            moduleWithAllDependencies.map { it.moduleWithLibrariesScope }.toTypedArray())
+        moduleWithAllDependencies.map { it.moduleWithLibrariesScope }.toTypedArray()
+    )
 
     val allVersions = FileBasedIndex.getInstance().getAllKeys(id, module.project)
     val badVersions = allVersions.filterNot(BinaryVersion::isCompatible).toHashSet()
@@ -295,10 +173,11 @@ private fun <T : BinaryVersion> getLibraryRootsWithAbiIncompatibleVersion(
     for (version in badVersions) {
         val indexedFiles = FileBasedIndex.getInstance().getContainingFiles(id, version, moduleWithAllDependentLibraries)
         for (indexedFile in indexedFiles) {
-            val libraryRoot = fileIndex.getClassRootForFile(indexedFile) ?:
-                    error("Only library roots were requested, and only class files should be indexed with the $id key. " +
-                          "File: ${indexedFile.path}")
-            badRoots.add(BinaryVersionedFile(getLocalFile(libraryRoot), version, supportedVersion))
+            val libraryRoot = fileIndex.getClassRootForFile(indexedFile) ?: error(
+                "Only library roots were requested, and only class files should be indexed with the $id key. " +
+                        "File: ${indexedFile.path}"
+            )
+            badRoots.add(BinaryVersionedFile(VfsUtil.getLocalFile(libraryRoot), version, supportedVersion))
         }
     }
 
@@ -306,9 +185,11 @@ private fun <T : BinaryVersion> getLibraryRootsWithAbiIncompatibleVersion(
 }
 
 fun showRuntimeJarNotFoundDialog(project: Project, jarName: String) {
-    Messages.showErrorDialog(project,
-                             jarName + " is not found. Make sure plugin is properly installed.",
-                             "No Runtime Found")
+    Messages.showErrorDialog(
+        project,
+        jarName + " is not found. Make sure plugin is properly installed.",
+        "No Runtime Found"
+    )
 }
 
 fun getKotlinJvmRuntimeMarkerClass(project: Project, scope: GlobalSearchScope): PsiClass? {
@@ -334,10 +215,18 @@ fun getStdlibArtifactId(sdk: Sdk?, version: String): String {
         return MAVEN_STDLIB_ID
     }
 
-    val sdkVersion = sdk?.let { JavaSdk.getInstance().getVersion(it) }
-    return when (sdkVersion) {
-        JavaSdkVersion.JDK_1_8, JavaSdkVersion.JDK_1_9 -> MAVEN_STDLIB_ID_JRE8
-        JavaSdkVersion.JDK_1_7 -> MAVEN_STDLIB_ID_JRE7
+    val sdkVersion = sdk?.version
+    if (hasJdkLikeUpdatedRuntime(version)) {
+        return when {
+            sdkVersion != null && sdkVersion.isAtLeast(JavaSdkVersion.JDK_1_8) -> MAVEN_STDLIB_ID_JDK8
+            sdkVersion == JavaSdkVersion.JDK_1_7 -> MAVEN_STDLIB_ID_JDK7
+            else -> MAVEN_STDLIB_ID
+        }
+    }
+
+    return when {
+        sdkVersion != null && sdkVersion.isAtLeast(JavaSdkVersion.JDK_1_8) -> MAVEN_STDLIB_ID_JRE8
+        sdkVersion == JavaSdkVersion.JDK_1_7 -> MAVEN_STDLIB_ID_JRE7
         else -> MAVEN_STDLIB_ID
     }
 }
@@ -346,25 +235,89 @@ fun getDefaultJvmTarget(sdk: Sdk?, version: String): JvmTarget? {
     if (!hasJreSpecificRuntime(version)) {
         return null
     }
-    val sdkVersion = sdk?.let { JavaSdk.getInstance().getVersion(it) }
-    if (sdkVersion != null && sdkVersion.isAtLeast(JavaSdkVersion.JDK_1_8)) {
-        return JvmTarget.JVM_1_8
+    val sdkVersion = sdk?.version
+    return when {
+        sdkVersion == null -> null
+        sdkVersion.isAtLeast(JavaSdkVersion.JDK_1_8) -> JvmTarget.JVM_1_8
+        sdkVersion.isAtLeast(JavaSdkVersion.JDK_1_6) -> JvmTarget.JVM_1_6
+        else -> null
     }
-    return null
 }
 
-fun hasJreSpecificRuntime(version: String): Boolean =
-        VersionComparatorUtil.compare(version, "1.1.0") >= 0 ||
-        isSnapshot(version) ||
-        version == "default_version" /* for tests */
+fun isSnapshot(version: String): Boolean {
+    return version.contains("SNAPSHOT", ignoreCase = true)
+}
 
-val MAVEN_STDLIB_ID = "kotlin-stdlib"
-val MAVEN_STDLIB_ID_JRE7 = "kotlin-stdlib-jre7"
-val MAVEN_STDLIB_ID_JRE8 = "kotlin-stdlib-jre8"
-val MAVEN_JS_STDLIB_ID = "kotlin-stdlib-js"
-val MAVEN_OLD_JS_STDLIB_ID = "kotlin-js-library"
-val MAVEN_COMMON_STDLIB_ID = "kotlin-stdlib-common" // TODO: KotlinCommonMavenConfigurator
-val MAVEN_TEST_ID = "kotlin-test"
-val MAVEN_TEST_JUNIT_ID = "kotlin-test-junit"
-val MAVEN_COMMON_TEST_ID = "kotlin-test-common"
+fun hasJdkLikeUpdatedRuntime(version: String): Boolean =
+    VersionComparatorUtil.compare(version, "1.2.0-rc-39") >= 0 ||
+            isSnapshot(version) ||
+            version == "default_version" /* for tests */
+
+fun hasJreSpecificRuntime(version: String): Boolean =
+    VersionComparatorUtil.compare(version, "1.1.0") >= 0 ||
+            isSnapshot(version) ||
+            version == "default_version" /* for tests */
+
+const val MAVEN_STDLIB_ID = PathUtil.KOTLIN_JAVA_STDLIB_NAME
+
+const val MAVEN_STDLIB_ID_JRE7 = PathUtil.KOTLIN_JAVA_RUNTIME_JRE7_NAME
+const val MAVEN_STDLIB_ID_JDK7 = PathUtil.KOTLIN_JAVA_RUNTIME_JDK7_NAME
+
+const val MAVEN_STDLIB_ID_JRE8 = PathUtil.KOTLIN_JAVA_RUNTIME_JRE8_NAME
+const val MAVEN_STDLIB_ID_JDK8 = PathUtil.KOTLIN_JAVA_RUNTIME_JDK8_NAME
+
+const val MAVEN_JS_STDLIB_ID = PathUtil.JS_LIB_NAME
+const val MAVEN_JS_TEST_ID = PathUtil.KOTLIN_TEST_JS_NAME
+
+
+const val MAVEN_TEST_ID = PathUtil.KOTLIN_TEST_NAME
+const val MAVEN_TEST_JUNIT_ID = "kotlin-test-junit"
+const val MAVEN_COMMON_TEST_ID = "kotlin-test-common"
+const val MAVEN_COMMON_TEST_ANNOTATIONS_ID = "kotlin-test-annotations-common"
+
 val LOG = Logger.getInstance("org.jetbrains.kotlin.idea.versions.KotlinRuntimeLibraryUtilKt")
+
+data class LibInfo(
+    val groupId: String,
+    val name: String,
+    val version: String = "0.0.0"
+)
+
+data class DeprecatedLibInfo(
+    val old: LibInfo,
+    val new: LibInfo,
+    val outdatedAfterVersion: String,
+    val message: String
+)
+
+private fun deprecatedLib(
+    oldGroupId: String,
+    oldName: String,
+    newGroupId: String = oldGroupId,
+    newName: String = oldName,
+    outdatedAfterVersion: String,
+    message: String
+): DeprecatedLibInfo {
+    return DeprecatedLibInfo(
+        old = LibInfo(groupId = oldGroupId, name = oldName),
+        new = LibInfo(groupId = newGroupId, name = newName),
+        outdatedAfterVersion = outdatedAfterVersion,
+        message = message
+    )
+}
+
+val DEPRECATED_LIBRARIES_INFORMATION = listOf(
+    deprecatedLib(
+        oldGroupId = "org.jetbrains.kotlin",
+        oldName = PathUtil.KOTLIN_JAVA_RUNTIME_JRE7_NAME, newName = PathUtil.KOTLIN_JAVA_RUNTIME_JDK7_NAME,
+        outdatedAfterVersion = "1.2.0-rc-39",
+        message = "${PathUtil.KOTLIN_JAVA_RUNTIME_JRE7_NAME} is deprecated since 1.2.0 and should be replaced with ${PathUtil.KOTLIN_JAVA_RUNTIME_JDK7_NAME}"
+    ),
+
+    deprecatedLib(
+        oldGroupId = "org.jetbrains.kotlin",
+        oldName = PathUtil.KOTLIN_JAVA_RUNTIME_JRE8_NAME, newName = PathUtil.KOTLIN_JAVA_RUNTIME_JDK8_NAME,
+        outdatedAfterVersion = "1.2.0-rc-39",
+        message = "${PathUtil.KOTLIN_JAVA_RUNTIME_JRE8_NAME} is deprecated since 1.2.0 and should be replaced with ${PathUtil.KOTLIN_JAVA_RUNTIME_JDK8_NAME}"
+    )
+)

@@ -21,9 +21,9 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Multimap;
 import com.intellij.openapi.util.Key;
 import com.intellij.util.keyFMap.KeyFMap;
-import gnu.trove.THashMap;
 import kotlin.jvm.functions.Function3;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -32,7 +32,8 @@ import java.util.Map;
 public class SlicedMapImpl implements MutableSlicedMap {
 
     private final boolean alwaysAllowRewrite;
-    private final Map<Object, KeyFMap> map = new THashMap<>(0);
+    @Nullable
+    private Map<Object, KeyFMap> map = null;
     private Multimap<WritableSlice<?, ?>, Object> collectiveSliceKeys = null;
 
     public SlicedMapImpl(boolean alwaysAllowRewrite) {
@@ -43,6 +44,10 @@ public class SlicedMapImpl implements MutableSlicedMap {
     public <K, V> void put(WritableSlice<K, V> slice, K key, V value) {
         if (!slice.check(key, value)) {
             return;
+        }
+
+        if (map == null) {
+            map = new OpenAddressLinearProbingHashTable<>();
         }
 
         KeyFMap holder = map.get(key);
@@ -77,13 +82,13 @@ public class SlicedMapImpl implements MutableSlicedMap {
 
     @Override
     public void clear() {
-        map.clear();
+        map = null;
         collectiveSliceKeys = null;
     }
 
     @Override
     public <K, V> V get(ReadOnlySlice<K, V> slice, K key) {
-        KeyFMap holder = map.get(key);
+        KeyFMap holder = map != null ? map.get(key) : null;
 
         V value = holder == null ? null : holder.get(slice.getKey());
 
@@ -101,36 +106,34 @@ public class SlicedMapImpl implements MutableSlicedMap {
 
     @Override
     public void forEach(@NotNull Function3<WritableSlice, Object, Object, Void> f) {
-        for (Map.Entry<Object, KeyFMap> entry : map.entrySet()) {
-            Object key = entry.getKey();
-            KeyFMap holder = entry.getValue();
-
-            if (holder == null) continue;
+        if (map == null) return;
+        map.forEach((key, holder) -> {
+            if (holder == null) return;
 
             for (Key<?> sliceKey : holder.getKeys()) {
                 Object value = holder.get(sliceKey);
 
                 f.invoke(((AbstractWritableSlice) sliceKey).getSlice(), key, value);
             }
-        }
+        });
     }
 
     @NotNull
     @Override
     public <K, V> ImmutableMap<K, V> getSliceContents(@NotNull ReadOnlySlice<K, V> slice) {
+        if (map == null) return ImmutableMap.of();
+
         ImmutableMap.Builder<K, V> builder = ImmutableMap.builder();
 
-        for (Map.Entry<Object, KeyFMap> entry : map.entrySet()) {
-
-            KeyFMap holder = entry.getValue();
-
+        map.forEach((key, holder) -> {
             V value = holder.get(slice.getKey());
 
             if (value != null) {
                 //noinspection unchecked
-                builder.put((K) entry.getKey(), value);
+                builder.put((K) key, value);
             }
-        }
+        });
+
         return builder.build();
     }
 }

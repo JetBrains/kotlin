@@ -21,23 +21,23 @@ import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.idea.codeInliner.UsageReplacementStrategy
 import org.jetbrains.kotlin.idea.core.moveCaret
 import org.jetbrains.kotlin.idea.core.targetDescriptors
 import org.jetbrains.kotlin.idea.quickfix.CleanupFix
 import org.jetbrains.kotlin.idea.quickfix.KotlinSingleIntentionActionFactory
-import org.jetbrains.kotlin.idea.codeInliner.UsageReplacementStrategy
 import org.jetbrains.kotlin.psi.KtImportDirective
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCalleeExpressionIfAny
 
 class DeprecatedSymbolUsageFix(
-        element: KtSimpleNameExpression/*TODO?*/,
-        replaceWith: ReplaceWith
+    element: KtSimpleNameExpression,
+    replaceWith: ReplaceWith
 ) : DeprecatedSymbolUsageFixBase(element, replaceWith), CleanupFix, HighPriorityAction {
 
     override fun getFamilyName() = "Replace deprecated symbol usage"
 
-    override fun getText() = "Replace with '${replaceWith.pattern}'" //TODO: substitute?
+    override fun getText() = "Replace with '${replaceWith.pattern}'"
 
     override fun invoke(replacementStrategy: UsageReplacementStrategy, project: Project, editor: Editor?) {
         val element = element ?: return
@@ -55,8 +55,14 @@ class DeprecatedSymbolUsageFix(
         }
 
         fun isImportToBeRemoved(import: KtImportDirective): Boolean {
-            return !import.isAllUnder
-                   && import.targetDescriptors().all { DeprecatedSymbolUsageFixBase.fetchReplaceWithPattern(it, import.project) != null }
+            if (import.isAllUnder) return false
+
+            val targetDescriptors = import.targetDescriptors()
+            if (targetDescriptors.isEmpty()) return false
+
+            return targetDescriptors.all {
+                DeprecatedSymbolUsageFixBase.fetchReplaceWithPattern(it, import.project) != null
+            }
         }
     }
 }

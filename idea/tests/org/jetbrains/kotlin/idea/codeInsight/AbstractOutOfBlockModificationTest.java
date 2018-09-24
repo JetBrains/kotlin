@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.codeInsight;
 
+import com.intellij.openapi.application.ApplicationInfo;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
@@ -52,6 +53,21 @@ public abstract class AbstractOutOfBlockModificationTest extends KotlinLightCode
         myFixture.configureByFile(path);
 
         boolean expectedOutOfBlock = getExpectedOutOfBlockResult();
+        boolean isSkipCheckDefined = InTextDirectivesUtils.isDirectiveDefined(myFixture.getFile().getText(), "SKIP_ANALYZE_CHECK");
+
+        // Special behaviour in 173, should be dropped after abandoning this version.
+        // BUNCH: 181
+        if ("InGlobalPropertyWithGetter".equals(getTestName(false))) {
+            String apiVersion = ApplicationInfo.getInstance().getApiVersion();
+            if (apiVersion != null && apiVersion.contains("-173.")) {
+                expectedOutOfBlock = true;
+                isSkipCheckDefined = true;
+            }
+        }
+
+        assertTrue("It's allowed to skip check with analyze only for tests where out-of-block is expected",
+                   !isSkipCheckDefined || expectedOutOfBlock);
+
 
         PsiModificationTrackerImpl tracker =
                 (PsiModificationTrackerImpl) PsiManager.getInstance(myFixture.getProject()).getModificationTracker();
@@ -72,10 +88,6 @@ public abstract class AbstractOutOfBlockModificationTest extends KotlinLightCode
 
         assertEquals("Result for out of block test is differs from expected on element in file:\n" + FileUtil.loadFile(new File(path)),
                      expectedOutOfBlock, oobBeforeType != oobAfterCount);
-
-        boolean isSkipCheckDefined = InTextDirectivesUtils.isDirectiveDefined(myFixture.getFile().getText(), "SKIP_ANALYZE_CHECK");
-        assertTrue("It's allowed to skip check with analyze only for tests where out-of-block is expected",
-                   !isSkipCheckDefined || expectedOutOfBlock);
 
         if (!isSkipCheckDefined) {
             checkOOBWithDescriptorsResolve(expectedOutOfBlock);

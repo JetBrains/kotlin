@@ -51,6 +51,10 @@ public final class InitializerVisitor extends TranslatorVisitor<Void> {
         KtExpression delegate = property.getDelegateExpression();
         if (initializer != null) {
             assert value != null;
+            KotlinType type = TranslationUtils.isReferenceToSyntheticBackingField(descriptor) ?
+                              descriptor.getType() :
+                              TranslationUtils.getReturnTypeForCoercion(descriptor);
+            value = TranslationUtils.coerce(context, value, type);
             statement = generateInitializerForProperty(context, descriptor, value);
         }
         else if (delegate != null) {

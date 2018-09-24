@@ -1,4 +1,5 @@
-// EXPECTED_REACHABLE_NODES: 1012
+// IGNORE_BACKEND: JS_IR
+// EXPECTED_REACHABLE_NODES: 1302
 package foo
 
 open class A(val barVal: Int) {

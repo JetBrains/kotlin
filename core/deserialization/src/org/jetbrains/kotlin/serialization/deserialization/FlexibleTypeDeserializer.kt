@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.serialization.deserialization
 
-import org.jetbrains.kotlin.serialization.ProtoBuf
+import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.SimpleType
 
@@ -24,7 +24,7 @@ interface FlexibleTypeDeserializer {
     fun create(proto: ProtoBuf.Type, flexibleId: String, lowerBound: SimpleType, upperBound: SimpleType): KotlinType
 
     object ThrowException : FlexibleTypeDeserializer {
-        override fun create(proto: ProtoBuf.Type, flexibleId: String, lowerBound: SimpleType, upperBound: SimpleType): KotlinType
-                = throw IllegalArgumentException("This method should not be used.")
+        override fun create(proto: ProtoBuf.Type, flexibleId: String, lowerBound: SimpleType, upperBound: SimpleType): KotlinType =
+            throw IllegalArgumentException("This method should not be used.")
     }
 }

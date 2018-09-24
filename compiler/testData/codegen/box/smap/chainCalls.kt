@@ -84,3 +84,4 @@ fun String.fail(): String {
 fun call(): String {
     return "xxx"
 }
+// IGNORE_BACKEND: JVM_IR

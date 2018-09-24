@@ -2,19 +2,23 @@ description = 'Kotlin Test for JS'
 
 apply plugin: 'kotlin-platform-js'
 
+configureDist(project)
 configurePublishing(project)
 
 dependencies {
-    implement project(':kotlin-test:kotlin-test-common')
+    expectedBy project(':kotlin-test:kotlin-test-common')
+    expectedBy project(':kotlin-test:kotlin-test-annotations-common')
     compile project(':kotlin-stdlib-js')
 }
 
 compileKotlin2Js {
-    // TODO: Why "-Xmulti-platfrom" ?
-    kotlinOptions.freeCompilerArgs = ["-Xallow-kotlin-package", "-Xmulti-platform"]
+    kotlinOptions.freeCompilerArgs = ["-Xallow-kotlin-package", "-Xuse-experimental=kotlin.contracts.ExperimentalContracts"]
     kotlinOptions {
         moduleKind = "umd"
         outputFile = "${buildDir}/classes/main/kotlin-test.js"
+        sourceMap = true
+        sourceMapPrefix = "./"
+        sourceMapEmbedSources = "always"
     }
 }
 
@@ -22,6 +26,7 @@ compileTestKotlin2Js {
     kotlinOptions.freeCompilerArgs = ["-Xallow-kotlin-package"]
     kotlinOptions {
         metaInfo = false
+        moduleKind = "umd"
     }
 }
 
@@ -43,6 +48,7 @@ artifacts {
 }
 
 task distJs(type: Copy) {
+    dependsOn(compileKotlin2Js)
     from(compileKotlin2Js.kotlinOptions.outputFile)
     into "$distDir/js"
 }

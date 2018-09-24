@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
-import org.jetbrains.kotlin.resolve.descriptorUtil.hasDefaultValue
+import org.jetbrains.kotlin.resolve.descriptorUtil.declaresOrInheritsDefaultValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
@@ -94,12 +94,7 @@ sealed class ValueParameterCountCheck(override val description: String) : Check 
 private object NoDefaultAndVarargsCheck : Check {
     override val description = "should not have varargs or parameters with default values"
     override fun check(functionDescriptor: FunctionDescriptor) =
-            functionDescriptor.valueParameters.all { !it.hasDefaultValue() && it.varargElementType == null }
-}
-
-private object NoTypeParametersCheck : Check {
-    override val description = "should not have type parameters"
-    override fun check(functionDescriptor: FunctionDescriptor) = functionDescriptor.typeParameters.isEmpty()
+            functionDescriptor.valueParameters.all { !it.declaresOrInheritsDefaultValue() && it.varargElementType == null }
 }
 
 private object IsKPropertyCheck : Check {
@@ -178,7 +173,8 @@ object OperatorChecks : AbstractModifierChecks() {
     override val checks = listOf(
             Checks(GET, MemberOrExtension, ValueParameterCountCheck.AtLeast(1)),
             Checks(SET, MemberOrExtension, ValueParameterCountCheck.AtLeast(2)) {
-                val lastIsOk = valueParameters.lastOrNull()?.let { !it.hasDefaultValue() && it.varargElementType == null } ?: false
+                val lastIsOk =
+                    valueParameters.lastOrNull()?.let { !it.declaresOrInheritsDefaultValue() && it.varargElementType == null } == true
                 ensure(lastIsOk) { "last parameter should not have a default value or be a vararg" }
             },
             Checks(GET_VALUE, MemberOrExtension, NoDefaultAndVarargsCheck, ValueParameterCountCheck.AtLeast(2), IsKPropertyCheck),

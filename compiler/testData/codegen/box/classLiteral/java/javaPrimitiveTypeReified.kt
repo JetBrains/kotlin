@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 // TODO: muted automatically, investigate should it be ran for JS or not
 // IGNORE_BACKEND: JS, NATIVE
 
@@ -26,9 +27,9 @@ fun box(): String {
     check<Float>("float")
     check<Long>("long")
     check<Double>("double")
+    check<Void>("void")
 
     checkNull<String>()
-    checkNull<Void>()
 
     return "OK"
 }

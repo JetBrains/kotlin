@@ -1,0 +1,184 @@
+== myRun ==
+inline fun myRun(block: () -> Unit) {
+    contract {
+        callsInPlace(block, InvocationKind.EXACTLY_ONCE)
+    }
+    block()
+}
+---------------------
+L0:
+  1 <START>
+    v(block: () -> Unit)
+    magic[FAKE_INITIALIZER](block: () -> Unit) -> <v0>
+    w(block|<v0>)
+  2 mark({ contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) } block() })
+    mark({ callsInPlace(block, InvocationKind.EXACTLY_ONCE) })
+    jmp?(L2)                                                                                      NEXT:[r({ callsInPlace(block, InvocationKind.EXACTLY_ONCE) }) -> <v1>, d({ callsInPlace(block, InvocationKind.EXACTLY_ONCE) })]
+    d({ callsInPlace(block, InvocationKind.EXACTLY_ONCE) })                                       NEXT:[<SINK>]
+L2 [after local declaration]:
+    r({ callsInPlace(block, InvocationKind.EXACTLY_ONCE) }) -> <v1>                               PREV:[jmp?(L2)]
+    mark(contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) })
+    call(contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) }, contract|<v1>) -> <v2>
+    r(block) -> <v3>
+    mark(block())
+    call(block(), invoke|<v3>) -> <v4>
+L1:
+  1 <END>                                                                                         NEXT:[<SINK>]
+error:
+    <ERROR>                                                                                       PREV:[]
+sink:
+    <SINK>                                                                                        PREV:[<ERROR>, <END>, d({ callsInPlace(block, InvocationKind.EXACTLY_ONCE) })]
+=====================
+== anonymous_0 ==
+{
+        callsInPlace(block, InvocationKind.EXACTLY_ONCE)
+    }
+---------------------
+L3:
+  3 <START>
+  4 mark(callsInPlace(block, InvocationKind.EXACTLY_ONCE))
+    magic[IMPLICIT_RECEIVER](callsInPlace(block, InvocationKind.EXACTLY_ONCE)) -> <v0>
+    r(block) -> <v1>
+    mark(InvocationKind.EXACTLY_ONCE)
+    r(EXACTLY_ONCE) -> <v2>
+    mark(callsInPlace(block, InvocationKind.EXACTLY_ONCE))
+    call(callsInPlace(block, InvocationKind.EXACTLY_ONCE), callsInPlace|<v0>, <v1>, <v2>) -> <v3>
+L4:
+  3 <END>                                                                                            NEXT:[<SINK>]
+error:
+    <ERROR>                                                                                          PREV:[]
+sink:
+    <SINK>                                                                                           PREV:[<ERROR>, <END>]
+=====================
+== unknownRun ==
+inline fun <T> unknownRun(block: () -> T): T = block()
+---------------------
+L0:
+  1 <START>
+    v(block: () -> T)
+    magic[FAKE_INITIALIZER](block: () -> T) -> <v0>
+    w(block|<v0>)
+    r(block) -> <v1>
+    mark(block())
+    call(block(), invoke|<v1>) -> <v2>
+    ret(*|<v2>) L1
+L1:
+    <END>                                              NEXT:[<SINK>]
+error:
+    <ERROR>                                            PREV:[]
+sink:
+    <SINK>                                             PREV:[<ERROR>, <END>]
+=====================
+== throwIfNotCalled ==
+fun throwIfNotCalled() {
+    val x: Int
+    myRun outer@ {
+        unknownRun {
+            myRun {
+                x = 42
+                return@outer
+            }
+        }
+        throw java.lang.IllegalArgumentException()
+    }
+    println(<!UNINITIALIZED_VARIABLE!>x<!>)
+}
+---------------------
+L0:
+  1 <START>
+  2 mark({ val x: Int myRun outer@ { unknownRun { myRun { x = 42 return@outer } } throw java.lang.IllegalArgumentException() } println(<!UNINITIALIZED_VARIABLE!>x<!>) })
+    v(val x: Int)
+    mark(outer@ { unknownRun { myRun { x = 42 return@outer } } throw java.lang.IllegalArgumentException() })
+    mark({ unknownRun { myRun { x = 42 return@outer } } throw java.lang.IllegalArgumentException() })
+    r({ unknownRun { myRun { x = 42 return@outer } } throw java.lang.IllegalArgumentException() }) -> <v0>
+    mark(myRun outer@ { unknownRun { myRun { x = 42 return@outer } } throw java.lang.IllegalArgumentException() })
+    call(myRun outer@ { unknownRun { myRun { x = 42 return@outer } } throw java.lang.IllegalArgumentException() }, myRun|<v0>) -> <v1>
+L2 [before inlined declaration]:
+    inlined({ unknownRun { myRun { x = 42 return@outer } } throw java.lang.IllegalArgumentException() })
+L3 [after inlined declaration]:
+    mark(println(<)
+    magic[UNRESOLVED_CALL](println(<|!<v2>) -> <v3>
+L1:
+  1 <END>                                                                                                                                                                    NEXT:[<SINK>]
+error:
+    <ERROR>                                                                                                                                                                  PREV:[]
+sink:
+    <SINK>                                                                                                                                                                   PREV:[<ERROR>, <END>]
+=====================
+== inlined anonymous_1 ==
+{
+        unknownRun {
+            myRun {
+                x = 42
+                return@outer
+            }
+        }
+        throw java.lang.IllegalArgumentException()
+    }
+---------------------
+L4:
+  3 <START>
+  4 mark(unknownRun { myRun { x = 42 return@outer } } throw java.lang.IllegalArgumentException())
+    mark({ myRun { x = 42 return@outer } })
+    jmp?(L6)                                                                                         NEXT:[r({ myRun { x = 42 return@outer } }) -> <v0>, d({ myRun { x = 42 return@outer } })]
+    d({ myRun { x = 42 return@outer } })                                                             NEXT:[<SINK>]
+L6 [after local declaration]:
+    r({ myRun { x = 42 return@outer } }) -> <v0>                                                     PREV:[jmp?(L6)]
+    mark(unknownRun { myRun { x = 42 return@outer } })
+    call(unknownRun { myRun { x = 42 return@outer } }, unknownRun|<v0>) -> <v1>
+    mark(throw java.lang.IllegalArgumentException())
+    mark(java.lang.IllegalArgumentException())
+    mark(IllegalArgumentException())
+    call(IllegalArgumentException(), <init>) -> <v2>
+    throw (throw java.lang.IllegalArgumentException()|<v2>)                                          NEXT:[<ERROR>]
+L5:
+  3 <END>                                                                                            NEXT:[<SINK>]                                                                                           PREV:[ret L5]
+error:
+    <ERROR>                                                                                          PREV:[throw (throw java.lang.IllegalArgumentException()|<v2>)]
+sink:
+    <SINK>                                                                                           PREV:[<ERROR>, <END>, d({ myRun { x = 42 return@outer } })]
+=====================
+== anonymous_2 ==
+{
+            myRun {
+                x = 42
+                return@outer
+            }
+        }
+---------------------
+L7:
+  5 <START>
+  6 mark(myRun { x = 42 return@outer })
+    mark({ x = 42 return@outer })
+    r({ x = 42 return@outer }) -> <v0>
+    mark(myRun { x = 42 return@outer })
+    call(myRun { x = 42 return@outer }, myRun|<v0>) -> <v1>
+L9 [before inlined declaration]:
+    inlined({ x = 42 return@outer })                           NEXT:[<SINK>]
+L8:
+L10 [after inlined declaration]:
+  5 <END>                                                      NEXT:[<SINK>]                                                     PREV:[]
+error:
+    <ERROR>                                                    PREV:[]
+sink:
+    <SINK>                                                     PREV:[<ERROR>, <END>, inlined({ x = 42 return@outer })]
+=====================
+== inlined anonymous_3 ==
+{
+                x = 42
+                return@outer
+            }
+---------------------
+L11:
+  7 <START>
+  8 mark(x = 42 return@outer)
+    r(42) -> <v0>
+    w(x|<v0>)
+    ret L5                       NEXT:[<END>]
+L12:
+- 7 <END>                        NEXT:[<SINK>]                       PREV:[]
+error:
+-   <ERROR>                      PREV:[]
+sink:
+-   <SINK>                       PREV:[]
+=====================

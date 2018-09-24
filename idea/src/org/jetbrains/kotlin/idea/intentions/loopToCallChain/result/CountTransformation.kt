@@ -30,13 +30,14 @@ class CountTransformation(
         private val filter: KtExpression?
 ) : AssignToVariableResultTransformation(loop, initialization) {
 
-    override fun mergeWithPrevious(previousTransformation: SequenceTransformation): ResultTransformation? {
+    override fun mergeWithPrevious(previousTransformation: SequenceTransformation, reformat: Boolean): ResultTransformation? {
         if (previousTransformation !is FilterTransformationBase) return null
         if (previousTransformation.indexVariable != null) return null
         val newFilter = if (filter == null)
-            previousTransformation.effectiveCondition.asExpression()
+            previousTransformation.effectiveCondition.asExpression(reformat)
         else
-            KtPsiFactory(filter).createExpressionByPattern("$0 && $1", previousTransformation.effectiveCondition.asExpression(), filter)
+            KtPsiFactory(filter).createExpressionByPattern("$0 && $1", previousTransformation.effectiveCondition.asExpression(reformat), filter,
+                                                           reformat = reformat)
         return CountTransformation(loop, previousTransformation.inputVariable, initialization, newFilter)
     }
 
@@ -44,8 +45,9 @@ class CountTransformation(
         get() = "count" + (if (filter != null) "{}" else "()")
 
     override fun generateCode(chainedCallGenerator: ChainedCallGenerator): KtExpression {
+        val reformat = chainedCallGenerator.reformat
         val call = if (filter != null) {
-            val lambda = generateLambda(inputVariable, filter)
+            val lambda = generateLambda(inputVariable, filter, reformat)
             chainedCallGenerator.generate("count $0:'{}'", lambda)
         }
         else {
@@ -56,7 +58,7 @@ class CountTransformation(
             call
         }
         else {
-            KtPsiFactory(call).createExpressionByPattern("$0 + $1", initialization.initializer, call)
+            KtPsiFactory(call).createExpressionByPattern("$0 + $1", initialization.initializer, call, reformat = reformat)
         }
     }
 

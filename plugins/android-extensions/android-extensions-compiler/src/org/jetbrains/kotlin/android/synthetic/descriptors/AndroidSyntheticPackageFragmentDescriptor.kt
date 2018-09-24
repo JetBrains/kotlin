@@ -20,7 +20,10 @@ import org.jetbrains.kotlin.android.synthetic.res.*
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.impl.PackageFragmentDescriptorImpl
+import org.jetbrains.kotlin.incremental.ANDROID_LAYOUT_CONTENT_LOOKUP_NAME
 import org.jetbrains.kotlin.incremental.components.LookupLocation
+import org.jetbrains.kotlin.incremental.components.LookupTracker
+import org.jetbrains.kotlin.incremental.recordPackageLookup
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
@@ -43,7 +46,9 @@ class AndroidSyntheticPackageFragmentDescriptor(
         val packageData: AndroidSyntheticPackageData,
         private val lazyContext: LazySyntheticElementResolveContext,
         private val storageManager: StorageManager,
-        private val isExperimental: Boolean
+        private val isExperimental: Boolean,
+        private val lookupTracker: LookupTracker,
+        private val layoutName: String
 ) : PackageFragmentDescriptorImpl(module, fqName) {
     private val scope = AndroidExtensionPropertiesScope()
     override fun getMemberScope(): MemberScope = scope
@@ -81,7 +86,14 @@ class AndroidSyntheticPackageFragmentDescriptor(
         override fun getContributedDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean) =
                 properties().filter { kindFilter.acceptsKinds(DescriptorKindFilter.VARIABLES_MASK) && nameFilter(it.name) }
 
-        override fun getContributedVariables(name: Name, location: LookupLocation) = properties().filter { it.name == name }
+        override fun getContributedVariables(name: Name, location: LookupLocation): List<PropertyDescriptor> {
+            recordLookup(name, location)
+            return properties().filter { it.name == name }
+        }
+
+        override fun recordLookup(name: Name, location: LookupLocation) {
+            lookupTracker.recordPackageLookup(location, layoutName, ANDROID_LAYOUT_CONTENT_LOOKUP_NAME)
+        }
 
         override fun printScopeStructure(p: Printer) {
             p.println(this::class.java.simpleName)

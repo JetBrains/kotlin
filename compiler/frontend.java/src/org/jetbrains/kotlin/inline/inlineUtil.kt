@@ -17,14 +17,14 @@
 package org.jetbrains.kotlin.inline
 
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
-import org.jetbrains.kotlin.serialization.Flags
-import org.jetbrains.kotlin.serialization.ProtoBuf
-import org.jetbrains.kotlin.serialization.deserialization.NameResolver
-import org.jetbrains.kotlin.serialization.deserialization.TypeTable
-import org.jetbrains.kotlin.serialization.jvm.BitEncoding
-import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf
-import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.JvmMethodSignature
-import org.jetbrains.kotlin.serialization.jvm.JvmProtoBufUtil
+import org.jetbrains.kotlin.metadata.ProtoBuf
+import org.jetbrains.kotlin.metadata.deserialization.Flags
+import org.jetbrains.kotlin.metadata.deserialization.NameResolver
+import org.jetbrains.kotlin.metadata.deserialization.TypeTable
+import org.jetbrains.kotlin.metadata.deserialization.getExtensionOrNull
+import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf
+import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf.JvmMethodSignature
+import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 
 fun inlineFunctionsJvmNames(header: KotlinClassHeader): Set<String> {
     val annotationData = header.data ?: return emptySet()
@@ -32,13 +32,13 @@ fun inlineFunctionsJvmNames(header: KotlinClassHeader): Set<String> {
 
     return when (header.kind) {
         KotlinClassHeader.Kind.CLASS -> {
-            val (nameResolver, classProto) = JvmProtoBufUtil.readClassDataFrom(BitEncoding.decodeBytes(annotationData), strings)
+            val (nameResolver, classProto) = JvmProtoBufUtil.readClassDataFrom(annotationData, strings)
             inlineFunctionsJvmNames(classProto.functionList, nameResolver, classProto.typeTable) +
             inlineAccessorsJvmNames(classProto.propertyList, nameResolver)
         }
         KotlinClassHeader.Kind.FILE_FACADE,
         KotlinClassHeader.Kind.MULTIFILE_CLASS_PART -> {
-            val (nameResolver, packageProto) = JvmProtoBufUtil.readPackageDataFrom(BitEncoding.decodeBytes(annotationData), strings)
+            val (nameResolver, packageProto) = JvmProtoBufUtil.readPackageDataFrom(annotationData, strings)
             inlineFunctionsJvmNames(packageProto.functionList, nameResolver, packageProto.typeTable) +
             inlineAccessorsJvmNames(packageProto.propertyList, nameResolver)
         }
@@ -50,7 +50,7 @@ private fun inlineFunctionsJvmNames(functions: List<ProtoBuf.Function>, nameReso
     val typeTable = TypeTable(protoTypeTable)
     val inlineFunctions = functions.filter { Flags.IS_INLINE.get(it.flags) }
     val jvmNames = inlineFunctions.mapNotNull {
-        JvmProtoBufUtil.getJvmMethodSignature(it, nameResolver, typeTable)
+        JvmProtoBufUtil.getJvmMethodSignature(it, nameResolver, typeTable)?.asString()
     }
     return jvmNames.toSet()
 }
@@ -62,8 +62,8 @@ private fun inlineAccessorsJvmNames(properties: List<ProtoBuf.Property>, nameRes
     }
     val inlineAccessors = arrayListOf<JvmMethodSignature>()
     propertiesWithInlineAccessors.forEach { proto ->
-        if (proto.hasExtension(JvmProtoBuf.propertySignature)) {
-            val signature = proto.getExtension(JvmProtoBuf.propertySignature)
+        val signature = proto.getExtensionOrNull(JvmProtoBuf.propertySignature)
+        if (signature != null) {
             if (proto.hasGetterFlags() && Flags.IS_INLINE_ACCESSOR.get(proto.getterFlags)) {
                 inlineAccessors.add(signature.getter)
             }

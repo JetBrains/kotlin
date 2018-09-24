@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.js.test.semantics;
@@ -32,31 +21,31 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 public class OutputPrefixPostfixTestGenerated extends AbstractOutputPrefixPostfixTest {
+    private void runTest(String testDataFilePath) throws Exception {
+        KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS, testDataFilePath);
+    }
+
     public void testAllFilesPresentInOutputPrefixPostfix() throws Exception {
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("js/js.translator/testData/outputPrefixPostfix"), Pattern.compile("^([^_](.+))\\.kt$"), TargetBackend.JS, true);
     }
 
     @TestMetadata("simple.kt")
     public void testSimple() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/outputPrefixPostfix/simple.kt");
-        doTest(fileName);
+        runTest("js/js.translator/testData/outputPrefixPostfix/simple.kt");
     }
 
     @TestMetadata("simpleWithPostfix.kt")
     public void testSimpleWithPostfix() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/outputPrefixPostfix/simpleWithPostfix.kt");
-        doTest(fileName);
+        runTest("js/js.translator/testData/outputPrefixPostfix/simpleWithPostfix.kt");
     }
 
     @TestMetadata("simpleWithPrefix.kt")
     public void testSimpleWithPrefix() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/outputPrefixPostfix/simpleWithPrefix.kt");
-        doTest(fileName);
+        runTest("js/js.translator/testData/outputPrefixPostfix/simpleWithPrefix.kt");
     }
 
     @TestMetadata("simpleWithPrefixAndPostfix.kt")
     public void testSimpleWithPrefixAndPostfix() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/outputPrefixPostfix/simpleWithPrefixAndPostfix.kt");
-        doTest(fileName);
+        runTest("js/js.translator/testData/outputPrefixPostfix/simpleWithPrefixAndPostfix.kt");
     }
 }

@@ -1,3 +1,4 @@
+// !WITH_NEW_INFERENCE
 fun text() {
     "direct:a" to "mock:a"
     "direct:a" on {it.body == "<hello/>"} to "mock:a"
@@ -12,7 +13,7 @@ fun text() {
     bar2 {<!TYPE_MISMATCH!><!>}
     bar2 {1}
     bar2 {<!UNRESOLVED_REFERENCE!>it<!>}
-    bar2 {<!EXPECTED_PARAMETERS_NUMBER_MISMATCH, CANNOT_INFER_PARAMETER_TYPE!>it<!> -> <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>it<!>}
+    bar2 <!NI;TYPE_MISMATCH!>{<!OI;CANNOT_INFER_PARAMETER_TYPE, OI;EXPECTED_PARAMETERS_NUMBER_MISMATCH!>it<!> -> <!NI;TYPE_MISMATCH, NI;TYPE_MISMATCH, NI;TYPE_MISMATCH, NI;TYPE_MISMATCH, OI;DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>it<!>}<!>
 }
 
 fun bar(<!UNUSED_PARAMETER!>f<!> :  (Int, Int) -> Int) {}

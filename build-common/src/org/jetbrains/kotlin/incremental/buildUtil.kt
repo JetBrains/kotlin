@@ -30,14 +30,18 @@ import org.jetbrains.kotlin.modules.KotlinModuleXmlBuilder
 import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus
+import org.jetbrains.kotlin.synthetic.SAM_LOOKUP_NAME
 import java.io.File
 import java.util.*
+
+const val DELETE_MODULE_FILE_PROPERTY = "kotlin.delete.module.file.after.build"
 
 fun makeModuleFile(
         name: String,
         isTest: Boolean,
         outputDir: File,
         sourcesToCompile: Iterable<File>,
+        commonSources: Iterable<File>,
         javaSourceRoots: Iterable<JvmSourceRoot>,
         classpath: Iterable<File>,
         friendDirs: Iterable<File>
@@ -46,9 +50,13 @@ fun makeModuleFile(
     builder.addModule(
             name,
             outputDir.absolutePath,
-            sourcesToCompile,
+            // important to transform file to absolute paths,
+            // otherwise compiler will use module file's parent as base path (a temporary file; see below)
+            // (see org.jetbrains.kotlin.cli.jvm.compiler.KotlinToJVMBytecodeCompiler.getAbsolutePaths)
+            sourcesToCompile.map { it.absoluteFile },
             javaSourceRoots,
             classpath,
+            commonSources.map { it.absoluteFile },
             null,
             "java-production",
             isTest,
@@ -77,15 +85,21 @@ fun makeCompileServices(
     }
 
 fun updateIncrementalCache(
-        generatedFiles: Iterable<GeneratedFile>,
-        cache: IncrementalJvmCache,
-        changesCollector: ChangesCollector
+    generatedFiles: Iterable<GeneratedFile>,
+    cache: IncrementalJvmCache,
+    changesCollector: ChangesCollector,
+    javaChangesTracker: JavaClassesTrackerImpl?
 ) {
     for (generatedFile in generatedFiles) {
         when {
             generatedFile is GeneratedJvmClass -> cache.saveFileToCache(generatedFile, changesCollector)
             generatedFile.outputFile.isModuleMappingFile() -> cache.saveModuleMappingToCache(generatedFile.sourceFiles, generatedFile.outputFile)
         }
+    }
+
+    javaChangesTracker?.javaClassesUpdates?.forEach {
+        (source, serializedJavaClass) ->
+        cache.saveJavaClassProto(source, serializedJavaClass, changesCollector)
     }
 
     cache.clearCacheForRemovedClasses(changesCollector)
@@ -109,8 +123,8 @@ data class DirtyData(
 )
 
 fun ChangesCollector.getDirtyData(
-        caches: Iterable<IncrementalCacheCommon>,
-        reporter: ICReporter
+    caches: Iterable<IncrementalCacheCommon>,
+    reporter: ICReporter
 ): DirtyData {
     val dirtyLookupSymbols = HashSet<LookupSymbol>()
     val dirtyClassesFqNames = HashSet<FqName>()
@@ -120,6 +134,7 @@ fun ChangesCollector.getDirtyData(
 
         if (change is ChangeInfo.SignatureChanged) {
             val fqNames = if (!change.areSubclassesAffected) listOf(change.fqName) else withSubtypes(change.fqName, caches)
+            dirtyClassesFqNames.addAll(fqNames)
 
             for (classFqName in fqNames) {
                 assert(!classFqName.isRoot) { "$classFqName is root when processing $change" }
@@ -135,10 +150,10 @@ fun ChangesCollector.getDirtyData(
             dirtyClassesFqNames.addAll(fqNames)
 
             for (name in change.names) {
-                for (fqName in fqNames) {
-                    dirtyLookupSymbols.add(LookupSymbol(name, fqName.asString()))
-                }
+                fqNames.mapTo(dirtyLookupSymbols) { LookupSymbol(name, it.asString()) }
             }
+
+            fqNames.mapTo(dirtyLookupSymbols) { LookupSymbol(SAM_LOOKUP_NAME.asString(), it.asString()) }
         }
     }
 
@@ -163,17 +178,17 @@ fun mapLookupSymbolsToFiles(
 }
 
 fun mapClassesFqNamesToFiles(
-        caches: Iterable<IncrementalCacheCommon>,
-        classesFqNames: Iterable<FqName>,
-        reporter: ICReporter,
-        excludes: Set<File> = emptySet()
+    caches: Iterable<IncrementalCacheCommon>,
+    classesFqNames: Iterable<FqName>,
+    reporter: ICReporter,
+    excludes: Set<File> = emptySet()
 ): Set<File> {
     val dirtyFiles = HashSet<File>()
 
     for (cache in caches) {
         for (dirtyClassFqName in classesFqNames) {
             val srcFile = cache.getSourceFileIfClass(dirtyClassFqName)
-            if (srcFile == null || srcFile in excludes) continue
+            if (srcFile == null || srcFile in excludes || srcFile.isJavaFile()) continue
 
             reporter.report { ("Class $dirtyClassFqName caused recompilation of: ${reporter.pathsAsString(srcFile)}") }
             dirtyFiles.add(srcFile)

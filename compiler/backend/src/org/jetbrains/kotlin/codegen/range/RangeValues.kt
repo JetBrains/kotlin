@@ -18,12 +18,17 @@ package org.jetbrains.kotlin.codegen.range
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.codegen.*
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
+import org.jetbrains.kotlin.descriptors.impl.SyntheticFieldDescriptor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
+import org.jetbrains.kotlin.resolve.jvm.AsmTypes
+import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.org.objectweb.asm.Type
@@ -42,26 +47,50 @@ fun ExpressionCodegen.createRangeValueForExpression(rangeExpression: KtExpressio
     val rangeType = bindingContext.getType(rangeExpression)!!
     val asmRangeType = asmType(rangeType)
 
+    val loopRangeIteratorResolvedCall = bindingContext[BindingContext.LOOP_RANGE_ITERATOR_RESOLVED_CALL, rangeExpression]
+
+    val builtIns = state.module.builtIns
     return when {
-        asmRangeType.sort == Type.ARRAY ->
-            ArrayRangeValue()
+        asmRangeType.sort == Type.ARRAY -> {
+            val properForInArraySemantics =
+                state.languageVersionSettings.supportsFeature(LanguageFeature.ProperForInArrayLoopRangeVariableAssignmentSemantic)
+            ArrayRangeValue(
+                properForInArraySemantics || !isLocalVarReference(rangeExpression, bindingContext),
+                properForInArraySemantics
+            )
+        }
+
         isPrimitiveRange(rangeType) ->
-            PrimitiveRangeRangeValue()
+            PrimitiveRangeRangeValue(rangeExpression)
         isPrimitiveProgression(rangeType) ->
-            PrimitiveProgressionRangeValue()
-        isSubtypeOfCharSequence(rangeType, state.module.builtIns) ->
-            CharSequenceRangeValue()
+            PrimitiveProgressionRangeValue(rangeExpression)
+        isSubtypeOfString(rangeType, builtIns) && isCharSequenceIteratorCall(loopRangeIteratorResolvedCall) ->
+            CharSequenceRangeValue(true, AsmTypes.JAVA_STRING_TYPE)
+        isSubtypeOfCharSequence(rangeType, builtIns) && isCharSequenceIteratorCall(loopRangeIteratorResolvedCall) ->
+            CharSequenceRangeValue(false, null)
         else ->
             IterableRangeValue()
     }
 }
 
+fun isLocalVarReference(rangeExpression: KtExpression, bindingContext: BindingContext): Boolean {
+    if (rangeExpression !is KtSimpleNameExpression) return false
+    val resultingDescriptor = rangeExpression.getResolvedCall(bindingContext)?.resultingDescriptor ?: return false
+    return resultingDescriptor is LocalVariableDescriptor &&
+            resultingDescriptor !is SyntheticFieldDescriptor &&
+            !resultingDescriptor.isDelegated &&
+            resultingDescriptor.isVar
+}
+
+private fun isSubtypeOfString(type: KotlinType, builtIns: KotlinBuiltIns) =
+    KotlinTypeChecker.DEFAULT.isSubtypeOf(type, builtIns.stringType)
+
 private fun isSubtypeOfCharSequence(type: KotlinType, builtIns: KotlinBuiltIns) =
-        KotlinTypeChecker.DEFAULT.isSubtypeOf(type, builtIns.getBuiltInClassByName(Name.identifier("CharSequence")).defaultType)
+    KotlinTypeChecker.DEFAULT.isSubtypeOf(type, builtIns.getBuiltInClassByName(Name.identifier("CharSequence")).defaultType)
 
 private fun getResolvedCallForRangeExpression(
-        bindingContext: BindingContext,
-        rangeExpression: KtExpression
+    bindingContext: BindingContext,
+    rangeExpression: KtExpression
 ): ResolvedCall<out CallableDescriptor>? {
     val expression = KtPsiUtil.deparenthesize(rangeExpression) ?: return null
 
@@ -99,9 +128,28 @@ private fun ExpressionCodegen.createIntrinsifiedRangeValueOrNull(rangeCall: Reso
             CollectionIndicesRangeValue(rangeCall)
         isCharSequenceIndices(rangeCallee) ->
             CharSequenceIndicesRangeValue(rangeCall)
+        isArrayOrPrimitiveArrayWithIndex(rangeCallee) ->
+            ArrayWithIndexRangeValue(rangeCall)
+        isIterableWithIndex(rangeCallee) ->
+            IterableWithIndexRangeValue(rangeCall)
+        isSequenceWithIndex(rangeCallee) ->
+            SequenceWithIndexRangeValue(rangeCall)
+        isCharSequenceWithIndex(rangeCallee) ->
+            CharSequenceWithIndexRangeValue(rangeCall)
         isComparableRangeTo(rangeCallee) ->
             ComparableRangeLiteralRangeValue(this, rangeCall)
+        isPrimitiveProgressionReverse(rangeCallee) ->
+            createReversedRangeValueOrNull(rangeCall)
         else ->
             null
     }
 }
+
+private fun ExpressionCodegen.createReversedRangeValueOrNull(rangeCall: ResolvedCall<out CallableDescriptor>): RangeValue? {
+    val receiver = rangeCall.extensionReceiver as? ExpressionReceiver ?: return null
+    val receiverRangeValue = createRangeValueForExpression(receiver.expression) as? ReversableRangeValue ?: return null
+    return ReversedRangeValue(receiverRangeValue)
+}
+
+private fun isCharSequenceIteratorCall(iteratorCall: ResolvedCall<*>?) =
+    iteratorCall?.resultingDescriptor?.let { isCharSequenceIterator(it) } ?: false

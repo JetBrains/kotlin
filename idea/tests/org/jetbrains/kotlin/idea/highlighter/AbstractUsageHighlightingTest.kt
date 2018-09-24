@@ -19,10 +19,10 @@ package org.jetbrains.kotlin.idea.highlighter
 import com.intellij.codeInsight.daemon.impl.HighlightInfo
 import com.intellij.codeInsight.daemon.impl.HighlightInfoType
 import com.intellij.codeInsight.highlighting.actions.HighlightUsagesAction
-import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.testFramework.ExpectedHighlightingData
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinLightProjectDescriptor
+import org.jetbrains.kotlin.idea.test.extractMarkerOffset
 
 abstract class AbstractUsageHighlightingTest: KotlinLightCodeInsightFixtureTestCase() {
     companion object {
@@ -36,13 +36,8 @@ abstract class AbstractUsageHighlightingTest: KotlinLightCodeInsightFixtureTestC
         val data = ExpectedHighlightingData(document, false, false, true, false, myFixture.file)
         data.init()
 
-        val caret = document.text.indexOf(CARET_TAG)
+        val caret = document.extractMarkerOffset(project, CARET_TAG)
         assert(caret != -1) { "Caret marker '$CARET_TAG' expected" }
-
-        WriteCommandAction.runWriteCommandAction(myFixture.project) {
-            document.deleteString(caret, caret + CARET_TAG.length)
-        }
-
         editor.caretModel.moveToOffset(caret)
 
         myFixture.testAction(HighlightUsagesAction())

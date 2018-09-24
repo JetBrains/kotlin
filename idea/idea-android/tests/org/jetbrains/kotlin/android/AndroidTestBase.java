@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.android;
 import com.android.sdklib.IAndroidTarget;
 import com.android.tools.idea.res.ResourceHelper;
 import com.android.tools.idea.startup.ExternalAnnotationsSupport;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.application.ex.PathManagerEx;
 import com.intellij.openapi.module.Module;
@@ -55,6 +56,8 @@ import java.nio.file.Paths;
 public abstract class AndroidTestBase extends UsefulTestCase {
 
     protected JavaCodeInsightTestFixture myFixture;
+
+    protected static final String ANDROID_SDK_NAME = "android_test_sdk";
 
     protected AndroidTestBase() {
         // IDEA14 seems to be stricter regarding validating accesses against known roots. By default, it contains the entire idea folder,
@@ -100,7 +103,7 @@ public abstract class AndroidTestBase extends UsefulTestCase {
         String sdkPath = TestUtils.getSdk().toString();
         String platformDir = TestUtils.getLatestAndroidPlatform();
 
-        Sdk sdk = ProjectJdkTable.getInstance().createSdk("android_test_sdk", AndroidSdkType.getInstance());
+        Sdk sdk = ProjectJdkTable.getInstance().createSdk(ANDROID_SDK_NAME, AndroidSdkType.getInstance());
         SdkModificator sdkModificator = sdk.getSdkModificator();
         sdkModificator.setHomePath(sdkPath);
 
@@ -131,6 +134,9 @@ public abstract class AndroidTestBase extends UsefulTestCase {
         sdkModificator.setSdkAdditionalData(data);
         ExternalAnnotationsSupport.attachJdkAnnotations(sdkModificator);
         sdkModificator.commitChanges();
+
+        ApplicationManager.getApplication().runWriteAction(() -> ProjectJdkTable.getInstance().addJdk(sdk));
+
         return sdk;
     }
 

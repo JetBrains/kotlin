@@ -1,11 +1,15 @@
+// IGNORE_BACKEND: JVM_IR
 // WITH_RUNTIME
 // WITH_COROUTINES
+// COMMON_COROUTINES_TEST
 import helpers.*
 // CHECK_BYTECODE_LISTING
-import kotlin.coroutines.experimental.*
-import kotlin.coroutines.experimental.intrinsics.*
+// CHECK_NEW_COUNT: function=suspendHere count=0
+// CHECK_NEW_COUNT: function=complexSuspend count=0
+import COROUTINES_PACKAGE.*
+import COROUTINES_PACKAGE.intrinsics.*
 
-inline suspend fun suspendThere(v: String): String = suspendCoroutineOrReturn { x ->
+inline suspend fun suspendThere(v: String): String = suspendCoroutineUninterceptedOrReturn { x ->
     x.resume(v)
     COROUTINE_SUSPENDED
 }

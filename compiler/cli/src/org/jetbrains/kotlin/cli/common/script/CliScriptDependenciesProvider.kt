@@ -16,23 +16,18 @@
 
 package org.jetbrains.kotlin.cli.common.script
 
+import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
-import org.jetbrains.kotlin.script.KotlinScriptDefinitionProvider
-import org.jetbrains.kotlin.script.ScriptDependenciesProvider
-import org.jetbrains.kotlin.script.ScriptContentLoader
+import org.jetbrains.kotlin.script.*
 import java.io.File
 import java.util.concurrent.locks.ReentrantReadWriteLock
 import kotlin.concurrent.read
 import kotlin.concurrent.write
 import kotlin.script.experimental.dependencies.ScriptDependencies
 
-class CliScriptDependenciesProvider(
-        project: Project,
-        private val scriptDefinitionProvider: KotlinScriptDefinitionProvider
-) : ScriptDependenciesProvider {
-
+class CliScriptDependenciesProvider(private val project: Project) : ScriptDependenciesProvider {
     private val cacheLock = ReentrantReadWriteLock()
     private val cache = hashMapOf<String, ScriptDependencies?>()
     private val scriptContentLoader = ScriptContentLoader(project)
@@ -46,9 +41,13 @@ class CliScriptDependenciesProvider(
         val cached = cache[path]
         return if (cached != null) cached
         else {
-            val scriptDef = scriptDefinitionProvider.findScriptDefinition(file)
+            val scriptDef = findScriptDefinition(file, project)
             if (scriptDef != null) {
-                val deps = scriptContentLoader.loadContentsAndResolveDependencies(scriptDef, file)
+                val result = scriptContentLoader.loadContentsAndResolveDependencies(scriptDef, file)
+
+                ServiceManager.getService(project, ScriptReportSink::class.java)?.attachReports(file, result.reports)
+
+                val deps = result.dependencies?.adjustByDefinition(scriptDef)
 
                 if (deps != null) {
                     log.info("[kts] new cached deps for $path: ${deps.classpath.joinToString(File.pathSeparator)}")
@@ -57,8 +56,7 @@ class CliScriptDependenciesProvider(
                     cache.put(path, deps)
                 }
                 deps
-            }
-            else null
+            } else null
         }
     }
 }

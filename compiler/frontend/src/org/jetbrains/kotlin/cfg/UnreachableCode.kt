@@ -33,8 +33,8 @@ interface UnreachableCode {
 }
 
 class UnreachableCodeImpl(
-        private val reachableElements: Set<KtElement>,
-        private val unreachableElements: Set<KtElement>
+    private val reachableElements: Set<KtElement>,
+    private val unreachableElements: Set<KtElement>
 ) : UnreachableCode {
 
     // This is needed in order to highlight only '1 < 2' and not '1', '<' and '2' as well
@@ -42,30 +42,29 @@ class UnreachableCodeImpl(
 
     override fun getUnreachableTextRanges(element: KtElement): List<TextRange> {
         return if (element.hasChildrenInSet(reachableElements)) {
-            with (element.getLeavesOrReachableChildren().removeReachableElementsWithMeaninglessSiblings().mergeAdjacentTextRanges()) {
+            with(element.getLeavesOrReachableChildren().removeReachableElementsWithMeaninglessSiblings().mergeAdjacentTextRanges()) {
                 if (isNotEmpty()) this
                 // Specific case like condition in when:
                 // element is dead but its only child is alive and has the same text range
                 else listOf(element.textRange.endOffset.let { TextRange(it, it) })
             }
-        }
-        else {
+        } else {
             listOf(element.textRange!!)
         }
     }
 
     private fun KtElement.hasChildrenInSet(set: Set<KtElement>): Boolean =
-            PsiTreeUtil.collectElements(this) { it != this }.any { it in set }
+        PsiTreeUtil.collectElements(this) { it != this }.any { it in set }
 
     private fun KtElement.getLeavesOrReachableChildren(): List<PsiElement> {
         val children = ArrayList<PsiElement>()
         acceptChildren(object : PsiElementVisitor() {
             override fun visitElement(element: PsiElement) {
-                val isReachable = element is KtElement && reachableElements.contains(element) && !element.hasChildrenInSet(unreachableElements)
+                val isReachable =
+                    element is KtElement && reachableElements.contains(element) && !element.hasChildrenInSet(unreachableElements)
                 if (isReachable || element.children.isEmpty()) {
                     children.add(element)
-                }
-                else {
+                } else {
                     element.acceptChildren(this)
                 }
             }
@@ -102,8 +101,7 @@ class UnreachableCodeImpl(
 
     private fun List<PsiElement>.mergeAdjacentTextRanges(): List<TextRange> {
         val result = ArrayList<TextRange>()
-        val lastRange = fold(null as TextRange?) {
-            currentTextRange, element ->
+        val lastRange = fold(null as TextRange?) { currentTextRange, element ->
 
             val elementRange = element.textRange!!
             when {

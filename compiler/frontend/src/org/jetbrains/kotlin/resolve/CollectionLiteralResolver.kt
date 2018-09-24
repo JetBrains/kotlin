@@ -39,25 +39,29 @@ import org.jetbrains.kotlin.types.expressions.KotlinTypeInfo
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.createTypeInfo
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.noTypeInfo
 
-class CollectionLiteralResolver(val module: ModuleDescriptor, val callResolver: CallResolver, val languageVersionSettings: LanguageVersionSettings) {
+class CollectionLiteralResolver(
+    val module: ModuleDescriptor,
+    val callResolver: CallResolver,
+    val languageVersionSettings: LanguageVersionSettings
+) {
     companion object {
         val PRIMITIVE_TYPE_TO_ARRAY: Map<PrimitiveType, Name> = hashMapOf(
-                PrimitiveType.BOOLEAN to Name.identifier("booleanArrayOf"),
-                PrimitiveType.CHAR to Name.identifier("charArrayOf"),
-                PrimitiveType.INT to Name.identifier("intArrayOf"),
-                PrimitiveType.BYTE to Name.identifier("byteArrayOf"),
-                PrimitiveType.SHORT to Name.identifier("shortArrayOf"),
-                PrimitiveType.FLOAT to Name.identifier("floatArrayOf"),
-                PrimitiveType.LONG to Name.identifier("longArrayOf"),
-                PrimitiveType.DOUBLE to Name.identifier("doubleArrayOf")
+            PrimitiveType.BOOLEAN to Name.identifier("booleanArrayOf"),
+            PrimitiveType.CHAR to Name.identifier("charArrayOf"),
+            PrimitiveType.INT to Name.identifier("intArrayOf"),
+            PrimitiveType.BYTE to Name.identifier("byteArrayOf"),
+            PrimitiveType.SHORT to Name.identifier("shortArrayOf"),
+            PrimitiveType.FLOAT to Name.identifier("floatArrayOf"),
+            PrimitiveType.LONG to Name.identifier("longArrayOf"),
+            PrimitiveType.DOUBLE to Name.identifier("doubleArrayOf")
         )
 
         val ARRAY_OF_FUNCTION = Name.identifier("arrayOf")
     }
 
     fun resolveCollectionLiteral(
-            collectionLiteralExpression: KtCollectionLiteralExpression,
-            context: ExpressionTypingContext
+        collectionLiteralExpression: KtCollectionLiteralExpression,
+        context: ExpressionTypingContext
     ): KotlinTypeInfo {
         if (!isInsideAnnotationEntryOrClass(collectionLiteralExpression)) {
             context.trace.report(UNSUPPORTED.on(collectionLiteralExpression, "Collection literals outside of annotations"))
@@ -69,15 +73,18 @@ class CollectionLiteralResolver(val module: ModuleDescriptor, val callResolver: 
     }
 
     private fun resolveCollectionLiteralSpecialMethod(
-            expression: KtCollectionLiteralExpression,
-            context: ExpressionTypingContext
+        expression: KtCollectionLiteralExpression,
+        context: ExpressionTypingContext
     ): KotlinTypeInfo {
         val call = CallMaker.makeCallForCollectionLiteral(expression)
         val callName = getArrayFunctionCallName(context.expectedType)
         val functionDescriptors = getFunctionDescriptorForCollectionLiteral(expression, callName)
         if (functionDescriptors.isEmpty()) {
-            context.trace.report(MISSING_STDLIB.on(
-                    expression, "Collection literal call '$callName()' is unresolved"))
+            context.trace.report(
+                MISSING_STDLIB.on(
+                    expression, "Collection literal call '$callName()' is unresolved"
+                )
+            )
             return noTypeInfo(context)
         }
 
@@ -92,8 +99,8 @@ class CollectionLiteralResolver(val module: ModuleDescriptor, val callResolver: 
     }
 
     private fun getFunctionDescriptorForCollectionLiteral(
-            expression: KtCollectionLiteralExpression,
-            callName: Name
+        expression: KtCollectionLiteralExpression,
+        callName: Name
     ): Collection<SimpleFunctionDescriptor> {
         val memberScopeOfKotlinPackage = module.getPackage(KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME).memberScope
         return memberScopeOfKotlinPackage.getContributedFunctions(callName, KotlinLookupLocation(expression))

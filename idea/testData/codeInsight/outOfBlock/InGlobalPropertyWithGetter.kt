@@ -1,4 +1,6 @@
 // FALSE
+// Important for 173 branch! OOCB is TRUE in this test because of IDEA-185462
+
 class B(val a: A)
 val B.foo: Int
     get() {

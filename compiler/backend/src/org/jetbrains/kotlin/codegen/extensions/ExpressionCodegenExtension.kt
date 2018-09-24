@@ -47,4 +47,7 @@ interface ExpressionCodegenExtension {
     fun applyFunction(receiver: StackValue, resolvedCall: ResolvedCall<*>, c: Context): StackValue? = null
 
     fun generateClassSyntheticParts(codegen: ImplementationBodyCodegen) {}
+
+    val shouldGenerateClassSyntheticPartsInLightClassesMode: Boolean
+        get() = false
 }

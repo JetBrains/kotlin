@@ -23,21 +23,18 @@ import com.intellij.core.CoreApplicationEnvironment
 import com.intellij.core.JavaCoreApplicationEnvironment
 import com.intellij.core.JavaCoreProjectEnvironment
 import com.intellij.lang.MetaLanguage
+import com.intellij.lang.jvm.facade.JvmElementProvider
 import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.extensions.ExtensionsArea
 import com.intellij.openapi.fileTypes.FileTypeExtensionPoint
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.io.FileUtil
-import com.intellij.psi.FileContextProvider
-import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiElementFinder
-import com.intellij.psi.PsiModifierListOwner
+import com.intellij.psi.*
 import com.intellij.psi.augment.PsiAugmentProvider
 import com.intellij.psi.augment.TypeAnnotationModifier
 import com.intellij.psi.compiled.ClassFileDecompilers
 import com.intellij.psi.impl.JavaClassSupersImpl
 import com.intellij.psi.impl.PsiTreeChangePreprocessor
-import com.intellij.psi.impl.compiled.ClsCustomNavigationPolicy
 import com.intellij.psi.meta.MetaDataContributor
 import com.intellij.psi.stubs.BinaryFileStubBuilders
 import com.intellij.psi.util.JavaClassSupers
@@ -72,6 +69,7 @@ abstract class AbstractJavaToKotlinConverterForWebDemoTest : TestCase() {
                 val projectArea = Extensions.getArea(project)
                 CoreApplicationEnvironment.registerExtensionPoint(projectArea, PsiTreeChangePreprocessor.EP_NAME, PsiTreeChangePreprocessor::class.java)
                 CoreApplicationEnvironment.registerExtensionPoint(projectArea, PsiElementFinder.EP_NAME, PsiElementFinder::class.java)
+                CoreApplicationEnvironment.registerExtensionPoint(projectArea, JvmElementProvider.EP_NAME, JvmElementProvider::class.java)
             }
         }
 
@@ -79,7 +77,17 @@ abstract class AbstractJavaToKotlinConverterForWebDemoTest : TestCase() {
             override fun isNullable(owner: PsiModifierListOwner, checkBases: Boolean) = !isNotNull(owner, checkBases)
             override fun isNotNull(owner: PsiModifierListOwner, checkBases: Boolean) = true
             override fun hasHardcodedContracts(element: PsiElement): Boolean = false
-            override fun getPredefinedNotNulls() = emptyList<String>()
+            override fun getNullables() = emptyList<String>()
+            override fun setNullables(vararg p0: String) = Unit
+            override fun getNotNulls() = emptyList<String>()
+            override fun setNotNulls(vararg p0: String) = Unit
+            override fun getDefaultNullable() = ""
+            override fun setDefaultNullable(defaultNullable: String) = Unit
+            override fun getDefaultNotNull() = ""
+            override fun setDefaultNotNull(p0: String) = Unit
+            override fun setInstrumentedNotNulls(p0: List<String>) = Unit
+            override fun getInstrumentedNotNulls() = emptyList<String>()
+            override fun isJsr305Default(psiAnnotation: PsiAnnotation, p1: Array<PsiAnnotation.TargetType>) = null
         })
 
         applicationEnvironment.application.registerService(JavaClassSupers::class.java, JavaClassSupersImpl::class.java)
@@ -103,11 +111,11 @@ abstract class AbstractJavaToKotlinConverterForWebDemoTest : TestCase() {
         CoreApplicationEnvironment.registerExtensionPoint(area, JavaMainMethodProvider.EP_NAME, JavaMainMethodProvider::class.java)
 
         CoreApplicationEnvironment.registerExtensionPoint(area, ContainerProvider.EP_NAME, ContainerProvider::class.java)
-        CoreApplicationEnvironment.registerExtensionPoint(area, ClsCustomNavigationPolicy.EP_NAME, ClsCustomNavigationPolicy::class.java)
         CoreApplicationEnvironment.registerExtensionPoint(area, ClassFileDecompilers.EP_NAME, ClassFileDecompilers.Decompiler::class.java)
 
         CoreApplicationEnvironment.registerExtensionPoint(area, TypeAnnotationModifier.EP_NAME, TypeAnnotationModifier::class.java)
         CoreApplicationEnvironment.registerExtensionPoint(area, MetaLanguage.EP_NAME, MetaLanguage::class.java)
+        CoreApplicationEnvironment.registerExtensionPoint(area, JavaModuleSystem.EP_NAME, JavaModuleSystem::class.java)
     }
 
     fun findAnnotations(): File? {

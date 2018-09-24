@@ -16,20 +16,23 @@
 
 package org.jetbrains.kotlin.serialization.js
 
+import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite
+import org.jetbrains.kotlin.metadata.ProtoBuf
+import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
+import org.jetbrains.kotlin.metadata.js.JsProtoBuf
+import org.jetbrains.kotlin.metadata.serialization.MutableVersionRequirementTable
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.source.PsiSourceFile
 import org.jetbrains.kotlin.serialization.KotlinSerializerExtensionBase
-import org.jetbrains.kotlin.serialization.ProtoBuf
-import org.jetbrains.kotlin.serialization.SerializerExtensionProtocol
 import org.jetbrains.kotlin.types.FlexibleType
 
 class KotlinJavascriptSerializerExtension(
-        private val fileRegistry: KotlinFileRegistry
+    private val fileRegistry: KotlinFileRegistry,
+    private val languageVersionSettings: LanguageVersionSettings,
+    override val metadataVersion: BinaryVersion
 ) : KotlinSerializerExtensionBase(JsSerializerProtocol) {
     override val stringTable = JavaScriptStringTable()
 
@@ -37,20 +40,28 @@ class KotlinJavascriptSerializerExtension(
         lowerProto.flexibleTypeCapabilitiesId = stringTable.getStringIndex(DynamicTypeDeserializer.id)
     }
 
-    override fun serializeClass(descriptor: ClassDescriptor, proto: ProtoBuf.Class.Builder) {
+    override fun serializeClass(
+        descriptor: ClassDescriptor,
+        proto: ProtoBuf.Class.Builder,
+        versionRequirementTable: MutableVersionRequirementTable
+    ) {
         val id = getFileId(descriptor)
         if (id != null) {
             proto.setExtension(JsProtoBuf.classContainingFileId, id)
         }
-        super.serializeClass(descriptor, proto)
+        super.serializeClass(descriptor, proto, versionRequirementTable)
     }
 
-    override fun serializeProperty(descriptor: PropertyDescriptor, proto: ProtoBuf.Property.Builder) {
+    override fun serializeProperty(
+        descriptor: PropertyDescriptor,
+        proto: ProtoBuf.Property.Builder,
+        versionRequirementTable: MutableVersionRequirementTable
+    ) {
         val id = getFileId(descriptor)
         if (id != null) {
             proto.setExtension(JsProtoBuf.propertyContainingFileId, id)
         }
-        super.serializeProperty(descriptor, proto)
+        super.serializeProperty(descriptor, proto, versionRequirementTable)
     }
 
     override fun serializeFunction(descriptor: FunctionDescriptor, proto: ProtoBuf.Function.Builder) {
@@ -64,26 +75,18 @@ class KotlinJavascriptSerializerExtension(
     private fun getFileId(descriptor: DeclarationDescriptor): Int? {
         if (!DescriptorUtils.isTopLevelDeclaration(descriptor) || descriptor !is DeclarationDescriptorWithSource) return null
 
-        val file = descriptor.source.containingFile
-        if (file !is PsiSourceFile) return null
+        val fileId = descriptor.extractFileId()
+        if (fileId != null) {
+            (descriptor.containingDeclaration as? KotlinJavascriptPackageFragment)?.let { packageFragment ->
+                return fileRegistry.lookup(KotlinDeserializedFileMetadata(packageFragment, fileId))
+            }
+        }
+
+        val file = descriptor.source.containingFile as? PsiSourceFile ?: return null
 
         val psiFile = file.psiFile
-        return (psiFile as? KtFile)?.let { fileRegistry.lookup(it) }
+        return (psiFile as? KtFile)?.let { fileRegistry.lookup(KotlinPsiFileMetadata(it)) }
     }
-}
 
-object JsSerializerProtocol : SerializerExtensionProtocol(
-        ExtensionRegistryLite.newInstance().apply { JsProtoBuf.registerAllExtensions(this) },
-        JsProtoBuf.packageFqName,
-        JsProtoBuf.constructorAnnotation, JsProtoBuf.classAnnotation, JsProtoBuf.functionAnnotation, JsProtoBuf.propertyAnnotation,
-        JsProtoBuf.enumEntryAnnotation, JsProtoBuf.compileTimeValue, JsProtoBuf.parameterAnnotation, JsProtoBuf.typeAnnotation,
-        JsProtoBuf.typeParameterAnnotation
-) {
-    fun getKjsmFilePath(packageFqName: FqName): String {
-        val shortName = if (packageFqName.isRoot) Name.identifier("root-package") else packageFqName.shortName()
-
-        return packageFqName.child(shortName).asString().replace('.', '/') +
-               "." +
-               KotlinJavascriptSerializationUtil.CLASS_METADATA_FILE_EXTENSION
-    }
+    override fun releaseCoroutines() = languageVersionSettings.supportsFeature(LanguageFeature.ReleaseCoroutines)
 }

@@ -1,0 +1,3 @@
+[NotNull Values]
+5 	fun <bold>bar(a: Int): Int = foo(a) { if (it > 0) it else return 0 }</bold>
+5 		fun <bold>bar(a: Int): Int = foo(a) { if (it > 0) it else return 0 }</bold>

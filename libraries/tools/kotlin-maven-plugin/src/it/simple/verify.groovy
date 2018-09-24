@@ -23,8 +23,8 @@ State state = new File(basedir, "build.log").readLines().collect { it.replaceAll
     def m = pattern.matcher(line)
     if (m.find()) {
         acc.currentPlugin = m.group(1)
-    } else if (line.startsWith("[INFO] Downloaded:") ||
-               line.startsWith("[INFO] Downloading:") ||
+    } else if (line.startsWith("[INFO] Downloaded") ||
+               line.startsWith("[INFO] Downloading") ||
                line.startsWith("Downloaded:") ||
                line.startsWith("Downloading:") ||
                line.startsWith("[INFO] PERF:")) {
@@ -35,7 +35,7 @@ State state = new File(basedir, "build.log").readLines().collect { it.replaceAll
                 replaceAll(/[0-9]+\s*ms/, "LLL ms").
                 trim().
                 replaceAll(/^\[[A-Z]+\]$/, "").
-                replaceAll(/version [0-9a-z-+\.]+/, "version @snapshot@").
+                replace(kotlinVersion, "@snapshot@").
                 replaceAll(/\(JRE .+\)/, "(JRE <jre-version>)")
 
         if (filtered != "") {

@@ -33,6 +33,10 @@ open class InstructionVisitor {
         visitInstructionWithNext(instruction)
     }
 
+    open fun visitInlinedLocalFunctionDeclarationInstruction(instruction: InlinedLocalFunctionDeclarationInstruction) {
+        visitLocalFunctionDeclarationInstruction(instruction)
+    }
+
     open fun visitVariableDeclarationInstruction(instruction: VariableDeclarationInstruction) {
         visitInstructionWithNext(instruction)
     }

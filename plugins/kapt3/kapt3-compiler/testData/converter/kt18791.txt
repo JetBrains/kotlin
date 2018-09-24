@@ -1,0 +1,163 @@
+package app;
+
+import java.lang.System;
+
+@kotlin.Metadata()
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+public abstract @interface Anno {
+
+    public abstract boolean a1();
+
+    public abstract byte a2();
+
+    public abstract int a3();
+
+    public abstract short a4();
+
+    public abstract long a5();
+
+    public abstract char a6();
+
+    public abstract float a7();
+
+    public abstract double a8();
+
+    public abstract java.lang.String a9();
+}
+
+////////////////////
+
+package app;
+
+public class B {
+
+    public B() {
+        super();
+    }
+
+    public static class id {
+
+        public id() {
+            super();
+        }
+        public static final int textView = 200;
+    }
+    public static final boolean a1 = false;
+    public static final byte a2 = 1;
+    public static final int a3 = 2;
+    public static final short a4 = 3;
+    public static final long a5 = 4L;
+    public static final char a6 = '5';
+    public static final float a7 = 6.0F;
+    public static final double a8 = 7.0;
+    public static final String a9 = "A";
+}
+
+////////////////////
+
+package app;
+
+import java.lang.System;
+
+@kotlin.Metadata()
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+public abstract @interface Bind {
+
+    public abstract int id();
+}
+
+////////////////////
+
+package app;
+
+import java.lang.System;
+
+@kotlin.Metadata()
+public final class MyActivity {
+
+    @Bind(id = lib.R.id.textView)
+    public final void foo() {
+    }
+
+    @Bind(id = lib.R.id.textView)
+    public final void foo2() {
+    }
+
+    @Bind(id = app.R.layout.mainActivity)
+    public final void foo3() {
+    }
+
+    @Bind(id = app.R.layout.mainActivity)
+    public final void foo4() {
+    }
+
+    @Anno(a1 = app.B.a1, a2 = app.B.a2, a3 = app.B.a3, a4 = app.B.a4, a5 = app.B.a5, a6 = app.B.a6, a7 = app.B.a7, a8 = app.B.a8, a9 = "A")
+    @Bind(id = app.R2.layout.mainActivity)
+    public final void foo5() {
+    }
+
+    @Bind(id = app.B.id.textView)
+    public final void plainIntConstant() {
+    }
+
+    public MyActivity() {
+        super();
+    }
+}
+
+////////////////////
+
+package app;
+
+public class R {
+
+    public R() {
+        super();
+    }
+
+    public static class layout {
+
+        public layout() {
+            super();
+        }
+        public static final int mainActivity = 100;
+    }
+}
+
+////////////////////
+
+package app;
+
+public class R2 {
+
+    public R2() {
+        super();
+    }
+
+    public static class layout {
+
+        public layout() {
+            super();
+        }
+        public static final int mainActivity = 100;
+    }
+}
+
+////////////////////
+
+package lib;
+
+public class R {
+
+    public R() {
+        super();
+    }
+
+    public static class id {
+
+        public id() {
+            super();
+        }
+        public static final int textView = 100;
+    }
+}

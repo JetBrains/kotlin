@@ -18,9 +18,11 @@ package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.references.ReferenceAccess
 import org.jetbrains.kotlin.idea.references.readWriteAccess
@@ -58,7 +60,10 @@ class OperatorToFunctionIntention : SelfTargetingIntention<KtExpression>(KtExpre
             val opRef = element.operationReference
             if (!opRef.textRange.containsOffset(caretOffset)) return false
             return when (opRef.getReferencedNameElementType()) {
-                KtTokens.PLUS, KtTokens.MINUS, KtTokens.MUL, KtTokens.DIV, KtTokens.PERC, KtTokens.RANGE, KtTokens.IN_KEYWORD, KtTokens.NOT_IN, KtTokens.PLUSEQ, KtTokens.MINUSEQ, KtTokens.MULTEQ, KtTokens.DIVEQ, KtTokens.PERCEQ, KtTokens.EQEQ, KtTokens.EXCLEQ, KtTokens.GT, KtTokens.LT, KtTokens.GTEQ, KtTokens.LTEQ -> true
+                KtTokens.PLUS, KtTokens.MINUS, KtTokens.MUL, KtTokens.DIV, KtTokens.PERC, KtTokens.RANGE,
+                KtTokens.IN_KEYWORD, KtTokens.NOT_IN, KtTokens.PLUSEQ, KtTokens.MINUSEQ, KtTokens.MULTEQ, KtTokens.DIVEQ, KtTokens.PERCEQ,
+                KtTokens.GT, KtTokens.LT, KtTokens.GTEQ, KtTokens.LTEQ -> true
+                KtTokens.EQEQ, KtTokens.EXCLEQ -> listOf(element.left, element.right).none { it?.node?.elementType == KtNodeTypes.NULL }
                 KtTokens.EQ -> element.left is KtArrayAccessExpression
                 else -> false
             }
@@ -80,7 +85,7 @@ class OperatorToFunctionIntention : SelfTargetingIntention<KtExpression>(KtExpre
                           ?: return false) as PsiElement
             if (!lbrace.textRange.containsOffset(caretOffset)) return false
 
-            val resolvedCall = element.getResolvedCall(element.analyze())
+            val resolvedCall = element.resolveToCall(BodyResolveMode.FULL)
             val descriptor = resolvedCall?.resultingDescriptor
             if (descriptor is FunctionDescriptor && descriptor.getName() == OperatorNameConventions.INVOKE) {
                 if (element.parent is KtDotQualifiedExpression &&
@@ -155,8 +160,8 @@ class OperatorToFunctionIntention : SelfTargetingIntention<KtExpression>(KtExpre
                     else if (remSupported) "$0 = $0.rem($1)"
                     else "$0 = $0.mod($1)"
                 }
-                KtTokens.EQEQ -> if (elemType?.isMarkedNullable ?: true) "$0?.equals($1) ?: ($1 == null)" else "$0.equals($1)"
-                KtTokens.EXCLEQ -> if (elemType?.isMarkedNullable ?: true) "!($0?.equals($1) ?: ($1 == null))" else "!$0.equals($1)"
+                KtTokens.EQEQ -> if (elemType?.isMarkedNullable != false) "$0?.equals($1) ?: ($1 == null)" else "$0.equals($1)"
+                KtTokens.EXCLEQ -> if (elemType?.isMarkedNullable != false) "!($0?.equals($1) ?: ($1 == null))" else "!$0.equals($1)"
                 KtTokens.GT -> "$0.compareTo($1) > 0"
                 KtTokens.LT -> "$0.compareTo($1) < 0"
                 KtTokens.GTEQ -> "$0.compareTo($1) >= 0"

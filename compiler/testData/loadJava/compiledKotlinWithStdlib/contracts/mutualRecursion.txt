@@ -1,0 +1,8 @@
+package test
+
+public fun bar(/*0*/ x: kotlin.Any?): kotlin.Boolean
+    Returns(WILDCARD) -> x is Int
+
+public fun foo(/*0*/ x: kotlin.Any?): kotlin.Boolean
+    Returns(WILDCARD) -> x is String
+

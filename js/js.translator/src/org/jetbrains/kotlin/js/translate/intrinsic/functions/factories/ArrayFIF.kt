@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.builtins.getValueParameterTypesFromFunctionType
 import org.jetbrains.kotlin.builtins.isBuiltinFunctionalType
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
+import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.backend.ast.metadata.descriptor
 import org.jetbrains.kotlin.js.backend.ast.metadata.inlineStrategy
@@ -39,6 +40,8 @@ import org.jetbrains.kotlin.js.translate.intrinsic.functions.basic.FunctionIntri
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.inline.InlineStrategy
+import org.jetbrains.kotlin.resolve.isInlineClassType
+import org.jetbrains.kotlin.types.KotlinType
 import java.util.*
 
 object ArrayFIF : CompositeFIF() {
@@ -61,16 +64,40 @@ object ArrayFIF : CompositeFIF() {
     val LENGTH_PROPERTY_INTRINSIC = BuiltInPropertyIntrinsic("length")
 
     @JvmStatic
-    fun typedArraysEnabled(config: JsConfig) = config.configuration.getBoolean(JSConfigurationKeys.TYPED_ARRAYS_ENABLED)
+    fun typedArraysEnabled(config: JsConfig) = config.configuration.get(JSConfigurationKeys.TYPED_ARRAYS_ENABLED, true)
 
-    fun castOrCreatePrimitiveArray(ctx: TranslationContext, type: PrimitiveType?, arg: JsArrayLiteral): JsExpression {
-        if (type == null || !typedArraysEnabled(ctx.config)) return arg
+    fun unsignedPrimitiveToSigned(type: KotlinType): PrimitiveType? {
+        // short-circuit
+        if (!type.isInlineClassType() || type.isMarkedNullable) return null
 
-        return if (type in TYPED_ARRAY_MAP) {
-            createTypedArray(type, arg)
+        return when {
+            KotlinBuiltIns.isUByte(type) -> BYTE
+            KotlinBuiltIns.isUShort(type) -> SHORT
+            KotlinBuiltIns.isUInt(type) -> INT
+            KotlinBuiltIns.isULong(type) -> LONG
+            else -> null
+        }
+    }
+
+    fun castOrCreatePrimitiveArray(ctx: TranslationContext, type: KotlinType, arg: JsArrayLiteral): JsExpression {
+        if (type.isMarkedNullable) return arg
+
+        val unsignedPrimitiveType = unsignedPrimitiveToSigned(type)
+
+        if (unsignedPrimitiveType != null) {
+            val conversionFunction = "to${unsignedPrimitiveType.typeName}"
+            arg.expressions.replaceAll { JsInvocation(JsNameRef(conversionFunction, it)) }
+        }
+
+        val primitiveType = unsignedPrimitiveType ?: KotlinBuiltIns.getPrimitiveType(type)?.takeUnless { type.isMarkedNullable}
+
+        if (primitiveType == null || !typedArraysEnabled(ctx.config)) return arg
+
+        return if (primitiveType in TYPED_ARRAY_MAP) {
+            createTypedArray(primitiveType, arg)
         }
         else {
-            JsAstUtils.invokeKotlinFunction(type.lowerCaseName + "ArrayOf", *arg.expressions.toTypedArray())
+            JsAstUtils.invokeKotlinFunction(primitiveType.lowerCaseName + "ArrayOf", *arg.expressions.toTypedArray())
         }
     }
 
@@ -192,8 +219,12 @@ object ArrayFIF : CompositeFIF() {
             }
             invocation.inlineStrategy = InlineStrategy.IN_PLACE
             val descriptor = callInfo.resolvedCall.resultingDescriptor.original
-            invocation.descriptor = descriptor
-            context.addInlineCall(descriptor)
+            val resolvedDescriptor = when (descriptor) {
+                is TypeAliasConstructorDescriptor -> descriptor.underlyingConstructorDescriptor
+                else -> descriptor
+            }
+            invocation.descriptor = resolvedDescriptor
+            context.addInlineCall(resolvedDescriptor)
             invocation
         }
     }

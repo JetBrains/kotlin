@@ -1,4 +1,6 @@
+// IGNORE_BACKEND: JVM_IR
 // TODO: muted automatically, investigate should it be ran for JS or not
+// IGNORE_BACKEND: NATIVE
 
 object A {
     const val a: String = "$"

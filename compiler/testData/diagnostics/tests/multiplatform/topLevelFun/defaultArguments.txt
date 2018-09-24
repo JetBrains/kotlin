@@ -1,3 +1,0 @@
-package
-
-public expect fun foo(/*0*/ x: kotlin.Int, /*1*/ y: kotlin.String = ...): kotlin.Unit

@@ -16,16 +16,31 @@
 
 package org.jetbrains.kotlin.codegen.context
 
+import org.jetbrains.kotlin.codegen.OwnerKind
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.resolve.isInlineClass
 import org.jetbrains.org.objectweb.asm.Type
 
 object CodegenContextUtil {
-    @JvmStatic fun getImplementationOwnerClassType(owner: CodegenContext<*>): Type? =
-            when (owner) {
-                is MultifileClassFacadeContext -> owner.filePartType
-                is DelegatingToPartContext -> owner.implementationOwnerClassType
-                else -> null
-            }
+    @JvmStatic
+    fun getImplementationOwnerClassType(owner: CodegenContext<*>): Type? =
+        when (owner) {
+            is MultifileClassFacadeContext -> owner.filePartType
+            is DelegatingToPartContext -> owner.implementationOwnerClassType
+            else -> null
+        }
 
-    @JvmStatic fun isImplClassOwner(owner: CodegenContext<*>): Boolean =
-            owner !is MultifileClassFacadeContext
+    @JvmStatic
+    fun isImplementationOwner(owner: CodegenContext<*>, descriptor: DeclarationDescriptor): Boolean {
+        if (descriptor.containingDeclaration?.isInlineClass() == true) {
+            val isInErasedMethod = owner.contextKind == OwnerKind.ERASED_INLINE_CLASS
+            when (descriptor) {
+                is FunctionDescriptor -> return isInErasedMethod
+                is PropertyDescriptor -> return !isInErasedMethod
+            }
+        }
+        return owner !is MultifileClassFacadeContext
+    }
 }

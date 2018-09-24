@@ -1,0 +1,8 @@
+>>> enum class Build { Debug, Release }
+
+>>> fun applySomething(build: Build) = when (build) {
+...    Build.Debug -> "OK"
+...    Build.Release -> "fail"
+...}
+>>> applySomething(Build.Debug)
+OK

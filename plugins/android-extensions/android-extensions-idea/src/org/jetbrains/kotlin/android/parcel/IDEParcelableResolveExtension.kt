@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.android.parcel
 
 import org.jetbrains.kotlin.android.synthetic.idea.androidExtensionsIsExperimental
-import org.jetbrains.kotlin.idea.caches.resolve.getModuleInfo
+import org.jetbrains.kotlin.idea.caches.project.getModuleInfo
 import org.jetbrains.kotlin.psi.KtElement
 
 class IDEParcelableResolveExtension : ParcelableResolveExtension() {

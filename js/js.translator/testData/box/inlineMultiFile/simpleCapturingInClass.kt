@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 999
+// EXPECTED_REACHABLE_NODES: 1289
 /*
  * Copy of JVM-backend test
  * Found at: compiler/testData/codegen/boxInline/capture/simpleCapturingInClass.1.kt

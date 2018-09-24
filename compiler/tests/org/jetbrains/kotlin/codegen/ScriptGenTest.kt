@@ -17,31 +17,40 @@
 package org.jetbrains.kotlin.codegen
 
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
+import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoots
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
-import org.jetbrains.kotlin.config.addKotlinSourceRoots
 import org.jetbrains.kotlin.script.KotlinScriptDefinitionFromAnnotatedTemplate
-import org.jetbrains.kotlin.scripts.ScriptWithIntParam
+import org.jetbrains.kotlin.scripts.TestKotlinScriptDependenciesResolver
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.org.objectweb.asm.Opcodes
+import java.io.File
+import kotlin.script.templates.ScriptTemplateDefinition
 
 class ScriptGenTest : CodegenTestCase() {
     companion object {
-        private val FIB_SCRIPT_DEFINITION = KotlinScriptDefinitionFromAnnotatedTemplate(ScriptWithIntParam::class, providedScriptFilePattern = ".*\\.lang\\.kt")
-        private val NO_PARAM_SCRIPT_DEFINITION = KotlinScriptDefinitionFromAnnotatedTemplate(Any::class, providedScriptFilePattern = ".*\\.kts")
+        private val FIB_SCRIPT_DEFINITION = KotlinScriptDefinitionFromAnnotatedTemplate(ScriptWithIntParam::class)
+        private val NO_PARAM_SCRIPT_DEFINITION = KotlinScriptDefinitionFromAnnotatedTemplate(Any::class)
     }
 
     override fun setUp() {
         super.setUp()
+        additionalDependencies =
+                System.getenv("PROJECT_CLASSES_DIRS")?.split(File.pathSeparator)?.map { File(it) }
+                ?: listOf("compiler/build/classes/kotlin/test", "build/compiler/classes/kotlin/test", "out/test/compiler.test")
+                        .mapNotNull { File(it).canonicalFile.takeIf { it.isDirectory } }
+                        .takeIf { it.isNotEmpty() }
+                ?: throw IllegalStateException("Unable to get classes output dirs, set PROJECT_CLASSES_DIRS environment variable")
     }
 
     fun testLanguage() {
-        setUpEnvironment("scriptCustom/fib.lang.kt")
+        setUpEnvironment("scriptCustom/fib.lang.kts")
 
         val aClass = generateClass("Fib_lang")
         val constructor = aClass.getConstructor(Integer.TYPE)
@@ -52,7 +61,7 @@ class ScriptGenTest : CodegenTestCase() {
     }
 
     fun testLanguageWithPackage() {
-        setUpEnvironment("scriptCustom/fibwp.lang.kt")
+        setUpEnvironment("scriptCustom/fibwp.lang.kts")
 
         val aClass = generateClass("test.Fibwp_lang")
         val constructor = aClass.getConstructor(Integer.TYPE)
@@ -63,7 +72,7 @@ class ScriptGenTest : CodegenTestCase() {
     }
 
     fun testDependentScripts() {
-        setUpEnvironment(listOf("scriptCustom/fibwp.lang.kt", "scriptCustom/fibwprunner.kts"))
+        setUpEnvironment(listOf("scriptCustom/fibwp.lang.kts", "scriptCustom/fibwprunner.kts"))
 
         val aClass = generateClass("Fibwprunner")
         val constructor = aClass.getConstructor()
@@ -79,7 +88,7 @@ class ScriptGenTest : CodegenTestCase() {
     }
 
     fun testScriptWhereMethodHasClosure() {
-        setUpEnvironment("scriptCustom/methodWithClosure.lang.kt")
+        setUpEnvironment("scriptCustom/methodWithClosure.lang.kts")
 
         val aClass = generateClass("MethodWithClosure_lang")
         val constructor = aClass.getConstructor(Integer.TYPE)
@@ -101,13 +110,14 @@ class ScriptGenTest : CodegenTestCase() {
     }
 
     private fun setUpEnvironment(sourcePaths: List<String>) {
-        val configuration = KotlinTestUtils.newConfiguration(ConfigurationKind.JDK_ONLY, TestJdkKind.FULL_JDK).apply {
+        val configuration = KotlinTestUtils.newConfiguration(ConfigurationKind.ALL, TestJdkKind.FULL_JDK).apply {
             put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, PrintingMessageCollector(System.err, MessageRenderer.PLAIN_FULL_PATHS, false))
             add(JVMConfigurationKeys.SCRIPT_DEFINITIONS, FIB_SCRIPT_DEFINITION)
             add(JVMConfigurationKeys.SCRIPT_DEFINITIONS, NO_PARAM_SCRIPT_DEFINITION)
             put(JVMConfigurationKeys.RETAIN_OUTPUT_IN_MEMORY, true)
 
             addKotlinSourceRoots(sourcePaths.map { "${KotlinTestUtils.getTestDataPathBase()}/codegen/$it" })
+            addJvmClasspathRoots(additionalDependencies)
         }
 
         myEnvironment = KotlinCoreEnvironment.createForTests(testRootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
@@ -115,3 +125,8 @@ class ScriptGenTest : CodegenTestCase() {
         loadFiles(*sourcePaths.toTypedArray())
     }
 }
+
+@ScriptTemplateDefinition(
+        scriptFilePattern =".*\\.lang\\.kts",
+        resolver = TestKotlinScriptDependenciesResolver::class)
+abstract class ScriptWithIntParam(val num: Int)

@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.descriptors.MemberDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.descriptors.synthetic.SyntheticMemberDescriptor
-import org.jetbrains.kotlin.resolve.descriptorUtil.hasDefaultValue
+import org.jetbrains.kotlin.resolve.calls.components.hasDefaultValue
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.checker.captureFromExpression
@@ -33,76 +33,79 @@ interface SpecificityComparisonCallbacks {
 interface TypeSpecificityComparator {
     fun isDefinitelyLessSpecific(specific: KotlinType, general: KotlinType): Boolean
 
-    object NONE: TypeSpecificityComparator {
+    object NONE : TypeSpecificityComparator {
         override fun isDefinitelyLessSpecific(specific: KotlinType, general: KotlinType) = false
     }
 }
 
 class FlatSignature<out T> private constructor(
-        val origin: T,
-        val typeParameters: Collection<TypeParameterDescriptor>,
-        val valueParameterTypes: List<KotlinType?>,
-        val hasExtensionReceiver: Boolean,
-        val hasVarargs: Boolean,
-        val numDefaults: Int,
-        val isExpect: Boolean,
-        val isSyntheticMember: Boolean
+    val origin: T,
+    val typeParameters: Collection<TypeParameterDescriptor>,
+    val valueParameterTypes: List<KotlinType?>,
+    val hasExtensionReceiver: Boolean,
+    val hasVarargs: Boolean,
+    val numDefaults: Int,
+    val isExpect: Boolean,
+    val isSyntheticMember: Boolean
 ) {
     val isGeneric = typeParameters.isNotEmpty()
 
     companion object {
         fun <T> createFromReflectionType(
-                origin: T,
-                descriptor: CallableDescriptor,
-                numDefaults: Int,
-                reflectionType: UnwrappedType
+            origin: T,
+            descriptor: CallableDescriptor,
+            numDefaults: Int,
+            reflectionType: UnwrappedType
         ): FlatSignature<T> {
-            return FlatSignature(origin,
-                                 descriptor.typeParameters,
-                                 reflectionType.arguments.map { it.type }, // should we drop return type?
-                                 hasExtensionReceiver = false,
-                                 hasVarargs = descriptor.valueParameters.any { it.varargElementType != null },
-                                 numDefaults = numDefaults,
-                                 isExpect = descriptor is MemberDescriptor && descriptor.isExpect,
-                                 isSyntheticMember = descriptor is SyntheticMemberDescriptor<*>
-                                 )
+            return FlatSignature(
+                origin,
+                descriptor.typeParameters,
+                reflectionType.arguments.map { it.type }, // should we drop return type?
+                hasExtensionReceiver = false,
+                hasVarargs = descriptor.valueParameters.any { it.varargElementType != null },
+                numDefaults = numDefaults,
+                isExpect = descriptor is MemberDescriptor && descriptor.isExpect,
+                isSyntheticMember = descriptor is SyntheticMemberDescriptor<*>
+            )
         }
 
         fun <T> create(
-                origin: T,
-                descriptor: CallableDescriptor,
-                numDefaults: Int,
-                parameterTypes: List<KotlinType?>
+            origin: T,
+            descriptor: CallableDescriptor,
+            numDefaults: Int,
+            parameterTypes: List<KotlinType?>
         ): FlatSignature<T> {
             val extensionReceiverType = descriptor.extensionReceiverParameter?.type
 
-            return FlatSignature(origin,
-                                 descriptor.typeParameters,
-                                 valueParameterTypes =
-                                 listOfNotNull(extensionReceiverType) + parameterTypes,
-                                 hasExtensionReceiver = extensionReceiverType != null,
-                                 hasVarargs = descriptor.valueParameters.any { it.varargElementType != null },
-                                 numDefaults = numDefaults,
-                                 isExpect = descriptor is MemberDescriptor && descriptor.isExpect,
-                                 isSyntheticMember = descriptor is SyntheticMemberDescriptor<*>
+            return FlatSignature(
+                origin,
+                descriptor.typeParameters,
+                valueParameterTypes =
+                listOfNotNull(extensionReceiverType) + parameterTypes,
+                hasExtensionReceiver = extensionReceiverType != null,
+                hasVarargs = descriptor.valueParameters.any { it.varargElementType != null },
+                numDefaults = numDefaults,
+                isExpect = descriptor is MemberDescriptor && descriptor.isExpect,
+                isSyntheticMember = descriptor is SyntheticMemberDescriptor<*>
             )
         }
 
         fun <D : CallableDescriptor> createFromCallableDescriptor(
-                descriptor: D
+            descriptor: D
         ): FlatSignature<D> =
-                create(descriptor, descriptor, numDefaults = 0, parameterTypes = descriptor.valueParameters.map { it.argumentValueType })
+            create(descriptor, descriptor, numDefaults = 0, parameterTypes = descriptor.valueParameters.map { it.argumentValueType })
 
         fun <D : CallableDescriptor> createForPossiblyShadowedExtension(descriptor: D): FlatSignature<D> =
-                FlatSignature(descriptor,
-                              descriptor.typeParameters,
-                              valueParameterTypes = descriptor.valueParameters.map { it.argumentValueType },
-                              hasExtensionReceiver = false,
-                              hasVarargs = descriptor.valueParameters.any { it.varargElementType != null },
-                              numDefaults = descriptor.valueParameters.count { it.hasDefaultValue() },
-                              isExpect = descriptor is MemberDescriptor && descriptor.isExpect,
-                              isSyntheticMember = descriptor is SyntheticMemberDescriptor<*>
-                )
+            FlatSignature(
+                descriptor,
+                descriptor.typeParameters,
+                valueParameterTypes = descriptor.valueParameters.map { it.argumentValueType },
+                hasExtensionReceiver = false,
+                hasVarargs = descriptor.valueParameters.any { it.varargElementType != null },
+                numDefaults = descriptor.valueParameters.count { it.hasDefaultValue() },
+                isExpect = descriptor is MemberDescriptor && descriptor.isExpect,
+                isSyntheticMember = descriptor is SyntheticMemberDescriptor<*>
+            )
 
         val ValueParameterDescriptor.argumentValueType get() = varargElementType ?: type
     }
@@ -119,10 +122,10 @@ interface SimpleConstraintSystem {
 }
 
 fun <T> SimpleConstraintSystem.isSignatureNotLessSpecific(
-        specific: FlatSignature<T>,
-        general: FlatSignature<T>,
-        callbacks: SpecificityComparisonCallbacks,
-        specificityComparator: TypeSpecificityComparator
+    specific: FlatSignature<T>,
+    general: FlatSignature<T>,
+    callbacks: SpecificityComparisonCallbacks,
+    specificityComparator: TypeSpecificityComparator
 ): Boolean {
     if (specific.hasExtensionReceiver != general.hasExtensionReceiver) return false
     if (specific.valueParameterTypes.size != general.valueParameterTypes.size) return false
@@ -143,8 +146,7 @@ fun <T> SimpleConstraintSystem.isSignatureNotLessSpecific(
                     return false
                 }
             }
-        }
-        else {
+        } else {
             val substitutedGeneralType = typeSubstitutor.safeSubstitute(generalType, Variance.INVARIANT)
 
             /**

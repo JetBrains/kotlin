@@ -1,10 +1,15 @@
+// !API_VERSION: 1.3
+// !JVM_DEFAULT_MODE: enable
 // JVM_TARGET: 1.8
-// KOTLIN_CONFIGURATION_FLAGS: +JVM.JVM8_TARGET_WITH_DEFAULTS
+// WITH_RUNTIME
+
 interface KCallable {
+    @JvmDefault
     val returnType: String
 }
 
 interface KCallableImpl : KCallable {
+    @JvmDefault
     override val returnType: String
         get() = "OK"
 }

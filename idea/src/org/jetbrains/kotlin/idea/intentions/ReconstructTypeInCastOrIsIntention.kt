@@ -46,7 +46,7 @@ class ReconstructTypeInCastOrIsIntention : SelfTargetingOffsetIndependentIntenti
         // No type parameters expected => nothing to reconstruct
         if (type.constructor.parameters.isEmpty()) return false
 
-        val typePresentation = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(type)
+        val typePresentation = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_NO_ANNOTATIONS.renderType(type)
         text = "Replace by '$typePresentation'"
 
         return true

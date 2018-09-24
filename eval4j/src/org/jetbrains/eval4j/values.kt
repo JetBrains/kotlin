@@ -118,15 +118,15 @@ fun Value.obj(expectedType: Type = asmType): Any? {
     }
 }
 
-fun <T: Any> T?.checkNull(): T {
+fun <T : Any> T?.checkNull(): T {
     if (this == null) {
-        throwEvalException(NullPointerException())
+        throwInterpretingException(NullPointerException())
     }
     return this
 }
 
-fun throwEvalException(e: Throwable): Nothing {
-    throw ThrownFromEvalException(e)
+fun throwInterpretingException(e: Throwable): Nothing {
+    throw Eval4JInterpretingException(e)
 }
 
 fun throwBrokenCodeException(e: Throwable): Nothing {

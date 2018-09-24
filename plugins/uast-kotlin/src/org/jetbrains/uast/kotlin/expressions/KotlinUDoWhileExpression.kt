@@ -20,17 +20,18 @@ import org.jetbrains.kotlin.psi.KtDoWhileExpression
 import org.jetbrains.uast.UDoWhileExpression
 import org.jetbrains.uast.UElement
 import org.jetbrains.uast.UIdentifier
+import org.jetbrains.uast.kotlin.declarations.KotlinUIdentifier
 
 class KotlinUDoWhileExpression(
         override val psi: KtDoWhileExpression,
-        override val uastParent: UElement?
-) : KotlinAbstractUExpression(), UDoWhileExpression {
+        givenParent: UElement?
+) : KotlinAbstractUExpression(givenParent), UDoWhileExpression {
     override val condition by lz { KotlinConverter.convertOrEmpty(psi.condition, this) }
     override val body by lz { KotlinConverter.convertOrEmpty(psi.body, this) }
 
     override val doIdentifier: UIdentifier
-        get() = UIdentifier(null, this)
+        get() = KotlinUIdentifier(null, this)
 
     override val whileIdentifier: UIdentifier
-        get() = UIdentifier(null, this)
+        get() = KotlinUIdentifier(null, this)
 }

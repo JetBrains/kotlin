@@ -16,7 +16,10 @@
 
 package org.jetbrains.kotlin.codegen
 
+import org.jetbrains.kotlin.codegen.context.CodegenContext
+import org.jetbrains.kotlin.codegen.context.InlineLambdaContext
 import org.jetbrains.kotlin.codegen.state.GenerationState
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.org.objectweb.asm.Type
@@ -27,10 +30,25 @@ class SamWrapperClasses(private val state: GenerationState) {
 
     private val samInterfaceToWrapperClass = hashMapOf<WrapperKey, Type>()
 
-    fun getSamWrapperClass(samType: SamType, file: KtFile, expressionCodegen: ExpressionCodegen): Type {
-        val isInsideInline = InlineUtil.isInlineOrContainingInline(expressionCodegen.context.contextDescriptor)
+    fun getSamWrapperClass(
+        samType: SamType,
+        file: KtFile,
+        expressionCodegen: ExpressionCodegen,
+        contextDescriptor: CallableMemberDescriptor
+    ): Type {
+        val isInsideInline = InlineUtil.isInlineOrContainingInline(expressionCodegen.context.contextDescriptor) ||
+                isInsideInlineLambdaContext(expressionCodegen.context, state)
         return samInterfaceToWrapperClass.getOrPut(WrapperKey(samType, file, isInsideInline)) {
-            SamWrapperCodegen(state, samType, expressionCodegen.parentCodegen, isInsideInline).genWrapper(file)
+            SamWrapperCodegen(state, samType, expressionCodegen.parentCodegen, isInsideInline).genWrapper(file, contextDescriptor)
         }
+    }
+
+    private fun isInsideInlineLambdaContext(context: CodegenContext<*>, state: GenerationState):Boolean {
+        var parent: CodegenContext<*>? = context
+        while (parent != null && parent != state.rootContext) {
+            if (parent is InlineLambdaContext) return true
+            parent = parent.parentContext
+        }
+        return false
     }
 }

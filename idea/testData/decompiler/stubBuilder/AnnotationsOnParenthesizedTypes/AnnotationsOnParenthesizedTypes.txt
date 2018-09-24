@@ -90,7 +90,7 @@ PsiJetFileStubImpl[package=]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=C]
-      FUN[fqName=AnnotationsOnParenthesizedTypes.parameter, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, name=parameter]
+      FUN[fqName=AnnotationsOnParenthesizedTypes.parameter, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=parameter]
         MODIFIER_LIST[public final]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=a]
@@ -108,7 +108,7 @@ PsiJetFileStubImpl[package=]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Unit]
-      FUN[fqName=AnnotationsOnParenthesizedTypes.parameterArgument, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, name=parameterArgument]
+      FUN[fqName=AnnotationsOnParenthesizedTypes.parameterArgument, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=parameterArgument]
         MODIFIER_LIST[public final]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=a]
@@ -131,7 +131,7 @@ PsiJetFileStubImpl[package=]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Unit]
-      FUN[fqName=AnnotationsOnParenthesizedTypes.returnArgument, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, name=returnArgument]
+      FUN[fqName=AnnotationsOnParenthesizedTypes.returnArgument, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=returnArgument]
         MODIFIER_LIST[public final]
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE
@@ -148,7 +148,7 @@ PsiJetFileStubImpl[package=]
                             REFERENCE_EXPRESSION[referencedName=A]
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=C]
-      FUN[fqName=AnnotationsOnParenthesizedTypes.returnTypeParameterValue, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=false, name=returnTypeParameterValue]
+      FUN[fqName=AnnotationsOnParenthesizedTypes.returnTypeParameterValue, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=false, mayHaveContract=false, name=returnTypeParameterValue]
         MODIFIER_LIST[public final]
         TYPE_PARAMETER_LIST
           TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T]
@@ -162,7 +162,7 @@ PsiJetFileStubImpl[package=]
                     REFERENCE_EXPRESSION[referencedName=A]
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=T]
-      FUN[fqName=AnnotationsOnParenthesizedTypes.returnValue, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, name=returnValue]
+      FUN[fqName=AnnotationsOnParenthesizedTypes.returnValue, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=returnValue]
         MODIFIER_LIST[public final]
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE
@@ -174,7 +174,7 @@ PsiJetFileStubImpl[package=]
                     REFERENCE_EXPRESSION[referencedName=A]
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=C]
-      FUN[fqName=AnnotationsOnParenthesizedTypes.receiverArgument, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=false, name=receiverArgument]
+      FUN[fqName=AnnotationsOnParenthesizedTypes.receiverArgument, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=false, mayHaveContract=false, name=receiverArgument]
         MODIFIER_LIST[public final]
         TYPE_REFERENCE
           USER_TYPE

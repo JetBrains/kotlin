@@ -23,20 +23,26 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
 import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.lazy.descriptors.findPackageFragmentForFile
 
 class ModuleGenerator(override val context: GeneratorContext) : Generator {
+
+    private val constantValueGenerator = context.constantValueGenerator
+
     fun generateModuleFragment(ktFiles: Collection<KtFile>): IrModuleFragment =
-            generateModuleFragmentWithoutDependencies(ktFiles).also { irModule ->
-                generateUnboundSymbolsAsDependencies(irModule)
-            }
+        generateModuleFragmentWithoutDependencies(ktFiles).also { irModule ->
+            generateUnboundSymbolsAsDependencies(irModule)
+        }
 
     fun generateModuleFragmentWithoutDependencies(ktFiles: Collection<KtFile>): IrModuleFragment =
-            IrModuleFragmentImpl(context.moduleDescriptor, context.irBuiltIns).also { irModule ->
-                irModule.files.addAll(generateFiles(ktFiles))
-            }
+        IrModuleFragmentImpl(context.moduleDescriptor, context.irBuiltIns).also { irModule ->
+            irModule.files.addAll(generateFiles(ktFiles))
+        }
 
-    private fun generateUnboundSymbolsAsDependencies(irModule: IrModuleFragment) {
-        ExternalDependenciesGenerator(context.symbolTable, context.irBuiltIns).generateUnboundSymbolsAsDependencies(irModule)
+    fun generateUnboundSymbolsAsDependencies(irModule: IrModuleFragment) {
+        ExternalDependenciesGenerator(
+            irModule.descriptor, context.symbolTable, context.irBuiltIns
+        ).generateUnboundSymbolsAsDependencies(irModule, context.bindingContext)
     }
 
     private fun generateFiles(ktFiles: Collection<KtFile>): List<IrFile> {
@@ -51,7 +57,9 @@ class ModuleGenerator(override val context: GeneratorContext) : Generator {
         val irFile = createEmptyIrFile(ktFile)
 
         for (ktAnnotationEntry in ktFile.annotationEntries) {
-            irFile.fileAnnotations.add(getOrFail(BindingContext.ANNOTATION, ktAnnotationEntry))
+            val annotationDescriptor = getOrFail(BindingContext.ANNOTATION, ktAnnotationEntry)
+            irFile.fileAnnotations.add(annotationDescriptor)
+            irFile.annotations.add(constantValueGenerator.generateAnnotationConstructorCall(annotationDescriptor))
         }
 
         for (ktDeclaration in ktFile.declarations) {
@@ -63,7 +71,7 @@ class ModuleGenerator(override val context: GeneratorContext) : Generator {
 
     private fun createEmptyIrFile(ktFile: KtFile): IrFileImpl {
         val fileEntry = context.sourceManager.getOrCreateFileEntry(ktFile)
-        val packageFragmentDescriptor = getOrFail(BindingContext.FILE_TO_PACKAGE_FRAGMENT, ktFile)
+        val packageFragmentDescriptor = context.moduleDescriptor.findPackageFragmentForFile(ktFile)!!
         val irFile = IrFileImpl(fileEntry, packageFragmentDescriptor)
         context.sourceManager.putFileEntry(irFile, fileEntry)
         return irFile

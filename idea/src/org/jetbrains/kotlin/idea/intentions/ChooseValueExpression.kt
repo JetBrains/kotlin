@@ -25,16 +25,18 @@ import com.intellij.codeInsight.template.impl.TemplateManagerImpl
 import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil
 
 //TODO: move it somewhere else and reuse
-abstract class ChooseValueExpression<T : Any>(
+abstract class ChooseValueExpression<in T : Any>(
         lookupItems: Collection<T>,
-        protected val defaultItem: T,
+        defaultItem: T,
         private val advertisementText: String? = null
 ) : Expression() {
-
     protected abstract fun getLookupString(element: T): String
     protected abstract fun getResult(element: T): String
 
-    protected val lookupItems: Array<LookupElement> = lookupItems.map { suggestion ->
+    @Suppress("LeakingThis")
+    private val defaultItemString = getLookupString(defaultItem)
+
+    private val lookupItems: Array<LookupElement> = lookupItems.map { suggestion ->
         LookupElementBuilder.create(suggestion, getLookupString(suggestion)).withInsertHandler { context, item ->
             val topLevelEditor = InjectedLanguageUtil.getTopLevelEditor(context.editor)
             val templateState = TemplateManagerImpl.getTemplateState(topLevelEditor)
@@ -52,7 +54,7 @@ abstract class ChooseValueExpression<T : Any>(
 
     override fun calculateQuickResult(context: ExpressionContext) = calculateResult(context)
 
-    override fun calculateResult(context: ExpressionContext) = TextResult(getLookupString(defaultItem))
+    override fun calculateResult(context: ExpressionContext) = TextResult(defaultItemString)
 
     override fun getAdvertisingText() = advertisementText
 }

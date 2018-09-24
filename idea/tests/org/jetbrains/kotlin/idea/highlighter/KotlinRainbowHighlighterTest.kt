@@ -39,6 +39,32 @@ class KotlinRainbowHighlighterTest : KotlinLightCodeInsightFixtureTestCase() {
         """)
     }
 
+    fun testRainbowNestedVal() {
+        checkRainbow(
+            """
+             fun some() {
+                 run {
+                     val <rainbow color='ff000001'>name</rainbow> = 1
+                     <rainbow color='ff000001'>name</rainbow>
+                     run {
+                         val <rainbow color='ff000004'>name</rainbow> = 2
+                         <rainbow color='ff000004'>name</rainbow>
+                     }
+                 }
+             }
+            """
+        )
+    }
+
+    fun testAssignmentIt() {
+        checkRainbow("""
+            val f : (Int) -> Unit = {
+                val <rainbow color='ff000004'>t</rainbow> = <rainbow color='ff000002'>it</rainbow>
+                <rainbow color='ff000002'>it</rainbow>
+            }
+        """)
+    }
+
     fun testRainbowNestedAnonymousFunction() {
         checkRainbow("""
             fun main() {
@@ -81,6 +107,24 @@ class KotlinRainbowHighlighterTest : KotlinLightCodeInsightFixtureTestCase() {
                 println(<rainbow color='ff000004'>b</rainbow>)
             }
         """)
+    }
+
+    fun testInitBlock() {
+        checkRainbow("""
+            class Some {
+                init {
+                    val <rainbow color='ff000004'>x</rainbow> = 128
+                    println(<rainbow color='ff000004'>x</rainbow>)
+
+                    run {
+                        println(<rainbow color='ff000004'>x</rainbow>)
+                    }
+                    fun some() {
+                        val <rainbow color='ff000003'>b</rainbow> = 299
+                        println(<rainbow color='ff000003'>b</rainbow> + <rainbow color='ff000004'>x</rainbow>)
+                    }
+                }
+            }""")
     }
 
     private fun checkRainbow(code: String) {

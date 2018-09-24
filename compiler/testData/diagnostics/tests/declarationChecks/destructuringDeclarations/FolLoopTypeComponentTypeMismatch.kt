@@ -1,3 +1,4 @@
+// !WITH_NEW_INFERENCE
 class A {
     operator fun component1() = 1
     operator fun component2() = 1.0
@@ -8,7 +9,7 @@ class C {
 }
 
 fun test() {
-    for ((<!UNUSED_VARIABLE!>x<!>: Double, <!UNUSED_VARIABLE!>y<!>: Int) in <!COMPONENT_FUNCTION_RETURN_TYPE_MISMATCH, COMPONENT_FUNCTION_RETURN_TYPE_MISMATCH!>C()<!>) {
+    for ((<!NI;TYPE_MISMATCH!><!UNUSED_VARIABLE!>x<!>: Double<!>, <!NI;TYPE_MISMATCH!><!UNUSED_VARIABLE!>y<!>: Int<!>) in <!OI;COMPONENT_FUNCTION_RETURN_TYPE_MISMATCH, OI;COMPONENT_FUNCTION_RETURN_TYPE_MISMATCH!>C()<!>) {
 
     }
 }

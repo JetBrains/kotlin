@@ -341,16 +341,10 @@ public class IRFactory {
             default:
                 // TODO: This should be a ReferenceError--but that's a runtime 
                 //  exception. Should we compile an exception into the code?
-                reportError("msg.bad.lhs.assign");
+                ts.reportSyntaxError("msg.bad.lhs.assign", null);
         }
         
         return new Node(TokenStream.ASSIGN, left, right, nodeOp, location);
-    }
-
-    private void reportError(String msgResource) {
-
-        String message = Context.getMessage0(msgResource);
-        ts.reportSyntaxError(message, null);
     }
 
     // Only needed to get file/line information. Could create an interface

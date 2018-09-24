@@ -1,4 +1,4 @@
-// "Create actual class for platform JS" "true"
+// "Create actual class for module testModule_JS (JS)" "true"
 
 expect sealed class <caret>Sealed {
     object Obj : Sealed

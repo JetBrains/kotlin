@@ -16,24 +16,24 @@
 
 package org.jetbrains.kotlin.utils
 
-import org.jetbrains.kotlin.serialization.deserialization.BinaryVersion
+import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import java.io.DataInputStream
 import java.io.File
 import java.io.InputStream
-import javax.xml.bind.DatatypeConverter.parseBase64Binary
-import javax.xml.bind.DatatypeConverter.printBase64Binary
+import java.util.*
 
 class KotlinJavascriptMetadata(val version: JsMetadataVersion, val moduleName: String, val body: ByteArray)
 
 // TODO: move to JS modules
 class JsMetadataVersion(vararg numbers: Int) : BinaryVersion(*numbers) {
-    override fun isCompatible() = this.isCompatibleTo(INSTANCE)
+    override fun isCompatible(): Boolean =
+        this.isCompatibleTo(INSTANCE)
 
     fun toInteger() = (patch shl 16) + (minOf(minor, 255) shl 8) + minOf(major, 255)
 
     companion object {
         @JvmField
-        val INSTANCE = JsMetadataVersion(1, 1, 0)
+        val INSTANCE = JsMetadataVersion(1, 2, 5)
 
         @JvmField
         val INVALID_VERSION = JsMetadataVersion()
@@ -72,8 +72,9 @@ object KotlinJavascriptMetadataUtils {
     fun hasMetadata(text: String): Boolean =
             KOTLIN_JAVASCRIPT_METHOD_NAME_PATTERN.matcher(text).find() && METADATA_PATTERN.matcher(text).find()
 
-    fun formatMetadataAsString(moduleName: String, content: ByteArray): String =
-        "// Kotlin.$KOTLIN_JAVASCRIPT_METHOD_NAME(${JsMetadataVersion.INSTANCE.toInteger()}, \"$moduleName\", \"${printBase64Binary(content)}\");\n"
+    fun formatMetadataAsString(moduleName: String, content: ByteArray, metadataVersion: JsMetadataVersion): String =
+        "// Kotlin.$KOTLIN_JAVASCRIPT_METHOD_NAME(${metadataVersion.toInteger()}, \"$moduleName\", " +
+        "\"${Base64.getEncoder().encodeToString(content)}\");\n"
 
     @JvmStatic
     fun loadMetadata(file: File): List<KotlinJavascriptMetadata> {
@@ -99,7 +100,7 @@ object KotlinJavascriptMetadataUtils {
             val abiVersion = JsMetadataVersion.fromInteger(matcher.group(1).toInt())
             val moduleName = matcher.group(3)
             val data = matcher.group(5)
-            metadataList.add(KotlinJavascriptMetadata(abiVersion, moduleName, parseBase64Binary(data)))
+            metadataList.add(KotlinJavascriptMetadata(abiVersion, moduleName, Base64.getDecoder().decode(data)))
         }
     }
 }

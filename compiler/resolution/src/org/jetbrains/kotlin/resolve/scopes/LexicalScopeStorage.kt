@@ -35,9 +35,9 @@ interface LocalRedeclarationChecker {
 }
 
 abstract class LexicalScopeStorage(
-        parent: HierarchicalScope,
-        val redeclarationChecker: LocalRedeclarationChecker
-): LexicalScope {
+    parent: HierarchicalScope,
+    val redeclarationChecker: LocalRedeclarationChecker
+) : LexicalScope {
     override val parent = parent.takeSnapshot()
 
     protected val addedDescriptors: MutableList<DeclarationDescriptor> = SmartList()
@@ -45,13 +45,15 @@ abstract class LexicalScopeStorage(
     private var functionsByName: MutableMap<Name, IntList>? = null
     private var variablesAndClassifiersByName: MutableMap<Name, IntList>? = null
 
-    override fun getContributedClassifier(name: Name, location: LookupLocation) = variableOrClassDescriptorByName(name) as? ClassifierDescriptor
-    override fun getContributedVariables(name: Name, location: LookupLocation) = listOfNotNull(variableOrClassDescriptorByName(name) as? VariableDescriptor)
+    override fun getContributedClassifier(name: Name, location: LookupLocation) =
+        variableOrClassDescriptorByName(name) as? ClassifierDescriptor
+
+    override fun getContributedVariables(name: Name, location: LookupLocation) =
+        listOfNotNull(variableOrClassDescriptorByName(name) as? VariableDescriptor)
 
     override fun getContributedFunctions(name: Name, location: LookupLocation) = functionsByName(name)
 
-    override fun getContributedDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean)
-            = addedDescriptors
+    override fun getContributedDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean) = addedDescriptors
 
     protected fun addVariableOrClassDescriptor(descriptor: DeclarationDescriptor) {
         val name = descriptor.name
@@ -115,7 +117,7 @@ abstract class LexicalScopeStorage(
 
     private operator fun IntList?.plus(value: Int) = IntList(value, this)
 
-    private fun <TDescriptor: DeclarationDescriptor> IntList.toDescriptors(): List<TDescriptor> {
+    private fun <TDescriptor : DeclarationDescriptor> IntList.toDescriptors(): List<TDescriptor> {
         val result = ArrayList<TDescriptor>(1)
         var rest: IntList? = this
         do {
@@ -124,4 +126,7 @@ abstract class LexicalScopeStorage(
         } while (rest != null)
         return result
     }
+
+    override fun definitelyDoesNotContainName(name: Name) =
+        functionsByName?.get(name) == null && variablesAndClassifiersByName?.get(name) == null
 }

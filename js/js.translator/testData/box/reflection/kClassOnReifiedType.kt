@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 1048
+// EXPECTED_REACHABLE_NODES: 1318
 package foo
 
 import kotlin.reflect.KClass

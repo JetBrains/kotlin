@@ -20,6 +20,7 @@ import com.intellij.openapi.util.Key
 import com.intellij.psi.PsiTreeChangeAdapter
 import com.intellij.psi.PsiTreeChangeEvent
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.core.dropBraces
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.intentions.ConvertToBlockBodyIntention
 import org.jetbrains.kotlin.idea.intentions.RemoveCurlyBracesFromTemplateIntention
@@ -29,6 +30,7 @@ import org.jetbrains.kotlin.psi.psiUtil.canPlaceAfterSimpleNameEntry
 import org.jetbrains.kotlin.psi.psiUtil.findDescendantOfType
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsExpression
+import org.jetbrains.kotlin.utils.KotlinExceptionWithAttachments
 import java.util.*
 
 internal abstract class ReplacementPerformer<TElement : KtElement>(
@@ -170,7 +172,7 @@ internal class ExpressionReplacementPerformer(
         if (templateEntry != null) {
             val intention = RemoveCurlyBracesFromTemplateIntention()
             if (intention.isApplicableTo(templateEntry)) {
-                val newEntry = intention.applyTo(templateEntry)
+                val newEntry = templateEntry.dropBraces()
                 return newEntry.expression
             }
         }
@@ -210,7 +212,10 @@ internal class ExpressionReplacementPerformer(
 
         val runExpression = psiFactory.createExpressionByPattern("run { $0 }", elementToBeReplaced) as KtCallExpression
         val runAfterReplacement = elementToBeReplaced.replaced(runExpression)
-        val block = runAfterReplacement.lambdaArguments[0].getLambdaExpression().bodyExpression!!
+        val ktLambdaArgument = runAfterReplacement.lambdaArguments[0]
+        val block = ktLambdaArgument.getLambdaExpression()?.bodyExpression
+                ?: throw KotlinExceptionWithAttachments("cant get body expression for $ktLambdaArgument")
+                    .withAttachment("ktLambdaArgument", ktLambdaArgument.text)
         elementToBeReplaced = block.statements.single()
         return elementToBeReplaced
 

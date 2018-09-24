@@ -1,0 +1,3 @@
+[NotNull Values]
+9 	val <bold>x = foo(::bar)</bold>
+9 		val <bold>x = foo(::bar)</bold>

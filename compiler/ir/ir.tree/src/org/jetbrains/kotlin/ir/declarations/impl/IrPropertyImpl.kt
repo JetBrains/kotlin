@@ -16,60 +16,99 @@
 
 package org.jetbrains.kotlin.ir.declarations.impl
 
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.util.transform
+import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
+import org.jetbrains.kotlin.ir.declarations.IrField
+import org.jetbrains.kotlin.ir.declarations.IrProperty
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
-import org.jetbrains.kotlin.utils.SmartList
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
 
 class IrPropertyImpl(
+    startOffset: Int,
+    endOffset: Int,
+    origin: IrDeclarationOrigin,
+    override val descriptor: PropertyDescriptor,
+    override val name: Name,
+    override val visibility: Visibility,
+    override val modality: Modality,
+    override val isVar: Boolean,
+    override val isConst: Boolean,
+    override val isLateinit: Boolean,
+    override val isDelegated: Boolean,
+    override val isExternal: Boolean
+) : IrDeclarationBase(startOffset, endOffset, origin),
+    IrProperty {
+
+    constructor(
         startOffset: Int,
         endOffset: Int,
         origin: IrDeclarationOrigin,
-        override val isDelegated: Boolean,
-        override val descriptor: PropertyDescriptor
-) : IrDeclarationBase(startOffset, endOffset, origin), IrProperty {
+        isDelegated: Boolean,
+        descriptor: PropertyDescriptor
+    ) : this(
+        startOffset, endOffset, origin, descriptor,
+        descriptor.name, descriptor.visibility, descriptor.modality,
+        isVar = descriptor.isVar,
+        isConst = descriptor.isConst,
+        isLateinit = descriptor.isLateInit,
+        isDelegated = isDelegated,
+        isExternal = descriptor.isEffectivelyExternal()
+    )
+
     constructor(
-            startOffset: Int, endOffset: Int, origin: IrDeclarationOrigin,
-            descriptor: PropertyDescriptor
+        startOffset: Int,
+        endOffset: Int,
+        origin: IrDeclarationOrigin,
+        descriptor: PropertyDescriptor
     ) : this(startOffset, endOffset, origin, descriptor.isDelegated, descriptor)
 
     constructor(
-            startOffset: Int, endOffset: Int, origin: IrDeclarationOrigin, isDelegated: Boolean, descriptor: PropertyDescriptor,
-            backingField: IrField?
+        startOffset: Int,
+        endOffset: Int,
+        origin: IrDeclarationOrigin,
+        isDelegated: Boolean,
+        descriptor: PropertyDescriptor,
+        backingField: IrField?
     ) : this(startOffset, endOffset, origin, isDelegated, descriptor) {
         this.backingField = backingField
     }
 
     constructor(
-            startOffset: Int, endOffset: Int, origin: IrDeclarationOrigin, isDelegated: Boolean, descriptor: PropertyDescriptor,
-            backingField: IrField?, getter: IrFunction?, setter: IrFunction?
+        startOffset: Int,
+        endOffset: Int,
+        origin: IrDeclarationOrigin,
+        isDelegated: Boolean,
+        descriptor: PropertyDescriptor,
+        backingField: IrField?,
+        getter: IrSimpleFunction?,
+        setter: IrSimpleFunction?
     ) : this(startOffset, endOffset, origin, isDelegated, descriptor, backingField) {
         this.getter = getter
         this.setter = setter
     }
 
-    override val typeParameters: MutableList<IrTypeParameter> = SmartList()
     override var backingField: IrField? = null
-    override var getter: IrFunction? = null
-    override var setter: IrFunction? = null
+    override var getter: IrSimpleFunction? = null
+    override var setter: IrSimpleFunction? = null
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R {
         return visitor.visitProperty(this, data)
     }
 
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
-        typeParameters.forEach { it.accept(visitor, data) }
         backingField?.accept(visitor, data)
         getter?.accept(visitor, data)
         setter?.accept(visitor, data)
     }
 
     override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
-        typeParameters.transform { it.transform(transformer, data) }
         backingField = backingField?.transform(transformer, data) as? IrField
-        getter = getter?.transform(transformer, data) as? IrFunction
-        setter = setter?.transform(transformer, data) as? IrFunction
+        getter = getter?.run { transform(transformer, data) as IrSimpleFunction }
+        setter = setter?.run { transform(transformer, data) as IrSimpleFunction }
     }
 }

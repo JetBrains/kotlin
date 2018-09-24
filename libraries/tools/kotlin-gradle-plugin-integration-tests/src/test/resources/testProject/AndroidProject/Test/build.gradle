@@ -27,4 +27,5 @@ android {
             }
         }
     }
+    lintOptions.abortOnError = false
 }

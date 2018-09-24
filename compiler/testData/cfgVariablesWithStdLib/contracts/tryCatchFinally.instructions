@@ -1,0 +1,187 @@
+== myRun ==
+inline fun <T> myRun(block: () -> T): T {
+    contract {
+        callsInPlace(block, InvocationKind.EXACTLY_ONCE)
+    }
+    return block()
+}
+---------------------
+L0:
+  1 <START>                                                                                       INIT: in: {} out: {}
+    v(block: () -> T)                                                                             INIT: in: {} out: {}
+    magic[FAKE_INITIALIZER](block: () -> T) -> <v0>                                               INIT: in: {} out: {}
+    w(block|<v0>)                                                                                 INIT: in: {} out: {}
+  2 mark({ contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) } return block() })        INIT: in: {} out: {}
+    mark({ callsInPlace(block, InvocationKind.EXACTLY_ONCE) })
+    jmp?(L2)
+    d({ callsInPlace(block, InvocationKind.EXACTLY_ONCE) })
+L2 [after local declaration]:
+    r({ callsInPlace(block, InvocationKind.EXACTLY_ONCE) }) -> <v1>
+    mark(contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) })
+    call(contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) }, contract|<v1>) -> <v2>
+    r(block) -> <v3>
+    mark(block())
+    call(block(), invoke|<v3>) -> <v4>
+    ret(*|<v4>) L1
+L1:
+  1 <END>
+error:
+    <ERROR>
+sink:
+    <SINK>                                                                                                                USE: in: {} out: {}
+=====================
+== anonymous_0 ==
+{
+        callsInPlace(block, InvocationKind.EXACTLY_ONCE)
+    }
+---------------------
+L3:
+  3 <START>                                                                                          INIT: in: {} out: {}
+  4 mark(callsInPlace(block, InvocationKind.EXACTLY_ONCE))
+    magic[IMPLICIT_RECEIVER](callsInPlace(block, InvocationKind.EXACTLY_ONCE)) -> <v0>
+    r(block) -> <v1>
+    mark(InvocationKind.EXACTLY_ONCE)
+    r(EXACTLY_ONCE) -> <v2>
+    mark(callsInPlace(block, InvocationKind.EXACTLY_ONCE))
+    call(callsInPlace(block, InvocationKind.EXACTLY_ONCE), callsInPlace|<v0>, <v1>, <v2>) -> <v3>
+L4:
+  3 <END>
+error:
+    <ERROR>
+sink:
+    <SINK>                                                                                                                   USE: in: {} out: {}
+=====================
+== someComputation ==
+fun someComputation(): Int = 42
+---------------------
+L0:
+  1 <START>           INIT: in: {} out: {}
+    r(42) -> <v0>
+    ret(*|<v0>) L1
+L1:
+    <END>
+error:
+    <ERROR>
+sink:
+    <SINK>                                    USE: in: {} out: {}
+=====================
+== report ==
+fun report(x: Int) = Unit
+---------------------
+L0:
+  1 <START>                                    INIT: in: {} out: {}
+    v(x: Int)                                  INIT: in: {} out: {}
+    magic[FAKE_INITIALIZER](x: Int) -> <v0>    INIT: in: {} out: {}
+    w(x|<v0>)                                  INIT: in: {} out: {}
+    r(Unit) -> <v1>                            INIT: in: {} out: {}
+    ret(*|<v1>) L1
+L1:
+    <END>
+error:
+    <ERROR>
+sink:
+    <SINK>                                                             USE: in: {} out: {}
+=====================
+== innerTryCatchFinally ==
+fun innerTryCatchFinally() {
+    val x: Int
+
+    myRun {
+        try {
+            x = someComputation()
+            report(x)
+        } catch (e: java.lang.Exception) {
+            x = 42
+            report(x)
+        } finally {
+            x = 0
+        }
+    }
+
+    x.inc()
+}
+---------------------
+L0:
+  1 <START>                                                                                                                                                 INIT: in: {} out: {}            USE: in: {} out: {}
+  2 mark({ val x: Int myRun { try { x = someComputation() report(x) } catch (e: java.lang.Exception) { x = 42 report(x) } finally { x = 0 } } x.inc() })
+    v(val x: Int)                                                                                                                                           INIT: in: {} out: {x=D}
+    mark({ try { x = someComputation() report(x) } catch (e: java.lang.Exception) { x = 42 report(x) } finally { x = 0 } })                                 INIT: in: {x=D} out: {x=D}
+    r({ try { x = someComputation() report(x) } catch (e: java.lang.Exception) { x = 42 report(x) } finally { x = 0 } }) -> <v0>
+    mark(myRun { try { x = someComputation() report(x) } catch (e: java.lang.Exception) { x = 42 report(x) } finally { x = 0 } })
+    call(myRun { try { x = someComputation() report(x) } catch (e: java.lang.Exception) { x = 42 report(x) } finally { x = 0 } }, myRun|<v0>) -> <v1>
+L2 [before inlined declaration]:
+    inlined({ try { x = someComputation() report(x) } catch (e: java.lang.Exception) { x = 42 report(x) } finally { x = 0 } })                              INIT: in: {x=ID} out: {x=ID}    USE: in: {x=WRITTEN_AFTER_READ} out: {x=WRITTEN_AFTER_READ}
+L3 [after inlined declaration]:
+    mark(x.inc())                                                                                                                                                                           USE: in: {x=READ} out: {x=READ}
+    r(x) -> <v2>                                                                                                                                                                            USE: in: {} out: {x=READ}
+    mark(inc())
+    call(inc(), inc|<v2>) -> <v3>
+L1:
+  1 <END>                                                                                                                                                   INIT: in: {} out: {}
+error:
+    <ERROR>
+sink:
+    <SINK>                                                                                                                                                                                  USE: in: {} out: {}
+=====================
+== inlined anonymous_1 ==
+{
+        try {
+            x = someComputation()
+            report(x)
+        } catch (e: java.lang.Exception) {
+            x = 42
+            report(x)
+        } finally {
+            x = 0
+        }
+    }
+---------------------
+L4:
+  3 <START>                                                                                                                                    INIT: in: {x=D} out: {x=D}
+  4 mark(try { x = someComputation() report(x) } catch (e: java.lang.Exception) { x = 42 report(x) } finally { x = 0 })
+    mark(try { x = someComputation() report(x) } catch (e: java.lang.Exception) { x = 42 report(x) } finally { x = 0 })
+    jmp?(L6)
+    jmp?(L7)
+  5 mark({ x = someComputation() report(x) })
+    mark(someComputation())
+    call(someComputation(), someComputation) -> <v0>                                                                                                                             USE: in: {x=WRITTEN_AFTER_READ} out: {x=WRITTEN_AFTER_READ}
+    w(x|<v0>)                                                                                                                                  INIT: in: {x=D} out: {x=ID}       USE: in: {x=READ} out: {x=WRITTEN_AFTER_READ}
+    r(x) -> <v1>                                                                                                                               INIT: in: {x=ID} out: {x=ID}      USE: in: {x=WRITTEN_AFTER_READ} out: {x=READ}
+    mark(report(x))
+    call(report(x), report|<v1>) -> <v2>
+  4 jmp?(L6)
+    jmp?(L7)
+    jmp(L8)
+L6 [onException]:
+  5 v(e: java.lang.Exception)                                                                                                                  INIT: in: {x=I?D} out: {x=I?D}
+    magic[FAKE_INITIALIZER](e: java.lang.Exception) -> <v3>                                                                                    INIT: in: {x=I?D} out: {x=I?D}
+    w(e|<v3>)                                                                                                                                  INIT: in: {x=I?D} out: {x=I?D}
+  6 mark({ x = 42 report(x) })                                                                                                                 INIT: in: {x=I?D} out: {x=I?D}
+    r(42) -> <v4>                                                                                                                                                                USE: in: {x=WRITTEN_AFTER_READ} out: {x=WRITTEN_AFTER_READ}
+    w(x|<v4>)                                                                                                                                  INIT: in: {x=I?D} out: {x=ID}     USE: in: {x=READ} out: {x=WRITTEN_AFTER_READ}
+    r(x) -> <v5>                                                                                                                               INIT: in: {x=ID} out: {x=ID}      USE: in: {x=WRITTEN_AFTER_READ} out: {x=READ}
+    mark(report(x))
+    call(report(x), report|<v5>) -> <v6>
+  5 jmp(L8)
+L8 [afterCatches]:
+  4 jmp(L9)
+L7 [onExceptionToFinallyBlock]:
+L10 [start finally]:
+  5 mark({ x = 0 })                                                                                                                            INIT: in: {x=I?D} out: {x=I?D}
+    r(0) -> <v7>                                                                                                                                                                 USE: in: {x=WRITTEN_AFTER_READ} out: {x=WRITTEN_AFTER_READ}
+    w(x|<v7>)                                                                                                                                  INIT: in: {x=I?D} out: {x=ID}     USE: in: {x=READ} out: {x=WRITTEN_AFTER_READ}
+L11 [finish finally]:
+  4 jmp(error)                                                                                                                                 INIT: in: {x=ID} out: {x=ID}      USE: in: {x=READ} out: {x=READ}
+L9 [skipFinallyToErrorBlock]:
+L12 [copy of L7, onExceptionToFinallyBlock]:
+  5 mark({ x = 0 })
+    r(0) -> <v7>                                                                                                                                                                 USE: in: {x=WRITTEN_AFTER_READ} out: {x=WRITTEN_AFTER_READ}
+    w(x|<v7>)                                                                                                                                                                    USE: in: {x=READ} out: {x=WRITTEN_AFTER_READ}
+  4 merge(try { x = someComputation() report(x) } catch (e: java.lang.Exception) { x = 42 report(x) } finally { x = 0 }|<v2>, <v6>) -> <v9>
+L5:
+  3 <END>
+error:
+    <ERROR>
+sink:
+    <SINK>                                                                                                                                                                       USE: in: {x=READ} out: {x=READ}
+=====================

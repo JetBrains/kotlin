@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.codegen;
@@ -32,103 +21,134 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 public class CheckLocalVariablesTableTestGenerated extends AbstractCheckLocalVariablesTableTest {
+    private void runTest(String testDataFilePath) throws Exception {
+        KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
+    }
+
     public void testAllFilesPresentInCheckLocalVariablesTable() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/checkLocalVariablesTable"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/checkLocalVariablesTable"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM, true);
     }
 
     @TestMetadata("catchClause.kt")
     public void testCatchClause() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/checkLocalVariablesTable/catchClause.kt");
-        doTest(fileName);
+        runTest("compiler/testData/checkLocalVariablesTable/catchClause.kt");
     }
 
     @TestMetadata("copyFunction.kt")
     public void testCopyFunction() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/checkLocalVariablesTable/copyFunction.kt");
-        doTest(fileName);
+        runTest("compiler/testData/checkLocalVariablesTable/copyFunction.kt");
     }
 
     @TestMetadata("destructuringInLambdas.kt")
     public void testDestructuringInLambdas() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/checkLocalVariablesTable/destructuringInLambdas.kt");
-        doTest(fileName);
+        runTest("compiler/testData/checkLocalVariablesTable/destructuringInLambdas.kt");
     }
 
     @TestMetadata("destructuringInlineLambda.kt")
     public void testDestructuringInlineLambda() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/checkLocalVariablesTable/destructuringInlineLambda.kt");
-        doTest(fileName);
+        runTest("compiler/testData/checkLocalVariablesTable/destructuringInlineLambda.kt");
     }
 
     @TestMetadata("inlineLambdaWithItParam.kt")
     public void testInlineLambdaWithItParam() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/checkLocalVariablesTable/inlineLambdaWithItParam.kt");
-        doTest(fileName);
+        runTest("compiler/testData/checkLocalVariablesTable/inlineLambdaWithItParam.kt");
     }
 
     @TestMetadata("inlineLambdaWithParam.kt")
     public void testInlineLambdaWithParam() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/checkLocalVariablesTable/inlineLambdaWithParam.kt");
-        doTest(fileName);
+        runTest("compiler/testData/checkLocalVariablesTable/inlineLambdaWithParam.kt");
     }
 
     @TestMetadata("inlineProperty.kt")
     public void testInlineProperty() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/checkLocalVariablesTable/inlineProperty.kt");
-        doTest(fileName);
+        runTest("compiler/testData/checkLocalVariablesTable/inlineProperty.kt");
     }
 
     @TestMetadata("inlineSimple.kt")
     public void testInlineSimple() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/checkLocalVariablesTable/inlineSimple.kt");
-        doTest(fileName);
+        runTest("compiler/testData/checkLocalVariablesTable/inlineSimple.kt");
     }
 
     @TestMetadata("inlineSimpleChain.kt")
     public void testInlineSimpleChain() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/checkLocalVariablesTable/inlineSimpleChain.kt");
-        doTest(fileName);
+        runTest("compiler/testData/checkLocalVariablesTable/inlineSimpleChain.kt");
     }
 
     @TestMetadata("itInLambda.kt")
     public void testItInLambda() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/checkLocalVariablesTable/itInLambda.kt");
-        doTest(fileName);
+        runTest("compiler/testData/checkLocalVariablesTable/itInLambda.kt");
     }
 
     @TestMetadata("itInReturnedLambda.kt")
     public void testItInReturnedLambda() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/checkLocalVariablesTable/itInReturnedLambda.kt");
-        doTest(fileName);
+        runTest("compiler/testData/checkLocalVariablesTable/itInReturnedLambda.kt");
     }
 
     @TestMetadata("jvmOverloads.kt")
     public void testJvmOverloads() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/checkLocalVariablesTable/jvmOverloads.kt");
-        doTest(fileName);
+        runTest("compiler/testData/checkLocalVariablesTable/jvmOverloads.kt");
     }
 
     @TestMetadata("kt11117.kt")
     public void testKt11117() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/checkLocalVariablesTable/kt11117.kt");
-        doTest(fileName);
+        runTest("compiler/testData/checkLocalVariablesTable/kt11117.kt");
     }
 
     @TestMetadata("lambdaAsVar.kt")
     public void testLambdaAsVar() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/checkLocalVariablesTable/lambdaAsVar.kt");
-        doTest(fileName);
+        runTest("compiler/testData/checkLocalVariablesTable/lambdaAsVar.kt");
     }
 
     @TestMetadata("localFun.kt")
     public void testLocalFun() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/checkLocalVariablesTable/localFun.kt");
-        doTest(fileName);
+        runTest("compiler/testData/checkLocalVariablesTable/localFun.kt");
     }
 
     @TestMetadata("underscoreNames.kt")
     public void testUnderscoreNames() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/checkLocalVariablesTable/underscoreNames.kt");
-        doTest(fileName);
+        runTest("compiler/testData/checkLocalVariablesTable/underscoreNames.kt");
+    }
+
+    @TestMetadata("compiler/testData/checkLocalVariablesTable/destructuringInSuspendLambda")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class DestructuringInSuspendLambda extends AbstractCheckLocalVariablesTableTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInDestructuringInSuspendLambda() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/checkLocalVariablesTable/destructuringInSuspendLambda"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM, true);
+        }
+
+        @TestMetadata("dataClass.kt")
+        public void testDataClass() throws Exception {
+            runTest("compiler/testData/checkLocalVariablesTable/destructuringInSuspendLambda/dataClass.kt");
+        }
+
+        @TestMetadata("extensionComponents.kt")
+        public void testExtensionComponents() throws Exception {
+            runTest("compiler/testData/checkLocalVariablesTable/destructuringInSuspendLambda/extensionComponents.kt");
+        }
+
+        @TestMetadata("generic.kt")
+        public void testGeneric() throws Exception {
+            runTest("compiler/testData/checkLocalVariablesTable/destructuringInSuspendLambda/generic.kt");
+        }
+
+        @TestMetadata("inline.kt")
+        public void testInline() throws Exception {
+            runTest("compiler/testData/checkLocalVariablesTable/destructuringInSuspendLambda/inline.kt");
+        }
+
+        @TestMetadata("otherParameters.kt")
+        public void testOtherParameters() throws Exception {
+            runTest("compiler/testData/checkLocalVariablesTable/destructuringInSuspendLambda/otherParameters.kt");
+        }
+
+        @TestMetadata("underscoreNames.kt")
+        public void testUnderscoreNames() throws Exception {
+            runTest("compiler/testData/checkLocalVariablesTable/destructuringInSuspendLambda/underscoreNames.kt");
+        }
     }
 }

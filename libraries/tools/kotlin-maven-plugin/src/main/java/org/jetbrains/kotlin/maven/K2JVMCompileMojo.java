@@ -16,7 +16,9 @@
 
 package org.jetbrains.kotlin.maven;
 
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiJavaModule;
+import kotlin.collections.MapsKt;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
@@ -32,15 +34,15 @@ import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments;
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector;
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler;
 import org.jetbrains.kotlin.incremental.IncrementalJvmCompilerRunnerKt;
+import org.jetbrains.kotlin.maven.incremental.FileCopier;
 import org.jetbrains.kotlin.maven.incremental.MavenICReporter;
 import org.jetbrains.kotlin.maven.kapt.AnnotationProcessingManager;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.nio.file.*;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.intellij.openapi.util.text.StringUtil.join;
 import static org.jetbrains.kotlin.maven.Util.filterClassPath;
@@ -121,15 +123,23 @@ public class K2JVMCompileMojo extends KotlinCompileMojoBase<K2JVMCompilerArgumen
 
     @Override
     protected List<String> getSourceFilePaths() {
-        List<String> paths = super.getSourceFilePaths();
+        List<String> paths = new ArrayList<>(super.getSourceFilePaths());
 
         File sourcesDir = AnnotationProcessingManager.getGeneratedSourcesDirectory(project, getSourceSetName());
         if (sourcesDir.isDirectory()) {
-            paths = new ArrayList<>(paths);
             paths.add(sourcesDir.getAbsolutePath());
         }
 
+        File kotlinSourcesDir = AnnotationProcessingManager.getGeneratedKotlinSourcesDirectory(project, getSourceSetName());
+        if (kotlinSourcesDir.isDirectory()) {
+            paths.add(kotlinSourcesDir.getAbsolutePath());
+        }
+
         return paths;
+    }
+
+    protected List<String> getClasspath() {
+        return filterClassPath(project.getBasedir(), classpath);
     }
 
     @NotNull
@@ -150,7 +160,7 @@ public class K2JVMCompileMojo extends KotlinCompileMojoBase<K2JVMCompilerArgumen
             getLog().warn("Parameters module and testModule are deprecated and ignored, they will be removed in further release.");
         }
 
-        List<String> classpathList = filterClassPath(project.getBasedir(), classpath);
+        List<String> classpathList = getClasspath();
 
         if (!classpathList.isEmpty()) {
             String classPathString = join(classpathList, File.pathSeparator);
@@ -168,7 +178,7 @@ public class K2JVMCompileMojo extends KotlinCompileMojoBase<K2JVMCompilerArgumen
         arguments.setDestination(output);
 
         arguments.setModuleName(moduleName);
-        getLog().info("Module name is " + moduleName);
+        getLog().debug("Module name is " + moduleName);
 
         if (arguments.getNoOptimize()) {
             getLog().info("Optimization is turned off");
@@ -237,18 +247,42 @@ public class K2JVMCompileMojo extends KotlinCompileMojoBase<K2JVMCompilerArgumen
         File cachesDir = getCachesDir();
         //noinspection ResultOfMethodCallIgnored
         cachesDir.mkdirs();
-
+        String destination = arguments.getDestination();
+        assert destination != null : "output is not specified!";
+        File classesDir = new File(destination);
+        File kotlinClassesDir = new File(cachesDir, "classes");
+        File snapshotsFile = new File(cachesDir, "snapshots.bin");
+        String classpath = arguments.getClasspath();
         MavenICReporter icReporter = MavenICReporter.get(getLog());
 
         try {
+            arguments.setDestination(kotlinClassesDir.getAbsolutePath());
+            if (classpath != null) {
+                List<String> filteredClasspath = new ArrayList<>();
+                for (String path : classpath.split(File.pathSeparator)) {
+                    if (!classesDir.equals(new File(path))) {
+                        filteredClasspath.add(path);
+                    }
+                }
+                arguments.setClasspath(StringUtil.join(filteredClasspath, File.pathSeparator));
+            }
+
             IncrementalJvmCompilerRunnerKt.makeIncrementally(cachesDir, sourceRoots, arguments, messageCollector, icReporter);
 
             int compiledKtFilesCount = icReporter.getCompiledKotlinFiles().size();
             getLog().info("Compiled " + icReporter.getCompiledKotlinFiles().size() + " Kotlin files using incremental compiler");
+
+            if (!messageCollector.hasErrors()) {
+                (new FileCopier(getLog())).syncDirs(kotlinClassesDir, classesDir, snapshotsFile);
+            }
         }
         catch (Throwable t) {
             t.printStackTrace();
             return ExitCode.INTERNAL_ERROR;
+        }
+        finally {
+            arguments.setDestination(destination);
+            arguments.setClasspath(classpath);
         }
 
         if (messageCollector.hasErrors()) {

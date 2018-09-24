@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.renderer
@@ -20,6 +9,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationWithTarget
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.name.Name
@@ -58,7 +48,7 @@ abstract class DescriptorRenderer {
     fun renderFunctionParameters(functionDescriptor: FunctionDescriptor): String
             = renderValueParameters(functionDescriptor.valueParameters, functionDescriptor.hasSynthesizedParameterNames())
 
-    abstract fun renderName(name: Name): String
+    abstract fun renderName(name: Name, rootRenderedElement: Boolean): String
 
     abstract fun renderFqName(fqName: FqNameUnsafe): String
 
@@ -192,6 +182,7 @@ interface DescriptorRendererOptions {
     var classWithPrimaryConstructor: Boolean
     var verbose: Boolean
     var unitReturnType: Boolean
+    var enhancedTypes: Boolean
     var withoutReturnType: Boolean
     var normalizedVisibilities: Boolean
     var renderDefaultVisibility: Boolean
@@ -201,10 +192,14 @@ interface DescriptorRendererOptions {
     var textFormat: RenderingFormat
     var excludedAnnotationClasses: Set<FqName>
     var excludedTypeAnnotationClasses: Set<FqName>
+    var annotationFilter: ((AnnotationDescriptor) -> Boolean)?
+    var eachAnnotationOnNewLine: Boolean
 
     var annotationArgumentsRenderingPolicy: AnnotationArgumentsRenderingPolicy
     val includeAnnotationArguments: Boolean get() = annotationArgumentsRenderingPolicy.includeAnnotationArguments
     val includeEmptyAnnotationArguments: Boolean get() = annotationArgumentsRenderingPolicy.includeEmptyAnnotationArguments
+
+    var boldOnlyForNamesInHtml: Boolean
 
     var includePropertyConstant: Boolean
     var parameterNameRenderingPolicy: ParameterNameRenderingPolicy
@@ -215,13 +210,15 @@ interface DescriptorRendererOptions {
     var typeNormalizer: (KotlinType) -> KotlinType
     var defaultParameterValueRenderer: ((ValueParameterDescriptor) -> String)?
     var secondaryConstructorsAsPrimary: Boolean
-    var renderAccessors: Boolean
+    var propertyAccessorRenderingPolicy: PropertyAccessorRenderingPolicy
     var renderDefaultAnnotationArguments: Boolean
     var alwaysRenderModifiers: Boolean
     var renderConstructorKeyword: Boolean
     var renderUnabbreviatedType: Boolean
     var includeAdditionalModifiers: Boolean
     var parameterNamesInFunctionalTypes: Boolean
+    var renderFunctionContracts: Boolean
+    var presentableUnresolvedTypes: Boolean
 }
 
 object ExcludedTypeAnnotations {
@@ -254,6 +251,12 @@ enum class ParameterNameRenderingPolicy {
     NONE
 }
 
+enum class PropertyAccessorRenderingPolicy {
+    PRETTY,
+    DEBUG,
+    NONE
+}
+
 enum class DescriptorRendererModifier(val includeByDefault: Boolean) {
     VISIBILITY(true),
     MODALITY(true),
@@ -262,6 +265,7 @@ enum class DescriptorRendererModifier(val includeByDefault: Boolean) {
     INNER(true),
     MEMBER_KIND(true),
     DATA(true),
+    INLINE(true),
     EXPECT(true),
     ACTUAL(true),
     ;

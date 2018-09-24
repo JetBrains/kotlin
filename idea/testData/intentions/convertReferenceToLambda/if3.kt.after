@@ -1,0 +1,11 @@
+class Test {
+    fun bar() = 1
+
+    fun test(x: Int) {
+        val foo: () -> Int = if (x == 1) {
+            this::bar
+        } else {
+            { this.bar() }
+        }
+    }
+}

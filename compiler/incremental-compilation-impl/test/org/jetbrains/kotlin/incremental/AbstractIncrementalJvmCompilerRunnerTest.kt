@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.incremental.utils.TestCompilationResult
 import org.jetbrains.kotlin.incremental.utils.TestICReporter
 import org.jetbrains.kotlin.incremental.utils.TestMessageCollector
+import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.ByteArrayOutputStream
 import java.io.File
 import javax.tools.ToolProvider
@@ -75,7 +76,8 @@ abstract class AbstractIncrementalJvmCompilerRunnerTest : AbstractIncrementalCom
             }
 
     private val compileClasspath =
-            listOf(File(bootstrapKotlincLib, "kotlin-stdlib.jar"))
-                    .map { it.canonicalPath }
-                    .joinToString(File.pathSeparator)
+            listOf(
+                kotlinStdlibJvm,
+                KotlinTestUtils.getAnnotationsJar()
+            ).joinToString(File.pathSeparator) { it.canonicalPath }
 }

@@ -25,6 +25,11 @@ interface ModuleDescriptor : DeclarationDescriptor {
 
     val builtIns: KotlinBuiltIns
 
+    /**
+     * Stable name of *Kotlin* module. Can be used for ABI (e.g. for mangling of declarations)
+     */
+    val stableName: Name?
+
     fun shouldSeeInternalsOf(targetModule: ModuleDescriptor): Boolean
 
     override fun <R, D> accept(visitor: DeclarationDescriptorVisitor<R, D>, data: D): R {
@@ -40,8 +45,7 @@ interface ModuleDescriptor : DeclarationDescriptor {
      */
     val allDependencyModules: List<ModuleDescriptor>
 
-    // All platform-specific modules depending on common 'this' module (result is empty if this is platform-specific itself)
-    val allImplementingModules: Set<ModuleDescriptor>
+    val expectedByModules: List<ModuleDescriptor>
 
     fun <T> getCapability(capability: Capability<T>): T?
 

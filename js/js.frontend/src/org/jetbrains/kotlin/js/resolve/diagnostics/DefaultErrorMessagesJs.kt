@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.js.resolve.diagnostics
@@ -39,11 +28,14 @@ private val DIAGNOSTIC_FACTORY_TO_RENDERER by lazy {
         put(ErrorsJs.NESTED_EXTERNAL_DECLARATION, "Non top-level `external` declaration")
         put(ErrorsJs.WRONG_EXTERNAL_DECLARATION, "Declaration of such kind ({0}) can't be external", Renderers.STRING)
         put(ErrorsJs.EXTENSION_FUNCTION_IN_EXTERNAL_DECLARATION, "Function types with receiver are prohibited in external declarations")
+        put(ErrorsJs.INLINE_CLASS_IN_EXTERNAL_DECLARATION, "Using inline classes as parameter type or return type of external declarations is not supported")
 
         put(ErrorsJs.JS_NAME_CLASH, "JavaScript name ({0}) generated for this declaration clashes with another declaration: {1}",
             Renderers.STRING, Renderers.COMPACT)
         put(ErrorsJs.JS_FAKE_NAME_CLASH, "JavaScript name {0} is generated for different inherited members: {1} and {2}",
             Renderers.STRING, Renderers.COMPACT, Renderers.COMPACT)
+        put(ErrorsJs.JS_BUILTIN_NAME_CLASH, "JavaScript name generated for this declaration clashes with built-in declaration {1}",
+            Renderers.STRING)
         put(ErrorsJs.JS_NAME_ON_PRIMARY_CONSTRUCTOR_PROHIBITED, "@JsName annotation is prohibited for primary constructors")
         put(ErrorsJs.JS_NAME_ON_ACCESSOR_AND_PROPERTY, "@JsName can be either on a property or its accessors, not both of them")
         put(ErrorsJs.JS_NAME_IS_NOT_ON_ALL_ACCESSORS, "@JsName should be on all of the property accessors")
@@ -69,10 +61,10 @@ private val DIAGNOSTIC_FACTORY_TO_RENDERER by lazy {
             "Can''t put non-external declarations in file marked with {0} annotation", RENDER_TYPE)
         put(ErrorsJs.WRONG_JS_QUALIFIER, "Qualifier contains illegal characters")
 
-        put(ErrorsJs.CANNOT_CHECK_FOR_NATIVE_INTERFACE, "Cannot check for native interface: {0}", RENDER_TYPE)
-        put(ErrorsJs.UNCHECKED_CAST_TO_NATIVE_INTERFACE, "Unchecked cast to native interface: {0} to {1}", RENDER_TYPE, RENDER_TYPE)
-        put(ErrorsJs.NATIVE_INTERFACE_AS_REIFIED_TYPE_ARGUMENT, "Cannot pass native interface {0} for reified type parameter", RENDER_TYPE)
-        put(ErrorsJs.NATIVE_INTERFACE_AS_CLASS_LITERAL, "Can't refer to native interface from class literal")
+        put(ErrorsJs.CANNOT_CHECK_FOR_EXTERNAL_INTERFACE, "Cannot check for external interface: {0}", RENDER_TYPE)
+        put(ErrorsJs.UNCHECKED_CAST_TO_EXTERNAL_INTERFACE, "Unchecked cast to external interface: {0} to {1}", RENDER_TYPE, RENDER_TYPE)
+        put(ErrorsJs.EXTERNAL_INTERFACE_AS_REIFIED_TYPE_ARGUMENT, "Cannot pass external interface {0} for reified type parameter", RENDER_TYPE)
+        put(ErrorsJs.EXTERNAL_INTERFACE_AS_CLASS_LITERAL, "Can't refer to external interface from class literal")
         put(ErrorsJs.EXTERNAL_TYPE_EXTENDS_NON_EXTERNAL_TYPE, "External type extends non-external type")
 
         put(ErrorsJs.WRONG_OPERATION_WITH_DYNAMIC, "Wrong operation with dynamic value: {0}", Renderers.STRING)
@@ -103,6 +95,10 @@ private val DIAGNOSTIC_FACTORY_TO_RENDERER by lazy {
         put(ErrorsJs.EXTERNAL_ENUM_ENTRY_WITH_BODY, "Entry of external enum class can't have body")
         put(ErrorsJs.EXTERNAL_CLASS_CONSTRUCTOR_PROPERTY_PARAMETER, "External class constructor cannot have a property parameter")
         put(ErrorsJs.CALL_TO_DEFINED_EXTERNALLY_FROM_NON_EXTERNAL_DECLARATION, "This property can only be used from external declarations")
+
+        put(ErrorsJs.WRONG_MULTIPLE_INHERITANCE,
+            "Can't apply multiple inheritance here, since it's impossible to generate bridge for system function {0}",
+            Renderers.DECLARATION_NAME_WITH_KIND)
 
         this
     }

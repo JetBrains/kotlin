@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.script
 
-import com.intellij.openapi.components.ServiceManager
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiFile
@@ -25,8 +25,9 @@ import org.jetbrains.kotlin.psi.KtAnnotationEntry
 import org.jetbrains.kotlin.psi.KtFile
 import java.io.File
 import kotlin.reflect.KClass
-import kotlin.script.experimental.dependencies.DependenciesResolver.ResolveResult.Failure
 import kotlin.script.dependencies.ScriptContents
+import kotlin.script.experimental.dependencies.DependenciesResolver
+import kotlin.script.experimental.dependencies.DependenciesResolver.ResolveResult.Failure
 import kotlin.script.experimental.dependencies.ScriptDependencies
 import kotlin.script.experimental.dependencies.ScriptReport
 
@@ -37,13 +38,17 @@ class ScriptContentLoader(private val project: Project) {
     private fun loadAnnotations(scriptDefinition: KotlinScriptDefinition, file: VirtualFile): List<Annotation> {
         val classLoader = scriptDefinition.template.java.classLoader
         // TODO_R: report error on failure to load annotation class
-        return getAnnotationEntries(file, project)
+        return ApplicationManager.getApplication().runReadAction<List<Annotation>> {
+            getAnnotationEntries(file, project)
                 .mapNotNull { psiAnn ->
                     // TODO: consider advanced matching using semantic similar to actual resolving
                     scriptDefinition.acceptedAnnotations.find { ann ->
                         psiAnn.typeName.let { it == ann.simpleName || it == ann.qualifiedName }
-                    }?.let { constructAnnotation(psiAnn, classLoader.loadClass(it.qualifiedName).kotlin as KClass<out Annotation>) }
+                    }?.let {
+                        constructAnnotation(psiAnn, classLoader.loadClass(it.qualifiedName).kotlin as KClass<out Annotation>, project)
+                    }
                 }
+        }
     }
 
     private fun getAnnotationEntries(file: VirtualFile, project: Project): Iterable<KtAnnotationEntry> {
@@ -55,14 +60,14 @@ class ScriptContentLoader(private val project: Project) {
 
     class BasicScriptContents(virtualFile: VirtualFile, getAnnotations: () -> Iterable<Annotation>) : ScriptContents {
         override val file: File = File(virtualFile.path)
-        override val annotations: Iterable<Annotation> by lazy { getAnnotations() }
-        override val text: CharSequence? by lazy { virtualFile.inputStream.reader(charset = virtualFile.charset).readText() }
+        override val annotations: Iterable<Annotation> by lazy(LazyThreadSafetyMode.PUBLICATION) { getAnnotations() }
+        override val text: CharSequence? by lazy(LazyThreadSafetyMode.PUBLICATION) { virtualFile.inputStream.reader(charset = virtualFile.charset).readText() }
     }
 
     fun loadContentsAndResolveDependencies(
             scriptDef: KotlinScriptDefinition,
             file: VirtualFile
-    ): ScriptDependencies? {
+    ): DependenciesResolver.ResolveResult {
         val scriptContents = getScriptContents(scriptDef, file)
         val environment = getEnvironment(scriptDef)
         val result = try {
@@ -74,8 +79,7 @@ class ScriptContentLoader(private val project: Project) {
         catch (e: Throwable) {
             e.asResolveFailure(scriptDef)
         }
-        ServiceManager.getService(project, ScriptReportSink::class.java)?.attachReports(file, result.reports)
-        return result.dependencies?.adjustByDefinition(scriptDef)
+        return result
     }
 
     fun getEnvironment(scriptDef: KotlinScriptDefinition) =
@@ -92,5 +96,5 @@ fun ScriptDependencies.adjustByDefinition(
 
 fun Throwable.asResolveFailure(scriptDef: KotlinScriptDefinition): Failure {
     val prefix = "${scriptDef.dependencyResolver::class.simpleName} threw exception ${this::class.simpleName}:\n "
-    return Failure(ScriptReport(prefix + (message ?: "<no message>")))
+    return Failure(ScriptReport(prefix + (message ?: "<no message>"), ScriptReport.Severity.FATAL))
 }

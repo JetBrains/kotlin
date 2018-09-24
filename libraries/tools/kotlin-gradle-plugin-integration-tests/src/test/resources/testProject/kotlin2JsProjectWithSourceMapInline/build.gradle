@@ -1,6 +1,7 @@
 buildscript {
     repositories {
         mavenLocal()
+        mavenCentral()
     }
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
@@ -23,6 +24,7 @@ allprojects {
     compileKotlin2Js {
         kotlinOptions.freeCompilerArgs = [ "-Xskip-metadata-version-check" ]
         kotlinOptions.sourceMap = true
+        kotlinOptions.sourceMapPrefix = "./"
         kotlinOptions.sourceMapEmbedSources = "always"
     }
 }

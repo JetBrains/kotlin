@@ -18,10 +18,8 @@ package org.jetbrains.kotlin.types.expressions
 
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
-import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.TargetPlatformVersion
-import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.context.GlobalContext
 import org.jetbrains.kotlin.context.withModule
@@ -55,80 +53,80 @@ import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.WrappedTypeFactory
 
 class LocalClassifierAnalyzer(
-        private val globalContext: GlobalContext,
-        private val storageManager: StorageManager,
-        private val descriptorResolver: DescriptorResolver,
-        private val functionDescriptorResolver: FunctionDescriptorResolver,
-        private val typeResolver: TypeResolver,
-        private val annotationResolver: AnnotationResolver,
-        private val platform: TargetPlatform,
-        private val lookupTracker: LookupTracker,
-        private val supertypeLoopChecker: SupertypeLoopChecker,
-        private val targetPlatformVersion: TargetPlatformVersion,
-        private val languageVersionSettings: LanguageVersionSettings,
-        private val delegationFilter: DelegationFilter,
-        private val wrappedTypeFactory: WrappedTypeFactory
+    private val globalContext: GlobalContext,
+    private val storageManager: StorageManager,
+    private val descriptorResolver: DescriptorResolver,
+    private val functionDescriptorResolver: FunctionDescriptorResolver,
+    private val typeResolver: TypeResolver,
+    private val annotationResolver: AnnotationResolver,
+    private val platform: TargetPlatform,
+    private val lookupTracker: LookupTracker,
+    private val supertypeLoopChecker: SupertypeLoopChecker,
+    private val targetPlatformVersion: TargetPlatformVersion,
+    private val languageVersionSettings: LanguageVersionSettings,
+    private val delegationFilter: DelegationFilter,
+    private val wrappedTypeFactory: WrappedTypeFactory
 ) {
     fun processClassOrObject(
-            scope: LexicalWritableScope?,
-            context: ExpressionTypingContext,
-            containingDeclaration: DeclarationDescriptor,
-            classOrObject: KtClassOrObject
+        scope: LexicalWritableScope?,
+        context: ExpressionTypingContext,
+        containingDeclaration: DeclarationDescriptor,
+        classOrObject: KtClassOrObject
     ) {
         val module = DescriptorUtils.getContainingModule(containingDeclaration)
         val project = classOrObject.project
         val moduleContext = globalContext.withProject(project).withModule(module)
         val container = createContainerForLazyLocalClassifierAnalyzer(
-                moduleContext,
-                context.trace,
-                platform,
-                lookupTracker,
-                targetPlatformVersion,
+            moduleContext,
+            context.trace,
+            platform,
+            lookupTracker,
+            targetPlatformVersion,
+            languageVersionSettings,
+            context.statementFilter,
+            LocalClassDescriptorHolder(
+                scope,
+                classOrObject,
+                containingDeclaration,
+                storageManager,
+                context,
+                module,
+                descriptorResolver,
+                functionDescriptorResolver,
+                typeResolver,
+                annotationResolver,
+                supertypeLoopChecker,
                 languageVersionSettings,
-                context.statementFilter,
-                LocalClassDescriptorHolder(
-                        scope,
-                        classOrObject,
-                        containingDeclaration,
-                        storageManager,
-                        context,
-                        module,
-                        descriptorResolver,
-                        functionDescriptorResolver,
-                        typeResolver,
-                        annotationResolver,
-                        supertypeLoopChecker,
-                        languageVersionSettings,
-                        SyntheticResolveExtension.getInstance(project),
-                        delegationFilter,
-                        wrappedTypeFactory
-                )
+                SyntheticResolveExtension.getInstance(project),
+                delegationFilter,
+                wrappedTypeFactory
+            )
         )
 
         container.get<LazyTopDownAnalyzer>().analyzeDeclarations(
-                TopDownAnalysisMode.LocalDeclarations,
-                listOf(classOrObject),
-                context.dataFlowInfo
+            TopDownAnalysisMode.LocalDeclarations,
+            listOf(classOrObject),
+            context.dataFlowInfo
         )
     }
 }
 
 class LocalClassDescriptorHolder(
-        val writableScope: LexicalWritableScope?,
-        val myClass: KtClassOrObject,
-        val containingDeclaration: DeclarationDescriptor,
-        val storageManager: StorageManager,
-        val expressionTypingContext: ExpressionTypingContext,
-        val moduleDescriptor: ModuleDescriptor,
-        val descriptorResolver: DescriptorResolver,
-        val functionDescriptorResolver: FunctionDescriptorResolver,
-        val typeResolver: TypeResolver,
-        val annotationResolver: AnnotationResolver,
-        val supertypeLoopChecker: SupertypeLoopChecker,
-        val languageVersionSettings: LanguageVersionSettings,
-        val syntheticResolveExtension: SyntheticResolveExtension,
-        val delegationFilter: DelegationFilter,
-        val wrappedTypeFactory: WrappedTypeFactory
+    val writableScope: LexicalWritableScope?,
+    val myClass: KtClassOrObject,
+    val containingDeclaration: DeclarationDescriptor,
+    val storageManager: StorageManager,
+    val expressionTypingContext: ExpressionTypingContext,
+    val moduleDescriptor: ModuleDescriptor,
+    val descriptorResolver: DescriptorResolver,
+    val functionDescriptorResolver: FunctionDescriptorResolver,
+    val typeResolver: TypeResolver,
+    val annotationResolver: AnnotationResolver,
+    val supertypeLoopChecker: SupertypeLoopChecker,
+    val languageVersionSettings: LanguageVersionSettings,
+    val syntheticResolveExtension: SyntheticResolveExtension,
+    val delegationFilter: DelegationFilter,
+    val wrappedTypeFactory: WrappedTypeFactory
 ) {
     // We do not need to synchronize here, because this code is used strictly from one thread
     private var classDescriptor: ClassDescriptor? = null
@@ -140,39 +138,39 @@ class LocalClassDescriptorHolder(
         assert(isMyClass(classOrObject)) { "Called on a wrong class: ${classOrObject.getDebugText()}" }
         if (classDescriptor == null) {
             classDescriptor = LazyClassDescriptor(
-                    object : LazyClassContext {
-                        override val declarationScopeProvider = declarationScopeProvider
-                        override val storageManager = this@LocalClassDescriptorHolder.storageManager
-                        override val trace = expressionTypingContext.trace
-                        override val moduleDescriptor = this@LocalClassDescriptorHolder.moduleDescriptor
-                        override val descriptorResolver = this@LocalClassDescriptorHolder.descriptorResolver
-                        override val functionDescriptorResolver = this@LocalClassDescriptorHolder.functionDescriptorResolver
-                        override val typeResolver = this@LocalClassDescriptorHolder.typeResolver
-                        override val declarationProviderFactory = object : DeclarationProviderFactory {
-                            override fun getClassMemberDeclarationProvider(classLikeInfo: KtClassLikeInfo): ClassMemberDeclarationProvider {
-                                return PsiBasedClassMemberDeclarationProvider(storageManager, classLikeInfo)
-                            }
-
-                            override fun getPackageMemberDeclarationProvider(packageFqName: FqName): PackageMemberDeclarationProvider? {
-                                throw UnsupportedOperationException("Should not be called for top-level declarations")
-                            }
-
-                            override fun diagnoseMissingPackageFragment(file: KtFile?) {
-                                throw UnsupportedOperationException()
-                            }
+                object : LazyClassContext {
+                    override val declarationScopeProvider = declarationScopeProvider
+                    override val storageManager = this@LocalClassDescriptorHolder.storageManager
+                    override val trace = expressionTypingContext.trace
+                    override val moduleDescriptor = this@LocalClassDescriptorHolder.moduleDescriptor
+                    override val descriptorResolver = this@LocalClassDescriptorHolder.descriptorResolver
+                    override val functionDescriptorResolver = this@LocalClassDescriptorHolder.functionDescriptorResolver
+                    override val typeResolver = this@LocalClassDescriptorHolder.typeResolver
+                    override val declarationProviderFactory = object : DeclarationProviderFactory {
+                        override fun getClassMemberDeclarationProvider(classLikeInfo: KtClassLikeInfo): ClassMemberDeclarationProvider {
+                            return PsiBasedClassMemberDeclarationProvider(storageManager, classLikeInfo)
                         }
-                        override val annotationResolver = this@LocalClassDescriptorHolder.annotationResolver
-                        override val lookupTracker: LookupTracker = LookupTracker.DO_NOTHING
-                        override val supertypeLoopChecker = this@LocalClassDescriptorHolder.supertypeLoopChecker
-                        override val languageVersionSettings = this@LocalClassDescriptorHolder.languageVersionSettings
-                        override val syntheticResolveExtension = this@LocalClassDescriptorHolder.syntheticResolveExtension
-                        override val delegationFilter: DelegationFilter = this@LocalClassDescriptorHolder.delegationFilter
-                        override val wrappedTypeFactory: WrappedTypeFactory = this@LocalClassDescriptorHolder.wrappedTypeFactory
-                    },
-                    containingDeclaration,
-                    classOrObject.nameAsSafeName,
-                    KtClassInfoUtil.createClassLikeInfo(classOrObject),
-                    classOrObject.hasModifier(KtTokens.EXTERNAL_KEYWORD)
+
+                        override fun getPackageMemberDeclarationProvider(packageFqName: FqName): PackageMemberDeclarationProvider? {
+                            throw UnsupportedOperationException("Should not be called for top-level declarations")
+                        }
+
+                        override fun diagnoseMissingPackageFragment(fqName: FqName, file: KtFile?) {
+                            throw UnsupportedOperationException()
+                        }
+                    }
+                    override val annotationResolver = this@LocalClassDescriptorHolder.annotationResolver
+                    override val lookupTracker: LookupTracker = LookupTracker.DO_NOTHING
+                    override val supertypeLoopChecker = this@LocalClassDescriptorHolder.supertypeLoopChecker
+                    override val languageVersionSettings = this@LocalClassDescriptorHolder.languageVersionSettings
+                    override val syntheticResolveExtension = this@LocalClassDescriptorHolder.syntheticResolveExtension
+                    override val delegationFilter: DelegationFilter = this@LocalClassDescriptorHolder.delegationFilter
+                    override val wrappedTypeFactory: WrappedTypeFactory = this@LocalClassDescriptorHolder.wrappedTypeFactory
+                },
+                containingDeclaration,
+                classOrObject.nameAsSafeName,
+                KtClassInfoUtil.createClassLikeInfo(classOrObject),
+                classOrObject.hasModifier(KtTokens.EXTERNAL_KEYWORD)
             )
             writableScope?.addClassifierDescriptor(classDescriptor!!)
         }
@@ -181,17 +179,17 @@ class LocalClassDescriptorHolder(
     }
 
     fun getResolutionScopeForClass(classOrObject: KtClassOrObject): LexicalScope {
-        assert (isMyClass(classOrObject)) { "Called on a wrong class: ${classOrObject.getDebugText()}" }
+        assert(isMyClass(classOrObject)) { "Called on a wrong class: ${classOrObject.getDebugText()}" }
         return expressionTypingContext.scope
     }
 }
 
 class LocalLazyDeclarationResolver(
-        globalContext: GlobalContext,
-        trace: BindingTrace,
-        private val localClassDescriptorManager: LocalClassDescriptorHolder,
-        topLevelDescriptorProvider : TopLevelDescriptorProvider,
-        absentDescriptorHandler: AbsentDescriptorHandler
+    globalContext: GlobalContext,
+    trace: BindingTrace,
+    private val localClassDescriptorManager: LocalClassDescriptorHolder,
+    topLevelDescriptorProvider: TopLevelDescriptorProvider,
+    absentDescriptorHandler: AbsentDescriptorHandler
 ) : LazyDeclarationResolver(globalContext, trace, topLevelDescriptorProvider, absentDescriptorHandler) {
 
     override fun getClassDescriptor(classOrObject: KtClassOrObject, location: LookupLocation): ClassDescriptor {
@@ -200,13 +198,20 @@ class LocalLazyDeclarationResolver(
         }
         return super.getClassDescriptor(classOrObject, location)
     }
+
+    override fun getClassDescriptorIfAny(classOrObject: KtClassOrObject, location: LookupLocation): ClassDescriptor? {
+        if (localClassDescriptorManager.isMyClass(classOrObject)) {
+            return localClassDescriptorManager.getClassDescriptor(classOrObject, scopeProvider)
+        }
+        return super.getClassDescriptorIfAny(classOrObject, location)
+    }
 }
 
 
 class DeclarationScopeProviderForLocalClassifierAnalyzer(
-        lazyDeclarationResolver: LazyDeclarationResolver,
-        fileScopeProvider: FileScopeProvider,
-        private val localClassDescriptorManager: LocalClassDescriptorHolder
+    lazyDeclarationResolver: LazyDeclarationResolver,
+    fileScopeProvider: FileScopeProvider,
+    private val localClassDescriptorManager: LocalClassDescriptorHolder
 ) : DeclarationScopeProviderImpl(lazyDeclarationResolver, fileScopeProvider) {
     override fun getResolutionScopeForDeclaration(elementOfDeclaration: PsiElement): LexicalScope {
         if (localClassDescriptorManager.isMyClass(elementOfDeclaration)) {

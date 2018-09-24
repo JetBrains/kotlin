@@ -1,6 +1,10 @@
+/*
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
+ */
+
 package test.utils
 
-import org.junit.Test
 import kotlin.test.*
 
 class PreconditionsTest() {
@@ -88,33 +92,6 @@ class PreconditionsTest() {
             val s2: String? = null
             checkNotNull(s2)
         }
-    }
-
-    @kotlin.jvm.JvmVersion
-    @Test fun passingAssert() {
-        assert(true)
-        var called = false
-        assert(true) { called = true; "some message" }
-
-        assertFalse(called)
-    }
-
-
-    @kotlin.jvm.JvmVersion
-    @Test fun failingAssert() {
-        val error = assertFailsWith<AssertionError> {
-            assert(false)
-        }
-        assertEquals("Assertion failed", error.message)
-    }
-
-
-    @kotlin.jvm.JvmVersion
-    @Test fun failingAssertWithMessage() {
-        val error = assertFailsWith<AssertionError> {
-            assert(false) { "Hello" }
-        }
-        assertEquals("Hello", error.message)
     }
 
     @Test fun error() {

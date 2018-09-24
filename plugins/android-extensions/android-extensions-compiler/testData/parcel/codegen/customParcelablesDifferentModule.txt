@@ -1,7 +1,7 @@
 public final class test/Foo$Creator : java/lang/Object, android/os/Parcelable$Creator {
     public void <init>()
 
-    public final java.lang.Object createFromParcel(android.os.Parcel p0) {
+    public final java.lang.Object createFromParcel(android.os.Parcel in) {
         LABEL (L0)
           ALOAD (1)
           LDC (in)
@@ -18,11 +18,11 @@ public final class test/Foo$Creator : java/lang/Object, android/os/Parcelable$Cr
         LABEL (L1)
     }
 
-    public final test.Foo[] newArray(int p0)
+    public final java.lang.Object[] newArray(int size)
 }
 
 public final class test/Foo : java/lang/Object, android/os/Parcelable {
-    public final static test.Foo$Creator CREATOR
+    public final static android.os.Parcelable$Creator CREATOR
 
     private final android.accounts.Account kp
 
@@ -30,17 +30,17 @@ public final class test/Foo : java/lang/Object, android/os/Parcelable {
           NEW
           DUP
           INVOKESPECIAL (test/Foo$Creator, <init>, ()V)
-          PUTSTATIC (CREATOR, Ltest/Foo$Creator;)
+          PUTSTATIC (CREATOR, Landroid/os/Parcelable$Creator;)
           RETURN
     }
 
-    public void <init>(android.accounts.Account p0)
+    public void <init>(android.accounts.Account kp)
 
-    public final int describeContents()
+    public int describeContents()
 
     public final android.accounts.Account getKp()
 
-    public final void writeToParcel(android.os.Parcel p0, int p1) {
+    public void writeToParcel(android.os.Parcel parcel, int flags) {
         LABEL (L0)
           ALOAD (1)
           LDC (parcel)

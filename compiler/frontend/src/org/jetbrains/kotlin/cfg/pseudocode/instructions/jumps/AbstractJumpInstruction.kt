@@ -24,9 +24,9 @@ import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionImpl
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.Instruction
 
 abstract class AbstractJumpInstruction(
-        element: KtElement,
-        val targetLabel: Label,
-        blockScope: BlockScope
+    element: KtElement,
+    val targetLabel: Label,
+    blockScope: BlockScope
 ) : KtElementInstructionImpl(element, blockScope), JumpInstruction {
     var resolvedTarget: Instruction? = null
         set(value) {

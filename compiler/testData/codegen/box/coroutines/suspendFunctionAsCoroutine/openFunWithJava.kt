@@ -1,15 +1,16 @@
+// LANGUAGE_VERSION: 1.3
+// IGNORE_BACKEND: JS_IR
+// IGNORE_BACKEND: JVM_IR
 // WITH_RUNTIME
 // WITH_COROUTINES
 // FILE: main.kt
 // TARGET_BACKEND: JVM
 import helpers.*
-import kotlin.coroutines.experimental.*
-import kotlin.coroutines.experimental.intrinsics.*
-
-
+import kotlin.coroutines.*
+import kotlin.coroutines.intrinsics.*
 
 open class A(val v: String) {
-    suspend fun suspendThere(v: String): String = suspendCoroutineOrReturn { x ->
+    suspend fun suspendThere(v: String): String = suspendCoroutineUninterceptedOrReturn { x ->
         x.resume(v)
         COROUTINE_SUSPENDED
     }
@@ -34,7 +35,7 @@ fun box(): String {
 }
 
 // FILE: JavaClass.java
-import kotlin.coroutines.experimental.*;
+import kotlin.coroutines.*;
 public class JavaClass {
     public static String foo() {
         final String[] res = new String[1];
@@ -46,12 +47,8 @@ public class JavaClass {
             }
 
             @Override
-            public void resume(String s) {
-                res[0] = s;
-            }
-
-            @Override
-            public void resumeWithException(Throwable throwable) {
+            public void resumeWith(Object x) {
+                res[0] = (String) x;
             }
         });
 

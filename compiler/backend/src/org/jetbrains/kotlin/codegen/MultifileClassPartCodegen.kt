@@ -17,8 +17,8 @@
 package org.jetbrains.kotlin.codegen
 
 import com.intellij.util.ArrayUtil
+import org.jetbrains.kotlin.backend.common.CodegenUtil
 import org.jetbrains.kotlin.codegen.context.MultifileClassPartContext
-import org.jetbrains.kotlin.codegen.serialization.JvmSerializerExtension
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
@@ -28,16 +28,13 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.KtTypeAlias
-import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.MultifileClass
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.OtherOrigin
-import org.jetbrains.kotlin.serialization.DescriptorSerializer
 import org.jetbrains.org.objectweb.asm.MethodVisitor
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode
 import org.jetbrains.org.objectweb.asm.tree.MethodInsnNode
-import java.util.*
 
 class MultifileClassPartCodegen(
         v: ClassBuilder,
@@ -135,7 +132,7 @@ class MultifileClassPartCodegen(
     }
 
     override fun generateBody() {
-        for (declaration in element.declarations) {
+        for (declaration in CodegenUtil.getDeclarationsToGenerate(element, state.bindingContext)) {
             if (declaration is KtNamedFunction || declaration is KtProperty || declaration is KtTypeAlias) {
                 genSimpleMember(declaration)
             }
@@ -161,25 +158,7 @@ class MultifileClassPartCodegen(
     }
 
     override fun generateKotlinMetadataAnnotation() {
-        val members = ArrayList<DeclarationDescriptor>()
-        for (declaration in element.declarations) {
-            when (declaration) {
-                is KtNamedFunction -> {
-                    val functionDescriptor = bindingContext.get(BindingContext.FUNCTION, declaration)
-                    members.add(functionDescriptor ?: throw AssertionError("Function ${declaration.name} is not bound in ${element.name}"))
-                }
-                is KtProperty -> {
-                    val property = bindingContext.get(BindingContext.VARIABLE, declaration)
-                    members.add(property ?: throw AssertionError("Property ${declaration.name} is not bound in ${element.name}"))
-                }
-            }
-        }
-
-        val extension = JvmSerializerExtension(v.serializationBindings, state)
-        val serializer = DescriptorSerializer.createTopLevel(extension)
-        val builder = serializer.packagePartProto(packageFragment.fqName, members)
-        extension.serializeJvmPackage(builder, partType)
-        val packageProto = builder.build()
+        val (serializer, packageProto) = PackagePartCodegen.serializePackagePartMembers(this, partType)
 
         val extraFlags = if (shouldGeneratePartHierarchy) JvmAnnotationNames.METADATA_MULTIFILE_PARTS_INHERIT_FLAG else 0
 

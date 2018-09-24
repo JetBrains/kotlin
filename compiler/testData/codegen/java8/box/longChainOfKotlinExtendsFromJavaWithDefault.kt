@@ -7,7 +7,7 @@ public interface Base {
 }
 
 // FILE: derived.kt
-
+// JVM_TARGET: 1.8
 interface K1 : Base
 
 interface K2 : K1

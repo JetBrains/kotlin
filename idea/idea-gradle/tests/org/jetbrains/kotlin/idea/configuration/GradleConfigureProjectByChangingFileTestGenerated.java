@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.configuration;
@@ -34,50 +23,57 @@ public class GradleConfigureProjectByChangingFileTestGenerated extends AbstractG
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Gradle extends AbstractGradleConfigureProjectByChangingFileTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTestGradle, TargetBackend.ANY, testDataFilePath);
+        }
+
         public void testAllFilesPresentInGradle() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/configuration/gradle"), Pattern.compile("(\\w+)_before\\.gradle$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/configuration/gradle"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, false);
         }
 
-        @TestMetadata("default_before.gradle")
+        @TestMetadata("default")
         public void testDefault() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/configuration/gradle/default_before.gradle");
-            doTestGradle(fileName);
+            runTest("idea/testData/configuration/gradle/default/");
         }
 
-        @TestMetadata("eapVersion_before.gradle")
+        @TestMetadata("eapVersion")
         public void testEapVersion() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/configuration/gradle/eapVersion_before.gradle");
-            doTestGradle(fileName);
+            runTest("idea/testData/configuration/gradle/eapVersion/");
         }
 
-        @TestMetadata("js_before.gradle")
+        @TestMetadata("jreLib")
+        public void testJreLib() throws Exception {
+            runTest("idea/testData/configuration/gradle/jreLib/");
+        }
+
+        @TestMetadata("js")
         public void testJs() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/configuration/gradle/js_before.gradle");
-            doTestGradle(fileName);
+            runTest("idea/testData/configuration/gradle/js/");
         }
 
-        @TestMetadata("m04Version_before.gradle")
+        @TestMetadata("m04Version")
         public void testM04Version() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/configuration/gradle/m04Version_before.gradle");
-            doTestGradle(fileName);
+            runTest("idea/testData/configuration/gradle/m04Version/");
         }
 
-        @TestMetadata("missedLibrary_before.gradle")
+        @TestMetadata("missedLibrary")
         public void testMissedLibrary() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/configuration/gradle/missedLibrary_before.gradle");
-            doTestGradle(fileName);
+            runTest("idea/testData/configuration/gradle/missedLibrary/");
         }
 
-        @TestMetadata("plugin_present_before.gradle")
+        @TestMetadata("plugin_present")
         public void testPlugin_present() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/configuration/gradle/plugin_present_before.gradle");
-            doTestGradle(fileName);
+            runTest("idea/testData/configuration/gradle/plugin_present/");
         }
 
-        @TestMetadata("rcVersion_before.gradle")
+        @TestMetadata("rcVersion")
         public void testRcVersion() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/configuration/gradle/rcVersion_before.gradle");
-            doTestGradle(fileName);
+            runTest("idea/testData/configuration/gradle/rcVersion/");
+        }
+
+        @TestMetadata("withJava9ModuleInfo")
+        public void testWithJava9ModuleInfo() throws Exception {
+            runTest("idea/testData/configuration/gradle/withJava9ModuleInfo/");
         }
     }
 
@@ -85,38 +81,37 @@ public class GradleConfigureProjectByChangingFileTestGenerated extends AbstractG
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Gsk extends AbstractGradleConfigureProjectByChangingFileTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTestGradle, TargetBackend.ANY, testDataFilePath);
+        }
+
         public void testAllFilesPresentInGsk() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/configuration/gsk"), Pattern.compile("(\\w+)_before\\.gradle.kts$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/configuration/gsk"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, false);
         }
 
-        @TestMetadata("eap11Version_before.gradle.kts")
+        @TestMetadata("eap11Version")
         public void testEap11Version() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/configuration/gsk/eap11Version_before.gradle.kts");
-            doTestGradle(fileName);
+            runTest("idea/testData/configuration/gsk/eap11Version/");
         }
 
-        @TestMetadata("eapVersion_before.gradle.kts")
+        @TestMetadata("eapVersion")
         public void testEapVersion() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/configuration/gsk/eapVersion_before.gradle.kts");
-            doTestGradle(fileName);
+            runTest("idea/testData/configuration/gsk/eapVersion/");
         }
 
-        @TestMetadata("helloWorld_before.gradle.kts")
+        @TestMetadata("helloWorld")
         public void testHelloWorld() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/configuration/gsk/helloWorld_before.gradle.kts");
-            doTestGradle(fileName);
+            runTest("idea/testData/configuration/gsk/helloWorld/");
         }
 
-        @TestMetadata("missedLibrary_before.gradle.kts")
+        @TestMetadata("missedLibrary")
         public void testMissedLibrary() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/configuration/gsk/missedLibrary_before.gradle.kts");
-            doTestGradle(fileName);
+            runTest("idea/testData/configuration/gsk/missedLibrary/");
         }
 
-        @TestMetadata("pluginPresent_before.gradle.kts")
+        @TestMetadata("pluginPresent")
         public void testPluginPresent() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/configuration/gsk/pluginPresent_before.gradle.kts");
-            doTestGradle(fileName);
+            runTest("idea/testData/configuration/gsk/pluginPresent/");
         }
     }
 }

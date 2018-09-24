@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 // FILE: Promise.java
 import org.jetbrains.annotations.NotNull;
 

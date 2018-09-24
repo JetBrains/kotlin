@@ -1,0 +1,3 @@
+[NotNull Values]
+25 	println("My name is '${a.<bold>name</bold>}'")
+25 		println("My name is '${a.<bold>name</bold>}'")

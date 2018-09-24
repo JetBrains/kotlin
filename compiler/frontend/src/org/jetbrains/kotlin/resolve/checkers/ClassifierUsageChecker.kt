@@ -18,89 +18,115 @@ package org.jetbrains.kotlin.resolve.checkers
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithSource
-import org.jetbrains.kotlin.descriptors.TypeAliasDescriptor
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.psi.KtNameReferenceExpression
-import org.jetbrains.kotlin.psi.KtReferenceExpression
-import org.jetbrains.kotlin.psi.KtTreeVisitorVoid
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTrace
-import org.jetbrains.kotlin.resolve.DeprecationResolver
-import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
+import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForTypeAliasObject
+import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
+import org.jetbrains.kotlin.resolve.descriptorUtil.isCompanionObject
 
 interface ClassifierUsageChecker {
-    fun check(
-            targetDescriptor: ClassifierDescriptor,
-            trace: BindingTrace,
-            element: PsiElement,
-            languageVersionSettings: LanguageVersionSettings,
-            deprecationResolver: DeprecationResolver
-    )
+    fun check(targetDescriptor: ClassifierDescriptor, element: PsiElement, context: ClassifierUsageCheckerContext)
+}
 
-    companion object {
-        fun check(
-                declarations: Collection<PsiElement>,
-                trace: BindingTrace,
-                languageVersionSettings: LanguageVersionSettings,
-                deprecationResolver: DeprecationResolver,
-                checkers: Iterable<ClassifierUsageChecker>
-        ) {
-            val visitor = object : KtTreeVisitorVoid() {
-                override fun visitReferenceExpression(expression: KtReferenceExpression) {
-                    super.visitReferenceExpression(expression)
+class ClassifierUsageCheckerContext(
+    override val trace: BindingTrace,
+    override val languageVersionSettings: LanguageVersionSettings,
+    override val deprecationResolver: DeprecationResolver,
+    override val moduleDescriptor: ModuleDescriptor
+) : CheckerContext
 
-                    if (expression is KtNameReferenceExpression && expression.getReferencedNameElementType() == KtTokens.SUPER_KEYWORD) {
-                        // Do not run checkers here because super expressions is not a proper expression. For example,
-                        // it doesn't make sense to report deprecation on "super" in "super.foo()" if the super class is deprecated.
-                        return
-                    }
 
-                    val target = getReferencedClassifier(expression) ?: return
+fun checkClassifierUsages(
+    declarations: Collection<PsiElement>,
+    checkers: Iterable<ClassifierUsageChecker>,
+    context: ClassifierUsageCheckerContext
+) {
+    val visitor = object : KtTreeVisitorVoid() {
+        override fun visitReferenceExpression(expression: KtReferenceExpression) {
+            super.visitReferenceExpression(expression)
 
-                    runCheckersWithTarget(target, expression)
+            if (expression is KtNameReferenceExpression && expression.getReferencedNameElementType() == KtTokens.SUPER_KEYWORD) {
+                // Do not run checkers here because super expressions is not a proper expression. For example,
+                // it doesn't make sense to report deprecation on "super" in "super.foo()" if the super class is deprecated.
+                return
+            }
 
-                    getReferenceToCompanionViaClassifier(expression, target)?.let { referenceClassifier ->
-                        val outerClass = target.containingDeclaration as ClassDescriptor
-                        runCheckersWithTarget(outerClass, expression)
-                        if (referenceClassifier is TypeAliasDescriptor) {
-                            runCheckersWithTarget(referenceClassifier, expression)
-                        }
-                    }
+            val targets = getReferencedClassifiers(expression)
+            for (target in targets) {
+                runCheckersWithTarget(target, expression)
+            }
+        }
+
+        override fun visitFunctionType(type: KtFunctionType) {
+            super.visitFunctionType(type)
+
+            val kotlinType = context.trace.get(BindingContext.TYPE, type.parent as? KtTypeReference ?: return)
+            if (kotlinType != null) {
+                val descriptor = kotlinType.constructor.declarationDescriptor
+                if (descriptor is ClassifierDescriptor) {
+                    runCheckersWithTarget(descriptor, type)
+                }
+            }
+        }
+
+        private fun runCheckersWithTarget(target: ClassifierDescriptor, expression: KtElement) {
+            for (checker in checkers) {
+                checker.check(target, expression, context)
+            }
+        }
+
+        private fun getReferencedClassifiers(expression: KtReferenceExpression): List<ClassifierDescriptor> {
+            val target = context.trace.get(BindingContext.REFERENCE_TARGET, expression)
+
+            return when (target) {
+                is ClassifierDescriptor ->
+                    listOfNotNull(
+                        target,
+                        getClassifierUsedToReferenceCompanionObject(target, expression)
+                    )
+
+                is ClassConstructorDescriptor -> listOf(target.constructedClass)
+
+                is FakeCallableDescriptorForTypeAliasObject -> {
+                    val referencedObject = target.getReferencedObject()
+                    val referencedTypeAlias = target.typeAliasDescriptor
+                    if (referencedObject != referencedTypeAlias.classDescriptor)
+                        listOf(referencedObject, referencedTypeAlias)
+                    else
+                        listOf(referencedTypeAlias)
                 }
 
-                private fun runCheckersWithTarget(target: ClassifierDescriptor, expression: KtReferenceExpression) {
-                    for (checker in checkers) {
-                        checker.check(target, trace, expression, languageVersionSettings, deprecationResolver)
-                    }
-                }
-
-                private fun getReferencedClassifier(expression: KtReferenceExpression): ClassifierDescriptor? {
-                    val target = trace.get(BindingContext.REFERENCE_TARGET, expression) as? ClassifierDescriptor
-                    if (target != null) return target
-
+                else -> {
                     // "Comparable" in "import java.lang.Comparable" references both a class and a SAM constructor and prevents
                     // REFERENCE_TARGET from being recorded in favor of AMBIGUOUS_REFERENCE_TARGET. But we must still run checkers
                     // to report if there's something wrong with the class. We characterize this case below by the following properties:
                     // 1) Exactly one of the references is a classifier
                     // 2) All references refer to the same source element, i.e. their source is the same
-                    val targets = trace.get(BindingContext.AMBIGUOUS_REFERENCE_TARGET, expression) ?: return null
-                    if (targets.groupBy { (it as? DeclarationDescriptorWithSource)?.source }.size != 1) return null
-                    return targets.filterIsInstance<ClassifierDescriptor>().singleOrNull()
+                    val targets = context.trace.get(BindingContext.AMBIGUOUS_REFERENCE_TARGET, expression) ?: return emptyList()
+                    if (targets.groupBy { (it as? DeclarationDescriptorWithSource)?.source }.size != 1) return emptyList()
+                    val targetClassifiers = targets.filterIsInstance<ClassifierDescriptor>()
+                    if (targetClassifiers.size == 1) targetClassifiers else emptyList()
                 }
-
-                private fun getReferenceToCompanionViaClassifier(expression: KtReferenceExpression, target: ClassifierDescriptor): ClassifierDescriptor? {
-                    if (!DescriptorUtils.isCompanionObject(target)) return null
-                    return trace.get(BindingContext.SHORT_REFERENCE_TO_COMPANION_OBJECT, expression)
-                }
-            }
-
-            for (declaration in declarations) {
-                declaration.accept(visitor)
             }
         }
+
+        private fun getClassifierUsedToReferenceCompanionObject(
+            referencedObject: ClassifierDescriptor,
+            expression: KtReferenceExpression
+        ): ClassifierDescriptor? =
+            if (referencedObject.isCompanionObject())
+                context.trace.get(BindingContext.SHORT_REFERENCE_TO_COMPANION_OBJECT, expression)
+            else
+                null
+    }
+
+    for (declaration in declarations) {
+        declaration.accept(visitor)
     }
 }

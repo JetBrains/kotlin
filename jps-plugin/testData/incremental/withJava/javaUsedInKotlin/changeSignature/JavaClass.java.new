@@ -1,5 +1,8 @@
 public class JavaClass {
-    public static String foo() {
-        return ":)";
+    public String foo() {
+        return "";
+    }
+
+    public void bar() {
     }
 }

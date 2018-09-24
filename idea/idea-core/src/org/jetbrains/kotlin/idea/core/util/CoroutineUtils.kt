@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.idea.core.util
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.ModalityState
-import com.intellij.openapi.components.service
+import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import kotlinx.coroutines.experimental.CoroutineDispatcher
@@ -47,7 +47,7 @@ public object EDT : CoroutineDispatcher() {
 
 // job that is cancelled when the project is disposed
 val Project.cancelOnDisposal: Job
-    get() = service<ProjectJob>().sharedJob
+    get() = ServiceManager.getService(this, ProjectJob::class.java).sharedJob
 
 internal class ProjectJob(project: Project) {
     internal val sharedJob: Job = Job()

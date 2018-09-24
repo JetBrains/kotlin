@@ -19,7 +19,10 @@ package org.jetbrains.kotlin.js.dce
 import com.google.gwt.dev.js.rhino.CodePosition
 import com.google.gwt.dev.js.rhino.ErrorReporter
 import org.jetbrains.kotlin.js.backend.JsToStringGenerationVisitor
-import org.jetbrains.kotlin.js.backend.ast.*
+import org.jetbrains.kotlin.js.backend.ast.JsBlock
+import org.jetbrains.kotlin.js.backend.ast.JsGlobalBlock
+import org.jetbrains.kotlin.js.backend.ast.JsNode
+import org.jetbrains.kotlin.js.backend.ast.JsProgram
 import org.jetbrains.kotlin.js.dce.Context.Node
 import org.jetbrains.kotlin.js.facade.SourceMapBuilderConsumer
 import org.jetbrains.kotlin.js.inline.util.collectDefinedNames
@@ -33,7 +36,6 @@ import org.jetbrains.kotlin.js.sourceMap.SourceFilePathResolver
 import org.jetbrains.kotlin.js.sourceMap.SourceMap3Builder
 import org.jetbrains.kotlin.js.util.TextOutputImpl
 import java.io.File
-import java.io.FileInputStream
 import java.io.InputStreamReader
 
 class DeadCodeElimination(private val logConsumer: (DCELogLevel, String) -> Unit) {
@@ -41,7 +43,6 @@ class DeadCodeElimination(private val logConsumer: (DCELogLevel, String) -> Unit
     private val reachableNames = mutableSetOf<String>()
 
     var reachableNodes = setOf<Node>()
-        get
         private set
 
     fun apply(root: JsNode) {
@@ -82,19 +83,19 @@ class DeadCodeElimination(private val logConsumer: (DCELogLevel, String) -> Unit
             var hasErrors = false
             val blocks = inputFiles.map { file ->
                 val block = JsGlobalBlock()
-                val code = File(file.path).readText()
-                val statements = parse(code, Reporter(file.path, logConsumer), program.scope, file.path) ?: run {
+                val code = file.resource.reader().let { InputStreamReader(it, "UTF-8") }.use { it.readText() }
+                val statements = parse(code, Reporter(file.resource.name, logConsumer), program.scope, file.resource.name) ?: run {
                     hasErrors = true
                     return@map block
                 }
-                val sourceMapParse = file.pathToSourceMap
-                        ?.let { InputStreamReader(FileInputStream(it), "UTF-8") }
+                val sourceMapParse = file.sourceMapResource
+                        ?.let { InputStreamReader(it.reader(), "UTF-8") }
                         ?.use { SourceMapParser.parse(it) }
                 when (sourceMapParse) {
                     is SourceMapError -> {
                         logConsumer(
                                 DCELogLevel.WARN,
-                                "Error parsing source map file ${file.pathToSourceMap}: ${sourceMapParse.message}")
+                                "Error parsing source map file ${file.sourceMapResource}: ${sourceMapParse.message}")
                     }
                     is SourceMapSuccess -> {
                         val sourceMap = sourceMapParse.value
@@ -119,7 +120,12 @@ class DeadCodeElimination(private val logConsumer: (DCELogLevel, String) -> Unit
                 val sourceMapFile = File(file.outputPath + ".map")
                 val textOutput = TextOutputImpl()
                 val sourceMapBuilder = SourceMap3Builder(File(file.outputPath), textOutput, "")
-                val consumer = SourceMapBuilderConsumer(sourceMapBuilder, SourceFilePathResolver(mutableListOf()), true, true)
+
+                val inputFile = File(file.resource.name)
+                val sourceBaseDir = if (inputFile.exists()) inputFile.parentFile else File(".")
+
+                val sourcePathResolver = SourceFilePathResolver(emptyList(), File(file.outputPath).parentFile)
+                val consumer = SourceMapBuilderConsumer(sourceBaseDir, sourceMapBuilder, sourcePathResolver, true, true)
                 block.accept(JsToStringGenerationVisitor(textOutput, consumer))
                 val sourceMapContent = sourceMapBuilder.build()
                 sourceMapBuilder.addLink()
@@ -129,7 +135,7 @@ class DeadCodeElimination(private val logConsumer: (DCELogLevel, String) -> Unit
                     writeText(textOutput.toString())
                 }
 
-                if (file.pathToSourceMap != null) {
+                if (file.sourceMapResource != null) {
                     sourceMapFile.writeText(sourceMapContent)
                 }
             }

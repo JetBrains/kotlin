@@ -1,3 +1,5 @@
+// IGNORE_BACKEND: JVM_IR
+// WITH_RUNTIME
 class C {
     @kotlin.jvm.JvmOverloads fun foo(firstParam: Int, secondParam: String = "") {
     }

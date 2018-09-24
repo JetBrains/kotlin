@@ -18,16 +18,21 @@ package org.jetbrains.kotlin.idea.quickfix.createFromUsage.createCallable
 
 import com.intellij.util.SmartList
 import org.jetbrains.kotlin.builtins.ReflectionTypes
-import org.jetbrains.kotlin.descriptors.PropertyAccessorDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.descriptors.VariableAccessorDescriptor
+import org.jetbrains.kotlin.descriptors.VariableDescriptorWithAccessors
+import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.CallableInfo
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.FunctionInfo
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.ParameterInfo
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.TypeInfo
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtProperty
+import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
@@ -43,12 +48,17 @@ object CreatePropertyDelegateAccessorsActionFactory : CreateCallableMemberFromUs
     override fun extractFixData(element: KtExpression, diagnostic: Diagnostic): List<CallableInfo> {
         val context = element.analyze()
 
-        fun isApplicableForAccessor(accessor: PropertyAccessorDescriptor?): Boolean =
+        fun isApplicableForAccessor(accessor: VariableAccessorDescriptor?): Boolean =
                 accessor != null && context[BindingContext.DELEGATED_PROPERTY_RESOLVED_CALL, accessor] == null
 
         val property = element.getNonStrictParentOfType<KtProperty>() ?: return emptyList()
-        val propertyDescriptor = context[BindingContext.DECLARATION_TO_DESCRIPTOR, property] as? PropertyDescriptor
+        val propertyDescriptor = context[BindingContext.DECLARATION_TO_DESCRIPTOR, property] as? VariableDescriptorWithAccessors
                                  ?: return emptyList()
+
+        if (propertyDescriptor is LocalVariableDescriptor
+                && !element.languageVersionSettings.supportsFeature(LanguageFeature.LocalDelegatedProperties)) {
+            return emptyList()
+        }
 
         val propertyReceiver = propertyDescriptor.extensionReceiverParameter ?: propertyDescriptor.dispatchReceiverParameter
         val propertyType = propertyDescriptor.type
@@ -61,13 +71,15 @@ object CreatePropertyDelegateAccessorsActionFactory : CreateCallableMemberFromUs
 
         val callableInfos = SmartList<CallableInfo>()
 
+        val psiFactory = KtPsiFactory(element)
+
         if (isApplicableForAccessor(propertyDescriptor.getter)) {
             val getterInfo = FunctionInfo(
                     name = OperatorNameConventions.GET_VALUE.asString(),
                     receiverTypeInfo = accessorReceiverType,
                     returnTypeInfo = TypeInfo(propertyType, Variance.OUT_VARIANCE),
                     parameterInfos = listOf(thisRefParam, metadataParam),
-                    isOperator = true
+                    modifierList = psiFactory.createModifierList(KtTokens.OPERATOR_KEYWORD)
             )
             callableInfos.add(getterInfo)
         }
@@ -79,7 +91,7 @@ object CreatePropertyDelegateAccessorsActionFactory : CreateCallableMemberFromUs
                     receiverTypeInfo = accessorReceiverType,
                     returnTypeInfo = TypeInfo(builtIns.unitType, Variance.OUT_VARIANCE),
                     parameterInfos = listOf(thisRefParam, metadataParam, newValueParam),
-                    isOperator = true
+                    modifierList = psiFactory.createModifierList(KtTokens.OPERATOR_KEYWORD)
             )
             callableInfos.add(setterInfo)
         }

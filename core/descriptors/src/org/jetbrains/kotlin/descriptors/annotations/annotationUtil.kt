@@ -20,6 +20,8 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.MemberDescriptor
+import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -39,8 +41,10 @@ fun KotlinBuiltIns.createDeprecatedAnnotation(
             this,
             KotlinBuiltIns.FQ_NAMES.replaceWith,
             mapOf(
-                    REPLACE_WITH_EXPRESSION_NAME to StringValue(replaceWith, this),
-                    REPLACE_WITH_IMPORTS_NAME to ArrayValue(emptyList(), getArrayType(Variance.INVARIANT, stringType), this)
+                    REPLACE_WITH_EXPRESSION_NAME to StringValue(replaceWith),
+                    REPLACE_WITH_IMPORTS_NAME to ArrayValue(emptyList()) { module ->
+                        module.builtIns.getArrayType(Variance.INVARIANT, stringType)
+                    }
             )
     )
 
@@ -48,9 +52,12 @@ fun KotlinBuiltIns.createDeprecatedAnnotation(
             this,
             KotlinBuiltIns.FQ_NAMES.deprecated,
             mapOf(
-                    DEPRECATED_MESSAGE_NAME to StringValue(message, this),
+                    DEPRECATED_MESSAGE_NAME to StringValue(message),
                     DEPRECATED_REPLACE_WITH_NAME to AnnotationValue(replaceWithAnnotation),
-                    DEPRECATED_LEVEL_NAME to EnumValue(getDeprecationLevelEnumEntry(level) ?: error("Deprecation level $level not found"))
+                    DEPRECATED_LEVEL_NAME to EnumValue(
+                            ClassId.topLevel(KotlinBuiltIns.FQ_NAMES.deprecationLevel),
+                            Name.identifier(level)
+                    )
             )
     )
 }
@@ -67,7 +74,8 @@ fun MemberDescriptor.isInlineOnlyOrReifiable(): Boolean =
         this is CallableMemberDescriptor && (isReifiable() || DescriptorUtils.getDirectMember(this).isReifiable() || isInlineOnly())
 
 fun MemberDescriptor.isEffectivelyInlineOnly(): Boolean =
-        isInlineOnlyOrReifiable() || safeAs<FunctionDescriptor>()?.let { it.isSuspend && it.isInline } == true
+    isInlineOnlyOrReifiable() || (this is FunctionDescriptor && isSuspend && isInline &&
+            (valueParameters.any { it.isCrossinline } || visibility == Visibilities.PRIVATE))
 
 fun MemberDescriptor.isInlineOnly(): Boolean {
     if (this !is FunctionDescriptor ||

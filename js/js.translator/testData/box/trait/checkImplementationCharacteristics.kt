@@ -1,4 +1,5 @@
-// EXPECTED_REACHABLE_NODES: 1011
+// IGNORE_BACKEND: JS_IR
+// EXPECTED_REACHABLE_NODES: 1301
 package foo
 
 public interface A {

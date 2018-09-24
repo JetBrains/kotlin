@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.diagnostics.Errors
-import org.jetbrains.kotlin.idea.caches.resolve.analyzeFully
+import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithContent
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.core.CollectingNameValidator
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
@@ -87,10 +87,12 @@ class KotlinGenerateSecondaryConstructorAction : KotlinGenerateMemberActionBase<
 
     private fun choosePropertiesToInitialize(klass: KtClassOrObject, context: BindingContext): List<DescriptorMemberChooserObject> {
         val candidates = klass.declarations
-                .filterIsInstance<KtProperty>()
-                .filter { it.isVar || context.diagnostics.forElement(it).any { it.factory in Errors.MUST_BE_INITIALIZED_DIAGNOSTICS } }
-                .map { context.get(BindingContext.VARIABLE, it) as PropertyDescriptor }
-                .map { DescriptorMemberChooserObject(it.source.getPsi()!!, it) }
+            .asSequence()
+            .filterIsInstance<KtProperty>()
+            .filter { it.isVar || context.diagnostics.forElement(it).any { it.factory in Errors.MUST_BE_INITIALIZED_DIAGNOSTICS } }
+            .map { context.get(BindingContext.VARIABLE, it) as PropertyDescriptor }
+            .map { DescriptorMemberChooserObject(it.source.getPsi()!!, it) }
+            .toList()
         if (ApplicationManager.getApplication().isUnitTestMode || candidates.isEmpty()) return candidates
 
         return with(MemberChooser(candidates.toTypedArray(), true, true, klass.project, false, null)) {
@@ -104,7 +106,7 @@ class KotlinGenerateSecondaryConstructorAction : KotlinGenerateMemberActionBase<
     }
 
     override fun prepareMembersInfo(klass: KtClassOrObject, project: Project, editor: Editor?): Info? {
-        val context = klass.analyzeFully()
+        val context = klass.analyzeWithContent()
         val classDescriptor = context.get(BindingContext.CLASS, klass) ?: return null
         val superConstructors = chooseSuperConstructors(klass, classDescriptor).map { it.descriptor as ConstructorDescriptor }
         val propertiesToInitialize = choosePropertiesToInitialize(klass, context).map { it.descriptor as PropertyDescriptor }

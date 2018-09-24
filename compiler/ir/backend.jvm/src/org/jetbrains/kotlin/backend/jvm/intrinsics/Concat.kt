@@ -56,7 +56,7 @@ class Concat : IntrinsicMethod() {
             receiver.put(AsmTypes.OBJECT_TYPE, v)
             genStringBuilderConstructor(v)
             v.swap()
-            genInvokeAppendMethod(v, returnType)
+            genInvokeAppendMethod(v, returnType, null)
             codegen.invokeAppend(v, arguments.get(0))
         }
 
@@ -71,7 +71,7 @@ class Concat : IntrinsicMethod() {
         return object : IrIntrinsicFunction(expression, signature, context, argsTypes) {
 
             override fun genInvokeInstruction(v: InstructionAdapter) {
-                AsmUtil.genInvokeAppendMethod(v, argsTypes[1])
+                AsmUtil.genInvokeAppendMethod(v, argsTypes[1], null)
                 v.invokevirtual("java/lang/StringBuilder", "toString", "()Ljava/lang/String;", false)
             }
 
@@ -126,7 +126,7 @@ class Concat : IntrinsicMethod() {
                     // in case of callable reference passed to a generic function, e.g.:
                     //      charArrayOf('O', 'K').fold("", String::plus)
                     // TODO Make String::plus generic, and invoke proper StringBuilder#append.
-                    AsmUtil.genInvokeAppendMethod(v, AsmTypes.OBJECT_TYPE)
+                    AsmUtil.genInvokeAppendMethod(v, AsmTypes.OBJECT_TYPE, null)
                     v.invokevirtual("java/lang/StringBuilder", "toString", "()Ljava/lang/String;", false)
                 }
             }

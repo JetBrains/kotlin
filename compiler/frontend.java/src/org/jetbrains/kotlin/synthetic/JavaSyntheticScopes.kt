@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.synthetic
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.load.java.components.SamConversionResolver
-import org.jetbrains.kotlin.resolve.DeprecationResolver
+import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
 import org.jetbrains.kotlin.resolve.scopes.SyntheticScopes
 import org.jetbrains.kotlin.storage.StorageManager
 
@@ -32,6 +32,9 @@ class JavaSyntheticScopes(
 ): SyntheticScopes {
     override val scopes = listOf(
             JavaSyntheticPropertiesScope(storageManager, lookupTracker),
-            SamAdapterFunctionsScope(storageManager, languageVersionSettings, samConventionResolver, deprecationResolver)
+            SamAdapterFunctionsScope(
+                    storageManager, languageVersionSettings, samConventionResolver, deprecationResolver,
+                    lookupTracker
+            )
     )
 }

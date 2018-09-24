@@ -23,8 +23,8 @@ import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionVisitor
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionVisitorWithResult
 
 class MarkInstruction(
-        element: KtElement,
-        blockScope: BlockScope
+    element: KtElement,
+    blockScope: BlockScope
 ) : InstructionWithNext(element, blockScope) {
 
     override fun accept(visitor: InstructionVisitor) {

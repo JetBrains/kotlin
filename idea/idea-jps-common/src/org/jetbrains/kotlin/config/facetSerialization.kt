@@ -25,6 +25,10 @@ import org.jdom.Element
 import org.jdom.Text
 import org.jetbrains.kotlin.cli.common.arguments.*
 import org.jetbrains.kotlin.load.java.JvmAbi
+import org.jetbrains.kotlin.platform.IdePlatform
+import org.jetbrains.kotlin.platform.IdePlatformKind
+import org.jetbrains.kotlin.platform.impl.JvmIdePlatformKind
+import org.jetbrains.kotlin.platform.orDefault
 import java.lang.reflect.Modifier
 import kotlin.reflect.KClass
 import kotlin.reflect.full.superclasses
@@ -43,8 +47,9 @@ private fun readV1Config(element: Element): KotlinFacetSettings {
         val targetPlatformName = versionInfoElement?.getOptionValue("targetPlatformName")
         val languageLevel = versionInfoElement?.getOptionValue("languageLevel")
         val apiLevel = versionInfoElement?.getOptionValue("apiLevel")
-        val targetPlatform = TargetPlatformKind.ALL_PLATFORMS.firstOrNull { it.description == targetPlatformName }
-                             ?: TargetPlatformKind.Jvm[JvmTarget.DEFAULT]
+        val targetPlatform = IdePlatformKind.All_PLATFORMS
+            .firstOrNull { it.description == targetPlatformName }
+            ?: JvmIdePlatformKind.defaultPlatform
 
         val compilerInfoElement = element.getOptionBody("compilerInfo")
 
@@ -58,7 +63,7 @@ private fun readV1Config(element: Element): KotlinFacetSettings {
         val jvmArgumentsElement = compilerInfoElement?.getOptionBody("k2jvmCompilerArguments")
         val jsArgumentsElement = compilerInfoElement?.getOptionBody("k2jsCompilerArguments")
 
-        val compilerArguments = targetPlatform.createCompilerArguments()
+        val compilerArguments = targetPlatform.createArguments { freeArgs = arrayListOf() }
 
         commonArgumentsElement?.let { XmlSerializer.deserializeInto(compilerArguments, it) }
         when (compilerArguments) {
@@ -73,6 +78,8 @@ private fun readV1Config(element: Element): KotlinFacetSettings {
         if (apiLevel != null) {
             compilerArguments.apiVersion = apiLevel
         }
+
+        compilerArguments.detectVersionAutoAdvance()
 
         if (useProjectSettings != null) {
             this.useProjectSettings = useProjectSettings
@@ -91,22 +98,56 @@ private fun readV1Config(element: Element): KotlinFacetSettings {
     }
 }
 
+fun Element.getFacetPlatformByConfigurationElement(): IdePlatform<*, *> {
+    val platformName = getAttributeValue("platform")
+    return IdePlatformKind.All_PLATFORMS
+        .firstOrNull { it.description == platformName }
+        .orDefault()
+}
+
 private fun readV2AndLaterConfig(element: Element): KotlinFacetSettings {
     return KotlinFacetSettings().apply {
         element.getAttributeValue("useProjectSettings")?.let { useProjectSettings = it.toBoolean() }
-        val platformName = element.getAttributeValue("platform")
-        val platformKind = TargetPlatformKind.ALL_PLATFORMS.firstOrNull { it.description == platformName } ?: TargetPlatformKind.DEFAULT_PLATFORM
+        val targetPlatform = element.getFacetPlatformByConfigurationElement()
         element.getChild("implements")?.let {
-            implementedModuleName = (element.content.firstOrNull() as? Text)?.textTrim
+            val items = it.getChildren("implement")
+            implementedModuleNames = if (items.isNotEmpty()) {
+                items.mapNotNull { (it.content.firstOrNull() as? Text)?.textTrim }
+            } else {
+                listOfNotNull((it.content.firstOrNull() as? Text)?.textTrim)
+            }
         }
+        element.getChild("sourceSets")?.let {
+            val items = it.getChildren("sourceSet")
+            sourceSetNames = items.mapNotNull { (it.content.firstOrNull() as? Text)?.textTrim }
+        }
+        kind = element.getChild("newMppModelJpsModuleKind")?.let {
+            val kindName = (it.content.firstOrNull() as? Text)?.textTrim
+            if (kindName != null) {
+                try {
+                    KotlinModuleKind.valueOf(kindName)
+                } catch (e: Exception) {
+                    null
+                }
+            } else null
+        } ?: KotlinModuleKind.DEFAULT
+        isTestModule = element.getAttributeValue("isTestModule")?.toBoolean() ?: false
+        externalProjectId = element.getAttributeValue("externalProjectId") ?: ""
         element.getChild("compilerSettings")?.let {
             compilerSettings = CompilerSettings()
             XmlSerializer.deserializeInto(compilerSettings!!, it)
         }
         element.getChild("compilerArguments")?.let {
-            compilerArguments = platformKind.createCompilerArguments()
+            compilerArguments = targetPlatform.createArguments { freeArgs = ArrayList() }
             XmlSerializer.deserializeInto(compilerArguments!!, it)
+            compilerArguments!!.detectVersionAutoAdvance()
         }
+        productionOutputPath = element.getChild("productionOutputPath")?.let {
+            PathUtil.toSystemDependentName((it.content.firstOrNull() as? Text)?.textTrim)
+        } ?: (compilerArguments as? K2JSCompilerArguments)?.outputFile
+        testOutputPath = element.getChild("testOutputPath")?.let {
+            PathUtil.toSystemDependentName((it.content.firstOrNull() as? Text)?.textTrim)
+        } ?: (compilerArguments as? K2JSCompilerArguments)?.outputFile
     }
 }
 
@@ -120,6 +161,7 @@ private fun readV2Config(element: Element): KotlinFacetSettings {
                     compilerArguments!!.coroutinesState = CommonCompilerArguments.WARN
                 args.any { arg -> arg.attributes[0].value == "coroutinesError" && arg.attributes[1].booleanValue } ->
                     compilerArguments!!.coroutinesState = CommonCompilerArguments.ERROR
+                else -> compilerArguments!!.coroutinesState = CommonCompilerArguments.DEFAULT
             }
         }
     }
@@ -211,8 +253,8 @@ private fun Element.restoreNormalOrdering(bean: Any) {
             .forEachIndexed { index, element -> elementsToReorder[index] = element.clone() }
 }
 
-private fun buildChildElement(element: Element, tag: String, bean: Any, filter: SerializationFilter) {
-    Element(tag).apply {
+private fun buildChildElement(element: Element, tag: String, bean: Any, filter: SerializationFilter): Element {
+    return Element(tag).apply {
         XmlSerializer.serializeInto(bean, this, filter)
         restoreNormalOrdering(bean)
         element.addContent(this)
@@ -222,14 +264,47 @@ private fun buildChildElement(element: Element, tag: String, bean: Any, filter: 
 private fun KotlinFacetSettings.writeLatestConfig(element: Element) {
     val filter = SkipDefaultsSerializationFilter()
 
-    targetPlatformKind?.let {
+    platform?.let {
         element.setAttribute("platform", it.description)
     }
     if (!useProjectSettings) {
         element.setAttribute("useProjectSettings", useProjectSettings.toString())
     }
-    implementedModuleName?.let {
-        element.addContent(Element("implements").apply { addContent(it) })
+    if (implementedModuleNames.isNotEmpty()) {
+        element.addContent(
+                Element("implements").apply {
+                    val singleModule = implementedModuleNames.singleOrNull()
+                    if (singleModule != null) {
+                        addContent(singleModule)
+                    } else {
+                        implementedModuleNames.map { addContent(Element("implement").apply { addContent(it) }) }
+                    }
+                }
+        )
+    }
+    if (sourceSetNames.isNotEmpty()) {
+        element.addContent(
+            Element("sourceSets").apply {
+                sourceSetNames.map { addContent(Element("sourceSet").apply { addContent(it) }) }
+            }
+        )
+    }
+    if (kind != KotlinModuleKind.DEFAULT) {
+        element.addContent(Element("newMppModelJpsModuleKind").apply { addContent(kind.name) })
+        element.setAttribute("isTestModule", isTestModule.toString())
+    }
+    if (externalProjectId.isNotEmpty()) {
+        element.setAttribute("externalProjectId", externalProjectId)
+    }
+    productionOutputPath?.let {
+        if (it != (compilerArguments as? K2JSCompilerArguments)?.outputFile) {
+            element.addContent(Element("productionOutputPath").apply { addContent(PathUtil.toSystemIndependentName(it)) })
+        }
+    }
+    testOutputPath?.let {
+        if (it != (compilerArguments as? K2JSCompilerArguments)?.outputFile) {
+            element.addContent(Element("testOutputPath").apply { addContent(PathUtil.toSystemIndependentName(it)) })
+        }
     }
     compilerSettings?.let { copyBean(it) }?.let {
         it.convertPathsToSystemIndependent()
@@ -237,7 +312,24 @@ private fun KotlinFacetSettings.writeLatestConfig(element: Element) {
     }
     compilerArguments?.let { copyBean(it) }?.let {
         it.convertPathsToSystemIndependent()
-        buildChildElement(element, "compilerArguments", it, filter)
+        val compilerArgumentsXml = buildChildElement(element, "compilerArguments", it, filter)
+        compilerArgumentsXml.dropVersionsIfNecessary(it)
+    }
+}
+
+fun CommonCompilerArguments.detectVersionAutoAdvance() {
+    autoAdvanceLanguageVersion = languageVersion == null
+    autoAdvanceApiVersion = apiVersion == null
+}
+
+fun Element.dropVersionsIfNecessary(settings: CommonCompilerArguments) {
+    // Do not serialize language/api version if they correspond to the default language version
+    if (settings.autoAdvanceLanguageVersion) {
+        getOption("languageVersion")?.detach()
+    }
+
+    if (settings.autoAdvanceApiVersion) {
+        getOption("apiVersion")?.detach()
     }
 }
 

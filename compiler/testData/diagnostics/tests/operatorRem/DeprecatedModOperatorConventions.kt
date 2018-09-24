@@ -1,3 +1,5 @@
+// !LANGUAGE: -ProhibitOperatorMod
+// !WITH_NEW_INFERENCE
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 
 class OldAndNew {
@@ -25,7 +27,7 @@ class IntAndUnit {
 
 fun test() {
     OldAndNew() % 1
-    OnlyOld() <!DEPRECATED_BINARY_MOD_AS_REM!>%<!> 1
+    OnlyOld() <!OI;DEPRECATED_BINARY_MOD_AS_REM!>%<!> 1
     OnlyNew() % 1
     Sample() % 1
 

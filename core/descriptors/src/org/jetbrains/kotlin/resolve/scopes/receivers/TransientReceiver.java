@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.resolve.scopes.receivers;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.types.KotlinType;
 
 /**
@@ -25,7 +26,11 @@ import org.jetbrains.kotlin.types.KotlinType;
  */
 public class TransientReceiver extends AbstractReceiverValue {
     public TransientReceiver(@NotNull KotlinType type) {
-        super(type);
+        this(type, null);
+    }
+
+    private TransientReceiver(@NotNull KotlinType type, @Nullable ReceiverValue original) {
+        super(type, original);
     }
 
     @Override
@@ -36,6 +41,6 @@ public class TransientReceiver extends AbstractReceiverValue {
     @NotNull
     @Override
     public ReceiverValue replaceType(@NotNull KotlinType newType) {
-        return new TransientReceiver(newType);
+        return new TransientReceiver(newType, getOriginal());
     }
 }

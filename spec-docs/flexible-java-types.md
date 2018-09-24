@@ -498,4 +498,8 @@ We can also support the following annotations out-of-the-box:
  * `NotNull` and `NotNull.List`
 * [Project Lombok](http://projectlombok.org/features/NonNull.html)
 * [`org.eclipse.jdt.annotation`](https://wiki.eclipse.org/JDT_Core/Null_Analysis)
-* [`org.checkerframework.checker.nullness.qual`](http://types.cs.washington.edu/checker-framework/current/checker-framework-manual.html#nullness-checker)
+* [`org.checkerframework.checker.nullness`](https://checkerframework.org/manual/#nullness-checker)
+ * [`*.qual.Nullable`](https://checkerframework.org/api/org/checkerframework/checker/nullness/qual/Nullable.html)
+ * [`*.qual.NonNull`](https://checkerframework.org/api/org/checkerframework/checker/nullness/qual/NonNull.html)
+ * [`*.compatqual.NullableDecl`](https://checkerframework.org/api/org/checkerframework/checker/nullness/compatqual/NullableDecl.html)
+ * [`*.compatqual.NonNullDecl`](https://checkerframework.org/api/org/checkerframework/checker/nullness/compatqual/NonNullDecl.html)

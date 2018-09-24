@@ -19,9 +19,6 @@ package kotlin.reflect.jvm.internal
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.TypeAliasDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
-import org.jetbrains.kotlin.load.java.structure.reflect.createArrayType
-import org.jetbrains.kotlin.load.java.structure.reflect.parameterizedTypeArguments
-import org.jetbrains.kotlin.load.java.structure.reflect.primitiveByWrapper
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.Variance
@@ -33,11 +30,14 @@ import kotlin.LazyThreadSafetyMode.PUBLICATION
 import kotlin.reflect.KClassifier
 import kotlin.reflect.KType
 import kotlin.reflect.KTypeProjection
+import kotlin.reflect.jvm.internal.structure.createArrayType
+import kotlin.reflect.jvm.internal.structure.parameterizedTypeArguments
+import kotlin.reflect.jvm.internal.structure.primitiveByWrapper
 import kotlin.reflect.jvm.jvmErasure
 
 internal class KTypeImpl(
-        val type: KotlinType,
-        computeJavaType: () -> Type
+    val type: KotlinType,
+    computeJavaType: () -> Type
 ) : KType {
     internal val javaType: Type by ReflectProperties.lazySoft(computeJavaType)
 
@@ -52,8 +52,8 @@ internal class KTypeImpl(
                     // There may be no argument if it's a primitive array (such as IntArray)
                     val argument = type.arguments.singleOrNull()?.type ?: return KClassImpl(jClass)
                     val elementClassifier =
-                            convert(argument)
-                            ?: throw KotlinReflectionInternalError("Cannot determine classifier for array element type: $this")
+                        convert(argument)
+                                ?: throw KotlinReflectionInternalError("Cannot determine classifier for array element type: $this")
                     return KClassImpl(elementClassifier.jvmErasure.java.createArrayType())
                 }
 
@@ -69,7 +69,7 @@ internal class KTypeImpl(
         }
     }
 
-    override val arguments: List<KTypeProjection> by ReflectProperties.lazySoft arguments@ {
+    override val arguments: List<KTypeProjection> by ReflectProperties.lazySoft arguments@{
         val typeArguments = type.arguments
         if (typeArguments.isEmpty()) return@arguments emptyList<KTypeProjection>()
 
@@ -78,8 +78,7 @@ internal class KTypeImpl(
         typeArguments.mapIndexed { i, typeProjection ->
             if (typeProjection.isStarProjection) {
                 KTypeProjection.STAR
-            }
-            else {
+            } else {
                 val type = KTypeImpl(typeProjection.type) {
                     val javaType = javaType
                     when (javaType) {
@@ -113,12 +112,15 @@ internal class KTypeImpl(
     override val isMarkedNullable: Boolean
         get() = type.isMarkedNullable
 
+    override val annotations: List<Annotation>
+        get() = type.computeAnnotations()
+
     override fun equals(other: Any?) =
-            other is KTypeImpl && type == other.type
+        other is KTypeImpl && type == other.type
 
     override fun hashCode() =
-            type.hashCode()
+        type.hashCode()
 
     override fun toString() =
-            ReflectionObjectRenderer.renderType(type)
+        ReflectionObjectRenderer.renderType(type)
 }

@@ -18,31 +18,56 @@ package org.jetbrains.kotlin.idea.maven
 
 import com.google.gson.JsonElement
 import com.google.gson.JsonParser
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.util.net.HttpConfigurable
 import org.jetbrains.idea.maven.dom.MavenVersionComparable
 import org.jetbrains.idea.maven.indices.MavenArchetypesProvider
 import org.jetbrains.idea.maven.model.MavenArchetype
 import org.jetbrains.kotlin.idea.KotlinPluginUtil
-import org.jetbrains.kotlin.idea.actions.internal.KotlinInternalMode
 import org.jetbrains.kotlin.utils.ifEmpty
 import java.net.HttpURLConnection
 import java.net.URLEncoder
 import java.util.concurrent.TimeUnit
 
-class KotlinMavenArchetypesProvider(val kotlinPluginVersion: String, val predefinedInternalMode: Boolean?) : MavenArchetypesProvider {
+class KotlinMavenArchetypesProvider(private val kotlinPluginVersion: String, private val predefinedInternalMode: Boolean?) :
+    MavenArchetypesProvider {
+
+    @Suppress("unused")
     constructor() : this(KotlinPluginUtil.getPluginVersion(), null)
 
-    val VERSIONS_LIST_URL = mavenSearchUrl("org.jetbrains.kotlin", packaging = "maven-archetype", rowsLimit = 1000)
+    companion object {
+        private val VERSIONS_LIST_URL = mavenSearchUrl("org.jetbrains.kotlin", packaging = "maven-archetype", rowsLimit = 1000)
+
+        private fun mavenSearchUrl(
+            group: String,
+            artifactId: String? = null,
+            version: String? = null,
+            packaging: String? = null,
+            rowsLimit: Int = 20
+        ): String {
+            val q = listOf(
+                "g" to group,
+                "a" to artifactId,
+                "v" to version,
+                "p" to packaging
+            )
+                .filter { it.second != null }.joinToString(separator = " AND ") { "${it.first}:\"${it.second}\"" }
+
+            return "http://search.maven.org/solrsearch/select?q=${q.encodeURL()}&core=gav&rows=$rowsLimit&wt=json"
+        }
+
+        private fun String.encodeURL() = URLEncoder.encode(this, "UTF-8")
+    }
+
     private val versionPrefix by lazy { versionPrefix(kotlinPluginVersion) }
     private val fallbackVersion = "1.0.3"
     private val internalMode: Boolean
-        get() = predefinedInternalMode ?: KotlinInternalMode.enabled
+        get() = predefinedInternalMode ?: ApplicationManager.getApplication().isInternal
 
     private val archetypesBlocking by lazy {
         try {
             loadVersions().ifEmpty { fallbackArchetypes() }
-        }
-        catch (t: Throwable) {
+        } catch (t: Throwable) {
             fallbackArchetypes()
         }
     }
@@ -50,8 +75,8 @@ class KotlinMavenArchetypesProvider(val kotlinPluginVersion: String, val predefi
     override fun getArchetypes() = archetypesBlocking.toMutableList()
 
     private fun fallbackArchetypes() =
-            listOf("kotlin-archetype-jvm", "kotlin-archetype-js")
-                    .map { MavenArchetype("org.jetbrains.kotlin", it, fallbackVersion, null, null) }
+        listOf("kotlin-archetype-jvm", "kotlin-archetype-js")
+            .map { MavenArchetype("org.jetbrains.kotlin", it, fallbackVersion, null, null) }
 
     private fun loadVersions(): List<MavenArchetype> {
         return connectAndApply(VERSIONS_LIST_URL) { urlConnection ->
@@ -62,37 +87,25 @@ class KotlinMavenArchetypesProvider(val kotlinPluginVersion: String, val predefi
     }
 
     internal fun extractVersions(root: JsonElement) =
-            root.asJsonObject.get("response")
-                    .asJsonObject.get("docs")
-                    .asJsonArray
-                    .map { it.asJsonObject }
-                    .map { MavenArchetype(it.get("g").asString, it.get("a").asString, it.get("v").asString, null, null) }
-                    .let { versions ->
-                        val prefix = versionPrefix
+        root.asJsonObject.get("response")
+            .asJsonObject.get("docs")
+            .asJsonArray
+            .map { it.asJsonObject }
+            .map { MavenArchetype(it.get("g").asString, it.get("a").asString, it.get("v").asString, null, null) }
+            .let { versions ->
+                val prefix = versionPrefix
 
-                        when {
-                            internalMode || prefix == null -> versions
-                            else -> versions.filter { it.version?.startsWith(prefix) ?: false }.ifEmpty { versions }
-                        }
-                                .groupBy { it.groupId + ":" + it.artifactId + ":" + versionPrefix(it.version) }
-                                .mapValues { chooseVersion(it.value) }
-                                .mapNotNull { it.value }
-                    }
+                when {
+                    internalMode || prefix == null -> versions
+                    else -> versions.filter { it.version?.startsWith(prefix) ?: false }.ifEmpty { versions }
+                }
+                    .groupBy { it.groupId + ":" + it.artifactId + ":" + versionPrefix(it.version) }
+                    .mapValues { chooseVersion(it.value) }
+                    .mapNotNull { it.value }
+            }
 
     private fun chooseVersion(versions: List<MavenArchetype>): MavenArchetype? {
         return versions.maxBy { MavenVersionComparable(it.version) }
-    }
-
-    private fun mavenSearchUrl(group: String, artifactId: String? = null, version: String? = null, packaging: String? = null, rowsLimit: Int = 20): String {
-        val q = listOf(
-                "g" to group,
-                "a" to artifactId,
-                "v" to version,
-                "p" to packaging
-        )
-                .filter { it.second != null }.joinToString(separator = " AND ") { "${it.first}:\"${it.second}\"" }
-
-        return "http://search.maven.org/solrsearch/select?q=${q.encodeURL()}&core=gav&rows=$rowsLimit&wt=json"
     }
 
     private fun <R> connectAndApply(url: String, timeoutSeconds: Int = 15, block: (HttpURLConnection) -> R): R {
@@ -107,14 +120,11 @@ class KotlinMavenArchetypesProvider(val kotlinPluginVersion: String, val predefi
     }
 
     private fun <R> HttpURLConnection.use(block: (HttpURLConnection) -> R): R =
-            try {
-                block(this)
-            }
-            finally {
-                disconnect()
-            }
-
-    private fun String.encodeURL() = URLEncoder.encode(this, "UTF-8")
+        try {
+            block(this)
+        } finally {
+            disconnect()
+        }
 
     private fun versionPrefix(version: String) = """^\d+\.\d+\.""".toRegex().find(version)?.value
 }

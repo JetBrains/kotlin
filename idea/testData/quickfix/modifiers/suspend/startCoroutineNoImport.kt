@@ -2,6 +2,6 @@
 // WITH_RUNTIME
 // DISABLE-ERRORS
 
-import kotlin.coroutines.suspendCoroutine
+import kotlin.coroutines.experimental.suspendCoroutine
 
 suspend fun <T> suspending(block: () -> T): T = suspendCoroutine { block.<caret>startCoroutine(it) }

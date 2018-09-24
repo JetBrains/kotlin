@@ -25,4 +25,4 @@ import kotlin.reflect.KProperty
 operator fun <T> CachedValue<T>.getValue(o: Any, property: KProperty<*>): T = value
 
 fun <T> CachedValue(project: Project, trackValue: Boolean = false, provider: () -> CachedValueProvider.Result<T>) =
-        CachedValuesManager.getManager(project).createCachedValue(provider, trackValue)
+    CachedValuesManager.getManager(project).createCachedValue(provider, trackValue)

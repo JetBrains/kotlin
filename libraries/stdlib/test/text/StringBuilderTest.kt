@@ -1,7 +1,11 @@
+/*
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
+ */
+
 package test.text
 
 import kotlin.test.*
-import org.junit.Test
 
 class StringBuilderTest {
 
@@ -61,5 +65,14 @@ class StringBuilderTest {
             assertEquals(7, sb.length)
             assertEquals("content", sb.toString())
         }
+    }
+
+    @Test fun clear() {
+        val sb = StringBuilder()
+        sb.append("test")
+        val s = sb.toString()
+        sb.clear()
+        assertTrue(sb.isEmpty())
+        assertEquals("test", s)
     }
 }

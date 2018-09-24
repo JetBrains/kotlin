@@ -17,12 +17,13 @@
 package org.jetbrains.kotlin.psi2ir.intermediate
 
 import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.types.KotlinType
 
 interface IntermediateValue {
     fun load(): IrExpression
     fun loadIfExists(): IrExpression? = load()
-    val type: KotlinType
+    val type: IrType
 }
 
 interface LValue : IntermediateValue {

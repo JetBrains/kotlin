@@ -263,7 +263,7 @@ public class Visibilities {
     public static final Visibility INVISIBLE_FAKE = new Visibility("invisible_fake", false) {
         @Override
         public boolean mustCheckInImports() {
-            throw new IllegalStateException("This method shouldn't be invoked for INVISIBLE_FAKE visibility");
+            return true;
         }
 
         @Override
@@ -402,6 +402,12 @@ public class Visibilities {
         public ReceiverValue replaceType(@NotNull KotlinType newType) {
             throw new IllegalStateException("This method should not be called");
         }
+
+        @NotNull
+        @Override
+        public ReceiverValue getOriginal() {
+            return this;
+        }
     };
 
     /**
@@ -420,6 +426,12 @@ public class Visibilities {
         public ReceiverValue replaceType(@NotNull KotlinType newType) {
             throw new IllegalStateException("This method should not be called");
         }
+
+        @NotNull
+        @Override
+        public ReceiverValue getOriginal() {
+            return this;
+        }
     };
 
     // This constant is not intended to use somewhere else from
@@ -435,6 +447,12 @@ public class Visibilities {
         @Override
         public ReceiverValue replaceType(@NotNull KotlinType newType) {
             throw new IllegalStateException("This method should not be called");
+        }
+
+        @NotNull
+        @Override
+        public ReceiverValue getOriginal() {
+            return this;
         }
     };
 

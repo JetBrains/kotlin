@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.resolve.lazy.descriptors
 
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationWithTarget
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtAnnotationEntry
@@ -35,62 +34,43 @@ import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.storage.getValue
 
 abstract class LazyAnnotationsContext(
-        val annotationResolver: AnnotationResolver,
-        val storageManager: StorageManager,
-        val trace: BindingTrace
+    val annotationResolver: AnnotationResolver,
+    val storageManager: StorageManager,
+    val trace: BindingTrace
 ) {
     abstract val scope: LexicalScope
 }
 
 class LazyAnnotationsContextImpl(
-        annotationResolver: AnnotationResolver,
-        storageManager: StorageManager,
-        trace: BindingTrace,
-        override val scope: LexicalScope
+    annotationResolver: AnnotationResolver,
+    storageManager: StorageManager,
+    trace: BindingTrace,
+    override val scope: LexicalScope
 ) : LazyAnnotationsContext(annotationResolver, storageManager, trace)
 
 class LazyAnnotations(
-        val c: LazyAnnotationsContext,
-        val annotationEntries: List<KtAnnotationEntry>
+    val c: LazyAnnotationsContext,
+    val annotationEntries: List<KtAnnotationEntry>
 ) : Annotations, LazyEntity {
     override fun isEmpty() = annotationEntries.isEmpty()
 
-    private val annotation = c.storageManager.createMemoizedFunction {
-        entry: KtAnnotationEntry ->
-
-        val descriptor = LazyAnnotationDescriptor(c, entry)
-        val target = entry.useSiteTarget?.getAnnotationUseSiteTarget()
-        AnnotationWithTarget(descriptor, target)
+    private val annotation = c.storageManager.createMemoizedFunction { entry: KtAnnotationEntry ->
+        LazyAnnotationDescriptor(c, entry)
     }
 
-    override fun getUseSiteTargetedAnnotations(): List<AnnotationWithTarget> {
-        return annotationEntries
-                .mapNotNull {
-                    val (descriptor, target) = annotation(it)
-                    if (target == null) null else AnnotationWithTarget(descriptor, target)
-                }
-    }
-
-    override fun getAllAnnotations() = annotationEntries.map(annotation)
-
-    override fun iterator(): Iterator<AnnotationDescriptor> {
-        return annotationEntries
-                .asSequence()
-                .mapNotNull {
-                    val (descriptor, target) = annotation(it)
-                    if (target == null) descriptor else null // Filter out annotations with target
-                }.iterator()
-    }
+    override fun iterator(): Iterator<AnnotationDescriptor> = annotationEntries.asSequence().map(annotation).iterator()
 
     override fun forceResolveAllContents() {
         // To resolve all entries
-        getAllAnnotations()
+        for (annotation in this) {
+            // TODO: probably we should do ForceResolveUtil.forceResolveAllContents(annotation) here
+        }
     }
 }
 
 class LazyAnnotationDescriptor(
-        val c: LazyAnnotationsContext,
-        val annotationEntry: KtAnnotationEntry
+    val c: LazyAnnotationsContext,
+    val annotationEntry: KtAnnotationEntry
 ) : AnnotationDescriptor, LazyEntity {
 
     init {
@@ -105,8 +85,7 @@ class LazyAnnotationDescriptor(
 
     private val scope = if (c.scope.ownerDescriptor is PackageFragmentDescriptor) {
         LexicalScope.Base(c.scope, FileDescriptorForVisibilityChecks(source, c.scope.ownerDescriptor))
-    }
-    else {
+    } else {
         c.scope
     }
 
@@ -130,8 +109,8 @@ class LazyAnnotationDescriptor(
     }
 
     private class FileDescriptorForVisibilityChecks(
-            private val source: SourceElement,
-            private val containingDeclaration: DeclarationDescriptor
+        private val source: SourceElement,
+        private val containingDeclaration: DeclarationDescriptor
     ) : DeclarationDescriptorWithSource {
         override val annotations: Annotations get() = Annotations.EMPTY
         override fun getContainingDeclaration() = containingDeclaration

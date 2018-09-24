@@ -36,7 +36,7 @@ class FlatMapTransformation(
         get() = "flatMap{}"
 
     override fun generateCode(chainedCallGenerator: ChainedCallGenerator): KtExpression {
-        val lambda = generateLambda(inputVariable, transform)
+        val lambda = generateLambda(inputVariable, transform, chainedCallGenerator.reformat)
         return chainedCallGenerator.generate("flatMap$0:'{}'", lambda)
     }
 
@@ -69,8 +69,11 @@ class FlatMapTransformation(
             if (state.indexVariable != null && state.indexVariable.hasUsages(transform)) {
                 // if nested loop range uses index, convert to "mapIndexed {...}.flatMap { it }"
                 val mapIndexedTransformation = MapTransformation(state.outerLoop, state.inputVariable, state.indexVariable, transform, mapNotNull = false)
-                val inputVarExpression = KtPsiFactory(nestedLoop).createExpressionByPattern("$0", state.inputVariable.nameAsSafeName)
-                val transformToUse = if (state.lazySequence) inputVarExpression.asSequence() else inputVarExpression
+                val inputVarExpression = KtPsiFactory(nestedLoop).createExpressionByPattern(
+                        "$0", state.inputVariable.nameAsSafeName,
+                        reformat = state.reformat
+                )
+                val transformToUse = if (state.lazySequence) inputVarExpression.asSequence(state.reformat) else inputVarExpression
                 val flatMapTransformation = FlatMapTransformation(state.outerLoop, state.inputVariable, transformToUse)
                 val newState = state.copy(
                         innerLoop = nestedLoop,
@@ -80,7 +83,7 @@ class FlatMapTransformation(
                 return TransformationMatch.Sequence(listOf(mapIndexedTransformation, flatMapTransformation), newState)
             }
 
-            val transformToUse = if (state.lazySequence) transform.asSequence() else transform
+            val transformToUse = if (state.lazySequence) transform.asSequence(state.reformat) else transform
             val transformation = FlatMapTransformation(state.outerLoop, state.inputVariable, transformToUse)
             val newState = state.copy(
                     innerLoop = nestedLoop,
@@ -90,8 +93,11 @@ class FlatMapTransformation(
             return TransformationMatch.Sequence(transformation, newState)
         }
 
-        private fun KtExpression.asSequence(): KtExpression {
-            return KtPsiFactory(this).createExpressionByPattern("$0.asSequence()", this)
+        private fun KtExpression.asSequence(reformat: Boolean): KtExpression {
+            return KtPsiFactory(this).createExpressionByPattern(
+                    "$0.asSequence()", this,
+                    reformat = reformat
+            )
         }
     }
 }

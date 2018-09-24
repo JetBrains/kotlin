@@ -31,11 +31,14 @@ private val packagePattern = Pattern.compile("(?m)^\\s*package[ |\t]+([\\w|\\.]*
 
 private val importPattern = Pattern.compile("import[ |\t]([\\w|]*\\.)")
 
-internal fun genFiles(file: File, fileContent: String, filesHolder: CodegenTestsOnAndroidGenerator.FilesWriter): FqName? {
-    val testFiles = createTestFiles(file, fileContent)
-    if (testFiles.filter { it.name.endsWith(".java") }.isNotEmpty()) {
+internal fun patchFiles(
+    file: File,
+    testFiles: List<CodegenTestCase.TestFile>,
+    filesHolder: CodegenTestsOnAndroidGenerator.FilesWriter
+): FqName? {
+    if (testFiles.any { it.name.endsWith(".java") }) {
         //TODO support java files
-        return null;
+        return null
     }
     val ktFiles = testFiles.filter { it.name.endsWith(".kt") }
     if (ktFiles.isEmpty()) return null
@@ -80,16 +83,6 @@ internal fun genFiles(file: File, fileContent: String, filesHolder: CodegenTests
         println("Several box methods in $file")
     }
     return boxFiles.last().newClassId
-}
-
-
-private fun createTestFiles(file: File, expectedText: String): List<CodegenTestCase.TestFile> {
-    val files = KotlinTestUtils.createTestFiles(file.name, expectedText, object : KotlinTestUtils.TestFileFactoryNoModules<CodegenTestCase.TestFile>() {
-        override fun create(fileName: String, text: String, directives: Map<String, String>): CodegenTestCase.TestFile {
-            return CodegenTestCase.TestFile(fileName, text)
-        }
-    })
-    return files
 }
 
 private fun hasBoxMethod(text: String): Boolean {

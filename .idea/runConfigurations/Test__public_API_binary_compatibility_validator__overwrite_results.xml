@@ -1,0 +1,21 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Test: public API binary compatibility validator, overwrite results" type="GradleRunConfiguration" factoryName="Gradle">
+    <ExternalSystemSettings>
+      <option name="executionName" />
+      <option name="externalProjectPath" value="$PROJECT_DIR$/libraries/tools/binary-compatibility-validator" />
+      <option name="externalSystemIdString" value="GRADLE" />
+      <option name="scriptParameters" value=" --tests * " />
+      <option name="taskDescriptions">
+        <list />
+      </option>
+      <option name="taskNames">
+        <list>
+          <option value=":tools:binary-compatibility-validator:cleanTest" />
+          <option value=":tools:binary-compatibility-validator:test" />
+        </list>
+      </option>
+      <option name="vmOptions" value="-Doverwrite.output=true" />
+    </ExternalSystemSettings>
+    <method />
+  </configuration>
+</component>

@@ -1,0 +1,9 @@
+UFile (package = )
+    UClass (name = LocalVariableWithAnnotationKt)
+        UAnnotationMethod (name = foo)
+            UBlockExpression
+                UDeclarationsExpression
+                    ULocalVariable (name = bar)
+                        UAnnotation (fqName = TestAnnotation)
+                        ULiteralExpression (value = "lorem ipsum")
+    UClass (name = TestAnnotation)

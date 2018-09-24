@@ -1,5 +1,5 @@
 // FILE: 1.kt
-
+// IGNORE_BACKEND: JVM_IR
 package test
 
 inline fun myrun(s: () -> Unit) {

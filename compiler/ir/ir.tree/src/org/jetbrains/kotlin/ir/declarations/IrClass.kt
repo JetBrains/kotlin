@@ -17,15 +17,26 @@
 package org.jetbrains.kotlin.ir.declarations
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.ValueDescriptor
-import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.name.Name
 
-interface IrClass : IrSymbolDeclaration<IrClassSymbol>, IrDeclarationContainer, IrTypeParametersContainer {
-    override val declarationKind: IrDeclarationKind
-        get() = IrDeclarationKind.CLASS
-
+interface IrClass : IrSymbolDeclaration<IrClassSymbol>, IrDeclarationWithVisibility, IrDeclarationContainer, IrTypeParametersContainer {
     override val descriptor: ClassDescriptor
+
+    val name: Name
+    val kind: ClassKind
+    val modality: Modality
+    val isCompanion: Boolean
+    val isInner: Boolean
+    val isData: Boolean
+    val isExternal: Boolean
+    val isInline: Boolean
+
+    val superTypes: MutableList<IrType>
 
     var thisReceiver: IrValueParameter?
 }
@@ -39,15 +50,15 @@ fun IrClass.addAll(members: List<IrDeclaration>) {
 }
 
 fun IrClass.getInstanceInitializerMembers() =
-        declarations.filter {
-            when (it) {
-                is IrAnonymousInitializer ->
-                    true
-                is IrProperty ->
-                    it.backingField?.initializer != null
-                is IrField ->
-                    it.initializer != null
-                else -> false
-            }
+    declarations.filter {
+        when (it) {
+            is IrAnonymousInitializer ->
+                true
+            is IrProperty ->
+                it.backingField?.initializer != null
+            is IrField ->
+                it.initializer != null
+            else -> false
         }
+    }
 

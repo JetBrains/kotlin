@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 fun IntArray.swap(i:Int, j:Int) {
     val temp = this[i]
     this[i] = this[j]

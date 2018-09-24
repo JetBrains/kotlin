@@ -1,6 +1,12 @@
 3 class A(var <bold>n: Int</bold>) {
-4 	val <bold>x = n</bold>
-6 	val <bold>y: Int</bold>
-14 	fun bar(<bold>m: Int</bold>) {
-15 	val <bold>z = n</bold>
-21 	val <bold>z = A(1).n</bold>
+3 	int n = new A(1).<bold>getN</bold>();
+4 	val x = <bold>n</bold>
+4 		val <bold>x = n</bold>
+9 	y = <bold>n</bold>
+6 		val <bold>y: Int</bold>
+11 	bar(<bold>n</bold>)
+14 		fun bar(<bold>m: Int</bold>) {
+15 	val z = <bold>n</bold>
+15 		val <bold>z = n</bold>
+21 	val z = A(1).<bold>n</bold>
+21 		val <bold>z = A(1).n</bold>

@@ -1,0 +1,48 @@
+package
+
+public fun main(): kotlin.Unit
+
+@UnknownQualifierDefault public open class A {
+    public constructor A()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    @UnknownQualifierNicknameDefault public open class B {
+        public constructor B()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+        // Static members
+        @UnknownQualifier public open fun foo(/*0*/ @UnknownQualifierNickname x: kotlin.String!): kotlin.String!
+    }
+}
+
+@kotlin.annotation.MustBeDocumented @javax.annotation.meta.TypeQualifier @kotlin.annotation.Retention(value = AnnotationRetention.RUNTIME) public final annotation class UnknownQualifier : kotlin.Annotation {
+    public constructor UnknownQualifier()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+@kotlin.annotation.MustBeDocumented @javax.annotation.meta.TypeQualifierDefault(value = {ElementType.METHOD, ElementType.PARAMETER}) @UnknownQualifier @kotlin.annotation.Retention(value = AnnotationRetention.RUNTIME) public final annotation class UnknownQualifierDefault : kotlin.Annotation {
+    public constructor UnknownQualifierDefault()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+@kotlin.annotation.MustBeDocumented @javax.annotation.meta.TypeQualifierNickname @UnknownQualifier @kotlin.annotation.Retention(value = AnnotationRetention.RUNTIME) public final annotation class UnknownQualifierNickname : kotlin.Annotation {
+    public constructor UnknownQualifierNickname()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+@kotlin.annotation.MustBeDocumented @javax.annotation.meta.TypeQualifierDefault(value = {ElementType.METHOD, ElementType.PARAMETER}) @UnknownQualifierNickname @kotlin.annotation.Retention(value = AnnotationRetention.RUNTIME) public final annotation class UnknownQualifierNicknameDefault : kotlin.Annotation {
+    public constructor UnknownQualifierNicknameDefault()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

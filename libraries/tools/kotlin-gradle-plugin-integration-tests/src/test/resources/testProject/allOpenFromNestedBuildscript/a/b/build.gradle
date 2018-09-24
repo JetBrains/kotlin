@@ -1,0 +1,15 @@
+apply plugin: "kotlin"
+apply plugin: "kotlin-allopen"
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+allOpen {
+    annotation("AllOpen")
+}
+
+dependencies {
+    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+}

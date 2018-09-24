@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 // Name of the getter should be 'getaBcde' according to JavaBean conventions
 var aBcde: Int = 239
 

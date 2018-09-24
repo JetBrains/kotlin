@@ -37,6 +37,3 @@ package
 
 public fun test(): kotlin.Unit
 public inline fun testInline(): kotlin.Unit
-
-package p {
-}

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,10 @@ import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.findModuleDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
+import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.references.mainReference
+import org.jetbrains.kotlin.idea.resolve.frontendService
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelector
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
@@ -36,8 +39,10 @@ import org.jetbrains.kotlin.renderer.RenderingFormat
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.callUtil.getType
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
+import org.jetbrains.kotlin.types.expressions.typeInfoFactory.noTypeInfo
 
 class KotlinExpressionTypeProvider : ExpressionTypeProvider<KtExpression>() {
     private val typeRenderer = DescriptorRenderer.COMPACT_WITH_SHORT_TYPES.withOptions {
@@ -81,7 +86,7 @@ class KotlinExpressionTypeProvider : ExpressionTypeProvider<KtExpression>() {
     private fun KtExpression.shouldShowStatementType(): Boolean {
         if (parent !is KtBlockExpression) return true
         if (parent.children.lastOrNull() == this) {
-            return analyze(BodyResolveMode.PARTIAL)[BindingContext.USED_AS_EXPRESSION, this] ?: false
+            return analyze(BodyResolveMode.PARTIAL_WITH_CFA)[BindingContext.USED_AS_EXPRESSION, this] ?: false
         }
         return false
     }
@@ -106,12 +111,13 @@ class KotlinExpressionTypeProvider : ExpressionTypeProvider<KtExpression>() {
             }
         }
 
-        val expressionTypeInfo = bindingContext[BindingContext.EXPRESSION_TYPE_INFO, element] ?: return "Type is unknown"
+        val expressionTypeInfo = bindingContext[BindingContext.EXPRESSION_TYPE_INFO, element] ?: noTypeInfo(DataFlowInfo.EMPTY)
         val expressionType = element.getType(bindingContext)
         val result = expressionType?.let { typeRenderer.renderType(it) } ?: return "Type is unknown"
 
-        val dataFlowValue = DataFlowValueFactory.createDataFlowValue(element, expressionType, bindingContext, element.findModuleDescriptor())
-        val types = expressionTypeInfo.dataFlowInfo.getStableTypes(dataFlowValue)
+        val dataFlowValueFactory = element.getResolutionFacade().frontendService<DataFlowValueFactory>()
+        val dataFlowValue = dataFlowValueFactory.createDataFlowValue(element, expressionType, bindingContext, element.findModuleDescriptor())
+        val types = expressionTypeInfo.dataFlowInfo.getStableTypes(dataFlowValue, element.languageVersionSettings)
         if (!types.isEmpty()) {
             return types.joinToString(separator = " & ") { typeRenderer.renderType(it) } + " (smart cast from " + result + ")"
         }

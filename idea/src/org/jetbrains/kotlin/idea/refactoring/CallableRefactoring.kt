@@ -35,10 +35,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.core.getDeepestSuperDeclarations
 import org.jetbrains.kotlin.idea.core.getDirectlyOverriddenDeclarations
-import org.jetbrains.kotlin.idea.highlighter.markers.actualsForExpected
-import org.jetbrains.kotlin.idea.highlighter.markers.isExpectedOrExpectedClassMember
-import org.jetbrains.kotlin.idea.highlighter.markers.liftToExpected
-import org.jetbrains.kotlin.idea.util.getResolutionScope
+import org.jetbrains.kotlin.idea.util.*
 import org.jetbrains.kotlin.psi.KtBlockExpression
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtDeclarationWithBody
@@ -87,7 +84,7 @@ abstract class CallableRefactoring<out T: CallableDescriptor>(
         }
         val message = KotlinBundle.message("x.overrides.y.in.class.list",
                                            DescriptorRenderer.COMPACT.render(callableFromEditor),
-                                           callableFromEditor.containingDeclaration.name.asString(), superString,
+                                           superString,
                                            "refactor")
         val title = IdeBundle.message("title.warning")!!
         val icon = Messages.getQuestionIcon()
@@ -149,7 +146,7 @@ abstract class CallableRefactoring<out T: CallableDescriptor>(
 
         assert(!closestModifiableDescriptors.isEmpty()) { "Should contain original declaration or some of its super declarations" }
         val deepestSuperDeclarations =
-                (callableDescriptor as? CallableMemberDescriptor)?.let(CallableMemberDescriptor::getDeepestSuperDeclarations)
+                (callableDescriptor as? CallableMemberDescriptor)?.getDeepestSuperDeclarations()
                 ?: listOf(callableDescriptor)
         if (ApplicationManager.getApplication()!!.isUnitTestMode) {
             performRefactoring(deepestSuperDeclarations)
@@ -184,7 +181,7 @@ abstract class CallableRefactoring<out T: CallableDescriptor>(
 fun getAffectedCallables(project: Project, descriptorsForChange: Collection<CallableDescriptor>): List<PsiElement> {
     val baseCallables = descriptorsForChange.mapNotNull { DescriptorToSourceUtilsIde.getAnyDeclaration(project, it) }
     return baseCallables + baseCallables.flatMapTo(HashSet<PsiElement>()) { callable ->
-        if (callable is KtDeclaration && callable.isExpectedOrExpectedClassMember()) {
+        if (callable is KtDeclaration && callable.isExpectDeclaration()) {
             callable.actualsForExpected()
         }
         else {

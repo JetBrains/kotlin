@@ -1,4 +1,4 @@
-// "Add ''@Transient'' annotation" "true"
+// "Add ''@IgnoredOnParcel'' annotation" "true"
 // WITH_RUNTIME
 
 package com.myapp.activity

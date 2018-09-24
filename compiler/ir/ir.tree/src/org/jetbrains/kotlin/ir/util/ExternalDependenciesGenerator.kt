@@ -16,38 +16,54 @@
 
 package org.jetbrains.kotlin.ir.util
 
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
-import org.jetbrains.kotlin.ir.declarations.IrExternalPackageFragment
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
+import org.jetbrains.kotlin.resolve.BindingContext
 
-class ExternalDependenciesGenerator(val symbolTable: SymbolTable, val irBuiltIns: IrBuiltIns) {
-    private val stubGenerator = DeclarationStubGenerator(symbolTable, IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB)
+class ExternalDependenciesGenerator(
+    moduleDescriptor: ModuleDescriptor,
+    val symbolTable: SymbolTable,
+    val irBuiltIns: IrBuiltIns
+) {
+    private val stubGenerator = DeclarationStubGenerator(
+        moduleDescriptor, symbolTable, IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB, irBuiltIns.languageVersionSettings
+    )
 
-    fun generateUnboundSymbolsAsDependencies(irModule: IrModuleFragment) {
-        val collector = DependenciesCollector()
-        collector.collectTopLevelDescriptorsForUnboundSymbols(symbolTable)
-
-        collector.dependencyModules.mapTo(irModule.dependencyModules) { moduleDescriptor ->
-            generateModuleStub(collector, moduleDescriptor)
-        }
+    fun generateUnboundSymbolsAsDependencies(irModule: IrModuleFragment, bindingContext: BindingContext? = null) {
+        DependencyGenerationTask(irModule, bindingContext).run()
     }
 
-    private fun generateModuleStub(collector: DependenciesCollector, moduleDescriptor: ModuleDescriptor): IrModuleFragment =
-            stubGenerator.generateEmptyModuleFragmentStub(moduleDescriptor, irBuiltIns).also { irDependencyModule ->
-                collector.getPackageFragments(moduleDescriptor).mapTo(irDependencyModule.externalPackageFragments) { packageFragmentDescriptor ->
-                    generatePackageStub(packageFragmentDescriptor, collector.getTopLevelDescriptors(packageFragmentDescriptor))
-                }
+    private inner class DependencyGenerationTask(val irModule: IrModuleFragment, val bindingContext: BindingContext?) {
+
+        fun run() {
+            stubGenerator.unboundSymbolGeneration = true
+            ArrayList(symbolTable.unboundClasses).forEach {
+                stubGenerator.generateClassStub(it.descriptor)
+            }
+            ArrayList(symbolTable.unboundConstructors).forEach {
+                stubGenerator.generateConstructorStub(it.descriptor)
+            }
+            ArrayList(symbolTable.unboundEnumEntries).forEach {
+                stubGenerator.generateEnumEntryStub(it.descriptor)
+            }
+            ArrayList(symbolTable.unboundFields).forEach {
+                stubGenerator.generatePropertyStub(it.descriptor, bindingContext)
+            }
+            ArrayList(symbolTable.unboundSimpleFunctions).forEach {
+                stubGenerator.generateFunctionStub(it.descriptor)
+            }
+            ArrayList(symbolTable.unboundTypeParameters).forEach {
+                stubGenerator.generateOrGetTypeParameterStub(it.descriptor)
             }
 
-    private fun generatePackageStub(packageFragmentDescriptor: PackageFragmentDescriptor, topLevelDescriptors: Collection<DeclarationDescriptor>): IrExternalPackageFragment =
-            stubGenerator.generateEmptyExternalPackageFragmentStub(packageFragmentDescriptor).also { irExternalPackageFragment ->
-                topLevelDescriptors.mapTo(irExternalPackageFragment.declarations) {
-                    stubGenerator.generateMemberStub(it)
-                }
-            }
-
+            assert(symbolTable.unboundClasses.isEmpty())
+            assert(symbolTable.unboundConstructors.isEmpty())
+            assert(symbolTable.unboundEnumEntries.isEmpty())
+            assert(symbolTable.unboundFields.isEmpty())
+            assert(symbolTable.unboundSimpleFunctions.isEmpty())
+            assert(symbolTable.unboundTypeParameters.isEmpty())
+        }
+    }
 }

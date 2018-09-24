@@ -32,11 +32,16 @@ class CallableReferenceCompatibilityChecker : CallChecker {
         for ((_, resolvedArgument) in resolvedCall.valueArguments) {
             inner@ for (argument in resolvedArgument.arguments) {
                 val argumentExpression = argument.getArgumentExpression() as? KtCallableReferenceExpression ?: continue@inner
-                val callableReferenceResolvedCall = argumentExpression.callableReference.getResolvedCall(context.trace.bindingContext) ?: continue@inner
+                val callableReferenceResolvedCall =
+                    argumentExpression.callableReference.getResolvedCall(context.trace.bindingContext) ?: continue@inner
                 if (callableReferenceResolvedCall.call.isCallableReference() &&
                     callableReferenceResolvedCall.candidateDescriptor.typeParameters.isNotEmpty()) {
-                    context.trace.report(Errors.UNSUPPORTED_FEATURE.on(argumentExpression,
-                                                                       typeInferenceForCallableReferencesFeature to context.languageVersionSettings))
+                    context.trace.report(
+                        Errors.UNSUPPORTED_FEATURE.on(
+                            argumentExpression,
+                            typeInferenceForCallableReferencesFeature to context.languageVersionSettings
+                        )
+                    )
                 }
             }
         }

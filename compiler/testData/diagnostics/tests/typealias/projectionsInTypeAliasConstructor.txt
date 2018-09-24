@@ -10,4 +10,4 @@ public final class In</*0*/ in T> {
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
-public typealias InAlias</*0*/ T>  = In<T>
+public typealias InAlias</*0*/ T> = In<T>

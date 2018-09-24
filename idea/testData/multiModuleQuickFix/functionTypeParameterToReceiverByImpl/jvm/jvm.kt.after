@@ -1,5 +1,5 @@
 actual fun foo(n: Int, action: Int.() -> Int) = n.action()
 
-fun test() {
+fun test1() {
     foo(1) { this + 1 }
 }

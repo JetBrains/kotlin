@@ -25,12 +25,12 @@ import org.gradle.api.Project
 import org.gradle.tooling.model.idea.IdeaModule
 import org.jetbrains.kotlin.android.synthetic.AndroidCommandLineProcessor.Companion.ANDROID_COMPILER_PLUGIN_ID
 import org.jetbrains.kotlin.android.synthetic.AndroidCommandLineProcessor.Companion.DEFAULT_CACHE_IMPL_OPTION
-import org.jetbrains.kotlin.android.synthetic.AndroidCommandLineProcessor.Companion.EXPERIMENTAL_OPTION
 import org.jetbrains.kotlin.android.synthetic.AndroidCommandLineProcessor.Companion.ENABLED_OPTION
+import org.jetbrains.kotlin.android.synthetic.AndroidCommandLineProcessor.Companion.EXPERIMENTAL_OPTION
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.idea.configuration.GradleProjectImportHandler
 import org.jetbrains.kotlin.idea.facet.KotlinFacet
-import org.jetbrains.kotlin.psi.NotNullableUserDataProperty
+import org.jetbrains.kotlin.idea.util.NotNullableCopyableDataNodeUserDataProperty
 import org.jetbrains.plugins.gradle.model.data.GradleSourceSetData
 import org.jetbrains.plugins.gradle.service.project.AbstractProjectResolverExtension
 import org.jetbrains.plugins.gradle.tooling.ErrorMessageBuilder
@@ -39,16 +39,16 @@ import java.io.Serializable
 import java.lang.Exception
 
 var DataNode<ModuleData>.hasAndroidExtensionsPlugin: Boolean
-        by NotNullableUserDataProperty(Key.create<Boolean>("HAS_ANDROID_EXTENSIONS_PLUGIN"), false)
+        by NotNullableCopyableDataNodeUserDataProperty(Key.create<Boolean>("HAS_ANDROID_EXTENSIONS_PLUGIN"), false)
 
 var DataNode<ModuleData>.isExperimental: Boolean
-        by NotNullableUserDataProperty(Key.create<Boolean>("ANDROID_EXTENSIONS_IS_EXPERIMENTAL"), false)
+        by NotNullableCopyableDataNodeUserDataProperty(Key.create<Boolean>("ANDROID_EXTENSIONS_IS_EXPERIMENTAL"), false)
 
 private const val DEFAULT_CACHE_IMPLEMENTATION_DEFAULT_VALUE = "hashMap"
 
 var DataNode<ModuleData>.defaultCacheImplementation: String
-        by NotNullableUserDataProperty(Key.create<String>("ANDROID_EXTENSIONS_DEFAULT_CACHE_IMPL"),
-                                       DEFAULT_CACHE_IMPLEMENTATION_DEFAULT_VALUE)
+        by NotNullableCopyableDataNodeUserDataProperty(Key.create<String>("ANDROID_EXTENSIONS_DEFAULT_CACHE_IMPL"),
+                                                       DEFAULT_CACHE_IMPLEMENTATION_DEFAULT_VALUE)
 
 interface AndroidExtensionsGradleModel : Serializable {
     val hasAndroidExtensionsPlugin: Boolean

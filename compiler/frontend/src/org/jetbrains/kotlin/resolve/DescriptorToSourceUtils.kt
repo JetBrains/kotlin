@@ -23,12 +23,19 @@ import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.SYNTHESIZE
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.synthetic.SyntheticMemberDescriptor
 import org.jetbrains.kotlin.psi.KtAnnotationEntry
+import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.resolve.scopes.receivers.ExtensionReceiver
 import org.jetbrains.kotlin.resolve.source.getPsi
 import java.util.*
 
 object DescriptorToSourceUtils {
     private fun collectEffectiveReferencedDescriptors(result: MutableList<DeclarationDescriptor>, descriptor: DeclarationDescriptor) {
+        if (descriptor is DeclarationDescriptorWithNavigationSubstitute) {
+            collectEffectiveReferencedDescriptors(result, descriptor.substitute)
+            return
+        }
+
         if (descriptor is CallableMemberDescriptor) {
             val kind = descriptor.kind
             if (kind != DECLARATION && kind != SYNTHESIZED) {
@@ -45,17 +52,34 @@ object DescriptorToSourceUtils {
         result.add(descriptor)
     }
 
-    @JvmStatic fun getEffectiveReferencedDescriptors(descriptor: DeclarationDescriptor): Collection<DeclarationDescriptor> {
+    @JvmStatic
+    fun getEffectiveReferencedDescriptors(descriptor: DeclarationDescriptor): Collection<DeclarationDescriptor> {
         val result = ArrayList<DeclarationDescriptor>()
         collectEffectiveReferencedDescriptors(result, descriptor.original)
         return result
     }
 
-    @JvmStatic fun getSourceFromDescriptor(descriptor: DeclarationDescriptor): PsiElement? {
+    // TODO Fix in descriptor
+    @JvmStatic
+    private fun getSourceForExtensionReceiverParameterDescriptor(descriptor: ReceiverParameterDescriptor): PsiElement? {
+        // Only for extension receivers
+        if (descriptor.source != SourceElement.NO_SOURCE || descriptor.value !is ExtensionReceiver) return null
+        val containingDeclaration = descriptor.containingDeclaration as? CallableDescriptor ?: return null
+        val psi = containingDeclaration.source.getPsi() as? KtCallableDeclaration ?: return null
+        return psi.receiverTypeReference
+    }
+
+    @JvmStatic
+    fun getSourceFromDescriptor(descriptor: DeclarationDescriptor): PsiElement? {
+        if (descriptor is ReceiverParameterDescriptor) {
+            getSourceForExtensionReceiverParameterDescriptor(descriptor)?.let { return it }
+        }
+
         return (descriptor as? DeclarationDescriptorWithSource)?.source?.getPsi()
     }
 
-    @JvmStatic fun getSourceFromAnnotation(descriptor: AnnotationDescriptor): KtAnnotationEntry? {
+    @JvmStatic
+    fun getSourceFromAnnotation(descriptor: AnnotationDescriptor): KtAnnotationEntry? {
         return descriptor.source.getPsi() as? KtAnnotationEntry
     }
 
@@ -63,12 +87,14 @@ object DescriptorToSourceUtils {
     // Returns PSI element for descriptor. If there are many relevant elements (e.g. it is fake override
     // with multiple declarations), returns null. It can't find declarations in builtins or decompiled code.
     // In IDE, use DescriptorToSourceUtilsIde instead.
-    @JvmStatic fun descriptorToDeclaration(descriptor: DeclarationDescriptor): PsiElement? {
+    @JvmStatic
+    fun descriptorToDeclaration(descriptor: DeclarationDescriptor): PsiElement? {
         val effectiveReferencedDescriptors = getEffectiveReferencedDescriptors(descriptor)
         return if (effectiveReferencedDescriptors.size == 1) getSourceFromDescriptor(effectiveReferencedDescriptors.firstOrNull()!!) else null
     }
 
-    @JvmStatic fun getContainingFile(declarationDescriptor: DeclarationDescriptor): KtFile? {
+    @JvmStatic
+    fun getContainingFile(declarationDescriptor: DeclarationDescriptor): KtFile? {
         // declarationDescriptor may describe a synthesized element which doesn't have PSI
         // To workaround that, we find a top-level parent (which is inside a PackageFragmentDescriptor), which is guaranteed to have PSI
         val descriptor = findTopLevelParent(declarationDescriptor) ?: return null

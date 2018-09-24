@@ -1,7 +1,7 @@
 package test
 
 annotation class PrimitiveArrays(
-        val byteArray: ByteArray
+        val byteArray: ByteArray,
         val charArray: CharArray,
         val shortArray: ShortArray,
         val intArray: IntArray,

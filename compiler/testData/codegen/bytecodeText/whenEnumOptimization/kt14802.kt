@@ -24,4 +24,4 @@ fun box(): String {
     return res
 }
 
-// 1 LOOKUPSWITCH
+// 1 TABLESWITCH

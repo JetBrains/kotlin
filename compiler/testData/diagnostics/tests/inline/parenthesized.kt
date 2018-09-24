@@ -22,6 +22,6 @@ inline fun inlineFunWithInvoke2(s: (p: Int) -> Unit) {
 }
 
 inline fun propagation(s: (p: Int) -> Unit) {
-    inlineFunWithInvoke((label@ s))
-    inlineFunWithInvoke((label2@ label@ s))
+    inlineFunWithInvoke((<!REDUNDANT_LABEL_WARNING!>label@<!> s))
+    inlineFunWithInvoke((<!REDUNDANT_LABEL_WARNING!>label2@<!> <!REDUNDANT_LABEL_WARNING!>label@<!> s))
 }

@@ -29,7 +29,7 @@ import java.util.Collections;
 import java.util.List;
 
 public abstract class PropertyAccessorDescriptorImpl extends DeclarationDescriptorNonRootImpl implements PropertyAccessorDescriptor {
-    private final boolean isDefault;
+    private boolean isDefault;
     private final boolean isExternal;
     private final Modality modality;
     private final PropertyDescriptor correspondingProperty;
@@ -64,6 +64,10 @@ public abstract class PropertyAccessorDescriptorImpl extends DeclarationDescript
     @Override
     public boolean isDefault() {
         return isDefault;
+    }
+
+    public void setDefault(boolean aDefault) {
+        isDefault = aDefault;
     }
 
     @NotNull

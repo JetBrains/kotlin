@@ -1,4 +1,4 @@
-// LANGUAGE_VERSION: 1.2
+// !LANGUAGE: +ProperVisibilityForCompanionObjectInstanceField
 
 class TestPrivateCompanion {
     private companion object Test

@@ -1,0 +1,29 @@
+package
+
+public fun test(): kotlin.Unit
+public operator fun Bar.getValue(/*0*/ nothing: kotlin.Any?, /*1*/ property: kotlin.reflect.KProperty<*>): kotlin.Any
+public operator fun Baz.getValue(/*0*/ nothing: kotlin.Any?, /*1*/ property: kotlin.reflect.KProperty<*>): kotlin.Any
+public operator fun Foo.getValue(/*0*/ nothing: kotlin.Any?, /*1*/ property: kotlin.reflect.KProperty<*>): kotlin.Any
+public operator fun Bar.provideDelegate(/*0*/ receiver: kotlin.Any?, /*1*/ property: kotlin.reflect.KProperty<*>): Bar
+public operator fun Foo.provideDelegate(/*0*/ receiver: kotlin.Any?, /*1*/ property: kotlin.reflect.KProperty<*>): Foo
+
+public object Bar {
+    private constructor Bar()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public object Baz {
+    private constructor Baz()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public object Foo {
+    private constructor Foo()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

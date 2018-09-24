@@ -25,7 +25,7 @@ import com.intellij.psi.PsiManager
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.idea.completion.test.AbstractJvmBasicCompletionTest
 import org.jetbrains.kotlin.idea.completion.test.testCompletion
-import org.jetbrains.kotlin.idea.test.JdkAndMockLibraryProjectDescriptor
+import org.jetbrains.kotlin.idea.test.SdkAndMockLibraryProjectDescriptor
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.KtPsiFactory
@@ -37,11 +37,11 @@ private val LIBRARY_SRC_PATH = KotlinTestUtils.getHomeDirectory() + "/idea/idea-
 
 class CodeFragmentCompletionInLibraryTest : AbstractJvmBasicCompletionTest() {
 
-    override fun getProjectDescriptor() = object: JdkAndMockLibraryProjectDescriptor(LIBRARY_SRC_PATH, false) {
+    override fun getProjectDescriptor() = object: SdkAndMockLibraryProjectDescriptor(LIBRARY_SRC_PATH, false) {
         override fun configureModule(module: Module, model: ModifiableRootModel) {
             super.configureModule(module, model)
 
-            val library = model.moduleLibraryTable.getLibraryByName(JdkAndMockLibraryProjectDescriptor.LIBRARY_NAME)!!
+            val library = model.moduleLibraryTable.getLibraryByName(SdkAndMockLibraryProjectDescriptor.LIBRARY_NAME)!!
             val modifiableModel = library.modifiableModel
 
             modifiableModel.addRoot(findLibrarySourceDir(), OrderRootType.SOURCES)

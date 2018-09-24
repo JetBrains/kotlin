@@ -22,11 +22,11 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
+import org.jetbrains.kotlin.idea.resolve.frontendService
 import org.jetbrains.kotlin.idea.util.getImplicitReceiversWithInstance
 import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfoAfter
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfoBefore
 import org.jetbrains.kotlin.resolve.calls.smartcasts.*
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
@@ -34,6 +34,8 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
+import org.jetbrains.kotlin.util.javaslang.component1
+import org.jetbrains.kotlin.util.javaslang.component2
 import java.util.*
 
 class SmartCastCalculator(
@@ -43,6 +45,8 @@ class SmartCastCalculator(
         receiver: KtExpression?,
         resolutionFacade: ResolutionFacade
 ) {
+    private val dataFlowValueFactory = resolutionFacade.frontendService<DataFlowValueFactory>()
+
     // keys are VariableDescriptor's and ThisReceiver's
     private val entityToSmartCastInfo: Map<Any, SmartCastInfo> = processDataFlowInfo(
             bindingContext.getDataFlowInfoBefore(contextElement),
@@ -82,7 +86,7 @@ class SmartCastCalculator(
         val dataFlowValueToEntity: (DataFlowValue) -> Any?
         if (receiver != null) {
             val receiverType = bindingContext.getType(receiver) ?: return emptyMap()
-            val receiverIdentifierInfo = DataFlowValueFactory.createDataFlowValue(
+            val receiverIdentifierInfo = dataFlowValueFactory.createDataFlowValue(
                     receiver, receiverType, bindingContext, containingDeclarationOrModule
             ).identifierInfo
             dataFlowValueToEntity = { value ->
@@ -116,10 +120,10 @@ class SmartCastCalculator(
 
         val entityToInfo = HashMap<Any, SmartCastInfo>()
 
-        for ((dataFlowValue, types) in dataFlowInfo.completeTypeInfo.asMap().entries) {
+        for ((dataFlowValue, types) in dataFlowInfo.completeTypeInfo) {
             val entity = dataFlowValueToEntity.invoke(dataFlowValue)
             if (entity != null) {
-                entityToInfo[entity] = SmartCastInfo(types, false)
+                entityToInfo[entity] = SmartCastInfo(types.toJavaList(), false)
             }
         }
 

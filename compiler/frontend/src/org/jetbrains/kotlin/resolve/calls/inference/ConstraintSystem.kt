@@ -60,7 +60,7 @@ interface ConstraintSystem {
          * to the corresponding types of variables of the system. Use that substitutor to provide constraints to the system
          */
         fun registerTypeVariables(
-                call: CallHandle, typeParameters: Collection<TypeParameterDescriptor>, external: Boolean = false
+            call: CallHandle, typeParameters: Collection<TypeParameterDescriptor>, external: Boolean = false
         ): TypeSubstitutor
 
         /**

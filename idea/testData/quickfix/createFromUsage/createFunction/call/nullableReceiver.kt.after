@@ -1,0 +1,8 @@
+// "Create extension function 'String?.notExistingFun'" "true"
+fun context(p: String?) {
+    p.notExistingFun()
+}
+
+private fun String?.notExistingFun() {
+    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+}

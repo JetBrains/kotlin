@@ -1,39 +1,32 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.resolve.calls.inference.model
 
+import org.jetbrains.kotlin.resolve.calls.inference.components.NewTypeSubstitutor
 import org.jetbrains.kotlin.resolve.calls.inference.trimToSize
 import org.jetbrains.kotlin.resolve.calls.model.KotlinCallDiagnostic
+import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
 import org.jetbrains.kotlin.types.TypeConstructor
 import org.jetbrains.kotlin.types.UnwrappedType
-import java.util.*
 import kotlin.collections.ArrayList
+import kotlin.collections.LinkedHashMap
 
 
 class MutableVariableWithConstraints(
-        override val typeVariable: NewTypeVariable,
-        constraints: Collection<Constraint> = emptyList()
+    override val typeVariable: NewTypeVariable,
+    constraints: Collection<Constraint> = emptyList()
 ) : VariableWithConstraints {
-    override val constraints: List<Constraint> get() {
-        if (simplifiedConstraints == null) {
-            simplifiedConstraints = simplifyConstraints()
+    override val constraints: List<Constraint>
+        get() {
+            if (simplifiedConstraints == null) {
+                simplifiedConstraints = simplifyConstraints()
+            }
+            return simplifiedConstraints!!
         }
-        return simplifiedConstraints!!
-    }
+
     private val mutableConstraints = ArrayList(constraints)
 
     private var simplifiedConstraints: List<Constraint>? = null
@@ -49,8 +42,7 @@ class MutableVariableWithConstraints(
         val actualConstraint = if (previousConstraintWithSameType.isNotEmpty()) {
             // i.e. previous is LOWER and new is UPPER or opposite situation
             Constraint(ConstraintKind.EQUALITY, constraint.type, constraint.position, constraint.typeHashCode)
-        }
-        else {
+        } else {
             constraint
         }
         mutableConstraints.add(actualConstraint)
@@ -72,16 +64,16 @@ class MutableVariableWithConstraints(
     }
 
     private fun newConstraintIsUseless(oldKind: ConstraintKind, newKind: ConstraintKind) =
-            when (oldKind) {
-                ConstraintKind.EQUALITY -> true
-                ConstraintKind.LOWER -> newKind == ConstraintKind.LOWER
-                ConstraintKind.UPPER -> newKind == ConstraintKind.UPPER
-            }
+        when (oldKind) {
+            ConstraintKind.EQUALITY -> true
+            ConstraintKind.LOWER -> newKind == ConstraintKind.LOWER
+            ConstraintKind.UPPER -> newKind == ConstraintKind.UPPER
+        }
 
     private fun simplifyConstraints(): List<Constraint> {
         val equalityConstraints = mutableConstraints
-                .filter { it.kind == ConstraintKind.EQUALITY }
-                .groupBy { it.typeHashCode }
+            .filter { it.kind == ConstraintKind.EQUALITY }
+            .groupBy { it.typeHashCode }
         return mutableConstraints.filter { isUsefulConstraint(it, equalityConstraints) }
     }
 
@@ -102,5 +94,7 @@ internal class MutableConstraintStorage : ConstraintStorage {
     override val initialConstraints: MutableList<InitialConstraint> = ArrayList()
     override var maxTypeDepthFromInitialConstraints: Int = 1
     override val errors: MutableList<KotlinCallDiagnostic> = ArrayList()
+    override val hasContradiction: Boolean get() = errors.any { !it.candidateApplicability.isSuccess }
     override val fixedTypeVariables: MutableMap<TypeConstructor, UnwrappedType> = LinkedHashMap()
+    override val postponedTypeVariables: ArrayList<NewTypeVariable> = ArrayList()
 }

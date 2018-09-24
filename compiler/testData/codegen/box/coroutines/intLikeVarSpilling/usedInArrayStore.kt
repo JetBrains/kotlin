@@ -1,12 +1,15 @@
+// IGNORE_BACKEND: JS_IR
+// IGNORE_BACKEND: JVM_IR
 // WITH_RUNTIME
 // WITH_COROUTINES
+// COMMON_COROUTINES_TEST
 import helpers.*
 // TARGET_BACKEND: JVM
-import kotlin.coroutines.experimental.*
-import kotlin.coroutines.experimental.intrinsics.*
+import COROUTINES_PACKAGE.*
+import COROUTINES_PACKAGE.intrinsics.*
 
 class Controller {
-    suspend fun suspendHere(): Unit = suspendCoroutineOrReturn { x ->
+    suspend fun suspendHere(): Unit = suspendCoroutineUninterceptedOrReturn { x ->
         x.resume(Unit)
         COROUTINE_SUSPENDED
     }

@@ -20,14 +20,14 @@ import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.InstructionWithValue
 
 class PseudoValueImpl(
-        override val debugName: String,
-        override val element: KtElement?,
-        override val createdAt: InstructionWithValue?
+    override val debugName: String,
+    override val element: KtElement?,
+    override val createdAt: InstructionWithValue?
 ) : PseudoValue {
     override fun toString(): String = debugName
 }
 
-open class PseudoValueFactoryImpl: PseudoValueFactory {
+open class PseudoValueFactoryImpl : PseudoValueFactory {
     private var lastIndex: Int = 0
 
     override fun newValue(element: KtElement?, instruction: InstructionWithValue?): PseudoValue {

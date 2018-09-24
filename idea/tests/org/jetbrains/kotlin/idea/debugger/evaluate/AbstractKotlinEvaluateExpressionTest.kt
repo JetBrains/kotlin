@@ -84,6 +84,7 @@ abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestBase() {
             override fun append(event: LoggingEvent?) {
                 println(event?.renderedMessage, ProcessOutputTypes.SYSTEM)
             }
+
             override fun close() {}
             override fun requiresLayout() = false
         }
@@ -149,7 +150,7 @@ abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestBase() {
                 }
             }
             finally {
-               if (shouldPrintFrame) {
+                if (shouldPrintFrame) {
                     printFrame(variablesView!!, watchesView!!, PrinterConfig(skipInPrintFrame, descriptorViewOptions))
                     println(fileText, ProcessOutputTypes.SYSTEM)
                 }
@@ -194,7 +195,7 @@ abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestBase() {
     }
 
     private fun createWatchesView(): XWatchesViewImpl {
-        val session = myDebuggerSession.xDebugSession  as XDebugSessionImpl
+        val session = myDebuggerSession.xDebugSession as XDebugSessionImpl
         val watchesView = XWatchesViewImpl(session, false)
         Disposer.register(testRootDisposable, watchesView)
         XDebugViewSessionListener.attach(watchesView, session)
@@ -248,7 +249,7 @@ abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestBase() {
         }
 
         fun shouldRenderSourcesPosition(): Boolean {
-            return when(viewOptions) {
+            return when (viewOptions) {
                 DescriptorViewOptions.FULL -> true
                 else -> false
             }
@@ -270,7 +271,7 @@ abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestBase() {
         }
 
         fun shouldComputeResultOfCreateExpression(): Boolean {
-           return viewOptions == DescriptorViewOptions.NAME_EXPRESSION_RESULT
+            return viewOptions == DescriptorViewOptions.NAME_EXPRESSION_RESULT
         }
     }
 
@@ -429,7 +430,7 @@ abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestBase() {
 
         for (labelAsText in labelsAsText) {
             val labelParts = labelAsText.split("=")
-            assert(labelParts.size == 2) { "Wrong format for DEBUG_LABEL directive: // DEBUG_LABEL: {localVariableName} = {labelText}"}
+            assert(labelParts.size == 2) { "Wrong format for DEBUG_LABEL directive: // DEBUG_LABEL: {localVariableName} = {labelText}" }
             val localVariableName = labelParts[0].trim()
             val labelName = labelParts[1].trim()
             val localVariable = debuggerContext.frameProxy!!.visibleVariableByName(localVariableName)
@@ -464,13 +465,20 @@ abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestBase() {
                     val value = evaluator.evaluate(this@AbstractKotlinEvaluateExpressionTest.evaluationContext)
                     val actualResult = value.asValue().asString()
                     if (expectedResult != null) {
-                        Assert.assertTrue("Evaluate expression returns wrong result for ${item.text}:" +
-                                          "\nexpected = $expectedResult\nactual   = $actualResult\n", expectedResult == actualResult)
+                        Assert.assertEquals(
+                                "Evaluate expression returns wrong result for ${item.text}:\n" +
+                                "expected = $expectedResult\n" +
+                                "actual   = $actualResult\n",
+                                expectedResult, actualResult)
                     }
                 }
                 catch (e: EvaluateException) {
-                    Assert.assertTrue("Evaluate expression throws wrong exception for ${item.text}:" +
-                                      "\nexpected = $expectedResult\nactual   = ${e.message}\n", expectedResult == e.message?.replaceFirst(ID_PART_REGEX, "id=ID"))
+                    val expectedMessage = e.message?.replaceFirst(ID_PART_REGEX, "id=ID")
+                    Assert.assertEquals(
+                            "Evaluate expression throws wrong exception for ${item.text}:\n" +
+                            "expected = $expectedResult\n" +
+                            "actual   = $expectedMessage\n",
+                            expectedResult, expectedMessage)
                 }
             }
         }
@@ -479,7 +487,8 @@ abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestBase() {
     private fun SuspendContextImpl.runActionInSuspendCommand(action: SuspendContextImpl.() -> Unit) {
         if (myInProgress) {
             action()
-        } else {
+        }
+        else {
             val command = object : SuspendContextCommandImpl(this) {
                 override fun contextAction(suspendContext: SuspendContextImpl) {
                     action(suspendContext)

@@ -20,13 +20,13 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.incremental.ProtoCompareGenerated.ProtoBufClassKind
 import org.jetbrains.kotlin.incremental.ProtoCompareGenerated.ProtoBufPackageKind
 import org.jetbrains.kotlin.incremental.storage.ProtoMapValue
+import org.jetbrains.kotlin.metadata.ProtoBuf
+import org.jetbrains.kotlin.metadata.deserialization.Flags
+import org.jetbrains.kotlin.metadata.deserialization.NameResolver
+import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.protobuf.MessageLite
-import org.jetbrains.kotlin.serialization.Flags
-import org.jetbrains.kotlin.serialization.ProtoBuf
-import org.jetbrains.kotlin.serialization.deserialization.Deserialization
-import org.jetbrains.kotlin.serialization.deserialization.NameResolver
-import org.jetbrains.kotlin.serialization.jvm.JvmProtoBufUtil
+import org.jetbrains.kotlin.serialization.deserialization.ProtoEnumFlags
 import java.util.*
 
 data class Difference(
@@ -41,16 +41,15 @@ data class PackagePartProtoData(val proto: ProtoBuf.Package, val nameResolver: N
 
 fun ProtoMapValue.toProtoData(packageFqName: FqName): ProtoData =
     if (isPackageFacade) {
-        val packageData = JvmProtoBufUtil.readPackageDataFrom(bytes, strings)
-        PackagePartProtoData(packageData.packageProto, packageData.nameResolver, packageFqName)
-    }
-    else {
-        val classData = JvmProtoBufUtil.readClassDataFrom(bytes, strings)
-        ClassProtoData(classData.classProto, classData.nameResolver)
+        val (nameResolver, packageProto) = JvmProtoBufUtil.readPackageDataFrom(bytes, strings)
+        PackagePartProtoData(packageProto, nameResolver, packageFqName)
+    } else {
+        val (nameResolver, classProto) = JvmProtoBufUtil.readClassDataFrom(bytes, strings)
+        ClassProtoData(classProto, nameResolver)
     }
 
 internal val MessageLite.isPrivate: Boolean
-    get() = Visibilities.isPrivate(Deserialization.visibility(
+    get() = Visibilities.isPrivate(ProtoEnumFlags.visibility(
             when (this) {
                 is ProtoBuf.Constructor -> Flags.VISIBILITY.get(flags)
                 is ProtoBuf.Function -> Flags.VISIBILITY.get(flags)
@@ -224,8 +223,8 @@ class DifferenceCalculatorForClass(
                 ProtoBufClassKind.TYPE_TABLE -> {
                     // TODO
                 }
-                ProtoCompareGenerated.ProtoBufClassKind.SINCE_KOTLIN_INFO,
-                ProtoCompareGenerated.ProtoBufClassKind.SINCE_KOTLIN_INFO_TABLE -> {
+                ProtoCompareGenerated.ProtoBufClassKind.VERSION_REQUIREMENT_LIST,
+                ProtoCompareGenerated.ProtoBufClassKind.VERSION_REQUIREMENT_TABLE -> {
                     // TODO
                 }
                 ProtoBufClassKind.FLAGS,
@@ -243,6 +242,16 @@ class DifferenceCalculatorForClass(
                 }
                 ProtoBufClassKind.JVM_EXT_CLASS_LOCAL_VARIABLE_LIST -> {
                     // Not affected, local variables are not accessible outside of a file
+                }
+                ProtoBufClassKind.JAVA_EXT_IS_PACKAGE_PRIVATE_CLASS -> {
+                    isClassAffected = true
+                    areSubclassesAffected = true
+                }
+                ProtoBufClassKind.BUILT_INS_EXT_CLASS_ANNOTATION_LIST -> {
+                    isClassAffected = true
+                }
+                ProtoCompareGenerated.ProtoBufClassKind.JVM_EXT_ANONYMOUS_OBJECT_ORIGIN_NAME -> {
+                    // Not affected, this extension is not used in the compiler
                 }
             }
         }
@@ -281,13 +290,16 @@ class DifferenceCalculatorForPackageFacade(
                 ProtoBufPackageKind.TYPE_ALIAS_LIST ->
                     names.addAll(calcDifferenceForNonPrivateMembers(ProtoBuf.Package::getTypeAliasList))
                 ProtoBufPackageKind.TYPE_TABLE,
-                ProtoBufPackageKind.SINCE_KOTLIN_INFO_TABLE,
+                ProtoBufPackageKind.VERSION_REQUIREMENT_TABLE,
                 ProtoBufPackageKind.JVM_EXT_PACKAGE_MODULE_NAME,
                 ProtoBufPackageKind.JS_EXT_PACKAGE_FQ_NAME-> {
                     // TODO
                 }
                 ProtoBufPackageKind.JVM_EXT_PACKAGE_LOCAL_VARIABLE_LIST -> {
                     // Not affected, local variables are not accessible outside of a file
+                }
+                ProtoBufPackageKind.BUILT_INS_EXT_PACKAGE_FQ_NAME -> {
+                    // Not affected
                 }
             }
         }

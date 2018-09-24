@@ -1,5 +1,16 @@
+// IGNORE_BACKEND: JVM_IR
+typealias ArrayS = Array<String>
+
 fun testArray() {
     Array<String>(5) { i ->
+        if (i == 3) return
+        i.toString()
+    }
+    throw AssertionError()
+}
+
+fun testArrayAlias() {
+    ArrayS(5) { i ->
         if (i == 3) return
         i.toString()
     }
@@ -56,6 +67,7 @@ fun testDoubleArray() {
 
 fun box(): String {
     testArray()
+    testArrayAlias()
     testIntArray()
     testLongArray()
     testBooleanArray()

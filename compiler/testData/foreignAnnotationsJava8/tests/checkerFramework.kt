@@ -1,4 +1,5 @@
 // !DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER
+// SKIP_COMPILED_JAVA
 // FILE: A.java
 
 import org.checkerframework.checker.nullness.qual.*;

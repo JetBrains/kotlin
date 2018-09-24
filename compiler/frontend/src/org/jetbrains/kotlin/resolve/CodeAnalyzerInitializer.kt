@@ -24,14 +24,14 @@ import org.jetbrains.kotlin.resolve.lazy.KotlinCodeAnalyzer
 interface CodeAnalyzerInitializer {
     fun initialize(trace: BindingTrace, module: ModuleDescriptor, codeAnalyzer: KotlinCodeAnalyzer)
     fun createTrace(): BindingTrace
-    
+
     companion object {
         fun getInstance(project: Project): CodeAnalyzerInitializer =
-                ServiceManager.getService<CodeAnalyzerInitializer>(project, CodeAnalyzerInitializer::class.java)!!
+            ServiceManager.getService<CodeAnalyzerInitializer>(project, CodeAnalyzerInitializer::class.java)!!
     }
 }
 
-class DummyCodeAnalyzerInitializer: CodeAnalyzerInitializer {
+class DummyCodeAnalyzerInitializer : CodeAnalyzerInitializer {
     override fun initialize(trace: BindingTrace, module: ModuleDescriptor, codeAnalyzer: KotlinCodeAnalyzer) {
         // Do nothing
     }

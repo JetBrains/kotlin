@@ -1,0 +1,12 @@
+package
+
+public val b: kotlin.Any
+public val bb: () -> kotlin.Boolean
+public val bbb: (() -> kotlin.Boolean)?
+public val bbbb: (() -> kotlin.Boolean)?
+public val n: () -> kotlin.Boolean
+public val v: () -> kotlin.Boolean
+public val w: () -> kotlin.Boolean
+public val ww: () -> kotlin.Boolean
+public fun f(/*0*/ x: kotlin.Long?): kotlin.Long
+public fun l(): (() -> kotlin.Boolean)?

@@ -1,0 +1,13 @@
+package
+
+public fun getBool(): kotlin.Boolean
+public inline fun </*0*/ T> myRun(/*0*/ block: () -> T): T
+    CallsInPlace(block, EXACTLY_ONCE)
+
+public fun threeLevelsReturnNoInitialization(/*0*/ x: kotlin.Int?): kotlin.Int?
+public fun threeLevelsReturnWithInitialization(/*0*/ x: kotlin.Int?): kotlin.Int?
+public fun threeLevelsReturnWithUnknown(/*0*/ x: kotlin.Int?): kotlin.Int?
+public inline fun unknownRun(/*0*/ block: () -> kotlin.Unit): kotlin.Unit
+public inline fun </*0*/ T, /*1*/ R> T.myLet(/*0*/ block: (T) -> R): R
+    CallsInPlace(block, EXACTLY_ONCE)
+

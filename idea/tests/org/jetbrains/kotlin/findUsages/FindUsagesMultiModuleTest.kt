@@ -16,29 +16,44 @@
 
 package org.jetbrains.kotlin.findUsages
 
-import org.jetbrains.kotlin.config.JvmTarget
-import org.jetbrains.kotlin.config.TargetPlatformKind
-import org.jetbrains.kotlin.idea.stubs.createFacet
+import org.jetbrains.kotlin.idea.multiplatform.setupMppProjectFromDirStructure
 import org.junit.Test
+import java.io.File
 
 class FindUsagesMultiModuleTest : AbstractFindUsagesMultiModuleTest() {
 
-    private fun doMultiPlatformTest(commonName: String = "common",
-                                    implName: String = "jvm",
-                                    implKind: TargetPlatformKind<*> = TargetPlatformKind.Jvm[JvmTarget.JVM_1_6]) {
-        val commonModule = module(commonName)
-        commonModule.createFacet(TargetPlatformKind.Common)
+    @Test
+    fun testFindActualInterface() {
+        doTest()
+    }
 
-        val jvm = module(implName)
-        jvm.createFacet(implKind)
-        jvm.enableMultiPlatform()
-        jvm.addDependency(commonModule)
+    @Test
+    fun testFindCommonClassFromActual() {
+        doTest()
+    }
 
-        doFindUsagesTest()
+    @Test
+    fun testFindCommonFromActual() {
+        doTest()
+    }
+
+    @Test
+    fun testFindCommonPropertyFromActual() {
+        doTest()
+    }
+
+    @Test
+    fun testFindCommonSuperclass() {
+        doTest()
     }
 
     @Test
     fun testFindImplFromHeader() {
-        doMultiPlatformTest()
+        doTest()
+    }
+
+    private fun doTest() {
+        setupMppProjectFromDirStructure(File(testDataPath + getTestName(true).removePrefix("test")))
+        doFindUsagesTest()
     }
 }

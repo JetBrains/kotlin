@@ -21,7 +21,7 @@ import java.io.File
 
 abstract class AbstractOutputPrefixPostfixTest : BasicBoxTest(
         BasicBoxTest.TEST_DATA_DIR_PATH + "outputPrefixPostfix/",
-        "${BasicBoxTest.TEST_DATA_DIR_PATH}/out/outputPrefixPostfix/",
+        "outputPrefixPostfix/",
         generateNodeJsRunner = false
 ) {
     override fun getOutputPrefixFile(testFilePath: String): File? {

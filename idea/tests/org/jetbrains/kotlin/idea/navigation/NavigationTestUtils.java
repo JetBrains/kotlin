@@ -33,8 +33,10 @@ import com.intellij.testFramework.fixtures.CodeInsightTestUtil;
 import com.intellij.util.PathUtil;
 import com.intellij.util.containers.MultiMap;
 import junit.framework.TestCase;
+import kotlin.collections.ArraysKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.asJava.LightClassUtilsKt;
 import org.jetbrains.kotlin.test.InTextDirectivesUtils;
 import org.jetbrains.kotlin.test.util.ReferenceUtils;
 import org.junit.Assert;
@@ -50,6 +52,10 @@ public final class NavigationTestUtils {
     }
 
     public static void assertGotoDataMatching(Editor editor, GotoTargetHandler.GotoData gotoData) {
+        assertGotoDataMatching(editor, gotoData, false);
+    }
+
+    public static void assertGotoDataMatching(Editor editor, GotoTargetHandler.GotoData gotoData, boolean renderModule) {
         // Get expected references from the tested document
         List<String> expectedReferences = InTextDirectivesUtils.findListWithPrefixes(editor.getDocument().getText(), "// REF:");
         for (int i = 0; i < expectedReferences.size(); i++) {
@@ -64,12 +70,13 @@ public final class NavigationTestUtils {
         Collections.sort(expectedReferences);
 
         if (gotoData != null) {
+            List<PsiElement> distinctTargets = ArraysKt.distinctBy(gotoData.targets, element -> LightClassUtilsKt.getUnwrapped(element));
             // Transform given reference result to strings
-            List<String> psiElements = Lists.transform(Arrays.asList(gotoData.targets), new Function<PsiElement, String>() {
+            List<String> psiElements = Lists.transform(distinctTargets, new Function<PsiElement, String>() {
                 @Override
                 public String apply(@Nullable PsiElement element) {
                     Assert.assertNotNull(element);
-                    return ReferenceUtils.renderAsGotoImplementation(element);
+                    return ReferenceUtils.renderAsGotoImplementation(element, renderModule);
                 }
             });
 

@@ -1,0 +1,3 @@
+package
+
+public fun lambda(/*0*/ x: kotlin.Int?): [ERROR : Error function type]

@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 1004
+// EXPECTED_REACHABLE_NODES: 1284
 class A {
     var log = ""
 

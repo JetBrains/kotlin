@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.incremental
 
 import java.io.*
 
-internal data class BuildInfo(val startTS: Long) : Serializable {
+data class BuildInfo(val startTS: Long) : Serializable {
     companion object {
         fun read(file: File): BuildInfo? =
                 try {

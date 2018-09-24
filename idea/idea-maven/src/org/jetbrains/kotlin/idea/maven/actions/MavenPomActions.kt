@@ -33,11 +33,15 @@ import org.jetbrains.kotlin.idea.maven.configuration.KotlinMavenConfigurator
 import org.jetbrains.kotlin.idea.versions.MAVEN_STDLIB_ID
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 
-class GenerateMavenCompileExecutionAction : PomFileActionBase(KotlinMavenExecutionProvider(PomFile.KotlinGoals.Compile, PomFile.DefaultPhases.Compile))
-class GenerateMavenTestCompileExecutionAction : PomFileActionBase(KotlinMavenExecutionProvider(PomFile.KotlinGoals.TestCompile, PomFile.DefaultPhases.TestCompile))
+class GenerateMavenCompileExecutionAction :
+    PomFileActionBase(KotlinMavenExecutionProvider(PomFile.KotlinGoals.Compile, PomFile.DefaultPhases.Compile))
+
+class GenerateMavenTestCompileExecutionAction :
+    PomFileActionBase(KotlinMavenExecutionProvider(PomFile.KotlinGoals.TestCompile, PomFile.DefaultPhases.TestCompile))
+
 class GenerateMavenPluginAction : PomFileActionBase(KotlinMavenPluginProvider())
 
-private val DefaultKotlinVersion = "\${kotlin.version}"
+private const val DefaultKotlinVersion = "\${kotlin.version}"
 
 open class PomFileActionBase(generateProvider: AbstractDomGenerateProvider<*>) : GenerateDomElementAction(generateProvider) {
     override fun isValidForFile(project: Project, editor: Editor, file: PsiFile): Boolean {
@@ -47,7 +51,8 @@ open class PomFileActionBase(generateProvider: AbstractDomGenerateProvider<*>) :
     override fun startInWriteAction() = true
 }
 
-private class KotlinMavenPluginProvider : AbstractDomGenerateProvider<MavenDomPlugin>("kotlin-maven-plugin-provider", MavenDomPlugin::class.java) {
+private class KotlinMavenPluginProvider :
+    AbstractDomGenerateProvider<MavenDomPlugin>("kotlin-maven-plugin-provider", MavenDomPlugin::class.java) {
 
     override fun generate(parent: DomElement?, editor: Editor?): MavenDomPlugin? {
         if (parent !is MavenDomProjectModel) {
@@ -82,7 +87,8 @@ private class KotlinMavenPluginProvider : AbstractDomGenerateProvider<MavenDomPl
     }
 }
 
-private class KotlinMavenExecutionProvider(val goal: String, val phase: String) : AbstractDomGenerateProvider<MavenDomPlugin>("kotlin-maven-execution-provider", MavenDomPlugin::class.java) {
+private class KotlinMavenExecutionProvider(val goal: String, val phase: String) :
+    AbstractDomGenerateProvider<MavenDomPlugin>("kotlin-maven-execution-provider", MavenDomPlugin::class.java) {
 
     override fun generate(parent: DomElement?, editor: Editor?): MavenDomPlugin? {
         if (parent !is MavenDomPlugin) {
@@ -99,7 +105,7 @@ private class KotlinMavenExecutionProvider(val goal: String, val phase: String) 
         return parent
     }
 
-    override fun getElementToNavigate(t: MavenDomPlugin?) = null
+    override fun getElementToNavigate(t: MavenDomPlugin?): DomElement? = null
 
     override fun getParentDomElement(project: Project?, editor: Editor?, file: PsiFile?): DomElement? {
         if (project == null || editor == null || file == null) {
@@ -112,8 +118,8 @@ private class KotlinMavenExecutionProvider(val goal: String, val phase: String) 
     override fun isAvailableForElement(contextElement: DomElement): Boolean {
         val plugin = contextElement.findPlugin()
         return plugin != null
-               && plugin.isKotlinMavenPlugin()
-               && plugin.executions.executions.none { it.goals.goals.any { it.value == goal } }
+                && plugin.isKotlinMavenPlugin()
+                && plugin.executions.executions.none { it.goals.goals.any { it.value == goal } }
     }
 
 }
@@ -129,11 +135,14 @@ private fun Char.isRangeEnd() = this == ']' || this == ')'
 
 private fun String.isRangeVersion() = length > 2 && this[0].isRangeStart() && last().isRangeEnd()
 
-private fun DomElement.findProject(): MavenDomProjectModel? = this as? MavenDomProjectModel ?: DomUtil.getParentOfType(this, MavenDomProjectModel::class.java, true)
-private fun DomElement.findPlugin(): MavenDomPlugin? = this as? MavenDomPlugin ?: DomUtil.getParentOfType(this, MavenDomPlugin::class.java, true)
+private fun DomElement.findProject(): MavenDomProjectModel? =
+    this as? MavenDomProjectModel ?: DomUtil.getParentOfType(this, MavenDomProjectModel::class.java, true)
+
+private fun DomElement.findPlugin(): MavenDomPlugin? =
+    this as? MavenDomPlugin ?: DomUtil.getParentOfType(this, MavenDomPlugin::class.java, true)
 
 private fun MavenDomPlugin.isKotlinMavenPlugin() = groupId.stringValue == KotlinMavenConfigurator.GROUP_ID
-                                                   && artifactId.stringValue == KotlinMavenConfigurator.MAVEN_PLUGIN_ID
+        && artifactId.stringValue == KotlinMavenConfigurator.MAVEN_PLUGIN_ID
 
 private fun MavenDomDependency.isKotlinStdlib() = groupId.stringValue == KotlinMavenConfigurator.GROUP_ID
-                                                  && artifactId.stringValue == MAVEN_STDLIB_ID
+        && artifactId.stringValue == MAVEN_STDLIB_ID

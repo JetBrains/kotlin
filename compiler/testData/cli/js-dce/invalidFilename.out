@@ -1,0 +1,2 @@
+warning: invalid file name '$TESTDATA_DIR$/invalidFilename.args'; must end either with '.js', '.zip' or '.jar'
+OK

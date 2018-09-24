@@ -20,17 +20,22 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.stubs.StubElement
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.idea.decompiler.stubBuilder.flags.*
+import org.jetbrains.kotlin.metadata.ProtoBuf
+import org.jetbrains.kotlin.metadata.ProtoBuf.MemberKind
+import org.jetbrains.kotlin.metadata.ProtoBuf.Modality
+import org.jetbrains.kotlin.metadata.deserialization.Flags
+import org.jetbrains.kotlin.metadata.deserialization.hasReceiver
+import org.jetbrains.kotlin.metadata.deserialization.receiverType
+import org.jetbrains.kotlin.metadata.deserialization.returnType
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinFunctionStubImpl
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinPlaceHolderStubImpl
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinPropertyStubImpl
 import org.jetbrains.kotlin.resolve.DataClassDescriptorResolver
-import org.jetbrains.kotlin.serialization.Flags
-import org.jetbrains.kotlin.serialization.ProtoBuf
-import org.jetbrains.kotlin.serialization.ProtoBuf.MemberKind
-import org.jetbrains.kotlin.serialization.ProtoBuf.Modality
-import org.jetbrains.kotlin.serialization.deserialization.*
+import org.jetbrains.kotlin.serialization.deserialization.AnnotatedCallableKind
+import org.jetbrains.kotlin.serialization.deserialization.ProtoContainer
+import org.jetbrains.kotlin.serialization.deserialization.getName
 
 fun createDeclarationsStubs(
         parentStub: StubElement<out PsiElement>,
@@ -161,7 +166,7 @@ private class FunctionClsStubBuilder(
         val annotationIds = c.components.annotationLoader.loadCallableAnnotations(
                 protoContainer, functionProto, AnnotatedCallableKind.FUNCTION
         )
-        createTargetedAnnotationStubs(annotationIds, modifierListStubImpl)
+        createAnnotationStubs(annotationIds, modifierListStubImpl)
     }
 
     override fun doCreateCallableStub(parent: StubElement<out PsiElement>): StubElement<out PsiElement> {
@@ -175,7 +180,8 @@ private class FunctionClsStubBuilder(
                 isExtension = functionProto.hasReceiver(),
                 hasBlockBody = true,
                 hasBody = Flags.MODALITY.get(functionProto.flags) != Modality.ABSTRACT,
-                hasTypeParameterListBeforeFunctionName = functionProto.typeParameterList.isNotEmpty()
+                hasTypeParameterListBeforeFunctionName = functionProto.typeParameterList.isNotEmpty(),
+                mayHaveContract = functionProto.hasContract()
         )
     }
 }
@@ -213,10 +219,17 @@ private class PropertyClsStubBuilder(
                 listOf(VISIBILITY, LATEINIT, EXTERNAL_PROPERTY) + constModifier + modalityModifier
         )
 
-        val annotationIds = c.components.annotationLoader.loadCallableAnnotations(
-                protoContainer, propertyProto, AnnotatedCallableKind.PROPERTY
-        )
-        createTargetedAnnotationStubs(annotationIds, modifierListStubImpl)
+        val propertyAnnotations =
+            c.components.annotationLoader.loadCallableAnnotations(protoContainer, propertyProto, AnnotatedCallableKind.PROPERTY)
+        val backingFieldAnnotations =
+            c.components.annotationLoader.loadPropertyBackingFieldAnnotations(protoContainer, propertyProto)
+        val delegateFieldAnnotations =
+            c.components.annotationLoader.loadPropertyDelegateFieldAnnotations(protoContainer, propertyProto)
+        val allAnnotations =
+            propertyAnnotations.map { ClassIdWithTarget(it, null) } +
+                    backingFieldAnnotations.map { ClassIdWithTarget(it, AnnotationUseSiteTarget.FIELD) } +
+                    delegateFieldAnnotations.map { ClassIdWithTarget(it, AnnotationUseSiteTarget.PROPERTY_DELEGATE_FIELD) }
+        createTargetedAnnotationStubs(allAnnotations, modifierListStubImpl)
     }
 
     override fun doCreateCallableStub(parent: StubElement<out PsiElement>): StubElement<out PsiElement> {
@@ -262,7 +275,7 @@ private class ConstructorClsStubBuilder(
         val annotationIds = c.components.annotationLoader.loadCallableAnnotations(
                 protoContainer, constructorProto, AnnotatedCallableKind.FUNCTION
         )
-        createTargetedAnnotationStubs(annotationIds, modifierListStubImpl)
+        createAnnotationStubs(annotationIds, modifierListStubImpl)
     }
 
     override fun doCreateCallableStub(parent: StubElement<out PsiElement>): StubElement<out PsiElement> {

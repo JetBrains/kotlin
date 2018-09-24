@@ -1,0 +1,2 @@
+@org/foo/A
+@org/foo/B.C

@@ -16,28 +16,39 @@
 
 package org.jetbrains.kotlin.incremental
 
-import org.jetbrains.kotlin.annotation.AnnotationFileUpdater
+import com.intellij.lang.java.JavaLanguage
+import com.intellij.openapi.util.Disposer
+import com.intellij.psi.PsiClass
+import com.intellij.psi.PsiFile
+import com.intellij.psi.PsiFileFactory
+import com.intellij.psi.PsiJavaFile
+import org.jetbrains.kotlin.build.DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS
 import org.jetbrains.kotlin.build.GeneratedFile
 import org.jetbrains.kotlin.build.GeneratedJvmClass
-import org.jetbrains.kotlin.build.isModuleMappingFile
 import org.jetbrains.kotlin.build.JvmSourceRoot
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
+import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.compilerRunner.ArgumentUtils
+import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.IncrementalCompilation
 import org.jetbrains.kotlin.config.Services
+import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
-import org.jetbrains.kotlin.incremental.multiproject.ArtifactChangesProvider
-import org.jetbrains.kotlin.incremental.multiproject.ChangesRegistry
+import org.jetbrains.kotlin.incremental.multiproject.EmptyModulesApiHistory
+import org.jetbrains.kotlin.incremental.multiproject.ModulesApiHistory
+import org.jetbrains.kotlin.incremental.storage.version.CacheVersionManager
+import org.jetbrains.kotlin.load.java.JavaClassesTracker
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 import org.jetbrains.kotlin.modules.TargetId
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.resolve.jvm.JvmClassName
+import org.jetbrains.kotlin.name.Name
 import java.io.File
-import java.util.*
 
 fun makeIncrementally(
         cachesDir: File,
@@ -46,60 +57,68 @@ fun makeIncrementally(
         messageCollector: MessageCollector = MessageCollector.NONE,
         reporter: ICReporter = EmptyICReporter
 ) {
-    val versions = commonCacheVersions(cachesDir) + standaloneCacheVersion(cachesDir)
-
-    val kotlinExtensions = listOf("kt", "kts")
-    val allExtensions = kotlinExtensions + listOf("java")
+    val kotlinExtensions = DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS
+    val allExtensions = kotlinExtensions + "java"
     val rootsWalk = sourceRoots.asSequence().flatMap { it.walk() }
     val files = rootsWalk.filter(File::isFile)
     val sourceFiles = files.filter { it.extension.toLowerCase() in allExtensions }.toList()
-    val kotlinFiles = sourceFiles.filter { it.extension.toLowerCase() in kotlinExtensions }
+    val buildHistoryFile = File(cachesDir, "build-history.bin")
 
     withIC {
-        val compiler = IncrementalJvmCompilerRunner(cachesDir,
-                                                    sourceRoots.map { JvmSourceRoot(it, null) }.toSet(),
-                                                    versions, reporter)
-        compiler.compile(kotlinFiles, args, messageCollector) {
-            it.inputsCache.sourceSnapshotMap.compareAndUpdate(sourceFiles)
-        }
+        val versions = commonCacheVersionsManagers(cachesDir, true) + standaloneCacheVersionManager(cachesDir, true)
+
+        val compiler = IncrementalJvmCompilerRunner(
+                cachesDir,
+                sourceRoots.map { JvmSourceRoot(it, null) }.toSet(),
+                versions, reporter,
+                // Use precise setting in case of non-Gradle build
+                usePreciseJavaTracking = true,
+                localStateDirs = emptyList(),
+                buildHistoryFile = buildHistoryFile,
+                modulesApiHistory = EmptyModulesApiHistory,
+                kotlinSourceFilesExtensions = kotlinExtensions
+        )
+        compiler.compile(sourceFiles, args, messageCollector, providedChangedFiles = null)
     }
 }
 
 object EmptyICReporter : ICReporter {
-    override fun report(message: ()->String) {
+    override fun report(message: () -> String) {
     }
 }
 
 inline fun <R> withIC(enabled: Boolean = true, fn: ()->R): R {
-    val isEnabledBackup = IncrementalCompilation.isEnabled()
-    IncrementalCompilation.setIsEnabled(enabled)
+    val isEnabledBackup = IncrementalCompilation.isEnabledForJvm()
+    IncrementalCompilation.setIsEnabledForJvm(enabled)
 
     try {
         return fn()
     }
     finally {
-        IncrementalCompilation.setIsEnabled(isEnabledBackup)
+        IncrementalCompilation.setIsEnabledForJvm(isEnabledBackup)
     }
 }
 
 class IncrementalJvmCompilerRunner(
-        workingDir: File,
-        private val javaSourceRoots: Set<JvmSourceRoot>,
-        cacheVersions: List<CacheVersion>,
-        reporter: ICReporter,
-        private var kaptAnnotationsFileUpdater: AnnotationFileUpdater? = null,
-        artifactChangesProvider: ArtifactChangesProvider? = null,
-        changesRegistry: ChangesRegistry? = null
+    workingDir: File,
+    private val javaSourceRoots: Set<JvmSourceRoot>,
+    cachesVersionManagers: List<CacheVersionManager>,
+    reporter: ICReporter,
+    private val usePreciseJavaTracking: Boolean,
+    buildHistoryFile: File,
+    localStateDirs: Collection<File>,
+    private val modulesApiHistory: ModulesApiHistory,
+    override val kotlinSourceFilesExtensions: List<String> = DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS
 ) : IncrementalCompilerRunner<K2JVMCompilerArguments, IncrementalJvmCachesManager>(
-        workingDir,
-        "caches-jvm",
-        cacheVersions,
-        reporter,
-        artifactChangesProvider,
-        changesRegistry
+    workingDir,
+    "caches-jvm",
+    cachesVersionManagers,
+    reporter,
+    localStateDirs = localStateDirs,
+        buildHistoryFile = buildHistoryFile
 ) {
     override fun isICEnabled(): Boolean =
-            IncrementalCompilation.isEnabled()
+            IncrementalCompilation.isEnabledForJvm()
 
     override fun createCacheManager(args: K2JVMCompilerArguments): IncrementalJvmCachesManager =
             IncrementalJvmCachesManager(cacheDirectory, File(args.destination), reporter)
@@ -107,109 +126,134 @@ class IncrementalJvmCompilerRunner(
     override fun destinationDir(args: K2JVMCompilerArguments): File =
             args.destinationAsFile
 
-    private var javaFilesProcessor = ChangedJavaFilesProcessor(reporter)
+    private val psiFileFactory: PsiFileFactory by lazy {
+        val rootDisposable = Disposer.newDisposable()
+        val configuration = CompilerConfiguration()
+        val environment = KotlinCoreEnvironment.createForProduction(rootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
+        val project = environment.project
+        PsiFileFactory.getInstance(project)
+    }
 
-    override fun calculateSourcesToCompile(caches: IncrementalJvmCachesManager, changedFiles: ChangedFiles.Known, args: K2JVMCompilerArguments): CompilationMode {
-        val removedClassFiles = changedFiles.removed.filter(File::isClassFile)
-        if (removedClassFiles.any()) return CompilationMode.Rebuild { "Removed class files: ${reporter.pathsAsString(removedClassFiles)}" }
+    private val changedUntrackedJavaClasses = mutableSetOf<ClassId>()
 
-        val modifiedClassFiles = changedFiles.modified.filter(File::isClassFile)
-        if (modifiedClassFiles.any()) return CompilationMode.Rebuild { "Modified class files: ${reporter.pathsAsString(modifiedClassFiles)}" }
+    private var javaFilesProcessor =
+            if (!usePreciseJavaTracking)
+                ChangedJavaFilesProcessor(reporter) { it.psiFile() }
+            else
+                null
 
-        val classpathSet = args.classpathAsList.toHashSet()
-        val modifiedClasspathEntries = changedFiles.modified.filter { it in classpathSet }
-        val lastBuildInfo = BuildInfo.read(lastBuildInfoFile)
+    override fun calculateSourcesToCompile(
+        caches: IncrementalJvmCachesManager,
+        changedFiles: ChangedFiles.Known,
+        args: K2JVMCompilerArguments
+    ): CompilationMode {
+        val dirtyFiles = DirtyFilesContainer(caches, reporter, kotlinSourceFilesExtensions)
+        initDirtyFiles(dirtyFiles, changedFiles)
+
+        val lastBuildInfo = BuildInfo.read(lastBuildInfoFile) ?: return CompilationMode.Rebuild { "No information on previous build" }
         reporter.report { "Last Kotlin Build info -- $lastBuildInfo" }
-        val classpathChanges = getClasspathChanges(modifiedClasspathEntries, lastBuildInfo)
-        if (classpathChanges !is ChangesEither.Known) {
-            return CompilationMode.Rebuild { "could not get changes from modified classpath entries: ${reporter.pathsAsString(modifiedClasspathEntries)}" }
+
+        val classpathChanges = getClasspathChanges(args.classpathAsList, changedFiles, lastBuildInfo, modulesApiHistory, reporter)
+
+        @Suppress("UNUSED_VARIABLE") // for sealed when
+        val unused = when (classpathChanges) {
+            is ChangesEither.Unknown -> return CompilationMode.Rebuild {
+                // todo: we can recompile all files incrementally (not cleaning caches), so rebuild won't propagate
+                "Could not get classpath's changes${classpathChanges.reason?.let { ": $it" }}"
+            }
+            is ChangesEither.Known -> {
+                dirtyFiles.addByDirtySymbols(classpathChanges.lookupSymbols)
+                dirtyFiles.addByDirtyClasses(classpathChanges.fqNames)
+            }
         }
 
-        val javaFilesChanges = javaFilesProcessor.process(changedFiles)
-        val affectedJavaSymbols = when (javaFilesChanges) {
-            is ChangesEither.Known -> javaFilesChanges.lookupSymbols
-            is ChangesEither.Unknown -> return CompilationMode.Rebuild { "Could not get changes for java files" }
+        if (!usePreciseJavaTracking) {
+            val javaFilesChanges = javaFilesProcessor!!.process(changedFiles)
+            val affectedJavaSymbols = when (javaFilesChanges) {
+                is ChangesEither.Known -> javaFilesChanges.lookupSymbols
+                is ChangesEither.Unknown -> return CompilationMode.Rebuild { "Could not get changes for java files" }
+            }
+            dirtyFiles.addByDirtySymbols(affectedJavaSymbols)
+        } else {
+            if (!processChangedJava(changedFiles, caches)) {
+                return CompilationMode.Rebuild { "Could not get changes for java files" }
+            }
         }
 
-        val dirtyFiles = getDirtyFiles(changedFiles)
-        val lookupSymbols = HashSet<LookupSymbol>()
-        lookupSymbols.addAll(affectedJavaSymbols)
-        lookupSymbols.addAll(classpathChanges.lookupSymbols)
+        val androidLayoutChanges = processLookupSymbolsForAndroidLayouts(changedFiles)
+        val removedClassesChanges = getRemovedClassesChanges(caches, changedFiles)
 
-        if (lookupSymbols.any()) {
-            val dirtyFilesFromLookups = mapLookupSymbolsToFiles(caches.lookupCache, lookupSymbols, reporter)
-            dirtyFiles.addAll(dirtyFilesFromLookups)
-        }
-
-        val dirtyClassesFqNames = classpathChanges.fqNames.flatMap { withSubtypes(it, listOf(caches.platformCache)) }
-        if (dirtyClassesFqNames.any()) {
-            val dirtyFilesFromFqNames = mapClassesFqNamesToFiles(listOf(caches.platformCache), dirtyClassesFqNames, reporter)
-            dirtyFiles.addAll(dirtyFilesFromFqNames)
-        }
+        dirtyFiles.addByDirtySymbols(androidLayoutChanges)
+        dirtyFiles.addByDirtySymbols(removedClassesChanges.dirtyLookupSymbols)
+        dirtyFiles.addByDirtyClasses(removedClassesChanges.dirtyClassesFqNames)
 
         return CompilationMode.Incremental(dirtyFiles)
     }
 
-    private fun getClasspathChanges(
-            modifiedClasspath: List<File>,
-            lastBuildInfo: BuildInfo?
-    ): ChangesEither {
-        if (modifiedClasspath.isEmpty()) {
-            reporter.report {"No classpath changes"}
-            return ChangesEither.Known()
-        }
+    private fun processChangedJava(changedFiles: ChangedFiles.Known, caches: IncrementalJvmCachesManager): Boolean {
+        val javaFiles = (changedFiles.modified + changedFiles.removed).filter(File::isJavaFile)
 
-        val lastBuildTS = lastBuildInfo?.startTS
-        if (lastBuildTS == null) {
-            reporter.report {"Could not determine last build timestamp"}
-            return ChangesEither.Unknown()
-        }
+        for (javaFile in javaFiles) {
+            if (!caches.platformCache.isTrackedFile(javaFile)) {
+                if (!javaFile.exists()) {
+                    // todo: can we do this more optimal?
+                    reporter.report { "Could not get changed for untracked removed java file $javaFile" }
+                    return false
+                }
 
-        val symbols = HashSet<LookupSymbol>()
-        val fqNames = HashSet<FqName>()
-        for (file in modifiedClasspath) {
-            val diffs = artifactChangesProvider?.getChanges(file, lastBuildTS)
+                val psiFile = javaFile.psiFile()
+                if (psiFile !is PsiJavaFile) {
+                    reporter.report { "[Precise Java tracking] Expected PsiJavaFile, got ${psiFile?.javaClass}" }
+                    return false
+                }
 
-            if (diffs == null) {
-                reporter.report {"Could not get changes for file: $file"}
-                return ChangesEither.Unknown()
-            }
+                for (psiClass in psiFile.classes) {
+                    val qualifiedName = psiClass.qualifiedName
+                    if (qualifiedName == null) {
+                        reporter.report { "[Precise Java tracking] Class with unknown qualified name in $javaFile" }
+                        return false
+                    }
 
-            diffs.forEach {
-                symbols.addAll(it.dirtyLookupSymbols)
-                fqNames.addAll(it.dirtyClassesFqNames)
+                    processChangedUntrackedJavaClass(psiClass, ClassId.topLevel(FqName(qualifiedName)))
+                }
             }
         }
 
-        return ChangesEither.Known(symbols, fqNames)
+        caches.platformCache.markDirty(javaFiles)
+        return true
+    }
+
+    private fun File.psiFile(): PsiFile? =
+            psiFileFactory.createFileFromText(nameWithoutExtension, JavaLanguage.INSTANCE, readText())
+
+    private fun processChangedUntrackedJavaClass(psiClass: PsiClass, classId: ClassId) {
+        changedUntrackedJavaClasses.add(classId)
+        for (innerClass in psiClass.innerClasses) {
+            val name = innerClass.name ?: continue
+            processChangedUntrackedJavaClass(innerClass, classId.createNestedClassId(Name.identifier(name)))
+        }
+    }
+
+    private fun processLookupSymbolsForAndroidLayouts(changedFiles: ChangedFiles.Known): Collection<LookupSymbol> {
+        val result = mutableListOf<LookupSymbol>()
+        for (file in changedFiles.modified + changedFiles.removed) {
+            if (file.extension.toLowerCase() != "xml") continue
+            val layoutName = file.name.substringBeforeLast('.')
+            result.add(LookupSymbol(ANDROID_LAYOUT_CONTENT_LOOKUP_NAME, layoutName))
+        }
+
+        return result
     }
 
     override fun preBuildHook(args: K2JVMCompilerArguments, compilationMode: CompilationMode) {
-        when (compilationMode) {
-            is CompilationMode.Incremental -> {
-                args.classpathAsList += args.destinationAsFile.apply { mkdirs() }
-            }
-            is CompilationMode.Rebuild -> {
-                // there is no point in updating annotation file since all files will be compiled anyway
-                kaptAnnotationsFileUpdater = null
-            }
+        if (compilationMode is CompilationMode.Incremental) {
+            val destinationDir = args.destinationAsFile
+            destinationDir.mkdirs()
+            args.classpathAsList = listOf(destinationDir) + args.classpathAsList
         }
     }
 
-    private var outdatedClasses: Iterable<JvmClassName> = emptyList()
-    override fun markDirty(caches: IncrementalJvmCachesManager, dirtySources: List<File>) {
-        outdatedClasses = caches.platformCache.classesBySources(dirtySources)
-        super.markDirty(caches, dirtySources)
-    }
-
-    override fun postCompilationHook(exitCode: ExitCode) {
-        if (exitCode == ExitCode.OK) {
-            kaptAnnotationsFileUpdater?.updateAnnotations(outdatedClasses)
-        }
-        else {
-            kaptAnnotationsFileUpdater?.revert()
-        }
-    }
+    override fun postCompilationHook(exitCode: ExitCode) {}
 
     override fun updateCaches(
             services: Services,
@@ -217,8 +261,14 @@ class IncrementalJvmCompilerRunner(
             generatedFiles: List<GeneratedFile>,
             changesCollector: ChangesCollector
     ) {
-        updateIncrementalCache(generatedFiles, caches.platformCache, changesCollector)
+        updateIncrementalCache(
+                generatedFiles, caches.platformCache, changesCollector,
+                services[JavaClassesTracker::class.java] as? JavaClassesTrackerImpl
+        )
     }
+
+    override fun runWithNoDirtyKotlinSources(caches: IncrementalJvmCachesManager): Boolean =
+            caches.platformCache.getObsoleteJavaClasses().isNotEmpty() || changedUntrackedJavaClasses.isNotEmpty()
 
     override fun additionalDirtyFiles(
             caches: IncrementalJvmCachesManager,
@@ -261,19 +311,25 @@ class IncrementalJvmCompilerRunner(
     }
 
     override fun additionalDirtyLookupSymbols(): Iterable<LookupSymbol> =
-            javaFilesProcessor.allChangedSymbols
+            javaFilesProcessor?.allChangedSymbols ?: emptyList()
 
     override fun makeServices(
             args: K2JVMCompilerArguments,
             lookupTracker: LookupTracker,
+            expectActualTracker: ExpectActualTracker,
             caches: IncrementalJvmCachesManager,
             compilationMode: CompilationMode
     ): Services.Builder =
-        super.makeServices(args, lookupTracker, caches, compilationMode).apply {
+        super.makeServices(args, lookupTracker, expectActualTracker, caches, compilationMode).apply {
             val targetId = TargetId(args.moduleName!!, "java-production")
             val targetToCache = mapOf(targetId to caches.platformCache)
             val incrementalComponents = IncrementalCompilationComponentsImpl(targetToCache)
             register(IncrementalCompilationComponents::class.java, incrementalComponents)
+            if (usePreciseJavaTracking) {
+                val changesTracker = JavaClassesTrackerImpl(caches.platformCache, changedUntrackedJavaClasses.toSet())
+                changedUntrackedJavaClasses.clear()
+                register(JavaClassesTracker::class.java, changesTracker)
+            }
         }
 
     override fun runCompiler(
@@ -286,13 +342,16 @@ class IncrementalJvmCompilerRunner(
         val compiler = K2JVMCompiler()
         val outputDir = args.destinationAsFile
         val classpath = args.classpathAsList
-        val moduleFile = makeModuleFile(args.moduleName!!,
-                isTest = false,
-                outputDir = outputDir,
-                sourcesToCompile = sourcesToCompile,
-                javaSourceRoots = javaSourceRoots,
-                classpath = classpath,
-                friendDirs = listOf())
+        val moduleFile = makeModuleFile(
+            args.moduleName!!,
+            isTest = false,
+            outputDir = outputDir,
+            sourcesToCompile = sourcesToCompile,
+            commonSources = args.commonSources?.map(::File).orEmpty(),
+            javaSourceRoots = javaSourceRoots,
+            classpath = classpath,
+            friendDirs = listOf()
+        )
         val destination = args.destination
         args.destination = null
         args.buildFile = moduleFile.absolutePath
@@ -316,5 +375,5 @@ var K2JVMCompilerArguments.destinationAsFile: File
         set(value) { destination = value.path }
 
 var K2JVMCompilerArguments.classpathAsList: List<File>
-    get() = classpath!!.split(File.pathSeparator).map(::File)
+    get() = classpath.orEmpty().split(File.pathSeparator).map(::File)
     set(value) { classpath = value.joinToString(separator = File.pathSeparator, transform = { it.path }) }

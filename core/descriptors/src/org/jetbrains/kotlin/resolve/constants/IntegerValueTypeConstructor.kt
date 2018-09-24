@@ -17,14 +17,20 @@
 package org.jetbrains.kotlin.resolve.constants
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.UnsignedTypes
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
+import org.jetbrains.kotlin.descriptors.findClassAcrossModuleDependencies
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.SimpleType
 import org.jetbrains.kotlin.types.TypeConstructor
 import java.util.*
 
 class IntegerValueTypeConstructor(
-        private val value: Long,
-        private val builtIns: KotlinBuiltIns
+    private val value: Long,
+    private val module: ModuleDescriptor,
+    parameters: CompileTimeConstant.Parameters
 ) : TypeConstructor {
     private val supertypes = ArrayList<KotlinType>(4)
 
@@ -32,17 +38,48 @@ class IntegerValueTypeConstructor(
         // order of types matters
         // 'getPrimitiveNumberType' returns first of supertypes that is a subtype of expected type
         // for expected type 'Any' result type 'Int' should be returned
-        checkBoundsAndAddSuperType(value, Integer.MIN_VALUE.toLong(), Integer.MAX_VALUE.toLong(), builtIns.intType)
-        checkBoundsAndAddSuperType(value, java.lang.Byte.MIN_VALUE.toLong(), java.lang.Byte.MAX_VALUE.toLong(), builtIns.byteType)
-        checkBoundsAndAddSuperType(value, java.lang.Short.MIN_VALUE.toLong(), java.lang.Short.MAX_VALUE.toLong(), builtIns.shortType)
+        val isUnsigned = parameters.isUnsignedNumberLiteral
+        val isConvertable = parameters.isConvertableConstVal
+
+        if (isUnsigned || isConvertable) {
+            assert(hasUnsignedTypesInModuleDependencies(module)) {
+                "Unsigned types should be on classpath to create an unsigned type constructor"
+            }
+        }
+
+        when {
+            isConvertable -> {
+                addSignedSuperTypes()
+                addUnsignedSuperTypes()
+            }
+
+            isUnsigned -> addUnsignedSuperTypes()
+
+            else -> addSignedSuperTypes()
+        }
+    }
+
+    private fun addSignedSuperTypes() {
+        checkBoundsAndAddSuperType(value, builtIns.intType)
+        checkBoundsAndAddSuperType(value, builtIns.byteType)
+        checkBoundsAndAddSuperType(value, builtIns.shortType)
         supertypes.add(builtIns.longType)
     }
 
-    private fun checkBoundsAndAddSuperType(value: Long, minValue: Long, maxValue: Long, kotlinType: KotlinType) {
-        if (value >= minValue && value <= maxValue) {
+    private fun addUnsignedSuperTypes() {
+        checkBoundsAndAddSuperType(value, unsignedType(KotlinBuiltIns.FQ_NAMES.uInt))
+        checkBoundsAndAddSuperType(value, unsignedType(KotlinBuiltIns.FQ_NAMES.uByte))
+        checkBoundsAndAddSuperType(value, unsignedType(KotlinBuiltIns.FQ_NAMES.uShort))
+        supertypes.add(unsignedType(KotlinBuiltIns.FQ_NAMES.uLong))
+    }
+
+    private fun checkBoundsAndAddSuperType(value: Long, kotlinType: KotlinType) {
+        if (value in kotlinType.minValue()..kotlinType.maxValue()) {
             supertypes.add(kotlinType)
         }
     }
+
+    private fun unsignedType(classId: ClassId): SimpleType = module.findClassAcrossModuleDependencies(classId)!!.defaultType
 
     override fun getSupertypes(): Collection<KotlinType> = supertypes
 
@@ -57,8 +94,34 @@ class IntegerValueTypeConstructor(
     fun getValue(): Long = value
 
     override fun getBuiltIns(): KotlinBuiltIns {
-        return builtIns
+        return module.builtIns
     }
 
     override fun toString() = "IntegerValueType($value)"
 }
+
+private fun KotlinType.minValue(): Long {
+    if (UnsignedTypes.isUnsignedType(this)) return 0
+    return when {
+        KotlinBuiltIns.isByte(this) -> Byte.MIN_VALUE.toLong()
+        KotlinBuiltIns.isShort(this) -> Short.MIN_VALUE.toLong()
+        KotlinBuiltIns.isInt(this) -> Int.MIN_VALUE.toLong()
+        else -> error("Can't get min value for type: $this")
+    }
+}
+
+@ExperimentalUnsignedTypes
+private fun KotlinType.maxValue(): Long {
+    return when {
+        KotlinBuiltIns.isByte(this) -> Byte.MAX_VALUE.toLong()
+        KotlinBuiltIns.isShort(this) -> Short.MAX_VALUE.toLong()
+        KotlinBuiltIns.isInt(this) -> Int.MAX_VALUE.toLong()
+
+        KotlinBuiltIns.isUByte(this) -> UByte.MAX_VALUE.toLong()
+        KotlinBuiltIns.isUShort(this) -> UShort.MAX_VALUE.toLong()
+        KotlinBuiltIns.isUInt(this) -> UInt.MAX_VALUE.toLong()
+
+        else -> error("Can't get max value for type: $this")
+    }
+}
+

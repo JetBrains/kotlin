@@ -18,15 +18,18 @@ package org.jetbrains.kotlin.ir.expressions.impl
 
 import org.jetbrains.kotlin.ir.expressions.IrContinue
 import org.jetbrains.kotlin.ir.expressions.IrLoop
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
-import org.jetbrains.kotlin.types.KotlinType
 
 class IrContinueImpl(
-        startOffset: Int,
-        endOffset: Int,
-        type: KotlinType,
-        loop: IrLoop
-) : IrBreakContinueBase(startOffset, endOffset, type, loop), IrContinue {
+    startOffset: Int,
+    endOffset: Int,
+    type: IrType,
+    loop: IrLoop
+) :
+    IrBreakContinueBase(startOffset, endOffset, type, loop),
+    IrContinue {
+
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
-            visitor.visitContinue(this, data)
+        visitor.visitContinue(this, data)
 }

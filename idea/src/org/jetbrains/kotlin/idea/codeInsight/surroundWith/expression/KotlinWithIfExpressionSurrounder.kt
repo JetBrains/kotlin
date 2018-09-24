@@ -22,28 +22,26 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.conversion.copy.range
-import org.jetbrains.kotlin.psi.KtBlockExpression
-import org.jetbrains.kotlin.psi.KtExpression
-import org.jetbrains.kotlin.psi.KtIfExpression
-import org.jetbrains.kotlin.psi.KtPsiFactory
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.typeUtil.isBoolean
 import org.jetbrains.kotlin.utils.sure
 
 class KotlinWithIfExpressionSurrounder(val withElse: Boolean) : KotlinExpressionSurrounder() {
     override fun isApplicable(expression: KtExpression) =
-            super.isApplicable(expression) && (expression.analyze(BodyResolveMode.PARTIAL).getType(expression)?.isBoolean() ?: false)
+        super.isApplicable(expression) && (expression.analyze(BodyResolveMode.PARTIAL).getType(expression)?.isBoolean() ?: false)
 
     override fun surroundExpression(project: Project, editor: Editor, expression: KtExpression): TextRange? {
         val factory = KtPsiFactory(project)
-        val ifExpression =
-                expression.replace(
-                        factory.createIf(
-                                expression,
-                                factory.createBlock("blockStubContentToBeRemovedLater"),
-                                if (withElse) factory.createEmptyBody() else null
-                        )
-                ) as KtIfExpression
+        val replaceResult = expression.replace(
+            factory.createIf(
+                expression,
+                factory.createBlock("blockStubContentToBeRemovedLater"),
+                if (withElse) factory.createEmptyBody() else null
+            )
+        ) as KtExpression
+
+        val ifExpression = KtPsiUtil.deparenthesizeOnce(replaceResult) as KtIfExpression
 
         CodeInsightUtilBase.forcePsiPostprocessAndRestoreElement(ifExpression)
 

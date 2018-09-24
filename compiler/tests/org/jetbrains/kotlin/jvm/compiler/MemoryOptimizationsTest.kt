@@ -33,10 +33,8 @@ import org.jetbrains.kotlin.types.TypeConstructorSubstitution
 import org.jetbrains.kotlin.types.lowerIfFlexible
 import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
 import org.jetbrains.kotlin.types.upperIfFlexible
-import org.junit.Test
 
 class MemoryOptimizationsTest : KtUsefulTestCase() {
-    @Test
     fun testBasicFlexibleTypeCase() {
         val moduleDescriptor = JvmResolveUtil.analyze(
                 KotlinTestUtils.createEnvironmentWithJdkAndNullabilityAnnotationsFromIdea(myTestRootDisposable, ConfigurationKind.ALL, TestJdkKind.FULL_JDK)
@@ -61,7 +59,6 @@ class MemoryOptimizationsTest : KtUsefulTestCase() {
 
 
 
-    @Test
     fun testSubstitutorDoNotRecreateUnchangedDescriptor() {
         val text =
                 """

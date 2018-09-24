@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringBundle
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.OutputValue.*
@@ -36,12 +35,10 @@ import org.jetbrains.kotlin.idea.util.approximateFlexibleTypes
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.KotlinPsiRange
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.lexer.KtKeywordToken
+import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElement
-import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElementSelector
-import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelector
-import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.resolveTopLevelClass
@@ -87,7 +84,7 @@ class RenameReplacement(override val parameter: Parameter): ParameterReplacement
         var expressionToReplace = (e.parent as? KtThisExpression ?: e).let { it.getQualifiedExpressionForSelector() ?: it }
         val parameterName = KtPsiUtil.unquoteIdentifier(parameter.nameForRef)
         val replacingName =
-                if (e.text.startsWith('`') || !KotlinNameSuggester.isIdentifier(parameterName)) "`$parameterName`" else parameterName
+                if (e.text.startsWith('`') || !parameterName.isIdentifier()) "`$parameterName`" else parameterName
         val psiFactory = KtPsiFactory(e)
         val replacement = when {
             parameter == descriptor.receiverParameter -> psiFactory.createExpression("this")
@@ -105,7 +102,7 @@ abstract class WrapInWithReplacement : Replacement {
         val call = (e as? KtSimpleNameExpression)?.getQualifiedElement() ?: return e
         val replacingExpression = KtPsiFactory(e).createExpressionByPattern("with($0) { $1 }", argumentText, call)
         val replace = call.replace(replacingExpression)
-        return (replace as KtCallExpression).lambdaArguments.first().getLambdaExpression().bodyExpression!!.statements.first()
+        return (replace as KtCallExpression).lambdaArguments.first().getLambdaExpression()!!.bodyExpression!!.statements.first()
     }
 }
 
@@ -353,7 +350,7 @@ data class ExtractableCodeDescriptor(
         val extractionData: ExtractionData,
         val originalContext: BindingContext,
         val suggestedNames: List<String>,
-        val visibility: String,
+        val visibility: KtModifierKeywordToken?,
         val parameters: List<Parameter>,
         val receiverParameter: Parameter?,
         val typeParameters: List<TypeParameter>,
@@ -368,7 +365,7 @@ data class ExtractableCodeDescriptor(
 
 fun ExtractableCodeDescriptor.copy(
         newName: String,
-        newVisibility: String,
+        newVisibility: KtModifierKeywordToken?,
         oldToNewParameters: Map<Parameter, Parameter>,
         newReceiver: Parameter?,
         returnType: KotlinType?

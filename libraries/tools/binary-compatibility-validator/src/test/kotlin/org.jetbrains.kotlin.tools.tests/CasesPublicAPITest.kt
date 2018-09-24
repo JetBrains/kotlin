@@ -1,3 +1,8 @@
+/*
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
+ */
+
 package org.jetbrains.kotlin.tools.tests
 
 import org.jetbrains.kotlin.tools.*
@@ -8,8 +13,11 @@ import java.io.File
 class CasesPublicAPITest {
 
     companion object {
-        val visibilities by lazy { readKotlinVisibilities(File("build/cases-declarations.json")) }
-        val baseClassPath = File("build/classes/test/cases").absoluteFile
+        val baseClassPaths: List<File> =
+            System.getProperty("testCasesClassesDirs")
+                .let { requireNotNull(it) { "Specify testCasesClassesDirs with a system property"} }
+                .split(File.pathSeparator)
+                .map { File(it, "cases").canonicalFile }
         val baseOutputPath = File("src/test/kotlin/cases")
     }
 
@@ -17,6 +25,8 @@ class CasesPublicAPITest {
     val testName = TestName()
 
     @Test fun companions() { snapshotAPIAndCompare(testName.methodName) }
+
+    @Test fun default() { snapshotAPIAndCompare(testName.methodName) }
 
     @Test fun inline() { snapshotAPIAndCompare(testName.methodName) }
 
@@ -42,11 +52,13 @@ class CasesPublicAPITest {
 
 
     private fun snapshotAPIAndCompare(testClassRelativePath: String) {
-        val testClassPath = baseClassPath.resolve(testClassRelativePath)
-        val testClasses = testClassPath.listFiles() ?: throw IllegalStateException("Cannot list files in $testClassPath")
+        val testClassPaths = baseClassPaths.map { it.resolve(testClassRelativePath) }
+        val testClasses = testClassPaths.flatMap { it.listFiles().orEmpty().asIterable() }
+        check(testClasses.isNotEmpty()) { "No class files are found in paths: $testClassPaths" }
+
         val testClassStreams = testClasses.asSequence().filter { it.name.endsWith(".class") }.map { it.inputStream() }
 
-        val api = getBinaryAPI(testClassStreams, visibilities).filterOutNonPublic()
+        val api = getBinaryAPI(testClassStreams).filterOutNonPublic()
 
         val target = baseOutputPath.resolve(testClassRelativePath).resolve(testName.methodName + ".txt")
 

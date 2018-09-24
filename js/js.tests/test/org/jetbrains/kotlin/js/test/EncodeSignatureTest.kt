@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.js.naming.encodeSignature
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
+import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 import org.junit.Assert
 import org.junit.Test
 
@@ -221,6 +222,7 @@ class EncodeSignatureTest {
         }
         finally {
             Disposer.dispose(disposable)
+            KtUsefulTestCase.resetApplicationToNull()
         }
     }
 

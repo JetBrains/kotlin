@@ -1,4 +1,4 @@
-// "Create actual class for platform JS" "true"
+// "Create actual enum class for module testModule_JS (JS)" "true"
 
 expect enum class MyEnum {
     FIRST,

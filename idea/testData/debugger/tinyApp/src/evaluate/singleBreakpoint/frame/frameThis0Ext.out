@@ -67,7 +67,7 @@ fun foo(f: () -> Unit) {
    this     = this = {frameThis0Ext.A$testExt$1@uniqueID}Function0<kotlin.Unit>
      field    = this$0: frameThis0Ext.A = {frameThis0Ext.A@uniqueID} (sp = null)
        field    = prop1: int = 1 (sp = frameThis0Ext.kt, 8)
-     field    = receiver$0: frameThis0Ext.AExt = {frameThis0Ext.AExt@uniqueID} (sp = null)
+     field    = $this_testExt: frameThis0Ext.AExt = {frameThis0Ext.AExt@uniqueID} (sp = null)
        field    = prop2: int = 1 (sp = frameThis0Ext.kt, 25)
      field    = $val1: int = 1 (sp = null)
      field    = arity: int = 0 (sp = Lambda.!EXT!)

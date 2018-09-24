@@ -1,4 +1,10 @@
+/*
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
+ */
+
 @file:kotlin.jvm.JvmName("MapAccessorsKt")
+
 package kotlin.collections
 
 import kotlin.reflect.KProperty
@@ -13,8 +19,8 @@ import kotlin.internal.Exact
  * @throws NoSuchElementException when the map doesn't contain value for the property name and doesn't provide an implicit default (see [withDefault]).
  */
 @kotlin.internal.InlineOnly
-public inline operator fun <V, V1: V> Map<in String, @Exact V>.getValue(thisRef: Any?, property: KProperty<*>): V1
-        = @Suppress("UNCHECKED_CAST") (getOrImplicitDefault(property.name) as V1)
+public inline operator fun <V, V1 : V> Map<in String, @Exact V>.getValue(thisRef: Any?, property: KProperty<*>): V1 =
+    @Suppress("UNCHECKED_CAST") (getOrImplicitDefault(property.name) as V1)
 
 /**
  * Returns the value of the property for the given object from this mutable map.
@@ -26,8 +32,15 @@ public inline operator fun <V, V1: V> Map<in String, @Exact V>.getValue(thisRef:
  */
 @kotlin.jvm.JvmName("getVar")
 @kotlin.internal.InlineOnly
-public inline operator fun <V> MutableMap<in String, in V>.getValue(thisRef: Any?, property: KProperty<*>): V
-        = @Suppress("UNCHECKED_CAST") (getOrImplicitDefault(property.name) as V)
+public inline operator fun <V, V1 : V> MutableMap<in String, out @Exact V>.getValue(thisRef: Any?, property: KProperty<*>): V1 =
+    @Suppress("UNCHECKED_CAST") (getOrImplicitDefault(property.name) as V1)
+
+@Deprecated("Use getValue() with two type parameters instead", level = DeprecationLevel.ERROR)
+@kotlin.jvm.JvmName("getVarContravariant")
+@kotlin.internal.LowPriorityInOverloadResolution
+@kotlin.internal.InlineOnly
+public inline fun <V> MutableMap<in String, in V>.getValue(thisRef: Any?, property: KProperty<*>): V =
+    @Suppress("UNCHECKED_CAST") (getOrImplicitDefault(property.name) as V)
 
 /**
  * Stores the value of the property for the given object in this mutable map.

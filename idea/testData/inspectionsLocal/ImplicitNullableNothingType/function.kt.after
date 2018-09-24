@@ -1,0 +1,3 @@
+open class My {
+    open fun foo(): Nothing? = null
+}

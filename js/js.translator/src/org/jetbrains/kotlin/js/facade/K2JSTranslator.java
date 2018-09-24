@@ -19,8 +19,12 @@ package org.jetbrains.kotlin.js.facade;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.config.CommonConfigurationKeys;
+import org.jetbrains.kotlin.config.CommonConfigurationKeysKt;
+import org.jetbrains.kotlin.config.LanguageVersionSettings;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor;
+import org.jetbrains.kotlin.incremental.js.IncrementalResultsConsumer;
 import org.jetbrains.kotlin.js.analyze.TopDownAnalyzerFacadeForJS;
 import org.jetbrains.kotlin.js.analyzer.JsAnalysisResult;
 import org.jetbrains.kotlin.js.backend.ast.JsImportedModule;
@@ -29,7 +33,6 @@ import org.jetbrains.kotlin.js.config.JSConfigurationKeys;
 import org.jetbrains.kotlin.js.config.JsConfig;
 import org.jetbrains.kotlin.js.coroutine.CoroutineTransformer;
 import org.jetbrains.kotlin.js.facade.exceptions.TranslationException;
-import org.jetbrains.kotlin.incremental.js.IncrementalResultsConsumer;
 import org.jetbrains.kotlin.js.inline.JsInliner;
 import org.jetbrains.kotlin.js.inline.clean.LabeledBlockToDoWhileTransformation;
 import org.jetbrains.kotlin.js.inline.clean.RemoveDuplicateImportsKt;
@@ -39,20 +42,21 @@ import org.jetbrains.kotlin.js.sourceMap.SourceFilePathResolver;
 import org.jetbrains.kotlin.js.translate.general.AstGenerationResult;
 import org.jetbrains.kotlin.js.translate.general.Translation;
 import org.jetbrains.kotlin.js.translate.utils.ExpandIsCallsKt;
+import org.jetbrains.kotlin.metadata.ProtoBuf;
+import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion;
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics;
-import org.jetbrains.kotlin.serialization.ProtoBuf;
 import org.jetbrains.kotlin.serialization.js.KotlinJavascriptSerializationUtil;
 import org.jetbrains.kotlin.serialization.js.ast.JsAstSerializer;
+import org.jetbrains.kotlin.utils.JsMetadataVersion;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static org.jetbrains.kotlin.diagnostics.DiagnosticUtils.hasError;
 
@@ -128,7 +132,10 @@ public final class K2JSTranslator {
         ModuleDescriptor moduleDescriptor = analysisResult.getModuleDescriptor();
         Diagnostics diagnostics = bindingTrace.getBindingContext().getDiagnostics();
 
-        AstGenerationResult translationResult = Translation.generateAst(bindingTrace, units, mainCallParameters, moduleDescriptor, config);
+        SourceFilePathResolver pathResolver = SourceFilePathResolver.create(config);
+
+        AstGenerationResult translationResult = Translation.generateAst(
+                bindingTrace, units, mainCallParameters, moduleDescriptor, config, pathResolver);
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled();
         if (hasError(diagnostics)) return new TranslationResult.Fail(diagnostics);
 
@@ -151,10 +158,6 @@ public final class K2JSTranslator {
 
         ExpandIsCallsKt.expandIsCalls(newFragments);
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled();
-
-        List<File> sourceRoots = config.getSourceMapRoots().stream().map(File::new).collect(Collectors.toList());
-        SourceFilePathResolver pathResolver = new SourceFilePathResolver(sourceRoots);
-
         JsAstSerializer serializer = new JsAstSerializer(file -> {
             try {
                 return pathResolver.getPathRelativeToSourceRoots(file);
@@ -176,14 +179,19 @@ public final class K2JSTranslator {
 
                 List<DeclarationDescriptor> scope = translationResult.getFileMemberScopes().get(file);
                 assert scope != null : "Could not find descriptors for file: " + file;
+                BinaryVersion metadataVersion = config.getConfiguration().get(CommonConfigurationKeys.METADATA_VERSION);
                 ProtoBuf.PackageFragment packagePart = serializationUtil.serializeDescriptors(
-                        bindingTrace.getBindingContext(), moduleDescriptor, scope, file.getPackageFqName());
+                        bindingTrace.getBindingContext(), moduleDescriptor, scope, file.getPackageFqName(),
+                        CommonConfigurationKeysKt.getLanguageVersionSettings(config.getConfiguration()),
+                        metadataVersion != null ? metadataVersion : JsMetadataVersion.INSTANCE
+                );
 
                 File ioFile = VfsUtilCore.virtualToIoFile(file.getVirtualFile());
                 incrementalResults.processPackagePart(ioFile, packagePart.toByteArray(), binaryAst);
             }
 
-            incrementalResults.processHeader(serializationUtil.serializeHeader(null).toByteArray());
+            LanguageVersionSettings settings = CommonConfigurationKeysKt.getLanguageVersionSettings(config.getConfiguration());
+            incrementalResults.processHeader(serializationUtil.serializeHeader(moduleDescriptor, null, settings).toByteArray());
         }
 
         RemoveDuplicateImportsKt.removeDuplicateImports(translationResult.getProgram());

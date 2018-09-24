@@ -32,9 +32,9 @@ import org.jetbrains.kotlin.utils.SmartList
 private typealias Variable = VariableWithConstraints
 
 class TypeVariableDirectionCalculator(
-        private val c: VariableFixationFinder.Context,
-        private val postponedKtPrimitives: List<PostponedResolvedAtom>,
-        topLevelType: UnwrappedType
+    private val c: VariableFixationFinder.Context,
+    private val postponedKtPrimitives: List<PostponedResolvedAtom>,
+    topLevelType: UnwrappedType
 ) {
     enum class ResolveDirection {
         TO_SUBTYPE,
@@ -45,7 +45,7 @@ class TypeVariableDirectionCalculator(
     data class NodeWithDirection(val variableWithConstraints: VariableWithConstraints, val direction: ResolveDirection) {
         override fun toString() = "$variableWithConstraints to $direction"
     }
-    
+
     private val directions = HashMap<Variable, ResolveDirection>()
 
     init {
@@ -53,7 +53,7 @@ class TypeVariableDirectionCalculator(
     }
 
     fun getDirection(typeVariable: Variable): ResolveDirection =
-            directions.getOrDefault(typeVariable, ResolveDirection.UNKNOWN)
+        directions.getOrDefault(typeVariable, ResolveDirection.UNKNOWN)
 
     private fun setupDirections(topReturnType: UnwrappedType) {
         topReturnType.visitType(ResolveDirection.TO_SUBTYPE) { variableWithConstraints, direction ->
@@ -87,32 +87,35 @@ class TypeVariableDirectionCalculator(
     }
 
     private fun getConstraintDependencies(
-            variable: Variable,
-            direction: ResolveDirection
+        variable: Variable,
+        direction: ResolveDirection
     ): List<NodeWithDirection> =
-            SmartList<NodeWithDirection>().also { result ->
-                for (constraint in variable.constraints) {
-                    if (!isInterestingConstraint(direction, constraint)) continue
+        SmartList<NodeWithDirection>().also { result ->
+            for (constraint in variable.constraints) {
+                if (!isInterestingConstraint(direction, constraint)) continue
 
-                    constraint.type.visitType(direction) { nodeVariable, nodeDirection ->
-                        result.add(NodeWithDirection(nodeVariable, nodeDirection))
-                    }
+                constraint.type.visitType(direction) { nodeVariable, nodeDirection ->
+                    result.add(NodeWithDirection(nodeVariable, nodeDirection))
                 }
             }
+        }
 
 
     private fun isInterestingConstraint(direction: ResolveDirection, constraint: Constraint): Boolean =
-            !(direction == ResolveDirection.TO_SUBTYPE && constraint.kind == ConstraintKind.UPPER) &&
-            !(direction == ResolveDirection.TO_SUPERTYPE && constraint.kind == ConstraintKind.LOWER)
+        !(direction == ResolveDirection.TO_SUBTYPE && constraint.kind == ConstraintKind.UPPER) &&
+                !(direction == ResolveDirection.TO_SUPERTYPE && constraint.kind == ConstraintKind.LOWER)
 
-    private fun UnwrappedType.visitType(startDirection: ResolveDirection, action: (variable: Variable, direction: ResolveDirection) -> Unit) =
-            when (this) {
-                is SimpleType -> visitType(startDirection, action)
-                is FlexibleType -> {
-                    lowerBound.visitType(startDirection, action)
-                    upperBound.visitType(startDirection, action)
-                }
+    private fun UnwrappedType.visitType(
+        startDirection: ResolveDirection,
+        action: (variable: Variable, direction: ResolveDirection) -> Unit
+    ) =
+        when (this) {
+            is SimpleType -> visitType(startDirection, action)
+            is FlexibleType -> {
+                lowerBound.visitType(startDirection, action)
+                upperBound.visitType(startDirection, action)
             }
+        }
 
     private fun SimpleType.visitType(startDirection: ResolveDirection, action: (variable: Variable, direction: ResolveDirection) -> Unit) {
         if (isIntersectionType) {

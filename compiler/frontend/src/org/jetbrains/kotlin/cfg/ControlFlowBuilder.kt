@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.cfg
 import org.jetbrains.kotlin.cfg.pseudocode.PseudoValue
 import org.jetbrains.kotlin.cfg.pseudocode.Pseudocode
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.*
+import org.jetbrains.kotlin.contracts.description.InvocationKind
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
@@ -27,9 +28,9 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 
 interface ControlFlowBuilder {
     // Subroutines
-    fun enterSubroutine(subroutine: KtElement)
+    fun enterSubroutine(subroutine: KtElement, invocationKind: InvocationKind? = null)
 
-    fun exitSubroutine(subroutine: KtElement): Pseudocode
+    fun exitSubroutine(subroutine: KtElement, invocationKind: InvocationKind? = null): Pseudocode
 
     val currentSubroutine: KtElement
     val returnSubroutine: KtElement
@@ -48,6 +49,8 @@ interface ControlFlowBuilder {
 
     fun declareVariable(property: KtVariableDeclaration)
     fun declareFunction(subroutine: KtElement, pseudocode: Pseudocode)
+
+    fun declareInlinedFunction(subroutine: KtElement, pseudocode: Pseudocode, invocationKind: InvocationKind)
 
     fun declareEntryOrObject(entryOrObject: KtClassOrObject)
 
@@ -101,25 +104,29 @@ interface ControlFlowBuilder {
     fun loadStringTemplate(expression: KtStringTemplateExpression, inputValues: List<PseudoValue>): InstructionWithValue
 
     fun magic(
-            instructionElement: KtElement,
-            valueElement: KtElement?,
-            inputValues: List<PseudoValue>,
-            kind: MagicKind): MagicInstruction
+        instructionElement: KtElement,
+        valueElement: KtElement?,
+        inputValues: List<PseudoValue>,
+        kind: MagicKind
+    ): MagicInstruction
 
     fun merge(
-            expression: KtExpression,
-            inputValues: List<PseudoValue>): MergeInstruction
+        expression: KtExpression,
+        inputValues: List<PseudoValue>
+    ): MergeInstruction
 
     fun readVariable(
-            expression: KtExpression,
-            resolvedCall: ResolvedCall<*>,
-            receiverValues: Map<PseudoValue, ReceiverValue>): ReadValueInstruction
+        expression: KtExpression,
+        resolvedCall: ResolvedCall<*>,
+        receiverValues: Map<PseudoValue, ReceiverValue>
+    ): ReadValueInstruction
 
     fun call(
-            valueElement: KtElement,
-            resolvedCall: ResolvedCall<*>,
-            receiverValues: Map<PseudoValue, ReceiverValue>,
-            arguments: Map<PseudoValue, ValueParameterDescriptor>): CallInstruction
+        valueElement: KtElement,
+        resolvedCall: ResolvedCall<*>,
+        receiverValues: Map<PseudoValue, ReceiverValue>,
+        arguments: Map<PseudoValue, ValueParameterDescriptor>
+    ): CallInstruction
 
     enum class PredefinedOperation {
         AND,
@@ -128,16 +135,18 @@ interface ControlFlowBuilder {
     }
 
     fun predefinedOperation(
-            expression: KtExpression,
-            operation: PredefinedOperation,
-            inputValues: List<PseudoValue>): OperationInstruction
+        expression: KtExpression,
+        operation: PredefinedOperation,
+        inputValues: List<PseudoValue>
+    ): OperationInstruction
 
     fun read(element: KtElement, target: AccessTarget, receiverValues: Map<PseudoValue, ReceiverValue>): ReadValueInstruction
 
     fun write(
-            assignment: KtElement,
-            lValue: KtElement,
-            rValue: PseudoValue,
-            target: AccessTarget,
-            receiverValues: Map<PseudoValue, ReceiverValue>)
+        assignment: KtElement,
+        lValue: KtElement,
+        rValue: PseudoValue,
+        target: AccessTarget,
+        receiverValues: Map<PseudoValue, ReceiverValue>
+    )
 }

@@ -1,6 +1,6 @@
 package test
 
-expect class C
+expect class C()
 
 fun test() {
     C()

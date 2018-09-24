@@ -43,12 +43,13 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
+import org.jetbrains.kotlin.psi.psiUtil.isTopLevelInFileOrScript
 import java.util.*
 
 class MoveKotlinDeclarationsHandler : MoveHandlerDelegate() {
     private fun getUniqueContainer(elements: Array<out PsiElement>): PsiElement? {
         val getContainer: (PsiElement) -> PsiElement? =
-                if (elements.any { it.parent !is KtFile }) { e ->
+                if (elements.any { !isTopLevelInFileOrScript(it) }) { e ->
                     when (e) {
                         is KtNamedDeclaration -> e.containingClassOrObject ?: e.parent
                         is KtFile -> e.parent
@@ -61,7 +62,7 @@ class MoveKotlinDeclarationsHandler : MoveHandlerDelegate() {
         return elements.mapNotNullTo(LinkedHashSet(), getContainer).singleOrNull()
     }
 
-    private fun KtNamedDeclaration.canMove() = if (this is KtClassOrObject) !isLocal else parent is KtFile
+    private fun KtNamedDeclaration.canMove() = if (this is KtClassOrObject) !isLocal else isTopLevelInFileOrScript(this)
 
     private fun doMoveWithCheck(
             project: Project, elements: Array<out PsiElement>, targetContainer: PsiElement?, callback: MoveCallback?, editor: Editor?
@@ -163,7 +164,8 @@ class MoveKotlinDeclarationsHandler : MoveHandlerDelegate() {
     }
 
     private fun canMove(elements: Array<out PsiElement>, targetContainer: PsiElement?, editorMode: Boolean): Boolean {
-        if (!super.canMove(elements, targetContainer)) return false
+        if (targetContainer != null && !isValidTarget(targetContainer, elements)) return false
+
         val container = getUniqueContainer(elements) ?: return false
 
         if (container is KtClassOrObject && targetContainer != null && targetContainer !is KtClassOrObject && elements.size > 1) {
@@ -172,7 +174,7 @@ class MoveKotlinDeclarationsHandler : MoveHandlerDelegate() {
 
         return elements.all { e ->
             when {
-                e is KtClass || e is KtObjectDeclaration && !e.isObjectLiteral() || e is KtNamedFunction || e is KtProperty ->
+                e is KtClass || e is KtObjectDeclaration && !e.isObjectLiteral() || e is KtNamedFunction || e is KtProperty || e is KtTypeAlias ->
                     (editorMode || (e as KtNamedDeclaration).canMove()) && e.canRefactor()
                 e is KtFile ->
                     e.declarations.any { it is KtNamedDeclaration } && e.canRefactor()

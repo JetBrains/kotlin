@@ -1,4 +1,5 @@
-// IGNORE_BACKEND_WITHOUT_CHECK: JS
+// IGNORE_BACKEND: JS_IR
+// DONT_RUN_GENERATED_CODE: JS
 
 fun test() {
     tailrec fun g3(counter : Int) {

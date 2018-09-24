@@ -1,3 +1,3 @@
-sealed class Base
-
-class Derived : Base()
+annotation class Outer {
+    class Nested
+}

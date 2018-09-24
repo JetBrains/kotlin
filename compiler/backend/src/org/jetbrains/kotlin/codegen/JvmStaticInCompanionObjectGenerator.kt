@@ -44,6 +44,8 @@ class JvmStaticInCompanionObjectGenerator(
                 Synthetic(originElement, staticFunctionDescriptor),
                 staticFunctionDescriptor,
                 object : FunctionGenerationStrategy.CodegenBased(state) {
+                    override fun skipNotNullAssertionsForParameters(): Boolean = true
+
                     override fun doGenerateBody(codegen: ExpressionCodegen, signature: JvmMethodSignature) {
                         val iv = codegen.v
                         val classDescriptor = descriptor.containingDeclaration as ClassDescriptor
@@ -61,7 +63,7 @@ class JvmStaticInCompanionObjectGenerator(
                                 propertyValue.put(signature.returnType, iv)
                             }
                             else {
-                                propertyValue.store(StackValue.onStack(propertyValue.type), iv, true)
+                                propertyValue.store(StackValue.onStack(propertyValue.type, propertyValue.kotlinType), iv, true)
                             }
                         }
                         else {

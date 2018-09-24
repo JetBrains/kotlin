@@ -183,13 +183,7 @@ internal class TemporaryVariableElimination(private val function: JsFunction) {
                 }
             }
 
-            override fun visitFor(x: JsFor) = withNewScope { super.visitFor(x) }
-
-            override fun visitForIn(x: JsForIn) = withNewScope { super.visitForIn(x) }
-
-            override fun visitWhile(x: JsWhile) = withNewScope { super.visitWhile(x) }
-
-            override fun visitDoWhile(x: JsDoWhile) = withNewScope { super.visitDoWhile(x) }
+            override fun visitLoop(x: JsLoop) = withNewScope { super.visitLoop(x) }
 
             override fun visitIf(x: JsIf) {
                 accept(x.ifExpression)
@@ -494,6 +488,11 @@ internal class TemporaryVariableElimination(private val function: JsFunction) {
 
                 accept(right)
                 sideEffectOccurred = true
+            }
+            else if (x.operator == JsBinaryOperator.AND || x.operator == JsBinaryOperator.OR) {
+                accept(x.arg1)
+                sideEffectOccurred = true
+                accept(x.arg2)
             }
             else {
                 super.visitBinaryExpression(x)

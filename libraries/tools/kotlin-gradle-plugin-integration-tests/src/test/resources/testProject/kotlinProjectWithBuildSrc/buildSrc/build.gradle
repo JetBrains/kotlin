@@ -1,5 +1,6 @@
 repositories {
     mavenLocal()
+    mavenCentral()
 }
 
 apply plugin: 'java'

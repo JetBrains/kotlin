@@ -18,9 +18,15 @@ package org.jetbrains.kotlin.idea.slicer
 
 import com.intellij.analysis.AnalysisScope
 import com.intellij.codeInsight.highlighting.ReadWriteAccessDetector.Access
+import com.intellij.lang.java.JavaLanguage
+import com.intellij.psi.PsiCall
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiMethod
+import com.intellij.psi.impl.light.LightMemberReference
 import com.intellij.psi.search.LocalSearchScope
 import com.intellij.psi.search.SearchScope
+import com.intellij.psi.search.searches.ReferencesSearch
+import com.intellij.slicer.JavaSliceUsage
 import com.intellij.slicer.SliceUsage
 import com.intellij.usageView.UsageInfo
 import com.intellij.util.Processor
@@ -35,48 +41,50 @@ import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.*
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.jumps.ReturnValueInstruction
 import org.jetbrains.kotlin.cfg.pseudocodeTraverser.TraversalOrder
 import org.jetbrains.kotlin.cfg.pseudocodeTraverser.traverse
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithSource
-import org.jetbrains.kotlin.descriptors.VariableDescriptorWithAccessors
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.SyntheticFieldDescriptor
-import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.caches.resolve.analyzeFully
-import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.*
 import org.jetbrains.kotlin.idea.core.isOverridable
 import org.jetbrains.kotlin.idea.findUsages.KotlinFunctionFindUsagesOptions
 import org.jetbrains.kotlin.idea.findUsages.KotlinPropertyFindUsagesOptions
 import org.jetbrains.kotlin.idea.findUsages.processAllExactUsages
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinValVar
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.toValVar
+import org.jetbrains.kotlin.idea.references.KtPropertyDelegationMethodsReference
+import org.jetbrains.kotlin.idea.references.ReferenceAccess
+import org.jetbrains.kotlin.idea.references.readWriteAccessWithFullExpression
 import org.jetbrains.kotlin.idea.search.declarationsSearch.HierarchySearchRequest
 import org.jetbrains.kotlin.idea.search.declarationsSearch.searchOverriders
-import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinReadWriteAccessDetector
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.DefaultValueArgument
 import org.jetbrains.kotlin.resolve.calls.model.ExpressionValueArgument
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.source.getPsi
+import org.jetbrains.kotlin.util.OperatorNameConventions
 import java.util.*
 
-private fun KtDeclaration.processHierarchyDownward(scope: SearchScope, processor: KtDeclaration.() -> Unit) {
+private fun PsiElement.processHierarchyDownward(scope: SearchScope, processor: PsiElement.() -> Unit) {
     processor()
     HierarchySearchRequest(this, scope).searchOverriders().forEach {
-        (it.namedUnwrappedElement as? KtDeclaration)?.processor()
+        it.namedUnwrappedElement?.processor()
     }
 }
 
-private fun KtDeclaration.processHierarchyUpward(scope: AnalysisScope, processor: KtDeclaration.() -> Unit) {
+private fun KtDeclaration.processHierarchyUpward(scope: AnalysisScope, processor: PsiElement.() -> Unit) {
     processor()
     val descriptor = unsafeResolveToDescriptor() as? CallableMemberDescriptor ?: return
     DescriptorUtils
-            .getAllOverriddenDescriptors(descriptor)
-            .mapNotNull { it.source.getPsi() as? KtDeclaration }
-            .filter { scope.contains(it) }
+        .getAllOverriddenDescriptors(descriptor)
+        .asSequence()
+        .mapNotNull { it.source.getPsi() }
+        .filter { scope.contains(it) }
+        .toList()
             .forEach(processor)
 }
 
@@ -93,17 +101,21 @@ private fun KtFunction.processCalls(scope: SearchScope, processor: (UsageInfo) -
     )
 }
 
+private enum class AccessKind {
+    READ_ONLY, WRITE_ONLY, WRITE_WITH_OPTIONAL_READ, READ_OR_WRITE
+}
+
 private fun KtDeclaration.processVariableAccesses(
         scope: SearchScope,
-        kind: Access,
+        kind: AccessKind,
         processor: (UsageInfo) -> Unit
 ) {
     processAllExactUsages(
             {
                 KotlinPropertyFindUsagesOptions(project).apply {
-                    isReadAccess = kind == Access.Read || kind == Access.ReadWrite
-                    isWriteAccess = kind == Access.Write || kind == Access.ReadWrite
-                    isReadWriteAccess = kind == Access.ReadWrite
+                    isReadAccess = kind == AccessKind.READ_ONLY || kind == AccessKind.READ_OR_WRITE
+                    isWriteAccess = kind == AccessKind.WRITE_ONLY || kind == AccessKind.WRITE_WITH_OPTIONAL_READ || kind == AccessKind.READ_OR_WRITE
+                    isReadWriteAccess = kind == AccessKind.WRITE_WITH_OPTIONAL_READ || kind == AccessKind.READ_OR_WRITE
                     isSearchForTextOccurrences = false
                     isSkipImportStatements = true
                     searchScope = scope.intersectWith(useScope)
@@ -113,9 +125,7 @@ private fun KtDeclaration.processVariableAccesses(
     )
 }
 
-private fun KtParameter.canProcess(): Boolean {
-    return !(isLoopParameter || isVarArg)
-}
+private fun KtParameter.canProcess() = !isVarArg
 
 abstract class Slicer(
         protected val element: KtExpression,
@@ -128,7 +138,7 @@ abstract class Slicer(
         operator fun get(element: KtElement): Pseudocode? {
             val container = element.containingDeclarationForPseudocode ?: return null
             return computedPseudocodes.getOrPut(container) {
-                container.getContainingPseudocode(container.analyzeFully())?.apply { computedPseudocodes[container] = this } ?: return null
+                container.getContainingPseudocode(container.analyzeWithContent())?.apply { computedPseudocodes[container] = this } ?: return null
             }
         }
     }
@@ -150,17 +160,33 @@ class InflowSlicer(
         processor: Processor<SliceUsage>,
         parentUsage: KotlinSliceUsage
 ) : Slicer(element, processor, parentUsage) {
-    private fun KtDeclaration.processHierarchyDownwardAndPass() {
+    private fun PsiElement.processHierarchyDownwardAndPass() {
         processHierarchyDownward(parentUsage.scope.toSearchScope()) { passToProcessor() }
     }
 
     private fun PsiElement.passToProcessorAsValue(lambdaLevel: Int = parentUsage.lambdaLevel) = passToProcessor(lambdaLevel, true)
 
     private fun KtDeclaration.processAssignments(accessSearchScope: SearchScope) {
-        processVariableAccesses(accessSearchScope, Access.Write) body@ {
-            val refExpression = it.element as? KtExpression ?: return@body
-            val rhs = KtPsiUtil.safeDeparenthesize(refExpression).getAssignmentByLHS()?.right ?: return@body
-            rhs.passToProcessorAsValue()
+        processVariableAccesses(accessSearchScope, AccessKind.WRITE_WITH_OPTIONAL_READ) body@ {
+            val refElement = it.element ?: return@body
+            val refParent = refElement.parent
+
+            val rhsValue = when {
+                refElement is KtExpression -> {
+                    val (accessKind, accessExpression) = refElement.readWriteAccessWithFullExpression(true)
+                    if (accessKind == ReferenceAccess.WRITE && accessExpression is KtBinaryExpression && accessExpression.operationToken == KtTokens.EQ) {
+                        accessExpression.right
+                    }
+                    else {
+                        accessExpression
+                    }
+                }
+
+                refParent is PsiCall -> refParent.argumentList?.expressions?.getOrNull(0)
+
+                else -> null
+            }
+            rhsValue?.passToProcessorAsValue()
         }
     }
 
@@ -185,12 +211,12 @@ class InflowSlicer(
     }
 
     private fun KtProperty.processProperty() {
-        val bindingContext by lazy { analyzeFully() }
+        val bindingContext by lazy { analyzeWithContent() }
 
         if (hasDelegateExpression()) {
             val getter = (unsafeResolveToDescriptor() as VariableDescriptorWithAccessors).getter
             val delegateGetterResolvedCall = getter?.let { bindingContext[BindingContext.DELEGATED_PROPERTY_RESOLVED_CALL, it] }
-            (delegateGetterResolvedCall?.resultingDescriptor?.source?.getPsi() as? KtDeclarationWithBody)?.passToProcessor()
+            delegateGetterResolvedCall?.resultingDescriptor?.source?.getPsi()?.passToProcessor()
             return
         }
 
@@ -221,19 +247,39 @@ class InflowSlicer(
             return
         }
 
-        val parameterDescriptor = analyze()[BindingContext.VALUE_PARAMETER, this] ?: return
+        if (function is KtNamedFunction
+            && function.name == OperatorNameConventions.SET_VALUE.asString()
+            && function.hasModifier(KtTokens.OPERATOR_KEYWORD)) {
+
+            ReferencesSearch
+                    .search(function, parentUsage.scope.toSearchScope())
+                    .filterIsInstance<KtPropertyDelegationMethodsReference>()
+                    .forEach { (it.element?.parent as? KtProperty)?.processPropertyAssignments() }
+        }
+
+        val parameterDescriptor = resolveToParameterDescriptorIfAny(BodyResolveMode.FULL) ?: return
 
         (function as? KtFunction)?.processCalls(parentUsage.scope.toSearchScope()) body@ {
-            val refExpression = it.element as? KtExpression ?: return@body
-            val callElement = refExpression.getParentOfTypeAndBranch<KtCallElement> { calleeExpression } ?: return@body
-            val resolvedCall = callElement.getResolvedCall(callElement.analyze()) ?: return@body
-            val resolvedArgument = resolvedCall.valueArguments[parameterDescriptor] ?: return@body
-            val flownExpression = when (resolvedArgument) {
-                                      is DefaultValueArgument -> defaultValue
-                                      is ExpressionValueArgument -> resolvedArgument.valueArgument?.getArgumentExpression()
-                                      else -> null
-                                  } ?: return@body
-            flownExpression.passToProcessorAsValue()
+            val refElement = it.element ?: return@body
+            val refParent = refElement.parent
+
+            val argumentExpression = when {
+                refElement is KtExpression -> {
+                    val callElement = refElement.getParentOfTypeAndBranch<KtCallElement> { calleeExpression } ?: return@body
+                    val resolvedCall = callElement.resolveToCall() ?: return@body
+                    val resolvedArgument = resolvedCall.valueArguments[parameterDescriptor] ?: return@body
+                    when (resolvedArgument) {
+                        is DefaultValueArgument -> defaultValue
+                        is ExpressionValueArgument -> resolvedArgument.valueArgument?.getArgumentExpression()
+                        else -> null
+                    }
+                }
+
+                refParent is PsiCall -> refParent.argumentList?.expressions?.getOrNull(this@processParameter.parameterIndex())
+
+                else -> null
+            }
+            argumentExpression?.passToProcessorAsValue()
         }
 
         if (valOrVarKeyword.toValVar() == KotlinValVar.Var) {
@@ -262,7 +308,7 @@ class InflowSlicer(
     private fun KtExpression.isBackingFieldReference(): Boolean {
         return this is KtSimpleNameExpression &&
                getReferencedName() == SyntheticFieldDescriptor.NAME.asString() &&
-               analyze()[BindingContext.REFERENCE_TARGET, this] is SyntheticFieldDescriptor
+               resolveToCall()?.resultingDescriptor is SyntheticFieldDescriptor
     }
 
     private fun KtExpression.processExpression() {
@@ -291,7 +337,7 @@ class InflowSlicer(
                     return
                 }
                 val accessedDescriptor = createdAt.target.accessedDescriptor ?: return
-                val accessedDeclaration = accessedDescriptor.source.getPsi() as? KtDeclaration ?: return
+                val accessedDeclaration = accessedDescriptor.source.getPsi() ?: return
                 if (accessedDescriptor is SyntheticFieldDescriptor) {
                     val property = accessedDeclaration as? KtProperty ?: return
                     if (accessedDescriptor.propertyDescriptor.setter?.isDefault ?: true) {
@@ -325,7 +371,7 @@ class InflowSlicer(
                     (resolvedCall.dispatchReceiver as? ExpressionReceiver)?.expression?.passToProcessorAsValue(parentUsage.lambdaLevel + 1)
                 }
                 else {
-                    (resultingDescriptor.source.getPsi() as? KtDeclaration)?.processHierarchyDownwardAndPass()
+                    resultingDescriptor.source.getPsi()?.processHierarchyDownwardAndPass()
                 }
             }
         }
@@ -353,19 +399,26 @@ class OutflowSlicer(
             if (this is KtParameter && !canProcess()) return@processHierarchyUpward
 
             val withDereferences = parentUsage.params.showInstanceDereferences
-            processVariableAccesses(parentUsage.scope.toSearchScope(), if (withDereferences) Access.ReadWrite else Access.Read) body@ {
-                val refExpression = (it.element as? KtExpression)?.let { KtPsiUtil.safeDeparenthesize(it) } ?: return@body
+            val accessKind = if (withDereferences) AccessKind.READ_OR_WRITE else AccessKind.READ_ONLY
+            (this as? KtDeclaration)?.processVariableAccesses(parentUsage.scope.toSearchScope(), accessKind) body@ {
+                val refElement = it.element
+                if (refElement !is KtExpression) {
+                    refElement?.passToProcessor()
+                    return@body
+                }
+
+                val refExpression = KtPsiUtil.safeDeparenthesize(refElement)
                 if (withDereferences) {
                     refExpression.processDereferences()
                 }
                 if (!withDereferences || KotlinReadWriteAccessDetector.INSTANCE.getExpressionAccess(refExpression) == Access.Read) {
-                    refExpression.processExpression()
+                    refExpression.passToProcessor()
                 }
             }
         }
     }
 
-    private fun PsiElement.getCallElementForExactCallee(): KtElement? {
+    private fun PsiElement.getCallElementForExactCallee(): PsiElement? {
         if (this is KtArrayAccessExpression) return this
 
         val operationRefExpr = getNonStrictParentOfType<KtOperationReferenceExpression>()
@@ -374,6 +427,7 @@ class OutflowSlicer(
         val parentCall = getParentOfTypeAndBranch<KtCallElement> { calleeExpression } ?: return null
         val callee = parentCall.calleeExpression?.let { KtPsiUtil.safeDeparenthesize(it) }
         if (callee == this || callee is KtConstructorCalleeExpression && callee.isAncestor(this, true)) return parentCall
+
         return null
     }
 
@@ -386,9 +440,25 @@ class OutflowSlicer(
     private fun KtFunction.processFunction() {
         if (this is KtConstructor<*> || this is KtNamedFunction && name != null) {
             processHierarchyUpward(parentUsage.scope) {
-                (this as? KtFunction)?.processCalls(parentUsage.scope.toSearchScope()) {
-                    it.element?.getCallElementForExactCallee()?.passToProcessor()
-                    it.element?.getCallableReferenceForExactCallee()?.passToProcessor(parentUsage.lambdaLevel + 1)
+                if (this is KtFunction) {
+                    processCalls(parentUsage.scope.toSearchScope()) {
+                        val refElement = it.element
+                        when {
+                            refElement == null -> (it.reference as? LightMemberReference)?.element?.passToProcessor()
+                            refElement is KtExpression -> {
+                                refElement.getCallElementForExactCallee()?.passToProcessor()
+                                refElement.getCallableReferenceForExactCallee()?.passToProcessor(parentUsage.lambdaLevel + 1)
+                            }
+                            else -> refElement.passToProcessor()
+                        }
+                    }
+                }
+                else if (this is PsiMethod && language == JavaLanguage.INSTANCE) {
+                    // todo: work around the bug in JavaSliceProvider.transform()
+                    processor.process(JavaSliceUsage.createRootUsage(this, parentUsage.params))
+                }
+                else {
+                    passToProcessor()
                 }
             }
             return
@@ -439,7 +509,7 @@ class OutflowSlicer(
     private fun KtExpression.processExpression() {
         processPseudocodeUsages { pseudoValue, instr ->
             when (instr) {
-                is WriteValueInstruction -> (instr.target.accessedDescriptor?.source?.getPsi() as? KtDeclaration)?.passToProcessor()
+                is WriteValueInstruction -> instr.target.accessedDescriptor?.source?.getPsi()?.passToProcessor()
                 is CallInstruction -> {
                     if (parentUsage.lambdaLevel > 0 && instr.receiverValues[pseudoValue] != null) {
                         instr.element.passToProcessor(parentUsage.lambdaLevel - 1)

@@ -1,0 +1,11 @@
+// -- Module: <m1-common> --
+package
+
+public expect fun </*0*/ T : kotlin.Comparable<T>> kotlin.Array<out T>.sort(): kotlin.Unit
+
+
+// -- Module: <m2-jvm> --
+package
+
+public fun </*0*/ T> kotlin.Array<out T>.sort(): kotlin.Unit
+public actual fun </*0*/ T : kotlin.Comparable<T>> kotlin.Array<out T>.sort(): kotlin.Unit

@@ -1,0 +1,11 @@
+// "Create class 'A'" "true"
+package p
+
+// TARGET_PARENT:
+class Foo: A() {
+
+}
+
+<caret>open class A {
+
+}

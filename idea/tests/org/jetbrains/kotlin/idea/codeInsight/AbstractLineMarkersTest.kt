@@ -1,23 +1,14 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.codeInsight
 
+import com.intellij.codeInsight.daemon.DaemonCodeAnalyzerSettings
 import com.intellij.codeInsight.daemon.LineMarkerInfo
 import com.intellij.codeInsight.daemon.impl.DaemonCodeAnalyzerImpl
+import com.intellij.openapi.editor.Document
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.rt.execution.junit.FileComparisonFailure
@@ -33,6 +24,7 @@ import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TagsTestDataUtil
 import org.jetbrains.kotlin.test.util.renderAsGotoImplementation
@@ -49,52 +41,65 @@ abstract class AbstractLineMarkersTest : KotlinLightCodeInsightFixtureTestCase()
         return KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
     }
 
-    fun doTest(path: String) {
+    fun doTest(path: String) = doTest(path) {}
+
+    protected fun doAndCheckHighlighting(
+        documentToAnalyze: Document, expectedHighlighting: ExpectedHighlightingData, expectedFile: File
+    ): List<LineMarkerInfo<*>> {
+        myFixture.doHighlighting()
+
+        val markers = DaemonCodeAnalyzerImpl.getLineMarkers(documentToAnalyze, myFixture.project)
+
         try {
-            val fileText = FileUtil.loadFile(File(path))
+            expectedHighlighting.checkLineMarkers(markers, documentToAnalyze.text)
+
+            // This is a workaround for sad bug in ExpectedHighlightingData:
+            // the latter doesn't throw assertion error when some line markers are expected, but none are present.
+            if (FileUtil.loadFile(expectedFile).contains("<lineMarker") && markers.isEmpty()) {
+                throw AssertionError("Some line markers are expected, but nothing is present at all")
+            }
+        } catch (error: AssertionError) {
+            try {
+                val actualTextWithTestData = TagsTestDataUtil.insertInfoTags(markers, true, myFixture.file.text)
+                KotlinTestUtils.assertEqualsToFile(expectedFile, actualTextWithTestData)
+            } catch (failure: FileComparisonFailure) {
+                throw FileComparisonFailure(
+                    error.message + "\n" + failure.message,
+                    failure.expected,
+                    failure.actual,
+                    failure.filePath
+                )
+            }
+        }
+        return markers
+    }
+
+    fun doTest(path: String, additionalCheck: () -> Unit) {
+        val fileText = FileUtil.loadFile(File(path))
+        try {
             ConfigLibraryUtil.configureLibrariesByDirective(myFixture.module, PlatformTestUtil.getCommunityPath(), fileText)
+            if (InTextDirectivesUtils.findStringWithPrefixes(fileText, "METHOD_SEPARATORS") != null) {
+                DaemonCodeAnalyzerSettings.getInstance().SHOW_METHOD_SEPARATORS = true
+            }
 
             myFixture.configureByFile(path)
             val project = myFixture.project
             val document = myFixture.editor.document
 
-            val data = ExpectedHighlightingData(
-                    document, false, false, false, myFixture.file)
+            val data = ExpectedHighlightingData(document, false, false, false, myFixture.file)
             data.init()
 
             PsiDocumentManager.getInstance(project).commitAllDocuments()
 
-            myFixture.doHighlighting()
-
-            val markers = DaemonCodeAnalyzerImpl.getLineMarkers(document, project)
-
-            try {
-                data.checkLineMarkers(markers, document.text)
-
-                // This is a workaround for sad bug in ExpectedHighlightingData:
-                // the latter doesn't throw assertion error when some line markers are expected, but none are present.
-                if (FileUtil.loadFile(File(path)).contains("<lineMarker") && markers.isEmpty()) {
-                    throw AssertionError("Some line markers are expected, but nothing is present at all")
-                }
-            }
-            catch (error: AssertionError) {
-                try {
-                    val actualTextWithTestData = TagsTestDataUtil.insertInfoTags(markers, true, myFixture.file.text)
-                    KotlinTestUtils.assertEqualsToFile(File(path), actualTextWithTestData)
-                }
-                catch (failure: FileComparisonFailure) {
-                    throw FileComparisonFailure(error.message + "\n" + failure.message,
-                                                failure.expected,
-                                                failure.actual,
-                                                failure.filePath)
-                }
-
-            }
+            val markers = doAndCheckHighlighting(document, data, File(path))
 
             assertNavigationElements(markers)
-        }
-        catch (exc: Exception) {
+            additionalCheck()
+        } catch (exc: Exception) {
             throw RuntimeException(exc)
+        } finally {
+            ConfigLibraryUtil.unconfigureLibrariesByDirective(myModule, fileText)
+            DaemonCodeAnalyzerSettings.getInstance().SHOW_METHOD_SEPARATORS = false
         }
 
     }

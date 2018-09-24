@@ -5,6 +5,12 @@ package org.jetbrains.kotlin.gradle.dsl
 interface KotlinCommonToolOptions {
 
     /**
+     * Report an error if there are any warnings
+     * Default value: false
+     */
+     var allWarningsAsErrors: kotlin.Boolean
+
+    /**
      * Generate no warnings
      * Default value: false
      */

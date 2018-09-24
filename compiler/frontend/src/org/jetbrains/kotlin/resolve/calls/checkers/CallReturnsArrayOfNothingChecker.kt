@@ -33,6 +33,6 @@ class CallReturnsArrayOfNothingChecker : CallChecker {
         if (this == null || isComputingDeferredType(this)) return false
 
         return isArrayOfNothing() ||
-               arguments.any { !it.isStarProjection && it.type.containsArrayOfNothing() }
+                arguments.any { !it.isStarProjection && it.type.containsArrayOfNothing() }
     }
 }

@@ -1,0 +1,3 @@
+// FIX: Replace with '=='
+
+val x = !(2 == 3 && 4.equals(5))

@@ -11,17 +11,17 @@ expect fun f4(s: () -> String)
 expect inline fun f5(s: () -> String)
 expect inline fun f6(crossinline s: () -> String)
 
-expect fun f7(x: Any)
-expect fun f8(vararg x: Any)
+expect fun f7<!JVM:NO_ACTUAL_FOR_EXPECT!>(x: Any)<!>
+expect fun f8<!JVM:NO_ACTUAL_FOR_EXPECT!>(vararg x: Any)<!>
 
 // MODULE: m2-jvm(m1-common)
 // FILE: jvm.kt
 
 actual inline fun f1(noinline s: () -> String) {}
-<!ACTUAL_WITHOUT_EXPECT!>actual inline fun f2(noinline s: () -> String)<!> {}
+actual inline fun f2<!ACTUAL_WITHOUT_EXPECT!>(noinline s: () -> String)<!> {}
 actual inline fun f3(s: () -> String) {}
 actual inline fun f4(crossinline s: () -> String) {}
-<!ACTUAL_WITHOUT_EXPECT!>actual inline fun f5(crossinline s: () -> String)<!> {}
+actual inline fun f5<!ACTUAL_WITHOUT_EXPECT!>(crossinline s: () -> String)<!> {}
 actual inline fun f6(s: () -> String) {}
-<!ACTUAL_WITHOUT_EXPECT!>actual fun f7(vararg x: Any)<!> {}
-<!ACTUAL_WITHOUT_EXPECT!>actual fun f8(x: Any)<!> {}
+actual fun f7<!ACTUAL_WITHOUT_EXPECT!>(vararg x: Any)<!> {}
+actual fun f8<!ACTUAL_WITHOUT_EXPECT!>(x: Any)<!> {}

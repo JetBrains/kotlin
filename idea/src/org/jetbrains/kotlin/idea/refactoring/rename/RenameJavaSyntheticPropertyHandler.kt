@@ -25,12 +25,10 @@ import com.intellij.psi.impl.light.LightElement
 import com.intellij.psi.search.SearchScope
 import com.intellij.refactoring.rename.RenamePsiElementProcessor
 import org.jetbrains.kotlin.idea.KotlinLanguage
-import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.refactoring.project
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.load.java.JvmAbi
-import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
 
@@ -70,8 +68,7 @@ class RenameJavaSyntheticPropertyHandler : AbstractReferenceSubstitutionRenameHa
 
     override fun getElementToRename(dataContext: DataContext): PsiElement? {
         val refExpr = getReferenceExpression(dataContext) ?: return null
-        val descriptor = refExpr.analyze(BodyResolveMode.PARTIAL)[BindingContext.REFERENCE_TARGET, refExpr] as? SyntheticJavaPropertyDescriptor
-                         ?: return null
+        val descriptor = refExpr.resolveToCall()?.resultingDescriptor as? SyntheticJavaPropertyDescriptor ?: return null
         return SyntheticPropertyWrapper(PsiManager.getInstance(dataContext.project), descriptor)
     }
 }

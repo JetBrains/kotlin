@@ -23,8 +23,10 @@ import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.CallableInfo
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.FunctionInfo
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.TypeInfo
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtDestructuringDeclaration
 import org.jetbrains.kotlin.psi.KtForExpression
+import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.resolve.DataClassDescriptorResolver
 import org.jetbrains.kotlin.types.Variance
 
@@ -52,6 +54,11 @@ object CreateComponentFunctionActionFactory : CreateCallableMemberFromUsageFacto
         val entry = entries[componentNumber]
         val returnTypeInfo = TypeInfo(entry, Variance.OUT_VARIANCE)
 
-        return FunctionInfo(name.identifier, ownerTypeInfo, returnTypeInfo, isOperator = true)
+        return FunctionInfo(
+                name.identifier,
+                ownerTypeInfo,
+                returnTypeInfo,
+                modifierList = KtPsiFactory(element).createModifierList(KtTokens.OPERATOR_KEYWORD)
+        )
     }
 }

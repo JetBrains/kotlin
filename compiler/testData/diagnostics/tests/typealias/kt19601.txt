@@ -25,5 +25,5 @@ public final class Test2</*0*/ T : N<kotlin.String> /* = Num<kotlin.String> */> 
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
-public typealias N</*0*/ T>  = Num<T>
-public typealias Ord</*0*/ T>  = Order<T>
+public typealias N</*0*/ T> = Num<T>
+public typealias Ord</*0*/ T> = Order<T>

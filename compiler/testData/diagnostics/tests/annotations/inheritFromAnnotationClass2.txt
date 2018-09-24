@@ -1,0 +1,42 @@
+package
+
+public final annotation class Ann : kotlin.annotation.Target {
+    public constructor Ann()
+    public final override /*1*/ /*fake_override*/ val allowedTargets: kotlin.Array<out kotlin.annotation.AnnotationTarget>
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final annotation class Ann2 : kotlin.annotation.Target {
+    public constructor Ann2(/*0*/ vararg allowedTargets: kotlin.annotation.AnnotationTarget /*kotlin.Array<out kotlin.annotation.AnnotationTarget>*/)
+    public final override /*1*/ val allowedTargets: kotlin.Array<out kotlin.annotation.AnnotationTarget>
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final annotation class Ann3 : C {
+    public constructor Ann3()
+    public final override /*1*/ /*fake_override*/ fun bar(): kotlin.collections.Set<kotlin.Number>
+    public open override /*1*/ /*fake_override*/ fun foo(): kotlin.collections.List<kotlin.String>
+}
+
+public final annotation class Ann4 : I {
+    public constructor Ann4()
+    public open override /*1*/ /*fake_override*/ fun foo(): kotlin.collections.List<kotlin.String>
+}
+
+public final class C : I {
+    public constructor C()
+    public final fun bar(): kotlin.collections.Set<kotlin.Number>
+    public open override /*1*/ /*fake_override*/ fun foo(): kotlin.collections.List<kotlin.String>
+}
+
+public interface I : J {
+    public open override /*1*/ fun foo(): kotlin.collections.List<kotlin.String>
+}
+
+public interface J : Target {
+    public abstract fun foo(): kotlin.collections.(Mutable)Collection<kotlin.String!>!
+}

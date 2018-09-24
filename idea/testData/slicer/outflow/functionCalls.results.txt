@@ -1,3 +1,4 @@
-3 fun <bold>foo(n: Int) {</bold>
-8 	val x = <bold>foo(1)</bold>
-8 		val <bold>x = foo(1)</bold>
+3 fun <bold>foo(n: Int) = n + 1</bold>
+3 	int x = FunctionCallsKt.<bold>foo</bold>(2);
+6 	val x = <bold>foo(1)</bold>
+6 		val <bold>x = foo(1)</bold>

@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.types.expressions
 
-import com.google.common.collect.Sets
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
@@ -35,7 +34,7 @@ import org.jetbrains.kotlin.resolve.scopes.utils.getDeclarationsByLabel
 
 object LabelResolver {
     private fun getElementsByLabelName(labelName: Name, labelExpression: KtSimpleNameExpression): Set<KtElement> {
-        val elements = Sets.newLinkedHashSet<KtElement>()
+        val elements = linkedSetOf<KtElement>()
         var parent: PsiElement? = labelExpression.parent
         while (parent != null) {
             val name = getLabelNameIfAny(parent)
@@ -113,9 +112,9 @@ object LabelResolver {
     }
 
     private fun resolveNamedLabel(
-            labelName: Name,
-            labelExpression: KtSimpleNameExpression,
-            trace: BindingTrace
+        labelName: Name,
+        labelExpression: KtSimpleNameExpression,
+        trace: BindingTrace
     ): KtElement? {
         val list = getElementsByLabelName(labelName, labelExpression)
         if (list.isEmpty()) return null
@@ -128,9 +127,9 @@ object LabelResolver {
     }
 
     fun resolveThisOrSuperLabel(
-            expression: KtInstanceExpressionWithLabel,
-            context: ResolutionContext<*>,
-            labelName: Name
+        expression: KtInstanceExpressionWithLabel,
+        context: ResolutionContext<*>,
+        labelName: Name
     ): LabeledReceiverResolutionResult {
         val referenceExpression = expression.instanceReference
         val targetLabel = expression.getTargetLabel() ?: error(expression)
@@ -148,7 +147,7 @@ object LabelResolver {
                 }
 
                 val element = DescriptorToSourceUtils.descriptorToDeclaration(declarationDescriptor)
-                              ?: error("No PSI element for descriptor: " + declarationDescriptor)
+                        ?: error("No PSI element for descriptor: " + declarationDescriptor)
                 context.trace.record(LABEL_TARGET, targetLabel, element)
                 context.trace.record(REFERENCE_TARGET, referenceExpression, declarationDescriptor)
 
@@ -170,8 +169,7 @@ object LabelResolver {
                         context.trace.record(REFERENCE_TARGET, referenceExpression, declarationDescriptor)
                     }
                     return LabeledReceiverResolutionResult.labelResolutionSuccess(thisReceiver)
-                }
-                else {
+                } else {
                     context.trace.report(UNRESOLVED_REFERENCE.on(targetLabel, targetLabel))
                 }
             }
@@ -181,8 +179,8 @@ object LabelResolver {
     }
 
     class LabeledReceiverResolutionResult private constructor(
-            val code: LabeledReceiverResolutionResult.Code,
-            private val receiverParameterDescriptor: ReceiverParameterDescriptor?
+        val code: LabeledReceiverResolutionResult.Code,
+        private val receiverParameterDescriptor: ReceiverParameterDescriptor?
     ) {
         enum class Code {
             LABEL_RESOLUTION_ERROR,

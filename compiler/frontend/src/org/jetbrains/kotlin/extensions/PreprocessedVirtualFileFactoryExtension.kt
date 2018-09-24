@@ -27,9 +27,10 @@ import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
  */
 interface PreprocessedVirtualFileFactoryExtension {
     companion object : ProjectExtensionDescriptor<PreprocessedVirtualFileFactoryExtension>(
-            "org.jetbrains.kotlin.preprocessedVirtualFileFactoryExtension",
-            PreprocessedVirtualFileFactoryExtension::class.java
+        "org.jetbrains.kotlin.preprocessedVirtualFileFactoryExtension",
+        PreprocessedVirtualFileFactoryExtension::class.java
     )
+
     fun isPassThrough(): Boolean
 
     fun createPreprocessedFile(file: VirtualFile?): VirtualFile?
@@ -45,6 +46,7 @@ class PreprocessedFileCreator(val project: Project) {
     fun create(file: VirtualFile): VirtualFile = validExts.firstNotNullResult { it.createPreprocessedFile(file) } ?: file
 
     // unused now, but could be used in the IDE at some point
-    fun createLight(file: LightVirtualFile): LightVirtualFile = validExts.firstNotNullResult { it.createPreprocessedLightFile(file) } ?: file
+    fun createLight(file: LightVirtualFile): LightVirtualFile =
+        validExts.firstNotNullResult { it.createPreprocessedLightFile(file) } ?: file
 }
 

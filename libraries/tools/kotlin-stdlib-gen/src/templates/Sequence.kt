@@ -1,15 +1,20 @@
+/*
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
+ */
+
 package templates
 
 import templates.Family.*
 
-fun sequences(): List<GenericFunction> {
-    val templates = arrayListOf<GenericFunction>()
+object SequenceOps : TemplateGroupBase() {
 
-    templates add f("asIterable()") {
-        only(Iterables, ArraysOfObjects, ArraysOfPrimitives, Sequences, CharSequences, Maps)
-        doc { f -> "Creates an [Iterable] instance that wraps the original ${f.collection} returning its ${f.element.pluralize()} when being iterated." }
+    val f_asIterable = fn("asIterable()") {
+        include(Iterables, ArraysOfObjects, ArraysOfPrimitives, Sequences, CharSequences, Maps)
+    } builder {
+        doc { "Creates an [Iterable] instance that wraps the original ${f.collection} returning its ${f.element.pluralize()} when being iterated." }
         returns("Iterable<T>")
-        body { f ->
+        body {
             """
             ${ when(f) {
                 ArraysOfObjects, ArraysOfPrimitives -> "if (isEmpty()) return emptyList()"
@@ -20,24 +25,29 @@ fun sequences(): List<GenericFunction> {
             """
         }
 
-        inline(Iterables, Maps) { Inline.Only }
+        specialFor(Iterables, Maps) { inlineOnly() }
+        specialFor(Iterables) {
+            doc { "Returns this collection as an [Iterable]." }
+            body { "return this" }
+        }
 
-        doc(Iterables) { "Returns this collection as an [Iterable]." }
-        body(Iterables) { "return this" }
         body(Maps) { "return entries" }
     }
 
-    templates add f("asSequence()") {
+    val f_asSequence = fn("asSequence()") {
+        includeDefault()
         include(CharSequences, Maps)
-        doc { f ->
+    } builder {
+        doc {
             """
             Creates a [Sequence] instance that wraps the original ${f.collection} returning its ${f.element.pluralize()} when being iterated.
-
-            ${if (f in listOf(ArraysOfPrimitives, ArraysOfObjects, Iterables)) "@sample samples.collections.Sequences.Building.sequenceFrom${f.doc.collection.capitalize()}" else ""}
             """
         }
+        if (f in listOf(ArraysOfPrimitives, ArraysOfObjects, Iterables))
+            sample("samples.collections.Sequences.Building.sequenceFrom${f.doc.collection.capitalize()}")
+
         returns("Sequence<T>")
-        body { f ->
+        body {
             """
             ${ when(f) {
                 ArraysOfObjects, ArraysOfPrimitives -> "if (isEmpty()) return emptySequence()"
@@ -50,11 +60,10 @@ fun sequences(): List<GenericFunction> {
 
         body(Maps) { "return entries.asSequence()" }
 
-        doc(Sequences) { "Returns this sequence as a [Sequence]."}
-        inline(Sequences) { Inline.Only }
-        body(Sequences) { "return this" }
+        specialFor(Sequences) {
+            doc { "Returns this sequence as a [Sequence]."}
+            inlineOnly()
+            body { "return this" }
+        }
     }
-
-    return templates
 }
-

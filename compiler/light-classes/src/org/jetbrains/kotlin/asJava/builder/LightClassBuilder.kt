@@ -22,17 +22,18 @@ import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.psi.ClassFileViewProvider
-import com.intellij.psi.PsiManager
+import com.intellij.psi.PsiElement
 import com.intellij.psi.impl.compiled.ClsFileImpl
 import com.intellij.psi.impl.java.stubs.PsiJavaFileStub
 import com.intellij.psi.impl.java.stubs.impl.PsiJavaFileStubImpl
+import com.intellij.psi.impl.source.tree.TreeElement
 import org.jetbrains.kotlin.codegen.state.GenerationState
-import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
+import java.lang.StringBuilder
 
 data class LightClassBuilderResult(val stub: PsiJavaFileStub, val bindingContext: BindingContext, val diagnostics: Diagnostics)
 
@@ -47,16 +48,20 @@ fun buildLightClass(
 
     try {
         val classBuilderFactory = KotlinLightClassBuilderFactory(createJavaFileStub(project, packageFqName, files))
-        val state = GenerationState(
+        val state = GenerationState.Builder(
                 project,
                 classBuilderFactory,
                 context.module,
                 context.bindingContext,
                 files.toList(),
-                CompilerConfiguration.EMPTY,
-                generateClassFilter,
-                wantsDiagnostics = false
-        )
+                context.languageVersionSettings?.let {
+                    CompilerConfiguration().apply {
+                        languageVersionSettings = it
+                        isReadOnly = true
+                    }
+                } ?: CompilerConfiguration.EMPTY
+
+        ).generateDeclaredClassFilter(generateClassFilter).wantsDiagnostics(false).build()
         state.beforeCompile()
 
         generate(state, files)
@@ -79,23 +84,42 @@ private fun createJavaFileStub(project: Project, packageFqName: FqName, files: C
     val javaFileStub = PsiJavaFileStubImpl(packageFqName.asString(), /*compiled = */true)
     javaFileStub.psiFactory = ClsWrapperStubPsiFactory.INSTANCE
 
-    val manager = PsiManager.getInstance(project)
-
-    val virtualFile = getRepresentativeVirtualFile(files)
-    val fakeFile = object : ClsFileImpl(ClassFileViewProvider(manager, virtualFile)) {
+    val fakeFile = object : ClsFileImpl(files.first().viewProvider) {
         override fun getStub() = javaFileStub
 
         override fun getPackageName() = packageFqName.asString()
 
         override fun isPhysical() = false
+
+        override fun appendMirrorText(indentLevel: Int, buffer: StringBuilder) {
+            if (files.size == 1) {
+                LOG.error("Mirror text should never be calculated for light classes generated from a single file")
+            }
+            super.appendMirrorText(indentLevel, buffer)
+        }
+
+
+        override fun setMirror(element: TreeElement) {
+            if (files.size == 1) {
+                LOG.error("Mirror element should never be set for light classes generated from a single file")
+            }
+            super.setMirror(element)
+        }
+
+        override fun getMirror(): PsiElement {
+            if (files.size == 1) {
+                LOG.error("Mirror element should never be calculated for light classes generated from a single file")
+            }
+            return super.getMirror()
+        }
+
+        override fun getText(): String {
+            return files.singleOrNull()?.text ?: super.getText()
+        }
     }
 
     javaFileStub.psi = fakeFile
     return javaFileStub
-}
-
-private fun getRepresentativeVirtualFile(files: Collection<KtFile>): VirtualFile {
-    return files.first().viewProvider.virtualFile
 }
 
 private fun logErrorWithOSInfo(cause: Throwable?, fqName: FqName, virtualFile: VirtualFile?) {

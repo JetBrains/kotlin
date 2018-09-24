@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package kotlin.test
@@ -44,6 +33,18 @@ internal object DefaultJsAsserter : Asserter {
         super.assertNotEquals(message, illegal, actual)
     }
 
+    override fun assertSame(message: String?, expected: Any?, actual: Any?) {
+        e = expected
+        a = actual
+        super.assertSame(message, expected, actual)
+    }
+
+    override fun assertNotSame(message: String?, illegal: Any?, actual: Any?) {
+        e = illegal
+        a = actual
+        super.assertNotSame(message, illegal, actual)
+    }
+
     override fun assertNull(message: String?, actual: Any?) {
         a = actual
         super.assertNull(message, actual)
@@ -57,8 +58,7 @@ internal object DefaultJsAsserter : Asserter {
     override fun assertTrue(lazyMessage: () -> String?, actual: Boolean) {
         if (!actual) {
             failWithMessage(lazyMessage)
-        }
-        else {
+        } else {
             invokeHook(true, lazyMessage)
         }
     }
@@ -88,8 +88,7 @@ internal object DefaultJsAsserter : Asserter {
                 override val actual: Any? = a
                 override val lazyMessage: () -> String? = lazyMessage
             })
-        }
-        finally {
+        } finally {
             e = undefined
             a = undefined
         }

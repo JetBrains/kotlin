@@ -62,7 +62,12 @@ class ReplState {
         abstract val parentLine: SuccessfulLine?
 
         class SubmittedLine(override val linePsi: KtFile, override val parentLine: SuccessfulLine?) : LineInfo()
-        class SuccessfulLine(override val linePsi: KtFile, override val parentLine: SuccessfulLine?, val lineDescriptor: LazyScriptDescriptor) : LineInfo()
+        class SuccessfulLine(
+            override val linePsi: KtFile,
+            override val parentLine: SuccessfulLine?,
+            val lineDescriptor: LazyScriptDescriptor
+        ) : LineInfo()
+
         class FailedLine(override val linePsi: KtFile, override val parentLine: SuccessfulLine?) : LineInfo()
     }
 
@@ -72,6 +77,6 @@ class ReplState {
         val lastLineImports = lexicalScopeAfterLastLine.parentsWithSelf.firstIsInstance<ImportingScope>()
         val scopesForThisLine = fileScopeFactory.createScopesForFile(lineInfo.linePsi, lastLineImports)
         val combinedLexicalScopes = lexicalScopeAfterLastLine.replaceImportingScopes(scopesForThisLine.importingScope)
-        return FileScopes(combinedLexicalScopes, scopesForThisLine.importingScope, scopesForThisLine.importResolver)
+        return FileScopes(combinedLexicalScopes, scopesForThisLine.importingScope, scopesForThisLine.importForceResolver)
     }
 }

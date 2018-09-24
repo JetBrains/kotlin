@@ -1,0 +1,7 @@
+compiler/testData/cli/jvm/jsr305Migration.kt:2:19: error: null can not be a value of a non-null type String
+    annotated.foo(null)
+                  ^
+compiler/testData/cli/jvm/jsr305Migration.kt:3:19: error: null can not be a value of a non-null type String
+    annotated.bar(null)
+                  ^
+COMPILATION_ERROR

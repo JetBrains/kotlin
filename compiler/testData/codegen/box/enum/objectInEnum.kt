@@ -1,3 +1,5 @@
+// !LANGUAGE: -NestedClassesInEnumEntryShouldBeInner
+
 enum class E {
     ENTRY,
     SUBCLASS {

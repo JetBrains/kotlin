@@ -1,10 +1,12 @@
+// IGNORE_BACKEND: JVM_IR
 // WITH_RUNTIME
 // WITH_COROUTINES
+// LANGUAGE_VERSION: 1.3
 import helpers.*
-import kotlin.coroutines.experimental.*
-import kotlin.coroutines.experimental.intrinsics.*
+import kotlin.coroutines.*
+import kotlin.coroutines.intrinsics.*
 
-suspend fun suspendWithValue(result: () -> String): String = suspendCoroutineOrReturn { x ->
+suspend fun suspendWithValue(result: () -> String): String = suspendCoroutineUninterceptedOrReturn { x ->
     x.resume(result())
     COROUTINE_SUSPENDED
 }

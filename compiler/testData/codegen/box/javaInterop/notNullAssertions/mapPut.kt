@@ -1,4 +1,4 @@
-// IGNORE_BACKEND: NATIVE
+// IGNORE_BACKEND: JS_IR
 
 fun <K: Any, V: Any> foo(k: K, v: V) {
     val map = HashMap<K, V>()

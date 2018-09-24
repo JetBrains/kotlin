@@ -314,6 +314,9 @@ message Switch {
 message SwitchEntry {
     optional Expression label = 1;
     repeated Statement statement = 2;
+
+    optional int32 fileId = 3;
+    optional Location location = 4;
 }
 
 message While {
@@ -403,6 +406,7 @@ message NameBinding {
 message ClassModel {
     required int32 name_id = 1;
     optional int32 super_name_id = 2;
+    repeated int32 interface_name_id = 4;
     optional GlobalBlock post_declaration_block = 3;
 }
 
@@ -435,6 +439,11 @@ enum SpecialFunction {
     WRAP_FUNCTION = 2;
     TO_BOXED_CHAR = 3;
     UNBOX_CHAR = 4;
+    SUSPEND_CALL = 5;
+    COROUTINE_RESULT = 6;
+    COROUTINE_CONTROLLER = 7;
+    COROUTINE_RECEIVER = 8;
+    SET_COROUTINE_RESULT = 9;
 }
 
 

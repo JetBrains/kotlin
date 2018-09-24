@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.codegen.inline
 
+import org.jetbrains.kotlin.codegen.optimization.common.InsnSequence
 import org.jetbrains.org.objectweb.asm.tree.LabelNode
 import org.jetbrains.org.objectweb.asm.tree.TryCatchBlockNode
 
@@ -35,6 +36,12 @@ interface Interval {
 
     /*note that some intervals are mutable */
     fun isEmpty(): Boolean = startLabel == endLabel
+
+    fun verify(processor: CoveringTryCatchNodeProcessor) {
+        assert (processor.instructionIndex(startLabel) <= processor.instructionIndex(endLabel)) {
+            "Try block body starts after body end: ${processor.instructionIndex(startLabel)} > ${processor.instructionIndex(endLabel)}"
+        }
+    }
 }
 
 interface SplittableInterval<out T : Interval> : Interval {
@@ -76,6 +83,9 @@ class TryCatchBlockNodeInfo(
         )
     }
 }
+
+val TryCatchBlockNodeInfo.bodyInstuctions
+    get() = InsnSequence(startLabel, endLabel)
 
 class TryCatchBlockNodePosition(
         val nodeInfo: TryCatchBlockNodeInfo,

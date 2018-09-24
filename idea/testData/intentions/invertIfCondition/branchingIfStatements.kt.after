@@ -6,5 +6,6 @@ fun main() {
             a + 1
         else
             a + 2
-    } else a
+    } else
+        a
 }

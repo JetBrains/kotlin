@@ -17,6 +17,7 @@
 package main
 
 import kotlin.reflect.*
+import kotlin.reflect.full.*
 
 fun topLevelFun() {}
 

@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.inspections
@@ -37,16 +26,48 @@ import java.awt.BorderLayout
 import java.util.regex.PatternSyntaxException
 import javax.swing.JPanel
 
-abstract class NamingConventionInspection(private val entityName: String,
-                                          defaultNamePattern: String) : AbstractKotlinInspection() {
+data class NamingRule(val message: String, val matcher: (String) -> Boolean)
+
+private val START_UPPER = NamingRule("should start with an uppercase letter") {
+    it.getOrNull(0)?.isUpperCase() == false
+}
+
+private val START_LOWER = NamingRule("should start with a lowercase letter") {
+    it.getOrNull(0)?.isLowerCase() == false
+}
+
+private val NO_UNDERSCORES = NamingRule("should not contain underscores") {
+    '_' in it
+}
+
+private val NO_START_UNDERSCORE = NamingRule("should not start with an underscore") {
+    it.startsWith('_')
+}
+
+private val NO_MIDDLE_UNDERSCORES = NamingRule("should not contain underscores in the middle or the end") {
+    '_' in it.substring(1)
+}
+
+private val NO_BAD_CHARACTERS = NamingRule("may contain only letters and digits") {
+    it.any { c -> c !in 'a'..'z' && c !in 'A'..'Z' && c !in '0'..'9' }
+}
+
+private val NO_BAD_CHARACTERS_OR_UNDERSCORE = NamingRule("may contain only letters, digits or underscores") {
+    it.any { c -> c !in 'a'..'z' && c !in 'A'..'Z' && c !in '0'..'9' && c != '_' }
+}
+
+abstract class NamingConventionInspection(
+    private val entityName: String,
+    private val defaultNamePattern: String,
+    private vararg val rules: NamingRule
+) : AbstractKotlinInspection() {
     protected var nameRegex: Regex? = defaultNamePattern.toRegex()
     var namePattern: String = defaultNamePattern
         set(value) {
             field = value
             nameRegex = try {
                 value.toRegex()
-            }
-            catch(e: PatternSyntaxException) {
+            } catch (e: PatternSyntaxException) {
                 null
             }
         }
@@ -55,16 +76,34 @@ abstract class NamingConventionInspection(private val entityName: String,
         val name = element.name
         val nameIdentifier = element.nameIdentifier
         if (name != null && nameIdentifier != null && nameRegex?.matches(name) == false) {
-            holder.registerProblem(element.nameIdentifier!!,
-                                   "$entityName name <code>#ref</code> doesn't match regex '$namePattern' #loc",
-                                   RenameIdentifierFix())
+            val message = getNameMismatchMessage(name)
+            holder.registerProblem(
+                element.nameIdentifier!!,
+                "$entityName name <code>#ref</code> $message #loc",
+                RenameIdentifierFix()
+            )
         }
+    }
+
+    protected fun getNameMismatchMessage(name: String): String {
+        if (namePattern == defaultNamePattern) {
+            for (rule in rules) {
+                if (rule.matcher(name)) {
+                    return rule.message
+                }
+            }
+        }
+        return "doesn't match regex '$namePattern'"
     }
 
     override fun createOptionsPanel() = NamingConventionOptionsPanel(this)
 }
 
-class ClassNameInspection : NamingConventionInspection("Class", "[A-Z][A-Za-z\\d]*") {
+class ClassNameInspection : NamingConventionInspection(
+    "Class",
+    "[A-Z][A-Za-z\\d]*",
+    START_UPPER, NO_UNDERSCORES, NO_BAD_CHARACTERS
+) {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
         return object : KtVisitorVoid() {
             override fun visitClassOrObject(classOrObject: KtClassOrObject) {
@@ -78,42 +117,68 @@ class ClassNameInspection : NamingConventionInspection("Class", "[A-Z][A-Za-z\\d
     }
 }
 
-class EnumEntryNameInspection : NamingConventionInspection("Enum entry", "[A-Z]([A-Za-z\\d]*|[A-Z_\\d]*)") {
+class EnumEntryNameInspection : NamingConventionInspection(
+    "Enum entry",
+    "[A-Z]([A-Za-z\\d]*|[A-Z_\\d]*)",
+    START_UPPER, NO_BAD_CHARACTERS_OR_UNDERSCORE
+) {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
-        return object : KtVisitorVoid() {
-            override fun visitEnumEntry(enumEntry: KtEnumEntry) {
-                verifyName(enumEntry, holder)
-            }
-        }
+        return enumEntryVisitor { enumEntry -> verifyName(enumEntry, holder) }
     }
 }
 
-class FunctionNameInspection : NamingConventionInspection("Function", "[a-z][A-Za-z\\d]*") {
+class FunctionNameInspection : NamingConventionInspection(
+    "Function",
+    "[a-z][A-Za-z\\d]*",
+    START_LOWER, NO_UNDERSCORES, NO_BAD_CHARACTERS
+) {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
-        return object : KtVisitorVoid() {
-            override fun visitNamedFunction(function: KtNamedFunction) {
-                if (TestUtils.isInTestSourceContent(function) && function.nameIdentifier?.text?.startsWith("`") == true) {
-                    return
-                }
+        return namedFunctionVisitor { function ->
+            if (function.hasModifier(KtTokens.OVERRIDE_KEYWORD)) {
+                return@namedFunctionVisitor
+            }
+            if (!TestUtils.isInTestSourceContent(function)) {
                 verifyName(function, holder)
             }
         }
     }
 }
 
-abstract class PropertyNameInspectionBase protected constructor(private val kind: PropertyKind,
-                                                                entityName: String,
-                                                                defaultNamePattern: String)
-    : NamingConventionInspection(entityName, defaultNamePattern) {
+class TestFunctionNameInspection : NamingConventionInspection(
+    "Test function",
+    "[a-z][A-Za-z_\\d]*",
+    START_LOWER
+) {
+    override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
+        return namedFunctionVisitor { function ->
+            if (!TestUtils.isInTestSourceContent(function)) {
+                return@namedFunctionVisitor
+            }
+            if (function.nameIdentifier?.text?.startsWith("`") == true) {
+                return@namedFunctionVisitor
+            }
+            verifyName(function, holder)
+        }
+    }
+}
 
-    protected enum class PropertyKind { NORMAL, PRIVATE, OBJECT, CONST, LOCAL }
+abstract class PropertyNameInspectionBase protected constructor(
+    private val kind: PropertyKind,
+    entityName: String,
+    defaultNamePattern: String,
+    vararg rules: NamingRule
+) : NamingConventionInspection(entityName, defaultNamePattern, *rules) {
+
+    protected enum class PropertyKind { NORMAL, PRIVATE, OBJECT_OR_TOP_LEVEL, CONST, LOCAL }
 
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
-        return object : KtVisitorVoid() {
-            override fun visitProperty(property: KtProperty) {
-                if (property.getKind() == kind) {
-                    verifyName(property, holder)
-                }
+        return propertyVisitor { property ->
+            if (property.hasModifier(KtTokens.OVERRIDE_KEYWORD)) {
+                return@propertyVisitor
+            }
+
+            if (property.getKind() == kind) {
+                verifyName(property, holder)
             }
         }
     }
@@ -121,7 +186,9 @@ abstract class PropertyNameInspectionBase protected constructor(private val kind
     private fun KtProperty.getKind(): PropertyKind = when {
         isLocal -> PropertyKind.LOCAL
 
-        containingClassOrObject is KtObjectDeclaration -> PropertyKind.OBJECT
+        containingClassOrObject is KtObjectDeclaration -> PropertyKind.OBJECT_OR_TOP_LEVEL
+
+        isTopLevel -> PropertyKind.OBJECT_OR_TOP_LEVEL
 
         hasModifier(KtTokens.CONST_KEYWORD) -> PropertyKind.CONST
 
@@ -131,26 +198,47 @@ abstract class PropertyNameInspectionBase protected constructor(private val kind
     }
 }
 
-class PropertyNameInspection : PropertyNameInspectionBase(PropertyKind.NORMAL, "Property", "[a-z][A-Za-z\\d]*")
+class PropertyNameInspection :
+    PropertyNameInspectionBase(
+        PropertyKind.NORMAL, "Property", "[a-z][A-Za-z\\d]*",
+        START_LOWER, NO_UNDERSCORES, NO_BAD_CHARACTERS
+    )
 
-class ObjectPropertyNameInspection : PropertyNameInspectionBase(PropertyKind.OBJECT, "Object property", "[A-Za-z][_A-Za-z\\d]*")
+class ObjectPropertyNameInspection :
+    PropertyNameInspectionBase(
+        PropertyKind.OBJECT_OR_TOP_LEVEL,
+        "Object or top-level property",
+        "[A-Za-z][_A-Za-z\\d]*",
+        NO_START_UNDERSCORE, NO_BAD_CHARACTERS_OR_UNDERSCORE
+    )
 
-class PrivatePropertyNameInspection : PropertyNameInspectionBase(PropertyKind.PRIVATE, "Private property", "_?[a-z][A-Za-z\\d]*")
+class PrivatePropertyNameInspection :
+    PropertyNameInspectionBase(
+        PropertyKind.PRIVATE, "Private property", "_?[a-z][A-Za-z\\d]*",
+        NO_MIDDLE_UNDERSCORES, NO_BAD_CHARACTERS_OR_UNDERSCORE
+    )
 
-class ConstPropertyNameInspection : PropertyNameInspectionBase(PropertyKind.CONST, "Const property", "[A-Z][_A-Z\\d]*")
+class ConstPropertyNameInspection :
+    PropertyNameInspectionBase(PropertyKind.CONST, "Const property", "[A-Z][_A-Z\\d]*")
 
-class LocalVariableNameInspection : PropertyNameInspectionBase(PropertyKind.LOCAL, "Local variable", "[a-z][A-Za-z\\d]*")
+class LocalVariableNameInspection :
+    PropertyNameInspectionBase(
+        PropertyKind.LOCAL, "Local variable", "[a-z][A-Za-z\\d]*",
+        START_LOWER, NO_UNDERSCORES, NO_BAD_CHARACTERS
+    )
 
-class PackageNameInspection : NamingConventionInspection("Package", "[a-z][A-Za-z\\d]*(\\.[a-z][A-Za-z\\d]*)*") {
+class PackageNameInspection :
+    NamingConventionInspection("Package", "[a-z][A-Za-z\\d]*(\\.[a-z][A-Za-z\\d]*)*", NO_UNDERSCORES) {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean, session: LocalInspectionToolSession): PsiElementVisitor {
-        return object : KtVisitorVoid() {
-            override fun visitPackageDirective(directive: KtPackageDirective) {
-                val qualifiedName = directive.qualifiedName
-                if (qualifiedName.isNotEmpty() && nameRegex?.matches(qualifiedName) == false) {
-                    holder.registerProblem(directive.packageNameExpression!!,
-                                           "Package name <code>#ref</code> doesn't match regex '$namePattern' #loc",
-                                           RenamePackageFix())
-                }
+        return packageDirectiveVisitor { directive ->
+            val qualifiedName = directive.qualifiedName
+            if (qualifiedName.isNotEmpty() && nameRegex?.matches(qualifiedName) == false) {
+                val message = getNameMismatchMessage(qualifiedName)
+                holder.registerProblem(
+                    directive.packageNameExpression!!,
+                    "Package name <code>#ref</code> $message #loc",
+                    RenamePackageFix()
+                )
             }
         }
     }
@@ -171,7 +259,7 @@ class NamingConventionOptionsPanel(owner: NamingConventionInspection) : JPanel()
             setOneLineMode(true)
         }
         regexField.document.addDocumentListener(object : DocumentAdapter() {
-            override fun documentChanged(e: DocumentEvent?) {
+            override fun documentChanged(e: DocumentEvent) {
                 owner.namePattern = regexField.text
             }
         })

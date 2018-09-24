@@ -145,7 +145,7 @@ class J2kPostProcessor(private val formatCode: Boolean) : PostProcessor {
             file.elementsInRange(rangeMarker.range!!).filterIsInstance<KtElement>()
 
         return if (elements.isNotEmpty())
-            file.getResolutionFacade().analyzeFullyAndGetResult(elements).bindingContext.diagnostics
+            file.getResolutionFacade().analyzeWithAllCompilerChecks(elements).bindingContext.diagnostics
         else
             Diagnostics.EMPTY
     }

@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.util
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.core.formatter.KotlinCodeStyleSettings
@@ -25,6 +26,7 @@ import org.jetbrains.kotlin.idea.core.targetDescriptors
 import org.jetbrains.kotlin.idea.imports.ImportPathComparator
 import org.jetbrains.kotlin.idea.imports.getImportableTargets
 import org.jetbrains.kotlin.idea.imports.importableFqName
+import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
 import org.jetbrains.kotlin.idea.refactoring.fqName.isImported
 import org.jetbrains.kotlin.idea.resolve.frontendService
 import org.jetbrains.kotlin.idea.util.ImportDescriptorResult
@@ -37,7 +39,6 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.ImportPath
 import org.jetbrains.kotlin.resolve.descriptorUtil.getImportableDescriptor
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
-import org.jetbrains.kotlin.resolve.lazy.DefaultImportProvider
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
@@ -46,6 +47,7 @@ import org.jetbrains.kotlin.resolve.scopes.utils.findClassifier
 import org.jetbrains.kotlin.resolve.scopes.utils.findFunction
 import org.jetbrains.kotlin.resolve.scopes.utils.findPackage
 import org.jetbrains.kotlin.resolve.scopes.utils.findVariable
+import org.jetbrains.kotlin.script.ScriptDependenciesProvider
 import org.jetbrains.kotlin.utils.addIfNotNull
 import java.util.*
 
@@ -58,8 +60,21 @@ class ImportInsertHelperImpl(private val project: Project) : ImportInsertHelper(
         get() = ImportPathComparator
 
     override fun isImportedWithDefault(importPath: ImportPath, contextFile: KtFile): Boolean {
-        val defaultImportProvider = contextFile.getResolutionFacade().frontendService<DefaultImportProvider>()
-        return importPath.isImported(defaultImportProvider.defaultImports, defaultImportProvider.excludedImports)
+        val languageVersionSettings = contextFile.getResolutionFacade().frontendService<LanguageVersionSettings>()
+        val platform = TargetPlatformDetector.getPlatform(contextFile)
+        val allDefaultImports = platform.getDefaultImports(languageVersionSettings, includeLowPriorityImports = true)
+
+        val scriptExtraImports = contextFile.takeIf { it.isScript() }?.let { ktFile ->
+            val scriptDependencies = ScriptDependenciesProvider.getInstance(ktFile.project).getScriptDependencies(ktFile.originalFile)
+            scriptDependencies?.imports?.map { ImportPath.fromString(it) }
+        }.orEmpty()
+
+        return importPath.isImported(allDefaultImports + scriptExtraImports, platform.excludedImports)
+    }
+
+    override fun isImportedWithLowPriorityDefaultImport(importPath: ImportPath, contextFile: KtFile): Boolean {
+        val platform = TargetPlatformDetector.getPlatform(contextFile)
+        return importPath.isImported(platform.defaultLowPriorityImports, platform.excludedImports)
     }
 
     override fun mayImportOnShortenReferences(descriptor: DeclarationDescriptor): Boolean {
@@ -213,17 +228,18 @@ class ImportInsertHelperImpl(private val project: Project) : ImportInsertHelper(
             val imports = file.importDirectives
             val scopeToImport = getMemberScope(parentFqName, moduleDescriptor) ?: return ImportDescriptorResult.FAIL
             val importedScopes = imports
-                    .filter { it.isAllUnder }
-                    .mapNotNull {
-                        val importPath = it.importPath
-                        if (importPath != null) {
-                            val fqName = importPath.fqName
-                            getMemberScope(fqName, moduleDescriptor)
-                        }
-                        else {
-                            null
-                        }
+                .asSequence()
+                .filter { it.isAllUnder }
+                .mapNotNull {
+                    val importPath = it.importPath
+                    if (importPath != null) {
+                        val fqName = importPath.fqName
+                        getMemberScope(fqName, moduleDescriptor)
+                    } else {
+                        null
                     }
+                }
+                .toList()
 
             val filePackage = moduleDescriptor.getPackage(file.packageFqName)
 

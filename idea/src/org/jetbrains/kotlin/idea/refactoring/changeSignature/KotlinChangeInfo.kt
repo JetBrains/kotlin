@@ -35,7 +35,8 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.idea.KotlinLanguage
-import org.jetbrains.kotlin.idea.caches.resolve.getJavaOrKotlinMemberDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.util.getJavaOrKotlinMemberDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.util.javaResolutionFacade
 import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinMethodDescriptor.Kind
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.KotlinCallableDefinitionUsage
@@ -49,6 +50,7 @@ import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.jvm.annotations.findJvmOverloadsAnnotation
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
+import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.types.isError
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.utils.keysToMap
@@ -124,7 +126,7 @@ open class KotlinChangeInfo(
 
     fun hasAppendedParametersOnly(): Boolean {
         val oldParamCount = originalBaseFunctionDescriptor.valueParameters.size
-        return newParameters.withIndex().all { (i, p) -> if (i < oldParamCount) p.oldIndex == i else p.isNewParameter }
+        return newParameters.asSequence().withIndex().all { (i, p) -> if (i < oldParamCount) p.oldIndex == i else p.isNewParameter }
     }
 
     override fun getNewParameters(): Array<KotlinParameterInfo> = newParameters.toTypedArray()
@@ -262,9 +264,8 @@ open class KotlinChangeInfo(
                     }
                     buffer.append('.')
                 }
+                buffer.append(name)
             }
-
-            buffer.append(name)
         }
 
         buffer.append(getNewParametersSignature(inheritedCallable))
@@ -333,7 +334,7 @@ open class KotlinChangeInfo(
         val mandatoryParams = parameters.toMutableList()
         val defaultValues = ArrayList<KtExpression>()
         return psiMethods.map {
-            JvmOverloadSignature(it, mandatoryParams.map(getPsi).toSet(), defaultValues.toSet()).apply {
+            JvmOverloadSignature(it, mandatoryParams.asSequence().map(getPsi).toSet(), defaultValues.toSet()).apply {
                 val param = mandatoryParams.removeLast { getDefaultValue(it) != null } ?: return@apply
                 defaultValues.add(getDefaultValue(param)!!)
             }
@@ -427,13 +428,13 @@ open class KotlinChangeInfo(
             var defaultValuesRemained = defaultValuesToRetain
             for (param in newParameterList) {
                 if (param.isNewParameter || param.defaultValueForParameter == null || defaultValuesRemained-- > 0) continue
-                newParameterList.withIndex().filter { it.value.oldIndex >= param.oldIndex }.forEach { oldIndices[it.index]-- }
+                newParameterList.asSequence().withIndex().filter { it.value.oldIndex >= param.oldIndex }.toList().forEach { oldIndices[it.index]-- }
             }
 
             defaultValuesRemained = defaultValuesToRetain
             val oldParameterCount = originalPsiMethod.parameterList.parametersCount
             var indexInCurrentPsiMethod = 0
-            return newParameterList.withIndex()
+            return newParameterList.asSequence().withIndex()
                     .mapNotNullTo(ArrayList()) map@ { pair ->
                         val (i, info) = pair
 
@@ -527,7 +528,7 @@ fun KotlinChangeInfo.getAffectedCallables(): Collection<UsageInfo> = methodDescr
 
 fun ChangeInfo.toJetChangeInfo(
         originalChangeSignatureDescriptor: KotlinMethodDescriptor,
-        resolutionFacade: ResolutionFacade? = null
+        resolutionFacade: ResolutionFacade
 ): KotlinChangeInfo {
     val method = method as PsiMethod
 
@@ -555,11 +556,14 @@ fun ChangeInfo.toJetChangeInfo(
                 }
 
         val parameterType = if (oldIndex >= 0) originalParameterDescriptors[oldIndex].type else currentType
+        val originalKtParameter = originalParameterDescriptors.getOrNull(oldIndex)?.source?.getPsi() as? KtParameter
+        val valOrVar = originalKtParameter?.valOrVarKeyword?.toValVar() ?: KotlinValVar.None
         KotlinParameterInfo(callableDescriptor = functionDescriptor,
                             originalIndex = oldIndex,
                             name = info.name,
                             originalTypeInfo = KotlinTypeInfo(false, parameterType),
-                            defaultValueForCall = defaultValueExpr).apply {
+                            defaultValueForCall = defaultValueExpr,
+                            valOrVar = valOrVar).apply {
             currentTypeInfo = KotlinTypeInfo(false, currentType)
         }
     }

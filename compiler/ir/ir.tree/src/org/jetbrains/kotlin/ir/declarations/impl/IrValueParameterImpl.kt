@@ -17,34 +17,75 @@
 package org.jetbrains.kotlin.ir.declarations.impl
 
 import org.jetbrains.kotlin.descriptors.ParameterDescriptor
+import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class IrValueParameterImpl(
+    startOffset: Int,
+    endOffset: Int,
+    origin: IrDeclarationOrigin,
+    override val symbol: IrValueParameterSymbol,
+    override val name: Name,
+    override val index: Int,
+    override val type: IrType,
+    override val varargElementType: IrType?,
+    override val isCrossinline: Boolean,
+    override val isNoinline: Boolean
+) :
+    IrDeclarationBase(startOffset, endOffset, origin),
+    IrValueParameter {
+
+    constructor(
         startOffset: Int,
         endOffset: Int,
         origin: IrDeclarationOrigin,
-        override val symbol: IrValueParameterSymbol
-) : IrDeclarationBase(startOffset, endOffset, origin), IrValueParameter {
-    override val descriptor: ParameterDescriptor = symbol.descriptor
-
-    constructor(startOffset: Int, endOffset: Int, origin: IrDeclarationOrigin, descriptor: ParameterDescriptor) :
-            this(startOffset, endOffset, origin, IrValueParameterSymbolImpl(descriptor))
+        symbol: IrValueParameterSymbol,
+        type: IrType,
+        varargElementType: IrType?
+    ) :
+            this(
+                startOffset, endOffset, origin,
+                symbol,
+                symbol.descriptor.name,
+                symbol.descriptor.safeAs<ValueParameterDescriptor>()?.index ?: -1,
+                type,
+                varargElementType,
+                symbol.descriptor.safeAs<ValueParameterDescriptor>()?.isCrossinline ?: false,
+                symbol.descriptor.safeAs<ValueParameterDescriptor>()?.isNoinline ?: false
+            )
 
     constructor(
-            startOffset: Int,
-            endOffset: Int,
-            origin: IrDeclarationOrigin,
-            descriptor: ParameterDescriptor,
-            defaultValue: IrExpressionBody?
-    ) : this(startOffset, endOffset, origin, descriptor) {
+        startOffset: Int,
+        endOffset: Int,
+        origin: IrDeclarationOrigin,
+        descriptor: ParameterDescriptor,
+        type: IrType,
+        varargElementType: IrType?
+    ) :
+            this(startOffset, endOffset, origin, IrValueParameterSymbolImpl(descriptor), type, varargElementType)
+
+    constructor(
+        startOffset: Int,
+        endOffset: Int,
+        origin: IrDeclarationOrigin,
+        descriptor: ParameterDescriptor,
+        type: IrType,
+        varargElementType: IrType?,
+        defaultValue: IrExpressionBody?
+    ) : this(startOffset, endOffset, origin, descriptor, type, varargElementType) {
         this.defaultValue = defaultValue
     }
+
+    override val descriptor: ParameterDescriptor = symbol.descriptor
 
     init {
         symbol.bind(this)
@@ -53,10 +94,10 @@ class IrValueParameterImpl(
     override var defaultValue: IrExpressionBody? = null
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
-            visitor.visitValueParameter(this, data)
+        visitor.visitValueParameter(this, data)
 
     override fun <D> transform(transformer: IrElementTransformer<D>, data: D): IrValueParameter =
-            transformer.visitValueParameter(this, data) as IrValueParameter
+        transformer.visitValueParameter(this, data) as IrValueParameter
 
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
         defaultValue?.accept(visitor, data)

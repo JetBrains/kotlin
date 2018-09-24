@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.idea.actions
 import com.intellij.ide.fileTemplates.DefaultCreateFromTemplateHandler
 import com.intellij.ide.fileTemplates.FileTemplate
 import org.jetbrains.kotlin.idea.KotlinFileType
-import org.jetbrains.kotlin.idea.core.quoteIfNeeded
+import org.jetbrains.kotlin.psi.psiUtil.quoteIfNeeded
 
 class KotlinCreateFromTemplateHandler : DefaultCreateFromTemplateHandler() {
     override fun handlesTemplate(template: FileTemplate) = template.isTemplateOfType(KotlinFileType.INSTANCE)

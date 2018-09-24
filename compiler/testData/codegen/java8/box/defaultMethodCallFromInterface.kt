@@ -11,7 +11,7 @@ public interface Simple {
 }
 
 // FILE: main.kt
-
+// JVM_TARGET: 1.8
 interface KInterface : Simple {
     fun bar(): String {
         return test("O") + Simple.testStatic("O")

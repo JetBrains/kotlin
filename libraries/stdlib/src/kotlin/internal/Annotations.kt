@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package kotlin.internal
@@ -65,3 +54,59 @@ internal annotation class InlineOnly
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY)
 @Retention(AnnotationRetention.BINARY)
 internal annotation class DynamicExtension
+
+/**
+ * The value of this parameter should be a property reference expression (`this::foo`), referencing a `lateinit` property,
+ * the backing field of which is accessible at the point where the corresponding argument is passed.
+ */
+@Target(AnnotationTarget.VALUE_PARAMETER)
+@Retention(AnnotationRetention.BINARY)
+@SinceKotlin("1.2")
+internal annotation class AccessibleLateinitPropertyLiteral
+
+/**
+ * Specifies that this declaration is only completely supported since the specified version.
+ *
+ * The Kotlin compiler of an earlier version is going to report a diagnostic on usages of this declaration.
+ * The diagnostic message can be specified with [message], or via [errorCode] (takes less space, but might not be immediately clear
+ * to the user). The diagnostic severity can be specified with [level]: WARNING/ERROR mean that either a warning or an error
+ * is going to be reported, HIDDEN means that the declaration is going to be removed from resolution completely.
+ *
+ * [versionKind] specifies which version should be compared with the [version] value, when compiling the usage of the annotated declaration.
+ * Note that prior to 1.2, only [RequireKotlinVersionKind.LANGUAGE_VERSION] was supported, so the Kotlin compiler before 1.2 is going to
+ * treat any [RequireKotlin] as if it requires the language version. Since 1.2, the Kotlin compiler supports
+ * [RequireKotlinVersionKind.LANGUAGE_VERSION], [RequireKotlinVersionKind.COMPILER_VERSION] and [RequireKotlinVersionKind.API_VERSION].
+ * If the actual value of [versionKind] is something different (e.g. a new version kind, added in future versions of Kotlin),
+ * Kotlin 1.2 is going to ignore this [RequireKotlin] altogether, where as Kotlin before 1.2 is going to treat this as a requirement
+ * on the language version.
+ *
+ * This annotation is erased at compile time; its arguments are stored in a more compact form in the Kotlin metadata.
+ */
+@Target(AnnotationTarget.CLASS, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY, AnnotationTarget.CONSTRUCTOR, AnnotationTarget.TYPEALIAS)
+@Retention(AnnotationRetention.SOURCE)
+@Repeatable
+@SinceKotlin("1.2")
+internal annotation class RequireKotlin(
+    val version: String,
+    val message: String = "",
+    val level: DeprecationLevel = DeprecationLevel.ERROR,
+    val versionKind: RequireKotlinVersionKind = RequireKotlinVersionKind.LANGUAGE_VERSION,
+    val errorCode: Int = -1
+)
+
+/**
+ * The kind of the version that is required by [RequireKotlin].
+ */
+@SinceKotlin("1.2")
+internal enum class RequireKotlinVersionKind {
+    LANGUAGE_VERSION,
+    COMPILER_VERSION,
+    API_VERSION,
+}
+
+/**
+ * Specifies that this declaration is a part of special DSL, used for constructing function's contract.
+ */
+@Retention(AnnotationRetention.BINARY)
+@SinceKotlin("1.2")
+internal annotation class ContractsDsl

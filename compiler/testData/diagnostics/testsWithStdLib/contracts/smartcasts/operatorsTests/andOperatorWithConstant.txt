@@ -1,0 +1,11 @@
+package
+
+public fun annotatedFalseAndFalse(/*0*/ x: kotlin.Any?): kotlin.Unit
+public fun annotatedFalseAndTrue(/*0*/ x: kotlin.Any?): kotlin.Unit
+public fun annotatedTrueAndFalse(/*0*/ x: kotlin.Any?): kotlin.Unit
+public fun annotatedTrueAndTrue(/*0*/ x: kotlin.Any?): kotlin.Unit
+public fun falseWhenString(/*0*/ x: kotlin.Any?): kotlin.Boolean
+    Returns(FALSE) -> x is String
+
+public fun trueWhenString(/*0*/ x: kotlin.Any?): kotlin.Boolean
+    Returns(TRUE) -> x is String

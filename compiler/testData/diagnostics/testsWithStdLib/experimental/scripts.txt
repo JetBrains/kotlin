@@ -1,0 +1,39 @@
+package
+
+public final class Usage_none : kotlin.script.templates.standard.ScriptTemplateWithArgs {
+    public constructor Usage_none(/*0*/ args: kotlin.Array<kotlin.String>)
+    public final override /*1*/ /*fake_override*/ val args: kotlin.Array<kotlin.String>
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    public final fun use(): kotlin.Unit
+}
+
+public final class Usage_propagate : kotlin.script.templates.standard.ScriptTemplateWithArgs {
+    public constructor Usage_propagate(/*0*/ args: kotlin.Array<kotlin.String>)
+    public final override /*1*/ /*fake_override*/ val args: kotlin.Array<kotlin.String>
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    @api.ExperimentalAPI public final fun use(): kotlin.Unit
+}
+
+public final class Usage_use : kotlin.script.templates.standard.ScriptTemplateWithArgs {
+    public constructor Usage_use(/*0*/ args: kotlin.Array<kotlin.String>)
+    public final override /*1*/ /*fake_override*/ val args: kotlin.Array<kotlin.String>
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    public final fun use(): kotlin.Unit
+}
+
+package api {
+    @api.ExperimentalAPI public fun function(): kotlin.String
+
+    @kotlin.Experimental(level = Level.WARNING) public final annotation class ExperimentalAPI : kotlin.Annotation {
+        public constructor ExperimentalAPI()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

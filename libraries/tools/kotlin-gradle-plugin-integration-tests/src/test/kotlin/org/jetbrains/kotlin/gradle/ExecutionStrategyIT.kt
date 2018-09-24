@@ -7,10 +7,12 @@ import java.io.File
 
 class ExecutionStrategyJsIT : ExecutionStrategyIT() {
     override fun setupProject(project: Project) {
-        project.setupWorkingDir()
+        super.setupProject(project)
         val buildGradle = File(project.projectDir, "app/build.gradle")
-        buildGradle.modify { it.replace("apply plugin: \"kotlin\"", "apply plugin: \"kotlin2js\"") +
-                "\ncompileKotlin2Js.kotlinOptions.outputFile = \"web/js/out.js\"" }
+        buildGradle.modify {
+            it.replace("apply plugin: \"kotlin\"", "apply plugin: \"kotlin2js\"") +
+                    "\ncompileKotlin2Js.kotlinOptions.outputFile = \"web/js/out.js\""
+        }
     }
 
     override fun CompiledProject.checkOutput() {
@@ -19,10 +21,6 @@ class ExecutionStrategyJsIT : ExecutionStrategyIT() {
 }
 
 open class ExecutionStrategyIT : BaseGradleIT() {
-    companion object {
-        private const val GRADLE_VERSION = "2.10"
-    }
-
     @Test
     fun testDaemon() {
         doTestExecutionStrategy("daemon")
@@ -39,7 +37,7 @@ open class ExecutionStrategyIT : BaseGradleIT() {
     }
 
     private fun doTestExecutionStrategy(executionStrategy: String) {
-        val project = Project("kotlinBuiltins", GRADLE_VERSION)
+        val project = Project("kotlinBuiltins")
         setupProject(project)
 
         val strategyCLIArg = "-Dkotlin.compiler.execution.strategy=$executionStrategy"
@@ -62,9 +60,13 @@ open class ExecutionStrategyIT : BaseGradleIT() {
     }
 
     protected open fun setupProject(project: Project) {
+        project.setupWorkingDir()
+        File(project.projectDir, "app/build.gradle").appendText(
+            "\ntasks.withType(org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile).all { kotlinOptions.allWarningsAsErrors = true }"
+        )
     }
 
     protected open fun CompiledProject.checkOutput() {
-        assertFileExists("app/build/classes/main/foo/MainKt.class")
+        assertFileExists(kotlinClassesDir(subproject = "app") + "foo/MainKt.class")
     }
 }

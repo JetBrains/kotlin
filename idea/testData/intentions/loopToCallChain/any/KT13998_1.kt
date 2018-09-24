@@ -1,5 +1,5 @@
 // WITH_RUNTIME
-// INTENTION_TEXT: "Replace with 'any{}'"
+// INTENTION_TEXT: "Replace with 'all{}'"
 // IS_APPLICABLE_2: false
 fun foo(): Boolean {
     val foo = listOf(true, true)

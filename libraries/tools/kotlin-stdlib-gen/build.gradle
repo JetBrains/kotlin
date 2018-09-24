@@ -5,17 +5,19 @@ sourceSets {
 }
 
 dependencies {
-    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_gradle_plugin_version"
+    compile "org.jetbrains.kotlin:kotlin-stdlib:$bootstrapKotlinVersion"
+    compile "org.jetbrains.kotlin:kotlin-reflect:$bootstrapKotlinVersion"
 }
 
 compileKotlin {
-    compilerJarFile = null
-    kotlinOptions.freeCompilerArgs = ["-version"]
+    kotlinOptions {
+        freeCompilerArgs = ["-version", "-Xnormalize-constructor-calls=enable", "-XXLanguage:-ReleaseCoroutines"]
+    }
 }
 
 task run(type: JavaExec) {
     group 'application'
     main 'generators.GenerateStandardLibKt'
     classpath sourceSets.main.runtimeClasspath
-    args = ["${rootDir}/.."]
+    args = ["${rootDir}"]
 }

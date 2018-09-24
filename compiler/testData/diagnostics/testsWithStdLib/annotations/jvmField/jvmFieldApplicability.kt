@@ -1,4 +1,6 @@
+// !LANGUAGE: +NestedClassesInAnnotations +InlineClasses
 // !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE
+
 <!WRONG_ANNOTATION_TARGET!>@kotlin.jvm.JvmField<!>
 fun foo() {
     <!WRONG_ANNOTATION_TARGET!>@kotlin.jvm.JvmField<!> val x = "A"
@@ -15,7 +17,7 @@ abstract class C : I{
     <!WRONG_ANNOTATION_TARGET!>@kotlin.jvm.JvmField<!> private fun foo(s: String = "OK") {
     }
 
-    <!INAPPLICABLE_JVM_FIELD, WRONG_ANNOTATION_TARGET!>@JvmField<!> val a: String by lazy { "A" }
+    <!WRONG_ANNOTATION_TARGET!>@JvmField<!> val a: String by lazy { "A" }
 
     <!INAPPLICABLE_JVM_FIELD!>@JvmField<!> open val b: Int = 3
 
@@ -35,11 +37,11 @@ abstract class C : I{
 
     <!INAPPLICABLE_JVM_FIELD!>@JvmField<!>
     val explicitDefaultAnnotatedGetter: String = ""
-        @DemoAnnotation get
+        <!ANNOTATION_TARGETS_NON_EXISTENT_ACCESSOR!>@DemoAnnotation<!> get
 
     <!INAPPLICABLE_JVM_FIELD!>@JvmField<!>
     var explicitDefaultAnnotatedSetter: String = ""
-        @DemoAnnotation set
+        <!ANNOTATION_TARGETS_NON_EXISTENT_ACCESSOR!>@DemoAnnotation<!> set
 
     <!INAPPLICABLE_JVM_FIELD!>@JvmField<!>
     var customSetter: String = ""
@@ -93,6 +95,8 @@ interface K {
     companion object {
         <!INAPPLICABLE_JVM_FIELD!>@JvmField<!>
         var c = 3
+
+        var x = 3
     }
 }
 
@@ -110,6 +114,13 @@ open class KKK : K {
     override final val j: Int = 0
 }
 
+annotation class L {
+    companion object {
+        <!INAPPLICABLE_JVM_FIELD!>@JvmField<!>
+        var c = 3
+    }
+}
+
 object O {
     @JvmField
     val c = 3
@@ -117,3 +128,16 @@ object O {
 
 <!INAPPLICABLE_JVM_FIELD!>@JvmField<!>
 private val private = 3
+
+inline class Foo(val x: Int)
+
+object IObject {
+    <!INAPPLICABLE_JVM_FIELD!>@JvmField<!>
+    val c: Foo = Foo(42)
+
+    <!INAPPLICABLE_JVM_FIELD!>@JvmField<!>
+    val u = <!EXPERIMENTAL_UNSIGNED_LITERALS!>42u<!>
+
+    <!INAPPLICABLE_JVM_FIELD!>@JvmField<!>
+    private val r: Result<Int> = TODO()
+}

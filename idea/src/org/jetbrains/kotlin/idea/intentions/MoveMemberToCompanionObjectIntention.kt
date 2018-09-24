@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.codeInsight.CodeInsightUtilCore
+import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.codeInsight.template.TemplateBuilderImpl
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
@@ -38,10 +39,13 @@ import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptorWithResolutionScopes
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
+import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.core.*
+import org.jetbrains.kotlin.idea.quickfix.KotlinSingleIntentionActionFactory
 import org.jetbrains.kotlin.idea.refactoring.checkConflictsInteractively
 import org.jetbrains.kotlin.idea.refactoring.move.OuterInstanceReferenceUsageInfo
 import org.jetbrains.kotlin.idea.refactoring.move.collectOuterInstanceReferences
@@ -61,7 +65,6 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
@@ -78,7 +81,13 @@ class MoveMemberToCompanionObjectIntention : SelfTargetingRangeIntention<KtNamed
         if (element.hasModifier(KtTokens.OVERRIDE_KEYWORD)) return null
         val containingClass = element.containingClassOrObject as? KtClass ?: return null
         if (containingClass.isLocal || containingClass.isInner()) return null
-        return element.nameIdentifier?.textRange
+
+        val nameIdentifier = element.nameIdentifier ?: return null
+        if (element is KtProperty && element.hasModifier(KtTokens.CONST_KEYWORD) && !element.isVar) {
+            val constElement = element.modifierList?.allChildren?.find { it.node.elementType == KtTokens.CONST_KEYWORD }
+            if (constElement != null) return TextRange(constElement.startOffset, nameIdentifier.endOffset)
+        }
+        return nameIdentifier.textRange
     }
 
     class JavaUsageInfo(refExpression: PsiReferenceExpression) : UsageInfo(refExpression)
@@ -171,8 +180,8 @@ class MoveMemberToCompanionObjectIntention : SelfTargetingRangeIntention<KtNamed
             nameSuggestions = getNameSuggestionsForOuterInstance(element)
 
             val newParam = parameterList.addParameterBefore(
-                    ktPsiFactory.createParameter("${nameSuggestions.first()}: ${IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(newParamType)}"),
-                    parameters.firstOrNull()
+                ktPsiFactory.createParameter("${nameSuggestions.first()}: ${IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_NO_ANNOTATIONS.renderType(newParamType)}"),
+                parameters.firstOrNull()
             )
 
             val newOuterInstanceRef = ktPsiFactory.createExpression(newParam.name!!)
@@ -312,8 +321,7 @@ class MoveMemberToCompanionObjectIntention : SelfTargetingRangeIntention<KtNamed
                         is KtSimpleNameReference -> {
                             val refExpr = ref.expression
                             if (element.isAncestor(refExpr)) return@mapNotNullTo null
-                            val context = refExpr.analyze(BodyResolveMode.PARTIAL)
-                            val resolvedCall = refExpr.getResolvedCall(context) ?: return@mapNotNullTo null
+                            val resolvedCall = refExpr.resolveToCall() ?: return@mapNotNullTo null
 
                             val callExpression = resolvedCall.call.callElement as? KtExpression ?: return@mapNotNullTo null
 
@@ -340,6 +348,12 @@ class MoveMemberToCompanionObjectIntention : SelfTargetingRangeIntention<KtNamed
 
         project.checkConflictsInteractively(conflicts) {
             runWriteAction { doMove(element, externalUsages, outerInstanceUsages, editor) }
+        }
+    }
+
+    companion object : KotlinSingleIntentionActionFactory() {
+        override fun createAction(diagnostic: Diagnostic): IntentionAction? {
+            return MoveMemberToCompanionObjectIntention()
         }
     }
 }

@@ -1,5 +1,6 @@
 -Simple.kt
  -Test
+  constructor Test(String)
   foo(): Int
   other(): Unit
   some: Int

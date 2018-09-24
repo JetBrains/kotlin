@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 1005
+// EXPECTED_REACHABLE_NODES: 1294
 package foo
 
 class Data(val rawData: Array<Int>, val width: Int, val height: Int) {

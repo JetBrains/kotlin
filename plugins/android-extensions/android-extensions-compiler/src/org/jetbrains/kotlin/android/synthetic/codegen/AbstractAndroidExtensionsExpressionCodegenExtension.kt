@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.android.synthetic.codegen
@@ -20,30 +9,24 @@ import kotlinx.android.extensions.CacheImplementation
 import kotlinx.android.extensions.CacheImplementation.NO_CACHE
 import org.jetbrains.kotlin.android.synthetic.AndroidConst
 import org.jetbrains.kotlin.android.synthetic.codegen.AndroidContainerType.LAYOUT_CONTAINER
-import org.jetbrains.kotlin.android.synthetic.descriptors.ContainerOptionsProxy
 import org.jetbrains.kotlin.android.synthetic.descriptors.AndroidSyntheticPackageFragmentDescriptor
+import org.jetbrains.kotlin.android.synthetic.descriptors.ContainerOptionsProxy
 import org.jetbrains.kotlin.android.synthetic.res.AndroidSyntheticFunction
 import org.jetbrains.kotlin.android.synthetic.res.AndroidSyntheticProperty
-import org.jetbrains.kotlin.codegen.ClassBuilder
-import org.jetbrains.kotlin.codegen.FunctionCodegen
-import org.jetbrains.kotlin.codegen.ImplementationBodyCodegen
-import org.jetbrains.kotlin.codegen.StackValue
+import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.extensions.ExpressionCodegenExtension
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtElement
-import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassOrAny
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 import org.jetbrains.org.objectweb.asm.Label
-import org.jetbrains.org.objectweb.asm.Opcodes.ACC_PRIVATE
-import org.jetbrains.org.objectweb.asm.Opcodes.ACC_PUBLIC
-import org.jetbrains.org.objectweb.asm.Opcodes.ACC_SYNTHETIC
+import org.jetbrains.org.objectweb.asm.Opcodes.*
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
@@ -64,6 +47,7 @@ abstract class AbstractAndroidExtensionsExpressionCodegenExtension : ExpressionC
             val classOrObject: KtClassOrObject,
             val containerOptions: ContainerOptionsProxy)
 
+    protected abstract fun isEnabled(element: KtElement?): Boolean
     protected abstract fun isExperimental(element: KtElement?): Boolean
     protected abstract fun getGlobalCacheImpl(element: KtElement?): CacheImplementation
 
@@ -99,16 +83,16 @@ abstract class AbstractAndroidExtensionsExpressionCodegenExtension : ExpressionC
         val containerOptions = ContainerOptionsProxy.create(container)
 
         if (!containerOptions.getCacheOrDefault(resolvedCall.call.calleeExpression).hasCache) {
-            return StackValue.functionCall(Type.VOID_TYPE) {}
+            return StackValue.functionCall(Type.VOID_TYPE, null) {}
         }
 
         if (containerOptions.containerType == AndroidContainerType.UNKNOWN) return null
         val actualReceiver = StackValue.receiver(resolvedCall, receiver, c.codegen, null)
 
-        return StackValue.functionCall(Type.VOID_TYPE) {
+        return StackValue.functionCall(Type.VOID_TYPE, null) {
             val bytecodeClassName = c.typeMapper.mapType(container).internalName
 
-            actualReceiver.put(c.typeMapper.mapType(container), it)
+            actualReceiver.put(c.typeMapper.mapType(container), container.defaultType, it)
             it.invokevirtual(bytecodeClassName, CLEAR_CACHE_METHOD_NAME, "()V", false)
         }
     }
@@ -152,6 +136,8 @@ abstract class AbstractAndroidExtensionsExpressionCodegenExtension : ExpressionC
     override fun generateClassSyntheticParts(codegen: ImplementationBodyCodegen) {
         val classBuilder = codegen.v
         val targetClass = codegen.myClass as? KtClass ?: return
+
+        if (!isEnabled(targetClass)) return
 
         val container = codegen.descriptor
         if (container.kind != ClassKind.CLASS && container.kind != ClassKind.OBJECT) return
@@ -266,11 +252,11 @@ abstract class AbstractAndroidExtensionsExpressionCodegenExtension : ExpressionC
 
         val containerType = containerOptions.containerType
         when (containerType) {
-            AndroidContainerType.ACTIVITY, AndroidContainerType.SUPPORT_FRAGMENT_ACTIVITY, AndroidContainerType.VIEW, AndroidContainerType.DIALOG -> {
+            AndroidContainerType.ACTIVITY, AndroidContainerType.ANDROIDX_SUPPORT_FRAGMENT_ACTIVITY, AndroidContainerType.SUPPORT_FRAGMENT_ACTIVITY, AndroidContainerType.VIEW, AndroidContainerType.DIALOG -> {
                 loadId()
                 iv.invokevirtual(containerType.internalClassName, "findViewById", "(I)Landroid/view/View;", false)
             }
-            AndroidContainerType.FRAGMENT, AndroidContainerType.SUPPORT_FRAGMENT, LAYOUT_CONTAINER -> {
+            AndroidContainerType.FRAGMENT, AndroidContainerType.ANDROIDX_SUPPORT_FRAGMENT, AndroidContainerType.SUPPORT_FRAGMENT, LAYOUT_CONTAINER -> {
                 if (containerType == LAYOUT_CONTAINER) {
                     iv.invokeinterface(containerType.internalClassName, "getContainerView", "()Landroid/view/View;")
                 } else {

@@ -1,3 +1,5 @@
+// NI_EXPECTED_FILE
+
 package localObjects
 
 object A {

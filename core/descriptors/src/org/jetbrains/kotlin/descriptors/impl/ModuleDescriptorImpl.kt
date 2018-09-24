@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.descriptors.impl
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.descriptors.InvalidModuleException
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.PackageViewDescriptor
@@ -29,12 +30,13 @@ import org.jetbrains.kotlin.utils.sure
 import java.lang.IllegalArgumentException
 
 class ModuleDescriptorImpl @JvmOverloads constructor(
-        moduleName: Name,
-        private val storageManager: StorageManager,
-        override val builtIns: KotlinBuiltIns,
-        // May be null in compiler context, should be not-null in IDE context
-        multiTargetPlatform: MultiTargetPlatform? = null,
-        capabilities: Map<ModuleDescriptor.Capability<*>, Any?> = emptyMap()
+    moduleName: Name,
+    private val storageManager: StorageManager,
+    override val builtIns: KotlinBuiltIns,
+    // May be null in compiler context, should be not-null in IDE context
+    multiTargetPlatform: MultiTargetPlatform? = null,
+    capabilities: Map<ModuleDescriptor.Capability<*>, Any?> = emptyMap(),
+    override val stableName: Name? = null
 ) : DeclarationDescriptorImpl(Annotations.EMPTY, moduleName), ModuleDescriptor {
     init {
         if (!moduleName.isSpecial) {
@@ -48,28 +50,26 @@ class ModuleDescriptorImpl @JvmOverloads constructor(
     private var packageFragmentProviderForModuleContent: PackageFragmentProvider? = null
 
     override var isValid: Boolean = true
-        set(value) {
-            field = value
-        }
 
     override fun assertValid() {
         if (!isValid) {
-            throw IllegalStateException("Accessing invalid module descriptor $this")
+            throw InvalidModuleException("Accessing invalid module descriptor $this")
         }
     }
 
-    private val packages = storageManager.createMemoizedFunction<FqName, PackageViewDescriptor> {
-        fqName: FqName -> LazyPackageViewDescriptorImpl(this, fqName, storageManager)
+    private val packages = storageManager.createMemoizedFunction<FqName, PackageViewDescriptor> { fqName: FqName ->
+        LazyPackageViewDescriptorImpl(this, fqName, storageManager)
     }
 
     @Deprecated("This method is not going to be supported. Please do not use it")
-    val testOnly_AllDependentModules: List<ModuleDescriptorImpl> get() = this.dependencies!!.allDependencies
+    val testOnly_AllDependentModules: List<ModuleDescriptorImpl>
+        get() = this.dependencies!!.allDependencies
 
     override val allDependencyModules: List<ModuleDescriptor>
         get() = this.dependencies.sure { "Dependencies of module $id were not set" }.allDependencies.filter { it != this }
 
-    override val allImplementingModules: Set<ModuleDescriptor>
-        get() = this.dependencies.sure { "Dependencies of module $id were not set" }.allImplementingModules
+    override val expectedByModules: List<ModuleDescriptor>
+        get() = this.dependencies.sure { "Dependencies of module $id were not set" }.expectedByDependencies
 
     override fun getPackage(fqName: FqName): PackageViewDescriptor {
         assertValid()
@@ -85,8 +85,7 @@ class ModuleDescriptorImpl @JvmOverloads constructor(
         val moduleDependencies = dependencies.sure { "Dependencies of module $id were not set before querying module content" }
         val dependenciesDescriptors = moduleDependencies.allDependencies
         assert(this in dependenciesDescriptors) { "Module $id is not contained in his own dependencies, this is probably a misconfiguration" }
-        dependenciesDescriptors.forEach {
-            dependency ->
+        dependenciesDescriptors.forEach { dependency ->
             assert(dependency.isInitialized) {
                 "Dependency module ${dependency.id} was not initialized by the time contents of dependent module ${this.id} were queried"
             }
@@ -109,15 +108,15 @@ class ModuleDescriptorImpl @JvmOverloads constructor(
     }
 
     fun setDependencies(descriptors: List<ModuleDescriptorImpl>) {
-        setDependencies(ModuleDependenciesImpl(descriptors, emptySet()))
+        setDependencies(descriptors, emptySet())
     }
 
     fun setDependencies(descriptors: List<ModuleDescriptorImpl>, friends: Set<ModuleDescriptorImpl>) {
-        setDependencies(ModuleDependenciesImpl(descriptors, friends))
+        setDependencies(ModuleDependenciesImpl(descriptors, friends, emptyList()))
     }
 
     override fun shouldSeeInternalsOf(targetModule: ModuleDescriptor): Boolean {
-        return this == targetModule || targetModule in dependencies!!.modulesWhoseInternalsAreVisible
+        return this == targetModule || targetModule in dependencies!!.modulesWhoseInternalsAreVisible || targetModule in expectedByModules
     }
 
     private val id: String
@@ -144,12 +143,11 @@ class ModuleDescriptorImpl @JvmOverloads constructor(
 interface ModuleDependencies {
     val allDependencies: List<ModuleDescriptorImpl>
     val modulesWhoseInternalsAreVisible: Set<ModuleDescriptorImpl>
-    val allImplementingModules: Set<ModuleDescriptorImpl>
+    val expectedByDependencies: List<ModuleDescriptorImpl>
 }
 
 class ModuleDependenciesImpl(
-        override val allDependencies: List<ModuleDescriptorImpl>,
-        override val modulesWhoseInternalsAreVisible: Set<ModuleDescriptorImpl>
-) : ModuleDependencies {
-    override val allImplementingModules: Set<ModuleDescriptorImpl> = emptySet()
-}
+    override val allDependencies: List<ModuleDescriptorImpl>,
+    override val modulesWhoseInternalsAreVisible: Set<ModuleDescriptorImpl>,
+    override val expectedByDependencies: List<ModuleDescriptorImpl>
+) : ModuleDependencies

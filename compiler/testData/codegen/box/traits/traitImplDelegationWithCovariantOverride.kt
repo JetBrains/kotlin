@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 interface A {
     fun foo(): Number {
         return 42

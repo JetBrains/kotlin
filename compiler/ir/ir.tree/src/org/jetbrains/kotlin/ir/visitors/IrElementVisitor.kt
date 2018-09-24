@@ -47,6 +47,9 @@ interface IrElementVisitor<out R, in D> {
     fun visitBlockBody(body: IrBlockBody, data: D) = visitBody(body, data)
     fun visitSyntheticBody(body: IrSyntheticBody, data: D) = visitBody(body, data)
 
+    fun visitSuspendableExpression(expression: IrSuspendableExpression, data: D) = visitExpression(expression, data)
+    fun visitSuspensionPoint(expression: IrSuspensionPoint, data: D) = visitExpression(expression, data)
+
     fun visitExpression(expression: IrExpression, data: D) = visitElement(expression, data)
     fun <T> visitConst(expression: IrConst<T>, data: D) = visitExpression(expression, data)
     fun visitVararg(expression: IrVararg, data: D) = visitExpression(expression, data)
@@ -78,7 +81,8 @@ interface IrElementVisitor<out R, in D> {
     fun visitCallableReference(expression: IrCallableReference, data: D) = visitMemberAccess(expression, data)
     fun visitFunctionReference(expression: IrFunctionReference, data: D) = visitCallableReference(expression, data)
     fun visitPropertyReference(expression: IrPropertyReference, data: D) = visitCallableReference(expression, data)
-    fun visitLocalDelegatedPropertyReference(expression: IrLocalDelegatedPropertyReference, data: D) = visitCallableReference(expression, data)
+    fun visitLocalDelegatedPropertyReference(expression: IrLocalDelegatedPropertyReference, data: D) =
+        visitCallableReference(expression, data)
 
     fun visitClassReference(expression: IrClassReference, data: D) = visitDeclarationReference(expression, data)
 

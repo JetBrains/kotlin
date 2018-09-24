@@ -25,12 +25,9 @@ import com.intellij.psi.impl.source.tree.LeafPsiElement
 import com.intellij.psi.xml.XmlAttribute
 import org.jetbrains.kotlin.android.synthetic.res.AndroidLayoutXmlFileManager
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.idea.caches.resolve.ModuleSourceInfo
-import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.caches.resolve.getModuleInfo
+import org.jetbrains.kotlin.idea.caches.project.getModuleInfo
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
-import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 class AndroidGotoDeclarationHandler : GotoDeclarationHandler {
     override fun getGotoDeclarationTargets(sourceElement: PsiElement?, offset: Int, editor: Editor?): Array<PsiElement>? {
@@ -48,19 +45,16 @@ class AndroidGotoDeclarationHandler : GotoDeclarationHandler {
     }
 
     private fun resolvePropertyDescriptor(simpleNameExpression: KtSimpleNameExpression): PropertyDescriptor? {
-        val bindingContext = simpleNameExpression.analyze(BodyResolveMode.PARTIAL)
-        val call = bindingContext[BindingContext.CALL, simpleNameExpression]
-        val resolvedCall = bindingContext[BindingContext.RESOLVED_CALL, call]
+        val resolvedCall = simpleNameExpression.resolveToCall()
         return resolvedCall?.resultingDescriptor as? PropertyDescriptor
     }
 
     private fun getLayoutManager(sourceElement: PsiElement): AndroidLayoutXmlFileManager? {
-        val moduleInfo = sourceElement.getModuleInfo()
-        if (moduleInfo !is ModuleSourceInfo) return null
+        val moduleInfo = sourceElement.getModuleInfo().findAndroidModuleInfo() ?: return null
         return ModuleServiceManager.getService(moduleInfo.module, AndroidLayoutXmlFileManager::class.java)
     }
 
-    override fun getActionText(context: DataContext?): String? {
+    override fun getActionText(context: DataContext): String? {
         return null
     }
 }

@@ -23,11 +23,12 @@ import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.PsiWhiteSpace
+import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.kotlin.kdoc.psi.api.KDoc
+import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.getChildrenOfType
-import org.jetbrains.kotlin.psi.psiUtil.nextLeaf
-import org.jetbrains.kotlin.psi.psiUtil.prevLeaf
+import org.jetbrains.kotlin.psi.psiUtil.*
 
 class RedundantSemicolonInspection : AbstractKotlinInspection(), CleanupLocalInspectionTool {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean, session: LocalInspectionToolSession): PsiElementVisitor {
@@ -36,32 +37,37 @@ class RedundantSemicolonInspection : AbstractKotlinInspection(), CleanupLocalIns
                 super.visitElement(element)
 
                 if (element.node.elementType == KtTokens.SEMICOLON && isRedundant(element)) {
-                    holder.registerProblem(element,
-                                           "Redundant semicolon",
-                                           ProblemHighlightType.LIKE_UNUSED_SYMBOL,
-                                           Fix)
+                    holder.registerProblem(
+                        element,
+                        "Redundant semicolon",
+                        ProblemHighlightType.LIKE_UNUSED_SYMBOL,
+                        Fix
+                    )
                 }
             }
         }
     }
 
     private fun isRedundant(semicolon: PsiElement): Boolean {
-        val nextLeaf = semicolon.nextLeaf { it !is PsiWhiteSpace && it !is PsiComment || it.isLineBreak()  }
+        val nextLeaf = semicolon.nextLeaf { it !is PsiWhiteSpace && it !is PsiComment || it.isLineBreak() }
         val isAtEndOfLine = nextLeaf == null || nextLeaf.isLineBreak()
         if (!isAtEndOfLine) {
             //when there is no imports parser generates empty import list with no spaces
-            if (semicolon.parent is KtPackageDirective && (nextLeaf as? KtImportList)?.imports?.isEmpty() ?: false) {
+            if (semicolon.parent is KtPackageDirective && (nextLeaf as? KtImportList)?.imports?.isEmpty() == true) {
                 return true
             }
             return false
         }
+
+        if (semicolon.prevLeaf()?.node?.elementType == KtNodeTypes.ELSE) return false
 
         if (semicolon.parent is KtEnumEntry) return false
 
         (semicolon.parent.parent as? KtClass)?.let {
             if (it.isEnum() && it.getChildrenOfType<KtEnumEntry>().isEmpty()) {
                 if (semicolon.prevLeaf { it !is PsiWhiteSpace && it !is PsiComment && !it.isLineBreak() }?.node?.elementType == KtTokens.LBRACE
-                    && it.declarations.isNotEmpty()) {
+                    && it.declarations.isNotEmpty()
+                ) {
                     //first semicolon in enum with no entries, but with some declarations
                     return false
                 }
@@ -73,9 +79,33 @@ class RedundantSemicolonInspection : AbstractKotlinInspection(), CleanupLocalIns
                 return false
         }
 
-        if (nextLeaf?.nextLeaf { it !is PsiComment }?.node?.elementType == KtTokens.LBRACE) {
+        if (nextLeaf?.nextLeaf {
+                it !is PsiWhiteSpace && it !is PsiComment && it.getStrictParentOfType<KDoc>() == null &&
+                        it.getStrictParentOfType<KtAnnotationEntry>() == null
+            }?.node?.elementType == KtTokens.LBRACE) {
             return false // case with statement starting with '{' and call on the previous line
         }
+
+        if (isRequiredForCompanion(semicolon)) {
+            return false
+        }
+
+        val prevNameReference = semicolon.getPrevSiblingIgnoringWhitespaceAndComments() as? KtNameReferenceExpression
+        if (prevNameReference != null && prevNameReference.text in softModifierKeywords
+            && semicolon.getNextSiblingIgnoringWhitespaceAndComments() is KtDeclaration
+        ) return false
+
+        return true
+    }
+
+    private fun isRequiredForCompanion(semicolon: PsiElement): Boolean {
+        val prev = semicolon.getPrevSiblingIgnoringWhitespaceAndComments() as? KtObjectDeclaration ?: return false
+        if (!prev.isCompanion()) return false
+        if (prev.nameIdentifier != null || prev.getChildOfType<KtClassBody>() != null) return false
+
+        val next = semicolon.getNextSiblingIgnoringWhitespaceAndComments() ?: return false
+        val firstChildNode = next.firstChild?.node ?: return false
+        if (KtTokens.KEYWORDS.contains(firstChildNode.elementType)) return false
 
         return true
     }
@@ -91,4 +121,6 @@ class RedundantSemicolonInspection : AbstractKotlinInspection(), CleanupLocalIns
             descriptor.psiElement.delete()
         }
     }
+
+    private val softModifierKeywords = KtTokens.SOFT_KEYWORDS.types.mapNotNull { (it as? KtModifierKeywordToken)?.toString() }
 }

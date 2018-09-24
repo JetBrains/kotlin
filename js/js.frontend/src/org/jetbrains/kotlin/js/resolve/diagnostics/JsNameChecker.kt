@@ -17,22 +17,21 @@
 package org.jetbrains.kotlin.js.resolve.diagnostics
 
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.js.PredefinedAnnotation
 import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils
 import org.jetbrains.kotlin.psi.KtDeclaration
-import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.checkers.SimpleDeclarationChecker
+import org.jetbrains.kotlin.resolve.checkers.DeclarationCheckerContext
+import org.jetbrains.kotlin.resolve.checkers.DeclarationChecker
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 import org.jetbrains.kotlin.resolve.source.getPsi
 
-object JsNameChecker : SimpleDeclarationChecker {
-    override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, diagnosticHolder: DiagnosticSink,
-                       bindingContext: BindingContext) {
+object JsNameChecker : DeclarationChecker {
+    override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
+        val trace = context.trace
         if (descriptor is PropertyDescriptor) {
             val namedAccessorCount = descriptor.accessors.count { AnnotationsUtils.getJsName(it) != null }
             if (namedAccessorCount > 0 && namedAccessorCount < descriptor.accessors.size) {
-                diagnosticHolder.report(ErrorsJs.JS_NAME_IS_NOT_ON_ALL_ACCESSORS.on(declaration))
+                trace.report(ErrorsJs.JS_NAME_IS_NOT_ON_ALL_ACCESSORS.on(declaration))
             }
         }
 
@@ -40,27 +39,27 @@ object JsNameChecker : SimpleDeclarationChecker {
         val jsNamePsi = jsName.source.getPsi() ?: declaration
 
         if (AnnotationsUtils.getNameForAnnotatedObject(descriptor, PredefinedAnnotation.NATIVE) != null) {
-            diagnosticHolder.report(ErrorsJs.JS_NAME_PROHIBITED_FOR_NAMED_NATIVE.on(jsNamePsi))
+            trace.report(ErrorsJs.JS_NAME_PROHIBITED_FOR_NAMED_NATIVE.on(jsNamePsi))
         }
 
         if (descriptor is CallableMemberDescriptor && descriptor.overriddenDescriptors.isNotEmpty()) {
-            diagnosticHolder.report(ErrorsJs.JS_NAME_PROHIBITED_FOR_OVERRIDE.on(jsNamePsi))
+            trace.report(ErrorsJs.JS_NAME_PROHIBITED_FOR_OVERRIDE.on(jsNamePsi))
         }
 
         when (descriptor) {
             is ConstructorDescriptor -> {
                 if (descriptor.isPrimary) {
-                    diagnosticHolder.report(ErrorsJs.JS_NAME_ON_PRIMARY_CONSTRUCTOR_PROHIBITED.on(jsNamePsi))
+                    trace.report(ErrorsJs.JS_NAME_ON_PRIMARY_CONSTRUCTOR_PROHIBITED.on(jsNamePsi))
                 }
             }
             is PropertyAccessorDescriptor -> {
                 if (AnnotationsUtils.getJsName(descriptor.correspondingProperty) != null) {
-                    diagnosticHolder.report(ErrorsJs.JS_NAME_ON_ACCESSOR_AND_PROPERTY.on(jsNamePsi))
+                    trace.report(ErrorsJs.JS_NAME_ON_ACCESSOR_AND_PROPERTY.on(jsNamePsi))
                 }
             }
             is PropertyDescriptor -> {
                 if (descriptor.isExtension) {
-                    diagnosticHolder.report(ErrorsJs.JS_NAME_PROHIBITED_FOR_EXTENSION_PROPERTY.on(jsNamePsi))
+                    trace.report(ErrorsJs.JS_NAME_PROHIBITED_FOR_EXTENSION_PROPERTY.on(jsNamePsi))
                 }
             }
         }

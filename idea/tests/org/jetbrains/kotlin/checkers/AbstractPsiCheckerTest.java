@@ -17,8 +17,10 @@
 package org.jetbrains.kotlin.checkers;
 
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.PsiFile;
 import com.intellij.rt.execution.junit.FileComparisonFailure;
 import com.intellij.spellchecker.inspections.SpellCheckingInspection;
+import com.intellij.testFramework.fixtures.impl.JavaCodeInsightTestFixtureImpl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
 import org.jetbrains.kotlin.idea.highlighter.NameHighlighter;
@@ -70,6 +72,10 @@ public abstract class AbstractPsiCheckerTest extends KotlinLightCodeInsightFixtu
 
     protected long checkHighlighting(boolean checkWarnings, boolean checkInfos, boolean checkWeakWarnings) {
         try {
+            PsiFile file = getFile();
+            if (file instanceof KtFile && ((KtFile) file).isScript() && myFixture instanceof JavaCodeInsightTestFixtureImpl) {
+                ((JavaCodeInsightTestFixtureImpl) myFixture).canChangeDocumentDuringHighlighting(true);
+            }
             return myFixture.checkHighlighting(checkWarnings, checkInfos, checkWeakWarnings);
         }
         catch (FileComparisonFailure e) {

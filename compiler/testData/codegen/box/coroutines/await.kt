@@ -1,9 +1,11 @@
+// IGNORE_BACKEND: JVM_IR
 // WITH_RUNTIME
 // WITH_COROUTINES
+// COMMON_COROUTINES_TEST
 // FILE: promise.kt
 import helpers.*
-import kotlin.coroutines.experimental.*
-import kotlin.coroutines.experimental.intrinsics.*
+import COROUTINES_PACKAGE.*
+import COROUTINES_PACKAGE.intrinsics.*
 
 class Promise<T>(private val executor: ((T) -> Unit) -> Unit) {
     private var value: Any? = null
@@ -51,8 +53,8 @@ fun processQueue() {
 
 // FILE: await.kt
 import helpers.*
-import kotlin.coroutines.experimental.*
-import kotlin.coroutines.experimental.intrinsics.*
+import COROUTINES_PACKAGE.*
+import COROUTINES_PACKAGE.intrinsics.*
 
 private var log = ""
 
@@ -97,8 +99,8 @@ fun <T> asyncOperation(resultSupplier: () -> T) = Promise<T> { resolve ->
 fun getLog() = log
 
 // FILE: main.kt
-import kotlin.coroutines.experimental.*
-import kotlin.coroutines.experimental.intrinsics.*
+import COROUTINES_PACKAGE.*
+import COROUTINES_PACKAGE.intrinsics.*
 
 private fun test() = async<String> {
     val o = await(asyncOperation { "O" })

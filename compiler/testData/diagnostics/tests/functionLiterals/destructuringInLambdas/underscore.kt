@@ -1,3 +1,4 @@
+// !WITH_NEW_INFERENCE
 // !CHECK_TYPE
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 data class A(val x: Int, val y: String)
@@ -50,13 +51,13 @@ fun bar() {
         _ checkType { _<String>() }
     }
 
-    foo { (<!COMPONENT_FUNCTION_RETURN_TYPE_MISMATCH!>_: String<!>, b) ->
+    foo { (<!NI;TYPE_MISMATCH, OI;COMPONENT_FUNCTION_RETURN_TYPE_MISMATCH!>_: String<!>, b) ->
         <!UNRESOLVED_REFERENCE!>_<!>.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>hashCode<!>()
         b checkType { _<String>() }
     }
 
-    foo { <!EXPECTED_PARAMETER_TYPE_MISMATCH!>(_, b): B<!> ->
+    foo <!NI;TYPE_MISMATCH!>{ <!OI;EXPECTED_PARAMETER_TYPE_MISMATCH!>(_, b): B<!> ->
         <!UNRESOLVED_REFERENCE!>_<!>.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>hashCode<!>()
         b checkType { _<Short>() }
-    }
+    }<!>
 }

@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.resolve.calls.CallResolver
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.context.CheckArgumentTypesMode
 import org.jetbrains.kotlin.resolve.calls.context.ContextDependency
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.scopes.ExplicitImportsScope
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
@@ -102,14 +103,13 @@ class ShadowedDeclarationsFilter(
         }
     }
 
-    private fun signature(descriptor: DeclarationDescriptor): Any {
-        return when (descriptor) {
-            is SimpleFunctionDescriptor -> FunctionSignature(descriptor)
-            is VariableDescriptor -> descriptor.name
-            is ClassDescriptor -> descriptor.importableFqName ?: descriptor
-            else -> descriptor
-        }
-    }
+    private fun signature(descriptor: DeclarationDescriptor): Any =
+            when (descriptor) {
+                is SimpleFunctionDescriptor -> FunctionSignature(descriptor)
+                is VariableDescriptor -> descriptor.name
+                is ClassDescriptor -> descriptor.importableFqName ?: descriptor
+                else -> descriptor
+            }
 
     private fun packageName(descriptor: DeclarationDescriptor) = descriptor.importableFqName?.parent()
 
@@ -119,14 +119,19 @@ class ShadowedDeclarationsFilter(
     ): Collection<TDescriptor> {
         if (descriptors.size == 1) return descriptors
 
-        val first = descriptors.first()
+        val first = descriptors.firstOrNull {
+            it is ClassDescriptor || it is ConstructorDescriptor || it is CallableDescriptor && !it.name.isSpecial
+        } ?: return descriptors
 
         if (first is ClassDescriptor) { // for classes with the same FQ-name we simply take the first one
-            return listOf<TDescriptor>(first)
+            return listOf(first)
         }
 
         val isFunction = first is FunctionDescriptor
-        val name = first.name
+        val name = when (first) {
+            is ConstructorDescriptor -> first.constructedClass.name
+            else -> first.name
+        }
         val parameters = (first as CallableDescriptor).valueParameters
 
         val dummyArgumentExpressions = dummyExpressionFactory.createDummyExpressions(parameters.size)
@@ -203,7 +208,8 @@ class ShadowedDeclarationsFilter(
         val dataFlowInfo = bindingContext.getDataFlowInfoBefore(context)
         val context = BasicCallResolutionContext.create(bindingTrace, scope, newCall, TypeUtils.NO_EXPECTED_TYPE, dataFlowInfo,
                                                         ContextDependency.INDEPENDENT, CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS,
-                                                        false, resolutionFacade.frontendService<LanguageVersionSettings>())
+                                                        false, /* languageVersionSettings */ resolutionFacade.frontendService(),
+                                                        resolutionFacade.frontendService<DataFlowValueFactory>())
         val callResolver = resolutionFacade.frontendService<CallResolver>()
         val results = if (isFunction) callResolver.resolveFunctionCall(context) else callResolver.resolveSimpleProperty(context)
         val resultingDescriptors = results.resultingCalls.map { it.resultingDescriptor }
@@ -239,6 +245,15 @@ class ShadowedDeclarationsFilter(
                 val p2 = parameters2[i]
                 if (p1.varargElementType != p2.varargElementType) return false // both should be vararg or or both not
                 if (p1.type != p2.type) return false
+            }
+
+            val typeParameters1 = function.typeParameters
+            val typeParameters2 = other.function.typeParameters
+            if (typeParameters1.size != typeParameters2.size) return false
+            for (i in typeParameters1.indices) {
+                val t1 = typeParameters1[i]
+                val t2 = typeParameters2[i]
+                if (t1.upperBounds != t2.upperBounds) return false
             }
             return true
         }

@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
+import org.jetbrains.kotlin.idea.util.CommentSaver
 import org.jetbrains.kotlin.psi.KtParenthesizedExpression
 import org.jetbrains.kotlin.psi.KtPsiUtil
 
@@ -29,6 +30,8 @@ class RemoveUnnecessaryParenthesesIntention : SelfTargetingRangeIntention<KtPare
     }
 
     override fun applyTo(element: KtParenthesizedExpression, editor: Editor?) {
-        element.replace(element.expression!!)
+        val commentSaver = CommentSaver(element)
+        val replaced = element.replace(element.expression!!)
+        commentSaver.restore(replaced)
     }
 }

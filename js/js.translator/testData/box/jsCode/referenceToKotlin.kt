@@ -1,4 +1,5 @@
-// EXPECTED_REACHABLE_NODES: 1389
+// IGNORE_BACKEND: JS_IR
+// EXPECTED_REACHABLE_NODES: 1530
 external fun p(m: String): String
 
 var log = ""

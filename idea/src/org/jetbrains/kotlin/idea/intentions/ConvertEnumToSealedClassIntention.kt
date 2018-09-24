@@ -20,6 +20,9 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.codeStyle.CodeStyleManager
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
+import org.jetbrains.kotlin.idea.refactoring.withExpectedActuals
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.allChildren
@@ -35,40 +38,56 @@ class ConvertEnumToSealedClassIntention : SelfTargetingRangeIntention<KtClass>(K
     }
 
     override fun applyTo(element: KtClass, editor: Editor?) {
-        element.removeModifier(KtTokens.ENUM_KEYWORD)
-        element.addModifier(KtTokens.SEALED_KEYWORD)
+        val name = element.name ?: return
+        if (name.isEmpty()) return
 
-        val psiFactory = KtPsiFactory(element)
+        for (klass in element.withExpectedActuals()) {
+            klass as? KtClass ?: continue
 
-        for (member in element.declarations) {
-            if (member !is KtEnumEntry) continue
+            val classDescriptor = klass.resolveToDescriptorIfAny() as? ClassDescriptor ?: continue
+            val isExpect = classDescriptor.isExpect
+            val isActual = classDescriptor.isActual
 
-            val obj = psiFactory.createDeclaration<KtObjectDeclaration>("object ${member.name}")
+            klass.removeModifier(KtTokens.ENUM_KEYWORD)
+            klass.addModifier(KtTokens.SEALED_KEYWORD)
 
-            val initializers = member.initializerList?.initializers ?: emptyList()
-            if (initializers.isNotEmpty()) {
-                initializers.forEach { obj.addSuperTypeListEntry(psiFactory.createSuperTypeCallEntry("${element.name}${it.text}")) }
+            val psiFactory = KtPsiFactory(klass)
+
+            for (member in klass.declarations) {
+                if (member !is KtEnumEntry) continue
+
+                val obj = psiFactory.createDeclaration<KtObjectDeclaration>("object ${member.name}")
+
+                val initializers = member.initializerList?.initializers ?: emptyList()
+                if (initializers.isNotEmpty()) {
+                    initializers.forEach { obj.addSuperTypeListEntry(psiFactory.createSuperTypeCallEntry("${klass.name}${it.text}")) }
+                }
+                else {
+                    val defaultEntry = if (isExpect) psiFactory.createSuperTypeEntry(name) else psiFactory.createSuperTypeCallEntry("$name()")
+                    obj.addSuperTypeListEntry(defaultEntry)
+                }
+
+                if (isActual) {
+                    obj.addModifier(KtTokens.ACTUAL_KEYWORD)
+                }
+
+                member.getBody()?.let { body -> obj.add(body) }
+
+                member.delete()
+                klass.addDeclaration(obj)
             }
-            else {
-                obj.addSuperTypeListEntry(psiFactory.createSuperTypeCallEntry("${element.name}()"))
-            }
 
-            member.getBody()?.let { body -> obj.add(body) }
-
-            member.delete()
-            element.addDeclaration(obj)
-        }
-
-        element.getBody()?.let { body ->
-            val semicolon = body
-                    .allChildren
-                    .takeWhile { it !is KtDeclaration }
-                    .firstOrNull { it.node.elementType == KtTokens.SEMICOLON }
-            if (semicolon != null) {
-                val nonWhiteSibling = semicolon.siblings(forward = true, withItself = false).firstOrNull { it !is PsiWhiteSpace }
-                body.deleteChildRange(semicolon, nonWhiteSibling?.prevSibling ?: semicolon)
-                if (nonWhiteSibling != null) {
-                    CodeStyleManager.getInstance(element.project).reformat(nonWhiteSibling.firstChild ?: nonWhiteSibling)
+            klass.getBody()?.let { body ->
+                val semicolon = body
+                        .allChildren
+                        .takeWhile { it !is KtDeclaration }
+                        .firstOrNull { it.node.elementType == KtTokens.SEMICOLON }
+                if (semicolon != null) {
+                    val nonWhiteSibling = semicolon.siblings(forward = true, withItself = false).firstOrNull { it !is PsiWhiteSpace }
+                    body.deleteChildRange(semicolon, nonWhiteSibling?.prevSibling ?: semicolon)
+                    if (nonWhiteSibling != null) {
+                        CodeStyleManager.getInstance(klass.project).reformat(nonWhiteSibling.firstChild ?: nonWhiteSibling)
+                    }
                 }
             }
         }

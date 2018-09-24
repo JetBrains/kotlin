@@ -21,6 +21,8 @@ import org.jetbrains.kotlin.js.backend.ast.metadata.*
 import org.jetbrains.kotlin.js.inline.util.collectFreeVariables
 import org.jetbrains.kotlin.js.inline.util.replaceNames
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
+import org.jetbrains.kotlin.js.translate.utils.JsAstUtils.pureFqn
+import org.jetbrains.kotlin.js.translate.utils.splitToRanges
 
 fun JsNode.collectNodesToSplit(breakContinueTargets: Map<JsContinue, JsStatement>): Set<JsNode> {
     val root = this
@@ -239,6 +241,110 @@ fun JsBlock.replaceSpecialReferences(context: CoroutineTransformationContext) {
     visitor.accept(this)
 }
 
+fun JsBlock.replaceSpecialReferencesInSimpleFunction(continuationParam: JsParameter, resultVar: JsName) {
+    val visitor = object : JsVisitorWithContextImpl() {
+        override fun visit(x: JsFunction, ctx: JsContext<*>) = false
+
+        override fun endVisit(x: JsNameRef, ctx: JsContext<in JsNode>) {
+            when {
+                x.coroutineReceiver -> {
+                    ctx.replaceMe(pureFqn(continuationParam.name, null).source(x.source))
+                }
+
+                x.coroutineController -> {
+                    ctx.replaceMe(JsThisRef().apply {
+                        source = x.source
+                    })
+                }
+
+                x.coroutineResult && x.qualifier.let { it is JsNameRef && it.name == continuationParam.name } -> {
+                    ctx.replaceMe(pureFqn(resultVar, null).source(x.source))
+                }
+            }
+        }
+    }
+    visitor.accept(this)
+}
+
+fun List<CoroutineBlock>.collectVariablesSurvivingBetweenBlocks(localVariables: Set<JsName>, parameters: Set<JsName>): Set<JsName> {
+    val varDefinedIn = localVariables.associate { it to mutableSetOf<Int>() }
+    val varDeclaredIn = localVariables.associate { it to mutableSetOf<Int>() }
+    val varUsedIn = localVariables.associate { it to mutableSetOf<Int>() }
+
+    for ((blockIndex, block) in withIndex()) {
+        for (statement in block.statements) {
+            statement.accept(object : RecursiveJsVisitor() {
+                override fun visitNameRef(nameRef: JsNameRef) {
+                    super.visitNameRef(nameRef)
+                    varUsedIn[nameRef.name]?.add(blockIndex)
+                }
+
+                override fun visit(x: JsVars.JsVar) {
+                    varDeclaredIn[x.name]?.add(blockIndex)
+                    if (x.initExpression != null) {
+                        varDefinedIn[x.name]?.add(blockIndex)
+                    }
+                    super.visit(x)
+
+                }
+
+                override fun visitParameter(x: JsParameter) {
+                    varDeclaredIn[x.name]?.add(blockIndex)
+                    varDefinedIn[x.name]?.add(blockIndex)
+                    super.visitParameter(x)
+                }
+
+                override fun visitBinaryExpression(x: JsBinaryOperation) {
+                    val lhs = x.arg1
+                    if (x.operator.isAssignment && lhs is JsNameRef) {
+                        varDefinedIn[lhs.name]?.add(blockIndex)?.let {
+                            accept(x.arg2)
+                            return
+                        }
+                    }
+                    super.visitBinaryExpression(x)
+                }
+
+                override fun visitFunction(x: JsFunction) {
+                    x.name?.let {
+                        varDefinedIn[it]?.add(blockIndex)
+                    }
+                }
+
+                override fun visitLabel(x: JsLabel) {
+                    accept(x.statement)
+                }
+
+                override fun visitBreak(x: JsBreak) {}
+
+                override fun visitContinue(x: JsContinue) {}
+            })
+        }
+    }
+
+    fun JsName.isLocalInBlock(): Boolean {
+        val def = varDefinedIn[this]!!
+        val use = varUsedIn[this]!!
+        val decl = varDeclaredIn[this]!!
+        if (def.size == 1 && use.size == 1) {
+            val singleDef = def.single()
+            val singleUse = use.single()
+            return singleDef == singleUse && decl.isNotEmpty()
+        }
+        return use.isEmpty()
+    }
+
+    return localVariables.filterNot { localVar ->
+        if (localVar in parameters) {
+            varUsedIn[localVar]!!.isEmpty() && varDefinedIn[localVar]!!.isEmpty() && varDeclaredIn[localVar]!!.isEmpty()
+        }
+        else {
+            localVar.isLocalInBlock()
+        }
+    }.toSet()
+
+}
+
 fun JsBlock.replaceLocalVariables(context: CoroutineTransformationContext, localVariables: Set<JsName>) {
     replaceSpecialReferences(context)
 
@@ -269,24 +375,41 @@ fun JsBlock.replaceLocalVariables(context: CoroutineTransformationContext, local
         }
 
         override fun endVisit(x: JsVars, ctx: JsContext<in JsStatement>) {
-            val assignments = x.vars.mapNotNull {
-                val fieldName = context.getFieldName(it.name)
-                val initExpression = it.initExpression
-                if (initExpression != null) {
-                    JsAstUtils.assignment(JsNameRef(fieldName, JsThisRef()), it.initExpression)
+            if (x.vars.none { it.name in localVariables }) return
+
+            val statements = mutableListOf<JsStatement>()
+            for ((range, shouldReplace) in x.vars.splitToRanges { it.name in localVariables }) {
+                if (shouldReplace) {
+                    val assignments = x.vars.mapNotNull {
+                        val fieldName = context.getFieldName(it.name)
+                        val initExpression = it.initExpression
+                        if (initExpression != null) {
+                            JsAstUtils.assignment(JsNameRef(fieldName, JsThisRef()), it.initExpression)
+                        }
+                        else {
+                            null
+                        }
+                    }
+                    if (assignments.isNotEmpty()) {
+                        statements += JsExpressionStatement(JsAstUtils.newSequence(assignments))
+                    }
                 }
                 else {
-                    null
+                    statements += JsVars(*range.toTypedArray())
                 }
             }
 
-            if (assignments.isNotEmpty()) {
-                ctx.replaceMe(JsExpressionStatement(JsAstUtils.newSequence(assignments)))
+            if (statements.size == 1) {
+                ctx.replaceMe(statements[0])
             }
             else {
                 ctx.removeMe()
+                ctx.addPrevious(statements)
             }
         }
     }
     visitor.accept(this)
 }
+
+internal fun JsExpression?.isStateMachineResult() =
+        this is JsNameRef && this.coroutineResult && qualifier.let { it is JsNameRef && it.coroutineReceiver && it.qualifier == null }

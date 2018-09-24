@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.intentions
 import com.intellij.codeInsight.FileModificationService
 import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.codeInspection.IntentionWrapper
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
@@ -27,6 +28,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
+import org.jetbrains.kotlin.psi.CREATEBYPATTERN_MAY_NOT_REFORMAT
 import org.jetbrains.kotlin.psi.KtBlockExpression
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.psiUtil.containsInside
@@ -82,12 +84,23 @@ abstract class SelfTargetingIntention<TElement : PsiElement>(
     protected open fun allowCaretInsideElement(element: PsiElement): Boolean =
             element !is KtBlockExpression
 
-    final override fun isAvailable(project: Project, editor: Editor, file: PsiFile) = getTarget(editor, file) != null
+    final override fun isAvailable(project: Project, editor: Editor, file: PsiFile): Boolean {
+        if (ApplicationManager.getApplication().isUnitTestMode) {
+            CREATEBYPATTERN_MAY_NOT_REFORMAT = true
+        }
+        try {
+            return getTarget(editor, file) != null
+        }
+        finally {
+            CREATEBYPATTERN_MAY_NOT_REFORMAT = false
+        }
+    }
 
     var inspection: IntentionBasedInspection<TElement>? = null
         internal set
 
-    final override fun invoke(project: Project, editor: Editor, file: PsiFile): Unit {
+    final override fun invoke(project: Project, editor: Editor?, file: PsiFile) {
+        editor ?: return
         PsiDocumentManager.getInstance(project).commitAllDocuments()
         val target = getTarget(editor, file) ?: return
         if (!FileModificationService.getInstance().preparePsiElementForWrite(target)) return

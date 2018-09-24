@@ -16,10 +16,8 @@
 
 package org.jetbrains.kotlin.jvm.repl
 
-import com.intellij.openapi.Disposable
-import com.intellij.openapi.util.Disposer
-import junit.framework.TestCase
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
+import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoot
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector
 import org.jetbrains.kotlin.cli.common.repl.ReplCodeLine
@@ -29,36 +27,29 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinToJVMBytecodeCompiler
 import org.jetbrains.kotlin.cli.jvm.repl.GenericReplCompiler
 import org.jetbrains.kotlin.cli.jvm.repl.KOTLIN_REPL_JVM_TARGET_PROPERTY
-import org.jetbrains.kotlin.codegen.CompilationException
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.JvmTarget
-import org.jetbrains.kotlin.config.addKotlinSourceRoot
 import org.jetbrains.kotlin.integration.KotlinIntegrationTestBase
 import org.jetbrains.kotlin.script.StandardScriptDefinition
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestJdkKind
+import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 import org.junit.Assert
-import org.junit.Test
 import java.io.File
 
 private const val library = "inline fun<T> foo(fn: () -> T): T = fn()"
 private const val script = "import foo\nval x = foo { 0 }"
 
-class ReplCompilerJava8Test : TestCase() {
-
-    var tmpdir : File? = null
-
-    private var disposable: Disposable? = null
+class ReplCompilerJava8Test : KtUsefulTestCase() {
+    private var tmpdir: File? = null
 
     override fun setUp() {
         super.setUp()
         tmpdir = KotlinTestUtils.tmpDirForTest(this)
 
         File(tmpdir, "library.kt").writeText(library)
-
-        disposable = Disposer.newDisposable()
 
         val configuration = KotlinTestUtils.newConfiguration(ConfigurationKind.ALL, TestJdkKind.FULL_JDK).apply {
             put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, PrintingMessageCollector(System.out, MessageRenderer.WITHOUT_PATHS, false))
@@ -67,19 +58,13 @@ class ReplCompilerJava8Test : TestCase() {
             put(JVMConfigurationKeys.JVM_TARGET, JvmTarget.JVM_1_8)
         }
 
-        val environment = KotlinCoreEnvironment.createForProduction(disposable!!, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
+        val environment = KotlinCoreEnvironment.createForTests(testRootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
 
         val res = KotlinToJVMBytecodeCompiler.compileBunchOfSources(environment)
         Assert.assertTrue(res)
     }
 
-    override fun tearDown() {
-        Disposer.dispose(disposable!!)
-    }
-
-    @Test
     fun testIncompatibleScriptJvmTargetConfig() {
-
         val configuration = makeConfiguration().apply {
             put(JVMConfigurationKeys.JVM_TARGET, JvmTarget.JVM_1_6)
         }
@@ -89,9 +74,7 @@ class ReplCompilerJava8Test : TestCase() {
         Assert.assertTrue((result as ReplCompileResult.Error).message.contains("error: cannot inline bytecode built with JVM target 1.8 into bytecode that is being built with JVM target 1.6"))
     }
 
-    @Test
     fun testIncompatibleScriptJvmTargetProperty() {
-
         val configuration = makeConfiguration()
         System.setProperty(KOTLIN_REPL_JVM_TARGET_PROPERTY, "1.6")
         try {
@@ -104,17 +87,13 @@ class ReplCompilerJava8Test : TestCase() {
         }
     }
 
-    @Test
     fun testCompatibleScriptJvmTargetJavaVersionDetect() {
-
         val configuration = makeConfiguration()
         val result = runTest(configuration)
         Assert.assertTrue(result is ReplCompileResult.CompiledClasses)
     }
 
-    @Test
     fun testCompatibleScriptJvmTargetProperty() {
-
         val configuration = makeConfiguration()
         System.setProperty(KOTLIN_REPL_JVM_TARGET_PROPERTY, "1.8")
         try {
@@ -125,10 +104,13 @@ class ReplCompilerJava8Test : TestCase() {
         }
     }
 
-    private fun makeConfiguration() = KotlinTestUtils.newConfiguration(ConfigurationKind.ALL, TestJdkKind.FULL_JDK, File(KotlinIntegrationTestBase.getCompilerLib(), "kotlin-stdlib.jar"), tmpdir)
+    private fun makeConfiguration() = KotlinTestUtils.newConfiguration(
+            ConfigurationKind.ALL, TestJdkKind.FULL_JDK, File(KotlinIntegrationTestBase.getCompilerLib(), "kotlin-stdlib.jar"), tmpdir
+    )
 
     private fun runTest(configuration: CompilerConfiguration): ReplCompileResult {
-        val replCompiler = GenericReplCompiler(disposable!!, StandardScriptDefinition, configuration, PrintingMessageCollector(System.out, MessageRenderer.WITHOUT_PATHS, false))
+        val collector = PrintingMessageCollector(System.out, MessageRenderer.WITHOUT_PATHS, false)
+        val replCompiler = GenericReplCompiler(testRootDisposable, StandardScriptDefinition, configuration, collector)
         val state = replCompiler.createState()
 
         return replCompiler.compile(state, ReplCodeLine(0, 0, script))

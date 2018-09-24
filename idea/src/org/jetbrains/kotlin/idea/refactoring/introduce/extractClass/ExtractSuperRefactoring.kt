@@ -38,16 +38,18 @@ import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.codeInsight.shorten.performDelayedRefactoringRequests
-import org.jetbrains.kotlin.idea.core.*
+import org.jetbrains.kotlin.idea.core.ShortenReferences
+import org.jetbrains.kotlin.idea.core.copied
+import org.jetbrains.kotlin.idea.core.getPackage
+import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.refactoring.introduce.insertDeclaration
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.KotlinMemberInfo
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.getChildrenToAnalyze
-import org.jetbrains.kotlin.idea.refactoring.memberInfo.resolveToDescriptorWrapperAware
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.toJavaMemberInfo
 import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.KotlinMoveTargetForDeferredFile
 import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.KotlinMoveTargetForExistingElement
 import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.MoveConflictChecker
-import org.jetbrains.kotlin.idea.refactoring.pullUp.checkPrivateMembersWithUsages
+import org.jetbrains.kotlin.idea.refactoring.pullUp.checkVisibilityInAbstractedMembers
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.runSynchronouslyWithProgress
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
@@ -61,6 +63,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
+import org.jetbrains.kotlin.psi.psiUtil.quoteIfNeeded
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
@@ -152,7 +155,7 @@ class ExtractSuperRefactoring(
                     elementsToMove,
                     moveTarget,
                     originalClass,
-                    memberInfos.filter { it.isToAbstract }.mapNotNull { it.member }
+                    memberInfos.asSequence().filter { it.isToAbstract }.mapNotNull { it.member }.toList()
             )
 
             project.runSynchronouslyWithProgress(RefactoringBundle.message("detecting.possible.conflicts"), true) {
@@ -171,15 +174,7 @@ class ExtractSuperRefactoring(
                         ExtractSuperClassUtil.checkSuperAccessible(targetParent, conflicts, originalClass.toLightClass())
                     }
 
-                    if (isExtractInterface) {
-                        val resolutionFacade = originalClass.getResolutionFacade()
-
-                        val membersToMove = elementsToMove.filterIsInstance<KtNamedDeclaration>()
-                        for (member in membersToMove) {
-                            val memberDescriptor = member.resolveToDescriptorWrapperAware(resolutionFacade)
-                            checkPrivateMembersWithUsages(member, memberDescriptor, originalClass, membersToMove, conflicts)
-                        }
-                    }
+                    checkVisibilityInAbstractedMembers(memberInfos, originalClass.getResolutionFacade(), conflicts)
                 }
             }
 
@@ -222,7 +217,7 @@ class ExtractSuperRefactoring(
                 .forEach { it.accept(visitor) }
     }
 
-    private fun createClass(superClassEntry: KtSuperTypeListEntry?): KtClass {
+    private fun createClass(superClassEntry: KtSuperTypeListEntry?): KtClass? {
         val targetParent = extractInfo.targetParent
         val newClassName = extractInfo.newClassName.quoteIfNeeded()
         val originalClass = extractInfo.originalClass
@@ -230,9 +225,11 @@ class ExtractSuperRefactoring(
         val kind = if (extractInfo.isInterface) "interface" else "class"
         val prototype = psiFactory.createClass("$kind $newClassName")
         val newClass = if (targetParent is PsiDirectory) {
-            val template = FileTemplateManager.getInstance(project).getInternalTemplate("Kotlin File")
-            val newFile = NewKotlinFileAction.createFileFromTemplate(extractInfo.targetFileName, template, targetParent) as KtFile
-            newFile.add(prototype) as KtClass
+            val file = targetParent.findFile(extractInfo.targetFileName) ?: run {
+                val template = FileTemplateManager.getInstance(project).getInternalTemplate("Kotlin File")
+                NewKotlinFileAction.createFileFromTemplate(extractInfo.targetFileName, template, targetParent) ?: return null
+            }
+            file.add(prototype) as KtClass
         }
         else {
             val targetSibling = originalClass.parentsWithSelf.first { it.parent == targetParent }
@@ -308,16 +305,16 @@ class ExtractSuperRefactoring(
         project.runSynchronouslyWithProgress(RefactoringBundle.message("progress.text"), true) { runReadAction { analyzeContext() } }
 
         project.executeWriteCommand(KotlinExtractSuperclassHandler.REFACTORING_NAME) {
-            val newClass = createClass(superClassEntry)
+            val newClass = createClass(superClassEntry) ?: return@executeWriteCommand
 
-            val subClass = extractInfo.originalClass.toLightClass()
-            val superClass = newClass.toLightClass()
+            val subClass = extractInfo.originalClass.toLightClass() ?: return@executeWriteCommand
+            val superClass = newClass.toLightClass() ?: return@executeWriteCommand
 
             PullUpProcessor(
-                    subClass,
-                    superClass ?: return@executeWriteCommand,
-                    extractInfo.memberInfos.mapNotNull { it.toJavaMemberInfo() }.toTypedArray(),
-                    extractInfo.docPolicy
+                subClass,
+                superClass,
+                extractInfo.memberInfos.mapNotNull { it.toJavaMemberInfo() }.toTypedArray(),
+                extractInfo.docPolicy
             ).moveMembersToBase()
 
             performDelayedRefactoringRequests(project)

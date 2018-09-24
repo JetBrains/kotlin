@@ -1,0 +1,17 @@
+package
+
+public val a0: kotlin.Any = 1.toUInt()
+public val b1: kotlin.UInt = 3.toUInt()
+public val b2: kotlin.UByte = 3.toUByte()
+public val c0: kotlin.Comparable<*>
+public val c1: kotlin.Comparable<kotlin.UInt>
+public val h1: kotlin.UInt = 255.toUInt()
+public val h2: kotlin.UShort = 255.toUShort()
+public val i0: kotlin.Int = 1.toUInt()
+public val m0: [ERROR : Type for -1u]
+public val m1: kotlin.UInt
+public val n0: kotlin.Number = 1.toUInt()
+public val u0: kotlin.UInt = 1.toUInt()
+public val u1: kotlin.UInt? = 1.toUInt()
+public val u2: kotlin.UInt? = 1.toUInt()
+public val u3: kotlin.UInt? = 1.toUInt()

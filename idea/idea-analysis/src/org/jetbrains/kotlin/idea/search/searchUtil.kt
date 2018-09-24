@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.search
 
 import com.intellij.openapi.fileTypes.FileType
 import com.intellij.openapi.fileTypes.FileTypeRegistry
+import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
@@ -27,10 +28,13 @@ import com.intellij.psi.search.PsiSearchHelper
 import com.intellij.psi.search.SearchScope
 import com.intellij.psi.search.searches.ReferencesSearch
 import org.jetbrains.kotlin.idea.KotlinFileType
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.types.expressions.OperatorConventions
 
 infix fun SearchScope.and(otherScope: SearchScope): SearchScope = intersectWith(otherScope)
 infix fun SearchScope.or(otherScope: SearchScope): SearchScope = union(otherScope)
+infix fun GlobalSearchScope.or(otherScope: SearchScope): GlobalSearchScope = union(otherScope)
 operator fun SearchScope.minus(otherScope: GlobalSearchScope): SearchScope = this and !otherScope
 operator fun GlobalSearchScope.not(): GlobalSearchScope = GlobalSearchScope.notScope(this)
 
@@ -50,22 +54,24 @@ fun Project.projectScope(): GlobalSearchScope = GlobalSearchScope.projectScope(t
 
 fun PsiFile.fileScope(): GlobalSearchScope = GlobalSearchScope.fileScope(this)
 
-fun GlobalSearchScope.restrictToKotlinSources() = GlobalSearchScope.getScopeRestrictedByFileTypes(this, KotlinFileType.INSTANCE)
+fun GlobalSearchScope.restrictByFileType(fileType: FileType) = GlobalSearchScope.getScopeRestrictedByFileTypes(this, fileType)
 
-fun SearchScope.restrictToKotlinSources(): SearchScope {
-    return when (this) {
-        is GlobalSearchScope -> restrictToKotlinSources()
-        is LocalSearchScope -> {
-            val ktElements = scope.filter { it.containingFile is KtFile }
-            when (ktElements.size) {
-                0 -> GlobalSearchScope.EMPTY_SCOPE
-                scope.size -> this
-                else -> LocalSearchScope(ktElements.toTypedArray())
-            }
+fun SearchScope.restrictByFileType(fileType: FileType) = when (this) {
+    is GlobalSearchScope -> restrictByFileType(fileType)
+    is LocalSearchScope -> {
+        val elements = scope.filter { it.containingFile.fileType == fileType }
+        when (elements.size) {
+            0 -> GlobalSearchScope.EMPTY_SCOPE
+            scope.size -> this
+            else -> LocalSearchScope(elements.toTypedArray())
         }
-        else -> this
     }
+    else -> this
 }
+
+fun GlobalSearchScope.restrictToKotlinSources() = restrictByFileType(KotlinFileType.INSTANCE)
+
+fun SearchScope.restrictToKotlinSources() = restrictByFileType(KotlinFileType.INSTANCE)
 
 fun SearchScope.excludeKotlinSources(): SearchScope = excludeFileTypes(KotlinFileType.INSTANCE)
 
@@ -90,4 +96,19 @@ fun ReferencesSearch.SearchParameters.effectiveSearchScope(element: PsiElement):
     if (isIgnoreAccessScope) return scopeDeterminedByUser
     val accessScope = PsiSearchHelper.SERVICE.getInstance(element.project).getUseScope(element)
     return scopeDeterminedByUser.intersectWith(accessScope)
+}
+
+fun isOnlyKotlinSearch(searchScope: SearchScope): Boolean {
+    return searchScope is LocalSearchScope && searchScope.scope.all { it.containingFile is KtFile }
+}
+
+fun PsiSearchHelper.isCheapEnoughToSearchConsideringOperators(
+    name: String,
+    scope: GlobalSearchScope,
+    fileToIgnoreOccurrencesIn: PsiFile?,
+    progress: ProgressIndicator?
+): PsiSearchHelper.SearchCostResult {
+    if (OperatorConventions.isConventionName(Name.identifier(name))) return PsiSearchHelper.SearchCostResult.TOO_MANY_OCCURRENCES
+
+    return isCheapEnoughToSearch(name, scope, fileToIgnoreOccurrencesIn, progress)
 }

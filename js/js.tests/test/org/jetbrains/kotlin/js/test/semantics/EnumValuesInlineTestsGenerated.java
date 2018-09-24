@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.js.test.semantics;
@@ -32,79 +21,76 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 public class EnumValuesInlineTestsGenerated extends AbstractEnumValuesInlineTests {
+    private void runTest(String testDataFilePath) throws Exception {
+        KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS, testDataFilePath);
+    }
+
     public void testAllFilesPresentInEnum() throws Exception {
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/enum"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JS, true);
     }
 
     @TestMetadata("kt10569.kt")
     public void testKt10569() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/enum/kt10569.kt");
-        doTest(fileName);
+        runTest("compiler/testData/codegen/boxInline/enum/kt10569.kt");
+    }
+
+    @TestMetadata("kt18254.kt")
+    public void testKt18254() throws Exception {
+        runTest("compiler/testData/codegen/boxInline/enum/kt18254.kt");
     }
 
     @TestMetadata("valueOf.kt")
     public void testValueOf() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/enum/valueOf.kt");
-        doTest(fileName);
+        runTest("compiler/testData/codegen/boxInline/enum/valueOf.kt");
     }
 
     @TestMetadata("valueOfCapturedType.kt")
     public void testValueOfCapturedType() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/enum/valueOfCapturedType.kt");
-        doTest(fileName);
+        runTest("compiler/testData/codegen/boxInline/enum/valueOfCapturedType.kt");
     }
 
     @TestMetadata("valueOfChain.kt")
     public void testValueOfChain() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/enum/valueOfChain.kt");
-        doTest(fileName);
+        runTest("compiler/testData/codegen/boxInline/enum/valueOfChain.kt");
     }
 
     @TestMetadata("valueOfChainCapturedType.kt")
     public void testValueOfChainCapturedType() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/enum/valueOfChainCapturedType.kt");
-        doTest(fileName);
+        runTest("compiler/testData/codegen/boxInline/enum/valueOfChainCapturedType.kt");
     }
 
     @TestMetadata("valueOfNonReified.kt")
     public void testValueOfNonReified() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/enum/valueOfNonReified.kt");
-        doTest(fileName);
+        runTest("compiler/testData/codegen/boxInline/enum/valueOfNonReified.kt");
     }
 
     @TestMetadata("values.kt")
     public void testValues() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/enum/values.kt");
-        doTest(fileName);
+        runTest("compiler/testData/codegen/boxInline/enum/values.kt");
     }
 
     @TestMetadata("valuesAsArray.kt")
     public void testValuesAsArray() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/enum/valuesAsArray.kt");
-        doTest(fileName);
+        runTest("compiler/testData/codegen/boxInline/enum/valuesAsArray.kt");
     }
 
     @TestMetadata("valuesCapturedType.kt")
     public void testValuesCapturedType() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/enum/valuesCapturedType.kt");
-        doTest(fileName);
+        runTest("compiler/testData/codegen/boxInline/enum/valuesCapturedType.kt");
     }
 
     @TestMetadata("valuesChain.kt")
     public void testValuesChain() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/enum/valuesChain.kt");
-        doTest(fileName);
+        runTest("compiler/testData/codegen/boxInline/enum/valuesChain.kt");
     }
 
     @TestMetadata("valuesChainCapturedType.kt")
     public void testValuesChainCapturedType() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/enum/valuesChainCapturedType.kt");
-        doTest(fileName);
+        runTest("compiler/testData/codegen/boxInline/enum/valuesChainCapturedType.kt");
     }
 
     @TestMetadata("valuesNonReified.kt")
     public void testValuesNonReified() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/enum/valuesNonReified.kt");
-        doTest(fileName);
+        runTest("compiler/testData/codegen/boxInline/enum/valuesNonReified.kt");
     }
 }

@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.types.KotlinType
 import java.util.*
 
 class CompositeBindingContext private constructor(
-        private val delegates: LinkedHashSet<BindingContext>
+    private val delegates: LinkedHashSet<BindingContext>
 ) : BindingContext {
     override fun getType(expression: KtExpression): KotlinType? {
         return delegates.asSequence().map { it.getType(expression) }.firstOrNull { it != null }
@@ -67,7 +67,7 @@ class CompositeBindingContext private constructor(
     }
 
     private class CompositeDiagnostics(
-            private val delegates: List<Diagnostics>
+        private val delegates: List<Diagnostics>
     ) : Diagnostics {
 
         override fun iterator(): Iterator<Diagnostic> {

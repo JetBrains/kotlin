@@ -16,10 +16,7 @@
 
 package org.jetbrains.kotlin.idea.refactoring.introduce.extractClass
 
-import com.intellij.openapi.editor.Editor
-import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
-import com.intellij.refactoring.util.CommonRefactoringUtil
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractClass.ui.KotlinExtractInterfaceDialog
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtClassOrObject
@@ -32,12 +29,11 @@ object KotlinExtractInterfaceHandler : KotlinExtractSuperHandlerBase(true) {
         return null
     }
 
-    override fun doInvoke(klass: KtClassOrObject, targetParent: PsiElement, project: Project, editor: Editor?) {
+    override fun createDialog(klass: KtClassOrObject, targetParent: PsiElement) =
         KotlinExtractInterfaceDialog(
                 originalClass = klass,
                 targetParent = targetParent,
                 conflictChecker = { checkConflicts(klass, it) },
                 refactoring = { ExtractSuperRefactoring(it).performRefactoring() }
-        ).show()
-    }
+        )
 }

@@ -1,5 +1,7 @@
 // "Add documentation" "true"
 
-/** <caret> */
+/**
+ * <caret>
+ */
 class C {
 }

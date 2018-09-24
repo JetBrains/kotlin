@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.j2k;
@@ -32,61 +21,56 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 public class JavaToKotlinConverterMultiFileTestGenerated extends AbstractJavaToKotlinConverterMultiFileTest {
+    private void runTest(String testDataFilePath) throws Exception {
+        KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+    }
+
     public void testAllFilesPresentInMultiFile() throws Exception {
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/multiFile"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, false);
     }
 
     @TestMetadata("AnnotationWithArrayParameter")
     public void testAnnotationWithArrayParameter() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/multiFile/AnnotationWithArrayParameter/");
-        doTest(fileName);
+        runTest("j2k/testData/multiFile/AnnotationWithArrayParameter/");
     }
 
     @TestMetadata("FieldToProperty")
     public void testFieldToProperty() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/multiFile/FieldToProperty/");
-        doTest(fileName);
+        runTest("j2k/testData/multiFile/FieldToProperty/");
     }
 
     @TestMetadata("FunctionalInterfaceAcceptor")
     public void testFunctionalInterfaceAcceptor() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/multiFile/FunctionalInterfaceAcceptor/");
-        doTest(fileName);
+        runTest("j2k/testData/multiFile/FunctionalInterfaceAcceptor/");
     }
 
     @TestMetadata("GetterAndSetterUsages")
     public void testGetterAndSetterUsages() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/multiFile/GetterAndSetterUsages/");
-        doTest(fileName);
+        runTest("j2k/testData/multiFile/GetterAndSetterUsages/");
     }
 
     @TestMetadata("KT11952")
     public void testKT11952() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/multiFile/KT11952/");
-        doTest(fileName);
+        runTest("j2k/testData/multiFile/KT11952/");
     }
 
     @TestMetadata("NullabilityByDFa")
     public void testNullabilityByDFa() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/multiFile/NullabilityByDFa/");
-        doTest(fileName);
+        runTest("j2k/testData/multiFile/NullabilityByDFa/");
     }
 
     @TestMetadata("ProtectedVisibility")
     public void testProtectedVisibility() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/multiFile/ProtectedVisibility/");
-        doTest(fileName);
+        runTest("j2k/testData/multiFile/ProtectedVisibility/");
     }
 
     @TestMetadata("ToCompanionObject")
     public void testToCompanionObject() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/multiFile/ToCompanionObject/");
-        doTest(fileName);
+        runTest("j2k/testData/multiFile/ToCompanionObject/");
     }
 
     @TestMetadata("ToObject")
     public void testToObject() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/multiFile/ToObject/");
-        doTest(fileName);
+        runTest("j2k/testData/multiFile/ToObject/");
     }
 }

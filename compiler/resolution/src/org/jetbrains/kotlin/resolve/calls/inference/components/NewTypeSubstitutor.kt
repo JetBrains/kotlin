@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.resolve.calls.inference.components
@@ -29,26 +18,27 @@ interface NewTypeSubstitutor {
     fun safeSubstitute(type: UnwrappedType): UnwrappedType = substitute(type, runCapturedChecks = true, keepAnnotation = false) ?: type
 
     fun substituteKeepAnnotations(type: UnwrappedType): UnwrappedType =
-            substitute(type, runCapturedChecks = true, keepAnnotation = true) ?: type
+        substitute(type, runCapturedChecks = true, keepAnnotation = true) ?: type
 
     private fun substitute(type: UnwrappedType, keepAnnotation: Boolean, runCapturedChecks: Boolean): UnwrappedType? =
-            when (type) {
-                is SimpleType -> substitute(type, keepAnnotation, runCapturedChecks)
-                is FlexibleType -> if (type is DynamicType || type is RawType) {
+        when (type) {
+            is SimpleType -> substitute(type, keepAnnotation, runCapturedChecks)
+            is FlexibleType -> if (type is DynamicType || type is RawType) {
+                null
+            } else {
+                val lowerBound = substitute(type.lowerBound, keepAnnotation, runCapturedChecks)
+                val upperBound = substitute(type.upperBound, keepAnnotation, runCapturedChecks)
+                if (lowerBound == null && upperBound == null) {
                     null
-                }
-                else {
-                    val lowerBound = substitute(type.lowerBound, keepAnnotation, runCapturedChecks)
-                    val upperBound = substitute(type.upperBound, keepAnnotation, runCapturedChecks)
-                    if (lowerBound == null && upperBound == null) {
-                        null
-                    }
-                    else {
-                        // todo discuss lowerIfFlexible and upperIfFlexible
-                        KotlinTypeFactory.flexibleType(lowerBound?.lowerIfFlexible() ?: type.lowerBound, upperBound?.upperIfFlexible() ?: type.upperBound)
-                    }
+                } else {
+                    // todo discuss lowerIfFlexible and upperIfFlexible
+                    KotlinTypeFactory.flexibleType(
+                        lowerBound?.lowerIfFlexible() ?: type.lowerBound,
+                        upperBound?.upperIfFlexible() ?: type.upperBound
+                    )
                 }
             }
+        }
 
     private fun substitute(type: SimpleType, keepAnnotation: Boolean, runCapturedChecks: Boolean): UnwrappedType? {
         if (type.isError) return null
@@ -56,12 +46,14 @@ interface NewTypeSubstitutor {
         if (type is AbbreviatedType) {
             val substitutedExpandedType = substitute(type.expandedType, keepAnnotation, runCapturedChecks)
             val substitutedAbbreviation = substitute(type.abbreviation, keepAnnotation, runCapturedChecks)
-            if (substitutedExpandedType is SimpleType? && substitutedAbbreviation is SimpleType?) {
-                return AbbreviatedType(substitutedExpandedType ?: type.expandedType,
-                                       substitutedAbbreviation ?: type.abbreviation)
-            }
-            else {
-                return substitutedExpandedType
+            return when {
+                substitutedExpandedType == null && substitutedAbbreviation == null -> null
+                substitutedExpandedType is SimpleType? && substitutedAbbreviation is SimpleType? ->
+                    AbbreviatedType(
+                        substitutedExpandedType ?: type.expandedType,
+                        substitutedAbbreviation ?: type.abbreviation
+                    )
+                else -> substitutedExpandedType
             }
         }
 
@@ -74,20 +66,26 @@ interface NewTypeSubstitutor {
         if (typeConstructor is NewCapturedTypeConstructor) {
             if (!runCapturedChecks) return null
 
-            assert(type is NewCapturedType) { // KT-16147
+            assert(type is NewCapturedType || (type is DefinitelyNotNullType && type.original is NewCapturedType)) {
+                // KT-16147
                 "Type is inconsistent -- somewhere we create type with typeConstructor = $typeConstructor " +
-                "and class: ${type::class.java.canonicalName}. type.toString() = $type"
+                        "and class: ${type::class.java.canonicalName}. type.toString() = $type"
             }
-            val lower = (type as NewCapturedType).lowerType?.let { substitute(it, keepAnnotation, runCapturedChecks = false) }
-            if (lower != null) throw IllegalStateException("Illegal type substitutor: $this, " +
-                                                           "because for captured type '$type' lower type approximation should be null, but it is: '$lower'," +
-                                                           "original lower type: '${type.lowerType}")
+            val capturedType = if (type is DefinitelyNotNullType) type.original as NewCapturedType else type as NewCapturedType
+            val lower = capturedType.lowerType?.let { substitute(it, keepAnnotation, runCapturedChecks = false) }
+            if (lower != null) throw IllegalStateException(
+                "Illegal type substitutor: $this, " +
+                        "because for captured type '$type' lower type approximation should be null, but it is: '$lower'," +
+                        "original lower type: '${capturedType.lowerType}"
+            )
 
-            type.constructor.supertypes.forEach { supertype ->
+            typeConstructor.supertypes.forEach { supertype ->
                 substitute(supertype, keepAnnotation, runCapturedChecks = false)?.let {
-                    throw IllegalStateException("Illegal type substitutor: $this, " +
-                                                "because for captured type '$type' supertype approximation should be null, but it is: '$supertype'," +
-                                                "original supertype: '$supertype'")
+                    throw IllegalStateException(
+                        "Illegal type substitutor: $this, " +
+                                "because for captured type '$type' supertype approximation should be null, but it is: '$supertype'," +
+                                "original supertype: '$supertype'"
+                    )
                 }
             }
 
@@ -111,14 +109,20 @@ interface NewTypeSubstitutor {
         if (type.isMarkedNullable) {
             replacement = replacement.makeNullableAsSpecified(true)
         }
+        if (type.isDefinitelyNotNullType) {
+            replacement = replacement.makeDefinitelyNotNullOrNotNull()
+        }
+        if (type is CustomTypeVariable) {
+            replacement = type.substitutionResult(replacement).unwrap()
+        }
 
         return replacement
     }
 
     private fun substituteParametrizedType(
-            type: SimpleType,
-            keepAnnotation: Boolean,
-            runCapturedChecks: Boolean
+        type: SimpleType,
+        keepAnnotation: Boolean,
+        runCapturedChecks: Boolean
     ): UnwrappedType? {
         val parameters = type.constructor.parameters
         val arguments = type.arguments

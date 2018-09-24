@@ -1,0 +1,45 @@
+== myRun ==
+inline fun myRun(block: () -> Unit): Unit {
+    contract {
+        callsInPlace(block, InvocationKind.EXACTLY_ONCE)
+    }
+    block()
+}
+---------------------
+                                                                            <v0>: {<: () -> Unit}                   NEW: magic[FAKE_INITIALIZER](block: () -> Unit) -> <v0>
+{ callsInPlace(block, InvocationKind.EXACTLY_ONCE) }                        <v1>: {<: ContractBuilder.() -> Unit}   NEW: r({ callsInPlace(block, InvocationKind.EXACTLY_ONCE) }) -> <v1>
+contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) }               <v2>: *                                 NEW: call(contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) }, contract|<v1>) -> <v2>
+block                                                                       <v3>: {<: () -> Unit}                   NEW: r(block) -> <v3>
+block()                                                                     <v4>: *                                 NEW: call(block(), invoke|<v3>) -> <v4>
+{ contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) } block() }   <v4>: *                                 COPY
+=====================
+== anonymous_0 ==
+{
+        callsInPlace(block, InvocationKind.EXACTLY_ONCE)
+    }
+---------------------
+                                                   <v0>: {<: ContractBuilder}   NEW: magic[IMPLICIT_RECEIVER](callsInPlace(block, InvocationKind.EXACTLY_ONCE)) -> <v0>
+block                                              <v1>: {<: Function<Unit>}    NEW: r(block) -> <v1>
+EXACTLY_ONCE                                       <v2>: {<: InvocationKind}    NEW: r(EXACTLY_ONCE) -> <v2>
+InvocationKind.EXACTLY_ONCE                        <v2>: {<: InvocationKind}    COPY
+callsInPlace(block, InvocationKind.EXACTLY_ONCE)   <v3>: *                      NEW: call(callsInPlace(block, InvocationKind.EXACTLY_ONCE), callsInPlace|<v0>, <v1>, <v2>) -> <v3>
+callsInPlace(block, InvocationKind.EXACTLY_ONCE)   <v3>: *                      COPY
+=====================
+== test ==
+fun test() {
+    myRun { throw java.lang.IllegalArgumentException() }
+    val x: Int = 42
+}
+---------------------
+{ throw java.lang.IllegalArgumentException() }         <v0>: {<: () -> Unit}   NEW: r({ throw java.lang.IllegalArgumentException() }) -> <v0>
+myRun { throw java.lang.IllegalArgumentException() }   <v1>: *                 NEW: call(myRun { throw java.lang.IllegalArgumentException() }, myRun|<v0>) -> <v1>
+42                                                     <v2>: Int               NEW: r(42) -> <v2>
+=====================
+== inlined anonymous_1 ==
+{ throw java.lang.IllegalArgumentException() }
+---------------------
+IllegalArgumentException()                   <v0>: {<: Throwable}   NEW: call(IllegalArgumentException(), <init>) -> <v0>
+java.lang.IllegalArgumentException()         <v0>: {<: Throwable}   COPY
+throw java.lang.IllegalArgumentException()   !<v1>: *
+throw java.lang.IllegalArgumentException()   !<v1>: *               COPY
+=====================

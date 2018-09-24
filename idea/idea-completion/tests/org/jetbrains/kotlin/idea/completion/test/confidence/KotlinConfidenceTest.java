@@ -68,6 +68,10 @@ public class KotlinConfidenceTest extends LightCompletionTestCase {
         doTest();
     }
 
+    public void testAutoPopupInStringTemplateAfterDollar() {
+        doTest();
+    }
+
     public void testNoAutoPopupInStringTemplateAfterSpace() {
         doTest();
     }
@@ -80,16 +84,6 @@ public class KotlinConfidenceTest extends LightCompletionTestCase {
     protected void setUp() throws Exception {
         super.setUp();
         TestUtilsKt.invalidateLibraryCache(getProject());
-    }
-
-    @Override
-    protected void tearDown() throws Exception {
-        TestUtilsKt.doKotlinTearDown(getProject(), new RunnableWithException() {
-            @Override
-            public void run() throws Exception {
-                KotlinConfidenceTest.super.tearDown();
-            }
-        });
     }
 
     protected void doTest() {

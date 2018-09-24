@@ -19,18 +19,19 @@ package org.jetbrains.kotlin.idea.quickfix
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiFile
 import com.intellij.psi.search.searches.ReferencesSearch
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.CollectingNameValidator
+import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.getDataFlowAwareTypes
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.*
 import org.jetbrains.kotlin.psi.KtCallElement
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.ValueArgument
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.calls.callUtil.getCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
@@ -70,9 +71,9 @@ class AddFunctionParametersFix(
             "Add parameter$subjectSuffix to $callableDescription"
     }
 
-    override fun isAvailable(project: Project, editor: Editor?, file: PsiFile): Boolean {
-        val callElement = callElement ?: return false
+    override fun isAvailable(project: Project, editor: Editor?, file: KtFile): Boolean {
         if (!super.isAvailable(project, editor, file)) return false
+        val callElement = callElement ?: return false
 
         // newParametersCnt <= 0: psi for this quickfix is no longer valid
         val newParametersCnt = callElement.valueArguments.size - functionDescriptor.valueParameters.size
@@ -89,6 +90,7 @@ class AddFunctionParametersFix(
             override fun configure(originalDescriptor: KotlinMethodDescriptor): KotlinMethodDescriptor {
                 return originalDescriptor.modify {
                     val callElement = callElement ?: return@modify
+                    val call = callElement.getCall(callElement.analyze()) ?: return@modify
                     val parameters = functionDescriptor.valueParameters
                     val arguments = callElement.valueArguments
                     val validator = CollectingNameValidator()
@@ -101,7 +103,8 @@ class AddFunctionParametersFix(
                             validator.addName(parameters[i].name.asString())
                             val argumentType = expression?.let {
                                 val bindingContext = it.analyze()
-                                bindingContext[BindingContext.SMARTCAST, it]?.defaultType ?: bindingContext.getType(it)
+                                val smartCasts = bindingContext[BindingContext.SMARTCAST, it]
+                                smartCasts?.defaultType ?: smartCasts?.type(call) ?: bindingContext.getType(it)
                             }
                             val parameterType = parameters[i].type
 
@@ -142,7 +145,7 @@ class AddFunctionParametersFix(
     ): KotlinParameterInfo {
         val name = getNewArgumentName(argument, validator)
         val expression = argument.getArgumentExpression()
-        val type = expression?.let { it.analyze().getType(it) } ?: functionDescriptor.builtIns.nullableAnyType
+        val type = expression?.let { getDataFlowAwareTypes(it).firstOrNull() } ?: functionDescriptor.builtIns.nullableAnyType
         return KotlinParameterInfo(functionDescriptor, -1, name, KotlinTypeInfo(false, null))
                 .apply { currentTypeInfo = KotlinTypeInfo(false, type) }
     }

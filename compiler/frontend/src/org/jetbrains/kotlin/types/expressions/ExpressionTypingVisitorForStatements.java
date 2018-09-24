@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.types.expressions;
 
-import com.google.common.collect.Sets;
 import com.intellij.psi.tree.IElementType;
 import kotlin.Pair;
 import org.jetbrains.annotations.NotNull;
@@ -50,6 +49,7 @@ import org.jetbrains.kotlin.types.expressions.typeInfoFactory.TypeInfoFactoryKt;
 import org.jetbrains.kotlin.util.OperatorNameConventions;
 
 import java.util.Collection;
+import java.util.HashSet;
 
 import static org.jetbrains.kotlin.diagnostics.Errors.*;
 import static org.jetbrains.kotlin.psi.KtPsiUtil.deparenthesize;
@@ -226,8 +226,7 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
                         context.replaceTraceAndCache(temporaryForAssignmentOperation).replaceScope(scope),
                         receiver, expression, name
                 );
-        KotlinType assignmentOperationType = OverloadResolutionResultsUtil.getResultingType(assignmentOperationDescriptors,
-                                                                                            context.contextDependency);
+        KotlinType assignmentOperationType = OverloadResolutionResultsUtil.getResultingType(assignmentOperationDescriptors, context);
 
         OverloadResolutionResults<FunctionDescriptor> binaryOperationDescriptors;
         KotlinType binaryOperationType;
@@ -243,7 +242,7 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
                     receiver, expression, counterpartName
             );
 
-            binaryOperationType = OverloadResolutionResultsUtil.getResultingType(binaryOperationDescriptors, context.contextDependency);
+            binaryOperationType = OverloadResolutionResultsUtil.getResultingType(binaryOperationDescriptors, context);
         }
         else {
             binaryOperationDescriptors = OverloadResolutionResultsImpl.nameNotFound();
@@ -261,7 +260,7 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
             // Both 'plus()' and 'plusAssign()' available => ambiguity
             OverloadResolutionResults<FunctionDescriptor> ambiguityResolutionResults = OverloadResolutionResultsUtil.ambiguity(assignmentOperationDescriptors, binaryOperationDescriptors);
             context.trace.report(ASSIGN_OPERATOR_AMBIGUITY.on(operationSign, ambiguityResolutionResults.getResultingCalls()));
-            Collection<DeclarationDescriptor> descriptors = Sets.newHashSet();
+            Collection<DeclarationDescriptor> descriptors = new HashSet<>();
             for (ResolvedCall<?> resolvedCall : ambiguityResolutionResults.getResultingCalls()) {
                 descriptors.add(resolvedCall.getResultingDescriptor());
             }
@@ -353,8 +352,8 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
             dataFlowInfo = resultInfo.getDataFlowInfo();
             KotlinType rightType = resultInfo.getType();
             if (left != null && expectedType != null && rightType != null) {
-                DataFlowValue leftValue = DataFlowValueFactory.createDataFlowValue(left, expectedType, context);
-                DataFlowValue rightValue = DataFlowValueFactory.createDataFlowValue(right, rightType, context);
+                DataFlowValue leftValue = components.dataFlowValueFactory.createDataFlowValue(left, expectedType, context);
+                DataFlowValue rightValue = components.dataFlowValueFactory.createDataFlowValue(right, rightType, context);
                 // We cannot say here anything new about rightValue except it has the same value as leftValue
                 resultInfo = resultInfo.replaceDataFlowInfo(dataFlowInfo.assign(leftValue, rightValue, components.languageVersionSettings));
             }

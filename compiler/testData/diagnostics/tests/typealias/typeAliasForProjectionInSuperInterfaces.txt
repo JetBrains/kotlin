@@ -110,11 +110,11 @@ public final class Test9 : OutT<out kotlin.Int> /* = Out<out kotlin.Int> */ {
 }
 public typealias InIn = In<in kotlin.Int>
 public typealias InStar = In<*>
-public typealias InT</*0*/ T>  = In<T>
+public typealias InT</*0*/ T> = In<T>
 public typealias InvIn = Inv<in kotlin.Int>
 public typealias InvOut = Inv<out kotlin.Int>
 public typealias InvStar = Inv<*>
-public typealias InvT</*0*/ T>  = Inv<T>
+public typealias InvT</*0*/ T> = Inv<T>
 public typealias OutOut = Out<out kotlin.Int>
 public typealias OutStar = Out<*>
-public typealias OutT</*0*/ T>  = Out<T>
+public typealias OutT</*0*/ T> = Out<T>

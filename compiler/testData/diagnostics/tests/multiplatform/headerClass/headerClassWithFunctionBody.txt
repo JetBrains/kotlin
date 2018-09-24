@@ -7,7 +7,6 @@ public final expect class Foo {
     public expect final val constructorProperty: kotlin.String
     public expect final var getSet: kotlin.String
     public expect final val prop: kotlin.String = "no"
-    public final expect fun defaultArg(/*0*/ value: kotlin.String = ...): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public final expect fun functionWithBody(/*0*/ x: kotlin.Int): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

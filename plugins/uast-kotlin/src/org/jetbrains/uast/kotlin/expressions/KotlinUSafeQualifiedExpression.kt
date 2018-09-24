@@ -23,8 +23,8 @@ import org.jetbrains.uast.UQualifiedReferenceExpression
 
 class KotlinUSafeQualifiedExpression(
         override val psi: KtSafeQualifiedExpression,
-        override val uastParent: UElement?
-) : KotlinAbstractUExpression(), UQualifiedReferenceExpression, 
+        givenParent: UElement?
+) : KotlinAbstractUExpression(givenParent), UQualifiedReferenceExpression,
         KotlinUElementWithType, KotlinEvaluatableUElement {
     override val receiver by lz { KotlinConverter.convertOrEmpty(psi.receiverExpression, this) }
     override val selector by lz { KotlinConverter.convertOrEmpty(psi.selectorExpression, this) }

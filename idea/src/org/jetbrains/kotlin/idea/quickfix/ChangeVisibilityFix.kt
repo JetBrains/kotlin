@@ -20,15 +20,16 @@ import com.intellij.codeInsight.intention.HighPriorityAction
 import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
-import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithVisibility
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.idea.core.canBePrivate
 import org.jetbrains.kotlin.idea.core.canBeProtected
 import org.jetbrains.kotlin.idea.core.setVisibility
+import org.jetbrains.kotlin.idea.util.runOnExpectAndAllActuals
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtModifierListOwner
 import org.jetbrains.kotlin.resolve.ExposedVisibilityChecker
@@ -43,6 +44,11 @@ open class ChangeVisibilityFix(
     override fun getFamilyName() = "Make $visibilityModifier"
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
+        val originalElement = element
+        if (originalElement is KtDeclaration) {
+            originalElement.runOnExpectAndAllActuals { it.setVisibility(visibilityModifier) }
+        }
+
         element?.setVisibility(visibilityModifier)
     }
 
@@ -52,9 +58,9 @@ open class ChangeVisibilityFix(
     protected class ChangeToProtectedFix(element: KtModifierListOwner, elementName: String) :
             ChangeVisibilityFix(element, elementName, KtTokens.PROTECTED_KEYWORD) {
 
-        override fun isAvailable(project: Project, editor: Editor?, file: PsiFile): Boolean {
+        override fun isAvailable(project: Project, editor: Editor?, file: KtFile): Boolean {
             val element = element ?: return false
-            return super.isAvailable(project, editor, file) && element.canBeProtected()
+            return element.canBeProtected()
         }
     }
 
@@ -64,9 +70,9 @@ open class ChangeVisibilityFix(
     protected class ChangeToPrivateFix(element: KtModifierListOwner, elementName: String) :
             ChangeVisibilityFix(element, elementName, KtTokens.PRIVATE_KEYWORD), HighPriorityAction {
 
-        override fun isAvailable(project: Project, editor: Editor?, file: PsiFile): Boolean {
+        override fun isAvailable(project: Project, editor: Editor?, file: KtFile): Boolean {
             val element = element ?: return false
-            return super.isAvailable(project, editor, file) && element.canBePrivate()
+            return element.canBePrivate()
         }
     }
 

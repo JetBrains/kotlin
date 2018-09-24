@@ -49,6 +49,7 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.Receiver
 import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
+import org.jetbrains.kotlin.types.expressions.DoubleColonLHS
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import java.util.*
 
@@ -458,10 +459,14 @@ class KotlinPsiUnifier(
                    && ((parent.operationToken as KtToken) in OperatorConventions.INCREMENT_OPERATIONS)
         }
 
-        private fun matchCallableReferences(e1: KtCallableReferenceExpression, e2: KtCallableReferenceExpression): Boolean {
+        private fun KtCallableReferenceExpression.hasExpressionReceiver(): Boolean =
+                bindingContext[BindingContext.DOUBLE_COLON_LHS, receiverExpression] is DoubleColonLHS.Expression
+
+        private fun matchCallableReferences(e1: KtCallableReferenceExpression, e2: KtCallableReferenceExpression): Status? {
+            if (e1.hasExpressionReceiver() || e2.hasExpressionReceiver()) return null
             val d1 = e1.bindingContext[BindingContext.REFERENCE_TARGET, e1.callableReference]
             val d2 = e2.bindingContext[BindingContext.REFERENCE_TARGET, e2.callableReference]
-            return matchDescriptors(d1, d2)
+            return if (matchDescriptors(d1, d2)) MATCHED else UNMATCHED
         }
 
         private fun matchThisExpressions(e1: KtThisExpression, e2: KtThisExpression): Boolean {
@@ -748,7 +753,7 @@ class KotlinPsiUnifier(
                     UNMATCHED
 
                 e1 is KtCallableReferenceExpression && e2 is KtCallableReferenceExpression ->
-                    if (matchCallableReferences(e1, e2)) MATCHED else UNMATCHED
+                    matchCallableReferences(e1, e2)
 
                 e1 is KtThisExpression && e2 is KtThisExpression -> if (matchThisExpressions(e1, e2)) MATCHED else UNMATCHED
 

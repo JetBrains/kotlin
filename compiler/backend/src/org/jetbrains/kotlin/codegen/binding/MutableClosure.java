@@ -19,8 +19,12 @@ package org.jetbrains.kotlin.codegen.binding;
 import com.intellij.openapi.util.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.codegen.AsmUtil;
 import org.jetbrains.kotlin.codegen.context.EnclosedValueDescriptor;
+import org.jetbrains.kotlin.config.LanguageFeature;
+import org.jetbrains.kotlin.config.LanguageVersionSettings;
 import org.jetbrains.kotlin.descriptors.*;
+import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.org.objectweb.asm.Type;
 
@@ -73,16 +77,16 @@ public final class MutableClosure implements CalculatedClosure {
     }
 
     @Override
-    public ClassDescriptor getCaptureThis() {
+    public ClassDescriptor getCapturedOuterClassDescriptor() {
         return captureThis ? enclosingClass : null;
     }
 
-    public void setCaptureThis() {
+    public void setNeedsCaptureOuterClass() {
         this.captureThis = true;
     }
 
     @Override
-    public KotlinType getCaptureReceiverType() {
+    public KotlinType getCapturedReceiverFromOuterContext() {
         if (captureReceiverType != null) {
             return captureReceiverType;
         }
@@ -96,21 +100,41 @@ public final class MutableClosure implements CalculatedClosure {
         return null;
     }
 
-    public void setCaptureReceiver() {
+    @NotNull
+    @Override
+    public String getCapturedReceiverFieldName(BindingContext bindingContext, LanguageVersionSettings languageVersionSettings) {
+        if (captureReceiverType != null) {
+            // Should effectively be returned only for callable references
+            return AsmUtil.CAPTURED_RECEIVER_FIELD;
+        } else if (enclosingFunWithReceiverDescriptor != null) {
+            if (!languageVersionSettings.supportsFeature(LanguageFeature.NewCapturedReceiverFieldNamingConvention)) {
+                return AsmUtil.CAPTURED_RECEIVER_FIELD;
+            }
+
+            String labeledThis = AsmUtil.getLabeledThisNameForReceiver(
+                    enclosingFunWithReceiverDescriptor, bindingContext, languageVersionSettings);
+
+            return AsmUtil.getCapturedFieldName(labeledThis);
+        } else {
+            throw new IllegalStateException("Closure does not capture an outer receiver");
+        }
+    }
+
+    public void setNeedsCaptureReceiverFromOuterContext() {
         if (enclosingFunWithReceiverDescriptor == null) {
             throw new IllegalStateException("Extension receiver parameter should exist");
         }
         this.captureEnclosingReceiver = true;
     }
 
+    public void setCustomCapturedReceiverType(@NotNull KotlinType type) {
+        this.captureReceiverType = type;
+    }
+
     @NotNull
     @Override
     public Map<DeclarationDescriptor, EnclosedValueDescriptor> getCaptureVariables() {
         return captureVariables != null ? captureVariables : Collections.emptyMap();
-    }
-
-    public void setCaptureReceiverType(@NotNull KotlinType type) {
-        this.captureReceiverType = type;
     }
 
     @NotNull

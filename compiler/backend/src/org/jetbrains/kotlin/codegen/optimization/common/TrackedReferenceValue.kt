@@ -22,7 +22,7 @@ interface ReferenceValueDescriptor {
     fun onUseAsTainted()
 }
 
-sealed class TrackedReferenceValue(type: Type): StrictBasicValue(type) {
+sealed class TrackedReferenceValue(type: Type) : StrictBasicValue(type) {
     abstract val descriptors: Set<ReferenceValueDescriptor>
 }
 
@@ -31,37 +31,38 @@ class ProperTrackedReferenceValue(type: Type, val descriptor: ReferenceValueDesc
         get() = setOf(descriptor)
 
     override fun equals(other: Any?): Boolean =
-            other === this ||
-            other is ProperTrackedReferenceValue && other.descriptor == this.descriptor
+        other === this ||
+                other is ProperTrackedReferenceValue && other.descriptor == this.descriptor
 
     override fun hashCode(): Int =
-            descriptor.hashCode()
+        descriptor.hashCode()
 
     override fun toString(): String =
-            "[$descriptor]"
+        "[$descriptor]"
 }
 
 
 class MergedTrackedReferenceValue(type: Type, override val descriptors: Set<ReferenceValueDescriptor>) : TrackedReferenceValue(type) {
     override fun equals(other: Any?): Boolean =
-            other === this ||
-            other is MergedTrackedReferenceValue && other.descriptors == this.descriptors
+        other === this ||
+                other is MergedTrackedReferenceValue && other.descriptors == this.descriptors
 
     override fun hashCode(): Int =
-            descriptors.hashCode()
+        descriptors.hashCode()
 
     override fun toString(): String =
-            descriptors.toString()
+        descriptors.toString()
 }
 
 
 class TaintedTrackedReferenceValue(type: Type, override val descriptors: Set<ReferenceValueDescriptor>) : TrackedReferenceValue(type) {
     override fun equals(other: Any?): Boolean =
-            other === this ||
-            other is TaintedTrackedReferenceValue && other.descriptors == this.descriptors
+        other === this ||
+                other is TaintedTrackedReferenceValue && other.descriptors == this.descriptors
 
     override fun hashCode(): Int =
-            descriptors.hashCode()
+        descriptors.hashCode()
+
     override fun toString(): String =
-            "!$descriptors"
+        "!$descriptors"
 }

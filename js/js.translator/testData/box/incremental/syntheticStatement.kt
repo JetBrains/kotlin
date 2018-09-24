@@ -1,5 +1,6 @@
-// EXPECTED_REACHABLE_NODES: 992
-/// FILE: a.kt
+// IGNORE_BACKEND: JS_IR
+// EXPECTED_REACHABLE_NODES: 1282
+// FILE: a.kt
 
 fun a() = "["
 

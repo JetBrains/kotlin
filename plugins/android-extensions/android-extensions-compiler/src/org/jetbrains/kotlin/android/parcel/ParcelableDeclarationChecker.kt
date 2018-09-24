@@ -1,39 +1,33 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.android.parcel
 
+import kotlinx.android.parcel.IgnoredOnParcel
 import org.jetbrains.kotlin.android.parcel.serializers.ParcelSerializer
 import org.jetbrains.kotlin.android.parcel.serializers.isParcelable
 import org.jetbrains.kotlin.android.synthetic.diagnostic.DefaultErrorMessagesAndroid
 import org.jetbrains.kotlin.android.synthetic.diagnostic.ErrorsAndroid
 import org.jetbrains.kotlin.codegen.ClassBuilderMode
+import org.jetbrains.kotlin.codegen.FrameMap
 import org.jetbrains.kotlin.codegen.state.IncompatibleClassTracker
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
+import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
+import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.diagnostics.reportFromPlugin
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.checkers.SimpleDeclarationChecker
+import org.jetbrains.kotlin.resolve.checkers.DeclarationChecker
+import org.jetbrains.kotlin.resolve.checkers.DeclarationCheckerContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.jvm.annotations.findJvmFieldAnnotation
@@ -44,31 +38,27 @@ val ANDROID_PARCELABLE_CLASS_FQNAME = FqName("android.os.Parcelable")
 val ANDROID_PARCELABLE_CREATOR_CLASS_FQNAME = FqName("android.os.Parcelable.Creator")
 val ANDROID_PARCEL_CLASS_FQNAME = FqName("android.os.Parcel")
 
-class ParcelableDeclarationChecker : SimpleDeclarationChecker {
+class ParcelableDeclarationChecker : DeclarationChecker {
     private companion object {
-        private val TRANSIENT_FQNAME = FqName(Transient::class.java.canonicalName)
+        private val IGNORED_ON_PARCEL_FQNAME = FqName(IgnoredOnParcel::class.java.canonicalName)
     }
 
-    override fun check(
-            declaration: KtDeclaration,
-            descriptor: DeclarationDescriptor,
-            diagnosticHolder: DiagnosticSink,
-            bindingContext: BindingContext
-    ) {
+    override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
+        val trace = context.trace
         when (descriptor) {
-            is ClassDescriptor -> checkParcelableClass(descriptor, declaration, diagnosticHolder, bindingContext)
+            is ClassDescriptor -> checkParcelableClass(descriptor, declaration, trace, trace.bindingContext)
             is SimpleFunctionDescriptor -> {
                 val containingClass = descriptor.containingDeclaration as? ClassDescriptor
                 val ktFunction = declaration as? KtFunction
                 if (containingClass != null && ktFunction != null) {
-                    checkParcelableClassMethod(descriptor, containingClass, ktFunction, diagnosticHolder)
+                    checkParcelableClassMethod(descriptor, containingClass, ktFunction, trace)
                 }
             }
             is PropertyDescriptor -> {
                 val containingClass = descriptor.containingDeclaration as? ClassDescriptor
                 val ktProperty = declaration as? KtProperty
                 if (containingClass != null && ktProperty != null) {
-                    checkParcelableClassProperty(descriptor, containingClass, ktProperty, diagnosticHolder, bindingContext)
+                    checkParcelableClassProperty(descriptor, containingClass, ktProperty, trace, trace.bindingContext)
                 }
             }
         }
@@ -95,9 +85,15 @@ class ParcelableDeclarationChecker : SimpleDeclarationChecker {
             diagnosticHolder: DiagnosticSink,
             bindingContext: BindingContext
     ) {
+        fun hasIgnoredOnParcel(): Boolean {
+            fun Annotations.hasIgnoredOnParcel() = any { it.fqName == IGNORED_ON_PARCEL_FQNAME }
+
+            return property.annotations.hasIgnoredOnParcel() || (property.getter?.annotations?.hasIgnoredOnParcel() ?: false)
+        }
+
         if (containingClass.isParcelize
-                && (declaration.hasDelegate() || bindingContext[BindingContext.BACKING_FIELD_REQUIRED, property] == true)
-                && !property.annotations.hasAnnotation(TRANSIENT_FQNAME)
+            && (declaration.hasDelegate() || bindingContext[BindingContext.BACKING_FIELD_REQUIRED, property] == true)
+            && !hasIgnoredOnParcel()
         ) {
             val reportElement = declaration.nameIdentifier ?: declaration
             diagnosticHolder.reportFromPlugin(ErrorsAndroid.PROPERTY_WONT_BE_SERIALIZED.on(reportElement), DefaultErrorMessagesAndroid)
@@ -121,14 +117,13 @@ class ParcelableDeclarationChecker : SimpleDeclarationChecker {
     ) {
         if (!descriptor.isParcelize) return
 
-        if (declaration !is KtClass || (declaration.isAnnotation() || declaration.isInterface())) {
-            val reportElement = (declaration as? KtClassOrObject)?.nameIdentifier ?: declaration
-            diagnosticHolder.reportFromPlugin(ErrorsAndroid.PARCELABLE_SHOULD_BE_CLASS.on(reportElement), DefaultErrorMessagesAndroid)
+        if (declaration !is KtClassOrObject) {
+            diagnosticHolder.reportFromPlugin(ErrorsAndroid.PARCELABLE_SHOULD_BE_CLASS.on(declaration), DefaultErrorMessagesAndroid)
             return
         }
 
-        if (declaration.isEnum()) {
-            val reportElement = (declaration as? KtClass)?.nameIdentifier ?: declaration
+        if (declaration is KtClass && (declaration.isAnnotation() || declaration.isInterface())) {
+            val reportElement = declaration.nameIdentifier ?: declaration
             diagnosticHolder.reportFromPlugin(ErrorsAndroid.PARCELABLE_SHOULD_BE_CLASS.on(reportElement), DefaultErrorMessagesAndroid)
             return
         }
@@ -145,7 +140,7 @@ class ParcelableDeclarationChecker : SimpleDeclarationChecker {
             diagnosticHolder.reportFromPlugin(ErrorsAndroid.PARCELABLE_SHOULD_BE_INSTANTIABLE.on(sealedOrAbstract), DefaultErrorMessagesAndroid)
         }
 
-        if (declaration.isInner()) {
+        if (declaration is KtClass && declaration.isInner()) {
             val reportElement = declaration.modifierList?.getModifier(KtTokens.INNER_KEYWORD) ?: declaration.nameIdentifier ?: declaration
             diagnosticHolder.reportFromPlugin(ErrorsAndroid.PARCELABLE_CANT_BE_INNER_CLASS.on(reportElement), DefaultErrorMessagesAndroid)
         }
@@ -181,12 +176,14 @@ class ParcelableDeclarationChecker : SimpleDeclarationChecker {
         }
 
         val typeMapper = KotlinTypeMapper(
-                bindingContext,
-                ClassBuilderMode.full(false),
-                IncompatibleClassTracker.DoNothing,
-                descriptor.module.name.asString(),
-                /* isJvm8Target */ false,
-                /* isJvm8TargetWithDefaults */ false)
+            bindingContext,
+            ClassBuilderMode.FULL,
+            IncompatibleClassTracker.DoNothing,
+            descriptor.module.name.asString(),
+            JvmTarget.DEFAULT,
+            KotlinTypeMapper.RELEASE_COROUTINES_DEFAULT,
+            false
+        )
 
         for (parameter in primaryConstructor?.valueParameters.orEmpty()) {
             checkParcelableClassProperty(parameter, descriptor, diagnosticHolder, typeMapper)
@@ -212,7 +209,13 @@ class ParcelableDeclarationChecker : SimpleDeclarationChecker {
             val asmType = typeMapper.mapType(type)
 
             try {
-                val context = ParcelSerializer.ParcelSerializerContext(typeMapper, typeMapper.mapType(containerClass.defaultType))
+                val parcelers = getTypeParcelers(descriptor.annotations) + getTypeParcelers(containerClass.annotations)
+                val context = ParcelSerializer.ParcelSerializerContext(
+                        typeMapper,
+                        typeMapper.mapType(containerClass.defaultType),
+                        parcelers,
+                        FrameMap())
+
                 ParcelSerializer.get(type, asmType, context, strict = true)
             }
             catch (e: IllegalArgumentException) {

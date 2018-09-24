@@ -28,8 +28,6 @@ public final class SmartSet <T> extends kotlin.collections.AbstractSet<T> implem
     public static final <T> SmartSet<T> create(@org.jetbrains.annotations.NotNull java.util.Collection<? extends T> set) { /* compiled code */ }
 
     public static final class Companion {
-        private final int getARRAY_THRESHOLD() { /* compiled code */ }
-
         @kotlin.jvm.JvmStatic
         @org.jetbrains.annotations.NotNull
         public final <T> SmartSet<T> create() { /* compiled code */ }

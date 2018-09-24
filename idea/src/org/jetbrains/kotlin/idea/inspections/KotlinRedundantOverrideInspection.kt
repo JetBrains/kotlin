@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.inspections
@@ -19,58 +8,62 @@ package org.jetbrains.kotlin.idea.inspections
 import com.intellij.codeInspection.*
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.load.java.descriptors.JavaMethodDescriptor
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.endOffset
-import org.jetbrains.kotlin.psi.psiUtil.getCallNameExpression
-import org.jetbrains.kotlin.psi.psiUtil.startOffset
+import org.jetbrains.kotlin.psi.psiUtil.*
+import org.jetbrains.kotlin.resolve.BindingContext
 
 class KotlinRedundantOverrideInspection : AbstractKotlinInspection(), CleanupLocalInspectionTool {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean, session: LocalInspectionToolSession) =
-            object : KtVisitorVoid() {
-                override fun visitNamedFunction(function: KtNamedFunction) {
-                    super.visitNamedFunction(function)
-                    val funKeyword = function.funKeyword ?: return
-                    val modifierList = function.modifierList ?: return
-                    if (!modifierList.hasModifier(KtTokens.OVERRIDE_KEYWORD)) return
-                    if (MODIFIER_EXCLUDE_OVERRIDE.any { modifierList.hasModifier(it) }) return
-                    if (function.annotationEntries.isNotEmpty()) return
+        namedFunctionVisitor(fun(function) {
+            val funKeyword = function.funKeyword ?: return
+            val modifierList = function.modifierList ?: return
+            if (!modifierList.hasModifier(KtTokens.OVERRIDE_KEYWORD)) return
+            if (MODIFIER_EXCLUDE_OVERRIDE.any { modifierList.hasModifier(it) }) return
+            if (function.annotationEntries.isNotEmpty()) return
+            if (function.containingClass()?.isData() == true) return
 
-                    val bodyExpression = function.bodyExpression ?: return
-                    val qualifiedExpression = when (bodyExpression) {
-                        is KtDotQualifiedExpression -> bodyExpression
-                        is KtBlockExpression -> {
-                            val body = bodyExpression.statements.singleOrNull()
-                            when (body) {
-                                is KtReturnExpression -> body.returnedExpression
-                                is KtDotQualifiedExpression -> body.takeIf {
-                                    function.typeReference.let { it == null || it.text == "Unit" }
-                                }
-                                else -> null
-                            }
-
+            val bodyExpression = function.bodyExpression ?: return
+            val qualifiedExpression = when (bodyExpression) {
+                is KtDotQualifiedExpression -> bodyExpression
+                is KtBlockExpression -> {
+                    val body = bodyExpression.statements.singleOrNull()
+                    when (body) {
+                        is KtReturnExpression -> body.returnedExpression
+                        is KtDotQualifiedExpression -> body.takeIf { _ ->
+                            function.typeReference.let { it == null || it.text == "Unit" }
                         }
                         else -> null
-                    } as? KtDotQualifiedExpression ?: return
+                    }
 
-                    val superExpression = qualifiedExpression.receiverExpression as? KtSuperExpression ?: return
-                    if (superExpression.superTypeQualifier != null) return
-
-                    val superCallElement = qualifiedExpression.selectorExpression as? KtCallElement ?: return
-                    if (!isSameFunctionName(superCallElement, function)) return
-                    if (!isSameArguments(superCallElement, function)) return
-
-                    val descriptor = holder.manager.createProblemDescriptor(
-                            function,
-                            TextRange(modifierList.startOffsetInParent, funKeyword.endOffset - function.startOffset),
-                            "Redundant override",
-                            ProblemHighlightType.LIKE_UNUSED_SYMBOL,
-                            isOnTheFly,
-                            RedundantOverrideFix()
-                    )
-                    holder.registerProblem(descriptor)
                 }
-            }
+                else -> null
+            } as? KtDotQualifiedExpression ?: return
+
+            val superExpression = qualifiedExpression.receiverExpression as? KtSuperExpression ?: return
+            if (superExpression.superTypeQualifier != null) return
+
+            val superCallElement = qualifiedExpression.selectorExpression as? KtCallElement ?: return
+            if (!isSameFunctionName(superCallElement, function)) return
+            if (!isSameArguments(superCallElement, function)) return
+            if (function.isAmbiguouslyDerived()) return
+
+            val descriptor = holder.manager.createProblemDescriptor(
+                function,
+                TextRange(modifierList.startOffsetInParent, funKeyword.endOffset - function.startOffset),
+                "Redundant overriding method",
+                ProblemHighlightType.LIKE_UNUSED_SYMBOL,
+                isOnTheFly,
+                RedundantOverrideFix()
+            )
+            holder.registerProblem(descriptor)
+        })
 
     private fun isSameArguments(superCallElement: KtCallElement, function: KtNamedFunction): Boolean {
         val arguments = superCallElement.valueArguments
@@ -87,7 +80,7 @@ class KotlinRedundantOverrideInspection : AbstractKotlinInspection(), CleanupLoc
     }
 
     private class RedundantOverrideFix : LocalQuickFix {
-        override fun getName() = "Remove redundant override"
+        override fun getName() = "Remove redundant overriding method"
         override fun getFamilyName() = name
 
         override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
@@ -99,3 +92,32 @@ class KotlinRedundantOverrideInspection : AbstractKotlinInspection(), CleanupLoc
         private val MODIFIER_EXCLUDE_OVERRIDE = KtTokens.MODIFIER_KEYWORDS_ARRAY.asList() - KtTokens.OVERRIDE_KEYWORD
     }
 }
+
+private fun KtNamedFunction.isAmbiguouslyDerived(): Boolean {
+    val context = analyze()
+    val original = context[BindingContext.FUNCTION, this]?.original
+    val overriddenDescriptors = original?.overriddenDescriptors ?: return false
+    if (overriddenDescriptors.size < 2) return false
+    // Two+ functions
+    // At least one default in interface or abstract in class, or just something from Java
+    if (overriddenDescriptors.any { overriddenFunction ->
+            overriddenFunction is JavaMethodDescriptor || when ((overriddenFunction.containingDeclaration as? ClassDescriptor)?.kind) {
+                ClassKind.CLASS -> overriddenFunction.modality == Modality.ABSTRACT
+                ClassKind.INTERFACE -> overriddenFunction.modality != Modality.ABSTRACT
+                else -> false
+            }
+
+        }
+    ) return true
+
+    val delegatedSuperTypeEntries =
+        containingClassOrObject?.superTypeListEntries?.filterIsInstance<KtDelegatedSuperTypeEntry>() ?: return false
+    if (delegatedSuperTypeEntries.isEmpty()) return false
+    val delegatedSuperDeclarations = delegatedSuperTypeEntries.mapNotNull { entry ->
+        context[BindingContext.TYPE, entry.typeReference]?.constructor?.declarationDescriptor
+    }
+    return overriddenDescriptors.any {
+        it.containingDeclaration in delegatedSuperDeclarations
+    }
+}
+

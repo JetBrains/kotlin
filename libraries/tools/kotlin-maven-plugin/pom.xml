@@ -12,7 +12,7 @@
     <parent>
         <groupId>org.jetbrains.kotlin</groupId>
         <artifactId>kotlin-project</artifactId>
-        <version>1.1-SNAPSHOT</version>
+        <version>1.3-SNAPSHOT</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
@@ -38,6 +38,11 @@
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
             <artifactId>kotlin-compiler</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-scripting-compiler</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -76,7 +81,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-plugin-plugin</artifactId>
-                <version>3.4</version>
+                <version>3.5.1</version>
 
                 <executions>
                     <execution>
@@ -119,9 +124,15 @@
                         <version>2.0.0</version>
                         <configuration>
                             <cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>
+                            <properties>
+                                <kotlin.version>${project.version}</kotlin.version>
+                            </properties>
                             <settingsFile>src/it/settings.xml</settingsFile>
                             <localRepositoryPath>${project.build.directory}/local-repo</localRepositoryPath>
                             <postBuildHookScript>verify</postBuildHookScript> <!-- no extension required -->
+                            <scriptVariables>
+                                <kotlinVersion>${project.version}</kotlinVersion>
+                            </scriptVariables>
                         </configuration>
                         <executions>
                             <execution>

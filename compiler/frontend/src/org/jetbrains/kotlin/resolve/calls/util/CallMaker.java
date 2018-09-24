@@ -108,24 +108,44 @@ public class CallMaker {
         private final KtExpression calleeExpression;
         private final List<? extends ValueArgument> valueArguments;
         private final Call.CallType callType;
+        private final boolean isSemanticallyEquivalentToSafeCall;
 
-        protected CallImpl(@NotNull KtElement callElement, @NotNull Receiver explicitReceiver, @Nullable ASTNode callOperationNode, @Nullable KtExpression calleeExpression, @NotNull List<? extends ValueArgument> valueArguments) {
-            this(callElement, explicitReceiver, callOperationNode, calleeExpression, valueArguments, CallType.DEFAULT);
+        protected CallImpl(
+                @NotNull KtElement callElement,
+                @NotNull Receiver explicitReceiver,
+                @Nullable ASTNode callOperationNode,
+                @Nullable KtExpression calleeExpression,
+                @NotNull List<? extends ValueArgument> valueArguments
+        ) {
+            this(callElement, explicitReceiver, callOperationNode, calleeExpression, valueArguments, CallType.DEFAULT, false);
         }
 
-        protected CallImpl(@NotNull KtElement callElement, @Nullable Receiver explicitReceiver, @Nullable ASTNode callOperationNode,
-                @Nullable KtExpression calleeExpression, @NotNull List<? extends ValueArgument> valueArguments, @NotNull CallType callType) {
+        protected CallImpl(
+                @NotNull KtElement callElement,
+                @Nullable Receiver explicitReceiver,
+                @Nullable ASTNode callOperationNode,
+                @Nullable KtExpression calleeExpression,
+                @NotNull List<? extends ValueArgument> valueArguments,
+                @NotNull CallType callType,
+                boolean isSemanticallyEquivalentToSafeCall
+        ) {
             this.callElement = callElement;
             this.explicitReceiver = explicitReceiver;
             this.callOperationNode = callOperationNode;
             this.calleeExpression = calleeExpression;
             this.valueArguments = valueArguments;
             this.callType = callType;
+            this.isSemanticallyEquivalentToSafeCall = isSemanticallyEquivalentToSafeCall;
         }
 
         @Override
         public ASTNode getCallOperationNode() {
             return callOperationNode;
+        }
+
+        @Override
+        public boolean isSemanticallyEquivalentToSafeCall() {
+            return isSemanticallyEquivalentToSafeCall || Call.super.isSemanticallyEquivalentToSafeCall();
         }
 
         @Nullable
@@ -194,13 +214,26 @@ public class CallMaker {
     public static Call makeCallWithExpressions(@NotNull KtElement callElement, @Nullable Receiver explicitReceiver,
                                                @Nullable ASTNode callOperationNode, @NotNull KtExpression calleeExpression,
                                                @NotNull List<KtExpression> argumentExpressions) {
-        return makeCallWithExpressions(callElement, explicitReceiver, callOperationNode, calleeExpression, argumentExpressions, CallType.DEFAULT);
+        return makeCallWithExpressions(callElement, explicitReceiver, callOperationNode, calleeExpression, argumentExpressions, CallType.DEFAULT,
+                                       false);
     }
 
     @NotNull
     public static Call makeCallWithExpressions(@NotNull KtElement callElement, @Nullable Receiver explicitReceiver,
-                                               @Nullable ASTNode callOperationNode, @NotNull KtExpression calleeExpression,
-                                               @NotNull List<KtExpression> argumentExpressions, @NotNull CallType callType) {
+            @Nullable ASTNode callOperationNode, @NotNull KtExpression calleeExpression,
+            @NotNull List<KtExpression> argumentExpressions, @NotNull CallType callType) {
+        return makeCallWithExpressions(callElement, explicitReceiver, callOperationNode, calleeExpression, argumentExpressions, callType,
+                                       false);
+    }
+
+
+    @NotNull
+    public static Call makeCallWithExpressions(
+            @NotNull KtElement callElement, @Nullable Receiver explicitReceiver,
+            @Nullable ASTNode callOperationNode, @NotNull KtExpression calleeExpression,
+            @NotNull List<KtExpression> argumentExpressions, @NotNull CallType callType,
+            boolean isSemanticallyEquivalentToSafeCall
+    ) {
         List<ValueArgument> arguments;
         if (argumentExpressions.isEmpty()) {
             arguments = Collections.emptyList();
@@ -211,7 +244,9 @@ public class CallMaker {
                 arguments.add(makeValueArgument(argumentExpression, calleeExpression));
             }
         }
-        return makeCall(callElement, explicitReceiver, callOperationNode, calleeExpression, arguments, callType);
+        return makeCall(
+                callElement, explicitReceiver, callOperationNode, calleeExpression, arguments, callType, isSemanticallyEquivalentToSafeCall
+        );
     }
 
     @NotNull
@@ -222,8 +257,22 @@ public class CallMaker {
     @NotNull
     public static Call makeCall(
             KtElement callElement, @Nullable Receiver explicitReceiver, @Nullable ASTNode callOperationNode,
-            KtExpression calleeExpression, List<? extends ValueArgument> arguments, CallType callType) {
-        return new CallImpl(callElement, explicitReceiver, callOperationNode, calleeExpression, arguments, callType);
+            KtExpression calleeExpression, List<? extends ValueArgument> arguments, CallType callType
+    ) {
+        return makeCall(callElement, explicitReceiver, callOperationNode, calleeExpression, arguments, callType, false);
+    }
+
+    @NotNull
+    public static Call makeCall(
+            KtElement callElement,
+            @Nullable Receiver explicitReceiver,
+            @Nullable ASTNode callOperationNode,
+            KtExpression calleeExpression,
+            List<? extends ValueArgument> arguments,
+            CallType callType,
+            boolean isSemanticallyEquivalentToSafeCall
+    ) {
+        return new CallImpl(callElement, explicitReceiver, callOperationNode, calleeExpression, arguments, callType, isSemanticallyEquivalentToSafeCall);
     }
 
     @NotNull
@@ -274,6 +323,12 @@ public class CallMaker {
     public static ValueArgument makeExternalValueArgument(@NotNull KtExpression expression) {
         return new ExpressionValueArgument(expression, expression, true);
     }
+
+    @NotNull
+    public static ValueArgument makeExternalValueArgument(@NotNull KtExpression expression, @NotNull KtElement reportErrorsOn) {
+        return new ExpressionValueArgument(expression, reportErrorsOn, true);
+    }
+
 
     @NotNull
     public static Call makePropertyCall(@Nullable Receiver explicitReceiver, @Nullable ASTNode callOperationNode, @NotNull KtSimpleNameExpression nameExpression) {

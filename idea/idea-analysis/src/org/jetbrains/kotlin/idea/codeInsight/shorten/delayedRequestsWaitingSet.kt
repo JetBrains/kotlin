@@ -25,7 +25,7 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMember
 import org.jetbrains.kotlin.asJava.unwrapped
-import org.jetbrains.kotlin.idea.caches.resolve.getJavaMemberDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.util.getJavaMemberDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.core.ShortenReferences.Options
 import org.jetbrains.kotlin.idea.core.ShortenReferences
@@ -133,7 +133,7 @@ fun prepareDelayedRequests(project: Project) {
     }
 }
 
-var KtElement.isToBeShortened: Boolean? by CopyableUserDataProperty(Key.create("IS_TO_BE_SHORTENED"))
+var KtElement.isToBeShortened: Boolean? by CopyablePsiUserDataProperty(Key.create("IS_TO_BE_SHORTENED"))
 
 fun KtElement.addToBeShortenedDescendantsToWaitingSet() {
     forEachDescendantOfType<KtElement> {

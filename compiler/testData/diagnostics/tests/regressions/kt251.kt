@@ -1,8 +1,9 @@
+// !WITH_NEW_INFERENCE
 class A() {
     var x: Int = 0
         get() = <!TYPE_MISMATCH!>"s"<!>
         set(value: <!WRONG_SETTER_PARAMETER_TYPE!>String<!>) {
-            field = <!TYPE_MISMATCH!>value<!>
+            field = <!NI;TYPE_MISMATCH, TYPE_MISMATCH!>value<!>
         }
     val y: Int
         get(): <!WRONG_GETTER_RETURN_TYPE(Int; String)!>String<!> = "s"
@@ -27,7 +28,7 @@ class A() {
         }
     val e = 1
         get(): <!WRONG_GETTER_RETURN_TYPE!>String<!> {
-            return <!TYPE_MISMATCH!>field<!>
+            return <!NI;TYPE_MISMATCH, TYPE_MISMATCH!>field<!>
         }
 
 }

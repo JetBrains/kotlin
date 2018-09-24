@@ -20,9 +20,9 @@ import org.jetbrains.kotlin.resolve.lazy.data.KtClassLikeInfo
 import org.jetbrains.kotlin.storage.StorageManager
 
 class PsiBasedClassMemberDeclarationProvider(
-        storageManager: StorageManager,
-        override val ownerInfo: KtClassLikeInfo)
-: AbstractPsiBasedDeclarationProvider(storageManager), ClassMemberDeclarationProvider {
+    storageManager: StorageManager,
+    override val ownerInfo: KtClassLikeInfo
+) : AbstractPsiBasedDeclarationProvider(storageManager), ClassMemberDeclarationProvider {
 
     override fun doCreateIndex(index: AbstractPsiBasedDeclarationProvider.Index) {
         for (declaration in ownerInfo.declarations) {

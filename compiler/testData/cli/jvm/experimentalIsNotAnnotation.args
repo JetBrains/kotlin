@@ -1,0 +1,5 @@
+$TESTDATA_DIR$/experimentalIsNotAnnotation.kt
+-d
+$TEMP_DIR$
+-Xexperimental=org.test.NotAnAnnotation1
+-Xuse-experimental=org.test.NotAnAnnotation2

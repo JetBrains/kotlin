@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 1000
+// EXPECTED_REACHABLE_NODES: 1290
 package foo
 
 open abstract class B() {

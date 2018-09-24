@@ -25,59 +25,55 @@ import org.jetbrains.kotlin.descriptors.impl.FunctionExpressionDescriptor
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.resolve.BindingContext
 
 object UnderscoreChecker : DeclarationChecker {
-
     @JvmOverloads
     fun checkIdentifier(
-            identifier: PsiElement?,
-            diagnosticHolder: DiagnosticSink,
-            languageVersionSettings: LanguageVersionSettings,
-            allowSingleUnderscore: Boolean = false
+        identifier: PsiElement?,
+        diagnosticHolder: DiagnosticSink,
+        languageVersionSettings: LanguageVersionSettings,
+        allowSingleUnderscore: Boolean = false
     ) {
         if (identifier == null || identifier.text.isEmpty()) return
         val isValidSingleUnderscore = allowSingleUnderscore && identifier.text == "_"
         if (!isValidSingleUnderscore && identifier.text.all { it == '_' }) {
             diagnosticHolder.report(Errors.UNDERSCORE_IS_RESERVED.on(identifier))
-        }
-        else if (isValidSingleUnderscore && !languageVersionSettings.supportsFeature(LanguageFeature.SingleUnderscoreForParameterName)) {
-            diagnosticHolder.report(Errors.UNSUPPORTED_FEATURE.on(identifier, LanguageFeature.SingleUnderscoreForParameterName to languageVersionSettings))
+        } else if (isValidSingleUnderscore && !languageVersionSettings.supportsFeature(LanguageFeature.SingleUnderscoreForParameterName)) {
+            diagnosticHolder.report(
+                Errors.UNSUPPORTED_FEATURE.on(
+                    identifier,
+                    LanguageFeature.SingleUnderscoreForParameterName to languageVersionSettings
+                )
+            )
         }
     }
 
     @JvmOverloads
     fun checkNamed(
-            declaration: KtNamedDeclaration,
-            diagnosticHolder: DiagnosticSink,
-            languageVersionSettings: LanguageVersionSettings,
-            allowSingleUnderscore: Boolean = false
+        declaration: KtNamedDeclaration,
+        diagnosticHolder: DiagnosticSink,
+        languageVersionSettings: LanguageVersionSettings,
+        allowSingleUnderscore: Boolean = false
     ) {
         checkIdentifier(declaration.nameIdentifier, diagnosticHolder, languageVersionSettings, allowSingleUnderscore)
     }
 
-    override fun check(
-            declaration: KtDeclaration,
-            descriptor: DeclarationDescriptor,
-            diagnosticHolder: DiagnosticSink,
-            bindingContext: BindingContext,
-            languageVersionSettings: LanguageVersionSettings
-    ) {
+    override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
         if (declaration is KtProperty && descriptor !is VariableDescriptor) return
         if (declaration is KtCallableDeclaration) {
             for (parameter in declaration.valueParameters) {
                 checkNamed(
-                        parameter, diagnosticHolder, languageVersionSettings,
-                        allowSingleUnderscore = descriptor is FunctionExpressionDescriptor
+                    parameter, context.trace, context.languageVersionSettings,
+                    allowSingleUnderscore = descriptor is FunctionExpressionDescriptor
                 )
             }
         }
         if (declaration is KtTypeParameterListOwner) {
             for (typeParameter in declaration.typeParameters) {
-                checkNamed(typeParameter, diagnosticHolder, languageVersionSettings)
+                checkNamed(typeParameter, context.trace, context.languageVersionSettings)
             }
         }
         if (declaration !is KtNamedDeclaration) return
-        checkNamed(declaration, diagnosticHolder, languageVersionSettings)
+        checkNamed(declaration, context.trace, context.languageVersionSettings)
     }
 }

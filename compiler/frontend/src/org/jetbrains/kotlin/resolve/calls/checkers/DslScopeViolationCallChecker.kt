@@ -18,22 +18,13 @@ package org.jetbrains.kotlin.resolve.calls.checkers
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.descriptors.TypeAliasDescriptor
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
-import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.diagnostics.Errors
-import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.resolve.calls.DslMarkerUtils.extractDslMarkerFqNames
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.resolvedCallUtil.getImplicitReceivers
-import org.jetbrains.kotlin.resolve.descriptorUtil.annotationClass
-import org.jetbrains.kotlin.resolve.descriptorUtil.getAllSuperClassifiers
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.resolve.scopes.utils.parentsWithSelf
-import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.getAbbreviation
-import org.jetbrains.kotlin.utils.addToStdlib.cast
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 object DslScopeViolationCallChecker : CallChecker {
     override fun check(resolvedCall: ResolvedCall<*>, reportOn: PsiElement, context: CallCheckerContext) {
@@ -46,56 +37,50 @@ object DslScopeViolationCallChecker : CallChecker {
     }
 
     private fun checkCallImplicitReceiver(
-            callImplicitReceiver: ReceiverValue,
-            resolvedCall: ResolvedCall<*>,
-            reportOn: PsiElement,
-            context: CallCheckerContext
+        callImplicitReceiver: ReceiverValue,
+        resolvedCall: ResolvedCall<*>,
+        reportOn: PsiElement,
+        context: CallCheckerContext
     ) {
         val receiversUntilOneFromTheCall =
-                context.scope.parentsWithSelf
-                        .mapNotNull { (it as? LexicalScope)?.implicitReceiver?.value }
-                        .takeWhile { it != callImplicitReceiver }.toList()
+            context.scope.parentsWithSelf
+                .mapNotNull { (it as? LexicalScope)?.implicitReceiver?.value }
+                .takeWhile { it != callImplicitReceiver }.toList()
 
         if (receiversUntilOneFromTheCall.isEmpty()) return
 
-        val callDslMarkers = callImplicitReceiver.type.extractDslMarkerFqNames()
-        if (callDslMarkers.isEmpty()) return
+        val (callDslMarkers, additionalCallDslMarkers) = extractDslMarkerFqNames(callImplicitReceiver)
+        if (callDslMarkers.isEmpty() && additionalCallDslMarkers.isEmpty()) return
+
+        val dslMarkersFromOuterReceivers = receiversUntilOneFromTheCall.map(::extractDslMarkerFqNames)
 
         val closestAnotherReceiverWithSameDslMarker =
-                receiversUntilOneFromTheCall.firstOrNull { receiver -> receiver.type.extractDslMarkerFqNames().any(callDslMarkers::contains) }
+            dslMarkersFromOuterReceivers.firstOrNull { (dslMarkersFromReceiver, _) ->
+                dslMarkersFromReceiver.any(callDslMarkers::contains)
+            }
 
         if (closestAnotherReceiverWithSameDslMarker != null) {
             // TODO: report receivers configuration (what's one is used and what's one is the closest)
             context.trace.report(Errors.DSL_SCOPE_VIOLATION.on(reportOn, resolvedCall.resultingDescriptor))
+            return
         }
-    }
 
-    fun KotlinType.extractDslMarkerFqNames(): Set<FqName> {
-        val result = mutableSetOf<FqName>()
+        val allDslMarkersFromCall = callDslMarkers + additionalCallDslMarkers
 
-        result.addAll(annotations.extractDslMarkerFqNames())
-
-        getAbbreviation()?.constructor?.declarationDescriptor?.run {
-            result.addAll(annotations.extractDslMarkerFqNames())
-            safeAs<TypeAliasDescriptor>()?.run {
-                result.addAll(underlyingType.extractDslMarkerFqNames())
+        val closestAnotherReceiverWithSameDslMarkerWithDeprecation =
+            dslMarkersFromOuterReceivers.firstOrNull { (dslMarkersFromReceiver, additionalDslMarkersFromReceiver) ->
+                val allMarkersFromReceiver = dslMarkersFromReceiver + additionalDslMarkersFromReceiver
+                allDslMarkersFromCall.any(allMarkersFromReceiver::contains)
             }
+
+        if (closestAnotherReceiverWithSameDslMarkerWithDeprecation != null) {
+            val diagnostic =
+                if (context.languageVersionSettings.supportsFeature(LanguageFeature.DslMarkerOnFunctionTypeReceiver))
+                    Errors.DSL_SCOPE_VIOLATION
+                else
+                    Errors.DSL_SCOPE_VIOLATION_WARNING
+
+            context.trace.report(diagnostic.on(reportOn, resolvedCall.resultingDescriptor))
         }
-
-        constructor.declarationDescriptor?.getAllSuperClassifiers()?.asIterable()
-                ?.flatMapTo(result) { it.annotations.extractDslMarkerFqNames() }
-
-        return result
     }
-
 }
-
-private fun Annotations.extractDslMarkerFqNames() =
-        filter(AnnotationDescriptor::isDslMarker).map { it.fqName!! }
-
-private fun AnnotationDescriptor.isDslMarker(): Boolean {
-    val classDescriptor = annotationClass ?: return false
-    return classDescriptor.annotations.hasAnnotation(DSL_MARKER_FQ_NAME)
-}
-
-private val DSL_MARKER_FQ_NAME = FqName("kotlin.DslMarker")

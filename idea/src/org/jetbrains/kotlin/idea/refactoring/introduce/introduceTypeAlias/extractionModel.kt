@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.types.KotlinType
 
 class TypeReferenceInfo(val reference: KtTypeReference, val type: KotlinType)
 
-internal var KtTypeReference.resolveInfo : TypeReferenceInfo? by CopyableUserDataProperty(Key.create("RESOLVE_INFO"))
+internal var KtTypeReference.resolveInfo : TypeReferenceInfo? by CopyablePsiUserDataProperty(Key.create("RESOLVE_INFO"))
 
 class IntroduceTypeAliasData(
         val originalTypeElement: KtElement,

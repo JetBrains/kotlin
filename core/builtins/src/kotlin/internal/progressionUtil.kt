@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package kotlin.internal
@@ -41,24 +30,22 @@ private fun differenceModulo(a: Long, b: Long, c: Long): Long {
  * from [start] to [end] in case of a positive [step], or from [end] to [start] in case of a negative
  * [step].
  *
- * No validation on passed parameters is performed. The given parameters should satisfy the condition: either
- * `step > 0` and `start >= end`, or `step < 0` and`start >= end`.
+ * No validation on passed parameters is performed. The given parameters should satisfy the condition:
+ *
+ * - either `step > 0` and `start <= end`,
+ * - or `step < 0` and `start >= end`.
+ *
  * @param start first element of the progression
  * @param end ending bound for the progression
  * @param step increment, or difference of successive elements in the progression
  * @return the final element of the progression
  * @suppress
  */
-internal fun getProgressionLastElement(start: Int, end: Int, step: Int): Int {
-    if (step > 0) {
-        return end - differenceModulo(end, start, step)
-    }
-    else if (step < 0) {
-        return end + differenceModulo(start, end, -step)
-    }
-    else {
-        throw kotlin.IllegalArgumentException("Step is zero.")
-    }
+@PublishedApi
+internal fun getProgressionLastElement(start: Int, end: Int, step: Int): Int = when {
+    step > 0 -> if (start >= end) end else end - differenceModulo(end, start, step)
+    step < 0 -> if (start <= end) end else end + differenceModulo(start, end, -step)
+    else -> throw kotlin.IllegalArgumentException("Step is zero.")
 }
 
 /**
@@ -66,22 +53,20 @@ internal fun getProgressionLastElement(start: Int, end: Int, step: Int): Int {
  * from [start] to [end] in case of a positive [step], or from [end] to [start] in case of a negative
  * [step].
  *
- * No validation on passed parameters is performed. The given parameters should satisfy the condition: either
- * `step > 0` and `start >= end`, or `step < 0` and`start >= end`.
+ * No validation on passed parameters is performed. The given parameters should satisfy the condition:
+ *
+ * - either `step > 0` and `start <= end`,
+ * - or `step < 0` and `start >= end`.
+ *
  * @param start first element of the progression
  * @param end ending bound for the progression
  * @param step increment, or difference of successive elements in the progression
  * @return the final element of the progression
  * @suppress
  */
-internal fun getProgressionLastElement(start: Long, end: Long, step: Long): Long {
-    if (step > 0) {
-        return end - differenceModulo(end, start, step)
-    }
-    else if (step < 0) {
-        return end + differenceModulo(start, end, -step)
-    }
-    else {
-        throw kotlin.IllegalArgumentException("Step is zero.")
-    }
+@PublishedApi
+internal fun getProgressionLastElement(start: Long, end: Long, step: Long): Long = when {
+    step > 0 -> if (start >= end) end else end - differenceModulo(end, start, step)
+    step < 0 -> if (start <= end) end else end + differenceModulo(start, end, -step)
+    else -> throw kotlin.IllegalArgumentException("Step is zero.")
 }

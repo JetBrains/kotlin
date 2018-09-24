@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.js.translate.utils;
 
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.backend.common.CodegenUtil;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
@@ -43,7 +44,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.jetbrains.kotlin.js.translate.utils.BindingUtils.getDefaultArgument;
 import static org.jetbrains.kotlin.js.translate.utils.JsAstUtils.*;
 import static org.jetbrains.kotlin.js.translate.utils.mutator.LastExpressionMutator.mutateLastExpression;
 
@@ -75,23 +75,40 @@ public final class FunctionBodyTranslator extends AbstractTranslator {
     }
 
     @NotNull
-    public static List<JsStatement> setDefaultValueForArguments(@NotNull FunctionDescriptor descriptor,
-            @NotNull TranslationContext functionBodyContext) {
+    public static List<JsStatement> setDefaultValueForArguments(
+            @NotNull FunctionDescriptor descriptor,
+            @NotNull TranslationContext context
+    ) {
         List<ValueParameterDescriptor> valueParameters = descriptor.getValueParameters();
+        List<ValueParameterDescriptor> valueParametersForDefaultValue =
+                CodegenUtil.getFunctionParametersForDefaultValueGeneration(descriptor, context.bindingTrace());
 
         List<JsStatement> result = new ArrayList<>(valueParameters.size());
-        for (ValueParameterDescriptor valueParameter : valueParameters) {
-            if (!valueParameter.declaresDefaultValue()) continue;
+        for (int i = 0; i < valueParameters.size(); i++) {
+            ValueParameterDescriptor valueParameter = valueParameters.get(i);
+            ValueParameterDescriptor valueParameterForDefaultValue = valueParametersForDefaultValue.get(i);
 
-            JsExpression jsNameRef = ReferenceTranslator.translateAsValueReference(valueParameter, functionBodyContext);
-            KtExpression defaultArgument = getDefaultArgument(valueParameter);
+            if (!valueParameterForDefaultValue.declaresDefaultValue()) continue;
+
+            JsExpression jsNameRef = ReferenceTranslator.translateAsValueReference(valueParameter, context);
+
+            KtExpression defaultArgument = BindingUtils.getDefaultArgument(valueParameterForDefaultValue);
             JsBlock defaultArgBlock = new JsBlock();
-            JsExpression defaultValue = Translation.translateAsExpression(defaultArgument, functionBodyContext, defaultArgBlock);
+            JsExpression defaultValue = Translation.translateAsExpression(defaultArgument, context, defaultArgBlock);
+
+            // parameterName = defaultValue
             PsiElement psi = KotlinSourceElementKt.getPsi(valueParameter.getSource());
             JsStatement assignStatement = assignment(jsNameRef, defaultValue).source(psi).makeStmt();
+
             JsStatement thenStatement = JsAstUtils.mergeStatementInBlockIfNeeded(assignStatement, defaultArgBlock);
+
+            // parameterName === undefined
             JsBinaryOperation checkArgIsUndefined = equality(jsNameRef, Namer.getUndefinedExpression());
-            checkArgIsUndefined.source(KotlinSourceElementKt.getPsi(valueParameter.getSource()));
+            checkArgIsUndefined.source(psi);
+
+            // if (parameterName === undefined) {
+            //     parameterName = defaultValue
+            // }
             JsIf jsIf = JsAstUtils.newJsIf(checkArgIsUndefined, thenStatement);
             jsIf.setSource(checkArgIsUndefined.getSource());
             result.add(jsIf);

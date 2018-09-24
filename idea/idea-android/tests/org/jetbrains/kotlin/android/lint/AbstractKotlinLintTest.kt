@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.android.lint
 import com.intellij.codeInspection.InspectionProfileEntry
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl
 import com.intellij.util.PathUtil
-import org.jetbrains.android.inspections.klint.AndroidLintInspectionBase
+import org.jetbrains.android.inspections.lint.AndroidLintInspectionBase
 import org.jetbrains.kotlin.android.KotlinAndroidTestCase
 import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
@@ -33,10 +33,12 @@ abstract class AbstractKotlinLintTest : KotlinAndroidTestCase() {
         AndroidLintInspectionBase.invalidateInspectionShortName2IssueMap()
         (myFixture as CodeInsightTestFixtureImpl).setVirtualFileFilter { false } // Allow access to tree elements.
         ConfigLibraryUtil.configureKotlinRuntime(myModule)
+        ConfigLibraryUtil.addLibrary(myModule, "androidExtensionsRuntime", "dist/kotlinc/lib", arrayOf("android-extensions-runtime.jar"))
     }
 
     override fun tearDown() {
         ConfigLibraryUtil.unConfigureKotlinRuntime(myModule)
+        ConfigLibraryUtil.removeLibrary(myModule, "androidExtensionsRuntime")
         super.tearDown()
     }
 

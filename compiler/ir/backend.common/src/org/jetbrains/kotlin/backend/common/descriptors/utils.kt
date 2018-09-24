@@ -24,25 +24,25 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 import org.jetbrains.kotlin.types.KotlinType
 
 fun ClassDescriptor?.getter2Descriptor(methodName: Name) = this?.let {
-    this.unsubstitutedMemberScope.getContributedDescriptors{true}
-            .firstOrNull {
-                it.name == methodName
-            } ?.let {
-        return@let (it as? PropertyDescriptor)?.getter
-    }
+    this.unsubstitutedMemberScope.getContributedDescriptors { true }
+        .firstOrNull {
+            it.name == methodName
+        }?.let {
+            return@let (it as? PropertyDescriptor)?.getter
+        }
 }
 
-fun ClassDescriptor?.signature2Descriptor(methodName: Name, signature:Array<KotlinType> = emptyArray()) = this?.let {
+fun ClassDescriptor?.signature2Descriptor(methodName: Name, signature: Array<KotlinType> = emptyArray()) = this?.let {
     this
-            .unsubstitutedMemberScope
-            .getContributedFunctions(methodName, NoLookupLocation.FROM_BACKEND)
-            .firstOrNull {
-                return@firstOrNull it.valueParameters.size == signature.size
-                        && (signature.isEmpty() || it.valueParameters.any {
-                    p -> val index = it.valueParameters.indexOf(p)
-                    return@any p.type == signature[index]
-        })
-    }
+        .unsubstitutedMemberScope
+        .getContributedFunctions(methodName, NoLookupLocation.FROM_BACKEND)
+        .firstOrNull {
+            return@firstOrNull it.valueParameters.size == signature.size
+                    && (signature.isEmpty() || it.valueParameters.any { p ->
+                val index = it.valueParameters.indexOf(p)
+                return@any p.type == signature[index]
+            })
+        }
 }
 
 val String.synthesizedName get() = Name.identifier(this.synthesizedString)
@@ -51,13 +51,13 @@ val String.synthesizedString get() = "\$$this"
 
 val DeclarationDescriptor.propertyIfAccessor
     get() = if (this is PropertyAccessorDescriptor)
-                this.correspondingProperty
-                else this
+        this.correspondingProperty
+    else this
 
 val CallableMemberDescriptor.propertyIfAccessor
     get() = if (this is PropertyAccessorDescriptor)
-                this.correspondingProperty
-                else this
+        this.correspondingProperty
+    else this
 
 val FunctionDescriptor.deserializedPropertyIfAccessor: DeserializedCallableMemberDescriptor
     get() {

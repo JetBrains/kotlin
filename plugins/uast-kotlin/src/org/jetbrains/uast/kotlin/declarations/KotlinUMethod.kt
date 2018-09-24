@@ -23,16 +23,26 @@ import org.jetbrains.kotlin.asJava.elements.isGetter
 import org.jetbrains.kotlin.asJava.elements.isSetter
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
+import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.uast.*
-import org.jetbrains.uast.java.annotations
 import org.jetbrains.uast.java.internal.JavaUElementWithComments
 import org.jetbrains.uast.kotlin.*
 
 open class KotlinUMethod(
         psi: KtLightMethod,
-        override val uastParent: UElement?
-) : UAnnotationMethod, JavaUElementWithComments, PsiMethod by psi {
+        givenParent: UElement?
+) : KotlinAbstractUElement(givenParent), UAnnotationMethod, UMethodTypeSpecific, UAnchorOwner, JavaUElementWithComments, PsiMethod by psi {
+    override val comments: List<UComment>
+        get() = super<KotlinAbstractUElement>.comments
+
     override val psi: KtLightMethod = unwrap<UMethod, KtLightMethod>(psi)
+
+    override val javaPsi = psi
+
+    override val sourcePsi = psi.kotlinOrigin
+
+    override fun getSourceElement() = sourcePsi ?: this
 
     override val uastDefaultValue by lz {
         val annotationParameter = psi.kotlinOrigin as? KtParameter ?: return@lz null
@@ -52,12 +62,32 @@ open class KotlinUMethod(
                 .map { KotlinUAnnotation(it, this) }
     }
 
+    private val receiver by lz { (sourcePsi as? KtCallableDeclaration)?.receiverTypeReference }
+
     override val uastParameters by lz {
-        psi.parameterList.parameters.map { KotlinUParameter(it, this) }
+        val lightParams = psi.parameterList.parameters
+        val receiver = receiver ?: return@lz lightParams.map {
+            KotlinUParameter(it, (it as? KtLightElement<*, *>)?.kotlinOrigin, this)
+        }
+        val receiverLight = lightParams.firstOrNull() ?: return@lz emptyList<UParameter>()
+        val uParameters = SmartList<UParameter>(KotlinReceiverUParameter(receiverLight, receiver, this))
+        lightParams.drop(1).mapTo(uParameters) { KotlinUParameter(it, (it as? KtLightElement<*, *>)?.kotlinOrigin, this) }
+        uParameters
     }
 
-    override val uastAnchor: UElement
-        get() = UIdentifier(nameIdentifier, this)
+    override val uastAnchor by lazy {
+        KotlinUIdentifier(
+            nameIdentifier,
+            sourcePsi.let { sourcePsi ->
+                when (sourcePsi) {
+                    is PsiNameIdentifierOwner -> sourcePsi.nameIdentifier
+                    is KtObjectDeclaration -> sourcePsi.getObjectKeyword()
+                    else -> sourcePsi?.navigationElement
+                }
+            },
+            this
+        )
+    }
 
 
     override val uastBody by lz {
@@ -71,21 +101,38 @@ open class KotlinUMethod(
             else -> null
         } ?: return@lz null
 
-        getLanguagePlugin().convertElement(bodyExpression, this) as? UExpression
+        when (bodyExpression) {
+            !is KtBlockExpression -> {
+                KotlinUBlockExpression.KotlinLazyUBlockExpression(this, { block ->
+                    val implicitReturn = KotlinUImplicitReturnExpression(block)
+                    val uBody = getLanguagePlugin().convertElement(bodyExpression, implicitReturn) as? UExpression
+                            ?: return@KotlinLazyUBlockExpression emptyList()
+                    listOf(implicitReturn.apply { returnExpression = uBody })
+                })
+
+            }
+            else -> getLanguagePlugin().convertElement(bodyExpression, this) as? UExpression
+        }
     }
 
     override val isOverride: Boolean
         get() = (kotlinOrigin as? KtCallableDeclaration)?.hasModifier(KtTokens.OVERRIDE_KEYWORD) ?: false
 
-    override fun getBody(): PsiCodeBlock? = super.getBody()
+    override fun getBody(): PsiCodeBlock? = super<UAnnotationMethod>.getBody()
 
-    override fun getOriginalElement(): PsiElement? = super.getOriginalElement()
+    override fun getOriginalElement(): PsiElement? = super<UAnnotationMethod>.getOriginalElement()
 
     override fun equals(other: Any?) = other is KotlinUMethod && psi == other.psi
 
-    override fun hashCode() = psi.hashCode()
-
     companion object {
-        fun create(psi: KtLightMethod, containingElement: UElement?) = KotlinUMethod(psi, containingElement)
+        fun create(psi: KtLightMethod, containingElement: UElement?) =
+                if (psi.kotlinOrigin is KtConstructor<*>) {
+                    KotlinConstructorUMethod(
+                            psi.kotlinOrigin?.containingClassOrObject,
+                            psi, containingElement
+                    )
+                }
+                else
+                    KotlinUMethod(psi, containingElement)
     }
 }

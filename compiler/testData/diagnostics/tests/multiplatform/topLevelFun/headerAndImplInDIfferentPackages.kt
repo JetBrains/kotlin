@@ -3,16 +3,16 @@
 // FILE: common.kt
 package common
 
-<!JS:NO_ACTUAL_FOR_EXPECT, JVM:NO_ACTUAL_FOR_EXPECT!>expect fun foo()<!>
+expect fun <!JS:NO_ACTUAL_FOR_EXPECT, JVM:NO_ACTUAL_FOR_EXPECT!>foo<!>()
 
 // MODULE: m2-jvm(m1-common)
 // FILE: jvm.kt
 package jvm
 
-<!ACTUAL_WITHOUT_EXPECT!>actual fun foo()<!> {}
+actual fun <!ACTUAL_WITHOUT_EXPECT!>foo<!>() {}
 
 // MODULE: m3-js(m1-common)
 // FILE: js.kt
 package js
 
-<!ACTUAL_WITHOUT_EXPECT!>actual fun foo()<!> {}
+actual fun <!ACTUAL_WITHOUT_EXPECT!>foo<!>() {}

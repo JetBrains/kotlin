@@ -27,10 +27,9 @@ import com.intellij.refactoring.rename.NameSuggestionProvider
 import org.jetbrains.kotlin.asJava.toLightElements
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatch
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.typeUtil.isUnit
@@ -67,7 +66,7 @@ class KotlinNameSuggestionProvider : NameSuggestionProvider {
                     val refExpr = ref.element as? KtSimpleNameExpression ?: continue
                     val argument = refExpr.parent as? KtValueArgument ?: continue
                     val callElement = (argument.parent as? KtValueArgumentList)?.parent as? KtCallElement ?: continue
-                    val resolvedCall = callElement.getResolvedCall(callElement.analyze(BodyResolveMode.PARTIAL)) ?: continue
+                    val resolvedCall = callElement.resolveToCall() ?: continue
                     val parameterName = (resolvedCall.getArgumentMapping(argument) as? ArgumentMatch)?.valueParameter?.name ?: continue
                     result += parameterName.asString()
                 }

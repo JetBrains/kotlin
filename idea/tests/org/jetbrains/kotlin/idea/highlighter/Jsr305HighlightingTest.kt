@@ -19,16 +19,15 @@ package org.jetbrains.kotlin.idea.highlighter
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.roots.ModifiableRootModel
 import com.intellij.testFramework.LightProjectDescriptor
-import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.config.KotlinFacetSettingsProvider
-import org.jetbrains.kotlin.config.TargetPlatformKind
 import org.jetbrains.kotlin.idea.stubs.createFacet
 import org.jetbrains.kotlin.idea.test.KotlinJdkAndLibraryProjectDescriptor
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
+import org.jetbrains.kotlin.platform.impl.JvmIdePlatformKind
 import org.jetbrains.kotlin.test.MockLibraryUtil
-import org.jetbrains.kotlin.utils.Jsr305State
+import org.jetbrains.kotlin.utils.ReportLevel
 
 class Jsr305HighlightingTest : KotlinLightCodeInsightFixtureTestCase() {
     override fun getProjectDescriptor(): LightProjectDescriptor {
@@ -44,15 +43,38 @@ class Jsr305HighlightingTest : KotlinLightCodeInsightFixtureTestCase() {
         ) {
             override fun configureModule(module: Module, model: ModifiableRootModel) {
                 super.configureModule(module, model)
-                module.createFacet(TargetPlatformKind.Jvm(JvmTarget.JVM_1_8))
+                module.createFacet(JvmIdePlatformKind.Platform(JvmTarget.JVM_1_8))
                 val facetSettings = KotlinFacetSettingsProvider.getInstance(project).getInitializedSettings(module)
-                (facetSettings.compilerArguments as K2JVMCompilerArguments).jsr305 = Jsr305State.STRICT.description
+
+                facetSettings.apply {
+                    val jsrStateByTestName =
+                            ReportLevel.findByDescription(getTestName(true)) ?: return@apply
+
+                    compilerSettings!!.additionalArguments += " -Xjsr305=${jsrStateByTestName.description}"
+                    updateMergedArguments()
+                }
             }
         }
     }
 
-    fun testSimple() {
-        myFixture.configureByFile("A.kt")
+    fun testIgnore() {
+        doTest()
+    }
+
+    fun testWarn() {
+        doTest()
+    }
+
+    fun testStrict() {
+        doTest()
+    }
+
+    fun testDefault() {
+        doTest()
+    }
+
+    private fun doTest() {
+        myFixture.configureByFile("${getTestName(false)}.kt")
         myFixture.checkHighlighting()
     }
 

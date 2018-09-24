@@ -1,0 +1,15 @@
+plugins {
+    id 'kotlin2js' version '1.2.40-eap-62'
+}
+group 'testgroup'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+    maven {
+        url 'http://dl.bintray.com/kotlin/kotlin-eap'
+    }
+}
+dependencies {
+    compile "org.jetbrains.kotlin:kotlin-stdlib-js"
+}

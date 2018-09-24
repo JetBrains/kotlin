@@ -1,0 +1,22 @@
+package
+
+public fun </*0*/ T> magic(): T
+
+private final class Outer</*0*/ E> {
+    public constructor Outer</*0*/ E>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    private final inner class Inner</*0*/ out F> /*captured type parameters: /*1*/ E*/ {
+        public constructor Inner</*0*/ out F>()
+        private final var doubleCharSequenceInt: Outer.Inner.foo.<anonymous>.baz.<anonymous>.Local<kotlin.Int, kotlin.CharSequence, kotlin.Double>
+        private final var doubleStringInt: Outer.Inner.foo.<anonymous>.baz.<anonymous>.Local<kotlin.Int, kotlin.String, kotlin.Double>
+        private final var doubleStringNumber: Outer.Inner.foo.<anonymous>.baz.<anonymous>.Local<kotlin.Number, kotlin.String, kotlin.Double>
+        private final fun bar(): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        private final fun </*0*/ G> foo(): () -> Outer.Inner.foo.<anonymous>.baz.<anonymous>.Local<G, F, E>
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

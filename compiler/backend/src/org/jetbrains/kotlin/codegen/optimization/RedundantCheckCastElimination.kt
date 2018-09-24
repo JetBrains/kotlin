@@ -22,7 +22,8 @@ import org.jetbrains.kotlin.codegen.optimization.fixStack.top
 import org.jetbrains.kotlin.codegen.optimization.transformer.MethodTransformer
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
-import org.jetbrains.org.objectweb.asm.tree.*
+import org.jetbrains.org.objectweb.asm.tree.MethodNode
+import org.jetbrains.org.objectweb.asm.tree.TypeInsnNode
 
 class RedundantCheckCastEliminationMethodTransformer : MethodTransformer() {
     override fun transform(internalClassName: String, methodNode: MethodNode) {
@@ -57,7 +58,7 @@ class RedundantCheckCastEliminationMethodTransformer : MethodTransformer() {
     }
 
     private fun isTrivialSubtype(superType: Type, subType: Type) =
-            superType == subType
+        superType == subType
 
     private fun isMultiArrayType(type: Type) = type.sort == Type.ARRAY && type.dimensions != 1
 }

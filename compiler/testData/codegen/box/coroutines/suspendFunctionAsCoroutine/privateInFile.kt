@@ -1,14 +1,16 @@
+// IGNORE_BACKEND: JVM_IR
 // WITH_RUNTIME
 // WITH_COROUTINES
+// COMMON_COROUTINES_TEST
 import helpers.*
-import kotlin.coroutines.experimental.*
-import kotlin.coroutines.experimental.intrinsics.*
+import COROUTINES_PACKAGE.*
+import COROUTINES_PACKAGE.intrinsics.*
 
 
 var x = true
 private suspend fun foo(): String  {
     if (x) {
-        return suspendCoroutineOrReturn<String> {
+        return suspendCoroutineUninterceptedOrReturn<String> {
             it.resume("OK")
             COROUTINE_SUSPENDED
         }

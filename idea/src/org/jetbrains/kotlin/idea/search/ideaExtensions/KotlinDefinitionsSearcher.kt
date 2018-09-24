@@ -16,8 +16,6 @@
 
 package org.jetbrains.kotlin.idea.search.ideaExtensions
 
-import com.intellij.codeInsight.navigation.MethodImplementationsSearch
-import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.search.GlobalSearchScope
@@ -28,25 +26,36 @@ import com.intellij.psi.search.searches.DefinitionsScopedSearch
 import com.intellij.util.Processor
 import com.intellij.util.QueryExecutor
 import com.intellij.util.containers.ContainerUtil
-import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.asJava.unwrapped
+import org.jetbrains.kotlin.compatibility.ExecutorProcessor
+import org.jetbrains.kotlin.idea.caches.lightClasses.KtFakeLightClass
+import org.jetbrains.kotlin.idea.search.declarationsSearch.forEachImplementation
+import org.jetbrains.kotlin.idea.search.declarationsSearch.forEachOverridingMethod
+import org.jetbrains.kotlin.idea.search.declarationsSearch.toPossiblyFakeLightMethods
+import org.jetbrains.kotlin.idea.util.actualsForExpected
 import org.jetbrains.kotlin.idea.util.application.runReadAction
+import org.jetbrains.kotlin.idea.util.isExpectDeclaration
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.contains
 import java.util.*
 
 class KotlinDefinitionsSearcher : QueryExecutor<PsiElement, DefinitionsScopedSearch.SearchParameters> {
-    override fun execute(queryParameters: DefinitionsScopedSearch.SearchParameters, consumer: Processor<PsiElement>): Boolean {
+    override fun execute(queryParameters: DefinitionsScopedSearch.SearchParameters, consumer: ExecutorProcessor<PsiElement>): Boolean {
         val consumer = skipDelegatedMethodsConsumer(consumer)
         val element = queryParameters.element
         val scope = queryParameters.scope
 
         return when (element) {
-            is KtClass ->
-                processClassImplementations(element, consumer)
+            is KtClass -> {
+                processClassImplementations(element, consumer) && processActualDeclarations(element, consumer)
+            }
+
+            is KtObjectDeclaration -> {
+                processActualDeclarations(element, consumer)
+            }
 
             is KtLightClass -> {
                 val useScope = runReadAction { element.useScope }
@@ -56,14 +65,21 @@ class KotlinDefinitionsSearcher : QueryExecutor<PsiElement, DefinitionsScopedSea
                     true
             }
 
-            is KtNamedFunction, is KtSecondaryConstructor ->
-                processFunctionImplementations(element as KtFunction, scope, consumer)
+            is KtNamedFunction, is KtSecondaryConstructor -> {
+                processFunctionImplementations(element as KtFunction, scope, consumer) && processActualDeclarations(element, consumer)
+            }
 
-            is KtProperty ->
-                processPropertyImplementations(element, scope, consumer)
+            is KtProperty -> {
+                processPropertyImplementations(element, scope, consumer) && processActualDeclarations(element, consumer)
+            }
 
-            is KtParameter ->
-                if (isFieldParameter(element)) processPropertyImplementations(element, scope, consumer) else true
+            is KtParameter -> {
+                if (isFieldParameter(element)) {
+                    processPropertyImplementations(element, scope, consumer) && processActualDeclarations(element, consumer)
+                } else {
+                    true
+                }
+            }
 
             else -> true
         }
@@ -71,7 +87,7 @@ class KotlinDefinitionsSearcher : QueryExecutor<PsiElement, DefinitionsScopedSea
 
     companion object {
 
-        private fun skipDelegatedMethodsConsumer(baseConsumer: Processor<PsiElement>): Processor<PsiElement> {
+        private fun skipDelegatedMethodsConsumer(baseConsumer: ExecutorProcessor<PsiElement>): Processor<PsiElement> {
             return Processor { element ->
                 if (isDelegated(element)) {
                     return@Processor true
@@ -87,7 +103,7 @@ class KotlinDefinitionsSearcher : QueryExecutor<PsiElement, DefinitionsScopedSea
         }
 
         private fun processClassImplementations(klass: KtClass, consumer: Processor<PsiElement>): Boolean {
-            val psiClass = runReadAction { klass.toLightClass() } ?: return true
+            val psiClass = runReadAction { klass.toLightClass() ?: KtFakeLightClass(klass) }
 
             val searchScope = runReadAction { psiClass.useScope }
             if (searchScope is LocalSearchScope) {
@@ -97,62 +113,68 @@ class KotlinDefinitionsSearcher : QueryExecutor<PsiElement, DefinitionsScopedSea
             return ContainerUtil.process(ClassInheritorsSearch.search(psiClass, true), consumer)
         }
 
-        private fun processLightClassLocalImplementations(psiClass: KtLightClass,
-                                                          searchScope: LocalSearchScope,
-                                                          consumer: Processor<PsiElement>): Boolean {
+        private fun processLightClassLocalImplementations(
+            psiClass: KtLightClass,
+            searchScope: LocalSearchScope,
+            consumer: Processor<PsiElement>
+        ): Boolean {
             // workaround for IDEA optimization that uses Java PSI traversal to locate inheritors in local search scope
             val virtualFiles = searchScope.scope.mapTo(HashSet()) { it.containingFile.virtualFile }
             val globalScope = GlobalSearchScope.filesScope(psiClass.project, virtualFiles)
-            return ContainerUtil.process(ClassInheritorsSearch.search(psiClass, globalScope, true), Processor<PsiClass> { candidate ->
+            return ContainerUtil.process(ClassInheritorsSearch.search(psiClass, globalScope, true)) { candidate ->
                 val candidateOrigin = candidate.unwrapped ?: candidate
                 if (candidateOrigin in searchScope) {
                     consumer.process(candidate)
-                }
-                else {
+                } else {
                     true
                 }
-            })
+            }
         }
 
         private fun processFunctionImplementations(function: KtFunction, scope: SearchScope, consumer: Processor<PsiElement>): Boolean {
-            val psiMethod = runReadAction { LightClassUtil.getLightClassMethod(function) }
-
-            return psiMethod?.let { MethodImplementationsSearch.processImplementations(it, consumer, scope) } ?: true
+            return runReadAction {
+                function.toPossiblyFakeLightMethods().firstOrNull()?.forEachImplementation(scope, consumer::process) ?: true
+            }
         }
 
-        private fun processPropertyImplementations(parameter: KtParameter, scope: SearchScope, consumer: Processor<PsiElement>): Boolean {
-            val accessorsPsiMethods = runReadAction { LightClassUtil.getLightClassPropertyMethods(parameter) }
-
-            return processPropertyImplementationsMethods(accessorsPsiMethods, scope, consumer)
+        private fun processPropertyImplementations(
+            declaration: KtNamedDeclaration,
+            scope: SearchScope,
+            consumer: Processor<PsiElement>
+        ): Boolean {
+            return runReadAction {
+                processPropertyImplementationsMethods(declaration.toPossiblyFakeLightMethods(), scope, consumer)
+            }
         }
 
-        private fun processPropertyImplementations(property: KtProperty, scope: SearchScope, consumer: Processor<PsiElement>): Boolean {
-            val accessorsPsiMethods = runReadAction { LightClassUtil.getLightClassPropertyMethods(property) }
-
-            return processPropertyImplementationsMethods(accessorsPsiMethods, scope, consumer)
+        private fun processActualDeclarations(declaration: KtDeclaration, consumer: Processor<PsiElement>): Boolean {
+            return runReadAction {
+                if (!declaration.isExpectDeclaration()) true
+                else declaration.actualsForExpected().all(consumer::process)
+            }
         }
 
-        fun processPropertyImplementationsMethods(accessors: LightClassUtil.PropertyAccessorsPsiMethods, scope: SearchScope, consumer: Processor<PsiElement>): Boolean {
-            for (method in accessors) {
-                val implementations = ArrayList<PsiMethod>()
-                MethodImplementationsSearch.getOverridingMethods(method, implementations, scope)
+        fun processPropertyImplementationsMethods(
+            accessors: Iterable<PsiMethod>,
+            scope: SearchScope,
+            consumer: Processor<PsiElement>
+        ): Boolean {
+            return accessors.all { method ->
+                method.forEachOverridingMethod(scope) { implementation ->
+                    if (isDelegated(implementation)) return@forEachOverridingMethod true
 
-                for (implementation in implementations) {
-                    if (isDelegated(implementation)) continue
-
-                    val mirrorElement = (implementation as? KtLightMethod)?.kotlinOrigin
-                    val elementToProcess = when(mirrorElement) {
-                        is KtProperty, is KtParameter -> mirrorElement
-                        is KtPropertyAccessor -> if (mirrorElement.parent is KtProperty) mirrorElement.parent else implementation
-                        else -> implementation
+                    val elementToProcess = runReadAction {
+                        val mirrorElement = (implementation as? KtLightMethod)?.kotlinOrigin
+                        when (mirrorElement) {
+                            is KtProperty, is KtParameter -> mirrorElement
+                            is KtPropertyAccessor -> if (mirrorElement.parent is KtProperty) mirrorElement.parent else implementation
+                            else -> implementation
+                        }
                     }
 
-                    if (!consumer.process(elementToProcess)) {
-                        return false
-                    }
+                    consumer.process(elementToProcess)
                 }
             }
-            return true
         }
     }
 }

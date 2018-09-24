@@ -4,6 +4,10 @@ expect class Header {
     fun foo(): Int
 }
 
+expect class Incomplete {
+    fun foo(): Int
+}
+
 expect fun foo(arg: Int): String
 
 expect val flag: Boolean

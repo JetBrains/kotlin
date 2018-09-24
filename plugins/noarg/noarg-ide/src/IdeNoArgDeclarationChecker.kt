@@ -23,20 +23,24 @@ import com.intellij.openapi.roots.ProjectRootModificationTracker
 import com.intellij.psi.util.CachedValue
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
+import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.kotlin.annotation.plugin.ide.getSpecialAnnotations
 import org.jetbrains.kotlin.noarg.NoArgCommandLineProcessor.Companion.ANNOTATION_OPTION
 import org.jetbrains.kotlin.noarg.NoArgCommandLineProcessor.Companion.PLUGIN_ID
 import org.jetbrains.kotlin.noarg.diagnostic.AbstractNoArgDeclarationChecker
 import org.jetbrains.kotlin.psi.KtModifierListOwner
-import java.util.*
+import java.util.concurrent.ConcurrentMap
 
 class IdeNoArgDeclarationChecker(val project: Project) : AbstractNoArgDeclarationChecker() {
     private companion object {
         val ANNOTATION_OPTION_PREFIX = "plugin:$PLUGIN_ID:${ANNOTATION_OPTION.name}="
     }
 
-    private val cache: CachedValue<WeakHashMap<Module, List<String>>> = cachedValue(project) {
-        CachedValueProvider.Result.create(WeakHashMap<Module, List<String>>(), ProjectRootModificationTracker.getInstance(project))
+    private val cache: CachedValue<ConcurrentMap<Module, List<String>>> = cachedValue(project) {
+        CachedValueProvider.Result.create(
+            ContainerUtil.createConcurrentWeakMap<Module, List<String>>(),
+            ProjectRootModificationTracker.getInstance(project)
+        )
     }
 
     override fun getAnnotationFqNames(modifierListOwner: KtModifierListOwner?): List<String> {

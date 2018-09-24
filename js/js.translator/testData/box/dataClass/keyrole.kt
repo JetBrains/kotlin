@@ -1,4 +1,5 @@
-// EXPECTED_REACHABLE_NODES: 1028
+// IGNORE_BACKEND: JS_IR
+// EXPECTED_REACHABLE_NODES: 1317
 package foo
 
 data class Holder<T>(val v: T)

@@ -57,10 +57,17 @@ class AddInlineModifierFix(
         }
     }
 
-    object SuspendFactory : KotlinSingleIntentionActionFactory() {
+    object NoInlineSuspendFactory : KotlinSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic): IntentionAction? {
             val parameter = diagnostic.psiElement as? KtParameter ?: return null
             return AddInlineModifierFix(parameter, KtTokens.NOINLINE_KEYWORD)
+        }
+    }
+
+    object CrossInlineSuspendFactory : KotlinSingleIntentionActionFactory() {
+        override fun createAction(diagnostic: Diagnostic): IntentionAction? {
+            val parameter = diagnostic.psiElement as? KtParameter ?: return null
+            return AddInlineModifierFix(parameter, KtTokens.CROSSINLINE_KEYWORD)
         }
     }
 

@@ -31,11 +31,23 @@ class GenericReplCompilingEvaluator(val compiler: ReplCompiler,
     override fun createState(lock: ReentrantReadWriteLock): IReplStageState<*> = AggregatedReplStageState(compiler.createState(lock), evaluator.createState(lock), lock)
 
     override fun compileAndEval(state: IReplStageState<*>, codeLine: ReplCodeLine, scriptArgs: ScriptArgsWithTypes?, invokeWrapper: InvokeWrapper?): ReplEvalResult {
+        if (codeLine.code.trim().isEmpty()) {
+            return ReplEvalResult.UnitResult()
+        }
+
         return state.lock.write {
             val aggregatedState = state.asState(AggregatedReplStageState::class.java)
             val compiled = compiler.compile(state, codeLine)
             when (compiled) {
-                is ReplCompileResult.Error -> ReplEvalResult.Error.CompileTime(compiled.message, compiled.location)
+                is ReplCompileResult.Error -> {
+                    aggregatedState.apply {
+                        lock.write {
+                            assert(state1.history.size == state2.history.size)
+                            adjustHistories() // needed due to statefulness of AnalyzerEngine - in case of compilation errors the line name reuse leads to #KT-17921
+                        }
+                    }
+                    ReplEvalResult.Error.CompileTime(compiled.message, compiled.location)
+                }
                 is ReplCompileResult.Incomplete -> ReplEvalResult.Incomplete()
                 is ReplCompileResult.CompiledClasses -> {
                     val result = eval(state, compiled, scriptArgs, invokeWrapper)
@@ -46,14 +58,7 @@ class GenericReplCompilingEvaluator(val compiler: ReplCompiler,
                             aggregatedState.apply {
                                 lock.write {
                                     if (state1.history.size > state2.history.size) {
-                                        if (state2.history.size == 0) {
-                                            state1.history.reset()
-                                        }
-                                        else {
-                                            state2.history.peek()?.let {
-                                                state1.history.resetTo(it.id)
-                                            }
-                                        }
+                                        adjustHistories()
                                         assert(state1.history.size == state2.history.size)
                                     }
                                 }
@@ -91,3 +96,9 @@ class GenericReplCompilingEvaluator(val compiler: ReplCompiler,
                 evaluator.eval(state, compiledCode, scriptArgs ?: defaultScriptArgs, invokeWrapper)
     }
 }
+
+private fun AggregatedReplStageState<*, *>.adjustHistories(): Iterable<ILineId>? =
+        state2.history.peek()?.let {
+            state1.history.resetTo(it.id)
+        }
+        ?: state1.history.reset()

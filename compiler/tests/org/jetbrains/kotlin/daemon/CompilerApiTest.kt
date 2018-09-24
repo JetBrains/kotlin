@@ -41,9 +41,6 @@ class CompilerApiTest : KotlinIntegrationTestBase() {
 
     val compilerClassPath = listOf(
             File(compilerLibDir, "kotlin-compiler.jar"))
-    val scriptRuntimeClassPath = listOf(
-            File(compilerLibDir, "kotlin-runtime.jar"),
-            File(compilerLibDir, "kotlin-script-runtime.jar"))
     val compilerId by lazy(LazyThreadSafetyMode.NONE) { CompilerId.makeCompilerId(compilerClassPath) }
 
     private fun compileLocally(messageCollector: TestMessageCollector, vararg args: String): Pair<Int, Collection<OutputMessageUtil.Output>> {
@@ -100,20 +97,6 @@ class CompilerApiTest : KotlinIntegrationTestBase() {
         }
     }
 
-    fun testScriptResolverEnvironmentArgsParsing() {
-
-        fun args(body: K2JVMCompilerArguments.() -> Unit): K2JVMCompilerArguments =
-                K2JVMCompilerArguments().apply(body)
-
-        val longStr = (1..100).joinToString { """\" $it aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa \\""" }
-        val unescapeRe = """\\(["\\])""".toRegex()
-        val messageCollector = TestMessageCollector()
-        Assert.assertEquals(hashMapOf("abc" to "def", "11" to "ab cd \\ \"", "long" to unescapeRe.replace(longStr, "\$1")),
-                            K2JVMCompiler.createScriptResolverEnvironment(
-                                args { scriptResolverEnvironment = arrayOf("abc=def", """11="ab cd \\ \""""", "long=\"$longStr\"") },
-                                messageCollector))
-    }
-
     fun testHelloAppLocal() {
         val messageCollector = TestMessageCollector()
         val jar = tmpdir.absolutePath + File.separator + "hello.jar"
@@ -161,7 +144,7 @@ class CompilerApiTest : KotlinIntegrationTestBase() {
         Assert.assertEquals(0, code)
         Assert.assertTrue(outputs.isNotEmpty())
         Assert.assertEquals(File(tmpdir, "Script.class").absolutePath, outputs.first().outputFile?.absolutePath)
-        runScriptWithArgs(getSimpleScriptBaseDir(), "script", "Script", scriptRuntimeClassPath + tmpdir, "hi", "there")
+        runScriptWithArgs(getSimpleScriptBaseDir(), "script", "Script", listOf(tmpdir), "hi", "there")
     }
 
     fun testSimpleScript() {
@@ -182,7 +165,7 @@ class CompilerApiTest : KotlinIntegrationTestBase() {
                 Assert.assertEquals(0, code)
                 Assert.assertTrue(outputs.isNotEmpty())
                 Assert.assertEquals(File(tmpdir, "Script.class").absolutePath, outputs.first().outputFile?.absolutePath)
-                runScriptWithArgs(getSimpleScriptBaseDir(), "script", "Script", scriptRuntimeClassPath + tmpdir, "hi", "there")
+                runScriptWithArgs(getSimpleScriptBaseDir(), "script", "Script", listOf(tmpdir), "hi", "there")
             }
             finally {
                 KotlinCompilerClient.shutdownCompileService(compilerId, daemonOptions)
@@ -206,6 +189,10 @@ class TestMessageCollector : MessageCollector {
     }
 
     override fun hasErrors(): Boolean = messages.any { it.severity == CompilerMessageSeverity.EXCEPTION || it.severity == CompilerMessageSeverity.ERROR }
+
+    override fun toString(): String {
+        return messages.joinToString("\n") { "${it.severity}: ${it.message}${it.location?.let{" at $it"} ?: ""}" }
+    }
 }
 
 fun TestMessageCollector.assertHasMessage(msg: String, desiredSeverity: CompilerMessageSeverity? = null) {

@@ -19,22 +19,23 @@ package org.jetbrains.kotlin.idea.conversion.copy
 import com.intellij.psi.*
 import com.intellij.psi.search.PsiShortNamesCache
 import com.intellij.psi.util.PsiTreeUtil
-import org.jetbrains.kotlin.caches.resolve.KotlinCacheService
+import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithVisibility
-import org.jetbrains.kotlin.idea.caches.resolve.*
+import org.jetbrains.kotlin.idea.caches.project.getNullableModuleInfo
+import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithContent
+import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
+import org.jetbrains.kotlin.idea.caches.resolve.util.getJavaMemberDescriptor
 import org.jetbrains.kotlin.idea.core.isVisible
 import org.jetbrains.kotlin.idea.imports.canBeReferencedViaImport
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
-import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
 import org.jetbrains.kotlin.psi.KtDotQualifiedExpression
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtImportDirective
 import org.jetbrains.kotlin.psi.psiUtil.referenceExpression
-import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 import java.util.*
-
 
 class PlainTextPasteImportResolver(val dataForConversion: DataForConversion, val targetFile: KtFile) {
 
@@ -44,7 +45,7 @@ class PlainTextPasteImportResolver(val dataForConversion: DataForConversion, val
     private val importList = file.importList!!
     private val psiElementFactory = PsiElementFactory.SERVICE.getInstance(project)
 
-    private val bindingContext by lazy { targetFile.analyzeFully() }
+    private val bindingContext by lazy { targetFile.analyzeWithContent() }
     private val resolutionFacade = targetFile.getResolutionFacade()
 
     private val shortNameCache = PsiShortNamesCache.getInstance(project)
@@ -119,16 +120,13 @@ class PlainTextPasteImportResolver(val dataForConversion: DataForConversion, val
 
         fun tryResolveReference(reference: PsiQualifiedReference): Boolean {
             if (reference.resolve() != null) return true
-            val referenceName = reference.referenceName!!
+            val referenceName = reference.referenceName ?: return false
             if (referenceName in failedToResolveReferenceNames) return false
             val classes = shortNameCache.getClassesByName(referenceName, scope)
                     .mapNotNull { psiClass ->
                         val containingFile = psiClass.containingFile
                         if (ProjectRootsUtil.isInProjectOrLibraryContent(containingFile)) {
-                            val resolutionFacade = KotlinCacheService.getInstance(project).getResolutionFacadeByFile(
-                                    containingFile, JvmPlatform
-                            )
-                            psiClass to psiClass.resolveToDescriptor(resolutionFacade)
+                            psiClass to psiClass.getJavaMemberDescriptor() as? ClassDescriptor
                         }
                         else {
                             null
@@ -153,11 +151,13 @@ class PlainTextPasteImportResolver(val dataForConversion: DataForConversion, val
             }
 
             val members = (shortNameCache.getMethodsByName(referenceName, scope).asList() +
-                           shortNameCache.getFieldsByName(referenceName, scope).asList())
-                    .map { it as PsiMember }
-                    .filter { it.getNullableModuleInfo() != null }
-                    .map { it to it.getJavaMemberDescriptor(resolutionFacade) as? DeclarationDescriptorWithVisibility }
-                    .filter { canBeImported(it.second) }
+                    shortNameCache.getFieldsByName(referenceName, scope).asList())
+                .asSequence()
+                .map { it as PsiMember }
+                .filter { it.getNullableModuleInfo() != null }
+                .map { it to it.getJavaMemberDescriptor(resolutionFacade) as? DeclarationDescriptorWithVisibility }
+                .filter { canBeImported(it.second) }
+                .toList()
 
             members.singleOrNull()?.let { (psiMember, _) ->
                 addImport(psiElementFactory.createImportStaticStatement(psiMember.containingClass!!, psiMember.name!!), true)
@@ -178,7 +178,12 @@ class PlainTextPasteImportResolver(val dataForConversion: DataForConversion, val
         runWriteAction {
             elementsWithUnresolvedRef.reversed().forEach {
                 val reference = it.reference as PsiQualifiedReference
-                if (!tryResolveReference(reference)) failedToResolveReferenceNames += reference.referenceName!!
+                if (!tryResolveReference(reference)) {
+                    val referenceName = reference.referenceName
+                    if (referenceName != null) {
+                        failedToResolveReferenceNames += referenceName
+                    }
+                }
             }
         }
     }

@@ -25,11 +25,12 @@ import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.uast.*
+import org.jetbrains.uast.kotlin.declarations.KotlinUIdentifier
 
 class KotlinUBinaryExpression(
         override val psi: KtBinaryExpression,
-        override val uastParent: UElement?
-) : KotlinAbstractUExpression(), UBinaryExpression, KotlinUElementWithType, KotlinEvaluatableUElement {
+        givenParent: UElement?
+) : KotlinAbstractUExpression(givenParent), UBinaryExpression, KotlinUElementWithType, KotlinEvaluatableUElement {
     private companion object {
         val BITWISE_OPERATORS = mapOf(
                 "or" to UastBinaryOperator.BITWISE_OR,
@@ -42,7 +43,7 @@ class KotlinUBinaryExpression(
     override val rightOperand by lz { KotlinConverter.convertOrEmpty(psi.right, this) }
 
     override val operatorIdentifier: UIdentifier?
-        get() = UIdentifier(psi.operationReference, this)
+        get() = KotlinUIdentifier(psi.operationReference.getReferencedNameElement(), this)
 
     override fun resolveOperator() = psi.operationReference.resolveCallToDeclaration(context = this) as? PsiMethod
 
@@ -88,8 +89,8 @@ class KotlinUBinaryExpression(
 
 class KotlinCustomUBinaryExpression(
         override val psi: PsiElement,
-        override val uastParent: UElement?
-) : KotlinAbstractUExpression(), UBinaryExpression {
+        givenParent: UElement?
+) : KotlinAbstractUExpression(givenParent), UBinaryExpression {
     lateinit override var leftOperand: UExpression
         internal set
 

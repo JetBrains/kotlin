@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.builtins.getFunctionalClassKind
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
-import org.jetbrains.kotlin.ir.builders.IrGeneratorContext
+import org.jetbrains.kotlin.ir.builders.IrGeneratorContextBase
 import org.jetbrains.kotlin.ir.builders.Scope
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.expressions.IrCall
@@ -50,26 +50,27 @@ private class KCallableNamePropertyTransformer(val lower: KCallableNamePropertyL
 
         //TODO rewrite checking
         val directMember = DescriptorUtils.getDirectMember(expression.descriptor)
-        if (!((directMember.containingDeclaration as? ClassDescriptor)?.defaultType?.isKFunctionType ?: false)) return expression
+        val classDescriptor = directMember.containingDeclaration as? ClassDescriptor ?: return expression
+        if (!classDescriptor.defaultType.isKFunctionType) return expression
         if (directMember.name.asString() != "name") return expression
 
         val receiver = callableReference.dispatchReceiver ?: callableReference.extensionReceiver
 
         return lower.context.createIrBuilder(expression.symbol, expression.startOffset, expression.endOffset).run {
 
-            IrCompositeImpl(startOffset, endOffset, context.builtIns.stringType).apply {
+            IrCompositeImpl(startOffset, endOffset, context.irBuiltIns.stringType).apply {
                 receiver?.let {
                     //put receiver for bound callable reference
                     statements.add(it)
                 }
 
                 statements.add(
-                        IrConstImpl.string(
-                                expression.startOffset,
-                                expression.endOffset,
-                                context.builtIns.stringType,
-                                callableReference.descriptor.name.asString()
-                        )
+                    IrConstImpl.string(
+                        expression.startOffset,
+                        expression.endOffset,
+                        context.irBuiltIns.stringType,
+                        callableReference.descriptor.name.asString()
+                    )
                 )
             }
 
@@ -85,21 +86,23 @@ private class KCallableNamePropertyTransformer(val lower: KCallableNamePropertyL
             return kind == FunctionClassDescriptor.Kind.KFunction
         }
 
-    fun BackendContext.createIrBuilder(symbol: IrSymbol,
-                                       startOffset: Int = UNDEFINED_OFFSET,
-                                       endOffset: Int = UNDEFINED_OFFSET) =
-            DeclarationIrBuilder(this, symbol, startOffset, endOffset)
+    fun BackendContext.createIrBuilder(
+        symbol: IrSymbol,
+        startOffset: Int = UNDEFINED_OFFSET,
+        endOffset: Int = UNDEFINED_OFFSET
+    ) =
+        DeclarationIrBuilder(this, symbol, startOffset, endOffset)
 
     class DeclarationIrBuilder(
-            backendContext: BackendContext,
-            symbol: IrSymbol,
-            startOffset: Int = UNDEFINED_OFFSET, endOffset: Int = UNDEFINED_OFFSET
+        backendContext: BackendContext,
+        symbol: IrSymbol,
+        startOffset: Int = UNDEFINED_OFFSET, endOffset: Int = UNDEFINED_OFFSET
     ) : IrBuilderWithScope(
-            IrLoweringContext(backendContext),
-            Scope(symbol),
-            startOffset,
-            endOffset
+        IrLoweringContext(backendContext),
+        Scope(symbol),
+        startOffset,
+        endOffset
     )
 
-    class IrLoweringContext(backendContext: BackendContext) : IrGeneratorContext(backendContext.irBuiltIns)
+    class IrLoweringContext(backendContext: BackendContext) : IrGeneratorContextBase(backendContext.irBuiltIns)
 }

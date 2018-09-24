@@ -20,20 +20,21 @@ import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.resolve.calls.inference.components.NewTypeSubstitutor
 import org.jetbrains.kotlin.resolve.calls.inference.components.NewTypeSubstitutorByConstructorMap
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
-import org.jetbrains.kotlin.resolve.calls.inference.model.NewConstraintSystemImpl
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.types.*
 
-fun ConstraintStorage.buildCurrentSubstitutor() = NewTypeSubstitutorByConstructorMap(fixedTypeVariables.entries.associate {
-    it.key to it.value
-})
+fun ConstraintStorage.buildCurrentSubstitutor(additionalBindings: Map<TypeConstructor, StubType>): NewTypeSubstitutorByConstructorMap =
+    NewTypeSubstitutorByConstructorMap(fixedTypeVariables.entries.associate { it.key to it.value } + additionalBindings)
 
 fun ConstraintStorage.buildResultingSubstitutor(): NewTypeSubstitutor {
     val currentSubstitutorMap = fixedTypeVariables.entries.associate {
         it.key to it.value
     }
     val uninferredSubstitutorMap = notFixedTypeVariables.entries.associate { (freshTypeConstructor, typeVariable) ->
-        freshTypeConstructor to ErrorUtils.createErrorTypeWithCustomConstructor("Uninferred type", typeVariable.typeVariable.freshTypeConstructor)
+        freshTypeConstructor to ErrorUtils.createErrorTypeWithCustomConstructor(
+            "Uninferred type",
+            typeVariable.typeVariable.freshTypeConstructor
+        )
     }
 
     return NewTypeSubstitutorByConstructorMap(currentSubstitutorMap + uninferredSubstitutorMap)
@@ -61,10 +62,10 @@ fun CallableDescriptor.substituteAndApproximateCapturedTypes(substitutor: NewTyp
         override fun get(key: KotlinType): TypeProjection? = null
 
         override fun prepareTopLevelType(topLevelType: KotlinType, position: Variance) =
-                substitutor.safeSubstitute(topLevelType.unwrap()).let { substitutedType ->
-                    TypeApproximator().approximateToSuperType(substitutedType, TypeApproximatorConfiguration.CapturedTypesApproximation) ?:
-                    substitutedType
-                }
+            substitutor.safeSubstitute(topLevelType.unwrap()).let { substitutedType ->
+                TypeApproximator().approximateToSuperType(substitutedType, TypeApproximatorConfiguration.CapturedTypesApproximation)
+                        ?: substitutedType
+            }
     }
 
     return substitute(TypeSubstitutor.create(wrappedSubstitution))

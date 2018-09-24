@@ -1,39 +1,34 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.types.expressions;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
+import org.jetbrains.kotlin.builtins.PlatformToKotlinClassMap;
 import org.jetbrains.kotlin.config.LanguageVersionSettings;
 import org.jetbrains.kotlin.context.GlobalContext;
+import org.jetbrains.kotlin.contracts.EffectSystem;
+import org.jetbrains.kotlin.contracts.parsing.ContractParsingServices;
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor;
 import org.jetbrains.kotlin.incremental.components.LookupTracker;
-import org.jetbrains.kotlin.platform.PlatformToKotlinClassMap;
 import org.jetbrains.kotlin.resolve.*;
 import org.jetbrains.kotlin.resolve.calls.CallExpressionResolver;
 import org.jetbrains.kotlin.resolve.calls.CallResolver;
 import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker;
 import org.jetbrains.kotlin.resolve.calls.checkers.RttiExpressionChecker;
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory;
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator;
+import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver;
 import org.jetbrains.kotlin.types.WrappedTypeFactory;
 
 import javax.inject.Inject;
 
 public class ExpressionTypingComponents {
     /*package*/ GlobalContext globalContext;
+    /*package*/ ModuleDescriptor moduleDescriptor;
     /*package*/ ExpressionTypingServices expressionTypingServices;
     /*package*/ CallResolver callResolver;
     /*package*/ PlatformToKotlinClassMap platformToKotlinClassMap;
@@ -64,10 +59,18 @@ public class ExpressionTypingComponents {
     /*package*/ WrappedTypeFactory wrappedTypeFactory;
     /*package*/ CollectionLiteralResolver collectionLiteralResolver;
     /*package*/ DeprecationResolver deprecationResolver;
+    /*package*/ EffectSystem effectSystem;
+    /*package*/ ContractParsingServices contractParsingServices;
+    /*package*/ DataFlowValueFactory dataFlowValueFactory;
 
     @Inject
     public void setGlobalContext(@NotNull GlobalContext globalContext) {
         this.globalContext = globalContext;
+    }
+
+    @Inject
+    public void setModuleDescriptor(@NotNull ModuleDescriptor moduleDescriptor) {
+        this.moduleDescriptor = moduleDescriptor;
     }
 
     @Inject
@@ -181,7 +184,7 @@ public class ExpressionTypingComponents {
     }
 
     @Inject
-    public void setLocalVariableResolver(@NotNull  LocalVariableResolver localVariableResolver) {
+    public void setLocalVariableResolver(@NotNull LocalVariableResolver localVariableResolver) {
         this.localVariableResolver = localVariableResolver;
     }
 
@@ -218,5 +221,20 @@ public class ExpressionTypingComponents {
     @Inject
     public void setDeprecationResolver(DeprecationResolver deprecationResolver) {
         this.deprecationResolver = deprecationResolver;
+    }
+
+    @Inject
+    public void setEffectSystem(@NotNull EffectSystem effectSystem) {
+        this.effectSystem = effectSystem;
+    }
+
+    @Inject
+    public void setContractParsingServices(@NotNull ContractParsingServices contractParsingServices) {
+        this.contractParsingServices = contractParsingServices;
+    }
+
+    @Inject
+    public void setDataFlowValueFactory(@NotNull DataFlowValueFactory dataFlowValueFactory) {
+        this.dataFlowValueFactory = dataFlowValueFactory;
     }
 }

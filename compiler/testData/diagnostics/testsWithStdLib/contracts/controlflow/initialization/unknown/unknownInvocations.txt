@@ -1,0 +1,6 @@
+package
+
+public fun </*0*/ T> inPlace(/*0*/ block: () -> T): T
+    CallsInPlace(block, UNKNOWN)
+
+public fun reassignmentAndNoInitializaiton(): kotlin.Unit

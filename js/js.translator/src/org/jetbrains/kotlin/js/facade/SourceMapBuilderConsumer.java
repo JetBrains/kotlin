@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.js.facade;
 
-import com.intellij.openapi.editor.Document;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
@@ -26,6 +25,7 @@ import org.jetbrains.kotlin.js.backend.ast.JsLocation;
 import org.jetbrains.kotlin.js.backend.ast.JsLocationWithSource;
 import org.jetbrains.kotlin.js.sourceMap.SourceFilePathResolver;
 import org.jetbrains.kotlin.js.sourceMap.SourceMapMappingConsumer;
+import org.jetbrains.kotlin.js.translate.utils.PsiUtils;
 
 import java.io.*;
 import java.nio.charset.Charset;
@@ -34,6 +34,9 @@ import java.util.List;
 import java.util.function.Supplier;
 
 public class SourceMapBuilderConsumer implements SourceLocationConsumer {
+    @NotNull
+    private final File sourceBaseDir;
+
     @NotNull
     private final SourceMapMappingConsumer mappingConsumer;
 
@@ -48,10 +51,12 @@ public class SourceMapBuilderConsumer implements SourceLocationConsumer {
     private final List<Object> sourceStack = new ArrayList<>();
 
     public SourceMapBuilderConsumer(
+            @NotNull File sourceBaseDir,
             @NotNull SourceMapMappingConsumer mappingConsumer,
             @NotNull SourceFilePathResolver pathResolver,
             boolean provideCurrentModuleContent, boolean provideExternalModuleContent
     ) {
+        this.sourceBaseDir = sourceBaseDir;
         this.mappingConsumer = mappingConsumer;
         this.pathResolver = pathResolver;
         this.provideCurrentModuleContent = provideCurrentModuleContent;
@@ -82,15 +87,10 @@ public class SourceMapBuilderConsumer implements SourceLocationConsumer {
         }
         if (sourceInfo instanceof PsiElement) {
             PsiElement element = (PsiElement) sourceInfo;
-            PsiFile psiFile = element.getContainingFile();
-            int offset = element.getNode().getStartOffset();
-            Document document = psiFile.getViewProvider().getDocument();
-            assert document != null;
-            int sourceLine = document.getLineNumber(offset);
-            int sourceColumn = offset - document.getLineStartOffset(sourceLine);
-
-            File file = new File(psiFile.getViewProvider().getVirtualFile().getPath());
             try {
+                JsLocation location = PsiUtils.extractLocationFromPsi(element, pathResolver);
+                PsiFile psiFile = element.getContainingFile();
+                File file = new File(psiFile.getViewProvider().getVirtualFile().getPath());
                 Supplier<Reader> contentSupplier;
                 if (provideCurrentModuleContent) {
                     contentSupplier = () -> {
@@ -105,8 +105,7 @@ public class SourceMapBuilderConsumer implements SourceLocationConsumer {
                 else {
                     contentSupplier = () -> null;
                 }
-                mappingConsumer.addMapping(pathResolver.getPathRelativeToSourceRoots(file), null, contentSupplier,
-                                           sourceLine, sourceColumn);
+                mappingConsumer.addMapping(location.getFile(), null, contentSupplier, location.getStartLine(), location.getStartChar());
             }
             catch (IOException e) {
                 throw new RuntimeException("IO error occurred generating source maps", e);
@@ -115,7 +114,23 @@ public class SourceMapBuilderConsumer implements SourceLocationConsumer {
         else if (sourceInfo instanceof JsLocationWithSource) {
             JsLocationWithSource location = (JsLocationWithSource) sourceInfo;
             Supplier<Reader> contentSupplier = provideExternalModuleContent ? location.getSourceProvider()::invoke : () -> null;
-            mappingConsumer.addMapping(location.getFile(), location.getIdentityObject(), contentSupplier,
+            String path;
+
+            File absFile = new File(location.getFile()).isAbsolute() ?
+                           new File(location.getFile()) :
+                           new File(sourceBaseDir, location.getFile());
+            if (absFile.isAbsolute()) {
+                try {
+                    path = pathResolver.getPathRelativeToSourceRoots(absFile);
+                }
+                catch (IOException e) {
+                    path = location.getFile();
+                }
+            }
+            else {
+                path = location.getFile();
+            }
+            mappingConsumer.addMapping(path, location.getIdentityObject(), contentSupplier,
                                location.getStartLine(), location.getStartChar());
         }
     }

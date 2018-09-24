@@ -1,0 +1,63 @@
+package
+
+package api {
+    @api.ExperimentalAPI public fun api.C.extension(): kotlin.Unit
+
+    @api.ExperimentalAPI public final class C {
+        public constructor C()
+        public final val property: kotlin.String = ""
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public final fun function(): kotlin.String
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+        public final inner class Inner {
+            public constructor Inner()
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        }
+
+        public final class Nested {
+            public constructor Nested()
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        }
+    }
+
+    @kotlin.Experimental(level = Level.WARNING) @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.CLASS, AnnotationTarget.FUNCTION}) public final annotation class ExperimentalAPI : kotlin.Annotation {
+        public constructor ExperimentalAPI()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+
+package usage1 {
+    @api.ExperimentalAPI public fun useAll(): kotlin.Unit
+
+    @api.ExperimentalAPI public final class Use {
+        public constructor Use()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        public final fun useAll(/*0*/ c: api.C): kotlin.Unit
+    }
+}
+
+package usage2 {
+    @kotlin.UseExperimental(markerClass = {api.ExperimentalAPI::class}) public fun useAll(): kotlin.Unit
+
+    @kotlin.UseExperimental(markerClass = {api.ExperimentalAPI::class}) public final class Use {
+        public constructor Use()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        public final fun useAll(/*0*/ c: api.C): kotlin.Unit
+    }
+}
+
+package usage3 {
+    public fun use(): kotlin.Unit
+}

@@ -27,7 +27,9 @@ import com.intellij.codeInsight.lookup.LookupElementPresentation
 import com.intellij.codeInsight.lookup.impl.LookupCellRenderer
 import com.intellij.ui.JBColor
 import com.intellij.util.ArrayUtil
+import org.jetbrains.kotlin.idea.core.completion.DeclarationLookupObject
 import org.jetbrains.kotlin.idea.test.AstAccessControl
+import org.jetbrains.kotlin.idea.util.module
 import org.jetbrains.kotlin.js.resolve.JsPlatform
 import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
@@ -88,7 +90,11 @@ object ExpectedCompletionUtils {
             val PRESENTATION_TYPE_TEXT: String = "typeText"
             val PRESENTATION_TAIL_TEXT: String = "tailText"
             val PRESENTATION_TEXT_ATTRIBUTES: String = "attributes"
-            val validKeys: Set<String> = setOf(LOOKUP_STRING, ALL_LOOKUP_STRINGS, PRESENTATION_ITEM_TEXT, PRESENTATION_TYPE_TEXT, PRESENTATION_TAIL_TEXT, PRESENTATION_TEXT_ATTRIBUTES)
+            val MODULE_NAME: String = "module"
+            val validKeys: Set<String> = setOf(
+                LOOKUP_STRING, ALL_LOOKUP_STRINGS, PRESENTATION_ITEM_TEXT, PRESENTATION_TYPE_TEXT,
+                PRESENTATION_TAIL_TEXT, PRESENTATION_TEXT_ATTRIBUTES, MODULE_NAME
+            )
         }
     }
 
@@ -119,6 +125,7 @@ object ExpectedCompletionUtils {
     private val COMPLETION_TYPE_PREFIX = "COMPLETION_TYPE:"
 
     val KNOWN_PREFIXES: List<String> = ImmutableList.of(
+            "LANGUAGE_VERSION:",
             EXIST_LINE_PREFIX,
             ABSENT_LINE_PREFIX,
             ABSENT_JS_LINE_PREFIX,
@@ -314,11 +321,19 @@ object ExpectedCompletionUtils {
             if (presentation.tailText != null) {
                 map.put(CompletionProposal.PRESENTATION_TAIL_TEXT, presentation.tailText)
             }
+            item.moduleName?.let {
+                map.put(CompletionProposal.MODULE_NAME, it)
+            }
 
             result.add(ExpectedCompletionUtils.CompletionProposal(map))
         }
         return result
     }
+
+    private val LookupElement.moduleName: String?
+        get() {
+            return (`object` as? DeclarationLookupObject)?.psiElement?.module?.name
+        }
 
     private fun textAttributes(presentation: LookupElementPresentation): String {
         return buildString {

@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.quickfix.ChangeVariableMutabilityFix
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.idea.references.readWriteAccess
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
@@ -49,7 +50,7 @@ class CanBeValInspection : AbstractKotlinInspection() {
 
                 when (declaration) {
                     is KtProperty -> {
-                        if (declaration.isVar && declaration.isLocal &&
+                        if (declaration.isVar && declaration.isLocal && !declaration.hasModifier(KtTokens.LATEINIT_KEYWORD) &&
                             canBeVal(declaration,
                                      declaration.hasInitializer() || declaration.hasDelegateExpression(),
                                      listOf(declaration))) {
@@ -102,7 +103,8 @@ class CanBeValInspection : AbstractKotlinInspection() {
             private fun Pseudocode.collectWriteInstructions(descriptor: DeclarationDescriptor): Set<WriteValueInstruction> =
                     with (instructionsIncludingDeadCode) {
                         filterIsInstance<WriteValueInstruction>()
-                        .filter { (it.target as? AccessTarget.Call)?.resolvedCall?.resultingDescriptor == descriptor }
+                            .asSequence()
+                            .filter { (it.target as? AccessTarget.Call)?.resolvedCall?.resultingDescriptor == descriptor }
                         .toSet() +
 
                         filterIsInstance<LocalFunctionDeclarationInstruction>()

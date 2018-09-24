@@ -26,18 +26,18 @@ import java.util.*
 
 interface ResolutionResultsCache {
     data class CachedData(
-            val resolutionResults: OverloadResolutionResultsImpl<*>,
-            val deferredComputation: BasicCallResolutionContext,
-            val tracing: TracingStrategy,
-            val resolutionTrace: DelegatingBindingTrace
+        val resolutionResults: OverloadResolutionResultsImpl<*>,
+        val deferredComputation: BasicCallResolutionContext,
+        val tracing: TracingStrategy,
+        val resolutionTrace: DelegatingBindingTrace
     )
 
     fun record(
-            call: Call,
-            results: OverloadResolutionResultsImpl<*>,
-            deferredComputation: BasicCallResolutionContext,
-            tracing: TracingStrategy,
-            resolutionTrace: DelegatingBindingTrace
+        call: Call,
+        results: OverloadResolutionResultsImpl<*>,
+        deferredComputation: BasicCallResolutionContext,
+        tracing: TracingStrategy,
+        resolutionTrace: DelegatingBindingTrace
     )
 
     operator fun get(call: Call): CachedData?
@@ -47,11 +47,11 @@ class ResolutionResultsCacheImpl : ResolutionResultsCache {
     private val data = HashMap<Call, CachedData>()
 
     override fun record(
-            call: Call,
-            results: OverloadResolutionResultsImpl<out CallableDescriptor?>,
-            deferredComputation: BasicCallResolutionContext,
-            tracing: TracingStrategy,
-            resolutionTrace: DelegatingBindingTrace
+        call: Call,
+        results: OverloadResolutionResultsImpl<out CallableDescriptor?>,
+        deferredComputation: BasicCallResolutionContext,
+        tracing: TracingStrategy,
+        resolutionTrace: DelegatingBindingTrace
     ) {
         data[call] = CachedData(results, deferredComputation, tracing, resolutionTrace)
     }
@@ -67,11 +67,11 @@ class TemporaryResolutionResultsCache(private val parentCache: ResolutionResults
     private val innerCache = ResolutionResultsCacheImpl()
 
     override fun record(
-            call: Call,
-            results: OverloadResolutionResultsImpl<out CallableDescriptor?>,
-            deferredComputation: BasicCallResolutionContext,
-            tracing: TracingStrategy,
-            resolutionTrace: DelegatingBindingTrace
+        call: Call,
+        results: OverloadResolutionResultsImpl<out CallableDescriptor?>,
+        deferredComputation: BasicCallResolutionContext,
+        tracing: TracingStrategy,
+        resolutionTrace: DelegatingBindingTrace
     ) {
         innerCache.record(call, results, deferredComputation, tracing, resolutionTrace)
     }

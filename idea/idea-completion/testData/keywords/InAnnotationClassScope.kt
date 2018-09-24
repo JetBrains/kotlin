@@ -29,4 +29,5 @@ annotation class Test {
 // EXIST:  typealias
 // EXIST:  expect
 // EXIST:  actual
+// EXIST:  companion object
 // NOTHING_ELSE

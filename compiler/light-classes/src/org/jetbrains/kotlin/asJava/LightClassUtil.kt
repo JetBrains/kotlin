@@ -127,10 +127,10 @@ object LightClassUtil {
         return getPsiMethodWrappers(declaration).firstOrNull()
     }
 
-    private fun getPsiMethodWrappers(declaration: KtDeclaration): Sequence<PsiMethod> {
-        return getWrappingClasses(declaration).flatMap { it.methods.asSequence() }
-                .filter { method -> method is KtLightMethod && method.kotlinOrigin === declaration }
-    }
+    private fun getPsiMethodWrappers(declaration: KtDeclaration): Sequence<KtLightMethod> =
+            getWrappingClasses(declaration).flatMap { it.methods.asSequence() }
+                    .filterIsInstance<KtLightMethod>()
+                    .filter { it.kotlinOrigin === declaration }
 
     private fun getWrappingClass(declaration: KtDeclaration): PsiClass? {
         var declaration = declaration
@@ -191,33 +191,19 @@ object LightClassUtil {
     private fun extractPropertyAccessors(
             ktDeclaration: KtDeclaration,
             specialGetter: PsiMethod?, specialSetter: PsiMethod?): PropertyAccessorsPsiMethods {
-        var getterWrapper = specialGetter
-        var setterWrapper = specialSetter
-        val additionalAccessors = arrayListOf<PsiMethod>()
 
-        for (wrapper in getPsiMethodWrappers(ktDeclaration)) {
-            if (wrapper !is KtLightMethod) continue
+        val (setters, getters) = getPsiMethodWrappers(ktDeclaration).partition { it.isSetter }
 
-            if (wrapper.isSetter) {
-                if (setterWrapper == null || setterWrapper === specialSetter) {
-                    setterWrapper = wrapper
-                }
-                else {
-                    additionalAccessors.add(wrapper)
-                }
-            }
-            else {
-                if (getterWrapper == null || getterWrapper === specialGetter) {
-                    getterWrapper = wrapper
-                }
-                else {
-                    additionalAccessors.add(wrapper)
-                }
-            }
-        }
-
+        val allGetters = listOfNotNull(specialGetter) + getters.filterNot { it == specialGetter }
+        val allSetters = listOfNotNull(specialSetter) + setters.filterNot { it == specialSetter }
         val backingField = getLightClassBackingField(ktDeclaration)
-        return PropertyAccessorsPsiMethods(getterWrapper, setterWrapper, backingField, additionalAccessors)
+        val additionalAccessors = allGetters.drop(1) + allSetters.drop(1)
+        return PropertyAccessorsPsiMethods(
+                allGetters.firstOrNull(),
+                allSetters.firstOrNull(),
+                backingField,
+                additionalAccessors
+        )
     }
 
     fun buildLightTypeParameterList(

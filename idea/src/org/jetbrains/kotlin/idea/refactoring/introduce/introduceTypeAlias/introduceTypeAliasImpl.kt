@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.core.CollectingNameValidator
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.idea.core.compareDescriptors
-import org.jetbrains.kotlin.idea.core.quoteIfNeeded
+import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.refactoring.introduce.insertDeclaration
 import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.KotlinPsiRange
@@ -45,6 +45,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.scopes.utils.findClassifier
+import org.jetbrains.kotlin.types.TypeUtils
 import java.util.*
 
 sealed class IntroduceTypeAliasAnalysisResult {
@@ -137,7 +138,7 @@ fun IntroduceTypeAliasDescriptor.validate(): IntroduceTypeAliasDescriptorWithCon
     when {
         name.isEmpty() ->
             conflicts.putValue(originalType, "No name provided for type alias")
-        !KotlinNameSuggester.isIdentifier(name) ->
+        !name.isIdentifier() ->
             conflicts.putValue(originalType, "Type alias name must be a valid identifier: $name")
         originalData.getTargetScope().findClassifier(Name.identifier(name), NoLookupLocation.FROM_IDE) != null ->
             conflicts.putValue(originalType, "Type $name already exists in the target scope")
@@ -164,23 +165,35 @@ fun findDuplicates(typeAlias: KtTypeAlias): Map<KotlinPsiRange, () -> Unit> {
 
     val psiFactory = KtPsiFactory(typeAlias)
 
+    fun replaceTypeElement(occurrence: KtTypeElement, typeArgumentsText: String) {
+        occurrence.replace(psiFactory.createType("$aliasName$typeArgumentsText").typeElement!!)
+    }
+
     fun replaceOccurrence(occurrence: PsiElement, arguments: List<KtTypeElement>) {
         val typeArgumentsText = if (arguments.isNotEmpty()) "<${arguments.joinToString { it.text }}>" else ""
         when (occurrence) {
             is KtTypeElement -> {
-                occurrence.replace(psiFactory.createType("$aliasName$typeArgumentsText").typeElement!!)
+                replaceTypeElement(occurrence, typeArgumentsText)
+            }
+
+            is KtSuperTypeCallEntry -> {
+                occurrence.calleeExpression.typeReference?.typeElement?.let { replaceTypeElement(it, typeArgumentsText) }
             }
 
             is KtCallElement -> {
-                val typeArgumentList = occurrence.typeArgumentList
+                val qualifiedExpression = occurrence.parent as? KtQualifiedExpression
+                val callExpression = if (qualifiedExpression != null && qualifiedExpression.selectorExpression == occurrence) {
+                    qualifiedExpression.replaced(occurrence)
+                } else occurrence
+                val typeArgumentList = callExpression.typeArgumentList
                 if (arguments.isNotEmpty()) {
                     val newTypeArgumentList = psiFactory.createTypeArguments(typeArgumentsText)
-                    typeArgumentList?.replace(newTypeArgumentList) ?: occurrence.addAfter(newTypeArgumentList, occurrence)
+                    typeArgumentList?.replace(newTypeArgumentList) ?: callExpression.addAfter(newTypeArgumentList, callExpression.calleeExpression)
                 }
                 else {
                     typeArgumentList?.delete()
                 }
-                occurrence.calleeExpression?.replace(psiFactory.createExpression(aliasName))
+                callExpression.calleeExpression?.replace(psiFactory.createExpression(aliasName))
             }
 
             is KtExpression -> occurrence.replace(psiFactory.createExpression(aliasName))
@@ -214,6 +227,9 @@ fun findDuplicates(typeAlias: KtTypeAlias): Map<KotlinPsiRange, () -> Unit> {
                 else continue
             }
             if (arguments.size != typeAliasDescriptor.declaredTypeParameters.size) continue
+            if (TypeUtils.isNullableType(typeAliasDescriptor.underlyingType)
+                && occurrence is KtUserType
+                && occurrence.parent !is KtNullableType) continue
             rangesWithReplacers += occurrence.toRange() to { replaceOccurrence(occurrence, arguments) }
         }
     }
@@ -233,7 +249,7 @@ fun findDuplicates(typeAlias: KtTypeAlias): Map<KotlinPsiRange, () -> Unit> {
     return rangesWithReplacers.toMap()
 }
 
-private var KtTypeReference.typeParameterInfo : TypeParameter? by CopyableUserDataProperty(Key.create("TYPE_PARAMETER_INFO"))
+private var KtTypeReference.typeParameterInfo : TypeParameter? by CopyablePsiUserDataProperty(Key.create("TYPE_PARAMETER_INFO"))
 
 fun IntroduceTypeAliasDescriptor.generateTypeAlias(previewOnly: Boolean = false): KtTypeAlias {
     val originalElement = originalData.originalTypeElement

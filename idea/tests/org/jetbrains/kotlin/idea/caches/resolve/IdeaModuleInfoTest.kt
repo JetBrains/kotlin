@@ -18,19 +18,32 @@ package org.jetbrains.kotlin.idea.caches.resolve
 
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.StdModuleTypes
+import com.intellij.openapi.projectRoots.ProjectJdkTable
 import com.intellij.openapi.roots.DependencyScope
+import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.roots.ModuleRootModificationUtil
+import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.roots.libraries.Library
 import com.intellij.openapi.vfs.LocalFileSystem
+import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess
+import com.intellij.psi.PsiManager
 import com.intellij.testFramework.ModuleTestCase
+import com.intellij.testFramework.PlatformTestCase
 import com.intellij.testFramework.PsiTestUtil
 import com.intellij.testFramework.UsefulTestCase
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
+import org.jetbrains.kotlin.idea.caches.project.*
+import org.jetbrains.kotlin.idea.caches.project.IdeaModuleInfo
+import org.jetbrains.kotlin.idea.caches.project.ModuleTestSourceInfo
 import org.jetbrains.kotlin.idea.framework.CommonLibraryKind
 import org.jetbrains.kotlin.idea.framework.JSLibraryKind
+import org.jetbrains.kotlin.idea.test.PluginTestCaseBase.*
+import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.test.util.addDependency
 import org.jetbrains.kotlin.test.util.jarRoot
 import org.jetbrains.kotlin.test.util.projectLibrary
+import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 import org.junit.Assert
 
 class IdeaModuleInfoTest : ModuleTestCase() {
@@ -318,11 +331,108 @@ class IdeaModuleInfoTest : ModuleTestCase() {
         stdlibJs.classes.assertAdditionalLibraryDependencies(stdlibCommon.classes)
     }
 
+    fun testScriptDependenciesForModule() {
+        val a = module("a")
+        val b = module("b")
+
+        with(createFileInModule(a, "script.kts").moduleInfo) {
+            dependencies().contains(a.production)
+            dependencies().contains(a.test)
+            !dependencies().contains(b.production)
+        }
+    }
+
+    override fun setUp() {
+        super.setUp()
+        VfsRootAccess.allowRootAccess("C:/Work/Projects/kotlin/")
+    }
+
+    fun testScriptDependenciesForProject() {
+        val a = module("a")
+
+        val script = createFileInProject("script.kts").moduleInfo
+
+        !script.dependencies().contains(a.production)
+        !script.dependencies().contains(a.test)
+
+        script.dependencies().firstIsInstance<ScriptDependenciesInfo.ForFile>()
+    }
+
+    fun testSdkForScript() {
+        runWriteAction {
+            ProjectJdkTable.getInstance().addJdk(mockJdk6())
+            ProjectJdkTable.getInstance().addJdk(mockJdk9())
+        }
+
+        with(createFileInProject("script.kts").moduleInfo) {
+            dependencies().filterIsInstance<SdkInfo>().single { it.sdk == mockJdk6() }
+        }
+    }
+
+    fun testSdkForScriptProjectSdk() {
+        runWriteAction {
+            ProjectJdkTable.getInstance().addJdk(mockJdk6())
+            ProjectJdkTable.getInstance().addJdk(mockJdk9())
+
+            ProjectRootManager.getInstance(project).projectSdk = mockJdk9()
+        }
+
+        with(createFileInProject("script.kts").moduleInfo) {
+            dependencies().filterIsInstance<SdkInfo>().single { it.sdk == mockJdk9() }
+        }
+    }
+
+    fun testSdkForScriptModuleSdk() {
+        val a = module("a")
+
+        runWriteAction {
+            ProjectJdkTable.getInstance().addJdk(mockJdk6())
+            ProjectJdkTable.getInstance().addJdk(mockJdk9())
+
+            ProjectRootManager.getInstance(project).projectSdk = mockJdk6()
+            with(ModuleRootManager.getInstance(a).modifiableModel) {
+                sdk = mockJdk9()
+                commit()
+            }
+        }
+
+        with(createFileInModule(a, "script.kts").moduleInfo) {
+            dependencies().filterIsInstance<SdkInfo>().first { it.sdk == mockJdk9() }
+        }
+    }
+
+    private fun createFileInModule(module: Module, fileName: String, inTests: Boolean = false): VirtualFile {
+        val fileToCopyIO = createTempFile(fileName, "")
+
+        for (contentEntry in ModuleRootManager.getInstance(module).contentEntries) {
+            for (sourceFolder in contentEntry.sourceFolders) {
+                if (((!inTests && !sourceFolder.isTestSource) || (inTests && sourceFolder.isTestSource)) && sourceFolder.file != null) {
+                    return runWriteAction {
+                        PlatformTestCase.getVirtualFile(fileToCopyIO).copy(this, sourceFolder.file!!, fileName)
+                    }
+                }
+            }
+        }
+
+        error("Couldn't find source folder in ${module.name}")
+    }
+
+    private fun createFileInProject(fileName: String): VirtualFile {
+        return runWriteAction {
+            PlatformTestCase.getVirtualFile(createTempFile(fileName, "")).copy(this, project.baseDir, fileName)
+        }
+    }
+
     private fun Module.addDependency(
             other: Module,
             dependencyScope: DependencyScope = DependencyScope.COMPILE,
             exported: Boolean = false
     ) = ModuleRootModificationUtil.addDependency(this, other, dependencyScope, exported)
+
+    private val VirtualFile.moduleInfo: IdeaModuleInfo
+        get() {
+            return PsiManager.getInstance(project).findFile(this)!!.getModuleInfo()
+        }
 
     private val Module.production: ModuleProductionSourceInfo
         get() = productionSourceInfo()!!
@@ -360,13 +470,23 @@ class IdeaModuleInfoTest : ModuleTestCase() {
         UsefulTestCase.assertSameElements(this.getDependentModules(), expected.toList())
     }
 
-    private fun stdlibCommon(): Library = projectLibrary("kotlin-stdlib-common",
-                                                         ForTestCompileRuntime.stdlibCommonForTests().jarRoot,
-                                                         kind = CommonLibraryKind)
+    private fun stdlibCommon(): Library = projectLibrary(
+        "kotlin-stdlib-common",
+        ForTestCompileRuntime.stdlibCommonForTests().jarRoot,
+        kind = CommonLibraryKind
+    )
 
     private fun stdlibJvm(): Library = projectLibrary("kotlin-stdlib", ForTestCompileRuntime.runtimeJarForTests().jarRoot)
 
-    private fun stdlibJs(): Library = projectLibrary("kotlin-stdlib-js",
-                                                     ForTestCompileRuntime.runtimeJarForTests().jarRoot,
-                                                     kind = JSLibraryKind)
+    private fun stdlibJs(): Library = projectLibrary(
+        "kotlin-stdlib-js",
+        ForTestCompileRuntime.runtimeJarForTests().jarRoot,
+        kind = JSLibraryKind
+    )
+
+    override fun tearDown() {
+        clearSdkTable(testRootDisposable)
+
+        super.tearDown()
+    }
 }

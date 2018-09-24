@@ -36,10 +36,8 @@ object LateinitIsInitialized : IntrinsicPropertyGetter() {
 private fun getStackValue(resolvedCall: ResolvedCall<*>, codegen: ExpressionCodegen): StackValue? {
     val expression =
             (resolvedCall.extensionReceiver as? ExpressionReceiver)?.expression as? KtCallableReferenceExpression ?: return null
-
-    // TODO: support properties imported from objects as soon as KT-18982 is fixed
-    val receiver = expression.receiverExpression?.let(codegen::gen) ?: StackValue.none()
-
-    val target = expression.callableReference.getResolvedCallWithAssert(codegen.bindingContext).resultingDescriptor
-    return codegen.intermediateValueForProperty(target as PropertyDescriptor, true, false, null, false, receiver, null, true)
+    val referenceResolvedCall = expression.callableReference.getResolvedCallWithAssert(codegen.bindingContext)
+    val receiver = codegen.generateCallableReferenceReceiver(referenceResolvedCall) ?: StackValue.none()
+    val target = referenceResolvedCall.resultingDescriptor as PropertyDescriptor
+    return codegen.intermediateValueForProperty(target, true, false, null, false, receiver, null, true)
 }

@@ -38,66 +38,66 @@ fun foo(dir: Direction): Int {
 ---------------------
 L0:
   1 <START>                                                                                                                                                                    INIT: in: {} out: {}
-    v(dir: Direction)                                                                                                                                                          INIT: in: {} out: {dir=D}
-    magic[FAKE_INITIALIZER](dir: Direction) -> <v0>                                                                                                                            INIT: in: {dir=D} out: {dir=D}
-    w(dir|<v0>)                                                                                                                                                                INIT: in: {dir=D} out: {dir=ID}                     USE: in: {EAST=READ, NORTH=READ, SOUTH=READ, WEST=READ, dir=READ} out: {EAST=READ, NORTH=READ, SOUTH=READ, WEST=READ, dir=READ}
-  2 mark({ val res: Int when (dir) { Direction.NORTH -> res = 1 Direction.SOUTH -> res = 2 Direction.WEST -> res = 3 Direction.EAST -> res = 4 } return res })                 INIT: in: {dir=ID} out: {dir=ID}
-    v(val res: Int)                                                                                                                                                            INIT: in: {dir=ID} out: {dir=ID, res=D}
-    mark(when (dir) { Direction.NORTH -> res = 1 Direction.SOUTH -> res = 2 Direction.WEST -> res = 3 Direction.EAST -> res = 4 })                                             INIT: in: {dir=ID, res=D} out: {dir=ID, res=D}      USE: in: {EAST=READ, NORTH=READ, SOUTH=READ, WEST=READ, dir=READ, res=READ} out: {EAST=READ, NORTH=READ, SOUTH=READ, WEST=READ, dir=READ, res=READ}
-    r(dir) -> <v1>                                                                                                                                                                                                                 USE: in: {EAST=READ, NORTH=READ, SOUTH=READ, WEST=READ, res=READ} out: {EAST=READ, NORTH=READ, SOUTH=READ, WEST=READ, dir=READ, res=READ}
+    v(dir: Direction)                                                                                                                                                          INIT: in: {} out: {}
+    magic[FAKE_INITIALIZER](dir: Direction) -> <v0>                                                                                                                            INIT: in: {} out: {}
+    w(dir|<v0>)                                                                                                                                                                INIT: in: {} out: {}                USE: in: {} out: {}
+  2 mark({ val res: Int when (dir) { Direction.NORTH -> res = 1 Direction.SOUTH -> res = 2 Direction.WEST -> res = 3 Direction.EAST -> res = 4 } return res })                 INIT: in: {} out: {}
+    v(val res: Int)                                                                                                                                                            INIT: in: {} out: {res=D}
+    mark(when (dir) { Direction.NORTH -> res = 1 Direction.SOUTH -> res = 2 Direction.WEST -> res = 3 Direction.EAST -> res = 4 })                                             INIT: in: {res=D} out: {res=D}
+    r(dir) -> <v1>
     mark(Direction.NORTH -> res = 1)
     mark(Direction.NORTH)
-    mark(Direction.NORTH)                                                                                                                                                                                                          USE: in: {EAST=READ, NORTH=READ, SOUTH=READ, WEST=READ, res=READ} out: {EAST=READ, NORTH=READ, SOUTH=READ, WEST=READ, res=READ}
-    r(NORTH) -> <v2>                                                                                                                                                                                                               USE: in: {EAST=READ, SOUTH=READ, WEST=READ, res=READ} out: {EAST=READ, NORTH=READ, SOUTH=READ, WEST=READ, res=READ}
+    mark(Direction.NORTH)
+    r(NORTH) -> <v2>
     magic[EQUALS_IN_WHEN_CONDITION](Direction.NORTH|<v1>, <v2>) -> <v3>
-    jmp?(L4|<v3>)                                                                                                                                                                                                                  USE: in: {EAST=READ, SOUTH=READ, WEST=READ, res=READ} out: {EAST=READ, SOUTH=READ, WEST=READ, res=READ}
+    jmp?(L4|<v3>)                                                                                                                                                                                                  USE: in: {res=READ} out: {res=READ}
 L3 ['when' entry body]:
-    r(1) -> <v4>                                                                                                                                                                                                                   USE: in: {res=WRITTEN_AFTER_READ} out: {res=WRITTEN_AFTER_READ}
-    w(res|<v4>)                                                                                                                                                                INIT: in: {dir=ID, res=D} out: {dir=ID, res=ID}     USE: in: {res=READ} out: {res=WRITTEN_AFTER_READ}
-    jmp(L2)                                                                                                                                                                    INIT: in: {dir=ID, res=ID} out: {dir=ID, res=ID}    USE: in: {res=READ} out: {res=READ}
+    r(1) -> <v4>                                                                                                                                                                                                   USE: in: {res=WRITTEN_AFTER_READ} out: {res=WRITTEN_AFTER_READ}
+    w(res|<v4>)                                                                                                                                                                INIT: in: {res=D} out: {res=ID}     USE: in: {res=READ} out: {res=WRITTEN_AFTER_READ}
+    jmp(L2)                                                                                                                                                                    INIT: in: {res=ID} out: {res=ID}
 L4 [next 'when' entry]:
-    mark(Direction.SOUTH -> res = 2)                                                                                                                                           INIT: in: {dir=ID, res=D} out: {dir=ID, res=D}
+    mark(Direction.SOUTH -> res = 2)                                                                                                                                           INIT: in: {res=D} out: {res=D}
     mark(Direction.SOUTH)
-    mark(Direction.SOUTH)                                                                                                                                                                                                          USE: in: {EAST=READ, SOUTH=READ, WEST=READ, res=READ} out: {EAST=READ, SOUTH=READ, WEST=READ, res=READ}
-    r(SOUTH) -> <v5>                                                                                                                                                                                                               USE: in: {EAST=READ, WEST=READ, res=READ} out: {EAST=READ, SOUTH=READ, WEST=READ, res=READ}
+    mark(Direction.SOUTH)
+    r(SOUTH) -> <v5>
     magic[EQUALS_IN_WHEN_CONDITION](Direction.SOUTH|<v1>, <v5>) -> <v6>
-    jmp?(L6|<v6>)                                                                                                                                                                                                                  USE: in: {EAST=READ, WEST=READ, res=READ} out: {EAST=READ, WEST=READ, res=READ}
+    jmp?(L6|<v6>)                                                                                                                                                                                                  USE: in: {res=READ} out: {res=READ}
 L5 ['when' entry body]:
-    r(2) -> <v7>                                                                                                                                                                                                                   USE: in: {res=WRITTEN_AFTER_READ} out: {res=WRITTEN_AFTER_READ}
-    w(res|<v7>)                                                                                                                                                                INIT: in: {dir=ID, res=D} out: {dir=ID, res=ID}     USE: in: {res=READ} out: {res=WRITTEN_AFTER_READ}
-    jmp(L2)                                                                                                                                                                    INIT: in: {dir=ID, res=ID} out: {dir=ID, res=ID}    USE: in: {res=READ} out: {res=READ}
+    r(2) -> <v7>                                                                                                                                                                                                   USE: in: {res=WRITTEN_AFTER_READ} out: {res=WRITTEN_AFTER_READ}
+    w(res|<v7>)                                                                                                                                                                INIT: in: {res=D} out: {res=ID}     USE: in: {res=READ} out: {res=WRITTEN_AFTER_READ}
+    jmp(L2)                                                                                                                                                                    INIT: in: {res=ID} out: {res=ID}
 L6 [next 'when' entry]:
-    mark(Direction.WEST -> res = 3)                                                                                                                                            INIT: in: {dir=ID, res=D} out: {dir=ID, res=D}
+    mark(Direction.WEST -> res = 3)                                                                                                                                            INIT: in: {res=D} out: {res=D}
     mark(Direction.WEST)
-    mark(Direction.WEST)                                                                                                                                                                                                           USE: in: {EAST=READ, WEST=READ, res=READ} out: {EAST=READ, WEST=READ, res=READ}
-    r(WEST) -> <v8>                                                                                                                                                                                                                USE: in: {EAST=READ, res=READ} out: {EAST=READ, WEST=READ, res=READ}
+    mark(Direction.WEST)
+    r(WEST) -> <v8>
     magic[EQUALS_IN_WHEN_CONDITION](Direction.WEST|<v1>, <v8>) -> <v9>
-    jmp?(L8|<v9>)                                                                                                                                                                                                                  USE: in: {EAST=READ, res=READ} out: {EAST=READ, res=READ}
+    jmp?(L8|<v9>)                                                                                                                                                                                                  USE: in: {res=READ} out: {res=READ}
 L7 ['when' entry body]:
-    r(3) -> <v10>                                                                                                                                                                                                                  USE: in: {res=WRITTEN_AFTER_READ} out: {res=WRITTEN_AFTER_READ}
-    w(res|<v10>)                                                                                                                                                               INIT: in: {dir=ID, res=D} out: {dir=ID, res=ID}     USE: in: {res=READ} out: {res=WRITTEN_AFTER_READ}
-    jmp(L2)                                                                                                                                                                    INIT: in: {dir=ID, res=ID} out: {dir=ID, res=ID}    USE: in: {res=READ} out: {res=READ}
+    r(3) -> <v10>                                                                                                                                                                                                  USE: in: {res=WRITTEN_AFTER_READ} out: {res=WRITTEN_AFTER_READ}
+    w(res|<v10>)                                                                                                                                                               INIT: in: {res=D} out: {res=ID}     USE: in: {res=READ} out: {res=WRITTEN_AFTER_READ}
+    jmp(L2)                                                                                                                                                                    INIT: in: {res=ID} out: {res=ID}
 L8 [next 'when' entry]:
-    mark(Direction.EAST -> res = 4)                                                                                                                                            INIT: in: {dir=ID, res=D} out: {dir=ID, res=D}
+    mark(Direction.EAST -> res = 4)                                                                                                                                            INIT: in: {res=D} out: {res=D}
     mark(Direction.EAST)
-    mark(Direction.EAST)                                                                                                                                                                                                           USE: in: {EAST=READ, res=READ} out: {EAST=READ, res=READ}
-    r(EAST) -> <v11>                                                                                                                                                                                                               USE: in: {res=READ} out: {EAST=READ, res=READ}
+    mark(Direction.EAST)
+    r(EAST) -> <v11>
     magic[EQUALS_IN_WHEN_CONDITION](Direction.EAST|<v1>, <v11>) -> <v12>
-    jmp?(L10|<v12>)                                                                                                                                                                                                                USE: in: {res=READ} out: {res=READ}
+    jmp?(L10|<v12>)                                                                                                                                                                                                USE: in: {res=READ} out: {res=READ}
 L9 ['when' entry body]:
-    r(4) -> <v13>                                                                                                                                                                                                                  USE: in: {res=WRITTEN_AFTER_READ} out: {res=WRITTEN_AFTER_READ}
-    w(res|<v13>)                                                                                                                                                               INIT: in: {dir=ID, res=D} out: {dir=ID, res=ID}     USE: in: {res=READ} out: {res=WRITTEN_AFTER_READ}
-    jmp(L2)                                                                                                                                                                    INIT: in: {dir=ID, res=ID} out: {dir=ID, res=ID}
+    r(4) -> <v13>                                                                                                                                                                                                  USE: in: {res=WRITTEN_AFTER_READ} out: {res=WRITTEN_AFTER_READ}
+    w(res|<v13>)                                                                                                                                                               INIT: in: {res=D} out: {res=ID}     USE: in: {res=READ} out: {res=WRITTEN_AFTER_READ}
+    jmp(L2)                                                                                                                                                                    INIT: in: {res=ID} out: {res=ID}
 L10 [next 'when' entry]:
-    magic[EXHAUSTIVE_WHEN_ELSE](when (dir) { Direction.NORTH -> res = 1 Direction.SOUTH -> res = 2 Direction.WEST -> res = 3 Direction.EAST -> res = 4 }) -> <v14>             INIT: in: {dir=ID, res=D} out: {dir=ID, res=IED}
+    magic[EXHAUSTIVE_WHEN_ELSE](when (dir) { Direction.NORTH -> res = 1 Direction.SOUTH -> res = 2 Direction.WEST -> res = 3 Direction.EAST -> res = 4 }) -> <v14>             INIT: in: {res=D} out: {res=IED}
 L2 [after 'when' expression]:
-    merge(when (dir) { Direction.NORTH -> res = 1 Direction.SOUTH -> res = 2 Direction.WEST -> res = 3 Direction.EAST -> res = 4 }|!<v15>, !<v16>, !<v17>, !<v18>) -> <v19>    INIT: in: {dir=ID, res=ID} out: {dir=ID, res=ID}    USE: in: {res=READ} out: {res=READ}
-    r(res) -> <v20>                                                                                                                                                                                                                USE: in: {} out: {res=READ}
+    merge(when (dir) { Direction.NORTH -> res = 1 Direction.SOUTH -> res = 2 Direction.WEST -> res = 3 Direction.EAST -> res = 4 }|!<v15>, !<v16>, !<v17>, !<v18>) -> <v19>    INIT: in: {res=ID} out: {res=ID}    USE: in: {res=READ} out: {res=READ}
+    r(res) -> <v20>                                                                                                                                                                                                USE: in: {} out: {res=READ}
     ret(*|<v20>) L1
 L1:
-  1 <END>                                                                                                                                                                      INIT: in: {dir=ID} out: {dir=ID}
+  1 <END>                                                                                                                                                                      INIT: in: {} out: {}
 error:
-    <ERROR>                                                                                                                                                                    INIT: in: {} out: {}
+    <ERROR>
 sink:
-    <SINK>                                                                                                                                                                     INIT: in: {dir=I?} out: {dir=I?}                    USE: in: {} out: {}
+    <SINK>                                                                                                                                                                                                         USE: in: {} out: {}
 =====================

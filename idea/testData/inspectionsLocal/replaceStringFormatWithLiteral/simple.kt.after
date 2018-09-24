@@ -1,0 +1,12 @@
+// WITH_RUNTIME
+// HIGHLIGHT: INFORMATION
+
+fun test() {
+    val foo = 1
+
+    "foo is $foo, bar is ${Bar().value}."
+}
+
+class Bar {
+    val value = 2
+}

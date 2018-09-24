@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.resolve.scopes.receivers;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.CallableDescriptor;
 import org.jetbrains.kotlin.types.KotlinType;
 
@@ -24,8 +25,12 @@ public class ExtensionReceiver extends AbstractReceiverValue implements Implicit
 
     private final CallableDescriptor descriptor;
 
-    public ExtensionReceiver(@NotNull CallableDescriptor callableDescriptor, @NotNull KotlinType receiverType) {
-        super(receiverType);
+    public ExtensionReceiver(
+            @NotNull CallableDescriptor callableDescriptor,
+            @NotNull KotlinType receiverType,
+            @Nullable ReceiverValue original
+    ) {
+        super(receiverType, original);
         this.descriptor = callableDescriptor;
     }
 
@@ -38,7 +43,7 @@ public class ExtensionReceiver extends AbstractReceiverValue implements Implicit
     @NotNull
     @Override
     public ReceiverValue replaceType(@NotNull KotlinType newType) {
-        return new ExtensionReceiver(descriptor, newType);
+        return new ExtensionReceiver(descriptor, newType, getOriginal());
     }
 
     @Override
