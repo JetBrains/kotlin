@@ -125,11 +125,6 @@ abstract class AbstractKotlinTargetConfigurator<KotlinTargetType : KotlinTarget>
     ) {
         val project = compilation.target.project
 
-        compilation.output.setResourcesDir(Callable {
-            val classesDirName = "resources/" + compilation.compilationName
-            File(project.buildDir, classesDirName)
-        })
-
         val resourcesTask = project.tasks.maybeCreate(compilation.processResourcesTaskName, ProcessResources::class.java)
         resourcesTask.description = "Processes $resourceSet."
         DslObject(resourcesTask).conventionMapping.map("destinationDir") { compilation.output.resourcesDir }

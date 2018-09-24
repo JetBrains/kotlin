@@ -269,7 +269,7 @@ class KotlinNativeCompilation(
     override val target: KotlinNativeTarget,
     name: String,
     override val output: SourceSetOutput
-) : AbstractKotlinCompilation(target, name) {
+) : AbstractKotlinCompilation(target, name), KotlinCompilationWithResources {
 
     private val project: Project
         get() = target.project
@@ -369,6 +369,8 @@ class KotlinNativeCompilation(
         getBinary(NativeOutputKind.valueOf(kind.toUpperCase()), NativeBuildType.valueOf(buildType.toUpperCase()))
 
     // Naming
+    override val processResourcesTaskName: String
+        get() = disambiguateName("processResources")
 
     val linkAllTaskName: String
         get() = lowerCamelCaseName(

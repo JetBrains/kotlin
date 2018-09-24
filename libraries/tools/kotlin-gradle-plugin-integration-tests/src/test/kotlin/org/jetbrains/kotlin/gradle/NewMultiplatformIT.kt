@@ -164,6 +164,23 @@ class NewMultiplatformIT : BaseGradleIT() {
     }
 
     @Test
+    fun testResourceProcessing() = with(Project("sample-lib", gradleVersion, "new-mpp-lib-and-app")) {
+        val targetsWithResources = listOf("jvm6", "wasm32", nativeHostTargetName)
+        val processResourcesTasks =
+            targetsWithResources.map { ":${it}ProcessResources" }
+
+        build(*processResourcesTasks.toTypedArray()) {
+            assertSuccessful()
+            assertTasksExecuted(*processResourcesTasks.toTypedArray())
+
+            targetsWithResources.forEach {
+                assertFileExists("build/processedResources/$it/main/commonMainResource.txt")
+                assertFileExists("build/processedResources/$it/main/${it}MainResource.txt")
+            }
+        }
+    }
+
+    @Test
     fun testSourceSetCyclicDependencyDetection() = with(Project("sample-lib", gradleVersion, "new-mpp-lib-and-app")) {
         setupWorkingDir()
         gradleBuildScript().appendText("\n" + """
