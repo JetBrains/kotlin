@@ -178,8 +178,10 @@ task zipStdLibSources(type: Zip, dependsOn: unzipStdlibSources) {
 
 task teamcityPublishStdLibSources {
   dependsOn zipStdLibSources
-  doLast {
-    println " ##teamcity[publishArtifacts '${tasks.zipStdLibSources.archivePath}'] "
+  if (System.getenv("TEAMCITY_BUILD_PROPERTIES_FILE") != null) {
+    doLast {
+      println " ##teamcity[publishArtifacts '${tasks.zipStdLibSources.archivePath}'] "
+    }
   }
 }
 
