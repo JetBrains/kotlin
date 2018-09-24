@@ -47,8 +47,6 @@ internal class CallableReferenceLowering(val context: Context): FileLoweringPass
 
     private object DECLARATION_ORIGIN_FUNCTION_REFERENCE_IMPL : IrDeclarationOriginImpl("FUNCTION_REFERENCE_IMPL")
 
-    private var functionReferenceCount = 0
-
     override fun lower(irFile: IrFile) {
         irFile.transform(object: IrElementTransformerVoidWithContext() {
 
@@ -184,7 +182,7 @@ internal class CallableReferenceLowering(val context: Context): FileLoweringPass
 
             functionReferenceClassDescriptor = object : ClassDescriptorImpl(
                     /* containingDeclaration = */ containingDeclaration,
-                    /* name                  = */ "${functionDescriptor.name}\$${functionReferenceCount++}".synthesizedName,
+                    /* name                  = */ "${functionDescriptor.name}\$FUNCTION_REFERENCE\$${context.functionReferenceCount++}".synthesizedName,
                     /* modality              = */ Modality.FINAL,
                     /* kind                  = */ ClassKind.CLASS,
                     /* superTypes            = */ superTypes.map { it.toKotlinType() },

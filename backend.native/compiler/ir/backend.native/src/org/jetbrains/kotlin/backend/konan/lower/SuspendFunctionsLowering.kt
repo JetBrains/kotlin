@@ -252,8 +252,6 @@ internal class SuspendFunctionsLowering(val context: Context): FileLoweringPass 
                                  val coroutineConstructor: IrConstructor,
                                  val invokeSuspendFunction: IrFunction)
 
-    private var coroutineId = 0
-
     private val COROUTINES_FQ_NAME            = FqName.fromSegments(listOf("kotlin", "coroutines", "experimental"))
     private val KOTLIN_FQ_NAME                = FqName("kotlin")
 
@@ -310,7 +308,7 @@ internal class SuspendFunctionsLowering(val context: Context): FileLoweringPass 
             }
             coroutineClassDescriptor = ClassDescriptorImpl(
                     /* containingDeclaration = */ irFunction.descriptor.containingDeclaration,
-                    /* name                  = */ "${irFunction.descriptor.name}\$${coroutineId++}".synthesizedName,
+                    /* name                  = */ "${irFunction.descriptor.name}\$COROUTINE\$${context.coroutineCount++}".synthesizedName,
                     /* modality              = */ Modality.FINAL,
                     /* kind                  = */ ClassKind.CLASS,
                     /* superTypes            = */ superTypes.map { it.toKotlinType() },
