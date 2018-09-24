@@ -43,9 +43,7 @@ import org.jetbrains.kotlin.types.checker.NewKotlinTypeChecker
 import org.jetbrains.kotlin.types.checker.TypeCheckerContext
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices
 import org.jetbrains.kotlin.types.expressions.KotlinTypeInfo
-import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
-import org.jetbrains.kotlin.types.typeUtil.builtIns
-import org.jetbrains.kotlin.types.typeUtil.contains
+import org.jetbrains.kotlin.types.typeUtil.*
 import javax.inject.Inject
 
 class TypeTemplate(
@@ -87,8 +85,28 @@ class CoroutineInferenceData {
         } ?: type
     }
 
-    fun addConstraint(subType: KotlinType, superType: KotlinType) {
-        csBuilder.addSubtypeConstraint(toNewVariableType(subType), toNewVariableType(superType), ConstraintPositionKind.SPECIAL.position())
+    internal fun addConstraint(subType: KotlinType, superType: KotlinType, allowOnlyTrivialConstraints: Boolean) {
+        val newSubType = toNewVariableType(subType)
+        val newSuperType = toNewVariableType(superType)
+
+        if (allowOnlyTrivialConstraints) {
+            if (isTrivialConstraint(subType, superType)) {
+                // It's important to avoid adding even trivial constraints from extensions,
+                // because we allow only calls that don't matter at all and here we can get
+                // into a situation when type is inferred from only trivial constraints to Any?, for example.
+
+                // Actually, this is a more general problem about inferring type without constraints (KT-5464)
+                return
+            } else {
+                badCallHappened()
+            }
+        }
+
+        csBuilder.addSubtypeConstraint(newSubType, newSuperType, ConstraintPositionKind.SPECIAL.position())
+    }
+
+    private fun isTrivialConstraint(subType: KotlinType, superType: KotlinType): Boolean {
+        return subType is SimpleType && subType.isNothing() || superType is SimpleType && superType.isNullableAny()
     }
 
     fun reportInferenceResult(externalCSBuilder: ConstraintSystem.Builder) {
@@ -201,24 +219,32 @@ class CoroutineInferenceSupport(
         callCompleter.completeCall(context, overloadResults, tracingStrategy)
         if (!resultingCall.isReallySuccess()) return
 
-        if (!isGoodCall(resultingCall.resultingDescriptor)) {
+        val resultingDescriptor = resultingCall.resultingDescriptor
+        if (!isGoodCall(resultingDescriptor)) {
             inferenceData.badCallHappened()
         }
 
         forceInferenceForArguments(context) { valueArgument: ValueArgument, kotlinType: KotlinType ->
-            val argumentMatch = resultingCall.getArgumentMapping(valueArgument) as? ArgumentMatch
-                    ?: return@forceInferenceForArguments
+            val argumentMatch = resultingCall.getArgumentMapping(valueArgument) as? ArgumentMatch ?: return@forceInferenceForArguments
 
             with(NewKotlinTypeChecker) {
                 val parameterType = getEffectiveExpectedType(argumentMatch.valueParameter, valueArgument, context)
-                CoroutineTypeCheckerContext().isSubtypeOf(kotlinType.unwrap(), parameterType.unwrap())
+                CoroutineTypeCheckerContext(allowOnlyTrivialConstraints = false).isSubtypeOf(kotlinType.unwrap(), parameterType.unwrap())
             }
         }
 
-        val extensionReceiver = resultingCall.resultingDescriptor.extensionReceiverParameter ?: return
+        val extensionReceiver = resultingDescriptor.extensionReceiverParameter ?: return
+        val allowOnlyTrivialConstraintsForReceiver =
+            if (languageVersionSettings.supportsFeature(LanguageFeature.ExperimentalBuilderInference))
+                !resultingDescriptor.hasBuilderInferenceAnnotation()
+            else
+                false
+
         resultingCall.extensionReceiver?.let { actualReceiver ->
             with(NewKotlinTypeChecker) {
-                CoroutineTypeCheckerContext().isSubtypeOf(actualReceiver.type.unwrap(), extensionReceiver.value.type.unwrap())
+                CoroutineTypeCheckerContext(allowOnlyTrivialConstraints = allowOnlyTrivialConstraintsForReceiver).isSubtypeOf(
+                    actualReceiver.type.unwrap(), extensionReceiver.value.type.unwrap()
+                )
             }
         }
     }
@@ -231,7 +257,7 @@ class CoroutineInferenceSupport(
         }
 
         if (resultingDescriptor.isExtension && !resultingDescriptor.hasBuilderInferenceAnnotation()) {
-            return false
+            return resultingDescriptor.extensionReceiverParameter?.type?.containsTypeTemplate() == false
         }
 
         val returnType = resultingDescriptor.returnType ?: return false
@@ -249,9 +275,13 @@ class CoroutineInferenceSupport(
         return true
     }
 
-    private class CoroutineTypeCheckerContext : TypeCheckerContext(errorTypeEqualsToAnything = true) {
+    private class CoroutineTypeCheckerContext(
+        private val allowOnlyTrivialConstraints: Boolean
+    ) : TypeCheckerContext(errorTypeEqualsToAnything = true) {
+
         override fun addSubtypeConstraint(subType: UnwrappedType, superType: UnwrappedType): Boolean? {
-            (subType as? TypeTemplate ?: superType as? TypeTemplate)?.coroutineInferenceData?.addConstraint(subType, superType)
+            val typeTemplate = subType as? TypeTemplate ?: superType as? TypeTemplate
+            typeTemplate?.coroutineInferenceData?.addConstraint(subType, superType, allowOnlyTrivialConstraints)
             return null
         }
     }
