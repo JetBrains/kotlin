@@ -39,6 +39,9 @@ enum class LocalFunctionAnalysisStrategy {
     abstract fun shouldVisitLocalFunction(declaration: LocalFunctionDeclarationInstruction): Boolean
 }
 
+/**
+ * Traverse [analyzeInstruction] function along all instructions of pseudocode in [traversalOrder]
+ */
 fun Pseudocode.traverse(
     traversalOrder: TraversalOrder,
     analyzeInstruction: (Instruction) -> Unit
@@ -52,6 +55,13 @@ fun Pseudocode.traverse(
     }
 }
 
+/**
+ * Traverse [analyzeInstruction] function along all instructions of pseudocode
+ *   and edges data from [edgesMap] in [traversalOrder].
+ *
+ * [analyzeInstruction] takes [Instruction] and two [D] values -- data from
+ *   incoming and outgoing edges
+ */
 fun <D> Pseudocode.traverse(
     traversalOrder: TraversalOrder,
     edgesMap: Map<Instruction, Edges<D>>,
@@ -64,6 +74,73 @@ fun <D> Pseudocode.traverse(
         }
         val edges = edgesMap[instruction] ?: continue
         analyzeInstruction(instruction, edges.incoming, edges.outgoing)
+    }
+}
+
+/**
+ * Traverse [analyzeInstruction] and [analyzeIncomingEdge] functions along all instructions of pseudocode
+ *   and edges data from [edgesMap] in [traversalOrder].
+ *
+ * [analyzeInstruction] takes [Instruction] and two [D] values -- data from
+ *   incoming and outgoing edges.
+ *
+ * [analyzeIncomingEdge] used for analyzing every single edge. It takes two instructions (previous and current)
+ *   and outgoing data from `previous -> current` edge
+ *
+ */
+fun <I : ControlFlowInfo<*, *, *>> Pseudocode.traverse(
+    traversalOrder: TraversalOrder,
+    edgesMap: Map<Instruction, Edges<I>>,
+    analyzeInstruction: (Instruction, I, I) -> Unit,
+    analyzeIncomingEdge: (Instruction, Instruction, I) -> Unit,
+    localFunctionAnalysisStrategy: LocalFunctionAnalysisStrategy
+) {
+    traverse(
+        traversalOrder,
+        edgesMap,
+        analyzeInstruction,
+        analyzeIncomingEdge,
+        localFunctionAnalysisStrategy,
+        previousSubGraphInstructions = Collections.emptyList(),
+        isLocal = false
+    )
+}
+
+private fun <I : ControlFlowInfo<*, *, *>> Pseudocode.traverse(
+    traversalOrder: TraversalOrder,
+    edgesMap: Map<Instruction, Edges<I>>,
+    analyzeInstruction: (Instruction, I, I) -> Unit,
+    analyzeIncomingEdge: (Instruction, Instruction, I) -> Unit,
+    localFunctionAnalysisStrategy: LocalFunctionAnalysisStrategy,
+    previousSubGraphInstructions: Collection<Instruction>,
+    isLocal: Boolean
+) {
+    val instructions = getInstructions(traversalOrder)
+    val startInstruction = getStartInstruction(traversalOrder)
+
+    for (instruction in instructions) {
+        val isStart = instruction.isStartInstruction(traversalOrder)
+        if (!isLocal && isStart)
+            continue
+
+        val previousInstructions =
+            getPreviousIncludingSubGraphInstructions(instruction, traversalOrder, startInstruction, previousSubGraphInstructions)
+
+        if (instruction is LocalFunctionDeclarationInstruction && localFunctionAnalysisStrategy.shouldVisitLocalFunction(instruction)) {
+            val subroutinePseudocode = instruction.body
+            subroutinePseudocode.traverse(
+                traversalOrder, edgesMap, analyzeInstruction, analyzeIncomingEdge, localFunctionAnalysisStrategy, previousInstructions, true
+            )
+            continue
+        }
+
+        previousInstructions.forEach { previousInstruction ->
+            val previousData = edgesMap[previousInstruction] ?: return@forEach
+            analyzeIncomingEdge(previousInstruction, instruction, previousData.outgoing)
+        }
+
+        val data = edgesMap[instruction] ?: continue
+        analyzeInstruction(instruction, data.incoming, data.outgoing)
     }
 }
 
