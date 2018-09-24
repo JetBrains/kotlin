@@ -11492,6 +11492,11 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS, testDataFilePath);
             }
 
+            @TestMetadata("accessPrivateInlineClassMethodFromInlineLambdaInInlineClass.kt")
+            public void testAccessPrivateInlineClassMethodFromInlineLambdaInInlineClass() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/accessPrivateInlineClassMethodFromInlineLambdaInInlineClass.kt");
+            }
+
             public void testAllFilesPresentInContextsAndAccessors() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JS, true);
             }
