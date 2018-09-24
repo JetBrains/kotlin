@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.cfg.variable
 
-import org.jetbrains.kotlin.cfg.ControlFlowInfo
 import org.jetbrains.kotlin.cfg.pseudocode.Pseudocode
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.BlockScope
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.Instruction
@@ -24,7 +23,7 @@ class PseudocodeVariableDataCollector(
 ) {
     val blockScopeVariableInfo = computeBlockScopeVariableInfo(pseudocode)
 
-    fun <I : ControlFlowInfo<*, *>> collectData(
+    fun <I : VariableUsageControlFlowInfo<*, *>> collectData(
         traversalOrder: TraversalOrder,
         initialInfo: I,
         instructionDataMergeStrategy: (Instruction, Collection<I>) -> Edges<I>
@@ -37,7 +36,7 @@ class PseudocodeVariableDataCollector(
         )
     }
 
-    private fun <I : ControlFlowInfo<*, *>> filterOutVariablesOutOfScope(
+    private fun <I : VariableUsageControlFlowInfo<*, *>> filterOutVariablesOutOfScope(
         from: Instruction,
         to: Instruction,
         info: I

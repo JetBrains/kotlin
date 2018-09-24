@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.cfg.pseudocode.PseudocodeImpl;
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.Instruction;
 import org.jetbrains.kotlin.cfg.pseudocodeTraverser.Edges;
 import org.jetbrains.kotlin.cfg.variable.PseudocodeVariablesData;
-import org.jetbrains.kotlin.cfg.variable.ReadOnlyInitControlFlowInfo;
+import org.jetbrains.kotlin.cfg.variable.VariableInitReadOnlyControlFlowInfo;
 import org.jetbrains.kotlin.cfg.variable.VariableUseState;
 import org.jetbrains.kotlin.descriptors.VariableDescriptor;
 import org.jetbrains.kotlin.resolve.BindingContext;
@@ -42,9 +42,9 @@ public abstract class AbstractDataFlowTest extends AbstractPseudocodeTest {
             @NotNull BindingContext bindingContext
     ) {
         PseudocodeVariablesData pseudocodeVariablesData = new PseudocodeVariablesData(pseudocode.getRootPseudocode(), bindingContext);
-        Map<Instruction, Edges<ReadOnlyInitControlFlowInfo>> variableInitializers =
+        Map<Instruction, Edges<VariableInitReadOnlyControlFlowInfo>> variableInitializers =
                 pseudocodeVariablesData.getVariableInitializers();
-        Map<Instruction, Edges<ReadOnlyControlFlowInfo<VariableUseState>>> useStatusData =
+        Map<Instruction, Edges<ReadOnlyControlFlowInfo<VariableDescriptor, VariableUseState>>> useStatusData =
                 pseudocodeVariablesData.getVariableUseStatusData();
         String initPrefix = "    INIT:";
         String usePrefix = "    USE:";
@@ -53,16 +53,16 @@ public abstract class AbstractDataFlowTest extends AbstractPseudocodeTest {
 
         dumpInstructions(pseudocode, out, (instruction, next, prev) -> {
             StringBuilder result = new StringBuilder();
-            Edges<ReadOnlyInitControlFlowInfo> initializersEdges = variableInitializers.get(instruction);
-            Edges<ReadOnlyInitControlFlowInfo> previousInitializersEdges = variableInitializers.get(prev);
+            Edges<VariableInitReadOnlyControlFlowInfo> initializersEdges = variableInitializers.get(instruction);
+            Edges<VariableInitReadOnlyControlFlowInfo> previousInitializersEdges = variableInitializers.get(prev);
             String initializersData = "";
             if (initializersEdges != null && !initializersEdges.equals(previousInitializersEdges)) {
                 initializersData = dumpEdgesData(initPrefix, initializersEdges, pseudocodeVariablesData);
             }
             result.append(String.format("%1$-" + initializersColumnWidth + "s", initializersData));
 
-            Edges<ReadOnlyControlFlowInfo<VariableUseState>> useStatusEdges = useStatusData.get(instruction);
-            Edges<ReadOnlyControlFlowInfo<VariableUseState>> nextUseStatusEdges = useStatusData.get(next);
+            Edges<ReadOnlyControlFlowInfo<VariableDescriptor, VariableUseState>> useStatusEdges = useStatusData.get(instruction);
+            Edges<ReadOnlyControlFlowInfo<VariableDescriptor, VariableUseState>> nextUseStatusEdges = useStatusData.get(next);
             if (useStatusEdges != null && !useStatusEdges.equals(nextUseStatusEdges)) {
                 result.append(dumpEdgesData(usePrefix, useStatusEdges, pseudocodeVariablesData));
             }
@@ -73,12 +73,12 @@ public abstract class AbstractDataFlowTest extends AbstractPseudocodeTest {
     private static int countDataColumnWidth(
             @NotNull String prefix,
             @NotNull List<Instruction> instructions,
-            @NotNull Map<Instruction, Edges<ReadOnlyInitControlFlowInfo>> data,
+            @NotNull Map<Instruction, Edges<VariableInitReadOnlyControlFlowInfo>> data,
             @NotNull PseudocodeVariablesData variablesData
     ) {
         int maxWidth = 0;
         for (Instruction instruction : instructions) {
-            Edges<ReadOnlyInitControlFlowInfo> edges = data.get(instruction);
+            Edges<VariableInitReadOnlyControlFlowInfo> edges = data.get(instruction);
             if (edges == null) continue;
             int length = dumpEdgesData(prefix, edges, variablesData).length();
             if (maxWidth < length) {
@@ -90,7 +90,7 @@ public abstract class AbstractDataFlowTest extends AbstractPseudocodeTest {
     }
 
     @NotNull
-    private static <S, I extends ReadOnlyControlFlowInfo<S>> String dumpEdgesData(
+    private static <S, I extends ReadOnlyControlFlowInfo<VariableDescriptor, S>> String dumpEdgesData(
             String prefix,
             @NotNull Edges<I> edges,
             @NotNull PseudocodeVariablesData variablesData
