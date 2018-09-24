@@ -19916,6 +19916,11 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                     runTest("compiler/testData/diagnostics/tests/smartCasts/loops/whileNull.kt");
                 }
 
+                @TestMetadata("whileNullAssignToSomething.kt")
+                public void testWhileNullAssignToSomething() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/smartCasts/loops/whileNullAssignToSomething.kt");
+                }
+
                 @TestMetadata("whileNullWithBreak.kt")
                 public void testWhileNullWithBreak() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/smartCasts/loops/whileNullWithBreak.kt");
