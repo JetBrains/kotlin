@@ -2049,14 +2049,14 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
                 runTestWithPackageReplacement("compiler/testData/diagnostics/testsWithStdLib/coroutines/restrictSuspension/notRelatedFun.kt", "kotlin.coroutines");
             }
 
-            @TestMetadata("outerYield.kt")
+            @TestMetadata("outerYield_1_2.kt")
             public void testOuterYield_1_2() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/diagnostics/testsWithStdLib/coroutines/restrictSuspension/outerYield.kt", "kotlin.coroutines.experimental");
+                runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/restrictSuspension/outerYield_1_2.kt");
             }
 
-            @TestMetadata("outerYield.kt")
+            @TestMetadata("outerYield_1_3.kt")
             public void testOuterYield_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/diagnostics/testsWithStdLib/coroutines/restrictSuspension/outerYield.kt", "kotlin.coroutines");
+                runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/restrictSuspension/outerYield_1_3.kt");
             }
 
             @TestMetadata("sameInstance.kt")
