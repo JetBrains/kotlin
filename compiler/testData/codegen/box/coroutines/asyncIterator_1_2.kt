@@ -1,11 +1,11 @@
-// IGNORE_BACKEND: JS_IR
-// IGNORE_BACKEND: JVM_IR
+// !LANGUAGE: -ReleaseCoroutines -ExperimentalBuilderInference
+// IGNORE_BACKEND: JVM_IR, JS_IR
 // WITH_RUNTIME
 // WITH_COROUTINES
-// COMMON_COROUTINES_TEST
+
 import helpers.*
-import COROUTINES_PACKAGE.*
-import COROUTINES_PACKAGE.intrinsics.*
+import kotlin.coroutines.experimental.*
+import kotlin.coroutines.experimental.intrinsics.*
 
 interface AsyncGenerator<in T> {
     suspend fun yield(value: T)
@@ -106,12 +106,6 @@ class AsyncGeneratorIterator<T>: AsyncIterator<T>, AsyncGenerator<T>, Continuati
     }
 }
 
-suspend fun <T> AsyncSequence<T>.toList(): List<T> {
-    val out = arrayListOf<T>()
-    for (e in this@toList) out += e // fails at this line
-    return out
-}
-
 fun builder(c: suspend () -> Unit) {
     c.startCoroutine(EmptyContinuation)
 }
@@ -122,13 +116,13 @@ fun box(): String {
         yield("K")
     }
 
-    var res = listOf<String>()
+    var res = ""
 
     builder {
-        res = seq.toList()
+        for (i in seq) {
+            res += i
+        }
     }
 
-    if (res.size > 2) return "fail 1: ${res.size}"
-
-    return res[0] + res[1]
+    return res
 }

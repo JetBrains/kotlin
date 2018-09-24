@@ -1,10 +1,12 @@
+// !LANGUAGE: +ReleaseCoroutines +ExperimentalBuilderInference
 // IGNORE_BACKEND: JVM_IR
 // WITH_RUNTIME
 // WITH_COROUTINES
-// COMMON_COROUTINES_TEST
+
 import helpers.*
-import COROUTINES_PACKAGE.*
-import COROUTINES_PACKAGE.intrinsics.*
+import kotlin.coroutines.*
+import kotlin.coroutines.intrinsics.*
+import kotlin.experimental.ExperimentalTypeInference
 
 interface AsyncGenerator<in T> {
     suspend fun yield(value: T)
@@ -19,7 +21,8 @@ interface AsyncIterator<out T> {
     operator suspend fun next(): T
 }
 
-fun <T> asyncGenerate(block: suspend AsyncGenerator<T>.() -> Unit): AsyncSequence<T> = object : AsyncSequence<T> {
+@UseExperimental(ExperimentalTypeInference::class)
+fun <T> asyncGenerate(@BuilderInference block: suspend AsyncGenerator<T>.() -> Unit): AsyncSequence<T> = object : AsyncSequence<T> {
     override fun iterator(): AsyncIterator<T> {
         val iterator = AsyncGeneratorIterator<T>()
         iterator.nextStep = block.createCoroutine(receiver = iterator, completion = iterator)

@@ -1,10 +1,11 @@
-// IGNORE_BACKEND: JVM_IR
+// !LANGUAGE: -ReleaseCoroutines -ExperimentalBuilderInference
+// IGNORE_BACKEND: JVM_IR, JS_IR
 // WITH_RUNTIME
 // WITH_COROUTINES
-// COMMON_COROUTINES_TEST
+
 import helpers.*
-import COROUTINES_PACKAGE.*
-import COROUTINES_PACKAGE.intrinsics.*
+import kotlin.coroutines.experimental.*
+import kotlin.coroutines.experimental.intrinsics.*
 
 interface AsyncGenerator<in T> {
     suspend fun yield(value: T)
