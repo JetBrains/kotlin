@@ -343,7 +343,7 @@ class IntrinsicifyCallsLowering(private val context: JsIrBackendContext) : FileL
             }
 
             override fun visitFunction(declaration: IrFunction): IrStatement {
-                if (declaration.symbol == intrinsics.compareToDoNotIntrinsicify)
+                if (declaration.hasAnnotation(intrinsics.doNotIntrinsifyAnnotationSymbol))
                     return declaration
                 return super.visitFunction(declaration)
             }
@@ -354,10 +354,6 @@ class IntrinsicifyCallsLowering(private val context: JsIrBackendContext) : FileL
                 if (call is IrCall) {
                     val symbol = call.symbol
                     val declaration = symbol.owner
-
-                    if (declaration.annotations.any { it.superQualifierSymbol == intrinsics.doNotIntrinsifyAnnotationSymbol }) {
-                        return call
-                    }
 
                     if (declaration.isDynamic() || declaration.isEffectivelyExternal()) {
                         when (call.origin) {

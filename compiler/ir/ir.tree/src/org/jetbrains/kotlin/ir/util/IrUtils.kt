@@ -336,6 +336,12 @@ fun IrAnnotationContainer.hasAnnotation(name: FqName) =
         it.symbol.owner.parentAsClass.descriptor.fqNameSafe == name
     }
 
+fun IrAnnotationContainer.hasAnnotation(symbol: IrClassSymbol) =
+    annotations.any {
+        it.symbol.owner.parentAsClass.symbol == symbol
+    }
+
+
 val IrConstructor.constructedClassType get() = (parent as IrClass).thisReceiver?.type!!
 
 fun IrFunction.isFakeOverriddenFromAny(): Boolean {

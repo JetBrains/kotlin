@@ -23,7 +23,7 @@ fun compareTo(a: dynamic, b: dynamic): Int {
     return compareToDoNotIntrinsicify(a, b)
 }
 
-// TODO: Use @DoNotIntrincify annotation
+@DoNotIntrinsify
 private fun <T : Comparable<T>> compareToDoNotIntrinsicify(a: Comparable<T>, b: T) =
     a.compareTo(b)
 
