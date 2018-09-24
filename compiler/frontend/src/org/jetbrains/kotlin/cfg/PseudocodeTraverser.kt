@@ -56,7 +56,7 @@ fun <D> Pseudocode.traverse(
     }
 }
 
-fun <I : ControlFlowInfo<*, *>> Pseudocode.collectData(
+fun <I : ControlFlowInfo<*, *, *>> Pseudocode.collectData(
     traversalOrder: TraversalOrder,
     mergeEdges: (Instruction, Collection<I>) -> Edges<I>,
     updateEdge: (Instruction, Instruction, I) -> I,
@@ -76,7 +76,7 @@ fun <I : ControlFlowInfo<*, *>> Pseudocode.collectData(
     return edgesMap
 }
 
-private fun <I : ControlFlowInfo<*, *>> Pseudocode.collectDataFromSubgraph(
+private fun <I : ControlFlowInfo<*, *, *>> Pseudocode.collectDataFromSubgraph(
     traversalOrder: TraversalOrder,
     edgesMap: MutableMap<Instruction, Edges<I>>,
     mergeEdges: (Instruction, Collection<I>) -> Edges<I>,
@@ -154,7 +154,7 @@ private fun getPreviousIncludingSubGraphInstructions(
     return result
 }
 
-private fun <I : ControlFlowInfo<*, *>> updateEdgeDataForInstruction(
+private fun <I : ControlFlowInfo<*, *, *>> updateEdgeDataForInstruction(
     instruction: Instruction,
     previousValue: Edges<I>?,
     newValue: Edges<I>?,

@@ -8,25 +8,33 @@ package org.jetbrains.kotlin.cfg.variable
 import org.jetbrains.kotlin.cfg.ControlFlowInfo
 import org.jetbrains.kotlin.cfg.ReadOnlyControlFlowInfo
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
-import org.jetbrains.kotlin.util.javaslang.*
+import org.jetbrains.kotlin.util.javaslang.ImmutableHashMap
+import org.jetbrains.kotlin.util.javaslang.ImmutableMap
+import org.jetbrains.kotlin.util.javaslang.component1
+import org.jetbrains.kotlin.util.javaslang.component2
 
-interface ReadOnlyInitControlFlowInfo : ReadOnlyControlFlowInfo<VariableControlFlowState> {
-    fun checkDefiniteInitializationInWhen(merge: ReadOnlyInitControlFlowInfo): Boolean
+typealias ReadOnlyUseVariableControlFlowInfo = ReadOnlyControlFlowInfo<VariableDescriptor, VariableUseState>
+typealias VariableControlFlowInfo<S, D> = ControlFlowInfo<S, VariableDescriptor, D>
+
+interface ReadOnlyInitVariableControlFlowInfo :
+    ReadOnlyControlFlowInfo<VariableDescriptor, VariableControlFlowState> {
+    fun checkDefiniteInitializationInWhen(merge: ReadOnlyInitVariableControlFlowInfo): Boolean
 }
 
-typealias ReadOnlyUseControlFlowInfo = ReadOnlyControlFlowInfo<VariableUseState>
-
-class InitControlFlowInfo(map: ImmutableMap<VariableDescriptor, VariableControlFlowState> = ImmutableHashMap.empty()) :
-    ControlFlowInfo<InitControlFlowInfo, VariableControlFlowState>(map), ReadOnlyInitControlFlowInfo {
-    override fun copy(newMap: ImmutableMap<VariableDescriptor, VariableControlFlowState>) = InitControlFlowInfo(newMap)
+class InitVariableControlFlowInfo(map: ImmutableMap<VariableDescriptor, VariableControlFlowState> = ImmutableHashMap.empty()) :
+    VariableControlFlowInfo<InitVariableControlFlowInfo, VariableControlFlowState>(map),
+    ReadOnlyInitVariableControlFlowInfo {
+    override fun copy(newMap: ImmutableMap<VariableDescriptor, VariableControlFlowState>) =
+        InitVariableControlFlowInfo(newMap)
 
     // this = output of EXHAUSTIVE_WHEN_ELSE instruction
     // merge = input of MergeInstruction
     // returns true if definite initialization in when happens here
-    override fun checkDefiniteInitializationInWhen(merge: ReadOnlyInitControlFlowInfo): Boolean {
+    override fun checkDefiniteInitializationInWhen(merge: ReadOnlyInitVariableControlFlowInfo): Boolean {
         for ((key, value) in iterator()) {
             if (value.initState == InitState.INITIALIZED_EXHAUSTIVELY &&
-                merge.getOrNull(key)?.initState == InitState.INITIALIZED) {
+                merge.getOrNull(key)?.initState == InitState.INITIALIZED
+            ) {
                 return true
             }
         }
@@ -34,9 +42,11 @@ class InitControlFlowInfo(map: ImmutableMap<VariableDescriptor, VariableControlF
     }
 }
 
-class UseControlFlowInfo(map: ImmutableMap<VariableDescriptor, VariableUseState> = ImmutableHashMap.empty()) :
-    ControlFlowInfo<UseControlFlowInfo, VariableUseState>(map), ReadOnlyUseControlFlowInfo {
-    override fun copy(newMap: ImmutableMap<VariableDescriptor, VariableUseState>) = UseControlFlowInfo(newMap)
+class UseVariableControlFlowInfo(map: ImmutableMap<VariableDescriptor, VariableUseState> = ImmutableHashMap.empty()) :
+    VariableControlFlowInfo<UseVariableControlFlowInfo, VariableUseState>(map),
+    ReadOnlyUseVariableControlFlowInfo {
+    override fun copy(newMap: ImmutableMap<VariableDescriptor, VariableUseState>) =
+        UseVariableControlFlowInfo(newMap)
 }
 
 enum class InitState(private val s: String) {

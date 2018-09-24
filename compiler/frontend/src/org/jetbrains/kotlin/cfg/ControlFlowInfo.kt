@@ -16,41 +16,40 @@
 
 package org.jetbrains.kotlin.cfg
 
-import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.util.javaslang.ImmutableHashMap
 import org.jetbrains.kotlin.util.javaslang.ImmutableMap
 
-interface ReadOnlyControlFlowInfo<D : Any> {
-    fun getOrNull(variableDescriptor: VariableDescriptor): D?
+interface ReadOnlyControlFlowInfo<K : Any, D : Any> {
+    fun getOrNull(key: K): D?
     // Only used in tests
-    fun asMap(): ImmutableMap<VariableDescriptor, D>
+    fun asMap(): ImmutableMap<K, D>
 }
 
-abstract class ControlFlowInfo<S : ControlFlowInfo<S, D>, D : Any>
+abstract class ControlFlowInfo<S : ControlFlowInfo<S, K, D>, K : Any, D : Any>
 internal constructor(
-    protected val map: ImmutableMap<VariableDescriptor, D> = ImmutableHashMap.empty()
-) : ImmutableMap<VariableDescriptor, D> by map, ReadOnlyControlFlowInfo<D> {
-    protected abstract fun copy(newMap: ImmutableMap<VariableDescriptor, D>): S
+    protected val map: ImmutableMap<K, D> = ImmutableHashMap.empty()
+) : ImmutableMap<K, D> by map, ReadOnlyControlFlowInfo<K, D> {
+    protected abstract fun copy(newMap: ImmutableMap<K, D>): S
 
-    override fun put(key: VariableDescriptor, value: D): S = put(key, value, this[key].getOrElse(null as D?))
+    override fun put(key: K, value: D): S = put(key, value, this[key].getOrElse(null as D?))
 
     /**
      * This overload exists just for sake of optimizations: in some cases we've just retrieved the old value,
      * so we don't need to scan through the persistent hashmap again
      */
-    fun put(key: VariableDescriptor, value: D, oldValue: D?): S {
+    fun put(key: K, value: D, oldValue: D?): S {
         @Suppress("UNCHECKED_CAST")
         // Avoid a copy instance creation if new value is the same
         if (value == oldValue) return this as S
         return copy(map.put(key, value))
     }
 
-    override fun getOrNull(variableDescriptor: VariableDescriptor): D? = this[variableDescriptor].getOrElse(null as D?)
+    override fun getOrNull(key: K): D? = this[key].getOrElse(null as D?)
     override fun asMap() = this
 
-    fun retainAll(predicate: (VariableDescriptor) -> Boolean): S = copy(map.removeAll(map.keySet().filterNot(predicate)))
+    fun retainAll(predicate: (K) -> Boolean): S = copy(map.removeAll(map.keySet().filterNot(predicate)))
 
-    override fun equals(other: Any?) = map == (other as? ControlFlowInfo<*, *>)?.map
+    override fun equals(other: Any?) = map == (other as? ControlFlowInfo<*, *, *>)?.map
 
     override fun hashCode() = map.hashCode()
 
