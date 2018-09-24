@@ -88,9 +88,7 @@ L0:
     r({ myRun { return@outer Unit } println(y) }) -> <v1>
     mark(myRun outer@ { myRun { return@outer Unit } println(y) })
     call(myRun outer@ { myRun { return@outer Unit } println(y) }, myRun|<v1>) -> <v2>
-L2 [before inlined declaration]:
     inlined({ myRun { return@outer Unit } println(y) })
-L3 [after inlined declaration]:
     w(x|<v2>)                                                                                          INIT: in: {} out: {}
     r(y) -> <v3>                                                                                       INIT: in: {} out: {}
     mark(println(y))
@@ -111,20 +109,20 @@ sink:
         println(y)
     }
 ---------------------
-L4:
+L2:
   3 <START>                                                  INIT: in: {} out: {}
+L4 [before inlined declaration]:
   4 mark(myRun { return@outer Unit } println(y))
     mark({ return@outer Unit })
     r({ return@outer Unit }) -> <v0>
     mark(myRun { return@outer Unit })
     call(myRun { return@outer Unit }, myRun|<v0>) -> <v1>
-L6 [before inlined declaration]:
     inlined({ return@outer Unit })                                                   USE: in: {} out: {}
-L7 [after inlined declaration]:
 -   r(y) -> <v2>
 -   mark(println(y))
 -   call(println(y), println|<v2>) -> <v3>
-L5:
+L3:
+L5 [after inlined declaration]:
   3 <END>                                                    INIT: in: {} out: {}    USE: in: {} out: {}
 error:
 -   <ERROR>
@@ -134,12 +132,14 @@ sink:
 == inlined anonymous_2 ==
 { return@outer Unit }
 ---------------------
-L8:
+L6:
   5 <START>                    INIT: in: {} out: {}
+L8 [before inlined declaration]:
   6 mark(return@outer Unit)
     r(Unit) -> <v0>
-    ret(*|<v0>) L5                                     USE: in: {} out: {}
-L9:
+    ret(*|<v0>) L3                                     USE: in: {} out: {}
+L7:
+L9 [after inlined declaration]:
 - 5 <END>
 error:
 -   <ERROR>

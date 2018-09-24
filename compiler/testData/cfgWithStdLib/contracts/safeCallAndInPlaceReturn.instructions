@@ -73,11 +73,9 @@ L0:
     r({ return "" }) -> <v2>
     mark(myRun { return "" })
     call(myRun { return "" }, myRun|<v1>, <v2>) -> <v3>
-L3 [before inlined declaration]:
     inlined({ return "" })                                    NEXT:[<SINK>]
 L1:
 L2 [result of call]:
-L4 [after inlined declaration]:
   1 <END>                                                     NEXT:[<SINK>]                                                    PREV:[jf(L2), ret(*|<v0>) L1]
 error:
     <ERROR>                                                   PREV:[]
@@ -89,13 +87,15 @@ sink:
         return ""
     }
 ---------------------
-L5:
+L3:
   3 <START>
+L5 [before inlined declaration]:
   4 mark(return "")
     mark("")
     r("") -> <v0>
     ret(*|<v0>) L1     NEXT:[<END>]
-L6:
+L4:
+L6 [after inlined declaration]:
 - 3 <END>              NEXT:[<SINK>]             PREV:[]
 error:
 -   <ERROR>            PREV:[]

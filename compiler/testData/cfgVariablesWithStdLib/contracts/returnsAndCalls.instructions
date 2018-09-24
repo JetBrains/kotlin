@@ -110,9 +110,7 @@ L0:
     r({ y = 42 }) -> <v3>
     mark(callsAndInverts(x !is String) { y = 42 })
     call(callsAndInverts(x !is String) { y = 42 }, callsAndInverts|<v2>, <v3>) -> <v4>
-L2 [before inlined declaration]:
     inlined({ y = 42 })                                                                                                                                                                         INIT: in: {y=ID} out: {y=ID}    USE: in: {y=WRITTEN_AFTER_READ} out: {y=WRITTEN_AFTER_READ}
-L3 [after inlined declaration]:
     jf(L6|<v4>)
   3 mark({ println(y) <!DEBUG_INFO_SMARTCAST!>x<!>.length })
     r(y) -> <v5>
@@ -145,12 +143,14 @@ sink:
 == inlined anonymous_1 ==
 { y = 42 }
 ---------------------
-L4:
+L2:
   3 <START>          INIT: in: {y=D} out: {y=D}
+L4 [before inlined declaration]:
   4 mark(y = 42)
     r(42) -> <v0>                                    USE: in: {y=WRITTEN_AFTER_READ} out: {y=WRITTEN_AFTER_READ}
     w(y|<v0>)        INIT: in: {y=D} out: {y=ID}     USE: in: {y=READ} out: {y=WRITTEN_AFTER_READ}
-L5:
+L3:
+L5 [after inlined declaration]:
   3 <END>            INIT: in: {y=ID} out: {y=ID}    USE: in: {y=READ} out: {y=READ}
 error:
 -   <ERROR>
@@ -192,10 +192,8 @@ L0:
     r({ y = 42 }) -> <v5>
     mark(callsAndInverts(x !is String) { y = 42 })
     call(callsAndInverts(x !is String) { y = 42 }, callsAndInverts|<v4>, <v5>) -> <v6>
-L3 [before inlined declaration]:
     inlined({ y = 42 })                                                                                                                                                                                           INIT: in: {y=ID} out: {y=ID}      USE: in: {y=WRITTEN_AFTER_READ} out: {y=WRITTEN_AFTER_READ}
 L2 [result of boolean operation]:
-L4 [after inlined declaration]:
     magic[AND](unknownBoolean && callsAndInverts(x !is String) { y = 42 }|<v2>, <v6>) -> <v7>                                                                                                                     INIT: in: {y=I?D} out: {y=I?D}
     jf(L7|<v7>)
   3 mark({ println(y) <!DEBUG_INFO_SMARTCAST!>x<!>.length })
@@ -229,12 +227,14 @@ sink:
 == inlined anonymous_2 ==
 { y = 42 }
 ---------------------
-L5:
+L3:
   3 <START>          INIT: in: {y=D} out: {y=D}
+L5 [before inlined declaration]:
   4 mark(y = 42)
     r(42) -> <v0>                                    USE: in: {y=WRITTEN_AFTER_READ} out: {y=WRITTEN_AFTER_READ}
     w(y|<v0>)        INIT: in: {y=D} out: {y=ID}     USE: in: {y=READ} out: {y=WRITTEN_AFTER_READ}
-L6:
+L4:
+L6 [after inlined declaration]:
   3 <END>            INIT: in: {y=ID} out: {y=ID}    USE: in: {y=READ} out: {y=READ}
 error:
 -   <ERROR>

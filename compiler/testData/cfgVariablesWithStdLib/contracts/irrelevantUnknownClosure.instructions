@@ -88,9 +88,7 @@ L0:
     r({ unknownRun { println("shouldn't change anything") } x = 42 }) -> <v0>
     mark(myRun { unknownRun { println("shouldn't change anything") } x = 42 })
     call(myRun { unknownRun { println("shouldn't change anything") } x = 42 }, myRun|<v0>) -> <v1>
-L2 [before inlined declaration]:
     inlined({ unknownRun { println("shouldn't change anything") } x = 42 })                                 INIT: in: {x=ID} out: {x=ID}    USE: in: {x=READ} out: {x=READ}
-L3 [after inlined declaration]:
     r(x) -> <v2>                                                                                                                            USE: in: {} out: {x=READ}
     mark(println(x))
     call(println(x), println|<v2>) -> <v3>
@@ -107,8 +105,9 @@ sink:
         x = 42
     }
 ---------------------
-L4:
+L2:
   3 <START>                                                                               INIT: in: {x=D} out: {x=D}
+L4 [before inlined declaration]:
   4 mark(unknownRun { println("shouldn't change anything") } x = 42)
     mark({ println("shouldn't change anything") })
     jmp?(L6)
@@ -119,7 +118,8 @@ L6 [after local declaration]:
     call(unknownRun { println("shouldn't change anything") }, unknownRun|<v0>) -> <v1>
     r(42) -> <v2>                                                                                                         USE: in: {x=WRITTEN_AFTER_READ} out: {x=WRITTEN_AFTER_READ}
     w(x|<v2>)                                                                             INIT: in: {x=D} out: {x=ID}     USE: in: {x=READ} out: {x=WRITTEN_AFTER_READ}
-L5:
+L3:
+L5 [after inlined declaration]:
   3 <END>                                                                                 INIT: in: {x=ID} out: {x=ID}    USE: in: {x=READ} out: {x=READ}
 error:
 -   <ERROR>

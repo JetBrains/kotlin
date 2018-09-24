@@ -123,9 +123,7 @@ L0:
     r({ try { x = innerComputation() x.inc() } catch (e: java.lang.Exception) { /** Potential reassignment because x.inc() could threw */ x = 42 x.inc() } }) -> <v0>
     mark(myRun { try { x = innerComputation() x.inc() } catch (e: java.lang.Exception) { /** Potential reassignment because x.inc() could threw */ x = 42 x.inc() } })
     call(myRun { try { x = innerComputation() x.inc() } catch (e: java.lang.Exception) { /** Potential reassignment because x.inc() could threw */ x = 42 x.inc() } }, myRun|<v0>) -> <v1>
-L3 [before inlined declaration]:
     inlined({ try { x = innerComputation() x.inc() } catch (e: java.lang.Exception) { /** Potential reassignment because x.inc() could threw */ x = 42 x.inc() } })                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            INIT: in: {x=ID} out: {x=ID}      USE: in: {x=WRITTEN_AFTER_READ} out: {x=WRITTEN_AFTER_READ}
-L4 [after inlined declaration]:
     mark(x.inc())
     r(x) -> <v2>
     mark(inc())
@@ -172,8 +170,9 @@ sink:
             }
         }
 ---------------------
-L5:
+L3:
   4 <START>                                                                                                                                                                         INIT: in: {x=D} out: {x=D}
+L5 [before inlined declaration]:
   5 mark(try { x = innerComputation() x.inc() } catch (e: java.lang.Exception) { /** Potential reassignment because x.inc() could threw */ x = 42 x.inc() })
     mark(try { x = innerComputation() x.inc() } catch (e: java.lang.Exception) { /** Potential reassignment because x.inc() could threw */ x = 42 x.inc() })
     jmp?(L7)
@@ -201,8 +200,9 @@ L7 [onException]:
   6 jmp(L8)
 L8 [afterCatches]:
   5 merge(try { x = innerComputation() x.inc() } catch (e: java.lang.Exception) { /** Potential reassignment because x.inc() could threw */ x = 42 x.inc() }|<v2>, <v6>) -> <v7>
-  4 ret(*|<v7>) L6
-L6:
+  4 ret(*|<v7>) L4
+L4:
+L6 [after inlined declaration]:
     <END>                                                                                                                                                                                                             USE: in: {x=READ} out: {x=READ}
 error:
 -   <ERROR>

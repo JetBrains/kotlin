@@ -92,9 +92,7 @@ L0:
     r({ try { x = someComputation() x.inc() } catch (e: java.lang.Exception) { // I? x.inc() } }) -> <v0>
     mark(myRun { try { x = someComputation() x.inc() } catch (e: java.lang.Exception) { // I? x.inc() } })
     call(myRun { try { x = someComputation() x.inc() } catch (e: java.lang.Exception) { // I? x.inc() } }, myRun|<v0>) -> <v1>
-L2 [before inlined declaration]:
     inlined({ try { x = someComputation() x.inc() } catch (e: java.lang.Exception) { // I? x.inc() } })                                    INIT: in: {x=I?D} out: {x=I?D}
-L3 [after inlined declaration]:
     mark(x.inc())                                                                                                                                                            USE: in: {x=READ} out: {x=READ}
     r(x) -> <v2>                                                                                                                                                             USE: in: {} out: {x=READ}
     mark(inc())
@@ -118,8 +116,9 @@ sink:
         }
     }
 ---------------------
-L4:
+L2:
   3 <START>                                                                                                             INIT: in: {x=D} out: {x=D}
+L4 [before inlined declaration]:
   4 mark(try { x = someComputation() x.inc() } catch (e: java.lang.Exception) { // I? x.inc() })
     mark(try { x = someComputation() x.inc() } catch (e: java.lang.Exception) { // I? x.inc() })
     jmp?(L6)                                                                                                                                              USE: in: {x=READ} out: {x=READ}
@@ -145,8 +144,9 @@ L6 [onException]:
   5 jmp(L7)
 L7 [afterCatches]:
   4 merge(try { x = someComputation() x.inc() } catch (e: java.lang.Exception) { // I? x.inc() }|<v2>, <v5>) -> <v6>
-  3 ret(*|<v6>) L5
-L5:
+  3 ret(*|<v6>) L3
+L3:
+L5 [after inlined declaration]:
     <END>                                                                                                                                                 USE: in: {x=READ} out: {x=READ}
 error:
 -   <ERROR>
@@ -183,9 +183,7 @@ L0:
     r({ x = 42 try { x = someComputation() x.inc() } catch (e: java.lang.Exception) { // Possible reassignment x = 42 x.inc() } // Initialized x.inc() }) -> <v0>
     mark(myRun { x = 42 try { x = someComputation() x.inc() } catch (e: java.lang.Exception) { // Possible reassignment x = 42 x.inc() } // Initialized x.inc() })
     call(myRun { x = 42 try { x = someComputation() x.inc() } catch (e: java.lang.Exception) { // Possible reassignment x = 42 x.inc() } // Initialized x.inc() }, myRun|<v0>) -> <v1>
-L2 [before inlined declaration]:
     inlined({ x = 42 try { x = someComputation() x.inc() } catch (e: java.lang.Exception) { // Possible reassignment x = 42 x.inc() } // Initialized x.inc() })                                             INIT: in: {x=ID} out: {x=ID}    USE: in: {x=WRITTEN_AFTER_READ} out: {x=WRITTEN_AFTER_READ}
-L3 [after inlined declaration]:
     mark(x.inc())                                                                                                                                                                                                                           USE: in: {x=READ} out: {x=READ}
     r(x) -> <v2>                                                                                                                                                                                                                            USE: in: {} out: {x=READ}
     mark(inc())
@@ -213,8 +211,9 @@ sink:
         x.inc()
     }
 ---------------------
-L4:
+L2:
   3 <START>                                                                                                                                                 INIT: in: {x=D} out: {x=D}
+L4 [before inlined declaration]:
   4 mark(x = 42 try { x = someComputation() x.inc() } catch (e: java.lang.Exception) { // Possible reassignment x = 42 x.inc() } // Initialized x.inc())
     r(42) -> <v0>
     w(x|<v0>)                                                                                                                                               INIT: in: {x=D} out: {x=ID}
@@ -248,8 +247,9 @@ L7 [afterCatches]:
     r(x) -> <v9>
     mark(inc())
     call(inc(), inc|<v9>) -> <v10>
-  3 ret(*|<v10>) L5
-L5:
+  3 ret(*|<v10>) L3
+L3:
+L5 [after inlined declaration]:
     <END>                                                                                                                                                                                   USE: in: {x=READ} out: {x=READ}
 error:
 -   <ERROR>
@@ -286,9 +286,7 @@ L0:
     r({ x = someComputation() x.inc() }) -> <v0>
     mark(myRun { x = someComputation() x.inc() })
     call(myRun { x = someComputation() x.inc() }, myRun|<v0>) -> <v1>
-L3 [before inlined declaration]:
     inlined({ x = someComputation() x.inc() })                                                                                                                                                                                                                                            INIT: in: {x=ID} out: {x=ID}      USE: in: {x=WRITTEN_AFTER_READ} out: {x=WRITTEN_AFTER_READ}
-L4 [after inlined declaration]:
   2 jmp?(L2)
     jmp(L7)
 L2 [onException]:
@@ -301,9 +299,7 @@ L2 [onException]:
     r({ x = 42 }) -> <v3>
     mark(myRun { x = 42 })
     call(myRun { x = 42 }, myRun|<v3>) -> <v4>
-L9 [before inlined declaration]:
     inlined({ x = 42 })                                                                                                                                                                                                                                                                   INIT: in: {x=ID} out: {x=ID}      USE: in: {x=WRITTEN_AFTER_READ} out: {x=WRITTEN_AFTER_READ}
-L10 [after inlined declaration]:
   3 jmp(L7)
 L8 [catch 0]:
     v(e: java.lang.Exception)                                                                                                                                                                                                                                                             INIT: in: {x=I?D} out: {x=I?D}
@@ -331,8 +327,9 @@ sink:
             x.inc()
         }
 ---------------------
-L5:
+L3:
   4 <START>                                             INIT: in: {x=D} out: {x=D}
+L5 [before inlined declaration]:
   5 mark(x = someComputation() x.inc())
     mark(someComputation())
     call(someComputation(), someComputation) -> <v0>                                    USE: in: {x=WRITTEN_AFTER_READ} out: {x=WRITTEN_AFTER_READ}
@@ -341,8 +338,9 @@ L5:
     r(x) -> <v1>
     mark(inc())
     call(inc(), inc|<v1>) -> <v2>
-  4 ret(*|<v2>) L6
-L6:
+  4 ret(*|<v2>) L4
+L4:
+L6 [after inlined declaration]:
     <END>                                                                               USE: in: {x=READ} out: {x=READ}
 error:
 -   <ERROR>
@@ -352,12 +350,14 @@ sink:
 == inlined anonymous_4 ==
 { x = 42 }
 ---------------------
-L11:
+L9:
   5 <START>          INIT: in: {x=I?D} out: {x=I?D}
+L11 [before inlined declaration]:
   6 mark(x = 42)
     r(42) -> <v0>                                      USE: in: {x=WRITTEN_AFTER_READ} out: {x=WRITTEN_AFTER_READ}
     w(x|<v0>)        INIT: in: {x=I?D} out: {x=ID}     USE: in: {x=READ} out: {x=WRITTEN_AFTER_READ}
-L12:
+L10:
+L12 [after inlined declaration]:
   5 <END>            INIT: in: {x=ID} out: {x=ID}      USE: in: {x=READ} out: {x=READ}
 error:
 -   <ERROR>

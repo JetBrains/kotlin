@@ -104,10 +104,8 @@ L2 [after local declaration]:
     r({ return }) -> <v1>
     mark(let { return })
     call(let { return }, let|<v0>, <v1>)
-L6 [before inlined declaration]:
     inlined({ return })                                                                             NEXT:[<SINK>]
 L5 [result of call]:
-L7 [after inlined declaration]:
     mark(f(null?.let { return }))                                                                   PREV:[jf(L5)]
     call(f(null?.let { return }), f|!<v2>) -> <v3>
     mark(doSomething())
@@ -139,12 +137,14 @@ sink:
 == inlined anonymous_1 ==
 { return }
 ---------------------
-L8:
+L6:
   3 <START>
+L8 [before inlined declaration]:
   4 mark(return)
     ret L1             NEXT:[<END>]
-- 3 ret(*|!<v0>) L9    PREV:[]
-L9:
+- 3 ret(*|!<v0>) L7    PREV:[]
+L7:
+L9 [after inlined declaration]:
 -   <END>              NEXT:[<SINK>]          PREV:[]
 error:
 -   <ERROR>            PREV:[]
@@ -169,10 +169,8 @@ L0:
     r({ return true }) -> <v2>
     mark(let { return true })
     call(let { return true }, let|<v1>, <v2>)
-L3 [before inlined declaration]:
     inlined({ return true })                                      NEXT:[<SINK>]
 L2 [result of call]:
-L4 [after inlined declaration]:
     mark(x?.let { return true } ?: false)                         PREV:[jf(L2)]
     jt(L7|!<v3>)                                                  NEXT:[r(false) -> <v4>, merge(x?.let { return true } ?: false|!<v3>, <v4>) -> <v5>]
     r(false) -> <v4>
@@ -191,13 +189,15 @@ sink:
         return true
     }
 ---------------------
-L5:
+L3:
   2 <START>
+L5 [before inlined declaration]:
   3 mark(return true)
     r(true) -> <v0>
     ret(*|<v0>) L1       NEXT:[<END>]
-- 2 ret(*|!<v1>) L6      PREV:[]
-L6:
+- 2 ret(*|!<v1>) L4      PREV:[]
+L4:
+L6 [after inlined declaration]:
 -   <END>                NEXT:[<SINK>]               PREV:[]
 error:
 -   <ERROR>              PREV:[]

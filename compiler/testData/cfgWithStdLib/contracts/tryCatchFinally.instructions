@@ -109,9 +109,7 @@ L0:
     r({ try { x = someComputation() report(x) } catch (e: java.lang.Exception) { x = 42 report(x) } finally { x = 0 } }) -> <v0>
     mark(myRun { try { x = someComputation() report(x) } catch (e: java.lang.Exception) { x = 42 report(x) } finally { x = 0 } })
     call(myRun { try { x = someComputation() report(x) } catch (e: java.lang.Exception) { x = 42 report(x) } finally { x = 0 } }, myRun|<v0>) -> <v1>
-L2 [before inlined declaration]:
     inlined({ try { x = someComputation() report(x) } catch (e: java.lang.Exception) { x = 42 report(x) } finally { x = 0 } })
-L3 [after inlined declaration]:
     mark(x.inc())
     r(x) -> <v2>
     mark(inc())
@@ -136,8 +134,9 @@ sink:
         }
     }
 ---------------------
-L4:
+L2:
   3 <START>
+L4 [before inlined declaration]:
   4 mark(try { x = someComputation() report(x) } catch (e: java.lang.Exception) { x = 42 report(x) } finally { x = 0 })
     mark(try { x = someComputation() report(x) } catch (e: java.lang.Exception) { x = 42 report(x) } finally { x = 0 })
     jmp?(L6)                                                                                                                                   NEXT:[v(e: java.lang.Exception), jmp?(L7)]
@@ -178,7 +177,8 @@ L12 [copy of L7, onExceptionToFinallyBlock]:
     r(0) -> <v7>
     w(x|<v7>)
   4 merge(try { x = someComputation() report(x) } catch (e: java.lang.Exception) { x = 42 report(x) } finally { x = 0 }|<v2>, <v6>) -> <v9>
-L5:
+L3:
+L5 [after inlined declaration]:
   3 <END>                                                                                                                                      NEXT:[<SINK>]
 error:
     <ERROR>                                                                                                                                    PREV:[jmp(error)]

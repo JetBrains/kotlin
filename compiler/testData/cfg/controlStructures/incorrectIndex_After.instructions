@@ -53,10 +53,8 @@ L0:
     r({ if (flag) { s.add(it) } else { s.remove(it) } return true }) -> <v3>
     mark(let { if (flag) { s.add(it) } else { s.remove(it) } return true })
     call(let { if (flag) { s.add(it) } else { s.remove(it) } return true }, let|<v2>, <v3>)
-L4 [before inlined declaration]:
     inlined({ if (flag) { s.add(it) } else { s.remove(it) } return true })                                                                            NEXT:[<SINK>]
 L3 [result of call]:
-L5 [after inlined declaration]:
     jmp?(L2)                                                                                                                                          NEXT:[mark({ name?.hashCode() }), r(false) -> <v5>]                                                                                                                        PREV:[jf(L3)]
     r(false) -> <v5>
   6 mark({ name?.hashCode() })
@@ -106,8 +104,9 @@ sink:
             return true
         }
 ---------------------
-L6:
+L4:
   4 <START>
+L6 [before inlined declaration]:
   5 mark(if (flag) { s.add(it) } else { s.remove(it) } return true)
     mark(if (flag) { s.add(it) } else { s.remove(it) })
     r(flag) -> <v0>
@@ -141,8 +140,9 @@ L10 [start finally]:
 L11 [result of call]:
 L12 [finish finally]:
   5 ret(*|<v10>) L1                                                            NEXT:[<END>]                                                                      PREV:[jf(L11), call(hashCode(), hashCode|<v11>) -> <v12>]
-- 4 ret(*|!<v13>) L7                                                           PREV:[]
-L7:
+- 4 ret(*|!<v13>) L5                                                           PREV:[]
+L5:
+L7 [after inlined declaration]:
 -   <END>                                                                      NEXT:[<SINK>]                                                                     PREV:[]
 error:
 -   <ERROR>                                                                    PREV:[]

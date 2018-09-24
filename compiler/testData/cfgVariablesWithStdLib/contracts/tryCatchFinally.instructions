@@ -109,9 +109,7 @@ L0:
     r({ try { x = someComputation() report(x) } catch (e: java.lang.Exception) { x = 42 report(x) } finally { x = 0 } }) -> <v0>
     mark(myRun { try { x = someComputation() report(x) } catch (e: java.lang.Exception) { x = 42 report(x) } finally { x = 0 } })
     call(myRun { try { x = someComputation() report(x) } catch (e: java.lang.Exception) { x = 42 report(x) } finally { x = 0 } }, myRun|<v0>) -> <v1>
-L2 [before inlined declaration]:
     inlined({ try { x = someComputation() report(x) } catch (e: java.lang.Exception) { x = 42 report(x) } finally { x = 0 } })                              INIT: in: {x=ID} out: {x=ID}    USE: in: {x=WRITTEN_AFTER_READ} out: {x=WRITTEN_AFTER_READ}
-L3 [after inlined declaration]:
     mark(x.inc())                                                                                                                                                                           USE: in: {x=READ} out: {x=READ}
     r(x) -> <v2>                                                                                                                                                                            USE: in: {} out: {x=READ}
     mark(inc())
@@ -136,8 +134,9 @@ sink:
         }
     }
 ---------------------
-L4:
+L2:
   3 <START>                                                                                                                                    INIT: in: {x=D} out: {x=D}
+L4 [before inlined declaration]:
   4 mark(try { x = someComputation() report(x) } catch (e: java.lang.Exception) { x = 42 report(x) } finally { x = 0 })
     mark(try { x = someComputation() report(x) } catch (e: java.lang.Exception) { x = 42 report(x) } finally { x = 0 })
     jmp?(L6)
@@ -178,7 +177,8 @@ L12 [copy of L7, onExceptionToFinallyBlock]:
     r(0) -> <v7>                                                                                                                                                                 USE: in: {x=WRITTEN_AFTER_READ} out: {x=WRITTEN_AFTER_READ}
     w(x|<v7>)                                                                                                                                                                    USE: in: {x=READ} out: {x=WRITTEN_AFTER_READ}
   4 merge(try { x = someComputation() report(x) } catch (e: java.lang.Exception) { x = 42 report(x) } finally { x = 0 }|<v2>, <v6>) -> <v9>
-L5:
+L3:
+L5 [after inlined declaration]:
   3 <END>
 error:
     <ERROR>

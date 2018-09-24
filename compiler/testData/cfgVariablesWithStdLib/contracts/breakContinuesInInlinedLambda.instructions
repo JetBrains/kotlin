@@ -109,19 +109,15 @@ L0:
     r({ while (getBoolean()) { do { myRun { if (getBoolean()) { x = 42 } else { x = 43 } } break } while (getBoolean()) myRun { x.inc() } myRun { x = 42 } break } x = 42 }) -> <v1>
     mark(myRun { while (getBoolean()) { do { myRun { if (getBoolean()) { x = 42 } else { x = 43 } } break } while (getBoolean()) myRun { x.inc() } myRun { x = 42 } break } x = 42 })
     call(myRun { while (getBoolean()) { do { myRun { if (getBoolean()) { x = 42 } else { x = 43 } } break } while (getBoolean()) myRun { x.inc() } myRun { x = 42 } break } x = 42 }, myRun|<v1>) -> <v2>
-L3 [before inlined declaration]:
     inlined({ while (getBoolean()) { do { myRun { if (getBoolean()) { x = 42 } else { x = 43 } } break } while (getBoolean()) myRun { x.inc() } myRun { x = 42 } break } x = 42 })                                                                      INIT: in: {x=ID} out: {x=ID}    USE: in: {x=WRITTEN_AFTER_READ} out: {x=WRITTEN_AFTER_READ}
-L4 [after inlined declaration]:
     jmp(L31)                                                                                                                                                                                                                                                                            USE: in: {x=READ} out: {x=READ}
 L2 [else branch]:
     mark({ x = 42 })                                                                                                                                                                                                                                    INIT: in: {x=D} out: {x=D}
     r({ x = 42 }) -> <v3>
     mark(myRun { x = 42 })
     call(myRun { x = 42 }, myRun|<v3>) -> <v4>
-L32 [before inlined declaration]:
     inlined({ x = 42 })                                                                                                                                                                                                                                 INIT: in: {x=ID} out: {x=ID}    USE: in: {x=WRITTEN_AFTER_READ} out: {x=WRITTEN_AFTER_READ}
 L31 ['if' expression result]:
-L33 [after inlined declaration]:
     merge(if (getBoolean()) myRun { while (getBoolean()) { do { myRun { if (getBoolean()) { x = 42 } else { x = 43 } } break } while (getBoolean()) myRun { x.inc() } myRun { x = 42 } break } x = 42 } else myRun { x = 42 }|<v2>, <v4>) -> <v5>
     mark(x.inc())                                                                                                                                                                                                                                                                       USE: in: {x=READ} out: {x=READ}
     r(x) -> <v6>                                                                                                                                                                                                                                                                        USE: in: {} out: {x=READ}
@@ -155,8 +151,9 @@ sink:
             x = 42
         }
 ---------------------
-L5:
+L3:
   3 <START>                                                                                                                                                                    INIT: in: {x=D} out: {x=D}
+L5 [before inlined declaration]:
   4 mark(while (getBoolean()) { do { myRun { if (getBoolean()) { x = 42 } else { x = 43 } } break } while (getBoolean()) myRun { x.inc() } myRun { x = 42 } break } x = 42)
 L7 [loop entry point]:
 L11 [condition entry point]:
@@ -174,9 +171,7 @@ L14 [body entry point]:
     r({ if (getBoolean()) { x = 42 } else { x = 43 } }) -> <v1>
     mark(myRun { if (getBoolean()) { x = 42 } else { x = 43 } })
     call(myRun { if (getBoolean()) { x = 42 } else { x = 43 } }, myRun|<v1>) -> <v2>
-L17 [before inlined declaration]:
     inlined({ if (getBoolean()) { x = 42 } else { x = 43 } })                                                                                                                  INIT: in: {x=ID} out: {x=ID}      USE: in: {x=WRITTEN_AFTER_READ} out: {x=WRITTEN_AFTER_READ}
-L18 [after inlined declaration]:
     jmp(L13)                                                                                                                                                                                                     USE: in: {x=READ} out: {x=READ}
 L15 [body exit point]:
 L16 [condition entry point]:
@@ -189,16 +184,12 @@ L13 [loop exit point]:
     r({ x.inc() }) -> <v5>
     mark(myRun { x.inc() })
     call(myRun { x.inc() }, myRun|<v5>) -> <v6>
-L23 [before inlined declaration]:
     inlined({ x.inc() })                                                                                                                                                                                         USE: in: {x=READ} out: {x=READ}
-L24 [after inlined declaration]:
     mark({ x = 42 })
     r({ x = 42 }) -> <v7>
     mark(myRun { x = 42 })
     call(myRun { x = 42 }, myRun|<v7>) -> <v8>
-L27 [before inlined declaration]:
     inlined({ x = 42 })
-L28 [after inlined declaration]:
     jmp(L8)                                                                                                                                                                                                      USE: in: {x=WRITTEN_AFTER_READ} out: {x=WRITTEN_AFTER_READ}
 - 4 jmp(L7)
 L8 [loop exit point]:
@@ -206,7 +197,8 @@ L10 [body exit point]:
     read (Unit)                                                                                                                                                                INIT: in: {x=I?D} out: {x=I?D}
     r(42) -> <v10>                                                                                                                                                                                               USE: in: {x=WRITTEN_AFTER_READ} out: {x=WRITTEN_AFTER_READ}
     w(x|<v10>)                                                                                                                                                                 INIT: in: {x=I?D} out: {x=ID}     USE: in: {x=READ} out: {x=WRITTEN_AFTER_READ}
-L6:
+L4:
+L6 [after inlined declaration]:
   3 <END>                                                                                                                                                                      INIT: in: {x=ID} out: {x=ID}      USE: in: {x=READ} out: {x=READ}
 error:
 -   <ERROR>
@@ -223,8 +215,9 @@ sink:
                         }
                     }
 ---------------------
-L19:
+L17:
   7 <START>                                                                     INIT: in: {x=D} out: {x=D}
+L19 [before inlined declaration]:
   8 mark(if (getBoolean()) { x = 42 } else { x = 43 })
     mark(if (getBoolean()) { x = 42 } else { x = 43 })
     mark(getBoolean())
@@ -240,7 +233,8 @@ L21 [else branch]:
     w(x|<v3>)                                                                   INIT: in: {x=D} out: {x=ID}     USE: in: {x=READ} out: {x=WRITTEN_AFTER_READ}
 L22 ['if' expression result]:
   8 merge(if (getBoolean()) { x = 42 } else { x = 43 }|!<v2>, !<v4>) -> <v5>    INIT: in: {x=ID} out: {x=ID}
-L20:
+L18:
+L20 [after inlined declaration]:
   7 <END>                                                                                                       USE: in: {x=READ} out: {x=READ}
 error:
 -   <ERROR>
@@ -250,15 +244,17 @@ sink:
 == inlined anonymous_3 ==
 { x.inc() }
 ---------------------
-L25:
+L23:
   6 <START>                          INIT: in: {x=ID} out: {x=ID}
+L25 [before inlined declaration]:
   7 mark(x.inc())
     mark(x.inc())                                                    USE: in: {x=READ} out: {x=READ}
     r(x) -> <v0>                                                     USE: in: {x=WRITTEN_AFTER_READ} out: {x=READ}
     mark(inc())
     call(inc(), inc|<v0>) -> <v1>
-  6 ret(*|<v1>) L26
-L26:
+  6 ret(*|<v1>) L24
+L24:
+L26 [after inlined declaration]:
     <END>                                                            USE: in: {x=WRITTEN_AFTER_READ} out: {x=WRITTEN_AFTER_READ}
 error:
 -   <ERROR>
@@ -268,12 +264,14 @@ sink:
 == inlined anonymous_4 ==
 { x = 42 }
 ---------------------
-L29:
+L27:
   6 <START>          INIT: in: {x=ID} out: {x=ID}
+L29 [before inlined declaration]:
   7 mark(x = 42)
     r(42) -> <v0>
     w(x|<v0>)
-L30:
+L28:
+L30 [after inlined declaration]:
   6 <END>                                            USE: in: {x=WRITTEN_AFTER_READ} out: {x=WRITTEN_AFTER_READ}
 error:
 -   <ERROR>
@@ -285,12 +283,14 @@ sink:
             x = 42
         }
 ---------------------
-L34:
+L32:
   3 <START>          INIT: in: {x=D} out: {x=D}
+L34 [before inlined declaration]:
   4 mark(x = 42)
     r(42) -> <v0>                                    USE: in: {x=WRITTEN_AFTER_READ} out: {x=WRITTEN_AFTER_READ}
     w(x|<v0>)        INIT: in: {x=D} out: {x=ID}     USE: in: {x=READ} out: {x=WRITTEN_AFTER_READ}
-L35:
+L33:
+L35 [after inlined declaration]:
   3 <END>            INIT: in: {x=ID} out: {x=ID}    USE: in: {x=READ} out: {x=READ}
 error:
 -   <ERROR>

@@ -93,9 +93,7 @@ L0:
     r({ unknownRun { myRun { x = 42 return@outer } } throw java.lang.IllegalArgumentException() }) -> <v0>
     mark(myRun outer@ { unknownRun { myRun { x = 42 return@outer } } throw java.lang.IllegalArgumentException() })
     call(myRun outer@ { unknownRun { myRun { x = 42 return@outer } } throw java.lang.IllegalArgumentException() }, myRun|<v0>) -> <v1>
-L2 [before inlined declaration]:
     inlined({ unknownRun { myRun { x = 42 return@outer } } throw java.lang.IllegalArgumentException() })
-L3 [after inlined declaration]:
     mark(println(<)
     magic[UNRESOLVED_CALL](println(<|!<v2>) -> <v3>
 L1:
@@ -116,8 +114,9 @@ sink:
         throw java.lang.IllegalArgumentException()
     }
 ---------------------
-L4:
+L2:
   3 <START>
+L4 [before inlined declaration]:
   4 mark(unknownRun { myRun { x = 42 return@outer } } throw java.lang.IllegalArgumentException())
     mark({ myRun { x = 42 return@outer } })
     jmp?(L6)                                                                                         NEXT:[r({ myRun { x = 42 return@outer } }) -> <v0>, d({ myRun { x = 42 return@outer } })]
@@ -131,8 +130,9 @@ L6 [after local declaration]:
     mark(IllegalArgumentException())
     call(IllegalArgumentException(), <init>) -> <v2>
     throw (throw java.lang.IllegalArgumentException()|<v2>)                                          NEXT:[<ERROR>]
-L5:
-  3 <END>                                                                                            NEXT:[<SINK>]                                                                                           PREV:[ret L5]
+L3:
+L5 [after inlined declaration]:
+  3 <END>                                                                                            NEXT:[<SINK>]                                                                                           PREV:[ret L3]
 error:
     <ERROR>                                                                                          PREV:[throw (throw java.lang.IllegalArgumentException()|<v2>)]
 sink:
@@ -153,10 +153,8 @@ L7:
     r({ x = 42 return@outer }) -> <v0>
     mark(myRun { x = 42 return@outer })
     call(myRun { x = 42 return@outer }, myRun|<v0>) -> <v1>
-L9 [before inlined declaration]:
     inlined({ x = 42 return@outer })                           NEXT:[<SINK>]
 L8:
-L10 [after inlined declaration]:
   5 <END>                                                      NEXT:[<SINK>]                                                     PREV:[]
 error:
     <ERROR>                                                    PREV:[]
@@ -169,13 +167,15 @@ sink:
                 return@outer
             }
 ---------------------
-L11:
+L9:
   7 <START>
+L11 [before inlined declaration]:
   8 mark(x = 42 return@outer)
     r(42) -> <v0>
     w(x|<v0>)
-    ret L5                       NEXT:[<END>]
-L12:
+    ret L3                       NEXT:[<END>]
+L10:
+L12 [after inlined declaration]:
 - 7 <END>                        NEXT:[<SINK>]                       PREV:[]
 error:
 -   <ERROR>                      PREV:[]

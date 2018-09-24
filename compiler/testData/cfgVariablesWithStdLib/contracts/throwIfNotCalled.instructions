@@ -93,9 +93,7 @@ L0:
     r({ unknownRun { myRun { x = 42 return@outer } } throw java.lang.IllegalArgumentException() }) -> <v0>
     mark(myRun outer@ { unknownRun { myRun { x = 42 return@outer } } throw java.lang.IllegalArgumentException() })
     call(myRun outer@ { unknownRun { myRun { x = 42 return@outer } } throw java.lang.IllegalArgumentException() }, myRun|<v0>) -> <v1>
-L2 [before inlined declaration]:
     inlined({ unknownRun { myRun { x = 42 return@outer } } throw java.lang.IllegalArgumentException() })                                                                     INIT: in: {x=ID} out: {x=ID}    USE: in: {x=ONLY_WRITTEN_NEVER_READ} out: {x=ONLY_WRITTEN_NEVER_READ}
-L3 [after inlined declaration]:
     mark(println(<)
     magic[UNRESOLVED_CALL](println(<|!<v2>) -> <v3>
 L1:
@@ -116,8 +114,9 @@ sink:
         throw java.lang.IllegalArgumentException()
     }
 ---------------------
-L4:
+L2:
   3 <START>                                                                                          INIT: in: {x=D} out: {x=D}
+L4 [before inlined declaration]:
   4 mark(unknownRun { myRun { x = 42 return@outer } } throw java.lang.IllegalArgumentException())
     mark({ myRun { x = 42 return@outer } })
     jmp?(L6)
@@ -131,7 +130,8 @@ L6 [after local declaration]:
     mark(IllegalArgumentException())
     call(IllegalArgumentException(), <init>) -> <v2>
     throw (throw java.lang.IllegalArgumentException()|<v2>)
-L5:
+L3:
+L5 [after inlined declaration]:
   3 <END>                                                                                            INIT: in: {x=ID} out: {x=ID}
 error:
     <ERROR>                                                                                          INIT: in: {x=D} out: {x=D}
@@ -153,10 +153,8 @@ L7:
     r({ x = 42 return@outer }) -> <v0>
     mark(myRun { x = 42 return@outer })
     call(myRun { x = 42 return@outer }, myRun|<v0>) -> <v1>
-L9 [before inlined declaration]:
     inlined({ x = 42 return@outer })                                                         USE: in: {x=ONLY_WRITTEN_NEVER_READ} out: {x=ONLY_WRITTEN_NEVER_READ}
 L8:
-L10 [after inlined declaration]:
   5 <END>                                                      INIT: in: {} out: {}
 error:
     <ERROR>
@@ -169,13 +167,15 @@ sink:
                 return@outer
             }
 ---------------------
-L11:
+L9:
   7 <START>                      INIT: in: {x=D} out: {x=D}
+L11 [before inlined declaration]:
   8 mark(x = 42 return@outer)
     r(42) -> <v0>                                                USE: in: {x=ONLY_WRITTEN_NEVER_READ} out: {x=ONLY_WRITTEN_NEVER_READ}
     w(x|<v0>)                    INIT: in: {x=D} out: {x=ID}     USE: in: {} out: {x=ONLY_WRITTEN_NEVER_READ}
-    ret L5                       INIT: in: {x=ID} out: {x=ID}    USE: in: {} out: {}
-L12:
+    ret L3                       INIT: in: {x=ID} out: {x=ID}    USE: in: {} out: {}
+L10:
+L12 [after inlined declaration]:
 - 7 <END>
 error:
 -   <ERROR>

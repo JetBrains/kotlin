@@ -134,9 +134,7 @@ L0:
     r({ try { x = innerComputation() } catch (e: java.lang.Exception) { log() } // possible reassignment if innerComputation finished x = 42 }) -> <v0>
     mark(myRun { try { x = innerComputation() } catch (e: java.lang.Exception) { log() } // possible reassignment if innerComputation finished x = 42 })
     call(myRun { try { x = innerComputation() } catch (e: java.lang.Exception) { log() } // possible reassignment if innerComputation finished x = 42 }, myRun|<v0>) -> <v1>
-L4 [before inlined declaration]:
     inlined({ try { x = innerComputation() } catch (e: java.lang.Exception) { log() } // possible reassignment if innerComputation finished x = 42 })                                                                                                                                                                                                                                                                                                                                                         INIT: in: {x=ID} out: {x=ID}
-L5 [after inlined declaration]:
     mark(outerComputation())
     call(outerComputation(), outerComputation) -> <v2>
     w(x|<v2>)
@@ -188,8 +186,9 @@ sink:
             x = 42
         }
 ---------------------
-L6:
+L4:
   4 <START>                                                                                                                                       INIT: in: {x=D} out: {x=D}
+L6 [before inlined declaration]:
   5 mark(try { x = innerComputation() } catch (e: java.lang.Exception) { log() } // possible reassignment if innerComputation finished x = 42)
     mark(try { x = innerComputation() } catch (e: java.lang.Exception) { log() })
     jmp?(L8)
@@ -211,7 +210,8 @@ L9 [afterCatches]:
   5 merge(try { x = innerComputation() } catch (e: java.lang.Exception) { log() }|!<v1>, <v3>) -> <v4>
     r(42) -> <v5>
     w(x|<v5>)                                                                                                                                     INIT: in: {x=I?D} out: {x=ID}
-L7:
+L5:
+L7 [after inlined declaration]:
   4 <END>                                                                                                                                         INIT: in: {x=ID} out: {x=ID}      USE: in: {x=WRITTEN_AFTER_READ} out: {x=WRITTEN_AFTER_READ}
 error:
 -   <ERROR>
@@ -253,9 +253,7 @@ L0:
     r({ try { innerComputation() } catch (e: java.lang.Exception) { log() } finally { x = 42 } }) -> <v0>
     mark(myRun { try { innerComputation() } catch (e: java.lang.Exception) { log() } finally { x = 42 } })
     call(myRun { try { innerComputation() } catch (e: java.lang.Exception) { log() } finally { x = 42 } }, myRun|<v0>) -> <v1>
-L3 [before inlined declaration]:
     inlined({ try { innerComputation() } catch (e: java.lang.Exception) { log() } finally { x = 42 } })                                                                                                                                                                                    INIT: in: {x=ID} out: {x=ID}      USE: in: {x=WRITTEN_AFTER_READ} out: {x=WRITTEN_AFTER_READ}
-L4 [after inlined declaration]:
     mark(x.inc())
     r(x) -> <v2>
     mark(inc())
@@ -294,8 +292,9 @@ sink:
             }
         }
 ---------------------
-L5:
+L3:
   4 <START>                                                                                                             INIT: in: {x=D} out: {x=D}
+L5 [before inlined declaration]:
   5 mark(try { innerComputation() } catch (e: java.lang.Exception) { log() } finally { x = 42 })
     mark(try { innerComputation() } catch (e: java.lang.Exception) { log() } finally { x = 42 })
     jmp?(L7)
@@ -329,8 +328,9 @@ L13 [copy of L8, onExceptionToFinallyBlock]:
     r(42) -> <v3>                                                                                                                                       USE: in: {x=WRITTEN_AFTER_READ} out: {x=WRITTEN_AFTER_READ}
     w(x|<v3>)                                                                                                           INIT: in: {x=D} out: {x=ID}     USE: in: {x=READ} out: {x=WRITTEN_AFTER_READ}
   5 merge(try { innerComputation() } catch (e: java.lang.Exception) { log() } finally { x = 42 }|<v0>, <v2>) -> <v5>    INIT: in: {x=ID} out: {x=ID}
-  4 ret(*|<v5>) L6
-L6:
+  4 ret(*|<v5>) L4
+L4:
+L6 [after inlined declaration]:
     <END>
 error:
     <ERROR>

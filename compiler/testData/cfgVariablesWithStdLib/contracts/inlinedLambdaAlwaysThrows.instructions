@@ -63,9 +63,7 @@ L0:
     r({ throw java.lang.IllegalArgumentException() }) -> <v0>
     mark(myRun { throw java.lang.IllegalArgumentException() })
     call(myRun { throw java.lang.IllegalArgumentException() }, myRun|<v0>) -> <v1>
-L2 [before inlined declaration]:
     inlined({ throw java.lang.IllegalArgumentException() })                                                   USE: in: {} out: {}
-L3 [after inlined declaration]:
 -   v(val x: Int = 42)
 -   r(42) -> <v2>
 -   w(x|<v2>)
@@ -79,15 +77,17 @@ sink:
 == inlined anonymous_1 ==
 { throw java.lang.IllegalArgumentException() }
 ---------------------
-L4:
+L2:
   3 <START>                                                    INIT: in: {} out: {}
+L4 [before inlined declaration]:
   4 mark(throw java.lang.IllegalArgumentException())
     mark(throw java.lang.IllegalArgumentException())
     mark(java.lang.IllegalArgumentException())
     mark(IllegalArgumentException())
     call(IllegalArgumentException(), <init>) -> <v0>
     throw (throw java.lang.IllegalArgumentException()|<v0>)                            USE: in: {} out: {}
-L5:
+L3:
+L5 [after inlined declaration]:
 - 3 <END>
 error:
     <ERROR>                                                    INIT: in: {} out: {}

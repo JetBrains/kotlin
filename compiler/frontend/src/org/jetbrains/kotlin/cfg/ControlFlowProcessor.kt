@@ -81,6 +81,22 @@ class ControlFlowProcessor(
 
     private fun generate(subroutine: KtElement, invocationKind: InvocationKind? = null): Pseudocode {
         builder.enterSubroutine(subroutine, invocationKind)
+
+        // this labels used for inlined declarations
+        var beforeBody: Label? = null
+        var afterBody: Label? = null
+
+        if (invocationKind != null) {
+            beforeBody = builder.createUnboundLabel("before inlined declaration")
+            afterBody = builder.createUnboundLabel("after inlined declaration")
+
+            builder.bindLabel(beforeBody)
+
+            if (!invocationKind.isDefinitelyVisited()) {
+                builder.nondeterministicJump(afterBody, subroutine, null)
+            }
+        }
+
         val cfpVisitor = CFPVisitor(builder)
         if (subroutine is KtDeclarationWithBody && subroutine !is KtSecondaryConstructor) {
             val valueParameters = subroutine.valueParameters
@@ -97,6 +113,14 @@ class ControlFlowProcessor(
         } else {
             cfpVisitor.generateInstructions(subroutine)
         }
+
+        if (invocationKind != null) {
+            if (invocationKind.canBeRevisited()) {
+                builder.nondeterministicJump(beforeBody!!, subroutine, null)
+            }
+            builder.bindLabel(afterBody!!)
+        }
+
         return builder.exitSubroutine(subroutine, invocationKind)
     }
 
@@ -1048,24 +1072,9 @@ class ControlFlowProcessor(
 
         private fun visitInlinedFunction(lambdaFunctionLiteral: KtFunction, invocationKind: InvocationKind) {
             // Defer emitting of inlined declaration
-            deferredGeneratorsStack.peek().add({ builder ->
-                                                   val beforeDeclaration = builder.createUnboundLabel("before inlined declaration")
-                                                   val afterDeclaration = builder.createUnboundLabel("after inlined declaration")
-
-                                                   builder.bindLabel(beforeDeclaration)
-
-                                                   if (!invocationKind.isDefinitelyVisited()) {
-                                                       builder.nondeterministicJump(afterDeclaration, lambdaFunctionLiteral, null)
-                                                   }
-
-                                                   generate(lambdaFunctionLiteral, invocationKind)
-
-                                                   if (invocationKind.canBeRevisited()) {
-                                                       builder.nondeterministicJump(beforeDeclaration, lambdaFunctionLiteral, null)
-                                                   }
-
-                                                   builder.bindLabel(afterDeclaration)
-                                               })
+            deferredGeneratorsStack.peek().add { _ ->
+                generate(lambdaFunctionLiteral, invocationKind)
+            }
         }
 
         override fun visitNamedFunction(function: KtNamedFunction) {
