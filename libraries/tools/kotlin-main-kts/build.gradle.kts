@@ -89,6 +89,11 @@ runtimeJarArtifactBy(pack, pack.outputs.files.singleFile) {
     classifier = ""
 }
 
+dist(
+    targetName = "$name.jar",
+    fromTask = pack
+)
+
 sourcesJar()
 javadocJar()
 
