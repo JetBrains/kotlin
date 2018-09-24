@@ -120,7 +120,10 @@ class CodeConverter(
                             convertedExpression = MethodCallExpression.buildNonNull(convertedExpression, it)
                         }
                     }
-                    else if (expectedTypeStr == "int") {
+                }
+
+                if (expectedTypeStr == "int") {
+                    if (actualType.canonicalText in setOf("char", "byte", "short")) {
                         convertedExpression = MethodCallExpression.buildNonNull(convertedExpression, "toInt")
                     }
                 }
