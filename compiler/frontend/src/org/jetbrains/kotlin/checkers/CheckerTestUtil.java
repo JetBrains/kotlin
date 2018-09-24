@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.checkers;
 
 import com.google.common.collect.LinkedListMultimap;
+import com.google.common.collect.Maps;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
@@ -708,7 +709,7 @@ public class CheckerTestUtil {
         }
 
         public Map<AbstractTestDiagnostic, TextDiagnostic> getTextDiagnosticsMap() {
-            Map<AbstractTestDiagnostic, TextDiagnostic> diagnosticMap = new HashMap<>();
+            Map<AbstractTestDiagnostic, TextDiagnostic> diagnosticMap = Maps.newLinkedHashMap();
             for (AbstractTestDiagnostic diagnostic : diagnostics) {
                 diagnosticMap.put(diagnostic, TextDiagnostic.asTextDiagnostic(diagnostic));
             }
