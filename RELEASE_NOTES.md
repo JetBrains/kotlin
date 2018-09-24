@@ -41,7 +41,7 @@ To run _Kotlin/Native_ JDK 8 or Java 9 (JDK) for the host platform has to be ins
 
 On macOS it also requires Xcode 9.4.1 or newer to be installed.
 
-The language and library version supported by this EAP release mostly match Kotlin 1.2.60.
+The language and library version supported by this EAP release match Kotlin 1.3.
 However, there are certain limitations, see section [Known Limitations](#limitations).
 
  Currently _Kotlin/Native_ uses reference counting based memory management scheme with a cycle

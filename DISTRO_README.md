@@ -33,7 +33,7 @@ without need to ship an additional execution runtime.
  See `README.md` in each sample directory for more information and build instructions.
 
  _Kotlin/Native_ could be used either as standalone compiler toolchain or as Gradle
-plugin. See `GRADLE_PLUGIN.md` for more details on how to use this plugin.
+plugin. See [`GRADLE_PLUGIN.md`](https://github.com/JetBrains/kotlin-native/blob/master/GRADLE_PLUGIN.md) for more details on how to use this plugin.
 
 Compile your programs like that:
 
@@ -49,6 +49,6 @@ To generate interoperability stubs create library definition file
 
     cinterop -def lib.def
  
-See `INTEROP.md` for more information on how to use C libraries from _Kotlin/Native_.
+See [`INTEROP.md`](https://github.com/JetBrains/kotlin-native/blob/master/INTEROP.md) for more information on how to use C libraries from _Kotlin/Native_.
 
 See `RELEASE_NOTES.md` for information on supported platforms and current limitations.
