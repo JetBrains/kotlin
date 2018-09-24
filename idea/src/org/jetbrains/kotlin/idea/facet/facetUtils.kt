@@ -29,6 +29,7 @@ import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.cli.common.arguments.*
 import org.jetbrains.kotlin.compilerRunner.ArgumentUtils
 import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.idea.compiler.configuration.Kotlin2JvmCompilerArgumentsHolder
 import org.jetbrains.kotlin.idea.compiler.configuration.KotlinCommonCompilerArgumentsHolder
 import org.jetbrains.kotlin.idea.compiler.configuration.KotlinCompilerSettings
 import org.jetbrains.kotlin.idea.configuration.externalCompilerVersion
@@ -41,19 +42,21 @@ import org.jetbrains.kotlin.platform.impl.JvmIdePlatformKind
 import kotlin.reflect.KProperty1
 
 private fun getDefaultTargetPlatform(module: Module, rootModel: ModuleRootModel?): IdePlatform<*, *> {
-    for (platform in IdePlatformKind.ALL_KINDS) {
-        if (getRuntimeLibraryVersions(module, rootModel, platform).isNotEmpty()) {
-            //TODO investigate, looks strange
-            return platform.defaultPlatform
+    val platformKind = IdePlatformKind.ALL_KINDS.firstOrNull {
+        getRuntimeLibraryVersions(module, rootModel, it).isNotEmpty()
+    } ?: JvmIdePlatformKind
+    if (platformKind == JvmIdePlatformKind) {
+        var jvmTarget = Kotlin2JvmCompilerArgumentsHolder.getInstance(module.project).settings.jvmTarget?.let { JvmTarget.fromString(it) }
+        if (jvmTarget == null) {
+            val sdk = ((rootModel ?: ModuleRootManager.getInstance(module))).sdk
+            val sdkVersion = (sdk?.sdkType as? JavaSdk)?.getVersion(sdk)
+            if (sdkVersion == null || sdkVersion >= JavaSdkVersion.JDK_1_8) {
+                jvmTarget = JvmTarget.JVM_1_8
+            }
         }
+        return if (jvmTarget != null) JvmIdePlatformKind.Platform(jvmTarget) else JvmIdePlatformKind.defaultPlatform
     }
-
-    val sdk = ((rootModel ?: ModuleRootManager.getInstance(module))).sdk
-    val sdkVersion = (sdk?.sdkType as? JavaSdk)?.getVersion(sdk)
-    return when {
-        sdkVersion == null || sdkVersion >= JavaSdkVersion.JDK_1_8 -> JvmIdePlatformKind.Platform(JvmTarget.JVM_1_8)
-        else -> JvmIdePlatformKind.defaultPlatform
-    }
+    return platformKind.defaultPlatform
 }
 
 fun KotlinFacetSettings.initializeIfNeeded(
@@ -227,8 +230,8 @@ private val CommonCompilerArguments.ignoredFields: List<String>
 private fun Module.configureSdkIfPossible(compilerArguments: CommonCompilerArguments, modelsProvider: IdeModifiableModelsProvider) {
     val allSdks = ProjectJdkTable.getInstance().allJdks
     val sdk = if (compilerArguments is K2JVMCompilerArguments) {
-        val jdkHome = compilerArguments.jdkHome ?: return
-        allSdks.firstOrNull { it.sdkType is JavaSdk && FileUtil.comparePaths(it.homePath, jdkHome) == 0 } ?: return
+        val jdkHome = compilerArguments.jdkHome
+        allSdks.firstOrNull { it.sdkType is JavaSdk && FileUtil.comparePaths(it.homePath, jdkHome) == 0 }
     } else {
         allSdks.firstOrNull { it.sdkType is KotlinSdkType }
                 ?: modelsProvider

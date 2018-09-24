@@ -298,6 +298,7 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtension() {
             resolverCtx: ProjectResolverContext
         ) {
             val mppModel = resolverCtx.getExtraProject(gradleModule, KotlinMPPGradleModel::class.java) ?: return
+            if (resolverCtx.getExtraProject(gradleModule, ExternalProject::class.java) == null) return
             processSourceSets(gradleModule, mppModel, ideModule, resolverCtx) { dataNode, sourceSet ->
                 if (dataNode == null || sourceSet.platform == KotlinPlatform.ANDROID) return@processSourceSets
                 createContentRootData(sourceSet.sourceDirs, sourceSet.sourceType, dataNode)
