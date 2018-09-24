@@ -5375,34 +5375,34 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/coroutines"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM_IR, true);
         }
 
-        @TestMetadata("asyncIteratorNullMerge.kt")
+        @TestMetadata("asyncIteratorNullMerge_1_2.kt")
         public void testAsyncIteratorNullMerge_1_2() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/asyncIteratorNullMerge.kt", "kotlin.coroutines.experimental");
+            runTest("compiler/testData/codegen/box/coroutines/asyncIteratorNullMerge_1_2.kt");
         }
 
-        @TestMetadata("asyncIteratorNullMerge.kt")
+        @TestMetadata("asyncIteratorNullMerge_1_3.kt")
         public void testAsyncIteratorNullMerge_1_3() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/asyncIteratorNullMerge.kt", "kotlin.coroutines");
+            runTest("compiler/testData/codegen/box/coroutines/asyncIteratorNullMerge_1_3.kt");
         }
 
-        @TestMetadata("asyncIteratorToList.kt")
+        @TestMetadata("asyncIteratorToList_1_2.kt")
         public void testAsyncIteratorToList_1_2() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/asyncIteratorToList.kt", "kotlin.coroutines.experimental");
+            runTest("compiler/testData/codegen/box/coroutines/asyncIteratorToList_1_2.kt");
         }
 
-        @TestMetadata("asyncIteratorToList.kt")
+        @TestMetadata("asyncIteratorToList_1_3.kt")
         public void testAsyncIteratorToList_1_3() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/asyncIteratorToList.kt", "kotlin.coroutines");
+            runTest("compiler/testData/codegen/box/coroutines/asyncIteratorToList_1_3.kt");
         }
 
-        @TestMetadata("asyncIterator.kt")
+        @TestMetadata("asyncIterator_1_2.kt")
         public void testAsyncIterator_1_2() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/asyncIterator.kt", "kotlin.coroutines.experimental");
+            runTest("compiler/testData/codegen/box/coroutines/asyncIterator_1_2.kt");
         }
 
-        @TestMetadata("asyncIterator.kt")
+        @TestMetadata("asyncIterator_1_3.kt")
         public void testAsyncIterator_1_3() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/asyncIterator.kt", "kotlin.coroutines");
+            runTest("compiler/testData/codegen/box/coroutines/asyncIterator_1_3.kt");
         }
 
         @TestMetadata("await.kt")

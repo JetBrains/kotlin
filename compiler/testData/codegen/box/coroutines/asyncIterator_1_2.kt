@@ -1,10 +1,11 @@
-// IGNORE_BACKEND: JVM_IR
+// !LANGUAGE: -ReleaseCoroutines -ExperimentalBuilderInference
+// IGNORE_BACKEND: JVM_IR, JS_IR
 // WITH_RUNTIME
 // WITH_COROUTINES
-// COMMON_COROUTINES_TEST
+
 import helpers.*
-import COROUTINES_PACKAGE.*
-import COROUTINES_PACKAGE.intrinsics.*
+import kotlin.coroutines.experimental.*
+import kotlin.coroutines.experimental.intrinsics.*
 
 interface AsyncGenerator<in T> {
     suspend fun yield(value: T)
@@ -109,9 +110,6 @@ fun builder(c: suspend () -> Unit) {
     c.startCoroutine(EmptyContinuation)
 }
 
-fun cst(a: Any?): String? = a as String?
-fun any(a: Any?): Any? = a
-
 fun box(): String {
     val seq = asyncGenerate {
         yield("O")
@@ -121,17 +119,9 @@ fun box(): String {
     var res = ""
 
     builder {
-        // type of `prev` should be j/l/Object everywhere (even in a expected type position)
-        var prev: Any? = null
         for (i in seq) {
             res += i
-            prev = any(res)
-            // merge of NULL_VALUE and j/l/Object should result in common j/l/Object value
-            // but it was NULL_VALUE and we do not spill null values, we just put
-            // ACONST_NULL after suspension point instead
         }
-
-        res = cst(prev) ?: "fail 1"
     }
 
     return res
