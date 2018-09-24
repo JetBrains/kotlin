@@ -192,6 +192,7 @@ class ContractSerializer {
             InvocationKind.AT_MOST_ONCE -> ProtoBuf.Effect.InvocationKind.AT_MOST_ONCE
             InvocationKind.EXACTLY_ONCE -> ProtoBuf.Effect.InvocationKind.EXACTLY_ONCE
             InvocationKind.AT_LEAST_ONCE -> ProtoBuf.Effect.InvocationKind.AT_LEAST_ONCE
+            InvocationKind.ZERO -> null
             InvocationKind.UNKNOWN -> null
         }
 

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.contracts.description
 
 enum class InvocationKind {
+    ZERO,
     AT_MOST_ONCE,
     EXACTLY_ONCE,
     AT_LEAST_ONCE,
