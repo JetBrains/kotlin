@@ -186,7 +186,8 @@ class ControlFlowProcessor(
             val expression = KtPsiUtil.deparenthesize(element) ?: return
 
             if (expression is KtStatementExpression || expression is KtTryExpression
-                || expression is KtIfExpression || expression is KtWhenExpression) {
+                || expression is KtIfExpression || expression is KtWhenExpression
+            ) {
                 return
             }
 
@@ -229,7 +230,7 @@ class ControlFlowProcessor(
 
         private fun getResolvedCallAccessTarget(element: KtElement?): AccessTarget =
             element.getResolvedCall(trace.bindingContext)?.let { AccessTarget.Call(it) }
-                    ?: AccessTarget.BlackBox
+                ?: AccessTarget.BlackBox
 
         private fun getDeclarationAccessTarget(element: KtElement): AccessTarget {
             val descriptor = trace.get(BindingContext.DECLARATION_TO_DESCRIPTOR, element)
@@ -923,7 +924,8 @@ class ControlFlowProcessor(
                     // Local class secondary constructors are handled differently
                     // They are the only local class element NOT included in owner pseudocode
                     // See generateInitializersForScriptClassOrObject && generateDeclarationForLocalClassOrObjectIfNeeded
-                    labelExprEnclosingFunc is ConstructorDescriptor && !labelExprEnclosingFunc.isPrimary) {
+                    labelExprEnclosingFunc is ConstructorDescriptor && !labelExprEnclosingFunc.isPrimary
+                ) {
                     trace.report(BREAK_OR_CONTINUE_JUMPS_ACROSS_FUNCTION_BOUNDARY.on(jumpExpression))
                 }
                 false
@@ -1413,7 +1415,8 @@ class ControlFlowProcessor(
                 for (declaration in classOrObject.declarations) {
                     if (declaration is KtSecondaryConstructor ||
                         declaration is KtProperty ||
-                        declaration is KtAnonymousInitializer) {
+                        declaration is KtAnonymousInitializer
+                    ) {
                         continue
                     }
                     generateInstructions(declaration)
@@ -1488,7 +1491,8 @@ class ControlFlowProcessor(
             mark(expression)
             val receiverExpression = expression.receiverExpression
             if (receiverExpression != null &&
-                trace.bindingContext.get(BindingContext.DOUBLE_COLON_LHS, receiverExpression) is DoubleColonLHS.Expression) {
+                trace.bindingContext.get(BindingContext.DOUBLE_COLON_LHS, receiverExpression) is DoubleColonLHS.Expression
+            ) {
                 generateInstructions(receiverExpression)
                 createNonSyntheticValue(expression, MagicKind.BOUND_CALLABLE_REFERENCE, receiverExpression)
             } else {
