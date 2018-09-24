@@ -346,7 +346,7 @@ class LazyModuleDependencies<M : ModuleInfo>(
 ) : ModuleDependencies {
     private val dependencies = storageManager.createLazyValue {
         val moduleDescriptor = resolverForProject.descriptorForModule(module)
-        buildSequence<ModuleDescriptorImpl> {
+        buildSequence {
             if (firstDependency != null) {
                 yield(resolverForProject.descriptorForModule(firstDependency))
             }

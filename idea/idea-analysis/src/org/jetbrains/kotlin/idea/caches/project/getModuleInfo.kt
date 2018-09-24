@@ -121,7 +121,7 @@ private sealed class ModuleInfoCollector<out T>(
             emptySequence()
         },
         virtualFileProcessor = { project, virtualFile, isLibrarySource ->
-            buildSequence<IdeaModuleInfo> {
+            buildSequence {
                 collectInfosByVirtualFile(
                     project,
                     virtualFile,

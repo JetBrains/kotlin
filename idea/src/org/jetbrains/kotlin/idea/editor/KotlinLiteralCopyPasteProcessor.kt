@@ -233,7 +233,7 @@ private class TemplateTokenSequence(private val inputString: String) : Sequence<
         if (inputString.isEmpty()) {
             return emptySequence<TemplateChunk>().iterator()
         }
-        return buildIterator<TemplateChunk> {
+        return buildIterator {
             var from = 0
             var to = 0
             while (to < inputString.length) {
