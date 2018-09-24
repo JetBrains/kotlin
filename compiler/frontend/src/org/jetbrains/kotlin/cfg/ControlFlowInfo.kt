@@ -26,7 +26,7 @@ abstract class ControlFlowInfo<S : ControlFlowInfo<S, D>, D : Any>
 internal constructor(
     protected val map: ImmutableMap<VariableDescriptor, D> = ImmutableHashMap.empty()
 ) : ImmutableMap<VariableDescriptor, D> by map, ReadOnlyControlFlowInfo<D> {
-    abstract protected fun copy(newMap: ImmutableMap<VariableDescriptor, D>): S
+    protected abstract fun copy(newMap: ImmutableMap<VariableDescriptor, D>): S
 
     override fun put(key: VariableDescriptor, value: D): S = put(key, value, this[key].getOrElse(null as D?))
 
