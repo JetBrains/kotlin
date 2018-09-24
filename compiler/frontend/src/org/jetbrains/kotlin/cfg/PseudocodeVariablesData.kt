@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.cfg
@@ -43,7 +32,8 @@ private typealias ImmutableHashSet<T> = javaslang.collection.HashSet<T>
 
 class PseudocodeVariablesData(val pseudocode: Pseudocode, private val bindingContext: BindingContext) {
     private val containsDoWhile = pseudocode.rootPseudocode.containsDoWhile
-    private val pseudocodeVariableDataCollector = PseudocodeVariableDataCollector(bindingContext, pseudocode)
+    private val pseudocodeVariableDataCollector =
+        PseudocodeVariableDataCollector(bindingContext, pseudocode)
 
     private class VariablesForDeclaration(
         val valsWithTrivialInitializer: Set<VariableDescriptor>,
@@ -86,7 +76,10 @@ class PseudocodeVariablesData(val pseudocode: Pseudocode, private val bindingCon
             val localPseudocode = localFunctionDeclarationInstruction.body
             addVariablesFromPseudocode(localPseudocode, nonTrivialVariables, valsWithTrivialInitializer)
         }
-        return VariablesForDeclaration(valsWithTrivialInitializer, nonTrivialVariables)
+        return VariablesForDeclaration(
+            valsWithTrivialInitializer,
+            nonTrivialVariables
+        )
     }
 
     private fun addVariablesFromPseudocode(
@@ -123,7 +116,10 @@ class PseudocodeVariablesData(val pseudocode: Pseudocode, private val bindingCon
             }
         }
 
-        return VariablesForDeclaration(valsWithTrivialInitializer, nonTrivialVariables)
+        return VariablesForDeclaration(
+            valsWithTrivialInitializer,
+            nonTrivialVariables
+        )
     }
 
     private fun isValWithTrivialInitializer(variableDeclarationElement: KtDeclaration, descriptor: VariableDescriptor) =
@@ -156,15 +152,20 @@ class PseudocodeVariablesData(val pseudocode: Pseudocode, private val bindingCon
             InitControlFlowInfo()
         ) { instruction: Instruction, incomingEdgesData: Collection<InitControlFlowInfo> ->
 
-            val enterInstructionData = mergeIncomingEdgesDataForInitializers(instruction, incomingEdgesData, blockScopeVariableInfo)
+            val enterInstructionData =
+                mergeIncomingEdgesDataForInitializers(
+                    instruction,
+                    incomingEdgesData,
+                    blockScopeVariableInfo
+                )
             val exitInstructionData = addVariableInitStateFromCurrentInstructionIfAny(
                 instruction, enterInstructionData, blockScopeVariableInfo
             )
             Edges(enterInstructionData, exitInstructionData)
         }.mapValues { (instruction, edges) ->
-                val trivialEdges = resultForValsWithTrivialInitializer[instruction]!!
-                Edges(trivialEdges.incoming.replaceDelegate(edges.incoming), trivialEdges.outgoing.replaceDelegate(edges.outgoing))
-            }
+            val trivialEdges = resultForValsWithTrivialInitializer[instruction]!!
+            Edges(trivialEdges.incoming.replaceDelegate(edges.incoming), trivialEdges.outgoing.replaceDelegate(edges.outgoing))
+        }
     }
 
     private fun computeInitInfoForTrivialVals(): Map<Instruction, Edges<ReadOnlyInitControlFlowInfoImpl>> {
@@ -194,9 +195,9 @@ class PseudocodeVariablesData(val pseudocode: Pseudocode, private val bindingCon
     }
 
     private fun WriteValueInstruction.isTrivialInitializer() =
-            // WriteValueInstruction having KtDeclaration as an element means
-            // it must be a write happened at the same time when
-            // the variable (common variable/parameter/object) has been declared
+    // WriteValueInstruction having KtDeclaration as an element means
+    // it must be a write happened at the same time when
+    // the variable (common variable/parameter/object) has been declared
         element is KtDeclaration
 
     private inner class ReadOnlyInitControlFlowInfoImpl(
@@ -206,7 +207,10 @@ class PseudocodeVariablesData(val pseudocode: Pseudocode, private val bindingCon
     ) : ReadOnlyInitControlFlowInfo {
         override fun getOrNull(variableDescriptor: VariableDescriptor): VariableControlFlowState? {
             if (variableDescriptor in declaredSet) {
-                return VariableControlFlowState.create(isInitialized = variableDescriptor in initSet, isDeclared = true)
+                return VariableControlFlowState.create(
+                    isInitialized = variableDescriptor in initSet,
+                    isDeclared = true
+                )
             }
             return delegate?.getOrNull(variableDescriptor)
         }
@@ -255,7 +259,10 @@ class PseudocodeVariablesData(val pseudocode: Pseudocode, private val bindingCon
             if (instruction.kind === MagicKind.EXHAUSTIVE_WHEN_ELSE) {
                 return enterInstructionData.iterator().fold(enterInstructionData) { result, (key, value) ->
                     if (!value.definitelyInitialized()) {
-                        result.put(key, VariableControlFlowState.createInitializedExhaustively(value.isDeclared))
+                        result.put(
+                            key,
+                            VariableControlFlowState.createInitializedExhaustively(value.isDeclared)
+                        )
                     } else result
                 }
             }
@@ -266,7 +273,7 @@ class PseudocodeVariablesData(val pseudocode: Pseudocode, private val bindingCon
         val variable =
             PseudocodeUtil.extractVariableDescriptorIfAny(instruction, bindingContext)
                 ?.takeIf { it in rootVariables.nonTrivialVariables }
-                    ?: return enterInstructionData
+                ?: return enterInstructionData
         var exitInstructionData = enterInstructionData
         if (instruction is WriteValueInstruction) {
             // if writing to already initialized object
@@ -275,16 +282,22 @@ class PseudocodeVariablesData(val pseudocode: Pseudocode, private val bindingCon
             }
 
             val enterInitState = enterInstructionData.getOrNull(variable)
-            val initializationAtThisElement = VariableControlFlowState.create(instruction.element is KtProperty, enterInitState)
+            val initializationAtThisElement =
+                VariableControlFlowState.create(instruction.element is KtProperty, enterInitState)
             exitInstructionData = exitInstructionData.put(variable, initializationAtThisElement, enterInitState)
         } else {
             // instruction instanceof VariableDeclarationInstruction
             val enterInitState =
                 enterInstructionData.getOrNull(variable)
-                        ?: getDefaultValueForInitializers(variable, instruction, blockScopeVariableInfo)
+                    ?: getDefaultValueForInitializers(
+                        variable,
+                        instruction,
+                        blockScopeVariableInfo
+                    )
 
             if (!enterInitState.mayBeInitialized() || !enterInitState.isDeclared) {
-                val variableDeclarationInfo = VariableControlFlowState.create(enterInitState.initState, isDeclared = true)
+                val variableDeclarationInfo =
+                    VariableControlFlowState.create(enterInitState.initState, isDeclared = true)
                 exitInstructionData = exitInstructionData.put(variable, variableDeclarationInfo, enterInitState)
             }
         }
@@ -343,12 +356,11 @@ class PseudocodeVariablesData(val pseudocode: Pseudocode, private val bindingCon
                     Edges(enterResult, exitResult)
                 }
             }.mapValues { (_, edges) ->
-
-                    Edges(
-                        edgesForTrivialVals.incoming.replaceDelegate(edges.incoming),
-                        edgesForTrivialVals.outgoing.replaceDelegate(edges.outgoing)
-                    )
-                }
+                Edges(
+                    edgesForTrivialVals.incoming.replaceDelegate(edges.incoming),
+                    edgesForTrivialVals.outgoing.replaceDelegate(edges.outgoing)
+                )
+            }
         }
 
     private fun computeUseInfoForTrivialVals(): Edges<ReadOnlyUseControlFlowInfoImpl> {
@@ -447,7 +459,11 @@ class PseudocodeVariablesData(val pseudocode: Pseudocode, private val bindingCon
                 var isDeclared = true
                 for (edgeData in incomingEdgesData) {
                     val varControlFlowState = edgeData.getOrNull(variable)
-                            ?: getDefaultValueForInitializers(variable, instruction, blockScopeVariableInfo)
+                        ?: getDefaultValueForInitializers(
+                            variable,
+                            instruction,
+                            blockScopeVariableInfo
+                        )
                     initState = initState?.merge(varControlFlowState.initState) ?: varControlFlowState.initState
                     if (!varControlFlowState.isDeclared) {
                         isDeclared = false
