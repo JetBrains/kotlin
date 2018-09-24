@@ -9,10 +9,7 @@ import org.jetbrains.kotlin.cfg.pseudocode.Pseudocode
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.BlockScope
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.Instruction
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.VariableDeclarationInstruction
-import org.jetbrains.kotlin.cfg.pseudocodeTraverser.Edges
-import org.jetbrains.kotlin.cfg.pseudocodeTraverser.TraversalOrder
-import org.jetbrains.kotlin.cfg.pseudocodeTraverser.collectData
-import org.jetbrains.kotlin.cfg.pseudocodeTraverser.traverse
+import org.jetbrains.kotlin.cfg.pseudocodeTraverser.*
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingContextUtils
@@ -32,7 +29,8 @@ class PseudocodeVariableDataCollector(
             traversalOrder,
             instructionDataMergeStrategy,
             { from, to, info -> filterOutVariablesOutOfScope(from, to, info) },
-            initialInfo
+            initialInfo,
+            LocalFunctionAnalysisStrategy.ANALYZE_EVERYTHING
         )
     }
 
