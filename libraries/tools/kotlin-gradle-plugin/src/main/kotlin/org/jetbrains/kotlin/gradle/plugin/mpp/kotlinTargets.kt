@@ -122,7 +122,7 @@ open class KotlinAndroidTarget(
         internal set
 
     override val platformType: KotlinPlatformType
-        get() = KotlinPlatformType.androidJvm
+        get() = KotlinPlatformType.ANDROID_JVM
 
     private val compilationFactory = KotlinJvmAndroidCompilationFactory(project, this)
 
@@ -179,7 +179,7 @@ open class KotlinOnlyTarget<T : KotlinCompilation>(
 class KotlinNativeTarget(
     project: Project,
     val konanTarget: KonanTarget
-) : KotlinOnlyTarget<KotlinNativeCompilation>(project, KotlinPlatformType.native) {
+) : KotlinOnlyTarget<KotlinNativeCompilation>(project, KotlinPlatformType.NATIVE) {
 
     init {
         attributes.attribute(konanTargetAttribute, konanTarget.name)

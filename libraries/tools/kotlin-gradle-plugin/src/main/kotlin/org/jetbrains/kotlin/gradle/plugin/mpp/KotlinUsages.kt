@@ -8,8 +8,8 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 import org.gradle.api.attributes.*
 import org.gradle.api.attributes.Usage.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
-import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType.androidJvm
-import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType.jvm
+import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType.ANDROID_JVM
+import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType.JVM
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.usageByName
 import org.jetbrains.kotlin.gradle.utils.isGradleVersionAtLeast
@@ -19,7 +19,7 @@ object KotlinUsages {
     const val KOTLIN_RUNTIME = "kotlin-runtime"
     val values = setOf(KOTLIN_API, KOTLIN_RUNTIME)
 
-    private val jvmPlatformTypes: Set<KotlinPlatformType> = setOf(jvm, androidJvm)
+    private val jvmPlatformTypes: Set<KotlinPlatformType> = setOf(JVM, ANDROID_JVM)
 
     internal fun consumerApiUsage(target: KotlinTarget) = target.project.usageByName(
         when (target.platformType) {

@@ -68,7 +68,7 @@ internal class DefaultKotlinSourceSetFactory(
 
         dependencyConfigurationWithMetadata.forEach { (configurationName, metadataName) ->
             project.configurations.maybeCreate(metadataName).apply {
-                attributes.attribute(KotlinPlatformType.attribute, KotlinPlatformType.common)
+                attributes.attribute(KotlinPlatformType.ATTRIBUTE, KotlinPlatformType.COMMON.attributeValue)
                 attributes.attribute(Usage.USAGE_ATTRIBUTE, project.usageByName(KotlinUsages.KOTLIN_API))
                 isVisible = false
                 isCanBeConsumed = false

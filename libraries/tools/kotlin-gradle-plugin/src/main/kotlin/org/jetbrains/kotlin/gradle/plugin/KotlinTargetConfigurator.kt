@@ -701,7 +701,7 @@ internal fun Project.usageByName(usageName: String): Usage =
     }
 
 fun Configuration.usesPlatformOf(target: KotlinTarget): Configuration {
-    attributes.attribute(KotlinPlatformType.attribute, target.platformType)
+    attributes.attribute(KotlinPlatformType.ATTRIBUTE, target.platformType.attributeValue)
     // TODO: Provide an universal way to copy attributes from the target.
     if (target is KotlinNativeTarget) {
         attributes.attribute(KotlinNativeTarget.konanTargetAttribute, target.konanTarget.name)

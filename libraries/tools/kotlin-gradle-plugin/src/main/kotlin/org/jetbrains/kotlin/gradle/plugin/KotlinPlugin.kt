@@ -395,7 +395,7 @@ internal abstract class AbstractKotlinPlugin(
             val javaSourceSets = project.convention.getPlugin(JavaPluginConvention::class.java).sourceSets
 
             val kotlinSourceSetDslName = when (kotlinTarget.platformType) {
-                KotlinPlatformType.js -> KOTLIN_JS_DSL_NAME
+                KotlinPlatformType.JS -> KOTLIN_JS_DSL_NAME
                 else -> KOTLIN_DSL_NAME
             }
 
@@ -428,7 +428,7 @@ internal abstract class AbstractKotlinPlugin(
             val project = kotlinTarget.project
 
             // Setup the consuming configurations:
-            project.dependencies.attributesSchema.attribute(KotlinPlatformType.attribute)
+            project.dependencies.attributesSchema.attribute(KotlinPlatformType.ATTRIBUTE)
             kotlinTarget.compilations.all { compilation ->
                 AbstractKotlinTargetConfigurator.defineConfigurationsForCompilation(compilation, kotlinTarget, project.configurations)
             }
@@ -436,7 +436,7 @@ internal abstract class AbstractKotlinPlugin(
             // Setup the published configurations:
             // Don't set the attributes for common module; otherwise their 'common' platform won't be compatible with the one in
             // platform-specific modules
-            if (kotlinTarget.platformType != KotlinPlatformType.common) {
+            if (kotlinTarget.platformType != KotlinPlatformType.COMMON) {
                 project.configurations.getByName(kotlinTarget.apiElementsConfigurationName).run {
                     attributes.attribute(Usage.USAGE_ATTRIBUTE, KotlinUsages.producerApiUsage(kotlinTarget))
                     usesPlatformOf(kotlinTarget)
@@ -493,7 +493,7 @@ internal open class KotlinPlugin(
             Kotlin2JvmSourceSetProcessor(project, tasksProvider, compilation, kotlinPluginVersion)
 
     override fun apply(project: Project) {
-        val target = KotlinWithJavaTarget(project, KotlinPlatformType.jvm, targetName).apply {
+        val target = KotlinWithJavaTarget(project, KotlinPlatformType.JVM, targetName).apply {
             disambiguationClassifier = null // don't add anything to the task names
         }
         (project.kotlinExtension as KotlinSingleJavaTargetExtension).target = target
@@ -520,7 +520,7 @@ internal open class KotlinCommonPlugin(
         KotlinCommonSourceSetProcessor(project, compilation, tasksProvider, kotlinPluginVersion)
 
     override fun apply(project: Project) {
-        val target = KotlinWithJavaTarget(project, KotlinPlatformType.common, targetName)
+        val target = KotlinWithJavaTarget(project, KotlinPlatformType.COMMON, targetName)
         (project.kotlinExtension as KotlinSingleJavaTargetExtension).target = target
 
         super.apply(project)
@@ -546,7 +546,7 @@ internal open class Kotlin2JsPlugin(
         )
 
     override fun apply(project: Project) {
-        val target = KotlinWithJavaTarget(project, KotlinPlatformType.js, targetName)
+        val target = KotlinWithJavaTarget(project, KotlinPlatformType.JS, targetName)
 
         (project.kotlinExtension as KotlinSingleJavaTargetExtension).target = target
         super.apply(project)
