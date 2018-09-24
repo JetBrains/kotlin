@@ -1,6 +1,12 @@
-// COMMON_COROUTINES_TEST
+// !LANGUAGE: +ReleaseCoroutines +ExperimentalBuilderInference
+// !USE_EXPERIMENTAL: kotlin.Experimental
 // SKIP_TXT
-@COROUTINES_PACKAGE.RestrictsSuspension
+
+@file:UseExperimental(ExperimentalTypeInference::class)
+
+import kotlin.experimental.ExperimentalTypeInference
+
+@kotlin.coroutines.RestrictsSuspension
 class RestrictedController<T> {
     suspend fun yield(<!UNUSED_PARAMETER!>x<!>: T) {}
 
@@ -21,7 +27,9 @@ class RestrictedController<T> {
     }
 }
 
-fun <T> buildSequence(<!UNUSED_PARAMETER!>c<!>: suspend RestrictedController<T>.() -> Unit) {}
+fun <T> buildSequence(@BuilderInference <!UNUSED_PARAMETER!>c<!>: suspend RestrictedController<T>.() -> Unit) {}
+
+@BuilderInference
 suspend fun <T> RestrictedController<T>.yield2(<!UNUSED_PARAMETER!>x<!>: T) {}
 
 fun test() {
