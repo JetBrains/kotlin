@@ -338,12 +338,76 @@ class NewMultiplatformProjectImportingTest : GradleImportingTestCase() {
         }
     }
 
+    @Test
+    fun testUnresolvedDependency() {
+        createProjectSubFile(
+            "build.gradle",
+            """
+                buildscript {
+                    repositories {
+                        mavenLocal()
+                        jcenter()
+                        maven { url 'https://dl.bintray.com/kotlin/kotlin-dev' }
+                    }
+                    dependencies {
+                        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
+                    }
+                }
+
+                allprojects {
+                    repositories {
+                        mavenLocal()
+                        jcenter()
+                        maven { url 'https://dl.bintray.com/kotlin/kotlin-dev' }
+                    }
+                }
+
+                apply plugin: 'kotlin-multiplatform'
+
+                kotlin {
+                    sourceSets {
+                        jvmMain {
+                            dependencies {
+                                implementation 'my.lib:unresolved'
+                            }
+                        }
+                    }
+                    targets {
+                        fromPreset(presets.jvmWithJava, 'jvm')
+                    }
+                }
+            """.trimIndent()
+        )
+
+        importProject()
+
+        checkProjectStructure(
+            exhaustiveSourceSourceRootList = false,
+            exhaustiveDependencyList = false
+        ) {
+            module("project")
+            module("project_commonMain")
+            module("project_commonTest")
+            module("project_jvmMain")
+            module("project_jvmTest")
+            module("project_main")
+            module("project_test")
+        }
+    }
+
     private fun checkProjectStructure(
         exhaustiveModuleList: Boolean = true,
         exhaustiveSourceSourceRootList: Boolean = true,
+        exhaustiveDependencyList: Boolean = true,
         body: ProjectInfo.() -> Unit = {}
     ) {
-        checkProjectStructure(myProject, projectPath, exhaustiveModuleList, exhaustiveSourceSourceRootList, body)
+        checkProjectStructure(
+            myProject,
+            projectPath,
+            exhaustiveModuleList,
+            exhaustiveSourceSourceRootList,
+            exhaustiveDependencyList,
+            body)
     }
 
     override fun importProject() {

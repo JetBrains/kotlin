@@ -13,15 +13,16 @@ import org.gradle.api.artifacts.Dependency
 import org.gradle.api.artifacts.component.ProjectComponentIdentifier
 import org.gradle.api.file.FileCollection
 import org.gradle.api.file.SourceDirectorySet
+import org.gradle.api.logging.Logging
 import org.gradle.api.provider.Property
 import org.jetbrains.plugins.gradle.model.*
 import org.jetbrains.plugins.gradle.tooling.ErrorMessageBuilder
 import org.jetbrains.plugins.gradle.tooling.ModelBuilderService
 import org.jetbrains.plugins.gradle.tooling.util.DependencyResolver
-import org.jetbrains.plugins.gradle.tooling.util.resolve.DependencyResolverImpl
 import org.jetbrains.plugins.gradle.tooling.util.SourceSetCachedFinder
+import org.jetbrains.plugins.gradle.tooling.util.resolve.DependencyResolverImpl
 import java.io.File
-import java.lang.Exception
+import java.lang.reflect.Method
 
 class KotlinMPPGradleModelBuilder : ModelBuilderService {
     override fun getErrorMessageBuilder(project: Project, e: Exception): ErrorMessageBuilder {
@@ -47,7 +48,18 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
         val targets = buildTargets(sourceSetMap, dependencyResolver, project) ?: return null
         computeSourceSetsDeferredInfo(sourceSets, targets)
         val coroutinesState = getCoroutinesState(project)
+        reportUnresolvedDependencies(targets)
         return KotlinMPPGradleModelImpl(sourceSetMap, targets, ExtraFeaturesImpl(coroutinesState))
+    }
+
+    private fun reportUnresolvedDependencies(targets: Collection<KotlinTarget>) {
+        targets
+            .asSequence()
+            .flatMap { it.compilations.asSequence() }
+            .flatMap { it.dependencies.asSequence() }
+            .mapNotNull { (it as? UnresolvedExternalDependency)?.failureMessage }
+            .toSet()
+            .forEach { logger.warn(it) }
     }
 
     private fun Project.getChildProjectByPath(path: String): Project? {
@@ -286,19 +298,20 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
         }
     }
 
+    @Suppress("UNCHECKED_CAST")
+    private fun safelyGetArguments(compileKotlinTask: Task, accessor: Method?) = try {
+        accessor?.invoke(compileKotlinTask) as? List<String>
+    } catch (e: Exception) {
+        logger.info(e.message, e)
+        null
+    } ?: emptyList()
+
     private fun buildCompilationArguments(compileKotlinTask: Task): KotlinCompilationArguments? {
         val compileTaskClass = compileKotlinTask.javaClass
         val getCurrentArguments = compileTaskClass.getMethodOrNull("getSerializedCompilerArguments")
         val getDefaultArguments = compileTaskClass.getMethodOrNull("getDefaultSerializedCompilerArguments")
-
-        //TODO: Hack for KotlinNativeCompile
-        if (getCurrentArguments == null || getDefaultArguments == null) {
-            return KotlinCompilationArgumentsImpl(emptyList(), emptyList())
-        }
-        @Suppress("UNCHECKED_CAST")
-        val currentArguments = getCurrentArguments(compileKotlinTask) as? List<String> ?: return null
-        @Suppress("UNCHECKED_CAST")
-        val defaultArguments = getDefaultArguments(compileKotlinTask) as? List<String> ?: return null
+        val currentArguments = safelyGetArguments(compileKotlinTask, getCurrentArguments)
+        val defaultArguments = safelyGetArguments(compileKotlinTask, getDefaultArguments)
         return KotlinCompilationArgumentsImpl(defaultArguments, currentArguments)
     }
 
@@ -368,5 +381,9 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
                 sourceSet.isTestModule = "Test" in sourceSet.name
             }
         }
+    }
+
+    companion object {
+        private val logger = Logging.getLogger(KotlinMPPGradleModelBuilder::class.java)
     }
 }
