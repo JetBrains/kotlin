@@ -28,14 +28,14 @@ internal class PsiReturnsEffectParser(
     callContext: ContractCallContext,
     contractParserDispatcher: PsiContractParserDispatcher
 ) : AbstractPsiEffectParser(collector, callContext, contractParserDispatcher) {
-    override fun tryParseEffect(expression: KtExpression): EffectDeclaration? {
-        val resolvedCall = expression.getResolvedCall(callContext.bindingContext) ?: return null
+    override fun tryParseEffect(expression: KtExpression): Collection<EffectDeclaration> {
+        val resolvedCall = expression.getResolvedCall(callContext.bindingContext) ?: return emptyList()
         val descriptor = resolvedCall.resultingDescriptor
 
-        if (descriptor.isReturnsNotNullDescriptor()) return ReturnsEffectDeclaration(ConstantReference.NOT_NULL)
-        if (descriptor.isReturnsWildcardDescriptor()) return ReturnsEffectDeclaration(ConstantReference.WILDCARD)
+        if (descriptor.isReturnsNotNullDescriptor()) return listOf(ReturnsEffectDeclaration(ConstantReference.NOT_NULL))
+        if (descriptor.isReturnsWildcardDescriptor()) return listOf(ReturnsEffectDeclaration(ConstantReference.WILDCARD))
 
-        if (!descriptor.isReturnsEffectDescriptor()) return null
+        if (!descriptor.isReturnsEffectDescriptor()) return emptyList()
 
         val argumentExpression = resolvedCall.firstArgumentAsExpressionOrNull()
         val constantValue = if (argumentExpression != null) contractParserDispatcher.parseConstant(argumentExpression) else null
@@ -45,9 +45,9 @@ internal class PsiReturnsEffectParser(
                 "only true/false/null constants in Returns-effect are currently supported",
                 argumentExpression ?: expression
             )
-            return null
+            return emptyList()
         }
 
-        return ReturnsEffectDeclaration(constantValue)
+        return listOf(ReturnsEffectDeclaration(constantValue))
     }
 }

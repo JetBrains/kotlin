@@ -29,15 +29,14 @@ internal class PsiConditionalEffectParser(
     callContext: ContractCallContext,
     dispatcher: PsiContractParserDispatcher
 ) : AbstractPsiEffectParser(collector, callContext, dispatcher) {
-    override fun tryParseEffect(expression: KtExpression): EffectDeclaration? {
-        val resolvedCall = expression.getResolvedCall(callContext.bindingContext) ?: return null
-        if (!resolvedCall.resultingDescriptor.isImpliesCallDescriptor()) return null
+    override fun tryParseEffect(expression: KtExpression): Collection<EffectDeclaration> {
+        val resolvedCall = expression.getResolvedCall(callContext.bindingContext) ?: return emptyList()
+        if (!resolvedCall.resultingDescriptor.isImpliesCallDescriptor()) return emptyList()
 
-        val effect = contractParserDispatcher.parseEffect(resolvedCall.dispatchReceiver.safeAs<ExpressionReceiver>()?.expression)
-                ?: return null
+        val effects = contractParserDispatcher.parseEffect(resolvedCall.dispatchReceiver.safeAs<ExpressionReceiver>()?.expression)
         val condition = contractParserDispatcher.parseCondition(resolvedCall.firstArgumentAsExpressionOrNull())
-                ?: return null
+            ?: return emptyList()
 
-        return ConditionalEffectDeclaration(effect, condition)
+        return effects.map { effect -> ConditionalEffectDeclaration(effect, condition) }
     }
 }

@@ -34,13 +34,13 @@ internal class PsiCallsEffectParser(
     contractParserDispatcher: PsiContractParserDispatcher
 ) : AbstractPsiEffectParser(collector, callContext, contractParserDispatcher) {
 
-    override fun tryParseEffect(expression: KtExpression): EffectDeclaration? {
-        val resolvedCall = expression.getResolvedCall(callContext.bindingContext) ?: return null
+    override fun tryParseEffect(expression: KtExpression): Collection<EffectDeclaration> {
+        val resolvedCall = expression.getResolvedCall(callContext.bindingContext) ?: return emptyList()
         val descriptor = resolvedCall.resultingDescriptor
 
-        if (!descriptor.isCallsInPlaceEffectDescriptor()) return null
+        if (!descriptor.isCallsInPlaceEffectDescriptor()) return emptyList()
 
-        val lambda = contractParserDispatcher.parseVariable(resolvedCall.firstArgumentAsExpressionOrNull()) ?: return null
+        val lambda = contractParserDispatcher.parseVariable(resolvedCall.firstArgumentAsExpressionOrNull()) ?: return emptyList()
 
         val kindArgument = resolvedCall.valueArgumentsByIndex?.getOrNull(1)
 
@@ -53,10 +53,10 @@ internal class PsiCallsEffectParser(
         if (kind == null) {
             val reportOn = (kindArgument as? ExpressionValueArgument)?.valueArgument?.getArgumentExpression() ?: expression
             collector.badDescription("unrecognized InvocationKind", reportOn)
-            return null
+            return emptyList()
         }
 
-        return CallsEffectDeclaration(lambda, kind)
+        return listOf(CallsEffectDeclaration(lambda, kind))
     }
 
     private fun KtExpression.toInvocationKind(bindingContext: BindingContext): InvocationKind? {
