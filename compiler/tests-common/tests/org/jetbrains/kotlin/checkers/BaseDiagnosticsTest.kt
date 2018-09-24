@@ -140,6 +140,7 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
         val dynamicCallDescriptors: List<DeclarationDescriptor> = ArrayList()
         val withNewInferenceDirective: Boolean
         val newInferenceEnabled: Boolean
+        val renderDiagnosticMessages: Boolean
 
         init {
             this.declareCheckType = CHECK_TYPE_DIRECTIVE in directives
@@ -162,6 +163,7 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
                 this.clearText = CheckerTestUtil.parseDiagnosedRanges(addExtras(expectedText), diagnosedRanges)
                 this.createKtFile = lazy { TestCheckerUtil.createCheckAndReturnPsiFile(fileName, clearText, project) }
             }
+            this.renderDiagnosticMessages = RENDER_DIAGNOSTICS_MESSAGES in directives
         }
 
         val ktFile: KtFile? by createKtFile
@@ -302,7 +304,8 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
                     diagnosticToExpectedDiagnostic,
                     { file -> file.text },
                     uncheckedDiagnostics,
-                    withNewInferenceDirective
+                    withNewInferenceDirective,
+                    renderDiagnosticMessages
                 )
             )
 
@@ -374,6 +377,8 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
 
         // Change it to "true" to load diagnostics for old inference to test new inference (ignore diagnostics with <NI; prefix)
         val USE_OLD_INFERENCE_DIAGNOSTICS_FOR_NI = false
+
+        val RENDER_DIAGNOSTICS_MESSAGES = "RENDER_DIAGNOSTICS_MESSAGES"
 
         private fun parseDiagnosticFilterDirective(
             directiveMap: Map<String, String>,
