@@ -2422,6 +2422,11 @@ public class DiagnosticsTestWithStdLibUsingJavacGenerated extends AbstractDiagno
             runTest("compiler/testData/diagnostics/testsWithStdLib/experimental/experimentalUnsignedLiterals.kt");
         }
 
+        @TestMetadata("fullFqNameUsage.kt")
+        public void testFullFqNameUsage() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/experimental/fullFqNameUsage.kt");
+        }
+
         @TestMetadata("importStatement.kt")
         public void testImportStatement() throws Exception {
             runTest("compiler/testData/diagnostics/testsWithStdLib/experimental/importStatement.kt");

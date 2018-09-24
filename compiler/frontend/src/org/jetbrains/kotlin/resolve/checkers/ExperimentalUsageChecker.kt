@@ -306,8 +306,11 @@ class ExperimentalUsageChecker(project: Project) : CallChecker {
             return false
         }
 
-        private fun PsiElement.isUsageAsUseExperimentalArgument(bindingContext: BindingContext): Boolean =
-            parent is KtClassLiteralExpression &&
+        private fun PsiElement.isUsageAsUseExperimentalArgument(bindingContext: BindingContext): Boolean {
+            val qualifier = (this as? KtSimpleNameExpression)?.getTopmostParentQualifiedExpressionForSelector() ?: this
+            val parent = qualifier.parent
+
+            return parent is KtClassLiteralExpression &&
                     parent.parent is KtValueArgument &&
                     parent.parent.parent is KtValueArgumentList &&
                     parent.parent.parent.parent.let { entry ->
@@ -315,6 +318,7 @@ class ExperimentalUsageChecker(project: Project) : CallChecker {
                             annotation.fqName == USE_EXPERIMENTAL_FQ_NAME || annotation.fqName == WAS_EXPERIMENTAL_FQ_NAME
                         } == true
                     }
+        }
     }
 
     class Overrides(project: Project) : DeclarationChecker {
