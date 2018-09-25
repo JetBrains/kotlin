@@ -81,6 +81,7 @@ abstract class KotlinBasePluginWrapper(
     private fun setupAttributeMatchingStrategy(project: Project) = with(project.dependencies.attributesSchema) {
         KotlinPlatformType.setupAttributesMatchingStrategy(this)
         KotlinUsages.setupAttributesMatchingStrategy(this)
+        ProjectLocalConfigurations.setupAttributesMatchingStrategy(this)
     }
 
     internal abstract fun getPlugin(

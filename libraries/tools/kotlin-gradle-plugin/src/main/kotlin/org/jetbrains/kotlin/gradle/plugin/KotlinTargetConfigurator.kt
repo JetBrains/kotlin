@@ -154,7 +154,10 @@ abstract class AbstractKotlinTargetConfigurator<KotlinTargetType : KotlinTarget>
 
         val configurations = project.configurations
 
-        val defaultConfiguration = configurations.maybeCreate(target.defaultConfigurationName)
+        val defaultConfiguration = configurations.maybeCreate(target.defaultConfigurationName).apply {
+            setupAsLocalTargetSpecificConfigurationIfSupported(target)
+        }
+
         val mainCompilation = target.compilations.maybeCreate(KotlinCompilation.MAIN_COMPILATION_NAME)
 
         val compileConfiguration = configurations.maybeCreate(mainCompilation.deprecatedCompileConfigurationName)
@@ -240,6 +243,7 @@ abstract class AbstractKotlinTargetConfigurator<KotlinTargetType : KotlinTarget>
             configurations: ConfigurationContainer
         ) {
             val compileConfiguration = configurations.maybeCreate(compilation.deprecatedCompileConfigurationName).apply {
+                setupAsLocalTargetSpecificConfigurationIfSupported(target)
                 isVisible = false
                 isCanBeResolved = true // Needed for IDE import
                 description = "Dependencies for $compilation (deprecated, use '${compilation.implementationConfigurationName} ' instead)."
@@ -262,6 +266,7 @@ abstract class AbstractKotlinTargetConfigurator<KotlinTargetType : KotlinTarget>
             }
 
             val compileOnlyConfiguration = configurations.maybeCreate(compilation.compileOnlyConfigurationName).apply {
+                setupAsLocalTargetSpecificConfigurationIfSupported(target)
                 isVisible = false
                 isCanBeResolved = true // Needed for IDE import
                 description = "Compile only dependencies for $compilation."
@@ -278,6 +283,7 @@ abstract class AbstractKotlinTargetConfigurator<KotlinTargetType : KotlinTarget>
 
             if (compilation is KotlinCompilationToRunnableFiles) {
                 val runtimeConfiguration = configurations.maybeCreate(compilation.deprecatedRuntimeConfigurationName).apply {
+                    setupAsLocalTargetSpecificConfigurationIfSupported(target)
                     extendsFrom(compileConfiguration)
                     isVisible = false
                     isCanBeResolved = true // Needed for IDE import
@@ -303,15 +309,14 @@ abstract class AbstractKotlinTargetConfigurator<KotlinTargetType : KotlinTarget>
                 }
             }
         }
-
-
-        internal val KotlinCompilation.deprecatedCompileConfigurationName: String
-            get() = disambiguateName("compile")
-
-        internal val KotlinCompilationToRunnableFiles.deprecatedRuntimeConfigurationName: String
-            get() = disambiguateName("runtime")
     }
 }
+
+internal val KotlinCompilation.deprecatedCompileConfigurationName: String
+    get() = disambiguateName("compile")
+
+internal val KotlinCompilationToRunnableFiles.deprecatedRuntimeConfigurationName: String
+    get() = disambiguateName("runtime")
 
 open class KotlinTargetConfigurator<KotlinCompilationType: KotlinCompilation>(
     buildOutputCleanupRegistry: BuildOutputCleanupRegistry,
