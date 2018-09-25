@@ -32,7 +32,11 @@ private fun <T : Throwable> assertFailsWithImpl(exceptionClass: Class<T>, messag
 }
 
 
-/** Asserts that a [block] fails with a specific exception of type [exceptionClass] being thrown. */
+/**
+ * Asserts that a [block] fails with a specific exception of type [exceptionClass] being thrown.
+ *
+ * If the assertion fails, the specified [message] is used unless it is null as a prefix for the failure message.
+ */
 actual fun <T : Throwable> assertFailsWith(exceptionClass: KClass<T>, message: String?, block: () -> Unit): T =
     assertFailsWithImpl(exceptionClass.java, message, block)
 
