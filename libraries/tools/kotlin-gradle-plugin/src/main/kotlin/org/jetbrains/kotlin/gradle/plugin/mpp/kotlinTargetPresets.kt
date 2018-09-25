@@ -6,12 +6,16 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.Project
-import org.gradle.api.file.FileCollection
+import org.gradle.api.artifacts.Dependency
+import org.gradle.api.artifacts.repositories.IvyArtifactRepository
+import org.gradle.api.artifacts.repositories.IvyPatternRepositoryLayout
 import org.gradle.api.internal.file.FileResolver
 import org.gradle.api.plugins.JavaPlugin
 import org.gradle.internal.cleanup.BuildOutputCleanupRegistry
 import org.gradle.internal.reflect.Instantiator
-import org.jetbrains.kotlin.compilerRunner.*
+import org.jetbrains.kotlin.compilerRunner.KotlinNativeProjectProperty
+import org.jetbrains.kotlin.compilerRunner.hasProperty
+import org.jetbrains.kotlin.compilerRunner.konanHome
 import org.jetbrains.kotlin.gradle.dsl.KotlinCompile
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.*
@@ -20,8 +24,11 @@ import org.jetbrains.kotlin.gradle.tasks.AndroidTasksProvider
 import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
 import org.jetbrains.kotlin.gradle.utils.NativeCompilerDownloader
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
+import org.jetbrains.kotlin.konan.KonanVersion
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
+import java.io.File
+import java.util.*
 
 abstract class KotlinOnlyTargetPreset<T : KotlinCompilation>(
     protected val project: Project,
@@ -250,18 +257,51 @@ class KotlinNativeTargetPreset(
         }
     }
 
-    private fun stdlib(target: KonanTarget): FileCollection = with(project) {
-        files("${konanHome}/klib/common/stdlib")
+    private fun setupKotlinNativeVirtualRepo(): Unit = with(project) {
+
+        val repoAlreadyExists = this.repositories.asSequence()
+            .filterIsInstance<IvyArtifactRepository>()
+            .any { KOTLIN_NATIVE_FAKE_REPO_NAME == it.name }
+
+        if (repoAlreadyExists) return
+
+        this.repositories.ivy { repo ->
+            repo.name = KOTLIN_NATIVE_FAKE_REPO_NAME
+            repo.setUrl("file://$konanHome/klib")
+            repo.layout("pattern") {
+                val layout = it as IvyPatternRepositoryLayout
+                layout.artifact("common/[artifact]")
+                layout.artifact("platform/[classifier]/[artifact]")
+            }
+            repo.metadataSources {
+                it.artifact()
+            }
+        }
     }
 
-    private fun platformLibs(target: KonanTarget): FileCollection = with(project) {
-        files(provider {
-            file("${konanHome}/klib/platform/${target.name}").listFiles { file -> file.isDirectory } ?: emptyArray()
-        })
+    private fun defaultLibs(target: KonanTarget? = null): List<Dependency> = with(project) {
+
+        val relPath = if (target != null) "platform/${target.name}" else "common"
+
+        file("$konanHome/klib/$relPath")
+            .listFiles { file -> file.isDirectory }
+            ?.sortedBy { dir -> dir.name.toLowerCase() }
+            ?.map { dir ->
+                dependencies.create(
+                    mutableMapOf(
+                        "group" to "Kotlin/Native",
+                        "name" to dir.name,
+                        "version" to getKotlinNativeLibraryVersion(dir)
+                    ).also { dependencyNotation ->
+                        if (target != null) dependencyNotation += "classifier" to target.name
+                    }
+                )
+            } ?: emptyList()
     }
 
     override fun createTarget(name: String): KotlinNativeTarget {
         setupNativeCompiler()
+        setupKotlinNativeVirtualRepo()
 
         val result = KotlinNativeTarget(project, konanTarget).apply {
             targetName = name
@@ -274,16 +314,21 @@ class KotlinNativeTargetPreset(
         KotlinNativeTargetConfigurator(buildOutputCleanupRegistry, kotlinPluginVersion).configureTarget(result)
 
         // Allow IDE to resolve the libraries provided by the compiler by adding them into dependencies.
-        result.compilations.all {
-            val target = it.target.konanTarget
-            it.dependencies {
-                implementation(stdlib(target))
-                // If we use just implementation(platformLibs(target)), the IDE resolver duplicates the libraries
-                // TODO: switch back to implementation(platformLibs(target)) when this issue is fixed
-                platformLibs(target).files.forEach { platformLib -> implementation(project.files(platformLib)) }
+        result.compilations.all { compilation ->
+            val target = compilation.target.konanTarget
+            compilation.dependencies {
+                // First, put common libs:
+                defaultLibs().forEach { implementation(it) }
+                // Then, platform-specific libs:
+                defaultLibs(target).forEach { implementation(it) }
             }
         }
+
         return result
+    }
+
+    companion object {
+        private const val KOTLIN_NATIVE_FAKE_REPO_NAME = "Kotlin/Native default libraries"
     }
 }
 
@@ -294,7 +339,7 @@ internal val KonanTarget.enabledOnCurrentHost
     get() = HostManager().isEnabled(this)
 
 internal val KonanTarget.presetName: String
-    get() = when(this) {
+    get() = when (this) {
         KonanTarget.ANDROID_ARM32 -> "androidNativeArm32"
         KonanTarget.ANDROID_ARM64 -> "androidNativeArm64"
         else -> lowerCamelCaseName(*this.name.split('_').toTypedArray())
@@ -302,3 +347,13 @@ internal val KonanTarget.presetName: String
 
 internal val KotlinNativeCompilation.isMainCompilation: Boolean
     get() = name == KotlinCompilation.MAIN_COMPILATION_NAME
+
+private fun getKotlinNativeLibraryVersion(klibDir: File): String {
+    val manifestFile = File(klibDir, "manifest")
+    check(manifestFile.isFile) { "Manifest file not found for Kotlin/Native library: $klibDir" }
+
+    val compilerVersion = Properties().also { it.load(manifestFile.bufferedReader()) }.getProperty("compiler_version")
+    checkNotNull(compilerVersion) { "Compiler version not specified in manifest file: $manifestFile" }
+
+    return KonanVersion.fromString(compilerVersion).toString()
+}
