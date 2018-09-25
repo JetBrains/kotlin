@@ -314,6 +314,11 @@ func testAnyPrint() throws {
     print("END")
 }
 
+func testCharExtensions() throws {
+    try assertTrue(ValuesKt.isA(ValuesKt.boxChar(65)))
+    try assertFalse(ValuesKt.isA(ValuesKt.boxChar(66)))
+}
+
 func testLambda() throws {
     try assertEquals(actual: ValuesKt.sumLambda(3, 4), expected: 7)
 }
@@ -404,6 +409,15 @@ func testInlineClasses() throws {
         actual: ValuesKt.concatenateInlineClassValues(ic1: ic1, ic1N: nil, ic2: ic2, ic2N: nil, ic3: nil, ic3N: nil),
         expected: "42 null foo null null null"
     )
+
+    try assertEquals(actual: ValuesKt.getValue1(ic1), expected: 42)
+    try assertEquals(actual: ValuesKt.getValueOrNull1(ic1N) as! Int, expected: 17)
+
+    try assertEquals(actual: ValuesKt.getValue2(ic2), expected: "foo")
+    try assertEquals(actual: ValuesKt.getValueOrNull2(ic2N), expected: "bar")
+
+    try assertEquals(actual: ValuesKt.getValue3(ic3), expected: ic3)
+    try assertEquals(actual: ValuesKt.getValueOrNull3(ic3N), expected: nil)
 }
 
 // -------- Execution of the test --------
@@ -431,6 +445,7 @@ class ValuesTests : TestProvider {
             TestCase(name: "TestStringExtension", method: withAutorelease(testStrExtFun)),
             TestCase(name: "TestAnyToString", method: withAutorelease(testAnyToString)),
             TestCase(name: "TestAnyPrint", method: withAutorelease(testAnyPrint)),
+            TestCase(name: "TestCharExtensions", method: withAutorelease(testCharExtensions)),
             TestCase(name: "TestLambda", method: withAutorelease(testLambda)),
             TestCase(name: "TestInterfaceExtension", method: withAutorelease(testInterfaceExtension)),
             TestCase(name: "TestClassInstances", method: withAutorelease(testClassInstances)),

@@ -11,12 +11,10 @@ import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.descriptors.allOverriddenDescriptors
 import org.jetbrains.kotlin.backend.konan.descriptors.isArray
 import org.jetbrains.kotlin.backend.konan.descriptors.isInterface
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.builtins.UnsignedType
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.*
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
@@ -34,18 +32,17 @@ internal abstract class ObjCExportMapper {
     }
 }
 
-private fun ObjCExportMapper.isRepresentedAsObjCInterface(descriptor: ClassDescriptor): Boolean =
-        !descriptor.isInterface && !isSpecialMapped(descriptor)
-
 internal fun ObjCExportMapper.getClassIfCategory(descriptor: CallableMemberDescriptor): ClassDescriptor? {
     if (descriptor.dispatchReceiverParameter != null) return null
 
     val extensionReceiverType = descriptor.extensionReceiverParameter?.type ?: return null
 
+    // FIXME: this code must rely on type mapping instead of copying its logic.
+
     if (extensionReceiverType.isObjCObjectType()) return null
 
     val erasedClass = extensionReceiverType.getErasedTypeClass()
-    return if (this.isRepresentedAsObjCInterface(erasedClass)) {
+    return if (!erasedClass.isInterface && !erasedClass.isInlined() && !this.isSpecialMapped(erasedClass)) {
         erasedClass
     } else {
         // E.g. receiver is protocol, or some type with custom mapping.

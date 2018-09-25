@@ -132,6 +132,9 @@ fun Any?.toString(): String = this?.toString() ?: "null"
 
 fun Any?.print() = println(this.toString())
 
+fun Char.boxChar(): Char? = this
+fun Char?.isA(): Boolean = (this == 'A')
+
 // Lambdas
 val sumLambda = { x: Int, y: Int -> x + y }
 
@@ -224,3 +227,12 @@ fun box(ic3: IC3): Any = ic3
 
 fun concatenateInlineClassValues(ic1: IC1, ic1N: IC1?, ic2: IC2, ic2N: IC2?, ic3: IC3, ic3N: IC3?): String =
         "${ic1.value} ${ic1N?.value} ${ic2.value} ${ic2N?.value} ${ic3.value} ${ic3N?.value}"
+
+fun IC1.getValue1() = this.value
+fun IC1?.getValueOrNull1() = this?.value
+
+fun IC2.getValue2() = value
+fun IC2?.getValueOrNull2() = this?.value
+
+fun IC3.getValue3() = value
+fun IC3?.getValueOrNull3() = this?.value
