@@ -19,15 +19,15 @@ enum class TestType(val type: String) {
     }
 }
 
-enum class TestArea {
-    PSI,
-    DIAGNOSTICS,
-    CODEGEN
+enum class TestArea(val testDataPath: String) {
+    PSI("psi"),
+    DIAGNOSTICS("diagnostics"),
+    CODEGEN_BOX("codegen/box")
 }
 
-enum class SpecTestLinkedType {
-    LINKED,
-    NOT_LINKED
+enum class SpecTestLinkedType(val testDataPath: String) {
+    LINKED("linked"),
+    NOT_LINKED("notLinked")
 }
 
 interface SpecTestInfoElementType {
@@ -108,15 +108,12 @@ abstract class AbstractSpecTestValidator<T : AbstractSpecTest>(private val testD
 
         val pathSeparator: String = Pattern.quote(File.separator)
         val lineSeparator: String = System.lineSeparator()
-        val testAreaRegex = """(?<testArea>${TestArea.values().joinToString("|")})"""
+        val testAreaRegex = """(?<testArea>${TestArea.values().joinToString("|").replace("_", " ")})"""
         val testTypeRegex = """(?<testType>${TestType.values().joinToString("|")})"""
-        val dirsByLinkedType = mapOf(
-            SpecTestLinkedType.LINKED to "linked",
-            SpecTestLinkedType.NOT_LINKED to "notLinked"
-        )
         private val testInfoElementPattern: Pattern = Pattern.compile("""\s*(?<name>[A-Z ]+?)(?::\s*(?<value>.*?))?$lineSeparator""")
         private val testCaseInfoRegex = """(?<infoElements>CASE DESCRIPTION:[\s\S]*?$lineSeparator)$lineSeparator*"""
-        private val testPathBaseRegexTemplate = """^.*?$pathSeparator(?<testArea>diagnostics|psi|codegen)$pathSeparator%s"""
+        private val testPathBaseRegexTemplate =
+            """^.*?$pathSeparator(?<testArea>diagnostics|psi|(?:codegen${pathSeparator}box))$pathSeparator%s"""
         val testPathRegexTemplate = """$testPathBaseRegexTemplate$pathSeparator(?<testType>pos|neg)/%s$"""
         val testCaseInfoSingleLinePattern: Pattern = Pattern.compile(SINGLELINE_COMMENT_REGEX.format(testCaseInfoRegex))
         val testCaseInfoMultilinePattern: Pattern = Pattern.compile(MULTILINE_COMMENT_REGEX.format(testCaseInfoRegex))
