@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 // WITH_RUNTIME
 
 const val M = Long.MAX_VALUE

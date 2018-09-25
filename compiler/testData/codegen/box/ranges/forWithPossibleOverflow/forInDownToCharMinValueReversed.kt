@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 // WITH_RUNTIME
 
 const val M = Char.MIN_VALUE
