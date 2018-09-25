@@ -223,6 +223,10 @@ class ModuleInfo(
                 )
             }
         }
+
+        if (rootModel.sdk == null) {
+            projectInfo.messageCollector.report("Module '${module.name}': No SDK defined")
+        }
     }
 
     private fun checkDependencyScope(library: ExportableOrderEntry, scope: DependencyScope) {
