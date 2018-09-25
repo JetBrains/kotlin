@@ -1433,6 +1433,9 @@ public operator fun <T> Sequence<T>.minus(element: T): Sequence<T> {
  * 
  * Note that the source sequence and the array being subtracted are iterated only when an `iterator` is requested from
  * the resulting sequence. Changing any of them between successive calls to `iterator` may affect the result.
+ * 
+ * The [elements] array may be converted to a [HashSet] to speed up the operation, thus the elements are required to have
+ * a correct and stable implementation of `hashCode()` that doesn't change between successive invocations.
  *
  * The operation is _intermediate_ and _stateful_.
  */
@@ -1451,6 +1454,9 @@ public operator fun <T> Sequence<T>.minus(elements: Array<out T>): Sequence<T> {
  * 
  * Note that the source sequence and the collection being subtracted are iterated only when an `iterator` is requested from
  * the resulting sequence. Changing any of them between successive calls to `iterator` may affect the result.
+ * 
+ * The [elements] collection may be converted to a [HashSet] to speed up the operation, thus the elements are required to have
+ * a correct and stable implementation of `hashCode()` that doesn't change between successive invocations.
  *
  * The operation is _intermediate_ and _stateful_.
  */
@@ -1473,6 +1479,9 @@ public operator fun <T> Sequence<T>.minus(elements: Iterable<T>): Sequence<T> {
  * the resulting sequence. Changing any of them between successive calls to `iterator` may affect the result.
  * 
  * The operation is _intermediate_ for this sequence and _terminal_ and _stateful_ for the [elements] sequence.
+ * 
+ * The [elements] sequence may be converted to a [HashSet] to speed up the operation, thus the elements are required to have
+ * a correct and stable implementation of `hashCode()` that doesn't change between successive invocations.
  */
 public operator fun <T> Sequence<T>.minus(elements: Sequence<T>): Sequence<T> {
     return object: Sequence<T> {
