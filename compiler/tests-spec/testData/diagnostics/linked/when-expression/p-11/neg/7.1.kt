@@ -50,5 +50,9 @@ fun case_6(value_1: _EnumClass): String {
     }
 }
 
-// CASE DESCRIPTION: Checking for not exhaustive 'when' on the empty enum class.
+/*
+ CASE DESCRIPTION: Checking for not exhaustive 'when' on the empty enum class.
+ DISCUSSION
+ ISSUES: KT-26044
+ */
 fun case_7(value_1: _EnumClassEmpty): String = <!NO_ELSE_IN_WHEN!>when<!> (value_1) { }

@@ -3,12 +3,12 @@
 // !USE_EXPERIMENTAL: kotlin.contracts.ExperimentalContracts
 
 /*
- KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (POSITIVE)
+ KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (NEGATIVE)
 
  SECTION: contracts
- CATEGORY: declarations, contractBuilder, common
- NUMBER: 5
- DESCRIPTION: contracts with not allowed conditions with boolean constants or constant expressions in implies.
+ CATEGORIES: declarations, contractBuilder, common
+ NUMBER: 15
+ DESCRIPTION: contracts with not allowed conditions with boolean constants or boolean constant expressions in implies.
  UNEXPECTED BEHAVIOUR
  ISSUES: KT-26491
  */

@@ -1,4 +1,4 @@
-// !LANGUAGE: +AllowContractsForCustomFunctions +UseCallsInPlaceEffect
+// !LANGUAGE: +AllowContractsForCustomFunctions +UseReturnsEffect
 // !DIAGNOSTICS: -INVISIBLE_REFERENCE -INVISIBLE_MEMBER
 // !USE_EXPERIMENTAL: kotlin.contracts.ExperimentalContracts
 
@@ -8,20 +8,30 @@
  SECTION: contracts
  CATEGORIES: declarations, contractFunction
  NUMBER: 1
- DESCRIPTION: Check that fun with contract and CallsInPlace effect is an inline function.
- UNEXPECTED BEHAVIOUR
- ISSUES: KT-26126
+ DESCRIPTION: Contract function usage before declaration it
  */
 
 import kotlin.contracts.*
 
-fun funWithContractExactlyOnce(block: () -> Unit) { // report about not-inline function is expected
-    contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) }
-    return block()
+fun case_1_1(x: Any?) {
+    if (case_1_2(x)) {
+        <!DEBUG_INFO_SMARTCAST!>x<!>.length
+    }
 }
 
-fun case_1() {
-    val value_1: Int
-    funWithContractExactlyOnce { value_1 = 10 } // back-end exception
-    value_1.inc()
+fun case_2_1(x: Number?) {
+    case_2_2(x)
+    println(<!DEBUG_INFO_SMARTCAST!>x<!>.toByte())
 }
+
+fun case_1_2(x: Any?): Boolean {
+    contract { returns(true) implies (x is String) }
+    return x is String
+}
+
+fun case_2_2(x: Any?) {
+    contract { returns() implies(x != null) }
+    if (x == null) throw Exception()
+}
+
+

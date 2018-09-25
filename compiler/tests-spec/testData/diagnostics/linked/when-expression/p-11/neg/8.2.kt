@@ -65,15 +65,6 @@ fun case_8(value_1: _SealedClassMixed?): String = <!NO_ELSE_IN_WHEN!>when<!>(val
 }
 
 /*
- CASE DESCRIPTION: Checking for not exhaustive 'when' on the empty nullable sealed class (without subtypes).
- UNEXPECTED BEHAVIOUR: must be exhaustive
- ISSUES: KT-26044
- */
-fun case_9(value: _SealedClassEmpty?): String = <!NO_ELSE_IN_WHEN!>when<!> (value) {
-    null -> ""
-}
-
-/*
  CASE DESCRIPTION: Checking for not exhaustive 'when' on the nullable Any.
  DISCUSSION: maybe make exhaustive without else?
  */
@@ -83,27 +74,8 @@ fun case_10(value_1: Any?): String = <!NO_ELSE_IN_WHEN!>when<!> (value_1) {
 }
 
 /*
- CASE DESCRIPTION: Checking for not exhaustive 'when' on opposite types.
- UNEXPECTED BEHAVIOUR: must be exhaustive
- ISSUES: KT-22996
- */
-fun case_11(value: _SealedClass?): String = <!NO_ELSE_IN_WHEN!>when<!> (value) {
-    is _SealedChild1, !is _SealedChild3?, <!USELESS_IS_CHECK!>is _SealedChild3?<!> -> ""
-}
-
-/*
- CASE DESCRIPTION: Checking for not exhaustive 'when' on opposite types.
- UNEXPECTED BEHAVIOUR: must be exhaustive
- ISSUES: KT-22996
- */
-fun case_12(value: _SealedClass?): String = <!NO_ELSE_IN_WHEN!>when<!> (value) {
-    is _SealedChild1, !is _SealedChild3 -> ""
-    <!USELESS_IS_CHECK!>is _SealedChild3?<!> -> ""
-}
-
-/*
  CASE DESCRIPTION: Checking for not exhaustive 'when' on the empty sealed class (without subtypes).
  DISCUSSION
  ISSUES: KT-26044
  */
-fun case_13(value: _SealedClassEmpty): String = <!NO_ELSE_IN_WHEN!>when<!> (value) {}
+fun case_11(value: _SealedClassEmpty): String = <!NO_ELSE_IN_WHEN!>when<!> (value) {}

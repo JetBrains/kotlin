@@ -51,11 +51,7 @@ fun case_2(value_1: Int): String {
     return ""
 }
 
-/*
- CASE DESCRIPTION: Checking all types except the correct one (numbers) in 'when' without bound value.
- UNEXPECTED BEHAVIOUR
- ISSUES: KT-25268
-*/
+// CASE DESCRIPTION: Checking all types except the correct one (numbers) in 'when' without bound value.
 fun case_3(value_1: Int): String {
     val whenValue = when {
         value_1 == 0 -> <!IMPLICIT_CAST_TO_ANY!>1 + 1<!>
@@ -72,23 +68,17 @@ fun case_3(value_1: Int): String {
     whenValue checkType { <!TYPE_MISMATCH!>_<!><Float>() }
     whenValue checkType { <!TYPE_MISMATCH!>_<!><Short>() }
     whenValue checkType { <!TYPE_MISMATCH!>_<!><Byte>() }
-    whenValue checkType { <!TYPE_MISMATCH!>_<!><Number>() } // unexpected behaviour!
     checkSubtype<Int>(<!TYPE_MISMATCH!>whenValue<!>)
     checkSubtype<Long>(<!TYPE_MISMATCH!>whenValue<!>)
     checkSubtype<Double>(<!TYPE_MISMATCH!>whenValue<!>)
     checkSubtype<Float>(<!TYPE_MISMATCH!>whenValue<!>)
     checkSubtype<Short>(<!TYPE_MISMATCH!>whenValue<!>)
     checkSubtype<Byte>(<!TYPE_MISMATCH!>whenValue<!>)
-    checkSubtype<Number>(<!TYPE_MISMATCH!>whenValue<!>) // unexpected behaviour!
 
     return ""
 }
 
-/*
- CASE DESCRIPTION: Checking all types except the correct one (numbers) in 'when' with bound value.
- UNEXPECTED BEHAVIOUR
- ISSUES: KT-25268
- */
+// CASE DESCRIPTION: Checking all types except the correct one (numbers) in 'when' with bound value.
 fun case_4(value_1: Int): String {
     val whenValue = when (value_1) {
         0 -> <!IMPLICIT_CAST_TO_ANY!>1 + 1<!>
@@ -105,14 +95,12 @@ fun case_4(value_1: Int): String {
     whenValue checkType { <!TYPE_MISMATCH!>_<!><Float>() }
     whenValue checkType { <!TYPE_MISMATCH!>_<!><Short>() }
     whenValue checkType { <!TYPE_MISMATCH!>_<!><Byte>() }
-    whenValue checkType { <!TYPE_MISMATCH!>_<!><Number>() } // unexpected behaviour!
     checkSubtype<Int>(<!TYPE_MISMATCH!>whenValue<!>)
     checkSubtype<Long>(<!TYPE_MISMATCH!>whenValue<!>)
     checkSubtype<Double>(<!TYPE_MISMATCH!>whenValue<!>)
     checkSubtype<Float>(<!TYPE_MISMATCH!>whenValue<!>)
     checkSubtype<Short>(<!TYPE_MISMATCH!>whenValue<!>)
     checkSubtype<Byte>(<!TYPE_MISMATCH!>whenValue<!>)
-    checkSubtype<Number>(<!TYPE_MISMATCH!>whenValue<!>) // unexpected behaviour!
 
     return ""
 }

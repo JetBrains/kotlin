@@ -24,3 +24,12 @@ fun case_2(value_1: _EnumClassSingle?): String = when (value_1) {
     _EnumClassSingle.EVERYTHING -> ""
     null -> ""
 }
+
+/*
+ CASE DESCRIPTION: Checking for not exhaustive 'when' on the empty nullable enum class.
+ UNEXPECTED BEHAVIOUR
+ ISSUES: KT-26044
+ */
+fun case_3(value_1: _EnumClassEmpty?): String = <!NO_ELSE_IN_WHEN!>when<!>(value_1) {
+    null -> ""
+}

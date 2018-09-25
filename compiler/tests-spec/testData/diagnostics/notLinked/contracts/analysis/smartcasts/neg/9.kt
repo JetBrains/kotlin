@@ -9,29 +9,27 @@
  SECTION: contracts
  CATEGORIES: analysis, smartcasts
  NUMBER: 9
- DESCRIPTION: Smartcasts after non-null assertions or not-null value assignment in lambdas of contract function with 'exactly once' or 'at least once' CallsInPlace effects.
- UNEXPECTED BEHAVIOUR
- ISSUES: KT-26148
+ DESCRIPTION: Check the lack of smartcasts after non-null assertions or not-null value assignment in lambdas of contract function with 'unknown' or 'at most once' CallsInPlace effects.
  */
 
 fun case_1(arg: Int?) {
-    funWithExactlyOnceCallsInPlace { arg!! }
+    funWithAtMostOnceCallsInPlace { arg!! }
     arg<!UNSAFE_CALL!>.<!>inc()
 }
 
 fun case_2(arg: Int?) {
-    funWithAtLeastOnceCallsInPlace { arg!! }
+    funWithUnknownCallsInPlace { arg!! }
     arg<!UNSAFE_CALL!>.<!>inc()
 }
 
 fun case_3() {
     val value_1: Boolean?
-    funWithExactlyOnceCallsInPlace { value_1 = false }
-    value_1<!UNSAFE_CALL!>.<!>not()
+    funWithAtMostOnceCallsInPlace { value_1 = false }
+    <!UNINITIALIZED_VARIABLE!>value_1<!><!UNSAFE_CALL!>.<!>not()
 }
 
 fun case_4() {
     val value_1: Boolean?
-    funWithAtLeastOnceCallsInPlace { <!VAL_REASSIGNMENT!>value_1<!> = true }
-    value_1<!UNSAFE_CALL!>.<!>not()
+    funWithUnknownCallsInPlace { <!VAL_REASSIGNMENT!>value_1<!> = true }
+    <!UNINITIALIZED_VARIABLE!>value_1<!><!UNSAFE_CALL!>.<!>not()
 }

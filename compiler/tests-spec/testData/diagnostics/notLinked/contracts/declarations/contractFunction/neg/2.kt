@@ -42,10 +42,7 @@ object case_3 {
     }
 }
 
-/*
- UNEXPECTED BEHAVIOUR
- ISSUES: KT-26244
- */
+// ISSUES: KT-26244
 class case_4 : _ClassLevel3() {
     fun <T : Number?>T.case_4_1(): Boolean {
         <!CONTRACT_NOT_ALLOWED!>contract<!> { returns(false) implies (<!USELESS_IS_CHECK!>this@case_4 !is _ClassLevel1<!>) }
@@ -79,10 +76,7 @@ class case_4 : _ClassLevel3() {
     fun case_4_5() = _ClassLevel3().case_4_5_wrap()
 }
 
-/*
- UNEXPECTED BEHAVIOUR
- ISSUES: KT-26244
- */
+// ISSUES: KT-26244
 class case_5<T> : _ClassLevel5() {
     inner class case_5_1 {
         fun <K : Number?>K.case_5_1_1() {

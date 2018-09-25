@@ -103,6 +103,7 @@ fun case_4(value_1: Number, value_2: (() -> Unit)?) {
 }
 
 /*
+ CASE DESCRIPTION: check the conclusion that not-null conditions corresponds to the contract with not null effect
  UNEXPECTED BEHAVIOUR: unsafe calls
  ISSUES: KT-26612
  */
@@ -120,6 +121,7 @@ fun case_5(value_1: Number?, value_2: String?) {
 }
 
 /*
+ CASE DESCRIPTION: check the conclusion that not-null conditions corresponds to the contract with not null effect (with null branch)
  UNEXPECTED BEHAVIOUR: unsafe calls
  ISSUES: KT-26612
  */

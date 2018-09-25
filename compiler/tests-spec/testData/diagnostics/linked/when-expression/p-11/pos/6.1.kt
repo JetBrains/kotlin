@@ -64,3 +64,22 @@ fun case_6(value_1: _SealedClassMixed): String = when (value_1) {
 fun case_7(value_1: _SealedClassEmpty): String = when (value_1) {
     else -> ""
 }
+
+/*
+ CASE DESCRIPTION: Checking for not exhaustive 'when' on opposite types.
+ UNEXPECTED BEHAVIOUR: must be exhaustive
+ ISSUES: KT-22996
+ */
+fun case_8(value: _SealedClass?): String = <!NO_ELSE_IN_WHEN!>when<!> (value) {
+    is _SealedChild1, !is _SealedChild3?, <!USELESS_IS_CHECK!>is _SealedChild3?<!> -> ""
+}
+
+/*
+ CASE DESCRIPTION: Checking for not exhaustive 'when' on opposite types.
+ UNEXPECTED BEHAVIOUR: must be exhaustive
+ ISSUES: KT-22996
+ */
+fun case_9(value: _SealedClass?): String = <!NO_ELSE_IN_WHEN!>when<!> (value) {
+    is _SealedChild1, !is _SealedChild3 -> ""
+    <!USELESS_IS_CHECK!>is _SealedChild3?<!> -> ""
+}

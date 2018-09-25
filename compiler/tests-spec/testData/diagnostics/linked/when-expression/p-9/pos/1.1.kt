@@ -57,6 +57,8 @@ fun case_3(value_1: Int): String {
     }
 
     whenValue checkType { _<Any>() }
+    whenValue checkType { <!TYPE_MISMATCH!>_<!><Number>() } // unexpected behaviour!
+    checkSubtype<Number>(<!TYPE_MISMATCH!>whenValue<!>) // unexpected behaviour!
 
     return ""
 }
@@ -77,6 +79,8 @@ fun case_4(value_1: Int): String {
     }
 
     whenValue checkType { _<Any>() }
+    whenValue checkType { <!TYPE_MISMATCH!>_<!><Number>() } // unexpected behaviour!
+    checkSubtype<Number>(<!TYPE_MISMATCH!>whenValue<!>) // unexpected behaviour!
 
     return ""
 }

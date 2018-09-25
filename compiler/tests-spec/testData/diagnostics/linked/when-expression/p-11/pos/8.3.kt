@@ -64,3 +64,12 @@ fun case_6(value_1: _SealedClassMixed?): String = when (value_1) {
     is _SealedMixedChildObject3 -> ""
     null -> ""
 }
+
+/*
+ CASE DESCRIPTION: Checking for not exhaustive 'when' on the empty nullable sealed class (without subtypes).
+ UNEXPECTED BEHAVIOUR: must be exhaustive
+ ISSUES: KT-26044
+ */
+fun case_7(value: _SealedClassEmpty?): String = <!NO_ELSE_IN_WHEN!>when<!> (value) {
+    null -> ""
+}

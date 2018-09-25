@@ -1,7 +1,8 @@
 package
 
-public fun case_1(/*0*/ value_1: kotlin.Any?): kotlin.Unit
-public fun case_2(/*0*/ value_1: kotlin.Number?): kotlin.Unit
+public fun case_1(): kotlin.Unit
+public fun case_2(): kotlin.Unit
+public fun case_3(): kotlin.Unit
 public inline fun </*0*/ T> funWithAtLeastOnceCallsInPlace(/*0*/ block: () -> T): T
     CallsInPlace(block, AT_LEAST_ONCE)
 
@@ -111,16 +112,9 @@ public inline fun funWithUnknownCallsInPlace(/*0*/ block: () -> kotlin.Unit): ko
     CallsInPlace(block, UNKNOWN)
 
 package contracts {
-    public fun </*0*/ T> T?.case_1_1(): kotlin.Boolean
-        Returns(FALSE) -> <this> != null
-
-    public fun </*0*/ T> T?.case_1_2(): kotlin.Boolean?
-        Returns(NULL) -> <this> is String
-
-    public fun </*0*/ T : kotlin.Number?> T.case_2_1(): kotlin.Boolean?
-        Returns(NOT_NULL) -> <this> != null
-
-    public fun </*0*/ T : kotlin.Number?> T.case_2_2(): kotlin.Boolean?
-        Returns(NULL) -> <this> != null
+    public inline fun case_3(/*0*/ block1: () -> kotlin.Unit, /*1*/ block2: () -> kotlin.Unit, /*2*/ block3: () -> kotlin.Unit): kotlin.Unit
+        CallsInPlace(block1, EXACTLY_ONCE)
+        CallsInPlace(block2, AT_LEAST_ONCE)
+        CallsInPlace(block3, EXACTLY_ONCE)
 
 }

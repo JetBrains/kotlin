@@ -1,5 +1,5 @@
 // !LANGUAGE: +AllowContractsForCustomFunctions +UseCallsInPlaceEffect
-// !DIAGNOSTICS: -INVISIBLE_REFERENCE -INVISIBLE_MEMBER
+// !DIAGNOSTICS: -INVISIBLE_REFERENCE -INVISIBLE_MEMBER -UNUSED_VARIABLE
 // !USE_EXPERIMENTAL: kotlin.contracts.ExperimentalContracts
 
 /*
@@ -8,25 +8,19 @@
  SECTION: contracts
  CATEGORIES: declarations, contractBuilder, effects, callsInPlace
  NUMBER: 2
- DESCRIPTION: functions with contract and duplicate CallsInPlace.
+ DESCRIPTION: Contract with 'this' in first parameter of CallsInPlace.
+ DISCUSSION
  UNEXPECTED BEHAVIOUR
- ISSUES: KT-26150
+ ISSUES: KT-26294
  */
 
 import kotlin.contracts.*
 
-inline fun case_1(block: () -> Unit) {
+inline fun <T : Function0<*>> T.case_1(block: () -> Unit) {
     contract {
-        callsInPlace(block, InvocationKind.EXACTLY_ONCE)
+        callsInPlace(this@case_1, InvocationKind.EXACTLY_ONCE)
         callsInPlace(block, InvocationKind.EXACTLY_ONCE)
     }
-    return block()
-}
-
-inline fun case_2(block: () -> Unit) {
-    contract {
-        callsInPlace(block, InvocationKind.EXACTLY_ONCE)
-        callsInPlace(block, InvocationKind.AT_MOST_ONCE)
-    }
-    return block()
+    block()
+    this@case_1()
 }

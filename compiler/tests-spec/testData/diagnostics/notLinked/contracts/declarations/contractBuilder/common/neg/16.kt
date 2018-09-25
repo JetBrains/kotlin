@@ -3,11 +3,11 @@
 // !USE_EXPERIMENTAL: kotlin.contracts.ExperimentalContracts
 
 /*
- KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (POSITIVE)
+ KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (NEGATIVE)
 
  SECTION: contracts
  CATEGORIES: declarations, contractBuilder, common
- NUMBER: 3
+ NUMBER: 16
  DESCRIPTION: Contract isn't in the first position.
  UNEXPECTED BEHAVIOUR
  ISSUES: KT-26191

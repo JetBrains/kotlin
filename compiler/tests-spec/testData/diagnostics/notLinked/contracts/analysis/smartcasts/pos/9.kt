@@ -101,9 +101,6 @@ fun case_8(value_1: Any?) {
     }
 }
 
-/*
- UNEXPECTED BEHAVIOUR: unreachable code
- */
 fun case_9(value_1: Any?) {
     if (funWithReturnsFalse(value_1 is String) || funWithReturnsFalse(value_1 is Int)) {
 
@@ -113,9 +110,6 @@ fun case_9(value_1: Any?) {
     }
 }
 
-/*
- UNEXPECTED BEHAVIOUR: unreachable code
- */
 fun case_10(value_1: Any?) {
     if (funWithReturnsFalse(value_1 is String) || getBoolean()) {
 

@@ -151,3 +151,10 @@ class case_10_class {
         }
     }
 }
+
+fun case_11(value_1: Any?, value_2: Any?, value_3: Any?) {
+    funWithReturnsAndInvertCondition(value_1 !is String? || value_2 !is Number && value_3 !is Float)
+    println(<!DEBUG_INFO_SMARTCAST!>value_1<!>!!.<!UNRESOLVED_REFERENCE!>length<!>)
+    println(value_2.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>toByte<!>())
+    println(value_3.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>dec<!>())
+}

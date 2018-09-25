@@ -8,7 +8,7 @@ public fun case_5(/*0*/ value_1: kotlin.Any?): kotlin.Unit
 public fun case_6(/*0*/ value_1: kotlin.Number): kotlin.Unit
 public fun case_7(/*0*/ value_1: kotlin.String?): kotlin.Unit
 public fun case_8(/*0*/ value_1: kotlin.String?, /*1*/ value_2: kotlin.String?): kotlin.Unit
-public fun case_9(/*0*/ value_1: kotlin.Number?): kotlin.Unit
+public fun case_9(/*0*/ value_1: kotlin.Any?): kotlin.Unit
 
 package contracts {
     public fun </*0*/ T> T.case_1(): kotlin.Unit
@@ -98,10 +98,10 @@ package contracts {
     public fun </*0*/ T : kotlin.String?> T.case_8_4(): kotlin.Boolean?
         Returns(NULL) -> <this> == null
 
-    public fun </*0*/ T : kotlin.Number?> T.case_9_1(): kotlin.Boolean?
-        Returns(NOT_NULL) -> <this> != null
+    public fun </*0*/ T> T?.case_9_1(): kotlin.Boolean
+        Returns(TRUE) -> <this> is Float
 
-    public fun </*0*/ T : kotlin.Number?> T.case_9_2(): kotlin.Boolean?
-        Returns(NULL) -> <this> != null
+    public fun </*0*/ T> T?.case_9_2(): kotlin.Boolean
+        Returns(FALSE) -> <this> is Double
 
 }

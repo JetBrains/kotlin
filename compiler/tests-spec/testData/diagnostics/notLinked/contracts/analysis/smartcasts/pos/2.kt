@@ -151,3 +151,14 @@ class case_10_class {
         }
     }
 }
+
+/*
+ CASE DESCRIPTION: check resolve reference when is used not null assertion and safe call operators
+ UNEXPECTED BEHAVIOUR
+ ISSUES: KT-26747
+ */
+fun case_12(value_1: Any?, value_2: Any?, value_3: Any?) {
+    funWithReturnsAndInvertCondition(value_1 !is String || value_2 !is Number || <!USELESS_IS_CHECK!>value_3 !is Any?<!>)
+    println(<!DEBUG_INFO_SMARTCAST!>value_1<!><!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>.<!UNRESOLVED_REFERENCE!>length<!>)
+    println(<!DEBUG_INFO_SMARTCAST!>value_2<!><!UNNECESSARY_SAFE_CALL!>?.<!>toByte())
+}

@@ -44,19 +44,3 @@ fun case_5(value_1: _EnumClassSingle?): String = <!NO_ELSE_IN_WHEN!>when<!>(valu
 fun case_6(value_1: _EnumClassSingle?): String = <!NO_ELSE_IN_WHEN!>when<!>(value_1) {
     null -> ""
 }
-
-/*
- CASE DESCRIPTION: Checking for not exhaustive 'when' on the empty nullable enum class.
- UNEXPECTED BEHAVIOUR
- ISSUES: KT-26044
- */
-fun case_7(value: _EnumClassEmpty?): String = <!NO_ELSE_IN_WHEN!>when<!>(value) {
-    null -> ""
-}
-
-/*
- CASE DESCRIPTION: Checking for not exhaustive 'when' on the empty enum class.
- DISCUSSION
- ISSUES: KT-26044
- */
-fun case_13(value: _EnumClassEmpty): String = <!NO_ELSE_IN_WHEN!>when<!> (value) {}
