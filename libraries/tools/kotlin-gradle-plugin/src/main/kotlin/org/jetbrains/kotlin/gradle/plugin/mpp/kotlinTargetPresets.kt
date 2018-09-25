@@ -11,7 +11,9 @@ import org.gradle.api.internal.file.FileResolver
 import org.gradle.api.plugins.JavaPlugin
 import org.gradle.internal.cleanup.BuildOutputCleanupRegistry
 import org.gradle.internal.reflect.Instantiator
-import org.jetbrains.kotlin.compilerRunner.*
+import org.jetbrains.kotlin.compilerRunner.KotlinNativeProjectProperty
+import org.jetbrains.kotlin.compilerRunner.hasProperty
+import org.jetbrains.kotlin.compilerRunner.konanHome
 import org.jetbrains.kotlin.gradle.dsl.KotlinCompile
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.*
@@ -19,7 +21,6 @@ import org.jetbrains.kotlin.gradle.plugin.sources.applyLanguageSettingsToKotlinT
 import org.jetbrains.kotlin.gradle.tasks.AndroidTasksProvider
 import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
 import org.jetbrains.kotlin.gradle.utils.NativeCompilerDownloader
-import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 
@@ -292,13 +293,6 @@ internal val KonanTarget.isCurrentHost: Boolean
 
 internal val KonanTarget.enabledOnCurrentHost
     get() = HostManager().isEnabled(this)
-
-internal val KonanTarget.presetName: String
-    get() = when(this) {
-        KonanTarget.ANDROID_ARM32 -> "androidNativeArm32"
-        KonanTarget.ANDROID_ARM64 -> "androidNativeArm64"
-        else -> lowerCamelCaseName(*this.name.split('_').toTypedArray())
-    }
 
 internal val KotlinNativeCompilation.isMainCompilation: Boolean
     get() = name == KotlinCompilation.MAIN_COMPILATION_NAME

@@ -78,6 +78,7 @@
 
         <scriptDefinitionContributor implementation="org.jetbrains.kotlin.idea.core.script.GradleScriptDefinitionsContributor" order="first"/>
 
+        <moduleBuilder implementation="org.jetbrains.kotlin.ide.konan.gradle.KotlinGradleNativeMultiplatformModuleBuilder"/>
         <moduleBuilder implementation="org.jetbrains.kotlin.idea.configuration.KotlinGradleWebMultiplatformModuleBuilder"/>
         <moduleBuilder implementation="org.jetbrains.kotlin.idea.configuration.KotlinGradleSharedMultiplatformModuleBuilder"/>
     </extensions>

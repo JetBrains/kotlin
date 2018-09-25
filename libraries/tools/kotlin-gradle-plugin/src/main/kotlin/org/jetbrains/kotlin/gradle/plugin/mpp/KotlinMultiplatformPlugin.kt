@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.konan.target.presetName
 
 internal val Project.multiplatformExtension get(): KotlinMultiplatformExtension? =
     project.extensions.getByName("kotlin") as KotlinMultiplatformExtension
