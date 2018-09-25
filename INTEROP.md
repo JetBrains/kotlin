@@ -20,60 +20,49 @@ imported into an IDE for the purpose of code completion and navigation.
  Interoperability with Swift/Objective-C is provided too and covered in a
 separate document [OBJC_INTEROP.md](OBJC_INTEROP.md).
 
+## Platform libraries ##
+
+ Note that in many cases there's no need to use custom interoperability library creation mechanisms described below,
+as for APIs available on the platform standartized bindings called [platform libraries](PLATFORM_LIBS.md)
+could be used. For example, POSIX on Linux/macOS platforms, Win32 on Windows platform, or Apple frameworks
+on macOS/iOS are available this way.
+
 ## Simple example ##
 
-Build the dependencies and compiler (see `README.md`).
-
-Prepare stubs for the system sockets library:
+Install libgit2 and prepare stubs for the git library:
 
 <div class="sample" markdown="1" theme="idea" mode="shell">
    
 ```bash
 
-cd samples/socket
-../../dist/bin/cinterop -def src/main/c_interop/sockets.def \
- -o sockets
+cd samples/gitchurn
+../../dist/bin/cinterop -def src/main/c_interop/libgit2.def \
+ -compilerOpts -I/usr/local/include -o libgit2
 ```
 
 </div>
 
-Compile the echo server:
+Compile the client:
 
 <div class="sample" markdown="1" theme="idea" mode="shell">
 
 ```bash
-../../dist/bin/kotlinc src/main/kotlin/EchoServer.kt \
- -library sockets -o EchoServer
+../../dist/bin/kotlinc src/main/kotlin \
+ -library libgit2 -o GitChurn
 ```
 
 </div>
 
-
-This whole process is automated in the `build.sh` script, which also supports cross-compilation
-to supported cross-targets with `TARGET=raspberrypi ./build.sh` (the `cross_dist` target must
-be executed first).
-
-Run the server:
+Run the client:
 
 <div class="sample" markdown="1" theme="idea" mode="shell">
 
 ```bash
-./EchoServer.kexe 3000 &
+./GitChurn.kexe ../..
 ```
 
 </div>
 
-Test the server by connecting to it, for example with telnet:
-
-<div class="sample" markdown="1" theme="idea" mode="shell">
-
-```bash
-telnet localhost 3000
-```
-
-</div>
-
-Write something to the console and watch the server echo it back.
 
 ## Creating bindings for a new library ##
 
@@ -83,8 +72,9 @@ Structurally it's a simple property file, which looks like this:
 <div class="sample" markdown="1" theme="idea" mode="c">
 
 ```c
-headers = zlib.h
-compilerOpts = -std=c99
+headers = png.h
+headerFilter = png.h
+package = png
 ```
 
 </div>
@@ -96,14 +86,14 @@ in the sysroot search paths, headers may be needed):
 <div class="sample" markdown="1" theme="idea" mode="shell">
 
 ```bash
-cinterop -def zlib.def -copt -I/opt/local/include -o zlib
+cinterop -def png.def -compilerOpts -I/usr/local/include -o png
 ```
 
 </div>
 
 
-This command will produce a `zlib.klib` compiled library and
-`zlib-build/kotlin` directory containing Kotlin source code for the library.
+This command will produce a `png.klib` compiled library and
+`png-build/kotlin` directory containing Kotlin source code for the library.
 
 If the behavior for a certain platform needs to be modified, you can use a format like
 `compilerOpts.osx` or `compilerOpts.linux` to provide platform-specific values
@@ -178,9 +168,39 @@ excludeDependentModules = true
 When both `excludeDependentModules` and `headerFilter` are used, they are
 applied as an intersection.
 
+### C compiler and linker options ###
+
+ Options passed to the C compiler (used to analyze headers, such as preprocessor definitions) and the linker
+(used to link final executables) can be passed in the definition file as `compilerOpts` and `linkerOpts`
+respectively. For example
+
+<div class="sample" markdown="1" theme="idea" mode="c">
+
+```c
+compilerOpts = -DFOO=bar
+linkerOpts = -lpng
+```
+
+</div>
+
+Target-specific options, only applicable to the certain target can be specified as well, such as
+
+<div class="sample" markdown="1" theme="idea" mode="c">
+
+ ```c
+ compilerOpts = -DBAR=bar
+ compilerOpts.linux_x64 = -DFOO=foo1
+ compilerOpts.mac_x64 = -DFOO=foo2
+ ```
+
+</div>
+
+and so, C headers on Linux will be analyzed with `-DBAR=bar -DFOO=foo1` and on macOS with `-DBAR=bar -DFOO=foo2`.
+Note that any definition file option can have both common and the platform-specific part.
+
 ### Adding custom declarations ###
 
-Sometimes it is required to add custom C declarations to the library before
+ Sometimes it is required to add custom C declarations to the library before
 generating bindings (e.g., for [macros](#macros)). Instead of creating an
 additional header file with these declarations, you can include them directly
 to the end of the `.def` file, after a separating line, containing only the
@@ -351,7 +371,7 @@ or
 <div class="sample" markdown="1" theme="idea" data-highlight-only>
 
 ```kotlin
-val bytePtr = placement.allocArray<ByteVar>(5):
+val bytePtr = placement.allocArray<ByteVar>(5)
 ```
 
 </div>
@@ -635,9 +655,12 @@ The `.def` file supports several options for adjusting the generated bindings.
     values correspondingly. If the enum is not included into any of these lists,
     then it is generated according to the heuristics.
 
+*    `noStringConversion` property value is space-separated lists of the functions whose
+     `const char*` parameters shall not be autoconverted as Kotlin string
+
 ### Portability ###
 
-Sometimes the C libraries have function parameters or struct fields of a
+ Sometimes the C libraries have function parameters or struct fields of a
 platform-dependent type, e.g. `long` or `size_t`. Kotlin itself doesn't provide
 neither implicit integer casts nor C-style integer casts (e.g.
 `(size_t) intValue`), so to make writing portable code in such cases easier,
@@ -671,3 +694,32 @@ fun zeroMemory(buffer: COpaquePointer, size: Int) {
 
 Also, the type parameter can be inferred automatically and so may be omitted
 in some cases.
+
+
+### Object pinning ###
+
+ Kotlin objects could be pinned, i.e. their position in memory is guaranteed to be stable
+until unpinned, and pointers to such objects inner data could be passed to the C functions. For example
+
+<div class="sample" markdown="1" theme="idea" data-highlight-only>
+
+```kotlin
+fun readData(fd: Int): String {
+    val buffer = ByteArray(1024)
+    buffer.usePinned { pinned ->
+        while (true) {
+            val length = recv(fd, pinned.addressOf(0), buffer.size.convert(), 0).toInt()
+
+            if (length <= 0) {
+               break
+            }
+            // Now `buffer` has raw data obtained from the `recv()` call.
+        }
+    }
+}
+```
+
+</div>
+
+Here we use service function `usePinned`, which pins an object, executes block and unpins it on normal and
+exception paths.
