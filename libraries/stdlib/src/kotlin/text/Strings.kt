@@ -1266,10 +1266,14 @@ public inline fun CharSequence.split(regex: Regex, limit: Int = 0): List<String>
 
 /**
  * Splits this char sequence to a sequence of lines delimited by any of the following character sequences: CRLF, LF or CR.
+ *
+ * The lines returned do not include terminating line separators.
  */
 public fun CharSequence.lineSequence(): Sequence<String> = splitToSequence("\r\n", "\n", "\r")
 
 /**
- * * Splits this char sequence to a list of lines delimited by any of the following character sequences: CRLF, LF or CR.
+ * Splits this char sequence to a list of lines delimited by any of the following character sequences: CRLF, LF or CR.
+ *
+ * The lines returned do not include terminating line separators.
  */
 public fun CharSequence.lines(): List<String> = lineSequence().toList()
