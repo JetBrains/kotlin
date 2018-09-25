@@ -154,7 +154,7 @@ abstract class AbstractKotlinTargetConfigurator<KotlinTargetType : KotlinTarget>
         }
     }
 
-    protected fun defineConfigurationsForTarget(target: KotlinTargetType) {
+    protected open fun defineConfigurationsForTarget(target: KotlinTargetType) {
         val project = target.project
 
         val configurations = project.configurations
@@ -665,6 +665,50 @@ open class KotlinNativeTargetConfigurator(
     override fun configureTarget(target: KotlinNativeTarget) {
         super.configureTarget(target)
         configureCInterops(target)
+        warnAboutIncorrectDependencies(target)
+    }
+
+    override fun defineConfigurationsForTarget(target: KotlinNativeTarget) {
+        super.defineConfigurationsForTarget(target)
+        val configurations = target.project.configurations
+
+        // The configuration and the main compilation are created by the base class.
+        val mainCompilation = target.compilations.getByName(MAIN_COMPILATION_NAME)
+        configurations.getByName(target.apiElementsConfigurationName).apply {
+            //  K/N compiler doesn't divide libraries into implementation and api ones. So we need to add implementation
+            // dependencies into the outgoing configuration.
+            extendsFrom(configurations.getByName(mainCompilation.implementationConfigurationName))
+        }
+    }
+
+    private fun warnAboutIncorrectDependencies(target: KotlinNativeTarget) = target.project.whenEvaluated {
+
+        val compileOnlyDependencies = target.compilations.mapNotNull {
+            val dependencies = configurations.getByName(it.compileOnlyConfigurationName).allDependencies
+            if (dependencies.isNotEmpty()) {it to dependencies} else null
+        }
+
+        fun Dependency.stringCoordinates(): String = buildString {
+            group?.let { append(it).append(':') }
+            append(name)
+            version?.let { append(':').append(it) }
+        }
+
+        if (compileOnlyDependencies.isNotEmpty()) {
+            with(target.project.logger) {
+                warn("A compileOnly dependency is used in the Kotlin/Native target '${target.name}':")
+                compileOnlyDependencies.forEach {
+                    warn("""
+                        Compilation: ${it.first.name}
+
+                        Dependencies:
+                        ${it.second.joinToString(separator = "\n") { it.stringCoordinates() }}
+
+                    """.trimIndent())
+                }
+                warn("Such dependencies are not applicable for Kotlin/Native, consider changing the dependency type to 'implementation' or 'api'.")
+            }
+        }
     }
 
     object NativeArtifactFormat {
