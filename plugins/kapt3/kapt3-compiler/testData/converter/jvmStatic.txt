@@ -4,7 +4,7 @@ import java.lang.System;
 public final class JvmStaticTest {
     public final byte three = (byte)3;
     public final char d = 'D';
-    private static final int one = 0;
+    private static final int one = 1;
     public static final int two = 2;
     public static final char c = 'C';
     public static final JvmStaticTest.Companion Companion = null;

@@ -25,7 +25,7 @@ import java.lang.System;
 @kotlin.Metadata()
 public final class Test {
     @org.jetbrains.annotations.NotNull()
-    private final java.lang.String prop = null;
+    private final java.lang.String prop = "A";
 
     @Anno2()
     @Anno()
