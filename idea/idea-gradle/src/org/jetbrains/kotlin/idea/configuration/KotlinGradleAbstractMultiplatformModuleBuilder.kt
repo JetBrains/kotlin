@@ -41,6 +41,8 @@ abstract class KotlinGradleAbstractMultiplatformModuleBuilder : GradleModuleBuil
             GradleKotlinMPPFrameworkSupportProvider().addSupport(builder, module, sdk = null, specifyPluginVersionIfNeeded = true)
             VfsUtil.saveText(buildGradle, builder.buildConfigurationPart() + builder.buildMainPart() + buildMultiPlatformPart())
             createProjectSkeleton(module, rootDir)
+
+            if (notImportedCommonSourceSets) GradlePropertiesFileFacade.forProject(module.project).addNotImportedCommonSourceSetsProperty()
         } finally {
             flushSettingsGradleCopy(module)
         }
@@ -56,6 +58,8 @@ abstract class KotlinGradleAbstractMultiplatformModuleBuilder : GradleModuleBuil
             .getOutputStream(this).bufferedWriter()
 
     protected open fun createProjectSkeleton(module: Module, rootDir: VirtualFile) {}
+
+    protected open val notImportedCommonSourceSets = false
 
     companion object {
         const val productionSuffix = "Main"
