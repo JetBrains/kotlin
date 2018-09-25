@@ -38,6 +38,11 @@ public class BytecodeListingTestGenerated extends AbstractBytecodeListingTest {
         runTest("compiler/testData/codegen/bytecodeListing/callableNameIntrinsic.kt");
     }
 
+    @TestMetadata("companionObjectVisibility_lv13.kt")
+    public void testCompanionObjectVisibility_lv13() throws Exception {
+        runTest("compiler/testData/codegen/bytecodeListing/companionObjectVisibility_lv13.kt");
+    }
+
     @TestMetadata("coroutineContextIntrinsic.kt")
     public void testCoroutineContextIntrinsic_1_2() throws Exception {
         runTestWithPackageReplacement("compiler/testData/codegen/bytecodeListing/coroutineContextIntrinsic.kt", "kotlin.coroutines.experimental");
