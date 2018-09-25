@@ -31,7 +31,7 @@ abstract class SerializerCodegen(
     bindingContext: BindingContext
 ) : AbstractSerialGenerator(bindingContext, serializerDescriptor) {
     //    protected val serializerDescriptor: ClassDescriptor = declaration.findClassDescriptor(bindingContext)
-    protected val serializableDescriptor: ClassDescriptor = getSerializableClassDescriptorBySerializer(serializerDescriptor)!!
+    val serializableDescriptor: ClassDescriptor = getSerializableClassDescriptorBySerializer(serializerDescriptor)!!
     protected val serialName: String = serializableDescriptor.annotations.serialNameValue ?: serializableDescriptor.fqNameUnsafe.asString()
     protected val properties = SerializableProperties(serializableDescriptor, bindingContext)
     protected val orderedProperties = properties.serializableProperties

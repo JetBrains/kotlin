@@ -191,11 +191,13 @@ class SerializerCodegenImpl(
                 dup() // array
                 iconst(i) // index
                 val prop = orderedProperties[i]
-                stackValueSerializerInstanceFromSerializerWithoutSti(
-                    codegen,
-                    prop,
-                    this@SerializerCodegenImpl
-                )
+                assert(
+                    stackValueSerializerInstanceFromSerializerWithoutSti(
+                        codegen,
+                        prop,
+                        this@SerializerCodegenImpl
+                    )
+                ) { "Property ${prop.name} must have serializer" }
                 astore(kSerializerType)
             }
             areturn(kSerializerArrayType)
