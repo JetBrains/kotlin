@@ -3,8 +3,9 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.spec
+package org.jetbrains.kotlin.spec.utils
 
+import org.jetbrains.kotlin.spec.utils.GeneralConfiguration.TESTDATA_PATH
 import org.jetbrains.kotlin.spec.validators.*
 import java.io.File
 
@@ -25,8 +26,6 @@ enum class SpecTestsStatElementType {
 }
 
 object TestsStatisticCollector {
-    private const val TEST_DATA_DIR = "./testData"
-
     private fun incrementStatCounters(baseStatElement: SpecTestsStatElement, elementTypes: List<Pair<SpecTestsStatElementType, Any>>) {
         var currentStatElement = baseStatElement
 
@@ -43,8 +42,7 @@ object TestsStatisticCollector {
         val statistic = mutableMapOf<TestArea, SpecTestsStatElement>()
 
         for (specTestArea in TestArea.values()) {
-            val specTestsPath =
-                "$TEST_DATA_DIR/${specTestArea.name.toLowerCase()}/${AbstractSpecTestValidator.dirsByLinkedType[testLinkedType]}"
+            val specTestsPath = "$TESTDATA_PATH/${specTestArea.name.toLowerCase()}/${testLinkedType.testDataPath}"
 
             statistic[specTestArea] = SpecTestsStatElement(SpecTestsStatElementType.AREA)
 

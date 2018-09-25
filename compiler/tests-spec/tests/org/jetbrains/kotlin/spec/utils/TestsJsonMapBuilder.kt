@@ -3,12 +3,11 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.spec
+package org.jetbrains.kotlin.spec.utils
 
 import com.google.gson.*
 import com.google.gson.reflect.TypeToken
 import org.jetbrains.kotlin.spec.validators.*
-import java.io.File
 
 object TestsJsonMapBuilder {
     private val stringListType = object : TypeToken<List<String>>() {}.type

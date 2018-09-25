@@ -3,15 +3,19 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.generators.tests
+package org.jetbrains.kotlin.spec.tasks
 
 import org.jetbrains.kotlin.generators.tests.generator.testGroup
 import org.jetbrains.kotlin.checkers.AbstractDiagnosticsTestSpec
+import org.jetbrains.kotlin.spec.utils.GeneralConfiguration.TEST_PATH
+import org.jetbrains.kotlin.spec.utils.GeneralConfiguration.TESTDATA_PATH
 
-fun main(args: Array<String>) {
-    testGroup("compiler/tests-spec/tests", "compiler/tests-spec/testData") {
+fun generateTests() {
+    testGroup(TEST_PATH, TESTDATA_PATH) {
         testClass<AbstractDiagnosticsTestSpec> {
             model("diagnostics", excludeDirs = listOf("helpers"))
         }
     }
 }
+
+fun main(args: Array<String>) = generateTests()
