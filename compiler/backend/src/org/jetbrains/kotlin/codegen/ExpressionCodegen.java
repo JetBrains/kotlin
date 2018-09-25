@@ -2673,28 +2673,8 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     public StackValue generateReceiverValue(@Nullable ReceiverValue receiverValue, boolean isSuper) {
         if (receiverValue instanceof ImplicitClassReceiver) {
             ClassDescriptor receiverDescriptor = ((ImplicitClassReceiver) receiverValue).getDeclarationDescriptor();
-            if (DescriptorUtils.isCompanionObject(receiverDescriptor)) {
-                CallableMemberDescriptor contextDescriptor = context.getContextDescriptor();
-                if (contextDescriptor instanceof FunctionDescriptor && receiverDescriptor == contextDescriptor.getContainingDeclaration()) {
-                    return StackValue.LOCAL_0;
-                }
-                else if (isPossiblyUninitializedSingleton(receiverDescriptor) && isInsideSingleton(receiverDescriptor)) {
-                    return generateThisOrOuterFromContext(receiverDescriptor, false, false);
-                }
-                else if (couldUseDirectAccessToCompanionObject(receiverDescriptor, context)) {
-                    return StackValue.singleton(receiverDescriptor, typeMapper);
-                }
-                else {
-                    return generateAccessorCallForCompanionObject(receiverDescriptor);
-                }
-            }
-            else if (receiverDescriptor instanceof ScriptDescriptor) {
-                return generateScriptReceiver((ScriptDescriptor) receiverDescriptor);
-            }
-            else {
-                return StackValue.thisOrOuter(this, receiverDescriptor, isSuper,
-                                              receiverValue instanceof CastImplicitClassReceiver || isEnumEntry(receiverDescriptor));
-            }
+            return generateInstanceReceiver(receiverDescriptor, isSuper,
+                                         receiverValue instanceof CastImplicitClassReceiver || isEnumEntry(receiverDescriptor));
         }
         else if (receiverValue instanceof ExtensionReceiver) {
             return generateExtensionReceiver(((ExtensionReceiver) receiverValue).getDeclarationDescriptor());
@@ -2711,6 +2691,35 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         }
         else {
             throw new UnsupportedOperationException("Unsupported receiver value: " + receiverValue);
+        }
+    }
+
+    private StackValue generateInstanceReceiver(
+            @NotNull ClassDescriptor receiverDescriptor,
+            boolean isSuper,
+            boolean castReceiver
+
+    ) {
+        if (DescriptorUtils.isCompanionObject(receiverDescriptor)) {
+            CallableMemberDescriptor contextDescriptor = context.getContextDescriptor();
+            if (contextDescriptor instanceof FunctionDescriptor && receiverDescriptor == contextDescriptor.getContainingDeclaration()) {
+                return StackValue.LOCAL_0;
+            }
+            else if (isPossiblyUninitializedSingleton(receiverDescriptor) && isInsideSingleton(receiverDescriptor)) {
+                return generateThisOrOuterFromContext(receiverDescriptor, false, false);
+            }
+            else if (couldUseDirectAccessToCompanionObject(receiverDescriptor, context)) {
+                return StackValue.singleton(receiverDescriptor, typeMapper);
+            }
+            else {
+                return generateAccessorCallForCompanionObject(receiverDescriptor);
+            }
+        }
+        else if (receiverDescriptor instanceof ScriptDescriptor) {
+            return generateScriptReceiver((ScriptDescriptor) receiverDescriptor);
+        }
+        else {
+            return StackValue.thisOrOuter(this, receiverDescriptor, isSuper, castReceiver);
         }
     }
 
@@ -4408,8 +4417,9 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     public StackValue visitThisExpression(@NotNull KtThisExpression expression, StackValue receiver) {
         DeclarationDescriptor descriptor = bindingContext.get(REFERENCE_TARGET, expression.getInstanceReference());
         if (descriptor instanceof ClassDescriptor) {
+            return generateInstanceReceiver((ClassDescriptor) descriptor, false, true);
             //TODO rewrite with context.lookupInContext()
-            return StackValue.thisOrOuter(this, (ClassDescriptor) descriptor, false, true);
+            //return StackValue.thisOrOuter(this, (ClassDescriptor) descriptor, false, true);
         }
         if (descriptor instanceof CallableDescriptor) {
             return generateExtensionReceiver((CallableDescriptor) descriptor);

@@ -14348,6 +14348,11 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/objects/companionObjectAccess"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JS, true);
             }
 
+            @TestMetadata("kt27117.kt")
+            public void testKt27117() throws Exception {
+                runTest("compiler/testData/codegen/box/objects/companionObjectAccess/kt27117.kt");
+            }
+
             @TestMetadata("privateCompanionObjectAccessedFromAnonymousObjectInNestedClass.kt")
             public void testPrivateCompanionObjectAccessedFromAnonymousObjectInNestedClass() throws Exception {
                 runTest("compiler/testData/codegen/box/objects/companionObjectAccess/privateCompanionObjectAccessedFromAnonymousObjectInNestedClass.kt");
