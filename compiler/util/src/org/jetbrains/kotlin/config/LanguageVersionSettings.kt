@@ -62,7 +62,6 @@ enum class LanguageFeature(
     ProhibitDataClassesOverridingCopy(KOTLIN_1_3, kind = BUG_FIX),
     RestrictionOfWrongAnnotationsWithUseSiteTargetsOnTypes(KOTLIN_1_3, kind = BUG_FIX),
     ProhibitInnerClassesOfGenericClassExtendingThrowable(KOTLIN_1_3, kind = BUG_FIX),
-    ProperVisibilityForCompanionObjectInstanceField(KOTLIN_1_3, kind = BUG_FIX),
     ProperForInArrayLoopRangeVariableAssignmentSemantic(KOTLIN_1_3, kind = BUG_FIX),
     NestedClassesInAnnotations(KOTLIN_1_3),
     JvmStaticInInterface(KOTLIN_1_3, kind = UNSTABLE_FEATURE),
@@ -93,6 +92,8 @@ enum class LanguageFeature(
 
     RestrictReturnStatementTarget(KOTLIN_1_4, kind = BUG_FIX),
     NoConstantValueAttributeForNonConstVals(KOTLIN_1_4, kind = BUG_FIX),
+
+    ProperVisibilityForCompanionObjectInstanceField(sinceVersion = null, kind = BUG_FIX),
 
     ProperIeee754Comparisons(sinceVersion = null, defaultState = State.DISABLED, kind = BUG_FIX),
 

@@ -1,4 +1,4 @@
-// !LANGUAGE: +ProperVisibilityForCompanionObjectInstanceField
+// LANGUAGE_VERSION: 1.2
 
 interface A {
     fun test() = ok()
