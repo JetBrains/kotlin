@@ -16,14 +16,10 @@ projectTest {
     workingDir = rootDir
 }
 
-val generateTests by generator("org.jetbrains.kotlin.generators.tests.GenerateCompilerSpecTestsKt")
+val generateSpecTests by generator("org.jetbrains.kotlin.spec.tasks.GenerateSpecTestsKt")
 
-val printSpecTestsStatistic by smartJavaExec {
-    classpath = javaPluginConvention().sourceSets.getByName("test").runtimeClasspath
-    main = "org.jetbrains.kotlin.spec.tasks.PrintSpecTestsStatisticKt"
-}
+val generateFeatureInteractionSpecTestData by generator("org.jetbrains.kotlin.spec.tasks.GenerateFeatureInteractionSpecTestDataKt")
 
-val generateJsonTestsMap by smartJavaExec {
-    classpath = javaPluginConvention().sourceSets.getByName("test").runtimeClasspath
-    main = "org.jetbrains.kotlin.spec.tasks.GenerateJsonTestsMapKt"
-}
+val printSpecTestsStatistic by generator("org.jetbrains.kotlin.spec.tasks.PrintSpecTestsStatisticKt")
+
+val generateJsonTestsMap by generator("org.jetbrains.kotlin.spec.tasks.GenerateJsonTestsMapKt")
