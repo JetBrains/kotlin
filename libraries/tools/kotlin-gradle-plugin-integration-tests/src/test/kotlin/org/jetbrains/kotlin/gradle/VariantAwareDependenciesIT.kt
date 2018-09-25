@@ -21,7 +21,9 @@ class VariantAwareDependenciesIT : BaseGradleIT() {
             embedProject(innerProject)
             gradleBuildScript(innerProject.projectName).appendText("\ndependencies { compile rootProject }")
 
-            testResolveAllConfigurations(innerProject.projectName)
+            testResolveAllConfigurations(innerProject.projectName) {
+                assertContains(">> :${innerProject.projectName}:runtime --> sample-lib-jvm6-1.0.jar")
+            }
         }
     }
 
@@ -34,7 +36,9 @@ class VariantAwareDependenciesIT : BaseGradleIT() {
             embedProject(innerProject)
             gradleBuildScript(innerProject.projectName).appendText("\nrepositories { jcenter() }; dependencies { compile rootProject }")
 
-            testResolveAllConfigurations(innerProject.projectName)
+            testResolveAllConfigurations(innerProject.projectName) {
+                assertContains(">> :${innerProject.projectName}:runtime --> sample-lib-nodejs-1.0.jar")
+            }
         }
     }
 
@@ -103,6 +107,76 @@ class VariantAwareDependenciesIT : BaseGradleIT() {
             gradleBuildScript(innerProject.projectName).appendText("\ndependencies { compile rootProject }")
 
             testResolveAllConfigurations(innerProject.projectName)
+        }
+    }
+
+    @Test
+    fun testMppResolvesJvmAndJsKtLibs() {
+        val outerProject = Project("sample-lib", gradleVersion, "new-mpp-lib-and-app")
+        val innerJvmProject = Project("simpleProject")
+        val innerJsProject = Project("kotlin2JsInternalTest")
+
+        with(outerProject) {
+            embedProject(innerJvmProject)
+            embedProject(innerJsProject)
+
+            gradleBuildScript().appendText("\n" + """
+                dependencies {
+                    jvm6Implementation project(':${innerJvmProject.projectName}')
+                    jvm6TestRuntime project(':${innerJvmProject.projectName}')
+                    nodeJsImplementation project(':${innerJsProject.projectName}')
+                    nodeJsTestRuntime project(':${innerJsProject.projectName}')
+                }
+            """.trimIndent())
+
+            testResolveAllConfigurations(innerJvmProject.projectName)
+        }
+    }
+
+    @Test
+    fun testJvmKtAppDependsOnMppTestRuntime() {
+        val outerProject = Project("sample-lib", gradleVersion, "new-mpp-lib-and-app")
+        val innerProject = Project("simpleProject")
+
+        with(outerProject) {
+            embedProject(innerProject)
+
+            gradleBuildScript(innerProject.projectName).appendText(
+                "\ndependencies { testCompile project(path: ':', configuration: 'jvm6TestRuntime') }"
+            )
+
+            testResolveAllConfigurations(innerProject.projectName) {
+                assertContains(">> :${innerProject.projectName}:testCompile --> sample-lib-jvm6-1.0.jar")
+                assertContains(">> :${innerProject.projectName}:testRuntime --> sample-lib-jvm6-1.0.jar")
+            }
+        }
+    }
+
+    @Test
+    fun testKtAppResolvesOldMpp() {
+        val outerProject = Project("multiplatformProject")
+        val innerJvmProject = Project("simpleProject")
+        val innerJsProject = Project("kotlin2JsInternalTest")
+
+        with(outerProject) {
+            embedProject(innerJvmProject)
+            embedProject(innerJsProject)
+
+            listOf(innerJvmProject to ":libJvm", innerJsProject to ":libJs").forEach { (project, dependency) ->
+                gradleBuildScript(project.projectName).appendText(
+                    "\n" + """
+                        configurations.create('foo')
+                        dependencies {
+                            foo project('$dependency')
+                            compile project('$dependency')
+                            foo project(':lib')
+                            compile project(':lib')
+                        }
+                    """.trimIndent()
+                )
+
+                testResolveAllConfigurations(project.projectName)
+            }
         }
     }
 

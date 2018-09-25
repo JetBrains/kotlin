@@ -66,7 +66,7 @@ object KotlinUsages {
 
             // if both API and runtime artifacts are chosen according to the compatibility rules, then
             // the consumer requested nothing specific, so provide them with the runtime variant, which is more complete:
-            if (candidateNames == setOf(KOTLIN_RUNTIME, KOTLIN_API)) {
+            if (candidateNames.filterNotNull().toSet() == setOf(KOTLIN_RUNTIME, KOTLIN_API)) {
                 details.closestMatch(candidateValues.single { it?.name == KOTLIN_RUNTIME }!!)
             }
             if (JAVA_API in candidateNames && JAVA_RUNTIME_JARS in candidateNames && values.none { it in candidateNames }) {
