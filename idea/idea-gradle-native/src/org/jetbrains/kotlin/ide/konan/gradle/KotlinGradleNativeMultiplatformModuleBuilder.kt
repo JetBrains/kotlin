@@ -6,16 +6,15 @@
 package org.jetbrains.kotlin.ide.konan.gradle
 
 import org.jetbrains.kotlin.idea.configuration.KotlinGradleAbstractMultiplatformModuleBuilder
+import org.jetbrains.kotlin.konan.target.presetName
 
 class KotlinGradleNativeMultiplatformModuleBuilder : KotlinGradleAbstractMultiplatformModuleBuilder() {
-
-    private var nativeTargetName: String = "ios"
 
     override fun getBuilderId() = "kotlin.gradle.multiplatform.native"
 
     override fun getPresentableName() = "Kotlin/Native"
 
-    override fun getDescription() = "Kotlin module for iOS target"
+    override fun getDescription() = "Kotlin module for native binaries"
 
     override val notImportedCommonSourceSets = true
 
@@ -26,7 +25,7 @@ class KotlinGradleNativeMultiplatformModuleBuilder : KotlinGradleAbstractMultipl
                     // For ARM, preset should be changed to presets.iosArm32 or presets.iosArm64
                     // For Linux, preset should be changed to e.g. presets.linuxX64
                     // For MacOS, preset should be changed to e.g. presets.macosX64
-                    fromPreset(presets.iosX64, '$nativeTargetName')
+                    fromPreset(presets.${defaultNativeTarget.presetName}, '${defaultNativeTarget.userTargetName}')
                 }
             }
         """.trimIndent()

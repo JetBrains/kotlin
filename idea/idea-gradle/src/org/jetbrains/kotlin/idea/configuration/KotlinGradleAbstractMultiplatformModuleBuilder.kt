@@ -14,6 +14,9 @@ import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.idea.KotlinIcons
 import org.jetbrains.kotlin.idea.util.rootManager
+import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.konan.target.TargetSupportException
 import org.jetbrains.plugins.gradle.frameworkSupport.BuildScriptDataBuilder
 import org.jetbrains.plugins.gradle.service.project.wizard.GradleModuleBuilder
 import org.jetbrains.plugins.gradle.service.settings.GradleProjectSettingsControl
@@ -60,6 +63,21 @@ abstract class KotlinGradleAbstractMultiplatformModuleBuilder : GradleModuleBuil
     protected open fun createProjectSkeleton(module: Module, rootDir: VirtualFile) {}
 
     protected open val notImportedCommonSourceSets = false
+
+    protected val defaultNativeTarget by lazy {
+        try {
+            HostManager.host
+        } catch (e: TargetSupportException) {
+            KonanTarget.IOS_X64
+        }
+    }
+
+    // Examples: ios_x64 -> ios, macos_x64 -> macos, wasm32 -> wasm.
+    protected val KonanTarget.userTargetName: String
+        get() {
+            val index = name.indexOfAny("_0123456789".toCharArray())
+            return if (index > 0) name.substring(0, index) else name
+        }
 
     companion object {
         const val productionSuffix = "Main"

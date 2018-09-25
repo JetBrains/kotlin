@@ -284,4 +284,16 @@ open class HostManager(subtargetProvider: SubTargetProvider = NoSubTargets()) {
     }
 }
 
+val KonanTarget.presetName: String
+    get() = when (this) {
+        KonanTarget.ANDROID_ARM32 -> "androidNativeArm32"
+        KonanTarget.ANDROID_ARM64 -> "androidNativeArm64"
+        else -> evaluatePresetName(this.name)
+    }
+
+private fun evaluatePresetName(targetName: String): String {
+    val nameParts = targetName.split('_').mapNotNull { it.takeIf(String::isNotEmpty) }
+    return nameParts.asSequence().drop(1).joinToString("", nameParts.firstOrNull().orEmpty(), transform = String::capitalize)
+}
+
 class TargetSupportException(message: String = "", cause: Throwable? = null) : Exception(message, cause)
