@@ -396,8 +396,7 @@ open class KotlinNativeTargetConfigurator(
 
             val testExecutableProperty = testExecutableLinkTask.outputFile
             executable = testExecutableProperty.get().absolutePath
-            // TODO: Provide a normal test path!
-            outputDir = project.layout.buildDirectory.dir("test-results").get().asFile
+            outputDir = project.layout.projectDirectory.asFile
 
             if (project.hasProperty("teamcity.version")) {
                 args("--ktest_logger=TEAMCITY")
