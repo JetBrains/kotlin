@@ -4221,6 +4221,16 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         public void testNestedInterface() throws Exception {
             runTest("idea/testData/inspectionsLocal/redundantSamConstructor/nestedInterface.kt");
         }
+
+        @TestMetadata("simple.kt")
+        public void testSimple() throws Exception {
+            runTest("idea/testData/inspectionsLocal/redundantSamConstructor/simple.kt");
+        }
+
+        @TestMetadata("simple2.kt")
+        public void testSimple2() throws Exception {
+            runTest("idea/testData/inspectionsLocal/redundantSamConstructor/simple2.kt");
+        }
     }
 
     @TestMetadata("idea/testData/inspectionsLocal/redundantSemicolon")
