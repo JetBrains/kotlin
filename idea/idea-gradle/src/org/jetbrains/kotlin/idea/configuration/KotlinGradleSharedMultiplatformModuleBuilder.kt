@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.idea.configuration
 
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.vfs.VirtualFile
+import org.jetbrains.kotlin.konan.target.presetName
 import java.io.BufferedWriter
 
 class KotlinGradleSharedMultiplatformModuleBuilder : KotlinGradleAbstractMultiplatformModuleBuilder() {
@@ -14,7 +15,7 @@ class KotlinGradleSharedMultiplatformModuleBuilder : KotlinGradleAbstractMultipl
     private val commonName: String = "common"
     private var jvmTargetName: String = "jvm"
     private var jsTargetName: String = "js"
-    private var nativeTargetName: String = "ios"
+    private var nativeTargetName: String = defaultNativeTarget.userTargetName
 
     private val commonSourceName get() = "$commonName$productionSuffix"
     private val commonTestName get() = "$commonName$testSuffix"
@@ -30,7 +31,7 @@ class KotlinGradleSharedMultiplatformModuleBuilder : KotlinGradleAbstractMultipl
     override fun getPresentableName() = "Kotlin (Multiplatform Library)"
 
     override fun getDescription() =
-        "Multiplatform Gradle projects allow sharing the same Kotlin code between all three main platforms (JVM, JS, iOS)."
+        "Multiplatform Gradle projects allow sharing the same Kotlin code between all three main platforms (JVM, JS, Native)."
 
     override fun createProjectSkeleton(module: Module, rootDir: VirtualFile) {
         val src = rootDir.createChildDirectory(this, "src")
@@ -42,7 +43,7 @@ class KotlinGradleSharedMultiplatformModuleBuilder : KotlinGradleAbstractMultipl
         val jsMain = src.createKotlinSampleFileWriter(jsSourceName)
         val jsTest = src.createKotlinSampleFileWriter(jsTestName, fileName = "SampleTestsJS.kt")
         val nativeMain = src.createKotlinSampleFileWriter(nativeSourceName)
-        val nativeTest = src.createKotlinSampleFileWriter(nativeTestName, fileName = "SampleTestsIOS.kt")
+        val nativeTest = src.createKotlinSampleFileWriter(nativeTestName, fileName = "SampleTestsNative.kt")
 
         try {
             commonMain.write(
@@ -98,7 +99,7 @@ class KotlinGradleSharedMultiplatformModuleBuilder : KotlinGradleAbstractMultipl
                 }
 
                 actual object Platform {
-                    actual val name: String = "iOS"
+                    actual val name: String = "Native"
                 }
             """.trimIndent()
             )
@@ -158,10 +159,10 @@ class KotlinGradleSharedMultiplatformModuleBuilder : KotlinGradleAbstractMultipl
                 import kotlin.test.Test
                 import kotlin.test.assertTrue
 
-                class SampleTestsIOS {
+                class SampleTestsNative {
                     @Test
                     fun testHello() {
-                        assertTrue("iOS" in hello())
+                        assertTrue("Native" in hello())
                     }
                 }
             """.trimIndent()
@@ -180,7 +181,7 @@ class KotlinGradleSharedMultiplatformModuleBuilder : KotlinGradleAbstractMultipl
                     // For ARM, preset should be changed to presets.iosArm32 or presets.iosArm64
                     // For Linux, preset should be changed to e.g. presets.linuxX64
                     // For MacOS, preset should be changed to e.g. presets.macosX64
-                    fromPreset(presets.iosX64, '$nativeTargetName')
+                    fromPreset(presets.${defaultNativeTarget.presetName}, '${defaultNativeTarget.userTargetName}')
                 }
                 sourceSets {
                     $commonSourceName {
