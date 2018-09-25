@@ -20,24 +20,18 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotated
 import org.jetbrains.kotlin.js.backend.ast.*
-import org.jetbrains.kotlin.js.resolve.diagnostics.findPsi
 import org.jetbrains.kotlin.js.translate.context.Namer
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
 import org.jetbrains.kotlin.js.translate.declaration.DeclarationBodyVisitor
 import org.jetbrains.kotlin.js.translate.declaration.DefaultPropertyTranslator
 import org.jetbrains.kotlin.js.translate.general.Translation
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
+import org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils
 import org.jetbrains.kotlin.js.translate.utils.TranslationUtils
 import org.jetbrains.kotlin.psi.KtPureClassOrObject
-import org.jetbrains.kotlin.resolve.descriptorUtil.classId
-import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.builtIns
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.SerializerCodegen
-import org.jetbrains.kotlinx.serialization.compiler.backend.common.findTypeSerializerOrContext
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.getSerialTypeInfo
-import org.jetbrains.kotlinx.serialization.compiler.backend.jvm.contextSerializerId
-import org.jetbrains.kotlinx.serialization.compiler.backend.jvm.enumSerializerId
-import org.jetbrains.kotlinx.serialization.compiler.backend.jvm.referenceArraySerializerId
 import org.jetbrains.kotlinx.serialization.compiler.resolve.*
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.SERIAL_DESCRIPTOR_CLASS_IMPL
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.typeArgPrefix
@@ -60,7 +54,8 @@ class SerializerJsTranslator(descriptor: ClassDescriptor,
                 .unsubstitutedPrimaryConstructor!!
 
         // this.serialDesc = new SerialDescImpl(...)
-        val value = JsNew(context.getInnerReference(serialDescImplConstructor), listOf(JsStringLiteral(serialName)))
+        val correctThis = context.getDispatchReceiver(JsDescriptorUtils.getReceiverParameterForDeclaration(desc.containingDeclaration))
+        val value = JsNew(context.getInnerReference(serialDescImplConstructor), listOf(JsStringLiteral(serialName), correctThis))
         val assgmnt = TranslationUtils.assignmentToBackingField(context, desc, value)
         translator.addInitializerStatement(assgmnt.makeStmt())
 
@@ -72,7 +67,11 @@ class SerializerJsTranslator(descriptor: ClassDescriptor,
 
         for (prop in orderedProperties) {
             if (prop.transient) continue
-            val call = JsInvocation(JsNameRef(context.getNameForDescriptor(addFunc), serialClassDescRef), JsStringLiteral(prop.name))
+            val call = JsInvocation(
+                JsNameRef(context.getNameForDescriptor(addFunc), serialClassDescRef),
+                JsStringLiteral(prop.name),
+                JsBooleanLiteral(prop.optional)
+            )
             translator.addInitializerStatement(call.makeStmt())
             // serialDesc.pushAnnotation(...)
             pushAnnotationsInto(prop.descriptor, pushFunc, serialClassDescRef)
@@ -91,6 +90,11 @@ class SerializerJsTranslator(descriptor: ClassDescriptor,
             val invok = JsInvocation(JsNameRef(context.getNameForDescriptor(pushFunction), intoRef), JsNew(classRef, argExprs))
             translator.addInitializerStatement(invok.makeStmt())
         }
+    }
+
+    override fun generateChildSerializersGetter(function: FunctionDescriptor) = generateFunction(function) { _, _ ->
+        val allSerializers = orderedProperties.map { requireNotNull(serializerTower(it)) { "Property ${it.name} must have a serializer" } }
+        +JsReturn(JsArrayLiteral(allSerializers))
     }
 
     override fun generateSerializableClassProperty(property: PropertyDescriptor) {
@@ -173,40 +177,6 @@ class SerializerJsTranslator(descriptor: ClassDescriptor,
                 .let { ctx.getNameForDescriptor(it) }
         +JsInvocation(JsNameRef(wEndFunc, localOutputRef), serialClassDescRef).makeStmt()
     }
-
-    private fun serializerInstance(serializerClass: ClassDescriptor?, module: ModuleDescriptor, kType: KotlinType, genericIndex: Int? = null): JsExpression? {
-        val nullableSerClass = context.translateQualifiedReference(module.getClassFromInternalSerializationPackage(SpecialBuiltins.nullableSerializer))
-        if (serializerClass == null) {
-            if (genericIndex == null) return null
-            return JsNameRef(context.scope().declareName("$typeArgPrefix$genericIndex"), JsThisRef())
-        }
-        if (serializerClass.kind == ClassKind.OBJECT) {
-            return context.serializerObjectGetter(serializerClass)
-        }
-        else {
-            var args = if (serializerClass.classId == enumSerializerId || serializerClass.classId == contextSerializerId)
-                listOf(createGetKClassExpression(kType.toClassDescriptor!!))
-            else kType.arguments.map {
-                val argSer = findTypeSerializerOrContext(module, it.type, sourceElement = serializerClass.findPsi())
-                val expr = serializerInstance(argSer, module, it.type, it.type.genericIndex) ?: return null
-                if (it.type.isMarkedNullable) JsNew(nullableSerClass, listOf(expr)) else expr
-            }
-            if (serializerClass.classId == referenceArraySerializerId)
-                args = listOf(createGetKClassExpression(kType.arguments[0].type.toClassDescriptor!!)) + args
-            val serializable = getSerializableClassDescriptorBySerializer(serializerClass)
-            val ref = if (serializable?.declaredTypeParameters?.isNotEmpty() == true) {
-                val desc = KSerializerDescriptorResolver.createTypedSerializerConstructorDescriptor(serializerClass, serializableDescriptor)
-                JsInvocation(context.getInnerReference(desc), args)
-            } else {
-                JsNew(context.translateQualifiedReference(serializerClass), args)
-            }
-            return ref
-        }
-    }
-
-    private fun createGetKClassExpression(classDescriptor: ClassDescriptor): JsExpression =
-            JsInvocation(context.namer().kotlin("getKClass"),
-                         context.translateQualifiedReference(classDescriptor))
 
 
     override fun generateLoad(function: FunctionDescriptor) = generateFunction(function) { jsFun, context ->

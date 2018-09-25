@@ -17,12 +17,23 @@
 package org.jetbrains.kotlinx.serialization.compiler.backend.js
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.js.backend.ast.*
+import org.jetbrains.kotlin.js.resolve.diagnostics.findPsi
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
 import org.jetbrains.kotlin.js.translate.expression.translateAndAliasParameters
 import org.jetbrains.kotlin.js.translate.reference.ReferenceTranslator
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
+import org.jetbrains.kotlin.resolve.descriptorUtil.classId
+import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.typeUtil.isTypeParameter
+import org.jetbrains.kotlinx.serialization.compiler.backend.common.findTypeSerializerOrContext
+import org.jetbrains.kotlinx.serialization.compiler.backend.jvm.contextSerializerId
+import org.jetbrains.kotlinx.serialization.compiler.backend.jvm.enumSerializerId
+import org.jetbrains.kotlinx.serialization.compiler.backend.jvm.referenceArraySerializerId
+import org.jetbrains.kotlinx.serialization.compiler.resolve.*
 
 internal class JsBlockBuilder {
     val block: JsBlock = JsBlock()
@@ -102,3 +113,60 @@ internal fun TranslationContext.serializerObjectGetter(serializer: ClassDescript
 internal fun TranslationContext.translateQualifiedReference(clazz: ClassDescriptor): JsExpression {
     return ReferenceTranslator.translateAsTypeReference(clazz, this)
 }
+
+// Does not use sti and therefore does not perform encoder calls optimization
+internal fun SerializerJsTranslator.serializerTower(property: SerializableProperty): JsExpression? {
+    val nullableSerClass =
+        context.translateQualifiedReference(property.module.getClassFromInternalSerializationPackage(SpecialBuiltins.nullableSerializer))
+    val serializer =
+        property.serializableWith?.toClassDescriptor
+            ?: if (!property.type.isTypeParameter()) findTypeSerializerOrContext(
+                property.module,
+                property.type,
+                property.descriptor.annotations,
+                property.descriptor.findPsi()
+            ) else null
+    return serializerInstance(serializer, property.module, property.type, property.genericIndex)
+        ?.let { expr -> if (property.type.isMarkedNullable) JsNew(nullableSerClass, listOf(expr)) else expr }
+}
+
+internal fun SerializerJsTranslator.serializerInstance(
+    serializerClass: ClassDescriptor?,
+    module: ModuleDescriptor,
+    kType: KotlinType,
+    genericIndex: Int? = null
+): JsExpression? {
+    val nullableSerClass =
+        context.translateQualifiedReference(module.getClassFromInternalSerializationPackage(SpecialBuiltins.nullableSerializer))
+    if (serializerClass == null) {
+        if (genericIndex == null) return null
+        return JsNameRef(context.scope().declareName("${SerialEntityNames.typeArgPrefix}$genericIndex"), JsThisRef())
+    }
+    if (serializerClass.kind == ClassKind.OBJECT) {
+        return context.serializerObjectGetter(serializerClass)
+    } else {
+        var args = if (serializerClass.classId == enumSerializerId || serializerClass.classId == contextSerializerId)
+            listOf(createGetKClassExpression(kType.toClassDescriptor!!))
+        else kType.arguments.map {
+            val argSer = findTypeSerializerOrContext(module, it.type, sourceElement = serializerClass.findPsi())
+            val expr = serializerInstance(argSer, module, it.type, it.type.genericIndex) ?: return null
+            if (it.type.isMarkedNullable) JsNew(nullableSerClass, listOf(expr)) else expr
+        }
+        if (serializerClass.classId == referenceArraySerializerId)
+            args = listOf(createGetKClassExpression(kType.arguments[0].type.toClassDescriptor!!)) + args
+        val serializable = getSerializableClassDescriptorBySerializer(serializerClass)
+        val ref = if (serializable?.declaredTypeParameters?.isNotEmpty() == true) {
+            val desc = KSerializerDescriptorResolver.createTypedSerializerConstructorDescriptor(serializerClass, serializableDescriptor)
+            JsInvocation(context.getInnerReference(desc), args)
+        } else {
+            JsNew(context.translateQualifiedReference(serializerClass), args)
+        }
+        return ref
+    }
+}
+
+internal fun SerializerJsTranslator.createGetKClassExpression(classDescriptor: ClassDescriptor): JsExpression =
+    JsInvocation(
+        context.namer().kotlin("getKClass"),
+        context.translateQualifiedReference(classDescriptor)
+    )
