@@ -297,6 +297,8 @@ public fun <K, V> Map<K, V>.getValue(key: K): V = getOrImplicitDefault(key)
  * Returns the value for the given key. If the key is not found in the map, calls the [defaultValue] function,
  * puts its result into the map under the given key and returns it.
  *
+ * Note that the operation is not guaranteed to be atomic if the map is being modified concurrently.
+ *
  * @sample samples.collections.Maps.Usage.getOrPut
  */
 public inline fun <K, V> MutableMap<K, V>.getOrPut(key: K, defaultValue: () -> V): V {
