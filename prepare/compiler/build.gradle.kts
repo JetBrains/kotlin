@@ -85,6 +85,7 @@ dependencies {
     fatJarContentsStripMetadata(intellijDep()) { includeJars("oro-2.0.8", "jdom", "log4j") }
 }
 
+noDefaultJar()
 
 val packCompiler by task<ShadowJar> {
     configurations = listOf(fatJar)
