@@ -348,6 +348,11 @@ public class JvmCodegenUtil {
                !JvmAbi.isMappedIntrinsicCompanionObject((ClassDescriptor) companionObject);
     }
 
+    public static boolean isNonIntrinsicPrivateCompanionObjectInInterface(@NotNull DeclarationDescriptorWithVisibility companionObject) {
+        return isCompanionObjectInInterfaceNotIntrinsic(companionObject) &&
+               Visibilities.isPrivate(companionObject.getVisibility());
+    }
+
     public static boolean isDeclarationOfBigArityFunctionInvoke(@Nullable DeclarationDescriptor descriptor) {
         return descriptor instanceof FunctionInvokeDescriptor && ((FunctionInvokeDescriptor) descriptor).hasBigArity();
     }

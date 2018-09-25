@@ -15123,6 +15123,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 runTest("compiler/testData/codegen/box/objects/companionObjectAccess/kt27117.kt");
             }
 
+            @TestMetadata("kt27121.kt")
+            public void testKt27121() throws Exception {
+                runTest("compiler/testData/codegen/box/objects/companionObjectAccess/kt27121.kt");
+            }
+
             @TestMetadata("privateCompanionObjectAccessedFromAnonymousObjectInNestedClass.kt")
             public void testPrivateCompanionObjectAccessedFromAnonymousObjectInNestedClass() throws Exception {
                 runTest("compiler/testData/codegen/box/objects/companionObjectAccess/privateCompanionObjectAccessedFromAnonymousObjectInNestedClass.kt");

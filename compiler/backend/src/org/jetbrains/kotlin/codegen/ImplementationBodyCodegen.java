@@ -786,12 +786,15 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 state.getLanguageVersionSettings().supportsFeature(LanguageFeature.DeprecatedFieldForInvisibleCompanionObject);
         boolean properVisibilityForCompanionObjectInstanceField =
                 state.getLanguageVersionSettings().supportsFeature(LanguageFeature.ProperVisibilityForCompanionObjectInstanceField);
+        boolean hasPrivateOrProtectedProperVisibility = (properFieldVisibilityFlag & (ACC_PRIVATE | ACC_PROTECTED)) != 0;
+        boolean hasPackagePrivateProperVisibility = (properFieldVisibilityFlag & (ACC_PUBLIC | ACC_PRIVATE | ACC_PROTECTED)) == 0;
         boolean fieldShouldBeDeprecated =
                 deprecatedFieldForInvisibleCompanionObject &&
                 !properVisibilityForCompanionObjectInstanceField &&
-                (properFieldVisibilityFlag & (ACC_PRIVATE | ACC_PROTECTED)) != 0;
+                (hasPrivateOrProtectedProperVisibility || hasPackagePrivateProperVisibility ||
+                 isNonIntrinsicPrivateCompanionObjectInInterface(companionObjectDescriptor));
         boolean doNotGeneratePublic =
-                properVisibilityForCompanionObjectInstanceField && (properFieldVisibilityFlag & (ACC_PRIVATE | ACC_PROTECTED)) != 0;
+                properVisibilityForCompanionObjectInstanceField && hasPrivateOrProtectedProperVisibility;
         int fieldAccessFlags;
         if (doNotGeneratePublic) {
             fieldAccessFlags = ACC_STATIC | ACC_FINAL;
@@ -804,6 +807,11 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         }
         if (fieldShouldBeDeprecated) {
             fieldAccessFlags |= ACC_DEPRECATED;
+        }
+        if (properVisibilityForCompanionObjectInstanceField &&
+            JvmCodegenUtil.isCompanionObjectInInterfaceNotIntrinsic(companionObjectDescriptor) &&
+            Visibilities.isPrivate(companionObjectDescriptor.getVisibility())) {
+            fieldAccessFlags |= ACC_SYNTHETIC;
         }
         StackValue.Field field = StackValue.singleton(companionObjectDescriptor, typeMapper);
         FieldVisitor fv = v.newField(JvmDeclarationOriginKt.OtherOrigin(companionObject == null ? myClass.getPsiOrParent() : companionObject),
