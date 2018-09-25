@@ -358,13 +358,18 @@ object Generators : TemplateGroupBase() {
         }
     }
 
+    private fun elementsConversionClause(elements: Family) =
+            """
+            The [elements] ${elements.doc.collection} may be converted to a [HashSet] to speed up the operation, thus the elements are required to have
+            a correct and stable implementation of `hashCode()` that doesn't change between successive invocations.
+            """
 
     val f_minus_iterable = fn("minus(elements: Iterable<T>)") {
         include(Iterables, Sets, Sequences)
     } builder {
         operator(true)
 
-        doc { "Returns a list containing all elements of the original collection except the elements contained in the given [elements] collection." }
+        doc { "Returns a list containing all elements of the original collection except the elements contained in the given [elements] collection.\n" }
         returns("List<T>")
         specialFor(Sets, Sequences) { returns("SELF") }
         body {
@@ -425,6 +430,9 @@ object Generators : TemplateGroupBase() {
             }
 
         }
+        doc {
+            doc + elementsConversionClause(Iterables)
+        }
     }
 
     val f_minus_array = fn("minus(elements: Array<out T>)") {
@@ -432,7 +440,7 @@ object Generators : TemplateGroupBase() {
     } builder {
         operator(true)
 
-        doc { "Returns a list containing all elements of the original collection except the elements contained in the given [elements] array." }
+        doc { "Returns a list containing all elements of the original collection except the elements contained in the given [elements] array.\n" }
         returns("List<T>")
         specialFor(Sets, Sequences) { returns("SELF") }
         body {
@@ -481,6 +489,9 @@ object Generators : TemplateGroupBase() {
                 """
             }
         }
+        doc {
+            doc + elementsConversionClause(ArraysOfObjects)
+        }
     }
 
     val f_minus_sequence = fn("minus(elements: Sequence<T>)") {
@@ -488,7 +499,7 @@ object Generators : TemplateGroupBase() {
     } builder {
         operator(true)
 
-        doc { "Returns a list containing all elements of the original collection except the elements contained in the given [elements] sequence." }
+        doc { "Returns a list containing all elements of the original collection except the elements contained in the given [elements] sequence.\n" }
         returns("List<T>")
         specialFor(Sets, Sequences) { returns("SELF") }
         body {
@@ -541,6 +552,9 @@ object Generators : TemplateGroupBase() {
                 }
                 """
             }
+        }
+        doc {
+            doc + elementsConversionClause(Sequences)
         }
     }
 
