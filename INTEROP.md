@@ -236,7 +236,7 @@ All the supported C types have corresponding representations in Kotlin:
     Kotlin counterpart with the same width.
 *   Pointers and arrays are mapped to `CPointer<T>?`.
 *   Enums can be mapped to either Kotlin enum or integral values, depending on
-    heuristics and the definition file hints (see "Definition file hints" below).
+    heuristics and the [definition file hints](#definition-file-hints).
 *   Structs are mapped to types having fields available via the dot notation,
     i.e. `someStructInstance.field1`.
 *   `typedef` are represented as `typealias`.
@@ -383,7 +383,7 @@ used like
 
 ```kotlin
 val fileSize = memScoped {
-    val statBuf = alloc<statStruct>()
+    val statBuf = alloc<stat>()
     val error = stat("/", statBuf.ptr)
     statBuf.st_size
 }
@@ -443,8 +443,8 @@ expecting a C string.
 There are also some tools available to convert between Kotlin and C strings
 manually:
 
-*   `fun CPointer<ByteRef>.toKString(): String`
-*   `val String.cstr: CValuesRef<ByteRef>`.
+*   `fun CPointer<ByteVar>.toKString(): String`
+*   `val String.cstr: CValuesRef<ByteVar>`.
 
     To get the pointer, `.cstr` should be allocated in native memory, e.g.
     
@@ -562,8 +562,8 @@ To wrap the reference:
 <div class="sample" markdown="1" theme="idea" data-highlight-only>
 
 ```kotlin
-val stablePtr = StableRef.create(kotlinReference)
-val voidPtr = stablePtr.value
+val stableRef = StableRef.create(kotlinReference)
+val voidPtr = stableRef.asCPointer()
 ```
 
 </div>
@@ -575,14 +575,13 @@ To unwrap the reference:
 <div class="sample" markdown="1" theme="idea" data-highlight-only>
 
 ```kotlin
-val stablePtr = StableRef.fromValue(voidPtr)
-val kotlinReference = stablePtr.get()
+val stableRef = voidPtr.asStableRef<KotlinClass>()
+val kotlinReference = stableRef.get()
 ```
 
 </div>
 
-where `kotlinReference` is the original wrapped reference (however, it's type is
-`Any` so it may require casting).
+where `kotlinReference` is the original wrapped reference.
 
 The created `StableRef` should eventually be manually disposed using
 the `.dispose()` method to prevent memory leaks:
@@ -590,7 +589,7 @@ the `.dispose()` method to prevent memory leaks:
 <div class="sample" markdown="1" theme="idea" data-highlight-only>
 
 ```kotlin
-stablePtr.dispose()
+stableRef.dispose()
 ```
 
 </div>
