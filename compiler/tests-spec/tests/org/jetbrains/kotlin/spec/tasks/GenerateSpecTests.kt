@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.spec.tasks
 
 import org.jetbrains.kotlin.generators.tests.generator.testGroup
 import org.jetbrains.kotlin.checkers.AbstractDiagnosticsTestSpec
+import org.jetbrains.kotlin.parsing.AbstractParsingTestSpec
 import org.jetbrains.kotlin.spec.utils.GeneralConfiguration.TEST_PATH
 import org.jetbrains.kotlin.spec.utils.GeneralConfiguration.TESTDATA_PATH
 
@@ -14,6 +15,9 @@ fun generateTests() {
     testGroup(TEST_PATH, TESTDATA_PATH) {
         testClass<AbstractDiagnosticsTestSpec> {
             model("diagnostics", excludeDirs = listOf("helpers"))
+        }
+        testClass<AbstractParsingTestSpec> {
+            model("psi", testMethod = "doParsingTest", excludeDirs = listOf("helpers", "templates"))
         }
     }
 }

@@ -1,0 +1,311 @@
+KtFile: 2.9.kt
+  PACKAGE_DIRECTIVE
+    <empty list>
+  IMPORT_LIST
+    <empty list>
+  CLASS
+    PsiElement(class)('class')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('A')
+    PsiWhiteSpace(' ')
+    CLASS_BODY
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n    ')
+      MODIFIER_LIST
+        PsiErrorElement:Expected annotation identifier after ':'
+          PsiElement(AT)('@')
+          PsiElement(IDENTIFIER)('field')
+          PsiElement(COLON)(':')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(true)('true')
+      PsiWhiteSpace('\n    ')
+      PROPERTY
+        PsiElement(val)('val')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('a')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('Int')
+        PsiWhiteSpace(' ')
+        PsiElement(EQ)('=')
+        PsiWhiteSpace(' ')
+        STRING_TEMPLATE
+          PsiElement(OPEN_QUOTE)('"')
+          PsiElement(CLOSING_QUOTE)('"')
+      PsiWhiteSpace('\n\n    ')
+      MODIFIER_LIST
+        PsiErrorElement:Expected annotation identifier after ':'
+          PsiElement(AT)('@')
+          PsiElement(IDENTIFIER)('setparam')
+          PsiElement(COLON)(':')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(false)('false')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(LPAR)('(')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(true)('true')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(RPAR)(')')
+      PsiWhiteSpace('\n    ')
+      PROPERTY
+        PsiElement(val)('val')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('b')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('Int')
+        PsiWhiteSpace(' ')
+        PsiElement(EQ)('=')
+        PsiWhiteSpace(' ')
+        STRING_TEMPLATE
+          PsiElement(OPEN_QUOTE)('"')
+          PsiElement(CLOSING_QUOTE)('"')
+      PsiWhiteSpace('\n\n    ')
+      MODIFIER_LIST
+        ANNOTATION_ENTRY
+          PsiElement(AT)('@')
+          ANNOTATION_TARGET
+            PsiElement(receiver)('receiver')
+          PsiElement(COLON)(':')
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                USER_TYPE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('org')
+                  PsiElement(DOT)('.')
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('jetbrains')
+                PsiElement(DOT)('.')
+                PsiErrorElement:Expecting type name
+                  <empty list>
+      PsiErrorElement:Expecting member declaration
+        PsiElement(false)('false')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(LT)('<')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(IDENTIFIER)('A')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(LT)('<')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(IDENTIFIER)('B')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(COMMA)(',')
+      PsiWhiteSpace(' ')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(IDENTIFIER)('C')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(GT)('>')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(GT)('>')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(LPAR)('(')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(true)('true')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(RPAR)(')')
+      PsiWhiteSpace('\n    ')
+      PROPERTY
+        PsiElement(val)('val')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('c')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('Int')
+        PsiWhiteSpace(' ')
+        PsiElement(EQ)('=')
+        PsiWhiteSpace(' ')
+        STRING_TEMPLATE
+          PsiElement(OPEN_QUOTE)('"')
+          PsiElement(CLOSING_QUOTE)('"')
+      PsiWhiteSpace('\n\n    ')
+      MODIFIER_LIST
+        ANNOTATION_ENTRY
+          PsiElement(AT)('@')
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                USER_TYPE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('org')
+                  PsiElement(DOT)('.')
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('jetbrains')
+                PsiElement(DOT)('.')
+                PsiErrorElement:Expecting type name
+                  <empty list>
+      PsiErrorElement:Expecting member declaration
+        PsiElement(false)('false')
+      PsiWhiteSpace('\n    ')
+      PROPERTY
+        PsiElement(val)('val')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('c')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('Int')
+        PsiWhiteSpace(' ')
+        PsiElement(EQ)('=')
+        PsiWhiteSpace(' ')
+        STRING_TEMPLATE
+          PsiElement(OPEN_QUOTE)('"')
+          PsiElement(CLOSING_QUOTE)('"')
+      PsiWhiteSpace('\n\n    ')
+      MODIFIER_LIST
+        PsiErrorElement:Expected annotation identifier after '@'
+          PsiElement(AT)('@')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(true)('true')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(LT)('<')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(IDENTIFIER)('A')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(LT)('<')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(IDENTIFIER)('B')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(GT)('>')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(COMMA)(',')
+      PsiWhiteSpace(' ')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(IDENTIFIER)('C')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(GT)('>')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(LPAR)('(')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(false)('false')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(COMMA)(',')
+      PsiWhiteSpace(' ')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(true)('true')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(COMMA)(',')
+      PsiWhiteSpace(' ')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(false)('false')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(RPAR)(')')
+      PsiWhiteSpace('\n    ')
+      PROPERTY
+        PsiElement(val)('val')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('c')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('Int')
+        PsiWhiteSpace(' ')
+        PsiElement(EQ)('=')
+        PsiWhiteSpace(' ')
+        STRING_TEMPLATE
+          PsiElement(OPEN_QUOTE)('"')
+          PsiElement(CLOSING_QUOTE)('"')
+      PsiWhiteSpace('\n\n    ')
+      MODIFIER_LIST
+        PsiErrorElement:Expected annotation identifier after '@'
+          PsiElement(AT)('@')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(true)('true')
+      PsiWhiteSpace('\n    ')
+      PROPERTY
+        PsiElement(val)('val')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('c')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('Int')
+        PsiWhiteSpace(' ')
+        PsiElement(EQ)('=')
+        PsiWhiteSpace(' ')
+        STRING_TEMPLATE
+          PsiElement(OPEN_QUOTE)('"')
+          PsiElement(CLOSING_QUOTE)('"')
+      PsiWhiteSpace('\n\n    ')
+      MODIFIER_LIST
+        PsiErrorElement:Expected annotation identifier after '@'
+          PsiElement(AT)('@')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(false)('false')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(DOT)('.')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(true)('true')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(DOT)('.')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(false)('false')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(LT)('<')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(IDENTIFIER)('A')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(LT)('<')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(IDENTIFIER)('B')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(GT)('>')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(COMMA)(',')
+      PsiWhiteSpace(' ')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(IDENTIFIER)('C')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(GT)('>')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(LPAR)('(')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(true)('true')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(COMMA)(',')
+      PsiWhiteSpace(' ')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(false)('false')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(COMMA)(',')
+      PsiWhiteSpace(' ')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(true)('true')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(RPAR)(')')
+      PsiWhiteSpace('\n    ')
+      PROPERTY
+        PsiElement(val)('val')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('c')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('Int')
+        PsiWhiteSpace(' ')
+        PsiElement(EQ)('=')
+        PsiWhiteSpace(' ')
+        STRING_TEMPLATE
+          PsiElement(OPEN_QUOTE)('"')
+          PsiElement(CLOSING_QUOTE)('"')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')
