@@ -775,6 +775,16 @@ public class DiagnosticsTestSpecGenerated extends AbstractDiagnosticsTestSpec {
                                 runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/controlFlow/initialization/pos/5.kt");
                             }
 
+                            @TestMetadata("6.kt")
+                            public void test6() throws Exception {
+                                runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/controlFlow/initialization/pos/6.kt");
+                            }
+
+                            @TestMetadata("7.kt")
+                            public void test7() throws Exception {
+                                runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/controlFlow/initialization/pos/7.kt");
+                            }
+
                             public void testAllFilesPresentInPos() throws Exception {
                                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/controlFlow/initialization/pos"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
                             }
@@ -906,6 +916,11 @@ public class DiagnosticsTestSpecGenerated extends AbstractDiagnosticsTestSpec {
                             runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/smartcasts/neg/13.kt");
                         }
 
+                        @TestMetadata("15.kt")
+                        public void test15() throws Exception {
+                            runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/smartcasts/neg/15.kt");
+                        }
+
                         @TestMetadata("2.kt")
                         public void test2() throws Exception {
                             runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/smartcasts/neg/2.kt");
@@ -972,6 +987,21 @@ public class DiagnosticsTestSpecGenerated extends AbstractDiagnosticsTestSpec {
                         @TestMetadata("11.kt")
                         public void test11() throws Exception {
                             runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/smartcasts/pos/11.kt");
+                        }
+
+                        @TestMetadata("12.kt")
+                        public void test12() throws Exception {
+                            runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/smartcasts/pos/12.kt");
+                        }
+
+                        @TestMetadata("13.kt")
+                        public void test13() throws Exception {
+                            runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/smartcasts/pos/13.kt");
+                        }
+
+                        @TestMetadata("14.kt")
+                        public void test14() throws Exception {
+                            runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/smartcasts/pos/14.kt");
                         }
 
                         @TestMetadata("2.kt")
@@ -1090,6 +1120,26 @@ public class DiagnosticsTestSpecGenerated extends AbstractDiagnosticsTestSpec {
                                 runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/common/neg/13.kt");
                             }
 
+                            @TestMetadata("14.kt")
+                            public void test14() throws Exception {
+                                runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/common/neg/14.kt");
+                            }
+
+                            @TestMetadata("15.kt")
+                            public void test15() throws Exception {
+                                runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/common/neg/15.kt");
+                            }
+
+                            @TestMetadata("16.kt")
+                            public void test16() throws Exception {
+                                runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/common/neg/16.kt");
+                            }
+
+                            @TestMetadata("17.kt")
+                            public void test17() throws Exception {
+                                runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/common/neg/17.kt");
+                            }
+
                             @TestMetadata("2.kt")
                             public void test2() throws Exception {
                                 runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/common/neg/2.kt");
@@ -1163,11 +1213,6 @@ public class DiagnosticsTestSpecGenerated extends AbstractDiagnosticsTestSpec {
                                 runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/common/pos/4.kt");
                             }
 
-                            @TestMetadata("5.kt")
-                            public void test5() throws Exception {
-                                runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/common/pos/5.kt");
-                            }
-
                             public void testAllFilesPresentInPos() throws Exception {
                                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/common/pos"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
                             }
@@ -1209,6 +1254,11 @@ public class DiagnosticsTestSpecGenerated extends AbstractDiagnosticsTestSpec {
                                 @TestMetadata("1.kt")
                                 public void test1() throws Exception {
                                     runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/effects/callsInPlace/neg/1.kt");
+                                }
+
+                                @TestMetadata("2.kt")
+                                public void test2() throws Exception {
+                                    runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractBuilder/effects/callsInPlace/neg/2.kt");
                                 }
 
                                 public void testAllFilesPresentInNeg() throws Exception {
@@ -1395,6 +1445,16 @@ public class DiagnosticsTestSpecGenerated extends AbstractDiagnosticsTestSpec {
                         @TestMetadata("2.kt")
                         public void test2() throws Exception {
                             runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractFunction/neg/2.kt");
+                        }
+
+                        @TestMetadata("3.kt")
+                        public void test3() throws Exception {
+                            runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractFunction/neg/3.kt");
+                        }
+
+                        @TestMetadata("4.kt")
+                        public void test4() throws Exception {
+                            runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractFunction/neg/4.kt");
                         }
 
                         public void testAllFilesPresentInNeg() throws Exception {
