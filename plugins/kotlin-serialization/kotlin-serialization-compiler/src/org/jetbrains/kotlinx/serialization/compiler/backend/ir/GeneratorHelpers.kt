@@ -6,6 +6,7 @@
 package org.jetbrains.kotlinx.serialization.compiler.backend.ir
 
 import org.jetbrains.kotlin.backend.common.BackendContext
+import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -22,10 +23,24 @@ import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.toKotlinType
+import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.js.backend.ast.JsExpression
+import org.jetbrains.kotlin.js.backend.ast.JsNew
+import org.jetbrains.kotlin.js.resolve.diagnostics.findPsi
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializableProperty
+import org.jetbrains.kotlin.types.typeUtil.isTypeParameter
+import org.jetbrains.kotlinx.serialization.compiler.backend.common.AbstractSerialGenerator
+import org.jetbrains.kotlinx.serialization.compiler.backend.common.findTypeSerializerOrContext
+import org.jetbrains.kotlinx.serialization.compiler.backend.js.SerializerJsTranslator
+import org.jetbrains.kotlinx.serialization.compiler.backend.js.serializerInstance
+import org.jetbrains.kotlinx.serialization.compiler.backend.js.translateQualifiedReference
+import org.jetbrains.kotlinx.serialization.compiler.backend.jvm.contextSerializerId
+import org.jetbrains.kotlinx.serialization.compiler.backend.jvm.enumSerializerId
+import org.jetbrains.kotlinx.serialization.compiler.backend.jvm.referenceArraySerializerId
+import org.jetbrains.kotlinx.serialization.compiler.resolve.*
 
 val BackendContext.externalSymbols: ReferenceSymbolTable get() = ir.symbols.externalSymbolTable
 
@@ -81,6 +96,21 @@ interface IrBuilderExtension {
         call.dispatchReceiver = dispatchReceiver
         args.forEachIndexed(call::putValueArgument)
         return call
+    }
+
+    fun IrBuilderWithScope.createArrayOfExpression(
+            resultingType: IrType,
+            arrayElementType: IrType,
+            arrayElements: List<IrExpression>
+    ): IrExpression {
+
+        val arrayType = compilerContext.ir.symbols.array.typeWith(arrayElementType)
+        val arg0 = IrVarargImpl(startOffset, endOffset, arrayType, arrayElementType, arrayElements)
+        val typeArguments = listOf(arrayElementType)
+
+        return irCall(compilerContext.ir.symbols.arrayOf, resultingType, typeArguments = typeArguments).apply {
+            putValueArgument(0, arg0)
+        }
     }
 
     fun IrBuilderWithScope.irBinOp(name: Name, lhs: IrExpression, rhs: IrExpression): IrExpression {
@@ -325,6 +355,63 @@ interface IrBuilderExtension {
             ).also { typeParameter ->
                 typeParameter.parent = this
             }
+        }
+    }
+
+    // Does not use sti and therefore does not perform encoder calls optimization
+    fun IrBuilderWithScope.serializerTower(generator: SerializerIrGenerator, property: SerializableProperty): IrExpression? {
+        val nullableSerClass =
+                compilerContext.externalSymbols.referenceClass(property.module.getClassFromInternalSerializationPackage(SpecialBuiltins.nullableSerializer))
+        val serializer =
+                property.serializableWith?.toClassDescriptor
+                        ?: if (!property.type.isTypeParameter()) generator.findTypeSerializerOrContext(
+                                property.module,
+                                property.type,
+                                property.descriptor.annotations,
+                                property.descriptor.findPsi()
+                        ) else null
+        return serializerInstance(generator, generator.serializableDescriptor, serializer, property.module, property.type, property.genericIndex)
+                ?.let { expr -> if (property.type.isMarkedNullable) irInvoke(null, nullableSerClass.constructors.toList()[0], expr) else expr }
+    }
+
+    fun IrBuilderWithScope.serializerInstance(
+            enclosingGenerator: AbstractSerialGenerator,
+            serializableDescriptor: ClassDescriptor,
+            serializerClass: ClassDescriptor?,
+            module: ModuleDescriptor,
+            kType: KotlinType,
+            genericIndex: Int? = null
+    ): IrExpression? {
+        val nullableSerClass =
+                compilerContext.externalSymbols.referenceClass(module.getClassFromInternalSerializationPackage(SpecialBuiltins.nullableSerializer))
+        if (serializerClass == null) {
+            if (genericIndex == null) return null
+            TODO("Saved serializer for generic argument")
+        }
+        if (serializerClass.kind == ClassKind.OBJECT) {
+            return irGetObject(serializerClass)
+        } else {
+            var args = if (serializerClass.classId == enumSerializerId || serializerClass.classId == contextSerializerId)
+                TODO("enum and context serializer")
+            else kType.arguments.map {
+                val argSer = enclosingGenerator.findTypeSerializerOrContext(module, it.type, sourceElement = serializerClass.findPsi())
+                val expr = serializerInstance(enclosingGenerator, serializableDescriptor, argSer, module, it.type, it.type.genericIndex) ?: return null
+                // todo: smth better than constructors[0] ??
+                if (it.type.isMarkedNullable) irInvoke(null, nullableSerClass.constructors.toList()[0], expr) else expr
+            }
+            if (serializerClass.classId == referenceArraySerializerId) TODO("reference array serializer")
+            val serializable = getSerializableClassDescriptorBySerializer(serializerClass)
+            val ctor = if (serializable?.declaredTypeParameters?.isNotEmpty() == true) {
+                KSerializerDescriptorResolver.createTypedSerializerConstructorDescriptor(serializerClass, serializableDescriptor)
+                        .let { compilerContext.externalSymbols.referenceConstructor(it) }
+            } else {
+                compilerContext.externalSymbols.referenceConstructor(serializerClass.unsubstitutedPrimaryConstructor!!)
+            }
+            return irInvoke(
+                    null,
+                    ctor,
+                    *args.toTypedArray()
+            )
         }
     }
 }
