@@ -13,6 +13,7 @@ import org.apache.ivy.core.module.id.ModuleRevisionId
 import org.apache.ivy.core.resolve.ResolveOptions
 import org.apache.ivy.core.settings.IvySettings
 import org.apache.ivy.plugins.parser.xml.XmlModuleDescriptorWriter
+import org.apache.ivy.plugins.resolver.ChainResolver
 import org.apache.ivy.plugins.resolver.URLResolver
 import org.apache.ivy.util.DefaultMessageLogger
 import org.apache.ivy.util.Message
@@ -43,7 +44,7 @@ class IvyResolver : Resolver {
 
     private fun resolveArtifact(artifactId: List<String>): List<File> {
 
-        if (ivyResolvers.isEmpty()) {
+        if (ivyResolvers.isEmpty() || ivyResolvers.none { it.name == "central" }) {
             ivyResolvers.add(
                 URLResolver().apply {
                     isM2compatible = true
@@ -53,10 +54,15 @@ class IvyResolver : Resolver {
             )
         }
         val ivySettings = IvySettings().apply {
-            for (resolver in ivyResolvers) {
-                addResolver(resolver)
-            }
-            setDefaultResolver(ivyResolvers.first().name)
+            val resolver =
+                if (ivyResolvers.size == 1) ivyResolvers.first()
+                else ChainResolver().also {
+                    for (resolver in ivyResolvers) {
+                        it.add(resolver)
+                    }
+                }
+            addResolver(resolver)
+            setDefaultResolver(resolver.name)
         }
 
         val ivy = Ivy.newInstance(ivySettings)
