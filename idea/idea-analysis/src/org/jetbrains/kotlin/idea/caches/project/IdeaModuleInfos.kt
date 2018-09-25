@@ -210,8 +210,6 @@ data class ModuleTestSourceInfo internal constructor(override val module: Module
     override fun <T> createCachedValueProvider(f: () -> CachedValueProvider.Result<T>) = CachedValueProvider { f() }
 }
 
-internal fun ModuleSourceInfo.isTests() = this is ModuleTestSourceInfo
-
 fun Module.productionSourceInfo(): ModuleProductionSourceInfo? = if (hasProductionRoots()) ModuleProductionSourceInfo(this) else null
 
 fun Module.testSourceInfo(): ModuleTestSourceInfo? = if (hasTestRoots()) ModuleTestSourceInfo(this) else null
@@ -444,3 +442,10 @@ data class PlatformModuleInfo(
 
 fun IdeaModuleInfo.projectSourceModules(): List<ModuleSourceInfo>? =
     (this as? ModuleSourceInfo)?.let(::listOf) ?: (this as? PlatformModuleInfo)?.containedModules
+
+enum class SourceType {
+    PRODUCTION,
+    TEST
+}
+
+internal val ModuleSourceInfo.sourceType get() = if (this is ModuleTestSourceInfo) SourceType.TEST else SourceType.PRODUCTION
