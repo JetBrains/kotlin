@@ -15,4 +15,4 @@
 # limitations under the License.
 
 DISTDIR=$(dirname $0)/..
-lldb -o "command script import $DISTDIR/tools/konan_lldb.py" $*
+exec lldb -o "command script import $DISTDIR/tools/konan_lldb.py" $*
