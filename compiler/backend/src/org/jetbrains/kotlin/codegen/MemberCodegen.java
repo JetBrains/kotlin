@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.psi.synthetics.SyntheticClassOrObjectDescriptor;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
+import org.jetbrains.kotlin.resolve.InlineClassesUtilsKt;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.constants.ConstantValue;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
@@ -406,7 +407,7 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
                     return typeMapper.mapDefaultImpls(classDescriptor);
                 }
             }
-            return typeMapper.mapType(classDescriptor);
+            return typeMapper.mapClass(classDescriptor);
         }
         else if (outermost instanceof MultifileClassFacadeContext || outermost instanceof DelegatingToPartContext) {
             Type implementationOwnerType = CodegenContextUtil.getImplementationOwnerClassType(outermost);
@@ -868,11 +869,15 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
         boolean isJvmStaticInObjectOrClass = CodegenUtilKt.isJvmStaticInObjectOrClassOrInterface(functionDescriptor);
         boolean hasDispatchReceiver = !isStaticDeclaration(functionDescriptor) &&
                                       !isNonDefaultInterfaceMember(functionDescriptor) &&
-                                      !isJvmStaticInObjectOrClass;
+                                      !isJvmStaticInObjectOrClass &&
+                                      !InlineClassesUtilsKt.isInlineClass(functionDescriptor.getContainingDeclaration());
         boolean accessorIsConstructor = accessorDescriptor instanceof AccessorForConstructorDescriptor;
 
+        ReceiverParameterDescriptor dispatchReceiver = functionDescriptor.getDispatchReceiverParameter();
+        Type dispatchReceiverType = dispatchReceiver != null ? typeMapper.mapType(dispatchReceiver.getType()) : AsmTypes.OBJECT_TYPE;
+
         int accessorParam = (hasDispatchReceiver && !accessorIsConstructor) ? 1 : 0;
-        int reg = hasDispatchReceiver ? 1 : 0;
+        int reg = hasDispatchReceiver ? dispatchReceiverType.getSize() : 0;
         if (!accessorIsConstructor && functionDescriptor instanceof ConstructorDescriptor) {
             iv.anew(callableMethod.getOwner());
             iv.dup();
@@ -881,7 +886,7 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
         }
         else if (KotlinTypeMapper.isAccessor(accessorDescriptor) && (hasDispatchReceiver || accessorIsConstructor)) {
             if (!isJvmStaticInObjectOrClass) {
-                iv.load(0, OBJECT_TYPE);
+                iv.load(0, dispatchReceiverType);
             }
         }
 

@@ -666,6 +666,21 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             runTest("idea/testData/intentions/addBraces/addBracesForIf.kt");
         }
 
+        @TestMetadata("addBracesForIfWithIndent.kt")
+        public void testAddBracesForIfWithIndent() throws Exception {
+            runTest("idea/testData/intentions/addBraces/addBracesForIfWithIndent.kt");
+        }
+
+        @TestMetadata("addBracesForIfWithIndent2.kt")
+        public void testAddBracesForIfWithIndent2() throws Exception {
+            runTest("idea/testData/intentions/addBraces/addBracesForIfWithIndent2.kt");
+        }
+
+        @TestMetadata("addBracesForIfWithIndent3.kt")
+        public void testAddBracesForIfWithIndent3() throws Exception {
+            runTest("idea/testData/intentions/addBraces/addBracesForIfWithIndent3.kt");
+        }
+
         @TestMetadata("addBracesForIfWithNoSpace.kt")
         public void testAddBracesForIfWithNoSpace() throws Exception {
             runTest("idea/testData/intentions/addBraces/addBracesForIfWithNoSpace.kt");

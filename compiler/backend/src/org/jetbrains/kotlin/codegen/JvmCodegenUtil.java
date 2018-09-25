@@ -197,8 +197,8 @@ public class JvmCodegenUtil {
         if (KotlinTypeMapper.isAccessor(property)) return false;
 
         CodegenContext context = contextBeforeInline.getFirstCrossInlineOrNonInlineContext();
-        // Inline functions or inline classes can't use direct access because a field may not be visible at the call site
-        if (context.isInlineMethodContext() || (context.getEnclosingClass() != null && context.getEnclosingClass().isInline())) {
+        // Inline functions can't use direct access because a field may not be visible at the call site
+        if (context.isInlineMethodContext()) {
             return false;
         }
 
