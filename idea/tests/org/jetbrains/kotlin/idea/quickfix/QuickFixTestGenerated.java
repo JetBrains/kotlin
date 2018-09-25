@@ -5261,6 +5261,16 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             runTest("idea/testData/quickfix/deprecatedSymbolUsage/noReplacement.kt");
         }
 
+        @TestMetadata("objects.kt")
+        public void testObjects() throws Exception {
+            runTest("idea/testData/quickfix/deprecatedSymbolUsage/objects.kt");
+        }
+
+        @TestMetadata("objectsInQualified.kt")
+        public void testObjectsInQualified() throws Exception {
+            runTest("idea/testData/quickfix/deprecatedSymbolUsage/objectsInQualified.kt");
+        }
+
         @TestMetadata("operatorCall.kt")
         public void testOperatorCall() throws Exception {
             runTest("idea/testData/quickfix/deprecatedSymbolUsage/operatorCall.kt");
@@ -6022,6 +6032,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             @TestMetadata("constructorUsageWithConflict1.kt")
             public void testConstructorUsageWithConflict1() throws Exception {
                 runTest("idea/testData/quickfix/deprecatedSymbolUsage/typeAliases/constructorUsageWithConflict1.kt");
+            }
+
+            @TestMetadata("objectAliased.kt")
+            public void testObjectAliased() throws Exception {
+                runTest("idea/testData/quickfix/deprecatedSymbolUsage/typeAliases/objectAliased.kt");
             }
 
             @TestMetadata("onlyAliasDeprecated.kt")
