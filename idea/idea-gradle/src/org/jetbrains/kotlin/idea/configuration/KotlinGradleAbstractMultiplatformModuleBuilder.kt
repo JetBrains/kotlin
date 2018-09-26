@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.konan.target.TargetSupportException
 import org.jetbrains.plugins.gradle.frameworkSupport.BuildScriptDataBuilder
 import org.jetbrains.plugins.gradle.service.project.wizard.GradleModuleBuilder
 import org.jetbrains.plugins.gradle.service.settings.GradleProjectSettingsControl
+import org.jetbrains.plugins.gradle.settings.DistributionType
 import javax.swing.Icon
 
 abstract class KotlinGradleAbstractMultiplatformModuleBuilder(
@@ -70,10 +71,29 @@ abstract class KotlinGradleAbstractMultiplatformModuleBuilder(
                 }
             }
             createProjectSkeleton(module, rootDir)
+            if (externalProjectSettings.distributionType == DistributionType.DEFAULT_WRAPPED) {
+                setGradleWrapperToUseVersion(rootDir, "4.7")
+            }
 
             if (notImportedCommonSourceSets) GradlePropertiesFileFacade.forProject(module.project).addNotImportedCommonSourceSetsProperty()
         } finally {
             flushSettingsGradleCopy(module)
+        }
+    }
+
+    private fun setGradleWrapperToUseVersion(rootDir: VirtualFile, version: String) {
+        val wrapperDir = rootDir.createChildDirectory(null, "gradle").createChildDirectory(null, "wrapper")
+        val wrapperProperties = wrapperDir.createChildData(null, "gradle-wrapper.properties").bufferedWriter()
+        wrapperProperties.use {
+            it.write(
+                """
+    distributionBase=GRADLE_USER_HOME
+    distributionPath=wrapper/dists
+    distributionUrl=https\://services.gradle.org/distributions/gradle-$version-bin.zip
+    zipStoreBase=GRADLE_USER_HOME
+    zipStorePath=wrapper/dists
+                """.trimIndent()
+            )
         }
     }
 
