@@ -49,7 +49,7 @@ private class SerializerClassLowering(
     }
 }
 
-class SerializationLoweringExtension : IrGenerationExtension {
+open class SerializationLoweringExtension : IrGenerationExtension {
     override fun generate(
         file: IrFile,
         backendContext: BackendContext,

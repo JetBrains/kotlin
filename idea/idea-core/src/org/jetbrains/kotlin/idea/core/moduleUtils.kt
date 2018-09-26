@@ -7,8 +7,19 @@ package org.jetbrains.kotlin.idea.core
 
 import com.intellij.facet.FacetManager
 import com.intellij.openapi.module.Module
+import org.jetbrains.kotlin.analyzer.ModuleInfo
+import org.jetbrains.kotlin.idea.caches.project.ModuleSourceInfo
+import org.jetbrains.kotlin.idea.caches.project.PlatformModuleInfo
 
 fun Module.isAndroidModule(): Boolean {
     val facets = FacetManager.getInstance(this).allFacets
     return facets.any { it.javaClass.simpleName == "AndroidFacet" }
+}
+
+fun ModuleInfo.unwrapModuleSourceInfo(): ModuleSourceInfo? {
+    return when (this) {
+        is ModuleSourceInfo -> this
+        is PlatformModuleInfo -> this.platformModule
+        else -> null
+    }
 }
