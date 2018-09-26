@@ -339,6 +339,11 @@ public class BytecodeListingTestGenerated extends AbstractBytecodeListingTest {
             runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/noBridgesForErasedInlineClass.kt");
         }
 
+        @TestMetadata("nullabilityInExpansion.kt")
+        public void testNullabilityInExpansion() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/nullabilityInExpansion.kt");
+        }
+
         @TestMetadata("primaryValsWithDifferentVisibilities.kt")
         public void testPrimaryValsWithDifferentVisibilities() throws Exception {
             runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/primaryValsWithDifferentVisibilities.kt");

@@ -12,11 +12,14 @@ import org.jetbrains.kotlin.load.java.typeEnhancement.hasEnhancedNullability
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
-import org.jetbrains.kotlin.resolve.*
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
+import org.jetbrains.kotlin.resolve.substitutedUnderlyingType
+import org.jetbrains.kotlin.resolve.unsubstitutedUnderlyingType
 import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.typeUtil.makeNullable
 import org.jetbrains.kotlin.types.typeUtil.replaceArgumentsWithStarProjections
 import org.jetbrains.kotlin.utils.DO_NOTHING_3
 
@@ -127,14 +130,13 @@ fun <T : Any> mapType(
 
         descriptor is ClassDescriptor -> {
             // NB if inline class is recursive, it's ok to map it as wrapped
-            if (descriptor.isInline && !mode.needInlineClassWrapping && !kotlinType.isRecursiveInlineClassType()) {
-                val typeForMapping = computeUnderlyingType(kotlinType)
-                if (typeForMapping != null) {
-                    val newMode = if (typeForMapping.isInlineClassType()) mode else mode.wrapInlineClassesMode()
+            if (descriptor.isInline && !mode.needInlineClassWrapping) {
+                val expandedType = computeExpandedTypeForInlineClass(kotlinType)
+                if (expandedType != null) {
                     return mapType(
-                        typeForMapping,
+                        expandedType,
                         factory,
-                        newMode,
+                        mode.wrapInlineClassesMode(),
                         typeMappingConfiguration,
                         descriptorTypeWriter,
                         writeGenericType,
@@ -249,6 +251,49 @@ internal fun computeUnderlyingType(inlineClassType: KotlinType): KotlinType? {
         getRepresentativeUpperBound(descriptor)
     else
         inlineClassType.substitutedUnderlyingType()
+}
+
+internal fun computeExpandedTypeForInlineClass(inlineClassType: KotlinType): KotlinType? =
+    computeExpandedTypeInner(inlineClassType, hashSetOf())
+
+internal fun computeExpandedTypeInner(kotlinType: KotlinType, visitedClassifiers: HashSet<ClassifierDescriptor>): KotlinType? {
+    val classifier = kotlinType.constructor.declarationDescriptor
+        ?: throw AssertionError("Type with a declaration expected: $kotlinType")
+    if (!visitedClassifiers.add(classifier)) return null
+
+    return when {
+        classifier is TypeParameterDescriptor ->
+            computeExpandedTypeInner(getRepresentativeUpperBound(classifier), visitedClassifiers)
+                ?.let { expandedUpperBound ->
+                    if (expandedUpperBound.isNullable() || !kotlinType.isMarkedNullable)
+                        expandedUpperBound
+                    else
+                        expandedUpperBound.makeNullable()
+                }
+
+        classifier is ClassDescriptor && classifier.isInline -> {
+            val inlineClassBoxType = kotlinType
+
+            val underlyingType = kotlinType.substitutedUnderlyingType() ?: return null
+            val expandedUnderlyingType = computeExpandedTypeInner(underlyingType, visitedClassifiers) ?: return null
+            when {
+                !kotlinType.isMarkedNullable -> expandedUnderlyingType
+
+                // Here inline class type is nullable. Apply nullability to the expandedUnderlyingType.
+
+                // Nullable types become inline class boxes
+                expandedUnderlyingType.isNullable() -> inlineClassBoxType
+
+                // Primitives become inline class boxes
+                KotlinBuiltIns.isPrimitiveType(expandedUnderlyingType) -> inlineClassBoxType
+
+                // Non-null reference types become nullable reference types
+                else -> expandedUnderlyingType.makeNullable()
+            }
+        }
+
+        else -> kotlinType
+    }
 }
 
 internal fun shouldUseUnderlyingType(inlineClassType: KotlinType): Boolean {
