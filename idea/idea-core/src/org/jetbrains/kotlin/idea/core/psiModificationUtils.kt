@@ -28,8 +28,10 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
+import org.jetbrains.kotlin.idea.util.findAnnotation
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.addRemoveModifier.MODIFIERS_ORDER
@@ -269,7 +271,10 @@ fun KtDeclaration.implicitVisibility(): KtModifierKeywordToken? =
         }
     }
 
-fun KtModifierListOwner.canBePrivate() = modifierList?.hasModifier(KtTokens.ABSTRACT_KEYWORD) != true
+fun KtModifierListOwner.canBePrivate(): Boolean {
+    if (this is KtProperty && this.findAnnotation(FqName("kotlin.jvm.JvmField")) != null) return false
+    return modifierList?.hasModifier(KtTokens.ABSTRACT_KEYWORD) != true
+}
 
 fun KtModifierListOwner.canBeProtected(): Boolean {
     val parent = when (this) {
