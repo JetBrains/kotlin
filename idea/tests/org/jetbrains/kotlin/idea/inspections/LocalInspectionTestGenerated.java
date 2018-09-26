@@ -1526,9 +1526,34 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
                 runTest("idea/testData/inspectionsLocal/conventionNameCalls/replaceCallWithBinaryOperator/equalsCompareTo.kt");
             }
 
+            @TestMetadata("equalsDoubleSmartCast.kt")
+            public void testEqualsDoubleSmartCast() throws Exception {
+                runTest("idea/testData/inspectionsLocal/conventionNameCalls/replaceCallWithBinaryOperator/equalsDoubleSmartCast.kt");
+            }
+
             @TestMetadata("equalsExtensionFunction.kt")
             public void testEqualsExtensionFunction() throws Exception {
                 runTest("idea/testData/inspectionsLocal/conventionNameCalls/replaceCallWithBinaryOperator/equalsExtensionFunction.kt");
+            }
+
+            @TestMetadata("equalsFloatSmartCast.kt")
+            public void testEqualsFloatSmartCast() throws Exception {
+                runTest("idea/testData/inspectionsLocal/conventionNameCalls/replaceCallWithBinaryOperator/equalsFloatSmartCast.kt");
+            }
+
+            @TestMetadata("equalsFloatingPointLiteral1.kt")
+            public void testEqualsFloatingPointLiteral1() throws Exception {
+                runTest("idea/testData/inspectionsLocal/conventionNameCalls/replaceCallWithBinaryOperator/equalsFloatingPointLiteral1.kt");
+            }
+
+            @TestMetadata("equalsFloatingPointLiteral2.kt")
+            public void testEqualsFloatingPointLiteral2() throws Exception {
+                runTest("idea/testData/inspectionsLocal/conventionNameCalls/replaceCallWithBinaryOperator/equalsFloatingPointLiteral2.kt");
+            }
+
+            @TestMetadata("equalsFloatingPointType.kt")
+            public void testEqualsFloatingPointType() throws Exception {
+                runTest("idea/testData/inspectionsLocal/conventionNameCalls/replaceCallWithBinaryOperator/equalsFloatingPointType.kt");
             }
 
             @TestMetadata("extensionFunction.kt")
