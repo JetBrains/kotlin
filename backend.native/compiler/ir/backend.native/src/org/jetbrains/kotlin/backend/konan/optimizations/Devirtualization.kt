@@ -21,8 +21,11 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.builders.*
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.IrVariable
+import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
+import org.jetbrains.kotlin.ir.descriptors.IrTemporaryVariableDescriptorImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
@@ -33,9 +36,12 @@ import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.util.addArguments
 import org.jetbrains.kotlin.ir.util.getArguments
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.impl.originalKotlinType
+import org.jetbrains.kotlin.ir.types.toKotlinType
 import org.jetbrains.kotlin.ir.util.irCall
 import org.jetbrains.kotlin.ir.util.explicitParameters
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
+import org.jetbrains.kotlin.name.Name
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -1034,14 +1040,28 @@ internal object Devirtualization {
             }
         }
 
-        fun <T : IrElement> IrStatementsBuilder<T>.irSplitCoercion(expression: IrExpression) =
+        fun <T : IrElement> IrStatementsBuilder<T>.irTemporary(value: IrExpression, tempName: String, type: IrType): IrVariable {
+            val originalKotlinType = type.originalKotlinType ?: type.toKotlinType()
+            val descriptor = IrTemporaryVariableDescriptorImpl(scope.scopeOwner, Name.identifier(tempName), originalKotlinType, false)
+
+            val temporary = IrVariableImpl(
+                    value.startOffset, value.endOffset, IrDeclarationOrigin.IR_TEMPORARY_VARIABLE,
+                    descriptor,
+                    type,
+                    value
+            )
+
+            +temporary
+            return temporary
+        }
+
+        fun <T : IrElement> IrStatementsBuilder<T>.irSplitCoercion(expression: IrExpression, tempName: String, actualType: IrType) =
                 if (!expression.isBoxOrUnboxCall())
-                    PossiblyCoercedValue(irTemporary(expression), null)
+                    PossiblyCoercedValue(irTemporary(expression, tempName, actualType), null)
                 else {
                     val coercion = expression as IrCall
                     PossiblyCoercedValue(
-                            irTemporary(irImplicitCast(coercion.getArguments().single().second,
-                                    coercion.symbol.owner.explicitParameters.single().type))
+                            irTemporary(coercion.getValueArgument(0)!!, tempName, coercion.symbol.owner.explicitParameters.single().type)
                             , coercion.symbol)
                 }
 
@@ -1166,9 +1186,10 @@ internal object Devirtualization {
 
                 val startOffset = expression.startOffset
                 val endOffset = expression.endOffset
+                val function = expression.symbol.owner
                 val type = if (descriptor.isSuspend)
                                context.irBuiltIns.anyNType
-                           else expression.symbol.owner.returnType
+                           else function.returnType
                 val irBuilder = context.createIrBuilder(currentScope!!.scope.scopeOwnerSymbol, startOffset, endOffset)
                 irBuilder.run {
                     val dispatchReceiver = expression.dispatchReceiver!!
@@ -1189,9 +1210,11 @@ internal object Devirtualization {
                             val actualCallee = possibleCallees[0].callee as DataFlowIR.FunctionSymbol.Declared
                             irBlock(expression) {
                                 val receiver = irTemporary(dispatchReceiver, "receiver")
-                                val extensionReceiver = expression.extensionReceiver?.let { irSplitCoercion(it) }
+                                val extensionReceiver = expression.extensionReceiver?.let {
+                                    irSplitCoercion(it, "extensionReceiver", function.extensionReceiverParameter!!.type)
+                                }
                                 val parameters = expression.descriptor.valueParameters.associate {
-                                    it to irSplitCoercion(expression.getValueArgument(it)!!)
+                                    it to irSplitCoercion(expression.getValueArgument(it)!!, "arg${it.index}", function.valueParameters[it.index].type)
                                 }
                                 +irDevirtualizedCall(expression, type, actualCallee, receiver, extensionReceiver, parameters)
                             }
@@ -1199,9 +1222,11 @@ internal object Devirtualization {
 
                         else -> irBlock(expression) {
                             val receiver = irTemporary(dispatchReceiver, "receiver")
-                            val extensionReceiver = expression.extensionReceiver?.let { irSplitCoercion(it) }
+                            val extensionReceiver = expression.extensionReceiver?.let {
+                                irSplitCoercion(it, "extensionReceiver", function.extensionReceiverParameter!!.type)
+                            }
                             val parameters = expression.descriptor.valueParameters.associate {
-                                it to irSplitCoercion(expression.getValueArgument(it)!!)
+                                it to irSplitCoercion(expression.getValueArgument(it)!!, "arg${it.index}", function.valueParameters[it.index].type)
                             }
                             val typeInfo = irTemporary(irCall(context.ir.symbols.getObjectTypeInfo).apply {
                                 putValueArgument(0, irGet(receiver))
