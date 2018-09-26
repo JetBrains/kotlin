@@ -36,7 +36,7 @@ class KonanLibraryImpl(
         get() = manifestProperties.readKonanLibraryVersioning()
 
     override val linkerOpts: List<String>
-        get() = manifestProperties.propertyList(KLIB_PROPERTY_LINKED_OPTS, target!!.visibleName)
+        get() = manifestProperties.propertyList(KLIB_PROPERTY_LINKED_OPTS)
 
     override val bitcodePaths: List<String>
         get() = layout.realFiles { (it.kotlinDir.listFilesOrEmpty + it.nativeDir.listFilesOrEmpty).map { it.absolutePath } }
