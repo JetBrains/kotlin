@@ -30,7 +30,7 @@ import org.jetbrains.kotlinx.serialization.compiler.resolve.*
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializationAnnotations.serialInfoFqName
 import java.util.*
 
-class SerializationResolveExtension : SyntheticResolveExtension {
+open class SerializationResolveExtension : SyntheticResolveExtension {
     override fun getSyntheticNestedClassNames(thisDescriptor: ClassDescriptor): List<Name> = when {
         thisDescriptor.annotations.hasAnnotation(serialInfoFqName) -> listOf(SerialEntityNames.IMPL_NAME)
         thisDescriptor.isInternalSerializable && !thisDescriptor.hasCompanionObjectAsSerializer ->
