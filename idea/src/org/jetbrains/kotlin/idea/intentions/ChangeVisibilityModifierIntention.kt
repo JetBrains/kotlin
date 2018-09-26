@@ -26,13 +26,12 @@ import org.jetbrains.kotlin.idea.core.canBePrivate
 import org.jetbrains.kotlin.idea.core.canBeProtected
 import org.jetbrains.kotlin.idea.core.setVisibility
 import org.jetbrains.kotlin.idea.core.toDescriptor
+import org.jetbrains.kotlin.idea.refactoring.isInterfaceClass
+import org.jetbrains.kotlin.idea.util.hasJvmFieldAnnotation
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.startOffset
-import org.jetbrains.kotlin.psi.psiUtil.toVisibility
-import org.jetbrains.kotlin.psi.psiUtil.visibilityModifier
-import org.jetbrains.kotlin.psi.psiUtil.visibilityModifierType
+import org.jetbrains.kotlin.psi.psiUtil.*
 
 open class ChangeVisibilityModifierIntention protected constructor(
     val modifier: KtModifierKeywordToken
@@ -113,6 +112,7 @@ open class ChangeVisibilityModifierIntention protected constructor(
     class Private : ChangeVisibilityModifierIntention(KtTokens.PRIVATE_KEYWORD), HighPriorityAction {
         override fun applicabilityRange(element: KtDeclaration): TextRange? {
             if (isAnnotationClassPrimaryConstructor(element)) return null
+            if (element is KtProperty && element.hasJvmFieldAnnotation()) return null
             return if (element.canBePrivate()) super.applicabilityRange(element) else null
         }
     }
@@ -126,6 +126,13 @@ open class ChangeVisibilityModifierIntention protected constructor(
     class Internal : ChangeVisibilityModifierIntention(KtTokens.INTERNAL_KEYWORD) {
         override fun applicabilityRange(element: KtDeclaration): TextRange? {
             if (isAnnotationClassPrimaryConstructor(element)) return null
+            if (element is KtProperty && element.hasJvmFieldAnnotation()) {
+                val containingClass = element.containingClassOrObject
+                val outerClass = containingClass?.containingClassOrObject
+                if (containingClass is KtObjectDeclaration
+                    && (outerClass?.isInterfaceClass() == true || outerClass?.isAnnotation() == true)
+                ) return null
+            }
             return super.applicabilityRange(element)
         }
     }
