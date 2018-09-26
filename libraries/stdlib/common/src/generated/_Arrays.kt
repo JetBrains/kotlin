@@ -443,6 +443,8 @@ public operator fun CharArray.contains(element: Char): Boolean {
 
 /**
  * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
+ * 
+ * @sample samples.collections.Collections.Usage.elementAt
  */
 @kotlin.internal.InlineOnly
 public inline fun <T> Array<out T>.elementAt(index: Int): T {
@@ -451,6 +453,8 @@ public inline fun <T> Array<out T>.elementAt(index: Int): T {
 
 /**
  * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
+ * 
+ * @sample samples.collections.Collections.Usage.elementAt
  */
 @kotlin.internal.InlineOnly
 public inline fun ByteArray.elementAt(index: Int): Byte {
@@ -459,6 +463,8 @@ public inline fun ByteArray.elementAt(index: Int): Byte {
 
 /**
  * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
+ * 
+ * @sample samples.collections.Collections.Usage.elementAt
  */
 @kotlin.internal.InlineOnly
 public inline fun ShortArray.elementAt(index: Int): Short {
@@ -467,6 +473,8 @@ public inline fun ShortArray.elementAt(index: Int): Short {
 
 /**
  * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
+ * 
+ * @sample samples.collections.Collections.Usage.elementAt
  */
 @kotlin.internal.InlineOnly
 public inline fun IntArray.elementAt(index: Int): Int {
@@ -475,6 +483,8 @@ public inline fun IntArray.elementAt(index: Int): Int {
 
 /**
  * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
+ * 
+ * @sample samples.collections.Collections.Usage.elementAt
  */
 @kotlin.internal.InlineOnly
 public inline fun LongArray.elementAt(index: Int): Long {
@@ -483,6 +493,8 @@ public inline fun LongArray.elementAt(index: Int): Long {
 
 /**
  * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
+ * 
+ * @sample samples.collections.Collections.Usage.elementAt
  */
 @kotlin.internal.InlineOnly
 public inline fun FloatArray.elementAt(index: Int): Float {
@@ -491,6 +503,8 @@ public inline fun FloatArray.elementAt(index: Int): Float {
 
 /**
  * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
+ * 
+ * @sample samples.collections.Collections.Usage.elementAt
  */
 @kotlin.internal.InlineOnly
 public inline fun DoubleArray.elementAt(index: Int): Double {
@@ -499,6 +513,8 @@ public inline fun DoubleArray.elementAt(index: Int): Double {
 
 /**
  * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
+ * 
+ * @sample samples.collections.Collections.Usage.elementAt
  */
 @kotlin.internal.InlineOnly
 public inline fun BooleanArray.elementAt(index: Int): Boolean {
@@ -507,6 +523,8 @@ public inline fun BooleanArray.elementAt(index: Int): Boolean {
 
 /**
  * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
+ * 
+ * @sample samples.collections.Collections.Usage.elementAt
  */
 @kotlin.internal.InlineOnly
 public inline fun CharArray.elementAt(index: Int): Char {
@@ -587,6 +605,8 @@ public inline fun CharArray.elementAtOrElse(index: Int, defaultValue: (Int) -> C
 
 /**
  * Returns an element at the given [index] or `null` if the [index] is out of bounds of this array.
+ * 
+ * @sample samples.collections.Collections.Usage.elementAtOrNull
  */
 @kotlin.internal.InlineOnly
 public inline fun <T> Array<out T>.elementAtOrNull(index: Int): T? {
@@ -595,6 +615,8 @@ public inline fun <T> Array<out T>.elementAtOrNull(index: Int): T? {
 
 /**
  * Returns an element at the given [index] or `null` if the [index] is out of bounds of this array.
+ * 
+ * @sample samples.collections.Collections.Usage.elementAtOrNull
  */
 @kotlin.internal.InlineOnly
 public inline fun ByteArray.elementAtOrNull(index: Int): Byte? {
@@ -603,6 +625,8 @@ public inline fun ByteArray.elementAtOrNull(index: Int): Byte? {
 
 /**
  * Returns an element at the given [index] or `null` if the [index] is out of bounds of this array.
+ * 
+ * @sample samples.collections.Collections.Usage.elementAtOrNull
  */
 @kotlin.internal.InlineOnly
 public inline fun ShortArray.elementAtOrNull(index: Int): Short? {
@@ -611,6 +635,8 @@ public inline fun ShortArray.elementAtOrNull(index: Int): Short? {
 
 /**
  * Returns an element at the given [index] or `null` if the [index] is out of bounds of this array.
+ * 
+ * @sample samples.collections.Collections.Usage.elementAtOrNull
  */
 @kotlin.internal.InlineOnly
 public inline fun IntArray.elementAtOrNull(index: Int): Int? {
@@ -619,6 +645,8 @@ public inline fun IntArray.elementAtOrNull(index: Int): Int? {
 
 /**
  * Returns an element at the given [index] or `null` if the [index] is out of bounds of this array.
+ * 
+ * @sample samples.collections.Collections.Usage.elementAtOrNull
  */
 @kotlin.internal.InlineOnly
 public inline fun LongArray.elementAtOrNull(index: Int): Long? {
@@ -627,6 +655,8 @@ public inline fun LongArray.elementAtOrNull(index: Int): Long? {
 
 /**
  * Returns an element at the given [index] or `null` if the [index] is out of bounds of this array.
+ * 
+ * @sample samples.collections.Collections.Usage.elementAtOrNull
  */
 @kotlin.internal.InlineOnly
 public inline fun FloatArray.elementAtOrNull(index: Int): Float? {
@@ -635,6 +665,8 @@ public inline fun FloatArray.elementAtOrNull(index: Int): Float? {
 
 /**
  * Returns an element at the given [index] or `null` if the [index] is out of bounds of this array.
+ * 
+ * @sample samples.collections.Collections.Usage.elementAtOrNull
  */
 @kotlin.internal.InlineOnly
 public inline fun DoubleArray.elementAtOrNull(index: Int): Double? {
@@ -643,6 +675,8 @@ public inline fun DoubleArray.elementAtOrNull(index: Int): Double? {
 
 /**
  * Returns an element at the given [index] or `null` if the [index] is out of bounds of this array.
+ * 
+ * @sample samples.collections.Collections.Usage.elementAtOrNull
  */
 @kotlin.internal.InlineOnly
 public inline fun BooleanArray.elementAtOrNull(index: Int): Boolean? {
@@ -651,6 +685,8 @@ public inline fun BooleanArray.elementAtOrNull(index: Int): Boolean? {
 
 /**
  * Returns an element at the given [index] or `null` if the [index] is out of bounds of this array.
+ * 
+ * @sample samples.collections.Collections.Usage.elementAtOrNull
  */
 @kotlin.internal.InlineOnly
 public inline fun CharArray.elementAtOrNull(index: Int): Char? {
