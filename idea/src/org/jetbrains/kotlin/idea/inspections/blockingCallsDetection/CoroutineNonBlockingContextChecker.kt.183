@@ -44,7 +44,7 @@ class CoroutineNonBlockingContextChecker : NonBlockingContextChecker {
             .firstOrNull { it is KtLambdaExpression && it.analyze().get(BindingContext.LAMBDA_INVOCATIONS, it) == null }
         val containingArgument = PsiTreeUtil.getParentOfType(containingLambda, KtValueArgument::class.java)
         if (containingArgument != null) {
-            val callExpression = PsiTreeUtil.getParentOfType(element, KtCallExpression::class.java) ?: return false
+            val callExpression = PsiTreeUtil.getParentOfType(containingArgument, KtCallExpression::class.java) ?: return false
             val call = callExpression.resolveToCall(BodyResolveMode.FULL) ?: return false
 
             val hasBlockingAnnotation = call.getFirstArgument()?.resolveToCall()

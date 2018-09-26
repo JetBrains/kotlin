@@ -38,4 +38,9 @@ class CoroutineNonBlockingontextDetectionTest: KotlinLightCodeInsightFixtureTest
         myFixture.configureByFile("LambdaReceiverTypeCheck.kt")
         myFixture.testHighlighting(true, false, false, "LambdaReceiverTypeCheck.kt")
     }
+
+    fun testNestedFunctionsInsideSuspendLambda() {
+        myFixture.configureByFile("NestedFunctionsInsideSuspendLambda.kt")
+        myFixture.testHighlighting(true, false, false, "NestedFunctionsInsideSuspendLambda.kt")
+    }
 }
