@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.idea.core.platform.impl
 
+import com.intellij.icons.AllIcons
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.libraries.Library
 import org.jetbrains.kotlin.analyzer.common.CommonAnalyzerFacade
@@ -47,12 +48,15 @@ object CommonIdePlatformKindTooling : IdePlatformKindTooling() {
     }
 
     override fun getTestIcon(declaration: KtNamedDeclaration, descriptor: DeclarationDescriptor): Icon? {
-        return IdePlatformKindTooling.getInstances()
-            .asSequence()
+        val icons = IdePlatformKindTooling.getInstances()
             .filter { it != this }
             .mapNotNull { it.getTestIcon(declaration, descriptor) }
             .distinct()
-            .singleOrNull()
+
+        return when (icons.size) {
+            0 -> null
+            else -> icons.singleOrNull() ?: AllIcons.RunConfigurations.TestState.Run
+        }
     }
 
     override fun acceptsAsEntryPoint(function: KtFunction): Boolean {
