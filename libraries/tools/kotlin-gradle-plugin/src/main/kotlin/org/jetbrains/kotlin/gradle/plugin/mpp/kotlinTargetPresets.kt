@@ -85,7 +85,7 @@ class KotlinMetadataTargetPreset(
         KotlinCommonCompilationFactory(forTarget)
 
     override val platformType: KotlinPlatformType
-        get() = KotlinPlatformType.COMMON
+        get() = KotlinPlatformType.common
 
     override fun buildCompilationProcessor(compilation: KotlinCommonCompilation): KotlinSourceSetProcessor<*> =
         KotlinCommonSourceSetProcessor(
@@ -136,7 +136,7 @@ class KotlinJvmTargetPreset(
         KotlinJvmCompilationFactory(forTarget)
 
     override val platformType: KotlinPlatformType
-        get() = KotlinPlatformType.JVM
+        get() = KotlinPlatformType.jvm
 
     override fun buildCompilationProcessor(compilation: KotlinJvmCompilation): KotlinSourceSetProcessor<*> =
         Kotlin2JvmSourceSetProcessor(project, KotlinTasksProvider(compilation.target.targetName), compilation, kotlinPluginVersion)
@@ -165,7 +165,7 @@ class KotlinJsTargetPreset(
         KotlinJsCompilationFactory(project, forTarget)
 
     override val platformType: KotlinPlatformType
-        get() = KotlinPlatformType.JS
+        get() = KotlinPlatformType.js
 
     override fun buildCompilationProcessor(compilation: KotlinJsCompilation): KotlinSourceSetProcessor<*> =
         Kotlin2JsSourceSetProcessor(project, KotlinTasksProvider(compilation.target.targetName), compilation, kotlinPluginVersion)
@@ -210,7 +210,7 @@ class KotlinJvmWithJavaTargetPreset(
     override fun createTarget(name: String): KotlinWithJavaTarget {
         project.plugins.apply(JavaPlugin::class.java)
 
-        val target = KotlinWithJavaTarget(project, KotlinPlatformType.JVM, name).apply {
+        val target = KotlinWithJavaTarget(project, KotlinPlatformType.jvm, name).apply {
             disambiguationClassifier = name
         }
 
