@@ -1485,6 +1485,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
                 runTest("idea/testData/intentions/addPropertyAccessors/both/hasSetter.kt");
             }
 
+            @TestMetadata("jvmField.kt")
+            public void testJvmField() throws Exception {
+                runTest("idea/testData/intentions/addPropertyAccessors/both/jvmField.kt");
+            }
+
             @TestMetadata("lateinit.kt")
             public void testLateinit() throws Exception {
                 runTest("idea/testData/intentions/addPropertyAccessors/both/lateinit.kt");
@@ -1558,6 +1563,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
                 runTest("idea/testData/intentions/addPropertyAccessors/getter/header.kt");
             }
 
+            @TestMetadata("jvmField.kt")
+            public void testJvmField() throws Exception {
+                runTest("idea/testData/intentions/addPropertyAccessors/getter/jvmField.kt");
+            }
+
             @TestMetadata("lateinit.kt")
             public void testLateinit() throws Exception {
                 runTest("idea/testData/intentions/addPropertyAccessors/getter/lateinit.kt");
@@ -1624,6 +1634,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             @TestMetadata("hasSetter.kt")
             public void testHasSetter() throws Exception {
                 runTest("idea/testData/intentions/addPropertyAccessors/setter/hasSetter.kt");
+            }
+
+            @TestMetadata("jvmField.kt")
+            public void testJvmField() throws Exception {
+                runTest("idea/testData/intentions/addPropertyAccessors/setter/jvmField.kt");
             }
 
             @TestMetadata("lateinit.kt")
