@@ -142,6 +142,15 @@ class Maps {
             val sameMap = nonEmptyMap.ifEmpty { null }
             assertTrue(nonEmptyMap === sameMap)
         }
+
+        @Sample
+        fun containsValue() {
+            val map: Map<String, Int> = mapOf("x" to 1, "y" to 2)
+
+            assertTrue(map.containsValue(1 as Number))
+            assertTrue(map.containsValue(2 as Any))
+            assertFalse(map.containsValue(100 as Number))
+        }
     }
 
     class Filtering {
