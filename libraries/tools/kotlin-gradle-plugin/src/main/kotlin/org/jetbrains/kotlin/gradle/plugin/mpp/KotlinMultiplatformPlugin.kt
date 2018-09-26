@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.presetName
 
 internal val Project.multiplatformExtension get(): KotlinMultiplatformExtension? =
-    project.extensions.getByName("kotlin") as KotlinMultiplatformExtension
+    project.extensions.findByName("kotlin") as? KotlinMultiplatformExtension
 
 class KotlinMultiplatformPlugin(
     private val buildOutputCleanupRegistry: BuildOutputCleanupRegistry,
