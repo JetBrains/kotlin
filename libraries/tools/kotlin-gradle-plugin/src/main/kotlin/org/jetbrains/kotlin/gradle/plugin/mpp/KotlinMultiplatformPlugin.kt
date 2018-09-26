@@ -132,8 +132,7 @@ class KotlinMultiplatformPlugin(
                 publishTask.onlyIf { publishTask.publication != rootPublication || project.multiplatformExtension!!.isGradleMetadataAvailable }
             }
 
-            // Create separate publications for all publishable targets
-            targets.matching { it.publishable }.all { target ->
+            fun createTargetPublication(target: KotlinTarget) {
                 val variant = target.component as KotlinVariant
                 val name = target.name
 
@@ -156,6 +155,10 @@ class KotlinMultiplatformPlugin(
                     it.execute(variantPublication)
                 }
             }
+
+            // Enforce the order of creating the publications, since the metadata publication is used in the other publications:
+            createTargetPublication(targets.getByName(METADATA_TARGET_NAME))
+            targets.matching { it.publishable && it.name != METADATA_TARGET_NAME }.all(::createTargetPublication)
         }
 
         project.components.add(kotlinSoftwareComponent)
