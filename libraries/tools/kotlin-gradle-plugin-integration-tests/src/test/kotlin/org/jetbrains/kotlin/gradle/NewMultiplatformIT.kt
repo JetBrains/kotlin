@@ -21,7 +21,7 @@ import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class NewMultiplatformIT : BaseGradleIT() {
-    val gradleVersion = GradleVersionRequired.AtLeast("4.8")
+    val gradleVersion = GradleVersionRequired.AtLeast("4.7")
 
     val nativeHostTargetName = when {
         HostManager.hostIsMingw -> "mingw64"
