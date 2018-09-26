@@ -5755,6 +5755,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             runTest("idea/testData/intentions/convertPrimaryConstructorToSecondary/defaultValueChain.kt");
         }
 
+        @TestMetadata("delegation.kt")
+        public void testDelegation() throws Exception {
+            runTest("idea/testData/intentions/convertPrimaryConstructorToSecondary/delegation.kt");
+        }
+
         @TestMetadata("enum.kt")
         public void testEnum() throws Exception {
             runTest("idea/testData/intentions/convertPrimaryConstructorToSecondary/enum.kt");
