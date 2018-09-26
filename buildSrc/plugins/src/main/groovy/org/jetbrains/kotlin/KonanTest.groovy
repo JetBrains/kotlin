@@ -858,12 +858,13 @@ fun runTest() {
         def text = project.file(fileName).text
 
         def languageSettings = findLinesWithPrefixesRemoved(text, '// !LANGUAGE: ')
-        if (languageSettings.contains('-ProperIeee754Comparisons')) {
-            // K/N supports only proper IEEE754 comparisons
-            return false
-        }
-        if (languageSettings.contains('+NewInference')) {
-            return false
+        if (!languageSettings.empty) {
+            def settings = languageSettings.first()
+            if (settings.contains('-ProperIeee754Comparisons') ||  // K/N supports only proper IEEE754 comparisons
+                    settings.contains('+NewInference') ||          // New inference is not implemented
+                    settings.contains('-ReleaseCoroutines')) {     // only release coroutines
+                return false
+            }
         }
 
         def version = findLinesWithPrefixesRemoved(text, '// LANGUAGE_VERSION: ')
