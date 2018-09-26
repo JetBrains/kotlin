@@ -516,6 +516,26 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/addExclExclCall"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
         }
 
+        @TestMetadata("array.kt")
+        public void testArray() throws Exception {
+            runTest("idea/testData/quickfix/addExclExclCall/array.kt");
+        }
+
+        @TestMetadata("array2.kt")
+        public void testArray2() throws Exception {
+            runTest("idea/testData/quickfix/addExclExclCall/array2.kt");
+        }
+
+        @TestMetadata("array3.kt")
+        public void testArray3() throws Exception {
+            runTest("idea/testData/quickfix/addExclExclCall/array3.kt");
+        }
+
+        @TestMetadata("array4.kt")
+        public void testArray4() throws Exception {
+            runTest("idea/testData/quickfix/addExclExclCall/array4.kt");
+        }
+
         @TestMetadata("implicit.kt")
         public void testImplicit() throws Exception {
             runTest("idea/testData/quickfix/addExclExclCall/implicit.kt");
