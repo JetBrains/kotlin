@@ -928,6 +928,17 @@ public inline fun <T, R, C : MutableCollection<in R>> Sequence<T>.mapTo(destinat
 }
 
 /**
+ * For each element, calls the specified function [operation] with the element as its receiver.
+ *
+ * The operation is _intermediate_ and _stateless_.
+ * 
+ * @sample samples.collections.Collections.Transformations.withEach
+ */
+public inline fun <T> Sequence<T>.withEach(operation: T.() -> Unit): Unit {
+    forEach { it.operation() }
+}
+
+/**
  * Returns a sequence of [IndexedValue] for each element of the original sequence.
  *
  * The operation is _intermediate_ and _stateless_.

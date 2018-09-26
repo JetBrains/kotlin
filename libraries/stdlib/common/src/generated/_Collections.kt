@@ -1348,6 +1348,16 @@ public inline fun <T, R, C : MutableCollection<in R>> Iterable<T>.mapTo(destinat
 }
 
 /**
+ * For each element, calls the specified function [operation] with the element as its receiver.
+ * 
+ * @sample samples.collections.Collections.Transformations.withEach
+ */
+@kotlin.internal.HidesMembers
+public inline fun <T> Iterable<T>.withEach(operation: T.() -> Unit): Unit {
+    forEach { it.operation() }
+}
+
+/**
  * Returns a lazy [Iterable] of [IndexedValue] for each element of the original collection.
  */
 public fun <T> Iterable<T>.withIndex(): Iterable<IndexedValue<T>> {

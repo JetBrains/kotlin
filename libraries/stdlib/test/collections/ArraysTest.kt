@@ -99,7 +99,7 @@ class ArraysTest {
         assertEquals(0.toShort(), arr[0])
         assertEquals(1.toShort(), arr[1])
     }
-    
+
     @Test fun intArray() {
         val arr = IntArray(2)
 
@@ -107,7 +107,7 @@ class ArraysTest {
         assertEquals(0, arr[0])
         assertEquals(0, arr[1])
     }
-    
+
     @Test fun intArrayInit() {
         val arr = IntArray(2) { it.toInt() }
 
@@ -115,7 +115,7 @@ class ArraysTest {
         assertEquals(0.toInt(), arr[0])
         assertEquals(1.toInt(), arr[1])
     }
-    
+
     @Test fun longArray() {
         val arr = LongArray(2)
 
@@ -141,7 +141,7 @@ class ArraysTest {
         assertEquals(expected, arr[0])
         assertEquals(expected, arr[1])
     }
-    
+
     @Test fun floatArrayInit() {
         val arr = FloatArray(2) { it.toFloat() }
 
@@ -887,7 +887,7 @@ class ArraysTest {
             byteArrayOf(1, 2, 3), byteArrayOf(4, 5, 6),
             byteArrayOf(5, 6, 3), byteArrayOf(6, 3, 3), byteArrayOf(6, 6, 3)
         )
-        
+
         doTest(
             CharArray::copyInto, ::assertArrayNotSameButEquals, CharArray::contentToString,
             charArrayOf('a', 'b', 'c'), charArrayOf('e', 'f', 'g'),
@@ -1425,6 +1425,60 @@ class ArraysTest {
         val array = Array(6) { it }
         array.sortWith(comparator)
         array.iterator().assertSorted { a, b -> comparator.compare(a, b) <= 0 }
+    }
+
+    @Test fun withEachArray() {
+        arrayOf("foo", "bar").withEach {
+          assertEquals(first().toString(), substring(0, 1))
+        }
+    }
+
+    @Test fun withEachByteArray() {
+        byteArrayOf(1, 1).withEach {
+          assertEquals(2, this + 1)
+        }
+    }
+
+    @Test fun withEachShortArray() {
+        shortArrayOf(1, 1).withEach {
+          assertEquals(2, this + 1)
+        }
+    }
+
+    @Test fun withEachIntArray() {
+        intArrayOf(1, 1).withEach {
+          assertEquals(2, this + 1)
+        }
+    }
+
+    @Test fun withEachLongArray() {
+        longArrayOf(1, 1).withEach {
+          assertEquals(2, this + 1)
+        }
+    }
+
+    @Test fun withEachFloatArray() {
+        floatArrayOf(1f, 1f).withEach {
+          assertEquals(2f, this + 1)
+        }
+    }
+
+    @Test fun withEachDoubleArray() {
+        doubleArrayOf(1.0, 1.0).withEach {
+          assertEquals(2.0, this + 1)
+        }
+    }
+
+    @Test fun withEachBooleanArray() {
+        booleanArrayOf(false, false).withEach {
+          assertEquals(true, !this)
+        }
+    }
+
+    @Test fun withEachCharArray() {
+        charArrayOf('1', '1').withEach {
+          assertEquals("1", toString())
+        }
     }
 }
 

@@ -570,6 +570,12 @@ public class SequenceTest {
         assertEquals(s2, s2.orEmpty())
     }
 
+    @Test fun withEach() {
+      sequenceOf("KOTLIN").withEach {
+        assertEquals("k", substring(0, 1).toLowerCase())
+      }
+    }
+
     /*
     test fun pairIterator() {
         val pairStr = (fibonacci() zip fibonacci().map { i -> i*2 }).joinToString(limit = 10)

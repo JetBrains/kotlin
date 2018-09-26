@@ -889,6 +889,15 @@ public inline fun <R, C : MutableCollection<in R>> CharSequence.mapTo(destinatio
 }
 
 /**
+ * For each element, calls the specified function [operation] with the element as its receiver.
+ * 
+ * @sample samples.collections.Collections.Transformations.withEach
+ */
+public inline fun CharSequence.withEach(operation: Char.() -> Unit): Unit {
+    forEach { it.operation() }
+}
+
+/**
  * Returns a lazy [Iterable] of [IndexedValue] for each character of the original char sequence.
  */
 public fun CharSequence.withIndex(): Iterable<IndexedValue<Char>> {

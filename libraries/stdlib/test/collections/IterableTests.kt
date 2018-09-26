@@ -488,6 +488,13 @@ abstract class IterableTests<T : Iterable<String>>(val createFrom: (Array<out St
         assertEquals(listOf("bar"), result as? List)
     }
 
+    @Test
+    fun withEach() {
+        data.withEach {
+          assertEquals(first().toString(), substring(0, 1))
+        }
+    }
+
 }
 
 
@@ -507,4 +514,3 @@ fun <T> Iterator<T>.assertSorted(isInOrder: (T, T) -> Boolean) {
     }
     return
 }
-

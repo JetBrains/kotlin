@@ -9032,6 +9032,87 @@ public inline fun <R, C : MutableCollection<in R>> CharArray.mapTo(destination: 
 }
 
 /**
+ * For each element, calls the specified function [operation] with the element as its receiver.
+ * 
+ * @sample samples.collections.Collections.Transformations.withEach
+ */
+public inline fun <T> Array<out T>.withEach(operation: T.() -> Unit): Unit {
+    forEach { it.operation() }
+}
+
+/**
+ * For each element, calls the specified function [operation] with the element as its receiver.
+ * 
+ * @sample samples.collections.Collections.Transformations.withEach
+ */
+public inline fun ByteArray.withEach(operation: Byte.() -> Unit): Unit {
+    forEach { it.operation() }
+}
+
+/**
+ * For each element, calls the specified function [operation] with the element as its receiver.
+ * 
+ * @sample samples.collections.Collections.Transformations.withEach
+ */
+public inline fun ShortArray.withEach(operation: Short.() -> Unit): Unit {
+    forEach { it.operation() }
+}
+
+/**
+ * For each element, calls the specified function [operation] with the element as its receiver.
+ * 
+ * @sample samples.collections.Collections.Transformations.withEach
+ */
+public inline fun IntArray.withEach(operation: Int.() -> Unit): Unit {
+    forEach { it.operation() }
+}
+
+/**
+ * For each element, calls the specified function [operation] with the element as its receiver.
+ * 
+ * @sample samples.collections.Collections.Transformations.withEach
+ */
+public inline fun LongArray.withEach(operation: Long.() -> Unit): Unit {
+    forEach { it.operation() }
+}
+
+/**
+ * For each element, calls the specified function [operation] with the element as its receiver.
+ * 
+ * @sample samples.collections.Collections.Transformations.withEach
+ */
+public inline fun FloatArray.withEach(operation: Float.() -> Unit): Unit {
+    forEach { it.operation() }
+}
+
+/**
+ * For each element, calls the specified function [operation] with the element as its receiver.
+ * 
+ * @sample samples.collections.Collections.Transformations.withEach
+ */
+public inline fun DoubleArray.withEach(operation: Double.() -> Unit): Unit {
+    forEach { it.operation() }
+}
+
+/**
+ * For each element, calls the specified function [operation] with the element as its receiver.
+ * 
+ * @sample samples.collections.Collections.Transformations.withEach
+ */
+public inline fun BooleanArray.withEach(operation: Boolean.() -> Unit): Unit {
+    forEach { it.operation() }
+}
+
+/**
+ * For each element, calls the specified function [operation] with the element as its receiver.
+ * 
+ * @sample samples.collections.Collections.Transformations.withEach
+ */
+public inline fun CharArray.withEach(operation: Char.() -> Unit): Unit {
+    forEach { it.operation() }
+}
+
+/**
  * Returns a lazy [Iterable] of [IndexedValue] for each element of the original array.
  */
 public fun <T> Array<out T>.withIndex(): Iterable<IndexedValue<T>> {

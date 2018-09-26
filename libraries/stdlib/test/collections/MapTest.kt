@@ -486,5 +486,9 @@ class MapTest {
 
     @Test fun plusAssignEmptySet() = testIdempotentAssign { it += setOf() }
 
-
+    @Test fun withEachMap() {
+        mapOf("one" to 1).withEach {
+          assertEquals(key, "one")
+        }
+    }
 }

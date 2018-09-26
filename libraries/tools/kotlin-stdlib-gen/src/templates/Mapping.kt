@@ -441,4 +441,20 @@ object Mapping : TemplateGroupBase() {
         }
     }
 
+    val f_withEach = fn("withEach(operation: T.() -> Unit)") {
+      includeDefault()
+      include(Maps, CharSequences)
+    } builder {
+      inline()
+      doc { "For each element, calls the specified function [operation] with the element as its receiver." }
+      specialFor(Iterables, Maps) { annotation("@kotlin.internal.HidesMembers") }
+      sample("samples.collections.Collections.Transformations.withEach")
+      returns("Unit")
+      body {
+        """
+        forEach { it.operation() }
+        """
+      }
+    }
+
 }
