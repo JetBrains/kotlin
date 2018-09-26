@@ -8749,6 +8749,21 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             runTest("idea/testData/intentions/foldInitializerAndIfToElvis/NotIsNullableType.kt");
         }
 
+        @TestMetadata("NotIsSameType.kt")
+        public void testNotIsSameType() throws Exception {
+            runTest("idea/testData/intentions/foldInitializerAndIfToElvis/NotIsSameType.kt");
+        }
+
+        @TestMetadata("NotIsSubType.kt")
+        public void testNotIsSubType() throws Exception {
+            runTest("idea/testData/intentions/foldInitializerAndIfToElvis/NotIsSubType.kt");
+        }
+
+        @TestMetadata("NotIsSuperType.kt")
+        public void testNotIsSuperType() throws Exception {
+            runTest("idea/testData/intentions/foldInitializerAndIfToElvis/NotIsSuperType.kt");
+        }
+
         @TestMetadata("OtherVar1.kt")
         public void testOtherVar1() throws Exception {
             runTest("idea/testData/intentions/foldInitializerAndIfToElvis/OtherVar1.kt");
