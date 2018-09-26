@@ -124,7 +124,7 @@ private fun acyclicTypeMangler(visited: MutableSet<TypeParameterDescriptor>, typ
                 if (bound == "kotlin.Any?") "" else "_$bound"
             }.joinToString("")
         }
-        return "#GENERIC" + upperBounds
+        return "#GENERIC${if (type.isMarkedNullable()) "?" else ""}$upperBounds"
     }
 
     var hashString = type.getClass()!!.fqNameSafe.asString()
