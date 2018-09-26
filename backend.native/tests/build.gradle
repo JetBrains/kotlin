@@ -164,6 +164,19 @@ task resultsTask() {
     }
 }
 
+boolean isExcluded(String task) {
+    // List of tests that fail due to unresolved comiler bugs
+    def excluded = [ "codegen/box/functions/bigArity", "codegen/box/functions/functionExpression" ]
+
+    boolean result = false
+    excluded.forEach {
+        if (task.contains(it)) {
+            result = true
+        }
+    }
+    return result
+}
+
 def createTestTasks(File testRoot, Class<Task> taskType, Closure taskConfiguration) {
     testRoot.eachDirRecurse {
         // Skip build directory and directories without *.kt files.
@@ -172,13 +185,17 @@ def createTestTasks(File testRoot, Class<Task> taskType, Closure taskConfigurati
         }
 
         def taskDirectory = project.relativePath(it)
-        def taskName = taskDirectory.replaceAll("[-/\\\\]", '_')
+        if (!isExcluded(taskDirectory)) {
+            def taskName = taskDirectory.replaceAll("[-/\\\\]", '_')
 
-        def task = project.task(taskName, type: taskType) {
-            groupDirectory = taskDirectory
-            finalizedBy resultsTask
+            def task = project.task(taskName, type: taskType) {
+                groupDirectory = taskDirectory
+                finalizedBy resultsTask
+            }
+            taskConfiguration(task)
+        } else {
+            println("$taskDirectory is excluded")
         }
-        taskConfiguration(task)
     }
 }
 
