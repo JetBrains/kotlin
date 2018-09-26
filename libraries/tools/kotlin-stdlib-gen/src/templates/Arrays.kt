@@ -517,7 +517,10 @@ object ArrayOps : TemplateGroupBase() {
         specialFor(ArraysOfUnsigned) {
             inlineOnly()
             body {
-                "return SELF(storage.copyInto(destination.storage, destinationOffset, startIndex, endIndex))"
+                """
+                storage.copyInto(destination.storage, destinationOffset, startIndex, endIndex)
+                return destination
+                """
             }
         }
         specialFor(ArraysOfPrimitives, InvariantArraysOfObjects) {
