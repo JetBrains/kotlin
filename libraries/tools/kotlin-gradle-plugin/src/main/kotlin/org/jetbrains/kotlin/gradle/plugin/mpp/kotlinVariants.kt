@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
+import org.gradle.api.artifacts.ExcludeRule
 import org.gradle.api.artifacts.ModuleDependency
 import org.gradle.api.artifacts.ModuleIdentifier
 import org.gradle.api.artifacts.ModuleVersionIdentifier
@@ -82,7 +83,6 @@ class KotlinVariantWithMetadataDependency(target: KotlinTarget, private val meta
     ) : UsageContext by parentUsageContext {
         override fun getDependencies() = parentUsageContext.dependencies + additionalDependencies
 
-        // FIXME this is a stub for a function that is not present in the Gradle API that we compile against
-        fun getGlobalExcludes(): Set<Any> = emptySet()
+        override fun getGlobalExcludes(): Set<ExcludeRule> = emptySet()
     }
 }

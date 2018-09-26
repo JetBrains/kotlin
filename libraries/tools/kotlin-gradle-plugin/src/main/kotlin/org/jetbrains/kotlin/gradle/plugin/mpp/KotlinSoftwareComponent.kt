@@ -76,7 +76,6 @@ internal class KotlinPlatformUsageContext(
 
     override fun getCapabilities(): Set<Capability> = emptySet()
 
-    // FIXME this is a stub for a function that is not present in the Gradle API that we compile against
     override fun getGlobalExcludes(): Set<ExcludeRule> = emptySet()
 }
 
