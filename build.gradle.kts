@@ -107,6 +107,7 @@ extra["JDK_17"] = jdkPath("1.7")
 extra["JDK_18"] = jdkPath("1.8")
 extra["JDK_9"] = jdkPath("9")
 extra["JDK_10"] = jdkPathIfFound("10")
+extra["JDK_11"] = jdkPathIfFound("11")
 
 rootProject.apply {
     from(rootProject.file("versions.gradle.kts"))

@@ -200,6 +200,11 @@ codegenTest(target = 10, jvm = 10) {
     systemProperty("kotlin.test.substitute.bytecode.1.8.to.10", "true")
 }
 
+codegenTest(target = 8, jvm = 11) {
+    systemProperty("kotlin.test.default.jvm.target", "1.8")
+    jvmArgs!!.add( "-XX:-FailOverToOldVerifier")
+}
+
 val generateTests by generator("org.jetbrains.kotlin.generators.tests.GenerateCompilerTestsKt")
 
 testsJar()
