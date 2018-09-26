@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.idea.compiler.configuration.Kotlin2JvmCompilerArgume
 import org.jetbrains.kotlin.idea.compiler.configuration.KotlinCommonCompilerArgumentsHolder
 import org.jetbrains.kotlin.idea.compiler.configuration.KotlinCompilerSettings
 import org.jetbrains.kotlin.idea.configuration.externalCompilerVersion
+import org.jetbrains.kotlin.idea.core.isAndroidModule
 import org.jetbrains.kotlin.idea.framework.KotlinSdkType
 import org.jetbrains.kotlin.idea.platform.tooling
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
@@ -229,6 +230,9 @@ private val CommonCompilerArguments.ignoredFields: List<String>
     }
 
 private fun Module.configureSdkIfPossible(compilerArguments: CommonCompilerArguments, modelsProvider: IdeModifiableModelsProvider) {
+    // SDK for Android module is already configured by Android plugin at this point
+    if (isAndroidModule()) return
+
     val projectSdk = ProjectRootManager.getInstance(project).projectSdk
     val allSdks = ProjectJdkTable.getInstance().allJdks
     val sdk = if (compilerArguments is K2JVMCompilerArguments) {
