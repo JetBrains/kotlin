@@ -150,6 +150,10 @@ task resultsTask() {
             results.put(it.name, it.results)
             statistics.add(it.statistics)
         }
+        
+        tasks.withType(RunStdlibTest).matching {it.state.executed }.each {
+            statistics.add(it.statistics)
+        }
 
         def output = ["statistics": statistics, "tests": results]
         def json = JsonOutput.toJson(output)
@@ -3041,6 +3045,8 @@ task runStdlibTests(type: RunStdlibTest) {
     useFilter = false
     arguments = [ "--ktest_negative_regex_filter=test.collections.CollectionTest.abstractCollectionToArray" ]
     runnerLogger = RunKonanTest.Logger.GTEST
+
+    finalizedBy resultsTask
 }
 
 task buildKonanTests(type: BuildKonanTest) {
