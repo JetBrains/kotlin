@@ -77,7 +77,7 @@ class DeclarationsChecker(
 
     private val modifiersChecker = modifiersChecker.withTrace(trace)
 
-    private val exposedChecker = ExposedVisibilityChecker(trace)
+    private val exposedChecker = ExposedVisibilityChecker(trace, languageVersionSettings)
 
     private val shadowedExtensionChecker = ShadowedExtensionChecker(typeSpecificityComparator, trace)
 

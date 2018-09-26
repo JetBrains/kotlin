@@ -115,6 +115,8 @@ enum class LanguageFeature(
 
     InlineClasses(sinceVersion = KOTLIN_1_3, defaultState = State.ENABLED_WITH_WARNING, kind = UNSTABLE_FEATURE),
 
+    ProhibitExposingFunctionTypeParameterBound(sinceVersion = null, defaultState = State.DISABLED, kind = BUG_FIX),
+
     ;
 
     val presentableName: String

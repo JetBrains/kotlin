@@ -16,6 +16,9 @@
 
 package org.jetbrains.kotlin.resolve
 
+import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink.DO_NOTHING
@@ -26,7 +29,10 @@ import org.jetbrains.kotlin.types.isError
 
 // Checker for all seven EXPOSED_* errors
 // All functions return true if everything is OK, or false in case of any errors
-class ExposedVisibilityChecker(private val trace: DiagnosticSink = DO_NOTHING) {
+class ExposedVisibilityChecker(
+    private val trace: DiagnosticSink = DO_NOTHING,
+    private val languageVersionSettings: LanguageVersionSettings = LanguageVersionSettingsImpl.DEFAULT
+) {
 
     // NB: does not check any members
     fun checkClassHeader(klass: KtClassOrObject, classDescriptor: ClassDescriptor): Boolean {
@@ -88,6 +94,14 @@ class ExposedVisibilityChecker(private val trace: DiagnosticSink = DO_NOTHING) {
                     )
                 )
                 result = false
+            }
+
+            if (languageVersionSettings.supportsFeature(LanguageFeature.ProhibitExposingFunctionTypeParameterBound)) {
+                functionDescriptor.typeParameters.forEachIndexed { i, typeParameterDescriptor ->
+                    if (!checkParameterBounds(function.typeParameters[i], typeParameterDescriptor, functionVisibility)) {
+                        result = false
+                    }
+                }
             }
         }
         functionDescriptor.valueParameters.forEachIndexed { i, parameterDescriptor ->
@@ -184,21 +198,30 @@ class ExposedVisibilityChecker(private val trace: DiagnosticSink = DO_NOTHING) {
         var result = true
         classDescriptor.declaredTypeParameters.forEachIndexed { i, typeParameterDescriptor ->
             if (i >= typeParameterList.size) return result
-            for (upperBound in typeParameterDescriptor.upperBounds) {
-                val restricting = upperBound.leastPermissiveDescriptor(classVisibility)
-                if (restricting != null) {
-                    trace.report(
-                        Errors.EXPOSED_TYPE_PARAMETER_BOUND.on(
-                            typeParameterList[i], classVisibility,
-                            restricting, restricting.effectiveVisibility()
-                        )
-                    )
-                    result = false
-                    break
-                }
-            }
+            val ktTypeParameter = typeParameterList[i]
+            if (!checkParameterBounds(ktTypeParameter, typeParameterDescriptor, classVisibility)) result = false
         }
         return result
+    }
+
+    private fun checkParameterBounds(
+        ktTypeParameter: KtTypeParameter,
+        typeParameterDescriptor: TypeParameterDescriptor,
+        ownerVisibility: EffectiveVisibility
+    ): Boolean {
+        for (upperBound in typeParameterDescriptor.upperBounds) {
+            val restricting = upperBound.leastPermissiveDescriptor(ownerVisibility)
+            if (restricting != null) {
+                trace.report(
+                    Errors.EXPOSED_TYPE_PARAMETER_BOUND.on(
+                        ktTypeParameter, ownerVisibility,
+                        restricting, restricting.effectiveVisibility()
+                    )
+                )
+                return false
+            }
+        }
+        return true
     }
 }
 
