@@ -242,7 +242,7 @@ object Elements : TemplateGroupBase() {
     } builder {
         val index = '$' + "index"
         doc { "Returns ${f.element.prefixWithArticle()} at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this ${f.collection}." }
-        sample("samples.collections.Collections.Usage.elementAt")
+        sample("samples.collections.Collections.Elements.elementAt")
         returns("T")
         body {
             """
@@ -269,6 +269,7 @@ object Elements : TemplateGroupBase() {
         include(CharSequences, Lists)
     } builder {
         doc { "Returns ${f.element.prefixWithArticle()} at the given [index] or the result of calling the [defaultValue] function if the [index] is out of bounds of this ${f.collection}." }
+        sample("samples.collections.Collections.Elements.elementAtOrElse")
         returns("T")
         body {
             """
@@ -328,7 +329,7 @@ object Elements : TemplateGroupBase() {
         include(CharSequences, Lists)
     } builder {
         doc { "Returns ${f.element.prefixWithArticle()} at the given [index] or `null` if the [index] is out of bounds of this ${f.collection}." }
-        sample("samples.collections.Collections.Usage.elementAtOrNull")
+        sample("samples.collections.Collections.Elements.elementAtOrNull")
         returns("T?")
         body {
             """
