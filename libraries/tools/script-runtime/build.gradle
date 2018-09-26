@@ -45,8 +45,7 @@ compileKotlin {
     kotlinOptions.freeCompilerArgs = [
             "-Xallow-kotlin-package",
             "-Xnormalize-constructor-calls=enable",
-            "-module-name", project.name,
-            "-XXLanguage:-ReleaseCoroutines"
+            "-module-name", project.name
     ]
 }
 
