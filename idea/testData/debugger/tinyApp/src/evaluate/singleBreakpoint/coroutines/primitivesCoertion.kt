@@ -1,6 +1,7 @@
 package primitivesCoertion
 
 import kotlin.sequences.*
+import kotlin.experimental.ExperimentalTypeInference
 
 fun main(args: Array<String>) {
     val a = sequence {
@@ -12,6 +13,8 @@ fun main(args: Array<String>) {
     println(a.toList())
 }
 
+@UseExperimental(ExperimentalTypeInference::class)
+@BuilderInference
 suspend fun SequenceScope<Int>.awaitSeq(): Int = 42
 
 // EXPRESSION: a
