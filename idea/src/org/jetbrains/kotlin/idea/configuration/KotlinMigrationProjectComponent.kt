@@ -9,8 +9,10 @@ import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.ActionPlaces
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.externalSystem.ExternalSystemModulePropertyManager
 import com.intellij.openapi.externalSystem.service.project.manage.ProjectDataImportListener
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
+import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ProjectRootManager
@@ -25,6 +27,7 @@ import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.idea.configuration.ui.MigrationNotificationDialog
+import org.jetbrains.kotlin.idea.facet.KotlinFacet
 import org.jetbrains.kotlin.idea.framework.GRADLE_SYSTEM_ID
 import org.jetbrains.kotlin.idea.framework.MAVEN_SYSTEM_ID
 import org.jetbrains.kotlin.idea.migration.CodeMigrationAction
@@ -265,6 +268,11 @@ private fun collectMaxCompilerSettings(project: Project): LanguageVersionSetting
         var maxLanguageVersion: LanguageVersion? = null
 
         for (module in ModuleManager.getInstance(project).modules) {
+            if (!module.isKotlinModule()) {
+                // Otherwise project compiler settings will give unreliable maximum for compiler settings
+                continue
+            }
+
             val languageVersionSettings = module.languageVersionSettings
 
             if (maxApiVersion == null || languageVersionSettings.apiVersion > maxApiVersion) {
@@ -278,4 +286,16 @@ private fun collectMaxCompilerSettings(project: Project): LanguageVersionSetting
 
         LanguageVersionSettingsImpl(maxLanguageVersion ?: LanguageVersion.LATEST_STABLE, maxApiVersion ?: ApiVersion.LATEST_STABLE)
     }
+}
+
+private fun Module.isKotlinModule(): Boolean {
+    if (isDisposed) return false
+
+    if (KotlinFacet.get(this) != null) {
+        return true
+    }
+
+    // This code works only for Maven and Gradle import, and it's expected that Kotlin facets are configured for
+    // all modules with external system.
+    return false
 }
