@@ -496,6 +496,7 @@ class ObjHolder {
    ObjHeader* obj() { return obj_; }
    const ObjHeader* obj() const { return obj_; }
    ObjHeader** slot() { return &obj_; }
+   void clear() { ::UpdateRef(&obj_, nullptr); }
 
   private:
    ObjHeader* obj_;

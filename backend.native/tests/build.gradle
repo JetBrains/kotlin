@@ -663,6 +663,12 @@ task worker10(type: RunKonanTest) {
     source = "runtime/workers/worker10.kt"
 }
 
+task worker11(type: RunKonanTest) {
+    disabled = (project.testTarget == 'wasm32') // Workers need pthreads.
+    goldValue = "OK\n"
+    source = "runtime/workers/worker11.kt"
+}
+
 task freeze0(type: RunKonanTest) {
     disabled = (project.testTarget == 'wasm32') // No workers on WASM.
     goldValue = "frozen bit is true\n" +

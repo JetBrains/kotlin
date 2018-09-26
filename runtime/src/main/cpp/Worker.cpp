@@ -379,6 +379,7 @@ void* workerRoutine(void* argument) {
     KNativePtr result = nullptr;
     try {
         job.function(argument, &resultRef);
+        argumentHolder.clear();
         // Transfer the result.
         result = transfer(resultRef, job.transferMode);
     } catch (ObjHolder& e) {
