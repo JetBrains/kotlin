@@ -70,7 +70,7 @@ public operator fun <@kotlin.internal.OnlyInputTypes T> Iterable<T>.contains(ele
 /**
  * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this collection.
  * 
- * @sample samples.collections.Collections.Usage.elementAt
+ * @sample samples.collections.Collections.Elements.elementAt
  */
 public fun <T> Iterable<T>.elementAt(index: Int): T {
     if (this is List)
@@ -81,7 +81,7 @@ public fun <T> Iterable<T>.elementAt(index: Int): T {
 /**
  * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this list.
  * 
- * @sample samples.collections.Collections.Usage.elementAt
+ * @sample samples.collections.Collections.Elements.elementAt
  */
 @kotlin.internal.InlineOnly
 public inline fun <T> List<T>.elementAt(index: Int): T {
@@ -90,6 +90,8 @@ public inline fun <T> List<T>.elementAt(index: Int): T {
 
 /**
  * Returns an element at the given [index] or the result of calling the [defaultValue] function if the [index] is out of bounds of this collection.
+ * 
+ * @sample samples.collections.Collections.Elements.elementAtOrElse
  */
 public fun <T> Iterable<T>.elementAtOrElse(index: Int, defaultValue: (Int) -> T): T {
     if (this is List)
@@ -108,6 +110,8 @@ public fun <T> Iterable<T>.elementAtOrElse(index: Int, defaultValue: (Int) -> T)
 
 /**
  * Returns an element at the given [index] or the result of calling the [defaultValue] function if the [index] is out of bounds of this list.
+ * 
+ * @sample samples.collections.Collections.Elements.elementAtOrElse
  */
 @kotlin.internal.InlineOnly
 public inline fun <T> List<T>.elementAtOrElse(index: Int, defaultValue: (Int) -> T): T {
@@ -117,7 +121,7 @@ public inline fun <T> List<T>.elementAtOrElse(index: Int, defaultValue: (Int) ->
 /**
  * Returns an element at the given [index] or `null` if the [index] is out of bounds of this collection.
  * 
- * @sample samples.collections.Collections.Usage.elementAtOrNull
+ * @sample samples.collections.Collections.Elements.elementAtOrNull
  */
 public fun <T> Iterable<T>.elementAtOrNull(index: Int): T? {
     if (this is List)
@@ -137,7 +141,7 @@ public fun <T> Iterable<T>.elementAtOrNull(index: Int): T? {
 /**
  * Returns an element at the given [index] or `null` if the [index] is out of bounds of this list.
  * 
- * @sample samples.collections.Collections.Usage.elementAtOrNull
+ * @sample samples.collections.Collections.Elements.elementAtOrNull
  */
 @kotlin.internal.InlineOnly
 public inline fun <T> List<T>.elementAtOrNull(index: Int): T? {

@@ -21,7 +21,7 @@ import kotlin.random.*
 /**
  * Returns a character at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this char sequence.
  * 
- * @sample samples.collections.Collections.Usage.elementAt
+ * @sample samples.collections.Collections.Elements.elementAt
  */
 @kotlin.internal.InlineOnly
 public inline fun CharSequence.elementAt(index: Int): Char {
@@ -30,6 +30,8 @@ public inline fun CharSequence.elementAt(index: Int): Char {
 
 /**
  * Returns a character at the given [index] or the result of calling the [defaultValue] function if the [index] is out of bounds of this char sequence.
+ * 
+ * @sample samples.collections.Collections.Elements.elementAtOrElse
  */
 @kotlin.internal.InlineOnly
 public inline fun CharSequence.elementAtOrElse(index: Int, defaultValue: (Int) -> Char): Char {
@@ -39,7 +41,7 @@ public inline fun CharSequence.elementAtOrElse(index: Int, defaultValue: (Int) -
 /**
  * Returns a character at the given [index] or `null` if the [index] is out of bounds of this char sequence.
  * 
- * @sample samples.collections.Collections.Usage.elementAtOrNull
+ * @sample samples.collections.Collections.Elements.elementAtOrNull
  */
 @kotlin.internal.InlineOnly
 public inline fun CharSequence.elementAtOrNull(index: Int): Char? {

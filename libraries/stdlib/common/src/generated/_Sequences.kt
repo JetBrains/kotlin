@@ -32,7 +32,7 @@ public operator fun <@kotlin.internal.OnlyInputTypes T> Sequence<T>.contains(ele
  *
  * The operation is _terminal_.
  * 
- * @sample samples.collections.Collections.Usage.elementAt
+ * @sample samples.collections.Collections.Elements.elementAt
  */
 public fun <T> Sequence<T>.elementAt(index: Int): T {
     return elementAtOrElse(index) { throw IndexOutOfBoundsException("Sequence doesn't contain element at index $index.") }
@@ -42,6 +42,8 @@ public fun <T> Sequence<T>.elementAt(index: Int): T {
  * Returns an element at the given [index] or the result of calling the [defaultValue] function if the [index] is out of bounds of this sequence.
  *
  * The operation is _terminal_.
+ * 
+ * @sample samples.collections.Collections.Elements.elementAtOrElse
  */
 public fun <T> Sequence<T>.elementAtOrElse(index: Int, defaultValue: (Int) -> T): T {
     if (index < 0)
@@ -61,7 +63,7 @@ public fun <T> Sequence<T>.elementAtOrElse(index: Int, defaultValue: (Int) -> T)
  *
  * The operation is _terminal_.
  * 
- * @sample samples.collections.Collections.Usage.elementAtOrNull
+ * @sample samples.collections.Collections.Elements.elementAtOrNull
  */
 public fun <T> Sequence<T>.elementAtOrNull(index: Int): T? {
     if (index < 0)

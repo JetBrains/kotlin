@@ -487,16 +487,16 @@ class Collections {
         }
     }
 
-    class Usage {
+    class Elements {
         @Sample
         fun elementAt() {
             val list = listOf(1, 2, 3)
             assertPrints(list.elementAt(0), "1")
             assertPrints(list.elementAt(2), "3")
-            assertFails { list.elementAt(3) }
+            assertFailsWith<IndexOutOfBoundsException> { list.elementAt(3) }
 
             val emptyList = emptyList<Int>()
-            assertFails { emptyList.elementAt(0) }
+            assertFailsWith<IndexOutOfBoundsException> { emptyList.elementAt(0) }
         }
 
         @Sample
@@ -508,6 +508,17 @@ class Collections {
 
             val emptyList = emptyList<Int>()
             assertPrints(emptyList.elementAtOrNull(0), "null")
+        }
+
+        @Sample
+        fun elementAtOrElse() {
+            val list = listOf(1, 2, 3)
+            assertPrints(list.elementAtOrElse(0) { 42 }, "1")
+            assertPrints(list.elementAtOrElse(2) { 42 }, "3")
+            assertPrints(list.elementAtOrElse(3) { 42 }, "42")
+
+            val emptyList = emptyList<Int>()
+            assertPrints(emptyList.elementAtOrElse(0) { "no int" }, "no int")
         }
     }
 }
