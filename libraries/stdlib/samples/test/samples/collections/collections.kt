@@ -311,6 +311,24 @@ class Collections {
             // but the sets with the same elements are equal no matter of order
             assertTrue(set1 == set2)
         }
+
+        @Sample
+        fun emptyMutableSet() {
+            val set = mutableSetOf<Int>()
+            assertTrue(set.isEmpty())
+
+            set.addAll(setOf(1, 2, 3))
+            assertPrints(set, "[1, 2, 3]")
+        }
+
+        @Sample
+        fun mutableSet() {
+            val set = mutableSetOf(1, 2, 3)
+            assertPrints(set, "[1, 2, 3]")
+
+            set += setOf(4, 5)
+            assertPrints(set, "[1, 2, 3, 4, 5]")
+        }
     }
 
     class Transformations {
