@@ -315,11 +315,13 @@ class KotlinNativeTargetPreset(
         // Allow IDE to resolve the libraries provided by the compiler by adding them into dependencies.
         result.compilations.all { compilation ->
             val target = compilation.target.konanTarget
-            compilation.dependencies {
-                // First, put common libs:
-                defaultLibs().forEach { implementation(it) }
-                // Then, platform-specific libs:
-                defaultLibs(target).forEach { implementation(it) }
+            // First, put common libs:
+            defaultLibs().forEach {
+                project.dependencies.add(compilation.compileDependencyConfigurationName, it)
+            }
+            // Then, platform-specific libs:
+            defaultLibs(target).forEach {
+                project.dependencies.add(compilation.compileDependencyConfigurationName, it)
             }
         }
 
