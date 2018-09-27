@@ -27,9 +27,9 @@ import org.jetbrains.plugins.gradle.settings.GradleSystemRunningSettings
 
 val Module.jsTestOutputFilePath: String?
     get() {
-        if (!shouldUseJpsOutput) {
-            (KotlinFacet.get(this)?.configuration?.settings?.testOutputPath)?.let { return it }
-        }
+        KotlinFacet.get(this)?.configuration?.settings?.testOutputPath?.let { return it }
+
+        if (!shouldUseJpsOutput) return null
 
         val compilerExtension = CompilerModuleExtension.getInstance(this)
         val outputDir = compilerExtension?.compilerOutputUrlForTests ?: return null
@@ -38,9 +38,9 @@ val Module.jsTestOutputFilePath: String?
 
 val Module.jsProductionOutputFilePath: String?
     get() {
-        if (!shouldUseJpsOutput) {
-            (KotlinFacet.get(this)?.configuration?.settings?.productionOutputPath)?.let { return it }
-        }
+        KotlinFacet.get(this)?.configuration?.settings?.productionOutputPath?.let { return it }
+
+        if (!shouldUseJpsOutput) return null
 
         val compilerExtension = CompilerModuleExtension.getInstance(this)
         val outputDir = compilerExtension?.compilerOutputUrl ?: return null
