@@ -513,7 +513,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             }
         }
 
-        return StackValue.operation(asmType, v -> {
+        return StackValue.operation(asmType, kotlinType, v -> {
             Label elseLabel = new Label();
             BranchedValue.Companion.condJump(condition, elseLabel, true, v);
 
