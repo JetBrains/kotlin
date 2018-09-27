@@ -82,5 +82,6 @@
         <moduleBuilder implementation="org.jetbrains.kotlin.idea.configuration.KotlinGradleWebMultiplatformModuleBuilder"/>
         <moduleBuilder implementation="org.jetbrains.kotlin.idea.configuration.KotlinGradleSharedMultiplatformModuleBuilder"/>
         <moduleBuilder implementation="org.jetbrains.kotlin.idea.configuration.KotlinGradleMobileMultiplatformModuleBuilder"/>
+        <moduleBuilder implementation="org.jetbrains.kotlin.idea.configuration.KotlinGradleMobileSharedMultiplatformModuleBuilder"/>
     </extensions>
 </idea-plugin>
