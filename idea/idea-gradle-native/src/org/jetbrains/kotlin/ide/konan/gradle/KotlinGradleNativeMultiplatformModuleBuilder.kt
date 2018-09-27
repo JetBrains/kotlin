@@ -5,10 +5,18 @@
 
 package org.jetbrains.kotlin.ide.konan.gradle
 
+import com.intellij.openapi.module.Module
+import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.idea.configuration.KotlinGradleAbstractMultiplatformModuleBuilder
 import org.jetbrains.kotlin.konan.target.presetName
 
 class KotlinGradleNativeMultiplatformModuleBuilder : KotlinGradleAbstractMultiplatformModuleBuilder() {
+
+    private val nativePresetName = defaultNativeTarget.presetName
+    private val nativeTargetName = defaultNativeTarget.userTargetName
+
+    private val nativeSourceName get() = "$nativeTargetName$productionSuffix"
+    private val nativeTestName get() = "$nativeTargetName$testSuffix"
 
     override fun getBuilderId() = "kotlin.gradle.multiplatform.native"
 
@@ -18,6 +26,44 @@ class KotlinGradleNativeMultiplatformModuleBuilder : KotlinGradleAbstractMultipl
 
     override val notImportedCommonSourceSets = true
 
+    override fun createProjectSkeleton(module: Module, rootDir: VirtualFile) {
+        val src = rootDir.createChildDirectory(this, "src")
+
+        // Main module:
+        src.createKotlinSampleFileWriter(nativeSourceName).use {
+            it.write(
+                """
+                package sample
+
+                fun hello(): String = "Hello, Kotlin/Native!"
+
+                fun main(args: Array<String>) {
+                    println(hello())
+                }
+                """.trimIndent()
+            )
+        }
+
+        // Test module:
+        src.createKotlinSampleFileWriter(nativeTestName, fileName = "SampleTests.kt").use {
+            it.write(
+                """
+                package sample
+
+                import kotlin.test.Test
+                import kotlin.test.assertTrue
+
+                class SampleTests {
+                    @Test
+                    fun testHello() {
+                        assertTrue("Kotlin/Native" in hello())
+                    }
+                }
+                """.trimIndent()
+            )
+        }
+    }
+
     override fun buildMultiPlatformPart(): String {
         return """
             kotlin {
@@ -25,7 +71,25 @@ class KotlinGradleNativeMultiplatformModuleBuilder : KotlinGradleAbstractMultipl
                     // For ARM, preset should be changed to presets.iosArm32 or presets.iosArm64
                     // For Linux, preset should be changed to e.g. presets.linuxX64
                     // For MacOS, preset should be changed to e.g. presets.macosX64
-                    fromPreset(presets.${defaultNativeTarget.presetName}, '${defaultNativeTarget.userTargetName}')
+                    fromPreset(presets.$nativePresetName, '$nativeTargetName')
+
+                    configure([$nativeTargetName]) {
+                        compilations.main.outputKinds('EXECUTABLE') // Comment to generate Kotlin/Native library (KLIB) instead of executable file.
+                        // Change to specify fully qualified name of your application's entry point:
+                        compilations.main.entryPoint = 'sample.main'
+                    }
+                }
+            }
+
+            task runProgram {
+                def buildType ="release" // Change to "debug" to run application with debug symbols.
+                dependsOn "link${'$'}{buildType.capitalize()}Executable${nativeTargetName.capitalize()}"
+                doLast {
+                    def programFile = kotlin.targets.$nativeTargetName.compilations.main.getBinary("EXECUTABLE", buildType)
+                    exec {
+                        executable programFile
+                        args ''
+                    }
                 }
             }
         """.trimIndent()
