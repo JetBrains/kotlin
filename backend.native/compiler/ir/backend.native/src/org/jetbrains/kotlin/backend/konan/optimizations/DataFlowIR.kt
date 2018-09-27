@@ -633,7 +633,7 @@ internal object DataFlowIR {
         }
 
         private val FunctionDescriptor.isSpecial get() =
-            name.asString().let { it.contains("<bridge-") || it.contains("<box>") || it.contains("<unbox>") }
+            name.asString().let { it.startsWith("<bridge-") || it == "<box>" || it == "<unbox>" }
 
         private fun mapPropertyInitializer(descriptor: IrField): FunctionSymbol = descriptor.original.let {
             functionMap[it]?.let { return it }

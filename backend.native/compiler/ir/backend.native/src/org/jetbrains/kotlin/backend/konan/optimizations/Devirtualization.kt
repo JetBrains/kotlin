@@ -15,10 +15,10 @@ import org.jetbrains.kotlin.backend.common.lower.irBlock
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.descriptors.isInterface
 import org.jetbrains.kotlin.backend.konan.ir.IrPrivateClassReferenceImpl
+import org.jetbrains.kotlin.backend.konan.ir.IrPrivateFunctionCall
 import org.jetbrains.kotlin.backend.konan.ir.IrPrivateFunctionCallImpl
 import org.jetbrains.kotlin.backend.konan.irasdescriptors.getErasedTypeClass
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
@@ -27,16 +27,18 @@ import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
 import org.jetbrains.kotlin.ir.descriptors.IrTemporaryVariableDescriptorImpl
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.expressions.impl.IrBranchImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrWhenImpl
+import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
-import org.jetbrains.kotlin.ir.util.addArguments
-import org.jetbrains.kotlin.ir.util.getArguments
+import org.jetbrains.kotlin.ir.symbols.impl.IrReturnableBlockSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.impl.originalKotlinType
 import org.jetbrains.kotlin.ir.types.toKotlinType
 import org.jetbrains.kotlin.ir.util.irCall
 import org.jetbrains.kotlin.ir.util.explicitParameters
+import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
 import java.util.*
@@ -991,9 +993,26 @@ internal object Devirtualization {
                         .asSequence()
                         .filter { it.key.irCallSite != null }
                         .associate { it.key.irCallSite!! to it.value }
-        Devirtualization.devirtualize(irModule, context, moduleDFG, externalModulesDFG, devirtualizedCallSites)
+        devirtualize(irModule, context, moduleDFG, externalModulesDFG, devirtualizedCallSites)
+        removeRedundantCoercions(irModule, context, moduleDFG, externalModulesDFG)
         return AnalysisResult(devirtualizationAnalysisResult)
     }
+
+    /**
+     * TODO: JVM inliner crashed on attempt inline this function from transform.kt with:
+     *  j.l.IllegalStateException: Couldn't obtain compiled function body for
+     *  public inline fun <reified T : org.jetbrains.kotlin.ir.IrElement> kotlin.collections.MutableList<T>.transform...
+     */
+    private inline fun <reified T : IrElement> MutableList<T>.transform(transformation: (T) -> IrElement) {
+        forEachIndexed { i, item ->
+            set(i, transformation(item) as T)
+        }
+    }
+
+    // TODO: do it more reliably.
+    private fun IrExpression.isBoxOrUnboxCall() =
+            (this is IrCall && symbol.owner.name.asString().let { it == "<box>" || it == "<unbox>" })
+                    || (this is IrPrivateFunctionCall && dfgSymbol.name?.let { it.contains("<box>") || it.contains("<unbox>") } == true)
 
     private fun devirtualize(irModule: IrModuleFragment, context: Context,
                              moduleDFG: ModuleDFG, externalModulesDFG: ExternalModulesDFG,
@@ -1012,9 +1031,6 @@ internal object Devirtualization {
                 return externalModulesDFG.publicFunctions[this.hash] ?: this
             return this
         }
-
-        // TODO: do it more reliably.
-        fun IrExpression.isBoxOrUnboxCall() = this is IrCall && symbol.owner.name.asString().let { it.contains("<box>") || it.contains("<unbox>") }
 
         fun IrBuilderWithScope.irCoerce(value: IrExpression, coercion: IrFunctionSymbol?) =
                 if (coercion == null)
@@ -1087,21 +1103,6 @@ internal object Devirtualization {
                     actualType.unboxFunction!!.resolved() as DataFlowIR.FunctionSymbol.Declared)
         }
 
-        fun IrBuilderWithScope.irCoerceIfNeeded(type: DataFlowIR.FunctionParameter, targetType: DataFlowIR.FunctionParameter,
-                                                possiblyCoercedValue: PossiblyCoercedValue): IrExpression {
-            val value = possiblyCoercedValue.value
-            val prevCoercion = possiblyCoercedValue.coercion
-
-            val coercion = getTypeConversion(type, targetType)
-                    ?: return possiblyCoercedValue.getFullValue(this)
-            if (prevCoercion == null)
-                return irCoerce(irGet(value), coercion.coerceFunction)
-            val expectedUncoercion = coercion.uncoerceFunction
-            val actualUncoercion = moduleDFG.symbolTable.mapFunction(prevCoercion.owner).resolved()
-            assert(actualUncoercion == expectedUncoercion) { "Incosistent coercions: ${expectedUncoercion}, ${actualUncoercion}" }
-            return irGet(value)
-        }
-
         fun irDevirtualizedCall(callee: IrCall, actualType: IrType, devirtualizedCallee: DataFlowIR.FunctionSymbol.Declared) =
                 IrPrivateFunctionCallImpl(
                         startOffset         = callee.startOffset,
@@ -1129,11 +1130,9 @@ internal object Devirtualization {
                         val bridgeTarget = it.resolved() as DataFlowIR.FunctionSymbol.Declared
                         val callResult = irDevirtualizedCall(callee, actualType, bridgeTarget).apply {
                             parameters.forEachIndexed { index, value ->
-                                putValueArgument(index, irCoerceIfNeeded(
-                                        type = actualCallee.parameters[index],
-                                        targetType = bridgeTarget.parameters[index],
-                                        possiblyCoercedValue = value
-                                ))
+                                val coercion = getTypeConversion(actualCallee.parameters[index], bridgeTarget.parameters[index])
+                                val fullValue = value.getFullValue(this@irDevirtualizedCall)
+                                putValueArgument(index, coercion?.let { irCoerce(fullValue, coercion.coerceFunction) } ?: fullValue)
                             }
                         }
                         val returnCoercion = getTypeConversion(bridgeTarget.returnParameter, actualCallee.returnParameter)
@@ -1144,19 +1143,6 @@ internal object Devirtualization {
         irModule.transformChildrenVoid(object: IrElementTransformerVoidWithContext() {
             override fun visitCall(expression: IrCall): IrExpression {
                 expression.transformChildrenVoid(this)
-
-                if (expression.isBoxOrUnboxCall()) {
-                    val arg = expression.getArguments().single().second
-                    val uncastedArg = if (arg is IrTypeOperatorCall && arg.operator == IrTypeOperator.IMPLICIT_CAST)
-                                          arg.argument
-                                      else arg
-                    if (!uncastedArg.isBoxOrUnboxCall()) return expression
-                    val argarg = (uncastedArg as IrCall).getArguments().single().second
-                    if (expression.symbol.owner.returnType == uncastedArg.symbol.owner.explicitParameters.single().type
-                        && expression.symbol.owner.explicitParameters.single().type == uncastedArg.symbol.owner.returnType)
-                        return argarg
-                    return expression
-                }
 
                 val devirtualizedCallSite = devirtualizedCallSites[expression]
                 val possibleCallees = devirtualizedCallSite?.possibleCallees
@@ -1269,6 +1255,217 @@ internal object Devirtualization {
                         }
                     }
                 }
+            }
+        })
+    }
+
+    private fun removeRedundantCoercions(irModule: IrModuleFragment, context: Context,
+                                         moduleDFG: ModuleDFG, externalModulesDFG: ExternalModulesDFG) {
+
+        fun DataFlowIR.FunctionSymbol.resolved(): DataFlowIR.FunctionSymbol {
+            if (this is DataFlowIR.FunctionSymbol.External)
+                return externalModulesDFG.publicFunctions[this.hash] ?: this
+            return this
+        }
+
+        class PossiblyFoldedExpression(val expression: IrExpression, val folded: Boolean) {
+            fun getFullExpression(coercion: IrCall, cast: IrTypeOperatorCall?): IrExpression {
+                if (folded) return expression
+                assert (coercion.dispatchReceiver == null && coercion.extensionReceiver == null) {
+                    "Expected either <box> or <unbox> function without any receivers"
+                }
+                val castedExpression =
+                        if (cast == null)
+                            expression
+                        else with (cast) {
+                            IrTypeOperatorCallImpl(startOffset, endOffset, type, operator, typeOperand, typeOperandClassifier, expression)
+                        }
+                with (coercion) {
+                    return IrCallImpl(startOffset, endOffset, type, symbol, descriptor, typeArgumentsCount, origin).apply {
+                        putValueArgument(0, castedExpression)
+                    }
+                }
+            }
+        }
+
+        // Possible values of a returnable block.
+        val returnableBlockValues = mutableMapOf<IrReturnableBlock, MutableList<IrExpression>>()
+
+        irModule.acceptChildrenVoid(object: IrElementVisitorVoid {
+            override fun visitElement(element: IrElement) {
+                element.acceptChildrenVoid(this)
+            }
+
+            override fun visitContainerExpression(expression: IrContainerExpression) {
+                if (expression is IrReturnableBlock)
+                    returnableBlockValues[expression] = mutableListOf()
+
+                super.visitContainerExpression(expression)
+            }
+
+            override fun visitReturn(expression: IrReturn) {
+                val returnableBlock = expression.returnTargetSymbol.owner as? IrReturnableBlock
+                if (returnableBlock != null)
+                    returnableBlockValues[returnableBlock]!!.add(expression.value)
+
+                super.visitReturn(expression)
+            }
+
+        })
+
+        irModule.transformChildrenVoid(object: IrElementTransformerVoid() {
+
+            fun fold(expression: IrExpression, coercion: IrCall, cast: IrTypeOperatorCall?,
+                     transformRecursively: Boolean): PossiblyFoldedExpression {
+
+                val transformer = this
+
+                fun IrExpression.transformIfAsked() =
+                        if (transformRecursively) this.transform(transformer, data = null) else this
+
+                fun IrElement.transformIfAsked() =
+                        if (transformRecursively) this.transform(transformer, data = null) else this
+
+                val coercionDeclaringClass = coercion.symbol.owner.parentAsClass
+                if (expression.isBoxOrUnboxCall()) {
+                    val result =
+                            (expression as? IrCall)?.let {
+                                if (coercionDeclaringClass == it.symbol.owner.parentAsClass)
+                                    it.getArguments().single().second
+                                else expression
+                            } ?: (expression as IrPrivateFunctionCall).let {
+                                val argarg = it.getValueArgument(0)!!
+                                val boxFunction = moduleDFG.symbolTable.mapFunction(context.getBoxFunction(coercionDeclaringClass)).resolved()
+                                val unboxFunction = moduleDFG.symbolTable.mapFunction(context.getUnboxFunction(coercionDeclaringClass)).resolved()
+                                if (it.dfgSymbol == boxFunction || it.dfgSymbol == unboxFunction)
+                                    argarg
+                                else it
+                            }
+                    return PossiblyFoldedExpression(result.transformIfAsked(), result != expression)
+                }
+                return when (expression) {
+                    is IrReturnableBlock -> {
+                        val foldedReturnableBlockValues = returnableBlockValues[expression]!!.associate { it to fold(it, coercion, cast, false) }
+                        val someoneFolded = foldedReturnableBlockValues.any { it.value.folded }
+                        val transformedReturnableBlock =
+                                if (!someoneFolded)
+                                    expression
+                                else {
+                                    val oldSymbol = expression.symbol
+                                    val newSymbol = IrReturnableBlockSymbolImpl(expression.descriptor)
+                                    val transformedReturnableBlock = with(expression) {
+                                        IrReturnableBlockImpl(
+                                                startOffset    = startOffset,
+                                                endOffset      = endOffset,
+                                                type           = coercion.type,
+                                                symbol         = newSymbol,
+                                                origin         = origin,
+                                                statements     = statements,
+                                                sourceFileName = sourceFileName)
+                                    }
+                                    transformedReturnableBlock.transformChildrenVoid(object: IrElementTransformerVoid() {
+                                        override fun visitExpression(expression: IrExpression): IrExpression {
+                                            foldedReturnableBlockValues[expression]?.let {
+                                                return it.getFullExpression(coercion, cast)
+                                            }
+                                            return super.visitExpression(expression)
+                                        }
+
+                                        override fun visitReturn(expression: IrReturn): IrExpression {
+                                            expression.transformChildrenVoid(this)
+                                            return if (expression.returnTargetSymbol != oldSymbol)
+                                                expression
+                                            else with(expression) {
+                                                IrReturnImpl(
+                                                        startOffset        = startOffset,
+                                                        endOffset          = endOffset,
+                                                        type               = context.irBuiltIns.nothingType,
+                                                        returnTargetSymbol = newSymbol,
+                                                        value              = value)
+                                            }
+                                        }
+                                    })
+                                    transformedReturnableBlock
+                                }
+                        if (transformRecursively)
+                            transformedReturnableBlock.transformChildrenVoid(this)
+                        PossiblyFoldedExpression(transformedReturnableBlock, someoneFolded)
+                    }
+
+                    is IrBlock -> {
+                        val statements = expression.statements
+                        val lastStatement = statements.last() as IrExpression
+                        val foldedLastStatement = fold(lastStatement, coercion, cast, transformRecursively)
+                        statements.transform {
+                            if (it == lastStatement)
+                                foldedLastStatement.expression
+                            else
+                                it.transformIfAsked()
+                        }
+                        val transformedBlock =
+                                if (!foldedLastStatement.folded)
+                                    expression
+                                else with(expression) {
+                                    IrBlockImpl(
+                                            startOffset = startOffset,
+                                            endOffset   = endOffset,
+                                            type        = coercion.type,
+                                            origin      = origin,
+                                            statements  = statements)
+                                }
+                        PossiblyFoldedExpression(transformedBlock, foldedLastStatement.folded)
+                    }
+
+                    is IrWhen -> {
+                        val foldedBranches = expression.branches.map { fold(it.result, coercion, cast, transformRecursively) }
+                        val someoneFolded = foldedBranches.any { it.folded }
+                        val transformedWhen = with(expression) {
+                            IrWhenImpl(startOffset, endOffset, if (someoneFolded) coercion.type else type, origin,
+                                    branches.asSequence().withIndex().map { (index, branch) ->
+                                        IrBranchImpl(
+                                                startOffset = branch.startOffset,
+                                                endOffset   = branch.endOffset,
+                                                condition   = branch.condition.transformIfAsked(),
+                                                result      = if (someoneFolded)
+                                                                  foldedBranches[index].getFullExpression(coercion, cast)
+                                                              else foldedBranches[index].expression)
+                                    }.toList())
+                        }
+                        return PossiblyFoldedExpression(transformedWhen, someoneFolded)
+                    }
+
+                    is IrTypeOperatorCall ->
+                        if (expression.operator != IrTypeOperator.CAST
+                                && expression.operator != IrTypeOperator.IMPLICIT_CAST
+                                && expression.operator != IrTypeOperator.SAFE_CAST)
+                            PossiblyFoldedExpression(expression.transformIfAsked(), false)
+                        else {
+                            if (expression.typeOperand.getInlinedClass() != coercionDeclaringClass)
+                                PossiblyFoldedExpression(expression.transformIfAsked(), false)
+                            else {
+                                val foldedArgument = fold(expression.argument, coercion, expression, transformRecursively)
+                                if (foldedArgument.folded)
+                                    foldedArgument
+                                else
+                                    PossiblyFoldedExpression(expression.apply { argument = foldedArgument.expression }, false)
+                            }
+                        }
+
+                    else -> PossiblyFoldedExpression(expression.transformIfAsked(), false)
+                }
+            }
+
+            override fun visitCall(expression: IrCall): IrExpression {
+                if (!expression.isBoxOrUnboxCall())
+                    return super.visitCall(expression)
+
+                val argument = expression.getArguments().single().second
+                val foldedArgument = fold(
+                        expression           = argument,
+                        coercion             = expression,
+                        cast                 = null,
+                        transformRecursively = true)
+                return foldedArgument.getFullExpression(expression, null)
             }
         })
     }
