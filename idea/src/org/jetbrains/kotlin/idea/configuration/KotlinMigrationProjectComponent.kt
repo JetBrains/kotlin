@@ -5,11 +5,7 @@
 
 package org.jetbrains.kotlin.idea.configuration
 
-import com.intellij.openapi.actionSystem.ActionManager
-import com.intellij.openapi.actionSystem.ActionPlaces
-import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.externalSystem.ExternalSystemModulePropertyManager
 import com.intellij.openapi.externalSystem.service.project.manage.ProjectDataImportListener
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.module.Module
@@ -26,11 +22,10 @@ import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
-import org.jetbrains.kotlin.idea.configuration.ui.MigrationNotificationDialog
+import org.jetbrains.kotlin.idea.configuration.ui.showMigrationNotification
 import org.jetbrains.kotlin.idea.facet.KotlinFacet
 import org.jetbrains.kotlin.idea.framework.GRADLE_SYSTEM_ID
 import org.jetbrains.kotlin.idea.framework.MAVEN_SYSTEM_ID
-import org.jetbrains.kotlin.idea.migration.CodeMigrationAction
 import org.jetbrains.kotlin.idea.migration.CodeMigrationToggleAction
 import org.jetbrains.kotlin.idea.migration.applicableMigrationTools
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
@@ -111,19 +106,7 @@ class KotlinMigrationProjectComponent(val project: Project) {
                 }
 
                 ApplicationManager.getApplication().invokeLater {
-                    val migrationNotificationDialog = MigrationNotificationDialog(project, migrationInfo)
-                    migrationNotificationDialog.show()
-
-                    if (migrationNotificationDialog.isOK) {
-                        val action = ActionManager.getInstance().getAction(CodeMigrationAction.ACTION_ID)
-
-                        val dataContext = getDataContextFromDialog(migrationNotificationDialog)
-                        if (dataContext != null) {
-                            val actionEvent = AnActionEvent.createFromAnAction(action, null, ActionPlaces.ACTION_SEARCH, dataContext)
-
-                            action.actionPerformed(actionEvent)
-                        }
-                    }
+                    showMigrationNotification(project, migrationInfo)
                 }
             } finally {
                 notifyFinish(migrationInfo, hasApplicableTools)
