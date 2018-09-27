@@ -498,7 +498,6 @@ open class KotlinNativeTargetConfigurator(
                     registerOutputFiles(binaryOutputDirectory(buildType, kind, compilation))
                     addCompilerPlugins()
 
-                    dependsOn(compilation.compileKotlinTaskName)
                     linkAll.dependsOn(this)
                 }
 
