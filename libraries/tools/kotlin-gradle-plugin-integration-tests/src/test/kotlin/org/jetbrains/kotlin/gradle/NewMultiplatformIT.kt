@@ -64,6 +64,10 @@ class NewMultiplatformIT : BaseGradleIT() {
                         "$pom should contain a name section.",
                         pom.readText().contains("<name>Sample MPP library</name>")
                     )
+                    Assert.assertFalse(
+                        "$pom should not contain standard K/N libraries as dependencies.",
+                        pom.readText().contains("<groupId>Kotlin/Native</groupId>")
+                    )
                 }
 
                 val jvmJarEntries = ZipFile(groupDir.resolve(jvmJarName)).entries().asSequence().map { it.name }.toSet()
