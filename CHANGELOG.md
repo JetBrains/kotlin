@@ -1,3 +1,6 @@
+## v0.9.3 (Sep 2018)
+  * Bugfixes
+
 ## v0.9.2 (Sep 2018)
   * Support Xcode 10.0
   * iOS 9.0 is the minimal supported version for all targets
