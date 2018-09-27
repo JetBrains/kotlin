@@ -26,6 +26,8 @@ class KotlinGradleSharedMultiplatformModuleBuilder : KotlinGradleAbstractMultipl
     private val nativeSourceName get() = "$nativeTargetName$productionSuffix"
     private val nativeTestName get() = "$nativeTargetName$testSuffix"
 
+    override val shouldEnableGradleMetadataPreview: Boolean = true
+
     override fun getBuilderId() = "kotlin.gradle.multiplatform.shared"
 
     override fun getPresentableName() = "Kotlin (Multiplatform Library)"
@@ -174,6 +176,11 @@ class KotlinGradleSharedMultiplatformModuleBuilder : KotlinGradleAbstractMultipl
 
     override fun buildMultiPlatformPart(): String {
         return """
+            group 'com.example'
+            version '0.0.1'
+
+            apply plugin: 'maven-publish'
+
             kotlin {
                 targets {
                     fromPreset(presets.jvm, '$jvmTargetName')
