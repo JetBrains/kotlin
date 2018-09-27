@@ -46,6 +46,19 @@ abstract class KotlinGradleAbstractMultiplatformModuleBuilder(
         return moduleDir
     }
 
+    private fun enableGradleMetadataPreview(rootDir: VirtualFile) {
+        val settingsGradle = rootDir.findOrCreateChildData(null, "settings.gradle")
+        val previousText = settingsGradle.inputStream.bufferedReader().use { it.readText() }
+        settingsGradle.bufferedWriter().use {
+            it.write(previousText)
+            if (previousText.isNotEmpty()) {
+                it.newLine()
+            }
+            it.write("enableFeaturePreview('GRADLE_METADATA')")
+            it.newLine()
+        }
+    }
+
     override fun setupModule(module: Module) {
         try {
             module.gradleModuleBuilder = this
@@ -58,6 +71,9 @@ abstract class KotlinGradleAbstractMultiplatformModuleBuilder(
             }
             val builder = BuildScriptDataBuilder(buildGradle)
             builder.setupAdditionalDependencies()
+            if (shouldEnableGradleMetadataPreview) {
+                enableGradleMetadataPreview(rootDir)
+            }
             val buildGradleText = if (!mppInApplication) {
                 GradleKotlinMPPFrameworkSupportProvider().addSupport(builder, module, sdk = null, specifyPluginVersionIfNeeded = true)
                 builder.buildConfigurationPart() + builder.buildMainPart() + buildMultiPlatformPart()
@@ -118,6 +134,8 @@ abstract class KotlinGradleAbstractMultiplatformModuleBuilder(
     protected open fun createProjectSkeleton(module: Module, rootDir: VirtualFile) {}
 
     protected open val notImportedCommonSourceSets = false
+
+    protected open val shouldEnableGradleMetadataPreview = false
 
     protected val defaultNativeTarget by lazy {
         try {
