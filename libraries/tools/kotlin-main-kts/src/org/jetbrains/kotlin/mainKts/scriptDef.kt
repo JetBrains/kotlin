@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.mainKts
 
+import org.jetbrains.kotlin.mainKts.impl.FilesAndIvyResolver
 import org.jetbrains.kotlin.script.util.DependsOn
-import org.jetbrains.kotlin.script.util.FilesAndIvyResolver
 import org.jetbrains.kotlin.script.util.Repository
 import java.io.File
 import kotlin.script.dependencies.ScriptContents
@@ -17,7 +17,6 @@ import kotlin.script.experimental.jvm.JvmDependency
 import kotlin.script.experimental.jvm.compat.mapLegacyDiagnosticSeverity
 import kotlin.script.experimental.jvm.compat.mapLegacyScriptPosition
 import kotlin.script.experimental.jvm.dependenciesFromClassContext
-import kotlin.script.experimental.jvm.dependenciesFromCurrentContext
 import kotlin.script.experimental.jvm.jvm
 
 @Suppress("unused")

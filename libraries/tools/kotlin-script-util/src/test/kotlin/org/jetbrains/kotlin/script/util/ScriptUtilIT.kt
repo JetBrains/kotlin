@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.script.KotlinScriptDefinition
 import org.jetbrains.kotlin.script.KotlinScriptDefinitionFromAnnotatedTemplate
 import org.jetbrains.kotlin.script.util.templates.BindingsScriptTemplateWithLocalResolving
-import org.jetbrains.kotlin.script.util.templates.StandardArgsScriptTemplateWithIvyResolving
 import org.jetbrains.kotlin.script.util.templates.StandardArgsScriptTemplateWithLocalResolving
 import org.jetbrains.kotlin.script.util.templates.StandardArgsScriptTemplateWithMavenResolving
 import org.jetbrains.kotlin.utils.PathUtil.getResourcePathForClass
@@ -98,17 +97,6 @@ done
         }
 
         val scriptClass = compileScript("args-junit-hello-world.kts", StandardArgsScriptTemplateWithMavenResolving::class)
-        Assert.assertNotNull(scriptClass)
-        captureOut {
-            scriptClass!!.getConstructor(Array<String>::class.java)!!.newInstance(arrayOf("a1"))
-        }.let {
-            Assert.assertEquals(argsHelloWorldOutput.linesSplitTrim(), it.linesSplitTrim())
-        }
-    }
-
-    @Test
-    fun testIvyResolveStdJUnitHelloWorld() {
-        val scriptClass = compileScript("args-junit-hello-world.kts", StandardArgsScriptTemplateWithIvyResolving::class)
         Assert.assertNotNull(scriptClass)
         captureOut {
             scriptClass!!.getConstructor(Array<String>::class.java)!!.newInstance(arrayOf("a1"))

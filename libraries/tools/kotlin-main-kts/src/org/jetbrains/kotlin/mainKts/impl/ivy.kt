@@ -3,7 +3,7 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.script.util.resolvers
+package org.jetbrains.kotlin.mainKts.impl
 
 import org.apache.ivy.Ivy
 import org.apache.ivy.core.LogOptions
@@ -18,8 +18,13 @@ import org.apache.ivy.plugins.resolver.URLResolver
 import org.apache.ivy.util.DefaultMessageLogger
 import org.apache.ivy.util.Message
 import org.jetbrains.kotlin.script.util.DependsOn
+import org.jetbrains.kotlin.script.util.KotlinAnnotatedScriptDependenciesResolver
 import org.jetbrains.kotlin.script.util.Repository
+import org.jetbrains.kotlin.script.util.resolvers.DirectResolver
+import org.jetbrains.kotlin.script.util.resolvers.Resolver
 import java.io.File
+import java.net.MalformedURLException
+import java.net.URL
 
 class IvyResolver : Resolver {
 
@@ -117,3 +122,13 @@ class IvyResolver : Resolver {
         }
     }
 }
+
+private fun String.toRepositoryUrlOrNull(): URL? =
+    try {
+        URL(this)
+    } catch (_: MalformedURLException) {
+        null
+    }
+
+class FilesAndIvyResolver :
+    KotlinAnnotatedScriptDependenciesResolver(emptyList(), arrayListOf(DirectResolver(), IvyResolver()).asIterable())

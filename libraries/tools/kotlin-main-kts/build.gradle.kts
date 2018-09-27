@@ -37,6 +37,7 @@ dependencies {
         fatJarContents(project(it)) { isTransitive = false }
         testCompile(project(it))
     }
+    compileOnly("org.apache.ivy:ivy:2.4.0")
     runtime(project(":kotlin-compiler"))
     runtime(project(":kotlin-reflect"))
     fatJarContents("org.apache.ivy:ivy:2.4.0")
