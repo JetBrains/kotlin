@@ -622,8 +622,7 @@ public inline fun <T> Array<out T>.subarrayContentToString(offset: Int, length: 
  */
 @SinceKotlin("1.3")
 public actual fun <T> Array<out T>.copyInto(destination: Array<T>, destinationOffset: Int, startIndex: Int, endIndex: Int): Array<T> {
-    val realEndIndex = if (endIndex == -1) this.size else endIndex // TODO: Remove when default value from expect is fixed
-    this.copyRangeTo(destination, startIndex, realEndIndex, destinationOffset)
+    this.copyRangeTo(destination, startIndex, endIndex, destinationOffset)
     return destination
 }
 
@@ -645,8 +644,7 @@ public actual fun <T> Array<out T>.copyInto(destination: Array<T>, destinationOf
  */
 @SinceKotlin("1.3")
 public actual fun ByteArray.copyInto(destination: ByteArray, destinationOffset: Int, startIndex: Int, endIndex: Int): ByteArray {
-    val realEndIndex = if (endIndex == -1) this.size else endIndex // TODO: Remove when default value from expect is fixed
-    this.copyRangeTo(destination, startIndex, realEndIndex, destinationOffset)
+    this.copyRangeTo(destination, startIndex, endIndex, destinationOffset)
     return destination
 }
 
@@ -668,8 +666,7 @@ public actual fun ByteArray.copyInto(destination: ByteArray, destinationOffset: 
  */
 @SinceKotlin("1.3")
 public actual fun ShortArray.copyInto(destination: ShortArray, destinationOffset: Int, startIndex: Int, endIndex: Int): ShortArray {
-    val realEndIndex = if (endIndex == -1) this.size else endIndex // TODO: Remove when default value from expect is fixed
-    this.copyRangeTo(destination, startIndex, realEndIndex, destinationOffset)
+    this.copyRangeTo(destination, startIndex, endIndex, destinationOffset)
     return destination
 }
 
@@ -691,8 +688,7 @@ public actual fun ShortArray.copyInto(destination: ShortArray, destinationOffset
  */
 @SinceKotlin("1.3")
 public actual fun IntArray.copyInto(destination: IntArray, destinationOffset: Int, startIndex: Int, endIndex: Int): IntArray {
-    val realEndIndex = if (endIndex == -1) this.size else endIndex // TODO: Remove when default value from expect is fixed
-    this.copyRangeTo(destination, startIndex, realEndIndex, destinationOffset)
+    this.copyRangeTo(destination, startIndex, endIndex, destinationOffset)
     return destination
 }
 
@@ -714,8 +710,7 @@ public actual fun IntArray.copyInto(destination: IntArray, destinationOffset: In
  */
 @SinceKotlin("1.3")
 public actual fun LongArray.copyInto(destination: LongArray, destinationOffset: Int, startIndex: Int, endIndex: Int): LongArray {
-    val realEndIndex = if (endIndex == -1) this.size else endIndex // TODO: Remove when default value from expect is fixed
-    this.copyRangeTo(destination, startIndex, realEndIndex, destinationOffset)
+    this.copyRangeTo(destination, startIndex, endIndex, destinationOffset)
     return destination
 }
 
@@ -737,8 +732,7 @@ public actual fun LongArray.copyInto(destination: LongArray, destinationOffset: 
  */
 @SinceKotlin("1.3")
 public actual fun FloatArray.copyInto(destination: FloatArray, destinationOffset: Int, startIndex: Int, endIndex: Int): FloatArray {
-    val realEndIndex = if (endIndex == -1) this.size else endIndex // TODO: Remove when default value from expect is fixed
-    this.copyRangeTo(destination, startIndex, realEndIndex, destinationOffset)
+    this.copyRangeTo(destination, startIndex, endIndex, destinationOffset)
     return destination
 }
 
@@ -760,8 +754,7 @@ public actual fun FloatArray.copyInto(destination: FloatArray, destinationOffset
  */
 @SinceKotlin("1.3")
 public actual fun DoubleArray.copyInto(destination: DoubleArray, destinationOffset: Int, startIndex: Int, endIndex: Int): DoubleArray {
-    val realEndIndex = if (endIndex == -1) this.size else endIndex // TODO: Remove when default value from expect is fixed
-    this.copyRangeTo(destination, startIndex, realEndIndex, destinationOffset)
+    this.copyRangeTo(destination, startIndex, endIndex, destinationOffset)
     return destination
 }
 
@@ -783,8 +776,7 @@ public actual fun DoubleArray.copyInto(destination: DoubleArray, destinationOffs
  */
 @SinceKotlin("1.3")
 public actual fun BooleanArray.copyInto(destination: BooleanArray, destinationOffset: Int, startIndex: Int, endIndex: Int): BooleanArray {
-    val realEndIndex = if (endIndex == -1) this.size else endIndex // TODO: Remove when default value from expect is fixed
-    this.copyRangeTo(destination, startIndex, realEndIndex, destinationOffset)
+    this.copyRangeTo(destination, startIndex, endIndex, destinationOffset)
     return destination
 }
 
@@ -806,8 +798,7 @@ public actual fun BooleanArray.copyInto(destination: BooleanArray, destinationOf
  */
 @SinceKotlin("1.3")
 public actual fun CharArray.copyInto(destination: CharArray, destinationOffset: Int, startIndex: Int, endIndex: Int): CharArray {
-    val realEndIndex = if (endIndex == -1) this.size else endIndex // TODO: Remove when default value from expect is fixed
-    this.copyRangeTo(destination, startIndex, realEndIndex, destinationOffset)
+    this.copyRangeTo(destination, startIndex, endIndex, destinationOffset)
     return destination
 }
 
