@@ -1,5 +1,3 @@
-
-import org.jetbrains.kotlin.serialization.builtins.BuiltInsSerializer
 import org.gradle.jvm.tasks.Jar
 import java.io.File
 
@@ -10,17 +8,17 @@ val builtinsSerialized = File(rootProject.extra["distDir"].toString(), "builtins
 
 val builtins by configurations.creating
 
-val serialize = task("serialize") {
+val serialize = task<Exec>("serialize") {
     val outDir = builtinsSerialized
     val inDirs = arrayOf(builtinsSrc, builtinsNative)
     outputs.dir(outDir)
     inputs.files(*inDirs)
-    doLast {
-        BuiltInsSerializer(dependOnOldBuiltIns = false)
-                .serialize(outDir, inDirs.asList(), listOf()) { totalSize, totalFiles ->
-                    println("Total bytes written: $totalSize to $totalFiles files")
-                }
-    }
+    commandLine(
+        "java", "-cp",
+        rootProject.buildscript.configurations["bootstrapCompilerClasspath"].asPath,
+        "org.jetbrains.kotlin.serialization.builtins.RunKt",
+        "$outDir", *inDirs
+    )
 }
 
 val builtinsJar by task<Jar> {
