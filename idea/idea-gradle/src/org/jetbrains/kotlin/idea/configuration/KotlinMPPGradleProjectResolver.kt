@@ -365,6 +365,19 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtension() {
                     val targetSourceSet = mppModel.sourceSets[targetSourceSetName] ?: continue
                     sourceSetGraph.putEdge(sourceSet, targetSourceSet)
                 }
+                // Workaround: Non-android source sets have commonMain/commonTest in their dependsOn
+                // Remove when the same is implemented for Android modules as well
+                if (sourceSet.platform == KotlinPlatform.ANDROID) {
+                    val commonSourceSetName = if (sourceSet.isTestModule) {
+                        KotlinSourceSet.COMMON_TEST_SOURCE_SET_NAME
+                    } else {
+                        KotlinSourceSet.COMMON_MAIN_SOURCE_SET_NAME
+                    }
+                    val commonSourceSet = mppModel.sourceSets[commonSourceSetName]
+                    if (commonSourceSet != null && commonSourceSet != sourceSet) {
+                        sourceSetGraph.putEdge(sourceSet, commonSourceSet)
+                    }
+                }
             }
             val closedSourceSetGraph = Graphs.transitiveClosure(sourceSetGraph)
             for (sourceSet in closedSourceSetGraph.nodes()) {
@@ -375,16 +388,18 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtension() {
                     getSiblingKotlinModuleData(sourceSet, gradleModule, ideModule, resolverCtx)
                 } ?: continue
                 val dependeeSourceSets = closedSourceSetGraph.successors(sourceSet)
-                val sourceSetInfo = if (isAndroid) {
-                    ideModule.kotlinAndroidSourceSets?.firstOrNull {
+                val sourceSetInfos = if (isAndroid) {
+                    ideModule.kotlinAndroidSourceSets?.filter {
                         (it.kotlinModule as? KotlinCompilation)?.sourceSets?.contains(sourceSet) ?: false
-                    }
+                    } ?: emptyList()
                 } else {
-                    fromDataNode.kotlinSourceSet
+                    listOfNotNull(fromDataNode.kotlinSourceSet)
                 }
-                if (sourceSetInfo != null && sourceSetInfo.kotlinModule is KotlinCompilation) {
-                    val selfName = sourceSetInfo.kotlinModule.fullName()
-                    sourceSetInfo.addSourceSets(dependeeSourceSets, selfName, gradleModule, resolverCtx)
+                for (sourceSetInfo in sourceSetInfos) {
+                    if (sourceSetInfo.kotlinModule is KotlinCompilation) {
+                        val selfName = sourceSetInfo.kotlinModule.fullName()
+                        sourceSetInfo.addSourceSets(dependeeSourceSets, selfName, gradleModule, resolverCtx)
+                    }
                 }
                 if (sourceSet.platform == KotlinPlatform.ANDROID) continue
                 for (dependeeSourceSet in dependeeSourceSets) {
