@@ -19,6 +19,7 @@ import com.intellij.openapi.externalSystem.service.project.manage.ContentRootDat
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.roots.DependencyScope
 import com.intellij.openapi.roots.ModifiableRootModel
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.util.containers.stream
@@ -76,19 +77,27 @@ class KotlinAndroidGradleMPPModuleDataService : AbstractProjectDataService<Modul
             }
             val androidModel = AndroidModuleModel.get(module) ?: continue
             val variantName = androidModel.selectedVariant.name
-            val mainSourceSetInfo = nodeToImport.kotlinAndroidSourceSets?.firstOrNull { it.kotlinModule.name == variantName } ?: continue
-            val mainCompilation = mainSourceSetInfo.kotlinModule as? KotlinCompilation ?: continue
-            for (sourceSet in mainCompilation.sourceSets) {
-                if (sourceSet.platform != KotlinPlatform.ANDROID) {
-                    val sourceSetId = mainSourceSetInfo.sourceSetIdsByName[sourceSet.name] ?: continue
-                    val sourceSetData = ExternalSystemApiUtil.findFirstRecursively(projectNode) {
-                        (it.data as? ModuleData)?.id == sourceSetId
-                    }?.data as? ModuleData ?: continue
-                    val sourceSetModule = modelsProvider.findIdeModule(sourceSetData) ?: continue
-                    rootModel.addModuleOrderEntry(sourceSetModule)
+            val activeSourceSetInfos = nodeToImport.kotlinAndroidSourceSets?.filter { it.kotlinModule.name.startsWith(variantName) } ?: emptyList()
+            for (activeSourceSetInfo in activeSourceSetInfos) {
+                val activeCompilation = activeSourceSetInfo.kotlinModule as? KotlinCompilation ?: continue
+                for (sourceSet in activeCompilation.sourceSets) {
+                    if (sourceSet.platform != KotlinPlatform.ANDROID) {
+                        val sourceSetId = activeSourceSetInfo.sourceSetIdsByName[sourceSet.name] ?: continue
+                        val sourceSetData = ExternalSystemApiUtil.findFirstRecursively(projectNode) {
+                            (it.data as? ModuleData)?.id == sourceSetId
+                        }?.data as? ModuleData ?: continue
+                        val sourceSetModule = modelsProvider.findIdeModule(sourceSetData) ?: continue
+                        val existingEntry = rootModel.findModuleOrderEntry(sourceSetModule)
+                        val dependencyScope = if (activeSourceSetInfo.isTestModule) DependencyScope.TEST else DependencyScope.COMPILE
+                        if (existingEntry != null && existingEntry.scope == dependencyScope) continue
+                        rootModel.addModuleOrderEntry(sourceSetModule).also { it.scope = dependencyScope }
+                    }
                 }
             }
-            KotlinSourceSetDataService.configureFacet(moduleData, mainSourceSetInfo, nodeToImport, module, modelsProvider)
+            val mainSourceSetInfo = activeSourceSetInfos.firstOrNull { it.kotlinModule.name == variantName }
+            if (mainSourceSetInfo != null) {
+                KotlinSourceSetDataService.configureFacet(moduleData, mainSourceSetInfo, nodeToImport, module, modelsProvider)
+            }
 
             val kotlinFacet = KotlinFacet.get(module)
             if (kotlinFacet != null) {
