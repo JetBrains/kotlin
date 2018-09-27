@@ -105,6 +105,8 @@
           <Problem reference="org.jetbrains.java.decompiler.main.decompiler.BaseDecompiler#addSpace" reason="Method was replaced with outher methods in 182. Use addSpaceEx instead." />
           <Problem reference="com.intellij.psi.codeStyle.CommonCodeStyleSettings#copyFrom" reason="Absent in 173. Use CompatibilityKt.copyFromEx instead." />
           <Problem reference="com.intellij.psi.codeStyle.CommonCodeStyleSettingsManager#copy" reason="Removed since 181. Use CompatibilityKt.copyFromEx instead." />
+          <Problem reference="com.intellij.notification.NotificationAction#createSimple" reason="Absent in 173." />
+          <Problem reference="com.intellij.notification.NotificationAction#create" reason="Absent in 173." />
         </list>
       </option>
     </inspection_tool>
