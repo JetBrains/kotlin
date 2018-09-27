@@ -1,3 +1,4 @@
+// HIGHLIGHT: INFORMATION
 // WITH_RUNTIME
 
 fun test(list: List<Int>): List<Int> {
@@ -5,5 +6,7 @@ fun test(list: List<Int>): List<Int> {
             .asSequence()
             .filter { it > 1 }
             .map { it * 2 }
+            .map { it * 3 }
+            .map { it * 4 }
             .toList()
 }

@@ -2985,11 +2985,11 @@ The Kotlin plugin provides language support in IntelliJ IDEA and Android Studio.
     />
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.collections.ConvertCallChainIntoSequenceInspection"
-                     displayName="Call chain on collection should be converted into 'Sequence'"
+                     displayName="Call chain on collection could be converted into 'Sequence' to increase performance"
                      groupPath="Kotlin"
                      groupName="Style issues"
                      enabledByDefault="true"
-                     level="INFORMATION"
+                     level="INFO"
                      language="kotlin"
     />
 
