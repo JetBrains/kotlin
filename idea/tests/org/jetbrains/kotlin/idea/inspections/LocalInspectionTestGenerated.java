@@ -564,6 +564,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
                 runTest("idea/testData/inspectionsLocal/collections/convertCallChainIntoSequence/comment2.kt");
             }
 
+            @TestMetadata("endsWithGroupingBy.kt")
+            public void testEndsWithGroupingBy() throws Exception {
+                runTest("idea/testData/inspectionsLocal/collections/convertCallChainIntoSequence/endsWithGroupingBy.kt");
+            }
+
             @TestMetadata("mutableList.kt")
             public void testMutableList() throws Exception {
                 runTest("idea/testData/inspectionsLocal/collections/convertCallChainIntoSequence/mutableList.kt");
@@ -642,6 +647,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             @TestMetadata("simple4.kt")
             public void testSimple4() throws Exception {
                 runTest("idea/testData/inspectionsLocal/collections/convertCallChainIntoSequence/simple4.kt");
+            }
+
+            @TestMetadata("startsWithGroupingBy.kt")
+            public void testStartsWithGroupingBy() throws Exception {
+                runTest("idea/testData/inspectionsLocal/collections/convertCallChainIntoSequence/startsWithGroupingBy.kt");
             }
 
             @TestMetadata("idea/testData/inspectionsLocal/collections/convertCallChainIntoSequence/termination")
