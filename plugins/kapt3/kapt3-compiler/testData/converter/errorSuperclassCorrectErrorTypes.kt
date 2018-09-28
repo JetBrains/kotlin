@@ -49,3 +49,7 @@ class MappedList<R>() : AbstractList<R>(), List<R> {
     override fun get(index: Int) = throw RuntimeException()
     override val size get() = 0
 }
+
+interface Parent<A : CharSequence?, B>
+
+class Child : AbstractList<String>(), Parent<String, Int>, List<String>
