@@ -200,7 +200,7 @@ actual class ArrayList<E> private constructor(
 
     private fun insertAtInternal(i: Int, n: Int) {
         ensureExtraCapacity(n)
-        array.copyRange(fromIndex = i, toIndex = offset + length, destinationIndex = i + n)
+        array.copyRangeTo(array, fromIndex = i, toIndex = offset + length, destinationIndex = i + n)
         length += n
     }
 
@@ -238,7 +238,7 @@ actual class ArrayList<E> private constructor(
             return old
         } else {
             val old = array[i]
-            array.copyRange(fromIndex = i + 1, toIndex = offset + length, destinationIndex = i)
+            array.copyRangeTo(array, fromIndex = i + 1, toIndex = offset + length, destinationIndex = i)
             array.resetAt(offset + length - 1)
             length--
             return old
@@ -249,7 +249,7 @@ actual class ArrayList<E> private constructor(
         if (backing != null) {
             backing.removeRangeInternal(rangeOffset, rangeLength)
         } else {
-            array.copyRange(fromIndex = rangeOffset + rangeLength, toIndex = length, destinationIndex = rangeOffset)
+            array.copyRangeTo(array, fromIndex = rangeOffset + rangeLength, toIndex = length, destinationIndex = rangeOffset)
             array.resetRange(fromIndex = length - rangeLength, toIndex = length)
         }
         length -= rangeLength
@@ -272,7 +272,7 @@ actual class ArrayList<E> private constructor(
                 }
             }
             val removed = rangeLength - j
-            array.copyRange(fromIndex = rangeOffset + rangeLength, toIndex = length, destinationIndex = rangeOffset + j)
+            array.copyRangeTo(array, fromIndex = rangeOffset + rangeLength, toIndex = length, destinationIndex = rangeOffset + j)
             array.resetRange(fromIndex = length - removed, toIndex = length)
             length -= removed
             return removed

@@ -359,13 +359,6 @@ internal fun DoubleArray.copyRangeTo(destination: DoubleArray, fromIndex: Int, t
 internal fun BooleanArray.copyRangeTo(destination: BooleanArray, fromIndex: Int, toIndex: Int, destinationIndex: Int = 0) {
     copyImpl(this, fromIndex, destination, destinationIndex, toIndex - fromIndex)
 }
-/**
- * Copies a range of array elements at a specified [fromIndex] (inclusive) to [toIndex] (exclusive) range of indices
- * to another part of this array starting at [destinationIndex].
- */
-public fun <E> Array<E>.copyRange(fromIndex: Int, toIndex: Int, destinationIndex: Int = 0) {
-    copyRangeTo(this, fromIndex, toIndex, destinationIndex)
-}
 
 internal fun <E> Collection<E>.collectionToString(): String {
     val sb = StringBuilder(2 + size * 3)
