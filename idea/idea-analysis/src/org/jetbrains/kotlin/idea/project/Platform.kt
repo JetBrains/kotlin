@@ -146,7 +146,7 @@ fun Project.getLanguageVersionSettings(
     }
 
     val extraAnalysisFlags = additionalArguments.configureAnalysisFlags(MessageCollector.NONE).apply {
-        if (jsr305State != null) put(AnalysisFlag.jsr305, jsr305State)
+        if (jsr305State != null) put(JvmAnalysisFlags.jsr305, jsr305State)
     }
 
     return LanguageVersionSettingsImpl(

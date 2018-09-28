@@ -151,8 +151,8 @@ abstract class BasicIrBoxTest(
                 LanguageFeature.MultiPlatformProjects to LanguageFeature.State.ENABLED
             ),
             analysisFlags = mapOf(
-                AnalysisFlag.useExperimental to listOf("kotlin.contracts.ExperimentalContracts", "kotlin.Experimental"),
-                AnalysisFlag.allowResultReturnType to true
+                AnalysisFlags.useExperimental to listOf("kotlin.contracts.ExperimentalContracts", "kotlin.Experimental"),
+                AnalysisFlags.allowResultReturnType to true
             )
         )
 

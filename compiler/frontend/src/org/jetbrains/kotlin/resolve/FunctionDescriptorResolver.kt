@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.getReceiverTypeFromFunctionType
 import org.jetbrains.kotlin.builtins.getValueParameterTypesFromFunctionType
 import org.jetbrains.kotlin.builtins.isBuiltinFunctionalType
-import org.jetbrains.kotlin.config.AnalysisFlag
+import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.contracts.description.ContractProviderKey
@@ -261,7 +261,7 @@ class FunctionDescriptorResolver(
 
         val isContractsEnabled = languageVersionSettings.supportsFeature(LanguageFeature.AllowContractsForCustomFunctions) ||
                 // We need to enable contracts if we're compiling "kotlin"-package to be able to ship contracts in stdlib in 1.2
-                languageVersionSettings.getFlag(AnalysisFlag.allowKotlinPackage)
+                languageVersionSettings.getFlag(AnalysisFlags.allowKotlinPackage)
 
         if (!isContractsEnabled || !function.isContractPresentPsiCheck()) return null
 

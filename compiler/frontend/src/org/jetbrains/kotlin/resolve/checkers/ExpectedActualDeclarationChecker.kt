@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.resolve.checkers
 
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.config.AnalysisFlag
+import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.Errors
@@ -51,7 +51,7 @@ object ExpectedActualDeclarationChecker : DeclarationChecker {
         if (descriptor.isExpect) {
             checkExpectedDeclarationHasActual(declaration, descriptor, context.trace, descriptor.module, context.expectActualTracker)
         } else {
-            val checkActual = !context.languageVersionSettings.getFlag(AnalysisFlag.multiPlatformDoNotCheckActual)
+            val checkActual = !context.languageVersionSettings.getFlag(AnalysisFlags.multiPlatformDoNotCheckActual)
             checkActualDeclarationHasExpected(declaration, descriptor, context.trace, checkActual)
         }
     }

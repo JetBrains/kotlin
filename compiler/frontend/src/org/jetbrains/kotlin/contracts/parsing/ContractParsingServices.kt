@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.contracts.parsing
 
-import org.jetbrains.kotlin.config.AnalysisFlag
+import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.contracts.description.ContractDescription
@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.descriptors.isOverridable
-import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.psiUtil.isContractDescriptionCallPsiCheck
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTrace
@@ -69,7 +69,7 @@ class ContractParsingServices(val languageVersionSettings: LanguageVersionSettin
     private fun checkFeatureEnabled(collector: ContractParsingDiagnosticsCollector) {
         val isFeatureTurnedOn = languageVersionSettings.supportsFeature(LanguageFeature.AllowContractsForCustomFunctions) ||
                 // This condition is here for technical purposes of compiling 1.2-runtime with contracts
-                languageVersionSettings.getFlag(AnalysisFlag.Flags.allowKotlinPackage)
+                languageVersionSettings.getFlag(AnalysisFlags.allowKotlinPackage)
         if (!isFeatureTurnedOn) {
             collector.unsupportedFeature(languageVersionSettings)
         }

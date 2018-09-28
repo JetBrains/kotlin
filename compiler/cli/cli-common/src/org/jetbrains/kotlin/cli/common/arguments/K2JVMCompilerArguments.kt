@@ -261,13 +261,13 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
 
     override fun configureAnalysisFlags(collector: MessageCollector): MutableMap<AnalysisFlag<*>, Any> {
         val result = super.configureAnalysisFlags(collector)
-        result.put(AnalysisFlag.strictMetadataVersionSemantics, strictMetadataVersionSemantics)
-        result[AnalysisFlag.jsr305] = Jsr305Parser(collector).parse(
+        result[JvmAnalysisFlags.strictMetadataVersionSemantics] = strictMetadataVersionSemantics
+        result[JvmAnalysisFlags.jsr305] = Jsr305Parser(collector).parse(
             jsr305,
             supportCompatqualCheckerFrameworkAnnotations
         )
-        result[AnalysisFlag.ignoreDataFlowInAssert] = JVMAssertionsMode.fromString(assertionsMode) != JVMAssertionsMode.LEGACY
-        JvmDefaultMode.fromStringOrNull(jvmDefault)?.let { result[AnalysisFlag.jvmDefaultMode] = it }
+        result[AnalysisFlags.ignoreDataFlowInAssert] = JVMAssertionsMode.fromString(assertionsMode) != JVMAssertionsMode.LEGACY
+        JvmDefaultMode.fromStringOrNull(jvmDefault)?.let { result[JvmAnalysisFlags.jvmDefaultMode] = it }
                 ?: collector.report(
                     CompilerMessageSeverity.ERROR,
                     "Unknown @JvmDefault mode: $jvmDefault, " +
