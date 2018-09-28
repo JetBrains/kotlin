@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.tools
 import kotlinx.metadata.jvm.*
 import org.objectweb.asm.Opcodes
 import org.objectweb.asm.tree.*
-import kotlin.comparisons.*
 
 val ACCESS_NAMES = mapOf(
     Opcodes.ACC_PUBLIC to "public",
