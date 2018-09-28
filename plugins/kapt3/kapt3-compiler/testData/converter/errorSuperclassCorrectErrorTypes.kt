@@ -1,5 +1,6 @@
 // CORRECT_ERROR_TYPES
 // NO_VALIDATION
+// WITH_RUNTIME
 
 @file:Suppress("UNRESOLVED_REFERENCE", "DELEGATION_NOT_TO_INTERFACE", "SUPERTYPE_NOT_INITIALIZED")
 package test
@@ -43,3 +44,8 @@ class Generics1 : Foo<String>()
 class Generics2 : Foo<String>
 
 class Generics3 : Foo<Bar, Baz, Boo<Baz, List<*>>, String>
+
+class MappedList<R>() : AbstractList<R>(), List<R> {
+    override fun get(index: Int) = throw RuntimeException()
+    override val size get() = 0
+}
