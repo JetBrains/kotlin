@@ -3870,7 +3870,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             gen(expr, exprType, exprKotlinType);
         }
 
-        genInvokeAppendMethod(v, exprType.getSort() == Type.ARRAY ? OBJECT_TYPE : exprType, exprKotlinType);
+        genInvokeAppendMethod(v, exprType, exprKotlinType);
     }
 
     @Nullable
