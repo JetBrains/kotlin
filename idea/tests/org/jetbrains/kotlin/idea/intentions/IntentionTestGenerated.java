@@ -3539,6 +3539,16 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
                 KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
             }
 
+            @TestMetadata("actual.kt")
+            public void testActual() throws Exception {
+                runTest("idea/testData/intentions/changeVisibility/private/actual.kt");
+            }
+
+            @TestMetadata("actual2.kt")
+            public void testActual2() throws Exception {
+                runTest("idea/testData/intentions/changeVisibility/private/actual2.kt");
+            }
+
             public void testAllFilesPresentInPrivate() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/changeVisibility/private"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
             }
@@ -3546,6 +3556,16 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             @TestMetadata("annotated.kt")
             public void testAnnotated() throws Exception {
                 runTest("idea/testData/intentions/changeVisibility/private/annotated.kt");
+            }
+
+            @TestMetadata("expect.kt")
+            public void testExpect() throws Exception {
+                runTest("idea/testData/intentions/changeVisibility/private/expect.kt");
+            }
+
+            @TestMetadata("expect2.kt")
+            public void testExpect2() throws Exception {
+                runTest("idea/testData/intentions/changeVisibility/private/expect2.kt");
             }
 
             @TestMetadata("hasModifier1.kt")
@@ -3566,6 +3586,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             @TestMetadata("hasModifier4.kt")
             public void testHasModifier4() throws Exception {
                 runTest("idea/testData/intentions/changeVisibility/private/hasModifier4.kt");
+            }
+
+            @TestMetadata("interface.kt")
+            public void testInterface() throws Exception {
+                runTest("idea/testData/intentions/changeVisibility/private/interface.kt");
             }
 
             @TestMetadata("jvmField.kt")
@@ -3661,6 +3686,21 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             @TestMetadata("onAnnotationParameter.kt")
             public void testOnAnnotationParameter() throws Exception {
                 runTest("idea/testData/intentions/changeVisibility/private/onAnnotationParameter.kt");
+            }
+
+            @TestMetadata("otherUsage.kt")
+            public void testOtherUsage() throws Exception {
+                runTest("idea/testData/intentions/changeVisibility/private/otherUsage.kt");
+            }
+
+            @TestMetadata("otherUsage2.kt")
+            public void testOtherUsage2() throws Exception {
+                runTest("idea/testData/intentions/changeVisibility/private/otherUsage2.kt");
+            }
+
+            @TestMetadata("otherUsage3.kt")
+            public void testOtherUsage3() throws Exception {
+                runTest("idea/testData/intentions/changeVisibility/private/otherUsage3.kt");
             }
 
             @TestMetadata("propertyGetter.kt")

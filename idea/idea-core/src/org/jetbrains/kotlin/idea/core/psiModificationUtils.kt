@@ -17,18 +17,29 @@
 package org.jetbrains.kotlin.idea.core
 
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiReference
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.impl.source.codeStyle.CodeEditUtil
+import com.intellij.psi.search.GlobalSearchScope
+import com.intellij.psi.search.PsiSearchHelper
+import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.util.Processor
 import org.jetbrains.kotlin.builtins.isFunctionOrSuspendFunctionType
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.extensions.DeclarationAttributeAltererExtension
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.references.mainReference
+import org.jetbrains.kotlin.idea.search.isCheapEnoughToSearchConsideringOperators
+import org.jetbrains.kotlin.idea.search.usagesSearch.dataClassComponentFunction
+import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
+import org.jetbrains.kotlin.idea.stubindex.KotlinSourceFilterScope
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.hasJvmFieldAnnotation
+import org.jetbrains.kotlin.idea.util.isExpectDeclaration
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
@@ -270,10 +281,65 @@ fun KtDeclaration.implicitVisibility(): KtModifierKeywordToken? =
         }
     }
 
-fun KtModifierListOwner.canBePrivate(): Boolean {
+fun KtModifierListOwner.canBePrivate(checkUsedInClass: Boolean = false): Boolean {
     if (modifierList?.hasModifier(KtTokens.ABSTRACT_KEYWORD) == true) return false
     if (this.isAnnotationClassPrimaryConstructor()) return false
     if (this is KtProperty && this.hasJvmFieldAnnotation()) return false
+
+    val declaration = this as? KtDeclaration
+    if (declaration is KtDeclaration) {
+        if (this.hasActualModifier() || declaration.isExpectDeclaration()) return false
+        val classOrObject = declaration.containingClassOrObject
+        if (classOrObject != null) {
+            if (classOrObject is KtClass && classOrObject.isInterface()) return false
+
+            // properties can be referred by component1/component2, which is too expensive to search, don't analyze them
+            if (declaration is KtParameter && declaration.dataClassComponentFunction() != null) return false
+
+            val psiSearchHelper = PsiSearchHelper.SERVICE.getInstance(declaration.project)
+            val useScope = declaration.useScope
+            val name = declaration.name ?: return false
+            val restrictedScope = if (useScope is GlobalSearchScope) {
+                when (psiSearchHelper.isCheapEnoughToSearchConsideringOperators(name, useScope, null, null)) {
+                    PsiSearchHelper.SearchCostResult.TOO_MANY_OCCURRENCES -> return false
+                    PsiSearchHelper.SearchCostResult.ZERO_OCCURRENCES -> return false
+                    PsiSearchHelper.SearchCostResult.FEW_OCCURRENCES -> KotlinSourceFilterScope.projectSources(useScope, declaration.project)
+                }
+            } else useScope
+
+            var otherUsageFound = false
+            var inClassUsageFound = false
+            ReferencesSearch.search(declaration, restrictedScope).forEach(Processor<PsiReference> {
+                val usage = it.element
+                if (classOrObject != usage.getParentOfType<KtClassOrObject>(false)) {
+                    otherUsageFound = true
+                    return@Processor false
+                }
+                val classOrObjectDescriptor = classOrObject.descriptor as? ClassDescriptor
+                if (classOrObjectDescriptor != null) {
+                    val receiverType = (usage as? KtElement)?.resolveToCall()?.dispatchReceiver?.type
+                    val receiverDescriptor = receiverType?.constructor?.declarationDescriptor
+                    if (receiverDescriptor != null && receiverDescriptor != classOrObjectDescriptor) {
+                        otherUsageFound = true
+                        return@Processor false
+                    }
+                }
+                val function = usage.getParentOfTypesAndPredicate<KtDeclarationWithBody>(
+                    true, KtNamedFunction::class.java, KtPropertyAccessor::class.java
+                ) { true }
+                val insideInlineFun = function?.let { f -> f.hasModifier(KtTokens.INLINE_KEYWORD) && !f.isPrivate() } ?: false
+                if (insideInlineFun) {
+                    otherUsageFound = true
+                    false
+                } else {
+                    inClassUsageFound = true
+                    true
+                }
+            })
+            return (!checkUsedInClass || inClassUsageFound) && !otherUsageFound
+        }
+    }
+
     return true
 }
 
