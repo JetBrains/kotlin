@@ -563,7 +563,7 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable, Co
         k2jsCompilerArguments.setModuleKind(getSelectedModuleKind());
 
         k2jsCompilerArguments.setSourceMapPrefix(sourceMapPrefix.getText());
-        k2jsCompilerArguments.setSourceMapEmbedSources(getSelectedSourceMapSourceEmbedding());
+        k2jsCompilerArguments.setSourceMapEmbedSources(generateSourceMapsCheckBox.isSelected() ? getSelectedSourceMapSourceEmbedding() : null);
 
         k2jvmCompilerArguments.setJvmTarget(getSelectedJvmVersion());
 
