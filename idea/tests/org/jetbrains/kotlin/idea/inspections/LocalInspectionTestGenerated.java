@@ -5071,6 +5071,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             runTest("idea/testData/inspectionsLocal/replacePutWithAssignment/putOnParameter.kt");
         }
 
+        @TestMetadata("putOnSuper.kt")
+        public void testPutOnSuper() throws Exception {
+            runTest("idea/testData/inspectionsLocal/replacePutWithAssignment/putOnSuper.kt");
+        }
+
         @TestMetadata("putOnThis.kt")
         public void testPutOnThis() throws Exception {
             runTest("idea/testData/inspectionsLocal/replacePutWithAssignment/putOnThis.kt");
