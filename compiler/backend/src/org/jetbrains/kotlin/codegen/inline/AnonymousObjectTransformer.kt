@@ -448,7 +448,8 @@ class AnonymousObjectTransformer(
                     ArrayUtil.toStringArray(original.exceptions)
                 ), original.access, original.name, original.desc, null, null,
                 obtainClassBuilderForCoroutineState = { builder },
-                lineNumber = 0, // <- TODO
+                element = null,
+                diagnostics = state.diagnostics,
                 languageVersionSettings = languageVersionSettings,
                 shouldPreserveClassInitialization = state.constructorCallNormalizationMode.shouldPreserveClassInitialization,
                 containingClassInternalName = builder.thisName,
@@ -477,7 +478,8 @@ class AnonymousObjectTransformer(
                     ArrayUtil.toStringArray(original.exceptions)
                 ), original.access, original.name, original.desc, null, null,
                 obtainClassBuilderForCoroutineState = { (inliningContext as RegeneratedClassContext).continuationBuilders[continuationClassName]!! },
-                lineNumber = 0, // <- TODO
+                element = null,
+                diagnostics = state.diagnostics,
                 languageVersionSettings = languageVersionSettings,
                 shouldPreserveClassInitialization = state.constructorCallNormalizationMode.shouldPreserveClassInitialization,
                 containingClassInternalName = builder.thisName,
