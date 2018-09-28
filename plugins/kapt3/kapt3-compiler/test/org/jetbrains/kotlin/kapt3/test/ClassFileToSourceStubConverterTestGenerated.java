@@ -124,6 +124,11 @@ public class ClassFileToSourceStubConverterTestGenerated extends AbstractClassFi
         runTest("plugins/kapt3/kapt3-compiler/testData/converter/ignoredMembers.kt");
     }
 
+    @TestMetadata("implicitReturnTypes.kt")
+    public void testImplicitReturnTypes() throws Exception {
+        runTest("plugins/kapt3/kapt3-compiler/testData/converter/implicitReturnTypes.kt");
+    }
+
     @TestMetadata("importsForErrorTypes.kt")
     public void testImportsForErrorTypes() throws Exception {
         runTest("plugins/kapt3/kapt3-compiler/testData/converter/importsForErrorTypes.kt");
@@ -147,6 +152,11 @@ public class ClassFileToSourceStubConverterTestGenerated extends AbstractClassFi
     @TestMetadata("innerClassesWithTypeParameters.kt")
     public void testInnerClassesWithTypeParameters() throws Exception {
         runTest("plugins/kapt3/kapt3-compiler/testData/converter/innerClassesWithTypeParameters.kt");
+    }
+
+    @TestMetadata("interfaceImplementation.kt")
+    public void testInterfaceImplementation() throws Exception {
+        runTest("plugins/kapt3/kapt3-compiler/testData/converter/interfaceImplementation.kt");
     }
 
     @TestMetadata("invalidFieldName.kt")
