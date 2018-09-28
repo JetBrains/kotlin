@@ -62,7 +62,10 @@ private fun Reader.parseNextArgument(): String? {
         if (r.isWhitespace()) break
 
         when (r) {
-            DOUBLE_QUOTE, SINGLE_QUOTE -> consumeRestOfEscapedSequence(sb, r)
+            DOUBLE_QUOTE, SINGLE_QUOTE -> {
+                consumeRestOfEscapedSequence(sb, r)
+                return sb.toString()
+            }
             BACKSLASH -> nextChar()?.apply(sb::append)
             else -> sb.append(r)
         }

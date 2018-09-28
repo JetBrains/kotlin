@@ -66,6 +66,11 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/jvm/apiVersionLessThanLanguageUsingArgfile.args");
         }
 
+        @TestMetadata("argfileWithEmptyArgument.args")
+        public void testArgfileWithEmptyArgument() throws Exception {
+            runTest("compiler/testData/cli/jvm/argfileWithEmptyArgument.args");
+        }
+
         @TestMetadata("argfileWithEscaping.args")
         public void testArgfileWithEscaping() throws Exception {
             runTest("compiler/testData/cli/jvm/argfileWithEscaping.args");
