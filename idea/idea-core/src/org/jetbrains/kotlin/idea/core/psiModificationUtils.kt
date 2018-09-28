@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.hasJvmFieldAnnotation
+import org.jetbrains.kotlin.idea.util.isExpectDeclaration
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
@@ -282,6 +283,17 @@ fun KtModifierListOwner.canBePrivate(): Boolean {
     if (modifierList?.hasModifier(KtTokens.ABSTRACT_KEYWORD) == true) return false
     if (this.isAnnotationClassPrimaryConstructor()) return false
     if (this is KtProperty && this.hasJvmFieldAnnotation()) return false
+
+    if (this is KtDeclaration) {
+        if (hasActualModifier() || isExpectDeclaration()) return false
+        val containingClassOrObject = containingClassOrObject ?: return true
+        if (containingClassOrObject is KtClass &&
+            (containingClassOrObject.isInterface() || containingClassOrObject.isAnnotation())
+        ) {
+            return false
+        }
+    }
+
     return true
 }
 
