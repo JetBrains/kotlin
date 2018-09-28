@@ -2,8 +2,6 @@ import kotlin.native.concurrent.*
 import kotlinx.cinterop.*
 import platform.AppKit.*
 import platform.Foundation.*
-import platform.objc.*
-import platform.osx.*
 import platform.darwin.*
 import platform.posix.*
 
@@ -34,11 +32,16 @@ private class Controller : NSObject() {
         dispatch_async_f(asyncQueue, DetachedObjectGraph {
             Data(clock_gettime_nsec_np(CLOCK_REALTIME))
         }.asCPointer(), staticCFunction {
-            it ->
+                it ->
             initRuntimeIfNeeded()
             val data = DetachedObjectGraph<Data>(it).attach()
             println("in async: $data")
         })
+    }
+
+    @ObjCAction
+    fun onQuit() {
+        NSApplication.sharedApplication().stop(this)
     }
 }
 
@@ -51,10 +54,10 @@ private class MyAppDelegate() : NSObject(), NSApplicationDelegateProtocol {
         val mainDisplayRect = NSScreen.mainScreen()!!.frame
         val windowRect = mainDisplayRect.useContents {
             NSMakeRect(
-                    origin.x + size.width * 0.25,
-                    origin.y + size.height * 0.25,
-                    size.width * 0.5,
-                    size.height * 0.5
+                origin.x + size.width * 0.25,
+                origin.y + size.height * 0.25,
+                size.width * 0.5,
+                size.height * 0.5
             )
 
         }
@@ -68,7 +71,7 @@ private class MyAppDelegate() : NSObject(), NSApplicationDelegateProtocol {
             hasShadow = true
             preferredBackingLocation = NSWindowBackingLocationVideoMemory
             hidesOnDeactivate = false
-            backgroundColor = NSColor.whiteColor()
+            backgroundColor = NSColor.grayColor()
             releasedWhenClosed = false
 
             delegate = object : NSObject(), NSWindowDelegateProtocol {
@@ -79,15 +82,23 @@ private class MyAppDelegate() : NSObject(), NSApplicationDelegateProtocol {
             }
         }
 
-        val button = NSButton(NSMakeRect(10.0, 10.0, 100.0, 40.0)).apply {
+        val buttonPress = NSButton(NSMakeRect(10.0, 10.0, 100.0, 40.0)).apply {
             title = "Press me"
             target = controller
             action = NSSelectorFromString("onClick")
         }
-        window.contentView!!.addSubview(button)
+        window.contentView!!.addSubview(buttonPress)
+        val buttonQuit = NSButton(NSMakeRect(120.0, 10.0, 100.0, 40.0)).apply {
+            title = "Quit"
+            target = controller
+            action = NSSelectorFromString("onQuit")
+        }
+        window.contentView!!.addSubview(buttonQuit)
+
     }
 
     override fun applicationWillFinishLaunching(notification: NSNotification) {
         window.makeKeyAndOrderFront(this)
     }
 }
+
