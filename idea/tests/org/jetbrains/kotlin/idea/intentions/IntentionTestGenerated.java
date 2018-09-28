@@ -3568,6 +3568,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
                 runTest("idea/testData/intentions/changeVisibility/private/hasModifier4.kt");
             }
 
+            @TestMetadata("jvmField.kt")
+            public void testJvmField() throws Exception {
+                runTest("idea/testData/intentions/changeVisibility/private/jvmField.kt");
+            }
+
             @TestMetadata("noModifierListAnnotation.kt")
             public void testNoModifierListAnnotation() throws Exception {
                 runTest("idea/testData/intentions/changeVisibility/private/noModifierListAnnotation.kt");

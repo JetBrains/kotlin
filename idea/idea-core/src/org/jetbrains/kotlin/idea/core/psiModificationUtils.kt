@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
+import org.jetbrains.kotlin.idea.util.hasJvmFieldAnnotation
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
@@ -277,7 +278,12 @@ fun KtDeclaration.implicitVisibility(): KtModifierKeywordToken? {
     }
 }
 
-fun KtModifierListOwner.canBePrivate() = modifierList?.hasModifier(KtTokens.ABSTRACT_KEYWORD) != true
+fun KtModifierListOwner.canBePrivate(): Boolean {
+    if (modifierList?.hasModifier(KtTokens.ABSTRACT_KEYWORD) == true) return false
+    if (this.isAnnotationClassPrimaryConstructor()) return false
+    if (this is KtProperty && this.hasJvmFieldAnnotation()) return false
+    return true
+}
 
 fun KtModifierListOwner.canBeProtected(): Boolean {
     val parent = when (this) {
@@ -290,6 +296,11 @@ fun KtModifierListOwner.canBeProtected(): Boolean {
         else -> false
     }
 }
+
+fun KtModifierListOwner.canBeInternal(): Boolean = !isAnnotationClassPrimaryConstructor()
+
+private fun KtModifierListOwner.isAnnotationClassPrimaryConstructor(): Boolean =
+    this is KtPrimaryConstructor && (this.parent as? KtClass)?.hasModifier(KtTokens.ANNOTATION_KEYWORD) ?: false
 
 fun KtClass.isInheritable(): Boolean {
     return when (getModalityFromDescriptor()) {
