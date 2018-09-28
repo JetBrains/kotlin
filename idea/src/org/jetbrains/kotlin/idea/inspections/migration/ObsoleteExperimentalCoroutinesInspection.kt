@@ -127,15 +127,12 @@ private class ObsoleteTopLevelFunctionUsage(
             return false
         }
 
-        val problemDescriptor = holder.manager.createProblemDescriptor(
-            simpleNameExpression,
+        holder.registerProblem(
             simpleNameExpression,
             "`$newFqName` is expected to be used since Kotlin 1.3",
             ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
-            isOnTheFly,
             ObsoleteCoroutineUsageFix(fix)
         )
-        holder.registerProblem(problemDescriptor)
 
         return true
     }
@@ -166,16 +163,13 @@ private class ObsoleteExtensionFunctionUsage(
             return false
         }
 
-        val problemDescriptor = holder.manager.createProblemDescriptor(
-            simpleNameExpression,
+        holder.registerProblem(
             simpleNameExpression,
             "Methods are absent in coroutines class since 1.3",
             ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
-            isOnTheFly,
             ObsoleteCoroutineUsageFix(fix)
         )
 
-        holder.registerProblem(problemDescriptor)
         return true
     }
 
@@ -209,16 +203,13 @@ private class ExperimentalImportUsage : CoroutineMigrationProblem {
 
         findBinding(simpleNameExpression) ?: return false
 
-        val problemDescriptor = holder.manager.createProblemDescriptor(
-            reportExpression,
+        holder.registerProblem(
             reportExpression,
             "Experimental coroutines usages are obsolete since 1.3",
             ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
-            isOnTheFly,
             ObsoleteCoroutineUsageFix(ObsoleteCoroutineImportFix)
         )
 
-        holder.registerProblem(problemDescriptor)
         return true
     }
 
