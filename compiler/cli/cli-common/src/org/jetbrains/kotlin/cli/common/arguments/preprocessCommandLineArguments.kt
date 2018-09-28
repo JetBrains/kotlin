@@ -16,8 +16,6 @@ private const val EXPERIMENTAL_ARGFILE_ARGUMENT = "-Xargfile="
 private const val SINGLE_QUOTE = '\''
 private const val DOUBLE_QUOTE = '"'
 private const val BACKSLASH = '\\'
-private const val WHITESPACE = ' '
-private const val NEWLINE = '\n'
 
 /**
  * Performs initial preprocessing of arguments, passed to the compiler.
@@ -56,13 +54,14 @@ private fun Reader.parseNextArgument(): String? {
     val sb = StringBuilder()
 
     var r = nextChar()
-    while (r != null && (r == WHITESPACE || r == NEWLINE)) {
+    while (r != null && r.isWhitespace()) {
         r = nextChar()
     }
 
-    loop@ while (r != null) {
+    while (r != null) {
+        if (r.isWhitespace()) break
+
         when (r) {
-            WHITESPACE, NEWLINE -> break@loop
             DOUBLE_QUOTE, SINGLE_QUOTE -> consumeRestOfEscapedSequence(sb, r)
             BACKSLASH -> nextChar()?.apply(sb::append)
             else -> sb.append(r)
