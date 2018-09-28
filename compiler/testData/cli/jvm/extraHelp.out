@@ -13,7 +13,9 @@ where advanced options include:
   -Xbuild-file=<path>        Path to the .xml build file to compile
   -Xcompile-java             Reuse javac analysis and compile Java source files
   -Xnormalize-constructor-calls={disable|enable}
-                             Normalize constructor calls (disable: don't normalize; enable: normalize), default is disable
+                             Normalize constructor calls (disable: don't normalize; enable: normalize),
+                             default is 'disable' in language version 1.2 and below,
+                             'enable' since language version 1.3
   -Xdump-declarations-to=<path> Path to JSON file to dump Java to Kotlin declaration mappings
   -Xdisable-default-scripting-plugin
                              Do not enable scripting plugin by default
