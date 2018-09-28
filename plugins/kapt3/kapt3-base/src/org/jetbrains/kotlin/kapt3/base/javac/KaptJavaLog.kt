@@ -215,7 +215,8 @@ class KaptJavaLog(
             "compiler.err.doesnt.exist",
             "compiler.err.duplicate.annotation.missing.container",
             "compiler.err.not.def.access.package.cant.access",
-            "compiler.err.package.not.visible"
+            "compiler.err.package.not.visible",
+            "compiler.err.not.def.public.cant.access"
         )
     }
 
