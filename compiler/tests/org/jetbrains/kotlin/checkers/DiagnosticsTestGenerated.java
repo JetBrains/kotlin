@@ -19117,6 +19117,21 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 runTest("compiler/testData/diagnostics/tests/smartCasts/kt2422.kt");
             }
 
+            @TestMetadata("kt27221.kt")
+            public void testKt27221() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/smartCasts/kt27221.kt");
+            }
+
+            @TestMetadata("kt27221_2.kt")
+            public void testKt27221_2() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/smartCasts/kt27221_2.kt");
+            }
+
+            @TestMetadata("kt27221_irrelevantClasses.kt")
+            public void testKt27221_irrelevantClasses() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/smartCasts/kt27221_irrelevantClasses.kt");
+            }
+
             @TestMetadata("kt2865.kt")
             public void testKt2865() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/smartCasts/kt2865.kt");
