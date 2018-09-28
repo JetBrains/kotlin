@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.gradle.plugin
+package org.jetbrains.kotlin.gradle.plugin.konan
 
 import groovy.lang.Closure
 import org.gradle.api.Action
-import org.gradle.api.Project
 import org.gradle.api.file.FileCollection
 
 interface KonanArtifactSpec {

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.gradle.plugin
+package org.jetbrains.kotlin.gradle.plugin.konan
 
 import groovy.lang.Closure
 import org.gradle.api.Action
@@ -28,7 +28,6 @@ import org.gradle.api.publish.maven.MavenPom
 import org.gradle.internal.reflect.Instantiator
 import org.gradle.util.ConfigureUtil
 import org.jetbrains.kotlin.gradle.plugin.tasks.KonanBuildingTask
-import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
 
@@ -109,7 +108,7 @@ abstract class KonanBuildingConfig<T: KonanBuildingTask>(private val name_: Stri
     protected fun determineOutputPlacement(target: KonanTarget): OutputPlacement {
         val configurationBuildDir = project.environmentVariables.configurationBuildDir
         return if (configurationBuildDir != null) {
-            OutputPlacement(configurationBuildDir,  name)
+            OutputPlacement(configurationBuildDir, name)
         } else {
             OutputPlacement(defaultBaseDir.targetSubdir(target), name)
         }

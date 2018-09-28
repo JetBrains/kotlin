@@ -34,12 +34,10 @@ import org.gradle.api.tasks.*
 import org.gradle.language.cpp.CppBinary
 import org.gradle.language.cpp.internal.DefaultUsageContext
 import org.gradle.language.cpp.internal.NativeVariantIdentity
-import org.gradle.language.nativeplatform.internal.Names
 import org.gradle.nativeplatform.Linkage
 import org.gradle.nativeplatform.OperatingSystemFamily
 import org.gradle.util.ConfigureUtil
-import org.jetbrains.kotlin.gradle.plugin.*
-import org.jetbrains.kotlin.konan.target.Family
+import org.jetbrains.kotlin.gradle.plugin.konan.*
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
@@ -90,7 +88,7 @@ abstract class KonanArtifactTask: KonanTargetableTask(), KonanArtifactSpec {
     protected abstract val artifactPrefix: String
         @Internal get
 
-    internal open fun init(config:KonanBuildingConfig<*>, destinationDir: File, artifactName: String, target: KonanTarget) {
+    internal open fun init(config: KonanBuildingConfig<*>, destinationDir: File, artifactName: String, target: KonanTarget) {
         super.init(target)
         this.destinationDir = destinationDir
         this.artifactName = artifactName

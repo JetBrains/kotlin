@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.gradle.plugin
+package org.jetbrains.kotlin.gradle.plugin.konan
 
 import org.gradle.api.*
 import org.gradle.api.component.ComponentWithVariants
@@ -31,7 +31,7 @@ import org.gradle.api.publish.maven.internal.publication.MavenPublicationInterna
 import org.gradle.language.cpp.internal.NativeVariantIdentity
 import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
 import org.gradle.util.GradleVersion
-import org.jetbrains.kotlin.gradle.plugin.KonanPlugin.Companion.COMPILE_ALL_TASK_NAME
+import org.jetbrains.kotlin.gradle.plugin.konan.KonanPlugin.Companion.COMPILE_ALL_TASK_NAME
 import org.jetbrains.kotlin.gradle.plugin.model.KonanToolingModelBuilder
 import org.jetbrains.kotlin.gradle.plugin.tasks.*
 import org.jetbrains.kotlin.konan.KonanVersion
@@ -297,7 +297,7 @@ class KonanPlugin @Inject constructor(private val registry: ToolingModelBuilderR
     private fun checkGradleVersion() =  GradleVersion.current().let { current ->
         check(current >= REQUIRED_GRADLE_VERSION) {
             "Kotlin/Native Gradle plugin is incompatible with this version of Gradle.\n" +
-            "The minimal required version is ${REQUIRED_GRADLE_VERSION}\n" +
+            "The minimal required version is $REQUIRED_GRADLE_VERSION\n" +
             "Current version is ${current}"
         }
     }

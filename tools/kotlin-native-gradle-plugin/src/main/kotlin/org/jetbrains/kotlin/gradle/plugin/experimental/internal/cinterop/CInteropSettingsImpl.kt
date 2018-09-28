@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.gradle.plugin.experimental.CInteropSettings
 import org.jetbrains.kotlin.gradle.plugin.experimental.CInteropSettings.IncludeDirectories
 import org.jetbrains.kotlin.gradle.plugin.experimental.KotlinNativeBinary
 import org.jetbrains.kotlin.gradle.plugin.experimental.internal.KotlinNativeBuildType
-import org.jetbrains.kotlin.gradle.plugin.experimental.internal.KotlinNativeUsage
 import org.jetbrains.kotlin.gradle.plugin.experimental.internal.getGradleOSFamily
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File

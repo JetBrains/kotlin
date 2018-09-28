@@ -38,7 +38,6 @@ import org.jetbrains.kotlin.gradle.plugin.experimental.TargetSettings
 import org.jetbrains.kotlin.gradle.plugin.experimental.sourcesets.KotlinNativeSourceSetImpl
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
-import org.jetbrains.kotlin.utils.addToStdlib.assertedCast
 import javax.inject.Inject
 
 class TargetSettingsImpl(val konanTarget: KonanTarget) : Named, TargetSettings {

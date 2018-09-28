@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.gradle.plugin
+package org.jetbrains.kotlin.gradle.plugin.konan
 
 import groovy.lang.Closure
 import org.gradle.api.Task
@@ -24,7 +24,7 @@ import org.gradle.internal.reflect.Instantiator
 import org.jetbrains.kotlin.gradle.plugin.tasks.*
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.KonanTarget
-import org.jetbrains.kotlin.konan.target.KonanTarget.*
+import org.jetbrains.kotlin.konan.target.KonanTarget.WASM32
 import java.io.File
 
 abstract class KonanCompileConfig<T: KonanCompileTask>(name: String,

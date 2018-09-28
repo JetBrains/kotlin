@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.gradle.plugin.tasks
 import org.gradle.api.tasks.Console
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.TaskAction
-import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.gradle.plugin.konan.*
 import org.jetbrains.kotlin.gradle.plugin.model.KonanModelArtifact
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
@@ -49,7 +49,9 @@ abstract class KonanBuildingTask: KonanArtifactWithLibrariesTask(), KonanBuildin
     @TaskAction
     open fun run() {
         destinationDir.mkdirs()
-        if (dumpParameters) { dumpProperties(this) }
+        if (dumpParameters) {
+            dumpProperties(this)
+        }
         toolRunner.run(buildArgs())
     }
 

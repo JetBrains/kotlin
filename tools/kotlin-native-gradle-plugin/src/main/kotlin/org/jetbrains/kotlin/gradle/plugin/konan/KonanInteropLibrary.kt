@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.gradle.plugin
+package org.jetbrains.kotlin.gradle.plugin.konan
 
 import groovy.lang.Closure
 import org.gradle.api.Action
@@ -23,9 +23,8 @@ import org.gradle.api.file.FileCollection
 import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.internal.reflect.Instantiator
 import org.gradle.util.ConfigureUtil
-import org.jetbrains.kotlin.gradle.plugin.KonanInteropSpec.IncludeDirectoriesSpec
+import org.jetbrains.kotlin.gradle.plugin.konan.KonanInteropSpec.IncludeDirectoriesSpec
 import org.jetbrains.kotlin.gradle.plugin.tasks.KonanInteropTask
-import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
 
 open class KonanInteropLibrary(name: String,

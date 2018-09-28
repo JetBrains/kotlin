@@ -16,8 +16,8 @@
 
 package org.jetbrains.kotlin.gradle.plugin.experimental.plugins
 
+import org.gradle.api.Named
 import org.gradle.api.Project
-import org.gradle.api.tasks.SourceSet
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformImplementationPluginBase
 
 class KotlinPlatformNativePlugin : KotlinPlatformImplementationPluginBase("native") {
@@ -29,9 +29,9 @@ class KotlinPlatformNativePlugin : KotlinPlatformImplementationPluginBase("nativ
         super.apply(project)
     }
 
-    override fun addCommonSourceSetToPlatformSourceSet(commonSourceSet: SourceSet, platformProject: Project) {
+    override fun addCommonSourceSetToPlatformSourceSet(commonSourceSet: Named, platformProject: Project) {
         val platformSourceSet = platformProject.kotlinNativeSourceSets.findByName(commonSourceSet.name)
-        val commonSources = commonSourceSet.kotlin
+        val commonSources = getKotlinSourceDirectorySetSafe(commonSourceSet)
         if (platformSourceSet != null && commonSources != null) {
             platformSourceSet.commonSources.from(commonSources)
         } else {

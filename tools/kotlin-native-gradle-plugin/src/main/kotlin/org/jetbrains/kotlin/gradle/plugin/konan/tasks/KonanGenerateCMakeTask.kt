@@ -19,10 +19,10 @@ package org.jetbrains.kotlin.gradle.plugin.tasks
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.FileCollection
 import org.gradle.api.tasks.TaskAction
-import org.jetbrains.kotlin.gradle.plugin.KonanInteropLibrary
-import org.jetbrains.kotlin.gradle.plugin.KonanLibrary
-import org.jetbrains.kotlin.gradle.plugin.KonanProgram
-import org.jetbrains.kotlin.gradle.plugin.konanArtifactsContainer
+import org.jetbrains.kotlin.gradle.plugin.konan.KonanInteropLibrary
+import org.jetbrains.kotlin.gradle.plugin.konan.KonanLibrary
+import org.jetbrains.kotlin.gradle.plugin.konan.KonanProgram
+import org.jetbrains.kotlin.gradle.plugin.konan.konanArtifactsContainer
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.HostManager
 import java.io.File
@@ -51,10 +51,10 @@ open class KonanGenerateCMakeTask : DefaultTask() {
     private val host = HostManager.host
 
     private fun generateCMakeLists(
-            projectName: String,
-            interops: List<KonanInteropLibrary>,
-            libraries: List<KonanLibrary>,
-            programs: List<KonanProgram>
+        projectName: String,
+        interops: List<KonanInteropLibrary>,
+        libraries: List<KonanLibrary>,
+        programs: List<KonanProgram>
     ): String {
         val cMakeCurrentListDir = "$" + "{CMAKE_CURRENT_LIST_DIR}"
 

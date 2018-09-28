@@ -15,6 +15,8 @@
  */
 
 import org.jetbrains.kotlin.konan.KonanVersion
+import org.jetbrains.kotlin.konan.MetaVersion
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
 /**
  * One may use bintrayUser/bintrayKey project properties or BINTRAY_USER/BINTRAY_KEY environment variables to upload
@@ -37,7 +39,7 @@ buildscript {
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-native-shared:$konanVersion"
         classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.3'
-        classpath 'com.github.jengelman.gradle.plugins:shadow:2.0.2'
+        classpath 'com.github.jengelman.gradle.plugins:shadow:4.0.0'
     }
 }
 
@@ -53,12 +55,20 @@ apply plugin: 'com.jfrog.bintray'
 apply plugin: 'com.github.johnrengelman.shadow'
 
 group = 'org.jetbrains.kotlin'
-version = KonanVersion.Companion.CURRENT.toString()
+
+if (KonanVersion.Companion.CURRENT.meta == MetaVersion.RELEASE) {
+    version = kotlinVersion
+} else {
+    version = "$kotlinVersion-native-${KonanVersion.Companion.CURRENT.toString()}"
+}
 
 repositories {
     mavenCentral()
     maven {
         url buildKotlinCompilerRepo
+    }
+    maven {
+        url kotlinCompilerRepo
     }
 }
 
@@ -74,33 +84,53 @@ configurations {
 
 dependencies {
     shadow "org.jetbrains.kotlin:kotlin-stdlib:0.9.1-native"
-    shadow "org.jetbrains.kotlin:kotlin-gradle-plugin:0.9.1-native"
 
+    // Bundle the serialization plugin into the final jar because we shade classes of the kotlin plugin
+    // while the serialization one extends them.
+    bundleDependencies "org.jetbrains.kotlin:kotlin-serialization:$kotlinVersion"
+    bundleDependencies "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
+    bundleDependencies "org.jetbrains.kotlin:kotlin-gradle-plugin-api:$kotlinVersion"
     bundleDependencies "org.jetbrains.kotlin:kotlin-native-shared:$konanVersion"
 
     testImplementation 'junit:junit:4.12'
-    testImplementation "org.jetbrains.kotlin:kotlin-test:1.3.0-rc-116"
-    testImplementation "org.jetbrains.kotlin:kotlin-test-junit:1.3.0-rc-116"
+    testImplementation "org.jetbrains.kotlin:kotlin-test:$buildKotlinVersion"
+    testImplementation "org.jetbrains.kotlin:kotlin-test-junit:$buildKotlinVersion"
     testImplementation "org.tools4j:tools4j-spockito:1.6"
     testImplementation('org.spockframework:spock-core:1.1-groovy-2.4') {
         exclude module: 'groovy-all'
     }
 }
 
-jar {
-    appendix = "no-shared"
-}
-
-shadowJar {
+task jar(type: ShadowJar, overwrite: true) {
+    from sourceSets.main.output
     configurations = [project.configurations.bundleDependencies]
     classifier = null
+    relocate('org.jetbrains.kotlinx', 'shadow.org.jetbrains.kotlinx')
+    relocate('org.jetbrains.kotlin.compilerRunner', 'shadow.org.jetbrains.kotlin.compilerRunner')
+    relocate('org.jetbrains.kotlin.gradle', 'shadow.org.jetbrains.kotlin.gradle') {
+        exclude('org.jetbrains.kotlin.gradle.plugin.experimental.**')
+        exclude('org.jetbrains.kotlin.gradle.plugin.konan.**')
+        exclude('org.jetbrains.kotlin.gradle.plugin.model.**')
+    }
+
+    exclude {
+        def path = it.relativePath.pathString
+        if (path.startsWith("META-INF/gradle-plugins") && path.endsWith(".properties")) {
+            def fileName = it.name
+            def id = fileName.take(fileName.lastIndexOf('.'))
+            return project.gradlePlugin.plugins.findByName(id) == null
+        }
+        return false
+    }
+    exclude('META-INF/services/org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar')
+    exclude('META-INF/services/org.jetbrains.kotlin.gradle.plugin.KotlinGradleSubplugin')
 }
 
 assemble.dependsOn shadowJar
 
 pluginUnderTestMetadata {
-    dependsOn shadowJar
-    pluginClasspath = files(shadowJar.archivePath) + configurations.shadow
+    dependsOn jar
+    pluginClasspath = files(jar.archivePath) + configurations.shadow
 }
 
 test {
@@ -164,7 +194,7 @@ gradlePlugin {
     plugins {
         create('konan') {
             id = 'konan'
-            implementationClass = 'org.jetbrains.kotlin.gradle.plugin.KonanPlugin'
+            implementationClass = 'org.jetbrains.kotlin.gradle.plugin.konan.KonanPlugin'
         }
         create('kotlin-native') {
             id = 'kotlin-native'
@@ -174,10 +204,15 @@ gradlePlugin {
             id = 'kotlin-platform-native'
             implementationClass = 'org.jetbrains.kotlin.gradle.plugin.experimental.plugins.KotlinPlatformNativePlugin'
         }
+        // We bundle a shaded version of kotlinx-serialization plugin
+        create('kotlinx-serialization-native') {
+            id = 'kotlinx-serialization-native'
+            implementationClass = 'shadow.org.jetbrains.kotlinx.serialization.gradle.SerializationGradleSubplugin'
+        }
 
         create('org.jetbrains.kotlin.konan') {
             id = 'org.jetbrains.kotlin.konan'
-            implementationClass = 'org.jetbrains.kotlin.gradle.plugin.KonanPlugin'
+            implementationClass = 'org.jetbrains.kotlin.gradle.plugin.konan.KonanPlugin'
         }
         create('org.jetbrains.kotlin.native') {
             id = 'org.jetbrains.kotlin.native'

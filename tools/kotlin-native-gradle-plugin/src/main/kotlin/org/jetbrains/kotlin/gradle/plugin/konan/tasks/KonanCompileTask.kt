@@ -22,13 +22,13 @@ import org.gradle.api.file.ConfigurableFileTree
 import org.gradle.api.file.FileCollection
 import org.gradle.api.tasks.*
 import org.gradle.process.CommandLineArgumentProvider
-import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.gradle.plugin.konan.*
 import org.jetbrains.kotlin.gradle.plugin.model.KonanModelArtifact
 import org.jetbrains.kotlin.gradle.plugin.model.KonanModelArtifactImpl
 import org.jetbrains.kotlin.konan.library.defaultResolver
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
-import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.Distribution
+import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
 
 /**
@@ -36,7 +36,8 @@ import java.io.File
  */
 abstract class KonanCompileTask: KonanBuildingTask(), KonanCompileSpec {
 
-    @Internal override val toolRunner = KonanCompilerRunner(project, project.konanExtension.jvmArgs)
+    @Internal override val toolRunner =
+        KonanCompilerRunner(project, project.konanExtension.jvmArgs)
 
     abstract val produce: CompilerOutputKind
         @Internal get

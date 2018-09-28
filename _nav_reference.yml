@@ -14,10 +14,6 @@
   url: platform_libs.html
   title: "Platform Libraries"
 
-- md: MULTIPLATFORM.md
-  url: multiplatform.html
-  title: "Multiplatform Projects"
-
 - md: INTEROP.md
   url: c_interop.html
   title: "C Interop"

@@ -19,13 +19,12 @@ package org.jetbrains.kotlin.gradle.plugin.model
 import org.gradle.api.Project
 import org.gradle.tooling.provider.model.ToolingModelBuilder
 import org.jetbrains.kotlin.gradle.plugin.experimental.internal.AbstractKotlinNativeBinary
-import org.jetbrains.kotlin.gradle.plugin.konanArtifactsContainer
-import org.jetbrains.kotlin.gradle.plugin.konanExtension
-import org.jetbrains.kotlin.gradle.plugin.konanHome
+import org.jetbrains.kotlin.gradle.plugin.konan.konanArtifactsContainer
+import org.jetbrains.kotlin.gradle.plugin.konan.konanExtension
+import org.jetbrains.kotlin.gradle.plugin.konan.konanHome
 import org.jetbrains.kotlin.konan.KonanVersion
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import java.io.File
-import java.lang.IllegalStateException
 
 
 object KonanToolingModelBuilder : ToolingModelBuilder {

@@ -1,10 +1,10 @@
-package org.jetbrains.kotlin.gradle.plugin
+package org.jetbrains.kotlin.gradle.plugin.konan
 
-import org.gradle.api.GradleException
 import org.gradle.api.Named
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
+import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformImplementationPluginBase
 import org.jetbrains.kotlin.gradle.plugin.tasks.KonanCompileTask
 import javax.inject.Inject
 

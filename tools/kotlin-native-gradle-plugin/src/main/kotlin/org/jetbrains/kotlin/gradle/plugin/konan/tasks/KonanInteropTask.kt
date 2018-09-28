@@ -18,15 +18,13 @@ package org.jetbrains.kotlin.gradle.plugin.tasks
 
 import groovy.lang.Closure
 import org.gradle.api.Action
-import org.gradle.api.Project
 import org.gradle.api.file.FileCollection
-import org.gradle.api.invocation.Gradle
 import org.gradle.api.tasks.*
 import org.gradle.util.ConfigureUtil
 import org.gradle.workers.IsolationMode
 import org.gradle.workers.WorkerExecutor
-import org.jetbrains.kotlin.gradle.plugin.*
-import org.jetbrains.kotlin.gradle.plugin.KonanInteropSpec.IncludeDirectoriesSpec
+import org.jetbrains.kotlin.gradle.plugin.konan.*
+import org.jetbrains.kotlin.gradle.plugin.konan.KonanInteropSpec.IncludeDirectoriesSpec
 import org.jetbrains.kotlin.gradle.plugin.model.KonanModelArtifact
 import org.jetbrains.kotlin.gradle.plugin.model.KonanModelArtifactImpl
 import org.jetbrains.kotlin.konan.library.defaultResolver
@@ -43,7 +41,8 @@ import javax.inject.Inject
 
 open class KonanInteropTask @Inject constructor(val workerExecutor: WorkerExecutor) : KonanBuildingTask(), KonanInteropSpec {
 
-    @Internal override val toolRunner: KonanToolRunner = KonanInteropRunner(project, project.konanExtension.jvmArgs)
+    @Internal override val toolRunner: KonanToolRunner =
+        KonanInteropRunner(project, project.konanExtension.jvmArgs)
 
     override fun init(config: KonanBuildingConfig<*>, destinationDir: File, artifactName: String, target: KonanTarget) {
         super.init(config, destinationDir, artifactName, target)
@@ -203,7 +202,9 @@ open class KonanInteropTask @Inject constructor(val workerExecutor: WorkerExecut
 
     override fun run() {
         destinationDir.mkdirs()
-        if (dumpParameters) { dumpProperties(this) }
+        if (dumpParameters) {
+            dumpProperties(this)
+        }
         val args = buildArgs()
         if (enableParallel) {
             interchangeBox[this.path] = toolRunner

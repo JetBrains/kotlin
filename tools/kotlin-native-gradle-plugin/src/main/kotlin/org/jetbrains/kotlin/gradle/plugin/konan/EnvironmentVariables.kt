@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.gradle.plugin
+package org.jetbrains.kotlin.gradle.plugin.konan
 
 import org.gradle.api.Project
-import org.jetbrains.kotlin.gradle.plugin.KonanPlugin.ProjectProperty
+import org.jetbrains.kotlin.gradle.plugin.konan.KonanPlugin.ProjectProperty
 import java.io.File
 
 /**

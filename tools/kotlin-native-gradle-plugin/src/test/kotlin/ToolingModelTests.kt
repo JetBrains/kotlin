@@ -19,8 +19,8 @@ package org.jetbrains.kotlin.gradle.plugin.test
 import org.gradle.api.internal.FeaturePreviews
 import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.testfixtures.ProjectBuilder
-import org.jetbrains.kotlin.gradle.plugin.KonanPlugin
-import org.jetbrains.kotlin.gradle.plugin.konanArtifactsContainer
+import org.jetbrains.kotlin.gradle.plugin.konan.KonanPlugin
+import org.jetbrains.kotlin.gradle.plugin.konan.konanArtifactsContainer
 import org.jetbrains.kotlin.gradle.plugin.model.KonanToolingModelBuilder
 import org.jetbrains.kotlin.konan.KonanVersion
 import org.junit.Rule
