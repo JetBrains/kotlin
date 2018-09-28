@@ -85,5 +85,4 @@ fun getNumberHashCode(obj: dynamic) = js("""
     }
 """).unsafeCast<Int>()
 
-// TODO: Use getObjectHashCode instead
-fun identityHashCode(obj: dynamic): Int = hashCode(obj)
+fun identityHashCode(obj: dynamic): Int = getObjectHashCode(obj)

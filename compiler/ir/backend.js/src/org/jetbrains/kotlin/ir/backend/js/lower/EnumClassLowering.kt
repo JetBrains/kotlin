@@ -12,12 +12,15 @@ import org.jetbrains.kotlin.backend.common.ir.copyParameterDeclarationsFrom
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlockBody
 import org.jetbrains.kotlin.backend.common.lower.irIfThen
+import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrConstructorImpl
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrVarargImpl
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrConstructorSymbolImpl
@@ -144,6 +147,34 @@ class EnumClassTransformer(val context: JsIrBackendContext, private val irClass:
         }
     }
 
+    private fun List<IrExpression>.toArrayLiteral(arrayType: IrType, elementType: IrType): IrExpression {
+        val startOffset = firstOrNull()?.startOffset ?: UNDEFINED_OFFSET
+        val endOffset = lastOrNull()?.endOffset ?: UNDEFINED_OFFSET
+
+        val irVararg = IrVarargImpl(startOffset, endOffset, arrayType, elementType, this)
+
+        return IrCallImpl(startOffset, endOffset, arrayType, context.intrinsics.arrayLiteral).apply {
+            putValueArgument(0, irVararg)
+        }
+    }
+
+    private fun createEnumValuesBody(): IrBody {
+        val valuesFun = findFunctionDescriptorForMemberWithSyntheticBodyKind(IrSyntheticBodyKind.ENUM_VALUES)
+        val entryInstanceToFunction = context.enumEntryToGetInstanceFunction
+
+        return context.createIrBuilder(valuesFun.symbol).run {
+            irBlockBody {
+                +irReturn(
+                    enumEntries.map {
+                        val function = entryInstanceToFunction[it.symbol]!!
+                        irCall(function)
+                    }.toArrayLiteral(valuesFun.returnType, irClass.defaultType)
+                )
+            }
+        }
+    }
+
+
     private fun lowerEnumConstructorsSignature() {
         irClass.declarations.transform { declaration ->
             if (declaration is IrConstructor) {
@@ -199,7 +230,7 @@ class EnumClassTransformer(val context: JsIrBackendContext, private val irClass:
         irClass.transformChildrenVoid(object : IrElementTransformerVoid() {
             override fun visitSyntheticBody(body: IrSyntheticBody): IrBody {
                 return when (body.kind) {
-                    IrSyntheticBodyKind.ENUM_VALUES -> builder.irBlockBody { } // TODO: Implement
+                    IrSyntheticBodyKind.ENUM_VALUES -> createEnumValuesBody()
                     IrSyntheticBodyKind.ENUM_VALUEOF -> createEnumValueOfBody()
                 }
             }

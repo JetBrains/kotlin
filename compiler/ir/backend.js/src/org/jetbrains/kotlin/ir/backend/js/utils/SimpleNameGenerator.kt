@@ -176,6 +176,11 @@ class SimpleNameGenerator : NameGenerator {
                 }
                 is IrSimpleFunction -> {
 
+                    if (declaration.dispatchReceiverParameter == null && declaration.parent is IrClass) {
+                        nameBuilder.append(getNameForDeclaration(declaration.parent as IrDeclaration, context))
+                        nameBuilder.append('.')
+                    }
+
                     nameBuilder.append(declaration.name.asString())
                     declaration.extensionReceiverParameter?.let { nameBuilder.append("_\$${it.type.render()}") }
                     declaration.typeParameters.forEach { nameBuilder.append("_${it.name.asString()}") }

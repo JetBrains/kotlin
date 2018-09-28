@@ -5,9 +5,9 @@
 
 package kotlin
 
-public class Enum<T : Enum<T>>(val name: String, val ordinal: Int) : Comparable<Enum<T>> {
+public class Enum<E : Enum<E>>(val name: String, val ordinal: Int) : Comparable<E> {
 
-    override fun compareTo(other: Enum<T>) = ordinal.compareTo(other.ordinal)
+    override fun compareTo(other: E) = ordinal.compareTo(other.ordinal)
 
     override fun equals(other: Any?) = this === other
 
