@@ -84,6 +84,9 @@ internal abstract class KonanCliRunner(
         } ?: emptyList<String>()
     }
 
+    protected val blacklistProperties: Set<String> =
+        setOf("java.endorsed.dirs")
+
     override val classpath: FileCollection =
         project.fileTree("${project.konanHome}/konan/lib/")
             .apply { include("*.jar")  }
@@ -106,7 +109,7 @@ internal abstract class KonanCliRunner(
 
     private fun String.escapeQuotes() = replace("\"", "\\\"")
 
-    private fun List<Pair<String, String>>.escapeQuotesForWindows() =
+    private fun Sequence<Pair<String, String>>.escapeQuotesForWindows() =
         if (HostManager.hostIsMingw) {
             map { (key, value) -> key.escapeQuotes() to value.escapeQuotes() }
         } else {
@@ -117,7 +120,7 @@ internal abstract class KonanCliRunner(
         project.logger.info("Run tool: $toolName with args: ${args.joinToString(separator = " ")}")
         if (classpath.isEmpty) {
             throw IllegalStateException("Classpath of the tool is empty: $toolName\n" +
-                                        "Probably the 'konan.home' project property contains an incorrect path.\n" +
+                                        "Probably the '${KotlinNativeProjectProperty.KONAN_HOME_OVERRIDE}' project property contains an incorrect path.\n" +
                                         "Please change it to the compiler root directory and rerun the build.")
         }
 
@@ -126,8 +129,9 @@ internal abstract class KonanCliRunner(
             spec.classpath = classpath
             spec.jvmArgs(jvmArgs)
             spec.systemProperties(
-                System.getProperties()
+                System.getProperties().asSequence()
                     .map { (k, v) -> k.toString() to v.toString() }
+                    .filter { (k, _) -> k !in blacklistProperties }
                     .escapeQuotesForWindows()
                     .toMap()
             )
