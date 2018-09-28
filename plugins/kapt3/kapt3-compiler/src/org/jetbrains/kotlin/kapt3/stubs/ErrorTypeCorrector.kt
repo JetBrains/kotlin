@@ -94,6 +94,11 @@ class ErrorTypeCorrector(
             val typeAlias = target.source.getPsi() as? KtTypeAlias
             val actualType = typeAlias?.getTypeReference() ?: return convert(target.expandedType)
             return convert(actualType, typeAlias.getSubstitutions(type))
+        } else if (target is ClassConstructorDescriptor) {
+            val asmType = converter.kaptContext.generationState.typeMapper
+                .mapType(target.constructedClass.defaultType, null, TypeMappingMode.GENERIC_ARGUMENT)
+
+            baseExpression = converter.treeMaker.Type(asmType)
         } else if (target is ClassDescriptor) {
             // We only get here if some type were an error type. In other words, 'type' is either an error type or its argument,
             // so it's impossible it to be unboxed primitive.

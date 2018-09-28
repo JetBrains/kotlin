@@ -69,6 +69,31 @@ package test;
 import java.lang.System;
 
 @kotlin.Metadata()
+public final class MappedList<R extends java.lang.Object> extends kotlin.collections.AbstractList<R> implements java.util.List<? extends R> {
+
+    @org.jetbrains.annotations.NotNull()
+    @java.lang.Override()
+    public java.lang.Void get(int index) {
+        return null;
+    }
+
+    @java.lang.Override()
+    public int getSize() {
+        return 0;
+    }
+
+    public MappedList() {
+        super();
+    }
+}
+
+////////////////////
+
+package test;
+
+import java.lang.System;
+
+@kotlin.Metadata()
 public final class TBarBazCl extends test.Cl implements Bar, Baz {
 
     public TBarBazCl() {
