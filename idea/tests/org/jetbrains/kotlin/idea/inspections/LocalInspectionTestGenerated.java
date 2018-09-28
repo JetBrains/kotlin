@@ -1294,6 +1294,16 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
                 runTest("idea/testData/inspectionsLocal/collections/uselessCallOnCollection/MapNotNullWithLambda.kt");
             }
 
+            @TestMetadata("MapNotNullWithLambda2.kt")
+            public void testMapNotNullWithLambda2() throws Exception {
+                runTest("idea/testData/inspectionsLocal/collections/uselessCallOnCollection/MapNotNullWithLambda2.kt");
+            }
+
+            @TestMetadata("MapNotNullWithLambda3.kt")
+            public void testMapNotNullWithLambda3() throws Exception {
+                runTest("idea/testData/inspectionsLocal/collections/uselessCallOnCollection/MapNotNullWithLambda3.kt");
+            }
+
             @TestMetadata("MapNotNullWithLambdaFake.kt")
             public void testMapNotNullWithLambdaFake() throws Exception {
                 runTest("idea/testData/inspectionsLocal/collections/uselessCallOnCollection/MapNotNullWithLambdaFake.kt");
