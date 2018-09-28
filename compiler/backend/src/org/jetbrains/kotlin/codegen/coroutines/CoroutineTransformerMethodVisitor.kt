@@ -138,10 +138,7 @@ class CoroutineTransformerMethodVisitor(
 
         val suspendMarkerVarIndex = methodNode.maxLocals++
 
-        val suspensionPointLineNumbers =
-            suspensionPoints.map { suspensionPoint ->
-                suspensionPoint.suspensionCallBegin.findPreviousOrNull { it is LineNumberNode } as LineNumberNode?
-            }
+        val suspensionPointLineNumbers = suspensionPoints.map { findSuspensionPointLineNumber(it) }
 
         val continuationLabels = suspensionPoints.withIndex().map {
             transformCallAndReturnContinuationLabel(it.index + 1, it.value, methodNode, suspendMarkerVarIndex)
@@ -200,6 +197,9 @@ class CoroutineTransformerMethodVisitor(
         }
     }
 
+    private fun findSuspensionPointLineNumber(suspensionPoint: SuspensionPoint) =
+        suspensionPoint.suspensionCallBegin.findPreviousOrNull { it is LineNumberNode } as LineNumberNode?
+
     private fun checkForSuspensionPointInsideMonitor(methodNode: MethodNode, suspensionPoints: List<SuspensionPoint>) {
         if (methodNode.instructions.asSequence().none { it.opcode == Opcodes.MONITORENTER }) return
 
@@ -225,7 +225,13 @@ class CoroutineTransformerMethodVisitor(
         for (suspensionPoint in suspensionPoints) {
             if (monitorDepthMap[suspensionPoint.suspensionCallBegin]?.let { it > 0 } == true) {
                 // TODO: Support crossinline suspend lambdas
-                element?.let { diagnostics.report(ErrorsJvm.SUSPENSION_POINT_INSIDE_MONITOR.on(it)) }
+                val stackTraceElement = StackTraceElement(
+                    containingClassInternalName,
+                    methodNode.name,
+                    sourceFile,
+                    findSuspensionPointLineNumber(suspensionPoint)?.line ?: -1
+                )
+                element?.let { diagnostics.report(ErrorsJvm.SUSPENSION_POINT_INSIDE_MONITOR.on(it, "$stackTraceElement")) }
                 return
             }
         }

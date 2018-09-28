@@ -1,13 +1,7 @@
-compiler/testData/compileKotlinAgainstCustomBinaries/suspensionPointInMonitor/source.kt:8:13: error: a suspension point is inside a critical section
+compiler/testData/compileKotlinAgainstCustomBinaries/suspensionPointInMonitor/source.kt:8:13: error: a suspension point at SourceKt$test$1.invokeSuspend(source.kt:10) is inside a critical section
     builder {
             ^
-compiler/testData/compileKotlinAgainstCustomBinaries/suspensionPointInMonitor/source.kt:14:13: error: a suspension point is inside a critical section
+compiler/testData/compileKotlinAgainstCustomBinaries/suspensionPointInMonitor/source.kt:14:13: error: a suspension point at SourceKt$test$2.invokeSuspend(source.kt:17) is inside a critical section
     builder {
             ^
-compiler/testData/compileKotlinAgainstCustomBinaries/suspensionPointInMonitor/source.kt:20:13: error: a suspension point is inside a critical section
-    builder {
-            ^
-compiler/testData/compileKotlinAgainstCustomBinaries/suspensionPointInMonitor/source.kt:42:9: error: a suspension point is inside a critical section
-        override suspend fun run() {
-        ^
 COMPILATION_ERROR
