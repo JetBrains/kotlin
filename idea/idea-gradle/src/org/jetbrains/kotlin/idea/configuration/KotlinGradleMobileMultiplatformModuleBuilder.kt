@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.idea.configuration
 
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.vfs.VirtualFile
+import org.jetbrains.kotlin.idea.configuration.xcode.XcodeProjectConfigurator
 import org.jetbrains.plugins.gradle.frameworkSupport.BuildScriptDataBuilder
 import java.io.BufferedWriter
 
@@ -84,6 +85,10 @@ class KotlinGradleMobileMultiplatformModuleBuilder :
 
                 fun hello(): String = "Hello from ${"$"}{Platform.name}"
 
+                class Proxy {
+                    fun proxyHello() = hello()
+                }
+
                 fun main(args: Array<String>) {
                     println(hello())
                 }
@@ -142,6 +147,11 @@ class KotlinGradleMobileMultiplatformModuleBuilder :
                     @Test
                     fun testMe() {
                         assertTrue(Sample().checkMe() > 0)
+                    }
+
+                    @Test
+                    fun testProxy() {
+                        assertTrue(Proxy().proxyHello().isNotEmpty())
                     }
                 }
             """.trimIndent()
@@ -262,6 +272,8 @@ sdk.dir=PleaseSpecifyAndroidSdkPathHere
                 androidLocalProperties, androidManifest, androidStrings, androidStyles, androidActivityMain
             ).forEach(BufferedWriter::close)
         }
+
+        XcodeProjectConfigurator().createSkeleton(rootDir)
     }
 
 
@@ -296,10 +308,12 @@ sdk.dir=PleaseSpecifyAndroidSdkPathHere
 
             kotlin {
                 targets {
-                    // For ARM, preset should be changed to presets.android_arm32 or presets.android_arm64
                     fromPreset(presets.android, '$jvmTargetName')
-                    // For ARM, preset should be changed to presets.iosArm32 or presets.iosArm64
-                    fromPreset(presets.iosX64, '$nativeTargetName')
+                    // This preset is for iPhone emulator
+                    // Switch here to presets.iosArm64 (or iosArm32) to build library for iPhone device
+                    fromPreset(presets.iosX64, '$nativeTargetName') {
+                        compilations.main.outputKinds('FRAMEWORK')
+                    }
                 }
                 sourceSets {
                     $commonSourceName {
@@ -331,11 +345,11 @@ sdk.dir=PleaseSpecifyAndroidSdkPathHere
                 }
             }
 
-            // Please set configuration.build.dir in gradle.properties before running this task.
-            // In this directory, you will get a native framework capable to be included into Xсode (с) project.
-            // Alternatively, you can directly run this task from Xсode (с).
-            // Example of Xcode (c) project can be found here:
-            // https://github.com/JetBrains/kotlin-mpp-example/tree/master/iosApp
+            // This task attaches native framework built from ios module to Xcode project
+            // (see iosApp directory). Don't run this task directly,
+            // Xcode runs this task itself during its build process.
+            // Before opening the project from iosApp directory in Xcode,
+            // make sure all Gradle infrastructure exists (gradle.wrapper, gradlew).
             task copyFramework {
                 def buildType = project.findProperty("kotlin.build.type") ?: "DEBUG"
                 def target = project.findProperty("kotlin.target") ?: "ios"
