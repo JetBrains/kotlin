@@ -127,4 +127,22 @@
     <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">If-Then foldable to '?.'</problem_class>
     <description>Foldable if-then</description>
   </problem>
+  <problem>
+    <file>implicitReceiver2.kt</file>
+    <line>6</line>
+    <module>light_idea_test_case</module>
+    <package>&lt;default&gt;</package>
+    <entry_point TYPE="file" FQNAME="temp:///src/implicitReceiver2.kt" />
+    <problem_class severity="INFO" attribute_key="INFO_ATTRIBUTES">If-Then foldable to '?.'</problem_class>
+    <description>Foldable if-then</description>
+  </problem>
+  <problem>
+    <file>implicitReceiver3.kt</file>
+    <line>5</line>
+    <module>light_idea_test_case</module>
+    <package>&lt;default&gt;</package>
+    <entry_point TYPE="file" FQNAME="temp:///src/implicitReceiver3.kt" />
+    <problem_class severity="INFO" attribute_key="INFO_ATTRIBUTES">If-Then foldable to '?.'</problem_class>
+    <description>Foldable if-then</description>
+  </problem>
 </problems>
