@@ -828,7 +828,7 @@ public inline fun <T, K, V, M : MutableMap<in K, MutableList<V>>> Sequence<T>.gr
  *
  * The operation is _intermediate_ and _stateless_.
  * 
- * @sample samples.collections.Collections.Transformations.groupingByEachCount
+ * @sample samples.collections.Grouping.groupingByEachCount
  */
 @SinceKotlin("1.1")
 public inline fun <T, K> Sequence<T>.groupingBy(crossinline keySelector: (T) -> K): Grouping<T, K> {
