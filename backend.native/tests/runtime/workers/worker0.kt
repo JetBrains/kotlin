@@ -12,7 +12,10 @@ import kotlin.native.concurrent.*
 @Test fun runTest() {
     val worker = Worker.start()
     val future = worker.execute(TransferMode.SAFE, { "Input" }) {
-        input -> input + " processed"
+        input ->
+        assertEquals(1, 1)
+        assertFailsWith<AssertionError> { assertEquals(1, 2) }
+        input + " processed"
     }
     future.consume {
         result -> println("Got $result")

@@ -18,10 +18,7 @@ import kotlin.reflect.KClass
  * Current adapter providing assertion implementations
  */
 private val asserter: Asserter
-    get() = _asserter ?: lookupAsserter()
-
-/** Used to override current asserter internally */
-internal var _asserter: Asserter? = null
+    get() = DefaultAsserter
 
 /** Asserts that the given [block] returns `true`. */
 public fun assertTrue(message: String? = null, block: () -> Boolean): Unit = assertTrue(block(), message)
