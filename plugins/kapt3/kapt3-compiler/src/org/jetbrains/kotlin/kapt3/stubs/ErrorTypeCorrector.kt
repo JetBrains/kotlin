@@ -137,7 +137,7 @@ class ErrorTypeCorrector(
             //TODO figure out if the containing method is an annotation method
             RETURN_TYPE -> TypeMappingMode.getOptimalModeForReturnType(kotlinType, false)
             METHOD_PARAMETER_TYPE -> TypeMappingMode.getOptimalModeForValueParameter(kotlinType)
-            SUPER_TYPE -> TypeMappingMode.getOptimalModeForValueParameter(kotlinType)
+            SUPER_TYPE -> TypeMappingMode.SUPER_TYPE
         }.updateArgumentModeFromAnnotations(kotlinType)
 
         val typeParameters = (target as? ClassifierDescriptor)?.typeConstructor?.parameters
