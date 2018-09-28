@@ -9,7 +9,6 @@
 
 package kotlin.coroutines.experimental
 
-import kotlin.*
 import kotlin.coroutines.experimental.intrinsics.*
 import kotlin.experimental.ExperimentalTypeInference
 

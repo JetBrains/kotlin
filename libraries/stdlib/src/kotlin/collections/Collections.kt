@@ -8,8 +8,6 @@
 
 package kotlin.collections
 
-import kotlin.*
-import kotlin.comparisons.compareValues
 import kotlin.contracts.*
 
 internal object EmptyIterator : ListIterator<Nothing> {

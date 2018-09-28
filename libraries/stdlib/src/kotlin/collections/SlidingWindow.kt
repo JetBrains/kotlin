@@ -5,8 +5,6 @@
 
 package kotlin.collections
 
-import kotlin.*
-
 internal fun checkWindowSizeStep(size: Int, step: Int) {
     require(size > 0 && step > 0) {
         if (size != step)

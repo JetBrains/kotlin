@@ -8,8 +8,6 @@
 
 package kotlin.ranges
 
-import kotlin.*
-
 /**
  * Represents a range of floating point numbers.
  * Extends [ClosedRange] interface providing custom operation [lessThanOrEquals] for comparing values of range domain type.

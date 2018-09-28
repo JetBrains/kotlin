@@ -9,7 +9,6 @@
 
 package kotlin.sequences
 
-import kotlin.*
 import kotlin.coroutines.*
 import kotlin.coroutines.intrinsics.*
 import kotlin.experimental.ExperimentalTypeInference

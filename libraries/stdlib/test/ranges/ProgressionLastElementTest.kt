@@ -5,9 +5,7 @@
 
 package test.ranges
 
-import kotlin.comparisons.*
 import kotlin.test.*
-
 
 class ProgressionLastElementTest {
 

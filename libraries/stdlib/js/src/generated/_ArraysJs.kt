@@ -13,9 +13,6 @@ package kotlin.collections
 import kotlin.js.*
 import primitiveArrayConcat
 import withType
-import kotlin.*
-import kotlin.text.*
-import kotlin.comparisons.*
 
 /**
  * Returns a [List] that wraps the original array.

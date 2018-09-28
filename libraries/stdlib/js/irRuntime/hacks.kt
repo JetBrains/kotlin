@@ -5,8 +5,6 @@
 
 package kotlin
 
-import kotlin.js.*
-
 // TODO: Ignore FunctionN interfaces
 
 public interface Function0<out R> : Function<R> {

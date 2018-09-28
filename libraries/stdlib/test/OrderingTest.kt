@@ -6,7 +6,6 @@
 package test.comparisons
 
 import kotlin.test.*
-import kotlin.comparisons.*
 
 data class Item(val name: String, val rating: Int) : Comparable<Item> {
     public override fun compareTo(other: Item): Int {

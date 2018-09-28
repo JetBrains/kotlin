@@ -11,9 +11,6 @@ package kotlin.collections
 //
 
 import kotlin.js.*
-import kotlin.*
-import kotlin.text.*
-import kotlin.comparisons.*
 
 /**
  * Reverses elements in the list in-place.

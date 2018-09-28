@@ -5,7 +5,6 @@
 
 package kotlin.random
 
-import kotlin.*
 import kotlin.math.nextDown
 
 /**
