@@ -74,18 +74,27 @@ class KotlinGradleNativeMultiplatformModuleBuilder : KotlinGradleAbstractMultipl
                     fromPreset(presets.$nativePresetName, '$nativeTargetName')
 
                     configure([$nativeTargetName]) {
-                        compilations.main.outputKinds('EXECUTABLE') // Comment to generate Kotlin/Native library (KLIB) instead of executable file.
+                        // Comment to generate Kotlin/Native library (KLIB) instead of executable file:
+                        compilations.main.outputKinds('EXECUTABLE')
                         // Change to specify fully qualified name of your application's entry point:
                         compilations.main.entryPoint = 'sample.main'
+                    }
+                }
+                sourceSets {
+                    // Note: To enable common source sets please comment out 'kotlin.import.noCommonSourceSets' property
+                    // in gradle.properties file and re-import your project in IDE.
+                    $nativeSourceName {
+                    }
+                    $nativeTestName {
                     }
                 }
             }
 
             task runProgram {
-                def buildType ="release" // Change to "debug" to run application with debug symbols.
+                def buildType = 'release' // Change to 'debug' to run application with debug symbols.
                 dependsOn "link${'$'}{buildType.capitalize()}Executable${nativeTargetName.capitalize()}"
                 doLast {
-                    def programFile = kotlin.targets.$nativeTargetName.compilations.main.getBinary("EXECUTABLE", buildType)
+                    def programFile = kotlin.targets.$nativeTargetName.compilations.main.getBinary('EXECUTABLE', buildType)
                     exec {
                         executable programFile
                         args ''
