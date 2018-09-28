@@ -2438,11 +2438,6 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             return;
         }
 
-        if (resolvedCall.getResultingDescriptor() instanceof FunctionDescriptor &&
-            ((FunctionDescriptor) resolvedCall.getResultingDescriptor()).isSuspend()) {
-            state.getGlobalCoroutinesContext().checkSuspendCall(resolvedCall);
-        }
-
         boolean isSuspendNoInlineCall =
                 CoroutineCodegenUtilKt.isSuspendNoInlineCall(resolvedCall, this, state.getLanguageVersionSettings());
         boolean isConstructor = resolvedCall.getResultingDescriptor() instanceof ConstructorDescriptor;

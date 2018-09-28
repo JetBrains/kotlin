@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.codegen.`when`.MappingsClassesForWhenByEnum
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding
 import org.jetbrains.kotlin.codegen.context.CodegenContext
 import org.jetbrains.kotlin.codegen.context.RootContext
-import org.jetbrains.kotlin.codegen.coroutines.GlobalCoroutinesContext
 import org.jetbrains.kotlin.codegen.extensions.ClassBuilderInterceptorExtension
 import org.jetbrains.kotlin.codegen.inline.GlobalInlineContext
 import org.jetbrains.kotlin.codegen.inline.InlineCache
@@ -203,7 +202,6 @@ class GenerationState private constructor(
     }
     val samWrapperClasses: SamWrapperClasses = SamWrapperClasses(this)
     val globalInlineContext: GlobalInlineContext = GlobalInlineContext(diagnostics)
-    val globalCoroutinesContext: GlobalCoroutinesContext = GlobalCoroutinesContext(diagnostics)
     val mappingsClassesForWhenByEnum: MappingsClassesForWhenByEnum = MappingsClassesForWhenByEnum(this)
     val jvmRuntimeTypes: JvmRuntimeTypes = JvmRuntimeTypes(module, configuration.languageVersionSettings)
     val factory: ClassFileFactory
