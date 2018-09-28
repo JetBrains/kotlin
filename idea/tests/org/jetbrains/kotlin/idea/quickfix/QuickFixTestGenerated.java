@@ -8347,6 +8347,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             runTest("idea/testData/quickfix/obsoleteCoroutines/buildSequenceImport.kt");
         }
 
+        @TestMetadata("inProjectFix.kt")
+        public void testInProjectFix() throws Exception {
+            runTest("idea/testData/quickfix/obsoleteCoroutines/inProjectFix.kt");
+        }
+
         @TestMetadata("resume.kt")
         public void testResume() throws Exception {
             runTest("idea/testData/quickfix/obsoleteCoroutines/resume.kt");
