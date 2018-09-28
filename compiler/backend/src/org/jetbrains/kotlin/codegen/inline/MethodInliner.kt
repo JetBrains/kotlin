@@ -945,7 +945,7 @@ class MethodInliner(
             )
         }
 
-        fun analyzeMethodNodeBeforeInline(node: MethodNode): Array<Frame<SourceValue>?> {
+        private fun analyzeMethodNodeBeforeInline(node: MethodNode): Array<Frame<SourceValue>?> {
             val analyzer = object : Analyzer<SourceValue>(SourceInterpreter()) {
                 override fun newFrame(nLocals: Int, nStack: Int): Frame<SourceValue> {
 
