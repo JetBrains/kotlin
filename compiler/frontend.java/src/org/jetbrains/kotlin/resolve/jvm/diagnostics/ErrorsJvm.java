@@ -133,7 +133,7 @@ public interface ErrorsJvm {
 
     DiagnosticFactory1<KtAnnotationEntry, String> ANNOTATION_TARGETS_NON_EXISTENT_ACCESSOR = DiagnosticFactory1.create(WARNING);
 
-    DiagnosticFactory1<PsiElement, CallableDescriptor> SUSPENSION_POINT_INSIDE_MONITOR = DiagnosticFactory1.create(ERROR, DEFAULT);
+    DiagnosticFactory0<PsiElement> SUSPENSION_POINT_INSIDE_MONITOR = DiagnosticFactory0.create(ERROR);
 
     @SuppressWarnings("UnusedDeclaration")
     Object _initializer = new Object() {

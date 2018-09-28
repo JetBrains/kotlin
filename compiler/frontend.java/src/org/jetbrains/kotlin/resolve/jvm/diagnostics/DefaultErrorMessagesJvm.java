@@ -147,7 +147,7 @@ public class DefaultErrorMessagesJvm implements DefaultErrorMessages.Extension {
         MAP.put(USAGE_OF_JVM_DEFAULT_THROUGH_SUPER_CALL, "Super calls of '@JvmDefault' members are only allowed with -Xjvm-default option");
         MAP.put(NON_JVM_DEFAULT_OVERRIDES_JAVA_DEFAULT, "Non-@JvmDefault interface method cannot override default Java method. Please annotate this method with @JvmDefault");
         MAP.put(EXPLICIT_METADATA_IS_DISALLOWED, "Explicit @Metadata is disallowed");
-        MAP.put(SUSPENSION_POINT_INSIDE_MONITOR, "The ''{0}'' suspension point is inside a critical section", NAME);
+        MAP.put(SUSPENSION_POINT_INSIDE_MONITOR, "A suspension point is inside a critical section");
     }
 
     @NotNull
