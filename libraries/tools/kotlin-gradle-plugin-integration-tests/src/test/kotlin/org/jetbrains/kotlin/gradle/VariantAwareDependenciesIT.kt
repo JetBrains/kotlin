@@ -180,6 +180,50 @@ class VariantAwareDependenciesIT : BaseGradleIT() {
         }
     }
 
+    @Test
+    fun testResolvesOldKotlinArtifactsPublishedWithMetadata() = with(Project("multiplatformProject", gradleVersion)) {
+        setupWorkingDir()
+        projectDir.resolve("settings.gradle").appendText("\nenableFeaturePreview 'GRADLE_METADATA'")
+        gradleBuildScript().appendText(
+            "\n" + """
+                configure([project(':lib'), project(':libJvm'), project(':libJs')]) {
+                    group 'com.example.oldmpp'
+                    version '1.0'
+                    apply plugin: 'maven-publish'
+                    publishing {
+                        repositories { maven { url "file://${'$'}{rootDir.absolutePath.replace('\\', '/')}/repo" } }
+                        publications { kotlin(MavenPublication) { from(components.java) } }
+                    }
+                }
+            """.trimIndent()
+        )
+        build("publish") { assertSuccessful() }
+
+        gradleBuildScript().modify {
+            it.replace("'com.example.oldmpp'", "'com.example.consumer'") +
+                    "\nsubprojects { repositories { maven { url \"file://${'$'}{rootDir.absolutePath.replace('\\\\', '/')}/repo\" } } }"
+        }
+
+        gradleBuildScript("lib").appendText("\ndependencies { compile 'com.example.oldmpp:lib:1.0' }")
+        testResolveAllConfigurations("lib")
+
+        gradleBuildScript("libJvm").appendText("\ndependencies { compile 'com.example.oldmpp:libJvm:1.0' }")
+        testResolveAllConfigurations("libJvm")
+
+        gradleBuildScript("libJs").appendText("\ndependencies { compile 'com.example.oldmpp:libJs:1.0' }")
+        testResolveAllConfigurations("libJs")
+
+        embedProject(Project("sample-lib", directoryPrefix = "new-mpp-lib-and-app"))
+        gradleBuildScript("sample-lib").appendText("\n" + """
+            dependencies {
+                commonMainApi 'com.example.oldmpp:lib:1.0'
+                jvm6MainApi 'com.example.oldmpp:libJvm:1.0'
+                nodeJsMainApi 'com.example.oldmpp:libJs:1.0'
+            }
+        """.trimIndent())
+        testResolveAllConfigurations("sample-lib")
+    }
+
     private fun Project.embedProject(other: Project) {
         setupWorkingDir()
         other.setupWorkingDir()

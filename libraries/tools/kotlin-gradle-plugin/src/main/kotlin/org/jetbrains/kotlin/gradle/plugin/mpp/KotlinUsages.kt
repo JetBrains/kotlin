@@ -55,7 +55,8 @@ object KotlinUsages {
         override fun execute(details: CompatibilityCheckDetails<Usage>) = with(details) {
             when {
                 consumerValue?.name == KOTLIN_API && producerValue?.name == JAVA_API -> compatible()
-                consumerValue?.name in values && producerValue?.name == JAVA_RUNTIME_JARS -> compatible()
+                consumerValue?.name in values &&
+                        producerValue?.name.let { it == JAVA_RUNTIME || it == JAVA_RUNTIME_JARS } -> compatible()
             }
         }
     }
@@ -70,6 +71,9 @@ object KotlinUsages {
                 details.closestMatch(candidateValues.single { it?.name == KOTLIN_RUNTIME }!!)
             }
             if (JAVA_API in candidateNames && JAVA_RUNTIME_JARS in candidateNames && values.none { it in candidateNames }) {
+                details.closestMatch(candidateValues.single { it?.name == JAVA_API }!!)
+            }
+            if (JAVA_API in candidateNames && JAVA_RUNTIME in candidateNames && values.none { it in candidateNames }) {
                 details.closestMatch(candidateValues.single { it?.name == JAVA_API }!!)
             }
             if (JAVA_RUNTIME_CLASSES in candidateNames && JAVA_RUNTIME_RESOURCES in candidateNames && KOTLIN_RUNTIME in candidateNames) {
