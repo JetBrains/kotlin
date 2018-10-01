@@ -19,7 +19,7 @@ class BuiltInsBinaryVersion(vararg numbers: Int) : BinaryVersion(*numbers) {
 
     companion object {
         @JvmField
-        val INSTANCE = BuiltInsBinaryVersion(1, 0, 6)
+        val INSTANCE = BuiltInsBinaryVersion(1, 0, 7)
 
         @JvmField
         val INVALID_VERSION = BuiltInsBinaryVersion()

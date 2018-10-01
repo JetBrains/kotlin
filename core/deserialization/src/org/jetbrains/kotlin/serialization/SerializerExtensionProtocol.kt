@@ -27,6 +27,8 @@ open class SerializerExtensionProtocol(
     val classAnnotation: GeneratedExtension<ProtoBuf.Class, List<ProtoBuf.Annotation>>,
     val functionAnnotation: GeneratedExtension<ProtoBuf.Function, List<ProtoBuf.Annotation>>,
     val propertyAnnotation: GeneratedExtension<ProtoBuf.Property, List<ProtoBuf.Annotation>>,
+    val propertyGetterAnnotation: GeneratedExtension<ProtoBuf.Property, List<ProtoBuf.Annotation>>,
+    val propertySetterAnnotation: GeneratedExtension<ProtoBuf.Property, List<ProtoBuf.Annotation>>,
     val enumEntryAnnotation: GeneratedExtension<ProtoBuf.EnumEntry, List<ProtoBuf.Annotation>>,
     val compileTimeValue: GeneratedExtension<ProtoBuf.Property, ProtoBuf.Annotation.Argument.Value>,
     val parameterAnnotation: GeneratedExtension<ProtoBuf.ValueParameter, List<ProtoBuf.Annotation>>,

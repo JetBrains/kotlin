@@ -5348,6 +5348,11 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             runTest("js/js.translator/testData/box/jsName/privateMethod.kt");
         }
 
+        @TestMetadata("propertyAccessorFromOtherModule.kt")
+        public void testPropertyAccessorFromOtherModule() throws Exception {
+            runTest("js/js.translator/testData/box/jsName/propertyAccessorFromOtherModule.kt");
+        }
+
         @TestMetadata("secondaryConstructor.kt")
         public void testSecondaryConstructor() throws Exception {
             runTest("js/js.translator/testData/box/jsName/secondaryConstructor.kt");

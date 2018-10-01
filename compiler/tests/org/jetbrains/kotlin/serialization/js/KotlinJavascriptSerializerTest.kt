@@ -152,4 +152,8 @@ class KotlinJavascriptSerializerTest : TestCaseWithTmpdir() {
     fun testEnum() {
         doTest("builtinsSerializer/annotationArguments/enum.kt")
     }
+
+    fun testPropertyAccessorAnnotations() {
+        doTest("builtinsSerializer/propertyAccessorAnnotations.kt")
+    }
 }

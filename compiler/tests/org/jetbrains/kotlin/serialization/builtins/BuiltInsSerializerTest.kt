@@ -112,4 +112,8 @@ class BuiltInsSerializerTest : TestCaseWithTmpdir() {
     fun testBinaryRetainedAnnotation() {
         doTest("binaryRetainedAnnotation.kt")
     }
+
+    fun testPropertyAccessorAnnotations() {
+        doTest("propertyAccessorAnnotations.kt")
+    }
 }
