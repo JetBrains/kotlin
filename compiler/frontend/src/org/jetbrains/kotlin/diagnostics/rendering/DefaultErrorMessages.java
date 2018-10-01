@@ -958,6 +958,8 @@ public class DefaultErrorMessages {
         MAP.put(ERROR_IN_CONTRACT_DESCRIPTION, "Error in contract description: {0}", TO_STRING);
         MAP.put(CONTRACT_NOT_ALLOWED, "{0}", TO_STRING);
 
+        MAP.put(CONTEXTUAL_EFFECT_WARNING, "Contextual effects: {0}", TO_STRING);
+
         MAP.setImmutable();
 
         for (Field field : Errors.class.getFields()) {
