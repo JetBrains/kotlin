@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.ir.backend.js.utils
 
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.isStatic
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrLoop
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
@@ -176,7 +177,7 @@ class SimpleNameGenerator : NameGenerator {
                 }
                 is IrSimpleFunction -> {
 
-                    if (declaration.dispatchReceiverParameter == null && declaration.parent is IrClass) {
+                    if (declaration.isStatic) {
                         nameBuilder.append(getNameForDeclaration(declaration.parent as IrDeclaration, context))
                         nameBuilder.append('.')
                     }

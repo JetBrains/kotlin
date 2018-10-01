@@ -148,12 +148,9 @@ class EnumClassTransformer(val context: JsIrBackendContext, private val irClass:
     }
 
     private fun List<IrExpression>.toArrayLiteral(arrayType: IrType, elementType: IrType): IrExpression {
-        val startOffset = firstOrNull()?.startOffset ?: UNDEFINED_OFFSET
-        val endOffset = lastOrNull()?.endOffset ?: UNDEFINED_OFFSET
+        val irVararg = IrVarargImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, arrayType, elementType, this)
 
-        val irVararg = IrVarargImpl(startOffset, endOffset, arrayType, elementType, this)
-
-        return IrCallImpl(startOffset, endOffset, arrayType, context.intrinsics.arrayLiteral).apply {
+        return IrCallImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, arrayType, context.intrinsics.arrayLiteral).apply {
             putValueArgument(0, irVararg)
         }
     }

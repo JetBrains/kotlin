@@ -124,6 +124,13 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
         PrimitiveType.DOUBLE to getInternalFunction("isLongArray")
     )
 
+
+    // Enum
+
+    val enumValueOfIntrinsic = getInternalFunction("enumValueOfIntrinsic")
+    val enumValuesIntrinsic = getInternalFunction("enumValuesIntrinsic")
+
+
     // Other:
 
     val jsObjectCreate = defineObjectCreateIntrinsic() // Object.create

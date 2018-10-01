@@ -1584,6 +1584,11 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             runTest("js/js.translator/testData/box/enum/simpleEnum.kt");
         }
 
+        @TestMetadata("standardFunctions.kt")
+        public void testStandardFunctions() throws Exception {
+            runTest("js/js.translator/testData/box/enum/standardFunctions.kt");
+        }
+
         @TestMetadata("standardMethods.kt")
         public void testStandardMethods() throws Exception {
             runTest("js/js.translator/testData/box/enum/standardMethods.kt");

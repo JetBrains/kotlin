@@ -23,7 +23,8 @@ class CallsLowering(val context: JsIrBackendContext) : FileLoweringPass {
         EqualityAndComparisonCallsTransformer(context),
         PrimitiveContainerMemberCallTransformer(context),
         MethodsOfAnyCallsTransformer(context),
-        ReflectionCallsTransformer(context)
+        ReflectionCallsTransformer(context),
+        EnumIntrinsicsTransformer(context)
     )
 
     override fun lower(irFile: IrFile) {
