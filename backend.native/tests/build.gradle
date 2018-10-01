@@ -2580,6 +2580,10 @@ task classDeclarationInsideInline(type: RunKonanTest) {
     goldValue = "test1: 1.0\n1\ntest2\n"
 }
 
+task inlineClass0(type: RunKonanTest) {
+    source = "codegen/inlineClass/inlineClass0.kt"
+}
+
 task deserialized_inline0(type: RunKonanTest) {
     source = "serialization/deserialized_inline0.kt"
 }

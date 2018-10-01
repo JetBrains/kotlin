@@ -271,6 +271,8 @@ private class InlineClassTransformer(private val context: Context) : IrBuildingT
     }
 
     override fun visitConstructor(declaration: IrConstructor): IrStatement {
+        super.visitConstructor(declaration)
+
         val classIsInlined = declaration.constructedClass.isInlined()
 
         if (classIsInlined && !declaration.isPrimary) {
@@ -282,7 +284,7 @@ private class InlineClassTransformer(private val context: Context) : IrBuildingT
             (declaration.body as IrBlockBody).statements.clear()
         }
 
-        return super.visitConstructor(declaration)
+        return declaration
     }
 
     private fun IrBuilderWithScope.irIsNull(expression: IrExpression): IrExpression {
