@@ -336,6 +336,8 @@ open class CInteropProcess: DefaultTask() {
     val extraOpts: List<String>
         @Input get() = settings.extraOpts
 
+    val kotlinNativeVersion: String
+        @Input get() = project.konanVersion.toString()
 
     // Task action.
     @TaskAction
