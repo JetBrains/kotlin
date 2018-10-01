@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.idea.util.runReadActionInSmartMode
 import org.jetbrains.kotlin.idea.versions.LibInfo
+import java.io.File
 
 class KotlinMigrationProjectComponent(val project: Project) {
     @Volatile
@@ -148,17 +149,37 @@ class KotlinMigrationProjectComponent(val project: Project) {
                 return true
             }
 
+            val checkedFiles = HashSet<File>()
+
+            project.basePath?.let { projectBasePath ->
+                checkedFiles.add(File(projectBasePath))
+            }
+
             val changedFiles = ChangeListManager.getInstance(project).affectedPaths
             for (changedFile in changedFiles) {
                 val extension = changedFile.extension
                 when (extension) {
                     "gradle" -> return true
                     "properties" -> return true
+                    "kts" -> return true
                     "iml" -> return true
                     "xml" -> {
                         if (changedFile.name == "pom.xml") return true
                         val parentDir = changedFile.parentFile
                         if (parentDir.isDirectory && parentDir.name == Project.DIRECTORY_STORE_FOLDER) {
+                            return true
+                        }
+                    }
+                    "kt", "java", "groovy" -> {
+                        val dirs: Sequence<File> = generateSequence(changedFile) { it.parentFile }
+                            .drop(1) // Drop original file
+                            .takeWhile { it.isDirectory }
+
+                        val isInBuildSrc = dirs
+                            .takeWhile { checkedFiles.add(it) }
+                            .any { it.name == BUILD_SRC_FOLDER_NAME }
+
+                        if (isInBuildSrc) {
                             return true
                         }
                     }
@@ -214,6 +235,8 @@ fun MigrationInfo.isLanguageVersionUpdate(old: LanguageVersion, new: LanguageVer
     return oldLanguageVersion <= old && newLanguageVersion >= new
 }
 
+
+private const val BUILD_SRC_FOLDER_NAME = "buildSrc"
 private const val KOTLIN_GROUP_ID = "org.jetbrains.kotlin"
 
 private fun maxKotlinLibVersion(project: Project): LibInfo? {
