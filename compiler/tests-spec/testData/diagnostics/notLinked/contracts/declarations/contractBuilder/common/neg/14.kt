@@ -1,5 +1,4 @@
-// !LANGUAGE: +AllowContractsForCustomFunctions +UseCallsInPlaceEffect
-// !DIAGNOSTICS: -INVISIBLE_REFERENCE -INVISIBLE_MEMBER -UNUSED_VARIABLE
+// !DIAGNOSTICS: -UNUSED_VARIABLE
 // !USE_EXPERIMENTAL: kotlin.contracts.ExperimentalContracts
 // !WITH_FUNCTIONS
 

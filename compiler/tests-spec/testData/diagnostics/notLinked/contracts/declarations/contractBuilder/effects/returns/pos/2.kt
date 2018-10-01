@@ -1,5 +1,4 @@
-// !LANGUAGE: +AllowContractsForCustomFunctions +UseCallsInPlaceEffect
-// !DIAGNOSTICS: -INVISIBLE_REFERENCE -INVISIBLE_MEMBER -FINAL_UPPER_BOUND
+// !DIAGNOSTICS: -FINAL_UPPER_BOUND
 // !USE_EXPERIMENTAL: kotlin.contracts.ExperimentalContracts
 // !WITH_CLASSES
 
