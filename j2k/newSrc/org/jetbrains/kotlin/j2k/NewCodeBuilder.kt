@@ -53,9 +53,9 @@ class NewCodeBuilder {
             printer.printWithNoIndent("break")
         }
 
-        override fun visitBreakWithLabelStatement(ktBreakWithLabelStatement: JKBreakWithLabelStatement) {
+        override fun visitBreakWithLabelStatement(breakWithLabelStatement: JKBreakWithLabelStatement) {
             printer.printWithNoIndent("break@")
-            printer.printWithNoIndent(ktBreakWithLabelStatement.label.value)
+            printer.printWithNoIndent(breakWithLabelStatement.label.value)
         }
 
         override fun visitModifierList(modifierList: JKModifierList) {
@@ -466,6 +466,31 @@ class NewCodeBuilder {
             printer.printWithNoIndent(" ")
             ktAssignmentStatement.expression.accept(this)
         }
+
+        override fun visitKtWhenStatement(ktWhenStatement: JKKtWhenStatement) {
+            printer.printWithNoIndent("when(")
+            ktWhenStatement.expression.accept(this)
+            printer.printWithNoIndent(")")
+            printer.block(multiline = true) {
+                ktWhenStatement.cases.forEach { it.accept(this) }
+            }
+        }
+
+        override fun visitKtWhenCase(ktWhenCase: JKKtWhenCase) {
+            renderList(ktWhenCase.labels, ", ") {
+                it.accept(this)
+            }
+            printer.printWithNoIndent(" -> ")
+            ktWhenCase.statement.accept(this)
+        }
+
+        override fun visitKtElseWhenLabel(ktElseWhenLabel: JKKtElseWhenLabel) {
+            printer.printWithNoIndent("else")
+        }
+
+        override fun visitKtValueWhenLabel(ktValueWhenLabel: JKKtValueWhenLabel) {
+            ktValueWhenLabel.expression.accept(this)
+        }
     }
 
     private enum class ParenthesisKind(val open: String, val close: String) {
@@ -477,6 +502,8 @@ class NewCodeBuilder {
         return builder.toString()
     }
 }
+
+
 
 private inline fun <T> List<T>.headTail(): Pair<T?, List<T>?> {
     val head = this.firstOrNull()

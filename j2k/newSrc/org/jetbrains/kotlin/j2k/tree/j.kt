@@ -87,3 +87,23 @@ interface JKJavaAssignmentExpression : JKExpression, JKBranchElement {
     var expression: JKExpression
     var operator: JKOperator
 }
+
+interface JKJavaSwitchStatement : JKStatement {
+    var expression: JKExpression
+    var cases: List<JKJavaSwitchCase>
+}
+
+interface JKJavaSwitchCase : JKTreeElement {
+    fun isDefault(): Boolean
+    var statements: List<JKStatement>
+}
+
+interface JKJavaDefaultSwitchCase : JKJavaSwitchCase {
+    override fun isDefault(): Boolean = true
+}
+
+interface JKJavaLabelSwitchCase : JKJavaSwitchCase {
+    override fun isDefault(): Boolean = false
+    var label: JKExpression
+}
+

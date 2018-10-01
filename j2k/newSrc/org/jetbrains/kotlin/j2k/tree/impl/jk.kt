@@ -274,20 +274,6 @@ class JKDoWhileStatementImpl(body: JKStatement, condition: JKExpression) : JKDoW
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitDoWhileStatement(this, data)
 }
 
-class JKSwitchStatementImpl(expression: JKExpression, block: JKBlock) : JKSwitchStatement, JKBranchElementBase() {
-    override var block by child(block)
-    override var expression by child(expression)
-    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitSwitchStatement(this, data)
-}
-
-class JKSwitchLabelStatementImpl(expression: JKExpression) : JKSwitchLabelStatement, JKBranchElementBase() {
-    override var expression by child(expression)
-    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitSwitchLabelStatement(this, data)
-}
-
-class JKSwitchDefaultLabelStatementImpl : JKSwitchDefaultLabelStatement, JKElementBase() {
-    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitSwitchDefaultLabelStatement(this, data)
-}
 
 class JKBreakStatementImpl : JKBreakStatement, JKElementBase() {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitBreakStatement(this, data)

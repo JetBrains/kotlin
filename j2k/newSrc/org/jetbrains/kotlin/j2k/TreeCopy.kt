@@ -14,3 +14,9 @@ fun <T : JKElement> T.copyTree(): T =
             this.copy() as T
         else -> TODO("Not supported+$this.toString()")
     }
+
+fun <T : JKElement> T.copyTreeAndDetach(): T =
+    this.copyTree().also {
+        if (it.parent != null) it.detach(it.parent!!)
+    }
+

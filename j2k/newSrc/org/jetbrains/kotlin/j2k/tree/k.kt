@@ -57,3 +57,21 @@ interface JKKtAlsoCallExpression : JKKtMethodCallExpression {
 }
 
 interface JKKtLiteralExpression : JKLiteralExpression
+
+interface JKKtWhenStatement : JKStatement {
+    var expression: JKExpression
+    var cases: List<JKKtWhenCase>
+}
+
+interface JKKtWhenCase : JKTreeElement {
+    var labels: List<JKKtWhenLabel>
+    var statement: JKStatement
+}
+
+interface JKKtWhenLabel : JKTreeElement
+
+interface JKKtElseWhenLabel : JKKtWhenLabel
+
+interface JKKtValueWhenLabel : JKKtWhenLabel {
+    var expression: JKExpression
+}

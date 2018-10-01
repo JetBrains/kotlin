@@ -220,3 +220,28 @@ class JKKtPrimaryConstructorImpl(
 
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitKtPrimaryConstructor(this, data)
 }
+
+class JKKtWhenStatementImpl(
+    expression: JKExpression,
+    cases: List<JKKtWhenCase>
+) : JKKtWhenStatement, JKBranchElementBase() {
+    override var expression: JKExpression by child(expression)
+    override var cases: List<JKKtWhenCase> by children(cases)
+    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitKtWhenStatement(this, data)
+}
+
+class JKKtWhenCaseImpl(labels: List<JKKtWhenLabel>, statement: JKStatement) : JKKtWhenCase, JKBranchElementBase() {
+    override var labels: List<JKKtWhenLabel> by children(labels)
+    override var statement: JKStatement by child(statement)
+    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitKtWhenCase(this, data)
+
+}
+
+class JKKtElseWhenLabelImpl : JKKtElseWhenLabel, JKElementBase() {
+    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitKtElseWhenLabel(this, data)
+}
+
+class JKKtValueWhenLabelImpl(expression: JKExpression) : JKKtValueWhenLabel, JKBranchElementBase() {
+    override var expression: JKExpression by child(expression)
+    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitKtValueWhenLabel(this, data)
+}

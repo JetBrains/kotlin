@@ -216,17 +216,6 @@ interface JKDoWhileStatement : JKLoopStatement {
     var condition: JKExpression
 }
 
-interface JKSwitchStatement : JKStatement {
-    var expression: JKExpression
-    var block: JKBlock
-}
-
-interface JKSwitchLabelStatement : JKStatement {
-    var expression: JKExpression
-}
-
-interface JKSwitchDefaultLabelStatement : JKStatement
-
 interface JKBreakStatement : JKStatement
 
 interface JKBreakWithLabelStatement : JKBreakStatement {

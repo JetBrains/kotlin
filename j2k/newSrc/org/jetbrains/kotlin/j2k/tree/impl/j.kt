@@ -205,3 +205,26 @@ class JKJavaAssignmentExpressionImpl(
 
     override var expression: JKExpression by child(expression)
 }
+
+class JKJavaSwitchStatementImpl(
+    expression: JKExpression,
+    cases: List<JKJavaSwitchCase>
+) : JKJavaSwitchStatement, JKBranchElementBase() {
+    override var expression: JKExpression by child(expression)
+    override var cases: List<JKJavaSwitchCase> by children(cases)
+    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitJavaSwitchStatement(this, data)
+}
+
+class JKJavaDefaultSwitchCaseImpl(statements: List<JKStatement>) : JKJavaDefaultSwitchCase, JKBranchElementBase() {
+    override var statements: List<JKStatement> by children(statements)
+    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitJavaDefaultSwitchCase(this, data)
+}
+
+class JKJavaLabelSwitchCaseImpl(
+    label: JKExpression,
+    statements: List<JKStatement>
+) : JKJavaLabelSwitchCase, JKBranchElementBase() {
+    override var statements: List<JKStatement> by children(statements)
+    override var label: JKExpression by child(label)
+    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitJavaLabelSwitchCase(this, data)
+}
