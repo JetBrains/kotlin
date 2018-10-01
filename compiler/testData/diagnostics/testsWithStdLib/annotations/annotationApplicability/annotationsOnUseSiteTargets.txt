@@ -1,10 +1,10 @@
 package
 
 public interface Test {
-    public abstract val a: kotlin.Int
-    public abstract val b: kotlin.Int
-    public abstract val c: kotlin.Int
-    public abstract val d: kotlin.Int
+    @get:kotlin.jvm.JvmStatic public abstract val a: kotlin.Int
+    @get:kotlin.jvm.JvmName(name = "1") public abstract val b: kotlin.Int
+    @get:kotlin.jvm.Synchronized public abstract val c: kotlin.Int
+    @get:kotlin.jvm.JvmOverloads public abstract val d: kotlin.Int
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

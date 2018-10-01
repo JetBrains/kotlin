@@ -4,7 +4,7 @@ public fun test(/*0*/ x: CollectionStringImpl): kotlin.Unit
 
 public open class CollectionStringImpl : kotlin.collections.MutableCollection<kotlin.String!> {
     public constructor CollectionStringImpl()
-    public open override /*1*/ val size: kotlin.Int
+    @get:java.lang.Override public open override /*1*/ val size: kotlin.Int
     @java.lang.Override public open override /*1*/ fun add(/*0*/ element: kotlin.String!): kotlin.Boolean
     @java.lang.Override public open override /*1*/ fun addAll(/*0*/ elements: kotlin.collections.Collection<kotlin.String!>): kotlin.Boolean
     @java.lang.Override public open override /*1*/ fun clear(): kotlin.Unit

@@ -5,7 +5,7 @@ package foo {
 
     public final class Diff {
         public constructor Diff()
-        @kotlin.Deprecated(level = DeprecationLevel.WARNING, message = "") public final var p: kotlin.Int
+        @kotlin.Deprecated(level = DeprecationLevel.WARNING, message = "") @get:kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "") @set:kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "") public final var p: kotlin.Int
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
@@ -45,7 +45,7 @@ package foo {
 
     public open class GetterDeprecated {
         public constructor GetterDeprecated()
-        public open var p: kotlin.Int
+        @get:kotlin.Deprecated(message = "") public open var p: kotlin.Int
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
@@ -91,7 +91,7 @@ package foo {
 
     public open class SetterDeprecated {
         public constructor SetterDeprecated()
-        public open var p: kotlin.Int
+        @set:kotlin.Deprecated(message = "") public open var p: kotlin.Int
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

@@ -6,7 +6,7 @@ public fun foo(): kotlin.Unit
 @kotlin.jvm.PurelyImplements(value = "kotlin.collections.MutableList") public/*package*/ open class A</*0*/ T : kotlin.Any!> : java.util.AbstractList<T!>, kotlin.collections.MutableList<T> {
     public/*package*/ constructor A</*0*/ T : kotlin.Any!>()
     protected/*protected and package*/ final override /*1*/ /*fake_override*/ var modCount: kotlin.Int
-    public open override /*2*/ val size: kotlin.Int
+    @get:java.lang.Override public open override /*2*/ val size: kotlin.Int
     public open override /*2*/ /*fake_override*/ fun add(/*0*/ element: T): kotlin.Boolean
     public open override /*2*/ /*fake_override*/ fun add(/*0*/ index: kotlin.Int, /*1*/ element: T): kotlin.Unit
     public open override /*2*/ /*fake_override*/ fun addAll(/*0*/ index: kotlin.Int, /*1*/ elements: kotlin.collections.Collection<T>): kotlin.Boolean

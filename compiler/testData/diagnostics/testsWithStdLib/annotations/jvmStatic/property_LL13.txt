@@ -2,7 +2,7 @@ package
 
 public final class A {
     public constructor A()
-    public final var p: kotlin.Int
+    @set:kotlin.jvm.JvmStatic public final var p: kotlin.Int
     @kotlin.jvm.JvmStatic public final val z2: kotlin.Int = 1
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
@@ -11,8 +11,8 @@ public final class A {
     public object A : B {
         private constructor A()
         @kotlin.jvm.JvmStatic public open override /*1*/ val base1: kotlin.Int = 0
-        public open override /*1*/ val base2: kotlin.Int = 0
-        public final var p: kotlin.Int
+        @get:kotlin.jvm.JvmStatic public open override /*1*/ val base2: kotlin.Int = 0
+        @set:kotlin.jvm.JvmStatic public final var p: kotlin.Int
         @kotlin.jvm.JvmStatic public final val z: kotlin.Int = 1
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         @kotlin.jvm.JvmStatic public open fun f(): kotlin.Unit
@@ -23,8 +23,8 @@ public final class A {
     public companion object Companion : B {
         private constructor Companion()
         @kotlin.jvm.JvmStatic public open override /*1*/ val base1: kotlin.Int = 0
-        public open override /*1*/ val base2: kotlin.Int = 0
-        public final var p1: kotlin.Int
+        @get:kotlin.jvm.JvmStatic public open override /*1*/ val base2: kotlin.Int = 0
+        @set:kotlin.jvm.JvmStatic public final var p1: kotlin.Int
         @kotlin.jvm.JvmStatic public final val z: kotlin.Int = 1
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

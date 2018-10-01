@@ -47,7 +47,7 @@ package usage1 {
 
 package usage2 {
     @kotlin.UseExperimental(markerClass = {api.ExperimentalAPI::class}) public val inProperty: () -> kotlin.Unit
-    public val inPropertyAccessor: () -> kotlin.Unit
+    @get:kotlin.UseExperimental(markerClass = {api.ExperimentalAPI::class}) public val inPropertyAccessor: () -> kotlin.Unit
     @kotlin.UseExperimental(markerClass = {api.ExperimentalAPI::class}) @api.EAnno public val property: kotlin.String = ""
     @kotlin.UseExperimental(markerClass = {api.ExperimentalAPI::class}) @api.EAnno public fun function(): kotlin.Unit
     public fun inDefaultArgument(/*0*/ @kotlin.UseExperimental(markerClass = {api.ExperimentalAPI::class}) f: () -> kotlin.Unit = ...): kotlin.Unit
