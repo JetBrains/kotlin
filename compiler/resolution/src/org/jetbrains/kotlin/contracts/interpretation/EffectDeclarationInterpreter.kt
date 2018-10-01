@@ -25,6 +25,6 @@ import org.jetbrains.kotlin.contracts.model.ESEffect
  * should be in 1-1-1 correspondence to each other and be agnostic
  * about other implementations.
  */
-internal interface EffectDeclarationInterpreter {
+interface EffectDeclarationInterpreter {
     fun tryInterpret(effectDeclaration: EffectDeclaration): ESEffect?
 }

@@ -19,11 +19,11 @@ package org.jetbrains.kotlin.contracts.parsing
 import org.jetbrains.kotlin.contracts.description.EffectDeclaration
 import org.jetbrains.kotlin.psi.KtExpression
 
-internal interface PsiEffectParser {
+interface PsiEffectParser {
     fun tryParseEffect(expression: KtExpression): Collection<EffectDeclaration>
 }
 
-internal abstract class AbstractPsiEffectParser(
+abstract class AbstractPsiEffectParser(
     val collector: ContractParsingDiagnosticsCollector,
     val callContext: ContractCallContext,
     val contractParserDispatcher: PsiContractParserDispatcher

@@ -75,11 +75,11 @@ class ContractInterpretationDispatcher {
     internal fun interpretCondition(booleanExpression: BooleanExpression): ESExpression? =
         booleanExpression.accept(conditionInterpreter, Unit)
 
-    internal fun interpretVariable(variableReference: VariableReference): ESVariable? = ESVariable(variableReference.descriptor)
+    fun interpretVariable(variableReference: VariableReference): ESVariable? = ESVariable(variableReference.descriptor)
 
-    internal fun interpretFunction(functionReference: FunctionReference): ESFunction? = ESFunction(functionReference.descriptor)
+    fun interpretFunction(functionReference: FunctionReference): ESFunction? = ESFunction(functionReference.descriptor)
 
-    internal fun interpretLambdaParameterReceiverReference(receiverReference: LambdaParameterReceiverReference): ESLambdaParameterReceiverReference? {
+    fun interpretLambdaParameterReceiverReference(receiverReference: LambdaParameterReceiverReference): ESLambdaParameterReceiverReference? {
         val variableReference = interpretVariable(receiverReference.variableReference) ?: return null
         return ESLambdaParameterReceiverReference(variableReference)
     }

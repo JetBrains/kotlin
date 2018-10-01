@@ -94,7 +94,10 @@ fun DeclarationDescriptor.isEqualsDescriptor(): Boolean =
     this is FunctionDescriptor && this.name == Name.identifier("equals") && dispatchReceiverParameter != null && // fast checks
             this.returnType?.isBoolean() == true && this.valueParameters.singleOrNull()?.type?.isNullableAny() == true // signature matches
 
-internal fun ResolvedCall<*>.firstArgumentAsExpressionOrNull(): KtExpression? =
+fun ResolvedCall<*>.firstArgumentAsExpressionOrNull(): KtExpression? =
     this.valueArgumentsByIndex?.firstOrNull()?.safeAs<ExpressionValueArgument>()?.valueArgument?.getArgumentExpression()
 
-private fun DeclarationDescriptor.equalsDslDescriptor(dslName: Name): Boolean = this.name == dslName && this.isFromContractDsl()
+fun ResolvedCall<*>.argumentAsExpressionOrNull(index: Int): KtExpression? =
+    this.valueArgumentsByIndex?.getOrNull(index)?.safeAs<ExpressionValueArgument>()?.valueArgument?.getArgumentExpression()
+
+fun DeclarationDescriptor.equalsDslDescriptor(dslName: Name): Boolean = this.name == dslName && this.isFromContractDsl()

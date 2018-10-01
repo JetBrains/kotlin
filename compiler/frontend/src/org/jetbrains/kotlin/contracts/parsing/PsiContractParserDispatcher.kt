@@ -49,7 +49,7 @@ interface PsiContractVariableParserDispatcher {
     fun parseKind(expression: KtExpression?): InvocationKind?
 }
 
-internal class PsiContractParserDispatcher(
+class PsiContractParserDispatcher(
     private val collector: ContractParsingDiagnosticsCollector,
     private val callContext: ContractCallContext
 ) : PsiContractVariableParserDispatcher {

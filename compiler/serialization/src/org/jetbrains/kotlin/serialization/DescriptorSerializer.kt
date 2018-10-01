@@ -529,7 +529,7 @@ class DescriptorSerializer private constructor(
 
     fun typeId(type: KotlinType): Int = typeTable[type(type)]
 
-    internal fun type(type: KotlinType): ProtoBuf.Type.Builder {
+    fun type(type: KotlinType): ProtoBuf.Type.Builder {
         val builder = ProtoBuf.Type.newBuilder()
 
         if (type.isError) {
