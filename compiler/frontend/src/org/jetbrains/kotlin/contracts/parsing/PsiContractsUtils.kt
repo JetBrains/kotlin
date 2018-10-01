@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.contracts.parsing.ContractsDslNames.CALLS_IN_PLACE
 import org.jetbrains.kotlin.contracts.parsing.ContractsDslNames.CONTRACT
 import org.jetbrains.kotlin.contracts.parsing.ContractsDslNames.CONTRACTS_DSL_ANNOTATION_FQN
 import org.jetbrains.kotlin.contracts.parsing.ContractsDslNames.EFFECT
+import org.jetbrains.kotlin.contracts.parsing.ContractsDslNames.EXTENSION_CONTRACTS_DSL_ANNOTATION_FQN
 import org.jetbrains.kotlin.contracts.parsing.ContractsDslNames.IMPLIES
 import org.jetbrains.kotlin.contracts.parsing.ContractsDslNames.INVOCATION_KIND_ENUM
 import org.jetbrains.kotlin.contracts.parsing.ContractsDslNames.RECEIVER_OF
@@ -40,6 +41,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 object ContractsDslNames {
     // Internal marker-annotation for distinguishing our API
     val CONTRACTS_DSL_ANNOTATION_FQN = FqName("kotlin.internal.ContractsDsl")
+    val EXTENSION_CONTRACTS_DSL_ANNOTATION_FQN = FqName("kotlin.annotations.ExtensionContractsDsl")
 
     // Types
     val EFFECT = Name.identifier("Effect")
@@ -68,7 +70,8 @@ object ContractsDslNames {
     val RECEIVER_OF = Name.identifier("receiverOf")
 }
 
-fun DeclarationDescriptor.isFromContractDsl(): Boolean = this.annotations.hasAnnotation(CONTRACTS_DSL_ANNOTATION_FQN)
+fun DeclarationDescriptor.isFromContractDsl(): Boolean =
+    this.annotations.hasAnnotation(CONTRACTS_DSL_ANNOTATION_FQN) || this.annotations.hasAnnotation(EXTENSION_CONTRACTS_DSL_ANNOTATION_FQN)
 
 fun DeclarationDescriptor.isContractCallDescriptor(): Boolean = equalsDslDescriptor(CONTRACT)
 

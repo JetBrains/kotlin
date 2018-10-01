@@ -521,6 +521,9 @@ public abstract interface annotation class kotlin/annotation/Target : java/lang/
 	public abstract fun allowedTargets ()[Lkotlin/annotation/AnnotationTarget;
 }
 
+public abstract interface annotation class kotlin/annotations/ExtensionContractsDsl : java/lang/annotation/Annotation {
+}
+
 public abstract class kotlin/collections/AbstractCollection : java/util/Collection, kotlin/jvm/internal/markers/KMappedMarker {
 	protected fun <init> ()V
 	public fun add (Ljava/lang/Object;)Z
