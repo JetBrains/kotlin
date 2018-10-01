@@ -1,4 +1,3 @@
-
 plugins {
     kotlin("jvm")
     id("jps-compatible")
@@ -16,7 +15,7 @@ dependencies {
     testCompile(project(":kotlin-test:kotlin-test-junit"))
     testCompile(commonDep("junit:junit"))
     testCompileOnly(intellijCoreDep()) { includeJars("intellij-core") }
-    testRuntime(intellijDep()) { includeJars("trove4j") }
+    testRuntime(intellijDep()) { includeJars("trove4j", "util") }
 }
 
 sourceSets {
