@@ -43,7 +43,9 @@ class SerializableCompanionJsTranslator(
             } else {
                 val args = jsFun.parameters.map { JsNameRef(it.name) }
                 val ref = context.getInnerNameForDescriptor(
-                        KSerializerDescriptorResolver.createTypedSerializerConstructorDescriptor(serializer, serializableDescriptor))
+                    requireNotNull(
+                        KSerializerDescriptorResolver.findSerializerConstructorForTypeArgumentsSerializers(serializer)
+                    ) { "Generated serializer does not have constructor with required number of arguments" })
                 JsInvocation(ref.makeRef(), args)
             }
             +JsReturn(stmt)

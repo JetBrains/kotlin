@@ -156,7 +156,9 @@ internal fun SerializerJsTranslator.serializerInstance(
             args = listOf(createGetKClassExpression(kType.arguments[0].type.toClassDescriptor!!)) + args
         val serializable = getSerializableClassDescriptorBySerializer(serializerClass)
         val ref = if (serializable?.declaredTypeParameters?.isNotEmpty() == true) {
-            val desc = KSerializerDescriptorResolver.createTypedSerializerConstructorDescriptor(serializerClass, serializableDescriptor)
+            val desc = requireNotNull(
+                KSerializerDescriptorResolver.findSerializerConstructorForTypeArgumentsSerializers(serializerClass)
+            ) { "Generated serializer does not have constructor with required number of arguments" }
             JsInvocation(context.getInnerReference(desc), args)
         } else {
             JsNew(context.translateQualifiedReference(serializerClass), args)
