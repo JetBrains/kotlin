@@ -19,7 +19,6 @@ fun testRandomWorkers() {
     val attempts = 3
     val results = Array(attempts, { ArrayList<Int>() } )
     for (attempt in 0 until attempts) {
-        Random.seed = seed
         // Produce a list of random numbers in each worker
         val futures = Array(workers.size, { workerIndex ->
             workers[workerIndex].execute(TransferMode.SAFE, { workerIndex }) {

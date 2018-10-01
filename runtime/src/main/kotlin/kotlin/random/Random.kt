@@ -17,9 +17,8 @@ internal object NativeRandom : Random() {
     /**
      * Random generator seed value.
      */
-    var seed: Long
+    private val seed: Long
         get() = _seed.value
-        set(value) = update(mult(value))
 
     private fun mult(value: Long) = (value xor MULTIPLIER) and ((1L shl 48) - 1)
 
@@ -42,8 +41,3 @@ internal actual fun fastLog2(value: Int): Int =
 
 internal actual fun doubleFromParts(hi26: Int, low27: Int): Double =
         (hi26.toLong().shl(27) + low27) / (1L shl 53).toDouble()
-
-// TODO: common stdlib Random hasn't got seed, this is workaround for running K/N tests.
-var Random.seed:Long
-  get() = NativeRandom.seed
-  set(value) { NativeRandom.seed = value }
