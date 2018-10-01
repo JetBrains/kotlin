@@ -19,7 +19,7 @@ repositories {
 }
 
 dependencies {
-    compile 'org.jetbrains.kotlinx:kotlinx-coroutines-core:0.24.0-eap13'
+    compile 'org.jetbrains.kotlinx:kotlinx-coroutines-core:0.27.0-eap13'
 }
 
 compileKotlin {
