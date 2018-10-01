@@ -1582,9 +1582,12 @@ public class FunctionCodegen {
                             reg += argTypes[i].getSize();
                         }
 
-                        String internalName = typeMapper.mapType(toClass).getInternalName();
+                        String internalName = typeMapper.mapClass(toClass).getInternalName();
                         if (toClass.getKind() == ClassKind.INTERFACE) {
                             iv.invokeinterface(internalName, delegateToMethod.getName(), delegateToMethod.getDescriptor());
+                        }
+                        else if (toClass.isInline()) {
+                            iv.invokestatic(internalName, delegateToMethod.getName(), delegateToMethod.getDescriptor(), false);
                         }
                         else {
                             iv.invokevirtual(internalName, delegateToMethod.getName(), delegateToMethod.getDescriptor(), false);

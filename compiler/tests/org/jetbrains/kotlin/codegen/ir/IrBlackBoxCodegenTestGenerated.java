@@ -11774,6 +11774,11 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             runTest("compiler/testData/codegen/box/inlineClasses/inlineFunctionInsideInlineClass.kt");
         }
 
+        @TestMetadata("interfaceImplementationByDelegation.kt")
+        public void testInterfaceImplementationByDelegation() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/interfaceImplementationByDelegation.kt");
+        }
+
         @TestMetadata("iterateOverArrayOfInlineClassValues.kt")
         public void testIterateOverArrayOfInlineClassValues() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/iterateOverArrayOfInlineClassValues.kt");
