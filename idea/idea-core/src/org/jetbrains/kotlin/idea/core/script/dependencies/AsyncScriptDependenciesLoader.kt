@@ -22,7 +22,7 @@ class AsyncScriptDependenciesLoader(
     file: VirtualFile,
     scriptDef: KotlinScriptDefinition,
     project: Project
-) : ScriptDependenciesLoader(file, scriptDef, project, true) {
+) : ScriptDependenciesLoader(file, scriptDef, project) {
 
     override fun loadDependencies() {
         if (!shouldSendNewRequest(lastRequest)) {
