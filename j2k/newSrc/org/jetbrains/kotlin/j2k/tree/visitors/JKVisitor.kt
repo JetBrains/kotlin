@@ -50,6 +50,7 @@ interface JKVisitor<out R, in D> {
     fun visitSwitchLabelStatement(switchLabelStatement: JKSwitchLabelStatement, data: D): R = visitStatement(switchLabelStatement, data)
     fun visitSwitchDefaultLabelStatement(switchDefaultLabelStatement: JKSwitchDefaultLabelStatement, data: D): R = visitStatement(switchDefaultLabelStatement, data)
     fun visitBreakStatement(breakStatement: JKBreakStatement, data: D): R = visitStatement(breakStatement, data)
+    fun visitBreakWithLabelStatement(breakWithLabelStatement: JKBreakWithLabelStatement, data: D): R = visitBreakStatement(breakWithLabelStatement, data)
     fun visitIfStatement(ifStatement: JKIfStatement, data: D): R = visitStatement(ifStatement, data)
     fun visitIfElseStatement(ifElseStatement: JKIfElseStatement, data: D): R = visitIfStatement(ifElseStatement, data)
     fun visitIfElseExpression(ifElseExpression: JKIfElseExpression, data: D): R = visitExpression(ifElseExpression, data)

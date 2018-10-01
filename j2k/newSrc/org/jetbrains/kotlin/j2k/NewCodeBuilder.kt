@@ -49,6 +49,15 @@ class NewCodeBuilder {
             file.acceptChildren(this)
         }
 
+        override fun visitBreakStatement(breakStatement: JKBreakStatement) {
+            printer.printWithNoIndent("break")
+        }
+
+        override fun visitBreakWithLabelStatement(ktBreakWithLabelStatement: JKBreakWithLabelStatement) {
+            printer.printWithNoIndent("break@")
+            printer.printWithNoIndent(ktBreakWithLabelStatement.label.value)
+        }
+
         override fun visitModifierList(modifierList: JKModifierList) {
             modifierList.modifiers.firstOrNull()?.accept(this)
             for (i in 1..modifierList.modifiers.lastIndex) {

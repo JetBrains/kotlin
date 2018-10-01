@@ -366,8 +366,10 @@ class JavaToJKTreeBuilder(var symbolProvider: JKSymbolProvider) {
                 is PsiSwitchLabelStatement -> if (isDefaultCase) JKSwitchDefaultLabelStatementImpl() else
                     JKSwitchLabelStatementImpl(with(expressionTreeMapper) { caseValue.toJK() })
                 is PsiBreakStatement -> {
-                    //labelIdentifier?.also { TODO("Label break") }
-                    JKBreakStatementImpl()
+                    if (labelIdentifier != null)
+                        JKBreakWithLabelStatementImpl(JKNameIdentifierImpl(labelIdentifier!!.text))
+                    else
+                        JKBreakStatementImpl()
                 }
                 else -> TODO("for ${this::class}")
             }

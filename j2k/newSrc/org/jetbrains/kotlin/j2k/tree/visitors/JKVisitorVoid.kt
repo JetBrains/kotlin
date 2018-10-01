@@ -97,6 +97,8 @@ interface JKVisitorVoid : JKVisitor<Unit, Nothing?> {
     override fun visitSwitchDefaultLabelStatement(switchDefaultLabelStatement: JKSwitchDefaultLabelStatement, data: Nothing?) = visitSwitchDefaultLabelStatement(switchDefaultLabelStatement)
     fun visitBreakStatement(breakStatement: JKBreakStatement) = visitStatement(breakStatement, null)
     override fun visitBreakStatement(breakStatement: JKBreakStatement, data: Nothing?) = visitBreakStatement(breakStatement)
+    fun visitBreakWithLabelStatement(ktBreakWithLabelStatement: JKBreakWithLabelStatement) = visitBreakStatement(ktBreakWithLabelStatement, null)
+    override fun visitBreakWithLabelStatement(breakWithLabelStatement: JKBreakWithLabelStatement, data: Nothing?) = visitBreakWithLabelStatement(breakWithLabelStatement)
     fun visitIfStatement(ifStatement: JKIfStatement) = visitStatement(ifStatement, null)
     override fun visitIfStatement(ifStatement: JKIfStatement, data: Nothing?) = visitIfStatement(ifStatement)
     fun visitIfElseStatement(ifElseStatement: JKIfElseStatement) = visitIfStatement(ifElseStatement, null)
