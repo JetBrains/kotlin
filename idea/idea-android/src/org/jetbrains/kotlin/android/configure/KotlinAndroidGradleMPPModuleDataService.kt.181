@@ -15,19 +15,22 @@ import com.intellij.openapi.externalSystem.model.project.ProjectData
 import com.intellij.openapi.externalSystem.service.project.IdeModifiableModelsProvider
 import com.intellij.openapi.externalSystem.service.project.manage.AbstractProjectDataService
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
+import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.DependencyScope
 import com.intellij.openapi.roots.ModifiableRootModel
+import com.intellij.util.SmartList
 import com.intellij.util.containers.stream
 import org.jetbrains.jps.model.java.JavaResourceRootType
 import org.jetbrains.jps.model.java.JavaSourceRootType
 import org.jetbrains.jps.model.module.JpsModuleSourceRootType
 import org.jetbrains.kotlin.gradle.KotlinCompilation
 import org.jetbrains.kotlin.gradle.KotlinPlatform
-import org.jetbrains.kotlin.idea.configuration.GradleProjectImportHandler
-import org.jetbrains.kotlin.idea.configuration.KotlinSourceSetDataService
-import org.jetbrains.kotlin.idea.configuration.kotlinAndroidSourceSets
+import org.jetbrains.kotlin.gradle.KotlinSourceSet
+import org.jetbrains.kotlin.idea.configuration.*
 import org.jetbrains.kotlin.idea.facet.KotlinFacet
+import org.jetbrains.kotlin.utils.addIfNotNull
+import org.jetbrains.plugins.gradle.model.data.GradleSourceSetData
 import java.io.File
 
 class KotlinAndroidGradleMPPModuleDataService : AbstractProjectDataService<ModuleData, Void>() {
@@ -67,13 +70,13 @@ class KotlinAndroidGradleMPPModuleDataService : AbstractProjectDataService<Modul
                             (it.data as? ModuleData)?.id == sourceSetId
                         }?.data as? ModuleData ?: continue
                         val sourceSetModule = modelsProvider.findIdeModule(sourceSetData) ?: continue
-                        val existingEntry = rootModel.findModuleOrderEntry(sourceSetModule)
-                        val dependencyScope = if (activeSourceSetInfo.isTestModule) DependencyScope.TEST else DependencyScope.COMPILE
-                        if (existingEntry != null && existingEntry.scope == dependencyScope) continue
-                        rootModel.addModuleOrderEntry(sourceSetModule).also { it.scope = dependencyScope }
+                        addModuleDependencyIfNeeded(rootModel, sourceSetModule, activeSourceSetInfo.isTestModule)
                     }
                 }
             }
+            addExtraDependeeModules(androidModel, projectNode, modelsProvider, rootModel, false)
+            addExtraDependeeModules(androidModel, projectNode, modelsProvider, rootModel, true)
+
             val mainSourceSetInfo = activeSourceSetInfos.firstOrNull { it.kotlinModule.name == variantName }
             if (mainSourceSetInfo != null) {
                 KotlinSourceSetDataService.configureFacet(moduleData, mainSourceSetInfo, nodeToImport, module, modelsProvider)
@@ -84,6 +87,60 @@ class KotlinAndroidGradleMPPModuleDataService : AbstractProjectDataService<Modul
                 GradleProjectImportHandler.getInstances(project).forEach { it.importByModule(kotlinFacet, nodeToImport) }
             }
         }
+    }
+
+    private fun addModuleDependencyIfNeeded(
+        rootModel: ModifiableRootModel,
+        dependeeModule: Module,
+        testScope: Boolean
+    ) {
+        val dependencyScope = if (testScope) DependencyScope.TEST else DependencyScope.COMPILE
+        val existingEntry = rootModel.findModuleOrderEntry(dependeeModule)
+        if (existingEntry != null && existingEntry.scope == dependencyScope) return
+        rootModel.addModuleOrderEntry(dependeeModule).also { it.scope = dependencyScope }
+    }
+
+    private fun addExtraDependeeModules(
+        androidModel: AndroidModuleModel,
+        projectNode: DataNode<ProjectData>,
+        modelsProvider: IdeModifiableModelsProvider,
+        rootModel: ModifiableRootModel,
+        testScope: Boolean
+    ) {
+        val dependencies = if (testScope) {
+            androidModel.selectedAndroidTestCompileDependencies
+        } else {
+            androidModel.selectedMainCompileLevel2Dependencies
+        } ?: return
+        val commonSourceSetName = KotlinSourceSet.commonName(testScope)
+        val relevantNodes = dependencies
+            .moduleDependencies
+            .mapNotNull { projectNode.findChildModuleById(it.projectPath) }
+            .flatMap { ExternalSystemApiUtil.getChildren(it, GradleSourceSetData.KEY) }
+            .filter {
+                val ktModule = it.kotlinSourceSet?.kotlinModule
+                ktModule != null && ktModule.isTestModule == testScope
+            }
+        SmartList<DataNode<GradleSourceSetData>>()
+            .apply {
+                addIfNotNull(
+                    relevantNodes.firstOrNull { it.kotlinSourceSet?.platform == KotlinPlatform.ANDROID }
+                        ?: relevantNodes.firstOrNull { it.kotlinSourceSet?.platform == KotlinPlatform.JVM }
+                )
+                addIfNotNull(
+                    relevantNodes.firstOrNull {
+                        it.kotlinSourceSet?.platform == KotlinPlatform.COMMON && it.kotlinSourceSet?.kotlinModule?.name == commonSourceSetName
+                    }
+                )
+            }
+            .mapNotNull { modelsProvider.findIdeModule(it.data) }
+            .forEach {
+                addModuleDependencyIfNeeded(rootModel, it, testScope)
+                val dependeeRootModel = modelsProvider.getModifiableRootModel(it)
+                dependeeRootModel.getModuleDependencies(testScope).forEach { transitiveDependee ->
+                    addModuleDependencyIfNeeded(rootModel, transitiveDependee, testScope)
+                }
+            }
     }
 
     private fun addSourceRoot(
