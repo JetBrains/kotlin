@@ -96,17 +96,17 @@ class KonanHelperProvider(lldb.SBSyntheticValueProvider):
         self._children_types = []
         self._children_type_names = []
         self._children_type_addresses = []
-        self._type_conversion = {
-            0: lambda address, name: self._valobj.CreateValueFromExpression(name, "(void *){:#x}".format(address)),
-            1: lambda address, name: self._create_synthetic_child(address, name),
-            2: lambda address, name: self._valobj.CreateValueFromExpression(name, "(int8_t *){:#x}".format(address)),
-            3: lambda address, name: self._valobj.CreateValueFromExpression(name, "(int16_t *){:#x}".format(address)),
-            4: lambda address, name: self._valobj.CreateValueFromExpression(name, "(int32_t *){:#x}".format(address)),
-            5: lambda address, name: self._valobj.CreateValueFromExpression(name, "(int64_t *){:#x}".format(address)),
-            6: lambda address, name: self._valobj.CreateValueFromExpression(name, "(float *){:#x}".format(address)),
-            7: lambda address, name: self._valobj.CreateValueFromExpression(name, "(double *){:#x}".format(address)),
-            8: lambda address, name: self._valobj.CreateValueFromExpression(name, "(void **){:#x}".format(address)),
-            9: lambda address, name: None}
+        self._type_conversion = [
+            lambda address, name: self._valobj.CreateValueFromExpression(name, "(void *){:#x}".format(address)),
+            lambda address, name: self._create_synthetic_child(address, name),
+            lambda address, name: self._valobj.CreateValueFromExpression(name, "(int8_t *){:#x}".format(address)),
+            lambda address, name: self._valobj.CreateValueFromExpression(name, "(int16_t *){:#x}".format(address)),
+            lambda address, name: self._valobj.CreateValueFromExpression(name, "(int32_t *){:#x}".format(address)),
+            lambda address, name: self._valobj.CreateValueFromExpression(name, "(int64_t *){:#x}".format(address)),
+            lambda address, name: self._valobj.CreateValueFromExpression(name, "(float *){:#x}".format(address)),
+            lambda address, name: self._valobj.CreateValueFromExpression(name, "(double *){:#x}".format(address)),
+            lambda address, name: self._valobj.CreateValueFromExpression(name, "(void **){:#x}".format(address)),
+            lambda address, name: None]
 
         self._types = [
             valobj.GetType().GetBasicType(lldb.eBasicTypeVoid).GetPointerType(),
