@@ -105,7 +105,8 @@ abstract class BaseKotlinCompilerSettings<T : Freezable> protected constructor(p
     override fun loadState(state: Element) {
         _settings = ReflectionUtil.newInstance(_settings.javaClass).apply {
             if (this is CommonCompilerArguments) {
-                freeArgs = ArrayList()
+                freeArgs = mutableListOf()
+                internalArguments = mutableListOf()
             }
             XmlSerializer.deserializeInto(this, state)
         }

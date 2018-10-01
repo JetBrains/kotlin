@@ -32,6 +32,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiJavaModule;
 import com.intellij.psi.PsiRequiresStatement;
 import com.intellij.util.containers.ContainerUtil;
+import org.jetbrains.kotlin.cli.common.arguments.InternalArgument;
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments;
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments;
 import org.jetbrains.kotlin.config.*;
@@ -53,6 +54,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 import java.util.stream.StreamSupport;
 
 import static java.util.Collections.emptyList;
@@ -305,6 +307,15 @@ public class ConfigureKotlinTest extends AbstractConfigureKotlinTest {
         assertEquals(
                 Collections.singletonList("true"),
                 KotlinCommonCompilerArgumentsHolder.Companion.getInstance(myProject).getSettings().getFreeArgs()
+        );
+    }
+
+    public void testProjectWithInternalArgs() {
+        List<InternalArgument> internalArguments =
+                KotlinCommonCompilerArgumentsHolder.Companion.getInstance(myProject).getSettings().getInternalArguments();
+        assertEquals(
+                0,
+                internalArguments.size()
         );
     }
 
