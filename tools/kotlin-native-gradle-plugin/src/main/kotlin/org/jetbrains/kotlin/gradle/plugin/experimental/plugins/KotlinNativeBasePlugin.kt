@@ -34,6 +34,7 @@ import org.gradle.language.plugins.NativeBasePlugin
 import org.gradle.nativeplatform.test.tasks.RunTestExecutable
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
+import org.jetbrains.kotlin.gradle.plugin.NATIVE_COMPILER_PLUGIN_CLASSPATH_CONFIGURATION_NAME
 import org.jetbrains.kotlin.gradle.plugin.PLUGIN_CLASSPATH_CONFIGURATION_NAME
 import org.jetbrains.kotlin.gradle.plugin.SubpluginEnvironment
 import org.jetbrains.kotlin.gradle.plugin.experimental.CInteropSettings
@@ -130,8 +131,13 @@ class KotlinNativeBasePlugin: Plugin<ProjectInternal> {
             assembleTask.dependsOn(it)
         }
 
-        project.configurations.maybeCreate(PLUGIN_CLASSPATH_CONFIGURATION_NAME).apply {
-            isTransitive = false
+        project.configurations.apply {
+            maybeCreate(NATIVE_COMPILER_PLUGIN_CLASSPATH_CONFIGURATION_NAME).apply {
+                isTransitive = false
+            }
+            maybeCreate(PLUGIN_CLASSPATH_CONFIGURATION_NAME).apply {
+                isTransitive = false
+            }
         }
 
         components.withType(AbstractKotlinNativeBinary::class.java) { binary ->
@@ -149,7 +155,7 @@ class KotlinNativeBasePlugin: Plugin<ProjectInternal> {
 
                 SubpluginEnvironment.loadSubplugins(this, kotlinVersion)
                     .addSubpluginOptions<CommonCompilerArguments>(this, it, it.compilerPluginOptions)
-                it.compilerPluginClasspath = project.configurations.getByName(PLUGIN_CLASSPATH_CONFIGURATION_NAME)
+                it.compilerPluginClasspath = project.configurations.getByName(NATIVE_COMPILER_PLUGIN_CLASSPATH_CONFIGURATION_NAME)
 
                 // Register an API header produced for shared/static library as a task output.
                 if (binary.kind == CompilerOutputKind.DYNAMIC || binary.kind == CompilerOutputKind.STATIC) {

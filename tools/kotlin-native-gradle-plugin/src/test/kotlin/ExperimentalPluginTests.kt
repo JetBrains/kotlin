@@ -844,4 +844,25 @@ class ExperimentalPluginTests {
             }
         }
     }
+
+    @Test
+    fun `Plugin should provide a correct serialization compiler plugin`() {
+        withProject {
+            pluginManager.apply("kotlinx-serialization-native")
+            repositories.apply {
+                jcenter()
+                maven { it.setUrl("http://kotlin.bintray.com/kotlin-eap") }
+                maven { it.setUrl("http://kotlin.bintray.com/kotlin-dev") }
+            }
+            evaluate()
+            tasks.withType(KotlinNativeCompile::class.java).all {
+                val compileClassPath = it.compilerPluginClasspath
+                assertNotNull(compileClassPath)
+                val files = compileClassPath.files
+                assertTrue(files.isNotEmpty(), "No compiler plugins in the classpath")
+                assertEquals(1, files.size, "More than one compiler plugin in the classpath")
+                assertTrue(files.single().absolutePath.contains("kotlin-serialization-unshaded"), "No unshaded version of serialization plugin in the classpath")
+            }
+        }
+    }
 }

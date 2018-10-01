@@ -16,7 +16,6 @@
 
 import org.jetbrains.kotlin.konan.KonanVersion
 import org.jetbrains.kotlin.konan.MetaVersion
-import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
 /**
  * One may use bintrayUser/bintrayKey project properties or BINTRAY_USER/BINTRAY_KEY environment variables to upload
@@ -101,7 +100,7 @@ dependencies {
     }
 }
 
-task jar(type: ShadowJar, overwrite: true) {
+shadowJar {
     from sourceSets.main.output
     configurations = [project.configurations.bundleDependencies]
     classifier = null
@@ -126,14 +125,22 @@ task jar(type: ShadowJar, overwrite: true) {
     exclude('META-INF/services/org.jetbrains.kotlin.gradle.plugin.KotlinGradleSubplugin')
 }
 
-assemble.dependsOn shadowJar
+jar {
+    dependsOn shadowJar
+    enabled = false
+}
 
 pluginUnderTestMetadata {
-    dependsOn jar
-    pluginClasspath = files(jar.archivePath) + configurations.shadow
+    dependsOn shadowJar
+    pluginClasspath = files(shadowJar.archivePath) + configurations.shadow
 }
 
 test {
+    dependsOn shadowJar
+    classpath = configurations.testRuntimeClasspath +
+            sourceSets.test.output +
+            files(shadowJar.archivePath) +
+            configurations.shadow
     systemProperty("kotlin.version", buildKotlinVersion)
     systemProperty("kotlin.repo", buildKotlinCompilerRepo)
     if (project.hasProperty("konan.home")) {
