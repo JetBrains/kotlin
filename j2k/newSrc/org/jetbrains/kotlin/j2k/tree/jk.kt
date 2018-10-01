@@ -30,6 +30,8 @@ interface JKTreeElement : JKElement {
     fun <D> acceptChildren(visitor: JKVisitor<Unit, D>, data: D)
 
     fun acceptChildren(visitor: JKVisitor<Unit, Nothing?>) = acceptChildren(visitor, null)
+
+    fun copy(): JKTreeElement
 }
 
 interface JKDeclaration : JKTreeElement

@@ -37,7 +37,7 @@ private class JKListChild<T : JKElement>(val value: Int) : ReadWriteProperty<JKB
     }
 }
 
-abstract class JKElementBase : JKTreeElement {
+abstract class JKElementBase : JKTreeElement, Cloneable {
     override var parent: JKElement? = null
 
     final override fun detach(from: JKElement) {
@@ -64,6 +64,9 @@ abstract class JKElementBase : JKTreeElement {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitTreeElement(this, data)
 
     override fun <D> acceptChildren(visitor: JKVisitor<Unit, D>, data: D) {}
+
+    override fun copy(): JKTreeElement =
+        clone() as JKTreeElement
 }
 
 abstract class JKBranchElementBase : JKElementBase(), JKBranchElement {
@@ -110,5 +113,35 @@ abstract class JKBranchElementBase : JKElementBase(), JKBranchElement {
         check(valid)
     }
 
-    override val children: MutableList<Any> = mutableListOf()
+    final override var children: MutableList<Any> = mutableListOf()
+        private set
+
+    override fun copy(): JKTreeElement {
+        val cloned = super.copy() as JKBranchElementBase
+        val deepClonedChildren =
+            cloned.children.map {
+                when (it) {
+                    is JKElementBase -> it.copy()
+                    is List<*> -> (it as List<JKTreeElement>).map { it.copy() }
+                    else -> error("Tree is corrupted")
+                }
+            }
+
+        deepClonedChildren.forEach { child ->
+            when (child) {
+                is JKElementBase -> {
+                    child.detach(this)
+                    child.attach(cloned)
+                }
+                is List<*> -> (child as List<JKTreeElement>).forEach {
+                    it.detach(this)
+                    it.attach(cloned)
+                }
+            }
+        }
+        cloned.children = deepClonedChildren.toMutableList()
+        return cloned
+    }
+
+
 }

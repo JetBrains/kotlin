@@ -228,6 +228,8 @@ class JKStubExpressionImpl : JKStubExpression, JKElementBase() {
 }
 
 object JKBodyStub : JKBlock, JKTreeElement {
+    override fun copy(): JKTreeElement = this
+
     override var statements: List<JKStatement>
         get() = emptyList()
         set(value) {}
