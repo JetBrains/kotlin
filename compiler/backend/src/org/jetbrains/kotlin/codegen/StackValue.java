@@ -25,7 +25,10 @@ import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.KtExpression;
 import org.jetbrains.kotlin.psi.ValueArgument;
-import org.jetbrains.kotlin.resolve.*;
+import org.jetbrains.kotlin.resolve.BindingContext;
+import org.jetbrains.kotlin.resolve.DescriptorUtils;
+import org.jetbrains.kotlin.resolve.ImportedFromObjectCallableDescriptor;
+import org.jetbrains.kotlin.resolve.InlineClassesUtilsKt;
 import org.jetbrains.kotlin.resolve.calls.model.DefaultValueArgument;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument;
@@ -160,16 +163,26 @@ public abstract class StackValue {
 
     @NotNull
     public static StackValue local(int index, @NotNull Type type, @NotNull VariableDescriptor descriptor) {
+        return local(index, type, descriptor, null);
+    }
+
+    @NotNull
+    public static StackValue local(int index, @NotNull Type type, @NotNull VariableDescriptor descriptor, @Nullable KotlinType delegateKotlinType) {
         if (descriptor.isLateInit()) {
+            assert delegateKotlinType == null :
+                    "Delegated property can't be lateinit: " + descriptor + ", delegate type: " + delegateKotlinType;
             return new LateinitLocal(index, type, descriptor.getType(), descriptor.getName());
         }
         else {
-            return new Local(index, type, descriptor.getType());
+            return new Local(
+                    index, type,
+                    delegateKotlinType != null ? delegateKotlinType : descriptor.getType()
+            );
         }
     }
 
     @NotNull
-    public static Delegate delegate(
+    public static Delegate localDelegate(
             @NotNull Type type,
             @NotNull StackValue delegateValue,
             @NotNull StackValue metadataValue,
@@ -186,7 +199,16 @@ public abstract class StackValue {
 
     @NotNull
     public static StackValue shared(int index, @NotNull Type type, @NotNull VariableDescriptor descriptor) {
-        return new Shared(index, type, descriptor.getType(), descriptor.isLateInit(), descriptor.getName());
+        return shared(index, type, descriptor, null);
+    }
+
+    @NotNull
+    public static StackValue shared(int index, @NotNull Type type, @NotNull VariableDescriptor descriptor, @Nullable KotlinType delegateKotlinType) {
+        return new Shared(
+                index, type,
+                delegateKotlinType != null ? delegateKotlinType : descriptor.getType(),
+                descriptor.isLateInit(), descriptor.getName()
+        );
     }
 
     @NotNull
