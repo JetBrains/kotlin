@@ -19377,6 +19377,11 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 runTest("compiler/testData/diagnostics/tests/smartCasts/smartCastOnWhen.kt");
             }
 
+            @TestMetadata("smartcastOnSameFieldOfDifferentInstances.kt")
+            public void testSmartcastOnSameFieldOfDifferentInstances() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/smartCasts/smartcastOnSameFieldOfDifferentInstances.kt");
+            }
+
             @TestMetadata("thisWithLabel.kt")
             public void testThisWithLabel() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/smartCasts/thisWithLabel.kt");
