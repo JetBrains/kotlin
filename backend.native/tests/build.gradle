@@ -158,6 +158,7 @@ task resultsTask() {
         def output = ["statistics": statistics, "tests": results]
         def json = JsonOutput.toJson(output)
         def reportFile = new File(testOutputExternal, "results.json")
+        testOutputExternal.mkdirs()
         reportFile.write(JsonOutput.prettyPrint(json))
         println("DONE.\n\n" +
                 "TOTAL: $statistics.total\n" +
