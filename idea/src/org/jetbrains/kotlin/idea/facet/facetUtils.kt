@@ -231,7 +231,7 @@ private val CommonCompilerArguments.ignoredFields: List<String>
 
 private fun Module.configureSdkIfPossible(compilerArguments: CommonCompilerArguments, modelsProvider: IdeModifiableModelsProvider) {
     // SDK for Android module is already configured by Android plugin at this point
-    if (isAndroidModule()) return
+    if (isAndroidModule(modelsProvider)) return
 
     val projectSdk = ProjectRootManager.getInstance(project).projectSdk
     val allSdks = ProjectJdkTable.getInstance().allJdks

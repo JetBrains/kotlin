@@ -6,13 +6,15 @@
 package org.jetbrains.kotlin.idea.core
 
 import com.intellij.facet.FacetManager
+import com.intellij.openapi.externalSystem.service.project.IdeModifiableModelsProvider
 import com.intellij.openapi.module.Module
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.idea.caches.project.ModuleSourceInfo
 import org.jetbrains.kotlin.idea.caches.project.PlatformModuleInfo
 
-fun Module.isAndroidModule(): Boolean {
-    val facets = FacetManager.getInstance(this).allFacets
+fun Module.isAndroidModule(modelsProvider: IdeModifiableModelsProvider? = null): Boolean {
+    val facetModel = if (modelsProvider != null) modelsProvider.getModifiableFacetModel(this) else FacetManager.getInstance(this)
+    val facets = facetModel.allFacets
     return facets.any { it.javaClass.simpleName == "AndroidFacet" }
 }
 
