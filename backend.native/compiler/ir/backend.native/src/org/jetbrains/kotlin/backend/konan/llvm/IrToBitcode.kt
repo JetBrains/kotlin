@@ -1108,42 +1108,68 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
      *  }
      *  we cannot determine if the result of when is assigned or not.
      */
-    private fun evaluateWhen(expression: IrWhen): LLVMValueRef {
-        context.log{"evaluateWhen                   : ${ir2string(expression)}"}
-        var bbExit: LLVMBasicBlockRef? = null             // By default "when" does not have "exit".
-        val isUnit                = expression.type.isUnit()
-        val isNothing             = expression.type.isNothing()
-
-        // We may not cover all cases if IrWhen is used as statement.
-        val coverAllCases         = isUnconditional(expression.branches.last())
-
-        // "When" has exit block if:
-        //      its type is not Nothing - we must place phi in the exit block
-        //      or it doesn't cover all cases - we may fall through all of them and must create exit block to continue.
-        if (!isNothing || !coverAllCases)                                         // If "when" has "exit".
-            bbExit = functionGenerationContext.basicBlock("when_exit", expression.startLocation)   // Create basic block to process "exit".
-
+    private inner class WhenEmittingContext(val expression: IrWhen) {
+        val needsPhi = isUnconditional(expression.branches.last()) && !expression.type.isUnit()
         val llvmType = codegen.getLLVMType(expression.type)
-        val resultPhi = if (isUnit || isNothing || !coverAllCases) null else
-            functionGenerationContext.appendingTo(bbExit!!) {
+
+        val bbExit = lazy { functionGenerationContext.basicBlock("when_exit", expression.startLocation) }
+
+        val resultPhi = lazy {
+            functionGenerationContext.appendingTo(bbExit.value) {
                 functionGenerationContext.phi(llvmType)
             }
-
-        expression.branches.forEach {                           // Iterate through "when" branches (clauses).
-            var bbNext = bbExit                                 // For last clause bbNext coincides with bbExit.
-            if (it != expression.branches.last())                            // If it is not last clause.
-                bbNext = functionGenerationContext.basicBlock("when_next", it.startLocation)  // Create new basic block for next clause.
-            generateWhenCase(resultPhi, it, bbNext, bbExit)                  // Generate code for current clause.
-        }
-
-        return when {
-            // FIXME: remove the hacks.
-            isUnit -> functionGenerationContext.theUnitInstanceRef.llvm
-            isNothing -> functionGenerationContext.kNothingFakeValue
-            !coverAllCases -> LLVMGetUndef(llvmType)!!
-            else -> resultPhi!!
         }
     }
+
+    private fun evaluateWhen(expression: IrWhen): LLVMValueRef {
+        context.log{"evaluateWhen                   : ${ir2string(expression)}"}
+
+        val whenEmittingContext = WhenEmittingContext(expression)
+
+        expression.branches.forEach {
+            val bbNext = if (it == expression.branches.last())
+                             null
+                         else
+                             functionGenerationContext.basicBlock("when_next", it.startLocation)
+            generateWhenCase(whenEmittingContext, it, bbNext)
+        }
+
+        if (whenEmittingContext.bbExit.isInitialized())
+            functionGenerationContext.positionAtEnd(whenEmittingContext.bbExit.value)
+
+        return when {
+            expression.type.isUnit() -> functionGenerationContext.theUnitInstanceRef.llvm
+            expression.type.isNothing() -> functionGenerationContext.kNothingFakeValue
+            whenEmittingContext.resultPhi.isInitialized() -> whenEmittingContext.resultPhi.value
+            else -> LLVMGetUndef(whenEmittingContext.llvmType)!!
+        }
+    }
+
+    private fun generateWhenCase(whenEmittingContext: WhenEmittingContext, branch: IrBranch, bbNext: LLVMBasicBlockRef?) {
+        val brResult = if (isUnconditional(branch))
+            evaluateExpression(branch.result)
+        else {
+            val bbCase = functionGenerationContext.basicBlock("when_case", branch.startLocation)
+            val condition = evaluateExpression(branch.condition)
+            functionGenerationContext.condBr(condition, bbCase, bbNext ?: whenEmittingContext.bbExit.value)
+            functionGenerationContext.positionAtEnd(bbCase)
+            evaluateExpression(branch.result)
+        }
+        if (!functionGenerationContext.isAfterTerminator()) {
+            if (whenEmittingContext.needsPhi)
+                functionGenerationContext.assignPhis(whenEmittingContext.resultPhi.value to brResult)
+            functionGenerationContext.br(whenEmittingContext.bbExit.value)
+        }
+        if (bbNext != null)
+            functionGenerationContext.positionAtEnd(bbNext)
+    }
+
+    //-------------------------------------------------------------------------//
+    // Checks if the branch is unconditional
+
+    private fun isUnconditional(branch: IrBranch): Boolean =
+            branch.condition is IrConst<*>                            // If branch condition is constant.
+                    && (branch.condition as IrConst<*>).value as Boolean  // If condition is "true"
 
     //-------------------------------------------------------------------------//
 
@@ -2499,41 +2525,6 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
             }
         }
     }
-
-    //-------------------------------------------------------------------------//
-
-    private fun generateWhenCase(resultPhi: LLVMValueRef?, branch: IrBranch,
-                                 bbNext: LLVMBasicBlockRef?, bbExit: LLVMBasicBlockRef?) {
-        val branchResult = branch.result
-        val brResult = if (isUnconditional(branch)) {                                 // It is the "else" clause.
-            evaluateExpression(branchResult)                                          // Generate clause body.
-        } else {                                                                      // It is conditional clause.
-            val bbCase = functionGenerationContext.basicBlock("when_case", branch.startLocation) // Create block for clause body.
-            val condition = evaluateExpression(branch.condition)                      // Generate cmp instruction.
-            functionGenerationContext.condBr(condition, bbCase, bbNext)               // Conditional branch depending on cmp result.
-            functionGenerationContext.positionAtEnd(bbCase)                           // Switch generation to block for clause body.
-            evaluateExpression(branch.result)                                         // Generate clause body.
-        }
-        if (!functionGenerationContext.isAfterTerminator()) {
-            if (resultPhi != null)
-                functionGenerationContext.assignPhis(resultPhi to brResult)
-            if (bbExit != null)
-                functionGenerationContext.br(bbExit)
-            else
-                functionGenerationContext.unreachable()
-        }
-        if (bbNext != null)                                                          // Switch generation to next or exit.
-            functionGenerationContext.positionAtEnd(bbNext)
-        else if (bbExit != null)
-            functionGenerationContext.positionAtEnd(bbExit)
-    }
-
-    //-------------------------------------------------------------------------//
-    // Checks if the branch is unconditional
-
-    private fun isUnconditional(branch: IrBranch): Boolean =
-        branch.condition is IrConst<*>                            // If branch condition is constant.
-            && (branch.condition as IrConst<*>).value as Boolean  // If condition is "true"
 
     //-------------------------------------------------------------------------//
 
