@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.contracts.model.Computation;
 import org.jetbrains.kotlin.contracts.model.Functor;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.kotlin.extensions.ExtensionBindingContextData;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.FqNameUnsafe;
 import org.jetbrains.kotlin.psi.*;
@@ -46,6 +47,7 @@ import org.jetbrains.kotlin.util.slicedMap.*;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Map;
 
 import static org.jetbrains.kotlin.util.slicedMap.RewritePolicy.DO_NOTHING;
 import static org.jetbrains.kotlin.util.slicedMap.Slices.COMPILE_TIME_VALUE_REWRITE_POLICY;
@@ -162,6 +164,11 @@ public interface BindingContext {
 
     WritableSlice<KtExpression, Boolean> VARIABLE_REASSIGNMENT = Slices.createSimpleSetSlice();
     WritableSlice<ValueParameterDescriptor, Boolean> AUTO_CREATED_IT = Slices.createSimpleSetSlice();
+
+    /**
+     * Slice that contains some info used by plugins (e.g. contracts plugin)
+     */
+    WritableSlice<KtExpression, Map<String, ExtensionBindingContextData>> EXTENSION_SLICE = Slices.createSimpleSlice();
 
     /**
      * Has type of current expression has been already resolved
