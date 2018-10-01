@@ -6,7 +6,6 @@
 package org.jetbrains.kotlinx.serialization.compiler.backend.ir
 
 import org.jetbrains.kotlin.backend.common.BackendContext
-import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -25,8 +24,6 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.toKotlinType
 import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.js.backend.ast.JsExpression
-import org.jetbrains.kotlin.js.backend.ast.JsNew
 import org.jetbrains.kotlin.js.resolve.diagnostics.findPsi
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
@@ -34,9 +31,6 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.isTypeParameter
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.AbstractSerialGenerator
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.findTypeSerializerOrContext
-import org.jetbrains.kotlinx.serialization.compiler.backend.js.SerializerJsTranslator
-import org.jetbrains.kotlinx.serialization.compiler.backend.js.serializerInstance
-import org.jetbrains.kotlinx.serialization.compiler.backend.js.translateQualifiedReference
 import org.jetbrains.kotlinx.serialization.compiler.backend.jvm.contextSerializerId
 import org.jetbrains.kotlinx.serialization.compiler.backend.jvm.enumSerializerId
 import org.jetbrains.kotlinx.serialization.compiler.backend.jvm.referenceArraySerializerId
@@ -375,15 +369,15 @@ interface IrBuilderExtension {
     }
 
     fun IrBuilderWithScope.serializerInstance(
-            enclosingGenerator: AbstractSerialGenerator,
-            serializableDescriptor: ClassDescriptor,
-            serializerClass: ClassDescriptor?,
-            module: ModuleDescriptor,
-            kType: KotlinType,
-            genericIndex: Int? = null
+        enclosingGenerator: AbstractSerialGenerator,
+        serializableDescriptor: ClassDescriptor,
+        serializerClass: ClassDescriptor?,
+        module: ModuleDescriptor,
+        kType: KotlinType,
+        genericIndex: Int? = null
     ): IrExpression? {
         val nullableSerClass =
-                compilerContext.externalSymbols.referenceClass(module.getClassFromInternalSerializationPackage(SpecialBuiltins.nullableSerializer))
+            compilerContext.externalSymbols.referenceClass(module.getClassFromInternalSerializationPackage(SpecialBuiltins.nullableSerializer))
         if (serializerClass == null) {
             if (genericIndex == null) return null
             TODO("Saved serializer for generic argument")
@@ -395,22 +389,25 @@ interface IrBuilderExtension {
                 TODO("enum and context serializer")
             else kType.arguments.map {
                 val argSer = enclosingGenerator.findTypeSerializerOrContext(module, it.type, sourceElement = serializerClass.findPsi())
-                val expr = serializerInstance(enclosingGenerator, serializableDescriptor, argSer, module, it.type, it.type.genericIndex) ?: return null
+                val expr = serializerInstance(enclosingGenerator, serializableDescriptor, argSer, module, it.type, it.type.genericIndex)
+                    ?: return null
                 // todo: smth better than constructors[0] ??
                 if (it.type.isMarkedNullable) irInvoke(null, nullableSerClass.constructors.toList()[0], expr) else expr
             }
             if (serializerClass.classId == referenceArraySerializerId) TODO("reference array serializer")
             val serializable = getSerializableClassDescriptorBySerializer(serializerClass)
             val ctor = if (serializable?.declaredTypeParameters?.isNotEmpty() == true) {
-                KSerializerDescriptorResolver.createTypedSerializerConstructorDescriptor(serializerClass, serializableDescriptor)
-                        .let { compilerContext.externalSymbols.referenceConstructor(it) }
+                requireNotNull(
+                    KSerializerDescriptorResolver.findSerializerConstructorForTypeArgumentsSerializers(serializerClass)
+                ) { "Generated serializer does not have constructor with required number of arguments" }
+                    .let { compilerContext.externalSymbols.referenceConstructor(it) }
             } else {
                 compilerContext.externalSymbols.referenceConstructor(serializerClass.unsubstitutedPrimaryConstructor!!)
             }
             return irInvoke(
-                    null,
-                    ctor,
-                    *args.toTypedArray()
+                null,
+                ctor,
+                *args.toTypedArray()
             )
         }
     }

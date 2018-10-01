@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.AbstractClassTypeConstructor
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeConstructor
-import java.lang.IllegalStateException
 
 /*
  * This class introduces all attributes that are needed for synthetic classes/object so far.
@@ -52,6 +51,8 @@ class SyntheticClassOrObjectDescriptor(
     private val thisDescriptor: SyntheticClassOrObjectDescriptor get() = this // code readability
 
     private lateinit var typeParameters: List<TypeParameterDescriptor>
+    public var secondaryConstructors: List<ClassConstructorDescriptor> = emptyList()
+
     private val typeConstructor = SyntheticTypeConstructor(c.storageManager)
     private val resolutionScopesSupport = ClassResolutionScopesSupport(thisDescriptor, c.storageManager, c.languageVersionSettings, { outerScope })
     private val syntheticSupertypes =
@@ -62,7 +63,9 @@ class SyntheticClassOrObjectDescriptor(
         c.storageManager.createLazyValue { createUnsubstitutedPrimaryConstructor(constructorVisibility) }
 
     @JvmOverloads
-    fun initialize(typeParameters: List<TypeParameterDescriptor> = emptyList()) {
+    fun initialize(
+        typeParameters: List<TypeParameterDescriptor> = emptyList()
+    ) {
         this.typeParameters = typeParameters
     }
 
@@ -81,7 +84,7 @@ class SyntheticClassOrObjectDescriptor(
     override fun getCompanionObjectDescriptor(): ClassDescriptorWithResolutionScopes? = null
     override fun getTypeConstructor(): TypeConstructor = typeConstructor
     override fun getUnsubstitutedPrimaryConstructor() = _unsubstitutedPrimaryConstructor()
-    override fun getConstructors() = listOf(_unsubstitutedPrimaryConstructor())
+    override fun getConstructors() = listOf(_unsubstitutedPrimaryConstructor()) + secondaryConstructors
     override fun getDeclaredTypeParameters() = typeParameters
     override fun getStaticScope() = MemberScope.Empty
     override fun getUnsubstitutedMemberScope() = unsubstitutedMemberScope

@@ -97,7 +97,8 @@ object KSerializerDescriptorResolver {
     ): ClassDescriptor {
         val thisDeclaration = declarationProvider.correspondingClassOrObject!!
         val scope = ctx.declarationScopeProvider.getResolutionScopeForDeclaration(declarationProvider.ownerInfo!!.scopeAnchor)
-        val serializerKind = if (thisDescriptor.declaredTypeParameters.isNotEmpty()) ClassKind.CLASS else ClassKind.OBJECT
+        val hasTypeParams = thisDescriptor.declaredTypeParameters.isNotEmpty()
+        val serializerKind = if (hasTypeParams) ClassKind.CLASS else ClassKind.OBJECT
         val serializerDescriptor = SyntheticClassOrObjectDescriptor(
             ctx,
             thisDeclaration,
@@ -114,6 +115,12 @@ object KSerializerDescriptorResolver {
                 )
             }
         serializerDescriptor.initialize(typeParameters)
+        val secondaryCtors =
+            if (!hasTypeParams)
+                emptyList()
+            else
+                listOf(createTypedSerializerConstructorDescriptor(serializerDescriptor, thisDescriptor, typeParameters))
+        serializerDescriptor.secondaryConstructors = secondaryCtors
         return serializerDescriptor
     }
 
@@ -286,9 +293,22 @@ object KSerializerDescriptorResolver {
         return functionDescriptor
     }
 
-    fun createTypedSerializerConstructorDescriptor(
+    // finds constructor (KSerializer<T0>, KSerializer<T1>...) on a KSerializer<T<T0, T1...>>
+    fun findSerializerConstructorForTypeArgumentsSerializers(serializerDescriptor: ClassDescriptor): ClassConstructorDescriptor? {
+        val serializableImplementationTypeArguments = extractKSerializerArgumentFromImplementation(serializerDescriptor)?.arguments
+            ?: throw AssertionError("Serializer does not implement KSerializer??")
+
+        val typeParamsCount = serializableImplementationTypeArguments.size
+        if (typeParamsCount == 0) return null //don't need it
+        return serializerDescriptor.constructors.find { ctor ->
+            ctor.valueParameters.size == typeParamsCount && ctor.valueParameters.all { isKSerializer(it.type) }
+        }
+    }
+
+    private fun createTypedSerializerConstructorDescriptor(
         classDescriptor: ClassDescriptor,
-        serializableDescriptor: ClassDescriptor
+        serializableDescriptor: ClassDescriptor,
+        typeParameters: List<TypeParameterDescriptor>
     ): ClassConstructorDescriptor {
         val constrDesc = ClassConstructorDescriptorImpl.createSynthesized(
             classDescriptor,
@@ -297,24 +317,23 @@ object KSerializerDescriptorResolver {
             classDescriptor.source
         )
         val serializerClass = classDescriptor.getClassFromSerializationPackage(SerialEntityNames.KSERIALIZER_CLASS)
-        val targs = mutableListOf<TypeParameterDescriptor>()
+        assert(serializableDescriptor.declaredTypeParameters.size == typeParameters.size)
         val args = serializableDescriptor.declaredTypeParameters.mapIndexed { index, param ->
-            val targ = TypeParameterDescriptorImpl.createWithDefaultBound(
-                constrDesc, Annotations.EMPTY, false, Variance.INVARIANT,
-                param.name, index
-            )
 
             val pType =
-                KotlinTypeFactory.simpleNotNullType(Annotations.EMPTY, serializerClass, listOf(TypeProjectionImpl(targ.defaultType)))
+                KotlinTypeFactory.simpleNotNullType(
+                    Annotations.EMPTY,
+                    serializerClass,
+                    listOf(TypeProjectionImpl(typeParameters[index].defaultType))
+                )
 
-            targs.add(targ)
             ValueParameterDescriptorImpl(
                 constrDesc, null, index, Annotations.EMPTY, Name.identifier("$typeArgPrefix$index"), pType,
                 false, false, false, null, constrDesc.source
             )
         }
 
-        constrDesc.initialize(args, Visibilities.PUBLIC, targs)
+        constrDesc.initialize(args, Visibilities.PUBLIC, typeParameters)
         constrDesc.returnType = classDescriptor.defaultType
         return constrDesc
     }
