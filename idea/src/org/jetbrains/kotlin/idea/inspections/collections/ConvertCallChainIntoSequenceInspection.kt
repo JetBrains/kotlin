@@ -61,7 +61,7 @@ class ConvertCallChainIntoSequenceInspection : AbstractKotlinInspection() {
                 holder.manager.createProblemDescriptor(
                     qualified,
                     rangeInElement,
-                    "Call chain on collection could be converted into 'Sequence' to increase performance",
+                    "Call chain on collection could be converted into 'Sequence' to improve performance",
                     highlightType,
                     isOnTheFly,
                     ConvertCallChainIntoSequenceFix()

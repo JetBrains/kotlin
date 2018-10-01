@@ -1,4 +1,4 @@
-// PROBLEM: Call chain on collection could be converted into 'Sequence' to increase performance
+// PROBLEM: Call chain on collection could be converted into 'Sequence' to improve performance
 // HIGHLIGHT: GENERIC_ERROR_OR_WARNING
 // WITH_RUNTIME
 
