@@ -777,6 +777,23 @@ class NewMultiplatformIT : BaseGradleIT() {
             assertTrue(output.contains("Dependent: Project print"), "No test output found")
             assertTrue(output.contains("Dependent: Published print"), "No test output found")
         }
+
+        // Check that changing the compiler version in properties causes interop reprocessing and source recompilation.
+        build(":projectLibrary:build") {
+            assertSuccessful()
+            assertTasksUpToDate(
+                ":projectLibrary:cinteropStdio${host.capitalize()}",
+                ":projectLibrary:compileKotlin${host.capitalize()}"
+            )
+        }
+
+        build(":projectLibrary:build", "-Porg.jetbrains.kotlin.native.version=0.9.2") {
+            assertSuccessful()
+            assertTasksExecuted(
+                ":projectLibrary:cinteropStdio${host.capitalize()}",
+                ":projectLibrary:compileKotlin${host.capitalize()}"
+            )
+        }
     }
 
     @Test
