@@ -24,8 +24,8 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.KtWhenEntry
 import org.jetbrains.kotlin.psi.KtWhenExpression
+import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
-import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
 class AddWhenElseBranchFix(element: KtWhenExpression) : KotlinQuickFixAction<KtWhenExpression>(element) {
     override fun getFamilyName() = "Add else branch"
@@ -39,11 +39,13 @@ class AddWhenElseBranchFix(element: KtWhenExpression) : KotlinQuickFixAction<KtW
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         val element = element ?: return
         val psiFactory = KtPsiFactory(file)
-        val entry = psiFactory.createWhenEntry("else -> TODO()")
+        val entry = psiFactory.createWhenEntry("else ->")
         val whenCloseBrace = element.closeBrace ?: error("isAvailable should check if close brace exist")
         val insertedWhenEntry =
             CodeInsightUtilCore.forcePsiPostprocessAndRestoreElement(element.addBefore(entry, whenCloseBrace)) as KtWhenEntry
-        editor!!.caretModel.moveToOffset(insertedWhenEntry.expression!!.startOffset)
+        val endOffset = insertedWhenEntry.endOffset
+        editor?.document?.insertString(endOffset, " ")
+        editor?.caretModel?.moveToOffset(endOffset + 1)
     }
 
     companion object : KotlinSingleIntentionActionFactory() {
