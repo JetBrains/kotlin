@@ -1,8 +1,8 @@
 // "Add else branch" "true"
+// WITH_RUNTIME
 fun test() {
     val a = 12
     val x = when (a) {
-        else -> {<caret>
-        }
+        else -> <caret>TODO()
     }
 }

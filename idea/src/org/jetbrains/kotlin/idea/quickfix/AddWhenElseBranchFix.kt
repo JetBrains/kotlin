@@ -20,9 +20,12 @@ import com.intellij.codeInsight.CodeInsightUtilCore
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.diagnostics.Diagnostic
-import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.endOffset
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtPsiFactory
+import org.jetbrains.kotlin.psi.KtWhenEntry
+import org.jetbrains.kotlin.psi.KtWhenExpression
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
 class AddWhenElseBranchFix(element: KtWhenExpression) : KotlinQuickFixAction<KtWhenExpression>(element) {
     override fun getFamilyName() = "Add else branch"
@@ -36,10 +39,11 @@ class AddWhenElseBranchFix(element: KtWhenExpression) : KotlinQuickFixAction<KtW
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         val element = element ?: return
         val psiFactory = KtPsiFactory(file)
-        val entry = psiFactory.createWhenEntry("else -> {}")
+        val entry = psiFactory.createWhenEntry("else -> TODO()")
         val whenCloseBrace = element.closeBrace ?: error("isAvailable should check if close brace exist")
-        val insertedWhenEntry = CodeInsightUtilCore.forcePsiPostprocessAndRestoreElement(element.addBefore(entry, whenCloseBrace)) as KtWhenEntry
-        editor!!.caretModel.moveToOffset((insertedWhenEntry.expression as KtBlockExpression).lBrace!!.endOffset)
+        val insertedWhenEntry =
+            CodeInsightUtilCore.forcePsiPostprocessAndRestoreElement(element.addBefore(entry, whenCloseBrace)) as KtWhenEntry
+        editor!!.caretModel.moveToOffset(insertedWhenEntry.expression!!.startOffset)
     }
 
     companion object : KotlinSingleIntentionActionFactory() {
