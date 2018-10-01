@@ -21,7 +21,7 @@ import com.intellij.codeInspection.ProblemDescriptor
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.findDescendantOfType
+import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfType
 
 class RenameUselessCallFix(val newName: String) : LocalQuickFix {
     override fun getName() = "Change call to '$newName'"
@@ -34,23 +34,22 @@ class RenameUselessCallFix(val newName: String) : LocalQuickFix {
             val selectorCallExpression = it.selectorExpression as? KtCallExpression
             val calleeExpression = selectorCallExpression?.calleeExpression ?: return
             calleeExpression.replaced(factory.createExpression(newName))
-            selectorCallExpression.applyFix(factory, calleeExpression.text, newName)
+            selectorCallExpression.renameGivenReturnLabels(factory, calleeExpression.text, newName)
         }
     }
 
-    private fun KtCallExpression.applyFix(factory: KtPsiFactory, calleeName: String, newName: String) {
+    private fun KtCallExpression.renameGivenReturnLabels(factory: KtPsiFactory, labelName: String, newName: String) {
         val lambdaExpression = lambdaArguments.firstOrNull()?.getLambdaExpression() ?: return
         val bodyExpression = lambdaExpression.bodyExpression ?: return
 
-        bodyExpression.statements.forEach {
-            val returnExpression = it.findDescendantOfType<KtReturnExpression>() ?: return@forEach
-            if (returnExpression.getLabelName() != calleeName) return@forEach
+        bodyExpression.forEachDescendantOfType<KtReturnExpression> {
+            if (it.getLabelName() != labelName) return@forEachDescendantOfType
 
-            returnExpression.replaced(
+            it.replaced(
                 factory.createExpressionByPattern(
                     "return@$0 $1",
                     newName,
-                    returnExpression.returnedExpression ?: ""
+                    it.returnedExpression ?: ""
                 )
             )
         }
