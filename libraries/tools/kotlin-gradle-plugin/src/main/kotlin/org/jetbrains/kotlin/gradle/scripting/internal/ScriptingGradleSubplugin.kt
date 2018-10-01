@@ -74,7 +74,8 @@ open class DiscoverScriptExtensionsTask : DefaultTask() {
     @get:Internal
     internal var sourceSet: SourceSet by Delegates.notNull()
 
-    @get:Internal
+    @get:InputFiles
+    @get:Classpath
     internal var discoveryClasspathConfiguration: Configuration by Delegates.notNull()
 
     @get:Internal
