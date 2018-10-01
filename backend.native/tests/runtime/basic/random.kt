@@ -61,19 +61,3 @@ fun testNextInt() {
     testReproducibility(getTimeMillis(), { Random.nextInt(1000) })
     testReproducibility(1000L, { Random.nextInt(1024) })
 }
-
-@Test
-fun testBoundsNextInt() {
-    boundTest(5000)
-    boundTest(32)
-    boundTest(2)
-    boundTest(Int.MAX_VALUE)
-}
-
-private fun boundTest(bound: Int) {
-    val a = Array<Int>(100, { Random.nextInt(bound) })
-    a.forEach {
-        assertTrue(it >= 0, "Should be: $it >= 0")
-        assertTrue(it < bound, "Should be: $it < $bound")
-    }
-}
