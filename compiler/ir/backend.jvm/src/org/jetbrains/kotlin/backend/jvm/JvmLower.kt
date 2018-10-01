@@ -23,12 +23,18 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.util.PatchDeclarationParentsVisitor
+import org.jetbrains.kotlin.ir.util.TypeTranslator
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.name.NameUtils
 
 class JvmLower(val context: JvmBackendContext) {
     fun lower(irFile: IrFile) {
         // TODO run lowering passes as callbacks in bottom-up visitor
+        JvmCoercionToUnitPatcher(
+            context.builtIns,
+            context.irBuiltIns,
+            TypeTranslator(context.ir.symbols.externalSymbolTable, context.state.languageVersionSettings)
+        ).lower(irFile)
         FileClassLowering(context).lower(irFile)
         KCallableNamePropertyLowering(context).lower(irFile)
 
