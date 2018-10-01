@@ -5,7 +5,7 @@ class A(val x: String?) {
     fun foo(other: A) {
         when {
             x == null && other.x == null -> "1"
-            <!DEBUG_INFO_SMARTCAST!>x<!>.length > 0 -> "2"
+            x<!UNSAFE_CALL!>.<!>length > 0 -> "2"
         }
     }
 }
