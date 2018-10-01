@@ -605,8 +605,10 @@ public class PropertyCodegen {
             assert resolvedCall != null : "Resolve call should be recorded for delegate call " + signature.toString();
 
             PropertyDescriptor propertyDescriptor = propertyAccessorDescriptor.getCorrespondingProperty();
-            StackValue.Property receiver = codegen.intermediateValueForProperty(propertyDescriptor, true, null, StackValue.LOCAL_0);
-            StackValue lastValue = invokeDelegatedPropertyConventionMethod(codegen, resolvedCall, receiver, propertyDescriptor);
+            StackValue.Property property = codegen.intermediateValueForProperty(propertyDescriptor, true, null, StackValue.LOCAL_0);
+            StackValue.Property delegate = property.getDelegateOrNull();
+            assert delegate != null : "No delegate for delegated property: " + propertyDescriptor;
+            StackValue lastValue = invokeDelegatedPropertyConventionMethod(codegen, resolvedCall, delegate, propertyDescriptor);
             Type asmType = signature.getReturnType();
             lastValue.put(asmType, v);
             v.areturn(asmType);

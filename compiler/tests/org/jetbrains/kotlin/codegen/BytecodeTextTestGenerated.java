@@ -2166,6 +2166,11 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             runTest("compiler/testData/codegen/bytecodeText/inlineClasses/noBoxingOperationsOnNonTrivialSpread.kt");
         }
 
+        @TestMetadata("noBoxingUnboxingInAccessorsForDelegatedPropertyWithInlineClassDelegate.kt")
+        public void testNoBoxingUnboxingInAccessorsForDelegatedPropertyWithInlineClassDelegate() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/inlineClasses/noBoxingUnboxingInAccessorsForDelegatedPropertyWithInlineClassDelegate.kt");
+        }
+
         @TestMetadata("nonOverridingMethodsAreCalledByInlineClass.kt")
         public void testNonOverridingMethodsAreCalledByInlineClass() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/inlineClasses/nonOverridingMethodsAreCalledByInlineClass.kt");

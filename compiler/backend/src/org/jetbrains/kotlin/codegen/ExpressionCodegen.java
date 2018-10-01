@@ -2153,7 +2153,8 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         return StackValue.property(
                 propertyDescriptor, backingFieldOwner,
                 typeMapper.mapType(isDelegatedProperty && forceField ? delegateType : propertyDescriptor.getOriginal().getType()),
-                isStaticBackingField, fieldName, callableGetter, callableSetter, receiver, this, resolvedCall, skipLateinitAssertion
+                isStaticBackingField, fieldName, callableGetter, callableSetter, receiver, this, resolvedCall, skipLateinitAssertion,
+                isDelegatedProperty && forceField ? delegateType : null
         );
     }
 
@@ -2169,7 +2170,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         CallableMethod callableSetter =
                 setMethod != null ? typeMapper.mapToCallableMethod(context.accessibleDescriptor(setMethod, null), false) : null;
         return StackValue.property(propertyDescriptor, null, type, false, null, callableGetter, callableSetter, receiver, this,
-                                   null, false);
+                                   null, false, null);
     }
 
     @Override

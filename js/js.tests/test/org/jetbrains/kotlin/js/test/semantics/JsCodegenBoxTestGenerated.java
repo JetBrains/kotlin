@@ -11890,6 +11890,54 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 runTest("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls/overriddenDefaultInterfaceMethodCall.kt");
             }
         }
+
+        @TestMetadata("compiler/testData/codegen/box/inlineClasses/propertyDelegation")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class PropertyDelegation extends AbstractJsCodegenBoxTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInPropertyDelegation() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/propertyDelegation"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JS, true);
+            }
+
+            @TestMetadata("delegateClassVarToInlineClass.kt")
+            public void testDelegateClassVarToInlineClass() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/propertyDelegation/delegateClassVarToInlineClass.kt");
+            }
+
+            @TestMetadata("delegateClassVarToInlineClassWithProvideDelegate.kt")
+            public void testDelegateClassVarToInlineClassWithProvideDelegate() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/propertyDelegation/delegateClassVarToInlineClassWithProvideDelegate.kt");
+            }
+
+            @TestMetadata("delegateCompanionVarToInlineClass.kt")
+            public void testDelegateCompanionVarToInlineClass() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/propertyDelegation/delegateCompanionVarToInlineClass.kt");
+            }
+
+            @TestMetadata("delegateJvmStaticCompanionVarToInlineClass.kt")
+            public void testDelegateJvmStaticCompanionVarToInlineClass() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/propertyDelegation/delegateJvmStaticCompanionVarToInlineClass.kt");
+            }
+
+            @TestMetadata("delegateObjectVarToInlineClass.kt")
+            public void testDelegateObjectVarToInlineClass() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/propertyDelegation/delegateObjectVarToInlineClass.kt");
+            }
+
+            @TestMetadata("delegateTopLevelVarToInlineClass.kt")
+            public void testDelegateTopLevelVarToInlineClass() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/propertyDelegation/delegateTopLevelVarToInlineClass.kt");
+            }
+
+            @TestMetadata("kt27070.kt")
+            public void testKt27070() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/propertyDelegation/kt27070.kt");
+            }
+        }
     }
 
     @TestMetadata("compiler/testData/codegen/box/innerNested")
