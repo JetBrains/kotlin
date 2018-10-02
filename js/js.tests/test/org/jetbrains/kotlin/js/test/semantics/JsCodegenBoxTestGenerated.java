@@ -11399,11 +11399,6 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             runTest("compiler/testData/codegen/box/inlineClasses/kt27132.kt");
         }
 
-        @TestMetadata("kt27140.kt")
-        public void testKt27140() throws Exception {
-            runTest("compiler/testData/codegen/box/inlineClasses/kt27140.kt");
-        }
-
         @TestMetadata("noAssertionsOnInlineClassBasedOnNullableType.kt")
         public void testNoAssertionsOnInlineClassBasedOnNullableType() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/noAssertionsOnInlineClassBasedOnNullableType.kt");
@@ -11570,16 +11565,6 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             public void testObjectInInlineClassFun() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/objectInInlineClassFun.kt");
             }
-
-            @TestMetadata("toPrivateCompanionFun.kt")
-            public void testToPrivateCompanionFun() throws Exception {
-                runTest("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/toPrivateCompanionFun.kt");
-            }
-
-            @TestMetadata("toPrivateCompanionVal.kt")
-            public void testToPrivateCompanionVal() throws Exception {
-                runTest("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/toPrivateCompanionVal.kt");
-            }
         }
 
         @TestMetadata("compiler/testData/codegen/box/inlineClasses/functionNameMangling")
@@ -11745,49 +11730,6 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             @TestMetadata("secondaryConstructor.kt")
             public void testSecondaryConstructor() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/secondaryConstructor.kt");
-            }
-        }
-
-        @TestMetadata("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls")
-        @TestDataPath("$PROJECT_ROOT")
-        @RunWith(JUnit3RunnerWithInners.class)
-        public static class InterfaceMethodCalls extends AbstractJsCodegenBoxTest {
-            private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS, testDataFilePath);
-            }
-
-            public void testAllFilesPresentInInterfaceMethodCalls() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JS, true);
-            }
-
-            @TestMetadata("defaultInterfaceExtensionFunCall.kt")
-            public void testDefaultInterfaceExtensionFunCall() throws Exception {
-                runTest("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls/defaultInterfaceExtensionFunCall.kt");
-            }
-
-            @TestMetadata("defaultInterfaceMethodCall.kt")
-            public void testDefaultInterfaceMethodCall() throws Exception {
-                runTest("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls/defaultInterfaceMethodCall.kt");
-            }
-
-            @TestMetadata("genericDefaultInterfaceExtensionFunCall.kt")
-            public void testGenericDefaultInterfaceExtensionFunCall() throws Exception {
-                runTest("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls/genericDefaultInterfaceExtensionFunCall.kt");
-            }
-
-            @TestMetadata("genericDefaultInterfaceMethodCall.kt")
-            public void testGenericDefaultInterfaceMethodCall() throws Exception {
-                runTest("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls/genericDefaultInterfaceMethodCall.kt");
-            }
-
-            @TestMetadata("genericInterfaceMethodCall.kt")
-            public void testGenericInterfaceMethodCall() throws Exception {
-                runTest("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls/genericInterfaceMethodCall.kt");
-            }
-
-            @TestMetadata("overriddenDefaultInterfaceMethodCall.kt")
-            public void testOverriddenDefaultInterfaceMethodCall() throws Exception {
-                runTest("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls/overriddenDefaultInterfaceMethodCall.kt");
             }
         }
 
