@@ -413,7 +413,7 @@ private fun ParserContext.parseDependencies(project: Project, forTests: Boolean)
                 }
             }
 
-            mainRoots += if (dependency.configuration == "runtimeElements" && scope != Scope.TEST) {
+            mainRoots += if (dependency.isModuleDependency && scope != Scope.TEST) {
                 POrderRoot(PDependency.Module(dependency.moduleName + ".src"), scope)
             } else if (dependency.configuration == "tests-jar" || dependency.configuration == "jpsTest") {
                 POrderRoot(
@@ -488,6 +488,9 @@ sealed class DependencyInfo(val scope: Scope) {
     class ResolvedDependencyInfo(scope: Scope, val dependency: ResolvedDependency) : DependencyInfo(scope)
     class CustomDependencyInfo(scope: Scope, val files: List<File>) : DependencyInfo(scope)
 }
+
+val ResolvedDependency.isModuleDependency
+    get() = configuration in JpsCompatiblePlugin.MODULE_CONFIGURATIONS
 
 fun List<CollectedConfiguration>.collectDependencies(): List<DependencyInfo> {
     val dependencies = mutableListOf<DependencyInfo>()
