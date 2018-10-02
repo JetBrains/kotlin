@@ -1151,6 +1151,10 @@ public class FunctionCodegen {
             return;
         }
 
+        if (InlineClassesUtilsKt.isInlineClass(contextClass) && kind != OwnerKind.ERASED_INLINE_CLASS) {
+            return;
+        }
+
         if (!isDefaultNeeded(functionDescriptor, function)) {
             return;
         }
@@ -1161,7 +1165,9 @@ public class FunctionCodegen {
                              isEffectivelyInlineOnly(functionDescriptor) ?
                              AsmUtil.NO_FLAG_PACKAGE_PRIVATE : Opcodes.ACC_PUBLIC;
         int flags =  visibilityFlag | getDeprecatedAccessFlag(functionDescriptor) | ACC_SYNTHETIC;
-        if (!(functionDescriptor instanceof ConstructorDescriptor)) {
+        if (!(functionDescriptor instanceof ConstructorDescriptor &&
+              !InlineClassesUtilsKt.isInlineClass(functionDescriptor.getContainingDeclaration()))
+        ) {
             flags |= ACC_STATIC;
         }
 
@@ -1283,7 +1289,7 @@ public class FunctionCodegen {
             generator.putValueIfNeeded(new JvmKotlinType(type, null), StackValue.local(parameterIndex, type));
         }
 
-        CallableMethod method = state.getTypeMapper().mapToCallableMethod(functionDescriptor, false);
+        CallableMethod method = state.getTypeMapper().mapToCallableMethod(functionDescriptor, false, methodContext.getContextKind());
 
         generator.genCall(method, null, false, codegen);
 

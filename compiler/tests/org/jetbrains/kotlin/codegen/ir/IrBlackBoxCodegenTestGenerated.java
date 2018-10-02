@@ -11654,34 +11654,9 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             runTest("compiler/testData/codegen/box/inlineClasses/crossinlineWithInlineClassInParameter.kt");
         }
 
-        @TestMetadata("defaultConstructorParameterValuesOfInlineClassType.kt")
-        public void testDefaultConstructorParameterValuesOfInlineClassType() throws Exception {
-            runTest("compiler/testData/codegen/box/inlineClasses/defaultConstructorParameterValuesOfInlineClassType.kt");
-        }
-
         @TestMetadata("defaultFunctionsFromAnyForInlineClass.kt")
         public void testDefaultFunctionsFromAnyForInlineClass() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/defaultFunctionsFromAnyForInlineClass.kt");
-        }
-
-        @TestMetadata("defaultInterfaceFunParameterValuesOfInlineClassType.kt")
-        public void testDefaultInterfaceFunParameterValuesOfInlineClassType() throws Exception {
-            runTest("compiler/testData/codegen/box/inlineClasses/defaultInterfaceFunParameterValuesOfInlineClassType.kt");
-        }
-
-        @TestMetadata("defaultParameterValuesOfInlineClassType.kt")
-        public void testDefaultParameterValuesOfInlineClassType() throws Exception {
-            runTest("compiler/testData/codegen/box/inlineClasses/defaultParameterValuesOfInlineClassType.kt");
-        }
-
-        @TestMetadata("defaultParameterValuesOfInlineClassTypeBoxing.kt")
-        public void testDefaultParameterValuesOfInlineClassTypeBoxing() throws Exception {
-            runTest("compiler/testData/codegen/box/inlineClasses/defaultParameterValuesOfInlineClassTypeBoxing.kt");
-        }
-
-        @TestMetadata("defaultValueOfInlineClassTypeInInlineFun.kt")
-        public void testDefaultValueOfInlineClassTypeInInlineFun() throws Exception {
-            runTest("compiler/testData/codegen/box/inlineClasses/defaultValueOfInlineClassTypeInInlineFun.kt");
         }
 
         @TestMetadata("elvisWithInlineClassAndNullConstant.kt")
@@ -12139,6 +12114,64 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             @TestMetadata("toPrivateCompanionVal.kt")
             public void testToPrivateCompanionVal() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/toPrivateCompanionVal.kt");
+            }
+        }
+
+        @TestMetadata("compiler/testData/codegen/box/inlineClasses/defaultParameterValues")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class DefaultParameterValues extends AbstractIrBlackBoxCodegenTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInDefaultParameterValues() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/defaultParameterValues"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM_IR, true);
+            }
+
+            @TestMetadata("defaultConstructorParameterValuesOfInlineClassType.kt")
+            public void testDefaultConstructorParameterValuesOfInlineClassType() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/defaultConstructorParameterValuesOfInlineClassType.kt");
+            }
+
+            @TestMetadata("defaultInterfaceFunParameterValuesOfInlineClassType.kt")
+            public void testDefaultInterfaceFunParameterValuesOfInlineClassType() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/defaultInterfaceFunParameterValuesOfInlineClassType.kt");
+            }
+
+            @TestMetadata("defaultParameterValuesOfInlineClassType.kt")
+            public void testDefaultParameterValuesOfInlineClassType() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/defaultParameterValuesOfInlineClassType.kt");
+            }
+
+            @TestMetadata("defaultParameterValuesOfInlineClassTypeBoxing.kt")
+            public void testDefaultParameterValuesOfInlineClassTypeBoxing() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/defaultParameterValuesOfInlineClassTypeBoxing.kt");
+            }
+
+            @TestMetadata("defaultValueOfInlineClassTypeInInlineFun.kt")
+            public void testDefaultValueOfInlineClassTypeInInlineFun() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/defaultValueOfInlineClassTypeInInlineFun.kt");
+            }
+
+            @TestMetadata("inlineClassFun.kt")
+            public void testInlineClassFun() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/inlineClassFun.kt");
+            }
+
+            @TestMetadata("inlineClassPrimaryConstructor.kt")
+            public void testInlineClassPrimaryConstructor() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/inlineClassPrimaryConstructor.kt");
+            }
+
+            @TestMetadata("inlineClassSecondaryConstructor.kt")
+            public void testInlineClassSecondaryConstructor() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/inlineClassSecondaryConstructor.kt");
+            }
+
+            @TestMetadata("kt26554.kt")
+            public void testKt26554() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/kt26554.kt");
             }
         }
 

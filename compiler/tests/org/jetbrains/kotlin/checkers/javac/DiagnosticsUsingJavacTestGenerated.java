@@ -10907,6 +10907,11 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                 runTest("compiler/testData/diagnostics/tests/inlineClasses/inlineClassCannotImplementInterfaceByDelegation.kt");
             }
 
+            @TestMetadata("inlineClassConstructorParameterWithDefaultValue.kt")
+            public void testInlineClassConstructorParameterWithDefaultValue() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inlineClasses/inlineClassConstructorParameterWithDefaultValue.kt");
+            }
+
             @TestMetadata("inlineClassDeclarationCheck.kt")
             public void testInlineClassDeclarationCheck() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/inlineClasses/inlineClassDeclarationCheck.kt");
