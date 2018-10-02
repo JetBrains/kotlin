@@ -76,6 +76,8 @@ fun compile(
 
     MoveExternalDeclarationsToSeparatePlace().lower(moduleFragment.files)
 
+    moduleFragment.files.forEach(ExpectDeclarationsRemoving(context)::lower)
+
     moduleFragment.files.forEach(CoroutineIntrinsicLowering(context)::lower)
     moduleFragment.files.forEach { ArrayInlineConstructorLowering(context).lower(it) }
 
