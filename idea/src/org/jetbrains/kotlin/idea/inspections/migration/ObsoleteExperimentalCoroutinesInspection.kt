@@ -118,7 +118,7 @@ private class ObsoleteCoroutineUsageInWholeFix : LocalQuickFix {
                 .codeCleanup(cleanupScope, cleanupToolProfile, "Apply in the project: " + toolWrapper.displayName, null, false)
         }
 
-        // Overcome failure during profile createin because of absent tools in tests
+        // Overcome failure during profile creating because of absent tools in tests
         inline fun <T> runInInspectionProfileInitMode(runnable: () -> T): T {
             return if (!ApplicationManager.getApplication().isUnitTestMode) {
                 runnable()
