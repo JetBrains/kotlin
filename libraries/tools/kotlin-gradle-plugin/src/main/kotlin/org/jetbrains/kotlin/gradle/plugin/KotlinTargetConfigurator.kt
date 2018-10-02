@@ -437,41 +437,6 @@ open class KotlinNativeTargetConfigurator(
         compilerPluginClasspath = project.configurations.getByName(NATIVE_COMPILER_PLUGIN_CLASSPATH_CONFIGURATION_NAME)
     }
 
-    private fun KotlinNativeCompile.registerOutputFiles(outputDirectory: File) {
-        val konanTarget = compilation.target.konanTarget
-
-        val prefix = outputKind.prefix(konanTarget)
-        val suffix = outputKind.suffix(konanTarget)
-        val baseName = if (compilation.isMainCompilation) project.name else compilation.name
-
-        outputFile.set(project.provider {
-            var filename = "$prefix$baseName$suffix"
-            if (outputKind == CompilerOutputKind.FRAMEWORK ||
-                outputKind == CompilerOutputKind.STATIC ||
-                outputKind == CompilerOutputKind.DYNAMIC ||
-                outputKind == CompilerOutputKind.PROGRAM && konanTarget == KonanTarget.WASM32
-            ) {
-                filename = filename.replace('-', '_')
-            }
-
-            outputDirectory.resolve(filename)
-        })
-
-        // Register outputs
-        if (outputKind == CompilerOutputKind.FRAMEWORK) {
-            outputs.dir(outputFile)
-        } else {
-            outputs.file(outputFile)
-        }
-
-        if (outputKind == CompilerOutputKind.STATIC || outputKind == CompilerOutputKind.DYNAMIC) {
-            outputs.file(project.provider {
-                val apiFileName = "$prefix${baseName}_api.h".replace('-', '_')
-                outputDirectory.resolve(apiFileName)
-            })
-        }
-    }
-
     private fun Project.createBinaryLinkTasks(compilation: KotlinNativeCompilation) = whenEvaluated {
         val konanTarget = compilation.target.konanTarget
         val availableOutputKinds = compilation.outputKinds.filter { it.availableFor(konanTarget) }
@@ -495,7 +460,7 @@ open class KotlinNativeTargetConfigurator(
                     optimized = buildType.optimized
                     debuggable = buildType.debuggable
 
-                    registerOutputFiles(binaryOutputDirectory(buildType, kind, compilation))
+                    destinationDir = binaryOutputDirectory(buildType, kind, compilation)
                     addCompilerPlugins()
 
                     linkAll.dependsOn(this)
@@ -582,7 +547,7 @@ open class KotlinNativeTargetConfigurator(
                     "compilation for target '${compilation.platformType.name}'."
             enabled = compilation.target.konanTarget.enabledOnCurrentHost
 
-            registerOutputFiles(klibOutputDirectory(compilation))
+            destinationDir = klibOutputDirectory(compilation)
             addCompilerPlugins()
             compilation.output.tryAddClassesDir {
                 project.files(this.outputFile).builtBy(this)

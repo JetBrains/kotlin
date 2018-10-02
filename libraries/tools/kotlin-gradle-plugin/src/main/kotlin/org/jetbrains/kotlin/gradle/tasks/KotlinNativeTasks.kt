@@ -20,6 +20,10 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.defaultSourceSetName
 import org.jetbrains.kotlin.gradle.plugin.mpp.isMainCompilation
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
+import org.jetbrains.kotlin.konan.target.CompilerOutputKind.DYNAMIC
+import org.jetbrains.kotlin.konan.target.CompilerOutputKind.FRAMEWORK
+import org.jetbrains.kotlin.konan.target.CompilerOutputKind.PROGRAM
+import org.jetbrains.kotlin.konan.target.CompilerOutputKind.STATIC
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
 
@@ -78,19 +82,11 @@ private fun FileCollection.filterOutPublishableInteropLibs(project: Project): Fi
     }
 }
 
-
 // endregion
-
 
 open class KotlinNativeCompile : AbstractCompile() {
 
     init {
-        @Suppress("LeakingThis")
-        setDestinationDir(project.provider {
-            val output = outputFile.get()
-            if (output.isDirectory) output else output.parentFile
-        })
-
         sourceCompatibility = "1.6"
         targetCompatibility = "1.6"
     }
@@ -178,9 +174,21 @@ open class KotlinNativeCompile : AbstractCompile() {
     val kotlinNativeVersion: String
         @Input get() = project.konanVersion.toString()
 
-    // We manually register this property as output file or directory depending on output kind.
+    // OutputFile is located under the destinationDir, so there is no need to register it as a separate output.
     @Internal
-    val outputFile: Property<File> = project.objects.property(File::class.java)
+    val outputFile: Provider<File> = project.provider {
+        val konanTarget = compilation.target.konanTarget
+
+        val prefix = outputKind.prefix(konanTarget)
+        val suffix = outputKind.suffix(konanTarget)
+        val baseName = if (compilation.isMainCompilation) project.name else compilation.name
+        var filename = "$prefix$baseName$suffix"
+        if (outputKind in listOf(FRAMEWORK, STATIC, DYNAMIC) || outputKind == PROGRAM && konanTarget == KonanTarget.WASM32) {
+            filename = filename.replace('-', '_')
+        }
+
+        destinationDir.resolve(filename)
+    }
 
     // endregion
     @Internal
