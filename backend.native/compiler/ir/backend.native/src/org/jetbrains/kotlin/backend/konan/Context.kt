@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.backend.konan
 import llvm.LLVMDumpModule
 import llvm.LLVMModuleRef
 import org.jetbrains.kotlin.backend.common.DumpIrTreeWithDescriptorsVisitor
-import org.jetbrains.kotlin.backend.common.ReflectionTypes
 import org.jetbrains.kotlin.backend.common.validateIrModule
 import org.jetbrains.kotlin.backend.konan.descriptors.*
 import org.jetbrains.kotlin.backend.konan.ir.KonanIr
@@ -49,7 +48,6 @@ import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitClassReceiver
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor
 import org.jetbrains.kotlin.serialization.deserialization.getName
-import org.jetbrains.kotlin.types.KotlinType
 import java.lang.System.out
 import kotlin.LazyThreadSafetyMode.PUBLICATION
 import kotlin.reflect.KProperty
@@ -309,9 +307,15 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config) {
     fun <T> getValue(member: LazyMember<T>): T =
             @Suppress("UNCHECKED_CAST") (lazyValues.getOrPut(member, { member.initializer(this) }) as T)
 
-    override val reflectionTypes: ReflectionTypes by lazy(PUBLICATION) {
-        ReflectionTypes(moduleDescriptor, KonanFqNames.internalPackageName)
+    @Deprecated("Use reflectionTypes0 instead.", ReplaceWith("this.reflectionTypes0"))
+    override val reflectionTypes: org.jetbrains.kotlin.backend.common.ReflectionTypes
+        get() = throw UnsupportedOperationException("This method will be removed soon")
+
+    // TODO: rename to reflectionTypes after updating the Kotlin compiler
+    val reflectionTypes0: KonanReflectionTypes by lazy(PUBLICATION) {
+        KonanReflectionTypes(moduleDescriptor, KonanFqNames.internalPackageName)
     }
+
     private val vtableBuilders = mutableMapOf<IrClass, ClassVtablesBuilder>()
 
     fun getVtableBuilder(classDescriptor: IrClass) = vtableBuilders.getOrPut(classDescriptor) {
