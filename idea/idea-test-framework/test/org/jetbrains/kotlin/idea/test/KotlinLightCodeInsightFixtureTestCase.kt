@@ -22,6 +22,7 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess
+import com.intellij.psi.PsiClassOwner
 import com.intellij.psi.PsiJavaFile
 import com.intellij.psi.PsiManager
 import com.intellij.psi.search.FileTypeIndex
@@ -77,6 +78,8 @@ abstract class KotlinLightCodeInsightFixtureTestCase : KotlinLightCodeInsightFix
                 }
             })
         }
+
+        fixTemplates()
     }
 
     override fun tearDown() {
@@ -92,8 +95,7 @@ abstract class KotlinLightCodeInsightFixtureTestCase : KotlinLightCodeInsightFix
         }
     }
 
-    override fun getProjectDescriptor(): LightProjectDescriptor
-            = getProjectDescriptorFromFileDirective()
+    override fun getProjectDescriptor(): LightProjectDescriptor = getProjectDescriptorFromFileDirective()
 
     protected fun getProjectDescriptorFromAnnotation(): LightProjectDescriptor {
         val testMethod = this::class.java.getDeclaredMethod(name)
@@ -108,66 +110,62 @@ abstract class KotlinLightCodeInsightFixtureTestCase : KotlinLightCodeInsightFix
     protected fun getProjectDescriptorFromTestName(): LightProjectDescriptor {
         val testName = StringUtil.toLowerCase(getTestName(false))
 
-        if (testName.endsWith("runtime")) {
-            return KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
+        return when {
+            testName.endsWith("runtime") -> KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
+            testName.endsWith("stdlib") -> ProjectDescriptorWithStdlibSources.INSTANCE
+            else -> KotlinLightProjectDescriptor.INSTANCE
         }
-        else if (testName.endsWith("stdlib")) {
-            return ProjectDescriptorWithStdlibSources.INSTANCE
-        }
-
-        return KotlinLightProjectDescriptor.INSTANCE
     }
 
-    protected fun getProjectDescriptorFromFileDirective(): LightProjectDescriptor {
-        if (!isAllFilesPresentInTest()) {
-            try {
-                val fileText = FileUtil.loadFile(File(testDataPath, fileName()), true)
+    private fun getProjectDescriptorFromFileDirective(): LightProjectDescriptor {
+        if (isAllFilesPresentInTest()) return KotlinLightProjectDescriptor.INSTANCE
 
-                val withLibraryDirective = InTextDirectivesUtils.findLinesWithPrefixesRemoved(fileText, "WITH_LIBRARY:")
-                if (!withLibraryDirective.isEmpty()) {
-                    return SdkAndMockLibraryProjectDescriptor(
-                        PluginTestCaseBase.getTestDataPathBase() + "/" + withLibraryDirective.get(
-                            0
-                        ), true
+        try {
+            val fileText = FileUtil.loadFile(File(testDataPath, fileName()), true)
+
+            val withLibraryDirective = InTextDirectivesUtils.findLinesWithPrefixesRemoved(fileText, "WITH_LIBRARY:")
+            return when {
+                !withLibraryDirective.isEmpty() ->
+                    SdkAndMockLibraryProjectDescriptor(
+                        PluginTestCaseBase.getTestDataPathBase() + "/" + withLibraryDirective[0],
+                        true
                     )
-                }
-                else if (InTextDirectivesUtils.isDirectiveDefined(fileText, "RUNTIME_WITH_SOURCES")) {
-                    return ProjectDescriptorWithStdlibSources.INSTANCE
-                }
-                else if (InTextDirectivesUtils.isDirectiveDefined(fileText, "RUNTIME_WITH_KOTLIN_TEST")) {
-                    return KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE_WITH_KOTLIN_TEST
-                }
-                else if (InTextDirectivesUtils.isDirectiveDefined(fileText, "RUNTIME_WITH_FULL_JDK")) {
-                    return KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE_FULL_JDK
-                }
-                else if (InTextDirectivesUtils.isDirectiveDefined(fileText, "RUNTIME_WITH_REFLECT")) {
-                    return KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE_WITH_REFLECT
-                }
-                else if (InTextDirectivesUtils.isDirectiveDefined(fileText, "RUNTIME_WITH_SCRIPT_RUNTIME")) {
-                    return KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE_WITH_SCRIPT_RUNTIME
-                }
-                else if (InTextDirectivesUtils.isDirectiveDefined(fileText, "RUNTIME") ||
-                         InTextDirectivesUtils.isDirectiveDefined(fileText, "WITH_RUNTIME")) {
-                    return KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
-                }
-                else if (InTextDirectivesUtils.isDirectiveDefined(fileText, "JS")) {
-                    return KotlinStdJSProjectDescriptor
-                }
-                else if (InTextDirectivesUtils.isDirectiveDefined(fileText, "ENABLE_MULTIPLATFORM")) {
-                    return KotlinProjectDescriptorWithFacet.KOTLIN_STABLE_WITH_MULTIPLATFORM
-                }
+
+                InTextDirectivesUtils.isDirectiveDefined(fileText, "RUNTIME_WITH_SOURCES") ->
+                    ProjectDescriptorWithStdlibSources.INSTANCE
+
+                InTextDirectivesUtils.isDirectiveDefined(fileText, "RUNTIME_WITH_KOTLIN_TEST") ->
+                    KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE_WITH_KOTLIN_TEST
+
+                InTextDirectivesUtils.isDirectiveDefined(fileText, "RUNTIME_WITH_FULL_JDK") ->
+                    KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE_FULL_JDK
+
+                InTextDirectivesUtils.isDirectiveDefined(fileText, "RUNTIME_WITH_REFLECT") ->
+                    KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE_WITH_REFLECT
+
+                InTextDirectivesUtils.isDirectiveDefined(fileText, "RUNTIME_WITH_SCRIPT_RUNTIME") ->
+                    KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE_WITH_SCRIPT_RUNTIME
+
+                InTextDirectivesUtils.isDirectiveDefined(fileText, "RUNTIME") ||
+                        InTextDirectivesUtils.isDirectiveDefined(fileText, "WITH_RUNTIME") ->
+                    KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
+
+                InTextDirectivesUtils.isDirectiveDefined(fileText, "JS") ->
+                    KotlinStdJSProjectDescriptor
+
+                InTextDirectivesUtils.isDirectiveDefined(fileText, "ENABLE_MULTIPLATFORM") ->
+                    KotlinProjectDescriptorWithFacet.KOTLIN_STABLE_WITH_MULTIPLATFORM
+
+                else -> KotlinLightProjectDescriptor.INSTANCE
             }
-            catch (e: IOException) {
-                throw rethrow(e)
-            }
+        } catch (e: IOException) {
+            throw rethrow(e)
         }
-        return KotlinLightProjectDescriptor.INSTANCE
     }
 
     protected fun isAllFilesPresentInTest(): Boolean = KotlinTestUtils.isAllFilesPresentTest(getTestName(false))
 
-    protected open fun fileName(): String
-            = KotlinTestUtils.getTestDataFileName(this::class.java, this.name) ?: (getTestName(false) + ".kt")
+    protected open fun fileName(): String = KotlinTestUtils.getTestDataFileName(this::class.java, this.name) ?: (getTestName(false) + ".kt")
 
     protected fun performNotWriteEditorAction(actionId: String): Boolean {
         val dataContext = (myFixture.editor as EditorEx).dataContext
@@ -234,8 +232,7 @@ fun configureLanguageAndApiVersion(
     languageVersion: String,
     apiVersion: String? = null
 ) {
-    val accessToken = WriteAction.start()
-    try {
+    WriteAction.run<Throwable> {
         val modelsProvider = IdeModifiableModelsProviderImpl(project)
         val facet = module.getOrCreateFacet(modelsProvider, useProjectSettings = false)
         facet.configureFacet(languageVersion, LanguageFeature.State.DISABLED, null, modelsProvider)
@@ -244,9 +241,6 @@ fun configureLanguageAndApiVersion(
         }
         KotlinCommonCompilerArgumentsHolder.getInstance(project).update { this.languageVersion = languageVersion }
         modelsProvider.commit()
-    }
-    finally {
-        accessToken.finish()
     }
 }
 
@@ -264,7 +258,8 @@ fun Project.allJavaFiles(): List<PsiJavaFile> {
         .filterIsInstance<PsiJavaFile>()
 }
 
-fun Project.findFileWithCaret() =
-    (allKotlinFiles() + allJavaFiles()).single {
+fun Project.findFileWithCaret(): PsiClassOwner {
+    return (allKotlinFiles() + allJavaFiles()).single {
         "<caret>" in VfsUtilCore.loadText(it.virtualFile) && !it.virtualFile.name.endsWith(".after")
     }
+}
