@@ -317,7 +317,9 @@ class TypeOperatorLowering(val context: JsIrBackendContext) : FileLoweringPass {
                 val casted = when {
                     toType.isByte() -> maskOp(argument, byteMask, lit24)
                     toType.isShort() -> maskOp(argument, shortMask, lit16)
-                    toType.isLong() -> TODO("Long coercion")
+                    toType.isLong() -> JsIrBuilder.buildCall(context.intrinsics.jsToLong).apply {
+                        putValueArgument(0, argument)
+                    }
                     else -> error("Unreachable execution (coercion to non-Integer type")
                 }
 
