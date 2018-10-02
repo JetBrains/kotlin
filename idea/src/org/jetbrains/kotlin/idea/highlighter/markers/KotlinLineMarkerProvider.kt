@@ -13,6 +13,7 @@ import com.intellij.codeInsight.daemon.impl.PsiElementListNavigator
 import com.intellij.codeInsight.navigation.ListBackgroundUpdaterTask
 import com.intellij.icons.AllIcons
 import com.intellij.openapi.actionSystem.IdeActions
+import com.intellij.openapi.editor.Document
 import com.intellij.openapi.editor.colors.CodeInsightColors
 import com.intellij.openapi.editor.colors.EditorColorsManager
 import com.intellij.openapi.editor.markup.GutterIconRenderer
@@ -37,11 +38,13 @@ import org.jetbrains.kotlin.idea.caches.resolve.findModuleDescriptor
 import org.jetbrains.kotlin.idea.core.isInheritable
 import org.jetbrains.kotlin.idea.core.isOverridable
 import org.jetbrains.kotlin.idea.core.toDescriptor
+import org.jetbrains.kotlin.idea.editor.fixers.startLine
 import org.jetbrains.kotlin.idea.presentation.DeclarationByModuleRenderer
 import org.jetbrains.kotlin.idea.search.declarationsSearch.toPossiblyFakeLightMethods
 import org.jetbrains.kotlin.idea.util.*
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.getPrevSiblingIgnoringWhitespaceAndComments
 import java.awt.event.MouseEvent
 import java.util.*
@@ -340,11 +343,35 @@ private fun collectMultiplatformMarkers(
     }
 }
 
+private fun Document?.areAnchorsOnOneLine(
+    first: KtNamedDeclaration,
+    second: KtNamedDeclaration?
+): Boolean {
+    if (this == null || second == null) return false
+    val firstAnchor = first.expectOrActualAnchor
+    val secondAnchor = second.expectOrActualAnchor
+    return firstAnchor.startLine(this) == secondAnchor.startLine(this)
+}
+
+private fun KtNamedDeclaration.requiresNoMarkers(): Boolean {
+    val document = PsiDocumentManager.getInstance(project).getDocument(containingFile)
+    when (this) {
+        is KtPrimaryConstructor -> {
+            return true
+        }
+        is KtParameter,
+        is KtEnumEntry -> if (document.areAnchorsOnOneLine(this, containingClassOrObject)) {
+            return true
+        }
+    }
+    return false
+}
+
 private fun collectActualMarkers(
     declaration: KtNamedDeclaration,
     result: MutableCollection<LineMarkerInfo<*>>
 ) {
-    if (declaration is KtPrimaryConstructor) return
+    if (declaration.requiresNoMarkers()) return
 
     val descriptor = declaration.toDescriptor() as? MemberDescriptor ?: return
     val commonModuleDescriptor = declaration.containingKtFile.findModuleDescriptor()
@@ -374,7 +401,7 @@ private fun collectExpectedMarkers(
     declaration: KtNamedDeclaration,
     result: MutableCollection<LineMarkerInfo<*>>
 ) {
-    if (declaration is KtPrimaryConstructor) return
+    if (declaration.requiresNoMarkers()) return
 
     val descriptor = declaration.toDescriptor() as? MemberDescriptor ?: return
     val platformModuleDescriptor = declaration.containingKtFile.findModuleDescriptor()
