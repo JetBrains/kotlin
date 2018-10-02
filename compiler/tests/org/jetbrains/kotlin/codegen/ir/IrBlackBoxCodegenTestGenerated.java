@@ -11654,9 +11654,29 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             runTest("compiler/testData/codegen/box/inlineClasses/crossinlineWithInlineClassInParameter.kt");
         }
 
+        @TestMetadata("defaultConstructorParameterValuesOfInlineClassType.kt")
+        public void testDefaultConstructorParameterValuesOfInlineClassType() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/defaultConstructorParameterValuesOfInlineClassType.kt");
+        }
+
         @TestMetadata("defaultFunctionsFromAnyForInlineClass.kt")
         public void testDefaultFunctionsFromAnyForInlineClass() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/defaultFunctionsFromAnyForInlineClass.kt");
+        }
+
+        @TestMetadata("defaultInterfaceFunParameterValuesOfInlineClassType.kt")
+        public void testDefaultInterfaceFunParameterValuesOfInlineClassType() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/defaultInterfaceFunParameterValuesOfInlineClassType.kt");
+        }
+
+        @TestMetadata("defaultParameterValuesOfInlineClassType.kt")
+        public void testDefaultParameterValuesOfInlineClassType() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/defaultParameterValuesOfInlineClassType.kt");
+        }
+
+        @TestMetadata("defaultParameterValuesOfInlineClassTypeBoxing.kt")
+        public void testDefaultParameterValuesOfInlineClassTypeBoxing() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/defaultParameterValuesOfInlineClassTypeBoxing.kt");
         }
 
         @TestMetadata("defaultValueOfInlineClassTypeInInlineFun.kt")

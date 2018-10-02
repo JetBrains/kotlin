@@ -1266,7 +1266,8 @@ public class FunctionCodegen {
                 Label loadArg = new Label();
                 iv.ifeq(loadArg);
 
-                StackValue.local(parameterIndex, type).store(loadStrategy.genValue(parameterDescriptor, codegen), iv);
+                StackValue.local(parameterIndex, type, parameterDescriptor.getType())
+                        .store(loadStrategy.genValue(parameterDescriptor, codegen), iv);
 
                 iv.mark(loadArg);
             }
