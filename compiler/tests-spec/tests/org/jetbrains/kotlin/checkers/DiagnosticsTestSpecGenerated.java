@@ -906,11 +906,6 @@ public class DiagnosticsTestSpecGenerated extends AbstractDiagnosticsTestSpec {
                             runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/smartcasts/neg/13.kt");
                         }
 
-                        @TestMetadata("14.kt")
-                        public void test14() throws Exception {
-                            runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/smartcasts/neg/14.kt");
-                        }
-
                         @TestMetadata("2.kt")
                         public void test2() throws Exception {
                             runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/smartcasts/neg/2.kt");
@@ -972,6 +967,11 @@ public class DiagnosticsTestSpecGenerated extends AbstractDiagnosticsTestSpec {
                         @TestMetadata("10.kt")
                         public void test10() throws Exception {
                             runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/smartcasts/pos/10.kt");
+                        }
+
+                        @TestMetadata("11.kt")
+                        public void test11() throws Exception {
+                            runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/smartcasts/pos/11.kt");
                         }
 
                         @TestMetadata("2.kt")
