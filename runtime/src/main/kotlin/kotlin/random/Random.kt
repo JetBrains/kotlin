@@ -7,34 +7,32 @@ package kotlin.random
 import kotlin.native.concurrent.AtomicLong
 import kotlin.system.getTimeNanos
 
-internal class NativeRandom {
+/**
+ * The default implementation of pseudo-random generator using the linear congruential generator.
+ */
+internal object NativeRandom : Random() {
+    private const val MULTIPLIER = 0x5deece66dL
+    private val _seed = AtomicLong(mult(getTimeNanos()))
+
     /**
-     * A default pseudo-random linear congruential generator.
+     * Random generator seed value.
      */
-    companion object : Random() {
-        private const val MULTIPLIER = 0x5deece66dL
-        private val _seed = AtomicLong(mult(getTimeNanos()))
+    var seed: Long
+        get() = _seed.value
+        set(value) = update(mult(value))
 
-        /**
-         * Random generator seed value.
-         */
-        var seed: Long
-            get() = _seed.value
-            set(value) = update(mult(value))
+    private fun mult(value: Long) = (value xor MULTIPLIER) and ((1L shl 48) - 1)
 
-        private fun mult(value: Long) = (value xor MULTIPLIER) and ((1L shl 48) - 1)
-
-        private fun update(seed: Long): Unit {
-            _seed.value = seed
-        }
-
-        override fun nextBits(bitCount: Int): Int {
-            update((seed * MULTIPLIER + 0xbL) and ((1L shl 48) - 1))
-            return (seed ushr (48 - bitCount)).toInt()
-        }
-
-        override fun nextInt(): Int = nextBits(32)
+    private fun update(seed: Long): Unit {
+        _seed.value = seed
     }
+
+    override fun nextBits(bitCount: Int): Int {
+        update((seed * MULTIPLIER + 0xbL) and ((1L shl 48) - 1))
+        return (seed ushr (48 - bitCount)).toInt()
+    }
+
+    override fun nextInt(): Int = nextBits(32)
 }
 
 internal actual fun defaultPlatformRandom(): Random = NativeRandom
