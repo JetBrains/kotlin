@@ -16,6 +16,9 @@
 
 package org.jetbrains.kotlin.idea.highlighter.markers
 
+import com.intellij.codeInsight.daemon.impl.PsiElementListNavigator
+import com.intellij.ide.util.DefaultPsiElementCellRenderer
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.MemberDescriptor
 import org.jetbrains.kotlin.idea.caches.project.implementedDescriptors
 import org.jetbrains.kotlin.idea.caches.resolve.findModuleDescriptor
@@ -23,6 +26,7 @@ import org.jetbrains.kotlin.idea.core.toDescriptor
 import org.jetbrains.kotlin.idea.util.expectedDeclarationIfAny
 import org.jetbrains.kotlin.idea.util.hasDeclarationOf
 import org.jetbrains.kotlin.psi.KtDeclaration
+import java.awt.event.MouseEvent
 
 fun getExpectedDeclarationTooltip(declaration: KtDeclaration): String? {
     val descriptor = declaration.toDescriptor() as? MemberDescriptor ?: return null
@@ -34,6 +38,20 @@ fun getExpectedDeclarationTooltip(declaration: KtDeclaration): String? {
     return "Has declaration in common module"
 }
 
-fun navigateToExpectedDeclaration(declaration: KtDeclaration) {
-    declaration.expectedDeclarationIfAny()?.navigate(/* request focus = */true)
+fun navigateToExpectedDeclaration(e: MouseEvent?, declaration: KtDeclaration) {
+    val expectedDeclarations =
+        listOfNotNull(declaration.expectedDeclarationIfAny()) +
+                declaration.findMarkerBoundDeclarations().mapNotNull { it.expectedDeclarationIfAny() }
+    if (expectedDeclarations.isEmpty()) return
+
+    val renderer = object : DefaultPsiElementCellRenderer() {
+        override fun getContainerText(element: PsiElement?, name: String?) = ""
+    }
+    PsiElementListNavigator.openTargets(
+        e,
+        expectedDeclarations.toTypedArray(),
+        "Choose expected for ${declaration.name}",
+        "Expected for ${declaration.name}",
+        renderer
+    )
 }

@@ -65,7 +65,8 @@ fun getPlatformActualTooltip(declaration: KtDeclaration): String? {
 }
 
 fun navigateToPlatformActual(e: MouseEvent?, declaration: KtDeclaration) {
-    val actualDeclarations = declaration.actualsForExpected()
+    val actualDeclarations =
+        declaration.actualsForExpected() + declaration.findMarkerBoundDeclarations().flatMap { it.actualsForExpected() }
     if (actualDeclarations.isEmpty()) return
 
     val renderer = object : DefaultPsiElementCellRenderer() {
