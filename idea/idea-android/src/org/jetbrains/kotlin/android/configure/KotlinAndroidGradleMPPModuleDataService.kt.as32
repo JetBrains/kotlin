@@ -17,7 +17,6 @@ import com.intellij.openapi.externalSystem.service.project.manage.AbstractProjec
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.roots.DependencyScope
 import com.intellij.openapi.roots.ModifiableRootModel
 import com.intellij.util.SmartList
 import com.intellij.util.containers.stream
@@ -27,6 +26,7 @@ import org.jetbrains.jps.model.module.JpsModuleSourceRootType
 import org.jetbrains.kotlin.gradle.KotlinCompilation
 import org.jetbrains.kotlin.gradle.KotlinPlatform
 import org.jetbrains.kotlin.gradle.KotlinSourceSet
+import org.jetbrains.kotlin.idea.addModuleDependencyIfNeeded
 import org.jetbrains.kotlin.idea.configuration.*
 import org.jetbrains.kotlin.idea.facet.KotlinFacet
 import org.jetbrains.kotlin.utils.addIfNotNull
@@ -87,17 +87,6 @@ class KotlinAndroidGradleMPPModuleDataService : AbstractProjectDataService<Modul
                 GradleProjectImportHandler.getInstances(project).forEach { it.importByModule(kotlinFacet, nodeToImport) }
             }
         }
-    }
-
-    private fun addModuleDependencyIfNeeded(
-        rootModel: ModifiableRootModel,
-        dependeeModule: Module,
-        testScope: Boolean
-    ) {
-        val dependencyScope = if (testScope) DependencyScope.TEST else DependencyScope.COMPILE
-        val existingEntry = rootModel.findModuleOrderEntry(dependeeModule)
-        if (existingEntry != null && existingEntry.scope == dependencyScope) return
-        rootModel.addModuleOrderEntry(dependeeModule).also { it.scope = dependencyScope }
     }
 
     private fun addExtraDependeeModules(
