@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.idea.codeInsight.gradle.GradleImportingTestCase
 import org.jetbrains.kotlin.platform.impl.CommonIdePlatformKind
 import org.jetbrains.kotlin.platform.impl.JsIdePlatformKind
 import org.jetbrains.kotlin.platform.impl.JvmIdePlatformKind
+import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.junit.Test
 import org.junit.runners.Parameterized
 
@@ -392,6 +393,212 @@ class NewMultiplatformProjectImportingTest : GradleImportingTestCase() {
             module("project_jvmTest")
             module("project_main")
             module("project_test")
+        }
+    }
+
+    @Test
+    fun testAndroidDependencyOnMPP() {
+        createProjectSubFile(
+            "settings.gradle",
+            """
+                include ':app'
+                include ':shared'
+            """.trimIndent()
+        )
+        createProjectSubFile(
+            "build.gradle",
+            """
+                buildscript {
+                    ext.kotlin_version = '$kotlinVersion'
+                    repositories {
+                        google()
+                        jcenter()
+                        maven { url 'https://dl.bintray.com/kotlin/kotlin-dev' }
+                    }
+                    dependencies {
+                        classpath 'com.android.tools.build:gradle:3.2.0'
+                        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${'$'}kotlin_version"
+                    }
+                }
+
+                allprojects {
+                    repositories {
+                        google()
+                        jcenter()
+                        maven { url 'https://dl.bintray.com/kotlin/kotlin-dev' }
+                    }
+                }
+
+                task clean(type: Delete) {
+                    delete rootProject.buildDir
+                }
+            """.trimIndent()
+        )
+        createProjectSubFile(
+            "local.properties",
+            "sdk.dir=/${KotlinTestUtils.getAndroidSdkSystemIndependentPath()}"
+        )
+        createProjectSubFile(
+            "shared/build.gradle",
+            """
+                apply plugin: 'kotlin-multiplatform'
+
+                kotlin {
+                    targets {
+                        fromPreset(presets.jvm, 'android')
+
+                        fromPreset(presets.iosArm64, 'iOS') {
+                            compilations.main.outputKinds('FRAMEWORK')
+                        }
+                    }
+
+                    sourceSets {
+                        commonMain.dependencies {
+                            api 'org.jetbrains.kotlin:kotlin-stdlib-common'
+                        }
+
+                        androidMain.dependencies {
+                            api 'org.jetbrains.kotlin:kotlin-stdlib'
+                        }
+                    }
+                }
+
+                configurations {
+                    compileClasspath
+                }
+            """.trimIndent()
+        )
+
+        createProjectSubFile(
+            "app/build.gradle",
+            """
+                apply plugin: 'com.android.application'
+
+                apply plugin: 'kotlin-android'
+
+                apply plugin: 'kotlin-android-extensions'
+
+                android {
+                    compileSdkVersion 26
+                    defaultConfig {
+                        applicationId "jetbrains.org.myapplication"
+                        minSdkVersion 15
+                        targetSdkVersion 26
+                        versionCode 1
+                        versionName "1.0"
+                        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+                    }
+                    buildTypes {
+                        release {
+                            minifyEnabled false
+                            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+                        }
+                    }
+                }
+
+                dependencies {
+                    implementation project(':shared')
+                    implementation fileTree(dir: 'libs', include: ['*.jar'])
+                    implementation"org.jetbrains.kotlin:kotlin-stdlib-jdk7:${'$'}kotlin_version"
+                    implementation 'com.android.support:appcompat-v7:27.1.1'
+                    implementation 'com.android.support.constraint:constraint-layout:1.1.3'
+                    testImplementation 'junit:junit:4.12'
+                    androidTestImplementation 'com.android.support.test:runner:1.0.2'
+                    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+                }
+            """.trimIndent()
+        )
+
+        importProject()
+
+        checkProjectStructure {
+            module("project")
+            module("app") {
+                libraryDependency("Gradle: android-android-26", DependencyScope.COMPILE)
+                libraryDependency("Gradle: android.arch.core:common:1.1.0@jar", DependencyScope.COMPILE)
+                libraryDependency("Gradle: android.arch.core:runtime-1.1.0", DependencyScope.COMPILE)
+                libraryDependency("Gradle: android.arch.lifecycle:common:1.1.0@jar", DependencyScope.COMPILE)
+                libraryDependency("Gradle: android.arch.lifecycle:livedata-core-1.1.0", DependencyScope.COMPILE)
+                libraryDependency("Gradle: android.arch.lifecycle:runtime-1.1.0", DependencyScope.COMPILE)
+                libraryDependency("Gradle: android.arch.lifecycle:viewmodel-1.1.0", DependencyScope.COMPILE)
+                libraryDependency("Gradle: com.android.support.constraint:constraint-layout-1.1.3", DependencyScope.COMPILE)
+                libraryDependency("Gradle: com.android.support.constraint:constraint-layout-solver:1.1.3@jar", DependencyScope.COMPILE)
+                libraryDependency("Gradle: com.android.support.test.espresso:espresso-core-3.0.2", DependencyScope.TEST)
+                libraryDependency("Gradle: com.android.support.test.espresso:espresso-idling-resource-3.0.2", DependencyScope.TEST)
+                libraryDependency("Gradle: com.android.support.test:monitor-1.0.2", DependencyScope.TEST)
+                libraryDependency("Gradle: com.android.support.test:runner-1.0.2", DependencyScope.TEST)
+                libraryDependency("Gradle: com.android.support:animated-vector-drawable-27.1.1", DependencyScope.COMPILE)
+                libraryDependency("Gradle: com.android.support:appcompat-v7-27.1.1", DependencyScope.COMPILE)
+                libraryDependency("Gradle: com.android.support:support-annotations:27.1.1@jar", DependencyScope.COMPILE)
+                libraryDependency("Gradle: com.android.support:support-compat-27.1.1", DependencyScope.COMPILE)
+                libraryDependency("Gradle: com.android.support:support-core-ui-27.1.1", DependencyScope.COMPILE)
+                libraryDependency("Gradle: com.android.support:support-core-utils-27.1.1", DependencyScope.COMPILE)
+                libraryDependency("Gradle: com.android.support:support-fragment-27.1.1", DependencyScope.COMPILE)
+                libraryDependency("Gradle: com.android.support:support-vector-drawable-27.1.1", DependencyScope.COMPILE)
+                libraryDependency("Gradle: com.google.code.findbugs:jsr305:2.0.1@jar", DependencyScope.TEST)
+                libraryDependency("Gradle: com.squareup:javawriter:2.1.1@jar", DependencyScope.TEST)
+                libraryDependency("Gradle: javax.inject:javax.inject:1@jar", DependencyScope.TEST)
+                libraryDependency("Gradle: junit:junit:4.12@jar", DependencyScope.TEST)
+                libraryDependency("Gradle: net.sf.kxml:kxml2:2.3.0@jar", DependencyScope.TEST)
+                libraryDependency("Gradle: org.hamcrest:hamcrest-core:1.3@jar", DependencyScope.TEST)
+                libraryDependency("Gradle: org.hamcrest:hamcrest-integration:1.3@jar", DependencyScope.TEST)
+                libraryDependency("Gradle: org.hamcrest:hamcrest-library:1.3@jar", DependencyScope.TEST)
+                libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:$kotlinVersion@jar", DependencyScope.COMPILE)
+                libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlinVersion@jar", DependencyScope.COMPILE)
+                libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion@jar", DependencyScope.COMPILE)
+                libraryDependency("Gradle: org.jetbrains:annotations:13.0@jar", DependencyScope.COMPILE)
+                moduleDependency("shared", DependencyScope.COMPILE)
+                moduleDependency("shared_androidMain", DependencyScope.COMPILE)
+                moduleDependency("shared_androidTest", DependencyScope.TEST)
+                moduleDependency("shared_commonMain", DependencyScope.COMPILE)
+                moduleDependency("shared_commonTest", DependencyScope.TEST)
+            }
+            module("shared")
+            module("shared_commonMain") {
+                libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:1.3.0-rc-146", DependencyScope.COMPILE)
+                sourceFolder("shared/src/commonMain/kotlin", KotlinSourceRootType.Source)
+                sourceFolder("shared/src/commonMain/resources", KotlinResourceRootType.Resource)
+            }
+            module("shared_commonTest") {
+                libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:1.3.0-rc-146", DependencyScope.TEST)
+                moduleDependency("shared_commonMain", DependencyScope.TEST)
+                sourceFolder("shared/src/commonTest/kotlin", KotlinSourceRootType.TestSource)
+                sourceFolder("shared/src/commonTest/resources", KotlinResourceRootType.TestResource)
+            }
+            module("shared_androidMain") {
+                libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:1.3.0-rc-146", DependencyScope.COMPILE)
+                libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib:1.3.0-rc-146", DependencyScope.COMPILE)
+                libraryDependency("Gradle: org.jetbrains:annotations:13.0", DependencyScope.COMPILE)
+                moduleDependency("shared_commonMain", DependencyScope.COMPILE)
+                sourceFolder("shared/src/androidMain/kotlin", JavaSourceRootType.SOURCE)
+                sourceFolder("shared/src/androidMain/resources", JavaResourceRootType.RESOURCE)
+            }
+            module("shared_androidTest") {
+                libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:1.3.0-rc-146", DependencyScope.TEST)
+                libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib:1.3.0-rc-146", DependencyScope.TEST)
+                libraryDependency("Gradle: org.jetbrains:annotations:13.0", DependencyScope.TEST)
+                moduleDependency("shared_androidMain", DependencyScope.TEST)
+                moduleDependency("shared_commonMain", DependencyScope.TEST)
+                moduleDependency("shared_commonTest", DependencyScope.TEST)
+                sourceFolder("shared/src/androidTest/kotlin", JavaSourceRootType.TEST_SOURCE)
+                sourceFolder("shared/src/androidTest/resources", JavaResourceRootType.TEST_RESOURCE)
+            }
+            module("shared_iOSMain") {
+                libraryDependency("Gradle: Kotlin/Native:stdlib:0.9.3", DependencyScope.COMPILE)
+                libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:1.3.0-rc-146", DependencyScope.COMPILE)
+                moduleDependency("shared_commonMain", DependencyScope.COMPILE)
+                sourceFolder("shared/src/iOSMain/kotlin", KotlinSourceRootType.Source)
+                sourceFolder("shared/src/iOSMain/resources", KotlinResourceRootType.Resource)
+            }
+            module("shared_iOSTest") {
+                libraryDependency("Gradle: Kotlin/Native:stdlib:0.9.3", DependencyScope.TEST)
+                libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:1.3.0-rc-146", DependencyScope.TEST)
+                moduleDependency("shared_iOSMain", DependencyScope.TEST)
+                moduleDependency("shared_commonMain", DependencyScope.TEST)
+                moduleDependency("shared_commonTest", DependencyScope.TEST)
+                sourceFolder("shared/src/iOSTest/kotlin", KotlinSourceRootType.TestSource)
+                sourceFolder("shared/src/iOSTest/resources", KotlinResourceRootType.TestResource)
+            }
         }
     }
 
