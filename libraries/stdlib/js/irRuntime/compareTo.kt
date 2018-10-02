@@ -8,19 +8,19 @@ package kotlin.js
 
 // Adopted from misc.js
 
-fun compareTo(a: dynamic, b: dynamic): Int {
-    var typeA = typeOf(a)
-    if (typeA == "number") {
-        if (typeOf(b) == "number") {
-            return doubleCompareTo(a, b)
-        }
-        return primitiveCompareTo(a, b)
-    }
-    if (typeA == "string" || typeA == "boolean") {
-        return primitiveCompareTo(a, b)
+fun compareTo(a: dynamic, b: dynamic): Int = when (typeOf(a)) {
+    "number" -> when {
+        typeOf(b) == "number" ->
+            doubleCompareTo(a, b)
+        b is Long ->
+            doubleCompareTo(a, b.toDouble())
+        else ->
+            primitiveCompareTo(a, b)
     }
 
-    return compareToDoNotIntrinsicify(a, b)
+    "string", "boolean" -> primitiveCompareTo(a, b)
+
+    else -> compareToDoNotIntrinsicify(a, b)
 }
 
 @DoNotIntrinsify
