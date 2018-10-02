@@ -67,7 +67,7 @@ class KotlinGradleMobileSharedMultiplatformModuleBuilder : KotlinGradleAbstractM
                 }
 
                 actual object Platform {
-                    actual fun name(): String = "Android"
+                    actual fun name(): String = "JVM"
                 }
             """.trimIndent()
             )
@@ -128,7 +128,7 @@ class KotlinGradleMobileSharedMultiplatformModuleBuilder : KotlinGradleAbstractM
                 class SampleTestsNative {
                     @Test
                     fun testHello() {
-                        assertTrue("Native" in hello())
+                        assertTrue("iOS" in hello())
                     }
                 }
             """.trimIndent()
