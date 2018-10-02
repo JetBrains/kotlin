@@ -14,6 +14,9 @@ import com.intellij.openapi.externalSystem.service.project.manage.AbstractProjec
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.roots.DependencyScope
+import com.intellij.openapi.roots.ExportableOrderEntry
+import com.intellij.openapi.roots.ModifiableRootModel
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.config.CoroutineSupport
 import org.jetbrains.kotlin.config.JvmTarget
@@ -59,7 +62,20 @@ class KotlinSourceSetDataService : AbstractProjectDataService<GradleSourceSetDat
             }
 
             configureFacet(sourceSetData, kotlinSourceSet, mainModuleData, ideModule, modelsProvider)
+
+            if (kotlinSourceSet.isTestModule) {
+                assignTestScope(rootModel)
+            }
         }
+    }
+
+    private fun assignTestScope(rootModel: ModifiableRootModel) {
+        rootModel
+            .orderEntries
+            .asSequence()
+            .filterIsInstance<ExportableOrderEntry>()
+            .filter { it.scope == DependencyScope.COMPILE }
+            .forEach { it.scope = DependencyScope.TEST }
     }
 
     companion object {
