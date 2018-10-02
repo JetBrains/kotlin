@@ -663,6 +663,20 @@ class NewMultiplatformIT : BaseGradleIT() {
             "build/bin/$nativeHostTargetName/main/release/static/$staticPrefix${baseName}_api.h"
         )
 
+        val klibPrefix = CompilerOutputKind.LIBRARY.prefix(HostManager.host)
+        val klibSuffix = CompilerOutputKind.LIBRARY.suffix(HostManager.host)
+        val klibPath = "${targetClassesDir(nativeHostTargetName)}${klibPrefix}native-lib$klibSuffix"
+
+        val frameworkPrefix = CompilerOutputKind.FRAMEWORK.prefix(HostManager.host)
+        val frameworkSuffix = CompilerOutputKind.FRAMEWORK.suffix(HostManager.host)
+        val frameworkPaths = listOf(
+            "build/bin/$nativeHostTargetName/main/debug/framework/$frameworkPrefix$baseName$frameworkSuffix.dSYM",
+            "build/bin/$nativeHostTargetName/main/debug/framework/$frameworkPrefix$baseName$frameworkSuffix",
+            "build/bin/$nativeHostTargetName/main/release/framework/$frameworkPrefix$baseName$frameworkSuffix"
+        )
+            .takeIf { HostManager.hostIsMac }
+            .orEmpty()
+
         val taskSuffix = nativeHostTargetName.capitalize()
         val linkTasks = listOf(
             ":linkDebugShared$taskSuffix",
@@ -671,25 +685,48 @@ class NewMultiplatformIT : BaseGradleIT() {
             ":linkReleaseStatic$taskSuffix"
         )
 
+        val klibTask = ":compileKotlin$taskSuffix"
+
+        val frameworkTasks = listOf(":linkDebugFramework$taskSuffix", ":linkReleaseFramework$taskSuffix")
+            .takeIf { HostManager.hostIsMac }
+            .orEmpty()
+
+        // Building
         build("assemble") {
             assertSuccessful()
 
             sharedPaths.forEach { assertFileExists(it) }
             staticPaths.forEach { assertFileExists(it) }
             headerPaths.forEach { assertFileExists(it) }
+            frameworkPaths.forEach { assertFileExists(it) }
+            assertFileExists(klibPath)
         }
 
+        // Test that all up-to date checks are correct
         build("assemble") {
             assertSuccessful()
             assertTasksUpToDate(linkTasks)
+            assertTasksUpToDate(frameworkTasks)
+            assertTasksUpToDate(klibTask)
         }
 
+        // Remove outputs and check that they are rebuilt.
         assertTrue(projectDir.resolve(headerPaths[0]).delete())
+        assertTrue(projectDir.resolve(klibPath).delete())
+        if (HostManager.hostIsMac) {
+            assertTrue(projectDir.resolve(frameworkPaths[0]).deleteRecursively())
+        }
 
         build("assemble") {
             assertSuccessful()
             assertTasksUpToDate(linkTasks.drop(1))
             assertTasksExecuted(linkTasks[0])
+            assertTasksExecuted(klibTask)
+
+            if (HostManager.hostIsMac) {
+                assertTasksUpToDate(frameworkTasks.drop(1))
+                assertTasksExecuted(frameworkTasks[0])
+            }
         }
     }
 
