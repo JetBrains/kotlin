@@ -20,6 +20,7 @@
         <externalProjectDataService implementation="org.jetbrains.kotlin.idea.configuration.KotlinSourceSetDataService"/>
         <externalProjectDataService implementation="org.jetbrains.kotlin.idea.configuration.KotlinTargetDataService"/>
         <externalProjectDataService implementation="org.jetbrains.kotlin.idea.configuration.KotlinGradleProjectSettingsDataService"/>
+        <externalProjectDataService implementation="org.jetbrains.kotlin.idea.KotlinJavaMPPSourceSetDataService"/>
         <externalSystemTaskNotificationListener implementation="org.jetbrains.kotlin.idea.core.script.ReloadGradleTemplatesOnSync"/>
 
         <localInspection
