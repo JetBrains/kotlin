@@ -47,7 +47,6 @@ import org.jetbrains.kotlin.types.TypeProjectionImpl
 import org.jetbrains.kotlin.types.replace
 
 internal class PropertyDelegationLowering(val context: KonanBackendContext) : FileLoweringPass {
-    private val reflectionTypes = context.reflectionTypes
     private var tempIndex = 0
 
     private fun getKPropertyImplConstructor(receiverTypes: List<IrType>,
@@ -300,9 +299,9 @@ internal class PropertyDelegationLowering(val context: KonanBackendContext) : Fi
         val arguments = type.arguments
         val expectedClassDescriptor = when (arguments.size) {
             0 -> return false
-            1 -> reflectionTypes.kMutableProperty0
-            2 -> reflectionTypes.kMutableProperty1
-            3 -> reflectionTypes.kMutableProperty2
+            1 -> context.reflectionTypes0.kMutableProperty0
+            2 -> context.reflectionTypes0.kMutableProperty1
+            3 -> context.reflectionTypes0.kMutableProperty2
             else -> throw AssertionError("More than 2 receivers is not allowed")
         }
         return type == expectedClassDescriptor.defaultType.replace(arguments)
