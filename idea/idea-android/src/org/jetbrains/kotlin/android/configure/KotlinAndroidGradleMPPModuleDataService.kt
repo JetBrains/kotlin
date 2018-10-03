@@ -78,7 +78,7 @@ class KotlinAndroidGradleMPPModuleDataService : AbstractProjectDataService<Modul
                     }
                 }
             }
-            val androidModel = AndroidModuleModel.get(module) ?: continue
+            val androidModel = module.getAndroidModel(modelsProvider) ?: continue
             val variantName = androidModel.selectedVariant.name
             val activeSourceSetInfos = nodeToImport.kotlinAndroidSourceSets?.filter { it.kotlinModule.name.startsWith(variantName) } ?: emptyList()
             for (activeSourceSetInfo in activeSourceSetInfos) {
