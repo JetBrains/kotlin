@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.ir.backend.js.lower.*
+import org.jetbrains.kotlin.ir.backend.js.lower.calls.CallsLowering
 import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.CoroutineIntrinsicLowering
 import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.SuspendFunctionsLowering
 import org.jetbrains.kotlin.ir.backend.js.lower.inline.FunctionInlining
@@ -131,7 +132,8 @@ private fun JsIrBackendContext.lower(moduleFragment: IrModuleFragment, dependenc
     moduleFragment.files.forEach(clble.getReferenceReplacer())
     moduleFragment.files.forEach(ClassReferenceLowering(this)::lower)
     moduleFragment.files.forEach(PrimitiveCompanionLowering(this)::lower)
-    moduleFragment.files.forEach(IntrinsicifyCallsLowering(this)::lower)
+    moduleFragment.files.forEach(ConstLowering(this)::lower)
+    moduleFragment.files.forEach(CallsLowering(this)::lower)
 }
 
 private fun FileLoweringPass.lower(files: List<IrFile>) = files.forEach { lower(it) }
