@@ -423,7 +423,8 @@ tasks {
         dependsOn("dist")
         dependsOn(":compiler:test",
                   ":compiler:container:test",
-                  ":compiler:tests-java8:test")
+                  ":compiler:tests-java8:test",
+                  ":compiler:tests-spec:remoteRunTests")
     }
 
     create("jsCompilerTest") {
