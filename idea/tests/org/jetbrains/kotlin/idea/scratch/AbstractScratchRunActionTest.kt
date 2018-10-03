@@ -114,7 +114,7 @@ abstract class AbstractScratchRunActionTest : FileEditorManagerTestCase() {
         val (editor, scratchPanel) = getEditorWithScratchPanel(myManager, scratchFile)?: error("Couldn't find scratch panel")
         scratchPanel.setReplMode(isRepl)
 
-        val action = RunScratchAction(scratchPanel)
+        val action = RunScratchAction()
         val event = getActionEvent(scratchFile, action)
         launchAction(event, action)
 
