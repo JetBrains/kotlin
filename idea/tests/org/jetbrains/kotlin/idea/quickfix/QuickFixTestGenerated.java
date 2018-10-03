@@ -7960,6 +7960,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/modifiers/addOpenToClassDeclaration"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
             }
 
+            @TestMetadata("dataSuperType.kt")
+            public void testDataSuperType() throws Exception {
+                runTest("idea/testData/quickfix/modifiers/addOpenToClassDeclaration/dataSuperType.kt");
+            }
+
             @TestMetadata("enumSupertype.kt")
             public void testEnumSupertype() throws Exception {
                 runTest("idea/testData/quickfix/modifiers/addOpenToClassDeclaration/enumSupertype.kt");
