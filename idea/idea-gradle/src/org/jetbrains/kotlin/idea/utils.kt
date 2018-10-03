@@ -16,6 +16,12 @@ fun addModuleDependencyIfNeeded(
 ) {
     val dependencyScope = if (testScope) DependencyScope.TEST else DependencyScope.COMPILE
     val existingEntry = rootModel.findModuleOrderEntry(dependeeModule)
-    if (existingEntry != null && existingEntry.scope == dependencyScope) return
+    if (existingEntry != null) {
+        val existingScope = existingEntry.scope
+        if (existingScope == DependencyScope.COMPILE || existingScope == dependencyScope) return
+        if (dependencyScope == DependencyScope.COMPILE) {
+            rootModel.removeOrderEntry(existingEntry)
+        }
+    }
     rootModel.addModuleOrderEntry(dependeeModule).also { it.scope = dependencyScope }
 }
