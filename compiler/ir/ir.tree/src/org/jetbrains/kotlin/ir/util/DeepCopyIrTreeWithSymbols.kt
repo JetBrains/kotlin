@@ -42,6 +42,13 @@ open class DeepCopyIrTreeWithSymbols(
     private val typeRemapper: TypeRemapper
 ) : IrElementTransformerVoid() {
 
+    init {
+        // TODO refactor
+        (typeRemapper as? DeepCopyTypeRemapper)?.let {
+            it.deepCopy = this
+        }
+    }
+
     private fun mapDeclarationOrigin(origin: IrDeclarationOrigin) = origin
     private fun mapStatementOrigin(origin: IrStatementOrigin?) = origin
 
@@ -478,8 +485,8 @@ open class DeepCopyIrTreeWithSymbols(
             expression.descriptor,
             expression.typeArgumentsCount,
             expression.field?.let { symbolRemapper.getReferencedField(it) },
-            expression.getter?.let { symbolRemapper.getReferencedFunction(it) },
-            expression.setter?.let { symbolRemapper.getReferencedFunction(it) },
+            expression.getter?.let { symbolRemapper.getReferencedSimpleFunction(it) },
+            expression.setter?.let { symbolRemapper.getReferencedSimpleFunction(it) },
             mapStatementOrigin(expression.origin)
         ).apply {
             copyRemappedTypeArgumentsFrom(expression)
@@ -492,8 +499,8 @@ open class DeepCopyIrTreeWithSymbols(
             expression.type.remapType(),
             expression.descriptor,
             symbolRemapper.getReferencedVariable(expression.delegate),
-            symbolRemapper.getReferencedFunction(expression.getter),
-            expression.setter?.let { symbolRemapper.getReferencedFunction(it) },
+            symbolRemapper.getReferencedSimpleFunction(expression.getter),
+            expression.setter?.let { symbolRemapper.getReferencedSimpleFunction(it) },
             mapStatementOrigin(expression.origin)
         )
 

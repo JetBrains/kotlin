@@ -21,7 +21,7 @@ fun getAndCheckInlinedInt(a: InlinedInt, b: InlinedInt) =
 // 0 valueOf
 // 0 Value
 // 1 areEqual
-// 2 INVOKESTATIC InlinedInt\$Erased.box
+// 2 INVOKESTATIC InlinedInt\.box
 // 0 INVOKEVIRTUAL InlinedInt.unbox
 
 // FILE: Inline.kt

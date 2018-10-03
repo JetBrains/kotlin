@@ -1,5 +1,5 @@
 // IGNORE_BACKEND: JS_IR
-// EXPECTED_REACHABLE_NODES: 1108
+// EXPECTED_REACHABLE_NODES: 1280
 // FILE: a.kt
 
 inline fun foo(f: (Int) -> String, x: Int = 23): String = "foo(${f(x)})"

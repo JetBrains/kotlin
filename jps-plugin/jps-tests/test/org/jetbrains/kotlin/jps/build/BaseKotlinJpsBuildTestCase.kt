@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.jps.build
 
 import org.jetbrains.jps.builders.JpsBuildTestCase
+import org.jetbrains.jps.model.library.JpsLibrary
 
 abstract class BaseKotlinJpsBuildTestCase : JpsBuildTestCase() {
     @Throws(Exception::class)
@@ -31,5 +32,11 @@ abstract class BaseKotlinJpsBuildTestCase : JpsBuildTestCase() {
         super.tearDown()
         myModel = null
         myBuildParams.clear()
+    }
+
+    private val libraries = mutableMapOf<String, JpsLibrary>()
+
+    protected fun requireLibrary(library: KotlinJpsLibrary) = libraries.getOrPut(library.id) {
+        library.create(myProject)
     }
 }

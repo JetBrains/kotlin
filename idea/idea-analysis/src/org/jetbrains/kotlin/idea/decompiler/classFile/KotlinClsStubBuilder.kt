@@ -23,7 +23,6 @@ import com.intellij.psi.impl.compiled.ClassFileStubBuilder
 import com.intellij.psi.stubs.PsiFileStub
 import com.intellij.util.indexing.FileContent
 import org.jetbrains.kotlin.descriptors.SourceElement
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.idea.caches.IDEKotlinBinaryClassCache
 import org.jetbrains.kotlin.idea.decompiler.stubBuilder.*
 import org.jetbrains.kotlin.load.kotlin.*
@@ -43,13 +42,19 @@ open class KotlinClsStubBuilder : ClsStubBuilder() {
     override fun getStubVersion() = ClassFileStubBuilder.STUB_VERSION + KotlinStubVersions.CLASSFILE_STUB_VERSION
 
     override fun buildFileStub(content: FileContent): PsiFileStub<*>? {
-        val file = content.file
+        val virtualFile = content.file
 
-        if (isKotlinInternalCompiledFile(file, content.content)) {
+        if (isKotlinInternalCompiledFile(virtualFile, content.content)) {
             return null
         }
 
-        return doBuildFileStub(file, content.content)
+        if (isVersioned(virtualFile)) {
+            // Kotlin can't build stubs for versioned class files, because list of versioned inner classes
+            // might be incomplete
+            return null
+        }
+
+        return doBuildFileStub(virtualFile, content.content)
     }
 
     private fun doBuildFileStub(file: VirtualFile, fileContent: ByteArray): PsiFileStub<KtFile>? {
@@ -105,6 +110,13 @@ open class KotlinClsStubBuilder : ClsStubBuilder() {
 
     companion object {
         val LOG = Logger.getInstance(KotlinClsStubBuilder::class.java)
+
+        // Archive separator + META-INF + versions
+        private val VERSIONED_PATH_MARKER = "!/META-INF/versions/"
+
+        fun isVersioned(virtualFile: VirtualFile): Boolean {
+            return virtualFile.path.contains(VERSIONED_PATH_MARKER)
+        }
     }
 }
 
@@ -112,7 +124,7 @@ class AnnotationLoaderForClassFileStubBuilder(
         kotlinClassFinder: KotlinClassFinder,
         private val cachedFile: VirtualFile,
         private val cachedFileContent: ByteArray
-) : AbstractBinaryClassAnnotationAndConstantLoader<ClassId, Unit, ClassIdWithTarget>(LockBasedStorageManager.NO_LOCKS, kotlinClassFinder) {
+) : AbstractBinaryClassAnnotationAndConstantLoader<ClassId, Unit>(LockBasedStorageManager.NO_LOCKS, kotlinClassFinder) {
 
     override fun getCachedFileContent(kotlinClass: KotlinJvmBinaryClass): ByteArray? {
         if ((kotlinClass as? VirtualFileKotlinClass)?.file == cachedFile) {
@@ -134,13 +146,4 @@ class AnnotationLoaderForClassFileStubBuilder(
         result.add(annotationClassId)
         return null
     }
-
-    override fun loadPropertyAnnotations(
-            propertyAnnotations: List<ClassId>, fieldAnnotations: List<ClassId>, fieldUseSiteTarget: AnnotationUseSiteTarget
-    ): List<ClassIdWithTarget> {
-        return propertyAnnotations.map { ClassIdWithTarget(it, null) } +
-               fieldAnnotations.map { ClassIdWithTarget(it, fieldUseSiteTarget ) }
-    }
-
-    override fun transformAnnotations(annotations: List<ClassId>) = annotations.map { ClassIdWithTarget(it, null) }
 }

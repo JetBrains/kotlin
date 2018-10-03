@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.script.examples.jvm.simple.host
 
-import org.jetbrains.kotlin.script.examples.jvm.simple.MyScript
+import org.jetbrains.kotlin.script.examples.jvm.simple.SimpleScript
 import java.io.File
 import kotlin.script.experimental.api.EvaluationResult
 import kotlin.script.experimental.api.ResultWithDiagnostics
@@ -13,10 +13,10 @@ import kotlin.script.experimental.host.toScriptSource
 import kotlin.script.experimental.jvm.dependenciesFromCurrentContext
 import kotlin.script.experimental.jvm.jvm
 import kotlin.script.experimental.jvmhost.BasicJvmScriptingHost
-import kotlin.script.experimental.jvmhost.createBasicScriptCompilationConfigurationFromAnnotatedBaseClass
+import kotlin.script.experimental.jvmhost.createJvmCompilationConfigurationFromTemplate
 
 fun evalFile(scriptFile: File): ResultWithDiagnostics<EvaluationResult> {
-    val compilationConfiguration = createBasicScriptCompilationConfigurationFromAnnotatedBaseClass<MyScript> {
+    val compilationConfiguration = createJvmCompilationConfigurationFromTemplate<SimpleScript> {
         jvm {
             dependenciesFromCurrentContext(
                 "scripting-jvm-simple-script" /* script library jar name */

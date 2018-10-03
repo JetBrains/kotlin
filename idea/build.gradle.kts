@@ -12,7 +12,7 @@ repositories {
 dependencies {
     testRuntime(intellijDep())
 
-    compile(projectDist(":kotlin-stdlib-jre8"))
+    compile(project(":kotlin-stdlib-jre8"))
     compileOnly(project(":kotlin-reflect-api"))
     compile(project(":core:descriptors"))
     compile(project(":core:descriptors.jvm"))
@@ -59,11 +59,17 @@ dependencies {
     testCompile(project(":idea:idea-jvm")) { isTransitive = false }
     testCompile(project(":idea:idea-gradle")) { isTransitive = false }
     testCompile(project(":idea:idea-maven")) { isTransitive = false }
+    testCompile(project(":idea:idea-native")) { isTransitive = false }
+    testCompile(project(":idea:idea-gradle-native")) { isTransitive = false }
     testCompile(commonDep("junit:junit"))
 
+    testRuntime(project(":kotlin-native:kotlin-native-library-reader")) { isTransitive = false }
+    testRuntime(project(":kotlin-native:kotlin-native-utils")) { isTransitive = false }
+
+    testRuntime(commonDep("org.jetbrains", "markdown"))
     testRuntime(project(":plugins:kapt3-idea")) { isTransitive = false }
-    testRuntime(projectDist(":kotlin-reflect"))
-    testRuntime(projectDist(":kotlin-preloader"))
+    testRuntime(project(":kotlin-reflect"))
+    testRuntime(project(":kotlin-preloader"))
 
     testCompile(project(":kotlin-sam-with-receiver-compiler-plugin")) { isTransitive = false }
 
@@ -77,6 +83,8 @@ dependencies {
     testRuntime(project(":kotlin-scripting-idea")) { isTransitive = false }
     testRuntime(project(":kotlin-scripting-compiler"))
     testRuntime(project(":sam-with-receiver-ide-plugin")) { isTransitive = false }
+    testRuntime(project(":kotlinx-serialization-compiler-plugin"))
+    testRuntime(project(":kotlinx-serialization-ide-plugin")) { isTransitive = false }
     testRuntime(project(":idea:idea-android")) { isTransitive = false }
     testRuntime(project(":plugins:lint")) { isTransitive = false }
     testRuntime(project(":plugins:uast-kotlin"))

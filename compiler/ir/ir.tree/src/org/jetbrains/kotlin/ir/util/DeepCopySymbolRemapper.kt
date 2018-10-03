@@ -157,6 +157,7 @@ open class DeepCopySymbolRemapper(
     override fun getReferencedVariable(symbol: IrVariableSymbol): IrVariableSymbol = variables.getReferenced(symbol)
     override fun getReferencedField(symbol: IrFieldSymbol): IrFieldSymbol = fields.getReferenced(symbol)
     override fun getReferencedConstructor(symbol: IrConstructorSymbol): IrConstructorSymbol = constructors.getReferenced(symbol)
+    override fun getReferencedSimpleFunction(symbol: IrSimpleFunctionSymbol): IrSimpleFunctionSymbol = functions.getReferenced(symbol)
     override fun getReferencedValue(symbol: IrValueSymbol): IrValueSymbol =
         when (symbol) {
             is IrValueParameterSymbol -> valueParameters.getReferenced(symbol)

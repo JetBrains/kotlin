@@ -60,11 +60,10 @@ internal annotation class marker
  * @property name the name which compiler uses both for declaration itself and for all references to the declaration.
  *           It's required to denote a valid JavaScript identifier.
  *
- * @since 1.1
  */
 @Retention(AnnotationRetention.BINARY)
 @Target(CLASS, FUNCTION, PROPERTY, CONSTRUCTOR, PROPERTY_GETTER, PROPERTY_SETTER)
-annotation class JsName(val name: String)
+public actual annotation class JsName(actual val name: String)
 
 /**
  * Denotes an `external` declaration that must be imported from native JavaScript library.
@@ -93,11 +92,10 @@ annotation class JsName(val name: String)
  *           It is not interpreted by the Kotlin compiler, it's passed as is directly to the target module system.
  *
  * @see JsNonModule
- * @since 1.1
  */
 @Retention(AnnotationRetention.BINARY)
 @Target(CLASS, PROPERTY, FUNCTION, FILE)
-annotation class JsModule(val import: String)
+public annotation class JsModule(val import: String)
 
 /**
  * Denotes an `external` declaration that can be used without module system.
@@ -125,11 +123,10 @@ annotation class JsModule(val import: String)
  * ```
  *
  * @see JsModule
- * @since 1.1
  */
 @Retention(AnnotationRetention.BINARY)
 @Target(CLASS, PROPERTY, FUNCTION, FILE)
-annotation class JsNonModule
+public annotation class JsNonModule
 
 /**
  * Adds prefix to `external` declarations in a source file.
@@ -159,8 +156,7 @@ annotation class JsNonModule
  *           Examples of valid qualifiers are: `foo`, `bar.Baz`, `_.$0.f`.
  *
  * @see JsModule
- * @since 1.1
  */
 @Retention(AnnotationRetention.BINARY)
 @Target(AnnotationTarget.FILE)
-annotation class JsQualifier(val value: String)
+public annotation class JsQualifier(val value: String)

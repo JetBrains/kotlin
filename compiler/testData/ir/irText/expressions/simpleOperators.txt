@@ -84,7 +84,7 @@ FILE fqName:<root> fileName:/simpleOperators.kt
     VALUE_PARAMETER name:b index:1 type:kotlin.Int flags:
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='test5x(Int, Int): Int'
-        CALL 'mod(Int): Int' type=kotlin.Int origin=null
+        CALL 'rem(Int): Int' type=kotlin.Int origin=null
           $this: GET_VAR 'value-parameter a: Int' type=kotlin.Int origin=null
           other: GET_VAR 'value-parameter b: Int' type=kotlin.Int origin=null
 

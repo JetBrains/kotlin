@@ -5,10 +5,7 @@
 
 package org.jetbrains.kotlin.resolve
 
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
@@ -37,12 +34,21 @@ fun KotlinType.substitutedUnderlyingType(): KotlinType? {
 fun KotlinType.isRecursiveInlineClassType() =
     isRecursiveInlineClassTypeInner(hashSetOf())
 
-private fun KotlinType.isRecursiveInlineClassTypeInner(visited: HashSet<ClassDescriptor>): Boolean {
-    val descriptor = constructor.declarationDescriptor as? ClassDescriptor ?: return false
-    if (visited.contains(descriptor)) return true
-    if (!descriptor.isInlineClass()) return false
-    visited.add(descriptor)
-    return unsubstitutedUnderlyingType()?.isRecursiveInlineClassTypeInner(visited) ?: false
+private fun KotlinType.isRecursiveInlineClassTypeInner(visited: HashSet<ClassifierDescriptor>): Boolean {
+    val descriptor = constructor.declarationDescriptor?.original ?: return false
+
+    if (!visited.add(descriptor)) return true
+
+    return when (descriptor) {
+        is ClassDescriptor ->
+            descriptor.isInlineClass() &&
+                    unsubstitutedUnderlyingType()?.isRecursiveInlineClassTypeInner(visited) == true
+
+        is TypeParameterDescriptor ->
+            descriptor.upperBounds.any { it.isRecursiveInlineClassTypeInner(visited) }
+
+        else -> false
+    }
 }
 
 fun KotlinType.isNullableUnderlyingType(): Boolean {

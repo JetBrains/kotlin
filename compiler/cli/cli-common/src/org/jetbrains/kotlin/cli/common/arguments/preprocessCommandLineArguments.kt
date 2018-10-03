@@ -10,12 +10,12 @@ import java.io.FileNotFoundException
 import java.io.IOException
 import java.io.Reader
 
-private const val EXPERIMENTAL_ARGFILE_ARGUMENT = "-Xargfile"
+const val ARGFILE_ARGUMENT = "@"
+private const val EXPERIMENTAL_ARGFILE_ARGUMENT = "-Xargfile="
 
-private const val QUOTATION_MARK = '"'
+private const val SINGLE_QUOTE = '\''
+private const val DOUBLE_QUOTE = '"'
 private const val BACKSLASH = '\\'
-private const val WHITESPACE = ' '
-private const val NEWLINE = '\n'
 
 /**
  * Performs initial preprocessing of arguments, passed to the compiler.
@@ -23,11 +23,16 @@ private const val NEWLINE = '\n'
  * will be used instead of actual passed arguments.
  */
 internal fun preprocessCommandLineArguments(args: List<String>, errors: ArgumentParseErrors): List<String> =
-    args.flatMap {
-        if (it.isArgumentForArgfile)
-            File(it.argfilePath).expand(errors)
-        else
-            listOf(it)
+    args.flatMap { arg ->
+        if (arg.isArgfileArgument) {
+            File(arg.argfilePath).expand(errors)
+        } else if (arg.isDeprecatedArgfileArgument) {
+            errors.deprecatedArguments[EXPERIMENTAL_ARGFILE_ARGUMENT] = ARGFILE_ARGUMENT
+
+            File(arg.deprecatedArgfilePath).expand(errors)
+        } else {
+            listOf(arg)
+        }
     }
 
 private fun File.expand(errors: ArgumentParseErrors): List<String> {
@@ -49,14 +54,18 @@ private fun Reader.parseNextArgument(): String? {
     val sb = StringBuilder()
 
     var r = nextChar()
-    while (r != null && (r == WHITESPACE || r == NEWLINE)) {
+    while (r != null && r.isWhitespace()) {
         r = nextChar()
     }
 
-    loop@ while (r != null) {
+    while (r != null) {
+        if (r.isWhitespace()) break
+
         when (r) {
-            WHITESPACE, NEWLINE -> break@loop
-            QUOTATION_MARK -> consumeRestOfEscapedSequence(sb)
+            DOUBLE_QUOTE, SINGLE_QUOTE -> {
+                consumeRestOfEscapedSequence(sb, r)
+                return sb.toString()
+            }
             BACKSLASH -> nextChar()?.apply(sb::append)
             else -> sb.append(r)
         }
@@ -67,9 +76,9 @@ private fun Reader.parseNextArgument(): String? {
     return sb.toString().takeIf { it.isNotEmpty() }
 }
 
-private fun Reader.consumeRestOfEscapedSequence(sb: StringBuilder) {
+private fun Reader.consumeRestOfEscapedSequence(sb: StringBuilder, quote: Char) {
     var ch = nextChar()
-    while (ch != null && ch != QUOTATION_MARK) {
+    while (ch != null && ch != quote) {
         if (ch == BACKSLASH) nextChar()?.apply(sb::append) else sb.append(ch)
         ch = nextChar()
     }
@@ -79,9 +88,13 @@ private fun Reader.nextChar(): Char? =
     read().takeUnless { it == -1 }?.toChar()
 
 private val String.argfilePath: String
-    get() = removePrefix("$EXPERIMENTAL_ARGFILE_ARGUMENT=")
+    get() = removePrefix(ARGFILE_ARGUMENT)
 
-// Note that currently we use only experimental syntax for passing argfiles
-// In 1.3 we can support also javac-like syntax `@argfile`
-private val String.isArgumentForArgfile: Boolean
-    get() = startsWith("$EXPERIMENTAL_ARGFILE_ARGUMENT=")
+private val String.isArgfileArgument: Boolean
+    get() = startsWith(ARGFILE_ARGUMENT)
+
+private val String.deprecatedArgfilePath: String
+    get() = removePrefix(EXPERIMENTAL_ARGFILE_ARGUMENT)
+
+private val String.isDeprecatedArgfileArgument: Boolean
+    get() = startsWith(EXPERIMENTAL_ARGFILE_ARGUMENT)

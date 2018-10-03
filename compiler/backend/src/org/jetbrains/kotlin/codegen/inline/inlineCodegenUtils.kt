@@ -60,8 +60,6 @@ const val API = Opcodes.ASM5
 const val NUMBERED_FUNCTION_PREFIX = "kotlin/jvm/functions/Function"
 const val INLINE_FUN_VAR_SUFFIX = "\$iv"
 
-internal const val THIS = "this"
-internal const val THIS_0 = "this$0"
 internal const val FIRST_FUN_LABEL = "$$$$\$ROOT$$$$$"
 internal const val SPECIAL_TRANSFORMATION_NAME = "\$special"
 const val INLINE_TRANSFORMATION_SUFFIX = "\$inlined"
@@ -70,9 +68,8 @@ internal const val INLINE_FUN_THIS_0_SUFFIX = "\$inline_fun"
 internal const val DEFAULT_LAMBDA_FAKE_CALL = "$$\$DEFAULT_LAMBDA_FAKE_CALL$$$"
 internal const val CAPTURED_FIELD_FOLD_PREFIX = "$$$"
 
-private const val RECEIVER_0 = "receiver$0"
 private const val NON_LOCAL_RETURN = "$$$$\$NON_LOCAL_RETURN$$$$$"
-private const val CAPTURED_FIELD_PREFIX = "$"
+const val CAPTURED_FIELD_PREFIX = "$"
 private const val NON_CAPTURED_FIELD_PREFIX = "$$"
 private const val INLINE_MARKER_CLASS_NAME = "kotlin/jvm/internal/InlineMarker"
 private const val INLINE_MARKER_BEFORE_METHOD_NAME = "beforeInlineCall"
@@ -249,9 +246,9 @@ private fun String.isInteger(radix: Int = 10) = toIntOrNull(radix) != null
 
 internal fun isCapturedFieldName(fieldName: String): Boolean {
     // TODO: improve this heuristic
-    return fieldName.startsWith(CAPTURED_FIELD_PREFIX) && !fieldName.startsWith(NON_CAPTURED_FIELD_PREFIX) ||
-            THIS_0 == fieldName ||
-            RECEIVER_0 == fieldName
+    return fieldName.startsWith(CAPTURED_FIELD_PREFIX) && !fieldName.startsWith(NON_CAPTURED_FIELD_PREFIX)
+            || AsmUtil.CAPTURED_THIS_FIELD == fieldName
+            || AsmUtil.CAPTURED_RECEIVER_FIELD == fieldName
 }
 
 internal fun isReturnOpcode(opcode: Int) = opcode >= Opcodes.IRETURN && opcode <= Opcodes.RETURN
@@ -521,7 +518,7 @@ fun isFakeLocalVariableForInline(name: String): Boolean {
     return name.startsWith(JvmAbi.LOCAL_VARIABLE_NAME_PREFIX_INLINE_FUNCTION) || name.startsWith(JvmAbi.LOCAL_VARIABLE_NAME_PREFIX_INLINE_ARGUMENT)
 }
 
-internal fun isThis0(name: String): Boolean = THIS_0 == name
+internal fun isThis0(name: String): Boolean = AsmUtil.CAPTURED_THIS_FIELD == name
 
 internal fun isSpecialEnumMethod(functionDescriptor: FunctionDescriptor): Boolean {
     val containingDeclaration = functionDescriptor.containingDeclaration as? PackageFragmentDescriptor ?: return false

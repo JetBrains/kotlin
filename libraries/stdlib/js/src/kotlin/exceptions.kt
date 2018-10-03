@@ -107,6 +107,10 @@ public actual open class NoSuchElementException actual constructor(message: Stri
     actual constructor() : this(null)
 }
 
+@SinceKotlin("1.3")
+public actual open class ArithmeticException actual constructor(message: String?) : RuntimeException(message) {
+    actual constructor() : this(null)
+}
 
 public actual open class NoWhenBranchMatchedException actual constructor(message: String?, cause: Throwable?) : RuntimeException(message, cause) {
     actual constructor() : this(null, null)

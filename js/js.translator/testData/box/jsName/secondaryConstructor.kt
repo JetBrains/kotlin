@@ -1,5 +1,5 @@
 // IGNORE_BACKEND: JS_IR
-// EXPECTED_REACHABLE_NODES: 1120
+// EXPECTED_REACHABLE_NODES: 1288
 package foo
 
 class A(val x: String) {

@@ -13,17 +13,16 @@ import org.gradle.api.artifacts.Dependency
 import org.gradle.api.artifacts.component.ProjectComponentIdentifier
 import org.gradle.api.file.FileCollection
 import org.gradle.api.file.SourceDirectorySet
-import org.jetbrains.plugins.gradle.model.AbstractExternalDependency
-import org.jetbrains.plugins.gradle.model.DefaultExternalProjectDependency
-import org.jetbrains.plugins.gradle.model.ExternalDependency
-import org.jetbrains.plugins.gradle.model.ExternalProjectDependency
+import org.gradle.api.logging.Logging
+import org.gradle.api.provider.Property
+import org.jetbrains.plugins.gradle.model.*
 import org.jetbrains.plugins.gradle.tooling.ErrorMessageBuilder
 import org.jetbrains.plugins.gradle.tooling.ModelBuilderService
 import org.jetbrains.plugins.gradle.tooling.util.DependencyResolver
 import org.jetbrains.plugins.gradle.tooling.util.DependencyResolverImpl
 import org.jetbrains.plugins.gradle.tooling.util.SourceSetCachedFinder
 import java.io.File
-import java.lang.Exception
+import java.lang.reflect.Method
 
 class KotlinMPPGradleModelBuilder : ModelBuilderService {
     override fun getErrorMessageBuilder(project: Project, e: Exception): ErrorMessageBuilder {
@@ -49,7 +48,26 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
         val targets = buildTargets(sourceSetMap, dependencyResolver, project) ?: return null
         computeSourceSetsDeferredInfo(sourceSets, targets)
         val coroutinesState = getCoroutinesState(project)
+        reportUnresolvedDependencies(targets)
         return KotlinMPPGradleModelImpl(sourceSetMap, targets, ExtraFeaturesImpl(coroutinesState))
+    }
+
+    private fun reportUnresolvedDependencies(targets: Collection<KotlinTarget>) {
+        targets
+            .asSequence()
+            .flatMap { it.compilations.asSequence() }
+            .flatMap { it.dependencies.asSequence() }
+            .mapNotNull { (it as? UnresolvedExternalDependency)?.failureMessage }
+            .toSet()
+            .forEach { logger.warn(it) }
+    }
+
+    private fun Project.getChildProjectByPath(path: String): Project? {
+        var project = this
+        for (name in path.split(":").asSequence().drop(1)) {
+            project = project.childProjects[name] ?: return null
+        }
+        return project
     }
 
     private fun getCoroutinesState(project: Project): String? {
@@ -115,25 +133,56 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
         val configurationName = getConfigurationName(dependencyHolder) as? String ?: return emptyList()
         val configuration = project.configurations.findByName(configurationName) ?: return emptyList()
         if (!configuration.isCanBeResolved) return emptyList()
-        val artifactsByProjectPath = configuration
+        val dependenciesByProjectPath = configuration
             .resolvedConfiguration
             .lenientConfiguration
             .firstLevelModuleDependencies
-            .flatMap { it.moduleArtifacts }
-            .filter { it.id.componentIdentifier is ProjectComponentIdentifier }
-            .groupBy { (it.id.componentIdentifier as ProjectComponentIdentifier).projectPath }
-        return dependencyResolver.resolveDependencies(configuration)
+            .mapNotNull { dependency ->
+                val artifact = dependency.moduleArtifacts.firstOrNull {
+                    it.id.componentIdentifier is ProjectComponentIdentifier
+                } ?: return@mapNotNull null
+                dependency to artifact
+            }
+            .groupBy { (it.second.id.componentIdentifier as ProjectComponentIdentifier).projectPath }
+        val resolvedDependencies = dependencyResolver.resolveDependencies(configuration)
             .apply {
                 forEach<ExternalDependency?> { (it as? AbstractExternalDependency)?.scope = scope }
             }
-            .map {
-                if (it !is ExternalProjectDependency || it.configurationName != Dependency.DEFAULT_CONFIGURATION) return@map it
-                val artifacts = artifactsByProjectPath[it.projectPath] ?: return@map it
-                val classifier = artifacts.mapTo(LinkedHashSet()) { it.classifier }.singleOrNull() ?: return@map it
-                DefaultExternalProjectDependency(it).apply {
+            .map { dependency ->
+                if (dependency !is ExternalProjectDependency
+                    || dependency.configurationName != Dependency.DEFAULT_CONFIGURATION
+                ) return@map dependency
+                val artifacts = dependenciesByProjectPath[dependency.projectPath] ?: return@map dependency
+                val artifactConfiguration = artifacts.mapTo(LinkedHashSet()) {
+                    it.first.configuration
+                }.singleOrNull() ?: return@map dependency
+                val taskGetterName = when (scope) {
+                    "COMPILE" -> "getApiElementsConfigurationName"
+                    "RUNTIME" -> "getRuntimeElementsConfigurationName"
+                    else -> return@map dependency
+                }
+                val targets = project.rootProject.getChildProjectByPath(dependency.projectPath)?.getTargets() ?: return@map dependency
+                val gradleTarget = targets.firstOrNull {
+                    val getter = it.javaClass.getMethodOrNull(taskGetterName) ?: return@firstOrNull false
+                    getter(it) == artifactConfiguration
+                } ?: return@map dependency
+                val classifier = gradleTarget.javaClass.getMethodOrNull("getDisambiguationClassifier")?.invoke(gradleTarget) as? String
+                    ?: return@map dependency
+                DefaultExternalProjectDependency(dependency).apply {
                     this.classifier = classifier
                 }
             }
+        val singleDependencyFiles = resolvedDependencies.mapNotNullTo(LinkedHashSet<File>()) {
+            (it as? FileCollectionDependency)?.files?.singleOrNull()
+        }
+        // Workaround for duplicated dependencies specified as a file collection (KT-26675)
+        // Drop this code when the issue is fixed in the platform
+        return resolvedDependencies.filter { dependency ->
+            if (dependency !is FileCollectionDependency) return@filter true
+            val files = dependency.files
+            if (files.size <= 1) return@filter true
+            (files.any { it !in singleDependencyFiles })
+        }
     }
 
     private fun buildTargets(
@@ -141,11 +190,14 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
         dependencyResolver: DependencyResolver,
         project: Project
     ): Collection<KotlinTarget>? {
+        return project.getTargets()?.mapNotNull { buildTarget(it, sourceSetMap, dependencyResolver, project) }
+    }
+
+    private fun Project.getTargets(): Collection<Named>? {
         val kotlinExt = project.extensions.findByName("kotlin") ?: return null
         val getTargets = kotlinExt.javaClass.getMethodOrNull("getTargets") ?: return null
         @Suppress("UNCHECKED_CAST")
-        val targets = (getTargets.invoke(kotlinExt) as? NamedDomainObjectContainer<Named>)?.asMap?.values ?: emptyList<Named>()
-        return targets.mapNotNull { buildTarget(it, sourceSetMap, dependencyResolver, project) }
+        return (getTargets.invoke(kotlinExt) as? NamedDomainObjectContainer<Named>)?.asMap?.values ?: emptyList()
     }
 
     private fun buildTarget(
@@ -246,14 +298,20 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
         }
     }
 
+    @Suppress("UNCHECKED_CAST")
+    private fun safelyGetArguments(compileKotlinTask: Task, accessor: Method?) = try {
+        accessor?.invoke(compileKotlinTask) as? List<String>
+    } catch (e: Exception) {
+        logger.info(e.message, e)
+        null
+    } ?: emptyList()
+
     private fun buildCompilationArguments(compileKotlinTask: Task): KotlinCompilationArguments? {
         val compileTaskClass = compileKotlinTask.javaClass
-        val getCurrentArguments = compileTaskClass.getMethodOrNull("getSerializedCompilerArguments") ?: return null
-        val getDefaultArguments = compileTaskClass.getMethodOrNull("getDefaultSerializedCompilerArguments") ?: return null
-        @Suppress("UNCHECKED_CAST")
-        val currentArguments = getCurrentArguments(compileKotlinTask) as? List<String> ?: return null
-        @Suppress("UNCHECKED_CAST")
-        val defaultArguments = getDefaultArguments(compileKotlinTask) as? List<String> ?: return null
+        val getCurrentArguments = compileTaskClass.getMethodOrNull("getSerializedCompilerArguments")
+        val getDefaultArguments = compileTaskClass.getMethodOrNull("getDefaultSerializedCompilerArguments")
+        val currentArguments = safelyGetArguments(compileKotlinTask, getCurrentArguments)
+        val defaultArguments = safelyGetArguments(compileKotlinTask, getDefaultArguments)
         return KotlinCompilationArgumentsImpl(defaultArguments, currentArguments)
     }
 
@@ -277,10 +335,15 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
         val getClassesDirs = gradleOutputClass.getMethodOrNull("getClassesDirs") ?: return null
         val getResourcesDir = gradleOutputClass.getMethodOrNull("getResourcesDir") ?: return null
         val compileKotlinTaskClass = compileKotlinTask.javaClass
-        val getDestinationDir = compileKotlinTaskClass.getMethodOrNull("getDestinationDir") ?: return null
+        val getDestinationDir = compileKotlinTaskClass.getMethodOrNull("getDestinationDir")
+        val getOutputFile = compileKotlinTaskClass.getMethodOrNull("getOutputFile")
         val classesDirs = getClassesDirs(gradleOutput) as? FileCollection ?: return null
         val resourcesDir = getResourcesDir(gradleOutput) as? File ?: return null
-        val destinationDir = getDestinationDir(compileKotlinTask) as? File
+        val destinationDir =
+            getDestinationDir?.invoke(compileKotlinTask) as? File
+            //TODO: Hack for KotlinNativeCompile
+                ?: (getOutputFile?.invoke(compileKotlinTask) as? Property<File>)?.orNull?.parentFile
+                ?: return null
         return KotlinCompilationOutputImpl(classesDirs.files, destinationDir, resourcesDir)
     }
 
@@ -297,6 +360,18 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
             }
         }
         for (sourceSet in sourceSets) {
+            val name = sourceSet.name
+            if (name == KotlinSourceSet.COMMON_MAIN_SOURCE_SET_NAME) {
+                sourceSet.platform = KotlinPlatform.COMMON
+                sourceSet.isTestModule = false
+                continue
+            }
+            if (name == KotlinSourceSet.COMMON_TEST_SOURCE_SET_NAME) {
+                sourceSet.platform = KotlinPlatform.COMMON
+                sourceSet.isTestModule = true
+                continue
+            }
+
             val compilations = sourceSetToCompilations[sourceSet]
             if (compilations != null) {
                 sourceSet.platform = compilations.map { it.platform }.distinct().singleOrNull() ?: KotlinPlatform.COMMON
@@ -306,5 +381,9 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
                 sourceSet.isTestModule = "Test" in sourceSet.name
             }
         }
+    }
+
+    companion object {
+        private val logger = Logging.getLogger(KotlinMPPGradleModelBuilder::class.java)
     }
 }

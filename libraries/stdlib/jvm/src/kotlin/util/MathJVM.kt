@@ -8,14 +8,12 @@
 
 package kotlin.math
 
-import kotlin.*
 import kotlin.internal.InlineOnly
 import kotlin.math.Constants.LN2
 import kotlin.math.Constants.taylor_2_bound
 import kotlin.math.Constants.taylor_n_bound
 import kotlin.math.Constants.upper_taylor_2_bound
 import kotlin.math.Constants.upper_taylor_n_bound
-
 
 import java.lang.Math as nativeMath
 

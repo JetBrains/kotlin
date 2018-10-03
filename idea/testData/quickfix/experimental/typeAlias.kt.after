@@ -9,4 +9,5 @@ annotation class AliasMarker
 @AliasMarker
 class AliasTarget
 
-@UseExperimental(AliasMarker::class) typealias AliasMarkerUsage = AliasTarget
+@UseExperimental(AliasMarker::class)
+typealias AliasMarkerUsage = AliasTarget

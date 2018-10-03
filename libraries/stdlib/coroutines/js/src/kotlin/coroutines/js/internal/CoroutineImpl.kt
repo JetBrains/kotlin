@@ -25,7 +25,7 @@ internal abstract class CoroutineImpl(private val resultContinuation: Continuati
                 ?: (context[ContinuationInterceptor]?.interceptContinuation(this) ?: this)
                     .also { intercepted_ = it }
 
-    override fun resumeWith(result: SuccessOrFailure<Any?>) {
+    override fun resumeWith(result: Result<Any?>) {
         var current = this
         var currentResult: Any? = result.getOrNull()
         var currentException: Throwable? = result.exceptionOrNull()
@@ -84,7 +84,7 @@ internal object CompletedContinuation : Continuation<Any?> {
     override val context: CoroutineContext
         get() = error("This continuation is already complete")
 
-    override fun resumeWith(result: SuccessOrFailure<Any?>) {
+    override fun resumeWith(result: Result<Any?>) {
         error("This continuation is already complete")
     }
 

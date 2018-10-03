@@ -1,4 +1,9 @@
+// !USE_EXPERIMENTAL: kotlin.Experimental
 // !DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_PARAMETER -UNUSED_VARIABLE
+
+@file:UseExperimental(ExperimentalTypeInference::class)
+
+import kotlin.experimental.ExperimentalTypeInference
 
 interface Controller<T> {
     suspend fun yield(t: T) {}
@@ -8,7 +13,7 @@ interface Controller<T> {
     fun <Z> generidFun(t: Z) = t
 }
 
-fun <S> generate(g: suspend Controller<S>.() -> Unit): S = TODO()
+fun <S> generate(@BuilderInference g: suspend Controller<S>.() -> Unit): S = TODO()
 
 val test1 = generate {
     yield(justString())

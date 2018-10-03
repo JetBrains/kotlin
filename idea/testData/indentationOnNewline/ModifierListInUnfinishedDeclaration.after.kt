@@ -1,0 +1,4 @@
+object A {
+    private
+    <caret>
+}

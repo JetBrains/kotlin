@@ -1,8 +1,9 @@
 @kotlin.Metadata
+@kotlin.coroutines.jvm.internal.DebugMetadata
 final class OomInReturnUnitKt$test$1 {
     field L$0: java.lang.Object
-    synthetic field data: java.lang.Object
     field label: int
+    synthetic field result: java.lang.Object
     inner class OomInReturnUnitKt$test$1
     method <init>(p0: kotlin.coroutines.Continuation): void
     public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object

@@ -26,8 +26,6 @@ import org.sonatype.aether.resolution.DependencyResolutionException
 import org.sonatype.aether.util.artifact.DefaultArtifact
 import org.sonatype.aether.util.artifact.JavaScopes
 import java.io.File
-import java.net.MalformedURLException
-import java.net.URL
 import java.util.*
 
 val mavenCentral = RemoteRepository("maven-central", "default", "https://repo.maven.apache.org/maven2/")
@@ -78,13 +76,9 @@ class MavenResolver(val reportError: ((String) -> Unit)? = null): Resolver {
         return null
     }
 
-    fun tryAddRepo(annotation: Repository): Boolean {
+    override fun tryAddRepo(annotation: Repository): Boolean {
         val urlStr = annotation.url.takeIf { it.isValidParam() } ?: annotation.value.takeIf { it.isValidParam() } ?: return false
-        try {
-            URL(urlStr)
-        } catch (_: MalformedURLException) {
-            return false
-        }
+        urlStr.toRepositoryUrlOrNull() ?: return false
         repos.add(
                 RemoteRepository(
                         if (annotation.id.isValidParam()) annotation.id else "central",

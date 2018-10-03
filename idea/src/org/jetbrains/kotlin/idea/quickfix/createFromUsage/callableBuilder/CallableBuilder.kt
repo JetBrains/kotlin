@@ -1013,7 +1013,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                     finishTemplate(true)
                 }
 
-                override fun templateFinished(template: Template?, brokenOff: Boolean) {
+                override fun templateFinished(template: Template, brokenOff: Boolean) {
                     finishTemplate(brokenOff)
                 }
             })

@@ -222,7 +222,7 @@ object KotlinToJVMBytecodeCompiler {
         }
 
     private fun findMainClass(generationState: GenerationState, files: List<KtFile>): FqName? {
-        val mainFunctionDetector = MainFunctionDetector(generationState.bindingContext)
+        val mainFunctionDetector = MainFunctionDetector(generationState.bindingContext, generationState.languageVersionSettings)
         return files.asSequence()
             .map { file ->
                 if (mainFunctionDetector.hasMain(file.declarations))

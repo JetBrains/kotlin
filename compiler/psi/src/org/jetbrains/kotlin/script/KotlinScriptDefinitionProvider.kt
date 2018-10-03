@@ -34,6 +34,8 @@ interface ScriptDefinitionProvider {
     fun isScript(fileName: String): Boolean
     fun getDefaultScriptDefinition(): KotlinScriptDefinition
 
+    fun getKnownFilenameExtensions(): Sequence<String>
+
     companion object {
         fun getInstance(project: Project): ScriptDefinitionProvider =
             ServiceManager.getService(project, ScriptDefinitionProvider::class.java)
@@ -93,6 +95,10 @@ abstract class LazyScriptDefinitionProvider : ScriptDefinitionProvider {
         }
 
     override fun isScript(fileName: String) = findScriptDefinition(fileName) != null
+
+    override fun getKnownFilenameExtensions(): Sequence<String> = lock.read {
+        cachedDefinitions.map { it.fileExtension }
+    }
 
     companion object {
         // TODO: find a common place for storing kotlin-related extensions and reuse values from it everywhere

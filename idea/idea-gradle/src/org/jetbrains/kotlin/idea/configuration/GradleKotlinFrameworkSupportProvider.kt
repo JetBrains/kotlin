@@ -20,11 +20,15 @@ import com.intellij.framework.FrameworkTypeEx
 import com.intellij.framework.addSupport.FrameworkSupportInModuleConfigurable
 import com.intellij.framework.addSupport.FrameworkSupportInModuleProvider
 import com.intellij.ide.util.frameworkSupport.FrameworkSupportModel
+import com.intellij.openapi.externalSystem.model.ExternalSystemDataKeys
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.roots.ModifiableModelsProvider
 import com.intellij.openapi.roots.ModifiableRootModel
 import org.jetbrains.kotlin.idea.KotlinIcons
+import org.jetbrains.kotlin.idea.core.platform.impl.CommonIdePlatformKindTooling.MAVEN_COMMON_STDLIB_ID
+import org.jetbrains.kotlin.idea.formatter.KotlinStyleGuideCodeStyle
+import org.jetbrains.kotlin.idea.formatter.ProjectCodeStyleImporter
 import org.jetbrains.kotlin.idea.versions.*
 import org.jetbrains.plugins.gradle.frameworkSupport.BuildScriptDataBuilder
 import org.jetbrains.plugins.gradle.frameworkSupport.GradleFrameworkSupportProvider
@@ -123,6 +127,12 @@ abstract class GradleKotlinFrameworkSupportProvider(
             updateSettingsScript(module) { updateSettingsScript(it, specifyPluginVersionIfNeeded) }
         } else {
             buildScriptData.addBuildscriptDependencyNotation(KotlinWithGradleConfigurator.CLASSPATH)
+        }
+
+        val isNewProject = module.project.getUserData(ExternalSystemDataKeys.NEWLY_CREATED_PROJECT) == true
+        if (isNewProject) {
+            ProjectCodeStyleImporter.apply(module.project, KotlinStyleGuideCodeStyle.INSTANCE)
+            GradlePropertiesFileFacade.forProject(module.project).addCodeStyleProperty(KotlinStyleGuideCodeStyle.CODE_STYLE_SETTING)
         }
     }
 

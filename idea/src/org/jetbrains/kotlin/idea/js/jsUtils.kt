@@ -19,19 +19,17 @@ package org.jetbrains.kotlin.idea.js
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.roots.CompilerModuleExtension
 import org.jetbrains.jps.util.JpsPathUtil
-import org.jetbrains.kotlin.idea.caches.project.implementingModules
 import org.jetbrains.kotlin.idea.facet.KotlinFacet
 import org.jetbrains.kotlin.idea.framework.isGradleModule
-import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
-import org.jetbrains.kotlin.js.resolve.JsPlatform
-import org.jetbrains.kotlin.resolve.TargetPlatform
+import org.jetbrains.kotlin.idea.project.platform
+import org.jetbrains.kotlin.platform.impl.isJavaScript
 import org.jetbrains.plugins.gradle.settings.GradleSystemRunningSettings
 
 val Module.jsTestOutputFilePath: String?
     get() {
-        if (!shouldUseJpsOutput) {
-            (KotlinFacet.get(this)?.configuration?.settings?.testOutputPath)?.let { return it }
-        }
+        KotlinFacet.get(this)?.configuration?.settings?.testOutputPath?.let { return it }
+
+        if (!shouldUseJpsOutput) return null
 
         val compilerExtension = CompilerModuleExtension.getInstance(this)
         val outputDir = compilerExtension?.compilerOutputUrlForTests ?: return null
@@ -40,20 +38,16 @@ val Module.jsTestOutputFilePath: String?
 
 val Module.jsProductionOutputFilePath: String?
     get() {
-        if (!shouldUseJpsOutput) {
-            (KotlinFacet.get(this)?.configuration?.settings?.productionOutputPath)?.let { return it }
-        }
+        KotlinFacet.get(this)?.configuration?.settings?.productionOutputPath?.let { return it }
+
+        if (!shouldUseJpsOutput) return null
 
         val compilerExtension = CompilerModuleExtension.getInstance(this)
         val outputDir = compilerExtension?.compilerOutputUrl ?: return null
         return JpsPathUtil.urlToPath("$outputDir/$name.js")
     }
 
-fun Module.jsOrJsImpl() = when (TargetPlatformDetector.getPlatform(this)) {
-    is TargetPlatform.Common -> implementingModules.firstOrNull { TargetPlatformDetector.getPlatform(it) is JsPlatform }
-    is JsPlatform -> this
-    else -> null
-}
+fun Module.asJsModule(): Module? = takeIf { it.platform.isJavaScript }
 
 val Module.shouldUseJpsOutput: Boolean
     get() = !(isGradleModule() && GradleSystemRunningSettings.getInstance().isUseGradleAwareMake)

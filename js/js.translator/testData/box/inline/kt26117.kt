@@ -1,5 +1,4 @@
 // EXPECTED_REACHABLE_NODES: 1529
-// IGNORE_BACKEND: JS_IR
 
 // TODO remove stdlib dependency
 

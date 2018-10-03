@@ -135,4 +135,10 @@ public abstract class AbstractReceiverParameterDescriptor extends DeclarationDes
     public SourceElement getSource() {
         return SourceElement.NO_SOURCE;
     }
+
+    @Nullable
+    @Override
+    public <V> V getUserData(UserDataKey<V> key) {
+        return null;
+    }
 }

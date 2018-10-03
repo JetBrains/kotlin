@@ -85,6 +85,11 @@ public class ForTestCompileRuntime {
     }
 
     @NotNull
+    public static File jetbrainsAnnotationsForTests() {
+        return assertExists(new File("dist/kotlinc/lib/annotations-13.0.jar"));
+    }
+
+    @NotNull
     public static File jvmAnnotationsForTests() {
         return assertExists(new File("dist/kotlinc/lib/kotlin-annotations-jvm.jar"));
     }

@@ -18,6 +18,7 @@ fun test(x: UInt?, y: UInt) {
 
 // @TestKt.class:
 // 0 INVOKESTATIC UInt\$Erased.box
+// 0 INVOKESTATIC UInt\.box
 // 1 INVOKEVIRTUAL UInt.unbox
 
 // 0 valueOf

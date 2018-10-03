@@ -1,5 +1,4 @@
 // KT-25514 Support usage of function reference with vararg where function of array is expected in new inference
-// IGNORE_BACKEND: JS_IR
 
 fun foo(x: Int, vararg y: String): String = y[0]
 

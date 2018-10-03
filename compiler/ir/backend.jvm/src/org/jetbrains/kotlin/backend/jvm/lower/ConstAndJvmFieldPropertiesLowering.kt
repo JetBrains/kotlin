@@ -6,13 +6,16 @@
 package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
+import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.codegen.JvmCodegenUtil
 import org.jetbrains.kotlin.descriptors.PropertyAccessorDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyGetterDescriptor
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrProperty
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrCall
+import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrSetFieldImpl
@@ -20,7 +23,8 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
 
-class ConstAndJvmFieldPropertiesLowering : IrElementTransformerVoid(), FileLoweringPass {
+class ConstAndJvmFieldPropertiesLowering(val context: JvmBackendContext) : IrElementTransformerVoid(), FileLoweringPass {
+
     override fun lower(irFile: IrFile) {
         irFile.transformChildrenVoid(this)
     }
@@ -35,6 +39,12 @@ class ConstAndJvmFieldPropertiesLowering : IrElementTransformerVoid(), FileLower
     }
 
     override fun visitCall(expression: IrCall): IrExpression {
+        val irProperty = (expression.symbol.owner as? IrSimpleFunction)?.correspondingProperty ?: return super.visitCall(expression)
+
+        if (irProperty.isConst) {
+            (irProperty.backingField?.initializer?.expression as? IrConst<*>)?.let { return it }
+        }
+
         val descriptor = expression.descriptor as? PropertyAccessorDescriptor ?: return super.visitCall(expression)
 
         val property = descriptor.correspondingProperty
@@ -55,24 +65,24 @@ class ConstAndJvmFieldPropertiesLowering : IrElementTransformerVoid(), FileLower
         return IrSetFieldImpl(
             expression.startOffset,
             expression.endOffset,
-            descriptor.correspondingProperty,
+            context.ir.symbols.externalSymbolTable.referenceField(descriptor.correspondingProperty),
             expression.dispatchReceiver,
             expression.getValueArgument(descriptor.valueParameters.lastIndex)!!,
             expression.type,
             expression.origin,
-            expression.superQualifier
+            expression.superQualifier?.let { context.ir.symbols.externalSymbolTable.referenceClass(it) }
         )
     }
 
-    private fun substituteGetter(descriptor: PropertyGetterDescriptor, expression: IrCall): IrGetFieldImpl {
+    private fun substituteGetter(descriptor: PropertyGetterDescriptor, expression: IrCall): IrExpression {
         return IrGetFieldImpl(
             expression.startOffset,
             expression.endOffset,
-            descriptor.correspondingProperty,
-            expression.dispatchReceiver,
+            context.ir.symbols.externalSymbolTable.referenceField(descriptor.correspondingProperty),
             expression.type,
+            expression.dispatchReceiver,
             expression.origin,
-            expression.superQualifier
+            expression.superQualifier?.let { context.ir.symbols.externalSymbolTable.referenceClass(it) }
         )
     }
 }

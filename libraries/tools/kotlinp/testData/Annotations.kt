@@ -26,8 +26,11 @@ annotation class A(
 
 annotation class B(val value: String)
 
+@Target(AnnotationTarget.TYPE)
+annotation class JvmNamed(@get:JvmName("uglyJvmName") val value: String)
+
 class C {
-    fun typeAnnotation(): @A(
+    fun returnTypeAnnotation(): @A(
         true,
         'x',
         1.toByte(),
@@ -49,4 +52,6 @@ class C {
         C::class,
         B(value = "aba\ncaba'\"\t\u0001\u0002\uA66E")
     ) Unit {}
+
+    fun parameterTypeAnnotation(p: @JvmNamed("Q_Q") Any): Any = p
 }

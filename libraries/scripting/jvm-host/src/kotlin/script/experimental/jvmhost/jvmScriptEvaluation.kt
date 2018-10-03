@@ -10,14 +10,14 @@ package kotlin.script.experimental.jvmhost
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.util.PropertiesCollection
 
-open class JvmScriptEvaluationEnvironment : PropertiesCollection.Builder() {
+open class JvmScriptEvaluationConfiguration : PropertiesCollection.Builder() {
 
-    companion object : JvmScriptEvaluationEnvironment()
+    companion object : JvmScriptEvaluationConfiguration()
 }
 
-val JvmScriptEvaluationEnvironment.baseClassLoader by PropertiesCollection.key<ClassLoader?>(Thread.currentThread().contextClassLoader)
+val JvmScriptEvaluationConfiguration.baseClassLoader by PropertiesCollection.key<ClassLoader?>(Thread.currentThread().contextClassLoader)
 
-val ScriptEvaluationConfiguration.jvm get() = JvmScriptEvaluationEnvironment()
+val ScriptEvaluationConfiguration.jvm get() = JvmScriptEvaluationConfiguration()
 
 open class BasicJvmScriptEvaluator : ScriptEvaluator {
 
@@ -26,30 +26,32 @@ open class BasicJvmScriptEvaluator : ScriptEvaluator {
         scriptEvaluationConfiguration: ScriptEvaluationConfiguration?
     ): ResultWithDiagnostics<EvaluationResult> =
         try {
-            val obj = compiledScript.instantiate(scriptEvaluationConfiguration)
-            when (obj) {
-                is ResultWithDiagnostics.Failure -> obj
+            val res = compiledScript.getClass(scriptEvaluationConfiguration)
+            when (res) {
+                is ResultWithDiagnostics.Failure -> res
                 is ResultWithDiagnostics.Success -> {
                     // in the future, when (if) we'll stop to compile everything into constructor
                     // run as SAM
                     // return res
-                    val scriptObject = obj.value
-                    if (scriptObject !is Class<*>)
-                        ResultWithDiagnostics.Failure(ScriptDiagnostic("expecting class in this implementation, got ${scriptObject?.javaClass}"))
-                    else {
-                        val receivers = scriptEvaluationConfiguration?.get(ScriptEvaluationConfiguration.implicitReceivers)
-                        val instance = if (receivers == null) {
-                            scriptObject.getConstructor().newInstance()
-                        } else {
-                            scriptObject.getConstructor(Array<Any>::class.java).newInstance(receivers.toTypedArray())
-                        }
-
-                        // TODO: fix result value
-                        ResultWithDiagnostics.Success(EvaluationResult(ResultValue.Value("", instance, ""), scriptEvaluationConfiguration))
+                    val scriptClass = res.value
+                    val args = ArrayList<Any?>()
+                    scriptEvaluationConfiguration?.get(ScriptEvaluationConfiguration.providedProperties)?.forEach {
+                        args.add(it.value)
                     }
+                    scriptEvaluationConfiguration?.get(ScriptEvaluationConfiguration.implicitReceivers)?.let {
+                        args.addAll(it)
+                    }
+                    scriptEvaluationConfiguration?.get(ScriptEvaluationConfiguration.constructorArgs)?.let {
+                        args.addAll(it)
+                    }
+                    val ctor = scriptClass.java.constructors.single()
+                    val instance = ctor.newInstance(*args.toArray())
+
+                    // TODO: fix result value
+                    ResultWithDiagnostics.Success(EvaluationResult(ResultValue.Value("", instance, ""), scriptEvaluationConfiguration))
                 }
             }
         } catch (e: Throwable) {
-            ResultWithDiagnostics.Failure(e.asDiagnostics())
+            ResultWithDiagnostics.Failure(e.asDiagnostics("Error evaluating script"))
         }
 }

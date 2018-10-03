@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 public class StockMarketTableModel() {
 
     public fun getColumnCount() : Int {

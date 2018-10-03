@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.name.Name
 
-private fun IrClassSymbol.getPropertyDeclaration(name: String) =
+fun IrClassSymbol.getPropertyDeclaration(name: String) =
     this.owner.declarations.filterIsInstance<IrProperty>()
         .atMostOne { it.descriptor.name == Name.identifier(name) }
 

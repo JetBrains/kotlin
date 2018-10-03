@@ -1,0 +1,9 @@
+package
+
+public fun case_4(/*0*/ value_1: kotlin.Boolean?): kotlin.Boolean
+public fun kotlin.Boolean?.case_1(): kotlin.Boolean
+public fun </*0*/ T : kotlin.Boolean> T?.case_2(): kotlin.Boolean
+public fun </*0*/ T> T?.case_3(): kotlin.Unit
+public fun kotlin.Boolean.case_5(/*0*/ value_1: kotlin.Any?): kotlin.Boolean?
+public fun kotlin.Boolean?.case_6(): kotlin.Boolean?
+public fun </*0*/ T : kotlin.Boolean?> T.case_7(/*0*/ value_1: kotlin.Any?): kotlin.Boolean?

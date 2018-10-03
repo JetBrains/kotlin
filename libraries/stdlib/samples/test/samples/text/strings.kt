@@ -1,6 +1,7 @@
 package samples.text
 
 import samples.*
+import kotlin.test.assertTrue
 
 class Strings {
 
@@ -85,6 +86,15 @@ class Strings {
     }
 
     @Sample
+    fun associateWith() {
+        val string = "bonne journée"
+        // associate each character with its code
+        val result = string.associateWith { char -> char.toInt() }
+        // notice each letter occurs only once
+        assertPrints(result, "{b=98, o=111, n=110, e=101,  =32, j=106, u=117, r=114, é=233}")
+    }
+
+    @Sample
     fun stringToByteArray() {
         val charset = Charsets.UTF_8
         val byteArray = "Hello".toByteArray(charset)
@@ -126,5 +136,44 @@ class Strings {
         // string is returned as is, when its length is greater than the specified
         val noPadding = "abcde".padEnd(3)
         assertPrints("'$noPadding'", "'abcde'")
+    }
+    @Sample
+    fun clearStringBuilder() {
+        val builder = StringBuilder()
+        builder.append("content").append(1)
+        assertPrints(builder, "content1")
+
+        builder.clear()
+        assertPrints(builder, "")
+    }
+
+    @Sample
+    fun stringIfEmpty() {
+        val empty = ""
+
+        val emptyOrNull: String? = empty.ifEmpty { null }
+        assertPrints(emptyOrNull, "null")
+
+        val emptyOrDefault = empty.ifEmpty { "default" }
+        assertPrints(emptyOrDefault, "default")
+
+        val nonEmpty = "abc"
+        val sameString = nonEmpty.ifEmpty { "def" }
+        assertTrue(nonEmpty === sameString)
+    }
+
+    @Sample
+    fun stringIfBlank() {
+        val blank = "    "
+
+        val blankOrNull: String? = blank.ifBlank { null }
+        assertPrints(blankOrNull, "null")
+
+        val blankOrDefault = blank.ifBlank { "default" }
+        assertPrints(blankOrDefault, "default")
+
+        val nonBlank = "abc"
+        val sameString = nonBlank.ifBlank { "def" }
+        assertTrue(nonBlank === sameString)
     }
 }

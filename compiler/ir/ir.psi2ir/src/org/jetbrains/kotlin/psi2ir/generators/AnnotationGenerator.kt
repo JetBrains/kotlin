@@ -5,18 +5,15 @@
 
 package org.jetbrains.kotlin.psi2ir.generators
 
-import org.jetbrains.kotlin.descriptors.PropertySetterDescriptor
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationWithTarget
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.IrDeclaration
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
+import org.jetbrains.kotlin.ir.declarations.IrField
+import org.jetbrains.kotlin.ir.declarations.IrTypeParametersContainer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 
-class AnnotationGenerator(
-    context: GeneratorContext
-) : IrElementVisitorVoid {
-
+class AnnotationGenerator(context: GeneratorContext) : IrElementVisitorVoid {
     private val typeTranslator = context.typeTranslator
     private val constantValueGenerator = context.constantValueGenerator
 
@@ -35,51 +32,16 @@ class AnnotationGenerator(
         }
     }
 
-    override fun visitValueParameter(declaration: IrValueParameter) {
-        super.visitValueParameter(declaration)
-
-        val descriptor = declaration.descriptor
-        val containingDeclaration = descriptor.containingDeclaration
-
-        if (containingDeclaration is PropertySetterDescriptor) {
-            containingDeclaration.correspondingProperty.annotations.getUseSiteTargetedAnnotations()
-                .filter { it.target == AnnotationUseSiteTarget.SETTER_PARAMETER }
-                .generateAnnotationConstructorCalls(declaration)
-        }
-
-        descriptor.type.annotations.getAllAnnotations()
-            .filter { it.target == AnnotationUseSiteTarget.RECEIVER }
-            .generateAnnotationConstructorCalls(declaration)
-    }
-
     private fun generateAnnotationsForDeclaration(declaration: IrDeclaration) {
-        declaration.descriptor.annotations.getAllAnnotations()
-            .filter { isAnnotationTargetMatchingDeclaration(it.target, declaration) }
-            .generateAnnotationConstructorCalls(declaration)
-    }
+        // Delegate field is mapped to a new property descriptor with annotations of the original property delegate
+        // (see IrPropertyDelegateDescriptorImpl), but annotations on backing fields should be processed manually here
+        val annotatedDescriptor =
+            if (declaration is IrField && declaration.origin != IrDeclarationOrigin.DELEGATE)
+                declaration.descriptor.backingField
+            else declaration.descriptor
 
-    private fun List<AnnotationWithTarget>.generateAnnotationConstructorCalls(declaration: IrDeclaration) {
-        mapTo(declaration.annotations) {
-            constantValueGenerator.generateAnnotationConstructorCall(it.annotation)
+        annotatedDescriptor?.annotations?.mapTo(declaration.annotations) {
+            constantValueGenerator.generateAnnotationConstructorCall(it)
         }
     }
-
-    private fun isAnnotationTargetMatchingDeclaration(target: AnnotationUseSiteTarget?, element: IrElement): Boolean =
-        when (element) {
-            is IrProperty ->
-                target == null || target == AnnotationUseSiteTarget.PROPERTY
-
-            is IrField ->
-                target == AnnotationUseSiteTarget.FIELD || target == AnnotationUseSiteTarget.PROPERTY_DELEGATE_FIELD
-
-            is IrSimpleFunction ->
-                target == null || target == AnnotationUseSiteTarget.PROPERTY_GETTER || target == AnnotationUseSiteTarget.PROPERTY_SETTER
-
-            is IrValueParameter ->
-                target == null || target == AnnotationUseSiteTarget.CONSTRUCTOR_PARAMETER
-
-            else -> target == null
-        }
 }
-
-

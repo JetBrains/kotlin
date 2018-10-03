@@ -5,10 +5,11 @@
 
 package kotlin.script.experimental.jvm
 
-import org.jetbrains.kotlin.script.util.scriptCompilationClasspathFromContext
 import java.io.File
+import kotlin.reflect.KClass
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.ScriptingHostConfiguration
+import kotlin.script.experimental.jvm.util.scriptCompilationClasspathFromContext
 import kotlin.script.experimental.util.PropertiesCollection
 
 data class JvmDependency(val classpath: List<File>) : ScriptDependency {
@@ -20,6 +21,12 @@ interface JvmScriptCompilationConfigurationKeys
 
 open class JvmScriptCompilationConfigurationBuilder : PropertiesCollection.Builder(), JvmScriptCompilationConfigurationKeys {
     companion object : JvmScriptCompilationConfigurationKeys
+}
+
+fun JvmScriptCompilationConfigurationBuilder.dependenciesFromClassContext(
+    contextClass: KClass<*>, vararg libraries: String, wholeClasspath: Boolean = false
+) {
+    dependenciesFromClassloader(*libraries, classLoader = contextClass.java.classLoader, wholeClasspath = wholeClasspath)
 }
 
 fun JvmScriptCompilationConfigurationBuilder.dependenciesFromCurrentContext(vararg libraries: String, wholeClasspath: Boolean = false) {

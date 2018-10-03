@@ -6,12 +6,10 @@
 package test.collections
 
 import test.assertStaticAndRuntimeTypeIs
-import kotlin.test.*
-import kotlin.comparisons.*
-import java.util.*
-
 import test.io.deserializeFromHex
 import test.io.serializeAndDeserialize
+import java.util.*
+import kotlin.test.*
 
 class CollectionJVMTest {
 

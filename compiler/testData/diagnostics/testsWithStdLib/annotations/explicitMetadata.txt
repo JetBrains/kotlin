@@ -1,6 +1,6 @@
 package
 
-@kotlin.Metadata(xi = 0) @B(m = kotlin.Metadata) public fun f(): kotlin.Unit
+@kotlin.Metadata(extraInt = 0) @B(m = kotlin.Metadata) public fun f(): kotlin.Unit
 
 @kotlin.Metadata public final class A {
     public constructor A()
@@ -9,7 +9,7 @@ package
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-@kotlin.Metadata(xs = "_") public final annotation class B : kotlin.Annotation {
+@kotlin.Metadata(extraString = "_") public final annotation class B : kotlin.Annotation {
     public constructor B(/*0*/ m: kotlin.Metadata)
     public final val m: kotlin.Metadata
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean

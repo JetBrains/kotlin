@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.configuration
 import com.intellij.framework.FrameworkTypeEx
 import com.intellij.framework.addSupport.FrameworkSupportInModuleProvider
 import com.intellij.ide.util.frameworkSupport.FrameworkSupportModel
+import com.intellij.openapi.externalSystem.model.ExternalSystemDataKeys
 import com.intellij.openapi.externalSystem.model.project.ProjectId
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.roots.ModifiableModelsProvider
@@ -27,6 +28,8 @@ import org.jetbrains.kotlin.idea.KotlinIcons
 import org.jetbrains.kotlin.idea.configuration.KotlinBuildScriptManipulator.Companion.GSK_KOTLIN_VERSION_PROPERTY_NAME
 import org.jetbrains.kotlin.idea.configuration.KotlinBuildScriptManipulator.Companion.getKotlinGradlePluginClassPathSnippet
 import org.jetbrains.kotlin.idea.configuration.KotlinBuildScriptManipulator.Companion.getKotlinModuleDependencySnippet
+import org.jetbrains.kotlin.idea.formatter.KotlinStyleGuideCodeStyle
+import org.jetbrains.kotlin.idea.formatter.ProjectCodeStyleImporter
 import org.jetbrains.kotlin.idea.versions.*
 import org.jetbrains.plugins.gradle.frameworkSupport.BuildScriptDataBuilder
 import org.jetbrains.plugins.gradle.frameworkSupport.KotlinDslGradleFrameworkSupportProvider
@@ -95,6 +98,12 @@ abstract class KotlinDslGradleKotlinFrameworkSupportProvider(
         }
 
         buildScriptData.addRepositoriesDefinition("mavenCentral()")
+
+        val isNewProject = module.project.getUserData(ExternalSystemDataKeys.NEWLY_CREATED_PROJECT) == true
+        if (isNewProject) {
+            ProjectCodeStyleImporter.apply(module.project, KotlinStyleGuideCodeStyle.INSTANCE)
+            GradlePropertiesFileFacade.forProject(module.project).addCodeStyleProperty(KotlinStyleGuideCodeStyle.CODE_STYLE_SETTING)
+        }
     }
 
     private fun RepositoryDescription.toKotlinRepositorySnippet() = "maven { setUrl(\"$url\") }"

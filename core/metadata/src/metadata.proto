@@ -84,6 +84,15 @@ message Annotation {
 
       repeated Value array_element = 9;
 
+      // If type = CLASS, the number of dimensions of the array of the class specified in class_id.
+      // E.g. if class_id = kotlin/String, this annotation argument value denotes:
+      // - String::class, if array_dimension_count = 0
+      // - Array<String>::class, if array_dimension_count = 1
+      // - Array<Array<String>>::class, if array_dimension_count = 2
+      // - etc.
+      // Other forms of array class literals are not supported by this format, see KT-26568
+      optional int32 array_dimension_count = 11 [default = 0];
+
       /*
         isUnsigned
       */

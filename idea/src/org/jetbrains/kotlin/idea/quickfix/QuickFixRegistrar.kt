@@ -572,5 +572,9 @@ class QuickFixRegistrar : QuickFixContributor {
 
         DEFAULT_VALUE_NOT_ALLOWED_IN_OVERRIDE.registerFactory(RemoveDefaultParameterValueFix)
         ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS.registerFactory(RemoveDefaultParameterValueFix)
+
+        RESOLUTION_TO_CLASSIFIER.registerFactory(ConvertToAnonymousObjectFix)
+
+        NOTHING_TO_INLINE.registerFactory(RemoveModifierFix.createRemoveModifierFactory(isRedundant = false))
     }
 }

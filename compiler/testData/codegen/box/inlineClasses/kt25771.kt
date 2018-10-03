@@ -1,15 +1,15 @@
 // !LANGUAGE: +InlineClasses
 // IGNORE_BACKEND: JVM_IR
 
-inline class SuccessOrFailure<out T>(val value: Any?) {
+inline class Result<out T>(val value: Any?) {
     val isFailure: Boolean get() = value is Failure
 
     public companion object {
-        public inline fun <T> success(value: T): SuccessOrFailure<T> =
-            SuccessOrFailure(value)
+        public inline fun <T> success(value: T): Result<T> =
+            Result(value)
 
-        public inline fun <T> failure(exception: Throwable): SuccessOrFailure<T> =
-            SuccessOrFailure(Failure(exception))
+        public inline fun <T> failure(exception: Throwable): Result<T> =
+            Result(Failure(exception))
     }
 
     class Failure (
@@ -17,11 +17,11 @@ inline class SuccessOrFailure<out T>(val value: Any?) {
     )
 }
 
-inline fun <R> runCatching(block: () -> R): SuccessOrFailure<R> {
+inline fun <R> runCatching(block: () -> R): Result<R> {
     return try {
-        SuccessOrFailure.success(block())
+        Result.success(block())
     } catch (e: Throwable) {
-        SuccessOrFailure.failure(e)
+        Result.failure(e)
     }
 }
 

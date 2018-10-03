@@ -229,6 +229,7 @@ public class JsInliner extends JsVisitorWithContextImpl {
     private void visit(@NotNull FunctionWithWrapper functionWithWrapper) {
         JsContext<JsStatement> oldContextForInline = statementContextForInline;
         Map<String, JsName> oldExistingImports = existingImports;
+        int oldInlineFunctionDepth = inlineFunctionDepth;
 
         ListContext<JsStatement> innerContext = new ListContext<>();
 
@@ -238,6 +239,7 @@ public class JsInliner extends JsVisitorWithContextImpl {
             existingImports = new HashMap<>();
             statementContexts.push(innerContext);
             statementContextForInline = innerContext;
+            inlineFunctionDepth++;
 
             for (JsStatement statement : wrapperBody.getStatements()) {
                 processImportStatement(statement);
@@ -268,14 +270,11 @@ public class JsInliner extends JsVisitorWithContextImpl {
 
         statementContextForInline = oldContextForInline;
         existingImports = oldExistingImports;
+        inlineFunctionDepth = oldInlineFunctionDepth;
     }
 
     @Override
     public boolean visit(@NotNull JsInvocation call, @NotNull JsContext context) {
-        if (InlineMetadata.decompose(call) != null) {
-            inlineFunctionDepth++;
-        }
-
         if (!hasToBeInlined(call)) return true;
 
         JsFunction containingFunction = getCurrentNamedFunction();
@@ -294,9 +293,7 @@ public class JsInliner extends JsVisitorWithContextImpl {
                 JsExpression argument = call.getArguments().get(i);
                 call.getArguments().set(i, accept(argument));
             }
-            inlineFunctionDepth++;
             visit(definition);
-            inlineFunctionDepth--;
             return false;
         }
 
@@ -305,10 +302,6 @@ public class JsInliner extends JsVisitorWithContextImpl {
 
     @Override
     public void endVisit(@NotNull JsInvocation x, @NotNull JsContext ctx) {
-        if (InlineMetadata.decompose(x) != null) {
-            inlineFunctionDepth--;
-        }
-
         if (hasToBeInlined(x)) {
             inline(x, ctx);
         }

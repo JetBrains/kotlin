@@ -1,0 +1,21 @@
+package
+
+public fun case_1(/*0*/ value_1: kotlin.Int?): kotlin.Unit
+public fun case_2(/*0*/ value_1: kotlin.Int?): kotlin.Unit
+public fun case_3(/*0*/ value_1: kotlin.Int?): kotlin.Unit
+public fun case_4(/*0*/ value_1: kotlin.Any?): kotlin.Unit
+
+package contracts {
+    public fun case_1(/*0*/ value_1: kotlin.Int?): kotlin.Boolean?
+        Returns(TRUE) -> value_1 != null
+
+    public fun case_2(/*0*/ value_1: kotlin.Int?): kotlin.Boolean
+        Returns(FALSE) -> value_1 != null
+
+    public fun case_3(/*0*/ value_1: kotlin.Int?): kotlin.Boolean?
+        Returns(NOT_NULL) -> value_1 != null
+
+    public fun case_4(/*0*/ value_1: kotlin.Any?): kotlin.Boolean
+        Returns(NOT_NULL) -> value_1 is Number
+
+}

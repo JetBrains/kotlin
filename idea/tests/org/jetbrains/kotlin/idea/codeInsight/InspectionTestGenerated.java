@@ -409,6 +409,11 @@ public class InspectionTestGenerated extends AbstractInspectionTest {
             runTest("idea/testData/inspections/unusedSymbol/function/inspectionData/inspections.test");
         }
 
+        @TestMetadata("unusedSymbol/functionMain/inspectionData/inspections.test")
+        public void testUnusedSymbol_functionMain_inspectionData_Inspections_test() throws Exception {
+            runTest("idea/testData/inspections/unusedSymbol/functionMain/inspectionData/inspections.test");
+        }
+
         @TestMetadata("unusedSymbol/js/inspectionData/inspections.test")
         public void testUnusedSymbol_js_inspectionData_Inspections_test() throws Exception {
             runTest("idea/testData/inspections/unusedSymbol/js/inspectionData/inspections.test");

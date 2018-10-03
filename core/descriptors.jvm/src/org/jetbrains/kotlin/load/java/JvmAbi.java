@@ -7,18 +7,11 @@ package org.jetbrains.kotlin.load.java;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.builtins.CompanionObjectMapping;
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor;
-import org.jetbrains.kotlin.descriptors.ClassDescriptor;
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor;
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget;
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationWithTarget;
+import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.CapitalizeDecapitalizeKt;
-
-import java.util.List;
 
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.isClassOrEnumClass;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.isCompanionObject;
@@ -26,7 +19,6 @@ import static org.jetbrains.kotlin.resolve.DescriptorUtils.isCompanionObject;
 public final class JvmAbi {
     public static final String DEFAULT_IMPLS_CLASS_NAME = "DefaultImpls";
     public static final String ERASED_INLINE_CONSTRUCTOR_NAME = "constructor";
-    private static final String ERASED_INLINE_CLASS_NAME = "Erased";
     public static final FqName JVM_FIELD_ANNOTATION_FQ_NAME = new FqName("kotlin.jvm.JvmField");
 
     /**
@@ -58,7 +50,7 @@ public final class JvmAbi {
     public static final String LOCAL_VARIABLE_NAME_PREFIX_INLINE_ARGUMENT = "$i$a$";
     public static final String LOCAL_VARIABLE_NAME_PREFIX_INLINE_FUNCTION = "$i$f$";
 
-    public static final String ERASED_INLINE_CLASS_SUFFIX = "$" + ERASED_INLINE_CLASS_NAME;
+    public static final String IMPL_SUFFIX_FOR_INLINE_CLASS_MEMBERS = "-impl";
 
     @NotNull
     public static String getSyntheticMethodNameForAnnotatedProperty(@NotNull Name propertyName) {
@@ -120,12 +112,10 @@ public final class JvmAbi {
     }
 
     public static boolean hasJvmFieldAnnotation(@NotNull CallableMemberDescriptor memberDescriptor) {
-        List<AnnotationWithTarget> annotations = memberDescriptor.getAnnotations().getUseSiteTargetedAnnotations();
-        for (AnnotationWithTarget annotationWithTarget : annotations) {
-            if (AnnotationUseSiteTarget.FIELD.equals(annotationWithTarget.getTarget()) &&
-                JVM_FIELD_ANNOTATION_FQ_NAME.equals(annotationWithTarget.getAnnotation().getFqName())) {
-                return true;
-            }
+        // TODO: deduplicate this with org.jetbrains.kotlin.resolve.jvm.annotations.hasJvmFieldAnnotation
+        if (memberDescriptor instanceof PropertyDescriptor) {
+            FieldDescriptor field = ((PropertyDescriptor) memberDescriptor).getBackingField();
+            if (field != null && field.getAnnotations().hasAnnotation(JVM_FIELD_ANNOTATION_FQ_NAME)) return true;
         }
         return memberDescriptor.getAnnotations().hasAnnotation(JVM_FIELD_ANNOTATION_FQ_NAME);
     }

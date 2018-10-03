@@ -270,7 +270,7 @@ class TowerResolver {
         val candidatesGroups = if (useOrder) {
             processor.process(towerData)
         } else {
-            listOf(processor.process(towerData).flatMap { it })
+            listOf(processor.process(towerData).flatten())
         }
 
         for (candidatesGroup in candidatesGroups) {

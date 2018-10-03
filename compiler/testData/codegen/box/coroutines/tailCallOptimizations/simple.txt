@@ -1,3 +1,4 @@
+@kotlin.coroutines.jvm.internal.DebugMetadata
 @kotlin.Metadata
 final class SimpleKt$box$1 {
     synthetic final field $result: kotlin.jvm.internal.Ref$ObjectRef

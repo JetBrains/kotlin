@@ -273,7 +273,7 @@ fun <T, E : PsiElement> getPsiElementPopup(
             }
         }
         addListener(object : JBPopupAdapter() {
-            override fun onClosed(event: LightweightWindowEvent?) {
+            override fun onClosed(event: LightweightWindowEvent) {
                 highlighter?.dropHighlight()
             }
         })
@@ -460,7 +460,7 @@ fun PsiElement.canRefactor(): Boolean {
         this is KtElement ||
         this is PsiMember && language == JavaLanguage.INSTANCE ||
         this is PsiDirectory ->
-            ProjectRootsUtil.isInProjectSource(this) || ((containingFile as? KtFile)?.isScript() ?: false)
+            ProjectRootsUtil.isInProjectSource(this, includeScriptsOutsideSourceRoots = true)
         else ->
             false
     }

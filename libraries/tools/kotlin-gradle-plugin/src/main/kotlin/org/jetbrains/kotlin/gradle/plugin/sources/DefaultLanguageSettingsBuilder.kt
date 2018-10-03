@@ -62,7 +62,7 @@ internal fun applyLanguageSettingsToKotlinTask(
     apiVersion = apiVersion ?: languageSettingsBuilder.apiVersion
 
     if (languageSettingsBuilder.progressiveMode) {
-        freeCompilerArgs += "-Xprogressive"
+        freeCompilerArgs += "-progressive"
     }
 
     languageSettingsBuilder.enabledLanguageFeatures.forEach { featureName ->

@@ -1,5 +1,4 @@
 // !LANGUAGE: +NewInference
-// IGNORE_BACKEND: JS_IR
 // WITH_RUNTIME
 
 // FILE: messages/foo.kt

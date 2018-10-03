@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 //WITH_RUNTIME
 
 fun foo(x: String, ys: List<String>) =

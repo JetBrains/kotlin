@@ -2,11 +2,10 @@ package samples.collections
 
 import samples.*
 import kotlin.test.*
-import kotlin.coroutines.experimental.buildIterator
-import kotlin.coroutines.experimental.buildSequence
 
 @RunWith(Enclosed::class)
 class Sequences {
+
     class Building {
 
         @Sample
@@ -112,7 +111,7 @@ class Sequences {
 
         @Sample
         fun buildFibonacciSequence() {
-            fun fibonacci() = buildSequence {
+            fun fibonacci() = sequence {
                 var terms = Pair(0, 1)
 
                 // this sequence is infinite
@@ -127,7 +126,7 @@ class Sequences {
 
         @Sample
         fun buildSequenceYieldAll() {
-            val sequence = buildSequence {
+            val sequence = sequence {
                 val start = 0
                 // yielding a single value
                 yield(start)
@@ -146,7 +145,7 @@ class Sequences {
             val wrappedCollection = object : AbstractCollection<Any>() {
                 override val size: Int = collection.size + 2
 
-                override fun iterator(): Iterator<Any> = buildIterator {
+                override fun iterator(): Iterator<Any> = iterator {
                     yield("first")
                     yieldAll(collection)
                     yield("last")
@@ -158,6 +157,30 @@ class Sequences {
 
     }
 
+    class Usage {
+
+        @Sample
+        fun sequenceOrEmpty() {
+            val nullSequence: Sequence<Int>? = null
+            assertPrints(nullSequence.orEmpty().toList(), "[]")
+
+            val sequence: Sequence<Int>? = sequenceOf(1, 2, 3)
+            assertPrints(sequence.orEmpty().toList(), "[1, 2, 3]")
+        }
+
+        @Sample
+        fun sequenceIfEmpty() {
+            val empty = emptySequence<Int>()
+
+            val emptyOrDefault = empty.ifEmpty { sequenceOf("default") }
+            assertPrints(emptyOrDefault.toList(), "[default]")
+
+            val nonEmpty = sequenceOf("value")
+
+            val nonEmptyOrDefault = nonEmpty.ifEmpty { sequenceOf("default") }
+            assertPrints(nonEmptyOrDefault.toList(), "[value]")
+        }
+    }
 
     class Transformations {
 

@@ -18,9 +18,9 @@ package org.jetbrains.kotlin.idea.quickfix.expectactual
 
 import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.ide.util.EditorHelper
-import com.intellij.ide.util.PackageUtil
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.module.Module
+import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
 import com.intellij.psi.JavaDirectoryService
 import com.intellij.psi.codeStyle.CodeStyleManager
@@ -34,19 +34,23 @@ import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.idea.caches.project.ModuleSourceInfo
-import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithContent
 import org.jetbrains.kotlin.idea.core.*
 import org.jetbrains.kotlin.idea.quickfix.KotlinQuickFixAction
 import org.jetbrains.kotlin.idea.quickfix.KotlinSingleIntentionActionFactory
 import org.jetbrains.kotlin.idea.refactoring.createKotlinFile
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.actualsForExpected
+import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.MultiTargetPlatform
+import org.jetbrains.kotlin.resolve.checkers.ExpectedActualDeclarationChecker
+import org.jetbrains.kotlin.resolve.checkers.ExperimentalUsageChecker
 import org.jetbrains.kotlin.resolve.getMultiTargetPlatform
 
 sealed class CreateActualFix<out D : KtNamedDeclaration>(
@@ -69,27 +73,29 @@ sealed class CreateActualFix<out D : KtNamedDeclaration>(
         val factory = KtPsiFactory(project)
 
         val actualFile = getOrCreateImplementationFile() ?: return
-        val generated = factory.generateIt(project, element) ?: return
+        DumbService.getInstance(project).runWhenSmart {
+            val generated = factory.generateIt(project, element) ?: return@runWhenSmart
 
-        runWriteAction {
-            if (actualFile.packageDirective?.fqName != file.packageDirective?.fqName &&
-                actualFile.declarations.isEmpty()
-            ) {
-                val packageDirective = file.packageDirective
-                packageDirective?.let {
-                    val oldPackageDirective = actualFile.packageDirective
-                    val newPackageDirective = factory.createPackageDirective(it.fqName)
-                    if (oldPackageDirective != null) {
-                        oldPackageDirective.replace(newPackageDirective)
-                    } else {
-                        actualFile.add(newPackageDirective)
+            project.executeWriteCommand("Create actual declaration") {
+                if (actualFile.packageDirective?.fqName != file.packageDirective?.fqName &&
+                    actualFile.declarations.isEmpty()
+                ) {
+                    val packageDirective = file.packageDirective
+                    packageDirective?.let {
+                        val oldPackageDirective = actualFile.packageDirective
+                        val newPackageDirective = factory.createPackageDirective(it.fqName)
+                        if (oldPackageDirective != null) {
+                            oldPackageDirective.replace(newPackageDirective)
+                        } else {
+                            actualFile.add(newPackageDirective)
+                        }
                     }
                 }
+                val actualDeclaration = actualFile.add(generated) as KtElement
+                val reformatted = CodeStyleManager.getInstance(project).reformat(actualDeclaration)
+                val shortened = ShortenReferences.DEFAULT.process(reformatted as KtElement)
+                EditorHelper.openInEditor(shortened)?.caretModel?.moveToOffset(shortened.textRange.startOffset)
             }
-            val actualDeclaration = actualFile.add(generated) as KtElement
-            val reformatted = CodeStyleManager.getInstance(project).reformat(actualDeclaration)
-            val shortened = ShortenReferences.DEFAULT.process(reformatted as KtElement)
-            EditorHelper.openInEditor(shortened)?.caretModel?.moveToOffset(shortened.textRange.startOffset)
         }
     }
 
@@ -109,8 +115,8 @@ sealed class CreateActualFix<out D : KtNamedDeclaration>(
         val expectedDir = declaration.containingFile.containingDirectory
         val expectedPackage = JavaDirectoryService.getInstance().getPackage(expectedDir)
 
-        val actualDirectory = PackageUtil.findOrCreateDirectoryForPackage(
-            actualModule, expectedPackage?.qualifiedName ?: "", null, false
+        val actualDirectory = findOrCreateDirectoryForPackage(
+            actualModule, expectedPackage?.qualifiedName ?: ""
         ) ?: return null
         return runWriteAction {
             val fileName = "$name.kt"
@@ -271,13 +277,21 @@ internal fun KtPsiFactory.generateClassOrObjectByExpectedClass(
         primaryConstructor.delete()
     }
 
-    val context = expectedClass.analyze()
+    val context = expectedClass.analyzeWithContent()
     actualClass.superTypeListEntries.zip(expectedClass.superTypeListEntries).forEach { (actualEntry, expectedEntry) ->
         if (actualEntry !is KtSuperTypeEntry) return@forEach
         val superType = context[BindingContext.TYPE, expectedEntry.typeReference]
         val superClassDescriptor = superType?.constructor?.declarationDescriptor as? ClassDescriptor ?: return@forEach
         if (superClassDescriptor.kind == ClassKind.CLASS || superClassDescriptor.kind == ClassKind.ENUM_CLASS) {
             actualEntry.replace(createSuperTypeCallEntry("${actualEntry.typeReference!!.text}()"))
+        }
+    }
+    if (actualClass.isAnnotation()) {
+        actualClass.annotationEntries.zip(expectedClass.annotationEntries).forEach { (actualEntry, expectedEntry) ->
+            val annotationDescriptor = context.get(BindingContext.ANNOTATION, expectedEntry) ?: return@forEach
+            if (annotationDescriptor.fqName in forbiddenAnnotationFqNames) {
+                actualEntry.delete()
+            }
         }
     }
 
@@ -312,12 +326,19 @@ internal fun KtPsiFactory.generateClassOrObjectByExpectedClass(
                 parameter.addModifier(KtTokens.ACTUAL_KEYWORD)
             }
         }
+        it.removeParameterDefaultValues()
     }
 
     return actualClass.apply {
         replaceExpectModifier(actualNeeded)
     }
 }
+
+private val forbiddenAnnotationFqNames = setOf(
+    ExpectedActualDeclarationChecker.OPTIONAL_EXPECTATION_FQ_NAME,
+    FqName("kotlin.ExperimentalMultiplatform"),
+    ExperimentalUsageChecker.USE_EXPERIMENTAL_FQ_NAME
+)
 
 private fun KtPsiFactory.generateFunction(
     project: Project,

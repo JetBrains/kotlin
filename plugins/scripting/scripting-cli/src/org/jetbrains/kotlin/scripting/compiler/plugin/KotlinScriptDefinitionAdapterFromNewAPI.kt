@@ -29,8 +29,6 @@ abstract class KotlinScriptDefinitionAdapterFromNewAPIBase : KotlinScriptDefinit
 
     protected abstract val hostConfiguration: ScriptingHostConfiguration
 
-    abstract val scriptFileExtensionWithDot: String
-
     open val baseClass: KClass<*> by lazy(LazyThreadSafetyMode.PUBLICATION) {
         getScriptingClass(scriptCompilationConfiguration.getOrError(ScriptCompilationConfiguration.baseClass))
     }
@@ -43,11 +41,11 @@ abstract class KotlinScriptDefinitionAdapterFromNewAPIBase : KotlinScriptDefinit
     override val fileType: LanguageFileType = KotlinFileType.INSTANCE
 
     override fun isScript(fileName: String): Boolean =
-        fileName.endsWith(scriptFileExtensionWithDot)
+        fileName.endsWith(".$fileExtension")
 
     override fun getScriptName(script: KtScript): Name {
         val fileBasedName = NameUtils.getScriptNameForFile(script.containingKtFile.name)
-        return Name.identifier(fileBasedName.identifier.removeSuffix(scriptFileExtensionWithDot))
+        return Name.identifier(fileBasedName.identifier.removeSuffix(".$fileExtension"))
     }
 
     override val annotationsForSamWithReceivers: List<String>
@@ -105,6 +103,6 @@ class KotlinScriptDefinitionAdapterFromNewAPI(
 
     override val name: String get() = scriptCompilationConfiguration[ScriptCompilationConfiguration.displayName] ?: super.name
 
-    override val scriptFileExtensionWithDot =
-        "." + (scriptCompilationConfiguration[ScriptCompilationConfiguration.fileExtension] ?: "kts")
+    override val fileExtension: String
+        get() = scriptCompilationConfiguration[ScriptCompilationConfiguration.fileExtension] ?: super.fileExtension
 }

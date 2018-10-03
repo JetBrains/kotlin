@@ -47,6 +47,7 @@ expect class Regex {
      *
      * @param startIndex An index to start search with, by default 0. Must be not less than zero and not greater than `input.length()`
      * @return An instance of [MatchResult] if match was found or `null` otherwise.
+     * @sample samples.text.Regexps.find
      */
     fun find(input: CharSequence, startIndex: Int = 0): MatchResult?
 
@@ -127,6 +128,15 @@ public expect fun String.toLowerCase(): String
 public expect fun String.capitalize(): String
 public expect fun String.decapitalize(): String
 public expect fun CharSequence.repeat(n: Int): String
+
+
+/**
+ * Clears the content of this string builder making it empty.
+ *
+ * @sample samples.text.Strings.clearStringBuilder
+ */
+@SinceKotlin("1.3")
+public expect fun StringBuilder.clear(): StringBuilder
 
 
 /**

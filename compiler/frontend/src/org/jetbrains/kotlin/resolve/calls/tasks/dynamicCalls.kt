@@ -109,7 +109,7 @@ class DynamicCallableDescriptors(storageManager: StorageManager, builtIns: Kotli
 
         val getter = DescriptorFactory.createDefaultGetter(propertyDescriptor, Annotations.EMPTY)
         getter.initialize(propertyDescriptor.type)
-        val setter = DescriptorFactory.createDefaultSetter(propertyDescriptor, Annotations.EMPTY)
+        val setter = DescriptorFactory.createDefaultSetter(propertyDescriptor, Annotations.EMPTY, Annotations.EMPTY)
 
         propertyDescriptor.initialize(getter, setter)
 

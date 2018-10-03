@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 1114
+// EXPECTED_REACHABLE_NODES: 1283
 package foo
 import kotlin.test.assertEquals
 

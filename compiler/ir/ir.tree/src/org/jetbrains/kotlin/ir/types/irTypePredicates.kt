@@ -60,6 +60,8 @@ fun IrType.isFloat(): Boolean = isNotNullClassType(KotlinBuiltIns.FQ_NAMES._floa
 fun IrType.isDouble(): Boolean = isNotNullClassType(KotlinBuiltIns.FQ_NAMES._double)
 fun IrType.isNumber(): Boolean = isNotNullClassType(KotlinBuiltIns.FQ_NAMES.number)
 
+fun IrType.isComparable(): Boolean = isNotNullClassType(KotlinBuiltIns.FQ_NAMES.comparable.toUnsafe())
+
 fun IrType.isNullableBoolean(): Boolean = isNullableClassType(KotlinBuiltIns.FQ_NAMES._boolean)
 fun IrType.isNullableLong(): Boolean = isNullableClassType(KotlinBuiltIns.FQ_NAMES._long)
 fun IrType.isNullableChar(): Boolean = isNullableClassType(KotlinBuiltIns.FQ_NAMES._char)

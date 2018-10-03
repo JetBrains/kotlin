@@ -3,6 +3,7 @@
 // WITH_RUNTIME
 
 import kotlin.coroutines.experimental.Continuation
+import kotlin.coroutines.resume
 
 fun test(con: Continuation<Int>) {
     con.<caret>resume(12)

@@ -1,7 +1,4 @@
-compiler/testData/cli/jvm/apiVersion.kt:2:5: error: the feature "bound callable references" is only available since API version 1.1
-    ""::class.isInstance(42)
-    ^
-compiler/testData/cli/jvm/apiVersion.kt:2:15: error: unresolved reference: isInstance
-    ""::class.isInstance(42)
+compiler/testData/cli/jvm/apiVersion.kt:2:15: error: unresolved reference: sealedSubclasses
+    ""::class.sealedSubclasses
               ^
 COMPILATION_ERROR

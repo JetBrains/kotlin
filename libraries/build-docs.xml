@@ -34,15 +34,15 @@
                 <pathelement location="${basedir}/../gradle/wrapper/gradle-wrapper.jar"/>
             </classpath>
             <arg line="--no-daemon"/>
-            <arg line=":kotlin-stdlib:distJar"/>
+            <arg line=":kotlin-stdlib:dist"/>
         </java>
     </target>
 
     <path id="stdlib.compile.classpath">
-        <fileset dir="${basedir}/stdlib/jvm/build/libs/" includes="dist-kotlin-stdlib.jar"/>
+        <fileset dir="${basedir}/../dist/kotlinc/lib/" includes="kotlin-stdlib.jar"/>
     </path>
     <path id="kotlin-test.compile.classpath">
-        <fileset dir="${basedir}/stdlib/jvm/build/libs/" includes="dist-kotlin-stdlib.jar"/>
+        <fileset dir="${basedir}/../dist/kotlinc/lib/" includes="kotlin-stdlib.jar"/>
         <pathelement location="${basedir}/lib/junit-4.11.jar"/>
     </path>
     <target name="document" depends="clean,dist-stdlib">

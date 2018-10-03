@@ -52,7 +52,9 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameOrNull
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassOrAny
 import org.jetbrains.kotlin.resolve.source.PsiSourceElement
+import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.isError
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.tree.*
@@ -322,7 +324,6 @@ class ClassFileToSourceStubConverter(
 
         val superClass = treeMaker.FqName(treeMaker.getQualifiedName(clazz.superName))
 
-        val hasSuperClass = clazz.superName != "java/lang/Object" && !isEnum
         val genericType = signatureParser.parseClassSignature(clazz.signature, superClass, interfaces)
 
         class EnumValueData(val field: FieldNode, val innerClass: InnerClassNode?, val correspondingClass: ClassNode?)
@@ -386,13 +387,99 @@ class ClassFileToSourceStubConverter(
 
         lineMappings.registerClass(clazz)
 
+        val superTypes = calculateSuperTypes(clazz, genericType)
+
         return treeMaker.ClassDef(
                 modifiers,
                 treeMaker.name(simpleName),
                 genericType.typeParameters,
-                if (hasSuperClass) genericType.superClass else null,
-                genericType.interfaces,
+                superTypes.superClass,
+                superTypes.interfaces,
                 enumValues + fields + methods + nestedClasses).keepKdocComments(clazz)
+    }
+
+    private class ClassSupertypes(val superClass: JCExpression?, val interfaces: JavacList<JCExpression>)
+
+    private fun calculateSuperTypes(clazz: ClassNode, genericType: SignatureParser.ClassGenericSignature): ClassSupertypes {
+        val hasSuperClass = clazz.superName != "java/lang/Object" && !clazz.isEnum()
+
+        val defaultSuperTypes = ClassSupertypes(
+            if (hasSuperClass) genericType.superClass else null,
+            genericType.interfaces
+        )
+
+        if (!correctErrorTypes) {
+            return defaultSuperTypes
+        }
+
+        val declaration = kaptContext.origins[clazz]?.element as? KtClassOrObject ?: return defaultSuperTypes
+
+        val (superClass, superInterfaces) = partitionSuperTypes(declaration) ?: return defaultSuperTypes
+
+        val sameSuperClassCount = (superClass == null) == (defaultSuperTypes.superClass == null)
+        val sameSuperInterfaceCount = superInterfaces.size == defaultSuperTypes.interfaces.size
+
+        if (sameSuperClassCount && sameSuperInterfaceCount) {
+            return defaultSuperTypes
+        }
+
+        class SuperTypeCalculationFailure : RuntimeException()
+
+        fun nonErrorType(ref: () -> KtTypeReference?): JCExpression {
+            assert(correctErrorTypes)
+
+            return getNonErrorType<JCExpression>(
+                ErrorUtils.createErrorType("Error super class"),
+                ErrorTypeCorrector.TypeKind.SUPER_TYPE,
+                ref
+            ) { throw SuperTypeCalculationFailure() }
+        }
+
+        return try {
+            ClassSupertypes(
+                superClass?.let { nonErrorType { it } },
+                mapJList(superInterfaces) { nonErrorType { it } }
+            )
+        } catch (e: SuperTypeCalculationFailure) {
+            defaultSuperTypes
+        }
+    }
+
+    private fun partitionSuperTypes(declaration: KtClassOrObject): Pair<KtTypeReference?, List<KtTypeReference>>? {
+        val superTypeEntries = declaration.superTypeListEntries
+            .takeIf { it.isNotEmpty() }
+            ?: return Pair(null, emptyList())
+
+        val resolvedSuperTypes = superTypeEntries
+            .map { it to kaptContext.bindingContext[BindingContext.TYPE, it.typeReference] }
+
+        val (resolvedAsClasses, otherSuperTypes) = resolvedSuperTypes
+            .partition {
+                it.second?.isError == false
+                && (it.second?.constructor?.declarationDescriptor as? ClassDescriptor)?.kind == ClassKind.CLASS
+            }
+
+        if (resolvedAsClasses.size > 1) {
+            // Error in user code, several entries were resolved to classes
+            return null
+        } else if (resolvedAsClasses.size == 1) {
+            return Pair(resolvedAsClasses.single().first.typeReference, otherSuperTypes.mapNotNull { it.first.typeReference })
+        }
+
+        val (withParenthesis, withoutParenthesis) = superTypeEntries.partition { it is KtSuperTypeCallEntry }
+
+        if (withParenthesis.size > 1) {
+            // Error in user code, several entries with super constructor call
+            return null
+        } else if (withParenthesis.size == 1) {
+            return Pair(withParenthesis.single().typeReference, withoutParenthesis.mapNotNull { it.typeReference })
+        }
+
+        if (declaration is KtClass && declaration.primaryConstructor == null && declaration.secondaryConstructors.isNotEmpty()) {
+            return Pair(superTypeEntries.first().typeReference, superTypeEntries.drop(1).mapNotNull { it.typeReference })
+        }
+
+        return Pair(null, superTypeEntries.mapNotNull { it.typeReference })
     }
 
     private tailrec fun checkIfValidTypeName(containingClass: ClassNode, type: Type): Boolean {

@@ -10,7 +10,6 @@ import com.intellij.codeInsight.FileModificationService
 import com.intellij.codeInsight.daemon.QuickFixBundle
 import com.intellij.codeInsight.daemon.impl.analysis.HighlightUtil
 import com.intellij.codeInsight.daemon.impl.analysis.JavaHighlightUtil
-import com.intellij.codeInsight.intention.QuickFixFactory
 import com.intellij.codeInspection.*
 import com.intellij.codeInspection.deadCode.UnusedDeclarationInspection
 import com.intellij.codeInspection.ex.EntryPointsManager
@@ -36,9 +35,8 @@ import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.asJava.toLightMethods
-import org.jetbrains.kotlin.config.AnalysisFlag
+import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
 import org.jetbrains.kotlin.idea.caches.project.implementingDescriptors
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.findModuleDescriptor
@@ -48,6 +46,7 @@ import org.jetbrains.kotlin.idea.core.toDescriptor
 import org.jetbrains.kotlin.idea.findUsages.KotlinFindUsagesHandlerFactory
 import org.jetbrains.kotlin.idea.findUsages.handlers.KotlinFindClassUsagesHandler
 import org.jetbrains.kotlin.idea.imports.importableFqName
+import org.jetbrains.kotlin.idea.isMainFunction
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.quickfix.RemoveUnusedFunctionParameterFix
 import org.jetbrains.kotlin.idea.references.mainReference
@@ -88,6 +87,12 @@ class UnusedSymbolInspection : AbstractKotlinInspection() {
         fun isEntryPoint(declaration: KtNamedDeclaration): Boolean {
             if (declaration.hasKotlinAdditionalAnnotation()) return true
             if (declaration is KtClass && declaration.declarations.any { it.hasKotlinAdditionalAnnotation() }) return true
+
+            // Some of the main-function-cases are covered by 'javaInspection.isEntryPoint(lightElement)' call
+            // but not all of them: light method for parameterless main still points to parameterless name
+            // that is not an actual entry point from Java language point of view
+            if (declaration.isMainFunction()) return true
+
             val lightElement: PsiElement? = when (declaration) {
                 is KtClassOrObject -> declaration.toLightClass()
                 is KtNamedFunction, is KtSecondaryConstructor -> LightClassUtil.getLightClassMethod(declaration as KtFunction)
@@ -170,8 +175,8 @@ class UnusedSymbolInspection : AbstractKotlinInspection() {
             if (descriptor is ClassDescriptor && descriptor.kind == ClassKind.ANNOTATION_CLASS) {
                 val fqName = descriptor.fqNameSafe.asString()
                 val languageVersionSettings = declaration.languageVersionSettings
-                if (fqName in languageVersionSettings.getFlag(AnalysisFlag.experimental) ||
-                    fqName in languageVersionSettings.getFlag(AnalysisFlag.useExperimental)
+                if (fqName in languageVersionSettings.getFlag(AnalysisFlags.experimental) ||
+                    fqName in languageVersionSettings.getFlag(AnalysisFlags.useExperimental)
                 ) return
             }
 
@@ -300,9 +305,7 @@ class UnusedSymbolInspection : AbstractKotlinInspection() {
         )
         val referenceUsed: Boolean by lazy { !ReferencesSearch.search(searchParameters).forEach(::checkReference) }
 
-        if (descriptor is FunctionDescriptor &&
-            DescriptorUtils.getAnnotationByFqName(descriptor.annotations, JvmFileClassUtil.JVM_NAME) != null
-        ) {
+        if (descriptor is FunctionDescriptor && DescriptorUtils.findJvmNameAnnotation(descriptor) != null) {
             if (referenceUsed) return true
         }
 
@@ -355,7 +358,7 @@ class UnusedSymbolInspection : AbstractKotlinInspection() {
     private fun hasPlatformImplementations(declaration: KtNamedDeclaration, descriptor: DeclarationDescriptor?): Boolean {
         if (!declaration.hasExpectModifier()) return false
 
-        descriptor as? MemberDescriptor ?: return false
+        if (descriptor !is MemberDescriptor) return false
         val commonModuleDescriptor = declaration.containingKtFile.findModuleDescriptor()
 
         return commonModuleDescriptor.implementingDescriptors.any { it.hasActualsFor(descriptor) } ||
@@ -389,8 +392,8 @@ class UnusedSymbolInspection : AbstractKotlinInspection() {
             )
                 continue
 
-            val intentionAction =
-                QuickFixFactory.getInstance().createAddToDependencyInjectionAnnotationsFix(declaration.project, fqName, "declarations")
+            val intentionAction = createAddToDependencyInjectionAnnotationsFix(declaration.project, fqName)
+
             list.add(IntentionWrapper(intentionAction, declaration.containingFile))
         }
 

@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 // EXPECTED_REACHABLE_NODES: 1517
 
 class World() {

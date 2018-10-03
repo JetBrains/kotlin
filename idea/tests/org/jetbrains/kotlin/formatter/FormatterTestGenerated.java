@@ -41,6 +41,11 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
             runTest("idea/testData/formatter/AnnotationBeforeExpression.after.kt");
         }
 
+        @TestMetadata("AnnotationBeforeTypeAliasOrConstructor.after.kt")
+        public void testAnnotationBeforeTypeAliasOrConstructor() throws Exception {
+            runTest("idea/testData/formatter/AnnotationBeforeTypeAliasOrConstructor.after.kt");
+        }
+
         @TestMetadata("AnonymousInitializers.after.kt")
         public void testAnonymousInitializers() throws Exception {
             runTest("idea/testData/formatter/AnonymousInitializers.after.kt");
@@ -769,6 +774,11 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
         @TestMetadata("WhenLinesBeforeLbrace.after.kt")
         public void testWhenLinesBeforeLbrace() throws Exception {
             runTest("idea/testData/formatter/WhenLinesBeforeLbrace.after.kt");
+        }
+
+        @TestMetadata("WhenWithVariable.after.kt")
+        public void testWhenWithVariable() throws Exception {
+            runTest("idea/testData/formatter/WhenWithVariable.after.kt");
         }
 
         @TestMetadata("WhereClause.after.kt")

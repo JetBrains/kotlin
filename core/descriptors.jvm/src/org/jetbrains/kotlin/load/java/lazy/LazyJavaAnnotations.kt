@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.load.java.lazy
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationWithTarget
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.load.java.components.JavaAnnotationMapper
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotation
@@ -35,10 +34,6 @@ class LazyJavaAnnotations(
     override fun findAnnotation(fqName: FqName) =
             annotationOwner.findAnnotation(fqName)?.let(annotationDescriptors)
             ?: JavaAnnotationMapper.findMappedJavaAnnotation(fqName, annotationOwner, c)
-
-    override fun getUseSiteTargetedAnnotations() = emptyList<AnnotationWithTarget>()
-
-    override fun getAllAnnotations() = this.map { AnnotationWithTarget(it, null) }
 
     override fun iterator() =
             (annotationOwner.annotations.asSequence().map(annotationDescriptors)

@@ -166,7 +166,7 @@ private class FunctionClsStubBuilder(
         val annotationIds = c.components.annotationLoader.loadCallableAnnotations(
                 protoContainer, functionProto, AnnotatedCallableKind.FUNCTION
         )
-        createTargetedAnnotationStubs(annotationIds, modifierListStubImpl)
+        createAnnotationStubs(annotationIds, modifierListStubImpl)
     }
 
     override fun doCreateCallableStub(parent: StubElement<out PsiElement>): StubElement<out PsiElement> {
@@ -219,10 +219,17 @@ private class PropertyClsStubBuilder(
                 listOf(VISIBILITY, LATEINIT, EXTERNAL_PROPERTY) + constModifier + modalityModifier
         )
 
-        val annotationIds = c.components.annotationLoader.loadCallableAnnotations(
-                protoContainer, propertyProto, AnnotatedCallableKind.PROPERTY
-        )
-        createTargetedAnnotationStubs(annotationIds, modifierListStubImpl)
+        val propertyAnnotations =
+            c.components.annotationLoader.loadCallableAnnotations(protoContainer, propertyProto, AnnotatedCallableKind.PROPERTY)
+        val backingFieldAnnotations =
+            c.components.annotationLoader.loadPropertyBackingFieldAnnotations(protoContainer, propertyProto)
+        val delegateFieldAnnotations =
+            c.components.annotationLoader.loadPropertyDelegateFieldAnnotations(protoContainer, propertyProto)
+        val allAnnotations =
+            propertyAnnotations.map { ClassIdWithTarget(it, null) } +
+                    backingFieldAnnotations.map { ClassIdWithTarget(it, AnnotationUseSiteTarget.FIELD) } +
+                    delegateFieldAnnotations.map { ClassIdWithTarget(it, AnnotationUseSiteTarget.PROPERTY_DELEGATE_FIELD) }
+        createTargetedAnnotationStubs(allAnnotations, modifierListStubImpl)
     }
 
     override fun doCreateCallableStub(parent: StubElement<out PsiElement>): StubElement<out PsiElement> {
@@ -268,7 +275,7 @@ private class ConstructorClsStubBuilder(
         val annotationIds = c.components.annotationLoader.loadCallableAnnotations(
                 protoContainer, constructorProto, AnnotatedCallableKind.FUNCTION
         )
-        createTargetedAnnotationStubs(annotationIds, modifierListStubImpl)
+        createAnnotationStubs(annotationIds, modifierListStubImpl)
     }
 
     override fun doCreateCallableStub(parent: StubElement<out PsiElement>): StubElement<out PsiElement> {

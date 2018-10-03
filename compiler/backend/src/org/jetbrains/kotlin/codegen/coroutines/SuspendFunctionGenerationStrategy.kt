@@ -70,7 +70,8 @@ open class SuspendFunctionGenerationStrategy(
             shouldPreserveClassInitialization = constructorCallNormalizationMode.shouldPreserveClassInitialization,
             needDispatchReceiver = originalSuspendDescriptor.dispatchReceiverParameter != null,
             internalNameForDispatchReceiver = containingClassInternalNameOrNull(),
-            languageVersionSettings = languageVersionSettings
+            languageVersionSettings = languageVersionSettings,
+            sourceFile = declaration.containingFile.name
         )
     }
 

@@ -1,4 +1,4 @@
-// "Make variable immutable" "true"
+// "Change to val" "true"
 fun foo(p: Int) {
     <caret>val (v1, v2) = getPair()!!
     v1

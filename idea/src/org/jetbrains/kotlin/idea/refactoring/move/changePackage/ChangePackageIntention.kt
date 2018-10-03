@@ -72,13 +72,13 @@ class ChangePackageIntention: SelfTargetingOffsetIndependentIntention<KtPackageD
                 editor,
                 builder.buildInlineTemplate(),
                 object: TemplateEditingAdapter() {
-                    override fun beforeTemplateFinished(state: TemplateState?, template: Template?) {
+                    override fun beforeTemplateFinished(state: TemplateState, template: Template?) {
                         if (state == null) return
                         enteredName = state.getVariableValue(PACKAGE_NAME_VAR)!!.text
                         affectedRange = state.getSegmentRange(0)
                     }
 
-                    override fun templateFinished(template: Template?, brokenOff: Boolean) {
+                    override fun templateFinished(template: Template, brokenOff: Boolean) {
                         if (brokenOff || enteredName == null || affectedRange == null) return
 
                         // Restore original name and run refactoring

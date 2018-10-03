@@ -7,11 +7,16 @@
 
 package kotlin.script.experimental.api
 
+import java.io.Serializable
 import kotlin.reflect.KClass
 import kotlin.script.experimental.util.PropertiesCollection
 
 interface ScriptCompilationConfigurationKeys
 
+/**
+ * The container for script compilation configuration
+ * For usages see {@link KotlinScript} and actual code examples
+ */
 open class ScriptCompilationConfiguration(baseConfigurations: Iterable<ScriptCompilationConfiguration>, body: Builder.() -> Unit) :
     PropertiesCollection(Builder(baseConfigurations).apply(body).data) {
 
@@ -30,105 +35,183 @@ open class ScriptCompilationConfiguration(baseConfigurations: Iterable<ScriptCom
     object Default : ScriptCompilationConfiguration()
 }
 
-val ScriptCompilationConfigurationKeys.displayName by PropertiesCollection.key<String>("Kotlin script") // Name of the script type
+/**
+ * The script type display name
+ */
+val ScriptCompilationConfigurationKeys.displayName by PropertiesCollection.key<String>("Kotlin script")
 
-val ScriptCompilationConfigurationKeys.fileExtension by PropertiesCollection.key<String>("kts") // file extension
+/**
+ * The script filename extension
+ */
+val ScriptCompilationConfigurationKeys.fileExtension by PropertiesCollection.key<String>("kts")
 
+/**
+ * The superclass for target script class
+ */
 val ScriptCompilationConfigurationKeys.baseClass by PropertiesCollection.key<KotlinType>() // script base class
 
-val ScriptCompilationConfigurationKeys.scriptBodyTarget by PropertiesCollection.key<ScriptBodyTarget>(ScriptBodyTarget.Constructor)
-
+/**
+ * The list of classes that will be used as implicit receivers in the script body, as if the whole body is wrapped with "with" calls:
+ * <pre>
+ * {@code
+ *   with (receiver1) {
+ *     ...
+ *       with (receiverN) {
+ *         // script body
+ *       }
+ *   }
+ * }
+ * </pre>
+ *
+ * Note: the actual receivers values should be passed to the constructor of the generated script class
+ */
 val ScriptCompilationConfigurationKeys.implicitReceivers by PropertiesCollection.key<List<KotlinType>>() // in the order from outer to inner scope
 
+/**
+ * The map of names to the types
+ */
 val ScriptCompilationConfigurationKeys.providedProperties by PropertiesCollection.key<Map<String, KotlinType>>() // external variables
 
+/**
+ * The list of import expressions that will be implicitly applied to the script body, the syntax is the same as for the "import" statement
+ */
 val ScriptCompilationConfigurationKeys.defaultImports by PropertiesCollection.key<List<String>>()
 
+/**
+ * The list of script dependencies - platform specific
+ */
 val ScriptCompilationConfigurationKeys.dependencies by PropertiesCollection.key<List<ScriptDependency>>()
 
-val ScriptCompilationConfigurationKeys.copyAnnotationsFrom by PropertiesCollection.key<List<KotlinType>>()
-
+/**
+ * The list of compiler options that will be applied on script compilation, the syntax is the same as for CLI compiler
+ */
 val ScriptCompilationConfigurationKeys.compilerOptions by PropertiesCollection.key<List<String>>() // Q: CommonCompilerOptions instead?
 
+/**
+ * The callback that will be called on the script compilation before parsing the script
+ */
 val ScriptCompilationConfigurationKeys.refineConfigurationBeforeParsing by PropertiesCollection.key<RefineConfigurationBeforeParsingData>()
 
+/**
+ * The callback that will be called on the script compilation after parsing script file annotations
+ */
 val ScriptCompilationConfigurationKeys.refineConfigurationOnAnnotations by PropertiesCollection.key<RefineConfigurationOnAnnotationsData>()
 
-val ScriptCompilationConfigurationKeys.refineConfigurationOnSections by PropertiesCollection.key<RefineConfigurationOnSectionsData>()
-
+/**
+ * The list of script fragments that should be compiled intead of the whole text
+ * (for use primary with the refinement callbacks)
+ */
 val ScriptCompilationConfigurationKeys.sourceFragments by PropertiesCollection.key<List<ScriptSourceNamedFragment>>()
 
-// DSL:
-
+/**
+ * The sub-builder DSL for configuring refinement callbacks
+ */
 val ScriptCompilationConfiguration.Builder.refineConfiguration get() = RefineConfigurationBuilder()
 
 
 class RefineConfigurationBuilder : PropertiesCollection.Builder() {
 
+    /**
+     * The callback that will be called on the script compilation before parsing the script
+     * @param handler the callback that will be called
+     */
     fun beforeParsing(handler: RefineScriptCompilationConfigurationHandler) {
         set(ScriptCompilationConfiguration.refineConfigurationBeforeParsing, RefineConfigurationBeforeParsingData(handler))
     }
 
+    /**
+     * The callback that will be called on the script compilation after parsing script file annotations
+     * @param annotations the list of annotations to trigger the callback on
+     * @param handler the callback that will be called
+     */
     fun onAnnotations(annotations: List<KotlinType>, handler: RefineScriptCompilationConfigurationHandler) {
         set(ScriptCompilationConfiguration.refineConfigurationOnAnnotations, RefineConfigurationOnAnnotationsData(annotations, handler))
     }
 
+    /**
+     * The callback that will be called on the script compilation after parsing script file annotations
+     * @param annotations the list of annotations to trigger the callback on
+     * @param handler the callback that will be called
+     */
     fun onAnnotations(vararg annotations: KotlinType, handler: RefineScriptCompilationConfigurationHandler) {
         onAnnotations(annotations.asList(), handler)
     }
 
+    /**
+     * The callback that will be called on the script compilation after parsing script file annotations
+     * @param annotations the list of annotations to trigger the callback on
+     * @param handler the callback that will be called
+     */
     inline fun <reified T : Annotation> onAnnotations(noinline handler: RefineScriptCompilationConfigurationHandler) {
         onAnnotations(listOf(KotlinType(T::class)), handler)
     }
 
+    /**
+     * The callback that will be called on the script compilation after parsing script file annotations
+     * @param annotations the list of annotations to trigger the callback on
+     * @param handler the callback that will be called
+     */
     fun onAnnotations(vararg annotations: KClass<out Annotation>, handler: RefineScriptCompilationConfigurationHandler) {
         onAnnotations(annotations.map { KotlinType(it) }, handler)
     }
 
+    /**
+     * The callback that will be called on the script compilation after parsing script file annotations
+     * @param annotations the list of annotations to trigger the callback on
+     * @param handler the callback that will be called
+     */
     fun onAnnotations(annotations: Iterable<KClass<out Annotation>>, handler: RefineScriptCompilationConfigurationHandler) {
         onAnnotations(annotations.map { KotlinType(it) }, handler)
     }
-
-    fun onSections(sections: List<String>, handler: RefineScriptCompilationConfigurationHandler) {
-        set(ScriptCompilationConfiguration.refineConfigurationOnSections, RefineConfigurationOnSectionsData(sections, handler))
-    }
-
-    fun onSections(vararg sections: String, handler: RefineScriptCompilationConfigurationHandler) {
-        onSections(sections.asList(), handler)
-    }
 }
 
+/**
+ * The refinement callback function signature
+ */
 typealias RefineScriptCompilationConfigurationHandler =
             (ScriptConfigurationRefinementContext) -> ResultWithDiagnostics<ScriptCompilationConfiguration>
 
-// to make it "hasheable" for cashing
 class RefineConfigurationBeforeParsingData(
     val handler: RefineScriptCompilationConfigurationHandler
-)
+) : Serializable
 
 class RefineConfigurationOnAnnotationsData(
     val annotations: List<KotlinType>,
     val handler: RefineScriptCompilationConfigurationHandler
-)
-
-class RefineConfigurationOnSectionsData(
-    val sections: List<String>,
-    val handler: RefineScriptCompilationConfigurationHandler
-)
+) : Serializable
 
 
+/**
+ * The functional interface to the script compiler
+ */
 interface ScriptCompiler {
 
+    /**
+     * Compiles the [script] according to the [scriptCompilationConfiguration]
+     * @param script the interface to the script source code
+     * @param scriptCompilationConfiguration the script compilation configuration properties
+     * @return result wrapper, if successful - with compiled script
+     */
     suspend operator fun invoke(
-        script: ScriptSource,
+        script: SourceCode,
         scriptCompilationConfiguration: ScriptCompilationConfiguration
     ): ResultWithDiagnostics<CompiledScript<*>>
 }
 
-
+/**
+ * The interface to the compiled script
+ */
 interface CompiledScript<out ScriptBase : Any> {
 
+    /**
+     * The compilation configuration used for script compilation
+     */
     val compilationConfiguration: ScriptCompilationConfiguration
 
-    suspend fun instantiate(scriptEvaluationConfiguration: ScriptEvaluationConfiguration?): ResultWithDiagnostics<ScriptBase>
+    /**
+     * The function that loads compiled script class
+     * @param scriptEvaluationConfiguration the script evaluation configuration properties
+     * @return result wrapper, if successful - with loaded KClass
+     */
+    suspend fun getClass(scriptEvaluationConfiguration: ScriptEvaluationConfiguration?): ResultWithDiagnostics<KClass<*>>
 }

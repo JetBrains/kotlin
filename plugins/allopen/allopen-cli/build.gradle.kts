@@ -11,8 +11,9 @@ dependencies {
     compileOnly(project(":compiler:frontend"))
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
 
-    runtime(projectRuntimeJar(":kotlin-compiler"))
-    runtime(projectDist(":kotlin-stdlib"))
+    runtime(project(":kotlin-stdlib"))
+
+    testRuntimeOnly(projectRuntimeJar(":kotlin-compiler"))
 
     testCompile(project(":compiler:backend"))
     testCompile(project(":compiler:cli"))

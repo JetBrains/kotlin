@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.resolve.jvm.annotations
 
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.descriptors.annotations.Annotated
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.load.java.JvmAbi.JVM_FIELD_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.name.FqName
@@ -29,7 +31,7 @@ fun DeclarationDescriptor.findJvmOverloadsAnnotation(): AnnotationDescriptor? =
     annotations.findAnnotation(JVM_OVERLOADS_FQ_NAME)
 
 fun DeclarationDescriptor.findJvmFieldAnnotation(): AnnotationDescriptor? =
-    DescriptorUtils.getAnnotationByFqName(annotations, JVM_FIELD_ANNOTATION_FQ_NAME)
+    (this as? PropertyDescriptor)?.backingField?.annotations?.findAnnotation(JVM_FIELD_ANNOTATION_FQ_NAME)
 
 fun DeclarationDescriptor.hasJvmFieldAnnotation(): Boolean =
     findJvmFieldAnnotation() != null
@@ -40,17 +42,15 @@ fun DeclarationDescriptor.isCallableMemberWithJvmDefaultAnnotation(): Boolean =
 fun CallableMemberDescriptor.hasJvmDefaultAnnotation(): Boolean =
     DescriptorUtils.getDirectMember(this).annotations.hasAnnotation(JVM_DEFAULT_FQ_NAME)
 
-fun DeclarationDescriptor.findJvmSyntheticAnnotation(): AnnotationDescriptor? =
-    DescriptorUtils.getAnnotationByFqName(annotations, JVM_SYNTHETIC_ANNOTATION_FQ_NAME)
+private fun Annotated.findJvmSyntheticAnnotation(): AnnotationDescriptor? =
+    annotations.findAnnotation(JVM_SYNTHETIC_ANNOTATION_FQ_NAME)
+        ?: (this as? PropertyDescriptor)?.backingField?.annotations?.findAnnotation(JVM_SYNTHETIC_ANNOTATION_FQ_NAME)
 
 fun DeclarationDescriptor.hasJvmSyntheticAnnotation(): Boolean =
     findJvmSyntheticAnnotation() != null
 
 fun DeclarationDescriptor.findStrictfpAnnotation(): AnnotationDescriptor? =
-    DescriptorUtils.getAnnotationByFqName(annotations, STRICTFP_ANNOTATION_FQ_NAME)
-
-fun DeclarationDescriptor.findVolatileAnnotation(): AnnotationDescriptor? =
-    DescriptorUtils.getAnnotationByFqName(annotations, VOLATILE_ANNOTATION_FQ_NAME)
+    annotations.findAnnotation(STRICTFP_ANNOTATION_FQ_NAME)
 
 fun DeclarationDescriptor.findSynchronizedAnnotation(): AnnotationDescriptor? =
-    DescriptorUtils.getAnnotationByFqName(annotations, SYNCHRONIZED_ANNOTATION_FQ_NAME)
+    annotations.findAnnotation(SYNCHRONIZED_ANNOTATION_FQ_NAME)

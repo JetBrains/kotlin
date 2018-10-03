@@ -24,6 +24,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiWhiteSpace;
 import com.maddyhome.idea.copyright.CopyrightProfile;
 import com.maddyhome.idea.copyright.psi.UpdatePsiFileCopyright;
+import org.jetbrains.kotlin.psi.KtImportList;
 
 class UpdateKotlinCopyright extends UpdatePsiFileCopyright {
 
@@ -37,7 +38,7 @@ class UpdateKotlinCopyright extends UpdatePsiFileCopyright {
         PsiElement last = first;
         PsiElement next = first;
         while (next != null) {
-            if (next instanceof PsiComment || next instanceof PsiWhiteSpace) {
+            if (next instanceof PsiComment || next instanceof PsiWhiteSpace || next.getText().isEmpty()) {
                 next = getNextSibling(next);
             }
             else {

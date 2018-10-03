@@ -5,14 +5,15 @@
 
 package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
-import org.jetbrains.kotlin.backend.common.utils.isFunctionTypeOrSubtype
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.backend.js.utils.JsGenerationContext
 import org.jetbrains.kotlin.ir.backend.js.utils.Namer
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.types.isUnit
+import org.jetbrains.kotlin.ir.util.isFunctionTypeOrSubtype
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
@@ -20,50 +21,8 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsExpression, JsGenerationContext> {
 
     override fun visitVararg(expression: IrVararg, context: JsGenerationContext): JsExpression {
-        // TODO: perform the dark magic below in the separated lowering
-        if (expression.elements.size == 1) {
-            val element = expression.elements[0]
-            if (element is IrSpreadElement) {
-                // special case, invoke slice()
-                val expr = element.expression.accept(this, context)
-                return JsInvocation(JsNameRef(Namer.SLICE_FUNCTION, expr))
-            }
-        }
-
-        var arrayLiteralElements = mutableListOf<JsExpression>()
-        val concatArguments = mutableListOf<JsExpression>()
-        var qualifier: JsExpression? = null
-
-        expression.elements.forEach {
-            if (it is IrSpreadElement) {
-                val expr = it.expression.accept(this, context)
-                if (qualifier == null) {
-                    if (arrayLiteralElements.isEmpty()) {
-                        qualifier = JsNameRef(Namer.CONCAT_FUNCTION, expr)
-                    } else {
-                        val dispatch = JsArrayLiteral(arrayLiteralElements)
-                        arrayLiteralElements = mutableListOf()
-                        qualifier = JsNameRef(Namer.CONCAT_FUNCTION, dispatch)
-                        concatArguments.add(expr)
-                    }
-                } else {
-                    if (arrayLiteralElements.isNotEmpty()) {
-                        concatArguments.add(JsArrayLiteral(arrayLiteralElements))
-                        arrayLiteralElements = mutableListOf()
-                    }
-                    concatArguments.add(expr)
-                }
-            } else {
-                arrayLiteralElements.add(it.accept(this, context))
-            }
-        }
-
-        return qualifier?.let {
-            if (arrayLiteralElements.isNotEmpty()) {
-                concatArguments.add(JsArrayLiteral(arrayLiteralElements))
-            }
-            return JsInvocation(it, concatArguments)
-        } ?: JsArrayLiteral(arrayLiteralElements)
+        assert(expression.elements.none { it is IrSpreadElement })
+        return JsArrayLiteral(expression.elements.map { it.accept(this, context) })
     }
 
     override fun visitExpressionBody(body: IrExpressionBody, context: JsGenerationContext): JsExpression =
@@ -158,8 +117,9 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
         val jsExtensionReceiver = expression.extensionReceiver?.accept(this, context)
         val arguments = translateCallArguments(expression, context)
 
-        if (dispatchReceiver != null &&
-            dispatchReceiver.type.isFunctionTypeOrSubtype() && symbol.descriptor.name == OperatorNameConventions.INVOKE && !symbol.descriptor.isSuspend
+        val isSuspend = (symbol.owner as? IrSimpleFunction)?.isSuspend ?: false
+
+        if (dispatchReceiver != null && symbol.owner.name == OperatorNameConventions.INVOKE && !isSuspend && dispatchReceiver.type.isFunctionTypeOrSubtype()
         ) {
             return JsInvocation(jsDispatchReceiver!!, arguments)
         }

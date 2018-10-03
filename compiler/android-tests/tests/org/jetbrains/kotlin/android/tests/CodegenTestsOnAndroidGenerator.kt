@@ -47,7 +47,7 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
     }
 
     private fun prepareAndroidModule() {
-        println("Copying kotlin-runtime.jar and kotlin-reflect.jar in android module...")
+        println("Copying kotlin-stdlib.jar and kotlin-reflect.jar in android module...")
         copyKotlinRuntimeJars()
 
         println("Check 'libs' folder in tested android module...")
@@ -60,7 +60,7 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
     private fun copyKotlinRuntimeJars() {
         FileUtil.copy(
             ForTestCompileRuntime.runtimeJarForTests(),
-            File(pathManager.libsFolderInAndroidTmpFolder + "/kotlin-runtime.jar")
+            File(pathManager.libsFolderInAndroidTmpFolder + "/kotlin-stdlib.jar")
         )
         FileUtil.copy(
             ForTestCompileRuntime.reflectJarForTests(),

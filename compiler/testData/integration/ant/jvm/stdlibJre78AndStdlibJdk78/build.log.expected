@@ -3,8 +3,8 @@ Buildfile: [TestData]/build.xml
 
 build:
   [kotlinc] Compiling [[TestData]/main.kt] => [[Temp]/test.jar]
-  [kotlinc] [CompilerLib]/kotlin-stdlib-jre7.jar: warning: kotlin-stdlib-jre7 is deprecated. Please use kotlin-stdlib-jdk7 instead
-  [kotlinc] [CompilerLib]/kotlin-stdlib-jre8.jar: warning: kotlin-stdlib-jre8 is deprecated. Please use kotlin-stdlib-jdk8 instead
+  [kotlinc] [KotlinProjectHome]/dist/kotlin-stdlib-jre7.jar: warning: kotlin-stdlib-jre7 is deprecated. Please use kotlin-stdlib-jdk7 instead
+  [kotlinc] [KotlinProjectHome]/dist/kotlin-stdlib-jre8.jar: warning: kotlin-stdlib-jre8 is deprecated. Please use kotlin-stdlib-jdk8 instead
 
 BUILD SUCCESSFUL
 Total time: [time]

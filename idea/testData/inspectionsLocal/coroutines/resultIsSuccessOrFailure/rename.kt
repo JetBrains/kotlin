@@ -1,8 +1,9 @@
 // FIX: Rename to 'incorrectCatching'
 package kotlin
 
-class SuccessOrFailure<T>(val value: T?) {
+class Result<T>(val value: T?) {
     fun getOrThrow(): T = value ?: throw AssertionError("")
 }
 
-fun <caret>incorrect() = SuccessOrFailure("123")
+@Suppress("RESULT_CLASS_IN_RETURN_TYPE")
+fun <caret>incorrect() = Result("123")

@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 // IGNORE_BACKEND: JS_IR
 fun box(): String {
     val a: Long = 2147483647 + 1

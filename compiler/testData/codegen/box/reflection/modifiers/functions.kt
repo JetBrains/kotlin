@@ -60,6 +60,7 @@ fun box(): String {
     assertFalse(::inlineProperty.getter.isExternal)
     assertTrue(::inlineProperty.getter.isInline)
     assertTrue(::inlineProperty.setter.isInline)
+    assertFalse(::inlineProperty.isSuspend)
 
     return "OK"
 }

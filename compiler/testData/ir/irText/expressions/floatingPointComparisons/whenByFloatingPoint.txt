@@ -75,9 +75,10 @@ FILE fqName:<root> fileName:/whenByFloatingPoint.kt
             GET_VAR 'value-parameter x: Any' type=kotlin.Any origin=null
           WHEN type=kotlin.Int origin=WHEN
             BRANCH
-              if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Double
-                typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Double modality:FINAL visibility:public flags: superTypes:[kotlin.Number; kotlin.Comparable<kotlin.Double>; java.io.Serializable]
-                GET_VAR 'tmp0_subject: Any' type=kotlin.Any origin=null
+              if: CALL 'NOT(Boolean): Boolean' type=kotlin.Boolean origin=EXCL
+                arg0: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Double
+                  typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Double modality:FINAL visibility:public flags: superTypes:[kotlin.Number; kotlin.Comparable<kotlin.Double>; java.io.Serializable]
+                  GET_VAR 'tmp0_subject: Any' type=kotlin.Any origin=null
               then: CONST Int type=kotlin.Int value=-1
             BRANCH
               if: CALL 'ieee754equals(Double?, Double?): Boolean' type=kotlin.Boolean origin=EQEQ

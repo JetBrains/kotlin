@@ -1,5 +1,5 @@
 // IGNORE_BACKEND: JS_IR
-// EXPECTED_REACHABLE_NODES: 1461
+// EXPECTED_REACHABLE_NODES: 1652
 // CHECK_NOT_CALLED_IN_SCOPE: function=component1 scope=test1
 // CHECK_NOT_CALLED_IN_SCOPE: function=component1 scope=test2
 // CHECK_NOT_CALLED_IN_SCOPE: function=component1 scope=test3

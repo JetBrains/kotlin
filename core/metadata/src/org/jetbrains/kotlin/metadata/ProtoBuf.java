@@ -2202,6 +2202,35 @@ public final class ProtoBuf {
         int getArrayElementCount();
 
         /**
+         * <code>optional int32 array_dimension_count = 11 [default = 0];</code>
+         *
+         * <pre>
+         * If type = CLASS, the number of dimensions of the array of the class specified in class_id.
+         * E.g. if class_id = kotlin/String, this annotation argument value denotes:
+         * - String::class, if array_dimension_count = 0
+         * - Array&lt;String&gt;::class, if array_dimension_count = 1
+         * - Array&lt;Array&lt;String&gt;&gt;::class, if array_dimension_count = 2
+         * - etc.
+         * Other forms of array class literals are not supported by this format, see KT-26568
+         * </pre>
+         */
+        boolean hasArrayDimensionCount();
+        /**
+         * <code>optional int32 array_dimension_count = 11 [default = 0];</code>
+         *
+         * <pre>
+         * If type = CLASS, the number of dimensions of the array of the class specified in class_id.
+         * E.g. if class_id = kotlin/String, this annotation argument value denotes:
+         * - String::class, if array_dimension_count = 0
+         * - Array&lt;String&gt;::class, if array_dimension_count = 1
+         * - Array&lt;Array&lt;String&gt;&gt;::class, if array_dimension_count = 2
+         * - etc.
+         * Other forms of array class literals are not supported by this format, see KT-26568
+         * </pre>
+         */
+        int getArrayDimensionCount();
+
+        /**
          * <code>optional int32 flags = 10 [default = 0];</code>
          *
          * <pre>
@@ -2332,8 +2361,13 @@ public final class ProtoBuf {
                   break;
                 }
                 case 80: {
-                  bitField0_ |= 0x00000100;
+                  bitField0_ |= 0x00000200;
                   flags_ = input.readInt32();
+                  break;
+                }
+                case 88: {
+                  bitField0_ |= 0x00000100;
+                  arrayDimensionCount_ = input.readInt32();
                   break;
                 }
               }
@@ -2703,6 +2737,41 @@ public final class ProtoBuf {
           return arrayElement_.get(index);
         }
 
+        public static final int ARRAY_DIMENSION_COUNT_FIELD_NUMBER = 11;
+        private int arrayDimensionCount_;
+        /**
+         * <code>optional int32 array_dimension_count = 11 [default = 0];</code>
+         *
+         * <pre>
+         * If type = CLASS, the number of dimensions of the array of the class specified in class_id.
+         * E.g. if class_id = kotlin/String, this annotation argument value denotes:
+         * - String::class, if array_dimension_count = 0
+         * - Array&lt;String&gt;::class, if array_dimension_count = 1
+         * - Array&lt;Array&lt;String&gt;&gt;::class, if array_dimension_count = 2
+         * - etc.
+         * Other forms of array class literals are not supported by this format, see KT-26568
+         * </pre>
+         */
+        public boolean hasArrayDimensionCount() {
+          return ((bitField0_ & 0x00000100) == 0x00000100);
+        }
+        /**
+         * <code>optional int32 array_dimension_count = 11 [default = 0];</code>
+         *
+         * <pre>
+         * If type = CLASS, the number of dimensions of the array of the class specified in class_id.
+         * E.g. if class_id = kotlin/String, this annotation argument value denotes:
+         * - String::class, if array_dimension_count = 0
+         * - Array&lt;String&gt;::class, if array_dimension_count = 1
+         * - Array&lt;Array&lt;String&gt;&gt;::class, if array_dimension_count = 2
+         * - etc.
+         * Other forms of array class literals are not supported by this format, see KT-26568
+         * </pre>
+         */
+        public int getArrayDimensionCount() {
+          return arrayDimensionCount_;
+        }
+
         public static final int FLAGS_FIELD_NUMBER = 10;
         private int flags_;
         /**
@@ -2713,7 +2782,7 @@ public final class ProtoBuf {
          * </pre>
          */
         public boolean hasFlags() {
-          return ((bitField0_ & 0x00000100) == 0x00000100);
+          return ((bitField0_ & 0x00000200) == 0x00000200);
         }
         /**
          * <code>optional int32 flags = 10 [default = 0];</code>
@@ -2736,6 +2805,7 @@ public final class ProtoBuf {
           enumValueId_ = 0;
           annotation_ = org.jetbrains.kotlin.metadata.ProtoBuf.Annotation.getDefaultInstance();
           arrayElement_ = java.util.Collections.emptyList();
+          arrayDimensionCount_ = 0;
           flags_ = 0;
         }
         private byte memoizedIsInitialized = -1;
@@ -2790,8 +2860,11 @@ public final class ProtoBuf {
           for (int i = 0; i < arrayElement_.size(); i++) {
             output.writeMessage(9, arrayElement_.get(i));
           }
-          if (((bitField0_ & 0x00000100) == 0x00000100)) {
+          if (((bitField0_ & 0x00000200) == 0x00000200)) {
             output.writeInt32(10, flags_);
+          }
+          if (((bitField0_ & 0x00000100) == 0x00000100)) {
+            output.writeInt32(11, arrayDimensionCount_);
           }
           output.writeRawBytes(unknownFields);
         }
@@ -2838,9 +2911,13 @@ public final class ProtoBuf {
             size += org.jetbrains.kotlin.protobuf.CodedOutputStream
               .computeMessageSize(9, arrayElement_.get(i));
           }
-          if (((bitField0_ & 0x00000100) == 0x00000100)) {
+          if (((bitField0_ & 0x00000200) == 0x00000200)) {
             size += org.jetbrains.kotlin.protobuf.CodedOutputStream
               .computeInt32Size(10, flags_);
+          }
+          if (((bitField0_ & 0x00000100) == 0x00000100)) {
+            size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+              .computeInt32Size(11, arrayDimensionCount_);
           }
           size += unknownFields.size();
           memoizedSerializedSize = size;
@@ -2954,8 +3031,10 @@ public final class ProtoBuf {
             bitField0_ = (bitField0_ & ~0x00000080);
             arrayElement_ = java.util.Collections.emptyList();
             bitField0_ = (bitField0_ & ~0x00000100);
-            flags_ = 0;
+            arrayDimensionCount_ = 0;
             bitField0_ = (bitField0_ & ~0x00000200);
+            flags_ = 0;
+            bitField0_ = (bitField0_ & ~0x00000400);
             return this;
           }
 
@@ -3019,6 +3098,10 @@ public final class ProtoBuf {
             if (((from_bitField0_ & 0x00000200) == 0x00000200)) {
               to_bitField0_ |= 0x00000100;
             }
+            result.arrayDimensionCount_ = arrayDimensionCount_;
+            if (((from_bitField0_ & 0x00000400) == 0x00000400)) {
+              to_bitField0_ |= 0x00000200;
+            }
             result.flags_ = flags_;
             result.bitField0_ = to_bitField0_;
             return result;
@@ -3059,6 +3142,9 @@ public final class ProtoBuf {
                 arrayElement_.addAll(other.arrayElement_);
               }
               
+            }
+            if (other.hasArrayDimensionCount()) {
+              setArrayDimensionCount(other.getArrayDimensionCount());
             }
             if (other.hasFlags()) {
               setFlags(other.getFlags());
@@ -3555,6 +3641,78 @@ public final class ProtoBuf {
             return this;
           }
 
+          private int arrayDimensionCount_ ;
+          /**
+           * <code>optional int32 array_dimension_count = 11 [default = 0];</code>
+           *
+           * <pre>
+           * If type = CLASS, the number of dimensions of the array of the class specified in class_id.
+           * E.g. if class_id = kotlin/String, this annotation argument value denotes:
+           * - String::class, if array_dimension_count = 0
+           * - Array&lt;String&gt;::class, if array_dimension_count = 1
+           * - Array&lt;Array&lt;String&gt;&gt;::class, if array_dimension_count = 2
+           * - etc.
+           * Other forms of array class literals are not supported by this format, see KT-26568
+           * </pre>
+           */
+          public boolean hasArrayDimensionCount() {
+            return ((bitField0_ & 0x00000200) == 0x00000200);
+          }
+          /**
+           * <code>optional int32 array_dimension_count = 11 [default = 0];</code>
+           *
+           * <pre>
+           * If type = CLASS, the number of dimensions of the array of the class specified in class_id.
+           * E.g. if class_id = kotlin/String, this annotation argument value denotes:
+           * - String::class, if array_dimension_count = 0
+           * - Array&lt;String&gt;::class, if array_dimension_count = 1
+           * - Array&lt;Array&lt;String&gt;&gt;::class, if array_dimension_count = 2
+           * - etc.
+           * Other forms of array class literals are not supported by this format, see KT-26568
+           * </pre>
+           */
+          public int getArrayDimensionCount() {
+            return arrayDimensionCount_;
+          }
+          /**
+           * <code>optional int32 array_dimension_count = 11 [default = 0];</code>
+           *
+           * <pre>
+           * If type = CLASS, the number of dimensions of the array of the class specified in class_id.
+           * E.g. if class_id = kotlin/String, this annotation argument value denotes:
+           * - String::class, if array_dimension_count = 0
+           * - Array&lt;String&gt;::class, if array_dimension_count = 1
+           * - Array&lt;Array&lt;String&gt;&gt;::class, if array_dimension_count = 2
+           * - etc.
+           * Other forms of array class literals are not supported by this format, see KT-26568
+           * </pre>
+           */
+          public Builder setArrayDimensionCount(int value) {
+            bitField0_ |= 0x00000200;
+            arrayDimensionCount_ = value;
+            
+            return this;
+          }
+          /**
+           * <code>optional int32 array_dimension_count = 11 [default = 0];</code>
+           *
+           * <pre>
+           * If type = CLASS, the number of dimensions of the array of the class specified in class_id.
+           * E.g. if class_id = kotlin/String, this annotation argument value denotes:
+           * - String::class, if array_dimension_count = 0
+           * - Array&lt;String&gt;::class, if array_dimension_count = 1
+           * - Array&lt;Array&lt;String&gt;&gt;::class, if array_dimension_count = 2
+           * - etc.
+           * Other forms of array class literals are not supported by this format, see KT-26568
+           * </pre>
+           */
+          public Builder clearArrayDimensionCount() {
+            bitField0_ = (bitField0_ & ~0x00000200);
+            arrayDimensionCount_ = 0;
+            
+            return this;
+          }
+
           private int flags_ ;
           /**
            * <code>optional int32 flags = 10 [default = 0];</code>
@@ -3564,7 +3722,7 @@ public final class ProtoBuf {
            * </pre>
            */
           public boolean hasFlags() {
-            return ((bitField0_ & 0x00000200) == 0x00000200);
+            return ((bitField0_ & 0x00000400) == 0x00000400);
           }
           /**
            * <code>optional int32 flags = 10 [default = 0];</code>
@@ -3584,7 +3742,7 @@ public final class ProtoBuf {
            * </pre>
            */
           public Builder setFlags(int value) {
-            bitField0_ |= 0x00000200;
+            bitField0_ |= 0x00000400;
             flags_ = value;
             
             return this;
@@ -3597,7 +3755,7 @@ public final class ProtoBuf {
            * </pre>
            */
           public Builder clearFlags() {
-            bitField0_ = (bitField0_ & ~0x00000200);
+            bitField0_ = (bitField0_ & ~0x00000400);
             flags_ = 0;
             
             return this;

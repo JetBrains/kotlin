@@ -1,5 +1,5 @@
 // IGNORE_BACKEND: JS_IR
-// EXPECTED_REACHABLE_NODES: 1147
+// EXPECTED_REACHABLE_NODES: 1304
 interface I {
     fun foo(x: String = "default"): String = "I.foo($x)"
 }

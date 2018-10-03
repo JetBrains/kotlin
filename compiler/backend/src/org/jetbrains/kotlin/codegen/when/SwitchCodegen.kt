@@ -91,6 +91,7 @@ abstract class SwitchCodegen(
         v.mark(endLabel)
 
         subjectVariableDescriptor?.let {
+            codegen.frameMap.leave(it)
             v.visitLocalVariable(
                 it.name.asString(), subjectType.descriptor, null,
                 beginLabel, endLabel, subjectLocal

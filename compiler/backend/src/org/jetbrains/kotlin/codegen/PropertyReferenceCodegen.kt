@@ -72,15 +72,17 @@ class PropertyReferenceCodegen(
     private val wrapperMethod = getWrapperMethodForPropertyReference(target, getFunction.valueParameters.size)
 
     private val closure = bindingContext.get(CodegenBinding.CLOSURE, classDescriptor)!!.apply {
-        assert((captureReceiverType != null) == (receiverType != null)) {
+        assert((capturedReceiverFromOuterContext != null) == (receiverType != null)) {
             "Bound property reference can only be generated with the type of the receiver. " +
-                    "Captured type = $captureReceiverType, actual type = $receiverType"
+            "Captured type = $capturedReceiverFromOuterContext, actual type = $receiverType"
         }
     }
 
-    private val constructorArgs = ClosureCodegen.calculateConstructorParameters(typeMapper, closure, asmType).apply {
-        assert(size <= 1) { "Bound property reference should capture only one value: $this" }
-    }
+    private val constructorArgs =
+        ClosureCodegen.calculateConstructorParameters(typeMapper, state.languageVersionSettings, closure, asmType).apply {
+            assert(size <= 1) { "Bound property reference should capture only one value: $this" }
+        }
+
     private val constructor = method("<init>", Type.VOID_TYPE, *constructorArgs.map { it.fieldType }.toTypedArray())
 
     override fun generateDeclaration() {
@@ -102,7 +104,7 @@ class PropertyReferenceCodegen(
         if (JvmCodegenUtil.isConst(closure)) {
             generateConstInstance(asmType, wrapperMethod.returnType)
         } else {
-            AsmUtil.genClosureFields(closure, v, typeMapper)
+            AsmUtil.genClosureFields(closure, v, typeMapper, state.languageVersionSettings)
         }
 
         generateConstructor()

@@ -125,8 +125,8 @@ abstract class SimpleType : UnwrappedType() {
 
     override fun toString(): String {
         return buildString {
-            for ((annotation, target) in annotations.getAllAnnotations()) {
-                append("[", DescriptorRenderer.DEBUG_TEXT.renderAnnotation(annotation, target), "] ")
+            for (annotation in annotations) {
+                append("[", DescriptorRenderer.DEBUG_TEXT.renderAnnotation(annotation), "] ")
             }
 
             append(constructor)

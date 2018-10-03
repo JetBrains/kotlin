@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="Encoding" useUTFGuessing="true" native2AsciiForPropertiesFiles="false">
+  <component name="Encoding">
     <file url="file://$PROJECT_DIR$/libraries" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/libraries/examples/browser-example" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/libraries/examples/browser-example-with-library" charset="UTF-8" />
@@ -14,6 +14,7 @@
     <file url="file://$PROJECT_DIR$/libraries/tools/kotlin-maven-plugin" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/libraries/tools/kotlin-maven-plugin-test" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/libraries/tools/kotlin-maven-sam-with-receiver" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/libraries/tools/kotlin-maven-serialization" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/libraries/tools/kotlin-osgi-bundle" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/libraries/tools/maven-archetypes" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/libraries/tools/maven-archetypes/kotlin-archetype-js" charset="UTF-8" />

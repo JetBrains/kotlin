@@ -20,10 +20,7 @@ import com.intellij.codeInsight.ContainerProvider
 import com.intellij.codeInsight.ExternalAnnotationsManager
 import com.intellij.codeInsight.InferredAnnotationsManager
 import com.intellij.codeInsight.runner.JavaMainMethodProvider
-import com.intellij.core.CoreApplicationEnvironment
-import com.intellij.core.CoreJavaFileManager
-import com.intellij.core.JavaCoreApplicationEnvironment
-import com.intellij.core.JavaCoreProjectEnvironment
+import com.intellij.core.*
 import com.intellij.ide.highlighter.JavaFileType
 import com.intellij.ide.plugins.PluginManagerCore
 import com.intellij.lang.MetaLanguage
@@ -36,6 +33,7 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.extensions.ExtensionsArea
 import com.intellij.openapi.fileTypes.FileTypeExtensionPoint
+import com.intellij.openapi.fileTypes.FileTypeRegistry
 import com.intellij.openapi.fileTypes.PlainTextFileType
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
@@ -220,9 +218,6 @@ class KotlinCoreEnvironment private constructor(
             extension.updateConfiguration(configuration)
         }
 
-        sourceFiles += createKtFiles(project)
-        sourceFiles.sortBy { it.virtualFile.path }
-
         // If not disabled explicitly, we should always support at least the standard script definition
         if (!configuration.getBoolean(JVMConfigurationKeys.DISABLE_STANDARD_SCRIPT_DEFINITION) &&
             StandardScriptDefinition !in configuration.getList(JVMConfigurationKeys.SCRIPT_DEFINITIONS)
@@ -235,6 +230,20 @@ class KotlinCoreEnvironment private constructor(
             scriptDefinitionProvider.setScriptDefinitionsSources(configuration.getList(JVMConfigurationKeys.SCRIPT_DEFINITIONS_SOURCES))
             scriptDefinitionProvider.setScriptDefinitions(configuration.getList(JVMConfigurationKeys.SCRIPT_DEFINITIONS))
 
+            // Register new file extensions
+            val fileTypeRegistry = FileTypeRegistry.getInstance() as CoreFileTypeRegistry
+
+            scriptDefinitionProvider.getKnownFilenameExtensions().filter {
+                fileTypeRegistry.getFileTypeByExtension(it) != KotlinFileType.INSTANCE
+            }.forEach {
+                fileTypeRegistry.registerFileType(KotlinFileType.INSTANCE, it)
+            }
+        }
+
+        sourceFiles += createKtFiles(project)
+        sourceFiles.sortBy { it.virtualFile.path }
+
+        if (scriptDefinitionProvider != null) {
             ScriptDependenciesProvider.getInstance(project).let { importsProvider ->
                 configuration.addJvmClasspathRoots(
                     sourceFiles.mapNotNull(importsProvider::getScriptDependencies)

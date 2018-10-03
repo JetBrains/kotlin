@@ -76,7 +76,10 @@ class AnnotationSplitter(
                 add(PROPERTY_SETTER)
             }
             if (hasBackingField) add(FIELD)
-            if (isVar) add(PROPERTY_SETTER)
+            if (isVar) {
+                add(PROPERTY_SETTER)
+                add(SETTER_PARAMETER)
+            }
             if (hasDelegate) add(PROPERTY_DELEGATE_FIELD)
         }
     }
@@ -84,71 +87,64 @@ class AnnotationSplitter(
     class PropertyWrapper @JvmOverloads constructor(val declaration: KtDeclaration, var descriptor: PropertyDescriptor? = null)
 
     private val splitAnnotations = storageManager.createLazyValue {
-        val map = hashMapOf<AnnotationUseSiteTarget, MutableList<AnnotationWithTarget>>()
-        val other = arrayListOf<AnnotationWithTarget>()
+        val map = hashMapOf<AnnotationUseSiteTarget, MutableList<AnnotationDescriptor>>()
+        val other = arrayListOf<AnnotationDescriptor>()
         val applicableTargets = applicableTargetsLazy()
         val applicableTargetsWithoutUseSiteTarget = applicableTargets.intersect(TARGET_PRIORITIES)
 
-        outer@ for (annotationWithTarget in allAnnotations.getAllAnnotations()) {
-            val useSiteTarget = annotationWithTarget.target
-            if (useSiteTarget != null) {
-                if (useSiteTarget in applicableTargets)
-                    map.getOrPut(useSiteTarget, { arrayListOf() }).add(annotationWithTarget)
-                else
-                    other.add(annotationWithTarget)
-
-                continue@outer
-            }
-
+        outer@ for (annotation in allAnnotations) {
             for (target in TARGET_PRIORITIES) {
                 if (target !in applicableTargetsWithoutUseSiteTarget) continue
 
                 val declarationSiteTargetForCurrentTarget = KotlinTarget.USE_SITE_MAPPING[target] ?: continue
-                val applicableTargetsForAnnotation = AnnotationChecker.applicableTargetSet(annotationWithTarget.annotation)
+                val applicableTargetsForAnnotation = AnnotationChecker.applicableTargetSet(annotation)
 
                 if (declarationSiteTargetForCurrentTarget in applicableTargetsForAnnotation) {
-                    map.getOrPut(target, { arrayListOf() }).add(annotationWithTarget)
+                    map.getOrPut(target) { arrayListOf() }.add(annotation)
                     continue@outer
                 }
             }
 
-            other.add(annotationWithTarget)
+            other.add(annotation)
         }
-        map to AnnotationsImpl.create(other)
+
+        for ((annotation, target) in @Suppress("DEPRECATION") allAnnotations.getUseSiteTargetedAnnotations()) {
+            if (target in applicableTargets) {
+                map.getOrPut(target) { arrayListOf() }.add(annotation)
+            }
+        }
+
+        map to Annotations.create(other)
     }
 
     fun getOtherAnnotations(): Annotations = LazySplitAnnotations(storageManager, null)
 
     fun getAnnotationsForTarget(target: AnnotationUseSiteTarget): Annotations = LazySplitAnnotations(storageManager, target)
 
-    fun getAnnotationsForTargets(vararg targets: AnnotationUseSiteTarget): Annotations {
-        return CompositeAnnotations(targets.map { getAnnotationsForTarget(it) })
-    }
-
     private inner class LazySplitAnnotations(
         storageManager: StorageManager,
         val target: AnnotationUseSiteTarget?
     ) : Annotations, LazyEntity {
         private val annotations by storageManager.createLazyValue {
-            val splitAnnotations = this@AnnotationSplitter.splitAnnotations()
+            val (targeted, other) = this@AnnotationSplitter.splitAnnotations()
 
-            if (target != null)
-                AnnotationsImpl.create(splitAnnotations.first[target] ?: emptyList())
-            else
-                splitAnnotations.second
+            if (target != null) {
+                targeted[target]?.let((Annotations)::create) ?: Annotations.EMPTY
+            } else {
+                other
+            }
         }
 
         override fun forceResolveAllContents() {
-            getAllAnnotations()
+            for (annotation in this) {
+                // TODO: probably we should do ForceResolveUtil.forceResolveAllContents(annotation) here
+            }
         }
 
         override fun isEmpty() = annotations.isEmpty()
         override fun hasAnnotation(fqName: FqName) = annotations.hasAnnotation(fqName)
         override fun findAnnotation(fqName: FqName) = annotations.findAnnotation(fqName)
-        override fun getUseSiteTargetedAnnotations() = annotations.getUseSiteTargetedAnnotations()
-        override fun getAllAnnotations() = annotations.getAllAnnotations()
         override fun iterator() = annotations.iterator()
         override fun toString() = annotations.toString()
     }
-
 }

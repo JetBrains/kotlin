@@ -8,7 +8,7 @@ public external fun foo(): SomeIC
 public external fun foo(/*0*/ c: SomeIC): SomeIC
 public external fun foo(/*0*/ a: kotlin.Int, /*1*/ c: SomeIC): SomeIC
 public external fun foo(/*0*/ a: kotlin.Int, /*1*/ vararg args: SomeIC /*kotlin.Array<out SomeIC>*/): kotlin.Unit
-public external fun foo(/*0*/ a: kotlin.Int, /*1*/ ui: kotlin.UInt, /*2*/ vararg args: kotlin.UInt /*kotlin.Array<out kotlin.UInt>*/): kotlin.Unit
+public external fun foo(/*0*/ a: kotlin.Int, /*1*/ ui: kotlin.UInt, /*2*/ vararg args: kotlin.UInt /*kotlin.UIntArray*/): kotlin.Unit
 
 public final external class CC {
     public constructor CC(/*0*/ a: SomeIC, /*1*/ b: SomeIC, /*2*/ c: SomeIC)

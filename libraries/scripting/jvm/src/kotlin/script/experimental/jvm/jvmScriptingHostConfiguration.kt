@@ -25,7 +25,7 @@ val JvmScriptingHostConfigurationKeys.javaHome by PropertiesCollection.key<File>
 val ScriptingHostConfigurationKeys.jvm
     get() = JvmScriptingHostConfigurationBuilder()
 
-val defaultJvmScriptingEnvironment = ScriptingHostConfiguration {
+val defaultJvmScriptingHostConfiguration = ScriptingHostConfiguration {
     getScriptingClass(JvmGetScriptingClass())
 }
 

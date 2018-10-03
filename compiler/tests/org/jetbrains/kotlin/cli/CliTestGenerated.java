@@ -66,6 +66,11 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/jvm/apiVersionLessThanLanguageUsingArgfile.args");
         }
 
+        @TestMetadata("argfileWithEmptyArgument.args")
+        public void testArgfileWithEmptyArgument() throws Exception {
+            runTest("compiler/testData/cli/jvm/argfileWithEmptyArgument.args");
+        }
+
         @TestMetadata("argfileWithEscaping.args")
         public void testArgfileWithEscaping() throws Exception {
             runTest("compiler/testData/cli/jvm/argfileWithEscaping.args");
@@ -149,6 +154,16 @@ public class CliTestGenerated extends AbstractCliTest {
         @TestMetadata("coroutinesWarn.args")
         public void testCoroutinesWarn() throws Exception {
             runTest("compiler/testData/cli/jvm/coroutinesWarn.args");
+        }
+
+        @TestMetadata("deprecatedApiVersion.args")
+        public void testDeprecatedApiVersion() throws Exception {
+            runTest("compiler/testData/cli/jvm/deprecatedApiVersion.args");
+        }
+
+        @TestMetadata("deprecatedLanguageVersion.args")
+        public void testDeprecatedLanguageVersion() throws Exception {
+            runTest("compiler/testData/cli/jvm/deprecatedLanguageVersion.args");
         }
 
         @TestMetadata("diagnosticsOrder.args")
@@ -239,6 +254,11 @@ public class CliTestGenerated extends AbstractCliTest {
         @TestMetadata("fileClassClashMultipleFiles.args")
         public void testFileClassClashMultipleFiles() throws Exception {
             runTest("compiler/testData/cli/jvm/fileClassClashMultipleFiles.args");
+        }
+
+        @TestMetadata("flagAllowingResultAsReturnType.args")
+        public void testFlagAllowingResultAsReturnType() throws Exception {
+            runTest("compiler/testData/cli/jvm/flagAllowingResultAsReturnType.args");
         }
 
         @TestMetadata("help.args")

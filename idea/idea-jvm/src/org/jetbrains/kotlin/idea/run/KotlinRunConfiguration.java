@@ -56,6 +56,7 @@ import org.jetbrains.kotlin.asJava.elements.KtLightMethod;
 import org.jetbrains.kotlin.idea.MainFunctionDetector;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
 import org.jetbrains.kotlin.idea.core.FileIndexUtilsKt;
+import org.jetbrains.kotlin.idea.project.PlatformKt;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.KtDeclaration;
 import org.jetbrains.kotlin.psi.KtDeclarationContainer;
@@ -319,7 +320,8 @@ public class KotlinRunConfiguration extends JetRunConfiguration {
     private static KtNamedFunction findMainFun(@NotNull PsiClass psiClass) {
         for (KtNamedFunction function : getMainFunCandidates(psiClass)) {
             BindingContext bindingContext = ResolutionUtils.analyze(function, BodyResolveMode.FULL);
-            MainFunctionDetector mainFunctionDetector = new MainFunctionDetector(bindingContext);
+            MainFunctionDetector mainFunctionDetector =
+                    new MainFunctionDetector(bindingContext, PlatformKt.getLanguageVersionSettings(function));
             if (mainFunctionDetector.isMain(function)) return function;
         }
         return null;

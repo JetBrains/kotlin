@@ -5,6 +5,10 @@
 
 package org.jetbrains.kotlin.idea.configuration
 
+import com.intellij.openapi.module.Module
+import com.intellij.openapi.vfs.VirtualFile
+import java.io.BufferedWriter
+
 class KotlinGradleWebMultiplatformModuleBuilder : KotlinGradleAbstractMultiplatformModuleBuilder() {
 
     private val commonName: String = "common"
@@ -20,10 +24,121 @@ class KotlinGradleWebMultiplatformModuleBuilder : KotlinGradleAbstractMultiplatf
 
     override fun getBuilderId() = "kotlin.gradle.multiplatform.web"
 
-    override fun getPresentableName() = "Kotlin (Multiplatform - Web)"
+    override fun getPresentableName() = "Kotlin (JS Client/JVM Server)"
 
     override fun getDescription() =
-        "Multiplatform web projects allow reusing the same code between JVM & JS platforms supported by Kotlin. Such projects are built with Gradle."
+        "Multiplatform Gradle projects allow reusing the same Kotlin code between JS Client and JVM Server."
+
+    override fun createProjectSkeleton(module: Module, rootDir: VirtualFile) {
+        val src = rootDir.createChildDirectory(this, "src")
+
+        val commonMain = src.createKotlinSampleFileWriter(commonSourceName)
+        val commonTest = src.createKotlinSampleFileWriter(commonTestName, fileName = "SampleTests.kt")
+        val jvmMain = src.createKotlinSampleFileWriter(jvmSourceName)
+        val jvmTest = src.createKotlinSampleFileWriter(jvmTestName, fileName = "SampleTestsJVM.kt")
+        val jsMain = src.createKotlinSampleFileWriter(jsSourceName)
+        val jsTest = src.createKotlinSampleFileWriter(jsTestName, fileName = "SampleTestsJS.kt")
+
+        try {
+            commonMain.write(
+                """
+                package sample
+
+                expect class Sample() {
+                    fun checkMe(): Int
+                }
+
+                expect object Platform {
+                    val name: String
+                }
+
+                fun hello(): String = "Hello from ${"$"}{Platform.name}"
+
+                fun main(args: Array<String>) {
+                    println(hello())
+                }
+            """.trimIndent()
+            )
+
+            jvmMain.write(
+                """
+                package sample
+
+                actual class Sample {
+                    actual fun checkMe() = 42
+                }
+
+                actual object Platform {
+                    actual val name: String = "JVM"
+                }
+            """.trimIndent()
+            )
+
+            jsMain.write(
+                """
+                package sample
+
+                actual class Sample {
+                    actual fun checkMe() = 12
+                }
+
+                actual object Platform {
+                    actual val name: String = "JS"
+                }
+            """.trimIndent()
+            )
+
+            commonTest.write(
+                """
+                package sample
+
+                import kotlin.test.Test
+                import kotlin.test.assertTrue
+
+                class SampleTests {
+                    @Test
+                    fun testMe() {
+                        assertTrue(Sample().checkMe() > 0)
+                    }
+                }
+            """.trimIndent()
+            )
+
+            jvmTest.write(
+                """
+                package sample
+
+                import kotlin.test.Test
+                import kotlin.test.assertTrue
+
+                class SampleTestsJVM {
+                    @Test
+                    fun testHello() {
+                        assertTrue("JVM" in hello())
+                    }
+                }
+            """.trimIndent()
+            )
+
+            jsTest.write(
+                """
+                package sample
+
+                import kotlin.test.Test
+                import kotlin.test.assertTrue
+
+                class SampleTestsJS {
+                    @Test
+                    fun testHello() {
+                        assertTrue("JS" in hello())
+                    }
+                }
+            """.trimIndent()
+            )
+        } finally {
+            listOf(commonMain, commonTest, jvmMain, jvmTest, jsMain, jsTest).forEach(BufferedWriter::close)
+        }
+    }
 
     override fun buildMultiPlatformPart(): String {
         return """
@@ -40,8 +155,8 @@ class KotlinGradleWebMultiplatformModuleBuilder : KotlinGradleAbstractMultiplatf
                     }
                     $commonTestName {
                         dependencies {
-                    		implementation 'org.jetbrains.kotlin:kotlin-test-common'
-                    		implementation 'org.jetbrains.kotlin:kotlin-test-annotations-common'
+                            implementation 'org.jetbrains.kotlin:kotlin-test-common'
+                            implementation 'org.jetbrains.kotlin:kotlin-test-annotations-common'
                         }
                     }
                     $jvmSourceName {

@@ -1,0 +1,8 @@
+package
+
+public fun doWhileInContract(/*0*/ x: kotlin.Any?): kotlin.Unit
+public fun forInContract(/*0*/ x: kotlin.Any?): kotlin.Unit
+public fun ifInContract(/*0*/ x: kotlin.Any?, /*1*/ boolean: kotlin.Boolean): kotlin.Unit
+public fun localValInContract(/*0*/ x: kotlin.Any?): kotlin.Unit
+public fun whenInContract(/*0*/ x: kotlin.Any?, /*1*/ boolean: kotlin.Boolean): kotlin.Unit
+public fun whileInContract(/*0*/ x: kotlin.Any?): kotlin.Unit

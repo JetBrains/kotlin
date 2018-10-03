@@ -1,5 +1,5 @@
 // IGNORE_BACKEND: JS_IR
-// EXPECTED_REACHABLE_NODES: 1111
+// EXPECTED_REACHABLE_NODES: 1283
 package foo
 
 external class A(c: Int) {

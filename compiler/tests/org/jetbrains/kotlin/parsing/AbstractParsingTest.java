@@ -38,6 +38,8 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 
+import kotlin.jvm.functions.Function1;
+
 public abstract class AbstractParsingTest extends KtParsingTestCase {
     @Override
     protected void setUp() throws Exception {
@@ -87,20 +89,26 @@ public abstract class AbstractParsingTest extends KtParsingTestCase {
     }
 
     protected void doParsingTest(@NotNull String filePath) throws Exception {
-        doBaseTest(filePath, KtNodeTypes.KT_FILE);
+        doBaseTest(filePath, KtNodeTypes.KT_FILE, null);
+    }
+
+    protected void doParsingTest(@NotNull String filePath, Function1<String, String> contentFilter) throws Exception {
+        doBaseTest(filePath, KtNodeTypes.KT_FILE, contentFilter);
     }
 
     protected void doExpressionCodeFragmentParsingTest(@NotNull String filePath) throws Exception {
-        doBaseTest(filePath, KtNodeTypes.EXPRESSION_CODE_FRAGMENT);
+        doBaseTest(filePath, KtNodeTypes.EXPRESSION_CODE_FRAGMENT, null);
     }
 
     protected void doBlockCodeFragmentParsingTest(@NotNull String filePath) throws Exception {
-        doBaseTest(filePath, KtNodeTypes.BLOCK_CODE_FRAGMENT);
+        doBaseTest(filePath, KtNodeTypes.BLOCK_CODE_FRAGMENT, null);
     }
 
-    private void doBaseTest(@NotNull String filePath, @NotNull IElementType fileType) throws Exception {
+    private void doBaseTest(@NotNull String filePath, @NotNull IElementType fileType, Function1<String, String> contentFilter) throws Exception {
+        String fileContent = loadFile(filePath);
+
         myFileExt = FileUtilRt.getExtension(PathUtil.getFileName(filePath));
-        myFile = createFile(filePath, fileType);
+        myFile = createFile(filePath, fileType, contentFilter != null ? contentFilter.invoke(fileContent) : fileContent);
 
         myFile.acceptChildren(new KtVisitorVoid() {
             @Override
@@ -118,16 +126,17 @@ public abstract class AbstractParsingTest extends KtParsingTestCase {
         doCheckResult(myFullDataPath, filePath.replaceAll("\\.kts?", ".txt"), toParseTreeText(myFile, false, false).trim());
     }
 
-    private PsiFile createFile(@NotNull String filePath, @NotNull IElementType fileType) throws Exception {
+    private PsiFile createFile(@NotNull String filePath, @NotNull IElementType fileType, @NotNull String fileContent) {
         KtPsiFactory psiFactory = KtPsiFactoryKt.KtPsiFactory(myProject);
+
         if (fileType == KtNodeTypes.EXPRESSION_CODE_FRAGMENT) {
-            return psiFactory.createExpressionCodeFragment(loadFile(filePath), null);
+            return psiFactory.createExpressionCodeFragment(fileContent, null);
         }
         else if (fileType == KtNodeTypes.BLOCK_CODE_FRAGMENT) {
-            return psiFactory.createBlockCodeFragment(loadFile(filePath), null);
+            return psiFactory.createBlockCodeFragment(fileContent, null);
         }
         else {
-            return createPsiFile(FileUtil.getNameWithoutExtension(PathUtil.getFileName(filePath)), loadFile(filePath));
+            return createPsiFile(FileUtil.getNameWithoutExtension(PathUtil.getFileName(filePath)), fileContent);
         }
     }
 

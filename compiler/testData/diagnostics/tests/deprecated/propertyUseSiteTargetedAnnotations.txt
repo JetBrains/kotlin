@@ -6,7 +6,7 @@ public fun literals(): kotlin.Unit
 public final class PropertyHolder {
     public constructor PropertyHolder()
     @kotlin.Deprecated(message = "") public final val a1: kotlin.Int = 1
-    @property:kotlin.Deprecated(message = "") public final var a2: kotlin.String
+    @kotlin.Deprecated(message = "") public final var a2: kotlin.String
     public final val withGetter: kotlin.String = ""
     public final var withSetter: kotlin.String
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean

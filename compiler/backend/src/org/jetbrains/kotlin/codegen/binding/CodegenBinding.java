@@ -68,6 +68,8 @@ public class CodegenBinding {
     public static final WritableSlice<VariableDescriptor, VariableDescriptor> LOCAL_VARIABLE_PROPERTY_METADATA =
             Slices.createSimpleSlice();
 
+    public static final WritableSlice<FunctionDescriptor, String> CALL_LABEL_FOR_LAMBDA_ARGUMENT = Slices.createSimpleSlice();
+
     static {
         BasicWritableSlice.initSliceDebugNames(CodegenBinding.class);
     }
@@ -184,7 +186,7 @@ public class CodegenBinding {
         MutableClosure closure = new MutableClosure(classDescriptor, enclosing);
 
         if (classDescriptor.isInner()) {
-            closure.setCaptureThis();
+            closure.setNeedsCaptureOuterClass();
         }
 
         trace.record(ASM_TYPE, classDescriptor, asmType);

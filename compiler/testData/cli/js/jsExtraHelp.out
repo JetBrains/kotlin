@@ -4,6 +4,7 @@ where advanced options include:
   -Xfriend-modules-disabled  Disable internal declaration export
   -Xtyped-arrays             Translate primitive arrays to JS typed arrays
   -Xallow-kotlin-package     Allow compiling code in package 'kotlin' and allow not requiring kotlin.stdlib in module-info
+  -Xallow-result-return-type Allow compiling code when `kotlin.Result` is used as a return type
   -Xcommon-sources=<path>    Sources of the common module that need to be compiled together with this module in the multi-platform mode.
                              Should be a subset of sources passed as free arguments
   -Xcoroutines={enable|warn|error}
@@ -19,11 +20,6 @@ where advanced options include:
   -Xno-check-actual          Do not check presence of 'actual' modifier in multi-platform projects
   -Xno-inline                Disable method inlining
   -Xplugin=<path>            Load plugins from the given classpath
-  -Xprogressive              Enable compiler progressive mode.
-                             In this mode, deprecations and bug fixes for unstable code take effect immediately,
-                             instead of going through graceful migration cycle.
-                             Code, written in progressive mode is backward compatible; however, code written in
-                             non-progressive mode may cause compilation errors in progressive mode.
   -Xproper-ieee754-comparisons Generate proper IEEE 754 comparisons in all cases if values are statically known to be of primitive numeric types
   -Xread-deserialized-contracts Enable reading of contracts from metadata
   -Xreport-output-files      Report source to output files mapping

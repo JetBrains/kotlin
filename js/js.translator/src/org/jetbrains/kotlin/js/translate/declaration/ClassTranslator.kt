@@ -126,8 +126,11 @@ class ClassTranslator private constructor(
         addSuperclassReferences()
         classDeclaration.secondaryConstructors.forEach { generateSecondaryConstructor(context, it) }
 
-        if (descriptor.isData && classDeclaration is KtClassOrObject) {
-            JsDataClassGenerator(classDeclaration, context).generate()
+        if (classDeclaration is KtClassOrObject) {
+            when {
+                descriptor.isData -> JsDataClassGenerator(classDeclaration, context).generate()
+                descriptor.isInline -> JsInlineClassGenerator(classDeclaration, context).generate()
+            }
         }
 
         emitConstructors(nonConstructorContext, nonConstructorContext.endDeclaration())

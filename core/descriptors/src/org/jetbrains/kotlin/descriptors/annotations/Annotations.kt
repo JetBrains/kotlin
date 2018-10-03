@@ -23,25 +23,15 @@ interface Annotated {
 }
 
 interface Annotations : Iterable<AnnotationDescriptor> {
-    /**
-     * @return `true` iff there are no "direct" annotations applicable to this declaration. Note that even if [isEmpty] is `true`,
-     * there may be use-site-targeted annotations applicable to the declaration!
-     *
-     * @see getUseSiteTargetedAnnotations
-     * @see getAllAnnotations
-     */
     fun isEmpty(): Boolean
 
     fun findAnnotation(fqName: FqName): AnnotationDescriptor? = firstOrNull { it.fqName == fqName }
 
     fun hasAnnotation(fqName: FqName): Boolean = findAnnotation(fqName) != null
 
-    fun getUseSiteTargetedAnnotations(): List<AnnotationWithTarget>
-
-    /**
-     * @return both targeted and annotations without target. Annotation order is preserved.
-     */
-    fun getAllAnnotations(): List<AnnotationWithTarget>
+    @Suppress("DeprecatedCallableAddReplaceWith")
+    @Deprecated("This method should only be used in frontend where we split annotations according to their use-site targets.")
+    fun getUseSiteTargetedAnnotations(): List<AnnotationWithTarget> = emptyList()
 
     companion object {
         val EMPTY: Annotations = object : Annotations {
@@ -49,28 +39,13 @@ interface Annotations : Iterable<AnnotationDescriptor> {
 
             override fun findAnnotation(fqName: FqName) = null
 
-            override fun getUseSiteTargetedAnnotations() = emptyList<AnnotationWithTarget>()
-
-            override fun getAllAnnotations() = emptyList<AnnotationWithTarget>()
-
             override fun iterator() = emptyList<AnnotationDescriptor>().iterator()
 
             override fun toString() = "EMPTY"
         }
 
-        fun findAnyAnnotation(annotations: Annotations, fqName: FqName): AnnotationWithTarget? {
-            return annotations.getAllAnnotations().firstOrNull { it.annotation.fqName == fqName }
-        }
-
-        fun findUseSiteTargetedAnnotation(annotations: Annotations, target: AnnotationUseSiteTarget, fqName: FqName): AnnotationDescriptor? {
-            return getUseSiteTargetedAnnotations(annotations, target).firstOrNull { it.fqName == fqName }
-        }
-
-        private fun getUseSiteTargetedAnnotations(annotations: Annotations, target: AnnotationUseSiteTarget): List<AnnotationDescriptor> {
-            return annotations.getUseSiteTargetedAnnotations().mapNotNull { (annotation, annotationTarget) ->
-                annotation.takeIf { target == annotationTarget }
-            }
-        }
+        fun create(annotations: List<AnnotationDescriptor>): Annotations =
+            if (annotations.isEmpty()) EMPTY else AnnotationsImpl(annotations)
     }
 }
 
@@ -86,14 +61,6 @@ class FilteredAnnotations(
     override fun findAnnotation(fqName: FqName) =
             if (fqNameFilter(fqName)) delegate.findAnnotation(fqName)
             else null
-
-    override fun getUseSiteTargetedAnnotations(): List<AnnotationWithTarget> {
-        return delegate.getUseSiteTargetedAnnotations().filter { shouldBeReturned(it.annotation) }
-    }
-
-    override fun getAllAnnotations(): List<AnnotationWithTarget> {
-        return delegate.getAllAnnotations().filter { shouldBeReturned(it.annotation) }
-    }
 
     override fun iterator() = delegate.filter(this::shouldBeReturned).iterator()
 
@@ -116,9 +83,8 @@ class CompositeAnnotations(
 
     override fun findAnnotation(fqName: FqName) = delegates.asSequence().mapNotNull { it.findAnnotation(fqName) }.firstOrNull()
 
+    @Suppress("DEPRECATION", "OverridingDeprecatedMember")
     override fun getUseSiteTargetedAnnotations() = delegates.flatMap { it.getUseSiteTargetedAnnotations() }
-
-    override fun getAllAnnotations() = delegates.flatMap { it.getAllAnnotations() }
 
     override fun iterator() = delegates.asSequence().flatMap { it.asSequence() }.iterator()
 }

@@ -23,6 +23,13 @@ interface KotlinSourceSet : KotlinModule {
     val sourceDirs: Set<File>
     val resourceDirs: Set<File>
     val dependsOnSourceSets: Set<String>
+
+    companion object {
+        const val COMMON_MAIN_SOURCE_SET_NAME = "commonMain"
+        const val COMMON_TEST_SOURCE_SET_NAME = "commonTest"
+
+        fun commonName(forTests: Boolean) = if (forTests) COMMON_TEST_SOURCE_SET_NAME else COMMON_MAIN_SOURCE_SET_NAME
+    }
 }
 
 interface KotlinLanguageSettings : Serializable {
@@ -60,6 +67,7 @@ enum class KotlinPlatform(val id: String) {
     COMMON("common"),
     JVM("jvm"),
     JS("js"),
+    NATIVE("native"),
     ANDROID("androidJvm");
 
     companion object {
@@ -77,6 +85,10 @@ interface KotlinTarget : Serializable {
     val platform: KotlinPlatform
     val compilations: Collection<KotlinCompilation>
     val jar: KotlinTargetJar?
+
+    companion object {
+        const val METADATA_TARGET_NAME = "metadata"
+    }
 }
 
 interface ExtraFeatures : Serializable {

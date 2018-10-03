@@ -32,12 +32,12 @@ plugins {
 }
 
 gradlePlugin {
-    (plugins) {
-        "pill-configurable" {
+    plugins {
+        register("pill-configurable") {
             id = "pill-configurable"
             implementationClass = "org.jetbrains.kotlin.pill.PillConfigurablePlugin"
         }
-        "jps-compatible" {
+        register("jps-compatible") {
             id = "jps-compatible"
             implementationClass = "org.jetbrains.kotlin.pill.JpsCompatiblePlugin"
         }
@@ -73,7 +73,6 @@ repositories {
     extra["buildSrcKotlinRepo"]?.let {
         maven(url = it)
     }
-    maven(url = "https://repo.gradle.org/gradle/ext-releases-local") // for native-platform
     jcenter()
 }
 

@@ -88,9 +88,15 @@ class Android25ProjectHandler(kotlinConfigurationTools: KotlinConfigurationTools
         else -> null
     }
 
-    override fun getJavaTask(variantData: BaseVariant): AbstractCompile? =
-            @Suppress("DEPRECATION") // There is always a Java compile task -- the deprecation was for Jack
-            variantData.javaCompile
+    override fun getJavaTask(variantData: BaseVariant): AbstractCompile? {
+        @Suppress("DEPRECATION") // There is always a Java compile task -- the deprecation was for Jack
+        return variantData::class.java.methods.firstOrNull { it.name == "getJavaCompileProvider" }
+            ?.invoke(variantData)
+            ?.let { taskProvider ->
+                // org.gradle.api.tasks.TaskProvider is added in Gradle 4.8
+                taskProvider::class.java.methods.firstOrNull { it.name == "get" }?.invoke(taskProvider) as AbstractCompile?
+            } ?: variantData.javaCompile
+    }
 
     override fun addJavaSourceDirectoryToVariantModel(variantData: BaseVariant, javaSourceDirectory: File) =
             variantData.addJavaSourceFoldersToModel(javaSourceDirectory)

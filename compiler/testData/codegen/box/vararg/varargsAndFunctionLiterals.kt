@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 fun foo(a: Int, vararg b: Int, f: (IntArray) -> String): String {
   return "test" + a + " " + f(b)
 }

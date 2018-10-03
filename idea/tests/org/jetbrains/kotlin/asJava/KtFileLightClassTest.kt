@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinLightProjectDescriptor
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtFile
 
 class KtFileLightClassTest : KotlinLightCodeInsightFixtureTestCase() {
@@ -93,7 +94,7 @@ class KtFileLightClassTest : KotlinLightCodeInsightFixtureTestCase() {
 
         val injectedFile = (editor as? EditorWindow)?.injectedFile
         assertEquals("Wrong injection language", "kotlin", injectedFile?.language?.id)
-        assertEquals("Injected class should be `A`", "A", (injectedFile as KtFile).classes.single().name)
+        assertEquals("Injected class should be `A`", "A", ((injectedFile as KtFile).declarations.single() as KtClass).toLightClass()!!.name)
     }
 
 

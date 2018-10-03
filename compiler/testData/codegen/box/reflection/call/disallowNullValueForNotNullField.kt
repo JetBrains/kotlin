@@ -23,6 +23,14 @@ class CounterTest<T>(t: T) {
     private var generic: T = t
 }
 
+class C {
+    companion object {
+        private var z: String = ""
+
+        fun getBoundZ() = this::z
+    }
+}
+
 fun box(): String {
     val p = A::class.memberProperties.single() as KMutableProperty1<A, String?>
     p.isAccessible = true
@@ -46,6 +54,20 @@ fun box(): String {
     val d = CounterTest::class.memberProperties.single { it.name == "generic" } as KMutableProperty1<CounterTest<*>, String?>
     d.isAccessible = true
     d.setter.call(CounterTest(""), null) // Also should not fail, because we can't be sure about nullability of 'generic'
+
+    val z = C.Companion::class.memberProperties.single { it.name == "z" } as KMutableProperty1<C.Companion, String?>
+    z.isAccessible = true
+    try {
+        z.setter.call(C, null)
+        return "Fail: exception should have been thrown"
+    } catch (e: IllegalArgumentException) {}
+
+    val zz = C.getBoundZ() as KMutableProperty0<String?>
+    zz.isAccessible = true
+    try {
+        zz.setter.call(null)
+        return "Fail: exception should have been thrown"
+    } catch (e: IllegalArgumentException) {}
 
     return "OK"
 }

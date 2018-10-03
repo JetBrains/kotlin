@@ -127,7 +127,10 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
             val configurationName = Kapt3KotlinGradleSubplugin.getKaptConfigurationName(sourceSetName)
 
             project.configurations.findByName(configurationName)?.let { return it }
-            val aptConfiguration = project.configurations.create(configurationName)
+            val aptConfiguration = project.configurations.create(configurationName).apply {
+                // Should not be available for consumption from other projects during variant-aware dependency resolution:
+                isCanBeConsumed = false
+            }
 
             if (aptConfiguration.name != Kapt3KotlinGradleSubplugin.MAIN_KAPT_CONFIGURATION_NAME) {
                 // The main configuration can be created after the current one. We should handle this case

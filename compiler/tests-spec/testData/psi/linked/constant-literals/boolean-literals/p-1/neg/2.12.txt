@@ -1,0 +1,111 @@
+KtFile: 2.12.kt
+  PACKAGE_DIRECTIVE
+    <empty list>
+  IMPORT_LIST
+    <empty list>
+  CLASS
+    PsiElement(class)('class')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('A')
+    PsiWhiteSpace(' ')
+    CLASS_BODY
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n    ')
+      PROPERTY
+        PsiElement(var)('var')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('x1')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('String')
+        PsiWhiteSpace('\n        ')
+        PROPERTY_ACCESSOR
+          PsiElement(set)('set')
+          PsiElement(LPAR)('(')
+          VALUE_PARAMETER_LIST
+            VALUE_PARAMETER
+              MODIFIER_LIST
+                PsiElement(private)('private')
+              PsiWhiteSpace(' ')
+              PsiErrorElement:Expecting parameter name
+                PsiElement(true)('true')
+          PsiElement(RPAR)(')')
+          PsiWhiteSpace(' ')
+          PsiElement(EQ)('=')
+          PsiWhiteSpace(' ')
+          BOOLEAN_CONSTANT
+            PsiElement(false)('false')
+      PsiWhiteSpace('\n\n    ')
+      PROPERTY
+        PsiElement(var)('var')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('x2')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('String')
+        PsiWhiteSpace('\n        ')
+        PROPERTY_ACCESSOR
+          PsiElement(set)('set')
+          PsiElement(LPAR)('(')
+          VALUE_PARAMETER_LIST
+            VALUE_PARAMETER
+              MODIFIER_LIST
+                PsiElement(abstract)('abstract')
+                PsiWhiteSpace(' ')
+                PsiElement(final)('final')
+              PsiWhiteSpace(' ')
+              PsiErrorElement:Expecting parameter name
+                PsiElement(true)('true')
+          PsiElement(RPAR)(')')
+          PsiWhiteSpace(' ')
+          BLOCK
+            PsiElement(LBRACE)('{')
+            PsiWhiteSpace('\n            ')
+            RETURN
+              PsiElement(return)('return')
+              PsiWhiteSpace(' ')
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('field')
+            PsiWhiteSpace('\n        ')
+            PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')
+  PsiWhiteSpace('\n\n')
+  PROPERTY
+    PsiElement(var)('var')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('x3')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    INTEGER_CONSTANT
+      PsiElement(INTEGER_LITERAL)('0L')
+    PsiWhiteSpace('\n    ')
+    PROPERTY_ACCESSOR
+      PsiElement(set)('set')
+      PsiElement(LPAR)('(')
+      VALUE_PARAMETER_LIST
+        VALUE_PARAMETER
+          MODIFIER_LIST
+            PsiElement(suspend)('suspend')
+          PsiWhiteSpace(' ')
+          PsiErrorElement:Expecting parameter name
+            PsiElement(false)('false')
+      PsiElement(RPAR)(')')
+      PsiWhiteSpace(' ')
+      BLOCK
+        PsiElement(LBRACE)('{')
+        PsiWhiteSpace('\n        ')
+        RETURN
+          PsiElement(return)('return')
+          PsiWhiteSpace(' ')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('field')
+        PsiWhiteSpace('\n    ')
+        PsiElement(RBRACE)('}')

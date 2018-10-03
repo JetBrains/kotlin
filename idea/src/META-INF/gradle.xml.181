@@ -4,9 +4,6 @@
         <frameworkSupport implementation="org.jetbrains.kotlin.idea.configuration.GradleKotlinJSFrameworkSupportProvider"/>
         <kotlinDslFrameworkSupport implementation="org.jetbrains.kotlin.idea.configuration.KotlinDslGradleKotlinJavaFrameworkSupportProvider"/>
         <kotlinDslFrameworkSupport implementation="org.jetbrains.kotlin.idea.configuration.KotlinDslGradleKotlinJSFrameworkSupportProvider"/>
-        <frameworkSupport implementation="org.jetbrains.kotlin.idea.configuration.GradleKotlinMPPCommonFrameworkSupportProvider"/>
-        <frameworkSupport implementation="org.jetbrains.kotlin.idea.configuration.GradleKotlinMPPJavaFrameworkSupportProvider"/>
-        <frameworkSupport implementation="org.jetbrains.kotlin.idea.configuration.GradleKotlinMPPJSFrameworkSupportProvider"/>
         <pluginDescriptions implementation="org.jetbrains.kotlin.idea.configuration.KotlinGradlePluginDescription"/>
         <projectResolve implementation="org.jetbrains.kotlin.idea.configuration.KotlinGradleProjectResolverExtension" order="first"/>
         <projectResolve implementation="org.jetbrains.kotlin.kapt.idea.KaptProjectResolverExtension" order="last"/>
@@ -30,6 +27,7 @@
         <externalProjectDataService implementation="org.jetbrains.kotlin.idea.configuration.KotlinGradleLibraryDataService"/>
         <externalProjectDataService implementation="org.jetbrains.kotlin.idea.configuration.KotlinSourceSetDataService"/>
         <externalProjectDataService implementation="org.jetbrains.kotlin.idea.configuration.KotlinTargetDataService"/>
+        <externalProjectDataService implementation="org.jetbrains.kotlin.idea.configuration.KotlinGradleProjectSettingsDataService"/>
         <externalSystemTaskNotificationListener implementation="org.jetbrains.kotlin.idea.core.script.ReloadGradleTemplatesOnSync"/>
 
         <localInspection
@@ -61,7 +59,7 @@
 
         <localInspection
             implementationClass="org.jetbrains.kotlin.idea.inspections.gradle.GradleKotlinxCoroutinesDeprecationInspection"
-            displayName="kotlinx.coroutines dependencies should be updated in Gradle for using with Kotlin 1.3+"
+            displayName="Incompatible kotlinx.coroutines dependency is used with Kotlin 1.3+ in Gradle"
             groupPath="Kotlin,Migration"
             groupName="Gradle"
             enabledByDefault="true"
@@ -71,8 +69,7 @@
 
         <runConfigurationProducer implementation="org.jetbrains.kotlin.idea.run.KotlinTestClassGradleConfigurationProducer"/>
         <runConfigurationProducer implementation="org.jetbrains.kotlin.idea.run.KotlinTestMethodGradleConfigurationProducer"/>
-
-        <orderEnumerationHandlerFactory implementation="org.jetbrains.kotlin.android.AndroidGradleOrderEnumerationHandler$FactoryImpl" order="first"/>
+        <orderEnumerationHandlerFactory implementation="org.jetbrains.kotlin.android.KotlinAndroidGradleOrderEnumerationHandler$FactoryImpl" order="first"/>
     </extensions>
 
     <extensions defaultExtensionNs="org.jetbrains.kotlin">
@@ -81,6 +78,7 @@
         <gradleProjectImportHandler implementation="org.jetbrains.kotlin.kapt.idea.KaptGradleProjectImportHandler"/>
         <gradleProjectImportHandler implementation="org.jetbrains.kotlin.noarg.ide.NoArgGradleProjectImportHandler"/>
         <gradleProjectImportHandler implementation="org.jetbrains.kotlin.samWithReceiver.ide.SamWithReceiverGradleProjectImportHandler"/>
+        <gradleProjectImportHandler implementation="org.jetbrains.kotlinx.serialization.idea.KotlinSerializationGradleImportHandler"/>
 
         <projectConfigurator implementation="org.jetbrains.kotlin.idea.configuration.KotlinGradleModuleConfigurator"/>
         <projectConfigurator implementation="org.jetbrains.kotlin.idea.configuration.KotlinJsGradleModuleConfigurator"/>
@@ -88,8 +86,8 @@
 
         <scriptDefinitionContributor implementation="org.jetbrains.kotlin.idea.core.script.GradleScriptDefinitionsContributor" order="first"/>
 
-        <moduleBuilder implementation="org.jetbrains.kotlin.idea.configuration.KotlinGradleMultiplatformModuleBuilder"/>
         <moduleBuilder implementation="org.jetbrains.kotlin.idea.configuration.KotlinGradleWebMultiplatformModuleBuilder"/>
+        <moduleBuilder implementation="org.jetbrains.kotlin.idea.configuration.KotlinGradleSharedMultiplatformModuleBuilder"/>
 
         <buildSystemTypeDetector implementation="org.jetbrains.kotlin.idea.configuration.GradleDetector"/>
     </extensions>

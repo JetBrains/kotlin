@@ -74,6 +74,16 @@ public class QuickFixMultiModuleTestGenerated extends AbstractQuickFixMultiModul
         runTest("idea/testData/multiModuleQuickFix/annotation/");
     }
 
+    @TestMetadata("annotationOptionalExpectation")
+    public void testAnnotationOptionalExpectation() throws Exception {
+        runTest("idea/testData/multiModuleQuickFix/annotationOptionalExpectation/");
+    }
+
+    @TestMetadata("annotationOptionalExpectationNoDir")
+    public void testAnnotationOptionalExpectationNoDir() throws Exception {
+        runTest("idea/testData/multiModuleQuickFix/annotationOptionalExpectationNoDir/");
+    }
+
     @TestMetadata("class")
     public void testClass() throws Exception {
         runTest("idea/testData/multiModuleQuickFix/class/");
@@ -112,6 +122,11 @@ public class QuickFixMultiModuleTestGenerated extends AbstractQuickFixMultiModul
     @TestMetadata("classSomeProperties")
     public void testClassSomeProperties() throws Exception {
         runTest("idea/testData/multiModuleQuickFix/classSomeProperties/");
+    }
+
+    @TestMetadata("classWithBase")
+    public void testClassWithBase() throws Exception {
+        runTest("idea/testData/multiModuleQuickFix/classWithBase/");
     }
 
     @TestMetadata("classWithIncompilableFunction")
@@ -172,6 +187,11 @@ public class QuickFixMultiModuleTestGenerated extends AbstractQuickFixMultiModul
     @TestMetadata("defaultParameterInExpectedClass")
     public void testDefaultParameterInExpectedClass() throws Exception {
         runTest("idea/testData/multiModuleQuickFix/defaultParameterInExpectedClass/");
+    }
+
+    @TestMetadata("defaultParameterInExpectedConstructor")
+    public void testDefaultParameterInExpectedConstructor() throws Exception {
+        runTest("idea/testData/multiModuleQuickFix/defaultParameterInExpectedConstructor/");
     }
 
     @TestMetadata("deprecatedHeader")

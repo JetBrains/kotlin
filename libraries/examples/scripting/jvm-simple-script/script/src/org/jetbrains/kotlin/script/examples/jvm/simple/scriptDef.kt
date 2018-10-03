@@ -7,7 +7,5 @@ package org.jetbrains.kotlin.script.examples.jvm.simple
 
 import kotlin.script.experimental.annotations.KotlinScript
 
-@KotlinScript(extension = "simplescript.kts")
-abstract class MyScript {
-//    abstract fun body(vararg args: String): Int
-}
+@KotlinScript(fileExtension = "simplescript.kts")
+abstract class SimpleScript

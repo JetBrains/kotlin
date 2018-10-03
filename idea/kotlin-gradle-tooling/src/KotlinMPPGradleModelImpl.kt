@@ -58,6 +58,7 @@ class KotlinCompilationImpl(
 
     override val isTestModule: Boolean
         get() = name == KotlinCompilation.TEST_COMPILATION_NAME
+                || platform == KotlinPlatform.ANDROID && name.contains("Test")
 
     override fun toString() = name
 }

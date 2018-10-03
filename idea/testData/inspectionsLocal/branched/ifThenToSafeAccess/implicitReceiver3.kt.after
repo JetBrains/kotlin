@@ -1,0 +1,8 @@
+class Foo
+
+class Bar {
+    fun Foo?.test() {
+        this@Bar?.bar()
+    }
+    fun bar() {}
+}

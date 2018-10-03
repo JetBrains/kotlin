@@ -27,13 +27,9 @@ import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationWithTarget
-import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.isPropertyParameter
-import org.jetbrains.kotlin.resolve.AnnotationChecker
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.jvm.annotations.JVM_DEFAULT_FQ_NAME
 import org.jetbrains.kotlin.resolve.source.getPsi
@@ -146,25 +142,26 @@ private fun getAnnotationDescriptors(declaration: KtDeclaration, annotatedLightE
     }
 
     val annotatedDescriptor = when {
-        descriptor is ClassDescriptor && annotatedLightElement is KtLightMethod && annotatedLightElement.isConstructor -> descriptor.unsubstitutedPrimaryConstructor
-        descriptor !is PropertyDescriptor || annotatedLightElement !is KtLightMethod -> descriptor
+        descriptor is ClassDescriptor && annotatedLightElement is KtLightMethod && annotatedLightElement.isConstructor ->
+            descriptor.unsubstitutedPrimaryConstructor
+        descriptor !is PropertyDescriptor -> descriptor
+        annotatedLightElement is KtLightFieldImpl.KtLightFieldForDeclaration -> descriptor.backingField
+        annotatedLightElement !is KtLightMethod -> descriptor
         annotatedLightElement.isGetter -> descriptor.getter
         annotatedLightElement.isSetter -> descriptor.setter
         else -> descriptor
     } ?: return emptyList()
 
-    val annotations = annotatedDescriptor.annotations.getAllAnnotations()
-        .filter { it.matches(annotatedLightElement) }
-        .map { it.annotation }
+    val annotations = annotatedDescriptor.annotations.toMutableList()
 
     if (descriptor is PropertyDescriptor) {
         val jvmDefault = descriptor.annotations.findAnnotation(JVM_DEFAULT_FQ_NAME)
         if (jvmDefault != null) {
-            return annotations + jvmDefault
+            annotations.add(jvmDefault)
         }
     }
-    return annotations
 
+    return annotations
 }
 
 private fun hasAnnotationsInSource(declaration: KtDeclaration): Boolean {
@@ -177,20 +174,4 @@ private fun hasAnnotationsInSource(declaration: KtDeclaration): Boolean {
     }
 
     return false
-}
-
-private fun AnnotationWithTarget.matches(annotated: KtLightElement<*, *>): Boolean {
-    if (annotated is KtLightFieldImpl.KtLightFieldForDeclaration) {
-        if (target == AnnotationUseSiteTarget.FIELD) return true
-
-        if (target != null) return false
-
-        val declarationSiteTargets = AnnotationChecker.applicableTargetSet(annotation)
-        return KotlinTarget.FIELD in declarationSiteTargets && KotlinTarget.PROPERTY !in declarationSiteTargets
-    }
-    else if (annotated is KtLightParameter && annotated.method.isSetter) {
-        return target == AnnotationUseSiteTarget.SETTER_PARAMETER
-    }
-
-    return true
 }

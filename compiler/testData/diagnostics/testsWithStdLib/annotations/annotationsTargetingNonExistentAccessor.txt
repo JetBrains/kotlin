@@ -59,9 +59,9 @@ public final class Foo {
 }
 
 private final class Other {
-    public constructor Other(/*0*/ @param:Ann param: kotlin.Int)
+    public constructor Other(/*0*/ @Ann param: kotlin.Int)
     @delegate:Ann private final val delegate: kotlin.String
-    @property:Ann @field:Ann private final val other: kotlin.String = ""
+    @Ann @field:Ann private final val other: kotlin.String = ""
     private final val param: kotlin.Int
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
@@ -94,7 +94,7 @@ public final class Statics {
 
     public companion object Companion {
         private constructor Companion()
-        @kotlin.jvm.JvmField public final val x0: kotlin.String = ""
+        @field:kotlin.jvm.JvmField public final val x0: kotlin.String = ""
         public const final val x1: kotlin.String = ""
         @kotlin.jvm.JvmStatic public final val x2: kotlin.String = ""
         @kotlin.jvm.JvmStatic private final val x3: kotlin.String = ""

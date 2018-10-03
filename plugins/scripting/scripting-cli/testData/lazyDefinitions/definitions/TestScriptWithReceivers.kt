@@ -8,5 +8,5 @@ object TestScriptWithReceiversDefinition : ScriptCompilationConfiguration(
         implicitReceivers(String::class)
     })
 
-@KotlinScript(extension = "1.kts", compilationConfiguration = TestScriptWithReceiversDefinition::class)
+@KotlinScript(fileExtension = "1.kts", compilationConfiguration = TestScriptWithReceiversDefinition::class)
 abstract class TestScriptWithReceivers

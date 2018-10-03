@@ -84,9 +84,7 @@ abstract class KotlinLightCodeInsightFixtureTestCase : KotlinLightCodeInsightFix
 
         VfsRootAccess.disallowRootAccess(KotlinTestUtils.getHomeDirectory())
 
-        doKotlinTearDown(project) {
-            super.tearDown()
-        }
+        super.tearDown()
 
         if (exceptions.isNotEmpty()) {
             exceptions.forEach { it.printStackTrace() }

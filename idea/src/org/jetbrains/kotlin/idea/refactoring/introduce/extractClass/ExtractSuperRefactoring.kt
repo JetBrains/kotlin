@@ -307,14 +307,14 @@ class ExtractSuperRefactoring(
         project.executeWriteCommand(KotlinExtractSuperclassHandler.REFACTORING_NAME) {
             val newClass = createClass(superClassEntry) ?: return@executeWriteCommand
 
-            val subClass = extractInfo.originalClass.toLightClass()
-            val superClass = newClass.toLightClass()
+            val subClass = extractInfo.originalClass.toLightClass() ?: return@executeWriteCommand
+            val superClass = newClass.toLightClass() ?: return@executeWriteCommand
 
             PullUpProcessor(
-                    subClass,
-                    superClass ?: return@executeWriteCommand,
-                    extractInfo.memberInfos.mapNotNull { it.toJavaMemberInfo() }.toTypedArray(),
-                    extractInfo.docPolicy
+                subClass,
+                superClass,
+                extractInfo.memberInfos.mapNotNull { it.toJavaMemberInfo() }.toTypedArray(),
+                extractInfo.docPolicy
             ).moveMembersToBase()
 
             performDelayedRefactoringRequests(project)

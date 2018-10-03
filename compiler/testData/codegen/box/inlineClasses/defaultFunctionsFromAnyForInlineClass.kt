@@ -1,5 +1,5 @@
 // !LANGUAGE: +InlineClasses
-// IGNORE_BACKEND: JVM_IR, JS_IR, JS
+// IGNORE_BACKEND: JVM_IR
 
 inline class Foo(val x: Int)
 inline class FooRef(val y: String)
@@ -37,15 +37,15 @@ fun box(): String {
 
     if (42L.hashCode() != fLong.hashCode()) return "Fail 12"
 
-    val fDouble = FooDouble(42.0)
-    if (fDouble.toString() != "FooDouble(y=42.0)") return "Fail 13: $fDouble"
+    val fDouble = FooDouble(42.1)
+    if (fDouble.toString() != "FooDouble(y=42.1)") return "Fail 13: $fDouble"
 
     if (!fDouble.equals(fDouble)) return "Fail 14"
 
     val gDouble = FooDouble(43.0)
     if (fDouble.equals(gDouble)) return "Fail 15"
 
-    if (42.0.hashCode() != fDouble.hashCode()) return "Fail 16"
+    if (42.1.hashCode() != fDouble.hashCode()) return "Fail 16"
 
     return "OK"
 }

@@ -38,6 +38,8 @@ class ReplacePutWithAssignmentInspection : AbstractApplicabilityBasedInspection<
 ) {
 
     override fun isApplicable(element: KtDotQualifiedExpression): Boolean {
+        if (element.receiverExpression is KtSuperExpression) return false
+
         val callExpression = element.callExpression
         if (callExpression?.valueArguments?.size != 2) return false
 

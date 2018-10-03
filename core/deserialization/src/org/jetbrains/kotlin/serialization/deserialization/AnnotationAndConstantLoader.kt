@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.types.KotlinType
 
 // The MessageLite instance everywhere should be Constructor, Function or Property
 // TODO: simplify this interface
-interface AnnotationAndConstantLoader<out A : Any, out C : Any, out T : Any> {
+interface AnnotationAndConstantLoader<out A : Any, out C : Any> {
     fun loadClassAnnotations(
         container: ProtoContainer.Class
     ): List<A>
@@ -32,7 +32,17 @@ interface AnnotationAndConstantLoader<out A : Any, out C : Any, out T : Any> {
         container: ProtoContainer,
         proto: MessageLite,
         kind: AnnotatedCallableKind
-    ): List<T>
+    ): List<A>
+
+    fun loadPropertyBackingFieldAnnotations(
+        container: ProtoContainer,
+        proto: ProtoBuf.Property
+    ): List<A>
+
+    fun loadPropertyDelegateFieldAnnotations(
+        container: ProtoContainer,
+        proto: ProtoBuf.Property
+    ): List<A>
 
     fun loadEnumEntryAnnotations(
         container: ProtoContainer,

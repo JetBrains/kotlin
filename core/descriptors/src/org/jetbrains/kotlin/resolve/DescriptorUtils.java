@@ -12,8 +12,6 @@ import org.jetbrains.kotlin.builtins.UnsignedTypes;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotated;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationWithTarget;
-import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.incremental.components.LookupLocation;
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.name.FqName;
@@ -46,7 +44,7 @@ public class DescriptorUtils {
             COROUTINES_PACKAGE_FQ_NAME_EXPERIMENTAL.child(Name.identifier("Continuation"));
     public static final FqName CONTINUATION_INTERFACE_FQ_NAME_RELEASE =
             COROUTINES_PACKAGE_FQ_NAME_RELEASE.child(Name.identifier("Continuation"));
-    public static final FqName SUCCESS_OR_FAILURE_FQ_NAME = new FqName("kotlin.SuccessOrFailure");
+    public static final FqName RESULT_FQ_NAME = new FqName("kotlin.Result");
 
     // This JVM-specific class FQ name is declared here only because it's used in MainFunctionDetector which is in frontend
     public static final FqName JVM_NAME = new FqName("kotlin.jvm.JvmName");
@@ -537,7 +535,7 @@ public class DescriptorUtils {
 
     @Nullable
     public static String getJvmName(@NotNull Annotated annotated) {
-        return getJvmName(getJvmNameAnnotation(annotated));
+        return getJvmName(findJvmNameAnnotation(annotated));
     }
 
     @Nullable
@@ -554,14 +552,8 @@ public class DescriptorUtils {
     }
 
     @Nullable
-    public static AnnotationDescriptor getAnnotationByFqName(@NotNull Annotations annotations, @NotNull FqName name) {
-        AnnotationWithTarget annotationWithTarget = Annotations.Companion.findAnyAnnotation(annotations, name);
-        return annotationWithTarget == null ? null : annotationWithTarget.getAnnotation();
-    }
-
-    @Nullable
-    public static AnnotationDescriptor getJvmNameAnnotation(@NotNull Annotated annotated) {
-        return getAnnotationByFqName(annotated.getAnnotations(), JVM_NAME);
+    public static AnnotationDescriptor findJvmNameAnnotation(@NotNull Annotated annotated) {
+        return annotated.getAnnotations().findAnnotation(JVM_NAME);
     }
 
     @NotNull
