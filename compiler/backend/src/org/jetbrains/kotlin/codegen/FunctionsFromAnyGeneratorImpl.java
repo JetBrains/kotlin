@@ -122,7 +122,7 @@ public class FunctionsFromAnyGeneratorImpl extends FunctionsFromAnyGenerator {
                     }
                 }
             }
-            genInvokeAppendMethod(iv, asmType, type.getKotlinType());
+            genInvokeAppendMethod(iv, asmType, type.getKotlinType(), typeMapper);
         }
 
         iv.aconst(")");

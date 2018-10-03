@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.config.JvmTarget;
 import org.jetbrains.kotlin.config.LanguageFeature;
 import org.jetbrains.kotlin.config.LanguageVersionSettings;
 import org.jetbrains.kotlin.descriptors.*;
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.load.java.JavaVisibilities;
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames;
@@ -665,8 +666,23 @@ public class AsmUtil {
     }
 
     public static void genInvokeAppendMethod(@NotNull InstructionAdapter v, @NotNull Type type, @Nullable KotlinType kotlinType) {
+        genInvokeAppendMethod(v, type, kotlinType, null);
+    }
+
+    public static void genInvokeAppendMethod(
+            @NotNull InstructionAdapter v,
+            @NotNull Type type,
+            @Nullable KotlinType kotlinType,
+            @Nullable KotlinTypeMapper typeMapper
+    ) {
         Type appendParameterType;
-        if (kotlinType != null && InlineClassesUtilsKt.isInlineClassType(kotlinType)) {
+
+        CallableMethod specializedToString = getSpecializedToStringCallableMethodOrNull(kotlinType, typeMapper);
+        if (specializedToString != null) {
+            specializedToString.genInvokeInstruction(v);
+            appendParameterType = AsmTypes.JAVA_STRING_TYPE;
+        }
+        else if (kotlinType != null && InlineClassesUtilsKt.isInlineClassType(kotlinType)) {
             appendParameterType = OBJECT_TYPE;
             SimpleType nullableAnyType = kotlinType.getConstructor().getBuiltIns().getNullableAnyType();
             StackValue.coerce(type, kotlinType, appendParameterType, nullableAnyType, v);
@@ -681,9 +697,17 @@ public class AsmUtil {
     public static StackValue genToString(
             @NotNull StackValue receiver,
             @NotNull Type receiverType,
-            @Nullable KotlinType receiverKotlinType
+            @Nullable KotlinType receiverKotlinType,
+            @Nullable KotlinTypeMapper typeMapper
     ) {
         return StackValue.operation(JAVA_STRING_TYPE, v -> {
+            CallableMethod specializedToString = getSpecializedToStringCallableMethodOrNull(receiverKotlinType, typeMapper);
+            if (specializedToString != null) {
+                receiver.put(receiverType, receiverKotlinType, v);
+                specializedToString.genInvokeInstruction(v);
+                return null;
+            }
+
             Type type;
             KotlinType kotlinType;
             if (receiverKotlinType != null && InlineClassesUtilsKt.isInlineClassType(receiverKotlinType)) {
@@ -699,6 +723,36 @@ public class AsmUtil {
             v.invokestatic("java/lang/String", "valueOf", "(" + type.getDescriptor() + ")Ljava/lang/String;", false);
             return null;
         });
+    }
+
+    @Nullable
+    private static CallableMethod getSpecializedToStringCallableMethodOrNull(
+            @Nullable KotlinType receiverKotlinType,
+            @Nullable KotlinTypeMapper typeMapper
+    ) {
+        if (typeMapper == null) return null;
+
+        if (receiverKotlinType == null) return null;
+        if (!InlineClassesUtilsKt.isInlineClassType(receiverKotlinType)) return null;
+        if (receiverKotlinType.isMarkedNullable()) return null;
+
+        DeclarationDescriptor receiverTypeDescriptor = receiverKotlinType.getConstructor().getDeclarationDescriptor();
+        assert receiverTypeDescriptor instanceof ClassDescriptor && ((ClassDescriptor) receiverTypeDescriptor).isInline() :
+                "Inline class type expected: " + receiverKotlinType;
+        ClassDescriptor receiverClassDescriptor = (ClassDescriptor) receiverTypeDescriptor;
+        FunctionDescriptor toStringDescriptor = receiverClassDescriptor.getUnsubstitutedMemberScope()
+                .getContributedFunctions(Name.identifier("toString"), NoLookupLocation.FROM_BACKEND)
+                .stream()
+                .filter(
+                        f -> f.getValueParameters().size() == 0
+                             && KotlinBuiltIns.isString(f.getReturnType())
+                             && f.getDispatchReceiverParameter() != null
+                             && f.getExtensionReceiverParameter() == null
+                )
+                .findFirst()
+                .orElseThrow(() -> new AssertionError("'toString' not found in member scope of " + receiverClassDescriptor));
+
+        return typeMapper.mapToCallableMethod(toStringDescriptor, false, OwnerKind.ERASED_INLINE_CLASS);
     }
 
     static void genHashCode(MethodVisitor mv, InstructionAdapter iv, Type type, JvmTarget jvmTarget) {
