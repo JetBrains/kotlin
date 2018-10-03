@@ -30,7 +30,6 @@ abstract class SerializerCodegen(
     protected val serializerDescriptor: ClassDescriptor,
     bindingContext: BindingContext
 ) : AbstractSerialGenerator(bindingContext, serializerDescriptor) {
-    //    protected val serializerDescriptor: ClassDescriptor = declaration.findClassDescriptor(bindingContext)
     val serializableDescriptor: ClassDescriptor = getSerializableClassDescriptorBySerializer(serializerDescriptor)!!
     protected val serialName: String = serializableDescriptor.annotations.serialNameValue ?: serializableDescriptor.fqNameUnsafe.asString()
     protected val properties = SerializableProperties(serializableDescriptor, bindingContext)
@@ -61,9 +60,7 @@ abstract class SerializerCodegen(
         return true
     }
 
-    protected open fun generateChildSerializersGetter(function: FunctionDescriptor) {
-        // TODO()
-    }
+    protected abstract fun generateChildSerializersGetter(function: FunctionDescriptor)
 
     protected val generatedSerialDescPropertyDescriptor = getPropertyToGenerate(
         serializerDescriptor, SerialEntityNames.SERIAL_DESC_FIELD,
@@ -73,9 +70,20 @@ abstract class SerializerCodegen(
         serializerDescriptor::checkSerializableClassPropertyResult
     ) { true }
 
+    val localSerializersFieldsDescriptors: List<PropertyDescriptor> = findLocalSerializersFieldDescriptors()
+
+    private fun findLocalSerializersFieldDescriptors(): List<PropertyDescriptor> {
+        val count = serializableDescriptor.declaredTypeParameters.size
+        if (count == 0) return emptyList()
+        val propNames = (0 until count).map { "${SerialEntityNames.typeArgPrefix}$it" }
+        return propNames.mapNotNull { name ->
+            getPropertyToGenerate(serializerDescriptor, name) { isKSerializer(it.returnType) }
+        }
+    }
+
     protected abstract fun generateSerialDesc()
 
-    protected abstract fun generateGenericFieldsAndConstructor(typedConstructorDescriptor: ConstructorDescriptor)
+    protected abstract fun generateGenericFieldsAndConstructor(typedConstructorDescriptor: ClassConstructorDescriptor)
 
     protected abstract fun generateSerializableClassProperty(property: PropertyDescriptor)
 
@@ -129,7 +137,6 @@ abstract class SerializerCodegen(
     )
         .singleOrNull { property ->
             isKindOk(property.kind) &&
-                    property.modality != Modality.FINAL &&
                     property.returnType != null &&
                     isReturnTypeOk(property)
         }

@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.types.TypeProjectionImpl
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.typeUtil.createProjection
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
+import org.jetbrains.kotlinx.serialization.compiler.backend.ir.SimpleSyntheticPropertyDescriptor
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.IMPL_NAME
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.SERIALIZER_CLASS_NAME
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.typeArgPrefix
@@ -133,9 +134,10 @@ object KSerializerDescriptorResolver {
         val classDescriptor = getSerializableClassDescriptorBySerializer(thisDescriptor) ?: return
         if (name == SerialEntityNames.SERIAL_DESC_FIELD_NAME && result.none(thisDescriptor::checkSerializableClassPropertyResult) &&
             fromSupertypes.none { thisDescriptor.checkSerializableClassPropertyResult(it) && it.modality == Modality.FINAL }
-        )
+        ) {
             result.add(createSerializableClassPropertyDescriptor(thisDescriptor, classDescriptor))
-
+        }
+        result.addAll(createLocalSerializersFieldsDescriptors(classDescriptor, thisDescriptor))
     }
 
     fun generateCompanionObjectMethods(
@@ -176,7 +178,7 @@ object KSerializerDescriptorResolver {
         }
     }
 
-    fun createSerializableClassPropertyDescriptor(
+    private fun createSerializableClassPropertyDescriptor(
         companionDescriptor: ClassDescriptor,
         classDescriptor: ClassDescriptor
     ): PropertyDescriptor =
@@ -338,7 +340,7 @@ object KSerializerDescriptorResolver {
         return constrDesc
     }
 
-    fun createSerializerGetterDescriptor(thisClass: ClassDescriptor, serializableClass: ClassDescriptor): SimpleFunctionDescriptor {
+    private fun createSerializerGetterDescriptor(thisClass: ClassDescriptor, serializableClass: ClassDescriptor): SimpleFunctionDescriptor {
         val f = SimpleFunctionDescriptorImpl.create(
             thisClass,
             Annotations.EMPTY,
@@ -491,6 +493,21 @@ object KSerializerDescriptorResolver {
                     true
                 ) as PropertyDescriptor
             )
+        }
+    }
+
+    // create properties typeSerial0, typeSerial1, etc... for storing generic arguments' serializers
+    private fun createLocalSerializersFieldsDescriptors(serializableDescriptor: ClassDescriptor, serializerDescriptor: ClassDescriptor): List<PropertyDescriptor> {
+        if (serializableDescriptor.declaredTypeParameters.isEmpty()) return emptyList()
+        val serializerClass = serializableDescriptor.getClassFromSerializationPackage(SerialEntityNames.KSERIALIZER_CLASS)
+        return serializerDescriptor.declaredTypeParameters.mapIndexed { index, param ->
+            val pType =
+                KotlinTypeFactory.simpleNotNullType(
+                    Annotations.EMPTY,
+                    serializerClass,
+                    listOf(TypeProjectionImpl(param.defaultType))
+                )
+            SimpleSyntheticPropertyDescriptor(serializerDescriptor, "$typeArgPrefix$index", pType)
         }
     }
 }

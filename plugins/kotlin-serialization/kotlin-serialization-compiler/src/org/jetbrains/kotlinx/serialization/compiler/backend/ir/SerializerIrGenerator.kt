@@ -8,18 +8,15 @@ package org.jetbrains.kotlinx.serialization.compiler.backend.ir
 import org.jetbrains.kotlin.backend.common.BackendContext
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irThrow
+import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.impl.IrBranchImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrVarargImpl
+import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.expressions.mapValueParameters
 import org.jetbrains.kotlin.ir.expressions.mapValueParametersIndexed
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
@@ -69,12 +66,17 @@ class SerializerIrGenerator(val irClass: IrClass, override val compilerContext: 
             introduceValueParameter(thisAsReceiverParameter)
             prop = generateSimplePropertyWithBackingField(thisAsReceiverParameter.symbol, desc, irClass)
             irClass.addMember(prop)
+
+            localSerializersFieldsDescriptors.forEach {
+                irClass.addMember(generateSimplePropertyWithBackingField(thisAsReceiverParameter.symbol, it, irClass))
+            }
         }
 
         compilerContext.localSymbolTable.declareAnonymousInitializer(
             irClass.startOffset, irClass.endOffset, SERIALIZABLE_PLUGIN_ORIGIN, irClass.descriptor
         ).buildWithScope { initIrBody ->
-            val ctor = irClass.declarations.filterIsInstance<IrConstructor>().singleOrNull()
+            val ctor = irClass.declarations.filterIsInstance<IrConstructor>().find { it.isPrimary }
+                ?: throw AssertionError("Serializer must have primary constructor")
             val serialClassDescImplCtor = compilerContext.externalSymbols.referenceConstructor(serialDescImplConstructor)
             compilerContext.localSymbolTable.withScope(initIrBody.descriptor) {
                 initIrBody.body = compilerContext.createIrBuilder(initIrBody.symbol).irBlockBody {
@@ -106,16 +108,34 @@ class SerializerIrGenerator(val irClass: IrClass, override val compilerContext: 
                         irGet(localDesc)
                     )
                 }
-                // workaround for KT-25353
-//                irClass.addMember(initIrBody)
-                (ctor?.body as? IrBlockBody)?.statements?.addAll(initIrBody.body.statements)
+                (ctor.body as? IrBlockBody)?.statements?.addAll(initIrBody.body.statements)
             }
         }
     }
 
-    override fun generateGenericFieldsAndConstructor(typedConstructorDescriptor: ConstructorDescriptor) {
-//        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
+    override fun generateGenericFieldsAndConstructor(typedConstructorDescriptor: ClassConstructorDescriptor) =
+        irClass.contributeCtor(typedConstructorDescriptor) { ctor ->
+            // generate call to primary ctor to init serialClassDesc and super()
+            val primaryCtor = irClass.descriptor.unsubstitutedPrimaryConstructor
+                ?: throw AssertionError("Serializer class must have primary constructor")
+            +IrDelegatingConstructorCallImpl(
+                startOffset,
+                endOffset,
+                compilerContext.irBuiltIns.unitType,
+                compilerContext.localSymbolTable.referenceConstructor(primaryCtor),
+                primaryCtor
+            )
+
+            // store type arguments serializers in fields
+            val thisAsReceiverParameter = irClass.thisReceiver!!
+            ctor.valueParameters.forEachIndexed { index, param ->
+                val localSerial = compilerContext.localSymbolTable.referenceField(localSerializersFieldsDescriptors[index])
+                +irSetField(generateReceiverExpressionForFieldAccess(
+                    thisAsReceiverParameter.symbol,
+                    localSerializersFieldsDescriptors[index]
+                ), localSerial.owner, irGet(param))
+            }
+        }
 
     override fun generateChildSerializersGetter(function: FunctionDescriptor) = irClass.contributeFunction(function) { irFun ->
         val allSerializers = orderedProperties.map { requireNotNull(

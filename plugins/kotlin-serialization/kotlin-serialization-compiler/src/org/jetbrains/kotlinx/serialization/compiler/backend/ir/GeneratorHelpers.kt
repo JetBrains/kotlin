@@ -58,9 +58,17 @@ interface IrBuilderExtension {
         ) else compilerContext.externalSymbols.referenceSimpleFunction(descriptor).owner
         f.parent = this
         f.returnType = descriptor.returnType!!.toIrType()
-        f.createParameterDeclarations()
+        if (!fromStubs) f.createParameterDeclarations(this.thisReceiver)
         f.body = compilerContext.createIrBuilder(f.symbol).irBlockBody { bodyGen(f) }
         this.addMember(f)
+    }
+
+    fun IrClass.contributeCtor(descriptor: ClassConstructorDescriptor, bodyGen: IrBlockBodyBuilder.(IrFunction) -> Unit) {
+        val c = compilerContext.externalSymbols.referenceConstructor(descriptor).owner
+        c.parent = this
+        c.returnType = descriptor.returnType.toIrType()
+        c.body = compilerContext.createIrBuilder(c.symbol).irBlockBody { bodyGen(c) }
+        this.addMember(c)
     }
 
     fun IrClass.contributeConstructor(
@@ -369,7 +377,7 @@ interface IrBuilderExtension {
     }
 
     fun IrBuilderWithScope.serializerInstance(
-        enclosingGenerator: AbstractSerialGenerator,
+        enclosingGenerator: SerializerIrGenerator,
         serializableDescriptor: ClassDescriptor,
         serializerClass: ClassDescriptor?,
         module: ModuleDescriptor,
@@ -380,7 +388,9 @@ interface IrBuilderExtension {
             compilerContext.externalSymbols.referenceClass(module.getClassFromInternalSerializationPackage(SpecialBuiltins.nullableSerializer))
         if (serializerClass == null) {
             if (genericIndex == null) return null
-            TODO("Saved serializer for generic argument")
+            val thiz = enclosingGenerator.irClass.thisReceiver!!
+            val prop = enclosingGenerator.localSerializersFieldsDescriptors[genericIndex]
+            return irGetField(irGet(thiz), compilerContext.localSymbolTable.referenceField(prop).owner)
         }
         if (serializerClass.kind == ClassKind.OBJECT) {
             return irGetObject(serializerClass)
