@@ -19,7 +19,7 @@ import org.junit.Test
 import org.junit.runners.Parameterized
 
 class NewMultiplatformProjectImportingTest : GradleImportingTestCase() {
-    private val kotlinVersion = "1.3.0-rc-6"
+    private val kotlinVersion = "1.3.0-rc-146"
 
     @Test
     fun testProjectDependency() {
