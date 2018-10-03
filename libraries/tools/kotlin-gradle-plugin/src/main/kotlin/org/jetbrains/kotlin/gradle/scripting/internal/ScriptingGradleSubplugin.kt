@@ -44,8 +44,8 @@ class ScriptingGradleSubplugin : Plugin<Project> {
             val javaPluginConvention = project.convention.findPlugin(JavaPluginConvention::class.java)
             if (javaPluginConvention?.sourceSets?.isEmpty() == false) {
 
-                project.tasks.all { task ->
-                    if (task is KotlinCompile && task !is KaptGenerateStubsTask) {
+                project.tasks.withType(KotlinCompile::class.java) { task ->
+                    if (task !is KaptGenerateStubsTask) {
                         val configuration = project.configurations.findByName(getConfigurationName(task.sourceSetName))
                         if (configuration?.isEmpty == false) {
                             javaPluginConvention.sourceSets.findByName(task.sourceSetName)?.let { sourceSet ->

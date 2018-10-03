@@ -163,7 +163,6 @@ open class KotlinPlatformImplementationPluginBase(platformName: String) : Kotlin
             val platformTask = platformProject.tasks
                 .withType(AbstractKotlinCompile::class.java)
                 .singleOrNull { it.sourceSetName == commonSourceSet.name } // TODO use strict check once this code is not run in K/N
-                .singleOrNull { it.sourceSetName == commonSourceSet.name } 
 
             val commonSources = getKotlinSourceDirectorySetSafe(commonSourceSet)!!
             if (platformTask != null) {
