@@ -18,7 +18,7 @@ fun case_1(): Boolean {
 }
 
 fun case_2(): Boolean {
-    contract { returnsNotNull() implies (return return return true) }
+    <!ERROR_IN_CONTRACT_DESCRIPTION!>contract<!> { returnsNotNull() implies (return return return true) }
     return true
 }
 
