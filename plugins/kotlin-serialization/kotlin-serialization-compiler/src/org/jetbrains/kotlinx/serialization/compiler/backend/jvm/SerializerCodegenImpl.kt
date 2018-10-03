@@ -50,7 +50,7 @@ class SerializerCodegenImpl(
         }
     }
 
-    override fun generateGenericFieldsAndConstructor(typedConstructorDescriptor: ConstructorDescriptor) {
+    override fun generateGenericFieldsAndConstructor(typedConstructorDescriptor: ClassConstructorDescriptor) {
         serializableDescriptor.declaredTypeParameters.forEachIndexed { i, _ ->
             codegen.v.newField(
                 OtherOrigin(codegen.myClass.psiOrParent), ACC_PRIVATE or ACC_SYNTHETIC,

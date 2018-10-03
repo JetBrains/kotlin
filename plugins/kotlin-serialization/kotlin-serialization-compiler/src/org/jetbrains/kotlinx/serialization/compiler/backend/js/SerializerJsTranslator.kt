@@ -107,7 +107,7 @@ class SerializerJsTranslator(descriptor: ClassDescriptor,
         translator.addProperty(propDesc, getterExpr, null)
     }
 
-    override fun generateGenericFieldsAndConstructor(typedConstructorDescriptor: ConstructorDescriptor) {
+    override fun generateGenericFieldsAndConstructor(typedConstructorDescriptor: ClassConstructorDescriptor) {
         val f = context.buildFunction(typedConstructorDescriptor) { jsFun, context ->
             val thiz = jsFun.scope.declareName(Namer.ANOTHER_THIS_PARAMETER_NAME).makeRef()
 
