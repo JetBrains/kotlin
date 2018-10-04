@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.intentions
 
+import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiComment
@@ -48,7 +49,13 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitClassReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.types.KotlinType
 
-class ObjectLiteralToLambdaInspection : IntentionBasedInspection<KtObjectLiteralExpression>(ObjectLiteralToLambdaIntention::class)
+class ObjectLiteralToLambdaInspection : IntentionBasedInspection<KtObjectLiteralExpression>(ObjectLiteralToLambdaIntention::class) {
+    override fun problemHighlightType(element: KtObjectLiteralExpression): ProblemHighlightType {
+        val (_, _, singleFunction) = extractData(element) ?: return super.problemHighlightType(element)
+        if (singleFunction.bodyExpression?.anyDescendantOfType<KtReturnExpression> { true } == true) return ProblemHighlightType.INFORMATION
+        return super.problemHighlightType(element)
+    }
+}
 
 class ObjectLiteralToLambdaIntention : SelfTargetingRangeIntention<KtObjectLiteralExpression>(
         KtObjectLiteralExpression::class.java,
@@ -164,24 +171,24 @@ class ObjectLiteralToLambdaIntention : SelfTargetingRangeIntention<KtObjectLiter
             ShortenReferences.DEFAULT.process(replaced.containingKtFile, replaced.startOffset, endOffset)
         }
     }
+}
 
-    private data class Data(
-            val baseTypeRef: KtTypeReference,
-            val baseType: KotlinType,
-            val singleFunction: KtNamedFunction
-    )
+private data class Data(
+    val baseTypeRef: KtTypeReference,
+    val baseType: KotlinType,
+    val singleFunction: KtNamedFunction
+)
 
-    private fun extractData(element: KtObjectLiteralExpression): Data? {
-        val objectDeclaration = element.objectDeclaration
+private fun extractData(element: KtObjectLiteralExpression): Data? {
+    val objectDeclaration = element.objectDeclaration
 
-        val singleFunction = objectDeclaration.declarations.singleOrNull() as? KtNamedFunction ?: return null
-        if (!singleFunction.hasModifier(KtTokens.OVERRIDE_KEYWORD)) return null
+    val singleFunction = objectDeclaration.declarations.singleOrNull() as? KtNamedFunction ?: return null
+    if (!singleFunction.hasModifier(KtTokens.OVERRIDE_KEYWORD)) return null
 
-        val delegationSpecifier = objectDeclaration.superTypeListEntries.singleOrNull() ?: return null
-        val typeRef = delegationSpecifier.typeReference ?: return null
-        val bindingContext = typeRef.analyze(BodyResolveMode.PARTIAL)
-        val baseType = bindingContext[BindingContext.TYPE, typeRef] ?: return null
+    val delegationSpecifier = objectDeclaration.superTypeListEntries.singleOrNull() ?: return null
+    val typeRef = delegationSpecifier.typeReference ?: return null
+    val bindingContext = typeRef.analyze(BodyResolveMode.PARTIAL)
+    val baseType = bindingContext[BindingContext.TYPE, typeRef] ?: return null
 
-        return Data(typeRef, baseType, singleFunction)
-    }
+    return Data(typeRef, baseType, singleFunction)
 }
