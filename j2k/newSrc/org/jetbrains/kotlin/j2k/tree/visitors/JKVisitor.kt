@@ -88,4 +88,5 @@ interface JKVisitor<out R, in D> {
     fun visitKtWhenLabel(ktWhenLabel: JKKtWhenLabel, data: D): R = visitTreeElement(ktWhenLabel, data)
     fun visitKtElseWhenLabel(ktElseWhenLabel: JKKtElseWhenLabel, data: D): R = visitKtWhenLabel(ktElseWhenLabel, data)
     fun visitKtValueWhenLabel(ktValueWhenLabel: JKKtValueWhenLabel, data: D): R = visitKtWhenLabel(ktValueWhenLabel, data)
+    fun visitKtIsExpression(ktIsExpression: JKKtIsExpression, data: D): R = visitExpression(ktIsExpression, data)
 }

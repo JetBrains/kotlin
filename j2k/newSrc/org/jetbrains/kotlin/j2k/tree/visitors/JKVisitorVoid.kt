@@ -173,4 +173,6 @@ interface JKVisitorVoid : JKVisitor<Unit, Nothing?> {
     override fun visitKtElseWhenLabel(ktElseWhenLabel: JKKtElseWhenLabel, data: Nothing?) = visitKtElseWhenLabel(ktElseWhenLabel)
     fun visitKtValueWhenLabel(ktValueWhenLabel: JKKtValueWhenLabel) = visitKtWhenLabel(ktValueWhenLabel, null)
     override fun visitKtValueWhenLabel(ktValueWhenLabel: JKKtValueWhenLabel, data: Nothing?) = visitKtValueWhenLabel(ktValueWhenLabel)
+    fun visitKtIsExpression(ktIsExpression: JKKtIsExpression) = visitExpression(ktIsExpression, null)
+    override fun visitKtIsExpression(ktIsExpression: JKKtIsExpression, data: Nothing?) = visitKtIsExpression(ktIsExpression)
 }

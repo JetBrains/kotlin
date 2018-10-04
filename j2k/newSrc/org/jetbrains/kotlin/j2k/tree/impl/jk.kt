@@ -187,6 +187,7 @@ class JKClassTypeImpl(
     override val nullability: Nullability = Nullability.Default
 ) : JKClassType
 
+class JKStarProjectionTypeImpl : JKStarProjectionType
 
 class JKUnresolvedClassType(
     val name: String,

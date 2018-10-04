@@ -245,3 +245,11 @@ class JKKtValueWhenLabelImpl(expression: JKExpression) : JKKtValueWhenLabel, JKB
     override var expression: JKExpression by child(expression)
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitKtValueWhenLabel(this, data)
 }
+
+
+class JKKtIsExpressionImpl(expression: JKExpression, type: JKTypeElement) : JKKtIsExpression, JKBranchElementBase() {
+    override var type by child(type)
+    override var expression by child(expression)
+
+    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitKtIsExpression(this, data)
+}

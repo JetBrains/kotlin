@@ -68,6 +68,11 @@ interface JKJavaArrayType : JKType {
     val type: JKType
 }
 
+interface JKStarProjectionType : JKType {
+    override val nullability: Nullability
+        get() = Nullability.NotNull
+}
+
 inline fun <reified T> JKElement.getParentOfType(): T? {
     var p = parent
     while (true) {

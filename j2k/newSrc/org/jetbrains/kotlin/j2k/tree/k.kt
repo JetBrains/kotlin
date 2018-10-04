@@ -75,3 +75,8 @@ interface JKKtElseWhenLabel : JKKtWhenLabel
 interface JKKtValueWhenLabel : JKKtWhenLabel {
     var expression: JKExpression
 }
+
+interface JKKtIsExpression : JKExpression {
+    var expression: JKExpression
+    var type: JKTypeElement
+}
