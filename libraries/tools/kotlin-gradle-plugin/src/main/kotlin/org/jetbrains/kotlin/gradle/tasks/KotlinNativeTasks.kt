@@ -1,5 +1,6 @@
 package org.jetbrains.kotlin.gradle.tasks
 
+import groovy.lang.Closure
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
 import org.gradle.api.file.FileCollection
@@ -161,13 +162,22 @@ open class KotlinNativeCompile : AbstractCompile() {
         override var suppressWarnings: Boolean = false
         override var verbose: Boolean = false
 
-        // Delegate for compilations's exptra options.
+        // Delegate for compilations's extra options.
         override var freeCompilerArgs: List<String>
             get() = compilation.extraOpts
             set(value) { compilation.extraOpts = value.toMutableList() }
     }
 
     @Internal val kotlinOptions: KotlinCommonToolOptions = NativeCompilerOpts()
+
+    fun kotlinOptions(fn: KotlinCommonToolOptions.() -> Unit) {
+        kotlinOptions.fn()
+    }
+
+    fun kotlinOptions(fn: Closure<*>) {
+        fn.delegate = kotlinOptions
+        fn.call()
+    }
 
     // endregion.
 
