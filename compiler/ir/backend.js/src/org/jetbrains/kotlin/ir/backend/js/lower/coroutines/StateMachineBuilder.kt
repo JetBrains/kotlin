@@ -279,7 +279,7 @@ class StateMachineBuilder(
         if (expression is IrReturnableBlock) processReturnableBlock(expression) else super.visitBlock(expression)
 
     private fun implicitCast(value: IrExpression, toType: IrType) =
-        JsIrBuilder.buildTypeOperator(toType, IrTypeOperator.IMPLICIT_CAST, value, toType, toType.classifierOrFail)
+        JsIrBuilder.buildImplicitCast(value, toType)
 
     override fun visitCall(expression: IrCall) {
         super.visitCall(expression)

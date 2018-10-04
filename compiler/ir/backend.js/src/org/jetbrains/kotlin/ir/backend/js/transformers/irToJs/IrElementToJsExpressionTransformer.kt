@@ -140,4 +140,11 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
         // TODO check when w/o else branch and empty when
         return expression.toJsNode(this, context, ::JsConditional)!!
     }
+
+    override fun visitTypeOperator(expression: IrTypeOperatorCall, data: JsGenerationContext): JsExpression {
+        return when (expression.operator) {
+            IrTypeOperator.IMPLICIT_CAST -> expression.argument.accept(this, data)
+            else -> throw IllegalStateException("All type operator calls except IMPLICIT_CAST should be lowered at this point")
+        }
+    }
 }
