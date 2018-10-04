@@ -45,6 +45,14 @@ class NewCodeBuilder {
             printer.print("/* !!! Hit visitElement for element type: ${treeElement::class} !!! */")
         }
 
+        override fun visitDoWhileStatement(doWhileStatement: JKDoWhileStatement) {
+            printer.printWithNoIndent("do")
+            doWhileStatement.body.accept(this)
+            printer.printWithNoIndent("while (")
+            doWhileStatement.condition.accept(this)
+            printer.printWithNoIndent(")")
+        }
+
         override fun visitFile(file: JKFile) {
             file.acceptChildren(this)
         }
