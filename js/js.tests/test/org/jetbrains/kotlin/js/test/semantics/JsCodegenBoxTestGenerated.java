@@ -11594,6 +11594,94 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             runTest("compiler/testData/codegen/box/inlineClasses/useThisInsideInlineClass.kt");
         }
 
+        @TestMetadata("compiler/testData/codegen/box/inlineClasses/callableReferences")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class CallableReferences extends AbstractJsCodegenBoxTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInCallableReferences() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/callableReferences"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JS, true);
+            }
+
+            @TestMetadata("boundInlineClassExtensionFun.kt")
+            public void testBoundInlineClassExtensionFun() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/boundInlineClassExtensionFun.kt");
+            }
+
+            @TestMetadata("boundInlineClassExtensionVal.kt")
+            public void testBoundInlineClassExtensionVal() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/boundInlineClassExtensionVal.kt");
+            }
+
+            @TestMetadata("boundInlineClassMemberFun.kt")
+            public void testBoundInlineClassMemberFun() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/boundInlineClassMemberFun.kt");
+            }
+
+            @TestMetadata("boundInlineClassMemberVal.kt")
+            public void testBoundInlineClassMemberVal() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/boundInlineClassMemberVal.kt");
+            }
+
+            @TestMetadata("boundInlineClassPrimaryVal.kt")
+            public void testBoundInlineClassPrimaryVal() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/boundInlineClassPrimaryVal.kt");
+            }
+
+            @TestMetadata("funWithInlineClassParameters.kt")
+            public void testFunWithInlineClassParameters() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/funWithInlineClassParameters.kt");
+            }
+
+            @TestMetadata("inlineClassExtensionFun.kt")
+            public void testInlineClassExtensionFun() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/inlineClassExtensionFun.kt");
+            }
+
+            @TestMetadata("inlineClassExtensionVal.kt")
+            public void testInlineClassExtensionVal() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/inlineClassExtensionVal.kt");
+            }
+
+            @TestMetadata("inlineClassMemberFun.kt")
+            public void testInlineClassMemberFun() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/inlineClassMemberFun.kt");
+            }
+
+            @TestMetadata("inlineClassMemberVal.kt")
+            public void testInlineClassMemberVal() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/inlineClassMemberVal.kt");
+            }
+
+            @TestMetadata("inlineClassPrimaryConstructor.kt")
+            public void testInlineClassPrimaryConstructor() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/inlineClassPrimaryConstructor.kt");
+            }
+
+            @TestMetadata("inlineClassPrimaryVal.kt")
+            public void testInlineClassPrimaryVal() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/inlineClassPrimaryVal.kt");
+            }
+
+            @TestMetadata("inlineClassTypeBoundMemberVar.kt")
+            public void testInlineClassTypeBoundMemberVar() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/inlineClassTypeBoundMemberVar.kt");
+            }
+
+            @TestMetadata("inlineClassTypeMemberVar.kt")
+            public void testInlineClassTypeMemberVar() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/inlineClassTypeMemberVar.kt");
+            }
+
+            @TestMetadata("inlineClassTypeTopLevelVar.kt")
+            public void testInlineClassTypeTopLevelVar() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/inlineClassTypeTopLevelVar.kt");
+            }
+        }
+
         @TestMetadata("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
