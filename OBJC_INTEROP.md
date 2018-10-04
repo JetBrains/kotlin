@@ -8,14 +8,14 @@ Swift/Objective-C.
 Kotlin/Native provides bidirectional interoperability with Objective-C.
 Objective-C frameworks and libraries can be used in Kotlin code if
 properly imported to the build (system frameworks are imported by default).
-See e.g. "Interop libraries" in
-[Gradle plugin documentation](GRADLE_PLUGIN.md#building-artifacts).
+See e.g. "Using cinterop" in
+[Gradle plugin documentation](GRADLE_PLUGIN.md#using-cinterop).
 A Swift library can be used in Kotlin code if its API is exported to Objective-C
 with `@objc`. Pure Swift modules are not yet supported.
 
 Kotlin modules can be used in Swift/Objective-C code if compiled into a
-[framework](GRADLE_PLUGIN.md#framework). See [calculator sample](https://github.com/JetBrains/kotlin-native/tree/master/samples/calculator)
-for an example.
+framework (see "Targets and output kinds" section in [Gradle plugin documentation](GRADLE_PLUGIN.md#targets-and-output-kinds)).
+See [calculator sample](https://github.com/JetBrains/kotlin-native/tree/master/samples/calculator) for an example.
 
 ## Mappings
 
