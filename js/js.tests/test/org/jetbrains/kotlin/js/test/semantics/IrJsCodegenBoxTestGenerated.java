@@ -10329,6 +10329,21 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
             runTest("compiler/testData/codegen/box/inlineClasses/jvmFieldInInlineClassCompanion.kt");
         }
 
+        @TestMetadata("jvmStaticFunInInlineClassCompanion.kt")
+        public void testJvmStaticFunInInlineClassCompanion() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/jvmStaticFunInInlineClassCompanion.kt");
+        }
+
+        @TestMetadata("jvmStaticPropertyAccessorInInlineClassCompanion.kt")
+        public void testJvmStaticPropertyAccessorInInlineClassCompanion() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/jvmStaticPropertyAccessorInInlineClassCompanion.kt");
+        }
+
+        @TestMetadata("jvmStaticVarInInlineClassCompanion.kt")
+        public void testJvmStaticVarInInlineClassCompanion() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/jvmStaticVarInInlineClassCompanion.kt");
+        }
+
         @TestMetadata("kt25246.kt")
         public void testKt25246() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/kt25246.kt");

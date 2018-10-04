@@ -330,7 +330,8 @@ public class FunctionCodegen {
             @NotNull DeclarationDescriptor containingDeclaration
     ) {
         return !canDelegateMethodBodyToInlineClass(origin, functionDescriptor, contextKind, containingDeclaration) ||
-               !functionDescriptor.getOverriddenDescriptors().isEmpty();
+               !functionDescriptor.getOverriddenDescriptors().isEmpty() ||
+               CodegenUtilKt.isJvmStaticInInlineClass(functionDescriptor);
     }
 
     private static boolean canDelegateMethodBodyToInlineClass(
@@ -342,6 +343,9 @@ public class FunctionCodegen {
         // special kind / function
         if (contextKind == OwnerKind.ERASED_INLINE_CLASS) return false;
         if (origin.getOriginKind() == JvmDeclarationOriginKind.UNBOX_METHOD_OF_INLINE_CLASS) return false;
+
+        // Synthesized class member descriptors corresponding to JvmStatic members of companion object
+        if (CodegenUtilKt.isJvmStaticInInlineClass(functionDescriptor)) return false;
 
         // descriptor corresponds to the underlying value
         if (functionDescriptor instanceof PropertyAccessorDescriptor) {
