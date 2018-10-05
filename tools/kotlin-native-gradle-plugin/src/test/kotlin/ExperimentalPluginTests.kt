@@ -853,6 +853,7 @@ class ExperimentalPluginTests {
                 jcenter()
                 maven { it.setUrl("http://kotlin.bintray.com/kotlin-eap") }
                 maven { it.setUrl("http://kotlin.bintray.com/kotlin-dev") }
+                maven { it.setUrl(MultiplatformSpecification.KOTLIN_REPO) }
             }
             evaluate()
             tasks.withType(KotlinNativeCompile::class.java).all {

@@ -141,8 +141,8 @@ test {
             sourceSets.test.output +
             files(shadowJar.archivePath) +
             configurations.shadow
-    systemProperty("kotlin.version", buildKotlinVersion)
-    systemProperty("kotlin.repo", buildKotlinCompilerRepo)
+    systemProperty("kotlin.version", kotlinVersion)
+    systemProperty("kotlin.repo", kotlinCompilerRepo)
     if (project.hasProperty("konan.home")) {
         systemProperty("konan.home", project.property("konan.home"))
     } else {
