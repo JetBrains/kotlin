@@ -1,4 +1,6 @@
-inline fun foo(f: () -> Unit) {}
+// PROBLEM: none
+// DISABLE-ERRORS
+fun foo(f: () -> Unit) {}
 
 fun test(): Int {
     foo {
