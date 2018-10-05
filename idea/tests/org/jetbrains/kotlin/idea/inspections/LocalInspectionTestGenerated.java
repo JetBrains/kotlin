@@ -5289,9 +5289,14 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             runTest("idea/testData/inspectionsLocal/setterBackingFieldAssignment/noAssignment.kt");
         }
 
-        @TestMetadata("noAssignment2.kt")
-        public void testNoAssignment2() throws Exception {
-            runTest("idea/testData/inspectionsLocal/setterBackingFieldAssignment/noAssignment2.kt");
+        @TestMetadata("noBackingField.kt")
+        public void testNoBackingField() throws Exception {
+            runTest("idea/testData/inspectionsLocal/setterBackingFieldAssignment/noBackingField.kt");
+        }
+
+        @TestMetadata("noBackingField2.kt")
+        public void testNoBackingField2() throws Exception {
+            runTest("idea/testData/inspectionsLocal/setterBackingFieldAssignment/noBackingField2.kt");
         }
 
         @TestMetadata("plusAssign.kt")

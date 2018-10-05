@@ -24,6 +24,7 @@ class SetterBackingFieldAssignmentInspection : AbstractKotlinInspection(), Clean
             val parameter = accessor.valueParameters.singleOrNull()
             val parameterDescriptor = parameter?.descriptor
             val context = accessor.analyze(BodyResolveMode.PARTIAL)
+            var hasBackingField = false
             if (bodyExpression.anyDescendantOfType<KtExpression> {
                     when (it) {
                         is KtBinaryExpression ->
@@ -35,12 +36,18 @@ class SetterBackingFieldAssignmentInspection : AbstractKotlinInspection(), Clean
                                 arg.text == parameter?.text
                                         && arg.getArgumentExpression().getResolvedCall(context)?.resultingDescriptor == parameterDescriptor
                             }
+                        is KtNameReferenceExpression -> {
+                            hasBackingField = it.text == KtTokens.FIELD_KEYWORD.value
+                            false
+                        }
                         else -> false
                     }
                 }) return
+            if (!hasBackingField) return
+
             holder.registerProblem(
                 accessor,
-                "Setter backing field should be assigned",
+                "Existing backing field is not assigned by the setter",
                 ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
                 AssignBackingFieldFix()
             )
