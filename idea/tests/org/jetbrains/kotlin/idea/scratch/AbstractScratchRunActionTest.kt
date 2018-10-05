@@ -20,7 +20,6 @@ import com.intellij.ide.scratch.ScratchFileService
 import com.intellij.ide.scratch.ScratchRootType
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.CommonDataKeys
-import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.CompilerModuleExtension
 import com.intellij.openapi.roots.ModuleRootModificationUtil
 import com.intellij.openapi.util.io.FileUtil
@@ -161,7 +160,8 @@ abstract class AbstractScratchRunActionTest : FileEditorManagerTestCase() {
     private fun getActionEvent(virtualFile: VirtualFile, action: AnAction): TestActionEvent {
         val context = MapDataContext()
         context.put(CommonDataKeys.VIRTUAL_FILE_ARRAY, arrayOf(virtualFile))
-        context.put<Project>(CommonDataKeys.PROJECT, project)
+        context.put(CommonDataKeys.PROJECT, project)
+        context.put(CommonDataKeys.EDITOR, myFixture.editor)
         return TestActionEvent(context, action)
     }
 
