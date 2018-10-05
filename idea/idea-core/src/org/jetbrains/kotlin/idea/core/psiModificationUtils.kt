@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.extensions.DeclarationAttributeAltererExtension
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.references.mainReference
-import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -255,7 +254,7 @@ fun KtModifierListOwner.setVisibility(visibilityModifier: KtModifierKeywordToken
 fun KtDeclaration.implicitVisibility(): KtModifierKeywordToken? {
     return when {
         this is KtPropertyAccessor && isSetter && property.hasModifier(KtTokens.OVERRIDE_KEYWORD) -> {
-            (property.descriptor as? PropertyDescriptor)?.overriddenDescriptors?.forEach {
+            (property.resolveToDescriptorIfAny() as? PropertyDescriptor)?.overriddenDescriptors?.forEach {
                 val visibility = it.setter?.visibility?.toKeywordToken()
                 if (visibility != null) return visibility
             }
