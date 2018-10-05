@@ -12,7 +12,7 @@ headers = AppleTextureEncoder.h AssertMacros.h Availability.h AvailabilityIntern
     gethostuuid.h glob.h ifaddrs.h inttypes.h iso646.h \
     langinfo.h \
     libgen.h libunwind.h \
-    membership.h monetary.h mpool.h \
+    membership.h menu.h monetary.h mpool.h \
     nameser.h ndbm.h nl_types.h \
     notify.h notify_keys.h ntsid.h \
     printf.h \
@@ -25,15 +25,11 @@ headers = AppleTextureEncoder.h AssertMacros.h Availability.h AvailabilityIntern
     bsm/libbsm.h \
     os/activity.h os/availability.h os/base.h os/lock.h \
     os/log.h os/object.h os/overflow.h os/trace.h \
-    simd/simd.h
+    simd/simd.h sys/sysctl.h sys/user.h
 
 headerFilter = **
 
 excludedFunctions = __tg_promote
 
-compilerOpts = -D_XOPEN_SOURCE
+compilerOpts = -D_XOPEN_SOURCE -DSHARED_LIBBIND -D_DARWIN_NO_64_BIT_INODE -DSYSCTL_DEF_ENABLED
 linkerOpts = -ldl -lz
-
----
-
-// menu.h is excluded so far due to interop issues.
