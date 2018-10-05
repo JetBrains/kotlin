@@ -26,38 +26,48 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 class ConstantConditionIfInspection : AbstractKotlinInspection() {
 
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
-        return ifExpressionVisitor { expression -> collectFixesAndRegisterProblem(expression, holder) }
+        return ifExpressionVisitor { expression ->
+            val constantValue = expression.getConditionConstantValueIfAny() ?: return@ifExpressionVisitor
+            val fixes = collectFixes(expression, constantValue)
+            holder.registerProblem(
+                expression.condition!!,
+                "Condition is always '$constantValue'",
+                *fixes.toTypedArray()
+            )
+        }
     }
 
     companion object {
-        private fun collectFixesAndRegisterProblem(expression: KtIfExpression, holder: ProblemsHolder?): List<ConstantConditionIfFix> {
-            val condition = expression.condition ?: return emptyList()
+        private fun KtIfExpression.getConditionConstantValueIfAny(): Boolean? {
+            val context = condition?.analyze(BodyResolveMode.PARTIAL_WITH_CFA) ?: return null
+            return condition?.constantBooleanValue(context)
+        }
 
-            val context = condition.analyze(BodyResolveMode.PARTIAL_WITH_CFA)
-            val constantValue = condition.constantBooleanValue(context) ?: return emptyList()
-
+        private fun collectFixes(
+            expression: KtIfExpression,
+            constantValue: Boolean? = expression.getConditionConstantValueIfAny()
+        ): List<ConstantConditionIfFix> {
+            if (constantValue == null) return emptyList()
             val fixes = mutableListOf<ConstantConditionIfFix>()
 
             if (expression.branch(constantValue) != null) {
                 val keepBraces = expression.isElseIf() && expression.branch(constantValue) is KtBlockExpression
-                fixes += SimplifyFix(constantValue, expression.isUsedAsExpression(context), keepBraces)
+                fixes += SimplifyFix(
+                    constantValue,
+                    expression.isUsedAsExpression(expression.analyze(BodyResolveMode.PARTIAL_WITH_CFA)),
+                    keepBraces
+                )
             }
 
             if (!constantValue && expression.`else` == null) {
                 fixes += RemoveFix()
             }
 
-            holder?.registerProblem(
-                condition,
-                "Condition is always '$constantValue'",
-                *fixes.toTypedArray()
-            )
-
             return fixes
         }
 
         fun applyFixIfSingle(ifExpression: KtIfExpression) {
-            collectFixesAndRegisterProblem(ifExpression, null).singleOrNull()?.applyFix(ifExpression)
+            collectFixes(ifExpression).singleOrNull()?.applyFix(ifExpression)
         }
     }
 
