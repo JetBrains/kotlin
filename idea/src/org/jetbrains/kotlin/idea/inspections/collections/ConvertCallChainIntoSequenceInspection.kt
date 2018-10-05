@@ -69,9 +69,9 @@ class ConvertCallChainIntoSequenceInspection : AbstractKotlinInspection() {
             )
         })
 
-    override fun createOptionsPanel() = OptionsPanel(this)
+    override fun createOptionsPanel(): JPanel = OptionsPanel(this)
 
-    class OptionsPanel internal constructor(owner: ConvertCallChainIntoSequenceInspection) : JPanel() {
+    private class OptionsPanel(owner: ConvertCallChainIntoSequenceInspection) : JPanel() {
         init {
             layout = BorderLayout()
             val regexField = EditorTextField(owner.callChainLengthText).apply { setOneLineMode(true) }
