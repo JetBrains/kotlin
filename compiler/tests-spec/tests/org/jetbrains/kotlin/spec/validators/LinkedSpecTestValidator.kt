@@ -56,11 +56,11 @@ class LinkedSpecTest(
 class LinkedSpecTestValidator(testDataFile: File) : AbstractSpecTestValidator<LinkedSpecTest>(testDataFile) {
     override val testPathPattern = getPathPattern()
     override val testInfoPattern: Pattern =
-        Pattern.compile(MULTILINE_COMMENT_REGEX.format("""KOTLIN $testAreaRegex SPEC TEST \($testTypeRegex\)$lineSeparator(?<infoElements>[\s\S]*?$lineSeparator)"""))
+        Pattern.compile(multilineCommentRegex.format("""KOTLIN $testAreaRegex SPEC TEST \($testTypeRegex\)$lineSeparator(?<infoElements>[\s\S]*?$lineSeparator)"""))
 
     companion object : SpecTestValidatorHelperObject {
         override val pathPartRegex =
-            """${SpecTestLinkedType.LINKED.testDataPath}$pathSeparator(?<sections>(?:[\w-]+)(?:/[\w-]+)*?)${pathSeparator}p-(?<paragraphNumber>$INTEGER_REGEX)"""
+            """${SpecTestLinkedType.LINKED.testDataPath}$pathSeparator(?<sections>(?:[\w-]+)(?:$pathSeparator[\w-]+)*?)${pathSeparator}p-(?<paragraphNumber>$INTEGER_REGEX)"""
         override val filenameRegex = """(?<sentenceNumber>$INTEGER_REGEX)\.(?<testNumber>$INTEGER_REGEX)\.kt"""
         override fun getPathPattern(): Pattern = Pattern.compile(testPathRegexTemplate.format(pathPartRegex, filenameRegex))
     }
@@ -91,9 +91,9 @@ class LinkedSpecTestValidator(testDataFile: File) : AbstractSpecTestValidator<Li
 
     override fun getTestInfo(testInfoMatcher: Matcher) =
         LinkedSpecTest(
-            TestArea.valueOf(testInfoMatcher.group("testArea").replace("/", "_").toUpperCase()),
+            TestArea.valueOf(testInfoMatcher.group("testArea").replace(File.separator, "_").toUpperCase()),
             TestType.fromValue(testInfoMatcher.group("testType"))!!,
-            testInfoMatcher.group("sections").split("/"),
+            testInfoMatcher.group("sections").split(File.separator),
             testInfoMatcher.group("paragraphNumber").toInt(),
             testInfoMatcher.group("sentenceNumber").toInt(),
             testNumber = testInfoMatcher.group("testNumber").toInt()

@@ -24,7 +24,8 @@ abstract class AbstractBlackBoxCodegenTestSpec : AbstractBlackBoxCodegenTest() {
         private val helperDirectives = mapOf(
             "REFLECT" to "reflect.kt"
         )
-        private val packagePattern = Pattern.compile("""(?:^|\n)package (?<packageName>.*?)(?:;|\n)""")
+        private val packagePattern =
+            Pattern.compile("""(?:^|${AbstractSpecTestValidator.lineSeparator})package (?<packageName>.*?)(?:;|${AbstractSpecTestValidator.lineSeparator})""")
     }
 
     private fun addPackageDirectiveToHelperFile(helperContent: String, packageName: String?) =

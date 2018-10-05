@@ -49,11 +49,11 @@ class NotLinkedSpecTest(
 class NotLinkedSpecTestValidator(testDataFile: File) : AbstractSpecTestValidator<NotLinkedSpecTest>(testDataFile) {
     override val testPathPattern = getPathPattern()
     override val testInfoPattern: Pattern =
-        Pattern.compile(MULTILINE_COMMENT_REGEX.format("""KOTLIN $testAreaRegex NOT LINKED SPEC TEST \($testTypeRegex\)$lineSeparator(?<infoElements>[\s\S]*?$lineSeparator)"""))
+        Pattern.compile(multilineCommentRegex.format("""KOTLIN $testAreaRegex NOT LINKED SPEC TEST \($testTypeRegex\)$lineSeparator(?<infoElements>[\s\S]*?$lineSeparator)"""))
 
     companion object : SpecTestValidatorHelperObject {
         override val pathPartRegex =
-            """${SpecTestLinkedType.NOT_LINKED.testDataPath}$pathSeparator(?<sections>[\w-]+)$pathSeparator(?<categories>(?:[\w-]+)(?:/[\w-]+)*?)"""
+            """${SpecTestLinkedType.NOT_LINKED.testDataPath}$pathSeparator(?<sections>[\w-]+)$pathSeparator(?<categories>(?:[\w-]+)(?:$pathSeparator[\w-]+)*?)"""
         override val filenameRegex = """(?<testNumber>$INTEGER_REGEX)\.kt"""
         override fun getPathPattern(): Pattern = Pattern.compile(testPathRegexTemplate.format(pathPartRegex, filenameRegex))
     }
@@ -82,7 +82,7 @@ class NotLinkedSpecTestValidator(testDataFile: File) : AbstractSpecTestValidator
             TestArea.valueOf(testInfoMatcher.group("testArea").toUpperCase()),
             TestType.fromValue(testInfoMatcher.group("testType"))!!,
             testInfoMatcher.group("sections"),
-            testInfoMatcher.group("categories").split("/"),
+            testInfoMatcher.group("categories").split(File.separator),
             testNumber = testInfoMatcher.group("testNumber").toInt()
         )
 
