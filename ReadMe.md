@@ -17,6 +17,7 @@ Welcome to [Kotlin](https://kotlinlang.org/)! Some handy links:
  * [Follow Kotlin on Twitter](https://twitter.com/kotlin)
  * [Public Slack channel](http://slack.kotlinlang.org/)
  * [TeamCity CI build](https://teamcity.jetbrains.com/project.html?tab=projectOverview&projectId=Kotlin)
+ * [Community Discord](https://discord.gg/UDJbpMn)
 
 ## Editing Kotlin
 
