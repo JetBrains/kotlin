@@ -1,4 +1,7 @@
 [![official project](http://jb.gg/badges/official.svg)](https://confluence.jetbrains.com/display/ALL/JetBrains+on+GitHub)
+[![Slack][slack-badge]][slack-url]
+[![JetBrains community Discord](https://goo.gl/xe5fjk)](https://discord.gg/UDJbpMn)
+
 [![TeamCity (simple build status)](https://img.shields.io/teamcity/http/teamcity.jetbrains.com/s/Kotlin_dev_Compiler.svg)](https://teamcity.jetbrains.com/viewType.html?buildTypeId=Kotlin_dev_Compiler&branch_Kotlin_dev=%3Cdefault%3E&tab=buildTypeStatusDiv)
 [![Maven Central](https://img.shields.io/maven-central/v/org.jetbrains.kotlin/kotlin-maven-plugin.svg)](http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22org.jetbrains.kotlin%22)
 [![GitHub license](https://img.shields.io/badge/license-Apache%20License%202.0-blue.svg?style=flat)](http://www.apache.org/licenses/LICENSE-2.0)
@@ -17,6 +20,7 @@ Welcome to [Kotlin](https://kotlinlang.org/)! Some handy links:
  * [Follow Kotlin on Twitter](https://twitter.com/kotlin)
  * [Public Slack channel](http://slack.kotlinlang.org/)
  * [TeamCity CI build](https://teamcity.jetbrains.com/project.html?tab=projectOverview&projectId=Kotlin)
+ * [Community Discord](https://discord.gg/UDJbpMn)
 
 ## Editing Kotlin
 
@@ -179,3 +183,8 @@ Before submitting the pull request, make sure that you can say "YES" to each poi
   - You ran the build locally and verified new functionality
   - You ran related tests locally and they passed
   - You do not have merge commits in the pull request
+
+
+[slack-url]: http://slack.kotlinlang.org
+[slack-badge-broken]: http://slack.kotlinlang.org/badge.svg
+[slack-badge]: https://goo.gl/6v9NMJ
