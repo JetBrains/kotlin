@@ -1,4 +1,5 @@
 [![official project](http://jb.gg/badges/official.svg)](https://confluence.jetbrains.com/display/ALL/JetBrains+on+GitHub)
+[![Slack][slack-badge]][slack-url]
 [![JetBrains community Discord](https://goo.gl/xe5fjk)](https://discord.gg/UDJbpMn)
 
 [![TeamCity (simple build status)](https://img.shields.io/teamcity/http/teamcity.jetbrains.com/s/Kotlin_dev_Compiler.svg)](https://teamcity.jetbrains.com/viewType.html?buildTypeId=Kotlin_dev_Compiler&branch_Kotlin_dev=%3Cdefault%3E&tab=buildTypeStatusDiv)
@@ -182,3 +183,8 @@ Before submitting the pull request, make sure that you can say "YES" to each poi
   - You ran the build locally and verified new functionality
   - You ran related tests locally and they passed
   - You do not have merge commits in the pull request
+
+
+[slack-url]: http://slack.kotlinlang.org
+[slack-badge-broken]: http://slack.kotlinlang.org/badge.svg
+[slack-badge]: https://goo.gl/6v9NMJ
