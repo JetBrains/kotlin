@@ -4000,6 +4000,11 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
             runTest("js/js.translator/testData/box/inline/kt26466.kt");
         }
 
+        @TestMetadata("kt26787.kt")
+        public void testKt26787() throws Exception {
+            runTest("js/js.translator/testData/box/inline/kt26787.kt");
+        }
+
         @TestMetadata("lambdaInLambda.kt")
         public void testLambdaInLambda() throws Exception {
             runTest("js/js.translator/testData/box/inline/lambdaInLambda.kt");
