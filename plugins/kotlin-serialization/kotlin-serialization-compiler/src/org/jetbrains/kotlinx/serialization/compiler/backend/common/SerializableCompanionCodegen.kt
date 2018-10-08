@@ -18,10 +18,11 @@ package org.jetbrains.kotlinx.serialization.compiler.backend.common
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.psi2ir.findSingleFunction
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.SERIALIZER_PROVIDER_NAME
 import org.jetbrains.kotlinx.serialization.compiler.resolve.getSerializableClassDescriptorByCompanion
+import org.jetbrains.kotlinx.serialization.compiler.resolve.isKSerializer
 
 abstract class SerializableCompanionCodegen(
     protected val companionDescriptor: ClassDescriptor,
@@ -30,7 +31,13 @@ abstract class SerializableCompanionCodegen(
     protected val serializableDescriptor: ClassDescriptor = getSerializableClassDescriptorByCompanion(companionDescriptor)!!
 
     fun generate() {
-        val serializerGetterDescriptor = companionDescriptor.unsubstitutedMemberScope.findSingleFunction(SERIALIZER_PROVIDER_NAME)
+        val serializerGetterDescriptor = companionDescriptor.unsubstitutedMemberScope.getContributedFunctions(
+            SERIALIZER_PROVIDER_NAME,
+            NoLookupLocation.FROM_BACKEND
+        ).first { func ->
+            func.valueParameters.size == serializableDescriptor.declaredTypeParameters.size &&
+                    func.valueParameters.all { isKSerializer(it.type) }
+        }
         generateSerializerGetter(serializerGetterDescriptor)
     }
 
