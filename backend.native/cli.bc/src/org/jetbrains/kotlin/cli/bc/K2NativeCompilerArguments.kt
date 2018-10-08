@@ -94,6 +94,12 @@ class K2NativeCompilerArguments : CommonCompilerArguments() {
     @Argument(value = "-Xdisable", deprecatedName = "--disable", valueDescription = "<Phase>", description = "Disable backend phase")
     var disablePhases: Array<String>? = null
 
+    @Argument(value = EMBED_BITCODE_FLAG, description = "Embed LLVM IR bitcode as data")
+    var embedBitcode: Boolean = false
+
+    @Argument(value = EMBED_BITCODE_MARKER_FLAG, description = "Embed placeholder LLVM IR data as a marker")
+    var embedBitcodeMarker: Boolean = false
+
     @Argument(value = "-Xenable", deprecatedName = "--enable", valueDescription = "<Phase>", description = "Enable backend phase")
     var enablePhases: Array<String>? = null
 
@@ -153,3 +159,5 @@ class K2NativeCompilerArguments : CommonCompilerArguments() {
             }
 }
 
+const val EMBED_BITCODE_FLAG = "-Xembed-bitcode"
+const val EMBED_BITCODE_MARKER_FLAG = "-Xembed-bitcode-marker"

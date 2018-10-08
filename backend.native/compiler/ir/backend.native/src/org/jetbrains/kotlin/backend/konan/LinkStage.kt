@@ -183,6 +183,7 @@ internal class LinkStage(val context: Context, val phaser: PhaseManager) {
                     libraries = linker.targetLibffi + linker.linkStaticLibraries(includedBinaries),
                     linkerArgs = entryPointSelector +
                             asLinkerArgs(config.getNotNull(KonanConfigKeys.LINKER_ARGS)) +
+                            BitcodeEmbedding.getLinkerOptions(context.config) +
                             libraryProvidedLinkerFlags + frameworkLinkerArgs,
                     optimize = optimize, debug = debug, kind = linkerOutput,
                     outputDsymBundle = context.config.outputFile + ".dSYM").forEach {

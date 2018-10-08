@@ -31,6 +31,9 @@ open class FrameworkTest : DefaultTask() {
     @Input
     lateinit var frameworkName: String
 
+    @Input
+    var fullBitcode: Boolean = false
+
     private val testOutput: String by lazy {
         project.file(project.property("testOutputFramework")!!).absolutePath
     }
@@ -109,7 +112,8 @@ open class FrameworkTest : DefaultTask() {
         }
 
         val args = listOf("-sdk", configs.absoluteTargetSysRoot, "-target", swiftTarget) +
-                options + "-o" + output.toString() + sources
+                options + "-o" + output.toString() + sources +
+                if (fullBitcode) listOf("-embed-bitcode", "-Xlinker", "-bitcode_verify") else listOf("-embed-bitcode-marker")
 
         val (stdOut, stdErr, exitCode) = runProcess(executor = localExecutor(project), executable = compiler, args = args)
 

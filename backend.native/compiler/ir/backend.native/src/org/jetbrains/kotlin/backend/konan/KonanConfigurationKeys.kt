@@ -20,6 +20,8 @@ class KonanConfigKeys {
                 = CompilerConfigurationKey.create("add debug information")
         val DISABLED_PHASES: CompilerConfigurationKey<List<String>> 
                 = CompilerConfigurationKey.create("disable backend phases")
+        val BITCODE_EMBEDDING_MODE: CompilerConfigurationKey<BitcodeEmbedding.Mode>
+                = CompilerConfigurationKey.create("bitcode embedding mode")
         val ENABLE_ASSERTIONS: CompilerConfigurationKey<Boolean>
                 = CompilerConfigurationKey.create("enable runtime assertions in generated code")
         val ENABLED_PHASES: CompilerConfigurationKey<List<String>> 

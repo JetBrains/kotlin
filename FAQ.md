@@ -50,6 +50,25 @@ framework("MyCustomFramework") {
 
 </div>
 
+### Q: How do I enable bitcode for my Kotlin framework?
+
+A: Use either `-Xembed-bitcode` or `-Xembed-bitcode-marker` compiler option
+or matching Gradle DSL statement, i.e.
+
+<div class="sample" markdown="1" theme="idea" mode="groovy">
+
+```groovy
+framework("MyCustomFramework") {
+    extraOpts '-Xembed-bitcode' // for release binaries
+    // or '-Xembed-bitcode-marker' for debug binaries
+}
+```
+
+These options have nearly the same effect as clang's `-fembed-bitcode`/`-fembed-bitcode-marker`
+and swiftc's `-embed-bitcode`/`-embed-bitcode-marker`.
+
+</div>
+
 ### Q: Why do I see `InvalidMutabilityException`?
 
 A: It likely happens, because you are trying to mutate a frozen object. An object can transfer to the
