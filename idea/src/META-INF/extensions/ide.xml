@@ -46,6 +46,10 @@
         <extensionPoint qualifiedName="org.jetbrains.kotlin.scriptRelatedModulesProvider"
                         interface="org.jetbrains.kotlin.idea.core.script.dependencies.ScriptRelatedModulesProvider"
                         area="IDEA_PROJECT"/>
+
+        <extensionPoint qualifiedName="org.jetbrains.kotlin.scriptDefinitionsProvider"
+                        interface="kotlin.script.experimental.intellij.ScriptDefinitionsProvider"
+                        area="IDEA_PROJECT"/>
     </extensionPoints>
 
     <extensions defaultExtensionNs="org.jetbrains.kotlin">
@@ -55,6 +59,10 @@
         <scriptDefinitionContributor
             id="ScriptTemplatesFromCompilerSettingsProvider"
             implementation="org.jetbrains.kotlin.idea.script.ScriptTemplatesFromCompilerSettingsProvider"/>
+
+        <scriptDefinitionContributor
+            id="BridgeScriptDefinitionsContributor"
+            implementation="org.jetbrains.kotlin.idea.script.BridgeScriptDefinitionsContributor"/>
 
         <scriptDefinitionContributor
             id="ScriptTemplatesFromDependenciesProvider"

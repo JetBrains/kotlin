@@ -40,6 +40,7 @@ dependencies {
     compile(project(":plugins:uast-kotlin"))
     compile(project(":plugins:uast-kotlin-idea"))
     compile(project(":kotlin-script-util")) { isTransitive = false }
+    compile(project(":kotlin-scripting-intellij"))
 
     compile(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-core")) { isTransitive = false }
 
