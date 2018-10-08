@@ -367,24 +367,20 @@ internal class GradleCompilerRunner(private val project: Project) : KotlinCompil
             val jarToModule = HashMap<File, IncrementalModuleEntry>()
 
             for (project in gradle.rootProject.allprojects) {
-                for (task in project.tasks) {
-                    when (task) {
-                        is AbstractKotlinCompile<*> -> {
-                            val module = IncrementalModuleEntry(project.path, task.moduleName, project.buildDir, task.buildHistoryFile)
-                            dirToModule[task.destinationDir] = module
-                            task.javaOutputDir?.let { dirToModule[it] = module }
-                            nameToModules.getOrPut(module.name) { HashSet() }.add(module)
+                project.tasks.withType(AbstractKotlinCompile::class.java).forEach { task ->
+                    val module = IncrementalModuleEntry(project.path, task.moduleName, project.buildDir, task.buildHistoryFile)
+                    dirToModule[task.destinationDir] = module
+                    task.javaOutputDir?.let { dirToModule[it] = module }
+                    nameToModules.getOrPut(module.name) { HashSet() }.add(module)
 
-                            if (task is Kotlin2JsCompile) {
-                                jarForSourceSet(project, task.sourceSetName)?.let {
-                                    jarToModule[it] = module
-                                }
-                            }
-                        }
-                        is InspectClassesForMultiModuleIC -> {
-                            jarToClassListFile[File(task.archivePath)] = task.classesListFile
+                    if (task is Kotlin2JsCompile) {
+                        jarForSourceSet(project, task.sourceSetName)?.let {
+                            jarToModule[it] = module
                         }
                     }
+                }
+                project.tasks.withType(InspectClassesForMultiModuleIC::class.java).forEach { task ->
+                    jarToClassListFile[File(task.archivePath)] = task.classesListFile
                 }
             }
 

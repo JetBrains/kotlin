@@ -423,12 +423,12 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
     private fun disableMultiModuleICIfNeeded() {
         if (!incremental || javaOutputDir == null) return
 
-        val illegalTask = project.tasks.firstOrNull {
+        val illegalTask = project.tasks.matching {
             it is AbstractCompile &&
                     it !is JavaCompile &&
                     it !is AbstractKotlinCompile<*> &&
                     javaOutputDir!!.isParentOf(it.destinationDir)
-        } as? AbstractCompile
+        }.firstOrNull() as? AbstractCompile
 
         if (illegalTask != null) {
             project.logger.info(
