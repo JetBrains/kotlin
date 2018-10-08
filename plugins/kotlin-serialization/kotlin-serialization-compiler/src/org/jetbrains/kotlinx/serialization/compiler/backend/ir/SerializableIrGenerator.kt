@@ -8,8 +8,10 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ParameterDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.ir.builders.*
+import org.jetbrains.kotlin.ir.declarations.IrAnonymousInitializer
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrField
+import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
@@ -90,13 +92,20 @@ class SerializableIrGenerator(
 
             // todo: transient initializers and init blocks
             // remaining initalizers of variables
-//            val serialDescs = properties.serializableProperties.map { it.descriptor }.toSet()
-//            irClass.declarations.asSequence()
-//                .filterIsInstance<IrProperty>()
-//                .filter { it.descriptor !in serialDescs }
-//                .filter { it.backingField != null }
-//                .mapNotNull { prop -> prop.backingField!!.initializer?.let { prop to it.expression } }
-//                .forEach { (prop, expr) -> +irSetField(irGet(thiz), prop.backingField!!, expr) }
+            val serialDescs = properties.serializableProperties.map { it.descriptor }.toSet()
+            irClass.declarations.asSequence()
+                .filterIsInstance<IrProperty>()
+                .filter { it.descriptor !in serialDescs }
+                .filter { it.backingField != null }
+                .mapNotNull { prop -> transformFieldInitializer(prop.backingField!!)?.let { prop to it } }
+                .forEach { (prop, expr) -> +irSetField(irGet(thiz), prop.backingField!!, expr) }
+
+            // init blocks
+            irClass.declarations.asSequence()
+                .filterIsInstance<IrAnonymousInitializer>()
+                .forEach { initializer ->
+                    initializer.body.statements.forEach { +it }
+                }
         }
 
     override fun generateWriteSelfMethod(methodDescriptor: FunctionDescriptor) {
