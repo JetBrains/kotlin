@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions.F
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions.FoldIfToReturnIntention
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions.IfThenToElvisIntention
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.isTrivialStatementBody
+import org.jetbrains.kotlin.idea.quickfix.ChangeVariableMutabilityFix
 import org.jetbrains.kotlin.idea.quickfix.QuickFixActionBase
 import org.jetbrains.kotlin.idea.quickfix.RemoveModifierFix
 import org.jetbrains.kotlin.idea.quickfix.RemoveUselessCastFix
@@ -92,7 +93,7 @@ object J2KPostProcessingRegistrar {
         registerGeneralInspectionBasedProcessing(RedundantExplicitTypeInspection())
         registerGeneralInspectionBasedProcessing(RedundantUnitReturnTypeInspection())
         _processings.add(RemoveExplicitPropertyType())
-        registerGeneralInspectionBasedProcessing(CanBeValInspection())
+        registerGeneralInspectionBasedProcessing(CanBeValInspection(ignoreNotUsedVals = false))
 
         registerIntentionBasedProcessing(FoldInitializerAndIfToElvisIntention())
 
