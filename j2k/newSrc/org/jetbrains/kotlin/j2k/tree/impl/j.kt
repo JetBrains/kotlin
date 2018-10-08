@@ -66,7 +66,12 @@ class JKJavaModifierImpl(override val type: JKJavaModifier.JavaModifierType) : J
 
 class JKJavaOperatorImpl private constructor(val token: IElementType) : JKOperator {
     override val operatorText: String
-        get() = TODO(token.toString())
+        get() = when (token) {
+            JavaTokenType.MINUSMINUS -> "--"
+            JavaTokenType.PLUSPLUS -> "++"
+            JavaTokenType.EXCL -> "!"
+            else -> TODO("TODO $token")
+        }
 
     override val precedence: Int
         get() = when (token) {
