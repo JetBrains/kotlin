@@ -26,7 +26,12 @@ val serialize by tasks.creating(JavaExec::class) {
 
     classpath(rootProject.buildscript.configurations["bootstrapCompilerClasspath"])
     main = "org.jetbrains.kotlin.serialization.builtins.RunKt"
-    jvmArgs("-Didea.io.use.nio2=true")
+
+    doFirst {
+        // Reassign to remove debugger options. Workaround for IDEA-200192.
+        jvmArgs = listOf("-Didea.io.use.nio2=true")
+    }
+
     args(outDir, *inDirs)
 }
 
