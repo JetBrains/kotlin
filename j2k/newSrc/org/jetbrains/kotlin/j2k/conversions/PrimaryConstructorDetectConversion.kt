@@ -20,27 +20,31 @@ class PrimaryConstructorDetectConversion(private val context: ConversionContext)
     private fun processClass(element: JKClass) {
         val constructors = element.declarationList.filterIsInstance<JKKtConstructor>()
         if (constructors.any { it is JKKtPrimaryConstructor }) return
-        // TODO: Detecting primary for multiple constructors
-        // TODO: Detecting primary constructors with field initializers
-        val single = constructors.singleOrNull { it.block.statements.isEmpty() } ?: return
-        val delegationCall = single.delegationCall as? JKDelegationConstructorCall
+        val primaryConstructorCandidate = detectPrimaryConstructor(constructors) ?: return
+        val delegationCall = primaryConstructorCandidate.delegationCall as? JKDelegationConstructorCall
         if (delegationCall?.expression is JKThisExpression) return
 
-        element.declarationList -= single
+        element.declarationList -= primaryConstructorCandidate
 
-        single.invalidate()
+        primaryConstructorCandidate.invalidate()
 
         val primaryConstructor =
             JKKtPrimaryConstructorImpl(
-                single.name,
-                single.parameters,
-                single.block,
-                single.modifierList,
-                single.delegationCall
+                primaryConstructorCandidate.name,
+                primaryConstructorCandidate.parameters,
+                primaryConstructorCandidate.block,
+                primaryConstructorCandidate.modifierList,
+                primaryConstructorCandidate.delegationCall
             )
 
-        context.symbolProvider.transferSymbol(primaryConstructor, single)
+        context.symbolProvider.transferSymbol(primaryConstructor, primaryConstructorCandidate)
 
         element.declarationList += primaryConstructor
+    }
+
+    private fun detectPrimaryConstructor(constructors: List<JKKtConstructor>): JKKtConstructor? {
+        val constructorsWithoutOtherConstructorCall =
+            constructors.filterNot { (it.delegationCall as? JKDelegationConstructorCall)?.expression is JKThisExpression }
+        return constructorsWithoutOtherConstructorCall.singleOrNull()
     }
 }
