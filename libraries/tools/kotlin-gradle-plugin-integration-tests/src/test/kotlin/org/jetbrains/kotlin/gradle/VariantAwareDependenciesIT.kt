@@ -224,6 +224,23 @@ class VariantAwareDependenciesIT : BaseGradleIT() {
         testResolveAllConfigurations("sample-lib")
     }
 
+    @Test
+    fun testConfigurationsWithNoExplicitUsageResolveRuntime() =
+    // Starting with Gradle 5.0, plain Maven dependencies are represented as two variants, and resolving them to the API one leads
+    // to transitive dependencies left out of the resolution results. We need to ensure that our attributes schema does not lead to the API
+    // variants chosen over the runtime ones when resolving a configuration with no required Usage:
+        with(Project("simpleProject", GradleVersionRequired.AtLeast("5.0-milestone-1"))) {
+            setupWorkingDir()
+            gradleBuildScript().appendText("\ndependencies { compile 'org.jetbrains.kotlin:kotlin-compiler-embeddable' }")
+
+            testResolveAllConfigurations {
+                assertContains(">> :compile --> kotlin-compiler-embeddable-${defaultBuildOptions().kotlinVersion}.jar")
+
+                // Check that the transitive dependencies with 'runtime' scope are also available:
+                assertContains(">> :compile --> kotlin-script-runtime-${defaultBuildOptions().kotlinVersion}.jar")
+            }
+        }
+
     private fun Project.embedProject(other: Project) {
         setupWorkingDir()
         other.setupWorkingDir()
