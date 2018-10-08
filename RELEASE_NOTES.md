@@ -1,9 +1,10 @@
-# Early Access Preview of Kotlin/Native #
+# Kotlin/Native backend, Beta version #
 
 ## Introduction ##
 
- _Kotlin/Native_ is a LLVM backend for the Kotlin compiler. It consists of a machine code generation facility using
-the LLVM toolchain and a native runtime implementation.
+ _Kotlin/Native_ is an LLVM backend for the Kotlin compiler.
+It consists of a machine code generation facility using the LLVM toolchain
+and a native runtime implementation.
 
  _Kotlin/Native_ is primarily designed to allow compilation for platforms where
 virtual machines are not desirable or possible (such as iOS or embedded targets),
@@ -70,13 +71,13 @@ For documentation on C interoperability stubs see INTEROP.md.
 
  *** DO NOT USE THIS PREVIEW RELEASE FOR ANY PERFORMANCE ANALYSIS ***
 
- This is purely a technology preview of _Kotlin/Native_ technology, and is not yet tuned
+ This beta version of _Kotlin/Native_ technology is not yet tuned
 for benchmarking and competitive analysis of any kind.
 
 ### Standard Library ###
 
-  The standard library in _Kotlin/Native_ is known to be mostly complete, please report us 
-missing functionality. Note, that standard Java APIs, such as `java.lang.Math` or `java.io`
+  The standard library in _Kotlin/Native_ is known match common standard library in other Kotlin variants.
+ Note, that standard Java APIs, such as `java.math.BigDecimal` or `java.io`
 is not available in current _Kotlin_ standard library, but using C interoperability, one could
 call similar APIs from the POSIX library, see this [`sample`](https://github.com/JetBrains/kotlin-native/blob/master/samples/csvparser).
   Also Kotlin/Native standard library contains certain native-specific extensions, mostly around
