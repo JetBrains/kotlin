@@ -119,6 +119,8 @@ class KotlinAndroidGradleMPPModuleDataService : AbstractProjectDataService<Modul
                 GradleProjectImportHandler.getInstances(project).forEach { it.importByModule(kotlinFacet, nodeToImport) }
             }
         }
+
+        ContentRootDataService().importData(contentRootsToImport, projectData, project, modelsProvider)
     }
 
     private fun getDependeeModuleNodes(
