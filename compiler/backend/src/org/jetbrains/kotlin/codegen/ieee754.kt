@@ -38,7 +38,7 @@ fun calcProperTypeForIeee754ArithmeticIfNeeded(
 private fun KotlinType.isFloatingPointOrNullable() =
     KotlinBuiltIns.isDoubleOrNullableDouble(this) || KotlinBuiltIns.isFloatOrNullableFloat(this)
 
-private fun KtExpression.getKotlinTypeForComparison(bindingContext: BindingContext): KotlinType? =
+fun KtExpression.getKotlinTypeForComparison(bindingContext: BindingContext): KotlinType? =
     when {
         this is KtProperty -> bindingContext[BindingContext.VARIABLE, this]?.type
         else -> kotlinType(bindingContext)

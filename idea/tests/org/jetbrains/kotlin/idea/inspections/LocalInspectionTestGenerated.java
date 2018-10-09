@@ -1531,6 +1531,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
                 runTest("idea/testData/inspectionsLocal/conventionNameCalls/replaceCallWithBinaryOperator/equalsDoubleSmartCast.kt");
             }
 
+            @TestMetadata("equalsDoubleSmartCastFromGeneric.kt")
+            public void testEqualsDoubleSmartCastFromGeneric() throws Exception {
+                runTest("idea/testData/inspectionsLocal/conventionNameCalls/replaceCallWithBinaryOperator/equalsDoubleSmartCastFromGeneric.kt");
+            }
+
             @TestMetadata("equalsExtensionFunction.kt")
             public void testEqualsExtensionFunction() throws Exception {
                 runTest("idea/testData/inspectionsLocal/conventionNameCalls/replaceCallWithBinaryOperator/equalsExtensionFunction.kt");
