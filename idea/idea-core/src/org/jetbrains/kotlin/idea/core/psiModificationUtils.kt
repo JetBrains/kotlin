@@ -253,19 +253,14 @@ fun KtModifierListOwner.setVisibility(visibilityModifier: KtModifierKeywordToken
 }
 
 fun KtDeclaration.implicitVisibility(): KtModifierKeywordToken? {
-    if (this is KtPropertyAccessor && this.isSetter) {
-        val property = this.property
-        if (property.hasModifier(KtTokens.OVERRIDE_KEYWORD)) {
-            val visibility = (property.descriptor as? PropertyDescriptor)
-                ?.overriddenDescriptors
-                ?.firstOrNull()
-                ?.setter
-                ?.visibility
-                ?.toKeywordToken()
-            if (visibility != null) return visibility
-        }
-    }
     return when {
+        this is KtPropertyAccessor && isSetter && property.hasModifier(KtTokens.OVERRIDE_KEYWORD) -> {
+            (property.descriptor as? PropertyDescriptor)?.overriddenDescriptors?.forEach {
+                val visibility = it.setter?.visibility?.toKeywordToken()
+                if (visibility != null) return visibility
+            }
+            KtTokens.DEFAULT_VISIBILITY_KEYWORD
+        }
         this is KtConstructor<*> -> {
             val klass = getContainingClassOrObject()
             if (klass is KtClass && (klass.isEnum() || klass.isSealed())) KtTokens.PRIVATE_KEYWORD
