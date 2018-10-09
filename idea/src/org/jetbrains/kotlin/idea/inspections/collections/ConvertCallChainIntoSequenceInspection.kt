@@ -16,7 +16,6 @@ import com.intellij.openapi.ui.LabeledComponent
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.ui.EditorTextField
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.inspections.AbstractKotlinInspection
@@ -28,11 +27,8 @@ import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.resolvedCallUtil.getImplicitReceiverValue
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
-import org.jetbrains.kotlin.resolve.descriptorUtil.isSubclassOf
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
-import org.jetbrains.kotlin.types.KotlinType
 import java.awt.BorderLayout
 import javax.swing.JPanel
 
@@ -154,7 +150,7 @@ private fun KtQualifiedExpression.findCallChain(): CallChain? {
     val receiverType =
         (lastCall.getQualifiedExpressionForSelector())?.receiverExpression?.getResolvedCall(context)?.resultingDescriptor?.returnType
             ?: lastCall.implicitReceiver(context)?.type
-    if (receiverType?.isMap(DefaultBuiltIns.Instance) == true) return null
+    if (receiverType?.isIterable(DefaultBuiltIns.Instance) != true) return null
 
     val firstCall = calls.first()
     val qualified = firstCall.getQualifiedExpressionForSelector() ?: firstCall.getQualifiedExpressionForReceiver() ?: return null

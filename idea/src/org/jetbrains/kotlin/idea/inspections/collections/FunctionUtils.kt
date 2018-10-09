@@ -39,6 +39,15 @@ fun KotlinType?.isMap(builtIns: KotlinBuiltIns): Boolean {
     return classDescriptor.name.asString().endsWith("Map") && classDescriptor.isSubclassOf(builtIns.map)
 }
 
+fun KotlinType?.isIterable(builtIns: KotlinBuiltIns): Boolean {
+    val classDescriptor = this?.constructor?.declarationDescriptor as? ClassDescriptor ?: return false
+    val className = classDescriptor.name.asString()
+    // First two lines are just to make things faster
+    return className.endsWith("List") && classDescriptor.isSubclassOf(builtIns.list)
+            || className.endsWith("Set") && classDescriptor.isSubclassOf(builtIns.set)
+            || classDescriptor.isSubclassOf(builtIns.iterable)
+}
+
 fun KtCallExpression.isCalling(fqName: FqName, context: BindingContext = analyze(BodyResolveMode.PARTIAL)): Boolean {
     val function = fqName.asString().takeLastWhile { it != '.' }
     if (calleeExpression?.text != function) return false
