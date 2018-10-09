@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.idea.compiler.configuration
 
 import com.intellij.openapi.components.PersistentStateComponent
-import com.intellij.openapi.progress.util.BackgroundTaskUtil
 import com.intellij.openapi.project.Project
 import com.intellij.util.ReflectionUtil
 import com.intellij.util.messages.Topic
@@ -25,6 +24,7 @@ import com.intellij.util.xmlb.SkipDefaultValuesSerializationFilters
 import com.intellij.util.xmlb.XmlSerializer
 import org.jdom.Element
 import org.jetbrains.kotlin.cli.common.arguments.*
+import org.jetbrains.kotlin.idea.syncPublisherWithDisposeCheck
 import kotlin.reflect.KClass
 
 abstract class BaseKotlinCompilerSettings<T : Freezable> protected constructor(private val project: Project) : PersistentStateComponent<Element>, Cloneable {
@@ -40,7 +40,7 @@ abstract class BaseKotlinCompilerSettings<T : Freezable> protected constructor(p
             validateNewSettings(value)
             _settings = value
 
-            BackgroundTaskUtil.syncPublisher(project, KotlinCompilerSettingsListener.TOPIC).settingsChanged(value)
+            project.syncPublisherWithDisposeCheck(KotlinCompilerSettingsListener.TOPIC).settingsChanged(value)
         }
 
     fun update(changer: T.() -> Unit) {
@@ -74,7 +74,7 @@ abstract class BaseKotlinCompilerSettings<T : Freezable> protected constructor(p
             XmlSerializer.deserializeInto(this, state)
         }
 
-        BackgroundTaskUtil.syncPublisher(project, KotlinCompilerSettingsListener.TOPIC).settingsChanged(settings)
+        project.syncPublisherWithDisposeCheck(KotlinCompilerSettingsListener.TOPIC).settingsChanged(settings)
     }
 
     public override fun clone(): Any = super.clone()
