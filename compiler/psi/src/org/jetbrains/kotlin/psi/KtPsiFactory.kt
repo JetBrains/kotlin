@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.resolve.ImportPath
 
 @JvmOverloads
@@ -391,6 +392,10 @@ class KtPsiFactory @JvmOverloads constructor(private val project: Project, val m
     fun createWhenCondition(conditionText: String): KtWhenCondition {
         val whenEntry = createWhenEntry("$conditionText -> {}")
         return whenEntry.conditions[0]
+    }
+
+    fun createIfWithBody(condition: KtExpression?, thenExpr: KtExpression?): KtIfExpression {
+        return createExpressionByPattern("if ($0) $1", condition!!, thenExpr!!) as KtIfExpression
     }
 
     fun createBlockStringTemplateEntry(expression: KtExpression): KtStringTemplateEntryWithExpression {
