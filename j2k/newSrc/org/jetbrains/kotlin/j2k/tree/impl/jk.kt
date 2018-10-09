@@ -89,7 +89,7 @@ class JKParameterImpl(
 
     override var modifierList by child(modifierList)
     override var initializer by child(initializer)
-    override val name by child(name)
+    override var name by child(name)
     override var type by child(type)
 }
 
@@ -218,7 +218,7 @@ class JKLocalVariableImpl(modifierList: JKModifierList, type: JKTypeElement, nam
     JKLocalVariable, JKBranchElementBase() {
     override var modifierList by child(modifierList)
     override var initializer by child(initializer)
-    override val name by child(name)
+    override var name by child(name)
     override val type by child(type)
 
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitLocalVariable(this, data)

@@ -66,7 +66,7 @@ interface JKMethod : JKDeclaration, JKModifierListOwner {
 
 interface JKField : JKDeclaration, JKModifierListOwner {
     val type: JKTypeElement
-    val name: JKNameIdentifier
+    var name: JKNameIdentifier
     var initializer: JKExpression
 }
 

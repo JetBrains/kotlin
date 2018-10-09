@@ -103,7 +103,10 @@ class NewCodeBuilder {
             )
         }
 
-        override fun visitMutabilityModifier(mutabilityModifier: JKMutabilityModifier) {}
+        override fun visitMutabilityModifier(mutabilityModifier: JKMutabilityModifier) {
+            if (mutabilityModifier.mutability == Mutability.NonMutable) printer.print("val")
+            else printer.print("var")
+        }
 
         override fun visitKtModifier(ktModifier: JKKtModifier) {
             printer.printWithNoIndent(
@@ -189,7 +192,8 @@ class NewCodeBuilder {
 
 
         override fun visitParameter(parameter: JKParameter) {
-            printer.printWithNoIndent(parameter.name.value, ": ")
+            parameter.modifierList.accept(this)
+            printer.printWithNoIndent(" ", parameter.name.value, ": ")
             parameter.type.accept(this)
             if (parameter.initializer !is JKStubExpression) {
                 printer.printWithNoIndent(" = ")
