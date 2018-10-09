@@ -184,6 +184,15 @@ class NewCodeBuilder {
             printer.printlnWithNoIndent()
         }
 
+        override fun visitKtInitDeclaration(ktInitDeclaration: JKKtInitDeclaration) {
+            if (ktInitDeclaration.block.statements.isNotEmpty()) {
+                printer.print("init ")
+                printer.block(multiline = true) {
+                    ktInitDeclaration.block.statements.forEach { it.accept(this) }
+                }
+            }
+        }
+
         override fun visitKtIsExpression(ktIsExpression: JKKtIsExpression) {
             ktIsExpression.expression.accept(this)
             printer.printWithNoIndent(" is ")

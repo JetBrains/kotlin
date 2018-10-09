@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.j2k.conversions
 
+import org.jetbrains.kotlin.j2k.copyTree
 import org.jetbrains.kotlin.j2k.tree.*
-import org.jetbrains.kotlin.j2k.tree.impl.JKJavaFieldImpl
-import org.jetbrains.kotlin.j2k.tree.impl.JKNameIdentifierImpl
+import org.jetbrains.kotlin.j2k.tree.impl.*
 
 
 class FieldInitializersInPrimaryFromParamsConversion : TransformerBasedConversion() {
@@ -16,6 +16,8 @@ class FieldInitializersInPrimaryFromParamsConversion : TransformerBasedConversio
     }
 
     override fun visitKtPrimaryConstructor(ktPrimaryConstructor: JKKtPrimaryConstructor) {
+        val containingClass = ktPrimaryConstructor.parentOfType<JKClass>() ?: return
+        val removedStatements = mutableListOf<JKStatement>()
         for (constructorStatement in ktPrimaryConstructor.block.statements) {
             val assignmentExpression =
                 (constructorStatement as? JKExpressionStatement)?.expression as? JKJavaAssignmentExpression ?: continue
@@ -25,7 +27,6 @@ class FieldInitializersInPrimaryFromParamsConversion : TransformerBasedConversio
             val parameter =
                 (assignmentExpression.expression as? JKFieldAccessExpression)?.identifier?.target as? JKParameter ?: continue
             if (ktPrimaryConstructor.parameters.contains(parameter)) {
-                val containingClass = ktPrimaryConstructor.parentOfType<JKClass>() ?: continue
                 val fieldDeclaration = containingClass.declarationList.find {
                     (it as? JKField)?.name?.value == fieldTarget.name.value
                 } ?: continue
@@ -36,7 +37,13 @@ class FieldInitializersInPrimaryFromParamsConversion : TransformerBasedConversio
                     parameter.name = JKNameIdentifierImpl(fieldTarget.name.value)
                 }
                 somethingChanged = true
+                removedStatements += constructorStatement
             }
+        }
+        ktPrimaryConstructor.block.statements -= removedStatements
+        if (ktPrimaryConstructor.block.statements.isNotEmpty()) {
+            ktPrimaryConstructor.block.detach(ktPrimaryConstructor)
+            containingClass.getOrCreateInitDeclaration().block = ktPrimaryConstructor.block
         }
     }
 

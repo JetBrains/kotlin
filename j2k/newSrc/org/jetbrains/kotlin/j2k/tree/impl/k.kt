@@ -253,3 +253,16 @@ class JKKtIsExpressionImpl(expression: JKExpression, type: JKTypeElement) : JKKt
 
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitKtIsExpression(this, data)
 }
+
+class JKKtInitDeclarationImpl(block: JKBlock) : JKKtInitDeclaration, JKBranchElementBase() {
+    override var block: JKBlock by child(block)
+    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitKtInitDeclaration(this, data)
+}
+
+fun JKClass.getOrCreateInitDeclaration(): JKKtInitDeclaration {
+    val existingDeclaration = declarationList.filterIsInstance<JKKtInitDeclaration>().firstOrNull()
+    if (existingDeclaration != null) return existingDeclaration
+    val newDeclaration = JKKtInitDeclarationImpl(JKBlockImpl())
+    declarationList += newDeclaration
+    return newDeclaration
+}
