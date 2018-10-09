@@ -19,7 +19,6 @@ import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.publish.maven.internal.publication.MavenPublicationInternal
 import org.gradle.api.publish.maven.tasks.AbstractPublishToMaven
-import org.gradle.internal.cleanup.BuildOutputCleanupRegistry
 import org.gradle.internal.reflect.Instantiator
 import org.gradle.jvm.tasks.Jar
 import org.gradle.util.ConfigureUtil
@@ -34,7 +33,6 @@ internal val Project.multiplatformExtension get(): KotlinMultiplatformExtension?
     project.extensions.findByName("kotlin") as? KotlinMultiplatformExtension
 
 class KotlinMultiplatformPlugin(
-    private val buildOutputCleanupRegistry: BuildOutputCleanupRegistry,
     private val fileResolver: FileResolver,
     private val instantiator: Instantiator,
     private val kotlinPluginVersion: String,
@@ -87,19 +85,19 @@ class KotlinMultiplatformPlugin(
 
         // set up metadata publishing
         targetsFromPreset.fromPreset(
-            KotlinMetadataTargetPreset(project, instantiator, fileResolver, buildOutputCleanupRegistry, kotlinPluginVersion),
+            KotlinMetadataTargetPreset(project, instantiator, fileResolver, kotlinPluginVersion),
             METADATA_TARGET_NAME
         )
     }
 
     fun setupDefaultPresets(project: Project) {
         with((project.kotlinExtension as KotlinMultiplatformExtension).presets) {
-            add(KotlinJvmTargetPreset(project, instantiator, fileResolver, buildOutputCleanupRegistry, kotlinPluginVersion))
-            add(KotlinJsTargetPreset(project, instantiator, fileResolver, buildOutputCleanupRegistry, kotlinPluginVersion))
+            add(KotlinJvmTargetPreset(project, instantiator, fileResolver, kotlinPluginVersion))
+            add(KotlinJsTargetPreset(project, instantiator, fileResolver, kotlinPluginVersion))
             add(KotlinAndroidTargetPreset(project, kotlinPluginVersion))
             add(KotlinJvmWithJavaTargetPreset(project, kotlinPluginVersion))
             HostManager().targets.forEach { _, target ->
-                add(KotlinNativeTargetPreset(target.presetName, project, target, buildOutputCleanupRegistry, kotlinPluginVersion))
+                add(KotlinNativeTargetPreset(target.presetName, project, target, kotlinPluginVersion))
             }
         }
     }

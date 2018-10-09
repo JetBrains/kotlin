@@ -112,7 +112,7 @@ open class KotlinNativeCompile : AbstractCompile() {
         @InputFiles get() = compilation.compileDependencyFiles.filterOutPublishableInteropLibs(project)
 
     private val friendModule: FileCollection?
-        get() = compilation.friendCompilation?.output
+        get() = compilation.friendCompilation?.output?.allOutputs
 
     override fun getClasspath(): FileCollection = libraries
     override fun setClasspath(configuration: FileCollection?) {
