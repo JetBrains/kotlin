@@ -5240,6 +5240,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             runTest("idea/testData/quickfix/decreaseVisibility/exposedSuperInterfacePrivate.kt");
         }
 
+        @TestMetadata("exposedTypeInAnnotation.kt")
+        public void testExposedTypeInAnnotation() throws Exception {
+            runTest("idea/testData/quickfix/decreaseVisibility/exposedTypeInAnnotation.kt");
+        }
+
         @TestMetadata("exposedTypeParameterBound.kt")
         public void testExposedTypeParameterBound() throws Exception {
             runTest("idea/testData/quickfix/decreaseVisibility/exposedTypeParameterBound.kt");
