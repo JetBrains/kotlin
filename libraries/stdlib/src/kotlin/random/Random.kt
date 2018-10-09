@@ -237,7 +237,7 @@ public abstract class Random {
      *
      * @sample samples.random.Randoms.defaultRandom
      */
-    companion object : Random() {
+    companion object Default : Random() {
 
         private val defaultRandom: Random = defaultPlatformRandom()
 
@@ -262,6 +262,15 @@ public abstract class Random {
         override fun nextBytes(size: Int): ByteArray = defaultRandom.nextBytes(size)
         override fun nextBytes(array: ByteArray, fromIndex: Int, toIndex: Int): ByteArray = defaultRandom.nextBytes(array, fromIndex, toIndex)
 
+        @Deprecated("Use Default companion object instead", level = DeprecationLevel.HIDDEN)
+        @Suppress("DEPRECATION_ERROR")
+        @kotlin.jvm.JvmField
+        public val Companion: Random.Companion = Random.Companion
+    }
+
+    @Deprecated("Use Default companion object instead", level = DeprecationLevel.HIDDEN)
+    public object Companion : Random() {
+        override fun nextBits(bitCount: Int): Int = Default.nextBits(bitCount)
     }
 }
 
