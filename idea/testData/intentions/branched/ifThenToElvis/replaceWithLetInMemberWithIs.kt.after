@@ -6,10 +6,6 @@ class Test {
     }
 
     fun doAThingIfPresent(param1: Any?): String {
-        return <caret>if (param1 is String) {
-            doAThing(param1)
-        } else {
-            ""
-        }
+        return (param1 as? String)?.let { doAThing(it) } ?: ""
     }
 }

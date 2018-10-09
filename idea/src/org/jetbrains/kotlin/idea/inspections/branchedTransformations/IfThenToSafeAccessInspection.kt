@@ -78,7 +78,7 @@ class IfThenToSafeAccessInspection : AbstractApplicabilityBasedInspection<KtIfEx
 
         if (editor != null && resultExpr is KtSafeQualifiedExpression) {
             resultExpr.inlineReceiverIfApplicableWithPrompt(editor)
-            resultExpr.renameLetParameter(editor)
+            renameLetParameter(resultExpr, editor)
         }
     }
 
@@ -93,12 +93,15 @@ class IfThenToSafeAccessInspection : AbstractApplicabilityBasedInspection<KtIfEx
         else -> false
     }
 
-    private fun KtSafeQualifiedExpression.renameLetParameter(editor: Editor) {
-        val callExpression = selectorExpression as? KtCallExpression ?: return
-        if (callExpression.calleeExpression?.text != "let") return
-        val parameter = callExpression.lambdaArguments.singleOrNull()?.getLambdaExpression()?.valueParameters?.singleOrNull() ?: return
-        PsiDocumentManager.getInstance(project).doPostponedOperationsAndUnblockDocument(editor.document)
-        editor.caretModel.moveToOffset(parameter.startOffset)
-        KotlinVariableInplaceRenameHandler().doRename(parameter, editor, null)
+    companion object {
+        fun renameLetParameter(expression: KtSafeQualifiedExpression, editor: Editor) {
+            val project = editor.project ?: return
+            val callExpression = expression.selectorExpression as? KtCallExpression ?: return
+            if (callExpression.calleeExpression?.text != "let") return
+            val parameter = callExpression.lambdaArguments.singleOrNull()?.getLambdaExpression()?.valueParameters?.singleOrNull() ?: return
+            PsiDocumentManager.getInstance(project).doPostponedOperationsAndUnblockDocument(editor.document)
+            editor.caretModel.moveToOffset(parameter.startOffset)
+            KotlinVariableInplaceRenameHandler().doRename(parameter, editor, null)
+        }
     }
 }
