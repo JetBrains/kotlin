@@ -9,8 +9,8 @@ import com.intellij.util.ArrayUtil
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.ClassBuilder
 import org.jetbrains.kotlin.codegen.StackValue
-import org.jetbrains.kotlin.codegen.coroutines.*
-import org.jetbrains.kotlin.codegen.optimization.common.asSequence
+import org.jetbrains.kotlin.codegen.coroutines.isCoroutineSuperClass
+import org.jetbrains.kotlin.codegen.inline.coroutines.CoroutineTransformer
 import org.jetbrains.kotlin.codegen.serialization.JvmCodegenStringTable
 import org.jetbrains.kotlin.codegen.writeKotlinMetadata
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
@@ -21,10 +21,8 @@ import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.metadata.jvm.serialization.JvmStringTable
 import org.jetbrains.kotlin.protobuf.MessageLite
-import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin.Companion.NO_ORIGIN
-import org.jetbrains.kotlin.utils.addToStdlib.cast
 import org.jetbrains.org.objectweb.asm.*
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 import org.jetbrains.org.objectweb.asm.tree.*
@@ -52,6 +50,7 @@ class AnonymousObjectTransformer(
         val classBuilder = createRemappingClassBuilderViaFactory(inliningContext)
         val methodsToTransform = ArrayList<MethodNode>()
         val metadataReader = ReadKotlinClassHeaderAnnotationVisitor()
+        lateinit var superClassName: String
 
         createClassReader().accept(object : ClassVisitor(API, classBuilder.visitor) {
             override fun visit(version: Int, access: Int, name: String, signature: String?, superName: String, interfaces: Array<String>) {
@@ -59,6 +58,7 @@ class AnonymousObjectTransformer(
                 if (languageVersionSettings.isCoroutineSuperClass(superName)) {
                     inliningContext.isContinuation = true
                 }
+                superClassName = superName
             }
 
             override fun visitInnerClass(name: String, outerName: String?, innerName: String?, access: Int) {
@@ -133,44 +133,23 @@ class AnonymousObjectTransformer(
                 constructor!!, allCapturedParamBuilder, constructorParamBuilder,transformationInfo, parentRemapper
         )
 
-        val crossinlineSuspendElement = capturedCrossinlineSuspendElement()
-        val capturesCrossinlineSuspend = (!inliningContext.isInliningLambda || inliningContext.isContinuation) &&
-                crossinlineSuspendElement != null
-
         val deferringMethods = ArrayList<DeferredMethodVisitor>()
 
         generateConstructorAndFields(classBuilder, allCapturedParamBuilder, constructorParamBuilder, parentRemapper, additionalFakeParams)
 
-        val isLambdaAlreadyGeneratedAndNotGoingToBeInlined = transformationInfo.oldClassName.contains("\$\$special\$\$inlined")
-
-        val hasLambdasToInline =
-            ((parentRemapper is RegeneratedLambdaFieldRemapper) && parentRemapper.recapturedLambdas.isNotEmpty()) || transformationInfo.capturedLambdasToInline.isNotEmpty()
-
+        val coroutineTransformer = CoroutineTransformer(
+            inliningContext,
+            classBuilder,
+            sourceInfo,
+            methodsToTransform,
+            superClassName
+        )
         for (next in methodsToTransform) {
-            // Generate state machine for
-            // 1) doResume method of suspend lambda
-            // 2) Suspend named function
-            // Iff it captures crossinline suspend lambda
-            val generateStateMachineForLambda =
-                languageVersionSettings.isResumeImplMethodName(next.name) && capturesCrossinlineSuspend && inliningContext.isContinuation &&
-                        !isLambdaAlreadyGeneratedAndNotGoingToBeInlined && hasLambdasToInline
-            val continuationClassName = findFakeContinuationConstructorClassName(next)
-            val generateStateMachineForNamedFunction =
-                capturesCrossinlineSuspend && !inliningContext.isContinuation && continuationClassName != null
-
             val deferringVisitor =
-                if (crossinlineSuspendElement != null) {
-                    when {
-                        generateStateMachineForLambda -> newStateMachineForLambda(classBuilder, next, crossinlineSuspendElement)
-                        generateStateMachineForNamedFunction -> newStateMachineForNamedFunction(
-                            classBuilder,
-                            next,
-                            continuationClassName!!,
-                            crossinlineSuspendElement
-                        )
-                        else -> newMethod(classBuilder, next)
-                    }
-                } else newMethod(classBuilder, next)
+                when {
+                    coroutineTransformer.shouldTransform(next) -> coroutineTransformer.newMethod(next)
+                    else -> newMethod(classBuilder, next)
+                }
             val funResult = inlineMethodAndUpdateGlobalResult(parentRemapper, deferringVisitor, next, allCapturedParamBuilder, false)
 
             val returnType = Type.getReturnType(next.desc)
@@ -185,29 +164,9 @@ class AnonymousObjectTransformer(
         }
 
         deferringMethods.forEach { method ->
-            replaceFakeContinuationsWithRealOnes(
-                method.intermediate,
-                if (!inliningContext.isContinuation)
-                    getLastParameterIndex(method.intermediate.desc, method.intermediate.access)
-                else 0
-            )
+            coroutineTransformer.replaceFakesWithReals(method.intermediate)
             removeFinallyMarkers(method.intermediate)
             method.visitEnd()
-
-            // During regeneration of named suspend functions, which capture crossinline suspend lambda, we need to spill the variables
-            // into continuation object.
-            // In order to do this, we reuse class builder, which regenerates continuation object.
-            if (capturesCrossinlineSuspend &&
-                !inliningContext.isContinuation &&
-                inliningContext is RegeneratedClassContext
-            ) {
-                val continuationClassName = findFakeContinuationConstructorClassName(method.intermediate)
-                if (continuationClassName != null) {
-                    inliningContext.continuationBuilders
-                        .remove(continuationClassName)
-                        ?.let(ClassBuilder::done)
-                }
-            }
         }
 
         SourceMapper.flushToClassBuilder(sourceMapper, classBuilder)
@@ -226,18 +185,13 @@ class AnonymousObjectTransformer(
         writeOuterInfo(visitor)
 
         if (continuationClassName == transformationInfo.oldClassName) {
-            assert(inliningContext.parent?.parent is RegeneratedClassContext)
-            (inliningContext.parent?.parent as RegeneratedClassContext).continuationBuilders[continuationClassName] = classBuilder
+            coroutineTransformer.registerClassBuilder(continuationClassName)
         } else {
             classBuilder.done()
         }
 
         return transformationResult
     }
-
-    private fun capturedCrossinlineSuspendElement(): KtExpression? = inliningContext.expressionMap.values.find { lambda ->
-        lambda is PsiExpressionLambda && lambda.isCrossInline && lambda.invokeMethodDescriptor.isSuspend
-    }?.cast<PsiExpressionLambda>()?.functionWithBodyOrCallableReference
 
     private fun writeTransformedMetadata(header: KotlinClassHeader, classBuilder: ClassBuilder) {
         writeKotlinMetadata(classBuilder, state, header.kind, header.extraInt) action@ { av ->
@@ -447,63 +401,6 @@ class AnonymousObjectTransformer(
         }
     }
 
-    private fun newStateMachineForLambda(builder: ClassBuilder, original: MethodNode, element: KtExpression): DeferredMethodVisitor {
-        return DeferredMethodVisitor(
-            MethodNode(
-                original.access, original.name, original.desc, original.signature,
-                ArrayUtil.toStringArray(original.exceptions)
-            )
-        ) {
-            CoroutineTransformerMethodVisitor(
-                builder.newMethod(
-                    NO_ORIGIN, original.access, original.name, original.desc, original.signature,
-                    ArrayUtil.toStringArray(original.exceptions)
-                ), original.access, original.name, original.desc, null, null,
-                obtainClassBuilderForCoroutineState = { builder },
-                element = element,
-                diagnostics = state.diagnostics,
-                languageVersionSettings = languageVersionSettings,
-                shouldPreserveClassInitialization = state.constructorCallNormalizationMode.shouldPreserveClassInitialization,
-                containingClassInternalName = builder.thisName,
-                isForNamedFunction = false,
-                sourceFile = sourceInfo ?: "",
-                isCrossinlineLambda = inliningContext.isContinuation
-            )
-        }
-    }
-
-    private fun newStateMachineForNamedFunction(
-        builder: ClassBuilder,
-        original: MethodNode,
-        continuationClassName: String,
-        element: KtExpression
-    ): DeferredMethodVisitor {
-        assert(inliningContext is RegeneratedClassContext)
-        return DeferredMethodVisitor(
-            MethodNode(
-                original.access, original.name, original.desc, original.signature,
-                ArrayUtil.toStringArray(original.exceptions)
-            )
-        ) {
-            CoroutineTransformerMethodVisitor(
-                builder.newMethod(
-                    NO_ORIGIN, original.access, original.name, original.desc, original.signature,
-                    ArrayUtil.toStringArray(original.exceptions)
-                ), original.access, original.name, original.desc, null, null,
-                obtainClassBuilderForCoroutineState = { (inliningContext as RegeneratedClassContext).continuationBuilders[continuationClassName]!! },
-                element = element,
-                diagnostics = state.diagnostics,
-                languageVersionSettings = languageVersionSettings,
-                shouldPreserveClassInitialization = state.constructorCallNormalizationMode.shouldPreserveClassInitialization,
-                containingClassInternalName = builder.thisName,
-                isForNamedFunction = true,
-                needDispatchReceiver = true,
-                internalNameForDispatchReceiver = builder.thisName,
-                sourceFile = sourceInfo ?: ""
-            )
-        }
-    }
-
     private fun extractParametersMappingAndPatchConstructor(
             constructor: MethodNode,
             capturedParamBuilder: ParametersBuilder,
@@ -648,11 +545,4 @@ class AnonymousObjectTransformer(
 
     private fun isFirstDeclSiteLambdaFieldRemapper(parentRemapper: FieldRemapper): Boolean =
             parentRemapper !is RegeneratedLambdaFieldRemapper && parentRemapper !is InlinedLambdaRemapper
-}
-
-internal fun findFakeContinuationConstructorClassName(node: MethodNode): String? {
-    val marker = node.instructions.asSequence().firstOrNull(::isBeforeFakeContinuationConstructorCallMarker) ?: return null
-    val new = marker.next
-    assert(new?.opcode == Opcodes.NEW)
-    return (new as TypeInsnNode).desc
 }

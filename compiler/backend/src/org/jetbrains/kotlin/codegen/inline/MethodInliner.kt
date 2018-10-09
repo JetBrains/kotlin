@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.codegen.coroutines.continuationAsmType
 import org.jetbrains.kotlin.codegen.coroutines.getOrCreateJvmSuspendFunctionView
 import org.jetbrains.kotlin.codegen.inline.FieldRemapper.Companion.foldName
+import org.jetbrains.kotlin.codegen.inline.coroutines.CoroutineTransformer
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods
 import org.jetbrains.kotlin.codegen.optimization.ApiVersionCallsPreprocessingMethodTransformer
 import org.jetbrains.kotlin.codegen.optimization.FixStackWithLabelNormalizationMethodTransformer
@@ -182,7 +183,7 @@ class MethodInliner(
                     val transformer = transformationInfo!!.createTransformer(
                         childInliningContext,
                         isSameModule,
-                        findFakeContinuationConstructorClassName(node)
+                        CoroutineTransformer.findFakeContinuationConstructorClassName(node)
                     )
 
                     val transformResult = transformer.doTransform(nodeRemapper)
