@@ -18,9 +18,11 @@ package org.jetbrains.kotlin.idea.util
 
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.ShortenReferences
+import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.annotations.JVM_FIELD_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 fun KtModifierListOwner.addAnnotation(
@@ -73,3 +75,5 @@ fun KtAnnotated.findAnnotation(annotationFqName: FqName): KtAnnotationEntry? {
 
     return annotationEntries.firstOrNull { entry -> context.get(BindingContext.ANNOTATION, entry)?.fqName == annotationFqName }
 }
+
+fun KtAnnotated.hasJvmFieldAnnotation(): Boolean = findAnnotation(JvmAbi.JVM_FIELD_ANNOTATION_FQ_NAME) != null
