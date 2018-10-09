@@ -10,10 +10,11 @@ import org.jetbrains.kotlin.j2k.tree.*
 import org.jetbrains.kotlin.j2k.tree.JKModalityModifier.Modality.*
 import org.jetbrains.kotlin.j2k.tree.impl.*
 
+
 class InsertDefaultPrimaryConstructorConversion(private val context: ConversionContext) : RecursiveApplicableConversionBase() {
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
         if (element !is JKClass) return recurse(element)
-        if (element.classKind != JKClass.ClassKind.CLASS && element.declarationList.none { it is JKKtConstructor }) return recurse(element)
+        if (element.classKind != JKClass.ClassKind.CLASS && element.declarationList.any { it is JKKtConstructor }) return recurse(element)
 
         val constructor = JKKtPrimaryConstructorImpl(
             JKNameIdentifierImpl(element.name.value), emptyList(), JKBodyStub,
