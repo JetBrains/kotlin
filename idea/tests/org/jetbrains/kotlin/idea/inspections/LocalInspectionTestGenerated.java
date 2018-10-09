@@ -644,6 +644,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
                 runTest("idea/testData/inspectionsLocal/collections/convertCallChainIntoSequence/simple4.kt");
             }
 
+            @TestMetadata("startWithGroupingBy.kt")
+            public void testStartWithGroupingBy() throws Exception {
+                runTest("idea/testData/inspectionsLocal/collections/convertCallChainIntoSequence/startWithGroupingBy.kt");
+            }
+
             @TestMetadata("idea/testData/inspectionsLocal/collections/convertCallChainIntoSequence/termination")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)
