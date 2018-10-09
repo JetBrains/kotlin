@@ -25,10 +25,7 @@ import org.jetbrains.kotlin.gradle.KotlinCompilation
 import org.jetbrains.kotlin.gradle.KotlinModule
 import org.jetbrains.kotlin.gradle.KotlinPlatform
 import org.jetbrains.kotlin.gradle.KotlinSourceSet
-import org.jetbrains.kotlin.idea.facet.applyCompilerArgumentsToFacet
-import org.jetbrains.kotlin.idea.facet.configureFacet
-import org.jetbrains.kotlin.idea.facet.getOrCreateFacet
-import org.jetbrains.kotlin.idea.facet.noVersionAutoAdvance
+import org.jetbrains.kotlin.idea.facet.*
 import org.jetbrains.kotlin.idea.inspections.gradle.findAll
 import org.jetbrains.kotlin.idea.inspections.gradle.findKotlinPluginVersion
 import org.jetbrains.kotlin.idea.platform.IdePlatformKindTooling
@@ -61,7 +58,9 @@ class KotlinSourceSetDataService : AbstractProjectDataService<GradleSourceSetDat
                 migrateNonJvmSourceFolders(rootModel)
             }
 
-            configureFacet(sourceSetData, kotlinSourceSet, mainModuleData, ideModule, modelsProvider)
+            configureFacet(sourceSetData, kotlinSourceSet, mainModuleData, ideModule, modelsProvider)?.let { facet ->
+                GradleProjectImportHandler.getInstances(project).forEach { it.importBySourceSet(facet, nodeToImport) }
+            }
 
             if (kotlinSourceSet.isTestModule) {
                 assignTestScope(rootModel)
@@ -92,12 +91,12 @@ class KotlinSourceSetDataService : AbstractProjectDataService<GradleSourceSetDat
             mainModuleNode: DataNode<ModuleData>,
             ideModule: Module,
             modelsProvider: IdeModifiableModelsProvider
-        ) {
+        ): KotlinFacet? {
             val compilerVersion = mainModuleNode
                 .findAll(BuildScriptClasspathData.KEY)
                 .firstOrNull()
                 ?.data
-                ?.let { findKotlinPluginVersion(it) } ?: return
+                ?.let { findKotlinPluginVersion(it) } ?: return null
 
             val platformKind = IdePlatformKindTooling.getTooling(kotlinSourceSet.platform).kind
             val platform = when (platformKind) {
@@ -151,6 +150,8 @@ class KotlinSourceSetDataService : AbstractProjectDataService<GradleSourceSetDat
                     testOutputPath = null
                 }
             }
+
+            return kotlinFacet
         }
     }
 }
