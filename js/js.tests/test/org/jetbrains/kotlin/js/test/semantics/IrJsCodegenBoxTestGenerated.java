@@ -19282,6 +19282,11 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
         public void testWithReturnUnit() throws Exception {
             runTest("compiler/testData/codegen/box/secondaryConstructors/withReturnUnit.kt");
         }
+
+        @TestMetadata("withoutPrimarySimple.kt")
+        public void testWithoutPrimarySimple() throws Exception {
+            runTest("compiler/testData/codegen/box/secondaryConstructors/withoutPrimarySimple.kt");
+        }
     }
 
     @TestMetadata("compiler/testData/codegen/box/signatureAnnotations")

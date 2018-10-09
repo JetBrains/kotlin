@@ -21347,6 +21347,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
         public void testWithoutPrimary() throws Exception {
             runTest("compiler/testData/codegen/box/secondaryConstructors/withoutPrimary.kt");
         }
+
+        @TestMetadata("withoutPrimarySimple.kt")
+        public void testWithoutPrimarySimple() throws Exception {
+            runTest("compiler/testData/codegen/box/secondaryConstructors/withoutPrimarySimple.kt");
+        }
     }
 
     @TestMetadata("compiler/testData/codegen/box/signatureAnnotations")
