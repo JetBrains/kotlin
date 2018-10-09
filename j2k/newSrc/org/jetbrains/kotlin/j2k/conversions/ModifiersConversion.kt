@@ -6,8 +6,10 @@
 package org.jetbrains.kotlin.j2k.conversions
 
 import org.jetbrains.kotlin.j2k.ConversionContext
+import org.jetbrains.kotlin.j2k.ast.Mutability
 import org.jetbrains.kotlin.j2k.tree.*
 import org.jetbrains.kotlin.j2k.tree.impl.JKKtModifierImpl
+import org.jetbrains.kotlin.j2k.tree.impl.mutability
 import org.jetbrains.kotlin.j2k.tree.impl.visibility
 
 class ModifiersConversion(private val context: ConversionContext) : RecursiveApplicableConversionBase() {
@@ -24,9 +26,33 @@ class ModifiersConversion(private val context: ConversionContext) : RecursiveApp
             if (context.converter.settings.noInternalForMembersOfInternal) {
                 relaxVisibility(element)
             }
+            if (element is JKParameter) {
+                convertParameterModifiers(element)
+            }
+            element.sortModifiers()
         }
         return recurse(element)
     }
+
+    private fun convertParameterModifiers(jkParameter: JKParameter) {
+        jkParameter.filterModifiers {
+            when (it) {
+                is JKModalityModifier -> it.modality != JKModalityModifier.Modality.OPEN
+                else -> true
+            }
+        }
+        if (jkParameter.parent is JKKtPrimaryConstructor) {
+            val hasNonDefaultMutabilityModifier =
+                jkParameter.modifierList.modifiers.find {
+                    it is JKMutabilityModifier && it.mutability != Mutability.Default
+                } != null
+            if (!hasNonDefaultMutabilityModifier)
+                jkParameter.modifierList.modifiers = emptyList()
+        } else {
+            jkParameter.modifierList.modifiers = emptyList()
+        }
+    }
+
 
     private fun relaxVisibility(element: JKTreeElement) {
         if (element is JKParameter) return
@@ -35,7 +61,8 @@ class ModifiersConversion(private val context: ConversionContext) : RecursiveApp
         val parent = element.parent as? JKClass
         if (parent == null
             || modifierList.visibility != JKAccessModifier.Visibility.PACKAGE_PRIVATE
-            || parent.modifierList.visibility != JKAccessModifier.Visibility.PACKAGE_PRIVATE) return
+            || parent.modifierList.visibility != JKAccessModifier.Visibility.PACKAGE_PRIVATE
+        ) return
         modifierList.visibility = JKAccessModifier.Visibility.PUBLIC
     }
 
@@ -49,5 +76,28 @@ class ModifiersConversion(private val context: ConversionContext) : RecursiveApp
                 else -> it
             }
         }
+    }
+
+    private fun JKModifierListOwner.sortModifiers() {
+        modifierList.modifiers = modifierList.modifiers.sortedBy { it.priority }
+    }
+
+    private val JKModifier.priority: Int
+        get() =
+            when (this) {
+                is JKAccessModifier -> 0
+                is JKModalityModifier ->
+                    when (this.modality) {
+                        JKModalityModifier.Modality.FINAL, JKModalityModifier.Modality.OPEN, JKModalityModifier.Modality.ABSTRACT -> 1
+                        JKModalityModifier.Modality.OVERRIDE -> 2
+                    }
+                is JKJavaModifier -> 3
+                is JKMutabilityModifier -> 4
+                else -> TODO(this.toString())
+            }
+
+
+    private fun JKModifierListOwner.filterModifiers(filter: (JKModifier) -> Boolean) {
+        modifierList.modifiers = modifierList.modifiers.filter(filter)
     }
 }
