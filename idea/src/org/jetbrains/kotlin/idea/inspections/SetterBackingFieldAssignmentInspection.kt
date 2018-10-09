@@ -8,23 +8,29 @@ package org.jetbrains.kotlin.idea.inspections
 import com.intellij.codeInspection.*
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElementVisitor
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.anyDescendantOfType
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
-import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 class SetterBackingFieldAssignmentInspection : AbstractKotlinInspection(), CleanupLocalInspectionTool {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean, session: LocalInspectionToolSession): PsiElementVisitor {
         return propertyAccessorVisitor(fun(accessor) {
             if (!accessor.isSetter) return
             val bodyExpression = accessor.bodyExpression as? KtBlockExpression ?: return
+
+            val property = accessor.property
+            val propertyContext = property.analyze()
+            val propertyDescriptor = propertyContext[BindingContext.DECLARATION_TO_DESCRIPTOR, property] as? PropertyDescriptor ?: return
+            if (propertyContext[BindingContext.BACKING_FIELD_REQUIRED, propertyDescriptor] == false) return
+
+            val accessorContext = accessor.analyze()
             val parameter = accessor.valueParameters.singleOrNull()
-            val parameterDescriptor = parameter?.descriptor
-            val context = accessor.analyze(BodyResolveMode.PARTIAL)
-            var hasBackingField = false
+            val parameterDescriptor = accessorContext[BindingContext.VALUE_PARAMETER, parameter] as? ValueParameterDescriptor
             if (bodyExpression.anyDescendantOfType<KtExpression> {
                     when (it) {
                         is KtBinaryExpression ->
@@ -34,16 +40,11 @@ class SetterBackingFieldAssignmentInspection : AbstractKotlinInspection(), Clean
                         is KtCallExpression ->
                             it.valueArguments.any { arg ->
                                 arg.text == parameter?.text
-                                        && arg.getArgumentExpression().getResolvedCall(context)?.resultingDescriptor == parameterDescriptor
+                                        && arg.getArgumentExpression().getResolvedCall(accessorContext)?.resultingDescriptor == parameterDescriptor
                             }
-                        is KtNameReferenceExpression -> {
-                            hasBackingField = it.text == KtTokens.FIELD_KEYWORD.value
-                            false
-                        }
                         else -> false
                     }
                 }) return
-            if (!hasBackingField) return
 
             holder.registerProblem(
                 accessor,
