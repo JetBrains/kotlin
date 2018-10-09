@@ -173,7 +173,7 @@ private fun KtQualifiedExpression.collectCallExpression(context: BindingContext)
         .dropWhile { !it.isTransformationOrTermination(context) }
         .takeWhile { it.isTransformationOrTermination(context) && !it.hasReturn() }
         .toList()
-        .dropLastWhile { it.calleeExpression?.text == "groupingBy" }
+        .dropLastWhile { it.isLazyTermination(context) }
     if (transformationCalls.size < 2) return emptyList()
 
     return transformationCalls
@@ -198,6 +198,11 @@ private fun KtCallExpression.isTransformationOrTermination(context: BindingConte
 
 private fun KtCallExpression.isTermination(context: BindingContext): Boolean {
     val fqName = terminations[calleeExpression?.text] ?: return false
+    return fqName == getResolvedCall(context)?.resultingDescriptor?.fqNameSafe
+}
+
+private fun KtCallExpression.isLazyTermination(context: BindingContext): Boolean {
+    val fqName = lazyTerminations[calleeExpression?.text] ?: return false
     return fqName == getResolvedCall(context)?.resultingDescriptor?.fqNameSafe
 }
 
@@ -301,5 +306,7 @@ private val terminations = listOf(
     val pkg = if (it in listOf("contains", "indexOf", "lastIndexOf")) "kotlin.collections.List" else "kotlin.collections"
     it to FqName("$pkg.$it")
 }
+
+private val lazyTerminations = terminations.filter { (key, _) -> key == "groupingBy" }
 
 private val transformationAndTerminations = transformations + terminations
