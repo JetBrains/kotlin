@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.j2k.tree.impl
 
+import com.intellij.psi.PsiClass
 import org.jetbrains.kotlin.j2k.ast.Mutability
 import org.jetbrains.kotlin.j2k.ast.Nullability
 import org.jetbrains.kotlin.j2k.tree.*
@@ -23,6 +24,7 @@ import org.jetbrains.kotlin.j2k.tree.JKLiteralExpression.LiteralType
 import org.jetbrains.kotlin.j2k.tree.JKLiteralExpression.LiteralType.BOOLEAN
 import org.jetbrains.kotlin.j2k.tree.JKLiteralExpression.LiteralType.NULL
 import org.jetbrains.kotlin.j2k.tree.visitors.JKVisitor
+import org.jetbrains.kotlin.psi.KtClass
 
 class JKFileImpl : JKFile, JKBranchElementBase() {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitFile(this, data)
@@ -194,6 +196,23 @@ class JKUnresolvedClassType(
     override val parameters: List<JKType>,
     override val nullability: Nullability = Nullability.Default
 ) : JKParametrizedType
+
+fun JKType.fqName(): String =
+    when (this) {
+        is JKClassType -> {
+            val target = classReference?.target
+            when (target) {
+                is KtClass -> target.fqName?.asString() ?: throw RuntimeException("FqName can not be calculated")
+                is PsiClass -> target.qualifiedName ?: throw RuntimeException("FqName can not be calculated")
+                else -> TODO(target.toString())
+            }
+        }
+        is JKUnresolvedClassType -> name
+        is JKJavaPrimitiveType -> jvmPrimitiveType.name
+        else -> TODO(toString())
+    }
+
+fun JKType.equalsByName(other: JKType) = fqName() == other.fqName()
 
 
 class JKNullLiteral : JKLiteralExpression, JKElementBase() {

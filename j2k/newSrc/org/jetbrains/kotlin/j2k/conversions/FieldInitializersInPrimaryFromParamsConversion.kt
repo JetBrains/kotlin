@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.j2k.conversions
 
-import org.jetbrains.kotlin.j2k.copyTree
 import org.jetbrains.kotlin.j2k.tree.*
 import org.jetbrains.kotlin.j2k.tree.impl.*
 
@@ -29,8 +28,9 @@ class FieldInitializersInPrimaryFromParamsConversion : TransformerBasedConversio
             if (ktPrimaryConstructor.parameters.contains(parameter)) {
                 val fieldDeclaration = containingClass.declarationList.find {
                     (it as? JKField)?.name?.value == fieldTarget.name.value
-                } ?: continue
-                parameter.modifierList = (fieldDeclaration as JKField).modifierList.also { it.detach(it.parent!!) }
+                } as? JKField ?: continue
+                if (!fieldDeclaration.type.type.equalsByName(parameter.type.type)) continue//TODO better way to compare types??
+                parameter.modifierList = fieldDeclaration.modifierList.also { it.detach(it.parent!!) }
                 containingClass.declarationList -= fieldDeclaration
 
                 if (parameter.name.value != fieldTarget.name.value) {
