@@ -23,9 +23,7 @@ class ConvertFlatMapToFlattenInspection : AbstractKotlinInspection() {
         qualifiedExpressionVisitor(fun(expression) {
             val callExpression = expression.selectorExpression as? KtCallExpression ?: return
             val calleeExpression = callExpression.calleeExpression ?: return
-            if (calleeExpression.text != "flatMap") return
-            val context = expression.analyze(BodyResolveMode.PARTIAL)
-            if (FqName("kotlin.collections.flatMap") != callExpression.getResolvedCall(context)?.resultingDescriptor?.fqNameSafe) return
+            if (!callExpression.isCalling(FqName("kotlin.collections.flatMap"))) return
 
             val argument = callExpression.valueArguments.singleOrNull() ?: return
             val lambdaExpression = (argument as? KtLambdaArgument)?.getLambdaExpression()

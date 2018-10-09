@@ -83,8 +83,3 @@ class SimplifiableCallChainInspection : AbstractCallChainChecker() {
         )
     }
 }
-
-private fun KotlinType?.isMap(builtIns: KotlinBuiltIns): Boolean {
-    val classDescriptor = this?.constructor?.declarationDescriptor as? ClassDescriptor ?: return false
-    return classDescriptor.name.asString().endsWith("Map") && classDescriptor.isSubclassOf(builtIns.map)
-}
