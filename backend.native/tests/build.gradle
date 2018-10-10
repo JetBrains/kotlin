@@ -2571,6 +2571,11 @@ task inline_twiceInlinedObject(type: RunKonanTest) {
     source = "codegen/inline/twiceInlinedObject.kt"
 }
 
+task inline_localObjectReturnedFromWhen(type: RunKonanTest) {
+    goldValue = "Ok\n"
+    source = "codegen/inline/localObjectReturnedFromWhen.kt"
+}
+
 task classDeclarationInsideInline(type: RunKonanTest) {
     source = "codegen/inline/classDeclarationInsideInline.kt"
     goldValue = "test1: 1.0\n1\ntest2\n"

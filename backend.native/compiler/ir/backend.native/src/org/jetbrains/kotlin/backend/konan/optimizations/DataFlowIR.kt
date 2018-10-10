@@ -488,10 +488,13 @@ internal object DataFlowIR {
 
         private fun ClassDescriptor.isFinal() = modality == Modality.FINAL && kind != ClassKind.ENUM_CLASS
 
-        fun mapClassReferenceType(descriptor: ClassDescriptor): Type {
+        fun mapClassReferenceType(descriptor: ClassDescriptor, eraseLocalObjects: Boolean = true): Type {
             // Do not try to devirtualize ObjC classes.
             if (descriptor.module.name == Name.special("<forward declarations>") || descriptor.isObjCClass())
                 return Type.Virtual
+
+            if (eraseLocalObjects && descriptor.isAnonymousObject && descriptor.isLocal)
+                return mapClassReferenceType(descriptor.getSuperClassNotAny() ?: context.irBuiltIns.anyClass.owner)
 
             val isFinal = descriptor.isFinal()
             val isAbstract = descriptor.isAbstract()
@@ -531,7 +534,7 @@ internal object DataFlowIR {
             return erasure.singleOrNull { !it.isInterface } ?: context.ir.symbols.any.owner
         }
 
-        fun mapPrimitiveBinaryType(primitiveBinaryType: PrimitiveBinaryType): Type =
+        private fun mapPrimitiveBinaryType(primitiveBinaryType: PrimitiveBinaryType): Type =
                 primitiveMap.getOrPut(primitiveBinaryType) {
                     Type.Public(
                             primitiveBinaryType.ordinal.toLong(),
@@ -544,11 +547,11 @@ internal object DataFlowIR {
                     )
                 }
 
-        fun mapType(type: IrType): Type {
+        fun mapType(type: IrType, eraseLocalObjects: Boolean = true): Type {
             val binaryType = type.computeBinaryType()
             return when (binaryType) {
                 is BinaryType.Primitive -> mapPrimitiveBinaryType(binaryType.type)
-                is BinaryType.Reference -> mapClassReferenceType(choosePrimary(binaryType.types.toList()))
+                is BinaryType.Reference -> mapClassReferenceType(choosePrimary(binaryType.types.toList()), eraseLocalObjects)
             }
         }
 

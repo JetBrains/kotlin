@@ -573,7 +573,7 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
                                         DataFlowIR.Node.NewObject(
                                                 symbolTable.mapFunction(callee),
                                                 arguments,
-                                                symbolTable.mapClassReferenceType(callee.constructedClass),
+                                                symbolTable.mapClassReferenceType(callee.constructedClass, false),
                                                 value
                                         )
                                     } else {

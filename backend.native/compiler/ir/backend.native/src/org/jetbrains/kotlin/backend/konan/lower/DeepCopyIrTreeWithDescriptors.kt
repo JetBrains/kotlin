@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.backend.konan.descriptors.initialize
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.*
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.builders.Scope
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.*
 import org.jetbrains.kotlin.ir.descriptors.IrTemporaryVariableDescriptorImpl
@@ -22,14 +21,11 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.impl.createClassSymbolOrNull
 import org.jetbrains.kotlin.ir.symbols.impl.createFunctionSymbol
-import org.jetbrains.kotlin.ir.symbols.impl.createValueSymbol
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.types.toKotlinType
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
-import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
@@ -43,8 +39,8 @@ import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.Variance
 
 internal class DeepCopyIrTreeWithDescriptors(val targetDescriptor: FunctionDescriptor,
-                                    val parentDescriptor: DeclarationDescriptor,
-                                    val context: Context) {
+                                             val parentDescriptor: DeclarationDescriptor,
+                                             val context: Context) {
 
     private val descriptorSubstituteMap: MutableMap<DeclarationDescriptor, DeclarationDescriptor> = mutableMapOf()
     private var typeSubstitutor: TypeSubstitutor? = null
@@ -776,96 +772,13 @@ internal class DeepCopyIrTreeWithDescriptors(val targetDescriptor: FunctionDescr
 
 class SubstitutedDescriptor(val inlinedFunction: FunctionDescriptor, val descriptor: DeclarationDescriptor)
 
-/**
- * Searches recursively for value that is corresponds to [key],
- * then to typeMapper(this[key]) and so on until typeMapper or Map.get returns null.
- * Returns null if there is no corresponding value for given [key] inside the map
- * Throws IllegalStateException if recursion led to cycle.
- */
-private fun <K, V> Map<K, V>.deepSearch(key: K, typeMapper: (V) -> K?): V? {
-    var result: V? = null
-    // Prevent cycles by remembering visited keys.
-    val visitedKeys = mutableSetOf<K?>()
-    var keyToVisit = key
-    do {
-        if (keyToVisit in visitedKeys) {
-            throw IllegalStateException("Detected cycle inside $this")
-        } else {
-            visitedKeys += keyToVisit
-        }
-        val value = this[keyToVisit]
-        if (value != null) {
-            result = value
-            keyToVisit = typeMapper(value) ?: return result
-        }
-    } while (value != null)
-    return result
-}
-
-/**
- * Maps old variables to new ones that have fixed type.
- */
-private fun createVariableSubstitutionMap(element: IrElement,
-                                          globalSubstituteMap: Map<DeclarationDescriptor, SubstitutedDescriptor>)
-        : Map<VariableDescriptor, VariableDescriptor> {
-
-    val variableSubstituteMap = mutableMapOf<VariableDescriptor, VariableDescriptor>()
-
-    element.acceptChildrenVoid(object: IrElementVisitorVoidWithContext() {
-        override fun visitElement(element: IrElement) {
-            element.acceptChildrenVoid(this)
-        }
-
-        override fun visitVariable(declaration: IrVariable) {
-            declaration.acceptChildrenVoid(this)
-
-            val oldDescriptor = declaration.descriptor
-            val oldClassDescriptor = oldDescriptor.type.constructor.declarationDescriptor as? ClassDescriptor
-
-            // This recursive search inside the map requires some explanation.
-            // Take a look at the following code:
-            //
-            // inline fun exec(f: () -> Unit) = f()
-            //
-            // inline fun test2() {
-            //     val sr = object {} // <- problematic place
-            // }
-            //
-            // fun box() {
-            //     exec {
-            //         test2()
-            //     }
-            // }
-            //
-            // Here test2 will be inlined twice, so descriptor of the object will be changed twice (ex. from A to B and from B to C).
-            // If we use ordinary access to the map (globalSubstituteMap[A]) then we get wrong descriptor (B).
-            // So we have to search recursively inside the map to find correct descriptor.
-            val typeMapper: (SubstitutedDescriptor) -> ClassDescriptor? = { it.descriptor as? ClassDescriptor }
-            val substitutedDescriptor = oldClassDescriptor?.let { globalSubstituteMap.deepSearch(it, typeMapper) }
-            if (substitutedDescriptor != null && allScopes.all { it.scope.scopeOwner != substitutedDescriptor.inlinedFunction }) {
-                val newDescriptor = IrTemporaryVariableDescriptorImpl(
-                        containingDeclaration = oldDescriptor.containingDeclaration,
-                        name = oldDescriptor.name,
-                        outType = (substitutedDescriptor.descriptor as ClassDescriptor).defaultType,
-                        isMutable = oldDescriptor.isVar)
-                variableSubstituteMap[oldDescriptor] = newDescriptor
-            }
-        }
-    })
-
-    return variableSubstituteMap
-}
-
 internal class DescriptorSubstitutorForExternalScope(
         val globalSubstituteMap: Map<DeclarationDescriptor, SubstitutedDescriptor>,
         val context: Context
 )
     : IrElementTransformerVoidWithContext() {
 
-    private val variableSubstituteMap = mutableMapOf<VariableDescriptor, VariableDescriptor>()
-
     fun run(element: IrElement) {
-        variableSubstituteMap += createVariableSubstitutionMap(element, globalSubstituteMap)
         element.transformChildrenVoid(this)
     }
 
@@ -881,41 +794,6 @@ internal class DescriptorSubstitutorForExternalScope(
             is IrCallWithShallowCopy -> copyIrCallWithShallowCopy(oldExpression, substitutedDescriptor)
             else -> oldExpression
         }
-    }
-
-    //---------------------------------------------------------------------//
-
-    override fun visitVariable(declaration: IrVariable): IrDeclaration {
-        declaration.transformChildrenVoid(this)
-
-        val oldDescriptor = declaration.descriptor
-        val newDescriptor = variableSubstituteMap[oldDescriptor] ?: return declaration
-
-        return IrVariableImpl(
-                startOffset = declaration.startOffset,
-                endOffset   = declaration.endOffset,
-                origin      = declaration.origin,
-                descriptor  = newDescriptor,
-                type        = context.ir.translateErased(newDescriptor.type),
-                initializer = declaration.initializer
-        )
-    }
-
-    //-------------------------------------------------------------------------//
-
-    override fun visitGetValue(expression: IrGetValue): IrExpression {
-        expression.transformChildrenVoid(this)
-
-        val oldDescriptor = expression.descriptor
-        val newDescriptor = variableSubstituteMap[oldDescriptor] ?: return expression
-
-        return IrGetValueImpl(
-                startOffset = expression.startOffset,
-                endOffset   = expression.endOffset,
-                type        = context.ir.translateErased(newDescriptor.type),
-                origin      = expression.origin,
-                symbol      = createValueSymbol(newDescriptor)
-        )
     }
 
     //-------------------------------------------------------------------------//
