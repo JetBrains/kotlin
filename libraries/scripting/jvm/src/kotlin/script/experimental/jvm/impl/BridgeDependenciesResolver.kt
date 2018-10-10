@@ -30,7 +30,7 @@ class BridgeDependenciesResolver(
         }
 
     override suspend fun resolveAsync(scriptContents: ScriptContents, environment: Environment): DependenciesResolver.ResolveResult {
-        return try {
+        try {
 
             val diagnostics = arrayListOf<ScriptReport>()
             val processedScriptData = ScriptCollectedData(
@@ -39,42 +39,45 @@ class BridgeDependenciesResolver(
                 )
             )
 
-            val refineFn = scriptCompilationConfiguration[ScriptCompilationConfiguration.refineConfigurationOnAnnotations]?.handler
-            val refinedConfiguration =
-                if (refineFn == null) null
-                else {
-                    val res = refineFn(
-                        ScriptConfigurationRefinementContext(scriptContents.toScriptSource(), scriptCompilationConfiguration, processedScriptData)
-                    )
-                    when (res) {
-                        is ResultWithDiagnostics.Failure ->
-                            return@resolveAsync DependenciesResolver.ResolveResult.Failure(res.reports.mapScriptReportsToDiagnostics())
-                        is ResultWithDiagnostics.Success -> {
-                            diagnostics.addAll(res.reports.mapScriptReportsToDiagnostics())
-                            res.value
-                        }
-                    }
-                }
+            val oldClasspath =
+                scriptCompilationConfiguration[ScriptCompilationConfiguration.dependencies]
+                    ?.flatMap { (it as JvmDependency).classpath } ?: emptyList()
 
-            val newClasspath = refinedConfiguration?.get(ScriptCompilationConfiguration.dependencies)
-                ?.flatMap { (it as JvmDependency).classpath } ?: emptyList()
-            if (newClasspath.isNotEmpty()) {
-                val oldClasspath =
-                    scriptCompilationConfiguration[ScriptCompilationConfiguration.dependencies]
-                        ?.flatMap { (it as JvmDependency).classpath } ?: emptyList()
-                if (newClasspath != oldClasspath) {
-                    onClasspathUpdated(newClasspath)
+            val defaultImports = scriptCompilationConfiguration[ScriptCompilationConfiguration.defaultImports]?.toList() ?: emptyList()
+
+            val refineFn = scriptCompilationConfiguration[ScriptCompilationConfiguration.refineConfigurationOnAnnotations]?.handler
+                ?: return DependenciesResolver.ResolveResult.Success(
+                    ScriptDependencies(classpath = oldClasspath, imports = defaultImports),
+                    diagnostics
+                )
+
+            val refineResults = refineFn(
+                ScriptConfigurationRefinementContext(scriptContents.toScriptSource(), scriptCompilationConfiguration, processedScriptData)
+            )
+            val refinedConfiguration = when (refineResults) {
+                is ResultWithDiagnostics.Failure ->
+                    return DependenciesResolver.ResolveResult.Failure(refineResults.reports.mapScriptReportsToDiagnostics())
+                is ResultWithDiagnostics.Success -> {
+                    diagnostics.addAll(refineResults.reports.mapScriptReportsToDiagnostics())
+                    refineResults.value
                 }
             }
-            DependenciesResolver.ResolveResult.Success(
+
+            val newClasspath = refinedConfiguration[ScriptCompilationConfiguration.dependencies]
+                ?.flatMap { (it as JvmDependency).classpath } ?: emptyList()
+            if (newClasspath != oldClasspath) {
+                onClasspathUpdated(newClasspath)
+            }
+
+            return DependenciesResolver.ResolveResult.Success(
                 ScriptDependencies(
                     classpath = newClasspath, // TODO: maybe it should return only increment from the initial config
-                    imports = scriptCompilationConfiguration[ScriptCompilationConfiguration.defaultImports]?.toList() ?: emptyList()
+                    imports = defaultImports
                 ),
                 diagnostics
             )
         } catch (e: Throwable) {
-            DependenciesResolver.ResolveResult.Failure(
+            return DependenciesResolver.ResolveResult.Failure(
                 ScriptReport(e.message ?: "unknown error $e")
             )
         }
