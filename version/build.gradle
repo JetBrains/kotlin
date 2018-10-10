@@ -32,6 +32,9 @@ repositories {
     maven {
         url buildKotlinCompilerRepo
     }
+    maven {
+        url sharedRepo
+    }
 }
 
 // FIXME(ddol): KLIB-REFACTORING-CLEANUP: drop generation of KonanVersion!
@@ -39,8 +42,6 @@ task generateCompilerVersion(type: VersionGenerator){}
 
 sourceSets {
     main.kotlin {
-        srcDir 'src/main/kotlin'
-        srcDir 'src/library/kotlin'
         srcDir generateCompilerVersion.versionSourceDirectory
     }
 }
@@ -57,9 +58,10 @@ clean {
 }
 
 jar {
-    archiveName = "shared.jar"
+    archiveName = "version.jar"
 }
 
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib:$buildKotlinVersion"
+    compile "org.jetbrains.kotlin:kotlin-native-shared:$sharedVersion"
 }

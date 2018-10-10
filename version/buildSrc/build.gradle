@@ -20,7 +20,6 @@ buildscript {
 
 }
 
-
 apply plugin: 'kotlin'
 
 repositories {

@@ -14,5 +14,4 @@
  * limitations under the License.
  */
 
-include 'shared'
 include 'plugins'

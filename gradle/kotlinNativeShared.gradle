@@ -1,0 +1,19 @@
+if (!hasProperty('sharedVersion')) {
+    throw new GradleException('Please ensure the "sharedVersion" property is defined before applying this script.')
+}
+
+if (!hasProperty('sharedRepo')) {
+    throw new GradleException('Please ensure the "sharedRepo" property is defined before applying this script.')
+}
+
+project.buildscript {
+    repositories {
+        maven { url sharedRepo }
+    }
+
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-native-shared:$sharedVersion"
+        // An included build with generated Kotlin/Native version.
+        classpath "org.jetbrains.kotlin:kotlin-native-version"
+    }
+}

@@ -82,6 +82,9 @@ repositories {
     maven {
         url kotlinCompilerRepo
     }
+    maven {
+        url sharedRepo
+    }
 }
 
 configurations {
@@ -102,7 +105,8 @@ dependencies {
     bundleDependencies "org.jetbrains.kotlin:kotlin-serialization:$kotlinVersion"
     bundleDependencies "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
     bundleDependencies "org.jetbrains.kotlin:kotlin-gradle-plugin-api:$kotlinVersion"
-    bundleDependencies "org.jetbrains.kotlin:kotlin-native-shared:$konanVersion"
+    bundleDependencies "org.jetbrains.kotlin:kotlin-native-shared:$sharedVersion"
+    bundleDependencies "org.jetbrains.kotlin:kotlin-native-version"
 
     testImplementation 'junit:junit:4.12'
     testImplementation "org.jetbrains.kotlin:kotlin-test:$buildKotlinVersion"

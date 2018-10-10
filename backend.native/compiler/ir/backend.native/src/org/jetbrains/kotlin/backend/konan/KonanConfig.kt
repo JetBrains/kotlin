@@ -13,18 +13,15 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.STRONG_W
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.konan.TempFiles
+import org.jetbrains.kotlin.konan.*
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.library.KonanLibrary
 import org.jetbrains.kotlin.konan.library.defaultResolver
 import org.jetbrains.kotlin.konan.library.libraryResolver
 import org.jetbrains.kotlin.konan.properties.loadProperties
 import org.jetbrains.kotlin.konan.target.*
-import org.jetbrains.kotlin.konan.KonanAbiVersion
-import org.jetbrains.kotlin.konan.KonanVersion
 import org.jetbrains.kotlin.konan.library.resolver.TopologicalLibraryOrder
 import org.jetbrains.kotlin.konan.library.toUnresolvedLibraries
-import org.jetbrains.kotlin.konan.parseKonanVersion
 
 class KonanConfig(val project: Project, val configuration: CompilerConfiguration) {
 
@@ -89,8 +86,8 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
         libraryNames.filter { it.contains(File.separator) },
         target,
         distribution,
-        ::resolverLogger,
-        compatibleCompilerVersions = compatibleCompilerVersions 
+        compatibleCompilerVersions + KonanVersion.CURRENT,
+        ::resolverLogger
     ).libraryResolver()
 
     internal val resolvedLibraries by lazy {
