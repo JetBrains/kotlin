@@ -107,6 +107,8 @@ private fun org.jetbrains.kotlin.types.KotlinType.isGeneric() =
 private fun isExportedFunction(descriptor: FunctionDescriptor): Boolean {
     if (!descriptor.isEffectivelyPublicApi || !descriptor.kind.isReal || descriptor.isExpect)
         return false
+    if (descriptor.isSuspend)
+        return false
     descriptor.allParameters.forEach {
         if (it.type.isGeneric()) return false
     }
@@ -276,9 +278,6 @@ private class ExportedElement(val kind: ElementKind,
         val original = descriptor.original as FunctionDescriptor
         val returned = when {
             original is ConstructorDescriptor -> uniqueName(original, shortName) to original.constructedClass
-            // Suspend functions actually return 'Any?'.
-            original.isSuspend -> uniqueName(original, shortName) to
-                    TypeUtils.getClassDescriptor(owner.context.builtIns.nullableAnyType)!!
             else -> uniqueName(original, shortName) to TypeUtils.getClassDescriptor(original.returnType!!)!!
         }
         val uniqueNames = owner.paramsToUniqueNames(original.explicitParameters)
@@ -298,7 +297,6 @@ private class ExportedElement(val kind: ElementKind,
         val original = descriptor.original as FunctionDescriptor
         val returnedType = when {
             original is ConstructorDescriptor -> owner.context.builtIns.unitType
-            original.isSuspend -> owner.context.builtIns.nullableAnyType
             else -> original.returnType!!
         }
         val returnedClass = TypeUtils.getClassDescriptor(returnedType)!!
