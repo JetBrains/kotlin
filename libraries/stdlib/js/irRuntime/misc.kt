@@ -6,5 +6,5 @@
 package kotlin.js
 
 // TODO: Polyfill
-fun imul(a: dynamic, b: dynamic) =
-    js("((a & 0xffff0000) * (b & 0xffff) + (a & 0xffff) * (b | 0)) | 0")
+internal fun imul(a: Int, b: Int) =
+    js("((a & 0xffff0000) * (b & 0xffff) + (a & 0xffff) * (b | 0)) | 0").unsafeCast<Int>()

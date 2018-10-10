@@ -115,6 +115,9 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
     //    val isCharSymbol = getInternalFunction("isChar")
     val isObjectSymbol = getInternalFunction("isObject")
 
+    val isNumberSymbol = getInternalFunction("isNumber")
+    val isComparableSymbol = getInternalFunction("isComparable")
+
     val isPrimitiveArray = mapOf(
         PrimitiveType.BOOLEAN to getInternalFunction("isBooleanArray"),
         PrimitiveType.BYTE to getInternalFunction("isByteArray"),

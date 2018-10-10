@@ -141,7 +141,6 @@ class TypeOperatorLowering(val context: JsIrBackendContext) : FileLoweringPass {
                         type.isInt() ||
                         type.isFloat() ||
                         type.isDouble() ||
-                        type.isNumber() ||
                         type.isBoolean() ||
                         type.isFunctionOrKFunction() ||
                         type.isString()
@@ -217,6 +216,8 @@ class TypeOperatorLowering(val context: JsIrBackendContext) : FileLoweringPass {
                     toType.isAny() -> generateIsObjectCheck(argument)
                     isTypeOfCheckingType(toType) -> generateTypeOfCheck(argument, toType)
 //                    toType.isChar() -> generateCheckForChar(argument)
+                    toType.isNumber() -> generateNumberCheck(argument)
+                    toType.isComparable() -> generateComparableCheck(argument)
                     toType.isArray() -> generateGenericArrayCheck(argument)
                     toType.isPrimitiveArray() -> generatePrimitiveArrayTypeCheck(argument, toType)
                     toType.isTypeParameter() -> generateTypeCheckWithTypeParameter(argument, toType)
@@ -271,6 +272,12 @@ class TypeOperatorLowering(val context: JsIrBackendContext) : FileLoweringPass {
 
             private fun generateGenericArrayCheck(argument: IrExpression) =
                 JsIrBuilder.buildCall(isArraySymbol).apply { putValueArgument(0, argument) }
+
+            private fun generateNumberCheck(argument: IrExpression) =
+                JsIrBuilder.buildCall(context.intrinsics.isNumberSymbol).apply { putValueArgument(0, argument) }
+
+            private fun generateComparableCheck(argument: IrExpression) =
+                JsIrBuilder.buildCall(context.intrinsics.isComparableSymbol).apply { putValueArgument(0, argument) }
 
             private fun generatePrimitiveArrayTypeCheck(argument: IrExpression, toType: IrType): IrExpression {
                 val f = context.intrinsics.isPrimitiveArray[toType.getPrimitiveArrayElementType()]!!
