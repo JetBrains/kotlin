@@ -83,12 +83,12 @@ enum class LanguageFeature(
     NormalizeConstructorCalls(KOTLIN_1_3),
     StrictJavaNullabilityAssertions(KOTLIN_1_3, kind = BUG_FIX),
     SoundSmartcastForEnumEntries(KOTLIN_1_3, kind = BUG_FIX),
-    DslMarkerOnFunctionTypeReceiver(KOTLIN_1_4, kind = BUG_FIX),
     ProhibitErroneousExpressionsInAnnotationsWithUseSiteTargets(KOTLIN_1_3, kind = BUG_FIX),
     NewCapturedReceiverFieldNamingConvention(KOTLIN_1_3, kind = BUG_FIX),
     ExtendedMainConvention(KOTLIN_1_3),
     ExperimentalBuilderInference(KOTLIN_1_3),
 
+    DslMarkerOnFunctionTypeReceiver(KOTLIN_1_4, kind = BUG_FIX),
     RestrictReturnStatementTarget(KOTLIN_1_4, kind = BUG_FIX),
     NoConstantValueAttributeForNonConstVals(KOTLIN_1_4, kind = BUG_FIX),
 
