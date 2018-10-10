@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.ir.util.transformFlat
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
+import org.jetbrains.kotlin.utils.addIfNotNull
 
 class BlockDecomposerLowering(context: JsIrBackendContext) : DeclarationContainerLoweringPass {
 
@@ -265,7 +266,7 @@ class BlockDecomposerTransformer(context: JsIrBackendContext) : IrElementTransfo
                 }
 
                 newLoopBody.statements += JsIrBuilder.buildIfElse(unitType, breakCond, thenBlock)
-                newLoopBody.statements += newBody!!
+                newLoopBody.statements.addIfNotNull(newBody)
 
                 return loop.apply {
                     condition = constTrue
@@ -293,16 +294,22 @@ class BlockDecomposerTransformer(context: JsIrBackendContext) : IrElementTransfo
         // } while (cond)
         //
         override fun visitDoWhileLoop(loop: IrDoWhileLoop): IrExpression {
-            val newBody = loop.body?.transform(statementTransformer, null)!!
+            val newBody = loop.body?.transform(statementTransformer, null)
             val newCondition = loop.condition.transform(expressionTransformer, null)
 
             if (newCondition is IrComposite) {
-                val innerLoop = IrDoWhileLoopImpl(loop.startOffset, loop.endOffset, unitType, loop.origin, newBody, constFalse).apply {
+                val innerLoop = IrDoWhileLoopImpl(loop.startOffset, loop.endOffset, unitType, loop.origin).apply {
+                    condition = constFalse
+                    body = newBody
                     label = makeLoopLabel()
                 }
 
                 val newLoopCondition = newCondition.statements.last() as IrExpression
-                val newLoopBody = IrBlockImpl(newCondition.startOffset, newBody.endOffset, newBody.type).apply {
+                val newLoopBody = IrBlockImpl(
+                    newCondition.startOffset,
+                    newBody?.endOffset ?: newCondition.endOffset,
+                    newBody?.type ?: unitType
+                ).apply {
                     statements += innerLoop
                     statements += newCondition.statements.run { subList(0, lastIndex) }
                 }

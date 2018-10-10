@@ -2149,6 +2149,11 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
                 runTest("js/js.translator/testData/box/expression/evaluationOrder/elvisWithBreakContinueReturn.kt");
             }
 
+            @TestMetadata("emptyLoopWithBreakContinueReturnInCondition.kt")
+            public void testEmptyLoopWithBreakContinueReturnInCondition() throws Exception {
+                runTest("js/js.translator/testData/box/expression/evaluationOrder/emptyLoopWithBreakContinueReturnInCondition.kt");
+            }
+
             @TestMetadata("equalsIntrinsicWithSideEffect.kt")
             public void testEqualsIntrinsicWithSideEffect() throws Exception {
                 runTest("js/js.translator/testData/box/expression/evaluationOrder/equalsIntrinsicWithSideEffect.kt");
