@@ -64,21 +64,25 @@ class NumberConversionCallsTransformer(context: JsIrBackendContext) : CallsTrans
             add(it, ConversionNames.TO_LONG, intrinsics.jsToLong)
         }
 
-        for (type in arrayOf(irBuiltIns.byteType, irBuiltIns.intType)) {
-            add(type, ConversionNames.TO_CHAR) {
-                irCall(it, intrinsics.charClassSymbol.constructors.single(), dispatchReceiverAsFirstArgument = true)
-            }
+
+        irBuiltIns.numberType.let {
+            add(it, ConversionNames.TO_BYTE, intrinsics.jsNumberToByte)
+            add(it, ConversionNames.TO_DOUBLE, intrinsics.jsNumberToDouble)
+            add(it, ConversionNames.TO_FLOAT, intrinsics.jsNumberToDouble)
+            add(it, ConversionNames.TO_INT, intrinsics.jsNumberToInt)
+            add(it, ConversionNames.TO_SHORT, intrinsics.jsNumberToShort)
+            add(it, ConversionNames.TO_LONG, intrinsics.jsNumberToLong)
         }
 
-        for (type in arrayOf(irBuiltIns.floatType, irBuiltIns.doubleType)) {
-            add(type, ConversionNames.TO_CHAR) {
-                JsIrBuilder.buildCall(intrinsics.charClassSymbol.constructors.single()).apply {
-                    putValueArgument(0, irCall(it, intrinsics.jsNumberToInt, dispatchReceiverAsFirstArgument = true))
-                }
-            }
+        for (type in arrayOf(irBuiltIns.byteType, irBuiltIns.shortType, irBuiltIns.intType)) {
+            add(type, ConversionNames.TO_CHAR, intrinsics.charConstructor)
         }
 
-        add(irBuiltIns.charType, ConversionNames.TO_CHAR) { it.dispatchReceiver!! }
+        for (type in arrayOf(irBuiltIns.floatType, irBuiltIns.doubleType, irBuiltIns.numberType)) {
+            add(type, ConversionNames.TO_CHAR, intrinsics.jsNumberToChar)
+        }
+
+        add(irBuiltIns.charType, ConversionNames.TO_CHAR, ::useDispatchReceiver)
     }
 
     override fun transformCall(call: IrCall): IrExpression {
