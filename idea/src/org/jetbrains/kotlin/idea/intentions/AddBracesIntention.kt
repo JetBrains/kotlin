@@ -21,6 +21,7 @@ import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiWhiteSpace
 import org.jetbrains.kotlin.idea.refactoring.getLineNumber
 import org.jetbrains.kotlin.idea.util.CommentSaver
+import org.jetbrains.kotlin.j2k.isInSingleLine
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
@@ -76,13 +77,15 @@ class AddBracesIntention : SelfTargetingIntention<KtElement>(KtElement::class.ja
 
         val result = expression.replace(psiFactory.createSingleStatementBlock(expression))
 
-        // shift (possible contained) comment in expression underneath braces
-        result.children.forEach {
-            if (it is PsiComment) {
-                // Add comment to the end of the expression
-                result.lastChild?.add(it)
-                // Delete the comment in it's old position
-                it.delete()
+        if (expression.isInSingleLine()) {
+            // shift (possible contained) comment in expression underneath braces
+            result.children.forEach {
+                if (it is PsiComment) {
+                    // Add comment to the end of the expression
+                    result.lastChild?.add(it)
+                    // Delete the comment in it's old position
+                    it.delete()
+                }
             }
         }
 
