@@ -5,7 +5,6 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.Project
 import org.gradle.api.file.FileCollection
 import org.gradle.api.file.FileTree
-import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.gradle.api.tasks.compile.AbstractCompile
@@ -21,10 +20,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.defaultSourceSetName
 import org.jetbrains.kotlin.gradle.plugin.mpp.isMainCompilation
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
-import org.jetbrains.kotlin.konan.target.CompilerOutputKind.DYNAMIC
-import org.jetbrains.kotlin.konan.target.CompilerOutputKind.FRAMEWORK
-import org.jetbrains.kotlin.konan.target.CompilerOutputKind.PROGRAM
-import org.jetbrains.kotlin.konan.target.CompilerOutputKind.STATIC
+import org.jetbrains.kotlin.konan.target.CompilerOutputKind.*
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
 
@@ -154,6 +150,9 @@ open class KotlinNativeCompile : AbstractCompile() {
 
     val enabledLanguageFeatures: Set<String>
         @Input get() = languageSettings?.enabledLanguageFeatures ?: emptySet()
+
+    val experimentalAnnotationsInUse: Set<String>
+        @Input get() = languageSettings?.experimentalAnnotationsInUse.orEmpty()
     // endregion.
 
     // region DSL for compiler options
@@ -226,6 +225,9 @@ open class KotlinNativeCompile : AbstractCompile() {
         addKey("-progressive", progressiveMode)
         enabledLanguageFeatures.forEach { featureName ->
             add("-XXLanguage:+$featureName")
+        }
+        experimentalAnnotationsInUse.forEach { annotationName ->
+            add("-Xuse-experimental=$annotationName")
         }
 
         // Compiler plugins.

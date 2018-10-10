@@ -311,18 +311,29 @@ class NewMultiplatformIT : BaseGradleIT() {
 
         gradleBuildScript().appendText(
             "\n" + """
-                kotlin.sourceSets.jvm6Main.languageSettings {
-                    languageVersion = '1.3'
-                    apiVersion = '1.3'
-                    enableLanguageFeature('InlineClasses')
-                    progressiveMode = true
+                kotlin.sourceSets.all {
+                    it.languageSettings {
+                        languageVersion = '1.3'
+                        apiVersion = '1.3'
+                        enableLanguageFeature('InlineClasses')
+                        useExperimentalAnnotation('kotlin.ExperimentalUnsignedTypes')
+                        useExperimentalAnnotation('kotlin.contracts.ExperimentalContracts')
+                        progressiveMode = true
+                    }
                 }
             """.trimIndent()
         )
 
-        build("compileKotlinJvm6") {
-            assertSuccessful()
-            assertContains("-language-version 1.3", "-api-version 1.3", "-XXLanguage:+InlineClasses", " -progressive")
+        listOf("compileKotlinJvm6", "compileKotlinNodeJs", "compileKotlin${nativeHostTargetName.capitalize()}").forEach {
+            build(it) {
+                assertSuccessful()
+                assertTasksExecuted(":$it")
+                assertContains(
+                    "-language-version 1.3", "-api-version 1.3", "-XXLanguage:+InlineClasses",
+                    " -progressive", "-Xuse-experimental=kotlin.ExperimentalUnsignedTypes",
+                    "-Xuse-experimental=kotlin.contracts.ExperimentalContracts"
+                )
+            }
         }
     }
 
@@ -351,8 +362,20 @@ class NewMultiplatformIT : BaseGradleIT() {
             }
         }
 
-        testMonotonousCheck("languageSettings.languageVersion = '1.4'", SourceSetConsistencyChecks.languageVersionCheckHint)
-        testMonotonousCheck("languageSettings.enableLanguageFeature('InlineClasses')", SourceSetConsistencyChecks.unstableFeaturesHint)
+        testMonotonousCheck(
+            "languageSettings.languageVersion = '1.4'",
+            SourceSetConsistencyChecks.languageVersionCheckHint
+        )
+
+        testMonotonousCheck(
+            "languageSettings.enableLanguageFeature('InlineClasses')",
+            SourceSetConsistencyChecks.unstableFeaturesHint
+        )
+
+        testMonotonousCheck(
+            "languageSettings.useExperimentalAnnotation('kotlin.ExperimentalUnsignedTypes')",
+            SourceSetConsistencyChecks.experimentalAnnotationsInUseHint
+        )
 
         // check that enabling a bugfix feature and progressive mode or advancing API level
         // don't require doing the same for dependent source sets:
