@@ -106,6 +106,9 @@ fun assertFails(block: () -> Unit): Throwable = assertFails(null, block)
  * Asserts that given function [block] fails by throwing an exception.
  *
  * If the assertion fails, the specified [message] is used unless it is null as a prefix for the failure message.
+ *
+ * @return An exception that was expected to be thrown and was successfully caught, so it is possible to check any
+ *         property of that exception.
  */
 @SinceKotlin("1.1")
 fun assertFails(message: String?, block: () -> Unit): Throwable {
@@ -121,6 +124,9 @@ fun assertFails(message: String?, block: () -> Unit): Throwable {
 /** Asserts that a [block] fails with a specific exception of type [T] being thrown.
  *
  * If the assertion fails, the specified [message] is used unless it is null as a prefix for the failure message.
+ *
+ * @return An exception that was expected to be thrown and was successfully caught, so it is possible to check any
+ *         property of that exception.
  */
 @InlineOnly
 inline fun <reified T : Throwable> assertFailsWith(message: String? = null, noinline block: () -> Unit): T =
