@@ -54,7 +54,7 @@ class KotlinGradleMobileMultiplatformModuleBuilder :
 
         val commonMain = src.createKotlinSampleFileWriter(commonSourceName)
         val commonTest = src.createKotlinSampleFileWriter(commonTestName, fileName = "SampleTests.kt")
-        val androidMain = src.createKotlinSampleFileWriter(mainSourceName, languageName = "java")
+        val androidMain = src.createKotlinSampleFileWriter(mainSourceName, jvmTargetName, languageName = "java")
         val androidTest = src.createKotlinSampleFileWriter(mainTestName, languageName = "java", fileName = "SampleTestsAndroid.kt")
 
         val androidLocalProperties = rootDir.createChildData(this, "local.properties").bufferedWriter()
@@ -67,7 +67,7 @@ class KotlinGradleMobileMultiplatformModuleBuilder :
         val androidStyles = androidValues.createChildData(this, "styles.xml").bufferedWriter()
         val androidActivityMain = androidLayout.createChildData(this, "activity_main.xml").bufferedWriter()
 
-        val nativeMain = src.createKotlinSampleFileWriter(nativeSourceName)
+        val nativeMain = src.createKotlinSampleFileWriter(nativeSourceName, nativeTargetName)
         val nativeTest = src.createKotlinSampleFileWriter(nativeTestName, fileName = "SampleTestsIOS.kt")
 
         try {

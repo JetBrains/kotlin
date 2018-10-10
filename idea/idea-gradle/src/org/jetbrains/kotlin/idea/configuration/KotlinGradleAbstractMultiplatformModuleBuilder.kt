@@ -123,8 +123,9 @@ abstract class KotlinGradleAbstractMultiplatformModuleBuilder(
 
     protected fun VirtualFile.createKotlinSampleFileWriter(
         sourceRootName: String,
+        platformName: String = "",
         languageName: String = "kotlin",
-        fileName: String = "Sample.kt"
+        fileName: String = "Sample${platformName.capitalize()}.kt"
     ) = createChildDirectory(this, sourceRootName)
         .createChildDirectory(this, languageName)
         .createChildDirectory(this, "sample")

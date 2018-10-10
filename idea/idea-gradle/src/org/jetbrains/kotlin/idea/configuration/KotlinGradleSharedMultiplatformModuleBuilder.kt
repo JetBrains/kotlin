@@ -40,11 +40,11 @@ class KotlinGradleSharedMultiplatformModuleBuilder : KotlinGradleAbstractMultipl
 
         val commonMain = src.createKotlinSampleFileWriter(commonSourceName)
         val commonTest = src.createKotlinSampleFileWriter(commonTestName, fileName = "SampleTests.kt")
-        val jvmMain = src.createKotlinSampleFileWriter(jvmSourceName)
+        val jvmMain = src.createKotlinSampleFileWriter(jvmSourceName, jvmTargetName)
         val jvmTest = src.createKotlinSampleFileWriter(jvmTestName, fileName = "SampleTestsJVM.kt")
-        val jsMain = src.createKotlinSampleFileWriter(jsSourceName)
+        val jsMain = src.createKotlinSampleFileWriter(jsSourceName, jsTargetName)
         val jsTest = src.createKotlinSampleFileWriter(jsTestName, fileName = "SampleTestsJS.kt")
-        val nativeMain = src.createKotlinSampleFileWriter(nativeSourceName)
+        val nativeMain = src.createKotlinSampleFileWriter(nativeSourceName, nativeTargetName)
         val nativeTest = src.createKotlinSampleFileWriter(nativeTestName, fileName = "SampleTestsNative.kt")
 
         try {

@@ -36,9 +36,9 @@ class KotlinGradleMobileSharedMultiplatformModuleBuilder : KotlinGradleAbstractM
 
         val commonMain = src.createKotlinSampleFileWriter(commonSourceName)
         val commonTest = src.createKotlinSampleFileWriter(commonTestName, fileName = "SampleTests.kt")
-        val jvmMain = src.createKotlinSampleFileWriter(jvmSourceName)
+        val jvmMain = src.createKotlinSampleFileWriter(jvmSourceName, jvmTargetName)
         val jvmTest = src.createKotlinSampleFileWriter(jvmTestName, fileName = "SampleTestsJVM.kt")
-        val nativeMain = src.createKotlinSampleFileWriter(nativeSourceName)
+        val nativeMain = src.createKotlinSampleFileWriter(nativeSourceName, nativeTargetName)
         val nativeTest = src.createKotlinSampleFileWriter(nativeTestName, fileName = "SampleTestsNative.kt")
 
         try {
