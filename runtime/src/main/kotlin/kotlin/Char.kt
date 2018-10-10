@@ -138,7 +138,7 @@ public class Char private constructor(
         public const val MIN_RADIX: Int = 2
 
         /**
-         * The minimum radix available for conversion to and from strings.
+         * The maximum radix available for conversion to and from strings.
          */
         public const val MAX_RADIX: Int = 36
     }
