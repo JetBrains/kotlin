@@ -50,6 +50,14 @@ internal class DefaultLanguageSettingsBuilder : LanguageSettingsBuilder {
         enabledLanguageFeaturesImpl += languageFeature
     }
 
+    private val experimentalAnnotationsInUseImpl = mutableSetOf<String>()
+
+    override val experimentalAnnotationsInUse: Set<String> = experimentalAnnotationsInUseImpl
+
+    override fun useExperimentalAnnotation(name: String) {
+        experimentalAnnotationsInUseImpl += name
+    }
+
     companion object {
     }
 }
@@ -67,6 +75,10 @@ internal fun applyLanguageSettingsToKotlinTask(
 
     languageSettingsBuilder.enabledLanguageFeatures.forEach { featureName ->
         freeCompilerArgs += "-XXLanguage:+$featureName"
+    }
+
+    languageSettingsBuilder.experimentalAnnotationsInUse.forEach { annotationName ->
+        freeCompilerArgs += "-Xuse-experimental=$annotationName"
     }
 }
 
