@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.ir.backend.js.lower
@@ -28,6 +17,7 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.isStatic
+import org.jetbrains.kotlin.ir.backend.js.utils.asString
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
@@ -38,7 +28,6 @@ import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.ir.util.isInterface
 import org.jetbrains.kotlin.ir.util.isReal
 import org.jetbrains.kotlin.ir.util.parentAsClass
-import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 
@@ -203,12 +192,16 @@ class FunctionAndSignature(val function: IrSimpleFunction) {
 
     private val signature = Signature(
         function.name,
-        function.extensionReceiverParameter?.type?.render(),
-        function.valueParameters.map { it.type.render() }
+        function.extensionReceiverParameter?.type?.asString(),
+        function.valueParameters.map { it.type.asString() }
     )
 
-    override fun equals(other: Any?) =
-        signature == (other as FunctionAndSignature).signature
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is FunctionAndSignature) return false
+
+        return signature == other.signature
+    }
 
     override fun hashCode(): Int = signature.hashCode()
 }

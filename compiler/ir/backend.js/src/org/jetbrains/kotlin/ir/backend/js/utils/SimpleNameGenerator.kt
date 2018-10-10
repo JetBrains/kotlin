@@ -14,13 +14,13 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.util.isDynamic
 import org.jetbrains.kotlin.ir.util.isEffectivelyExternal
-import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.js.backend.ast.JsName
 import org.jetbrains.kotlin.js.naming.isES5IdentifierPart
 import org.jetbrains.kotlin.js.naming.isES5IdentifierStart
 import org.jetbrains.kotlin.resolve.calls.tasks.isDynamic
 import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor
+import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 
 // TODO: this class has to be reimplemented soon
 class SimpleNameGenerator : NameGenerator {
@@ -183,9 +183,17 @@ class SimpleNameGenerator : NameGenerator {
                     }
 
                     nameBuilder.append(declaration.name.asString())
-                    declaration.extensionReceiverParameter?.let { nameBuilder.append("_\$${it.type.render()}") }
-                    declaration.typeParameters.forEach { nameBuilder.append("_${it.name.asString()}") }
-                    declaration.valueParameters.forEach { nameBuilder.append("_${it.type.render()}") }
+                    // TODO should we skip type parameters and use upper bound of type parameter when print type of value parameters?
+                    declaration.typeParameters.ifNotEmpty {
+                        nameBuilder.append("_\$t")
+                        joinTo(nameBuilder, "") { "_${it.name.asString()}" }
+                    }
+                    declaration.extensionReceiverParameter?.let {
+                        nameBuilder.append("_r$${it.type.asString()}")
+                    }
+                    declaration.valueParameters.ifNotEmpty {
+                        joinTo(nameBuilder, "") { "_${it.type.asString()}" }
+                    }
                 }
 
             }
@@ -197,7 +205,6 @@ class SimpleNameGenerator : NameGenerator {
 
             nameDeclarator(sanitizeName(nameBuilder.toString()))
         }
-
 
     private fun sanitizeName(name: String): String {
         if (name.isEmpty()) return "_"
