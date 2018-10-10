@@ -14,9 +14,6 @@
  * limitations under the License.
  */
 
-import org.jetbrains.kotlin.konan.KonanVersion
-import org.jetbrains.kotlin.konan.MetaVersion
-
 /**
  * One may use bintrayUser/bintrayKey project properties or BINTRAY_USER/BINTRAY_KEY environment variables to upload
  * built plugin to bintray repository.
@@ -36,7 +33,6 @@ buildscript {
     }
 
     dependencies {
-        classpath "org.jetbrains.kotlin:kotlin-native-shared:$konanVersion"
         classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.3'
         classpath 'com.github.jengelman.gradle.plugins:shadow:4.0.0'
     }
@@ -55,10 +51,19 @@ apply plugin: 'com.github.johnrengelman.shadow'
 
 group = 'org.jetbrains.kotlin'
 
-if (KonanVersion.Companion.CURRENT.meta == MetaVersion.RELEASE) {
+// With Gradle 4.10 we are no longer able to depend on
+// a 'shared' build included into the root one and use the KonanVersion API provided
+// by it. So we have to manually construct the version.
+// TODO: Remove this code when 'shared' is built separately (from a separate repo).
+def meta = findProperty('konanMetaVersion') ?: 'dev'
+if (meta == 'release') {
     version = kotlinVersion
 } else {
-    version = "$kotlinVersion-native-${KonanVersion.Companion.CURRENT.toString()}"
+    def buildNumber = findProperty("build.number")?.tokenize('-')?.get(2)
+    version = "$kotlinVersion-native-$konanVersion-$meta"
+    if (buildNumber != null) {
+        version += "-$buildNumber"
+    }
 }
 
 repositories {
@@ -132,7 +137,21 @@ jar {
 
 pluginUnderTestMetadata {
     dependsOn shadowJar
-    pluginClasspath = files(shadowJar.archivePath) + configurations.shadow
+    doLast {
+        // Since Gradle 4.10 it isn't possible to edit the pluginUnderTest classpath.
+        // So we have to manually set the implementation-classpath to get the output fat-jar.
+        def pluginMetadata = outputDirectory.get().file(PluginUnderTestMetadata.METADATA_FILE_NAME).getAsFile()
+        def classpath = files(shadowJar.archivePath) + configurations.shadow
+        new Properties().with { properties ->
+            pluginMetadata.withInputStream {
+                properties.load(it)
+            }
+            properties.setProperty(PluginUnderTestMetadata.IMPLEMENTATION_CLASSPATH_PROP_KEY , classpath.asPath)
+            pluginMetadata.withOutputStream {
+                properties.store(it, null)
+            }
+        }
+    }
 }
 
 test {

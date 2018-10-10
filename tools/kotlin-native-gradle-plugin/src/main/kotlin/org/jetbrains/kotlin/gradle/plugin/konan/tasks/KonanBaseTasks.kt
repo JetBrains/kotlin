@@ -20,10 +20,7 @@ import groovy.lang.Closure
 import org.gradle.api.Action
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
-import org.gradle.api.artifacts.Configuration
-import org.gradle.api.artifacts.DependencyConstraint
-import org.gradle.api.artifacts.ModuleDependency
-import org.gradle.api.artifacts.PublishArtifact
+import org.gradle.api.artifacts.*
 import org.gradle.api.attributes.Attribute
 import org.gradle.api.attributes.AttributeContainer
 import org.gradle.api.attributes.Usage
@@ -129,6 +126,7 @@ abstract class KonanArtifactTask: KonanTargetableTask(), KonanArtifactSpec {
                 override fun getDependencyConstraints(): MutableSet<out DependencyConstraint> = mutableSetOf()
                 override fun getArtifacts(): MutableSet<out PublishArtifact> = platformConfiguration.allArtifacts
                 override fun getAttributes(): AttributeContainer = platformConfiguration.attributes
+                override fun getGlobalExcludes(): Set<ExcludeRule> = emptySet()
             }, platformConfiguration.allArtifacts, platformConfiguration)
             konanSoftwareComponent.addVariant(NativeVariantIdentity(
                     variantName,

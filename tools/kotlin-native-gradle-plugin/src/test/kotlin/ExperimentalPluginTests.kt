@@ -65,8 +65,8 @@ class ExperimentalPluginTests {
         }
         val assembleResult = project.createRunner().withArguments("assemble").build()
 
-        assertEquals(TaskOutcome.SUCCESS, assembleResult.task(":compileDebugKotlinNative")?.outcome)
-        assertTrue(projectDirectory.resolve("build/exe/main/debug/test.$exeSuffix").exists())
+        assertEquals(TaskOutcome.SUCCESS, assembleResult.task(":compileDebugExecutableKotlinNative")?.outcome)
+        assertTrue(projectDirectory.resolve("build/exe/main/debug/executable/test.$exeSuffix").exists())
     }
 
     @Test
