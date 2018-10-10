@@ -1,5 +1,5 @@
 // PROBLEM: none
 class Test {
-    private <caret>var p: Int = 0
+    <caret>var foo: Int = 0
         get() = field
 }

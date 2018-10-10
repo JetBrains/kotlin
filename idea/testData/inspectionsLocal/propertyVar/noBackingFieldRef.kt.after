@@ -1,5 +1,5 @@
 // FIX: Change to val and delete initializer
 class Test {
-    private <caret>var p: Int = 0
+    val foo: Int
         get() = 1
 }
