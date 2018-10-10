@@ -42,7 +42,8 @@ class SuspensionPointInSynchronizedCallChecker : CallChecker {
             if (parent !is KtValueArgumentList) {
                 child = parent
             }
-            parent = parent.parent
+            // parent.parent can be null if we edit the file, see EA-2158254 and KT-27484
+            parent = parent.parent ?: return
         }
     }
 

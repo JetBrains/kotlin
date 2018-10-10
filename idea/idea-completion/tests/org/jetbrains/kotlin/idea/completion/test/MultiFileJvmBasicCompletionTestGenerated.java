@@ -359,6 +359,11 @@ public class MultiFileJvmBasicCompletionTestGenerated extends AbstractMultiFileJ
         runTest("idea/idea-completion/testData/basic/multifile/StaticMembersOfNotImportedClassNameConflict/");
     }
 
+    @TestMetadata("SuspensionPointInMonitor")
+    public void testSuspensionPointInMonitor() throws Exception {
+        runTest("idea/idea-completion/testData/basic/multifile/SuspensionPointInMonitor/");
+    }
+
     @TestMetadata("SyntheticExtensionDeprecated")
     public void testSyntheticExtensionDeprecated() throws Exception {
         runTest("idea/idea-completion/testData/basic/multifile/SyntheticExtensionDeprecated/");
