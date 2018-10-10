@@ -77,6 +77,8 @@ class AddBracesIntention : SelfTargetingIntention<KtElement>(KtElement::class.ja
 
         val result = expression.replace(psiFactory.createSingleStatementBlock(expression))
 
+        // Ensure that expression is in single line, due to possible multiple comments
+        // in multi line expression.
         if (expression.isInSingleLine()) {
             // shift (possible contained) comment in expression underneath braces
             result.children.forEach {
