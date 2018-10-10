@@ -21,10 +21,7 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.IElementType
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.cfg.pseudocode.containingDeclarationForPseudocode
-import org.jetbrains.kotlin.codegen.getKotlinTypeForComparison
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
@@ -38,19 +35,17 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getLastParentOfTypeInRow
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
-import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfoBefore
 import org.jetbrains.kotlin.resolve.calls.callUtil.getFirstArgumentExpression
 import org.jetbrains.kotlin.resolve.calls.callUtil.getReceiverExpression
 import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatch
 import org.jetbrains.kotlin.resolve.calls.model.isReallySuccess
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
+import org.jetbrains.kotlin.resolve.calls.smartcasts.getKotlinTypeWithPossibleSmartCastToFP
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.types.typeUtil.*
 import org.jetbrains.kotlin.util.OperatorNameConventions
-import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
 class ReplaceCallWithBinaryOperatorInspection : AbstractApplicabilityBasedInspection<KtDotQualifiedExpression>(
     KtDotQualifiedExpression::class.java
@@ -172,44 +167,15 @@ class ReplaceCallWithBinaryOperatorInspection : AbstractApplicabilityBasedInspec
     private fun KtDotQualifiedExpression.isFloatingPointNumberEquals(): Boolean {
         val resolvedCall = resolveToCall() ?: return false
         val context = analyze(BodyResolveMode.PARTIAL)
-        val calcDescriptor = {
-            this.containingDeclarationForPseudocode?.resolveToDescriptorIfAny()
-        }
+        val dataFlowValueFactory = getResolutionFacade().getFrontendService(DataFlowValueFactory::class.java)
         val receiverType = resolvedCall.getReceiverExpression()?.getKotlinTypeWithPossibleSmartCastToFP(
-            context, calcDescriptor
+            context, containingDeclarationForPseudocode?.resolveToDescriptorIfAny(), languageVersionSettings, dataFlowValueFactory
         ) ?: return false
         val argumentType = resolvedCall.getFirstArgumentExpression()?.getKotlinTypeWithPossibleSmartCastToFP(
-            context, calcDescriptor
+            context, containingDeclarationForPseudocode?.resolveToDescriptorIfAny(), languageVersionSettings, dataFlowValueFactory
         ) ?: return false
         return receiverType.isFpType() && argumentType.isNumericType() ||
                 argumentType.isFpType() && receiverType.isNumericType()
-    }
-
-    private fun KtExpression.getKotlinTypeWithPossibleSmartCastToFP(
-        context: BindingContext,
-        calcDescriptor: () -> DeclarationDescriptor?
-    ): KotlinType? {
-        val givenType = getKotlinTypeForComparison(context) ?: return null
-
-        if (KotlinBuiltIns.isDoubleOrNullableDouble(givenType) || KotlinBuiltIns.isFloatOrNullableFloat(givenType)) {
-            return givenType
-        }
-
-        val dataFlowValueFactory = getResolutionFacade().getFrontendService(DataFlowValueFactory::class.java)
-        val dataFlow = dataFlowValueFactory.createDataFlowValue(
-            this,
-            givenType,
-            context,
-            calcDescriptor() ?: return givenType
-        )
-        val stableTypes = context.getDataFlowInfoBefore(this).getStableTypes(dataFlow, languageVersionSettings)
-        return stableTypes.firstNotNullResult {
-            when {
-                KotlinBuiltIns.isDoubleOrNullableDouble(it) -> it
-                KotlinBuiltIns.isFloatOrNullableFloat(it) -> it
-                else -> null
-            }
-        } ?: givenType
     }
 
     private fun KtSimpleNameExpression.isFloatingPointNumberEquals(): Boolean {
