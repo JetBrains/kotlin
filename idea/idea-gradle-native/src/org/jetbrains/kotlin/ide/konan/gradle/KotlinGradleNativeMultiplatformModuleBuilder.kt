@@ -30,7 +30,7 @@ class KotlinGradleNativeMultiplatformModuleBuilder : KotlinGradleAbstractMultipl
         val src = rootDir.createChildDirectory(this, "src")
 
         // Main module:
-        src.createKotlinSampleFileWriter(nativeSourceName).use {
+        src.createKotlinSampleFileWriter(nativeSourceName, nativeTargetName).use {
             it.write(
                 """
                 package sample

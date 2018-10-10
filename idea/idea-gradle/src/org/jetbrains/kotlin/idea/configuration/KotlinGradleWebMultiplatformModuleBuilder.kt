@@ -34,9 +34,9 @@ class KotlinGradleWebMultiplatformModuleBuilder : KotlinGradleAbstractMultiplatf
 
         val commonMain = src.createKotlinSampleFileWriter(commonSourceName)
         val commonTest = src.createKotlinSampleFileWriter(commonTestName, fileName = "SampleTests.kt")
-        val jvmMain = src.createKotlinSampleFileWriter(jvmSourceName)
+        val jvmMain = src.createKotlinSampleFileWriter(jvmSourceName, jvmTargetName)
         val jvmTest = src.createKotlinSampleFileWriter(jvmTestName, fileName = "SampleTestsJVM.kt")
-        val jsMain = src.createKotlinSampleFileWriter(jsSourceName)
+        val jsMain = src.createKotlinSampleFileWriter(jsSourceName, jsTargetName)
         val jsTest = src.createKotlinSampleFileWriter(jsTestName, fileName = "SampleTestsJS.kt")
 
         try {
