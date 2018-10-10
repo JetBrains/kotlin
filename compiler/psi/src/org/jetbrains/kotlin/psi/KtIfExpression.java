@@ -38,6 +38,21 @@ public class KtIfExpression extends KtExpressionImpl {
         return findExpressionUnder(KtNodeTypes.CONDITION);
     }
 
+    @Nullable
+    public PsiElement getCloseBrace() {
+        return findChildByType(KtTokens.RBRACE);
+    }
+
+    @Nullable
+    public PsiElement getOpenBrace() {
+        return findChildByType(KtTokens.LBRACE);
+    }
+
+    @Nullable
+    public KtExpression getSubjectExpression() {
+        return findChildByClass(KtExpression.class);
+    }
+
     @Nullable @IfNotParsed
     public PsiElement getLeftParenthesis() {
         return findChildByType(KtTokens.LPAR);

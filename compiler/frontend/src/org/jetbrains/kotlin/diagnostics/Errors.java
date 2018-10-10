@@ -957,6 +957,9 @@ public interface Errors {
     DiagnosticFactory1<PsiElement, KtKeywordToken> VAL_OR_VAR_ON_CATCH_PARAMETER = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory1<PsiElement, KtKeywordToken> VAL_OR_VAR_ON_SECONDARY_CONSTRUCTOR_PARAMETER = DiagnosticFactory1.create(ERROR);
 
+    // If expressions
+    DiagnosticFactory0<KtIfExpression> COMMENT_OUT_OF_IF = DiagnosticFactory0.create(ERROR);
+
     // When expressions
 
     DiagnosticFactory0<KtWhenCondition> EXPECTED_CONDITION = DiagnosticFactory0.create(ERROR);

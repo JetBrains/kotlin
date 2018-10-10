@@ -255,6 +255,8 @@ class QuickFixRegistrar : QuickFixContributor {
         PROPERTY_WITH_NO_TYPE_NO_INITIALIZER.registerActions(SpecifyTypeExplicitlyFix())
         MUST_BE_INITIALIZED.registerActions(SpecifyTypeExplicitlyFix())
 
+        COMMENT_OUT_OF_IF.registerFactory(AddIfBodyFix)
+
         ELSE_MISPLACED_IN_WHEN.registerFactory(MoveWhenElseBranchFix)
         NO_ELSE_IN_WHEN.registerFactory(AddWhenElseBranchFix)
         NO_ELSE_IN_WHEN.registerFactory(AddWhenRemainingBranchesFix)
