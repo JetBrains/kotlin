@@ -76,6 +76,16 @@ class AddBracesIntention : SelfTargetingIntention<KtElement>(KtElement::class.ja
 
         val result = expression.replace(psiFactory.createSingleStatementBlock(expression))
 
+        // shift (possible contained) comment in expression underneath braces
+        result.children.forEach {
+            if (it is PsiComment) {
+                // Add comment to the end of the expression
+                result.lastChild?.add(it)
+                // Delete the comment in it's old position
+                it.delete()
+            }
+        }
+
         when (element) {
             is KtDoWhileExpression ->
                 // remove new line between '}' and while
