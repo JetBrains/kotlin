@@ -1,0 +1,1 @@
+fun test(vararg <caret>a: Long) = a.size

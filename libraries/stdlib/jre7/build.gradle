@@ -1,11 +1,15 @@
 description = 'Kotlin Standard Library JRE 7 extension (deprecated)'
 
 apply plugin: 'kotlin'
+apply plugin: 'pill-configurable'
 
 configureJvm6Project(project)
 configureDist(project)
-configurePublishing(project)
 ext.javaHome = JDK_17
+
+pill {
+    importAsLibrary = true
+}
 
 dependencies {
     compile project(':kotlin-stdlib')
@@ -22,6 +26,8 @@ sourceSets {
         kotlin {
             srcDir 'test'
             if(!System.properties.'idea.active') {
+                srcDir '../jvm/test'
+                srcDir '../common/test'
                 srcDir '../test'
             }
         }
@@ -37,8 +43,14 @@ artifacts {
     archives javadocJar
 }
 
+task distForTest(type: Copy) {
+    rename "-${java.util.regex.Pattern.quote(version)}", ''
+    from jar
+    into distDir
+}
+
 dist {
-    from (jar, sourcesJar)
+    dependsOn(distForTest)
 }
 
 
@@ -51,13 +63,12 @@ compileKotlin {
             "-Xallow-kotlin-package",
             "-Xmultifile-parts-inherit",
             "-Xnormalize-constructor-calls=enable",
-            "-Xdump-declarations-to=${buildDir}/stdlib-jre7-declarations.json",
             "-module-name", project.name
     ]
 }
 
 compileTestKotlin {
-    kotlinOptions.freeCompilerArgs = ["-Xallow-kotlin-package"]
+    kotlinOptions.freeCompilerArgs = ["-Xallow-kotlin-package", "-Xmulti-platform", "-XXLanguage:+ReleaseCoroutines", "-Xuse-experimental=kotlin.ExperimentalUnsignedTypes"]
 }
 
 kotlin.experimental.coroutines 'enable'

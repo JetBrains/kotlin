@@ -29,9 +29,11 @@ import org.jetbrains.kotlin.psi.psiUtil.isPropertyParameter
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.uast.*
 import org.jetbrains.uast.kotlin.expressions.KotlinUElvisExpression
+import org.jetbrains.uast.kotlin.internal.KotlinUElementWithComments
 import org.jetbrains.uast.kotlin.psi.UastKotlinPsiVariable
 
-abstract class KotlinAbstractUElement(private val givenParent: UElement?) : UElement, JvmDeclarationUElement {
+abstract class KotlinAbstractUElement(private val givenParent: UElement?) : KotlinUElementWithComments,
+    JvmDeclarationUElementPlaceholder {
 
     final override val uastParent: UElement? by lz {
         givenParent ?: convertParent()
@@ -102,6 +104,10 @@ abstract class KotlinAbstractUElement(private val givenParent: UElement?) : UEle
             parent = parent?.parent
         }
 
+        if (parent is KtPropertyDelegate) {
+            parent = parent.parent
+        }
+
         val result = doConvertParent(this, parent)
         if (result == this) {
             throw IllegalStateException("Loop in parent structure when converting a $psi of type ${psi?.javaClass} with parent $parent of type ${parent?.javaClass} text: [${parent?.text}]")
@@ -147,8 +153,18 @@ fun doConvertParent(element: UElement, parent: PsiElement?): UElement? {
 
     val result = KotlinUastLanguagePlugin().convertElementWithParent(parentUnwrapped, null)
 
+    if (result is KotlinUBlockExpression && element is UClass) {
+        return KotlinUDeclarationsExpression(result).apply {
+            declarations = listOf(element)
+        }
+    }
+
     if (result is UEnumConstant && element is UDeclaration) {
         return result.initializingClass
+    }
+
+    if (result is UCallExpression && result.uastParent is UEnumConstant) {
+        return result.uastParent
     }
 
     if (result is USwitchClauseExpressionWithBody && !isInConditionBranch(element, result)) {
@@ -167,6 +183,17 @@ fun doConvertParent(element: UElement, parent: PsiElement?): UElement? {
         }
     }
 
+    if (result is UMethod
+        && result !is KotlinConstructorUMethod // no sense to wrap super calls with `return`
+        && element is UExpression
+        && element !is UBlockExpression
+        && element !is UTypeReferenceExpression // when element is a type in extension methods
+    ) {
+        return KotlinUBlockExpression.KotlinLazyUBlockExpression(result, { block ->
+            listOf(KotlinUImplicitReturnExpression(block).apply { returnExpression = element })
+        }).expressions.single()
+    }
+
     return result
 }
 
@@ -183,8 +210,10 @@ private fun findAnnotationClassFromConstructorParameter(parameter: KtParameter):
     return null
 }
 
-abstract class KotlinAbstractUExpression(givenParent: UElement?)
-    : KotlinAbstractUElement(givenParent), UExpression, JvmDeclarationUElement {
+abstract class KotlinAbstractUExpression(givenParent: UElement?) :
+    KotlinAbstractUElement(givenParent),
+    UExpression,
+    JvmDeclarationUElementPlaceholder {
 
     override val javaPsi: PsiElement? = null
 

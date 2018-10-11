@@ -27,21 +27,22 @@ import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.KtPsiFactory
 
 abstract class AbstractAddAccessorsIntention(
-        private val addGetter: Boolean,
-        private val addSetter: Boolean
+    private val addGetter: Boolean,
+    private val addSetter: Boolean
 ) : SelfTargetingRangeIntention<KtProperty>(KtProperty::class.java, createFamilyName(addGetter, addSetter)) {
 
     override fun applicabilityRange(element: KtProperty): TextRange? {
         if (element.isLocal || element.isAbstract() || element.hasDelegate() ||
             element.hasModifier(KtTokens.LATEINIT_KEYWORD) ||
-            element.hasModifier(KtTokens.CONST_KEYWORD)) {
+            element.hasModifier(KtTokens.CONST_KEYWORD)
+        ) {
             return null
         }
         val descriptor = element.resolveToDescriptorIfAny() as? CallableMemberDescriptor ?: return null
         if (descriptor.isExpect) return null
 
         if (addSetter && (!element.isVar || element.setter != null)) return null
-        if (addGetter && element.getter != null) return null
+        if (addGetter && ((element.typeReference == null && element.initializer == null) || element.getter != null)) return null
         return element.nameIdentifier?.textRange
     }
 

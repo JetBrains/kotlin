@@ -1,14 +1,14 @@
 public final class Class {
     @org.jetbrains.annotations.Nullable
-    private final java.lang.String nullableVal = "";
+    private final java.lang.String nullableVal;
     @org.jetbrains.annotations.Nullable
     private java.lang.String nullableVar;
     @org.jetbrains.annotations.NotNull
-    private final java.lang.String notNullVal = "";
+    private final java.lang.String notNullVal;
     @org.jetbrains.annotations.NotNull
     private java.lang.String notNullVar;
-    private final java.lang.String privateNN = "";
-    private final java.lang.String privateN = "";
+    private final java.lang.String privateNN;
+    private final java.lang.String privateN;
 
     @org.jetbrains.annotations.NotNull
     public final java.lang.String notNull(@org.jetbrains.annotations.NotNull java.lang.String a) { /* compiled code */ }

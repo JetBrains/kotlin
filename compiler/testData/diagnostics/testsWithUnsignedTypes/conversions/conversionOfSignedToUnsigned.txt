@@ -1,0 +1,30 @@
+package
+
+@kotlin.internal.ImplicitIntegerCoercion public const val BIGGER_THAN_UBYTE: kotlin.Int = 256
+@kotlin.internal.ImplicitIntegerCoercion public const val EXPLICIT_INT: kotlin.Int = 255
+@kotlin.internal.ImplicitIntegerCoercion public const val IMPLICIT_INT: kotlin.Int = 255
+@kotlin.internal.ImplicitIntegerCoercion public const val LONG_CONST: kotlin.Long = 255.toLong()
+@kotlin.internal.ImplicitIntegerCoercion public val NON_CONST: kotlin.Int = 255
+@kotlin.internal.ImplicitIntegerCoercion public const val UINT_CONST: kotlin.UInt = 42.toUInt()
+public fun takeIntWithoutAnnotation(/*0*/ i: kotlin.Int): kotlin.Unit
+public fun takeLong(/*0*/ @kotlin.internal.ImplicitIntegerCoercion l: kotlin.Long): kotlin.Unit
+public fun takeUByte(/*0*/ @kotlin.internal.ImplicitIntegerCoercion u: kotlin.UByte): kotlin.Unit
+public fun takeUBytes(/*0*/ @kotlin.internal.ImplicitIntegerCoercion vararg u: kotlin.UByte /*kotlin.UByteArray*/): kotlin.Unit
+public fun takeUInt(/*0*/ @kotlin.internal.ImplicitIntegerCoercion u: kotlin.UInt): kotlin.Unit
+public fun takeUIntWithoutAnnotaion(/*0*/ u: kotlin.UInt): kotlin.Unit
+public fun takeULong(/*0*/ @kotlin.internal.ImplicitIntegerCoercion u: kotlin.ULong): kotlin.Unit
+public fun takeUShort(/*0*/ @kotlin.internal.ImplicitIntegerCoercion u: kotlin.UShort): kotlin.Unit
+public fun test(): kotlin.Unit
+
+package kotlin {
+
+    package kotlin.internal {
+
+        public final annotation class ImplicitIntegerCoercion : kotlin.Annotation {
+            public constructor ImplicitIntegerCoercion()
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        }
+    }
+}

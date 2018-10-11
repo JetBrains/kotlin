@@ -1,27 +1,19 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.checkers
 
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
+import com.intellij.psi.PsiElement
 import com.intellij.psi.search.GlobalSearchScope
+import junit.framework.TestCase
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.analyzer.common.CommonAnalyzerFacade
-import org.jetbrains.kotlin.cli.jvm.compiler.CliLightClassGenerationSupport
+import org.jetbrains.kotlin.builtins.jvm.JvmBuiltIns
+import org.jetbrains.kotlin.cli.jvm.compiler.NoScopeRecordCliBindingTrace
 import org.jetbrains.kotlin.cli.jvm.compiler.TopDownAnalyzerFacadeForJVM
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.container.get
@@ -31,7 +23,6 @@ import org.jetbrains.kotlin.context.withModule
 import org.jetbrains.kotlin.context.withProject
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.descriptors.PackagePartProvider
 import org.jetbrains.kotlin.descriptors.PackageViewDescriptor
 import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
@@ -47,7 +38,6 @@ import org.jetbrains.kotlin.load.java.lazy.SingleModuleClassResolver
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
-import org.jetbrains.kotlin.platform.JvmBuiltIns
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.calls.model.MutableResolvedCall
@@ -55,6 +45,7 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.jvm.JavaDescriptorResolver
 import org.jetbrains.kotlin.resolve.lazy.KotlinCodeAnalyzer
 import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProviderFactory
+import org.jetbrains.kotlin.serialization.deserialization.MetadataPartProvider
 import org.jetbrains.kotlin.storage.ExceptionTracker
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.storage.StorageManager
@@ -94,17 +85,29 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
         val modules = createModules(groupedByModule, context.storageManager)
         val moduleBindings = HashMap<TestModule?, BindingContext>()
 
+        val languageVersionSettingsByModule = HashMap<TestModule?, LanguageVersionSettings>()
+
         for ((testModule, testFilesInModule) in groupedByModule) {
             val ktFiles = getKtFiles(testFilesInModule, true)
 
             val oldModule = modules[testModule]!!
 
-            val languageVersionSettings = loadLanguageVersionSettings(testFilesInModule)
+            val languageVersionSettings =
+                if (coroutinesPackage.isNotEmpty())
+                    CompilerTestLanguageVersionSettings(
+                        DEFAULT_DIAGNOSTIC_TESTS_FEATURES,
+                        if (coroutinesPackage.contains("experimental")) ApiVersion.KOTLIN_1_2 else ApiVersion.KOTLIN_1_3,
+                        if (coroutinesPackage.contains("experimental")) LanguageVersion.KOTLIN_1_2 else LanguageVersion.KOTLIN_1_3
+                    )
+                else loadLanguageVersionSettings(testFilesInModule)
+
+            languageVersionSettingsByModule[testModule] = languageVersionSettings
+
             val moduleContext = context.withProject(project).withModule(oldModule)
 
             val separateModules = groupedByModule.size == 1 && groupedByModule.keys.single() == null
             val result = analyzeModuleContents(
-                moduleContext, ktFiles, CliLightClassGenerationSupport.NoScopeRecordCliBindingTrace(),
+                moduleContext, ktFiles, NoScopeRecordCliBindingTrace(),
                 languageVersionSettings, separateModules, loadJvmTarget(testFilesInModule)
             )
             if (oldModule != result.moduleDescriptor) {
@@ -141,7 +144,7 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
         var exceptionFromDescriptorValidation: Throwable? = null
         try {
             val expectedFile = getExpectedDescriptorFile(testDataFile, files)
-            validateAndCompareDescriptorWithFile(expectedFile, files, modules)
+            validateAndCompareDescriptorWithFile(expectedFile, files, modules, coroutinesPackage)
         } catch (e: Throwable) {
             exceptionFromDescriptorValidation = e
         }
@@ -175,7 +178,9 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
             exceptionFromDynamicCallDescriptorsValidation = e
         }
 
-        KotlinTestUtils.assertEqualsToFile(getExpectedDiagnosticsFile(testDataFile), actualText.toString())
+        KotlinTestUtils.assertEqualsToFile(getExpectedDiagnosticsFile(testDataFile), actualText.toString()) { s ->
+            s.replace("COROUTINES_PACKAGE", coroutinesPackage)
+        }
 
         assertTrue("Diagnostics mismatch. See the output above", ok)
 
@@ -184,7 +189,9 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
         exceptionFromLazyResolveLogValidation?.let { throw it }
         exceptionFromDynamicCallDescriptorsValidation?.let { throw it }
 
-        performAdditionalChecksAfterDiagnostics(testDataFile, files, groupedByModule, modules, moduleBindings)
+        performAdditionalChecksAfterDiagnostics(
+            testDataFile, files, groupedByModule, modules, moduleBindings, languageVersionSettingsByModule
+        )
     }
 
     protected open fun getExpectedDiagnosticsFile(testDataFile: File): File {
@@ -212,7 +219,8 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
         testFiles: List<TestFile>,
         moduleFiles: Map<TestModule?, List<TestFile>>,
         moduleDescriptors: Map<TestModule?, ModuleDescriptorImpl>,
-        moduleBindings: Map<TestModule?, BindingContext>
+        moduleBindings: Map<TestModule?, BindingContext>,
+        languageVersionSettingsByModule: Map<TestModule?, LanguageVersionSettings>
     ) {
         // To be overridden by diagnostic-like tests.
     }
@@ -232,7 +240,14 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
             }
         }
 
-        return result ?: CompilerTestLanguageVersionSettings(
+        return result ?: defaultLanguageVersionSettings()
+    }
+
+    /**
+     * Version settings used when no test data files have overriding version directives
+     */
+    protected open fun defaultLanguageVersionSettings(): LanguageVersionSettings {
+        return CompilerTestLanguageVersionSettings(
             DEFAULT_DIAGNOSTIC_TESTS_FEATURES,
             LanguageVersionSettingsImpl.DEFAULT.apiVersion,
             LanguageVersionSettingsImpl.DEFAULT.languageVersion
@@ -330,9 +345,9 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
                     MultiTargetPlatform.CAPABILITY to MultiTargetPlatform.Common,
                     MODULE_FILES to files
                 )
-            ) { _, _ ->
+            ) { _ ->
                 // TODO
-                PackagePartProvider.Empty
+                MetadataPartProvider.Empty
             }
         } else if (platform != null) {
             // TODO: analyze with the correct platform, not always JVM
@@ -395,7 +410,8 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
     private fun validateAndCompareDescriptorWithFile(
         expectedFile: File,
         testFiles: List<TestFile>,
-        modules: Map<TestModule?, ModuleDescriptorImpl>
+        modules: Map<TestModule?, ModuleDescriptorImpl>,
+        coroutinesPackage: String
     ) {
         if (skipDescriptorsValidation()) return
         if (testFiles.any { file -> InTextDirectivesUtils.isDirectiveDefined(file.expectedText, "// SKIP_TXT") }) {
@@ -456,7 +472,9 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
                     "Such tests are hard to maintain, take long time to execute and are subject to sudden unreviewed changes anyway."
         }
 
-        KotlinTestUtils.assertEqualsToFile(expectedFile, allPackagesText)
+        KotlinTestUtils.assertEqualsToFile(expectedFile, allPackagesText) { s ->
+            s.replace("COROUTINES_PACKAGE", coroutinesPackage)
+        }
     }
 
 
@@ -567,17 +585,26 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
         if (ktFiles.any { file -> AnalyzingUtils.getSyntaxErrorRanges(file).isNotEmpty() }) return
 
         val resolvedCallsEntries = bindingContext.getSliceContents(BindingContext.RESOLVED_CALL)
+        val unresolvedCallsOnElements = ArrayList<PsiElement>()
+
         for ((call, resolvedCall) in resolvedCallsEntries) {
             val element = call.callElement
 
-            val lineAndColumn = DiagnosticUtils.getLineAndColumnInPsiFile(element.containingFile, element.textRange)
-
             if (!configuredLanguageVersionSettings.supportsFeature(LanguageFeature.NewInference)) {
-                assertTrue(
-                    "Resolved call for '${element.text}'$lineAndColumn is not completed",
-                    (resolvedCall as MutableResolvedCall<*>).isCompleted
-                )
+                if (!(resolvedCall as MutableResolvedCall<*>).isCompleted) {
+                    unresolvedCallsOnElements.add(element)
+                }
             }
+        }
+
+        if (unresolvedCallsOnElements.isNotEmpty()) {
+            TestCase.fail(
+                "There are uncompleted resolved calls for the following elements:\n" +
+                        unresolvedCallsOnElements.joinToString(separator = "\n") { element ->
+                            val lineAndColumn = DiagnosticUtils.getLineAndColumnInPsiFile(element.containingFile, element.textRange)
+                            "'${element.text}'$lineAndColumn"
+                        }
+            )
         }
 
         checkResolvedCallsInDiagnostics(bindingContext, configuredLanguageVersionSettings)

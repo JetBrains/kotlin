@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.daemon.experimental.unit
 
-import kotlinx.coroutines.experimental.*
+import kotlinx.coroutines.*
 import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector

@@ -31,11 +31,10 @@ import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall;
 
-import java.io.*;
-import java.nio.charset.Charset;
+import java.io.File;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
-import java.util.function.Supplier;
 
 public final class PsiUtils {
 
@@ -69,13 +68,6 @@ public final class PsiUtils {
         KtExpression selectorExpression = expression.getSelectorExpression();
         assert selectorExpression != null : "Selector should not be null.";
         return selectorExpression;
-    }
-
-    @NotNull
-    public static KtSimpleNameExpression getNotNullSimpleNameSelector(@NotNull KtQualifiedExpression expression) {
-        KtSimpleNameExpression selectorAsSimpleName = getSelectorAsSimpleName(expression);
-        assert selectorAsSimpleName != null;
-        return selectorAsSimpleName;
     }
 
     @NotNull

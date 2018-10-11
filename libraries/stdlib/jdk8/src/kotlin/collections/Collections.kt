@@ -17,6 +17,7 @@
 @file:Suppress("UNCHECKED_CAST", "NOTHING_TO_INLINE", "INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
 @file:JvmName("CollectionsJDK8Kt")
 @file:kotlin.jvm.JvmPackageName("kotlin.collections.jdk8")
+
 package kotlin.collections
 
 /**
@@ -25,8 +26,8 @@ package kotlin.collections
  */
 @SinceKotlin("1.2")
 @kotlin.internal.InlineOnly
-public inline fun <@kotlin.internal.OnlyInputTypes K, V> Map<out K, V>.getOrDefault(key: K, defaultValue: V): V
-        = (this as Map<K, V>).getOrDefault(key, defaultValue)
+public inline fun <@kotlin.internal.OnlyInputTypes K, V> Map<out K, V>.getOrDefault(key: K, defaultValue: V): V =
+    (this as Map<K, V>).getOrDefault(key, defaultValue)
 
 
 /**
@@ -35,5 +36,5 @@ public inline fun <@kotlin.internal.OnlyInputTypes K, V> Map<out K, V>.getOrDefa
  */
 @SinceKotlin("1.2")
 @kotlin.internal.InlineOnly
-public inline fun <@kotlin.internal.OnlyInputTypes K, @kotlin.internal.OnlyInputTypes V> MutableMap<out K, out V>.remove(key: K, value: V): Boolean
-        = (this as MutableMap<K, V>).remove(key, value)
+public inline fun <@kotlin.internal.OnlyInputTypes K, @kotlin.internal.OnlyInputTypes V> MutableMap<out K, out V>.remove(key: K, value: V): Boolean =
+    (this as MutableMap<K, V>).remove(key, value)

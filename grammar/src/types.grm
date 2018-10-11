@@ -34,13 +34,13 @@ userType
   ;
 
 simpleUserType
-  : SimpleName ("<" (optionalProjection type | "*"){","} ">")?
+  : SimpleName ("<" (projection? type | "*"){","} ">")?
   ;
 
-optionalProjection
+projection
   : varianceAnnotation
   ;
 
 functionType
-  : (type ".")? "(" parameter{","}? ")" "->" type?
+  : (type ".")? "(" parameter{","}? ")" "->" type
   ;

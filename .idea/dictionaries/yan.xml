@@ -1,10 +1,12 @@
 <component name="ProjectDictionaryState">
   <dictionary name="yan">
     <words>
+      <w>debuggee</w>
       <w>deserializes</w>
       <w>impls</w>
       <w>kapt</w>
       <w>parceler</w>
+      <w>repl</w>
       <w>uast</w>
     </words>
   </dictionary>

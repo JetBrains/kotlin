@@ -1,10 +1,9 @@
-// !API_VERSION: 1.3
-// MODULE: api
+// !USE_EXPERIMENTAL: kotlin.Experimental
 // FILE: api.kt
 
 package api
 
-@Experimental(Experimental.Level.WARNING, [Experimental.Impact.COMPILATION])
+@Experimental(Experimental.Level.WARNING)
 @Target(AnnotationTarget.CLASS, AnnotationTarget.FUNCTION)
 annotation class ExperimentalAPI
 
@@ -17,7 +16,6 @@ class C {
     }
 }
 
-// MODULE: usage1(api)
 // FILE: usage-propagate.kt
 
 package usage1
@@ -32,7 +30,6 @@ fun use1() {
 @ExperimentalAPI
 fun use2(f: C.D.E.F) = f.hashCode()
 
-// MODULE: usage2(api)
 // FILE: usage-use.kt
 
 package usage2
@@ -45,9 +42,8 @@ fun use1() {
 }
 
 @UseExperimental(ExperimentalAPI::class)
-fun use2(f: <!EXPERIMENTAL_API_USAGE!>C<!>.<!EXPERIMENTAL_API_USAGE!>D<!>.<!EXPERIMENTAL_API_USAGE!>E<!>.<!EXPERIMENTAL_API_USAGE!>F<!>) = f.hashCode()
+fun use2(f: C.D.E.F) = f.hashCode()
 
-// MODULE: usage3(api)
 // FILE: usage-none.kt
 
 package usage3

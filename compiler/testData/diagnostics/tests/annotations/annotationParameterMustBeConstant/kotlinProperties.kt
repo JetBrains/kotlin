@@ -1,12 +1,12 @@
 annotation class Ann(vararg val i: Int)
 
 @Ann(
-        <!ANNOTATION_PARAMETER_MUST_BE_CONST!>i1<!>,
+        <!ANNOTATION_ARGUMENT_MUST_BE_CONST!>i1<!>,
         i2,
-        <!ANNOTATION_PARAMETER_MUST_BE_CONST!>i3<!>,
+        <!ANNOTATION_ARGUMENT_MUST_BE_CONST!>i3<!>,
         i4,
-        <!ANNOTATION_PARAMETER_MUST_BE_CONST!>i5<!>,
-        <!ANNOTATION_PARAMETER_MUST_BE_CONST!>i6<!>
+        <!ANNOTATION_ARGUMENT_MUST_BE_CONST!>i5<!>,
+        <!ANNOTATION_ARGUMENT_MUST_BE_CONST!>i6<!>
 )
 class Test
 

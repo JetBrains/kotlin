@@ -29,7 +29,7 @@ class ConstantConditionIfInspection : AbstractKotlinInspection() {
         return ifExpressionVisitor(fun(expression) {
             val condition = expression.condition ?: return
 
-            val context = condition.analyze(BodyResolveMode.PARTIAL)
+            val context = condition.analyze(BodyResolveMode.PARTIAL_WITH_CFA)
             val constantValue = condition.constantBooleanValue(context) ?: return
 
             val fixes = mutableListOf<LocalQuickFix>()

@@ -1,28 +1,25 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.load.kotlin
 
-import org.jetbrains.kotlin.builtins.FAKE_CONTINUATION_CLASS_DESCRIPTOR
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.builtins.isSuspendFunctionType
-import org.jetbrains.kotlin.builtins.transformSuspendFunctionToRuntimeFunctionType
+import org.jetbrains.kotlin.builtins.*
+import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.load.java.typeEnhancement.hasEnhancedNullability
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
-import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
-import org.jetbrains.kotlin.resolve.isInlineClassType
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
 import org.jetbrains.kotlin.resolve.substitutedUnderlyingType
 import org.jetbrains.kotlin.resolve.unsubstitutedUnderlyingType
 import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.typeUtil.makeNullable
 import org.jetbrains.kotlin.types.typeUtil.replaceArgumentsWithStarProjections
 import org.jetbrains.kotlin.utils.DO_NOTHING_3
 
@@ -43,12 +40,10 @@ interface TypeMappingConfiguration<out T : Any> {
     fun getPredefinedTypeForClass(classDescriptor: ClassDescriptor): T?
     fun getPredefinedInternalNameForClass(classDescriptor: ClassDescriptor): String?
     fun processErrorType(kotlinType: KotlinType, descriptor: ClassDescriptor)
+    fun releaseCoroutines(): Boolean
 }
 
 const val NON_EXISTENT_CLASS_NAME = "error/NonExistentClass"
-
-private val CONTINUATION_INTERNAL_NAME =
-    JvmClassName.byClassId(ClassId.topLevel(DescriptorUtils.CONTINUATION_INTERFACE_FQ_NAME)).internalName
 
 fun <T : Any> mapType(
     kotlinType: KotlinType,
@@ -56,13 +51,15 @@ fun <T : Any> mapType(
     mode: TypeMappingMode,
     typeMappingConfiguration: TypeMappingConfiguration<T>,
     descriptorTypeWriter: JvmDescriptorTypeWriter<T>?,
-    writeGenericType: (KotlinType, T, TypeMappingMode) -> Unit = DO_NOTHING_3
+    writeGenericType: (KotlinType, T, TypeMappingMode) -> Unit = DO_NOTHING_3,
+    isIrBackend: Boolean
 ): T {
     if (kotlinType.isSuspendFunctionType) {
         return mapType(
-            transformSuspendFunctionToRuntimeFunctionType(kotlinType),
+            transformSuspendFunctionToRuntimeFunctionType(kotlinType, typeMappingConfiguration.releaseCoroutines()),
             factory, mode, typeMappingConfiguration, descriptorTypeWriter,
-            writeGenericType
+            writeGenericType,
+            isIrBackend
         )
     }
 
@@ -83,13 +80,13 @@ fun <T : Any> mapType(
         // It's not very important because such types anyway are prohibited in declarations
         return mapType(
             commonSupertype.replaceArgumentsWithStarProjections(),
-            factory, mode, typeMappingConfiguration, descriptorTypeWriter, writeGenericType
+            factory, mode, typeMappingConfiguration, descriptorTypeWriter, writeGenericType, isIrBackend
         )
     }
 
     val descriptor =
         constructor.declarationDescriptor
-                ?: throw UnsupportedOperationException("no descriptor for type constructor of " + kotlinType)
+            ?: throw UnsupportedOperationException("no descriptor for type constructor of $kotlinType")
 
     when {
         ErrorUtils.isError(descriptor) -> {
@@ -121,7 +118,8 @@ fun <T : Any> mapType(
                         mapType(
                             memberType, factory,
                             mode.toGenericArgumentMode(memberProjection.projectionKind),
-                            typeMappingConfiguration, descriptorTypeWriter, writeGenericType
+                            typeMappingConfiguration, descriptorTypeWriter, writeGenericType,
+                            isIrBackend
                         )
 
                 descriptorTypeWriter?.writeArrayEnd()
@@ -131,11 +129,19 @@ fun <T : Any> mapType(
         }
 
         descriptor is ClassDescriptor -> {
+            // NB if inline class is recursive, it's ok to map it as wrapped
             if (descriptor.isInline && !mode.needInlineClassWrapping) {
-                val typeForMapping = computeUnderlyingType(kotlinType)
-                if (typeForMapping != null) {
-                    val newMode = if (typeForMapping.isInlineClassType()) mode else mode.wrapInlineClassesMode()
-                    return mapType(typeForMapping, factory, newMode, typeMappingConfiguration, descriptorTypeWriter, writeGenericType)
+                val expandedType = computeExpandedTypeForInlineClass(kotlinType)
+                if (expandedType != null) {
+                    return mapType(
+                        expandedType,
+                        factory,
+                        mode.wrapInlineClassesMode(),
+                        typeMappingConfiguration,
+                        descriptorTypeWriter,
+                        writeGenericType,
+                        isIrBackend
+                    )
                 }
             }
 
@@ -144,13 +150,21 @@ fun <T : Any> mapType(
                     factory.javaLangClassType
                 } else {
                     typeMappingConfiguration.getPredefinedTypeForClass(descriptor.original)
-                            ?: run {
-                                // refer to enum entries by enum type in bytecode unless ASM_TYPE is written
-                                val enumClassIfEnumEntry = if (descriptor.kind == ClassKind.ENUM_ENTRY)
+                        ?: run {
+                            // refer to enum entries by enum type in bytecode unless ASM_TYPE is written
+                            val enumClassIfEnumEntry =
+                                if (descriptor.kind == ClassKind.ENUM_ENTRY)
                                     descriptor.containingDeclaration as ClassDescriptor
-                                else descriptor
-                                factory.createObjectType(computeInternalName(enumClassIfEnumEntry.original, typeMappingConfiguration))
-                            }
+                                else
+                                    descriptor
+                            factory.createObjectType(
+                                computeInternalName(
+                                    enumClassIfEnumEntry.original,
+                                    typeMappingConfiguration,
+                                    isIrBackend
+                                )
+                            )
+                        }
                 }
 
             writeGenericType(kotlinType, jvmType, mode)
@@ -161,13 +175,18 @@ fun <T : Any> mapType(
         descriptor is TypeParameterDescriptor -> {
             val type = mapType(
                 getRepresentativeUpperBound(descriptor),
-                factory, mode, typeMappingConfiguration, writeGenericType = DO_NOTHING_3, descriptorTypeWriter = null
+                factory,
+                mode,
+                typeMappingConfiguration,
+                writeGenericType = DO_NOTHING_3,
+                descriptorTypeWriter = null,
+                isIrBackend = isIrBackend
             )
             descriptorTypeWriter?.writeTypeVariable(descriptor.getName(), type)
             return type
         }
 
-        else -> throw UnsupportedOperationException("Unknown type " + kotlinType)
+        else -> throw UnsupportedOperationException("Unknown type $kotlinType")
     }
 }
 
@@ -178,12 +197,24 @@ fun hasVoidReturnType(descriptor: CallableDescriptor): Boolean {
             && descriptor !is PropertyGetterDescriptor
 }
 
-private fun <T : Any> mapBuiltInType(type: KotlinType, typeFactory: JvmTypeFactory<T>, mode: TypeMappingMode): T? {
+private fun continuationInternalName(releaseCoroutines: Boolean): String {
+    val fqName =
+        if (releaseCoroutines) DescriptorUtils.CONTINUATION_INTERFACE_FQ_NAME_RELEASE
+        else DescriptorUtils.CONTINUATION_INTERFACE_FQ_NAME_EXPERIMENTAL
+    return JvmClassName.byClassId(ClassId.topLevel(fqName)).internalName
+}
+
+private fun <T : Any> mapBuiltInType(
+    type: KotlinType,
+    typeFactory: JvmTypeFactory<T>,
+    mode: TypeMappingMode
+): T? {
     val descriptor = type.constructor.declarationDescriptor as? ClassDescriptor ?: return null
 
-    if (descriptor === FAKE_CONTINUATION_CLASS_DESCRIPTOR) {
-
-        return typeFactory.createObjectType(CONTINUATION_INTERNAL_NAME)
+    if (descriptor === FAKE_CONTINUATION_CLASS_DESCRIPTOR_EXPERIMENTAL) {
+        return typeFactory.createObjectType(continuationInternalName(false))
+    } else if (descriptor == FAKE_CONTINUATION_CLASS_DESCRIPTOR_RELEASE) {
+        return typeFactory.createObjectType(continuationInternalName(true))
     }
 
     val primitiveType = KotlinBuiltIns.getPrimitiveType(descriptor)
@@ -202,7 +233,8 @@ private fun <T : Any> mapBuiltInType(type: KotlinType, typeFactory: JvmTypeFacto
         val classId = JavaToKotlinClassMap.mapKotlinToJava(descriptor.fqNameUnsafe)
         if (classId != null) {
             if (!mode.kotlinCollectionsToJavaCollections &&
-                JavaToKotlinClassMap.mutabilityMappings.any { it.javaClass == classId }) return null
+                JavaToKotlinClassMap.mutabilityMappings.any { it.javaClass == classId }
+            ) return null
 
             return typeFactory.createObjectType(JvmClassName.byClassId(classId).internalName)
         }
@@ -211,7 +243,7 @@ private fun <T : Any> mapBuiltInType(type: KotlinType, typeFactory: JvmTypeFacto
     return null
 }
 
-private fun computeUnderlyingType(inlineClassType: KotlinType): KotlinType? {
+internal fun computeUnderlyingType(inlineClassType: KotlinType): KotlinType? {
     if (!shouldUseUnderlyingType(inlineClassType)) return null
 
     val descriptor = inlineClassType.unsubstitutedUnderlyingType()?.constructor?.declarationDescriptor ?: return null
@@ -221,7 +253,50 @@ private fun computeUnderlyingType(inlineClassType: KotlinType): KotlinType? {
         inlineClassType.substitutedUnderlyingType()
 }
 
-private fun shouldUseUnderlyingType(inlineClassType: KotlinType): Boolean {
+internal fun computeExpandedTypeForInlineClass(inlineClassType: KotlinType): KotlinType? =
+    computeExpandedTypeInner(inlineClassType, hashSetOf())
+
+internal fun computeExpandedTypeInner(kotlinType: KotlinType, visitedClassifiers: HashSet<ClassifierDescriptor>): KotlinType? {
+    val classifier = kotlinType.constructor.declarationDescriptor
+        ?: throw AssertionError("Type with a declaration expected: $kotlinType")
+    if (!visitedClassifiers.add(classifier)) return null
+
+    return when {
+        classifier is TypeParameterDescriptor ->
+            computeExpandedTypeInner(getRepresentativeUpperBound(classifier), visitedClassifiers)
+                ?.let { expandedUpperBound ->
+                    if (expandedUpperBound.isNullable() || !kotlinType.isMarkedNullable)
+                        expandedUpperBound
+                    else
+                        expandedUpperBound.makeNullable()
+                }
+
+        classifier is ClassDescriptor && classifier.isInline -> {
+            val inlineClassBoxType = kotlinType
+
+            val underlyingType = kotlinType.substitutedUnderlyingType() ?: return null
+            val expandedUnderlyingType = computeExpandedTypeInner(underlyingType, visitedClassifiers) ?: return null
+            when {
+                !kotlinType.isMarkedNullable -> expandedUnderlyingType
+
+                // Here inline class type is nullable. Apply nullability to the expandedUnderlyingType.
+
+                // Nullable types become inline class boxes
+                expandedUnderlyingType.isNullable() -> inlineClassBoxType
+
+                // Primitives become inline class boxes
+                KotlinBuiltIns.isPrimitiveType(expandedUnderlyingType) -> inlineClassBoxType
+
+                // Non-null reference types become nullable reference types
+                else -> expandedUnderlyingType.makeNullable()
+            }
+        }
+
+        else -> kotlinType
+    }
+}
+
+internal fun shouldUseUnderlyingType(inlineClassType: KotlinType): Boolean {
     val underlyingType = inlineClassType.unsubstitutedUnderlyingType() ?: return false
 
     return !inlineClassType.isMarkedNullable ||
@@ -230,9 +305,10 @@ private fun shouldUseUnderlyingType(inlineClassType: KotlinType): Boolean {
 
 fun computeInternalName(
     klass: ClassDescriptor,
-    typeMappingConfiguration: TypeMappingConfiguration<*> = TypeMappingConfigurationImpl
+    typeMappingConfiguration: TypeMappingConfiguration<*> = TypeMappingConfigurationImpl,
+    isIrBackend: Boolean
 ): String {
-    val container = klass.containingDeclaration
+    val container = if (isIrBackend) getContainer(klass.containingDeclaration) else klass.containingDeclaration
 
     val name = SpecialNames.safeIdentifier(klass.name).identifier
     if (container is PackageFragmentDescriptor) {
@@ -241,19 +317,23 @@ fun computeInternalName(
     }
 
     val containerClass = container as? ClassDescriptor
-            ?: throw IllegalArgumentException("Unexpected container: $container for $klass")
+        ?: throw IllegalArgumentException("Unexpected container: $container for $klass")
 
     val containerInternalName =
         typeMappingConfiguration.getPredefinedInternalNameForClass(containerClass) ?: computeInternalName(
             containerClass,
-            typeMappingConfiguration
+            typeMappingConfiguration,
+            isIrBackend
         )
-    return containerInternalName + "$" + name
+    return "$containerInternalName$$name"
 }
 
-private fun getRepresentativeUpperBound(descriptor: TypeParameterDescriptor): KotlinType {
+private fun getContainer(container: DeclarationDescriptor?): DeclarationDescriptor? =
+    container as? ClassDescriptor ?: container as? PackageFragmentDescriptor ?: container?.let { getContainer(it.containingDeclaration) }
+
+fun getRepresentativeUpperBound(descriptor: TypeParameterDescriptor): KotlinType {
     val upperBounds = descriptor.upperBounds
-    assert(!upperBounds.isEmpty()) { "Upper bounds should not be empty: " + descriptor }
+    assert(!upperBounds.isEmpty()) { "Upper bounds should not be empty: $descriptor" }
 
     return upperBounds.firstOrNull {
         val classDescriptor = it.constructor.declarationDescriptor as? ClassDescriptor ?: return@firstOrNull false

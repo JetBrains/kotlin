@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
 
@@ -21,34 +21,54 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 public class BackspaceHandlerTestGenerated extends AbstractBackspaceHandlerTest {
+    private void runTest(String testDataFilePath) throws Exception {
+        KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+    }
+
     public void testAllFilesPresentInBackspaceHandler() throws Exception {
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/editor/backspaceHandler"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
     }
 
+    @TestMetadata("rawStringDelete.kt")
+    public void testRawStringDelete() throws Exception {
+        runTest("idea/testData/editor/backspaceHandler/rawStringDelete.kt");
+    }
+
+    @TestMetadata("rawStringInCloseQuote.kt")
+    public void testRawStringInCloseQuote() throws Exception {
+        runTest("idea/testData/editor/backspaceHandler/rawStringInCloseQuote.kt");
+    }
+
+    @TestMetadata("rawStringInOpenQuote.kt")
+    public void testRawStringInOpenQuote() throws Exception {
+        runTest("idea/testData/editor/backspaceHandler/rawStringInOpenQuote.kt");
+    }
+
     @TestMetadata("typeArguments.kt")
     public void testTypeArguments() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/editor/backspaceHandler/typeArguments.kt");
-        doTest(fileName);
+        runTest("idea/testData/editor/backspaceHandler/typeArguments.kt");
     }
 
     @TestMetadata("idea/testData/editor/backspaceHandler/stringTemplate")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class StringTemplate extends AbstractBackspaceHandlerTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
         public void testAllFilesPresentInStringTemplate() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/editor/backspaceHandler/stringTemplate"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("escapedStringTemplate.kt")
         public void testEscapedStringTemplate() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/editor/backspaceHandler/stringTemplate/escapedStringTemplate.kt");
-            doTest(fileName);
+            runTest("idea/testData/editor/backspaceHandler/stringTemplate/escapedStringTemplate.kt");
         }
 
         @TestMetadata("stringTemplateBrackets.kt")
         public void testStringTemplateBrackets() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/editor/backspaceHandler/stringTemplate/stringTemplateBrackets.kt");
-            doTest(fileName);
+            runTest("idea/testData/editor/backspaceHandler/stringTemplate/stringTemplateBrackets.kt");
         }
     }
 }

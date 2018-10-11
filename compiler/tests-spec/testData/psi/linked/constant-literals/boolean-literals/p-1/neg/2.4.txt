@@ -1,0 +1,12 @@
+KtFile: 2.4.kt
+  FILE_ANNOTATION_LIST
+    PsiErrorElement:Expected annotation identifier after ':'
+      PsiElement(AT)('@')
+      PsiElement(IDENTIFIER)('file')
+      PsiElement(COLON)(':')
+  PACKAGE_DIRECTIVE
+    <empty list>
+  IMPORT_LIST
+    <empty list>
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(true)('true')

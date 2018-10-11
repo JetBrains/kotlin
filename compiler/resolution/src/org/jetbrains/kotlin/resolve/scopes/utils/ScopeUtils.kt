@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.resolve.scopes.utils
 
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.synthetic.SyntheticMemberDescriptor
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.Name
@@ -64,14 +65,19 @@ fun HierarchicalScope.collectDescriptorsFiltered(
 
 @Deprecated("Use getContributedProperties instead")
 fun LexicalScope.findLocalVariable(name: Name): VariableDescriptor? {
-    return findFirstFromMeAndParent {
-        when {
-            it is LexicalScopeWrapper -> it.delegate.findLocalVariable(name)
+    return findFirstFromMeAndParent { originalScope ->
+        // Unpacking LexicalScopeWrapper may be important to check that it is not ImportingScope
+        val possiblyUnpackedScope = when (originalScope) {
+            is LexicalScopeWrapper -> originalScope.delegate
+            else -> originalScope
+        }
 
-            it !is ImportingScope && it !is LexicalChainedScope -> it.getContributedVariables(
-                name,
-                NoLookupLocation.WHEN_GET_LOCAL_VARIABLE
-            ).singleOrNull() /* todo check this*/
+        when {
+            possiblyUnpackedScope !is ImportingScope && possiblyUnpackedScope !is LexicalChainedScope ->
+                possiblyUnpackedScope.getContributedVariables(
+                    name,
+                    NoLookupLocation.WHEN_GET_LOCAL_VARIABLE
+                ).singleOrNull() /* todo check this*/
 
             else -> null
         }
@@ -86,14 +92,29 @@ fun DeclarationDescriptor.canBeResolvedWithoutDeprecation(
     location: LookupLocation
 ): Boolean {
     for (scope in scopeForResolution.parentsWithSelf) {
-        val (descriptorFromCurrentScope, isDeprecated) = scope.getContributedClassifierIncludeDeprecated(name, location) ?: continue
-        if (descriptorFromCurrentScope == this && !isDeprecated) return true
+        val hasNonDeprecatedSuitableCandidate = when (this) {
+            // Looking for classifier: fair check via special method in ResolutionScope
+            is ClassifierDescriptor -> scope.getContributedClassifierIncludeDeprecated(name, location)
+                ?.let { it.descriptor == this && !it.isDeprecated }
+
+            // Looking for member: heuristically check only one case, when another descriptor visible through explicit import
+            is VariableDescriptor -> (scope as? ImportingScope)?.getContributedVariables(name, location)?.any { it == this }
+
+            is FunctionDescriptor -> (scope as? ImportingScope)?.getContributedFunctions(name, location)?.any { it == this }
+
+            else -> null
+        }
+
+        if (hasNonDeprecatedSuitableCandidate == true) return true
     }
 
     return false
 }
 
-fun HierarchicalScope.findFirstClassifierWithDeprecationStatus(name: Name, location: LookupLocation): DescriptorWithDeprecation<ClassifierDescriptor>? {
+fun HierarchicalScope.findFirstClassifierWithDeprecationStatus(
+    name: Name,
+    location: LookupLocation
+): DescriptorWithDeprecation<ClassifierDescriptor>? {
     return findFirstFromMeAndParent { it.getContributedClassifierIncludeDeprecated(name, location) }
 }
 
@@ -246,7 +267,10 @@ fun LexicalScope.createScopeForDestructuring(newReceiver: ReceiverParameterDescr
     )
 }
 
-private class LexicalScopeWrapper(val delegate: LexicalScope, val newImportingScopeChain: ImportingScope) : LexicalScope by delegate {
+private class LexicalScopeWrapper(
+    val delegate: LexicalScope,
+    private val newImportingScopeChain: ImportingScope
+) : LexicalScope by delegate {
     init {
         assert(delegate !is LexicalScopeWrapper) {
             "Do not wrap again to avoid performance issues"

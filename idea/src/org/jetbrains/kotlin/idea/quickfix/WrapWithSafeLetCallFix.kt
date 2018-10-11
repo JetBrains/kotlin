@@ -28,11 +28,12 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.createSmartPointer
 import org.jetbrains.kotlin.psi.psiUtil.getLastParentOfTypeInRow
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelector
 import org.jetbrains.kotlin.types.typeUtil.isNullabilityMismatch
 
 class WrapWithSafeLetCallFix(
-        expression: KtExpression,
-        nullableExpression: KtExpression
+    expression: KtExpression,
+    nullableExpression: KtExpression
 ) : KotlinQuickFixAction<KtExpression>(expression) {
     private val nullableExpressionPointer = nullableExpression.createSmartPointer()
 
@@ -43,16 +44,22 @@ class WrapWithSafeLetCallFix(
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         val element = element ?: return
         val nullableExpression = nullableExpressionPointer.element ?: return
+        val qualifiedExpression = element.getQualifiedExpressionForSelector()
+        val receiverExpression = qualifiedExpression?.receiverExpression
         val factory = KtPsiFactory(element)
         val nullableText = nullableExpression.text
         val validator = NewDeclarationNameValidator(element, nullableExpression, NewDeclarationNameValidator.Target.VARIABLES)
         val name = KotlinNameSuggester.suggestNameByName("it", validator)
         nullableExpression.replace(factory.createExpression(name))
-        val wrapped = when (name) {
-            "it" -> factory.createExpressionByPattern("$0?.let { $1 }", nullableText, element)
-            else -> factory.createExpressionByPattern("$0?.let { $1 -> $2 }", nullableText, name, element)
+        val underLetExpression = when {
+            receiverExpression != null -> factory.createExpressionByPattern("$0.$1", receiverExpression, element)
+            else -> element
         }
-        element.replace(wrapped)
+        val wrapped = when (name) {
+            "it" -> factory.createExpressionByPattern("$0?.let { $1 }", nullableText, underLetExpression)
+            else -> factory.createExpressionByPattern("$0?.let { $1 -> $2 }", nullableText, name, underLetExpression)
+        }
+        (qualifiedExpression ?: element).replace(wrapped)
     }
 
     object UnsafeFactory : KotlinSingleIntentionActionFactory() {

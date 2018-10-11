@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 //WITH_RUNTIME
 // FILE: JavaClass.java
 

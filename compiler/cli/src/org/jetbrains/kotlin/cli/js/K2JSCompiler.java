@@ -24,23 +24,25 @@ import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ExceptionUtil;
 import com.intellij.util.SmartList;
-import com.intellij.util.containers.HashMap;
 import kotlin.collections.ArraysKt;
 import kotlin.collections.CollectionsKt;
+import kotlin.collections.SetsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.analyzer.AnalysisResult;
 import org.jetbrains.kotlin.backend.common.output.OutputFileCollection;
 import org.jetbrains.kotlin.cli.common.CLICompiler;
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys;
+import org.jetbrains.kotlin.cli.common.CommonCompilerPerformanceManager;
 import org.jetbrains.kotlin.cli.common.ExitCode;
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments;
 import org.jetbrains.kotlin.cli.common.arguments.K2JsArgumentConstants;
+import org.jetbrains.kotlin.cli.common.config.ContentRootsKt;
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport;
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity;
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector;
 import org.jetbrains.kotlin.cli.common.messages.MessageUtil;
-import org.jetbrains.kotlin.cli.common.output.outputUtils.OutputUtilsKt;
+import org.jetbrains.kotlin.cli.common.output.OutputUtilsKt;
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.cli.jvm.plugins.PluginCliParser;
@@ -62,13 +64,11 @@ import org.jetbrains.kotlin.js.facade.TranslationResult;
 import org.jetbrains.kotlin.js.facade.TranslationUnit;
 import org.jetbrains.kotlin.js.facade.exceptions.TranslationException;
 import org.jetbrains.kotlin.js.sourceMap.SourceFilePathResolver;
+import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion;
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.serialization.js.ModuleKind;
-import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
-import org.jetbrains.kotlin.utils.KotlinPaths;
-import org.jetbrains.kotlin.utils.PathUtil;
-import org.jetbrains.kotlin.utils.StringsKt;
+import org.jetbrains.kotlin.utils.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -98,6 +98,8 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
         doMain(new K2JSCompiler(), args);
     }
 
+    private final K2JSCompilerPerformanceManager performanceManager = new K2JSCompilerPerformanceManager();
+
     @NotNull
     @Override
     public K2JSCompilerArguments createArguments() {
@@ -105,7 +107,7 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
     }
 
     @NotNull
-    protected TranslationResult translate(
+    private static TranslationResult translate(
             @NotNull JsConfig.Reporter reporter,
             @NotNull List<KtFile> allKotlinFiles,
             @NotNull JsAnalysisResult jsAnalysisResult,
@@ -115,7 +117,7 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
         K2JSTranslator translator = new K2JSTranslator(config);
         IncrementalDataProvider incrementalDataProvider = config.getConfiguration().get(JSConfigurationKeys.INCREMENTAL_DATA_PROVIDER);
         if (incrementalDataProvider != null) {
-            Map<File, KtFile> nonCompiledSources = new HashMap<File, KtFile>(allKotlinFiles.size());
+            Map<File, KtFile> nonCompiledSources = new HashMap<>(allKotlinFiles.size());
             for (KtFile ktFile : allKotlinFiles) {
                 nonCompiledSources.put(VfsUtilCore.virtualToIoFile(ktFile.getVirtualFile()), ktFile);
             }
@@ -168,12 +170,18 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
             return COMPILATION_ERROR;
         }
 
-        ExitCode pluginLoadResult = PluginCliParser.loadPluginsSafe(arguments, configuration);
+        ExitCode pluginLoadResult =
+                PluginCliParser.loadPluginsSafe(arguments.getPluginClasspaths(), arguments.getPluginOptions(), configuration);
         if (pluginLoadResult != ExitCode.OK) return pluginLoadResult;
 
         configuration.put(JSConfigurationKeys.LIBRARIES, configureLibraries(arguments, paths, messageCollector));
 
-        ContentRootsKt.addKotlinSourceRoots(configuration, arguments.getFreeArgs());
+        String[] commonSourcesArray = arguments.getCommonSources();
+        Set<String> commonSources = commonSourcesArray == null ? Collections.emptySet() : SetsKt.setOf(commonSourcesArray);
+        for (String arg : arguments.getFreeArgs()) {
+            ContentRootsKt.addKotlinSourceRoot(configuration, arg, commonSources.contains(arg));
+        }
+
         KotlinCoreEnvironment environmentForJS =
                 KotlinCoreEnvironment.createForProduction(rootDisposable, configuration, EnvironmentConfigFiles.JS_CONFIG_FILES);
 
@@ -388,6 +396,8 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
             configuration.put(JSConfigurationKeys.META_INFO, true);
         }
 
+        configuration.put(JSConfigurationKeys.TYPED_ARRAYS_ENABLED, arguments.getTypedArrays());
+
         configuration.put(JSConfigurationKeys.FRIEND_PATHS_DISABLED, arguments.getFriendModulesDisabled());
 
         if (!arguments.getFriendModulesDisabled() && arguments.getFriendModules() != null) {
@@ -514,6 +524,11 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
         return commonPath != null ? commonPath.getPath() : ".";
     }
 
+    @NotNull
+    @Override
+    protected CommonCompilerPerformanceManager getPerformanceManager() {
+        return performanceManager;
+    }
 
     private static MainCallParameters createMainCallParameters(String main) {
         if (K2JsArgumentConstants.NO_CALL.equals(main)) {
@@ -528,5 +543,17 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
     @Override
     public String executableScriptFileName() {
         return "kotlinc-js";
+    }
+
+    @NotNull
+    @Override
+    protected BinaryVersion createMetadataVersion(@NotNull int[] versionArray) {
+        return new JsMetadataVersion(versionArray);
+    }
+
+    private static final class K2JSCompilerPerformanceManager extends CommonCompilerPerformanceManager {
+        public K2JSCompilerPerformanceManager() {
+            super("Kotlin to JS Compiler");
+        }
     }
 }

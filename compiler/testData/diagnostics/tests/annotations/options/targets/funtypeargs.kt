@@ -1,4 +1,5 @@
 @Target(AnnotationTarget.EXPRESSION)
+@Retention(AnnotationRetention.SOURCE)
 annotation class special
 
 @Target(AnnotationTarget.TYPE)

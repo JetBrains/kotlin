@@ -1405,6 +1405,81 @@ class SmartEnterTest : KotlinLightCodeInsightFixtureTestCase() {
 <caret>"""
     )
 
+    fun testValueArgumentList1() = doFileTest(
+        """
+        fun foo(i: Int) = 1
+        fun test1() {
+            foo(1<caret>
+        }
+        """,
+        """
+        fun foo(i: Int) = 1
+        fun test1() {
+            foo(1)<caret>
+        }
+        """
+    )
+
+    fun testValueArgumentList2() = doFileTest(
+        """
+        fun foo(i: Int) = 1
+        fun test2() {
+            foo(foo(1<caret>
+        }
+        """,
+        """
+        fun foo(i: Int) = 1
+        fun test2() {
+            foo(foo(1))<caret>
+        }
+        """
+    )
+
+    fun testValueArgumentList3() = doFileTest(
+        """
+        fun foo(i: Int) = 1
+        fun test3() {
+            foo(<caret>
+        }
+        """,
+        """
+        fun foo(i: Int) = 1
+        fun test3() {
+            foo(<caret>)
+        }
+        """
+    )
+
+    fun testValueArgumentList4() = doFileTest(
+        """
+        fun foo(i: Int) = 1
+        fun test4() {
+            foo(1,<caret>
+        }
+        """,
+        """
+        fun foo(i: Int) = 1
+        fun test4() {
+            foo(1, <caret>)
+        }
+        """
+    )
+
+    fun testValueArgumentList5() = doFileTest(
+        """
+        class Foo(i: Int)
+        fun test5() {
+            Foo(1<caret>
+        }
+        """,
+        """
+        class Foo(i: Int)
+        fun test5() {
+            Foo(1)<caret>
+        }
+        """
+    )
+
     fun doFunTest(before: String, after: String) {
         fun String.withFunContext(): String {
             val bodyText = "//----\n${this.trimIndent()}\n//----"

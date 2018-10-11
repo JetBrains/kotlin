@@ -1,18 +1,26 @@
 description = 'Kotlin Common Standard Library'
 
 apply plugin: 'kotlin-platform-common'
+apply plugin: 'pill-configurable'
 
 configureDist(project)
 configurePublishing(project)
 
-def commonSrcDir = "${buildDir}/common-sources"
-def commonTestSrcDir = "${buildDir}/common-test-sources"
+def commonSrcDir = "../src"
+def commonTestSrcDir = "../test"
+
+pill {
+    importAsLibrary = true
+}
 
 sourceSets {
     main {
         kotlin {
             srcDir 'src'
             srcDir commonSrcDir
+            srcDir '../unsigned/src'
+            srcDir '../coroutines/common/src'
+            srcDir '../coroutines/src'
         }
     }
     test {
@@ -21,51 +29,91 @@ sourceSets {
             srcDir 'test'
         }
     }
+    coroutines {
+        kotlin {
+            srcDir '../coroutines-experimental/src'
+        }
+    }
 }
 
 dependencies {
     testCompile project(":kotlin-test:kotlin-test-common")
     testCompile project(":kotlin-test:kotlin-test-annotations-common")
+
+    coroutinesCompile sourceSets.main.output
 }
 
-createPreprocessorTask(project, "Main", "${projectDir}/../src/kotlin", commonSrcDir)
-createPreprocessorTask(project, "Test", "${projectDir}/../test", commonTestSrcDir)
-
 compileKotlinCommon {
-    dependsOn preprocessSourcesMain
+    dependsOn(":prepare:build.version:writeStdlibVersion")
 //    dependsOn ":prepare:compiler:prepare-compiler-with-bootstrap-runtime"
 //    compilerJarFile = compilerJarWithBootstrapRuntime
 }
 
-/*
-// TODO: currently unsupported
 compileKotlinCommon {
     kotlinOptions {
         freeCompilerArgs = [
-                "-module-name", "${project.name}".toString()
+                "-module-name", project.name,
+                "-Xuse-experimental=kotlin.Experimental",
+                "-Xuse-experimental=kotlin.ExperimentalMultiplatform",
+                "-Xuse-experimental=kotlin.contracts.ExperimentalContracts",
+                "-XXLanguage:+InlineClasses",
+                "-XXLanguage:+ReleaseCoroutines",
+                "-Xallow-kotlin-package",
+                "-Xallow-result-return-type"
         ]
     }
 }
-*/
+
+compileCoroutinesKotlinCommon {
+    kotlinOptions {
+        languageVersion = "1.3"
+        apiVersion = "1.3"
+        freeCompilerArgs = [
+                "-module-name", project.name+"-coroutines",
+                "-Xuse-experimental=kotlin.contracts.ExperimentalContracts",
+                "-Xuse-experimental=kotlin.Experimental",
+                "-XXLanguage:-ReleaseCoroutines",
+                "-Xallow-kotlin-package",
+                "-Xallow-result-return-type"
+        ]
+    }
+}
 
 compileTestKotlinCommon {
-    dependsOn preprocessSourcesTest
+    kotlinOptions {
+        freeCompilerArgs += [
+                "-Xuse-experimental=kotlin.ExperimentalUnsignedTypes"
+        ]
+    }
 }
 
 kotlin.experimental.coroutines 'enable'
 
 jar {
     manifestAttributes(manifest, project, 'Main')
+    from sourceSets.coroutines.output
 }
 
+task coroutinesCommonJar(type: Jar) {
+    classifier = 'coroutines'
+    version = null
+    manifestAttributes(manifest, project, 'Main')
+    project.configure(manifest) { attributes 'Kotlin-Version': '1.3' }
+}
 
 task sourcesJar(type: Jar, dependsOn: classes) {
     classifier = 'sources'
     from sourceSets.main.kotlin
+    from sourceSets.coroutines.kotlin
+}
+
+configurations {
+    sources
 }
 
 artifacts {
     archives sourcesJar
+    sources sourcesJar
     archives javadocJar
 }
 
@@ -77,5 +125,12 @@ task distCommon(type: Copy) {
 }
 
 dist.dependsOn distCommon
+
+task experimentalCommonJarsDist(type: Copy) {
+    from coroutinesCommonJar
+    into distDir
+}
+
+dist.dependsOn experimentalCommonJarsDist
 
 classes.setDependsOn(classes.dependsOn.findAll { it != "compileJava" })

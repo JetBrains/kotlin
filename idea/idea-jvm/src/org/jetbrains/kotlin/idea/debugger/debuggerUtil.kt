@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.debugger
@@ -20,13 +9,15 @@ import com.intellij.debugger.engine.DebugProcessImpl
 import com.intellij.debugger.engine.DebuggerManagerThreadImpl
 import com.intellij.debugger.engine.events.DebuggerCommandImpl
 import com.intellij.debugger.impl.DebuggerContextImpl
+import com.intellij.debugger.impl.DebuggerUtilsEx
 import com.intellij.debugger.jdi.LocalVariableProxyImpl
 import com.intellij.psi.PsiElement
 import com.sun.jdi.*
 import com.sun.tools.jdi.LocalVariableImpl
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding
-import org.jetbrains.kotlin.codegen.coroutines.CONTINUATION_ASM_TYPE
 import org.jetbrains.kotlin.codegen.coroutines.DO_RESUME_METHOD_NAME
+import org.jetbrains.kotlin.codegen.coroutines.INVOKE_SUSPEND_METHOD_NAME
+import org.jetbrains.kotlin.codegen.coroutines.continuationAsmTypes
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
 import org.jetbrains.kotlin.idea.debugger.evaluate.KotlinDebuggerCaches
 import org.jetbrains.kotlin.idea.refactoring.getLineEndOffset
@@ -39,11 +30,81 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import java.util.*
 
-fun isInsideInlineFunctionBody(visibleVariables: List<LocalVariableProxyImpl>): Boolean {
+fun Method.safeAllLineLocations(): List<Location> {
+    return DebuggerUtilsEx.allLineLocations(this) ?: emptyList()
+}
+
+fun ReferenceType.safeAllLineLocations(): List<Location> {
+    return DebuggerUtilsEx.allLineLocations(this) ?: emptyList()
+}
+
+fun Method.safeLocationsOfLine(line: Int): List<Location> {
+    return try {
+        locationsOfLine(line)
+    } catch (e: AbsentInformationException) {
+        emptyList()
+    }
+}
+
+fun Method.safeVariables(): List<LocalVariable>? {
+    return try {
+        variables()
+    } catch (e: AbsentInformationException) {
+        null
+    }
+}
+
+fun Method.safeArguments(): List<LocalVariable>? {
+    return try {
+        arguments()
+    } catch (e: AbsentInformationException) {
+        null
+    }
+}
+
+fun Method.safeReturnType(): Type? {
+    return try {
+        returnType()
+    } catch (e: ClassNotLoadedException) {
+        null
+    }
+}
+
+fun LocalVariable.safeType(): Type? {
+    return try {
+        return type()
+    } catch (e: ClassNotLoadedException) {
+        null
+    }
+}
+
+fun Location.safeSourceName(): String? {
+    return try {
+        sourceName()
+    } catch (e: AbsentInformationException) {
+        null
+    } catch (e: InternalError) {
+        null
+    }
+}
+
+fun Location.safeLineNumber(): Int {
+    return DebuggerUtilsEx.getLineNumber(this, false)
+}
+
+fun Location.safeSourceLineNumber(): Int {
+    return DebuggerUtilsEx.getLineNumber(this, true)
+}
+
+fun Location.safeMethod(): Method? {
+    return DebuggerUtilsEx.getMethod(this)
+}
+
+fun isInsideInlineFunctionBody(visibleVariables: List<LocalVariable>): Boolean {
     return visibleVariables.any { it.name().startsWith(JvmAbi.LOCAL_VARIABLE_NAME_PREFIX_INLINE_FUNCTION) }
 }
 
-fun numberOfInlinedFunctions(visibleVariables: List<LocalVariableProxyImpl>): Int {
+fun numberOfInlinedFunctions(visibleVariables: List<LocalVariable>): Int {
     return visibleVariables.count { it.name().startsWith(JvmAbi.LOCAL_VARIABLE_NAME_PREFIX_INLINE_FUNCTION) }
 }
 
@@ -119,7 +180,7 @@ private class MockStackFrame(private val location: Location, private val vm: Vir
 
     private fun createVisibleVariables() {
         if (visibleVariables == null) {
-            val allVariables = location.method().variables()
+            val allVariables = location.method().safeVariables() ?: emptyList()
             val map = HashMap<String, LocalVariable>(allVariables.size)
 
             for (allVariable in allVariables) {
@@ -154,14 +215,20 @@ private class MockStackFrame(private val location: Location, private val vm: Vir
     override fun virtualMachine() = vm
 }
 
-private val DO_RESUME_SIGNATURE = "(Ljava/lang/Object;Ljava/lang/Throwable;)Ljava/lang/Object;"
+private const val DO_RESUME_SIGNATURE = "(Ljava/lang/Object;Ljava/lang/Throwable;)Ljava/lang/Object;"
+private const val INVOKE_SUSPEND_SIGNATURE = "(Ljava/lang/Object;)Ljava/lang/Object;"
 
 fun isInSuspendMethod(location: Location): Boolean {
     val method = location.method()
     val signature = method.signature()
 
-    return signature.contains(CONTINUATION_ASM_TYPE.toString()) ||
-           (method.name() == DO_RESUME_METHOD_NAME && signature == DO_RESUME_SIGNATURE)
+    for (continuationAsmType in continuationAsmTypes()) {
+        if (signature.contains(continuationAsmType.toString()) ||
+            (method.name() == DO_RESUME_METHOD_NAME && signature == DO_RESUME_SIGNATURE) ||
+            (method.name() == INVOKE_SUSPEND_METHOD_NAME && signature == INVOKE_SUSPEND_SIGNATURE)
+        ) return true
+    }
+    return false
 }
 
 fun suspendFunctionFirstLineLocation(location: Location): Int? {
@@ -183,7 +250,7 @@ fun isOnSuspendReturnOrReenter(location: Location): Boolean {
 }
 
 fun isLastLineLocationInMethod(location: Location): Boolean {
-    val knownLines = location.method().allLineLocations().map { it.lineNumber() }.filter { it != -1 }
+    val knownLines = location.method().safeAllLineLocations().map { it.lineNumber() }.filter { it != -1 }
     if (knownLines.isEmpty()) {
         return false
     }
@@ -192,7 +259,7 @@ fun isLastLineLocationInMethod(location: Location): Boolean {
 }
 
 fun isOneLineMethod(location: Location): Boolean {
-    val allLineLocations = location.method().allLineLocations()
+    val allLineLocations = location.method().safeAllLineLocations()
     val firstLine = allLineLocations.firstOrNull()?.lineNumber()
     val lastLine = allLineLocations.lastOrNull()?.lineNumber()
 

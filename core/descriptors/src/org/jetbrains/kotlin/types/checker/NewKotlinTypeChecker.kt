@@ -186,6 +186,8 @@ object NewKotlinTypeChecker : KotlinTypeChecker {
             return StrictEqualityTypeChecker.strictEqualTypes(subType.makeNullableAsSpecified(false), superType.makeNullableAsSpecified(false))
         }
 
+        if (subType is StubType || superType is StubType) return true
+
         if (superType is NewCapturedType && superType.lowerType != null) {
             when (getLowerCapturedTypePolicy(subType, superType)) {
                 CHECK_ONLY_LOWER -> return isSubtypeOf(subType, superType.lowerType)

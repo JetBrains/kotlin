@@ -1,4 +1,5 @@
-public package util
+// ALLOW_AST_ACCESS
+package util
 
 interface T {
     fun f()

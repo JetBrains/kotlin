@@ -2,7 +2,7 @@ package org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure
 
 import io.ktor.network.sockets.ServerSocket
 import io.ktor.network.sockets.Socket
-import kotlinx.coroutines.experimental.*
+import kotlinx.coroutines.*
 import org.jetbrains.kotlin.daemon.common.experimental.*
 import java.io.Serializable
 import java.util.concurrent.TimeUnit

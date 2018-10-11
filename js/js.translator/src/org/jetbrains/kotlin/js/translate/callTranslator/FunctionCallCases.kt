@@ -316,7 +316,7 @@ object DynamicOperatorCallCase : FunctionCallCase() {
 }
 
 fun FunctionCallInfo.translateFunctionCall(): JsExpression {
-    val intrinsic = DelegateFunctionIntrinsic.intrinsic(this)
+    val intrinsic = DelegateFunctionIntrinsic.intrinsic(this, context)
 
     return when {
         intrinsic != null ->

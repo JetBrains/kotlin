@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
+import org.jetbrains.kotlin.lexer.KtToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtFunction
@@ -38,10 +39,18 @@ object InlineParameterChecker : DeclarationChecker {
                     parameter.reportIncorrectInline(KtTokens.NOINLINE_KEYWORD, context.trace)
                     parameter.reportIncorrectInline(KtTokens.CROSSINLINE_KEYWORD, context.trace)
                 }
-
                 if (inline && !parameter.hasModifier(KtTokens.NOINLINE_KEYWORD) &&
-                    parameterDescriptor?.type?.isSuspendFunctionType == true) {
-                    context.trace.report(Errors.INLINE_SUSPEND_FUNCTION_TYPE_UNSUPPORTED.on(parameter))
+                    !parameter.hasModifier(KtTokens.CROSSINLINE_KEYWORD) &&
+                    parameterDescriptor?.type?.isSuspendFunctionType == true
+                ) {
+                    if (declaration.hasModifier(KtTokens.SUSPEND_KEYWORD)) {
+                        val typeReference = parameter.typeReference!!
+                        val modifierList = typeReference.modifierList!!
+                        val modifier = modifierList.getModifier(KtTokens.SUSPEND_KEYWORD)!!
+                        context.trace.report(Errors.REDUNDANT_INLINE_SUSPEND_FUNCTION_TYPE.on(modifier))
+                    } else {
+                        context.trace.report(Errors.INLINE_SUSPEND_FUNCTION_TYPE_UNSUPPORTED.on(parameter))
+                    }
                 }
             }
         }

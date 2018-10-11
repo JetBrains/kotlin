@@ -38,7 +38,7 @@ class CharSequenceIndicesRangeValue(rangeCall: ResolvedCall<out CallableDescript
             StackValue.constant(0, asmElementType),
             true,
             StackValue.operation(Type.INT_TYPE) { v ->
-                codegen.generateCallReceiver(rangeCall).put(codegen.asmType(expectedReceiverType), v)
+                codegen.generateCallReceiver(rangeCall).put(codegen.asmType(expectedReceiverType), expectedReceiverType, v)
                 v.invokeinterface("java/lang/CharSequence", "length", "()I")
             },
             false

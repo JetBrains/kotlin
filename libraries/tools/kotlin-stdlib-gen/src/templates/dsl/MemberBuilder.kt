@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package templates
@@ -26,10 +15,11 @@ private fun getDefaultSourceFile(f: Family): SourceFile = when (f) {
     Sets -> SourceFile.Sets
     Ranges, RangesOfPrimitives, ProgressionsOfPrimitives -> SourceFile.Ranges
     ArraysOfObjects, InvariantArraysOfObjects, ArraysOfPrimitives -> SourceFile.Arrays
+    ArraysOfUnsigned -> SourceFile.UArrays
     Maps -> SourceFile.Maps
     Strings -> SourceFile.Strings
     CharSequences -> SourceFile.Strings
-    Primitives, Generic -> SourceFile.Misc
+    Primitives, Generic, Unsigned -> SourceFile.Misc
 }
 
 @TemplateDsl
@@ -49,11 +39,13 @@ class MemberBuilder(
 
     val f get() = family
 
-    private val legacyMode = true
+    private val legacyMode = false
     var hasPlatformSpecializations: Boolean = legacyMode
         private set
 
     var doc: String? = null; private set
+
+    val samples = mutableListOf<String>()
 
     val sequenceClassification = mutableListOf<SequenceClass>()
     var deprecate: Deprecation? = null; private set
@@ -66,6 +58,7 @@ class MemberBuilder(
     var infix: Boolean = false; private set
     var operator: Boolean = false; private set
     val typeParams = mutableListOf<String>()
+    var primaryTypeParameter: String? = null; private set
     var customReceiver: String? = null; private set
     var receiverAsterisk: Boolean = false // TODO: rename to genericStarProjection
     var toNullableT: Boolean = false
@@ -73,6 +66,7 @@ class MemberBuilder(
     var returns: String? = null; private set
     var body: String? = null; private set
     val annotations: MutableList<String> = mutableListOf()
+    val suppressions: MutableList<String> = mutableListOf()
 
     fun sourceFile(file: SourceFile) { sourceFile = file }
 
@@ -89,7 +83,7 @@ class MemberBuilder(
         inline = value
         if (suppressWarning) {
             require(value == Inline.Yes)
-            annotation("""@Suppress("NOTHING_TO_INLINE")""")
+            inline = Inline.YesSuppressWarning
         }
     }
     fun inlineOnly() { inline = Inline.Only }
@@ -105,12 +99,20 @@ class MemberBuilder(
     @Deprecated("Use specialFor", ReplaceWith("specialFor(*fs) { returns(run(valueBuilder)) }"))
     fun returns(vararg fs: Family, valueBuilder: () -> String) = specialFor(*fs) { returns(run(valueBuilder)) }
 
-    fun typeParam(typeParameterName: String) {
+    fun typeParam(typeParameterName: String, primary: Boolean = false) {
         typeParams += typeParameterName
+        if (primary) {
+            check(primaryTypeParameter == null)
+            primaryTypeParameter = typeParameterName
+        }
     }
 
     fun annotation(annotation: String) {
         annotations += annotation
+    }
+
+    fun suppress(diagnostic: String) {
+        suppressions += diagnostic
     }
 
     fun sequenceClassification(vararg sequenceClass: SequenceClass) {
@@ -123,6 +125,10 @@ class MemberBuilder(
 
     @Deprecated("Use specialFor", ReplaceWith("specialFor(*fs) { doc(valueBuilder) }"))
     fun doc(vararg fs: Family, valueBuilder: DocExtensions.() -> String) = specialFor(*fs) { doc(valueBuilder) }
+
+    fun sample(sampleRef: String) {
+        samples += sampleRef
+    }
 
     fun body(valueBuilder: () -> String) {
         body = valueBuilder()
@@ -171,7 +177,7 @@ class MemberBuilder(
         }
 
         val returnType = returns ?: throw RuntimeException("No return type specified for $signature")
-
+        val primaryTypeParameter = this.primaryTypeParameter ?: "T"
 
         fun renderType(expression: String, receiver: String, self: String): String {
             val t = StringTokenizer(expression, " \t\n,:()<>?.", true)
@@ -210,12 +216,12 @@ class MemberBuilder(
                     "TCollection" -> {
                         when (family) {
                             CharSequences, Strings -> "Appendable"
-                            else -> renderType("MutableCollection<in T>", receiver, self)
+                            else -> renderType("MutableCollection<in $primaryTypeParameter>", receiver, self)
                         }
                     }
-                    "T" -> {
+                    primaryTypeParameter -> {
                         when (family) {
-                            Generic -> "T"
+                            Generic -> primaryTypeParameter
                             CharSequences, Strings -> "Char"
                             Maps -> "Map.Entry<K, V>"
                             else -> primitive?.name ?: token
@@ -223,13 +229,13 @@ class MemberBuilder(
                     }
                     "TRange" -> {
                         when (family) {
-                            Generic -> "Range<T>"
+                            Generic -> "Range<$primaryTypeParameter>"
                             else -> primitive!!.name + "Range"
                         }
                     }
                     "TProgression" -> {
                         when (family) {
-                            Generic -> "Progression<out T>"
+                            Generic -> "Progression<out $primaryTypeParameter>"
                             else -> primitive!!.name + "Progression"
                         }
                     }
@@ -240,7 +246,7 @@ class MemberBuilder(
             return answer.toString()
         }
 
-        val isAsteriskOrT = if (receiverAsterisk) "*" else "T"
+        val isAsteriskOrT = if (receiverAsterisk) "*" else primaryTypeParameter
         val self = (when (family) {
             Iterables -> "Iterable<$isAsteriskOrT>"
             Collections -> "Collection<$isAsteriskOrT>"
@@ -248,16 +254,16 @@ class MemberBuilder(
             Maps -> "Map<out K, V>"
             Sets -> "Set<$isAsteriskOrT>"
             Sequences -> "Sequence<$isAsteriskOrT>"
-            InvariantArraysOfObjects -> "Array<T>"
-            ArraysOfObjects -> "Array<${isAsteriskOrT.replace("T", "out T")}>"
+            InvariantArraysOfObjects -> "Array<$primaryTypeParameter>"
+            ArraysOfObjects -> "Array<${isAsteriskOrT.replace(primaryTypeParameter, "out $primaryTypeParameter")}>"
             Strings -> "String"
             CharSequences -> "CharSequence"
             Ranges -> "ClosedRange<$isAsteriskOrT>"
-            ArraysOfPrimitives -> primitive?.let { it.name + "Array" } ?: throw IllegalArgumentException("Primitive array should specify primitive type")
+            ArraysOfPrimitives, ArraysOfUnsigned -> primitive?.let { it.name + "Array" } ?: throw IllegalArgumentException("Primitive array should specify primitive type")
             RangesOfPrimitives -> primitive?.let { it.name + "Range" } ?: throw IllegalArgumentException("Primitive range should specify primitive type")
             ProgressionsOfPrimitives -> primitive?.let { it.name + "Progression" } ?: throw IllegalArgumentException("Primitive progression should specify primitive type")
-            Primitives -> primitive?.let { it.name } ?: throw IllegalArgumentException("Primitive should specify primitive type")
-            Generic -> "T"
+            Primitives, Unsigned -> primitive?.let { it.name } ?: throw IllegalArgumentException("Primitive should specify primitive type")
+            Generic -> primaryTypeParameter
         })
 
         val receiver = (customReceiver ?: self).let { renderType(it, it, self) }
@@ -268,8 +274,8 @@ class MemberBuilder(
             val parameters = typeParams.mapTo(mutableListOf()) { parseTypeParameter(it.renderType()) }
 
             if (family == Generic) {
-                if (parameters.none { it.name == "T" })
-                    parameters.add(TypeParameter("T"))
+                if (parameters.none { it.name == primaryTypeParameter })
+                    parameters.add(TypeParameter(primaryTypeParameter))
                 return parameters
             } else if (primitive == null && family != Strings && family != CharSequences) {
                 val mentionedTypes = parseTypeRef(receiver).mentionedTypes() + parameters.flatMap { it.mentionedTypeRefs() }
@@ -283,7 +289,7 @@ class MemberBuilder(
                 return parameters
             } else {
                 // substituted T is no longer a parameter
-                val renderedT = "T".renderType()
+                val renderedT = primaryTypeParameter.renderType()
                 return parameters.filterNot { it.name == renderedT }
             }
         }
@@ -297,6 +303,10 @@ class MemberBuilder(
             if (family == Sequences && sequenceClassification.isNotEmpty()) {
                 builder.append(" *\n")
                 builder.append(" * The operation is ${sequenceClassification.joinToString(" and ") { "_${it}_" }}.\n")
+            }
+            if (samples.any()) {
+                builder.append(" * \n")
+                samples.forEach { builder.append(" * @sample $it\n")}
             }
             builder.append(" */\n")
         }
@@ -314,7 +324,7 @@ class MemberBuilder(
 
         if (!f.isPrimitiveSpecialization && primitive != null) {
             platformName
-                    ?.replace("<T>", primitive!!.name)
+                    ?.replace("<$primaryTypeParameter>", primitive!!.name)
                     ?.let { platformName -> builder.append("@kotlin.jvm.JvmName(\"${platformName}\")\n") }
         }
 
@@ -324,8 +334,15 @@ class MemberBuilder(
 
         annotations.forEach { builder.append(it.trimIndent()).append('\n') }
 
-        if (inline == Inline.Only) {
-            builder.append("@kotlin.internal.InlineOnly").append('\n')
+        when (inline) {
+            Inline.Only -> builder.append("@kotlin.internal.InlineOnly").append('\n')
+            Inline.YesSuppressWarning -> suppressions.add("NOTHING_TO_INLINE")
+        }
+
+        if (suppressions.isNotEmpty()) {
+            suppressions.joinTo(builder, separator = ", ", prefix = "@Suppress(", postfix = ")\n") {
+                """"$it""""
+            }
         }
 
         listOfNotNull(

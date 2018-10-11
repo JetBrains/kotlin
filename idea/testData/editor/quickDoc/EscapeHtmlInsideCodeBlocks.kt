@@ -8,7 +8,7 @@
  */
 class <caret>A<T>
 
-//INFO: <pre><b>public</b> <b>final</b> <b>class</b> A&lt;T&gt; <i>defined in</i> root package <i>in file</i> EscapeHtmlInsideCodeBlocks.kt</pre><p>Code block:</p>
+//INFO: <div class='definition'><pre><font color="808080"><i>EscapeHtmlInsideCodeBlocks.kt</i></font><br>public final class <b>A</b>&lt;T&gt;</pre></div><div class='content'><p>Code block:</p>
 //INFO: <pre><code>
 //INFO: A&lt;T&gt;
-//INFO: </code></pre><p>Code span: <code>&lt;T&gt;</code> is type parameter</p>
+//INFO: </code></pre><p>Code span: <code>&lt;T&gt;</code> is type parameter</p></div><table class='sections'></table>

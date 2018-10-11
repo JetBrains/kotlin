@@ -18,7 +18,7 @@ import org.jetbrains.uast.kotlin.KotlinUElementWithType
 class KotlinUCollectionLiteralExpression(
     override val sourcePsi: KtCollectionLiteralExpression,
     givenParent: UElement?
-) : KotlinAbstractUExpression(givenParent), UCallExpression, KotlinUElementWithType {
+) : KotlinAbstractUExpression(givenParent), UCallExpressionEx, KotlinUElementWithType {
 
     override val classReference: UReferenceExpression? get() = null
 
@@ -50,5 +50,7 @@ class KotlinUCollectionLiteralExpression(
     override fun resolve(): PsiMethod? = null
 
     override val psi: PsiElement get() = sourcePsi
+
+    override fun getArgumentForParameter(i: Int): UExpression? = valueArguments.getOrNull(i)
 
 }

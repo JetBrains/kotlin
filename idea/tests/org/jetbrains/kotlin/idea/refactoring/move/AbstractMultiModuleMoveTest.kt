@@ -37,6 +37,7 @@ abstract class AbstractMultiModuleMoveTest : KotlinMultiFileTestCase() {
         doTestCommittingDocuments { rootDir, _ ->
             val modulesWithJvmRuntime: List<Module>
             val modulesWithJsRuntime: List<Module>
+            val modulesWithCommonRuntime: List<Module>
 
             PluginTestCaseBase.addJdk(testRootDisposable, PluginTestCaseBase::mockJdk)
 
@@ -45,16 +46,22 @@ abstract class AbstractMultiModuleMoveTest : KotlinMultiFileTestCase() {
                 val moduleManager = ModuleManager.getInstance(project)
                 modulesWithJvmRuntime =
                         (config["modulesWithRuntime"]?.asJsonArray?.map { moduleManager.findModuleByName(it.asString!!)!! }
-                         ?: moduleManager.modules.toList())
+                                ?: moduleManager.modules.toList())
                 modulesWithJvmRuntime.forEach { ConfigLibraryUtil.configureKotlinRuntimeAndSdk(it, PluginTestCaseBase.mockJdk()) }
+
                 modulesWithJsRuntime =
                         (config["modulesWithJsRuntime"]?.asJsonArray?.map { moduleManager.findModuleByName(it.asString!!)!! }
-                         ?: emptyList())
+                                ?: emptyList())
                 modulesWithJsRuntime.forEach { ConfigLibraryUtil.configureKotlinJsRuntimeAndSdk(it, PluginTestCaseBase.mockJdk()) }
-            }
-            else {
+
+                modulesWithCommonRuntime =
+                        (config["modulesWithCommonRuntime"]?.asJsonArray?.map { moduleManager.findModuleByName(it.asString!!)!! }
+                                ?: emptyList())
+                modulesWithCommonRuntime.forEach { ConfigLibraryUtil.configureKotlinCommonRuntime(it) }
+            } else {
                 modulesWithJvmRuntime = emptyList()
                 modulesWithJsRuntime = emptyList()
+                modulesWithCommonRuntime = emptyList()
             }
 
             try {
@@ -66,6 +73,9 @@ abstract class AbstractMultiModuleMoveTest : KotlinMultiFileTestCase() {
                 }
                 modulesWithJsRuntime.forEach {
                     ConfigLibraryUtil.unConfigureKotlinJsRuntimeAndSdk(it, PluginTestCaseBase.mockJdk())
+                }
+                modulesWithCommonRuntime.forEach {
+                    ConfigLibraryUtil.unConfigureKotlinCommonRuntime(it)
                 }
             }
         }

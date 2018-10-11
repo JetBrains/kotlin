@@ -1,14 +1,15 @@
 
-apply {
-    plugin("java")
-    plugin("kotlin")
+plugins {
+    java
+    kotlin("jvm")
+    id("jps-compatible")
 }
 
 jvmTarget = "1.6"
 javaHome = rootProject.extra["JDK_16"] as String
 
 dependencies {
-    compileOnly(projectDist(":kotlin-stdlib"))
+    compileOnly(project(":kotlin-stdlib"))
 }
 
 sourceSets {

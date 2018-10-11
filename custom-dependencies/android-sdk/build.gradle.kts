@@ -41,10 +41,10 @@ fun unzipSdkTask(
     sdkName: String, sdkVer: String, destinationSubdir: String, coordinatesSuffix: String,
     additionalConfig: Configuration? = null, dirLevelsToSkipOnUnzip: Int = 0, ext: String = "zip",
     unzipFilter: CopySpec.() -> Unit = {}
-): DefaultTask {
+): Task {
     val id = "${sdkName}_$sdkVer"
     val cfg = configurations.create(id)
-    val dependency = "google:$sdkName:$sdkVer${coordinatesSuffix.takeIf{ it.isNotEmpty() }?.let { ":$it" } ?: ""}@$ext"
+    val dependency = "google:$sdkName:$sdkVer${coordinatesSuffix.takeIf { it.isNotEmpty() }?.let { ":$it" } ?: ""}@$ext"
     dependencies.add(cfg.name, dependency)
 
     val unzipTask = task("unzip_$id") {

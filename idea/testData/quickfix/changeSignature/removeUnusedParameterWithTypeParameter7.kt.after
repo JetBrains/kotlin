@@ -1,0 +1,8 @@
+// "Remove parameter 'x'" "true"
+interface TypeHolder<T, U>
+
+fun baz(<caret>) {}
+
+fun test(holder: TypeHolder<String, Int>) {
+    baz()
+}

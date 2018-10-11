@@ -12,6 +12,9 @@ class CompileServiceAsyncWrapper(
     val rmiCompileService: CompileService
 ) : CompileServiceAsync {
 
+    override suspend fun classesFqNamesByFiles(sessionId: Int, sourceFiles: Set<File>) =
+        rmiCompileService.classesFqNamesByFiles(sessionId, sourceFiles)
+
     override suspend fun compile(
         sessionId: Int,
         compilerArguments: Array<out String>,

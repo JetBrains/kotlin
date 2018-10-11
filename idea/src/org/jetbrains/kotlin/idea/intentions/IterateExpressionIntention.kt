@@ -41,7 +41,7 @@ class IterateExpressionIntention : SelfTargetingIntention<KtExpression>(KtExpres
         val range = element.textRange
         if (caretOffset != range.startOffset && caretOffset != range.endOffset) return false
         val data = data(element) ?: return false
-        text = "Iterate over '${IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(data.collectionType)}'"
+        text = "Iterate over '${IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_NO_ANNOTATIONS.renderType(data.collectionType)}'"
         return true
     }
 
@@ -79,7 +79,7 @@ class IterateExpressionIntention : SelfTargetingIntention<KtExpression>(KtExpres
                     listOf(KotlinNameSuggester.suggestIterationVariableNames(element, elementType, bindingContext, nameValidator, "e"))
                 }
 
-                val paramPattern = (names.singleOrNull()?.first()
+                val paramPattern = (names.asSequence().singleOrNull()?.first()
                                     ?: psiFactory.createDestructuringParameter(names.indices.joinToString(prefix = "(", postfix = ")") { "p$it" }))
                 var forExpression = psiFactory.createExpressionByPattern("for($0 in $1) {\nx\n}", paramPattern, element) as KtForExpression
                 forExpression = element.replaced(forExpression)

@@ -21,7 +21,7 @@ import com.intellij.psi.PsiManager;
 import com.intellij.psi.impl.file.PsiPackageImpl;
 import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.asJava.LightClassGenerationSupport;
+import org.jetbrains.kotlin.asJava.KotlinAsJavaSupport;
 import org.jetbrains.kotlin.name.FqName;
 
 public class KtLightPackage extends PsiPackageImpl {
@@ -43,6 +43,6 @@ public class KtLightPackage extends PsiPackageImpl {
 
     @Override
     public boolean isValid() {
-        return LightClassGenerationSupport.getInstance(getProject()).packageExists(fqName, scope);
+        return KotlinAsJavaSupport.getInstance(getProject()).packageExists(fqName, scope);
     }
 }

@@ -17,9 +17,10 @@ import com.intellij.psi.impl.source.tree.TreeUtil
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.tree.TokenSet
 import org.jetbrains.kotlin.KtNodeTypes
-import org.jetbrains.kotlin.idea.KotlinLanguage
+import org.jetbrains.kotlin.KtNodeTypes.*
 import org.jetbrains.kotlin.idea.core.formatter.KotlinCodeStyleSettings
 import org.jetbrains.kotlin.idea.formatter.NodeIndentStrategy.Companion.strategy
+import org.jetbrains.kotlin.idea.util.requireNode
 import org.jetbrains.kotlin.kdoc.lexer.KDocTokens
 import org.jetbrains.kotlin.kdoc.parser.KDocElementTypes
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -43,12 +44,6 @@ private val CODE_BLOCKS = TokenSet.create(KtNodeTypes.BLOCK, KtNodeTypes.CLASS_B
 
 private val ALIGN_FOR_BINARY_OPERATIONS = TokenSet.create(MUL, DIV, PERC, PLUS, MINUS, ELVIS, LT, GT, LTEQ, GTEQ, ANDAND, OROR)
 private val ANNOTATIONS = TokenSet.create(KtNodeTypes.ANNOTATION_ENTRY, KtNodeTypes.ANNOTATION)
-
-val CodeStyleSettings.kotlinCommonSettings: KotlinCommonCodeStyleSettings
-    get() = getCommonSettings(KotlinLanguage.INSTANCE) as KotlinCommonCodeStyleSettings
-
-val CodeStyleSettings.kotlinCustomSettings: KotlinCodeStyleSettings
-    get() = getCustomSettings(KotlinCodeStyleSettings::class.java)!!
 
 typealias WrappingStrategy = (childElement: ASTNode) -> Wrap?
 
@@ -98,6 +93,16 @@ abstract class KotlinCommonBlock(
     protected abstract fun getNullAlignmentStrategy(): CommonAlignmentStrategy
 
     fun isLeaf(): Boolean = node.firstChildNode == null
+
+    fun isIncomplete(): Boolean {
+        if (isIncompleteInSuper()) {
+            return true
+        }
+
+        // An incomplete declaration is the reason when modifier list can become a class body child, otherwise
+        // it's going to be a declaration child.
+        return node.elementType == MODIFIER_LIST && node.treeParent?.elementType == CLASS_BODY
+    }
 
     fun buildChildren(): List<Block> {
         if (mySubBlocks != null) {
@@ -155,7 +160,7 @@ abstract class KotlinCommonBlock(
     private fun List<ASTBlock>.splitAtIndex(index: Int, indent: Indent?, wrap: Wrap?): List<ASTBlock> {
         val operationBlock = this[index]
         val operationSyntheticBlock = SyntheticKotlinBlock(
-            operationBlock.node,
+            operationBlock.requireNode(),
             subList(index, size),
             null, indent, wrap, spacingBuilder
         ) { createSyntheticSpacingNodeBlock(it) }
@@ -176,7 +181,7 @@ abstract class KotlinCommonBlock(
     }
 
     private fun isCallBlock(astBlock: ASTBlock): Boolean {
-        val node = astBlock.node
+        val node = astBlock.requireNode()
         return node.elementType in QUALIFIED_EXPRESSIONS && node.lastChildNode?.elementType == KtNodeTypes.CALL_EXPRESSION
     }
 
@@ -192,9 +197,15 @@ abstract class KotlinCommonBlock(
     private fun splitSubBlocksOnElvis(nodeSubBlocks: List<ASTBlock>): List<ASTBlock> {
         val elvisIndex = nodeSubBlocks.indexOfBlockWithType(ELVIS_SET)
         if (elvisIndex >= 0) {
+            val indent = if (settings.kotlinCustomSettings.CONTINUATION_INDENT_IN_ELVIS) {
+                Indent.getContinuationIndent()
+            } else {
+                Indent.getNormalIndent()
+            }
+
             return nodeSubBlocks.splitAtIndex(
                 elvisIndex,
-                Indent.getContinuationIndent(),
+                indent,
                 null
             )
         }
@@ -257,9 +268,9 @@ abstract class KotlinCommonBlock(
             return ChildAttributes(Indent.getNoneIndent(), null)
         }
 
-        if (type == KtNodeTypes.IF) {
+        if (type == IF) {
             val elseBlock = mySubBlocks?.getOrNull(newChildIndex)
-            if (elseBlock != null && elseBlock.node.elementType == KtTokens.ELSE_KEYWORD) {
+            if (elseBlock != null && elseBlock.requireNode().elementType == KtTokens.ELSE_KEYWORD) {
                 return ChildAttributes.DELEGATE_TO_NEXT_CHILD
             }
         }
@@ -272,7 +283,7 @@ abstract class KotlinCommonBlock(
         }
 
         return when (type) {
-            in CODE_BLOCKS, KtNodeTypes.WHEN, KtNodeTypes.IF, KtNodeTypes.FOR, KtNodeTypes.WHILE, KtNodeTypes.DO_WHILE -> ChildAttributes(
+            in CODE_BLOCKS, WHEN, IF, FOR, WHILE, DO_WHILE, WHEN_ENTRY -> ChildAttributes(
                 Indent.getNormalIndent(),
                 null
             )
@@ -339,7 +350,7 @@ abstract class KotlinCommonBlock(
                     kotlinCommonSettings.ALIGN_MULTILINE_METHOD_BRACKETS, LPAR, RPAR
                 )
 
-            parentType === KtNodeTypes.WHEN ->
+            parentType === WHEN ->
                 getAlignmentForCaseBranch(kotlinCustomSettings.ALIGN_IN_COLUMNS_CASE_BRANCH)
 
             parentType === KtNodeTypes.WHEN_ENTRY ->
@@ -511,13 +522,13 @@ abstract class KotlinCommonBlock(
                             ANNOTATIONS,
                             !node.treeParent.isFirstParameter()
                         )
-                    is KtClassOrObject ->
+                    is KtClassOrObject, is KtTypeAlias ->
                         return getWrappingStrategyForItemList(
                             commonSettings.CLASS_ANNOTATION_WRAP,
                             ANNOTATIONS
                         )
 
-                    is KtNamedFunction ->
+                    is KtNamedFunction, is KtSecondaryConstructor ->
                         return getWrappingStrategyForItemList(
                             commonSettings.METHOD_ANNOTATION_WRAP,
                             ANNOTATIONS
@@ -537,10 +548,10 @@ abstract class KotlinCommonBlock(
             elementType === KtNodeTypes.VALUE_PARAMETER ->
                 return wrapAfterAnnotation(commonSettings.PARAMETER_ANNOTATION_WRAP)
 
-            nodePsi is KtClassOrObject ->
+            nodePsi is KtClassOrObject || nodePsi is KtTypeAlias ->
                 return wrapAfterAnnotation(commonSettings.CLASS_ANNOTATION_WRAP)
 
-            nodePsi is KtNamedFunction ->
+            nodePsi is KtNamedFunction || nodePsi is KtSecondaryConstructor ->
                 return wrap@{ childElement ->
                     getWrapAfterAnnotation(childElement, commonSettings.METHOD_ANNOTATION_WRAP)?.let {
                         return@wrap it
@@ -659,8 +670,9 @@ private val INDENT_RULES = arrayOf(
         .within(KtNodeTypes.BODY).notForType(KtNodeTypes.BLOCK)
         .set(Indent.getNormalIndent()),
 
-    strategy("For the entry in when")
-        .forType(KtNodeTypes.WHEN_ENTRY)
+    strategy("For WHEN content")
+        .within(KtNodeTypes.WHEN)
+        .notForType(RBRACE, LBRACE, WHEN_KEYWORD)
         .set(Indent.getNormalIndent()),
 
     strategy("For single statement in THEN and ELSE")
@@ -737,19 +749,19 @@ private val INDENT_RULES = arrayOf(
 
     strategy("Opening parenthesis for conditions")
         .forType(LPAR)
-        .within(KtNodeTypes.IF, KtNodeTypes.WHEN_ENTRY, KtNodeTypes.WHILE, KtNodeTypes.DO_WHILE)
+        .within(IF, KtNodeTypes.WHEN_ENTRY, WHILE, DO_WHILE)
         .set(Indent.getContinuationWithoutFirstIndent(true)),
 
     strategy("Closing parenthesis for conditions")
         .forType(RPAR)
         .forElement { node -> !hasErrorElementBefore(node) }
-        .within(KtNodeTypes.IF, KtNodeTypes.WHEN_ENTRY, KtNodeTypes.WHILE, KtNodeTypes.DO_WHILE)
+        .within(IF, KtNodeTypes.WHEN_ENTRY, WHILE, DO_WHILE)
         .set(Indent.getNoneIndent()),
 
     strategy("Closing parenthesis for incomplete conditions")
         .forType(RPAR)
         .forElement { node -> hasErrorElementBefore(node) }
-        .within(KtNodeTypes.IF, KtNodeTypes.WHEN_ENTRY, KtNodeTypes.WHILE, KtNodeTypes.DO_WHILE)
+        .within(IF, KtNodeTypes.WHEN_ENTRY, WHILE, DO_WHILE)
         .set(Indent.getContinuationWithoutFirstIndent()),
 
     strategy("KDoc comment indent")

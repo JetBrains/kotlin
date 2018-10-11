@@ -1,0 +1,12 @@
+package
+
+public fun </*0*/ K> test(/*0*/ a: Inv<K>): kotlin.Unit
+public operator fun </*0*/ K> Inv<K>.get(/*0*/ i: kotlin.Int): Inv<K>
+public inline operator fun </*0*/ reified T> Inv<T>.invoke(): kotlin.Unit
+
+public final class Inv</*0*/ T> {
+    public constructor Inv</*0*/ T>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

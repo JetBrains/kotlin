@@ -37,7 +37,7 @@ class CliJavaModuleFinder(jrtFileSystemRoot: VirtualFile?) : JavaModuleFinder {
         get() = modulesRoot?.children.orEmpty().asSequence().mapNotNull(this::findSystemModule)
 
     override fun findModule(name: String): JavaModule? =
-            modulesRoot?.findChild(name)?.let(this::findSystemModule) ?: userModules[name]
+        modulesRoot?.findChild(name)?.let(this::findSystemModule) ?: userModules[name]
 
     private fun findSystemModule(moduleRoot: VirtualFile): JavaModule.Explicit? {
         val file = moduleRoot.findChild(PsiJavaModule.MODULE_INFO_CLS_FILE) ?: return null

@@ -58,10 +58,10 @@ abstract class AbstractMultiFileLocalInspectionTest : AbstractLocalInspectionTes
         val problemExpectedString = config["problem"]?.asString // null means "some problem", "none" means no problem
         val localFixTextString = config["fix"]?.asString // null means "some single fix" or "none" if no problem expected
 
-        doTest(path) test@ { _ ->
-            val mainFile = myFixture.configureFromTempProjectFile(mainFilePath)
+        doTest(path) test@{ _ ->
+            myFixture.configureFromTempProjectFile(mainFilePath)
 
-            runInspectionWithFixesAndCheck(mainFile.virtualFile, inspection, problemExpectedString, null, localFixTextString)
+            runInspectionWithFixesAndCheck(inspection, problemExpectedString, null, localFixTextString)
         }
     }
 

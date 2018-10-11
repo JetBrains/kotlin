@@ -70,7 +70,7 @@ class ControlFlowInformationProvider private constructor(
     ) : this(
         declaration,
         trace,
-        ControlFlowProcessor(trace).generatePseudocode(declaration),
+        ControlFlowProcessor(trace, languageVersionSettings).generatePseudocode(declaration),
         languageVersionSettings,
         diagnosticSuppressor
     )
@@ -469,7 +469,7 @@ class ControlFlowInformationProvider private constructor(
                             report(Errors.CAPTURED_VAL_INITIALIZATION.on(expression, variableDescriptor), ctxt)
                         }
                     } else {
-                        if (KtPsiUtil.isBackingFieldReference(variableDescriptor)) {
+                        if (isBackingFieldReference(variableDescriptor)) {
                             reportValReassigned(expression, variableDescriptor, ctxt)
                         } else {
                             report(Errors.VAL_REASSIGNMENT.on(expression, variableDescriptor), ctxt)
@@ -668,7 +668,7 @@ class ControlFlowInformationProvider private constructor(
                 if (anonymous && !languageVersionSettings.supportsFeature(LanguageFeature.SingleUnderscoreForParameterName)) {
                     return
                 }
-                val mainFunctionDetector = MainFunctionDetector(trace.bindingContext)
+                val mainFunctionDetector = MainFunctionDetector(trace.bindingContext, languageVersionSettings)
                 val isMain = owner is KtNamedFunction && mainFunctionDetector.isMain(owner)
                 val functionName = functionDescriptor.name
                 if (isMain
@@ -684,6 +684,9 @@ class ControlFlowInformationProvider private constructor(
                 } else {
                     report(UNUSED_PARAMETER.on(element, variableDescriptor), ctxt)
                 }
+            }
+            is KtPropertyAccessor -> {
+                report(UNUSED_PARAMETER.on(element, variableDescriptor), ctxt)
             }
         }
     }

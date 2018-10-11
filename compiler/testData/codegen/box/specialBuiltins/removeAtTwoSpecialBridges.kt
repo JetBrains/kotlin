@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 // IGNORE_BACKEND: NATIVE
 
 open class A0<E> : MutableList<E> {

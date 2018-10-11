@@ -140,7 +140,7 @@ class KotlinChangeSignatureTest : KotlinLightCodeInsightFixtureTestCase() {
                 else -> throw e
             }
             val conflictsFile = File(testDataPath + getTestName(false) + "Messages.txt")
-            UsefulTestCase.assertSameLinesWithFile(conflictsFile.absolutePath, message)
+            UsefulTestCase.assertSameLinesWithFile(conflictsFile.absolutePath, message!!)
         }
     }
 
@@ -161,7 +161,7 @@ class KotlinChangeSignatureTest : KotlinLightCodeInsightFixtureTestCase() {
                 else -> throw e
             }
             val conflictsFile = File(testDataPath + getTestName(false) + "Messages.txt")
-            UsefulTestCase.assertSameLinesWithFile(conflictsFile.absolutePath, message)
+            UsefulTestCase.assertSameLinesWithFile(conflictsFile.absolutePath, message!!)
         }
     }
 
@@ -1008,4 +1008,8 @@ class KotlinChangeSignatureTest : KotlinLightCodeInsightFixtureTestCase() {
     fun testGetConventionRenameToFoo() = doTest { newName = "foo" }
 
     fun testGetConventionRenameToInvoke() = doTest { newName = "invoke" }
+
+    fun testKotlinOverridingJavaWithDifferentParamName() = doJavaTest {
+        newParameters.add(ParameterInfoImpl(-1, "n", PsiType.INT))
+    }
 }

@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.daemon.incremental.experimental
 
-import kotlinx.coroutines.experimental.async
+import kotlinx.coroutines.async
 import org.jetbrains.kotlin.annotation.AnnotationFileUpdater
 import org.jetbrains.kotlin.daemon.common.IncrementalCompilerServicesFacadeAsync
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName

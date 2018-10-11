@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 1129
+// EXPECTED_REACHABLE_NODES: 1301
 // CHECK_NOT_CALLED_IN_SCOPE: function=plus_za3lpa$ scope=box
 // CHECK_NOT_CALLED_IN_SCOPE: function=plus scope=box
 // CHECK_NOT_CALLED_IN_SCOPE: function=invoke scope=box

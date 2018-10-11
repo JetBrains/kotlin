@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.contracts.description
 
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.serialization.deserialization.ContractProvider
 
 /**
@@ -51,4 +51,4 @@ class LazyContractProvider(private val computation: () -> Any?) : ContractProvid
 }
 
 // For storing into UserDataMap of FunctionDescriptor
-object ContractProviderKey : FunctionDescriptor.UserDataKey<LazyContractProvider?>
+object ContractProviderKey : CallableDescriptor.UserDataKey<LazyContractProvider?>

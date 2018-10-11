@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKt;
+import org.jetbrains.kotlin.storage.LockBasedStorageManager;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.util.OperatorNameConventions;
 import org.jetbrains.org.objectweb.asm.MethodVisitor;
@@ -55,6 +56,7 @@ public class SamWrapperCodegen {
     private final SamType samType;
     private final MemberCodegen<?> parentCodegen;
     private final int visibility;
+    public static final String SAM_WRAPPER_SUFFIX = "$0";
 
     public SamWrapperCodegen(
             @NotNull GenerationState state,
@@ -89,7 +91,8 @@ public class SamWrapperCodegen {
                 ClassKind.CLASS,
                 Collections.singleton(samType.getType()),
                 SourceElement.NO_SOURCE,
-                /* isExternal = */ false
+                /* isExternal = */ false,
+                LockBasedStorageManager.NO_LOCKS
         );
         // e.g. compare(T, T)
         SimpleFunctionDescriptor erasedInterfaceFunction = samType.getOriginalAbstractMethod().copy(
@@ -190,8 +193,10 @@ public class SamWrapperCodegen {
             @NotNull KtFile containingFile,
             CallableMemberDescriptor contextDescriptor
     ) {
-        boolean hasPackagePartClass =
-                CollectionsKt.any(CodegenUtil.getActualDeclarations(containingFile), PackageCodegenImpl::isFilePartDeclaration);
+        boolean hasPackagePartClass = CollectionsKt.any(
+                CodegenUtil.getDeclarationsToGenerate(containingFile, state.getBindingContext()),
+                PackageCodegenImpl::isFilePartDeclaration
+        );
         FqName filePartFqName = JvmFileClassUtil.getFileClassInfoNoResolve(containingFile).getFileClassFqName();
 
         FqName outermostOwner;
@@ -206,7 +211,7 @@ public class SamWrapperCodegen {
         }
 
         String shortName = String.format(
-                "%s$sam%s$%s$0",
+                "%s$sam%s$%s" + SAM_WRAPPER_SUFFIX,
                 outermostOwner.shortName().asString(),
                 (isInsideInline ? "$i" : ""),
                 DescriptorUtils.getFqNameSafe(samType.getJavaClassDescriptor()).asString().replace('.', '_')

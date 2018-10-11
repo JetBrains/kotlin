@@ -1,0 +1,15 @@
+package
+
+public val s1: kotlin.UByte = 256.toUInt()
+public val s2: kotlin.Int
+public const val u1: kotlin.UByte = -1.toUByte()
+public const val u2: kotlin.UShort = -1.toUShort()
+public const val u3: kotlin.UInt = -1.toUInt()
+public const val u4: kotlin.ULong = -1.toULong()
+public const val u5: kotlin.ULong = -1.toULong()
+public const val u6: kotlin.ULong = -1.toULong()
+public const val u7: kotlin.ULong = -1.toULong()
+public val u8: kotlin.Comparable<*>
+public const val u9: kotlin.ULong = -1.toULong()
+public fun takeUByte(/*0*/ ubyte: kotlin.UByte): kotlin.Unit
+public fun test(): kotlin.Unit

@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.resolve.jvm;
@@ -34,6 +23,7 @@ public class AsmTypes {
     public static final Type NUMBER_TYPE = getType(Number.class);
     public static final Type BOOLEAN_WRAPPER_TYPE = getType(Boolean.class);
     public static final Type CHARACTER_WRAPPER_TYPE = getType(Character.class);
+    public static final Type VOID_WRAPPER_TYPE = getType(Void.class);
 
     public static final Type UNIT_TYPE = Type.getObjectType("kotlin/Unit");
 
@@ -46,6 +36,7 @@ public class AsmTypes {
     public static final Type MUTABLE_PROPERTY_REFERENCE1 = Type.getObjectType("kotlin/jvm/internal/MutablePropertyReference1");
     public static final Type MUTABLE_PROPERTY_REFERENCE2 = Type.getObjectType("kotlin/jvm/internal/MutablePropertyReference2");
 
+    public static final Type RESULT_FAILURE = Type.getObjectType("kotlin/Result$Failure");
 
     public static final Type[] PROPERTY_REFERENCE_IMPL = {
             Type.getObjectType("kotlin/jvm/internal/PropertyReference0Impl"),
@@ -71,6 +62,8 @@ public class AsmTypes {
     public static final Type K_MUTABLE_PROPERTY0_TYPE = reflect("KMutableProperty0");
     public static final Type K_MUTABLE_PROPERTY1_TYPE = reflect("KMutableProperty1");
     public static final Type K_MUTABLE_PROPERTY2_TYPE = reflect("KMutableProperty2");
+
+    public static final Type SUSPEND_FUNCTION_TYPE = Type.getObjectType("kotlin/coroutines/jvm/internal/SuspendFunction");
 
     public static final String REFLECTION = "kotlin/jvm/internal/Reflection";
 

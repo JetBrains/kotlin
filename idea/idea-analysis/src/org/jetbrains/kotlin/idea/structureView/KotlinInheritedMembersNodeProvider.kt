@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import java.util.*
 
-class KotlinInheritedMembersNodeProvider: InheritedMembersNodeProvider<TreeElement>() {
+class KotlinInheritedMembersNodeProvider : InheritedMembersNodeProvider<TreeElement>() {
     override fun provideNodes(node: TreeElement): Collection<TreeElement> {
         if (node !is KotlinStructureViewElement) return listOf()
 

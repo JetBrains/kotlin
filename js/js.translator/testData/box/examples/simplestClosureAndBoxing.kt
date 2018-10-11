@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 1110
+// EXPECTED_REACHABLE_NODES: 1282
 fun box(): String {
     return if (int_invoker({ 7 }) == 7) "OK" else "fail"
 }

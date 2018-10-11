@@ -47,6 +47,8 @@ fun ExpressionCodegen.createRangeValueForExpression(rangeExpression: KtExpressio
     val rangeType = bindingContext.getType(rangeExpression)!!
     val asmRangeType = asmType(rangeType)
 
+    val loopRangeIteratorResolvedCall = bindingContext[BindingContext.LOOP_RANGE_ITERATOR_RESOLVED_CALL, rangeExpression]
+
     val builtIns = state.module.builtIns
     return when {
         asmRangeType.sort == Type.ARRAY -> {
@@ -62,9 +64,9 @@ fun ExpressionCodegen.createRangeValueForExpression(rangeExpression: KtExpressio
             PrimitiveRangeRangeValue(rangeExpression)
         isPrimitiveProgression(rangeType) ->
             PrimitiveProgressionRangeValue(rangeExpression)
-        isSubtypeOfString(rangeType, builtIns) ->
+        isSubtypeOfString(rangeType, builtIns) && isCharSequenceIteratorCall(loopRangeIteratorResolvedCall) ->
             CharSequenceRangeValue(true, AsmTypes.JAVA_STRING_TYPE)
-        isSubtypeOfCharSequence(rangeType, builtIns) ->
+        isSubtypeOfCharSequence(rangeType, builtIns) && isCharSequenceIteratorCall(loopRangeIteratorResolvedCall) ->
             CharSequenceRangeValue(false, null)
         else ->
             IterableRangeValue()
@@ -148,3 +150,6 @@ private fun ExpressionCodegen.createReversedRangeValueOrNull(rangeCall: Resolved
     val receiverRangeValue = createRangeValueForExpression(receiver.expression) as? ReversableRangeValue ?: return null
     return ReversedRangeValue(receiverRangeValue)
 }
+
+private fun isCharSequenceIteratorCall(iteratorCall: ResolvedCall<*>?) =
+    iteratorCall?.resultingDescriptor?.let { isCharSequenceIterator(it) } ?: false

@@ -1,0 +1,120 @@
+package
+
+public fun case_1(/*0*/ value_1: kotlin.Int?): kotlin.Unit
+public fun case_2(/*0*/ value_1: kotlin.Int?): kotlin.Unit
+public inline fun </*0*/ T> funWithAtLeastOnceCallsInPlace(/*0*/ block: () -> T): T
+    CallsInPlace(block, AT_LEAST_ONCE)
+
+public inline fun funWithAtLeastOnceCallsInPlace(/*0*/ block: () -> kotlin.Unit): kotlin.Unit
+    CallsInPlace(block, AT_LEAST_ONCE)
+
+public inline fun funWithAtMostOnceCallsInPlace(/*0*/ block: () -> kotlin.Unit): kotlin.Unit
+    CallsInPlace(block, AT_MOST_ONCE)
+
+public inline fun </*0*/ T> funWithExactlyOnceCallsInPlace(/*0*/ block: () -> T): T
+    CallsInPlace(block, EXACTLY_ONCE)
+
+public inline fun funWithExactlyOnceCallsInPlace(/*0*/ block: () -> kotlin.Unit): kotlin.Unit
+    CallsInPlace(block, EXACTLY_ONCE)
+
+public fun funWithReturns(/*0*/ cond: kotlin.Boolean): kotlin.Unit
+    Returns(WILDCARD) -> cond
+
+public fun funWithReturnsAndInvertCondition(/*0*/ cond: kotlin.Boolean): kotlin.Unit
+    Returns(WILDCARD) -> !cond
+
+public fun funWithReturnsAndInvertTypeCheck(/*0*/ value_1: kotlin.Any?): kotlin.Unit
+    Returns(WILDCARD) -> value_1 !is String
+
+public fun funWithReturnsAndNotNullCheck(/*0*/ value_1: kotlin.Any?): kotlin.Unit
+    Returns(WILDCARD) -> value_1 != null
+
+public fun funWithReturnsAndNullCheck(/*0*/ value_1: kotlin.Any?): kotlin.Unit
+    Returns(WILDCARD) -> value_1 == null
+
+public fun funWithReturnsAndTypeCheck(/*0*/ value_1: kotlin.Any?): kotlin.Unit
+    Returns(WILDCARD) -> value_1 is String
+
+public fun funWithReturnsFalse(/*0*/ cond: kotlin.Boolean): kotlin.Boolean
+    Returns(FALSE) -> cond
+
+public fun funWithReturnsFalseAndInvertCondition(/*0*/ cond: kotlin.Boolean): kotlin.Boolean
+    Returns(FALSE) -> !cond
+
+public fun funWithReturnsFalseAndInvertTypeCheck(/*0*/ value_1: kotlin.Any?): kotlin.Boolean
+    Returns(FALSE) -> value_1 !is String
+
+public fun funWithReturnsFalseAndNotNullCheck(/*0*/ value_1: kotlin.Number?): kotlin.Boolean
+    Returns(FALSE) -> value_1 != null
+
+public fun funWithReturnsFalseAndNullCheck(/*0*/ value_1: kotlin.Number?): kotlin.Boolean
+    Returns(FALSE) -> value_1 == null
+
+public fun funWithReturnsFalseAndTypeCheck(/*0*/ value_1: kotlin.Any?): kotlin.Boolean
+    Returns(FALSE) -> value_1 is String
+
+public fun funWithReturnsNotNull(/*0*/ cond: kotlin.Boolean): kotlin.Boolean?
+    Returns(NOT_NULL) -> cond
+
+public fun funWithReturnsNotNullAndInvertCondition(/*0*/ cond: kotlin.Boolean): kotlin.Boolean?
+    Returns(NOT_NULL) -> !cond
+
+public fun funWithReturnsNotNullAndInvertTypeCheck(/*0*/ value_1: kotlin.Any?): kotlin.Boolean?
+    Returns(NOT_NULL) -> value_1 !is String
+
+public fun funWithReturnsNotNullAndNotNullCheck(/*0*/ value_1: kotlin.Number?): kotlin.Boolean?
+    Returns(NOT_NULL) -> value_1 != null
+
+public fun funWithReturnsNotNullAndNullCheck(/*0*/ value_1: kotlin.Number?): kotlin.Boolean?
+    Returns(NOT_NULL) -> value_1 == null
+
+public fun funWithReturnsNotNullAndTypeCheck(/*0*/ value_1: kotlin.Any?): kotlin.Boolean?
+    Returns(NOT_NULL) -> value_1 is String
+
+public fun funWithReturnsNull(/*0*/ cond: kotlin.Boolean): kotlin.Boolean?
+    Returns(NULL) -> cond
+
+public fun funWithReturnsNullAndInvertCondition(/*0*/ cond: kotlin.Boolean): kotlin.Boolean?
+    Returns(NULL) -> !cond
+
+public fun funWithReturnsNullAndInvertTypeCheck(/*0*/ value_1: kotlin.Any?): kotlin.Boolean?
+    Returns(NULL) -> value_1 !is String
+
+public fun funWithReturnsNullAndNotNullCheck(/*0*/ value_1: kotlin.Number?): kotlin.Boolean?
+    Returns(NULL) -> value_1 != null
+
+public fun funWithReturnsNullAndNullCheck(/*0*/ value_1: kotlin.Number?): kotlin.Boolean?
+    Returns(NULL) -> value_1 == null
+
+public fun funWithReturnsNullAndTypeCheck(/*0*/ value_1: kotlin.Any?): kotlin.Boolean?
+    Returns(NULL) -> value_1 is String
+
+public fun funWithReturnsTrue(/*0*/ cond: kotlin.Boolean): kotlin.Boolean
+    Returns(TRUE) -> cond
+
+public fun funWithReturnsTrueAndInvertCondition(/*0*/ cond: kotlin.Boolean): kotlin.Boolean
+    Returns(TRUE) -> !cond
+
+public fun funWithReturnsTrueAndInvertTypeCheck(/*0*/ value_1: kotlin.Any?): kotlin.Boolean
+    Returns(TRUE) -> value_1 !is String
+
+public fun funWithReturnsTrueAndNotNullCheck(/*0*/ value_1: kotlin.Any?): kotlin.Boolean
+    Returns(TRUE) -> value_1 != null
+
+public fun funWithReturnsTrueAndNullCheck(/*0*/ value_1: kotlin.Any?): kotlin.Boolean
+    Returns(TRUE) -> value_1 == null
+
+public fun funWithReturnsTrueAndTypeCheck(/*0*/ value_1: kotlin.Any?): kotlin.Boolean
+    Returns(TRUE) -> value_1 is String
+
+public inline fun funWithUnknownCallsInPlace(/*0*/ block: () -> kotlin.Unit): kotlin.Unit
+    CallsInPlace(block, UNKNOWN)
+
+package contracts {
+    public fun case_1(/*0*/ value_1: kotlin.Int?, /*1*/ value_2: kotlin.Int? = ...): kotlin.Boolean
+        Returns(TRUE) -> value_1 != null
+
+    public fun case_2(/*0*/ value_1: kotlin.Int? = ..., /*1*/ value_2: kotlin.Int? = ..., /*2*/ value_3: kotlin.Int? = ...): kotlin.Boolean
+        Returns(TRUE) -> value_2 != null
+
+}

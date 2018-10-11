@@ -123,11 +123,19 @@ class TypeAliasQualifier(
     }
 }
 
-class ClassValueReceiver(val classQualifier: ClassifierQualifier, private val type: KotlinType) : ExpressionReceiver {
+class ClassValueReceiver @JvmOverloads constructor(
+    val classQualifier: ClassifierQualifier,
+    private val type: KotlinType,
+    original: ClassValueReceiver? = null
+) : ExpressionReceiver {
+    private val original = original ?: this
+
     override fun getType() = type
 
     override val expression: KtExpression
         get() = classQualifier.expression
 
-    override fun replaceType(newType: KotlinType) = ClassValueReceiver(classQualifier, newType)
+    override fun replaceType(newType: KotlinType) = ClassValueReceiver(classQualifier, newType, original)
+
+    override fun getOriginal() = original
 }

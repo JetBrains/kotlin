@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.js.translate.utils.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.Call.CallType
 import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.psi.KtWhenConditionInRange
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.isInvokeCallOnVariable
 import org.jetbrains.kotlin.resolve.calls.callUtil.isSafeCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
@@ -108,22 +109,22 @@ private fun translateCall(
     if (resolvedCall is VariableAsFunctionResolvedCall) {
         assert(explicitReceivers.extensionReceiver == null) { "VariableAsFunctionResolvedCall must have one receiver" }
         val variableCall = resolvedCall.variableCall
+        val isFunctionType = variableCall.resultingDescriptor.type.isFunctionTypeOrSubtype
+        val inlineCall = if (isFunctionType) variableCall else resolvedCall
 
-        return if (variableCall.expectedReceivers()) {
+        val newExplicitReceivers = if (variableCall.expectedReceivers()) {
             val newReceiver = CallTranslator.translateGet(context, variableCall, explicitReceivers.extensionOrDispatchReceiver)
-            translateFunctionCall(context, resolvedCall.functionCall, resolvedCall.variableCall, ExplicitReceivers(newReceiver))
+            ExplicitReceivers(newReceiver)
         } else {
             val dispatchReceiver = CallTranslator.translateGet(context, variableCall, null)
-            val isFunctionType = resolvedCall.variableCall.resultingDescriptor.type.isFunctionTypeOrSubtype
-            val inlineCall = if (isFunctionType) resolvedCall.variableCall else resolvedCall
             if (explicitReceivers.extensionOrDispatchReceiver == null) {
-                translateFunctionCall(context, resolvedCall.functionCall, inlineCall, ExplicitReceivers(dispatchReceiver))
-            }
-            else {
-                translateFunctionCall(context, resolvedCall.functionCall, inlineCall,
-                                      ExplicitReceivers(dispatchReceiver, explicitReceivers.extensionOrDispatchReceiver))
+                ExplicitReceivers(dispatchReceiver)
+            } else {
+                ExplicitReceivers(dispatchReceiver, explicitReceivers.extensionOrDispatchReceiver)
             }
         }
+
+        return translateFunctionCall(context, resolvedCall.functionCall, inlineCall, newExplicitReceivers)
     }
 
     val call = resolvedCall.call
@@ -148,8 +149,9 @@ private fun translateFunctionCall(
     var callExpression = callInfo.translateFunctionCall()
 
     if (CallExpressionTranslator.shouldBeInlined(inlineResolvedCall.resultingDescriptor, context)) {
-        setInlineCallMetadata(callExpression, resolvedCall.call.callElement as KtExpression,
-                              inlineResolvedCall.resultingDescriptor, context)
+        val callElement = resolvedCall.call.callElement
+        val ktExpression = (callElement as? KtWhenConditionInRange)?.rangeExpression ?: callElement as KtExpression
+        setInlineCallMetadata(callExpression, ktExpression, inlineResolvedCall.resultingDescriptor, context)
     }
 
     if (resolvedCall.resultingDescriptor.isSuspend) {
@@ -268,15 +270,15 @@ interface DelegateIntrinsic<in I : CallInfo> {
     fun I.getDescriptor(): CallableDescriptor
     fun I.getArgs(): List<JsExpression>
 
-    fun intrinsic(callInfo: I): JsExpression? = if (callInfo.canBeApply()) callInfo.getIntrinsic() else null
+    fun intrinsic(callInfo: I, context: TranslationContext): JsExpression? = if (callInfo.canBeApply()) callInfo.getIntrinsic(context) else null
 
-    private fun I.getIntrinsic(): JsExpression? {
+    private fun I.getIntrinsic(context: TranslationContext): JsExpression? {
         val descriptor = getDescriptor()
 
         // Now intrinsic support only FunctionDescriptor. See DelegatePropertyAccessIntrinsic.getDescriptor()
         if (descriptor is FunctionDescriptor) {
-            val intrinsic = context.intrinsics().getFunctionIntrinsic(descriptor)
-            if (intrinsic.exists()) {
+            val intrinsic = context.intrinsics().getFunctionIntrinsic(descriptor, context)
+            if (intrinsic != null) {
                 return intrinsic.apply(this, getArgs(), context)
             }
         }

@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.daemon.experimental.integration
 
 import com.intellij.openapi.application.ApplicationManager
-import kotlinx.coroutines.experimental.runBlocking
+import kotlinx.coroutines.runBlocking
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity

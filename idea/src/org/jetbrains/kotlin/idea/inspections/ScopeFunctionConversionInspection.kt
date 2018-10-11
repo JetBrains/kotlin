@@ -13,13 +13,13 @@ import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.SmartPsiElementPointer
-import com.intellij.refactoring.rename.inplace.VariableInplaceRenameHandler
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.refactoring.getThisLabelName
+import org.jetbrains.kotlin.idea.refactoring.rename.KotlinVariableInplaceRenameHandler
 import org.jetbrains.kotlin.idea.references.resolveMainReferenceToDescriptors
 import org.jetbrains.kotlin.idea.util.getReceiverTargetDescriptor
 import org.jetbrains.kotlin.idea.util.getResolutionScope
@@ -114,28 +114,24 @@ class Replacement<T : PsiElement> private constructor(
         get() = elementPointer.element!!.endOffset
 }
 
-class ReplacementCollection {
-    private lateinit var project: Project
+class ReplacementCollection(private val project: Project) {
     private val replacements = mutableListOf<Replacement<out PsiElement>>()
     var createParameter: KtPsiFactory.() -> PsiElement? = { null }
     var elementToRename: PsiElement? = null
 
     fun <T : PsiElement> add(element: T, replacementFactory: KtPsiFactory.(T) -> PsiElement) {
-        project = element.project
         replacements.add(Replacement.create(element, replacementFactory))
     }
 
     fun apply() {
-        if (replacements.isNotEmpty()) {
-            val factory = KtPsiFactory(project)
-            elementToRename = factory.createParameter()
+        val factory = KtPsiFactory(project)
+        elementToRename = factory.createParameter()
 
-            // Calls need to be processed in outside-in order
-            replacements.sortBy { it.endOffset }
+        // Calls need to be processed in outside-in order
+        replacements.sortBy { it.endOffset }
 
-            for (replacement in replacements) {
-                replacement.apply(factory)
-            }
+        for (replacement in replacements) {
+            replacement.apply(factory)
         }
     }
 
@@ -154,12 +150,13 @@ abstract class ConvertScopeFunctionFix(private val counterpartName: String) : Lo
         val functionLiteral = lambda.getLambdaExpression()?.functionLiteral ?: return
         val lambdaDescriptor = bindingContext[FUNCTION, functionLiteral] ?: return
 
-        val replacements = ReplacementCollection()
+        functionLiteral.valueParameterList?.delete()
+        functionLiteral.arrow?.delete()
+
+        val replacements = ReplacementCollection(project)
         analyzeLambda(bindingContext, lambda, lambdaDescriptor, replacements)
         callee.replace(KtPsiFactory(project).createExpression(counterpartName) as KtNameReferenceExpression)
-        if (replacements.isNotEmpty()) {
-            replacements.apply()
-        }
+        replacements.apply()
         postprocessLambda(lambda)
 
         if (replacements.isNotEmpty() && replacements.elementToRename != null && !ApplicationManager.getApplication().isUnitTestMode) {
@@ -205,14 +202,17 @@ class ConvertScopeFunctionToParameter(counterpartName: String) : ConvertScopeFun
         lambda.accept(object : KtTreeVisitorVoid() {
             override fun visitSimpleNameExpression(expression: KtSimpleNameExpression) {
                 super.visitSimpleNameExpression(expression)
+                if (expression is KtOperationReferenceExpression) return
                 val resolvedCall = expression.getResolvedCall(bindingContext) ?: return
                 val dispatchReceiverTarget = resolvedCall.dispatchReceiver?.getReceiverTargetDescriptor(bindingContext)
                 val extensionReceiverTarget = resolvedCall.extensionReceiver?.getReceiverTargetDescriptor(bindingContext)
                 if (dispatchReceiverTarget == lambdaDescriptor || extensionReceiverTarget == lambdaDescriptor) {
                     val parent = expression.parent
                     if (parent is KtCallExpression && expression == parent.calleeExpression) {
-                        replacements.add(parent) { element ->
-                            factory.createExpressionByPattern("$0.$1", parameterName, element)
+                        if ((parent.parent as? KtQualifiedExpression)?.receiverExpression !is KtThisExpression) {
+                            replacements.add(parent) { element ->
+                                factory.createExpressionByPattern("$0.$1", parameterName, element)
+                            }
                         }
                     } else if (parent is KtQualifiedExpression && parent.receiverExpression is KtThisExpression) {
                         // do nothing
@@ -359,6 +359,6 @@ private fun PsiElement.startInPlaceRename() {
         PsiDocumentManager.getInstance(project).doPostponedOperationsAndUnblockDocument(editor.document)
 
         editor.caretModel.moveToOffset(startOffset)
-        VariableInplaceRenameHandler().doRename(this, editor, null)
+        KotlinVariableInplaceRenameHandler().doRename(this, editor, null)
     }
 }

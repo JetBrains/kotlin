@@ -1,11 +1,18 @@
 import org.gradle.jvm.tasks.Jar
 
-apply { plugin("kotlin") }
+plugins {
+    kotlin("jvm")
+    id("jps-compatible")
+}
+
+repositories {
+    maven("https://dl.bintray.com/jetbrains/markdown")
+}
 
 dependencies {
     testRuntime(intellijDep())
 
-    compile(project(":kotlin-stdlib"))
+    compile(project(":kotlin-stdlib-jre8"))
     compileOnly(project(":kotlin-reflect-api"))
     compile(project(":core:descriptors"))
     compile(project(":core:descriptors.jvm"))
@@ -35,13 +42,12 @@ dependencies {
     compile(project(":kotlin-script-util")) { isTransitive = false }
 
     compile(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-core")) { isTransitive = false }
-    compile("teamcity:markdown")
 
-    compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
-    compileOnly(intellijDep()) {
-        includeJars("annotations", "openapi", "idea", "velocity", "boot", "gson", "log4j", "asm-all",
-                    "swingx-core", "forms_rt", "util", "jdom", "trove4j", "guava", rootProject = rootProject)
-    }
+    compileOnly(project(":kotlin-daemon-client"))
+    compileOnly(project(":kotlin-daemon-client-new"))
+
+    compileOnly(intellijDep())
+    compileOnly(commonDep("org.jetbrains", "markdown"))
     compileOnly(commonDep("com.google.code.findbugs", "jsr305"))
     compileOnly(intellijPluginDep("IntelliLang"))
     compileOnly(intellijPluginDep("copyright"))
@@ -50,15 +56,21 @@ dependencies {
 
     testCompile(project(":kotlin-test:kotlin-test-junit"))
     testCompile(projectTests(":compiler:tests-common"))
-    testCompile(project(":idea:idea-test-framework")) { isTransitive = false }
+    testCompile(projectTests(":idea:idea-test-framework")) { isTransitive = false }
     testCompile(project(":idea:idea-jvm")) { isTransitive = false }
     testCompile(project(":idea:idea-gradle")) { isTransitive = false }
     testCompile(project(":idea:idea-maven")) { isTransitive = false }
+    testCompile(project(":idea:idea-native")) { isTransitive = false }
+    testCompile(project(":idea:idea-gradle-native")) { isTransitive = false }
     testCompile(commonDep("junit:junit"))
 
+    testRuntime(project(":kotlin-native:kotlin-native-library-reader")) { isTransitive = false }
+    testRuntime(project(":kotlin-native:kotlin-native-utils")) { isTransitive = false }
+
+    testRuntime(commonDep("org.jetbrains", "markdown"))
     testRuntime(project(":plugins:kapt3-idea")) { isTransitive = false }
-    testRuntime(projectDist(":kotlin-reflect"))
-    testRuntime(projectDist(":kotlin-preloader"))
+    testRuntime(project(":kotlin-reflect"))
+    testRuntime(project(":kotlin-preloader"))
 
     testCompile(project(":kotlin-sam-with-receiver-compiler-plugin")) { isTransitive = false }
 
@@ -69,7 +81,11 @@ dependencies {
     testRuntime(project(":noarg-ide-plugin")) { isTransitive = false }
     testRuntime(project(":kotlin-noarg-compiler-plugin"))
     testRuntime(project(":plugins:annotation-based-compiler-plugins-ide-support")) { isTransitive = false }
+    testRuntime(project(":kotlin-scripting-idea")) { isTransitive = false }
+    testRuntime(project(":kotlin-scripting-compiler"))
     testRuntime(project(":sam-with-receiver-ide-plugin")) { isTransitive = false }
+    testRuntime(project(":kotlinx-serialization-compiler-plugin"))
+    testRuntime(project(":kotlinx-serialization-ide-plugin")) { isTransitive = false }
     testRuntime(project(":idea:idea-android")) { isTransitive = false }
     testRuntime(project(":plugins:lint")) { isTransitive = false }
     testRuntime(project(":plugins:uast-kotlin"))
@@ -77,16 +93,17 @@ dependencies {
     (rootProject.extra["compilerModules"] as Array<String>).forEach {
         testRuntime(project(it))
     }
-    testCompileOnly(intellijCoreDep()) { includeJars("intellij-core") }
+
     testCompile(intellijPluginDep("IntelliLang"))
     testCompile(intellijPluginDep("copyright"))
     testCompile(intellijPluginDep("properties"))
     testCompile(intellijPluginDep("java-i18n"))
-    testCompileOnly(intellijDep()) { includeJars("groovy-all", "velocity", "gson", "idea_rt", "util", "log4j", rootProject = rootProject) }
+    testCompile(intellijPluginDep("stream-debugger"))
+    testCompileOnly(intellijDep())
     testCompileOnly(commonDep("com.google.code.findbugs", "jsr305"))
-    testCompileOnly(intellijPluginDep("gradle")) { includeJars("gradle-base-services", "gradle-tooling-extension-impl", "gradle-wrapper", rootProject = rootProject) }
-    testCompileOnly(intellijPluginDep("Groovy")) { includeJars("Groovy") }
-    testCompileOnly(intellijPluginDep("maven")) { includeJars("maven", "maven-server-api") }
+    testCompileOnly(intellijPluginDep("gradle"))
+    testCompileOnly(intellijPluginDep("Groovy"))
+    testCompileOnly(intellijPluginDep("maven"))
 
     testRuntime(intellijPluginDep("junit"))
     testRuntime(intellijPluginDep("gradle"))
@@ -94,33 +111,79 @@ dependencies {
     testRuntime(intellijPluginDep("coverage"))
     testRuntime(intellijPluginDep("maven"))
     testRuntime(intellijPluginDep("android"))
+    testRuntime(intellijPluginDep("smali"))
     testRuntime(intellijPluginDep("testng"))
-}
-
-val processResources: Copy by tasks
-processResources.from("../compiler/cli/src") {
-    include("META-INF/extensions/compiler.xml")
 }
 
 sourceSets {
     "main" {
         projectDefault()
-        java.srcDirs("idea-completion/src",
-                     "idea-live-templates/src",
-                     "idea-repl/src")
+        java.srcDirs(
+            "idea-completion/src",
+            "idea-live-templates/src",
+            "idea-repl/src"
+        )
         resources.srcDirs("idea-repl/src").apply { include("META-INF/**") }
     }
     "test" {
         projectDefault()
         java.srcDirs(
-                     "idea-completion/tests",
-                     "idea-live-templates/tests")
+            "idea-completion/tests",
+            "idea-live-templates/tests"
+        )
+    }
+
+}
+
+val performanceTestCompile by configurations.creating {
+    extendsFrom(configurations["testCompile"])
+}
+
+val performanceTestRuntime by configurations.creating {
+    extendsFrom(configurations["testRuntime"])
+}
+
+val performanceTest by run {
+    sourceSets.creating {
+        compileClasspath += sourceSets["test"].output
+        compileClasspath += sourceSets["main"].output
+        runtimeClasspath += sourceSets["test"].output
+        runtimeClasspath += sourceSets["main"].output
+        java.srcDirs("performanceTests")
     }
 }
 
 projectTest {
     dependsOn(":dist")
     workingDir = rootDir
+}
+
+
+projectTest(taskName = "performanceTest") {
+    dependsOn(":dist")
+    dependsOn(performanceTest.output)
+    testClassesDirs = performanceTest.output.classesDirs
+    classpath = performanceTest.runtimeClasspath
+    workingDir = rootDir
+
+    jvmArgs?.removeAll { it.startsWith("-Xmx") }
+
+    maxHeapSize = "3g"
+    jvmArgs("-XX:SoftRefLRUPolicyMSPerMB=50")
+    jvmArgs(
+        "-XX:ReservedCodeCacheSize=240m",
+        "-XX:+UseCompressedOops",
+        "-XX:+UseConcMarkSweepGC"
+    )
+    jvmArgs("-XX:+UnlockCommercialFeatures", "-XX:+FlightRecorder")
+
+    if (hasProperty("perf.flight.recorder.override")) {
+        jvmArgs(property("perf.flight.recorder.override"))
+    } else {
+        val settings = if (hasProperty("perf.flight.recorder.settings")) ",settings=${property("perf.flight.recorder.settings")}" else ""
+        jvmArgs("-XX:StartFlightRecording=delay=15m,duration=5h,filename=perf.jfr$settings")
+    }
+
     doFirst {
         systemProperty("idea.home.path", intellijRootDir().canonicalPath)
     }

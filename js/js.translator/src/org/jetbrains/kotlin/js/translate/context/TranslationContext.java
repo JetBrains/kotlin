@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.js.translate.context;
@@ -19,10 +8,13 @@ package org.jetbrains.kotlin.js.translate.context;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.config.CommonConfigurationKeysKt;
+import org.jetbrains.kotlin.config.LanguageFeature;
+import org.jetbrains.kotlin.config.LanguageVersionSettings;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
-import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor;
+import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl;
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.js.backend.ast.*;
 import org.jetbrains.kotlin.js.backend.ast.metadata.MetadataProperties;
@@ -41,6 +33,7 @@ import org.jetbrains.kotlin.js.translate.utils.TranslationUtils;
 import org.jetbrains.kotlin.js.translate.utils.UtilsKt;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.KtExpression;
+import org.jetbrains.kotlin.psi.KtSimpleNameExpression;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
@@ -77,7 +70,7 @@ public class TranslationContext {
     @Nullable
     private final ClassDescriptor classDescriptor;
     @Nullable
-    private final VariableDescriptor continuationParameterDescriptor;
+    private final ValueParameterDescriptor continuationParameterDescriptor;
 
     @Nullable
     private InlineFunctionContext inlineFunctionContext;
@@ -124,7 +117,7 @@ public class TranslationContext {
         }
     }
 
-    private VariableDescriptor calculateContinuationParameter() {
+    private ValueParameterDescriptor calculateContinuationParameter() {
         if (parent != null && parent.declarationDescriptor == declarationDescriptor) {
             return parent.continuationParameterDescriptor;
         }
@@ -132,14 +125,14 @@ public class TranslationContext {
             FunctionDescriptor function = (FunctionDescriptor) declarationDescriptor;
             if (function.isSuspend()) {
                 ClassDescriptor continuationDescriptor =
-                        DescriptorUtilKt.findContinuationClassDescriptor(getCurrentModule(), NoLookupLocation.FROM_BACKEND);
+                        DescriptorUtilKt.findContinuationClassDescriptor(
+                                getCurrentModule(), NoLookupLocation.FROM_BACKEND,
+                                getLanguageVersionSettings().supportsFeature(LanguageFeature.ReleaseCoroutines));
 
-                return new LocalVariableDescriptor(
-                        declarationDescriptor,
-                        Annotations.Companion.getEMPTY(),
-                        Name.identifier("continuation"),
-                        continuationDescriptor.getDefaultType(),
-                        SourceElement.NO_SOURCE);
+                return new ValueParameterDescriptorImpl(function, null, function.getValueParameters().size(),
+                                                        Annotations.Companion.getEMPTY(), Name.identifier("continuation"),
+                                                        continuationDescriptor.getDefaultType(), false, false, false, null,
+                                                        SourceElement.NO_SOURCE);
             }
         }
         return null;
@@ -865,7 +858,7 @@ public class TranslationContext {
     }
 
     @Nullable
-    public VariableDescriptor getContinuationParameterDescriptor() {
+    public ValueParameterDescriptor getContinuationParameterDescriptor() {
         return continuationParameterDescriptor;
     }
 
@@ -877,6 +870,37 @@ public class TranslationContext {
     @Nullable
     public TranslationContext getParent() {
         return parent;
+    }
+
+    @NotNull
+    public JsExpression declareConstantValue(
+            @NotNull DeclarationDescriptor descriptor,
+            @NotNull KtSimpleNameExpression expression,
+            @NotNull JsExpression value) {
+        if (!isPublicInlineFunction() && isFromCurrentModule(descriptor)) {
+            return ReferenceTranslator.translateSimpleName(expression, this);
+        }
+
+        // Tag shouldn't be null if we cannot reference this descriptor locally.
+        String tag = Objects.requireNonNull(staticContext.getTag(descriptor));
+        String suggestedName = StaticContext.getSuggestedName(descriptor);
+
+        return declareConstantValue(suggestedName, tag, value);
+    }
+
+    @NotNull
+    public JsExpression declareConstantValue(@NotNull String suggestedName, @NotNull String tag, @NotNull JsExpression value) {
+        if (inlineFunctionContext == null || !isPublicInlineFunction()) {
+            return staticContext.importDeclaration(suggestedName, tag, value).makeRef();
+        }
+        else {
+            return inlineFunctionContext.getImports().computeIfAbsent(tag, t -> {
+                JsName result = JsScope.declareTemporaryName(suggestedName);
+                MetadataProperties.setImported(result, true);
+                inlineFunctionContext.getImportBlock().getStatements().add(JsAstUtils.newVar(result, value));
+                return result;
+            }).makeRef();
+        }
     }
 
     @NotNull
@@ -905,5 +929,10 @@ public class TranslationContext {
     @NotNull
     public JsName getVariableForPropertyMetadata(@NotNull VariableDescriptorWithAccessors property) {
         return staticContext.getVariableForPropertyMetadata(property);
+    }
+
+    @NotNull
+    public LanguageVersionSettings getLanguageVersionSettings() {
+        return CommonConfigurationKeysKt.getLanguageVersionSettings(staticContext.getConfig().getConfiguration());
     }
 }

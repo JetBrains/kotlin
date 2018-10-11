@@ -1,7 +1,8 @@
 // !LANGUAGE: +AllowContractsForCustomFunctions +UseReturnsEffect
+// !USE_EXPERIMENTAL: kotlin.contracts.ExperimentalContracts
 // !DIAGNOSTICS: -INVISIBLE_REFERENCE -INVISIBLE_MEMBER
 
-import kotlin.internal.contracts.*
+import kotlin.contracts.*
 
 fun myAssert(condition: Boolean) {
     contract {
@@ -61,5 +62,5 @@ fun testAtLeastOnceFlow(x: Any?) {
         <!DEBUG_INFO_SMARTCAST!>x<!>.length
     } while (x != null)
 
-    <!DEBUG_INFO_SMARTCAST!>x<!>.length
+    <!DEBUG_INFO_SMARTCAST!>x<!>.<!UNREACHABLE_CODE!>length<!>
 }

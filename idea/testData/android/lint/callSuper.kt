@@ -1,4 +1,4 @@
-// INSPECTION_CLASS: org.jetbrains.android.inspections.klint.AndroidLintInspectionToolProvider$AndroidKLintMissingSuperCallInspection
+// INSPECTION_CLASS: com.android.tools.idea.lint.AndroidLintMissingSuperCallInspection
 
 package android.support.annotation
 

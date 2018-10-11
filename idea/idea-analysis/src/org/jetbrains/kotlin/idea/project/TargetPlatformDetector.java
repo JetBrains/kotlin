@@ -38,7 +38,7 @@ public class TargetPlatformDetector {
 
     @NotNull
     public static TargetPlatform getPlatform(@NotNull KtFile file) {
-        TargetPlatform explicitPlatform = KtPsiFactoryKt.getTargetPlatform(file);
+        TargetPlatform explicitPlatform = PlatformKt.getForcedTargetPlatform(file);
         if (explicitPlatform != null) return explicitPlatform;
 
         if (file instanceof KtCodeFragment) {
@@ -62,7 +62,6 @@ public class TargetPlatformDetector {
             }
         }
 
-        LOG.info("Using default platform for file: " + file.getName());
         return JvmPlatform.INSTANCE;
     }
 

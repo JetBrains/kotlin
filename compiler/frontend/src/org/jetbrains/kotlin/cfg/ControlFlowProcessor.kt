@@ -30,11 +30,14 @@ import org.jetbrains.kotlin.cfg.pseudocode.PseudocodeImpl
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.AccessTarget
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.InstructionWithValue
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.MagicKind
+import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.contracts.description.InvocationKind
 import org.jetbrains.kotlin.contracts.description.canBeRevisited
 import org.jetbrains.kotlin.contracts.description.isDefinitelyVisited
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor
+import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.diagnostics.Errors.*
 import org.jetbrains.kotlin.lexer.KtToken
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -63,7 +66,10 @@ import java.util.*
 
 typealias DeferredGenerator = (ControlFlowBuilder) -> Unit
 
-class ControlFlowProcessor(private val trace: BindingTrace) {
+class ControlFlowProcessor(
+    private val trace: BindingTrace,
+    private val languageVersionSettings: LanguageVersionSettings?
+) {
 
     private val builder: ControlFlowBuilder = ControlFlowInstructionsGenerator()
 
@@ -291,6 +297,17 @@ class ControlFlowProcessor(private val trace: BindingTrace) {
             if (baseExpression != null) {
                 generateInstructions(baseExpression)
                 copyValue(baseExpression, expression)
+            }
+
+            val labelNameExpression = expression.getTargetLabel()
+            if (labelNameExpression != null) {
+                val deparenthesizedBaseExpression = KtPsiUtil.deparenthesize(expression)
+                if (deparenthesizedBaseExpression !is KtLambdaExpression &&
+                    deparenthesizedBaseExpression !is KtLoopExpression &&
+                    deparenthesizedBaseExpression !is KtNamedFunction
+                ) {
+                    trace.report(Errors.REDUNDANT_LABEL_WARNING.on(labelNameExpression))
+                }
             }
         }
 
@@ -927,12 +944,10 @@ class ControlFlowProcessor(private val trace: BindingTrace) {
             val subroutine: KtElement?
             val labelName = expression.getLabelName()
             subroutine = if (labelElement != null && labelName != null) {
-                val labeledElement = trace.get(BindingContext.LABEL_TARGET, labelElement)
-                if (labeledElement != null) {
-                    assert(labeledElement is KtElement)
-                    labeledElement as KtElement?
-                } else {
-                    null
+                trace.get(BindingContext.LABEL_TARGET, labelElement)?.let { labeledElement ->
+                    val labeledKtElement = labeledElement as KtElement
+                    checkReturnLabelTarget(expression, labeledKtElement)
+                    labeledKtElement
                 }
             } else {
                 builder.returnSubroutine
@@ -948,6 +963,17 @@ class ControlFlowProcessor(private val trace: BindingTrace) {
                 }
             } else {
                 createNonSyntheticValue(expression, MagicKind.UNSUPPORTED_ELEMENT, returnedExpression)
+            }
+        }
+
+        private fun checkReturnLabelTarget(returnExpression: KtReturnExpression, labeledElement: KtElement) {
+            if (languageVersionSettings == null) return
+            if (labeledElement !is KtFunctionLiteral && labeledElement !is KtNamedFunction) {
+                if (languageVersionSettings.supportsFeature(LanguageFeature.RestrictReturnStatementTarget)) {
+                    trace.report(Errors.NOT_A_FUNCTION_LABEL.on(returnExpression))
+                } else {
+                    trace.report(Errors.NOT_A_FUNCTION_LABEL_WARNING.on(returnExpression))
+                }
             }
         }
 

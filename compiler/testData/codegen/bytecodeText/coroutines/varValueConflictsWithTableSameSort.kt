@@ -1,12 +1,11 @@
+// LANGUAGE_VERSION: 1.3
 // WITH_RUNTIME
 // WITH_COROUTINES
 import helpers.*
 // TREAT_AS_ONE_FILE
-import kotlin.coroutines.experimental.*
-import kotlin.coroutines.experimental.intrinsics.*
-suspend fun suspendHere(): String = suspendCoroutineOrReturn { x ->
-    x.resume("OK")
-}
+import kotlin.coroutines.*
+import kotlin.coroutines.intrinsics.*
+suspend fun suspendHere(): String = ""
 
 fun builder(c: suspend () -> Unit) {
     c.startCoroutine(EmptyContinuation)
@@ -16,6 +15,7 @@ fun box(): String {
     var result = "fail 1"
 
     builder {
+        var shiftSlot: String = ""
         // Initialize var with Int value
         try {
             var i: String = "abc"

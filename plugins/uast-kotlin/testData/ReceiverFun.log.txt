@@ -4,7 +4,9 @@ UFile (package = )
             UParameter (name = $receiver)
                 UAnnotation (fqName = MyReceiverAnnotation)
                 UAnnotation (fqName = org.jetbrains.annotations.NotNull)
-            UQualifiedReferenceExpression
-                UThisExpression (label = null)
-                USimpleNameReferenceExpression (identifier = length)
+            UBlockExpression
+                UReturnExpression
+                    UQualifiedReferenceExpression
+                        UThisExpression (label = null)
+                        USimpleNameReferenceExpression (identifier = length)
     UClass (name = MyReceiverAnnotation)

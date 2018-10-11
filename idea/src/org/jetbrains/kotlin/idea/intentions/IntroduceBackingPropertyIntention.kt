@@ -40,7 +40,7 @@ class IntroduceBackingPropertyIntention : SelfTargetingIntention<KtProperty>(KtP
         fun canIntroduceBackingProperty(property: KtProperty): Boolean {
             val name = property.name ?: return false
 
-            val bindingContext = property.getResolutionFacade().analyzeFullyAndGetResult(listOf(property)).bindingContext
+            val bindingContext = property.getResolutionFacade().analyzeWithAllCompilerChecks(listOf(property)).bindingContext
             val descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, property) as? PropertyDescriptor ?: return false
             if (bindingContext.get(BindingContext.BACKING_FIELD_REQUIRED, descriptor) == false) return false
 

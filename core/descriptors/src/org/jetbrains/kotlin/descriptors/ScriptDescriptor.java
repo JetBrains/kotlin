@@ -18,10 +18,18 @@ package org.jetbrains.kotlin.descriptors;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
+
 public interface ScriptDescriptor extends ClassDescriptor {
     int getPriority();
 
     @NotNull
     @Override
     ClassConstructorDescriptor getUnsubstitutedPrimaryConstructor();
+
+    @NotNull
+    List<ClassDescriptor> getImplicitReceivers();
+
+    @NotNull
+    List<PropertyDescriptor> getScriptEnvironmentProperties();
 }

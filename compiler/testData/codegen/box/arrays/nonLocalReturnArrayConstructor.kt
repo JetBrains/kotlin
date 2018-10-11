@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 typealias ArrayS = Array<String>
 
 fun testArray() {

@@ -1,0 +1,18 @@
+package
+
+public fun foo(/*0*/ s1: kotlin.Int, /*1*/ s2: kotlin.Int): kotlin.Int
+public fun </*0*/ T> id(/*0*/ x: T): T
+public fun test1(/*0*/ x: kotlin.String?): kotlin.Int
+public fun test2(/*0*/ x: kotlin.String?): kotlin.Unit
+public fun test3(/*0*/ x: kotlin.String?, /*1*/ y: kotlin.String?): kotlin.Unit
+public fun test4(/*0*/ x: kotlin.String?): kotlin.Unit
+public fun test5(/*0*/ x: Inv<out kotlin.Any?>): kotlin.Unit
+public fun test6(/*0*/ x: Inv<out kotlin.String?>): kotlin.Unit
+
+public final class Inv</*0*/ T> {
+    public constructor Inv</*0*/ T>(/*0*/ data: T)
+    public final val data: T
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

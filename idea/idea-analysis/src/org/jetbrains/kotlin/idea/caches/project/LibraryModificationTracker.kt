@@ -15,7 +15,7 @@ import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ProjectFileIndex
 import com.intellij.openapi.util.SimpleModificationTracker
-import com.intellij.openapi.vfs.StandardFileSystems
+import com.intellij.openapi.vfs.JarFileSystem
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.openapi.vfs.newvfs.BulkFileListener
@@ -93,7 +93,7 @@ class LibraryModificationTracker(project: Project) : SimpleModificationTracker()
     private fun isLibraryArchiveRoot(virtualFile: VirtualFile): Boolean {
         if (virtualFile.fileType != ArchiveFileType.INSTANCE) return false
 
-        val archiveRoot = StandardFileSystems.getJarRootForLocalFile(virtualFile) ?: return false
+        val archiveRoot = JarFileSystem.getInstance().getRootByLocal(virtualFile) ?: return false
         return projectFileIndex.isInLibraryClasses(archiveRoot)
     }
 }

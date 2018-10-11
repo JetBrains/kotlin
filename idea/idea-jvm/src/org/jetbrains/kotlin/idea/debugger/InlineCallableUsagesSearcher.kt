@@ -36,6 +36,8 @@ import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.psi.psiUtil.isAncestor
+import org.jetbrains.kotlin.psi.psiUtil.isInsideOf
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
 
@@ -56,7 +58,7 @@ class InlineCallableUsagesSearcher(private val myDebugProcess: DebugProcess) {
                 ReferencesSearch.search(declaration, getScopeForInlineDeclarationUsages(declaration)).forEach {
                     if (!runReadAction { it.isImportUsage() }) {
                         val usage = (it.element as? KtElement)?.let(::getRelevantElement)
-                        if (usage != null) {
+                        if (usage != null && !runReadAction { declaration.isAncestor(usage) }) {
                             searchResult.add(usage)
                         }
                     }

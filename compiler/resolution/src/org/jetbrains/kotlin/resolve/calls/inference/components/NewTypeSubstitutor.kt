@@ -46,13 +46,14 @@ interface NewTypeSubstitutor {
         if (type is AbbreviatedType) {
             val substitutedExpandedType = substitute(type.expandedType, keepAnnotation, runCapturedChecks)
             val substitutedAbbreviation = substitute(type.abbreviation, keepAnnotation, runCapturedChecks)
-            if (substitutedExpandedType is SimpleType? && substitutedAbbreviation is SimpleType?) {
-                return AbbreviatedType(
-                    substitutedExpandedType ?: type.expandedType,
-                    substitutedAbbreviation ?: type.abbreviation
-                )
-            } else {
-                return substitutedExpandedType
+            return when {
+                substitutedExpandedType == null && substitutedAbbreviation == null -> null
+                substitutedExpandedType is SimpleType? && substitutedAbbreviation is SimpleType? ->
+                    AbbreviatedType(
+                        substitutedExpandedType ?: type.expandedType,
+                        substitutedAbbreviation ?: type.abbreviation
+                    )
+                else -> substitutedExpandedType
             }
         }
 

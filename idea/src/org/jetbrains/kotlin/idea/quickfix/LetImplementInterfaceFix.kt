@@ -39,7 +39,7 @@ class LetImplementInterfaceFix(
         expressionType: KotlinType
 ) : KotlinQuickFixAction<KtClassOrObject>(element), LowPriorityAction {
 
-    private fun KotlinType.renderShort() = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(this)
+    private fun KotlinType.renderShort() = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_NO_ANNOTATIONS.renderType(this)
 
     private val expectedTypeName: String
 

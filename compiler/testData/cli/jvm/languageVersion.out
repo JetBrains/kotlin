@@ -1,10 +1,4 @@
-compiler/testData/cli/jvm/languageVersion.kt:5:17: error: this type is sealed, so it can be inherited by only its own nested classes or objects
-class Derived : Base()
-                ^
-compiler/testData/cli/jvm/languageVersion.kt:8:5: error: the feature "bound callable references" is only available since language version 1.1
-    ""::class.isInstance(42)
+compiler/testData/cli/jvm/languageVersion.kt:4:5: error: members are not allowed in annotation class
+    class Nested
     ^
-compiler/testData/cli/jvm/languageVersion.kt:8:15: error: unresolved reference: isInstance
-    ""::class.isInstance(42)
-              ^
 COMPILATION_ERROR

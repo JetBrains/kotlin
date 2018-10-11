@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.resolve
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.FunctionDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.PropertyAccessorDescriptorImpl
@@ -34,7 +35,7 @@ import org.jetbrains.kotlin.resolve.typeBinding.createTypeBindingForReturnType
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.Variance.*
-import org.jetbrains.kotlin.types.checkTypePosition
+import org.jetbrains.kotlin.types.checker.TypeCheckingProcedure
 
 class ManualVariance(val descriptor: TypeParameterDescriptor, val variance: Variance)
 
@@ -142,17 +143,38 @@ class VarianceCheckerCore(
 
     private fun TypeBinding<PsiElement>.checkTypePosition(position: Variance) = checkTypePosition(type, position)
 
-    private fun TypeBinding<PsiElement>.checkTypePosition(containingType: KotlinType, position: Variance): Boolean =
-        checkTypePosition(
-            position,
-            { typeParameterDescriptor, typeBinding, errorPosition ->
-                val varianceConflictDiagnosticData = VarianceConflictDiagnosticData(containingType, typeParameterDescriptor, errorPosition)
+    private fun TypeBinding<PsiElement>.checkTypePosition(containingType: KotlinType, position: Variance): Boolean {
+        val classifierDescriptor = type.constructor.declarationDescriptor
+        if (classifierDescriptor is TypeParameterDescriptor) {
+            val declarationVariance = classifierDescriptor.varianceWithManual()
+            if (!declarationVariance.allowsPosition(position)
+                && !type.annotations.hasAnnotation(KotlinBuiltIns.FQ_NAMES.unsafeVariance)
+            ) {
+                val varianceConflictDiagnosticData = VarianceConflictDiagnosticData(containingType, classifierDescriptor, position)
                 val diagnostic =
-                    if (typeBinding.isInAbbreviation) Errors.TYPE_VARIANCE_CONFLICT_IN_EXPANDED_TYPE else Errors.TYPE_VARIANCE_CONFLICT
-                diagnosticSink.report(diagnostic.on(typeBinding.psiElement, varianceConflictDiagnosticData))
-            },
-            customVariance = { it.varianceWithManual() }
-        )
+                    if (isInAbbreviation) Errors.TYPE_VARIANCE_CONFLICT_IN_EXPANDED_TYPE else Errors.TYPE_VARIANCE_CONFLICT
+                diagnosticSink.report(diagnostic.on(psiElement, varianceConflictDiagnosticData))
+            }
+            return declarationVariance.allowsPosition(position)
+        }
+
+        var noError = true
+        for (argument in arguments) {
+            if (argument?.typeParameter == null || argument.projection.isStarProjection) continue
+
+            val projectionKind = TypeCheckingProcedure.getEffectiveProjectionKind(argument.typeParameter!!, argument.projection)!!
+            val newPosition = when (projectionKind) {
+                TypeCheckingProcedure.EnrichedProjectionKind.OUT -> position
+                TypeCheckingProcedure.EnrichedProjectionKind.IN -> position.opposite()
+                TypeCheckingProcedure.EnrichedProjectionKind.INV -> Variance.INVARIANT
+                TypeCheckingProcedure.EnrichedProjectionKind.STAR -> null // CONFLICTING_PROJECTION error was reported
+            }
+            if (newPosition != null) {
+                noError = noError and argument.binding.checkTypePosition(containingType, newPosition)
+            }
+        }
+        return noError
+    }
 
     private fun isIrrelevant(descriptor: CallableDescriptor): Boolean {
         val containingClass = descriptor.containingDeclaration as? ClassDescriptor ?: return true

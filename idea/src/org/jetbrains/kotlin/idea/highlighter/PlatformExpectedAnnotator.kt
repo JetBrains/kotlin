@@ -21,9 +21,9 @@ import com.intellij.lang.annotation.Annotator
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.caches.resolve.KotlinCacheService
 import org.jetbrains.kotlin.descriptors.MemberDescriptor
+import org.jetbrains.kotlin.idea.caches.project.implementingDescriptors
 import org.jetbrains.kotlin.idea.caches.resolve.findModuleDescriptor
 import org.jetbrains.kotlin.idea.core.toDescriptor
-import org.jetbrains.kotlin.idea.facet.implementingDescriptors
 import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.psi.KtClassOrObject
@@ -51,8 +51,10 @@ class PlatformExpectedAnnotator : Annotator {
 
         val trace = BindingTraceContext()
         for (module in implementingModules) {
-            ExpectedActualDeclarationChecker.checkExpectedDeclarationHasActual(declaration, descriptor, trace, module,
-                                                                               ExpectActualTracker.DoNothing)
+            ExpectedActualDeclarationChecker.checkExpectedDeclarationHasActual(
+                declaration, descriptor, trace, module,
+                ExpectActualTracker.DoNothing
+            )
         }
 
         val suppressionCache = KotlinCacheService.getInstance(declaration.project).getSuppressionCache()
@@ -66,6 +68,6 @@ class PlatformExpectedAnnotator : Annotator {
 
     private fun isExpectedDeclaration(declaration: KtDeclaration): Boolean {
         return declaration.hasExpectModifier() ||
-               declaration is KtClassOrObject && KtPsiUtil.getOutermostClassOrObject(declaration)?.hasExpectModifier() == true
+                declaration is KtClassOrObject && KtPsiUtil.getOutermostClassOrObject(declaration)?.hasExpectModifier() == true
     }
 }

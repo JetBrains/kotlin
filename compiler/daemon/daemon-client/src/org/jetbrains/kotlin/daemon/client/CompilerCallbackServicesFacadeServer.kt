@@ -22,11 +22,15 @@ import org.jetbrains.kotlin.daemon.common.impls.RmiFriendlyCompilationCanceledEx
 import org.jetbrains.kotlin.daemon.common.impls.SOCKET_ANY_FREE_PORT
 import org.jetbrains.kotlin.incremental.components.LookupInfo
 import org.jetbrains.kotlin.incremental.components.LookupTracker
+import org.jetbrains.kotlin.incremental.js.IncrementalDataProvider
+import org.jetbrains.kotlin.incremental.js.IncrementalResultsConsumer
+import org.jetbrains.kotlin.incremental.js.JsInlineFunctionHash
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 import org.jetbrains.kotlin.load.kotlin.incremental.components.JvmPackagePartProto
 import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus
 import org.jetbrains.kotlin.utils.isProcessCanceledException
+import java.io.File
 import java.rmi.server.UnicastRemoteObject
 
 
@@ -34,6 +38,9 @@ open class CompilerCallbackServicesFacadeServer(
     val incrementalCompilationComponents: IncrementalCompilationComponents? = null,
     val lookupTracker: LookupTracker? = null,
     val compilationCanceledStatus: CompilationCanceledStatus? = null,
+    val expectActualTracker: ExpectActualTracker? = null,
+    val incrementalResultsConsumer: IncrementalResultsConsumer? = null,
+    val incrementalDataProvider: IncrementalDataProvider? = null,
     port: Int = SOCKET_ANY_FREE_PORT
 ) : CompilerCallbackServicesFacade,
     UnicastRemoteObject(
@@ -46,6 +53,12 @@ open class CompilerCallbackServicesFacadeServer(
     override fun hasLookupTracker(): Boolean = lookupTracker != null
 
     override fun hasCompilationCanceledStatus(): Boolean = compilationCanceledStatus != null
+
+    override fun hasExpectActualTracker(): Boolean = expectActualTracker != null
+
+    override fun hasIncrementalResultsConsumer(): Boolean = incrementalResultsConsumer != null
+
+    override fun hasIncrementalDataProvider(): Boolean = incrementalDataProvider != null
 
     // TODO: consider replacing NPE with other reporting, although NPE here means most probably incorrect usage
 
@@ -101,4 +114,33 @@ open class CompilerCallbackServicesFacadeServer(
             else throw e
         }
     }
+
+    override fun expectActualTracker_report(expectedFilePath: String, actualFilePath: String) {
+        expectActualTracker!!.report(File(expectedFilePath), File(actualFilePath))
+    }
+
+    override fun incrementalResultsConsumer_processHeader(headerMetadata: ByteArray) {
+        incrementalResultsConsumer!!.processHeader(headerMetadata)
+    }
+
+    override fun incrementalResultsConsumer_processPackagePart(
+        sourceFilePath: String,
+        packagePartMetadata: ByteArray,
+        binaryAst: ByteArray
+    ) {
+        incrementalResultsConsumer!!.processPackagePart(File(sourceFilePath), packagePartMetadata, binaryAst)
+    }
+
+    override fun incrementalResultsConsumer_processInlineFunctions(functions: Collection<JsInlineFunctionHash>) {
+        incrementalResultsConsumer!!.processInlineFunctions(functions)
+    }
+
+    override fun incrementalDataProvider_getHeaderMetadata(): ByteArray = incrementalDataProvider!!.headerMetadata
+
+    override fun incrementalDataProvider_getMetadataVersion(): IntArray = incrementalDataProvider!!.metadataVersion
+
+    override fun incrementalDataProvider_getCompiledPackageParts() =
+        incrementalDataProvider!!.compiledPackageParts.entries.map {
+            CompiledPackagePart(it.key.path, it.value.metadata, it.value.binaryAst)
+        }
 }

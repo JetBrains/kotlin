@@ -18,9 +18,9 @@ package org.jetbrains.kotlin.codegen.inline;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
+import kotlin.annotations.jvm.ReadOnly;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.ReadOnly;
 import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.org.objectweb.asm.Label;
 import org.jetbrains.org.objectweb.asm.Opcodes;

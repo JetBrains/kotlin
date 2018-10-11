@@ -2,6 +2,7 @@
 // ACTION: Move lambda argument into parentheses
 // ACTION: Remove explicit lambda parameter types (may break code)
 // ACTION: Rename to _
+// ACTION: Convert to anonymous function
 
 fun foo(block: (String, Int) -> Unit) {
     block("", 1)

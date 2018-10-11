@@ -48,7 +48,7 @@ internal class DescriptorRendererImpl(
     private fun renderKeyword(keyword: String): String {
         when (textFormat) {
             RenderingFormat.PLAIN -> return keyword
-            RenderingFormat.HTML -> return "<b>$keyword</b>"
+            RenderingFormat.HTML -> return if (boldOnlyForNamesInHtml) keyword else "<b>$keyword</b>"
         }
     }
 
@@ -79,12 +79,16 @@ internal class DescriptorRendererImpl(
     }
 
     /* NAMES RENDERING */
-    override fun renderName(name: Name): String {
-        return escape(name.render())
+    override fun renderName(name: Name, rootRenderedElement: Boolean): String {
+        val escaped = escape(name.render())
+        if (boldOnlyForNamesInHtml && textFormat == RenderingFormat.HTML && rootRenderedElement) {
+            return "<b>$escaped</b>"
+        }
+        return escaped
     }
 
-    private fun renderName(descriptor: DeclarationDescriptor, builder: StringBuilder) {
-        builder.append(renderName(descriptor.name))
+    private fun renderName(descriptor: DeclarationDescriptor, builder: StringBuilder, rootRenderedElement: Boolean) {
+        builder.append(renderName(descriptor.name, rootRenderedElement))
     }
 
     private fun renderCompanionObjectName(descriptor: DeclarationDescriptor, builder: StringBuilder) {
@@ -96,12 +100,12 @@ internal class DescriptorRendererImpl(
             val containingDeclaration = descriptor.containingDeclaration
             if (containingDeclaration != null) {
                 builder.append("of ")
-                builder.append(renderName(containingDeclaration.name))
+                builder.append(renderName(containingDeclaration.name, false))
             }
         }
         if (verbose || descriptor.name != SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT) {
             if (!startFromName) renderSpaceIfNeeded(builder)
-            builder.append(renderName(descriptor.name))
+            builder.append(renderName(descriptor.name, true))
         }
     }
 
@@ -229,7 +233,11 @@ internal class DescriptorRendererImpl(
         this.renderAnnotations(type)
 
         if (type.isError) {
-            append(type.constructor.toString()) // Debug name of an error type is more informative
+            if (type is UnresolvedType && presentableUnresolvedTypes) {
+                append(type.presentableName)
+            } else {
+                append(type.constructor.toString()) // Debug name of an error type is more informative
+            }
             append(renderTypeArguments(type.arguments))
         }
         else {
@@ -263,7 +271,7 @@ internal class DescriptorRendererImpl(
         possiblyInnerType.outerType?.let {
             renderPossiblyInnerType(it)
             append('.')
-            append(renderName(possiblyInnerType.classifierDescriptor.name))
+            append(renderName(possiblyInnerType.classifierDescriptor.name, false))
         } ?: append(renderTypeConstructor(possiblyInnerType.classifierDescriptor.typeConstructor))
 
         append(renderTypeArguments(possiblyInnerType.arguments))
@@ -347,7 +355,7 @@ internal class DescriptorRendererImpl(
 
             val name = if (parameterNamesInFunctionalTypes) typeProjection.type.extractParameterNameFromFunctionTypeArgument() else null
             if (name != null) {
-                append(renderName(name))
+                append(renderName(name, false))
                 append(": ")
             }
 
@@ -391,14 +399,20 @@ internal class DescriptorRendererImpl(
         }
     }
 
-    private fun StringBuilder.renderAnnotations(annotated: Annotated) {
+    private fun StringBuilder.renderAnnotations(annotated: Annotated, target: AnnotationUseSiteTarget? = null) {
         if (DescriptorRendererModifier.ANNOTATIONS !in modifiers) return
 
         val excluded = if (annotated is KotlinType) excludedTypeAnnotationClasses else excludedAnnotationClasses
 
-        for ((annotation, target) in annotated.annotations.getAllAnnotations()) {
-            if (annotation.fqName !in excluded) {
-                append(renderAnnotation(annotation, target)).append(" ")
+        val annotationFilter = annotationFilter
+        for (annotation in annotated.annotations) {
+            if (annotation.fqName !in excluded && (annotationFilter == null || annotationFilter(annotation))) {
+                append(renderAnnotation(annotation, target))
+                if (eachAnnotationOnNewLine) {
+                    appendln()
+                } else {
+                    append(" ")
+                }
             }
         }
     }
@@ -550,7 +564,7 @@ internal class DescriptorRendererImpl(
 
         builder.renderAnnotations(typeParameter)
 
-        renderName(typeParameter, builder)
+        renderName(typeParameter, builder, topLevel)
         val upperBoundsCount = typeParameter.upperBounds.size
         if ((upperBoundsCount > 1 && !topLevel) || upperBoundsCount == 1) {
             val upperBound = typeParameter.upperBounds.iterator().next()
@@ -645,7 +659,7 @@ internal class DescriptorRendererImpl(
             renderReceiver(function, builder)
         }
 
-        renderName(function, builder)
+        renderName(function, builder, true)
 
         renderValueParameters(function.valueParameters, function.hasSynthesizedParameterNames(), builder)
 
@@ -671,6 +685,8 @@ internal class DescriptorRendererImpl(
     private fun renderReceiver(callableDescriptor: CallableDescriptor, builder: StringBuilder) {
         val receiver = callableDescriptor.extensionReceiverParameter
         if (receiver != null) {
+            builder.renderAnnotations(receiver, AnnotationUseSiteTarget.RECEIVER)
+
             val type = receiver.type
             var result = renderType(type)
             if (shouldRenderAsPrettyFunctionType(type) && !TypeUtils.isNullableType(type)) {
@@ -693,7 +709,7 @@ internal class DescriptorRendererImpl(
             if (renderConstructorKeyword) {
                 builder.append(" ")
             }
-            renderName(classDescriptor, builder)
+            renderName(classDescriptor, builder, true)
             renderTypeParameters(constructor.typeParameters, builder, false)
         }
 
@@ -712,7 +728,7 @@ internal class DescriptorRendererImpl(
         for (typeParameter in typeParameters) {
             typeParameter.upperBounds
                     .drop(1) // first parameter is rendered by renderTypeParameter
-                    .mapTo(upperBoundStrings) { renderName(typeParameter.name) + " : " + renderType(it) }
+                    .mapTo(upperBoundStrings) { renderName(typeParameter.name, false) + " : " + renderType(it) }
         }
 
         if (!upperBoundStrings.isEmpty()) {
@@ -787,7 +803,7 @@ internal class DescriptorRendererImpl(
         }
 
         if (includeName) {
-            renderName(variable, builder)
+            renderName(variable, builder, topLevel)
             builder.append(": ")
         }
 
@@ -803,7 +819,7 @@ internal class DescriptorRendererImpl(
     private fun renderProperty(property: PropertyDescriptor, builder: StringBuilder) {
         if (!startFromName) {
             if (!startFromDeclarationKeyword) {
-                builder.renderAnnotations(property)
+                renderPropertyAnnotations(property, builder)
                 renderVisibility(property.visibility, builder)
                 renderModifier(builder, property.isConst, "const")
                 renderMemberModifiers(property, builder)
@@ -817,7 +833,7 @@ internal class DescriptorRendererImpl(
             renderReceiver(property, builder)
         }
 
-        renderName(property, builder)
+        renderName(property, builder, true)
         builder.append(": ").append(renderType(property.type))
 
         renderReceiverAfterName(property, builder)
@@ -825,6 +841,21 @@ internal class DescriptorRendererImpl(
         renderInitializer(property, builder)
 
         renderWhereSuffix(property.typeParameters, builder)
+    }
+
+    private fun renderPropertyAnnotations(property: PropertyDescriptor, builder: StringBuilder) {
+        if (DescriptorRendererModifier.ANNOTATIONS !in modifiers) return
+
+        builder.renderAnnotations(property)
+
+        property.backingField?.let { builder.renderAnnotations(it, AnnotationUseSiteTarget.FIELD) }
+        property.delegateField?.let { builder.renderAnnotations(it, AnnotationUseSiteTarget.PROPERTY_DELEGATE_FIELD) }
+
+        if (propertyAccessorRenderingPolicy == PropertyAccessorRenderingPolicy.NONE) {
+            property.setter?.valueParameters?.single()?.let {
+                builder.renderAnnotations(it, AnnotationUseSiteTarget.SETTER_PARAMETER)
+            }
+        }
     }
 
     private fun renderInitializer(variable: VariableDescriptor, builder: StringBuilder) {
@@ -840,7 +871,7 @@ internal class DescriptorRendererImpl(
         renderVisibility(typeAlias.visibility, builder)
         renderMemberModifiers(typeAlias, builder)
         builder.append(renderKeyword("typealias")).append(" ")
-        renderName(typeAlias, builder)
+        renderName(typeAlias, builder, true)
 
         renderTypeParameters(typeAlias.declaredTypeParameters, builder, false)
         renderCapturedTypeParametersIfRequired(typeAlias, builder)
@@ -881,7 +912,7 @@ internal class DescriptorRendererImpl(
 
         if (!isCompanionObject(klass)) {
             if (!startFromName) renderSpaceIfNeeded(builder)
-            renderName(klass, builder)
+            renderName(klass, builder, true)
         }
         else {
             renderCompanionObjectName(klass, builder)
@@ -931,7 +962,7 @@ internal class DescriptorRendererImpl(
         renderPackageHeader(packageView.fqName, "package", builder)
         if (debugMode) {
             builder.append(" in context of ")
-            renderName(packageView.module, builder)
+            renderName(packageView.module, builder, false)
         }
     }
 
@@ -939,7 +970,7 @@ internal class DescriptorRendererImpl(
         renderPackageHeader(fragment.fqName, "package-fragment", builder)
         if (debugMode) {
             builder.append(" in ")
-            renderName(fragment.containingDeclaration, builder)
+            renderName(fragment.containingDeclaration, builder, false)
         }
     }
 
@@ -971,25 +1002,25 @@ internal class DescriptorRendererImpl(
         }
 
         override fun visitPropertyGetterDescriptor(descriptor: PropertyGetterDescriptor, builder: StringBuilder) {
-            if (renderAccessors) {
-                renderAccessorModifiers(descriptor, builder)
-                builder.append("getter for ")
-                renderProperty(descriptor.correspondingProperty, builder)
-            }
-            else {
-                visitFunctionDescriptor(descriptor, builder)
-            }
-
+            visitPropertyAccessorDescriptor(descriptor, builder, "getter")
         }
 
         override fun visitPropertySetterDescriptor(descriptor: PropertySetterDescriptor, builder: StringBuilder) {
-            if (renderAccessors) {
-                renderAccessorModifiers(descriptor, builder)
-                builder.append("setter for ")
-                renderProperty(descriptor.correspondingProperty, builder)
-            }
-            else {
-                visitFunctionDescriptor(descriptor, builder)
+            visitPropertyAccessorDescriptor(descriptor, builder, "setter")
+        }
+
+        private fun visitPropertyAccessorDescriptor(descriptor: PropertyAccessorDescriptor, builder: StringBuilder, kind: String) {
+            when (propertyAccessorRenderingPolicy) {
+                PropertyAccessorRenderingPolicy.PRETTY -> {
+                    renderAccessorModifiers(descriptor, builder)
+                    builder.append("$kind for ")
+                    renderProperty(descriptor.correspondingProperty, builder)
+                }
+                PropertyAccessorRenderingPolicy.DEBUG -> {
+                    visitFunctionDescriptor(descriptor, builder)
+                }
+                PropertyAccessorRenderingPolicy.NONE -> {
+                }
             }
         }
 
@@ -1018,7 +1049,7 @@ internal class DescriptorRendererImpl(
         }
 
         override fun visitModuleDeclaration(descriptor: ModuleDescriptor, builder: StringBuilder) {
-            renderName(descriptor, builder)
+            renderName(descriptor, builder, true)
         }
 
         override fun visitScriptDescriptor(scriptDescriptor: ScriptDescriptor, builder: StringBuilder) {

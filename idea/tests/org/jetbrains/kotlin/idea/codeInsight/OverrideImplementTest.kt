@@ -17,11 +17,16 @@
 package org.jetbrains.kotlin.idea.codeInsight
 
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
+import org.jetbrains.kotlin.idea.test.configureLanguageAndApiVersion
 
 class OverrideImplementTest : AbstractOverrideImplementTest() {
     override fun setUp() {
         super.setUp()
         myFixture.testDataPath = PluginTestCaseBase.getTestDataPathBase() + "/codeInsight/overrideImplement"
+    }
+
+    fun testAndroidxNotNull() {
+        doOverrideDirectoryTest("foo")
     }
 
     fun testEmptyClassBodyFunctionMethod() {
@@ -117,6 +122,10 @@ class OverrideImplementTest : AbstractOverrideImplementTest() {
     }
 
     fun testOverrideExplicitFunction() {
+        doOverrideFileTest()
+    }
+
+    fun testOverrideExtensionFunction() {
         doOverrideFileTest()
     }
 
@@ -278,5 +287,14 @@ class OverrideImplementTest : AbstractOverrideImplementTest() {
 
     fun testDataClassEquals() {
         doOverrideFileTest("equals")
+    }
+
+    fun testCopyExperimental() {
+        configureLanguageAndApiVersion(project, module, "1.3", "1.3")
+        doOverrideFileTest("targetFun")
+    }
+
+    fun testUnresolvedType() {
+        doOverrideFileTest()
     }
 }

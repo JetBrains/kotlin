@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.daemon.common.experimental
 
 
-import kotlinx.coroutines.experimental.async
-import kotlinx.coroutines.experimental.runBlocking
+import kotlinx.coroutines.async
+import kotlinx.coroutines.runBlocking
 import org.jetbrains.kotlin.daemon.common.*
 import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.runWithTimeout
 import org.jetbrains.kotlin.daemon.common.impls.DaemonReportCategory

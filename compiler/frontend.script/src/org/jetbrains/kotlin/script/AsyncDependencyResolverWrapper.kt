@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.script
 
-import kotlinx.coroutines.experimental.runBlocking
+import kotlinx.coroutines.runBlocking
 import kotlin.script.experimental.dependencies.DependenciesResolver
 import kotlin.script.dependencies.Environment
 import kotlin.script.dependencies.ScriptContents

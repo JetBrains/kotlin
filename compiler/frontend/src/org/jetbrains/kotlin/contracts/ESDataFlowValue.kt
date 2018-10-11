@@ -23,7 +23,22 @@ import org.jetbrains.kotlin.descriptors.ValueDescriptor
 import org.jetbrains.kotlin.psi.KtLambdaExpression
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValue
 
-class ESDataFlowValue(descriptor: ValueDescriptor, val dataFlowValue: DataFlowValue) : ESVariable(descriptor)
+class ESDataFlowValue(descriptor: ValueDescriptor, val dataFlowValue: DataFlowValue) : ESVariable(descriptor) {
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as ESDataFlowValue
+
+        if (dataFlowValue != other.dataFlowValue) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        return dataFlowValue.hashCode()
+    }
+}
 
 class ESLambda(val lambda: KtLambdaExpression) : ESValue(null) {
     override fun <T> accept(visitor: ESExpressionVisitor<T>): T {

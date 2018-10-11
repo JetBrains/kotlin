@@ -130,6 +130,9 @@ public class WordSelectionTest extends KotlinLightCodeInsightFixtureTestCase {
     public void testDeclarationWithComment3() { doTest(); }
     public void testDeclarationWithComment4() { doTest(); }
 
+    public void testLeftBrace() { doTest(); }
+    public void testRightBrace() { doTest(); }
+
     private void doTest() {
         String dirName = getTestName(false);
 

@@ -1,0 +1,7 @@
+fun foo() {
+    bar(
+        <spot>1,
+        "abcd",
+        false</spot>
+    )
+}

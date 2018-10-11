@@ -64,14 +64,14 @@ fun main(a: A) {
     a.field<!UNSAFE_CALL!>.<!>length
 
     a.foo2("", null)?.length
-    <!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>a.foo2("", null)<!>.length
-    <!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>a.foo2(null, "")<!>.length
+    <!RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>a.foo2("", null)<!>.length
+    <!RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>a.foo2(null, "")<!>.length
 
     a.bar2().length
     a.bar2()!!.length
 
     a.field2?.length
-    <!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>a.field2<!>.length
+    <!RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>a.field2<!>.length
 
     a.field3?.length
     a.field3<!UNSAFE_CALL!>.<!>length

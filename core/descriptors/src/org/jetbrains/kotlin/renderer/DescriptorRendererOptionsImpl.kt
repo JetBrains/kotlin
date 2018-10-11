@@ -17,6 +17,8 @@
 package org.jetbrains.kotlin.renderer
 
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationWithTarget
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.types.KotlinType
 import java.lang.IllegalStateException
@@ -76,6 +78,7 @@ internal class DescriptorRendererOptionsImpl : DescriptorRendererOptions {
     override var verbose by property(false)
     override var unitReturnType by property(true)
     override var withoutReturnType by property(false)
+    override var enhancedTypes by property(false)
     override var normalizedVisibilities by property(false)
     override var renderDefaultVisibility by property(true)
     override var uninferredTypeParameterAsName by property(false)
@@ -91,12 +94,16 @@ internal class DescriptorRendererOptionsImpl : DescriptorRendererOptions {
     override var parameterNameRenderingPolicy by property(ParameterNameRenderingPolicy.ALL)
     override var receiverAfterName by property(false)
     override var renderCompanionObjectName by property(false)
-    override var renderAccessors by property(false)
+    override var propertyAccessorRenderingPolicy by property(PropertyAccessorRenderingPolicy.DEBUG)
     override var renderDefaultAnnotationArguments by property(false)
+
+    override var eachAnnotationOnNewLine: Boolean by property(false)
 
     override var excludedAnnotationClasses by property(emptySet<FqName>())
 
     override var excludedTypeAnnotationClasses by property(ExcludedTypeAnnotations.internalAnnotationsForResolve)
+
+    override var annotationFilter: ((AnnotationDescriptor) -> Boolean)? by property(null)
 
     override var annotationArgumentsRenderingPolicy by property(AnnotationArgumentsRenderingPolicy.NO_ARGUMENTS)
 
@@ -111,4 +118,8 @@ internal class DescriptorRendererOptionsImpl : DescriptorRendererOptions {
     override var parameterNamesInFunctionalTypes: Boolean by property(true)
 
     override var renderFunctionContracts: Boolean by property(false)
+
+    override var presentableUnresolvedTypes: Boolean by property(false)
+
+    override var boldOnlyForNamesInHtml: Boolean by property(false)
 }

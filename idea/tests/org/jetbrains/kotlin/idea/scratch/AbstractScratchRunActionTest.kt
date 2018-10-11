@@ -25,6 +25,7 @@ import com.intellij.openapi.roots.CompilerModuleExtension
 import com.intellij.openapi.roots.ModuleRootModificationUtil
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiManager
 import com.intellij.testFramework.FileEditorManagerTestCase
@@ -33,9 +34,12 @@ import com.intellij.testFramework.PsiTestUtil
 import com.intellij.testFramework.TestActionEvent
 import com.intellij.util.ui.UIUtil
 import org.jetbrains.kotlin.idea.KotlinLanguage
+import org.jetbrains.kotlin.idea.core.script.ScriptDependenciesManager
+import org.jetbrains.kotlin.idea.highlighter.KotlinHighlightingUtil
 import org.jetbrains.kotlin.idea.scratch.actions.RunScratchAction
-import org.jetbrains.kotlin.idea.scratch.output.InlayScratchOutputHandler
+import org.jetbrains.kotlin.idea.scratch.output.InlayScratchFileRenderer
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
+import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.MockLibraryUtil
@@ -101,7 +105,12 @@ abstract class AbstractScratchRunActionTest : FileEditorManagerTestCase() {
 
         myFixture.openFileInEditor(scratchFile)
 
+        ScriptDependenciesManager.updateScriptDependenciesSynchronously(scratchFile, project)
+
         val psiFile = PsiManager.getInstance(project).findFile(scratchFile) ?: error("Couldn't find psi file ${sourceFile.path}")
+
+        if (!KotlinHighlightingUtil.shouldHighlight(psiFile)) error("Highlighting for scratch file is switched off")
+
         val (editor, scratchPanel) = getEditorWithScratchPanel(myManager, scratchFile)?: error("Couldn't find scratch panel")
         scratchPanel.setReplMode(isRepl)
 
@@ -127,10 +136,10 @@ abstract class AbstractScratchRunActionTest : FileEditorManagerTestCase() {
                 doc.getLineStartOffset(line),
                 doc.getLineEndOffset(line)
             ).map { it.renderer }
-                .filterIsInstance<InlayScratchOutputHandler.ScratchFileRenderer>()
+                .filterIsInstance<InlayScratchFileRenderer>()
                 .forEach {
                     val str = it.toString()
-                    val offset = doc.getLineEndOffset(line); actualOutput.insert(offset, "    // $str")
+                    val offset = doc.getLineEndOffset(line); actualOutput.insert(offset, "${str.takeWhile { it.isWhitespace() }}// ${str.trim()}")
                 }
         }
 
@@ -160,8 +169,18 @@ abstract class AbstractScratchRunActionTest : FileEditorManagerTestCase() {
 
     override fun getProjectDescriptor() = KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE_FULL_JDK
 
+    override fun setUp() {
+        super.setUp()
+
+        VfsRootAccess.allowRootAccess(KotlinTestUtils.getHomeDirectory())
+
+        PluginTestCaseBase.addJdk(myFixture.projectDisposable) { PluginTestCaseBase.fullJdk() }
+    }
+
     override fun tearDown() {
         super.tearDown()
+
+        VfsRootAccess.disallowRootAccess(KotlinTestUtils.getHomeDirectory())
 
         ScratchFileService.getInstance().scratchesMapping.mappings.forEach { file, _ ->
             runWriteAction { file.delete(this) }

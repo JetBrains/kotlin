@@ -9,3 +9,10 @@ dependencies {
 sourceSets {
     main.kotlin.srcDirs += 'src'
 }
+
+compileKotlin {
+    kotlinOptions {
+        // Do not report prerelease errors
+        freeCompilerArgs = ["-Xskip-metadata-version-check"]
+    }
+}

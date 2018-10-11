@@ -6,7 +6,8 @@ internal class A {
 
     constructor() {}
 
-    @JvmOverloads constructor(p: Int, s: String, x: Int = 1) {
+    @JvmOverloads
+    constructor(p: Int, s: String, x: Int = 1) {
         this.s = s
         this.x = x
     }

@@ -10,4 +10,4 @@ fun fn(value: Any) {
     }
 }
 
-// TYPE: value -> <html>A & B (smart cast from Any)</html>
+// TYPE: value -> <html>B & A (smart cast from Any)</html>

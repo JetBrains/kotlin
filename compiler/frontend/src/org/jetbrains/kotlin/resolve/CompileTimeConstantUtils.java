@@ -20,6 +20,7 @@ import kotlin.collections.SetsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
+import org.jetbrains.kotlin.builtins.UnsignedTypes;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.VariableDescriptor;
 import org.jetbrains.kotlin.psi.KtExpression;
@@ -89,7 +90,8 @@ public class CompileTimeConstantUtils {
             KotlinBuiltIns.isKClass(typeDescriptor) ||
             KotlinBuiltIns.isPrimitiveArray(parameterType) ||
             KotlinBuiltIns.isPrimitiveType(parameterType) ||
-            KotlinBuiltIns.isString(parameterType)) {
+            KotlinBuiltIns.isString(parameterType) ||
+            UnsignedTypes.INSTANCE.isUnsignedType(parameterType)) {
             return true;
         }
 

@@ -16,24 +16,28 @@
 
 package org.jetbrains.kotlin.backend.common.ir
 
-import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.DumpIrTreeWithDescriptorsVisitor
+import org.jetbrains.kotlin.backend.common.descriptors.WrappedTypeParameterDescriptor
+import org.jetbrains.kotlin.backend.common.descriptors.WrappedValueParameterDescriptor
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.ClassConstructorDescriptorImpl
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrConstructor
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrConstructorImpl
-import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.impl.*
-import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
+import org.jetbrains.kotlin.ir.declarations.impl.IrTypeParameterImpl
+import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
+import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
+import org.jetbrains.kotlin.ir.expressions.IrCall
+import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
+import org.jetbrains.kotlin.ir.expressions.impl.IrBlockBodyImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrDelegatingConstructorCallImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrInstanceInitializerCallImpl
+import org.jetbrains.kotlin.ir.symbols.impl.IrTypeParameterSymbolImpl
+import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.util.DumpIrTreeVisitor
-import org.jetbrains.kotlin.ir.util.createParameterDeclarations
-import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.TypeProjectionImpl
-import org.jetbrains.kotlin.types.TypeSubstitutor
+import org.jetbrains.kotlin.ir.util.defaultType
 import java.io.StringWriter
 
 
@@ -54,11 +58,12 @@ fun DeclarationDescriptor.createFakeOverrideDescriptor(owner: ClassDescriptor): 
     return when (this) {
         is CallableMemberDescriptor ->
             copy(
-                    /* newOwner      = */ owner,
-                    /* modality      = */ modality,
-                    /* visibility    = */ visibility,
-                    /* kind          = */ CallableMemberDescriptor.Kind.FAKE_OVERRIDE,
-                    /* copyOverrides = */ true).apply {
+                /* newOwner      = */ owner,
+                /* modality      = */ modality,
+                /* visibility    = */ visibility,
+                /* kind          = */ CallableMemberDescriptor.Kind.FAKE_OVERRIDE,
+                /* copyOverrides = */ true
+            ).apply {
                 overriddenDescriptors += this@createFakeOverrideDescriptor
             }
         else -> null
@@ -67,74 +72,114 @@ fun DeclarationDescriptor.createFakeOverrideDescriptor(owner: ClassDescriptor): 
 
 fun FunctionDescriptor.createOverriddenDescriptor(owner: ClassDescriptor, final: Boolean = true): FunctionDescriptor {
     return this.newCopyBuilder()
-            .setOwner(owner)
-            .setCopyOverrides(true)
-            .setModality(if (final) Modality.FINAL else Modality.OPEN)
-            .setDispatchReceiverParameter(owner.thisAsReceiverParameter)
-            .build()!!.apply {
+        .setOwner(owner)
+        .setCopyOverrides(true)
+        .setModality(if (final) Modality.FINAL else Modality.OPEN)
+        .setDispatchReceiverParameter(owner.thisAsReceiverParameter)
+        .build()!!.apply {
         overriddenDescriptors += this@createOverriddenDescriptor
     }
 }
 
-fun ClassDescriptor.createSimpleDelegatingConstructorDescriptor(superConstructorDescriptor: ClassConstructorDescriptor, isPrimary: Boolean = false)
-        : ClassConstructorDescriptor {
+fun IrClass.addSimpleDelegatingConstructor(
+        superConstructor: IrConstructor,
+        irBuiltIns: IrBuiltIns,
+        origin: IrDeclarationOrigin,
+        isPrimary: Boolean = false
+): IrConstructor {
+    val superConstructorDescriptor = superConstructor.descriptor
     val constructorDescriptor = ClassConstructorDescriptorImpl.createSynthesized(
-            /* containingDeclaration = */ this,
+            /* containingDeclaration = */ this.descriptor,
             /* annotations           = */ Annotations.EMPTY,
             /* isPrimary             = */ isPrimary,
-            /* source                = */ SourceElement.NO_SOURCE)
-    val valueParameters = superConstructorDescriptor.valueParameters.map {
-        it.copy(constructorDescriptor, it.name, it.index)
+            /* source                = */ SourceElement.NO_SOURCE
+    )
+    val valueParameters = superConstructor.valueParameters.map {
+        val descriptor = it.descriptor as ValueParameterDescriptor
+        val newDescriptor = descriptor.copy(constructorDescriptor, descriptor.name, descriptor.index)
+        IrValueParameterImpl(
+                startOffset,
+                endOffset,
+                IrDeclarationOrigin.DEFINED,
+                newDescriptor,
+                it.type,
+                it.varargElementType
+        )
     }
-    constructorDescriptor.initialize(valueParameters, superConstructorDescriptor.visibility)
-    constructorDescriptor.returnType = superConstructorDescriptor.returnType
-    return constructorDescriptor
-}
 
-fun IrClass.addSimpleDelegatingConstructor(superConstructorSymbol: IrConstructorSymbol,
-                                                    constructorDescriptor: ClassConstructorDescriptor,
-                                                    origin: IrDeclarationOrigin)
-        : IrConstructor {
+
+    constructorDescriptor.initialize(
+            valueParameters.map { it.descriptor as ValueParameterDescriptor },
+            superConstructorDescriptor.visibility
+    )
+    constructorDescriptor.returnType = superConstructorDescriptor.returnType
 
     return IrConstructorImpl(startOffset, endOffset, origin, constructorDescriptor).also { constructor ->
-        constructor.createParameterDeclarations()
 
-        constructor.body = IrBlockBodyImpl(startOffset, endOffset,
+        assert(superConstructor.dispatchReceiverParameter == null) // Inner classes aren't supported.
+
+        constructor.valueParameters += valueParameters
+        constructor.returnType = this.defaultType
+
+        constructor.body = IrBlockBodyImpl(
+                startOffset, endOffset,
                 listOf(
                         IrDelegatingConstructorCallImpl(
-                                startOffset, endOffset,
-                                superConstructorSymbol, superConstructorSymbol.descriptor
+                                startOffset, endOffset, irBuiltIns.unitType,
+                                superConstructor.symbol, superConstructor.descriptor
                         ).apply {
                             constructor.valueParameters.forEachIndexed { idx, parameter ->
-                                putValueArgument(idx, IrGetValueImpl(startOffset, endOffset, parameter.symbol))
+                                putValueArgument(idx, IrGetValueImpl(startOffset, endOffset, parameter.type, parameter.symbol))
                             }
                         },
-                        IrInstanceInitializerCallImpl(startOffset, endOffset, this.symbol)
+                        IrInstanceInitializerCallImpl(startOffset, endOffset, this.symbol, irBuiltIns.unitType)
                 )
         )
 
+        constructor.parent = this
         this.declarations.add(constructor)
     }
 }
 
-fun CommonBackendContext.createArrayOfExpression(arrayElementType: KotlinType,
-                                             arrayElements: List<IrExpression>,
-                                             startOffset: Int, endOffset: Int): IrExpression {
+val IrCall.isSuspend get() = (symbol.owner as? IrSimpleFunction)?.isSuspend == true
+val IrFunctionReference.isSuspend get() = (symbol.owner as? IrSimpleFunction)?.isSuspend == true
 
-    val genericArrayOfFunSymbol = ir.symbols.arrayOf
-    val genericArrayOfFun = genericArrayOfFunSymbol.descriptor
-    val typeParameter0 = genericArrayOfFun.typeParameters[0]
-    val typeSubstitutor = TypeSubstitutor.create(mapOf(typeParameter0.typeConstructor to TypeProjectionImpl(arrayElementType)))
-    val substitutedArrayOfFun = genericArrayOfFun.substitute(typeSubstitutor)!!
 
-    val typeArguments = mapOf(typeParameter0 to arrayElementType)
-
-    val valueParameter0 = substitutedArrayOfFun.valueParameters[0]
-    val arg0VarargType = valueParameter0.type
-    val arg0VarargElementType = valueParameter0.varargElementType!!
-    val arg0 = IrVarargImpl(startOffset, endOffset, arg0VarargType, arg0VarargElementType, arrayElements)
-
-    return IrCallImpl(startOffset, endOffset, genericArrayOfFunSymbol, substitutedArrayOfFun, typeArguments).apply {
-        putValueArgument(0, arg0)
+fun IrValueParameter.copyTo(irFunction: IrFunction, shift: Int = 0): IrValueParameter {
+    val descriptor = WrappedValueParameterDescriptor(symbol.descriptor.annotations, symbol.descriptor.source)
+    val symbol = IrValueParameterSymbolImpl(descriptor)
+    return IrValueParameterImpl(
+        startOffset, endOffset, origin, symbol,
+        name, shift + index, type, varargElementType, isCrossinline, isNoinline
+    ).also {
+        descriptor.bind(it)
+        it.parent = irFunction
     }
+}
+
+fun IrTypeParameter.copyTo(irFunction: IrFunction, shift: Int = 0): IrTypeParameter {
+    // TODO: Copy IrTypeParameter with type remapping
+    val descriptor = WrappedTypeParameterDescriptor(symbol.descriptor.annotations, symbol.descriptor.source)
+    val symbol = IrTypeParameterSymbolImpl(descriptor)
+    return IrTypeParameterImpl(startOffset, endOffset, origin, symbol, name, shift + index, isReified, variance).also {
+        descriptor.bind(it)
+        it.parent = irFunction
+    }
+}
+
+fun IrFunction.copyParameterDeclarationsFrom(from: IrFunction) {
+
+    // TODO: should dispatch receiver be copied?
+    dispatchReceiverParameter = from.dispatchReceiverParameter?.let {
+        IrValueParameterImpl(it.startOffset, it.endOffset, it.origin, it.descriptor, it.type, it.varargElementType).also {
+            it.parent = this
+        }
+    }
+    extensionReceiverParameter = from.extensionReceiverParameter?.copyTo(this)
+
+    val shift = valueParameters.size
+    valueParameters += from.valueParameters.map { it.copyTo(this, shift) }
+
+    assert(typeParameters.isEmpty())
+    from.typeParameters.mapTo(typeParameters) { it.copyTo(this) }
 }

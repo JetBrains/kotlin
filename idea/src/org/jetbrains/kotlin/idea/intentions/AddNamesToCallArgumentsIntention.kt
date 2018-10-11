@@ -18,7 +18,9 @@ package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
+import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatch
 import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatchStatus
@@ -42,6 +44,10 @@ class AddNamesToCallArgumentsIntention : SelfTargetingRangeIntention<KtCallEleme
             if (argumentMatch.valueParameter.varargElementType != null) {
                 val varargArgument = resolvedCall.valueArguments[argumentMatch.valueParameter] as? VarargValueArgument ?: return null
                 if (varargArgument.arguments.size != 1) return null
+                val versionSettings = element.languageVersionSettings
+                if (versionSettings.supportsFeature(LanguageFeature.ProhibitAssigningSingleElementsToVarargsInNamedForm)) {
+                    if (argument.getSpreadElement() == null) return null
+                }
             }
         }
 

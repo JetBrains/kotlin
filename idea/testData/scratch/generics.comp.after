@@ -1,8 +1,8 @@
-class GClass<T> {    // RESULT: class GClass<T>
+class GClass<T> {         // RESULT: class GClass<T>
     fun foo(t: T): T {
         return t
     }
 }
 
-val g = GClass<Int>()    // RESULT: val g: Generics.GClass<Int>
-g.foo(1)    // RESULT: 1
+val g = GClass<Int>()     // RESULT: val g: Generics.GClass<Int>
+g.foo(1)                  // RESULT: 1

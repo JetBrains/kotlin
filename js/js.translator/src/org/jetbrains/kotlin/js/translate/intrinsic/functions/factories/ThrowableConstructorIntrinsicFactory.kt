@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.types.typeUtil.isNotNullThrowable
 
 object ThrowableConstructorIntrinsicFactory : FunctionIntrinsicFactory {
-    override fun getIntrinsic(descriptor: FunctionDescriptor): FunctionIntrinsic? {
+    override fun getIntrinsic(descriptor: FunctionDescriptor, context: TranslationContext): FunctionIntrinsic? {
         if (descriptor !is ConstructorDescriptor) return null
         if (!descriptor.constructedClass.defaultType.isNotNullThrowable()) return null
 

@@ -1,0 +1,6 @@
+class C {
+    companion object {
+        fun foo(s: String) = 1
+    }
+    val f = ::foo
+}

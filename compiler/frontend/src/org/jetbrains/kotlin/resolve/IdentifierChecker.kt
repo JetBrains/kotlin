@@ -16,16 +16,16 @@
 
 package org.jetbrains.kotlin.resolve
 
-import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 
 interface IdentifierChecker {
-    fun checkIdentifier(identifier: PsiElement?, diagnosticHolder: DiagnosticSink)
+    fun checkIdentifier(simpleNameExpression: KtSimpleNameExpression, diagnosticHolder: DiagnosticSink)
     fun checkDeclaration(declaration: KtDeclaration, diagnosticHolder: DiagnosticSink)
 
     object Default : IdentifierChecker {
-        override fun checkIdentifier(identifier: PsiElement?, diagnosticHolder: DiagnosticSink) {}
+        override fun checkIdentifier(simpleNameExpression: KtSimpleNameExpression, diagnosticHolder: DiagnosticSink) {}
         override fun checkDeclaration(declaration: KtDeclaration, diagnosticHolder: DiagnosticSink) {}
     }
 }

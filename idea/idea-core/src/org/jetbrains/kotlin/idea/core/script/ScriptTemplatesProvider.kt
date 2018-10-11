@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.core.script
+@file:Suppress("PackageDirectoryMismatch")
+package org.jetbrains.kotlin.script
 
 import com.intellij.openapi.extensions.ExtensionPointName
-import org.jetbrains.kotlin.script.KotlinScriptDefinition
 import java.io.File
 import kotlin.script.experimental.dependencies.DependenciesResolver
 
@@ -59,13 +59,3 @@ interface ScriptTemplatesProvider {
     }
 }
 
-class ScriptTemplatesProviderAdapter(private val templatesProvider: ScriptTemplatesProvider) : ScriptDefinitionContributor {
-    override val id: String
-        get() = templatesProvider.id
-
-    override fun getDefinitions(): List<KotlinScriptDefinition> {
-        return loadDefinitionsFromTemplates(
-                templatesProvider.templateClassNames.toList(), templatesProvider.templateClasspath,
-                templatesProvider.environment.orEmpty(), templatesProvider.additionalResolverClasspath)
-    }
-}

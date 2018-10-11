@@ -1,5 +1,18 @@
 
-apply { plugin("kotlin") }
+plugins {
+    kotlin("jvm")
+    id("jps-compatible")
+}
+
+sourceSets {
+    "main" { }
+    "test" { projectDefault() }
+}
+
+val builtinsSourceSet = sourceSets.create("builtins") {
+    java.srcDir("builtins")
+}
+val builtinsCompile by configurations
 
 dependencies {
     compile(projectTests(":compiler:cli"))
@@ -15,17 +28,15 @@ dependencies {
     compile(projectTests(":kotlin-noarg-compiler-plugin"))
     compile(projectTests(":kotlin-sam-with-receiver-compiler-plugin"))
     compile(projectTests(":generators:test-generator"))
-    compileOnly(intellijDep("jps-build-test"))
-    compileOnly(project(":kotlin-reflect-api"))
+    builtinsCompile("org.jetbrains.kotlin:kotlin-stdlib:$bootstrapKotlinVersion")
+    testCompileOnly(intellijDep("jps-build-test"))
+    testCompileOnly(project(":kotlin-reflect-api"))
     testCompile(intellijDep("jps-build-test"))
+    testCompile(builtinsSourceSet.output)
     testRuntime(intellijDep()) { includeJars("idea_rt") }
-    testRuntime(projectDist(":kotlin-reflect"))
+    testRuntime(project(":kotlin-reflect"))
 }
 
-sourceSets {
-    "main" { projectDefault() }
-    "test" { projectDefault() }
-}
 
 projectTest {
     workingDir = rootDir
@@ -37,3 +48,7 @@ val generateProtoBuf by generator("org.jetbrains.kotlin.generators.protobuf.Gene
 val generateProtoBufCompare by generator("org.jetbrains.kotlin.generators.protobuf.GenerateProtoBufCompare")
 
 val generateGradleOptions by generator("org.jetbrains.kotlin.generators.arguments.GenerateGradleOptionsKt")
+
+val generateBuiltins by generator("org.jetbrains.kotlin.generators.builtins.generateBuiltIns.GenerateBuiltInsKt", builtinsSourceSet)
+
+testsJar()

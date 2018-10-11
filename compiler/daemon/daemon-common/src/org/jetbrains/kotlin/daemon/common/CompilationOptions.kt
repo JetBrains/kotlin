@@ -21,13 +21,13 @@ import java.io.Serializable
 import java.util.*
 
 open class CompilationOptions(
-    val compilerMode: CompilerMode,
-    val targetPlatform: CompileService.TargetPlatform,
-    /** @See [ReportCategory] */
+        val compilerMode: CompilerMode,
+        val targetPlatform: CompileService.TargetPlatform,
+        /** @See [ReportCategory] */
         val reportCategories: Array<Int>,
-    /** @See [ReportSeverity] */
+        /** @See [ReportSeverity] */
         val reportSeverity: Int,
-    /** @See [CompilationResultCategory]] */
+        /** @See [CompilationResultCategory]] */
         val requestedCompilationResults: Array<Int>
 ) : Serializable {
     companion object {
@@ -46,23 +46,27 @@ open class CompilationOptions(
 }
 
 class IncrementalCompilationOptions(
-    val areFileChangesKnown: Boolean,
-    val modifiedFiles: List<File>?,
-    val deletedFiles: List<File>?,
-    val workingDir: File,
-    val customCacheVersionFileName: String,
-    val customCacheVersion: Int,
-    compilerMode: CompilerMode,
-    targetPlatform: CompileService.TargetPlatform,
-    /** @See [ReportCategory] */
+        val areFileChangesKnown: Boolean,
+        val modifiedFiles: List<File>?,
+        val deletedFiles: List<File>?,
+        val workingDir: File,
+        val customCacheVersionFileName: String,
+        val customCacheVersion: Int,
+        compilerMode: CompilerMode,
+        targetPlatform: CompileService.TargetPlatform,
+        /** @See [ReportCategory] */
         reportCategories: Array<Int>,
-    /** @See [ReportSeverity] */
+        /** @See [ReportSeverity] */
         reportSeverity: Int,
-    /** @See [CompilationResultCategory]] */
+        /** @See [CompilationResultCategory]] */
         requestedCompilationResults: Array<Int>,
-    val resultDifferenceFile: File? = null,
-    val friendDifferenceFile: File? = null,
-    val usePreciseJavaTracking: Boolean
+        val usePreciseJavaTracking: Boolean,
+        /**
+         * Directories that should be cleared when IC decides to rebuild
+         */
+        val localStateDirs: List<File>,
+        val multiModuleICSettings: MultiModuleICSettings,
+        val modulesInfo: IncrementalModuleInfo
 ) : CompilationOptions(compilerMode, targetPlatform, reportCategories, reportSeverity, requestedCompilationResults) {
     companion object {
         const val serialVersionUID: Long = 0
@@ -77,10 +81,19 @@ class IncrementalCompilationOptions(
                "workingDir=$workingDir, " +
                "customCacheVersionFileName='$customCacheVersionFileName', " +
                "customCacheVersion=$customCacheVersion, " +
-               "resultDifferenceFile=$resultDifferenceFile, " +
-               "friendDifferenceFile=$friendDifferenceFile, " +
+               "multiModuleICSettings=$multiModuleICSettings, " +
                "usePreciseJavaTracking=$usePreciseJavaTracking" +
+               "localStateDirs=$localStateDirs" +
                ")"
+    }
+}
+
+data class MultiModuleICSettings(
+    val buildHistoryFile: File,
+    val useModuleDetection: Boolean
+) : Serializable {
+    companion object {
+        const val serialVersionUID: Long = 0
     }
 }
 

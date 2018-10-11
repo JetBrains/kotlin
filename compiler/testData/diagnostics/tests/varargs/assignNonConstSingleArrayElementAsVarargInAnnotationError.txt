@@ -1,0 +1,19 @@
+package
+
+public val nonConstArray: kotlin.LongArray
+@Anno public fun bar1(): kotlin.Unit
+@Anno public fun bar2(): kotlin.Unit
+@Anno(value = {}) public fun foo1(): kotlin.Unit
+@Anno(value = {}) public fun foo2(): kotlin.Unit
+@Anno(value = {}) public fun foo3(): kotlin.Unit
+@Anno(value = {}) public fun foo4(): kotlin.Unit
+public fun nonConstFun(): kotlin.LongArray
+public fun nonConstLong(): kotlin.Long
+
+public final annotation class Anno : kotlin.Annotation {
+    public constructor Anno(/*0*/ vararg value: kotlin.Long /*kotlin.LongArray*/)
+    public final val value: kotlin.LongArray
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

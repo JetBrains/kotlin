@@ -28,10 +28,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveImportReference
 import org.jetbrains.kotlin.idea.codeInsight.shorten.addDelayedImportRequest
 import org.jetbrains.kotlin.idea.codeInsight.shorten.addToShorteningWaitSet
-import org.jetbrains.kotlin.idea.core.ShortenReferences
-import org.jetbrains.kotlin.idea.core.copied
-import org.jetbrains.kotlin.idea.core.quoteIfNeeded
-import org.jetbrains.kotlin.idea.core.replaced
+import org.jetbrains.kotlin.idea.core.*
 import org.jetbrains.kotlin.idea.intentions.OperatorToFunctionIntention
 import org.jetbrains.kotlin.idea.refactoring.fqName.getKotlinFqName
 import org.jetbrains.kotlin.lexer.KtToken
@@ -39,6 +36,7 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.load.java.descriptors.JavaPropertyDescriptor
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.name.isOneSegmentFQN
 import org.jetbrains.kotlin.plugin.references.SimpleNameReferenceExtension
 import org.jetbrains.kotlin.psi.*
@@ -77,13 +75,11 @@ class KtSimpleNameReference(expression: KtSimpleNameExpression) : KtSimpleRefere
         }
     }
 
-    override fun isReferenceTo(element: PsiElement?): Boolean {
-        if (element != null) {
-            if (!canBeReferenceTo(element)) return false
+    override fun isReferenceTo(element: PsiElement): Boolean {
+        if (!canBeReferenceTo(element)) return false
 
-            for (extension in Extensions.getArea(element.project).getExtensionPoint(SimpleNameReferenceExtension.EP_NAME).extensions) {
-                if (extension.isReferenceTo(this, element)) return true
-            }
+        for (extension in Extensions.getArea(element.project).getExtensionPoint(SimpleNameReferenceExtension.EP_NAME).extensions) {
+            if (extension.isReferenceTo(this, element)) return true
         }
 
         return super.isReferenceTo(element)
@@ -104,9 +100,22 @@ class KtSimpleNameReference(expression: KtSimpleNameExpression) : KtSimpleRefere
         return true
     }
 
-    override fun handleElementRename(newElementName: String?): PsiElement {
+    override fun handleElementRename(newElementName: String): PsiElement {
         if (!canRename()) throw IncorrectOperationException()
-        if (newElementName == null) return expression
+
+        if (newElementName.unquote() == "") {
+            val qualifiedElement = expression.getQualifiedElement()
+            return when (qualifiedElement) {
+                is KtQualifiedExpression -> {
+                    expression.replace(qualifiedElement.receiverExpression)
+                    qualifiedElement.replaced(qualifiedElement.selectorExpression!!)
+                }
+                is KtUserType -> {
+                    expression.replaced(KtPsiFactory(expression).createSimpleName(SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT.asString()))
+                }
+                else -> expression
+            }
+        }
 
         // Do not rename if the reference corresponds to synthesized component function
         val expressionText = expression.text
@@ -169,16 +178,18 @@ class KtSimpleNameReference(expression: KtSimpleNameExpression) : KtSimpleRefere
 
         if (shorteningMode == ShorteningMode.NO_SHORTENING) return newExpression
 
-        val needToShorten =
-                PsiTreeUtil.getParentOfType(expression, KtImportDirective::class.java, KtPackageDirective::class.java) == null
-        if (needToShorten) {
-            when (shorteningMode) {
-                ShorteningMode.FORCED_SHORTENING -> ShortenReferences.DEFAULT.process(newQualifiedElement)
-                else -> newQualifiedElement.addToShorteningWaitSet()
-            }
+        val needToShorten = PsiTreeUtil.getParentOfType(expression, KtImportDirective::class.java, KtPackageDirective::class.java) == null
+        if (!needToShorten) {
+            return newExpression
         }
 
-        return newExpression
+        return when (shorteningMode) {
+            ShorteningMode.FORCED_SHORTENING -> ShortenReferences.DEFAULT.process(newQualifiedElement)
+            else -> {
+                newQualifiedElement.addToShorteningWaitSet()
+                newExpression
+            }
+        }
     }
 
     /**

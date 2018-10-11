@@ -1,5 +1,8 @@
 
-apply { plugin("kotlin") }
+plugins {
+    kotlin("jvm")
+    id("jps-compatible")
+}
 
 jvmTarget = "1.8"
 
@@ -25,7 +28,6 @@ dependencies {
 
     testCompile(project(":compiler:backend"))
     testCompile(project(":compiler:cli"))
-    testCompile(project(":compiler:tests-common"))
     testCompile(projectTests(":compiler:tests-common"))
     testCompile(commonDep("junit:junit"))
 }
@@ -33,12 +35,17 @@ dependencies {
 sourceSets {
     "main" {
         projectDefault()
-        java.srcDirs("../../plugins/annotation-collector/src",
-                     "../builtins-serializer/src",
+        java.srcDirs("../builtins-serializer/src",
                      "../javac-wrapper/src")
     }
-    "test" {
-        java.srcDirs("../../plugins/annotation-collector/test")
+    "test" { }
+}
+
+tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>> {
+    kotlinOptions {
+        languageVersion = "1.2"
+        apiVersion = "1.2"
+        freeCompilerArgs += "-Xskip-metadata-version-check"
     }
 }
 

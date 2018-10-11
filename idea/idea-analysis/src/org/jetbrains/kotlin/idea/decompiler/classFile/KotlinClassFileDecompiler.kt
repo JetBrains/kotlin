@@ -30,8 +30,8 @@ import org.jetbrains.kotlin.idea.decompiler.textBuilder.DecompiledText
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.ResolverForDecompiler
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.buildDecompiledText
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.defaultDecompilerRendererOptions
-import org.jetbrains.kotlin.load.kotlin.JvmMetadataVersion
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
+import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.types.asFlexibleType
@@ -67,8 +67,10 @@ fun buildDecompiledTextForClassFile(
         classFile: VirtualFile,
         resolver: ResolverForDecompiler = DeserializerForClassfileDecompiler(classFile)
 ): DecompiledText {
-    val (classHeader, classId) = IDEKotlinBinaryClassCache.getKotlinBinaryClassHeaderData(classFile)
+    val classHeader = IDEKotlinBinaryClassCache.getKotlinBinaryClassHeaderData(classFile)
                                  ?: error("Decompiled data factory shouldn't be called on an unsupported file: " + classFile)
+
+    val classId = classHeader.classId
 
     if (!classHeader.metadataVersion.isCompatible()) {
         return createIncompatibleAbiVersionDecompiledText(JvmMetadataVersion.INSTANCE, classHeader.metadataVersion)
@@ -85,7 +87,7 @@ fun buildDecompiledTextForClassFile(
             buildText(listOfNotNull(resolver.resolveTopLevelClass(classId)))
         }
         KotlinClassHeader.Kind.MULTIFILE_CLASS -> {
-            val partClasses = findMultifileClassParts(classFile, classId, classHeader)
+            val partClasses = findMultifileClassParts(classFile, classId, classHeader.partNamesIfMultifileFacade)
             val partMembers = partClasses.flatMap { partClass ->
                 resolver.resolveDeclarationsInFacade(partClass.classId.asSingleFqName())
             }

@@ -1,6 +1,6 @@
 // WITH_RUNTIME
 
-const val M = 0xFFFF.toChar()
+const val M = Char.MAX_VALUE
 
 fun box(): String {
     var count = 0

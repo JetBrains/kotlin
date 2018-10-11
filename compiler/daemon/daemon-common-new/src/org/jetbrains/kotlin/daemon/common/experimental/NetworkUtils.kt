@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.daemon.common.experimental
 
 import io.ktor.network.sockets.aSocket
-import kotlinx.coroutines.experimental.runBlocking
+import kotlinx.coroutines.runBlocking
 import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.ServerSocketWrapper
 import org.jetbrains.kotlin.daemon.common.impls.*
 import java.io.IOException

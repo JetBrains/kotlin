@@ -40,7 +40,7 @@ class NumberConversionFix(
         val expressionType = element.analyze(BodyResolveMode.PARTIAL).getType(element)
         expressionType != null && expressionType != type && expressionType.isPrimitiveNumberType() && type.isPrimitiveNumberType()
     }
-    private val typePresentation = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(type)
+    private val typePresentation = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_NO_ANNOTATIONS.renderType(type)
 
     override fun isAvailable(project: Project, editor: Editor?, file: KtFile)
             = disableIfAvailable?.isAvailable(project, editor, file) != true

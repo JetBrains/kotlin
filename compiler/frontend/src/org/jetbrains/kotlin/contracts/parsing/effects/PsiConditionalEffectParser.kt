@@ -18,23 +18,19 @@ package org.jetbrains.kotlin.contracts.parsing.effects
 
 import org.jetbrains.kotlin.contracts.description.ConditionalEffectDeclaration
 import org.jetbrains.kotlin.contracts.description.EffectDeclaration
-import org.jetbrains.kotlin.contracts.parsing.AbstractPsiEffectParser
-import org.jetbrains.kotlin.contracts.parsing.PsiContractParserDispatcher
-import org.jetbrains.kotlin.contracts.parsing.firstArgumentAsExpressionOrNull
-import org.jetbrains.kotlin.contracts.parsing.isImpliesCallDescriptor
+import org.jetbrains.kotlin.contracts.parsing.*
 import org.jetbrains.kotlin.psi.KtExpression
-import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 internal class PsiConditionalEffectParser(
-    trace: BindingTrace,
+    collector: ContractParsingDiagnosticsCollector,
+    callContext: ContractCallContext,
     dispatcher: PsiContractParserDispatcher
-) : AbstractPsiEffectParser(trace, dispatcher) {
+) : AbstractPsiEffectParser(collector, callContext, dispatcher) {
     override fun tryParseEffect(expression: KtExpression): EffectDeclaration? {
-        val resolvedCall = expression.getResolvedCall(trace.bindingContext) ?: return null
-
+        val resolvedCall = expression.getResolvedCall(callContext.bindingContext) ?: return null
         if (!resolvedCall.resultingDescriptor.isImpliesCallDescriptor()) return null
 
         val effect = contractParserDispatcher.parseEffect(resolvedCall.dispatchReceiver.safeAs<ExpressionReceiver>()?.expression)

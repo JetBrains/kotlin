@@ -1,0 +1,19 @@
+compiler/testData/cli/jvm/releaseCoroutinesApiVersion1.2.kt:1:1: error: unsupported [cannot use release coroutines with api version less than 1.3]
+suspend fun dummy() {}
+^
+compiler/testData/cli/jvm/releaseCoroutinesApiVersion1.2.kt:3:8: error: unsupported [cannot use release coroutines with api version less than 1.3]
+val c: suspend () -> Unit = {}
+       ^
+compiler/testData/cli/jvm/releaseCoroutinesApiVersion1.2.kt:5:16: error: unsupported [cannot use release coroutines with api version less than 1.3]
+fun builder(c: suspend () -> Unit) {}
+               ^
+compiler/testData/cli/jvm/releaseCoroutinesApiVersion1.2.kt:7:9: error: unsupported [cannot use release coroutines with api version less than 1.3]
+val d = suspend {}
+        ^
+compiler/testData/cli/jvm/releaseCoroutinesApiVersion1.2.kt:9:1: error: unsupported [cannot use release coroutines with api version less than 1.3]
+suspend fun check() {
+^
+compiler/testData/cli/jvm/releaseCoroutinesApiVersion1.2.kt:12:5: error: unsupported [cannot use release coroutines with api version less than 1.3]
+    builder {}
+    ^
+COMPILATION_ERROR

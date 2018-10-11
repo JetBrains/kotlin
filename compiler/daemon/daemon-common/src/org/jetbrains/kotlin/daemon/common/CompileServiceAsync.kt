@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.daemon.common
 import org.jetbrains.kotlin.cli.common.repl.ReplCheckResult
 import org.jetbrains.kotlin.cli.common.repl.ReplCodeLine
 import org.jetbrains.kotlin.cli.common.repl.ReplCompileResult
+import java.io.File
 
 
 interface CompileServiceAsync {
@@ -69,6 +70,8 @@ interface CompileServiceAsync {
         replStateId: Int,
         codeLine: ReplCodeLine
     ): CompileService.CallResult<ReplCompileResult>
+
+    suspend fun classesFqNamesByFiles(sessionId: Int, sourceFiles: Set<File>): CompileService.CallResult<Set<String>>
 
     val serverPort: Int
         get() = 0

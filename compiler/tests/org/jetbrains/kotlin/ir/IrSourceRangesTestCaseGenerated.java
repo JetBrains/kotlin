@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
 
@@ -21,25 +21,26 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 public class IrSourceRangesTestCaseGenerated extends AbstractIrSourceRangesTestCase {
+    private void runTest(String testDataFilePath) throws Exception {
+        KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+    }
+
     public void testAllFilesPresentInSourceRanges() throws Exception {
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/ir/sourceRanges"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
     }
 
     @TestMetadata("augmentedAssignmentWithExpression.kt")
     public void testAugmentedAssignmentWithExpression() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/sourceRanges/augmentedAssignmentWithExpression.kt");
-        doTest(fileName);
+        runTest("compiler/testData/ir/sourceRanges/augmentedAssignmentWithExpression.kt");
     }
 
     @TestMetadata("kt17108.kt")
     public void testKt17108() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/sourceRanges/kt17108.kt");
-        doTest(fileName);
+        runTest("compiler/testData/ir/sourceRanges/kt17108.kt");
     }
 
     @TestMetadata("synthesizedDataClassMembers.kt")
     public void testSynthesizedDataClassMembers() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/ir/sourceRanges/synthesizedDataClassMembers.kt");
-        doTest(fileName);
+        runTest("compiler/testData/ir/sourceRanges/synthesizedDataClassMembers.kt");
     }
 }

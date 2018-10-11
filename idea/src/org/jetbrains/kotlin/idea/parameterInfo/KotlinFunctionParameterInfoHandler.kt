@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.idea.core.resolveCandidates
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.util.ShadowedDeclarationsFilter
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.load.java.NULLABILITY_ANNOTATIONS
 import org.jetbrains.kotlin.load.java.sam.SamAdapterDescriptor
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.allChildren
@@ -62,6 +63,20 @@ class KotlinFunctionParameterInfoHandler : KotlinParameterInfoWithCallHandlerBas
     override fun getActualParametersRBraceType() = KtTokens.RPAR
 
     override fun getArgumentListAllowedParentClasses() = setOf(KtCallElement::class.java)
+}
+
+class KotlinLambdaParameterInfoHandler :
+    KotlinParameterInfoWithCallHandlerBase<KtLambdaArgument, KtLambdaArgument>(KtLambdaArgument::class, KtLambdaArgument::class) {
+    override fun getActualParameters(lambdaArgument: KtLambdaArgument) = arrayOf(lambdaArgument)
+
+    override fun getActualParametersRBraceType() = KtTokens.RBRACE
+
+    override fun getArgumentListAllowedParentClasses() = setOf(KtLambdaArgument::class.java)
+
+    override fun getParameterIndex(context: UpdateParameterInfoContext, argumentList: KtLambdaArgument): Int {
+        val size = (argumentList.parent as? KtCallElement)?.valueArguments?.size ?: 1
+        return size - 1
+    }
 }
 
 class KotlinArrayAccessParameterInfoHandler : KotlinParameterInfoWithCallHandlerBase<KtContainerNode, KtExpression>(KtContainerNode::class, KtExpression::class) {
@@ -114,7 +129,7 @@ abstract class KotlinParameterInfoWithCallHandlerBase<TArgumentList : KtElement,
         val file = context.file as? KtFile ?: return null
 
         val token = file.findElementAt(context.offset) ?: return null
-        val argumentList = PsiTreeUtil.getParentOfType(token, argumentListClass.java) ?: return null
+        val argumentList = PsiTreeUtil.getParentOfType(token, argumentListClass.java, true, KtValueArgumentList::class.java) ?: return null
 
         val bindingContext = argumentList.analyze(BodyResolveMode.PARTIAL)
         val call = findCall(argumentList, bindingContext) ?: return null
@@ -138,12 +153,15 @@ abstract class KotlinParameterInfoWithCallHandlerBase<TArgumentList : KtElement,
         if (context.parameterOwner !== argumentList) {
             context.removeHint()
         }
-
-        val offset = context.offset
-        val parameterIndex = argumentList.allChildren
-                .takeWhile { it.startOffset < offset }
-                .count { it.node.elementType == KtTokens.COMMA }
+        val parameterIndex = getParameterIndex(context, argumentList)
         context.setCurrentParameter(parameterIndex)
+    }
+
+    protected open fun getParameterIndex(context: UpdateParameterInfoContext, argumentList: TArgumentList): Int {
+        val offset = context.offset
+        return argumentList.allChildren
+            .takeWhile { it.startOffset < offset }
+            .count { it.node.elementType == KtTokens.COMMA }
     }
 
     override fun updateUI(itemToShow: FunctionDescriptor, context: ParameterInfoUIContext) {
@@ -247,6 +265,7 @@ abstract class KotlinParameterInfoWithCallHandlerBase<TArgumentList : KtElement,
     override fun getParametersForDocumentation(item: FunctionDescriptor, context: ParameterInfoContext) = emptyArray<Any>()
 
     private val RENDERER = DescriptorRenderer.SHORT_NAMES_IN_TYPES.withOptions {
+        enhancedTypes = true
         renderUnabbreviatedType = false
     }
 
@@ -254,9 +273,12 @@ abstract class KotlinParameterInfoWithCallHandlerBase<TArgumentList : KtElement,
         return buildString {
             if (named) append("[")
 
-            parameter.annotations.getAllAnnotations().forEach {
-                it.annotation.fqName?.let { append("@${it.shortName().asString()} ") }
-            }
+            parameter
+                .annotations
+                .filterNot { it.fqName in NULLABILITY_ANNOTATIONS }
+                .forEach {
+                    it.fqName?.let { fqName -> append("@${fqName.shortName().asString()} ") }
+                }
 
             if (parameter.varargElementType != null) {
                 append("vararg ")

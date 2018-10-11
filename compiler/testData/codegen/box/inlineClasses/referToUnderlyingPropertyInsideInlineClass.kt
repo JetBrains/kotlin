@@ -1,4 +1,5 @@
 // !LANGUAGE: +InlineClasses
+// IGNORE_BACKEND: JVM_IR
 
 inline class UInt(val value: Int) {
     operator fun plus(other: UInt) = UInt(value + other.value)

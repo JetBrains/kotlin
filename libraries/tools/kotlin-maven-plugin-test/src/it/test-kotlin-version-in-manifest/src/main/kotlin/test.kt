@@ -21,11 +21,8 @@ import java.util.jar.Attributes
 import java.util.jar.Manifest
 
 val LIBRARIES = listOf(
-        "kotlin-runtime",
         "kotlin-stdlib",
         "kotlin-stdlib-common",
-        "kotlin-stdlib-jre7",
-        "kotlin-stdlib-jre8",
         "kotlin-stdlib-jdk7",
         "kotlin-stdlib-jdk8",
         "kotlin-reflect",

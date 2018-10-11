@@ -11,6 +11,3 @@ package a {
     @kotlin.SinceKotlin(version = "1.1") public typealias Alias_1_1 = kotlin.String
     public typealias Since_1_1_Alias = a.Since_1_1
 }
-
-package b {
-}

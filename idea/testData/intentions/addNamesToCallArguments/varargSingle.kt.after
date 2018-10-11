@@ -1,5 +1,0 @@
-fun foo(n: Int, vararg s: String){}
-
-fun bar() {
-    <caret>foo(n = 1, s = "")
-}

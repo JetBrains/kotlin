@@ -1,11 +1,15 @@
 description = 'Kotlin Test JUnit'
 
 apply plugin: 'kotlin-platform-jvm'
+apply plugin: 'pill-configurable'
 
 configureJvm6Project(project)
 configureDist(project)
 configurePublishing(project)
 
+pill {
+    importAsLibrary = true
+}
 
 dependencies {
     expectedBy project(':kotlin-test:kotlin-test-annotations-common')
@@ -28,7 +32,7 @@ dist {
 }
 
 compileKotlin {
-    kotlinOptions.freeCompilerArgs = ["-Xallow-kotlin-package", "-Xmulti-platform", "-module-name", project.name]
+    kotlinOptions.freeCompilerArgs = ["-Xallow-kotlin-package", "-module-name", project.name]
 }
 
 compileTestKotlin {

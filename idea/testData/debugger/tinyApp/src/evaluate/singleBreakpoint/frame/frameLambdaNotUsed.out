@@ -20,7 +20,7 @@ fun foo(f: () -> Unit) {
 // PRINT_FRAME
 
 // EXPRESSION: val1
-// RESULT: Cannot find local variable: name = val1
+// RESULT: java.lang.AssertionError : Cannot find local variable: name = val1
  frame    = invoke:7, FrameLambdaNotUsedKt$main$1 {frameLambdaNotUsed}
    this     = this = {frameLambdaNotUsed.FrameLambdaNotUsedKt$main$1@uniqueID}Function0<kotlin.Unit>
      field    = arity: int = 0 (sp = Lambda.!EXT!)

@@ -38,10 +38,6 @@ class IrModuleFragmentImpl(
 
     override val files: MutableList<IrFile> = ArrayList()
 
-    override val externalPackageFragments: MutableList<IrExternalPackageFragment> = ArrayList()
-
-    override val dependencyModules: MutableList<IrModuleFragment> = ArrayList()
-
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitModuleFragment(this, data)
 

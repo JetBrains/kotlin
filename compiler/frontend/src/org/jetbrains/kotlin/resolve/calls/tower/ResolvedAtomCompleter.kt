@@ -5,17 +5,19 @@
 
 package org.jetbrains.kotlin.resolve.calls.tower
 
-import org.jetbrains.kotlin.builtins.replaceReturnType
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.createFunctionType
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.impl.FunctionDescriptorImpl
+import org.jetbrains.kotlin.descriptors.impl.ReceiverParameterDescriptorImpl
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTrace
-import org.jetbrains.kotlin.resolve.DeprecationResolver
 import org.jetbrains.kotlin.resolve.TemporaryBindingTrace
 import org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver
 import org.jetbrains.kotlin.resolve.calls.checkers.CallCheckerContext
@@ -28,6 +30,7 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategyImpl
 import org.jetbrains.kotlin.resolve.calls.util.CallMaker
+import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
 import org.jetbrains.kotlin.types.IndexedParametersSubstitution
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.UnwrappedType
@@ -38,17 +41,18 @@ import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
 
 class ResolvedAtomCompleter(
     private val resultSubstitutor: NewTypeSubstitutor,
-    private val trace: BindingTrace,
     private val topLevelCallContext: BasicCallResolutionContext,
     private val kotlinToResolvedCallTransformer: KotlinToResolvedCallTransformer,
     private val expressionTypingServices: ExpressionTypingServices,
     private val argumentTypeResolver: ArgumentTypeResolver,
     private val doubleColonExpressionResolver: DoubleColonExpressionResolver,
-    deprecationResolver: DeprecationResolver,
-    moduleDescriptor: ModuleDescriptor,
+    private val builtIns: KotlinBuiltIns,
+    private val deprecationResolver: DeprecationResolver,
+    private val moduleDescriptor: ModuleDescriptor,
     private val dataFlowValueFactory: DataFlowValueFactory
 ) {
-    private val callCheckerContext = CallCheckerContext(topLevelCallContext, deprecationResolver, moduleDescriptor)
+    private val topLevelCallCheckerContext = CallCheckerContext(topLevelCallContext, deprecationResolver, moduleDescriptor)
+    private val topLevelTrace = topLevelCallCheckerContext.trace
 
     private fun complete(resolvedAtom: ResolvedAtom) {
         when (resolvedAtom) {
@@ -56,11 +60,7 @@ class ResolvedAtomCompleter(
             is ResolvedCallableReferenceAtom -> completeCallableReference(resolvedAtom)
             is ResolvedLambdaAtom -> completeLambda(resolvedAtom)
             is ResolvedCallAtom -> completeResolvedCall(resolvedAtom, emptyList())
-            is CallResolutionResult -> {
-                if (resolvedAtom.type == CallResolutionResult.Type.PARTIAL) {
-                    resolvedAtom.resultCallAtom?.let { completeResolvedCall(it, resolvedAtom.diagnostics) }
-                }
-            }
+            is PartialCallResolutionResult -> completeResolvedCall(resolvedAtom.resultCallAtom, resolvedAtom.diagnostics)
         }
     }
 
@@ -76,15 +76,28 @@ class ResolvedAtomCompleter(
 
         val resolvedCall = kotlinToResolvedCallTransformer.transformToResolvedCall<CallableDescriptor>(
             resolvedCallAtom,
-            trace,
+            topLevelTrace,
             resultSubstitutor,
             diagnostics
         )
-        kotlinToResolvedCallTransformer.bindAndReport(topLevelCallContext, trace, resolvedCall, diagnostics)
+
+        val resolutionContextForPartialCall =
+            topLevelCallContext.trace[BindingContext.PARTIAL_CALL_RESOLUTION_CONTEXT, resolvedCallAtom.atom.psiKotlinCall.psiCall]
+
+        val callCheckerContext = if (resolutionContextForPartialCall != null)
+            CallCheckerContext(
+                resolutionContextForPartialCall.replaceBindingTrace(topLevelTrace),
+                deprecationResolver,
+                moduleDescriptor
+            )
+        else
+            topLevelCallCheckerContext
+
+        kotlinToResolvedCallTransformer.bindAndReport(topLevelCallContext, topLevelTrace, resolvedCall, diagnostics)
         kotlinToResolvedCallTransformer.runCallCheckers(resolvedCall, callCheckerContext)
 
         val lastCall = if (resolvedCall is VariableAsFunctionResolvedCall) resolvedCall.functionCall else resolvedCall
-        kotlinToResolvedCallTransformer.runArgumentsChecks(topLevelCallContext, trace, lastCall as NewResolvedCallImpl<*>)
+        kotlinToResolvedCallTransformer.runArgumentsChecks(topLevelCallContext, topLevelTrace, lastCall as NewResolvedCallImpl<*>)
 
         return resolvedCall
     }
@@ -92,21 +105,21 @@ class ResolvedAtomCompleter(
     private fun completeLambda(lambda: ResolvedLambdaAtom) {
         val returnType = resultSubstitutor.safeSubstitute(lambda.returnType)
 
-        updateTraceForLambdaReturnType(lambda, trace, returnType)
+        updateTraceForLambda(lambda, topLevelTrace, returnType)
 
         for (lambdaResult in lambda.resultArguments) {
             val resultValueArgument = lambdaResult as? PSIKotlinCallArgument ?: continue
             val newContext =
                 topLevelCallContext.replaceDataFlowInfo(resultValueArgument.dataFlowInfoAfterThisArgument)
                     .replaceExpectedType(returnType)
-                    .replaceBindingTrace(trace)
+                    .replaceBindingTrace(topLevelTrace)
 
             val argumentExpression = resultValueArgument.valueArgument.getArgumentExpression() ?: continue
             kotlinToResolvedCallTransformer.updateRecordedType(argumentExpression, newContext, true)
         }
     }
 
-    private fun updateTraceForLambdaReturnType(lambda: ResolvedLambdaAtom, trace: BindingTrace, returnType: UnwrappedType) {
+    private fun updateTraceForLambda(lambda: ResolvedLambdaAtom, trace: BindingTrace, returnType: UnwrappedType) {
         val psiCallArgument = lambda.atom.psiCallArgument
 
         val ktArgumentExpression: KtExpression
@@ -127,8 +140,40 @@ class ResolvedAtomCompleter(
                 ?: throw AssertionError("No function descriptor for resolved lambda argument")
         functionDescriptor.setReturnType(returnType)
 
-        val existingLambdaType = trace.getType(ktArgumentExpression) ?: throw AssertionError("No type for resolved lambda argument")
-        trace.recordType(ktArgumentExpression, existingLambdaType.replaceReturnType(returnType))
+        val existingLambdaType = trace.getType(ktArgumentExpression)
+        if (existingLambdaType == null) {
+            if (ktFunction is KtNamedFunction && ktFunction.nameIdentifier != null) return // it's a statement
+
+            throw AssertionError("No type for resolved lambda argument: ${ktArgumentExpression.text}")
+        }
+        val substitutedFunctionalType = createFunctionType(
+            builtIns,
+            existingLambdaType.annotations,
+            lambda.receiver?.let { resultSubstitutor.substituteKeepAnnotations(it) },
+            lambda.parameters.map { resultSubstitutor.substituteKeepAnnotations(it) },
+            null, // parameter names transforms to special annotations, so they are already taken from parameter types
+            returnType,
+            lambda.isSuspend
+        )
+
+        trace.recordType(ktArgumentExpression, substitutedFunctionalType)
+
+        // Mainly this is needed for builder-like inference, when we have type `SomeType<K, V>.() -> Unit` and now we want to update those K, V
+        val receiver = functionDescriptor.extensionReceiverParameter
+        if (receiver != null) {
+            require(receiver is ReceiverParameterDescriptorImpl) {
+                "Extension receiver for anonymous function ($receiver) should be ReceiverParameterDescriptorImpl"
+            }
+
+            val valueType = receiver.value.type.unwrap()
+            val newValueType = resultSubstitutor.substituteKeepAnnotations(valueType)
+
+            val newReceiverValue = receiver.value.replaceType(newValueType)
+
+            functionDescriptor.setExtensionReceiverParameter(
+                ReceiverParameterDescriptorImpl(receiver.containingDeclaration, newReceiverValue, receiver.annotations)
+            )
+        }
     }
 
     private fun completeCallableReference(
@@ -153,7 +198,7 @@ class ResolvedAtomCompleter(
         // write down type for callable reference expression
         val resultType = resultSubstitutor.safeSubstitute(callableCandidate.reflectionCandidateType, Variance.INVARIANT)
         argumentTypeResolver.updateResultArgumentTypeIfNotDenotable(
-            trace, expressionTypingServices.statementFilter,
+            topLevelTrace, expressionTypingServices.statementFilter,
             resultType,
             callableReferenceExpression
         )
@@ -169,7 +214,7 @@ class ResolvedAtomCompleter(
         val psiCall = CallMaker.makeCall(reference, explicitReceiver?.receiverValue, null, reference, emptyList())
 
         val tracing = TracingStrategyImpl.create(reference, psiCall)
-        val temporaryTrace = TemporaryBindingTrace.create(trace, "callable reference fake call")
+        val temporaryTrace = TemporaryBindingTrace.create(topLevelTrace, "callable reference fake call")
 
         val resolvedCall = ResolvedCallImpl(
             psiCall, callableCandidate.candidate, callableCandidate.dispatchReceiver?.receiver?.receiverValue,
@@ -178,9 +223,9 @@ class ResolvedAtomCompleter(
         )
         resolvedCall.setResultingSubstitutor(resultSubstitutor)
 
-        tracing.bindCall(trace, psiCall)
-        tracing.bindReference(trace, resolvedCall)
-        tracing.bindResolvedCall(trace, resolvedCall)
+        tracing.bindCall(topLevelTrace, psiCall)
+        tracing.bindReference(topLevelTrace, resolvedCall)
+        tracing.bindResolvedCall(topLevelTrace, resolvedCall)
 
         resolvedCall.setStatusToSuccess()
         resolvedCall.markCallAsCompleted()
@@ -189,7 +234,8 @@ class ResolvedAtomCompleter(
             is FunctionDescriptor -> doubleColonExpressionResolver.bindFunctionReference(
                 callableReferenceExpression,
                 resultType,
-                topLevelCallContext
+                topLevelCallContext,
+                callableCandidate.candidate as FunctionDescriptor
             )
             is PropertyDescriptor -> doubleColonExpressionResolver.bindPropertyReference(
                 callableReferenceExpression,
@@ -199,8 +245,8 @@ class ResolvedAtomCompleter(
         }
 
         // TODO: probably we should also record key 'DATA_FLOW_INFO_BEFORE', see ExpressionTypingVisitorDispatcher.getTypeInfo
-        trace.recordType(callableReferenceExpression, resultType)
-        trace.record(BindingContext.PROCESSED, callableReferenceExpression)
+        topLevelTrace.recordType(callableReferenceExpression, resultType)
+        topLevelTrace.record(BindingContext.PROCESSED, callableReferenceExpression)
 
         doubleColonExpressionResolver.checkReferenceIsToAllowedMember(
             callableCandidate.candidate,
@@ -217,7 +263,7 @@ class ResolvedAtomCompleter(
             collectionLiteralArgument.expectedType?.let { resultSubstitutor.safeSubstitute(it) } ?: TypeUtils.NO_EXPECTED_TYPE
 
         val actualContext = context
-            .replaceBindingTrace(trace)
+            .replaceBindingTrace(topLevelTrace)
             .replaceExpectedType(expectedType)
             .replaceContextDependency(ContextDependency.INDEPENDENT)
 

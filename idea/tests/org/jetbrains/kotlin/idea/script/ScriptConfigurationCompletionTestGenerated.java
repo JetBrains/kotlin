@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
 
@@ -21,19 +21,21 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 public class ScriptConfigurationCompletionTestGenerated extends AbstractScriptConfigurationCompletionTest {
+    private void runTest(String testDataFilePath) throws Exception {
+        KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+    }
+
     public void testAllFilesPresentInCompletion() throws Exception {
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/script/definition/completion"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, false);
     }
 
     @TestMetadata("conflictingModule")
     public void testConflictingModule() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/script/definition/completion/conflictingModule/");
-        doTest(fileName);
+        runTest("idea/testData/script/definition/completion/conflictingModule/");
     }
 
     @TestMetadata("conflictingModuleJavaLib")
     public void testConflictingModuleJavaLib() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/script/definition/completion/conflictingModuleJavaLib/");
-        doTest(fileName);
+        runTest("idea/testData/script/definition/completion/conflictingModuleJavaLib/");
     }
 }

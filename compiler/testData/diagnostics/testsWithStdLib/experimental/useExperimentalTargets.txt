@@ -1,26 +1,3 @@
-// -- Module: <api> --
-package
-
-package api {
-
-    @kotlin.Experimental(changesMayBreak = {Impact.COMPILATION}, level = Level.WARNING) @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.CLASS}) public final annotation class E : kotlin.Annotation {
-        public constructor E()
-        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-    }
-
-    @api.E public open class Foo {
-        public constructor Foo(/*0*/ s: kotlin.String = ...)
-        public final val s: kotlin.String
-        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-    }
-}
-
-
-// -- Module: <usage> --
 package
 
 @kotlin.UseExperimental(markerClass = {api.E::class}) public val property: kotlin.String
@@ -42,6 +19,22 @@ public final class Constructor {
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
+@kotlin.UseExperimental(markerClass = {api.E::class}) public typealias TypeAlias = api.Foo
 
 package api {
+
+    @kotlin.Experimental(level = Level.WARNING) @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.CLASS}) public final annotation class E : kotlin.Annotation {
+        public constructor E()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    @api.E public open class Foo {
+        public constructor Foo(/*0*/ s: kotlin.String = ...)
+        public final val s: kotlin.String
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
 }

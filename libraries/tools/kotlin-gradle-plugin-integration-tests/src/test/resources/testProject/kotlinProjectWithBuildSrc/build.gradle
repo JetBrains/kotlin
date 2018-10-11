@@ -1,1 +1,6 @@
 apply plugin: 'kotlin'
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}

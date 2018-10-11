@@ -1,4 +1,9 @@
 apply plugin: 'kotlin'
+apply plugin: 'jps-compatible'
+
+pill {
+    variant = "FULL"
+}
 
 configureJvmProject(project)
 
@@ -12,6 +17,8 @@ dependencies {
     testCompile project(':kotlin-gradle-plugin').sourceSets.test.output
     testCompile project(':kotlin-gradle-subplugin-example')
     testCompile project(':kotlin-allopen')
+    testCompile project(':kotlin-noarg')
+    testCompile project(':kotlin-sam-with-receiver')
     testCompile project(':kotlin-test:kotlin-test-jvm')
 
     testCompile project(path: ':kotlin-compiler-embeddable', configuration: 'runtimeJar')
@@ -21,7 +28,7 @@ dependencies {
     testRuntime (project(path: ':kotlin-gradle-plugin-test-utils-embeddable', configuration: 'runtimeJar'))
 
     testCompile project(path: ':examples:annotation-processor-example')
-    testCompile project(':kotlin-stdlib-jre8')
+    testCompile project(':kotlin-stdlib-jdk8')
     testCompile project(':kotlin-reflect')
     testCompile project(':kotlin-android-extensions')
 
@@ -38,6 +45,8 @@ dependencies {
 test.dependsOn(":kotlin-gradle-plugin:validateTaskProperties")
 
 test.dependsOn(":kotlin-allopen:install",
+               ":kotlin-noarg:install",
+               ":kotlin-sam-with-receiver:install",
                ":kotlin-android-extensions:install",
                ":kotlin-build-common:install",
                ":kotlin-compiler-embeddable:install",
@@ -46,8 +55,11 @@ test.dependsOn(":kotlin-allopen:install",
                ":kotlin-annotation-processing-gradle:install",
                ":kotlin-test:kotlin-test-jvm:install",
                ":kotlin-gradle-subplugin-example:install",
-               ":kotlin-stdlib-jre8:install",
-               ":examples:annotation-processor-example:install")
+               ":kotlin-stdlib-jdk8:install",
+               ":examples:annotation-processor-example:install",
+               ":kotlin-scripting-common:install",
+               ":kotlin-scripting-jvm:install",
+               ":kotlin-scripting-compiler-embeddable:install")
 
 
 // Validate that all dependencies 'install' tasks are added to 'test' dependencies
@@ -123,6 +135,7 @@ tasks.withType(Test) {
 def jpsIncrementalTestsClass = '**/KotlinGradlePluginJpsParametrizedIT.class'
 
 test {
+    dependsOn(":kotlin-gradle-plugin:validateTaskProperties")
     exclude jpsIncrementalTestsClass
 }
 

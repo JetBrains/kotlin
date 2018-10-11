@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.load.java.lazy.descriptors
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.jvm.createMappedTypeParametersSubstitution
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.ClassDescriptorBase
@@ -26,7 +27,6 @@ import org.jetbrains.kotlin.load.java.structure.JavaClassifierType
 import org.jetbrains.kotlin.load.java.structure.JavaType
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.isValidJavaFqName
-import org.jetbrains.kotlin.platform.createMappedTypeParametersSubstitution
 import org.jetbrains.kotlin.resolve.constants.StringValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
@@ -139,6 +139,9 @@ class LazyJavaClassDescriptor(
         // If we ignore a method with wrong signature (different from one in Object) it's not very bad,
         // we'll just say that the interface MAY BE a SAM when it's not and then more detailed check will be applied.
         if (candidates.count { it.name.identifier !in PUBLIC_METHOD_NAMES_IN_OBJECT } > 1) return true
+
+        // If we have default methods the interface could be a SAM even while a super interface has more than one abstract method
+        if (jClass.methods.any { !it.isAbstract && it.typeParameters.isEmpty() }) return false
 
         // Check if any of the super-interfaces contain too many methods to be a SAM
         return typeConstructor.supertypes.any {

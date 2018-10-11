@@ -2,5 +2,5 @@ package test
 
 expect class <caret>Foo
 
-// REF: [jvm] (test).Foo
-// REF: [js] (test).Foo
+// REF: [testModule_JVM] (test).Foo
+// REF: [testModule_JS] (test).Foo

@@ -16,14 +16,13 @@
 
 package org.jetbrains.kotlin.jps.build
 
-import org.jetbrains.jps.incremental.ModuleBuildTarget
 import org.jetbrains.kotlin.incremental.testingUtils.BuildLogFinder
-import org.jetbrains.kotlin.jps.incremental.CacheVersionProvider
+import org.jetbrains.kotlin.jps.targets.KotlinModuleBuildTarget
 
 abstract class AbstractDataContainerVersionChangedTest : AbstractIncrementalCacheVersionChangedTest() {
     override val buildLogFinder: BuildLogFinder
         get() = BuildLogFinder(isDataContainerBuildLogEnabled = true)
 
-    override fun getVersions(cacheVersionProvider: CacheVersionProvider, targets: Iterable<ModuleBuildTarget>) =
-            listOf(cacheVersionProvider.dataContainerVersion())
+    override fun getVersionManagersToTest(target: KotlinModuleBuildTarget<*>) =
+        listOf(kotlinCompileContext.lookupsCacheAttributesManager.versionManagerForTesting)
 }

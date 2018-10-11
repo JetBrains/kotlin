@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.psi2ir.intermediate
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.psi2ir.generators.CallGenerator
 import org.jetbrains.kotlin.types.KotlinType
 
@@ -26,11 +27,12 @@ class LValueWithGetterAndSetterCalls(
     val callGenerator: CallGenerator,
     val getterCall: CallBuilder?,
     val setterCall: CallBuilder?,
-    override val type: KotlinType,
+    override val type: IrType,
     val startOffset: Int,
     val endOffset: Int,
     val origin: IrStatementOrigin? = null
 ) : LValue {
+
     private val descriptor: CallableDescriptor =
         getterCall?.descriptor ?: setterCall?.descriptor
         ?: throw AssertionError("Call-based LValue should have either a getter or a setter call")

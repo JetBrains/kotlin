@@ -26,12 +26,12 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 import javax.swing.Icon
 
 class KotlinLambdaSmartStepTarget(
-        label: String,
-        highlightElement: KtFunction,
-        lines: Range<Int>,
-        val isInline: Boolean,
-        val isSuspend: Boolean
-): SmartStepTarget(label, highlightElement, true, lines) {
+    label: String,
+    highlightElement: KtFunction,
+    lines: Range<Int>,
+    val isInline: Boolean,
+    val isSuspend: Boolean
+) : SmartStepTarget(label, highlightElement, true, lines) {
     override fun getIcon(): Icon = KotlinIcons.LAMBDA
 
     fun getLambda() = highlightElement as KtFunction

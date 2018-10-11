@@ -86,7 +86,11 @@ class KotlinSourcePositionProvider: SourcePositionProvider() {
 
     private fun computeSourcePosition(descriptor: FieldDescriptor, project: Project, context: DebuggerContextImpl, nearest: Boolean): SourcePosition? {
         val fieldName = descriptor.field.name()
-        if (fieldName == AsmUtil.CAPTURED_THIS_FIELD || fieldName == AsmUtil.CAPTURED_RECEIVER_FIELD) {
+
+        if (fieldName == AsmUtil.CAPTURED_THIS_FIELD
+            || fieldName == AsmUtil.CAPTURED_RECEIVER_FIELD
+            || fieldName.startsWith(AsmUtil.LABELED_THIS_FIELD)
+        ) {
             return null
         }
 

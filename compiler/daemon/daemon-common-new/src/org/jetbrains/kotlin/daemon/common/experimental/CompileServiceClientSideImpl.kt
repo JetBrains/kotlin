@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.daemon.common.experimental
 
-import kotlinx.coroutines.experimental.async
-import kotlinx.coroutines.experimental.delay
-import kotlinx.coroutines.experimental.newSingleThreadContext
+import kotlinx.coroutines.async
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.newSingleThreadContext
 import org.jetbrains.kotlin.cli.common.repl.ReplCheckResult
 import org.jetbrains.kotlin.cli.common.repl.ReplCodeLine
 import org.jetbrains.kotlin.cli.common.repl.ReplCompileResult
@@ -77,6 +77,10 @@ class CompileServiceClientSideImpl(
         }
 
     } {
+    override suspend fun classesFqNamesByFiles(sessionId: Int, sourceFiles: Set<File>): CompileService.CallResult<Set<String>> {
+        val id = sendMessage(ClassesFqNamesByFilesMessage(sessionId, sourceFiles))
+        return readMessage(id)
+    }
 
     val log = Logger.getLogger("CompileServiceClientSideImpl")
 
@@ -318,6 +322,16 @@ class CompileServiceClientSideImpl(
                     servicesFacade,
                     compilationResults
                 )
+            )
+    }
+
+    class ClassesFqNamesByFilesMessage(
+        val sessionId: Int,
+        val sourceFiles: Set<File>
+    ) : Server.Message<CompileServiceServerSide>() {
+        override suspend fun processImpl(server: CompileServiceServerSide, sendReply: (Any?) -> Unit) =
+            sendReply(
+                server.classesFqNamesByFiles(sessionId, sourceFiles)
             )
     }
 

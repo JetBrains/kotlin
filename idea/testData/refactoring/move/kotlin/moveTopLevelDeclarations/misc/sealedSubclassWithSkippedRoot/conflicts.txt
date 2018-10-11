@@ -1,1 +1,1 @@
-Sealed class 'Expr' must be moved with all its subclasses
+Class 'Expr' must be moved with sealed parent class and all its subclasses

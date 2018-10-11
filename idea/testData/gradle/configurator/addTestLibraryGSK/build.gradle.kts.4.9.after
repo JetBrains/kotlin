@@ -1,0 +1,9 @@
+plugins {
+    kotlin("jvm") version "1.2.50"
+}
+
+dependencies {
+    compile(kotlinModule("stdlib-jre8"))
+    testCompile("junit:junit:4.12")
+    testCompile(kotlin("test"))
+}

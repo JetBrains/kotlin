@@ -30,17 +30,22 @@ import com.intellij.psi.util.PsiModificationTracker
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.analyzer.ResolverForModuleComputationTracker
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.idea.caches.project.ModuleSourceInfo
 import org.jetbrains.kotlin.idea.caches.project.SdkInfo
 import org.jetbrains.kotlin.idea.compiler.configuration.KotlinCommonCompilerArgumentsHolder
+import org.jetbrains.kotlin.idea.compiler.configuration.KotlinCompilerSettings
 import org.jetbrains.kotlin.idea.completion.test.withServiceRegistered
 import org.jetbrains.kotlin.idea.facet.KotlinFacetConfiguration
 import org.jetbrains.kotlin.idea.facet.KotlinFacetType
 import org.jetbrains.kotlin.idea.framework.JSLibraryKind
 import org.jetbrains.kotlin.idea.project.KotlinCodeBlockModificationListener
 import org.jetbrains.kotlin.idea.project.KotlinModuleModificationTracker
+import org.jetbrains.kotlin.idea.project.getLanguageVersionSettings
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
+import org.jetbrains.kotlin.idea.test.allKotlinFiles
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.idea.util.projectStructure.sdk
@@ -58,7 +63,7 @@ open class MultiModuleHighlightingTest : AbstractMultiModuleHighlightingTest() {
 
         module2.addDependency(module1)
 
-        checkHighlightingInAllFiles()
+        checkHighlightingInProject()
     }
 
     fun testDependency() {
@@ -77,7 +82,7 @@ open class MultiModuleHighlightingTest : AbstractMultiModuleHighlightingTest() {
         module4.addDependency(module2)
         module4.addDependency(module3)
 
-        checkHighlightingInAllFiles()
+        checkHighlightingInProject()
     }
 
     fun testLazyResolvers() {
@@ -95,7 +100,7 @@ open class MultiModuleHighlightingTest : AbstractMultiModuleHighlightingTest() {
             assertTrue(module2 !in tracker.moduleResolversComputed)
             assertTrue(module3 !in tracker.moduleResolversComputed)
 
-            checkHighlightingInAllFiles { "m3" in file.name }
+            checkHighlightingInProject { project.allKotlinFiles().filter { "m3" in it.name } }
 
             assertTrue(module1 in tracker.moduleResolversComputed)
             assertTrue(module2 !in tracker.moduleResolversComputed)
@@ -130,7 +135,7 @@ open class MultiModuleHighlightingTest : AbstractMultiModuleHighlightingTest() {
 
             assertEquals(0, tracker.sdkResolversComputed.size)
 
-            checkHighlightingInAllFiles { "m2" in file.name }
+            checkHighlightingInProject { project.allKotlinFiles().filter { "m2" in it.name } }
 
             assertEquals(2, tracker.moduleResolversComputed.size)
 
@@ -157,14 +162,14 @@ open class MultiModuleHighlightingTest : AbstractMultiModuleHighlightingTest() {
             assertEquals(currentModCount, module2ModTracker.modificationCount)
             assertEquals(currentModCount, module3ModTracker.modificationCount)
 
-            checkHighlightingInAllFiles { "m2" in file.name }
+            checkHighlightingInProject { project.allKotlinFiles().filter { "m2" in it.name } }
 
             assertEquals(0, tracker.sdkResolversComputed.size)
             assertEquals(1, tracker.moduleResolversComputed.size)
 
             tracker.moduleResolversComputed.clear()
             (PsiModificationTracker.SERVICE.getInstance(myProject) as PsiModificationTrackerImpl).incOutOfCodeBlockModificationCounter()
-            checkHighlightingInAllFiles { "m2" in file.name }
+            checkHighlightingInProject { project.allKotlinFiles().filter { "m2" in it.name } }
             assertEquals(0, tracker.sdkResolversComputed.size)
             assertEquals(2, tracker.moduleResolversComputed.size)
         }
@@ -179,7 +184,7 @@ open class MultiModuleHighlightingTest : AbstractMultiModuleHighlightingTest() {
         module3.addDependency(module2, dependencyScope = DependencyScope.TEST)
         module2.addDependency(module1, dependencyScope = DependencyScope.COMPILE)
 
-        checkHighlightingInAllFiles()
+        checkHighlightingInProject()
     }
 
     fun testLanguageVersionsViaFacets() {
@@ -193,7 +198,7 @@ open class MultiModuleHighlightingTest : AbstractMultiModuleHighlightingTest() {
         m1.addDependency(m2)
         m2.addDependency(m1)
 
-        checkHighlightingInAllFiles()
+        checkHighlightingInProject()
     }
 
     fun testSamWithReceiverExtension() {
@@ -211,49 +216,72 @@ open class MultiModuleHighlightingTest : AbstractMultiModuleHighlightingTest() {
         module1.addDependency(module2)
         module2.addDependency(module1)
 
-        checkHighlightingInAllFiles()
+        checkHighlightingInProject()
     }
 
     fun testJvmExperimentalLibrary() {
         val lib = MockLibraryUtil.compileJvmLibraryToJar(
             testDataPath + "${getTestName(true)}/lib", "lib",
             extraOptions = listOf(
-                "-Xskip-runtime-version-check",
-                "-language-version",
-                "1.3",
+                "-Xuse-experimental=kotlin.Experimental",
                 "-Xexperimental=lib.ExperimentalAPI"
             )
         )
-        withSkipMetadataVersionCheck {
-            module("usage").addLibrary(lib)
-            checkHighlightingInAllFiles()
-        }
+
+        module("usage").addLibrary(lib)
+        checkHighlightingInProject()
     }
 
     fun testJsExperimentalLibrary() {
         val lib = MockLibraryUtil.compileJsLibraryToJar(
             testDataPath + "${getTestName(true)}/lib", "lib", false,
             extraOptions = listOf(
-                "-Xskip-runtime-version-check",
-                "-language-version",
-                "1.3",
+                "-Xuse-experimental=kotlin.Experimental",
                 "-Xexperimental=lib.ExperimentalAPI"
             )
         )
-        withSkipMetadataVersionCheck {
-            module("usage").addLibrary(lib, kind = JSLibraryKind)
-            checkHighlightingInAllFiles()
-        }
+
+        module("usage").addLibrary(lib, kind = JSLibraryKind)
+        checkHighlightingInProject()
     }
 
-    private fun withSkipMetadataVersionCheck(block: () -> Unit) {
-        val holder = KotlinCommonCompilerArgumentsHolder.getInstance(project)
-        try {
-            holder.update { skipMetadataVersionCheck = true }
-            block()
-        } finally {
-            holder.update { skipMetadataVersionCheck = false }
+    fun testCoroutineMixedReleaseStatus() {
+        KotlinCommonCompilerArgumentsHolder.getInstance(project).update { skipMetadataVersionCheck = true }
+        KotlinCompilerSettings.getInstance(project).update { additionalArguments = "-Xskip-metadata-version-check" }
+
+        val libOld = MockLibraryUtil.compileJvmLibraryToJar(
+            testDataPath + "${getTestName(true)}/libOld", "libOld",
+            extraOptions = listOf("-language-version", "1.2", "-api-version", "1.2")
+        )
+
+        val libNew = MockLibraryUtil.compileJvmLibraryToJar(
+            testDataPath + "${getTestName(true)}/libNew", "libNew",
+            extraOptions = listOf("-language-version", "1.3", "-api-version", "1.3")
+        )
+
+        val moduleNew = module("moduleNew").setupKotlinFacet {
+            settings.coroutineSupport = LanguageFeature.State.ENABLED
+            settings.languageLevel = LanguageVersion.KOTLIN_1_3
+            settings.apiLevel = LanguageVersion.KOTLIN_1_3
         }
+
+        val moduleOld = module("moduleOld").setupKotlinFacet {
+            settings.coroutineSupport = LanguageFeature.State.ENABLED
+            settings.languageLevel = LanguageVersion.KOTLIN_1_2
+            settings.apiLevel = LanguageVersion.KOTLIN_1_2
+        }
+
+        moduleNew.addLibrary(libOld)
+        moduleNew.addLibrary(libNew)
+        moduleNew.addLibrary(ForTestCompileRuntime.runtimeJarForTests())
+
+        moduleOld.addLibrary(libNew)
+        moduleOld.addLibrary(libOld)
+        moduleOld.addLibrary(ForTestCompileRuntime.runtimeJarForTests())
+
+        moduleNew.addDependency(moduleOld)
+
+        checkHighlightingInProject()
     }
 
     private fun Module.setupKotlinFacet(configure: KotlinFacetConfiguration.() -> Unit) = apply {

@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 
 fun box(): String {
     val map: MutableMap<String, Int> = HashMap<String, Int>()

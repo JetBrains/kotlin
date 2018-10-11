@@ -31,8 +31,6 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.frontend.di.createContainerForBodyResolve
 import org.jetbrains.kotlin.idea.caches.resolve.CodeFragmentAnalyzer
-import org.jetbrains.kotlin.idea.stubindex.KotlinProbablyNothingFunctionShortNameIndex
-import org.jetbrains.kotlin.idea.stubindex.KotlinProbablyNothingPropertyShortNameIndex
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfType
@@ -72,12 +70,12 @@ class ResolveElementCache(
         }
     }
 
-    // drop whole cache after change "out of code block"
+    // drop whole cache after change "out of code block", each entry is checked with own modification stamp
     private val fullResolveCache: CachedValue<MutableMap<KtElement, CachedFullResolve>> =
         CachedValuesManager.getManager(project).createCachedValue(
             CachedValueProvider<MutableMap<KtElement, ResolveElementCache.CachedFullResolve>> {
                 CachedValueProvider.Result.create(
-                    ContainerUtil.createConcurrentSoftValueMap<KtElement, CachedFullResolve>(),
+                    ContainerUtil.createConcurrentWeakKeySoftValueMap<KtElement, CachedFullResolve>(),
                     PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT,
                     resolveSession.exceptionTracker
                 )
@@ -103,21 +101,13 @@ class ResolveElementCache(
         CachedValuesManager.getManager(project).createCachedValue(
             CachedValueProvider<MutableMap<KtExpression, ResolveElementCache.CachedPartialResolve>> {
                 CachedValueProvider.Result.create(
-                    ContainerUtil.createConcurrentSoftValueMap<KtExpression, CachedPartialResolve>(),
+                    ContainerUtil.createConcurrentWeakKeySoftValueMap<KtExpression, CachedPartialResolve>(),
                     PsiModificationTracker.MODIFICATION_COUNT,
                     resolveSession.exceptionTracker
                 )
             },
             false
         )
-
-
-    private fun probablyNothingCallableNames(): ProbablyNothingCallableNames {
-        return object : ProbablyNothingCallableNames {
-            override fun functionNames() = KotlinProbablyNothingFunctionShortNameIndex.getInstance().getAllKeys(project)
-            override fun propertyNames() = KotlinProbablyNothingPropertyShortNameIndex.getInstance().getAllKeys(project)
-        }
-    }
 
     override fun resolveFunctionBody(function: KtNamedFunction) = getElementsAdditionalResolve(function, null, BodyResolveMode.FULL)
 
@@ -187,16 +177,23 @@ class ResolveElementCache(
 
                 val (bindingContext, statementFilter) = performElementAdditionalResolve(resolveElement, contextElements, bodyResolveMode)
 
-                if (statementFilter == StatementFilter.NONE) { // partial resolve is not supported for the given declaration - full resolve performed instead
+                if (statementFilter == StatementFilter.NONE &&
+                    bodyResolveMode.doControlFlowAnalysis && !bodyResolveMode.bindingTraceFilter.ignoreDiagnostics
+                ) {
+                    // Without statement filter, we analyze everything, so we can count partial resolve result as full resolve
+                    // But we can do this only if our resolve mode also provides *both* CFA and diagnostics
+                    // This is true only for PARTIAL_WITH_DIAGNOSTICS resolve mode
                     fullResolveMap[resolveElement] = CachedFullResolve(bindingContext, resolveElement)
                     return bindingContext
                 }
 
                 val resolveToCache = CachedPartialResolve(bindingContext, file, bodyResolveMode)
 
-                for (statement in (statementFilter as PartialBodyResolveFilter).allStatementsToResolve) {
-                    if (bindingContext[BindingContext.PROCESSED, statement] == true) {
-                        partialResolveMap.putIfAbsent(statement, resolveToCache)
+                if (statementFilter is PartialBodyResolveFilter) {
+                    for (statement in statementFilter.allStatementsToResolve) {
+                        if (bindingContext[BindingContext.PROCESSED, statement] == true) {
+                            partialResolveMap.putIfAbsent(statement, resolveToCache)
+                        }
                     }
                 }
 
@@ -310,7 +307,6 @@ class ResolveElementCache(
                 statementFilterUsed = PartialBodyResolveFilter(
                     contextElements!!,
                     resolveElement as KtDeclaration,
-                    probablyNothingCallableNames(),
                     bodyResolveMode == BodyResolveMode.PARTIAL_FOR_COMPLETION
                 )
             }
@@ -375,7 +371,7 @@ class ResolveElementCache(
 
             is KtImportList -> {
                 val resolver = resolveSession.fileScopeProvider.getImportResolver(resolveElement.getContainingKtFile())
-                resolver.forceResolveAllImports()
+                resolver.forceResolveNonDefaultImports()
                 resolveSession.trace
             }
 
@@ -409,12 +405,15 @@ class ResolveElementCache(
             }
         }
 
-        val controlFlowTrace =
-            DelegatingBindingTrace(trace.bindingContext, "Element control flow resolve", resolveElement, allowSliceRewrite = true)
-        ControlFlowInformationProvider(
-            resolveElement, controlFlowTrace, resolveElement.languageVersionSettings, resolveSession.platformDiagnosticSuppressor
-        ).checkDeclaration()
-        controlFlowTrace.addOwnDataTo(trace, null, false)
+        if (bodyResolveMode.doControlFlowAnalysis) {
+            val controlFlowTrace = DelegatingBindingTrace(
+                trace.bindingContext, "Element control flow resolve", resolveElement, allowSliceRewrite = true
+            )
+            ControlFlowInformationProvider(
+                resolveElement, controlFlowTrace, resolveElement.languageVersionSettings, resolveSession.platformDiagnosticSuppressor
+            ).checkDeclaration()
+            controlFlowTrace.addOwnDataTo(trace, null, false)
+        }
 
         return Pair(trace.bindingContext, statementFilterUsed)
     }
@@ -548,12 +547,12 @@ class ResolveElementCache(
         val descriptor = resolveSession.resolveToDescriptor(property) as PropertyDescriptor
         ForceResolveUtil.forceResolveAllContents(descriptor)
 
-        val bodyResolveContext = BodyResolveContextForLazy(TopDownAnalysisMode.LocalDeclarations, { declaration ->
+        val bodyResolveContext = BodyResolveContextForLazy(TopDownAnalysisMode.LocalDeclarations) { declaration ->
             assert(declaration.parent == property || declaration == property) {
                 "Must be called only for property accessors or for property, but called for $declaration"
             }
             resolveSession.declarationScopeProvider.getResolutionScopeForDeclaration(declaration)
-        })
+        }
 
         bodyResolver.resolveProperty(bodyResolveContext, property, descriptor)
 
@@ -702,7 +701,7 @@ class ResolveElementCache(
             statementFilter,
             file.jvmTarget,
             file.languageVersionSettings
-        ).get<BodyResolver>()
+        ).get()
     }
 
     // All additional resolve should be done to separate trace

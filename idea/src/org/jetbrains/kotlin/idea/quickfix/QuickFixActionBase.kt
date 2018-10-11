@@ -45,7 +45,7 @@ abstract class QuickFixActionBase<out T : PsiElement>(element: T) : IntentionAct
             val element = element ?: return false
             return element.isValid &&
                    !element.project.isDisposed &&
-                   (file.manager.isInProject(file) || file is KtCodeFragment) &&
+                   (file.manager.isInProject(file) || file is KtCodeFragment || (file is KtFile && file.isScript())) &&
                    (file is KtFile || isCrossLanguageFix) &&
                    isAvailableImpl(project, editor, file)
         }

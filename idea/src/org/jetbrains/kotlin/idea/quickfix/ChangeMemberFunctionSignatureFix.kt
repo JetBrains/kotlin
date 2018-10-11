@@ -31,8 +31,8 @@ import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
-import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.core.ShortenReferences
+import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.load.java.NOT_NULL_ANNOTATIONS
@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.KtParameterList
 import org.jetbrains.kotlin.psi.KtPsiFactory
+import org.jetbrains.kotlin.psi.typeRefHelpers.setReceiverTypeReference
 import org.jetbrains.kotlin.renderer.ClassifierNamePolicy
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.descriptorUtil.setSingleOverridden
@@ -55,8 +56,8 @@ import java.util.*
  * Fix that changes member function's signature to match one of super functions' signatures.
  */
 class ChangeMemberFunctionSignatureFix private constructor(
-        element: KtNamedFunction,
-        private val signatures: List<ChangeMemberFunctionSignatureFix.Signature>
+    element: KtNamedFunction,
+    private val signatures: List<ChangeMemberFunctionSignatureFix.Signature>
 ) : KotlinQuickFixAction<KtNamedFunction>(element) {
 
     init {
@@ -100,15 +101,16 @@ class ChangeMemberFunctionSignatureFix private constructor(
                 return emptyList()
             }
 
-            val functionDescriptor = functionElement.resolveToDescriptorIfAny(BodyResolveMode.FULL)
-                                     ?: return emptyList()
+            val functionDescriptor = functionElement.resolveToDescriptorIfAny(BodyResolveMode.FULL) ?: return emptyList()
             val superFunctions = getPossibleSuperFunctionsDescriptors(functionDescriptor)
 
             return superFunctions
-                    .filter { it.kind.isReal }
-                    .map { signatureToMatch(functionDescriptor, it) }
-                    .distinctBy { it.sourceCode }
-                    .sortedBy { it.preview }
+                .asSequence()
+                .filter { it.kind.isReal }
+                .map { signatureToMatch(functionDescriptor, it) }
+                .distinctBy { it.sourceCode }
+                .sortedBy { it.preview }
+                .toList()
         }
 
         /**
@@ -128,13 +130,15 @@ class ChangeMemberFunctionSignatureFix private constructor(
             matchParameters(ParameterChooser.MatchTypes, superParameters, parameters, newParameters, matched, used)
 
             val newFunction = replaceFunctionParameters(
-                    superFunction.copy(
-                            function.containingDeclaration,
-                            Modality.OPEN,
-                            findMemberWithMaxVisibility(listOf(superFunction, function)).visibility,
-                            CallableMemberDescriptor.Kind.DELEGATION,
-                            /* copyOverrides = */ true),
-                    newParameters)
+                superFunction.copy(
+                    function.containingDeclaration,
+                    Modality.OPEN,
+                    findMemberWithMaxVisibility(listOf(superFunction, function)).visibility,
+                    CallableMemberDescriptor.Kind.DELEGATION,
+                    /* copyOverrides = */ true
+                ),
+                newParameters
+            )
             newFunction.setSingleOverridden(superFunction)
 
             return Signature(newFunction)
@@ -154,12 +158,12 @@ class ChangeMemberFunctionSignatureFix private constructor(
          * @param used - true iff this parameter in function is used to match some parameter in super function (may be modified by this function)
          */
         private fun matchParameters(
-                parameterChooser: ParameterChooser,
-                superParameters: List<ValueParameterDescriptor>,
-                parameters: List<ValueParameterDescriptor>,
-                newParameters: MutableList<ValueParameterDescriptor>,
-                matched: BitSet,
-                used: BitSet
+            parameterChooser: ParameterChooser,
+            superParameters: List<ValueParameterDescriptor>,
+            parameters: List<ValueParameterDescriptor>,
+            newParameters: MutableList<ValueParameterDescriptor>,
+            matched: BitSet,
+            used: BitSet
         ) {
             for (superParameter in superParameters) {
                 if (!matched[superParameter.index]) {
@@ -185,8 +189,8 @@ class ChangeMemberFunctionSignatureFix private constructor(
 
             val name = functionDescriptor.name
             return containingClass.defaultType.supertypes()
-                    .flatMap { supertype -> supertype.memberScope.getContributedFunctions(name, NoLookupLocation.FROM_IDE) }
-                    .filter { it.kind.isReal && it.isOverridable }
+                .flatMap { supertype -> supertype.memberScope.getContributedFunctions(name, NoLookupLocation.FROM_IDE) }
+                .filter { it.kind.isReal && it.isOverridable }
         }
 
         /**
@@ -194,29 +198,29 @@ class ChangeMemberFunctionSignatureFix private constructor(
          * Note that parameters may belong to other methods or have incorrect "index" property -- it will be fixed by this function.
          */
         private fun replaceFunctionParameters(
-                function: FunctionDescriptor,
-                newParameters: List<ValueParameterDescriptor>
+            function: FunctionDescriptor,
+            newParameters: List<ValueParameterDescriptor>
         ): FunctionDescriptor {
             val descriptor = SimpleFunctionDescriptorImpl.create(
-                    function.containingDeclaration,
-                    function.annotations,
-                    function.name,
-                    function.kind,
-                    SourceElement.NO_SOURCE
+                function.containingDeclaration,
+                function.annotations,
+                function.name,
+                function.kind,
+                SourceElement.NO_SOURCE
             )
 
-            val parameters = newParameters.withIndex().map { (index, parameter) ->
+            val parameters = newParameters.asSequence().withIndex().map { (index, parameter) ->
                 ValueParameterDescriptorImpl(
-                        descriptor, null, index,
-                        parameter.annotations, parameter.name, parameter.returnType!!, parameter.declaresDefaultValue(),
-                        parameter.isCrossinline, parameter.isNoinline, parameter.varargElementType, SourceElement.NO_SOURCE
+                    descriptor, null, index,
+                    parameter.annotations, parameter.name, parameter.returnType!!, parameter.declaresDefaultValue(),
+                    parameter.isCrossinline, parameter.isNoinline, parameter.varargElementType, SourceElement.NO_SOURCE
                 )
-            }
+            }.toList()
 
             return descriptor.apply {
                 initialize(
-                        function.extensionReceiverParameter?.type, function.dispatchReceiverParameter,
-                        function.typeParameters, parameters, function.returnType, function.modality, function.visibility
+                    function.extensionReceiverParameter?.copy(this), function.dispatchReceiverParameter,
+                    function.typeParameters, parameters, function.returnType, function.modality, function.visibility
                 )
                 isOperator = function.isOperator
                 isInfix = function.isInfix
@@ -264,8 +268,7 @@ class ChangeMemberFunctionSignatureFix private constructor(
                 // TODO: support for generic functions
                 return if (KotlinTypeChecker.DEFAULT.equalTypes(parameter.type, superParameter.type)) {
                     superParameter.copy(parameter.containingDeclaration, parameter.name, parameter.index)
-                }
-                else {
+                } else {
                     null
                 }
             }
@@ -274,10 +277,10 @@ class ChangeMemberFunctionSignatureFix private constructor(
     }
 
     private class MyAction(
-            private val project: Project,
-            private val editor: Editor?,
-            private val function: KtNamedFunction,
-            private val signatures: List<Signature>
+        private val project: Project,
+        private val editor: Editor?,
+        private val function: KtNamedFunction,
+        private val signatures: List<Signature>
     ) {
         fun execute() {
             PsiDocumentManager.getInstance(project).commitAllDocuments()
@@ -286,8 +289,7 @@ class ChangeMemberFunctionSignatureFix private constructor(
 
             if (signatures.size == 1 || editor == null || !editor.component.isShowing) {
                 changeSignature(signatures.first())
-            }
-            else {
+            } else {
                 chooseSignatureAndChange()
             }
         }
@@ -331,6 +333,9 @@ class ChangeMemberFunctionSignatureFix private constructor(
                 }
 
                 val newParameterList = function.valueParameterList!!.replace(patternFunction.valueParameterList!!) as KtParameterList
+                if (patternFunction.receiverTypeReference == null && function.receiverTypeReference != null) {
+                    function.setReceiverTypeReference(null)
+                }
                 ShortenReferences.DEFAULT.process(newParameterList)
             }
         }

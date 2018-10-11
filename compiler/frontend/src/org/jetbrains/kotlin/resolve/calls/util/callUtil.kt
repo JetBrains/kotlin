@@ -142,6 +142,13 @@ fun KtElement.getCall(context: BindingContext): Call? {
     // Do not use Call bound to outer call expression (if any) to prevent stack overflow during analysis
     if (element is KtCallElement && element.calleeExpression == null) return null
 
+    if (element is KtWhenExpression) {
+        val subjectVariable = element.subjectVariable
+        if (subjectVariable != null) {
+            return subjectVariable.getCall(context)
+        }
+    }
+
     val parent = element.parent
     val reference: KtExpression? = when (parent) {
         is KtInstanceExpressionWithLabel -> parent

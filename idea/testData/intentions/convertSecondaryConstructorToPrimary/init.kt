@@ -7,4 +7,6 @@ class ConvertToInit {
         foo()
         bar()
     }
+
+    fun baz() {}
 }

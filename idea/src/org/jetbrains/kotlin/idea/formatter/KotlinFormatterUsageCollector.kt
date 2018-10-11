@@ -12,6 +12,8 @@ import com.intellij.internal.statistic.utils.getEnumUsage
 import com.intellij.openapi.project.Project
 import com.intellij.psi.codeStyle.CodeStyleSettingsManager
 import org.jetbrains.kotlin.idea.core.formatter.KotlinCodeStyleSettings
+import org.jetbrains.kotlin.idea.formatter.KotlinFormatterUsageCollector.KotlinFormatterKind.*
+import org.jetbrains.kotlin.idea.util.isDefaultOfficialCodeStyle
 
 class KotlinFormatterUsageCollector : AbstractProjectsUsagesCollector() {
     override fun getGroupId(): GroupDescriptor = GroupDescriptor.create(GROUP_ID)
@@ -42,11 +44,18 @@ class KotlinFormatterUsageCollector : AbstractProjectsUsagesCollector() {
         private val KOTLIN_DEFAULT_COMMON = KotlinLanguageCodeStyleSettingsProvider().defaultCommonSettings
             .also { KotlinStyleGuideCodeStyle.applyToCommonSettings(it) }
 
-        private val KOTLIN_DEFAULT_CUSTOM = KotlinCodeStyleSettings.DEFAULT.clone()
-            .also { KotlinStyleGuideCodeStyle.applyToKotlinCustomSettings(it as KotlinCodeStyleSettings) }
+        private val KOTLIN_DEFAULT_CUSTOM = KotlinCodeStyleSettings.DEFAULT.cloneSettings()
+            .also { KotlinStyleGuideCodeStyle.applyToKotlinCustomSettings(it) }
+
+        private val KOTLIN_OBSOLETE_DEFAULT_COMMON = KotlinLanguageCodeStyleSettingsProvider().defaultCommonSettings
+            .also { KotlinObsoleteCodeStyle.applyToCommonSettings(it) }
+
+        private val KOTLIN_OBSOLETE_DEFAULT_CUSTOM = KotlinCodeStyleSettings.DEFAULT.cloneSettings()
+            .also { KotlinObsoleteCodeStyle.applyToKotlinCustomSettings(it) }
 
         fun getKotlinFormatterKind(project: Project): KotlinFormatterKind {
             val isProject = CodeStyleSettingsManager.getInstance(project).USE_PER_PROJECT_SETTINGS
+            val isDefaultOfficialCodeStyle = isDefaultOfficialCodeStyle
 
             val settings = CodeStyleSettingsManager.getSettings(project)
             val kotlinCommonSettings = settings.kotlinCommonSettings
@@ -54,23 +63,53 @@ class KotlinFormatterUsageCollector : AbstractProjectsUsagesCollector() {
 
             val isDefaultKotlinCommonSettings = kotlinCommonSettings == KotlinLanguageCodeStyleSettingsProvider().defaultCommonSettings
             val isDefaultKotlinCustomSettings = kotlinCustomSettings == KotlinCodeStyleSettings.DEFAULT
+
             if (isDefaultKotlinCommonSettings && isDefaultKotlinCustomSettings) {
-                return if (isProject) KotlinFormatterKind.PROJECT_DEFAULT else KotlinFormatterKind.IDEA_DEFAULT
+                return if (isDefaultOfficialCodeStyle) {
+                    paired(IDEA_OFFICIAL_DEFAULT, isProject)
+                } else {
+                    paired(IDEA_DEFAULT, isProject)
+                }
             }
 
-            val isOnlyKotlinStyle = kotlinCommonSettings == KOTLIN_DEFAULT_COMMON && kotlinCustomSettings == KOTLIN_DEFAULT_CUSTOM
-            if (isOnlyKotlinStyle) {
-                return if (isProject) KotlinFormatterKind.PROJECT_KOTLIN else KotlinFormatterKind.IDEA_KOTLIN
+            if (kotlinCommonSettings == KOTLIN_OBSOLETE_DEFAULT_COMMON && kotlinCustomSettings == KOTLIN_OBSOLETE_DEFAULT_CUSTOM) {
+                return paired(IDEA_OBSOLETE_KOTLIN, isProject)
             }
 
-            val isKotlinLikeSettings = settings == settings.clone().also {
+            if (kotlinCommonSettings == KOTLIN_DEFAULT_COMMON && kotlinCustomSettings == KOTLIN_DEFAULT_CUSTOM) {
+                return paired(IDEA_KOTLIN, isProject)
+            }
+
+            val isKotlinOfficialLikeSettings = settings == settings.clone().also {
                 KotlinStyleGuideCodeStyle.apply(it)
             }
-            if (isKotlinLikeSettings) {
-                return if (isProject) KotlinFormatterKind.PROJECT_KOTLIN_WITH_CUSTOM else KotlinFormatterKind.IDEA_KOTLIN_WITH_CUSTOM
+            if (isKotlinOfficialLikeSettings) {
+                return paired(IDEA_OFFICIAL_KOTLIN_WITH_CUSTOM, isProject)
             }
 
-            return if (isProject) KotlinFormatterKind.PROJECT_CUSTOM else KotlinFormatterKind.IDEA_CUSTOM
+            val isKotlinObsoleteLikeSettings = settings == settings.clone().also {
+                KotlinObsoleteCodeStyle.apply(it)
+            }
+            if (isKotlinObsoleteLikeSettings) {
+                return paired(IDEA_KOTLIN_WITH_CUSTOM, isProject)
+            }
+
+            return paired(IDEA_CUSTOM, isProject)
+        }
+
+        private fun paired(kind: KotlinFormatterKind, isProject: Boolean): KotlinFormatterKind {
+            if (!isProject) return kind
+
+            return when (kind) {
+                IDEA_DEFAULT -> PROJECT_DEFAULT
+                IDEA_OFFICIAL_DEFAULT -> PROJECT_OFFICIAL_DEFAULT
+                IDEA_CUSTOM -> PROJECT_CUSTOM
+                IDEA_KOTLIN_WITH_CUSTOM -> PROJECT_KOTLIN_WITH_CUSTOM
+                IDEA_KOTLIN -> PROJECT_KOTLIN
+                IDEA_OBSOLETE_KOTLIN -> PROJECT_OBSOLETE_KOTLIN
+                IDEA_OFFICIAL_KOTLIN_WITH_CUSTOM -> PROJECT_OBSOLETE_KOTLIN_WITH_CUSTOM
+                else -> kind
+            }
         }
     }
 
@@ -83,6 +122,13 @@ class KotlinFormatterUsageCollector : AbstractProjectsUsagesCollector() {
         PROJECT_DEFAULT,
         PROJECT_CUSTOM,
         PROJECT_KOTLIN_WITH_CUSTOM,
-        PROJECT_KOTLIN;
+        PROJECT_KOTLIN,
+
+        IDEA_OFFICIAL_DEFAULT,
+        IDEA_OBSOLETE_KOTLIN,
+        IDEA_OFFICIAL_KOTLIN_WITH_CUSTOM,
+        PROJECT_OFFICIAL_DEFAULT,
+        PROJECT_OBSOLETE_KOTLIN,
+        PROJECT_OBSOLETE_KOTLIN_WITH_CUSTOM
     }
 }

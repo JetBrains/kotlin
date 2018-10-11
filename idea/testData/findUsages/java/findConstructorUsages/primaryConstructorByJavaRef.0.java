@@ -3,7 +3,7 @@
 // FIND_BY_REF
 // WITH_FILE_NAME
 class J extends A {
-    constructor(n: Int) {
+    J(int n) {
         super(n);
     }
 

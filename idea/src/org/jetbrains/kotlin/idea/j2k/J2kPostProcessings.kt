@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.core.moveFunctionLiteralOutsideParenthesesIfPossible
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.core.setVisibility
 import org.jetbrains.kotlin.idea.inspections.*
@@ -69,7 +70,7 @@ object J2KPostProcessingRegistrar {
     init {
         _processings.add(RemoveExplicitTypeArgumentsProcessing())
         _processings.add(RemoveRedundantOverrideVisibilityProcessing())
-        _processings.add(MoveLambdaOutsideParenthesesProcessing())
+        registerInspectionBasedProcessing(MoveLambdaOutsideParenthesesInspection())
         _processings.add(FixObjectStringConcatenationProcessing())
         _processings.add(ConvertToStringTemplateProcessing())
         _processings.add(UsePropertyAccessSyntaxProcessing())
@@ -240,19 +241,6 @@ object J2KPostProcessingRegistrar {
             if (element !is KtCallableDeclaration || !element.hasModifier(KtTokens.OVERRIDE_KEYWORD)) return null
             val modifier = element.visibilityModifierType() ?: return null
             return { element.setVisibility(modifier) }
-        }
-    }
-
-    private class MoveLambdaOutsideParenthesesProcessing : J2kPostProcessing {
-        override val writeActionNeeded = true
-
-        private val intention = MoveLambdaOutsideParenthesesIntention()
-
-        override fun createAction(element: KtElement, diagnostics: Diagnostics): (() -> Unit)? {
-            if (element !is KtCallExpression) return null
-            val literalArgument = element.valueArguments.lastOrNull()?.getArgumentExpression()?.unpackFunctionLiteral() ?: return null
-            if (!intention.isApplicableTo(element, literalArgument.textOffset)) return null
-            return { intention.applyTo(element, null) }
         }
     }
 

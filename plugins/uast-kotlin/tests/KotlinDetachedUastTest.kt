@@ -16,6 +16,7 @@
 
 package org.jetbrains.uast.test.kotlin
 
+import com.intellij.psi.PsiClassType
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiLanguageInjectionHost
@@ -26,12 +27,10 @@ import org.jetbrains.kotlin.idea.core.copied
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.psi.KtCallExpression
-import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.psiUtil.findDescendantOfType
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
-import org.jetbrains.kotlin.test.testFramework.runWriteAction
 import org.jetbrains.uast.*
 import org.jetbrains.uast.test.env.findUElementByTextFromPsi
 
@@ -82,6 +81,26 @@ class KotlinDetachedUastTest : KotlinLightCodeInsightFixtureTestCase() {
         TestCase.assertNull(uCallExpression.methodName)
     }
 
+    fun testCapturedTypeInExtensionReceiverOfCall() {
+        val psiFile = myFixture.configureByText(
+            "foo.kt", """
+            class Foo<T>
+
+            fun <K> K.extensionFunc() {}
+
+            fun test(f: Foo<*>) {
+                f.extensionFunc()
+            }
+        """.trimIndent()
+        ) as KtFile
+
+        val extensionFunctionCall = psiFile.findDescendantOfType<KtCallExpression>()!!
+        val uCallExpression = extensionFunctionCall.toUElementOfType<UCallExpression>()!!
+
+        TestCase.assertNotNull(uCallExpression.receiverType)
+        TestCase.assertNotNull(uCallExpression.methodName)
+    }
+
     fun testParameterInAnnotationClassFromFactory() {
 
         val detachedClass = KtPsiFactory(project).createClass("""
@@ -110,6 +129,19 @@ class KotlinDetachedUastTest : KotlinLightCodeInsightFixtureTestCase() {
             TestCase.assertTrue("it should have some parents $it actually", it > 1)
         }
 
+    }
+
+    fun testResolveStringFromUast() {
+        val file = myFixture.addFileToProject(
+            "s.kt", """fun foo(){
+                val s = "abc"
+                s.toUpperCase()
+                }
+            ""${'"'}"""
+        )
+
+        val refs = file.findUElementByTextFromPsi<UQualifiedReferenceExpression>("s.toUpperCase()")
+        TestCase.assertNotNull((refs.receiver.getExpressionType() as PsiClassType).resolve())
     }
 
 }

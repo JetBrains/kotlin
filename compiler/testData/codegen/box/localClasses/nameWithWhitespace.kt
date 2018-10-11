@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 // IGNORE_BACKEND: JS
 
 fun `method with spaces`(): String {

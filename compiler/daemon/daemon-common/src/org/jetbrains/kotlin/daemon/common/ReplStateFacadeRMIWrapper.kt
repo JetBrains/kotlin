@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.daemon.common
 
-import kotlinx.coroutines.experimental.runBlocking
+import kotlinx.coroutines.runBlocking
 import org.jetbrains.kotlin.cli.common.repl.ILineId
 import org.jetbrains.kotlin.daemon.common.CompileService
 import org.jetbrains.kotlin.daemon.common.impls.ReplStateFacade

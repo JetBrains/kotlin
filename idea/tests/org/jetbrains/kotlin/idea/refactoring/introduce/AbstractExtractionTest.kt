@@ -297,7 +297,7 @@ abstract class AbstractExtractionTest : KotlinLightCodeInsightFixtureTestCase() 
     }
 
     protected fun doExtractSuperTest(path: String, isInterface: Boolean) {
-        doTest(path) { file ->
+        doTest(path, true) { file ->
             file as KtFile
 
             markMembersInfo(file)
@@ -305,6 +305,8 @@ abstract class AbstractExtractionTest : KotlinLightCodeInsightFixtureTestCase() 
             val targetParent = file.findElementByCommentPrefix("// SIBLING:")?.parent ?: file.parent!!
             val fileText = file.text
             val className = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// NAME:")!!
+            val targetFileName = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// TARGET_FILE_NAME:")
+                    ?: "$className.${KotlinFileType.EXTENSION}"
             val editor = fixture.editor
             val originalClass = file.findElementAt(editor.caretModel.offset)?.getStrictParentOfType<KtClassOrObject>()!!
             val memberInfos = chooseMembers(extractClassMembers(originalClass))
@@ -314,7 +316,7 @@ abstract class AbstractExtractionTest : KotlinLightCodeInsightFixtureTestCase() 
                         originalClass,
                         memberInfos,
                         targetParent,
-                        "$className.${KotlinFileType.EXTENSION}",
+                        targetFileName,
                         className,
                         isInterface,
                         DocCommentPolicy<PsiComment>(DocCommentPolicy.ASIS)

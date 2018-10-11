@@ -37,12 +37,11 @@ fun patchTypeParametersForDefaultImplMethod(function: CallableMemberDescriptor):
 
     val existingNames = (functionTypeParameterNames + interfaceTypeParameters.map { it.name.asString() }).toMutableSet()
 
-    val mappingForInterfaceTypeParameters = conflictedTypeParameters.associateBy ({ it }) {
-        typeParameter ->
+    val mappingForInterfaceTypeParameters = conflictedTypeParameters.associateBy({ it }) { typeParameter ->
 
         val newNamePrefix = typeParameter.name.asString() + "_I"
-        val newName = newNamePrefix + generateSequence(1) { x -> x + 1 }.first {
-            index -> (newNamePrefix + index) !in existingNames
+        val newName = newNamePrefix + generateSequence(1) { x -> x + 1 }.first { index ->
+            (newNamePrefix + index) !in existingNames
         }
 
         existingNames.add(newName)
@@ -58,21 +57,25 @@ fun patchTypeParametersForDefaultImplMethod(function: CallableMemberDescriptor):
     val additionalTypeParameters = interfaceTypeParameters.map { typeParameter ->
         mappingForInterfaceTypeParameters[typeParameter] ?: typeParameter
     }
-    var resultTypeParameters = mutableListOf<TypeParameterDescriptor>()
+    val resultTypeParameters = mutableListOf<TypeParameterDescriptor>()
     DescriptorSubstitutor.substituteTypeParameters(additionalTypeParameters, substitution, classDescriptor, resultTypeParameters)
 
     return ReceiverTypeAndTypeParameters(substitutor.substitute(classDescriptor.defaultType, Variance.INVARIANT)!!, resultTypeParameters)
 }
 
-fun CallableMemberDescriptor.createTypeParameterWithNewName(descriptor: TypeParameterDescriptor, newName: String): TypeParameterDescriptorImpl {
+fun CallableMemberDescriptor.createTypeParameterWithNewName(
+    descriptor: TypeParameterDescriptor,
+    newName: String
+): TypeParameterDescriptorImpl {
     val newDescriptor = TypeParameterDescriptorImpl.createForFurtherModification(
-            this,
-            descriptor.annotations,
-            descriptor.isReified,
-            descriptor.variance,
-            Name.identifier(newName),
-            descriptor.index,
-            descriptor.source)
+        this,
+        descriptor.annotations,
+        descriptor.isReified,
+        descriptor.variance,
+        Name.identifier(newName),
+        descriptor.index,
+        descriptor.source
+    )
     descriptor.upperBounds.forEach {
         newDescriptor.addUpperBound(it)
     }

@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.fileClasses
 
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import org.jetbrains.kotlin.load.java.descriptors.getImplClassNameForDeserialized
@@ -109,9 +110,19 @@ val KtFile.javaFileFacadeFqName: FqName
             val facadeFqName =
                     if (isCompiled) packageFqName.child(Name.identifier(virtualFile.nameWithoutExtension))
                     else JvmFileClassUtil.getFileClassInfoNoResolve(this).facadeClassFqName
+
+            if (!Name.isValidIdentifier(facadeFqName.shortName().identifier)) {
+                LOG.error(
+                    "An invalid fqName `$facadeFqName` with short name `${facadeFqName.shortName()}` is created for file `$name` " +
+                            "(isCompiled = $isCompiled)"
+                )
+            }
+
             CachedValueProvider.Result(facadeFqName, this)
         }
     }
+
+private val LOG = Logger.getInstance("JvmFileClassUtil")
 
 fun KtDeclaration.isInsideJvmMultifileClassFile() = JvmFileClassUtil.findAnnotationEntryOnFileNoResolve(
         containingKtFile,

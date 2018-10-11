@@ -1,0 +1,77 @@
+@kotlin.Metadata
+@kotlin.coroutines.jvm.internal.DebugMetadata
+final class OomInReturnUnitKt$test$1 {
+    field L$0: java.lang.Object
+    field label: int
+    synthetic field result: java.lang.Object
+    inner class OomInReturnUnitKt$test$1
+    method <init>(p0: kotlin.coroutines.Continuation): void
+    public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
+}
+
+@kotlin.Metadata
+public final class OomInReturnUnitKt {
+    inner class OomInReturnUnitKt$test$1
+    public final static @org.jetbrains.annotations.Nullable method some(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.Continuation): java.lang.Object
+    public final static @org.jetbrains.annotations.Nullable method test(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.Continuation): java.lang.Object
+}
+
+@kotlin.Metadata
+public abstract class helpers/ContinuationAdapter {
+    private final @org.jetbrains.annotations.NotNull field context: kotlin.coroutines.CoroutineContext
+    public method <init>(): void
+    public @org.jetbrains.annotations.NotNull method getContext(): kotlin.coroutines.CoroutineContext
+    public abstract method resume(p0: java.lang.Object): void
+    public method resumeWith(@org.jetbrains.annotations.NotNull p0: java.lang.Object): void
+    public abstract method resumeWithException(@org.jetbrains.annotations.NotNull p0: java.lang.Throwable): void
+}
+
+@kotlin.Metadata
+public final class helpers/CoroutineUtilKt$handleExceptionContinuation$1 {
+    synthetic final field $x: kotlin.jvm.functions.Function1
+    private final @org.jetbrains.annotations.NotNull field context: kotlin.coroutines.EmptyCoroutineContext
+    inner class helpers/CoroutineUtilKt$handleExceptionContinuation$1
+    method <init>(p0: kotlin.jvm.functions.Function1): void
+    public synthetic method getContext(): kotlin.coroutines.CoroutineContext
+    public @org.jetbrains.annotations.NotNull method getContext(): kotlin.coroutines.EmptyCoroutineContext
+    public method resumeWith(@org.jetbrains.annotations.NotNull p0: java.lang.Object): void
+}
+
+@kotlin.Metadata
+public final class helpers/CoroutineUtilKt$handleResultContinuation$1 {
+    synthetic final field $x: kotlin.jvm.functions.Function1
+    private final @org.jetbrains.annotations.NotNull field context: kotlin.coroutines.EmptyCoroutineContext
+    inner class helpers/CoroutineUtilKt$handleResultContinuation$1
+    method <init>(p0: kotlin.jvm.functions.Function1): void
+    public synthetic method getContext(): kotlin.coroutines.CoroutineContext
+    public @org.jetbrains.annotations.NotNull method getContext(): kotlin.coroutines.EmptyCoroutineContext
+    public method resumeWith(@org.jetbrains.annotations.NotNull p0: java.lang.Object): void
+}
+
+@kotlin.Metadata
+public final class helpers/CoroutineUtilKt {
+    inner class helpers/CoroutineUtilKt$handleExceptionContinuation$1
+    inner class helpers/CoroutineUtilKt$handleResultContinuation$1
+    public final static @org.jetbrains.annotations.NotNull method handleExceptionContinuation(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function1): kotlin.coroutines.Continuation
+    public final static @org.jetbrains.annotations.NotNull method handleResultContinuation(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function1): kotlin.coroutines.Continuation
+}
+
+@kotlin.Metadata
+public final class helpers/EmptyContinuation$Companion {
+    inner class helpers/EmptyContinuation$Companion
+    private method <init>(): void
+    public synthetic method <init>(p0: kotlin.jvm.internal.DefaultConstructorMarker): void
+}
+
+@kotlin.Metadata
+public class helpers/EmptyContinuation {
+    public final static field Companion: helpers.EmptyContinuation$Companion
+    private final @org.jetbrains.annotations.NotNull field context: kotlin.coroutines.CoroutineContext
+    inner class helpers/EmptyContinuation$Companion
+    static method <clinit>(): void
+    public method <init>(): void
+    public method <init>(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.CoroutineContext): void
+    public synthetic method <init>(p0: kotlin.coroutines.CoroutineContext, p1: int, p2: kotlin.jvm.internal.DefaultConstructorMarker): void
+    public @org.jetbrains.annotations.NotNull method getContext(): kotlin.coroutines.CoroutineContext
+    public method resumeWith(@org.jetbrains.annotations.NotNull p0: java.lang.Object): void
+}

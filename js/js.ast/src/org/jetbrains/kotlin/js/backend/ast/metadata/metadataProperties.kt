@@ -47,6 +47,8 @@ var JsInvocation.descriptor: CallableDescriptor? by MetadataProperty(default = n
 
 var JsInvocation.psiElement: PsiElement? by MetadataProperty(default = null)
 
+var JsNameRef.isJsCall: Boolean by MetadataProperty(default = false)
+
 var JsNameRef.inlineStrategy: InlineStrategy? by MetadataProperty(default = null)
 
 var JsNameRef.descriptor: CallableDescriptor? by MetadataProperty(default = null)

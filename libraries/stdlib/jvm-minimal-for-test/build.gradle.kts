@@ -2,7 +2,9 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 description = "Kotlin Mock Runtime for Tests"
 
-apply { plugin("kotlin") }
+plugins {
+    kotlin("jvm")
+}
 
 jvmTarget = "1.6"
 javaHome = rootProject.extra["JDK_16"] as String
@@ -20,17 +22,19 @@ sourceSets {
     "test" {}
 }
 
-val copySources by task<Copy> {
-    from(project(":kotlin-stdlib").projectDir.resolve("jvm/runtime"))
-            .include("kotlin/TypeAliases.kt",
-                    "kotlin/text/TypeAliases.kt")
-    from(project(":kotlin-stdlib").projectDir.resolve("src"))
-            .include("kotlin/collections/TypeAliases.kt",
-                    "kotlin/jvm/JvmVersion.kt",
-                    "kotlin/util/Standard.kt",
-                    "kotlin/internal/Annotations.kt",
-                    "kotlin/internal/contracts/ContractBuilder.kt",
-                    "kotlin/internal/contracts/Effect.kt")
+val copySources by task<Sync> {
+    val stdlibProjectDir = project(":kotlin-stdlib").projectDir
+
+    from(stdlibProjectDir.resolve("runtime"))
+        .include("kotlin/TypeAliases.kt",
+                 "kotlin/text/TypeAliases.kt")
+    from(stdlibProjectDir.resolve("src"))
+        .include("kotlin/collections/TypeAliases.kt")
+    from(stdlibProjectDir.resolve("../src"))
+        .include("kotlin/util/Standard.kt",
+                 "kotlin/internal/Annotations.kt",
+                 "kotlin/contracts/ContractBuilder.kt",
+                 "kotlin/contracts/Effect.kt")
     into(File(buildDir, "src"))
 }
 
@@ -42,7 +46,13 @@ tasks.withType<JavaCompile> {
 tasks.withType<KotlinCompile> {
     dependsOn(copySources)
     kotlinOptions {
-        freeCompilerArgs += listOf("-module-name", "kotlin-stdlib")
+        freeCompilerArgs += listOf(
+            "-module-name",
+            "kotlin-stdlib",
+            "-Xmulti-platform",
+            "-Xuse-experimental=kotlin.contracts.ExperimentalContracts",
+            "-Xuse-experimental=kotlin.Experimental"
+        )
     }
 }
 

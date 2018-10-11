@@ -1,0 +1,253 @@
+package test;
+
+import java.lang.System;
+
+@kotlin.Metadata()
+public class Cl {
+
+    public Cl() {
+        super();
+    }
+}
+
+////////////////////
+
+package test;
+
+import java.lang.System;
+
+@kotlin.Metadata()
+public final class Generics1 extends Foo<java.lang.String> {
+
+    public Generics1() {
+        super();
+    }
+}
+
+////////////////////
+
+package test;
+
+import java.lang.System;
+
+@kotlin.Metadata()
+public final class Generics2 implements Foo<java.lang.String> {
+
+    public Generics2() {
+        super();
+    }
+}
+
+////////////////////
+
+package test;
+
+import java.lang.System;
+
+@kotlin.Metadata()
+public final class Generics3 implements Foo<Bar, Baz, Boo<Baz, java.util.List<?>>, java.lang.String> {
+
+    public Generics3() {
+        super();
+    }
+}
+
+////////////////////
+
+package test;
+
+import java.lang.System;
+
+@kotlin.Metadata()
+public abstract interface Intf {
+}
+
+////////////////////
+
+package test;
+
+import java.lang.System;
+
+@kotlin.Metadata()
+public final class TBarBazCl extends test.Cl implements Bar, Baz {
+
+    public TBarBazCl() {
+        super();
+    }
+}
+
+////////////////////
+
+package test;
+
+import java.lang.System;
+
+@kotlin.Metadata()
+public final class TClBarBaz extends test.Cl implements Bar, Baz {
+
+    public TClBarBaz() {
+        super();
+    }
+}
+
+////////////////////
+
+package test;
+
+import java.lang.System;
+
+@kotlin.Metadata()
+public final class TFooBar extends Foo implements Bar, test.Intf {
+    @org.jetbrains.annotations.NotNull()
+    private final X a = null;
+
+    @org.jetbrains.annotations.NotNull()
+    public final X getA() {
+        return null;
+    }
+
+    public TFooBar(@org.jetbrains.annotations.NotNull()
+    X a) {
+        super();
+    }
+}
+
+////////////////////
+
+package test;
+
+import java.lang.System;
+
+@kotlin.Metadata()
+public final class TFooBar2 implements Foo, Bar {
+    @org.jetbrains.annotations.NotNull()
+    private final X a = null;
+
+    @org.jetbrains.annotations.NotNull()
+    public final X getA() {
+        return null;
+    }
+
+    public TFooBar2(@org.jetbrains.annotations.NotNull()
+    X a) {
+        super();
+    }
+}
+
+////////////////////
+
+package test;
+
+import java.lang.System;
+
+@kotlin.Metadata()
+public final class TFooBarBaz extends Foo implements Bar, Baz {
+
+    public TFooBarBaz() {
+        super();
+    }
+}
+
+////////////////////
+
+package test;
+
+import java.lang.System;
+
+@kotlin.Metadata()
+public final class TFooBarBaz2 implements test.Intf {
+
+    public TFooBarBaz2() {
+        super();
+    }
+}
+
+////////////////////
+
+package test;
+
+import java.lang.System;
+
+@kotlin.Metadata()
+public final class TFooBarBaz3 implements Foo, Bar, Baz {
+
+    public TFooBarBaz3() {
+        super();
+    }
+}
+
+////////////////////
+
+package test;
+
+import java.lang.System;
+
+@kotlin.Metadata()
+public final class TFooBarBaz4 implements Foo, Bar, Baz {
+
+    public TFooBarBaz4() {
+        super();
+    }
+}
+
+////////////////////
+
+package test;
+
+import java.lang.System;
+
+@kotlin.Metadata()
+public final class TFooBarBaz5 implements Foo, Bar, Baz {
+
+    public TFooBarBaz5() {
+        super();
+    }
+
+    public TFooBarBaz5(@org.jetbrains.annotations.NotNull()
+    java.lang.String s) {
+        super();
+    }
+}
+
+////////////////////
+
+package test;
+
+import java.lang.System;
+
+@kotlin.Metadata()
+public final class TFooBarBaz6 extends Foo implements Bar, Baz {
+
+    public TFooBarBaz6(@org.jetbrains.annotations.NotNull()
+    java.lang.String s) {
+        super();
+    }
+}
+
+////////////////////
+
+package test;
+
+import java.lang.System;
+
+@kotlin.Metadata()
+public final class TxFooxBarxBaz extends x.Foo implements x.Bar, x.Baz, test.Intf {
+
+    public TxFooxBarxBaz() {
+        super();
+    }
+}
+
+////////////////////
+
+package test;
+
+import java.lang.System;
+
+@kotlin.Metadata()
+public final class TxFooxBarxBaz2 {
+
+    public TxFooxBarxBaz2() {
+        super();
+    }
+}

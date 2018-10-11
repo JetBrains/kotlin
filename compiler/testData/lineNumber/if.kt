@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 fun foo() {
     if (test.lineNumber() > 0) {
         test.lineNumber()

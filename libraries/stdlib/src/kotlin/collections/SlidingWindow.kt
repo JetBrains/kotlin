@@ -1,22 +1,9 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package kotlin.collections
-
-import kotlin.coroutines.experimental.buildIterator
 
 internal fun checkWindowSizeStep(size: Int, step: Int) {
     require(size > 0 && step > 0) {
@@ -34,7 +21,7 @@ internal fun <T> Sequence<T>.windowedSequence(size: Int, step: Int, partialWindo
 
 internal fun <T> windowedIterator(iterator: Iterator<T>, size: Int, step: Int, partialWindows: Boolean, reuseBuffer: Boolean): Iterator<List<T>> {
     if (!iterator.hasNext()) return EmptyIterator
-    return buildIterator<List<T>> {
+    return iterator<List<T>> {
         val gap = step - size
         if (gap >= 0) {
             var buffer = ArrayList<T>(size)
@@ -96,7 +83,7 @@ internal class MovingSubList<out E>(private val list: List<E>) : AbstractList<E>
  *
  * Buffer overflow is not allowed so [add] doesn't overwrite tail but raises an exception.
  */
-private class RingBuffer<T>(val capacity: Int): AbstractList<T>(), RandomAccess {
+private class RingBuffer<T>(val capacity: Int) : AbstractList<T>(), RandomAccess {
     init {
         require(capacity >= 0) { "ring buffer capacity should not be negative but it is $capacity" }
     }
@@ -116,25 +103,25 @@ private class RingBuffer<T>(val capacity: Int): AbstractList<T>(), RandomAccess 
     fun isFull() = size == capacity
 
     override fun iterator(): Iterator<T> = object : AbstractIterator<T>() {
-            private var count = size
-            private var index = startIndex
+        private var count = size
+        private var index = startIndex
 
-            override fun computeNext() {
-                if (count == 0) {
-                    done()
-                } else {
-                    @Suppress("UNCHECKED_CAST")
-                    setNext(buffer[index] as T)
-                    index = index.forward(1)
-                    count--
-                }
+        override fun computeNext() {
+            if (count == 0) {
+                done()
+            } else {
+                @Suppress("UNCHECKED_CAST")
+                setNext(buffer[index] as T)
+                index = index.forward(1)
+                count--
             }
+        }
     }
 
     @Suppress("UNCHECKED_CAST")
     override fun <T> toArray(array: Array<T>): Array<T> {
         val result: Array<T?> =
-                if (array.size < this.size) array.copyOf(this.size) else array as Array<T?>
+            if (array.size < this.size) array.copyOf(this.size) else array as Array<T?>
 
         val size = this.size
 

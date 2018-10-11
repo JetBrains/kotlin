@@ -49,9 +49,9 @@ import org.jetbrains.kotlin.idea.util.projectStructure.version
 import org.jetbrains.kotlin.idea.util.runWithAlternativeResolveEnabled
 import org.jetbrains.kotlin.idea.vfilefinder.KotlinJavaScriptMetaFileIndex
 import org.jetbrains.kotlin.idea.vfilefinder.hasSomethingInPackage
-import org.jetbrains.kotlin.load.kotlin.JvmMetadataVersion
+import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
+import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.serialization.deserialization.BinaryVersion
 import org.jetbrains.kotlin.utils.JsMetadataVersion
 import org.jetbrains.kotlin.utils.KotlinPaths
 import org.jetbrains.kotlin.utils.LibraryUtils
@@ -236,10 +236,12 @@ fun getDefaultJvmTarget(sdk: Sdk?, version: String): JvmTarget? {
         return null
     }
     val sdkVersion = sdk?.version
-    if (sdkVersion != null && sdkVersion.isAtLeast(JavaSdkVersion.JDK_1_8)) {
-        return JvmTarget.JVM_1_8
+    return when {
+        sdkVersion == null -> null
+        sdkVersion.isAtLeast(JavaSdkVersion.JDK_1_8) -> JvmTarget.JVM_1_8
+        sdkVersion.isAtLeast(JavaSdkVersion.JDK_1_6) -> JvmTarget.JVM_1_6
+        else -> null
     }
-    return null
 }
 
 fun isSnapshot(version: String): Boolean {
@@ -267,8 +269,7 @@ const val MAVEN_STDLIB_ID_JDK8 = PathUtil.KOTLIN_JAVA_RUNTIME_JDK8_NAME
 const val MAVEN_JS_STDLIB_ID = PathUtil.JS_LIB_NAME
 const val MAVEN_JS_TEST_ID = PathUtil.KOTLIN_TEST_JS_NAME
 
-const val MAVEN_OLD_JS_STDLIB_ID = "kotlin-js-library"
-const val MAVEN_COMMON_STDLIB_ID = "kotlin-stdlib-common" // TODO: KotlinCommonMavenConfigurator
+
 const val MAVEN_TEST_ID = PathUtil.KOTLIN_TEST_NAME
 const val MAVEN_TEST_JUNIT_ID = "kotlin-test-junit"
 const val MAVEN_COMMON_TEST_ID = "kotlin-test-common"
@@ -278,7 +279,8 @@ val LOG = Logger.getInstance("org.jetbrains.kotlin.idea.versions.KotlinRuntimeLi
 
 data class LibInfo(
     val groupId: String,
-    val name: String
+    val name: String,
+    val version: String = "0.0.0"
 )
 
 data class DeprecatedLibInfo(

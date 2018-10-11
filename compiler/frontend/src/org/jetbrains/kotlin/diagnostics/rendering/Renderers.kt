@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.diagnostics.rendering
 
 import com.google.common.collect.Lists
-import com.google.common.collect.Sets
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
@@ -34,6 +33,7 @@ import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
+import org.jetbrains.kotlin.renderer.PropertyAccessorRenderingPolicy
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.MemberComparator
 import org.jetbrains.kotlin.resolve.MultiTargetPlatform
@@ -51,7 +51,6 @@ import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.io.PrintWriter
 import java.io.StringWriter
-import java.lang.AssertionError
 
 object Renderers {
 
@@ -252,7 +251,7 @@ object Renderers {
         for (substitutedDescriptor in substitutedDescriptors) {
             val receiverType = DescriptorUtils.getReceiverParameterType(substitutedDescriptor.extensionReceiverParameter)
 
-            val errorPositions = Sets.newHashSet<ConstraintPosition>()
+            val errorPositions = hashSetOf<ConstraintPosition>()
             val parameterTypes = Lists.newArrayList<KotlinType>()
             for (valueParameterDescriptor in substitutedDescriptor.valueParameters) {
                 parameterTypes.add(valueParameterDescriptor.type)
@@ -349,7 +348,8 @@ object Renderers {
                 LOG.error(
                     debugMessage(
                         "There is no type parameter with violated upper bound for 'upper bound violated' error",
-                        inferenceErrorData
+                        inferenceErrorData,
+                        verbosity = ConstraintSystemRenderingVerbosity.EXTRA_VERBOSE
                     )
                 )
                 result
@@ -533,38 +533,100 @@ object Renderers {
     @JvmField
     val RENDER_COLLECTION_OF_TYPES = ContextDependentRenderer<Collection<KotlinType>> { types, context -> renderTypes(types, context) }
 
-    fun renderConstraintSystem(constraintSystem: ConstraintSystem, shortTypeBounds: Boolean): String {
+    enum class ConstraintSystemRenderingVerbosity {
+        COMPACT,
+        DEBUG, // Includes type bounds positions, types are rendered with FQNs instead of short names
+        EXTRA_VERBOSE // Additionally includes all supertypes of each bounds and type constructors of types
+    }
+
+    fun renderConstraintSystem(constraintSystem: ConstraintSystem, verbosity: ConstraintSystemRenderingVerbosity): String {
         val typeBounds = linkedSetOf<TypeBounds>()
         for (variable in constraintSystem.typeVariables) {
             typeBounds.add(constraintSystem.getTypeBounds(variable))
         }
+
+        val separator = if (verbosity == ConstraintSystemRenderingVerbosity.EXTRA_VERBOSE) "\n\n" else "\n"
         return "type parameter bounds:\n" +
-                StringUtil.join(typeBounds, { renderTypeBounds(it, short = shortTypeBounds) }, "\n") + "\n\n" + "status:\n" +
+                typeBounds.joinToString(separator = separator) { renderTypeBounds(it, verbosity) } +
+                "\n\n" +
+                "status:\n" +
                 ConstraintsUtil.getDebugMessageForStatus(constraintSystem.status)
     }
 
-    private fun renderTypeBounds(typeBounds: TypeBounds, short: Boolean): String {
-        val renderBound = { bound: Bound ->
-            val arrow = when (bound.kind) {
-                LOWER_BOUND -> ">: "
-                UPPER_BOUND -> "<: "
-                else -> ":= "
-            }
-            val renderer = if (short) DescriptorRenderer.SHORT_NAMES_IN_TYPES else DescriptorRenderer.FQ_NAMES_IN_TYPES
-            val renderedBound = arrow + renderer.renderType(bound.constrainingType) + if (!bound.isProper) "*" else ""
-            if (short) renderedBound else renderedBound + '(' + bound.position + ')'
-        }
-        val typeVariableName = typeBounds.typeVariable.name
+    private fun renderTypeBounds(typeBounds: TypeBounds, verbosity: ConstraintSystemRenderingVerbosity): String {
+        val renderedTypeVariable = renderTypeVariable(
+            typeBounds.typeVariable,
+            includeTypeConstructor = verbosity == ConstraintSystemRenderingVerbosity.EXTRA_VERBOSE
+        )
+
         return if (typeBounds.bounds.isEmpty()) {
-            typeVariableName.asString()
-        } else
-            "$typeVariableName ${StringUtil.join(typeBounds.bounds, renderBound, ", ")}"
+            renderedTypeVariable
+        } else {
+            // In 'EXTRA_VERBOSE' bounds take a lot of lines and are rendered as a separate block of text
+            // In other modes they are rendered as a single line
+            val boundsPrefix = if (verbosity == ConstraintSystemRenderingVerbosity.EXTRA_VERBOSE) "\n" else " "
+            val boundsSeparator = if (verbosity == ConstraintSystemRenderingVerbosity.EXTRA_VERBOSE) "\n" else ", "
+
+            val renderedBounds = typeBounds.bounds.joinToString(separator = boundsSeparator) { renderTypeBound(it, verbosity) }
+
+            renderedTypeVariable + boundsPrefix + renderedBounds
+        }
     }
 
-    private fun debugMessage(message: String, inferenceErrorData: InferenceErrorData) = buildString {
+    private fun renderTypeVariable(typeVariable: TypeVariable, includeTypeConstructor: Boolean): String {
+        val typeVariableName = typeVariable.name.asString()
+        if (!includeTypeConstructor) return typeVariableName
+
+        return "TypeVariable $typeVariableName, " +
+                "descriptor = ${typeVariable.freshTypeParameter}, " +
+                "typeConstructor = ${renderTypeConstructor(typeVariable.freshTypeParameter.typeConstructor)}"
+    }
+
+    private fun renderTypeBound(bound: Bound, verbosity: ConstraintSystemRenderingVerbosity): String {
+        val typeRendered = if (verbosity == ConstraintSystemRenderingVerbosity.COMPACT)
+            DescriptorRenderer.SHORT_NAMES_IN_TYPES
+        else
+            DescriptorRenderer.FQ_NAMES_IN_TYPES
+
+        val arrow = when (bound.kind) {
+            LOWER_BOUND -> ">: "
+            UPPER_BOUND -> "<: "
+            else -> ":= "
+        }
+
+        val initialBoundRender = arrow + typeRendered.renderType(bound.constrainingType) + if (!bound.isProper) "*" else ""
+
+        return when (verbosity) {
+            ConstraintSystemRenderingVerbosity.COMPACT -> initialBoundRender
+
+            ConstraintSystemRenderingVerbosity.DEBUG -> "$initialBoundRender (${bound.position}) "
+
+            ConstraintSystemRenderingVerbosity.EXTRA_VERBOSE -> {
+                "$initialBoundRender (${bound.position})\n" +
+                        "Constraining type additional info: ${renderTypeConstructor(bound.constrainingType.constructor)}\n" +
+                        "Supertypes of constraining type:\n" +
+                        TypeUtils.getAllSupertypes(bound.constrainingType).joinToString("\n") {
+                            "- " + typeRendered.renderType(it) + ", TypeConstructor info: ${renderTypeConstructor(it.constructor)}"
+                        } +
+                        "\n"
+            }
+        }
+    }
+
+    @Suppress("deprecation")
+    private fun renderTypeConstructor(typeConstructor: TypeConstructor): String {
+        return "$typeConstructor[${typeConstructor.javaClass.name}], " +
+                "${(typeConstructor as? AbstractTypeConstructor)?.renderAdditionalDebugInformation()}"
+    }
+
+    private fun debugMessage(
+        message: String,
+        inferenceErrorData: InferenceErrorData,
+        verbosity: ConstraintSystemRenderingVerbosity = ConstraintSystemRenderingVerbosity.DEBUG
+    ) = buildString {
         append(message)
         append("\nConstraint system: \n")
-        append(renderConstraintSystem(inferenceErrorData.constraintSystem, false))
+        append(renderConstraintSystem(inferenceErrorData.constraintSystem, verbosity))
         append("\nDescriptor:\n")
         append(inferenceErrorData.descriptor)
         append("\nExpected type:\n")
@@ -615,7 +677,7 @@ object Renderers {
     val DEPRECATION_RENDERER = DescriptorRenderer.ONLY_NAMES_WITH_SHORT_TYPES.withOptions {
         withoutTypeParameters = false
         receiverAfterName = false
-        renderAccessors = true
+        propertyAccessorRenderingPolicy = PropertyAccessorRenderingPolicy.PRETTY
     }.asRenderer()
 }
 

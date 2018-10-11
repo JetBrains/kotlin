@@ -1,11 +1,10 @@
-// !API_VERSION: 1.3
+// !USE_EXPERIMENTAL: kotlin.Experimental
 // !DIAGNOSTICS: -UNUSED_VARIABLE
-// MODULE: api
 // FILE: api.kt
 
 package api
 
-@Experimental(Experimental.Level.WARNING, [Experimental.Impact.COMPILATION])
+@Experimental(Experimental.Level.WARNING)
 @Target(AnnotationTarget.TYPE, AnnotationTarget.CLASS, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY, AnnotationTarget.TYPEALIAS,
         AnnotationTarget.VALUE_PARAMETER)
 annotation class ExperimentalAPI
@@ -19,7 +18,6 @@ val property: String = ""
 @ExperimentalAPI
 typealias Typealias = String
 
-// MODULE: usage1(api)
 // FILE: usage-propagate.kt
 
 package usage1
@@ -42,7 +40,6 @@ class Use {
     }
 }
 
-// MODULE: usage2(api)
 // FILE: usage-use.kt
 
 package usage2
@@ -67,7 +64,6 @@ class Use {
     }
 }
 
-// MODULE: usage3(api)
 // FILE: usage-none.kt
 
 package usage3

@@ -34,11 +34,14 @@ import org.jetbrains.kotlin.synthetic.SAM_LOOKUP_NAME
 import java.io.File
 import java.util.*
 
+const val DELETE_MODULE_FILE_PROPERTY = "kotlin.delete.module.file.after.build"
+
 fun makeModuleFile(
         name: String,
         isTest: Boolean,
         outputDir: File,
         sourcesToCompile: Iterable<File>,
+        commonSources: Iterable<File>,
         javaSourceRoots: Iterable<JvmSourceRoot>,
         classpath: Iterable<File>,
         friendDirs: Iterable<File>
@@ -47,9 +50,13 @@ fun makeModuleFile(
     builder.addModule(
             name,
             outputDir.absolutePath,
-            sourcesToCompile,
+            // important to transform file to absolute paths,
+            // otherwise compiler will use module file's parent as base path (a temporary file; see below)
+            // (see org.jetbrains.kotlin.cli.jvm.compiler.KotlinToJVMBytecodeCompiler.getAbsolutePaths)
+            sourcesToCompile.map { it.absoluteFile },
             javaSourceRoots,
             classpath,
+            commonSources.map { it.absoluteFile },
             null,
             "java-production",
             isTest,
@@ -78,10 +85,10 @@ fun makeCompileServices(
     }
 
 fun updateIncrementalCache(
-        generatedFiles: Iterable<GeneratedFile>,
-        cache: IncrementalJvmCache,
-        changesCollector: ChangesCollector,
-        javaChangesTracker: JavaClassesTrackerImpl?
+    generatedFiles: Iterable<GeneratedFile>,
+    cache: IncrementalJvmCache,
+    changesCollector: ChangesCollector,
+    javaChangesTracker: JavaClassesTrackerImpl?
 ) {
     for (generatedFile in generatedFiles) {
         when {
@@ -116,8 +123,8 @@ data class DirtyData(
 )
 
 fun ChangesCollector.getDirtyData(
-        caches: Iterable<IncrementalCacheCommon<*>>,
-        reporter: ICReporter
+    caches: Iterable<IncrementalCacheCommon>,
+    reporter: ICReporter
 ): DirtyData {
     val dirtyLookupSymbols = HashSet<LookupSymbol>()
     val dirtyClassesFqNames = HashSet<FqName>()
@@ -127,6 +134,7 @@ fun ChangesCollector.getDirtyData(
 
         if (change is ChangeInfo.SignatureChanged) {
             val fqNames = if (!change.areSubclassesAffected) listOf(change.fqName) else withSubtypes(change.fqName, caches)
+            dirtyClassesFqNames.addAll(fqNames)
 
             for (classFqName in fqNames) {
                 assert(!classFqName.isRoot) { "$classFqName is root when processing $change" }
@@ -170,10 +178,10 @@ fun mapLookupSymbolsToFiles(
 }
 
 fun mapClassesFqNamesToFiles(
-        caches: Iterable<IncrementalCacheCommon<*>>,
-        classesFqNames: Iterable<FqName>,
-        reporter: ICReporter,
-        excludes: Set<File> = emptySet()
+    caches: Iterable<IncrementalCacheCommon>,
+    classesFqNames: Iterable<FqName>,
+    reporter: ICReporter,
+    excludes: Set<File> = emptySet()
 ): Set<File> {
     val dirtyFiles = HashSet<File>()
 
@@ -192,7 +200,7 @@ fun mapClassesFqNamesToFiles(
 
 fun withSubtypes(
         typeFqName: FqName,
-        caches: Iterable<IncrementalCacheCommon<*>>
+        caches: Iterable<IncrementalCacheCommon>
 ): Set<FqName> {
     val types = LinkedList(listOf(typeFqName))
     val subtypes = hashSetOf<FqName>()

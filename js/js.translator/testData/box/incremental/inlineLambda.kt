@@ -1,4 +1,5 @@
-// EXPECTED_REACHABLE_NODES: 1128
+// IGNORE_BACKEND: JS_IR
+// EXPECTED_REACHABLE_NODES: 1283
 // FILE: a.kt
 inline fun foo(f: () -> String): () -> String {
     val result = f()

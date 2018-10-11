@@ -22,7 +22,6 @@ public/*package*/ abstract class ListImpl : java.util.ArrayList<kotlin.String!> 
     invisible_fake open /*fake_override*/ fun ensureCapacityInternal(/*0*/ kotlin.Int): kotlin.Unit
     invisible_fake open /*fake_override*/ fun ensureExplicitCapacity(/*0*/ kotlin.Int): kotlin.Unit
     invisible_fake open /*fake_override*/ fun fastRemove(/*0*/ kotlin.Int): kotlin.Unit
-    public open /*fake_override*/ fun forEach(/*0*/ java.util.function.Consumer<in kotlin.String!>!): kotlin.Unit
     public abstract fun func(): kotlin.Int
     public open /*fake_override*/ fun get(/*0*/ kotlin.Int): kotlin.String!
     invisible_fake open /*fake_override*/ fun grow(/*0*/ kotlin.Int): kotlin.Unit
@@ -33,21 +32,15 @@ public/*package*/ abstract class ListImpl : java.util.ArrayList<kotlin.String!> 
     public open /*fake_override*/ fun listIterator(): kotlin.collections.MutableListIterator<kotlin.String!>
     public open /*fake_override*/ fun listIterator(/*0*/ kotlin.Int): kotlin.collections.MutableListIterator<kotlin.String!>
     invisible_fake open /*fake_override*/ fun outOfBoundsMsg(/*0*/ kotlin.Int): kotlin.String!
-    public open /*fake_override*/ fun parallelStream(): java.util.stream.Stream<kotlin.String!>
     invisible_fake open /*fake_override*/ fun rangeCheck(/*0*/ kotlin.Int): kotlin.Unit
     invisible_fake open /*fake_override*/ fun rangeCheckForAdd(/*0*/ kotlin.Int): kotlin.Unit
     invisible_fake open /*fake_override*/ fun readObject(/*0*/ java.io.ObjectInputStream!): kotlin.Unit
     public open /*fake_override*/ fun remove(/*0*/ kotlin.String!): kotlin.Boolean
     public open /*fake_override*/ fun removeAll(/*0*/ kotlin.collections.Collection<kotlin.String!>): kotlin.Boolean
     public open /*fake_override*/ fun removeAt(/*0*/ kotlin.Int): kotlin.String!
-    public open /*fake_override*/ fun removeIf(/*0*/ java.util.function.Predicate<in kotlin.String!>): kotlin.Boolean
     protected/*protected and package*/ open /*fake_override*/ fun removeRange(/*0*/ kotlin.Int, /*1*/ kotlin.Int): kotlin.Unit
-    public open /*fake_override*/ fun replaceAll(/*0*/ java.util.function.UnaryOperator<kotlin.String!>): kotlin.Unit
     public open /*fake_override*/ fun retainAll(/*0*/ kotlin.collections.Collection<kotlin.String!>): kotlin.Boolean
     public open /*fake_override*/ fun set(/*0*/ kotlin.Int, /*1*/ kotlin.String!): kotlin.String!
-    public open /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun sort(/*0*/ java.util.Comparator<in kotlin.String!>!): kotlin.Unit
-    public open /*fake_override*/ fun spliterator(): java.util.Spliterator<kotlin.String!>
-    public open /*fake_override*/ fun stream(): java.util.stream.Stream<kotlin.String!>
     public open /*fake_override*/ fun subList(/*0*/ kotlin.Int, /*1*/ kotlin.Int): kotlin.collections.MutableList<kotlin.String!>
     public open /*fake_override*/ fun toArray(): kotlin.Array<(out) kotlin.Any!>!
     public open /*fake_override*/ fun </*0*/ T : kotlin.Any!> toArray(/*0*/ kotlin.Array<(out) T!>!): kotlin.Array<(out) T!>!
@@ -55,7 +48,6 @@ public/*package*/ abstract class ListImpl : java.util.ArrayList<kotlin.String!> 
     invisible_fake open /*fake_override*/ fun writeObject(/*0*/ java.io.ObjectOutputStream!): kotlin.Unit
 
     // Static members
-    invisible_fake final /*fake_override*/ val DEFAULTCAPACITY_EMPTY_ELEMENTDATA: kotlin.Array<(out) kotlin.Any!>!
     invisible_fake const final /*fake_override*/ val DEFAULT_CAPACITY: kotlin.Int
     invisible_fake final /*fake_override*/ val EMPTY_ELEMENTDATA: kotlin.Array<(out) kotlin.Any!>!
     invisible_fake const final /*fake_override*/ val MAX_ARRAY_SIZE: kotlin.Int

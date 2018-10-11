@@ -1,7 +1,10 @@
 
 description = "Kotlin SamWithReceiver IDEA Plugin"
 
-apply { plugin("kotlin") }
+plugins {
+    kotlin("jvm")
+    id("jps-compatible")
+}
 
 jvmTarget = "1.6"
 
@@ -15,7 +18,7 @@ dependencies {
     compile(project(":idea:idea-android"))
     compile(project(":idea"))
     compile(project(":idea:idea-jvm"))
-    compile(intellijDep()) { includeJars("openapi", "extensions", "util") }
+    compile(intellijDep()) { includeJars("openapi", "platform-api", "extensions", "util") }
 }
 
 sourceSets {

@@ -25,14 +25,18 @@ import org.jetbrains.kotlin.psi.KtTypeReference
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.types.*
 
-
-interface TypeBinding<out P : PsiElement> : TypeHolder<TypeBinding<P>> {
+interface TypeBinding<out P : PsiElement> {
     val psiElement: P
+    val type: KotlinType
     val isInAbbreviation: Boolean
-    override val arguments: List<TypeArgumentBinding<P>?>
+    val arguments: List<TypeArgumentBinding<P>?>
 }
 
-interface TypeArgumentBinding<out P : PsiElement> : TypeHolderArgument<TypeBinding<P>>
+interface TypeArgumentBinding<out P : PsiElement> {
+    val projection: TypeProjection
+    val typeParameter: TypeParameterDescriptor?
+    val binding: TypeBinding<P>
+}
 
 fun KtTypeReference.createTypeBinding(trace: BindingContext): TypeBinding<KtTypeElement>? {
     val type = trace[BindingContext.TYPE, this]
@@ -64,7 +68,7 @@ fun KtCallableDeclaration.createTypeBindingForReturnType(trace: BindingContext):
 private class TypeArgumentBindingImpl<out P : PsiElement>(
     override val projection: TypeProjection,
     override val typeParameter: TypeParameterDescriptor?,
-    override val holder: TypeBinding<P>
+    override val binding: TypeBinding<P>
 ) : TypeArgumentBinding<P>
 
 private class ExplicitTypeBinding(

@@ -56,6 +56,7 @@ import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.approximateWithResolvableType
 import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.idea.util.isResolvableInScope
+import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
@@ -75,7 +76,7 @@ internal val KotlinBuiltIns.defaultReturnType: KotlinType get() = unitType
 internal val KotlinBuiltIns.defaultParameterType: KotlinType get() = nullableAnyType
 
 private fun DeclarationDescriptor.renderForMessage(): String =
-        IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.render(this)
+        IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_NO_ANNOTATIONS.render(this)
 
 private val TYPE_RENDERER = DescriptorRenderer.FQ_NAMES_IN_TYPES.withOptions {
     typeNormalizer = IdeDescriptorRenderers.APPROXIMATE_FLEXIBLE_TYPES
@@ -306,7 +307,7 @@ private fun ExtractionData.analyzeControlFlow(
     }
 
     val outParameters =
-            parameters.filter { it.mirrorVarName != null && modifiedVarDescriptors[it.originalDescriptor] != null }.sortedBy { it.nameForRef }
+        parameters.filter { it.mirrorVarName != null && modifiedVarDescriptors[it.originalDescriptor] != null }.sortedBy { it.nameForRef }
     val outDeclarations =
             declarationsToCopy.filter { modifiedVarDescriptors[bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, it]] != null }
     val modifiedValueCount = outParameters.size + outDeclarations.size
@@ -606,21 +607,27 @@ private fun ExtractionData.getLocalInstructions(pseudocode: Pseudocode): List<In
     return instructions
 }
 
-fun ExtractionData.isVisibilityApplicable(): Boolean {
+fun ExtractionData.isLocal(): Boolean {
     val parent = targetSibling.parent
-    return parent is KtClassBody || (parent is KtFile && !parent.isScript())
+    return parent !is KtClassBody && (parent !is KtFile || parent.isScript())
 }
 
-fun ExtractionData.getDefaultVisibility(): String {
-    if (!isVisibilityApplicable()) return ""
+fun ExtractionData.isVisibilityApplicable(): Boolean {
+    if (isLocal()) return false
+    if (commonParent.parentsWithSelf.any { it is KtNamedFunction && it.hasModifier(KtTokens.INLINE_KEYWORD) && it.isPublic }) return false
+    return true
+}
+
+fun ExtractionData.getDefaultVisibility(): KtModifierKeywordToken? {
+    if (!isVisibilityApplicable()) return null
 
     val parent = targetSibling.getStrictParentOfType<KtDeclaration>()
     if (parent is KtClass) {
-        if (parent.isInterface()) return ""
-        if (parent.isEnum() && commonParent.getNonStrictParentOfType<KtEnumEntry>()?.getStrictParentOfType<KtClass>() == parent) return ""
+        if (parent.isInterface()) return null
+        if (parent.isEnum() && commonParent.getNonStrictParentOfType<KtEnumEntry>()?.getStrictParentOfType<KtClass>() == parent) return null
     }
 
-    return "private"
+    return KtTokens.PRIVATE_KEYWORD
 }
 
 fun ExtractionData.performAnalysis(): AnalysisResult {

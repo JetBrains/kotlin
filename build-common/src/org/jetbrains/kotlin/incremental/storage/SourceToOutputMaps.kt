@@ -42,6 +42,9 @@ internal abstract class AbstractSourceToOutputMap<Name>(
     operator fun get(sourceFile: File): Collection<Name> =
             storage[sourceFile.absolutePath].orEmpty().map(nameTransformer::asName)
 
+    fun getFqNames(sourceFile: File): Collection<FqName> =
+        storage[sourceFile.absolutePath].orEmpty().map(nameTransformer::asFqName)
+
     override fun dumpValue(value: Collection<String>) =
             value.dumpCollection()
 

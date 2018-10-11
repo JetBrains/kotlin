@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.js.backend.ast;
 import org.jetbrains.kotlin.js.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
 
-public class JsForIn extends SourceInfoAwareJsNode implements JsStatement {
+public class JsForIn extends SourceInfoAwareJsNode implements JsLoop {
     private JsStatement body;
     private JsExpression iterExpression;
     private JsExpression objectExpression;

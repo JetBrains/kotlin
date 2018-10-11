@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.daemon.common.experimental
 
-import kotlinx.coroutines.experimental.runBlocking
+import kotlinx.coroutines.runBlocking
 import org.jetbrains.kotlin.daemon.common.impls.IncrementalCompilerServicesFacade
 import org.jetbrains.kotlin.daemon.common.impls.SimpleDirtyData
 import java.io.File

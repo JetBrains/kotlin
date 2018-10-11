@@ -43,7 +43,9 @@ import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.util.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.MultiTargetPlatform
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
+import org.jetbrains.kotlin.resolve.getMultiTargetPlatform
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
@@ -143,7 +145,12 @@ abstract class CompletionSession(
 
     // LookupElementsCollector instantiation is deferred because virtual call to createSorter uses data from derived classes
     protected val collector: LookupElementsCollector by lazy(LazyThreadSafetyMode.NONE) {
-        LookupElementsCollector({ CompletionBenchmarkSink.instance.onFlush(this) }, prefixMatcher, parameters, resultSet, createSorter(), (file as? KtCodeFragment)?.extraCompletionFilter)
+        LookupElementsCollector(
+            { CompletionBenchmarkSink.instance.onFlush(this) },
+            prefixMatcher, parameters, resultSet,
+            createSorter(), (file as? KtCodeFragment)?.extraCompletionFilter,
+            moduleDescriptor.getMultiTargetPlatform() === MultiTargetPlatform.Common
+        )
     }
 
     protected val searchScope: GlobalSearchScope =
@@ -399,16 +406,13 @@ abstract class CompletionSession(
                                       nameExpression: KtSimpleNameExpression,
                                       callTypeAndReceiver: CallTypeAndReceiver<*, *>): Collection<ReceiverType>? {
         var receiverTypes = callTypeAndReceiver.receiverTypesWithIndex(
-                bindingContext, nameExpression, moduleDescriptor, resolutionFacade,
-                stableSmartCastsOnly = true, /* we don't include smart cast receiver types for "unstable" receiver value to mark members grayed */
-                withImplicitReceiversWhenExplicitPresent = true)
+            bindingContext, nameExpression, moduleDescriptor, resolutionFacade,
+            stableSmartCastsOnly = true, /* we don't include smart cast receiver types for "unstable" receiver value to mark members grayed */
+            withImplicitReceiversWhenExplicitPresent = true
+        )
 
         if (callTypeAndReceiver is CallTypeAndReceiver.SAFE || isDebuggerContext) {
             receiverTypes = receiverTypes?.map { ReceiverType(it.type.makeNotNullable(), it.receiverIndex) }
-        }
-
-        if (receiverTypes != null && nameExpression.languageVersionSettings.supportsFeature(LanguageFeature.DslMarkersSupport)) {
-            receiverTypes -= receiverTypes.shadowedByDslMarkers()
         }
 
         return receiverTypes

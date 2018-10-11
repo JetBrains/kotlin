@@ -266,9 +266,13 @@ public class Preloader {
         }
     }
 
-    private static class PreloaderException extends RuntimeException {
+    public static class PreloaderException extends RuntimeException {
         public PreloaderException(String message) {
             super(message);
+        }
+
+        public PreloaderException(String message, Throwable cause) {
+            super(message, cause);
         }
     }
 

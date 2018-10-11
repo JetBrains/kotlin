@@ -125,11 +125,12 @@ object ExpectedActualResolver {
             is FunctionDescriptor -> scopes.flatMap { it.getContributedFunctions(name, NoLookupLocation.FOR_ALREADY_TRACKED) }
             is PropertyDescriptor -> scopes.flatMap { it.getContributedVariables(name, NoLookupLocation.FOR_ALREADY_TRACKED) }
             else -> throw AssertionError("Unsupported declaration: $this")
-        }
+        }.onlyFromThis(module)
     }
 
     private fun ClassifierDescriptorWithTypeParameters.findClassifiersFromModule(
-        module: ModuleDescriptor
+        module: ModuleDescriptor,
+        includeDependencies: Boolean = false
     ): Collection<ClassifierDescriptorWithTypeParameters> {
         val classId = classId ?: return emptyList()
 
@@ -139,6 +140,7 @@ object ExpectedActualResolver {
 
         val segments = classId.relativeClassName.pathSegments()
         var classifiers = module.getPackage(classId.packageFqName).memberScope.getAllClassifiers(segments.first())
+        if (!includeDependencies) classifiers = classifiers.onlyFromThis(module)
 
         for (name in segments.subList(1, segments.size)) {
             classifiers = classifiers.mapNotNull { classifier ->
@@ -150,6 +152,9 @@ object ExpectedActualResolver {
 
         return classifiers
     }
+
+    private fun <T : DeclarationDescriptor> Iterable<T>.onlyFromThis(module: ModuleDescriptor): List<T> =
+        filter { it.module == module }
 
     sealed class Compatibility {
         // For IncompatibilityKind.STRONG `actual` declaration is considered as overload and error reports on expected declaration
@@ -192,7 +197,7 @@ object ExpectedActualResolver {
 
             object ClassKind : Incompatible("class kinds are different (class, interface, object, enum, annotation)")
 
-            object ClassModifiers : Incompatible("modifiers are different (companion, inner)")
+            object ClassModifiers : Incompatible("modifiers are different (companion, inner, inline)")
 
             object Supertypes : Incompatible("some supertypes are missing in the actual declaration")
 
@@ -322,7 +327,7 @@ object ExpectedActualResolver {
         return expected is ClassifierDescriptorWithTypeParameters &&
                 expected.isExpect &&
                 actual is ClassifierDescriptorWithTypeParameters &&
-                expected.findClassifiersFromModule(platformModule).any { classifier ->
+                expected.findClassifiersFromModule(platformModule, includeDependencies = true).any { classifier ->
                     // Note that it's fine to only check that this "actual typealias" expands to the expected class, without checking
                     // whether the type arguments in the expansion are in the correct order or have the correct variance, because we only
                     // allow simple cases like "actual typealias Foo<A, B> = FooImpl<A, B>", see DeclarationsChecker#checkActualTypeAlias
@@ -390,7 +395,7 @@ object ExpectedActualResolver {
 
         if (a.kind != b.kind) return Incompatible.ClassKind
 
-        if (!equalBy(a, b) { listOf(it.isCompanionObject, it.isInner) }) return Incompatible.ClassModifiers
+        if (!equalBy(a, b) { listOf(it.isCompanionObject, it.isInner, it.isInline) }) return Incompatible.ClassModifiers
 
         val aTypeParams = a.declaredTypeParameters
         val bTypeParams = b.declaredTypeParameters

@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.idea.highlighter
 
 import com.intellij.lang.annotation.AnnotationHolder
+import com.intellij.openapi.editor.colors.TextAttributesKey
+import com.intellij.openapi.extensions.Extensions
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.impl.SyntheticFieldDescriptor
@@ -16,8 +18,10 @@ import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 import org.jetbrains.kotlin.psi.KtThisExpression
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.tasks.isDynamic
 import org.jetbrains.kotlin.resolve.calls.tower.isSynthesized
+import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
 internal class PropertiesHighlightingVisitor(holder: AnnotationHolder, bindingContext: BindingContext)
     : AfterAnalysisHighlightingVisitor(holder, bindingContext) {
@@ -35,14 +39,23 @@ internal class PropertiesHighlightingVisitor(holder: AnnotationHolder, bindingCo
             return
         }
 
-        highlightProperty(expression, target)
+        val resolvedCall = expression.getResolvedCall(bindingContext)
+
+        val attributesKey = resolvedCall?.let { call ->
+            Extensions.getExtensions(HighlighterExtension.EP_NAME).firstNotNullResult { extension ->
+                extension.highlightCall(expression, call)
+            }
+        } ?: attributeKeyByPropertyType(target)
+
+        highlightName(expression, attributesKey)
+
     }
 
     override fun visitProperty(property: KtProperty) {
         val nameIdentifier = property.nameIdentifier ?: return
         val propertyDescriptor = bindingContext.get(BindingContext.VARIABLE, property)
         if (propertyDescriptor is PropertyDescriptor) {
-            highlightProperty(nameIdentifier, propertyDescriptor)
+            highlightPropertyDeclaration(nameIdentifier, propertyDescriptor)
         }
 
         super.visitProperty(property)
@@ -55,19 +68,24 @@ internal class PropertiesHighlightingVisitor(holder: AnnotationHolder, bindingCo
             if (propertyDescriptor.isVar) {
                 highlightName(nameIdentifier, MUTABLE_VARIABLE)
             }
-            highlightProperty(nameIdentifier, propertyDescriptor)
+            highlightPropertyDeclaration(nameIdentifier, propertyDescriptor)
         }
 
         super.visitParameter(parameter)
     }
 
-    private fun highlightProperty(
-            elementToHighlight: PsiElement,
-            descriptor: PropertyDescriptor) {
+    private fun highlightPropertyDeclaration(
+        elementToHighlight: PsiElement,
+        descriptor: PropertyDescriptor
+    ) {
+        highlightName(
+            elementToHighlight,
+            attributeKeyForDeclarationFromExtensions(elementToHighlight, descriptor) ?: attributeKeyByPropertyType(descriptor)
+        )
+    }
 
-        if (applyHighlighterExtensions(elementToHighlight, descriptor)) return
-
-        val attributesKey = when {
+    private fun attributeKeyByPropertyType(descriptor: PropertyDescriptor): TextAttributesKey {
+        return when {
             descriptor.isDynamic() ->
                 DYNAMIC_PROPERTY_CALL
 
@@ -80,6 +98,5 @@ internal class PropertiesHighlightingVisitor(holder: AnnotationHolder, bindingCo
             else ->
                 INSTANCE_PROPERTY
         }
-        highlightName(elementToHighlight, attributesKey)
     }
 }

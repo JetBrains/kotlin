@@ -17,11 +17,13 @@
 package org.jetbrains.kotlin.allopen.ide
 
 import com.intellij.openapi.util.Key
-import org.jetbrains.kotlin.annotation.plugin.ide.AnnotationBasedPluginModel
-import org.jetbrains.kotlin.annotation.plugin.ide.AnnotationBasedPluginModelBuilderService
-import org.jetbrains.kotlin.annotation.plugin.ide.AnnotationBasedPluginProjectResolverExtension
+import org.jetbrains.kotlin.annotation.plugin.ide.*
 
-interface AllOpenModel : AnnotationBasedPluginModel
+interface AllOpenModel : AnnotationBasedPluginModel {
+    override fun dump(): DumpedPluginModel {
+        return DumpedPluginModelImpl(AllOpenModelImpl::class.java, annotations.toList(), presets.toList())
+    }
+}
 
 class AllOpenModelImpl(
         override val annotations: List<String>,

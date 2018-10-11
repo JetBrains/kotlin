@@ -3,7 +3,10 @@ import org.gradle.jvm.tasks.Jar
 
 description = "Compiler runner + daemon client"
 
-apply { plugin("kotlin") }
+plugins {
+    kotlin("jvm")
+    id("jps-compatible")
+}
 
 jvmTarget = "1.6"
 
@@ -15,6 +18,7 @@ dependencies {
     compileOnly(project(":compiler:daemon-common"))
     compileOnly(project(":compiler:daemon-common-new"))
     compile(project(":kotlin-daemon-client"))
+    compile(project(":kotlin-daemon-client-new"))
     compileOnly(project(":compiler:util"))
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
     runtimeOnly(projectRuntimeJar(":kotlin-compiler-embeddable"))
@@ -26,10 +30,6 @@ sourceSets {
 }
 
 val jar: Jar by tasks
-jar.apply {
-    from(getSourceSetsFrom(":kotlin-daemon-client")["main"].output.classesDirs)
-    from(getSourceSetsFrom(":compiler:daemon-common")["main"].output.classesDirs)
-}
 
 runtimeJar(rewriteDepsToShadedCompiler(jar))
 sourcesJar()

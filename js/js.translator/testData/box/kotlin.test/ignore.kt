@@ -1,4 +1,5 @@
-// EXPECTED_REACHABLE_NODES: 1192
+// IGNORE_BACKEND: JS_IR
+// EXPECTED_REACHABLE_NODES: 1340
 import kotlin.test.Test
 import kotlin.test.Ignore
 

@@ -7,12 +7,13 @@ import com.intellij.psi.impl.source.tree.LeafPsiElement
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.utils.addToStdlib.assertedCast
-import org.jetbrains.uast.JvmDeclarationUElement
-import org.jetbrains.uast.UDeclaration
+import org.jetbrains.uast.UAnchorOwner
 import org.jetbrains.uast.UElement
 import org.jetbrains.uast.UFile
+import org.jetbrains.uast.kotlin.JvmDeclarationUElementPlaceholder
 import org.jetbrains.uast.kotlin.KOTLIN_CACHED_UELEMENT_KEY
 import org.jetbrains.uast.kotlin.KotlinUastLanguagePlugin
+import org.jetbrains.uast.sourcePsiElement
 import org.jetbrains.uast.test.common.RenderLogTestBase
 import org.jetbrains.uast.visitor.UastVisitor
 import org.junit.Assert
@@ -39,7 +40,14 @@ abstract class AbstractKotlinRenderLogTest : AbstractKotlinUastTest(), RenderLog
     }
 
     private fun checkParentConsistency(file: UFile) {
-        val parentMap = mutableMapOf<PsiElement, String>()
+        val parentMap = mutableMapOf<PsiElement, MutableMap<String, String>>()
+
+        operator fun MutableMap<PsiElement, MutableMap<String, String>>.get(psi: PsiElement, cls: String?) =
+            parentMap.getOrPut(psi) { mutableMapOf() }[cls]
+
+        operator fun MutableMap<PsiElement, MutableMap<String, String>>.set(psi: PsiElement, cls: String, v: String) {
+            parentMap.getOrPut(psi) { mutableMapOf() }[cls] = v
+        }
 
         file.accept(object : UastVisitor {
             private val parentStack = Stack<UElement>()
@@ -52,10 +60,8 @@ abstract class AbstractKotlinRenderLogTest : AbstractKotlinUastTest(), RenderLog
                 else {
                     Assert.assertEquals("Wrong parent of $node", parentStack.peek(), parent)
                 }
-                node.psi?.let {
-                    if (it !in parentMap) {
-                        parentMap[it] = parentStack.reversed().joinToString { it.asLogString() }
-                    }
+                node.sourcePsiElement?.let {
+                    parentMap[it, node.asLogString()] = parentStack.reversed().joinToString { it.asLogString() }
                 }
                 parentStack.push(node)
                 return false
@@ -72,7 +78,7 @@ abstract class AbstractKotlinRenderLogTest : AbstractKotlinUastTest(), RenderLog
         file.psi.accept(object : PsiRecursiveElementVisitor() {
             override fun visitElement(element: PsiElement) {
                 val uElement = KotlinUastLanguagePlugin().convertElementWithParent(element, null)
-                val expectedParents = parentMap[element]
+                val expectedParents = parentMap[element, uElement?.asLogString()]
                 if (expectedParents != null) {
                     assertNotNull("Expected to be able to convert PSI element $element", uElement)
                     val parents = generateSequence(uElement!!.uastParent) { it.uastParent }.joinToString { it.asLogString() }
@@ -90,7 +96,7 @@ abstract class AbstractKotlinRenderLogTest : AbstractKotlinUastTest(), RenderLog
                     node.containingFile.assertedCast<KtFile> { "containingFile should be KtFile for ${node.asLogString()}" }
                 }
 
-                val anchorPsi = (node as? UDeclaration)?.uastAnchor?.psi
+                val anchorPsi = (node as? UAnchorOwner)?.uastAnchor?.sourcePsi
                 if (anchorPsi != null) {
                     anchorPsi.containingFile.assertedCast<KtFile> { "uastAnchor.containingFile should be KtFile for ${node.asLogString()}" }
                 }
@@ -104,14 +110,16 @@ abstract class AbstractKotlinRenderLogTest : AbstractKotlinUastTest(), RenderLog
         accept(object : UastVisitor {
             override fun visitElement(node: UElement): Boolean {
 
-                val jvmDeclaration = node as? JvmDeclarationUElement
+                if (node is UAnchorOwner) {
+                    node.uastAnchor?.let { visitElement(it) }
+                }
+
+                val jvmDeclaration = node as? JvmDeclarationUElementPlaceholder
                                      ?: throw AssertionError("${node.javaClass} should implement 'JvmDeclarationUElement'")
 
                 jvmDeclaration.sourcePsi?.let {
                     assertTrue("sourcePsi should be physical but ${it.javaClass} found for [${it.text}] " +
-                                       "for ${jvmDeclaration.javaClass}->${jvmDeclaration.uastParent?.javaClass}",
-                               it is KtElement || it is LeafPsiElement
-                    )
+                               "for ${jvmDeclaration.javaClass}->${jvmDeclaration.uastParent?.javaClass}",it is LeafPsiElement || it is KtElement|| it is LeafPsiElement)
                 }
                 jvmDeclaration.javaPsi?.let {
                     assertTrue("javaPsi should be light but ${it.javaClass} found for [${it.text}] " +

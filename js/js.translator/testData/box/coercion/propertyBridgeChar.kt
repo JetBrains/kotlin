@@ -1,4 +1,5 @@
-// EXPECTED_REACHABLE_NODES: 1145
+// IGNORE_BACKEND: JS_IR
+// EXPECTED_REACHABLE_NODES: 1296
 open class A {
     val foo: Char
         get() = 'X'

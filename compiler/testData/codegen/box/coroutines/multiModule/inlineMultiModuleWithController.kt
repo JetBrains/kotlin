@@ -1,13 +1,14 @@
-// IGNORE_BACKEND: NATIVE
+// IGNORE_BACKEND: JVM_IR
 // WITH_COROUTINES
 // WITH_RUNTIME
+// COMMON_COROUTINES_TEST
 
 // MODULE: lib(support)
 // FILE: lib.kt
 
 import helpers.*
-import kotlin.coroutines.experimental.*
-import kotlin.coroutines.experimental.intrinsics.*
+import COROUTINES_PACKAGE.*
+import COROUTINES_PACKAGE.intrinsics.*
 
 var continuation: () -> Unit = { }
 var log = ""
@@ -25,7 +26,7 @@ class C {
     }
 }
 
-suspend fun <T> foo(v: T): T = suspendCoroutineOrReturn { x ->
+suspend fun <T> foo(v: T): T = suspendCoroutineUninterceptedOrReturn { x ->
     continuation = {
         x.resume(v)
     }
@@ -43,8 +44,8 @@ fun C.builder(c: suspend C.() -> Unit) {
 // MODULE: main(lib)
 // FILE: main.kt
 
-import kotlin.coroutines.experimental.*
-import kotlin.coroutines.experimental.intrinsics.*
+import COROUTINES_PACKAGE.*
+import COROUTINES_PACKAGE.intrinsics.*
 
 suspend fun C.baz() {
     v = "A"

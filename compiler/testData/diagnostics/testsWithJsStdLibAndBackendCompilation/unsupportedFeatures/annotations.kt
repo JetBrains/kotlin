@@ -1,3 +1,4 @@
+// !LANGUAGE: -RestrictRetentionForExpressionAnnotations
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 
 package foo
@@ -6,11 +7,11 @@ package foo
 @Target(AnnotationTarget.CLASS, AnnotationTarget.FUNCTION, AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.EXPRESSION)
 annotation class AnnotationWithSourceRetention
 
-@Retention(AnnotationRetention.BINARY)
+<!RESTRICTED_RETENTION_FOR_EXPRESSION_ANNOTATION_WARNING!>@Retention(AnnotationRetention.BINARY)<!>
 @Target(AnnotationTarget.CLASS, AnnotationTarget.FUNCTION, AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.EXPRESSION)
 annotation class AnnotationWithBinaryRetention
 
-@Retention(AnnotationRetention.RUNTIME)
+<!RESTRICTED_RETENTION_FOR_EXPRESSION_ANNOTATION_WARNING!>@Retention(AnnotationRetention.RUNTIME)<!>
 @Target(AnnotationTarget.CLASS, AnnotationTarget.FUNCTION, AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.EXPRESSION)
 annotation class AnnotationWithRuntimeRetention
 

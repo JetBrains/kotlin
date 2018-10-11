@@ -40,9 +40,9 @@ class KotlinHighlightExitPointsHandlerFactory : HighlightUsagesHandlerFactoryBas
     override fun createHighlightUsagesHandler(editor: Editor, file: PsiFile, target: PsiElement): HighlightUsagesHandlerBase<*>? {
         if (target is LeafPsiElement && (target.elementType in RETURN_AND_THROW)) {
             val returnOrThrow = PsiTreeUtil.getParentOfType<KtExpression>(
-                    target,
-                    KtReturnExpression::class.java,
-                    KtThrowExpression::class.java
+                target,
+                KtReturnExpression::class.java,
+                KtThrowExpression::class.java
             ) ?: return null
 
             return MyHandler(editor, file, returnOrThrow)
@@ -50,7 +50,8 @@ class KotlinHighlightExitPointsHandlerFactory : HighlightUsagesHandlerFactoryBas
         return null
     }
 
-    private class MyHandler(editor: Editor, file: PsiFile, val target: KtExpression) : HighlightUsagesHandlerBase<PsiElement>(editor, file) {
+    private class MyHandler(editor: Editor, file: PsiFile, val target: KtExpression) :
+        HighlightUsagesHandlerBase<PsiElement>(editor, file) {
         override fun getTargets() = listOf(target)
 
         override fun selectTargets(targets: MutableList<PsiElement>, selectionConsumer: Consumer<MutableList<PsiElement>>) {

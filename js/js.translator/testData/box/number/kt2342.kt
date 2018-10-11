@@ -1,4 +1,5 @@
-// EXPECTED_REACHABLE_NODES: 1111
+// IGNORE_BACKEND: JS_IR
+// EXPECTED_REACHABLE_NODES: 1281
 package foo
 
 fun test(a: Int, b: Int, expected: Int): String {

@@ -33,9 +33,10 @@ import org.jetbrains.kotlin.idea.debugger.suspendFunctionFirstLineLocation
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 
 class KotlinSuspendCallStepOverFilter(
-        private val line: Int,
-        private val file: PsiFile,
-        private val ignoreBreakpoints: Boolean) : MethodFilter {
+    private val line: Int,
+    private val file: PsiFile,
+    private val ignoreBreakpoints: Boolean
+) : MethodFilter {
     override fun getCallingExpressionLines(): Range<Int>? = Range(line, line)
 
     override fun locationMatches(process: DebugProcessImpl, location: Location?): Boolean {
@@ -66,10 +67,9 @@ private fun createRunToCursorBreakpoint(context: SuspendContextImpl, line: Int, 
     }
 
     val runToCursorBreakpoint =
-            runReadAction {
-                DebuggerManagerEx.getInstanceEx(process.project).breakpointManager.addRunToCursorBreakpoint(position, ignoreBreakpoints)
-            } ?:
-            return
+        runReadAction {
+            DebuggerManagerEx.getInstanceEx(process.project).breakpointManager.addRunToCursorBreakpoint(position, ignoreBreakpoints)
+        } ?: return
 
     runToCursorBreakpoint.suspendPolicy = when {
         context.suspendPolicy == EventRequest.SUSPEND_EVENT_THREAD -> DebuggerSettings.SUSPEND_THREAD

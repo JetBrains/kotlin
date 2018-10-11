@@ -1,3 +1,5 @@
+// IGNORE_BACKEND: JVM_IR
+// IGNORE_BACKEND: JS_IR
 enum class A1(val prop1: String) {
     X("asd"),
     Y() {

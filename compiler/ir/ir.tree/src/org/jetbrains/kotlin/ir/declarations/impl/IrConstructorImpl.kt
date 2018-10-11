@@ -23,32 +23,44 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrConstructorSymbolImpl
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
-import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
 
 class IrConstructorImpl(
     startOffset: Int,
     endOffset: Int,
     origin: IrDeclarationOrigin,
     override val symbol: IrConstructorSymbol,
+    name: Name,
     visibility: Visibility,
-    returnType: KotlinType,
-    isInline: Boolean
+    isInline: Boolean,
+    isExternal: Boolean,
+    override val isPrimary: Boolean
 ) :
-    IrFunctionBase(startOffset, endOffset, origin, visibility, isInline, returnType),
+    IrFunctionBase(
+        startOffset, endOffset, origin, name,
+        visibility, isInline, isExternal
+    ),
     IrConstructor {
 
     constructor(
         startOffset: Int,
         endOffset: Int,
         origin: IrDeclarationOrigin,
-        symbol: IrConstructorSymbol
+        symbol: IrConstructorSymbol,
+        body: IrBody? = null
     ) : this(
         startOffset, endOffset, origin, symbol,
+        symbol.descriptor.name,
         symbol.descriptor.visibility,
-        symbol.descriptor.returnType,
-        symbol.descriptor.isInline
-    )
+        symbol.descriptor.isInline,
+        symbol.descriptor.isEffectivelyExternal(),
+        symbol.descriptor.isPrimary
+    ) {
+        this.body = body
+    }
 
     constructor(
         startOffset: Int,
@@ -57,6 +69,7 @@ class IrConstructorImpl(
         descriptor: ClassConstructorDescriptor
     ) : this(startOffset, endOffset, origin, IrConstructorSymbolImpl(descriptor))
 
+    @Deprecated("Use constructor which takes symbol instead of descriptor")
     constructor(
         startOffset: Int,
         endOffset: Int,

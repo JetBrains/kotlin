@@ -1,0 +1,87 @@
+<problems>
+    <problem>
+        <file>classes.kt</file>
+        <line>6</line>
+        <description>class example</description>
+    </problem>
+    <problem>
+        <file>classes.kt</file>
+        <line>9</line>
+        <description>class example</description>
+    </problem>
+
+    <problem>
+        <file>overloads.kt</file>
+        <line>6</line>
+        <description>concrete overload example</description>
+    </problem>
+    <problem>
+        <file>overloads.kt</file>
+        <line>9</line>
+        <description>overload with no params example</description>
+    </problem>
+    <problem>
+        <file>overloads.kt</file>
+        <line>10</line>
+        <description>overload with no params example</description>
+    </problem>
+
+    <problem>
+        <file>static.kt</file>
+        <line>6</line>
+        <description>static method example</description>
+    </problem>
+
+    <problem>
+        <file>JavaTest.java</file>
+        <line>10</line>
+        <description>class example</description>
+    </problem>
+    <problem>
+        <file>JavaTest.java</file>
+        <line>11</line>
+        <description>static method example</description>
+    </problem>
+    <problem>
+        <file>JavaTest.java</file>
+        <line>15</line>
+        <description>concrete overload example</description>
+    </problem>
+    <problem>
+        <file>JavaTest.java</file>
+        <line>18</line>
+        <description>overload with no params example</description>
+    </problem>
+    <problem>
+        <file>JavaTest.java</file>
+        <line>19</line>
+        <description>overload with no params example</description>
+    </problem>
+    <problem>
+        <file>JavaTest.java</file>
+        <line>25</line>
+        <description>class example</description>
+    </problem>
+    <problem>
+        <file>JavaTest.java</file>
+        <line>30</line>
+        <description>signature changed example</description>
+    </problem>
+    <problem>
+        <file>JavaTest.java</file>
+        <line>43</line>
+        <description>constructor example</description>
+    </problem>
+
+    <problem>
+        <file>super.kt</file>
+        <line>6</line>
+        <description>signature changed example</description>
+    </problem>
+
+    <problem>
+        <file>constructors.kt</file>
+        <line>7</line>
+        <description>constructor example</description>
+    </problem>
+</problems>

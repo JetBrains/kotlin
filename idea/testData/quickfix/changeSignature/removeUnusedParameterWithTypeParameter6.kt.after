@@ -1,0 +1,6 @@
+// "Remove parameter 'x'" "true"
+class Foo {
+    constructor(<caret>)
+}
+
+val foo = Foo()

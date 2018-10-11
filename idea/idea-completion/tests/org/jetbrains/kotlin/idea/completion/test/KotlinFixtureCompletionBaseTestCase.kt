@@ -20,16 +20,17 @@ import com.intellij.codeInsight.completion.CompletionType
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.idea.caches.project.LibraryModificationTracker
+import org.jetbrains.kotlin.idea.test.CompilerTestDirectives
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
-import org.jetbrains.kotlin.idea.test.configureLanguageVersion
+import org.jetbrains.kotlin.idea.test.configureCompilerOptions
 import org.jetbrains.kotlin.resolve.TargetPlatform
 import java.io.File
 
 abstract class KotlinFixtureCompletionBaseTestCase : KotlinLightCodeInsightFixtureTestCase() {
     abstract fun getPlatform(): TargetPlatform
 
-    protected open fun complete(completionType: CompletionType, invocationCount: Int): Array<LookupElement>?
-            = myFixture.complete(completionType, invocationCount)
+    protected open fun complete(completionType: CompletionType, invocationCount: Int): Array<LookupElement>? =
+        myFixture.complete(completionType, invocationCount)
 
     protected abstract fun defaultCompletionType(): CompletionType
     protected open fun defaultInvocationCount(): Int = 0
@@ -39,17 +40,23 @@ abstract class KotlinFixtureCompletionBaseTestCase : KotlinLightCodeInsightFixtu
 
         try {
             val fileText = FileUtil.loadFile(File(testPath), true)
-            configureLanguageVersion(fileText, project, module)
+            configureCompilerOptions(fileText, project, module)
 
-            assertTrue("\"<caret>\" is missing in file \"$testPath\"", fileText.contains("<caret>"));
+            assertTrue("\"<caret>\" is missing in file \"$testPath\"", fileText.contains("<caret>"))
 
             if (ExpectedCompletionUtils.shouldRunHighlightingBeforeCompletion(fileText)) {
                 myFixture.doHighlighting()
             }
 
-            testCompletion(fileText, getPlatform(), { completionType, count -> complete(completionType, count) }, defaultCompletionType(), defaultInvocationCount())
-        }
-        finally {
+            testCompletion(
+                fileText,
+                getPlatform(),
+                { completionType, count -> complete(completionType, count) },
+                defaultCompletionType(),
+                defaultInvocationCount(),
+                additionalValidDirectives = CompilerTestDirectives.ALL_COMPILER_TEST_DIRECTIVES
+            )
+        } finally {
             tearDownFixture()
         }
     }

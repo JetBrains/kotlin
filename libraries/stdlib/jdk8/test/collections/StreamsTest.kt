@@ -39,13 +39,13 @@ class StreamsTest {
 
         fun<T> assertSequenceContent(expected: List<T>, actual: Sequence<T>) {
             assertEquals(expected, actual.toList())
-            assertFailsWith<IllegalStateException> ("Second iteration fails") { actual.toList() }
+            assertFailsWith<IllegalStateException>("Second iteration fails") { actual.toList() }
 
         }
 
-        assertSequenceContent(data.asList(), Stream.of(*data).asSequence())
-        assertSequenceContent(listOf(1, 2), IntStream.of(1, 2).asSequence())
-        assertSequenceContent(listOf(1L, 2L), LongStream.of(1L, 2L).asSequence())
+        assertSequenceContent(data.asList(),    Stream.of(*data).asSequence())
+        assertSequenceContent(listOf(1, 2),     IntStream.of(1, 2).asSequence())
+        assertSequenceContent(listOf(1L, 2L),   LongStream.of(1L, 2L).asSequence())
         assertSequenceContent(listOf(1.0, 2.0), DoubleStream.of(1.0, 2.0).asSequence())
     }
 

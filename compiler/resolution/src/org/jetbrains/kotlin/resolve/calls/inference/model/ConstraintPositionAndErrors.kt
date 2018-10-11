@@ -61,8 +61,16 @@ class LambdaArgumentConstraintPosition(val lambda: ResolvedLambdaAtom) : Constra
     }
 }
 
+class DelegatedPropertyConstraintPosition(val topLevelCall: KotlinCall) : ConstraintPosition() {
+    override fun toString() = "Constraint from call $topLevelCall for delegated property"
+}
+
 class IncorporationConstraintPosition(val from: ConstraintPosition, val initialConstraint: InitialConstraint) : ConstraintPosition() {
     override fun toString() = "Incorporate $initialConstraint from position $from"
+}
+
+class CoroutinePosition() : ConstraintPosition() {
+    override fun toString(): String = "for coroutine call"
 }
 
 @Deprecated("Should be used only in SimpleConstraintSystemImpl")
@@ -85,3 +93,9 @@ class CapturedTypeFromSubtyping(
 ) : ConstraintSystemCallDiagnostic(INAPPLICABLE)
 
 class NotEnoughInformationForTypeParameter(val typeVariable: NewTypeVariable) : ConstraintSystemCallDiagnostic(INAPPLICABLE)
+
+class ConstrainingTypeIsError(
+    val typeVariable: NewTypeVariable,
+    val constraintType: UnwrappedType,
+    val position: IncorporationConstraintPosition
+) : ConstraintSystemCallDiagnostic(INAPPLICABLE)

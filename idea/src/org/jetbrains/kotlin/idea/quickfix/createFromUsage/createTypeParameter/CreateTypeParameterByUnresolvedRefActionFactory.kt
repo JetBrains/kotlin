@@ -84,14 +84,16 @@ object CreateTypeParameterByUnresolvedRefActionFactory : KotlinIntentionActionFa
         val ktUserType = originalElementPointer.element ?: return emptyList()
         val name = ktUserType.referencedName ?: return emptyList()
         return getPossibleTypeParameterContainers(ktUserType)
-                .filter { it.typeParameters.all { it.name != name } }
-                .map {
-                    QuickFixWithDelegateFactory factory@ {
-                        val originalElement = originalElementPointer.element ?: return@factory null
-                        val data = quickFixDataFactory()?.copy(declaration = it) ?: return@factory null
-                        CreateTypeParameterFromUsageFix(originalElement, data, presentTypeParameterNames = true)
-                    }
+            .asSequence()
+            .filter { it.typeParameters.all { it.name != name } }
+            .map {
+                QuickFixWithDelegateFactory factory@ {
+                    val originalElement = originalElementPointer.element ?: return@factory null
+                    val data = quickFixDataFactory()?.copy(declaration = it) ?: return@factory null
+                    CreateTypeParameterFromUsageFix(originalElement, data, presentTypeParameterNames = true)
                 }
+            }
+            .toList()
     }
 }
 

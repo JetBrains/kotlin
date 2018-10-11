@@ -1,0 +1,4 @@
+$TESTDATA_DIR$/simple.kt
+-d
+$TEMP_DIR$
+-Xmetadata-version=1..2.3

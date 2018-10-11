@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.gradle.tasks
 
 import org.gradle.api.Project
 import org.gradle.api.tasks.CacheableTask
-import org.gradle.api.tasks.compile.AbstractCompile
 import org.jetbrains.kotlin.cli.common.arguments.K2MetadataCompilerArguments
 import org.jetbrains.kotlin.compilerRunner.GradleCompilerEnvironment
 import org.jetbrains.kotlin.compilerRunner.GradleCompilerRunner
@@ -41,7 +40,7 @@ internal open class KotlinCompileCommon : AbstractKotlinCompile<K2MetadataCompil
             K2MetadataCompilerArguments()
 
     override fun getSourceRoots(): SourceRoots =
-            SourceRoots.KotlinOnly.create(getSource())
+            SourceRoots.KotlinOnly.create(getSource(), sourceFilesExtensions)
 
     override fun findKotlinCompilerClasspath(project: Project): List<File>  =
             findKotlinMetadataCompilerClasspath(project)
@@ -50,10 +49,11 @@ internal open class KotlinCompileCommon : AbstractKotlinCompile<K2MetadataCompil
         args.apply { fillDefaultValues() }
         super.setupCompilerArgs(args, defaultsOnly)
 
+        args.moduleName = friendTask?.moduleName ?: this@KotlinCompileCommon.moduleName
+
         if (defaultsOnly) return
 
         val classpathList = classpath.files.toMutableList()
-        val friendTask = friendTaskName?.let { project.tasks.findByName(it) } as? AbstractCompile
         friendTask?.let { classpathList.add(it.destinationDir) }
 
         with(args) {

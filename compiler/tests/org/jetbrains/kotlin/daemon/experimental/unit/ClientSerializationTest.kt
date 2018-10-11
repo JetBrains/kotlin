@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.daemon.experimental.unit
 
 import io.ktor.network.sockets.aSocket
-import kotlinx.coroutines.experimental.async
-import kotlinx.coroutines.experimental.runBlocking
+import kotlinx.coroutines.async
+import kotlinx.coroutines.runBlocking
 import org.jetbrains.kotlin.daemon.common.experimental.CompilerServicesFacadeBaseClientSideImpl
 import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.DefaultClient
 import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.ServerBase

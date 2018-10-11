@@ -1,31 +1,21 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.gradle.tasks
 
 import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.api.file.FileCollection
 import org.gradle.api.logging.Logger
 import org.gradle.api.plugins.BasePluginConvention
 import org.gradle.api.tasks.*
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.compile.AbstractCompile
+import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.api.tasks.incremental.IncrementalTaskInputs
-import org.jetbrains.kotlin.annotation.AnnotationFileUpdater
-import org.jetbrains.kotlin.annotation.AnnotationFileUpdaterImpl
+import org.jetbrains.kotlin.build.DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.CommonToolArguments
@@ -35,36 +25,61 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.compilerRunner.*
+import org.jetbrains.kotlin.daemon.common.MultiModuleICSettings
 import org.jetbrains.kotlin.gradle.dsl.*
+import org.jetbrains.kotlin.gradle.incremental.ChangedFiles
 import org.jetbrains.kotlin.gradle.internal.CompilerArgumentAwareWithInput
 import org.jetbrains.kotlin.gradle.internal.prepareCompilerArguments
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.utils.ParsedGradleVersion
-import org.jetbrains.kotlin.incremental.*
-import org.jetbrains.kotlin.incremental.multiproject.ArtifactDifferenceRegistry
-import org.jetbrains.kotlin.incremental.multiproject.ArtifactDifferenceRegistryProvider
+import org.jetbrains.kotlin.gradle.utils.isParentOf
+import org.jetbrains.kotlin.gradle.utils.pathsAsStringRelativeTo
+import org.jetbrains.kotlin.gradle.utils.toSortedPathsArray
+import org.jetbrains.kotlin.incremental.ChangedFiles
+import org.jetbrains.kotlin.incremental.classpathAsList
+import org.jetbrains.kotlin.incremental.destinationAsFile
 import org.jetbrains.kotlin.utils.LibraryUtils
 import java.io.File
 import java.util.*
-import java.util.concurrent.Callable
 import kotlin.properties.Delegates
 
-const val ANNOTATIONS_PLUGIN_NAME = "org.jetbrains.kotlin.kapt"
 const val KOTLIN_BUILD_DIR_NAME = "kotlin"
 const val USING_INCREMENTAL_COMPILATION_MESSAGE = "Using Kotlin incremental compilation"
 const val USING_EXPERIMENTAL_JS_INCREMENTAL_COMPILATION_MESSAGE = "Using experimental Kotlin/JS incremental compilation"
 
 abstract class AbstractKotlinCompileTool<T : CommonToolArguments>() : AbstractCompile(), CompilerArgumentAwareWithInput<T> {
-    // TODO: deprecate and remove
+    private fun useCompilerClasspathConfigurationMessage(propertyName: String) {
+        project.logger.kotlinWarn(
+            "'$path.$propertyName' is deprecated and will be removed soon. " +
+                    "Use '$COMPILER_CLASSPATH_CONFIGURATION_NAME' " +
+                    "configuration for customizing compiler classpath."
+        )
+    }
+
+    // TODO: remove
     @get:Internal
     var compilerJarFile: File? = null
+        @Deprecated("Use $COMPILER_CLASSPATH_CONFIGURATION_NAME configuration")
+        set(value) {
+            useCompilerClasspathConfigurationMessage("compilerJarFile")
+            field = value
+        }
 
+    // TODO: remove
     @get:Internal
     var compilerClasspath: List<File>? = null
+        @Deprecated("Use $COMPILER_CLASSPATH_CONFIGURATION_NAME configuration")
+        set(value) {
+            useCompilerClasspathConfigurationMessage("compilerClasspath")
+            field = value
+        }
 
     @InputFiles
     @PathSensitive(PathSensitivity.RELATIVE)
     override fun getSource() = super.getSource()
+
+    @get:Input
+    internal var useFallbackCompilerSearch: Boolean = false
 
     @get:Classpath @get:InputFiles
     internal val computedCompilerClasspath: List<File>
@@ -73,8 +88,21 @@ abstract class AbstractKotlinCompileTool<T : CommonToolArguments>() : AbstractCo
                     // a hack to remove compiler jar from the cp, will be dropped when compilerJarFile will be removed
                     listOf(it) + findKotlinCompilerClasspath(project).filter { !it.name.startsWith("kotlin-compiler") }
                 }
-                ?: findKotlinCompilerClasspath(project).takeIf { it.isNotEmpty() }
-                ?: throw IllegalStateException("Could not find Kotlin Compiler classpath. Please specify $name.compilerClasspath")
+                ?: if (!useFallbackCompilerSearch) {
+                    try {
+                        project.configurations.getByName(COMPILER_CLASSPATH_CONFIGURATION_NAME).resolve().toList()
+                    } catch (e: Exception) {
+                        project.logger.error(
+                            "Could not resolve compiler classpath. " +
+                                    "Check if Kotlin Gradle plugin repository is configured in $project."
+                        )
+                        throw e
+                    }
+                } else {
+                    findKotlinCompilerClasspath(project)
+                }
+                ?: throw IllegalStateException("Could not find Kotlin Compiler classpath")
+
 
     protected abstract fun findKotlinCompilerClasspath(project: Project): List<File>
 }
@@ -85,9 +113,10 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKo
         cacheOnlyIfEnabledForKotlin()
     }
 
+    // avoid creating directory in getter: this can lead to failure in parallel build
     @get:LocalState
     internal val taskBuildDirectory: File
-        get() = File(File(project.buildDir, KOTLIN_BUILD_DIR_NAME), name).apply { mkdirs() }
+        get() = File(File(project.buildDir, KOTLIN_BUILD_DIR_NAME), name)
 
     // indicates that task should compile kotlin incrementally if possible
     // it's not possible when IncrementalTaskInputs#isIncremental returns false (i.e first build)
@@ -100,18 +129,40 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKo
         }
 
     @get:Internal
+    internal val buildHistoryFile: File get() = File(taskBuildDirectory, "build-history.bin")
+
+    @get:Input
+    internal var useModuleDetection: Boolean = false
+
+    @get:Internal
+    protected val multiModuleICSettings: MultiModuleICSettings
+        get() = MultiModuleICSettings(buildHistoryFile, useModuleDetection)
+
+    @get:Classpath
+    @get:InputFiles
+    val pluginClasspath: FileCollection
+        get() = project.configurations.getByName(PLUGIN_CLASSPATH_CONFIGURATION_NAME)
+
+    @get:Internal
     internal val pluginOptions = CompilerPluginOptions()
 
     @get:Classpath @get:InputFiles
     protected val additionalClasspath = arrayListOf<File>()
 
     @get:Internal // classpath already participates in the checks
-    protected val compileClasspath: Iterable<File>
+    internal val compileClasspath: Iterable<File>
         get() = (classpath + additionalClasspath)
                 .filterTo(LinkedHashSet(), File::exists)
 
-    @get:Classpath @get:InputFiles
-    internal val pluginClasspath get() = pluginOptions.classpath
+    private val sourceFilesExtensionsSources: MutableList<Iterable<String>> = mutableListOf()
+
+    @get:Input
+    val sourceFilesExtensions: List<String>
+        get() = DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS + sourceFilesExtensionsSources.flatten()
+
+    internal fun sourceFilesExtensions(extensions: Iterable<String>) {
+        sourceFilesExtensionsSources.add(extensions)
+    }
 
     private val kotlinExt: KotlinProjectExtension
             get() = project.extensions.findByType(KotlinProjectExtension::class.java)!!
@@ -143,13 +194,6 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKo
                 ?: Coroutines.DEFAULT
 
     @get:Internal
-    internal var compilerCalled: Boolean = false
-
-    // TODO: consider more reliable approach (see usage)
-    @get:Internal
-    internal var anyClassesCompiled: Boolean = false
-
-    @get:Internal
     internal var friendTaskName: String? = null
 
     @get:Internal
@@ -158,18 +202,22 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKo
     @get:Internal
     internal var sourceSetName: String by Delegates.notNull()
 
+    @get:InputFiles
+    @get:PathSensitive(PathSensitivity.RELATIVE)
+    internal var commonSourceSet: Iterable<File> = emptyList()
+
     @get:Input
     internal val moduleName: String
         get() {
             val baseName = project.convention.findPlugin(BasePluginConvention::class.java)?.archivesBaseName
                     ?: project.name
             val suffix = if (sourceSetName == "main") "" else "_$sourceSetName"
-            return "$baseName$suffix"
+            return filterModuleName("${baseName}$suffix")
         }
 
     @Suppress("UNCHECKED_CAST")
     @get:Internal
-    protected val friendTask: AbstractKotlinCompile<T>?
+    internal val friendTask: AbstractKotlinCompile<T>?
             get() = friendTaskName?.let { project.tasks.findByName(it) } as? AbstractKotlinCompile<T>
 
     /** Classes directories that are not produced by this task but should be consumed by
@@ -185,10 +233,15 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKo
     @get:Internal // takes part in the compiler arguments
     var friendPaths: Lazy<Array<String>?> = lazy {
         friendTask?.let { friendTask ->
-            mutableListOf<String>().apply {
-                add((friendTask.javaOutputDir ?: friendTask.destinationDir).absolutePath)
-                addAll(friendTask.attachedClassesDirs.mapNotNull { it.value?.absolutePath })
-            }.toTypedArray()
+            val possibleFriendDirs = ArrayList<File?>().apply {
+                add(friendTask.javaOutputDir)
+                add(friendTask.destinationDir)
+                addAll(friendTask.attachedClassesDirs.map { it.value })
+            }
+
+            possibleFriendDirs.filterNotNullTo(HashSet())
+                .map { it.absolutePath }
+                .toTypedArray()
         }
     }
 
@@ -198,6 +251,9 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKo
 
     @TaskAction
     open fun execute(inputs: IncrementalTaskInputs): Unit {
+        // Check that the JDK tools are available in Gradle (fail-fast, instead of a fail during the compiler run):
+        findToolsJar()
+
         val sourceRoots = getSourceRoots()
         val allKotlinSources = sourceRoots.kotlinSourceFiles
 
@@ -210,8 +266,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKo
 
         sourceRoots.log(this.name, logger)
         val args = prepareCompilerArguments()
-
-        compilerCalled = true
+        taskBuildDirectory.mkdirs()
         callCompiler(args, sourceRoots, ChangedFiles(inputs))
     }
 
@@ -225,6 +280,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKo
             Coroutines.ENABLE -> CommonCompilerArguments.ENABLE
             Coroutines.WARN -> CommonCompilerArguments.WARN
             Coroutines.ERROR -> CommonCompilerArguments.ERROR
+            Coroutines.DEFAULT -> CommonCompilerArguments.DEFAULT
         }
 
         logger.kotlinDebug { "args.coroutinesState=${args.coroutinesState}" }
@@ -233,13 +289,13 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKo
             args.verbose = true
         }
 
-        args.multiPlatform = project.plugins.any { it is KotlinPlatformPluginBase }
+        args.multiPlatform = project.plugins.any { it is KotlinPlatformPluginBase || it is KotlinMultiplatformPluginWrapper }
 
         setupPlugins(args)
     }
 
-    open fun setupPlugins(compilerArgs: T) {
-        compilerArgs.pluginClasspaths = pluginClasspath.toTypedArray()
+    fun setupPlugins(compilerArgs: T) {
+        compilerArgs.pluginClasspaths = pluginClasspath.toSortedPathsArray()
         compilerArgs.pluginOptions = pluginOptions.arguments.toTypedArray()
     }
 
@@ -262,14 +318,6 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
     @get:Internal
     internal open val sourceRootsContainer = FilteringSourceRootsContainer()
 
-    private var kaptAnnotationsFileUpdater: AnnotationFileUpdater? = null
-
-    @get:Internal
-    val buildHistoryFile: File get() = File(taskBuildDirectory, "build-history.bin")
-
-    @get:Internal
-    val kaptOptions = KaptOptions()
-
     /** A package prefix that is used for locating Java sources in a directory structure with non-full-depth packages.
      *
      * Example: a Java source file with `package com.example.my.package` is located in directory `src/main/java/my/package`.
@@ -278,21 +326,12 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
     @get:Optional
     var javaPackagePrefix: String? = null
 
-    @get:Internal
-    internal var artifactDifferenceRegistryProvider: ArtifactDifferenceRegistryProvider? = null
-
-    @get:Internal
-    internal var artifactFile: File? = null
-
     @get:Input
     var usePreciseJavaTracking: Boolean = true
         set(value) {
             field = value
             logger.kotlinDebug { "Set $this.usePreciseJavaTracking=$value" }
         }
-
-    @get:LocalState @get:Optional
-    internal var buildServicesWorkingDir: Callable<File>? = null
 
     init {
         incremental = true
@@ -303,13 +342,6 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
 
     override fun createCompilerArgs(): K2JVMCompilerArguments =
             K2JVMCompilerArguments()
-
-    override fun setupPlugins(compilerArgs: K2JVMCompilerArguments) {
-        compilerArgs.pluginClasspaths = pluginClasspath.toTypedArray()
-
-        val kaptPluginOptions = getKaptPluginOptions()
-        compilerArgs.pluginOptions = (pluginOptions.arguments + kaptPluginOptions.arguments).toTypedArray()
-    }
 
     override fun setupCompilerArgs(args: K2JVMCompilerArguments, defaultsOnly: Boolean) {
         args.apply { fillDefaultValues() }
@@ -339,14 +371,7 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
     }
 
     @Internal
-    override fun getSourceRoots() = SourceRoots.ForJvm.create(getSource(), sourceRootsContainer)
-
-    protected open fun clearOutputsBeforeNonIncrementalBuild() {
-        logger.kotlinDebug { "Removing all kotlin classes in $destinationDir" }
-
-        destinationDir.deleteRecursively()
-        destinationDir.mkdirs()
-    }
+    override fun getSourceRoots() = SourceRoots.ForJvm.create(getSource(), sourceRootsContainer, sourceFilesExtensions)
 
     override fun callCompiler(args: K2JVMCompilerArguments, sourceRoots: SourceRoots, changedFiles: ChangedFiles) {
         sourceRoots as SourceRoots.ForJvm
@@ -354,54 +379,65 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
         val messageCollector = GradleMessageCollector(logger)
         val outputItemCollector = OutputItemsCollectorImpl()
         val compilerRunner = GradleCompilerRunner(project)
-        val reporter = GradleICReporter(project.rootProject.projectDir)
 
         val environment = when {
             !incremental ->
                 GradleCompilerEnvironment(computedCompilerClasspath, messageCollector, outputItemCollector, args)
             else -> {
                 logger.info(USING_INCREMENTAL_COMPILATION_MESSAGE)
-                val friendTask = friendTaskName?.let { project.tasks.findByName(it) as? KotlinCompile }
                 GradleIncrementalCompilerEnvironment(
                         computedCompilerClasspath,
                         if (hasFilesInTaskBuildDirectory()) changedFiles else ChangedFiles.Unknown(),
-                        reporter, taskBuildDirectory,
-                        messageCollector, outputItemCollector, args, kaptAnnotationsFileUpdater,
-                        artifactDifferenceRegistryProvider,
-                        artifactFile = artifactFile,
-                        buildHistoryFile = buildHistoryFile,
-                        friendBuildHistoryFile = friendTask?.buildHistoryFile,
-                        usePreciseJavaTracking = usePreciseJavaTracking
+                        taskBuildDirectory,
+                        messageCollector, outputItemCollector, args,
+                        usePreciseJavaTracking = usePreciseJavaTracking,
+                        localStateDirs = outputDirectories,
+                        multiModuleICSettings = multiModuleICSettings
                 )
             }
         }
 
         if (!incremental) {
-            clearOutputsBeforeNonIncrementalBuild()
+            clearOutputDirectories(reason = "IC is disabled for the task")
         }
 
         try {
             val exitCode = compilerRunner.runJvmCompiler(
-                    sourceRoots.kotlinSourceFiles,
-                    sourceRoots.javaSourceRoots,
-                    javaPackagePrefix,
-                    args,
-                    environment)
+                sourceRoots.kotlinSourceFiles,
+                commonSourceSet.toList(),
+                sourceRoots.javaSourceRoots,
+                javaPackagePrefix,
+                args,
+                environment
+            )
 
+            disableMultiModuleICIfNeeded()
             processCompilerExitCode(exitCode)
-            artifactDifferenceRegistryProvider?.withRegistry(reporter) {
-                it.flush(true)
-            }
         }
         catch (e: Throwable) {
             cleanupOnError()
-            artifactDifferenceRegistryProvider?.clean()
             throw e
         }
-        finally {
-            artifactDifferenceRegistryProvider?.withRegistry(reporter, ArtifactDifferenceRegistry::close)
+    }
+
+    private fun disableMultiModuleICIfNeeded() {
+        if (!incremental || javaOutputDir == null) return
+
+        val illegalTask = project.tasks.matching {
+            it is AbstractCompile &&
+                    it !is JavaCompile &&
+                    it !is AbstractKotlinCompile<*> &&
+                    javaOutputDir!!.isParentOf(it.destinationDir)
+        }.firstOrNull() as? AbstractCompile
+
+        if (illegalTask != null) {
+            project.logger.info(
+                "Kotlin inter-project IC is disabled: " +
+                        "unknown task '$illegalTask' destination dir ${illegalTask.destinationDir} " +
+                        "intersects with java destination dir $javaOutputDir"
+            )
+            buildHistoryFile.delete()
         }
-        anyClassesCompiled = true
     }
 
     private fun cleanupOnError() {
@@ -416,25 +452,6 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
 
         throwGradleExceptionIfError(exitCode)
     }
-
-    private fun getKaptPluginOptions() =
-            CompilerPluginOptions().apply {
-                kaptOptions.annotationsFile?.let { kaptAnnotationsFile ->
-                    if (incremental) {
-                        kaptAnnotationsFileUpdater = AnnotationFileUpdaterImpl(kaptAnnotationsFile)
-                    }
-
-                    addPluginArgument(ANNOTATIONS_PLUGIN_NAME, FilesSubpluginOption("output", listOf(kaptAnnotationsFile)))
-                }
-
-                if (kaptOptions.generateStubs) {
-                    addPluginArgument(ANNOTATIONS_PLUGIN_NAME, FilesSubpluginOption("stubs", listOf(destinationDir)))
-                }
-
-                if (kaptOptions.supportInheritedAnnotations) {
-                    addPluginArgument(ANNOTATIONS_PLUGIN_NAME, SubpluginOption("inherited", true.toString()))
-                }
-            }
 
     // override setSource to track source directory sets and files (for generated android folders)
     override fun setSource(sources: Any?) {
@@ -481,7 +498,7 @@ open class Kotlin2JsCompile() : AbstractKotlinCompile<K2JSCompilerArguments>(), 
         kotlinOptionsImpl.updateArguments(args)
     }
 
-    override fun getSourceRoots() = SourceRoots.KotlinOnly.create(getSource())
+    override fun getSourceRoots() = SourceRoots.KotlinOnly.create(getSource(), sourceFilesExtensions)
 
     @get:InputFiles
     @get:Optional
@@ -520,7 +537,6 @@ open class Kotlin2JsCompile() : AbstractKotlinCompile<K2JSCompilerArguments>(), 
         val messageCollector = GradleMessageCollector(logger)
         val outputItemCollector = OutputItemsCollectorImpl()
         val compilerRunner = GradleCompilerRunner(project)
-        val reporter = GradleICReporter(project.rootProject.projectDir)
 
         val environment = when {
             incremental -> {
@@ -528,18 +544,27 @@ open class Kotlin2JsCompile() : AbstractKotlinCompile<K2JSCompilerArguments>(), 
                 GradleIncrementalCompilerEnvironment(
                         computedCompilerClasspath,
                         if (hasFilesInTaskBuildDirectory()) changedFiles else ChangedFiles.Unknown(),
-                        reporter, taskBuildDirectory,
-                        messageCollector, outputItemCollector, args)
+                        taskBuildDirectory,
+                        messageCollector,
+                        outputItemCollector,
+                        args,
+                        multiModuleICSettings = multiModuleICSettings
+                )
             }
             else -> {
                 GradleCompilerEnvironment(computedCompilerClasspath, messageCollector, outputItemCollector, args)
             }
         }
 
-        val exitCode = compilerRunner.runJsCompiler(sourceRoots.kotlinSourceFiles, args, environment)
+        val exitCode = compilerRunner.runJsCompiler(sourceRoots.kotlinSourceFiles, commonSourceSet.toList(), args, environment)
         throwGradleExceptionIfError(exitCode)
     }
 }
+
+private val invalidModuleNameCharactersRegex = """[\\/\r\n\t]""".toRegex()
+
+private fun filterModuleName(moduleName: String): String =
+    moduleName.replace(invalidModuleNameCharactersRegex, "_")
 
 private fun Task.getGradleVersion(): ParsedGradleVersion? {
     val gradleVersion = project.gradle.gradleVersion

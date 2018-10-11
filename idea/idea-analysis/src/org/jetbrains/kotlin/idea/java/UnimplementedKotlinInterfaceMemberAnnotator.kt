@@ -29,6 +29,7 @@ import com.intellij.psi.*
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForSourceDeclaration
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.idea.KotlinLanguage
+import org.jetbrains.kotlin.resolve.jvm.annotations.JVM_DEFAULT_FQ_NAME
 import org.jetbrains.kotlin.utils.ifEmpty
 
 class UnimplementedKotlinInterfaceMemberAnnotator : Annotator {
@@ -51,10 +52,14 @@ class UnimplementedKotlinInterfaceMemberAnnotator : Annotator {
         }.ifEmpty { return null }
 
         val kotlinSuperClass = generateSequence(psiClass) { it.superClass }.firstOrNull { it is KtLightClassForSourceDeclaration }
-                               ?: return signaturesFromKotlinInterfaces.first().method as? KtLightMethod
 
-        val signaturesVisibleThroughKotlinSuperClass = kotlinSuperClass.visibleSignatures
-        return signaturesFromKotlinInterfaces.firstOrNull { it !in signaturesVisibleThroughKotlinSuperClass }?.method as? KtLightMethod
+        val signaturesVisibleThroughKotlinSuperClass = kotlinSuperClass?.visibleSignatures ?: emptyList()
+        return signaturesFromKotlinInterfaces.firstOrNull {
+            it !in signaturesVisibleThroughKotlinSuperClass &&
+                    it.method.modifierList.annotations.none { annotation ->
+                        annotation.qualifiedName == JVM_DEFAULT_FQ_NAME.asString()
+                    }
+        }?.method as? KtLightMethod
     }
 
     private fun report(method: KtLightMethod, holder: AnnotationHolder, psiClass: PsiClass) {

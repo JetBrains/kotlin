@@ -26,8 +26,11 @@ import org.jetbrains.kotlin.utils.KotlinJavascriptMetadataUtils
 import java.util.*
 
 object KotlinJsMetadataVersionIndex : KotlinMetadataVersionIndexBase<KotlinJsMetadataVersionIndex, JsMetadataVersion>(
-        KotlinJsMetadataVersionIndex::class.java, ::JsMetadataVersion
+    KotlinJsMetadataVersionIndex::class.java
 ) {
+    override fun createBinaryVersion(versionArray: IntArray, extraBoolean: Boolean?): JsMetadataVersion =
+        JsMetadataVersion(*versionArray)
+
     override fun getIndexer() = INDEXER
 
     override fun getInputFilter() = FileBasedIndex.InputFilter { file -> JavaScript.EXTENSION == file.extension }
@@ -44,8 +47,8 @@ object KotlinJsMetadataVersionIndex : KotlinMetadataVersionIndexBase<KotlinJsMet
             KotlinJavascriptMetadataUtils.parseMetadata(inputData.contentAsText, metadataList)
             for (metadata in metadataList) {
                 val version = metadata.version.takeIf { it.isCompatible() }
-                              // Version is set to something weird
-                              ?: JsMetadataVersion.INVALID_VERSION
+                // Version is set to something weird
+                    ?: JsMetadataVersion.INVALID_VERSION
                 result[version] = null
             }
         }

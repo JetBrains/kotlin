@@ -1,5 +1,8 @@
 
-apply { plugin("kotlin") }
+plugins {
+    kotlin("jvm")
+    id("jps-compatible")
+}
 
 dependencies {
     testCompile(project(":core:descriptors"))
@@ -27,9 +30,9 @@ dependencies {
     testCompileOnly(project(":kotlin-reflect-api"))
     testCompile(commonDep("junit:junit"))
     testCompile(androidDxJar()) { isTransitive = false }
-    testCompile(intellijCoreDep()) { includeJars("intellij-core"); isTransitive = false }
+    testCompileOnly(intellijCoreDep()) { includeJars("intellij-core") }
     testCompile(intellijDep()) {
-        includeJars("openapi", "idea", "idea_rt", "guava", "trove4j", "picocontainer", "asm-all", "log4j", "jdom", rootProject = rootProject)
+        includeJars("openapi", "platform-api", "platform-impl", "idea", "idea_rt", "guava", "trove4j", "picocontainer-1.2", "asm-all", "log4j", "jdom", "bootstrap", "annotations", rootProject = rootProject)
         isTransitive = false
     }
 }

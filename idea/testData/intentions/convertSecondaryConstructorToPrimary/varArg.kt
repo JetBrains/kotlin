@@ -7,4 +7,6 @@ class WithVarArg {
     constructor(<caret>vararg zz: String) {
         x = listOf(*zz)
     }
+
+    fun foo() {}
 }

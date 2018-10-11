@@ -26,6 +26,7 @@ import com.intellij.psi.codeStyle.CommonCodeStyleSettings
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.tree.TokenSet
 import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.kotlin.idea.util.requireNode
 import org.jetbrains.kotlin.lexer.KtTokens
 import java.util.*
 
@@ -57,12 +58,12 @@ class KotlinSpacingBuilder(val commonCodeStyleSettings: CommonCodeStyleSettings,
             val rightSet: TokenSet? = null
     ) : (ASTBlock, ASTBlock, ASTBlock) -> Boolean {
         override fun invoke(p: ASTBlock, l: ASTBlock, r: ASTBlock): Boolean =
-            (parent == null || p.node!!.elementType == parent) &&
-            (left == null || l.node!!.elementType == left) &&
-            (right == null || r.node!!.elementType == right) &&
-            (parentSet == null || parentSet.contains(p.node!!.elementType)) &&
-            (leftSet == null || leftSet.contains(l.node!!.elementType)) &&
-            (rightSet == null || rightSet.contains(r.node!!.elementType))
+            (parent == null || p.requireNode().elementType == parent) &&
+            (left == null || l.requireNode().elementType == left) &&
+            (right == null || r.requireNode().elementType == right) &&
+            (parentSet == null || parentSet.contains(p.requireNode().elementType)) &&
+            (leftSet == null || leftSet.contains(l.requireNode().elementType)) &&
+            (rightSet == null || rightSet.contains(r.requireNode().elementType))
     }
 
     private data class Rule(val conditions: List<Condition>,
@@ -139,8 +140,8 @@ class KotlinSpacingBuilder(val commonCodeStyleSettings: CommonCodeStyleSettings,
 
             if (spacing != null) {
                 // TODO: it's a severe hack but I don't know how to implement it in other way
-                if (child1.node.elementType == KtTokens.EOL_COMMENT && spacing.toString().contains("minLineFeeds=0")) {
-                    val isBeforeBlock = child2.node.elementType == KtNodeTypes.BLOCK || child2.node.firstChildNode?.elementType == KtNodeTypes.BLOCK
+                if (child1.requireNode().elementType == KtTokens.EOL_COMMENT && spacing.toString().contains("minLineFeeds=0")) {
+                    val isBeforeBlock = child2.requireNode().elementType == KtNodeTypes.BLOCK || child2.requireNode().firstChildNode?.elementType == KtNodeTypes.BLOCK
                     val keepBlankLines = if (isBeforeBlock) 0 else commonCodeStyleSettings.KEEP_BLANK_LINES_IN_CODE
                     return createSpacing(0, minLineFeeds = 1, keepLineBreaks = true, keepBlankLines = keepBlankLines)
                 }

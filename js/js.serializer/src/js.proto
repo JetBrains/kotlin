@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.serialization.js;
+package org.jetbrains.kotlin.metadata.js;
 
-import "core/deserialization/src/descriptors.proto";
+import "core/metadata/src/metadata.proto";
 
 option java_outer_classname = "JsProtoBuf";
 option optimize_for = LITE_RUNTIME;

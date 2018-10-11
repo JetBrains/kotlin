@@ -1,8 +1,7 @@
 package test.sample
 
 import sample.Hello
-
-import org.junit.Test
+import kotlin.test.Test
 
 class SampleTest {
     @Test

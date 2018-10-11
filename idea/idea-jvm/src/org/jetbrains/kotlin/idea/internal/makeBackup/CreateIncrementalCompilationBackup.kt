@@ -39,15 +39,15 @@ import java.text.SimpleDateFormat
 import java.util.*
 import java.util.zip.ZipOutputStream
 
-class CreateIncrementalCompilationBackup: AnAction("Create backup for debugging Kotlin incremental compilation") {
+class CreateIncrementalCompilationBackup : AnAction("Create backup for debugging Kotlin incremental compilation") {
     companion object {
-        val BACKUP_DIR_NAME = ".backup"
-        val PATCHES_TO_CREATE = 5
+        const val BACKUP_DIR_NAME = ".backup"
+        const val PATCHES_TO_CREATE = 5
 
-        val PATCHES_FRACTION = .25
-        val LOGS_FRACTION = .05
-        val PROJECT_SYSTEM_FRACTION = .05
-        val ZIP_FRACTION = 1.0 - PATCHES_FRACTION - LOGS_FRACTION - PROJECT_SYSTEM_FRACTION
+        const val PATCHES_FRACTION = .25
+        const val LOGS_FRACTION = .05
+        const val PROJECT_SYSTEM_FRACTION = .05
+        const val ZIP_FRACTION = 1.0 - PATCHES_FRACTION - LOGS_FRACTION - PROJECT_SYSTEM_FRACTION
     }
 
     override fun actionPerformed(e: AnActionEvent) {
@@ -56,15 +56,15 @@ class CreateIncrementalCompilationBackup: AnAction("Create backup for debugging 
         val backupDir = File(FileUtil.createTempDirectory("makeBackup", null), BACKUP_DIR_NAME)
 
         ProgressManager.getInstance().run(
-                object : Task.Backgroundable(project, "Creating backup for debugging Kotlin incremental compilation", true) {
-                    override fun run(indicator: ProgressIndicator) {
-                        createPatches(backupDir, project, indicator)
-                        copyLogs(backupDir, indicator)
-                        copyProjectSystemDir(backupDir, project, indicator)
+            object : Task.Backgroundable(project, "Creating backup for debugging Kotlin incremental compilation", true) {
+                override fun run(indicator: ProgressIndicator) {
+                    createPatches(backupDir, project, indicator)
+                    copyLogs(backupDir, indicator)
+                    copyProjectSystemDir(backupDir, project, indicator)
 
-                        zipProjectDir(backupDir, project, projectBaseDir, indicator)
-                    }
+                    zipProjectDir(backupDir, project, projectBaseDir, indicator)
                 }
+            }
         )
     }
 
@@ -74,7 +74,13 @@ class CreateIncrementalCompilationBackup: AnAction("Create backup for debugging 
             val gateway = localHistoryImpl.gateway!!
             val localHistoryFacade = localHistoryImpl.facade
 
-            val revisionsCollector = RevisionsCollector(localHistoryFacade, gateway.createTransientRootEntry(), project.baseDir!!.path, project.locationHash, null)
+            val revisionsCollector = RevisionsCollector(
+                localHistoryFacade,
+                gateway.createTransientRootEntry(),
+                project.baseDir!!.path,
+                project.locationHash,
+                null
+            )
 
             var patchesCreated = 0
 
@@ -91,8 +97,7 @@ class CreateIncrementalCompilationBackup: AnAction("Create backup for debugging 
                     indicator.fraction = PATCHES_FRACTION * patchesCreated / PATCHES_TO_CREATE
 
                     val differences = revisions[0].getDifferencesWith(rev)!!
-                    val changes = differences.map {
-                        d ->
+                    val changes = differences.map { d ->
                         Change(d.getLeftContentRevision(gateway), d.getRightContentRevision(gateway))
                     }
 
@@ -134,24 +139,24 @@ class CreateIncrementalCompilationBackup: AnAction("Create backup for debugging 
 
         for (dir in listOf(projectDir, backupDir.parentFile!!)) {
             FileUtil.processFilesRecursively(
-                    dir,
-                    /*processor*/ {
-                        if (it!!.isFile
-                            && !it.name.endsWith(".hprof")
-                            && !(it.name.startsWith("make_backup_") && it.name.endsWith(".zip"))
-                        ) {
+                dir,
+                /*processor*/ {
+                    if (it!!.isFile
+                        && !it.name.endsWith(".hprof")
+                        && !(it.name.startsWith("make_backup_") && it.name.endsWith(".zip"))
+                    ) {
 
-                            indicator.text = "Scanning project dir: $it"
+                        indicator.text = "Scanning project dir: $it"
 
-                            files.add(Pair(it, FileUtil.getRelativePath(dir, it)!!))
-                            totalBytes += it.length()
-                        }
-                        true
-                    },
-                    /*directoryFilter*/ {
-                        val name = it!!.name
-                        name != ".git" && name != "out"
+                        files.add(Pair(it, FileUtil.getRelativePath(dir, it)!!))
+                        totalBytes += it.length()
                     }
+                    true
+                },
+                /*directoryFilter*/ {
+                    val name = it!!.name
+                    name != ".git" && name != "out"
+                }
             )
         }
 
@@ -176,14 +181,16 @@ class CreateIncrementalCompilationBackup: AnAction("Create backup for debugging 
 
         FileUtil.delete(backupDir)
 
-        WaitForProgressToShow.runOrInvokeLaterAboveProgress({
-            ShowFilePathAction.showDialog(
+        WaitForProgressToShow.runOrInvokeLaterAboveProgress(
+            {
+                ShowFilePathAction.showDialog(
                     project,
                     "Successfully created backup " + backupFile.absolutePath,
                     "Created backup",
                     backupFile,
                     null
-            )
-        }, null, project)
+                )
+            }, null, project
+        )
     }
 }

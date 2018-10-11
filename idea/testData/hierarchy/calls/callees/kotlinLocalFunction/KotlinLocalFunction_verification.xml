@@ -6,14 +6,14 @@
   <node text="KA(2 usages)  ()"/>
   <node text="KA.foo(String)  ()"/>
   <node text="KA.name  ()"/>
-  <node text="localFun.bar()  ()">
+  <node text="client.localFun.bar()  ()">
+    <node text="KA(2 usages)  ()"/>
+    <node text="KA.foo(String)  ()"/>
     <node text="KA.name  ()"/>
+    <node text="JA.JA()(2 usages)  ()"/>
     <node text="JA.foo(String)  ()">
       <node text="PrintStream.println(String)  (java.io)"/>
     </node>
-    <node text="KA(2 usages)  ()"/>
-    <node text="JA.JA()(2 usages)  ()"/>
-    <node text="KA.foo(String)  ()"/>
   </node>
   <node text="packageFun(String)(2 usages)  ()"/>
 </node>

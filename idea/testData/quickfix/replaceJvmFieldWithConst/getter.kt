@@ -4,5 +4,6 @@
 // ACTION: Make internal
 // ACTION: Make private
 // ACTION: Remove explicit type specification
+// ACTION: Add use-site target 'property'
 <caret>@JvmField val number: Int
     get() = 42

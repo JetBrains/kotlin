@@ -1,0 +1,5 @@
+class Foo
+class Bar
+
+fun Foo.example() = "test"
+fun Bar.example() = "test"

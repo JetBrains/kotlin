@@ -1,5 +1,8 @@
 
-apply { plugin("kotlin") }
+plugins {
+    kotlin("jvm")
+    id("jps-compatible")
+}
 
 dependencies {
     compileOnly(project(":idea"))
@@ -8,7 +11,7 @@ dependencies {
     compileOnly(project(":idea:idea-jvm"))
 
     compile(intellijDep())
-    
+
     runtimeOnly(files(toolsJar()))
 }
 

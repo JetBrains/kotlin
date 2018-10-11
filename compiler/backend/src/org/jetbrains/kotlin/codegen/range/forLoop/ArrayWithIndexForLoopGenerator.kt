@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.codegen.range.forLoop
 
+import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.ExpressionCodegen
 import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.codegen.generateCallReceiver
@@ -23,8 +24,9 @@ class ArrayWithIndexForLoopGenerator(
     rangeCall: ResolvedCall<out CallableDescriptor>
 ) : AbstractWithIndexForLoopGenerator(codegen, forExpression, loopParameter, rangeCall) {
 
-    private val arrayType = codegen.asmType(ExpressionCodegen.getExpectedReceiverType(rangeCall))
-    private val arrayElementType = arrayType.elementType
+    private val arrayKotlinType = ExpressionCodegen.getExpectedReceiverType(rangeCall)
+    private val arrayType = codegen.asmType(arrayKotlinType)
+    private val arrayElementType = AsmUtil.correctElementType(arrayType)
     private var arrayVar = -1
     private var arrayLengthVar = -1
 
@@ -42,12 +44,11 @@ class ArrayWithIndexForLoopGenerator(
         val arrayValue = StackValue.local(arrayVar, arrayType)
         arrayValue.store(codegen.generateCallReceiver(rangeCall), v)
 
-        arrayValue.put(arrayType, v)
+        arrayValue.put(arrayType, arrayKotlinType, v)
         v.arraylength()
         v.store(arrayLengthVar, Type.INT_TYPE)
 
-        StackValue.local(indexVar, indexType)
-            .store(StackValue.constant(0, Type.INT_TYPE), v)
+        StackValue.local(indexVar, indexType).store(StackValue.constant(0), v)
     }
 
     override fun checkPreCondition(loopExit: Label) {

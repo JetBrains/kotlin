@@ -1,4 +1,4 @@
-// INSPECTION_CLASS: org.jetbrains.android.inspections.klint.AndroidLintInspectionToolProvider$AndroidKLintSetJavaScriptEnabledInspection
+// INSPECTION_CLASS: com.android.tools.idea.lint.AndroidLintSetJavaScriptEnabledInspection
 
 import android.annotation.SuppressLint
 import android.app.Activity
@@ -8,8 +8,8 @@ import android.webkit.WebView
 public class HelloWebApp : Activity() {
 
     fun test(webView: WebView) {
-        webView.settings.<warning descr="Using `setJavaScriptEnabled` can introduce XSS vulnerabilities into you application, review carefully.">javaScriptEnabled</warning> = true // bad
-        webView.getSettings().<warning descr="Using `setJavaScriptEnabled` can introduce XSS vulnerabilities into you application, review carefully.">setJavaScriptEnabled(true)</warning> // bad
+        <warning descr="Using `setJavaScriptEnabled` can introduce XSS vulnerabilities into your application, review carefully.">webView.settings.javaScriptEnabled</warning> = true // bad
+        <warning descr="Using `setJavaScriptEnabled` can introduce XSS vulnerabilities into your application, review carefully.">webView.getSettings().setJavaScriptEnabled(true)</warning> // bad
         webView.getSettings().setJavaScriptEnabled(false) // good
         webView.loadUrl("file:///android_asset/www/index.html")
     }

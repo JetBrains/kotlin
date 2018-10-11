@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
 
@@ -22,19 +22,20 @@ import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter;
 import org.jetbrains.kotlin.codegen.signature.JvmSignatureWriter;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
+import org.jetbrains.kotlin.config.LanguageVersionSettings;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl;
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader;
+import org.jetbrains.kotlin.metadata.ProtoBuf;
 import org.jetbrains.kotlin.psi.KtElement;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKt;
 import org.jetbrains.kotlin.resolve.scopes.MemberScope;
 import org.jetbrains.kotlin.serialization.DescriptorSerializer;
-import org.jetbrains.kotlin.serialization.ProtoBuf;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils;
 import org.jetbrains.kotlin.util.OperatorNameConventions;
@@ -171,7 +172,7 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
             generateConstInstance(asmType, asmType);
         }
 
-        genClosureFields(closure, v, typeMapper);
+        genClosureFields(closure, v, typeMapper, state.getLanguageVersionSettings());
     }
 
     protected void generateClosureBody() {
@@ -195,11 +196,15 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
             erasedInterfaceFunction = samType.getOriginalAbstractMethod();
         }
 
+        List<KotlinType> bridgeParameterKotlinTypes = CollectionsKt.map(erasedInterfaceFunction.getValueParameters(), ValueDescriptor::getType);
+
         generateBridge(
                 typeMapper.mapAsmMethod(erasedInterfaceFunction),
+                bridgeParameterKotlinTypes,
                 erasedInterfaceFunction.getReturnType(),
                 typeMapper.mapAsmMethod(funDescriptor),
-                funDescriptor.getReturnType()
+                funDescriptor.getReturnType(),
+                JvmCodegenUtil.isDeclarationOfBigArityFunctionInvoke(erasedInterfaceFunction)
         );
 
         //TODO: rewrite cause ugly hack
@@ -268,9 +273,11 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
 
     protected void generateBridge(
             @NotNull Method bridge,
+            @NotNull List<KotlinType> bridgeParameterKotlinTypes,
             @Nullable KotlinType bridgeReturnType,
             @NotNull Method delegate,
-            @Nullable KotlinType delegateReturnType
+            @Nullable KotlinType delegateReturnType,
+            boolean isVarargInvoke
     ) {
         if (bridge.equals(delegate)) return;
 
@@ -285,9 +292,18 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
         InstructionAdapter iv = new InstructionAdapter(mv);
         MemberCodegen.markLineNumberForDescriptor(DescriptorUtils.getParentOfType(funDescriptor, ClassDescriptor.class), iv);
 
-        iv.load(0, asmType);
+        Type[] bridgeParameterTypes = bridge.getArgumentTypes();
+        if (isVarargInvoke) {
+            assert bridgeParameterTypes.length == 1 && bridgeParameterTypes[0].equals(AsmUtil.getArrayType(OBJECT_TYPE)) :
+                    "Vararg invoke must have one parameter of type [Ljava/lang/Object;: " + bridge;
+            generateVarargInvokeArityAssert(iv, delegate.getArgumentTypes().length);
+        }
+        else {
+            assert bridgeParameterTypes.length == bridgeParameterKotlinTypes.size() :
+                    "Asm parameter types should be the same length as Kotlin parameter types";
+        }
 
-        Type[] myParameterTypes = bridge.getArgumentTypes();
+        iv.load(0, asmType);
 
         List<ParameterDescriptor> calleeParameters = CollectionsKt.plus(
                 CollectionsKt.listOfNotNull(funDescriptor.getExtensionReceiverParameter()),
@@ -296,11 +312,22 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
 
         int slot = 1;
         for (int i = 0; i < calleeParameters.size(); i++) {
-            Type type = myParameterTypes[i];
             ParameterDescriptor calleeParameter = calleeParameters.get(i);
             KotlinType parameterType = calleeParameter.getType();
-            StackValue.local(slot, type, parameterType).put(typeMapper.mapType(calleeParameter), parameterType, iv);
-            slot += type.getSize();
+            StackValue value;
+            if (isVarargInvoke) {
+                value = StackValue.arrayElement(
+                        OBJECT_TYPE, null,
+                        StackValue.local(1, bridgeParameterTypes[0], bridgeParameterKotlinTypes.get(0)),
+                        StackValue.constant(i)
+                );
+            }
+            else {
+                Type type = bridgeParameterTypes[i];
+                value = StackValue.local(slot, type, bridgeParameterKotlinTypes.get(i));
+                slot += type.getSize();
+            }
+            value.put(typeMapper.mapType(calleeParameter), parameterType, iv);
         }
 
         iv.invokevirtual(asmType.getInternalName(), delegate.getName(), delegate.getDescriptor(), false);
@@ -399,7 +426,7 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
 
     @NotNull
     protected Method generateConstructor() {
-        List<FieldInfo> args = calculateConstructorParameters(typeMapper, closure, asmType);
+        List<FieldInfo> args = calculateConstructorParameters(typeMapper, state.getLanguageVersionSettings(), closure, asmType);
 
         Type[] argTypes = fieldListToTypeArray(args);
 
@@ -422,7 +449,7 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
 
             String superClassConstructorDescriptor;
             if (superClassAsmType.equals(LAMBDA) || superClassAsmType.equals(FUNCTION_REFERENCE) ||
-                superClassAsmType.equals(CoroutineCodegenUtilKt.COROUTINE_IMPL_ASM_TYPE)) {
+                CoroutineCodegenUtilKt.isCoroutineSuperClass(state.getLanguageVersionSettings(), superClassAsmType.getInternalName())) {
                 int arity = calculateArity();
                 iv.iconst(arity);
                 if (shouldHaveBoundReferenceReceiver) {
@@ -456,18 +483,20 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
     @NotNull
     public static List<FieldInfo> calculateConstructorParameters(
             @NotNull KotlinTypeMapper typeMapper,
+            @NotNull LanguageVersionSettings languageVersionSettings,
             @NotNull CalculatedClosure closure,
             @NotNull Type ownerType
     ) {
         List<FieldInfo> args = Lists.newArrayList();
-        ClassDescriptor captureThis = closure.getCaptureThis();
+        ClassDescriptor captureThis = closure.getCapturedOuterClassDescriptor();
         if (captureThis != null) {
             Type type = typeMapper.mapType(captureThis);
             args.add(FieldInfo.createForHiddenField(ownerType, type, CAPTURED_THIS_FIELD));
         }
-        KotlinType captureReceiverType = closure.getCaptureReceiverType();
+        KotlinType captureReceiverType = closure.getCapturedReceiverFromOuterContext();
         if (captureReceiverType != null) {
-            args.add(FieldInfo.createForHiddenField(ownerType, typeMapper.mapType(captureReceiverType), CAPTURED_RECEIVER_FIELD));
+            String fieldName = closure.getCapturedReceiverFieldName(typeMapper.getBindingContext(), languageVersionSettings);
+            args.add(FieldInfo.createForHiddenField(ownerType, typeMapper.mapType(captureReceiverType), fieldName));
         }
 
         for (EnclosedValueDescriptor enclosedValueDescriptor : closure.getCaptureVariables().values()) {

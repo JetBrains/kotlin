@@ -1,7 +1,10 @@
 
 description = "Kotlin Build Common"
 
-apply { plugin("kotlin") }
+plugins {
+    kotlin("jvm")
+    id("jps-compatible")
+}
 
 dependencies {
     compileOnly(project(":core:util.runtime"))
@@ -18,10 +21,10 @@ dependencies {
     testCompile(projectTests(":compiler:tests-common"))
     testCompile(commonDep("junit:junit"))
     testCompile(protobufFull())
-    testCompile(projectDist(":kotlin-stdlib"))
+    testCompile(project(":kotlin-stdlib"))
     testCompileOnly(intellijDep()) { includeJars("openapi") }
 
-    testRuntime(projectDist(":kotlin-reflect"))
+    testRuntime(project(":kotlin-reflect"))
 }
 
 sourceSets {

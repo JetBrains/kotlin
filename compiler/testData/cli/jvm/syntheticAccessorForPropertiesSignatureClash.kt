@@ -16,7 +16,9 @@ class A {
     fun `access$getBar$lp`(a: A): Int = 7
 
     companion object {
-        private var foo = 1;
+        private var foo = 1
+            // Custom getter is needed, otherwise no need to generate getY and setY
+            get() = field
 
         fun test() {
             {

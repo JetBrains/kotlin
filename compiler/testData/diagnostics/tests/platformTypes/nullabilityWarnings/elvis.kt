@@ -1,5 +1,4 @@
 // !DIAGNOSTICS: -UNUSED_VARIABLE -SENSELESS_COMPARISON, -UNUSED_PARAMETER
-// !WITH_NEW_INFERENCE
 
 // FILE: J.java
 
@@ -62,7 +61,7 @@ fun test() {
     takeNotNull(J.getNAny() ?: J())
 
     val x = <!UNRESOLVED_REFERENCE!>unresolved<!> ?: null
-    <!OI;UNREACHABLE_CODE!>val y =<!> <!UNRESOLVED_REFERENCE!>unresolved<!>.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>foo<!> ?: return
+    <!UNREACHABLE_CODE!>val y =<!> <!UNRESOLVED_REFERENCE!>unresolved<!>.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>foo<!> ?: return
 }
 
 fun takeNotNull(s: J) {}

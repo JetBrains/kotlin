@@ -33,6 +33,7 @@ import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiNamedElement
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
+import org.jetbrains.kotlin.idea.core.isInTestSourceContentKotlinAware
 import org.jetbrains.kotlin.idea.run.KotlinRunConfiguration
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.psi.KtClassOrObject
@@ -152,7 +153,7 @@ class KotlinCoverageExtension : JavaCoverageEngineExtension() {
             val module = ModuleUtilCore.findModuleForPsiElement(file)
             if (module == null) return null
             val fileIndex = ProjectRootManager.getInstance(file.project).fileIndex
-            val inTests = fileIndex.isInTestSourceContent(file.virtualFile)
+            val inTests = fileIndex.isInTestSourceContentKotlinAware(file.virtualFile)
             val compilerOutputExtension = CompilerModuleExtension.getInstance(module)
             return if (inTests)
                 compilerOutputExtension!!.compilerOutputPathForTests

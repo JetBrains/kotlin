@@ -9,6 +9,7 @@ import com.intellij.codeInspection.IntentionWrapper
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.psi.PsiElementVisitor
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.inspections.MayBeConstantInspection.Status.*
@@ -18,6 +19,7 @@ import org.jetbrains.kotlin.psi.KtObjectDeclaration
 import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.propertyVisitor
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
+import org.jetbrains.kotlin.psi.psiUtil.isObjectLiteral
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.constants.ErrorValue
 import org.jetbrains.kotlin.resolve.constants.NullValue
@@ -44,10 +46,10 @@ class MayBeConstantInspection : AbstractKotlinInspection() {
                 MIGHT_BE_CONST_ERRONEOUS, JVM_FIELD_MIGHT_BE_CONST_ERRONEOUS -> return@propertyVisitor
                 MIGHT_BE_CONST, JVM_FIELD_MIGHT_BE_CONST -> {
                     holder.registerProblem(
-                            property.nameIdentifier ?: property,
-                            if (status == JVM_FIELD_MIGHT_BE_CONST) "'const' might be used instead of '@JvmField'" else "Might be 'const'",
-                            ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
-                            IntentionWrapper(AddConstModifierFix(property), property.containingFile)
+                        property.nameIdentifier ?: property,
+                        if (status == JVM_FIELD_MIGHT_BE_CONST) "'const' might be used instead of '@JvmField'" else "Might be 'const'",
+                        ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
+                        IntentionWrapper(AddConstModifierFix(property), property.containingFile)
                     )
                 }
             }
@@ -57,22 +59,27 @@ class MayBeConstantInspection : AbstractKotlinInspection() {
     companion object {
         fun KtProperty.getStatus(): Status {
             if (isLocal || isVar || getter != null ||
-                hasModifier(KtTokens.CONST_KEYWORD) || hasModifier(KtTokens.OVERRIDE_KEYWORD)) {
+                hasModifier(KtTokens.CONST_KEYWORD) || hasModifier(KtTokens.OVERRIDE_KEYWORD)
+            ) {
                 return NONE
             }
+            val containingClassOrObject = this.containingClassOrObject
             if (!isTopLevel && containingClassOrObject !is KtObjectDeclaration) return NONE
+            if (containingClassOrObject?.isObjectLiteral() == true) return NONE
 
             val initializer = initializer
             // For some reason constant evaluation does not work for property.analyze()
             val context = (initializer ?: this).analyze(BodyResolveMode.PARTIAL)
             val propertyDescriptor = context[BindingContext.DECLARATION_TO_DESCRIPTOR, this] as? VariableDescriptor ?: return NONE
+            val type = propertyDescriptor.type
+            if (!KotlinBuiltIns.isPrimitiveType(type) && !KotlinBuiltIns.isString(type)) return NONE
             val withJvmField = propertyDescriptor.hasJvmFieldAnnotation()
             if (annotationEntries.isNotEmpty() && !withJvmField) return NONE
 
             return when {
                 initializer != null -> {
                     val compileTimeConstant = ConstantExpressionEvaluator.getConstant(
-                            initializer, context
+                        initializer, context
                     ) ?: return NONE
                     val erroneousConstant = compileTimeConstant.usesNonConstValAsConstant
                     compileTimeConstant.toConstantValue(propertyDescriptor.type).takeIf {

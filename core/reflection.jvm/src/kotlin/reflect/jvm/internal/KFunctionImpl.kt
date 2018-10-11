@@ -25,27 +25,28 @@ import java.lang.reflect.Modifier
 import kotlin.jvm.internal.CallableReference
 import kotlin.jvm.internal.FunctionBase
 import kotlin.reflect.KFunction
-import kotlin.reflect.jvm.internal.AnnotationConstructorCaller.CallMode.CALL_BY_NAME
-import kotlin.reflect.jvm.internal.AnnotationConstructorCaller.CallMode.POSITIONAL_CALL
-import kotlin.reflect.jvm.internal.AnnotationConstructorCaller.Origin.JAVA
-import kotlin.reflect.jvm.internal.AnnotationConstructorCaller.Origin.KOTLIN
 import kotlin.reflect.jvm.internal.JvmFunctionSignature.*
+import kotlin.reflect.jvm.internal.calls.*
+import kotlin.reflect.jvm.internal.calls.AnnotationConstructorCaller.CallMode.CALL_BY_NAME
+import kotlin.reflect.jvm.internal.calls.AnnotationConstructorCaller.CallMode.POSITIONAL_CALL
+import kotlin.reflect.jvm.internal.calls.AnnotationConstructorCaller.Origin.JAVA
+import kotlin.reflect.jvm.internal.calls.AnnotationConstructorCaller.Origin.KOTLIN
 
 internal class KFunctionImpl private constructor(
-        override val container: KDeclarationContainerImpl,
-        name: String,
-        private val signature: String,
-        descriptorInitialValue: FunctionDescriptor?,
-        private val boundReceiver: Any? = CallableReference.NO_RECEIVER
-) : KCallableImpl<Any?>(), KFunction<Any?>, FunctionBase, FunctionWithAllInvokes {
+    override val container: KDeclarationContainerImpl,
+    name: String,
+    private val signature: String,
+    descriptorInitialValue: FunctionDescriptor?,
+    private val boundReceiver: Any? = CallableReference.NO_RECEIVER
+) : KCallableImpl<Any?>(), KFunction<Any?>, FunctionBase<Any?>, FunctionWithAllInvokes {
     constructor(container: KDeclarationContainerImpl, name: String, signature: String, boundReceiver: Any?)
             : this(container, name, signature, null, boundReceiver)
 
     constructor(container: KDeclarationContainerImpl, descriptor: FunctionDescriptor) : this(
-            container,
-            descriptor.name.asString(),
-            RuntimeTypeMapper.mapSignature(descriptor).asString(),
-            descriptor
+        container,
+        descriptor.name.asString(),
+        RuntimeTypeMapper.mapSignature(descriptor).asString(),
+        descriptor
     )
 
     override val isBound: Boolean get() = boundReceiver != CallableReference.NO_RECEIVER
@@ -56,7 +57,7 @@ internal class KFunctionImpl private constructor(
 
     override val name: String get() = descriptor.name.asString()
 
-    override val caller: FunctionCaller<*> by ReflectProperties.lazySoft caller@ {
+    override val caller: Caller<*> by ReflectProperties.lazySoft caller@{
         val jvmSignature = RuntimeTypeMapper.mapSignature(descriptor)
         val member: Member? = when (jvmSignature) {
             is KotlinConstructor -> {
@@ -72,7 +73,6 @@ internal class KFunctionImpl private constructor(
                 val methods = jvmSignature.methods
                 return@caller AnnotationConstructorCaller(container.jClass, methods.map { it.name }, POSITIONAL_CALL, JAVA, methods)
             }
-            is BuiltInFunction -> jvmSignature.getMember(container)
         }
 
         when (member) {
@@ -86,16 +86,18 @@ internal class KFunctionImpl private constructor(
                 else ->
                     createStaticMethodCaller(member)
             }
-            else -> throw KotlinReflectionInternalError("Call is not yet supported for this function: $descriptor (member = $member)")
-        }
+            else -> throw KotlinReflectionInternalError("Could not compute caller for function: $descriptor (member = $member)")
+        }.createInlineClassAwareCallerIfNeeded(descriptor)
     }
 
-    override val defaultCaller: FunctionCaller<*>? by ReflectProperties.lazySoft defaultCaller@ {
+    override val defaultCaller: Caller<*>? by ReflectProperties.lazySoft defaultCaller@{
         val jvmSignature = RuntimeTypeMapper.mapSignature(descriptor)
         val member: Member? = when (jvmSignature) {
             is KotlinFunction -> {
-                container.findDefaultMethod(jvmSignature.methodName, jvmSignature.methodDesc,
-                                            !Modifier.isStatic(caller.member!!.modifiers), descriptor.isPublicInBytecode)
+                container.findDefaultMethod(
+                    jvmSignature.methodName, jvmSignature.methodDesc,
+                    !Modifier.isStatic(caller.member!!.modifiers), descriptor.isPublicInBytecode
+                )
             }
             is KotlinConstructor -> {
                 if (isAnnotationConstructor)
@@ -120,29 +122,29 @@ internal class KFunctionImpl private constructor(
                 // In objects, $default's signature does _not_ contain the additional object instance parameter,
                 // as opposed to companion objects where the first parameter is the companion object instance.
                 descriptor.annotations.findAnnotation(JVM_STATIC) != null &&
-                !(descriptor.containingDeclaration as ClassDescriptor).isCompanionObject ->
+                        !(descriptor.containingDeclaration as ClassDescriptor).isCompanionObject ->
                     createJvmStaticInObjectCaller(member)
 
                 else ->
                     createStaticMethodCaller(member)
             }
             else -> null
-        }
+        }?.createInlineClassAwareCallerIfNeeded(descriptor, isDefault = true)
     }
 
     private fun createStaticMethodCaller(member: Method) =
-            if (isBound) FunctionCaller.BoundStaticMethod(member, boundReceiver) else FunctionCaller.StaticMethod(member)
+        if (isBound) CallerImpl.Method.BoundStatic(member, boundReceiver) else CallerImpl.Method.Static(member)
 
     private fun createJvmStaticInObjectCaller(member: Method) =
-            if (isBound) FunctionCaller.BoundJvmStaticInObject(member) else FunctionCaller.JvmStaticInObject(member)
+        if (isBound) CallerImpl.Method.BoundJvmStaticInObject(member) else CallerImpl.Method.JvmStaticInObject(member)
 
     private fun createInstanceMethodCaller(member: Method) =
-            if (isBound) FunctionCaller.BoundInstanceMethod(member, boundReceiver) else FunctionCaller.InstanceMethod(member)
+        if (isBound) CallerImpl.Method.BoundInstance(member, boundReceiver) else CallerImpl.Method.Instance(member)
 
     private fun createConstructorCaller(member: Constructor<*>) =
-            if (isBound) FunctionCaller.BoundConstructor(member, boundReceiver) else FunctionCaller.Constructor(member)
+        if (isBound) CallerImpl.BoundConstructor(member, boundReceiver) else CallerImpl.Constructor(member)
 
-    override fun getArity() = caller.arity
+    override val arity: Int get() = caller.arity
 
     override val isInline: Boolean
         get() = descriptor.isInline
@@ -165,8 +167,8 @@ internal class KFunctionImpl private constructor(
     }
 
     override fun hashCode(): Int =
-            (container.hashCode() * 31 + name.hashCode()) * 31 + signature.hashCode()
+        (container.hashCode() * 31 + name.hashCode()) * 31 + signature.hashCode()
 
     override fun toString(): String =
-            ReflectionObjectRenderer.renderFunction(descriptor)
+        ReflectionObjectRenderer.renderFunction(descriptor)
 }

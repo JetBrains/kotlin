@@ -18,12 +18,14 @@ package org.jetbrains.kotlin.config;
 
 import org.jetbrains.annotations.TestOnly;
 
-public class IncrementalCompilation {
-    private static final String INCREMENTAL_COMPILATION_PROPERTY = "kotlin.incremental.compilation";
-    private static final String INCREMENTAL_COMPILATION_JS_PROPERTY = "kotlin.incremental.compilation.js";
+import java.util.List;
 
-    public static boolean isEnabled() {
-        return "true".equals(System.getProperty(INCREMENTAL_COMPILATION_PROPERTY));
+public class IncrementalCompilation {
+    public static final String INCREMENTAL_COMPILATION_JVM_PROPERTY = "kotlin.incremental.compilation";
+    public static final String INCREMENTAL_COMPILATION_JS_PROPERTY = "kotlin.incremental.compilation.js";
+
+    public static boolean isEnabledForJvm() {
+        return "true".equals(System.getProperty(INCREMENTAL_COMPILATION_JVM_PROPERTY));
     }
 
     public static boolean isEnabledForJs() {
@@ -31,12 +33,21 @@ public class IncrementalCompilation {
     }
 
     @TestOnly
-    public static void setIsEnabled(boolean value) {
-        System.setProperty(INCREMENTAL_COMPILATION_PROPERTY, String.valueOf(value));
+    public static void setIsEnabledForJvm(boolean value) {
+        System.setProperty(INCREMENTAL_COMPILATION_JVM_PROPERTY, String.valueOf(value));
     }
 
     @TestOnly
     public static void setIsEnabledForJs(boolean value) {
         System.setProperty(INCREMENTAL_COMPILATION_JS_PROPERTY, String.valueOf(value));
+    }
+
+    public static void toJvmArgs(List<String> jvmArgs) {
+        if (isEnabledForJvm()) addJvmSystemFlag(jvmArgs, INCREMENTAL_COMPILATION_JVM_PROPERTY);
+        if (isEnabledForJs()) addJvmSystemFlag(jvmArgs, INCREMENTAL_COMPILATION_JS_PROPERTY);
+    }
+
+    private static void addJvmSystemFlag(List<String> jvmArgs, String name) {
+        jvmArgs.add("D" + name + "=true");
     }
 }

@@ -45,7 +45,11 @@ class KotlinDaemonIT : BaseGradleIT() {
             assert(createdSessions.size == 1) { "Created multiple sessions per build ${createdSessions.joinToString()}" }
 
             val existingSessions = output.findAllStringsPrefixed(EXISTING_SESSION_FILE_PREFIX)
-            Assert.assertArrayEquals("Existing sessions don't match created sessions for two module projects", createdSessions, existingSessions)
+            Assert.assertArrayEquals(
+                "Existing sessions don't match created sessions for two module projects",
+                createdSessions,
+                existingSessions
+            )
 
             val deletedSessions = output.findAllStringsPrefixed(DELETED_SESSION_FILE_PREFIX)
             Assert.assertArrayEquals("Deleted sessions don't match created sessions", createdSessions, deletedSessions)

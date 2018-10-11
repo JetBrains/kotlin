@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 // !DIAGNOSTICS: -UNUSED_PARAMETER, -UNUSED_VARIABLE
 
 fun baz(i: Int) = i
@@ -9,7 +8,7 @@ fun nullableFun(): ((Int) -> Int)? = null
 fun test() {
     val x1: (Int) -> Int = bar(if (true) ::baz else ::baz)
     val x2: (Int) -> Int = bar(nullableFun() ?: ::baz)
-    val x3: (Int) -> Int = bar(::baz <!OI;USELESS_ELVIS!><!NI;USELESS_ELVIS_ON_CALLABLE_REFERENCE!>?:<!> ::baz<!>)
+    val x3: (Int) -> Int = bar(::baz <!USELESS_ELVIS!>?: ::baz<!>)
 
     val i = 0
     val x4: (Int) -> Int = bar(when (i) {

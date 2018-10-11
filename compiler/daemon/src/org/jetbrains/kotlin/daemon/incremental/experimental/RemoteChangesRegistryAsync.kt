@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.daemon.incremental.experimental
 
-import kotlinx.coroutines.experimental.async
+import kotlinx.coroutines.async
 import org.jetbrains.kotlin.daemon.common.IncrementalCompilerServicesFacadeAsync
 import org.jetbrains.kotlin.daemon.incremental.toSimpleDirtyData
 import org.jetbrains.kotlin.incremental.DirtyData

@@ -20,8 +20,10 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.GroupingMessageCollector
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.repl.ReplEvalResult
+import org.jetbrains.kotlin.cli.jvm.repl.configuration.ConsoleReplConfiguration
+import org.jetbrains.kotlin.cli.jvm.repl.configuration.IdeReplConfiguration
+import org.jetbrains.kotlin.cli.jvm.repl.configuration.ReplConfiguration
 import org.jetbrains.kotlin.cli.jvm.repl.messages.unescapeLineBreaks
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
@@ -34,10 +36,10 @@ import java.util.concurrent.Executors
 import java.util.concurrent.Future
 
 class ReplFromTerminal(
-        disposable: Disposable,
-        compilerConfiguration: CompilerConfiguration,
-        replConfiguration: ReplConfiguration
-) : ReplConfiguration by replConfiguration {
+    disposable: Disposable,
+    compilerConfiguration: CompilerConfiguration,
+    private val replConfiguration: ReplConfiguration
+) {
     private val replInitializer: Future<ReplInterpreter> = Executors.newSingleThreadExecutor().submit(Callable {
         ReplInterpreter(disposable, compilerConfiguration, replConfiguration)
     })
@@ -45,13 +47,19 @@ class ReplFromTerminal(
     private val replInterpreter: ReplInterpreter
         get() = replInitializer.get()
 
-    private val messageCollector: MessageCollector = compilerConfiguration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
+    private val writer get() = replConfiguration.writer
+
+    private val messageCollector = compilerConfiguration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
 
     private fun doRun() {
         try {
-            writer.printlnWelcomeMessage("Welcome to Kotlin version ${KotlinCompilerVersion.VERSION} " +
-                                         "(JRE ${System.getProperty("java.runtime.version")})")
-            writer.printlnWelcomeMessage("Type :help for help, :quit for quit")
+            with(writer) {
+                printlnWelcomeMessage(
+                    "Welcome to Kotlin version ${KotlinCompilerVersion.VERSION} " +
+                            "(JRE ${System.getProperty("java.runtime.version")})"
+                )
+                printlnWelcomeMessage("Type :help for help, :quit for quit")
+            }
 
             // Display compiler messages related to configuration and CLI arguments, quit if there are errors
             val hasErrors = messageCollector.hasErrors()
@@ -65,16 +73,15 @@ class ReplFromTerminal(
                     break
                 }
             }
-        }
-        catch (e: Exception) {
-            errorLogger.logException(e)
-        }
-        finally {
+        } catch (e: Exception) {
+            replConfiguration.exceptionReporter.report(e)
+            throw e
+        } finally {
             try {
-                commandReader.flushHistory()
-            }
-            catch (e: Exception) {
-                errorLogger.logException(e)
+                replConfiguration.commandReader.flushHistory()
+            } catch (e: Exception) {
+                replConfiguration.exceptionReporter.report(e)
+                throw e
             }
 
         }
@@ -87,11 +94,11 @@ class ReplFromTerminal(
     }
 
     private fun one(next: WhatNextAfterOneLine): WhatNextAfterOneLine {
-        var line = commandReader.readLine(next) ?: return WhatNextAfterOneLine.QUIT
+        var line = replConfiguration.commandReader.readLine(next) ?: return WhatNextAfterOneLine.QUIT
 
         line = unescapeLineBreaks(line)
 
-        if (line.startsWith(":") && (line.length == 1 || line.get(1) != ':')) {
+        if (line.startsWith(":") && (line.length == 1 || line[1] != ':')) {
             val notQuit = oneCommand(line.substring(1))
             return if (notQuit) WhatNextAfterOneLine.READ_LINE else WhatNextAfterOneLine.QUIT
         }
@@ -99,8 +106,7 @@ class ReplFromTerminal(
         val lineResult = eval(line)
         return if (lineResult is ReplEvalResult.Incomplete) {
             WhatNextAfterOneLine.INCOMPLETE
-        }
-        else {
+        } else {
             WhatNextAfterOneLine.READ_LINE
         }
     }
@@ -124,22 +130,21 @@ class ReplFromTerminal(
     @Throws(Exception::class)
     private fun oneCommand(command: String): Boolean {
         val split = splitCommand(command)
-        if (split.size >= 1 && command == "help") {
-            writer.printlnHelpMessage("Available commands:\n" +
-                                      ":help                   show this help\n" +
-                                      ":quit                   exit the interpreter\n" +
-                                      ":dump bytecode          dump classes to terminal\n" +
-                                      ":load <file>            load script from specified file")
+        if (split.isNotEmpty() && command == "help") {
+            writer.printlnHelpMessage(
+                "Available commands:\n" +
+                        ":help                   show this help\n" +
+                        ":quit                   exit the interpreter\n" +
+                        ":dump bytecode          dump classes to terminal\n" +
+                        ":load <file>            load script from specified file"
+            )
             return true
-        }
-        else if (split.size >= 2 && split[0] == "dump" && split[1] == "bytecode") {
+        } else if (split.size >= 2 && split[0] == "dump" && split[1] == "bytecode") {
             replInterpreter.dumpClasses(PrintWriter(System.out))
             return true
-        }
-        else if (split.size >= 1 && split[0] == "quit") {
+        } else if (split.isNotEmpty() && split[0] == "quit") {
             return false
-        }
-        else if (split.size >= 2 && split[0] == "load") {
+        } else if (split.size >= 2 && split[0] == "load") {
             val fileName = split[1]
             try {
                 val scriptText = FileUtil.loadFile(File(fileName))
@@ -148,8 +153,7 @@ class ReplFromTerminal(
                 writer.outputCompileError("Can not load script: ${e.message}")
             }
             return true
-        }
-        else {
+        } else {
             writer.printlnHelpMessage("Unknown command\n" + "Type :help for help")
             return true
         }
@@ -162,14 +166,13 @@ class ReplFromTerminal(
 
         fun run(disposable: Disposable, configuration: CompilerConfiguration) {
             val replIdeMode = System.getProperty("kotlin.repl.ideMode") == "true"
-            val replConfiguration = if (replIdeMode) ReplForIdeConfiguration() else ConsoleReplConfiguration()
+            val replConfiguration = if (replIdeMode) IdeReplConfiguration() else ConsoleReplConfiguration()
             return try {
                 ReplFromTerminal(disposable, configuration, replConfiguration).doRun()
-            }
-            catch (e: Exception) {
-                replConfiguration.errorLogger.logException(e)
+            } catch (e: Exception) {
+                replConfiguration.exceptionReporter.report(e)
+                throw e
             }
         }
     }
-
 }

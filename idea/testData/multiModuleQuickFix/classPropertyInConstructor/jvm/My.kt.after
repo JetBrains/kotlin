@@ -1,0 +1,7 @@
+// "Add missing actual members" "true"
+// DISABLE-ERRORS
+
+actual class <caret>My(actual val name: String) {
+    actual val age: String
+        get() = TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+}

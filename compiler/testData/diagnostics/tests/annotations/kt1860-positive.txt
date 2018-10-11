@@ -1,6 +1,6 @@
 package
 
-public var bar: kotlin.Int
+@setparam:test public var bar: kotlin.Int
 public val x: (kotlin.Int) -> kotlin.Int
 public fun foo(/*0*/ @test f: kotlin.Int): kotlin.Unit
 
@@ -11,7 +11,7 @@ public final class Hello {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.EXPRESSION}) public final annotation class test : kotlin.Annotation {
+@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.EXPRESSION}) @kotlin.annotation.Retention(value = AnnotationRetention.SOURCE) public final annotation class test : kotlin.Annotation {
     public constructor test()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

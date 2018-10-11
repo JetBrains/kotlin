@@ -22,20 +22,27 @@ import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 internal interface NameTransformer<Name> {
     fun asString(name: Name): String
     fun asName(string: String): Name
+    fun asFqName(string: String): FqName
 }
 
 internal object FqNameTransformer : NameTransformer<FqName> {
     override fun asString(name: FqName): String =
-            name.asString()
+        name.asString()
 
     override fun asName(string: String): FqName =
-            FqName(string)
+        FqName(string)
+
+    override fun asFqName(string: String): FqName =
+        asName(string)
 }
 
 internal object JvmClassNameTransformer : NameTransformer<JvmClassName> {
     override fun asString(name: JvmClassName): String =
-            name.internalName
+        name.internalName
 
     override fun asName(string: String): JvmClassName =
-            JvmClassName.byInternalName(string)
+        JvmClassName.byInternalName(string)
+
+    override fun asFqName(string: String): FqName =
+        asName(string).fqNameForClassNameWithoutDollars
 }

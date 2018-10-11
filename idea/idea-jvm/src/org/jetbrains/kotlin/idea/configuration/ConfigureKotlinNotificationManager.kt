@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.configuration
@@ -19,8 +8,11 @@ package org.jetbrains.kotlin.idea.configuration
 import com.intellij.notification.Notification
 import com.intellij.notification.NotificationsManager
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.module.Module
+import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.project.DumbService
+import com.intellij.openapi.project.IndexNotReadyException
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.idea.configuration.ui.notifications.ConfigureKotlinNotification
 import java.util.concurrent.atomic.AtomicBoolean
@@ -28,9 +20,9 @@ import kotlin.reflect.KClass
 
 object ConfigureKotlinNotificationManager: KotlinSingleNotificationManager<ConfigureKotlinNotification> {
     fun notify(project: Project, excludeModules: List<Module> = emptyList()) {
-        val notificationString = ConfigureKotlinNotification.getNotificationString(project, excludeModules)
-        if (notificationString != null) {
-            notify(project, ConfigureKotlinNotification(project, excludeModules, notificationString))
+        val notificationState = ConfigureKotlinNotification.getNotificationState(project, excludeModules)
+        if (notificationState != null) {
+            notify(project, ConfigureKotlinNotification(project, excludeModules, notificationState))
         }
     }
 
@@ -58,8 +50,7 @@ interface KotlinSingleNotificationManager<in T: Notification> {
         for (oldNotification in notifications) {
             if (oldNotification == notification) {
                 isNotificationExists = true
-            }
-            else {
+            } else {
                 oldNotification?.expire()
             }
         }
@@ -70,20 +61,46 @@ interface KotlinSingleNotificationManager<in T: Notification> {
 private val checkInProgress = AtomicBoolean(false)
 
 fun checkHideNonConfiguredNotifications(project: Project) {
-    if (checkInProgress.get() || ConfigureKotlinNotificationManager.getVisibleNotifications(project).isEmpty()) return
+    if (checkInProgress.get()) return
+    val notification = ConfigureKotlinNotificationManager.getVisibleNotifications(project).firstOrNull() ?: return
 
     ApplicationManager.getApplication().executeOnPooledThread {
         if (!checkInProgress.compareAndSet(false, true)) return@executeOnPooledThread
 
         DumbService.getInstance(project).waitForSmartMode()
-        if (getConfigurableModulesWithKotlinFiles(project).all(::isNotConfiguredNotificationRequired)) {
+        val moduleSourceRootMap = ModuleSourceRootMap(project)
+
+        if (notification.notificationState.debugProjectName != project.name) {
+            LOG.error("Bad notification check for project: ${project.name}\n${notification.notificationState}")
+        }
+
+        val hideNotification =
+            if (!ApplicationManager.getApplication().isUnitTestMode) {
+                try {
+                    val moduleSourceRootGroups = notification.notificationState.notConfiguredModules
+                        .mapNotNull { ModuleManager.getInstance(project).findModuleByName(it) }
+                        .map { moduleSourceRootMap.getWholeModuleGroup(it) }
+                    moduleSourceRootGroups.none(::isNotConfiguredNotificationRequired)
+                } catch (e: IndexNotReadyException) {
+                    checkInProgress.set(false)
+                    ApplicationManager.getApplication().invokeLater {
+                        checkHideNonConfiguredNotifications(project)
+                    }
+                    return@executeOnPooledThread
+                }
+            } else {
+                true
+            }
+
+        if (hideNotification) {
             ApplicationManager.getApplication().invokeLater {
                 ConfigureKotlinNotificationManager.expireOldNotifications(project)
                 checkInProgress.set(false)
             }
-        }
-        else {
+        } else {
             checkInProgress.set(false)
         }
     }
 }
+
+private val LOG = Logger.getInstance(ConfigureKotlinNotificationManager::class.java)

@@ -132,6 +132,9 @@ public class CompilerConfiguration {
         else if (object instanceof Map) {
             return (T) Collections.unmodifiableMap((Map) object);
         }
+        else if (object instanceof Set) {
+            return (T) Collections.unmodifiableSet((Set) object);
+        }
         else if (object instanceof Collection) {
             return (T) Collections.unmodifiableCollection((Collection) object);
         }

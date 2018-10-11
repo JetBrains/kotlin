@@ -3,10 +3,10 @@ package org.jetbrains.kotlin.gradle.tasks
 import org.gradle.api.file.FileTree
 import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.logging.Logger
-import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.gradle.plugin.kotlinDebug
-import org.jetbrains.kotlin.incremental.isJavaFile
-import org.jetbrains.kotlin.incremental.isKotlinFile
+import org.jetbrains.kotlin.gradle.utils.isJavaFile
+import org.jetbrains.kotlin.gradle.utils.isKotlinFile
+import org.jetbrains.kotlin.gradle.utils.isParentOf
 import java.io.File
 import java.util.*
 
@@ -22,8 +22,8 @@ internal sealed class SourceRoots(val kotlinSourceFiles: List<File>) {
 
     class ForJvm(kotlinSourceFiles: List<File>, val javaSourceRoots: Set<File>) : SourceRoots(kotlinSourceFiles) {
         companion object {
-            fun create(taskSource: FileTree, sourceRoots: FilteringSourceRootsContainer): ForJvm {
-                val kotlinSourceFiles = (taskSource as Iterable<File>).filter(File::isKotlinFile)
+            fun create(taskSource: FileTree, sourceRoots: FilteringSourceRootsContainer, sourceFilesExtensions: List<String>): ForJvm {
+                val kotlinSourceFiles = (taskSource as Iterable<File>).filter { it.isKotlinFile(sourceFilesExtensions) }
                 val javaSourceRoots = findRootsForSources(
                         sourceRoots.sourceRoots, taskSource.filter(File::isJavaFile))
                 return ForJvm(kotlinSourceFiles, javaSourceRoots)
@@ -35,7 +35,7 @@ internal sealed class SourceRoots(val kotlinSourceFiles: List<File>) {
 
                 for (sourceDir in sourceDirs) {
                     for (sourceRoot in allSourceRoots) {
-                        if (FileUtil.isAncestor(sourceRoot, sourceDir, /* strict = */false)) {
+                        if (sourceRoot.isParentOf(sourceDir)) {
                             resultRoots.add(sourceRoot)
                         }
                     }
@@ -53,7 +53,8 @@ internal sealed class SourceRoots(val kotlinSourceFiles: List<File>) {
 
     class KotlinOnly(kotlinSourceFiles: List<File>) : SourceRoots(kotlinSourceFiles) {
         companion object {
-            fun create(taskSource: FileTree) = KotlinOnly((taskSource as Iterable<File>).filter(File::isKotlinFile))
+            fun create(taskSource: FileTree, sourceFilesExtensions: List<String>) =
+                KotlinOnly((taskSource as Iterable<File>).filter { it.isKotlinFile(sourceFilesExtensions) })
         }
     }
 }

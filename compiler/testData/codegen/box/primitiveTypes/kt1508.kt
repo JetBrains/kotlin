@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 fun test( n : Number ) = n.toInt().toLong() + n.toLong()
 
 fun box() : String {

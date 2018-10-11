@@ -473,3 +473,42 @@ KtFile: CommentsBinding.kt
         PsiElement(INTEGER_LITERAL)('1')
       PsiWhiteSpace(' ')
       PsiComment(EOL_COMMENT)('// prop2')
+  PsiWhiteSpace('\n\n')
+  PROPERTY
+    PsiElement(var)('var')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('prop3')
+    PsiElement(COLON)(':')
+    PsiWhiteSpace(' ')
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('Int')
+    PsiWhiteSpace(' ')
+    PsiComment(EOL_COMMENT)('// Int')
+    PsiWhiteSpace('\n    ')
+    PROPERTY_ACCESSOR
+      PsiComment(EOL_COMMENT)('// this comment is for getter')
+      PsiWhiteSpace('\n    ')
+      PsiElement(get)('get')
+      PsiElement(LPAR)('(')
+      PsiElement(RPAR)(')')
+      PsiWhiteSpace(' ')
+      PsiElement(EQ)('=')
+      PsiWhiteSpace(' ')
+      INTEGER_CONSTANT
+        PsiElement(INTEGER_LITERAL)('1')
+    PsiWhiteSpace('\n    ')
+    PROPERTY_ACCESSOR
+      PsiComment(EOL_COMMENT)('// this comment is for setter')
+      PsiWhiteSpace('\n    ')
+      PsiElement(set)('set')
+      PsiElement(LPAR)('(')
+      VALUE_PARAMETER_LIST
+        VALUE_PARAMETER
+          PsiElement(IDENTIFIER)('value')
+      PsiElement(RPAR)(')')
+      PsiWhiteSpace(' ')
+      BLOCK
+        PsiElement(LBRACE)('{')
+        PsiElement(RBRACE)('}')

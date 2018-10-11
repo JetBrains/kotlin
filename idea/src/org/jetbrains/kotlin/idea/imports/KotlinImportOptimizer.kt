@@ -22,8 +22,9 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.caches.project.ModuleSourceInfo
-import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.project.ScriptModuleInfo
 import org.jetbrains.kotlin.idea.caches.project.getNullableModuleInfo
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.core.formatter.KotlinCodeStyleSettings
 import org.jetbrains.kotlin.idea.references.KtInvokeFunctionReference
@@ -52,7 +53,8 @@ class KotlinImportOptimizer : ImportOptimizer {
 
     private class OptimizeProcess(private val file: KtFile) {
         fun execute() {
-            if (file.getNullableModuleInfo() !is ModuleSourceInfo) return
+            val moduleInfo = file.getNullableModuleInfo()
+            if (moduleInfo !is ModuleSourceInfo && moduleInfo !is ScriptModuleInfo) return
 
             val oldImports = file.importDirectives
             if (oldImports.isEmpty()) return
@@ -122,9 +124,11 @@ class KotlinImportOptimizer : ImportOptimizer {
                 return when (target) {
                     is FunctionDescriptor ->
                         scope.findFunction(target.name, NoLookupLocation.FROM_IDE) { it == target } != null
+                            && bindingContext[BindingContext.DEPRECATED_SHORT_NAME_ACCESS, place] != true
 
                     is PropertyDescriptor ->
                         scope.findVariable(target.name, NoLookupLocation.FROM_IDE) { it == target } != null
+                            && bindingContext[BindingContext.DEPRECATED_SHORT_NAME_ACCESS, place] != true
 
                     is ClassDescriptor ->
                         scope.findClassifier(target.name, NoLookupLocation.FROM_IDE) == target
@@ -183,7 +187,7 @@ class KotlinImportOptimizer : ImportOptimizer {
         }
 
         fun replaceImports(file: KtFile, imports: List<ImportPath>) {
-            val importList = file.importList!!
+            val importList = file.importList ?: return
             val oldImports = importList.imports
             val psiFactory = KtPsiFactory(file.project)
             for (importPath in imports) {

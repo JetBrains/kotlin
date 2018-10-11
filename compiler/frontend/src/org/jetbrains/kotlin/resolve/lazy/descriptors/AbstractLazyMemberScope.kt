@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.resolve.lazy.descriptors
 
-import com.google.common.collect.Sets
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -55,7 +54,7 @@ protected constructor(
         storageManager.createMemoizedFunction { doGetTypeAliases(it) }
 
     private fun doGetClasses(name: Name): List<ClassDescriptor> {
-        val result = Sets.newLinkedHashSet<ClassDescriptor>()
+        val result = linkedSetOf<ClassDescriptor>()
         declarationProvider.getClassOrObjectDeclarations(name).mapTo(result) {
             if (it is KtScriptInfo)
                 LazyScriptDescriptor(c as ResolveSession, thisDescriptor, name, it)
@@ -92,7 +91,7 @@ protected constructor(
     }
 
     private fun doGetFunctions(name: Name): Collection<SimpleFunctionDescriptor> {
-        val result = Sets.newLinkedHashSet<SimpleFunctionDescriptor>()
+        val result = linkedSetOf<SimpleFunctionDescriptor>()
 
         val declarations = declarationProvider.getFunctionDeclarations(name)
         for (functionDeclaration in declarations) {

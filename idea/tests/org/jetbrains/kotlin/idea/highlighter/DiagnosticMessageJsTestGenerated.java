@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
 
@@ -21,19 +21,21 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 public class DiagnosticMessageJsTestGenerated extends AbstractDiagnosticMessageJsTest {
+    private void runTest(String testDataFilePath) throws Exception {
+        KotlinTestUtils.runTest(this::doTest, TargetBackend.JS, testDataFilePath);
+    }
+
     public void testAllFilesPresentInJs() throws Exception {
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/diagnosticMessage/js"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JS, false);
     }
 
     @TestMetadata("jsCodeErrorHtml.kt")
     public void testJsCodeErrorHtml() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/diagnosticMessage/js/jsCodeErrorHtml.kt");
-        doTest(fileName);
+        runTest("idea/testData/diagnosticMessage/js/jsCodeErrorHtml.kt");
     }
 
     @TestMetadata("jsCodeErrorText.kt")
     public void testJsCodeErrorText() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/diagnosticMessage/js/jsCodeErrorText.kt");
-        doTest(fileName);
+        runTest("idea/testData/diagnosticMessage/js/jsCodeErrorText.kt");
     }
 }

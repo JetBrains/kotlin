@@ -26,6 +26,9 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.lazy.descriptors.findPackageFragmentForFile
 
 class ModuleGenerator(override val context: GeneratorContext) : Generator {
+
+    private val constantValueGenerator = context.constantValueGenerator
+
     fun generateModuleFragment(ktFiles: Collection<KtFile>): IrModuleFragment =
         generateModuleFragmentWithoutDependencies(ktFiles).also { irModule ->
             generateUnboundSymbolsAsDependencies(irModule)
@@ -37,7 +40,9 @@ class ModuleGenerator(override val context: GeneratorContext) : Generator {
         }
 
     fun generateUnboundSymbolsAsDependencies(irModule: IrModuleFragment) {
-        ExternalDependenciesGenerator(context.symbolTable, context.irBuiltIns).generateUnboundSymbolsAsDependencies(irModule)
+        ExternalDependenciesGenerator(
+            irModule.descriptor, context.symbolTable, context.irBuiltIns
+        ).generateUnboundSymbolsAsDependencies(irModule, context.bindingContext)
     }
 
     private fun generateFiles(ktFiles: Collection<KtFile>): List<IrFile> {
@@ -52,7 +57,9 @@ class ModuleGenerator(override val context: GeneratorContext) : Generator {
         val irFile = createEmptyIrFile(ktFile)
 
         for (ktAnnotationEntry in ktFile.annotationEntries) {
-            irFile.fileAnnotations.add(getOrFail(BindingContext.ANNOTATION, ktAnnotationEntry))
+            val annotationDescriptor = getOrFail(BindingContext.ANNOTATION, ktAnnotationEntry)
+            irFile.fileAnnotations.add(annotationDescriptor)
+            irFile.annotations.add(constantValueGenerator.generateAnnotationConstructorCall(annotationDescriptor))
         }
 
         for (ktDeclaration in ktFile.declarations) {

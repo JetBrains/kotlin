@@ -1,0 +1,4 @@
+// to be created
+actual interface I {
+    actual fun f(p: Int)
+}

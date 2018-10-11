@@ -20,6 +20,7 @@ package org.jetbrains.kotlin.idea.actions.internal
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.ProgressManager.progress
 import com.intellij.openapi.project.Project
@@ -29,6 +30,7 @@ import com.intellij.psi.PsiModifier
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.caches.resolve.findModuleDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
+import org.jetbrains.kotlin.idea.util.application.progressIndicatorNullable
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.load.java.isFromJava
 import org.jetbrains.kotlin.name.FqName
@@ -37,7 +39,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 
 
 class SearchNotPropertyCandidatesAction : AnAction() {
-    override fun actionPerformed(e: AnActionEvent?) {
+    override fun actionPerformed(e: AnActionEvent) {
         val project = e?.project!!
         val psiFile = e.getData(CommonDataKeys.PSI_FILE) as? KtFile ?: return
 
@@ -54,7 +56,7 @@ class SearchNotPropertyCandidatesAction : AnAction() {
         ProgressManager.getInstance().runProcessWithProgressSynchronously(
                 {
                     runReadAction {
-                        ProgressManager.getInstance().progressIndicator.isIndeterminate = true
+                        ProgressManager.getInstance().progressIndicatorNullable!!.isIndeterminate = true
                         processAllDescriptors(packageDesc, project)
                     }
                 },
@@ -151,7 +153,7 @@ class SearchNotPropertyCandidatesAction : AnAction() {
     }
 
     override fun update(e: AnActionEvent) {
-        if (!KotlinInternalMode.enabled) {
+        if (!ApplicationManager.getApplication().isInternal) {
             e.presentation.isVisible = false
             e.presentation.isEnabled = false
         }

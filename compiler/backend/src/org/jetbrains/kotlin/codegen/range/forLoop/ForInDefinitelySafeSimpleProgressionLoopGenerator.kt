@@ -82,7 +82,7 @@ class ForInDefinitelySafeSimpleProgressionLoopGenerator(
     }
 
     override fun checkPreCondition(loopExit: Label) {
-        loopParameter().put(asmElementType, v)
+        loopParameter().put(asmElementType, elementType, v)
         v.load(endVar, asmElementType)
         if (asmElementType.sort == Type.LONG) {
             v.lcmp()

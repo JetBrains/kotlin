@@ -94,7 +94,7 @@ class KtInvokeFunctionReference(expression: KtCallExpression) : KtSimpleReferenc
 
     override fun canRename(): Boolean = true
 
-    override fun handleElementRename(newElementName: String?): PsiElement? {
+    override fun handleElementRename(newElementName: String): PsiElement? {
         val callExpression = expression
         val fullCallExpression = callExpression.getQualifiedExpressionForSelectorOrThis()
         if (newElementName == OperatorNameConventions.GET.asString() && callExpression.typeArguments.isEmpty()) {

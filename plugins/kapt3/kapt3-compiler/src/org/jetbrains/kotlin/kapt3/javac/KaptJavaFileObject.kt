@@ -17,10 +17,9 @@
 package org.jetbrains.kotlin.kapt3.javac
 
 import com.sun.tools.javac.tree.JCTree
-import org.jetbrains.kotlin.kapt3.util.getPackageNameJava9Aware
+import org.jetbrains.kotlin.kapt3.base.util.getPackageNameJava9Aware
 import java.io.File
 import java.net.URI
-import java.net.URL
 import javax.lang.model.element.Modifier
 import javax.lang.model.element.NestingKind
 import javax.tools.JavaFileObject

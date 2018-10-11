@@ -1,0 +1,143 @@
+/*
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
+ */
+
+package org.jetbrains.kotlin.gradle
+
+import org.jetbrains.kotlin.gradle.util.checkBytecodeContains
+import org.junit.Test
+import java.io.File
+import kotlin.test.assertTrue
+
+class SubpluginsIT : BaseGradleIT() {
+    @Test
+    fun testGradleSubplugin() {
+        val project = Project("kotlinGradleSubplugin")
+
+        project.build("compileKotlin", "build") {
+            assertSuccessful()
+            assertContains("ExampleSubplugin loaded")
+            assertContains("Project component registration: exampleValue")
+            assertTasksExecuted(":compileKotlin")
+        }
+
+        project.build("compileKotlin", "build") {
+            assertSuccessful()
+            assertContains("ExampleSubplugin loaded")
+            assertNotContains("Project component registration: exampleValue")
+            assertTasksUpToDate(":compileKotlin")
+        }
+    }
+
+    @Test
+    fun testAllOpenPlugin() {
+        Project("allOpenSimple").build("build") {
+            assertSuccessful()
+
+            val classesDir = File(project.projectDir, kotlinClassesDir())
+            val openClass = File(classesDir, "test/OpenClass.class")
+            val closedClass = File(classesDir, "test/ClosedClass.class")
+            assertTrue(openClass.exists())
+            assertTrue(closedClass.exists())
+
+            checkBytecodeContains(
+                openClass,
+                "public class test/OpenClass {",
+                "public method()V"
+            )
+
+            checkBytecodeContains(
+                closedClass,
+                "public final class test/ClosedClass {",
+                "public final method()V"
+            )
+        }
+    }
+
+    @Test
+    fun testKotlinSpringPlugin() {
+        Project("allOpenSpring").build("build") {
+            assertSuccessful()
+
+            val classesDir = File(project.projectDir, kotlinClassesDir())
+            val openClass = File(classesDir, "test/OpenClass.class")
+            val closedClass = File(classesDir, "test/ClosedClass.class")
+            assertTrue(openClass.exists())
+            assertTrue(closedClass.exists())
+
+            checkBytecodeContains(
+                openClass,
+                "public class test/OpenClass {",
+                "public method()V"
+            )
+
+            checkBytecodeContains(
+                closedClass,
+                "public final class test/ClosedClass {",
+                "public final method()V"
+            )
+        }
+    }
+
+    @Test
+    fun testKotlinJpaPlugin() {
+        Project("noArgJpa").build("build") {
+            assertSuccessful()
+
+            val classesDir = File(project.projectDir, kotlinClassesDir())
+
+            fun checkClass(name: String) {
+                val testClass = File(classesDir, "test/$name.class")
+                assertTrue(testClass.exists())
+                checkBytecodeContains(testClass, "public <init>()V")
+            }
+
+            checkClass("Test")
+            checkClass("Test2")
+        }
+    }
+
+    @Test
+    fun testNoArgKt18668() {
+        Project("noArgKt18668").build("build") {
+            assertSuccessful()
+        }
+    }
+
+    @Test
+    fun testSamWithReceiverSimple() {
+        Project("samWithReceiverSimple").build("build") {
+            assertSuccessful()
+        }
+    }
+
+    @Test
+    fun testScripting() {
+        Project("kotlinScripting").build("build") {
+            assertSuccessful()
+            assertCompiledKotlinSources(
+                listOf("app/src/main/kotlin/world.greet.kts", "script-template/src/main/kotlin/GreetScriptTemplate.kt")
+            )
+            assertFileExists("${kotlinClassesDir("app", "main")}World_greet.class")
+        }
+    }
+
+    @Test
+    fun testAllOpenFromNestedBuildscript() {
+        Project("allOpenFromNestedBuildscript").build("build") {
+            assertSuccessful()
+            assertFileExists("${kotlinClassesDir(subproject = "a/b", sourceSet = "main")}MyClass.class")
+            assertFileExists("${kotlinClassesDir(subproject = "a/b", sourceSet = "test")}MyTestClass.class")
+        }
+    }
+
+    @Test
+    fun testAllopenFromScript() {
+        Project("allOpenFromScript").build("build") {
+            assertSuccessful()
+            assertFileExists("${kotlinClassesDir(sourceSet = "main")}MyClass.class")
+            assertFileExists("${kotlinClassesDir(sourceSet = "test")}MyTestClass.class")
+        }
+    }
+}

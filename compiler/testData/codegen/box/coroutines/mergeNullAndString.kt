@@ -1,8 +1,10 @@
+// IGNORE_BACKEND: JVM_IR
 // WITH_RUNTIME
 // WITH_COROUTINES
+// COMMON_COROUTINES_TEST
 import helpers.*
-import kotlin.coroutines.experimental.*
-import kotlin.coroutines.experimental.intrinsics.*
+import COROUTINES_PACKAGE.*
+import COROUTINES_PACKAGE.intrinsics.*
 
 fun builder(c: suspend () -> Unit) {
     c.startCoroutine(EmptyContinuation)
@@ -20,7 +22,7 @@ suspend fun foo(y: A?): String {
     return res
 }
 
-suspend fun baz(y: String): Unit = suspendCoroutineOrReturn { x ->
+suspend fun baz(y: String): Unit = suspendCoroutineUninterceptedOrReturn { x ->
     res += y[res.length]
     x.resume(Unit)
     COROUTINE_SUSPENDED

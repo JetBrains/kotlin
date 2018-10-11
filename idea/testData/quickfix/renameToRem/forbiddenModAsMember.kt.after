@@ -1,0 +1,14 @@
+// "Rename to 'rem'" "true"
+// DISABLE-ERRORS
+// COMPILER_ARGUMENTS: -XXLanguage:+ProhibitOperatorMod
+
+object Rem {
+    operator fun rem(x: Int) {}
+    operator fun modAssign(x: Int) {}
+}
+
+fun test() {
+    Rem % 1
+    Rem.rem(1)
+    Rem.modAssign(1)
+}

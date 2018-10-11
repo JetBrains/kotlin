@@ -1,5 +1,8 @@
 ================ Step #1 =================
 
+Marked as dirty by Kotlin:
+  src/other.kt
+  src/usage.kt
 Cleaning output files:
   out/production/module/B.class
   out/production/module/META-INF/module.kotlin_module

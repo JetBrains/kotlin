@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.daemon.experimental.integration
 
 import junit.framework.TestCase
-import kotlinx.coroutines.experimental.*
+import kotlinx.coroutines.*
 import org.jetbrains.kotlin.cli.AbstractCliTest
 import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer

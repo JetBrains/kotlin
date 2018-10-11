@@ -1,12 +1,22 @@
 
 @file:Suppress("PropertyName")
 
-import org.gradle.api.publish.ivy.internal.artifact.DefaultIvyArtifact
+import org.gradle.api.publish.ivy.internal.artifact.FileBasedIvyArtifact
 import org.gradle.api.publish.ivy.internal.publication.DefaultIvyConfiguration
 import org.gradle.api.publish.ivy.internal.publication.DefaultIvyPublicationIdentity
 import org.gradle.api.publish.ivy.internal.publisher.IvyDescriptorFileGenerator
 import java.io.File
 import org.gradle.internal.os.OperatingSystem
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath("com.github.jengelman.gradle.plugins:shadow:${property("versions.shadow")}")
+    }
+}
 
 val intellijUltimateEnabled: Boolean by rootProject.extra
 val intellijRepo: String by rootProject.extra
@@ -17,6 +27,13 @@ val androidStudioBuild = rootProject.findProperty("versions.androidStudioBuild")
 val intellijSeparateSdks: Boolean by rootProject.extra
 val installIntellijCommunity = !intellijUltimateEnabled || intellijSeparateSdks
 val installIntellijUltimate = intellijUltimateEnabled
+
+val intellijVersionDelimiterIndex = intellijVersion.indexOfAny(charArrayOf('.', '-'))
+if (intellijVersionDelimiterIndex == -1) {
+    error("Invalid IDEA version $intellijVersion")
+}
+
+val platformBaseVersion = intellijVersion.substring(0, intellijVersionDelimiterIndex)
 
 logger.info("intellijUltimateEnabled: $intellijUltimateEnabled")
 
@@ -44,6 +61,9 @@ repositories {
     if (androidStudioRelease != null) {
         ivy {
             artifactPattern("https://dl.google.com/dl/android/studio/ide-zips/$androidStudioRelease/[artifact]-[revision]-$studioOs.zip")
+            metadataSources {
+                artifact()
+            }
         }
     }
     maven { setUrl("$intellijRepo/$intellijReleaseType") }
@@ -115,7 +135,7 @@ fun removePathPrefix(path: String): String {
 val unzipIntellijSdk by tasks.creating {
     configureExtractFromConfigurationTask(intellij, pathRemap = { removePathPrefix(it) }) {
         zipTree(it.singleFile).matching {
-            exclude("plugins/Kotlin/**")
+            exclude("**/plugins/Kotlin/**")
         }
     }
 }
@@ -132,8 +152,12 @@ val unzipIntellijCore by tasks.creating { configureExtractFromConfigurationTask(
 
 val unzipJpsStandalone by tasks.creating { configureExtractFromConfigurationTask(`jps-standalone`) { zipTree(it.singleFile) } }
 
-val copyIntellijSdkSources by tasks.creating {
-    configureExtractFromConfigurationTask(sources) { it.singleFile }
+val copyIntellijSdkSources by tasks.creating(ShadowJar::class.java) {
+    from(sources)
+    baseName = "ideaIC"
+    version = intellijVersion
+    classifier = "sources"
+    destinationDir = File(repoDir, sources.name)
 }
 
 val copyJpsBuildTest by tasks.creating { configureExtractFromConfigurationTask(`jps-build-test`) { it.singleFile } }
@@ -147,12 +171,12 @@ fun writeIvyXml(moduleName: String, fileName: String, jarFiles: FileCollection, 
         jarFiles.asFileTree.files.forEach {
             if (it.isFile && it.extension == "jar") {
                 val relativeName = it.toRelativeString(baseDir).removeSuffix(".jar")
-                addArtifact(DefaultIvyArtifact(it, relativeName, "jar", "jar", null).also { it.conf = "default" })
+                addArtifact(FileBasedIvyArtifact(it, DefaultIvyPublicationIdentity(customDepsOrg, relativeName, intellijVersion)).also { it.conf = "default" })
             }
         }
         if (sourcesJar != null) {
             val sourcesArtifactName = sourcesJar.name.removeSuffix(".jar").substringBefore("-")
-            addArtifact(DefaultIvyArtifact(sourcesJar, sourcesArtifactName, "jar", "sources", "sources").also { it.conf = "sources" })
+            addArtifact(FileBasedIvyArtifact(sourcesJar, DefaultIvyPublicationIdentity(customDepsOrg, sourcesArtifactName, intellijVersion)).also { it.conf = "sources" })
         }
         writeTo(File(customDepsRepoModulesDir, "$fileName.ivy.xml"))
     }

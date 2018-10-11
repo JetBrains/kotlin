@@ -82,17 +82,28 @@ class RedundantGotoMethodTransformer : MethodTransformer() {
 
     private fun rewriteLabelIfNeeded(
         jumpInsn: JumpInsnNode,
-        labelsToReplace: HashMap<LabelNode, JumpInsnNode>
+        labelsToReplace: Map<LabelNode, JumpInsnNode>
     ) {
-        val lastTargetLabel = getLastTargetJumpInsn(jumpInsn, labelsToReplace).label
-        if (lastTargetLabel != jumpInsn.label) {
+        val lastJumpInsn = getLastTargetJumpInsn(jumpInsn, labelsToReplace, mutableListOf())
+        if (lastJumpInsn != null && lastJumpInsn != jumpInsn) {
             // Do not remove the old label because it can be used to define a local variable range.
-            jumpInsn.label = lastTargetLabel
+            jumpInsn.label = lastJumpInsn.label
         }
     }
 
-    private fun getLastTargetJumpInsn(jumpInsn: JumpInsnNode, labelsToReplace: HashMap<LabelNode, JumpInsnNode>): JumpInsnNode {
-        labelsToReplace[jumpInsn.label]?.let { return getLastTargetJumpInsn(it, labelsToReplace) }
+    private fun getLastTargetJumpInsn(
+        jumpInsn: JumpInsnNode,
+        labelsToReplace: Map<LabelNode, JumpInsnNode>,
+        alreadyVisited: MutableList<JumpInsnNode>
+    ): JumpInsnNode? {
+        labelsToReplace[jumpInsn.label]?.let {
+            if (alreadyVisited.contains(it)) {
+                // Cycle detected, do no apply goto optimization
+                return null
+            }
+            alreadyVisited.add(it)
+            return getLastTargetJumpInsn(it, labelsToReplace, alreadyVisited)
+        }
         return jumpInsn
     }
 }

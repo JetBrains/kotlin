@@ -1,0 +1,82 @@
+// Class.class
+// ------------------------------------------
+public final class Class : kotlin/Any {
+
+  // signature: <init>()V
+  public /* primary */ constructor()
+
+  // signature: f()V
+  public final fun f(): kotlin/Unit
+
+  // local delegated property #0
+  // local final /* delegated */ val local4: kotlin/Array<kotlin/String>
+  //   local final get
+
+  // local delegated property #1
+  // local final /* delegated */ val local5: kotlin/collections/List<kotlin/Unit>?
+  //   local final get
+
+  // local delegated property #2
+  // local final /* delegated */ val local6: kotlin/Int
+  //   local final get
+}
+// Class$f$1.class
+// ------------------------------------------
+lambda {
+
+  // signature: invoke()V
+  local final fun g(): kotlin/Unit
+}
+// Delegate.class
+// ------------------------------------------
+public final class Delegate<T#0 /* T */> : kotlin/Any {
+
+  // signature: <init>(Ljava/lang/Object;)V
+  public /* primary */ constructor(value: T#0? /* = ... */)
+
+  // signature: getValue(Ljava/lang/Object;Lkotlin/reflect/KProperty;)Ljava/lang/Object;
+  public final operator fun getValue(instance: kotlin/Any?, property: kotlin/reflect/KProperty<*>): T#0
+
+  // field: value:Ljava/lang/Object;
+  // getter: getValue()Ljava/lang/Object;
+  public final val value: T#0?
+    public final get
+}
+// LocalDelegatedPropertiesKt.class
+// ------------------------------------------
+package {
+
+  // field: init0:Lkotlin/Unit;
+  // getter: getInit0()Lkotlin/Unit;
+  public final val init0: kotlin/Unit
+    public final get
+
+  // field: init1:Lkotlin/Unit;
+  // getter: getInit1()Lkotlin/Unit;
+  public final val init1: kotlin/Unit
+    public final get
+
+  // field: nonLocal$delegate:LDelegate;
+  // getter: getNonLocal()Ljava/lang/String;
+  public final /* delegated */ val nonLocal: kotlin/String
+    public final /* non-default */ get
+
+  // local delegated property #0
+  // local final /* delegated */ val local1: kotlin/Double
+  //   local final get
+
+  // local delegated property #1
+  // local final /* delegated */ val local2: kotlin/Any
+  //   local final get
+
+  // local delegated property #2
+  // local final /* delegated */ val local3: kotlin/CharSequence?
+  //   local final get
+}
+// META-INF/test-module.kotlin_module
+// ------------------------------------------
+module {
+  package <root> {
+    LocalDelegatedPropertiesKt
+  }
+}
