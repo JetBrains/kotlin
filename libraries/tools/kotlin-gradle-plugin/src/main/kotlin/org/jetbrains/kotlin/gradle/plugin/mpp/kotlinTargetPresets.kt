@@ -11,7 +11,6 @@ import org.gradle.api.artifacts.repositories.IvyArtifactRepository
 import org.gradle.api.artifacts.repositories.IvyPatternRepositoryLayout
 import org.gradle.api.internal.file.FileResolver
 import org.gradle.api.plugins.JavaPlugin
-import org.gradle.internal.cleanup.BuildOutputCleanupRegistry
 import org.gradle.internal.reflect.Instantiator
 import org.jetbrains.kotlin.compilerRunner.KotlinNativeProjectProperty
 import org.jetbrains.kotlin.compilerRunner.hasProperty
@@ -33,12 +32,11 @@ abstract class KotlinOnlyTargetPreset<T : KotlinCompilation>(
     protected val project: Project,
     private val instantiator: Instantiator,
     private val fileResolver: FileResolver,
-    protected val buildOutputCleanupRegistry: BuildOutputCleanupRegistry,
     protected val kotlinPluginVersion: String
 ) : KotlinTargetPreset<KotlinOnlyTarget<T>> {
 
     protected open fun createKotlinTargetConfigurator(): KotlinTargetConfigurator<T> =
-        KotlinTargetConfigurator(buildOutputCleanupRegistry, createDefaultSourceSets = true, createTestCompilation = true)
+        KotlinTargetConfigurator(createDefaultSourceSets = true, createTestCompilation = true)
 
     override fun createTarget(name: String): KotlinOnlyTarget<T> {
         val result = KotlinOnlyTarget<T>(project, platformType).apply {
@@ -67,13 +65,11 @@ class KotlinMetadataTargetPreset(
     project: Project,
     instantiator: Instantiator,
     fileResolver: FileResolver,
-    buildOutputCleanupRegistry: BuildOutputCleanupRegistry,
     kotlinPluginVersion: String
 ) : KotlinOnlyTargetPreset<KotlinCommonCompilation>(
     project,
     instantiator,
     fileResolver,
-    buildOutputCleanupRegistry,
     kotlinPluginVersion
 ) {
     override fun getName(): String = PRESET_NAME
@@ -99,7 +95,7 @@ class KotlinMetadataTargetPreset(
     }
 
     override fun createKotlinTargetConfigurator(): KotlinTargetConfigurator<KotlinCommonCompilation> =
-        KotlinTargetConfigurator(buildOutputCleanupRegistry, createDefaultSourceSets = false, createTestCompilation = false)
+        KotlinTargetConfigurator(createDefaultSourceSets = false, createTestCompilation = false)
 
     override fun createTarget(name: String): KotlinOnlyTarget<KotlinCommonCompilation> =
         super.createTarget(name).apply {
@@ -120,13 +116,11 @@ class KotlinJvmTargetPreset(
     project: Project,
     instantiator: Instantiator,
     fileResolver: FileResolver,
-    buildOutputCleanupRegistry: BuildOutputCleanupRegistry,
     kotlinPluginVersion: String
 ) : KotlinOnlyTargetPreset<KotlinJvmCompilation>(
     project,
     instantiator,
     fileResolver,
-    buildOutputCleanupRegistry,
     kotlinPluginVersion
 ) {
     override fun getName(): String = PRESET_NAME
@@ -149,13 +143,11 @@ class KotlinJsTargetPreset(
     project: Project,
     instantiator: Instantiator,
     fileResolver: FileResolver,
-    buildOutputCleanupRegistry: BuildOutputCleanupRegistry,
     kotlinPluginVersion: String
 ) : KotlinOnlyTargetPreset<KotlinJsCompilation>(
     project,
     instantiator,
     fileResolver,
-    buildOutputCleanupRegistry,
     kotlinPluginVersion
 ) {
     override fun getName(): String = PRESET_NAME
@@ -248,7 +240,6 @@ class KotlinNativeTargetPreset(
     private val name: String,
     val project: Project,
     val konanTarget: KonanTarget,
-    private val buildOutputCleanupRegistry: BuildOutputCleanupRegistry,
     private val kotlinPluginVersion: String
 ) : KotlinTargetPreset<KotlinNativeTarget> {
 
@@ -317,7 +308,7 @@ class KotlinNativeTargetPreset(
             compilations = project.container(compilationFactory.itemClass, compilationFactory)
         }
 
-        KotlinNativeTargetConfigurator(buildOutputCleanupRegistry, kotlinPluginVersion).configureTarget(result)
+        KotlinNativeTargetConfigurator(kotlinPluginVersion).configureTarget(result)
 
         // Allow IDE to resolve the libraries provided by the compiler by adding them into dependencies.
         result.compilations.all { compilation ->
