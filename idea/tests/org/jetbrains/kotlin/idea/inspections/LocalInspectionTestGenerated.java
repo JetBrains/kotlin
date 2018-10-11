@@ -1000,6 +1000,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
                 public void testToSortedSet() throws Exception {
                     runTest("idea/testData/inspectionsLocal/collections/convertCallChainIntoSequence/termination/toSortedSet.kt");
                 }
+
+                @TestMetadata("unzip.kt")
+                public void testUnzip() throws Exception {
+                    runTest("idea/testData/inspectionsLocal/collections/convertCallChainIntoSequence/termination/unzip.kt");
+                }
             }
         }
 
