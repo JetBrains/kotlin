@@ -33,6 +33,7 @@ PsiJetFileStubImpl[package=]
                   TYPE_REFERENCE
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=b]
+                VALUE_ARGUMENT_LIST
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=DoubleRange]
     TYPE_REFERENCE
@@ -49,5 +50,6 @@ PsiJetFileStubImpl[package=]
               TYPE_REFERENCE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=b]
+            VALUE_ARGUMENT_LIST
       USER_TYPE
         REFERENCE_EXPRESSION[referencedName=Unit]

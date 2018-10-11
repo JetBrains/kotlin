@@ -6,6 +6,7 @@ PsiJetFileStubImpl[package=test]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=Suppress]
+      VALUE_ARGUMENT_LIST
   PACKAGE_DIRECTIVE
     REFERENCE_EXPRESSION[referencedName=test]
   IMPORT_LIST

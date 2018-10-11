@@ -34,3 +34,4 @@ PsiJetFileStubImpl[package=]
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=Target]
+        VALUE_ARGUMENT_LIST
