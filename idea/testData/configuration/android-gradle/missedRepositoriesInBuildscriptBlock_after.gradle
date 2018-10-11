@@ -5,7 +5,7 @@ buildscript {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
     repositories {
-        maven { url 'http://oss.sonatype.org/content/repositories/snapshots' }
+        maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
         mavenCentral()
     }
 }
@@ -14,7 +14,7 @@ apply plugin: 'kotlin-android'
 
 repositories {
     mavenCentral()
-    maven { url 'http://oss.sonatype.org/content/repositories/snapshots' }
+    maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
 }
 
 android {
