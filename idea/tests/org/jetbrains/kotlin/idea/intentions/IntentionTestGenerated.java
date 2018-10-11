@@ -6046,6 +6046,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             runTest("idea/testData/intentions/convertPropertyInitializerToGetter/inapplicableIfNoInitializer.kt");
         }
 
+        @TestMetadata("jvmField.kt")
+        public void testJvmField() throws Exception {
+            runTest("idea/testData/intentions/convertPropertyInitializerToGetter/jvmField.kt");
+        }
+
         @TestMetadata("notInLambda.kt")
         public void testNotInLambda() throws Exception {
             runTest("idea/testData/intentions/convertPropertyInitializerToGetter/notInLambda.kt");
