@@ -63,7 +63,7 @@ class CoroutineTransformerMethodVisitor(
     private val languageVersionSettings: LanguageVersionSettings,
     private val sourceFile: String,
     // These two are needed to report diagnostics about suspension points inside critical section
-    private val element: KtElement?,
+    private val element: KtElement,
     private val diagnostics: DiagnosticSink,
     // It's only matters for named functions, may differ from '!isStatic(access)' in case of DefaultImpls
     private val needDispatchReceiver: Boolean = false,
@@ -231,7 +231,7 @@ class CoroutineTransformerMethodVisitor(
                     sourceFile,
                     findSuspensionPointLineNumber(suspensionPoint)?.line ?: -1
                 )
-                element?.let { diagnostics.report(ErrorsJvm.SUSPENSION_POINT_INSIDE_MONITOR.on(it, "$stackTraceElement")) }
+                diagnostics.report(ErrorsJvm.SUSPENSION_POINT_INSIDE_MONITOR.on(element, "$stackTraceElement"))
                 return
             }
         }

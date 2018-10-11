@@ -4,4 +4,7 @@ compiler/testData/compileKotlinAgainstCustomBinaries/suspensionPointInMonitor/so
 compiler/testData/compileKotlinAgainstCustomBinaries/suspensionPointInMonitor/source.kt:14:13: error: a suspension point at SourceKt$test$2.invokeSuspend(source.kt:17) is inside a critical section
     builder {
             ^
+compiler/testData/compileKotlinAgainstCustomBinaries/suspensionPointInMonitor/source.kt:24:25: error: a suspension point at SourceKt$test$3$invokeSuspend$$inlined$withCrossinline$2.invokeSuspend(a.kt:31) is inside a critical section
+        withCrossinline {
+                        ^
 COMPILATION_ERROR
