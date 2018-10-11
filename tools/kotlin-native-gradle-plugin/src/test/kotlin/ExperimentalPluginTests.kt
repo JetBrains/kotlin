@@ -316,6 +316,7 @@ class ExperimentalPluginTests {
                 plugins {
                     id 'kotlin-native'
                     id 'maven-publish'
+                    id 'signing'
                 }
 
                 group 'test'

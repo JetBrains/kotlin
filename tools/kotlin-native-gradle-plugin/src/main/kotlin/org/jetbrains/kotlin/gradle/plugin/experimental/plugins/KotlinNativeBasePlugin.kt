@@ -314,7 +314,6 @@ class KotlinNativeBasePlugin: Plugin<ProjectInternal> {
         // TODO: Deal with compiler downloading.
         // Apply base plugins
         project.pluginManager.apply(LifecycleBasePlugin::class.java)
-        project.pluginManager.apply(NativeBasePlugin::class.java)
 
         checkGradleMetadataFeature()
         checkGradleVersion()
@@ -322,6 +321,11 @@ class KotlinNativeBasePlugin: Plugin<ProjectInternal> {
 
         setUpMatchingStrategy()
         addCompilationTasks()
+
+        // The NativeBasePlugin accesses some properties which are set by the methods above
+        // (e.g. linkFile for libraries). Thus we have to apply it after setting there properties.
+        project.pluginManager.apply(NativeBasePlugin::class.java)
+
         addInteropTasks()
         addTargetInfoTask()
     }
