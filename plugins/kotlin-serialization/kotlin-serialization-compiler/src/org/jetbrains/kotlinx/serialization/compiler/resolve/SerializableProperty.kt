@@ -19,17 +19,26 @@ package org.jetbrains.kotlinx.serialization.compiler.resolve
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.psi.ValueArgument
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
+import org.jetbrains.kotlin.types.KotlinType
 
 class SerializableProperty(val descriptor: PropertyDescriptor, val isConstructorParameterWithDefault: Boolean) {
     val name = descriptor.annotations.serialNameValue ?: descriptor.name.asString()
     val type = descriptor.type
     val genericIndex = type.genericIndex
     val module = descriptor.module
-    val serializableWith = descriptor.annotations.serializableWith?.let { checkSerializerNullability(type, it) }
+    val serializableWith = extractSerializableWith(descriptor.annotations)
     val optional = descriptor.annotations.serialOptional
     val transient = descriptor.annotations.serialTransient
     val annotationsWithArguments: List<Triple<ClassDescriptor, List<ValueArgument>, List<ValueParameterDescriptor>>> =
         descriptor.annotationsWithArguments()
+
+    private fun extractSerializableWith(annotations: Annotations): KotlinType? {
+        annotations.serializableWith?.let { return it }
+        if (annotations.hasAnnotation(SerializationAnnotations.contextualFqName))
+            return module.getClassFromSerializationPackage(SpecialBuiltins.contextSerializer).defaultType
+        return null
+    }
 }
