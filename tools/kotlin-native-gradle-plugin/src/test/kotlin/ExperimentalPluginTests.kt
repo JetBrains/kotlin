@@ -847,23 +847,40 @@ class ExperimentalPluginTests {
 
     @Test
     fun `Plugin should provide a correct serialization compiler plugin`() {
-        withProject {
-            pluginManager.apply("kotlinx-serialization-native")
-            repositories.apply {
-                jcenter()
-                maven { it.setUrl("http://kotlin.bintray.com/kotlin-eap") }
-                maven { it.setUrl("http://kotlin.bintray.com/kotlin-dev") }
-                maven { it.setUrl(MultiplatformSpecification.KOTLIN_REPO) }
-            }
-            evaluate()
-            tasks.withType(KotlinNativeCompile::class.java).all {
-                val compileClassPath = it.compilerPluginClasspath
-                assertNotNull(compileClassPath)
-                val files = compileClassPath.files
-                assertTrue(files.isNotEmpty(), "No compiler plugins in the classpath")
-                assertEquals(1, files.size, "More than one compiler plugin in the classpath")
-                assertTrue(files.single().absolutePath.contains("kotlin-serialization-unshaded"), "No unshaded version of serialization plugin in the classpath")
-            }
+        val project = KonanProject.createEmpty(projectDirectory).apply {
+            buildFile.writeText("""
+                import org.jetbrains.kotlin.gradle.plugin.experimental.tasks.KotlinNativeCompile
+
+                plugins {
+                    id 'kotlin-native'
+                    id 'kotlinx-serialization-native'
+                }
+
+                repositories {
+                    maven { url "http://kotlin.bintray.com/kotlin-eap" }
+                    maven { url "http://kotlin.bintray.com/kotlin-dev" }
+                    maven { url "${MultiplatformSpecification.KOTLIN_REPO}" }
+                }
+
+                def assertTrue(boolean cond, String message) {
+                    if (!cond) {
+                        throw AssertionError(message)
+                    }
+                }
+
+                task assertClassPath {
+                    doLast {
+                        tasks.withType(KotlinNativeCompile.class).all {
+                            def compileClassPath = it.compilerPluginClasspath
+                            assertTrue(compileClassPath != null, "compileClassPath should not be null")
+                            assertTrue(!compileClassPath.isEmpty(), "No compiler plugins in the classpath")
+                            assertTrue(compileClassPath.singleFile.absolutePath.contains("kotlin-serialization-unshaded"),
+                                        "No unshaded version of serialization plugin in the classpath")
+                        }
+                    }
+                }
+            """.trimIndent())
         }
+        project.createRunner().withArguments("assertClassPath").build()
     }
 }

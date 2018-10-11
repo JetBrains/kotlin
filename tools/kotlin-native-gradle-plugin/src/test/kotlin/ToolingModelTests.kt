@@ -129,7 +129,7 @@ open class ToolingModelTests {
                 }
 
                 import org.jetbrains.kotlin.gradle.plugin.model.*
-                import org.jetbrains.kotlin.konan.target.CompilerOutputKind
+                import shadow.org.jetbrains.kotlin.konan.target.CompilerOutputKind
 
                 public <T> void assertEquals(
                         T actual,

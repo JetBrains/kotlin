@@ -112,6 +112,7 @@ shadowJar {
     classifier = null
     relocate('org.jetbrains.kotlinx', 'shadow.org.jetbrains.kotlinx')
     relocate('org.jetbrains.kotlin.compilerRunner', 'shadow.org.jetbrains.kotlin.compilerRunner')
+    relocate('org.jetbrains.kotlin.konan', 'shadow.org.jetbrains.kotlin.konan')
     relocate('org.jetbrains.kotlin.gradle', 'shadow.org.jetbrains.kotlin.gradle') {
         exclude('org.jetbrains.kotlin.gradle.plugin.experimental.**')
         exclude('org.jetbrains.kotlin.gradle.plugin.konan.**')
@@ -157,10 +158,6 @@ pluginUnderTestMetadata {
 
 test {
     dependsOn shadowJar
-    classpath = configurations.testRuntimeClasspath +
-            sourceSets.test.output +
-            files(shadowJar.archivePath) +
-            configurations.shadow
     systemProperty("kotlin.version", kotlinVersion)
     systemProperty("kotlin.repo", kotlinCompilerRepo)
     if (project.hasProperty("konan.home")) {
