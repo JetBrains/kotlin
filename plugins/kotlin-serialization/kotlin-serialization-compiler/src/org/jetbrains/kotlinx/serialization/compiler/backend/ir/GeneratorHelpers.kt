@@ -8,6 +8,7 @@ package org.jetbrains.kotlinx.serialization.compiler.backend.ir
 import org.jetbrains.kotlin.backend.common.BackendContext
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
@@ -25,11 +26,16 @@ import org.jetbrains.kotlin.ir.types.toKotlinType
 import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.js.resolve.diagnostics.findPsi
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
+import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.KotlinTypeFactory
+import org.jetbrains.kotlin.types.TypeProjectionImpl
+import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.typeUtil.isTypeParameter
-import org.jetbrains.kotlinx.serialization.compiler.backend.common.AbstractSerialGenerator
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.findTypeSerializerOrContext
 import org.jetbrains.kotlinx.serialization.compiler.backend.jvm.contextSerializerId
 import org.jetbrains.kotlinx.serialization.compiler.backend.jvm.enumSerializerId
@@ -360,6 +366,21 @@ interface IrBuilderExtension {
         }
     }
 
+
+
+    fun IrBuilderWithScope.classReference(classType: KotlinType): IrClassReference {
+        val clazz = classType.toClassDescriptor!!
+        val kClass = clazz.module.findClassAcrossModuleDependencies(ClassId(FqName("kotlin.reflect"), Name.identifier("KClass")))!!
+        val returnType = KotlinTypeFactory.simpleNotNullType(Annotations.EMPTY, kClass, listOf(TypeProjectionImpl(Variance.INVARIANT, classType)))
+        return IrClassReferenceImpl(
+            startOffset,
+            endOffset,
+            returnType.toIrType(),
+            compilerContext.externalSymbols.referenceClassifier(clazz),
+            classType.toIrType()
+        )
+    }
+
     // Does not use sti and therefore does not perform encoder calls optimization
     fun IrBuilderWithScope.serializerTower(generator: SerializerIrGenerator, property: SerializableProperty): IrExpression? {
         val nullableSerClass =
@@ -395,16 +416,17 @@ interface IrBuilderExtension {
         if (serializerClass.kind == ClassKind.OBJECT) {
             return irGetObject(serializerClass)
         } else {
+            // todo: special instantiation of enum serializer according to new design
             var args = if (serializerClass.classId == enumSerializerId || serializerClass.classId == contextSerializerId)
-                TODO("enum and context serializer")
+                listOf(classReference(kType))
             else kType.arguments.map {
                 val argSer = enclosingGenerator.findTypeSerializerOrContext(module, it.type, sourceElement = serializerClass.findPsi())
                 val expr = serializerInstance(enclosingGenerator, serializableDescriptor, argSer, module, it.type, it.type.genericIndex)
                     ?: return null
-                // todo: smth better than constructors[0] ??
                 if (it.type.isMarkedNullable) irInvoke(null, nullableSerClass.constructors.toList()[0], expr) else expr
             }
-            if (serializerClass.classId == referenceArraySerializerId) TODO("reference array serializer")
+            if (serializerClass.classId == referenceArraySerializerId)
+                args = listOf(classReference(kType.arguments[0].type)) + args
             val serializable = getSerializableClassDescriptorBySerializer(serializerClass)
             val ctor = if (serializable?.declaredTypeParameters?.isNotEmpty() == true) {
                 requireNotNull(

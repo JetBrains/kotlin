@@ -90,7 +90,6 @@ class SerializableIrGenerator(
                 +irIfThenElse(compilerContext.irBuiltIns.unitType, propNotSeenTest, ifNotSeenExpr, assignParamExpr)
             }
 
-            // todo: transient initializers and init blocks
             // remaining initalizers of variables
             val serialDescs = properties.serializableProperties.map { it.descriptor }.toSet()
             irClass.declarations.asSequence()
