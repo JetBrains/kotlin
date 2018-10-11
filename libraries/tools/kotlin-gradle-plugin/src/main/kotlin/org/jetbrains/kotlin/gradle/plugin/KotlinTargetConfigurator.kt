@@ -44,7 +44,6 @@ import java.util.*
 import java.util.concurrent.Callable
 
 abstract class AbstractKotlinTargetConfigurator<KotlinTargetType : KotlinTarget>(
-    private val buildOutputCleanupRegistry: BuildOutputCleanupRegistry,
     protected val createDefaultSourceSets: Boolean,
     protected val createTestCompilation: Boolean
 ) {
@@ -62,12 +61,17 @@ abstract class AbstractKotlinTargetConfigurator<KotlinTargetType : KotlinTarget>
 
     abstract fun configureArchivesAndComponent(target: KotlinTargetType)
 
+    private fun Project.registerOutputsForStaleOutputCleanup(kotlinCompilation: KotlinCompilation) {
+        val cleanTask = tasks.getByName(LifecycleBasePlugin.CLEAN_TASK_NAME) as Delete
+        cleanTask.delete(kotlinCompilation.output.allOutputs)
+    }
+
     protected fun configureCompilations(platformTarget: KotlinTargetType) {
         val project = platformTarget.project
         val main = platformTarget.compilations.create(KotlinCompilation.MAIN_COMPILATION_NAME)
 
         platformTarget.compilations.all {
-            buildOutputCleanupRegistry.registerOutputs(it.output)
+            project.registerOutputsForStaleOutputCleanup(it)
             it.compileDependencyFiles = project.configurations.maybeCreate(it.compileDependencyConfigurationName)
             if (it is KotlinCompilationToRunnableFiles) {
                 it.runtimeDependencyFiles = project.configurations.maybeCreate(it.runtimeDependencyConfigurationName)
@@ -324,11 +328,9 @@ internal val KotlinCompilationToRunnableFiles.deprecatedRuntimeConfigurationName
     get() = disambiguateName("runtime")
 
 open class KotlinTargetConfigurator<KotlinCompilationType: KotlinCompilation>(
-    buildOutputCleanupRegistry: BuildOutputCleanupRegistry,
     createDefaultSourceSets: Boolean,
     createTestCompilation: Boolean
 ) : AbstractKotlinTargetConfigurator<KotlinOnlyTarget<KotlinCompilationType>>(
-    buildOutputCleanupRegistry,
     createDefaultSourceSets,
     createTestCompilation
 ) {
@@ -378,10 +380,8 @@ open class KotlinTargetConfigurator<KotlinCompilationType: KotlinCompilation>(
 
 
 open class KotlinNativeTargetConfigurator(
-    buildOutputCleanupRegistry: BuildOutputCleanupRegistry,
     private val kotlinPluginVersion: String
 ) : AbstractKotlinTargetConfigurator<KotlinNativeTarget>(
-    buildOutputCleanupRegistry,
     createDefaultSourceSets = true,
     createTestCompilation = true
 ) {
