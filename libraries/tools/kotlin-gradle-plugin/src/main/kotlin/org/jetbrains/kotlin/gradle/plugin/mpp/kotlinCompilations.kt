@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import java.io.File
 import java.lang.IllegalArgumentException
 import java.util.*
+import java.util.concurrent.Callable
 
 internal fun KotlinCompilation.composeName(prefix: String? = null, suffix: String? = null): String {
     val compilationNamePart = compilationName.takeIf { it != KotlinCompilation.MAIN_COMPILATION_NAME }
@@ -70,6 +71,12 @@ abstract class AbstractKotlinCompilation(
     override fun getAttributes(): AttributeContainer = attributeContainer
 
     override val kotlinSourceSets: MutableSet<KotlinSourceSet> = mutableSetOf()
+
+    override val output: KotlinCompilationOutput by lazy {
+        DefaultKotlinCompilationOutput(
+            target.project,
+            Callable { target.project.buildDir.resolve("processedResources/${target.targetName}/$name") })
+    }
 
     open fun addSourcesToCompileTask(sourceSet: KotlinSourceSet, addAsCommonSources: Boolean) {
         (target.project.tasks.getByName(compileKotlinTaskName) as AbstractKotlinCompile<*>).apply {
@@ -186,8 +193,7 @@ internal fun KotlinCompilation.disambiguateName(simpleName: String): String {
 
 open class KotlinJvmCompilation(
     target: KotlinTarget,
-    name: String,
-    override val output: SourceSetOutput
+    name: String
 ) : AbstractKotlinCompilationToRunnableFiles(target, name), KotlinCompilationWithResources {
     override val processResourcesTaskName: String
         get() = disambiguateName("processResources")
@@ -199,8 +205,7 @@ class KotlinWithJavaCompilation(
 ) : AbstractKotlinCompilationToRunnableFiles(target, name), KotlinCompilationWithResources {
     lateinit var javaSourceSet: SourceSet
 
-    override val output: SourceSetOutput
-        get() = javaSourceSet.output
+    override val output: KotlinCompilationOutput by lazy { KotlinWithJavaCompilationOutput(this) }
 
     override val processResourcesTaskName: String
         get() = javaSourceSet.processResourcesTaskName
@@ -249,26 +254,22 @@ class KotlinWithJavaCompilation(
 
 class KotlinJvmAndroidCompilation(
     target: KotlinAndroidTarget,
-    name: String,
-    override val output: SourceSetOutput
+    name: String
 ) : AbstractKotlinCompilationToRunnableFiles(target, name)
 
 class KotlinJsCompilation(
     target: KotlinTarget,
-    name: String,
-    override val output: SourceSetOutput
+    name: String
 ) : AbstractKotlinCompilationToRunnableFiles(target, name)
 
 class KotlinCommonCompilation(
     target: KotlinTarget,
-    name: String,
-    override val output: SourceSetOutput
+    name: String
 ) : AbstractKotlinCompilation(target, name)
 
 class KotlinNativeCompilation(
     override val target: KotlinNativeTarget,
-    name: String,
-    override val output: SourceSetOutput
+    name: String
 ) : AbstractKotlinCompilation(target, name), KotlinCompilationWithResources {
 
     private val project: Project

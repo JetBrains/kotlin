@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.gradle.plugin.sources.applyLanguageSettingsToKotlinT
 import org.jetbrains.kotlin.gradle.tasks.AndroidTasksProvider
 import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
 import org.jetbrains.kotlin.gradle.utils.NativeCompilerDownloader
-import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.konan.KonanVersion
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -226,8 +225,15 @@ class KotlinJvmWithJavaTargetPreset(
         target.compilations.getByName("test").run {
             val main = target.compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME)
 
-            compileDependencyFiles = project.files(main.output, project.configurations.maybeCreate(compileDependencyConfigurationName))
-            runtimeDependencyFiles = project.files(output, main.output, project.configurations.maybeCreate(runtimeDependencyConfigurationName))
+            compileDependencyFiles = project.files(
+                main.output.allOutputs,
+                project.configurations.maybeCreate(compileDependencyConfigurationName)
+            )
+            runtimeDependencyFiles = project.files(
+                output.allOutputs,
+                main.output.allOutputs,
+                project.configurations.maybeCreate(runtimeDependencyConfigurationName)
+            )
         }
 
         return target
