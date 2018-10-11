@@ -57,8 +57,7 @@ internal abstract class KotlinSourceSetProcessor<T : AbstractKotlinCompile<*>>(
     protected val logger = Logging.getLogger(this.javaClass)!!
 
     protected val isSeparateClassesDirSupported: Boolean by lazy {
-        !CopyClassesToJavaOutputStatus.isEnabled(project) &&
-                kotlinCompilation.output.javaClass.methods.any { it.name == "getClassesDirs" }
+        !CopyClassesToJavaOutputStatus.isEnabled(project) && isGradleVersionAtLeast(4, 0)
     }
 
     protected val sourceSetName: String = kotlinCompilation.compilationName
@@ -78,7 +77,7 @@ internal abstract class KotlinSourceSetProcessor<T : AbstractKotlinCompile<*>>(
                         kotlinCompilation.target.disambiguationClassifier?.let { "$it/" }.orEmpty()
                 File(project.buildDir, "classes/kotlin/$targetSubDirectory${kotlinCompilation.compilationName}")
             } else {
-                kotlinCompilation.output.classesDir
+                kotlinCompilation.output.classesDirs.singleFile
             }
         }
 
@@ -228,18 +227,15 @@ internal class Kotlin2JvmSourceSetProcessor(
     }
 }
 
-internal fun SourceSetOutput.tryAddClassesDir(
+internal fun KotlinCompilationOutput.tryAddClassesDir(
         classesDirProvider: () -> FileCollection
-): Boolean {
-    val getClassesDirs = javaClass.methods.firstOrNull { it.name == "getClassesDirs" && it.parameterCount == 0 }
-            ?: return false
-
-    val classesDirs = getClassesDirs(this) as? ConfigurableFileCollection
-            ?: return false
-
-    classesDirs.from(Callable { classesDirProvider() })
-    return true
-}
+): Boolean =
+    if (isGradleVersionAtLeast(4, 0)) {
+        classesDirs.from(Callable { classesDirProvider() })
+        true
+    } else {
+        false
+    }
 
 internal class Kotlin2JsSourceSetProcessor(
     project: Project,
@@ -280,8 +276,8 @@ internal class Kotlin2JsSourceSetProcessor(
 
             kotlinTask.destinationDir = outputDir
 
-            if (!isSeparateClassesDirSupported) {
-                kotlinCompilation.output.setClassesDirCompatible(kotlinTask.destinationDir)
+            if (!isSeparateClassesDirSupported && kotlinCompilation is KotlinWithJavaCompilation) {
+                kotlinCompilation.javaSourceSet.output.setClassesDirCompatible(kotlinTask.destinationDir)
             }
 
             appliedPlugins

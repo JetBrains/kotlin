@@ -225,8 +225,15 @@ class KotlinJvmWithJavaTargetPreset(
         target.compilations.getByName("test").run {
             val main = target.compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME)
 
-            compileDependencyFiles = project.files(main.output, project.configurations.maybeCreate(compileDependencyConfigurationName))
-            runtimeDependencyFiles = project.files(output, main.output, project.configurations.maybeCreate(runtimeDependencyConfigurationName))
+            compileDependencyFiles = project.files(
+                main.output.allOutputs,
+                project.configurations.maybeCreate(compileDependencyConfigurationName)
+            )
+            runtimeDependencyFiles = project.files(
+                output.allOutputs,
+                main.output.allOutputs,
+                project.configurations.maybeCreate(runtimeDependencyConfigurationName)
+            )
         }
 
         return target
