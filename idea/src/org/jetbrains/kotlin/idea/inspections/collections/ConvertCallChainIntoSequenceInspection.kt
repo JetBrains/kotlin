@@ -304,7 +304,8 @@ private val terminations = listOf(
     "toMutableList",
     "toMutableSet",
     "toSet",
-    "toSortedSet"
+    "toSortedSet",
+    "unzip"
 ).associate {
     val pkg = if (it in listOf("contains", "indexOf", "lastIndexOf")) "kotlin.collections.List" else "kotlin.collections"
     it to FqName("$pkg.$it")
