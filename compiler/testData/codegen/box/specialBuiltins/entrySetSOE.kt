@@ -1,4 +1,4 @@
-// IGNORE_BACKEND: JS_IR, JVM_IR
+// IGNORE_BACKEND: JVM_IR
 // IGNORE_BACKEND: NATIVE
 
 open class Map1 : HashMap<String, Any?>()
