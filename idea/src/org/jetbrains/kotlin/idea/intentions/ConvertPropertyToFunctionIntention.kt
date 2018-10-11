@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.idea.runSynchronouslyWithProgress
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.idea.util.application.progressIndicatorNullable
 import org.jetbrains.kotlin.idea.util.application.runReadAction
+import org.jetbrains.kotlin.idea.util.hasJvmFieldAnnotation
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.psi.KtCallableReferenceExpression
@@ -192,7 +193,11 @@ class ConvertPropertyToFunctionIntention : SelfTargetingIntention<KtProperty>(Kt
     override fun isApplicableTo(element: KtProperty, caretOffset: Int): Boolean {
         val identifier = element.nameIdentifier ?: return false
         if (!identifier.textRange.containsOffset(caretOffset)) return false
-        return element.delegate == null && !element.isVar && !element.isLocal && (element.initializer == null || element.getter == null)
+        return element.delegate == null
+                && !element.isVar
+                && !element.isLocal
+                && (element.initializer == null || element.getter == null)
+                && !element.hasJvmFieldAnnotation()
     }
 
     override fun applyTo(element: KtProperty, editor: Editor?) {
