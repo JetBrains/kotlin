@@ -318,7 +318,19 @@ public abstract class StackValue {
 
     @NotNull
     public static Field field(@NotNull Type type, @NotNull Type owner, @NotNull String name, boolean isStatic, @NotNull StackValue receiver) {
-        return field(type, null, owner, name, isStatic, receiver, null);
+        return field(type, null, owner, name, isStatic, receiver);
+    }
+
+    @NotNull
+    public static Field field(
+            @NotNull Type type,
+            @Nullable KotlinType kotlinType,
+            @NotNull Type owner,
+            @NotNull String name,
+            boolean isStatic,
+            @NotNull StackValue receiver
+    ) {
+        return field(type, kotlinType, owner, name, isStatic, receiver, null);
     }
 
     @NotNull
@@ -341,7 +353,14 @@ public abstract class StackValue {
 
     @NotNull
     public static Field field(@NotNull FieldInfo info, @NotNull StackValue receiver) {
-        return field(info.getFieldType(), Type.getObjectType(info.getOwnerInternalName()), info.getFieldName(), info.isStatic(), receiver);
+        return field(
+                info.getFieldType(),
+                info.getFieldKotlinType(),
+                Type.getObjectType(info.getOwnerInternalName()),
+                info.getFieldName(),
+                info.isStatic(),
+                receiver
+        );
     }
 
     @NotNull

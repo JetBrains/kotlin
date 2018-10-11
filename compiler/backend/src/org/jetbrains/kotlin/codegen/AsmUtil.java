@@ -639,10 +639,18 @@ public class AsmUtil {
     ) {
         assert !info.isStatic();
         Type fieldType = info.getFieldType();
+        KotlinType fieldKotlinType = info.getFieldKotlinType();
+        KotlinType nullableAny;
+        if (fieldKotlinType != null) {
+            nullableAny = fieldKotlinType.getConstructor().getBuiltIns().getNullableAnyType();
+        } else {
+            nullableAny = null;
+        }
+
         iv.load(ownerIndex, info.getOwnerType());//this
         if (cast) {
             iv.load(index, AsmTypes.OBJECT_TYPE); //param
-            StackValue.coerce(AsmTypes.OBJECT_TYPE, fieldType, iv);
+            StackValue.coerce(AsmTypes.OBJECT_TYPE, nullableAny, fieldType, fieldKotlinType, iv);
         } else {
             iv.load(index, fieldType); //param
         }

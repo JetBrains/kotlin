@@ -347,7 +347,7 @@ class CoroutineCodegenForLambda private constructor(
             // pass captured closure to constructor
             val constructorParameters = calculateConstructorParameters(typeMapper, languageVersionSettings, closure, owner)
             for (parameter in constructorParameters) {
-                StackValue.field(parameter, thisInstance).put(parameter.fieldType, this)
+                StackValue.field(parameter, thisInstance).put(parameter.fieldType, parameter.fieldKotlinType, this)
             }
 
             // load resultContinuation
@@ -377,7 +377,11 @@ class CoroutineCodegenForLambda private constructor(
                     load(1, AsmTypes.OBJECT_TYPE)
                     iconst(index - 1)
                     aload(AsmTypes.OBJECT_TYPE)
-                    StackValue.coerce(AsmTypes.OBJECT_TYPE, fieldInfoForCoroutineLambdaParameter.fieldType, this)
+                    StackValue.coerce(
+                        AsmTypes.OBJECT_TYPE, builtIns.nullableAnyType,
+                        fieldInfoForCoroutineLambdaParameter.fieldType, fieldInfoForCoroutineLambdaParameter.fieldKotlinType,
+                        this
+                    )
                     putfield(
                         fieldInfoForCoroutineLambdaParameter.ownerInternalName,
                         fieldInfoForCoroutineLambdaParameter.fieldName,
@@ -386,7 +390,11 @@ class CoroutineCodegenForLambda private constructor(
                 } else {
                     if (generateErasedCreate) {
                         load(index, AsmTypes.OBJECT_TYPE)
-                        StackValue.coerce(AsmTypes.OBJECT_TYPE, fieldInfoForCoroutineLambdaParameter.fieldType, this)
+                        StackValue.coerce(
+                            AsmTypes.OBJECT_TYPE, builtIns.nullableAnyType,
+                            fieldInfoForCoroutineLambdaParameter.fieldType, fieldInfoForCoroutineLambdaParameter.fieldKotlinType,
+                            this
+                        )
                     } else {
                         load(index, fieldInfoForCoroutineLambdaParameter.fieldType)
                     }
@@ -434,6 +442,7 @@ class CoroutineCodegenForLambda private constructor(
         FieldInfo.createForHiddenField(
             typeMapper.mapClass(closureContext.thisDescriptor),
             typeMapper.mapType(type),
+            type,
             name
         )
 

@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.impl.SyntheticFieldDescriptor;
 import org.jetbrains.kotlin.resolve.inline.InlineUtil;
+import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.org.objectweb.asm.Label;
 import org.jetbrains.org.objectweb.asm.Type;
 
@@ -64,8 +65,9 @@ public class MethodContext extends CodegenContext<CallableMemberDescriptor> {
     public StackValue getReceiverExpression(KotlinTypeMapper typeMapper) {
         assert getCallableDescriptorWithReceiver() != null;
         @SuppressWarnings("ConstantConditions")
-        Type asmType = typeMapper.mapType(getCallableDescriptorWithReceiver().getExtensionReceiverParameter().getType());
-        return StackValue.local(AsmUtil.getReceiverIndex(this, getContextDescriptor()), asmType);
+        KotlinType kotlinType = getCallableDescriptorWithReceiver().getExtensionReceiverParameter().getType();
+        Type asmType = typeMapper.mapType(kotlinType);
+        return StackValue.local(AsmUtil.getReceiverIndex(this, getContextDescriptor()), asmType, kotlinType);
     }
 
     @Override

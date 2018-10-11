@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKt;
 import org.jetbrains.kotlin.resolve.scopes.MemberScope;
 import org.jetbrains.kotlin.serialization.DescriptorSerializer;
 import org.jetbrains.kotlin.types.KotlinType;
+import org.jetbrains.kotlin.types.SimpleType;
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils;
 import org.jetbrains.kotlin.util.OperatorNameConventions;
 import org.jetbrains.org.objectweb.asm.MethodVisitor;
@@ -490,13 +491,14 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
         List<FieldInfo> args = Lists.newArrayList();
         ClassDescriptor captureThis = closure.getCapturedOuterClassDescriptor();
         if (captureThis != null) {
-            Type type = typeMapper.mapType(captureThis);
-            args.add(FieldInfo.createForHiddenField(ownerType, type, CAPTURED_THIS_FIELD));
+            SimpleType thisType = captureThis.getDefaultType();
+            Type type = typeMapper.mapType(thisType);
+            args.add(FieldInfo.createForHiddenField(ownerType, type, thisType, CAPTURED_THIS_FIELD));
         }
         KotlinType captureReceiverType = closure.getCapturedReceiverFromOuterContext();
         if (captureReceiverType != null) {
             String fieldName = closure.getCapturedReceiverFieldName(typeMapper.getBindingContext(), languageVersionSettings);
-            args.add(FieldInfo.createForHiddenField(ownerType, typeMapper.mapType(captureReceiverType), fieldName));
+            args.add(FieldInfo.createForHiddenField(ownerType, typeMapper.mapType(captureReceiverType), captureReceiverType, fieldName));
         }
 
         for (EnclosedValueDescriptor enclosedValueDescriptor : closure.getCaptureVariables().values()) {
@@ -505,7 +507,10 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
                 ExpressionTypingUtils.isLocalFunction(descriptor)) {
                 args.add(
                         FieldInfo.createForHiddenField(
-                                ownerType, enclosedValueDescriptor.getType(), enclosedValueDescriptor.getFieldName()
+                                ownerType,
+                                enclosedValueDescriptor.getType(),
+                                enclosedValueDescriptor.getKotlinType(),
+                                enclosedValueDescriptor.getFieldName()
                         )
                 );
             }
