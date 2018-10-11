@@ -255,25 +255,27 @@ class PsiExpressionLambda(
         arrayListOf<CapturedParamDesc>().apply {
             val captureThis = closure.capturedOuterClassDescriptor
             if (captureThis != null) {
-                val type = typeMapper.mapType(captureThis)
+                val kotlinType = captureThis.defaultType
+                val type = typeMapper.mapType(kotlinType)
                 val descriptor = EnclosedValueDescriptor(
                     AsmUtil.CAPTURED_THIS_FIELD, null,
                     StackValue.field(type, lambdaClassType, AsmUtil.CAPTURED_THIS_FIELD, false, StackValue.LOCAL_0),
-                    type
+                    type, kotlinType
                 )
                 add(getCapturedParamInfo(descriptor))
             }
 
-            if (closure.capturedReceiverFromOuterContext != null) {
-                val type = typeMapper.mapType(closure.capturedReceiverFromOuterContext!!).let {
+            val capturedReceiver = closure.capturedReceiverFromOuterContext
+            if (capturedReceiver != null) {
+                val type = typeMapper.mapType(capturedReceiver).let {
                     if (isBoundCallableReference) it.boxReceiverForBoundReference() else it
                 }
 
                 val fieldName = closure.getCapturedReceiverFieldName(typeMapper.bindingContext, languageVersionSettings)
                 val descriptor = EnclosedValueDescriptor(
                     fieldName, null,
-                    StackValue.field(type, lambdaClassType, fieldName, false, StackValue.LOCAL_0),
-                    type
+                    StackValue.field(type, capturedReceiver, lambdaClassType, fieldName, false, StackValue.LOCAL_0),
+                    type, capturedReceiver
                 )
                 add(getCapturedParamInfo(descriptor))
             }
