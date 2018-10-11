@@ -21,8 +21,10 @@ import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.metadata.jvm.serialization.JvmStringTable
 import org.jetbrains.kotlin.protobuf.MessageLite
+import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin.Companion.NO_ORIGIN
+import org.jetbrains.kotlin.utils.addToStdlib.cast
 import org.jetbrains.org.objectweb.asm.*
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 import org.jetbrains.org.objectweb.asm.tree.*
@@ -131,10 +133,9 @@ class AnonymousObjectTransformer(
                 constructor!!, allCapturedParamBuilder, constructorParamBuilder,transformationInfo, parentRemapper
         )
 
+        val crossinlineSuspendElement = capturedCrossinlineSuspendElement()
         val capturesCrossinlineSuspend = (!inliningContext.isInliningLambda || inliningContext.isContinuation) &&
-                inliningContext.expressionMap.values.any { lambda ->
-                    lambda is PsiExpressionLambda && lambda.isCrossInline && lambda.invokeMethodDescriptor.isSuspend
-                }
+                crossinlineSuspendElement != null
 
         val deferringMethods = ArrayList<DeferredMethodVisitor>()
 
@@ -158,11 +159,18 @@ class AnonymousObjectTransformer(
                 capturesCrossinlineSuspend && !inliningContext.isContinuation && continuationClassName != null
 
             val deferringVisitor =
-                when {
-                    generateStateMachineForLambda -> newStateMachineForLambda(classBuilder, next)
-                    generateStateMachineForNamedFunction -> newStateMachineForNamedFunction(classBuilder, next, continuationClassName!!)
-                    else -> newMethod(classBuilder, next)
-                }
+                if (crossinlineSuspendElement != null) {
+                    when {
+                        generateStateMachineForLambda -> newStateMachineForLambda(classBuilder, next, crossinlineSuspendElement)
+                        generateStateMachineForNamedFunction -> newStateMachineForNamedFunction(
+                            classBuilder,
+                            next,
+                            continuationClassName!!,
+                            crossinlineSuspendElement
+                        )
+                        else -> newMethod(classBuilder, next)
+                    }
+                } else newMethod(classBuilder, next)
             val funResult = inlineMethodAndUpdateGlobalResult(parentRemapper, deferringVisitor, next, allCapturedParamBuilder, false)
 
             val returnType = Type.getReturnType(next.desc)
@@ -226,6 +234,10 @@ class AnonymousObjectTransformer(
 
         return transformationResult
     }
+
+    private fun capturedCrossinlineSuspendElement(): KtExpression? = inliningContext.expressionMap.values.find { lambda ->
+        lambda is PsiExpressionLambda && lambda.isCrossInline && lambda.invokeMethodDescriptor.isSuspend
+    }?.cast<PsiExpressionLambda>()?.functionWithBodyOrCallableReference
 
     private fun writeTransformedMetadata(header: KotlinClassHeader, classBuilder: ClassBuilder) {
         writeKotlinMetadata(classBuilder, state, header.kind, header.extraInt) action@ { av ->
@@ -435,7 +447,7 @@ class AnonymousObjectTransformer(
         }
     }
 
-    private fun newStateMachineForLambda(builder: ClassBuilder, original: MethodNode): DeferredMethodVisitor {
+    private fun newStateMachineForLambda(builder: ClassBuilder, original: MethodNode, element: KtExpression): DeferredMethodVisitor {
         return DeferredMethodVisitor(
             MethodNode(
                 original.access, original.name, original.desc, original.signature,
@@ -448,7 +460,7 @@ class AnonymousObjectTransformer(
                     ArrayUtil.toStringArray(original.exceptions)
                 ), original.access, original.name, original.desc, null, null,
                 obtainClassBuilderForCoroutineState = { builder },
-                element = null,
+                element = element,
                 diagnostics = state.diagnostics,
                 languageVersionSettings = languageVersionSettings,
                 shouldPreserveClassInitialization = state.constructorCallNormalizationMode.shouldPreserveClassInitialization,
@@ -463,7 +475,8 @@ class AnonymousObjectTransformer(
     private fun newStateMachineForNamedFunction(
         builder: ClassBuilder,
         original: MethodNode,
-        continuationClassName: String
+        continuationClassName: String,
+        element: KtExpression
     ): DeferredMethodVisitor {
         assert(inliningContext is RegeneratedClassContext)
         return DeferredMethodVisitor(
@@ -478,7 +491,7 @@ class AnonymousObjectTransformer(
                     ArrayUtil.toStringArray(original.exceptions)
                 ), original.access, original.name, original.desc, null, null,
                 obtainClassBuilderForCoroutineState = { (inliningContext as RegeneratedClassContext).continuationBuilders[continuationClassName]!! },
-                element = null,
+                element = element,
                 diagnostics = state.diagnostics,
                 languageVersionSettings = languageVersionSettings,
                 shouldPreserveClassInitialization = state.constructorCallNormalizationMode.shouldPreserveClassInitialization,

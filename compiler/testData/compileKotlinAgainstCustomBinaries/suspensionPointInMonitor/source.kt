@@ -18,6 +18,14 @@ fun test() {
         )
     }
 
+    builder {
+        withCrossinline {}
+
+        withCrossinline {
+            suspensionPoint()
+        }
+    }
+
     synchronized(lock) {
         builder {
             suspensionPoint()
