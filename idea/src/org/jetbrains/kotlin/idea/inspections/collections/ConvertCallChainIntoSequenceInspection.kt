@@ -219,6 +219,7 @@ private val transformations = listOf(
     "filterIsInstance",
     "filterNot",
     "filterNotNull",
+    "flatten",
     "map",
     "mapIndexed",
     "mapIndexedNotNull",
