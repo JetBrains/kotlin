@@ -10324,11 +10324,6 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
             runTest("compiler/testData/codegen/box/inlineClasses/iterateOverListOfInlineClassValues.kt");
         }
 
-        @TestMetadata("jvmFieldInInlineClassCompanion.kt")
-        public void testJvmFieldInInlineClassCompanion() throws Exception {
-            runTest("compiler/testData/codegen/box/inlineClasses/jvmFieldInInlineClassCompanion.kt");
-        }
-
         @TestMetadata("jvmStaticFunInInlineClassCompanion.kt")
         public void testJvmStaticFunInInlineClassCompanion() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/jvmStaticFunInInlineClassCompanion.kt");
@@ -10610,11 +10605,6 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
             @TestMetadata("accessPrivateInlineClassMethodFromLambda2.kt")
             public void testAccessPrivateInlineClassMethodFromLambda2() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/accessPrivateInlineClassMethodFromLambda2.kt");
-            }
-
-            @TestMetadata("accessPrivateStaticInlineClassCompanionMethod.kt")
-            public void testAccessPrivateStaticInlineClassCompanionMethod() throws Exception {
-                runTest("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/accessPrivateStaticInlineClassCompanionMethod.kt");
             }
 
             public void testAllFilesPresentInContextsAndAccessors() throws Exception {
@@ -10979,11 +10969,6 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
             @TestMetadata("delegateCompanionVarToInlineClass.kt")
             public void testDelegateCompanionVarToInlineClass() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/propertyDelegation/delegateCompanionVarToInlineClass.kt");
-            }
-
-            @TestMetadata("delegateJvmStaticCompanionVarToInlineClass.kt")
-            public void testDelegateJvmStaticCompanionVarToInlineClass() throws Exception {
-                runTest("compiler/testData/codegen/box/inlineClasses/propertyDelegation/delegateJvmStaticCompanionVarToInlineClass.kt");
             }
 
             @TestMetadata("delegateLocalVarToInlineClass.kt")
