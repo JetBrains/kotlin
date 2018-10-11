@@ -920,4 +920,35 @@ class NewMultiplatformIT : BaseGradleIT() {
             assertTrue(fileInWorkingDir("$pathPrefix/kotlin.js").length() < 500 * 1000, "Looks like kotlin.js file was not minified by DCE")
         }
     }
+
+
+    @Test
+    fun testStaleOutputCleanup() = with(Project("new-mpp-lib-with-tests", gradleVersion)) {
+        setupWorkingDir()
+        // Check that output directories of Kotlin compilations are registered for Gradle stale outputs cleanup.
+        // One way to check that is to run a Gradle build with no Gradle history (no .gradle directory) and see that the compilation
+        // output directories are cleaned up, even those outside the project's buildDir
+
+        gradleBuildScript().appendText(
+            "\n" + """
+            kotlin.targets.js.compilations.main.output.classesDirs.from("foo") // should affect Gradle's behavior wrt stale output cleanup
+            task('foo') {
+                outputs.dir("foo")
+                doFirst {
+                    println 'hello'
+                    file("foo/2.txt").text = System.currentTimeMillis()
+                }
+            }
+            """.trimIndent()
+        )
+
+        val staleFilePath = "foo/1.txt"
+        projectDir.resolve(staleFilePath).run { parentFile.mkdirs(); createNewFile() }
+
+        build("foo") {
+            assertSuccessful()
+            assertNoSuchFile(staleFilePath)
+            assertFileExists("foo/2.txt")
+        }
+    }
 }

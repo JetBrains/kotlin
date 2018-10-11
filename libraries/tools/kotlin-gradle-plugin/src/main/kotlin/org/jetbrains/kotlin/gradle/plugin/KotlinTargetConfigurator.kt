@@ -7,7 +7,10 @@ package org.jetbrains.kotlin.gradle.plugin
 
 import org.gradle.api.Project
 import org.gradle.api.Task
-import org.gradle.api.artifacts.*
+import org.gradle.api.artifacts.Configuration
+import org.gradle.api.artifacts.ConfigurationContainer
+import org.gradle.api.artifacts.Dependency
+import org.gradle.api.artifacts.PublishArtifact
 import org.gradle.api.artifacts.type.ArtifactTypeDefinition
 import org.gradle.api.attributes.Usage
 import org.gradle.api.attributes.Usage.USAGE_ATTRIBUTE
@@ -20,9 +23,9 @@ import org.gradle.api.internal.plugins.DslObject
 import org.gradle.api.plugins.BasePlugin
 import org.gradle.api.plugins.JavaBasePlugin
 import org.gradle.api.tasks.Copy
+import org.gradle.api.tasks.Delete
 import org.gradle.api.tasks.bundling.Jar
 import org.gradle.api.tasks.testing.Test
-import org.gradle.internal.cleanup.BuildOutputCleanupRegistry
 import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.gradle.language.jvm.tasks.ProcessResources
 import org.gradle.nativeplatform.test.tasks.RunTestExecutable
@@ -42,7 +45,6 @@ import java.util.*
 import java.util.concurrent.Callable
 
 abstract class AbstractKotlinTargetConfigurator<KotlinTargetType : KotlinTarget>(
-    private val buildOutputCleanupRegistry: BuildOutputCleanupRegistry,
     protected val createDefaultSourceSets: Boolean,
     protected val createTestCompilation: Boolean
 ) {
@@ -60,12 +62,17 @@ abstract class AbstractKotlinTargetConfigurator<KotlinTargetType : KotlinTarget>
 
     abstract fun configureArchivesAndComponent(target: KotlinTargetType)
 
+    private fun Project.registerOutputsForCleanup(kotlinCompilation: KotlinCompilation) {
+        val cleanTask = tasks.getByName(LifecycleBasePlugin.CLEAN_TASK_NAME) as Delete
+        cleanTask.delete(kotlinCompilation.output.allOutputs)
+    }
+
     protected fun configureCompilations(platformTarget: KotlinTargetType) {
         val project = platformTarget.project
         val main = platformTarget.compilations.create(KotlinCompilation.MAIN_COMPILATION_NAME)
 
         platformTarget.compilations.all {
-            buildOutputCleanupRegistry.registerOutputs(it.output)
+            project.registerOutputsForCleanup(it)
             it.compileDependencyFiles = project.configurations.maybeCreate(it.compileDependencyConfigurationName)
             if (it is KotlinCompilationToRunnableFiles) {
                 it.runtimeDependencyFiles = project.configurations.maybeCreate(it.runtimeDependencyConfigurationName)
@@ -74,11 +81,17 @@ abstract class AbstractKotlinTargetConfigurator<KotlinTargetType : KotlinTarget>
 
         if (createTestCompilation) {
             platformTarget.compilations.create(KotlinCompilation.TEST_COMPILATION_NAME).apply {
-                compileDependencyFiles = project.files(main.output, project.configurations.maybeCreate(compileDependencyConfigurationName))
+                compileDependencyFiles = project.files(
+                    main.output.allOutputs,
+                    project.configurations.maybeCreate(compileDependencyConfigurationName)
+                )
 
                 if (this is KotlinCompilationToRunnableFiles) {
-                    runtimeDependencyFiles =
-                            project.files(output, main.output, project.configurations.maybeCreate(runtimeDependencyConfigurationName))
+                    runtimeDependencyFiles = project.files(
+                        output.allOutputs,
+                        main.output.allOutputs,
+                        project.configurations.maybeCreate(runtimeDependencyConfigurationName)
+                    )
                 }
             }
         }
@@ -127,22 +140,19 @@ abstract class AbstractKotlinTargetConfigurator<KotlinTargetType : KotlinTarget>
 
         val resourcesTask = project.tasks.maybeCreate(compilation.processResourcesTaskName, ProcessResources::class.java)
         resourcesTask.description = "Processes $resourceSet."
-        DslObject(resourcesTask).conventionMapping.map("destinationDir") { compilation.output.resourcesDir }
+        DslObject(resourcesTask).conventionMapping.map("destinationDir") { project.file(compilation.output.resourcesDir) }
         resourcesTask.from(resourceSet)
     }
 
     protected fun createLifecycleTask(compilation: KotlinCompilation) {
         val project = compilation.target.project
 
-        (compilation.output.classesDirs as ConfigurableFileCollection).from(project.files().builtBy(compilation.compileAllTaskName))
+        compilation.output.classesDirs.from(project.files().builtBy(compilation.compileAllTaskName))
 
         project.tasks.create(compilation.compileAllTaskName).apply {
             group = LifecycleBasePlugin.BUILD_GROUP
             description = "Assembles outputs for compilation '${compilation.name}' of target '${compilation.target.name}'"
-            dependsOn(
-                compilation.output.dirs,
-                compilation.compileKotlinTaskName
-            )
+            dependsOn(compilation.compileKotlinTaskName)
             if (compilation is KotlinCompilationWithResources) {
                 dependsOn(compilation.processResourcesTaskName)
             }
@@ -319,11 +329,9 @@ internal val KotlinCompilationToRunnableFiles.deprecatedRuntimeConfigurationName
     get() = disambiguateName("runtime")
 
 open class KotlinTargetConfigurator<KotlinCompilationType: KotlinCompilation>(
-    buildOutputCleanupRegistry: BuildOutputCleanupRegistry,
     createDefaultSourceSets: Boolean,
     createTestCompilation: Boolean
 ) : AbstractKotlinTargetConfigurator<KotlinOnlyTarget<KotlinCompilationType>>(
-    buildOutputCleanupRegistry,
     createDefaultSourceSets,
     createTestCompilation
 ) {
@@ -336,7 +344,7 @@ open class KotlinTargetConfigurator<KotlinCompilationType: KotlinCompilation>(
         val jar = project.tasks.create(target.artifactsTaskName, Jar::class.java)
         jar.description = "Assembles a jar archive containing the main classes."
         jar.group = BasePlugin.BUILD_GROUP
-        jar.from(mainCompilation.output)
+        jar.from(mainCompilation.output.allOutputs)
 
         val apiElementsConfiguration = project.configurations.getByName(target.apiElementsConfigurationName)
 
@@ -373,10 +381,8 @@ open class KotlinTargetConfigurator<KotlinCompilationType: KotlinCompilation>(
 
 
 open class KotlinNativeTargetConfigurator(
-    buildOutputCleanupRegistry: BuildOutputCleanupRegistry,
     private val kotlinPluginVersion: String
 ) : AbstractKotlinTargetConfigurator<KotlinNativeTarget>(
-    buildOutputCleanupRegistry,
     createDefaultSourceSets = true,
     createTestCompilation = true
 ) {
@@ -619,7 +625,7 @@ open class KotlinNativeTargetConfigurator(
             val mainCompilation = target.compilations.getByName(MAIN_COMPILATION_NAME)
             target.compilations.findByName(TEST_COMPILATION_NAME)?.apply {
                 cinterops.all {
-                    it.dependencyFiles += mainCompilation.output
+                    it.dependencyFiles += mainCompilation.output.allOutputs
                 }
             }
         }

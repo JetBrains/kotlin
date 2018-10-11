@@ -22,7 +22,6 @@ import org.gradle.api.internal.FeaturePreviews
 import org.gradle.api.internal.file.FileResolver
 import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
-import org.gradle.internal.cleanup.BuildOutputCleanupRegistry
 import org.gradle.internal.reflect.Instantiator
 import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
 import org.jetbrains.kotlin.gradle.dsl.*
@@ -134,12 +133,11 @@ open class Kotlin2JsPluginWrapper @Inject constructor(
 open class KotlinMultiplatformPluginWrapper @Inject constructor(
     fileResolver: FileResolver,
     private val instantiator: Instantiator,
-    private val buildOutputCleanupRegistry: BuildOutputCleanupRegistry,
     private val featurePreviews: FeaturePreviews
 ): KotlinBasePluginWrapper(fileResolver) {
     override fun getPlugin(project: Project, kotlinGradleBuildServices: KotlinGradleBuildServices): Plugin<Project> =
         KotlinMultiplatformPlugin(
-            buildOutputCleanupRegistry, fileResolver,
+            fileResolver,
             instantiator, kotlinPluginVersion, featurePreviews
         )
 
