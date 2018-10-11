@@ -9239,6 +9239,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             runTest("idea/testData/intentions/introduceBackingProperty/inapplicableNoBackingField.kt");
         }
 
+        @TestMetadata("jvmField.kt")
+        public void testJvmField() throws Exception {
+            runTest("idea/testData/intentions/introduceBackingProperty/jvmField.kt");
+        }
+
         @TestMetadata("semicolon.kt")
         public void testSemicolon() throws Exception {
             runTest("idea/testData/intentions/introduceBackingProperty/semicolon.kt");
