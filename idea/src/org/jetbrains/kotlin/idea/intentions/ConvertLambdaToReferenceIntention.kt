@@ -193,7 +193,7 @@ open class ConvertLambdaToReferenceIntention(text: String) :
             val arguments = outerCallExpression.valueArguments.filter { it !is KtLambdaArgument }
             val hadDefaultValues = valueParameters.size - 1 > arguments.size
             val useNamedArguments = valueParameters.any { it.hasDefaultValue() } && hadDefaultValues
-                    || arguments.any { it.getArgumentName() != null }
+                    || arguments.any { it.isNamed() }
 
             val newArgumentList = factory.buildValueArgumentList {
                 appendFixedText("(")

@@ -52,7 +52,7 @@ class KotlinCallerCallUsage(element: KtCallElement): KotlinUsageInfo<KtCallEleme
     override fun processUsage(changeInfo: KotlinChangeInfo, element: KtCallElement, allUsages: Array<out UsageInfo>): Boolean {
         val argumentList = element.valueArgumentList ?: return true
         val psiFactory = KtPsiFactory(project)
-        val isNamedCall = argumentList.arguments.any { it.getArgumentName() != null }
+        val isNamedCall = argumentList.arguments.any { it.isNamed() }
         changeInfo.getNonReceiverParameters()
                 .filter { it.isNewParameter }
                 .forEach {
