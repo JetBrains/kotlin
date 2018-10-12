@@ -142,10 +142,9 @@ class SerializerIrGenerator(val irClass: IrClass, override val compilerContext: 
                 serializerTower(this@SerializerIrGenerator, it)) { "Property ${it.name} must have a serializer" }
         }
 
-        val arrayOfKSerType = irFun.returnType
         val kSer = serializableDescriptor.module.getClassFromSerializationPackage(KSERIALIZER_NAME.identifier)
         val kSerType = compilerContext.externalSymbols.referenceClass(kSer).owner.defaultType
-        val array = createArrayOfExpression(arrayOfKSerType, kSerType, allSerializers)
+        val array = createArrayOfExpression(kSerType, allSerializers)
         +irReturn(array)
     }
 
