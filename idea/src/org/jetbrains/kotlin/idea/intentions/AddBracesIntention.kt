@@ -18,7 +18,10 @@ package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiComment
+import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiWhiteSpace
+import org.jetbrains.kotlin.idea.core.deleteElementAndCleanParent
+import org.jetbrains.kotlin.idea.intentions.branchedTransformations.lineCount
 import org.jetbrains.kotlin.idea.refactoring.getLineNumber
 import org.jetbrains.kotlin.idea.util.CommentSaver
 import org.jetbrains.kotlin.j2k.isInSingleLine
@@ -77,20 +80,6 @@ class AddBracesIntention : SelfTargetingIntention<KtElement>(KtElement::class.ja
 
         val result = expression.replace(psiFactory.createSingleStatementBlock(expression))
 
-        // Ensure that expression is in single line, due to possible multiple comments
-        // in multi line expression.
-        if (expression.isInSingleLine()) {
-            // shift (possible contained) comment in expression underneath braces
-            result.children.forEach {
-                if (it is PsiComment) {
-                    // Add comment to the end of the expression
-                    result.lastChild?.add(it)
-                    // Delete the comment in it's old position
-                    it.delete()
-                }
-            }
-        }
-
         when (element) {
             is KtDoWhileExpression ->
                 // remove new line between '}' and while
@@ -98,7 +87,13 @@ class AddBracesIntention : SelfTargetingIntention<KtElement>(KtElement::class.ja
             is KtIfExpression ->
                 (result?.parent?.nextSibling as? PsiWhiteSpace)?.delete()
         }
-        saver.restore(result)
+
+        // Check for single line expression with comment beneath.
+        if (expression.isInSingleLine()) { // TODO: Check if there's a second line (PsiComment) in expression
+            saver.restore(result, true, false)
+        } else {
+            saver.restore(result, false, false)
+        }
     }
 
     private fun KtElement.getTargetExpression(caretLocation: Int): KtExpression? {
