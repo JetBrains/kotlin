@@ -43,8 +43,12 @@ interface ScriptDefinitionProvider {
 }
 
 fun findScriptDefinition(file: VirtualFile, project: Project): KotlinScriptDefinition? {
-    if (file.isDirectory) return null
-    if (file.extension == KotlinFileType.EXTENSION || file.extension == JavaClassFileType.INSTANCE.defaultExtension) return null
+    if (file.isDirectory ||
+        file.extension == KotlinFileType.EXTENSION ||
+        file.extension == JavaClassFileType.INSTANCE.defaultExtension
+    ) {
+        return null
+    }
 
     val psiFile = PsiManager.getInstance(project).findFile(file)
     if (psiFile != null) {
@@ -85,7 +89,7 @@ abstract class LazyScriptDefinitionProvider : ScriptDefinitionProvider {
     }
 
     protected open fun nonScriptFileName(fileName: String) = nonScriptFilenameSuffixes.any {
-        fileName.endsWith( it, ignoreCase = true)
+        fileName.endsWith(it, ignoreCase = true)
     }
 
     override fun findScriptDefinition(fileName: String): KotlinScriptDefinition? =
