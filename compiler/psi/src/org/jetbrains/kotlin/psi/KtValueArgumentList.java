@@ -20,7 +20,6 @@ import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.KtNodeTypes;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes;
@@ -43,7 +42,7 @@ public class KtValueArgumentList extends KtElementImplStub<KotlinPlaceHolderStub
 
     @NotNull
     public List<KtValueArgument> getArguments() {
-        return findChildrenByType(KtNodeTypes.VALUE_ARGUMENT);
+        return getStubOrPsiChildrenAsList(KtStubElementTypes.VALUE_ARGUMENT);
     }
 
     @Nullable

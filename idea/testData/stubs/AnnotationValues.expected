@@ -58,6 +58,14 @@ PsiJetFileStubImpl[package=test]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=Simple]
         VALUE_ARGUMENT_LIST
+          VALUE_ARGUMENT
+          VALUE_ARGUMENT
+          VALUE_ARGUMENT
+          VALUE_ARGUMENT
+          VALUE_ARGUMENT
+          VALUE_ARGUMENT
+          VALUE_ARGUMENT
+          VALUE_ARGUMENT
   CLASS[fqName=test.StringLiteral, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=StringLiteral, superNames=[]]
     MODIFIER_LIST[annotation]
     PRIMARY_CONSTRUCTOR
@@ -84,6 +92,9 @@ PsiJetFileStubImpl[package=test]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=StringLiteral]
         VALUE_ARGUMENT_LIST
+          VALUE_ARGUMENT
+          VALUE_ARGUMENT
+          VALUE_ARGUMENT
   CLASS[fqName=test.E, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=E, superNames=[]]
     MODIFIER_LIST[enum]
     CLASS_BODY
@@ -113,6 +124,10 @@ PsiJetFileStubImpl[package=test]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=EnumLiteral]
         VALUE_ARGUMENT_LIST
+          VALUE_ARGUMENT
+            REFERENCE_EXPRESSION[referencedName=E1]
+          VALUE_ARGUMENT
+          VALUE_ARGUMENT
   CLASS[fqName=test.VarArg, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=VarArg, superNames=[]]
     MODIFIER_LIST[annotation]
     PRIMARY_CONSTRUCTOR
@@ -130,6 +145,9 @@ PsiJetFileStubImpl[package=test]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=VarArg]
         VALUE_ARGUMENT_LIST
+          VALUE_ARGUMENT
+          VALUE_ARGUMENT
+          VALUE_ARGUMENT
   CLASS[fqName=test.Arrays, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=Arrays, superNames=[]]
     MODIFIER_LIST[annotation]
     PRIMARY_CONSTRUCTOR
@@ -166,6 +184,12 @@ PsiJetFileStubImpl[package=test]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=Arrays]
         VALUE_ARGUMENT_LIST
+          VALUE_ARGUMENT
+          VALUE_ARGUMENT
+          VALUE_ARGUMENT
+          VALUE_ARGUMENT
+          VALUE_ARGUMENT
+          VALUE_ARGUMENT
   CLASS[fqName=test.ClassLiteral, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=ClassLiteral, superNames=[]]
     MODIFIER_LIST[annotation]
     PRIMARY_CONSTRUCTOR
@@ -196,6 +220,9 @@ PsiJetFileStubImpl[package=test]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=ClassLiteral]
         VALUE_ARGUMENT_LIST
+          VALUE_ARGUMENT
+          VALUE_ARGUMENT
+          VALUE_ARGUMENT
     TYPE_PARAMETER_LIST
       TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T]
   CLASS[fqName=test.Nested, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=Nested, superNames=[]]
@@ -230,3 +257,5 @@ PsiJetFileStubImpl[package=test]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=Outer]
         VALUE_ARGUMENT_LIST
+          VALUE_ARGUMENT
+          VALUE_ARGUMENT

@@ -104,6 +104,12 @@ public interface KtStubElementTypes {
     KtPlaceHolderStubElementType<KtValueArgumentList> VALUE_ARGUMENT_LIST =
             new KtValueArgumentListElementType("VALUE_ARGUMENT_LIST");
 
+    KtPlaceHolderStubElementType<KtValueArgument> VALUE_ARGUMENT =
+            new KtPlaceHolderStubElementType<>("VALUE_ARGUMENT", KtValueArgument.class);
+
+    KtPlaceHolderStubElementType<KtLambdaArgument> LAMBDA_ARGUMENT =
+            new KtPlaceHolderStubElementType<>("LAMBDA_ARGUMENT", KtLambdaArgument.class);
+
     KtPlaceHolderStubElementType<KtSuperTypeList> SUPER_TYPE_LIST =
             new KtPlaceHolderStubElementType<>("SUPER_TYPE_LIST", KtSuperTypeList.class);
 
