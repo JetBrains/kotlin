@@ -73,7 +73,8 @@ private val runtimeSourcesCommon = listOfKtFilesFrom(
     "libraries/stdlib/js/src/kotlin/builtins.kt",
 
     // Inlining of js fun doesn't update the variables inside
-    "libraries/stdlib/js/src/kotlin/jsTypeOf.kt"
+    "libraries/stdlib/js/src/kotlin/jsTypeOf.kt",
+    "libraries/stdlib/js/src/kotlin/collections/utils.kt"
 )
 
 
