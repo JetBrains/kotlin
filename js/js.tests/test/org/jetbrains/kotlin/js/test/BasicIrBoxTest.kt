@@ -43,9 +43,6 @@ private val runtimeSourcesCommon = listOfKtFilesFrom(
     // TODO: Support Int.pow
     "libraries/stdlib/js/src/kotlin/random/PlatformRandom.kt",
 
-    // TODO: Unify exceptions
-    "libraries/stdlib/common/src/kotlin/ExceptionsH.kt",
-
     // Fails with: EXPERIMENTAL_IS_NOT_ENABLED
     "libraries/stdlib/common/src/kotlin/annotations/Annotations.kt",
 
@@ -61,9 +58,6 @@ private val runtimeSourcesCommon = listOfKtFilesFrom(
     // Unnecessary for now
     "libraries/stdlib/js/src/kotlin/dom",
     "libraries/stdlib/js/src/kotlin/browser",
-
-    // TODO: Unify exceptions
-    "libraries/stdlib/js/src/kotlin/exceptions.kt",
 
     // TODO: fix compilation issues in arrayPlusCollection
     // Replaced with irRuntime/kotlinHacks.kt
