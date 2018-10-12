@@ -1,7 +1,7 @@
 import org.gradle.plugins.ide.idea.model.IdeaModel
 
 plugins {
-    idea
+    //idea
     kotlin("jvm")
     id("jps-compatible")
 }
@@ -28,8 +28,8 @@ sourceSets {
     "test" {}
 }
 
-configure<IdeaModel> {
-    module {
-        excludeDirs = excludeDirs + files("testData/out-min")
-    }
-}
+//configure<IdeaModel> {
+//    module {
+//        excludeDirs = excludeDirs + files("testData/out-min")
+//    }
+//}
