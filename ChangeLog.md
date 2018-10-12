@@ -1,5 +1,165 @@
 # CHANGELOG
 
+## 1.3-RC3
+
+### Compiler
+
+- [`KT-26300`](https://youtrack.jetbrains.com/issue/KT-26300) Smartcasts don't work if pass same fields of instances of the same class in contract function with conjunction not-null condition
+- [`KT-27221`](https://youtrack.jetbrains.com/issue/KT-27221) Incorrect smart cast for sealed classes with a multilevel hierarchy
+
+### IDE
+
+- [`KT-27163`](https://youtrack.jetbrains.com/issue/KT-27163) Replace coroutine migration dialog with notification
+- [`KT-27200`](https://youtrack.jetbrains.com/issue/KT-27200) New MPP wizard: mobile library
+- [`KT-27201`](https://youtrack.jetbrains.com/issue/KT-27201) MPP library wizards: provide maven publishing
+- [`KT-27214`](https://youtrack.jetbrains.com/issue/KT-27214) Android test source directories are not recognised in IDE
+- [`KT-27351`](https://youtrack.jetbrains.com/issue/KT-27351) Better fix for coroutines outdated versions in Gradle and Maven
+
+### IDE. Android
+
+- [`KT-27331`](https://youtrack.jetbrains.com/issue/KT-27331) Missing dependencies in Android project depending on MPP project
+
+### IDE. Inspections and Intentions
+
+- [`KT-27164`](https://youtrack.jetbrains.com/issue/KT-27164) Create a quick fix for replacing obsolete coroutines in the whole project
+
+### IDE. Multiplatform
+
+- [`KT-27029`](https://youtrack.jetbrains.com/issue/KT-27029) Multiplatform project is unloaded if Gradle refresh/reimport is failed
+
+### Libraries
+
+- [`KT-22869`](https://youtrack.jetbrains.com/issue/KT-22869) Improve docs of assertFailsWith function
+
+### Tools. CLI
+
+- [`KT-27218`](https://youtrack.jetbrains.com/issue/KT-27218) From @<argfile> not all whitespace characters are parsed correctly
+
+### Tools. Compiler Plugins
+
+- [`KT-27166`](https://youtrack.jetbrains.com/issue/KT-27166) Disable kotlinx.serialization plugin in IDE by default
+
+## 1.3-RC2
+
+### Android
+
+- [`KT-27006`](https://youtrack.jetbrains.com/issue/KT-27006) Android extensions are not recognised by IDE in multiplatform projects
+- [`KT-27008`](https://youtrack.jetbrains.com/issue/KT-27008) Compiler plugins are not working in multiplatform projects with Android target
+
+### Compiler
+
+- [`KT-24415`](https://youtrack.jetbrains.com/issue/KT-24415) Remove bridge flag from default methods
+- [`KT-24510`](https://youtrack.jetbrains.com/issue/KT-24510) Coroutines make Android's D8 angry
+- [`KT-25545`](https://youtrack.jetbrains.com/issue/KT-25545) Import statement of `@Experimental` element causes compiler warning/error, but annotation can't be used to avoid it
+- [`KT-26382`](https://youtrack.jetbrains.com/issue/KT-26382) Wrong smartcast if used safe call + returnsNull effect
+- [`KT-26640`](https://youtrack.jetbrains.com/issue/KT-26640) Check inference behaviour for coroutines that it's possible to improve it in compatible way
+- [`KT-26804`](https://youtrack.jetbrains.com/issue/KT-26804) Make sure @PublishedAPI is retained in binary representation of a primary constructor of an inline class
+- [`KT-27079`](https://youtrack.jetbrains.com/issue/KT-27079) Allow using extensions without opt-in in builder-inference if they add only trivial constraints
+- [`KT-27084`](https://youtrack.jetbrains.com/issue/KT-27084) smart cast to non-nullable regression from 1.2.70 to 1.3.0-rc-57
+- [`KT-27117`](https://youtrack.jetbrains.com/issue/KT-27117) IllegalAccessError when using private Companion field inside inline lambda
+- [`KT-27121`](https://youtrack.jetbrains.com/issue/KT-27121) Illegal field modifiers in class for a field of an interface companion
+- [`KT-27161`](https://youtrack.jetbrains.com/issue/KT-27161) Getting "Backend Internal error: Descriptor can be left only if it is last" using new when syntax
+
+### IDE
+
+#### New Features
+
+- [`KT-26313`](https://youtrack.jetbrains.com/issue/KT-26313) Support ResolveScopeEnlarger in Kotlin IDE
+- [`KT-26786`](https://youtrack.jetbrains.com/issue/KT-26786) MPP builders: create not only build.gradle but some example files also
+
+#### Fixes
+
+- [`KT-13948`](https://youtrack.jetbrains.com/issue/KT-13948) IDE plugins: improve description
+- [`KT-14981`](https://youtrack.jetbrains.com/issue/KT-14981) IDE should accept only its variant of plugin, as possible
+- [`KT-23864`](https://youtrack.jetbrains.com/issue/KT-23864) Copyright message is duplicated in kotlin file in root package after updating copyright
+- [`KT-24907`](https://youtrack.jetbrains.com/issue/KT-24907) please remove usages of com.intellij.openapi.vfs.StandardFileSystems#getJarRootForLocalFile deprecated long ago
+- [`KT-25449`](https://youtrack.jetbrains.com/issue/KT-25449) Mark classes loaded by custom class loader with @DynamicallyLoaded annotation for the sake of better static analysis
+- [`KT-25463`](https://youtrack.jetbrains.com/issue/KT-25463) API version in Kotlin facets isn't automatically set to 1.3 when importing a project in Gradle
+- [`KT-25952`](https://youtrack.jetbrains.com/issue/KT-25952) New Project Wizard: generate MPP in a new way
+- [`KT-26501`](https://youtrack.jetbrains.com/issue/KT-26501) Fix "IDEA internal actions" group text to "Kotlin internal actions"
+- [`KT-26695`](https://youtrack.jetbrains.com/issue/KT-26695) IDEA takes 1.3-M2-release plugin as more recent than any 1.3.0-dev-nnn or 1.3.0-rc-nnn plugin
+- [`KT-26763`](https://youtrack.jetbrains.com/issue/KT-26763) Compiler options are not imported into Kotlin facet for a Native module
+- [`KT-26774`](https://youtrack.jetbrains.com/issue/KT-26774) Create IDE setting for experimental inline classes
+- [`KT-26889`](https://youtrack.jetbrains.com/issue/KT-26889) Don't show migration dialog if no actual migrations are available
+- [`KT-26933`](https://youtrack.jetbrains.com/issue/KT-26933) No jre -> jdk fix in Gradle file if version isn't written explicitly
+- [`KT-26937`](https://youtrack.jetbrains.com/issue/KT-26937) MPP: Gradle import: adding `target` definition after importing its `sourceSet` does not correct the module SDK
+- [`KT-26953`](https://youtrack.jetbrains.com/issue/KT-26953) New MPP project wrong formatting
+- [`KT-27021`](https://youtrack.jetbrains.com/issue/KT-27021) Wrong JVM target if no Kotlin facet is specified
+- [`KT-27100`](https://youtrack.jetbrains.com/issue/KT-27100) Version migration dialog is not shown in Studio 3.3
+- [`KT-27145`](https://youtrack.jetbrains.com/issue/KT-27145) Gradle import: JVM modules gets no JDK in dependencies
+- [`KT-27177`](https://youtrack.jetbrains.com/issue/KT-27177) MPP wizards: use Gradle 4.7 only
+- [`KT-27193`](https://youtrack.jetbrains.com/issue/KT-27193) Gradle import: with Kotlin configured Android module gets non-Android JDK
+
+### IDE. Code Style, Formatting
+
+- [`KT-27027`](https://youtrack.jetbrains.com/issue/KT-27027) Formatter puts when subject variable on a new line
+
+### IDE. Completion
+
+- [`KT-25313`](https://youtrack.jetbrains.com/issue/KT-25313) Autocomplete generates incorrect code on fields overriding by `expected` class
+
+### IDE. Hints
+
+- [`KT-26057`](https://youtrack.jetbrains.com/issue/KT-26057) (arguably) redundant hint shown for enum value when qualified with enum class
+
+### IDE. Inspections and Intentions
+
+- [`KT-14929`](https://youtrack.jetbrains.com/issue/KT-14929) Deprecated ReplaceWith for type aliases
+- [`KT-25251`](https://youtrack.jetbrains.com/issue/KT-25251) Create intention for migration coroutines from experimental to released state
+- [`KT-26027`](https://youtrack.jetbrains.com/issue/KT-26027) False positive from "Nested lambda has shadowed implicit parameter" inspection for SAM conversion
+- [`KT-26268`](https://youtrack.jetbrains.com/issue/KT-26268) Inspection "Nested lambda has shadowed implicit parameter" should only warn if parameter is used
+- [`KT-26775`](https://youtrack.jetbrains.com/issue/KT-26775) Create quick fix that enable or disable experimental inline classes in project
+- [`KT-26991`](https://youtrack.jetbrains.com/issue/KT-26991) ReplaceWith for object doesn't work anymore
+
+### IDE. Multiplatform
+
+- [`KT-24060`](https://youtrack.jetbrains.com/issue/KT-24060) `main` function in common part of MPP project: allow user to choose between platform modules to run it from
+- [`KT-26647`](https://youtrack.jetbrains.com/issue/KT-26647) Warn user about incompatible/ignored Native targets on Gradle build of a project with the new multiplatform model
+- [`KT-26690`](https://youtrack.jetbrains.com/issue/KT-26690) IDE significantly slows down having Native target in a multiplatform project
+- [`KT-26872`](https://youtrack.jetbrains.com/issue/KT-26872) MPP: JS: Node.js run configuration is created with not existing JavaScript file
+- [`KT-26942`](https://youtrack.jetbrains.com/issue/KT-26942) MPP IDE: JS test configuration removes gutter actions from common module
+- [`KT-27010`](https://youtrack.jetbrains.com/issue/KT-27010) New mpp: missing run gutters in common code when relevant platform roots do not exist
+- [`KT-27133`](https://youtrack.jetbrains.com/issue/KT-27133) IDE requires `actual` implementations to be also present in test source sets
+- [`KT-27172`](https://youtrack.jetbrains.com/issue/KT-27172) ISE: "The provided plugin org.jetbrains.kotlin.android.synthetic.AndroidComponentRegistrar is not compatible with this version of compiler" on build of a multiplatform project with iOS and Android
+
+### IDE. Navigation
+
+- [`KT-25055`](https://youtrack.jetbrains.com/issue/KT-25055) Android modules are named same as JVM ones in `actual` gutter tooltip
+- [`KT-26004`](https://youtrack.jetbrains.com/issue/KT-26004) IDE: Unable to navigate to common library declaration from platform code (not necessarily in an MPP project)
+
+### IDE. Tests Support
+
+- [`KT-23884`](https://youtrack.jetbrains.com/issue/KT-23884) Running common module test in IDE results in "no JDK specified" error
+- [`KT-23911`](https://youtrack.jetbrains.com/issue/KT-23911) Cannot jump to source from common test function in Run tool window
+
+### Libraries
+
+- [`KT-18608`](https://youtrack.jetbrains.com/issue/KT-18608) Result type for Kotlin (aka Try monad)
+- [`KT-26666`](https://youtrack.jetbrains.com/issue/KT-26666) Add documentation for contract DSL
+
+### Reflection
+
+- [`KT-24170`](https://youtrack.jetbrains.com/issue/KT-24170) Instance parameter of inherited declaration should have the type of subclass, not the base class
+
+### Tools. Compiler Plugins
+
+- [`KT-24444`](https://youtrack.jetbrains.com/issue/KT-24444) Do not store proxy objects from Gradle importer in the project model
+
+### Tools. Gradle
+
+- [`KT-25200`](https://youtrack.jetbrains.com/issue/KT-25200) Report a warning when building multiplatform code in Gradle
+- [`KT-26390`](https://youtrack.jetbrains.com/issue/KT-26390) Implement source JARs building and publishing in new MPP
+- [`KT-26771`](https://youtrack.jetbrains.com/issue/KT-26771) New Native MPP Gradle plugin creates publications only for host system
+- [`KT-26834`](https://youtrack.jetbrains.com/issue/KT-26834) Gradle compilation of multimodule project fails with Could not resolve all files for configuration ':example-v8:apiDependenciesMetadata'
+- [`KT-27111`](https://youtrack.jetbrains.com/issue/KT-27111) `org.jetbrains.kotlin.platform.type` is not set for some Gradle configurations in multiplatform plugin
+- [`KT-27196`](https://youtrack.jetbrains.com/issue/KT-27196) Support Kotlin/JS DCE in new MPP
+
+### Tools. Scripts
+
+- [`KT-26828`](https://youtrack.jetbrains.com/issue/KT-26828) main-kts test fails with "Error processing script definition class"
+- [`KT-27015`](https://youtrack.jetbrains.com/issue/KT-27015) Scripting sample from 1.3 RC blogpost does not work
+- [`KT-27050`](https://youtrack.jetbrains.com/issue/KT-27050) 1.3-RC Scripting @file:Repository and @file:DependsOn annotations are not repeatable
+
 ## 1.3-RC
 
 ### Compiler
