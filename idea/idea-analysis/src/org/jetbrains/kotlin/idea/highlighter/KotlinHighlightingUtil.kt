@@ -38,6 +38,10 @@ object KotlinHighlightingUtil {
             return shouldHighlightScript(ktFile)
         }
 
+        if (OutsidersPsiFileSupportWrapper.isOutsiderFile(ktFile.virtualFile)) {
+            return true
+        }
+
         return ProjectRootsUtil.isInProjectOrLibraryContent(ktFile) && ktFile.getModuleInfo() !is NotUnderContentRootModuleInfo
     }
 
