@@ -125,7 +125,7 @@ public actual open class AssertionError : Error {
 
     constructor(cause: Throwable?) : super(cause)
 
-    actual constructor(message: Any?) : super(message.toString())
+    actual constructor(message: Any?) : super(message?.toString())
 
     constructor(message: String?, cause: Throwable?) : super(message, cause)
 }
