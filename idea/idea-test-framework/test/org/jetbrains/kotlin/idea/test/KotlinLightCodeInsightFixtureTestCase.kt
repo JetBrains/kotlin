@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.idea.test
 
-import com.intellij.codeInsight.CodeInsightTestCase
 import com.intellij.codeInsight.daemon.impl.EditorTracker
 import com.intellij.ide.highlighter.JavaFileType
 import com.intellij.ide.startup.impl.StartupManagerImpl
@@ -31,7 +30,9 @@ import com.intellij.testFramework.LightProjectDescriptor
 import com.intellij.testFramework.LoggedErrorProcessor
 import org.apache.log4j.Logger
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
-import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.config.CompilerSettings
+import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.compiler.configuration.KotlinCommonCompilerArgumentsHolder
 import org.jetbrains.kotlin.idea.compiler.configuration.KotlinCompilerSettings
@@ -93,6 +94,16 @@ abstract class KotlinLightCodeInsightFixtureTestCase : KotlinLightCodeInsightFix
 
     override fun getProjectDescriptor(): LightProjectDescriptor
             = getProjectDescriptorFromFileDirective()
+
+    protected fun getProjectDescriptorFromAnnotation(): LightProjectDescriptor {
+        val testMethod = this::class.java.getDeclaredMethod(name)
+        val platformId = testMethod.getAnnotation(ProjectDescriptorKind::class.java)?.value
+
+        return when (platformId) {
+            JDK_AND_MULTIPLATFORM_STDLIB_WITH_SOURCES -> KotlinJdkAndMultiplatformStdlibDescriptor.JDK_AND_MULTIPLATFORM_STDLIB_WITH_SOURCES
+            else -> throw IllegalStateException("Unknown value for project descriptor kind")
+        }
+    }
 
     protected fun getProjectDescriptorFromTestName(): LightProjectDescriptor {
         val testName = StringUtil.toLowerCase(getTestName(false))

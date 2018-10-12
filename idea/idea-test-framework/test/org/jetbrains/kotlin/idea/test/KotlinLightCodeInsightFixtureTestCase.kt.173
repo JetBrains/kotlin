@@ -95,6 +95,16 @@ abstract class KotlinLightCodeInsightFixtureTestCase : KotlinLightCodeInsightFix
     override fun getProjectDescriptor(): LightProjectDescriptor
             = getProjectDescriptorFromFileDirective()
 
+    protected fun getProjectDescriptorFromAnnotation(): LightProjectDescriptor {
+        val testMethod = this::class.java.getDeclaredMethod(name)
+        val platformId = testMethod.getAnnotation(ProjectDescriptorKind::class.java)?.value
+
+        return when (platformId) {
+            JDK_AND_MULTIPLATFORM_STDLIB_WITH_SOURCES -> KotlinJdkAndMultiplatformStdlibDescriptor.JDK_AND_MULTIPLATFORM_STDLIB_WITH_SOURCES
+            else -> throw IllegalStateException("Unknown value for project descriptor kind")
+        }
+    }
+
     protected fun getProjectDescriptorFromTestName(): LightProjectDescriptor {
         val testName = StringUtil.toLowerCase(getTestName(false))
 
