@@ -20633,6 +20633,11 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             runTest("compiler/testData/codegen/box/specialBuiltins/throwableCause.kt");
         }
 
+        @TestMetadata("throwableComplex.kt")
+        public void testThrowableComplex() throws Exception {
+            runTest("compiler/testData/codegen/box/specialBuiltins/throwableComplex.kt");
+        }
+
         @TestMetadata("throwableImpl.kt")
         public void testThrowableImpl() throws Exception {
             runTest("compiler/testData/codegen/box/specialBuiltins/throwableImpl.kt");
