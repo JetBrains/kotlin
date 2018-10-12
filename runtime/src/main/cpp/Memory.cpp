@@ -27,6 +27,7 @@
 #include "MemoryPrivate.hpp"
 #include "Natives.h"
 #include "Porting.h"
+#include "Runtime.h"
 
 // If garbage collection algorithm for cyclic garbage to be used.
 // We are using the Bacon's algorithm for GC, see
@@ -351,11 +352,6 @@ namespace {
 // TODO: can we pass this variable as an explicit argument?
 THREAD_LOCAL_VARIABLE MemoryState* memoryState = nullptr;
 
-// TODO: use widely.
-inline void EnsureRuntimeInitialized() {
-  RuntimeCheck(memoryState != nullptr, "Unable to execute Kotlin code on uninitialized thread");
-}
-
 constexpr int kFrameOverlaySlots = sizeof(FrameOverlay) / sizeof(ObjHeader**);
 
 inline bool isFreeable(const ContainerHeader* header) {
@@ -420,10 +416,15 @@ void KRefSharedHolder::initRefOwner() {
 void KRefSharedHolder::verifyRefOwner() const {
   // Note: checking for 'permanentOrFrozen()' and retrieving 'type_info()'
   // are supposed to be correct even for unowned object.
-  if (owner_ != memoryState && !obj_->container()->permanentOrFrozen()) {
-    EnsureRuntimeInitialized();
-    // TODO: add some info about the owner.
-    ThrowIllegalObjectSharingException(obj_->type_info(), obj_);
+  if (owner_ != memoryState) {
+    // Initialized runtime is required to throw the exception below
+    // or to provide proper execution context for shared objects:
+    if (memoryState == nullptr) Kotlin_initRuntimeIfNeeded();
+
+    if (!obj_->container()->permanentOrFrozen()) {
+      // TODO: add some info about the owner.
+      ThrowIllegalObjectSharingException(obj_->type_info(), obj_);
+    }
   }
 }
 
