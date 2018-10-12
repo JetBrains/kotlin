@@ -116,17 +116,26 @@ task distSourcesJar(type: Jar) {
     }
 }
 
+task distMavenSources(type: Copy) {
+    from(sourcesJar)
+    into "$distDir/maven"
+    rename "-${java.util.regex.Pattern.quote(version)}", ''
+}
+
 artifacts {
     archives sourcesJar
     archives javadocJar
 }
 
 dist {
+    dependsOn distMavenSources
+
     [jar, distSourcesJar].forEach {
         from(it) {
             rename('dist-', '')
         }
     }
+
     from (configurations.compile) {
         include 'annotations*.jar'
     }

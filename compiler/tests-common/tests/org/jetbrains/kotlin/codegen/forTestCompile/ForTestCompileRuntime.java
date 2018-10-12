@@ -75,8 +75,18 @@ public class ForTestCompileRuntime {
     }
 
     @NotNull
+    public static File stdlibMavenSourcesJarForTests() {
+        return assertExists(new File("dist/maven/kotlin-stdlib-sources.jar"));
+    }
+
+    @NotNull
     public static File stdlibCommonForTests() {
         return assertExists(new File("dist/common/kotlin-stdlib-common.jar"));
+    }
+
+    @NotNull
+    public static File stdlibCommonSourcesForTests() {
+        return assertExists(new File("dist/common/kotlin-stdlib-common-sources.jar"));
     }
 
     @NotNull
