@@ -18,17 +18,14 @@ package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiComment
-import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiWhiteSpace
-import org.jetbrains.kotlin.idea.core.deleteElementAndCleanParent
-import org.jetbrains.kotlin.idea.intentions.branchedTransformations.lineCount
+import org.jetbrains.kotlin.idea.refactoring.getLineCount
 import org.jetbrains.kotlin.idea.refactoring.getLineNumber
 import org.jetbrains.kotlin.idea.util.CommentSaver
 import org.jetbrains.kotlin.j2k.isInSingleLine
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
-import java.lang.IllegalArgumentException
 
 class AddBracesIntention : SelfTargetingIntention<KtElement>(KtElement::class.java, "Add braces") {
     override fun isApplicableTo(element: KtElement, caretOffset: Int): Boolean {
@@ -55,7 +52,7 @@ class AddBracesIntention : SelfTargetingIntention<KtElement>(KtElement::class.ja
     override fun applyTo(element: KtElement, editor: Editor?) {
         if (editor == null) throw IllegalArgumentException("This intention requires an editor")
         val expression = element.getTargetExpression(editor.caretModel.offset)!!
-
+        var isCommentBeneath = false
         val psiFactory = KtPsiFactory(element)
 
         val semicolon = element.getNextSiblingIgnoringWhitespaceAndComments()?.takeIf { it.node.elementType == KtTokens.SEMICOLON }
@@ -65,6 +62,14 @@ class AddBracesIntention : SelfTargetingIntention<KtElement>(KtElement::class.ja
                 semicolon.replace(psiFactory.createNewLine())
             else
                 semicolon.delete()
+        }
+
+        // TODO: Check if there's only 1 PsiComment at the end of the element, but underneath the actual expression
+        // TODO: Also make sure to exclude other test cases that don't have a comment underneath the expression.
+        if (element is KtIfExpression && expression.isInSingleLine()) {
+            val lastComment = element.siblings(withItself = false).filter { it !is PsiWhiteSpace }.last { it is PsiComment }
+            val allComments = element.allChildren.filterIsInstance<PsiComment>().toList()
+            isCommentBeneath = element.getLineCount() <= 1 && lastComment is PsiComment // && allComments.count() == 0) {
         }
 
         val nextComment = when {
@@ -89,7 +94,7 @@ class AddBracesIntention : SelfTargetingIntention<KtElement>(KtElement::class.ja
         }
 
         // Check for single line expression with comment beneath.
-        if (expression.isInSingleLine()) { // TODO: Check if there's a second line (PsiComment) in expression
+        if (isCommentBeneath) {
             saver.restore(result, true, false)
         } else {
             saver.restore(result, false, false)
