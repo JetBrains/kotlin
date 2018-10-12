@@ -107,7 +107,6 @@ interface IrBuilderExtension {
     }
 
     fun IrBuilderWithScope.createArrayOfExpression(
-            resultingType: IrType,
             arrayElementType: IrType,
             arrayElements: List<IrExpression>
     ): IrExpression {
@@ -116,7 +115,7 @@ interface IrBuilderExtension {
         val arg0 = IrVarargImpl(startOffset, endOffset, arrayType, arrayElementType, arrayElements)
         val typeArguments = listOf(arrayElementType)
 
-        return irCall(compilerContext.ir.symbols.arrayOf, resultingType, typeArguments = typeArguments).apply {
+        return irCall(compilerContext.ir.symbols.arrayOf, arrayType, typeArguments = typeArguments).apply {
             putValueArgument(0, arg0)
         }
     }
@@ -381,6 +380,21 @@ interface IrBuilderExtension {
         )
     }
 
+    fun findEnumValuesMethod(enumClass: ClassDescriptor): IrFunction {
+        assert(enumClass.kind == ClassKind.ENUM_CLASS)
+        return compilerContext.externalSymbols.referenceClass(enumClass).owner.functions
+            .find { it.origin == IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER && it.name == Name.identifier("values") }
+            ?: throw AssertionError("Enum class does not have .values() function")
+    }
+
+    private fun getEnumMembersNames(enumClass: ClassDescriptor): Sequence<String> {
+        assert(enumClass.kind == ClassKind.ENUM_CLASS)
+        return enumClass.unsubstitutedMemberScope.getContributedDescriptors().asSequence()
+            .filterIsInstance<ClassDescriptor>()
+            .filter { it.kind == ClassKind.ENUM_ENTRY }
+            .map { it.name.toString() }
+    }
+
     // Does not use sti and therefore does not perform encoder calls optimization
     fun IrBuilderWithScope.serializerTower(generator: SerializerIrGenerator, property: SerializableProperty): IrExpression? {
         val nullableSerClass =
@@ -400,33 +414,48 @@ interface IrBuilderExtension {
     fun IrBuilderWithScope.serializerInstance(
         enclosingGenerator: SerializerIrGenerator,
         serializableDescriptor: ClassDescriptor,
-        serializerClass: ClassDescriptor?,
+        serializerClassOriginal: ClassDescriptor?,
         module: ModuleDescriptor,
         kType: KotlinType,
         genericIndex: Int? = null
     ): IrExpression? {
         val nullableSerClass =
             compilerContext.externalSymbols.referenceClass(module.getClassFromInternalSerializationPackage(SpecialBuiltins.nullableSerializer))
-        if (serializerClass == null) {
+        if (serializerClassOriginal == null) {
             if (genericIndex == null) return null
             val thiz = enclosingGenerator.irClass.thisReceiver!!
             val prop = enclosingGenerator.localSerializersFieldsDescriptors[genericIndex]
             return irGetField(irGet(thiz), compilerContext.localSymbolTable.referenceField(prop).owner)
         }
-        if (serializerClass.kind == ClassKind.OBJECT) {
-            return irGetObject(serializerClass)
+        if (serializerClassOriginal.kind == ClassKind.OBJECT) {
+            return irGetObject(serializerClassOriginal)
         } else {
-            // todo: special instantiation of enum serializer according to new design
-            var args = if (serializerClass.classId == enumSerializerId || serializerClass.classId == contextSerializerId)
-                listOf(classReference(kType))
-            else kType.arguments.map {
-                val argSer = enclosingGenerator.findTypeSerializerOrContext(module, it.type, sourceElement = serializerClass.findPsi())
-                val expr = serializerInstance(enclosingGenerator, serializableDescriptor, argSer, module, it.type, it.type.genericIndex)
-                    ?: return null
-                if (it.type.isMarkedNullable) irInvoke(null, nullableSerClass.constructors.toList()[0], expr) else expr
+            var serializerClass = serializerClassOriginal
+            var args: List<IrExpression> = when (serializerClassOriginal.classId) {
+                contextSerializerId -> listOf(classReference(kType))
+                enumSerializerId -> {
+                    serializerClass = serializableDescriptor.getClassFromInternalSerializationPackage("CommonEnumSerializer")
+                    kType.toClassDescriptor!!.let { enumDesc ->
+                        listOf(
+                            irString(enumDesc.name.toString()),
+                            irCall(findEnumValuesMethod(enumDesc)),
+                            createArrayOfExpression(
+                                compilerContext.irBuiltIns.stringType,
+                                getEnumMembersNames(enumDesc).map { irString(it) }.toList()
+                            )
+                        )
+                    }
+                }
+                else -> kType.arguments.map {
+                    val argSer = enclosingGenerator.findTypeSerializerOrContext(module, it.type, sourceElement = serializerClassOriginal.findPsi())
+                    val expr = serializerInstance(enclosingGenerator, serializableDescriptor, argSer, module, it.type, it.type.genericIndex)
+                        ?: return null
+                    if (it.type.isMarkedNullable) irInvoke(null, nullableSerClass.constructors.toList()[0], expr) else expr
+                }
             }
-            if (serializerClass.classId == referenceArraySerializerId)
+            if (serializerClassOriginal.classId == referenceArraySerializerId)
                 args = listOf(classReference(kType.arguments[0].type)) + args
+
             val serializable = getSerializableClassDescriptorBySerializer(serializerClass)
             val ctor = if (serializable?.declaredTypeParameters?.isNotEmpty() == true) {
                 requireNotNull(
