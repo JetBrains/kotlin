@@ -14501,6 +14501,11 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 runTest("compiler/testData/diagnostics/tests/override/ExtendFunctionClass.kt");
             }
 
+            @TestMetadata("fakeEquals.kt")
+            public void testFakeEquals() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/override/fakeEquals.kt");
+            }
+
             @TestMetadata("FakeOverrideAbstractAndNonAbstractFun.kt")
             public void testFakeOverrideAbstractAndNonAbstractFun() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/override/FakeOverrideAbstractAndNonAbstractFun.kt");
