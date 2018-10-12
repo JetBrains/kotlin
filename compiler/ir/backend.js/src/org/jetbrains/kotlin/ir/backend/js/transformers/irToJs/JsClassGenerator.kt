@@ -10,11 +10,14 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.backend.js.utils.JsGenerationContext
 import org.jetbrains.kotlin.ir.backend.js.utils.Namer
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.types.isAny
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.js.backend.ast.*
+import org.jetbrains.kotlin.name.Name
 
 class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationContext) {
 
@@ -55,8 +58,43 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
 
         classBlock.statements += generateClassMetadata()
         irClass.onlyIf({ kind == ClassKind.OBJECT }) { classBlock.statements += maybeGenerateObjectInstance() }
+        if (irClass.superTypes.any { it.isThrowable() }) {
+            classBlock.statements += genereateThrowableProperties()
+        }
         context.staticContext.classModels[className] = classModel
         return classBlock
+    }
+
+    private fun genereateThrowableProperties(): List<JsStatement> {
+        val functions = irClass.declarations.filterIsInstance<IrSimpleFunction>()
+
+        val messageGetter = functions.single { it.name == Name.special("<get-message>") }
+        val causeGetter = functions.single { it.name == Name.special("<get-cause>") }
+
+        val msgProperty = defineProperty(classPrototypeRef, "message") {
+            val literal = JsObjectLiteral(true)
+            val function = buildGetterFunction(messageGetter)
+            literal.apply {
+                propertyInitializers += JsPropertyInitializer(JsStringLiteral("get"), function)
+            }
+        }
+
+        val causeProperty = defineProperty(classPrototypeRef, "cause") {
+            val literal = JsObjectLiteral(true)
+            val function = buildGetterFunction(causeGetter)
+            literal.apply {
+                propertyInitializers += JsPropertyInitializer(JsStringLiteral("get"), function)
+            }
+        }
+
+        return listOf(msgProperty.makeStmt(), causeProperty.makeStmt())
+    }
+
+    private fun buildGetterFunction(delegate: IrSimpleFunction): JsFunction {
+        val getterName = context.getNameForSymbol(delegate.symbol)
+        val returnStatement = JsReturn(JsInvocation(JsNameRef(getterName, JsThisRef())))
+
+        return JsFunction(JsFunctionScope(context.currentScope, ""), JsBlock(returnStatement), "")
     }
 
     private fun generateMemberFunction(declaration: IrSimpleFunction): JsStatement? {
@@ -77,7 +115,13 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
         // II.prototype.foo = I.prototype.foo
         if (!irClass.isInterface) {
             declaration.resolveFakeOverride()?.let {
-                val implClassDeclaration = it.parent as IrClass
+                var implClassDeclaration = it.parent as IrClass
+
+                // special case
+                if (implClassDeclaration.defaultType.isThrowable()) {
+                    implClassDeclaration = throwableAccessor()
+                }
+
                 if (!implClassDeclaration.defaultType.isAny() && !it.isEffectivelyExternal()) {
                     val implMethodName = context.getNameForSymbol(it.symbol)
                     val implClassName = context.getNameForSymbol(implClassDeclaration.symbol)
@@ -91,6 +135,18 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
         }
 
         return null
+    }
+
+    private fun throwableAccessor(): IrClass {
+
+        fun throwableAccessorImpl(type: IrType): IrType {
+            val klass = (type.classifierOrFail as IrClassSymbol)
+            val superType = klass.owner.superTypes.first { (it.classifierOrFail as? IrClassSymbol)?.owner?.kind == ClassKind.CLASS }
+            return if (superType.isThrowable()) type else throwableAccessorImpl(superType)
+        }
+
+
+        return (throwableAccessorImpl(irClass.defaultType).classifierOrFail as IrClassSymbol).owner
     }
 
     private fun maybeGenerateObjectInstance(): List<JsStatement> {

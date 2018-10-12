@@ -84,6 +84,8 @@ class JsIrBackendContext(
     }
 
     companion object {
+        val KOTLIN_PACKAGE_FQN = FqName.fromSegments(listOf("kotlin"))
+
         private val INTRINSICS_PACKAGE_NAME = Name.identifier("intrinsics")
         private val COROUTINE_SUSPENDED_NAME = Name.identifier("COROUTINE_SUSPENDED")
         private val COROUTINE_CONTEXT_NAME = Name.identifier("coroutineContext")
@@ -91,10 +93,10 @@ class JsIrBackendContext(
         private val CONTINUATION_NAME = Name.identifier("Continuation")
         // TODO: what is more clear way reference this getter?
         private val CONTINUATION_CONTEXT_GETTER_NAME = Name.special("<get-context>")
-        private val CONTINUATION_CONTEXT_PROPERTY_NAME = Name.identifier("context")
 
-        private val REFLECT_PACKAGE_FQNAME = FqName.fromSegments(listOf("kotlin", "reflect"))
-        private val JS_PACKAGE_FQNAME = FqName.fromSegments(listOf("kotlin", "js"))
+        private val CONTINUATION_CONTEXT_PROPERTY_NAME = Name.identifier("context")
+        private val REFLECT_PACKAGE_FQNAME = KOTLIN_PACKAGE_FQN.child(Name.identifier("reflect"))
+        private val JS_PACKAGE_FQNAME = KOTLIN_PACKAGE_FQN.child(Name.identifier("js"))
         private val JS_INTERNAL_PACKAGE_FQNAME = JS_PACKAGE_FQNAME.child(Name.identifier("internal"))
         private val COROUTINE_PACKAGE_FQNAME_12 = FqName.fromSegments(listOf("kotlin", "coroutines", "experimental"))
         private val COROUTINE_PACKAGE_FQNAME_13 = FqName.fromSegments(listOf("kotlin", "coroutines"))
@@ -122,8 +124,8 @@ class JsIrBackendContext(
                 ) as ClassDescriptor
             )
             val contextGetter =
-                continuation.owner.declarations.filterIsInstance<IrFunction>().atMostOne { it.descriptor.name == CONTINUATION_CONTEXT_GETTER_NAME }
-                    ?: continuation.owner.declarations.filterIsInstance<IrProperty>().atMostOne { it.descriptor.name == CONTINUATION_CONTEXT_PROPERTY_NAME }?.getter!!
+                continuation.owner.declarations.filterIsInstance<IrFunction>().atMostOne { it.name == CONTINUATION_CONTEXT_GETTER_NAME }
+                    ?: continuation.owner.declarations.filterIsInstance<IrProperty>().atMostOne { it.name == CONTINUATION_CONTEXT_PROPERTY_NAME }?.getter!!
             return contextGetter.symbol
         }
 
