@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.idea.configuration
 
-import com.intellij.openapi.module.Module
 import com.intellij.openapi.vfs.VirtualFile
 import java.io.BufferedWriter
 
@@ -29,7 +28,7 @@ class KotlinGradleWebMultiplatformModuleBuilder : KotlinGradleAbstractMultiplatf
     override fun getDescription() =
         "Multiplatform Gradle projects allow reusing the same Kotlin code between JS Client and JVM Server."
 
-    override fun createProjectSkeleton(module: Module, rootDir: VirtualFile) {
+    override fun createProjectSkeleton(rootDir: VirtualFile) {
         val src = rootDir.createChildDirectory(this, "src")
 
         val commonMain = src.createKotlinSampleFileWriter(commonSourceName)

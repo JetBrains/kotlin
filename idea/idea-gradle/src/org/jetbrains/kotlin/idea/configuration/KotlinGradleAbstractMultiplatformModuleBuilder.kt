@@ -86,7 +86,7 @@ abstract class KotlinGradleAbstractMultiplatformModuleBuilder(
                     it.addIncludedModules(listOf(":app"))
                 }
             }
-            createProjectSkeleton(module, rootDir)
+            createProjectSkeleton(rootDir)
             if (externalProjectSettings.distributionType == DistributionType.DEFAULT_WRAPPED) {
                 setGradleWrapperToUseVersion(rootDir, "4.7")
             }
@@ -132,7 +132,7 @@ abstract class KotlinGradleAbstractMultiplatformModuleBuilder(
         .createChildData(this, fileName)
         .bufferedWriter()
 
-    protected open fun createProjectSkeleton(module: Module, rootDir: VirtualFile) {}
+    protected open fun createProjectSkeleton(rootDir: VirtualFile) {}
 
     protected open val notImportedCommonSourceSets = false
 

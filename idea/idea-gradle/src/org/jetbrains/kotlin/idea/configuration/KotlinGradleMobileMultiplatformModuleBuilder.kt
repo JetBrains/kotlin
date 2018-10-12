@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.idea.configuration
 
-import com.intellij.openapi.module.Module
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.idea.configuration.xcode.XcodeProjectConfigurator
 import org.jetbrains.plugins.gradle.frameworkSupport.BuildScriptDataBuilder
@@ -48,7 +47,7 @@ class KotlinGradleMobileMultiplatformModuleBuilder :
         addRepositoriesDefinition("jcenter()")
     }
 
-    override fun createProjectSkeleton(module: Module, rootDir: VirtualFile) {
+    override fun createProjectSkeleton(rootDir: VirtualFile) {
         val appDir = rootDir.findChild(androidAppName)!!
         val src = appDir.createChildDirectory(this, "src")
 
