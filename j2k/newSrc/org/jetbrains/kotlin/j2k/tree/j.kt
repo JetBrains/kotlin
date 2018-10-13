@@ -107,3 +107,4 @@ interface JKJavaLabelSwitchCase : JKJavaSwitchCase {
     var label: JKExpression
 }
 
+interface JKJavaContinueStatement: JKStatement

@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.j2k.tree.JKMethod
 import org.jetbrains.kotlin.j2k.tree.JKTreeElement
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtNamedFunction
+import org.jetbrains.kotlin.psi.KtProperty
 
 interface JKSymbol {
     val target: Any
@@ -120,13 +121,21 @@ class JKMultiverseFieldSymbol(override val target: PsiField) : JKFieldSymbol {
         get() = target.name // TODO("Fix this")
 }
 
+class JKMultiversePropertySymbol(override val target: KtProperty) : JKFieldSymbol {
+    override val name: String
+        get() = target.name!!
+    override val declaredIn: JKSymbol
+        get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
+    override val fqName: String
+        get() = target.name!! // TODO("Fix this")
+}
+
 class JKUnresolvedField(override val target: String) : JKFieldSymbol {
     constructor(target: PsiReference) : this(target.canonicalText)
 
     override val declaredIn: JKSymbol
         get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
     override val fqName: String = target
-
     override val name: String
         get() = target
 }

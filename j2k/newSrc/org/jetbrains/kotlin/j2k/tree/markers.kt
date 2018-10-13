@@ -81,3 +81,6 @@ inline fun <reified T> JKElement.getParentOfType(): T? {
         p = p.parent
     }
 }
+
+fun <T : JKElement> T.detached() =
+    also { if (parent != null) detach(parent!!) }

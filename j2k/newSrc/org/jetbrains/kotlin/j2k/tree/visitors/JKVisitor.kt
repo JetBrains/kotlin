@@ -69,6 +69,7 @@ interface JKVisitor<out R, in D> {
     fun visitJavaInstanceOfExpression(javaInstanceOfExpression: JKJavaInstanceOfExpression, data: D): R = visitExpression(javaInstanceOfExpression, data)
     fun visitJavaPolyadicExpression(javaPolyadicExpression: JKJavaPolyadicExpression, data: D): R = visitExpression(javaPolyadicExpression, data)
     fun visitJavaAssignmentExpression(javaAssignmentExpression: JKJavaAssignmentExpression, data: D): R = visitExpression(javaAssignmentExpression, data)
+    fun visitJavaContinueStatement(javaContinueStatement: JKJavaContinueStatement, data: D): R = visitStatement(javaContinueStatement, data)
     fun visitJavaSwitchStatement(javaSwitchStatement: JKJavaSwitchStatement, data: D): R = visitStatement(javaSwitchStatement, data)
     fun visitJavaSwitchCase(javaSwitchCase: JKJavaSwitchCase, data: D): R = visitTreeElement(javaSwitchCase, data)
     fun visitJavaDefaultSwitchCase(javaDefaultSwitchCase: JKJavaDefaultSwitchCase, data: D): R = visitJavaSwitchCase(javaDefaultSwitchCase, data)
@@ -90,4 +91,6 @@ interface JKVisitor<out R, in D> {
     fun visitKtValueWhenLabel(ktValueWhenLabel: JKKtValueWhenLabel, data: D): R = visitKtWhenLabel(ktValueWhenLabel, data)
     fun visitKtIsExpression(ktIsExpression: JKKtIsExpression, data: D): R = visitExpression(ktIsExpression, data)
     fun visitKtInitDeclaration(ktInitDeclaration: JKKtInitDeclaration, data: D): R = visitDeclaration(ktInitDeclaration, data)
+    fun visitKtForInStatement(ktForInStatement: JKKtForInStatement, data: D): R = visitStatement(ktForInStatement, data)
+    fun visitKtOperatorExpression(ktOperatorExpression: JKKtOperatorExpression, data: D): R = visitExpression(ktOperatorExpression, data)
 }

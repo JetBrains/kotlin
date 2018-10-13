@@ -143,6 +143,8 @@ interface JKVisitorVoid : JKVisitor<Unit, Nothing?> {
     override fun visitJavaDefaultSwitchCase(javaDefaultSwitchCase: JKJavaDefaultSwitchCase, data: Nothing?) = visitJavaDefaultSwitchCase(javaDefaultSwitchCase)
     fun visitJavaLabelSwitchCase(javaLabelSwitchCase: JKJavaLabelSwitchCase) = visitJavaSwitchCase(javaLabelSwitchCase, null)
     override fun visitJavaLabelSwitchCase(javaLabelSwitchCase: JKJavaLabelSwitchCase, data: Nothing?) = visitJavaLabelSwitchCase(javaLabelSwitchCase)
+    fun visitJavaContinueStatement(javaContinueStatement: JKJavaContinueStatement) = visitStatement(javaContinueStatement, null)
+    override fun visitJavaContinueStatement(javaContinueStatement: JKJavaContinueStatement, data: Nothing?) = visitJavaContinueStatement(javaContinueStatement)
     fun visitKtProperty(ktProperty: JKKtProperty) = visitField(ktProperty, null)
     override fun visitKtProperty(ktProperty: JKKtProperty, data: Nothing?) = visitKtProperty(ktProperty)
     fun visitKtFunction(ktFunction: JKKtFunction) = visitMethod(ktFunction, null)
@@ -177,4 +179,8 @@ interface JKVisitorVoid : JKVisitor<Unit, Nothing?> {
     override fun visitKtIsExpression(ktIsExpression: JKKtIsExpression, data: Nothing?) = visitKtIsExpression(ktIsExpression)
     fun visitKtInitDeclaration(ktInitDeclaration: JKKtInitDeclaration) = visitDeclaration(ktInitDeclaration, null)
     override fun visitKtInitDeclaration(ktInitDeclaration: JKKtInitDeclaration, data: Nothing?) = visitKtInitDeclaration(ktInitDeclaration)
+    fun visitKtForInStatement(ktForInStatement: JKKtForInStatement) = visitStatement(ktForInStatement, null)
+    override fun visitKtForInStatement(ktForInStatement: JKKtForInStatement, data: Nothing?) = visitKtForInStatement(ktForInStatement)
+    fun visitKtOperatorExpression(ktOperatorExpression: JKKtOperatorExpression) = visitExpression(ktOperatorExpression, null)
+    override fun visitKtOperatorExpression(ktOperatorExpression: JKKtOperatorExpression, data: Nothing?) = visitKtOperatorExpression(ktOperatorExpression)
 }

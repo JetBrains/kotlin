@@ -45,6 +45,15 @@ class NewCodeBuilder {
             printer.print("/* !!! Hit visitElement for element type: ${treeElement::class} !!! */")
         }
 
+        override fun visitKtForInStatement(ktForInStatement: JKKtForInStatement) {
+            printer.printWithNoIndent("for (")
+            printer.printWithNoIndent(ktForInStatement.variableIdentifier.value)
+            printer.printWithNoIndent(" in ")
+            ktForInStatement.iterationExpression.accept(this)
+            printer.printWithNoIndent(") ")
+            ktForInStatement.body.accept(this)
+        }
+
         override fun visitDoWhileStatement(doWhileStatement: JKDoWhileStatement) {
             printer.printWithNoIndent("do")
             doWhileStatement.body.accept(this)
@@ -226,6 +235,13 @@ class NewCodeBuilder {
             }
         }
 
+        override fun visitKtOperatorExpression(ktOperatorExpression: JKKtOperatorExpression) {
+            ktOperatorExpression.receiver.accept(this)
+            printer.printWithNoIndent(" ")
+            printer.printWithNoIndent(ktOperatorExpression.identifier.name)
+            printer.printWithNoIndent(" ")
+            ktOperatorExpression.argument.accept(this)
+        }
 
         override fun visitIfElseExpression(ifElseExpression: JKIfElseExpression) {
             printer.printWithNoIndent("if (")

@@ -16,6 +16,8 @@
 
 package org.jetbrains.kotlin.j2k.tree
 
+import org.jetbrains.kotlin.j2k.tree.impl.JKMethodSymbol
+
 interface JKKtProperty : JKField {
     val getter: JKBlock
     val setter: JKBlock
@@ -83,4 +85,16 @@ interface JKKtIsExpression : JKExpression {
 
 interface JKKtInitDeclaration : JKDeclaration {
     var block: JKBlock
+}
+
+interface JKKtForInStatement : JKStatement {
+    var variableIdentifier: JKNameIdentifier
+    var iterationExpression: JKExpression
+    var body: JKStatement
+}
+
+interface JKKtOperatorExpression : JKExpression {
+    var receiver: JKExpression
+    var identifier: JKMethodSymbol
+    var argument: JKExpression
 }

@@ -376,3 +376,9 @@ class JKDelegationConstructorCallImpl(
 class JKFieldAccessExpressionImpl(override var identifier: JKFieldSymbol) : JKFieldAccessExpression, JKElementBase() {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitFieldAccessExpression(this, data)
 }
+val JKStatement.statements: List<JKStatement>
+    get() =
+        when (this) {
+            is JKBlockStatement -> block.statements
+            else -> listOf(this)
+        }

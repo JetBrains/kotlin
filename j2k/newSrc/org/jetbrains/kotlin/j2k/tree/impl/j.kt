@@ -70,6 +70,7 @@ class JKJavaOperatorImpl private constructor(val token: IElementType) : JKOperat
             JavaTokenType.MINUSMINUS -> "--"
             JavaTokenType.PLUSPLUS -> "++"
             JavaTokenType.EXCL -> "!"
+            JavaTokenType.ASTERISKEQ -> "*="
             else -> TODO("TODO $token")
         }
 
