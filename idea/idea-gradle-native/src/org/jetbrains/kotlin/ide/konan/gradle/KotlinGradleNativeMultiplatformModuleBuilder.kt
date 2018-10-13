@@ -75,9 +75,9 @@ class KotlinGradleNativeMultiplatformModuleBuilder : KotlinGradleAbstractMultipl
 
                     configure([$nativeTargetName]) {
                         // Comment to generate Kotlin/Native library (KLIB) instead of executable file:
-                        compilations.main.outputKinds('EXECUTABLE')
+                        compilations.main.outputKinds 'EXECUTABLE'
                         // Change to specify fully qualified name of your application's entry point:
-                        compilations.main.entryPoint = 'sample.main'
+                        compilations.main.entryPoint 'sample.main'
                     }
                 }
                 sourceSets {
@@ -91,8 +91,8 @@ class KotlinGradleNativeMultiplatformModuleBuilder : KotlinGradleAbstractMultipl
             }
 
             task runProgram {
-                def buildType = 'release' // Change to 'debug' to run application with debug symbols.
-                dependsOn "link${'$'}{buildType.capitalize()}Executable${nativeTargetName.capitalize()}"
+                def buildType = 'RELEASE' // Change to 'DEBUG' to run application with debug symbols.
+                dependsOn kotlin.targets.$nativeTargetName.compilations.main.linkTaskName('EXECUTABLE', buildType)
                 doLast {
                     def programFile = kotlin.targets.$nativeTargetName.compilations.main.getBinary('EXECUTABLE', buildType)
                     exec {

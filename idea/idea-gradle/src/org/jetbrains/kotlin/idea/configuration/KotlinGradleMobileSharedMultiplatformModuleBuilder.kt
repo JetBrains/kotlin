@@ -151,7 +151,7 @@ class KotlinGradleMobileSharedMultiplatformModuleBuilder : KotlinGradleAbstractM
                     // This preset is for iPhone emulator
                     // Switch here to presets.iosArm64 to build library for iPhone device
                     fromPreset(presets.iosX64, '$nativeTargetName') {
-                        compilations.main.outputKinds('FRAMEWORK')
+                        compilations.main.outputKinds 'FRAMEWORK'
                     }
                 }
                 sourceSets {
