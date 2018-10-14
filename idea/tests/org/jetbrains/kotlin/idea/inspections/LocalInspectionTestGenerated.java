@@ -4083,6 +4083,36 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         public void testSameNameMemberVariable() throws Exception {
             runTest("idea/testData/inspectionsLocal/redundantCompanionReference/sameNameMemberVariable.kt");
         }
+
+        @TestMetadata("sameNameSuperMemberFunction.kt")
+        public void testSameNameSuperMemberFunction() throws Exception {
+            runTest("idea/testData/inspectionsLocal/redundantCompanionReference/sameNameSuperMemberFunction.kt");
+        }
+
+        @TestMetadata("sameNameSuperMemberFunction2.kt")
+        public void testSameNameSuperMemberFunction2() throws Exception {
+            runTest("idea/testData/inspectionsLocal/redundantCompanionReference/sameNameSuperMemberFunction2.kt");
+        }
+
+        @TestMetadata("sameNameSuperMemberFunction3.kt")
+        public void testSameNameSuperMemberFunction3() throws Exception {
+            runTest("idea/testData/inspectionsLocal/redundantCompanionReference/sameNameSuperMemberFunction3.kt");
+        }
+
+        @TestMetadata("sameNameSuperMemberVariable.kt")
+        public void testSameNameSuperMemberVariable() throws Exception {
+            runTest("idea/testData/inspectionsLocal/redundantCompanionReference/sameNameSuperMemberVariable.kt");
+        }
+
+        @TestMetadata("sameNameSuperMemberVariable2.kt")
+        public void testSameNameSuperMemberVariable2() throws Exception {
+            runTest("idea/testData/inspectionsLocal/redundantCompanionReference/sameNameSuperMemberVariable2.kt");
+        }
+
+        @TestMetadata("sameNameSuperMemberVariable3.kt")
+        public void testSameNameSuperMemberVariable3() throws Exception {
+            runTest("idea/testData/inspectionsLocal/redundantCompanionReference/sameNameSuperMemberVariable3.kt");
+        }
     }
 
     @TestMetadata("idea/testData/inspectionsLocal/redundantExplicitType")
