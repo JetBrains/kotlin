@@ -32,11 +32,8 @@ interface CacheAttributesManager<Attrs : Any> {
 
     /**
      * Write [values] as cache attributes for next build execution.
-     *
-     * This is internal operation that should be implemented by particular implementation of CacheAttributesManager.
-     * Consider using `loadDiff().saveExpectedIfNeeded()` for saving attributes values for next build.
      */
-    fun writeActualVersion(values: Attrs?)
+    fun writeVersion(values: Attrs? = expected)
 
     /**
      * Check if cache with [actual] attributes values can be used when [expected] attributes are required.
@@ -54,26 +51,12 @@ fun <Attrs : Any> CacheAttributesManager<Attrs>.loadAndCheckStatus() =
 
 /**
  * This method is kept only for compatibility.
- * Save [expected] cache attributes values if it is enabled and not equals to [actual].
- */
-@Deprecated(
-    message = "Consider using `this.loadDiff().saveExpectedIfNeeded()` and cache `loadDiff()` result.",
-    replaceWith = ReplaceWith("loadDiff().saveExpectedIfNeeded()")
-)
-fun <Attrs : Any> CacheAttributesManager<Attrs>.saveIfNeeded(
-    actual: Attrs? = this.loadActual(),
-    expected: Attrs = this.expected
-        ?: error("To save disabled cache status [delete] should be called (this behavior is kept for compatibility)")
-) = loadDiff(actual, expected).saveExpectedIfNeeded()
-
-/**
- * This method is kept only for compatibility.
  * Delete actual cache attributes values if it existed.
  */
 @Deprecated(
     message = "Consider using `this.loadDiff().saveExpectedIfNeeded()` and cache `loadDiff()` result.",
-    replaceWith = ReplaceWith("writeActualVersion(null)")
+    replaceWith = ReplaceWith("writeVersion(null)")
 )
 fun CacheAttributesManager<*>.clean() {
-    writeActualVersion(null)
+    writeVersion(null)
 }

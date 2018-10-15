@@ -44,7 +44,7 @@ class CacheVersionManager(
             null
         }
 
-    override fun writeActualVersion(values: CacheVersion?) {
+    override fun writeVersion(values: CacheVersion?) {
         if (values == null) versionFile.delete()
         else {
             versionFile.parentFile.mkdirs()

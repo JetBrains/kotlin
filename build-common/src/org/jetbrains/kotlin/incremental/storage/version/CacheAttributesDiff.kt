@@ -27,10 +27,6 @@ data class CacheAttributesDiff<Attrs: Any>(
                 else CacheStatus.CLEARED
             }
 
-    fun saveExpectedIfNeeded() {
-        if (expected != actual) manager.writeActualVersion(expected)
-    }
-
     override fun toString(): String {
         return "$status: actual=$actual -> expected=$expected"
     }

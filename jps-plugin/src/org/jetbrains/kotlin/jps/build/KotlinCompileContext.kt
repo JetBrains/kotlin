@@ -149,7 +149,7 @@ class KotlinCompileContext(val jpsContext: CompileContext) {
      */
     fun ensureLookupsCacheAttributesSaved() {
         if (lookupAttributesSaved.compareAndSet(false, true)) {
-            initialLookupsCacheStateDiff.saveExpectedIfNeeded()
+            initialLookupsCacheStateDiff.manager.writeVersion()
         }
     }
 
@@ -207,7 +207,7 @@ class KotlinCompileContext(val jpsContext: CompileContext) {
     private fun clearLookupCache() {
         KotlinBuilder.LOG.info("Clearing lookup cache")
         dataManager.cleanLookupStorage(KotlinBuilder.LOG)
-        initialLookupsCacheStateDiff.saveExpectedIfNeeded()
+        initialLookupsCacheStateDiff.manager.writeVersion()
     }
 
     fun cleanupCaches() {
