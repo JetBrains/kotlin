@@ -13,8 +13,8 @@ import javax.script.Invocable
 import javax.script.ScriptEngine
 
 fun createScriptEngine(): ScriptEngine =
-        // TODO use "-strict"
-        NashornScriptEngineFactory().getScriptEngine("--language=es5", "--no-java", "--no-syntax-extensions")
+    // TODO use "-strict"
+    NashornScriptEngineFactory().getScriptEngine("--language=es5", "--no-java", "--no-syntax-extensions")
 
 fun ScriptEngine.overrideAsserter() {
     eval("this['kotlin-test'].kotlin.test.overrideAsserter_wbnzx$(new this['kotlin-test'].kotlin.test.DefaultAsserter());")
@@ -27,25 +27,25 @@ fun ScriptEngine.runTestFunction(
     withModuleSystem: Boolean
 ): Any? {
     val testModule =
-            when {
-                withModuleSystem ->
-                    eval(BasicBoxTest.Companion.KOTLIN_TEST_INTERNAL + ".require('" + testModuleName!! + "')")
-                testModuleName === null ->
-                    eval("this")
-                else ->
-                    get(testModuleName)
-            }
+        when {
+            withModuleSystem ->
+                eval(BasicBoxTest.KOTLIN_TEST_INTERNAL + ".require('" + testModuleName!! + "')")
+            testModuleName === null ->
+                eval("this")
+            else ->
+                get(testModuleName)
+        }
     testModule as ScriptObjectMirror
 
     val testPackage =
-            when {
-                testPackageName === null ->
-                    testModule
-                testPackageName.contains(".") ->
-                    testPackageName.split(".").fold(testModule) { p, part -> p[part] as ScriptObjectMirror }
-                else ->
-                    testModule[testPackageName]!!
-            }
+        when {
+            testPackageName === null ->
+                testModule
+            testPackageName.contains(".") ->
+                testPackageName.split(".").fold(testModule) { p, part -> p[part] as ScriptObjectMirror }
+            else ->
+                testModule[testPackageName]!!
+        }
 
     return (this as Invocable).invokeMethod(testPackage, testFunctionName)
 }
@@ -55,21 +55,20 @@ fun ScriptEngine.loadFile(path: String) {
 }
 
 fun ScriptEngine.runAndRestoreContext(
-        f: ScriptEngine.() -> Any?
+    f: ScriptEngine.() -> Any?
 ): Any? {
     val globalObject = eval("this") as ScriptObjectMirror
     val before = globalObject.toMapWithAllMembers()
 
     return try {
         this.f()
-    }
-    finally {
+    } finally {
         val after = globalObject.toMapWithAllMembers()
         val diff = after.entries - before.entries
 
 
         diff.forEach {
-            globalObject.put(it.key, before[it.key] ?: ScriptRuntime.UNDEFINED)
+            globalObject[it.key] = before[it.key] ?: ScriptRuntime.UNDEFINED
         }
     }
 }
@@ -86,12 +85,12 @@ abstract class AbstractNashornJsTestChecker {
         get() = engineCache ?: createScriptEngineForTest().also { engineCache = it }
 
     fun check(
-            files: List<String>,
-            testModuleName: String?,
-            testPackageName: String?,
-            testFunctionName: String,
-            expectedResult: String,
-            withModuleSystem: Boolean
+        files: List<String>,
+        testModuleName: String?,
+        testPackageName: String?,
+        testFunctionName: String,
+        expectedResult: String,
+        withModuleSystem: Boolean
     ) {
         val actualResult = run(files, testModuleName, testPackageName, testFunctionName, withModuleSystem)
         Assert.assertEquals(expectedResult, actualResult)
@@ -102,11 +101,11 @@ abstract class AbstractNashornJsTestChecker {
     }
 
     private fun run(
-            files: List<String>,
-            testModuleName: String?,
-            testPackageName: String?,
-            testFunctionName: String,
-            withModuleSystem: Boolean
+        files: List<String>,
+        testModuleName: String?,
+        testPackageName: String?,
+        testFunctionName: String,
+        withModuleSystem: Boolean
     ) = run(files) {
         runTestFunction(testModuleName, testPackageName, testFunctionName, withModuleSystem)
     }
@@ -114,8 +113,8 @@ abstract class AbstractNashornJsTestChecker {
     protected open fun beforeRun() {}
 
     private fun run(
-            files: List<String>,
-            f: ScriptEngine.() -> Any?
+        files: List<String>,
+        f: ScriptEngine.() -> Any?
     ): Any? {
         // Recreate the engine once in a while
         if (engineUsageCnt++ > 100) {
@@ -131,12 +130,12 @@ abstract class AbstractNashornJsTestChecker {
         }
     }
 
-    abstract protected fun createScriptEngineForTest(): ScriptEngine
+    protected abstract fun createScriptEngineForTest(): ScriptEngine
 }
 
-object NashornJsTestChecker: AbstractNashornJsTestChecker() {
-    val SETUP_KOTLIN_OUTPUT = "kotlin.kotlin.io.output = new kotlin.kotlin.io.BufferedOutput();"
-    private val GET_KOTLIN_OUTPUT = "kotlin.kotlin.io.output.buffer;"
+object NashornJsTestChecker : AbstractNashornJsTestChecker() {
+    const val SETUP_KOTLIN_OUTPUT = "kotlin.kotlin.io.output = new kotlin.kotlin.io.BufferedOutput();"
+    private const val GET_KOTLIN_OUTPUT = "kotlin.kotlin.io.output.buffer;"
 
     override fun beforeRun() {
         engine.eval(SETUP_KOTLIN_OUTPUT)
@@ -163,7 +162,7 @@ object NashornJsTestChecker: AbstractNashornJsTestChecker() {
     }
 }
 
-object NashornIrJsTestChecker: AbstractNashornJsTestChecker() {
+object NashornIrJsTestChecker : AbstractNashornJsTestChecker() {
     override fun createScriptEngineForTest(): ScriptEngine {
         val engine = createScriptEngine()
 
