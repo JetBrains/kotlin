@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrAnonymousInitializerSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
 import org.jetbrains.kotlin.ir.util.hasAnnotation
+import org.jetbrains.kotlin.ir.util.isAnnotationClass
 import org.jetbrains.kotlin.ir.util.isInterface
 import org.jetbrains.kotlin.ir.util.isObject
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
@@ -60,7 +61,7 @@ class MoveCompanionObjectFieldsLowering(val context: CommonBackendContext) : Cla
         val companion = irClass.declarations.find {
             it is IrClass && it.isCompanion
         } as IrClass? ?: return
-        if (irClass.isInterface && !companion.allFieldsAreJvmField()) return
+        if ((irClass.isInterface || irClass.isAnnotationClass) && !companion.allFieldsAreJvmField()) return
         companion.declarations.forEach {
             when (it) {
                 is IrProperty -> {

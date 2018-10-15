@@ -289,8 +289,7 @@ private val MemberDescriptor.effectiveModality: Modality
             }
         }
         if (DescriptorUtils.isSealedClass(this) ||
-            DescriptorUtils.isAnnotationClass(this) ||
-            DescriptorUtils.isAnnotationClass(this.containingDeclaration)
+            DescriptorUtils.isAnnotationClass(this)
         ) {
             return Modality.ABSTRACT
         }

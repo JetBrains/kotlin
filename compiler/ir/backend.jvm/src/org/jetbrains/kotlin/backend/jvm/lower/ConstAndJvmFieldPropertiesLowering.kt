@@ -40,7 +40,7 @@ class ConstAndJvmFieldPropertiesLowering(val context: CommonBackendContext) : Ir
         val irProperty = irSimpleFunction.correspondingProperty ?: return super.visitCall(expression)
 
         if (irProperty.isConst) {
-            (irProperty.backingField?.initializer?.expression as? IrConst<*>)?.let { return it }
+            (irProperty.backingField!!.initializer!!.expression as IrConst<*>).let { return it }
         }
 
         if (irProperty.backingField?.hasAnnotation(JVM_FIELD_ANNOTATION_FQ_NAME) == true) {
