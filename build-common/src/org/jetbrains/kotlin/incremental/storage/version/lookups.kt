@@ -15,6 +15,3 @@ fun lookupsCacheVersionManager(dataRoot: File, isEnabled: Boolean) =
         File(dataRoot, DATA_CONTAINER_VERSION_FILE_NAME),
         if (isEnabled) DATA_CONTAINER_VERSION else null
     )
-
-fun readLookupsCacheStatus(dataRoot: File, isEnabled: Boolean): CacheStatus =
-    lookupsCacheVersionManager(dataRoot, isEnabled).loadAndCheckStatus()

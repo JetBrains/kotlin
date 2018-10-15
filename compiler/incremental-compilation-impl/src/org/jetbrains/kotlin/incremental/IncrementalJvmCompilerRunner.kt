@@ -65,12 +65,10 @@ fun makeIncrementally(
     val buildHistoryFile = File(cachesDir, "build-history.bin")
 
     withIC {
-        val versions = commonCacheVersionsManagers(cachesDir, true) + standaloneCacheVersionManager(cachesDir, true)
-
         val compiler = IncrementalJvmCompilerRunner(
                 cachesDir,
                 sourceRoots.map { JvmSourceRoot(it, null) }.toSet(),
-                versions, reporter,
+                reporter,
                 // Use precise setting in case of non-Gradle build
                 usePreciseJavaTracking = true,
                 localStateDirs = emptyList(),
@@ -102,7 +100,6 @@ inline fun <R> withIC(enabled: Boolean = true, fn: ()->R): R {
 class IncrementalJvmCompilerRunner(
     workingDir: File,
     private val javaSourceRoots: Set<JvmSourceRoot>,
-    cachesVersionManagers: List<CacheVersionManager>,
     reporter: ICReporter,
     private val usePreciseJavaTracking: Boolean,
     buildHistoryFile: File,
@@ -112,7 +109,6 @@ class IncrementalJvmCompilerRunner(
 ) : IncrementalCompilerRunner<K2JVMCompilerArguments, IncrementalJvmCachesManager>(
     workingDir,
     "caches-jvm",
-    cachesVersionManagers,
     reporter,
     localStateDirs = localStateDirs,
         buildHistoryFile = buildHistoryFile

@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.js.*
-import org.jetbrains.kotlin.incremental.storage.version.CacheVersionManager
 import org.jetbrains.kotlin.incremental.multiproject.EmptyModulesApiHistory
 import org.jetbrains.kotlin.incremental.multiproject.ModulesApiHistory
 import java.io.File
@@ -43,10 +42,8 @@ fun makeJsIncrementally(
     val buildHistoryFile = File(cachesDir, "build-history.bin")
 
     withJsIC {
-        val versions = commonCacheVersionsManagers(cachesDir, true) + standaloneCacheVersionManager(cachesDir, true)
-
         val compiler = IncrementalJsCompilerRunner(
-            cachesDir, versions, reporter,
+            cachesDir, reporter,
             buildHistoryFile = buildHistoryFile,
             modulesApiHistory = EmptyModulesApiHistory)
         compiler.compile(allKotlinFiles, args, messageCollector, providedChangedFiles = null)
@@ -66,14 +63,12 @@ inline fun <R> withJsIC(fn: () -> R): R {
 
 class IncrementalJsCompilerRunner(
     workingDir: File,
-    cachesVersionManagers: List<CacheVersionManager>,
     reporter: ICReporter,
         buildHistoryFile: File,
         private val modulesApiHistory: ModulesApiHistory
 ) : IncrementalCompilerRunner<K2JSCompilerArguments, IncrementalJsCachesManager>(
     workingDir,
     "caches-js",
-    cachesVersionManagers,
     reporter,
         buildHistoryFile = buildHistoryFile
 ) {
