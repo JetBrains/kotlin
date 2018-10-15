@@ -47,12 +47,12 @@ class CompositeLookupsCacheAttributesManager(
         return CompositeLookupsCacheAttributes(version.version, components)
     }
 
-    override fun writeActualVersion(values: CompositeLookupsCacheAttributes?) {
+    override fun writeVersion(values: CompositeLookupsCacheAttributes?) {
         if (values == null) {
-            versionManager.writeActualVersion(null)
+            versionManager.writeVersion(null)
             actualComponentsFile.delete()
         } else {
-            versionManager.writeActualVersion(CacheVersion(values.version))
+            versionManager.writeVersion(CacheVersion(values.version))
 
             actualComponentsFile.parentFile.mkdirs()
             actualComponentsFile.writeText(values.components.joinToString("\n"))

@@ -96,7 +96,7 @@ class KotlinChunk internal constructor(val context: KotlinCompileContext, val ta
         context.ensureLookupsCacheAttributesSaved()
 
         targets.forEach {
-            it.initialLocalCacheAttributesDiff.saveExpectedIfNeeded()
+            it.initialLocalCacheAttributesDiff.manager.writeVersion()
         }
 
         val serializedMetaInfo = representativeTarget.buildMetaInfoFactory.serializeToString(compilerArguments)
