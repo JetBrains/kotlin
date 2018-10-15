@@ -23,14 +23,4 @@ class KtLambdaArgument(node: ASTNode) : KtValueArgument(node), LambdaArgument {
     override fun getLambdaExpression(): KtLambdaExpression? = getArgumentExpression()?.unpackFunctionLiteral()
 }
 
-fun KtExpression.unpackFunctionLiteral(allowParentheses: Boolean = false): KtLambdaExpression? {
-    return when (this) {
-        is KtLambdaExpression -> this
-        is KtLabeledExpression -> baseExpression?.unpackFunctionLiteral(allowParentheses)
-        is KtAnnotatedExpression -> baseExpression?.unpackFunctionLiteral(allowParentheses)
-        is KtParenthesizedExpression -> if (allowParentheses) expression?.unpackFunctionLiteral(allowParentheses) else null
-        else -> null
-    }
-}
-
 
