@@ -6,9 +6,9 @@
 package org.jetbrains.kotlin.jps.incremental
 
 import org.jetbrains.annotations.TestOnly
-import org.jetbrains.kotlin.incremental.storage.version.CacheAttributesManager
-import org.jetbrains.kotlin.incremental.storage.version.CacheVersion
-import org.jetbrains.kotlin.incremental.storage.version.lookupsCacheVersionManager
+import org.jetbrains.kotlin.jps.incremental.CacheAttributesManager
+import org.jetbrains.kotlin.jps.incremental.CacheVersion
+import org.jetbrains.kotlin.jps.incremental.lookupsCacheVersionManager
 import java.io.File
 import java.io.IOException
 
