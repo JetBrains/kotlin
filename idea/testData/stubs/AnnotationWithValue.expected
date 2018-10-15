@@ -23,3 +23,5 @@ PsiJetFileStubImpl[package=]
         VALUE_ARGUMENT_LIST
           VALUE_ARGUMENT
           VALUE_ARGUMENT
+            VALUE_ARGUMENT_NAME
+              REFERENCE_EXPRESSION[referencedName=other]

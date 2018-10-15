@@ -63,9 +63,17 @@ PsiJetFileStubImpl[package=test]
           VALUE_ARGUMENT
           VALUE_ARGUMENT
           VALUE_ARGUMENT
+            VALUE_ARGUMENT_NAME
+              REFERENCE_EXPRESSION[referencedName=f]
           VALUE_ARGUMENT
+            VALUE_ARGUMENT_NAME
+              REFERENCE_EXPRESSION[referencedName=c]
           VALUE_ARGUMENT
+            VALUE_ARGUMENT_NAME
+              REFERENCE_EXPRESSION[referencedName=b1]
           VALUE_ARGUMENT
+            VALUE_ARGUMENT_NAME
+              REFERENCE_EXPRESSION[referencedName=b2]
   CLASS[fqName=test.StringLiteral, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=StringLiteral, superNames=[]]
     MODIFIER_LIST[annotation]
     PRIMARY_CONSTRUCTOR
@@ -128,6 +136,8 @@ PsiJetFileStubImpl[package=test]
             REFERENCE_EXPRESSION[referencedName=E1]
           VALUE_ARGUMENT
           VALUE_ARGUMENT
+            VALUE_ARGUMENT_NAME
+              REFERENCE_EXPRESSION[referencedName=e3]
   CLASS[fqName=test.VarArg, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=VarArg, superNames=[]]
     MODIFIER_LIST[annotation]
     PRIMARY_CONSTRUCTOR
@@ -259,3 +269,5 @@ PsiJetFileStubImpl[package=test]
         VALUE_ARGUMENT_LIST
           VALUE_ARGUMENT
           VALUE_ARGUMENT
+            VALUE_ARGUMENT_NAME
+              REFERENCE_EXPRESSION[referencedName=nested]
