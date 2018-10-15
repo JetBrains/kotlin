@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.resolve.multiplatform.ExpectedActualResolver
 
 /**
  * This pass removes all declarations with `isExpect == true`.
+ * Note: org.jetbrains.kotlin.backend.common.lower.ExpectDeclarationsRemoving is copy of this lower.
  */
 internal class ExpectDeclarationsRemoving(val context: Context) : FileLoweringPass {
 
