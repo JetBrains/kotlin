@@ -24,10 +24,17 @@ import org.jetbrains.kotlin.psi.KtCallableReferenceExpression
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.source.KotlinSourceElement
+import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.typeUtil.builtIns
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
-fun capturedBoundReferenceReceiver(ownerType: Type, expectedReceiverType: Type, isInliningStrategy: Boolean): StackValue =
+fun capturedBoundReferenceReceiver(
+    ownerType: Type,
+    expectedReceiverType: Type,
+    expectedReceiverKotlinType: KotlinType?,
+    isInliningStrategy: Boolean
+): StackValue =
     StackValue.operation(expectedReceiverType) { iv ->
         iv.load(0, ownerType)
         iv.getfield(
@@ -36,7 +43,8 @@ fun capturedBoundReferenceReceiver(ownerType: Type, expectedReceiverType: Type, 
             if (isInliningStrategy) AsmUtil.CAPTURED_RECEIVER_FIELD else AsmUtil.BOUND_REFERENCE_RECEIVER,
             AsmTypes.OBJECT_TYPE.descriptor
         )
-        StackValue.coerce(AsmTypes.OBJECT_TYPE, expectedReceiverType, iv)
+        val nullableAny = expectedReceiverKotlinType?.run { builtIns.nullableAnyType }
+        StackValue.coerce(AsmTypes.OBJECT_TYPE, nullableAny, expectedReceiverType, expectedReceiverKotlinType, iv)
     }
 
 fun ClassDescriptor.isSyntheticClassForCallableReference(): Boolean =
@@ -49,9 +57,10 @@ fun CalculatedClosure.isForCallableReference(): Boolean =
 fun CalculatedClosure.isForBoundCallableReference(): Boolean =
     isForCallableReference() && capturedReceiverFromOuterContext != null
 
-fun InstructionAdapter.loadBoundReferenceReceiverParameter(index: Int, type: Type) {
+fun InstructionAdapter.loadBoundReferenceReceiverParameter(index: Int, type: Type, kotlinType: KotlinType?) {
     load(index, type)
-    StackValue.coerce(type, AsmTypes.OBJECT_TYPE, this)
+    val nullableAny = kotlinType?.run { builtIns.nullableAnyType }
+    StackValue.coerce(type, kotlinType, AsmTypes.OBJECT_TYPE, nullableAny, this)
 }
 
 fun CalculatedClosure.isBoundReferenceReceiverField(fieldInfo: FieldInfo): Boolean =
@@ -61,26 +70,21 @@ fun CalculatedClosure.isBoundReferenceReceiverField(fieldInfo: FieldInfo): Boole
 fun InstructionAdapter.generateClosureFieldsInitializationFromParameters(
     closure: CalculatedClosure,
     args: List<FieldInfo>
-): Pair<Int, Type>? {
+): Pair<Int, FieldInfo>? {
     var k = 1
     var boundReferenceReceiverParameterIndex = -1
-    var boundReferenceReceiverType: Type? = null
+    var boundReferenceReceiverFieldInfo: FieldInfo? = null
     for (fieldInfo in args) {
         if (closure.isBoundReferenceReceiverField(fieldInfo)) {
             boundReferenceReceiverParameterIndex = k
-            boundReferenceReceiverType = fieldInfo.fieldType
+            boundReferenceReceiverFieldInfo = fieldInfo
             k += fieldInfo.fieldType.size
             continue
         }
         k = AsmUtil.genAssignInstanceFieldFromParam(fieldInfo, k, this)
     }
 
-    return when {
-        boundReferenceReceiverType != null ->
-            Pair(boundReferenceReceiverParameterIndex, boundReferenceReceiverType)
-        else ->
-            null
-    }
+    return boundReferenceReceiverFieldInfo?.let { Pair(boundReferenceReceiverParameterIndex, it) }
 }
 
 fun computeExpectedNumberOfReceivers(referencedFunction: FunctionDescriptor, isBound: Boolean): Int {

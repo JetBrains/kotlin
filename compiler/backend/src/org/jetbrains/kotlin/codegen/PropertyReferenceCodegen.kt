@@ -31,7 +31,9 @@ import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.resolve.DescriptorFactory
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.PropertyImportedFromObject
+import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
+import org.jetbrains.kotlin.resolve.isUnderlyingPropertyOfInlineClass
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes.*
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
@@ -52,8 +54,11 @@ class PropertyReferenceCodegen(
     classBuilder: ClassBuilder,
     private val localVariableDescriptorForReference: VariableDescriptor,
     private val target: VariableDescriptor,
-    private val receiverType: Type?
+    private val boundReceiverJvmKotlinType: JvmKotlinType?
 ) : MemberCodegen<KtElement>(state, parentCodegen, context, expression, classBuilder) {
+
+    private val boundReceiverType = boundReceiverJvmKotlinType?.type
+
     private val classDescriptor = context.contextDescriptor
     private val asmType = typeMapper.mapClass(classDescriptor)
 
@@ -72,9 +77,9 @@ class PropertyReferenceCodegen(
     private val wrapperMethod = getWrapperMethodForPropertyReference(target, getFunction.valueParameters.size)
 
     private val closure = bindingContext.get(CodegenBinding.CLOSURE, classDescriptor)!!.apply {
-        assert((capturedReceiverFromOuterContext != null) == (receiverType != null)) {
+        assert((capturedReceiverFromOuterContext != null) == (boundReceiverType != null)) {
             "Bound property reference can only be generated with the type of the receiver. " +
-            "Captured type = $capturedReceiverFromOuterContext, actual type = $receiverType"
+                    "Captured type = $capturedReceiverFromOuterContext, actual type = $boundReceiverType"
         }
     }
 
@@ -129,16 +134,16 @@ class PropertyReferenceCodegen(
     private fun generateConstructor() {
         generateMethod("property reference init", 0, constructor) {
             val shouldHaveBoundReferenceReceiver = closure.isForBoundCallableReference()
-            val receiverIndexAndType = generateClosureFieldsInitializationFromParameters(closure, constructorArgs)
+            val receiverIndexAndFieldInfo = generateClosureFieldsInitializationFromParameters(closure, constructorArgs)
 
-            if (receiverIndexAndType == null) {
+            if (receiverIndexAndFieldInfo == null) {
                 assert(!shouldHaveBoundReferenceReceiver) { "No bound reference receiver in constructor parameters: $constructorArgs" }
                 load(0, OBJECT_TYPE)
                 invokespecial(superAsmType.internalName, "<init>", "()V", false)
             } else {
-                val (receiverIndex, receiverType) = receiverIndexAndType
+                val (receiverIndex, receiverFieldInfo) = receiverIndexAndFieldInfo
                 load(0, OBJECT_TYPE)
-                loadBoundReferenceReceiverParameter(receiverIndex, receiverType)
+                loadBoundReferenceReceiverParameter(receiverIndex, receiverFieldInfo.fieldType, receiverFieldInfo.fieldKotlinType)
                 invokespecial(superAsmType.internalName, "<init>", "(Ljava/lang/Object;)V", false)
             }
         }
@@ -155,7 +160,7 @@ class PropertyReferenceCodegen(
                 getFunction,
                 target,
                 asmType,
-                receiverType,
+                boundReceiverJvmKotlinType,
                 element,
                 state,
                 false
@@ -176,7 +181,7 @@ class PropertyReferenceCodegen(
                 setFunction,
                 target,
                 asmType,
-                receiverType,
+                boundReceiverJvmKotlinType,
                 element,
                 state,
                 false
@@ -284,19 +289,39 @@ class PropertyReferenceCodegen(
     }
 
     class PropertyReferenceGenerationStrategy(
-        val isGetter: Boolean,
+        private val isGetter: Boolean,
         private val originalFunctionDesc: FunctionDescriptor,
-        val target: VariableDescriptor,
-        val asmType: Type,
-        val receiverType: Type?,
-        val expression: KtElement,
+        private val target: VariableDescriptor,
+        private val asmType: Type,
+        boundReceiverJvmKotlinType: JvmKotlinType?,
+        private val expression: KtElement,
         state: GenerationState,
         private val isInliningStrategy: Boolean
     ) :
         FunctionGenerationStrategy.CodegenBased(state) {
+
+        private val boundReceiverType = boundReceiverJvmKotlinType?.type
+        private val boundReceiverKotlinType = boundReceiverJvmKotlinType?.kotlinType
+
+        private val expectedReceiverKotlinType =
+            target.extensionReceiverParameter?.type
+                ?: (target.containingDeclaration as? ClassDescriptor)?.defaultType
+
+        private val expectedReceiverType =
+            if (expectedReceiverKotlinType != null)
+                state.typeMapper.mapType(expectedReceiverKotlinType)
+            else {
+                assert(boundReceiverType == null) {
+                    "$target: no expected receiver, boundReceiverType is $boundReceiverType"
+                }
+                null
+            }
+
         override fun doGenerateBody(codegen: ExpressionCodegen, signature: JvmMethodSignature) {
             val v = codegen.v
             val typeMapper = state.typeMapper
+            val targetKotlinType = target.type
+
             if (target is PropertyImportedFromObject) {
                 val containingObject = target.containingObject
                 StackValue
@@ -304,31 +329,51 @@ class PropertyReferenceCodegen(
                     .put(typeMapper.mapClass(containingObject), containingObject.defaultType, v)
             }
 
-            if (receiverType != null) {
-                val expectedReceiver =
-                    target.extensionReceiverParameter?.type ?: (target.containingDeclaration as? ClassDescriptor)?.defaultType
-                val expectedReceiverType = if (expectedReceiver != null) typeMapper.mapType(expectedReceiver) else receiverType
-                capturedBoundReferenceReceiver(asmType, expectedReceiverType, isInliningStrategy).put(expectedReceiverType, v)
+            if (boundReceiverType != null) {
+                capturedBoundReferenceReceiver(asmType, boundReceiverType, boundReceiverKotlinType, isInliningStrategy)
+                    .put(expectedReceiverType!!, expectedReceiverKotlinType, v)
             } else {
                 val receivers = originalFunctionDesc.valueParameters.dropLast(if (isGetter) 0 else 1)
                 receivers.forEachIndexed { i, valueParameterDescriptor ->
-                    StackValue.local(i + 1, OBJECT_TYPE).put(typeMapper.mapType(valueParameterDescriptor), valueParameterDescriptor.type, v)
+                    val nullableAny = valueParameterDescriptor.builtIns.nullableAnyType
+                    StackValue.local(i + 1, OBJECT_TYPE, nullableAny)
+                        .put(typeMapper.mapType(valueParameterDescriptor), valueParameterDescriptor.type, v)
                 }
             }
 
-            val value = if (target is LocalVariableDescriptor) {
-                codegen.findLocalOrCapturedValue(target)!!
-            } else {
-                codegen.intermediateValueForProperty(target as PropertyDescriptor, false, null, StackValue.none())
+            val value = when {
+                target is LocalVariableDescriptor -> codegen.findLocalOrCapturedValue(target)!!
+
+                target.isUnderlyingPropertyOfInlineClass() -> {
+                    if (expectedReceiverType == null)
+                        throw AssertionError("$target: boundReceiverType=$boundReceiverType, expectedReceiverType is null")
+
+                    val receiver =
+                        if (boundReceiverType != null)
+                            StackValue.onStack(expectedReceiverType, expectedReceiverKotlinType)
+                        else
+                            StackValue.none()
+
+                    StackValue.underlyingValueOfInlineClass(typeMapper.mapType(targetKotlinType), targetKotlinType, receiver)
+                }
+
+                else -> codegen.intermediateValueForProperty(target as PropertyDescriptor, false, null, StackValue.none())
             }
 
             codegen.markStartLineNumber(expression)
-            val type = target.type
+
             if (isGetter) {
-                value.put(OBJECT_TYPE, type, v)
+                value.put(OBJECT_TYPE, targetKotlinType, v)
             } else {
-                val functionDescriptor = codegen.context.functionDescriptor
-                value.store(StackValue.local(codegen.frameMap.getIndex(functionDescriptor.valueParameters.last()), OBJECT_TYPE, type), v)
+                value.store(
+                    StackValue.local(
+                        codegen.frameMap.getIndex(
+                            codegen.context.functionDescriptor.valueParameters.last()
+                        ),
+                        OBJECT_TYPE, targetKotlinType
+                    ),
+                    v
+                )
             }
             v.areturn(signature.returnType)
         }
