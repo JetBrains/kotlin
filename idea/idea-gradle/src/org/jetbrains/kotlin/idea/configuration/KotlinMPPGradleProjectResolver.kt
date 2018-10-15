@@ -651,6 +651,7 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtension() {
                         val arg = "-XXLanguage:+$it"
                         ManualLanguageFeatureSetting(feature, LanguageFeature.State.ENABLED, arg)
                     }
+                    it.useExperimental = languageSettings.experimentalAnnotationsInUse.toTypedArray()
                 }
             }
         }

@@ -112,12 +112,14 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
         val getApiVersion = languageSettingsClass.getMethodOrNull("getApiVersion") ?: return null
         val getProgressiveMode = languageSettingsClass.getMethodOrNull("getProgressiveMode") ?: return null
         val getEnabledLanguageFeatures = languageSettingsClass.getMethodOrNull("getEnabledLanguageFeatures") ?: return null
+        val getExperimentalAnnotationsInUse = languageSettingsClass.getMethodOrNull("getExperimentalAnnotationsInUse")
         @Suppress("UNCHECKED_CAST")
         return KotlinLanguageSettingsImpl(
             getLanguageVersion(gradleLanguageSettings) as? String,
             getApiVersion(gradleLanguageSettings) as? String,
             getProgressiveMode(gradleLanguageSettings) as? Boolean ?: false,
-            getEnabledLanguageFeatures(gradleLanguageSettings) as? Set<String> ?: emptySet()
+            getEnabledLanguageFeatures(gradleLanguageSettings) as? Set<String> ?: emptySet(),
+            getExperimentalAnnotationsInUse?.invoke(gradleLanguageSettings) as? Set<String> ?: emptySet()
         )
     }
 
