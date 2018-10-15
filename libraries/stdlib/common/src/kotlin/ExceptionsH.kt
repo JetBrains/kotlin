@@ -46,13 +46,12 @@ public expect open class IndexOutOfBoundsException : RuntimeException {
     constructor(message: String?)
 }
 
-@Suppress("NO_ACTUAL_FOR_EXPECT") // TODO: Introduce typealias in JVM
 public expect open class ConcurrentModificationException : RuntimeException {
     constructor()
     constructor(message: String?)
-    @Deprecated("The constructor is not supported on all platforms and will be removed from kotlin-stdlib-common soon.")
+    @Deprecated("The constructor is not supported on all platforms and will be removed from kotlin-stdlib-common soon.", level = DeprecationLevel.ERROR)
     constructor(message: String?, cause: Throwable?)
-    @Deprecated("The constructor is not supported on all platforms and will be removed from kotlin-stdlib-common soon.")
+    @Deprecated("The constructor is not supported on all platforms and will be removed from kotlin-stdlib-common soon.", level = DeprecationLevel.ERROR)
     constructor(cause: Throwable?)
 }
 
@@ -84,6 +83,12 @@ public expect open class AssertionError : Error {
 }
 
 public expect open class NoSuchElementException : RuntimeException {
+    constructor()
+    constructor(message: String?)
+}
+
+@SinceKotlin("1.3")
+public expect open class ArithmeticException : RuntimeException {
     constructor()
     constructor(message: String?)
 }

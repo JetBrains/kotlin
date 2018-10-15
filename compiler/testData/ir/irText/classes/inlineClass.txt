@@ -1,0 +1,73 @@
+FILE fqName:<root> fileName:/inlineClass.kt
+  CLASS CLASS name:Test modality:FINAL visibility:public flags:inline superTypes:[kotlin.Any]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Test flags:
+    CONSTRUCTOR visibility:public <> (x:kotlin.Int) returnType:Test flags:primary
+      VALUE_PARAMETER name:x index:0 type:kotlin.Int flags:
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
+        INSTANCE_INITIALIZER_CALL classDescriptor='Test'
+    PROPERTY name:x visibility:public modality:FINAL flags:val
+      FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:public flags:final
+        EXPRESSION_BODY
+          GET_VAR 'value-parameter x: Int' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL <> ($this:Test) returnType:kotlin.Int flags:
+        correspondingProperty: PROPERTY name:x visibility:public modality:FINAL flags:val
+        $this: VALUE_PARAMETER name:<this> type:Test flags:
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='<get-x>(): Int'
+            GET_FIELD 'x: Int' type=kotlin.Int origin=null
+              receiver: GET_VAR 'this@Test: Test' type=Test origin=null
+    FUN GENERATED_INLINE_CLASS_MEMBER name:toString visibility:public modality:OPEN <> ($this:Test) returnType:kotlin.String flags:
+      overridden:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:
+      $this: VALUE_PARAMETER name:<this> type:Test flags:
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='toString(): String'
+          STRING_CONCATENATION type=kotlin.String
+            CONST String type=kotlin.String value=Test(
+            CONST String type=kotlin.String value=x=
+            CALL '<get-x>(): Int' type=kotlin.Int origin=GET_PROPERTY
+              $this: GET_VAR 'this@Test: Test' type=Test origin=null
+            CONST String type=kotlin.String value=)
+    FUN GENERATED_INLINE_CLASS_MEMBER name:hashCode visibility:public modality:OPEN <> ($this:Test) returnType:kotlin.Int flags:
+      overridden:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int flags:
+      $this: VALUE_PARAMETER name:<this> type:Test flags:
+      BLOCK_BODY
+        VAR IR_TEMPORARY_VARIABLE name:tmp0_result type:kotlin.Int flags:var
+          CONST Int type=kotlin.Int value=0
+        SET_VAR 'tmp0_result: Int' type=kotlin.Unit origin=EQ
+          CALL 'hashCode(): Int' type=kotlin.Int origin=null
+            $this: CALL '<get-x>(): Int' type=kotlin.Int origin=GET_PROPERTY
+              $this: GET_VAR 'this@Test: Test' type=Test origin=null
+        RETURN type=kotlin.Nothing from='hashCode(): Int'
+          GET_VAR 'tmp0_result: Int' type=kotlin.Int origin=null
+    FUN GENERATED_INLINE_CLASS_MEMBER name:equals visibility:public modality:OPEN <> ($this:Test, other:kotlin.Any?) returnType:kotlin.Boolean flags:
+      overridden:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:
+      $this: VALUE_PARAMETER name:<this> type:Test flags:
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
+      BLOCK_BODY
+        WHEN type=kotlin.Unit origin=null
+          BRANCH
+            if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=Test
+              typeOperand: CLASS CLASS name:Test modality:FINAL visibility:public flags:inline superTypes:[kotlin.Any]
+              GET_VAR 'value-parameter other: Any?' type=kotlin.Any? origin=null
+            then: RETURN type=kotlin.Nothing from='equals(Any?): Boolean'
+              CONST Boolean type=kotlin.Boolean value=false
+        VAR IR_TEMPORARY_VARIABLE name:tmp0_other_with_cast type:Test flags:val
+          TYPE_OP type=Test origin=CAST typeOperand=Test
+            typeOperand: CLASS CLASS name:Test modality:FINAL visibility:public flags:inline superTypes:[kotlin.Any]
+            GET_VAR 'value-parameter other: Any?' type=kotlin.Any? origin=null
+        WHEN type=kotlin.Unit origin=null
+          BRANCH
+            if: CALL 'NOT(Boolean): Boolean' type=kotlin.Boolean origin=EXCLEQ
+              arg0: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EXCLEQ
+                arg0: CALL '<get-x>(): Int' type=kotlin.Int origin=GET_PROPERTY
+                  $this: GET_VAR 'this@Test: Test' type=Test origin=null
+                arg1: CALL '<get-x>(): Int' type=kotlin.Int origin=GET_PROPERTY
+                  $this: GET_VAR 'tmp0_other_with_cast: Test' type=Test origin=null
+            then: RETURN type=kotlin.Nothing from='equals(Any?): Boolean'
+              CONST Boolean type=kotlin.Boolean value=false
+        RETURN type=kotlin.Nothing from='equals(Any?): Boolean'
+          CONST Boolean type=kotlin.Boolean value=true

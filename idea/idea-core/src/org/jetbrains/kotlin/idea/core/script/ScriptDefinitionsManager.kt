@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.idea.core.script
 
-import com.intellij.ide.projectView.impl.ProjectRootsUtil.isInTestSource
+import com.intellij.execution.console.IdeConsoleRootType
 import com.intellij.ide.scratch.ScratchFileService
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.runWriteAction
@@ -35,11 +35,8 @@ import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.caches.project.SdkInfo
 import org.jetbrains.kotlin.idea.caches.project.getScriptRelatedModuleInfo
-import org.jetbrains.kotlin.idea.util.ProjectRootsUtil.isInContent
-import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.script.*
 import org.jetbrains.kotlin.scripting.compiler.plugin.KotlinScriptDefinitionAdapterFromNewAPI
-import org.jetbrains.kotlin.scripting.compiler.plugin.KotlinScriptDefinitionAdapterFromNewAPIBase
 import org.jetbrains.kotlin.utils.PathUtil
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.flattenTo
@@ -49,15 +46,15 @@ import kotlin.concurrent.write
 import kotlin.script.dependencies.Environment
 import kotlin.script.dependencies.ScriptContents
 import kotlin.script.experimental.api.KotlinType
-import kotlin.script.experimental.api.ScriptingEnvironment
-import kotlin.script.experimental.api.ScriptingEnvironmentProperties
-import kotlin.script.experimental.definitions.ScriptDefinitionFromAnnotatedBaseClass
 import kotlin.script.experimental.dependencies.DependenciesResolver
 import kotlin.script.experimental.dependencies.ScriptDependencies
 import kotlin.script.experimental.dependencies.asSuccess
+import kotlin.script.experimental.host.ScriptingHostConfiguration
+import kotlin.script.experimental.host.configurationDependencies
+import kotlin.script.experimental.host.createCompilationConfigurationFromTemplate
 import kotlin.script.experimental.jvm.JvmDependency
-import kotlin.script.experimental.jvm.JvmGetScriptingClass
-import kotlin.script.experimental.location.ScriptExpectedLocation
+import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
+import kotlin.script.experimental.jvm.util.scriptCompilationClasspathFromContextOrStlib
 import kotlin.script.templates.standard.ScriptTemplateWithArgs
 
 class ScriptDefinitionsManager(private val project: Project) : LazyScriptDefinitionProvider() {
@@ -110,42 +107,21 @@ class ScriptDefinitionsManager(private val project: Project) : LazyScriptDefinit
         return StandardIdeScriptDefinition(project)
     }
 
-    @Suppress("DEPRECATION")
-    fun isInExpectedLocation(ktFile: KtFile, scriptDefinition: KotlinScriptDefinition): Boolean {
-        if (ScratchFileService.isInScratchRoot(ktFile.virtualFile)) return true
-
-        val scriptScope = scriptDefinition.scriptExpectedLocations
-        return when {
-            scriptScope.contains(ScriptExpectedLocation.Everywhere) -> true
-            scriptScope.contains(ScriptExpectedLocation.Project)
-                    && ProjectRootManager.getInstance(ktFile.project).fileIndex.isInContent(ktFile.virtualFile) -> true
-            scriptScope.contains(ScriptExpectedLocation.TestsOnly) && isInTestSource(ktFile) -> true
-            else -> return isInContent(
-                ktFile,
-                scriptScope.contains(ScriptExpectedLocation.SourcesOnly),
-                scriptScope.contains(ScriptExpectedLocation.Libraries),
-                scriptScope.contains(ScriptExpectedLocation.Libraries),
-                scriptScope.contains(ScriptExpectedLocation.Libraries)
-            )
-        }
-    }
-
     private fun updateDefinitions() {
         assert(lock.isWriteLocked) { "updateDefinitions should only be called under the write lock" }
         definitions = definitionsByContributor.values.flattenTo(mutableListOf()).asSequence()
 
-        // Register new file extensions
         val fileTypeManager = FileTypeManager.getInstance()
-        val extensions = definitions?.mapNotNull { definition ->
-            (definition as? KotlinScriptDefinitionAdapterFromNewAPIBase)
-                ?.scriptFileExtensionWithDot?.removePrefix(".")
-                ?.takeIf { fileTypeManager.getFileTypeByExtension(it) != KotlinFileType.INSTANCE }
-        }?.toList()
 
-        if (extensions?.isNotEmpty() == true) {
+        val newExtensions = getKnownFilenameExtensions().filter {
+            fileTypeManager.getFileTypeByExtension(it) != KotlinFileType.INSTANCE
+        }.toList()
+
+        if (newExtensions.any()) {
+            // Register new file extensions
             ApplicationManager.getApplication().invokeLater {
                 runWriteAction {
-                    extensions.forEach {
+                    newExtensions.forEach {
                         fileTypeManager.associateExtension(KotlinFileType.INSTANCE, it)
                     }
                 }
@@ -208,14 +184,16 @@ fun loadDefinitionsFromTemplates(
                     )
                 }
                 template.annotations.firstIsInstanceOrNull<kotlin.script.experimental.annotations.KotlinScript>() != null -> {
+                    val hostConfiguration = ScriptingHostConfiguration(defaultJvmScriptingHostConfiguration) {
+                        configurationDependencies(JvmDependency(classpath))
+                    }
                     KotlinScriptDefinitionAdapterFromNewAPI(
-                        ScriptDefinitionFromAnnotatedBaseClass(
-                            ScriptingEnvironment(
-                                ScriptingEnvironmentProperties.baseClass to KotlinType(template),
-                                ScriptingEnvironmentProperties.configurationDependencies to listOf(JvmDependency(classpath)),
-                                ScriptingEnvironmentProperties.getScriptingClass to JvmGetScriptingClass()
-                            )
-                        )
+                        createCompilationConfigurationFromTemplate(
+                            KotlinType(
+                                template
+                            ), hostConfiguration, KotlinScriptDefinition::class
+                        ),
+                        hostConfiguration
                     )
                 }
                 else -> {
@@ -269,17 +247,15 @@ class BundledKotlinScriptDependenciesResolver(private val project: Project) : De
         val virtualFile = scriptContents.file?.let { VfsUtil.findFileByIoFile(it, true) }
 
         val javaHome = getScriptSDK(project, virtualFile)
-        val dependencies = ScriptDependencies(
-            javaHome = javaHome?.let(::File),
-            classpath = with(PathUtil.kotlinPathsForIdeaPlugin) {
-                listOf(
-                    reflectPath,
-                    stdlibPath,
-                    scriptRuntimePath
-                )
-            }
-        )
-        return dependencies.asSuccess()
+
+        var classpath = with(PathUtil.kotlinPathsForIdeaPlugin) {
+            listOf(reflectPath, stdlibPath, scriptRuntimePath)
+        }
+        if (ScratchFileService.getInstance().getRootType(virtualFile) is IdeConsoleRootType) {
+            classpath = scriptCompilationClasspathFromContextOrStlib(wholeClasspath = true) + classpath
+        }
+
+        return ScriptDependencies(javaHome = javaHome?.let(::File), classpath = classpath).asSuccess()
     }
 
     private fun getScriptSDK(project: Project, virtualFile: VirtualFile?): String? {
@@ -292,8 +268,8 @@ class BundledKotlinScriptDependenciesResolver(private val project: Project) : De
         }
 
         val jdk = ProjectRootManager.getInstance(project).projectSdk
-                ?: ProjectJdkTable.getInstance().allJdks.firstOrNull { sdk -> sdk.sdkType is JavaSdk }
-                ?: PathUtilEx.getAnyJdk(project)
+            ?: ProjectJdkTable.getInstance().allJdks.firstOrNull { sdk -> sdk.sdkType is JavaSdk }
+            ?: PathUtilEx.getAnyJdk(project)
         return jdk?.homePath
     }
 }

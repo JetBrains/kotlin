@@ -37,20 +37,14 @@ import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.*
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.expressions.impl.IrClassReferenceImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrDelegatingConstructorCallImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrInstanceInitializerCallImpl
+import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.IrConstructorSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
-import org.jetbrains.kotlin.ir.types.IrSimpleType
-import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
-import org.jetbrains.kotlin.ir.types.toIrType
-import org.jetbrains.kotlin.ir.types.toKotlinType
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.load.java.JavaVisibilities
@@ -86,7 +80,7 @@ class CallableReferenceLowering(val context: JvmBackendContext) : FileLoweringPa
                 val descriptor = expression.descriptor
                 if (descriptor.isInlineCall(context.state)) {
                     //TODO: more wise filtering
-                    descriptor.valueParameters.map { valueParameter ->
+                    descriptor.valueParameters.forEach { valueParameter ->
                         if (InlineUtil.isInlineParameter(valueParameter)) {
                             expression.getValueArgument(valueParameter.index)?.let {
                                 if (isInlineIrExpression(it)) {
@@ -99,8 +93,41 @@ class CallableReferenceLowering(val context: JvmBackendContext) : FileLoweringPa
                     }
                 }
 
+                val argumentsCount = expression.valueArgumentsCount
+                // Change calls to FunctionN with large N to varargs calls.
+                val newCall = if (argumentsCount > MAX_ARGCOUNT_WITHOUT_VARARG &&
+                    descriptor.containingDeclaration in listOf(
+                        context.builtIns.getFunction(argumentsCount),
+                        context.reflectionTypes.getKFunction(argumentsCount)
+                    )
+                ) {
+                    val vararg = IrVarargImpl(
+                        UNDEFINED_OFFSET, UNDEFINED_OFFSET,
+                        context.ir.symbols.array.typeWith(),
+                        context.ir.symbols.any.typeWith(),
+                        (0 until argumentsCount).map { i -> expression.getValueArgument(i)!! }
+                    )
+                    val invokeFunDescriptor = context.getClass(FqName("kotlin.jvm.functions.FunctionN"))
+                        .getFunction("invoke", listOf(expression.type.toKotlinType()))
+                    val invokeFunSymbol = context.ir.symbols.externalSymbolTable.referenceSimpleFunction(invokeFunDescriptor)
+
+                    IrCallImpl(
+                        UNDEFINED_OFFSET, UNDEFINED_OFFSET,
+                        expression.type,
+                        invokeFunSymbol, invokeFunDescriptor,
+                        1,
+                        expression.origin,
+                        expression.superQualifier?.let { context.ir.symbols.externalSymbolTable.referenceClass(it) }
+                    ).apply {
+                        putTypeArgument(0, expression.type)
+                        dispatchReceiver = expression.dispatchReceiver
+                        extensionReceiver = expression.extensionReceiver
+                        putValueArgument(0, vararg)
+                    }
+                } else expression
+
                 //TODO: clean
-                return super.visitCall(expression)
+                return super.visitCall(newCall)
             }
 
             override fun visitFunctionReference(expression: IrFunctionReference): IrExpression {
@@ -151,7 +178,11 @@ class CallableReferenceLowering(val context: JvmBackendContext) : FileLoweringPa
         private lateinit var functionReferenceThis: IrValueParameterSymbol
         private lateinit var argumentToPropertiesMap: Map<ParameterDescriptor, IrFieldSymbol>
 
-        private val functionReference = context.ir.symbols.functionReference
+        private val isLambda = irFunctionReference.origin == IrStatementOrigin.LAMBDA
+
+        private val functionReferenceOrLambda = if (isLambda) context.ir.symbols.lambdaClass else context.ir.symbols.functionReference
+
+        var useVararg: Boolean = false
 
         fun build(): BuiltFunctionReference {
             val startOffset = irFunctionReference.startOffset
@@ -159,13 +190,21 @@ class CallableReferenceLowering(val context: JvmBackendContext) : FileLoweringPa
 
             val returnType = functionDescriptor.returnType!!
             val superTypes: MutableList<KotlinType> = mutableListOf(
-                functionReference.descriptor.defaultType
+                functionReferenceOrLambda.descriptor.defaultType
             )
 
             val numberOfParameters = unboundFunctionParameters.size
-            val functionClassDescriptor = context.getClass(FqName("kotlin.jvm.functions.Function$numberOfParameters"))
+            useVararg = (numberOfParameters > MAX_ARGCOUNT_WITHOUT_VARARG)
+
+            val functionClassDescriptor = if (useVararg)
+                context.getClass(FqName("kotlin.jvm.functions.FunctionN"))
+            else
+                context.getClass(FqName("kotlin.jvm.functions.Function$numberOfParameters"))
             val functionParameterTypes = unboundFunctionParameters.map { it.type }
-            val functionClassTypeParameters = functionParameterTypes + returnType
+            val functionClassTypeParameters = if (useVararg)
+                listOf(returnType)
+            else
+                functionParameterTypes + returnType
             superTypes += functionClassDescriptor.defaultType.replace(functionClassTypeParameters)
 
             var suspendFunctionClassDescriptor: ClassDescriptor? = null
@@ -195,7 +234,17 @@ class CallableReferenceLowering(val context: JvmBackendContext) : FileLoweringPa
                 endOffset = endOffset,
                 origin = DECLARATION_ORIGIN_FUNCTION_REFERENCE_IMPL,
                 descriptor = functionReferenceClassDescriptor
-            )
+            ).apply {
+                createParameterDeclarations()
+                val typeTranslator = TypeTranslator(context.ir.symbols.externalSymbolTable, context.state.languageVersionSettings,
+                                                    enterTableScope=true)
+                val constantValueGenerator = ConstantValueGenerator(context.state.module, context.ir.symbols.externalSymbolTable)
+                typeTranslator.constantValueGenerator = constantValueGenerator
+                constantValueGenerator.typeTranslator = typeTranslator
+                functionReferenceClassDescriptor.typeConstructor.supertypes.mapTo(this.superTypes) {
+                    typeTranslator.translateType(it)
+                }
+            }
 
             val contributedDescriptors = mutableListOf<DeclarationDescriptor>()
             val constructorBuilder = createConstructorBuilder()
@@ -203,36 +252,11 @@ class CallableReferenceLowering(val context: JvmBackendContext) : FileLoweringPa
                 SimpleMemberScope(contributedDescriptors), setOf(constructorBuilder.symbol.descriptor), null
             )
 
-            functionReferenceClass.createParameterDeclarations()
-
             functionReferenceThis = functionReferenceClass.thisReceiver!!.symbol
 
             val invokeFunctionDescriptor = functionClassDescriptor.getFunction("invoke", functionClassTypeParameters)
 
             val invokeMethodBuilder = createInvokeMethodBuilder(invokeFunctionDescriptor)
-            val getSignatureBuilder =
-                createGetSignatureMethodBuilder(functionReference.owner.descriptor.getFunction("getSignature", emptyList()))
-            val getNameBuilder = createGetNameMethodBuilder(functionReference.owner.descriptor.getProperty("name", emptyList()))
-            val getOwnerBuilder = createGetOwnerMethodBuilder(functionReference.owner.descriptor.getFunction("getOwner", emptyList()))
-
-            val suspendInvokeMethodBuilder =
-                if (suspendFunctionClassDescriptor != null) {
-                    val suspendInvokeFunctionDescriptor =
-                        suspendFunctionClassDescriptor.getFunction("invoke", suspendFunctionClassTypeParameters!!)
-                    createInvokeMethodBuilder(suspendInvokeFunctionDescriptor)
-                } else null
-
-            val inheritedScope = functionReference.descriptor.unsubstitutedMemberScope
-                .getContributedDescriptors().mapNotNull { it.createFakeOverrideDescriptor(functionReferenceClassDescriptor) }
-                .filterNot { it.name.asString() == "getSignature" || it.name.asString() == "name" || it.name.asString() == "getOwner" }
-
-            contributedDescriptors.addAll(
-                (
-                        inheritedScope + invokeMethodBuilder.symbol.descriptor +
-                                suspendInvokeMethodBuilder?.symbol?.descriptor + getSignatureBuilder.symbol.descriptor
-                        ).filterNotNull()
-            )
-
 
             constructorBuilder.initialize()
             functionReferenceClass.declarations.add(constructorBuilder.ir)
@@ -240,18 +264,44 @@ class CallableReferenceLowering(val context: JvmBackendContext) : FileLoweringPa
             invokeMethodBuilder.initialize()
             functionReferenceClass.declarations.add(invokeMethodBuilder.ir)
 
-            getSignatureBuilder.initialize()
-            functionReferenceClass.declarations.add(getSignatureBuilder.ir)
+            if (!isLambda) {
+                val getSignatureBuilder =
+                    createGetSignatureMethodBuilder(functionReferenceOrLambda.owner.descriptor.getFunction("getSignature", emptyList()))
+                val getNameBuilder = createGetNameMethodBuilder(functionReferenceOrLambda.owner.descriptor.getProperty("name", emptyList()))
+                val getOwnerBuilder =
+                    createGetOwnerMethodBuilder(functionReferenceOrLambda.owner.descriptor.getFunction("getOwner", emptyList()))
 
-            getNameBuilder.initialize()
-            functionReferenceClass.declarations.add(getNameBuilder.ir)
+                val suspendInvokeMethodBuilder =
+                    if (suspendFunctionClassDescriptor != null) {
+                        val suspendInvokeFunctionDescriptor =
+                            suspendFunctionClassDescriptor.getFunction("invoke", suspendFunctionClassTypeParameters!!)
+                        createInvokeMethodBuilder(suspendInvokeFunctionDescriptor)
+                    } else null
 
-            getOwnerBuilder.initialize()
-            functionReferenceClass.declarations.add(getOwnerBuilder.ir)
+                val inheritedScope = functionReferenceOrLambda.descriptor.unsubstitutedMemberScope
+                    .getContributedDescriptors().mapNotNull { it.createFakeOverrideDescriptor(functionReferenceClassDescriptor) }
+                    .filterNot { !isLambda && (it.name.asString() == "getSignature" || it.name.asString() == "name" || it.name.asString() == "getOwner") }
 
-            suspendInvokeMethodBuilder?.let {
-                it.initialize()
-                functionReferenceClass.declarations.add(it.ir)
+                contributedDescriptors.addAll(
+                    (
+                            inheritedScope + invokeMethodBuilder.symbol.descriptor +
+                                    suspendInvokeMethodBuilder?.symbol?.descriptor + getSignatureBuilder.symbol.descriptor
+                            ).filterNotNull()
+                )
+
+                getSignatureBuilder.initialize()
+                functionReferenceClass.declarations.add(getSignatureBuilder.ir)
+
+                getNameBuilder.initialize()
+                functionReferenceClass.declarations.add(getNameBuilder.ir)
+
+                getOwnerBuilder.initialize()
+                functionReferenceClass.declarations.add(getOwnerBuilder.ir)
+
+                suspendInvokeMethodBuilder?.let {
+                    it.initialize()
+                    functionReferenceClass.declarations.add(it.ir)
+                }
             }
 
             return BuiltFunctionReference(functionReferenceClass, constructorBuilder.ir)
@@ -260,7 +310,7 @@ class CallableReferenceLowering(val context: JvmBackendContext) : FileLoweringPa
         private fun createConstructorBuilder() = object : SymbolWithIrBuilder<IrConstructorSymbol, IrConstructor>() {
 
             private val kFunctionRefConstructorSymbol =
-                functionReference.constructors.filter { it.descriptor.valueParameters.size == 2 }.single()
+                functionReferenceOrLambda.constructors.filter { it.descriptor.valueParameters.size == if (isLambda) 1 else 2 }.single()
 
             override fun buildSymbol() = IrConstructorSymbolImpl(
                 ClassConstructorDescriptorImpl.create(
@@ -308,13 +358,15 @@ class CallableReferenceLowering(val context: JvmBackendContext) : FileLoweringPa
                                 IrConstImpl.int(startOffset, endOffset, context.irBuiltIns.intType, unboundFunctionParameters.size)
                             putValueArgument(0, const)
 
-                            val irReceiver = valueParameters.firstOrNull()
-                            val receiver = boundFunctionParameters.singleOrNull()
-                            //TODO pass proper receiver
-                            val receiverValue = receiver?.let {
-                                irGet(irReceiver!!.symbol.owner)
-                            } ?: irNull()
-                            putValueArgument(1, receiverValue)
+                            if (!isLambda) {
+                                val irReceiver = valueParameters.firstOrNull()
+                                val receiver = boundFunctionParameters.singleOrNull()
+                                //TODO pass proper receiver
+                                val receiverValue = receiver?.let {
+                                    irGet(irReceiver!!.symbol.owner)
+                                } ?: irNull()
+                                putValueArgument(1, receiverValue)
+                            }
                         }
 
                         //TODO don't write receiver again: use it from base class
@@ -382,31 +434,74 @@ class CallableReferenceLowering(val context: JvmBackendContext) : FileLoweringPa
                         createParameterDeclarations()
 
                         body = irBuilder.irBlockBody(startOffset, endOffset) {
+                            val arrayGetFun = context.irBuiltIns.arrayClass.owner
+                                .declarations.find {
+                                (it as? IrSimpleFunction)?.name?.toString() == "get"
+                            }!! as IrSimpleFunction
+
+                            if (useVararg) {
+                                val varargParam = valueParameters.single()
+                                val arraySizeProperty = context.irBuiltIns.arrayClass.owner.declarations.find {
+                                    (it as? IrProperty)?.name?.toString() == "size"
+                                } as IrProperty
+                                +irIfThen(
+                                    irNotEquals(
+                                        irCall(arraySizeProperty.getter!!).apply {
+                                            dispatchReceiver = irGet(varargParam)
+                                        },
+                                        irInt(unboundFunctionParameters.size)
+                                    ),
+                                    irCall(context.irBuiltIns.illegalArgumentExceptionFun).apply {
+                                        putValueArgument(0, irString("Expected ${unboundFunctionParameters.size} arguments"))
+                                    }
+                                )
+                            }
                             +irReturn(
                                 irCall(irFunctionReference.symbol).apply {
                                     var unboundIndex = 0
                                     val unboundArgsSet = unboundFunctionParameters.toSet()
-                                    functionParameters.forEach {
-                                        val argument =
-                                            if (!unboundArgsSet.contains(it))
-                                            // Bound parameter - read from field.
-                                                irGetField(irGet(functionReferenceThis.owner), argumentToPropertiesMap[it]!!.owner)
-                                            else {
-                                                if (ourSymbol.descriptor.isSuspend && unboundIndex == valueParameters.size)
+
+                                    functionParameters.forEach { parameter ->
+                                        val argument = when {
+                                            !unboundArgsSet.contains(parameter) ->
+                                                // Bound parameter - read from field.
+                                                irGetField(irGet(functionReferenceThis.owner), argumentToPropertiesMap[parameter]!!.owner)
+                                            ourSymbol.descriptor.isSuspend && unboundIndex == valueParameters.size ->
                                                 // For suspend functions the last argument is continuation and it is implicit.
-                                                    TODO()
+                                                TODO()
 //                                                        irCall(getContinuationSymbol,
 //                                                               listOf(ourSymbol.descriptor.returnType!!))
-                                                else
-                                                    irGet(valueParameters[unboundIndex++])
+                                            useVararg -> {
+                                                val type = parameter.type.toIrType()!!
+                                                val varargParam = valueParameters.single()
+                                                irBlock(resultType = type) {
+                                                    val argValue = irTemporary(
+                                                        irCall(arrayGetFun).apply {
+                                                            dispatchReceiver = irGet(varargParam)
+                                                            putValueArgument(0, irInt(unboundIndex++))
+                                                        }
+                                                    )
+                                                    +irIfThen(
+                                                        irNotIs(irGet(argValue), type),
+                                                        irCall(context.irBuiltIns.illegalArgumentExceptionFun).apply {
+                                                            putValueArgument(0, irString("Wrong type, expected $type"))
+                                                        }
+                                                    )
+                                                    +irGet(argValue)
+                                                }
                                             }
-                                        when (it) {
+                                            else -> {
+                                                irGet(valueParameters[unboundIndex++])
+                                            }
+                                        }
+                                        when (parameter) {
                                             functionDescriptor.dispatchReceiverParameter -> dispatchReceiver = argument
                                             functionDescriptor.extensionReceiverParameter -> extensionReceiver = argument
-                                            else -> putValueArgument((it as ValueParameterDescriptor).index, argument)
+                                            else -> putValueArgument((parameter as ValueParameterDescriptor).index, argument)
                                         }
                                     }
-                                    assert(unboundIndex == valueParameters.size) { "Not all arguments of <invoke> are used" }
+
+                                    if (!useVararg) assert(unboundIndex == valueParameters.size) { "Not all arguments of <invoke> are used" }
                                 }
                             )
                         }
@@ -465,7 +560,7 @@ class CallableReferenceLowering(val context: JvmBackendContext) : FileLoweringPa
                                 /* outType                   = */ superNameProperty.type,
                                 /* typeParameters            = */ superNameProperty.typeParameters,
                                 /* dispatchReceiverParameter = */ superNameProperty.dispatchReceiverParameter,
-                                /* receiverType              = */ superNameProperty.extensionReceiverParameter?.type
+                                /* extensionReceiverParameter= */ superNameProperty.extensionReceiverParameter
                             )
                             //overriddenDescriptors += superNameProperty.getter
                         }
@@ -693,6 +788,10 @@ class CallableReferenceLowering(val context: JvmBackendContext) : FileLoweringPa
             val name = asString()
             Name.identifier("$${name.substring(1, name.length - 1)}")
         } else this
+    }
+
+    companion object {
+        const val MAX_ARGCOUNT_WITHOUT_VARARG = 22
     }
 }
 

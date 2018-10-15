@@ -187,7 +187,23 @@ internal constructor(private val nativePattern: Pattern) : Serializable {
     @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
     public actual fun split(input: CharSequence, limit: Int = 0): List<String> {
         require(limit >= 0, { "Limit must be non-negative, but was $limit." })
-        return nativePattern.split(input, if (limit == 0) -1 else limit).asList()
+
+        val matcher = nativePattern.matcher(input)
+        if (!matcher.find() || limit == 1) return listOf(input.toString())
+
+        val result = ArrayList<String>(if (limit > 0) limit.coerceAtMost(10) else 10)
+        var lastStart = 0
+        val lastSplit = limit - 1 // negative if there's no limit
+
+        do {
+            result.add(input.substring(lastStart, matcher.start()))
+            lastStart = matcher.end()
+            if (lastSplit >= 0 && result.size == lastSplit) break
+        } while (matcher.find())
+
+        result.add(input.substring(lastStart, input.length))
+
+        return result
     }
 
     /** Returns the string representation of this regular expression, namely the [pattern] of this regular expression. */

@@ -45,7 +45,7 @@ class EnumClassLowering(val context: JvmBackendContext) : ClassLoweringPass {
         fun transform(delegatingConstructorCall: IrDelegatingConstructorCall): IrExpression
     }
 
-    private val unsubstitutedArrayOfFun = context.builtIns.findSingleFunction(Name.identifier("arrayOf"))
+    private val unsubstitutedArrayOfFun = context.ir.symbols.arrayOf.descriptor
 
     private fun createArrayOfExpression(arrayElementType: KotlinType, arrayElements: List<IrExpression>): IrExpression {
         val typeParameter0 = unsubstitutedArrayOfFun.typeParameters[0]
@@ -186,18 +186,12 @@ class EnumClassLowering(val context: JvmBackendContext) : ClassLoweringPass {
             return enumEntryClass
         }
 
-        private fun createFieldForEnumEntry(enumEntry: IrEnumEntry): IrField {
-            val fieldSymbol = context.descriptorsFactory.getSymbolForEnumEntry(enumEntry.symbol)
-
-            return IrFieldImpl(
-                enumEntry.startOffset, enumEntry.endOffset, JvmLoweredDeclarationOrigin.FIELD_FOR_ENUM_ENTRY,
-                fieldSymbol, enumEntry.initializerExpression!!.type
-            ).also {
+        private fun createFieldForEnumEntry(enumEntry: IrEnumEntry) =
+            context.declarationFactory.getFieldForEnumEntry(enumEntry, enumEntry.initializerExpression!!.type).also {
                 it.initializer = IrExpressionBodyImpl(enumEntry.initializerExpression!!)
                 enumEntryFields.add(it)
                 enumEntriesByField[it] = enumEntry
             }
-        }
 
         private fun setupSynthesizedEnumClassMembers() {
             val irField = createSyntheticValuesFieldDeclaration()

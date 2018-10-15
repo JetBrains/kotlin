@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 fun box(): String {
     val list = ArrayList<String>()
     list.add("0")

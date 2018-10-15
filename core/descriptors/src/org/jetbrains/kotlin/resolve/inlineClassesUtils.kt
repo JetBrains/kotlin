@@ -5,10 +5,7 @@
 
 package org.jetbrains.kotlin.resolve
 
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
@@ -32,6 +29,26 @@ fun KotlinType.isInlineClassType(): Boolean = constructor.declarationDescriptor?
 fun KotlinType.substitutedUnderlyingType(): KotlinType? {
     val parameter = unsubstitutedUnderlyingParameter() ?: return null
     return memberScope.getContributedVariables(parameter.name, NoLookupLocation.FOR_ALREADY_TRACKED).singleOrNull()?.type
+}
+
+fun KotlinType.isRecursiveInlineClassType() =
+    isRecursiveInlineClassTypeInner(hashSetOf())
+
+private fun KotlinType.isRecursiveInlineClassTypeInner(visited: HashSet<ClassifierDescriptor>): Boolean {
+    val descriptor = constructor.declarationDescriptor?.original ?: return false
+
+    if (!visited.add(descriptor)) return true
+
+    return when (descriptor) {
+        is ClassDescriptor ->
+            descriptor.isInlineClass() &&
+                    unsubstitutedUnderlyingType()?.isRecursiveInlineClassTypeInner(visited) == true
+
+        is TypeParameterDescriptor ->
+            descriptor.upperBounds.any { it.isRecursiveInlineClassTypeInner(visited) }
+
+        else -> false
+    }
 }
 
 fun KotlinType.isNullableUnderlyingType(): Boolean {

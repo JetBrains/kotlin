@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.ir.symbols.impl.createFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.createValueSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.DeepCopyIrTree
+import org.jetbrains.kotlin.ir.util.withScope
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
@@ -30,6 +31,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassOrAny
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperInterfaces
+import org.jetbrains.kotlin.resolve.scopes.receivers.ExtensionReceiver
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeSubstitutor
@@ -315,11 +317,11 @@ internal class DeepCopyIrTreeWithDescriptors(val targetDescriptor: FunctionDescr
                 val newDispatchReceiverParameter = oldDispatchReceiverParameter?.let { descriptorSubstituteMap.getOrDefault(it, it) as ReceiverParameterDescriptor }
                 val newTypeParameters = oldDescriptor.typeParameters        // TODO substitute types
                 val newValueParameters = copyValueParameters(oldDescriptor.valueParameters, this)
-                val newReceiverParameterType = substituteTypeAndTryGetCopied(oldDescriptor.extensionReceiverParameter?.type)
+                val newReceiverParameter = copyReceiverParameter(oldDescriptor.extensionReceiverParameter, this)
                 val newReturnType = substituteTypeAndTryGetCopied(oldDescriptor.returnType)
 
                 initialize(
-                    /* receiverParameterType        = */ newReceiverParameterType,
+                    /* extensionReceiverParameter   = */ newReceiverParameter,
                     /* dispatchReceiverParameter    = */ newDispatchReceiverParameter,
                     /* typeParameters               = */ newTypeParameters,
                     /* unsubstitutedValueParameters = */ newValueParameters,
@@ -338,11 +340,11 @@ internal class DeepCopyIrTreeWithDescriptors(val targetDescriptor: FunctionDescr
             (descriptorSubstituteMap[oldDescriptor] as ClassConstructorDescriptorImpl).apply {
                 val newTypeParameters = oldDescriptor.typeParameters
                 val newValueParameters = copyValueParameters(oldDescriptor.valueParameters, this)
-                val receiverParameterType = substituteTypeAndTryGetCopied(oldDescriptor.dispatchReceiverParameter?.type)
+                val newReceiverParameter = copyReceiverParameter(oldDescriptor.dispatchReceiverParameter, this)
                 val returnType = substituteTypeAndTryGetCopied(oldDescriptor.returnType)
 
                 initialize(
-                    /* receiverParameterType        = */ receiverParameterType,
+                    /* extensionReceiverParameter   = */ newReceiverParameter,
                     /* dispatchReceiverParameter    = */ null,                              //  For constructor there is no explicit dispatch receiver.
                     /* typeParameters               = */ newTypeParameters,
                     /* unsubstitutedValueParameters = */ newValueParameters,
@@ -360,11 +362,14 @@ internal class DeepCopyIrTreeWithDescriptors(val targetDescriptor: FunctionDescr
                     /* outType                   = */ substituteTypeAndTryGetCopied(oldDescriptor.type)!!,
                     /* typeParameters            = */ oldDescriptor.typeParameters,
                     /* dispatchReceiverParameter = */ (containingDeclaration as ClassDescriptor).thisAsReceiverParameter,
-                    /* receiverType              = */ substituteTypeAndTryGetCopied(oldDescriptor.extensionReceiverParameter?.type))
+                    /* extensionReceiverParameter= */ copyReceiverParameter(oldDescriptor.extensionReceiverParameter, this)
+                )
 
                 initialize(
                     /* getter = */ oldDescriptor.getter?.let { copyPropertyGetterDescriptor(it, this) },
-                    /* setter = */ oldDescriptor.setter?.let { copyPropertySetterDescriptor(it, this) })
+                    /* setter = */ oldDescriptor.setter?.let { copyPropertySetterDescriptor(it, this) },
+                    oldDescriptor.backingField, oldDescriptor.delegateField
+                )
 
                 overriddenDescriptors += oldDescriptor.overriddenDescriptors
             }
@@ -431,6 +436,18 @@ internal class DeepCopyIrTreeWithDescriptors(val targetDescriptor: FunctionDescr
                 newDescriptor
             }
 
+        private fun copyReceiverParameter(
+            oldReceiverParameter: ReceiverParameterDescriptor?, containingDeclaration: CallableDescriptor
+        ): ReceiverParameterDescriptor? {
+            if (oldReceiverParameter == null) return null
+            val substituteTypeAndTryGetCopied = substituteTypeAndTryGetCopied(oldReceiverParameter.type) ?: return null
+            return ReceiverParameterDescriptorImpl(
+                containingDeclaration,
+                ExtensionReceiver(containingDeclaration, substituteTypeAndTryGetCopied, oldReceiverParameter.value),
+                oldReceiverParameter.annotations
+            )
+        }
+
         private fun substituteTypeAndTryGetCopied(type: KotlinType?): KotlinType? {
             val substitutedType = substituteType(type) ?: return null
             val oldClassDescriptor = TypeUtils.getClassDescriptor(substitutedType) ?: return substitutedType
@@ -479,7 +496,7 @@ internal class DeepCopyIrTreeWithDescriptors(val targetDescriptor: FunctionDescr
             return IrCallImpl(
                 startOffset    = expression.startOffset,
                 endOffset      = expression.endOffset,
-                type           = newDescriptor.returnType?.toIrType()!!,
+                type           = newDescriptor.returnType?.toIrType(context.symbolTable)!!,
                 descriptor     = newDescriptor,
                 typeArgumentsCount = expression.typeArgumentsCount,
                 origin         = expression.origin,
@@ -492,16 +509,19 @@ internal class DeepCopyIrTreeWithDescriptors(val targetDescriptor: FunctionDescr
 
         //---------------------------------------------------------------------//
 
-        override fun visitFunction(declaration: IrFunction): IrFunction =
-            IrFunctionImpl(
-                startOffset = declaration.startOffset,
-                endOffset   = declaration.endOffset,
-                origin      = mapDeclarationOrigin(declaration.origin),
-                descriptor  = mapFunctionDeclaration(declaration.descriptor),
-                body        = declaration.body?.transform(this, null)
-            ).also {
-                it.setOverrides(context.symbolTable)
-            }.transformParameters(declaration)
+        override fun visitFunction(declaration: IrFunction) =
+            context.symbolTable.withScope(mapFunctionDeclaration(declaration.descriptor)) { descriptor ->
+                IrFunctionImpl(
+                    startOffset = declaration.startOffset,
+                    endOffset = declaration.endOffset,
+                    origin = mapDeclarationOrigin(declaration.origin),
+                    descriptor = descriptor,
+                    body = declaration.body?.transform(this@InlineCopyIr, null)
+                ).also {
+                    it.setOverrides(context.symbolTable)
+                    it.transformParameters(declaration)
+                }
+            }
 
         //---------------------------------------------------------------------//
 
@@ -611,7 +631,7 @@ internal class DeepCopyIrTreeWithDescriptors(val targetDescriptor: FunctionDescr
 
     //-------------------------------------------------------------------------//
 
-    private fun substituteType(oldType: IrType?): IrType? = substituteType(oldType?.toKotlinType())?.toIrType()
+    private fun substituteType(oldType: IrType?): IrType? = substituteType(oldType?.toKotlinType())?.toIrType(context.symbolTable)
 
     private fun substituteType(oldType: KotlinType?): KotlinType? {
         if (typeSubstitutor == null) return oldType

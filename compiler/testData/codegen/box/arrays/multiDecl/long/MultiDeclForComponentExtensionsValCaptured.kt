@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 operator fun Long.component1() = this + 1
 operator fun Long.component2() = this + 2
 

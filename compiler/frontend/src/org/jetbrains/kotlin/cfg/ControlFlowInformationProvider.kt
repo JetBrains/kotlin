@@ -668,7 +668,7 @@ class ControlFlowInformationProvider private constructor(
                 if (anonymous && !languageVersionSettings.supportsFeature(LanguageFeature.SingleUnderscoreForParameterName)) {
                     return
                 }
-                val mainFunctionDetector = MainFunctionDetector(trace.bindingContext)
+                val mainFunctionDetector = MainFunctionDetector(trace.bindingContext, languageVersionSettings)
                 val isMain = owner is KtNamedFunction && mainFunctionDetector.isMain(owner)
                 val functionName = functionDescriptor.name
                 if (isMain

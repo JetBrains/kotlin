@@ -33,7 +33,10 @@ class IncrementalPackagePartProvider(
 
     private val moduleMappings = storageManager.createLazyValue {
         incrementalCaches.map { cache ->
-            ModuleMapping.loadModuleMapping(cache.getModuleMappingData(), "<incremental>", deserializationConfiguration)
+            ModuleMapping.loadModuleMapping(cache.getModuleMappingData(), "<incremental>", deserializationConfiguration) { version ->
+                // Incremental compilation should fall back to full rebuild if the minor component of the metadata version has changed
+                throw IllegalStateException("Version of the generated module should not be incompatible: $version")
+            }
         }
     }
 

@@ -33,5 +33,5 @@ interface C : A {
 // FILE: J.java
 
 public interface J extends A {
-    Object foo(kotlin.coroutines.experimental.Continuation<kotlin.Unit> y);
+    Object foo(kotlin.coroutines.Continuation<kotlin.Unit> y);
 }

@@ -31,7 +31,7 @@ class RemoveExplicitLambdaParameterTypesIntention : SelfTargetingIntention<KtLam
     override fun applyTo(element: KtLambdaExpression, editor: Editor?) {
         val oldParameterList = element.functionLiteral.valueParameterList!!
 
-        val parameterString = oldParameterList.parameters.map {
+        val parameterString = oldParameterList.parameters.asSequence().map {
             it.destructuringDeclaration?.text ?: it.name
         }.joinToString(", ")
         val newParameterList = KtPsiFactory(element).createLambdaParameterList(parameterString)

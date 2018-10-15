@@ -12,7 +12,7 @@ pill {
 }
 
 dependencies {
-    compileOnly project(path: ':kotlin-stdlib', configuration: 'distJar')
+    compileOnly project(':kotlin-stdlib')
 }
 
 configurations {

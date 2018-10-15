@@ -43,14 +43,17 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
-import java.lang.AssertionError
 
 class DataClassMembersGenerator(
     declarationGenerator: DeclarationGenerator
 ) : DeclarationGeneratorExtension(declarationGenerator) {
 
-    fun generate(ktClassOrObject: KtClassOrObject, irClass: IrClass) {
-        MyDataClassMethodGenerator(ktClassOrObject, irClass).generate()
+    fun generateInlineClassMembers(ktClassOrObject: KtClassOrObject, irClass: IrClass) {
+        MyDataClassMethodGenerator(ktClassOrObject, irClass, IrDeclarationOrigin.GENERATED_INLINE_CLASS_MEMBER).generate()
+    }
+
+    fun generateDataClassMembers(ktClassOrObject: KtClassOrObject, irClass: IrClass) {
+        MyDataClassMethodGenerator(ktClassOrObject, irClass, IrDeclarationOrigin.GENERATED_DATA_CLASS_MEMBER).generate()
     }
 
     private fun declareSimpleFunction(startOffset: Int, endOffset: Int, origin: IrDeclarationOrigin, function: FunctionDescriptor) =
@@ -104,7 +107,8 @@ class DataClassMembersGenerator(
 
     private inner class MyDataClassMethodGenerator(
         ktClassOrObject: KtClassOrObject,
-        val irClass: IrClass
+        val irClass: IrClass,
+        val origin: IrDeclarationOrigin
     ) : DataClassMethodGenerator(ktClassOrObject, declarationGenerator.context.bindingContext) {
         private inline fun buildMember(
             function: FunctionDescriptor,
@@ -112,7 +116,7 @@ class DataClassMembersGenerator(
             body: MemberFunctionBuilder.(IrFunction) -> Unit
         ) {
             MemberFunctionBuilder(
-                irClass, function, IrDeclarationOrigin.GENERATED_DATA_CLASS_MEMBER,
+                irClass, function, origin,
                 psiElement.startOffsetOrUndefined, psiElement.endOffsetOrUndefined
             ).addToClass { irFunction ->
                 irFunction.buildWithScope {
@@ -123,8 +127,10 @@ class DataClassMembersGenerator(
         }
 
         override fun generateComponentFunction(function: FunctionDescriptor, parameter: ValueParameterDescriptor) {
+            if (!irClass.isData) return
+
             val ktParameter = DescriptorToSourceUtils.descriptorToDeclaration(parameter)
-                    ?: throw AssertionError("No definition for data class constructor parameter $parameter")
+                ?: throw AssertionError("No definition for data class constructor parameter $parameter")
 
             buildMember(function, ktParameter) {
                 +irReturn(irGet(function.returnType!!.toIrType(), irThis(), getPropertyGetterSymbol(parameter)))
@@ -140,8 +146,10 @@ class DataClassMembersGenerator(
             context.symbolTable.referenceFunction(property.getter!!)
 
         override fun generateCopyFunction(function: FunctionDescriptor, constructorParameters: List<KtParameter>) {
+            if (!irClass.isData) return
+
             val dataClassConstructor = classDescriptor.unsubstitutedPrimaryConstructor
-                    ?: throw AssertionError("Data class should have a primary constructor: $classDescriptor")
+                ?: throw AssertionError("Data class should have a primary constructor: $classDescriptor")
             val constructorSymbol = context.symbolTable.referenceConstructor(dataClassConstructor)
 
             buildMember(function, declaration) { irFunction ->
@@ -167,7 +175,9 @@ class DataClassMembersGenerator(
             buildMember(function, declaration) {
                 val irType = classDescriptor.defaultType.toIrType()
 
-                +irIfThenReturnTrue(irEqeqeq(irThis(), irOther()))
+                if (!irClass.isInline) {
+                    +irIfThenReturnTrue(irEqeqeq(irThis(), irOther()))
+                }
                 +irIfThenReturnFalse(irNotIs(irOther(), irType))
                 val otherWithCast = irTemporary(irAs(irOther(), irType), "other_with_cast")
                 for (property in properties) {

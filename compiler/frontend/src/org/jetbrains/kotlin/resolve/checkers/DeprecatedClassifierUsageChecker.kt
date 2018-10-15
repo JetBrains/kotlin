@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.resolve.checkers
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.psi.KtThisExpression
-import org.jetbrains.kotlin.resolve.createDeprecationDiagnostic
+import org.jetbrains.kotlin.resolve.deprecation.createDeprecationDiagnostic
 
 class DeprecatedClassifierUsageChecker : ClassifierUsageChecker {
     override fun check(targetDescriptor: ClassifierDescriptor, element: PsiElement, context: ClassifierUsageCheckerContext) {

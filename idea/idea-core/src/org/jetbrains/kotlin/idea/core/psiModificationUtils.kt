@@ -21,13 +21,15 @@ import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.impl.source.codeStyle.CodeEditUtil
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.util.PsiTreeUtil
-import org.jetbrains.kotlin.builtins.isFunctionType
+import org.jetbrains.kotlin.builtins.isFunctionOrSuspendFunctionType
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.extensions.DeclarationAttributeAltererExtension
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
+import org.jetbrains.kotlin.idea.util.hasJvmFieldAnnotation
+import org.jetbrains.kotlin.idea.util.isExpectDeclaration
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
@@ -135,8 +137,8 @@ fun KtCallExpression.canMoveLambdaOutsideParentheses(): Boolean {
         // if there are functions among candidates but none of them have last function parameter then not show the intention
         if (candidates.isNotEmpty() && candidates.none { candidate ->
                 val params = candidate.valueParameters
-                params.lastOrNull()?.type?.isFunctionType == true &&
-                        params.count { it.type.isFunctionType } == lambdaArgumentCount + referenceArgumentCount
+                params.lastOrNull()?.type?.isFunctionOrSuspendFunctionType == true &&
+                        params.count { it.type.isFunctionOrSuspendFunctionType } == lambdaArgumentCount + referenceArgumentCount
             }
         ) return false
     }
@@ -251,8 +253,15 @@ fun KtModifierListOwner.setVisibility(visibilityModifier: KtModifierKeywordToken
     addModifier(visibilityModifier)
 }
 
-fun KtDeclaration.implicitVisibility(): KtModifierKeywordToken? =
-    when {
+fun KtDeclaration.implicitVisibility(): KtModifierKeywordToken? {
+    return when {
+        this is KtPropertyAccessor && isSetter && property.hasModifier(KtTokens.OVERRIDE_KEYWORD) -> {
+            (property.resolveToDescriptorIfAny() as? PropertyDescriptor)?.overriddenDescriptors?.forEach {
+                val visibility = it.setter?.visibility?.toKeywordToken()
+                if (visibility != null) return visibility
+            }
+            KtTokens.DEFAULT_VISIBILITY_KEYWORD
+        }
         this is KtConstructor<*> -> {
             val klass = getContainingClassOrObject()
             if (klass is KtClass && (klass.isEnum() || klass.isSealed())) KtTokens.PRIVATE_KEYWORD
@@ -268,8 +277,25 @@ fun KtDeclaration.implicitVisibility(): KtModifierKeywordToken? =
             KtTokens.DEFAULT_VISIBILITY_KEYWORD
         }
     }
+}
 
-fun KtModifierListOwner.canBePrivate() = modifierList?.hasModifier(KtTokens.ABSTRACT_KEYWORD) != true
+fun KtModifierListOwner.canBePrivate(): Boolean {
+    if (modifierList?.hasModifier(KtTokens.ABSTRACT_KEYWORD) == true) return false
+    if (this.isAnnotationClassPrimaryConstructor()) return false
+    if (this is KtProperty && this.hasJvmFieldAnnotation()) return false
+
+    if (this is KtDeclaration) {
+        if (hasActualModifier() || isExpectDeclaration()) return false
+        val containingClassOrObject = containingClassOrObject ?: return true
+        if (containingClassOrObject is KtClass &&
+            (containingClassOrObject.isInterface() || containingClassOrObject.isAnnotation())
+        ) {
+            return false
+        }
+    }
+
+    return true
+}
 
 fun KtModifierListOwner.canBeProtected(): Boolean {
     val parent = when (this) {
@@ -282,6 +308,11 @@ fun KtModifierListOwner.canBeProtected(): Boolean {
         else -> false
     }
 }
+
+fun KtModifierListOwner.canBeInternal(): Boolean = !isAnnotationClassPrimaryConstructor()
+
+private fun KtModifierListOwner.isAnnotationClassPrimaryConstructor(): Boolean =
+    this is KtPrimaryConstructor && (this.parent as? KtClass)?.hasModifier(KtTokens.ANNOTATION_KEYWORD) ?: false
 
 fun KtClass.isInheritable(): Boolean {
     return when (getModalityFromDescriptor()) {

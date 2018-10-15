@@ -1,5 +1,4 @@
-// IGNORE_BACKEND: JS_IR
-// EXPECTED_REACHABLE_NODES: 1391
+// EXPECTED_REACHABLE_NODES: 1534
 /*
 This tests that variables (aliases) are created for array literals.
 

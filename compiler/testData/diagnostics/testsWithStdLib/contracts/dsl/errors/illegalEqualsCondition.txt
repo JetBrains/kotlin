@@ -1,0 +1,7 @@
+package
+
+public fun equalConstants(): kotlin.Unit
+public fun equalNullWithCall(): kotlin.Unit
+public fun equalsWithVariables(/*0*/ x: kotlin.Any?, /*1*/ y: kotlin.Any?): kotlin.Unit
+public fun get(): kotlin.Int?
+public fun identityEqualsWithVariables(/*0*/ x: kotlin.Any?, /*1*/ y: kotlin.Any?): kotlin.Unit

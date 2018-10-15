@@ -10,14 +10,18 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 
 interface ContentRoot
 
-data class KotlinSourceRoot(val path: String): ContentRoot
+/**
+ * @param isCommon whether this source root contains sources of a common module in a multi-platform project
+ */
+data class KotlinSourceRoot(val path: String, val isCommon: Boolean): ContentRoot
 
-fun CompilerConfiguration.addKotlinSourceRoot(source: String) {
-    add(CLIConfigurationKeys.CONTENT_ROOTS, KotlinSourceRoot(source))
+@JvmOverloads
+fun CompilerConfiguration.addKotlinSourceRoot(path: String, isCommon: Boolean = false) {
+    add(CLIConfigurationKeys.CONTENT_ROOTS, KotlinSourceRoot(path, isCommon))
 }
 
 fun CompilerConfiguration.addKotlinSourceRoots(sources: List<String>): Unit =
-    sources.forEach(this::addKotlinSourceRoot)
+    sources.forEach { addKotlinSourceRoot(it) }
 
-val CompilerConfiguration.kotlinSourceRoots: List<String>
-    get() = get(CLIConfigurationKeys.CONTENT_ROOTS)?.filterIsInstance<KotlinSourceRoot>()?.map { it.path }.orEmpty()
+val CompilerConfiguration.kotlinSourceRoots: List<KotlinSourceRoot>
+    get() = get(CLIConfigurationKeys.CONTENT_ROOTS)?.filterIsInstance<KotlinSourceRoot>().orEmpty()

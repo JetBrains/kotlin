@@ -6,7 +6,7 @@ buildscript {
     kotlin_version = "$VERSION$"
     repositories {
         maven {
-            setUrl("http://dl.bintray.com/kotlin/kotlin-eap")
+            setUrl("https://dl.bintray.com/kotlin/kotlin-eap")
         }
         mavenCentral()
     }
@@ -29,7 +29,7 @@ application {
 repositories {
     jcenter()
     maven {
-        setUrl("http://dl.bintray.com/kotlin/kotlin-eap")
+        setUrl("https://dl.bintray.com/kotlin/kotlin-eap")
     }
 }
 

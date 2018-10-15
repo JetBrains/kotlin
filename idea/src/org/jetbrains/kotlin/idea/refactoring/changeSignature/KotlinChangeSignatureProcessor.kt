@@ -45,6 +45,16 @@ class KotlinChangeSignatureProcessor(
     val ktChangeInfo
         get() = changeInfo.delegate!!
 
+    override fun setPrepareSuccessfulSwingThreadCallback(callback: Runnable?) {
+        val actualCallback = if (callback != null) {
+            Runnable {
+                callback.run()
+                setPrepareSuccessfulSwingThreadCallback(null)
+            }
+        } else null
+        super.setPrepareSuccessfulSwingThreadCallback(actualCallback)
+    }
+
     override fun createUsageViewDescriptor(usages: Array<UsageInfo>): UsageViewDescriptor {
         val subject = if (ktChangeInfo.kind.isConstructor) "constructor" else "function"
         return KotlinUsagesViewDescriptor(myChangeInfo.method, RefactoringBundle.message("0.to.change.signature", subject))

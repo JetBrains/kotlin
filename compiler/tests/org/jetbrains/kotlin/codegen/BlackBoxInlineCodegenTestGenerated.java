@@ -2410,6 +2410,11 @@ public class BlackBoxInlineCodegenTestGenerated extends AbstractBlackBoxInlineCo
             runTest("compiler/testData/codegen/boxInline/property/augAssignmentAndIncViaConvention.kt");
         }
 
+        @TestMetadata("kt22649.kt")
+        public void testKt22649() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/property/kt22649.kt");
+        }
+
         @TestMetadata("property.kt")
         public void testProperty() throws Exception {
             runTest("compiler/testData/codegen/boxInline/property/property.kt");
@@ -2834,6 +2839,36 @@ public class BlackBoxInlineCodegenTestGenerated extends AbstractBlackBoxInlineCo
         @TestMetadata("defaultFunction.kt")
         public void testDefaultFunction() throws Exception {
             runTest("compiler/testData/codegen/boxInline/smap/defaultFunction.kt");
+        }
+
+        @TestMetadata("kt23369.kt")
+        public void testKt23369() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/smap/kt23369.kt");
+        }
+
+        @TestMetadata("kt23369_2.kt")
+        public void testKt23369_2() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/smap/kt23369_2.kt");
+        }
+
+        @TestMetadata("kt23369_3.kt")
+        public void testKt23369_3() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/smap/kt23369_3.kt");
+        }
+
+        @TestMetadata("kt23369_E.kt")
+        public void testKt23369_E() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/smap/kt23369_E.kt");
+        }
+
+        @TestMetadata("kt23369_F.kt")
+        public void testKt23369_F() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/smap/kt23369_F.kt");
+        }
+
+        @TestMetadata("kt23369_L.kt")
+        public void testKt23369_L() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/smap/kt23369_L.kt");
         }
 
         @TestMetadata("oneFile.kt")
@@ -3317,6 +3352,11 @@ public class BlackBoxInlineCodegenTestGenerated extends AbstractBlackBoxInlineCo
         @TestMetadata("inlineSuspendOfSuspend.kt")
         public void testInlineSuspendOfSuspend_1_3() throws Exception {
             runTestWithPackageReplacement("compiler/testData/codegen/boxInline/suspend/inlineSuspendOfSuspend.kt", "kotlin.coroutines");
+        }
+
+        @TestMetadata("kt26658.kt")
+        public void testKt26658() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/suspend/kt26658.kt");
         }
 
         @TestMetadata("multipleLocals.kt")

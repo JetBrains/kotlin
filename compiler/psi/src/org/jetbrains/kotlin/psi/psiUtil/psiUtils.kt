@@ -130,6 +130,10 @@ inline fun <reified T : PsiElement, reified V : PsiElement, reified U : PsiEleme
     return PsiTreeUtil.getParentOfType(this, T::class.java, V::class.java, U::class.java)
 }
 
+inline fun <reified T : PsiElement> PsiElement.getParentOfType(strict: Boolean, vararg stopAt: Class<out PsiElement>): T? {
+    return PsiTreeUtil.getParentOfType(this, T::class.java, strict, *stopAt)
+}
+
 inline fun <reified T : PsiElement> PsiElement.getStrictParentOfType(): T? {
     return PsiTreeUtil.getParentOfType(this, T::class.java, true)
 }

@@ -41,7 +41,8 @@ dist {
 
 compileKotlin {
     kotlinOptions.freeCompilerArgs = ["-Xallow-kotlin-package", "-Xnormalize-constructor-calls=enable",
-                                      "-module-name", project.archivesBaseName]
+                                      "-Xuse-experimental=kotlin.contracts.ExperimentalContracts",
+                                      "-module-name", project.archivesBaseName, ]
 }
 
 compileTestKotlin {

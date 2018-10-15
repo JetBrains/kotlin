@@ -20,7 +20,6 @@ import com.intellij.facet.impl.ui.libraries.DelegatingLibrariesValidatorContext
 import com.intellij.facet.ui.FacetEditorContext
 import com.intellij.facet.ui.FacetEditorValidator
 import com.intellij.facet.ui.FacetValidatorsManager
-import org.jetbrains.kotlin.config.TargetPlatformKind
 import org.jetbrains.kotlin.idea.facet.KotlinFacetEditorGeneralTab.EditorComponent
 
 class KotlinLibraryValidatorCreator : KotlinFacetValidatorCreator() {
@@ -29,6 +28,6 @@ class KotlinLibraryValidatorCreator : KotlinFacetValidatorCreator() {
                 DelegatingLibrariesValidatorContext(editorContext),
                 validatorsManager,
                 "kotlin"
-        ) { editor.targetPlatformComboBox.selectedItem as TargetPlatformKind<*> }
+        ) { editor.chosenPlatform!! }
     }
 }

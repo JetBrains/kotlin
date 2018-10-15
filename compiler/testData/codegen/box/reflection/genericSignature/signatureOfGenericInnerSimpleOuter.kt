@@ -9,8 +9,9 @@ abstract class Outer {
 
 fun box(): String {
     kotlin.test.assertEquals(
-            "Outer.Outer\$Inner<R>",
-            Outer::class.java.declaredMethods.single().genericReturnType.toString())
+        "Outer\$Inner<R>",
+        Outer::class.java.declaredMethods.single().genericReturnType.toString()
+    )
 
     return "OK"
 }

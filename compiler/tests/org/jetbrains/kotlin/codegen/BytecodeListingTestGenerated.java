@@ -38,6 +38,21 @@ public class BytecodeListingTestGenerated extends AbstractBytecodeListingTest {
         runTest("compiler/testData/codegen/bytecodeListing/callableNameIntrinsic.kt");
     }
 
+    @TestMetadata("companionObjectVisibility_after.kt")
+    public void testCompanionObjectVisibility_after() throws Exception {
+        runTest("compiler/testData/codegen/bytecodeListing/companionObjectVisibility_after.kt");
+    }
+
+    @TestMetadata("companionObjectVisibility_before.kt")
+    public void testCompanionObjectVisibility_before() throws Exception {
+        runTest("compiler/testData/codegen/bytecodeListing/companionObjectVisibility_before.kt");
+    }
+
+    @TestMetadata("companionObjectVisibility_lv13.kt")
+    public void testCompanionObjectVisibility_lv13() throws Exception {
+        runTest("compiler/testData/codegen/bytecodeListing/companionObjectVisibility_lv13.kt");
+    }
+
     @TestMetadata("coroutineContextIntrinsic.kt")
     public void testCoroutineContextIntrinsic_1_2() throws Exception {
         runTestWithPackageReplacement("compiler/testData/codegen/bytecodeListing/coroutineContextIntrinsic.kt", "kotlin.coroutines.experimental");
@@ -205,6 +220,16 @@ public class BytecodeListingTestGenerated extends AbstractBytecodeListingTest {
             runTest("compiler/testData/codegen/bytecodeListing/annotations/literals.kt");
         }
 
+        @TestMetadata("noAdditionalAnnotationsInAccessors.kt")
+        public void testNoAdditionalAnnotationsInAccessors() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/annotations/noAdditionalAnnotationsInAccessors.kt");
+        }
+
+        @TestMetadata("noAnnotationsInSyntheticAccessors.kt")
+        public void testNoAnnotationsInSyntheticAccessors() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/annotations/noAnnotationsInSyntheticAccessors.kt");
+        }
+
         @TestMetadata("onProperties.kt")
         public void testOnProperties() throws Exception {
             runTest("compiler/testData/codegen/bytecodeListing/annotations/onProperties.kt");
@@ -274,6 +299,11 @@ public class BytecodeListingTestGenerated extends AbstractBytecodeListingTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/inlineClasses"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
+        @TestMetadata("annotationsOnHiddenConstructor.kt")
+        public void testAnnotationsOnHiddenConstructor() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/annotationsOnHiddenConstructor.kt");
+        }
+
         @TestMetadata("companionObjectInsideInlineClass.kt")
         public void testCompanionObjectInsideInlineClass() throws Exception {
             runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/companionObjectInsideInlineClass.kt");
@@ -284,14 +314,87 @@ public class BytecodeListingTestGenerated extends AbstractBytecodeListingTest {
             runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/computablePropertiesInsideInlineClass.kt");
         }
 
+        @TestMetadata("inlineClassMembersVisibility.kt")
+        public void testInlineClassMembersVisibility() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/inlineClassMembersVisibility.kt");
+        }
+
+        @TestMetadata("inlineClassTypeParametersInConstructor.kt")
+        public void testInlineClassTypeParametersInConstructor() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/inlineClassTypeParametersInConstructor.kt");
+        }
+
+        @TestMetadata("inlineClassWithInlineClassUnderlyingType.kt")
+        public void testInlineClassWithInlineClassUnderlyingType() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/inlineClassWithInlineClassUnderlyingType.kt");
+        }
+
+        @TestMetadata("inlineClassWithManyKindsOfMembers.kt")
+        public void testInlineClassWithManyKindsOfMembers() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/inlineClassWithManyKindsOfMembers.kt");
+        }
+
         @TestMetadata("noBridgesForErasedInlineClass.kt")
         public void testNoBridgesForErasedInlineClass() throws Exception {
             runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/noBridgesForErasedInlineClass.kt");
         }
 
+        @TestMetadata("nullabilityInExpansion.kt")
+        public void testNullabilityInExpansion() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/nullabilityInExpansion.kt");
+        }
+
+        @TestMetadata("primaryValsWithDifferentVisibilities.kt")
+        public void testPrimaryValsWithDifferentVisibilities() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/primaryValsWithDifferentVisibilities.kt");
+        }
+
+        @TestMetadata("publishedApiAnnotationOnInlineClassConstructor.kt")
+        public void testPublishedApiAnnotationOnInlineClassConstructor() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/publishedApiAnnotationOnInlineClassConstructor.kt");
+        }
+
         @TestMetadata("shapeOfInlineClassWithPrimitive.kt")
         public void testShapeOfInlineClassWithPrimitive() throws Exception {
             runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/shapeOfInlineClassWithPrimitive.kt");
+        }
+    }
+
+    @TestMetadata("compiler/testData/codegen/bytecodeListing/main")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Main extends AbstractBytecodeListingTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInMain() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/main"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("multifileSuspend.kt")
+        public void testMultifileSuspend() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/main/multifileSuspend.kt");
+        }
+
+        @TestMetadata("parameterlessMain.kt")
+        public void testParameterlessMain() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/main/parameterlessMain.kt");
+        }
+
+        @TestMetadata("parameterlessMain_before.kt")
+        public void testParameterlessMain_before() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/main/parameterlessMain_before.kt");
+        }
+
+        @TestMetadata("suspendMain.kt")
+        public void testSuspendMain() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/main/suspendMain.kt");
+        }
+
+        @TestMetadata("suspendMain_before.kt")
+        public void testSuspendMain_before() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/main/suspendMain_before.kt");
         }
     }
 
@@ -388,6 +491,11 @@ public class BytecodeListingTestGenerated extends AbstractBytecodeListingTest {
 
         public void testAllFilesPresentInTailcall() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/tailcall"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("tailCallIfReturnUnit.kt")
+        public void testTailCallIfReturnUnit() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/tailcall/tailCallIfReturnUnit.kt");
         }
 
         @TestMetadata("tailCallIntrinsics.kt")

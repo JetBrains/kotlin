@@ -13,6 +13,17 @@ object Elements : TemplateGroupBase() {
     init {
         defaultBuilder {
             sequenceClassification(terminal)
+            specialFor(ArraysOfUnsigned) {
+                since("1.3")
+                annotation("@ExperimentalUnsignedTypes")
+            }
+            specialFor(RangesOfPrimitives) {
+                if (primitive in PrimitiveType.unsignedPrimitives) {
+                    since("1.3")
+                    annotation("@ExperimentalUnsignedTypes")
+                    sourceFile(SourceFile.URanges)
+                }
+            }
         }
     }
 
@@ -52,6 +63,7 @@ object Elements : TemplateGroupBase() {
             ${if (f == Iterables) "if (this is List) return this.indexOf(element)" else ""}
             var index = 0
             for (item in this) {
+                checkIndexOverflow(index)
                 if (element == item)
                     return index
                 index++
@@ -106,6 +118,7 @@ object Elements : TemplateGroupBase() {
             var lastIndex = -1
             var index = 0
             for (item in this) {
+                checkIndexOverflow(index)
                 if (element == item)
                     lastIndex = index
                 index++
@@ -157,12 +170,13 @@ object Elements : TemplateGroupBase() {
             """
             var index = 0
             for (item in this) {
+                ${if (f != Lists) "checkIndexOverflow(index)" else ""}
                 if (predicate(item))
                     return index
                 index++
             }
             return -1
-            """
+            """.lines().filterNot { it.isBlank() }.joinToString("\n")
         }
 
         body(CharSequences, ArraysOfPrimitives, ArraysOfObjects) {
@@ -190,6 +204,7 @@ object Elements : TemplateGroupBase() {
             var lastIndex = -1
             var index = 0
             for (item in this) {
+                checkIndexOverflow(index)
                 if (predicate(item))
                     lastIndex = index
                 index++
@@ -227,6 +242,7 @@ object Elements : TemplateGroupBase() {
     } builder {
         val index = '$' + "index"
         doc { "Returns ${f.element.prefixWithArticle()} at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this ${f.collection}." }
+        sample("samples.collections.Collections.Elements.elementAt")
         returns("T")
         body {
             """
@@ -253,6 +269,7 @@ object Elements : TemplateGroupBase() {
         include(CharSequences, Lists)
     } builder {
         doc { "Returns ${f.element.prefixWithArticle()} at the given [index] or the result of calling the [defaultValue] function if the [index] is out of bounds of this ${f.collection}." }
+        sample("samples.collections.Collections.Elements.elementAtOrElse")
         returns("T")
         body {
             """
@@ -312,6 +329,7 @@ object Elements : TemplateGroupBase() {
         include(CharSequences, Lists)
     } builder {
         doc { "Returns ${f.element.prefixWithArticle()} at the given [index] or `null` if the [index] is out of bounds of this ${f.collection}." }
+        sample("samples.collections.Collections.Elements.elementAtOrNull")
         returns("T?")
         body {
             """
@@ -801,6 +819,70 @@ object Elements : TemplateGroupBase() {
             if (!found) return null
             return single
             """
+        }
+    }
+
+    val f_random = fn("random()") {
+        include(Collections, ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned, CharSequences, RangesOfPrimitives)
+    } builder {
+        since("1.3")
+        inlineOnly()
+        returns("T")
+        doc {
+            """
+            Returns a random ${f.element} from this ${f.collection}.
+
+            @throws ${if (f == RangesOfPrimitives) "IllegalArgumentException" else "NoSuchElementException"} if this ${f.collection} is empty.
+            """
+        }
+        body {
+            """return random(Random)"""
+        }
+    }
+
+    val f_random_random = fn("random(random: Random)") {
+        include(Collections, ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned, CharSequences, RangesOfPrimitives)
+    } builder {
+        since("1.3")
+        returns("T")
+        doc {
+            """
+            Returns a random ${f.element} from this ${f.collection} using the specified source of randomness.
+
+            @throws ${if (f == RangesOfPrimitives) "IllegalArgumentException" else "NoSuchElementException"} if this ${f.collection} is empty.
+            """
+        }
+        body {
+            """
+            if (isEmpty())
+                throw NoSuchElementException("${f.doc.collection.capitalize()} is empty.")
+            return elementAt(random.nextInt(size))
+            """
+        }
+        specialFor(ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned, CharSequences) {
+            body {
+                val size = if (family == CharSequences) "length" else "size"
+                """
+                if (isEmpty())
+                    throw NoSuchElementException("${f.doc.collection.capitalize()} is empty.")
+                return get(random.nextInt($size))
+                """
+            }
+        }
+        specialFor(RangesOfPrimitives) {
+            body {
+                val expr = when (primitive) {
+                    PrimitiveType.Char -> "nextInt(first.toInt(), last.toInt() + 1).toChar()"
+                    else -> "next$primitive(this)"
+                }
+                """
+                try {
+                    return random.$expr
+                } catch(e: IllegalArgumentException) {
+                    throw NoSuchElementException(e.message)
+                }
+                """
+            }
         }
     }
 

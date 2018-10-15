@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.serialization.deserialization
 
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.TypeTable
@@ -26,7 +27,7 @@ interface ContractDeserializer {
         ownerFunction: FunctionDescriptor,
         typeTable: TypeTable,
         typeDeserializer: TypeDeserializer
-    ): Pair<FunctionDescriptor.UserDataKey<*>, ContractProvider>?
+    ): Pair<CallableDescriptor.UserDataKey<*>, ContractProvider>?
 
     companion object {
         val DEFAULT = object : ContractDeserializer {
@@ -35,7 +36,7 @@ interface ContractDeserializer {
                 ownerFunction: FunctionDescriptor,
                 typeTable: TypeTable,
                 typeDeserializer: TypeDeserializer
-            ): Pair<FunctionDescriptor.UserDataKey<*>, Nothing>? = null
+            ): Pair<CallableDescriptor.UserDataKey<*>, Nothing>? = null
         }
     }
 }

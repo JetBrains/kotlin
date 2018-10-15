@@ -41,9 +41,18 @@ compiler/testData/multiplatform/optionalExpectationIncorrectUse/common.kt:19:20:
 compiler/testData/multiplatform/optionalExpectationIncorrectUse/jvm.kt:1:24: error: declaration annotated with '@OptionalExpectation' can only be used inside an annotation entry
 fun useInReturnType(): A? = null
                        ^
+compiler/testData/multiplatform/optionalExpectationIncorrectUse/jvm.kt:1:24: error: declaration annotated with '@OptionalExpectation' can only be used in common module sources
+fun useInReturnType(): A? = null
+                       ^
 compiler/testData/multiplatform/optionalExpectationIncorrectUse/jvm.kt:3:43: error: declaration annotated with '@OptionalExpectation' can only be used inside an annotation entry
 annotation class AnotherAnnotation(val a: A)
                                           ^
+compiler/testData/multiplatform/optionalExpectationIncorrectUse/jvm.kt:3:43: error: declaration annotated with '@OptionalExpectation' can only be used in common module sources
+annotation class AnotherAnnotation(val a: A)
+                                          ^
 compiler/testData/multiplatform/optionalExpectationIncorrectUse/jvm.kt:5:20: error: declaration annotated with '@OptionalExpectation' can only be used inside an annotation entry
+@AnotherAnnotation(A())
+                   ^
+compiler/testData/multiplatform/optionalExpectationIncorrectUse/jvm.kt:5:20: error: declaration annotated with '@OptionalExpectation' can only be used in common module sources
 @AnotherAnnotation(A())
                    ^

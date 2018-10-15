@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 fun foo() {
     val l = ArrayList<Int>(2)
     l.add(1)

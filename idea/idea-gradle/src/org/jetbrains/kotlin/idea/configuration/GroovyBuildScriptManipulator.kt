@@ -21,6 +21,10 @@ import com.intellij.openapi.roots.ExternalLibraryDescriptor
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.codeStyle.CodeStyleManager
+import org.jetbrains.kotlin.cli.common.arguments.CliArgumentStringBuilder.buildArgumentString
+import org.jetbrains.kotlin.cli.common.arguments.CliArgumentStringBuilder.replaceLanguageFeature
+import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.idea.configuration.KotlinWithGradleConfigurator.Companion.getBuildScriptSettingsPsiFile
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.idea.util.module
 import org.jetbrains.kotlin.psi.psiUtil.getChildrenOfType
@@ -28,12 +32,11 @@ import org.jetbrains.plugins.groovy.lang.psi.GroovyFile
 import org.jetbrains.plugins.groovy.lang.psi.GroovyPsiElementFactory
 import org.jetbrains.plugins.groovy.lang.psi.api.statements.GrStatement
 import org.jetbrains.plugins.groovy.lang.psi.api.statements.blocks.GrClosableBlock
+import org.jetbrains.plugins.groovy.lang.psi.api.statements.expressions.GrApplicationStatement
 import org.jetbrains.plugins.groovy.lang.psi.api.statements.expressions.GrAssignmentExpression
 import org.jetbrains.plugins.groovy.lang.psi.api.statements.expressions.GrMethodCall
 import org.jetbrains.plugins.groovy.lang.psi.api.statements.expressions.path.GrMethodCallExpression
 import org.jetbrains.plugins.groovy.lang.psi.api.util.GrStatementOwner
-import org.jetbrains.kotlin.idea.configuration.KotlinWithGradleConfigurator.Companion.getBuildScriptSettingsPsiFile
-import org.jetbrains.plugins.groovy.lang.psi.api.statements.expressions.GrApplicationStatement
 
 class GroovyBuildScriptManipulator(
     override val scriptFile: GroovyFile,
@@ -150,6 +153,25 @@ class GroovyBuildScriptManipulator(
         return kotlinBlock.parent
     }
 
+    override fun changeLanguageFeatureConfiguration(
+        feature: LanguageFeature,
+        state: LanguageFeature.State,
+        forTests: Boolean
+    ): PsiElement? {
+        val featureArgumentString = feature.buildArgumentString(state)
+        val parameterName = "freeCompilerArgs"
+        return addOrReplaceKotlinTaskParameter(
+            scriptFile,
+            parameterName,
+            "[\"$featureArgumentString\"]",
+            forTests
+        ) { insideKotlinOptions ->
+            val prefix = if (insideKotlinOptions) "kotlinOptions." else ""
+            val newText = text.replaceLanguageFeature(feature, state, prefix = "$prefix$parameterName = [", postfix = "]")
+            replaceWithStatementFromText(newText)
+        }
+    }
+
     override fun changeLanguageVersion(version: String, forTests: Boolean): PsiElement? =
         changeKotlinTaskParameter(scriptFile, "languageVersion", version, forTests)
 
@@ -158,12 +180,11 @@ class GroovyBuildScriptManipulator(
 
     override fun addKotlinLibraryToModuleBuildScript(
         scope: DependencyScope,
-        libraryDescriptor: ExternalLibraryDescriptor,
-        isAndroidModule: Boolean
+        libraryDescriptor: ExternalLibraryDescriptor
     ) {
         val dependencyString = String.format(
             "%s \"%s:%s:%s\"",
-            scope.toGradleCompileScope(isAndroidModule),
+            scope.toGradleCompileScope(scriptFile.module?.getBuildSystemType() == AndroidGradle),
             libraryDescriptor.libraryGroupId,
             libraryDescriptor.libraryArtifactId,
             libraryDescriptor.maxVersion
@@ -225,28 +246,47 @@ class GroovyBuildScriptManipulator(
             )
     }
 
+    private fun addOrReplaceKotlinTaskParameter(
+        gradleFile: GroovyFile,
+        parameterName: String,
+        defaultValue: String,
+        forTests: Boolean,
+        replaceIt: GrStatement.(Boolean) -> GrStatement
+    ): PsiElement? {
+        val kotlinBlock = gradleFile.getBlockOrCreate(if (forTests) "compileTestKotlin" else "compileKotlin")
+
+        for (stmt in kotlinBlock.statements) {
+            if ((stmt as? GrAssignmentExpression)?.lValue?.text == "kotlinOptions.$parameterName") {
+                return stmt.replaceIt(true)
+            }
+        }
+
+        kotlinBlock.getBlockOrCreate("kotlinOptions").apply {
+            statements.firstOrNull { stmt ->
+                (stmt as? GrAssignmentExpression)?.lValue?.text == parameterName
+            }?.let { stmt ->
+                stmt.replaceIt(false)
+            } ?: addLastExpressionInBlockIfNeeded("$parameterName = $defaultValue")
+        }
+
+        return kotlinBlock.parent
+    }
+
     private fun changeKotlinTaskParameter(
         gradleFile: GroovyFile,
         parameterName: String,
         parameterValue: String,
         forTests: Boolean
     ): PsiElement? {
-        val snippet = "$parameterName = \"$parameterValue\""
-        val kotlinBlock = gradleFile.getBlockOrCreate(if (forTests) "compileTestKotlin" else "compileKotlin")
-
-        for (stmt in kotlinBlock.statements) {
-            if ((stmt as? GrAssignmentExpression)?.lValue?.text == "kotlinOptions." + parameterName) {
-                return stmt.replaceWithStatementFromText("kotlinOptions." + snippet)
+        return addOrReplaceKotlinTaskParameter(
+            gradleFile, parameterName, "\"$parameterValue\"", forTests
+        ) { insideKotlinOptions ->
+            if (insideKotlinOptions) {
+                replaceWithStatementFromText("kotlinOptions.$parameterName = \"$parameterValue\"")
+            } else {
+                replaceWithStatementFromText("$parameterName = \"$parameterValue\"")
             }
         }
-
-        kotlinBlock.getBlockOrCreate("kotlinOptions").apply {
-            addOrReplaceExpression(snippet) { stmt ->
-                (stmt as? GrAssignmentExpression)?.lValue?.text == parameterName
-            }
-        }
-
-        return kotlinBlock.parent
     }
 
     private fun getGroovyDependencySnippet(

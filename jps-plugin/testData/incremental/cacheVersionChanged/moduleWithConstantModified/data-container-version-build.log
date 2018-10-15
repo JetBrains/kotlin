@@ -1,7 +1,10 @@
 ================ Step #1 =================
 
+Lookups cache are INVALID: actual=(777, [jvm]) -> expected=(3011001, [jvm])
+Marked as dirty by Kotlin:
+  module1/src/A.kt
+  module2/src/B.kt
 Building module1
-Actions after cache changed: [REBUILD_ALL_KOTLIN, DO_NOTHING]
 Cleaning output files:
   out/production/module1/META-INF/module1.kotlin_module
   out/production/module1/a/AKt.class
@@ -9,13 +12,9 @@ End of files
 Compiling files:
   module1/src/A.kt
 End of files
-Marked as dirty by Kotlin:
-  module1/src/A.kt
-  module2/src/B.kt
 Exit code: OK
 ------------------------------------------
 Building module2
-Actions after cache changed: [REBUILD_CHUNK, DO_NOTHING]
 Cleaning output files:
   out/production/module2/META-INF/module2.kotlin_module
   out/production/module2/b/B.class

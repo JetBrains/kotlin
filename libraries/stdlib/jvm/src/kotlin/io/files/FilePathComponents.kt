@@ -9,7 +9,6 @@
 package kotlin.io
 
 import java.io.File
-import kotlin.*
 
 /**
  * Estimation of a root name by a given file name.

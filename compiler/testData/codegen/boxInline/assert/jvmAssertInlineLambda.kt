@@ -1,4 +1,5 @@
 // IGNORE_BACKEND: JVM_IR
+// IGNORE_BACKEND: NATIVE
 // FILE: inline.kt
 // KOTLIN_CONFIGURATION_FLAGS: ASSERTIONS_MODE=jvm
 // WITH_RUNTIME
@@ -96,7 +97,8 @@ class ShouldBeEnabled : Checker {
 
 fun setDesiredAssertionStatus(v: Boolean): Checker {
     val loader = Checker::class.java.classLoader
-    loader.setDefaultAssertionStatus(v)
+    loader.setClassAssertionStatus("ShouldBeEnabled", true)
+    loader.setClassAssertionStatus("ShouldBeDisabled", false)
     val c = loader.loadClass(if (v) "ShouldBeEnabled" else "ShouldBeDisabled")
     return c.newInstance() as Checker
 }
@@ -120,6 +122,5 @@ fun box(): String {
         return "FAIL 7"
     } catch (ignore: AssertionError) {
     }
-
     return "OK"
 }

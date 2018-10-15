@@ -19,8 +19,8 @@ package org.jetbrains.kotlin.gradle.dsl
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.internal.plugins.DslObject
+import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaTarget
-import org.jetbrains.kotlin.gradle.plugin.source.KotlinSourceSet
 import kotlin.reflect.KClass
 
 private const val KOTLIN_PROJECT_EXTENSION_NAME = "kotlin"
@@ -63,12 +63,11 @@ open class ExperimentalExtension {
 enum class Coroutines {
     ENABLE,
     WARN,
-    ERROR;
+    ERROR,
+    DEFAULT;
 
     companion object {
-        val DEFAULT = WARN
-
         fun byCompilerArgument(argument: String): Coroutines? =
-                Coroutines.values().firstOrNull { it.name.equals(argument, ignoreCase = true) }
+            Coroutines.values().firstOrNull { it.name.equals(argument, ignoreCase = true) }
     }
 }

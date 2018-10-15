@@ -1,0 +1,128 @@
+package
+
+public fun case_1(/*0*/ value_1: kotlin.Boolean): kotlin.Unit
+    Returns(WILDCARD) -> value_1
+
+public fun case_10(/*0*/ value_1: kotlin.Any?): kotlin.Unit
+    Returns(WILDCARD) -> value_1 == null
+
+public fun case_11(/*0*/ value_1: kotlin.Any?): kotlin.Boolean?
+    Returns(NULL) -> value_1 != null
+
+public fun case_2(/*0*/ value_1: kotlin.Boolean): kotlin.Boolean
+    Returns(FALSE) -> !value_1
+
+public fun case_5(/*0*/ value_1: kotlin.Any?): kotlin.Unit
+    Returns(WILDCARD) -> value_1 is String
+
+public fun case_6(/*0*/ value_1: kotlin.Any?): kotlin.Unit
+    Returns(WILDCARD) -> value_1 !is String?
+
+public fun kotlin.Char.case_12(): kotlin.Unit
+    Returns(WILDCARD) -> <this> == null
+
+public fun </*0*/ T : kotlin.Number> T?.case_13(): kotlin.Unit
+    Returns(WILDCARD) -> <this> == null
+
+public fun kotlin.Boolean.case_3(): kotlin.Unit
+    Returns(WILDCARD) -> !<this>
+
+public fun kotlin.Any?.case_7(): kotlin.Unit
+    Returns(WILDCARD) -> <this> is Number
+
+public fun </*0*/ T> T?.case_8(): kotlin.Unit
+    Returns(WILDCARD) -> <this> !is _ClassLevel3?
+
+public fun </*0*/ T : kotlin.Number?> T.case_9(): kotlin.Boolean?
+    Returns(NULL) -> <this> is Byte?
+
+public final class _Class {
+    public constructor _Class()
+    public final val prop_1: kotlin.Int = 1
+    public final val prop_2: kotlin.Int = 2
+    public final val prop_3: kotlin.Int = 3
+    public final operator fun contains(/*0*/ a: kotlin.Char): kotlin.Boolean
+    public final operator fun contains(/*0*/ a: kotlin.Int): kotlin.Boolean
+    public final operator fun contains(/*0*/ a: kotlin.Long): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public final fun fun_1(): (kotlin.Int) -> (kotlin.Int) -> kotlin.Int
+    public final fun fun_2(/*0*/ value_1: kotlin.Int): kotlin.Int
+    public final fun fun_3(/*0*/ value_1: kotlin.Int): (kotlin.Int) -> kotlin.Int
+    public final fun getCharArray(/*0*/ value_1: kotlin.Char): kotlin.CharArray
+    public final fun getIntArray(/*0*/ value_1: kotlin.Int): kotlin.IntArray
+    public final fun getLongArray(/*0*/ value_1: kotlin.Long): kotlin.LongArray
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    public final class _NestedClass {
+        public constructor _NestedClass()
+        public final val prop_4: kotlin.Int = 4
+        public final val prop_5: kotlin.Int = 5
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+
+public open class _ClassLevel1 {
+    public constructor _ClassLevel1()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public open class _ClassLevel2 : _ClassLevel1 {
+    public constructor _ClassLevel2()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public open class _ClassLevel3 : _ClassLevel2 {
+    public constructor _ClassLevel3()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public open class _ClassLevel4 : _ClassLevel3 {
+    public constructor _ClassLevel4()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public open class _ClassLevel5 : _ClassLevel4 {
+    public constructor _ClassLevel5()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class _ClassLevel6 : _ClassLevel5 {
+    public constructor _ClassLevel6()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class _ClassWithCompanionObject {
+    public constructor _ClassWithCompanionObject()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    public companion object Companion {
+        private constructor Companion()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+
+public final class _EmptyClass {
+    public constructor _EmptyClass()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

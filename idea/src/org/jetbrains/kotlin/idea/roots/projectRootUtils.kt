@@ -5,10 +5,7 @@
 
 package org.jetbrains.kotlin.idea.roots
 
-import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ModifiableRootModel
-import com.intellij.openapi.roots.ex.ProjectRootManagerEx
-import com.intellij.openapi.util.EmptyRunnable
 import org.jetbrains.jps.model.JpsElement
 import org.jetbrains.jps.model.ex.JpsElementBase
 import org.jetbrains.jps.model.java.JavaResourceRootType
@@ -17,10 +14,6 @@ import org.jetbrains.jps.model.module.JpsModuleSourceRoot
 import org.jetbrains.jps.model.module.JpsModuleSourceRootType
 import org.jetbrains.kotlin.config.KotlinResourceRootType
 import org.jetbrains.kotlin.config.KotlinSourceRootType
-import org.jetbrains.kotlin.config.TargetPlatformKind
-import org.jetbrains.kotlin.js.resolve.JsPlatform
-import org.jetbrains.kotlin.resolve.TargetPlatform
-import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 
 private fun JpsModuleSourceRoot.getOrCreateProperties() =
     getProperties(rootType)?.also { (it as? JpsElementBase<*>)?.setParent(null) } ?: rootType.createDefaultProperties()
@@ -47,14 +40,4 @@ fun migrateNonJvmSourceFolders(modifiableRootModel: ModifiableRootModel) {
             contentEntry.addSourceFolder(url, newSourceRootType, properties)
         }
     }
-}
-
-fun TargetPlatformKind<*>.asTargetPlatform() = when (this) {
-    is TargetPlatformKind.Jvm -> JvmPlatform
-    is TargetPlatformKind.JavaScript -> JsPlatform
-    is TargetPlatformKind.Common -> TargetPlatform.Common
-}
-
-fun Project.invalidateProjectRoots() {
-    ProjectRootManagerEx.getInstanceEx(this).makeRootsChange(EmptyRunnable.INSTANCE, false, true)
 }

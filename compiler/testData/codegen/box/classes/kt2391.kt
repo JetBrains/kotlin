@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 public interface LoggerAware {
     public val logger: StringBuilder
 }

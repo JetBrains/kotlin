@@ -1,5 +1,5 @@
 
-import org.gradle.api.publish.ivy.internal.artifact.DefaultIvyArtifact
+import org.gradle.api.publish.ivy.internal.artifact.FileBasedIvyArtifact
 import org.gradle.api.publish.ivy.internal.publication.DefaultIvyConfiguration
 import org.gradle.api.publish.ivy.internal.publication.DefaultIvyPublicationIdentity
 import org.gradle.api.publish.ivy.internal.publisher.IvyDescriptorFileGenerator
@@ -92,8 +92,8 @@ val prepareIvyXml by tasks.creating {
         with(IvyDescriptorFileGenerator(DefaultIvyPublicationIdentity(customDepsOrg, dxModuleName, dxRevision))) {
             addConfiguration(DefaultIvyConfiguration("default"))
             addConfiguration(DefaultIvyConfiguration("sources"))
-            addArtifact(DefaultIvyArtifact(File(dxRepoModuleDir, "dx.jar"), "dx", "jar", "jar", null).also { it.conf = "default" })
-            addArtifact(DefaultIvyArtifact(File(dxRepoModuleDir, "dx-sources.jar"), "dx", "jar", "sources", "sources").also { it.conf = "sources" })
+            addArtifact(FileBasedIvyArtifact(File(dxRepoModuleDir, "dx.jar"), DefaultIvyPublicationIdentity(customDepsOrg, "dx", dxRevision)).also { it.conf = "default" })
+            addArtifact(FileBasedIvyArtifact(File(dxRepoModuleDir, "dx-sources.jar"), DefaultIvyPublicationIdentity(customDepsOrg, "dx", dxRevision)).also { it.conf = "sources" })
             writeTo(ivyFile)
         }
     }

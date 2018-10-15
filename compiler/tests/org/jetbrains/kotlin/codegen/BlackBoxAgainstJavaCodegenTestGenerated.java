@@ -847,6 +847,11 @@ public class BlackBoxAgainstJavaCodegenTestGenerated extends AbstractBlackBoxAga
                     runTest("compiler/testData/codegen/boxAgainstJava/sam/adapters/operators/invoke.kt");
                 }
 
+                @TestMetadata("legacyModOperator.kt")
+                public void testLegacyModOperator() throws Exception {
+                    runTest("compiler/testData/codegen/boxAgainstJava/sam/adapters/operators/legacyModOperator.kt");
+                }
+
                 @TestMetadata("multiGetSet.kt")
                 public void testMultiGetSet() throws Exception {
                     runTest("compiler/testData/codegen/boxAgainstJava/sam/adapters/operators/multiGetSet.kt");

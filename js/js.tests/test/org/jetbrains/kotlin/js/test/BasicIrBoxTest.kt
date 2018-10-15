@@ -5,12 +5,10 @@
 
 package org.jetbrains.kotlin.js.test
 
-import org.jetbrains.kotlin.config.ApiVersion
-import org.jetbrains.kotlin.config.LanguageVersion
-import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
-import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.ir.backend.js.Result
 import org.jetbrains.kotlin.ir.backend.js.compile
+import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.config.JsConfig
 import org.jetbrains.kotlin.js.facade.MainCallParameters
 import org.jetbrains.kotlin.js.facade.TranslationUnit
@@ -18,36 +16,90 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.test.TargetBackend
 import java.io.File
 
-private val runtimeSources = listOfKtFilesFrom(
-    "libraries/stdlib/js/src/kotlin/core.kt",
-    "libraries/stdlib/js/src/kotlin/js.core.kt",
-    "libraries/stdlib/js/src/kotlin/jsTypeOf.kt",
-    "libraries/stdlib/js/src/kotlin/dynamic.kt",
-    "libraries/stdlib/js/src/kotlin/annotations.kt",
-
-    "libraries/stdlib/src/kotlin/internal/Annotations.kt",
+private val runtimeSourcesCommon = listOfKtFilesFrom(
+    "core/builtins/src/kotlin",
+    "libraries/stdlib/common/src",
+    "libraries/stdlib/src/kotlin/",
+    "libraries/stdlib/js/src/kotlin",
+    "libraries/stdlib/js/src/generated",
+    "libraries/stdlib/js/irRuntime",
+    "libraries/stdlib/js/runtime",
+    "libraries/stdlib/unsigned",
 
     "core/builtins/native/kotlin/Annotation.kt",
     "core/builtins/native/kotlin/Number.kt",
     "core/builtins/native/kotlin/Comparable.kt",
-    "core/builtins/src/kotlin/Annotations.kt",
-    "core/builtins/src/kotlin/internal/InternalAnnotations.kt",
-    "core/builtins/src/kotlin/internal/progressionUtil.kt",
-    "core/builtins/src/kotlin/Iterators.kt",
-    "core/builtins/src/kotlin/ProgressionIterators.kt",
-    "core/builtins/src/kotlin/Progressions.kt",
-    "core/builtins/src/kotlin/Range.kt",
-    "core/builtins/src/kotlin/Ranges.kt",
-    "core/builtins/src/kotlin/Unit.kt",
     "core/builtins/native/kotlin/Collections.kt",
     "core/builtins/native/kotlin/Iterator.kt",
+    "core/builtins/native/kotlin/CharSequence.kt",
 
-    "libraries/stdlib/js/irRuntime",
+    "core/builtins/src/kotlin/Unit.kt",
+
     BasicBoxTest.COMMON_FILES_DIR_PATH
+) - listOfKtFilesFrom(
+    "libraries/stdlib/common/src/kotlin/JvmAnnotationsH.kt",
+    "libraries/stdlib/src/kotlin/annotations/Multiplatform.kt",
+
+    // TODO: Support Int.pow
+    "libraries/stdlib/js/src/kotlin/random/PlatformRandom.kt",
+
+    // TODO: Unify exceptions
+    "libraries/stdlib/common/src/kotlin/ExceptionsH.kt",
+
+    // Fails with: EXPERIMENTAL_IS_NOT_ENABLED
+    "libraries/stdlib/common/src/kotlin/annotations/Annotations.kt",
+
+    // Conflicts with libraries/stdlib/js/src/kotlin/annotations.kt
+    "libraries/stdlib/js/runtime/hacks.kt",
+
+    // TODO: Reuse in IR BE
+    "libraries/stdlib/js/runtime/Enum.kt",
+
+    // JS-specific optimized version of emptyArray() already defined
+    "core/builtins/src/kotlin/ArrayIntrinsics.kt",
+
+    // Unnecessary for now
+    "libraries/stdlib/js/src/kotlin/dom",
+    "libraries/stdlib/js/src/kotlin/browser",
+
+    // TODO: Unify exceptions
+    "libraries/stdlib/js/src/kotlin/exceptions.kt",
+
+    // TODO: fix compilation issues in arrayPlusCollection
+    // Replaced with irRuntime/kotlinHacks.kt
+    "libraries/stdlib/js/src/kotlin/kotlin.kt",
+
+    // Full version is defined in stdlib
+    // This file is useful for smaller subset of runtime sources
+    "libraries/stdlib/js/irRuntime/rangeExtensions.kt",
+
+    // Mostly array-specific stuff
+    "libraries/stdlib/js/src/kotlin/builtins.kt",
+
+    // Inlining of js fun doesn't update the variables inside
+    "libraries/stdlib/js/src/kotlin/jsTypeOf.kt"
+)
+
+
+private val coroutine12Files = listOfKtFilesFrom(
+    "libraries/stdlib/js/irRuntime/coroutines_12"
+)
+
+private val coroutine13Files = listOfKtFilesFrom(
+    "libraries/stdlib/coroutines/common",
+    "libraries/stdlib/coroutines/js/src/kotlin/coroutines/SafeContinuationJs.kt",
+    "libraries/stdlib/coroutines/src",
+    // TODO: merge coroutines_13 with JS BE coroutines
+    "libraries/stdlib/js/irRuntime/coroutines_13"
 )
 
 private var runtimeResult: Result? = null
 private val runtimeFile = File("js/js.translator/testData/out/irBox/testRuntime.js")
+
+private val runtimeSources_12 = (runtimeSourcesCommon - coroutine13Files + coroutine12Files).distinct()
+private val runtimeSources_13 = (runtimeSourcesCommon - coroutine12Files + coroutine13Files).distinct()
+
+private val runtimeSources = runtimeSources_13
 
 abstract class BasicIrBoxTest(
     pathToTestDir: String,
@@ -67,6 +119,13 @@ abstract class BasicIrBoxTest(
 
     override var skipMinification = true
 
+    private val compilationCache = mutableMapOf<String, Result>()
+
+    override fun doTest(filePath: String, expectedResult: String, mainCallParameters: MainCallParameters, coroutinesPackage: String) {
+        compilationCache.clear()
+        super.doTest(filePath, expectedResult, mainCallParameters, coroutinesPackage)
+    }
+
     override fun translateFiles(
         units: List<TranslationUnit>,
         outputFile: File,
@@ -77,40 +136,46 @@ abstract class BasicIrBoxTest(
         incrementalData: IncrementalData,
         remap: Boolean,
         testPackage: String?,
-        testFunction: String,
-        doNotCache: Boolean
+        testFunction: String
     ) {
         val filesToCompile = units
             .map { (it as TranslationUnit.SourceFile).file }
             // TODO: split input files to some parts (global common, local common, test)
             .filterNot { it.virtualFilePath.contains(BasicBoxTest.COMMON_FILES_DIR_PATH) }
 
+        val runtimeConfiguration = config.configuration.copy()
+
+        // TODO: is it right in general? Maybe sometimes we need to compile with newer versions or with additional language features.
+        runtimeConfiguration.languageVersionSettings = LanguageVersionSettingsImpl(
+            LanguageVersion.LATEST_STABLE, ApiVersion.LATEST_STABLE,
+            specificFeatures = mapOf(
+                LanguageFeature.AllowContractsForCustomFunctions to LanguageFeature.State.ENABLED,
+                LanguageFeature.MultiPlatformProjects to LanguageFeature.State.ENABLED
+            ),
+            analysisFlags = mapOf(
+                AnalysisFlags.useExperimental to listOf("kotlin.contracts.ExperimentalContracts", "kotlin.Experimental"),
+                AnalysisFlags.allowResultReturnType to true
+            )
+        )
+
         if (runtimeResult == null) {
-            val myConfiguration = config.configuration.copy()
-
-            // TODO: is it right in general? Maybe sometimes we need to compile with newer versions or with additional language features.
-            myConfiguration.languageVersionSettings = LanguageVersionSettingsImpl(LanguageVersion.LATEST_STABLE, ApiVersion.LATEST_STABLE)
-
-            runtimeResult = compile(config.project, runtimeSources.map(::createPsiFile), myConfiguration)
+            runtimeResult = compile(config.project, runtimeSources.map(::createPsiFile), runtimeConfiguration)
             runtimeFile.write(runtimeResult!!.generatedCode)
         }
 
-        val result = if (doNotCache) {
-            val runtimeFiles = runtimeSources.map(::createPsiFile)
-            val allFiles = runtimeFiles + filesToCompile
-            compile(
-                config.project,
-                allFiles,
-                config.configuration,
-                FqName((testPackage?.let { "$it." } ?: "") + testFunction))
-        } else {
-            compile(
-                config.project,
-                filesToCompile,
-                config.configuration,
-                FqName((testPackage?.let { "$it." } ?: "") + testFunction),
-                listOf(runtimeResult!!.moduleDescriptor))
-        }
+        val dependencyNames = config.configuration[JSConfigurationKeys.LIBRARIES]!!.map { File(it).name }
+        val dependencies = listOf(runtimeResult!!.moduleDescriptor) + dependencyNames.mapNotNull { compilationCache[it]?.moduleDescriptor }
+        val irDependencies = listOf(runtimeResult!!.moduleFragment) + compilationCache.values.map { it.moduleFragment }
+
+        val result = compile(
+            config.project,
+            filesToCompile,
+            config.configuration,
+            FqName((testPackage?.let { "$it." } ?: "") + testFunction),
+            dependencies,
+            irDependencies)
+
+        compilationCache[outputFile.name.replace(".js", ".meta.js")] = result
 
         outputFile.write(result.generatedCode)
     }
@@ -125,8 +190,7 @@ abstract class BasicIrBoxTest(
     ) {
         // TODO: should we do anything special for module systems?
         // TODO: return list of js from translateFiles and provide then to this function with other js files
-        // TODO: cache runtime.js and don't cache kotlin.js for IR BE tests
-        super.runGeneratedCode(listOf(runtimeFile.absolutePath) + jsFiles, null, null, testFunction, expectedResult, false)
+        NashornIrJsTestChecker.check(jsFiles, null, null, testFunction, expectedResult, false)
     }
 }
 
@@ -138,7 +202,7 @@ private fun listOfKtFilesFrom(vararg paths: String): List<String> {
             .filter { it.extension == "kt" }
             .map { it.relativeToOrSelf(currentDir).path }
             .asIterable()
-    }
+    }.distinct()
 }
 
 private fun File.write(text: String) {

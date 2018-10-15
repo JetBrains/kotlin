@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.git
 
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vcs.FilePath
 import git4idea.checkin.GitCheckinExplicitMovementProvider
 import org.jetbrains.kotlin.idea.actions.pathBeforeJ2K
@@ -18,7 +17,7 @@ class KotlinExplicitMovementProvider : GitCheckinExplicitMovementProvider() {
     }
 
     override fun getDescription(): String {
-        return "Create extra commit with .java -> .kt file renames"
+        return "Extra commit for .java > .kt renames"
     }
 
     override fun getCommitMessage(oldCommitMessage: String): String {

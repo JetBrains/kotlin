@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.serialization.js
 
-import org.jetbrains.kotlin.config.AnalysisFlag
+import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.LookupTracker
@@ -256,7 +256,7 @@ object KotlinJavascriptSerializationUtil {
             header.flags = 1
         }
 
-        val experimentalAnnotationFqNames = languageVersionSettings.getFlag(AnalysisFlag.experimental)
+        val experimentalAnnotationFqNames = languageVersionSettings.getFlag(AnalysisFlags.experimental)
         if (experimentalAnnotationFqNames.isNotEmpty()) {
             val stringTable = StringTableImpl()
             for (fqName in experimentalAnnotationFqNames) {

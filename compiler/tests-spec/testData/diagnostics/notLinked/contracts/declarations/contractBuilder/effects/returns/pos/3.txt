@@ -1,0 +1,11 @@
+package
+
+public fun kotlin.Any?.case_1(): kotlin.Boolean
+    Returns(FALSE) -> <this> != null
+
+public fun </*0*/ T> T?.case_2(/*0*/ value_1: kotlin.Any?, /*1*/ value_2: kotlin.Any?): kotlin.Unit
+    Returns(WILDCARD) -> <this> is String? || (value_1 !is Int && value_2 !is Nothing?)
+
+public inline fun </*0*/ reified T : kotlin.Number?> T.case_3(/*0*/ value_1: kotlin.Any?): kotlin.Unit
+    Returns(WILDCARD) -> value_1 == null || (<this> != null && <this> is Int)
+

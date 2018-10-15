@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.idea.configuration
 
 import com.intellij.openapi.externalSystem.model.DataNode
 import com.intellij.openapi.externalSystem.model.ProjectKeys
-import com.intellij.openapi.externalSystem.model.project.ExternalSystemSourceType
 import com.intellij.openapi.externalSystem.model.project.ModuleData
 import com.intellij.openapi.externalSystem.model.project.ProjectData
 import com.intellij.openapi.externalSystem.service.project.IdeModifiableModelsProvider
@@ -15,15 +14,10 @@ import com.intellij.openapi.externalSystem.service.project.manage.AbstractProjec
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.roots.LibraryOrderEntry
-import com.intellij.openapi.roots.ModifiableRootModel
-import com.intellij.openapi.roots.impl.libraries.LibraryEx
-import com.intellij.openapi.roots.libraries.Library
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.config.CoroutineSupport
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.config.KotlinModuleKind
-import org.jetbrains.kotlin.config.TargetPlatformKind
 import org.jetbrains.kotlin.gradle.KotlinCompilation
 import org.jetbrains.kotlin.gradle.KotlinModule
 import org.jetbrains.kotlin.gradle.KotlinPlatform
@@ -32,12 +26,11 @@ import org.jetbrains.kotlin.idea.facet.applyCompilerArgumentsToFacet
 import org.jetbrains.kotlin.idea.facet.configureFacet
 import org.jetbrains.kotlin.idea.facet.getOrCreateFacet
 import org.jetbrains.kotlin.idea.facet.noVersionAutoAdvance
-import org.jetbrains.kotlin.idea.framework.CommonLibraryKind
-import org.jetbrains.kotlin.idea.framework.JSLibraryKind
-import org.jetbrains.kotlin.idea.framework.effectiveKind
 import org.jetbrains.kotlin.idea.inspections.gradle.findAll
 import org.jetbrains.kotlin.idea.inspections.gradle.findKotlinPluginVersion
+import org.jetbrains.kotlin.idea.platform.IdePlatformKindTooling
 import org.jetbrains.kotlin.idea.roots.migrateNonJvmSourceFolders
+import org.jetbrains.kotlin.platform.impl.JvmIdePlatformKind
 import org.jetbrains.plugins.gradle.model.data.BuildScriptClasspathData
 import org.jetbrains.plugins.gradle.model.data.GradleSourceSetData
 
@@ -61,9 +54,7 @@ class KotlinSourceSetDataService : AbstractProjectDataService<GradleSourceSetDat
             val platform = kotlinSourceSet.platform
             val rootModel = modelsProvider.getModifiableRootModel(ideModule)
 
-            dropWrongLibraries(rootModel, platform, project)
-
-            if (platform != KotlinPlatform.JVM) {
+            if (platform != KotlinPlatform.JVM && platform != KotlinPlatform.ANDROID) {
                 migrateNonJvmSourceFolders(rootModel)
             }
 
@@ -71,93 +62,79 @@ class KotlinSourceSetDataService : AbstractProjectDataService<GradleSourceSetDat
         }
     }
 
-    private val KotlinModule.kind
-        get() = when (this) {
-            is KotlinCompilation -> KotlinModuleKind.COMPILATION_AND_SOURCE_SET_HOLDER
-            is KotlinSourceSet -> KotlinModuleKind.SOURCE_SET_HOLDER
-            else -> KotlinModuleKind.DEFAULT
-        }
+    companion object {
+        private val KotlinModule.kind
+            get() = when (this) {
+                is KotlinCompilation -> KotlinModuleKind.COMPILATION_AND_SOURCE_SET_HOLDER
+                is KotlinSourceSet -> KotlinModuleKind.SOURCE_SET_HOLDER
+                else -> KotlinModuleKind.DEFAULT
+            }
 
-    private fun configureFacet(
-        sourceSetData: GradleSourceSetData,
-        kotlinSourceSet: KotlinSourceSetInfo,
-        mainModuleNode: DataNode<ModuleData>,
-        ideModule: Module,
-        modelsProvider: IdeModifiableModelsProvider
-    ) {
-        val compilerVersion = mainModuleNode
-            .findAll(BuildScriptClasspathData.KEY)
-            .firstOrNull()
-            ?.data
-            ?.let { findKotlinPluginVersion(it) } ?: return
-        val platformKind = when (kotlinSourceSet.platform) {
-            KotlinPlatform.JVM -> TargetPlatformKind.Jvm[JvmTarget.fromString(
-                sourceSetData.targetCompatibility ?: ""
-            ) ?: JvmTarget.DEFAULT]
-            KotlinPlatform.JS -> TargetPlatformKind.JavaScript
-            KotlinPlatform.COMMON -> TargetPlatformKind.Common
-        }
-        val coroutinesProperty = CoroutineSupport.byCompilerArgument(
-            mainModuleNode.coroutines ?: findKotlinCoroutinesProperty(ideModule.project)
-        )
+        fun configureFacet(
+            moduleData: ModuleData,
+            kotlinSourceSet: KotlinSourceSetInfo,
+            mainModuleNode: DataNode<ModuleData>,
+            ideModule: Module,
+            modelsProvider: IdeModifiableModelsProvider
+        ) {
+            val compilerVersion = mainModuleNode
+                .findAll(BuildScriptClasspathData.KEY)
+                .firstOrNull()
+                ?.data
+                ?.let { findKotlinPluginVersion(it) } ?: return
 
-        val kotlinFacet = ideModule.getOrCreateFacet(modelsProvider, false)
-        kotlinFacet.configureFacet(compilerVersion, coroutinesProperty, platformKind, modelsProvider)
+            val platformKind = IdePlatformKindTooling.getTooling(kotlinSourceSet.platform).kind
+            val platform = when (platformKind) {
+                is JvmIdePlatformKind -> {
+                    val target = JvmTarget.fromString(moduleData.targetCompatibility ?: "") ?: JvmTarget.DEFAULT
+                    JvmIdePlatformKind.Platform(target)
+                }
+                else -> platformKind.defaultPlatform
+            }
 
-        val compilerArguments = kotlinSourceSet.compilerArguments
-        val defaultCompilerArguments = kotlinSourceSet.defaultCompilerArguments
-        if (compilerArguments != null) {
-            applyCompilerArgumentsToFacet(
-                compilerArguments,
-                defaultCompilerArguments,
-                kotlinFacet,
-                modelsProvider
+            val coroutinesProperty = CoroutineSupport.byCompilerArgument(
+                mainModuleNode.coroutines ?: findKotlinCoroutinesProperty(ideModule.project)
             )
-        }
 
-        adjustClasspath(kotlinFacet, kotlinSourceSet.dependencyClasspath)
+            val kotlinFacet = ideModule.getOrCreateFacet(modelsProvider, false)
+            kotlinFacet.configureFacet(compilerVersion, coroutinesProperty, platform, modelsProvider)
 
-        kotlinFacet.noVersionAutoAdvance()
-
-        with(kotlinFacet.configuration.settings) {
-            kind = kotlinSourceSet.kotlinModule.kind
-
-            sourceSetNames = kotlinSourceSet.sourceSetIdsByName.values.mapNotNull { sourceSetId ->
-                val node = mainModuleNode.findChildModuleById(sourceSetId) ?: return@mapNotNull null
-                val data = node.data as? ModuleData ?: return@mapNotNull null
-                modelsProvider.findIdeModule(data)?.name
+            val compilerArguments = kotlinSourceSet.compilerArguments
+            val defaultCompilerArguments = kotlinSourceSet.defaultCompilerArguments
+            if (compilerArguments != null) {
+                applyCompilerArgumentsToFacet(
+                    compilerArguments,
+                    defaultCompilerArguments,
+                    kotlinFacet,
+                    modelsProvider
+                )
             }
 
-            if (kotlinSourceSet.isTestModule) {
-                testOutputPath = (kotlinSourceSet.compilerArguments as? K2JSCompilerArguments)?.outputFile
-                productionOutputPath = null
-            } else {
-                productionOutputPath = (kotlinSourceSet.compilerArguments as? K2JSCompilerArguments)?.outputFile
-                testOutputPath = null
-            }
-        }
-    }
+            adjustClasspath(kotlinFacet, kotlinSourceSet.dependencyClasspath)
 
-    private fun dropWrongLibraries(
-        rootModel: ModifiableRootModel,
-        platform: KotlinPlatform,
-        project: Project
-    ) {
-        rootModel.orderEntries().librariesOnly().forEach { orderEntry ->
-            val library = (orderEntry as? LibraryOrderEntry)?.library
-            if (library != null && !library.matchesPlatform(platform, project)) {
-                rootModel.removeOrderEntry(orderEntry)
-            }
-            true
-        }
-    }
+            kotlinFacet.noVersionAutoAdvance()
 
-    private fun Library.matchesPlatform(platform: KotlinPlatform, project: Project): Boolean {
-        val kind = (this as? LibraryEx)?.effectiveKind(project)
-        return when (kind) {
-            CommonLibraryKind -> true
-            JSLibraryKind -> platform == KotlinPlatform.JS
-            else -> platform == KotlinPlatform.JVM
+            with(kotlinFacet.configuration.settings) {
+                kind = kotlinSourceSet.kotlinModule.kind
+
+                isTestModule = kotlinSourceSet.isTestModule
+
+                externalProjectId = kotlinSourceSet.gradleModuleId
+
+                sourceSetNames = kotlinSourceSet.sourceSetIdsByName.values.mapNotNull { sourceSetId ->
+                    val node = mainModuleNode.findChildModuleById(sourceSetId) ?: return@mapNotNull null
+                    val data = node.data as? ModuleData ?: return@mapNotNull null
+                    modelsProvider.findIdeModule(data)?.name
+                }
+
+                if (kotlinSourceSet.isTestModule) {
+                    testOutputPath = (kotlinSourceSet.compilerArguments as? K2JSCompilerArguments)?.outputFile
+                    productionOutputPath = null
+                } else {
+                    productionOutputPath = (kotlinSourceSet.compilerArguments as? K2JSCompilerArguments)?.outputFile
+                    testOutputPath = null
+                }
+            }
         }
     }
 }

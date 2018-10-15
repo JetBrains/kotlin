@@ -171,7 +171,7 @@ private class IrUnboundSymbolReplacer(
 
         expression.transformChildrenVoid(this)
         return with(expression) {
-            IrClassReferenceImpl(startOffset, endOffset, type, symbol, symbol.descriptor.toIrType())
+            IrClassReferenceImpl(startOffset, endOffset, type, symbol, symbol.descriptor.toIrType(symbolTable = symbolTable))
         }
     }
 
@@ -293,8 +293,8 @@ private class IrUnboundSymbolReplacer(
         expression.replaceTypeArguments()
 
         val field = expression.field?.replaceOrSame(SymbolTable::referenceField)
-        val getter = expression.getter?.replace(SymbolTable::referenceFunction) ?: expression.getter
-        val setter = expression.setter?.replace(SymbolTable::referenceFunction) ?: expression.setter
+        val getter = expression.getter?.replace(SymbolTable::referenceSimpleFunction) ?: expression.getter
+        val setter = expression.setter?.replace(SymbolTable::referenceSimpleFunction) ?: expression.setter
 
         if (field == expression.field && getter == expression.getter && setter == expression.setter) {
             return super.visitPropertyReference(expression)
@@ -316,8 +316,8 @@ private class IrUnboundSymbolReplacer(
 
     override fun visitLocalDelegatedPropertyReference(expression: IrLocalDelegatedPropertyReference): IrExpression {
         val delegate = expression.delegate.replaceOrSame(SymbolTable::referenceVariable)
-        val getter = expression.getter.replace(SymbolTable::referenceFunction) ?: expression.getter
-        val setter = expression.setter?.replace(SymbolTable::referenceFunction) ?: expression.setter
+        val getter = expression.getter.replace(SymbolTable::referenceSimpleFunction) ?: expression.getter
+        val setter = expression.setter?.replace(SymbolTable::referenceSimpleFunction) ?: expression.setter
 
         if (delegate == expression.delegate && getter == expression.getter && setter == expression.setter) {
             return super.visitLocalDelegatedPropertyReference(expression)

@@ -64,6 +64,11 @@ public class DiagnosticsWithUnsignedTypesGenerated extends AbstractDiagnosticsWi
         runTest("compiler/testData/diagnostics/testsWithUnsignedTypes/unsignedLiteralsInsideConstVals.kt");
     }
 
+    @TestMetadata("unsignedLiteralsOn1_2.kt")
+    public void testUnsignedLiteralsOn1_2() throws Exception {
+        runTest("compiler/testData/diagnostics/testsWithUnsignedTypes/unsignedLiteralsOn1_2.kt");
+    }
+
     @TestMetadata("unsignedLiteralsOverflowSignedBorder.kt")
     public void testUnsignedLiteralsOverflowSignedBorder() throws Exception {
         runTest("compiler/testData/diagnostics/testsWithUnsignedTypes/unsignedLiteralsOverflowSignedBorder.kt");

@@ -1,9 +1,9 @@
 package
 
-public fun test1(/*0*/ i: @setparam:kotlin.Suppress(names = {}) kotlin.Int): kotlin.Unit
-public fun test2(/*0*/ i: @param:kotlin.Suppress(names = {}) kotlin.Int): kotlin.Unit
-public fun test3(/*0*/ i: @receiver:kotlin.Suppress(names = {}) kotlin.Int): kotlin.Unit
-public fun test4(): @setparam:kotlin.Suppress(names = {}) kotlin.Int
-public fun test5(/*0*/ i: (@setparam:kotlin.Suppress(names = {}) kotlin.Int) -> kotlin.Unit): kotlin.Unit
-public fun test7(): (@setparam:kotlin.Suppress(names = {}) kotlin.Int) -> kotlin.Unit
-public fun ((@setparam:kotlin.Suppress(names = {}) kotlin.Int) -> kotlin.Unit).test6(): kotlin.Unit
+public fun test1(/*0*/ i: kotlin.Int): kotlin.Unit
+public fun test2(/*0*/ i: kotlin.Int): kotlin.Unit
+public fun test3(/*0*/ i: kotlin.Int): kotlin.Unit
+public fun test4(): kotlin.Int
+public fun test5(/*0*/ i: (kotlin.Int) -> kotlin.Unit): kotlin.Unit
+public fun test7(): (kotlin.Int) -> kotlin.Unit
+public fun ((kotlin.Int) -> kotlin.Unit).test6(): kotlin.Unit

@@ -3,6 +3,7 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
+@file:UseExperimental(ExperimentalUnsignedTypes::class)
 package kotlin.internal
 
 // (a - b) mod c

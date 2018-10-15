@@ -94,4 +94,3 @@ FILE fqName:<root> fileName:/enumsInAnnotationArguments.kt
       CALL 'constructor TestAnn(En)' type=TestAnn origin=null
         x: GET_ENUM 'A' type=En
     BLOCK_BODY
-

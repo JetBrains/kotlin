@@ -1,0 +1,39 @@
+package
+
+public final inline class Name {
+    public constructor Name(/*0*/ name: kotlin.String)
+    public final val name: kotlin.String
+    public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+}
+
+public interface NameAndPasswordVerifier : NameVerifier, PasswordVerifier {
+    public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
+    public abstract override /*1*/ /*fake_override*/ fun verify(/*0*/ name: Name): kotlin.Unit
+    public abstract override /*1*/ /*fake_override*/ fun verify(/*0*/ password: Password): kotlin.Unit
+}
+
+public interface NameVerifier {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    public abstract fun verify(/*0*/ name: Name): kotlin.Unit
+}
+
+public final inline class Password {
+    public constructor Password(/*0*/ password: kotlin.String)
+    public final val password: kotlin.String
+    public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+}
+
+public interface PasswordVerifier {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    public abstract fun verify(/*0*/ password: Password): kotlin.Unit
+}

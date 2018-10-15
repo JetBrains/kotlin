@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 operator fun <T> Array<T>?.get(i : Int?) = this!!.get(i!!)
 fun <T> array(vararg t : T) : Array<T> = t as Array<T>
 

@@ -41,7 +41,7 @@ class TestDispatcher(
     inner class DispatchedContinuation<T>(val delegate: Continuation<T>) : Continuation<T> {
         override val context: CoroutineContext = delegate.context
 
-        override fun resumeWith(result: SuccessOrFailure<T>) {
+        override fun resumeWith(result: Result<T>) {
             executor.execute {
                 delegate.resumeWith(result)
             }

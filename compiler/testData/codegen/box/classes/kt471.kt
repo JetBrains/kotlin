@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 class MyNumber(val i: Int) {
     operator fun inc(): MyNumber = MyNumber(i+1)
 }

@@ -151,11 +151,13 @@ class PlainTextPasteImportResolver(val dataForConversion: DataForConversion, val
             }
 
             val members = (shortNameCache.getMethodsByName(referenceName, scope).asList() +
-                           shortNameCache.getFieldsByName(referenceName, scope).asList())
-                    .map { it as PsiMember }
-                    .filter { it.getNullableModuleInfo() != null }
-                    .map { it to it.getJavaMemberDescriptor(resolutionFacade) as? DeclarationDescriptorWithVisibility }
-                    .filter { canBeImported(it.second) }
+                    shortNameCache.getFieldsByName(referenceName, scope).asList())
+                .asSequence()
+                .map { it as PsiMember }
+                .filter { it.getNullableModuleInfo() != null }
+                .map { it to it.getJavaMemberDescriptor(resolutionFacade) as? DeclarationDescriptorWithVisibility }
+                .filter { canBeImported(it.second) }
+                .toList()
 
             members.singleOrNull()?.let { (psiMember, _) ->
                 addImport(psiElementFactory.createImportStaticStatement(psiMember.containingClass!!, psiMember.name!!), true)

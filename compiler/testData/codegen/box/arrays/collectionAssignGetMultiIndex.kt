@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 operator fun ArrayList<String>.get(index1: Int, index2: Int) = this[index1 + index2]
 operator fun ArrayList<String>.set(index1: Int, index2: Int, elem: String) {
     this[index1 + index2] = elem

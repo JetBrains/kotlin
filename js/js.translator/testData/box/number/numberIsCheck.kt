@@ -1,5 +1,5 @@
 // IGNORE_BACKEND: JS_IR
-// EXPECTED_REACHABLE_NODES: 1115
+// EXPECTED_REACHABLE_NODES: 1286
 package foo
 
 // For now, check is Byte(is Short, is Int is Float, is Double) translates to typeof ... == "number"

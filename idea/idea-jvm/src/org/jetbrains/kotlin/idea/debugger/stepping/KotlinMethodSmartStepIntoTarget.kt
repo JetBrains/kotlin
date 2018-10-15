@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.renderer.ParameterNameRenderingPolicy
+import org.jetbrains.kotlin.renderer.PropertyAccessorRenderingPolicy
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 import javax.swing.Icon
 
@@ -45,7 +46,7 @@ class KotlinMethodSmartStepTarget(
         private val renderer = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_NO_ANNOTATIONS.withOptions {
             parameterNameRenderingPolicy = ParameterNameRenderingPolicy.NONE
             withoutReturnType = true
-            renderAccessors = true
+            propertyAccessorRenderingPolicy = PropertyAccessorRenderingPolicy.PRETTY
             startFromName = true
             modifiers = emptySet()
         }

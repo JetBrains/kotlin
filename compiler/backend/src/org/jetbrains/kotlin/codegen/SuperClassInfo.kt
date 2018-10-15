@@ -25,9 +25,9 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.org.objectweb.asm.Type
 
 class SuperClassInfo(
-        val type: Type,
-        // null means java/lang/Object
-        val kotlinType: KotlinType?
+    val type: Type,
+    // null means java/lang/Object or irrelevant
+    val kotlinType: KotlinType?
 ) {
 
     companion object {

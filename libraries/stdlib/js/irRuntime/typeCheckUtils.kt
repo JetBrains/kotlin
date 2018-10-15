@@ -72,7 +72,11 @@ public fun isInterface(ctor: dynamic, IType: dynamic): Boolean {
 }
 */
 
-fun typeOf(obj: dynamic) = js("typeof obj").unsafeCast<String>()
+fun typeOf(obj: dynamic): String = js("typeof obj").unsafeCast<String>()
+
+fun jsTypeOf(a: Any?): String = js("typeof a").unsafeCast<String>()
+
+fun instanceOf(obj: dynamic, jsClass: dynamic) = js("obj instanceof jsClass").unsafeCast<Boolean>()
 
 fun isObject(obj: dynamic): Boolean {
     val objTypeOf = typeOf(obj)
@@ -96,4 +100,54 @@ public fun isArrayish(o: dynamic) =
 
 public fun isChar(c: Any): Boolean {
     return js("throw Error(\"isChar is not implemented\")").unsafeCast<Boolean>()
+}
+
+// TODO: Distinguish Boolean/Byte and Short/Char
+public fun isBooleanArray(a: dynamic): Boolean = isArray(a) && a.asDynamic().`$type$` == "BooleanArray"
+public fun isByteArray(a: dynamic): Boolean = js("a instanceof Int8Array").unsafeCast<Boolean>()
+public fun isShortArray(a: dynamic): Boolean = js("a instanceof Int16Array").unsafeCast<Boolean>()
+public fun isCharArray(a: dynamic): Boolean = isArray(a) && a.asDynamic().`$type$` == "CharArray"
+public fun isIntArray(a: dynamic): Boolean = js("a instanceof Int32Array").unsafeCast<Boolean>()
+public fun isFloatArray(a: dynamic): Boolean = js("a instanceof Float32Array").unsafeCast<Boolean>()
+public fun isDoubleArray(a: dynamic): Boolean = js("a instanceof Float64Array").unsafeCast<Boolean>()
+public fun isLongArray(a: dynamic): Boolean = isArray(a) && a.asDynamic().`$type$` == "LongArray"
+
+
+internal fun jsIn(x: String, y: dynamic): Boolean = js("x in y")
+internal fun jsGetPrototypeOf(jsClass: dynamic) = js("Object.getPrototypeOf(jsClass)")
+
+public fun jsIsType(obj: dynamic, jsClass: dynamic): Boolean {
+    if (jsClass === js("Object")) {
+        return isObject(obj)
+    }
+
+    if (obj == null || jsClass == null || (typeOf(obj) != "object" && typeOf(obj) != "function")) {
+        return false
+    }
+
+    if (typeOf(jsClass) == "function" && instanceOf(obj, jsClass)) {
+        return true
+    }
+
+    var proto = jsGetPrototypeOf(jsClass)
+    var constructor = proto?.constructor
+    if (constructor != null && jsIn("${'$'}metadata${'$'}", constructor)) {
+        var metadata = constructor.`$metadata$`
+        if (metadata.kind === "object") {
+            return obj === jsClass
+        }
+    }
+
+    var klassMetadata = jsClass.`$metadata$`
+
+    // In WebKit (JavaScriptCore) for some interfaces from DOM typeof returns "object", nevertheless they can be used in RHS of instanceof
+    if (klassMetadata == null) {
+        return instanceOf(obj, jsClass)
+    }
+
+    if (klassMetadata.kind === "interface" && obj.constructor != null) {
+        return isInterfaceImpl(obj.constructor, jsClass)
+    }
+
+    return false
 }

@@ -48,20 +48,8 @@ Kotlin.arrayToString = function (a) {
     return "[" + Array.prototype.map.call(a, function(e) { return toString(e); }).join(", ") + "]";
 };
 
-Kotlin.arrayDeepToString = function (a, visited) {
-    visited = visited || [a];
-    var toString = Kotlin.isCharArray(a) ? String.fromCharCode : Kotlin.toString;
-    return "[" + Array.prototype.map.call(a, function (e) {
-            if (Kotlin.isArrayish(e) && visited.indexOf(e) < 0) {
-                visited.push(e);
-                var result = Kotlin.arrayDeepToString(e, visited);
-                visited.pop();
-                return result;
-            }
-            else {
-                return toString(e);
-            }
-        }).join(", ") + "]";
+Kotlin.arrayDeepToString = function (arr) {
+    return Kotlin.kotlin.collections.contentDeepToStringImpl(arr);
 };
 
 Kotlin.arrayEquals = function (a, b) {
@@ -81,24 +69,7 @@ Kotlin.arrayEquals = function (a, b) {
 };
 
 Kotlin.arrayDeepEquals = function (a, b) {
-    if (a === b) {
-        return true;
-    }
-    if (!Kotlin.isArrayish(b) || a.length !== b.length) {
-        return false;
-    }
-
-    for (var i = 0, n = a.length; i < n; i++) {
-        if (Kotlin.isArrayish(a[i])) {
-            if (!Kotlin.arrayDeepEquals(a[i], b[i])) {
-                return false;
-            }
-        }
-        else if (!Kotlin.equals(a[i], b[i])) {
-            return false;
-        }
-    }
-    return true;
+    return Kotlin.kotlin.collections.contentDeepEqualsImpl(a, b);
 };
 
 Kotlin.arrayHashCode = function (arr) {
@@ -110,12 +81,7 @@ Kotlin.arrayHashCode = function (arr) {
 };
 
 Kotlin.arrayDeepHashCode = function (arr) {
-    var result = 1;
-    for (var i = 0, n = arr.length; i < n; i++) {
-        var e = arr[i];
-        result = ((31 * result | 0) + (Kotlin.isArrayish(e) ? Kotlin.arrayDeepHashCode(e) : Kotlin.hashCode(e))) | 0;
-    }
-    return result;
+    return Kotlin.kotlin.collections.contentDeepHashCodeImpl(arr);
 };
 
 Kotlin.primitiveArraySort = function (array) {

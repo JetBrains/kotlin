@@ -297,7 +297,7 @@ public class ExpressionTypingServices {
                 beforeJumpInfo = result.getJumpFlowInfo();
                 jumpOutPossible = result.getJumpOutPossible();
             }
-            if (newDataFlowInfo != context.dataFlowInfo) {
+            if (newDataFlowInfo != newContext.dataFlowInfo) {
                 newContext = newContext.replaceDataFlowInfo(newDataFlowInfo);
                 // We take current data flow info if jump there is not possible
             }

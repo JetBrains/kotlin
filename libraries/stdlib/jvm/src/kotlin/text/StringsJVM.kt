@@ -317,7 +317,8 @@ public inline fun String.codePointCount(beginIndex: Int, endIndex: Int): Int =
 /**
  * Compares two strings lexicographically, optionally ignoring case differences.
  */
-public fun String.compareTo(other: String, ignoreCase: Boolean = false): Int {
+@Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+public actual fun String.compareTo(other: String, ignoreCase: Boolean = false): Int {
     if (ignoreCase)
         return (this as java.lang.String).compareToIgnoreCase(other)
     else
@@ -465,5 +466,5 @@ public actual fun CharSequence.repeat(n: Int): String {
  * Note that this Comparator does not take locale into account,
  * and will result in an unsatisfactory ordering for certain locales.
  */
-public val String.Companion.CASE_INSENSITIVE_ORDER: Comparator<String>
+public actual val String.Companion.CASE_INSENSITIVE_ORDER: Comparator<String>
     get() = java.lang.String.CASE_INSENSITIVE_ORDER

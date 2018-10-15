@@ -135,7 +135,7 @@ The Kotlin plugin provides language support in IntelliJ IDEA and Android Studio.
       <add-to-group group-id="IntroduceActionsGroup" anchor="after" relative-to-action="IntroduceField"/>
     </action>
 
-    <group id="InternalKotlin" text="IDEA Internal Actions" internal="true">
+    <group id="InternalKotlin" text="Kotlin Internal Actions" internal="true">
       <separator/>
       <group id="KotlinInternalGroup" text="Kotlin" popup="true">
         <group id="KotlinCompletionBenchmarkGroup" popup="true" text="Benchmark completion">
@@ -170,6 +170,9 @@ The Kotlin plugin provides language support in IntelliJ IDEA and Android Studio.
 
         <action id="CopyAsDiagnosticTest" class="org.jetbrains.kotlin.idea.actions.internal.CopyAsDiagnosticTestAction"
                 text="Copy Current File As Diagnostic Test"/>
+
+        <action id="KotlinFormattingSettingsStatusAction" class="org.jetbrains.kotlin.idea.actions.internal.KotlinFormattingSettingsStatusAction"
+                text="Formatter settings info"/>
       </group>
       <separator/>
 
@@ -225,6 +228,15 @@ The Kotlin plugin provides language support in IntelliJ IDEA and Android Studio.
 
       <add-to-group group-id="GenerateGroup" anchor="first"/>
     </group>
+
+    <action id="Kotlin.RunScratch" class="org.jetbrains.kotlin.idea.scratch.actions.RunScratchAction"
+            text="Run Kotlin Scratch" description="Run Kotlin Scratch">
+      <keyboard-shortcut first-keystroke="control alt W" keymap="$default"/>
+      <add-to-group group-id="RunContextPopupGroup" anchor="last"/>
+    </action>
+    <action id="Kotlin.ClearScratch" class="org.jetbrains.kotlin.idea.scratch.actions.ClearScratchAction"
+            text="Clear Kotlin Scratch" description="Clear Kotlin Scratch">
+    </action>
   </actions>
 
   <extensions defaultExtensionNs="com.intellij">
@@ -482,6 +494,7 @@ The Kotlin plugin provides language support in IntelliJ IDEA and Android Studio.
     <qualifiedNameProvider implementation="org.jetbrains.kotlin.idea.actions.KotlinQualifiedNameProvider"/>
 
     <codeInsight.parameterInfo language="kotlin" implementationClass="org.jetbrains.kotlin.idea.parameterInfo.KotlinFunctionParameterInfoHandler"/>
+    <codeInsight.parameterInfo language="kotlin" implementationClass="org.jetbrains.kotlin.idea.parameterInfo.KotlinLambdaParameterInfoHandler"/>
     <codeInsight.parameterInfo language="kotlin" implementationClass="org.jetbrains.kotlin.idea.parameterInfo.KotlinArrayAccessParameterInfoHandler"/>
     <codeInsight.parameterInfo language="kotlin" implementationClass="org.jetbrains.kotlin.idea.parameterInfo.KotlinClassTypeArgumentInfoHandler"/>
     <codeInsight.parameterInfo language="kotlin" implementationClass="org.jetbrains.kotlin.idea.parameterInfo.KotlinFunctionTypeArgumentInfoHandler"/>
@@ -1669,6 +1682,11 @@ The Kotlin plugin provides language support in IntelliJ IDEA and Android Studio.
 
     <intentionAction>
       <className>org.jetbrains.kotlin.idea.intentions.ConvertTrimIndentToTrimMarginIntention</className>
+      <category>Kotlin</category>
+    </intentionAction>
+
+    <intentionAction>
+      <className>org.jetbrains.kotlin.idea.intentions.ConvertPropertyGetterToInitializerIntention</className>
       <category>Kotlin</category>
     </intentionAction>
 
@@ -2920,12 +2938,21 @@ The Kotlin plugin provides language support in IntelliJ IDEA and Android Studio.
                      language="kotlin"
     />
     
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.ForEachParameterNotUsedInspection"
+                     displayName="Iterated elements are not used in forEach"
+                     groupPath="Kotlin"
+                     groupName="Probable bugs"
+                     enabledByDefault="true"
+                     level="WEAK WARNING"
+                     language="kotlin"
+    />
+
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.NestedLambdaShadowedImplicitParameterInspection"
                      displayName="Nested lambda has shadowed implicit parameter"
                      groupPath="Kotlin"
                      groupName="Style issues"
                      enabledByDefault="true"
-                     level="WARNING"
+                     level="WEAK WARNING"
                      language="kotlin"
     />
 
@@ -2967,7 +2994,7 @@ The Kotlin plugin provides language support in IntelliJ IDEA and Android Studio.
     />
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.collections.ConvertCallChainIntoSequenceInspection"
-                     displayName="Call chain on collection should be converted into 'Sequence'"
+                     displayName="Call chain on collection could be converted into 'Sequence' to improve performance"
                      groupPath="Kotlin"
                      groupName="Style issues"
                      enabledByDefault="true"
@@ -2977,6 +3004,87 @@ The Kotlin plugin provides language support in IntelliJ IDEA and Android Studio.
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.SuspiciousAsDynamicInspection"
                      displayName="Suspicious 'asDynamic' member invocation"
+                     groupPath="Kotlin"
+                     groupName="Style issues"
+                     enabledByDefault="true"
+                     level="WEAK WARNING"
+                     language="kotlin"
+    />
+
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.ReplaceAssertBooleanWithAssertEqualityInspection"
+                     displayName="Replace assert boolean with assert equality"
+                     groupPath="Kotlin"
+                     groupName="Style issues"
+                     enabledByDefault="true"
+                     level="WEAK WARNING"
+                     language="kotlin"
+    />
+
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.RedundantReturnLabelInspection"
+                     displayName="Redundant 'return' label"
+                     groupPath="Kotlin"
+                     groupName="Redundant constructs"
+                     enabledByDefault="true"
+                     level="WEAK WARNING"
+                     language="kotlin"
+    />
+
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.coroutines.ResultIsResultInspection"
+                     displayName="Function returning Result"
+                     groupPath="Kotlin"
+                     groupName="Style issues"
+                     enabledByDefault="false"
+                     level="WEAK WARNING"
+                     language="kotlin"
+    />
+
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.coroutines.RedundantRunCatchingInspection"
+                     displayName="Redundant 'runCatching' call"
+                     groupPath="Kotlin"
+                     groupName="Style issues"
+                     enabledByDefault="true"
+                     level="WEAK WARNING"
+                     language="kotlin"
+    />
+
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.collections.ConvertFlatMapToFlattenInspection"
+                     displayName="flatMap call should be simplified to flatten()"
+                     groupPath="Kotlin"
+                     groupName="Style issues"
+                     enabledByDefault="true"
+                     level="WEAK WARNING"
+                     language="kotlin"
+    />
+
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.SafeCastWithReturnInspection"
+                     displayName="Safe cast with 'return' should be replaced with 'if' type check"
+                     groupPath="Kotlin"
+                     groupName="Style issues"
+                     enabledByDefault="true"
+                     level="WEAK WARNING"
+                     language="kotlin"
+    />
+
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.OptionalExpectationInspection"
+                     displayName="Optionally expected annotation has no actual annotation"
+                     groupPath="Kotlin"
+                     groupName="Style issues"
+                     enabledByDefault="true"
+                     level="INFORMATION"
+                     language="kotlin"
+    />
+
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.UnlabeledReturnInsideLambdaInspection"
+                     displayName="Unlabeled return inside lambda"
+                     groupPath="Kotlin"
+                     groupName="Style issues"
+                     enabledByDefault="true"
+                     level="INFORMATION"
+                     language="kotlin"
+    />
+
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.ReplaceArraysCopyOfWithCopyOfInspection"
+                     displayName="Replace 'Arrays.copyOf' with 'copyOf'"
                      groupPath="Kotlin"
                      groupName="Style issues"
                      enabledByDefault="true"
@@ -3024,10 +3132,13 @@ The Kotlin plugin provides language support in IntelliJ IDEA and Android Studio.
   <xi:include href="jvm.xml" xpointer="xpointer(/idea-plugin/*)"/>
   <!-- CIDR-PLUGIN-EXCLUDE-END -->
 
+  <xi:include href="native.xml" xpointer="xpointer(/idea-plugin/*)"/>
   <xi:include href="tipsAndTricks.xml" xpointer="xpointer(/idea-plugin/*)"/>
 
   <xi:include href="extensions/ide.xml" xpointer="xpointer(/idea-plugin/*)"/>
 
+  <xi:include href="kotlinx-serialization.xml" xpointer="xpointer(/idea-plugin/*)"/>
+  
   <extensionPoints>
     <xi:include href="extensions/compiler.xml" xpointer="xpointer(/idea-plugin/extensionPoints/*)"/>
 
@@ -3062,6 +3173,10 @@ The Kotlin plugin provides language support in IntelliJ IDEA and Android Studio.
     <highlighterExtension implementation="org.jetbrains.kotlin.idea.highlighter.dsl.DslHighlighterExtension"/>
 
     <pluginUpdateVerifier implementation="org.jetbrains.kotlin.idea.update.GooglePluginUpdateVerifier"/>
+
+    <idePlatformKind implementation="org.jetbrains.kotlin.platform.impl.CommonIdePlatformKind"/>
+
+    <idePlatformKindTooling implementation="org.jetbrains.kotlin.idea.core.platform.impl.CommonIdePlatformKindTooling"/>
   </extensions>
 
 </idea-plugin>

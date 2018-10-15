@@ -21,10 +21,10 @@ dependencies {
     testCompile(projectTests(":compiler:tests-common"))
     testCompile(commonDep("junit:junit"))
     testCompile(protobufFull())
-    testCompile(projectDist(":kotlin-stdlib"))
+    testCompile(project(":kotlin-stdlib"))
     testCompileOnly(intellijDep()) { includeJars("openapi") }
 
-    testRuntime(projectDist(":kotlin-reflect"))
+    testRuntime(project(":kotlin-reflect"))
 }
 
 sourceSets {

@@ -146,7 +146,7 @@ class KotlinGradleIT : BaseGradleIT() {
                 "Greeter.kt", "KotlinGreetingJoiner.kt",
                 "TestGreeter.kt", "TestKotlinGreetingJoiner.kt"
             )
-            assertCompiledKotlinSources(project.relativize(affectedSources), weakTesting = false)
+            assertCompiledKotlinSources(project.relativize(affectedSources))
         }
     }
 
@@ -824,6 +824,68 @@ class KotlinGradleIT : BaseGradleIT() {
             assertSuccessful()
             assertNotContains("Could not register Kotlin output")
             assertTasksExecuted(compileKotlinTasks)
+        }
+    }
+
+    @Test
+    fun testKotlinSourceInJavaSourceSet() = with(Project("multiplatformProject")) {
+        setupWorkingDir()
+
+        val srcDirPrefix = "srcDir: "
+
+        gradleBuildScript().appendText(
+            "\n" + """
+            subprojects { project ->
+                project.afterEvaluate {
+                    project.sourceSets.each { sourceSet ->
+                        sourceSet.allJava.srcDirs.each { srcDir ->
+                            println "$srcDirPrefix" + srcDir.canonicalPath
+                        }
+                    }
+                }
+            }
+            """.trimIndent()
+        )
+        val srcDirRegex = "$srcDirPrefix(.*)".toRegex()
+
+        build("help") {
+            assertSuccessful()
+            val reportedSrcDirs = srcDirRegex.findAll(output).map { it.groupValues[1] }.toSet()
+
+            val expectedKotlinDirs = listOf("lib", "libJvm", "libJs").flatMap { module ->
+                listOf("main", "test").map { sourceSet ->
+                    projectDir.resolve("$module/src/$sourceSet/kotlin").absolutePath
+                }
+            }
+
+            expectedKotlinDirs.forEach { assertTrue(it in reportedSrcDirs, "$it should be included into the Java source sets") }
+        }
+    }
+
+    @Test
+    fun testNoTaskConfigurationForcing() {
+        val gradleVersionRequirement = GradleVersionRequired.AtLeast("4.9")
+        val projects = listOf(
+            Project("simpleProject", gradleVersionRequirement),
+            Project("kotlin2JsNoOutputFileProject", gradleVersionRequirement),
+            Project("sample-app", gradleVersionRequirement, "new-mpp-lib-and-app")
+        )
+
+        projects.forEach {
+            it.apply {
+                setupWorkingDir()
+
+                val taskConfigureFlag = "Configured the task!"
+
+                gradleBuildScript().appendText("\n" + """
+                    tasks.register("myTask") { println '$taskConfigureFlag' }
+                """.trimIndent())
+
+                build("help") {
+                    assertSuccessful()
+                    assertNotContains(taskConfigureFlag)
+                }
+            }
         }
     }
 }

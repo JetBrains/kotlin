@@ -6,7 +6,7 @@
 package test.coroutines
 
 import kotlin.test.*
-import kotlin.coroutines.experimental.*
+import kotlin.coroutines.*
 
 class CoroutineContextTest {
     data class CtxA(val i: Int) : AbstractCoroutineContextElement(CtxA) {

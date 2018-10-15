@@ -20,10 +20,7 @@ import com.intellij.codeInsight.ContainerProvider
 import com.intellij.codeInsight.ExternalAnnotationsManager
 import com.intellij.codeInsight.InferredAnnotationsManager
 import com.intellij.codeInsight.runner.JavaMainMethodProvider
-import com.intellij.core.CoreApplicationEnvironment
-import com.intellij.core.CoreJavaFileManager
-import com.intellij.core.JavaCoreApplicationEnvironment
-import com.intellij.core.JavaCoreProjectEnvironment
+import com.intellij.core.*
 import com.intellij.ide.highlighter.JavaFileType
 import com.intellij.ide.plugins.PluginManagerCore
 import com.intellij.lang.MetaLanguage
@@ -36,6 +33,7 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.extensions.ExtensionsArea
 import com.intellij.openapi.fileTypes.FileTypeExtensionPoint
+import com.intellij.openapi.fileTypes.FileTypeRegistry
 import com.intellij.openapi.fileTypes.PlainTextFileType
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
@@ -69,6 +67,7 @@ import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.CliModuleVisibilityManagerImpl
 import org.jetbrains.kotlin.cli.common.KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY
 import org.jetbrains.kotlin.cli.common.config.ContentRoot
+import org.jetbrains.kotlin.cli.common.config.KotlinSourceRoot
 import org.jetbrains.kotlin.cli.common.config.kotlinSourceRoots
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR
@@ -110,6 +109,7 @@ import org.jetbrains.kotlin.resolve.jvm.extensions.PackageFragmentProviderExtens
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver
 import org.jetbrains.kotlin.resolve.lazy.declarations.CliDeclarationProviderFactoryService
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactoryService
+import org.jetbrains.kotlin.resolve.multiplatform.isCommonSource
 import org.jetbrains.kotlin.script.ScriptDefinitionProvider
 import org.jetbrains.kotlin.script.ScriptDependenciesProvider
 import org.jetbrains.kotlin.script.ScriptReportSink
@@ -218,9 +218,6 @@ class KotlinCoreEnvironment private constructor(
             extension.updateConfiguration(configuration)
         }
 
-        sourceFiles += createKtFiles(project)
-        sourceFiles.sortBy { it.virtualFile.path }
-
         // If not disabled explicitly, we should always support at least the standard script definition
         if (!configuration.getBoolean(JVMConfigurationKeys.DISABLE_STANDARD_SCRIPT_DEFINITION) &&
             StandardScriptDefinition !in configuration.getList(JVMConfigurationKeys.SCRIPT_DEFINITIONS)
@@ -233,6 +230,20 @@ class KotlinCoreEnvironment private constructor(
             scriptDefinitionProvider.setScriptDefinitionsSources(configuration.getList(JVMConfigurationKeys.SCRIPT_DEFINITIONS_SOURCES))
             scriptDefinitionProvider.setScriptDefinitions(configuration.getList(JVMConfigurationKeys.SCRIPT_DEFINITIONS))
 
+            // Register new file extensions
+            val fileTypeRegistry = FileTypeRegistry.getInstance() as CoreFileTypeRegistry
+
+            scriptDefinitionProvider.getKnownFilenameExtensions().filter {
+                fileTypeRegistry.getFileTypeByExtension(it) != KotlinFileType.INSTANCE
+            }.forEach {
+                fileTypeRegistry.registerFileType(KotlinFileType.INSTANCE, it)
+            }
+        }
+
+        sourceFiles += createKtFiles(project)
+        sourceFiles.sortBy { it.virtualFile.path }
+
+        if (scriptDefinitionProvider != null) {
             ScriptDependenciesProvider.getInstance(project).let { importsProvider ->
                 configuration.addJvmClasspathRoots(
                     sourceFiles.mapNotNull(importsProvider::getScriptDependencies)
@@ -305,7 +316,7 @@ class KotlinCoreEnvironment private constructor(
 
     fun createPackagePartProvider(scope: GlobalSearchScope): JvmPackagePartProvider {
         return JvmPackagePartProvider(configuration.languageVersionSettings, scope).apply {
-            addRoots(initialRoots)
+            addRoots(initialRoots, configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY))
             packagePartProviders += this
             (ModuleAnnotationsResolver.getInstance(project) as CliModuleAnnotationsResolver).addPackagePartProvider(this)
         }
@@ -363,7 +374,7 @@ class KotlinCoreEnvironment private constructor(
         val newRoots = classpathRootsResolver.convertClasspathRoots(contentRoots).roots
 
         for (packagePartProvider in packagePartProviders) {
-            packagePartProvider.addRoots(newRoots)
+            packagePartProvider.addRoots(newRoots, configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY))
         }
 
         return rootsIndex.addNewIndexForRoots(newRoots)?.let { newIndex ->
@@ -400,16 +411,18 @@ class KotlinCoreEnvironment private constructor(
     private fun findJarRoot(file: File): VirtualFile? =
         applicationEnvironment.jarFileSystem.findFileByPath("$file${URLUtil.JAR_SEPARATOR}")
 
-    private fun getSourceRootsCheckingForDuplicates(): Collection<String> {
-        val uniqueSourceRoots = linkedSetOf<String>()
+    private fun getSourceRootsCheckingForDuplicates(): List<KotlinSourceRoot> {
+        val uniqueSourceRoots = hashSetOf<String>()
+        val result = mutableListOf<KotlinSourceRoot>()
 
-        configuration.kotlinSourceRoots.forEach { path ->
-            if (!uniqueSourceRoots.add(path)) {
-                report(STRONG_WARNING, "Duplicate source root: $path")
+        for (root in configuration.kotlinSourceRoots) {
+            if (!uniqueSourceRoots.add(root.path)) {
+                report(STRONG_WARNING, "Duplicate source root: ${root.path}")
             }
+            result.add(root)
         }
 
-        return uniqueSourceRoots
+        return result
     }
 
     fun getSourceFiles(): List<KtFile> = sourceFiles
@@ -425,7 +438,7 @@ class KotlinCoreEnvironment private constructor(
 
         val virtualFileCreator = PreprocessedFileCreator(project)
 
-        for (sourceRootPath in sourceRoots) {
+        for ((sourceRootPath, isCommon) in sourceRoots) {
             val vFile = localFileSystem.findFileByPath(sourceRootPath)
             if (vFile == null) {
                 val message = "Source file or directory not found: $sourceRootPath"
@@ -452,6 +465,9 @@ class KotlinCoreEnvironment private constructor(
                     val psiFile = psiManager.findFile(virtualFile)
                     if (psiFile is KtFile) {
                         result.add(psiFile)
+                        if (isCommon) {
+                            psiFile.isCommonSource = true
+                        }
                     }
                 }
             }

@@ -166,4 +166,10 @@ public abstract class CallableReference implements KCallable, Serializable {
     public boolean isAbstract() {
         return getReflected().isAbstract();
     }
+
+    @Override
+    @SinceKotlin(version = "1.3")
+    public boolean isSuspend() {
+        return getReflected().isSuspend();
+    }
 }

@@ -14,6 +14,7 @@ enum class Family {
     InvariantArraysOfObjects,
     ArraysOfObjects,
     ArraysOfPrimitives,
+    ArraysOfUnsigned,
     Sequences,
     CharSequences,
     Strings,
@@ -21,7 +22,8 @@ enum class Family {
     RangesOfPrimitives,
     ProgressionsOfPrimitives,
     Generic,
-    Primitives;
+    Primitives,
+    Unsigned;
 
     val isPrimitiveSpecialization: Boolean by lazy { this in primitiveSpecializations }
 
@@ -44,18 +46,28 @@ enum class PrimitiveType {
     Float,
     Double,
     Boolean,
-    Char;
+    Char,
+    // unsigned
+    UByte,
+    UShort,
+    UInt,
+    ULong;
 
     val capacity by lazy { descendingByDomainCapacity.indexOf(this).let { if (it < 0) it else descendingByDomainCapacity.size - it } }
 
     companion object {
-        val defaultPrimitives = PrimitiveType.values().toSet()
+        val unsignedPrimitives = setOf(UInt, ULong, UByte, UShort)
+        val defaultPrimitives = PrimitiveType.values().toSet() - unsignedPrimitives
         val numericPrimitives = setOf(Int, Long, Byte, Short, Double, Float)
         val integralPrimitives = setOf(Int, Long, Byte, Short, Char)
+        val rangePrimitives = setOf(Int, Long, Char, UInt, ULong)
 
         val descendingByDomainCapacity = listOf(Double, Float, Long, Int, Short, Char, Byte)
+        val descendingByDomainCapacityUnsigned = listOf(ULong, UInt, UShort, UByte)
 
-        fun maxByCapacity(fromType: PrimitiveType, toType: PrimitiveType): PrimitiveType = descendingByDomainCapacity.first { it == fromType || it == toType }
+        fun maxByCapacity(fromType: PrimitiveType, toType: PrimitiveType): PrimitiveType =
+            (if (fromType in unsignedPrimitives) descendingByDomainCapacityUnsigned else descendingByDomainCapacity)
+                .first { it == fromType || it == toType }
     }
 }
 

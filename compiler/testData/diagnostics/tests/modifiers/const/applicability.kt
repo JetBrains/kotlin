@@ -82,7 +82,7 @@ const val nonConstInitializer9 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>1.0/0.0
 const val nonConstInitializer10 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>0/0<!>
 const val nonConstInitializer11 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>1 % 0<!>
 const val nonConstInitializer12 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>0 % 0<!>
-const val nonConstInitializer13 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>0.<!DEPRECATION!>mod<!>(0)<!>
+const val nonConstInitializer13 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>0.<!DEPRECATION_ERROR!>mod<!>(0)<!>
 const val nonConstInitializer14 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>0.rem(0)<!>
 const val nonConstInitializer15 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>0.div(0)<!>
 
@@ -99,7 +99,7 @@ const val constInitializer10 = 1.0 % 0
 const val constInitializer11 = 0.0 % 0
 const val constInitializer12 = (-1.0) % 0
 const val constInitializer13 = 1.0.rem(0)
-const val constInitializer14 = 1.0.<!DEPRECATION!>mod<!>(0)
+const val constInitializer14 = 1.0.<!DEPRECATION_ERROR!>mod<!>(0)
 const val constInitializer15 = 1.0.div(0)
 
 // ------------------

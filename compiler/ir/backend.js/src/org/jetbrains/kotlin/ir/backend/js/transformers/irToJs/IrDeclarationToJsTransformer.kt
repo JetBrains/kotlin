@@ -7,12 +7,14 @@ package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
 import org.jetbrains.kotlin.ir.backend.js.utils.JsGenerationContext
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.js.backend.ast.JsEmpty
 import org.jetbrains.kotlin.js.backend.ast.JsStatement
 import org.jetbrains.kotlin.js.backend.ast.JsVars
 
 class IrDeclarationToJsTransformer : BaseIrElementToJsNodeTransformer<JsStatement, JsGenerationContext> {
 
     override fun visitSimpleFunction(declaration: IrSimpleFunction, context: JsGenerationContext): JsStatement {
+        if (declaration.descriptor.isExpect) return JsEmpty // TODO: fix it in Psi2Ir
         return declaration.accept(IrFunctionToJsTransformer(), context).makeStmt()
     }
 
@@ -26,6 +28,8 @@ class IrDeclarationToJsTransformer : BaseIrElementToJsNodeTransformer<JsStatemen
 
     override fun visitField(declaration: IrField, context: JsGenerationContext): JsStatement {
         val fieldName = context.getNameForSymbol(declaration.symbol)
+
+        if (declaration.isExternal) return JsEmpty
 
         if (declaration.initializer != null) {
             val initializer = declaration.initializer!!.accept(IrElementToJsExpressionTransformer(), context)

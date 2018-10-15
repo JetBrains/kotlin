@@ -1,0 +1,37 @@
+apply plugin: 'kotlin-multiplatform'
+
+repositories {
+    mavenLocal()
+    jcenter()
+    maven { url  "http://dl.bintray.com/kotlin/kotlinx.html/" }
+}
+
+kotlin {
+    sourceSets {
+        allNative
+        nativeTest
+
+        macos64Main { dependsOn sourceSets.allNative }
+        linux64Main { dependsOn sourceSets.allNative }
+        mingw64Main { dependsOn sourceSets.allNative }
+
+        macos64Test { dependsOn sourceSets.nativeTest }
+        linux64Test { dependsOn sourceSets.nativeTest }
+        mingw64Test { dependsOn sourceSets.nativeTest }
+    }
+
+    targets {
+        fromPreset(presets.macosX64, 'macos64')
+        fromPreset(presets.linuxX64, 'linux64')
+        fromPreset(presets.mingwX64, 'mingw64')
+
+        configure([macos64, linux64, mingw64]) {
+            compilations.main.cinterops {
+                stdio {
+                    packageName 'example.cinterop.project.stdio'
+                    extraOpts '-nodefaultlibs'
+                }
+            }
+        }
+    }
+}

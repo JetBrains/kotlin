@@ -30,6 +30,7 @@ class WholeProjectJavaInspectionTest : WholeProjectInspectionTest() {
                     includeLibrarySource = false,
                     includeLibraryClasses = false,
                     includeScriptDependencies = false,
+                    includeScriptsOutsideSourceRoots = false,
                     fileIndex = index
                 )
             }

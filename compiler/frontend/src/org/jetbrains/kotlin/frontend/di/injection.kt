@@ -172,6 +172,7 @@ fun createContainerForLazyResolve(
     targetEnvironment.configure(this)
 
     useImpl<ResolveSession>()
+    useImpl<LazyTopDownAnalyzer>()
 }
 
 fun createLazyResolveSession(moduleContext: ModuleContext, files: Collection<KtFile>): ResolveSession =

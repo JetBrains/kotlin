@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 1114
+// EXPECTED_REACHABLE_NODES: 1284
 package foo
 
 fun test(f: (Int) -> Boolean, p: Int) = f(p)

@@ -31,7 +31,8 @@ class VariableTypeAndInitializerResolver(
     private val wrappedTypeFactory: WrappedTypeFactory,
     private val typeApproximator: TypeApproximator,
     private val declarationReturnTypeSanitizer: DeclarationReturnTypeSanitizer,
-    private val languageVersionSettings: LanguageVersionSettings
+    private val languageVersionSettings: LanguageVersionSettings,
+    private val anonymousTypeTransformers: Iterable<DeclarationSignatureAnonymousTypeTransformer>
 ) {
     companion object {
         @JvmField
@@ -82,7 +83,7 @@ class VariableTypeAndInitializerResolver(
                         )
                         val initializerType =
                             resolveInitializerType(scopeForInitializer, variable.initializer!!, dataFlowInfo, trace, local)
-                        transformAnonymousTypeIfNeeded(variableDescriptor, variable, initializerType, trace)
+                        transformAnonymousTypeIfNeeded(variableDescriptor, variable, initializerType, trace, anonymousTypeTransformers)
                     }
 
                 else -> resolveInitializerType(scopeForInitializer, variable.initializer!!, dataFlowInfo, trace, local)

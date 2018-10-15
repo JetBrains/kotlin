@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 1113
+// EXPECTED_REACHABLE_NODES: 1285
 // HAS_NO_CAPTURED_VARS: function=A_init except=Kotlin;A;equals
 
 class A() {

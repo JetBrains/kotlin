@@ -8,11 +8,8 @@
 
 package kotlin.io
 
-import java.io.*
-import java.util.*
-import kotlin.*
-import kotlin.text.*
-import kotlin.comparisons.*
+import java.io.File
+import java.io.IOException
 
 /**
  * Creates an empty directory in the specified [directory], using the given [prefix] and [suffix] to generate its name.

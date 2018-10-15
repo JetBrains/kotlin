@@ -25,7 +25,7 @@ fun test(f: Foo) {
 }
 
 // @TestKt.class:
-// 6 INVOKESTATIC Foo\$Erased.box
+// 6 INVOKESTATIC Foo\.box
 // 4 INVOKEVIRTUAL Foo.unbox
 // 0 valueOf
 // 0 intValue

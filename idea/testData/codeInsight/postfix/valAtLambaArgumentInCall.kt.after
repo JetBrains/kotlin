@@ -1,5 +1,6 @@
 // ALLOW_MULTIPLE_EXPRESSIONS
 fun bar(x: (Int) -> String) = x(1)
 fun foo() {
-    val bar = bar() { y: Int -> "abc" }
+    val x = { y: Int -> "abc" }
+    bar(x)
 }

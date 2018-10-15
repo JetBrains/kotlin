@@ -28,7 +28,7 @@ public class JvmOptimizeImportsTestGenerated extends AbstractJvmOptimizeImportsT
         }
 
         public void testAllFilesPresentInJvm() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/editor/optimizeImports/jvm"), Pattern.compile("^([^.]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/editor/optimizeImports/jvm"), Pattern.compile("^([^.]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("AlreadyOptimized.kt")
@@ -161,6 +161,11 @@ public class JvmOptimizeImportsTestGenerated extends AbstractJvmOptimizeImportsT
             runTest("idea/testData/editor/optimizeImports/jvm/UnusedImports.kt");
         }
 
+        @TestMetadata("UnusedImportsInScript.kts")
+        public void testUnusedImportsInScript() throws Exception {
+            runTest("idea/testData/editor/optimizeImports/jvm/UnusedImportsInScript.kts");
+        }
+
         @TestMetadata("WithAliases.kt")
         public void testWithAliases() throws Exception {
             runTest("idea/testData/editor/optimizeImports/jvm/WithAliases.kt");
@@ -175,7 +180,7 @@ public class JvmOptimizeImportsTestGenerated extends AbstractJvmOptimizeImportsT
             }
 
             public void testAllFilesPresentInAllUnderImports() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/editor/optimizeImports/jvm/allUnderImports"), Pattern.compile("^([^.]+)\\.kt$"), TargetBackend.ANY, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/editor/optimizeImports/jvm/allUnderImports"), Pattern.compile("^([^.]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
             }
 
             @TestMetadata("ClassNameConflict.kt")

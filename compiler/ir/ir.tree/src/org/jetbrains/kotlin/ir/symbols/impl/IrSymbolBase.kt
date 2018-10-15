@@ -26,9 +26,9 @@ abstract class IrSymbolBase<out D : DeclarationDescriptor>(override val descript
 abstract class IrBindableSymbolBase<out D : DeclarationDescriptor, B : IrSymbolOwner>(descriptor: D) :
     IrBindableSymbol<D, B>, IrSymbolBase<D>(descriptor) {
     init {
-        assert(isOriginalDescriptor(descriptor)) {
-            "Substituted descriptor $descriptor for ${descriptor.original}"
-        }
+//        assert(isOriginalDescriptor(descriptor)) {
+//            "Substituted descriptor $descriptor for ${descriptor.original}"
+//        }
     }
 
     private fun isOriginalDescriptor(descriptor: DeclarationDescriptor): Boolean =

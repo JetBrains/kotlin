@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.idea.scratch.ui
 
 import com.intellij.ide.scratch.ScratchFileService
+import com.intellij.ide.scratch.ScratchRootType
 import com.intellij.openapi.components.AbstractProjectComponent
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileEditor.FileEditorManagerListener
@@ -52,7 +53,7 @@ class ScratchFileHook(project: Project) : AbstractProjectComponent(project) {
 
     private fun isPluggable(file: VirtualFile): Boolean {
         if (!file.isValid) return false
-        if (!ScratchFileService.isInScratchRoot(file)) return false
+        if (ScratchFileService.getInstance().getRootType(file) !is ScratchRootType) return false
         val psiFile = PsiManager.getInstance(myProject).findFile(file) ?: return false
         return ScratchFileLanguageProvider.get(psiFile.fileType) != null
     }

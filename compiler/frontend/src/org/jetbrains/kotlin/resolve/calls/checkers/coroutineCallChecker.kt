@@ -46,9 +46,15 @@ fun FunctionDescriptor.isBuiltInCoroutineContext(languageVersionSettings: Langua
 fun PropertyDescriptor.isBuiltInCoroutineContext(languageVersionSettings: LanguageVersionSettings) =
     this.fqNameSafe.isBuiltInCoroutineContext(languageVersionSettings)
 
-object CoroutineSuspendCallChecker : CallChecker {
-    private val ALLOWED_SCOPE_KINDS = setOf(LexicalScopeKind.FUNCTION_INNER_SCOPE, LexicalScopeKind.FUNCTION_HEADER_FOR_DESTRUCTURING)
+private val ALLOWED_SCOPE_KINDS = setOf(LexicalScopeKind.FUNCTION_INNER_SCOPE, LexicalScopeKind.FUNCTION_HEADER_FOR_DESTRUCTURING)
 
+fun findEnclosingSuspendFunction(context: CallCheckerContext): FunctionDescriptor? = context.scope
+    .parentsWithSelf.firstOrNull {
+    it is LexicalScope && it.kind in ALLOWED_SCOPE_KINDS &&
+            it.ownerDescriptor.safeAs<FunctionDescriptor>()?.isSuspend == true
+}?.cast<LexicalScope>()?.ownerDescriptor?.cast()
+
+object CoroutineSuspendCallChecker : CallChecker {
     override fun check(resolvedCall: ResolvedCall<*>, reportOn: PsiElement, context: CallCheckerContext) {
         val descriptor = resolvedCall.candidateDescriptor
         when (descriptor) {
@@ -61,11 +67,7 @@ object CoroutineSuspendCallChecker : CallChecker {
             else -> return
         }
 
-        val enclosingSuspendFunction = context.scope
-            .parentsWithSelf.firstOrNull {
-            it is LexicalScope && it.kind in ALLOWED_SCOPE_KINDS &&
-                    it.ownerDescriptor.safeAs<FunctionDescriptor>()?.isSuspend == true
-        }?.cast<LexicalScope>()?.ownerDescriptor?.cast<FunctionDescriptor>()
+        val enclosingSuspendFunction = findEnclosingSuspendFunction(context)
 
         when {
             enclosingSuspendFunction != null -> {

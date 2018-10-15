@@ -210,7 +210,7 @@ interface DescriptorRendererOptions {
     var typeNormalizer: (KotlinType) -> KotlinType
     var defaultParameterValueRenderer: ((ValueParameterDescriptor) -> String)?
     var secondaryConstructorsAsPrimary: Boolean
-    var renderAccessors: Boolean
+    var propertyAccessorRenderingPolicy: PropertyAccessorRenderingPolicy
     var renderDefaultAnnotationArguments: Boolean
     var alwaysRenderModifiers: Boolean
     var renderConstructorKeyword: Boolean
@@ -248,6 +248,12 @@ enum class OverrideRenderingPolicy {
 enum class ParameterNameRenderingPolicy {
     ALL,
     ONLY_NON_SYNTHESIZED,
+    NONE
+}
+
+enum class PropertyAccessorRenderingPolicy {
+    PRETTY,
+    DEBUG,
     NONE
 }
 

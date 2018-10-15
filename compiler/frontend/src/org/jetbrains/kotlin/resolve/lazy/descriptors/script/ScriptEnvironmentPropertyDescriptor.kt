@@ -7,10 +7,12 @@ package org.jetbrains.kotlin.resolve.lazy.descriptors.script
 
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
-import org.jetbrains.kotlin.descriptors.impl.*
+import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl
+import org.jetbrains.kotlin.descriptors.impl.PropertyGetterDescriptorImpl
+import org.jetbrains.kotlin.descriptors.impl.PropertySetterDescriptorImpl
+import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyScriptDescriptor
-import org.jetbrains.kotlin.types.KotlinType
 
 class ScriptEnvironmentPropertyDescriptor(
     name: Name,
@@ -22,8 +24,8 @@ class ScriptEnvironmentPropertyDescriptor(
     script,
     null,
     Annotations.EMPTY,
-    Modality.OPEN,
-    Visibilities.PUBLIC,
+    Modality.FINAL,
+    Visibilities.PRIVATE,
     isVar,
     name,
     CallableMemberDescriptor.Kind.SYNTHESIZED,
@@ -32,7 +34,7 @@ class ScriptEnvironmentPropertyDescriptor(
     /* isDelegated = */ false
 ) {
     init {
-        setType(typeDescriptor.defaultType, emptyList<TypeParameterDescriptorImpl>(), receiver, null as KotlinType?)
+        setType(typeDescriptor.defaultType, emptyList(), receiver, null)
         initialize(
             makePropertyGetterDescriptor(),
             if (!isVar) null else makePropertySetterDescriptor()

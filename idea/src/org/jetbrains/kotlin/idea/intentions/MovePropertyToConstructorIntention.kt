@@ -76,12 +76,9 @@ class MovePropertyToConstructorIntention :
 
         val commentSaver = CommentSaver(element)
 
+        val context = element.analyze(BodyResolveMode.PARTIAL)
         val propertyAnnotationsText = element.modifierList?.annotationEntries?.joinToString(separator = " ") {
-            if (it.isApplicableToConstructorParameter()) {
-                it.getTextWithUseSiteIfMissing(AnnotationUseSiteTarget.FIELD.renderName)
-            } else {
-                it.text
-            }
+            it.getTextWithUseSite(context)
         }
 
         if (constructorParameter != null) {
@@ -129,18 +126,26 @@ class MovePropertyToConstructorIntention :
         return parameterDescriptor.source.getPsi() as? KtParameter
     }
 
-    private fun KtAnnotationEntry.isApplicableToConstructorParameter(): Boolean {
-        val context = analyze(BodyResolveMode.PARTIAL)
-        val descriptor = context[BindingContext.ANNOTATION, this] ?: return false
-        val applicableTargets = AnnotationChecker.applicableTargetSet(descriptor)
-        return applicableTargets.contains(KotlinTarget.VALUE_PARAMETER)
-    }
+    private fun KtAnnotationEntry.getTextWithUseSite(context: BindingContext): String {
+        if (useSiteTarget != null) return text
+        val typeReference = this.typeReference?.text ?: return text
+        val valueArgumentList = valueArgumentList?.text.orEmpty()
 
-    private fun KtAnnotationEntry.getTextWithUseSiteIfMissing(useSite: String) =
-        if (useSiteTarget == null)
-            "@$useSite:${typeReference?.text.orEmpty()}${valueArgumentList?.text.orEmpty()}"
-        else
-            text
+        fun AnnotationUseSiteTarget.textWithMe() = "@$renderName:$typeReference$valueArgumentList"
+
+        val descriptor = context[BindingContext.ANNOTATION, this] ?: return text
+        val applicableTargets = AnnotationChecker.applicableTargetSet(descriptor)
+        return when {
+            KotlinTarget.VALUE_PARAMETER !in applicableTargets ->
+                text
+            KotlinTarget.PROPERTY in applicableTargets ->
+                AnnotationUseSiteTarget.PROPERTY.textWithMe()
+            KotlinTarget.FIELD in applicableTargets ->
+                AnnotationUseSiteTarget.FIELD.textWithMe()
+            else ->
+                text
+        }
+    }
 
     private fun KotlinType.render() = IdeDescriptorRenderers.SOURCE_CODE.renderType(this)
 

@@ -1,0 +1,57 @@
+KtFile: 2.2.kt
+  PACKAGE_DIRECTIVE
+    <empty list>
+  IMPORT_LIST
+    <empty list>
+  FUN
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('f')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    BLOCK
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n    ')
+      RETURN
+        PsiElement(return)('return')
+        PsiErrorElement:Label must be named
+          PsiElement(AT)('@')
+        BOOLEAN_CONSTANT
+          PsiElement(true)('true')
+      PsiWhiteSpace('\n\n    ')
+      WHILE
+        PsiElement(while)('while')
+        PsiWhiteSpace(' ')
+        PsiElement(LPAR)('(')
+        CONDITION
+          BOOLEAN_CONSTANT
+            PsiElement(true)('true')
+        PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        BODY
+          BLOCK
+            PsiElement(LBRACE)('{')
+            PsiWhiteSpace('\n        ')
+            BREAK
+              PsiElement(break)('break')
+              PsiErrorElement:Label must be named
+                PsiElement(AT)('@')
+            PsiErrorElement:Unexpected tokens (use ';' to separate expressions on the same line)
+              <empty list>
+            BOOLEAN_CONSTANT
+              PsiElement(false)('false')
+            PsiWhiteSpace('\n        ')
+            CONTINUE
+              PsiElement(continue)('continue')
+              PsiErrorElement:Label must be named
+                PsiElement(AT)('@')
+            PsiErrorElement:Unexpected tokens (use ';' to separate expressions on the same line)
+              <empty list>
+            BOOLEAN_CONSTANT
+              PsiElement(true)('true')
+            PsiWhiteSpace('\n    ')
+            PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')

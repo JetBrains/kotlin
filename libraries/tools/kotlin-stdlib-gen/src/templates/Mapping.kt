@@ -204,10 +204,11 @@ object Mapping : TemplateGroupBase() {
         returns("C")
 
         body {
+            fun checkOverflow(value: String) = if (f == Sequences || f == Iterables) "checkIndexOverflow($value)" else value
             """
                 var index = 0
                 for (item in this)
-                    destination.add(transform(index++, item))
+                    destination.add(transform(${checkOverflow("index++")}, item))
                 return destination
             """
         }
@@ -428,7 +429,7 @@ object Mapping : TemplateGroupBase() {
             using the specified [keySelector] function to extract a key from each ${f.element}.
             """
         }
-        sample("samples.collections.Collections.Transformations.groupingByEachCount")
+        sample("samples.collections.Grouping.groupingByEachCount")
 
         body {
             """

@@ -64,4 +64,10 @@ public interface CallableDescriptor extends DeclarationDescriptorWithVisibility,
 
     @NotNull
     Collection<? extends CallableDescriptor> getOverriddenDescriptors();
+
+    interface UserDataKey<V> {}
+
+    // TODO: pull up userdata related members to DeclarationDescriptor and use more efficient implementation (e.g. THashMap)
+    @Nullable
+    <V> V getUserData(UserDataKey<V> key);
 }

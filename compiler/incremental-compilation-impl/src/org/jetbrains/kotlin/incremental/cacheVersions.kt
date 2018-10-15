@@ -16,21 +16,25 @@
 
 package org.jetbrains.kotlin.incremental
 
+import org.jetbrains.kotlin.incremental.storage.version.CacheVersionManager
+import org.jetbrains.kotlin.incremental.storage.version.localCacheVersionManager
+import org.jetbrains.kotlin.incremental.storage.version.lookupsCacheVersionManager
 import java.io.File
 
 internal const val STANDALONE_CACHE_VERSION = 2
 internal const val STANDALONE_VERSION_FILE_NAME = "standalone-ic-format-version.txt"
 
-fun standaloneCacheVersion(dataRoot: File, enabled: Boolean): CacheVersion =
-        customCacheVersion(STANDALONE_CACHE_VERSION, STANDALONE_VERSION_FILE_NAME, dataRoot, enabled)
+fun standaloneCacheVersionManager(dataRoot: File, enabled: Boolean): CacheVersionManager =
+    customCacheVersionManager(STANDALONE_CACHE_VERSION, STANDALONE_VERSION_FILE_NAME, dataRoot, enabled)
 
-fun customCacheVersion(version: Int, fileName: String, dataRoot: File, enabled: Boolean): CacheVersion =
-        CacheVersion(ownVersion = version,
-                versionFile = File(dataRoot, fileName),
-                whenVersionChanged = CacheVersion.Action.REBUILD_ALL_KOTLIN,
-                whenTurnedOn = CacheVersion.Action.REBUILD_ALL_KOTLIN,
-                whenTurnedOff = CacheVersion.Action.REBUILD_ALL_KOTLIN,
-                isEnabled = enabled)
+fun customCacheVersionManager(version: Int, fileName: String, dataRoot: File, enabled: Boolean): CacheVersionManager =
+    CacheVersionManager(
+        File(dataRoot, fileName),
+        if (enabled) version else null
+    )
 
-fun commonCacheVersions(cachesDir: File, enabled: Boolean): List<CacheVersion> =
-    listOf(normalCacheVersion(cachesDir, enabled), dataContainerCacheVersion(cachesDir, enabled))
+fun commonCacheVersionsManagers(cachesDir: File, enabled: Boolean): List<CacheVersionManager> =
+    listOf(
+        localCacheVersionManager(cachesDir, enabled),
+        lookupsCacheVersionManager(cachesDir, enabled)
+    )

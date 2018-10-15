@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
+import org.jetbrains.kotlin.resolve.jvm.InlineClassManglingRulesKt;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKt;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind;
@@ -108,7 +109,14 @@ public class ConstructorCodegen {
         functionCodegen.generateDefaultIfNeeded(constructorContext, constructorDescriptor, OwnerKind.IMPLEMENTATION,
                                                 DefaultParameterValueLoader.DEFAULT, null);
 
+        registerAccessorForHiddenConstructorIfNeeded(constructorDescriptor);
+
         new DefaultParameterValueSubstitutor(state).generatePrimaryConstructorOverloadsIfNeeded(constructorDescriptor, v, memberCodegen, kind, myClass);
+    }
+
+    private void registerAccessorForHiddenConstructorIfNeeded(ClassConstructorDescriptor descriptor) {
+        if (!InlineClassManglingRulesKt.shouldHideConstructorDueToInlineClassTypeValueParameters(descriptor)) return;
+        context.getAccessor(descriptor, AccessorKind.NORMAL, null, null);
     }
 
     public void generateSecondaryConstructor(
@@ -138,6 +146,8 @@ public class ConstructorCodegen {
         new DefaultParameterValueSubstitutor(state).generateOverloadsIfNeeded(
                 constructor, constructorDescriptor, constructorDescriptor, kind, v, memberCodegen
         );
+
+        registerAccessorForHiddenConstructorIfNeeded(constructorDescriptor);
     }
 
     private void generateDelegatorToConstructorCall(
@@ -276,7 +286,9 @@ public class ConstructorCodegen {
     private void generateClosureInitialization(@NotNull InstructionAdapter iv) {
         MutableClosure closure = context.closure;
         if (closure != null) {
-            List<FieldInfo> argsFromClosure = ClosureCodegen.calculateConstructorParameters(typeMapper, closure, classAsmType);
+            List<FieldInfo> argsFromClosure = ClosureCodegen.calculateConstructorParameters(
+                    typeMapper, state.getLanguageVersionSettings(), closure, classAsmType);
+
             int k = 1;
             for (FieldInfo info : argsFromClosure) {
                 k = AsmUtil.genAssignInstanceFieldFromParam(info, k, iv);

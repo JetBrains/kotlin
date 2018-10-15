@@ -1,5 +1,3 @@
-// IGNORE_BACKEND: JS_IR
-// IGNORE_BACKEND: NATIVE
 // KT-16291 Smart cast doesn't work when getting class of instance
 
 class Foo(val s: String) {

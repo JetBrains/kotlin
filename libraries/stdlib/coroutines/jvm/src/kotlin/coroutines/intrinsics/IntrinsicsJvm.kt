@@ -5,7 +5,7 @@
 
 @file:kotlin.jvm.JvmName("IntrinsicsKt")
 @file:kotlin.jvm.JvmMultifileClass
-@file:Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER", "UNCHECKED_CAST")
+@file:Suppress("UNCHECKED_CAST")
 
 package kotlin.coroutines.intrinsics
 
@@ -162,7 +162,7 @@ private inline fun <T> createCoroutineFromSuspendFunction(
         object : RestrictedContinuationImpl(completion as Continuation<Any?>) {
             private var label = 0
 
-            override fun invokeSuspend(result: SuccessOrFailure<Any?>): Any? =
+            override fun invokeSuspend(result: Result<Any?>): Any? =
                 when (label) {
                     0 -> {
                         label = 1
@@ -180,7 +180,7 @@ private inline fun <T> createCoroutineFromSuspendFunction(
         object : ContinuationImpl(completion as Continuation<Any?>, context) {
             private var label = 0
 
-            override fun invokeSuspend(result: SuccessOrFailure<Any?>): Any? =
+            override fun invokeSuspend(result: Result<Any?>): Any? =
                 when (label) {
                     0 -> {
                         label = 1

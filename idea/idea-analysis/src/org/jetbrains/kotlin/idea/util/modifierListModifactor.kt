@@ -18,16 +18,19 @@ package org.jetbrains.kotlin.idea.util
 
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.ShortenReferences
+import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.annotations.JVM_FIELD_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 fun KtModifierListOwner.addAnnotation(
-        annotationFqName: FqName,
-        annotationInnerText: String? = null,
-        whiteSpaceText: String = "\n",
-        addToExistingAnnotation: ((KtAnnotationEntry) -> Boolean)? = null): Boolean {
+    annotationFqName: FqName,
+    annotationInnerText: String? = null,
+    whiteSpaceText: String = "\n",
+    addToExistingAnnotation: ((KtAnnotationEntry) -> Boolean)? = null
+): Boolean {
     val annotationText = when (annotationInnerText) {
         null -> "@${annotationFqName.asString()}"
         else -> "@${annotationFqName.asString()}($annotationInnerText)"
@@ -37,14 +40,8 @@ fun KtModifierListOwner.addAnnotation(
     val modifierList = modifierList
 
     if (modifierList == null) {
-        // create a modifier list from scratch
-        val newModifierList = psiFactory.createModifierList(annotationText)
-        val replaced = KtPsiUtil.replaceModifierList(this, newModifierList)!!
-        val whiteSpace = psiFactory.createWhiteSpace(whiteSpaceText)
-        addAfter(whiteSpace, replaced)
-
-        ShortenReferences.DEFAULT.process(replaced)
-
+        val addedAnnotation = addAnnotationEntry(psiFactory.createAnnotationEntry(annotationText))
+        ShortenReferences.DEFAULT.process(addedAnnotation)
         return true
     }
 
@@ -57,7 +54,6 @@ fun KtModifierListOwner.addAnnotation(
         modifierList.addAfter(whiteSpace, addedAnnotation)
 
         ShortenReferences.DEFAULT.process(addedAnnotation)
-
         return true
     }
 
@@ -79,3 +75,5 @@ fun KtAnnotated.findAnnotation(annotationFqName: FqName): KtAnnotationEntry? {
 
     return annotationEntries.firstOrNull { entry -> context.get(BindingContext.ANNOTATION, entry)?.fqName == annotationFqName }
 }
+
+fun KtAnnotated.hasJvmFieldAnnotation(): Boolean = findAnnotation(JvmAbi.JVM_FIELD_ANNOTATION_FQ_NAME) != null

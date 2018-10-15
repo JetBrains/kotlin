@@ -49,15 +49,38 @@ object DslScopeViolationCallChecker : CallChecker {
 
         if (receiversUntilOneFromTheCall.isEmpty()) return
 
-        val callDslMarkers = extractDslMarkerFqNames(callImplicitReceiver.type)
-        if (callDslMarkers.isEmpty()) return
+        val (callDslMarkers, additionalCallDslMarkers) = extractDslMarkerFqNames(callImplicitReceiver)
+        if (callDslMarkers.isEmpty() && additionalCallDslMarkers.isEmpty()) return
+
+        val dslMarkersFromOuterReceivers = receiversUntilOneFromTheCall.map(::extractDslMarkerFqNames)
 
         val closestAnotherReceiverWithSameDslMarker =
-            receiversUntilOneFromTheCall.firstOrNull { receiver -> extractDslMarkerFqNames(receiver.type).any(callDslMarkers::contains) }
+            dslMarkersFromOuterReceivers.firstOrNull { (dslMarkersFromReceiver, _) ->
+                dslMarkersFromReceiver.any(callDslMarkers::contains)
+            }
 
         if (closestAnotherReceiverWithSameDslMarker != null) {
             // TODO: report receivers configuration (what's one is used and what's one is the closest)
             context.trace.report(Errors.DSL_SCOPE_VIOLATION.on(reportOn, resolvedCall.resultingDescriptor))
+            return
+        }
+
+        val allDslMarkersFromCall = callDslMarkers + additionalCallDslMarkers
+
+        val closestAnotherReceiverWithSameDslMarkerWithDeprecation =
+            dslMarkersFromOuterReceivers.firstOrNull { (dslMarkersFromReceiver, additionalDslMarkersFromReceiver) ->
+                val allMarkersFromReceiver = dslMarkersFromReceiver + additionalDslMarkersFromReceiver
+                allDslMarkersFromCall.any(allMarkersFromReceiver::contains)
+            }
+
+        if (closestAnotherReceiverWithSameDslMarkerWithDeprecation != null) {
+            val diagnostic =
+                if (context.languageVersionSettings.supportsFeature(LanguageFeature.DslMarkerOnFunctionTypeReceiver))
+                    Errors.DSL_SCOPE_VIOLATION
+                else
+                    Errors.DSL_SCOPE_VIOLATION_WARNING
+
+            context.trace.report(diagnostic.on(reportOn, resolvedCall.resultingDescriptor))
         }
     }
 }

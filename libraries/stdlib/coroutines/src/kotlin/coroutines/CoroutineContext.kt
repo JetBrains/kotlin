@@ -66,14 +66,14 @@ public interface CoroutineContext {
          */
         public val key: Key<*>
 
-        @Suppress("UNCHECKED_CAST")
         public override operator fun <E : Element> get(key: Key<E>): E? =
-            if (this.key === key) this as E else null
+            @Suppress("UNCHECKED_CAST")
+            if (this.key == key) this as E else null
 
         public override fun <R> fold(initial: R, operation: (R, Element) -> R): R =
             operation(initial, this)
 
         public override fun minusKey(key: Key<*>): CoroutineContext =
-            if (this.key === key) EmptyCoroutineContext else this
+            if (this.key == key) EmptyCoroutineContext else this
     }
 }

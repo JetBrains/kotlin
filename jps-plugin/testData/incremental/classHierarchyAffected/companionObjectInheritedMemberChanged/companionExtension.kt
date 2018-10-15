@@ -1,3 +1,3 @@
 fun A.AA.ext() {
-    x.hashCode()
+    x.length
 }

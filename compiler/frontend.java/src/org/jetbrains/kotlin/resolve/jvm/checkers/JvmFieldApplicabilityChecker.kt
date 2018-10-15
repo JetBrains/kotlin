@@ -28,9 +28,11 @@ import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.checkers.DeclarationChecker
 import org.jetbrains.kotlin.resolve.checkers.DeclarationCheckerContext
+import org.jetbrains.kotlin.resolve.isInlineClassType
 import org.jetbrains.kotlin.resolve.jvm.annotations.findJvmFieldAnnotation
 import org.jetbrains.kotlin.resolve.jvm.checkers.JvmFieldApplicabilityChecker.Problem.*
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
+import org.jetbrains.kotlin.resolve.jvm.isInlineClassThatRequiresMangling
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 
@@ -46,19 +48,23 @@ class JvmFieldApplicabilityChecker : DeclarationChecker {
         INSIDE_COMPANION_OF_INTERFACE("JvmField cannot be applied to a property defined in companion object of interface"),
         NOT_PUBLIC_VAL_WITH_JVMFIELD("JvmField could be applied only if all interface companion properties are 'public final val' with '@JvmField' annotation"),
         TOP_LEVEL_PROPERTY_OF_MULTIFILE_FACADE("JvmField cannot be applied to top level property of a file annotated with ${JvmFileClassUtil.JVM_MULTIFILE_CLASS_SHORT}"),
-        DELEGATE("JvmField cannot be applied to delegated property")
+        DELEGATE("JvmField cannot be applied to delegated property"),
+        RETURN_TYPE_IS_INLINE_CLASS("JvmField cannot be applied to a property of an inline class type")
     }
 
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
-        val annotation = descriptor.findJvmFieldAnnotation() ?: return
+        if (descriptor !is PropertyDescriptor || declaration !is KtProperty) return
+
+        val annotation = descriptor.findJvmFieldAnnotation()
+            ?: descriptor.delegateField?.annotations?.findAnnotation(JvmAbi.JVM_FIELD_ANNOTATION_FQ_NAME)
+            ?: return
 
         val problem = when {
-            descriptor !is PropertyDescriptor -> return
-            declaration is KtProperty && declaration.hasDelegate() -> DELEGATE
+            declaration.hasDelegate() -> DELEGATE
             !descriptor.hasBackingField(context.trace.bindingContext) -> return
             descriptor.isOverridable -> NOT_FINAL
             Visibilities.isPrivate(descriptor.visibility) -> PRIVATE
-            descriptor.hasCustomAccessor() -> CUSTOM_ACCESSOR
+            declaration.hasCustomAccessor() -> CUSTOM_ACCESSOR
             descriptor.overriddenDescriptors.isNotEmpty() -> OVERRIDES
             descriptor.isLateInit -> LATEINIT
             descriptor.isConst -> CONST
@@ -72,6 +78,7 @@ class JvmFieldApplicabilityChecker : DeclarationChecker {
                 }
             DescriptorUtils.isTopLevelDeclaration(descriptor) && declaration.isInsideJvmMultifileClassFile() ->
                 TOP_LEVEL_PROPERTY_OF_MULTIFILE_FACADE
+            descriptor.returnType?.isInlineClassThatRequiresMangling() == true -> RETURN_TYPE_IS_INLINE_CLASS
             else -> return
         }
 
@@ -92,7 +99,16 @@ class JvmFieldApplicabilityChecker : DeclarationChecker {
         return true
     }
 
-    private fun PropertyDescriptor.hasCustomAccessor() = !(getter?.isDefault ?: true) || !(setter?.isDefault ?: true)
+    // This logic has been effectively used since 1.0. It'd be nice to call [PropertyAccessorDescriptor.isDefault] here instead,
+    // but that would be a breaking change because in the following case:
+    //
+    //     @JvmField
+    //     @get:Anno
+    //     val foo = 42
+    //
+    // we'd start considering foo as having a custom getter and disallow the JvmField annotation on it
+    private fun KtProperty.hasCustomAccessor(): Boolean =
+        getter != null || setter != null
 
     private fun PropertyDescriptor.hasBackingField(bindingContext: BindingContext) =
         bindingContext.get(BindingContext.BACKING_FIELD_REQUIRED, this) ?: false

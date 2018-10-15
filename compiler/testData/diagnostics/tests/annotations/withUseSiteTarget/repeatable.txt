@@ -1,16 +1,16 @@
 package
 
 public final class A {
-    public constructor A(/*0*/ @param:Ann @Ann x: kotlin.Int, /*1*/ @param:RepeatableAnn @Ann y: kotlin.Int)
-    @property:Ann @RepeatableAnn @property:RepeatableAnn @field:Ann public final val a: kotlin.Int = 0
-    @Ann @property:Ann @field:Ann public final val b: kotlin.Int = 0
+    public constructor A(/*0*/ @Ann @Ann x: kotlin.Int, /*1*/ @Ann @RepeatableAnn y: kotlin.Int)
+    @RepeatableAnn @Ann @RepeatableAnn @field:Ann public final val a: kotlin.Int = 0
+    @Ann @Ann @field:Ann public final val b: kotlin.Int = 0
     @field:RepeatableAnn @field:RepeatableAnn public final val c: kotlin.Int = 0
-    @property:RepeatableAnn @RepeatableAnn public final val d: kotlin.Int = 0
-    @property:RepeatableAnn @RepeatableAnn @delegate:RepeatableAnn public final val e: kotlin.String
-    @property:Ann @delegate:Ann public final val f: kotlin.String
+    @RepeatableAnn @RepeatableAnn public final val d: kotlin.Int = 0
+    @RepeatableAnn @RepeatableAnn @delegate:RepeatableAnn public final val e: kotlin.String
+    @Ann @delegate:Ann public final val f: kotlin.String
     @Ann @delegate:Ann public final val g: kotlin.String
     @Ann @field:Ann public final val h: kotlin.String = ""
-    @property:Ann @field:Ann public final val i: kotlin.String = ""
+    @Ann @field:Ann public final val i: kotlin.String = ""
     public final val x: kotlin.Int
     public final val y: kotlin.Int
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
@@ -26,10 +26,10 @@ public final annotation class Ann : kotlin.Annotation {
 }
 
 public final class B {
-    public constructor B(/*0*/ @param:fieldOrPropAnn x: kotlin.Int, /*1*/ y: kotlin.Int)
+    public constructor B(/*0*/ @fieldOrPropAnn x: kotlin.Int, /*1*/ y: kotlin.Int)
     @getSetAndParamAnn @setparam:getSetAndParamAnn public final var w: kotlin.Int
     @fieldOrPropAnn public final val x: kotlin.Int
-    @property:fieldOrPropAnn @fieldOrPropAnn public final val y: kotlin.Int
+    @fieldOrPropAnn @fieldOrPropAnn public final val y: kotlin.Int
     @fieldOrPropAnn @field:fieldOrPropAnn public final val z: kotlin.Int = 42
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

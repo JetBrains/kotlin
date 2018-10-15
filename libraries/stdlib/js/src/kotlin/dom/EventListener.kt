@@ -8,8 +8,8 @@ package org.w3c.dom.events
 public fun EventListener(handler: (Event) -> Unit): EventListener = EventListenerHandler(handler)
 
 private class EventListenerHandler(private val handler: (Event) -> Unit) : EventListener {
-    public override fun handleEvent(e: Event) {
-        handler(e)
+    public override fun handleEvent(event: Event) {
+        handler(event)
     }
 
     public override fun toString(): String = "EventListenerHandler($handler)"

@@ -35,9 +35,7 @@ abstract class KotlinLightPlatformCodeInsightFixtureTestCase: LightPlatformCodeI
     override fun tearDown() {
         VfsRootAccess.disallowRootAccess(KotlinTestUtils.getHomeDirectory())
 
-        doKotlinTearDown(project) {
-            super.tearDown()
-        }
+        super.tearDown()
     }
 
     override fun getTestDataPath(): String = this::class.findAnnotation<TestMetadata>()?.value ?: super.getTestDataPath()

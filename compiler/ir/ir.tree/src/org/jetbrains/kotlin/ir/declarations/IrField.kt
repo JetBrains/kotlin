@@ -12,15 +12,15 @@ import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.name.Name
 
-interface IrField : IrSymbolDeclaration<IrFieldSymbol> {
+interface IrField : IrSymbolDeclaration<IrFieldSymbol>, IrOverridableDeclaration<IrFieldSymbol>, IrDeclarationWithVisibility {
     override val descriptor: PropertyDescriptor
 
     val name: Name
     val type: IrType
-    val visibility: Visibility
     val isFinal: Boolean
     val isExternal: Boolean
     val isStatic: Boolean
 
     var initializer: IrExpressionBody?
+    var correspondingProperty: IrProperty?
 }

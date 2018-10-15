@@ -18,7 +18,7 @@ class JavaClass {
         i.run();
     }
 
-    void modAssign(Runnable i) {
+    void remAssign(Runnable i) {
         i.run();
     }
 }

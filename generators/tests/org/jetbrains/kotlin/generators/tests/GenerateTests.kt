@@ -78,6 +78,7 @@ import org.jetbrains.kotlin.idea.conversion.copy.AbstractTextJavaToKotlinCopyPas
 import org.jetbrains.kotlin.idea.coverage.AbstractKotlinCoverageOutputFilesTest
 import org.jetbrains.kotlin.idea.debugger.*
 import org.jetbrains.kotlin.idea.debugger.evaluate.*
+import org.jetbrains.kotlin.idea.debugger.sequence.exec.AbstractSequenceTraceTestCase
 import org.jetbrains.kotlin.idea.decompiler.navigation.AbstractNavigateToDecompiledLibraryTest
 import org.jetbrains.kotlin.idea.decompiler.navigation.AbstractNavigateToLibrarySourceTest
 import org.jetbrains.kotlin.idea.decompiler.stubBuilder.AbstractClsStubBuilderTest
@@ -600,7 +601,7 @@ fun main(args: Array<String>) {
         }
 
         testClass<AbstractJvmOptimizeImportsTest> {
-            model("editor/optimizeImports/jvm", pattern = KT_WITHOUT_DOTS_IN_NAME)
+            model("editor/optimizeImports/jvm", pattern = KT_OR_KTS_WITHOUT_DOTS_IN_NAME)
             model("editor/optimizeImports/common", pattern = KT_WITHOUT_DOTS_IN_NAME)
         }
         testClass<AbstractJsOptimizeImportsTest> {
@@ -643,6 +644,11 @@ fun main(args: Array<String>) {
 
         testClass<AbstractFileRankingTest> {
             model("debugger/fileRanking")
+        }
+
+        testClass<AbstractSequenceTraceTestCase> {
+            // We need to implement mapping logic for terminal operations
+            model("debugger/tinyApp/src/streams/sequence", excludeDirs = listOf("terminal"))
         }
 
         testClass<AbstractStubBuilderTest> {
@@ -833,7 +839,7 @@ fun main(args: Array<String>) {
         }
 
         testClass<AbstractBasicCompletionWeigherTest> {
-            model("weighers/basic", pattern = KT_WITHOUT_DOTS_IN_NAME)
+            model("weighers/basic", pattern = KT_OR_KTS_WITHOUT_DOTS_IN_NAME)
         }
 
         testClass<AbstractSmartCompletionWeigherTest> {
@@ -934,21 +940,22 @@ fun main(args: Array<String>) {
         testClass<AbstractIncrementalJpsTest> {
             model("incremental/multiModule/common", extension = null, excludeParentDirs = true)
             model("incremental/multiModule/jvm", extension = null, excludeParentDirs = true)
+            model("incremental/multiModule/multiplatform/custom", extension = null, excludeParentDirs = true)
             model("incremental/pureKotlin", extension = null, recursive = false)
             model("incremental/withJava", extension = null, excludeParentDirs = true)
             model("incremental/inlineFunCallSite", extension = null, excludeParentDirs = true)
             model("incremental/classHierarchyAffected", extension = null, excludeParentDirs = true)
         }
 
-        actualizeMppJpsIncTestCaseDirs(testDataRoot, "incremental/multiplatform/multiModule")
+        actualizeMppJpsIncTestCaseDirs(testDataRoot, "incremental/multiModule/multiplatform/withGeneratedContent")
 
         testClass<AbstractIncrementalJsJpsTest> {
             model("incremental/multiModule/common", extension = null, excludeParentDirs = true)
         }
 
-        testClass<AbstractMultiplatformJpsTest> {
+        testClass<AbstractMultiplatformJpsTestWithGeneratedContent> {
             model(
-                "incremental/multiplatform/multiModule", extension = null, excludeParentDirs = true,
+                "incremental/multiModule/multiplatform/withGeneratedContent", extension = null, excludeParentDirs = true,
                 testClassName = "MultiplatformMultiModule", recursive = true
             )
         }
@@ -1014,10 +1021,10 @@ fun main(args: Array<String>) {
         }
 
         testClass<AbstractIncrementalMultiplatformJvmCompilerRunnerTest> {
-            model("incremental/multiplatform/singleModule", extension = null, excludeParentDirs = true)
+            model("incremental/singleModule/common", extension = null, excludeParentDirs = true)
         }
         testClass<AbstractIncrementalMultiplatformJsCompilerRunnerTest> {
-            model("incremental/multiplatform/singleModule", extension = null, excludeParentDirs = true)
+            model("incremental/singleModule/common", extension = null, excludeParentDirs = true)
         }
     }
 

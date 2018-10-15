@@ -14,5 +14,5 @@ fun test(f: Foo) {
     f.notInlineInc() // one here
 }
 
-// 0 INVOKESTATIC Foo\$Erased.inlineInc
-// 1 INVOKESTATIC Foo\$Erased.notInlineInc
+// 0 INVOKESTATIC Foo\.inlineInc
+// 1 INVOKESTATIC Foo\.notInlineInc

@@ -34,7 +34,7 @@ FILE fqName:<root> fileName:/augmentedAssignment2.kt
     $receiver: VALUE_PARAMETER name:<this> type:A flags:
     VALUE_PARAMETER name:s index:0 type:kotlin.String flags:
     BLOCK_BODY
-  FUN name:modAssign visibility:public modality:FINAL <> ($receiver:A, s:kotlin.String) returnType:kotlin.Unit flags:
+  FUN name:remAssign visibility:public modality:FINAL <> ($receiver:A, s:kotlin.String) returnType:kotlin.Unit flags:
     $receiver: VALUE_PARAMETER name:<this> type:A flags:
     VALUE_PARAMETER name:s index:0 type:kotlin.String flags:
     BLOCK_BODY
@@ -63,7 +63,7 @@ FILE fqName:<root> fileName:/augmentedAssignment2.kt
       CALL 'divAssign(String) on A: Unit' type=kotlin.Unit origin=DIVEQ
         $receiver: GET_VAR 'a: A' type=A origin=DIVEQ
         s: CONST String type=kotlin.String value=/=
-      CALL 'modAssign(String) on A: Unit' type=kotlin.Unit origin=PERCEQ
+      CALL 'remAssign(String) on A: Unit' type=kotlin.Unit origin=PERCEQ
         $receiver: GET_VAR 'a: A' type=A origin=PERCEQ
         s: CONST String type=kotlin.String value=*=
   FUN name:testProperty visibility:public modality:FINAL <> () returnType:kotlin.Unit flags:
@@ -85,7 +85,7 @@ FILE fqName:<root> fileName:/augmentedAssignment2.kt
           $receiver: CALL '<get-p>(): A' type=A origin=DIVEQ
           s: CONST String type=kotlin.String value=/=
       BLOCK type=kotlin.Unit origin=PERCEQ
-        CALL 'modAssign(String) on A: Unit' type=kotlin.Unit origin=PERCEQ
+        CALL 'remAssign(String) on A: Unit' type=kotlin.Unit origin=PERCEQ
           $receiver: CALL '<get-p>(): A' type=A origin=PERCEQ
           s: CONST String type=kotlin.String value=%=
 

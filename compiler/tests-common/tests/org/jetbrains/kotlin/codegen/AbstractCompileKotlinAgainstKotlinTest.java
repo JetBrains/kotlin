@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.cli.common.modules.ModuleBuilder;
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
+import org.jetbrains.kotlin.config.CommonConfigurationKeys;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.load.kotlin.ModuleVisibilityManager;
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils;
@@ -25,7 +26,6 @@ import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Arrays;
@@ -90,12 +90,14 @@ public abstract class AbstractCompileKotlinAgainstKotlinTest extends CodegenTest
     }
 
     @NotNull
-    private ClassFileFactory compileA(@NotNull TestFile testFile, List<TestFile> files) throws IOException {
+    private ClassFileFactory compileA(@NotNull TestFile testFile, List<TestFile> files) {
         Disposable compileDisposable = createDisposable("compileA");
-        CompilerConfiguration configuration =
-                createConfiguration(ConfigurationKind.ALL, getJdkKind(files),
-                                    Collections.singletonList(KotlinTestUtils.getAnnotationsJar()),
-                                    Collections.emptyList(), Collections.singletonList(testFile));
+        CompilerConfiguration configuration = createConfiguration(
+                ConfigurationKind.ALL, getJdkKind(files), Collections.singletonList(KotlinTestUtils.getAnnotationsJar()),
+                Collections.emptyList(), Collections.singletonList(testFile)
+        );
+
+        configuration.put(CommonConfigurationKeys.MODULE_NAME, "a");
 
         KotlinCoreEnvironment environment = KotlinCoreEnvironment.createForTests(
                 compileDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES);
@@ -110,16 +112,18 @@ public abstract class AbstractCompileKotlinAgainstKotlinTest extends CodegenTest
     }
 
     @NotNull
-    private ClassFileFactory compileB(@NotNull TestFile testFile, List<TestFile> files) throws IOException {
+    private ClassFileFactory compileB(@NotNull TestFile testFile, List<TestFile> files) {
         String commonHeader = StringsKt.substringBefore(files.get(0).content, "FILE:", "");
-        CompilerConfiguration configurationWithADirInClasspath =
-                createConfiguration(ConfigurationKind.ALL, getJdkKind(files),
-                                    Lists.newArrayList(KotlinTestUtils.getAnnotationsJar(), aDir),
-                                    Collections.emptyList(), Lists.newArrayList(testFile, new TestFile("header", commonHeader)));
+        CompilerConfiguration configuration = createConfiguration(
+                ConfigurationKind.ALL, getJdkKind(files), Lists.newArrayList(KotlinTestUtils.getAnnotationsJar(), aDir),
+                Collections.emptyList(), Lists.newArrayList(testFile, new TestFile("header", commonHeader))
+        );
+
+        configuration.put(CommonConfigurationKeys.MODULE_NAME, "b");
 
         Disposable compileDisposable = createDisposable("compileB");
         KotlinCoreEnvironment environment = KotlinCoreEnvironment.createForTests(
-                compileDisposable, configurationWithADirInClasspath, EnvironmentConfigFiles.JVM_CONFIG_FILES
+                compileDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES
         );
 
         return compileKotlin(Collections.singletonList(testFile), bDir, environment, compileDisposable);

@@ -42,7 +42,7 @@ class ModuleGenerator(override val context: GeneratorContext) : Generator {
     fun generateUnboundSymbolsAsDependencies(irModule: IrModuleFragment) {
         ExternalDependenciesGenerator(
             irModule.descriptor, context.symbolTable, context.irBuiltIns
-        ).generateUnboundSymbolsAsDependencies(irModule)
+        ).generateUnboundSymbolsAsDependencies(irModule, context.bindingContext)
     }
 
     private fun generateFiles(ktFiles: Collection<KtFile>): List<IrFile> {

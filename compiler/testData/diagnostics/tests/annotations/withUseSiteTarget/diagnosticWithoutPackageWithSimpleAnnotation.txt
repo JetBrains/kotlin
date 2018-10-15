@@ -1,6 +1,6 @@
 package
 
-@foo @bar @file:baz public fun test(): kotlin.Unit
+@foo @bar public fun test(): kotlin.Unit
 
 public final annotation class bar : kotlin.Annotation {
     public constructor bar()

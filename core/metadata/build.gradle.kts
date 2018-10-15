@@ -10,7 +10,7 @@ javaHome = rootProject.extra["JDK_16"] as String
 
 dependencies {
     compile(protobufLite())
-    compile(projectDist(":kotlin-stdlib"))
+    compile(project(":kotlin-stdlib"))
 }
 
 sourceSets {

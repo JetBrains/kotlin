@@ -1,0 +1,31 @@
+package test
+
+public final annotation class Ann : kotlin.Annotation {
+    /*primary*/ public constructor Ann()
+}
+
+public sealed class Sealed {
+    /*primary*/ @test.Ann private constructor Sealed(/*0*/ @test.Ann z: test.Z)
+    public final val z: test.Z
+        public final fun <get-z>(): test.Z
+
+    public final class Derived : test.Sealed {
+        /*primary*/ @test.Ann public constructor Derived(/*0*/ z: test.Z)
+        public final override /*1*/ /*fake_override*/ val z: test.Z
+            public final override /*1*/ /*fake_override*/ fun <get-z>(): test.Z
+    }
+}
+
+public final class Test {
+    /*primary*/ @test.Ann public constructor Test(/*0*/ @test.Ann z: test.Z)
+    @test.Ann public constructor Test(/*0*/ z: test.Z, /*1*/ @test.Ann a: kotlin.Int)
+    @test.Ann private constructor Test(/*0*/ z: test.Z, /*1*/ @test.Ann s: kotlin.String)
+    public final val z: test.Z
+        public final fun <get-z>(): test.Z
+}
+
+public final inline class Z {
+    /*primary*/ public constructor Z(/*0*/ x: kotlin.Int)
+    public final val x: kotlin.Int
+        public final fun <get-x>(): kotlin.Int
+}

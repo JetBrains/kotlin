@@ -13,6 +13,7 @@ node {
 }
 
 val antLauncherJar by configurations.creating
+val testJsRuntime by configurations.creating
 
 dependencies {
     testRuntime(intellijDep())
@@ -22,7 +23,7 @@ dependencies {
     testCompileOnly(project(":compiler:frontend"))
     testCompileOnly(project(":compiler:cli"))
     testCompileOnly(project(":compiler:util"))
-    testCompile(intellijCoreDep()) { includeJars("intellij-core") }
+    testCompileOnly(intellijCoreDep()) { includeJars("intellij-core") }
     testCompileOnly(intellijDep()) { includeJars("openapi", "idea", "idea_rt", "util") }
     testCompile(project(":compiler:backend.js"))
     testCompile(project(":js:js.translator"))
@@ -32,11 +33,11 @@ dependencies {
     testCompile(projectTests(":kotlin-build-common"))
     testCompile(projectTests(":generators:test-generator"))
 
-    testRuntime(projectDist(":kotlin-stdlib"))
-    testRuntime(projectDist(":kotlin-stdlib-js"))
-    testRuntime(projectDist(":kotlin-test:kotlin-test-js")) // to be sure that kotlin-test-js built before tests runned
-    testRuntime(projectDist(":kotlin-reflect"))
-    testRuntime(projectDist(":kotlin-preloader")) // it's required for ant tests
+    testRuntime(project(":kotlin-stdlib"))
+    testJsRuntime(project(":kotlin-stdlib-js"))
+    testJsRuntime(project(":kotlin-test:kotlin-test-js")) // to be sure that kotlin-test-js built before tests runned
+    testRuntime(project(":kotlin-reflect"))
+    testRuntime(project(":kotlin-preloader")) // it's required for ant tests
     testRuntime(project(":compiler:backend-common"))
     testRuntime(commonDep("org.fusesource.jansi", "jansi"))
 
@@ -51,6 +52,7 @@ sourceSets {
 
 projectTest {
     dependsOn(":dist")
+    dependsOn(testJsRuntime)
     jvmArgs("-da:jdk.nashorn.internal.runtime.RecompilableScriptFunctionData") // Disable assertion which fails due to a bug in nashorn (KT-23637)
     workingDir = rootDir
     if (findProperty("kotlin.compiler.js.ir.tests.skip")?.toString()?.toBoolean() == true) {
@@ -66,6 +68,7 @@ testsJar {}
 
 projectTest("quickTest") {
     dependsOn(":dist")
+    dependsOn(testJsRuntime)
     workingDir = rootDir
     systemProperty("kotlin.js.skipMinificationTest", "true")
     doFirst {

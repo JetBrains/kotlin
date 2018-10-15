@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.idea.inspections.collections
 
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.inspections.AbstractKotlinInspection
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtQualifiedExpression
@@ -36,9 +37,7 @@ abstract class AbstractCallChainChecker : AbstractKotlinInspection() {
 
         val context = expression.analyze()
         val firstResolvedCall = firstExpression.getResolvedCall(context) ?: return null
-        val conversion = actualConversions.firstOrNull {
-            firstResolvedCall.resultingDescriptor.fqNameOrNull()?.asString() == it.firstFqName
-        } ?: return null
+        val conversion = actualConversions.firstOrNull { firstResolvedCall.isCalling(FqName(it.firstFqName)) } ?: return null
         val secondResolvedCall = expression.getResolvedCall(context) ?: return null
 
         if (!additionalCallCheck(conversion, firstResolvedCall, secondResolvedCall, context)) return null
@@ -47,8 +46,7 @@ abstract class AbstractCallChainChecker : AbstractKotlinInspection() {
         val lambdaArgument = firstCallExpression.lambdaArguments.firstOrNull()
         if (lambdaArgument?.anyDescendantOfType<KtReturnExpression>() == true) return null
 
-        val secondResultingDescriptor = secondResolvedCall.resultingDescriptor
-        if (secondResultingDescriptor.fqNameOrNull()?.asString() != conversion.secondFqName) return null
+        if (!secondResolvedCall.isCalling(FqName(conversion.secondFqName))) return null
         if (secondResolvedCall.valueArguments.any { (parameter, resolvedArgument) ->
                 parameter.type.isFunctionOfAnyKind() &&
                         resolvedArgument !is DefaultValueArgument
@@ -84,8 +82,6 @@ abstract class AbstractCallChainChecker : AbstractKotlinInspection() {
 
         fun getCallExpression(firstExpression: KtExpression) =
             (firstExpression as? KtQualifiedExpression)?.selectorExpression as? KtCallExpression
-                    ?: firstExpression as? KtCallExpression
-
-
+                ?: firstExpression as? KtCallExpression
     }
 }

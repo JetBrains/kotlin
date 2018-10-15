@@ -153,7 +153,7 @@ public abstract class AbstractAnnotationDescriptorResolveTest extends KotlinTest
     }
 
     private static void checkAnnotationsOnProperty(String expectedAnnotation, PropertyDescriptor prop) {
-        checkDescriptorWithTarget(expectedAnnotation, prop, AnnotationUseSiteTarget.FIELD);
+        checkDescriptor(expectedAnnotation, prop);
         checkDescriptor(expectedAnnotation, prop.getGetter());
         PropertySetterDescriptor propSetter = prop.getSetter();
         assertNotNull(propSetter);
@@ -361,30 +361,13 @@ public abstract class AbstractAnnotationDescriptorResolveTest extends KotlinTest
         return KotlinTestUtils.doLoadFile(file).replaceAll("ANNOTATION", annotationText);
     }
 
-    private static String renderAnnotations(Annotations annotations, @Nullable AnnotationUseSiteTarget defaultTarget) {
-        return StringUtil.join(annotations.getAllAnnotations(), annotationWithTarget -> {
-            AnnotationUseSiteTarget targetToRender = annotationWithTarget.getTarget();
-            if (targetToRender == defaultTarget) {
-                targetToRender = null;
-            }
-
-            return WITH_ANNOTATION_ARGUMENT_TYPES.renderAnnotation(annotationWithTarget.getAnnotation(), targetToRender);
-        }, " ");
+    public static String renderAnnotations(Annotations annotations) {
+        return StringUtil.join(annotations, annotation -> WITH_ANNOTATION_ARGUMENT_TYPES.renderAnnotation(annotation, null), " ");
     }
 
-    protected static void checkDescriptor(String expectedAnnotation, DeclarationDescriptor member) {
-        String actual = getAnnotations(member);
+    private static void checkDescriptor(String expectedAnnotation, DeclarationDescriptor member) {
+        String actual = renderAnnotations(member.getAnnotations());
         assertEquals("Failed to resolve annotation descriptor for " + member.toString(), expectedAnnotation, actual);
-    }
-
-    private static void checkDescriptorWithTarget(String expectedAnnotation, DeclarationDescriptor member, AnnotationUseSiteTarget target) {
-        String actual = renderAnnotations(member.getAnnotations(), target);
-        assertEquals("Failed to resolve annotation descriptor for " + member.toString(), expectedAnnotation, actual);
-    }
-
-    @NotNull
-    protected static String getAnnotations(DeclarationDescriptor member) {
-        return renderAnnotations(member.getAnnotations(), null);
     }
 
     @Override

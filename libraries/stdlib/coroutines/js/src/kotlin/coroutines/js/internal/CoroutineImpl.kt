@@ -5,7 +5,7 @@
 
 package kotlin.coroutines
 
-import kotlin.coroutines.intrinsics.CoroutineSingletons
+import kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED
 
 @SinceKotlin("1.3")
 @JsName("CoroutineImpl")
@@ -25,7 +25,7 @@ internal abstract class CoroutineImpl(private val resultContinuation: Continuati
                 ?: (context[ContinuationInterceptor]?.interceptContinuation(this) ?: this)
                     .also { intercepted_ = it }
 
-    override fun resumeWith(result: SuccessOrFailure<Any?>) {
+    override fun resumeWith(result: Result<Any?>) {
         var current = this
         var currentResult: Any? = result.getOrNull()
         var currentException: Throwable? = result.exceptionOrNull()
@@ -45,7 +45,7 @@ internal abstract class CoroutineImpl(private val resultContinuation: Continuati
 
                 try {
                     val outcome = doResume()
-                    if (outcome === CoroutineSingletons.COROUTINE_SUSPENDED) return
+                    if (outcome === COROUTINE_SUSPENDED) return
                     currentResult = outcome
                     currentException = null
                 } catch (exception: dynamic) { // Catch all exceptions
@@ -84,7 +84,7 @@ internal object CompletedContinuation : Continuation<Any?> {
     override val context: CoroutineContext
         get() = error("This continuation is already complete")
 
-    override fun resumeWith(result: SuccessOrFailure<Any?>) {
+    override fun resumeWith(result: Result<Any?>) {
         error("This continuation is already complete")
     }
 

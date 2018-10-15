@@ -1,25 +1,15 @@
-
 @file:Suppress("PropertyName")
 
-import org.gradle.api.publish.ivy.internal.artifact.DefaultIvyArtifact
+import org.gradle.api.publish.ivy.internal.artifact.FileBasedIvyArtifact
 import org.gradle.api.publish.ivy.internal.publication.DefaultIvyConfiguration
 import org.gradle.api.publish.ivy.internal.publication.DefaultIvyPublicationIdentity
 import org.gradle.api.publish.ivy.internal.publisher.IvyDescriptorFileGenerator
 import java.io.File
 import org.gradle.internal.os.OperatingSystem
-import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
-buildscript {
-    repositories {
-        jcenter()
-    }
-    dependencies {
-        classpath("com.github.jengelman.gradle.plugins:shadow:${property("versions.shadow")}")
-    }
-}
+val cacheRedirectorEnabled = findProperty("cacheRedirectorEnabled")?.toString()?.toBoolean() == true
 
 val intellijUltimateEnabled: Boolean by rootProject.extra
-val intellijRepo: String by rootProject.extra
 val intellijReleaseType: String by rootProject.extra
 val intellijVersion = rootProject.extra["versions.intellijSdk"] as String
 val androidStudioRelease = rootProject.findProperty("versions.androidStudioRelease") as String?
@@ -66,8 +56,14 @@ repositories {
             }
         }
     }
-    maven { setUrl("$intellijRepo/$intellijReleaseType") }
-    maven { setUrl("https://plugins.jetbrains.com/maven") }
+
+    if (cacheRedirectorEnabled) {
+        maven("https://cache-redirector.jetbrains.com/www.jetbrains.com/intellij-repository/$intellijReleaseType")
+        maven("https://cache-redirector.jetbrains.com/plugins.jetbrains.com/maven")
+    }
+
+    maven("https://www.jetbrains.com/intellij-repository/$intellijReleaseType")
+    maven("https://plugins.jetbrains.com/maven")
 }
 
 val intellij by configurations.creating
@@ -152,12 +148,9 @@ val unzipIntellijCore by tasks.creating { configureExtractFromConfigurationTask(
 
 val unzipJpsStandalone by tasks.creating { configureExtractFromConfigurationTask(`jps-standalone`) { zipTree(it.singleFile) } }
 
-val copyIntellijSdkSources by tasks.creating(ShadowJar::class.java) {
+val copyIntellijSdkSources by tasks.creating(Copy::class.java) {
     from(sources)
-    baseName = "ideaIC"
-    version = intellijVersion
-    classifier = "sources"
-    destinationDir = File(repoDir, sources.name)
+    into(File(repoDir, sources.name))
 }
 
 val copyJpsBuildTest by tasks.creating { configureExtractFromConfigurationTask(`jps-build-test`) { it.singleFile } }
@@ -171,12 +164,12 @@ fun writeIvyXml(moduleName: String, fileName: String, jarFiles: FileCollection, 
         jarFiles.asFileTree.files.forEach {
             if (it.isFile && it.extension == "jar") {
                 val relativeName = it.toRelativeString(baseDir).removeSuffix(".jar")
-                addArtifact(DefaultIvyArtifact(it, relativeName, "jar", "jar", null).also { it.conf = "default" })
+                addArtifact(FileBasedIvyArtifact(it, DefaultIvyPublicationIdentity(customDepsOrg, relativeName, intellijVersion)).also { it.conf = "default" })
             }
         }
         if (sourcesJar != null) {
             val sourcesArtifactName = sourcesJar.name.removeSuffix(".jar").substringBefore("-")
-            addArtifact(DefaultIvyArtifact(sourcesJar, sourcesArtifactName, "jar", "sources", "sources").also { it.conf = "sources" })
+            addArtifact(FileBasedIvyArtifact(sourcesJar, DefaultIvyPublicationIdentity(customDepsOrg, sourcesArtifactName, intellijVersion)).also { it.conf = "sources" })
         }
         writeTo(File(customDepsRepoModulesDir, "$fileName.ivy.xml"))
     }

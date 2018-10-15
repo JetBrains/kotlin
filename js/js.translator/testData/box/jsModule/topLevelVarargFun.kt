@@ -1,5 +1,5 @@
 // IGNORE_BACKEND: JS_IR
-// EXPECTED_REACHABLE_NODES: 1111
+// EXPECTED_REACHABLE_NODES: 1283
 // MODULE_KIND: AMD
 @JsModule("bar")
 external fun foo(vararg arg: String): String

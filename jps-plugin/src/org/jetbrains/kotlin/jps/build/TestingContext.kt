@@ -24,7 +24,7 @@ import org.jetbrains.jps.model.JpsSimpleElement
 import org.jetbrains.jps.model.ex.JpsElementChildRoleBase
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 
-private val TESTING_CONTEXT = JpsElementChildRoleBase.create<JpsSimpleElement<out TestingContext>>("Testing context")
+private val TESTING_CONTEXT = JpsElementChildRoleBase.create<JpsSimpleElement<out TestingContext>>("Testing kcontext")
 
 @TestOnly
 fun JpsProject.setTestingContext(context: TestingContext) {
@@ -40,5 +40,7 @@ val CompileContext.testingContext: TestingContext?
 
 class TestingContext(
     val lookupTracker: LookupTracker,
-    val buildLogger: BuildLogger
-)
+    val buildLogger: TestingBuildLogger
+) {
+    var kotlinCompileContext: KotlinCompileContext? = null
+}
