@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.backend.js
 
 import org.jetbrains.kotlin.backend.common.descriptors.WrappedClassConstructorDescriptor
-import org.jetbrains.kotlin.backend.common.descriptors.WrappedPropertyDescriptor
+import org.jetbrains.kotlin.backend.common.descriptors.WrappedFieldDescriptor
 import org.jetbrains.kotlin.backend.common.ir.DeclarationFactory
 import org.jetbrains.kotlin.backend.common.ir.copyTo
 import org.jetbrains.kotlin.backend.common.ir.copyTypeParametersFrom
@@ -51,7 +51,7 @@ class JsDeclarationFactory : DeclarationFactory {
         }
 
     private fun createPropertyWithBackingField(name: Name, visibility: Visibility, parent: IrClass, fieldType: IrType, origin: IrDeclarationOrigin): IrField {
-        val descriptor = WrappedPropertyDescriptor()
+        val descriptor = WrappedFieldDescriptor()
         val symbol = IrFieldSymbolImpl(descriptor)
 
         return IrFieldImpl(
