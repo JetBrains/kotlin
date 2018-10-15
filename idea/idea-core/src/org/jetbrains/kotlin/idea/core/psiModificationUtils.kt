@@ -123,6 +123,7 @@ fun KtCallExpression.getLastLambdaExpression(): KtLambdaExpression? {
 }
 
 fun KtCallExpression.canMoveLambdaOutsideParentheses(): Boolean {
+    if (getStrictParentOfType<KtDelegatedSuperTypeEntry>() != null) return false
     if (getLastLambdaExpression() == null) return false
 
     val callee = calleeExpression
