@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
-import org.jetbrains.kotlin.backend.common.descriptors.WrappedPropertyDescriptor
+import org.jetbrains.kotlin.backend.common.descriptors.WrappedFieldDescriptor
 import org.jetbrains.kotlin.backend.common.descriptors.WrappedVariableDescriptor
 import org.jetbrains.kotlin.backend.common.lower.replaceThisByStaticReference
 import org.jetbrains.kotlin.backend.common.makePhase
@@ -170,7 +170,7 @@ class MoveCompanionObjectFieldsLowering(val context: CommonBackendContext) : Cla
             oldField.name
         else
             Name.identifier(oldField.name.toString() + "\$companion")
-        val descriptor = WrappedPropertyDescriptor(oldField.descriptor.annotations, oldField.descriptor.source)
+        val descriptor = WrappedFieldDescriptor(oldField.descriptor.annotations, oldField.descriptor.source)
         val field = IrFieldImpl(
             oldField.startOffset, oldField.endOffset,
             IrDeclarationOrigin.PROPERTY_BACKING_FIELD,

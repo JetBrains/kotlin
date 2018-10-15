@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.ir.backend.js.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.atMostOne
-import org.jetbrains.kotlin.backend.common.descriptors.WrappedPropertyDescriptor
+import org.jetbrains.kotlin.backend.common.descriptors.WrappedFieldDescriptor
 import org.jetbrains.kotlin.backend.common.ir.copyTo
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.IrElement
@@ -157,7 +157,7 @@ class ThrowableSuccessorsLowering(context: JsIrBackendContext) : FileLoweringPas
         }
 
         private fun createBackingField(declaration: IrClass, name: Name, type: IrType): IrField {
-            val fieldDescriptor = WrappedPropertyDescriptor()
+            val fieldDescriptor = WrappedFieldDescriptor()
             val fieldSymbol = IrFieldSymbolImpl(fieldDescriptor)
             val fieldDeclaration = IrFieldImpl(
                 UNDEFINED_OFFSET,
