@@ -10,7 +10,7 @@ sourceCompatibility = 1.8
 
 repositories {
     mavenCentral()
-    maven { url 'http://dl.bintray.com/kotlin/kotlin-eap' }
+    maven { url 'https://dl.bintray.com/kotlin/kotlin-eap' }
 }
 
 dependencies {

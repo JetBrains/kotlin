@@ -6,7 +6,7 @@ version = "1.0-SNAPSHOT"
 
 repositories {
     mavenCentral()
-    maven { setUrl("http://dl.bintray.com/kotlin/kotlin-eap") }
+    maven { setUrl("https://dl.bintray.com/kotlin/kotlin-eap") }
 }
 dependencies {
     compile(kotlin("stdlib-js"))
