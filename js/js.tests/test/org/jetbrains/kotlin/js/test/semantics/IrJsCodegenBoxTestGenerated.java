@@ -5160,6 +5160,11 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
             runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/createCoroutineSafe.kt", "kotlin.coroutines");
         }
 
+        @TestMetadata("createCoroutinesOnManualInstances.kt")
+        public void testCreateCoroutinesOnManualInstances() throws Exception {
+            runTest("compiler/testData/codegen/box/coroutines/createCoroutinesOnManualInstances.kt");
+        }
+
         @TestMetadata("createCoroutinesOnManualInstances_1_2.kt")
         public void testCreateCoroutinesOnManualInstances_1_2() throws Exception {
             runTest("compiler/testData/codegen/box/coroutines/createCoroutinesOnManualInstances_1_2.kt");
@@ -10322,21 +10327,6 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
         @TestMetadata("iterateOverListOfInlineClassValues.kt")
         public void testIterateOverListOfInlineClassValues() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/iterateOverListOfInlineClassValues.kt");
-        }
-
-        @TestMetadata("jvmStaticFunInInlineClassCompanion.kt")
-        public void testJvmStaticFunInInlineClassCompanion() throws Exception {
-            runTest("compiler/testData/codegen/box/inlineClasses/jvmStaticFunInInlineClassCompanion.kt");
-        }
-
-        @TestMetadata("jvmStaticPropertyAccessorInInlineClassCompanion.kt")
-        public void testJvmStaticPropertyAccessorInInlineClassCompanion() throws Exception {
-            runTest("compiler/testData/codegen/box/inlineClasses/jvmStaticPropertyAccessorInInlineClassCompanion.kt");
-        }
-
-        @TestMetadata("jvmStaticVarInInlineClassCompanion.kt")
-        public void testJvmStaticVarInInlineClassCompanion() throws Exception {
-            runTest("compiler/testData/codegen/box/inlineClasses/jvmStaticVarInInlineClassCompanion.kt");
         }
 
         @TestMetadata("kt25246.kt")
