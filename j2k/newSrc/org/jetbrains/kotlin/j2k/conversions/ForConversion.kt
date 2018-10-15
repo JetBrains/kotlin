@@ -6,12 +6,9 @@
 package org.jetbrains.kotlin.j2k.conversions
 
 import com.intellij.psi.*
-import jdk.nashorn.internal.ir.BlockStatement
 import org.jetbrains.kotlin.j2k.ConversionContext
 import org.jetbrains.kotlin.j2k.ReferenceSearcher
-import org.jetbrains.kotlin.j2k.ast.*
 import org.jetbrains.kotlin.j2k.hasWriteAccesses
-import org.jetbrains.kotlin.j2k.isInSingleLine
 import org.jetbrains.kotlin.j2k.tree.*
 import org.jetbrains.kotlin.j2k.tree.impl.*
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -51,8 +48,9 @@ class ForConversion(private val context: ConversionContext) : RecursiveApplicabl
         if (loopStatement.updater is JKEmptyStatement) return loopStatement::body.detached()
         val continueStatementConverter = object : RecursiveApplicableConversionBase() {
             override fun applyToElement(element: JKTreeElement): JKTreeElement {
-                if (element !is JKJavaContinueStatement) return recurse(element)
-                //TODO ??? if (statement.findContinuedStatement()?.toContinuedLoop() != this@ForConverter.statement) return null
+                if (element !is JKContinueStatement) return recurse(element)
+                val elementPsi = element.psi<PsiContinueStatement>()!!
+                if (elementPsi.findContinuedStatement()?.toContinuedLoop() != loopStatement.psi<PsiForStatement>()) return recurse(element)
                 val statements = listOf(loopStatement.updater, element)
                 return recurse(JKBlockStatementImpl(JKBlockImpl(statements)))
             }
@@ -127,6 +125,14 @@ class ForConversion(private val context: ConversionContext) : RecursiveApplicabl
 
         }
         return null
+    }
+
+    private fun PsiStatement.toContinuedLoop(): PsiLoopStatement? {
+        return when (this) {
+            is PsiLoopStatement -> this
+            is PsiLabeledStatement -> statement?.toContinuedLoop()
+            else -> null
+        }
     }
 
     private fun forIterationRange(

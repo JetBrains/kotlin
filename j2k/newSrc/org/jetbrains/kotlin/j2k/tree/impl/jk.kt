@@ -382,3 +382,16 @@ val JKStatement.statements: List<JKStatement>
             is JKBlockStatement -> block.statements
             else -> listOf(this)
         }
+
+class JKLabelEmptyImpl : JKLabelEmpty, JKElementBase() {
+    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitLabelEmpty(this, data)
+}
+class JKLabelTextImpl(label: JKNameIdentifier) : JKLabelText, JKBranchElementBase() {
+    override val label: JKNameIdentifier by child(label)
+    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitLabelText(this, data)
+}
+
+class JKContinueStatementImpl(label: JKLabel) : JKContinueStatement, JKBranchElementBase() {
+    override var label: JKLabel by child(label)
+    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitContinueStatement(this, data)
+}

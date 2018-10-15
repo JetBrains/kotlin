@@ -250,3 +250,15 @@ interface JKDelegationConstructorCall : JKMethodCallExpression {
     val expression: JKExpression
     override val arguments: JKExpressionList
 }
+
+interface JKLabel : JKTreeElement
+
+interface JKLabelEmpty : JKLabel
+
+interface JKLabelText : JKLabel {
+    val label: JKNameIdentifier
+}
+
+interface JKContinueStatement : JKStatement {
+    var label: JKLabel
+}

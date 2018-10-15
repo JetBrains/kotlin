@@ -71,6 +71,7 @@ class JKJavaOperatorImpl private constructor(val token: IElementType) : JKOperat
             JavaTokenType.PLUSPLUS -> "++"
             JavaTokenType.EXCL -> "!"
             JavaTokenType.ASTERISKEQ -> "*="
+            JavaTokenType.EQEQ -> "=="
             else -> TODO("TODO $token")
         }
 

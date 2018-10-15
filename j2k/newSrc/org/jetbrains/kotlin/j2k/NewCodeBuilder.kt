@@ -300,6 +300,21 @@ class NewCodeBuilder {
             printer.printWithNoIndent("super")
         }
 
+        override fun visitContinueStatement(continueStatement: JKContinueStatement) {
+            printer.printWithNoIndent("continue ")
+            continueStatement.label.accept(this)
+        }
+
+        override fun visitLabelEmpty(labelEmpty: JKLabelEmpty) {
+
+        }
+
+        override fun visitLabelText(labelText: JKLabelText) {
+            printer.printWithNoIndent("@")
+            labelText.label.accept(this)
+            printer.printWithNoIndent(" ")
+        }
+
         override fun visitPostfixExpression(postfixExpression: JKPostfixExpression) {
             postfixExpression.expression.accept(this)
             printer.printWithNoIndent(postfixExpression.operator.operatorText)
