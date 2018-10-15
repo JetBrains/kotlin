@@ -38,6 +38,8 @@ interface KotlinLanguageSettings : Serializable {
     val isProgressiveMode: Boolean
     val enabledLanguageFeatures: Set<String>
     val experimentalAnnotationsInUse: Set<String>
+    val compilerPluginArguments: List<String>
+    val compilerPluginClasspath: Set<File>
 }
 
 interface KotlinCompilationOutput : Serializable {

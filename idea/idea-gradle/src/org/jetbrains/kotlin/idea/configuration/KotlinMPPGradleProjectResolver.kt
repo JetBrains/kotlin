@@ -652,6 +652,8 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtension() {
                         ManualLanguageFeatureSetting(feature, LanguageFeature.State.ENABLED, arg)
                     }
                     it.useExperimental = languageSettings.experimentalAnnotationsInUse.toTypedArray()
+                    it.pluginOptions = languageSettings.compilerPluginArguments.toTypedArray()
+                    it.pluginClasspaths = languageSettings.compilerPluginClasspath.map(File::getPath).toTypedArray()
                 }
             }
         }

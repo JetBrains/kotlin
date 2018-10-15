@@ -29,7 +29,9 @@ class KotlinLanguageSettingsImpl(
     override val apiVersion: String?,
     override val isProgressiveMode: Boolean,
     override val enabledLanguageFeatures: Set<String>,
-    override val experimentalAnnotationsInUse: Set<String>
+    override val experimentalAnnotationsInUse: Set<String>,
+    override val compilerPluginArguments: List<String>,
+    override val compilerPluginClasspath: Set<File>
 ) : KotlinLanguageSettings
 
 class KotlinCompilationOutputImpl(
