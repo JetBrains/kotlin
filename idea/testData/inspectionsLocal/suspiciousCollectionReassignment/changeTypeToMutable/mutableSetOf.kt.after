@@ -1,6 +1,0 @@
-// FIX: Change type to mutable
-// WITH_RUNTIME
-fun test() {
-    val set = mutableSetOf(1)<caret>
-    set += 1
-}

@@ -3,5 +3,5 @@
 // WITH_RUNTIME
 fun test() {
     var set = mutableSetOf(1)
-    <caret>set += 2
+    set <caret>+= 2
 }

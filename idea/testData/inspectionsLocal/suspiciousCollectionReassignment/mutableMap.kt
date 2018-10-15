@@ -3,5 +3,5 @@
 // WITH_RUNTIME
 fun test() {
     var map = mutableMapOf(1 to 2)
-    <caret>map += 3 to 4
+    map <caret>+= 3 to 4
 }

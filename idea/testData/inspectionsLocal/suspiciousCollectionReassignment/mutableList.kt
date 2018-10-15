@@ -3,5 +3,5 @@
 // WITH_RUNTIME
 fun test() {
     var list = mutableListOf(1)
-    <caret>list += 2
+    list <caret>+= 2
 }

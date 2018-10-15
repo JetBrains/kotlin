@@ -2,5 +2,5 @@
 // WITH_RUNTIME
 fun test() {
     var list = listOf(1)
-    <caret>list - 1
+    list <caret>- 1
 }

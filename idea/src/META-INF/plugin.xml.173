@@ -3093,7 +3093,7 @@ The Kotlin plugin provides language support in IntelliJ IDEA and Android Studio.
     />
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.SuspiciousCollectionReassignmentInspection"
-                     displayName="Collection augmented assignment creates a new collection under the hood"
+                     displayName="Augmented assignment creates a new collection under the hood"
                      groupPath="Kotlin"
                      groupName="Probable bugs"
                      enabledByDefault="true"
