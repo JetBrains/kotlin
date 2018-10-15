@@ -29,7 +29,8 @@ import org.gradle.api.tasks.compile.AbstractCompile
 import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
 import org.jetbrains.kotlin.gradle.model.builder.KotlinAndroidExtensionModelBuilder
 import org.jetbrains.kotlin.gradle.plugin.*
-import org.jetbrains.kotlin.gradle.plugin.android.AndroidGradleWrapper
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.multiplatformExtension
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.w3c.dom.Document
 import java.io.File
@@ -85,6 +86,12 @@ class AndroidSubplugin : KotlinGradleSubplugin<KotlinCompile> {
         if (project.plugins.findPlugin(AndroidExtensionsSubpluginIndicator::class.java) == null) {
             return false
         }
+        project.multiplatformExtension?.let { kotlin ->
+            return kotlin.targets.any { target ->
+                target is KotlinAndroidTarget && target.compilations.any { it.compileKotlinTaskName == task.name }
+            }
+        }
+
         return true
     }
 
