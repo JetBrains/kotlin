@@ -929,6 +929,94 @@ class NewMultiplatformIT : BaseGradleIT() {
     }
 
     @Test
+    fun testMppBuildWithCompilerPlugins() = with(Project("sample-lib", gradleVersion, "new-mpp-lib-and-app")) {
+        setupWorkingDir()
+
+        val printOptionsTaskName = "printCompilerPluginOptions"
+        val argsMarker = "=args=>"
+        val classpathMarker = "=cp=>"
+        val compilerPluginArgsRegex = "(\\w+)${Regex.escape(argsMarker)}(.*)".toRegex()
+        val compilerPluginClasspathRegex = "(\\w+)${Regex.escape(classpathMarker)}(.*)".toRegex()
+
+        gradleBuildScript().appendText(
+            "\n" + """
+            buildscript {
+                dependencies {
+                    classpath "org.jetbrains.kotlin:kotlin-allopen:${'$'}kotlin_version"
+                    classpath "org.jetbrains.kotlin:kotlin-noarg:${'$'}kotlin_version"
+                }
+            }
+            apply plugin: 'kotlin-allopen'
+            apply plugin: 'kotlin-noarg'
+
+            allOpen { annotation 'com.example.Annotation' }
+            noArg { annotation 'com.example.Annotation' }
+
+            task $printOptionsTaskName {
+                doFirst {
+                    kotlin.sourceSets.each { sourceSet ->
+                        def args = sourceSet.languageSettings.compilerPluginArguments
+                        def cp = sourceSet.languageSettings.compilerPluginClasspath.files
+                        println sourceSet.name + '$argsMarker' + args
+                        println sourceSet.name + '$classpathMarker' + cp
+                    }
+                }
+            }
+            """.trimIndent()
+        )
+
+        projectDir.resolve("src/commonMain/kotlin/Annotation.kt").writeText(
+            """
+            package com.example
+            annotation class Annotation
+            """.trimIndent()
+        )
+        projectDir.resolve("src/commonMain/kotlin/Annotated.kt").writeText(
+            """
+            package com.example
+            @Annotation
+            open class Annotated(var y: Int) { var x = 2 }
+            """.trimIndent()
+        )
+        // TODO once Kotlin/Native properly supports compiler plugins, move this class to the common sources
+        listOf("jvm6", "nodeJs").forEach {
+            projectDir.resolve("src/${it}Main/kotlin/Override.kt").writeText(
+                """
+                package com.example
+                @Annotation
+                class Override : Annotated(0) {
+                    override var x = 3
+                }
+                """.trimIndent()
+            )
+        }
+
+        build("assemble", printOptionsTaskName) {
+            assertSuccessful()
+            assertTasksExecuted(*listOf("Jvm6", "NodeJs", nativeHostTargetName.capitalize()).map { ":compileKotlin$it" }.toTypedArray())
+            assertFileExists("build/classes/kotlin/jvm6/main/com/example/Annotated.class")
+            assertFileExists("build/classes/kotlin/jvm6/main/com/example/Override.class")
+            assertFileContains("build/classes/kotlin/nodeJs/main/sample-lib.js", "Override")
+
+            val (compilerPluginArgsBySourceSet, compilerPluginClasspathBySourceSet) =
+                    listOf(compilerPluginArgsRegex, compilerPluginClasspathRegex)
+                        .map { marker ->
+                            marker.findAll(output).associate { it.groupValues[1] to it.groupValues[2] }
+                        }
+
+            // TODO once Kotlin/Native properly supports compiler plugins, expand this to all source sets:
+            listOf("commonMain", "commonTest", "jvm6Main", "jvm6Test", "nodeJsMain", "nodeJsTest").forEach {
+                val expectedArgs = "[plugin:org.jetbrains.kotlin.allopen:annotation=com.example.Annotation, " +
+                        "plugin:org.jetbrains.kotlin.noarg:annotation=com.example.Annotation]"
+
+                assertEquals(expectedArgs, compilerPluginArgsBySourceSet[it], "Expected $expectedArgs as plugin args for $it")
+                assertTrue { compilerPluginClasspathBySourceSet[it]!!.contains("kotlin-allopen") }
+                assertTrue { compilerPluginClasspathBySourceSet[it]!!.contains("kotlin-noarg") }
+            }
+        }
+    }
+
+    @Test
     fun testJsDceInMpp() = with(Project("new-mpp-js-dce", gradleVersion)) {
         build("runRhino") {
             assertSuccessful()

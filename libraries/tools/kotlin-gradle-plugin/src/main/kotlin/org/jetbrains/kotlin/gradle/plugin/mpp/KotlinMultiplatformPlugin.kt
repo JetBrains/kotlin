@@ -19,18 +19,21 @@ import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.publish.maven.internal.publication.MavenPublicationInternal
 import org.gradle.api.publish.maven.tasks.AbstractPublishToMaven
+import org.gradle.api.tasks.compile.AbstractCompile
 import org.gradle.internal.reflect.Instantiator
 import org.gradle.jvm.tasks.Jar
 import org.gradle.util.ConfigureUtil
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.gradle.plugin.sources.DefaultLanguageSettingsBuilder
 import org.jetbrains.kotlin.gradle.utils.SingleWarningPerBuild
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.presetName
 
-internal val Project.multiplatformExtension get(): KotlinMultiplatformExtension? =
-    project.extensions.findByName("kotlin") as? KotlinMultiplatformExtension
+internal val Project.multiplatformExtension
+    get(): KotlinMultiplatformExtension? =
+        project.extensions.findByName("kotlin") as? KotlinMultiplatformExtension
 
 class KotlinMultiplatformPlugin(
     private val fileResolver: FileResolver,
@@ -88,6 +91,53 @@ class KotlinMultiplatformPlugin(
             KotlinMetadataTargetPreset(project, instantiator, fileResolver, kotlinPluginVersion),
             METADATA_TARGET_NAME
         )
+
+        // propagate compiler plugin options to the source set language settings
+        setupCompilerPluginOptions(project)
+    }
+
+    private fun setupCompilerPluginOptions(project: Project) {
+        // common source sets use the compiler options from the metadata compilation:
+        val metadataCompilation =
+            project.multiplatformExtension!!.targets
+                .getByName(METADATA_TARGET_NAME)
+                .compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME)
+
+        val primaryCompilationsBySourceSet by lazy { // don't evaluate eagerly: Android targets are not created at this point
+            val allCompilationsForSourceSets =
+                project.multiplatformExtension!!.targets
+                    .flatMap { target ->
+                        target.compilations.flatMap { compilation ->
+                            compilation.allKotlinSourceSets.map { it to compilation }
+                        }
+                    }
+                    .groupBy(keySelector = { (sourceSet, _) -> sourceSet }, valueTransform = { (_, compilation) -> compilation })
+
+            allCompilationsForSourceSets.mapValues { (_, compilations) -> // choose one primary compilation
+                when (compilations.size) {
+                    0 -> metadataCompilation
+                    1 -> compilations.single()
+                    else -> {
+                        val sourceSetTargets = compilations.map { it.target }.distinct()
+                        when (sourceSetTargets.size) {
+                            1 -> sourceSetTargets.single().compilations.findByName(KotlinCompilation.MAIN_COMPILATION_NAME)
+                                ?: // use any of the compilations for now, looks OK for Android TODO maybe reconsider
+                                compilations.first()
+                            else -> metadataCompilation
+                        }
+                    }
+                }
+            }
+        }
+
+        project.kotlinExtension.sourceSets.all { sourceSet ->
+            (sourceSet.languageSettings as? DefaultLanguageSettingsBuilder)?.run {
+                compilerPluginOptionsTask = lazy {
+                    val associatedCompilation = primaryCompilationsBySourceSet[sourceSet] ?: metadataCompilation
+                    project.tasks.getByName(associatedCompilation.compileKotlinTaskName) as AbstractCompile
+                }
+            }
+        }
     }
 
     fun setupDefaultPresets(project: Project) {
@@ -170,7 +220,7 @@ class KotlinMultiplatformPlugin(
     private fun configureSourceJars(project: Project) = with(project.kotlinExtension as KotlinMultiplatformExtension) {
         targets.all { target ->
             val mainCompilation = target.compilations.findByName(KotlinCompilation.MAIN_COMPILATION_NAME)
-                // If a target has no `main` compilation (e.g. Android), don't create the source JAR
+            // If a target has no `main` compilation (e.g. Android), don't create the source JAR
                 ?: return@all
 
             val sourcesJar = project.tasks.create(target.sourcesJarTaskName, Jar::class.java) { sourcesJar ->
@@ -189,7 +239,7 @@ class KotlinMultiplatformPlugin(
         }
     }
 
-    private fun configureSourceSets(project: Project) = with (project.kotlinExtension as KotlinMultiplatformExtension) {
+    private fun configureSourceSets(project: Project) = with(project.kotlinExtension as KotlinMultiplatformExtension) {
         val production = sourceSets.create(KotlinSourceSet.COMMON_MAIN_SOURCE_SET_NAME)
         val test = sourceSets.create(KotlinSourceSet.COMMON_TEST_SOURCE_SET_NAME)
 
@@ -247,7 +297,7 @@ class KotlinMultiplatformPlugin(
         const val METADATA_TARGET_NAME = "metadata"
 
         const val GRADLE_METADATA_WARNING =
-            // TODO point the user to some MPP docs explaining this in more detail
+        // TODO point the user to some MPP docs explaining this in more detail
             "This build is set up to publish Kotlin multiplatform libraries with experimental Gradle metadata. " +
                     "Future Gradle versions may fail to resolve dependencies on these publications. " +
                     "You can disable Gradle metadata usage during publishing and dependencies resolution by removing " +

@@ -6,10 +6,14 @@
 package org.jetbrains.kotlin.gradle.plugin.sources
 
 import org.gradle.api.InvalidUserDataException
+import org.gradle.api.file.FileCollection
+import org.gradle.api.tasks.compile.AbstractCompile
 import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.gradle.plugin.LanguageSettingsBuilder
+import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
+import org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile
 
 internal class DefaultLanguageSettingsBuilder : LanguageSettingsBuilder {
     private var languageVersionImpl: LanguageVersion? = null
@@ -58,8 +62,28 @@ internal class DefaultLanguageSettingsBuilder : LanguageSettingsBuilder {
         experimentalAnnotationsInUseImpl += name
     }
 
-    companion object {
-    }
+    /* A Kotlin task that is responsible for code analysis of the owner of this language settings builder. */
+    lateinit var compilerPluginOptionsTask: Lazy<AbstractCompile>
+
+    val compilerPluginArguments: List<String>
+        get() {
+            val pluginOptionsTask = compilerPluginOptionsTask.value
+            return when (pluginOptionsTask) {
+                is AbstractKotlinCompile<*> -> pluginOptionsTask.pluginOptions
+                is KotlinNativeCompile -> pluginOptionsTask.compilerPluginOptions
+                else -> error("Unexpected task: $compilerPluginOptionsTask")
+            }.arguments
+        }
+
+    val compilerPluginClasspath: FileCollection
+        get() {
+            val pluginClasspathTask = compilerPluginOptionsTask.value
+            return when (pluginClasspathTask) {
+                is AbstractKotlinCompile<*> -> pluginClasspathTask.pluginClasspath
+                is KotlinNativeCompile -> pluginClasspathTask.compilerPluginClasspath ?: pluginClasspathTask.project.files()
+                else -> error("Unexpected task: $compilerPluginOptionsTask")
+            }
+        }
 }
 
 internal fun applyLanguageSettingsToKotlinTask(
