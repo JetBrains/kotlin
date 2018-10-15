@@ -33,8 +33,6 @@ import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.daemon.client.CompileServiceSession
 import org.jetbrains.kotlin.daemon.common.*
-import org.jetbrains.kotlin.gradle.incremental.GRADLE_CACHE_VERSION
-import org.jetbrains.kotlin.gradle.incremental.GRADLE_CACHE_VERSION_FILE_NAME
 import org.jetbrains.kotlin.gradle.plugin.kotlinDebug
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.InspectClassesForMultiModuleIC
@@ -270,8 +268,6 @@ internal class GradleCompilerRunner(private val project: Project) : KotlinCompil
             modifiedFiles = knownChangedFiles?.modified,
             deletedFiles = knownChangedFiles?.removed,
             workingDir = environment.workingDir,
-            customCacheVersion = GRADLE_CACHE_VERSION,
-            customCacheVersionFileName = GRADLE_CACHE_VERSION_FILE_NAME,
             reportCategories = reportCategories(verbose),
             reportSeverity = reportSeverity(verbose),
             requestedCompilationResults = arrayOf(CompilationResultCategory.IC_COMPILE_ITERATION.code),

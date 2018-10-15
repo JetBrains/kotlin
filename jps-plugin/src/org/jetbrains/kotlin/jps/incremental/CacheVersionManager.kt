@@ -3,7 +3,7 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.incremental.storage.version
+package org.jetbrains.kotlin.jps.incremental
 
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmBytecodeBinaryVersion
