@@ -34,7 +34,6 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.*
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 
@@ -251,12 +250,6 @@ internal class SuspendFunctionsLowering(val context: Context): FileLoweringPass 
     private class BuiltCoroutine(val coroutineClass: IrClass,
                                  val coroutineConstructor: IrConstructor,
                                  val invokeSuspendFunction: IrFunction)
-
-    private val COROUTINES_FQ_NAME            = FqName.fromSegments(listOf("kotlin", "coroutines", "experimental"))
-    private val KOTLIN_FQ_NAME                = FqName("kotlin")
-
-    private val coroutinesScope           = context.irModule!!.descriptor.getPackage(COROUTINES_FQ_NAME).memberScope
-    private val kotlinPackageScope        = context.irModule!!.descriptor.getPackage(KOTLIN_FQ_NAME).memberScope
 
     private inner class CoroutineBuilder(val irFunction: IrFunction, val functionReference: IrFunctionReference?) {
 

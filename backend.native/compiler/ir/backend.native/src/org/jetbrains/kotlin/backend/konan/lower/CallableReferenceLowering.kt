@@ -127,13 +127,9 @@ internal class CallableReferenceLowering(val context: Context): FileLoweringPass
     private class BuiltFunctionReference(val functionReferenceClass: IrClass,
                                          val functionReferenceConstructor: IrConstructor)
 
-    private val COROUTINES_FQ_NAME = FqName.fromSegments(listOf("kotlin", "coroutines", "experimental"))
     private val VOLATILE_LAMBDA_FQ_NAME = FqName.fromSegments(listOf("kotlin", "native", "internal", "VolatileLambda"))
 
-    private val coroutinesScope    = context.irModule!!.descriptor.getPackage(COROUTINES_FQ_NAME).memberScope
-
-    private val continuationClassDescriptor = coroutinesScope
-            .getContributedClassifier(Name.identifier("Continuation"), NoLookupLocation.FROM_BACKEND) as ClassDescriptor
+    private val continuationClassDescriptor = context.ir.symbols.continuationClassDescriptor
 
     private val getContinuationSymbol = context.ir.symbols.getContinuation
 

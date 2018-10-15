@@ -368,6 +368,9 @@ internal class KonanSymbols(context: Context, val symbolTable: SymbolTable, val 
     private val coroutinesPackage = context.builtIns.builtInsModule.getPackage(
             context.config.configuration.languageVersionSettings.coroutinesPackageFqName()).memberScope
 
+    val continuationClassDescriptor = coroutinesPackage
+            .getContributedClassifier(Name.identifier("Continuation"), NoLookupLocation.FROM_BACKEND) as ClassDescriptor
+
     val coroutineContextGetter = coroutinesPackage
             .getContributedVariables(Name.identifier("coroutineContext"), NoLookupLocation.FROM_BACKEND)
             .single()

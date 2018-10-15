@@ -6,7 +6,6 @@
 package kotlin.sequences
 
 import kotlin.comparisons.*
-import kotlin.coroutines.experimental.*
 import kotlin.native.internal.FixmeConcurrency
 
 @FixmeConcurrency
