@@ -59,21 +59,29 @@ PsiJetFileStubImpl[package=test]
               REFERENCE_EXPRESSION[referencedName=Simple]
         VALUE_ARGUMENT_LIST
           VALUE_ARGUMENT
+            INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=12]
           VALUE_ARGUMENT
+            INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=12L]
           VALUE_ARGUMENT
+            INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=12]
           VALUE_ARGUMENT
+            FLOAT_CONSTANT[kind=FLOAT_CONSTANT, value=3.3]
           VALUE_ARGUMENT
             VALUE_ARGUMENT_NAME
               REFERENCE_EXPRESSION[referencedName=f]
+            FLOAT_CONSTANT[kind=FLOAT_CONSTANT, value=3.3F]
           VALUE_ARGUMENT
             VALUE_ARGUMENT_NAME
               REFERENCE_EXPRESSION[referencedName=c]
+            CHARACTER_CONSTANT[kind=CHARACTER_CONSTANT, value='a']
           VALUE_ARGUMENT
             VALUE_ARGUMENT_NAME
               REFERENCE_EXPRESSION[referencedName=b1]
+            BOOLEAN_CONSTANT[kind=BOOLEAN_CONSTANT, value=true]
           VALUE_ARGUMENT
             VALUE_ARGUMENT_NAME
               REFERENCE_EXPRESSION[referencedName=b2]
+            BOOLEAN_CONSTANT[kind=BOOLEAN_CONSTANT, value=false]
   CLASS[fqName=test.StringLiteral, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=StringLiteral, superNames=[]]
     MODIFIER_LIST[annotation]
     PRIMARY_CONSTRUCTOR
@@ -156,8 +164,11 @@ PsiJetFileStubImpl[package=test]
               REFERENCE_EXPRESSION[referencedName=VarArg]
         VALUE_ARGUMENT_LIST
           VALUE_ARGUMENT
+            INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
           VALUE_ARGUMENT
+            INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=2]
           VALUE_ARGUMENT
+            INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=3]
   CLASS[fqName=test.Arrays, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=Arrays, superNames=[]]
     MODIFIER_LIST[annotation]
     PRIMARY_CONSTRUCTOR

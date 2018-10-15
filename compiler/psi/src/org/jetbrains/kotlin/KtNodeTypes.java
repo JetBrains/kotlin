@@ -86,11 +86,11 @@ public interface KtNodeTypes {
     KtNodeType CONSTRUCTOR_DELEGATION_REFERENCE = new KtNodeType.KtLeftBoundNodeType("CONSTRUCTOR_DELEGATION_REFERENCE", KtConstructorDelegationReferenceExpression.class);
 
     // TODO: Not sure if we need separate NT for each kind of constants
-    KtNodeType NULL               = new KtNodeType("NULL", KtConstantExpression.class);
-    KtNodeType BOOLEAN_CONSTANT   = new KtNodeType("BOOLEAN_CONSTANT", KtConstantExpression.class);
-    KtNodeType FLOAT_CONSTANT     = new KtNodeType("FLOAT_CONSTANT", KtConstantExpression.class);
-    KtNodeType CHARACTER_CONSTANT = new KtNodeType("CHARACTER_CONSTANT", KtConstantExpression.class);
-    KtNodeType INTEGER_CONSTANT   = new KtNodeType("INTEGER_CONSTANT", KtConstantExpression.class);
+    IElementType NULL               = KtStubElementTypes.NULL;
+    IElementType BOOLEAN_CONSTANT   = KtStubElementTypes.BOOLEAN_CONSTANT;
+    IElementType FLOAT_CONSTANT     = KtStubElementTypes.FLOAT_CONSTANT;
+    IElementType CHARACTER_CONSTANT = KtStubElementTypes.CHARACTER_CONSTANT;
+    IElementType INTEGER_CONSTANT   = KtStubElementTypes.INTEGER_CONSTANT;
 
     KtNodeType STRING_TEMPLATE    = new KtNodeType("STRING_TEMPLATE", KtStringTemplateExpression.class);
     KtNodeType LONG_STRING_TEMPLATE_ENTRY = new KtNodeType("LONG_STRING_TEMPLATE_ENTRY", KtBlockStringTemplateEntry.class);
