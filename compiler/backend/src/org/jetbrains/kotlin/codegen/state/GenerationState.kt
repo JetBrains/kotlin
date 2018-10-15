@@ -252,7 +252,12 @@ class GenerationState private constructor(
     init {
         this.interceptedBuilderFactory = builderFactory
             .wrapWith(
-                { OptimizationClassBuilderFactory(it, this) },
+                {
+                    if (classBuilderMode.generateBodies)
+                        OptimizationClassBuilderFactory(it, this)
+                    else
+                        it
+                },
                 {
                     BuilderFactoryForDuplicateSignatureDiagnostics(
                         it, this.bindingContext, diagnostics, this.moduleName,

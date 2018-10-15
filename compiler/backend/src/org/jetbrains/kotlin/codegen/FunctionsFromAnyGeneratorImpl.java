@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor;
 import org.jetbrains.kotlin.lexer.KtTokens;
-import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.psi.KtClassOrObject;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.InlineClassesUtilsKt;
@@ -24,6 +23,7 @@ import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKt;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.SimpleType;
+import org.jetbrains.org.objectweb.asm.AnnotationVisitor;
 import org.jetbrains.org.objectweb.asm.Label;
 import org.jetbrains.org.objectweb.asm.MethodVisitor;
 import org.jetbrains.org.objectweb.asm.Type;
@@ -34,9 +34,7 @@ import java.util.List;
 import static org.jetbrains.kotlin.codegen.AsmUtil.*;
 import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.JAVA_STRING_TYPE;
 import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE;
-import static org.jetbrains.org.objectweb.asm.Opcodes.ACC_PUBLIC;
-import static org.jetbrains.org.objectweb.asm.Opcodes.ACC_STATIC;
-import static org.jetbrains.org.objectweb.asm.Opcodes.IRETURN;
+import static org.jetbrains.org.objectweb.asm.Opcodes.*;
 
 public class FunctionsFromAnyGeneratorImpl extends FunctionsFromAnyGenerator {
     private final ClassDescriptor classDescriptor;
@@ -83,7 +81,7 @@ public class FunctionsFromAnyGeneratorImpl extends FunctionsFromAnyGenerator {
             return;
         }
 
-        mv.visitAnnotation(Type.getDescriptor(NotNull.class), false);
+        visitEndForAnnotationVisitor(mv.visitAnnotation(Type.getDescriptor(NotNull.class), false));
 
         if (!generationState.getClassBuilderMode().generateBodies) {
             FunctionCodegen.endVisit(mv, toStringMethodName, getDeclaration());
@@ -218,7 +216,9 @@ public class FunctionsFromAnyGeneratorImpl extends FunctionsFromAnyGenerator {
             return;
         }
 
-        mv.visitParameterAnnotation(isErasedInlineClassKind ? 1 : 0, Type.getDescriptor(Nullable.class), false);
+        visitEndForAnnotationVisitor(
+                mv.visitParameterAnnotation(isErasedInlineClassKind ? 1 : 0, Type.getDescriptor(Nullable.class), false)
+        );
 
         if (!generationState.getClassBuilderMode().generateBodies) {
             FunctionCodegen.endVisit(mv, equalsMethodName, getDeclaration());
@@ -269,6 +269,12 @@ public class FunctionsFromAnyGeneratorImpl extends FunctionsFromAnyGenerator {
         iv.areturn(Type.INT_TYPE);
 
         FunctionCodegen.endVisit(mv, equalsMethodName, getDeclaration());
+    }
+
+    private static void visitEndForAnnotationVisitor(@Nullable AnnotationVisitor annotation) {
+        if (annotation != null) {
+            annotation.visitEnd();
+        }
     }
 
     private int generateBasicChecksAndStoreTarget(InstructionAdapter iv, Label eq, Label ne) {
