@@ -86,6 +86,8 @@ abstract class BasicBoxTest(
     protected open val runMinifierByDefault: Boolean = false
     protected open val skipMinification = System.getProperty("kotlin.js.skipMinificationTest", "false")!!.toBoolean()
 
+    protected open val incrementalCompilationChecksEnabled = true
+
     fun doTest(filePath: String) {
         doTest(filePath, "OK", MainCallParameters.noCall())
     }
@@ -329,7 +331,7 @@ abstract class BasicBoxTest(
             mainCallParameters, incrementalData, remap, testPackage, testFunction
         )
 
-        if (module.hasFilesToRecompile) {
+        if (incrementalCompilationChecksEnabled && module.hasFilesToRecompile) {
             checkIncrementalCompilation(
                 sourceDirs, module, kotlinFiles, dependencies, friends, multiModule, remap,
                 outputFile, outputPrefixFile, outputPostfixFile, mainCallParameters, incrementalData, testPackage, testFunction

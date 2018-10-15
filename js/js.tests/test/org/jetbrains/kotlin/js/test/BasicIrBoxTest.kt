@@ -114,7 +114,10 @@ abstract class BasicIrBoxTest(
     targetBackend = TargetBackend.JS_IR
 ) {
 
-    override var skipMinification = true
+    override val skipMinification = true
+
+    // TODO Design incremental compilation for IR and add test support
+    override val incrementalCompilationChecksEnabled = false
 
     private val compilationCache = mutableMapOf<String, Result>()
 
