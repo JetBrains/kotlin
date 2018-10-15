@@ -948,7 +948,7 @@ private fun allSuspensionPointsAreTailCalls(
     }
 }
 
-internal class IgnoringCopyOperationSourceInterpreter : SourceInterpreter() {
+internal class IgnoringCopyOperationSourceInterpreter : SourceInterpreter(OPTIMIZATION_ASM_API_VERSION) {
     override fun copyOperation(insn: AbstractInsnNode?, value: SourceValue?) = value
 }
 
