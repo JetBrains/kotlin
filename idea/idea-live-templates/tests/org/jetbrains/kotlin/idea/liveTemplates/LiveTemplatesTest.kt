@@ -72,6 +72,10 @@ class LiveTemplatesTest : KotlinLightCodeInsightFixtureTestCase() {
         paremeterless()
     }
 
+    fun testMaina() {
+        paremeterless()
+    }
+
     fun testSoutv() {
         start()
 
