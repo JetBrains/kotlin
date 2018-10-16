@@ -21,7 +21,8 @@ class ResultTypeWithNullableOperatorsChecker : CallChecker {
 
         when {
             operationNode?.elementType == KtTokens.SAFE_ACCESS -> {
-                val receiver = resolvedCall.resultingDescriptor.dispatchReceiverParameter ?: return
+                val resultingDescriptor = resolvedCall.resultingDescriptor
+                val receiver = resultingDescriptor.extensionReceiverParameter ?: resultingDescriptor.dispatchReceiverParameter ?: return
                 if (receiver.type.isResultType()) {
                     context.trace.report(Errors.RESULT_CLASS_WITH_NULLABLE_OPERATOR.on(operationNode!!.psi, "?."))
                 }
