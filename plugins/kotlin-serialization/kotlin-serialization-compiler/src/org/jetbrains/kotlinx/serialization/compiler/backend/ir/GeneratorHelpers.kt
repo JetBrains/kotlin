@@ -380,6 +380,23 @@ interface IrBuilderExtension {
         )
     }
 
+    fun buildInitializersRemapping(irClass: IrClass): (IrField) -> IrExpression? {
+        val original = irClass.constructors.singleOrNull { it.isPrimary }
+            ?: throw IllegalStateException("Serializable class must have single primary constructor")
+        // default arguments of original constructor
+        val defaultsMap: Map<ParameterDescriptor, IrExpression?> =
+            original.valueParameters.associate { it.descriptor to it.defaultValue?.expression }
+        return fun(f: IrField): IrExpression? {
+            val i = f.initializer?.expression ?: return null
+            return if (i is IrGetValueImpl && i.origin == IrStatementOrigin.INITIALIZE_PROPERTY_FROM_PARAMETER) {
+                // this is a primary constructor property, use corresponding default of value parameter
+                defaultsMap.getValue(i.descriptor as ParameterDescriptor)
+            } else {
+                i
+            }
+        }
+    }
+
     fun findEnumValuesMethod(enumClass: ClassDescriptor): IrFunction {
         assert(enumClass.kind == ClassKind.ENUM_CLASS)
         return compilerContext.externalSymbols.referenceClass(enumClass).owner.functions
