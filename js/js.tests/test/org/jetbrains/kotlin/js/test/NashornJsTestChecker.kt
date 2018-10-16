@@ -55,34 +55,33 @@ fun ScriptEngine.loadFile(path: String) {
 }
 
 fun ScriptEngine.runAndRestoreContext(
+    globalObject: ScriptObjectMirror = eval("this") as ScriptObjectMirror,
+    originalState: Map<String, Any?> = globalObject.toMap(),
     f: ScriptEngine.() -> Any?
 ): Any? {
-    val globalObject = eval("this") as ScriptObjectMirror
-    val before = globalObject.toMapWithAllMembers()
-
     return try {
         this.f()
     } finally {
-        val after = globalObject.toMapWithAllMembers()
-        val diff = after.entries - before.entries
-
-
-        diff.forEach {
-            globalObject[it.key] = before[it.key] ?: ScriptRuntime.UNDEFINED
+        for (key in globalObject.keys) {
+            globalObject[key] = originalState[key] ?: ScriptRuntime.UNDEFINED
         }
     }
 }
-
-private fun ScriptObjectMirror.toMapWithAllMembers(): Map<String, Any?> = getOwnKeys(true).associate { it to this[it] }
 
 abstract class AbstractNashornJsTestChecker {
 
     private var engineUsageCnt = 0
 
     private var engineCache: ScriptEngine? = null
+    private var globalObject: ScriptObjectMirror? = null
+    private var originalState: Map<String, Any?>? = null
 
     protected val engine
-        get() = engineCache ?: createScriptEngineForTest().also { engineCache = it }
+        get() = engineCache ?: createScriptEngineForTest().also {
+            engineCache = it
+            globalObject = it.eval("this") as ScriptObjectMirror
+            originalState = globalObject?.toMap()
+        }
 
     fun check(
         files: List<String>,
@@ -119,12 +118,12 @@ abstract class AbstractNashornJsTestChecker {
         // Recreate the engine once in a while
         if (engineUsageCnt++ > 100) {
             engineUsageCnt = 0
-            engineCache = createScriptEngineForTest()
+            engineCache = null
         }
 
         beforeRun()
 
-        return engine.runAndRestoreContext {
+        return engine.runAndRestoreContext(globalObject!!, originalState!!) {
             files.forEach(engine::loadFile)
             engine.f()
         }
