@@ -74,7 +74,7 @@ internal class InlineClassAwareCaller<out M : Member>(
 
         val unbox = Array(expectedArgsSize) { i ->
             if (i in argumentRange) {
-                kotlinParameterTypes[i - shift].toInlineClass()?.getUnboxMethod()
+                kotlinParameterTypes[i - shift].toInlineClass()?.getUnboxMethod(descriptor)
             } else null
         }
 
@@ -103,26 +103,9 @@ internal class InlineClassAwareCaller<out M : Member>(
     }
 
     private fun Class<*>.getBoxMethod(): Method = try {
-        getDeclaredMethod("box" + JvmAbi.IMPL_SUFFIX_FOR_INLINE_CLASS_MEMBERS, getUnboxMethod().returnType)
+        getDeclaredMethod("box" + JvmAbi.IMPL_SUFFIX_FOR_INLINE_CLASS_MEMBERS, getUnboxMethod(descriptor).returnType)
     } catch (e: NoSuchMethodException) {
         throw KotlinReflectionInternalError("No box method found in inline class: $this (calling $descriptor)")
-    }
-
-    private fun Class<*>.getUnboxMethod(): Method = try {
-        getDeclaredMethod("unbox" + JvmAbi.IMPL_SUFFIX_FOR_INLINE_CLASS_MEMBERS)
-    } catch (e: NoSuchMethodException) {
-        throw KotlinReflectionInternalError("No unbox method found in inline class: $this (calling $descriptor)")
-    }
-
-    private fun KotlinType.toInlineClass(): Class<*>? {
-        val descriptor = constructor.declarationDescriptor
-        if (descriptor is ClassDescriptor && descriptor.isInline) {
-            return descriptor.toJavaClass() ?: throw KotlinReflectionInternalError(
-                "Class object for the class ${descriptor.name} cannot be found (classId=${descriptor.classId})"
-            )
-        }
-
-        return null
     }
 }
 
@@ -135,4 +118,31 @@ internal fun <M : Member> CallerImpl<M>.createInlineClassAwareCallerIfNeeded(
                 descriptor.returnType?.isInlineClassType() == true ||
                 (this !is BoundCaller && descriptor.extensionReceiverParameter?.type?.isInlineClassType() == true)
     return if (needsInlineAwareCaller) InlineClassAwareCaller(descriptor, this, isDefault) else this
+}
+
+internal fun Class<*>.getUnboxMethod(descriptor: CallableMemberDescriptor): Method = try {
+    getDeclaredMethod("unbox" + JvmAbi.IMPL_SUFFIX_FOR_INLINE_CLASS_MEMBERS)
+} catch (e: NoSuchMethodException) {
+    throw KotlinReflectionInternalError("No unbox method found in inline class: $this (calling $descriptor)")
+}
+
+internal fun KotlinType.toInlineClass(): Class<*>? {
+    val descriptor = constructor.declarationDescriptor
+    if (descriptor is ClassDescriptor && descriptor.isInline) {
+        return descriptor.toJavaClass() ?: throw KotlinReflectionInternalError(
+            "Class object for the class ${descriptor.name} cannot be found (classId=${descriptor.classId})"
+        )
+    }
+
+    return null
+}
+
+internal fun Any?.coerceToExpectedReceiverType(descriptor: CallableMemberDescriptor): Any? {
+    val expectedReceiverType =
+        descriptor.extensionReceiverParameter?.type
+            ?: (descriptor.containingDeclaration as? ClassDescriptor)?.defaultType
+
+    val unboxMethod = expectedReceiverType?.toInlineClass()?.getUnboxMethod(descriptor) ?: return this
+
+    return unboxMethod.invoke(this)
 }
