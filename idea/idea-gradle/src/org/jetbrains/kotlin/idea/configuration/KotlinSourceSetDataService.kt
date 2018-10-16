@@ -96,7 +96,7 @@ class KotlinSourceSetDataService : AbstractProjectDataService<GradleSourceSetDat
                 .findAll(BuildScriptClasspathData.KEY)
                 .firstOrNull()
                 ?.data
-                ?.let { findKotlinPluginVersion(it) } ?: return null
+                ?.let { findKotlinPluginVersion(it) }// ?: return null TODO: Fix in CLion or our plugin KT-27623
 
             val platformKind = IdePlatformKindTooling.getTooling(kotlinSourceSet.platform).kind
             val platform = when (platformKind) {
