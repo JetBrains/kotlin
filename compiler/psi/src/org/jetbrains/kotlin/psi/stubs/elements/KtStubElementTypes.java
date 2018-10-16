@@ -135,6 +135,9 @@ public interface KtStubElementTypes {
     KtConstantExpressionElementType CHARACTER_CONSTANT  = new KtConstantExpressionElementType("CHARACTER_CONSTANT");
     KtConstantExpressionElementType INTEGER_CONSTANT    = new KtConstantExpressionElementType("INTEGER_CONSTANT");
 
+    KtPlaceHolderStubElementType<KtStringTemplateExpression> STRING_TEMPLATE =
+            new KtStringTemplateExpressionElementType("STRING_TEMPLATE");
+
     KtScriptElementType SCRIPT = new KtScriptElementType("SCRIPT");
 
     TokenSet DECLARATION_TYPES =

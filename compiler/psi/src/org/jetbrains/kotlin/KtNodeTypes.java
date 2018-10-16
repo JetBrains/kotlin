@@ -92,7 +92,7 @@ public interface KtNodeTypes {
     IElementType CHARACTER_CONSTANT = KtStubElementTypes.CHARACTER_CONSTANT;
     IElementType INTEGER_CONSTANT   = KtStubElementTypes.INTEGER_CONSTANT;
 
-    KtNodeType STRING_TEMPLATE    = new KtNodeType("STRING_TEMPLATE", KtStringTemplateExpression.class);
+    IElementType STRING_TEMPLATE    = KtStubElementTypes.STRING_TEMPLATE;
     KtNodeType LONG_STRING_TEMPLATE_ENTRY = new KtNodeType("LONG_STRING_TEMPLATE_ENTRY", KtBlockStringTemplateEntry.class);
     KtNodeType SHORT_STRING_TEMPLATE_ENTRY = new KtNodeType("SHORT_STRING_TEMPLATE_ENTRY", KtSimpleNameStringTemplateEntry.class);
     KtNodeType LITERAL_STRING_TEMPLATE_ENTRY = new KtNodeType("LITERAL_STRING_TEMPLATE_ENTRY", KtLiteralStringTemplateEntry.class);

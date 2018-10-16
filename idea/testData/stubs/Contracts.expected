@@ -8,6 +8,7 @@ PsiJetFileStubImpl[package=test]
             REFERENCE_EXPRESSION[referencedName=Suppress]
       VALUE_ARGUMENT_LIST
         VALUE_ARGUMENT
+          STRING_TEMPLATE
   PACKAGE_DIRECTIVE
     REFERENCE_EXPRESSION[referencedName=test]
   IMPORT_LIST
