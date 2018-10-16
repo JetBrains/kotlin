@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 // TARGET_BACKEND: JVM
 // FILE: F.java
 import java.util.function.Function;
