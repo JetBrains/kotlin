@@ -1,3 +1,4 @@
+// TARGET_BACKEND: JVM
 // FILE: Simple.java
 
 interface Simple {

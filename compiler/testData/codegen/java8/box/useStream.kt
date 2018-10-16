@@ -1,3 +1,4 @@
+// TARGET_BACKEND: JVM
 // KT-5190 Java 8 Stream.collect couldn't be called
 // WITH_RUNTIME
 // FULL_JDK

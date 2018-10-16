@@ -1,3 +1,4 @@
+// TARGET_BACKEND: JVM
 // FILE: IBase.java
 
 interface IBase {

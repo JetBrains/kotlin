@@ -1,3 +1,4 @@
+// TARGET_BACKEND: JVM
 // FILE: Test.java
 
 public interface Test {
