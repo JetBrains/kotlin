@@ -69,10 +69,16 @@ abstract class GradleKotlinFrameworkSupportProvider(
         addSupport(buildScriptData, module, rootModel.sdk, true)
     }
 
-    open fun addSupport(buildScriptData: BuildScriptDataBuilder, module: Module, sdk: Sdk?, specifyPluginVersionIfNeeded: Boolean) {
-        var kotlinVersion = bundledRuntimeVersion()
+    open fun addSupport(
+        buildScriptData: BuildScriptDataBuilder,
+        module: Module,
+        sdk: Sdk?,
+        specifyPluginVersionIfNeeded: Boolean,
+        explicitPluginVersion: String? = null
+    ) {
+        var kotlinVersion = explicitPluginVersion ?: bundledRuntimeVersion()
         val additionalRepository = getRepositoryForVersion(kotlinVersion)
-        if (isSnapshot(bundledRuntimeVersion())) {
+        if (isSnapshot(kotlinVersion)) {
             kotlinVersion = LAST_SNAPSHOT_VERSION
         }
 
@@ -157,8 +163,14 @@ open class GradleKotlinJavaFrameworkSupportProvider(
 
     override fun getDependencies(sdk: Sdk?) = listOf(getStdlibArtifactId(sdk, bundledRuntimeVersion()))
 
-    override fun addSupport(buildScriptData: BuildScriptDataBuilder, module: Module, sdk: Sdk?, specifyPluginVersionIfNeeded: Boolean) {
-        super.addSupport(buildScriptData, module, sdk, specifyPluginVersionIfNeeded)
+    override fun addSupport(
+        buildScriptData: BuildScriptDataBuilder,
+        module: Module,
+        sdk: Sdk?,
+        specifyPluginVersionIfNeeded: Boolean,
+        explicitPluginVersion: String?
+    ) {
+        super.addSupport(buildScriptData, module, sdk, specifyPluginVersionIfNeeded, explicitPluginVersion)
         val jvmTarget = getDefaultJvmTarget(sdk, bundledRuntimeVersion())
         if (jvmTarget != null) {
             val description = jvmTarget.description
@@ -235,8 +247,14 @@ class GradleKotlinMPPJavaFrameworkSupportProvider
     override fun getDescription() = "JVM-specific code for a Kotlin multiplatform project"
     override fun getTestDependencies() = listOf(MAVEN_TEST_ID, MAVEN_TEST_JUNIT_ID, "junit:junit:4.12")
 
-    override fun addSupport(buildScriptData: BuildScriptDataBuilder, module: Module, sdk: Sdk?, specifyPluginVersionIfNeeded: Boolean) {
-        super.addSupport(buildScriptData, module, sdk, specifyPluginVersionIfNeeded)
+    override fun addSupport(
+        buildScriptData: BuildScriptDataBuilder,
+        module: Module,
+        sdk: Sdk?,
+        specifyPluginVersionIfNeeded: Boolean,
+        explicitPluginVersion: String?
+    ) {
+        super.addSupport(buildScriptData, module, sdk, specifyPluginVersionIfNeeded, explicitPluginVersion)
         val jvmTarget = getDefaultJvmTarget(sdk, bundledRuntimeVersion())
         if (jvmTarget != null) {
             val description = jvmTarget.description

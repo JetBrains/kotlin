@@ -26,6 +26,8 @@ import javax.swing.Icon
 abstract class KotlinGradleAbstractMultiplatformModuleBuilder(
     val mppInApplication: Boolean = false
 ) : GradleModuleBuilder() {
+    var explicitPluginVersion: String? = null
+
     override fun getNodeIcon(): Icon = KotlinIcons.MPP
 
     override fun createWizardSteps(wizardContext: WizardContext, modulesProvider: ModulesProvider): Array<ModuleWizardStep> {
@@ -41,7 +43,13 @@ abstract class KotlinGradleAbstractMultiplatformModuleBuilder(
         val buildGradle = moduleDir.createChildData(null, "build.gradle")
         val builder = BuildScriptDataBuilder(buildGradle)
         builder.setupAdditionalDependenciesForApplication()
-        GradleKotlinMPPFrameworkSupportProvider().addSupport(builder, module, sdk = null, specifyPluginVersionIfNeeded = true)
+        GradleKotlinMPPFrameworkSupportProvider().addSupport(
+            builder,
+            module,
+            sdk = null,
+            specifyPluginVersionIfNeeded = true,
+            explicitPluginVersion = explicitPluginVersion
+        )
         VfsUtil.saveText(buildGradle, builder.buildConfigurationPart() + builder.buildMainPart() + buildMultiPlatformPart())
         return moduleDir
     }
@@ -75,7 +83,13 @@ abstract class KotlinGradleAbstractMultiplatformModuleBuilder(
                 enableGradleMetadataPreview(rootDir)
             }
             val buildGradleText = if (!mppInApplication) {
-                GradleKotlinMPPFrameworkSupportProvider().addSupport(builder, module, sdk = null, specifyPluginVersionIfNeeded = true)
+                GradleKotlinMPPFrameworkSupportProvider().addSupport(
+                    builder,
+                    module,
+                    sdk = null,
+                    specifyPluginVersionIfNeeded = true,
+                    explicitPluginVersion = explicitPluginVersion
+                )
                 builder.buildConfigurationPart() + builder.buildMainPart() + buildMultiPlatformPart()
             } else {
                 builder.buildConfigurationPart() + builder.buildMainPart()
