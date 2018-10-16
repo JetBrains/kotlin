@@ -138,7 +138,7 @@ We love contributions! There's [lots to do on Kotlin](https://youtrack.jetbrains
 about what you're interested in doing? Please join the #kontributors channel in [our Slack chat](http://slack.kotlinlang.org/)
 and let us know about your plans.
 
-If you want to find some issues to start off with, try [this query](https://youtrack.jetbrains.com/issues?q=tag:%20%7BUp%20For%20Grabs%7D%20and%20State:%20Open) which should find all open Kotlin issues that are marked as "up-for-grabs".
+If you want to find some issues to start off with, try [this query](https://youtrack.jetbrains.com/issues/KT?q=tag:%20%7BUp%20For%20Grabs%7D%20and%20State:%20Open) which should find all open Kotlin issues that are marked as "up-for-grabs".
 
 Currently only committers can assign issues to themselves so just add a comment if you're starting work on it.
 
