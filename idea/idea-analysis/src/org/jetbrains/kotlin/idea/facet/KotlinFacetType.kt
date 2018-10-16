@@ -24,7 +24,7 @@ abstract class KotlinFacetType<C : KotlinFacetConfiguration> :
             get() = FacetTypeRegistry.getInstance().findFacetType(TYPE_ID)
     }
 
-    override fun isSuitableModuleType(moduleType: ModuleType<*>) = moduleType is JavaModuleType
+    override fun isSuitableModuleType(moduleType: ModuleType<*>) = true
 
     override fun getIcon(): Icon = KotlinIcons.SMALL_LOGO
 }

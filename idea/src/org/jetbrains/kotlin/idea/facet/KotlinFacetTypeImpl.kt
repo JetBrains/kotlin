@@ -27,7 +27,7 @@ import javax.swing.Icon
 
 class KotlinFacetTypeImpl : KotlinFacetType<KotlinFacetConfiguration>() {
 
-    override fun isSuitableModuleType(moduleType: ModuleType<*>) = moduleType is JavaModuleType
+    override fun isSuitableModuleType(moduleType: ModuleType<*>) = true
 
     override fun getIcon(): Icon = KotlinIcons.SMALL_LOGO
 
