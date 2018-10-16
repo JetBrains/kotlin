@@ -309,6 +309,9 @@ data class LibrarySourceInfo(val project: Project, val library: Library, overrid
         return createLibraryInfo(project, library)
     }
 
+    override val platform: TargetPlatform?
+        get() = binariesModuleInfo.platform
+
     override fun toString() = "LibrarySourceInfo(libraryName=${library.name})"
 }
 
