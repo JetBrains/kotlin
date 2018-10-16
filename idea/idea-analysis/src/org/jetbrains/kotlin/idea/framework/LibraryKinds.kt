@@ -25,9 +25,11 @@ import com.intellij.openapi.roots.libraries.PersistentLibraryKind
 import com.intellij.openapi.util.io.JarUtil
 import com.intellij.openapi.vfs.*
 import org.jetbrains.kotlin.caches.resolve.IdePlatformKindResolution
+import org.jetbrains.kotlin.caches.resolve.resolution
 import org.jetbrains.kotlin.idea.vfilefinder.KnownLibraryKindForIndex
 import org.jetbrains.kotlin.idea.vfilefinder.getLibraryKindForJar
 import org.jetbrains.kotlin.js.resolve.JsPlatform
+import org.jetbrains.kotlin.platform.DefaultIdeTargetPlatformKindProvider
 import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 import org.jetbrains.kotlin.utils.PathUtil
@@ -78,10 +80,14 @@ fun detectLibraryKind(roots: Array<VirtualFile>): PersistentLibraryKind<*>? {
         }
     }
 
-    return IdePlatformKindResolution
-        .getInstances()
-        .firstOrNull { it.isLibraryFileForPlatform(jarFile) }
-        ?.libraryKind
+    val matchingResolution =
+        IdePlatformKindResolution
+            .getInstances()
+            .firstOrNull { it.isLibraryFileForPlatform(jarFile) }
+
+    if (matchingResolution != null) return matchingResolution.libraryKind
+
+    return DefaultIdeTargetPlatformKindProvider.defaultPlatform.kind.resolution.libraryKind
 }
 
 fun getLibraryJar(roots: Array<VirtualFile>, jarPattern: Pattern): VirtualFile? {
