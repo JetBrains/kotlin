@@ -45,18 +45,3 @@ fun <Attrs : Any> CacheAttributesManager<Attrs>.loadDiff(
     actual: Attrs? = this.loadActual(),
     expected: Attrs? = this.expected
 ) = CacheAttributesDiff(this, actual, expected)
-
-fun <Attrs : Any> CacheAttributesManager<Attrs>.loadAndCheckStatus() =
-    loadDiff().status
-
-/**
- * This method is kept only for compatibility.
- * Delete actual cache attributes values if it existed.
- */
-@Deprecated(
-    message = "Consider using `this.loadDiff().saveExpectedIfNeeded()` and cache `loadDiff()` result.",
-    replaceWith = ReplaceWith("writeVersion(null)")
-)
-fun CacheAttributesManager<*>.clean() {
-    writeVersion(null)
-}
