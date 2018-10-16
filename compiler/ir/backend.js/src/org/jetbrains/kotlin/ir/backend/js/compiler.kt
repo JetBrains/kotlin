@@ -105,6 +105,7 @@ private fun JsIrBackendContext.performInlining(moduleFragment: IrModuleFragment)
 
 private fun JsIrBackendContext.lower(moduleFragment: IrModuleFragment, dependencies: List<IrModuleFragment>) {
     moduleFragment.files.forEach(ThrowableSuccessorsLowering(this)::lower)
+    moduleFragment.files.forEach(TailrecLowering(this)::runOnFilePostfix)
     moduleFragment.files.forEach(UnitMaterializationLowering(this)::lower)
     moduleFragment.files.forEach(EnumClassLowering(this)::runOnFilePostfix)
     moduleFragment.files.forEach(EnumUsageLowering(this)::lower)
