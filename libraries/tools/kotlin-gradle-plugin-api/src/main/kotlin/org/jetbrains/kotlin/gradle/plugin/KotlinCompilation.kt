@@ -9,9 +9,11 @@ import org.gradle.api.Named
 import org.gradle.api.attributes.HasAttributes
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.FileCollection
+import java.io.File
 
 interface KotlinCompilationOutput {
-    var resourcesDir: Any
+    var resourcesDirProvider: Any
+    val resourcesDir: File
     val classesDirs: ConfigurableFileCollection
 
     val allOutputs: FileCollection
