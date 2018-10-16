@@ -5,10 +5,18 @@
 
 package org.jetbrains.kotlin.idea.roots
 
+import com.intellij.openapi.module.Module
+import com.intellij.openapi.module.ModuleManager
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.project.rootManager
+import com.intellij.openapi.roots.JavaProjectRootsUtil.isForGeneratedSources
 import com.intellij.openapi.roots.ModifiableRootModel
+import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.jps.model.JpsElement
 import org.jetbrains.jps.model.ex.JpsElementBase
+import org.jetbrains.jps.model.java.JavaModuleSourceRootTypes
 import org.jetbrains.jps.model.java.JavaResourceRootType
+import org.jetbrains.jps.model.java.JavaSourceRootProperties
 import org.jetbrains.jps.model.java.JavaSourceRootType
 import org.jetbrains.jps.model.module.JpsModuleSourceRoot
 import org.jetbrains.jps.model.module.JpsModuleSourceRootType
@@ -40,4 +48,21 @@ fun migrateNonJvmSourceFolders(modifiableRootModel: ModifiableRootModel) {
             contentEntry.addSourceFolder(url, newSourceRootType, properties)
         }
     }
+}
+
+fun getKotlinAwareDestinationSourceRoots(project: Project): List<VirtualFile> {
+    return ModuleManager.getInstance(project).modules.flatMap { it.collectKotlinAwareDestinationSourceRoots() }
+}
+
+private val KOTLIN_AWARE_SOURCE_ROOT_TYPES: Set<JpsModuleSourceRootType<JavaSourceRootProperties>> =
+    JavaModuleSourceRootTypes.SOURCES + KotlinSourceRootType.ALL_SOURCES
+
+private fun Module.collectKotlinAwareDestinationSourceRoots(): List<VirtualFile> {
+    return rootManager
+        .contentEntries
+        .asSequence()
+        .flatMap { it.getSourceFolders(KOTLIN_AWARE_SOURCE_ROOT_TYPES).asSequence() }
+        .filterNot { isForGeneratedSources(it) }
+        .mapNotNull { it.file }
+        .toList()
 }

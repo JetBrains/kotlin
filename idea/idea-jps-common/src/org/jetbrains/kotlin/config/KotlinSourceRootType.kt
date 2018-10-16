@@ -15,5 +15,9 @@ sealed class KotlinSourceRootType : JpsElementTypeBase<JavaSourceRootProperties>
     object TestSource : KotlinSourceRootType()
 
     override fun createDefaultProperties() = JpsJavaExtensionService.getInstance().createSourceRootProperties("")
+
+    companion object {
+        val ALL_SOURCES = setOf(Source, TestSource)
+    }
 }
 
