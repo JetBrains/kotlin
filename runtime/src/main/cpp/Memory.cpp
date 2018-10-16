@@ -619,6 +619,8 @@ void dumpReachable(const char* prefix, const ContainerHeaderSet* roots) {
 
 #endif
 
+#if USE_GC
+
 void MarkRoots(MemoryState*);
 void DeleteCorpses(MemoryState*);
 void ScanRoots(MemoryState*);
@@ -747,6 +749,7 @@ void CollectWhite(MemoryState* state, ContainerHeader* container) {
   runDeallocationHooks(container);
   scheduleDestroyContainer(state, container);
 }
+#endif
 
 inline void AddRef(ContainerHeader* header) {
   // Looking at container type we may want to skip AddRef() totally
@@ -883,8 +886,10 @@ void FreeAggregatingFrozenContainer(ContainerHeader* container) {
   RuntimeAssert(isAggregatingFrozenContainer(container), "expected fictitious frozen container");
   MEMORY_LOG("%p is fictitious frozen container\n", container);
   RuntimeAssert(!container->buffered(), "frozen objects must not participate in GC")
+#if USE_GC
   // Forbid finalizerQueue handling.
   ++state->finalizerQueueSuspendCount;
+#endif
   // Special container for frozen objects.
   ContainerHeader** subContainer = reinterpret_cast<ContainerHeader**>(container + 1);
   MEMORY_LOG("Total subcontainers = %d\n", container->objectCount());
@@ -892,7 +897,9 @@ void FreeAggregatingFrozenContainer(ContainerHeader* container) {
     MEMORY_LOG("Freeing subcontainer %p\n", *subContainer);
     FreeContainer(*subContainer++);
   }
+#if USE_GC
   --state->finalizerQueueSuspendCount;
+#endif
   scheduleDestroyContainer(state, container);
   MEMORY_LOG("Freeing subcontainers done\n");
 }
@@ -1121,8 +1128,10 @@ void DeinitMemory(MemoryState* memoryState) {
     dumpReachable("", memoryState->containers);
   }
 #else
+#if USE_GC
   if (lastMemoryState)
     RuntimeAssert(allocCount == 0, "Memory leaks found");
+#endif
 #endif
 
   PRINT_EVENT(memoryState)
@@ -1729,6 +1738,7 @@ void FreezeSubgraph(ObjHeader* root) {
     freezeAcyclic(rootContainer );
   }
 
+#if USE_GC
   // Now remove frozen objects from the toFree list.
   // TODO: optimize it by keeping ignored (i.e. freshly frozen) objects in the set,
   // and use it when analyzing toFree during collection.
@@ -1737,6 +1747,7 @@ void FreezeSubgraph(ObjHeader* root) {
       if (!isMarkedAsRemoved(container) && container->frozen())
         container = markAsRemoved(container);
   }
+#endif
 }
 
 // This function is called from field mutators to check if object's header is frozen.
