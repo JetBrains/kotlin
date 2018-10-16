@@ -340,13 +340,10 @@ class CommentSaver(originalElements: PsiChildRange, private val saveLineBreaks: 
 
             // shift (possible contained) comment in expression underneath braces
             if (isSingleExpressionWithCommentBeneath) {
-                resultElements.forEach {
-                    // Add comment to the end of the expression
-                    it.add(psiFactory.createWhiteSpace("\n"))
-                    it.add(restored)
-
-                    restored.delete()
-                }
+                val element = resultElements.first
+                element?.add(psiFactory.createWhiteSpace("\n"))
+                element?.add(restored)
+                restored.delete()
             }
 
             bindNewElement(restored, commentTreeElement) // will be used when restoring line breaks

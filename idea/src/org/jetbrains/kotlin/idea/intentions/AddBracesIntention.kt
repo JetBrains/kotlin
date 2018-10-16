@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiComment
+import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiWhiteSpace
 import org.jetbrains.kotlin.idea.refactoring.getLineCount
 import org.jetbrains.kotlin.idea.refactoring.getLineNumber
@@ -64,12 +65,18 @@ class AddBracesIntention : SelfTargetingIntention<KtElement>(KtElement::class.ja
                 semicolon.delete()
         }
 
-        // TODO: Check if there's only 1 PsiComment at the end of the element, but underneath the actual expression
-        // TODO: Also make sure to exclude other test cases that don't have a comment underneath the expression.
-        if (element is KtIfExpression && expression.isInSingleLine()) {
-            val lastComment = element.siblings(withItself = false).filter { it !is PsiWhiteSpace }.last { it is PsiComment }
-            val allComments = element.allChildren.filterIsInstance<PsiComment>().toList()
-            isCommentBeneath = element.getLineCount() <= 1 && lastComment is PsiComment // && allComments.count() == 0) {
+        // Check for single line if expression
+        if (element is KtIfExpression && expression.isInSingleLine() && element.`else` == null) {
+            // Check if a comment is actually underneath (\n) the expression
+            val allElements = element.siblings(withItself = false).filterIsInstance<PsiElement>()
+            val sibling = allElements.lastOrNull { it is PsiComment }
+            if (sibling is PsiComment) {
+                // Check if \n before last comment and if there is not a comment before \n
+                isCommentBeneath =
+                        sibling.prevSibling is PsiWhiteSpace &&
+                        sibling.prevSibling.textContains('\n') &&
+                        sibling.prevSibling.prevSibling !is PsiComment
+            }
         }
 
         val nextComment = when {
@@ -94,11 +101,7 @@ class AddBracesIntention : SelfTargetingIntention<KtElement>(KtElement::class.ja
         }
 
         // Check for single line expression with comment beneath.
-        if (isCommentBeneath) {
-            saver.restore(result, true, false)
-        } else {
-            saver.restore(result, false, false)
-        }
+        saver.restore(result, isCommentBeneath, false)
     }
 
     private fun KtElement.getTargetExpression(caretLocation: Int): KtExpression? {
