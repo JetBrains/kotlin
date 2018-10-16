@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.idea.core.isAndroidModule
 import org.jetbrains.kotlin.idea.framework.KotlinSdkType
 import org.jetbrains.kotlin.idea.platform.tooling
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
+import org.jetbrains.kotlin.platform.DefaultIdeTargetPlatformKindProvider
 import org.jetbrains.kotlin.platform.IdePlatform
 import org.jetbrains.kotlin.platform.IdePlatformKind
 import org.jetbrains.kotlin.platform.impl.JvmIdePlatformKind
@@ -46,7 +47,7 @@ import kotlin.reflect.KProperty1
 private fun getDefaultTargetPlatform(module: Module, rootModel: ModuleRootModel?): IdePlatform<*, *> {
     val platformKind = IdePlatformKind.ALL_KINDS.firstOrNull {
         getRuntimeLibraryVersions(module, rootModel, it).isNotEmpty()
-    } ?: JvmIdePlatformKind
+    } ?: DefaultIdeTargetPlatformKindProvider.defaultPlatform.kind
     if (platformKind == JvmIdePlatformKind) {
         var jvmTarget = Kotlin2JvmCompilerArgumentsHolder.getInstance(module.project).settings.jvmTarget?.let { JvmTarget.fromString(it) }
         if (jvmTarget == null) {
