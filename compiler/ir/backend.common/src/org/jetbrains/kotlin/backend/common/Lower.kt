@@ -30,20 +30,28 @@ interface FileLoweringPass {
     fun lower(irFile: IrFile)
 }
 
-interface ClassLoweringPass {
+interface ClassLoweringPass : FileLoweringPass {
     fun lower(irClass: IrClass)
+
+    override fun lower(irFile: IrFile) = runOnFilePostfix(irFile)
 }
 
-interface DeclarationContainerLoweringPass {
+interface DeclarationContainerLoweringPass : FileLoweringPass {
     fun lower(irDeclarationContainer: IrDeclarationContainer)
+
+    override fun lower(irFile: IrFile) = runOnFilePostfix(irFile)
 }
 
-interface FunctionLoweringPass {
+interface FunctionLoweringPass : FileLoweringPass {
     fun lower(irFunction: IrFunction)
+
+    override fun lower(irFile: IrFile) = runOnFilePostfix(irFile)
 }
 
-interface BodyLoweringPass {
+interface BodyLoweringPass : FileLoweringPass {
     fun lower(irBody: IrBody)
+
+    override fun lower(irFile: IrFile) = runOnFilePostfix(irFile)
 }
 
 fun ClassLoweringPass.runOnFilePostfix(irFile: IrFile) {
@@ -67,7 +75,7 @@ fun DeclarationContainerLoweringPass.asClassLoweringPass() = object : ClassLower
 
 fun DeclarationContainerLoweringPass.runOnFilePostfix(irFile: IrFile) {
     this.asClassLoweringPass().runOnFilePostfix(irFile)
-    this.lower(irFile)
+    this.lower(irFile as IrDeclarationContainer)
 }
 
 fun BodyLoweringPass.runOnFilePostfix(irFile: IrFile) {

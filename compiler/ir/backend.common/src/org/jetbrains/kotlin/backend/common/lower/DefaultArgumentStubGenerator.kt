@@ -5,10 +5,7 @@
 
 package org.jetbrains.kotlin.backend.common.lower
 
-import org.jetbrains.kotlin.backend.common.BodyLoweringPass
-import org.jetbrains.kotlin.backend.common.CommonBackendContext
-import org.jetbrains.kotlin.backend.common.DeclarationContainerLoweringPass
-import org.jetbrains.kotlin.backend.common.FunctionLoweringPass
+import org.jetbrains.kotlin.backend.common.*
 import org.jetbrains.kotlin.backend.common.descriptors.WrappedClassConstructorDescriptor
 import org.jetbrains.kotlin.backend.common.descriptors.WrappedSimpleFunctionDescriptor
 import org.jetbrains.kotlin.backend.common.descriptors.WrappedValueParameterDescriptor
@@ -38,6 +35,16 @@ import org.jetbrains.kotlin.ir.util.transformDeclarationsFlat
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
+
+fun makeDefaultArgumentStubPhase(skipInlineMethods: Boolean) = object : CompilerPhase<CommonBackendContext, IrFile> {
+    override val name = "DefaultArgumentsStubGenerator"
+    override val description = "Generate synthetic stubs for functions with default parameter values"
+
+    override fun invoke(context: CommonBackendContext, input: IrFile): IrFile {
+        DefaultArgumentStubGenerator(context, skipInlineMethods).lower(input)
+        return input
+    }
+}
 
 // TODO: fix expect/actual default parameters
 

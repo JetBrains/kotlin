@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
+import org.jetbrains.kotlin.backend.common.makePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
@@ -34,6 +35,11 @@ import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
 import org.jetbrains.kotlin.resolve.calls.components.hasDefaultValue
 import org.jetbrains.kotlin.resolve.jvm.annotations.findJvmOverloadsAnnotation
 
+val JvmOverloadsAnnotationPhase = makePhase(
+    ::JvmOverloadsAnnotationLowering,
+    name = "JvmOverloadsAnnotation",
+    description = "Handle JvmOverloads annotations"
+)
 
 class JvmOverloadsAnnotationLowering(val context: JvmBackendContext) : ClassLoweringPass {
 

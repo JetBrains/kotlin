@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
+import org.jetbrains.kotlin.backend.common.makePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrExpression
@@ -14,6 +15,12 @@ import org.jetbrains.kotlin.ir.expressions.IrGetObjectValue
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
+
+val SingletonReferencesPhase = makePhase(
+    ::SingletonReferencesLowering,
+    name = "SingletonReferences",
+    description = "Handle singleton references"
+)
 
 class SingletonReferencesLowering(val context: JvmBackendContext) : BodyLoweringPass, IrElementTransformerVoid() {
     override fun lower(irBody: IrBody) {

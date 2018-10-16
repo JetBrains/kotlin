@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.common.descriptors.WrappedSimpleFunctionDesc
 import org.jetbrains.kotlin.backend.common.descriptors.WrappedValueParameterDescriptor
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irIfThen
+import org.jetbrains.kotlin.backend.common.makePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
@@ -28,6 +29,12 @@ import org.jetbrains.kotlin.ir.util.filterDeclarations
 import org.jetbrains.kotlin.ir.util.findDeclaration
 import org.jetbrains.kotlin.ir.util.isSubclassOf
 import org.jetbrains.kotlin.name.Name
+
+val FunctionNVarargInvokePhase = makePhase(
+    ::FunctionNVarargInvokeLowering,
+    name = "FunctionNVarargInvoke",
+    description = "Handle invoke functions with large number of arguments"
+)
 
 class FunctionNVarargInvokeLowering(var context: JvmBackendContext) : ClassLoweringPass {
 
