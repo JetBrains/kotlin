@@ -23,6 +23,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.analyzer.AnalysisResult
+import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.container.ComponentProvider
 import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.context.GlobalContext
@@ -31,6 +32,8 @@ import org.jetbrains.kotlin.context.withProject
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
 import org.jetbrains.kotlin.frontend.di.createContainerForLazyBodyResolve
+import org.jetbrains.kotlin.idea.caches.project.getModuleInfo
+import org.jetbrains.kotlin.idea.compiler.IDELanguageSettingsProvider
 import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
 import org.jetbrains.kotlin.idea.project.jvmTarget
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
@@ -182,8 +185,11 @@ private object KotlinResolveDataProvider {
                 allowSliceRewrite = true
             )
 
-            val targetPlatform = TargetPlatformDetector.getPlatform(analyzableElement.containingKtFile)
+            val moduleInfo = analyzableElement.containingKtFile.getModuleInfo()
 
+            val targetPlatform = moduleInfo.platform ?: TargetPlatformDetector.getPlatform(analyzableElement.containingKtFile)
+
+            val targetPlatformVersion = IDELanguageSettingsProvider.getTargetPlatform(moduleInfo, project)
             val lazyTopDownAnalyzer = createContainerForLazyBodyResolve(
                 //TODO: should get ModuleContext
                 globalContext.withProject(project).withModule(moduleDescriptor),
@@ -191,7 +197,7 @@ private object KotlinResolveDataProvider {
                 trace,
                 targetPlatform,
                 bodyResolveCache,
-                analyzableElement.jvmTarget,
+                targetPlatformVersion,
                 analyzableElement.languageVersionSettings
             ).get<LazyTopDownAnalyzer>()
 

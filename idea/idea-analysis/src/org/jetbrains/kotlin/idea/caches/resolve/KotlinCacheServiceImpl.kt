@@ -209,7 +209,7 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
         // we assume that all files come from the same module
         val targetPlatform = files.map { TargetPlatformDetector.getPlatform(it) }.toSet().single()
         val specialModuleInfo = files.map(KtFile::getModuleInfo).toSet().single()
-        val settings = specialModuleInfo.platformSettings(targetPlatform)
+        val settings = specialModuleInfo.platformSettings(specialModuleInfo.platform ?: targetPlatform)
 
         // File copies are created during completion and receive correct modification events through POM.
         // Dummy files created e.g. by J2K do not receive events.
