@@ -3,7 +3,7 @@ import java.lang.System;
 @kotlin.Metadata()
 public final class Test {
     @org.jetbrains.annotations.NotNull()
-    private static final java.lang.String test = null;
+    private static final java.lang.String test = "";
     public static final Test.A A = null;
 
     public Test() {

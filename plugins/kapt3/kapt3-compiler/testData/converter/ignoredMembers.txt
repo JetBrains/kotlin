@@ -5,7 +5,7 @@ public final class Test {
     @org.jetbrains.annotations.NotNull()
     public final java.lang.String ignoredProperty = "";
     @org.jetbrains.annotations.NotNull()
-    private final java.lang.String nonIgnoredProperty = null;
+    private final java.lang.String nonIgnoredProperty = "";
 
     public final void nonIgnoredFun() {
     }
