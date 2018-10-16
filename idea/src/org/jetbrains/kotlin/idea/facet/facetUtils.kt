@@ -138,7 +138,7 @@ fun Module.getOrCreateFacet(
 }
 
 fun KotlinFacet.configureFacet(
-    compilerVersion: String,
+    compilerVersion: String?,
     coroutineSupport: LanguageFeature.State,
     platform: IdePlatform<*, *>?, // if null, detect by module dependencies
     modelsProvider: IdeModifiableModelsProvider
