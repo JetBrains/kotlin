@@ -100,14 +100,14 @@ bunch switch . 182
 
 ## <a name="working-in-idea"></a> Working with the project in IntelliJ IDEA
 
-Working with the Kotlin project requires IntelliJ IDEA 2017.3. You can download IntelliJ IDEA 2017.3 [here](https://www.jetbrains.com/idea/download).
+Working with the Kotlin project requires at least IntelliJ IDEA 2017.3. You can download IntelliJ IDEA 2017.3 [here](https://www.jetbrains.com/idea/download).
 
-To import the project in Intellij choose project directory in Open project dialog. Then, after project opened, Select 
+After cloning the project, to import the project in Intellij choose the project directory in the Open project dialog. Then, after project opened, Select 
 `File` -> `New...` -> `Module from Existing Sources` in the menu, and select `build.gradle.kts` file in the project's root folder.
 
 In the import dialog, select `use default gradle wrapper`.
 
-To be able to run tests from IntelliJ easily, check `Delegate IDE build/run actions to Gradle` and choose `Gradle Test Runner` in the Gradle runner settings.
+To be able to run tests from IntelliJ easily, check `Delegate IDE build/run actions to Gradle` and choose `Gradle Test Runner` in the Gradle runner settings after importing the project.
 
 At this time, you can use the latest released 1.2.x version of the Kotlin plugin for working with the code. To make sure you have the latest version installed, use Tools | Kotlin | Configure Kotlin Plugin Updates and press "Check for updates now".
 
@@ -138,7 +138,7 @@ We love contributions! There's [lots to do on Kotlin](https://youtrack.jetbrains
 about what you're interested in doing? Please join the #kontributors channel in [our Slack chat](http://slack.kotlinlang.org/)
 and let us know about your plans.
 
-If you want to find some issues to start off with, try [this query](https://youtrack.jetbrains.com/issues/KT?q=tag:%20%7BUp%20For%20Grabs%7D%20%23Unresolved) which should find all Kotlin issues that marked as "up-for-grabs".
+If you want to find some issues to start off with, try [this query](https://youtrack.jetbrains.com/issues?q=tag:%20%7BUp%20For%20Grabs%7D%20and%20State:%20Open) which should find all open Kotlin issues that are marked as "up-for-grabs".
 
 Currently only committers can assign issues to themselves so just add a comment if you're starting work on it.
 
