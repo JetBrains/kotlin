@@ -43,10 +43,7 @@ class SerializableJsTranslator(
     val context: TranslationContext
 ) : SerializableCodegen(descriptor, context.bindingContext()) {
 
-    private val initMap: Map<PropertyDescriptor, KtExpression?> = declaration.run {
-        (bodyPropertiesDescriptorsMap(context.bindingContext()).mapValues { it.value.delegateExpressionOrInitializer } +
-                primaryPropertiesDescriptorsMap(context.bindingContext()).mapValues { it.value.defaultValue })
-    }
+    private val initMap: Map<PropertyDescriptor, KtExpression?> = context.buildInitializersRemapping(declaration)
 
     override fun generateInternalConstructor(constructorDescriptor: ClassConstructorDescriptor) {
 

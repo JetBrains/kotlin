@@ -6,7 +6,6 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ParameterDescriptor
-import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.IrAnonymousInitializer
 import org.jetbrains.kotlin.ir.declarations.IrClass
@@ -18,7 +17,6 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.util.TypeTranslator
 import org.jetbrains.kotlin.ir.util.constructors
-import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassOrAny
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
@@ -40,19 +38,7 @@ class SerializableIrGenerator(
 
     override fun generateInternalConstructor(constructorDescriptor: ClassConstructorDescriptor) =
         irClass.contributeConstructor(constructorDescriptor) { ctor ->
-            val original = irClass.constructors.singleOrNull { it.isPrimary } ?: throw IllegalStateException("Serializable class must have single primary constructor")
-            // default arguments of original constructor
-            val defaultsMap: Map<ParameterDescriptor, IrExpression?> = original.valueParameters.associate { it.descriptor to it.defaultValue?.expression }
-
-            fun transformFieldInitializer(f: IrField): IrExpression? {
-                val i = f.initializer?.expression ?: return null
-                return if (i is IrGetValueImpl && i.origin == IrStatementOrigin.INITIALIZE_PROPERTY_FROM_PARAMETER) {
-                    // this is a primary constructor property, use corresponding default of value parameter
-                    defaultsMap.getValue(i.descriptor as ParameterDescriptor)
-                } else {
-                    i
-                }
-            }
+            val transformFieldInitializer = buildInitializersRemapping(irClass)
 
             // Missing field exception parts
             val exceptionCtor =
