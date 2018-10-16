@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.incremental.ExpectActualTrackerImpl
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.storage.version.CacheAttributesDiff
+import org.jetbrains.kotlin.incremental.storage.version.CacheVersion
 import org.jetbrains.kotlin.incremental.storage.version.loadDiff
 import org.jetbrains.kotlin.incremental.storage.version.localCacheVersionManager
 import org.jetbrains.kotlin.jps.build.*
@@ -70,7 +71,7 @@ abstract class KotlinModuleBuildTarget<BuildMetaInfoType : BuildMetaInfo> intern
         isIncrementalCompilationEnabled
     )
 
-    val initialLocalCacheAttributesDiff: CacheAttributesDiff<*> = localCacheVersionManager.loadDiff()
+    val initialLocalCacheAttributesDiff: CacheAttributesDiff<CacheVersion> = localCacheVersionManager.loadDiff()
 
     val module: JpsModule
         get() = jpsModuleBuildTarget.module

@@ -61,7 +61,7 @@ class KotlinCompileContext(val jpsContext: CompileContext) {
 
     val lookupsCacheAttributesManager: CompositeLookupsCacheAttributesManager = makeLookupsCacheAttributesManager()
 
-    val initialLookupsCacheStateDiff: CacheAttributesDiff<*> = loadLookupsCacheStateDiff()
+    val initialLookupsCacheStateDiff: CacheAttributesDiff<CompositeLookupsCacheAttributes> = loadLookupsCacheStateDiff()
 
     val shouldCheckCacheVersions = System.getProperty(KotlinBuilder.SKIP_CACHE_VERSION_CHECK_PROPERTY) == null
 
@@ -149,7 +149,8 @@ class KotlinCompileContext(val jpsContext: CompileContext) {
      */
     fun ensureLookupsCacheAttributesSaved() {
         if (lookupAttributesSaved.compareAndSet(false, true)) {
-            initialLookupsCacheStateDiff.saveExpectedIfNeeded()
+            val diff = initialLookupsCacheStateDiff
+            diff.manager.writeActualVersion(diff.expected)
         }
     }
 
@@ -207,7 +208,7 @@ class KotlinCompileContext(val jpsContext: CompileContext) {
     private fun clearLookupCache() {
         KotlinBuilder.LOG.info("Clearing lookup cache")
         dataManager.cleanLookupStorage(KotlinBuilder.LOG)
-        initialLookupsCacheStateDiff.saveExpectedIfNeeded()
+        initialLookupsCacheStateDiff.manager.writeActualVersion(null)
     }
 
     fun cleanupCaches() {
