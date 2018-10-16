@@ -11,6 +11,12 @@
         <xi:fallback/>
     </xi:include>
 
+    <extensions defaultExtensionNs="com.intellij">
+        <applicationService
+            serviceInterface="org.jetbrains.kotlin.platform.DefaultIdeTargetPlatformKindProvider"
+            serviceImplementation="org.jetbrains.konan.support.NativeOnlyDefaultTargetPlatformKindProvider"/>
+    </extensions>
+
     <extensions defaultExtensionNs="cidr.debugger">
         <languageSupport language="kotlin" implementationClass="org.jetbrains.konan.debugger.KonanDebuggerLanguageSupport"/>
         <lineBreakpointFileTypesProvider implementation="org.jetbrains.konan.debugger.KonanLineBreakpointFileTypesProvider"/>
