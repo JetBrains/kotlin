@@ -73,7 +73,7 @@ dependencies {
 }
 
 jar {
-    manifestAttributes(manifest, project, 'Main', true)
+    manifestAttributes(manifest, project, 'Main' /*true*/)
     from("${rootDir}/dist/builtins")
     from sourceSets.experimental.output
     from sourceSets.coroutines.output
@@ -85,14 +85,14 @@ jar {
 task coroutinesJar(type: Jar) {
     version = null
     classifier = 'coroutines'
-    manifestAttributes(manifest, project, 'Main', true)
+    manifestAttributes(manifest, project, 'Main')
     project.configure(manifest) { attributes 'Kotlin-Version': '1.3' }
 }
 
 task unsignedJar(type: Jar) {
     version = null
     classifier = 'unsigned'
-    manifestAttributes(manifest, project, 'Main', true)
+    manifestAttributes(manifest, project, 'Main')
     project.configure(manifest) { attributes 'Kotlin-Version': '1.3' }
 }
 
@@ -122,9 +122,19 @@ task distMavenSources(type: Copy) {
     rename "-${java.util.regex.Pattern.quote(version)}", ''
 }
 
+task modularJar(type: Jar) {
+    dependsOn(jar)
+    manifestAttributes(manifest, project, 'Main', true)
+    classifier = 'modular'
+
+    from zipTree(jar.outputs.files.singleFile)
+    from sourceSets.java9.output
+}
+
 artifacts {
     archives sourcesJar
     archives javadocJar
+    archives modularJar
 }
 
 dist {
@@ -189,7 +199,7 @@ compileExperimentalKotlin {
     }
 }
 
-compileJava9Sources(project, 'kotlin.stdlib')
+compileJava9Sources(project, 'kotlin.stdlib', [sourceSets.main.output, sourceSets.coroutines.output])
 
 compileCoroutinesKotlin {
     kotlinOptions {

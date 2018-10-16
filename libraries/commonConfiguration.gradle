@@ -90,13 +90,10 @@ ext.manifestAttributes = { Manifest manifest, Project project, String component 
                 'Kotlin-Runtime-Component': component,
                 'Kotlin-Version': project.kotlinLanguageVersion
         }
-        // TODO: enable as soon as this doesn't cause D8/DX to crash
-        /*
         if (multiRelease) {
             attributes \
                 'Multi-Release': 'true'
         }
-        */
     }
 }
 
