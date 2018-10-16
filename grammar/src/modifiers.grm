@@ -19,6 +19,7 @@ modifier
   : typeParameterModifier
   : functionModifier
   : propertyModifier
+  : multiPlatformModifier
   ;
 
 classModifier
@@ -76,4 +77,9 @@ propertyModifier
 
 suspendModifier
   : "suspend"
+  ;
+
+multiPlatformModifier
+  : "expect"
+  : "actual"
   ;
