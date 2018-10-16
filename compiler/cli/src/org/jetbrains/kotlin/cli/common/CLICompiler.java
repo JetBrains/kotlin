@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.cli.common;
 
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.util.Disposer;
+import kotlin.collections.SetsKt;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -160,6 +161,40 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> extends CLI
         }
 
         setupLanguageVersionSettings(configuration, arguments);
+
+        if (arguments.getListPhases()) {
+            configuration.put(CommonConfigurationKeys.LIST_PHASES, true);
+        }
+
+        String[] enabledPhases = arguments.getEnablePhases();
+        if (enabledPhases != null) {
+            configuration.put(CommonConfigurationKeys.ENABLED_PHASES, SetsKt.setOf(enabledPhases));
+        }
+
+        String[] disabledPhases = arguments.getDisablePhases();
+        if (disabledPhases != null) {
+            configuration.put(CommonConfigurationKeys.DISABLED_PHASES, SetsKt.setOf(disabledPhases));
+        }
+
+        String[] verbosePhases = arguments.getVerbosePhases();
+        if (verbosePhases != null) {
+            configuration.put(CommonConfigurationKeys.VERBOSE_PHASES, SetsKt.setOf(verbosePhases));
+        }
+
+        String[] phasesToDumpBefore = arguments.getPhasesToDumpBefore();
+        if (phasesToDumpBefore != null) {
+            configuration.put(CommonConfigurationKeys.PHASES_TO_DUMP_STATE_BEFORE, SetsKt.setOf(phasesToDumpBefore));
+        }
+
+        String[] phasesToDumpAfter = arguments.getPhasesToDumpAfter();
+        if (phasesToDumpAfter != null) {
+            configuration.put(CommonConfigurationKeys.PHASES_TO_DUMP_STATE_AFTER, SetsKt.setOf(phasesToDumpAfter));
+        }
+
+        String[] phasesToDump = arguments.getPhasesToDump();
+        if (phasesToDump != null) {
+            configuration.put(CommonConfigurationKeys.PHASES_TO_DUMP_STATE, SetsKt.setOf(phasesToDump));
+        }
     }
 
     @NotNull
