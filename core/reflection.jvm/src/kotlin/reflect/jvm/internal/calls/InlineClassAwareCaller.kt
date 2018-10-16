@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
+import org.jetbrains.kotlin.resolve.isInlineClass
 import org.jetbrains.kotlin.resolve.isInlineClassType
 import org.jetbrains.kotlin.types.KotlinType
 import java.lang.reflect.Member
@@ -49,15 +50,34 @@ internal class InlineClassAwareCaller<out M : Member>(
                 // and in that case the number of expected arguments is one less than usual, hence -1
                 -1
             }
-            descriptor.dispatchReceiverParameter != null && caller !is BoundCaller -> 1
+
+            descriptor.dispatchReceiverParameter != null && caller !is BoundCaller -> {
+                // If we have an unbound reference to the inline class member,
+                // its receiver (which is passed as argument 0) should also be unboxed.
+                if (descriptor.containingDeclaration.isInlineClass())
+                    0
+                else
+                    1
+            }
+
             else -> 0
         }
 
         val extraArgumentsTail = if (isDefault) 2 else 0
 
-        val kotlinParameterTypes =
-            listOfNotNull(descriptor.extensionReceiverParameter?.type) +
-                    descriptor.valueParameters.map(ValueParameterDescriptor::getType)
+        val kotlinParameterTypes: List<KotlinType> = ArrayList<KotlinType>().also { kotlinParameterTypes ->
+            val extensionReceiverType = descriptor.extensionReceiverParameter?.type
+            if (extensionReceiverType != null) {
+                kotlinParameterTypes.add(extensionReceiverType)
+            } else {
+                val containingDeclaration = descriptor.containingDeclaration
+                if (containingDeclaration is ClassDescriptor && containingDeclaration.isInline) {
+                    kotlinParameterTypes.add(containingDeclaration.defaultType)
+                }
+            }
+
+            descriptor.valueParameters.mapTo(kotlinParameterTypes, ValueParameterDescriptor::getType)
+        }
         val expectedArgsSize = kotlinParameterTypes.size + shift + extraArgumentsTail
         if (arity != expectedArgsSize) {
             throw KotlinReflectionInternalError(
@@ -116,9 +136,13 @@ internal fun <M : Member> CallerImpl<M>.createInlineClassAwareCallerIfNeeded(
     val needsInlineAwareCaller =
         descriptor.valueParameters.any { it.type.isInlineClassType() } ||
                 descriptor.returnType?.isInlineClassType() == true ||
-                (this !is BoundCaller && descriptor.extensionReceiverParameter?.type?.isInlineClassType() == true)
+                this !is BoundCaller && descriptor.hasInlineClassReceiver()
+
     return if (needsInlineAwareCaller) InlineClassAwareCaller(descriptor, this, isDefault) else this
 }
+
+private fun CallableMemberDescriptor.hasInlineClassReceiver() =
+    expectedReceiverType?.isInlineClassType() == true
 
 internal fun Class<*>.getUnboxMethod(descriptor: CallableMemberDescriptor): Method = try {
     getDeclaredMethod("unbox" + JvmAbi.IMPL_SUFFIX_FOR_INLINE_CLASS_MEMBERS)
@@ -137,12 +161,13 @@ internal fun KotlinType.toInlineClass(): Class<*>? {
     return null
 }
 
-internal fun Any?.coerceToExpectedReceiverType(descriptor: CallableMemberDescriptor): Any? {
-    val expectedReceiverType =
-        descriptor.extensionReceiverParameter?.type
-            ?: (descriptor.containingDeclaration as? ClassDescriptor)?.defaultType
+private val CallableMemberDescriptor.expectedReceiverType
+    get() =
+        extensionReceiverParameter?.type
+            ?: (containingDeclaration as? ClassDescriptor)?.defaultType.takeIf { dispatchReceiverParameter != null }
 
-    val unboxMethod = expectedReceiverType?.toInlineClass()?.getUnboxMethod(descriptor) ?: return this
+internal fun Any?.coerceToExpectedReceiverType(descriptor: CallableMemberDescriptor): Any? {
+    val unboxMethod = descriptor.expectedReceiverType?.toInlineClass()?.getUnboxMethod(descriptor) ?: return this
 
     return unboxMethod.invoke(this)
 }

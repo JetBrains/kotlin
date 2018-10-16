@@ -28,12 +28,9 @@ import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.psi.KtElement
-import org.jetbrains.kotlin.resolve.DescriptorFactory
-import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.PropertyImportedFromObject
+import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
-import org.jetbrains.kotlin.resolve.isUnderlyingPropertyOfInlineClass
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes.*
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
@@ -252,7 +249,11 @@ class PropertyReferenceCodegen(
                 else -> error("Unsupported callable reference: $callable")
             }
             val declaration = DescriptorUtils.unwrapFakeOverride(accessor).original
-            val method = state.typeMapper.mapAsmMethod(declaration)
+            val method =
+                if (callable.containingDeclaration.isInlineClass())
+                    state.typeMapper.mapSignatureForInlineErasedClassSkipGeneric(declaration).asmMethod
+                else
+                    state.typeMapper.mapAsmMethod(declaration)
             return method.name + method.descriptor
         }
 
