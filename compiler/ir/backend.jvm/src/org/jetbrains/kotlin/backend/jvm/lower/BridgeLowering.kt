@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.backend.common.bridges.generateBridgesForFunctionDes
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlockBody
 import org.jetbrains.kotlin.backend.common.lower.irNot
+import org.jetbrains.kotlin.backend.common.makePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.descriptors.DefaultImplsClassDescriptor
 import org.jetbrains.kotlin.backend.jvm.descriptors.JvmFunctionDescriptorImpl
@@ -58,6 +59,12 @@ import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.org.objectweb.asm.Opcodes.*
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.Method
+
+val BridgePhase = makePhase(
+    ::BridgeLowering,
+    name = "Bridge",
+    description = "Generate bridges"
+)
 
 class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPass {
 

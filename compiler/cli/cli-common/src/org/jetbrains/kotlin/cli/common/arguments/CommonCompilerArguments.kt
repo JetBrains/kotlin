@@ -196,6 +196,48 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
     )
     var allowResultReturnType: Boolean by FreezableVar(false)
 
+    @Argument(
+        value = "-Xlist-phases",
+        description = "List backend phases"
+    )
+    var listPhases: Boolean by FreezableVar(false)
+
+    @Argument(
+        value = "-Xdisable-phases",
+        description = "Disable backend phases"
+    )
+    var disablePhases: Array<String> by FreezableVar(emptyArray())
+
+    @Argument(
+        value = "-Xverbose-phases",
+        description = "Be verbose while performing these backend phases"
+    )
+    var verbosePhases: Array<String> by FreezableVar(emptyArray())
+
+    @Argument(
+        value = "-Xphases-to-dump-before",
+        description = "Dump backend state before these phases"
+    )
+    var phasesToDumpBefore: Array<String> by FreezableVar(emptyArray())
+
+    @Argument(
+        value = "-Xphases-to-dump-after",
+        description = "Dump backend state after these phases"
+    )
+    var phasesToDumpAfter: Array<String> by FreezableVar(emptyArray())
+
+    @Argument(
+        value = "-Xphases-to-dump",
+        description = "Dump backend state both before and after these phases"
+    )
+    var phasesToDump: Array<String> by FreezableVar(emptyArray())
+
+    @Argument(
+        value = "-Xprofile-phases",
+        description = "Profile backend phases"
+    )
+    var profilePhases: Boolean by FreezableVar(false)
+
     open fun configureAnalysisFlags(collector: MessageCollector): MutableMap<AnalysisFlag<*>, Any> {
         return HashMap<AnalysisFlag<*>, Any>().apply {
             put(AnalysisFlags.skipMetadataVersionCheck, skipMetadataVersionCheck)

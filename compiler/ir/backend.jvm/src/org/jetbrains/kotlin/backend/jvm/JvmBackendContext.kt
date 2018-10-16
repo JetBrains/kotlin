@@ -6,12 +6,15 @@
 package org.jetbrains.kotlin.backend.jvm
 
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
+import org.jetbrains.kotlin.backend.common.CompilerPhaseManager
+import org.jetbrains.kotlin.backend.common.CompilerPhases
 import org.jetbrains.kotlin.backend.common.ir.Ir
 import org.jetbrains.kotlin.backend.common.ir.Symbols
 import org.jetbrains.kotlin.backend.jvm.descriptors.JvmDeclarationFactory
 import org.jetbrains.kotlin.backend.jvm.descriptors.JvmSharedVariablesManager
 import org.jetbrains.kotlin.builtins.ReflectionTypes
 import org.jetbrains.kotlin.codegen.state.GenerationState
+import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.NotFoundClasses
@@ -44,6 +47,19 @@ class JvmBackendContext(
 
     override val ir = JvmIr(irModuleFragment, symbolTable)
 
+    val phases = CompilerPhases(jvmPhases, state.configuration)
+
+    init {
+        if (state.configuration.get(CommonConfigurationKeys.LIST_PHASES) == true) {
+            phases.list()
+        }
+    }
+
+    var inVerbosePhase = false
+
+    fun rootPhaseManager(irFile: IrFile) = CompilerPhaseManager(this, phases, irFile, JvmPhaseRunner)
+
+
     private fun find(memberScope: MemberScope, className: String): ClassDescriptor {
         return find(memberScope, Name.identifier(className))
     }
@@ -73,7 +89,9 @@ class JvmBackendContext(
 
     override fun log(message: () -> String) {
         /*TODO*/
-        print(message())
+        if (inVerbosePhase) {
+            print(message())
+        }
     }
 
     override fun report(element: IrElement?, irFile: IrFile?, message: String, isError: Boolean) {

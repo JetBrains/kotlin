@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlock
+import org.jetbrains.kotlin.backend.common.makePhase
 import org.jetbrains.kotlin.codegen.JvmCodegenUtil
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
@@ -20,6 +21,12 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.load.java.JvmAbi.JVM_FIELD_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
+
+val ConstAndJvmFieldPropertiesPhase = makePhase(
+    ::ConstAndJvmFieldPropertiesLowering,
+    name = "ConstAndJvmFieldProperties",
+    description = "Substitute calls to const and Jvm>Field properties with const/field access"
+)
 
 class ConstAndJvmFieldPropertiesLowering(val context: CommonBackendContext) : IrElementTransformerVoid(), FileLoweringPass {
     override fun lower(irFile: IrFile) {

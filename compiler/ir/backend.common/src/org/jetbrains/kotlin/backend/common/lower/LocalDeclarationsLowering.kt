@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.common.DeclarationContainerLoweringPass
 import org.jetbrains.kotlin.backend.common.descriptors.*
 import org.jetbrains.kotlin.backend.common.ir.copyTo
 import org.jetbrains.kotlin.backend.common.ir.copyTypeParametersFrom
+import org.jetbrains.kotlin.backend.common.makePhase
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl
@@ -35,8 +36,23 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.NameUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.parents
 import java.util.*
+
+val LocalDeclarationsPhase = makePhase(
+    ::LocalDeclarationsLowering,
+    name = "LocalDeclarations",
+    description = "Move local declarations to classes",
+    prerequisite = setOf(SharedVariablesPhase)
+)
+
+val JvmLocalDeclarationsPhase = makePhase(
+    ::JvmLocalDeclarationsLowering,
+    name = "JvmLocalDeclarations",
+    description = "Move local declarations to classes",
+    prerequisite = setOf(SharedVariablesPhase)
+)
 
 interface LocalNameProvider {
     fun localName(descriptor: DeclarationDescriptor): String =
@@ -55,7 +71,18 @@ val IrDeclaration.parents: Sequence<IrDeclarationParent>
 
 object BOUND_VALUE_PARAMETER: IrDeclarationOriginImpl("BOUND_VALUE_PARAMETER")
 
-class LocalDeclarationsLowering(
+class JvmLocalDeclarationsLowering(context: BackendContext) :
+    LocalDeclarationsLowering(
+        context,
+        object : LocalNameProvider {
+            override fun localName(descriptor: DeclarationDescriptor): String =
+                NameUtils.sanitizeAsJavaIdentifier(super.localName(descriptor))
+        },
+        Visibilities.PUBLIC, //TODO properly figure out visibility
+        true
+    )
+
+open class LocalDeclarationsLowering(
     val context: BackendContext,
     val localNameProvider: LocalNameProvider = LocalNameProvider.DEFAULT,
     val loweredConstructorVisibility: Visibility = Visibilities.PRIVATE,

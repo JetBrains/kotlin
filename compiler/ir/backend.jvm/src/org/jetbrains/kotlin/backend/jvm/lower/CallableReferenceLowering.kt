@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.descriptors.*
 import org.jetbrains.kotlin.backend.common.ir.createFakeOverrideDescriptor
 import org.jetbrains.kotlin.backend.common.lower.*
+import org.jetbrains.kotlin.backend.common.makePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.codegen.isInlineCall
 import org.jetbrains.kotlin.backend.jvm.codegen.isInlineIrExpression
@@ -58,6 +59,12 @@ import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
+
+val CallableReferencePhase = makePhase(
+    ::CallableReferenceLowering,
+    name = "CallableReference",
+    description = "Handle callable references"
+)
 
 //Hack implementation to support CR java types in lower
 class CrIrType(val type: Type) : IrType {

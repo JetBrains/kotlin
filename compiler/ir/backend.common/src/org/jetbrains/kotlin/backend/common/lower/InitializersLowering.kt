@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.common.lower
 
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
+import org.jetbrains.kotlin.backend.common.CompilerPhase
 import org.jetbrains.kotlin.backend.common.ir.SetDeclarationsParentVisitor
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
@@ -28,6 +29,17 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
+
+fun makeInitializersPhase(declarationOrigin: IrDeclarationOrigin, clinitNeeded: Boolean) = object :
+    CompilerPhase<CommonBackendContext, IrFile> {
+    override val name = "Initializers"
+    override val description = "Handle initializer statements"
+
+    override fun invoke(context: CommonBackendContext, input: IrFile): IrFile {
+        InitializersLowering(context, declarationOrigin, clinitNeeded).lower(input)
+        return input
+    }
+}
 
 object SYNTHESIZED_INIT_BLOCK: IrStatementOriginImpl("SYNTHESIZED_INIT_BLOCK")
 
