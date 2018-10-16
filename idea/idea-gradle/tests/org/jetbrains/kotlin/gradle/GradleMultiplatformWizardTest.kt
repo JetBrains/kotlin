@@ -47,7 +47,9 @@ import org.jetbrains.kotlin.ide.konan.gradle.KotlinGradleNativeMultiplatformModu
 import org.jetbrains.kotlin.idea.codeInsight.gradle.GradleImportingTestCase
 import org.jetbrains.kotlin.idea.configuration.*
 import org.jetbrains.kotlin.utils.PrintingLogger
+import org.jetbrains.plugins.gradle.service.execution.GradleExecutionHelper
 import org.jetbrains.plugins.gradle.settings.DistributionType
+import org.jetbrains.plugins.gradle.settings.GradleExecutionSettings
 import org.jetbrains.plugins.gradle.settings.GradleProjectSettings
 import org.jetbrains.plugins.gradle.settings.GradleSettings
 import org.jetbrains.plugins.gradle.util.GradleConstants
@@ -78,7 +80,9 @@ class GradleMultiplatformWizardTest : ProjectWizardTestCase<AbstractProjectWizar
     }
 
     private fun testImportFromBuilder(
-        builder: KotlinGradleAbstractMultiplatformModuleBuilder, nameRoot: String, metadataInside: Boolean = false
+        builder: KotlinGradleAbstractMultiplatformModuleBuilder,
+        vararg testClassNames: String,
+        metadataInside: Boolean = false
     ) {
         // Temporary workaround for duplicated bundled template
         class PrintingFactory : Logger.Factory {
@@ -88,8 +92,6 @@ class GradleMultiplatformWizardTest : ProjectWizardTestCase<AbstractProjectWizar
         }
         Logger.setFactory(PrintingFactory::class.java)
 
-        // For some reason with any other name it does not work (???)
-        val projectName = "test${nameRoot}new"
         val project = createProject { step ->
             if (step is ProjectTypeStep) {
                 TestCase.assertTrue(step.setSelectedTemplate("Kotlin", builder.presentableName))
@@ -98,7 +100,6 @@ class GradleMultiplatformWizardTest : ProjectWizardTestCase<AbstractProjectWizar
                 val projectBuilder = myWizard.projectBuilder
                 UsefulTestCase.assertInstanceOf(projectBuilder, builder::class.java)
                 with(projectBuilder as KotlinGradleAbstractMultiplatformModuleBuilder) {
-                    name = projectName
                     explicitPluginVersion = pluginVersion
                 }
 
@@ -108,19 +109,17 @@ class GradleMultiplatformWizardTest : ProjectWizardTestCase<AbstractProjectWizar
             }
         }
 
-        TestCase.assertEquals(projectName, project.name)
         val modules = ModuleManager.getInstance(project).modules
         TestCase.assertEquals(1, modules.size)
         val module = modules[0]
         TestCase.assertTrue(ModuleRootManager.getInstance(module).isSdkInherited)
-        TestCase.assertEquals(projectName, module.name)
 
         val root = ProjectRootManager.getInstance(project).contentRoots[0]
 
         val settingsScript = VfsUtilCore.findRelativeFile("settings.gradle", root)
         TestCase.assertNotNull(settingsScript)
         val settingsScriptText = StringUtil.convertLineSeparators(VfsUtilCore.loadText(settingsScript!!))
-        TestCase.assertTrue(String.format("rootProject.name = '%s'\n\n", projectName) in settingsScriptText)
+        TestCase.assertTrue("rootProject.name = " in settingsScriptText)
         if (metadataInside) {
             TestCase.assertTrue("enableFeaturePreview('GRADLE_METADATA')" in settingsScriptText)
         }
@@ -130,6 +129,9 @@ class GradleMultiplatformWizardTest : ProjectWizardTestCase<AbstractProjectWizar
         println(buildScriptText)
 
         doImportProject(project)
+        if (testClassNames.isNotEmpty()) {
+            doTestProject(project, *testClassNames)
+        }
     }
 
     @Throws(IOException::class)
@@ -210,26 +212,43 @@ class GradleMultiplatformWizardTest : ProjectWizardTestCase<AbstractProjectWizar
         }
     }
 
+    private fun doTestProject(project: Project, vararg testClassNames: String) {
+        val settings = GradleExecutionSettings(null, null, DistributionType.DEFAULT_WRAPPED, false)
+        GradleExecutionHelper().execute(project.basePath!!, settings) {
+            val testLauncher = it.newTestLauncher()
+            testLauncher.withJvmTestClasses(*testClassNames).run()
+            it.close()
+            // TODO: fix "Failed to delete" problem
+        }
+    }
+
     // TODO: add testMobile when we will be able to locate Android SDK automatically
 
     @Test
     fun testMobileShared() {
-        testImportFromBuilder(KotlinGradleMobileSharedMultiplatformModuleBuilder(), "MobileShared", metadataInside = true)
+        testImportFromBuilder(
+            KotlinGradleMobileSharedMultiplatformModuleBuilder(),
+            "SampleTests", "SampleTestsJVM", "SampleTestsNative", metadataInside = true
+        )
     }
 
     @Test
     fun testNative() {
-        testImportFromBuilder(KotlinGradleNativeMultiplatformModuleBuilder(), "Native")
+        // TODO: add test run here (probably after fix of KT-27599)
+        testImportFromBuilder(KotlinGradleNativeMultiplatformModuleBuilder())
     }
 
     @Test
     fun testShared() {
-        testImportFromBuilder(KotlinGradleSharedMultiplatformModuleBuilder(), "Shared", metadataInside = true)
+        testImportFromBuilder(
+            KotlinGradleSharedMultiplatformModuleBuilder(),
+            "SampleTests", "SampleTestsJVM", "SampleTestsNative", metadataInside = true
+        )
     }
 
     @Test
     fun testWeb() {
-        testImportFromBuilder(KotlinGradleWebMultiplatformModuleBuilder(), "Web")
+        testImportFromBuilder(KotlinGradleWebMultiplatformModuleBuilder(), "SampleTests", "SampleTestsJVM")
     }
 
     override fun setUp() {
