@@ -62,6 +62,13 @@ projectTest {
         systemProperty("kotlin.ant.classpath", antLauncherJar.asPath)
         systemProperty("kotlin.ant.launcher.class", "org.apache.tools.ant.Main")
     }
+
+    val prefixForPpropertiesToForward = "fd."
+    for((key, value) in properties) {
+        if (key.startsWith(prefixForPpropertiesToForward)) {
+            systemProperty(key.substring(prefixForPpropertiesToForward.length), value)
+        }
+    }
 }
 
 testsJar {}
