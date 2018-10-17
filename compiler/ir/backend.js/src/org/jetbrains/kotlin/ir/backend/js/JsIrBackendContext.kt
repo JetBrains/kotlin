@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.ir.backend.js
 
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
-import org.jetbrains.kotlin.backend.common.ReflectionTypes
 import org.jetbrains.kotlin.backend.common.atMostOne
 import org.jetbrains.kotlin.backend.common.descriptors.KnownPackageFragmentDescriptor
 import org.jetbrains.kotlin.backend.common.ir.Ir
@@ -78,10 +77,6 @@ class JsIrBackendContext(
     override val sharedVariablesManager =
         JsSharedVariablesManager(irBuiltIns, implicitDeclarationFile)
     override val declarationFactory = JsDeclarationFactory()
-    override val reflectionTypes: ReflectionTypes by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        // TODO
-        ReflectionTypes(module, REFLECT_PACKAGE_FQNAME)
-    }
 
     companion object {
         val KOTLIN_PACKAGE_FQN = FqName.fromSegments(listOf("kotlin"))
@@ -148,10 +143,6 @@ class JsIrBackendContext(
     private val operatorMap = referenceOperators()
 
     val functions = (0..22).map { symbolTable.referenceClass(builtIns.getFunction(it)) }
-
-    val kFunctions by lazy {
-        (0..22).map { symbolTable.referenceClass(reflectionTypes.getKFunction(it)) }
-    }
 
     val primitiveCompanionObjects = PrimitiveType.NUMBER_TYPES
         .asSequence()
