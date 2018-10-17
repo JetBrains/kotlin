@@ -61,5 +61,5 @@ private object MockExecutor : DefaultRunExecutor() {
 private object MockProfile : RunProfile {
     override fun getState(executor: Executor, env: ExecutionEnvironment) = null
     override fun getIcon() = null
-    override fun getName() = null
+    override fun getName() = "unknown"
 }
