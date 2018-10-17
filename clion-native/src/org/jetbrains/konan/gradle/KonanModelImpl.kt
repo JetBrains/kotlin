@@ -1,0 +1,19 @@
+/*
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
+ */
+
+package org.jetbrains.konan.gradle
+
+import org.jetbrains.kotlin.konan.target.CompilerOutputKind
+import java.io.File
+
+data class KonanModelImpl(override val artifacts: List<KonanModelArtifact>) : KonanModel
+
+data class KonanModelArtifactImpl(
+    override val name: String,
+    override val type: CompilerOutputKind,
+    override val targetPlatform: String,
+    override val file: File,
+    override val buildTaskName: String
+) : KonanModelArtifact

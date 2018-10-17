@@ -20,6 +20,10 @@
     </component>
   </application-components>
 
+
+  <extensions defaultExtensionNs="org.jetbrains.plugins.gradle">
+    <projectResolve implementation="org.jetbrains.konan.gradle.KonanProjectResolver"/>
+  </extensions>
   <extensions defaultExtensionNs="com.intellij">
     <projectService serviceImplementation="org.jetbrains.konan.gradle.GradleKonanWorkspace"/>
 
