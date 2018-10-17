@@ -14,36 +14,37 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.run;
+package org.jetbrains.kotlin.idea.run
 
-import com.intellij.execution.CommonJavaRunConfigurationParameters;
-import com.intellij.execution.ExternalizablePath;
-import com.intellij.execution.configurations.ConfigurationFactory;
-import com.intellij.execution.configurations.JavaRunConfigurationModule;
-import com.intellij.execution.configurations.ModuleBasedConfiguration;
-import com.intellij.execution.configurations.RefactoringListenerProvider;
+import com.intellij.execution.CommonJavaRunConfigurationParameters
+import com.intellij.execution.ExternalizablePath
+import com.intellij.execution.configurations.ConfigurationFactory
+import com.intellij.execution.configurations.JavaRunConfigurationModule
+import com.intellij.execution.configurations.ModuleBasedConfiguration
+import com.intellij.execution.configurations.RefactoringListenerProvider
 
-/**
- * @deprecated Will be dropped in 1.2.20. Use KotlinRunConfiguration instead.
- */
-@SuppressWarnings("DeprecatedIsStillUsed")
-@Deprecated
-public abstract class JetRunConfiguration extends ModuleBasedConfiguration<JavaRunConfigurationModule>
-        implements CommonJavaRunConfigurationParameters, RefactoringListenerProvider {
-    public String MAIN_CLASS_NAME;
-    public String WORKING_DIRECTORY;
+@Suppress("PropertyName", "MemberVisibilityCanBePrivate")
+@Deprecated("Will be dropped in 1.2.20. Use KotlinRunConfiguration instead.")
+abstract class JetRunConfiguration(
+    name: String,
+    runConfigurationModule: JavaRunConfigurationModule,
+    factory: ConfigurationFactory
+) :
+    ModuleBasedConfiguration<JavaRunConfigurationModule>(name, runConfigurationModule, factory),
+    CommonJavaRunConfigurationParameters,
+    RefactoringListenerProvider {
 
-    public JetRunConfiguration(String name, JavaRunConfigurationModule runConfigurationModule, ConfigurationFactory factory) {
-        super(name, runConfigurationModule, factory);
+    @JvmField
+    var MAIN_CLASS_NAME: String? = null
+
+    @JvmField
+    var WORKING_DIRECTORY: String? = null
+
+    override fun setWorkingDirectory(value: String?) {
+        WORKING_DIRECTORY = ExternalizablePath.urlValue(value)
     }
 
-    @Override
-    public void setWorkingDirectory(String value) {
-        WORKING_DIRECTORY = ExternalizablePath.urlValue(value);
-    }
-
-    @Override
-    public String getWorkingDirectory() {
-        return ExternalizablePath.localPathValue(WORKING_DIRECTORY);
+    override fun getWorkingDirectory(): String? {
+        return ExternalizablePath.localPathValue(WORKING_DIRECTORY)
     }
 }
