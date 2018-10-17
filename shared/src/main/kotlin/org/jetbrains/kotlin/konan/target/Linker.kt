@@ -206,7 +206,7 @@ open class LinuxBasedLinker(targetProperties: LinuxBasedConfigurables)
 
     private val ar = "$absoluteTargetToolchain/bin/ar"
     override val libGcc: String = "$absoluteTargetSysRoot/${super.libGcc}"
-    private val linker = "$absoluteTargetToolchain/bin/ld.gold"
+    private val linker = "$absoluteLlvmHome/bin/ld.lld"
     private val specificLibs = abiSpecificLibraries.map { "-L${absoluteTargetSysRoot}/$it" }
 
     override fun filterStaticLibraries(binaries: List<String>) = binaries.filter { it.isUnixStaticLib }
