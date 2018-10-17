@@ -33,7 +33,7 @@ internal class DefaultLanguageSettingsBuilder : LanguageSettingsBuilder {
     override var apiVersion: String?
         get() = apiVersionImpl?.versionString
         set(value) {
-            apiVersionImpl = value ?.let { versionString ->
+            apiVersionImpl = value?.let { versionString ->
                 parseApiVersionSettings(versionString) ?: throw InvalidUserDataException(
                     "Incorrect API version. Expected one of: ${apiVersionValues.joinToString { "'${it.versionString}'" }}"
                 )

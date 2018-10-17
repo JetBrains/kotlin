@@ -194,7 +194,7 @@ class KotlinAndroidTargetPreset(
 class KotlinJvmWithJavaTargetPreset(
     private val project: Project,
     private val kotlinPluginVersion: String
-): KotlinTargetPreset<KotlinWithJavaTarget> {
+) : KotlinTargetPreset<KotlinWithJavaTarget> {
 
     override fun getName(): String = PRESET_NAME
 

@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.gradle.tasks
 
 import org.jetbrains.kotlin.gradle.plugin.SubpluginOption
-import java.io.File
 
 class CompilerPluginOptions {
     private val mutableArguments = arrayListOf<String>()

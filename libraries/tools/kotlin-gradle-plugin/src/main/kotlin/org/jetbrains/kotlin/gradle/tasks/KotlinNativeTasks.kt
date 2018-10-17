@@ -164,10 +164,13 @@ open class KotlinNativeCompile : AbstractCompile() {
         // Delegate for compilations's extra options.
         override var freeCompilerArgs: List<String>
             get() = compilation.extraOpts
-            set(value) { compilation.extraOpts = value.toMutableList() }
+            set(value) {
+                compilation.extraOpts = value.toMutableList()
+            }
     }
 
-    @Internal val kotlinOptions: KotlinCommonToolOptions = NativeCompilerOpts()
+    @Internal
+    val kotlinOptions: KotlinCommonToolOptions = NativeCompilerOpts()
 
     fun kotlinOptions(fn: KotlinCommonToolOptions.() -> Unit) {
         kotlinOptions.fn()
@@ -204,9 +207,10 @@ open class KotlinNativeCompile : AbstractCompile() {
     val compilerPluginOptions = CompilerPluginOptions()
 
     val compilerPluginCommandLine
-        @Input get()= compilerPluginOptions.arguments
+        @Input get() = compilerPluginOptions.arguments
 
-    @Optional @InputFiles
+    @Optional
+    @InputFiles
     var compilerPluginClasspath: FileCollection? = null
 
     val serializedCompilerArguments: List<String>
@@ -297,7 +301,7 @@ open class KotlinNativeCompile : AbstractCompile() {
     }
 }
 
-open class CInteropProcess: DefaultTask() {
+open class CInteropProcess : DefaultTask() {
 
     @Internal
     lateinit var settings: DefaultCInteropSettings

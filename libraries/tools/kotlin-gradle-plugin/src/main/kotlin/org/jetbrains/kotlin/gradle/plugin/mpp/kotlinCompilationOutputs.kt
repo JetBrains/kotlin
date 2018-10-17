@@ -33,7 +33,7 @@ class DefaultKotlinCompilationOutput(
 
 class KotlinWithJavaCompilationOutput(
     internal val compilation: KotlinWithJavaCompilation
-): KotlinCompilationOutput, Callable<FileCollection> {
+) : KotlinCompilationOutput, Callable<FileCollection> {
 
     private val javaSourceSetOutput
         get() = compilation.javaSourceSet.output
@@ -43,13 +43,15 @@ class KotlinWithJavaCompilationOutput(
 
     override var resourcesDirProvider: Any
         get() = javaSourceSetOutput.resourcesDir
-        set(value) { javaSourceSetOutput.setResourcesDir(value) }
+        set(value) {
+            javaSourceSetOutput.setResourcesDir(value)
+        }
 
     override val classesDirs: ConfigurableFileCollection =
         if (isGradleVersionAtLeast(4, 0))
             javaSourceSetOutput.classesDirs as ConfigurableFileCollection
         else
-            // In Gradle < 4.0 `SourceSetOutput` does not have `classesDirs`
+        // In Gradle < 4.0 `SourceSetOutput` does not have `classesDirs`
             @Suppress("DEPRECATION")
             compilation.target.project.files(Callable { javaSourceSetOutput.classesDir })
 

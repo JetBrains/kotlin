@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.gradle.utils.isGradleVersionAtLeast
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.konan.target.KonanTarget
 
-abstract class AbstractKotlinTarget (
+abstract class AbstractKotlinTarget(
     final override val project: Project
 ) : KotlinTarget {
     private val attributeContainer = HierarchyAttributeContainer(parent = null)
@@ -156,8 +156,9 @@ open class KotlinWithJavaTarget(
         get() = JavaPlugin.JAR_TASK_NAME
 
     override val compilations: NamedDomainObjectContainer<KotlinWithJavaCompilation> =
-        project.container(KotlinWithJavaCompilation::class.java,
-                          KotlinWithJavaCompilationFactory(project, this)
+        project.container(
+            KotlinWithJavaCompilation::class.java,
+            KotlinWithJavaCompilationFactory(project, this)
         )
 }
 

@@ -121,7 +121,8 @@ abstract class AbstractKotlinTargetConfigurator<KotlinTargetType : KotlinTarget>
             ?: return // Otherwise, there is no runtime classpath
 
         target.project.tasks.create(lowerCamelCaseName(target.targetName, testTaskNameSuffix), Test::class.java).apply {
-            project.afterEvaluate { // use afterEvaluate to override the JavaPlugin defaults for Test tasks
+            project.afterEvaluate {
+                // use afterEvaluate to override the JavaPlugin defaults for Test tasks
                 conventionMapping.map("testClassesDirs") { testCompilation.output.classesDirs }
                 conventionMapping.map("classpath") { testCompilation.runtimeDependencyFiles }
                 description = "Runs the unit tests."
@@ -327,7 +328,7 @@ internal val KotlinCompilation.deprecatedCompileConfigurationName: String
 internal val KotlinCompilationToRunnableFiles.deprecatedRuntimeConfigurationName: String
     get() = disambiguateName("runtime")
 
-open class KotlinTargetConfigurator<KotlinCompilationType: KotlinCompilation>(
+open class KotlinTargetConfigurator<KotlinCompilationType : KotlinCompilation>(
     createDefaultSourceSets: Boolean,
     createTestCompilation: Boolean
 ) : AbstractKotlinTargetConfigurator<KotlinOnlyTarget<KotlinCompilationType>>(
@@ -428,7 +429,7 @@ open class KotlinNativeTargetConfigurator(
         return buildDir.resolve("bin/$targetSubDirectory${compilation.name}/$buildTypeSubDirectory/$kindSubDirectory")
     }
 
-    private fun Project. klibOutputDirectory(
+    private fun Project.klibOutputDirectory(
         compilation: KotlinNativeCompilation
     ): File {
         val targetSubDirectory = compilation.target.disambiguationClassifier?.let { "$it/" }.orEmpty()
@@ -653,7 +654,9 @@ open class KotlinNativeTargetConfigurator(
 
         val compileOnlyDependencies = target.compilations.mapNotNull {
             val dependencies = configurations.getByName(it.compileOnlyConfigurationName).allDependencies
-            if (dependencies.isNotEmpty()) {it to dependencies} else null
+            if (dependencies.isNotEmpty()) {
+                it to dependencies
+            } else null
         }
 
         fun Dependency.stringCoordinates(): String = buildString {
@@ -666,13 +669,15 @@ open class KotlinNativeTargetConfigurator(
             with(target.project.logger) {
                 warn("A compileOnly dependency is used in the Kotlin/Native target '${target.name}':")
                 compileOnlyDependencies.forEach {
-                    warn("""
+                    warn(
+                        """
                         Compilation: ${it.first.name}
 
                         Dependencies:
                         ${it.second.joinToString(separator = "\n") { it.stringCoordinates() }}
 
-                    """.trimIndent())
+                    """.trimIndent()
+                    )
                 }
                 warn("Such dependencies are not applicable for Kotlin/Native, consider changing the dependency type to 'implementation' or 'api'.")
             }
