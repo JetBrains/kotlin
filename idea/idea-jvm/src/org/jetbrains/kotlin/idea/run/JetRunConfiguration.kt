@@ -20,7 +20,6 @@ import com.intellij.execution.CommonJavaRunConfigurationParameters
 import com.intellij.execution.ExternalizablePath
 import com.intellij.execution.configurations.ConfigurationFactory
 import com.intellij.execution.configurations.JavaRunConfigurationModule
-import com.intellij.execution.configurations.ModuleBasedConfiguration
 import com.intellij.execution.configurations.RefactoringListenerProvider
 
 @Suppress("PropertyName", "MemberVisibilityCanBePrivate")
@@ -30,7 +29,7 @@ abstract class JetRunConfiguration(
     runConfigurationModule: JavaRunConfigurationModule,
     factory: ConfigurationFactory
 ) :
-    ModuleBasedConfiguration<JavaRunConfigurationModule>(name, runConfigurationModule, factory),
+    ModuleBasedConfigurationElement<JavaRunConfigurationModule>(name, runConfigurationModule, factory),
     CommonJavaRunConfigurationParameters,
     RefactoringListenerProvider {
 

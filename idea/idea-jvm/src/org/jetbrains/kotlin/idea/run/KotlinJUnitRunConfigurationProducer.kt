@@ -59,7 +59,7 @@ class KotlinJUnitRunConfigurationProducer : RunConfigurationProducer<JUnitConfig
         if (vmParameters != null && configuration.vmParameters != vmParameters) return false
 
         val template = RunManager.getInstance(configuration.project).getConfigurationTemplate(configurationFactory)
-        val predefinedModule = (template.configuration as ModuleBasedConfiguration<*>).configurationModule.module
+        val predefinedModule = (template.configuration as ModuleBasedConfigurationAny).configurationModule.module
         val configurationModule = configuration.configurationModule.module
         return configurationModule == context.location?.module?.asJvmModule() || configurationModule == predefinedModule
     }
