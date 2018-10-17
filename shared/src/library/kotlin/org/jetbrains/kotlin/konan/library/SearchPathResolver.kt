@@ -208,18 +208,24 @@ internal fun SearchPathResolverWithTarget.libraryMatch(candidate: KonanLibraryIm
         return false
     }
 
-    if (candidateAbiVersion == null ||
-        knownAbiVersions != null &&
-            !knownAbiVersions!!.contains(candidateAbiVersion)) {
+    val abiVersionMatch = candidateAbiVersion != null &&
+            knownAbiVersions != null &&
+            knownAbiVersions!!.contains(candidateAbiVersion)
 
-        if (candidateCompilerVersion == null ||
-                knownCompilerVersions != null &&
-                knownCompilerVersions!!.none { it.compatible(candidateCompilerVersion) } ) {
+    val compilerVersionMatch = candidateCompilerVersion != null &&
+            knownCompilerVersions != null &&
+            knownCompilerVersions!!.any { it.compatible(candidateCompilerVersion) }
 
-            logger("skipping $candidatePath. The abi versions don't match. Expected '${knownAbiVersions}', found '${candidateAbiVersion}'")
-            if (knownCompilerVersions != null) logger("The compiler versions don't match either. Expected '${knownCompilerVersions?.map { it.toString(false, false) }}', found '${candidateCompilerVersion?.toString(true, true)}'")
-            return false
+    if (!abiVersionMatch && !compilerVersionMatch) {
+        logger("skipping $candidatePath. The abi versions don't match. Expected '${knownAbiVersions}', found '${candidateAbiVersion}'")
+
+        if (knownCompilerVersions != null) {
+            val expected = knownCompilerVersions?.map { it.toString(false, false) }
+            val found = candidateCompilerVersion?.toString(true, true)
+            logger("The compiler versions don't match either. Expected '${expected}', found '${found}'")
         }
+
+        return false
     }
 
     if (candidateLibraryVersion != unresolved.libraryVersion &&
