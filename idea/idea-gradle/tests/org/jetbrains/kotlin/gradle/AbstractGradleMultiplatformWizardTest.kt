@@ -52,7 +52,6 @@ import org.jetbrains.plugins.gradle.settings.GradleExecutionSettings
 import org.jetbrains.plugins.gradle.settings.GradleProjectSettings
 import org.jetbrains.plugins.gradle.settings.GradleSettings
 import org.jetbrains.plugins.gradle.util.GradleConstants
-import org.junit.Test
 import java.io.File
 import java.io.IOException
 import java.util.*
@@ -124,6 +123,8 @@ abstract class AbstractGradleMultiplatformWizardTest : ProjectWizardTestCase<Abs
             TestCase.assertTrue("enableFeaturePreview('GRADLE_METADATA')" in settingsScriptText)
         }
 
+        File(root.canonicalPath).assertNoEmptyChildren()
+
         val buildScript = VfsUtilCore.findRelativeFile("build.gradle", root)!!
         val buildScriptText = StringUtil.convertLineSeparators(VfsUtilCore.loadText(buildScript))
         println(buildScriptText)
@@ -132,6 +133,21 @@ abstract class AbstractGradleMultiplatformWizardTest : ProjectWizardTestCase<Abs
         doImportProject(project)
         if (testClassNames.isNotEmpty()) {
             doTestProject(project, *testClassNames)
+        }
+    }
+
+    private fun File.assertNoEmptyChildren() {
+        for (file in walkTopDown()) {
+            if (!file.isDirectory) {
+                var empty = true
+                file.forEachLine {
+                    if (it.isNotEmpty()) {
+                        empty = false
+                        return@forEachLine
+                    }
+                }
+                TestCase.assertFalse("Generated file ${file.path} is empty", empty)
+            }
         }
     }
 
