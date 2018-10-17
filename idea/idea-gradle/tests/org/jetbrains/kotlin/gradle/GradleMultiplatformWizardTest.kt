@@ -214,12 +214,14 @@ class GradleMultiplatformWizardTest : ProjectWizardTestCase<AbstractProjectWizar
 
     private fun doTestProject(project: Project, vararg testClassNames: String) {
         val settings = GradleExecutionSettings(null, null, DistributionType.DEFAULT_WRAPPED, false)
+        println("Running project tests: ${testClassNames.toList()}")
         GradleExecutionHelper().execute(project.basePath!!, settings) {
             val testLauncher = it.newTestLauncher()
             testLauncher.withJvmTestClasses(*testClassNames).run()
-            it.close()
-            // TODO: fix "Failed to delete" problem
         }
+        println("Waiting for daemon death...")
+        Thread.sleep(30000L)
+        println("Trying to clean everything...")
     }
 
     // TODO: add testMobile when we will be able to locate Android SDK automatically
