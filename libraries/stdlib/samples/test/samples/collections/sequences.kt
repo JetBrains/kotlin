@@ -140,12 +140,58 @@ class Sequences {
         }
 
         @Sample
+        fun buildDeprecatedFibonacciSequence() {
+            fun fibonacci() = buildSequence {
+                var terms = Pair(0, 1)
+
+                // this sequence is infinite
+                while (true) {
+                    yield(terms.first)
+                    terms = Pair(terms.second, terms.first + terms.second)
+                }
+            }
+
+            assertPrints(fibonacci().take(10).toList(), "[0, 1, 1, 2, 3, 5, 8, 13, 21, 34]")
+        }
+
+        @Sample
+        fun buildDeprecatedSequenceYieldAll() {
+            val sequence = buildSequence {
+                val start = 0
+                // yielding a single value
+                yield(start)
+                // yielding an iterable
+                yieldAll(1..5 step 2)
+                // yielding an infinite sequence
+                yieldAll(generateSequence(8) { it * 3 })
+            }
+
+            assertPrints(sequence.take(7).toList(), "[0, 1, 3, 5, 8, 24, 72]")
+        }
+
+        @Sample
         fun buildIterator() {
             val collection = listOf(1, 2, 3)
             val wrappedCollection = object : AbstractCollection<Any>() {
                 override val size: Int = collection.size + 2
 
                 override fun iterator(): Iterator<Any> = iterator {
+                    yield("first")
+                    yieldAll(collection)
+                    yield("last")
+                }
+            }
+
+            assertPrints(wrappedCollection, "[first, 1, 2, 3, last]")
+        }
+
+        @Sample
+        fun buildDeprecatedIterator() {
+            val collection = listOf(1, 2, 3)
+            val wrappedCollection = object : AbstractCollection<Any>() {
+                override val size: Int = collection.size + 2
+
+                override fun iterator(): Iterator<Any> = buildIterator {
                     yield("first")
                     yieldAll(collection)
                     yield("last")
