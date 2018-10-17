@@ -51,6 +51,7 @@ object ConversionsRunner {
             +SwitchStatementConversion(context)
             +InstanceofConversion()
             +ForConversion(context)
+            +LabeledStatementConversion()
         }
 
     fun doApply(trees: List<JKTreeElement>, context: ConversionContext) {

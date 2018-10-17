@@ -315,6 +315,18 @@ class NewCodeBuilder {
             printer.printWithNoIndent(" ")
         }
 
+        override fun visitLabeledStatement(labeledStatement: JKLabeledStatement) {
+            for (label in labeledStatement.labels) {
+                label.accept(this)
+                printer.printWithNoIndent("@")
+            }
+            labeledStatement.statement.accept(this)
+        }
+
+        override fun visitNameIdentifier(nameIdentifier: JKNameIdentifier) {
+            printer.printWithNoIndent(nameIdentifier.value)
+        }
+
         override fun visitPostfixExpression(postfixExpression: JKPostfixExpression) {
             postfixExpression.expression.accept(this)
             printer.printWithNoIndent(postfixExpression.operator.operatorText)
@@ -392,6 +404,13 @@ class NewCodeBuilder {
             printer.printlnWithNoIndent()
         }
 
+        override fun visitKtConvertedFromForLoopSyntheticWhileStatement(
+            ktConvertedFromForLoopSyntheticWhileStatement: JKKtConvertedFromForLoopSyntheticWhileStatement
+        ) {
+            ktConvertedFromForLoopSyntheticWhileStatement.variableDeclaration.accept(this)
+            printer.printlnWithNoIndent()
+            ktConvertedFromForLoopSyntheticWhileStatement.whileStatement.accept(this)
+        }
 
         private fun renderType(type: JKType) {
             when (type) {

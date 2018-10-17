@@ -395,3 +395,9 @@ class JKContinueStatementImpl(label: JKLabel) : JKContinueStatement, JKBranchEle
     override var label: JKLabel by child(label)
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitContinueStatement(this, data)
 }
+
+class JKLabeledStatementImpl(statement: JKStatement, labels: List<JKNameIdentifier>) : JKLabeledStatement, JKBranchElementBase() {
+    override var statement: JKStatement by child(statement)
+    override val labels: List<JKNameIdentifier> by children(labels)
+    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitLabeledStatement(this, data)
+}

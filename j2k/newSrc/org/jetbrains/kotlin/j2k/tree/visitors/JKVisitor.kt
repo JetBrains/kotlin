@@ -58,6 +58,7 @@ interface JKVisitor<out R, in D> {
     fun visitLabelEmpty(labelEmpty: JKLabelEmpty, data: D): R = visitLabel(labelEmpty, data)
     fun visitLabelText(labelText: JKLabelText, data: D): R = visitLabel(labelText, data)
     fun visitContinueStatement(continueStatement: JKContinueStatement, data: D): R = visitStatement(continueStatement, data)
+    fun visitLabeledStatement(labeledStatement: JKLabeledStatement, data: D): R = visitStatement(labeledStatement, data)
     fun visitJavaField(javaField: JKJavaField, data: D): R = visitField(javaField, data)
     fun visitJavaMethod(javaMethod: JKJavaMethod, data: D): R = visitMethod(javaMethod, data)
     fun visitJavaMethodCallExpression(javaMethodCallExpression: JKJavaMethodCallExpression, data: D): R = visitMethodCallExpression(javaMethodCallExpression, data)
@@ -97,4 +98,5 @@ interface JKVisitor<out R, in D> {
     fun visitKtInitDeclaration(ktInitDeclaration: JKKtInitDeclaration, data: D): R = visitDeclaration(ktInitDeclaration, data)
     fun visitKtForInStatement(ktForInStatement: JKKtForInStatement, data: D): R = visitStatement(ktForInStatement, data)
     fun visitKtOperatorExpression(ktOperatorExpression: JKKtOperatorExpression, data: D): R = visitExpression(ktOperatorExpression, data)
+    fun visitKtConvertedFromForLoopSyntheticWhileStatement(ktConvertedFromForLoopSyntheticWhileStatement: JKKtConvertedFromForLoopSyntheticWhileStatement, data: D): R = visitStatement(ktConvertedFromForLoopSyntheticWhileStatement, data)
 }

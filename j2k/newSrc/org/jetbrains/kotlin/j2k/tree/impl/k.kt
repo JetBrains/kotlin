@@ -286,3 +286,13 @@ class JKKtOperatorExpressionImpl(
     override var argument: JKExpression by child(argument)
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitKtOperatorExpression(this, data)
 }
+
+class JKKtConvertedFromForLoopSyntheticWhileStatementImpl(
+    variableDeclaration: JKStatement,
+    whileStatement: JKWhileStatement
+) : JKKtConvertedFromForLoopSyntheticWhileStatement, JKBranchElementBase(), PsiOwner by PsiOwnerImpl() {
+    override var variableDeclaration: JKStatement by child(variableDeclaration)
+    override var whileStatement: JKWhileStatement by child(whileStatement)
+    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R =
+        visitor.visitKtConvertedFromForLoopSyntheticWhileStatement(this, data)
+}

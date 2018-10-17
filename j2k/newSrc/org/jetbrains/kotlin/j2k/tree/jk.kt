@@ -262,3 +262,8 @@ interface JKLabelText : JKLabel {
 interface JKContinueStatement : JKStatement {
     var label: JKLabel
 }
+
+interface JKLabeledStatement : JKStatement {
+    var statement: JKStatement
+    val labels: List<JKNameIdentifier>
+}

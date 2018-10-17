@@ -113,6 +113,8 @@ interface JKVisitorVoid : JKVisitor<Unit, Nothing?> {
     override fun visitLabelText(labelText: JKLabelText, data: Nothing?) = visitLabelText(labelText)
     fun visitContinueStatement(continueStatement: JKContinueStatement) = visitStatement(continueStatement, null)
     override fun visitContinueStatement(continueStatement: JKContinueStatement, data: Nothing?) = visitContinueStatement(continueStatement)
+    fun visitLabeledStatement(labeledStatement: JKLabeledStatement) = visitStatement(labeledStatement, null)
+    override fun visitLabeledStatement(labeledStatement: JKLabeledStatement, data: Nothing?) = visitLabeledStatement(labeledStatement)
     fun visitJavaField(javaField: JKJavaField) = visitField(javaField, null)
     override fun visitJavaField(javaField: JKJavaField, data: Nothing?) = visitJavaField(javaField)
     fun visitJavaMethod(javaMethod: JKJavaMethod) = visitMethod(javaMethod, null)
@@ -191,4 +193,6 @@ interface JKVisitorVoid : JKVisitor<Unit, Nothing?> {
     override fun visitKtForInStatement(ktForInStatement: JKKtForInStatement, data: Nothing?) = visitKtForInStatement(ktForInStatement)
     fun visitKtOperatorExpression(ktOperatorExpression: JKKtOperatorExpression) = visitExpression(ktOperatorExpression, null)
     override fun visitKtOperatorExpression(ktOperatorExpression: JKKtOperatorExpression, data: Nothing?) = visitKtOperatorExpression(ktOperatorExpression)
+    fun visitKtConvertedFromForLoopSyntheticWhileStatement(ktConvertedFromForLoopSyntheticWhileStatement: JKKtConvertedFromForLoopSyntheticWhileStatement) = visitStatement(ktConvertedFromForLoopSyntheticWhileStatement, null)
+    override fun visitKtConvertedFromForLoopSyntheticWhileStatement(ktConvertedFromForLoopSyntheticWhileStatement: JKKtConvertedFromForLoopSyntheticWhileStatement, data: Nothing?) = visitKtConvertedFromForLoopSyntheticWhileStatement(ktConvertedFromForLoopSyntheticWhileStatement)
 }
