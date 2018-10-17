@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.idea.configuration.KotlinGradleMobileMultiplatformMo
 import org.jetbrains.kotlin.idea.configuration.KotlinGradleMobileSharedMultiplatformModuleBuilder
 import org.jetbrains.kotlin.idea.configuration.KotlinGradleSharedMultiplatformModuleBuilder
 import org.jetbrains.kotlin.idea.configuration.KotlinGradleWebMultiplatformModuleBuilder
+import org.jetbrains.kotlin.konan.target.HostManager
 import org.junit.Test
 
 class GradleMultiplatformWizardTest : AbstractGradleMultiplatformWizardTest() {
@@ -21,24 +22,26 @@ class GradleMultiplatformWizardTest : AbstractGradleMultiplatformWizardTest() {
 
     @Test
     fun testMobileShared() {
-        testImportFromBuilder(
-            KotlinGradleMobileSharedMultiplatformModuleBuilder(),
-            "SampleTests", "SampleTestsJVM", "SampleTestsNative", metadataInside = true
-        )
+        val builder = KotlinGradleMobileSharedMultiplatformModuleBuilder()
+        val project = testImportFromBuilder(builder, "SampleTests", "SampleTestsJVM", metadataInside = true)
+        // Native tests can be run on Mac only
+        if (HostManager.hostIsMac) {
+            runTaskInProject(project, builder.nativeTestName)
+        }
     }
 
     @Test
     fun testNative() {
-        // TODO: add test run here (probably after fix of KT-27599)
-        testImportFromBuilder(KotlinGradleNativeMultiplatformModuleBuilder())
+        val builder = KotlinGradleNativeMultiplatformModuleBuilder()
+        val project = testImportFromBuilder(builder)
+        runTaskInProject(project, builder.nativeTestName)
     }
 
     @Test
     fun testShared() {
-        testImportFromBuilder(
-            KotlinGradleSharedMultiplatformModuleBuilder(),
-            "SampleTests", "SampleTestsJVM", "SampleTestsNative", metadataInside = true
-        )
+        val builder = KotlinGradleSharedMultiplatformModuleBuilder()
+        val project = testImportFromBuilder(builder, "SampleTests", "SampleTestsJVM", "SampleTestsNative", metadataInside = true)
+        runTaskInProject(project, builder.nativeTestName)
     }
 
     @Test

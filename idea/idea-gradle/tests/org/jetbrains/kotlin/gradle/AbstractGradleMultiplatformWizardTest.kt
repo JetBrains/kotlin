@@ -84,7 +84,7 @@ abstract class AbstractGradleMultiplatformWizardTest : ProjectWizardTestCase<Abs
         vararg testClassNames: String,
         metadataInside: Boolean = false,
         performImport: Boolean = true
-    ) {
+    ): Project {
         // TODO: check whether it's necessary to have templates in sources
         // Temporary workaround for duplicated bundled template
         class PrintingFactory : Logger.Factory {
@@ -132,11 +132,12 @@ abstract class AbstractGradleMultiplatformWizardTest : ProjectWizardTestCase<Abs
         val buildScriptText = StringUtil.convertLineSeparators(VfsUtilCore.loadText(buildScript))
         println(buildScriptText)
 
-        if (!performImport) return
+        if (!performImport) return project
         doImportProject(project)
         if (testClassNames.isNotEmpty()) {
             doTestProject(project, *testClassNames)
         }
+        return project
     }
 
     private fun File.assertNoEmptyChildren() {
@@ -239,6 +240,14 @@ abstract class AbstractGradleMultiplatformWizardTest : ProjectWizardTestCase<Abs
             // TODO: --no-daemon should be here, unfortunately it does not work for TestLauncher
             val testLauncher = it.newTestLauncher()
             testLauncher.withJvmTestClasses(*testClassNames).run()
+        }
+    }
+
+    protected fun runTaskInProject(project: Project, taskName: String) {
+        val settings = GradleExecutionSettings(null, null, DistributionType.DEFAULT_WRAPPED, false)
+        println("Running project task: $taskName")
+        GradleExecutionHelper().execute(project.basePath!!, settings) {
+            it.newBuild().forTasks(taskName).run()
         }
     }
 

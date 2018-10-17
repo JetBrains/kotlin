@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.ide.konan.gradle
 
-import com.intellij.openapi.module.Module
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.idea.configuration.KotlinGradleAbstractMultiplatformModuleBuilder
 import org.jetbrains.kotlin.konan.target.presetName
@@ -16,7 +15,7 @@ class KotlinGradleNativeMultiplatformModuleBuilder : KotlinGradleAbstractMultipl
     private val nativeTargetName = defaultNativeTarget.userTargetName
 
     private val nativeSourceName get() = "$nativeTargetName$productionSuffix"
-    private val nativeTestName get() = "$nativeTargetName$testSuffix"
+    val nativeTestName get() = "$nativeTargetName$testSuffix"
 
     override fun getBuilderId() = "kotlin.gradle.multiplatform.native"
 

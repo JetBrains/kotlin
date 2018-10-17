@@ -19,7 +19,7 @@ class KotlinGradleMobileSharedMultiplatformModuleBuilder : KotlinGradleAbstractM
     private val jvmSourceName get() = "$jvmTargetName$productionSuffix"
     private val jvmTestName get() = "$jvmTargetName$testSuffix"
     private val nativeSourceName get() = "$nativeTargetName$productionSuffix"
-    private val nativeTestName get() = "$nativeTargetName$testSuffix"
+    val nativeTestName get() = "$nativeTargetName$testSuffix"
 
     override val shouldEnableGradleMetadataPreview: Boolean = true
 

@@ -15,7 +15,7 @@ class GradleMultiplatformWizardTest : AbstractGradleMultiplatformWizardTest() {
         // NB: I'm not quite sure this thing really works in 181 (Native is inside)
         testImportFromBuilder(
             KotlinGradleSharedMultiplatformModuleBuilder(),
-            "SampleTests", "SampleTestsJVM", "SampleTestsNative", metadataInside = true
+            "SampleTests", "SampleTestsJVM", metadataInside = true
         )
     }
 
