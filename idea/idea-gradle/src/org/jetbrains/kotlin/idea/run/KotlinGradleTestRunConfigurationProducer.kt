@@ -15,7 +15,6 @@
  */
 package org.jetbrains.kotlin.idea.run
 
-import com.intellij.execution.JavaRunConfigurationExtensionManager
 import com.intellij.execution.actions.ConfigurationContext
 import com.intellij.execution.actions.RunConfigurationProducer
 import com.intellij.execution.junit.PatternConfigurationProducer
@@ -93,7 +92,7 @@ class KotlinTestClassGradleConfigurationProducer : TestClassGradleConfigurationP
         configuration.settings.scriptParameters = String.format("--tests \"%s\"", testClass.qualifiedName)
         configuration.name = testClass.name
 
-        JavaRunConfigurationExtensionManager.getInstance().extendCreatedConfiguration(configuration, contextLocation)
+        JavaRunConfigurationExtensionManagerUtil.getInstance().extendCreatedConfiguration(configuration, contextLocation)
         return true
     }
 
@@ -151,7 +150,7 @@ class KotlinTestMethodGradleConfigurationProducer : TestMethodGradleConfiguratio
 
         if (!applyTestMethodConfiguration(configuration, context, psiMethod, containingClass)) return false
 
-        JavaRunConfigurationExtensionManager.getInstance().extendCreatedConfiguration(configuration, contextLocation)
+        JavaRunConfigurationExtensionManagerUtil.getInstance().extendCreatedConfiguration(configuration, contextLocation)
         return true
     }
 

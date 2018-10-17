@@ -108,6 +108,7 @@
           <Problem reference="com.intellij.notification.NotificationAction#createSimple" reason="Absent in 173." />
           <Problem reference="com.intellij.notification.NotificationAction#create" reason="Absent in 173." />
           <Problem reference="com.intellij.util.JdomKt#element" reason="Removed in 191" />
+          <Problem reference="com.intellij.execution.JavaRunConfigurationExtensionManager#getInstance" reason="Can't be used in Kotlin, because method was replaced with property after J2K in 191. Use JavaRunConfigurationExtensionManagerUtil instead." />
         </list>
       </option>
     </inspection_tool>
