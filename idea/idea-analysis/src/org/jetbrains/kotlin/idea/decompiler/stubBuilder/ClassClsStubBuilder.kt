@@ -112,6 +112,7 @@ private class ClassClsStubBuilder(
             relevantFlags.add(INNER)
             relevantFlags.add(DATA)
             relevantFlags.add(MODALITY)
+            relevantFlags.add(INLINE_CLASS)
         }
         val additionalModifiers = when (classKind) {
             ProtoBuf.Class.Kind.ENUM_CLASS -> listOf(KtTokens.ENUM_KEYWORD)

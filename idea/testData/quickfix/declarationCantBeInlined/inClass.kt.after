@@ -1,0 +1,4 @@
+// "Make 'foo' not open" "true"
+open class A {
+    inline fun foo() {}
+}

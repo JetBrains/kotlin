@@ -7,17 +7,21 @@ package org.jetbrains.kotlin.idea.formatter
 
 import com.intellij.psi.codeStyle.CodeStyleSettings
 import com.intellij.psi.codeStyle.CommonCodeStyleSettings
-import com.intellij.psi.codeStyle.PredefinedCodeStyle
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.core.formatter.KotlinCodeStyleSettings
 
-class KotlinObsoleteCodeStyle : PredefinedCodeStyle(CODE_STYLE_TITLE, KotlinLanguage.INSTANCE) {
+class KotlinObsoleteCodeStyle : KotlinPredefinedCodeStyle(CODE_STYLE_TITLE, KotlinLanguage.INSTANCE) {
+    override val codeStyleId: String = CODE_STYLE_ID
+
     override fun apply(settings: CodeStyleSettings) {
         Companion.apply(settings)
     }
 
     companion object {
+        val INSTANCE = KotlinObsoleteCodeStyle()
+
         const val CODE_STYLE_ID = "KOTLIN_OLD_DEFAULTS"
+        const val CODE_STYLE_SETTING = "obsolete"
         const val CODE_STYLE_TITLE = "Kotlin obsolete IntelliJ IDEA codestyle"
 
         fun apply(settings: CodeStyleSettings) {

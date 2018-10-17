@@ -56,6 +56,11 @@ public class LoadJavaClsStubTestGenerated extends AbstractLoadJavaClsStubTest {
             runTest("compiler/testData/loadJava/compiledKotlin/annotations/AnnotationInAnnotationArguments.kt");
         }
 
+        @TestMetadata("ClassLiteralArguments.kt")
+        public void testClassLiteralArguments() throws Exception {
+            runTest("compiler/testData/loadJava/compiledKotlin/annotations/ClassLiteralArguments.kt");
+        }
+
         @TestMetadata("EnumArgumentWithCustomToString.kt")
         public void testEnumArgumentWithCustomToString() throws Exception {
             runTest("compiler/testData/loadJava/compiledKotlin/annotations/EnumArgumentWithCustomToString.kt");
@@ -128,9 +133,19 @@ public class LoadJavaClsStubTestGenerated extends AbstractLoadJavaClsStubTest {
                 runTest("compiler/testData/loadJava/compiledKotlin/annotations/classMembers/Getter.kt");
             }
 
+            @TestMetadata("HiddenConstructorWithInlineClassParameters.kt")
+            public void testHiddenConstructorWithInlineClassParameters() throws Exception {
+                runTest("compiler/testData/loadJava/compiledKotlin/annotations/classMembers/HiddenConstructorWithInlineClassParameters.kt");
+            }
+
             @TestMetadata("PropertyField.kt")
             public void testPropertyField() throws Exception {
                 runTest("compiler/testData/loadJava/compiledKotlin/annotations/classMembers/PropertyField.kt");
+            }
+
+            @TestMetadata("PublishedApiAnnotationOnInlineClassCosntructor.kt")
+            public void testPublishedApiAnnotationOnInlineClassCosntructor() throws Exception {
+                runTest("compiler/testData/loadJava/compiledKotlin/annotations/classMembers/PublishedApiAnnotationOnInlineClassCosntructor.kt");
             }
 
             @TestMetadata("Setter.kt")
@@ -484,6 +499,11 @@ public class LoadJavaClsStubTestGenerated extends AbstractLoadJavaClsStubTest {
             @TestMetadata("FieldTarget.kt")
             public void testFieldTarget() throws Exception {
                 runTest("compiler/testData/loadJava/compiledKotlin/annotations/withUseSiteTarget/FieldTarget.kt");
+            }
+
+            @TestMetadata("PropertyAndAccessor.kt")
+            public void testPropertyAndAccessor() throws Exception {
+                runTest("compiler/testData/loadJava/compiledKotlin/annotations/withUseSiteTarget/PropertyAndAccessor.kt");
             }
 
             @TestMetadata("ReceiverTarget.kt")

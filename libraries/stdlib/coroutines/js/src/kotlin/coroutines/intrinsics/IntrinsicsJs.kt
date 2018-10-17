@@ -3,8 +3,6 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
-@file:Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER", "UNCHECKED_CAST")
-
 package kotlin.coroutines.intrinsics
 
 import kotlin.coroutines.*
@@ -121,6 +119,7 @@ private inline fun <T> createCoroutineFromSuspendFunction(
     completion: Continuation<T>,
     crossinline block: () -> Any?
 ): Continuation<Unit> {
+    @Suppress("UNCHECKED_CAST")
     return object : CoroutineImpl(completion as Continuation<Any?>) {
         override fun doResume(): Any? {
             exception?.let { throw it }

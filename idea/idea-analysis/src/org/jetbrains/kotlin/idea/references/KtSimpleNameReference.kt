@@ -178,16 +178,18 @@ class KtSimpleNameReference(expression: KtSimpleNameExpression) : KtSimpleRefere
 
         if (shorteningMode == ShorteningMode.NO_SHORTENING) return newExpression
 
-        val needToShorten =
-                PsiTreeUtil.getParentOfType(expression, KtImportDirective::class.java, KtPackageDirective::class.java) == null
-        if (needToShorten) {
-            when (shorteningMode) {
-                ShorteningMode.FORCED_SHORTENING -> ShortenReferences.DEFAULT.process(newQualifiedElement)
-                else -> newQualifiedElement.addToShorteningWaitSet()
-            }
+        val needToShorten = PsiTreeUtil.getParentOfType(expression, KtImportDirective::class.java, KtPackageDirective::class.java) == null
+        if (!needToShorten) {
+            return newExpression
         }
 
-        return newExpression
+        return when (shorteningMode) {
+            ShorteningMode.FORCED_SHORTENING -> ShortenReferences.DEFAULT.process(newQualifiedElement)
+            else -> {
+                newQualifiedElement.addToShorteningWaitSet()
+                newExpression
+            }
+        }
     }
 
     /**

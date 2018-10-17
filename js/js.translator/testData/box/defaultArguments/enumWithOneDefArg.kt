@@ -1,5 +1,5 @@
 // IGNORE_BACKEND: JS_IR
-// EXPECTED_REACHABLE_NODES: 1135
+// EXPECTED_REACHABLE_NODES: 1291
 package foo
 
 enum class Foo(val a: Int = 1, val b: String) {

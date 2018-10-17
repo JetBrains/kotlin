@@ -21,19 +21,19 @@ FILE fqName:<root> fileName:/receiverParameterWithAnnotations.kt
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='A'
-    FUN name:f visibility:public modality:FINAL <> ($this:A, $receiver:@receiver:Ann kotlin.String) returnType:kotlin.String flags:
+    FUN name:f visibility:public modality:FINAL <> ($this:A, $receiver:kotlin.String) returnType:kotlin.String flags:
       $this: VALUE_PARAMETER name:<this> type:A flags:
-      $receiver: VALUE_PARAMETER name:<this> type:@receiver:Ann kotlin.String flags:
+      $receiver: VALUE_PARAMETER name:<this> type:kotlin.String flags:
         annotations:
           CALL 'constructor Ann()' type=Ann origin=null
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='f() on String: String'
           CONST String type=kotlin.String value=
     PROPERTY name:p visibility:public modality:FINAL flags:val
-      FUN name:<get-p> visibility:public modality:FINAL <> ($this:A, $receiver:@receiver:Ann kotlin.String?) returnType:kotlin.String flags:
+      FUN name:<get-p> visibility:public modality:FINAL <> ($this:A, $receiver:kotlin.String?) returnType:kotlin.String flags:
         correspondingProperty: PROPERTY name:p visibility:public modality:FINAL flags:val
         $this: VALUE_PARAMETER name:<this> type:A flags:
-        $receiver: VALUE_PARAMETER name:<this> type:@receiver:Ann kotlin.String? flags:
+        $receiver: VALUE_PARAMETER name:<this> type:kotlin.String? flags:
           annotations:
             CALL 'constructor Ann()' type=Ann origin=null
         BLOCK_BODY
@@ -52,17 +52,17 @@ FILE fqName:<root> fileName:/receiverParameterWithAnnotations.kt
       overridden:
         FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
-  FUN name:topLevelF visibility:public modality:FINAL <> ($receiver:@receiver:Ann kotlin.String?) returnType:kotlin.String flags:
-    $receiver: VALUE_PARAMETER name:<this> type:@receiver:Ann kotlin.String? flags:
+  FUN name:topLevelF visibility:public modality:FINAL <> ($receiver:kotlin.String?) returnType:kotlin.String flags:
+    $receiver: VALUE_PARAMETER name:<this> type:kotlin.String? flags:
       annotations:
         CALL 'constructor Ann()' type=Ann origin=null
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='topLevelF() on String?: String'
         CONST String type=kotlin.String value=
   PROPERTY name:topLevelP visibility:public modality:FINAL flags:val
-    FUN name:<get-topLevelP> visibility:public modality:FINAL <> ($receiver:@receiver:Ann kotlin.String) returnType:kotlin.String flags:
+    FUN name:<get-topLevelP> visibility:public modality:FINAL <> ($receiver:kotlin.String) returnType:kotlin.String flags:
       correspondingProperty: PROPERTY name:topLevelP visibility:public modality:FINAL flags:val
-      $receiver: VALUE_PARAMETER name:<this> type:@receiver:Ann kotlin.String flags:
+      $receiver: VALUE_PARAMETER name:<this> type:kotlin.String flags:
         annotations:
           CALL 'constructor Ann()' type=Ann origin=null
       BLOCK_BODY

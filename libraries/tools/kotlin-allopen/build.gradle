@@ -24,6 +24,12 @@ dependencies {
 
 evaluationDependsOn(":kotlin-allopen-compiler-plugin")
 
+tasks.withType(project.compileKotlin.class) {
+    kotlinOptions.languageVersion = "1.2"
+    kotlinOptions.apiVersion = "1.2"
+    kotlinOptions.freeCompilerArgs += ["-Xskip-metadata-version-check"]
+}
+
 jar {
     from(project(":kotlin-allopen-compiler-plugin").sourceSets.main.output.classesDirs)
     from(project(":kotlin-allopen-compiler-plugin").sourceSets.main.output.resourcesDir)

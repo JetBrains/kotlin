@@ -7,7 +7,7 @@
 @file:kotlin.jvm.JvmName("StandardKt")
 package kotlin
 
-import kotlin.internal.contracts.*
+import kotlin.contracts.*
 import kotlin.jvm.internal.unsafe.*
 
 /**

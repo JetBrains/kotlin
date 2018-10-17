@@ -74,7 +74,7 @@ class KotlinPackageContentModificationListener(private val project: Project) {
         })
 
         connection.subscribe(ProjectTopics.PROJECT_ROOTS, object : ModuleRootListener {
-            override fun rootsChanged(event: ModuleRootEvent?) {
+            override fun rootsChanged(event: ModuleRootEvent) {
                 PerModulePackageCacheService.getInstance(project).onTooComplexChange()
             }
         })

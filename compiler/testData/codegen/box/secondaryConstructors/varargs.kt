@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 fun join(x: Array<out String>): String {
     var result = ""
     for (i in x) {

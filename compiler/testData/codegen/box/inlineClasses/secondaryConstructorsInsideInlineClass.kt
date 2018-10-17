@@ -1,6 +1,8 @@
 // !LANGUAGE: +InlineClasses
 // IGNORE_BACKEND: JVM_IR
 
+@file:Suppress("SECONDARY_CONSTRUCTOR_WITH_BODY_INSIDE_INLINE_CLASS")
+
 var global = "wrong"
 
 inline class Foo(val x: String) {

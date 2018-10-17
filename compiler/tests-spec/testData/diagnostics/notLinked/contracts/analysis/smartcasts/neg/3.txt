@@ -1,0 +1,72 @@
+package
+
+public fun case_1(/*0*/ value_1: kotlin.Any?, /*1*/ value_2: kotlin.Any?): kotlin.Unit
+public fun case_2(/*0*/ value_1: kotlin.Any?, /*1*/ value_2: kotlin.Any?): kotlin.Unit
+public fun case_4(/*0*/ value_1: kotlin.Any?, /*1*/ value_2: kotlin.Any?): kotlin.Unit
+public fun case_5(/*0*/ value_1: kotlin.Any?, /*1*/ value_2: kotlin.Any?): kotlin.Unit
+
+public final class case_3_class {
+    public constructor case_3_class()
+    public final val prop_1: kotlin.Int? = 10
+    public final fun case_3(/*0*/ value_1: kotlin.Any?, /*1*/ value_2: kotlin.Number?): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class case_6_class {
+    public constructor case_6_class()
+    public final val prop_1: kotlin.Int? = 10
+    public final fun case_6(/*0*/ value_1: kotlin.Any?, /*1*/ value_2: kotlin.Number?): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+package contracts {
+    public fun case_1(/*0*/ value_1: kotlin.Any?, /*1*/ value_2: kotlin.Any?): kotlin.Unit
+        Returns(WILDCARD) -> value_1 !is String || value_2 !is Number
+
+    public fun case_2(/*0*/ value_1: kotlin.Any?, /*1*/ value_2: kotlin.Any?): kotlin.Unit
+        Returns(WILDCARD) -> value_1 !is String || value_2 != null
+
+    public fun case_3(/*0*/ value_1: kotlin.Any?, /*1*/ value_2: kotlin.Any?, /*2*/ value_3: kotlin.Any?, /*3*/ value_4: kotlin.Any?): kotlin.Unit
+        Returns(WILDCARD) -> value_1 !is Float? || value_1 == null || value_2 == null || value_3 == null || value_4 == null
+
+    public fun case_4_1(/*0*/ value_1: kotlin.Any?, /*1*/ value_2: kotlin.Any?): kotlin.Boolean
+        Returns(TRUE) -> value_1 !is String || value_2 !is Number
+
+    public fun case_4_2(/*0*/ value_1: kotlin.Any?, /*1*/ value_2: kotlin.Any?): kotlin.Boolean
+        Returns(FALSE) -> value_1 !is String || value_2 !is Number
+
+    public fun case_4_3(/*0*/ value_1: kotlin.Any?, /*1*/ value_2: kotlin.Any?): kotlin.Boolean?
+        Returns(NOT_NULL) -> value_1 !is String || value_2 !is Number
+
+    public fun case_4_4(/*0*/ value_1: kotlin.Any?, /*1*/ value_2: kotlin.Any?): kotlin.Boolean?
+        Returns(NULL) -> value_1 !is String || value_2 !is Number
+
+    public fun case_5_1(/*0*/ value_1: kotlin.Any?, /*1*/ value_2: kotlin.Any?): kotlin.Boolean
+        Returns(TRUE) -> value_1 !is String || value_2 != null
+
+    public fun case_5_2(/*0*/ value_1: kotlin.Any?, /*1*/ value_2: kotlin.Any?): kotlin.Boolean
+        Returns(FALSE) -> value_1 !is String || value_2 != null
+
+    public fun case_5_3(/*0*/ value_1: kotlin.Any?, /*1*/ value_2: kotlin.Any?): kotlin.Boolean?
+        Returns(NOT_NULL) -> value_1 is String && value_2 == null
+
+    public fun case_5_4(/*0*/ value_1: kotlin.Any?, /*1*/ value_2: kotlin.Any?): kotlin.Boolean?
+        Returns(NULL) -> value_1 is String && value_2 == null
+
+    public fun case_6_1(/*0*/ value_1: kotlin.Any?, /*1*/ value_2: kotlin.Any?, /*2*/ value_3: kotlin.Any?, /*3*/ value_4: kotlin.Any?): kotlin.Boolean
+        Returns(TRUE) -> value_1 !is Float? || value_1 == null || value_2 == null || value_3 == null || value_4 == null
+
+    public fun case_6_2(/*0*/ value_1: kotlin.Any?, /*1*/ value_2: kotlin.Any?, /*2*/ value_3: kotlin.Any?, /*3*/ value_4: kotlin.Any?): kotlin.Boolean
+        Returns(FALSE) -> value_1 !is Float? || value_1 == null || value_2 == null || value_3 == null || value_4 == null
+
+    public fun case_6_3(/*0*/ value_1: kotlin.Any?, /*1*/ value_2: kotlin.Any?, /*2*/ value_3: kotlin.Any?, /*3*/ value_4: kotlin.Any?): kotlin.Boolean?
+        Returns(NOT_NULL) -> value_1 is Float? && value_1 != null && value_2 != null && value_3 != null && value_4 != null
+
+    public fun case_6_4(/*0*/ value_1: kotlin.Any?, /*1*/ value_2: kotlin.Any?, /*2*/ value_3: kotlin.Any?, /*3*/ value_4: kotlin.Any?): kotlin.Boolean?
+        Returns(NULL) -> value_1 is Float? && value_1 != null && value_2 != null && value_3 != null && value_4 != null
+
+}

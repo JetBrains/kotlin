@@ -1,0 +1,36 @@
+package
+
+public fun getAny(): kotlin.Any
+public fun getBoolean(/*0*/ arg: kotlin.Any = ...): kotlin.Boolean
+public fun getByte(/*0*/ arg: kotlin.Any = ...): kotlin.Byte
+public fun getChar(/*0*/ arg: kotlin.Any = ...): kotlin.Char
+public fun getDouble(/*0*/ arg: kotlin.Any = ...): kotlin.Double
+public fun getFloat(/*0*/ arg: kotlin.Any = ...): kotlin.Float
+public fun getInt(/*0*/ arg: kotlin.Any = ...): kotlin.Int
+public fun getList(): kotlin.collections.MutableList<kotlin.Int>
+public fun getLong(/*0*/ arg: kotlin.Any = ...): kotlin.Long
+public fun getNothing(): kotlin.Nothing
+public fun getShort(/*0*/ arg: kotlin.Any = ...): kotlin.Short
+public fun getString(/*0*/ arg: kotlin.Any = ...): kotlin.String
+public fun getUnit(): () -> kotlin.Unit
+public fun </*0*/ T> T?.case_3(): kotlin.Unit
+
+public final class _BasicTypesProvider {
+    public constructor _BasicTypesProvider()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public final fun getAny(): kotlin.Any
+    public final fun getBoolean(/*0*/ arg: kotlin.Any = ...): kotlin.Boolean
+    public final fun getByte(/*0*/ arg: kotlin.Any = ...): kotlin.Byte
+    public final fun getChar(/*0*/ arg: kotlin.Any = ...): kotlin.Char
+    public final fun getDouble(/*0*/ arg: kotlin.Any = ...): kotlin.Double
+    public final fun getFloat(/*0*/ arg: kotlin.Any = ...): kotlin.Float
+    public final fun getInt(/*0*/ arg: kotlin.Any = ...): kotlin.Int
+    public final fun getList(): kotlin.collections.MutableList<kotlin.Int>
+    public final fun getLong(/*0*/ arg: kotlin.Any = ...): kotlin.Long
+    public final fun getNothing(): kotlin.Nothing
+    public final fun getShort(/*0*/ arg: kotlin.Any = ...): kotlin.Short
+    public final fun getString(/*0*/ arg: kotlin.Any = ...): kotlin.String
+    public final fun getUnit(): () -> kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

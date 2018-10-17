@@ -171,7 +171,8 @@ abstract class AbstractKotlinKapt3IntegrationTest : CodegenTestCase() {
             PathUtil.getJdkClassesRootsFromCurrentJre() + PathUtil.kotlinPathsForIdeaPlugin.stdlibPath,
             emptyList(), javaSourceRoots, outputDir, outputDir, stubsOutputDir, incrementalDataOutputDir
         ), options, emptyMap(), emptyList(), STUBS_AND_APT, System.currentTimeMillis(),
-        MessageCollectorBackedKaptLogger(true), correctErrorTypes = true, mapDiagnosticLocations = true,
+        MessageCollectorBackedKaptLogger(true),
+        correctErrorTypes = true, mapDiagnosticLocations = true, strictMode = true,
         compilerConfiguration = CompilerConfiguration.EMPTY
     ) {
         internal var savedStubs: String? = null

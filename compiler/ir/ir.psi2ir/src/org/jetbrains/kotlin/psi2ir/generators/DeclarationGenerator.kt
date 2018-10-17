@@ -155,29 +155,8 @@ class DeclarationGenerator(override val context: GeneratorContext) : Generator {
         }
     }
 
-    private fun generateFakeOverrideProperty(propertyDescriptor: PropertyDescriptor, ktElement: KtPureElement): IrProperty {
-        val startOffset = ktElement.pureStartOffsetOrUndefined
-        val endOffset = ktElement.pureEndOffsetOrUndefined
-
-        val backingField =
-            if (propertyDescriptor.getter == null)
-                context.symbolTable.declareField(
-                    startOffset, endOffset, IrDeclarationOrigin.FAKE_OVERRIDE,
-                    propertyDescriptor, propertyDescriptor.type.toIrType()
-                )
-            else
-                null
-
-        return IrPropertyImpl(
-            startOffset, endOffset,
-            IrDeclarationOrigin.FAKE_OVERRIDE,
-            false,
-            propertyDescriptor,
-            backingField,
-            propertyDescriptor.getter?.let { generateFakeOverrideFunction(it, ktElement) },
-            propertyDescriptor.setter?.let { generateFakeOverrideFunction(it, ktElement) }
-        )
-    }
+    private fun generateFakeOverrideProperty(propertyDescriptor: PropertyDescriptor, ktElement: KtPureElement): IrProperty =
+        PropertyGenerator(this).generateFakeOverrideProperty(propertyDescriptor, ktElement)
 
     private fun generateFakeOverrideFunction(functionDescriptor: FunctionDescriptor, ktElement: KtPureElement): IrSimpleFunction =
         FunctionGenerator(this).generateFakeOverrideFunction(functionDescriptor, ktElement)

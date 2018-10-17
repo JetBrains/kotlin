@@ -491,6 +491,11 @@ public class BasicCompletionHandlerTestGenerated extends AbstractBasicCompletion
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/handlers/basic/override"), Pattern.compile("^([^.]+)\\.kt$"), TargetBackend.ANY, true);
         }
 
+        @TestMetadata("ExpectClassValOverride.kt")
+        public void testExpectClassValOverride() throws Exception {
+            runTest("idea/idea-completion/testData/handlers/basic/override/ExpectClassValOverride.kt");
+        }
+
         @TestMetadata("ImplementFunction.kt")
         public void testImplementFunction() throws Exception {
             runTest("idea/idea-completion/testData/handlers/basic/override/ImplementFunction.kt");
@@ -514,6 +519,11 @@ public class BasicCompletionHandlerTestGenerated extends AbstractBasicCompletion
         @TestMetadata("KeepModifiersBefore.kt")
         public void testKeepModifiersBefore() throws Exception {
             runTest("idea/idea-completion/testData/handlers/basic/override/KeepModifiersBefore.kt");
+        }
+
+        @TestMetadata("kt25312.kt")
+        public void testKt25312() throws Exception {
+            runTest("idea/idea-completion/testData/handlers/basic/override/kt25312.kt");
         }
 
         @TestMetadata("OverrideFunction.kt")

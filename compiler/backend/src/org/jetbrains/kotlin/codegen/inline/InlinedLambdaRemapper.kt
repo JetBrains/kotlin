@@ -34,7 +34,7 @@ class InlinedLambdaRemapper(
             isDefaultBoundCallableReference && fieldName == AsmUtil.BOUND_REFERENCE_RECEIVER && fieldOwner == originalLambdaInternalName
 
     override fun getFieldNameForFolding(insnNode: FieldInsnNode): String =
-            if (isMyBoundReceiverForDefaultLambda(insnNode.owner, insnNode.name)) AsmUtil.RECEIVER_NAME else insnNode.name
+            if (isMyBoundReceiverForDefaultLambda(insnNode.owner, insnNode.name)) AsmUtil.RECEIVER_PARAMETER_NAME else insnNode.name
 
     override fun findField(fieldInsnNode: FieldInsnNode, captured: Collection<CapturedParamInfo>) =
             parent!!.findField(fieldInsnNode, captured)

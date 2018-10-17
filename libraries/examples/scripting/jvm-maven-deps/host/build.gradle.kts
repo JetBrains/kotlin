@@ -7,10 +7,12 @@ plugins {
 dependencies {
     compile(project(":examples:scripting-jvm-maven-deps"))
     compile(project(":kotlin-scripting-jvm-host"))
-    compile(projectDist(":kotlin-stdlib"))
-    compile(projectDist(":kotlin-reflect"))
+    compile(project(":kotlin-stdlib"))
+    compileOnly(project(":kotlin-reflect-api"))
     compileOnly(project(":compiler:util"))
-    runtime(projectRuntimeJar(":kotlin-compiler"))
+    runtime(project(":kotlin-reflect"))
+
+    testRuntimeOnly(projectRuntimeJar(":kotlin-compiler"))
     testCompile(commonDep("junit"))
 }
 

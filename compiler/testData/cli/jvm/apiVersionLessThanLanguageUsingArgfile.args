@@ -1,1 +1,1 @@
--Xargfile=$TESTDATA_DIR$/apiVersionLessThanLanguage.argfile
+@$TESTDATA_DIR$/apiVersionLessThanLanguage.argfile

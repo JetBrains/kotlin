@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 
 fun barB(vararg args: Byte) = args
 fun barC(vararg args: Char) = args

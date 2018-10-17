@@ -573,6 +573,24 @@ public class WriteSignatureTestGenerated extends AbstractWriteSignatureTest {
         }
     }
 
+    @TestMetadata("compiler/testData/writeSignature/java8")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Java8 extends AbstractWriteSignatureTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInJava8() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeSignature/java8"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("mutableMapRemove.kt")
+        public void testMutableMapRemove() throws Exception {
+            runTest("compiler/testData/writeSignature/java8/mutableMapRemove.kt");
+        }
+    }
+
     @TestMetadata("compiler/testData/writeSignature/nothing")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

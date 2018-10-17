@@ -17,9 +17,9 @@ dependencies {
     testCompile(project(":kotlin-test:kotlin-test-junit"))
     testRuntime(project(":kotlin-reflect"))
     compilerClasspath(projectRuntimeJar(":kotlin-compiler-embeddable"))
-    compilerClasspath(projectDist(":kotlin-reflect"))
-    compilerClasspath(projectDist(":kotlin-stdlib"))
-    compilerClasspath(projectDist(":kotlin-script-runtime"))
+    compilerClasspath(project(":kotlin-reflect"))
+    compilerClasspath(project(":kotlin-stdlib"))
+    compilerClasspath(project(":kotlin-script-runtime"))
 }
 
 projectTest {

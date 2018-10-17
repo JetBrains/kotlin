@@ -18,33 +18,58 @@ package org.jetbrains.kotlin.gradle.plugin
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.plugins.JavaPluginConvention
-import org.gradle.api.tasks.SourceSet
+import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
+import org.jetbrains.kotlin.gradle.dsl.KotlinSingleJavaTargetExtension
+import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.multiplatformExtension
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinJsDce
+import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import java.io.File
 
 class KotlinJsDcePlugin : Plugin<Project> {
     override fun apply(project: Project) {
-        project.pluginManager.apply(Kotlin2JsPluginWrapper::class.java)
+        val kotlinExtension = project.multiplatformExtension ?: run {
+            project.pluginManager.apply(Kotlin2JsPluginWrapper::class.java)
+            project.kotlinExtension as KotlinSingleJavaTargetExtension
+        }
 
-        val javaPluginConvention = project.convention.getPlugin(JavaPluginConvention::class.java)
-        javaPluginConvention.sourceSets.forEach { processSourceSet(project, it) }
+        fun forEachJsTarget(action: (KotlinTarget) -> Unit) {
+            when (kotlinExtension) {
+                is KotlinSingleJavaTargetExtension -> action(kotlinExtension.target)
+                is KotlinMultiplatformExtension ->
+                    kotlinExtension.targets
+                        .matching { it.platformType == KotlinPlatformType.js }
+                        .all { action(it) }
+            }
+        }
+
+        forEachJsTarget {
+            it.compilations.all { processCompilation(project, it) }
+        }
     }
 
-    private fun processSourceSet(project: Project, sourceSet: SourceSet) {
-        val kotlinTaskName = sourceSet.getCompileTaskName("kotlin2Js")
+    private fun processCompilation(project: Project, kotlinCompilation: KotlinCompilation) {
+        val kotlinTaskName = kotlinCompilation.compileKotlinTaskName
         val kotlinTask = project.tasks.findByName(kotlinTaskName) as? Kotlin2JsCompile ?: return
-        val dceTaskName = sourceSet.getTaskName(DCE_TASK_PREFIX, TASK_SUFFIX)
+        val dceTaskName = lowerCamelCaseName(
+            DCE_TASK_PREFIX,
+            kotlinCompilation.target.disambiguationClassifier,
+            kotlinCompilation.name.takeIf { it != KotlinCompilation.MAIN_COMPILATION_NAME },
+            if (kotlinCompilation.target is KotlinWithJavaTarget) TASK_SUFFIX else MPP_TASK_SUFFIX
+        )
         val dceTask = project.tasks.create(dceTaskName, KotlinJsDce::class.java).also {
             it.dependsOn(kotlinTask)
             project.tasks.findByName("build")!!.dependsOn(it)
         }
 
         project.afterEvaluate {
-            val outputDir = File(File(project.buildDir, DEFAULT_OUT_DIR), sourceSet.name)
+            val outputDir = project.buildDir
+                .resolve(DEFAULT_OUT_DIR)
+                .resolve(kotlinCompilation.target.disambiguationClassifier?.let { "$it/" }.orEmpty() + kotlinCompilation.name)
 
-            val configuration = project.configurations.findByName(sourceSet.compileConfigurationName)!!
+            val configuration = project.configurations.getByName(kotlinCompilation.compileDependencyConfigurationName)
 
             with (dceTask) {
                 classpath = configuration
@@ -56,6 +81,7 @@ class KotlinJsDcePlugin : Plugin<Project> {
 
     companion object {
         private const val TASK_SUFFIX = "kotlinJs"
+        private const val MPP_TASK_SUFFIX = "kotlin"
         private const val DCE_TASK_PREFIX = "runDce"
         private const val DEFAULT_OUT_DIR = "kotlin-js-min"
     }

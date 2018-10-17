@@ -1,5 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
-// IGNORE_BACKEND: JS_IR
 fun box(): String {
     val i1: Int = Int.MAX_VALUE
     val i2 = i1 + 1

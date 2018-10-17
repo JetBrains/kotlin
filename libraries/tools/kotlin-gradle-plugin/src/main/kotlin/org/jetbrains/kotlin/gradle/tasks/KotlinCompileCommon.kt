@@ -40,7 +40,7 @@ internal open class KotlinCompileCommon : AbstractKotlinCompile<K2MetadataCompil
             K2MetadataCompilerArguments()
 
     override fun getSourceRoots(): SourceRoots =
-            SourceRoots.KotlinOnly.create(getSource())
+            SourceRoots.KotlinOnly.create(getSource(), sourceFilesExtensions)
 
     override fun findKotlinCompilerClasspath(project: Project): List<File>  =
             findKotlinMetadataCompilerClasspath(project)

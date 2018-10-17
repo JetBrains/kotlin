@@ -8,7 +8,6 @@ package test.collections
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ConcurrentMap
 import kotlin.test.*
-import kotlin.comparisons.*
 
 class MapJVMTest {
     @Test fun createSortedMap() {

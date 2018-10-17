@@ -95,13 +95,13 @@ class KaptStubLineInformation {
                 }
                 is JCTree.JCClassDecl -> {
                     val className = parent.simpleName.toString()
-                    val newName = if (currentName.isEmpty()) className else currentName + "#" + className
+                    val newName = if (currentName.isEmpty()) className else currentName + "$" + className
                     if (declaration === parent) {
                         return newName
                     }
 
                     for (definition in parent.defs) {
-                        getFqName(declaration, definition, className)?.let { return it }
+                        getFqName(declaration, definition, newName)?.let { return it }
                     }
 
                     return null

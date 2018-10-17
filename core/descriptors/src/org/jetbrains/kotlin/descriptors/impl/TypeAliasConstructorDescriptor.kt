@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.DescriptorFactory
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.storage.getValue
 import org.jetbrains.kotlin.types.*
@@ -192,12 +193,16 @@ class TypeAliasConstructorDescriptorImpl private constructor(
 
             val returnType = substitutedConstructor.returnType.unwrap().lowerIfFlexible().withAbbreviation(typeAliasDescriptor.defaultType)
 
-            val receiverParameterType = constructor.dispatchReceiverParameter?.let {
-                substitutorForUnderlyingClass.safeSubstitute(it.type, Variance.INVARIANT)
+            val receiverParameter = constructor.dispatchReceiverParameter?.let {
+                DescriptorFactory.createExtensionReceiverParameterForCallable(
+                    typeAliasConstructor,
+                    substitutorForUnderlyingClass.safeSubstitute(it.type, Variance.INVARIANT),
+                    Annotations.EMPTY
+                )
             }
 
             typeAliasConstructor.initialize(
-                receiverParameterType,
+                receiverParameter,
                 null,
                 typeAliasDescriptor.declaredTypeParameters,
                 valueParameters,

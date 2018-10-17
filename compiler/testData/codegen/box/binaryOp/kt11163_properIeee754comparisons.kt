@@ -1,5 +1,4 @@
 // !LANGUAGE: +ProperIeee754Comparisons
-// IGNORE_BACKEND: JS_IR
 operator fun Int.compareTo(c: Char) = 0
 
 fun foo(x: Int, y: Char): String {

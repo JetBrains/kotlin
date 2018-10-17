@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 fun baz(s: String?): Int {
     if (s == null) return 0
     return when(s) {

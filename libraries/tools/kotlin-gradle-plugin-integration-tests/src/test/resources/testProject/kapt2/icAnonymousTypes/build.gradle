@@ -1,0 +1,46 @@
+buildscript {
+    repositories {
+        mavenLocal()
+        jcenter()
+        maven { url 'https://maven.google.com' }
+    }
+    dependencies {
+        classpath "com.android.tools.build:gradle:$android_tools_version"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+
+apply plugin: 'com.android.application'
+
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
+
+android {
+  compileSdkVersion 27
+  buildToolsVersion "27.0.3"
+
+  defaultConfig {
+    applicationId "org.kotlinlang.test"
+
+    minSdkVersion 16
+    targetSdkVersion 27
+
+    versionCode 1
+    versionName "1.0"
+  }
+
+  dataBinding {
+    enabled true
+  }
+}
+
+repositories {
+    mavenLocal()
+    jcenter()
+    maven { url 'https://maven.google.com' }
+}
+
+dependencies {
+    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    kapt "com.android.databinding:compiler:$android_tools_version"
+}

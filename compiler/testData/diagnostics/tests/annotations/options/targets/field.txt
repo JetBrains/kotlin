@@ -1,6 +1,6 @@
 package
 
-@Field public val x: kotlin.Int = 42
+@field:Field public val x: kotlin.Int = 42
 @Field public val y: kotlin.Int
 
 @Field public final annotation class Another : kotlin.Annotation {
@@ -28,8 +28,8 @@ public interface His {
 @Field public abstract class My {
     public constructor My(/*0*/ @Field arg: kotlin.Int, /*1*/ w: kotlin.Int)
     @Field public final val v: kotlin.Int
-    @Field public final val w: kotlin.Int
-    @Field public final val x: kotlin.Int
+    @field:Field public final val w: kotlin.Int
+    @field:Field public final val x: kotlin.Int
     @Field public final val y: kotlin.Int
     @Field public abstract val z: kotlin.Int
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean

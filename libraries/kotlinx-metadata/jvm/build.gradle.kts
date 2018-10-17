@@ -4,6 +4,7 @@ description = "Kotlin JVM metadata manipulation library"
 
 plugins {
     kotlin("jvm")
+    id("jps-compatible")
 }
 
 /*
@@ -43,7 +44,7 @@ dependencies {
     testCompile(commonDep("junit:junit"))
     testCompile(intellijDep()) { includeJars("asm-all", rootProject = rootProject) }
     testCompileOnly(project(":kotlin-reflect-api"))
-    testRuntime(projectDist(":kotlin-reflect"))
+    testRuntime(project(":kotlin-reflect"))
 }
 
 noDefaultJar()

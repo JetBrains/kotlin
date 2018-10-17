@@ -44,7 +44,7 @@ class UnsignedTypeGenerator(val type: UnsignedType, out: PrintWriter) : BuiltIns
         out.println("@Suppress(\"NON_PUBLIC_PRIMARY_CONSTRUCTOR_OF_INLINE_CLASS\")")
         out.println("@SinceKotlin(\"1.3\")")
         out.println("@ExperimentalUnsignedTypes")
-        out.println("public inline class $className internal constructor(private val data: $storageType) : Comparable<$className> {")
+        out.println("public inline class $className @PublishedApi internal constructor(@PublishedApi internal val data: $storageType) : Comparable<$className> {")
         out.println()
         out.println("""    companion object {
         /**
@@ -56,6 +56,16 @@ class UnsignedTypeGenerator(val type: UnsignedType, out: PrintWriter) : BuiltIns
          * A constant holding the maximum value an instance of $className can have.
          */
         public const val MAX_VALUE: $className = $className(-1)
+
+        /**
+         * The number of bytes used to represent an instance of $className in a binary form.
+         */
+        public const val SIZE_BYTES: Int = ${type.byteSize}
+
+        /**
+         * The number of bits used to represent an instance of $className in a binary form.
+         */
+        public const val SIZE_BITS: Int = ${type.byteSize * 8}
     }""")
 
         generateCompareTo()
@@ -90,14 +100,21 @@ class UnsignedTypeGenerator(val type: UnsignedType, out: PrintWriter) : BuiltIns
      * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
      * or a positive number if it's greater than other.
      */""")
+            out.println("    @kotlin.internal.InlineOnly")
+            if (otherType == type)
+                out.println("""    @Suppress("OVERRIDE_BY_INLINE")""")
             out.print("    public ")
             if (otherType == type) out.print("override ")
-            out.print("operator fun compareTo(other: ${otherType.capitalized}): Int = ")
+            out.print("inline operator fun compareTo(other: ${otherType.capitalized}): Int = ")
             if (otherType == type && maxByDomainCapacity(type, UnsignedType.UINT) == type) {
                 out.println("${className.toLowerCase()}Compare(this.data, other.data)")
             } else {
-                val ctype = maxByDomainCapacity(maxByDomainCapacity(type, otherType), UnsignedType.UINT)
-                out.println("${convert("this", type, ctype)}.compareTo(${convert("other", otherType, ctype)})")
+                if (maxOf(type, otherType) < UnsignedType.UINT) {
+                    out.println("this.toInt().compareTo(other.toInt())")
+                } else {
+                    val ctype = maxByDomainCapacity(type, otherType)
+                    out.println("${convert("this", type, ctype)}.compareTo(${convert("other", otherType, ctype)})")
+                }
             }
         }
         out.println()
@@ -116,7 +133,8 @@ class UnsignedTypeGenerator(val type: UnsignedType, out: PrintWriter) : BuiltIns
             val returnType = getOperatorReturnType(type, otherType)
 
             out.println("    /** $doc */")
-            out.print("    public operator fun $name(other: ${otherType.capitalized}): ${returnType.capitalized} = ")
+            out.println("    @kotlin.internal.InlineOnly")
+            out.print("    public inline operator fun $name(other: ${otherType.capitalized}): ${returnType.capitalized} = ")
             if (type == otherType && type == returnType) {
                 when (name) {
                     "plus", "minus", "times" -> out.println("$className(this.data.$name(other.data))")
@@ -136,7 +154,8 @@ class UnsignedTypeGenerator(val type: UnsignedType, out: PrintWriter) : BuiltIns
         for ((name, doc) in GeneratePrimitives.unaryOperators) {
             if (name in listOf("unaryPlus", "unaryMinus")) continue
             out.println("    /** $doc */")
-            out.println("    public operator fun $name(): $className = $className(data.$name())")
+            out.println("    @kotlin.internal.InlineOnly")
+            out.println("    public inline operator fun $name(): $className = $className(data.$name())")
 
         }
         out.println()
@@ -147,7 +166,8 @@ class UnsignedTypeGenerator(val type: UnsignedType, out: PrintWriter) : BuiltIns
         val rangeType = rangeElementType.capitalized + "Range"
         fun convert(name: String) = if (rangeElementType == type) name else "$name.to${rangeElementType.capitalized}()"
         out.println("    /** Creates a range from this value to the specified [other] value. */")
-        out.println("    public operator fun rangeTo(other: $className): $rangeType = $rangeType(${convert("this")}, ${convert("other")})")
+        out.println("    @kotlin.internal.InlineOnly")
+        out.println("    public inline operator fun rangeTo(other: $className): $rangeType = $rangeType(${convert("this")}, ${convert("other")})")
         out.println()
     }
 
@@ -157,7 +177,8 @@ class UnsignedTypeGenerator(val type: UnsignedType, out: PrintWriter) : BuiltIns
         fun generateShiftOperator(name: String, implementation: String = name) {
             val doc = GeneratePrimitives.shiftOperators[implementation]!!
             out.println("    /** $doc */")
-            out.println("    public infix fun $name(bitCount: Int): $className = $className(data $implementation bitCount)")
+            out.println("    @kotlin.internal.InlineOnly")
+            out.println("    public inline infix fun $name(bitCount: Int): $className = $className(data $implementation bitCount)")
         }
 
         generateShiftOperator("shl")
@@ -167,17 +188,20 @@ class UnsignedTypeGenerator(val type: UnsignedType, out: PrintWriter) : BuiltIns
     private fun generateBitwiseOperators() {
         for ((name, doc) in GeneratePrimitives.bitwiseOperators) {
             out.println("    /** $doc */")
-            out.println("    public infix fun $name(other: $className): $className = $className(this.data $name other.data)")
+            out.println("    @kotlin.internal.InlineOnly")
+            out.println("    public inline infix fun $name(other: $className): $className = $className(this.data $name other.data)")
         }
         out.println("    /** Inverts the bits in this value. */")
-        out.println("    public fun inv(): $className = $className(data.inv())")
+        out.println("    @kotlin.internal.InlineOnly")
+        out.println("    public inline fun inv(): $className = $className(data.inv())")
         out.println()
     }
 
     private fun generateMemberConversions() {
         for (otherType in UnsignedType.values()) {
             val signed = otherType.asSigned.capitalized
-            out.print("    public fun to$signed(): $signed = ")
+            out.println("    @kotlin.internal.InlineOnly")
+            out.print("    public inline fun to$signed(): $signed = ")
             out.println(when {
                 otherType < type -> "data.to$signed()"
                 otherType == type -> "data"
@@ -188,8 +212,13 @@ class UnsignedTypeGenerator(val type: UnsignedType, out: PrintWriter) : BuiltIns
 
         for (otherType in UnsignedType.values()) {
             val name = otherType.capitalized
-            out.print("    public fun to$name(): $name = ")
-            out.println(if (type == otherType) "this" else "data.to${otherType.capitalized}()")
+            out.println("    @kotlin.internal.InlineOnly")
+            out.print("    public inline fun to$name(): $name = ")
+            out.println(when {
+                otherType > type -> "${otherType.capitalized}(data.to${otherType.asSigned.capitalized}() and ${type.mask})"
+                otherType == type -> "this"
+                else -> "data.to${otherType.capitalized}()"
+            })
         }
         out.println()
     }
@@ -200,9 +229,9 @@ class UnsignedTypeGenerator(val type: UnsignedType, out: PrintWriter) : BuiltIns
             val thisSigned = type.asSigned.capitalized
             out.println("@SinceKotlin(\"1.3\")")
             out.println("@ExperimentalUnsignedTypes")
-            out.print("public fun $otherSigned.to$className(): $className = ")
+            out.println("@kotlin.internal.InlineOnly")
+            out.print("public inline fun $otherSigned.to$className(): $className = ")
             out.println(when {
-                otherType < type -> "$className(this.to$thisSigned() and ${otherType.mask})"
                 otherType == type -> "$className(this)"
                 else -> "$className(this.to$thisSigned())"
             })
@@ -268,9 +297,12 @@ class UnsignedArrayGenerator(val type: UnsignedType, out: PrintWriter) : BuiltIn
         out.println("public inline class $arrayType")
         out.println("@Suppress(\"NON_PUBLIC_PRIMARY_CONSTRUCTOR_OF_INLINE_CLASS\")")
         out.println("@PublishedApi")
-        out.println("internal constructor(private val storage: $storageArrayType) : Collection<$elementType> {")
+        out.println("internal constructor(@PublishedApi internal val storage: $storageArrayType) : Collection<$elementType> {")
         out.println(
             """
+    /** Creates a new array of the specified [size], with all elements initialized to zero. */
+    public constructor(size: Int) : this($storageArrayType(size))
+
     /** Returns the array element at the given [index]. This method can be called using the index operator. */
     public operator fun get(index: Int): $elementType = storage[index].to$elementType()
 
@@ -301,16 +333,17 @@ class UnsignedArrayGenerator(val type: UnsignedType, out: PrintWriter) : BuiltIn
         out.println("}")
 
         // TODO: Make inline constructor, like in ByteArray
-        out.println()
-        out.println("@SinceKotlin(\"1.3\")")
-        out.println("@ExperimentalUnsignedTypes")
-        out.println("""public inline fun $arrayType(size: Int, init: (Int) -> $elementType): $arrayType {
+        out.println("""
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun $arrayType(size: Int, init: (Int) -> $elementType): $arrayType {
     return $arrayType($storageArrayType(size) { index -> init(index).to$storageElementType() })
 }
 
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
-// TODO: @kotlin.internal.InlineOnly
+@kotlin.internal.InlineOnly
 public inline fun $arrayTypeOf(vararg elements: $elementType): $arrayType = elements"""
         )
     }
@@ -320,6 +353,7 @@ class UnsignedRangeGenerator(val type: UnsignedType, out: PrintWriter) : BuiltIn
     val elementType = type.capitalized
     val signedType = type.asSigned.capitalized
     val stepType = signedType
+    val stepMinValue = "$stepType.MIN_VALUE"
 
     override fun getPackage(): String = "kotlin.ranges"
 
@@ -372,7 +406,8 @@ internal constructor(
     step: $stepType
 ) : Iterable<$elementType> {
     init {
-        if (step == 0.to$stepType()) throw kotlin.IllegalArgumentException("Step must be non-zero")
+        if (step == 0.to$stepType()) throw kotlin.IllegalArgumentException("Step must be non-zero.")
+        if (step == $stepMinValue) throw kotlin.IllegalArgumentException("Step must be greater than $stepMinValue to avoid overflow on negation.")
     }
 
     /**
@@ -410,6 +445,8 @@ internal constructor(
 
          * The progression starts with the [rangeStart] value and goes toward the [rangeEnd] value not excluding it, with the specified [step].
          * In order to go backwards the [step] must be negative.
+         *
+         * [step] must be greater than `$stepMinValue` and not equal to zero.
          */
         public fun fromClosedRange(rangeStart: $elementType, rangeEnd: $elementType, step: $stepType): ${elementType}Progression = ${elementType}Progression(rangeStart, rangeEnd, step)
     }

@@ -1,0 +1,37 @@
+compiler/testData/compileKotlinAgainstCustomBinaries/requireKotlin/source.kt:3:13: error: 'A' is only available since Kotlin 42.33 and cannot be used in Kotlin 1.3. This declaration is only supported since Kotlin 42.33
+fun test(a: A): TA {
+            ^
+compiler/testData/compileKotlinAgainstCustomBinaries/requireKotlin/source.kt:3:13: error: 'A' is only available since Kotlin 40.34 and cannot be used in Kotlin 1.3
+fun test(a: A): TA {
+            ^
+compiler/testData/compileKotlinAgainstCustomBinaries/requireKotlin/source.kt:3:13: error: 'A' is only available since Kotlin 45.35 and cannot be used in Kotlin 1.3
+fun test(a: A): TA {
+            ^
+compiler/testData/compileKotlinAgainstCustomBinaries/requireKotlin/source.kt:3:17: error: 'typealias TA = String' is only available since Kotlin 42.33 and cannot be used in Kotlin 1.3. This declaration is only supported since Kotlin 42.33
+fun test(a: A): TA {
+                ^
+compiler/testData/compileKotlinAgainstCustomBinaries/requireKotlin/source.kt:3:17: error: 'typealias TA = String' is only available since Kotlin 40.34 and cannot be used in Kotlin 1.3
+fun test(a: A): TA {
+                ^
+compiler/testData/compileKotlinAgainstCustomBinaries/requireKotlin/source.kt:3:17: error: 'typealias TA = String' is only available since Kotlin 45.35 and cannot be used in Kotlin 1.3
+fun test(a: A): TA {
+                ^
+compiler/testData/compileKotlinAgainstCustomBinaries/requireKotlin/source.kt:4:5: error: 'f(): Unit' is only available since Kotlin 42.33 and cannot be used in Kotlin 1.3. This declaration is only supported since Kotlin 42.33
+    f()
+    ^
+compiler/testData/compileKotlinAgainstCustomBinaries/requireKotlin/source.kt:4:5: error: 'f(): Unit' is only available since Kotlin 40.34 and cannot be used in Kotlin 1.3
+    f()
+    ^
+compiler/testData/compileKotlinAgainstCustomBinaries/requireKotlin/source.kt:4:5: error: 'f(): Unit' is only available since Kotlin 45.35 and cannot be used in Kotlin 1.3
+    f()
+    ^
+compiler/testData/compileKotlinAgainstCustomBinaries/requireKotlin/source.kt:5:12: error: 'p: String' is only available since Kotlin 42.33 and cannot be used in Kotlin 1.3. This declaration is only supported since Kotlin 42.33
+    return p
+           ^
+compiler/testData/compileKotlinAgainstCustomBinaries/requireKotlin/source.kt:5:12: error: 'p: String' is only available since Kotlin 40.34 and cannot be used in Kotlin 1.3
+    return p
+           ^
+compiler/testData/compileKotlinAgainstCustomBinaries/requireKotlin/source.kt:5:12: error: 'p: String' is only available since Kotlin 45.35 and cannot be used in Kotlin 1.3
+    return p
+           ^
+COMPILATION_ERROR

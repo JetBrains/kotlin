@@ -73,7 +73,7 @@ private class StringConcatenationTransformer(val lower: StringConcatenationLower
         it.valueParameters.size == 0 && it.name == nameToString
     }
     private val defaultAppendFunction = stringBuilder.functions.single {
-        it.descriptor.name == nameAppend &&
+        it.name == nameAppend &&
                 it.valueParameters.size == 1 &&
                 it.valueParameters.single().type.isNullableAny()
     }
@@ -82,7 +82,7 @@ private class StringConcatenationTransformer(val lower: StringConcatenationLower
     private val appendFunctions: Map<KotlinType, IrSimpleFunction?> =
         typesWithSpecialAppendFunction.map { type ->
             type to stringBuilder.functions.toList().atMostOne {
-                it.descriptor.name == nameAppend &&
+                it.name == nameAppend &&
                         it.valueParameters.size == 1 &&
                         it.valueParameters.single().type.toKotlinType() == type
             }

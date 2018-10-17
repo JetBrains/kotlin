@@ -7,7 +7,7 @@ public interface A {
 
     public companion object Companion {
         private constructor Companion()
-        @kotlin.jvm.JvmField public final val c: kotlin.Int = 3
+        @field:kotlin.jvm.JvmField public final val c: kotlin.Int = 3
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
@@ -21,8 +21,8 @@ public interface B {
 
     public companion object Companion {
         private constructor Companion()
-        @kotlin.jvm.JvmField public final val a: kotlin.Int = 3
-        @kotlin.jvm.JvmField public final val c: kotlin.Int = 3
+        @field:kotlin.jvm.JvmField public final val a: kotlin.Int = 3
+        @field:kotlin.jvm.JvmField public final val c: kotlin.Int = 3
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
@@ -37,7 +37,7 @@ public interface C {
     public companion object Companion {
         private constructor Companion()
         public final val a: kotlin.Int = 3
-        @kotlin.jvm.JvmField public final val c: kotlin.Int = 3
+        @field:kotlin.jvm.JvmField public final val c: kotlin.Int = 3
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
@@ -51,7 +51,7 @@ public interface D {
 
     public companion object Companion {
         private constructor Companion()
-        @kotlin.jvm.JvmField public final var c: kotlin.Int
+        @field:kotlin.jvm.JvmField public final var c: kotlin.Int
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
@@ -65,9 +65,9 @@ public interface E {
 
     public companion object Companion {
         private constructor Companion()
-        @kotlin.jvm.JvmField private final val a: kotlin.Int = 3
-        @kotlin.jvm.JvmField internal final val b: kotlin.Int = 3
-        @kotlin.jvm.JvmField protected final val c: kotlin.Int = 3
+        @field:kotlin.jvm.JvmField private final val a: kotlin.Int = 3
+        @field:kotlin.jvm.JvmField internal final val b: kotlin.Int = 3
+        @field:kotlin.jvm.JvmField protected final val c: kotlin.Int = 3
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
@@ -81,7 +81,7 @@ public interface F {
 
     public companion object Companion {
         private constructor Companion()
-        @kotlin.jvm.JvmField public open val a: kotlin.Int = 3
+        @field:kotlin.jvm.JvmField public open val a: kotlin.Int = 3
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

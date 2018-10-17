@@ -40,8 +40,10 @@ import org.jetbrains.kotlin.analyzer.AnalysisResult;
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.checkers.CompilerTestLanguageVersionSettings;
+import org.jetbrains.kotlin.checkers.CompilerTestLanguageVersionSettingsKt;
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys;
 import org.jetbrains.kotlin.cli.common.config.ContentRootsKt;
+import org.jetbrains.kotlin.cli.common.config.KotlinSourceRoot;
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation;
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity;
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector;
@@ -97,6 +99,13 @@ public class KotlinTestUtils {
 
     private static final boolean RUN_IGNORED_TESTS_AS_REGULAR =
             Boolean.getBoolean("org.jetbrains.kotlin.run.ignored.tests.as.regular");
+
+    private static final boolean PRINT_STACKTRACE_FOR_IGNORED_TESTS =
+            Boolean.getBoolean("org.jetbrains.kotlin.print.stacktrace.for.ignored.tests");
+
+    private static final boolean DONT_IGNORE_TESTS_WORKING_ON_COMPATIBLE_BACKEND =
+            Boolean.getBoolean("org.jetbrains.kotlin.dont.ignore.tests.working.on.compatible.backend");
+
 
     private static final boolean AUTOMATICALLY_UNMUTE_PASSED_TESTS = true;
     private static final boolean AUTOMATICALLY_MUTE_FAILED_TESTS = false;
@@ -610,11 +619,11 @@ public class KotlinTestUtils {
     }
 
     public static void resolveAllKotlinFiles(KotlinCoreEnvironment environment) throws IOException {
-        List<String> paths = ContentRootsKt.getKotlinSourceRoots(environment.getConfiguration());
-        if (paths.isEmpty()) return;
+        List<KotlinSourceRoot> roots = ContentRootsKt.getKotlinSourceRoots(environment.getConfiguration());
+        if (roots.isEmpty()) return;
         List<KtFile> ktFiles = new ArrayList<>();
-        for (String path : paths) {
-            File file = new File(path);
+        for (KotlinSourceRoot root : roots) {
+            File file = new File(root.getPath());
             if (file.isFile()) {
                 ktFiles.add(loadJetFile(environment.getProject(), file));
             }
@@ -680,6 +689,7 @@ public class KotlinTestUtils {
     ) throws IOException {
         if (!ktFiles.isEmpty()) {
             KotlinCoreEnvironment environment = createEnvironmentWithFullJdkAndIdeaAnnotations(disposable);
+            CompilerTestLanguageVersionSettingsKt.setupLanguageVersionSettingsForMultifileCompilerTests(ktFiles, environment);
             LoadDescriptorUtil.compileKotlinToDirAndGetModule(ktFiles, outDir, environment);
         }
         else {
@@ -1037,6 +1047,13 @@ public class KotlinTestUtils {
 
         boolean isIgnored = isIgnoredTarget(targetBackend, testDataFile);
 
+        if (DONT_IGNORE_TESTS_WORKING_ON_COMPATIBLE_BACKEND) {
+            // Only ignore if it is ignored for both backends
+            // Motivation: this backend works => all good, even if compatible backend fails
+            // This backend fails, compatible works => need to know
+            isIgnored &= isIgnoredTarget(targetBackend.getCompatibleWith(), testDataFile);
+        }
+
         try {
             test.invoke(testDataFilePath);
         }
@@ -1074,7 +1091,9 @@ public class KotlinTestUtils {
                 throw e;
             }
 
-            e.printStackTrace();
+            if (PRINT_STACKTRACE_FOR_IGNORED_TESTS) {
+                e.printStackTrace();
+            }
             return;
         }
 

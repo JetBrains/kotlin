@@ -48,7 +48,9 @@ open class FunctionCodegen(private val irFunction: IrFunction, private val class
         val flags = calculateMethodFlags(irFunction.isStatic)
         val methodVisitor = createMethod(flags, signature)
 
-        FunctionCodegen.generateMethodAnnotations(descriptor, signature.asmMethod, methodVisitor, classCodegen, state.typeMapper)
+        AnnotationCodegen.forMethod(methodVisitor, classCodegen, state.typeMapper).genAnnotations(
+            descriptor, signature.asmMethod.returnType
+        )
         FunctionCodegen.generateParameterAnnotations(descriptor, methodVisitor, signature, classCodegen, state)
 
         if (!state.classBuilderMode.generateBodies || flags.and(Opcodes.ACC_ABSTRACT) != 0 || irFunction.isExternal) {

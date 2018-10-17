@@ -33,8 +33,11 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.container.ComponentProvider
+import org.jetbrains.kotlin.container.StorageComponentContainer
+import org.jetbrains.kotlin.container.useInstance
 import org.jetbrains.kotlin.context.ProjectContext
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
 import org.jetbrains.kotlin.kapt3.Kapt3CommandLineProcessor.Companion.ANNOTATION_PROCESSORS_OPTION
 import org.jetbrains.kotlin.kapt3.Kapt3CommandLineProcessor.Companion.ANNOTATION_PROCESSOR_CLASSPATH_OPTION
 import org.jetbrains.kotlin.kapt3.Kapt3CommandLineProcessor.Companion.APT_MODE_OPTION
@@ -53,13 +56,16 @@ import org.jetbrains.kotlin.kapt3.Kapt3CommandLineProcessor.Companion.VERBOSE_MO
 import org.jetbrains.kotlin.kapt3.Kapt3ConfigurationKeys.ANNOTATION_PROCESSOR_CLASSPATH
 import org.jetbrains.kotlin.kapt3.Kapt3ConfigurationKeys.APT_OPTIONS
 import org.jetbrains.kotlin.kapt3.Kapt3ConfigurationKeys.JAVAC_CLI_OPTIONS
+import org.jetbrains.kotlin.kapt3.Kapt3CommandLineProcessor.Companion.STRICT_MODE_OPTION
 import org.jetbrains.kotlin.kapt3.base.Kapt
 import org.jetbrains.kotlin.kapt3.base.KaptPaths
 import org.jetbrains.kotlin.kapt3.base.log
 import org.jetbrains.kotlin.kapt3.util.MessageCollectorBackedKaptLogger
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.BindingTrace
+import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisHandlerExtension
+import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 import org.jetbrains.kotlin.utils.decodePluginOptions
 import java.io.ByteArrayInputStream
 import java.io.File
@@ -112,6 +118,9 @@ object Kapt3ConfigurationKeys {
 
     val MAP_DIAGNOSTIC_LOCATIONS: CompilerConfigurationKey<String> =
         CompilerConfigurationKey.create<String>(MAP_DIAGNOSTIC_LOCATIONS_OPTION.description)
+
+    val STRICT_MODE: CompilerConfigurationKey<String> =
+        CompilerConfigurationKey.create<String>(STRICT_MODE_OPTION.description)
 }
 
 class Kapt3CommandLineProcessor : CommandLineProcessor {
@@ -171,6 +180,9 @@ class Kapt3CommandLineProcessor : CommandLineProcessor {
 
         val MAP_DIAGNOSTIC_LOCATIONS_OPTION: CliOption =
             CliOption("mapDiagnosticLocations", "true | false", "Map diagnostic reported on kapt stubs to original locations in Kotlin sources", required = false)
+
+        val STRICT_MODE_OPTION: CliOption =
+            CliOption("strict", "true | false", "Show errors on incompatibilities during stub generation", required = false)
     }
 
     override val pluginId: String = ANNOTATION_PROCESSING_COMPILER_PLUGIN_ID
@@ -179,7 +191,7 @@ class Kapt3CommandLineProcessor : CommandLineProcessor {
             listOf(SOURCE_OUTPUT_DIR_OPTION, ANNOTATION_PROCESSOR_CLASSPATH_OPTION, APT_OPTIONS_OPTION, JAVAC_CLI_OPTIONS_OPTION,
                    CLASS_OUTPUT_DIR_OPTION, VERBOSE_MODE_OPTION, STUBS_OUTPUT_DIR_OPTION, APT_ONLY_OPTION, APT_MODE_OPTION,
                    USE_LIGHT_ANALYSIS_OPTION, CORRECT_ERROR_TYPES_OPTION, ANNOTATION_PROCESSORS_OPTION, INCREMENTAL_DATA_OUTPUT_DIR_OPTION,
-                   CONFIGURATION, MAP_DIAGNOSTIC_LOCATIONS_OPTION, INFO_AS_WARNINGS_OPTION)
+                   CONFIGURATION, MAP_DIAGNOSTIC_LOCATIONS_OPTION, INFO_AS_WARNINGS_OPTION, STRICT_MODE_OPTION)
 
     override fun processOption(option: CliOption, value: String, configuration: CompilerConfiguration) {
         when (option) {
@@ -199,6 +211,7 @@ class Kapt3CommandLineProcessor : CommandLineProcessor {
             CORRECT_ERROR_TYPES_OPTION -> configuration.put(Kapt3ConfigurationKeys.CORRECT_ERROR_TYPES, value)
             MAP_DIAGNOSTIC_LOCATIONS_OPTION -> configuration.put(Kapt3ConfigurationKeys.MAP_DIAGNOSTIC_LOCATIONS, value)
             INFO_AS_WARNINGS_OPTION -> configuration.put(Kapt3ConfigurationKeys.INFO_AS_WARNINGS, value)
+            STRICT_MODE_OPTION -> configuration.put(Kapt3ConfigurationKeys.STRICT_MODE, value)
             CONFIGURATION -> configuration.applyOptionsFrom(decodePluginOptions(value), pluginOptions)
             else -> throw CliOptionProcessingException("Unknown option: ${option.name}")
         }
@@ -230,6 +243,7 @@ class Kapt3ComponentRegistrar : ComponentRegistrar {
 
         val isVerbose = configuration.get(Kapt3ConfigurationKeys.VERBOSE_MODE) == "true"
         val infoAsWarnings = configuration.get(Kapt3ConfigurationKeys.INFO_AS_WARNINGS) == "true"
+        val strictMode = configuration.get(Kapt3ConfigurationKeys.STRICT_MODE) == "true"
         val messageCollector = configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
                                ?: PrintingMessageCollector(System.err, MessageRenderer.PLAIN_FULL_PATHS, isVerbose)
         val logger = MessageCollectorBackedKaptLogger(isVerbose, infoAsWarnings, messageCollector)
@@ -302,6 +316,7 @@ class Kapt3ComponentRegistrar : ComponentRegistrar {
             logger.info("Correct error types: $correctErrorTypes")
             logger.info("Map diagnostic locations: $mapDiagnosticLocations")
             logger.info("Info as warnings: $infoAsWarnings")
+            logger.info("Strict mode: $strictMode")
             paths.log(logger)
             logger.info("Annotation processors: " + annotationProcessors.joinToString())
             logger.info("Javac options: $apOptions")
@@ -310,10 +325,23 @@ class Kapt3ComponentRegistrar : ComponentRegistrar {
 
         val kapt3AnalysisCompletedHandlerExtension = ClasspathBasedKapt3Extension(
             paths, apOptions, javacCliOptions, annotationProcessors,
-            aptMode, useLightAnalysis, correctErrorTypes, mapDiagnosticLocations, System.currentTimeMillis(), logger, configuration
+            aptMode, useLightAnalysis, correctErrorTypes, mapDiagnosticLocations, strictMode,
+            System.currentTimeMillis(), logger, configuration
         )
 
         AnalysisHandlerExtension.registerExtension(project, kapt3AnalysisCompletedHandlerExtension)
+        StorageComponentContainerContributor.registerExtension(project, KaptComponentContributor())
+    }
+
+    class KaptComponentContributor : StorageComponentContainerContributor {
+        override fun registerModuleComponents(
+            container: StorageComponentContainer,
+            platform: TargetPlatform,
+            moduleDescriptor: ModuleDescriptor
+        ) {
+            if (platform != JvmPlatform) return
+            container.useInstance(KaptAnonymousTypeTransformer())
+        }
     }
 
     /* This extension simply disables both code analysis and code generation.

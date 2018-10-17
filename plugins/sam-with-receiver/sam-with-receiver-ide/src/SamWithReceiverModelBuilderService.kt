@@ -17,13 +17,11 @@
 package org.jetbrains.kotlin.samWithReceiver.ide
 
 import com.intellij.openapi.util.Key
-import org.jetbrains.kotlin.annotation.plugin.ide.AnnotationBasedPluginModel
-import org.jetbrains.kotlin.annotation.plugin.ide.AnnotationBasedPluginModelBuilderService
-import org.jetbrains.kotlin.annotation.plugin.ide.AnnotationBasedPluginProjectResolverExtension
+import org.jetbrains.kotlin.annotation.plugin.ide.*
 
 interface SamWithReceiverModel : AnnotationBasedPluginModel {
-    override fun copy(): SamWithReceiverModel {
-        return SamWithReceiverModelImpl(annotations.toList(), presets.toList())
+    override fun dump(): DumpedPluginModel {
+        return DumpedPluginModelImpl(SamWithReceiverModelImpl::class.java, annotations.toList(), presets.toList())
     }
 }
 

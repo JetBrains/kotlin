@@ -25,9 +25,9 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.protobuf.GeneratedMessageLite
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils.isInterface
-import org.jetbrains.kotlin.resolve.annotations.hasJvmDefaultAnnotation
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.resolve.descriptorUtil.nonSourceAnnotations
+import org.jetbrains.kotlin.resolve.jvm.annotations.hasJvmDefaultAnnotation
 import org.jetbrains.kotlin.serialization.DescriptorSerializer
 import org.jetbrains.kotlin.serialization.DescriptorSerializer.Companion.writeVersionRequirement
 import org.jetbrains.kotlin.serialization.SerializerExtension
@@ -76,9 +76,9 @@ class JvmSerializerExtension(private val bindings: JvmSerializationBindings, sta
                 it is CallableMemberDescriptor && it.hasJvmDefaultAnnotation()
             }
         ) {
-            assert(!builder.hasVersionRequirement()) { "VersionRequirement should be empty for $classDescriptor" }
-            builder.versionRequirement =
-                    writeVersionRequirement(1, 2, 40, ProtoBuf.VersionRequirement.VersionKind.COMPILER_VERSION, versionRequirementTable)
+            builder.addVersionRequirement(
+                writeVersionRequirement(1, 2, 40, ProtoBuf.VersionRequirement.VersionKind.COMPILER_VERSION, versionRequirementTable)
+            )
         }
     }
 
@@ -178,14 +178,16 @@ class JvmSerializerExtension(private val bindings: JvmSerializationBindings, sta
             if (setterMethod != null) signatureSerializer.methodSignature(null, setterMethod) else null
         )
 
-        proto.setExtension(JvmProtoBuf.propertySignature, signature)
+        if (signature != null) {
+            proto.setExtension(JvmProtoBuf.propertySignature, signature)
+        }
 
         if (descriptor.isJvmFieldPropertyInInterfaceCompanion()) {
             proto.setExtension(JvmProtoBuf.flags, JvmFlags.getPropertyFlags(true))
 
-            assert(!proto.hasVersionRequirement()) { "VersionRequirement should be empty for $descriptor" }
-            proto.versionRequirement =
-                    writeVersionRequirement(1, 2, 70, ProtoBuf.VersionRequirement.VersionKind.COMPILER_VERSION, versionRequirementTable)
+            proto.addVersionRequirement(
+                writeVersionRequirement(1, 2, 70, ProtoBuf.VersionRequirement.VersionKind.COMPILER_VERSION, versionRequirementTable)
+            )
         }
     }
 
@@ -262,7 +264,7 @@ class JvmSerializerExtension(private val bindings: JvmSerializationBindings, sta
             syntheticMethod: JvmProtoBuf.JvmMethodSignature?,
             getter: JvmProtoBuf.JvmMethodSignature?,
             setter: JvmProtoBuf.JvmMethodSignature?
-        ): JvmProtoBuf.JvmPropertySignature {
+        ): JvmProtoBuf.JvmPropertySignature? {
             val signature = JvmProtoBuf.JvmPropertySignature.newBuilder()
 
             if (fieldDesc != null) {
@@ -281,7 +283,7 @@ class JvmSerializerExtension(private val bindings: JvmSerializationBindings, sta
                 signature.setter = setter
             }
 
-            return signature.build()
+            return signature.build().takeIf { it.serializedSize > 0 }
         }
 
         fun fieldSignature(

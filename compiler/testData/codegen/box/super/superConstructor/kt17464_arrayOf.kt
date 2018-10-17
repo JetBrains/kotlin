@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 open class A(val array: Array<Any>)
 
 class B : A(arrayOf("OK"))

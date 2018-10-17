@@ -1,0 +1,10 @@
+c [sourceSetHolder, edit]
+
+pJvm [compilationAndSourceSetHolder, jvm]
+pJvm -> c [include]
+
+pJs [compilationAndSourceSetHolder, js]
+pJs -> c [include]
+
+pNative [compilationAndSourceSetHolder, native]
+pNative -> c [include]

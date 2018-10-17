@@ -25,6 +25,8 @@ FILE fqName:<root> fileName:/Derived.kt
           value: GET_VAR 'value-parameter value: Int' type=kotlin.Int origin=null
     PROPERTY FAKE_OVERRIDE name:value visibility:public modality:FINAL flags:var
       FIELD FAKE_OVERRIDE name:value type:kotlin.Int visibility:public flags:
+        overridden:
+          FIELD IR_EXTERNAL_DECLARATION_STUB name:value type:kotlin.Int visibility:public flags:
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:
       overridden:
         FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:

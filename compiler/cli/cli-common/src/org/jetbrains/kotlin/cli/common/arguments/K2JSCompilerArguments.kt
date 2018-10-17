@@ -55,13 +55,17 @@ class K2JSCompilerArguments : CommonCompilerArguments() {
     )
     var sourceMapBaseDirs: String? by NullableStringFreezableVar(null)
 
+    /**
+     * SourceMapEmbedSources should be null by default, since it has effect only when source maps are enabled.
+     * When sourceMapEmbedSources are not null and source maps is disabled warning is reported.
+     */
     @GradleOption(DefaultValues.JsSourceMapContentModes::class)
     @Argument(
             value = "-source-map-embed-sources",
             valueDescription = "{ always, never, inlining }",
             description = "Embed source files into source map"
     )
-    var sourceMapEmbedSources: String? by NullableStringFreezableVar(K2JsArgumentConstants.SOURCE_MAP_SOURCE_CONTENT_INLINING)
+    var sourceMapEmbedSources: String? by NullableStringFreezableVar(null)
 
     @GradleOption(DefaultValues.BooleanTrueDefault::class)
     @Argument(value = "-meta-info", description = "Generate .meta.js and .kjsm files with metadata. Use to create a library")

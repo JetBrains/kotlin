@@ -37,8 +37,8 @@ abstract class AbstractVersionRequirementTest : TestCaseWithTmpdir() {
             val descriptor = module.findUnambiguousDescriptorByFqName(fqName)
 
             val requirement = when (descriptor) {
-                is DeserializedMemberDescriptor -> descriptor.versionRequirement
-                is DeserializedClassDescriptor -> descriptor.versionRequirement
+                is DeserializedMemberDescriptor -> descriptor.versionRequirements.single()
+                is DeserializedClassDescriptor -> descriptor.versionRequirements.single()
                 else -> throw AssertionError("Unknown descriptor: $descriptor")
             } ?: throw AssertionError("No VersionRequirement for $descriptor")
 
@@ -78,6 +78,7 @@ abstract class AbstractVersionRequirementTest : TestCaseWithTmpdir() {
     fun testSuspendFun() {
         doTest(
             VersionRequirement.Version(1, 1), DeprecationLevel.ERROR, null, ProtoBuf.VersionRequirement.VersionKind.LANGUAGE_VERSION, null,
+            customLanguageVersion = LanguageVersion.KOTLIN_1_2,
             fqNames = listOf(
                 "test.topLevel",
                 "test.Foo.member",
@@ -158,6 +159,7 @@ abstract class AbstractVersionRequirementTest : TestCaseWithTmpdir() {
     fun testNestedClassMembers() {
         doTest(
             VersionRequirement.Version(1, 1), DeprecationLevel.ERROR, null, ProtoBuf.VersionRequirement.VersionKind.LANGUAGE_VERSION, null,
+            customLanguageVersion = LanguageVersion.KOTLIN_1_2,
             fqNames = listOf(
                 "test.Outer.Inner.Deep",
                 "test.Outer.Inner.Deep.<init>",
@@ -166,6 +168,22 @@ abstract class AbstractVersionRequirementTest : TestCaseWithTmpdir() {
                 "test.Outer.Inner.Deep.s",
                 "test.Outer.Nested.g",
                 "test.Outer.Companion"
+            )
+        )
+    }
+
+    fun testInlineClassesAndRelevantDeclarations() {
+        doTest(
+            VersionRequirement.Version(1, 3), DeprecationLevel.ERROR, null, ProtoBuf.VersionRequirement.VersionKind.LANGUAGE_VERSION, null,
+            fqNames = listOf(
+                "test.IC",
+                "test.Ctor.<init>",
+                "test.simpleFun",
+                "test.aliasedFun",
+                "test.simpleProp",
+                "test.result",
+                "test.Foo",
+                "test.Bar"
             )
         )
     }

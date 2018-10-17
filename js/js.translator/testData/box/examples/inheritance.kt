@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 1147
+// EXPECTED_REACHABLE_NODES: 1319
 // Changed when traits were introduced. May not make sense any more
 
 open class X(val x: Int) {

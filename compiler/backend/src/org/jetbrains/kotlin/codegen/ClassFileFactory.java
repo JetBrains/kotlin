@@ -27,7 +27,8 @@ import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.kotlin.backend.common.output.OutputFile;
 import org.jetbrains.kotlin.backend.common.output.OutputFileCollection;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
-import org.jetbrains.kotlin.config.AnalysisFlag;
+import org.jetbrains.kotlin.config.AnalysisFlags;
+import org.jetbrains.kotlin.config.JvmAnalysisFlags;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.DescriptorUtilKt;
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor;
@@ -113,7 +114,7 @@ public class ClassFileFactory implements OutputFileCollection {
             part.addTo(builder);
         }
 
-        List<String> experimental = state.getLanguageVersionSettings().getFlag(AnalysisFlag.getExperimental());
+        List<String> experimental = state.getLanguageVersionSettings().getFlag(AnalysisFlags.getExperimental());
         if (!experimental.isEmpty()) {
             writeExperimentalMarkers(state.getModule(), builder, experimental);
         }
@@ -123,7 +124,11 @@ public class ClassFileFactory implements OutputFileCollection {
         generators.put(outputFilePath, new OutAndSourceFileList(CollectionsKt.toList(sourceFiles)) {
             @Override
             public byte[] asBytes(ClassBuilderFactory factory) {
-                return ModuleMappingKt.serializeToByteArray(moduleProto, state.getMetadataVersion().toArray());
+                int flags = 0;
+                if (state.getLanguageVersionSettings().getFlag(JvmAnalysisFlags.getStrictMetadataVersionSemantics())) {
+                    flags |= ModuleMapping.STRICT_METADATA_VERSION_SEMANTICS_FLAG;
+                }
+                return ModuleMappingKt.serializeToByteArray(moduleProto, state.getMetadataVersion(), flags);
             }
 
             @Override
@@ -201,7 +206,9 @@ public class ClassFileFactory implements OutputFileCollection {
                 case "kotlin_module": {
                     ModuleMapping mapping = ModuleMappingUtilKt.loadModuleMapping(
                             ModuleMapping.Companion, file.asByteArray(), relativePath.getPath(),
-                            CompilerDeserializationConfiguration.Default.INSTANCE
+                            CompilerDeserializationConfiguration.Default.INSTANCE, version -> {
+                                throw new IllegalStateException("Version of the generated module cannot be incompatible: " + version);
+                            }
                     );
                     for (Map.Entry<String, PackageParts> entry : mapping.getPackageFqName2Parts().entrySet()) {
                         FqName packageFqName = new FqName(entry.getKey());

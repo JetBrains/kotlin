@@ -30,7 +30,9 @@ import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.codegen.*
+import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
 import org.jetbrains.kotlin.kapt3.*
+import org.jetbrains.kotlin.kapt3.Kapt3ComponentRegistrar.KaptComponentContributor
 import org.jetbrains.kotlin.kapt3.base.KaptContext
 import org.jetbrains.kotlin.kapt3.base.KaptPaths
 import org.jetbrains.kotlin.kapt3.base.doAnnotationProcessing
@@ -105,7 +107,9 @@ abstract class AbstractKotlinKapt3Test : CodegenTestCase() {
         addAnnotationProcessingRuntimeLibrary(myEnvironment)
 
         // Use light analysis mode in tests
-        AnalysisHandlerExtension.registerExtension(myEnvironment.project, PartialAnalysisHandlerExtension())
+        val project = myEnvironment.project
+        AnalysisHandlerExtension.registerExtension(project, PartialAnalysisHandlerExtension())
+        StorageComponentContainerContributor.registerExtension(project, KaptComponentContributor())
 
         loadMultiFiles(files)
 
@@ -161,9 +165,10 @@ abstract class AbstractKotlinKapt3Test : CodegenTestCase() {
         kaptContext: KaptContextForStubGeneration,
         javaFiles: List<File>,
         generateNonExistentClass: Boolean,
-        correctErrorTypes: Boolean
+        correctErrorTypes: Boolean,
+        strictMode: Boolean
     ): JavacList<JCCompilationUnit> {
-        val converter = ClassFileToSourceStubConverter(kaptContext, generateNonExistentClass, correctErrorTypes)
+        val converter = ClassFileToSourceStubConverter(kaptContext, generateNonExistentClass, correctErrorTypes, strictMode)
 
         val kaptStubs = converter.convert()
         val convertedFiles = kaptStubs.map { stub ->
@@ -247,9 +252,10 @@ open class AbstractClassFileToSourceStubConverterTest : AbstractKotlinKapt3Test(
         val generateNonExistentClass = wholeFile.isOptionSet("NON_EXISTENT_CLASS")
         val correctErrorTypes = wholeFile.isOptionSet("CORRECT_ERROR_TYPES")
         val validate = !wholeFile.isOptionSet("NO_VALIDATION")
+        val strictMode = wholeFile.isOptionSet("STRICT_MODE")
         val expectedErrors = wholeFile.getRawOptionValues(EXPECTED_ERROR).sorted()
 
-        val convertedFiles = convert(kaptContext, javaFiles, generateNonExistentClass, correctErrorTypes)
+        val convertedFiles = convert(kaptContext, javaFiles, generateNonExistentClass, correctErrorTypes, strictMode)
 
         kaptContext.javaLog.interceptorData.files = convertedFiles.map { it.sourceFile to it }.toMap()
         if (validate) kaptContext.compiler.enterTrees(convertedFiles)
@@ -303,7 +309,10 @@ open class AbstractClassFileToSourceStubConverterTest : AbstractKotlinKapt3Test(
 
 abstract class AbstractKotlinKaptContextTest : AbstractKotlinKapt3Test() {
     override fun check(kaptContext: KaptContextForStubGeneration, javaFiles: List<File>, txtFile: File, wholeFile: File) {
-        val compilationUnits = convert(kaptContext, javaFiles, generateNonExistentClass = false, correctErrorTypes = true)
+        val compilationUnits = convert(
+            kaptContext, javaFiles,
+            generateNonExistentClass = false, correctErrorTypes = true, strictMode = false
+        )
 
         kaptContext.doAnnotationProcessing(
             emptyList(),

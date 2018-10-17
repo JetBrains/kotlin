@@ -6,8 +6,6 @@
 package org.jetbrains.kotlin.idea.completion
 
 import com.intellij.codeInsight.completion.PrefixMatcher
-import com.intellij.codeInsight.lookup.LookupElement
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.idea.core.KotlinIndicesHelper
 import org.jetbrains.kotlin.idea.util.CallTypeAndReceiver
 import org.jetbrains.kotlin.idea.util.ReceiverType
@@ -24,32 +22,7 @@ class DslMembersCompletion(
     private val callTypeAndReceiver: CallTypeAndReceiver<*, *>
 ) {
     private val nearestReceiver = receiverTypes?.firstOrNull()
-    private val nearestReceiverMarkers = nearestReceiver?.takeIf { it.implicit }
-        ?.let { DslMarkerUtils.extractDslMarkerFqNames(it.type) }.orEmpty()
-
-    private val factory = object : AbstractLookupElementFactory {
-        override fun createLookupElement(
-            descriptor: DeclarationDescriptor,
-            useReceiverTypes: Boolean,
-            qualifyNestedClasses: Boolean,
-            includeClassTypeArguments: Boolean,
-            parametersAndTypeGrayed: Boolean
-        ): LookupElement? {
-            error("Should not be called")
-        }
-
-        override fun createStandardLookupElementsForDescriptor(
-            descriptor: DeclarationDescriptor,
-            useReceiverTypes: Boolean
-        ): Collection<LookupElement> {
-            return elementFactory.createStandardLookupElementsForDescriptor(descriptor, useReceiverTypes).also {
-                it.forEach { element ->
-                    element.isDslMember = true
-                }
-            }
-        }
-    }
-
+    private val nearestReceiverMarkers = nearestReceiver?.takeIf { it.implicit }?.extractDslMarkers().orEmpty()
 
     fun completeDslFunctions() {
         if (nearestReceiver == null || nearestReceiverMarkers.isEmpty()) return
@@ -65,7 +38,7 @@ class DslMembersCompletion(
             receiverTypes = listOf(nearestReceiver.type)
         )
         extensionDescriptors.forEach {
-            collector.addDescriptorElements(it, factory, notImported = true, withReceiverCast = false, prohibitDuplicates = true)
+            collector.addDescriptorElements(it, elementFactory, notImported = true, withReceiverCast = false, prohibitDuplicates = true)
         }
 
         collector.flushToResultSet()

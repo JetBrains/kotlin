@@ -7,26 +7,23 @@ public final class Foo$Companion {
 }
 
 @kotlin.Metadata
-public final static class Foo$Erased {
-    public final static @org.jetbrains.annotations.NotNull method box(p0: int): Foo
-    public static method constructor(p0: int): int
-    public static method equals(p0: int, @org.jetbrains.annotations.Nullable p1: java.lang.Object): boolean
-    public static method hashCode(p0: int): int
-    public final static method inInlineClass(p0: int): void
-    public static @org.jetbrains.annotations.NotNull method toString(p0: int): java.lang.String
-}
-
-@kotlin.Metadata
 public final class Foo {
     public final static field Companion: Foo$Companion
     private final static field constValInCompanion: int
     private final field x: int
     inner class Foo$Companion
     static method <clinit>(): void
-    public method <init>(p0: int): void
+    private synthetic method <init>(p0: int): void
+    public synthetic final static @org.jetbrains.annotations.NotNull method box-impl(p0: int): Foo
+    public static method constructor-impl(p0: int): int
     public method equals(p0: java.lang.Object): boolean
+    public static method equals-impl(p0: int, @org.jetbrains.annotations.Nullable p1: java.lang.Object): boolean
+    public final static method equals-impl0(p0: int, p1: int): boolean
     public final method getX(): int
     public method hashCode(): int
+    public static method hashCode-impl(p0: int): int
+    public final static method inInlineClass-impl(p0: int): void
     public method toString(): java.lang.String
-    public final method unbox(): int
+    public static @org.jetbrains.annotations.NotNull method toString-impl(p0: int): java.lang.String
+    public synthetic final method unbox-impl(): int
 }

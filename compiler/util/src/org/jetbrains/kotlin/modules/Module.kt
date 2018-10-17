@@ -27,6 +27,8 @@ interface Module {
 
     fun getSourceFiles(): List<String>
 
+    fun getCommonSourceFiles(): List<String>
+
     fun getClasspathRoots(): List<String>
 
     fun getJavaSourceRoots(): List<JavaRootPath>

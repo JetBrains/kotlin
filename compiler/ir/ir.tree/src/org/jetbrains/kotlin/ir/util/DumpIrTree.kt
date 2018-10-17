@@ -144,6 +144,16 @@ class DumpIrTreeVisitor(out: Appendable) : IrElementVisitor<Unit, String> {
         }
     }
 
+    override fun visitField(declaration: IrField, data: String) {
+        declaration.dumpLabeledElementWith(data) {
+            dumpAnnotations(declaration)
+            declaration.overriddenSymbols.dumpItems("overridden") {
+                it.dumpDeclarationElementOrDescriptor()
+            }
+            declaration.initializer?.accept(this, "")
+        }
+    }
+
     private fun List<IrElement>.dumpElements() {
         forEach { it.accept(this@DumpIrTreeVisitor, "") }
     }

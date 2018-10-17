@@ -410,7 +410,13 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
         possibleTypesForSubject: Set<KotlinType>
     ) {
         val subjectExpression = expression.subjectExpression ?: return
-        for (possibleCastType in possibleTypesForSubject) {
+        // Using "reversed()" here is a kind of hack to fix KT-27221
+        // KT-27221 was a breaking change introduced after DataFlowImpl optimization that changed the order of possible types to reversed,
+        // and it led to the wrong sealed class being chosen.
+        // But it seems that order of collected types shouldn't matter at all
+        // (at least because the order of relevant checks might change the behavior, see KT-27252)
+        // TODO: Read the comment above, wait for resolution in KT-27252 and get rid of "reversed" call here
+        for (possibleCastType in possibleTypesForSubject.reversed()) {
             val possibleCastClass = possibleCastType.constructor.declarationDescriptor as? ClassDescriptor ?: continue
             if (possibleCastClass.kind == ClassKind.ENUM_CLASS || possibleCastClass.modality == Modality.SEALED) {
                 if (checkSmartCastToExpectedTypeInSubject(

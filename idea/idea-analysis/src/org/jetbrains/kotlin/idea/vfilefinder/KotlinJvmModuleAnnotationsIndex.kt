@@ -45,11 +45,13 @@ object KotlinJvmModuleAnnotationsIndex : FileBasedIndexExtension<String, List<Cl
     override fun getIndexer(): DataIndexer<String, List<ClassId>, FileContent> = DataIndexer { inputData ->
         val file = inputData.file
         try {
-            val moduleMapping = ModuleMapping.loadModuleMapping(inputData.content, file.toString(), DeserializationConfiguration.Default)
-            return@DataIndexer mapOf(file.nameWithoutExtension to moduleMapping.moduleData.annotations.map(ClassId::fromString))
+            val moduleMapping = ModuleMapping.loadModuleMapping(inputData.content, file.toString(), DeserializationConfiguration.Default) {}
+            if (moduleMapping !== ModuleMapping.EMPTY) {
+                return@DataIndexer mapOf(file.nameWithoutExtension to moduleMapping.moduleData.annotations.map(ClassId::fromString))
+            }
         } catch (e: Exception) {
             // Exceptions are already reported in KotlinModuleMappingIndex
-            emptyMap()
         }
+        emptyMap()
     }
 }

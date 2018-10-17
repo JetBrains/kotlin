@@ -31,10 +31,10 @@ fun capturedBoundReferenceReceiver(ownerType: Type, expectedReceiverType: Type, 
         StackValue.operation(expectedReceiverType) { iv ->
             iv.load(0, ownerType)
             iv.getfield(
-                    ownerType.internalName,
+                ownerType.internalName,
                     //HACK for inliner - it should recognize field as captured receiver
-                    if (isInliningStrategy) AsmUtil.CAPTURED_RECEIVER_FIELD else AsmUtil.BOUND_REFERENCE_RECEIVER,
-                    AsmTypes.OBJECT_TYPE.descriptor
+                if (isInliningStrategy) AsmUtil.CAPTURED_RECEIVER_FIELD else AsmUtil.BOUND_REFERENCE_RECEIVER,
+                AsmTypes.OBJECT_TYPE.descriptor
             )
             StackValue.coerce(AsmTypes.OBJECT_TYPE, expectedReceiverType, iv)
         }
@@ -47,7 +47,7 @@ fun CalculatedClosure.isForCallableReference(): Boolean =
         closureClass.isSyntheticClassForCallableReference()
 
 fun CalculatedClosure.isForBoundCallableReference(): Boolean =
-        isForCallableReference() && captureReceiverType != null
+        isForCallableReference() && capturedReceiverFromOuterContext != null
 
 fun InstructionAdapter.loadBoundReferenceReceiverParameter(index: Int, type: Type) {
     load(index, type)

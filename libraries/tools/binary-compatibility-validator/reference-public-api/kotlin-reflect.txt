@@ -7,6 +7,8 @@ public final class kotlin/reflect/full/IllegalPropertyDelegateAccessException : 
 }
 
 public final class kotlin/reflect/full/KCallables {
+	public static final fun callSuspend (Lkotlin/reflect/KCallable;[Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static final fun callSuspendBy (Lkotlin/reflect/KCallable;Ljava/util/Map;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static final fun findParameterByName (Lkotlin/reflect/KCallable;Ljava/lang/String;)Lkotlin/reflect/KParameter;
 	public static final fun getExtensionReceiverParameter (Lkotlin/reflect/KCallable;)Lkotlin/reflect/KParameter;
 	public static final fun getInstanceParameter (Lkotlin/reflect/KCallable;)Lkotlin/reflect/KParameter;

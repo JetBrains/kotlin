@@ -20,7 +20,10 @@ import com.intellij.CommonBundle;
 import com.intellij.facet.impl.ui.libraries.LibraryCompositionSettings;
 import com.intellij.facet.impl.ui.libraries.LibraryOptionsPanel;
 import com.intellij.framework.library.FrameworkLibraryVersionFilter;
-import com.intellij.ide.util.projectWizard.*;
+import com.intellij.ide.util.projectWizard.ModuleBuilder;
+import com.intellij.ide.util.projectWizard.ModuleWizardStep;
+import com.intellij.ide.util.projectWizard.SettingsStep;
+import com.intellij.ide.util.projectWizard.WizardContext;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.JavaModuleType;
 import com.intellij.openapi.module.Module;
@@ -41,6 +44,8 @@ import kotlin.collections.ArraysKt;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.idea.formatter.KotlinStyleGuideCodeStyle;
+import org.jetbrains.kotlin.idea.formatter.ProjectCodeStyleImporter;
 import org.jetbrains.kotlin.js.resolve.JsPlatform;
 import org.jetbrains.kotlin.resolve.TargetPlatform;
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform;
@@ -106,6 +111,10 @@ public class KotlinModuleSettingStep extends ModuleWizardStep {
                     if (customLibraryDescription instanceof CustomLibraryDescriptorWithDeferredConfig) {
                         ((CustomLibraryDescriptorWithDeferredConfig) customLibraryDescription).finishLibConfiguration(module, rootModel, isNewProject);
                     }
+                }
+
+                if (isNewProject) {
+                    ProjectCodeStyleImporter.INSTANCE.apply(module.getProject(), KotlinStyleGuideCodeStyle.Companion.getINSTANCE());
                 }
             }
         };

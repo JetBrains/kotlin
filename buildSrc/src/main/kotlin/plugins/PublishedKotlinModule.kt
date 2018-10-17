@@ -108,7 +108,7 @@ open class PublishedKotlinModule : Plugin<Project> {
                 val password: String? by preparePublication.extra
                 val repoUrl: String by preparePublication.extra
 
-                var repository: MavenRemoteRepository by Delegates.notNull()
+                var repository by Delegates.notNull<MavenRemoteRepository>()
 
                 repositories {
                     withConvention(MavenRepositoryHandlerConvention::class) {

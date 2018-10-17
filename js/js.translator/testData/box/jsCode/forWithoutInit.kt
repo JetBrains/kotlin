@@ -1,5 +1,5 @@
 // IGNORE_BACKEND: JS_IR
-// EXPECTED_REACHABLE_NODES: 1125
+// EXPECTED_REACHABLE_NODES: 1281
 // FILE: a.kt
 fun foo(n: Int): String = js("""
     var result = "";

@@ -79,7 +79,7 @@ class IterateExpressionIntention : SelfTargetingIntention<KtExpression>(KtExpres
                     listOf(KotlinNameSuggester.suggestIterationVariableNames(element, elementType, bindingContext, nameValidator, "e"))
                 }
 
-                val paramPattern = (names.singleOrNull()?.first()
+                val paramPattern = (names.asSequence().singleOrNull()?.first()
                                     ?: psiFactory.createDestructuringParameter(names.indices.joinToString(prefix = "(", postfix = ")") { "p$it" }))
                 var forExpression = psiFactory.createExpressionByPattern("for($0 in $1) {\nx\n}", paramPattern, element) as KtForExpression
                 forExpression = element.replaced(forExpression)

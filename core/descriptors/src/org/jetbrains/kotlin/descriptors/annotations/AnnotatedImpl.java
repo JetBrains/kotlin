@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.descriptors.annotations;
 
 import org.jetbrains.annotations.NotNull;
 
-public abstract class AnnotatedImpl implements Annotated {
+public class AnnotatedImpl implements Annotated {
     private final Annotations annotations;
 
     public AnnotatedImpl(@NotNull Annotations annotations) {

@@ -17,10 +17,7 @@
 package org.jetbrains.kotlin.checkers
 
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
-import org.jetbrains.kotlin.config.AnalysisFlag
-import org.jetbrains.kotlin.config.ApiVersion
-import org.jetbrains.kotlin.config.LanguageVersion
-import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.MockLibraryUtil
@@ -85,7 +82,7 @@ abstract class AbstractForeignAnnotationsTest : AbstractDiagnosticsTest() {
             name to state
         }.toMap()
 
-        return mapOf(AnalysisFlag.jsr305 to Jsr305State(globalState, migrationState, userAnnotationsState))
+        return mapOf(JvmAnalysisFlags.jsr305 to Jsr305State(globalState, migrationState, userAnnotationsState))
     }
 
     private fun List<TestFile>.getDirectiveValue(directive: String): ReportLevel? = mapNotNull {

@@ -16,11 +16,12 @@
 
 package org.jetbrains.kotlin.cli.common.arguments
 
+import java.io.Serializable
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
 abstract class Freezable {
-    protected open inner class FreezableVar<T>(private var value: T) : ReadWriteProperty<Any, T> {
+    protected open inner class FreezableVar<T>(private var value: T) : ReadWriteProperty<Any, T>, Serializable {
         override fun getValue(thisRef: Any, property: KProperty<*>) = value
 
         override fun setValue(thisRef: Any, property: KProperty<*>, value: T) {

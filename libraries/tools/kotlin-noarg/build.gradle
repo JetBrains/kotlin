@@ -30,6 +30,12 @@ dependencies {
 
 evaluationDependsOn(":kotlin-noarg-compiler-plugin")
 
+tasks.withType(project.compileKotlin.class) {
+    kotlinOptions.languageVersion = "1.2"
+    kotlinOptions.apiVersion = "1.2"
+    kotlinOptions.freeCompilerArgs += ["-Xskip-metadata-version-check"]
+}
+
 jar {
     from(project(":kotlin-noarg-compiler-plugin").sourceSets.main.output.classesDirs)
     from(project(":kotlin-noarg-compiler-plugin").sourceSets.main.output.resourcesDir)

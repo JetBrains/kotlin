@@ -102,7 +102,8 @@ public class MockUpdateParameterInfoContext implements UpdateParameterInfoContex
         return false;
     }
 
-    @Override
+    //@Override since 181
+    //add `@Override` when BUNCH: 173 is dropped
     public UserDataHolderEx getCustomContext() {
         return null;
     }
@@ -126,5 +127,11 @@ public class MockUpdateParameterInfoContext implements UpdateParameterInfoContex
     @Override
     public Editor getEditor() {
         return myFixture.getEditor();
+    }
+
+    //@Override since 183
+    //add `@Override` when BUNCH: 182 is dropped
+    public boolean isSingleParameterInfo() {
+        return false;
     }
 }

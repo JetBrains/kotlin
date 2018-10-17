@@ -36,8 +36,11 @@ class JvmQuickFixRegistrar : QuickFixContributor {
         EXPERIMENTAL_FEATURE_ERROR.registerFactory(ChangeCoroutineSupportFix)
         EXPERIMENTAL_FEATURE_WARNING.registerFactory(ChangeCoroutineSupportFix)
 
+        EXPERIMENTAL_FEATURE_ERROR.registerFactory(ChangeGeneralLanguageFeatureSupportFix)
+        EXPERIMENTAL_FEATURE_WARNING.registerFactory(ChangeGeneralLanguageFeatureSupportFix)
+
         NO_REFLECTION_IN_CLASS_PATH.registerFactory(AddReflectionQuickFix)
 
-        MISSING_SCRIPT_BASE_CLASS.registerFactory(AddScriptRuntimeQuickFix)
+        MISSING_SCRIPT_STANDARD_TEMPLATE.registerFactory(AddScriptRuntimeQuickFix)
     }
 }

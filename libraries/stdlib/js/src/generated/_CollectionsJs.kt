@@ -3,9 +3,6 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
-@file:kotlin.jvm.JvmMultifileClass
-@file:kotlin.jvm.JvmName("CollectionsKt")
-
 package kotlin.collections
 
 //
@@ -14,9 +11,6 @@ package kotlin.collections
 //
 
 import kotlin.js.*
-import kotlin.*
-import kotlin.text.*
-import kotlin.comparisons.*
 
 /**
  * Reverses elements in the list in-place.

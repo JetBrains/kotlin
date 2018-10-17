@@ -1,22 +1,19 @@
 @kotlin.Metadata
-public final static class Foo$Erased {
-    public final static @org.jetbrains.annotations.NotNull method box(p0: long): Foo
-    public static method constructor(p0: long): long
-    public final static method empty(p0: long): void
-    public static method equals(p0: long, @org.jetbrains.annotations.Nullable p1: java.lang.Object): boolean
-    public final static method extension(p0: long, @org.jetbrains.annotations.NotNull p1: java.lang.Object, @org.jetbrains.annotations.NotNull p2: java.lang.String): void
-    public static method hashCode(p0: long): int
-    public final static method param(p0: long, p1: double): void
-    public static @org.jetbrains.annotations.NotNull method toString(p0: long): java.lang.String
-}
-
-@kotlin.Metadata
 public final class Foo {
     private final field l: long
-    public method <init>(p0: long): void
+    private synthetic method <init>(p0: long): void
+    public synthetic final static @org.jetbrains.annotations.NotNull method box-impl(p0: long): Foo
+    public static method constructor-impl(p0: long): long
+    public final static method empty-impl(p0: long): void
     public method equals(p0: java.lang.Object): boolean
+    public static method equals-impl(p0: long, @org.jetbrains.annotations.Nullable p1: java.lang.Object): boolean
+    public final static method equals-impl0(p0: long, p1: long): boolean
+    public final static method extension-impl(p0: long, @org.jetbrains.annotations.NotNull p1: java.lang.Object, @org.jetbrains.annotations.NotNull p2: java.lang.String): void
     public final method getL(): long
     public method hashCode(): int
+    public static method hashCode-impl(p0: long): int
+    public final static method param-impl(p0: long, p1: double): void
     public method toString(): java.lang.String
-    public final method unbox(): long
+    public static @org.jetbrains.annotations.NotNull method toString-impl(p0: long): java.lang.String
+    public synthetic final method unbox-impl(): long
 }

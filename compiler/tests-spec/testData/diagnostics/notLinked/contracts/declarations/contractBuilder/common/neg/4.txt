@@ -1,0 +1,5 @@
+package
+
+public fun case_1(): kotlin.Boolean?
+public fun case_2(): kotlin.Boolean
+public fun case_3(): kotlin.Boolean?

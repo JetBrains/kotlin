@@ -22,7 +22,7 @@
         <dependency>
             <groupId>org.jetbrains.kotlinx</groupId>
             <artifactId>kotlinx-coroutines-android</artifactId>
-            <version>0.30.0</version>
+            <version>1.0.0-RC</version>
         </dependency>
     </dependencies>
 

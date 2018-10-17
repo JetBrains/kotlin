@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.BindingContext.COLLECTION_LITERAL_CALL
-import org.jetbrains.kotlin.resolve.annotations.hasImplicitIntegerCoercionAnnotation
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.getEffectiveExpectedType
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
@@ -303,7 +302,6 @@ class ConstantExpressionEvaluator(
 
         if (!UnsignedTypes.isUnsignedType(constantType)) return
 
-
         with(ExperimentalUsageChecker) {
             val descriptor = constantType.constructor.declarationDescriptor ?: return
             val experimentalities = descriptor.loadExperimentalities(moduleAnnotationsResolver, languageVersionSettings)
@@ -366,7 +364,7 @@ private class ConstantExpressionEvaluatorVisitor(
             return when (constantValue) {
                 is ErrorValue, is EnumValue -> return null
                 is NullValue -> StringValue("null")
-                else -> StringValue(constantValue.value.toString())
+                else -> StringValue(constantValue.stringTemplateValue())
             }.wrap(compileTimeConstant.parameters)
         }
 
@@ -750,7 +748,7 @@ private class ConstantExpressionEvaluatorVisitor(
 
                 val isConvertableConstVal =
                     callableDescriptor.isConst &&
-                            callableDescriptor.hasImplicitIntegerCoercionAnnotation() &&
+                            ImplicitIntegerCoercion.isEnabledForConstVal(callableDescriptor) &&
                             callableDescriptor.compileTimeInitializer is IntValue
 
                 return callableDescriptor.compileTimeInitializer?.wrap(
@@ -986,6 +984,15 @@ private class ConstantExpressionEvaluatorVisitor(
         parameters: CompileTimeConstant.Parameters,
         expectedType: KotlinType
     ): CompileTimeConstant<*>? {
+        if (parameters.isUnsignedNumberLiteral &&
+            !checkAccessibilityOfUnsignedTypes(
+                constantExpressionEvaluator.module,
+                constantExpressionEvaluator.languageVersionSettings
+            )
+        ) {
+            return UnsignedErrorValueTypeConstant(value, parameters)
+        }
+
         if (parameters.isUnsignedLongNumberLiteral) {
             return ULongValue(value).wrap(parameters)
         }
@@ -1011,6 +1018,13 @@ private class ConstantExpressionEvaluatorVisitor(
                 else -> LongValue(value)
             }
         }.wrap(parameters)
+    }
+
+    private fun checkAccessibilityOfUnsignedTypes(module: ModuleDescriptor, languageVersionSettings: LanguageVersionSettings): Boolean {
+        val uInt = module.findClassAcrossModuleDependencies(KotlinBuiltIns.FQ_NAMES.uInt) ?: return false
+        val accessibility = uInt.checkSinceKotlinVersionAccessibility(languageVersionSettings)
+        // Case `NotAccessibleButWasExperimental` will be checked later in `checkExperimentalityOfConstantLiteral`
+        return accessibility is SinceKotlinAccessibility.Accessible
     }
 
     private fun <T> ConstantValue<T>.wrap(parameters: CompileTimeConstant.Parameters): TypedCompileTimeConstant<T> =

@@ -104,6 +104,10 @@ fun main(args: Array<String>) {
             model("codegen/boxInline/suspend/", targetBackend = TargetBackend.JS)
         }
 
+        testClass<AbstractIrInlineSuspendTests> {
+            model("codegen/boxInline/suspend/", targetBackend = TargetBackend.JS_IR)
+        }
+
         testClass<AbstractJsLegacyPrimitiveArraysBoxTest> {
             model("codegen/box/arrays", targetBackend = TargetBackend.JS)
         }

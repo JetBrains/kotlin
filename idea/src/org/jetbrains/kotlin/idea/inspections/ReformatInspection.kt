@@ -34,7 +34,10 @@ import javax.swing.JComponent
 import javax.xml.bind.annotation.XmlAttribute
 
 class ReformatInspection : LocalInspectionTool() {
-    @XmlAttribute var processChangedFilesOnly: Boolean = false
+    @XmlAttribute
+    var processChangedFilesOnly: Boolean = false
+
+    override fun runForWholeFile(): Boolean = true
 
     override fun checkFile(file: PsiFile, manager: InspectionManager, isOnTheFly: Boolean): Array<out ProblemDescriptor>? {
         if (file !is KtFile || !ProjectRootsUtil.isInProjectSource(file)) {
@@ -48,7 +51,7 @@ class ReformatInspection : LocalInspectionTool() {
         val changes = collectFormattingChanges(file)
         if (changes.isEmpty()) return null
 
-        val elements = changes.map {
+        val elements = changes.asSequence().map {
             val rangeOffset = when (it) {
                 is ShiftIndentInsideRange -> it.range.startOffset
                 is ReplaceWhiteSpace -> it.textRange.startOffset
@@ -59,7 +62,7 @@ class ReformatInspection : LocalInspectionTool() {
             if (leaf is PsiWhiteSpace && isEmptyLineReformat(leaf, it)) return@map null
 
             leaf
-        }.filterNotNull()
+        }.filterNotNull().toList()
 
         return elements.map {
             ProblemDescriptorImpl(

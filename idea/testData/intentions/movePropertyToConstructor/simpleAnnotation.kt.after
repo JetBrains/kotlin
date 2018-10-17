@@ -1,4 +1,4 @@
 annotation class SuperAnnotation
 
-class TestClass(@field:SuperAnnotation val text: String) {
+class TestClass(@property:SuperAnnotation val text: String) {
 }

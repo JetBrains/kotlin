@@ -22,7 +22,7 @@ class JavaClass {
         return this;
     }
 
-    JavaClass mod(Runnable i) {
+    JavaClass rem(Runnable i) {
         i.run();
         return this;
     }

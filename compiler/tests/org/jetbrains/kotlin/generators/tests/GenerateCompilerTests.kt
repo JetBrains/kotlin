@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.generators.tests
@@ -27,10 +16,7 @@ import org.jetbrains.kotlin.cli.AbstractCliTest
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.defaultConstructor.AbstractDefaultArgumentsReflectionTest
 import org.jetbrains.kotlin.codegen.flags.AbstractWriteFlagsTest
-import org.jetbrains.kotlin.codegen.ir.AbstractIrBlackBoxAgainstJavaCodegenTest
-import org.jetbrains.kotlin.codegen.ir.AbstractIrBlackBoxCodegenTest
-import org.jetbrains.kotlin.codegen.ir.AbstractIrBlackBoxInlineCodegenTest
-import org.jetbrains.kotlin.codegen.ir.AbstractIrCheckLocalVariablesTableTest
+import org.jetbrains.kotlin.codegen.ir.*
 import org.jetbrains.kotlin.generators.tests.generator.testGroup
 import org.jetbrains.kotlin.generators.util.KT_OR_KTS_WITHOUT_DOTS_IN_NAME
 import org.jetbrains.kotlin.integration.AbstractAntTaskTest
@@ -166,6 +152,10 @@ fun main(args: Array<String>) {
             model("codegen/kapt", targetBackend = TargetBackend.JVM)
         }
 
+        testClass<AbstractAsmLikeInstructionListingTest> {
+            model("codegen/asmLike", targetBackend = TargetBackend.JVM)
+        }
+
         testClass<AbstractBlackBoxInlineCodegenTest> {
             model("codegen/boxInline")
         }
@@ -183,7 +173,7 @@ fun main(args: Array<String>) {
         }
 
         testClass<AbstractCustomScriptCodegenTest> {
-            model("codegen/customScript", extension = "kts")
+            model("codegen/customScript", pattern = "^(.*)$")
         }
 
         testClass<AbstractBytecodeTextTest> {
@@ -211,7 +201,7 @@ fun main(args: Array<String>) {
         }
 
         testClass<AbstractCheckLocalVariablesTableTest> {
-            model("checkLocalVariablesTable")
+            model("checkLocalVariablesTable", targetBackend = TargetBackend.JVM)
         }
 
         testClass<AbstractWriteFlagsTest> {
@@ -336,8 +326,7 @@ fun main(args: Array<String>) {
         }
 
         testClass<AbstractLineNumberTest> {
-            model("lineNumber", recursive = false)
-            model("lineNumber/custom", testMethod = "doTestCustom")
+            model("lineNumber")
         }
 
         testClass<AbstractLocalClassProtoTest> {
@@ -358,6 +347,10 @@ fun main(args: Array<String>) {
 
         testClass<AbstractIrCheckLocalVariablesTableTest> {
             model("checkLocalVariablesTable", targetBackend = TargetBackend.JVM_IR)
+        }
+
+        testClass<AbstractIrLineNumberTest> {
+            model("lineNumber", targetBackend = TargetBackend.JVM_IR)
         }
 
         testClass<AbstractIrBlackBoxInlineCodegenTest> {

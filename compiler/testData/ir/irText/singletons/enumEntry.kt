@@ -2,7 +2,7 @@ enum class Z {
     ENTRY {
         fun test() {}
 
-        class A {
+        inner class A {
             fun test2() {
                 test()
             }

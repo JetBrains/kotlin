@@ -1,0 +1,110 @@
+package
+
+private val asFun: () -> kotlin.Result<kotlin.Int>?
+public val asFunPublic: () -> kotlin.Result<kotlin.Int>
+public val asFunctional: () -> kotlin.Result<kotlin.Int>
+public val topLevelP: kotlin.Result<kotlin.Int>
+public val topLevelPInferred: kotlin.Result<kotlin.Int>
+internal val topLevelPInternal: kotlin.Result<kotlin.Int>
+private val topLevelPPrivate: kotlin.Result<kotlin.Int>
+private val topLevelPPrivateCustomGetter: kotlin.Result<kotlin.Int>
+private val topLevelPPrivateInferred: kotlin.Result<kotlin.Int>
+public fun local(/*0*/ r: kotlin.Result<kotlin.Int>): kotlin.Unit
+public fun params(/*0*/ r1: kotlin.Result<kotlin.Int>, /*1*/ r2: kotlin.Result<kotlin.Int>?, /*2*/ r3: ResultAlias<kotlin.String> /* = kotlin.Result<kotlin.String> */, /*3*/ r4: kotlin.collections.List<kotlin.Result<kotlin.Int>>, /*4*/ r5: InlineResult<kotlin.Int>, /*5*/ vararg r6: kotlin.Result<kotlin.Int> /*kotlin.Array<out kotlin.Result<kotlin.Int>>*/): kotlin.Unit
+public fun </*0*/ T> resultInGenericFun(/*0*/ r: kotlin.Result<kotlin.Int>): T
+public fun returnContainer(): kotlin.collections.List<kotlin.Result<kotlin.Int>>
+public fun returnInferred(/*0*/ r1: kotlin.Result<kotlin.Int>, /*1*/ r2: ResultAlias<kotlin.Int> /* = kotlin.Result<kotlin.Int> */, /*2*/ b: kotlin.Boolean): kotlin.Result<kotlin.Int>
+public fun returnTypeAlias(): ResultAlias<kotlin.Int> /* = kotlin.Result<kotlin.Int> */
+public fun returnTypeInline(): InlineResult<kotlin.Int>
+internal fun returnTypeInternal(): kotlin.Result<kotlin.Int>
+public fun returnTypeNullable(): kotlin.Result<kotlin.Int>?
+private fun returnTypePrivate(): kotlin.Result<kotlin.Int>
+public fun returnTypePublic(): kotlin.Result<kotlin.Int>
+
+public final class CtorParams {
+    public constructor CtorParams(/*0*/ r1: kotlin.Result<kotlin.Int>)
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final inline class InlineResult</*0*/ out T> {
+    public constructor InlineResult</*0*/ out T>(/*0*/ r: kotlin.Result<T>)
+    private final val r: kotlin.Result<T>
+    public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+}
+
+internal open class InternalCls {
+    public constructor InternalCls(/*0*/ r1: kotlin.Result<kotlin.Int>, /*1*/ r2: ResultAlias<kotlin.Int>? /* = kotlin.Result<kotlin.Int>? */, /*2*/ r3: kotlin.collections.List<kotlin.Result<kotlin.Int>>)
+    public final val p1: kotlin.Result<kotlin.Int>
+    public final val p2: kotlin.Result<kotlin.String>
+    protected final val p3: kotlin.Result<kotlin.Int>
+    public final val r1: kotlin.Result<kotlin.Int>
+    public final val r2: ResultAlias<kotlin.Int>? /* = kotlin.Result<kotlin.Int>? */
+    public final val r3: kotlin.collections.List<kotlin.Result<kotlin.Int>>
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    protected final fun returnInClsProtected(): kotlin.Result<kotlin.Int>
+    public final fun returnInInternal(): kotlin.Result<kotlin.Int>
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    public companion object Companion {
+        private constructor Companion()
+        public final val cr1: kotlin.Result<kotlin.Int>
+        private final val cr2: kotlin.Result<kotlin.Int>
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+
+private final class PrivateCls {
+    public constructor PrivateCls(/*0*/ r1: kotlin.Result<kotlin.Int>, /*1*/ r2: ResultAlias<kotlin.Int>? /* = kotlin.Result<kotlin.Int>? */, /*2*/ r3: kotlin.collections.List<kotlin.Result<kotlin.Int>>)
+    public final val p1: kotlin.Result<kotlin.Int>
+    public final val p2: kotlin.Result<kotlin.String>
+    public final val r1: kotlin.Result<kotlin.Int>
+    public final val r2: ResultAlias<kotlin.Int>? /* = kotlin.Result<kotlin.Int>? */
+    public final val r3: kotlin.collections.List<kotlin.Result<kotlin.Int>>
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final fun returnInPrivate(): kotlin.Result<kotlin.Int>
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    public companion object Companion {
+        private constructor Companion()
+        public final val cr1: kotlin.Result<kotlin.Int>
+        private final val cr2: kotlin.Result<kotlin.Int>
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+
+public open class PublicCls {
+    public constructor PublicCls(/*0*/ r1: kotlin.Result<kotlin.String>, /*1*/ r2: kotlin.Result<kotlin.Int>?, /*2*/ r3: ResultAlias<kotlin.Int> /* = kotlin.Result<kotlin.Int> */, /*3*/ r4: ResultAlias<kotlin.Int>? /* = kotlin.Result<kotlin.Int>? */, /*4*/ r5: InlineResult<kotlin.Int>, /*5*/ r6: kotlin.Result<kotlin.Int>, /*6*/ r7: kotlin.Result<kotlin.Int>, /*7*/ r8: kotlin.collections.List<kotlin.Result<kotlin.Int>>)
+    public final val p1: kotlin.Result<kotlin.Int>
+    public final var p2: kotlin.Result<kotlin.Int>
+    public final val p3: ResultAlias<kotlin.Int>? /* = kotlin.Result<kotlin.Int>? */
+    public final val p4: kotlin.Result<kotlin.Int>
+    internal final val p5: kotlin.Result<kotlin.Int>
+    private final var p6: kotlin.Result<kotlin.Int>
+    internal final val p7: kotlin.Result<kotlin.Int>
+    protected final val p8: kotlin.Result<kotlin.Int>
+    public final val r1: kotlin.Result<kotlin.String>
+    public final val r2: kotlin.Result<kotlin.Int>?
+    public final val r3: ResultAlias<kotlin.Int> /* = kotlin.Result<kotlin.Int> */
+    public final val r4: ResultAlias<kotlin.Int>? /* = kotlin.Result<kotlin.Int>? */
+    public final val r5: InlineResult<kotlin.Int>
+    internal final val r6: kotlin.Result<kotlin.Int>
+    private final val r7: kotlin.Result<kotlin.Int>
+    public final val r8: kotlin.collections.List<kotlin.Result<kotlin.Int>>
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final fun returnInCls(): kotlin.Result<kotlin.Int>
+    private final fun returnInClsPrivate(): kotlin.Result<kotlin.Int>
+    protected final fun returnInClsProtected(): kotlin.Result<kotlin.Int>
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+public typealias ResultAlias</*0*/ T> = kotlin.Result<T>

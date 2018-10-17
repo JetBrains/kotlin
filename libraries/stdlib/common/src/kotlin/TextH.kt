@@ -47,6 +47,7 @@ expect class Regex {
      *
      * @param startIndex An index to start search with, by default 0. Must be not less than zero and not greater than `input.length()`
      * @return An instance of [MatchResult] if match was found or `null` otherwise.
+     * @sample samples.text.Regexps.find
      */
     fun find(input: CharSequence, startIndex: Int = 0): MatchResult?
 
@@ -130,6 +131,15 @@ public expect fun CharSequence.repeat(n: Int): String
 
 
 /**
+ * Clears the content of this string builder making it empty.
+ *
+ * @sample samples.text.Strings.clearStringBuilder
+ */
+@SinceKotlin("1.3")
+public expect fun StringBuilder.clear(): StringBuilder
+
+
+/**
  * Returns a new string with all occurrences of [oldChar] replaced with [newChar].
  */
 expect fun String.replace(oldChar: Char, newChar: Char, ignoreCase: Boolean = false): String
@@ -158,6 +168,13 @@ expect fun String.replaceFirst(oldValue: String, newValue: String, ignoreCase: B
  */
 expect fun String?.equals(other: String?, ignoreCase: Boolean = false): Boolean
 
+/**
+ * Compares two strings lexicographically, optionally ignoring case differences.
+ */
+@SinceKotlin("1.2")
+expect fun String.compareTo(other: String, ignoreCase: Boolean = false): Int
+
+
 // From stringsCode.kt
 
 internal inline expect fun String.nativeIndexOf(ch: Char, fromIndex: Int): Int
@@ -178,6 +195,16 @@ expect fun CharSequence.regionMatches(
     length: Int,
     ignoreCase: Boolean = false
 ): Boolean
+
+
+/**
+ * A Comparator that orders strings ignoring character case.
+ *
+ * Note that this Comparator does not take locale into account,
+ * and will result in an unsatisfactory ordering for certain locales.
+ */
+@SinceKotlin("1.2")
+public expect val String.Companion.CASE_INSENSITIVE_ORDER: Comparator<String>
 
 
 /**

@@ -9,17 +9,14 @@ public final class Class : kotlin/Any {
   public final fun f(): kotlin/Unit
 
   // local delegated property #0
-  // field: local4:Lkotlin/Array;
   // local final /* delegated */ val local4: kotlin/Array<kotlin/String>
   //   local final get
 
   // local delegated property #1
-  // field: local5:Ljava/util/List;
   // local final /* delegated */ val local5: kotlin/collections/List<kotlin/Unit>?
   //   local final get
 
   // local delegated property #2
-  // field: local6:I
   // local final /* delegated */ val local6: kotlin/Int
   //   local final get
 }
@@ -65,17 +62,14 @@ package {
     public final /* non-default */ get
 
   // local delegated property #0
-  // field: local1:D
   // local final /* delegated */ val local1: kotlin/Double
   //   local final get
 
   // local delegated property #1
-  // field: local2:Ljava/lang/Object;
   // local final /* delegated */ val local2: kotlin/Any
   //   local final get
 
   // local delegated property #2
-  // field: local3:Ljava/lang/CharSequence;
   // local final /* delegated */ val local3: kotlin/CharSequence?
   //   local final get
 }

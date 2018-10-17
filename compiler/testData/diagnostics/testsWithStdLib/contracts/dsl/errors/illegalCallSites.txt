@@ -1,0 +1,26 @@
+package
+
+public val topLevelAnonymousFunction: (kotlin.Boolean) -> kotlin.Unit
+public val topLevelLambda: (kotlin.Boolean) -> kotlin.Unit
+public var topLevelPropertyAccessors: kotlin.Int?
+public inline fun inlineTopLevel(/*0*/ x: kotlin.Boolean): kotlin.Unit
+    Returns(WILDCARD) -> x
+
+public suspend fun suspendTopLevel(/*0*/ x: kotlin.Boolean): kotlin.Unit
+public fun test(): kotlin.Unit
+public fun topLevel(/*0*/ x: kotlin.Boolean): kotlin.Unit
+    Returns(WILDCARD) -> x
+
+public operator fun kotlin.Boolean.plus(/*0*/ x: kotlin.Boolean): kotlin.Boolean
+
+public open class Class {
+    public constructor Class()
+    public abstract fun abstractMember(/*0*/ x: kotlin.Boolean): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final inline fun inlineMember(/*0*/ x: kotlin.Boolean): kotlin.Unit
+    public final fun member(/*0*/ x: kotlin.Boolean): kotlin.Unit
+    public open fun openMemeber(/*0*/ x: kotlin.Boolean): kotlin.Unit
+    public final suspend fun suspendMember(/*0*/ x: kotlin.Boolean): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

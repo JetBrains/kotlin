@@ -1,12 +1,17 @@
+// !USE_EXPERIMENTAL: kotlin.Experimental
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 // !WITH_NEW_INFERENCE
 // NI_EXPECTED_FILE
+
+@file:UseExperimental(ExperimentalTypeInference::class)
+
+import kotlin.experimental.ExperimentalTypeInference
 
 class Controller<T> {
     suspend fun yield(t: T) {}
 }
 
-fun <S> generate(g: suspend Controller<S>.() -> Unit): S = TODO()
+fun <S> generate(@BuilderInference g: suspend Controller<S>.() -> Unit): S = TODO()
 
 class A
 

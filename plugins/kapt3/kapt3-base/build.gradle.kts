@@ -4,7 +4,7 @@ plugins {
 }
 
 dependencies {
-    compile(projectDist(":kotlin-stdlib"))
+    compile(project(":kotlin-stdlib"))
     compile(files("${System.getProperty("java.home")}/../lib/tools.jar"))
     testCompile(commonDep("junit:junit"))
 }

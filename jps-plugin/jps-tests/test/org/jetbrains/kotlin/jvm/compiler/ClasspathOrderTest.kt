@@ -41,16 +41,17 @@ class ClasspathOrderTest : TestCaseWithTmpdir() {
 
     fun testClasspathOrderForModuleScriptBuild() {
         val xmlContent = KotlinModuleXmlBuilder().addModule(
-                "name",
-                File(tmpdir, "output").absolutePath,
-                listOf(sourceDir),
-                listOf(JvmSourceRoot(sourceDir)),
-                listOf(PathUtil.kotlinPathsForDistDirectory.stdlibPath),
-                null,
-                JavaModuleBuildTargetType.PRODUCTION.typeId,
-                JavaModuleBuildTargetType.PRODUCTION.isTests,
-                setOf(),
-                emptyList()
+            "name",
+            File(tmpdir, "output").absolutePath,
+            listOf(sourceDir),
+            listOf(JvmSourceRoot(sourceDir)),
+            listOf(PathUtil.kotlinPathsForDistDirectory.stdlibPath),
+            emptyList(),
+            null,
+            JavaModuleBuildTargetType.PRODUCTION.typeId,
+            JavaModuleBuildTargetType.PRODUCTION.isTests,
+            setOf(),
+            emptyList()
         ).asText().toString()
 
         val xml = File(tmpdir, "module.xml")

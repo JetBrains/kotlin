@@ -31,7 +31,7 @@ public class BasicCompletionWeigherTestGenerated extends AbstractBasicCompletion
     }
 
     public void testAllFilesPresentInBasic() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/weighers/basic"), Pattern.compile("^([^.]+)\\.kt$"), TargetBackend.ANY, true);
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/weighers/basic"), Pattern.compile("^([^.]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
     }
 
     @TestMetadata("CallableReference_NothingLast.kt")
@@ -69,9 +69,19 @@ public class BasicCompletionWeigherTestGenerated extends AbstractBasicCompletion
         runTest("idea/idea-completion/testData/weighers/basic/DslCalls.kt");
     }
 
+    @TestMetadata("DslCallsAnnotatedFunctionType.kt")
+    public void testDslCallsAnnotatedFunctionType() throws Exception {
+        runTest("idea/idea-completion/testData/weighers/basic/DslCallsAnnotatedFunctionType.kt");
+    }
+
     @TestMetadata("DslCallsWithMultipleReceivers.kt")
     public void testDslCallsWithMultipleReceivers() throws Exception {
         runTest("idea/idea-completion/testData/weighers/basic/DslCallsWithMultipleReceivers.kt");
+    }
+
+    @TestMetadata("DslMemberCalls.kt")
+    public void testDslMemberCalls() throws Exception {
+        runTest("idea/idea-completion/testData/weighers/basic/DslMemberCalls.kt");
     }
 
     @TestMetadata("ExactMatchForKeyword.kt")
@@ -92,6 +102,16 @@ public class BasicCompletionWeigherTestGenerated extends AbstractBasicCompletion
     @TestMetadata("ImportedOrder.kt")
     public void testImportedOrder() throws Exception {
         runTest("idea/idea-completion/testData/weighers/basic/ImportedOrder.kt");
+    }
+
+    @TestMetadata("KT-25588_1.kts")
+    public void testKT_25588_1() throws Exception {
+        runTest("idea/idea-completion/testData/weighers/basic/KT-25588_1.kts");
+    }
+
+    @TestMetadata("KT-25588_2.kts")
+    public void testKT_25588_2() throws Exception {
+        runTest("idea/idea-completion/testData/weighers/basic/KT-25588_2.kts");
     }
 
     @TestMetadata("KeywordsLast.kt")
@@ -139,6 +159,11 @@ public class BasicCompletionWeigherTestGenerated extends AbstractBasicCompletion
         runTest("idea/idea-completion/testData/weighers/basic/NamedParameters3.kt");
     }
 
+    @TestMetadata("NoExpectedType.kt")
+    public void testNoExpectedType() throws Exception {
+        runTest("idea/idea-completion/testData/weighers/basic/NoExpectedType.kt");
+    }
+
     @TestMetadata("Packages.kt")
     public void testPackages() throws Exception {
         runTest("idea/idea-completion/testData/weighers/basic/Packages.kt");
@@ -179,6 +204,11 @@ public class BasicCompletionWeigherTestGenerated extends AbstractBasicCompletion
         runTest("idea/idea-completion/testData/weighers/basic/SuperMembers.kt");
     }
 
+    @TestMetadata("UnavailableDslReceiver.kt")
+    public void testUnavailableDslReceiver() throws Exception {
+        runTest("idea/idea-completion/testData/weighers/basic/UnavailableDslReceiver.kt");
+    }
+
     @TestMetadata("idea/idea-completion/testData/weighers/basic/expectedInfo")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
@@ -193,7 +223,7 @@ public class BasicCompletionWeigherTestGenerated extends AbstractBasicCompletion
         }
 
         public void testAllFilesPresentInExpectedInfo() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/weighers/basic/expectedInfo"), Pattern.compile("^([^.]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/weighers/basic/expectedInfo"), Pattern.compile("^([^.]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("CompanionObjectMethod.kt")
@@ -276,7 +306,7 @@ public class BasicCompletionWeigherTestGenerated extends AbstractBasicCompletion
         }
 
         public void testAllFilesPresentInParameterNameAndType() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/weighers/basic/parameterNameAndType"), Pattern.compile("^([^.]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/weighers/basic/parameterNameAndType"), Pattern.compile("^([^.]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("Deprecated.kt")

@@ -17,12 +17,12 @@ import org.jetbrains.kotlin.idea.MainFunctionDetector
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.js.KotlinJSRunConfigurationData
 import org.jetbrains.kotlin.idea.js.KotlinJSRunConfigurationDataProvider
-import org.jetbrains.kotlin.idea.js.jsOrJsImpl
+import org.jetbrains.kotlin.idea.js.asJsModule
 import org.jetbrains.kotlin.idea.js.jsProductionOutputFilePath
 import org.jetbrains.kotlin.idea.nodejs.TestElementPath
 import org.jetbrains.kotlin.idea.nodejs.getNodeJsEnvironmentVars
+import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.run.addBuildTask
-import org.jetbrains.kotlin.idea.util.module
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
@@ -45,19 +45,19 @@ private class KotlinNodeJsRunConfigurationProducer :
     override val isForTests: Boolean
         get() = false
 
-    private fun getConfigurationData(element: PsiElement, context: ConfigurationContext?): NodeJsConfigData? {
-        if (context != null && !context.isAcceptable) return null
-        val jsModule = element.module?.jsOrJsImpl() ?: return null
-        val jsFilePath = jsModule.jsProductionOutputFilePath ?: return null
+    override fun getConfigurationData(context: ConfigurationContext): NodeJsConfigData? {
+        if (!context.isAcceptable) return null
+        val element = context.psiLocation ?: return null
+        val module = context.module?.asJsModule() ?: return null
+
+        val jsFilePath = module.jsProductionOutputFilePath ?: return null
         val declaration = element.getNonStrictParentOfType<KtNamedDeclaration>()
         if (declaration is KtNamedFunction) {
-            val detector = MainFunctionDetector { it.resolveToDescriptorIfAny() }
+            val detector = MainFunctionDetector(declaration.languageVersionSettings) { it.resolveToDescriptorIfAny() }
             if (!detector.isMain(declaration, false)) return null
-        } else if (!TestElementPath.isModuleAssociatedDir(element, jsModule)) return null
-        return NodeJsConfigData(element, jsModule, jsFilePath)
+        } else if (!TestElementPath.isModuleAssociatedDir(element, module)) return null
+        return NodeJsConfigData(element, module, jsFilePath)
     }
-
-    override fun getConfigurationData(element: PsiElement) = getConfigurationData(element, null)
 
     override fun setupConfigurationFromContext(
         configuration: NodeJsRunConfiguration,
@@ -65,7 +65,7 @@ private class KotlinNodeJsRunConfigurationProducer :
         sourceElement: Ref<PsiElement>
     ): Boolean {
         val psiElement = sourceElement.get() ?: return false
-        val configData = getConfigurationData(psiElement, context) ?: return false
+        val configData = getConfigurationData(context) ?: return false
 
         if (configuration.workingDirectory.isNullOrBlank()) {
             configuration.workingDirectory = FileUtil.toSystemDependentName(psiElement.project.baseDir.path)
@@ -79,8 +79,7 @@ private class KotlinNodeJsRunConfigurationProducer :
     }
 
     override fun isConfigurationFromContext(configuration: NodeJsRunConfiguration, context: ConfigurationContext): Boolean {
-        val contextPsi = context.psiLocation ?: return false
-        val configData = getConfigurationData(contextPsi, context) ?: return false
+        val configData = getConfigurationData(context) ?: return false
         return configuration.inputPath == configData.jsOutputFilePath
     }
 }

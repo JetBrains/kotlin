@@ -38,12 +38,14 @@ dependencies {
     compileOnly project(':compiler:daemon-common')
 
     compile project(':kotlin-stdlib')
+    compile project(':kotlin-native:kotlin-native-utils')
     compileOnly project(':kotlin-reflect-api')
     compileOnly project(':kotlin-android-extensions')
     compileOnly project(':kotlin-build-common')
     compileOnly project(':kotlin-compiler-runner')
     compileOnly project(':kotlin-annotation-processing')
     compileOnly project(':kotlin-annotation-processing-gradle')
+    compileOnly project(':kotlin-scripting-compiler')
 
     compileOnly 'com.android.tools.build:gradle:2.0.0'
     compileOnly 'org.codehaus.groovy:groovy-all:2.4.12'
@@ -61,6 +63,7 @@ dependencies {
     runtime project(path: ':kotlin-annotation-processing-gradle', configuration: "runtimeJar")
     runtime project(path: ':kotlin-android-extensions', configuration: 'runtimeJar')
     runtime project(path: ':kotlin-compiler-runner', configuration: 'runtimeJar')
+    runtime project(path: ':kotlin-scripting-compiler-embeddable', configuration: 'runtimeJar')
     runtime project(':kotlin-reflect')
 
     // com.android.tools.build:gradle has ~50 unneeded transitive dependencies
@@ -85,6 +88,9 @@ dependencies {
 
 tasks.withType(project.compileKotlin.class) {
     kotlinOptions.jdkHome = JDK_18
+    kotlinOptions.languageVersion = "1.2"
+    kotlinOptions.apiVersion = "1.2"
+    kotlinOptions.freeCompilerArgs += ["-Xskip-metadata-version-check"]
 }
 
 sourceSets.main.java.srcDirs += sourceSets.main.kotlin.srcDirs
@@ -116,6 +122,7 @@ artifacts {
 }
 
 test.executable = "${JDK_18}/bin/java"
+test.dependsOn(validateTaskProperties)
 
 validateTaskProperties.failOnWarning = true
 

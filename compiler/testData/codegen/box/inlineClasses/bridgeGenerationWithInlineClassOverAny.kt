@@ -1,29 +1,29 @@
 // !LANGUAGE: +InlineClasses
 // IGNORE_BACKEND: JVM_IR
 
-inline class SuccessOrFailure<T>(val a: Any?) {
+inline class Result<T>(val a: Any?) {
     fun getOrThrow(): T = a as T
 }
 
-abstract class SuccessOrFailureReceiver<T> {
-    abstract fun receive(result: SuccessOrFailure<T>)
+abstract class ResultReceiver<T> {
+    abstract fun receive(result: Result<T>)
 }
 
-fun <T> SuccessOrFailureReceiver(f: (SuccessOrFailure<T>) -> Unit): SuccessOrFailureReceiver<T> =
-    object : SuccessOrFailureReceiver<T>() {
-        override fun receive(result: SuccessOrFailure<T>) {
+fun <T> ResultReceiver(f: (Result<T>) -> Unit): ResultReceiver<T> =
+    object : ResultReceiver<T>() {
+        override fun receive(result: Result<T>) {
             f(result)
         }
     }
 
 fun test() {
     var invoked = false
-    val receiver = SuccessOrFailureReceiver<Int> { result ->
+    val receiver = ResultReceiver<Int> { result ->
         val intResult = result.getOrThrow()
         invoked = true
     }
 
-    receiver.receive(SuccessOrFailure(42))
+    receiver.receive(Result(42))
     if (!invoked) {
         throw RuntimeException("Fail")
     }

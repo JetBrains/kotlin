@@ -76,8 +76,12 @@ class AddBracesIntention : SelfTargetingIntention<KtElement>(KtElement::class.ja
 
         val result = expression.replace(psiFactory.createSingleStatementBlock(expression))
 
-        if (element is KtDoWhileExpression) { // remove new line between '}' and while
-            (element.body!!.parent.nextSibling as? PsiWhiteSpace)?.delete()
+        when (element) {
+            is KtDoWhileExpression ->
+                // remove new line between '}' and while
+                (element.body!!.parent.nextSibling as? PsiWhiteSpace)?.delete()
+            is KtIfExpression ->
+                (result?.parent?.nextSibling as? PsiWhiteSpace)?.delete()
         }
         saver.restore(result)
     }

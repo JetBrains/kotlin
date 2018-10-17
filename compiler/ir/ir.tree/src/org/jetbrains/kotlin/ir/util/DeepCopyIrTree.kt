@@ -243,6 +243,15 @@ open class DeepCopyIrTree : IrElementTransformerVoid() {
             declaration.initializer?.transform()
         ).apply {
             transformAnnotations(declaration)
+            if (declaration.origin == IrDeclarationOrigin.FAKE_OVERRIDE) {
+                descriptor.overriddenDescriptors.mapIndexedTo(overriddenSymbols) { index, overriddenDescriptor ->
+                    val oldOverriddenSymbol = declaration.overriddenSymbols.getOrNull(index)
+                    if (overriddenDescriptor.original == oldOverriddenSymbol?.descriptor?.original)
+                        oldOverriddenSymbol
+                    else
+                        IrFieldSymbolImpl(overriddenDescriptor.original)
+                }
+            }
         }
 
     override fun visitLocalDelegatedProperty(declaration: IrLocalDelegatedProperty): IrLocalDelegatedProperty =

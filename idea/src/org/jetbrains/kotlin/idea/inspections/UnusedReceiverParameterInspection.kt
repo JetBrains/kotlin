@@ -25,10 +25,10 @@ import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
 import org.jetbrains.kotlin.idea.KotlinBundle
-import org.jetbrains.kotlin.idea.MainFunctionDetector
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithContent
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.core.isOverridable
+import org.jetbrains.kotlin.idea.isMainFunction
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinChangeSignatureConfiguration
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinMethodDescriptor
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.modify
@@ -77,7 +77,7 @@ class UnusedReceiverParameterInspection : AbstractKotlinInspection() {
 
                 val callable = callableDeclaration.descriptor ?: return
 
-                if (MainFunctionDetector.isMain(callable)) return
+                if (callableDeclaration.isMainFunction(callable)) return
 
                 val containingDeclaration = callable.containingDeclaration
                 if (containingDeclaration != null && containingDeclaration == receiverTypeDeclaration) {

@@ -419,16 +419,16 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
         val scripts = specialFiles.filterScripts()
         if (scripts.isNotEmpty()) {
             val projectFacade = getFacadeForScripts(scripts)
-            return ModuleResolutionFacadeImpl(projectFacade, moduleInfo)
+            return ModuleResolutionFacadeImpl(projectFacade, moduleInfo).createdFor(scripts, moduleInfo)
         }
 
         if (specialFiles.isNotEmpty()) {
             val projectFacade = getFacadeForSpecialFiles(specialFiles)
-            return ModuleResolutionFacadeImpl(projectFacade, moduleInfo)
+            return ModuleResolutionFacadeImpl(projectFacade, moduleInfo).createdFor(specialFiles, moduleInfo)
         }
 
         val platform = TargetPlatformDetector.getPlatform(file)
-        return getResolutionFacadeByModuleInfo(moduleInfo, platform)
+        return getResolutionFacadeByModuleInfo(moduleInfo, platform).createdFor(emptyList(), moduleInfo, platform)
     }
 
     override fun getResolutionFacadeByFile(file: PsiFile, platform: TargetPlatform): ResolutionFacade? {

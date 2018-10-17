@@ -1,7 +1,7 @@
 // IGNORE_BACKEND: JVM_IR
 // IGNORE_BACKEND: JS_IR
 // TODO: muted automatically, investigate should it be ran for JS or not
-// IGNORE_BACKEND: JS, NATIVE
+// IGNORE_BACKEND: JS
 
 // WITH_RUNTIME
 // This is a big, ugly, semi-auto generated test.

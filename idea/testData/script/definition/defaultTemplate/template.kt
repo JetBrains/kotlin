@@ -6,9 +6,9 @@ import kotlin.script.experimental.dependencies.*
 import kotlin.script.experimental.location.*
 import kotlin.script.templates.ScriptTemplateDefinition
 
-class FromTextDependenciesResolver : AsyncDependenciesResolver {
+class FromTextDependenciesResolver : DependenciesResolver {
     @Suppress("UNCHECKED_CAST")
-    suspend override fun resolveAsync(scriptContents: ScriptContents, environment: Environment): DependenciesResolver.ResolveResult {
+    override fun resolve(scriptContents: ScriptContents, environment: Environment): DependenciesResolver.ResolveResult {
         return ScriptDependencies(
             classpath = (environment["classpath"] as? List<File>).orEmpty(),
             imports = (environment["imports"] as? List<String>).orEmpty(),

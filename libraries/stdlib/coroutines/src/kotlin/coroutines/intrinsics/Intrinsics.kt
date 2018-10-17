@@ -3,7 +3,6 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
-@file:Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 @file:kotlin.jvm.JvmName("IntrinsicsKt")
 @file:kotlin.jvm.JvmMultifileClass
 
@@ -37,6 +36,7 @@ import kotlin.internal.InlineOnly
  */
 @SinceKotlin("1.3")
 @InlineOnly
+@Suppress("UNUSED_PARAMETER", "RedundantSuspendModifier")
 public suspend inline fun <T> suspendCoroutineUninterceptedOrReturn(crossinline block: (Continuation<T>) -> Any?): T =
     throw NotImplementedError("Implementation of suspendCoroutineUninterceptedOrReturn is intrinsic")
 
@@ -46,8 +46,7 @@ public suspend inline fun <T> suspendCoroutineUninterceptedOrReturn(crossinline 
  */
 // It is implemented as property with getter to avoid ProGuard <clinit> problem with multifile IntrinsicsKt class
 @SinceKotlin("1.3")
-public val COROUTINE_SUSPENDED: Any
-    get() = CoroutineSingletons.COROUTINE_SUSPENDED
+public val COROUTINE_SUSPENDED: Any get() = CoroutineSingletons.COROUTINE_SUSPENDED
 
 // Using enum here ensures two important properties:
 //  1. It makes SafeContinuation serializable with all kinds of serialization frameworks (since all of them natively support enums)

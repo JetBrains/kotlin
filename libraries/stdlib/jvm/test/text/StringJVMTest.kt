@@ -61,11 +61,6 @@ class StringJVMTest {
         assertArrayNotSameButEquals(charArrayOf('\u0000', '\u0000', 'e', 'l'), buffer)
     }
 
-    @Test fun orderIgnoringCase() {
-        val list = listOf("Beast", "Ast", "asterisk")
-        assertEquals(listOf("Ast", "Beast", "asterisk"), list.sorted())
-        assertEquals(listOf("Ast", "asterisk", "Beast"), list.sortedWith(String.CASE_INSENSITIVE_ORDER))
-    }
 
     @Test fun charsets() {
         assertEquals("UTF-32", Charsets.UTF_32.name())

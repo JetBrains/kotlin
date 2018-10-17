@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 1121
+// EXPECTED_REACHABLE_NODES: 1293
 /*
  * Copy of JVM-backend test
  * Found at: compiler/testData/codegen/boxInline/simple/classObject.1.kt

@@ -24,35 +24,42 @@ import com.intellij.openapi.roots.libraries.Library
 import com.intellij.openapi.roots.libraries.PersistentLibraryKind
 import com.intellij.openapi.util.io.JarUtil
 import com.intellij.openapi.vfs.*
+import org.jetbrains.kotlin.caches.resolve.IdePlatformKindResolution
 import org.jetbrains.kotlin.idea.vfilefinder.KnownLibraryKindForIndex
 import org.jetbrains.kotlin.idea.vfilefinder.getLibraryKindForJar
 import org.jetbrains.kotlin.js.resolve.JsPlatform
 import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
-import org.jetbrains.kotlin.serialization.deserialization.MetadataPackageFragment
 import org.jetbrains.kotlin.utils.PathUtil
 import java.util.jar.Attributes
 import java.util.regex.Pattern
 
-interface KotlinLibraryKind
+interface KotlinLibraryKind {
+    val compilerPlatform: TargetPlatform
+}
 
 object JSLibraryKind : PersistentLibraryKind<DummyLibraryProperties>("kotlin.js"), KotlinLibraryKind {
+    override val compilerPlatform: TargetPlatform
+        get() = JsPlatform
+
     override fun createDefaultProperties() = DummyLibraryProperties.INSTANCE!!
 }
 
 object CommonLibraryKind : PersistentLibraryKind<DummyLibraryProperties>("kotlin.common"), KotlinLibraryKind {
+    override val compilerPlatform: TargetPlatform
+        get() = TargetPlatform.Common
+
     override fun createDefaultProperties() = DummyLibraryProperties.INSTANCE!!
 }
 
 val PersistentLibraryKind<*>?.platform: TargetPlatform
     get() = when (this) {
-        JSLibraryKind -> JsPlatform
-        CommonLibraryKind -> TargetPlatform.Common
+        is KotlinLibraryKind -> this.compilerPlatform
         else -> JvmPlatform
     }
 
 fun getLibraryPlatform(project: Project, library: Library): TargetPlatform {
-    library as? LibraryEx ?: return JvmPlatform
+    if (library !is LibraryEx) return JvmPlatform
     if (library.isDisposed) return JvmPlatform
 
     return library.effectiveKind(project).platform
@@ -61,18 +68,20 @@ fun getLibraryPlatform(project: Project, library: Library): TargetPlatform {
 fun detectLibraryKind(roots: Array<VirtualFile>): PersistentLibraryKind<*>? {
     val jarFile = roots.firstOrNull() ?: return null
     if (jarFile.fileSystem is JarFileSystem) {
-        return when (jarFile.getLibraryKindForJar()) {
-            KnownLibraryKindForIndex.COMMON -> CommonLibraryKind
-            KnownLibraryKindForIndex.JS -> JSLibraryKind
-            KnownLibraryKindForIndex.UNKNOWN -> null
+        // TODO: Detect library kind for Jar file using IdePlatformKindResolution.
+        when (jarFile.getLibraryKindForJar()) {
+            KnownLibraryKindForIndex.COMMON -> return CommonLibraryKind
+            KnownLibraryKindForIndex.JS -> return JSLibraryKind
+            KnownLibraryKindForIndex.UNKNOWN -> {
+                /* Continue detection of library kind via IdePlatformKindResolution. */
+            }
         }
     }
 
-    return when (jarFile.extension) {
-        "js", "kjsm" -> JSLibraryKind
-        MetadataPackageFragment.METADATA_FILE_EXTENSION -> CommonLibraryKind
-        else -> null
-    }
+    return IdePlatformKindResolution
+        .getInstances()
+        .firstOrNull { it.isLibraryFileForPlatform(jarFile) }
+        ?.libraryKind
 }
 
 fun getLibraryJar(roots: Array<VirtualFile>, jarPattern: Pattern): VirtualFile? {

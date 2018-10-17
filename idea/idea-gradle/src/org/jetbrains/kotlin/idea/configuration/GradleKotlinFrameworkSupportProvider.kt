@@ -20,11 +20,15 @@ import com.intellij.framework.FrameworkTypeEx
 import com.intellij.framework.addSupport.FrameworkSupportInModuleConfigurable
 import com.intellij.framework.addSupport.FrameworkSupportInModuleProvider
 import com.intellij.ide.util.frameworkSupport.FrameworkSupportModel
+import com.intellij.openapi.externalSystem.model.ExternalSystemDataKeys
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.roots.ModifiableModelsProvider
 import com.intellij.openapi.roots.ModifiableRootModel
 import org.jetbrains.kotlin.idea.KotlinIcons
+import org.jetbrains.kotlin.idea.core.platform.impl.CommonIdePlatformKindTooling.MAVEN_COMMON_STDLIB_ID
+import org.jetbrains.kotlin.idea.formatter.KotlinStyleGuideCodeStyle
+import org.jetbrains.kotlin.idea.formatter.ProjectCodeStyleImporter
 import org.jetbrains.kotlin.idea.versions.*
 import org.jetbrains.plugins.gradle.frameworkSupport.BuildScriptDataBuilder
 import org.jetbrains.plugins.gradle.frameworkSupport.GradleFrameworkSupportProvider
@@ -124,6 +128,12 @@ abstract class GradleKotlinFrameworkSupportProvider(
         } else {
             buildScriptData.addBuildscriptDependencyNotation(KotlinWithGradleConfigurator.CLASSPATH)
         }
+
+        val isNewProject = module.project.getUserData(ExternalSystemDataKeys.NEWLY_CREATED_PROJECT) == true
+        if (isNewProject) {
+            ProjectCodeStyleImporter.apply(module.project, KotlinStyleGuideCodeStyle.INSTANCE)
+            GradlePropertiesFileFacade.forProject(module.project).addCodeStyleProperty(KotlinStyleGuideCodeStyle.CODE_STYLE_SETTING)
+        }
     }
 
     protected open fun updateSettingsScript(settingsBuilder: SettingsScriptBuilder, specifyPluginVersionIfNeeded: Boolean) { }
@@ -196,6 +206,24 @@ open class GradleKotlinMPPCommonFrameworkSupportProvider :
     }
 
     override fun getDescription() = "Shared code for a Kotlin multiplatform project (targeting JVM and JS)"
+}
+
+class GradleKotlinMPPFrameworkSupportProvider : GradleKotlinFrameworkSupportProvider(
+    "KOTLIN_MPP", "Kotlin (Multiplatform - Experimental)", KotlinIcons.MPP
+) {
+    override fun getPluginId() = "kotlin-multiplatform"
+    override fun getPluginExpression() = "id 'kotlin-multiplatform'"
+
+    override fun getDependencies(sdk: Sdk?): List<String> = listOf()
+    override fun getTestDependencies(): List<String> = listOf()
+
+    override fun updateSettingsScript(settingsBuilder: SettingsScriptBuilder, specifyPluginVersionIfNeeded: Boolean) {
+        if (specifyPluginVersionIfNeeded) {
+            settingsBuilder.addResolutionStrategy("kotlin-multiplatform")
+        }
+    }
+
+    override fun getDescription() = "Kotlin multiplatform code"
 }
 
 class GradleKotlinMPPJavaFrameworkSupportProvider

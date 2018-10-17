@@ -10,12 +10,7 @@ import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion
 
 /**
  * A mirror to the [Metadata] annotation on a JVM class file, containing the metadata of Kotlin declarations declared in the class file.
- * Properties of this class correspond to the properties of [Metadata], but the names are not shortened because there's no restriction
- * on the bytecode size here.
- *
- * Note that [Metadata] is not yet public (see https://youtrack.jetbrains.com/issue/KT-23602). In order to create an instance of
- * [KotlinClassHeader] from the [Metadata] annotation instance obtained reflectively, one could use Java code to workaround
- * the internal visibility error.
+ * Properties of this class correspond 1:1 to the properties of [Metadata].
  *
  * @param kind see [kind]
  * @param metadataVersion see [metadataVersion]
@@ -39,7 +34,7 @@ class KotlinClassHeader(
     /**
      * A kind of the metadata this header encodes.
      *
-     * @see Metadata.k
+     * @see Metadata.kind
      * @see CLASS_KIND
      * @see FILE_FACADE_KIND
      * @see SYNTHETIC_CLASS_KIND
@@ -51,7 +46,7 @@ class KotlinClassHeader(
     /**
      * The version of the metadata provided in other properties of this header.
      *
-     * @see Metadata.mv
+     * @see Metadata.metadataVersion
      * @see COMPATIBLE_METADATA_VERSION
      */
     val metadataVersion: IntArray = metadataVersion ?: intArrayOf()
@@ -59,7 +54,7 @@ class KotlinClassHeader(
     /**
      * The version of the bytecode interface (naming conventions, signatures) of the corresponding class file.
      *
-     * @see Metadata.bv
+     * @see Metadata.bytecodeVersion
      * @see COMPATIBLE_BYTECODE_VERSION
      */
     val bytecodeVersion: IntArray = bytecodeVersion ?: intArrayOf()
@@ -67,35 +62,35 @@ class KotlinClassHeader(
     /**
      * The first array of strings used to encode the metadata.
      *
-     * @see Metadata.d1
+     * @see Metadata.data1
      */
     val data1: Array<String> = data1 ?: emptyArray()
 
     /**
      * The second array of strings used to encode the metadata.
      *
-     * @see Metadata.d2
+     * @see Metadata.data2
      */
     val data2: Array<String> = data2 ?: emptyArray()
 
     /**
      * An extra string field for the metadata.
      *
-     * @see Metadata.xs
+     * @see Metadata.extraString
      */
     val extraString: String = extraString ?: ""
 
     /**
      * Fully qualified name of the Kotlin package of the corresponding class, in case [JvmPackageName] was used.
      *
-     * @see Metadata.pn
+     * @see Metadata.packageName
      */
     val packageName: String = packageName ?: ""
 
     /**
      * An extra int field for the metadata.
      *
-     * @see Metadata.xi
+     * @see Metadata.extraInt
      */
     val extraInt: Int = extraInt ?: 0
 

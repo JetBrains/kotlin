@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 
 fun foo(i : Int?, a : Any?) {
     i?.plus(1)

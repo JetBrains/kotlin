@@ -1,0 +1,9 @@
+// WITH_RUNTIME
+fun test(list: List<Any>) {
+    list.mapNotNull {
+        if (it !is String) return@mapNotNull null
+        foo(it)
+    }
+}
+
+fun foo(x: String) = 1

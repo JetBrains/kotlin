@@ -22,7 +22,7 @@ object EmptyModulesApiHistory : ModulesApiHistory {
         Either.Error("Multi-module IC is not configured")
 }
 
-open class ModulesApiHistoryJvm(protected val modulesInfo: IncrementalModuleInfo) : ModulesApiHistory {
+abstract class ModulesApiHistoryBase(protected val modulesInfo: IncrementalModuleInfo) : ModulesApiHistory {
     protected val projectRootPath: Path = Paths.get(modulesInfo.projectRoot.absolutePath)
     private val dirToHistoryFileCache = HashMap<File, Set<File>>()
 
@@ -86,7 +86,11 @@ open class ModulesApiHistoryJvm(protected val modulesInfo: IncrementalModuleInfo
         return Either.Success(history)
     }
 
-    protected open fun getBuildHistoryFilesForJar(jar: File): Either<Set<File>> {
+    protected abstract fun getBuildHistoryFilesForJar(jar: File): Either<Set<File>>
+}
+
+class ModulesApiHistoryJvm(modulesInfo: IncrementalModuleInfo) : ModulesApiHistoryBase(modulesInfo) {
+    override fun getBuildHistoryFilesForJar(jar: File): Either<Set<File>> {
         val classListFile = modulesInfo.jarToClassListFile[jar] ?: return Either.Error("Unknown jar: $jar")
         if (!classListFile.isFile) return Either.Error("Class list file does not exist $classListFile")
 
@@ -109,7 +113,18 @@ open class ModulesApiHistoryJvm(protected val modulesInfo: IncrementalModuleInfo
     }
 }
 
-class ModulesApiHistoryAndroid(modulesInfo: IncrementalModuleInfo) : ModulesApiHistoryJvm(modulesInfo) {
+class ModulesApiHistoryJs(modulesInfo: IncrementalModuleInfo) : ModulesApiHistoryBase(modulesInfo) {
+    override fun getBuildHistoryFilesForJar(jar: File): Either<Set<File>> {
+        val moduleEntry = modulesInfo.jarToModule[jar]
+
+        return when {
+            moduleEntry != null -> Either.Success(setOf(moduleEntry.buildHistoryFile))
+            else -> Either.Error("No module is found for jar $jar")
+        }
+    }
+}
+
+class ModulesApiHistoryAndroid(modulesInfo: IncrementalModuleInfo) : ModulesApiHistoryBase(modulesInfo) {
     private val delegate = ModulesApiHistoryJvm(modulesInfo)
 
     override fun historyFilesForChangedFiles(changedFiles: Set<File>): Either<Set<File>> {

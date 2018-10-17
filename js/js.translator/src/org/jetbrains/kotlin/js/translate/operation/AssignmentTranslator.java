@@ -18,10 +18,7 @@ package org.jetbrains.kotlin.js.translate.operation;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.descriptors.CallableDescriptor;
-import org.jetbrains.kotlin.descriptors.ClassDescriptor;
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor;
+import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.js.backend.ast.JsExpression;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.general.AbstractTranslator;
@@ -70,7 +67,7 @@ public abstract class AssignmentTranslator extends AbstractTranslator {
     }
 
     protected final AccessTranslator createAccessTranslator(@NotNull KtExpression left, boolean forceOrderOfEvaluation) {
-        if (isReferenceToBackingFieldFromConstructor(left, context())) {
+        if (isValProperty(left, context())) {
             KtSimpleNameExpression simpleName = getSimpleName(left);
             assert simpleName != null;
             return BackingFieldAccessTranslator.newInstance(simpleName, context());
@@ -80,40 +77,17 @@ public abstract class AssignmentTranslator extends AbstractTranslator {
         }
     }
 
-    private static boolean isReferenceToBackingFieldFromConstructor(
+    private static boolean isValProperty(
             @NotNull KtExpression expression,
             @NotNull TranslationContext context
     ) {
-        if (expression instanceof KtSimpleNameExpression) {
-            KtSimpleNameExpression nameExpression = (KtSimpleNameExpression) expression;
-            DeclarationDescriptor descriptor = getDescriptorForReferenceExpression(context.bindingContext(), nameExpression);
-            return isReferenceToBackingFieldFromConstructor(descriptor, context);
+        KtSimpleNameExpression simpleNameExpression = getSimpleName(expression);
+
+        if (simpleNameExpression != null) {
+            DeclarationDescriptor descriptor = getDescriptorForReferenceExpression(context.bindingContext(), simpleNameExpression);
+            return descriptor instanceof PropertyDescriptor && !((PropertyDescriptor) descriptor).isVar();
         }
-        else if (expression instanceof KtDotQualifiedExpression) {
-            KtDotQualifiedExpression qualifiedExpression = (KtDotQualifiedExpression) expression;
-            if (qualifiedExpression.getReceiverExpression() instanceof KtThisExpression &&
-                qualifiedExpression.getSelectorExpression() instanceof KtSimpleNameExpression
-            ) {
-                KtSimpleNameExpression nameExpression = (KtSimpleNameExpression) qualifiedExpression.getSelectorExpression();
-                DeclarationDescriptor descriptor = getDescriptorForReferenceExpression(context.bindingContext(), nameExpression);
-                return isReferenceToBackingFieldFromConstructor(descriptor, context);
-            }
-        }
+
         return false;
-    }
-
-    private static boolean isReferenceToBackingFieldFromConstructor(
-            @Nullable DeclarationDescriptor descriptor,
-            @NotNull TranslationContext context
-    ) {
-        if (!(descriptor instanceof PropertyDescriptor)) return false;
-
-        PropertyDescriptor propertyDescriptor = (PropertyDescriptor) descriptor;
-        if (!(context.getDeclarationDescriptor() instanceof ClassDescriptor)) return false;
-
-        ClassDescriptor classDescriptor = (ClassDescriptor) context.getDeclarationDescriptor();
-        if (classDescriptor != propertyDescriptor.getContainingDeclaration()) return false;
-
-        return !propertyDescriptor.isVar();
     }
 }

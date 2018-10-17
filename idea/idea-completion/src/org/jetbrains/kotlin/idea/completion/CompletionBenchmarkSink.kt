@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.idea.completion
 
-import kotlinx.coroutines.experimental.channels.ConflatedChannel
+import kotlinx.coroutines.channels.ConflatedChannel
 import java.lang.System.currentTimeMillis
 
 

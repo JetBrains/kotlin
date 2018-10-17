@@ -11,7 +11,7 @@ fun test(a: InlineNotNullPrimitive, b: InlineNotNullReference) {
     testNotNullReference(b, b, b, b) // 2 box
 }
 
-// 3 INVOKESTATIC InlineNotNullPrimitive\$Erased.box
-// 2 INVOKESTATIC InlineNotNullReference\$Erased.box
+// 3 INVOKESTATIC InlineNotNullPrimitive\.box
+// 2 INVOKESTATIC InlineNotNullReference\.box
 
 // 0 valueOf

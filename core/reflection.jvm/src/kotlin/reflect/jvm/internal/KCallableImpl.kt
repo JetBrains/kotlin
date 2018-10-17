@@ -1,37 +1,31 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package kotlin.reflect.jvm.internal
 
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor
+import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Type
+import java.lang.reflect.WildcardType
 import java.util.*
+import kotlin.coroutines.Continuation
 import kotlin.reflect.*
+import kotlin.reflect.jvm.internal.calls.Caller
 import kotlin.reflect.jvm.javaType
 
 internal abstract class KCallableImpl<out R> : KCallable<R> {
     abstract val descriptor: CallableMemberDescriptor
 
     // The instance which is used to perform a positional call, i.e. `call`
-    abstract val caller: FunctionCaller<*>
+    abstract val caller: Caller<*>
 
     // The instance which is used to perform a call "by name", i.e. `callBy`
-    abstract val defaultCaller: FunctionCaller<*>?
+    abstract val defaultCaller: Caller<*>?
 
     abstract val container: KDeclarationContainerImpl
 
@@ -46,12 +40,16 @@ internal abstract class KCallableImpl<out R> : KCallable<R> {
         val result = ArrayList<KParameter>()
         var index = 0
 
-        if (descriptor.dispatchReceiverParameter != null && !isBound) {
-            result.add(KParameterImpl(this, index++, KParameter.Kind.INSTANCE) { descriptor.dispatchReceiverParameter!! })
-        }
+        if (!isBound) {
+            val instanceReceiver = descriptor.instanceReceiverParameter
+            if (instanceReceiver != null) {
+                result.add(KParameterImpl(this, index++, KParameter.Kind.INSTANCE) { instanceReceiver })
+            }
 
-        if (descriptor.extensionReceiverParameter != null && !isBound) {
-            result.add(KParameterImpl(this, index++, KParameter.Kind.EXTENSION_RECEIVER) { descriptor.extensionReceiverParameter!! })
+            val extensionReceiver = descriptor.extensionReceiverParameter
+            if (extensionReceiver != null) {
+                result.add(KParameterImpl(this, index++, KParameter.Kind.EXTENSION_RECEIVER) { extensionReceiver })
+            }
         }
 
         for (i in descriptor.valueParameters.indices) {
@@ -73,7 +71,9 @@ internal abstract class KCallableImpl<out R> : KCallable<R> {
         get() = _parameters()
 
     private val _returnType = ReflectProperties.lazySoft {
-        KTypeImpl(descriptor.returnType!!) { caller.returnType }
+        KTypeImpl(descriptor.returnType!!) {
+            extractContinuationArgument() ?: caller.returnType
+        }
     }
 
     override val returnType: KType
@@ -107,11 +107,11 @@ internal abstract class KCallableImpl<out R> : KCallable<R> {
     }
 
     override fun callBy(args: Map<KParameter, Any?>): R {
-        return if (isAnnotationConstructor) callAnnotationConstructor(args) else callDefaultMethod(args)
+        return if (isAnnotationConstructor) callAnnotationConstructor(args) else callDefaultMethod(args, null)
     }
 
     // See ArgumentGenerator#generate
-    private fun callDefaultMethod(args: Map<KParameter, Any?>): R {
+    internal fun callDefaultMethod(args: Map<KParameter, Any?>, continuationArgument: Continuation<*>?): R {
         val parameters = parameters
         val arguments = ArrayList<Any?>(parameters.size)
         var mask = 0
@@ -142,6 +142,10 @@ internal abstract class KCallableImpl<out R> : KCallable<R> {
             if (parameter.kind == KParameter.Kind.VALUE) {
                 index++
             }
+        }
+
+        if (continuationArgument != null) {
+            arguments.add(continuationArgument)
         }
 
         if (!anyOptional) {
@@ -197,4 +201,19 @@ internal abstract class KCallableImpl<out R> : KCallable<R> {
                 else -> throw UnsupportedOperationException("Unknown primitive: $type")
             }
         } else null
+
+    private fun extractContinuationArgument(): Type? {
+        if ((descriptor as? FunctionDescriptor)?.isSuspend == true) {
+            // kotlin.coroutines.Continuation<? super java.lang.String>
+            val continuationType = caller.parameterTypes.lastOrNull() as? ParameterizedType
+            if (continuationType?.rawType == Continuation::class.java) {
+                // ? super java.lang.String
+                val wildcard = continuationType.actualTypeArguments.single() as? WildcardType
+                // java.lang.String
+                return wildcard?.lowerBounds?.first()
+            }
+        }
+
+        return null
+    }
 }

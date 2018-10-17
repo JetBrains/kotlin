@@ -60,7 +60,7 @@ private fun collectModuleInfosFromIdeaModel(
 
     return IdeaModelInfosCache(
         moduleSourceInfos = ideaModules.flatMap(Module::correspondingModuleInfos),
-        libraryInfos = ideaLibraries.map { LibraryInfo(project, it) },
+        libraryInfos = ideaLibraries.flatMap { createLibraryInfo(project, it) },
         sdkInfos = (sdksFromModulesDependencies + getAllProjectSdks()).filterNotNull().toSet().map { SdkInfo(project, it) }
     )
 }

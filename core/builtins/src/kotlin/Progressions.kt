@@ -20,7 +20,8 @@ public open class CharProgression
             step: Int
     ) : Iterable<Char> {
     init {
-        if (step == 0) throw kotlin.IllegalArgumentException("Step must be non-zero")
+        if (step == 0) throw kotlin.IllegalArgumentException("Step must be non-zero.")
+        if (step == Int.MIN_VALUE) throw kotlin.IllegalArgumentException("Step must be greater than Int.MIN_VALUE to avoid overflow on negation.")
     }
 
     /**
@@ -58,6 +59,8 @@ public open class CharProgression
 
          * The progression starts with the [rangeStart] value and goes toward the [rangeEnd] value not excluding it, with the specified [step].
          * In order to go backwards the [step] must be negative.
+         *
+         * [step] must be greater than `Int.MIN_VALUE` and not equal to zero.
          */
         public fun fromClosedRange(rangeStart: Char, rangeEnd: Char, step: Int): CharProgression = CharProgression(rangeStart, rangeEnd, step)
     }
@@ -74,7 +77,8 @@ public open class IntProgression
             step: Int
     ) : Iterable<Int> {
     init {
-        if (step == 0) throw kotlin.IllegalArgumentException("Step must be non-zero")
+        if (step == 0) throw kotlin.IllegalArgumentException("Step must be non-zero.")
+        if (step == Int.MIN_VALUE) throw kotlin.IllegalArgumentException("Step must be greater than Int.MIN_VALUE to avoid overflow on negation.")
     }
 
     /**
@@ -112,6 +116,8 @@ public open class IntProgression
 
          * The progression starts with the [rangeStart] value and goes toward the [rangeEnd] value not excluding it, with the specified [step].
          * In order to go backwards the [step] must be negative.
+         *
+         * [step] must be greater than `Int.MIN_VALUE` and not equal to zero.
          */
         public fun fromClosedRange(rangeStart: Int, rangeEnd: Int, step: Int): IntProgression = IntProgression(rangeStart, rangeEnd, step)
     }
@@ -128,7 +134,8 @@ public open class LongProgression
             step: Long
     ) : Iterable<Long> {
     init {
-        if (step == 0L) throw kotlin.IllegalArgumentException("Step must be non-zero")
+        if (step == 0L) throw kotlin.IllegalArgumentException("Step must be non-zero.")
+        if (step == Long.MIN_VALUE) throw kotlin.IllegalArgumentException("Step must be greater than Long.MIN_VALUE to avoid overflow on negation.")
     }
 
     /**
@@ -166,6 +173,8 @@ public open class LongProgression
 
          * The progression starts with the [rangeStart] value and goes toward the [rangeEnd] value not excluding it, with the specified [step].
          * In order to go backwards the [step] must be negative.
+         *
+         * [step] must be greater than `Long.MIN_VALUE` and not equal to zero.
          */
         public fun fromClosedRange(rangeStart: Long, rangeEnd: Long, step: Long): LongProgression = LongProgression(rangeStart, rangeEnd, step)
     }

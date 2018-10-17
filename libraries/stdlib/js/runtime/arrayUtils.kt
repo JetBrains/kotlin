@@ -51,6 +51,7 @@ fun charArray(size: Int, init: dynamic): Array<Char> {
 inline fun charArrayWithFun(size: Int, init: (Int) -> Char): Array<Char> {
     val array = charArray(size, null)
     for (i in 0..array.size - 1) {
+        @Suppress("UNUSED_VARIABLE") // used in js block
         val value = init(i)
         js("array[i] = value;")
     }
@@ -61,6 +62,7 @@ inline fun charArrayWithFun(size: Int, init: (Int) -> Char): Array<Char> {
 inline fun untypedCharArrayWithFun(size: Int, init: (Int) -> Char): Array<Char> {
     val array = Array<Char>(size)
     for (i in 0..array.size - 1) {
+        @Suppress("UNUSED_VARIABLE") // used in js block
         val value = init(i)
         js("array[i] = value;")
     }

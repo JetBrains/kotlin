@@ -57,6 +57,12 @@ class JvmRuntimeTypes(module: ModuleDescriptor, private val languageVersionSetti
         createCoroutineSuperClass("RestrictedSuspendLambda")
     }
 
+    private val suspendFunctionInterface by lazy {
+        if (languageVersionSettings.isReleaseCoroutines())
+            createClass(kotlinCoroutinesJvmInternalPackage, "SuspendFunction", ClassKind.INTERFACE)
+        else null
+    }
+
     private fun createCoroutineSuperClass(className: String): ClassDescriptor {
         return if (languageVersionSettings.isReleaseCoroutines())
             createClass(kotlinCoroutinesJvmInternalPackage, className)
@@ -145,7 +151,8 @@ class JvmRuntimeTypes(module: ModuleDescriptor, private val languageVersionSetti
             referencedFunction.isSuspend
         )
 
-        return listOf(functionReference.defaultType, functionType)
+        val suspendFunctionType = if (referencedFunction.isSuspend) suspendFunctionInterface?.defaultType else null
+        return listOfNotNull(functionReference.defaultType, functionType, suspendFunctionType)
     }
 
     fun getSupertypeForPropertyReference(descriptor: VariableDescriptorWithAccessors, isMutable: Boolean, isBound: Boolean): KotlinType {

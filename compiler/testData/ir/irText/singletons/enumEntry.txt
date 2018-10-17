@@ -19,9 +19,10 @@ FILE fqName:<root> fileName:/enumEntry.kt
         FUN name:test visibility:public modality:FINAL <> ($this:Z.ENTRY) returnType:kotlin.Unit flags:
           $this: VALUE_PARAMETER name:<this> type:Z.ENTRY flags:
           BLOCK_BODY
-        CLASS CLASS name:A modality:FINAL visibility:public flags: superTypes:[kotlin.Any]
+        CLASS CLASS name:A modality:FINAL visibility:public flags:inner superTypes:[kotlin.Any]
           $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Z.ENTRY.A flags:
-          CONSTRUCTOR visibility:public <> () returnType:Z.ENTRY.A flags:primary
+          CONSTRUCTOR visibility:public <> ($this:Z.ENTRY) returnType:Z.ENTRY.A flags:primary
+            $outer: VALUE_PARAMETER name:<this> type:Z.ENTRY flags:
             BLOCK_BODY
               DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
               INSTANCE_INITIALIZER_CALL classDescriptor='A'
@@ -132,4 +133,3 @@ FILE fqName:<root> fileName:/enumEntry.kt
     FUN ENUM_CLASS_SPECIAL_MEMBER name:valueOf visibility:public modality:FINAL <> (value:kotlin.String) returnType:Z flags:
       VALUE_PARAMETER name:value index:0 type:kotlin.String flags:
       SYNTHETIC_BODY kind=ENUM_VALUEOF
-

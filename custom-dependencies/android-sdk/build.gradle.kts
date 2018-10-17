@@ -41,10 +41,10 @@ fun unzipSdkTask(
     sdkName: String, sdkVer: String, destinationSubdir: String, coordinatesSuffix: String,
     additionalConfig: Configuration? = null, dirLevelsToSkipOnUnzip: Int = 0, ext: String = "zip",
     unzipFilter: CopySpec.() -> Unit = {}
-): DefaultTask {
+): Task {
     val id = "${sdkName}_$sdkVer"
     val cfg = configurations.create(id)
-    val dependency = "google:$sdkName:$sdkVer${coordinatesSuffix.takeIf{ it.isNotEmpty() }?.let { ":$it" } ?: ""}@$ext"
+    val dependency = "google:$sdkName:$sdkVer${coordinatesSuffix.takeIf { it.isNotEmpty() }?.let { ":$it" } ?: ""}@$ext"
     dependencies.add(cfg.name, dependency)
 
     val unzipTask = task("unzip_$id") {
@@ -86,6 +86,7 @@ unzipSdkTask("android_m2repository", "r44", "extras/android", "")
 unzipSdkTask("platform-tools", "r25.0.3", "", toolsOs)
 unzipSdkTask("tools", "r24.3.4", "", toolsOs)
 unzipSdkTask("build-tools", "r23.0.1", "build-tools/23.0.1", toolsOs, buildTools, 1)
+unzipSdkTask("build-tools", "r28.0.2", "build-tools/28.0.2", toolsOs, buildTools, 1)
 
 
 val clean by task<Delete> {

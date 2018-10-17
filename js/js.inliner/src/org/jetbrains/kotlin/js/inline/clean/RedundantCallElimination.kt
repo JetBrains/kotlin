@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.js.backend.ast.JsBlock
 import org.jetbrains.kotlin.js.backend.ast.JsInvocation
 import org.jetbrains.kotlin.js.backend.ast.JsNameRef
 import org.jetbrains.kotlin.js.backend.ast.RecursiveJsVisitor
-import org.jetbrains.kotlin.js.inline.util.getCallerQualifier
+import org.jetbrains.kotlin.js.backend.ast.metadata.isJsCall
 import org.jetbrains.kotlin.js.inline.util.isCallInvocation
 
 // Replaces a.foo.call(a, b) with a.foo(b)
@@ -37,7 +37,11 @@ class RedundantCallElimination(private val root: JsBlock) {
             private fun tryEliminate(invocation: JsInvocation) {
                 if (!isCallInvocation(invocation)) return
 
-                val qualifier = getCallerQualifier(invocation) as? JsNameRef ?: return
+                val call = invocation.qualifier as? JsNameRef ?: return
+
+                if (!call.isJsCall) return
+
+                val qualifier = call.qualifier as? JsNameRef ?: return
 
                 val receiver = qualifier.qualifier as? JsNameRef ?: return
                 val firstArg = invocation.arguments.firstOrNull() as? JsNameRef ?: return

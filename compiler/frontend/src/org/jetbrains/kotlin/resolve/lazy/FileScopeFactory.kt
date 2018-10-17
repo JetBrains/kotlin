@@ -17,8 +17,6 @@
 package org.jetbrains.kotlin.resolve.lazy
 
 import gnu.trove.THashSet
-import org.jetbrains.kotlin.builtins.PlatformToKotlinClassMap
-import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.incremental.components.LookupLocation
@@ -27,11 +25,13 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtImportDirective
 import org.jetbrains.kotlin.psi.KtImportInfo
-import org.jetbrains.kotlin.resolve.*
+import org.jetbrains.kotlin.resolve.BindingTrace
+import org.jetbrains.kotlin.resolve.ImportPath
+import org.jetbrains.kotlin.resolve.TargetPlatform
+import org.jetbrains.kotlin.resolve.TemporaryBindingTrace
 import org.jetbrains.kotlin.resolve.scopes.*
 import org.jetbrains.kotlin.resolve.source.KotlinSourceElement
-import org.jetbrains.kotlin.script.getScriptExternalDependencies
-import org.jetbrains.kotlin.storage.StorageManager
+import org.jetbrains.kotlin.script.ScriptDependenciesProvider
 import org.jetbrains.kotlin.storage.getValue
 import org.jetbrains.kotlin.utils.Printer
 
@@ -178,9 +178,9 @@ class FileScopeFactory(
         val result = FileScopes(lexicalScope, lazyImportingScope, importResolver)
 
         private fun createDefaultImportResolversForFile(): DefaultImportResolvers {
-            val extraImports = file.takeIf { it.isScript() }?.originalFile?.virtualFile?.let { vFile ->
-                val scriptExternalDependencies = getScriptExternalDependencies(vFile, file.project)
-                scriptExternalDependencies?.imports?.map { DefaultImportImpl(ImportPath.fromString(it)) }.orEmpty()
+            val extraImports = file.takeIf { it.isScript() }?.let { ktFile ->
+                val scriptDependencies = ScriptDependenciesProvider.getInstance(ktFile.project).getScriptDependencies(ktFile.originalFile)
+                scriptDependencies?.imports?.map { DefaultImportImpl(ImportPath.fromString(it)) }
             }.orEmpty()
 
             if (extraImports.isEmpty() && aliasImportNames.isEmpty()) {

@@ -1,0 +1,148 @@
+package
+
+public fun case_1(/*0*/ value_1: kotlin.Int?): kotlin.Unit
+public fun case_2(/*0*/ value_1: kotlin.Number?): kotlin.Unit
+public fun case_3(/*0*/ value_1: kotlin.Any?): kotlin.Unit
+public fun case_4(/*0*/ value_1: kotlin.Any?): kotlin.Unit
+public fun case_5(/*0*/ value_1: kotlin.Int?): kotlin.Unit
+public fun case_6(/*0*/ value_1: kotlin.Number?): kotlin.Unit
+public fun case_7(/*0*/ value_1: kotlin.Any?): kotlin.Unit
+public fun case_8(/*0*/ value_1: kotlin.Any?): kotlin.Unit
+
+package contracts {
+    public fun case_1_1(/*0*/ value_1: kotlin.Int?): kotlin.Unit
+        Returns(WILDCARD) -> value_1 == null
+
+    public fun case_1_2(/*0*/ value_1: kotlin.Int?): kotlin.Unit
+        Returns(WILDCARD) -> value_1 != null
+
+    public fun case_2_1(/*0*/ value_1: kotlin.Number?): kotlin.Unit
+        Returns(WILDCARD) -> value_1 !is Float
+
+    public fun case_2_2(/*0*/ value_1: kotlin.Number?): kotlin.Unit
+        Returns(WILDCARD) -> value_1 !is Int
+
+    public fun case_3_1(/*0*/ value_1: kotlin.Any?): kotlin.Unit
+        Returns(WILDCARD) -> value_1 !is String
+
+    public fun case_3_2(/*0*/ value_1: kotlin.Any?): kotlin.Unit
+        Returns(WILDCARD) -> value_1 is String
+
+    public fun case_4_1(/*0*/ value_1: kotlin.Any?): kotlin.Unit
+        Returns(WILDCARD) -> value_1 !is Number?
+
+    public fun case_4_2(/*0*/ value_1: kotlin.Number?): kotlin.Unit
+        Returns(WILDCARD) -> value_1 == null
+
+    public fun case_4_3(/*0*/ value_1: kotlin.Number): kotlin.Unit
+        Returns(WILDCARD) -> value_1 !is Int
+
+    public fun case_5_1(/*0*/ value_1: kotlin.Int?): kotlin.Boolean
+        Returns(TRUE) -> value_1 == null
+
+    public fun case_5_2(/*0*/ value_1: kotlin.Int?): kotlin.Boolean
+        Returns(TRUE) -> value_1 != null
+
+    public fun case_5_3(/*0*/ value_1: kotlin.Int?): kotlin.Boolean
+        Returns(FALSE) -> value_1 == null
+
+    public fun case_5_4(/*0*/ value_1: kotlin.Int?): kotlin.Boolean
+        Returns(FALSE) -> value_1 != null
+
+    public fun case_5_5(/*0*/ value_1: kotlin.Int?): kotlin.Boolean?
+        Returns(NOT_NULL) -> value_1 == null
+
+    public fun case_5_6(/*0*/ value_1: kotlin.Int?): kotlin.Boolean?
+        Returns(NOT_NULL) -> value_1 != null
+
+    public fun case_5_7(/*0*/ value_1: kotlin.Int?): kotlin.Boolean?
+        Returns(NULL) -> value_1 == null
+
+    public fun case_5_8(/*0*/ value_1: kotlin.Int?): kotlin.Boolean?
+        Returns(NULL) -> value_1 != null
+
+    public fun case_6_1(/*0*/ value_1: kotlin.Number?): kotlin.Boolean
+        Returns(TRUE) -> value_1 !is Float
+
+    public fun case_6_2(/*0*/ value_1: kotlin.Number?): kotlin.Boolean
+        Returns(TRUE) -> value_1 !is Int
+
+    public fun case_6_3(/*0*/ value_1: kotlin.Number?): kotlin.Boolean
+        Returns(FALSE) -> value_1 !is Float
+
+    public fun case_6_4(/*0*/ value_1: kotlin.Number?): kotlin.Boolean
+        Returns(FALSE) -> value_1 !is Int
+
+    public fun case_6_5(/*0*/ value_1: kotlin.Number?): kotlin.Boolean?
+        Returns(NOT_NULL) -> value_1 !is Float
+
+    public fun case_6_6(/*0*/ value_1: kotlin.Number?): kotlin.Boolean?
+        Returns(NOT_NULL) -> value_1 !is Int
+
+    public fun case_6_7(/*0*/ value_1: kotlin.Number?): kotlin.Boolean?
+        Returns(NULL) -> value_1 !is Float
+
+    public fun case_6_8(/*0*/ value_1: kotlin.Number?): kotlin.Boolean?
+        Returns(NULL) -> value_1 !is Int
+
+    public fun case_7_1(/*0*/ value_1: kotlin.Any?): kotlin.Boolean
+        Returns(TRUE) -> value_1 !is String
+
+    public fun case_7_2(/*0*/ value_1: kotlin.Any?): kotlin.Boolean
+        Returns(TRUE) -> value_1 is String
+
+    public fun case_7_3(/*0*/ value_1: kotlin.Any?): kotlin.Boolean
+        Returns(FALSE) -> value_1 !is String
+
+    public fun case_7_4(/*0*/ value_1: kotlin.Any?): kotlin.Boolean
+        Returns(FALSE) -> value_1 is String
+
+    public fun case_7_5(/*0*/ value_1: kotlin.Any?): kotlin.Boolean?
+        Returns(NOT_NULL) -> value_1 !is String
+
+    public fun case_7_6(/*0*/ value_1: kotlin.Any?): kotlin.Boolean?
+        Returns(NOT_NULL) -> value_1 is String
+
+    public fun case_7_7(/*0*/ value_1: kotlin.Any?): kotlin.Boolean?
+        Returns(NULL) -> value_1 !is String
+
+    public fun case_7_8(/*0*/ value_1: kotlin.Any?): kotlin.Boolean?
+        Returns(NULL) -> value_1 is String
+
+    public fun case_8_1(/*0*/ value_1: kotlin.Any?): kotlin.Boolean
+        Returns(TRUE) -> value_1 !is Number?
+
+    public fun case_8_10(/*0*/ value_1: kotlin.Any?): kotlin.Boolean?
+        Returns(NULL) -> value_1 is Number?
+
+    public fun case_8_11(/*0*/ value_1: kotlin.Number?): kotlin.Boolean?
+        Returns(NULL) -> value_1 == null
+
+    public fun case_8_12(/*0*/ value_1: kotlin.Number): kotlin.Boolean?
+        Returns(NULL) -> value_1 !is Int
+
+    public fun case_8_2(/*0*/ value_1: kotlin.Number?): kotlin.Boolean
+        Returns(TRUE) -> value_1 == null
+
+    public fun case_8_3(/*0*/ value_1: kotlin.Number): kotlin.Boolean
+        Returns(TRUE) -> value_1 !is Int
+
+    public fun case_8_4(/*0*/ value_1: kotlin.Any?): kotlin.Boolean
+        Returns(FALSE) -> value_1 !is Number?
+
+    public fun case_8_5(/*0*/ value_1: kotlin.Number?): kotlin.Boolean
+        Returns(FALSE) -> value_1 == null
+
+    public fun case_8_6(/*0*/ value_1: kotlin.Number): kotlin.Boolean
+        Returns(FALSE) -> value_1 !is Int
+
+    public fun case_8_7(/*0*/ value_1: kotlin.Any?): kotlin.Boolean?
+        Returns(NOT_NULL) -> value_1 is Number?
+
+    public fun case_8_8(/*0*/ value_1: kotlin.Number?): kotlin.Boolean?
+        Returns(NOT_NULL) -> value_1 == null
+
+    public fun case_8_9(/*0*/ value_1: kotlin.Number): kotlin.Boolean?
+        Returns(NOT_NULL) -> value_1 !is Int
+
+}

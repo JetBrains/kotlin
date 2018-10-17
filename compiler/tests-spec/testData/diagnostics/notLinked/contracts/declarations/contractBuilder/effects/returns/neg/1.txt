@@ -1,0 +1,6 @@
+package
+
+public fun case_1(/*0*/ x: kotlin.Any?): kotlin.Boolean
+public fun case_2(/*0*/ x: kotlin.Any?): kotlin.Boolean
+public fun case_3(/*0*/ x: kotlin.Int, /*1*/ y: kotlin.Int): kotlin.Boolean
+public fun case_4(/*0*/ x: kotlin.Any?, /*1*/ y: kotlin.Any?): kotlin.Boolean

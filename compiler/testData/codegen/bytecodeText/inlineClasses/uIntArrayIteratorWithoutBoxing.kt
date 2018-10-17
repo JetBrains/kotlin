@@ -27,7 +27,7 @@ fun test() {
 
 fun takeUInt(u: UInt) {}
 
-// 1 INVOKESTATIC UInt\$Erased.box
+// 1 INVOKESTATIC UInt\.box
 // 1 INVOKEVIRTUAL UInt.unbox
 
 // 0 INVOKEVIRTUAL UIntIterator.iterator

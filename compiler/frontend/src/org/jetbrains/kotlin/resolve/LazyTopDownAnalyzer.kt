@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.checkers.ClassifierUsageChecker
 import org.jetbrains.kotlin.resolve.checkers.ClassifierUsageCheckerContext
 import org.jetbrains.kotlin.resolve.checkers.checkClassifierUsages
+import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
 import org.jetbrains.kotlin.resolve.lazy.*
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyClassDescriptor
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyScriptDescriptor
@@ -273,7 +274,6 @@ class LazyTopDownAnalyzer(
             val descriptor = lazyDeclarationResolver.resolveToDescriptor(property) as PropertyDescriptor
 
             c.properties.put(property, descriptor)
-            ForceResolveUtil.forceResolveAllContents(descriptor.annotations)
             registerTopLevelFqName(topLevelFqNames, property, descriptor)
         }
     }

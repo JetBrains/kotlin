@@ -18,17 +18,21 @@ package org.jetbrains.kotlin.idea.formatter
 
 import com.intellij.psi.codeStyle.CodeStyleSettings
 import com.intellij.psi.codeStyle.CommonCodeStyleSettings
-import com.intellij.psi.codeStyle.PredefinedCodeStyle
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.core.formatter.KotlinCodeStyleSettings
 
-class KotlinStyleGuideCodeStyle : PredefinedCodeStyle("Kotlin style guide", KotlinLanguage.INSTANCE) {
+class KotlinStyleGuideCodeStyle : KotlinPredefinedCodeStyle("Kotlin style guide", KotlinLanguage.INSTANCE) {
+    override val codeStyleId: String = CODE_STYLE_ID
+
     override fun apply(settings: CodeStyleSettings) {
         Companion.apply(settings)
     }
 
     companion object {
+        val INSTANCE = KotlinStyleGuideCodeStyle()
+
         const val CODE_STYLE_ID = "KOTLIN_OFFICIAL"
+        const val CODE_STYLE_SETTING = "official"
         const val CODE_STYLE_TITLE = "Kotlin Coding Conventions"
 
         fun apply(settings: CodeStyleSettings) {
@@ -36,7 +40,10 @@ class KotlinStyleGuideCodeStyle : PredefinedCodeStyle("Kotlin style guide", Kotl
             applyToCommonSettings(settings.kotlinCommonSettings)
         }
 
-        fun applyToKotlinCustomSettings(kotlinCustomSettings: KotlinCodeStyleSettings, modifyCodeStyle: Boolean = true) {
+        fun applyToKotlinCustomSettings(
+            kotlinCustomSettings: KotlinCodeStyleSettings,
+            modifyCodeStyle: Boolean = true
+        ) {
             kotlinCustomSettings.apply {
                 if (modifyCodeStyle) {
                     CODE_STYLE_DEFAULTS = CODE_STYLE_ID

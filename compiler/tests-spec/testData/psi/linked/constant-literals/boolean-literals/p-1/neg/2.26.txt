@@ -1,0 +1,80 @@
+KtFile: 2.26.kt
+  PACKAGE_DIRECTIVE
+    <empty list>
+  IMPORT_LIST
+    <empty list>
+  FUN
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('case_1')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    BLOCK
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n    ')
+      CALLABLE_REFERENCE_EXPRESSION
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('Boolean')
+        PsiElement(COLONCOLON)('::')
+        REFERENCE_EXPRESSION
+          PsiErrorElement:Expecting an identifier
+            <empty list>
+      BOOLEAN_CONSTANT
+        PsiElement(true)('true')
+      PsiWhiteSpace('\n\n    ')
+      CALLABLE_REFERENCE_EXPRESSION
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('Boolean')
+        PsiElement(QUEST)('?')
+        PsiElement(QUEST)('?')
+        PsiElement(QUEST)('?')
+        PsiElement(COLONCOLON)('::')
+        REFERENCE_EXPRESSION
+          PsiErrorElement:Expecting an identifier
+            <empty list>
+      CALLABLE_REFERENCE_EXPRESSION
+        BOOLEAN_CONSTANT
+          PsiElement(false)('false')
+        PsiElement(COLONCOLON)('::')
+        REFERENCE_EXPRESSION
+          PsiErrorElement:Expecting an identifier
+            <empty list>
+      CALLABLE_REFERENCE_EXPRESSION
+        BOOLEAN_CONSTANT
+          PsiElement(true)('true')
+        PsiElement(COLONCOLON)('::')
+        REFERENCE_EXPRESSION
+          PsiErrorElement:Expecting an identifier
+            <empty list>
+      BOOLEAN_CONSTANT
+        PsiElement(false)('false')
+      PsiWhiteSpace('\n\n    ')
+      CALLABLE_REFERENCE_EXPRESSION
+        DOT_QUALIFIED_EXPRESSION
+          DOT_QUALIFIED_EXPRESSION
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('org')
+            PsiElement(DOT)('.')
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('jetbrains')
+          PsiElement(DOT)('.')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('Boolean')
+        PsiElement(QUEST)('?')
+        PsiElement(COLONCOLON)('::')
+        REFERENCE_EXPRESSION
+          PsiErrorElement:Expecting an identifier
+            <empty list>
+      CALLABLE_REFERENCE_EXPRESSION
+        BOOLEAN_CONSTANT
+          PsiElement(true)('true')
+        PsiElement(COLONCOLON)('::')
+        REFERENCE_EXPRESSION
+          PsiErrorElement:Expecting an identifier
+            <empty list>
+      BOOLEAN_CONSTANT
+        PsiElement(false)('false')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')

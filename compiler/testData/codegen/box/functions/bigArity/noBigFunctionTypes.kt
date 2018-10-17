@@ -1,9 +1,8 @@
 // !LANGUAGE: -FunctionTypesWithBigArity
-// IGNORE_BACKEND: JVM_IR
 
 // This test does not make sense for JVM because a diagnostic is reported when function types with big arity are not available
 // (see diagnostics/tests/sourceCompatibility/noBigFunctionTypes.kt)
-// IGNORE_BACKEND: JVM
+// IGNORE_BACKEND: JVM, JVM_IR
 
 class A
 

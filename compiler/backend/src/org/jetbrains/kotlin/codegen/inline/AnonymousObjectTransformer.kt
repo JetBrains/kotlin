@@ -9,9 +9,7 @@ import com.intellij.util.ArrayUtil
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.ClassBuilder
 import org.jetbrains.kotlin.codegen.StackValue
-import org.jetbrains.kotlin.codegen.coroutines.CoroutineTransformerMethodVisitor
-import org.jetbrains.kotlin.codegen.coroutines.isCoroutineSuperClass
-import org.jetbrains.kotlin.codegen.coroutines.isResumeImplMethodName
+import org.jetbrains.kotlin.codegen.coroutines.*
 import org.jetbrains.kotlin.codegen.optimization.common.asSequence
 import org.jetbrains.kotlin.codegen.serialization.JvmCodegenStringTable
 import org.jetbrains.kotlin.codegen.writeKotlinMetadata
@@ -23,8 +21,10 @@ import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.metadata.jvm.serialization.JvmStringTable
 import org.jetbrains.kotlin.protobuf.MessageLite
+import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin.Companion.NO_ORIGIN
+import org.jetbrains.kotlin.utils.addToStdlib.cast
 import org.jetbrains.org.objectweb.asm.*
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 import org.jetbrains.org.objectweb.asm.tree.*
@@ -133,10 +133,9 @@ class AnonymousObjectTransformer(
                 constructor!!, allCapturedParamBuilder, constructorParamBuilder,transformationInfo, parentRemapper
         )
 
+        val crossinlineSuspendElement = capturedCrossinlineSuspendElement()
         val capturesCrossinlineSuspend = (!inliningContext.isInliningLambda || inliningContext.isContinuation) &&
-                inliningContext.expressionMap.values.any { lambda ->
-                    lambda is PsiExpressionLambda && lambda.isCrossInline && lambda.invokeMethodDescriptor.isSuspend
-                }
+                crossinlineSuspendElement != null
 
         val deferringMethods = ArrayList<DeferredMethodVisitor>()
 
@@ -160,11 +159,18 @@ class AnonymousObjectTransformer(
                 capturesCrossinlineSuspend && !inliningContext.isContinuation && continuationClassName != null
 
             val deferringVisitor =
-                when {
-                    generateStateMachineForLambda -> newStateMachineForLambda(classBuilder, next)
-                    generateStateMachineForNamedFunction -> newStateMachineForNamedFunction(classBuilder, next, continuationClassName!!)
-                    else -> newMethod(classBuilder, next)
-                }
+                if (crossinlineSuspendElement != null) {
+                    when {
+                        generateStateMachineForLambda -> newStateMachineForLambda(classBuilder, next, crossinlineSuspendElement)
+                        generateStateMachineForNamedFunction -> newStateMachineForNamedFunction(
+                            classBuilder,
+                            next,
+                            continuationClassName!!,
+                            crossinlineSuspendElement
+                        )
+                        else -> newMethod(classBuilder, next)
+                    }
+                } else newMethod(classBuilder, next)
             val funResult = inlineMethodAndUpdateGlobalResult(parentRemapper, deferringVisitor, next, allCapturedParamBuilder, false)
 
             val returnType = Type.getReturnType(next.desc)
@@ -179,6 +185,12 @@ class AnonymousObjectTransformer(
         }
 
         deferringMethods.forEach { method ->
+            replaceFakeContinuationsWithRealOnes(
+                method.intermediate,
+                if (!inliningContext.isContinuation)
+                    getLastParameterIndex(method.intermediate.desc, method.intermediate.access)
+                else 0
+            )
             removeFinallyMarkers(method.intermediate)
             method.visitEnd()
 
@@ -222,6 +234,10 @@ class AnonymousObjectTransformer(
 
         return transformationResult
     }
+
+    private fun capturedCrossinlineSuspendElement(): KtExpression? = inliningContext.expressionMap.values.find { lambda ->
+        lambda is PsiExpressionLambda && lambda.isCrossInline && lambda.invokeMethodDescriptor.isSuspend
+    }?.cast<PsiExpressionLambda>()?.functionWithBodyOrCallableReference
 
     private fun writeTransformedMetadata(header: KotlinClassHeader, classBuilder: ClassBuilder) {
         writeKotlinMetadata(classBuilder, state, header.kind, header.extraInt) action@ { av ->
@@ -431,7 +447,7 @@ class AnonymousObjectTransformer(
         }
     }
 
-    private fun newStateMachineForLambda(builder: ClassBuilder, original: MethodNode): DeferredMethodVisitor {
+    private fun newStateMachineForLambda(builder: ClassBuilder, original: MethodNode, element: KtExpression): DeferredMethodVisitor {
         return DeferredMethodVisitor(
             MethodNode(
                 original.access, original.name, original.desc, original.signature,
@@ -444,11 +460,14 @@ class AnonymousObjectTransformer(
                     ArrayUtil.toStringArray(original.exceptions)
                 ), original.access, original.name, original.desc, null, null,
                 obtainClassBuilderForCoroutineState = { builder },
-                lineNumber = 0, // <- TODO
+                element = element,
+                diagnostics = state.diagnostics,
                 languageVersionSettings = languageVersionSettings,
                 shouldPreserveClassInitialization = state.constructorCallNormalizationMode.shouldPreserveClassInitialization,
                 containingClassInternalName = builder.thisName,
-                isForNamedFunction = false
+                isForNamedFunction = false,
+                sourceFile = sourceInfo ?: "",
+                isCrossinlineLambda = inliningContext.isContinuation
             )
         }
     }
@@ -456,7 +475,8 @@ class AnonymousObjectTransformer(
     private fun newStateMachineForNamedFunction(
         builder: ClassBuilder,
         original: MethodNode,
-        continuationClassName: String
+        continuationClassName: String,
+        element: KtExpression
     ): DeferredMethodVisitor {
         assert(inliningContext is RegeneratedClassContext)
         return DeferredMethodVisitor(
@@ -471,13 +491,15 @@ class AnonymousObjectTransformer(
                     ArrayUtil.toStringArray(original.exceptions)
                 ), original.access, original.name, original.desc, null, null,
                 obtainClassBuilderForCoroutineState = { (inliningContext as RegeneratedClassContext).continuationBuilders[continuationClassName]!! },
-                lineNumber = 0, // <- TODO
+                element = element,
+                diagnostics = state.diagnostics,
                 languageVersionSettings = languageVersionSettings,
                 shouldPreserveClassInitialization = state.constructorCallNormalizationMode.shouldPreserveClassInitialization,
                 containingClassInternalName = builder.thisName,
                 isForNamedFunction = true,
                 needDispatchReceiver = true,
-                internalNameForDispatchReceiver = builder.thisName
+                internalNameForDispatchReceiver = builder.thisName,
+                sourceFile = sourceInfo ?: ""
             )
         }
     }
@@ -581,8 +603,8 @@ class AnonymousObjectTransformer(
             val parent = parentFieldRemapper.parent as? RegeneratedLambdaFieldRemapper ?:
                          throw AssertionError("Expecting RegeneratedLambdaFieldRemapper, but ${parentFieldRemapper.parent}")
             val ownerType = Type.getObjectType(parent.originalLambdaInternalName)
-            val desc = CapturedParamDesc(ownerType, THIS, ownerType)
-            val recapturedParamInfo = capturedParamBuilder.addCapturedParam(desc, THIS_0/*outer lambda/object*/, false)
+            val desc = CapturedParamDesc(ownerType, AsmUtil.THIS, ownerType)
+            val recapturedParamInfo = capturedParamBuilder.addCapturedParam(desc, AsmUtil.CAPTURED_THIS_FIELD/*outer lambda/object*/, false)
             val composed = StackValue.LOCAL_0
             recapturedParamInfo.remapValue = composed
             allRecapturedParameters.add(desc)
@@ -604,7 +626,7 @@ class AnonymousObjectTransformer(
     }
 
     private fun getNewFieldName(oldName: String, originalField: Boolean): String {
-        if (THIS_0 == oldName) {
+        if (AsmUtil.CAPTURED_THIS_FIELD == oldName) {
             return if (!originalField) {
                 oldName
             }

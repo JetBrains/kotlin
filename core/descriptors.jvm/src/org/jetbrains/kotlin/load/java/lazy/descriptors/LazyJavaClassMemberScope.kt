@@ -489,7 +489,7 @@ class LazyJavaClassMemberScope(
         propertyDescriptor.initialize(getter, null)
 
         val returnType = givenType ?: computeMethodReturnType(method, c.childForMethod(propertyDescriptor, method))
-        propertyDescriptor.setType(returnType, listOf(), getDispatchReceiverParameter(), null as KotlinType?)
+        propertyDescriptor.setType(returnType, listOf(), getDispatchReceiverParameter(), null)
         getter.initialize(returnType)
 
         return propertyDescriptor
@@ -519,7 +519,7 @@ class LazyJavaClassMemberScope(
             /* isStaticFinal = */ false
         )
 
-        propertyDescriptor.setType(getterMethod.returnType!!, listOf(), getDispatchReceiverParameter(), null as KotlinType?)
+        propertyDescriptor.setType(getterMethod.returnType!!, listOf(), getDispatchReceiverParameter(), null)
 
         val getter = DescriptorFactory.createGetter(
             propertyDescriptor, getterMethod.annotations, /* isDefault = */false,
@@ -529,14 +529,15 @@ class LazyJavaClassMemberScope(
             initialize(propertyDescriptor.type)
         }
 
-        val setter = setterMethod?.let { setterMethod ->
+        val setter = if (setterMethod != null) {
+            val parameter = setterMethod.valueParameters.firstOrNull() ?: throw AssertionError("No parameter found for $setterMethod")
             DescriptorFactory.createSetter(
-                propertyDescriptor, setterMethod.annotations, /* isDefault = */false,
+                propertyDescriptor, setterMethod.annotations, parameter.annotations, /* isDefault = */false,
                 /* isExternal = */ false, /* isInline = */ false, setterMethod.visibility, setterMethod.source
             ).apply {
                 initialSignatureDescriptor = setterMethod
             }
-        }
+        } else null
 
         return propertyDescriptor.apply { initialize(getter, setter) }
     }

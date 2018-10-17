@@ -38,7 +38,8 @@ class RenameKotlinFileProcessor : RenamePsiFileProcessor() {
         override fun isValid() = file.isValid
     }
 
-    override fun canProcessElement(element: PsiElement) = element is KtFile && ProjectRootsUtil.isInProjectSource(element)
+    override fun canProcessElement(element: PsiElement) =
+        element is KtFile && ProjectRootsUtil.isInProjectSource(element, includeScriptsOutsideSourceRoots = true)
 
     override fun prepareRenaming(element: PsiElement,
                                  newName: String,

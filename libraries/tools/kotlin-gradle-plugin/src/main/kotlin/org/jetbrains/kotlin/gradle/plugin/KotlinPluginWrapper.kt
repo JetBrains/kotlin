@@ -18,20 +18,19 @@ package org.jetbrains.kotlin.gradle.plugin
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.internal.FeaturePreviews
 import org.gradle.api.internal.file.FileResolver
 import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
-import org.gradle.internal.cleanup.BuildOutputCleanupRegistry
 import org.gradle.internal.reflect.Instantiator
 import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMultiplatformPlugin
-import org.jetbrains.kotlin.gradle.plugin.source.KotlinSourceSet
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSetFactory
 import org.jetbrains.kotlin.gradle.plugin.sources.KotlinSourceSetFactory
 import org.jetbrains.kotlin.gradle.tasks.KOTLIN_COMPILER_EMBEDDABLE
 import org.jetbrains.kotlin.gradle.tasks.KOTLIN_MODULE_GROUP
-import org.jetbrains.kotlin.gradle.utils.isGradleVersionAtLeast
 import java.io.FileNotFoundException
 import java.util.*
 import javax.inject.Inject
@@ -56,6 +55,9 @@ abstract class KotlinBasePluginWrapper(
             // todo: Consider removing if org.jetbrains.kotlin.cli.jvm.plugins.PluginCliParser stops using parent last classloader
             isTransitive = false
         }
+        project.configurations.maybeCreate(NATIVE_COMPILER_PLUGIN_CLASSPATH_CONFIGURATION_NAME).apply {
+            isTransitive = false
+        }
 
         // TODO: consider only set if if daemon or parallel compilation are enabled, though this way it should be safe too
         System.setProperty(org.jetbrains.kotlin.cli.common.KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY, "true")
@@ -76,11 +78,9 @@ abstract class KotlinBasePluginWrapper(
     }
 
     private fun setupAttributeMatchingStrategy(project: Project) = with(project.dependencies.attributesSchema) {
-        attribute(KotlinPlatformType.attribute).run {
-            if (isGradleVersionAtLeast(4, 0)) {
-                compatibilityRules.add(KotlinPlatformType.CompatibilityRule::class.java)
-            }
-        }
+        KotlinPlatformType.setupAttributesMatchingStrategy(this)
+        KotlinUsages.setupAttributesMatchingStrategy(this)
+        ProjectLocalConfigurations.setupAttributesMatchingStrategy(this)
     }
 
     internal abstract fun getPlugin(
@@ -133,12 +133,12 @@ open class Kotlin2JsPluginWrapper @Inject constructor(
 open class KotlinMultiplatformPluginWrapper @Inject constructor(
     fileResolver: FileResolver,
     private val instantiator: Instantiator,
-    private val buildOutputCleanupRegistry: BuildOutputCleanupRegistry
+    private val featurePreviews: FeaturePreviews
 ): KotlinBasePluginWrapper(fileResolver) {
     override fun getPlugin(project: Project, kotlinGradleBuildServices: KotlinGradleBuildServices): Plugin<Project> =
         KotlinMultiplatformPlugin(
-            buildOutputCleanupRegistry, fileResolver,
-            instantiator, kotlinPluginVersion
+            fileResolver,
+            instantiator, kotlinPluginVersion, featurePreviews
         )
 
     override val projectExtensionClass: KClass<out KotlinMultiplatformExtension>
@@ -148,7 +148,7 @@ open class KotlinMultiplatformPluginWrapper @Inject constructor(
 fun Project.getKotlinPluginVersion(): String? =
     plugins.asSequence().mapNotNull { (it as? KotlinBasePluginWrapper)?.kotlinPluginVersion }.firstOrNull()
 
-private fun Any.loadKotlinVersionFromResource(log: Logger): String {
+fun Plugin<*>.loadKotlinVersionFromResource(log: Logger): String {
     log.kotlinDebug("Loading version information")
     val props = Properties()
     val propFileName = "project.properties"
