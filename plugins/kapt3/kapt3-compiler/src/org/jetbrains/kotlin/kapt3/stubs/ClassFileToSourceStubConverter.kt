@@ -570,9 +570,15 @@ class ClassFileToSourceStubConverter(
         val origin = kaptContext.origins[field]
         val descriptor = origin?.descriptor
 
+        val fieldAnnotations = when (descriptor) {
+            is PropertyDescriptor -> descriptor.backingField?.annotations
+            else -> descriptor?.annotations
+        } ?: Annotations.EMPTY
+
         val modifiers = convertModifiers(
-                field.access, ElementKind.FIELD, packageFqName,
-                field.visibleAnnotations, field.invisibleAnnotations, descriptor?.annotations ?: Annotations.EMPTY)
+            field.access, ElementKind.FIELD, packageFqName,
+            field.visibleAnnotations, field.invisibleAnnotations, fieldAnnotations
+        )
 
         val name = field.name
         if (!isValidIdentifier(name)) return null
