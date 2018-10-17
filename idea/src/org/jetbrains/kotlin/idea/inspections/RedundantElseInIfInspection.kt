@@ -17,8 +17,10 @@ import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.codeStyle.CodeStyleManager
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.isElseIf
+import org.jetbrains.kotlin.idea.refactoring.getLineNumber
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
+import org.jetbrains.kotlin.psi.psiUtil.getNextSiblingIgnoringWhitespace
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -58,11 +60,18 @@ private class RemoveRedundantElseFix : LocalQuickFix {
             copy.lBrace?.delete()
             copy.rBrace?.delete()
         }
-        val added = ifExpression.parent.addAfter(copy, ifExpression)
+        val parent = ifExpression.parent
+        val added = parent.addAfter(copy, ifExpression)
+        val thenEndLine = ifExpression.then?.getLineNumber(start = false)
+        val elseKeywordLineNumber = elseKeyword.getLineNumber()
+        val elseStartLine = ((elseExpression as? KtBlockExpression)?.statements?.firstOrNull() ?: elseExpression).getLineNumber()
+        if (elseKeywordLineNumber == thenEndLine && elseKeywordLineNumber == elseStartLine) {
+            parent.addAfter(KtPsiFactory(ifExpression).createNewLine(), ifExpression)
+        }
         elseExpression.delete()
         elseKeyword.delete()
 
-        val nextSibling = added.nextSibling
+        val nextSibling = added.getNextSiblingIgnoringWhitespace()
         if (nextSibling != null) {
             val editor = ifExpression.findExistingEditor()
             if (editor != null) {

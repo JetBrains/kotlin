@@ -3994,6 +3994,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             runTest("idea/testData/inspectionsLocal/redundantElseInIf/redundant4.kt");
         }
 
+        @TestMetadata("redundantSingleLine.kt")
+        public void testRedundantSingleLine() throws Exception {
+            runTest("idea/testData/inspectionsLocal/redundantElseInIf/redundantSingleLine.kt");
+        }
+
         @TestMetadata("usedAsExpression.kt")
         public void testUsedAsExpression() throws Exception {
             runTest("idea/testData/inspectionsLocal/redundantElseInIf/usedAsExpression.kt");
