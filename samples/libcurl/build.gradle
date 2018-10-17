@@ -13,7 +13,7 @@ components.main {
             defFile 'src/main/c_interop/libcurl.def'
 
             target('linux_x64') {
-                includeDirs.headerFilterOnly '/usr/include'
+                includeDirs.headerFilterOnly '/usr/include', '/usr/include/x86_64-linux-gnu'
             }
             target('macos_x64') {
                 includeDirs.headerFilterOnly '/opt/local/include', '/usr/local/include'
