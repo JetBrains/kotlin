@@ -385,6 +385,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
 
         BitcodeEmbedding.processModule(context.llvm)
 
+        appendDebugSelector()
         appendLlvmUsed("llvm.used", context.llvm.usedFunctions + context.llvm.usedGlobals)
         appendLlvmUsed("llvm.compiler.used", context.llvm.compilerUsedGlobals)
         appendStaticInitializers()
@@ -2626,14 +2627,21 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
     private fun appendLlvmUsed(name: String, args: List<LLVMValueRef>) {
         if (args.isEmpty()) return
 
-        memScoped {
-            val argsCasted = args.map { it -> constPointer(it).bitcast(int8TypePtr) }
-            val llvmUsedGlobal =
+        val argsCasted = args.map { it -> constPointer(it).bitcast(int8TypePtr) }
+        val llvmUsedGlobal =
                 context.llvm.staticData.placeGlobalArray(name, int8TypePtr, argsCasted)
 
-            LLVMSetLinkage(llvmUsedGlobal.llvmGlobal, LLVMLinkage.LLVMAppendingLinkage)
-            LLVMSetSection(llvmUsedGlobal.llvmGlobal, "llvm.metadata")
-        }
+        LLVMSetLinkage(llvmUsedGlobal.llvmGlobal, LLVMLinkage.LLVMAppendingLinkage)
+        LLVMSetSection(llvmUsedGlobal.llvmGlobal, "llvm.metadata")
+    }
+
+    private fun appendDebugSelector() {
+        if (!context.config.produce.isNativeBinary) return
+        val llvmDebugSelector =
+                context.llvm.staticData.placeGlobal("KonanNeedDebugInfo",
+                        Int32(if (context.shouldContainDebugInfo()) 1 else 0))
+        llvmDebugSelector.setConstant(true)
+        llvmDebugSelector.setLinkage(LLVMLinkage.LLVMExternalLinkage)
     }
 
     //-------------------------------------------------------------------------//
