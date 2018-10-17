@@ -84,7 +84,7 @@ dependencies {
         testCompileOnly(project(it))
     }
     testCompileOnly(intellijCoreDep()) { includeJars("intellij-core") }
-    testCompileOnly(intellijDep()) { includeJars("openapi", "idea", "idea_rt", "util", "asm-all") }
+    testCompileOnly(intellijDep()) { includeJars("openapi", "idea", "idea_rt", "util", "asm-all", rootProject = rootProject) }
 
     testRuntime(project(":kotlin-reflect"))
     testRuntime(project(":kotlin-daemon-client"))
