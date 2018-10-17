@@ -107,6 +107,7 @@
           <Problem reference="com.intellij.psi.codeStyle.CommonCodeStyleSettingsManager#copy" reason="Removed since 181. Use CompatibilityKt.copyFromEx instead." />
           <Problem reference="com.intellij.notification.NotificationAction#createSimple" reason="Absent in 173." />
           <Problem reference="com.intellij.notification.NotificationAction#create" reason="Absent in 173." />
+          <Problem reference="com.intellij.util.JdomKt#element" reason="Removed in 191" />
         </list>
       </option>
     </inspection_tool>

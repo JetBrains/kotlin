@@ -12,7 +12,6 @@ import com.intellij.openapi.components.Storage
 import com.intellij.openapi.project.Project
 import com.intellij.util.addOptionTag
 import com.intellij.util.attribute
-import com.intellij.util.element
 import com.intellij.util.getAttributeBooleanValue
 import org.jdom.Element
 import org.jetbrains.kotlin.script.KotlinScriptDefinition
@@ -102,16 +101,16 @@ class KotlinScriptingSettings : PersistentStateComponent<Element> {
         KotlinScriptDefinitionKey(this.name, this::class.qualifiedName ?: "unknown")
 
     private fun Element.addScriptDefinitionContentElement(definition: KotlinScriptDefinitionKey, settings: KotlinScriptDefinitionValue) {
-        element(SCRIPT_DEFINITION_TAG).apply {
+        Element(SCRIPT_DEFINITION_TAG).apply {
             attribute(KotlinScriptDefinitionKey::className.name, definition.className)
             attribute(KotlinScriptDefinitionKey::definitionName.name, definition.definitionName)
 
-            element(KotlinScriptDefinitionValue::order.name).apply {
+            Element(KotlinScriptDefinitionValue::order.name).apply {
                 text = settings.order.toString()
             }
 
             if (!settings.isEnabled) {
-                element(KotlinScriptDefinitionValue::isEnabled.name).apply {
+                Element(KotlinScriptDefinitionValue::isEnabled.name).apply {
                     text = settings.isEnabled.toString()
                 }
             }
