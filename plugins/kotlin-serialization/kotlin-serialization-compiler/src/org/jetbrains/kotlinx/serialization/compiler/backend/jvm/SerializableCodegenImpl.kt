@@ -16,13 +16,13 @@
 
 package org.jetbrains.kotlinx.serialization.compiler.backend.jvm
 
-import org.jetbrains.kotlin.codegen.CompilationException
-import org.jetbrains.kotlin.codegen.ExpressionCodegen
-import org.jetbrains.kotlin.codegen.ImplementationBodyCodegen
+import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -51,10 +51,24 @@ class SerializableCodegenImpl(
 
     private val descToProps = classCodegen.myClass.bodyPropertiesDescriptorsMap(classCodegen.bindingContext)
 
-    private val paramsToProps: Map<PropertyDescriptor, KtParameter> = classCodegen.myClass.primaryPropertiesDescriptorsMap(classCodegen.bindingContext)
+    private val paramsToProps: Map<PropertyDescriptor, KtParameter> =
+        classCodegen.myClass.primaryPropertiesDescriptorsMap(classCodegen.bindingContext)
 
     private fun getProp(prop: SerializableProperty) = descToProps[prop.descriptor]
     private fun getParam(prop: SerializableProperty) = paramsToProps[prop.descriptor]
+
+    private fun initializersMapper(prop: SerializableProperty): Pair<KtExpression, Type> {
+        val maybeInit =
+            getProp(prop)?.let { it.delegateExpressionOrInitializer ?: throw AssertionError("${it.name} property must have initializer") }
+
+        val initializer = maybeInit ?: getParam(prop)?.let {
+            it.defaultValue ?: throw AssertionError("${it.name} property must have initializer")
+        }
+
+        return if (initializer == null) throw AssertionError("Can't find initializer for property ${prop.descriptor}")
+        else initializer to classCodegen.typeMapper.mapType(prop.type)
+    }
+
     private val SerializableProperty.asmType get() = classCodegen.typeMapper.mapType(this.type)
 
     override fun generateInternalConstructor(constructorDescriptor: ClassConstructorDescriptor) {
@@ -94,13 +108,58 @@ class SerializableCodegenImpl(
             myPropsStart = 0
         }
 
-        for (i in myPropsStart until properties.serializableProperties.size) {
-            val property = properties[i]
+        fun emitEncoderCall(property: SerializableProperty, index: Int) {
             // output.writeXxxElementValue (desc, index, value)
             load(outputI, kOutputType)
             load(serialDescI, descType)
-            iconst(i)
-            genKOutputMethodCall(property, classCodegen, exprCodegen, thisAsmType, thisI, offsetI, generator = this@SerializableCodegenImpl)
+            iconst(index)
+            genKOutputMethodCall(
+                property,
+                classCodegen,
+                exprCodegen,
+                thisAsmType,
+                thisI,
+                offsetI,
+                generator = this@SerializableCodegenImpl
+            )
+        }
+
+        for (i in myPropsStart until properties.serializableProperties.size) {
+            val property = properties[i]
+            if (!property.optional) {
+                emitEncoderCall(property, i)
+            } else {
+                val writeLabel = Label()
+                val nonWriteLabel = Label()
+                // obj.prop != DEFAULT_VAL
+                ImplementationBodyCodegen.genPropertyOnStack(
+                    this,
+                    exprCodegen.context,
+                    property.descriptor,
+                    thisAsmType,
+                    thisI,
+                    classCodegen.state
+                )
+                val propAsmType = classCodegen.typeMapper.mapType(property.type)
+                val lhs = StackValue.onStack(propAsmType)
+                val (expr, _) = initializersMapper(property)
+                exprCodegen.gen(expr, propAsmType)
+                val rhs = StackValue.onStack(propAsmType)
+                // INVOKESTATIC kotlin/jvm/internal/Intrinsics.areEqual (Ljava/lang/Object;Ljava/lang/Object;)Z
+                AsmUtil.genEqualsForExpressionsOnStack(KtTokens.EXCLEQ, lhs, rhs).put(Type.BOOLEAN_TYPE, null, this)
+                ifne(writeLabel)
+
+                // output.shouldEncodeElementDefault(descriptor, i)
+                load(outputI, kOutputType)
+                load(serialDescI, descType)
+                iconst(i)
+                invokeinterface(kOutputType.internalName, CallingConventions.shouldEncodeDefault, "(${descType.descriptor}I)Z")
+                ifeq(nonWriteLabel)
+
+                visitLabel(writeLabel)
+                emitEncoderCall(property, i)
+                visitLabel(nonWriteLabel)
+            }
         }
 
         areturn(Type.VOID_TYPE)
@@ -201,24 +260,27 @@ class SerializableCodegenImpl(
     private fun needInitProperty(prop: SerializableProperty) = getProp(prop)?.let { classCodegen.shouldInitializeProperty(it) }
                                                                ?: getParam(prop)?.hasDefaultValue() ?: throw IllegalStateException()
 
-    private fun ExpressionCodegen.genInitProperty(prop: SerializableProperty)
-            = getProp(prop)?.let {
+    private fun ExpressionCodegen.genInitProperty(prop: SerializableProperty) = getProp(prop)?.let {
         classCodegen.initializeProperty(this, it)
     }
-              ?: getParam(prop)?.let {
-        this.v.load(0, thisAsmType)
-        if (!it.hasDefaultValue()) throw CompilationException("Optional field ${it.name} in primary constructor of serializable " +
-                                                                 "$serializableDescriptor must have default value", null, it)
-        this.gen(it.defaultValue, prop.asmType)
-        this.v.putfield(thisAsmType.internalName, prop.descriptor.name.asString(), prop.asmType.descriptor)
-    }
-              ?: throw IllegalStateException()
+        ?: getParam(prop)?.let {
+            this.v.load(0, thisAsmType)
+            if (!it.hasDefaultValue()) throw CompilationException(
+                "Optional field ${it.name} in primary constructor of serializable " +
+                        "$serializableDescriptor must have default value", null, it
+            )
+            this.gen(it.defaultValue, prop.asmType)
+            this.v.putfield(thisAsmType.internalName, prop.descriptor.name.asString(), prop.asmType.descriptor)
+        }
+        ?: throw IllegalStateException()
 
     private fun ExpressionCodegen.genInitParam(prop: PropertyDescriptor, param: KtParameter) {
         this.v.load(0, thisAsmType)
         val mapType = classCodegen.typeMapper.mapType(prop.type)
-        if (!param.hasDefaultValue()) throw CompilationException("Transient field ${param.name} in primary constructor of serializable " +
-                                                                 "$serializableDescriptor must have default value", null, param)
+        if (!param.hasDefaultValue()) throw CompilationException(
+            "Transient field ${param.name} in primary constructor of serializable " +
+                    "$serializableDescriptor must have default value", null, param
+        )
         this.gen(param.defaultValue, mapType)
         this.v.putfield(thisAsmType.internalName, prop.name.asString(), mapType.descriptor)
     }

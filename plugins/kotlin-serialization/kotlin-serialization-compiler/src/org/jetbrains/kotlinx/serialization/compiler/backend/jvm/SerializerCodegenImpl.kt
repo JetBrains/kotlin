@@ -534,17 +534,4 @@ class SerializerCodegenImpl(
                 visitLabel(nextLabel)
         }
     }
-
-    // todo: move to StackValue?
-    private fun InstructionAdapter.stackValueDefault(type: Type) {
-        when (type.sort) {
-            BOOLEAN, BYTE, SHORT, CHAR, INT -> iconst(0)
-            LONG -> lconst(0)
-            FLOAT -> fconst(0f)
-            DOUBLE -> dconst(0.0)
-            else -> aconst(null)
-        }
-    }
-
-
 }
