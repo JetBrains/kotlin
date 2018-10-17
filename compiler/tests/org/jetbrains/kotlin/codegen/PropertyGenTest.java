@@ -124,10 +124,7 @@ public class PropertyGenTest extends CodegenTestCase {
         getFoo.setAccessible(true);
         assertTrue((getFoo.getModifiers() & Modifier.PROTECTED) != 0);
         assertEquals(349, getFoo.invoke(instance));
-        // See KT-20344
-        // Method setFoo = findDeclaredMethodByName(aClass, "setFoo");
-        // setFoo.setAccessible(true);
-        // assertTrue((setFoo.getModifiers() & Modifier.PRIVATE) != 0);
+        assertNull(findDeclaredMethodByNameOrNull(aClass, "setFoo"));
         Method setter = findDeclaredMethodByName(aClass, "setter");
         setter.invoke(instance);
         assertEquals(610, getFoo.invoke(instance));
@@ -247,13 +244,5 @@ public class PropertyGenTest extends CodegenTestCase {
 
         assertNull("Property should not have a getter", findDeclaredMethodByNameOrNull(c, "getVarNoAccessors"));
         assertNull("Property should not have a setter", findDeclaredMethodByNameOrNull(c, "setVarNoAccessors"));
-    }
-
-    // Properties with trivial private setters should not generate their setters since
-    // the class will use direct field access instead for these properties.
-    public void testKt20344() throws Exception {
-        loadText("class Foo { public lateinit var x: String private set }");
-        Class<?> aClass = generateClass("Foo");
-        assertNull("Property should not have generated setter", findDeclaredMethodByNameOrNull(aClass, "setX"));
     }
 }
