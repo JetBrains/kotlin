@@ -24,6 +24,7 @@ import com.intellij.openapi.externalSystem.settings.ExternalProjectSettings
 import com.intellij.openapi.externalSystem.settings.ExternalSystemSettingsListenerAdapter
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.externalSystem.util.ExternalSystemUtil
+import com.intellij.openapi.fileTypes.FileTypeManager
 import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.ProjectJdkTable
@@ -52,6 +53,7 @@ import org.jetbrains.plugins.gradle.settings.GradleExecutionSettings
 import org.jetbrains.plugins.gradle.settings.GradleProjectSettings
 import org.jetbrains.plugins.gradle.settings.GradleSettings
 import org.jetbrains.plugins.gradle.util.GradleConstants
+`import org.jetbrains.plugins.groovy.GroovyFileType
 import java.io.File
 import java.io.IOException
 import java.util.*
@@ -83,6 +85,7 @@ abstract class AbstractGradleMultiplatformWizardTest : ProjectWizardTestCase<Abs
         metadataInside: Boolean = false,
         performImport: Boolean = true
     ) {
+        // TODO: check whether it's necessary to have templates in sources
         // Temporary workaround for duplicated bundled template
         class PrintingFactory : Logger.Factory {
             override fun getLoggerInstance(category: String): Logger {
@@ -233,12 +236,10 @@ abstract class AbstractGradleMultiplatformWizardTest : ProjectWizardTestCase<Abs
         val settings = GradleExecutionSettings(null, null, DistributionType.DEFAULT_WRAPPED, false)
         println("Running project tests: ${testClassNames.toList()}")
         GradleExecutionHelper().execute(project.basePath!!, settings) {
+            // TODO: --no-daemon should be here, unfortunately it does not work for TestLauncher
             val testLauncher = it.newTestLauncher()
             testLauncher.withJvmTestClasses(*testClassNames).run()
         }
-        println("Waiting for daemon death...")
-        Thread.sleep(30000L)
-        println("Trying to clean everything...")
     }
 
     override fun setUp() {
@@ -250,6 +251,8 @@ abstract class AbstractGradleMultiplatformWizardTest : ProjectWizardTestCase<Abs
 
             println("ProjectWizardTestCase.configureJdk:")
             println(Arrays.asList(*ProjectJdkTable.getInstance().allJdks))
+
+            FileTypeManager.getInstance().associateExtension(GroovyFileType.GROOVY_FILE_TYPE, "gradle")
         }
     }
 
