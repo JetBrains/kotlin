@@ -84,6 +84,9 @@ open class KotlinNativeCompile @Inject constructor(internal val binary: Abstract
     val outputFile: File
         get() = outputLocationProvider.get().asFile
 
+    val konanVersion: String
+        @Input get() = project.konanVersion.toString(true, true)
+
     private val outputPathProvider: Provider<String> = project.provider {
         with(binary) {
             val root = outputRootName

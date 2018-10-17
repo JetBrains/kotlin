@@ -44,6 +44,9 @@ abstract class KonanBuildingTask: KonanArtifactWithLibrariesTask(), KonanBuildin
     val konanHome
         @Input get() = project.konanHome
 
+    val konanVersion
+        @Input get() = project.konanVersion.toString(true, true)
+
     protected abstract fun buildArgs(): List<String>
 
     @TaskAction

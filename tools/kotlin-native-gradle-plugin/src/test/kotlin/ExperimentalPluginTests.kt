@@ -1005,4 +1005,21 @@ class ExperimentalPluginTests {
             assertFileExists(it)
         }
     }
+
+    @Test
+    fun `Plugin should allow overriding Kotlin-Native version`() {
+        val project = KonanProject.createEmpty(projectDirectory).apply {
+            buildFile.writeText("plugins { id 'kotlin-native' }")
+            propertiesFile.writeText("")
+        }
+
+        val result = project.createRunner().withArguments(
+            "checkKonanCompiler",
+            "-Porg.jetbrains.kotlin.native.version=0.9.3",
+            "-i"
+        ).build()
+        assertTrue(result.output.contains(
+            "Downloading Kotlin/Native compiler from.*kotlin-native-${HostManager.simpleOsName()}-0.9.3".toRegex())
+        )
+    }
 }

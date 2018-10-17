@@ -47,7 +47,7 @@ open class KonanCompilerDownloadTask : DefaultTask() {
             try {
                 val downloadUrlDirectory = buildString {
                     append("$BASE_DOWNLOAD_URL/")
-                    val version = KonanVersion.CURRENT
+                    val version = project.konanVersion
                     when (version.meta) {
                         MetaVersion.DEV -> append("dev/")
                         else -> append("releases/")

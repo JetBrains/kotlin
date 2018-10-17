@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.gradle.plugin.konan.KonanPlugin.Companion.COMPILE_AL
 import org.jetbrains.kotlin.gradle.plugin.model.KonanToolingModelBuilder
 import org.jetbrains.kotlin.gradle.plugin.tasks.*
 import org.jetbrains.kotlin.konan.KonanVersion
+import org.jetbrains.kotlin.konan.parseKonanVersion
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.customerDistribution
@@ -69,6 +70,11 @@ internal val Project.konanHome: String
         assert(hasProperty(KonanPlugin.ProjectProperty.KONAN_HOME))
         return project.file(getProperty(KonanPlugin.ProjectProperty.KONAN_HOME)).canonicalPath
     }
+
+internal val Project.konanVersion: KonanVersion
+    get() = project.findProperty(KonanPlugin.ProjectProperty.KONAN_VERSION)
+        ?.toString()?.parseKonanVersion()
+        ?: KonanVersion.CURRENT
 
 internal val Project.konanBuildRoot          get() = buildDir.resolve("konan")
 internal val Project.konanBinBaseDir         get() = konanBuildRoot.resolve("bin")
@@ -134,7 +140,7 @@ private fun Project.getOrCreateTask(name: String): Task = with(tasks) {
 }
 
 internal fun Project.konanCompilerName(): String =
-        "kotlin-native-${project.simpleOsName}-${KonanVersion.CURRENT}"
+        "kotlin-native-${project.simpleOsName}-${project.konanVersion}"
 
 internal fun Project.konanCompilerDownloadDir(): String =
         DependencyProcessor.localKonanDir.resolve(project.konanCompilerName()).absolutePath
@@ -266,6 +272,7 @@ class KonanPlugin @Inject constructor(private val registry: ToolingModelBuilderR
 
     enum class ProjectProperty(val propertyName: String) {
         KONAN_HOME                     ("konan.home"),
+        KONAN_VERSION                  ("org.jetbrains.kotlin.native.version"),
         KONAN_BUILD_TARGETS            ("konan.build.targets"),
         KONAN_JVM_ARGS                 ("konan.jvmArgs"),
         KONAN_USE_ENVIRONMENT_VARIABLES("konan.useEnvironmentVariables"),

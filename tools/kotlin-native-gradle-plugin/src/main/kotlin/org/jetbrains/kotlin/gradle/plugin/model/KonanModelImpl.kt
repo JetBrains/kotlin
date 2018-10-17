@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.gradle.plugin.experimental.internal.AbstractKotlinNa
 import org.jetbrains.kotlin.gradle.plugin.konan.konanArtifactsContainer
 import org.jetbrains.kotlin.gradle.plugin.konan.konanExtension
 import org.jetbrains.kotlin.gradle.plugin.konan.konanHome
+import org.jetbrains.kotlin.gradle.plugin.konan.konanVersion
 import org.jetbrains.kotlin.konan.KonanVersion
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import java.io.File
@@ -36,7 +37,7 @@ object KonanToolingModelBuilder : ToolingModelBuilder {
         return KonanModelImpl(
             artifacts,
             project.file(project.konanHome),
-            KonanVersion.CURRENT,
+            project.konanVersion,
             // TODO: Provide defaults for these versions.
             project.konanExtension.languageVersion,
             project.konanExtension.apiVersion

@@ -82,6 +82,8 @@ open class CInteropTask @Inject constructor(val settings: CInteropSettingsImpl):
     val extraOpts: List<String>
         @Input get() = settings.extraOpts
 
+    val konanVersion: String
+        @Input get() = project.konanVersion.toString(true, true)
 
     // Task action.
     @TaskAction
