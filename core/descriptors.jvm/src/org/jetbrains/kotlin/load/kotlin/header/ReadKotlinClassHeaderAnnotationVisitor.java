@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion;
 import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
+import org.jetbrains.kotlin.resolve.constants.ClassLiteralValue;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -164,7 +165,7 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
         }
 
         @Override
-        public void visitClassLiteral(@NotNull Name name, @NotNull ClassLiteralId classLiteralId) {
+        public void visitClassLiteral(@NotNull Name name, @NotNull ClassLiteralValue classLiteralValue) {
         }
 
         @Override
@@ -239,7 +240,7 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
         }
 
         @Override
-        public void visitClassLiteral(@NotNull Name name, @NotNull ClassLiteralId classLiteralId) {
+        public void visitClassLiteral(@NotNull Name name, @NotNull ClassLiteralValue classLiteralValue) {
         }
 
         @Override
@@ -311,7 +312,7 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
         }
 
         @Override
-        public void visitClassLiteral(@NotNull ClassLiteralId classLiteralId) {
+        public void visitClassLiteral(@NotNull ClassLiteralValue classLiteralValue) {
         }
 
         @Override

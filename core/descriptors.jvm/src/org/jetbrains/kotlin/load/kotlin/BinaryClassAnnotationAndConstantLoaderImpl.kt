@@ -93,9 +93,9 @@ class BinaryClassAnnotationAndConstantLoaderImpl(
                 }
             }
 
-            override fun visitClassLiteral(name: Name, classLiteralId: KotlinJvmBinaryClass.ClassLiteralId) {
-                arguments[name] = classLiteralId.toClassValue() ?:
-                        ErrorValue.create("Error value of annotation argument: $name: class ${classLiteralId.classId.asSingleFqName()} not found")
+            override fun visitClassLiteral(name: Name, value: ClassLiteralValue) {
+                arguments[name] = value.toClassValue() ?:
+                        ErrorValue.create("Error value of annotation argument: $name: class ${value.classId.asSingleFqName()} not found")
             }
 
             override fun visitEnum(name: Name, enumClassId: ClassId, enumEntryName: Name) {
@@ -114,10 +114,11 @@ class BinaryClassAnnotationAndConstantLoaderImpl(
                         elements.add(EnumValue(enumClassId, enumEntryName))
                     }
 
-                    override fun visitClassLiteral(classLiteralId: KotlinJvmBinaryClass.ClassLiteralId) {
+                    override fun visitClassLiteral(value: ClassLiteralValue) {
                         elements.add(
-                            classLiteralId.toClassValue()
-                                ?: ErrorValue.create("Error array element value of annotation argument: $name: class ${classLiteralId.classId.asSingleFqName()} not found")
+                            value.toClassValue() ?: ErrorValue.create(
+                                "Error array element value of annotation argument: $name: class ${value.classId.asSingleFqName()} not found"
+                            )
                         )
                     }
 
@@ -152,10 +153,10 @@ class BinaryClassAnnotationAndConstantLoaderImpl(
         }
     }
 
-    private fun KotlinJvmBinaryClass.ClassLiteralId.toClassValue(): KClassValue? =
-        module.findClassAcrossModuleDependencies(this.classId)?.let { classDescriptor ->
+    private fun ClassLiteralValue.toClassValue(): KClassValue? =
+        module.findClassAcrossModuleDependencies(classId)?.let { classDescriptor ->
             var currentType = classDescriptor.defaultType
-            for (i in 0 until this.arrayNestedness) {
+            for (i in 0 until arrayNestedness) {
                 val nextWrappedType =
                     (if (i == 0) module.builtIns.getPrimitiveArrayKotlinTypeByPrimitiveKotlinType(currentType) else null)
                         ?: module.builtIns.getArrayType(Variance.INVARIANT, currentType)
