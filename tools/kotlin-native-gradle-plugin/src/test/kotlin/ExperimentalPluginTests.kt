@@ -1019,7 +1019,21 @@ class ExperimentalPluginTests {
             "-i"
         ).build()
         assertTrue(result.output.contains(
-            "Downloading Kotlin/Native compiler from.*kotlin-native-${HostManager.simpleOsName()}-0.9.3".toRegex())
-        )
+            "Downloading Kotlin/Native compiler from.*kotlin-native-${HostManager.simpleOsName()}-0.9.3".toRegex()
+        ))
+    }
+
+    @Test
+    fun `Plugin should show warning if deprecated properties are used`() {
+        val project = KonanProject.createEmpty(projectDirectory).apply {
+            buildFile.writeText("plugins { id 'kotlin-native' }")
+            val properties = propertiesFile.readText().replace("org.jetbrains.kotlin.native.home", "konan.home")
+            propertiesFile.writeText(properties)
+        }
+
+        val result = project.createRunner().withArguments("tasks").build()
+        assertTrue(result.output.contains(
+            "Project property 'konan.home' is deprecated. Use 'org.jetbrains.kotlin.native.home' instead."
+        ))
     }
 }

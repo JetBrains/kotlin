@@ -214,7 +214,7 @@ class KonanProject {
     /** Generates gradle.properties file with the konan.home and konan.jvmArgs properties set. */
     File generatePropertiesFile(String konanHome, String konanJvmArgs = System.getProperty("konan.jvmArgs") ?: "") {
         propertiesFile = createFile(projectPath, "gradle.properties", """\
-            konan.home=$konanHome
+            org.jetbrains.kotlin.native.home=$konanHome
             ${!konanJvmArgs.isEmpty() ? "konan.jvmArgs=$konanJvmArgs\n" : ""}
         """.stripIndent())
         return propertiesFile

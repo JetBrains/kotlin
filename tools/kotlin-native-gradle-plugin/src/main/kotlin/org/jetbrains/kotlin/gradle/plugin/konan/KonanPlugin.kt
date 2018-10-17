@@ -45,14 +45,30 @@ import javax.inject.Inject
 
 /**
  * We use the following properties:
- *      konan.home          - directory where compiler is located (aka dist in konan project output).
- *      konan.version       - a konan compiler version for downloading.
- *      konan.build.targets - list of targets to build (by default all the declared targets are built).
- *      konan.jvmArgs       - additional args to be passed to a JVM executing the compiler/cinterop tool.
+ *      org.jetbrains.kotlin.native.home    - directory where compiler is located (aka dist in konan project output).
+ *      org.jetbrains.kotlin.native.version - a konan compiler version for downloading.
+ *      konan.build.targets                 - list of targets to build (by default all the declared targets are built).
+ *      konan.jvmArgs                       - additional args to be passed to a JVM executing the compiler/cinterop tool.
  */
 
-internal fun Project.hasProperty(property: KonanPlugin.ProjectProperty) = hasProperty(property.propertyName)
-internal fun Project.findProperty(property: KonanPlugin.ProjectProperty): Any? = findProperty(property.propertyName)
+internal fun Project.warnAboutDeprecatedProperty(property: KonanPlugin.ProjectProperty) =
+    property.deprecatedPropertyName?.let { deprecated ->
+        if (project.hasProperty(deprecated)) {
+            logger.warn("Project property '$deprecated' is deprecated. Use '${property.propertyName}' instead.")
+        }
+    }
+
+internal fun Project.hasProperty(property: KonanPlugin.ProjectProperty) = with(property) {
+    when {
+        hasProperty(propertyName) -> true
+        deprecatedPropertyName != null && hasProperty(deprecatedPropertyName) -> true
+        else -> false
+    }
+}
+
+internal fun Project.findProperty(property: KonanPlugin.ProjectProperty): Any? = with(property) {
+    return findProperty(propertyName) ?: deprecatedPropertyName?.let { findProperty(it) }
+}
 
 internal fun Project.getProperty(property: KonanPlugin.ProjectProperty) = findProperty(property)
         ?: throw IllegalArgumentException("No such property in the project: ${property.propertyName}")
@@ -270,8 +286,8 @@ open class KonanSoftwareComponent(val project: ProjectInternal?): SoftwareCompon
 class KonanPlugin @Inject constructor(private val registry: ToolingModelBuilderRegistry)
     : Plugin<ProjectInternal> {
 
-    enum class ProjectProperty(val propertyName: String) {
-        KONAN_HOME                     ("konan.home"),
+    enum class ProjectProperty(val propertyName: String, val deprecatedPropertyName: String? = null) {
+        KONAN_HOME                     ("org.jetbrains.kotlin.native.home", "konan.home"),
         KONAN_VERSION                  ("org.jetbrains.kotlin.native.version"),
         KONAN_BUILD_TARGETS            ("konan.build.targets"),
         KONAN_JVM_ARGS                 ("konan.jvmArgs"),
@@ -327,6 +343,8 @@ class KonanPlugin @Inject constructor(private val registry: ToolingModelBuilderR
         if (!isPublicationEnabled) {
             project.logger.warn("feature GRADLE_METADATA is not enabled: publication is disabled")
         }
+
+        project.warnAboutDeprecatedProperty(ProjectProperty.KONAN_HOME)
 
         // Set additional project properties like konan.home, konan.build.targets etc.
         if (!project.hasProperty(ProjectProperty.KONAN_HOME)) {
