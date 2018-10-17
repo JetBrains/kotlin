@@ -11646,6 +11646,11 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/inlineClassExtensionVal.kt");
             }
 
+            @TestMetadata("inlineClassInternalPrimaryVal.kt")
+            public void testInlineClassInternalPrimaryVal() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/inlineClassInternalPrimaryVal.kt");
+            }
+
             @TestMetadata("inlineClassMemberFun.kt")
             public void testInlineClassMemberFun() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/inlineClassMemberFun.kt");
@@ -11664,6 +11669,11 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             @TestMetadata("inlineClassPrimaryVal.kt")
             public void testInlineClassPrimaryVal() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/inlineClassPrimaryVal.kt");
+            }
+
+            @TestMetadata("inlineClassPrivatePrimaryVal.kt")
+            public void testInlineClassPrivatePrimaryVal() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/callableReferences/inlineClassPrivatePrimaryVal.kt");
             }
 
             @TestMetadata("inlineClassTypeBoundMemberVar.kt")
