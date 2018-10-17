@@ -27,20 +27,20 @@
 <div class="sample" markdown="1" theme="idea" data-highlight-only>
   
  ```kotlin
-   val future = execute(TransferMode.SAFE, { SomeDataForWorker() }) {
-       // data returned by the second function argument comes to the
-       // worker routine as 'input' parameter.
-       input ->
-       // Here we create an instance to be returned when someone consumes result future.
-       WorkerResult(input.stringParam + " result")
-   }
+val future = execute(TransferMode.SAFE, { SomeDataForWorker() }) {
+   // data returned by the second function argument comes to the
+   // worker routine as 'input' parameter.
+   input ->
+   // Here we create an instance to be returned when someone consumes result future.
+   WorkerResult(input.stringParam + " result")
+}
 
-   future.consume {
-      // Here we see result returned from routine above. Note that future object or
-      // id could be transferred to another worker, so we don't have to consume future
-      // in same execution context it was obtained.
-      result -> println("result is $result")
-   }
+future.consume {
+  // Here we see result returned from routine above. Note that future object or
+  // id could be transferred to another worker, so we don't have to consume future
+  // in same execution context it was obtained.
+  result -> println("result is $result")
+}
 ```
 
 </div>
