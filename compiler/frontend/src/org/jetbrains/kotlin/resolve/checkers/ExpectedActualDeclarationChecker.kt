@@ -17,7 +17,10 @@
 package org.jetbrains.kotlin.resolve.checkers
 
 import com.intellij.openapi.vfs.VfsUtilCore
+import com.intellij.psi.PsiAnnotationMethod
+import com.intellij.psi.PsiCall
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiLiteral
 import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.*
@@ -27,6 +30,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.hasActualModifier
 import org.jetbrains.kotlin.resolve.*
+import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant
 import org.jetbrains.kotlin.resolve.descriptorUtil.isAnnotationConstructor
 import org.jetbrains.kotlin.resolve.descriptorUtil.isPrimaryConstructorOfInlineClass
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
@@ -253,7 +257,9 @@ object ExpectedActualDeclarationChecker : DeclarationChecker {
                 val actualParameter = DescriptorToSourceUtils.descriptorToDeclaration(actualParameterDescriptor)
 
                 val expectedValue = trace.bindingContext.get(BindingContext.COMPILE_TIME_VALUE, expectedParameter.defaultValue)
-                // TODO: support arguments coming from Java via typealias, see PsiAnnotationMethod.getDefaultValue()
+
+                if (javaDefaultValueEqualsExpectedValue(actualParameter, trace, expectedParameter, expectedValue)) continue
+
                 val actualValue = (actualParameter as? KtParameter)?.let { parameter ->
                     trace.bindingContext.get(BindingContext.COMPILE_TIME_VALUE, parameter.defaultValue)
                 }
@@ -263,5 +269,21 @@ object ExpectedActualDeclarationChecker : DeclarationChecker {
                 }
             }
         }
+    }
+
+    private fun javaDefaultValueEqualsExpectedValue(
+        actualParameter: PsiElement?, trace: BindingTrace, expectedParameter: KtParameter, expectedValue: CompileTimeConstant<*>?
+    ): Boolean {
+        val actualPsi = (actualParameter as? PsiAnnotationMethod)?.defaultValue ?: return false
+        val expectedType = trace.bindingContext.get(BindingContext.EXPECTED_EXPRESSION_TYPE, expectedParameter.defaultValue) ?: return false
+        val actualValue = when (actualPsi) {
+            is PsiLiteral -> actualPsi.value
+            is PsiCall -> {
+                //TODO: arrays and annotations
+                return false
+            }
+            else -> return false
+        }
+        return (actualValue == expectedValue?.getValue(expectedType))
     }
 }
