@@ -23,8 +23,7 @@ fun test() {}
 // FILE: jvm.kt
 
 actual typealias A1 = J1
-// TODO: support arguments coming from Java via typealias (KT-22704)
-actual typealias <!ACTUAL_ANNOTATION_CONFLICTING_DEFAULT_ARGUMENT_VALUE!>A2<!> = J2
+actual typealias A2 = J2
 actual typealias A3 = J3
 actual typealias A4 = J4
 actual typealias <!ACTUAL_ANNOTATION_CONFLICTING_DEFAULT_ARGUMENT_VALUE!>A5<!> = J5
