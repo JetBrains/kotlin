@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.js.translate.context.TranslationContext
 import org.jetbrains.kotlin.js.translate.declaration.DeclarationBodyVisitor
 import org.jetbrains.kotlin.js.translate.declaration.DefaultPropertyTranslator
 import org.jetbrains.kotlin.js.translate.general.Translation
+import org.jetbrains.kotlin.js.translate.intrinsic.functions.factories.TopLevelFIF.KOTLIN_EQUALS
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 import org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils
 import org.jetbrains.kotlin.js.translate.utils.TranslationUtils
@@ -193,7 +194,7 @@ class SerializerJsTranslator(descriptor: ClassDescriptor,
                 val defaultValue =
                     initializersMap.getValue(property.descriptor)?.let { Translation.translateAsExpression(it, ctx) }
                         ?: throw IllegalStateException("Optional property does not have an initializer?")
-                val partA = JsBinaryOperation(JsBinaryOperator.NEQ, property.jsNameRef(), defaultValue)
+                val partA = JsAstUtils.not(KOTLIN_EQUALS.apply(property.jsNameRef(), listOf(defaultValue), ctx))
                 val partB =
                     JsInvocation(JsNameRef(shouldEncodeFunc, localOutputRef), serialClassDescRef, JsIntLiteral(index))
                 val cond = JsBinaryOperation(JsBinaryOperator.OR, partA, partB)
