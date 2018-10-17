@@ -5,6 +5,7 @@
 package org.jetbrains.kotlin.gradle
 
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMultiplatformPlugin
+import org.jetbrains.kotlin.gradle.plugin.mpp.UnusedSourceSetsChecker
 import org.jetbrains.kotlin.gradle.plugin.sources.METADATA_CONFIGURATION_NAME_SUFFIX
 import org.jetbrains.kotlin.gradle.plugin.sources.SourceSetConsistencyChecks
 import org.jetbrains.kotlin.gradle.util.checkBytecodeContains
@@ -1060,6 +1061,36 @@ class NewMultiplatformIT : BaseGradleIT() {
             assertSuccessful()
             assertNoSuchFile(staleFilePath)
             assertFileExists("foo/2.txt")
+        }
+    }
+
+    @Test
+    fun testUnusedSourceSetsReport() = with(Project("sample-lib", gradleVersion, "new-mpp-lib-and-app")) {
+        setupWorkingDir()
+
+        gradleBuildScript().appendText("\nkotlin { sourceSets { foo { } } }")
+
+        build {
+            assertSuccessful()
+            assertContains(UnusedSourceSetsChecker.WARNING_PREFIX_ONE, UnusedSourceSetsChecker.WARNING_INTRO)
+        }
+
+        gradleBuildScript().appendText("\nkotlin { sourceSets { bar { dependsOn foo } } }")
+
+        build {
+            assertSuccessful()
+            assertContains(UnusedSourceSetsChecker.WARNING_PREFIX_MANY, UnusedSourceSetsChecker.WARNING_INTRO)
+        }
+
+        gradleBuildScript().appendText("\nkotlin { sourceSets { jvm6Main { dependsOn bar } } }")
+
+        build {
+            assertSuccessful()
+            assertNotContains(
+                UnusedSourceSetsChecker.WARNING_PREFIX_ONE,
+                UnusedSourceSetsChecker.WARNING_PREFIX_MANY,
+                UnusedSourceSetsChecker.WARNING_INTRO
+            )
         }
     }
 }
