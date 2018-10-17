@@ -90,7 +90,7 @@ class KotlinTestClassGradleConfigurationProducer : TestClassGradleConfigurationP
         configuration.settings.externalProjectPath = projectPath
         configuration.settings.taskNames = tasksToRun
         configuration.settings.scriptParameters = String.format("--tests \"%s\"", testClass.qualifiedName)
-        configuration.name = testClass.name
+        configuration.name = testClass.name ?: "unknown"
 
         JavaRunConfigurationExtensionManagerUtil.getInstance().extendCreatedConfiguration(configuration, contextLocation)
         return true
