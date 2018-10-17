@@ -7,6 +7,7 @@ package kotlin.reflect.jvm.internal.calls
 
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
@@ -69,7 +70,7 @@ internal class InlineClassAwareCaller<out M : Member>(
             val extensionReceiverType = descriptor.extensionReceiverParameter?.type
             if (extensionReceiverType != null) {
                 kotlinParameterTypes.add(extensionReceiverType)
-            } else {
+            } else if (descriptor !is ConstructorDescriptor) {
                 val containingDeclaration = descriptor.containingDeclaration
                 if (containingDeclaration is ClassDescriptor && containingDeclaration.isInline) {
                     kotlinParameterTypes.add(containingDeclaration.defaultType)

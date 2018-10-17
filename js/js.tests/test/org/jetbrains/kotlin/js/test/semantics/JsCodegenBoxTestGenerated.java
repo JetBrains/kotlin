@@ -17685,6 +17685,11 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                     runTest("compiler/testData/codegen/box/reflection/call/inlineClasses/functionsAndConstructors.kt");
                 }
 
+                @TestMetadata("inlineClassConstructor.kt")
+                public void testInlineClassConstructor() throws Exception {
+                    runTest("compiler/testData/codegen/box/reflection/call/inlineClasses/inlineClassConstructor.kt");
+                }
+
                 @TestMetadata("jvmStaticFieldInObject.kt")
                 public void testJvmStaticFieldInObject() throws Exception {
                     runTest("compiler/testData/codegen/box/reflection/call/inlineClasses/jvmStaticFieldInObject.kt");
