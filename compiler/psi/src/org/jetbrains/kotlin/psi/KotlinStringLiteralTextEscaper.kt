@@ -16,8 +16,8 @@
 
 package org.jetbrains.kotlin.psi
 
-import com.intellij.psi.LiteralTextEscaper
 import com.intellij.openapi.util.TextRange
+import com.intellij.psi.LiteralTextEscaper
 import gnu.trove.TIntArrayList
 import org.jetbrains.kotlin.psi.psiUtil.getContentRange
 import org.jetbrains.kotlin.psi.psiUtil.isSingleQuoted

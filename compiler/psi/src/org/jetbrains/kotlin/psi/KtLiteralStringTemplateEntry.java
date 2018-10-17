@@ -18,10 +18,16 @@ package org.jetbrains.kotlin.psi;
 
 import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderWithTextStub;
+import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes;
 
 public class KtLiteralStringTemplateEntry extends KtStringTemplateEntry {
     public KtLiteralStringTemplateEntry(@NotNull ASTNode node) {
         super(node);
+    }
+
+    public KtLiteralStringTemplateEntry(@NotNull KotlinPlaceHolderWithTextStub<KtLiteralStringTemplateEntry> stub) {
+        super(stub, KtStubElementTypes.LITERAL_STRING_TEMPLATE_ENTRY);
     }
 
     @Override

@@ -92,11 +92,11 @@ public interface KtNodeTypes {
     IElementType CHARACTER_CONSTANT = KtStubElementTypes.CHARACTER_CONSTANT;
     IElementType INTEGER_CONSTANT   = KtStubElementTypes.INTEGER_CONSTANT;
 
-    IElementType STRING_TEMPLATE    = KtStubElementTypes.STRING_TEMPLATE;
-    KtNodeType LONG_STRING_TEMPLATE_ENTRY = new KtNodeType("LONG_STRING_TEMPLATE_ENTRY", KtBlockStringTemplateEntry.class);
-    KtNodeType SHORT_STRING_TEMPLATE_ENTRY = new KtNodeType("SHORT_STRING_TEMPLATE_ENTRY", KtSimpleNameStringTemplateEntry.class);
-    KtNodeType LITERAL_STRING_TEMPLATE_ENTRY = new KtNodeType("LITERAL_STRING_TEMPLATE_ENTRY", KtLiteralStringTemplateEntry.class);
-    KtNodeType ESCAPE_STRING_TEMPLATE_ENTRY = new KtNodeType("ESCAPE_STRING_TEMPLATE_ENTRY", KtEscapeStringTemplateEntry.class);
+    IElementType STRING_TEMPLATE               = KtStubElementTypes.STRING_TEMPLATE;
+    IElementType LONG_STRING_TEMPLATE_ENTRY    = KtStubElementTypes.LONG_STRING_TEMPLATE_ENTRY;
+    IElementType SHORT_STRING_TEMPLATE_ENTRY   = KtStubElementTypes.SHORT_STRING_TEMPLATE_ENTRY;
+    IElementType LITERAL_STRING_TEMPLATE_ENTRY = KtStubElementTypes.LITERAL_STRING_TEMPLATE_ENTRY;
+    IElementType ESCAPE_STRING_TEMPLATE_ENTRY  = KtStubElementTypes.ESCAPE_STRING_TEMPLATE_ENTRY;
 
     KtNodeType PARENTHESIZED             = new KtNodeType("PARENTHESIZED", KtParenthesizedExpression.class);
     KtNodeType RETURN                    = new KtNodeType("RETURN", KtReturnExpression.class);
