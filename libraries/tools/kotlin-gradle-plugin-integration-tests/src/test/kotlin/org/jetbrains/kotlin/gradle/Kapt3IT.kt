@@ -395,6 +395,16 @@ open class Kapt3IT : Kapt3BaseIT() {
     }
 
     @Test
+    fun testNoKaptPluginApplied() {
+        val project = Project("nokapt", directoryPrefix = "kapt2")
+
+        project.build("build") {
+            assertFailed()
+            assertContains("Could not find method kapt() for arguments")
+        }
+    }
+
+    @Test
     fun testChangesInLocalAnnotationProcessor() {
         val project = Project("localAnnotationProcessor", directoryPrefix = "kapt2")
 

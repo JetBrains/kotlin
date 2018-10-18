@@ -100,7 +100,7 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
         val KAPT_SUBPLUGIN_ID = "org.jetbrains.kotlin.kapt3"
 
         fun getKaptConfigurationName(sourceSetName: String): String {
-            return if (sourceSetName != "main")
+            return if (sourceSetName != SourceSet.MAIN_SOURCE_SET_NAME)
                 "$MAIN_KAPT_CONFIGURATION_NAME${sourceSetName.capitalize()}"
             else
                 MAIN_KAPT_CONFIGURATION_NAME
@@ -122,7 +122,7 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
             return hasProperty(INFO_AS_WARNINGS) && property(INFO_AS_WARNINGS) == "true"
         }
 
-        fun findMainKaptConfiguration(project: Project) = project.findKaptConfiguration(MAIN_KAPT_CONFIGURATION_NAME)
+        fun findMainKaptConfiguration(project: Project) = project.findKaptConfiguration(SourceSet.MAIN_SOURCE_SET_NAME)
 
         fun createAptConfigurationIfNeeded(project: Project, sourceSetName: String): Configuration {
             val configurationName = Kapt3KotlinGradleSubplugin.getKaptConfigurationName(sourceSetName)
