@@ -5,7 +5,10 @@
 
 package org.jetbrains.kotlin.daemon.common.experimental
 
+import io.ktor.network.selector.ActorSelectorManager
 import io.ktor.network.sockets.aSocket
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.ServerSocketWrapper
 import org.jetbrains.kotlin.daemon.common.impls.*
@@ -69,13 +72,15 @@ object LoopbackNetworkInterface {
             ServerSocket(port, SERVER_SOCKET_BACKLOG_SIZE, InetAddress.getByName(null))
     }
 
+    val selectorMgr = ActorSelectorManager(Dispatchers.IO)
+
     class ServerLoopbackSocketFactoryKtor : Serializable {
         override fun equals(other: Any?): Boolean = other === this || super.equals(other)
         override fun hashCode(): Int = super.hashCode()
 
         @Throws(IOException::class)
         fun createServerSocket(port: Int) =
-            aSocket()
+            aSocket(selectorMgr)
                 .tcp()
                 .bind(InetSocketAddress(InetAddress.getByName(null), port)) // TODO : NO BACKLOG SIZE CHANGE =(
     }
@@ -106,7 +111,7 @@ object LoopbackNetworkInterface {
 
     class ClientLoopbackSocketFactoryKtor : AbstractClientLoopbackSocketFactory<io.ktor.network.sockets.Socket>() {
         override fun socketCreate(host: String, port: Int): io.ktor.network.sockets.Socket =
-            runBlocking { aSocket().tcp().connect(InetSocketAddress(host, port)) }
+            runBlocking { aSocket(selectorMgr).tcp().connect(InetSocketAddress(host, port)) }
     }
 
 }

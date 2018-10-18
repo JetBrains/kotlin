@@ -22,6 +22,10 @@ import java.util.logging.Logger
 class CompileServiceRMIWrapper(val server: CompileServiceServerSide, daemonOptions: DaemonOptions, compilerId: CompilerId) :
     CompileService {
 
+    override fun classesFqNamesByFiles(sessionId: Int, sourceFiles: Set<File>) = runBlocking {
+        server.classesFqNamesByFiles(sessionId, sourceFiles)
+    }
+
     val log = Logger.getLogger("CompileServiceRMIWrapper")
 
     private fun deprecated(): Nothing = TODO("NEVER USE DEPRECATED METHODS, PLEASE!") // prints this todo message

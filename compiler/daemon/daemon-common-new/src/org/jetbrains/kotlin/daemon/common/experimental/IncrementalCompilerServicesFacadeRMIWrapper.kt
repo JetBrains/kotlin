@@ -14,30 +14,6 @@ import java.io.Serializable
 class IncrementalCompilerServicesFacadeRMIWrapper(val clientSide: IncrementalCompilerServicesFacadeClientSide) :
     IncrementalCompilerServicesFacade, Serializable {
 
-    override fun hasAnnotationsFileUpdater() = runBlocking {
-        clientSide.hasAnnotationsFileUpdater()
-    }
-
-    override fun updateAnnotations(outdatedClassesJvmNames: Iterable<String>) = runBlocking {
-        clientSide.updateAnnotations(outdatedClassesJvmNames)
-    }
-
-    override fun revert() = runBlocking {
-        clientSide.revert()
-    }
-
-    override fun registerChanges(timestamp: Long, dirtyData: SimpleDirtyData) = runBlocking {
-        clientSide.registerChanges(timestamp, dirtyData)
-    }
-
-    override fun unknownChanges(timestamp: Long) = runBlocking {
-        clientSide.unknownChanges(timestamp)
-    }
-
-    override fun getChanges(artifact: File, sinceTS: Long) = runBlocking {
-        clientSide.getChanges(artifact, sinceTS)
-    }
-
     override fun report(category: Int, severity: Int, message: String?, attachment: Serializable?) = runBlocking {
         clientSide.report(category, severity, message, attachment)
     }

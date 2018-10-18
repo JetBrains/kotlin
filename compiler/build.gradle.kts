@@ -84,7 +84,9 @@ dependencies {
     testCompile(project(":kotlin-scripting-compiler"))
     testCompile(project(":kotlin-script-util"))
     testCompileOnly(project(":kotlin-reflect-api"))
-    testCompile(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-jdk8")) { isTransitive = false }
+    testCompile(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-jdk8")) {
+        isTransitive = false
+    }
     otherCompilerModules.forEach {
         testCompileOnly(project(it))
     }
@@ -97,12 +99,19 @@ dependencies {
     testRuntime(project(":compiler:daemon")) // +
     testRuntime(project(":compiler:daemon-common")) // +
     testRuntime(project(":compiler:daemon-common-new")) // +
-    testRuntime(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-jdk8")) { isTransitive = false }
+    testRuntime(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-jdk8")) {
+        isTransitive = false
+    }
     testRuntime(commonDep("io.ktor", "ktor-network")) {
         exclude(group = "org.jetbrains.kotlin", module = "kotlin-reflect")
         exclude(group = "org.jetbrains.kotlin", module = "kotlin-stdlib")
+        exclude(group = "org.jetbrains.kotlin", module = "kotlin-stdlib-common")
         exclude(group = "org.jetbrains.kotlin", module = "kotlin-stdlib-jdk8")
         exclude(group = "org.jetbrains.kotlin", module = "kotlin-stdlib-jdk7")
+        exclude(group = "org.jetbrains.kotlinx", module = "kotlinx-coroutines-jdk8")
+        exclude(group = "org.jetbrains.kotlinx", module = "kotlinx-coroutines-core")
+        exclude(group = "org.jetbrains.kotlinx", module = "kotlinx-coroutines-core-common")
+
     }
     testRuntime(androidDxJar())
     testRuntime(files(toolsJar()))

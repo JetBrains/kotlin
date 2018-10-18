@@ -19,32 +19,6 @@ class IncrementalCompilerServicesFacadeClientSideImpl(val serverPort: Int) :
     IncrementalCompilerServicesFacadeClientSide,
     Client<CompilerServicesFacadeBaseServerSide> by DefaultClient(serverPort) {
 
-    override suspend fun hasAnnotationsFileUpdater(): Boolean {
-        val id = sendMessage(HasAnnotationsFileUpdaterMessage())
-        return readMessage(id)
-    }
-
-    override suspend fun updateAnnotations(outdatedClassesJvmNames: Iterable<String>) {
-        sendNoReplyMessage(UpdateAnnotationsMessage(outdatedClassesJvmNames))
-    }
-
-    override suspend fun revert() {
-        sendNoReplyMessage(RevertMessage())
-    }
-
-    override suspend fun registerChanges(timestamp: Long, dirtyData: SimpleDirtyData) {
-        sendNoReplyMessage(RegisterChangesMessage(timestamp, dirtyData))
-    }
-
-    override suspend fun unknownChanges(timestamp: Long) {
-        sendNoReplyMessage(UnknownChangesMessage(timestamp))
-    }
-
-    override suspend fun getChanges(artifact: File, sinceTS: Long): Iterable<SimpleDirtyData>? {
-        val id = sendMessage(HasAnnotationsFileUpdaterMessage())
-        return readMessage(id)
-    }
-
     override suspend fun report(category: Int, severity: Int, message: String?, attachment: Serializable?) {
         sendNoReplyMessage(CompilerServicesFacadeBaseServerSide.ReportMessage(category, severity, message, attachment))
     }

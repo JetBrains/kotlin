@@ -448,7 +448,7 @@ class KotlinCompilerClient : KotlinCompilerDaemonClient {
         registryDir.mkdirs()
         val timestampMarker = createTempFile("kotlin-daemon-client-tsmarker", directory = registryDir)
         val aliveWithMetadata = try {
-            log.info("walkDaemonsAsync...")
+            log.info("walkDaemonsAsync... : ${registryDir.path}")
             walkDaemonsAsync(registryDir, compilerId, timestampMarker, report = report).also {
                 log.info(
                     "daemons (${it.size}): ${it.map { "daemon(params : " + it.jvmOptions.jvmParams.joinToString(", ") + ")" }.joinToString(

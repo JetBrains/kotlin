@@ -25,7 +25,7 @@ val nativePlatformVariants = listOf(
 dependencies {
     compileOnly(project(":compiler:util"))
     compileOnly(project(":compiler:cli-common"))
-    compileOnly(project(":compiler:daemon-common"))
+    compileOnly(project(":compiler:daemon-common-new"))
     compileOnly(project(":kotlin-reflect-api"))
     compileOnly(project(":kotlin-daemon-client"))
     embeddedComponents(project(":kotlin-daemon-client"))
@@ -39,12 +39,18 @@ dependencies {
         embeddedComponents(commonDep("net.rubygrapefruit", "native-platform", "-$it"))
     }
     compile(projectDist(":kotlin-reflect"))
-    compile(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-jdk8")) { isTransitive = false }
+    compile(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-jdk8")) {
+        isTransitive = false
+    }
     compile(commonDep("io.ktor", "ktor-network")) {
         exclude(group = "org.jetbrains.kotlin", module = "kotlin-reflect")
         exclude(group = "org.jetbrains.kotlin", module = "kotlin-stdlib")
+        exclude(group = "org.jetbrains.kotlin", module = "kotlin-stdlib-common")
         exclude(group = "org.jetbrains.kotlin", module = "kotlin-stdlib-jdk8")
         exclude(group = "org.jetbrains.kotlin", module = "kotlin-stdlib-jdk7")
+        exclude(group = "org.jetbrains.kotlinx", module = "kotlinx-coroutines-jdk8")
+        exclude(group = "org.jetbrains.kotlinx", module = "kotlinx-coroutines-core")
+        exclude(group = "org.jetbrains.kotlinx", module = "kotlinx-coroutines-core-common")
     }
 }
 
