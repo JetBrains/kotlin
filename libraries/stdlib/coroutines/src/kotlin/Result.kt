@@ -119,6 +119,7 @@ internal fun createFailure(exception: Throwable): Any =
  * add some exception-augmenting logic here (if needed).
  */
 @PublishedApi
+@SinceKotlin("1.3")
 internal fun Result<*>.throwOnFailure() {
     if (value is Result.Failure) throw value.exception
 }
@@ -160,6 +161,7 @@ public inline fun <T, R> T.runCatching(block: T.() -> R): Result<R> {
  * This function is shorthand for `getOrElse { throw it }` (see [getOrElse]).
  */
 @InlineOnly
+@SinceKotlin("1.3")
 public inline fun <T> Result<T>.getOrThrow(): T {
     throwOnFailure()
     return value as T
@@ -174,6 +176,7 @@ public inline fun <T> Result<T>.getOrThrow(): T {
  * This function is shorthand for `fold(onSuccess = { it }, onFailure = onFailure)` (see [fold]).
  */
 @InlineOnly
+@SinceKotlin("1.3")
 public inline fun <R, T : R> Result<T>.getOrElse(onFailure: (exception: Throwable) -> R): R {
     contract {
         callsInPlace(onFailure, InvocationKind.AT_MOST_ONCE)
@@ -191,6 +194,7 @@ public inline fun <R, T : R> Result<T>.getOrElse(onFailure: (exception: Throwabl
  * This function is shorthand for `getOrElse { defaultValue }` (see [getOrElse]).
  */
 @InlineOnly
+@SinceKotlin("1.3")
 public inline fun <R, T : R> Result<T>.getOrDefault(defaultValue: R): R {
     if (isFailure) return defaultValue
     return value as T
@@ -203,6 +207,7 @@ public inline fun <R, T : R> Result<T>.getOrDefault(defaultValue: R): R {
  * Note, that an exception thrown by [onSuccess] or by [onFailure] function is rethrown by this function.
  */
 @InlineOnly
+@SinceKotlin("1.3")
 public inline fun <R, T> Result<T>.fold(
     onSuccess: (value: T) -> R,
     onFailure: (exception: Throwable) -> R
@@ -228,6 +233,7 @@ public inline fun <R, T> Result<T>.fold(
  * See [mapCatching] for an alternative that encapsulates exceptions.
  */
 @InlineOnly
+@SinceKotlin("1.3")
 public inline fun <R, T> Result<T>.map(transform: (value: T) -> R): Result<R> {
     contract {
         callsInPlace(transform, InvocationKind.AT_MOST_ONCE)
@@ -247,6 +253,7 @@ public inline fun <R, T> Result<T>.map(transform: (value: T) -> R): Result<R> {
  * See [map] for an alternative that rethrows exceptions.
  */
 @InlineOnly
+@SinceKotlin("1.3")
 public inline fun <R, T> Result<T>.mapCatching(transform: (value: T) -> R): Result<R> {
     return when {
         isSuccess -> runCatching { transform(value as T) }
@@ -263,6 +270,7 @@ public inline fun <R, T> Result<T>.mapCatching(transform: (value: T) -> R): Resu
  * See [recoverCatching] for an alternative that encapsulates exceptions.
  */
 @InlineOnly
+@SinceKotlin("1.3")
 public inline fun <R, T: R> Result<T>.recover(transform: (exception: Throwable) -> R): Result<R> {
     contract {
         callsInPlace(transform, InvocationKind.AT_MOST_ONCE)
@@ -282,6 +290,7 @@ public inline fun <R, T: R> Result<T>.recover(transform: (exception: Throwable) 
  * See [recover] for an alternative that rethrows exceptions.
  */
 @InlineOnly
+@SinceKotlin("1.3")
 public inline fun <R, T: R> Result<T>.recoverCatching(transform: (exception: Throwable) -> R): Result<R> {
     val value = value // workaround for inline classes BE bug
     return when(val exception = exceptionOrNull()) {
@@ -297,6 +306,7 @@ public inline fun <R, T: R> Result<T>.recoverCatching(transform: (exception: Thr
  * Returns the original `Result` unchanged.
  */
 @InlineOnly
+@SinceKotlin("1.3")
 public inline fun <T> Result<T>.onFailure(action: (exception: Throwable) -> Unit): Result<T> {
     contract {
         callsInPlace(action, InvocationKind.AT_MOST_ONCE)
@@ -310,6 +320,7 @@ public inline fun <T> Result<T>.onFailure(action: (exception: Throwable) -> Unit
  * Returns the original `Result` unchanged.
  */
 @InlineOnly
+@SinceKotlin("1.3")
 public inline fun <T> Result<T>.onSuccess(action: (value: T) -> Unit): Result<T> {
     contract {
         callsInPlace(action, InvocationKind.AT_MOST_ONCE)
