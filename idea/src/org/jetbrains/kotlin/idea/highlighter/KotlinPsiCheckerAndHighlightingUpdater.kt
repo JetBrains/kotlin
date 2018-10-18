@@ -14,22 +14,15 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.highlighter;
+package org.jetbrains.kotlin.idea.highlighter
 
-import com.intellij.psi.PsiElement;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.idea.inspections.UnusedSymbolInspection;
-import org.jetbrains.kotlin.psi.KtNamedFunction;
-import org.jetbrains.kotlin.psi.KtParameter;
+import org.jetbrains.kotlin.idea.inspections.UnusedSymbolInspection
+import org.jetbrains.kotlin.psi.KtNamedFunction
+import org.jetbrains.kotlin.psi.KtParameter
 
-public class KotlinPsiCheckerAndHighlightingUpdater extends KotlinPsiChecker {
-    @Override
-    protected boolean shouldSuppressUnusedParameter(@NotNull KtParameter parameter) {
-        PsiElement grandParent = parameter.getParent().getParent();
-        if (grandParent instanceof KtNamedFunction) {
-            KtNamedFunction function = (KtNamedFunction) grandParent;
-            return UnusedSymbolInspection.Companion.isEntryPoint(function);
-        }
-        return false;
+class KotlinPsiCheckerAndHighlightingUpdater : KotlinPsiChecker() {
+    override fun shouldSuppressUnusedParameter(parameter: KtParameter): Boolean {
+        val grandParent = parameter.parent.parent
+        return if (grandParent is KtNamedFunction) UnusedSymbolInspection.isEntryPoint(grandParent) else false
     }
 }
