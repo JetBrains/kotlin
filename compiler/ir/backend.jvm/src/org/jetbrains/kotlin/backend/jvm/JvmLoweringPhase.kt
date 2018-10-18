@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.backend.jvm
 import org.jetbrains.kotlin.backend.common.CompilerPhase
 import org.jetbrains.kotlin.backend.common.PhaseRunner
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
-import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.name
 import org.jetbrains.kotlin.ir.util.dump
@@ -56,13 +55,12 @@ enum class JvmLoweringPhase(
     override val prerequisite = prerequisiteVararg.toSet()
 }
 
-enum class BeforeOrAfter { BEFORE, AFTER; }
+enum class BeforeOrAfter { BEFORE, AFTER }
 
-object JvmPhaseRunner: PhaseRunner<JvmBackendContext> {
-    override fun reportBefore(context: JvmBackendContext, element: IrElement, phase: CompilerPhase, depth: Int) {
-        val irFile = element as IrFile
+object JvmPhaseRunner: PhaseRunner<JvmBackendContext, IrFile> {
+    override fun reportBefore(context: JvmBackendContext, data: IrFile, phase: CompilerPhase, depth: Int) {
         if (phase in context.phases.toDumpStateBefore) {
-            dumpFile(irFile, phase, BeforeOrAfter.BEFORE)
+            dumpFile(data, phase, BeforeOrAfter.BEFORE)
         }
     }
 
@@ -81,10 +79,9 @@ object JvmPhaseRunner: PhaseRunner<JvmBackendContext> {
         context.inVerbosePhase = false
     }
 
-    override fun reportAfter(context: JvmBackendContext, element: IrElement, phase: CompilerPhase, depth: Int) {
-        val irFile = element as IrFile
+    override fun reportAfter(context: JvmBackendContext, data: IrFile, phase: CompilerPhase, depth: Int) {
         if (phase in context.phases.toDumpStateAfter) {
-            dumpFile(irFile, phase, BeforeOrAfter.AFTER)
+            dumpFile(data, phase, BeforeOrAfter.AFTER)
         }
     }
 }
@@ -94,6 +91,7 @@ private fun runAndProfile(message: String, body: () -> Unit) {
     println("$message: $msec msec")
 }
 
+@Suppress("UNUSED_PARAMETER")
 private fun justRun(message: String, body: () -> Unit) = body()
 
 private fun separator(title: String) {

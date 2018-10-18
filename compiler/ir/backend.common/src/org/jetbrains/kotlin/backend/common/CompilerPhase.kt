@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.backend.common
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
-import org.jetbrains.kotlin.ir.IrElement
 
 interface CompilerPhase {
     val description: String
@@ -67,30 +66,32 @@ class CompilerPhases<Phase>(phaseArray: Array<Phase>, config: CompilerConfigurat
     }
 }
 
-interface PhaseRunner<Context : CommonBackendContext> {
-    fun reportBefore(context: Context, element: IrElement, phase: CompilerPhase, depth: Int)
+interface PhaseRunner<Context : CommonBackendContext, Data> {
+    fun reportBefore(context: Context, data: Data, phase: CompilerPhase, depth: Int)
     fun runBody(context: Context, phase: CompilerPhase, body: () -> Unit)
-    fun reportAfter(context: Context, element: IrElement, phase: CompilerPhase, depth: Int)
+    fun reportAfter(context: Context, data: Data, phase: CompilerPhase, depth: Int)
 }
 
 /* We assume that `element` is being modified by each phase, retaining its identity in the process. */
-class CompilerPhaseManager<Context : CommonBackendContext, Phase>(
+class CompilerPhaseManager<Context : CommonBackendContext, Data, Phase>(
     val context: Context,
     val phases: CompilerPhases<Phase>,
-    val element: IrElement,
-    val phaseRunner: PhaseRunner<Context>,
-    val parent: CompilerPhaseManager<Context, Phase>? = null
+    val data: Data,
+    val phaseRunner: PhaseRunner<Context, Data>,
+    val parent: CompilerPhaseManager<Context, *, Phase>? = null
 ) where Phase : CompilerPhase, Phase : Enum<Phase> {
     val depth: Int = parent?.depth?.inc() ?: 0
 
-    val previousPhases = mutableSetOf<Phase>()
+    private val previousPhases = mutableSetOf<Phase>()
 
-    fun createChild(
-        newElement: IrElement = element,
-        newPhaseRunner: PhaseRunner<Context> = phaseRunner
+    fun <NewData> createChild(
+        newData: NewData,
+        newPhaseRunner: PhaseRunner<Context, NewData>
     ) = CompilerPhaseManager(
-        context, phases, newElement, newPhaseRunner, parent = this
+        context, phases, newData, newPhaseRunner, parent = this
     )
+
+    fun createChild() = createChild(data, phaseRunner)
 
     private fun checkPrerequisite(phase: CompilerPhase): Boolean =
         previousPhases.contains(phase) || parent?.checkPrerequisite(phase) == true
@@ -106,8 +107,8 @@ class CompilerPhaseManager<Context : CommonBackendContext, Phase>(
 
         previousPhases.add(phase)
 
-        phaseRunner.reportBefore(context, element, phase, depth)
+        phaseRunner.reportBefore(context, data, phase, depth)
         phaseRunner.runBody(context, phase, body)
-        phaseRunner.reportAfter(context, element, phase, depth)
+        phaseRunner.reportAfter(context, data, phase, depth)
     }
 }
