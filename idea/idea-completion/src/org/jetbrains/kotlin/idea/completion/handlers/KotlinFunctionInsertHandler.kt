@@ -179,9 +179,7 @@ sealed class KotlinFunctionInsertHandler(callType: CallType<*>) : KotlinCallable
             if (!insertTypeArguments) {
                 if (shouldPlaceCaretInBrackets(completionChar) || closeBracketOffset == null) {
                     editor.caretModel.moveToOffset(openingBracketOffset + 1 + inBracketsShift)
-                    if (!insertLambda) {
-                        AutoPopupController.getInstance(project)?.autoPopupParameterInfo(editor, offsetElement)
-                    }
+                    AutoPopupController.getInstance(project)?.autoPopupParameterInfo(editor, offsetElement)
                 } else {
                     editor.caretModel.moveToOffset(closeBracketOffset + 1)
                 }
