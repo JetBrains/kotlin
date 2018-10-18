@@ -5,10 +5,12 @@
 
 package org.jetbrains.kotlin.daemon.experimental.unit
 
+import io.ktor.network.selector.ActorSelectorManager
+import io.ktor.network.selector.SelectorManager
 import io.ktor.network.sockets.aSocket
-import kotlinx.coroutines.async
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.*
 import org.jetbrains.kotlin.daemon.common.experimental.CompilerServicesFacadeBaseClientSideImpl
+import org.jetbrains.kotlin.daemon.common.experimental.LoopbackNetworkInterface.selectorMgr
 import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.DefaultClient
 import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.ServerBase
 import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.openIO
@@ -21,7 +23,7 @@ import java.net.InetSocketAddress
 import java.util.logging.Logger
 
 class TestServer(val serverPort: Int = 6999) {
-    private val serverSocket = aSocket().tcp().bind(InetSocketAddress(serverPort))
+    private val serverSocket = aSocket(selectorMgr).tcp().bind(InetSocketAddress(serverPort))
     private val log = Logger.getLogger("TestServer")
 
     fun awaitClient() = async {

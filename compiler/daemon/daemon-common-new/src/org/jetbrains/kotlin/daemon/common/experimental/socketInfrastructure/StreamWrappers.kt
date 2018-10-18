@@ -12,6 +12,7 @@ import kotlinx.coroutines.channels.consumeEach
 import kotlinx.coroutines.io.*
 import kotlinx.io.core.readBytes
 import java.io.*
+import java.nio.ByteBuffer
 import java.util.logging.Logger
 
 private val DEFAULT_BYTE_ARRAY = byteArrayOf(0, 0, 0, 0)
@@ -30,7 +31,7 @@ class ByteReadChannelWrapper(readChannel: ByteReadChannel, private val log: Logg
         else
             try {
                 readChannel.readPacket(4).readBytes()
-            } catch (e: IOException) {
+            } catch (e: Exception) {
                 log.info("failed to read message length, ${e.message}")
                 null
             }
@@ -40,7 +41,7 @@ class ByteReadChannelWrapper(readChannel: ByteReadChannel, private val log: Logg
             readChannel.readPacket(
                 length
             ).readBytes()
-        } catch (e: IOException) {
+        } catch (e: Exception) {
             log.info("failed to read packet (${e.message})")
             null
         }
@@ -145,7 +146,7 @@ class ByteWriteChannelWrapper(writeChannel: ByteWriteChannel, private val log: L
         if (!writeChannel.isClosedForWrite) {
             try {
                 writeChannel.writeFully(b)
-            } catch (e: IOException) {
+            } catch (e: Exception) {
                 log.info("failed to print message, ${e.message}")
             }
         } else {
@@ -166,7 +167,7 @@ class ByteWriteChannelWrapper(writeChannel: ByteWriteChannel, private val log: L
                         if (!writeChannel.isClosedForWrite) {
                             try {
                                 writeChannel.flush()
-                            } catch (e: IOException) {
+                            } catch (e: Exception) {
                                 log.info("failed to flush byte write chanel")
                             }
                         }
