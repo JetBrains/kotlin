@@ -133,7 +133,11 @@ object ProjectRootsUtil {
         }
         if (includeLibrarySource && !isBinary) {
             if (fileIndex.isInLibrarySource(file)) return true
-            if (scriptConfigurationManager?.getAllLibrarySourcesScope()?.contains(file) == true) return true
+            if (scriptConfigurationManager?.getAllLibrarySourcesScope()?.contains(file) == true &&
+                !fileIndex.isInSourceContentWithoutInjected(file)
+            ) {
+                return true
+            }
         }
 
         return false
