@@ -33,6 +33,8 @@ import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.impl.IrDynamicTypeImpl
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.util.getPropertyDeclaration
+import org.jetbrains.kotlin.ir.util.kotlinPackageFqn
+import org.jetbrains.kotlin.ir.util.referenceFunction
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
@@ -177,14 +179,14 @@ class JsIrBackendContext(
             override val areEqual
                 get () = TODO("not implemented")
 
-            override val ThrowNullPointerException
-                get () = irBuiltIns.throwNpeSymbol
+            override val ThrowNullPointerException = getFunctions(kotlinPackageFqn.child(Name.identifier("THROW_NPE"))).singleOrNull()?.let {
+                symbolTable.referenceSimpleFunction(it) } ?: irBuiltIns.throwNpeSymbol
 
             override val ThrowNoWhenBranchMatchedException
                 get () = irBuiltIns.noWhenBranchMatchedExceptionSymbol
 
-            override val ThrowTypeCastException
-                get () = irBuiltIns.throwCceSymbol
+            override val ThrowTypeCastException = getFunctions(kotlinPackageFqn.child(Name.identifier("THROW_CCE"))).singleOrNull()?.let {
+                symbolTable.referenceSimpleFunction(it) } ?: irBuiltIns.throwCceSymbol
 
             override val ThrowUninitializedPropertyAccessException=
                 symbolTable.referenceSimpleFunction(getFunctions(FqName("kotlin.throwUninitializedPropertyAccessException")).single())
@@ -204,6 +206,9 @@ class JsIrBackendContext(
 
         override fun shouldGenerateHandlerParameterForDefaultBodyFun() = true
     }
+
+    val throwISEymbol = getFunctions(kotlinPackageFqn.child(Name.identifier("THROW_CCE"))).singleOrNull()?.let {
+        symbolTable.referenceSimpleFunction(it) } ?: irBuiltIns.throwIseSymbol
 
     val coroutineImplLabelProperty by lazy { ir.symbols.coroutineImpl.getPropertyDeclaration("state")!! }
     val coroutineImplResultSymbol by lazy { ir.symbols.coroutineImpl.getPropertyDeclaration("result")!! }

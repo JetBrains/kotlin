@@ -42,8 +42,8 @@ class TypeOperatorLowering(val context: JsIrBackendContext) : FileLoweringPass {
     private val calculator = JsIrArithBuilder(context)
 
     //NOTE: Should we define JS-own functions similar to current implementation?
-    private val throwCCE = context.irBuiltIns.throwCceSymbol
-    private val throwNPE = context.irBuiltIns.throwNpeSymbol
+    private val throwCCE = context.ir.symbols.ThrowTypeCastException
+    private val throwNPE = context.ir.symbols.ThrowNullPointerException
 
     private val eqeq = context.irBuiltIns.eqeqSymbol
 
