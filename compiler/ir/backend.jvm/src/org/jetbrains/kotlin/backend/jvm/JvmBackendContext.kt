@@ -56,6 +56,8 @@ class JvmBackendContext(
         }
     }
 
+    var inVerbosePhase = false
+
     fun rootPhaseManager(irFile: IrFile) = CompilerPhaseManager(this, phases, irFile, JvmPhaseRunner)
 
 
@@ -88,7 +90,9 @@ class JvmBackendContext(
 
     override fun log(message: () -> String) {
         /*TODO*/
-        print(message())
+        if (inVerbosePhase) {
+            print(message())
+        }
     }
 
     override fun report(element: IrElement?, irFile: IrFile?, message: String, isError: Boolean) {

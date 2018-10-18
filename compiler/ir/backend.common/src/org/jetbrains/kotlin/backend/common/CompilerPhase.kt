@@ -62,7 +62,7 @@ class CompilerPhases<Phase>(phaseArray: Array<Phase>, config: CompilerConfigurat
 
 interface PhaseRunner<Context : CommonBackendContext> {
     fun reportBefore(context: Context, element: IrElement, phase: CompilerPhase, depth: Int)
-    fun runBody(context: Context, body: () -> Unit)
+    fun runBody(context: Context, phase: CompilerPhase, body: () -> Unit)
     fun reportAfter(context: Context, element: IrElement, phase: CompilerPhase, depth: Int)
 }
 
@@ -100,7 +100,7 @@ class CompilerPhaseManager<Context : CommonBackendContext, Phase>(
         previousPhases.add(phase)
 
         phaseRunner.reportBefore(context, element, phase, depth)
-        phaseRunner.runBody(context, body)
+        phaseRunner.runBody(context, phase, body)
         phaseRunner.reportAfter(context, element, phase, depth)
     }
 }
