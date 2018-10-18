@@ -104,7 +104,6 @@
         <runConfigurationProducer implementation="org.jetbrains.kotlin.idea.run.script.standalone.KotlinStandaloneScriptRunConfigurationProducer"/>
 
         <library.type implementation="org.jetbrains.kotlin.idea.framework.JSLibraryType"/>
-        <library.type implementation="org.jetbrains.kotlin.idea.framework.CommonLibraryType"/>
         <library.javaSourceRootDetector implementation="org.jetbrains.kotlin.idea.configuration.KotlinSourceRootDetector"/>
 
         <editorNotificationProvider implementation="org.jetbrains.kotlin.idea.configuration.KotlinSetupEnvironmentNotificationProvider"/>

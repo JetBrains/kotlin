@@ -71,8 +71,15 @@ abstract class IdePlatformKindTooling {
             return TOOLING_SUPPORT_BY_KIND[kind] ?: error("Unknown platform $kind")
         }
 
+        /**
+         * @return null if current IDE doesn't know given platform
+         */
+        fun getToolingIfAny(platformId: KotlinPlatform): IdePlatformKindTooling? {
+            return TOOLING_SUPPORT_BY_PLATFORM_ID[platformId]
+        }
+
         fun getTooling(platformId: KotlinPlatform): IdePlatformKindTooling {
-            return TOOLING_SUPPORT_BY_PLATFORM_ID[platformId] ?: error("Unknown Gradle platform $platformId")
+            return getToolingIfAny(platformId) ?: error("Unknown Gradle platform $platformId")
         }
     }
 }
