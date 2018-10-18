@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.resolve.BindingTraceContext
 import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.resolve.checkers.ExpectedActualDeclarationChecker
 import org.jetbrains.kotlin.resolve.diagnostics.SimpleDiagnostics
+import org.jetbrains.kotlin.resolve.jvm.multiplatform.JavaActualAnnotationArgumentExtractor
 
 class PlatformExpectedAnnotator : Annotator {
     override fun annotate(element: PsiElement, holder: AnnotationHolder) {
@@ -49,12 +50,12 @@ class PlatformExpectedAnnotator : Annotator {
         val descriptor = declaration.toDescriptor() as? MemberDescriptor ?: return
         if (!descriptor.isExpect) return
 
+        // TODO: obtain the list of annotation argument extractors from platform somehow
+        val checker = ExpectedActualDeclarationChecker(listOf(JavaActualAnnotationArgumentExtractor()))
+
         val trace = BindingTraceContext()
         for (module in implementingModules) {
-            ExpectedActualDeclarationChecker.checkExpectedDeclarationHasActual(
-                declaration, descriptor, trace, module,
-                ExpectActualTracker.DoNothing
-            )
+            checker.checkExpectedDeclarationHasActual(declaration, descriptor, trace, module, ExpectActualTracker.DoNothing)
         }
 
         val suppressionCache = KotlinCacheService.getInstance(declaration.project).getSuppressionCache()
