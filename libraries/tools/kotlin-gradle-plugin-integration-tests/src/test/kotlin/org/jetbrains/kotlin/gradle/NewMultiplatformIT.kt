@@ -440,7 +440,10 @@ class NewMultiplatformIT : BaseGradleIT() {
 
                 val expectedFileName = "sample-lib-${KotlinMultiplatformPlugin.METADATA_TARGET_NAME}-1.0.jar"
 
-                val paths = metadataDependencyRegex.findAll(output).map { it.groupValues[1] to it.groupValues[2] }.toSet()
+                val paths = metadataDependencyRegex
+                    .findAll(output).map { it.groupValues[1] to it.groupValues[2] }
+                    .filter { (_, f) -> "sample-lib" in f }
+                    .toSet()
 
                 Assert.assertEquals(
                     listOf("Api", "Implementation", "CompileOnly", "RuntimeOnly").map {
