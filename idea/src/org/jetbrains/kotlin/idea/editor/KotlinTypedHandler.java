@@ -100,6 +100,7 @@ public class KotlinTypedHandler extends TypedHandlerDelegate {
                 }
 
                 if (iterator.atEnd() || !(SUPPRESS_AUTO_INSERT_CLOSE_BRACE_AFTER.contains(iterator.getTokenType()))) {
+                    AutoPopupController.getInstance(project).autoPopupParameterInfo(editor, null);
                     return Result.CONTINUE;
                 }
 
