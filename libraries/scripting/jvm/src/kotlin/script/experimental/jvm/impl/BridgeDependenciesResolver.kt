@@ -40,14 +40,17 @@ class BridgeDependenciesResolver(
             )
 
             val oldClasspath =
-                scriptCompilationConfiguration[ScriptCompilationConfiguration.dependencies]
-                    ?.flatMap { (it as JvmDependency).classpath } ?: emptyList()
+                scriptCompilationConfiguration[ScriptCompilationConfiguration.dependencies].toClassPathOrEmpty()
 
             val defaultImports = scriptCompilationConfiguration[ScriptCompilationConfiguration.defaultImports]?.toList() ?: emptyList()
 
             val refineFn = scriptCompilationConfiguration[ScriptCompilationConfiguration.refineConfigurationOnAnnotations]?.handler
                 ?: return DependenciesResolver.ResolveResult.Success(
-                    ScriptDependencies(classpath = oldClasspath, imports = defaultImports),
+                    ScriptDependencies(
+                        classpath = oldClasspath,
+                        sources = scriptCompilationConfiguration[ScriptCompilationConfiguration.ide.dependenciesSources].toClassPathOrEmpty(),
+                        imports = defaultImports
+                    ),
                     diagnostics
                 )
 
@@ -72,6 +75,7 @@ class BridgeDependenciesResolver(
             return DependenciesResolver.ResolveResult.Success(
                 ScriptDependencies(
                     classpath = newClasspath, // TODO: maybe it should return only increment from the initial config
+                    sources = refinedConfiguration[ScriptCompilationConfiguration.ide.dependenciesSources].toClassPathOrEmpty(),
                     imports = defaultImports
                 ),
                 diagnostics
@@ -93,3 +97,4 @@ internal fun ScriptContents.toScriptSource(): SourceCode = when {
     else -> throw IllegalArgumentException("Unable to convert script contents $this into script source")
 }
 
+internal fun List<ScriptDependency>?.toClassPathOrEmpty() = this?.flatMap { (it as JvmDependency).classpath } ?: emptyList()
