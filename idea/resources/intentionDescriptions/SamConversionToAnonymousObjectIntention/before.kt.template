@@ -1,0 +1,6 @@
+val runnable = Runnable {
+    foo()
+}
+
+fun foo() {
+}

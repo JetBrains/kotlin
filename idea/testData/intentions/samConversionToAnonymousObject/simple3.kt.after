@@ -1,0 +1,10 @@
+import java.time.LocalDate
+import java.time.LocalDateTime
+
+// RUNTIME_WITH_FULL_JDK
+val s = object : Sam {
+    override fun test(d: LocalDate, t: LocalDateTime): List<String> {
+        val s = "$d$t"
+        return listOf(s)
+    }
+}

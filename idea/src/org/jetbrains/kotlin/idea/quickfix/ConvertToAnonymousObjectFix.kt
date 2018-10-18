@@ -7,70 +7,48 @@ package org.jetbrains.kotlin.idea.quickfix
 
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.diagnostics.DiagnosticWithParameters3
 import org.jetbrains.kotlin.diagnostics.Errors
-import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfType
-import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.intentions.SamConversionToAnonymousObjectIntention
+import org.jetbrains.kotlin.psi.KtCallExpression
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtNameReferenceExpression
+import org.jetbrains.kotlin.psi.KtReferenceExpression
 import org.jetbrains.kotlin.resolve.calls.tower.WrongResolutionToClassifier
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyClassDescriptor
-import org.jetbrains.kotlin.types.typeUtil.isUnit
+import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
-class ConvertToAnonymousObjectFix(
-    callExpression: KtCallExpression,
-    private val interfaceName: String,
-    private val functionName: String,
-    private val functionParameters: String,
-    private val functionReturnType: String?
-) : KotlinQuickFixAction<KtCallExpression>(callExpression) {
+class ConvertToAnonymousObjectFix(element: KtNameReferenceExpression) : KotlinQuickFixAction<KtNameReferenceExpression>(element) {
     override fun getFamilyName() = "Convert to anonymous object"
 
     override fun getText() = familyName
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
-        val callExpression = element ?: return
-        val lambda = callExpression.lambdaArguments.singleOrNull()?.getLambdaExpression() ?: return
-
-        val psiFactory = KtPsiFactory(project)
-        val body = lambda.bodyExpression
-        if (body != null) {
-            body.forEachDescendantOfType<KtReturnExpression> {
-                if (it.getLabelName() == interfaceName) it.labeledExpression?.delete()
-            }
-            val last = body.statements.lastOrNull()
-            if (last !is KtReturnExpression) last?.replace(psiFactory.createExpressionByPattern("return $0", last))
-        }
-
-        val anonymousObject = psiFactory.buildExpression {
-            appendFixedText("object : $interfaceName {")
-            appendFixedText("override fun $functionName$functionParameters")
-            if (functionReturnType != null) appendFixedText(": $functionReturnType")
-            appendFixedText("{")
-            if (body != null) appendExpression(body)
-            appendFixedText("}")
-            appendFixedText("}")
-        }
-        callExpression.replace(anonymousObject)
+        val nameReference = element ?: return
+        val call = nameReference.parent as? KtCallExpression ?: return
+        val functionDescriptor = nameReference.analyze().diagnostics.forElement(nameReference).firstNotNullResult {
+            if (it.factory == Errors.RESOLUTION_TO_CLASSIFIER) getFunctionDescriptor(Errors.RESOLUTION_TO_CLASSIFIER.cast(it)) else null
+        } ?: return
+        val functionName = functionDescriptor.name.asString()
+        SamConversionToAnonymousObjectIntention.convertToAnonymousObject(call, functionDescriptor, functionName)
     }
 
     companion object : KotlinSingleIntentionActionFactory() {
-        override fun createAction(diagnostic: Diagnostic): KotlinQuickFixAction<KtCallExpression>? {
+        override fun createAction(diagnostic: Diagnostic): KotlinQuickFixAction<KtNameReferenceExpression>? {
             val casted = Errors.RESOLUTION_TO_CLASSIFIER.cast(diagnostic)
             if (casted.b != WrongResolutionToClassifier.INTERFACE_AS_FUNCTION) return null
-
-            val callExpression = casted.psiElement.parent as? KtCallExpression ?: return null
-            if (callExpression.lambdaArguments.singleOrNull()?.getLambdaExpression() == null) return null
-            val interfaceName = callExpression.calleeExpression?.text ?: return null
-
-            val classDescriptor = casted.a as? LazyClassDescriptor ?: return null
-            val function = classDescriptor.declaredCallableMembers.singleOrNull() as? SimpleFunctionDescriptor ?: return null
-            val functionDeclaration = DescriptorToSourceUtils.descriptorToDeclaration(function) as? KtNamedFunction ?: return null
-            val functionName = functionDeclaration.name ?: return null
-            val functionParameters = functionDeclaration.valueParameterList?.text ?: return null
-            val functionReturnType = function.returnType?.takeIf { !it.isUnit() }?.toString()
-
-            return ConvertToAnonymousObjectFix(callExpression, interfaceName, functionName, functionParameters, functionReturnType)
+            val nameReference = casted.psiElement as? KtNameReferenceExpression ?: return null
+            if (nameReference.parent as? KtCallExpression == null) return null
+            if (getFunctionDescriptor(casted) == null) return null
+            return ConvertToAnonymousObjectFix(nameReference)
         }
+
+        private fun getFunctionDescriptor(
+            d: DiagnosticWithParameters3<KtReferenceExpression, ClassifierDescriptor, WrongResolutionToClassifier, String>
+        ) = (d.a as? LazyClassDescriptor)?.declaredCallableMembers?.singleOrNull() as? SimpleFunctionDescriptor
     }
 }
