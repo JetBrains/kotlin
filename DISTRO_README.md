@@ -51,4 +51,4 @@ To generate interoperability stubs create library definition file
  
 See [`INTEROP.md`](https://github.com/JetBrains/kotlin-native/blob/master/INTEROP.md) for more information on how to use C libraries from _Kotlin/Native_.
 
-See `RELEASE_NOTES.md` for information on supported platforms and current limitations.
+See [`RELEASE_NOTES.md`](https://github.com/JetBrains/kotlin-native/blob/master/RELEASE_NOTES.md) for information on supported platforms and current limitations.
