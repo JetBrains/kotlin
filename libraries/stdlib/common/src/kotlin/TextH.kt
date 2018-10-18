@@ -221,6 +221,7 @@ expect fun String.toByte(): Byte
 /**
  * Parses the string as a signed [Byte] number and returns the result.
  * @throws NumberFormatException if the string is not a valid representation of a number.
+ * @throws IllegalArgumentException when [radix] is not a valid radix for string to number conversion.
  */
 expect fun String.toByte(radix: Int): Byte
 
@@ -234,6 +235,7 @@ expect fun String.toShort(): Short
 /**
  * Parses the string as a [Short] number and returns the result.
  * @throws NumberFormatException if the string is not a valid representation of a number.
+ * @throws IllegalArgumentException when [radix] is not a valid radix for string to number conversion.
  */
 expect fun String.toShort(radix: Int): Short
 
@@ -246,6 +248,7 @@ expect fun String.toInt(): Int
 /**
  * Parses the string as an [Int] number and returns the result.
  * @throws NumberFormatException if the string is not a valid representation of a number.
+ * @throws IllegalArgumentException when [radix] is not a valid radix for string to number conversion.
  */
 expect fun String.toInt(radix: Int): Int
 
@@ -258,6 +261,7 @@ expect fun String.toLong(): Long
 /**
  * Parses the string as a [Long] number and returns the result.
  * @throws NumberFormatException if the string is not a valid representation of a number.
+ * @throws IllegalArgumentException when [radix] is not a valid radix for string to number conversion.
  */
 expect fun String.toLong(radix: Int): Long
 
