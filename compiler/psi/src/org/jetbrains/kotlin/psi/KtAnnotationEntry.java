@@ -20,6 +20,7 @@ import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.KtNodeTypes;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.stubs.KotlinAnnotationEntryStub;
@@ -60,8 +61,8 @@ public class KtAnnotationEntry extends KtElementImplStub<KotlinAnnotationEntrySt
     @Override
     public KtValueArgumentList getValueArgumentList() {
         KotlinAnnotationEntryStub stub = getStub();
-        if (stub != null && !stub.hasValueArguments()) {
-            return null;
+        if (stub == null && getGreenStub() != null) {
+            return (KtValueArgumentList) findChildByType(KtNodeTypes.VALUE_ARGUMENT_LIST);
         }
 
         return getStubOrPsiChild(KtStubElementTypes.VALUE_ARGUMENT_LIST);
@@ -70,6 +71,11 @@ public class KtAnnotationEntry extends KtElementImplStub<KotlinAnnotationEntrySt
     @NotNull
     @Override
     public List<? extends ValueArgument> getValueArguments() {
+        KotlinAnnotationEntryStub stub = getStub();
+        if (stub != null && !stub.hasValueArguments()) {
+            return Collections.<KtValueArgument>emptyList();
+        }
+
         KtValueArgumentList list = getValueArgumentList();
         return list != null ? list.getArguments() : Collections.<KtValueArgument>emptyList();
     }

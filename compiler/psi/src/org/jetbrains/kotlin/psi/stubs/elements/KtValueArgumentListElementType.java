@@ -22,6 +22,9 @@ public class KtValueArgumentListElementType extends KtPlaceHolderStubElementType
             return false;
         }
 
+        KtValueArgumentList psi = node.getPsi(KtValueArgumentList.class);
+        if (psi.getArguments().isEmpty()) return false;
+
         return super.shouldCreateStub(node);
     }
 }
