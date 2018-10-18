@@ -15,5 +15,6 @@ data class KonanModelArtifactImpl(
     override val type: CompilerOutputKind,
     override val targetPlatform: String,
     override val file: File,
-    override val buildTaskName: String
+    override val buildTaskName: String,
+    override val isTests: Boolean
 ) : KonanModelArtifact

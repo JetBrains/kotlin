@@ -19,4 +19,5 @@ interface KonanModelArtifact : Serializable {
     val targetPlatform: String
     val file: File
     val buildTaskName: String
+    val isTests: Boolean
 }

@@ -207,7 +207,7 @@ class GradleKonanLauncher(protected val myEnvironment: ExecutionEnvironment,
   @Throws(ExecutionException::class)
   fun getRunEnvironment(buildAndRunConfigurations: GradleKonanAppRunConfiguration.BuildAndRunConfigurations): CPPEnvironment {
     val environmentProblems = EnvironmentProblems()
-    val environment = CPPToolchains.createCPPEnvironment(project, null, environmentProblems, false, false)
+    val environment = CPPToolchains.createCPPEnvironment(project, projectBaseDir, null, environmentProblems, false, null)
     if (environment == null) {
       environmentProblems.throwAsExecutionException()
     }

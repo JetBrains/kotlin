@@ -10,38 +10,31 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.TransactionGuard;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.externalSystem.model.DataNode;
-import com.intellij.openapi.externalSystem.model.ExternalProjectInfo;
-import com.intellij.openapi.externalSystem.model.ProjectKeys;
-import com.intellij.openapi.externalSystem.model.project.ModuleData;
-import com.intellij.openapi.externalSystem.service.project.ProjectDataManager;
 import com.intellij.openapi.externalSystem.service.project.manage.ExternalProjectsManager;
-import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil;
 import com.intellij.openapi.progress.BackgroundTaskQueue;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.AtomicClearableLazyValue;
-import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.util.Trinity;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.NullableFunction;
 import com.intellij.util.SmartList;
+import com.intellij.util.containers.ContainerUtil;
+import com.intellij.util.containers.MultiMap;
 import com.jetbrains.cidr.lang.toolchains.CidrToolEnvironment;
 import com.jetbrains.cidr.lang.workspace.OCResolveConfiguration;
 import com.jetbrains.cidr.lang.workspace.OCWorkspaceImpl;
+import kotlin.Unit;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.konan.gradle.execution.GradleKonanBuildTarget;
 import org.jetbrains.konan.gradle.execution.GradleKonanConfiguration;
-import org.jetbrains.plugins.gradle.model.ExternalSourceSet;
-import org.jetbrains.plugins.gradle.model.data.GradleSourceSetData;
-import org.jetbrains.plugins.gradle.service.project.GradleProjectResolver;
 import org.jetbrains.plugins.gradle.settings.GradleSettings;
-import org.jetbrains.plugins.gradle.util.GradleConstants;
 
 import java.io.File;
+import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
 
 /**
@@ -105,14 +98,6 @@ public class GradleKonanWorkspace {
       CidrToolEnvironment environment = new CidrToolEnvironment();
 
       NullableFunction<File, VirtualFile> fileMapper = OCWorkspaceImpl.createFileMapper();
-      for (ExternalProjectInfo projectInfo : ProjectDataManager.getInstance().getExternalProjectsData(myProject, GradleConstants.SYSTEM_ID)) {
-        Map<String, Pair<DataNode<GradleSourceSetData>, ExternalSourceSet>> data =
-                projectInfo.getExternalProjectStructure().getUserData(GradleProjectResolver.RESOLVED_SOURCE_SETS);
-        for (DataNode<ModuleData> moduleNode : ExternalSystemApiUtil.findAll(projectInfo.getExternalProjectStructure(), ProjectKeys.MODULE)) {
-
-        }
-      }
-
       //KonanProjectDataService.forEachKonanProject(myProject, (cppProject, moduleData, rootProjectPath) -> {
       //  cppProject.getArtifacts().forEach(
       //    konanArtifact -> addConfiguration(
@@ -148,42 +133,42 @@ public class GradleKonanWorkspace {
   @NotNull
   private static List<GradleKonanBuildTarget> loadBuildTargets(@NotNull Project project) {
     List<GradleKonanBuildTarget> buildTargets = new SmartList<>();
-    //KonanProjectDataService.forEachKonanProject(project, (konanModel, moduleData, rootProjectPath) -> {
-    //  MultiMap<Trinity<String, String, String>, GradleKonanConfiguration> configurationsMap = MultiMap.createSmart();
-    //  for (KonanModelArtifact konanArtifact: konanModel.getArtifacts()) {
-    //    String compileTaskName = konanArtifact.getBuildTaskName();
-    //    String id = getConfigurationId(moduleData.getId(), konanArtifact);
-    //    // TODO: We should do something about debug/release for gradle
-    //    GradleKonanConfiguration configuration =
-    //      new GradleKonanConfiguration(id, konanArtifact.getName(), "Debug",
-    //                                   konanArtifact.getFile(), konanArtifact.getType(),
-    //                                   compileTaskName, rootProjectPath);
-    //    Trinity<String, String, String> names = Trinity.create(moduleData.getId(), moduleData.getExternalName(), konanArtifact.getName());
-    //    configurationsMap.putValue(names, configuration);
-    //  }
-    //
-    //  configurationsMap.entrySet().forEach(entry -> {
-    //    Trinity<String, String, String> names = entry.getKey();
-    //    Collection<GradleKonanConfiguration> value = entry.getValue();
-    //    List<GradleKonanConfiguration> configurations =
-    //      value instanceof List ? (List<GradleKonanConfiguration>)value : ContainerUtil.newArrayList(value);
-    //
-    //    String moduleId = names.first;
-    //    String moduleName = names.second;
-    //    String targetName = names.third;
-    //    String targetId = getBuildTargetId(moduleId, targetName);
-    //    buildTargets.add(new GradleKonanBuildTarget(targetId, targetName, moduleName, configurations));
-    //  });
-    //  return Unit.INSTANCE;
-    //});
+    KonanProjectDataService.forEachKonanProject(project, (konanModel, moduleData, rootProjectPath) -> {
+      MultiMap<Trinity<String, String, String>, GradleKonanConfiguration> configurationsMap = MultiMap.createSmart();
+      for (KonanModelArtifact konanArtifact: konanModel.getArtifacts()) {
+        String compileTaskName = konanArtifact.getBuildTaskName();
+        String id = getConfigurationId(moduleData.getId(), konanArtifact);
+        // TODO: We should do something about debug/release for gradle
+        GradleKonanConfiguration configuration =
+          new GradleKonanConfiguration(id, konanArtifact.getName(), "Debug",
+                                       konanArtifact.getFile(), konanArtifact.getType(),
+                                       compileTaskName, rootProjectPath, konanArtifact.isTests());
+        Trinity<String, String, String> names = Trinity.create(moduleData.getId(), moduleData.getExternalName(), konanArtifact.getName());
+        configurationsMap.putValue(names, configuration);
+      }
+
+      configurationsMap.entrySet().forEach(entry -> {
+        Trinity<String, String, String> names = entry.getKey();
+        Collection<GradleKonanConfiguration> value = entry.getValue();
+        List<GradleKonanConfiguration> configurations =
+                value instanceof List ? (List<GradleKonanConfiguration>)value : ContainerUtil.newArrayList(value);
+
+        String moduleId = names.first;
+        String moduleName = names.second;
+        String targetName = names.third;
+        String targetId = getBuildTargetId(moduleId, targetName);
+        buildTargets.add(new GradleKonanBuildTarget(targetId, targetName, moduleName, configurations));
+      });
+      return Unit.INSTANCE;
+    });
 
     return buildTargets;
   }
 
-  //@NotNull
-  //private static String getConfigurationId(String moduleId, KonanModelArtifact konanArtifact) {
-  //  return getBuildTargetId(moduleId, konanArtifact.getName()) + ":" + konanArtifact.getBuildTaskName();
-  //}
+  @NotNull
+  private static String getConfigurationId(String moduleId, KonanModelArtifact konanArtifact) {
+    return getBuildTargetId(moduleId, konanArtifact.getName()) + ":" + konanArtifact.getBuildTaskName();
+  }
 
   @NotNull
   private static String getBuildTargetId(String moduleId, String targetName) {

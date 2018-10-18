@@ -25,6 +25,7 @@
     <projectResolve implementation="org.jetbrains.konan.gradle.KonanProjectResolver"/>
   </extensions>
   <extensions defaultExtensionNs="com.intellij">
+    <externalProjectDataService implementation="org.jetbrains.konan.gradle.KonanProjectDataService"/>
     <projectService serviceImplementation="org.jetbrains.konan.gradle.GradleKonanWorkspace"/>
 
     <configurationType implementation="org.jetbrains.konan.gradle.execution.GradleKonanAppRunConfigurationType"/>
