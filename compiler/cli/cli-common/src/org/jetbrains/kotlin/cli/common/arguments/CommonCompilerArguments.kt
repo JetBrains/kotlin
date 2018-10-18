@@ -238,6 +238,12 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
     )
     var phasesToDump: Array<String>? by FreezableVar(null)
 
+    @Argument(
+        value = "-Xprofile-phases",
+        description = "Profile backend phases"
+    )
+    var profilePhases: Boolean by FreezableVar(false)
+
     open fun configureAnalysisFlags(collector: MessageCollector): MutableMap<AnalysisFlag<*>, Any> {
         return HashMap<AnalysisFlag<*>, Any>().apply {
             put(AnalysisFlags.skipMetadataVersionCheck, skipMetadataVersionCheck)

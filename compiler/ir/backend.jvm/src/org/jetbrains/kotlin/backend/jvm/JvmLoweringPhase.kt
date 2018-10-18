@@ -7,16 +7,18 @@ package org.jetbrains.kotlin.backend.jvm
 
 import org.jetbrains.kotlin.backend.common.CompilerPhase
 import org.jetbrains.kotlin.backend.common.PhaseRunner
+import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.name
 import org.jetbrains.kotlin.ir.util.dump
+import kotlin.system.measureTimeMillis
 
 enum class JvmLoweringPhase(
     override val description: String,
     vararg prerequisiteVararg: JvmLoweringPhase
 ) : CompilerPhase {
-    START_LOWERING("State before lowerings start"),
+    START_LOWERING("State before lowering starts"),
 
     COERCION_TO_UNIT_PATCHER("Patch coercion to unit"),
     FILE_CLASS("File class lowering"),
@@ -37,8 +39,8 @@ enum class JvmLoweringPhase(
     INNER_CLASS_CONSTRUCTOR_CALLS("Inner classs constructor calls"),
     PATCH_PARENTS_2("Patch declaration parents"),
     ENUM_CLASS("Enum class lowering"),
-    OBJECT_CLASS("object class lowering"),
-    INITIALIZERS("initializers lowering"),
+    OBJECT_CLASS("Object class lowering"),
+    INITIALIZERS("Initializers lowering"),
     SINGLETON_REFERENCES("Singleton references lowering"),
     SYNTHETIC_ACCESSOR("Synthetic accessor lowering", OBJECT_CLASS),
     BRIDGE("Bridge lowering"),
@@ -65,9 +67,18 @@ object JvmPhaseRunner: PhaseRunner<JvmBackendContext> {
     }
 
     override fun runBody(context: JvmBackendContext, phase: CompilerPhase, body: () -> Unit) {
-        if (context.state.configuration.get())
+        val runner = when {
+            phase == JvmLoweringPhase.START_LOWERING -> ::justRun
+            phase == JvmLoweringPhase.END_LOWERING -> ::justRun
+            (context.state.configuration.get(CommonConfigurationKeys.PROFILE_PHASES) == true) -> ::runAndProfile
+            else -> ::justRun
+        }
+
         context.inVerbosePhase = (phase in context.phases.verbose)
-        body()
+
+        runner(phase.description, body)
+
+        context.inVerbosePhase = false
     }
 
     override fun reportAfter(context: JvmBackendContext, element: IrElement, phase: CompilerPhase, depth: Int) {
@@ -77,6 +88,13 @@ object JvmPhaseRunner: PhaseRunner<JvmBackendContext> {
         }
     }
 }
+
+private fun runAndProfile(message: String, body: () -> Unit) {
+    val msec = measureTimeMillis(body)
+    println("$message: $msec msec")
+}
+
+private fun justRun(message: String, body: () -> Unit) = body()
 
 private fun separator(title: String) {
     println("\n\n--- ${title} ----------------------\n")

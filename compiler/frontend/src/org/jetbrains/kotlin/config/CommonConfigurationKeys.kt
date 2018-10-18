@@ -62,6 +62,9 @@ object CommonConfigurationKeys {
 
     @JvmField
     val VERBOSE_PHASES = CompilerConfigurationKey.create<Set<String>>("verbose backend phases")
+
+    @JvmField
+    val PROFILE_PHASES = CompilerConfigurationKey.create<Boolean>("profile backend phase execution")
 }
 
 var CompilerConfiguration.languageVersionSettings: LanguageVersionSettings

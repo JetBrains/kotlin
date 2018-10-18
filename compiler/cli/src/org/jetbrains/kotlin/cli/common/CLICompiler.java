@@ -195,6 +195,8 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> extends CLI
         if (phasesToDump != null) {
             configuration.put(CommonConfigurationKeys.PHASES_TO_DUMP_STATE, SetsKt.setOf(phasesToDump));
         }
+
+        configuration.put(CommonConfigurationKeys.PROFILE_PHASES, arguments.getProfilePhases());
     }
 
     @NotNull
