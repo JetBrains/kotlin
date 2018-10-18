@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.gradle.*
 import org.jetbrains.kotlin.idea.configuration.GradlePropertiesFileFacade.Companion.KOTLIN_NOT_IMPORTED_COMMON_SOURCE_SETS_SETTING
 import org.jetbrains.kotlin.idea.platform.IdePlatformKindTooling
 import org.jetbrains.plugins.gradle.model.*
+import org.jetbrains.plugins.gradle.model.data.BuildScriptClasspathData
 import org.jetbrains.plugins.gradle.model.data.GradleSourceSetData
 import org.jetbrains.plugins.gradle.service.project.AbstractProjectResolverExtension
 import org.jetbrains.plugins.gradle.service.project.GradleProjectResolver
@@ -58,6 +59,21 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtension() {
         return super.createModule(gradleModule, projectDataNode).also {
             initializeModuleData(gradleModule, it, projectDataNode, resolverCtx)
         }
+    }
+
+    override fun populateModuleExtraModels(gradleModule: IdeaModule, ideModule: DataNode<ModuleData>) {
+        if (ExternalSystemApiUtil.find(ideModule, BuildScriptClasspathData.KEY) == null) {
+            val buildScriptClasspathModel = resolverCtx.getExtraProject(gradleModule, BuildScriptClasspathModel::class.java)
+            val classpathEntries = buildScriptClasspathModel?.classpath?.map {
+                BuildScriptClasspathData.ClasspathEntry(it.classes, it.sources, it.javadoc)
+            } ?: emptyList()
+            val buildScriptClasspathData = BuildScriptClasspathData(GradleConstants.SYSTEM_ID, classpathEntries).also {
+                it.gradleHomeDir = buildScriptClasspathModel?.gradleHomeDir
+            }
+            ideModule.createChild(BuildScriptClasspathData.KEY, buildScriptClasspathData)
+        }
+
+        super.populateModuleExtraModels(gradleModule, ideModule)
     }
 
     override fun populateModuleContentRoots(gradleModule: IdeaModule, ideModule: DataNode<ModuleData>) {
