@@ -65,6 +65,7 @@ object JvmPhaseRunner: PhaseRunner<JvmBackendContext> {
     }
 
     override fun runBody(context: JvmBackendContext, phase: CompilerPhase, body: () -> Unit) {
+        if (context.state.configuration.get())
         context.inVerbosePhase = (phase in context.phases.verbose)
         body()
     }

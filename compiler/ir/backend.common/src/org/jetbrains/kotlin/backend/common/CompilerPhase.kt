@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.common
 
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.CompilerConfigurationKey
 import org.jetbrains.kotlin.ir.IrElement
 
 interface CompilerPhase {
@@ -20,7 +21,7 @@ class CompilerPhases<Phase>(phaseArray: Array<Phase>, config: CompilerConfigurat
     val phases = phaseArray.associate { it.name to it }
 
     val enabled = computeEnabled(config)
-    val verbose = config.get(CommonConfigurationKeys.VERBOSE_PHASES)?.map { phases[it]!! }?.toSet() ?: emptySet()
+    val verbose = phaseSetFromConfiguration(config, CommonConfigurationKeys.VERBOSE_PHASES)
 
     private val dumpPhases = computeDumpPhases(config)
     val toDumpStateBefore = dumpPhases.component1()
@@ -43,20 +44,26 @@ class CompilerPhases<Phase>(phaseArray: Array<Phase>, config: CompilerConfigurat
     }
 
     private fun computeEnabled(config: CompilerConfiguration) =
-        with(config) {
-            with(CommonConfigurationKeys) {
-                val disabledPhases = get(DISABLED_PHASES)?.map { phases[it]!! } ?: emptyList()
-                val enabledPhases = get(ENABLED_PHASES)?.map { phases[it]!! } ?: emptyList()
-                phases.values.toSet() - disabledPhases + enabledPhases
-            }
+        with(CommonConfigurationKeys) {
+            val disabledPhases = phaseSetFromConfiguration(config, ENABLED_PHASES)
+            val enabledPhases = phaseSetFromConfiguration(config, DISABLED_PHASES)
+            phases.values.toSet() - disabledPhases + enabledPhases
         }
 
-    private fun computeDumpPhases(config: CompilerConfiguration): Pair<Set<Phase>, Set<Phase>> {
-        val beforeSet = config.get(CommonConfigurationKeys.PHASES_TO_DUMP_STATE_BEFORE)?.map { phases[it]!! }?.toSet() ?: emptySet()
-        val afterSet = config.get(CommonConfigurationKeys.PHASES_TO_DUMP_STATE_AFTER)?.map { phases[it]!! }?.toSet() ?: emptySet()
-        val bothSet = config.get(CommonConfigurationKeys.PHASES_TO_DUMP_STATE)?.map { phases[it]!! }?.toSet() ?: emptySet()
+    private fun phaseSetFromConfiguration(config: CompilerConfiguration, key: CompilerConfigurationKey<Set<String>>): Set<Phase> {
+        val phaseNames = config.get(key) ?: emptySet()
+        if ("ALL" in phaseNames) return phases.values.toSet()
+        return phaseNames.map { phases[it]!! }.toSet()
+    }
 
-        return Pair(beforeSet + bothSet, afterSet + bothSet)
+    private fun computeDumpPhases(config: CompilerConfiguration): Pair<Set<Phase>, Set<Phase>> {
+        with(CommonConfigurationKeys) {
+            val beforeSet = phaseSetFromConfiguration(config, PHASES_TO_DUMP_STATE_BEFORE)
+            val afterSet = phaseSetFromConfiguration(config, PHASES_TO_DUMP_STATE_AFTER)
+            val bothSet = phaseSetFromConfiguration(config, PHASES_TO_DUMP_STATE)
+
+            return Pair(beforeSet + bothSet, afterSet + bothSet)
+        }
     }
 }
 
