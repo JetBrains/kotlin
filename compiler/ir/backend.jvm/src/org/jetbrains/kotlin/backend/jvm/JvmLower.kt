@@ -47,7 +47,7 @@ class JvmLower(val context: JvmBackendContext) {
 
             phase(LATEINIT) { LateinitLowering(context, true).lower(irFile) }
 
-            MoveCompanionObjectFieldsLowering(context).runOnFilePostfix(irFile)
+            phase(MOVE_COMPANION_OBJECT_FIELDS) { MoveCompanionObjectFieldsLowering(context).runOnFilePostfix(irFile) }
             phase(CONST_AND_JVM_PROPERTIES) { ConstAndJvmFieldPropertiesLowering(context).lower(irFile) }
             phase(PROPERTIES) { PropertiesLowering().lower(irFile) }
             phase(ANNOTATION) { AnnotationLowering().runOnFilePostfix(irFile) } //should be run before defaults lowering

@@ -23,6 +23,7 @@ enum class JvmLoweringPhase(
     FILE_CLASS("File class lowering"),
     KCALLABLE_NAME_PROPERTY("KCallable name property lowering"),
     LATEINIT("Lateinit lowering"),
+    MOVE_COMPANION_OBJECT_FIELDS("Move companion object fields to owner lowering"),
     CONST_AND_JVM_PROPERTIES("Const and JvmField properties lowering"),
     PROPERTIES("Properties lowering"),
     ANNOTATION("Annotation lowering"),
