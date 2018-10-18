@@ -40,6 +40,16 @@ public annotation class Retain
 @Retention(AnnotationRetention.SOURCE)
 public annotation class Throws(vararg val exceptionClasses: KClass<out Throwable>)
 
+@Deprecated("ThreadLocal was moved to kotlin.native.concurrent package " +
+        "and became available in Kotlin Common as optional annotation",
+        ReplaceWith("kotlin.native.concurrent.ThreadLocal"))
+public typealias ThreadLocal = kotlin.native.concurrent.ThreadLocal
+
+@Deprecated("SharedImmutable was moved to kotlin.native.concurrent package " +
+        "and became available in Kotlin Common as optional annotation",
+        ReplaceWith("kotlin.native.concurrent.SharedImmutable"))
+public typealias SharedImmutable = kotlin.native.concurrent.SharedImmutable
+
 /**
  * Makes top level function available from C/C++ code with the given name.
  *
@@ -49,9 +59,3 @@ public annotation class Throws(vararg val exceptionClasses: KClass<out Throwable
 @Target(AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.BINARY)
 public annotation class CName(val externName: String = "", val shortName: String = "")
-
-@Deprecated("Please use kotlin.native.concurrent")
-typealias ThreadLocal = kotlin.native.concurrent.ThreadLocal
-
-@Deprecated("Please use kotlin.native.concurrent")
-typealias SharedImmutable = kotlin.native.concurrent.SharedImmutable
