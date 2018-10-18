@@ -86,7 +86,7 @@ class KotlinAndroidMPPGradleProjectResolver : AbstractProjectResolverExtension()
             .asSequence()
             .flatMap { it.compilations.asSequence() }
             .filter { it.platform == KotlinPlatform.ANDROID }
-            .map { KotlinMPPGradleProjectResolver.createSourceSetInfo(it, gradleModule, resolverCtx) }
+            .mapNotNull { KotlinMPPGradleProjectResolver.createSourceSetInfo(it, gradleModule, resolverCtx) }
             .toList()
         mainModuleData.createChild(KotlinAndroidSourceSetData.KEY, KotlinAndroidSourceSetData(androidSourceSets))
     }
