@@ -161,7 +161,10 @@ internal class Kotlin2JvmSourceSetProcessor(
         tasksProvider.createKotlinJVMTask(project, taskName, kotlinCompilation)
 
     override fun doTargetSpecificProcessing() {
-        Kapt3KotlinGradleSubplugin.createAptConfigurationIfNeeded(project, kotlinCompilation.compilationName)
+        ifKaptEnabled(project) {
+            Kapt3KotlinGradleSubplugin.createAptConfigurationIfNeeded(project, kotlinCompilation.compilationName)
+        }
+
         ScriptingGradleSubplugin.createDiscoveryConfigurationIfNeeded(project, kotlinCompilation.compilationName)
 
         project.afterEvaluate { project ->
@@ -662,7 +665,10 @@ abstract class AbstractAndroidProjectHandler<V>(private val kotlinConfigurationT
                 kotlin.srcDirs(sourceSet.java.srcDirs)
             }
             sourceSet.addConvention(KOTLIN_DSL_NAME, kotlinSourceSet)
-            Kapt3KotlinGradleSubplugin.createAptConfigurationIfNeeded(project, sourceSet.name)
+
+            ifKaptEnabled(project) {
+                Kapt3KotlinGradleSubplugin.createAptConfigurationIfNeeded(project, sourceSet.name)
+            }
         }
 
         val kotlinOptions = KotlinJvmOptionsImpl()
@@ -838,6 +844,19 @@ internal fun createSyncOutputTask(
     project.logger.kotlinDebug { "Created task ${syncTask.path} to copy kotlin classes from $kotlinDir to $javaDir" }
 
     return syncTask
+}
+
+private fun ifKaptEnabled(project: Project, block: () -> Unit) {
+    var triggered = false
+
+    fun trigger() {
+        if (triggered) return
+        triggered = true
+        block()
+    }
+
+    project.pluginManager.withPlugin("kotlin-kapt") { trigger() }
+    project.pluginManager.withPlugin("org.jetbrains.kotlin.kapt") { trigger() }
 }
 
 private fun SourceSet.clearJavaSrcDirs() {
