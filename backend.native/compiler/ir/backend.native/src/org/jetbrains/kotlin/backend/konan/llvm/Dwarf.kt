@@ -305,5 +305,5 @@ internal enum class DwarfLanguage(val value:Int) {
   DW_LANG_Mips_Assembler(0x8001),
   DW_LANG_GOOGLE_RenderScript(0x8e57),
   DW_LANG_BORLAND_Delphi(0xb000),
-  DW_LANG_Kotlin(0x0001) /* manually added, should be changed someday. */
+  DW_LANG_Kotlin(0x0026)
 }

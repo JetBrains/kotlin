@@ -100,6 +100,9 @@ class KonanConfigKeys {
                 = CompilerConfigurationKey.create("verify ir")
         val VERBOSE_PHASES: CompilerConfigurationKey<List<String>> 
                 = CompilerConfigurationKey.create("verbose backend phases")
+        val DEBUG_INFO_VERSION: CompilerConfigurationKey<Int>
+                = CompilerConfigurationKey.create("debug info format version")
+
     }
 }
 

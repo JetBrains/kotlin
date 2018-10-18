@@ -1907,13 +1907,13 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
             val path = this.fileEntry.name.toFileAndFolder()
             DICreateCompilationUnit(
                     builder     = context.debugInfo.builder,
-                    lang        = DwarfLanguage.DW_LANG_Kotlin.value,
+                    lang        = DWARF.language(context.config),
                     File        = path.file,
                     dir         = path.folder,
                     producer    = DWARF.producer,
                     isOptimized = 0,
                     flags       = "",
-                    rv          = DWARF.runtimeVersion)
+                    rv          = DWARF.runtimeVersion(context.config))
             DICreateFile(context.debugInfo.builder, path.file, path.folder)!!
         }
     }

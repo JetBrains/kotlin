@@ -9,12 +9,13 @@ import kotlinx.cinterop.allocArrayOf
 import kotlinx.cinterop.memScoped
 import llvm.*
 import org.jetbrains.kotlin.backend.konan.Context
-import org.jetbrains.kotlin.konan.KonanVersion
+import org.jetbrains.kotlin.backend.konan.KonanConfig
+import org.jetbrains.kotlin.backend.konan.KonanConfigKeys
 import org.jetbrains.kotlin.backend.konan.irasdescriptors.FunctionDescriptor
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.ir.SourceManager.FileEntry
-import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.js.descriptorUtils.getJetTypeFqName
+import org.jetbrains.kotlin.konan.KonanVersion
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
@@ -23,17 +24,38 @@ import org.jetbrains.kotlin.types.TypeUtils
 internal object DWARF {
     val producer                       = "konanc ${KonanVersion.CURRENT} / kotlin-compiler: ${KotlinVersion.CURRENT}"
     /* TODO: from LLVM sources is unclear what runtimeVersion corresponds to term in terms of dwarf specification. */
-    val runtimeVersion                 = 2
     val dwarfVersionMetaDataNodeName   = "Dwarf Version".mdString()
     val dwarfDebugInfoMetaDataNodeName = "Debug Info Version".mdString()
-    val dwarfVersion = 2 /* TODO: configurable? like gcc/clang -gdwarf-2 and so on. */
-    val debugInfoVersion = 3 /* TODO: configurable? */
+    const val debugInfoVersion = 3 /* TODO: configurable? */
     /**
      * This is  the value taken from [DIFlags.FlagFwdDecl], to mark type declaration as
      * forward one.
      */
-    val flagsForwardDeclaration = 4
+    const val flagsForwardDeclaration = 4
+
+    fun runtimeVersion(config: KonanConfig) = when (config.debugInfoVersion()) {
+        2 -> 0
+        1 -> 2 /* legacy :/ */
+        else -> TODO("unsupported debug info format version")
+    }
+
+    /**
+     * Note: Kotlin language constant appears in DWARF v6, while modern linker fails to links DWARF other then [2;4],
+     * that why we emit version 4 actually.
+     */
+    fun dwarfVersion(config : KonanConfig) = when (config.debugInfoVersion()) {
+        1 -> 2
+        2 -> 4 /* likely the most of the future kotlin native debug info format versions will emit DWARF v4 */
+        else -> TODO("unsupported debug info format version")
+    }
+
+    fun language(config: KonanConfig) = when (config.debugInfoVersion()) {
+        1 -> DwarfLanguage.DW_LANG_C89.value
+        else -> DwarfLanguage.DW_LANG_Kotlin.value
+    }
 }
+
+fun KonanConfig.debugInfoVersion():Int = configuration[KonanConfigKeys.DEBUG_INFO_VERSION] ?: 1
 
 internal class DebugInfo internal constructor(override val context: Context):ContextUtils {
     val files = mutableMapOf<String, DIFileRef>()
@@ -119,7 +141,7 @@ internal fun generateDebugInfoHeader(context: Context) {
          * !6 = !{!"Apple LLVM version 8.0.0 (clang-800.0.38)"}
          */
         val llvmTwo = Int32(2).llvm
-        val dwarfVersion = node(llvmTwo, DWARF.dwarfVersionMetaDataNodeName, Int32(DWARF.dwarfVersion).llvm)
+        val dwarfVersion = node(llvmTwo, DWARF.dwarfVersionMetaDataNodeName, Int32(DWARF.dwarfVersion(context.config)).llvm)
         val nodeDebugInfoVersion = node(llvmTwo, DWARF.dwarfDebugInfoMetaDataNodeName, Int32(DWARF.debugInfoVersion).llvm)
         val llvmModuleFlags = "llvm.module.flags"
         LLVMAddNamedMetadataOperand(context.llvmModule, llvmModuleFlags, dwarfVersion)

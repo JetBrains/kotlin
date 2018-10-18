@@ -189,6 +189,7 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                     put(FRIEND_MODULES, arguments.friendModules!!.split(File.pathSeparator).filterNot(String::isEmpty))
 
                 put(BITCODE_EMBEDDING_MODE, selectBitcodeEmbeddingMode(this, arguments, outputKind))
+                put(DEBUG_INFO_VERSION, arguments.debugInfoFormatVersion.toInt())
             }
         }
     }
