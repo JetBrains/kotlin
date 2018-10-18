@@ -121,11 +121,6 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             runTest("compiler/testData/codegen/box/annotations/nestedClassesInAnnotations.kt");
         }
 
-        @TestMetadata("parameterAnnotationInDefaultImpls.kt")
-        public void testParameterAnnotationInDefaultImpls() throws Exception {
-            runTest("compiler/testData/codegen/box/annotations/parameterAnnotationInDefaultImpls.kt");
-        }
-
         @TestMetadata("parameterWithPrimitiveType.kt")
         public void testParameterWithPrimitiveType() throws Exception {
             runTest("compiler/testData/codegen/box/annotations/parameterWithPrimitiveType.kt");
@@ -17504,11 +17499,6 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 runTest("compiler/testData/codegen/box/reflection/annotations/annotationRetentionAnnotation.kt");
             }
 
-            @TestMetadata("annotationsOnJavaMembers.kt")
-            public void testAnnotationsOnJavaMembers() throws Exception {
-                runTest("compiler/testData/codegen/box/reflection/annotations/annotationsOnJavaMembers.kt");
-            }
-
             @TestMetadata("findAnnotation.kt")
             public void testFindAnnotation() throws Exception {
                 runTest("compiler/testData/codegen/box/reflection/annotations/findAnnotation.kt");
@@ -18517,36 +18507,6 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             public void testKt6106() throws Exception {
                 runTest("compiler/testData/codegen/box/reflection/genericSignature/kt6106.kt");
             }
-
-            @TestMetadata("signatureOfDeepGenericInner.kt")
-            public void testSignatureOfDeepGenericInner() throws Exception {
-                runTest("compiler/testData/codegen/box/reflection/genericSignature/signatureOfDeepGenericInner.kt");
-            }
-
-            @TestMetadata("signatureOfDeepInner.kt")
-            public void testSignatureOfDeepInner() throws Exception {
-                runTest("compiler/testData/codegen/box/reflection/genericSignature/signatureOfDeepInner.kt");
-            }
-
-            @TestMetadata("signatureOfDeepInnerLastGeneric.kt")
-            public void testSignatureOfDeepInnerLastGeneric() throws Exception {
-                runTest("compiler/testData/codegen/box/reflection/genericSignature/signatureOfDeepInnerLastGeneric.kt");
-            }
-
-            @TestMetadata("signatureOfGenericInnerGenericOuter.kt")
-            public void testSignatureOfGenericInnerGenericOuter() throws Exception {
-                runTest("compiler/testData/codegen/box/reflection/genericSignature/signatureOfGenericInnerGenericOuter.kt");
-            }
-
-            @TestMetadata("signatureOfGenericInnerSimpleOuter.kt")
-            public void testSignatureOfGenericInnerSimpleOuter() throws Exception {
-                runTest("compiler/testData/codegen/box/reflection/genericSignature/signatureOfGenericInnerSimpleOuter.kt");
-            }
-
-            @TestMetadata("signatureOfSimpleInnerSimpleOuter.kt")
-            public void testSignatureOfSimpleInnerSimpleOuter() throws Exception {
-                runTest("compiler/testData/codegen/box/reflection/genericSignature/signatureOfSimpleInnerSimpleOuter.kt");
-            }
         }
 
         @TestMetadata("compiler/testData/codegen/box/reflection/isInstance")
@@ -18870,11 +18830,6 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
 
             public void testAllFilesPresentInMethodsFromAny() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/reflection/methodsFromAny"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JS, true);
-            }
-
-            @TestMetadata("builtinFunctionsToString.kt")
-            public void testBuiltinFunctionsToString() throws Exception {
-                runTest("compiler/testData/codegen/box/reflection/methodsFromAny/builtinFunctionsToString.kt");
             }
 
             @TestMetadata("callableReferencesEqualToCallablesFromAPI.kt")
