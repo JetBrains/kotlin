@@ -9,7 +9,7 @@ fun foo() {
 fun test() {
     object : I {
         override fun bar() {
-            return foo()
+            foo()
         }
     }
 }
