@@ -25,7 +25,7 @@ class GradleKonanConfiguration(val id: String,
   private val myName: String = "$name [$profileName]"
 
   val isExecutable: Boolean
-    get() = targetType == CompilerOutputKind.PROGRAM && !isTests
+    get() = targetType == CompilerOutputKind.PROGRAM
 
   override fun getName(): String {
     return myName

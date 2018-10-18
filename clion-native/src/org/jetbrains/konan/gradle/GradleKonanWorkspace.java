@@ -7,7 +7,6 @@ package org.jetbrains.konan.gradle;
 
 import com.intellij.execution.ExecutionTargetManager;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.application.TransactionGuard;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.externalSystem.service.project.manage.ExternalProjectsManager;
@@ -17,12 +16,9 @@ import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.AtomicClearableLazyValue;
 import com.intellij.openapi.util.Trinity;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.util.NullableFunction;
 import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.MultiMap;
-import com.jetbrains.cidr.lang.toolchains.CidrToolEnvironment;
 import com.jetbrains.cidr.lang.workspace.OCResolveConfiguration;
 import com.jetbrains.cidr.lang.workspace.OCWorkspaceImpl;
 import kotlin.Unit;
@@ -32,9 +28,10 @@ import org.jetbrains.konan.gradle.execution.GradleKonanBuildTarget;
 import org.jetbrains.konan.gradle.execution.GradleKonanConfiguration;
 import org.jetbrains.plugins.gradle.settings.GradleSettings;
 
-import java.io.File;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 /**
@@ -86,48 +83,9 @@ public class GradleKonanWorkspace {
       public void run(@NotNull ProgressIndicator indicator) {
         myTargets.drop();
         myTargets.getValue();
-        updateOCWorkspace();
         ApplicationManager.getApplication().invokeLater(() -> ExecutionTargetManager.update(myProject), myProject.getDisposed());
       }
     });
-  }
-
-  public void updateOCWorkspace() {
-    OCWorkspaceImpl.ModifiableModel workspace = OCWorkspaceImpl.getInstanceImpl(myProject).getModifiableModel();
-    try {
-      CidrToolEnvironment environment = new CidrToolEnvironment();
-
-      NullableFunction<File, VirtualFile> fileMapper = OCWorkspaceImpl.createFileMapper();
-      //KonanProjectDataService.forEachKonanProject(myProject, (cppProject, moduleData, rootProjectPath) -> {
-      //  cppProject.getArtifacts().forEach(
-      //    konanArtifact -> addConfiguration(
-      //      konanArtifact,
-      //      rootProjectPath,
-      //      moduleData,
-      //      workspace,
-      //      environment,
-      //      fileMapper)
-      //  );
-      //  return Unit.INSTANCE;
-      //});
-
-      TransactionGuard.getInstance().submitTransactionAndWait(() -> {
-        ApplicationManager.getApplication().runWriteAction(() -> {
-          if (myProject.isDisposed()) {
-            workspace.dispose();
-            return;
-          }
-          //workspace.commit(1);
-        });
-      });
-    }
-    finally {
-      workspace.dispose();
-    }
-    //workspace.getMessages().forEach(each -> {
-    //  LOG.warn(each.getType() + ": " + each.getText());
-    //  // todo send messages to the build view (sync tab)
-    //});
   }
 
   @NotNull
@@ -157,7 +115,14 @@ public class GradleKonanWorkspace {
         String moduleName = names.second;
         String targetName = names.third;
         String targetId = getBuildTargetId(moduleId, targetName);
-        buildTargets.add(new GradleKonanBuildTarget(targetId, targetName, moduleName, configurations));
+        buildTargets.add(new GradleKonanBuildTarget(targetId, targetName, moduleName, configurations.stream().filter(it -> !it.isTests()).collect(
+                Collectors.toList())));
+
+        GradleKonanConfiguration testConfiguration = configurations.stream().filter(GradleKonanConfiguration::isTests).findFirst().orElse(null);
+        if (testConfiguration != null) {
+          targetName += "Tests";
+          buildTargets.add(new GradleKonanBuildTarget(getBuildTargetId(moduleId, targetName), targetName, moduleName, Collections.singletonList(testConfiguration)));
+        }
       });
       return Unit.INSTANCE;
     });
@@ -174,47 +139,4 @@ public class GradleKonanWorkspace {
   private static String getBuildTargetId(String moduleId, String targetName) {
     return moduleId + ":" + targetName;
   }
-
-  //private static void addConfiguration(KonanModelArtifact konanArtifact,
-  //                                     String rootProjectPath,
-  //                                     ModuleData moduleData,
-  //                                     ModifiableModel workspace,
-  //                                     CidrToolEnvironment environment,
-  //                                     NullableFunction<File, VirtualFile> fileMapper) {
-  //  String id = getConfigurationId(moduleData.getId(), konanArtifact);
-  //  String displayName = OCResolveConfigurationImpl.getConfigurationDisplayName(konanArtifact.getName(), konanArtifact.getBuildTaskName(), false);
-  //  String shortDisplayName = OCResolveConfigurationImpl.getConfigurationDisplayName(konanArtifact.getName(), konanArtifact.getBuildTaskName(), true);
-  //
-  //  //File buildWorkingDir = konanArtifact.getCompilerDetails().getWorkingDir();
-  //  //if (buildWorkingDir == null) {
-  //  //  workspace.getMessages().add(new Message(id, MessageType.ERROR, "Compiler working dir was not found for '" + displayName + "'"));
-  //  //  return;
-  //  //}
-  //  //if (konanArtifact.getCompilerExecutable() == null) {
-  //  //  workspace.getMessages().add(new Message(id, MessageType.ERROR, "Compiler was not found for '" + displayName + "'"));
-  //  //  return;
-  //  //}
-  //  Map<OCLanguageKind, OCResolveConfigurationImpl.CompilerSettingsData> configLanguages = new THashMap<>();
-  //
-  //
-  //  OCCompilerKind compilerKind = Arrays.stream(OCCompilerKind.values())
-  //                                      //.filter(
-  //                                      //  kind -> kind.toString().equalsIgnoreCase(konanArtifact.getCompilerDetails().getCompilerKind()))
-  //                                      .findFirst()
-  //                                      .orElse(OCCompilerKind.UNKNOWN);
-  //  configLanguages.put(CLanguageKind.CPP, new OCResolveConfigurationImpl.CompilerSettingsData(compilerKind, null,
-  //                                                                                             konanArtifact.getSrcDirs().get(0),
-  //                                                                                             CidrCompilerSwitches.EMPTY));//new CidrSwitchBuilder().addAllRaw(compilerArgs).build()));
-  //  Map<VirtualFile, Pair<OCLanguageKind, CidrCompilerSwitches>> configSourceFiles = new THashMap<>();
-  //  for (File ioSource: konanArtifact.getSrcFiles()) {
-  //    VirtualFile vfSource = fileMapper.fun(ioSource);
-  //    if (vfSource == null) continue;
-  //    configSourceFiles.put(vfSource, Pair.create(OCLanguageKind.CPP, null));
-  //  }
-  //
-  //  if (!konanArtifact.getSrcDirs().isEmpty()) {
-  //    workspace.addConfiguration(
-  //      id, displayName, shortDisplayName, configLanguages, configSourceFiles, environment, fileMapper);
-  //  }
-  //}
 }

@@ -77,7 +77,7 @@ class KonanProjectDataService : AbstractProjectDataService<KonanModel, Module>()
         val gradleAppRunConfigurationType = GradleKonanAppRunConfigurationType.instance
 
         getArtifacts(project)
-            .filter { it.second.type == CompilerOutputKind.PROGRAM && !it.second.isTests }
+            .filter { it.second.type == CompilerOutputKind.PROGRAM }
             .forEach { (moduleName, artifact) ->
                 val target = GradleKonanBuildTarget(moduleName + ":" + artifact.name, artifact.name, moduleName, emptyList())
 
