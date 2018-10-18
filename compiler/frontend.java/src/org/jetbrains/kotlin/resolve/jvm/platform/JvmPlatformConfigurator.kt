@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.resolve.checkers.BigFunctionTypeAvailabilityChecker
 import org.jetbrains.kotlin.resolve.checkers.ExpectedActualDeclarationChecker
 import org.jetbrains.kotlin.resolve.jvm.*
 import org.jetbrains.kotlin.resolve.jvm.checkers.*
+import org.jetbrains.kotlin.resolve.jvm.multiplatform.JavaActualAnnotationArgumentExtractor
 import org.jetbrains.kotlin.synthetic.JavaSyntheticScopes
 import org.jetbrains.kotlin.types.DynamicTypesSettings
 import org.jetbrains.kotlin.types.expressions.FunctionWithBigAritySupport
@@ -34,7 +35,7 @@ object JvmPlatformConfigurator : PlatformConfigurator(
         TypeParameterBoundIsNotArrayChecker(),
         JvmSyntheticApplicabilityChecker(),
         StrictfpApplicabilityChecker(),
-        ExpectedActualDeclarationChecker,
+        ExpectedActualDeclarationChecker(listOf(JavaActualAnnotationArgumentExtractor())),
         JvmAnnotationsTargetNonExistentAccessorChecker(),
         BadInheritedJavaSignaturesChecker
     ),

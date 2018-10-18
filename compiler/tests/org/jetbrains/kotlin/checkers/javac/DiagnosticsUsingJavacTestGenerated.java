@@ -13059,6 +13059,11 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                     runTest("compiler/testData/diagnostics/tests/multiplatform/defaultArguments/annotationsViaActualTypeAlias.kt");
                 }
 
+                @TestMetadata("annotationsViaActualTypeAlias2.kt")
+                public void testAnnotationsViaActualTypeAlias2() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/multiplatform/defaultArguments/annotationsViaActualTypeAlias2.kt");
+                }
+
                 @TestMetadata("constructor.kt")
                 public void testConstructor() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/multiplatform/defaultArguments/constructor.kt");
