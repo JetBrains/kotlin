@@ -109,6 +109,7 @@ public inline class Result<out T> @PublishedApi internal constructor(
  * make sure that this class is not exposed in ABI.
  */
 @PublishedApi
+@SinceKotlin("1.3")
 internal fun createFailure(exception: Throwable): Any =
     Result.Failure(exception)
 
@@ -127,6 +128,7 @@ internal fun Result<*>.throwOnFailure() {
  * catching and encapsulating any thrown exception as a failure.
  */
 @InlineOnly
+@SinceKotlin("1.3")
 public inline fun <R> runCatching(block: () -> R): Result<R> {
     return try {
         Result.success(block())
@@ -140,6 +142,7 @@ public inline fun <R> runCatching(block: () -> R): Result<R> {
  * if invocation was successful, catching and encapsulating any thrown exception as a failure.
  */
 @InlineOnly
+@SinceKotlin("1.3")
 public inline fun <T, R> T.runCatching(block: T.() -> R): Result<R> {
     return try {
         Result.success(block())
