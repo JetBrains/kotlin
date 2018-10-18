@@ -402,6 +402,13 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
 
     companion object {
         private val logger = Logging.getLogger(KotlinMPPGradleModelBuilder::class.java)
+
+        fun Project.getTargets(): Collection<Named>? {
+            val kotlinExt = project.extensions.findByName("kotlin") ?: return null
+            val getTargets = kotlinExt.javaClass.getMethodOrNull("getTargets") ?: return null
+            @Suppress("UNCHECKED_CAST")
+            return (getTargets.invoke(kotlinExt) as? NamedDomainObjectContainer<Named>)?.asMap?.values ?: emptyList()
+        }
     }
 }
 
