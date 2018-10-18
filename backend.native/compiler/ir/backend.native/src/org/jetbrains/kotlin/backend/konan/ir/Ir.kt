@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import kotlin.properties.Delegates
@@ -289,15 +290,14 @@ internal class KonanSymbols(context: Context, val symbolTable: SymbolTable, val 
             { findArrayExtension(it.descriptor, "contentHashCode") }
     )
 
-    fun findArrayExtension(descriptor: ClassDescriptor, name: String): IrSimpleFunctionSymbol {
+    private fun findArrayExtension(descriptor: ClassDescriptor, name: String): IrSimpleFunctionSymbol {
         val functionDescriptor = builtInsPackage("kotlin", "collections")
                 .getContributedFunctions(Name.identifier(name), NoLookupLocation.FROM_BACKEND)
                 .singleOrNull {
                     it.valueParameters.isEmpty()
                             && it.extensionReceiverParameter?.type?.constructor?.declarationDescriptor == descriptor
                             && !it.isExpect
-                }
-                ?: throw Error(descriptor.toString())
+                } ?: error(descriptor.toString())
         return symbolTable.referenceSimpleFunction(functionDescriptor)
     }
 
@@ -318,6 +318,15 @@ internal class KonanSymbols(context: Context, val symbolTable: SymbolTable, val 
     val arraySet = array.descriptor.unsubstitutedMemberScope
             .getContributedFunctions(Name.identifier("set"), NoLookupLocation.FROM_BACKEND)
             .single().let { symbolTable.referenceSimpleFunction(it) }
+
+    val arraySize = arrays.associateBy(
+            { it },
+            { it.descriptor.unsubstitutedMemberScope
+                    .getContributedVariables(Name.identifier("size"), NoLookupLocation.FROM_BACKEND)
+                    .single().let { symbolTable.referenceSimpleFunction(it.getter!!) } }
+    )
+
+
 
     val valuesForEnum = symbolTable.referenceSimpleFunction(
             context.getInternalFunctions("valuesForEnum").single())

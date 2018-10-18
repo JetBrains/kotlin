@@ -79,6 +79,7 @@ class Launcher(val numWarmIterations: Int) {
         runElvisBenchmark()
         runEulerBenchmark()
         runFibonacciBenchmark()
+        runForLoopBenchmark()
         runInlineBenchmark()
         runIntArrayBenchmark()
         runIntBaselineBenchmark()
@@ -263,6 +264,24 @@ class Launcher(val numWarmIterations: Int) {
         results["Fibonacci.calc"]                = launch(benchmark::calc)
         results["Fibonacci.calcWithProgression"] = launch(benchmark::calcWithProgression)
         results["Fibonacci.calcSquare"]          = launch(benchmark::calcSquare)
+    }
+
+    //-------------------------------------------------------------------------//
+
+    fun runForLoopBenchmark() {
+        val benchmark = ForLoopsBenchmark()
+
+        results["ForLoops.arrayLoop"] = launch(benchmark::arrayLoop)
+        results["ForLoops.intArrayLoop"] = launch(benchmark::intArrayLoop)
+        results["ForLoops.floatArrayLoop"] = launch(benchmark::floatArrayLoop)
+        results["ForLoops.charArrayLoop"] = launch(benchmark::charArrayLoop)
+        results["ForLoops.stringLoop"] = launch(benchmark::stringLoop)
+
+        results["ForLoops.arrayIndicesLoop"] = launch(benchmark::arrayIndicesLoop)
+        results["ForLoops.intArrayIndicesLoop"] = launch(benchmark::intArrayIndicesLoop)
+        results["ForLoops.floatArrayIndicesLoop"] = launch(benchmark::floatArrayIndicesLoop)
+        results["ForLoops.charArrayIndicesLoop"] = launch(benchmark::charArrayIndicesLoop)
+        results["ForLoops.stringIndicesLoop"] = launch(benchmark::stringIndicesLoop)
     }
 
     //-------------------------------------------------------------------------//
