@@ -17,12 +17,14 @@
 package org.jetbrains.kotlin.idea.highlighter
 
 import org.jetbrains.kotlin.idea.inspections.UnusedSymbolInspection
+import org.jetbrains.kotlin.idea.isMainFunction
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.KtParameter
 
 class KotlinPsiCheckerAndHighlightingUpdater : KotlinPsiChecker() {
     override fun shouldSuppressUnusedParameter(parameter: KtParameter): Boolean {
-        val grandParent = parameter.parent.parent
-        return if (grandParent is KtNamedFunction) UnusedSymbolInspection.isEntryPoint(grandParent) else false
+        val grandParent = parameter.parent.parent as? KtNamedFunction ?: return false
+        if (!UnusedSymbolInspection.isEntryPoint(grandParent)) return false
+        return !grandParent.isMainFunction()
     }
 }

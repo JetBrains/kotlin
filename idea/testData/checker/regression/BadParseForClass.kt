@@ -1,4 +1,4 @@
-fun main(args: Array<String>) {
+fun main(<warning>args</warning>: Array<String>) {
     String.class<EOLError descr="Name expected"></EOLError>
 }
 
