@@ -166,11 +166,6 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> extends CLI
             configuration.put(CommonConfigurationKeys.LIST_PHASES, true);
         }
 
-        String[] enabledPhases = arguments.getEnablePhases();
-        if (enabledPhases != null) {
-            configuration.put(CommonConfigurationKeys.ENABLED_PHASES, SetsKt.setOf(enabledPhases));
-        }
-
         String[] disabledPhases = arguments.getDisablePhases();
         if (disabledPhases != null) {
             configuration.put(CommonConfigurationKeys.DISABLED_PHASES, SetsKt.setOf(disabledPhases));

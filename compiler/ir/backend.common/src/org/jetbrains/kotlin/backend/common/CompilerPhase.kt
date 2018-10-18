@@ -44,9 +44,8 @@ class CompilerPhases<Phase>(phaseArray: Array<Phase>, config: CompilerConfigurat
 
     private fun computeEnabled(config: CompilerConfiguration) =
         with(CommonConfigurationKeys) {
-            val disabledPhases = phaseSetFromConfiguration(config, ENABLED_PHASES)
-            val enabledPhases = phaseSetFromConfiguration(config, DISABLED_PHASES)
-            phases.values.toSet() - disabledPhases + enabledPhases
+            val disabledPhases = phaseSetFromConfiguration(config, DISABLED_PHASES)
+            phases.values.toSet() - disabledPhases
         }
 
     private fun phaseSetFromConfiguration(config: CompilerConfiguration, key: CompilerConfigurationKey<Set<String>>): Set<Phase> {

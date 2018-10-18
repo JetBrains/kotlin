@@ -203,12 +203,6 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
     var listPhases: Boolean by FreezableVar(false)
 
     @Argument(
-        value = "-Xenable-phases",
-        description = "Enable backend phases"
-    )
-    var enablePhases: Array<String>? by FreezableVar(null)
-
-    @Argument(
         value = "-Xdisable-phases",
         description = "Disable backend phases"
     )

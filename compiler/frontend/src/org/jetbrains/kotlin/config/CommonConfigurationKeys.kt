@@ -49,9 +49,6 @@ object CommonConfigurationKeys {
     val DISABLED_PHASES = CompilerConfigurationKey.create<Set<String>>("disable backend phases")
 
     @JvmField
-    val ENABLED_PHASES = CompilerConfigurationKey.create<Set<String>>("enable backend phases")
-
-    @JvmField
     val PHASES_TO_DUMP_STATE_BEFORE = CompilerConfigurationKey.create<Set<String>>("backend phases where we dump compiler state before the phase")
 
     @JvmField
