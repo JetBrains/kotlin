@@ -24,7 +24,7 @@ internal object DWARF {
     val producer                       = "konanc ${KonanVersion.CURRENT} / kotlin-compiler: ${KotlinVersion.CURRENT}"
     /* TODO: from LLVM sources is unclear what runtimeVersion corresponds to term in terms of dwarf specification. */
     val runtimeVersion                 = 2
-    val dwarfVersionMetaDataNodeName   = "Dwarf Name".mdString()
+    val dwarfVersionMetaDataNodeName   = "Dwarf Version".mdString()
     val dwarfDebugInfoMetaDataNodeName = "Debug Info Version".mdString()
     val dwarfVersion = 2 /* TODO: configurable? like gcc/clang -gdwarf-2 and so on. */
     val debugInfoVersion = 3 /* TODO: configurable? */
