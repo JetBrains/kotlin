@@ -18,6 +18,7 @@ package kotlin.reflect.jvm.internal
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.resolve.jvm.shouldHideConstructorDueToInlineClassTypeValueParameters
 import java.lang.reflect.Constructor
 import java.lang.reflect.Member
 import java.lang.reflect.Method
@@ -76,7 +77,7 @@ internal class KFunctionImpl private constructor(
 
         when (member) {
             is Constructor<*> ->
-                createConstructorCaller(member)
+                createConstructorCaller(member, descriptor)
             is Method -> when {
                 !Modifier.isStatic(member.modifiers) ->
                     createInstanceMethodCaller(member)
@@ -112,7 +113,7 @@ internal class KFunctionImpl private constructor(
 
         when (member) {
             is Constructor<*> ->
-                createConstructorCaller(member)
+                createConstructorCaller(member, descriptor)
             is Method -> when {
                 // Note that static $default methods for @JvmStatic functions are generated differently in objects and companion objects.
                 // In objects, $default's signature does _not_ contain the additional object instance parameter,
@@ -140,8 +141,19 @@ internal class KFunctionImpl private constructor(
     private fun createInstanceMethodCaller(member: Method) =
         if (isBound) CallerImpl.Method.BoundInstance(member, boundReceiver) else CallerImpl.Method.Instance(member)
 
-    private fun createConstructorCaller(member: Constructor<*>) =
-        if (isBound) CallerImpl.BoundConstructor(member, boundReceiver) else CallerImpl.Constructor(member)
+    private fun createConstructorCaller(member: Constructor<*>, descriptor: FunctionDescriptor): CallerImpl<Constructor<*>> {
+        return if (shouldHideConstructorDueToInlineClassTypeValueParameters(descriptor)) {
+            if (isBound)
+                CallerImpl.AccessorForHiddenBoundConstructor(member, boundReceiver)
+            else
+                CallerImpl.AccessorForHiddenConstructor(member)
+        } else {
+            if (isBound)
+                CallerImpl.BoundConstructor(member, boundReceiver)
+            else
+                CallerImpl.Constructor(member)
+        }
+    }
 
     override val arity: Int get() = caller.arity
 
