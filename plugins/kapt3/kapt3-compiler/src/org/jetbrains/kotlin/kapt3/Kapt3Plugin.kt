@@ -328,7 +328,7 @@ class Kapt3ComponentRegistrar : ComponentRegistrar {
 
         val javaSourceRoots = contentRoots.filterIsInstance<JavaSourceRoot>().map { it.file }
 
-        val useLightAnalysis = configuration.get(Kapt3ConfigurationKeys.USE_LIGHT_ANALYSIS) == "true"
+        val useLightAnalysis = configuration.get(Kapt3ConfigurationKeys.USE_LIGHT_ANALYSIS) != "false"
         val correctErrorTypes = configuration.get(Kapt3ConfigurationKeys.CORRECT_ERROR_TYPES) == "true"
         val mapDiagnosticLocations = configuration.get(Kapt3ConfigurationKeys.MAP_DIAGNOSTIC_LOCATIONS) == "true"
 
