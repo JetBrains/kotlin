@@ -63,7 +63,7 @@ See the samples coming with the distribution.
 
 To see the list of available flags, run `kotlinc -h`.
 
-For documentation on C interoperability stubs see INTEROP.md.
+For documentation on C interoperability stubs see [INTEROP.md](https://github.com/JetBrains/kotlin-native/blob/master/INTEROP.md).
 
  ## <a name="limitations"></a>Known limitations ##
 
@@ -112,4 +112,4 @@ Notice that property delegation (including lazy properties) *does* work.
 
 to set breakpoint in main function of your application. Single stepping and step into shall work, 
 variable inspection may have issues.
-See [`DEBUGGING.md`](https://github.com/JetBrains/kotlin-native/blob/master/DEBUGGING.md)
+See [`DEBUGGING.md`](https://github.com/JetBrains/kotlin-native/blob/master/DEBUGGING.md).
