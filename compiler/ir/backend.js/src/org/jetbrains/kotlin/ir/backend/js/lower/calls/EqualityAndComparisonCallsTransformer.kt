@@ -151,7 +151,9 @@ class EqualityAndComparisonCallsTransformer(context: JsIrBackendContext) : Calls
     }
 
     private fun IrFunction.isMethodOfPrimitiveJSType() =
-        dispatchReceiverParameter?.type?.getPrimitiveType() != PrimitiveType.OTHER
+        dispatchReceiverParameter?.let {
+            it.type.getPrimitiveType() != PrimitiveType.OTHER
+        } ?: false
 
     private fun IrFunction.isMethodOfPotentiallyPrimitiveJSType() =
         isMethodOfPrimitiveJSType() || isFakeOverriddenFromAny()
