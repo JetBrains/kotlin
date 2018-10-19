@@ -884,7 +884,9 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
         boolean accessorIsConstructor = accessorDescriptor instanceof AccessorForConstructorDescriptor;
 
         ReceiverParameterDescriptor dispatchReceiver = functionDescriptor.getDispatchReceiverParameter();
-        Type dispatchReceiverType = dispatchReceiver != null ? typeMapper.mapType(dispatchReceiver.getType()) : AsmTypes.OBJECT_TYPE;
+        Type dispatchReceiverType = dispatchReceiver != null && !accessorIsConstructor
+                                    ? typeMapper.mapType(dispatchReceiver.getType())
+                                    : AsmTypes.OBJECT_TYPE;
 
         int accessorParam = (hasDispatchReceiver && !accessorIsConstructor) ? 1 : 0;
         int reg = hasDispatchReceiver ? dispatchReceiverType.getSize() : 0;
