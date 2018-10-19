@@ -107,7 +107,6 @@ private fun JsIrBackendContext.lower(moduleFragment: IrModuleFragment, dependenc
     VarargLowering(this).lower(moduleFragment)
     LateinitLowering(this, true).lower(moduleFragment)
     DefaultArgumentStubGenerator(this).runOnFilesPostfix(moduleFragment)
-    DefaultParameterFakeOverrideCleanup(this).runOnFilesPostfix(moduleFragment)
     DefaultParameterInjector(this).runOnFilesPostfix(moduleFragment)
     DefaultParameterCleaner(this).runOnFilesPostfix(moduleFragment)
     SharedVariablesLowering(this).runOnFilesPostfix(moduleFragment)

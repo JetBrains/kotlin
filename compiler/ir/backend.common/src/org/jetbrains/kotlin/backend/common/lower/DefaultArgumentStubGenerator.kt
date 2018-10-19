@@ -66,6 +66,23 @@ open class DefaultArgumentStubGenerator constructor(val context: CommonBackendCo
         if (bodies.isEmpty()) {
             // Fake override
             val newIrFunction = irFunction.generateDefaultsFunction(context, IrDeclarationOrigin.FAKE_OVERRIDE)
+
+            if (irFunction is IrSimpleFunction) {
+                for (baseFunSymbol in irFunction.overriddenSymbols) {
+                    val baseFun = baseFunSymbol.owner
+                    if (baseFun.needsDefaultArgumentsLowering(skipInlineMethods)) {
+                        val baseOrigin = if (baseFun.valueParameters.any { it.defaultValue != null }) {
+                            DECLARATION_ORIGIN_FUNCTION_FOR_DEFAULT_PARAMETER
+                        } else {
+                            IrDeclarationOrigin.FAKE_OVERRIDE
+                        }
+                        (baseFun.generateDefaultsFunction(context, baseOrigin) as? IrSimpleFunction)?.let {
+                            (newIrFunction as IrSimpleFunction).overriddenSymbols.add(it.symbol)
+                        }
+                    }
+                }
+            }
+
             return listOf(irFunction, newIrFunction)
         }
 
@@ -162,23 +179,6 @@ private fun maskParameter(function: IrFunction, number: Int) =
 
 private fun markerParameterDeclaration(function: IrFunction) =
     function.valueParameters.single { it.name == kConstructorMarkerName }
-
-// Populates `overriddenSymbols` for the newly created functions
-class DefaultParameterFakeOverrideCleanup(val context: CommonBackendContext): DeclarationContainerLoweringPass {
-    override fun lower(irDeclarationContainer: IrDeclarationContainer) {
-        for (func in irDeclarationContainer.declarations) {
-            if (func !is IrSimpleFunction) continue
-
-            val defFunc = context.ir.defaultParameterDeclarationsCache[func] as? IrSimpleFunction ?: continue
-
-            for (o in func.overriddenSymbols) {
-                (context.ir.defaultParameterDeclarationsCache[o.owner] as? IrSimpleFunction)?.let {
-                    defFunc.overriddenSymbols.add(it.symbol)
-                }
-            }
-        }
-    }
-}
 
 open class DefaultParameterInjector constructor(
     val context: CommonBackendContext,
