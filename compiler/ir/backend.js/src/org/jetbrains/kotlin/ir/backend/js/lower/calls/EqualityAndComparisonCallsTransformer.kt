@@ -7,10 +7,7 @@ package org.jetbrains.kotlin.ir.backend.js.lower.calls
 
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.irCall
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
-import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.types.*
@@ -102,7 +99,7 @@ class EqualityAndComparisonCallsTransformer(context: JsIrBackendContext) : Calls
 
         fun IrSimpleFunction.isFakeOverriddenFromComparable(): Boolean = when {
             origin != IrDeclarationOrigin.FAKE_OVERRIDE ->
-                parentAsClass.thisReceiver!!.type.isComparable()
+                !isStaticMethodOfClass && parentAsClass.thisReceiver!!.type.isComparable()
 
             else -> overriddenSymbols.all { it.owner.isFakeOverriddenFromComparable() }
         }

@@ -56,7 +56,7 @@ class BridgesConstruction(val context: JsIrBackendContext) : ClassLoweringPass {
         irClass.declarations
             .asSequence()
             .filterIsInstance<IrSimpleFunction>()
-            .filter { !it.isStatic }
+            .filter { !it.isStaticMethodOfClass }
             .toList()
             .forEach { generateBridges(it, irClass) }
 

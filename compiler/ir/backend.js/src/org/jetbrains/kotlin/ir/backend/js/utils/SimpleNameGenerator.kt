@@ -181,7 +181,7 @@ class SimpleNameGenerator : NameGenerator {
                 }
                 is IrSimpleFunction -> {
 
-                    if (declaration.isStatic) {
+                    if (declaration.isStaticMethodOfClass) {
                         nameBuilder.append(getNameForDeclaration(declaration.parent as IrDeclaration, context))
                         nameBuilder.append('.')
                     }
