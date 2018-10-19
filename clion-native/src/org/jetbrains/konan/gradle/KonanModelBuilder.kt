@@ -68,9 +68,7 @@ class KonanModelBuilder : ModelBuilderService {
             outputFile,
             task.name,
             isTests
-        ).also {
-            println(it)
-        }
+        )
     }
 
     private operator fun Any?.get(methodName: String, vararg params: Any): Any? {

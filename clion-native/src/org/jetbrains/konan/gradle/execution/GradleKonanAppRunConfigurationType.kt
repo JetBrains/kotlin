@@ -19,8 +19,8 @@ import org.jetbrains.annotations.NonNls
  * @author Vladislav.Soroka
  */
 class GradleKonanAppRunConfigurationType protected constructor() : ConfigurationTypeBase("GradleKonanAppRunConfiguration",
-                                                                                         "Gradle Konan Application",
-                                                                                         "Gradle Kotlin/Native application configuration",
+                                                                                         "Kotlin/Native Application",
+                                                                                         "Kotlin/Native application configuration",
                                                                                          AllIcons.RunConfigurations.Application) {
   private val myDefaultFactoryId: String = "Application"
 

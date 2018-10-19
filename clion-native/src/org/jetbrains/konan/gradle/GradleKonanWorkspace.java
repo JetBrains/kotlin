@@ -115,8 +115,11 @@ public class GradleKonanWorkspace {
         String moduleName = names.second;
         String targetName = names.third;
         String targetId = getBuildTargetId(moduleId, targetName);
-        buildTargets.add(new GradleKonanBuildTarget(targetId, targetName, moduleName, configurations.stream().filter(it -> !it.isTests()).collect(
-                Collectors.toList())));
+        List<GradleKonanConfiguration> nonTestConfigurations = configurations.stream().filter(it -> !it.isTests()).collect(
+                Collectors.toList());
+        if (!nonTestConfigurations.isEmpty()) {
+          buildTargets.add(new GradleKonanBuildTarget(targetId, targetName, moduleName, nonTestConfigurations));
+        }
 
         GradleKonanConfiguration testConfiguration = configurations.stream().filter(GradleKonanConfiguration::isTests).findFirst().orElse(null);
         if (testConfiguration != null) {
