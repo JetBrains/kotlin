@@ -884,4 +884,125 @@ class ExperimentalPluginTests {
         }
         project.createRunner().withArguments("assertClassPath").build()
     }
+
+    @Test
+    fun `Plugin should be compatible with the MPP one`() {
+        val repo = tmpFolder.newFolder("repo")
+        val repoPath = KonanProject.escapeBackSlashes(repo.absolutePath)
+        val nativeProducer = KonanProject.createEmpty(tmpFolder.newFolder("native-producer")).apply {
+            buildFile.writeText("""
+                plugins {
+                    id 'kotlin-native'
+                    id 'maven-publish'
+                }
+
+                group 'test'
+                version '1.0'
+
+                sourceSets.main.component {
+                    targets = ['wasm32']
+                }
+
+                publishing {
+                    repositories {
+                        maven { url = '$repoPath' }
+                    }
+                }
+            """.trimIndent())
+
+            settingsFile.appendText("enableFeaturePreview('GRADLE_METADATA')")
+            generateSrcFile("native.kt", "fun native() = 42")
+        }
+
+        val mpp = KonanProject.createEmpty(tmpFolder.newFolder("mpp")).apply {
+            buildFile.writeText("""
+                plugins {
+                    id 'org.jetbrains.kotlin.multiplatform' version '${MultiplatformSpecification.KOTLIN_VERSION}'
+                    id 'maven-publish'
+                }
+
+                group 'test'
+                version '1.0'
+
+                repositories {
+                    maven { url '$repoPath' }
+                    maven { url "${MultiplatformSpecification.KOTLIN_REPO}" }
+                    jcenter()
+                }
+
+                kotlin {
+                    sourceSets {
+                        wasmMain {
+                            dependencies {
+                                implementation 'test:native-producer:1.0'
+                            }
+                        }
+                    }
+
+                    targets {
+                        fromPreset(presets.wasm32, 'wasm')
+                    }
+                }
+
+                publishing {
+                    repositories {
+                        maven { url = '$repoPath' }
+                    }
+                }
+            """.trimIndent())
+
+            settingsFile.writeText("""
+                pluginManagement {
+                    repositories {
+                        maven { url "${MultiplatformSpecification.KOTLIN_REPO}" }
+                        jcenter()
+                    }
+                }
+                enableFeaturePreview('GRADLE_METADATA')
+            """.trimIndent())
+
+            propertiesFile.writeText("org.jetbrains.kotlin.native.home=$konanHome")
+            generateSrcFile(listOf("src/wasmMain/kotlin"), "mpp.kt", "fun mpp() = native()")
+        }
+
+        val nativeConsumer = KonanProject.createEmpty(tmpFolder.newFolder("native-consumer")).apply {
+            buildFile.writeText("""
+                plugins {
+                    id 'kotlin-native'
+                }
+
+                repositories {
+                    maven { url '$repoPath' }
+                }
+
+                sourceSets.main.component {
+                    targets = ['wasm32']
+                }
+
+                dependencies {
+                    implementation 'test:mpp:1.0'
+                }
+            """.trimIndent())
+
+            settingsFile.appendText("enableFeaturePreview('GRADLE_METADATA')")
+            generateSrcFile("consumer.kt", "fun consumer() = mpp()")
+        }
+
+        nativeProducer.createRunner().withArguments("publish").build()
+        mpp.createRunner().withArguments("publish").build()
+        nativeConsumer.createRunner().withArguments("build").build()
+
+        val publishedFiles = listOf(
+            "repo/test/native-producer/1.0/native-producer-1.0.module",
+            "repo/test/native-producer_debug/1.0/native-producer_debug-1.0.module",
+            "repo/test/native-producer_debug/1.0/native-producer_debug-1.0.klib",
+            "repo/test/mpp/1.0/mpp-1.0.module",
+            "repo/test/mpp-wasm/1.0/mpp-wasm-1.0.module",
+            "repo/test/mpp-wasm/1.0/mpp-wasm-1.0.klib"
+        )
+
+        publishedFiles.forEach {
+            assertFileExists(it)
+        }
+    }
 }

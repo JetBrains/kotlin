@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.gradle.plugin.experimental.CInteropSettings.IncludeD
 import org.jetbrains.kotlin.gradle.plugin.experimental.KotlinNativeBinary
 import org.jetbrains.kotlin.gradle.plugin.experimental.internal.KotlinNativeBuildType
 import org.jetbrains.kotlin.gradle.plugin.experimental.internal.getGradleOSFamily
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
 import javax.inject.Inject
@@ -81,7 +82,7 @@ open class CInteropSettingsImpl @Inject constructor(
             val objects = project.objects
             isCanBeConsumed = false
             isCanBeResolved = true
-            attributes.attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage::class.java, Usage.JAVA_API))
+            attributes.attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage::class.java, KotlinUsages.KOTLIN_API))
             attributes.attribute(CppBinary.DEBUGGABLE_ATTRIBUTE, KotlinNativeBuildType.DEBUG.debuggable)
             attributes.attribute(CppBinary.OPTIMIZED_ATTRIBUTE, KotlinNativeBuildType.DEBUG.optimized)
             attributes.attribute(KotlinPlatformType.attribute, KotlinPlatformType.native)

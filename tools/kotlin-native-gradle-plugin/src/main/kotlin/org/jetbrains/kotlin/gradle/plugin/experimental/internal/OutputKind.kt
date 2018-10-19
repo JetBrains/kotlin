@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.gradle.plugin.experimental.internal
 
 import org.gradle.api.attributes.Usage
 import org.jetbrains.kotlin.gradle.plugin.experimental.KotlinNativeBinary
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -42,9 +43,7 @@ enum class OutputKind(
         KotlinNativeLibraryImpl::class.java,
         1,
         null,
-        // Use JAVA_API here because the MPP plugin uses this usage for all artifacts in 1.3-RC.
-        // TODO: Change to KOTLIN_API with such change is merged into big Kotlin's 1.3.
-        Usage.JAVA_API
+        KotlinUsages.KOTLIN_API
     ),
     FRAMEWORK(
         CompilerOutputKind.FRAMEWORK,
@@ -63,7 +62,7 @@ enum class OutputKind(
         3,
         Usage.NATIVE_RUNTIME,
         Usage.NATIVE_LINK,
-    false
+        false
     ) {
         override fun availableFor(target: KonanTarget): Boolean = target != KonanTarget.WASM32
     },

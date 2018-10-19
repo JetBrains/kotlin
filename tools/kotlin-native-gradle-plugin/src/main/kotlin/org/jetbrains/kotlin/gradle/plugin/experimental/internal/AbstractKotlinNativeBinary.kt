@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.gradle.plugin.experimental.ComponentWithBaseName
 import org.jetbrains.kotlin.gradle.plugin.experimental.KotlinNativeBinary
 import org.jetbrains.kotlin.gradle.plugin.experimental.sourcesets.KotlinNativeSourceSet
 import org.jetbrains.kotlin.gradle.plugin.experimental.tasks.KotlinNativeCompile
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.KonanTarget
 
@@ -106,7 +107,7 @@ abstract class AbstractKotlinNativeBinary(
     // A configuration containing klibs.
     override val klibs = configurations.create(names.withPrefix("klibs")).apply {
         isCanBeConsumed = false
-        attributes.attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage::class.java, Usage.JAVA_API))
+        attributes.attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage::class.java, KotlinUsages.KOTLIN_API))
         attributes.attribute(CppBinary.DEBUGGABLE_ATTRIBUTE, debuggable)
         attributes.attribute(CppBinary.OPTIMIZED_ATTRIBUTE, optimized)
         attributes.attribute(KotlinPlatformType.attribute, KotlinPlatformType.native)

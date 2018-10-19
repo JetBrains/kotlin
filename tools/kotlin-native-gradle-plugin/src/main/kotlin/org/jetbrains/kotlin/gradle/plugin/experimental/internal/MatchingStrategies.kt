@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.gradle.plugin.experimental.internal
 
 import org.gradle.api.attributes.*
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 
 open class Compatible: AttributeCompatibilityRule<Boolean> {
     override fun execute(details: CompatibilityCheckDetails<Boolean>) = details.compatible()
@@ -44,17 +45,19 @@ open class UsageCompatibility: AttributeCompatibilityRule<Usage> {
 
         when {
             requested == null -> compatible()
-            requested == Usage.JAVA_API && (provided == Usage.JAVA_API || provided == KotlinNativeUsage.KLIB) -> {
-                compatible()
-            }
-            requested == provided -> compatible()
+            requested in supportedRequestedUsages && provided in supportedProvidedUsages -> compatible()
         }
+    }
+
+    companion object {
+        val supportedRequestedUsages = listOf(KotlinUsages.KOTLIN_API, Usage.JAVA_API)
+        val supportedProvidedUsages = listOf(KotlinUsages.KOTLIN_API, Usage.JAVA_API, KotlinNativeUsage.KLIB)
     }
 }
 
 open class UsageDisambiguation: AttributeDisambiguationRule<Usage> {
     override fun execute(details: MultipleCandidatesDetails<Usage>): Unit = with(details) {
-        val usagePriority = listOf(Usage.JAVA_API, KotlinNativeUsage.KLIB)
+        val usagePriority = listOf(KotlinUsages.KOTLIN_API, Usage.JAVA_API, KotlinNativeUsage.KLIB)
         usagePriority.forEach { usage ->
             val found = candidateValues.find { it.name == usage }
             if (found != null) {
