@@ -73,6 +73,7 @@ fun compile(
         moduleFragment.files.forEach { irFile -> extension.generate(irFile, context, psi2IrContext.bindingContext) }
     }
 
+    ExternalEnumLowering(context).runOnFilesPostfix(moduleFragment)
     MoveExternalDeclarationsToSeparatePlace().lower(moduleFragment)
     ExpectDeclarationsRemoving(context).lower(moduleFragment)
     CoroutineIntrinsicLowering(context).lower(moduleFragment)
