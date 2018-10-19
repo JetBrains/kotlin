@@ -399,8 +399,11 @@ class Kapt3ComponentRegistrar : ComponentRegistrar {
     }
 }
 
-enum class AptMode {
-    WITH_COMPILATION, STUBS_AND_APT, STUBS_ONLY, APT_ONLY;
+enum class AptMode(val optionName: String) {
+    WITH_COMPILATION("compile"),
+    STUBS_AND_APT("stubsAndApt"),
+    STUBS_ONLY("stubs"),
+    APT_ONLY("apt");
 
     val runAnnotationProcessing
         get() = this != STUBS_ONLY
@@ -410,12 +413,12 @@ enum class AptMode {
 
     companion object {
         // Supports both deprecated APT_ONLY and new APT_MODE options
-        fun parse(mode: String?): AptMode = when (mode) {
-            "true", "stubsAndApt" -> STUBS_AND_APT
-            "false", "compile" -> WITH_COMPILATION
-            "apt" -> APT_ONLY
-            "stubs" -> STUBS_ONLY
-            else -> WITH_COMPILATION
+        fun parse(mode: String?): AptMode {
+            return when (mode) {
+                "true" -> STUBS_AND_APT
+                "false" -> WITH_COMPILATION
+                else -> AptMode.values().firstOrNull { it.optionName == mode } ?: WITH_COMPILATION
+            }
         }
     }
 }
