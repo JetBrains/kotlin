@@ -7,6 +7,7 @@ plugins {
 }
 
 repositories {
+    maven("https://dl.bintray.com/jetbrains/markdown")
     teamcityServer {
         setUrl("http://buildserver.labs.intellij.net")
         credentials {
@@ -23,6 +24,7 @@ dependencies {
     compile(project(":kotlin-ultimate:cidr-native"))
     compile(project(":idea:idea-gradle-native"))
     compileOnly(tc("$clionVersionRepo:$clionVersion:unscrambled/clion.jar"))
+    compileOnly(commonDep("org.jetbrains", "markdown"))
 }
 
 sourceSets {

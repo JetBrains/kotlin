@@ -1,0 +1,20 @@
+plugins {
+    id 'kotlin-multiplatform' version '1.3.0-rc-190'
+}
+repositories {
+    maven { url 'http://dl.bintray.com/kotlin/kotlin-eap' }
+    mavenCentral()
+}
+kotlin {
+    targets {
+        fromPreset(presets.{% platform %}, 'CSVParser')
+
+        configure([CSVParser]) {
+            compilations.main.outputKinds('EXECUTABLE')
+        }
+    }
+    sourceSets {
+        CSVParserMain {
+        }
+    }
+}
