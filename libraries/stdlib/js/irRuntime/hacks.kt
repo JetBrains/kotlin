@@ -48,6 +48,9 @@ public inline fun longArrayOf(vararg a: Long) = a
 internal fun throwUninitializedPropertyAccessException(name: String): Nothing =
     throw UninitializedPropertyAccessException("lateinit property $name has not been initialized")
 
+internal fun noWhenBranchMatchedException(): Nothing = throw NoWhenBranchMatchedException()
+
+
 fun THROW_ISE() {
     throw IllegalStateException()
 }

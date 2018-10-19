@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.types.isLong
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
@@ -26,7 +25,8 @@ class CallsLowering(val context: JsIrBackendContext) : FileLoweringPass {
         PrimitiveContainerMemberCallTransformer(context),
         MethodsOfAnyCallsTransformer(context),
         ReflectionCallsTransformer(context),
-        EnumIntrinsicsTransformer(context)
+        EnumIntrinsicsTransformer(context),
+        ExceptionHelperCallsTransformer(context)
     )
 
     override fun lower(irFile: IrFile) {
