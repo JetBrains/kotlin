@@ -79,14 +79,17 @@ class MultipleCatchesLowering(val context: JsIrBackendContext) : FileLoweringPas
                     val type = catch.catchParameter.type
 
                     val typeSymbol = type.classifierOrNull
-                    val castedPendingException = if (type !is IrDynamicType)
-                        buildImplicitCast(pendingException, type, typeSymbol!!)
-                    else pendingException
+                    val castedPendingException = {
+                        if (type !is IrDynamicType)
+                            buildImplicitCast(pendingException, type, typeSymbol!!)
+                        else
+                            pendingException
+                    }
 
                     val catchBody = catch.result.transform(object : IrElementTransformer<IrValueSymbol> {
                         override fun visitGetValue(expression: IrGetValue, data: IrValueSymbol) =
                             if (expression.symbol == data)
-                                castedPendingException
+                                castedPendingException()
                             else
                                 expression
                     }, catch.catchParameter.symbol)
