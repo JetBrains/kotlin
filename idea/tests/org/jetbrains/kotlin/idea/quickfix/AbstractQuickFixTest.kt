@@ -41,7 +41,7 @@ abstract class AbstractQuickFixTest : KotlinLightCodeInsightFixtureTestCase(), Q
     @Throws(Exception::class)
     protected fun doTest(beforeFileName: String) {
         val beforeFileText = FileUtil.loadFile(File(beforeFileName))
-        configureCompilerOptions(beforeFileText, project, module)
+        val configured = configureCompilerOptions(beforeFileText, project, module)
 
         val inspections = parseInspectionsToEnable(beforeFileName, beforeFileText).toTypedArray()
 
@@ -52,6 +52,9 @@ abstract class AbstractQuickFixTest : KotlinLightCodeInsightFixtureTestCase(), Q
             checkForUnexpectedErrors()
         } finally {
             myFixture.disableInspections(*inspections)
+            if (configured) {
+                rollbackCompilerOptions(project, module)
+            }
         }
     }
 

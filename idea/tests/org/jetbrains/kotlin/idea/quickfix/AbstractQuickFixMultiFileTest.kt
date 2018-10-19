@@ -45,6 +45,7 @@ import org.jetbrains.kotlin.idea.quickfix.utils.findInspectionFile
 import org.jetbrains.kotlin.idea.test.DirectiveBasedActionUtils
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.configureCompilerOptions
+import org.jetbrains.kotlin.idea.test.rollbackCompilerOptions
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.testFramework.runWriteAction
@@ -200,7 +201,7 @@ abstract class AbstractQuickFixMultiFileTest : KotlinLightCodeInsightFixtureTest
     private fun doTest(beforeFileName: String) {
         val mainFile = File(beforeFileName)
         val originalFileText = FileUtil.loadFile(mainFile, true)
-        configureCompilerOptions(originalFileText, project, module)
+        val configured = configureCompilerOptions(originalFileText, project, module)
 
         val mainFileDir = mainFile.parentFile!!
 
@@ -265,6 +266,11 @@ abstract class AbstractQuickFixMultiFileTest : KotlinLightCodeInsightFixtureTest
             catch (e: Throwable) {
                 e.printStackTrace()
                 TestCase.fail(getTestName(true))
+            }
+            finally {
+                if (configured) {
+                    rollbackCompilerOptions(project, module)
+                }
             }
         }, "", "")
     }
