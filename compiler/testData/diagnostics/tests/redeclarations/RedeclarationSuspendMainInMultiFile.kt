@@ -1,5 +1,5 @@
 // FILE: a.kt
-suspend fun main(args: Array<String>) {}
+suspend fun main() {}
 
 // FILE: b.kt
-suspend fun main(args: Array<String>) {}
+suspend fun main() {}

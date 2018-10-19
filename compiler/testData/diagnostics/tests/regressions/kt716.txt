@@ -1,7 +1,7 @@
 package
 
 public fun </*0*/ T> getJavaClass(): java.lang.Class<T>
-public fun main(/*0*/ args: kotlin.Array<kotlin.String>): kotlin.Unit
+public fun main(): kotlin.Unit
 public fun </*0*/ T> typeinfo(): TypeInfo<T>
 public fun </*0*/ T> TypeInfo<T>.getJavaClass(): java.lang.Class<T>
 

@@ -1,6 +1,6 @@
 //KT-4711 Error type with no error reported from type inference
 
-fun main(args:Array<String>) {
+fun main() {
     val n = 100
     val delta = 1.0 / n
     val startTimeNanos = System.nanoTime()
