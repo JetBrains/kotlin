@@ -43,7 +43,10 @@ fun JvmScriptCompilationConfigurationBuilder.dependenciesFromClassloader(
     )
 }
 
+@Deprecated("Unused")
 val JvmScriptCompilationConfigurationKeys.javaHome by PropertiesCollection.keyCopy(ScriptingHostConfiguration.jvm.javaHome)
+
+val JvmScriptCompilationConfigurationKeys.jdkHome by PropertiesCollection.keyCopy(ScriptingHostConfiguration.jvm.jdkHome)
 
 @Suppress("unused")
 val ScriptCompilationConfigurationKeys.jvm
