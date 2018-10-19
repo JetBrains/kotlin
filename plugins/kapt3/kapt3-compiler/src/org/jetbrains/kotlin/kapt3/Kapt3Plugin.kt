@@ -277,9 +277,17 @@ class Kapt3ComponentRegistrar : ComponentRegistrar {
         }
 
         val sourcesOutputDir = configuration.get(Kapt3ConfigurationKeys.SOURCE_OUTPUT_DIR)?.let(::File)
-        val classFilesOutputDir = configuration.get(Kapt3ConfigurationKeys.CLASS_OUTPUT_DIR)?.let(::File)
         val stubsOutputDir = configuration.get(Kapt3ConfigurationKeys.STUBS_OUTPUT_DIR)?.let(::File)
         val incrementalDataOutputDir = configuration.get(Kapt3ConfigurationKeys.INCREMENTAL_DATA_OUTPUT_DIR)?.let(::File)
+
+        val classFilesOutputDir = configuration.get(Kapt3ConfigurationKeys.CLASS_OUTPUT_DIR)?.let(::File)
+            ?: configuration.get(JVMConfigurationKeys.OUTPUT_DIRECTORY)
+
+        if (classFilesOutputDir == null && configuration.get(JVMConfigurationKeys.OUTPUT_JAR) != null) {
+            logger.error("Kapt does not support specifying JAR file outputs. Please specify the classes output directory explicitly.")
+            abortAnalysis()
+            return
+        }
 
         val annotationProcessors = configuration.get(Kapt3ConfigurationKeys.ANNOTATION_PROCESSORS) ?: emptyList()
 
