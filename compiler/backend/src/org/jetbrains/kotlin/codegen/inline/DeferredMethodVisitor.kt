@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.codegen.inline
 
+import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.org.objectweb.asm.MethodVisitor
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
 
@@ -27,6 +28,7 @@ class DeferredMethodVisitor(
     override fun visitEnd() {
         super.visitEnd()
         val resultVisitor = resultNode()
+        AsmUtil.resetLabelInfos(intermediate)
         intermediate.accept(resultVisitor)
     }
 }

@@ -51,6 +51,10 @@ import org.jetbrains.kotlin.types.SimpleType;
 import org.jetbrains.org.objectweb.asm.*;
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
 import org.jetbrains.org.objectweb.asm.commons.Method;
+import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode;
+import org.jetbrains.org.objectweb.asm.tree.InsnList;
+import org.jetbrains.org.objectweb.asm.tree.LabelNode;
+import org.jetbrains.org.objectweb.asm.tree.MethodNode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -1228,5 +1232,22 @@ public class AsmUtil {
         OwnerKind kind = context.getContextKind();
         //Trait always should have this descriptor
         return kind != OwnerKind.DEFAULT_IMPLS && isStaticMethod(kind, descriptor) ? 0 : 1;
+    }
+
+    public static void resetLabelInfos(@NotNull MethodNode methodNode) {
+        //noinspection ConstantConditions
+        if (Opcodes.API_VERSION <= Opcodes.ASM6) {
+            return;
+        }
+
+        InsnList instructions = methodNode.instructions;
+        for (AbstractInsnNode inst = instructions.getFirst(); inst != null; inst = inst.getNext()) {
+            if (inst instanceof LabelNode) {
+                Label label = ((LabelNode) inst).getLabel();
+                if (label != null) {
+                    label.info = null;
+                }
+            }
+        }
     }
 }

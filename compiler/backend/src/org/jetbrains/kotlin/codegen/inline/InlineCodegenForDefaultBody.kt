@@ -70,6 +70,7 @@ class InlineCodegenForDefaultBody(
 
         val argsSize =
             (Type.getArgumentsAndReturnSizes(jvmSignature.asmMethod.descriptor) ushr 2) - if (callableMethod.isStaticCall()) 1 else 0
+        AsmUtil.resetLabelInfos(node)
         node.accept(object : InlineAdapter(transformedMethod, 0, childSourceMapper) {
             override fun visitLocalVariable(name: String, desc: String, signature: String?, start: Label, end: Label, index: Int) {
                 val startLabel = if (index < argsSize) methodStartLabel else start
@@ -77,6 +78,7 @@ class InlineCodegenForDefaultBody(
             }
         })
 
+        AsmUtil.resetLabelInfos(transformedMethod)
         transformedMethod.accept(MethodBodyVisitor(codegen.visitor))
     }
 
