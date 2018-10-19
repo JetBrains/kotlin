@@ -354,7 +354,7 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtension() {
                         sourceSetMap,
                         artifactsMap,
                         dataNode,
-                        preprocessDependencies(compilation.dependencies, ideProject),
+                        preprocessDependencies(compilation.dependencies),
                         ideProject
                     )
                     for (sourceSet in compilation.sourceSets) {
@@ -432,7 +432,7 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtension() {
                         sourceSetMap,
                         artifactsMap,
                         fromDataNode,
-                        preprocessDependencies(mergedDependencies, ideProject),
+                        preprocessDependencies(mergedDependencies),
                         ideProject
                     )
                 }
@@ -445,49 +445,12 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtension() {
             else -> null
         }
 
-        private fun preprocessDependencies(
-            dependencies: Set<KotlinDependency>,
-            ideProject: DataNode<ProjectData>
-        ): List<ExternalDependency> {
+        private fun preprocessDependencies(dependencies: Set<KotlinDependency>): List<ExternalDependency> {
             return dependencies
                 .groupBy { it.id }
                 .mapValues { it.value.firstOrNull { it.scope == "COMPILE" } ?: it.value.lastOrNull() }
                 .values
                 .filterNotNull()
-                .adjustDependencies(ideProject)
-        }
-
-        private fun List<ExternalDependency>.adjustDependencies(ideProject: DataNode<ProjectData>): List<ExternalDependency> {
-            val result = LinkedHashSet(this)
-            for (dependency in this) {
-                if (dependency !is ExternalProjectDependency) continue
-                val projectPath = dependency.projectPath
-                val classifier = dependency.classifier ?: continue
-                val targetModuleNode = ExternalSystemApiUtil.findFirstRecursively(ideProject) {
-                    (it.data as? ModuleData)?.id == projectPath
-                } ?: continue
-                val candidateDataNodes = ExternalSystemApiUtil.getChildren(targetModuleNode, GradleSourceSetData.KEY)
-                if (classifier != KotlinTarget.METADATA_TARGET_NAME) {
-                    val compilationName = candidateDataNodes
-                        .mapNotNull { sourceSetNode ->
-                            sourceSetNode.kotlinSourceSet?.kotlinModule as? KotlinCompilation
-                        }
-                        .firstOrNull {
-                            it.name == KotlinCompilation.MAIN_COMPILATION_NAME && it.target.disambiguationClassifier == classifier
-                        }
-                        ?.fullName() ?: continue
-                    result += DefaultExternalProjectDependency(dependency).also {
-                        it.configurationName = compilationName
-                    }
-                }
-
-                result += DefaultExternalProjectDependency(dependency).also {
-                    it.configurationName = KotlinSourceSet.COMMON_MAIN_SOURCE_SET_NAME
-                }
-
-                result -= dependency
-            }
-            return result.toList()
         }
 
         private fun addDependency(fromModule: DataNode<*>, toModule: DataNode<*>) {
