@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.util.transformDeclarationsFlat
 import org.jetbrains.kotlin.ir.util.transformFlat
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
@@ -86,7 +87,7 @@ class LocalDeclarationsLowering(
         // Continuous numbering across all declarations in the container.
         lambdasCount = 0
 
-        irDeclarationContainer.declarations.transformFlat { memberDeclaration ->
+        irDeclarationContainer.transformDeclarationsFlat { memberDeclaration ->
             // TODO: may be do the opposite - specify the list of IR elements which need not to be transformed
             when (memberDeclaration) {
                 is IrFunction -> LocalDeclarationsTransformer(memberDeclaration).lowerLocalDeclarations()

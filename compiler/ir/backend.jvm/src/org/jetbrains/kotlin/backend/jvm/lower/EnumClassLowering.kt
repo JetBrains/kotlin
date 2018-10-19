@@ -170,7 +170,7 @@ class EnumClassLowering(val context: JvmBackendContext) : ClassLoweringPass {
         }
 
         private fun lowerEnumEntries() {
-            irClass.declarations.transformFlat { declaration ->
+            irClass.transformDeclarationsFlat { declaration ->
                 if (declaration is IrEnumEntry) {
                     listOfNotNull(
                         createFieldForEnumEntry(declaration),

@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
 import org.jetbrains.kotlin.ir.util.defaultType
+import org.jetbrains.kotlin.ir.util.transformDeclarationsFlat
 import org.jetbrains.kotlin.ir.util.transformFlat
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
@@ -44,7 +45,7 @@ import org.jetbrains.kotlin.name.Name
 open class DefaultArgumentStubGenerator constructor(val context: CommonBackendContext, private val skipInlineMethods: Boolean = true) :
     DeclarationContainerLoweringPass {
     override fun lower(irDeclarationContainer: IrDeclarationContainer) {
-        irDeclarationContainer.declarations.transformFlat { memberDeclaration ->
+        irDeclarationContainer.transformDeclarationsFlat { memberDeclaration ->
             if (memberDeclaration is IrFunction)
                 lower(memberDeclaration)
             else
@@ -371,7 +372,7 @@ private fun IrFunction.generateDefaultsFunctionImpl(context: CommonBackendContex
     val newFunction = buildFunctionDeclaration(this, origin)
 
     val syntheticParameters = MutableList((valueParameters.size + 31) / 32) { i ->
-        valueParameter(valueParameters.size + i, parameterMaskName(i), context.irBuiltIns.intType)
+        newFunction.valueParameter(valueParameters.size + i, parameterMaskName(i), context.irBuiltIns.intType)
     }
 
     if (this is IrConstructor) {

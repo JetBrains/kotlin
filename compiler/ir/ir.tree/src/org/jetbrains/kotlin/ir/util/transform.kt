@@ -17,6 +17,8 @@
 package org.jetbrains.kotlin.ir.util
 
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.declarations.IrDeclaration
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationContainer
 
 inline fun <reified T : IrElement> MutableList<T>.transform(transformation: (T) -> IrElement) {
     forEachIndexed { i, item ->
@@ -44,5 +46,18 @@ inline fun <T> MutableList<T>.transformFlat(transformation: (T) -> List<T>?) {
         addAll(i, transformed)
         i += transformed.size
         removeAt(i)
+    }
+}
+
+/**
+ * Transforms declarations in declaration container.
+ * Behaves similar to like MutableList<T>.transformFlat but also updates
+ * parent property for transformed declarations.
+ */
+fun IrDeclarationContainer.transformDeclarationsFlat(transformation: (IrDeclaration) -> List<IrDeclaration>?) {
+    declarations.transformFlat { declaration ->
+        val transformed = transformation(declaration)
+        transformed?.forEach { it.parent = this }
+        transformed
     }
 }

@@ -58,7 +58,7 @@ internal class SuspendFunctionsLowering(val context: JsIrBackendContext): FileLo
     }
 
     private fun buildCoroutines(irFile: IrFile) {
-        irFile.declarations.transformFlat(::tryTransformSuspendFunction)
+        irFile.transformDeclarationsFlat(::tryTransformSuspendFunction)
         irFile.acceptVoid(object : IrElementVisitorVoid {
             override fun visitElement(element: IrElement) {
                 element.acceptChildrenVoid(this)
@@ -66,7 +66,7 @@ internal class SuspendFunctionsLowering(val context: JsIrBackendContext): FileLo
 
             override fun visitClass(declaration: IrClass) {
                 declaration.acceptChildrenVoid(this)
-                declaration.declarations.transformFlat(::tryTransformSuspendFunction)
+                declaration.transformDeclarationsFlat(::tryTransformSuspendFunction)
             }
         })
     }
@@ -343,6 +343,7 @@ internal class SuspendFunctionsLowering(val context: JsIrBackendContext): FileLo
             coroutineClassThis =
                     JsIrBuilder.buildValueParameter(Name.special("<this>"), -1, thisType, IrDeclarationOrigin.INSTANCE_RECEIVER)
             coroutineClass.thisReceiver = coroutineClassThis
+            coroutineClassThis.parent = coroutineClass
 
             val overriddenMap = mutableMapOf<IrSimpleFunction, IrSimpleFunctionSymbol>()
             val constructors = mutableSetOf<IrConstructor>()

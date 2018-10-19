@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
 import org.jetbrains.kotlin.ir.util.defaultType
-import org.jetbrains.kotlin.ir.util.transformFlat
+import org.jetbrains.kotlin.ir.util.transformDeclarationsFlat
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
@@ -54,7 +54,7 @@ class SecondaryCtorLowering(val context: JsIrBackendContext) {
     }
 
     private fun updateConstructorDeclarations(irClass: IrClass) {
-        irClass.declarations.transformFlat {
+        irClass.transformDeclarationsFlat {
             if (it is IrConstructor) {
                 oldCtorToNewMap[it.symbol]?.let { (newInit, newCreate) ->
                     listOf(newInit.owner, newCreate.owner)

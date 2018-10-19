@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrBlockImpl
-import org.jetbrains.kotlin.ir.util.transformFlat
+import org.jetbrains.kotlin.ir.util.transformDeclarationsFlat
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.utils.addIfNotNull
@@ -23,13 +23,13 @@ class PropertiesLowering : IrElementTransformerVoid(), FileLoweringPass {
 
     override fun visitFile(declaration: IrFile): IrFile {
         declaration.transformChildrenVoid(this)
-        declaration.declarations.transformFlat { lowerProperty(it, ClassKind.CLASS) }
+        declaration.transformDeclarationsFlat { lowerProperty(it, ClassKind.CLASS) }
         return declaration
     }
 
     override fun visitClass(declaration: IrClass): IrStatement {
         declaration.transformChildrenVoid(this)
-        declaration.declarations.transformFlat { lowerProperty(it, declaration.kind) }
+        declaration.transformDeclarationsFlat { lowerProperty(it, declaration.kind) }
         return declaration
     }
 
