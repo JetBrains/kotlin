@@ -86,7 +86,7 @@ public class ConstructorCodegen {
         ClassConstructorDescriptor constructorDescriptor = descriptor.getUnsubstitutedPrimaryConstructor();
         if (constructorDescriptor == null) return;
 
-        ConstructorContext constructorContext = context.intoConstructor(constructorDescriptor);
+        ConstructorContext constructorContext = context.intoConstructor(constructorDescriptor, typeMapper);
 
         KtPrimaryConstructor primaryConstructor = myClass.getPrimaryConstructor();
         JvmDeclarationOrigin origin = JvmDeclarationOriginKt
@@ -127,7 +127,7 @@ public class ConstructorCodegen {
     ) {
         if (!canHaveDeclaredConstructors(descriptor)) return;
 
-        ConstructorContext constructorContext = context.intoConstructor(constructorDescriptor);
+        ConstructorContext constructorContext = context.intoConstructor(constructorDescriptor, typeMapper);
 
         KtSecondaryConstructor constructor = (KtSecondaryConstructor) descriptorToDeclaration(constructorDescriptor);
 

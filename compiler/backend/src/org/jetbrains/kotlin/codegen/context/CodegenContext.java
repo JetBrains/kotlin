@@ -309,8 +309,8 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
     }
 
     @NotNull
-    public ConstructorContext intoConstructor(@NotNull ConstructorDescriptor descriptor) {
-        return new ConstructorContext(descriptor, getContextKind(), this, closure);
+    public ConstructorContext intoConstructor(@NotNull ConstructorDescriptor descriptor, @NotNull KotlinTypeMapper typeMapper) {
+        return new ConstructorContext(descriptor, getContextKind(), this, closure, typeMapper);
     }
 
     @NotNull
