@@ -149,8 +149,8 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
 
     @Argument(
         value = "-Xuse-old-class-files-reading",
-        description = "Use old class files reading implementation " +
-                "(may slow down the build and should be used in case of problems with the new implementation)"
+        description = "Use old class files reading implementation. This may slow down the build and cause problems with Groovy interop.\n" +
+                "Should be used in case of problems with the new implementation"
     )
     var useOldClassFilesReading: Boolean by FreezableVar(false)
 

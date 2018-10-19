@@ -1,0 +1,34 @@
+buildscript {
+    repositories {
+        mavenLocal()
+        mavenCentral()
+    }
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+
+apply plugin: "kotlin"
+apply plugin: "groovy"
+apply plugin: "java"
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+dependencies {
+    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    compile 'org.codehaus.groovy:groovy-all:2.5.3'
+}
+
+compileGroovy.dependsOn = compileGroovy.taskDependencies.values - 'compileJava'
+
+compileKotlin {
+    dependsOn compileGroovy
+    classpath += files(compileGroovy.destinationDir)
+}
+
+compileKotlin {
+    kotlinOptions.jvmTarget = "1.8"
+}
