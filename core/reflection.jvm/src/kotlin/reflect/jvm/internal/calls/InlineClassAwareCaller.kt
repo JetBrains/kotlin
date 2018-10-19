@@ -52,6 +52,9 @@ internal class InlineClassAwareCaller<out M : Member>(
                 -1
             }
 
+            descriptor is ConstructorDescriptor ->
+                if (caller is BoundCaller) -1 else 0
+
             descriptor.dispatchReceiverParameter != null && caller !is BoundCaller -> {
                 // If we have an unbound reference to the inline class member,
                 // its receiver (which is passed as argument 0) should also be unboxed.
@@ -70,7 +73,12 @@ internal class InlineClassAwareCaller<out M : Member>(
             val extensionReceiverType = descriptor.extensionReceiverParameter?.type
             if (extensionReceiverType != null) {
                 kotlinParameterTypes.add(extensionReceiverType)
-            } else if (descriptor !is ConstructorDescriptor) {
+            } else if (descriptor is ConstructorDescriptor) {
+                val constructedClass = descriptor.constructedClass
+                if (constructedClass.isInner) {
+                    kotlinParameterTypes.add((constructedClass.containingDeclaration as ClassDescriptor).defaultType)
+                }
+            } else {
                 val containingDeclaration = descriptor.containingDeclaration
                 if (containingDeclaration is ClassDescriptor && containingDeclaration.isInline) {
                     kotlinParameterTypes.add(containingDeclaration.defaultType)
@@ -162,13 +170,21 @@ internal fun KotlinType.toInlineClass(): Class<*>? {
     return null
 }
 
-private val CallableMemberDescriptor.expectedReceiverType
-    get() =
-        extensionReceiverParameter?.type
-            ?: (containingDeclaration as? ClassDescriptor)?.defaultType.takeIf { dispatchReceiverParameter != null }
+private val CallableMemberDescriptor.expectedReceiverType: KotlinType?
+    get() {
+        val extensionReceiver = extensionReceiverParameter
+        val dispatchReceiver = dispatchReceiverParameter
+        return when {
+            extensionReceiver != null -> extensionReceiver.type
+            dispatchReceiver == null -> null
+            this is ConstructorDescriptor -> dispatchReceiver.type
+            else -> (containingDeclaration as? ClassDescriptor)?.defaultType
+        }
+    }
 
 internal fun Any?.coerceToExpectedReceiverType(descriptor: CallableMemberDescriptor): Any? {
-    val unboxMethod = descriptor.expectedReceiverType?.toInlineClass()?.getUnboxMethod(descriptor) ?: return this
+    val expectedReceiverType = descriptor.expectedReceiverType
+    val unboxMethod = expectedReceiverType?.toInlineClass()?.getUnboxMethod(descriptor) ?: return this
 
     return unboxMethod.invoke(this)
 }

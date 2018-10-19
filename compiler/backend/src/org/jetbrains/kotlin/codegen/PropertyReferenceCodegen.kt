@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes.*
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
+import org.jetbrains.kotlin.resolve.jvm.shouldHideConstructorDueToInlineClassTypeValueParameters
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.typeUtil.builtIns
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -241,6 +242,11 @@ class PropertyReferenceCodegen(
             }
 
             val accessor = when (callable) {
+                is ClassConstructorDescriptor ->
+                    if (shouldHideConstructorDueToInlineClassTypeValueParameters(callable))
+                        AccessorForConstructorDescriptor(callable, callable.containingDeclaration, null, AccessorKind.NORMAL)
+                    else
+                        callable
                 is FunctionDescriptor -> callable
                 is VariableDescriptorWithAccessors ->
                     callable.getter ?: DescriptorFactory.createDefaultGetter(callable as PropertyDescriptor, Annotations.EMPTY).apply {

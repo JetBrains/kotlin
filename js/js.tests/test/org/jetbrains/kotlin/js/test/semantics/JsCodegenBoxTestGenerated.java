@@ -17858,14 +17858,19 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                     KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/reflection/call/inlineClasses"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JS, true);
                 }
 
+                @TestMetadata("constructorWithInlineClassParameters.kt")
+                public void testConstructorWithInlineClassParameters() throws Exception {
+                    runTest("compiler/testData/codegen/box/reflection/call/inlineClasses/constructorWithInlineClassParameters.kt");
+                }
+
                 @TestMetadata("fieldAccessors.kt")
                 public void testFieldAccessors() throws Exception {
                     runTest("compiler/testData/codegen/box/reflection/call/inlineClasses/fieldAccessors.kt");
                 }
 
-                @TestMetadata("functionsAndConstructors.kt")
-                public void testFunctionsAndConstructors() throws Exception {
-                    runTest("compiler/testData/codegen/box/reflection/call/inlineClasses/functionsAndConstructors.kt");
+                @TestMetadata("functionsWithInlineClassParameters.kt")
+                public void testFunctionsWithInlineClassParameters() throws Exception {
+                    runTest("compiler/testData/codegen/box/reflection/call/inlineClasses/functionsWithInlineClassParameters.kt");
                 }
 
                 @TestMetadata("inlineClassConstructor.kt")
