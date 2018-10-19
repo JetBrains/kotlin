@@ -208,7 +208,7 @@ abstract class AbstractKotlinKapt3Test : CodegenTestCase() {
         lines.filter { it.startsWith("// $name") }.toList()
     }
 
-    protected fun File.getOptionValues(name: String) = getRawOptionValues(name).map { it.drop("// ".length + name.length).trim() }
+    private fun File.getOptionValues(name: String) = getRawOptionValues(name).map { it.drop("// ".length + name.length).trim() }
 
     protected abstract fun check(
         kaptContext: KaptContextForStubGeneration,

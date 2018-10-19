@@ -27,11 +27,12 @@ import org.jetbrains.org.objectweb.asm.tree.MethodNode
 import java.util.*
 
 internal class ParameterInfo(
-        val flags: Long,
-        val name: String,
-        val type: Type,
-        val visibleAnnotations: List<AnnotationNode>?,
-        val invisibleAnnotations: List<AnnotationNode>?)
+    val flags: Long,
+    val name: String,
+    val type: Type,
+    val visibleAnnotations: List<AnnotationNode>?,
+    val invisibleAnnotations: List<AnnotationNode>?
+)
 
 internal fun MethodNode.getParametersInfo(containingClass: ClassNode): List<ParameterInfo> {
     val localVariables = this.localVariables ?: emptyList()
@@ -63,7 +64,7 @@ internal fun MethodNode.getParametersInfo(containingClass: ClassNode): List<Para
 
         // @JvmOverloads constructors and ordinary methods don't have "this" local variable
         name = name ?: localVariables.getOrNull(index + localVariableIndexOffset)?.name
-                   ?: "p${index - startParameterIndex}"
+                ?: "p${index - startParameterIndex}"
 
         // Property setters has bad parameter names
         if (name.startsWith("<") && name.endsWith(">")) {
