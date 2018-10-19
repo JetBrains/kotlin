@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.js.inline.context.FunctionContext;
 import org.jetbrains.kotlin.js.inline.context.InliningContext;
 import org.jetbrains.kotlin.js.inline.context.NamingContext;
 import org.jetbrains.kotlin.js.inline.util.*;
+import org.jetbrains.kotlin.js.translate.expression.InlineMetadata;
 import org.jetbrains.kotlin.resolve.inline.InlineStrategy;
 
 import java.util.*;
@@ -346,6 +347,61 @@ public class JsInliner extends JsVisitorWithContextImpl {
         if (lastCallInfo != null && lastCallInfo.call == x) {
             inlineCallInfos.removeLast();
         }
+    }
+
+    @Override
+    public void endVisit(@NotNull JsExpressionStatement x, @NotNull JsContext ctx) {
+        JsExpression e = x.getExpression();
+        if (e instanceof JsBinaryOperation) {
+            JsBinaryOperation binOp = (JsBinaryOperation) e;
+            if (binOp.getOperator() == JsBinaryOperator.ASG) {
+                JsFunction splitSuspendInlineFunction = splitExportedSuspendInlineFunctionDeclarations(binOp.getArg2());
+                if (splitSuspendInlineFunction != null) {
+                    binOp.setArg2(splitSuspendInlineFunction);
+                }
+            }
+        }
+
+        super.endVisit(x, ctx);
+    }
+
+    @Override
+    public void endVisit(@NotNull JsVars.JsVar x, @NotNull JsContext ctx) {
+        JsFunction splitSuspendInlineFunction = splitExportedSuspendInlineFunctionDeclarations(x.getInitExpression());
+        if (splitSuspendInlineFunction != null) {
+            x.setInitExpression(splitSuspendInlineFunction);
+        }
+    }
+
+    @Nullable
+    private JsFunction splitExportedSuspendInlineFunctionDeclarations(@NotNull JsExpression expression) {
+        InlineMetadata inlineMetadata = InlineMetadata.decompose(expression);
+        if (inlineMetadata != null) {
+            FunctionWithWrapper functionWithWrapper = inlineMetadata.getFunction();
+            JsFunction originalFunction = functionWithWrapper.getFunction();
+            if (MetadataProperties.getCoroutineMetadata(originalFunction) != null) {
+                JsContext<JsStatement> statementContext = getLastStatementLevelContext();
+
+                // This function will be exported to JS
+                JsFunction function = originalFunction.deepCopy();
+
+                // Original function should be not be transformed into a state machine
+                originalFunction.setName(null);
+                MetadataProperties.setCoroutineMetadata(originalFunction, null);
+                MetadataProperties.setInlineableCoroutineBody(originalFunction, true);
+                if (functionWithWrapper.getWrapperBody() != null) {
+                    // Extract local declarations
+                    applyWrapper(functionWithWrapper.getWrapperBody(), function, originalFunction, new JsInliningContext(statementContext));
+                }
+
+                // Keep the `defineInlineFunction` for the inliner to find
+                statementContext.addNext(expression.makeStmt());
+
+                // Return the function body to be used without inlining.
+                return function;
+            }
+        }
+        return null;
     }
 
     @Override

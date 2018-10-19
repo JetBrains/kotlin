@@ -907,6 +907,11 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
         public void testNativeExceptions() throws Exception {
             runTest("js/js.translator/testData/box/coroutines/nativeExceptions.kt");
         }
+
+        @TestMetadata("onlyInlineSuspendFunction.kt")
+        public void testOnlyInlineSuspendFunction() throws Exception {
+            runTest("js/js.translator/testData/box/coroutines/onlyInlineSuspendFunction.kt");
+        }
     }
 
     @TestMetadata("js/js.translator/testData/box/crossModuleRef")
