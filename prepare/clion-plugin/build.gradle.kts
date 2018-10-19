@@ -89,4 +89,5 @@ task<Copy>("clionPlugin") {
         exclude("**/$platformDepsJarName")
         into("lib")
     }
+    from(File(project(":kotlin-ultimate:clion-native").projectDir, "templates")) { into("templates") }
 }
