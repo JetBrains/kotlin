@@ -25,9 +25,9 @@ import kotlin.system.measureTimeMillis
 import com.sun.tools.javac.util.List as JavacList
 
 fun KaptContext.doAnnotationProcessing(
-        javaSourceFiles: List<File>,
-        processors: List<Processor>,
-        additionalSources: JavacList<JCTree.JCCompilationUnit> = JavacList.nil()
+    javaSourceFiles: List<File>,
+    processors: List<Processor>,
+    additionalSources: JavacList<JCTree.JCCompilationUnit> = JavacList.nil()
 ) {
     val processingEnvironment = JavacProcessingEnvironment.instance(context)
     val wrappedProcessors = processors.map { ProcessorWrapper(it) }
@@ -37,8 +37,7 @@ fun KaptContext.doAnnotationProcessing(
         if (isJava9OrLater()) {
             val initProcessAnnotationsMethod = JavaCompiler::class.java.declaredMethods.single { it.name == "initProcessAnnotations" }
             initProcessAnnotationsMethod.invoke(compiler, wrappedProcessors, emptyList<JavaFileObject>(), emptyList<String>())
-        }
-        else {
+        } else {
             compiler.initProcessAnnotations(wrappedProcessors)
         }
 
@@ -47,14 +46,14 @@ fun KaptContext.doAnnotationProcessing(
         compilerAfterAP = try {
             javaLog.interceptorData.files = parsedJavaFiles.map { it.sourceFile to it }.toMap()
             val analyzedFiles = compiler.stopIfErrorOccurred(
-                    CompileState.PARSE, compiler.enterTrees(parsedJavaFiles + additionalSources))
+                CompileState.PARSE, compiler.enterTrees(parsedJavaFiles + additionalSources)
+            )
 
             if (isJava9OrLater()) {
                 val processAnnotationsMethod = compiler.javaClass.getMethod("processAnnotations", JavacList::class.java)
                 processAnnotationsMethod.invoke(compiler, analyzedFiles)
                 compiler
-            }
-            else {
+            } else {
                 compiler.processAnnotations(analyzedFiles)
             }
         } catch (e: AnnotationProcessingError) {
@@ -138,10 +137,15 @@ private class ProcessorWrapper(private val delegate: Processor) : Processor by d
 fun KaptContext.parseJavaFiles(javaSourceFiles: List<File>): JavacList<JCTree.JCCompilationUnit> {
     val javaFileObjects = fileManager.getJavaFileObjectsFromFiles(javaSourceFiles)
 
-    return compiler.stopIfErrorOccurred(CompileState.PARSE,
-                    initModulesIfNeeded(
-                            compiler.stopIfErrorOccurred(CompileState.PARSE,
-                                    compiler.parseFiles(javaFileObjects))))
+    return compiler.stopIfErrorOccurred(
+        CompileState.PARSE,
+        initModulesIfNeeded(
+            compiler.stopIfErrorOccurred(
+                CompileState.PARSE,
+                compiler.parseFiles(javaFileObjects)
+            )
+        )
+    )
 }
 
 private fun KaptContext.initModulesIfNeeded(files: JavacList<JCTree.JCCompilationUnit>): JavacList<JCTree.JCCompilationUnit> {
@@ -150,8 +154,9 @@ private fun KaptContext.initModulesIfNeeded(files: JavacList<JCTree.JCCompilatio
 
         @Suppress("UNCHECKED_CAST")
         return compiler.stopIfErrorOccurred(
-                CompileState.PARSE,
-                initModulesMethod.invoke(compiler, files) as JavacList<JCTree.JCCompilationUnit>)
+            CompileState.PARSE,
+            initModulesMethod.invoke(compiler, files) as JavacList<JCTree.JCCompilationUnit>
+        )
     }
 
     return files
