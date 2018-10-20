@@ -7,12 +7,8 @@ package org.jetbrains.konan.gradle
 
 import org.gradle.api.*
 import org.gradle.api.provider.Provider
-<<<<<<< HEAD
-import org.jetbrains.kotlin.gradle.getMethodOrNull
-=======
 import org.jetbrains.kotlin.gradle.*
 import org.jetbrains.kotlin.gradle.KotlinMPPGradleModelBuilder.Companion.getTargets
->>>>>>> 9669d7d... Build artifacts via compilations, not via tasks
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.utils.addToStdlib.flatMapToNullable
 import org.jetbrains.plugins.gradle.tooling.ErrorMessageBuilder
@@ -31,9 +27,7 @@ class KonanModelBuilder : ModelBuilderService {
     }
 
     override fun buildAll(modelName: String, project: Project): Any? {
-        println("build")
-
-        val targets = project.getTargets() ?: error("Targets not found")
+        val targets = project.getTargets() ?: return null
 
         val artifacts = targets
             .flatMap { it["getCompilations"] as NamedDomainObjectContainer<*> }

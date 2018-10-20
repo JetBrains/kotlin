@@ -5,7 +5,7 @@
   <name>Kotlin/Native for CLion</name>
   <vendor>JetBrains</vendor>
 
-  <idea-version since-build="183.3" until-build="191.*"/> <!--TODO restrict compatibility -->
+  <!--version_placeholder-->
 
   <description>Kotlin/Native support</description>
 
