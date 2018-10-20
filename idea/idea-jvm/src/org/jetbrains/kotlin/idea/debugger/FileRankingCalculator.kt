@@ -6,9 +6,9 @@
 package org.jetbrains.kotlin.idea.debugger
 
 import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.psi.PsiElement
 import com.sun.jdi.*
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.codegen.ClassBuilderMode
 import org.jetbrains.kotlin.codegen.state.IncompatibleClassTracker
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
@@ -30,8 +30,6 @@ import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.varargParameterPosition
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
-import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.typeUtil.builtIns
 import org.jetbrains.kotlin.utils.keysToMap
 import kotlin.jvm.internal.FunctionBase
 import org.jetbrains.org.objectweb.asm.Type as AsmType
@@ -196,6 +194,11 @@ abstract class FileRankingCalculator(private val checkClassFqName: Boolean = tru
         } catch (e: AbsentInformationException) {
             ZERO
         } catch (e: InternalException) {
+            ZERO
+        } catch (e: ProcessCanceledException) {
+            throw e
+        } catch (e: RuntimeException) {
+            LOG.error("Exception during Kotlin sources ranking", e)
             ZERO
         }
     }
