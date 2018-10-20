@@ -30,6 +30,7 @@ val platformDepsZip by configurations.creating
 
 val pluginXmlPath = "META-INF/plugin.xml"
 val platformDepsJarName = "kotlinNative-platformDeps.jar"
+val pluginXmlLocation = File(buildDir, "pluginXml")
 
 // Do not rename, used in JPS importer
 val projectsToShadow by extra(listOf(
@@ -55,9 +56,26 @@ val kotlinPluginXml by tasks.creating {
     }
 }
 
+val preparePluginXml by task<Copy> {
+    dependsOn(":kotlin-ultimate:clion-native:assemble")
+    inputs.property("versions.clion", clionVersion)
+    from(project(":kotlin-ultimate:clion-native").mainSourceSet.output.resourcesDir) { include(pluginXmlPath) }
+    into(pluginXmlLocation)
+
+    val sinceBuild =
+        if (clionVersion.matches(Regex("\\d+\\.\\d+"))) clionVersion else clionVersion.substring(0, clionVersion.lastIndexOf('.'))
+    val untilBuild = clionVersion.substring(0, clionVersion.lastIndexOf('.')) + ".*"
+
+    filter {
+        it.replace("<!--version_placeholder-->",
+                   "<idea-version since-build=\"$sinceBuild\" until-build=\"$untilBuild\"/>")
+    }
+}
+
 val jar = runtimeJar {
     archiveName = "kotlin-plugin.jar"
     dependsOn(cidrPlugin)
+    dependsOn(preparePluginXml)
     from(kotlinPluginXml) { into("META-INF") }
 
     from {
@@ -68,8 +86,11 @@ val jar = runtimeJar {
 
     for (p in projectsToShadow) {
         dependsOn("$p:classes")
-        from(getSourceSetsFrom(p)["main"].output)
+        from(getSourceSetsFrom(p)["main"].output) {
+            exclude(pluginXmlPath)
+        }
     }
+    from(pluginXmlLocation) { include(pluginXmlPath) }
 }
 
 val platformDepsJar by task<Zip> {
