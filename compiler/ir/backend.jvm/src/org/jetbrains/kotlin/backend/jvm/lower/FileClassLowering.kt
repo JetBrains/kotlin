@@ -46,5 +46,35 @@ class FileClassLowering(val context: JvmBackendContext) : FileLoweringPass {
         irFile.declarations.clear()
         irFile.declarations.addAll(classes)
     }
+
+    fun createFileClass(irFile: IrFile, fileClassMembers: List<IrDeclaration>): IrClass {
+        val fileEntry = irFile.fileEntry
+        val ktFile = context.psiSourceManager.getKtFile(fileEntry as PsiSourceManager.PsiFileEntry)
+            ?: throw AssertionError("Unexpected file entry: $fileEntry")
+        val fileClassInfo = JvmFileClassUtil.getFileClassInfoNoResolve(ktFile)
+        val descriptor = WrappedClassDescriptor(sourceElement = KotlinSourceElement(ktFile))
+        return IrClassImpl(
+            0, fileEntry.maxOffset,
+            IrDeclarationOrigin.DEFINED,
+            symbol = IrClassSymbolImpl(descriptor),
+            name = fileClassInfo.fileClassFqName.shortName(),
+            kind = ClassKind.CLASS,
+            visibility = Visibilities.PUBLIC,
+            modality = Modality.FINAL,
+            isCompanion = false,
+            isInner = false,
+            isData = false,
+            isExternal = false,
+            isInline = false
+        ).apply {
+            descriptor.bind(this)
+            superTypes.add(context.irBuiltIns.anyType)
+            parent = irFile
+            declarations.addAll(fileClassMembers)
+            // TODO: figure out why reparenting leads to failing tests.
+            // fileClassMembers.forEach { it.parent = this }
+        }
+        // TODO file annotations
+    }
 }
 

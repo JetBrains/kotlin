@@ -30,11 +30,7 @@ import org.jetbrains.kotlin.name.NameUtils
 class JvmLower(val context: JvmBackendContext) {
     fun lower(irFile: IrFile) {
         // TODO run lowering passes as callbacks in bottom-up visitor
-        JvmCoercionToUnitPatcher(
-            context.builtIns,
-            context.irBuiltIns,
-            TypeTranslator(context.ir.symbols.externalSymbolTable, context.state.languageVersionSettings)
-        ).lower(irFile)
+        JvmCoercionToUnitPatcher(context).lower(irFile)
         FileClassLowering(context).lower(irFile)
         KCallableNamePropertyLowering(context).lower(irFile)
 
