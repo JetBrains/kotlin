@@ -85,6 +85,8 @@
         <module>tools/kotlin-maven-sam-with-receiver</module>
         <module>tools/kotlin-maven-serialization</module>
 
+        <module>tools/kotlin-bom</module>
+
         <module>tools/kotlin-maven-plugin-test</module>
 
         <module>examples/kotlin-java-example</module>
