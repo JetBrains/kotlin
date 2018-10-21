@@ -188,6 +188,10 @@ class SDL_Visualizer(val width: Int, val height: Int): GameFieldVisualizer, User
         }
         this.renderer = renderer
 
+        // Workaround for Mojave SDL bug, see https://bugzilla.libsdl.org/show_bug.cgi?id=4272
+        SDL_PumpEvents()
+        SDL_SetWindowSize(window, windowWidth, windowHeight)
+
         texture = loadImage(window, renderer, "tetris_all.bmp")
     }
 
