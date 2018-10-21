@@ -68,7 +68,7 @@ internal fun MutableList<String>.addListArg(parameter: String, values: List<Stri
 }
 
 private fun File.providedByCompiler(project: Project): Boolean =
-    toPath().startsWith(project.file(project.konanHome).toPath())
+    toPath().startsWith(project.file(project.konanHome).resolve("klib").toPath())
 
 // We need to filter out interop duplicates because we create copy of them for IDE.
 // TODO: Remove this after interop rework.
