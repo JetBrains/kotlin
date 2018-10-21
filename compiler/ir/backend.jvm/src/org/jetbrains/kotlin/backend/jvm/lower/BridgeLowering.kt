@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.codegen.FunctionCodegen.isMethodOfAny
 import org.jetbrains.kotlin.codegen.FunctionCodegen.isThereOverriddenInKotlinClass
 import org.jetbrains.kotlin.codegen.JvmCodegenUtil.getDirectMember
 import org.jetbrains.kotlin.codegen.OwnerKind
-import org.jetbrains.kotlin.codegen.descriptors.FileClassDescriptor
 import org.jetbrains.kotlin.codegen.isToArrayFromCollection
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.config.JvmTarget
