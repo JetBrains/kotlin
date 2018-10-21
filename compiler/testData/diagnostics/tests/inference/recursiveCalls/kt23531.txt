@@ -1,0 +1,21 @@
+package
+
+public fun doTheJob0(): kotlin.Unit
+public fun doTheJob1(): kotlin.Unit
+public suspend fun doTheJob2(): kotlin.Unit
+public suspend fun doTheJob3(): kotlin.Unit
+public fun insideJob0(): kotlin.Unit
+public fun insideJob1(): kotlin.Unit
+public suspend fun insideJob2(): kotlin.Unit
+public suspend fun insideJob3(): kotlin.Unit
+public fun </*0*/ T> simpleAsync0(/*0*/ block: Scope.() -> T): kotlin.Unit
+public fun </*0*/ T> simpleAsync1(/*0*/ block: suspend Scope.() -> T): kotlin.Unit
+public suspend fun </*0*/ T> simpleAsync2(/*0*/ block: Scope.() -> T): kotlin.Unit
+public suspend fun </*0*/ T> simpleAsync3(/*0*/ block: suspend Scope.() -> T): kotlin.Unit
+
+public final class Scope {
+    public constructor Scope()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
