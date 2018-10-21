@@ -33,9 +33,9 @@ abstract class ClassLowerWithContext : FileLoweringPass, IrElementTransformer<Ir
     private val irClass2Context = hashMapOf<IrClass, IrClassContext>()
 
     override fun lower(irFile: IrFile) {
-        val packageIr = irFile.declarations.singleOrNull { it.descriptor is FileClassDescriptor }
+        val packageIr = irFile.declarations.singleOrNull { it is IrClass && it.isFileClass } as? IrClass
         if (packageIr != null) {
-            visitClass(packageIr as IrClass, null)
+            visitClass(packageIr, null)
             irFile.declarations.filterNot { it == packageIr }.forEach { it.accept(this, irClass2Context[packageIr]!!) }
         } else {
             irFile.accept(this, null)

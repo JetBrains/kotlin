@@ -44,7 +44,8 @@ class IrClassImpl(
     override val isInner: Boolean,
     override val isData: Boolean,
     override val isExternal: Boolean,
-    override val isInline: Boolean
+    override val isInline: Boolean,
+    override val isFileClass: Boolean = false
 ) :
     IrDeclarationBase(startOffset, endOffset, origin),
     IrClass {

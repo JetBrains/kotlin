@@ -70,9 +70,9 @@ class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPass {
         !isInterface(descriptor.containingDeclaration) || state.target !== JvmTarget.JVM_1_6 && descriptor.hasJvmDefaultAnnotation()
 
     override fun lower(irClass: IrClass) {
-        val classDescriptor = irClass.descriptor
-        if (classDescriptor is FileClassDescriptor) return
+        if (irClass.isFileClass) return
 
+        val classDescriptor = irClass.descriptor
         if (classDescriptor is DefaultImplsClassDescriptor) {
             return /*TODO?*/
         }

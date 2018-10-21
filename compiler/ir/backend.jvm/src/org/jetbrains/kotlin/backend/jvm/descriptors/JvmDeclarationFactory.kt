@@ -10,8 +10,6 @@ import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.lower.createFunctionAndMapVariables
 import org.jetbrains.kotlin.backend.jvm.lower.createStaticFunctionWithReceivers
 import org.jetbrains.kotlin.builtins.CompanionObjectMapping.isMappedIntrinsicCompanionObject
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.codegen.descriptors.FileClassDescriptor
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.descriptors.*
@@ -19,8 +17,6 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.ClassConstructorDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
-import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
-import org.jetbrains.kotlin.ir.SourceManager
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrClassImpl
@@ -37,14 +33,10 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.load.java.JavaVisibilities
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi2ir.PsiSourceManager
-import org.jetbrains.kotlin.resolve.source.KotlinSourceElement
 import org.jetbrains.org.objectweb.asm.Opcodes
 import java.util.*
 
 class JvmDeclarationFactory(
-    private val psiSourceManager: PsiSourceManager,
-    private val builtIns: KotlinBuiltIns,
     private val state: GenerationState,
     private val symbolTable: SymbolTable
 ) : DeclarationFactory {
@@ -66,19 +58,6 @@ class JvmDeclarationFactory(
                 type
             )
         }
-
-    fun createFileClassDescriptor(fileEntry: SourceManager.FileEntry, packageFragment: PackageFragmentDescriptor): FileClassDescriptor {
-        val ktFile = psiSourceManager.getKtFile(fileEntry as PsiSourceManager.PsiFileEntry)
-                ?: throw AssertionError("Unexpected file entry: $fileEntry")
-        val fileClassInfo = JvmFileClassUtil.getFileClassInfoNoResolve(ktFile)
-        val sourceElement = KotlinSourceElement(ktFile)
-        return FileClassDescriptorImpl(
-            fileClassInfo.fileClassFqName.shortName(), packageFragment,
-            listOf(builtIns.anyType),
-            sourceElement,
-            Annotations.EMPTY // TODO file annotations
-        )
-    }
 
     override fun getOuterThisField(innerClass: IrClass): IrField =
         if (!innerClass.isInner) throw AssertionError("Class is not inner: ${innerClass.dump()}")

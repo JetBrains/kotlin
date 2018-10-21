@@ -17,12 +17,20 @@
 package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
+import org.jetbrains.kotlin.backend.common.descriptors.WrappedClassDescriptor
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
+import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.impl.IrClassImpl
+import org.jetbrains.kotlin.ir.symbols.impl.IrClassSymbolImpl
+import org.jetbrains.kotlin.psi2ir.PsiSourceManager
+import org.jetbrains.kotlin.resolve.source.KotlinSourceElement
 import java.util.*
 
 class FileClassLowering(val context: JvmBackendContext) : FileLoweringPass {
@@ -39,8 +47,7 @@ class FileClassLowering(val context: JvmBackendContext) : FileLoweringPass {
 
         if (fileClassMembers.isEmpty()) return
 
-        val fileClassDescriptor = context.declarationFactory.createFileClassDescriptor(irFile.fileEntry, irFile.packageFragmentDescriptor)
-        val irFileClass = IrClassImpl(0, irFile.fileEntry.maxOffset, IrDeclarationOrigin.DEFINED, fileClassDescriptor, fileClassMembers)
+        val irFileClass = createFileClass(irFile, fileClassMembers)
         classes.add(irFileClass)
 
         irFile.declarations.clear()
