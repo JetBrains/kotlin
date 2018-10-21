@@ -39,6 +39,7 @@ private val runtimeSources = listOfKtFilesFrom(
 ) - listOfKtFilesFrom(
     "libraries/stdlib/common/src/kotlin/JvmAnnotationsH.kt",
     "libraries/stdlib/src/kotlin/annotations/Multiplatform.kt",
+    "libraries/stdlib/common/src/kotlin/NativeAnnotationsH.kt",
 
     // TODO: Support Int.pow
     "libraries/stdlib/js/src/kotlin/random/PlatformRandom.kt",
