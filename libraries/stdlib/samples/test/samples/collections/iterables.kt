@@ -41,24 +41,6 @@ class Iterables {
             }
         }
 
-        @Sample
-        fun iterableDeprecated() {
-            val iterable = Iterable {
-                buildIterator {
-                    yield(42)
-                    yieldAll(1..5 step 2)
-                }
-            }
-            val result = iterable.mapIndexed { index, value -> "$index: $value" }
-            assertPrints(result, "[0: 42, 1: 1, 2: 3, 3: 5]")
-
-            // can be iterated many times
-            repeat(2) {
-                val sum = iterable.sum()
-                assertPrints(sum, "51")
-            }
-        }
-
     }
 
     class Operations {
