@@ -1,3 +1,4 @@
+// SKIP_JDK6
 // FILE: A.kt
 import java.util.*
 class Jdk6List<F> : AbstractList<F>() {

@@ -66,9 +66,5 @@ fun main(args: Array<String>) {
         testClass<AbstractEnhancedSignaturesResolvedCallsTest> {
             model("resolvedCalls/enhancedSignatures")
         }
-
-        testClass<AbstractCompileKotlinAgainstKotlinTest> {
-            model("codegen/java8/compileKotlinAgainstKotlin")
-        }
     }
 }
