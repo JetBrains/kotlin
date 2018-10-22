@@ -57,12 +57,12 @@ object CommonLibraryKind : PersistentLibraryKind<DummyLibraryProperties>("kotlin
 val PersistentLibraryKind<*>?.platform: TargetPlatform
     get() = when (this) {
         is KotlinLibraryKind -> this.compilerPlatform
-        else -> JvmPlatform
+        else -> DefaultIdeTargetPlatformKindProvider.defaultCompilerPlatform
     }
 
 fun getLibraryPlatform(project: Project, library: Library): TargetPlatform {
-    if (library !is LibraryEx) return JvmPlatform
-    if (library.isDisposed) return JvmPlatform
+    if (library !is LibraryEx) return DefaultIdeTargetPlatformKindProvider.defaultCompilerPlatform
+    if (library.isDisposed) return DefaultIdeTargetPlatformKindProvider.defaultCompilerPlatform
 
     return library.effectiveKind(project).platform
 }
