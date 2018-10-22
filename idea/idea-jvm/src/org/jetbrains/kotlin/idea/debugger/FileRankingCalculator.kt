@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypes2
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypes3
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.varargParameterPosition
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.utils.keysToMap
@@ -107,6 +108,8 @@ abstract class FileRankingCalculator(private val checkClassFqName: Boolean = tru
     }
 
     private fun rankingForClassName(fqName: String, descriptor: ClassDescriptor, bindingContext: BindingContext): Ranking {
+        if (DescriptorUtils.isLocal(descriptor)) return Ranking.ZERO
+
         val expectedFqName = makeTypeMapper(bindingContext).mapType(descriptor).className
         return when {
             checkClassFqName -> if (expectedFqName == fqName) MAJOR else LOW
