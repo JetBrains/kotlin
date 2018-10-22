@@ -21,6 +21,7 @@ dependencies {
     compile(project(":compiler:frontend"))
     compile(project(":compiler:frontend.java"))
     compile(project(":compiler:plugin-api"))
+    compileOnly(project(":kotlin-annotation-processing-cli"))
     compileOnly(project(":kotlin-annotation-processing-base"))
     compileOnly(project(":kotlin-annotation-processing-runtime"))
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
@@ -33,6 +34,7 @@ dependencies {
     testCompile(project(":kotlin-annotation-processing-runtime"))
 
     embeddedComponents(project(":kotlin-annotation-processing-runtime")) { isTransitive = false }
+    embeddedComponents(project(":kotlin-annotation-processing-cli")) { isTransitive = false }
     embeddedComponents(project(":kotlin-annotation-processing-base")) { isTransitive = false }
 }
 
