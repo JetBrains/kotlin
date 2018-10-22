@@ -19,10 +19,7 @@ package org.jetbrains.kotlin.idea.quickfix
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.diagnostics.Diagnostic
-import org.jetbrains.kotlin.psi.KtExpression
-import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.KtPsiFactory
-import org.jetbrains.kotlin.psi.createExpressionByPattern
+import org.jetbrains.kotlin.psi.*
 
 class ChangeToFunctionInvocationFix(element: KtExpression) : KotlinQuickFixAction<KtExpression>(element) {
     override fun getFamilyName() = "Change to function invocation"
@@ -31,7 +28,11 @@ class ChangeToFunctionInvocationFix(element: KtExpression) : KotlinQuickFixActio
 
     public override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         val element = element ?: return
-        element.replace(KtPsiFactory(file).createExpressionByPattern("$0()", element))
+        val nextLiteralString = element.parent.nextSibling as? KtLiteralStringTemplateEntry
+        val parentheses = nextLiteralString?.text
+            ?.takeIf { it.startsWith("(") && it.endsWith(")") }?.also { nextLiteralString.delete() }
+            ?: "()"
+        element.replace(KtPsiFactory(file).createExpressionByPattern("$0$1", element, parentheses))
     }
 
     companion object : KotlinSingleIntentionActionFactory() {
