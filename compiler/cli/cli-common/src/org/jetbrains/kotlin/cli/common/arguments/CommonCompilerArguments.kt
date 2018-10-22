@@ -206,31 +206,31 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
         value = "-Xdisable-phases",
         description = "Disable backend phases"
     )
-    var disablePhases: Array<String>? by FreezableVar(null)
+    var disablePhases: Array<String> by FreezableVar(emptyArray())
 
     @Argument(
         value = "-Xverbose-phases",
         description = "Be verbose while performing these backend phases"
     )
-    var verbosePhases: Array<String>? by FreezableVar(null)
+    var verbosePhases: Array<String> by FreezableVar(emptyArray())
 
     @Argument(
         value = "-Xphases-to-dump-before",
         description = "Dump backend state before these phases"
     )
-    var phasesToDumpBefore: Array<String>? by FreezableVar(null)
+    var phasesToDumpBefore: Array<String> by FreezableVar(emptyArray())
 
     @Argument(
         value = "-Xphases-to-dump-after",
         description = "Dump backend state after these phases"
     )
-    var phasesToDumpAfter: Array<String>? by FreezableVar(null)
+    var phasesToDumpAfter: Array<String> by FreezableVar(emptyArray())
 
     @Argument(
         value = "-Xphases-to-dump",
         description = "Dump backend state both before and after these phases"
     )
-    var phasesToDump: Array<String>? by FreezableVar(null)
+    var phasesToDump: Array<String> by FreezableVar(emptyArray())
 
     @Argument(
         value = "-Xprofile-phases",

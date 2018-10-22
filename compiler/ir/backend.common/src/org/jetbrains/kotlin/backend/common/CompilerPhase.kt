@@ -22,9 +22,18 @@ class CompilerPhases<Phase>(phaseArray: Array<Phase>, config: CompilerConfigurat
     val enabled = computeEnabled(config)
     val verbose = phaseSetFromConfiguration(config, CommonConfigurationKeys.VERBOSE_PHASES)
 
-    private val dumpPhases = computeDumpPhases(config)
-    val toDumpStateBefore = dumpPhases.component1()
-    val toDumpStateAfter = dumpPhases.component2()
+    val toDumpStateBefore: Set<Phase>
+    val toDumpStateAfter: Set<Phase>
+
+    init {
+        with(CommonConfigurationKeys) {
+            val beforeSet = phaseSetFromConfiguration(config, PHASES_TO_DUMP_STATE_BEFORE)
+            val afterSet = phaseSetFromConfiguration(config, PHASES_TO_DUMP_STATE_AFTER)
+            val bothSet = phaseSetFromConfiguration(config, PHASES_TO_DUMP_STATE)
+            toDumpStateBefore = beforeSet + bothSet
+            toDumpStateAfter = afterSet + bothSet
+        }
+    }
 
     fun known(name: String): String {
         if (phases[name] == null) {
@@ -38,7 +47,7 @@ class CompilerPhases<Phase>(phaseArray: Array<Phase>, config: CompilerConfigurat
             val enabled = if (phase in enabled) "(Enabled)" else ""
             val verbose = if (phase in verbose) "(Verbose)" else ""
 
-            println(String.format("%1$-30s%2$-30s%3$-10s", "${key}:", phase.description, "$enabled $verbose"))
+            println(String.format("%1$-30s%2$-30s%3$-10s", "$key:", phase.description, "$enabled $verbose"))
         }
     }
 
@@ -53,16 +62,6 @@ class CompilerPhases<Phase>(phaseArray: Array<Phase>, config: CompilerConfigurat
         if ("ALL" in phaseNames) return phases.values.toSet()
         return phaseNames.map { phases[it]!! }.toSet()
     }
-
-    private fun computeDumpPhases(config: CompilerConfiguration): Pair<Set<Phase>, Set<Phase>> {
-        with(CommonConfigurationKeys) {
-            val beforeSet = phaseSetFromConfiguration(config, PHASES_TO_DUMP_STATE_BEFORE)
-            val afterSet = phaseSetFromConfiguration(config, PHASES_TO_DUMP_STATE_AFTER)
-            val bothSet = phaseSetFromConfiguration(config, PHASES_TO_DUMP_STATE)
-
-            return Pair(beforeSet + bothSet, afterSet + bothSet)
-        }
-    }
 }
 
 interface PhaseRunner<Context : CommonBackendContext, Data> {
@@ -76,7 +75,7 @@ class CompilerPhaseManager<Context : CommonBackendContext, Data, Phase>(
     val context: Context,
     val phases: CompilerPhases<Phase>,
     val data: Data,
-    val phaseRunner: PhaseRunner<Context, Data>,
+    private val phaseRunner: PhaseRunner<Context, Data>,
     val parent: CompilerPhaseManager<Context, *, Phase>? = null
 ) where Phase : CompilerPhase, Phase : Enum<Phase> {
     val depth: Int = parent?.depth?.inc() ?: 0

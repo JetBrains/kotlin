@@ -162,35 +162,12 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> extends CLI
 
         setupLanguageVersionSettings(configuration, arguments);
 
-        if (arguments.getListPhases()) {
-            configuration.put(CommonConfigurationKeys.LIST_PHASES, true);
-        }
-
-        String[] disabledPhases = arguments.getDisablePhases();
-        if (disabledPhases != null) {
-            configuration.put(CommonConfigurationKeys.DISABLED_PHASES, SetsKt.setOf(disabledPhases));
-        }
-
-        String[] verbosePhases = arguments.getVerbosePhases();
-        if (verbosePhases != null) {
-            configuration.put(CommonConfigurationKeys.VERBOSE_PHASES, SetsKt.setOf(verbosePhases));
-        }
-
-        String[] phasesToDumpBefore = arguments.getPhasesToDumpBefore();
-        if (phasesToDumpBefore != null) {
-            configuration.put(CommonConfigurationKeys.PHASES_TO_DUMP_STATE_BEFORE, SetsKt.setOf(phasesToDumpBefore));
-        }
-
-        String[] phasesToDumpAfter = arguments.getPhasesToDumpAfter();
-        if (phasesToDumpAfter != null) {
-            configuration.put(CommonConfigurationKeys.PHASES_TO_DUMP_STATE_AFTER, SetsKt.setOf(phasesToDumpAfter));
-        }
-
-        String[] phasesToDump = arguments.getPhasesToDump();
-        if (phasesToDump != null) {
-            configuration.put(CommonConfigurationKeys.PHASES_TO_DUMP_STATE, SetsKt.setOf(phasesToDump));
-        }
-
+        configuration.put(CommonConfigurationKeys.LIST_PHASES, arguments.getListPhases());
+        configuration.put(CommonConfigurationKeys.DISABLED_PHASES, SetsKt.setOf(arguments.getDisablePhases()));
+        configuration.put(CommonConfigurationKeys.VERBOSE_PHASES, SetsKt.setOf(arguments.getVerbosePhases()));
+        configuration.put(CommonConfigurationKeys.PHASES_TO_DUMP_STATE_BEFORE, SetsKt.setOf(arguments.getPhasesToDumpBefore()));
+        configuration.put(CommonConfigurationKeys.PHASES_TO_DUMP_STATE_AFTER, SetsKt.setOf(arguments.getPhasesToDumpAfter()));
+        configuration.put(CommonConfigurationKeys.PHASES_TO_DUMP_STATE, SetsKt.setOf(arguments.getPhasesToDump()));
         configuration.put(CommonConfigurationKeys.PROFILE_PHASES, arguments.getProfilePhases());
     }
 
