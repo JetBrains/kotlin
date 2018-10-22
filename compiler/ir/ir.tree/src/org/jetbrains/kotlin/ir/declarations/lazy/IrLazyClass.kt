@@ -66,8 +66,6 @@ class IrLazyClass(
         symbol.bind(this)
     }
 
-    override val isFileClass = false // file classes are never crated lazily
-
     override val annotations: MutableList<IrCall> = arrayListOf()
 
     override val descriptor: ClassDescriptor get() = symbol.descriptor
