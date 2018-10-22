@@ -10,6 +10,7 @@
 
 package kotlin.test
 
+import kotlin.contracts.*
 import kotlin.internal.InlineOnly
 import kotlin.internal.OnlyInputTypes
 import kotlin.reflect.KClass
@@ -25,6 +26,7 @@ public fun assertTrue(message: String? = null, block: () -> Boolean): Unit = ass
 
 /** Asserts that the expression is `true` with an optional [message]. */
 public fun assertTrue(actual: Boolean, message: String? = null) {
+    contract { returns() implies actual }
     return asserter.assertTrue(message ?: "Expected value to be true.", actual)
 }
 
@@ -33,6 +35,7 @@ public fun assertFalse(message: String? = null, block: () -> Boolean): Unit = as
 
 /** Asserts that the expression is `false` with an optional [message]. */
 public fun assertFalse(actual: Boolean, message: String? = null) {
+    contract { returns() implies (!actual) }
     return asserter.assertTrue(message ?: "Expected value to be false.", !actual)
 }
 
@@ -58,12 +61,14 @@ public fun <@OnlyInputTypes T> assertNotSame(illegal: T, actual: T, message: Str
 
 /** Asserts that the [actual] value is not `null`, with an optional [message]. */
 public fun <T : Any> assertNotNull(actual: T?, message: String? = null): T {
+    contract { returns() implies (actual != null) }
     asserter.assertNotNull(message, actual)
     return actual!!
 }
 
 /** Asserts that the [actual] value is not `null`, with an optional [message] and a function [block] to process the not-null value. */
 public fun <T: Any, R> assertNotNull(actual: T?, message: String? = null, block: (T) -> R) {
+    contract { returns() implies (actual != null) }
     asserter.assertNotNull(message, actual)
     if (actual != null) {
         block(actual)
