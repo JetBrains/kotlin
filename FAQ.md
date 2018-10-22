@@ -43,8 +43,11 @@ A: Use the `-module_name` compiler option or matching Gradle DSL statement, i.e.
 <div class="sample" markdown="1" theme="idea" mode="groovy">
 
 ```groovy
-framework("MyCustomFramework") {
-    extraOpts '-module_name', 'TheName'
+targets {
+    fromPreset(presets.iosArm64, 'myapp') {
+       compilations.main.outputKinds 'FRAMEWORK'
+       compilations.main.extraOpts '-module_name', 'TheName'
+    }
 }
 ```
 
@@ -58,9 +61,11 @@ or matching Gradle DSL statement, i.e.
 <div class="sample" markdown="1" theme="idea" mode="groovy">
 
 ```groovy
-framework("MyCustomFramework") {
-    extraOpts '-Xembed-bitcode' // for release binaries
-    // or '-Xembed-bitcode-marker' for debug binaries
+targets {
+    fromPreset(presets.iosArm64, 'myapp') {
+       compilations.main.outputKinds 'FRAMEWORK'
+       compilations.main.extraOpts '-Xembed-bitcode' // for release binaries
+       // or '-Xembed-bitcode-marker' for debug binaries
 }
 ```
 

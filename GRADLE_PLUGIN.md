@@ -1,5 +1,11 @@
 # Kotlin/Native Gradle plugin
 
+### IMPORTANT NOTICE
+
+This document describes Kotlin/Native experimental Gradle plugin, which is not the plugin yet supported by IDE
+or in multiplatform projects. See MPP Gradle plugin [documentation](https://kotlinlang.org/docs/reference/building-mpp-with-gradle.html
+for more information.
+
 ### Overview
 
 You may use the Gradle plugin to build _Kotlin/Native_ projects. Builds of the plugin are
