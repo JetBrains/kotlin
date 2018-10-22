@@ -76,9 +76,9 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
     private fun generateAndSave() {
         println("Generating test files...")
         val testSourceFilePath =
-            pathManager.srcFolderInAndroidTmpFolder + "/" + testClassPackage.replace(".", "/") + "/" + testClassName + ".java"
+            pathManager.srcFolderInAndroidTmpFolder + "/androidTest/java/" + testClassPackage.replace(".", "/") + "/" + testClassName + ".java"
 
-        FileWriter(File(testSourceFilePath)).use {
+        FileWriter(File(testSourceFilePath).also { it.parentFile.mkdirs() }).use {
             val p = Printer(it)
             p.print(FileUtil.loadFile(File("license/LICENSE.txt")))
             p.println(
