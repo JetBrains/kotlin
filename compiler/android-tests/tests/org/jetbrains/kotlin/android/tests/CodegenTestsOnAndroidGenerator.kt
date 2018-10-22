@@ -137,7 +137,11 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
 
             writeFiles(
                 rawFiles.map {
-                    CodegenTestFiles.create(it.first, it.second, environment.project).psiFile
+                    try {
+                        CodegenTestFiles.create(it.first, it.second, environment.project).psiFile
+                    } catch (e: Throwable) {
+                        throw RuntimeException("Error on processing ${it.first}:\n${it.second}", e)
+                    }
                 }, environment
             )
             Disposer.dispose(disposable)
