@@ -71,10 +71,6 @@ fun main(args: Array<String>) {
             model("codegen/java8/compileKotlinAgainstKotlin")
         }
 
-        testClass<AbstractWriteFlagsTest> {
-            model("codegen/java8/writeFlags")
-        }
-
         testClass<AbstractBytecodeTextTest>("BytecodeTextJava8TestGenerated") {
             model("codegen/java8/bytecodeText")
         }
