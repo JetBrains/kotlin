@@ -307,12 +307,7 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config) {
     fun <T> getValue(member: LazyMember<T>): T =
             @Suppress("UNCHECKED_CAST") (lazyValues.getOrPut(member, { member.initializer(this) }) as T)
 
-    @Deprecated("Use reflectionTypes0 instead.", ReplaceWith("this.reflectionTypes0"))
-    override val reflectionTypes: org.jetbrains.kotlin.backend.common.ReflectionTypes
-        get() = throw UnsupportedOperationException("This method will be removed soon")
-
-    // TODO: rename to reflectionTypes after updating the Kotlin compiler
-    val reflectionTypes0: KonanReflectionTypes by lazy(PUBLICATION) {
+    val reflectionTypes: KonanReflectionTypes by lazy(PUBLICATION) {
         KonanReflectionTypes(moduleDescriptor, KonanFqNames.internalPackageName)
     }
 

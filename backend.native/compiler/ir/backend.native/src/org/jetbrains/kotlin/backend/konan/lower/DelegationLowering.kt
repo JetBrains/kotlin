@@ -300,9 +300,9 @@ internal class PropertyDelegationLowering(val context: Context) : FileLoweringPa
         val arguments = type.arguments
         val expectedClassDescriptor = when (arguments.size) {
             0 -> return false
-            1 -> context.reflectionTypes0.kMutableProperty0
-            2 -> context.reflectionTypes0.kMutableProperty1
-            3 -> context.reflectionTypes0.kMutableProperty2
+            1 -> context.reflectionTypes.kMutableProperty0
+            2 -> context.reflectionTypes.kMutableProperty1
+            3 -> context.reflectionTypes.kMutableProperty2
             else -> throw AssertionError("More than 2 receivers is not allowed")
         }
         return type == expectedClassDescriptor.defaultType.replace(arguments)

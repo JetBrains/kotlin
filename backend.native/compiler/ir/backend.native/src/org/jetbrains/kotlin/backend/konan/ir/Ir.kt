@@ -36,7 +36,6 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import kotlin.properties.Delegates
@@ -426,23 +425,23 @@ internal class KonanSymbols(context: Context, val symbolTable: SymbolTable, val 
     val isInitializedPropertyDescriptor = builtInsPackage("kotlin")
             .getContributedVariables(Name.identifier("isInitialized"), NoLookupLocation.FROM_BACKEND).single {
                 it.extensionReceiverParameter.let {
-                    it != null && TypeUtils.getClassDescriptor(it.type) == context.reflectionTypes0.kProperty0
+                    it != null && TypeUtils.getClassDescriptor(it.type) == context.reflectionTypes.kProperty0
                 } && !it.isExpect
             }
 
     val isInitializedGetterDescriptor = isInitializedPropertyDescriptor.getter!!
 
-    val kFunctionImpl =  symbolTable.referenceClass(context.reflectionTypes0.kFunctionImpl)
+    val kFunctionImpl =  symbolTable.referenceClass(context.reflectionTypes.kFunctionImpl)
 
-    val kProperty0Impl = symbolTable.referenceClass(context.reflectionTypes0.kProperty0Impl)
-    val kProperty1Impl = symbolTable.referenceClass(context.reflectionTypes0.kProperty1Impl)
-    val kProperty2Impl = symbolTable.referenceClass(context.reflectionTypes0.kProperty2Impl)
-    val kMutableProperty0Impl = symbolTable.referenceClass(context.reflectionTypes0.kMutableProperty0Impl)
-    val kMutableProperty1Impl = symbolTable.referenceClass(context.reflectionTypes0.kMutableProperty1Impl)
-    val kMutableProperty2Impl = symbolTable.referenceClass(context.reflectionTypes0.kMutableProperty2Impl)
+    val kProperty0Impl = symbolTable.referenceClass(context.reflectionTypes.kProperty0Impl)
+    val kProperty1Impl = symbolTable.referenceClass(context.reflectionTypes.kProperty1Impl)
+    val kProperty2Impl = symbolTable.referenceClass(context.reflectionTypes.kProperty2Impl)
+    val kMutableProperty0Impl = symbolTable.referenceClass(context.reflectionTypes.kMutableProperty0Impl)
+    val kMutableProperty1Impl = symbolTable.referenceClass(context.reflectionTypes.kMutableProperty1Impl)
+    val kMutableProperty2Impl = symbolTable.referenceClass(context.reflectionTypes.kMutableProperty2Impl)
 
-    val kLocalDelegatedPropertyImpl = symbolTable.referenceClass(context.reflectionTypes0.kLocalDelegatedPropertyImpl)
-    val kLocalDelegatedMutablePropertyImpl = symbolTable.referenceClass(context.reflectionTypes0.kLocalDelegatedMutablePropertyImpl)
+    val kLocalDelegatedPropertyImpl = symbolTable.referenceClass(context.reflectionTypes.kLocalDelegatedPropertyImpl)
+    val kLocalDelegatedMutablePropertyImpl = symbolTable.referenceClass(context.reflectionTypes.kLocalDelegatedMutablePropertyImpl)
 
     val getClassTypeInfo = internalFunction("getClassTypeInfo")
     val getObjectTypeInfo = internalFunction("getObjectTypeInfo")
@@ -483,7 +482,7 @@ internal class KonanSymbols(context: Context, val symbolTable: SymbolTable, val 
             .map { symbolTable.referenceClass(builtIns.getFunction(it)) }
 
     val kFunctions = (0 .. KONAN_FUNCTION_INTERFACES_MAX_PARAMETERS)
-            .map { symbolTable.referenceClass(context.reflectionTypes0.getKFunction(it)) }
+            .map { symbolTable.referenceClass(context.reflectionTypes.getKFunction(it)) }
 
     fun getKFunctionType(returnType: IrType, parameterTypes: List<IrType>): IrType {
         val kFunctionClassSymbol = kFunctions[parameterTypes.size]
