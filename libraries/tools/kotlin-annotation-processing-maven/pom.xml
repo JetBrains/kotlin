@@ -7,6 +7,7 @@
     <properties>
         <maven.version>3.0.4</maven.version>
         <annotation-processing.src>${basedir}/../../../plugins/kapt3/kapt3-compiler/src</annotation-processing.src>
+        <annotation-processing.cli.src>${basedir}/../../../plugins/kapt3/kapt3-cli/src</annotation-processing.cli.src>
         <annotation-processing.base.src>${basedir}/../../../plugins/kapt3/kapt3-base/src</annotation-processing.base.src>
         <annotation-processing.runtime.src>${basedir}/../../../plugins/kapt3/kapt3-runtime/src</annotation-processing.runtime.src>
         <annotation-processing.target-src>${basedir}/target/src/main/kotlin</annotation-processing.target-src>
@@ -70,6 +71,7 @@
                             <outputDirectory>${annotation-processing.target-src}</outputDirectory>
                             <resources>
                                 <resource><directory>${annotation-processing.src}</directory></resource>
+                                <resource><directory>${annotation-processing.cli.src}</directory></resource>
                                 <resource><directory>${annotation-processing.base.src}</directory></resource>
                                 <resource><directory>${annotation-processing.runtime.src}</directory></resource>
                             </resources>

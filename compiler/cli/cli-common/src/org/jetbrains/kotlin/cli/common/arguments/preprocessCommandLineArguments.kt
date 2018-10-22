@@ -22,7 +22,7 @@ private const val BACKSLASH = '\\'
  * This is done prior to *any* arguments parsing, and result of preprocessing
  * will be used instead of actual passed arguments.
  */
-internal fun preprocessCommandLineArguments(args: List<String>, errors: ArgumentParseErrors): List<String> =
+fun preprocessCommandLineArguments(args: List<String>, errors: ArgumentParseErrors): List<String> =
     args.flatMap { arg ->
         if (arg.isArgfileArgument) {
             File(arg.argfilePath).expand(errors)

@@ -35,11 +35,14 @@ import org.jetbrains.kotlin.container.useInstance
 import org.jetbrains.kotlin.context.ProjectContext
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
-import org.jetbrains.kotlin.kapt3.KaptCliOptions.*
+import org.jetbrains.kotlin.kapt.cli.KaptCliOption
+import org.jetbrains.kotlin.kapt.cli.KaptCliOption.Companion.ANNOTATION_PROCESSING_COMPILER_PLUGIN_ID
+import org.jetbrains.kotlin.kapt.cli.KaptCliOption.*
 import org.jetbrains.kotlin.kapt3.Kapt3ConfigurationKeys.ANNOTATION_PROCESSOR_CLASSPATH
+import org.jetbrains.kotlin.kapt3.Kapt3ConfigurationKeys.APT_OPTION
 import org.jetbrains.kotlin.kapt3.Kapt3ConfigurationKeys.APT_OPTIONS
 import org.jetbrains.kotlin.kapt3.Kapt3ConfigurationKeys.JAVAC_CLI_OPTIONS
-import org.jetbrains.kotlin.kapt3.KaptCliOptions.Companion.ANNOTATION_PROCESSING_COMPILER_PLUGIN_ID
+import org.jetbrains.kotlin.kapt3.Kapt3ConfigurationKeys.JAVAC_OPTION
 import org.jetbrains.kotlin.kapt3.base.Kapt
 import org.jetbrains.kotlin.kapt3.base.KaptPaths
 import org.jetbrains.kotlin.kapt3.base.log
@@ -71,11 +74,19 @@ object Kapt3ConfigurationKeys {
     val ANNOTATION_PROCESSOR_CLASSPATH: CompilerConfigurationKey<List<String>> =
         CompilerConfigurationKey.create<List<String>>(ANNOTATION_PROCESSOR_CLASSPATH_OPTION.description)
 
+    @Deprecated("Use APT_OPTION instead.")
     val APT_OPTIONS: CompilerConfigurationKey<String> =
         CompilerConfigurationKey.create<String>(APT_OPTIONS_OPTION.description)
 
+    val APT_OPTION: CompilerConfigurationKey<Map<String, String>> =
+        CompilerConfigurationKey.create<Map<String, String>>(APT_OPTION_OPTION.description)
+
+    @Deprecated("Use JAVAC_OPTION instead.")
     val JAVAC_CLI_OPTIONS: CompilerConfigurationKey<String> =
         CompilerConfigurationKey.create<String>(JAVAC_CLI_OPTIONS_OPTION.description)
+
+    val JAVAC_OPTION: CompilerConfigurationKey<Map<String, String>> =
+        CompilerConfigurationKey.create<Map<String, String>>(JAVAC_OPTION_OPTION.description)
 
     val ANNOTATION_PROCESSORS: CompilerConfigurationKey<List<String>> =
         CompilerConfigurationKey.create<List<String>>(ANNOTATION_PROCESSORS_OPTION.description)
@@ -106,61 +117,13 @@ object Kapt3ConfigurationKeys {
         CompilerConfigurationKey.create<String>(STRICT_MODE_OPTION.description)
 }
 
-enum class KaptCliOptions(
-    override val optionName: String,
-    override val valueDescription: String,
-    override val description: String,
-    override val allowMultipleOccurrences: Boolean = false
-) : AbstractCliOption {
-    CONFIGURATION("configuration", "<encoded>", "Encoded configuration"),
-    SOURCE_OUTPUT_DIR_OPTION("sources", "<path>", "Output path for the generated files"),
-    CLASS_OUTPUT_DIR_OPTION("classes", "<path>", "Output path for the class files"),
-    STUBS_OUTPUT_DIR_OPTION("stubs", "<path>", "Output path for the Java stubs"),
-    INCREMENTAL_DATA_OUTPUT_DIR_OPTION("incrementalData", "<path>", "Output path for the incremental data"),
-    ANNOTATION_PROCESSOR_CLASSPATH_OPTION("apclasspath", "<classpath>", "Annotation processor classpath", true),
-    APT_OPTIONS_OPTION("apoptions", "options map", "Encoded annotation processor options", false),
-    JAVAC_CLI_OPTIONS_OPTION("javacArguments", "javac CLI options map", "Encoded javac CLI options", false),
-    ANNOTATION_PROCESSORS_OPTION("processors", "<fqname,[fqname2,...]>", "Annotation processor qualified names", true),
-    VERBOSE_MODE_OPTION("verbose", "true | false", "Enable verbose output"),
-    INFO_AS_WARNINGS_OPTION("infoAsWarnings", "true | false", "Show information messages as warnings"),
-    STRICT_MODE_OPTION("strict", "true | false", "Show errors on incompatibilities during stub generation"),
-    APT_MODE_OPTION(
-        "aptMode", "apt | stubs | stubsAndApt | compile",
-        "Annotation processing mode: only apt, only stub generation, both, or with the subsequent compilation"
-    ),
-    USE_LIGHT_ANALYSIS_OPTION(
-        "useLightAnalysis",
-        "true | false",
-        "Do not analyze declaration bodies if can"
-    ),
-    CORRECT_ERROR_TYPES_OPTION(
-        "correctErrorTypes",
-        "true | false",
-        "Replace generated or error types with ones from the generated sources"
-    ),
-    MAP_DIAGNOSTIC_LOCATIONS_OPTION(
-        "mapDiagnosticLocations",
-        "true | false",
-        "Map diagnostic reported on kapt stubs to original locations in Kotlin sources"
-    ),
-
-    @Deprecated("Use APT_MODE_OPTION instead.")
-    APT_ONLY_OPTION("aptOnly", "true | false", "Run only annotation processing, do not compile Kotlin files");
-
-    override val required: Boolean = false
-
-    companion object {
-        const val ANNOTATION_PROCESSING_COMPILER_PLUGIN_ID: String = "org.jetbrains.kotlin.kapt3"
-    }
-}
-
 class Kapt3CommandLineProcessor : CommandLineProcessor {
     override val pluginId: String = ANNOTATION_PROCESSING_COMPILER_PLUGIN_ID
 
-    override val pluginOptions: Collection<AbstractCliOption> = KaptCliOptions.values().asList()
+    override val pluginOptions: Collection<AbstractCliOption> = values().asList()
 
     override fun processOption(option: AbstractCliOption, value: String, configuration: CompilerConfiguration) {
-        if (option !is KaptCliOptions) {
+        if (option !is KaptCliOption) {
             throw CliOptionProcessingException("Unknown option: ${option.optionName}")
         }
 
@@ -168,8 +131,10 @@ class Kapt3CommandLineProcessor : CommandLineProcessor {
             ANNOTATION_PROCESSOR_CLASSPATH_OPTION -> configuration.appendList(ANNOTATION_PROCESSOR_CLASSPATH, value)
             ANNOTATION_PROCESSORS_OPTION -> configuration.appendList(
                 Kapt3ConfigurationKeys.ANNOTATION_PROCESSORS, value.split(',').map { it.trim() }.filter { it.isNotEmpty() })
-            APT_OPTIONS_OPTION -> configuration.put(Kapt3ConfigurationKeys.APT_OPTIONS, value)
-            JAVAC_CLI_OPTIONS_OPTION -> configuration.put(Kapt3ConfigurationKeys.JAVAC_CLI_OPTIONS, value)
+            APT_OPTIONS_OPTION -> configuration.put(APT_OPTIONS, value)
+            JAVAC_CLI_OPTIONS_OPTION -> configuration.put(JAVAC_CLI_OPTIONS, value)
+            APT_OPTION_OPTION -> configuration.appendMap(APT_OPTION, option, value)
+            JAVAC_OPTION_OPTION -> configuration.appendMap(JAVAC_OPTION, option, value)
             SOURCE_OUTPUT_DIR_OPTION -> configuration.put(Kapt3ConfigurationKeys.SOURCE_OUTPUT_DIR, value)
             CLASS_OUTPUT_DIR_OPTION -> configuration.put(Kapt3ConfigurationKeys.CLASS_OUTPUT_DIR, value)
             STUBS_OUTPUT_DIR_OPTION -> configuration.put(Kapt3ConfigurationKeys.STUBS_OUTPUT_DIR, value)
@@ -183,12 +148,34 @@ class Kapt3CommandLineProcessor : CommandLineProcessor {
             INFO_AS_WARNINGS_OPTION -> configuration.put(Kapt3ConfigurationKeys.INFO_AS_WARNINGS, value)
             STRICT_MODE_OPTION -> configuration.put(Kapt3ConfigurationKeys.STRICT_MODE, value)
             CONFIGURATION -> configuration.applyOptionsFrom(decodePluginOptions(value), pluginOptions)
+            TOOLS_JAR_OPTION -> throw CliOptionProcessingException("'${TOOLS_JAR_OPTION.optionName}' is only supported in the kapt CLI tool")
         }
+    }
+
+    private fun CompilerConfiguration.appendMap(
+        key: CompilerConfigurationKey<Map<String, String>>,
+        option: AbstractCliOption,
+        keyValuePair: String
+    ) {
+        val keyValueDecoded = keyValuePair.split('=', limit = 2)
+        if (keyValueDecoded.size != 2) {
+            throw CliOptionProcessingException("Invalid option format for ${option.optionName}: key=value expected")
+        }
+
+        val oldMap = getMap(key)
+        val newMap = (oldMap as? MutableMap<String, String>) ?: oldMap.toMutableMap()
+
+        newMap[keyValueDecoded[0]] = keyValueDecoded[1]
+        put(key, newMap)
     }
 }
 
 class Kapt3ComponentRegistrar : ComponentRegistrar {
-    private fun decodeList(options: String): Map<String, String> {
+    private fun decodeMap(options: String): Map<String, String> {
+        if (options.isEmpty()) {
+            return emptyMap()
+        }
+
         val map = LinkedHashMap<String, String>()
 
         val decodedBytes = Base64.getDecoder().decode(options)
@@ -264,8 +251,11 @@ class Kapt3ComponentRegistrar : ComponentRegistrar {
             return
         }
 
-        val apOptions = configuration.get(APT_OPTIONS)?.let { decodeList(it) } ?: emptyMap()
-        val javacCliOptions = configuration.get(JAVAC_CLI_OPTIONS)?.let { decodeList(it) } ?: emptyMap()
+        val apOptions = (configuration.get(APT_OPTIONS)?.let { decodeMap(it) } ?: emptyMap()).toMutableMap()
+        configuration.get(APT_OPTION)?.let { apOptions += it }
+
+        val javacOptions = (configuration.get(JAVAC_CLI_OPTIONS)?.let { decodeMap(it) } ?: emptyMap()).toMutableMap()
+        configuration.get(JAVAC_OPTION)?.let { javacOptions += it }
 
         sourcesOutputDir.mkdirs()
 
@@ -300,7 +290,7 @@ class Kapt3ComponentRegistrar : ComponentRegistrar {
         }
 
         val kapt3AnalysisCompletedHandlerExtension = ClasspathBasedKapt3Extension(
-            paths, apOptions, javacCliOptions, annotationProcessors,
+            paths, apOptions, javacOptions, annotationProcessors,
             aptMode, useLightAnalysis, correctErrorTypes, mapDiagnosticLocations, strictMode,
             System.currentTimeMillis(), logger, configuration
         )
@@ -359,6 +349,8 @@ enum class AptMode(val optionName: String) {
         get() = this != APT_ONLY
 
     companion object {
+       fun supports(mode: String?) = AptMode.values().any { it.optionName == mode }
+
         // Supports both deprecated APT_ONLY and new APT_MODE options
         fun parse(mode: String?): AptMode {
             return when (mode) {

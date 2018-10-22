@@ -24,6 +24,9 @@ interface AbstractCliOption {
     val description: String
     val required: Boolean
     val allowMultipleOccurrences: Boolean
+
+    val deprecatedName: String?
+        get() = null
 }
 
 class CliOption(
