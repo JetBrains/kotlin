@@ -38,4 +38,5 @@ build/
 .idea/compiler.xml
 .idea/inspectionProfiles/profiles_settings.xml
 .idea/.name
+.idea/artifacts/dist_auto_reference_dont_use.xml
 kotlin-ultimate/

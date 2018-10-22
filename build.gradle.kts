@@ -6,6 +6,7 @@ import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import proguard.gradle.ProGuardTask
 import org.gradle.kotlin.dsl.*
+import org.jetbrains.kotlin.buildUtils.idea.*
 import org.jetbrains.gradle.ext.ActionDelegationConfig.TestRunner.*
 
 buildscript {
@@ -853,6 +854,10 @@ if (isJpsBuildEnabled && System.getProperty("idea.active") != null) {
         rootProject.idea {
             project {
                 settings {
+                    ideArtifacts {
+                        generateIdeArtifacts(rootProject, this@ideArtifacts)
+                    }
+
                     compiler {
                         processHeapSize = 2000
                         addNotNullAssertions = true

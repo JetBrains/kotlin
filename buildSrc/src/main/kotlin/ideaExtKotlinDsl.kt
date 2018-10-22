@@ -1,3 +1,4 @@
+import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.plugins.ExtensionAware
 import org.gradle.kotlin.dsl.configure
 import org.gradle.plugins.ide.idea.model.IdeaProject
@@ -28,3 +29,6 @@ fun DefaultRunConfigurationContainer.junit(name: String, block: JUnit.() -> Unit
 
 fun DefaultRunConfigurationContainer.application(name: String, block: Application.() -> Unit) =
     create(name, Application::class.java, block)
+
+fun ProjectSettings.ideArtifacts(block: NamedDomainObjectContainer<org.jetbrains.gradle.ext.TopLevelArtifact>.() -> Unit) =
+    (this@ideArtifacts as ExtensionAware).extensions.configure("ideArtifacts", block)
