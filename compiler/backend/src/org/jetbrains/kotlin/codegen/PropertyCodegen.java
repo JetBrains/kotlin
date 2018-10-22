@@ -620,7 +620,8 @@ public class PropertyCodegen {
             assert delegate != null : "No delegate for delegated property: " + propertyDescriptor;
             StackValue lastValue = invokeDelegatedPropertyConventionMethod(codegen, resolvedCall, delegate, propertyDescriptor);
             Type asmType = signature.getReturnType();
-            lastValue.put(asmType, v);
+            KotlinType kotlinReturnType = propertyAccessorDescriptor.getOriginal().getReturnType();
+            lastValue.put(asmType, kotlinReturnType, v);
             v.areturn(asmType);
         }
     }
