@@ -201,14 +201,14 @@ external public actual fun exp(x: Double): Double
 /**
  * Computes `exp(x) - 1`.
  *
- * This actual function can be implemented to produce more precise result for [x] near zero.
+ * This function can be implemented to produce more precise result for [x] near zero.
  *
  * Special cases:
  *   - `expm1(NaN)` is `NaN`
  *   - `expm1(+Inf)` is `+Inf`
  *   - `expm1(-Inf)` is `-1.0`
  *
- * @see [exp] actual function.
+ * @see [exp] function.
  */
 @SinceKotlin("1.2")
 @SymbolName("Kotlin_math_expm1")
@@ -224,7 +224,7 @@ external public actual fun expm1(x: Double): Double
  *   - `log(+Inf, b)` is `+Inf` for `b > 1` and `-Inf` for `b < 1`
  *   - `log(0.0, b)` is `-Inf` for `b > 1` and `+Inf` for `b > 1`
  *
- * See also logarithm actual functions for common fixed bases: [ln], [log10] and [log2].
+ * See also logarithm functions for common fixed bases: [ln], [log10] and [log2].
  */
 @SinceKotlin("1.2")
 public actual fun log(x: Double, base: Double): Double {
@@ -266,7 +266,7 @@ external public actual fun log2(x: Double): Double
 /**
  * Computes `ln(x + 1)`.
  *
- * This actual function can be implemented to produce more precise result for [x] near zero.
+ * This function can be implemented to produce more precise result for [x] near zero.
  *
  * Special cases:
  *   - `ln1p(NaN)` is `NaN`
@@ -274,8 +274,8 @@ external public actual fun log2(x: Double): Double
  *   - `ln1p(-1.0)` is `-Inf`
  *   - `ln1p(+Inf)` is `+Inf`
  *
- * @see [ln] actual function
- * @see [expm1] actual function
+ * @see [ln] function
+ * @see [expm1] function
  */
 @SinceKotlin("1.2")
 @SymbolName("Kotlin_math_ln1p")
@@ -750,14 +750,14 @@ external public actual fun exp(x: Float): Float
 /**
  * Computes `exp(x) - 1`.
  *
- * This actual function can be implemented to produce more precise result for [x] near zero.
+ * This function can be implemented to produce more precise result for [x] near zero.
  *
  * Special cases:
  *   - `expm1(NaN)` is `NaN`
  *   - `expm1(+Inf)` is `+Inf`
  *   - `expm1(-Inf)` is `-1.0`
  *
- * @see [exp] actual function.
+ * @see [exp] function.
  */
 @SinceKotlin("1.2")
 @SymbolName("Kotlin_math_expm1f")
@@ -773,7 +773,7 @@ external public actual fun expm1(x: Float): Float
  *   - `log(+Inf, b)` is `+Inf` for `b > 1` and `-Inf` for `b < 1`
  *   - `log(0.0, b)` is `-Inf` for `b > 1` and `+Inf` for `b > 1`
  *
- * See also logarithm actual functions for common fixed bases: [ln], [log10] and [log2].
+ * See also logarithm functions for common fixed bases: [ln], [log10] and [log2].
  */
 @SinceKotlin("1.2")
 public actual fun log(x: Float, base: Float): Float {
@@ -815,7 +815,7 @@ external public actual fun log2(x: Float): Float
 /**
  * Computes `ln(a + 1)`.
  *
- * This actual function can be implemented to produce more precise result for [x] near zero.
+ * This function can be implemented to produce more precise result for [x] near zero.
  *
  * Special cases:
  *   - `ln1p(NaN)` is `NaN`
@@ -823,8 +823,8 @@ external public actual fun log2(x: Float): Float
  *   - `ln1p(-1.0)` is `-Inf`
  *   - `ln1p(+Inf)` is `+Inf`
  *
- * @see [ln] actual function
- * @see [expm1] actual function
+ * @see [ln] function
+ * @see [expm1] function
  */
 @SinceKotlin("1.2")
 @SymbolName("Kotlin_math_ln1pf")

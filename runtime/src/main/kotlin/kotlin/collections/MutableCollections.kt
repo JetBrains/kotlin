@@ -46,12 +46,12 @@ actual abstract class AbstractMutableMap<K, V> protected actual constructor() : 
     actual abstract override fun put(key: K, value: V): V?
 
     /**
-     * Returns a [Set] of all keys in this map.
+     * Returns a [MutableSet] of all keys in this map.
      */
     abstract override val keys: MutableSet<K>
 
     /**
-     * Returns a [Collection] of all values in this map.
+     * Returns a [MutableCollection] of all values in this map. Note that this collection may contain duplicate values.
      */
     abstract override val values: MutableCollection<V>
 }

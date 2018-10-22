@@ -12,8 +12,9 @@ public class Char private constructor(
         private val value: kotlin.native.internal.ShortValue) : Comparable<Char> {
     /**
      * Compares this value with the specified value for order.
-     * Returns zero if this value is equal to the specified other value, a negative number if its less than other,
-     * or a positive number if its greater than other.
+     *
+     * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
+     * or a positive number if it's greater than other.
      */
     @SymbolName("Kotlin_Char_compareTo_Char")
     external public override fun compareTo(other: Char): Int

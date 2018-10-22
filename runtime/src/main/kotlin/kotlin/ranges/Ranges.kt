@@ -114,7 +114,7 @@ private class ClosedFloatRange (
 }
 
 /**
- * Creates a range from this [Float] value to the specified [other] value.
+ * Creates a range from this [Float] value to the specified [that] value.
  *
  * Numbers are compared with the ends of this range according to IEEE-754.
  */

@@ -14,23 +14,23 @@ public actual fun print(message: Any?) {
     print(message.toString())
 }
 
-/** Prints the given [message] and newline to the standard output stream. */
+/** Prints the given [message] and the line separator to the standard output stream. */
 @SymbolName("Kotlin_io_Console_println")
 external public fun println(message: String)
 
-/** Prints the given [message] and newline to the standard output stream. */
+/** Prints the given [message] and the line separator to the standard output stream. */
 public actual fun println(message: Any?) {
     println(message.toString())
 }
 
-/** Prints newline to the standard output stream. */
+/** Prints the line separator to the standard output stream. */
 @SymbolName("Kotlin_io_Console_println0")
 external public actual fun println()
 
 /**
  * Reads a line of input from the standard input stream.
  *
- * @return the line read or `null` if the input is empty.
+ * @return the line read or `null` if the input stream is redirected to a file and the end of file has been reached.
  */
 @SymbolName("Kotlin_io_Console_readLine")
 external public fun readLine(): String?

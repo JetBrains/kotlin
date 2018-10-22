@@ -9,6 +9,8 @@ import kotlin.native.internal.FloatingPointParser
 
 /**
  * Returns a string representation of this [Byte] value in the specified [radix].
+ *
+ * @throws IllegalArgumentException when [radix] is not a valid radix for number to string conversion.
  */
 @SinceKotlin("1.1")
 @kotlin.internal.InlineOnly
@@ -16,6 +18,8 @@ public actual inline fun Byte.toString(radix: Int): String = this.toInt().toStri
 
 /**
  * Returns a string representation of this [Short] value in the specified [radix].
+ *
+ * @throws IllegalArgumentException when [radix] is not a valid radix for number to string conversion.
  */
 @SinceKotlin("1.1")
 @kotlin.internal.InlineOnly
@@ -27,6 +31,8 @@ external internal fun intToString(value: Int, radix: Int): String
 
 /**
  * Returns a string representation of this [Int] value in the specified [radix].
+ *
+ * @throws IllegalArgumentException when [radix] is not a valid radix for number to string conversion.
  */
 @SinceKotlin("1.1")
 @kotlin.internal.InlineOnly
@@ -38,6 +44,8 @@ external internal fun longToString(value: Long, radix: Int): String
 
 /**
  * Returns a string representation of this [Long] value in the specified [radix].
+ *
+ * @throws IllegalArgumentException when [radix] is not a valid radix for number to string conversion.
  */
 @SinceKotlin("1.1")
 @kotlin.internal.InlineOnly
@@ -59,6 +67,7 @@ public actual inline fun String.toByte(): Byte = toByteOrNull() ?: throw NumberF
 /**
  * Parses the string as a signed [Byte] number and returns the result.
  * @throws NumberFormatException if the string is not a valid representation of a number.
+ * @throws IllegalArgumentException when [radix] is not a valid radix for string to number conversion.
  */
 @SinceKotlin("1.1")
 @kotlin.internal.InlineOnly
@@ -74,6 +83,7 @@ public actual inline fun String.toShort(): Short = toShortOrNull() ?: throw Numb
 /**
  * Parses the string as a [Short] number and returns the result.
  * @throws NumberFormatException if the string is not a valid representation of a number.
+ * @throws IllegalArgumentException when [radix] is not a valid radix for string to number conversion.
  */
 @SinceKotlin("1.1")
 @kotlin.internal.InlineOnly
@@ -89,6 +99,7 @@ public actual inline fun String.toInt(): Int = toIntOrNull() ?: throw NumberForm
 /**
  * Parses the string as an [Int] number and returns the result.
  * @throws NumberFormatException if the string is not a valid representation of a number.
+ * @throws IllegalArgumentException when [radix] is not a valid radix for string to number conversion.
  */
 @SinceKotlin("1.1")
 @kotlin.internal.InlineOnly
@@ -104,6 +115,7 @@ public actual inline fun String.toLong(): Long = toLongOrNull() ?: throw NumberF
 /**
  * Parses the string as a [Long] number and returns the result.
  * @throws NumberFormatException if the string is not a valid representation of a number.
+ * @throws IllegalArgumentException when [radix] is not a valid radix for string to number conversion.
  */
 @SinceKotlin("1.1")
 @kotlin.internal.InlineOnly

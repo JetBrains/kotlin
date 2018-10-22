@@ -28,6 +28,7 @@ actual public enum class RegexOption(override val value: Int, override val mask:
 
     /**
      * Enables multiline mode.
+     *
      * In multiline mode the expressions `^` and `$` match just after or just before,
      * respectively, a line terminator or the end of the input sequence.
      */
@@ -35,6 +36,7 @@ actual public enum class RegexOption(override val value: Int, override val mask:
 
     /**
      * Enables literal parsing of the pattern.
+     *
      * Metacharacters or escape sequences in the input sequence will be given no special meaning.
      */
     LITERAL(Pattern.LITERAL),
@@ -64,9 +66,8 @@ actual public enum class RegexOption(override val value: Int, override val mask:
 actual data class MatchGroup(actual val value: String, val range: IntRange)
 
 /**
- * Represents an immutable regular expression.
- *
- * For pattern syntax reference see [Pattern]
+ * Represents a compiled regular expression.
+ * Provides functions to match strings in text with a pattern, replace the found occurrences and split text around matches.
  */
 actual public class Regex internal constructor(internal val nativePattern: Pattern) {
 
@@ -94,15 +95,21 @@ actual public class Regex internal constructor(internal val nativePattern: Patte
     actual val options: Set<RegexOption> = fromInt(nativePattern.flags)
 
     actual companion object {
-        /** Returns a literal regex for the specified [literal] string. */
+        /**
+         * Returns a regular expression that matches the specified [literal] string literally.
+         * No characters of that string will have special meaning when searching for an occurrence of the regular expression.
+         */
         actual fun fromLiteral(literal: String): Regex = Regex(literal, RegexOption.LITERAL)
 
-        /** Returns a literal pattern for the specified [literal] string. */
+        /**
+         * Returns a regular expression pattern string that matches the specified [literal] string literally.
+         * No characters of that string will have special meaning when searching for an occurrence of the regular expression.
+         */
         actual fun escape(literal: String): String = Pattern.quote(literal)
 
         /**
-         * Returns a replacement string for the given one that has all backslashes
-         * and dollar signs escaped.
+         * Returns a literal replacement expression for the specified [literal] string.
+         * No characters of that string will have special meaning when it is used as a replacement string in [Regex.replace] function.
          */
         actual fun escapeReplacement(literal: String): String {
             if (!literal.contains('\\') && !literal.contains('$'))
@@ -248,7 +255,7 @@ actual public class Regex internal constructor(internal val nativePattern: Patte
     /**
      * Replaces the first occurrence of this regular expression in the specified [input] string with specified [replacement] expression.
      *
-     * @param replacement A replacement expression that can include substitutions. See [Matcher.appendReplacement] for details.
+     * @param replacement A replacement expression that can include substitutions.
      */
     actual fun replaceFirst(input: CharSequence, replacement: String): String
             = replaceFirst(input) { match -> processReplacement(match, replacement) }
@@ -282,7 +289,12 @@ actual public class Regex internal constructor(internal val nativePattern: Patte
         return result
     }
 
-    /** Returns the string representation of this regular expression, namely the [pattern] of this regular expression. */
+    /**
+     * Returns the string representation of this regular expression, namely the [pattern] of this regular expression.
+     *
+     * Note that another regular expression constructed from the same pattern string may have different [options]
+     * and may match strings differently.
+     */
     override fun toString(): String = nativePattern.toString()
 
     // Native specific =================================================================================================
@@ -291,7 +303,11 @@ actual public class Regex internal constructor(internal val nativePattern: Patte
     /** Indicates whether the regular expression can find at least one match in the specified [input] starting with [index]. */
     fun containsMatchIn(input: CharSequence, index: Int): Boolean = find(input, index) != null
 
-    /** Replaces the first occurrence of this regular expression in the specified [input] string with specified using specified transfromation */
+    /**
+     * Replaces the first occurrence of this regular expression in the specified [input] string with the result of calling
+     * the given function [transform] that takes a [MatchResult] representing the occurrence and returns a string to be used as a
+     * replacement for that occurrence.
+     */
     fun replaceFirst(input: CharSequence, transform: (MatchResult) -> CharSequence): String {
         val match = find(input) ?: return input.toString()
         val length = input.length

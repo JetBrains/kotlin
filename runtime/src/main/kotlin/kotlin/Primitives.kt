@@ -38,43 +38,43 @@ public final class Byte private constructor(private val value: kotlin.native.int
 
     /**
      * Compares this value with the specified value for order.
-     * Returns zero if this value is equal to the specified other value, a negative number if its less than other,
-     * or a positive number if its greater than other.
+     * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
+     * or a positive number if it's greater than other.
      */
     @SymbolName("Kotlin_Byte_compareTo_Byte")
     external public override operator fun compareTo(other: Byte): Int
     /**
      * Compares this value with the specified value for order.
-     * Returns zero if this value is equal to the specified other value, a negative number if its less than other,
-     * or a positive number if its greater than other.
+     * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
+     * or a positive number if it's greater than other.
      */
     @SymbolName("Kotlin_Byte_compareTo_Short")
     external public operator fun compareTo(other: Short): Int
     /**
      * Compares this value with the specified value for order.
-     * Returns zero if this value is equal to the specified other value, a negative number if its less than other,
-     * or a positive number if its greater than other.
+     * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
+     * or a positive number if it's greater than other.
      */
     @SymbolName("Kotlin_Byte_compareTo_Int")
     external public operator fun compareTo(other: Int): Int
     /**
      * Compares this value with the specified value for order.
-     * Returns zero if this value is equal to the specified other value, a negative number if its less than other,
-     * or a positive number if its greater than other.
+     * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
+     * or a positive number if it's greater than other.
      */
     @SymbolName("Kotlin_Byte_compareTo_Long")
     external public operator fun compareTo(other: Long): Int
     /**
      * Compares this value with the specified value for order.
-     * Returns zero if this value is equal to the specified other value, a negative number if its less than other,
-     * or a positive number if its greater than other.
+     * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
+     * or a positive number if it's greater than other.
      */
     @SymbolName("Kotlin_Byte_compareTo_Float")
     external public operator fun compareTo(other: Float): Int
     /**
      * Compares this value with the specified value for order.
-     * Returns zero if this value is equal to the specified other value, a negative number if its less than other,
-     * or a positive number if its greater than other.
+     * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
+     * or a positive number if it's greater than other.
      */
     @SymbolName("Kotlin_Byte_compareTo_Double")
     external public operator fun compareTo(other: Double): Int
@@ -263,43 +263,43 @@ public final class Short private constructor(private val value: kotlin.native.in
 
     /**
      * Compares this value with the specified value for order.
-     * Returns zero if this value is equal to the specified other value, a negative number if its less than other,
-     * or a positive number if its greater than other.
+     * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
+     * or a positive number if it's greater than other.
      */
     @SymbolName("Kotlin_Short_compareTo_Byte")
     external public operator fun compareTo(other: Byte): Int
     /**
      * Compares this value with the specified value for order.
-     * Returns zero if this value is equal to the specified other value, a negative number if its less than other,
-     * or a positive number if its greater than other.
+     * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
+     * or a positive number if it's greater than other.
      */
     @SymbolName("Kotlin_Short_compareTo_Short")
     external public override operator fun compareTo(other: Short): Int
     /**
      * Compares this value with the specified value for order.
-     * Returns zero if this value is equal to the specified other value, a negative number if its less than other,
-     * or a positive number if its greater than other.
+     * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
+     * or a positive number if it's greater than other.
      */
     @SymbolName("Kotlin_Short_compareTo_Int")
     external public operator fun compareTo(other: Int): Int
     /**
      * Compares this value with the specified value for order.
-     * Returns zero if this value is equal to the specified other value, a negative number if its less than other,
-     * or a positive number if its greater than other.
+     * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
+     * or a positive number if it's greater than other.
      */
     @SymbolName("Kotlin_Short_compareTo_Long")
     external public operator fun compareTo(other: Long): Int
     /**
      * Compares this value with the specified value for order.
-     * Returns zero if this value is equal to the specified other value, a negative number if its less than other,
-     * or a positive number if its greater than other.
+     * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
+     * or a positive number if it's greater than other.
      */
     @SymbolName("Kotlin_Short_compareTo_Float")
     external public operator fun compareTo(other: Float): Int
     /**
      * Compares this value with the specified value for order.
-     * Returns zero if this value is equal to the specified other value, a negative number if its less than other,
-     * or a positive number if its greater than other.
+     * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
+     * or a positive number if it's greater than other.
      */
     @SymbolName("Kotlin_Short_compareTo_Double")
     external public operator fun compareTo(other: Double): Int
@@ -488,43 +488,43 @@ public final class Int private constructor(private val value: kotlin.native.inte
 
     /**
      * Compares this value with the specified value for order.
-     * Returns zero if this value is equal to the specified other value, a negative number if its less than other,
-     * or a positive number if its greater than other.
+     * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
+     * or a positive number if it's greater than other.
      */
     @SymbolName("Kotlin_Int_compareTo_Byte")
     external public operator fun compareTo(other: Byte): Int
     /**
      * Compares this value with the specified value for order.
-     * Returns zero if this value is equal to the specified other value, a negative number if its less than other,
-     * or a positive number if its greater than other.
+     * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
+     * or a positive number if it's greater than other.
      */
     @SymbolName("Kotlin_Int_compareTo_Short")
     external public operator fun compareTo(other: Short): Int
     /**
      * Compares this value with the specified value for order.
-     * Returns zero if this value is equal to the specified other value, a negative number if its less than other,
-     * or a positive number if its greater than other.
+     * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
+     * or a positive number if it's greater than other.
      */
     @SymbolName("Kotlin_Int_compareTo_Int")
     external public override operator fun compareTo(other: Int): Int
     /**
      * Compares this value with the specified value for order.
-     * Returns zero if this value is equal to the specified other value, a negative number if its less than other,
-     * or a positive number if its greater than other.
+     * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
+     * or a positive number if it's greater than other.
      */
     @SymbolName("Kotlin_Int_compareTo_Long")
     external public operator fun compareTo(other: Long): Int
     /**
      * Compares this value with the specified value for order.
-     * Returns zero if this value is equal to the specified other value, a negative number if its less than other,
-     * or a positive number if its greater than other.
+     * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
+     * or a positive number if it's greater than other.
      */
     @SymbolName("Kotlin_Int_compareTo_Float")
     external public operator fun compareTo(other: Float): Int
     /**
      * Compares this value with the specified value for order.
-     * Returns zero if this value is equal to the specified other value, a negative number if its less than other,
-     * or a positive number if its greater than other.
+     * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
+     * or a positive number if it's greater than other.
      */
     @SymbolName("Kotlin_Int_compareTo_Double")
     external public operator fun compareTo(other: Double): Int
@@ -637,13 +637,13 @@ public final class Int private constructor(private val value: kotlin.native.inte
     @SymbolName("Kotlin_Int_unaryMinus")
     external public operator fun unaryMinus(): Int
 
-    /** Shifts this value left by [bits]. */
+    /** Shifts this value left by the [bitCount] number of bits. */
     @SymbolName("Kotlin_Int_shl_Int")
     external public infix fun shl(bitCount: Int): Int
-    /** Shifts this value right by [bits], filling the leftmost bits with copies of the sign bit. */
+    /** Shifts this value right by the [bitCount] number of bits, filling the leftmost bits with copies of the sign bit. */
     @SymbolName("Kotlin_Int_shr_Int")
     external public infix fun shr(bitCount: Int): Int
-    /** Shifts this value right by [bits], filling the leftmost bits with zeros. */
+    /** Shifts this value right by the [bitCount] number of bits, filling the leftmost bits with zeros. */
     @SymbolName("Kotlin_Int_ushr_Int")
     external public infix fun ushr(bitCount: Int): Int
     /** Performs a bitwise AND operation between the two values. */
@@ -655,7 +655,7 @@ public final class Int private constructor(private val value: kotlin.native.inte
     /** Performs a bitwise XOR operation between the two values. */
     @SymbolName("Kotlin_Int_xor_Int")
     external public infix fun xor(other: Int): Int
-    /** Inverts the bits in this value/ */
+    /** Inverts the bits in this value. */
     @SymbolName("Kotlin_Int_inv")
     external public fun inv(): Int
 
@@ -735,43 +735,43 @@ public final class Long private constructor(private val value: kotlin.native.int
 
     /**
      * Compares this value with the specified value for order.
-     * Returns zero if this value is equal to the specified other value, a negative number if its less than other,
-     * or a positive number if its greater than other.
+     * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
+     * or a positive number if it's greater than other.
      */
     @SymbolName("Kotlin_Long_compareTo_Byte")
     external public operator fun compareTo(other: Byte): Int
     /**
      * Compares this value with the specified value for order.
-     * Returns zero if this value is equal to the specified other value, a negative number if its less than other,
-     * or a positive number if its greater than other.
+     * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
+     * or a positive number if it's greater than other.
      */
     @SymbolName("Kotlin_Long_compareTo_Short")
     external public operator fun compareTo(other: Short): Int
     /**
      * Compares this value with the specified value for order.
-     * Returns zero if this value is equal to the specified other value, a negative number if its less than other,
-     * or a positive number if its greater than other.
+     * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
+     * or a positive number if it's greater than other.
      */
     @SymbolName("Kotlin_Long_compareTo_Int")
     external public operator fun compareTo(other: Int): Int
     /**
      * Compares this value with the specified value for order.
-     * Returns zero if this value is equal to the specified other value, a negative number if its less than other,
-     * or a positive number if its greater than other.
+     * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
+     * or a positive number if it's greater than other.
      */
     @SymbolName("Kotlin_Long_compareTo_Long")
     external public override operator fun compareTo(other: Long): Int
     /**
      * Compares this value with the specified value for order.
-     * Returns zero if this value is equal to the specified other value, a negative number if its less than other,
-     * or a positive number if its greater than other.
+     * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
+     * or a positive number if it's greater than other.
      */
     @SymbolName("Kotlin_Long_compareTo_Float")
     external public operator fun compareTo(other: Float): Int
     /**
      * Compares this value with the specified value for order.
-     * Returns zero if this value is equal to the specified other value, a negative number if its less than other,
-     * or a positive number if its greater than other.
+     * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
+     * or a positive number if it's greater than other.
      */
     @SymbolName("Kotlin_Long_compareTo_Double")
     external public operator fun compareTo(other: Double): Int
@@ -901,13 +901,13 @@ public final class Long private constructor(private val value: kotlin.native.int
         return LongRange(this, other.toLong())
     }
 
-    /** Shifts this value left by [bits]. */
+    /** Shifts this value left by the [bitCount] number of bits. */
     @SymbolName("Kotlin_Long_shl_Int")
     external public infix fun shl(bitCount: Int): Long
-    /** Shifts this value right by [bits], filling the leftmost bits with copies of the sign bit. */
+    /** Shifts this value right by the [bitCount] number of bits, filling the leftmost bits with copies of the sign bit. */
     @SymbolName("Kotlin_Long_shr_Int")
     external public infix fun shr(bitCount: Int): Long
-    /** Shifts this value right by [bits], filling the leftmost bits with zeros. */
+    /** Shifts this value right by the [bitCount] number of bits, filling the leftmost bits with zeros. */
     @SymbolName("Kotlin_Long_ushr_Int")
     external public infix fun ushr(bitCount: Int): Long
     /** Performs a bitwise AND operation between the two values. */
@@ -919,7 +919,7 @@ public final class Long private constructor(private val value: kotlin.native.int
     /** Performs a bitwise XOR operation between the two values. */
     @SymbolName("Kotlin_Long_xor_Long")
     external public infix fun xor(other: Long): Long
-    /** Inverts the bits in this value/ */
+    /** Inverts the bits in this value. */
     @SymbolName("Kotlin_Long_inv")
     external public fun inv(): Long
 
@@ -987,32 +987,32 @@ public final class Float private constructor(private val value: kotlin.native.in
 
     /**
      * Compares this value with the specified value for order.
-     * Returns zero if this value is equal to the specified other value, a negative number if its less than other,
-     * or a positive number if its greater than other.
+     * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
+     * or a positive number if it's greater than other.
      */
     public operator fun compareTo(other: Byte): Int = compareTo(other.toFloat())
     /**
      * Compares this value with the specified value for order.
-     * Returns zero if this value is equal to the specified other value, a negative number if its less than other,
-     * or a positive number if its greater than other.
+     * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
+     * or a positive number if it's greater than other.
      */
     public operator fun compareTo(other: Short): Int = compareTo(other.toFloat())
     /**
      * Compares this value with the specified value for order.
-     * Returns zero if this value is equal to the specified other value, a negative number if its less than other,
-     * or a positive number if its greater than other.
+     * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
+     * or a positive number if it's greater than other.
      */
     public operator fun compareTo(other: Int): Int = compareTo(other.toFloat())
     /**
      * Compares this value with the specified value for order.
-     * Returns zero if this value is equal to the specified other value, a negative number if its less than other,
-     * or a positive number if its greater than other.
+     * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
+     * or a positive number if it's greater than other.
      */
     public operator fun compareTo(other: Long): Int = compareTo(other.toFloat())
     /**
      * Compares this value with the specified value for order.
-     * Returns zero if this value is equal to the specified other value, a negative number if its less than other,
-     * or a positive number if its greater than other.
+     * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
+     * or a positive number if it's greater than other.
      */
     public override operator fun compareTo(other: Float): Int {
         // if any of values in NaN both comparisons return false
@@ -1028,8 +1028,8 @@ public final class Float private constructor(private val value: kotlin.native.in
 
     /**
      * Compares this value with the specified value for order.
-     * Returns zero if this value is equal to the specified other value, a negative number if its less than other,
-     * or a positive number if its greater than other.
+     * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
+     * or a positive number if it's greater than other.
      */
     public operator fun compareTo(other: Double): Int = - other.compareTo(this)
 
@@ -1206,43 +1206,43 @@ public final class Double private constructor(private val value: kotlin.native.i
 
     /**
      * Compares this value with the specified value for order.
-     * Returns zero if this value is equal to the specified other value, a negative number if its less than other,
-     * or a positive number if its greater than other.
+     * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
+     * or a positive number if it's greater than other.
      */
     public operator fun compareTo(other: Byte): Int = compareTo(other.toDouble())
 
     /**
      * Compares this value with the specified value for order.
-     * Returns zero if this value is equal to the specified other value, a negative number if its less than other,
-     * or a positive number if its greater than other.
+     * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
+     * or a positive number if it's greater than other.
      */
     public operator fun compareTo(other: Short): Int = compareTo(other.toDouble())
 
     /**
      * Compares this value with the specified value for order.
-     * Returns zero if this value is equal to the specified other value, a negative number if its less than other,
-     * or a positive number if its greater than other.
+     * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
+     * or a positive number if it's greater than other.
      */
     public operator fun compareTo(other: Int): Int = compareTo(other.toDouble())
 
     /**
      * Compares this value with the specified value for order.
-     * Returns zero if this value is equal to the specified other value, a negative number if its less than other,
-     * or a positive number if its greater than other.
+     * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
+     * or a positive number if it's greater than other.
      */
     public operator fun compareTo(other: Long): Int = compareTo(other.toDouble())
 
     /**
      * Compares this value with the specified value for order.
-     * Returns zero if this value is equal to the specified other value, a negative number if its less than other,
-     * or a positive number if its greater than other.
+     * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
+     * or a positive number if it's greater than other.
      */
     public operator fun compareTo(other: Float): Int = compareTo(other.toDouble())
 
     /**
      * Compares this value with the specified value for order.
-     * Returns zero if this value is equal to the specified other value, a negative number if its less than other,
-     * or a positive number if its greater than other.
+     * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
+     * or a positive number if it's greater than other.
      */
     public override operator fun compareTo(other: Double): Int {
         // if any of values in NaN both comparisons return false

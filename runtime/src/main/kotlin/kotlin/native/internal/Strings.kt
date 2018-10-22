@@ -84,7 +84,7 @@ public actual fun String.replaceFirst(oldValue: String, newValue: String, ignore
  * Returns a copy of this string having its first letter lowercased, or the original string,
  * if it's empty or already starts with a lower case letter.
  *
- * @sample samples.text.Strings.decaptialize
+ * @sample samples.text.Strings.decapitalize
  */
 public actual fun String.decapitalize(): String {
     return if (isNotEmpty() && this[0].isUpperCase()) substring(0, 1).toLowerCase() + substring(1) else this
@@ -106,9 +106,7 @@ public actual inline fun String.substring(startIndex: Int, endIndex: Int): Strin
         subSequence(startIndex, endIndex) as String
 
 /**
- * Returns the substring of this string starting at the [startIndex].
- *
- * @param startIndex the start index (inclusive).
+ * Returns a substring of this string that starts at the specified [startIndex] and continues to the end of the string.
  */
 @kotlin.internal.InlineOnly
 public actual inline fun String.substring(startIndex: Int): String =
@@ -171,7 +169,7 @@ external public actual fun String.toUpperCase(): String
 external public actual inline fun String.toLowerCase(): String
 
 /**
- * Returns an array containing all characters of the specified string.
+ * Returns a new character array containing the characters from this string.
  */
 @SymbolName("Kotlin_String_toCharArray")
 external public fun String.toCharArray() : CharArray
@@ -180,7 +178,7 @@ external public fun String.toCharArray() : CharArray
  * Returns a copy of this string having its first letter uppercased, or the original string,
  * if it's empty or already starts with an upper case letter.
  *
- * @sample samples.text.Strings.captialize
+ * @sample samples.text.Strings.capitalize
  */
 public actual fun String.capitalize(): String {
     return if (isNotEmpty() && this[0].isLowerCase()) substring(0, 1).toUpperCase() + substring(1) else this

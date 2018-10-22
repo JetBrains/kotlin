@@ -89,6 +89,12 @@ public actual inline fun CharArray.copyOf(): CharArray {
 
 /**
  * Returns new array which is a copy of the original array, resized to the given [newSize].
+ * The copy is either truncated or padded at the end with `null` values if necessary.
+ *
+ * - If [newSize] is less than the size of the original array, the copy array is truncated to the [newSize].
+ * - If [newSize] is greater than the size of the original array, the extra elements in the copy array are filled with `null` values.
+ *
+ * @sample samples.collections.Arrays.CopyOfOperations.resizingCopyOf
  */
 @kotlin.internal.InlineOnly
 public actual inline fun <T> Array<T>.copyOf(newSize: Int): Array<T?> {
@@ -97,6 +103,12 @@ public actual inline fun <T> Array<T>.copyOf(newSize: Int): Array<T?> {
 
 /**
  * Returns new array which is a copy of the original array, resized to the given [newSize].
+ * The copy is either truncated or padded at the end with zero values if necessary.
+ *
+ * - If [newSize] is less than the size of the original array, the copy array is truncated to the [newSize].
+ * - If [newSize] is greater than the size of the original array, the extra elements in the copy array are filled with zero values.
+ *
+ * @sample samples.collections.Arrays.CopyOfOperations.resizedPrimitiveCopyOf
  */
 @kotlin.internal.InlineOnly
 public actual inline fun ByteArray.copyOf(newSize: Int): ByteArray {
@@ -105,6 +117,12 @@ public actual inline fun ByteArray.copyOf(newSize: Int): ByteArray {
 
 /**
  * Returns new array which is a copy of the original array, resized to the given [newSize].
+ * The copy is either truncated or padded at the end with zero values if necessary.
+ *
+ * - If [newSize] is less than the size of the original array, the copy array is truncated to the [newSize].
+ * - If [newSize] is greater than the size of the original array, the extra elements in the copy array are filled with zero values.
+ *
+ * @sample samples.collections.Arrays.CopyOfOperations.resizedPrimitiveCopyOf
  */
 @kotlin.internal.InlineOnly
 public actual inline fun ShortArray.copyOf(newSize: Int): ShortArray {
@@ -113,6 +131,12 @@ public actual inline fun ShortArray.copyOf(newSize: Int): ShortArray {
 
 /**
  * Returns new array which is a copy of the original array, resized to the given [newSize].
+ * The copy is either truncated or padded at the end with zero values if necessary.
+ *
+ * - If [newSize] is less than the size of the original array, the copy array is truncated to the [newSize].
+ * - If [newSize] is greater than the size of the original array, the extra elements in the copy array are filled with zero values.
+ *
+ * @sample samples.collections.Arrays.CopyOfOperations.resizedPrimitiveCopyOf
  */
 @kotlin.internal.InlineOnly
 public actual inline fun IntArray.copyOf(newSize: Int): IntArray {
@@ -121,6 +145,12 @@ public actual inline fun IntArray.copyOf(newSize: Int): IntArray {
 
 /**
  * Returns new array which is a copy of the original array, resized to the given [newSize].
+ * The copy is either truncated or padded at the end with zero values if necessary.
+ *
+ * - If [newSize] is less than the size of the original array, the copy array is truncated to the [newSize].
+ * - If [newSize] is greater than the size of the original array, the extra elements in the copy array are filled with zero values.
+ *
+ * @sample samples.collections.Arrays.CopyOfOperations.resizedPrimitiveCopyOf
  */
 @kotlin.internal.InlineOnly
 public actual inline fun LongArray.copyOf(newSize: Int): LongArray {
@@ -129,6 +159,12 @@ public actual inline fun LongArray.copyOf(newSize: Int): LongArray {
 
 /**
  * Returns new array which is a copy of the original array, resized to the given [newSize].
+ * The copy is either truncated or padded at the end with zero values if necessary.
+ *
+ * - If [newSize] is less than the size of the original array, the copy array is truncated to the [newSize].
+ * - If [newSize] is greater than the size of the original array, the extra elements in the copy array are filled with zero values.
+ *
+ * @sample samples.collections.Arrays.CopyOfOperations.resizedPrimitiveCopyOf
  */
 @kotlin.internal.InlineOnly
 public actual inline fun FloatArray.copyOf(newSize: Int): FloatArray {
@@ -137,6 +173,12 @@ public actual inline fun FloatArray.copyOf(newSize: Int): FloatArray {
 
 /**
  * Returns new array which is a copy of the original array, resized to the given [newSize].
+ * The copy is either truncated or padded at the end with zero values if necessary.
+ *
+ * - If [newSize] is less than the size of the original array, the copy array is truncated to the [newSize].
+ * - If [newSize] is greater than the size of the original array, the extra elements in the copy array are filled with zero values.
+ *
+ * @sample samples.collections.Arrays.CopyOfOperations.resizedPrimitiveCopyOf
  */
 @kotlin.internal.InlineOnly
 public actual inline fun DoubleArray.copyOf(newSize: Int): DoubleArray {
@@ -145,6 +187,12 @@ public actual inline fun DoubleArray.copyOf(newSize: Int): DoubleArray {
 
 /**
  * Returns new array which is a copy of the original array, resized to the given [newSize].
+ * The copy is either truncated or padded at the end with `false` values if necessary.
+ *
+ * - If [newSize] is less than the size of the original array, the copy array is truncated to the [newSize].
+ * - If [newSize] is greater than the size of the original array, the extra elements in the copy array are filled with `false` values.
+ *
+ * @sample samples.collections.Arrays.CopyOfOperations.resizedPrimitiveCopyOf
  */
 @kotlin.internal.InlineOnly
 public actual inline fun BooleanArray.copyOf(newSize: Int): BooleanArray {
@@ -153,6 +201,12 @@ public actual inline fun BooleanArray.copyOf(newSize: Int): BooleanArray {
 
 /**
  * Returns new array which is a copy of the original array, resized to the given [newSize].
+ * The copy is either truncated or padded at the end with null char (`\u0000`) values if necessary.
+ *
+ * - If [newSize] is less than the size of the original array, the copy array is truncated to the [newSize].
+ * - If [newSize] is greater than the size of the original array, the extra elements in the copy array are filled with null char (`\u0000`) values.
+ *
+ * @sample samples.collections.Arrays.CopyOfOperations.resizedPrimitiveCopyOf
  */
 @kotlin.internal.InlineOnly
 public actual inline fun CharArray.copyOf(newSize: Int): CharArray {
@@ -167,7 +221,10 @@ public actual inline fun CharArray.copyOf(newSize: Int): CharArray {
 }
 
 /**
- * Returns new array which is a copy of range of original array.
+ * Returns a new array which is a copy of the specified range of the original array.
+ *
+ * @param fromIndex the start of the range (inclusive), must be in `0..array.size`
+ * @param toIndex the end of the range (exclusive), must be in `fromIndex..array.size`
  */
 // TODO: The method may check input or return Array<T?>.
 // Now we check its input (fromIndex <= toIndex < size).
@@ -179,7 +236,10 @@ public actual inline fun <T> Array<T>.copyOfRange(fromIndex: Int, toIndex: Int):
 }
 
 /**
- * Returns new array which is a copy of range of original array.
+ * Returns a new array which is a copy of the specified range of the original array.
+ *
+ * @param fromIndex the start of the range (inclusive), must be in `0..array.size`
+ * @param toIndex the end of the range (exclusive), must be in `fromIndex..array.size`
  */
 @kotlin.internal.InlineOnly
 public actual inline fun ByteArray.copyOfRange(fromIndex: Int, toIndex: Int): ByteArray {
@@ -188,7 +248,10 @@ public actual inline fun ByteArray.copyOfRange(fromIndex: Int, toIndex: Int): By
 }
 
 /**
- * Returns new array which is a copy of range of original array.
+ * Returns a new array which is a copy of the specified range of the original array.
+ *
+ * @param fromIndex the start of the range (inclusive), must be in `0..array.size`
+ * @param toIndex the end of the range (exclusive), must be in `fromIndex..array.size`
  */
 @kotlin.internal.InlineOnly
 public actual inline fun ShortArray.copyOfRange(fromIndex: Int, toIndex: Int): ShortArray {
@@ -197,7 +260,10 @@ public actual inline fun ShortArray.copyOfRange(fromIndex: Int, toIndex: Int): S
 }
 
 /**
- * Returns new array which is a copy of range of original array.
+ * Returns a new array which is a copy of the specified range of the original array.
+ *
+ * @param fromIndex the start of the range (inclusive), must be in `0..array.size`
+ * @param toIndex the end of the range (exclusive), must be in `fromIndex..array.size`
  */
 @kotlin.internal.InlineOnly
 public actual inline fun IntArray.copyOfRange(fromIndex: Int, toIndex: Int): IntArray {
@@ -206,7 +272,10 @@ public actual inline fun IntArray.copyOfRange(fromIndex: Int, toIndex: Int): Int
 }
 
 /**
- * Returns new array which is a copy of range of original array.
+ * Returns a new array which is a copy of the specified range of the original array.
+ *
+ * @param fromIndex the start of the range (inclusive), must be in `0..array.size`
+ * @param toIndex the end of the range (exclusive), must be in `fromIndex..array.size`
  */
 @kotlin.internal.InlineOnly
 public actual inline fun LongArray.copyOfRange(fromIndex: Int, toIndex: Int): LongArray {
@@ -215,7 +284,10 @@ public actual inline fun LongArray.copyOfRange(fromIndex: Int, toIndex: Int): Lo
 }
 
 /**
- * Returns new array which is a copy of range of original array.
+ * Returns a new array which is a copy of the specified range of the original array.
+ *
+ * @param fromIndex the start of the range (inclusive), must be in `0..array.size`
+ * @param toIndex the end of the range (exclusive), must be in `fromIndex..array.size`
  */
 @kotlin.internal.InlineOnly
 public actual inline fun FloatArray.copyOfRange(fromIndex: Int, toIndex: Int): FloatArray {
@@ -224,7 +296,10 @@ public actual inline fun FloatArray.copyOfRange(fromIndex: Int, toIndex: Int): F
 }
 
 /**
- * Returns new array which is a copy of range of original array.
+ * Returns a new array which is a copy of the specified range of the original array.
+ *
+ * @param fromIndex the start of the range (inclusive), must be in `0..array.size`
+ * @param toIndex the end of the range (exclusive), must be in `fromIndex..array.size`
  */
 @kotlin.internal.InlineOnly
 public actual inline fun DoubleArray.copyOfRange(fromIndex: Int, toIndex: Int): DoubleArray {
@@ -233,7 +308,10 @@ public actual inline fun DoubleArray.copyOfRange(fromIndex: Int, toIndex: Int): 
 }
 
 /**
- * Returns new array which is a copy of range of original array.
+ * Returns a new array which is a copy of the specified range of the original array.
+ *
+ * @param fromIndex the start of the range (inclusive), must be in `0..array.size`
+ * @param toIndex the end of the range (exclusive), must be in `fromIndex..array.size`
  */
 @kotlin.internal.InlineOnly
 public actual inline fun BooleanArray.copyOfRange(fromIndex: Int, toIndex: Int): BooleanArray {
@@ -242,7 +320,10 @@ public actual inline fun BooleanArray.copyOfRange(fromIndex: Int, toIndex: Int):
 }
 
 /**
- * Returns new array which is a copy of range of original array.
+ * Returns a new array which is a copy of the specified range of the original array.
+ *
+ * @param fromIndex the start of the range (inclusive), must be in `0..array.size`
+ * @param toIndex the end of the range (exclusive), must be in `fromIndex..array.size`
  */
 @kotlin.internal.InlineOnly
 public actual inline fun CharArray.copyOfRange(fromIndex: Int, toIndex: Int): CharArray {
@@ -259,8 +340,6 @@ public actual fun <T> Array<out T>.sortWith(comparator: Comparator<in T>): Unit 
 
 /**
  * Sorts the array in-place according to the natural order of its elements.
- *
- * @throws ClassCastException if any element of the array is not [Comparable].
  */
 public actual fun <T: Comparable<T>> Array<out T>.sort(): Unit {
     if (size > 1) sortArrayComparable(this)
@@ -615,7 +694,7 @@ public inline fun <T> Array<out T>.subarrayContentToString(offset: Int, length: 
  * @param endIndex the end (exclusive) of the subrange to copy, size of this array by default.
  *
  * @throws IndexOutOfBoundsException or [IllegalArgumentException] when [startIndex] or [endIndex] is out of range of this array indices or when `startIndex > endIndex`.
- * @throws IndexOutOfBoundsException when the subrange doesn't fit into the [destination] array starting at the specified [destinationIndex],
+ * @throws IndexOutOfBoundsException when the subrange doesn't fit into the [destination] array starting at the specified [destinationOffset],
  * or when that index is out of the [destination] array indices range.
  *
  * @return the [destination] array.
@@ -637,7 +716,7 @@ public actual fun <T> Array<out T>.copyInto(destination: Array<T>, destinationOf
  * @param endIndex the end (exclusive) of the subrange to copy, size of this array by default.
  *
  * @throws IndexOutOfBoundsException or [IllegalArgumentException] when [startIndex] or [endIndex] is out of range of this array indices or when `startIndex > endIndex`.
- * @throws IndexOutOfBoundsException when the subrange doesn't fit into the [destination] array starting at the specified [destinationIndex],
+ * @throws IndexOutOfBoundsException when the subrange doesn't fit into the [destination] array starting at the specified [destinationOffset],
  * or when that index is out of the [destination] array indices range.
  *
  * @return the [destination] array.
@@ -659,7 +738,7 @@ public actual fun ByteArray.copyInto(destination: ByteArray, destinationOffset: 
  * @param endIndex the end (exclusive) of the subrange to copy, size of this array by default.
  *
  * @throws IndexOutOfBoundsException or [IllegalArgumentException] when [startIndex] or [endIndex] is out of range of this array indices or when `startIndex > endIndex`.
- * @throws IndexOutOfBoundsException when the subrange doesn't fit into the [destination] array starting at the specified [destinationIndex],
+ * @throws IndexOutOfBoundsException when the subrange doesn't fit into the [destination] array starting at the specified [destinationOffset],
  * or when that index is out of the [destination] array indices range.
  *
  * @return the [destination] array.
@@ -681,7 +760,7 @@ public actual fun ShortArray.copyInto(destination: ShortArray, destinationOffset
  * @param endIndex the end (exclusive) of the subrange to copy, size of this array by default.
  *
  * @throws IndexOutOfBoundsException or [IllegalArgumentException] when [startIndex] or [endIndex] is out of range of this array indices or when `startIndex > endIndex`.
- * @throws IndexOutOfBoundsException when the subrange doesn't fit into the [destination] array starting at the specified [destinationIndex],
+ * @throws IndexOutOfBoundsException when the subrange doesn't fit into the [destination] array starting at the specified [destinationOffset],
  * or when that index is out of the [destination] array indices range.
  *
  * @return the [destination] array.
@@ -703,7 +782,7 @@ public actual fun IntArray.copyInto(destination: IntArray, destinationOffset: In
  * @param endIndex the end (exclusive) of the subrange to copy, size of this array by default.
  *
  * @throws IndexOutOfBoundsException or [IllegalArgumentException] when [startIndex] or [endIndex] is out of range of this array indices or when `startIndex > endIndex`.
- * @throws IndexOutOfBoundsException when the subrange doesn't fit into the [destination] array starting at the specified [destinationIndex],
+ * @throws IndexOutOfBoundsException when the subrange doesn't fit into the [destination] array starting at the specified [destinationOffset],
  * or when that index is out of the [destination] array indices range.
  *
  * @return the [destination] array.
@@ -725,7 +804,7 @@ public actual fun LongArray.copyInto(destination: LongArray, destinationOffset: 
  * @param endIndex the end (exclusive) of the subrange to copy, size of this array by default.
  *
  * @throws IndexOutOfBoundsException or [IllegalArgumentException] when [startIndex] or [endIndex] is out of range of this array indices or when `startIndex > endIndex`.
- * @throws IndexOutOfBoundsException when the subrange doesn't fit into the [destination] array starting at the specified [destinationIndex],
+ * @throws IndexOutOfBoundsException when the subrange doesn't fit into the [destination] array starting at the specified [destinationOffset],
  * or when that index is out of the [destination] array indices range.
  *
  * @return the [destination] array.
@@ -747,7 +826,7 @@ public actual fun FloatArray.copyInto(destination: FloatArray, destinationOffset
  * @param endIndex the end (exclusive) of the subrange to copy, size of this array by default.
  *
  * @throws IndexOutOfBoundsException or [IllegalArgumentException] when [startIndex] or [endIndex] is out of range of this array indices or when `startIndex > endIndex`.
- * @throws IndexOutOfBoundsException when the subrange doesn't fit into the [destination] array starting at the specified [destinationIndex],
+ * @throws IndexOutOfBoundsException when the subrange doesn't fit into the [destination] array starting at the specified [destinationOffset],
  * or when that index is out of the [destination] array indices range.
  *
  * @return the [destination] array.
@@ -769,7 +848,7 @@ public actual fun DoubleArray.copyInto(destination: DoubleArray, destinationOffs
  * @param endIndex the end (exclusive) of the subrange to copy, size of this array by default.
  *
  * @throws IndexOutOfBoundsException or [IllegalArgumentException] when [startIndex] or [endIndex] is out of range of this array indices or when `startIndex > endIndex`.
- * @throws IndexOutOfBoundsException when the subrange doesn't fit into the [destination] array starting at the specified [destinationIndex],
+ * @throws IndexOutOfBoundsException when the subrange doesn't fit into the [destination] array starting at the specified [destinationOffset],
  * or when that index is out of the [destination] array indices range.
  *
  * @return the [destination] array.
@@ -791,7 +870,7 @@ public actual fun BooleanArray.copyInto(destination: BooleanArray, destinationOf
  * @param endIndex the end (exclusive) of the subrange to copy, size of this array by default.
  *
  * @throws IndexOutOfBoundsException or [IllegalArgumentException] when [startIndex] or [endIndex] is out of range of this array indices or when `startIndex > endIndex`.
- * @throws IndexOutOfBoundsException when the subrange doesn't fit into the [destination] array starting at the specified [destinationIndex],
+ * @throws IndexOutOfBoundsException when the subrange doesn't fit into the [destination] array starting at the specified [destinationOffset],
  * or when that index is out of the [destination] array indices range.
  *
  * @return the [destination] array.

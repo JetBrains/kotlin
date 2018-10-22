@@ -6,10 +6,10 @@
 package kotlin.collections
 
 /**
-* A generic ordered collection of elements. Methods in this interface support only read-only access to the list;
-* read/write access is supported through the [MutableList] interface.
-* @param E the type of elements contained in the list.
-*/
+ * A generic ordered collection of elements. Methods in this interface support only read-only access to the list;
+ * read/write access is supported through the [MutableList] interface.
+ * @param E the type of elements contained in the list. The list is covariant on its element type.
+ */
 public interface List<out E> : Collection<E> {
     // Query Operations
     override val size: Int
@@ -54,28 +54,44 @@ public interface List<out E> : Collection<E> {
     /**
      * Returns a view of the portion of this list between the specified [fromIndex] (inclusive) and [toIndex] (exclusive).
      * The returned list is backed by this list, so non-structural changes in the returned list are reflected in this list, and vice-versa.
+     *
+     * Structural changes in the base list make the behavior of the view undefined.
      */
     public fun subList(fromIndex: Int, toIndex: Int): List<E>
 }
 
 /**
  * A generic ordered collection of elements that supports adding and removing elements.
- * @param E the type of elements contained in the list.
+ * @param E the type of elements contained in the list. The mutable list is invariant on its element type.
  */
 public interface MutableList<E> : List<E>, MutableCollection<E> {
     // Modification Operations
+    /**
+     * Adds the specified element to the end of this list.
+     *
+     * @return `true` because the list is always modified as the result of this operation.
+     */
     override fun add(element: E): Boolean
+
     override fun remove(element: E): Boolean
 
     // Bulk Modification Operations
+    /**
+     * Adds all of the elements of the specified collection to the end of this list.
+     *
+     * The elements are appended in the order they appear in the [elements] collection.
+     *
+     * @return `true` if the list was changed as the result of the operation.
+     */
     override fun addAll(elements: Collection<E>): Boolean
 
     /**
-     * Inserts all of the elements in the specified collection [elements] into this list at the specified [index].
+     * Inserts all of the elements of the specified collection [elements] into this list at the specified [index].
      *
      * @return `true` if the list was changed as the result of the operation.
      */
     public fun addAll(index: Int, elements: Collection<E>): Boolean
+
     override fun removeAll(elements: Collection<E>): Boolean
     override fun retainAll(elements: Collection<E>): Boolean
     override fun clear(): Unit
@@ -102,6 +118,7 @@ public interface MutableList<E> : List<E>, MutableCollection<E> {
 
     // List Iterators
     override fun listIterator(): MutableListIterator<E>
+
     override fun listIterator(index: Int): MutableListIterator<E>
 
     // View

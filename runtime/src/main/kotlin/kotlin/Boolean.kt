@@ -22,13 +22,15 @@ public class Boolean private constructor(
     external public operator fun not(): Boolean
 
     /**
-     * Performs a logical `and` operation between this Boolean and the [other] one.
+     * Performs a logical `and` operation between this Boolean and the [other] one. Unlike the `&&` operator,
+     * this function does not perform short-circuit evaluation. Both `this` and [other] will always be evaluated.
      */
     @SymbolName("Kotlin_Boolean_and_Boolean")
     external public infix fun and(other: Boolean): Boolean
 
     /**
-     * Performs a logical `or` operation between this Boolean and the [other] one.
+     * Performs a logical `or` operation between this Boolean and the [other] one. Unlike the `||` operator,
+     * this function does not perform short-circuit evaluation. Both `this` and [other] will always be evaluated.
      */
     @SymbolName("Kotlin_Boolean_or_Boolean")
     external public infix fun or(other: Boolean): Boolean
