@@ -33,6 +33,8 @@ class CommentSaver(originalElements: PsiChildRange, private val saveLineBreaks: 
     private val SAVED_TREE_KEY = Key<TreeElement>("SAVED_TREE")
     private val psiFactory = KtPsiFactory(originalElements.first!!)
 
+    private var testCount = 0
+
     private abstract class TreeElement {
         companion object {
             fun create(element: PsiElement): TreeElement? {
@@ -339,7 +341,7 @@ class CommentSaver(originalElements: PsiChildRange, private val saveLineBreaks: 
             }
 
             // shift (possible contained) comment in expression underneath braces
-            if (isSingleExpressionWithCommentBeneath) {
+            if (isSingleExpressionWithCommentBeneath && resultElements.count() == 1) {
                 val element = resultElements.first
                 element?.add(psiFactory.createWhiteSpace("\n"))
                 element?.add(restored)
