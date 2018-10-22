@@ -20,6 +20,9 @@ dependencies {
     compilerClasspath(project(":kotlin-reflect"))
     compilerClasspath(project(":kotlin-stdlib"))
     compilerClasspath(project(":kotlin-script-runtime"))
+    compileOnly(project(":compiler:cli-common")) // TODO: fix import (workaround for jps build)
+    testCompile(project(":core:util.runtime")) // TODO: fix import (workaround for jps build)
+    testCompile(project(":compiler:daemon-common")) // TODO: fix import (workaround for jps build)
 }
 
 projectTest {

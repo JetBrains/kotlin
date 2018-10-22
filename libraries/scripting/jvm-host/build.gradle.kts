@@ -19,7 +19,7 @@ dependencies {
     runtime(project(":kotlin-reflect"))
     testCompile(projectTests(":compiler:tests-common"))
     testCompile(commonDep("junit"))
-    testRuntime(project(":kotlin-reflect"))
+    testCompile(project(":compiler:daemon-common")) // TODO: fix import (workaround for jps build)
 }
 
 sourceSets {
