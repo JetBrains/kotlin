@@ -56,6 +56,7 @@ dependencies {
     compileOnly(intellijPluginDep("properties"))
     compileOnly(intellijPluginDep("java-i18n"))
 
+    testCompileOnly(project(":kotlin-reflect-api")) // TODO: fix import (workaround for jps build)
     testCompile(project(":kotlin-test:kotlin-test-junit"))
     testCompile(projectTests(":compiler:tests-common"))
     testCompile(projectTests(":idea:idea-test-framework")) { isTransitive = false }
@@ -77,6 +78,7 @@ dependencies {
     testCompile(project(":kotlin-sam-with-receiver-compiler-plugin")) { isTransitive = false }
 
     testRuntime(project(":plugins:android-extensions-compiler"))
+    testRuntimeOnly(project(":kotlin-android-extensions-runtime")) // TODO: fix import (workaround for jps build)
     testRuntime(project(":plugins:android-extensions-ide")) { isTransitive = false }
     testRuntime(project(":allopen-ide-plugin")) { isTransitive = false }
     testRuntime(project(":kotlin-allopen-compiler-plugin"))
@@ -118,8 +120,9 @@ dependencies {
     testRuntime(intellijPluginDep("android"))
     testRuntime(intellijPluginDep("smali"))
     testRuntime(intellijPluginDep("testng"))
-}
 
+    if (System.getProperty("idea.active") != null) testRuntimeOnly(files("${rootProject.projectDir}/dist/kotlinc/lib/kotlin-reflect.jar"))
+}
 sourceSets {
     "main" {
         projectDefault()
@@ -143,6 +146,7 @@ sourceSets {
     }
 
 }
+
 
 val performanceTestCompile by configurations.creating {
     extendsFrom(configurations["testCompile"])

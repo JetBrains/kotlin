@@ -13,6 +13,8 @@ dependencies {
         testCompile(projectTests(it))
         jpsTest(project(it, configuration = "jpsTest"))
     }
+
+    testRuntimeOnly(files("${rootProject.projectDir}/dist/kotlinc/lib/kotlin-reflect.jar"))
 }
 
 sourceSets {
