@@ -94,6 +94,10 @@ class DeclarationStubGenerator(
             irProperty.setter = descriptor.setter?.let { generateFunctionStub(it, createPropertyIfNeeded = false) }?.apply {
                 correspondingProperty = irProperty
             }
+            // Do we ever generate stubs for file-level properties?
+            (descriptor.containingDeclaration as? ClassDescriptor)?.let {
+                irProperty.parent = generateClassStub(it)
+            }
         }
 
     private fun generateFieldStub(descriptor: PropertyDescriptor): IrField {
