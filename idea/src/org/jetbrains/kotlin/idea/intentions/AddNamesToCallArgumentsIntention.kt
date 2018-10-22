@@ -27,44 +27,57 @@ import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatchStatus
 import org.jetbrains.kotlin.resolve.calls.model.VarargValueArgument
 
 class AddNamesToCallArgumentsIntention : SelfTargetingRangeIntention<KtCallElement>(
-        KtCallElement::class.java,
-        "Add names to call arguments"
+    KtCallElement::class.java,
+    "Add names to call arguments"
 ) {
     override fun applicabilityRange(element: KtCallElement): TextRange? {
-        val arguments = element.valueArguments
-        if (arguments.all { it.isNamed() || it is LambdaArgument }) return null
-
-        val resolvedCall = element.resolveToCall() ?: return null
-        if (!resolvedCall.resultingDescriptor.hasStableParameterNames()) return null
-
-        for (argument in arguments) {
-            val argumentMatch = resolvedCall.getArgumentMapping(argument) as? ArgumentMatch ?: return null
-            if (argumentMatch.status != ArgumentMatchStatus.SUCCESS) return null
-
-            if (argumentMatch.valueParameter.varargElementType != null) {
-                val varargArgument = resolvedCall.valueArguments[argumentMatch.valueParameter] as? VarargValueArgument ?: return null
-                if (varargArgument.arguments.size != 1) return null
-                val versionSettings = element.languageVersionSettings
-                if (versionSettings.supportsFeature(LanguageFeature.ProhibitAssigningSingleElementsToVarargsInNamedForm)) {
-                    if (argument.getSpreadElement() == null) return null
-                }
-            }
-        }
-
+        if (!canAddNamesToCallArguments(element)) return null
         return element.calleeExpression?.textRange
     }
 
     override fun applyTo(element: KtCallElement, editor: Editor?) {
-        val arguments = element.valueArguments
-        val resolvedCall = element.resolveToCall() ?: return
-        for (argument in arguments) {
-            if (argument !is KtValueArgument || argument is KtLambdaArgument) continue
-            val argumentMatch = resolvedCall.getArgumentMapping(argument) as? ArgumentMatch ?: continue
-            val name = argumentMatch.valueParameter.name
-            val newArgument = KtPsiFactory(element).createArgument(argument.getArgumentExpression()!!,
-                                                                   name,
-                                                                   argument.getSpreadElement() != null)
-            argument.replace(newArgument)
+        addNamesToCallArguments(element)
+    }
+
+    companion object {
+        fun canAddNamesToCallArguments(element: KtCallElement): Boolean {
+            val arguments = element.valueArguments
+            if (arguments.all { it.isNamed() || it is LambdaArgument }) return false
+
+            val resolvedCall = element.resolveToCall() ?: return false
+            if (!resolvedCall.resultingDescriptor.hasStableParameterNames()) return false
+
+            for (argument in arguments) {
+                val argumentMatch = resolvedCall.getArgumentMapping(argument) as? ArgumentMatch ?: return false
+                if (argumentMatch.status != ArgumentMatchStatus.SUCCESS) return false
+
+                if (argumentMatch.valueParameter.varargElementType != null) {
+                    val varargArgument = resolvedCall.valueArguments[argumentMatch.valueParameter] as? VarargValueArgument ?: return false
+                    if (varargArgument.arguments.size != 1) return false
+                    val versionSettings = element.languageVersionSettings
+                    if (versionSettings.supportsFeature(LanguageFeature.ProhibitAssigningSingleElementsToVarargsInNamedForm)) {
+                        if (argument.getSpreadElement() == null) return false
+                    }
+                }
+            }
+
+            return true
+        }
+
+        fun addNamesToCallArguments(element: KtCallElement) {
+            val arguments = element.valueArguments
+            val resolvedCall = element.resolveToCall() ?: return
+            for (argument in arguments) {
+                if (argument !is KtValueArgument || argument is KtLambdaArgument) continue
+                val argumentMatch = resolvedCall.getArgumentMapping(argument) as? ArgumentMatch ?: continue
+                val name = argumentMatch.valueParameter.name
+                val newArgument = KtPsiFactory(element).createArgument(
+                    argument.getArgumentExpression()!!,
+                    name,
+                    argument.getSpreadElement() != null
+                )
+                argument.replace(newArgument)
+            }
         }
     }
 }

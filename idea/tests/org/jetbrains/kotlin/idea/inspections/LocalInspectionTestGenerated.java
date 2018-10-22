@@ -47,6 +47,69 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @TestMetadata("idea/testData/inspectionsLocal/booleanLiteralArgument")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class BooleanLiteralArgument extends AbstractLocalInspectionTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInBooleanLiteralArgument() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/booleanLiteralArgument"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("boolean.kt")
+        public void testBoolean() throws Exception {
+            runTest("idea/testData/inspectionsLocal/booleanLiteralArgument/boolean.kt");
+        }
+
+        @TestMetadata("booleanLiteral.kt")
+        public void testBooleanLiteral() throws Exception {
+            runTest("idea/testData/inspectionsLocal/booleanLiteralArgument/booleanLiteral.kt");
+        }
+
+        @TestMetadata("booleanLiteral2.kt")
+        public void testBooleanLiteral2() throws Exception {
+            runTest("idea/testData/inspectionsLocal/booleanLiteralArgument/booleanLiteral2.kt");
+        }
+
+        @TestMetadata("booleanLiteral3.kt")
+        public void testBooleanLiteral3() throws Exception {
+            runTest("idea/testData/inspectionsLocal/booleanLiteralArgument/booleanLiteral3.kt");
+        }
+
+        @TestMetadata("booleanLiteral4.kt")
+        public void testBooleanLiteral4() throws Exception {
+            runTest("idea/testData/inspectionsLocal/booleanLiteralArgument/booleanLiteral4.kt");
+        }
+
+        @TestMetadata("hasError.kt")
+        public void testHasError() throws Exception {
+            runTest("idea/testData/inspectionsLocal/booleanLiteralArgument/hasError.kt");
+        }
+
+        @TestMetadata("hasName.kt")
+        public void testHasName() throws Exception {
+            runTest("idea/testData/inspectionsLocal/booleanLiteralArgument/hasName.kt");
+        }
+
+        @TestMetadata("hasVararg.kt")
+        public void testHasVararg() throws Exception {
+            runTest("idea/testData/inspectionsLocal/booleanLiteralArgument/hasVararg.kt");
+        }
+
+        @TestMetadata("intLiteral.kt")
+        public void testIntLiteral() throws Exception {
+            runTest("idea/testData/inspectionsLocal/booleanLiteralArgument/intLiteral.kt");
+        }
+
+        @TestMetadata("javaMethod.kt")
+        public void testJavaMethod() throws Exception {
+            runTest("idea/testData/inspectionsLocal/booleanLiteralArgument/javaMethod.kt");
+        }
+    }
+
     @TestMetadata("idea/testData/inspectionsLocal/branched")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
