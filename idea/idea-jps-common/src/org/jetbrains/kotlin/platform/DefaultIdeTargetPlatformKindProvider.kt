@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.platform
 import com.intellij.openapi.components.ServiceManager
 import org.jetbrains.kotlin.config.isJps
 import org.jetbrains.kotlin.platform.impl.JvmIdePlatformKind
+import org.jetbrains.kotlin.resolve.TargetPlatform
 
 interface DefaultIdeTargetPlatformKindProvider {
     val defaultPlatform: IdePlatform<*, *>
@@ -22,5 +23,8 @@ interface DefaultIdeTargetPlatformKindProvider {
 
                 return ServiceManager.getService(DefaultIdeTargetPlatformKindProvider::class.java).defaultPlatform
             }
+
+        val defaultCompilerPlatform: TargetPlatform
+            get() = defaultPlatform.kind.compilerPlatform
     }
 }

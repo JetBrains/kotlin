@@ -23,6 +23,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.platform.DefaultIdeTargetPlatformKindProvider;
 import org.jetbrains.kotlin.psi.KtCodeFragment;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.psi.KtPsiFactoryKt;
@@ -62,7 +63,7 @@ public class TargetPlatformDetector {
             }
         }
 
-        return JvmPlatform.INSTANCE;
+        return DefaultIdeTargetPlatformKindProvider.Companion.getDefaultCompilerPlatform();
     }
 
     @NotNull
