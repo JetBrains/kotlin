@@ -26,13 +26,17 @@ import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
 import org.jetbrains.kotlin.ir.builders.IrGeneratorContextBase
 import org.jetbrains.kotlin.ir.builders.Scope
+import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.declarations.IrProperty
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrCallableReference
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
+import org.jetbrains.kotlin.ir.util.isSubclassOf
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -47,36 +51,39 @@ class KCallableNamePropertyLowering(val context: BackendContext) : FileLoweringP
 private class KCallableNamePropertyTransformer(val lower: KCallableNamePropertyLowering) : IrElementTransformerVoid() {
 
     override fun visitCall(expression: IrCall): IrExpression {
+
         val callableReference = expression.dispatchReceiver as? IrCallableReference ?: return expression
 
         //TODO rewrite checking
-        val directMember = DescriptorUtils.getDirectMember(expression.descriptor)
-        val classDescriptor = directMember.containingDeclaration as? ClassDescriptor ?: return expression
-        if (!classDescriptor.defaultType.isKFunctionType) return expression
-        if (directMember.name.asString() != "name") return expression
+        val directMember = expression.symbol.owner.let {
+            (it as? IrSimpleFunction)?.correspondingProperty ?: it
+        }
+        val irClass = directMember.parent as? IrClass ?: return expression
+        if (irClass.isSubclassOf(lower.context.irBuiltIns.kCallableClass.owner)) return expression
+        val name = when (directMember) {
+            is IrSimpleFunction -> directMember.name
+            is IrProperty -> directMember.name
+            else -> throw AssertionError("Should be IrSimpleFunction or IrProperty, ${directMember}")
+        }
+        if (name.asString() != "name") return expression
 
         val receiver = callableReference.dispatchReceiver ?: callableReference.extensionReceiver
 
-        return lower.context.createIrBuilder(expression.symbol, expression.startOffset, expression.endOffset).run {
-
-            IrCompositeImpl(startOffset, endOffset, context.irBuiltIns.stringType).apply {
-                receiver?.let {
-                    //put receiver for bound callable reference
-                    statements.add(it)
-                }
-
-                statements.add(
-                    IrConstImpl.string(
-                        expression.startOffset,
-                        expression.endOffset,
-                        context.irBuiltIns.stringType,
-                        callableReference.descriptor.name.asString()
-                    )
-                )
+        return IrCompositeImpl(expression.startOffset, expression.endOffset, lower.context.irBuiltIns.stringType).apply {
+            receiver?.let {
+                //put receiver for bound callable reference
+                statements.add(it)
             }
 
+            statements.add(
+                IrConstImpl.string(
+                    expression.startOffset,
+                    expression.endOffset,
+                    lower.context.irBuiltIns.stringType,
+                    callableReference.descriptor.name.asString()
+                )
+            )
         }
-
     }
 
 
