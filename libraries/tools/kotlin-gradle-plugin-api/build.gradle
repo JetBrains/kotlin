@@ -15,7 +15,7 @@ pill {
 
 dependencies {
     compile project(':kotlin-stdlib')
-    compile project('::konan:konan-utils')
+    compile project('::kotlin-native:kotlin-native-utils')
 
     compileOnly gradleApi()
     compileOnly 'com.android.tools.build:gradle:0.4.2'

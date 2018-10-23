@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 fun box(): String {
     val array = intArrayOf(11, 12, 13)
     val p = array.get(0)

@@ -10,7 +10,8 @@ import java.io.File
 
 class DirtyFilesContainer(
     private val caches: IncrementalCachesManager<*>,
-    private val reporter: ICReporter
+    private val reporter: ICReporter,
+    private val sourceFilesExtensions: List<String>
 ) {
     private val myDirtyFiles = HashSet<File>()
 
@@ -18,7 +19,7 @@ class DirtyFilesContainer(
         ArrayList(myDirtyFiles)
 
     fun add(files: Iterable<File>) {
-        val existingKotlinFiles = files.filter { it.isKotlinFile() }
+        val existingKotlinFiles = files.filter { it.isKotlinFile(sourceFilesExtensions) }
         if (existingKotlinFiles.isNotEmpty()) {
             myDirtyFiles.addAll(existingKotlinFiles)
         }

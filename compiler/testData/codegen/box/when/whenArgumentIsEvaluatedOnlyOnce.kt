@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 var x = 0
 fun inc(): Int {
     x++

@@ -1,11 +1,11 @@
 package
 
-public fun test1(/*0*/ @file:kotlin.Suppress(names = {""}) x: kotlin.Int): kotlin.Unit
-@file:kotlin.Suppress(names = {""}) public fun test2(): kotlin.Unit
-public fun @file:kotlin.Suppress(names = {""}) kotlin.Int.test3(): kotlin.Unit
+public fun test1(/*0*/ x: kotlin.Int): kotlin.Unit
+public fun test2(): kotlin.Unit
+public fun kotlin.Int.test3(): kotlin.Unit
 
 public final class OnType {
-    public constructor OnType(/*0*/ x: @file:kotlin.Suppress(names = {""}) kotlin.Int)
+    public constructor OnType(/*0*/ x: kotlin.Int)
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

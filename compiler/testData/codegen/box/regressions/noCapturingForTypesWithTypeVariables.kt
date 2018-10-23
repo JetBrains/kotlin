@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 fun foo(useScriptArgs: Array<out Any?>?) {
     val constructorArgs: Array<out Any?> = arrayOf(useScriptArgs.orEmpty())
 }

@@ -16,9 +16,10 @@
 
 package org.jetbrains.kotlin.codegen;
 
-import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.util.ArrayUtil;
 import kotlin.collections.CollectionsKt;
+import kotlin.io.FilesKt;
+import kotlin.sequences.SequencesKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
@@ -28,28 +29,19 @@ import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.TestJdkKind;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 public abstract class AbstractTopLevelMembersInvocationTest extends AbstractBytecodeTextTest {
-
-    private static final String LIBRARY = "library";
-
     @Override
     public void doTest(@NotNull String filename) throws Exception {
         File root = new File(filename);
-        List<String> sourceFiles = new ArrayList<>(2);
+        List<String> sourceFiles = SequencesKt.toList(SequencesKt.map(
+                SequencesKt.filter(FilesKt.walkTopDown(root).maxDepth(1), File::isFile),
+                this::relativePath
+        ));
 
-        FileUtil.processFilesRecursively(root, file -> {
-            if (file.getName().endsWith(".kt")) {
-                sourceFiles.add(relativePath(file));
-                return true;
-            }
-            return true;
-        }, file -> !LIBRARY.equals(file.getName()));
-
-        File library = new File(root, LIBRARY);
+        File library = new File(root, "library");
         List<File> classPath =
                 library.exists()
                 ? Collections.singletonList(CompilerTestUtil.compileJvmLibrary(library))

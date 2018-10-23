@@ -33,7 +33,7 @@ internal object ReflectionObjectRenderer {
     }
 
     private fun StringBuilder.appendReceivers(callable: CallableDescriptor) {
-        val dispatchReceiver = callable.dispatchReceiverParameter
+        val dispatchReceiver = callable.instanceReceiverParameter
         val extensionReceiver = callable.extensionReceiverParameter
 
         appendReceiverType(dispatchReceiver)

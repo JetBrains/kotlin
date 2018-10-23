@@ -1,6 +1,7 @@
 // !LANGUAGE: +ReleaseCoroutines
 // WITH_COROUTINES
 // WITH_REFLECT
+// IGNORE_BACKEND: NATIVE
 // IGNORE_BACKEND: JS_IR
 // IGNORE_BACKEND: JS
 // IGNORE_BACKEND: JVM_IR
@@ -32,7 +33,7 @@ var proceed = {}
 
 suspend fun suspendHere() = suspendCoroutineUninterceptedOrReturn<Unit> { cont ->
     proceed = {
-        cont.resumeWith(SuccessOrFailure.success(Unit))
+        cont.resumeWith(Result.success(Unit))
     }
     COROUTINE_SUSPENDED
 }

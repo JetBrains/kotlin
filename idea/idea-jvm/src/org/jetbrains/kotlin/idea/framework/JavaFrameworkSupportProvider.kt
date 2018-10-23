@@ -18,6 +18,8 @@ import com.intellij.openapi.roots.ui.configuration.FacetsProvider
 import com.intellij.openapi.roots.ui.configuration.libraries.CustomLibraryDescription
 import org.jetbrains.kotlin.idea.configuration.BuildSystemType
 import org.jetbrains.kotlin.idea.configuration.getBuildSystemType
+import org.jetbrains.kotlin.idea.formatter.KotlinStyleGuideCodeStyle
+import org.jetbrains.kotlin.idea.formatter.ProjectCodeStyleImporter
 import javax.swing.JComponent
 
 class JavaFrameworkSupportProvider : FrameworkSupportInModuleProvider() {
@@ -46,6 +48,11 @@ class JavaFrameworkSupportProvider : FrameworkSupportInModuleProvider() {
                         "Kotlin/\u200BJS")
 
                 description!!.finishLibConfiguration(module, rootModel, false)
+
+                val isNewProject = model.project == null
+                if (isNewProject) {
+                    ProjectCodeStyleImporter.apply(module.project, KotlinStyleGuideCodeStyle.INSTANCE)
+                }
             }
 
             override fun onFrameworkSelectionChanged(selected: Boolean) {

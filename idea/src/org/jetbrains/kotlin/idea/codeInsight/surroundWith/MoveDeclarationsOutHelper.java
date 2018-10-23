@@ -25,7 +25,6 @@ import com.intellij.psi.search.searches.ReferencesSearch;
 import com.intellij.psi.util.PsiUtilCore;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.VariableDescriptor;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils;
@@ -117,9 +116,9 @@ public class MoveDeclarationsOutHelper {
 
     @NotNull
     private static KotlinType getPropertyType(@NotNull KtProperty property) {
-        DeclarationDescriptor variableDescriptor = ResolutionUtils.resolveToDescriptorIfAny(property, BodyResolveMode.PARTIAL);
-        assert variableDescriptor instanceof VariableDescriptor : "Couldn't resolve property to property descriptor " + property.getText();
-        return ((VariableDescriptor) variableDescriptor).getType();
+        VariableDescriptor variableDescriptor = ResolutionUtils.resolveToDescriptorIfAny(property, BodyResolveMode.PARTIAL);
+        assert variableDescriptor != null : "Couldn't resolve property to property descriptor " + property.getText();
+        return variableDescriptor.getType();
     }
 
     @NotNull

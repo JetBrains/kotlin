@@ -18,10 +18,10 @@ import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.psi.PsiElement
 import org.jetbrains.annotations.Contract
+import org.jetbrains.kotlin.cli.common.arguments.CliArgumentStringBuilder.replaceLanguageFeature
 import org.jetbrains.kotlin.config.*
-import org.jetbrains.kotlin.idea.KotlinPluginUtil
-import org.jetbrains.kotlin.idea.compiler.configuration.KotlinCommonCompilerArgumentsHolder
 import org.jetbrains.kotlin.idea.facet.getRuntimeLibraryVersion
+import org.jetbrains.kotlin.idea.facet.toApiVersion
 import org.jetbrains.kotlin.idea.framework.ui.CreateLibraryDialogWithModules
 import org.jetbrains.kotlin.idea.framework.ui.FileUIUtils
 import org.jetbrains.kotlin.idea.quickfix.askUpdateRuntime
@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.idea.versions.findKotlinRuntimeLibrary
 import java.io.File
 import java.util.*
 
-abstract class KotlinWithLibraryConfigurator internal constructor() : KotlinProjectConfigurator {
+abstract class KotlinWithLibraryConfigurator protected constructor() : KotlinProjectConfigurator {
     protected abstract val libraryName: String
 
     protected abstract val messageForOverrideDialog: String
@@ -332,7 +332,7 @@ abstract class KotlinWithLibraryConfigurator internal constructor() : KotlinProj
 
     override fun changeCoroutineConfiguration(module: Module, state: LanguageFeature.State) {
         val runtimeUpdateRequired = state != LanguageFeature.State.DISABLED &&
-                                    (getRuntimeLibraryVersion(module)?.startsWith("1.0") ?: false)
+                getRuntimeLibraryVersion(module).toApiVersion() == ApiVersion.KOTLIN_1_0
 
         if (runtimeUpdateRequired && !askUpdateRuntime(module, LanguageFeature.Coroutines.sinceApiVersion)) {
             return
@@ -343,6 +343,31 @@ abstract class KotlinWithLibraryConfigurator internal constructor() : KotlinProj
             facetSettings.coroutineSupport = state
             facetSettings.apiLevel = LanguageVersion.KOTLIN_1_1
             facetSettings.languageLevel = LanguageVersion.KOTLIN_1_1
+        }
+    }
+
+    override fun changeGeneralFeatureConfiguration(
+        module: Module,
+        feature: LanguageFeature,
+        state: LanguageFeature.State,
+        forTests: Boolean
+    ) {
+        val sinceVersion = feature.sinceApiVersion
+
+        if (state != LanguageFeature.State.DISABLED &&
+            getRuntimeLibraryVersion(module).toApiVersion() < sinceVersion &&
+            !askUpdateRuntime(module, sinceVersion)
+        ) {
+            return
+        }
+
+        val facetSettings = KotlinFacetSettingsProvider.getInstance(module.project).getInitializedSettings(module)
+        ModuleRootModificationUtil.updateModel(module) {
+            facetSettings.apiLevel = feature.sinceVersion
+            facetSettings.languageLevel = feature.sinceVersion
+            facetSettings.compilerSettings?.apply {
+                additionalArguments = additionalArguments.replaceLanguageFeature(feature, state, separator = " ", quoted = false)
+            }
         }
     }
 

@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.load.java.descriptors;
 
+import kotlin.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
@@ -119,8 +120,10 @@ public class JavaClassConstructorDescriptor extends ClassConstructorDescriptorIm
     public JavaClassConstructorDescriptor enhance(
             @Nullable KotlinType enhancedReceiverType,
             @NotNull List<ValueParameterData> enhancedValueParametersData,
-            @NotNull KotlinType enhancedReturnType
+            @NotNull KotlinType enhancedReturnType,
+            @Nullable Pair<UserDataKey<?>, ?> additionalUserData
     ) {
+
         JavaClassConstructorDescriptor enhanced = createSubstitutedCopy(
                 getContainingDeclaration(), /* original = */ null, getKind(), null, getAnnotations(), getSource());
         ReceiverParameterDescriptor enhancedReceiver =
@@ -137,6 +140,10 @@ public class JavaClassConstructorDescriptor extends ClassConstructorDescriptorIm
                 getModality(),
                 getVisibility()
         );
+
+        if (additionalUserData != null) {
+            enhanced.putInUserDataMap(additionalUserData.getFirst(), additionalUserData.getSecond());
+        }
 
         return enhanced;
     }

@@ -8,7 +8,7 @@ plugins {
 }
 
 repositories {
-    maven("https://dl.bintray.com/jetbrains/markdown")
+    maven("https://jetbrains.bintray.com/markdown")
 }
 
 // Do not rename, used in JPS importer
@@ -34,8 +34,10 @@ val projectsToShadow by extra(listOf(
         ":compiler:frontend.script",
         ":idea:ide-common",
         ":idea",
+        ":idea:idea-native",
         ":idea:idea-core",
         ":idea:idea-gradle",
+        ":idea:idea-gradle-native",
         //":idea-ultimate",
         ":compiler:ir.psi2ir",
         ":compiler:ir.tree",
@@ -43,6 +45,9 @@ val projectsToShadow by extra(listOf(
         ":js:js.frontend",
         ":js:js.parser",
         ":js:js.serializer",
+        ":js:js.translator",
+        ":kotlin-native:kotlin-native-utils",
+        ":kotlin-native:kotlin-native-library-reader",
         ":compiler:light-classes",
         ":compiler:plugin-api",
         ":kotlin-preloader",
@@ -59,9 +64,9 @@ val sideJars by configurations.creating
 dependencies {
     packedJars(protobufFull())
     packedJars(project(":core:builtins", configuration = "builtins"))
-    sideJars(projectDist(":kotlin-script-runtime"))
-    sideJars(projectDist(":kotlin-stdlib"))
-    sideJars(projectDist(":kotlin-reflect"))
+    sideJars(project(":kotlin-script-runtime"))
+    sideJars(project(":kotlin-stdlib"))
+    sideJars(project(":kotlin-reflect"))
     sideJars(project(":kotlin-compiler-client-embeddable"))
     sideJars(commonDep("io.javaslang", "javaslang"))
     sideJars(commonDep("javax.inject"))

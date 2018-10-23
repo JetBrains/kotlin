@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 fun foo(): String = "foo1"
 fun foo(i: Int): String = "foo2"
 

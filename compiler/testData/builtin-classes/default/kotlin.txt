@@ -77,12 +77,12 @@ public final class Byte : kotlin.Number, kotlin.Comparable<kotlin.Byte> {
     public final operator fun minus(/*0*/ other: kotlin.Int): kotlin.Int
     public final operator fun minus(/*0*/ other: kotlin.Long): kotlin.Long
     public final operator fun minus(/*0*/ other: kotlin.Short): kotlin.Int
-    @kotlin.Deprecated(level = DeprecationLevel.WARNING, message = "Use rem(other) instead", replaceWith = kotlin.ReplaceWith(expression = "rem(other)", imports = {})) public final operator fun mod(/*0*/ other: kotlin.Byte): kotlin.Int
-    @kotlin.Deprecated(level = DeprecationLevel.WARNING, message = "Use rem(other) instead", replaceWith = kotlin.ReplaceWith(expression = "rem(other)", imports = {})) public final operator fun mod(/*0*/ other: kotlin.Double): kotlin.Double
-    @kotlin.Deprecated(level = DeprecationLevel.WARNING, message = "Use rem(other) instead", replaceWith = kotlin.ReplaceWith(expression = "rem(other)", imports = {})) public final operator fun mod(/*0*/ other: kotlin.Float): kotlin.Float
-    @kotlin.Deprecated(level = DeprecationLevel.WARNING, message = "Use rem(other) instead", replaceWith = kotlin.ReplaceWith(expression = "rem(other)", imports = {})) public final operator fun mod(/*0*/ other: kotlin.Int): kotlin.Int
-    @kotlin.Deprecated(level = DeprecationLevel.WARNING, message = "Use rem(other) instead", replaceWith = kotlin.ReplaceWith(expression = "rem(other)", imports = {})) public final operator fun mod(/*0*/ other: kotlin.Long): kotlin.Long
-    @kotlin.Deprecated(level = DeprecationLevel.WARNING, message = "Use rem(other) instead", replaceWith = kotlin.ReplaceWith(expression = "rem(other)", imports = {})) public final operator fun mod(/*0*/ other: kotlin.Short): kotlin.Int
+    @kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Use rem(other) instead", replaceWith = kotlin.ReplaceWith(expression = "rem(other)", imports = {})) public final operator fun mod(/*0*/ other: kotlin.Byte): kotlin.Int
+    @kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Use rem(other) instead", replaceWith = kotlin.ReplaceWith(expression = "rem(other)", imports = {})) public final operator fun mod(/*0*/ other: kotlin.Double): kotlin.Double
+    @kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Use rem(other) instead", replaceWith = kotlin.ReplaceWith(expression = "rem(other)", imports = {})) public final operator fun mod(/*0*/ other: kotlin.Float): kotlin.Float
+    @kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Use rem(other) instead", replaceWith = kotlin.ReplaceWith(expression = "rem(other)", imports = {})) public final operator fun mod(/*0*/ other: kotlin.Int): kotlin.Int
+    @kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Use rem(other) instead", replaceWith = kotlin.ReplaceWith(expression = "rem(other)", imports = {})) public final operator fun mod(/*0*/ other: kotlin.Long): kotlin.Long
+    @kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Use rem(other) instead", replaceWith = kotlin.ReplaceWith(expression = "rem(other)", imports = {})) public final operator fun mod(/*0*/ other: kotlin.Short): kotlin.Int
     public final operator fun plus(/*0*/ other: kotlin.Byte): kotlin.Int
     public final operator fun plus(/*0*/ other: kotlin.Double): kotlin.Double
     public final operator fun plus(/*0*/ other: kotlin.Float): kotlin.Float
@@ -253,12 +253,12 @@ public final class Double : kotlin.Number, kotlin.Comparable<kotlin.Double> {
     public final operator fun minus(/*0*/ other: kotlin.Int): kotlin.Double
     public final operator fun minus(/*0*/ other: kotlin.Long): kotlin.Double
     public final operator fun minus(/*0*/ other: kotlin.Short): kotlin.Double
-    @kotlin.Deprecated(level = DeprecationLevel.WARNING, message = "Use rem(other) instead", replaceWith = kotlin.ReplaceWith(expression = "rem(other)", imports = {})) public final operator fun mod(/*0*/ other: kotlin.Byte): kotlin.Double
-    @kotlin.Deprecated(level = DeprecationLevel.WARNING, message = "Use rem(other) instead", replaceWith = kotlin.ReplaceWith(expression = "rem(other)", imports = {})) public final operator fun mod(/*0*/ other: kotlin.Double): kotlin.Double
-    @kotlin.Deprecated(level = DeprecationLevel.WARNING, message = "Use rem(other) instead", replaceWith = kotlin.ReplaceWith(expression = "rem(other)", imports = {})) public final operator fun mod(/*0*/ other: kotlin.Float): kotlin.Double
-    @kotlin.Deprecated(level = DeprecationLevel.WARNING, message = "Use rem(other) instead", replaceWith = kotlin.ReplaceWith(expression = "rem(other)", imports = {})) public final operator fun mod(/*0*/ other: kotlin.Int): kotlin.Double
-    @kotlin.Deprecated(level = DeprecationLevel.WARNING, message = "Use rem(other) instead", replaceWith = kotlin.ReplaceWith(expression = "rem(other)", imports = {})) public final operator fun mod(/*0*/ other: kotlin.Long): kotlin.Double
-    @kotlin.Deprecated(level = DeprecationLevel.WARNING, message = "Use rem(other) instead", replaceWith = kotlin.ReplaceWith(expression = "rem(other)", imports = {})) public final operator fun mod(/*0*/ other: kotlin.Short): kotlin.Double
+    @kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Use rem(other) instead", replaceWith = kotlin.ReplaceWith(expression = "rem(other)", imports = {})) public final operator fun mod(/*0*/ other: kotlin.Byte): kotlin.Double
+    @kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Use rem(other) instead", replaceWith = kotlin.ReplaceWith(expression = "rem(other)", imports = {})) public final operator fun mod(/*0*/ other: kotlin.Double): kotlin.Double
+    @kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Use rem(other) instead", replaceWith = kotlin.ReplaceWith(expression = "rem(other)", imports = {})) public final operator fun mod(/*0*/ other: kotlin.Float): kotlin.Double
+    @kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Use rem(other) instead", replaceWith = kotlin.ReplaceWith(expression = "rem(other)", imports = {})) public final operator fun mod(/*0*/ other: kotlin.Int): kotlin.Double
+    @kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Use rem(other) instead", replaceWith = kotlin.ReplaceWith(expression = "rem(other)", imports = {})) public final operator fun mod(/*0*/ other: kotlin.Long): kotlin.Double
+    @kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Use rem(other) instead", replaceWith = kotlin.ReplaceWith(expression = "rem(other)", imports = {})) public final operator fun mod(/*0*/ other: kotlin.Short): kotlin.Double
     public final operator fun plus(/*0*/ other: kotlin.Byte): kotlin.Double
     public final operator fun plus(/*0*/ other: kotlin.Double): kotlin.Double
     public final operator fun plus(/*0*/ other: kotlin.Float): kotlin.Double
@@ -356,12 +356,12 @@ public final class Float : kotlin.Number, kotlin.Comparable<kotlin.Float> {
     public final operator fun minus(/*0*/ other: kotlin.Int): kotlin.Float
     public final operator fun minus(/*0*/ other: kotlin.Long): kotlin.Float
     public final operator fun minus(/*0*/ other: kotlin.Short): kotlin.Float
-    @kotlin.Deprecated(level = DeprecationLevel.WARNING, message = "Use rem(other) instead", replaceWith = kotlin.ReplaceWith(expression = "rem(other)", imports = {})) public final operator fun mod(/*0*/ other: kotlin.Byte): kotlin.Float
-    @kotlin.Deprecated(level = DeprecationLevel.WARNING, message = "Use rem(other) instead", replaceWith = kotlin.ReplaceWith(expression = "rem(other)", imports = {})) public final operator fun mod(/*0*/ other: kotlin.Double): kotlin.Double
-    @kotlin.Deprecated(level = DeprecationLevel.WARNING, message = "Use rem(other) instead", replaceWith = kotlin.ReplaceWith(expression = "rem(other)", imports = {})) public final operator fun mod(/*0*/ other: kotlin.Float): kotlin.Float
-    @kotlin.Deprecated(level = DeprecationLevel.WARNING, message = "Use rem(other) instead", replaceWith = kotlin.ReplaceWith(expression = "rem(other)", imports = {})) public final operator fun mod(/*0*/ other: kotlin.Int): kotlin.Float
-    @kotlin.Deprecated(level = DeprecationLevel.WARNING, message = "Use rem(other) instead", replaceWith = kotlin.ReplaceWith(expression = "rem(other)", imports = {})) public final operator fun mod(/*0*/ other: kotlin.Long): kotlin.Float
-    @kotlin.Deprecated(level = DeprecationLevel.WARNING, message = "Use rem(other) instead", replaceWith = kotlin.ReplaceWith(expression = "rem(other)", imports = {})) public final operator fun mod(/*0*/ other: kotlin.Short): kotlin.Float
+    @kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Use rem(other) instead", replaceWith = kotlin.ReplaceWith(expression = "rem(other)", imports = {})) public final operator fun mod(/*0*/ other: kotlin.Byte): kotlin.Float
+    @kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Use rem(other) instead", replaceWith = kotlin.ReplaceWith(expression = "rem(other)", imports = {})) public final operator fun mod(/*0*/ other: kotlin.Double): kotlin.Double
+    @kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Use rem(other) instead", replaceWith = kotlin.ReplaceWith(expression = "rem(other)", imports = {})) public final operator fun mod(/*0*/ other: kotlin.Float): kotlin.Float
+    @kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Use rem(other) instead", replaceWith = kotlin.ReplaceWith(expression = "rem(other)", imports = {})) public final operator fun mod(/*0*/ other: kotlin.Int): kotlin.Float
+    @kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Use rem(other) instead", replaceWith = kotlin.ReplaceWith(expression = "rem(other)", imports = {})) public final operator fun mod(/*0*/ other: kotlin.Long): kotlin.Float
+    @kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Use rem(other) instead", replaceWith = kotlin.ReplaceWith(expression = "rem(other)", imports = {})) public final operator fun mod(/*0*/ other: kotlin.Short): kotlin.Float
     public final operator fun plus(/*0*/ other: kotlin.Byte): kotlin.Float
     public final operator fun plus(/*0*/ other: kotlin.Double): kotlin.Double
     public final operator fun plus(/*0*/ other: kotlin.Float): kotlin.Float
@@ -442,12 +442,12 @@ public final class Int : kotlin.Number, kotlin.Comparable<kotlin.Int> {
     public final operator fun minus(/*0*/ other: kotlin.Int): kotlin.Int
     public final operator fun minus(/*0*/ other: kotlin.Long): kotlin.Long
     public final operator fun minus(/*0*/ other: kotlin.Short): kotlin.Int
-    @kotlin.Deprecated(level = DeprecationLevel.WARNING, message = "Use rem(other) instead", replaceWith = kotlin.ReplaceWith(expression = "rem(other)", imports = {})) public final operator fun mod(/*0*/ other: kotlin.Byte): kotlin.Int
-    @kotlin.Deprecated(level = DeprecationLevel.WARNING, message = "Use rem(other) instead", replaceWith = kotlin.ReplaceWith(expression = "rem(other)", imports = {})) public final operator fun mod(/*0*/ other: kotlin.Double): kotlin.Double
-    @kotlin.Deprecated(level = DeprecationLevel.WARNING, message = "Use rem(other) instead", replaceWith = kotlin.ReplaceWith(expression = "rem(other)", imports = {})) public final operator fun mod(/*0*/ other: kotlin.Float): kotlin.Float
-    @kotlin.Deprecated(level = DeprecationLevel.WARNING, message = "Use rem(other) instead", replaceWith = kotlin.ReplaceWith(expression = "rem(other)", imports = {})) public final operator fun mod(/*0*/ other: kotlin.Int): kotlin.Int
-    @kotlin.Deprecated(level = DeprecationLevel.WARNING, message = "Use rem(other) instead", replaceWith = kotlin.ReplaceWith(expression = "rem(other)", imports = {})) public final operator fun mod(/*0*/ other: kotlin.Long): kotlin.Long
-    @kotlin.Deprecated(level = DeprecationLevel.WARNING, message = "Use rem(other) instead", replaceWith = kotlin.ReplaceWith(expression = "rem(other)", imports = {})) public final operator fun mod(/*0*/ other: kotlin.Short): kotlin.Int
+    @kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Use rem(other) instead", replaceWith = kotlin.ReplaceWith(expression = "rem(other)", imports = {})) public final operator fun mod(/*0*/ other: kotlin.Byte): kotlin.Int
+    @kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Use rem(other) instead", replaceWith = kotlin.ReplaceWith(expression = "rem(other)", imports = {})) public final operator fun mod(/*0*/ other: kotlin.Double): kotlin.Double
+    @kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Use rem(other) instead", replaceWith = kotlin.ReplaceWith(expression = "rem(other)", imports = {})) public final operator fun mod(/*0*/ other: kotlin.Float): kotlin.Float
+    @kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Use rem(other) instead", replaceWith = kotlin.ReplaceWith(expression = "rem(other)", imports = {})) public final operator fun mod(/*0*/ other: kotlin.Int): kotlin.Int
+    @kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Use rem(other) instead", replaceWith = kotlin.ReplaceWith(expression = "rem(other)", imports = {})) public final operator fun mod(/*0*/ other: kotlin.Long): kotlin.Long
+    @kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Use rem(other) instead", replaceWith = kotlin.ReplaceWith(expression = "rem(other)", imports = {})) public final operator fun mod(/*0*/ other: kotlin.Short): kotlin.Int
     public final infix fun or(/*0*/ other: kotlin.Int): kotlin.Int
     public final operator fun plus(/*0*/ other: kotlin.Byte): kotlin.Int
     public final operator fun plus(/*0*/ other: kotlin.Double): kotlin.Double
@@ -532,12 +532,12 @@ public final class Long : kotlin.Number, kotlin.Comparable<kotlin.Long> {
     public final operator fun minus(/*0*/ other: kotlin.Int): kotlin.Long
     public final operator fun minus(/*0*/ other: kotlin.Long): kotlin.Long
     public final operator fun minus(/*0*/ other: kotlin.Short): kotlin.Long
-    @kotlin.Deprecated(level = DeprecationLevel.WARNING, message = "Use rem(other) instead", replaceWith = kotlin.ReplaceWith(expression = "rem(other)", imports = {})) public final operator fun mod(/*0*/ other: kotlin.Byte): kotlin.Long
-    @kotlin.Deprecated(level = DeprecationLevel.WARNING, message = "Use rem(other) instead", replaceWith = kotlin.ReplaceWith(expression = "rem(other)", imports = {})) public final operator fun mod(/*0*/ other: kotlin.Double): kotlin.Double
-    @kotlin.Deprecated(level = DeprecationLevel.WARNING, message = "Use rem(other) instead", replaceWith = kotlin.ReplaceWith(expression = "rem(other)", imports = {})) public final operator fun mod(/*0*/ other: kotlin.Float): kotlin.Float
-    @kotlin.Deprecated(level = DeprecationLevel.WARNING, message = "Use rem(other) instead", replaceWith = kotlin.ReplaceWith(expression = "rem(other)", imports = {})) public final operator fun mod(/*0*/ other: kotlin.Int): kotlin.Long
-    @kotlin.Deprecated(level = DeprecationLevel.WARNING, message = "Use rem(other) instead", replaceWith = kotlin.ReplaceWith(expression = "rem(other)", imports = {})) public final operator fun mod(/*0*/ other: kotlin.Long): kotlin.Long
-    @kotlin.Deprecated(level = DeprecationLevel.WARNING, message = "Use rem(other) instead", replaceWith = kotlin.ReplaceWith(expression = "rem(other)", imports = {})) public final operator fun mod(/*0*/ other: kotlin.Short): kotlin.Long
+    @kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Use rem(other) instead", replaceWith = kotlin.ReplaceWith(expression = "rem(other)", imports = {})) public final operator fun mod(/*0*/ other: kotlin.Byte): kotlin.Long
+    @kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Use rem(other) instead", replaceWith = kotlin.ReplaceWith(expression = "rem(other)", imports = {})) public final operator fun mod(/*0*/ other: kotlin.Double): kotlin.Double
+    @kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Use rem(other) instead", replaceWith = kotlin.ReplaceWith(expression = "rem(other)", imports = {})) public final operator fun mod(/*0*/ other: kotlin.Float): kotlin.Float
+    @kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Use rem(other) instead", replaceWith = kotlin.ReplaceWith(expression = "rem(other)", imports = {})) public final operator fun mod(/*0*/ other: kotlin.Int): kotlin.Long
+    @kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Use rem(other) instead", replaceWith = kotlin.ReplaceWith(expression = "rem(other)", imports = {})) public final operator fun mod(/*0*/ other: kotlin.Long): kotlin.Long
+    @kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Use rem(other) instead", replaceWith = kotlin.ReplaceWith(expression = "rem(other)", imports = {})) public final operator fun mod(/*0*/ other: kotlin.Short): kotlin.Long
     public final infix fun or(/*0*/ other: kotlin.Long): kotlin.Long
     public final operator fun plus(/*0*/ other: kotlin.Byte): kotlin.Long
     public final operator fun plus(/*0*/ other: kotlin.Double): kotlin.Double
@@ -653,12 +653,12 @@ public final class Short : kotlin.Number, kotlin.Comparable<kotlin.Short> {
     public final operator fun minus(/*0*/ other: kotlin.Int): kotlin.Int
     public final operator fun minus(/*0*/ other: kotlin.Long): kotlin.Long
     public final operator fun minus(/*0*/ other: kotlin.Short): kotlin.Int
-    @kotlin.Deprecated(level = DeprecationLevel.WARNING, message = "Use rem(other) instead", replaceWith = kotlin.ReplaceWith(expression = "rem(other)", imports = {})) public final operator fun mod(/*0*/ other: kotlin.Byte): kotlin.Int
-    @kotlin.Deprecated(level = DeprecationLevel.WARNING, message = "Use rem(other) instead", replaceWith = kotlin.ReplaceWith(expression = "rem(other)", imports = {})) public final operator fun mod(/*0*/ other: kotlin.Double): kotlin.Double
-    @kotlin.Deprecated(level = DeprecationLevel.WARNING, message = "Use rem(other) instead", replaceWith = kotlin.ReplaceWith(expression = "rem(other)", imports = {})) public final operator fun mod(/*0*/ other: kotlin.Float): kotlin.Float
-    @kotlin.Deprecated(level = DeprecationLevel.WARNING, message = "Use rem(other) instead", replaceWith = kotlin.ReplaceWith(expression = "rem(other)", imports = {})) public final operator fun mod(/*0*/ other: kotlin.Int): kotlin.Int
-    @kotlin.Deprecated(level = DeprecationLevel.WARNING, message = "Use rem(other) instead", replaceWith = kotlin.ReplaceWith(expression = "rem(other)", imports = {})) public final operator fun mod(/*0*/ other: kotlin.Long): kotlin.Long
-    @kotlin.Deprecated(level = DeprecationLevel.WARNING, message = "Use rem(other) instead", replaceWith = kotlin.ReplaceWith(expression = "rem(other)", imports = {})) public final operator fun mod(/*0*/ other: kotlin.Short): kotlin.Int
+    @kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Use rem(other) instead", replaceWith = kotlin.ReplaceWith(expression = "rem(other)", imports = {})) public final operator fun mod(/*0*/ other: kotlin.Byte): kotlin.Int
+    @kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Use rem(other) instead", replaceWith = kotlin.ReplaceWith(expression = "rem(other)", imports = {})) public final operator fun mod(/*0*/ other: kotlin.Double): kotlin.Double
+    @kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Use rem(other) instead", replaceWith = kotlin.ReplaceWith(expression = "rem(other)", imports = {})) public final operator fun mod(/*0*/ other: kotlin.Float): kotlin.Float
+    @kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Use rem(other) instead", replaceWith = kotlin.ReplaceWith(expression = "rem(other)", imports = {})) public final operator fun mod(/*0*/ other: kotlin.Int): kotlin.Int
+    @kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Use rem(other) instead", replaceWith = kotlin.ReplaceWith(expression = "rem(other)", imports = {})) public final operator fun mod(/*0*/ other: kotlin.Long): kotlin.Long
+    @kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Use rem(other) instead", replaceWith = kotlin.ReplaceWith(expression = "rem(other)", imports = {})) public final operator fun mod(/*0*/ other: kotlin.Short): kotlin.Int
     public final operator fun plus(/*0*/ other: kotlin.Byte): kotlin.Int
     public final operator fun plus(/*0*/ other: kotlin.Double): kotlin.Double
     public final operator fun plus(/*0*/ other: kotlin.Float): kotlin.Float

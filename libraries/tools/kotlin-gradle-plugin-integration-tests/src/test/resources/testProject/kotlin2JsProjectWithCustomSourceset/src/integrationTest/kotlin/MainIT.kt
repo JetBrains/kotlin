@@ -1,7 +1,7 @@
 package test
 
 import example.MyProductionClass
-import org.junit.Test
+import kotlin.test.Test
 
 class MainIT {
     @Test

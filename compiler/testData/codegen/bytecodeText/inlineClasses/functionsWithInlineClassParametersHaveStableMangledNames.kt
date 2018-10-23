@@ -23,7 +23,7 @@ fun test(password: Password) {
     if (password.password != "OK") throw AssertionError()
 }
 
-// 1 public final static test-9zx0e0j9\(Ljava/lang/String;\)V
-// 1 public final static test-79jv2l6i\(Ljava/lang/String;\)V
-// 1 public final static test-d4pejdz3\(Ljava/lang/String;\)V
-// 1 public final static test-c6sgoxk6\(Ljava/lang/String;\)V
+// 1 public final static test-tmnojjU\(Ljava/lang/String;\)V
+// 1 public final static test-hI9h0ro\(Ljava/lang/String;\)V
+// 1 public final static test-75PUH38\(Ljava/lang/String;\)V
+// 1 public final static test-3mN7H-Y\(Ljava/lang/String;\)V

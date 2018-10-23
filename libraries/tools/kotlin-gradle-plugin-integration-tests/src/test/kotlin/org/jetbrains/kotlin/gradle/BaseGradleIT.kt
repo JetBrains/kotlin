@@ -189,12 +189,15 @@ abstract class BaseGradleIT {
         directoryPrefix: String? = null,
         val minLogLevel: LogLevel = LogLevel.DEBUG
     ) {
+        internal val testCase = this@BaseGradleIT
+
         val resourceDirName = if (directoryPrefix != null) "$directoryPrefix/$projectName" else projectName
         open val resourcesRoot = File(resourcesRootFile, "testProject/$resourceDirName")
         val projectDir = File(workingDir.canonicalFile, projectName)
 
         open fun setupWorkingDir() {
-            copyRecursively(this.resourcesRoot, workingDir)
+            if (!projectDir.isDirectory || projectDir.listFiles().isEmpty())
+                copyRecursively(this.resourcesRoot, workingDir)
         }
 
         fun relativize(files: Iterable<File>): List<String> =
@@ -312,9 +315,9 @@ abstract class BaseGradleIT {
         return this
     }
 
-    fun CompiledProject.assertContains(vararg expected: String): CompiledProject {
+    fun CompiledProject.assertContains(vararg expected: String, ignoreCase: Boolean = false): CompiledProject {
         for (str in expected) {
-            assertTrue(output.contains(str.normalize()), "Output should contain '$str'")
+            assertTrue(output.contains(str.normalize(), ignoreCase), "Output should contain '$str'")
         }
         return this
     }

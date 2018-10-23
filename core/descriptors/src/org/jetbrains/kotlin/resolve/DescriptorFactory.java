@@ -46,27 +46,33 @@ public class DescriptorFactory {
     @NotNull
     public static PropertySetterDescriptorImpl createDefaultSetter(
             @NotNull PropertyDescriptor propertyDescriptor,
-            @NotNull Annotations annotations
+            @NotNull Annotations annotations,
+            @NotNull Annotations parameterAnnotations
     ) {
-        return createSetter(propertyDescriptor, annotations, true, false, false, propertyDescriptor.getSource());
+        return createSetter(propertyDescriptor, annotations, parameterAnnotations, true, false, false, propertyDescriptor.getSource());
     }
 
     @NotNull
     public static PropertySetterDescriptorImpl createSetter(
             @NotNull PropertyDescriptor propertyDescriptor,
             @NotNull Annotations annotations,
+            @NotNull Annotations parameterAnnotations,
             boolean isDefault,
             boolean isExternal,
             boolean isInline,
             @NotNull SourceElement sourceElement
     ) {
-        return createSetter(propertyDescriptor, annotations, isDefault, isExternal, isInline, propertyDescriptor.getVisibility(), sourceElement);
+        return createSetter(
+                propertyDescriptor, annotations, parameterAnnotations, isDefault, isExternal, isInline,
+                propertyDescriptor.getVisibility(), sourceElement
+        );
     }
 
     @NotNull
     public static PropertySetterDescriptorImpl createSetter(
             @NotNull PropertyDescriptor propertyDescriptor,
             @NotNull Annotations annotations,
+            @NotNull Annotations parameterAnnotations,
             boolean isDefault,
             boolean isExternal,
             boolean isInline,
@@ -77,7 +83,9 @@ public class DescriptorFactory {
                 propertyDescriptor, annotations, propertyDescriptor.getModality(), visibility, isDefault, isExternal,
                 isInline, CallableMemberDescriptor.Kind.DECLARATION, null, sourceElement
         );
-        setterDescriptor.initializeDefault();
+        ValueParameterDescriptorImpl parameter =
+                PropertySetterDescriptorImpl.createSetterParameter(setterDescriptor, propertyDescriptor.getType(), parameterAnnotations);
+        setterDescriptor.initialize(parameter);
         return setterDescriptor;
     }
 

@@ -97,7 +97,7 @@ class IrPropertyDelegateDescriptorImpl(
         correspondingProperty.containingDeclaration,
         getDelegateName(correspondingProperty.name),
         delegateType,
-        correspondingProperty.annotations
+        correspondingProperty.delegateField?.annotations ?: Annotations.EMPTY
     ),
     IrPropertyDelegateDescriptor
 

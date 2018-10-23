@@ -5,9 +5,11 @@
 
 package org.jetbrains.kotlin.idea.parameterInfo
 
+import com.intellij.codeInsight.hints.HintInfo
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinLightProjectDescriptor
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
+import org.junit.Assert
 
 class LambdaImplicitHintsTest : KotlinLightCodeInsightFixtureTestCase() {
     override fun getProjectDescriptor(): KotlinLightProjectDescriptor = KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
@@ -15,6 +17,16 @@ class LambdaImplicitHintsTest : KotlinLightCodeInsightFixtureTestCase() {
     fun check(text: String) {
         myFixture.configureByText("A.kt", text)
         myFixture.testInlays()
+    }
+
+    fun testHintType() {
+        myFixture.checkHintType(
+            """
+            val x = listOf("").filter { <caret>
+            }
+            """,
+            HintType.LAMBDA_IMPLICIT_PARAMETER_RECEIVER
+        )
     }
 
     fun testSimpleIt() {

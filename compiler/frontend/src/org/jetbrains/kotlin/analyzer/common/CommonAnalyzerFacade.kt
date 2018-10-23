@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.container.useImpl
 import org.jetbrains.kotlin.container.useInstance
 import org.jetbrains.kotlin.context.ModuleContext
 import org.jetbrains.kotlin.context.ProjectContext
+import org.jetbrains.kotlin.contracts.ContractDeserializerImpl
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
@@ -165,6 +166,7 @@ object CommonAnalyzerFacade : ResolverForModuleFactory() {
         useInstance(metadataPartProvider)
         useInstance(declarationProviderFactory)
         useImpl<MetadataPackageFragmentProvider>()
+        useImpl<ContractDeserializerImpl>()
 
         val metadataFinderFactory = ServiceManager.getService(moduleContext.project, MetadataFinderFactory::class.java)
                 ?: error("No MetadataFinderFactory in project")

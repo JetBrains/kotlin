@@ -1,4 +1,4 @@
-// IGNORE_BACKEND: JVM_IR, JS_IR
+// IGNORE_BACKEND: JVM_IR
 // WITH_UNSIGNED
 
 fun box(): String {

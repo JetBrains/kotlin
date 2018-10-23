@@ -25,6 +25,7 @@ private val KOTLIN_LIBRARY_KIND_FILE_ATTRIBUTE: String = "kotlin-library-kind".a
     ServiceManager.getService(FileAttributeService::class.java)?.register(this, 1)
 }
 
+// TODO: Detect library kind for Jar file using IdePlatformKindResolution.
 fun VirtualFile.getLibraryKindForJar(): KnownLibraryKindForIndex {
     if (this !is VirtualFileWithId) return detectLibraryKindFromJarContentsForIndex(this)
 

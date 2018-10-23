@@ -10,11 +10,11 @@ public final annotation class Ann : kotlin.Annotation {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-@receiver:Ann public final class SomeClass {
-    @receiver:Ann public constructor SomeClass(/*0*/ @receiver:Ann a: kotlin.String)
-    @receiver:Ann protected final val simpleProperty: kotlin.String = "text"
+@Ann public final class SomeClass {
+    public constructor SomeClass(/*0*/ a: kotlin.String)
+    protected final val simpleProperty: kotlin.String = "text"
     public final val @receiver:Ann kotlin.String.extensionProperty2: kotlin.String
-    @receiver:Ann public final fun anotherFun(): kotlin.Unit
+    public final fun anotherFun(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

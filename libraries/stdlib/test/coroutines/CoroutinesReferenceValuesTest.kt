@@ -7,7 +7,7 @@ package test.coroutines
 
 import test.assertStaticAndRuntimeTypeIs
 import kotlin.test.*
-import kotlin.coroutines.experimental.*
+import kotlin.coroutines.*
 
 /**
  * Test to ensure that coroutine machinery does not call equals/hashCode/toString anywhere.
@@ -45,13 +45,10 @@ class CoroutinesReferenceValuesTest {
         bad.startCoroutine(object : Continuation<BadClass> {
             override val context: CoroutineContext = EmptyCoroutineContext
 
-            override fun resume(value: BadClass) {
+            @Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")
+            override fun resumeWith(result_: Result<BadClass>) {
                 assertTrue(result == null)
-                result = value
-            }
-
-            override fun resumeWithException(exception: Throwable) {
-                throw exception
+                result = result_.getOrThrow()
             }
         })
         assertTrue(result is BadClass)

@@ -42,7 +42,7 @@ internal abstract class AbstractPlatformRandom : Random() {
         impl.nextInt().takeUpperBits(bitCount)
 
     override fun nextInt(): Int = impl.nextInt()
-    override fun nextInt(bound: Int): Int = impl.nextInt(bound)
+    override fun nextInt(until: Int): Int = impl.nextInt(until)
     override fun nextLong(): Long = impl.nextLong()
     override fun nextBoolean(): Boolean = impl.nextBoolean()
     override fun nextDouble(): Double = impl.nextDouble()

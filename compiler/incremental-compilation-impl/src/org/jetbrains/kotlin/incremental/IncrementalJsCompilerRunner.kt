@@ -37,15 +37,13 @@ fun makeJsIncrementally(
         messageCollector: MessageCollector = MessageCollector.NONE,
         reporter: ICReporter = EmptyICReporter
 ) {
-    val isIncremental = IncrementalCompilation.isEnabledForJs()
-    val versions = commonCacheVersions(cachesDir, isIncremental) + standaloneCacheVersion(cachesDir, isIncremental)
     val allKotlinFiles = sourceRoots.asSequence().flatMap { it.walk() }
             .filter { it.isFile && it.extension.equals("kt", ignoreCase = true) }.toList()
     val buildHistoryFile = File(cachesDir, "build-history.bin")
 
     withJsIC {
         val compiler = IncrementalJsCompilerRunner(
-            cachesDir, versions, reporter,
+            cachesDir, reporter,
             buildHistoryFile = buildHistoryFile,
             modulesApiHistory = EmptyModulesApiHistory)
         compiler.compile(allKotlinFiles, args, messageCollector, providedChangedFiles = null)
@@ -64,16 +62,14 @@ inline fun <R> withJsIC(fn: () -> R): R {
 }
 
 class IncrementalJsCompilerRunner(
-        workingDir: File,
-        cacheVersions: List<CacheVersion>,
-        reporter: ICReporter,
+    workingDir: File,
+    reporter: ICReporter,
         buildHistoryFile: File,
         private val modulesApiHistory: ModulesApiHistory
 ) : IncrementalCompilerRunner<K2JSCompilerArguments, IncrementalJsCachesManager>(
-        workingDir,
-        "caches-js",
-        cacheVersions,
-        reporter,
+    workingDir,
+    "caches-js",
+    reporter,
         buildHistoryFile = buildHistoryFile
 ) {
     override fun isICEnabled(): Boolean =
@@ -89,7 +85,7 @@ class IncrementalJsCompilerRunner(
         val lastBuildInfo = BuildInfo.read(lastBuildInfoFile)
             ?: return CompilationMode.Rebuild { "No information on previous build" }
 
-        val dirtyFiles = DirtyFilesContainer(caches, reporter)
+        val dirtyFiles = DirtyFilesContainer(caches, reporter, kotlinSourceFilesExtensions)
         initDirtyFiles(dirtyFiles, changedFiles)
 
         val libs = (args.libraries ?: "").split(File.pathSeparator).map { File(it) }

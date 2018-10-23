@@ -12,42 +12,49 @@ import kotlin.script.experimental.util.PropertiesCollection
 
 interface ScriptingHostConfigurationKeys
 
-class ScriptingHostConfiguration(baseScriptingEnvironments: Iterable<ScriptingHostConfiguration>, body: Builder.() -> Unit) :
-    PropertiesCollection(Builder(baseScriptingEnvironments).apply(body).data) {
+/**
+ * The container for script evaluation configuration
+ * For usages see actual code examples
+ */
+class ScriptingHostConfiguration(baseScriptingConfigurations: Iterable<ScriptingHostConfiguration>, body: Builder.() -> Unit) :
+    PropertiesCollection(Builder(baseScriptingConfigurations).apply(body).data) {
 
     constructor(body: Builder.() -> Unit = {}) : this(emptyList(), body)
     constructor(
         vararg baseConfigurations: ScriptingHostConfiguration, body: Builder.() -> Unit = {}
     ) : this(baseConfigurations.asIterable(), body)
 
-    class Builder internal constructor(baseScriptingEnvironments: Iterable<ScriptingHostConfiguration>) :
+    class Builder internal constructor(baseScriptingHostConfigurations: Iterable<ScriptingHostConfiguration>) :
         ScriptingHostConfigurationKeys,
-        PropertiesCollection.Builder(baseScriptingEnvironments)
+        PropertiesCollection.Builder(baseScriptingHostConfigurations)
     
     companion object : ScriptingHostConfigurationKeys
 }
 
-// should contain all dependencies needed for baseClass and compilationConfigurator
+/**
+ * The list of all dependencies required for the script base class and refinement callbacks
+ */
 val ScriptingHostConfigurationKeys.configurationDependencies by PropertiesCollection.key<List<ScriptDependency>>()
 
-// do not use configurationDependencies as script dependencies, so only the dependencies defined by compilationConfigurator will be used
-// (NOTE: in this case they should include the dependencies for the base class anyway, since this class is needed for script
-// compilation and instantiation, but compilationConfigurator could be excluded)
-val ScriptingHostConfigurationKeys.isolatedDependencies by PropertiesCollection.key<Boolean>(false)
-
-// a "class loader" for KotlinTypes
+/**
+ * The pointer to the generic "class loader" for the types used in the script configurations
+ */
 val ScriptingHostConfigurationKeys.getScriptingClass by PropertiesCollection.key<GetScriptingClass>()
 
-
+/**
+ * The interface to the generic "class loader" for the types used in the script configurations
+ */
 interface GetScriptingClass {
     operator fun invoke(classType: KotlinType, contextClass: KClass<*>, hostConfiguration: ScriptingHostConfiguration): KClass<*>
 }
 
+// helper method
 fun ScriptingHostConfiguration.getScriptingClass(type: KotlinType, contextClass: KClass<*>): KClass<*> {
     val getClass = get(ScriptingHostConfiguration.getScriptingClass)
         ?: throw IllegalArgumentException("Expecting 'getScriptingClass' property in the scripting environment: unable to load scripting class $type")
     return getClass(type, contextClass, this)
 }
 
+// helper method
 fun ScriptingHostConfiguration.getScriptingClass(type: KotlinType, context: Any): KClass<*> = getScriptingClass(type, context::class)
 

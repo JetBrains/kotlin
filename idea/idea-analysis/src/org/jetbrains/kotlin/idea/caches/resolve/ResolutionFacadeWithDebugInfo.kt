@@ -94,7 +94,7 @@ private class ResolutionFacadeWithDebugInfo(
         try {
             return body()
         } catch (e: Throwable) {
-            if (e is ControlFlowException) {
+            if (e is ControlFlowException || e is IndexNotReadyException) {
                 throw e
             }
             throw KotlinIdeaResolutionException(e, resolvingWhat(), creationPlace)

@@ -24,6 +24,7 @@ import com.intellij.openapi.roots.CompilerModuleExtension
 import com.intellij.openapi.roots.LibraryOrderEntry
 import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.roots.impl.libraries.LibraryEx
+import com.intellij.psi.codeStyle.CodeStyleSettingsManager
 import com.intellij.util.PathUtil
 import junit.framework.TestCase
 import org.jetbrains.jps.model.java.JavaResourceRootType
@@ -36,6 +37,9 @@ import org.jetbrains.kotlin.idea.caches.project.productionSourceInfo
 import org.jetbrains.kotlin.idea.caches.project.testSourceInfo
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeAndGetResult
 import org.jetbrains.kotlin.idea.facet.KotlinFacet
+import org.jetbrains.kotlin.idea.formatter.KotlinObsoleteCodeStyle
+import org.jetbrains.kotlin.idea.formatter.KotlinStyleGuideCodeStyle
+import org.jetbrains.kotlin.idea.formatter.kotlinCodeStyleDefaults
 import org.jetbrains.kotlin.idea.framework.CommonLibraryKind
 import org.jetbrains.kotlin.idea.framework.JSLibraryKind
 import org.jetbrains.kotlin.idea.framework.KotlinSdkType
@@ -173,6 +177,140 @@ class KotlinMavenImporterTest : MavenImportingTestCase() {
 
         assertSources("project", "src/main/kotlin", "src/main/kotlin.jvm")
         assertTestSources("project", "src/test/java", "src/test/kotlin", "src/test/kotlin.jvm")
+    }
+
+    fun testWithKapt() {
+        createProjectSubDirs("src/main/kotlin", "src/main/kotlin.jvm", "src/test/kotlin", "src/test/kotlin.jvm")
+
+        importProject(
+            """
+            <groupId>test</groupId>
+            <artifactId>project</artifactId>
+            <version>1.0.0</version>
+
+            <dependencies>
+                <dependency>
+                    <groupId>org.jetbrains.kotlin</groupId>
+                    <artifactId>kotlin-stdlib</artifactId>
+                    <version>$kotlinVersion</version>
+                </dependency>
+            </dependencies>
+
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.jetbrains.kotlin</groupId>
+                        <artifactId>kotlin-maven-plugin</artifactId>
+
+                        <executions>
+                            <execution>
+                                <id>kapt</id>
+                                <goals>
+                                    <goal>kapt</goal>
+                                </goals>
+                                <configuration>
+                                    <sourceDirs>
+                                        <sourceDir>src/main/kotlin</sourceDir>
+                                        <sourceDir>src/main/java</sourceDir>
+                                    </sourceDirs>
+                                </configuration>
+                            </execution>
+
+                            <execution>
+                                <id>compile</id>
+                                <phase>compile</phase>
+                                <goals>
+                                    <goal>compile</goal>
+                                </goals>
+                                <configuration>
+                                    <sourceDirs>
+                                        <sourceDir>src/main/kotlin</sourceDir>
+                                        <sourceDir>src/main/java</sourceDir>
+                                    </sourceDirs>
+                                </configuration>
+                            </execution>
+
+                            <execution>
+                                <id>test-kapt</id>
+                                <goals>
+                                    <goal>test-kapt</goal>
+                                </goals>
+                                <configuration>
+                                    <sourceDirs>
+                                        <sourceDir>src/test/kotlin</sourceDir>
+                                        <sourceDir>src/test/java</sourceDir>
+                                    </sourceDirs>
+                                </configuration>
+                            </execution>
+
+                            <execution>
+                                <id>test-compile</id>
+                                <phase>test-compile</phase>
+                                <goals>
+                                    <goal>test-compile</goal>
+                                </goals>
+                                <configuration>
+                                    <sourceDirs>
+                                        <sourceDir>src/test/kotlin</sourceDir>
+                                        <sourceDir>src/test/java</sourceDir>
+                                        <sourceDir>target/generated-sources/kapt/test</sourceDir>
+                                    </sourceDirs>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+            """
+        )
+
+        assertModules("project")
+        assertImporterStatePresent()
+
+        assertSources("project", "src/main/java", "src/main/kotlin")
+        assertTestSources("project", "src/test/java", "src/test/kotlin")
+    }
+
+    fun testImportObsoleteCodeStyle() {
+        Assert.assertNull(CodeStyleSettingsManager.getSettings(myProject).kotlinCodeStyleDefaults())
+
+        importProject(
+            """
+            <groupId>test</groupId>
+            <artifactId>project</artifactId>
+            <version>1.0.0</version>
+
+            <properties>
+                <kotlin.code.style>obsolete</kotlin.code.style>
+            </properties>
+            """
+        )
+
+        Assert.assertEquals(
+            KotlinObsoleteCodeStyle.CODE_STYLE_ID,
+            CodeStyleSettingsManager.getSettings(myProject).kotlinCodeStyleDefaults()
+        )
+    }
+
+    fun testImportOfficialCodeStyle() {
+        Assert.assertNull(CodeStyleSettingsManager.getSettings(myProject).kotlinCodeStyleDefaults())
+
+        importProject(
+            """
+            <groupId>test</groupId>
+            <artifactId>project</artifactId>
+            <version>1.0.0</version>
+
+            <properties>
+                <kotlin.code.style>official</kotlin.code.style>
+            </properties>
+            """
+        )
+
+        Assert.assertEquals(
+            KotlinStyleGuideCodeStyle.CODE_STYLE_ID,
+            CodeStyleSettingsManager.getSettings(myProject).kotlinCodeStyleDefaults()
+        )
     }
 
     fun testReImportRemoveDir() {
@@ -496,7 +634,7 @@ class KotlinMavenImporterTest : MavenImportingTestCase() {
             Assert.assertEquals("1.8", (compilerArguments as K2JVMCompilerArguments).jvmTarget)
             Assert.assertEquals("foobar.jar", (compilerArguments as K2JVMCompilerArguments).classpath)
             Assert.assertEquals(
-                "-Xmulti-platform",
+                "-version",
                 compilerSettings!!.additionalArguments
             )
         }
@@ -694,7 +832,7 @@ class KotlinMavenImporterTest : MavenImportingTestCase() {
                 Assert.assertEquals("commonjs", moduleKind)
             }
             Assert.assertEquals(
-                "-meta-info -output test.js -Xmulti-platform",
+                "-meta-info -output test.js",
                 compilerSettings!!.additionalArguments
             )
         }
@@ -846,7 +984,7 @@ class KotlinMavenImporterTest : MavenImportingTestCase() {
             Assert.assertEquals("JVM 1.8", platform!!.description)
             Assert.assertEquals("1.8", (compilerArguments as K2JVMCompilerArguments).jvmTarget)
             Assert.assertEquals("foobar.jar", (compilerArguments as K2JVMCompilerArguments).classpath)
-            Assert.assertEquals("-Xmulti-platform", compilerSettings!!.additionalArguments)
+            Assert.assertEquals("-version", compilerSettings!!.additionalArguments)
         }
     }
 

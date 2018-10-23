@@ -529,14 +529,15 @@ class LazyJavaClassMemberScope(
             initialize(propertyDescriptor.type)
         }
 
-        val setter = setterMethod?.let { setterMethod ->
+        val setter = if (setterMethod != null) {
+            val parameter = setterMethod.valueParameters.firstOrNull() ?: throw AssertionError("No parameter found for $setterMethod")
             DescriptorFactory.createSetter(
-                propertyDescriptor, setterMethod.annotations, /* isDefault = */false,
+                propertyDescriptor, setterMethod.annotations, parameter.annotations, /* isDefault = */false,
                 /* isExternal = */ false, /* isInline = */ false, setterMethod.visibility, setterMethod.source
             ).apply {
                 initialSignatureDescriptor = setterMethod
             }
-        }
+        } else null
 
         return propertyDescriptor.apply { initialize(getter, setter) }
     }

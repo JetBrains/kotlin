@@ -29,6 +29,15 @@
                         interface="org.jetbrains.kotlin.idea.completion.KotlinCompletionExtension"/>
         <extensionPoint qualifiedName="org.jetbrains.kotlin.buildSystemTypeDetector"
                         interface="org.jetbrains.kotlin.idea.configuration.BuildSystemTypeDetector"/>
+
+        <extensionPoint qualifiedName="org.jetbrains.kotlin.idePlatformKind"
+                        interface="org.jetbrains.kotlin.platform.IdePlatformKind"/>
+        <extensionPoint qualifiedName="org.jetbrains.kotlin.idePlatformKindTooling"
+                        interface="org.jetbrains.kotlin.idea.platform.IdePlatformKindTooling"/>
+
+        <extensionPoint qualifiedName="org.jetbrains.kotlin.scriptRelatedModulesProvider"
+                        interface="org.jetbrains.kotlin.idea.core.script.dependencies.ScriptRelatedModulesProvider"
+                        area="IDEA_PROJECT"/>
     </extensionPoints>
 
     <extensions defaultExtensionNs="org.jetbrains.kotlin">
@@ -55,5 +64,6 @@
         <idePlatformKindResolution implementation="org.jetbrains.kotlin.caches.resolve.CommonPlatformKindResolution"/>
 
         <scratchFileLanguageProvider language="kotlin" implementationClass="org.jetbrains.kotlin.idea.scratch.KtScratchFileLanguageProvider"/>
+        <scriptRelatedModulesProvider implementation="org.jetbrains.kotlin.idea.scratch.ScratchModuleDependencyProvider"/>
     </extensions>
 </idea-plugin>

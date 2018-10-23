@@ -144,7 +144,7 @@ abstract class LazyJavaScope(protected val c: LazyJavaResolverContext) : MemberS
             if (effectiveSignature.receiverType != null)
                     mapOf(JavaMethodDescriptor.ORIGINAL_VALUE_PARAMETER_FOR_EXTENSION_RECEIVER to valueParameters.descriptors.first())
                 else
-                    emptyMap<FunctionDescriptor.UserDataKey<ValueParameterDescriptor>, ValueParameterDescriptor>()
+                    emptyMap<CallableDescriptor.UserDataKey<ValueParameterDescriptor>, ValueParameterDescriptor>()
         )
 
         functionDescriptorImpl.setParameterNamesStatus(effectiveSignature.hasStableParameterNames, valueParameters.hasSynthesizedNames)
@@ -271,7 +271,8 @@ abstract class LazyJavaScope(protected val c: LazyJavaResolverContext) : MemberS
 
     private fun resolveProperty(field: JavaField): PropertyDescriptor {
         val propertyDescriptor = createPropertyDescriptor(field)
-        propertyDescriptor.initialize(null, null)
+        // Annotations on Java fields are loaded as property annotations, therefore backingField = null below
+        propertyDescriptor.initialize(null, null, null, null)
 
         val propertyType = getPropertyType(field)
 

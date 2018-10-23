@@ -1,5 +1,3 @@
-// EXPECTED_ERROR(other:-1:-1) '60x60' is an invalid Java enum value name
-
 class `:)` {
     lateinit val f: String
 }
@@ -38,3 +36,5 @@ class `A()B()`
 class `A B` {
     class C
 }
+
+// EXPECTED_ERROR(other:-1:-1) '60x60' is an invalid Java enum value name

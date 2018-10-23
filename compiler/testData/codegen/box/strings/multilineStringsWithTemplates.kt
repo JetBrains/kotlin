@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 fun box() : String {
     val s = "abc"
     val test1 = """$s"""

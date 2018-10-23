@@ -100,7 +100,14 @@ public class KotlinTestUtils {
     private static final boolean RUN_IGNORED_TESTS_AS_REGULAR =
             Boolean.getBoolean("org.jetbrains.kotlin.run.ignored.tests.as.regular");
 
-    private static final boolean AUTOMATICALLY_UNMUTE_PASSED_TESTS = true;
+    private static final boolean PRINT_STACKTRACE_FOR_IGNORED_TESTS =
+            Boolean.getBoolean("org.jetbrains.kotlin.print.stacktrace.for.ignored.tests");
+
+    private static final boolean DONT_IGNORE_TESTS_WORKING_ON_COMPATIBLE_BACKEND =
+            Boolean.getBoolean("org.jetbrains.kotlin.dont.ignore.tests.working.on.compatible.backend");
+
+
+    private static final boolean AUTOMATICALLY_UNMUTE_PASSED_TESTS = false;
     private static final boolean AUTOMATICALLY_MUTE_FAILED_TESTS = false;
 
     private static final List<File> filesToDelete = new ArrayList<>();
@@ -1040,6 +1047,13 @@ public class KotlinTestUtils {
 
         boolean isIgnored = isIgnoredTarget(targetBackend, testDataFile);
 
+        if (DONT_IGNORE_TESTS_WORKING_ON_COMPATIBLE_BACKEND) {
+            // Only ignore if it is ignored for both backends
+            // Motivation: this backend works => all good, even if compatible backend fails
+            // This backend fails, compatible works => need to know
+            isIgnored &= isIgnoredTarget(targetBackend.getCompatibleWith(), testDataFile);
+        }
+
         try {
             test.invoke(testDataFilePath);
         }
@@ -1077,7 +1091,9 @@ public class KotlinTestUtils {
                 throw e;
             }
 
-            e.printStackTrace();
+            if (PRINT_STACKTRACE_FOR_IGNORED_TESTS) {
+                e.printStackTrace();
+            }
             return;
         }
 

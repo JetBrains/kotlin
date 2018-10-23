@@ -17,15 +17,13 @@
 package org.jetbrains.kotlin.noarg.ide
 
 import com.intellij.openapi.util.Key
-import org.jetbrains.kotlin.annotation.plugin.ide.AnnotationBasedPluginModel
-import org.jetbrains.kotlin.annotation.plugin.ide.AnnotationBasedPluginModelBuilderService
-import org.jetbrains.kotlin.annotation.plugin.ide.AnnotationBasedPluginProjectResolverExtension
+import org.jetbrains.kotlin.annotation.plugin.ide.*
 
 interface NoArgModel : AnnotationBasedPluginModel {
     val invokeInitializers: Boolean
 
-    override fun copy(): NoArgModel {
-        return NoArgModelImpl(annotations.toList(), presets.toList(), invokeInitializers)
+    override fun dump(): DumpedPluginModel {
+        return DumpedPluginModelImpl(NoArgModelImpl::class.java, annotations.toList(), presets.toList(), invokeInitializers)
     }
 }
 

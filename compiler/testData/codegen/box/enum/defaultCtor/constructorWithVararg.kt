@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 enum class Test(vararg xs: Int) {
     OK;
     val values = xs

@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 interface A {
     fun bar2(arg: Int = 239) : Int
 

@@ -12,11 +12,11 @@ internal class PlatformThreadLocalRandom : kotlin.random.AbstractPlatformRandom(
     // TODO no bridge generated for covariant override
     override val impl: java.util.Random get() = ThreadLocalRandom.current()
 
-    override fun nextInt(origin: Int, bound: Int): Int = ThreadLocalRandom.current().nextInt(origin, bound)
-    override fun nextLong(bound: Long): Long = ThreadLocalRandom.current().nextLong(bound)
-    override fun nextLong(origin: Long, bound: Long): Long = ThreadLocalRandom.current().nextLong(origin, bound)
-    override fun nextDouble(bound: Double): Double = ThreadLocalRandom.current().nextDouble(bound)
+    override fun nextInt(from: Int, until: Int): Int = ThreadLocalRandom.current().nextInt(from, until)
+    override fun nextLong(until: Long): Long = ThreadLocalRandom.current().nextLong(until)
+    override fun nextLong(from: Long, until: Long): Long = ThreadLocalRandom.current().nextLong(from, until)
+    override fun nextDouble(until: Double): Double = ThreadLocalRandom.current().nextDouble(until)
 
 //     do not delegate this, as it's buggy in JDK8+ (up to 11 at the moment of writing)
-//     override fun nextDouble(origin: Double, bound: Double): Double = ThreadLocalRandom.current().nextDouble(origin, bound)
+//     override fun nextDouble(from: Double, until: Double): Double = ThreadLocalRandom.current().nextDouble(from, until)
 }

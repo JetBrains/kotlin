@@ -1,5 +1,5 @@
 // IGNORE_BACKEND: JS_IR
-// EXPECTED_REACHABLE_NODES: 1173
+// EXPECTED_REACHABLE_NODES: 1330
 import kotlin.test.Test
 
 class Simple {

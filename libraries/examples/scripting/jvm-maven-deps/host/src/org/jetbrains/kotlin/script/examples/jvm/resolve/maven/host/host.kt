@@ -5,17 +5,17 @@
 
 package org.jetbrains.kotlin.script.examples.jvm.resolve.maven.host
 
-import org.jetbrains.kotlin.script.examples.jvm.resolve.maven.MyScriptWithMavenDeps
+import org.jetbrains.kotlin.script.examples.jvm.resolve.maven.ScriptWithMavenDeps
 import java.io.File
 import kotlin.script.experimental.api.EvaluationResult
 import kotlin.script.experimental.api.ResultWithDiagnostics
 import kotlin.script.experimental.host.toScriptSource
 import kotlin.script.experimental.jvmhost.BasicJvmScriptingHost
-import kotlin.script.experimental.jvmhost.createBasicScriptCompilationConfigurationFromAnnotatedBaseClass
+import kotlin.script.experimental.jvmhost.createJvmCompilationConfigurationFromTemplate
 
 fun evalFile(scriptFile: File): ResultWithDiagnostics<EvaluationResult> {
 
-    val compilationConfiguration = createBasicScriptCompilationConfigurationFromAnnotatedBaseClass<MyScriptWithMavenDeps>()
+    val compilationConfiguration = createJvmCompilationConfigurationFromTemplate<ScriptWithMavenDeps>()
 
     return BasicJvmScriptingHost().eval(scriptFile.toScriptSource(), compilationConfiguration, null)
 }

@@ -3,6 +3,8 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("SIGNED_CONSTANT_CONVERTED_TO_UNSIGNED")
+
 package test.collections
 
 import test.assertStaticTypeIs
@@ -10,7 +12,6 @@ import test.assertTypeEquals
 import test.collections.behaviors.*
 import test.comparisons.STRING_CASE_INSENSITIVE_ORDER
 import kotlin.test.*
-import kotlin.comparisons.*
 import kotlin.random.Random
 
 fun <T> assertArrayNotSameButEquals(expected: Array<out T>, actual: Array<out T>, message: String = "") { assertTrue(expected !== actual && expected contentEquals actual, message) }
@@ -208,10 +209,19 @@ class ArraysTest {
     @Test fun contentDeepEquals() {
         val arr1 = arrayOf("a", 1, intArrayOf(2))
         val arr2 = arrayOf("a", 1, intArrayOf(2))
+        val arr3 = arrayOf("a", 1, uintArrayOf(2u))
+        val arr4 = arrayOf("a", 1, uintArrayOf(2u))
         assertFalse(arr1 contentEquals arr2)
         assertTrue(arr1 contentDeepEquals arr2)
+
+        assertFalse(arr1 contentDeepEquals arr3)
+        assertTrue(arr3 contentDeepEquals arr4)
+
         arr2[2] = arr1
         assertFalse(arr1 contentDeepEquals arr2)
+
+        arr4[2] = arr3
+        assertFalse(arr3 contentDeepEquals arr4)
     }
 
     @Test fun contentToString() {
@@ -223,14 +233,13 @@ class ArraysTest {
     }
 
     @Test fun contentDeepToString() {
-        // Don't run this test unless primitive array `is` checks are supported (KT-17137)
-        if ((intArrayOf() as Any) is Array<*>) {
-            assertTrue(true)
-            return
-        }
-
-        val arr = arrayOf("aa", 1, null, charArrayOf('d'))
-        assertEquals("[aa, 1, null, [d]]", arr.contentDeepToString())
+        val arr = arrayOf(
+            "aa", 1, null, arrayOf(arrayOf("foo")), charArrayOf('d'), booleanArrayOf(false),
+            intArrayOf(-1), longArrayOf(-1), shortArrayOf(-1), byteArrayOf(-1),
+            uintArrayOf(UInt.MAX_VALUE), ulongArrayOf(ULong.MAX_VALUE), ushortArrayOf(UShort.MAX_VALUE), ubyteArrayOf(UByte.MAX_VALUE),
+            doubleArrayOf(3.14), floatArrayOf(1.25f)
+        )
+        assertEquals("[aa, 1, null, [[foo]], [d], [false], [-1], [-1], [-1], [-1], [4294967295], [18446744073709551615], [65535], [255], [3.14], [1.25]]", arr.contentDeepToString())
     }
 
     @Test fun contentDeepToStringNoRecursion() {
@@ -261,6 +270,16 @@ class ArraysTest {
     @Test fun contentDeepHashCode() {
         val arr = arrayOf(null, Value(2), arrayOf(Value(3)))
         assertEquals(((1*31 + 0)*31 + 2) * 31 + (1 * 31 + 3), arr.contentDeepHashCode())
+
+        val intArray2 = arrayOf(intArrayOf(1, 2), intArrayOf(3, 4))
+        val intList2 = listOf(listOf(1, 2), listOf(3, 4))
+
+        assertEquals(intList2.hashCode(), intArray2.contentDeepHashCode())
+
+        val uintArray2 = arrayOf(uintArrayOf(1u, 2u), uintArrayOf(3u, 4u))
+        val uintList2 = listOf(listOf(1u, 2u), listOf(3u, 4u))
+
+        assertEquals(uintList2.hashCode(), uintArray2.contentDeepHashCode())
     }
 
 
@@ -835,7 +854,7 @@ class ArraysTest {
             dest.copyInto(dest, 1, 0, 2)
             assertTEquals(result3, dest, "Overlapping forward copy: ${result2.toStringT()}, ${dest.toStringT()}")
 
-            for ((start, end) in listOf(-1 to 0, 0 to 4, 4 to 4, 1 to 0)) {
+            for ((start, end) in listOf(-1 to 0, 0 to 4, 4 to 4, 1 to 0, 0 to -1)) {
                 val bounds = "start: $start, end: $end"
                 val ex = assertFails(bounds) { newValues.copyInto(dest, 0, start, end) }
                 assertTrue(ex is IllegalArgumentException || ex is IndexOutOfBoundsException, "Unexpected exception type: $ex")

@@ -1,7 +1,7 @@
 public final class test/SomeClass$Creator : java/lang/Object, android/os/Parcelable$Creator {
     public void <init>()
 
-    public final java.lang.Object createFromParcel(android.os.Parcel p0) {
+    public final java.lang.Object createFromParcel(android.os.Parcel in) {
         LABEL (L0)
           ALOAD (1)
           LDC (in)
@@ -23,7 +23,7 @@ public final class test/SomeClass$Creator : java/lang/Object, android/os/Parcela
         LABEL (L4)
     }
 
-    public final java.lang.Object[] newArray(int p0)
+    public final java.lang.Object[] newArray(int size)
 }
 
 public final class test/SomeClass : java/lang/Object, android/os/Parcelable {
@@ -35,7 +35,7 @@ public final class test/SomeClass : java/lang/Object, android/os/Parcelable {
 
     public int describeContents()
 
-    public void writeToParcel(android.os.Parcel p0, int p1) {
+    public void writeToParcel(android.os.Parcel parcel, int flags) {
         LABEL (L0)
           ALOAD (1)
           LDC (parcel)

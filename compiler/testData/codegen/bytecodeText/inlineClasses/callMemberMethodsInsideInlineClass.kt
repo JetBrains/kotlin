@@ -12,7 +12,7 @@ inline class Foo(val x: Int) {
     }
 }
 
-// 1 INVOKESTATIC Foo\$Erased.empty \(I\)V
-// 1 INVOKESTATIC Foo\$Erased.withParam \(ILjava/lang/String;\)V
-// 1 INVOKESTATIC Foo\$Erased.withInlineClassParam-1e4ch6lh \(II\)V
+// 1 INVOKESTATIC Foo\.empty-impl \(I\)V
+// 1 INVOKESTATIC Foo\.withParam-impl \(ILjava/lang/String;\)V
+// 1 INVOKESTATIC Foo\.withInlineClassParam-GWb7d6U \(II\)V
 // 5 INVOKEVIRTUAL

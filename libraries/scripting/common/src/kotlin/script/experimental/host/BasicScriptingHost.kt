@@ -18,18 +18,27 @@
 
 package kotlin.script.experimental.host
 
-import kotlinx.coroutines.experimental.CoroutineScope
-import kotlinx.coroutines.experimental.runBlocking
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.runBlocking
 import kotlin.script.experimental.api.*
 
+/**
+ * The base class for scripting host implementations
+ */
 abstract class BasicScriptingHost(
     val compiler: ScriptCompiler,
     val evaluator: ScriptEvaluator
 ) {
+    /**
+     * The overridable wrapper for executing evaluation in a desired coroutines context
+     */
     open fun <T> runInCoroutineContext(block: suspend CoroutineScope.() -> T): T = runBlocking { block() }
 
+    /**
+     * The default implementation of the evaluation function
+     */
     open fun eval(
-        script: ScriptSource,
+        script: SourceCode,
         scriptCompilationConfiguration: ScriptCompilationConfiguration,
         configuration: ScriptEvaluationConfiguration?
     ): ResultWithDiagnostics<EvaluationResult> =

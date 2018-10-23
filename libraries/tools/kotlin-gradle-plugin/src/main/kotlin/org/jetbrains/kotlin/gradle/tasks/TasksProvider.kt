@@ -52,7 +52,9 @@ internal open class KotlinTasksProvider(val targetName: String) {
         mapKotlinTaskProperties(project, kotlinTask)
 
         project.whenEvaluated {
-            val languageSettings = project.kotlinExtension.sourceSets.getByName(compilation.defaultSourceSetName).languageSettings
+            val languageSettings = project.kotlinExtension.sourceSets.findByName(compilation.defaultSourceSetName)?.languageSettings
+                ?: return@whenEvaluated
+
             kotlinTask as org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>
             applyLanguageSettingsToKotlinTask(languageSettings, kotlinTask)
         }

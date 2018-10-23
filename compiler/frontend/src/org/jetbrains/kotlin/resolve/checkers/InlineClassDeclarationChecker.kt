@@ -120,7 +120,7 @@ object InlineClassDeclarationChecker : DeclarationChecker {
 
     private fun isParameterAcceptableForInlineClass(parameter: KtParameter): Boolean {
         val isOpen = parameter.modalityModifier()?.node?.elementType == KtTokens.OPEN_KEYWORD
-        return parameter.hasValOrVar() && !parameter.isMutable && !parameter.isVarArg && !parameter.hasDefaultValue() && !isOpen
+        return parameter.hasValOrVar() && !parameter.isMutable && !parameter.isVarArg && !isOpen
     }
 }
 
@@ -137,6 +137,40 @@ class PropertiesWithBackingFieldsInsideInlineClass : DeclarationChecker {
 
         declaration.delegate?.let {
             context.trace.report(Errors.DELEGATED_PROPERTY_INSIDE_INLINE_CLASS.on(it))
+        }
+    }
+}
+
+class ReservedMembersAndConstructsForInlineClass : DeclarationChecker {
+
+    companion object {
+        private val reservedFunctions = setOf("box", "unbox", "equals", "hashCode")
+    }
+
+    override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
+        val containingDeclaration = descriptor.containingDeclaration ?: return
+        if (!containingDeclaration.isInlineClass()) return
+
+        if (descriptor !is FunctionDescriptor) return
+
+        when (descriptor) {
+            is SimpleFunctionDescriptor -> {
+                val ktFunction = declaration as? KtFunction ?: return
+                val functionName = descriptor.name.asString()
+                if (functionName in reservedFunctions) {
+                    val nameIdentifier = ktFunction.nameIdentifier ?: return
+                    context.trace.report(Errors.RESERVED_MEMBER_INSIDE_INLINE_CLASS.on(nameIdentifier, functionName))
+                }
+            }
+
+            is ConstructorDescriptor -> {
+                val secondaryConstructor = declaration as? KtSecondaryConstructor ?: return
+                val bodyExpression = secondaryConstructor.bodyExpression
+                if (secondaryConstructor.hasBlockBody() && bodyExpression is KtBlockExpression) {
+                    val lBrace = bodyExpression.lBrace ?: return
+                    context.trace.report(Errors.SECONDARY_CONSTRUCTOR_WITH_BODY_INSIDE_INLINE_CLASS.on(lBrace))
+                }
+            }
         }
     }
 }

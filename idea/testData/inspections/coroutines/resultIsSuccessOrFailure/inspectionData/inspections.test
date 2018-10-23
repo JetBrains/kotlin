@@ -1,1 +1,1 @@
-// INSPECTION_CLASS: org.jetbrains.kotlin.idea.inspections.coroutines.ResultIsSuccessOrFailureInspection
+// INSPECTION_CLASS: org.jetbrains.kotlin.idea.inspections.coroutines.ResultIsResultInspection

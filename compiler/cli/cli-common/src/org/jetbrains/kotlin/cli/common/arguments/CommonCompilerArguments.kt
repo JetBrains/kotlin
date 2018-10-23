@@ -65,6 +65,17 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
     )
     var kotlinHome: String? by NullableStringFreezableVar(null)
 
+    @Argument(
+        value = "-progressive",
+        deprecatedName = "-Xprogressive",
+        description = "Enable progressive compiler mode.\n" +
+                "In this mode, deprecations and bug fixes for unstable code take effect immediately,\n" +
+                "instead of going through a graceful migration cycle.\n" +
+                "Code written in the progressive mode is backward compatible; however, code written in\n" +
+                "non-progressive mode may cause compilation errors in the progressive mode."
+    )
+    var progressiveMode by FreezableVar(false)
+
     @Argument(value = "-P", valueDescription = PLUGIN_OPTION_FORMAT, description = "Pass an option to a plugin")
     var pluginOptions: Array<String>? by FreezableVar(null)
 
@@ -166,16 +177,6 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
     var dumpPerf: String? by NullableStringFreezableVar(null)
 
     @Argument(
-        value = "-Xprogressive",
-        description = "Enable compiler progressive mode.\n" +
-                "In this mode, deprecations and bug fixes for unstable code take effect immediately,\n" +
-                "instead of going through graceful migration cycle.\n" +
-                "Code, written in progressive mode is backward compatible; however, code written in\n" +
-                "non-progressive mode may cause compilation errors in progressive mode."
-    )
-    var progressiveMode by FreezableVar(false)
-
-    @Argument(
         value = "-Xmetadata-version",
         description = "Change metadata version of the generated binary files"
     )
@@ -189,14 +190,21 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
     )
     var commonSources: Array<String>? by FreezableVar(null)
 
+    @Argument(
+        value = "-Xallow-result-return-type",
+        description = "Allow compiling code when `kotlin.Result` is used as a return type"
+    )
+    var allowResultReturnType: Boolean by FreezableVar(false)
+
     open fun configureAnalysisFlags(collector: MessageCollector): MutableMap<AnalysisFlag<*>, Any> {
         return HashMap<AnalysisFlag<*>, Any>().apply {
-            put(AnalysisFlag.skipMetadataVersionCheck, skipMetadataVersionCheck)
-            put(AnalysisFlag.multiPlatformDoNotCheckActual, noCheckActual)
-            put(AnalysisFlag.allowKotlinPackage, allowKotlinPackage)
-            put(AnalysisFlag.experimental, experimental?.toList().orEmpty())
-            put(AnalysisFlag.useExperimental, useExperimental?.toList().orEmpty())
-            put(AnalysisFlag.explicitApiVersion, apiVersion != null)
+            put(AnalysisFlags.skipMetadataVersionCheck, skipMetadataVersionCheck)
+            put(AnalysisFlags.multiPlatformDoNotCheckActual, noCheckActual)
+            put(AnalysisFlags.allowKotlinPackage, allowKotlinPackage)
+            put(AnalysisFlags.experimental, experimental?.toList().orEmpty())
+            put(AnalysisFlags.useExperimental, useExperimental?.toList().orEmpty())
+            put(AnalysisFlags.explicitApiVersion, apiVersion != null)
+            put(AnalysisFlags.allowResultReturnType, allowResultReturnType)
         }
     }
 
@@ -319,8 +327,10 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
         if (progressiveMode && languageVersion < LanguageVersion.LATEST_STABLE) {
             collector.report(
                 CompilerMessageSeverity.STRONG_WARNING,
-                "'-Xprogressive' meaningful only for latest language version (${LanguageVersion.LATEST_STABLE}), while this build uses $languageVersion\n" +
-                        "Behaviour of compiler in such mode is undefined; please, consider moving to the latest stable version or turning off progressive mode."
+                "'-progressive' is meaningful only for the latest language version (${LanguageVersion.LATEST_STABLE}), " +
+                        "while this build uses $languageVersion\n" +
+                        "Compiler behavior in such mode is undefined; please, consider moving to the latest stable version " +
+                        "or turning off progressive mode."
             )
         }
 

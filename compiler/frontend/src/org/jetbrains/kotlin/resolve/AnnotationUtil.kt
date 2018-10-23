@@ -27,14 +27,8 @@ import org.jetbrains.kotlin.resolve.constants.ErrorValue
 // If you wish to add another JVM-related annotation and has/find utility methods, please proceed to jvmAnnotationUtil.kt
 val JVM_STATIC_ANNOTATION_FQ_NAME = FqName("kotlin.jvm.JvmStatic")
 
-private val IMPLICIT_INTEGER_COERCION_ANNOTATION_FQ_NAME = FqName("kotlin.internal.ImplicitIntegerCoercion")
-
 fun DeclarationDescriptor.hasJvmStaticAnnotation(): Boolean {
     return annotations.findAnnotation(JVM_STATIC_ANNOTATION_FQ_NAME) != null
-}
-
-fun DeclarationDescriptor.hasImplicitIntegerCoercionAnnotation(): Boolean {
-    return annotations.findAnnotation(IMPLICIT_INTEGER_COERCION_ANNOTATION_FQ_NAME) != null
 }
 
 fun AnnotationDescriptor.argumentValue(parameterName: String): ConstantValue<*>? {

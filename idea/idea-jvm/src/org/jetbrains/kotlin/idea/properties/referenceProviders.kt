@@ -29,8 +29,6 @@ import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
-import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
@@ -78,10 +76,7 @@ private fun KtExpression.getBundleNameByContext(): String? {
     val callable = resolvedCall.resultingDescriptor
 
     if ((resolvedCall.extensionReceiver as? ExpressionReceiver)?.expression == expression) {
-        val returnTypeAnnotations = callable.returnType?.annotations ?: return null
-        return Annotations
-                .findUseSiteTargetedAnnotation(returnTypeAnnotations, AnnotationUseSiteTarget.RECEIVER, PROPERTY_KEY)
-                ?.getBundleName()
+        return callable.extensionReceiverParameter?.annotations?.findAnnotation(PROPERTY_KEY)?.getBundleName()
     }
 
     return resolvedCall.valueArguments.entries

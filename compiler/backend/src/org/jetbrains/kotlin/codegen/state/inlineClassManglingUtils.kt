@@ -7,44 +7,28 @@ package org.jetbrains.kotlin.codegen.state
 
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.load.kotlin.getRepresentativeUpperBound
-import org.jetbrains.kotlin.resolve.DescriptorUtils.SUCCESS_OR_FAILURE_FQ_NAME
-import org.jetbrains.kotlin.resolve.InlineClassDescriptorResolver.BOX_METHOD_NAME
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
+import org.jetbrains.kotlin.resolve.InlineClassDescriptorResolver
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
-import org.jetbrains.kotlin.resolve.isInlineClassType
+import org.jetbrains.kotlin.resolve.jvm.*
 import org.jetbrains.kotlin.types.KotlinType
 import java.security.MessageDigest
+import java.util.*
 
-fun getInlineClassValueParametersManglingSuffix(descriptor: CallableMemberDescriptor): String? {
+fun getInlineClassSignatureManglingSuffix(descriptor: CallableMemberDescriptor): String? {
     if (descriptor !is FunctionDescriptor) return null
     if (descriptor is ConstructorDescriptor) return null
-    if (descriptor.isSynthesizedBoxMethod()) return null
+    if (InlineClassDescriptorResolver.isSynthesizedBoxOrUnboxMethod(descriptor)) return null
 
     val actualValueParameterTypes = listOfNotNull(descriptor.extensionReceiverParameter?.type) + descriptor.valueParameters.map { it.type }
 
-    if (actualValueParameterTypes.none { it.requiresFunctionNameMangling() }) return null
-
-    return md5radix36string(collectSignatureForMangling(actualValueParameterTypes))
+    return getInlineClassSignatureManglingSuffix(actualValueParameterTypes)
 }
 
-private fun KotlinType.requiresFunctionNameMangling() =
-    isInlineClassThatRequiresMangling() || isTypeParameterWithUpperBoundThatRequiresMangling()
-
-private fun KotlinType.isInlineClassThatRequiresMangling() =
-    isInlineClassType() && !isDontMangleClass(this.constructor.declarationDescriptor as ClassDescriptor)
-
-private fun isDontMangleClass(classDescriptor: ClassDescriptor) =
-    classDescriptor.fqNameSafe == SUCCESS_OR_FAILURE_FQ_NAME
-
-private fun KotlinType.isTypeParameterWithUpperBoundThatRequiresMangling(): Boolean {
-    val descriptor = constructor.declarationDescriptor as? TypeParameterDescriptor ?: return false
-    return getRepresentativeUpperBound(descriptor).requiresFunctionNameMangling()
-}
-
-private fun FunctionDescriptor.isSynthesizedBoxMethod() =
-    kind == CallableMemberDescriptor.Kind.SYNTHESIZED &&
-            containingDeclaration.let { it is ClassDescriptor && it.isInline } &&
-            name == BOX_METHOD_NAME
+private fun getInlineClassSignatureManglingSuffix(valueParameterTypes: List<KotlinType>) =
+    if (requiresFunctionNameMangling(valueParameterTypes))
+        "-" + md5base64(collectSignatureForMangling(valueParameterTypes))
+    else
+        null
 
 private fun collectSignatureForMangling(types: List<KotlinType>) =
     types.joinToString { getSignatureElementForMangling(it) }
@@ -65,11 +49,8 @@ private fun getSignatureElementForMangling(type: KotlinType): String = buildStri
     }
 }
 
-private fun md5radix36string(signatureForMangling: String): String {
-    val d = MessageDigest.getInstance("MD5").digest(signatureForMangling.toByteArray())
-    var acc = 0L
-    for (i in 0..4) {
-        acc = (acc shl 8) + (d[i].toLong() and 0xFFL)
-    }
-    return acc.toString(36)
+private fun md5base64(signatureForMangling: String): String {
+    val d = MessageDigest.getInstance("MD5").digest(signatureForMangling.toByteArray()).copyOfRange(0, 5)
+    // base64 URL encoder without padding uses exactly the characters allowed in both JVM bytecode and Dalvik bytecode names
+    return Base64.getUrlEncoder().withoutPadding().encodeToString(d)
 }

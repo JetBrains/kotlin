@@ -14,7 +14,7 @@ dependencies {
 
     compile project(':kotlin-test::kotlin-test-junit')
 
-    compileOnly project(path: ":kotlin-stdlib", configuration: "distJar")
+    compileOnly project(":kotlin-stdlib")
     compileOnly project(':compiler')
     compileOnly project(':compiler:plugin-api')
     compileOnly project(':compiler:cli-common')

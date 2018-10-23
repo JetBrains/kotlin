@@ -6,19 +6,23 @@
 @file:JvmName("IdePlatformKindUtil")
 package org.jetbrains.kotlin.platform
 
-import com.intellij.openapi.application.ApplicationManager
 import org.jetbrains.kotlin.extensions.ApplicationExtensionDescriptor
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
+import org.jetbrains.kotlin.config.isJps
 import org.jetbrains.kotlin.platform.impl.CommonIdePlatformKind
 import org.jetbrains.kotlin.platform.impl.JsIdePlatformKind
 import org.jetbrains.kotlin.platform.impl.JvmIdePlatformKind
+import org.jetbrains.kotlin.platform.impl.NativeIdePlatformKind
 import org.jetbrains.kotlin.resolve.TargetPlatform
+import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
 abstract class IdePlatformKind<Kind : IdePlatformKind<Kind>> {
     abstract val compilerPlatform: TargetPlatform
     abstract val platforms: List<IdePlatform<Kind, *>>
 
     abstract val defaultPlatform: IdePlatform<Kind, *>
+
+    abstract fun platformByCompilerArguments(arguments: CommonCompilerArguments): IdePlatform<Kind, CommonCompilerArguments>?
 
     abstract val argumentsClass: Class<out CommonCompilerArguments>
 
@@ -27,25 +31,37 @@ abstract class IdePlatformKind<Kind : IdePlatformKind<Kind>> {
     override fun equals(other: Any?): Boolean = javaClass == other?.javaClass
     override fun hashCode(): Int = javaClass.hashCode()
 
-    companion object : ApplicationExtensionDescriptor<IdePlatformKind<*>>(
-        "org.jetbrains.kotlin.idePlatformKind", IdePlatformKind::class.java
-    ) {
+    override fun toString() = name
+
+    companion object {
+        // We can't use the ApplicationExtensionDescriptor class directly because it's missing in the JPS process
+        private val extension = run {
+            if (isJps) return@run null
+            ApplicationExtensionDescriptor("org.jetbrains.kotlin.idePlatformKind", IdePlatformKind::class.java)
+        }
+
         // For using only in JPS
-        private val JPS_KINDS = listOf(JvmIdePlatformKind, JsIdePlatformKind, CommonIdePlatformKind)
+        private val JPS_KINDS
+            get() = listOf(
+                JvmIdePlatformKind,
+                JsIdePlatformKind,
+                CommonIdePlatformKind,
+                NativeIdePlatformKind
+            )
 
         val ALL_KINDS by lazy {
-            if (ApplicationManager.getApplication() == null) {
-                return@lazy JPS_KINDS
-            }
-
-            val kinds = getInstances()
-            require(kinds.isNotEmpty()) { "Platform list is empty" }
+            val kinds = extension?.getInstances() ?: return@lazy JPS_KINDS
+            require(kinds.isNotEmpty()) { "Platform kind list is empty" }
             kinds
         }
 
         val All_PLATFORMS by lazy { ALL_KINDS.flatMap { it.platforms } }
 
         val IDE_PLATFORMS_BY_COMPILER_PLATFORMS by lazy { ALL_KINDS.map { it.compilerPlatform to it }.toMap() }
+
+        fun <Args : CommonCompilerArguments> platformByCompilerArguments(arguments: Args): IdePlatform<*, *>? =
+            ALL_KINDS.firstNotNullResult { it.platformByCompilerArguments(arguments) }
+
     }
 }
 

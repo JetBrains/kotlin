@@ -8,12 +8,12 @@ description = "Kotlin/Native utils"
 jvmTarget = "1.6"
 
 dependencies {
-    compile(projectDist(":kotlin-stdlib"))
+    compile(project(":kotlin-stdlib"))
 }
 
 sourceSets {
     "main" { projectDefault() }
-    "test" {}
+    "test" { none() }
 }
 
 standardPublicJars()

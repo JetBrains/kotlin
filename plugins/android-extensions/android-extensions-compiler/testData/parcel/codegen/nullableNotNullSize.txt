@@ -1,9 +1,9 @@
 public final class TestNotNull$Creator : java/lang/Object, android/os/Parcelable$Creator {
     public void <init>()
 
-    public final java.lang.Object createFromParcel(android.os.Parcel p0)
+    public final java.lang.Object createFromParcel(android.os.Parcel in)
 
-    public final java.lang.Object[] newArray(int p0)
+    public final java.lang.Object[] newArray(int size)
 }
 
 public final class TestNotNull : java/lang/Object {
@@ -13,13 +13,13 @@ public final class TestNotNull : java/lang/Object {
 
     static void <clinit>()
 
-    public void <init>(android.util.Size p0)
+    public void <init>(android.util.Size a)
 
     public int describeContents()
 
     public final android.util.Size getA()
 
-    public void writeToParcel(android.os.Parcel p0, int p1) {
+    public void writeToParcel(android.os.Parcel parcel, int flags) {
         LABEL (L0)
           ALOAD (1)
           LDC (parcel)
@@ -36,9 +36,9 @@ public final class TestNotNull : java/lang/Object {
 public final class TestNullable$Creator : java/lang/Object, android/os/Parcelable$Creator {
     public void <init>()
 
-    public final java.lang.Object createFromParcel(android.os.Parcel p0)
+    public final java.lang.Object createFromParcel(android.os.Parcel in)
 
-    public final java.lang.Object[] newArray(int p0)
+    public final java.lang.Object[] newArray(int size)
 }
 
 public final class TestNullable : java/lang/Object {
@@ -48,13 +48,13 @@ public final class TestNullable : java/lang/Object {
 
     static void <clinit>()
 
-    public void <init>(android.util.Size p0)
+    public void <init>(android.util.Size a)
 
     public int describeContents()
 
     public final android.util.Size getA()
 
-    public void writeToParcel(android.os.Parcel p0, int p1) {
+    public void writeToParcel(android.os.Parcel parcel, int flags) {
         LABEL (L0)
           ALOAD (1)
           LDC (parcel)

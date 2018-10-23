@@ -12,6 +12,7 @@ fun f() {
 
 // @TestKt.class:
 // 0 INVOKESTATIC UInt\$Erased.box
+// 0 INVOKESTATIC UInt\.box
 // 0 INVOKEVIRTUAL UInt.unbox
 // 0 valueOf
 // 0 intValue

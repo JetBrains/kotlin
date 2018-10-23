@@ -14,6 +14,9 @@ import com.intellij.openapi.externalSystem.service.project.manage.AbstractProjec
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.roots.DependencyScope
+import com.intellij.openapi.roots.ExportableOrderEntry
+import com.intellij.openapi.roots.ModifiableRootModel
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.config.CoroutineSupport
 import org.jetbrains.kotlin.config.JvmTarget
@@ -28,9 +31,8 @@ import org.jetbrains.kotlin.idea.facet.getOrCreateFacet
 import org.jetbrains.kotlin.idea.facet.noVersionAutoAdvance
 import org.jetbrains.kotlin.idea.inspections.gradle.findAll
 import org.jetbrains.kotlin.idea.inspections.gradle.findKotlinPluginVersion
+import org.jetbrains.kotlin.idea.platform.IdePlatformKindTooling
 import org.jetbrains.kotlin.idea.roots.migrateNonJvmSourceFolders
-import org.jetbrains.kotlin.platform.impl.CommonIdePlatformKind
-import org.jetbrains.kotlin.platform.impl.JsIdePlatformKind
 import org.jetbrains.kotlin.platform.impl.JvmIdePlatformKind
 import org.jetbrains.plugins.gradle.model.data.BuildScriptClasspathData
 import org.jetbrains.plugins.gradle.model.data.GradleSourceSetData
@@ -60,73 +62,94 @@ class KotlinSourceSetDataService : AbstractProjectDataService<GradleSourceSetDat
             }
 
             configureFacet(sourceSetData, kotlinSourceSet, mainModuleData, ideModule, modelsProvider)
+
+            if (kotlinSourceSet.isTestModule) {
+                assignTestScope(rootModel)
+            }
         }
     }
 
-    private val KotlinModule.kind
-        get() = when (this) {
-            is KotlinCompilation -> KotlinModuleKind.COMPILATION_AND_SOURCE_SET_HOLDER
-            is KotlinSourceSet -> KotlinModuleKind.SOURCE_SET_HOLDER
-            else -> KotlinModuleKind.DEFAULT
-        }
+    private fun assignTestScope(rootModel: ModifiableRootModel) {
+        rootModel
+            .orderEntries
+            .asSequence()
+            .filterIsInstance<ExportableOrderEntry>()
+            .filter { it.scope == DependencyScope.COMPILE }
+            .forEach { it.scope = DependencyScope.TEST }
+    }
 
-    private fun configureFacet(
-        sourceSetData: GradleSourceSetData,
-        kotlinSourceSet: KotlinSourceSetInfo,
-        mainModuleNode: DataNode<ModuleData>,
-        ideModule: Module,
-        modelsProvider: IdeModifiableModelsProvider
-    ) {
-        val compilerVersion = mainModuleNode
-            .findAll(BuildScriptClasspathData.KEY)
-            .firstOrNull()
-            ?.data
-            ?.let { findKotlinPluginVersion(it) } ?: return
-        val platformKind = when (kotlinSourceSet.platform) {
-            KotlinPlatform.JVM, KotlinPlatform.ANDROID -> {
-                val target = JvmTarget.fromString(sourceSetData.targetCompatibility ?: "") ?: JvmTarget.DEFAULT
-                JvmIdePlatformKind.Platform(target)
+    companion object {
+        private val KotlinModule.kind
+            get() = when (this) {
+                is KotlinCompilation -> KotlinModuleKind.COMPILATION_AND_SOURCE_SET_HOLDER
+                is KotlinSourceSet -> KotlinModuleKind.SOURCE_SET_HOLDER
+                else -> KotlinModuleKind.DEFAULT
             }
-            KotlinPlatform.JS -> JsIdePlatformKind.Platform
-            KotlinPlatform.COMMON -> CommonIdePlatformKind.Platform
-        }
-        val coroutinesProperty = CoroutineSupport.byCompilerArgument(
-            mainModuleNode.coroutines ?: findKotlinCoroutinesProperty(ideModule.project)
-        )
 
-        val kotlinFacet = ideModule.getOrCreateFacet(modelsProvider, false)
-        kotlinFacet.configureFacet(compilerVersion, coroutinesProperty, platformKind, modelsProvider)
+        fun configureFacet(
+            moduleData: ModuleData,
+            kotlinSourceSet: KotlinSourceSetInfo,
+            mainModuleNode: DataNode<ModuleData>,
+            ideModule: Module,
+            modelsProvider: IdeModifiableModelsProvider
+        ) {
+            val compilerVersion = mainModuleNode
+                .findAll(BuildScriptClasspathData.KEY)
+                .firstOrNull()
+                ?.data
+                ?.let { findKotlinPluginVersion(it) } ?: return
 
-        val compilerArguments = kotlinSourceSet.compilerArguments
-        val defaultCompilerArguments = kotlinSourceSet.defaultCompilerArguments
-        if (compilerArguments != null) {
-            applyCompilerArgumentsToFacet(
-                compilerArguments,
-                defaultCompilerArguments,
-                kotlinFacet,
-                modelsProvider
+            val platformKind = IdePlatformKindTooling.getTooling(kotlinSourceSet.platform).kind
+            val platform = when (platformKind) {
+                is JvmIdePlatformKind -> {
+                    val target = JvmTarget.fromString(moduleData.targetCompatibility ?: "") ?: JvmTarget.DEFAULT
+                    JvmIdePlatformKind.Platform(target)
+                }
+                else -> platformKind.defaultPlatform
+            }
+
+            val coroutinesProperty = CoroutineSupport.byCompilerArgument(
+                mainModuleNode.coroutines ?: findKotlinCoroutinesProperty(ideModule.project)
             )
-        }
 
-        adjustClasspath(kotlinFacet, kotlinSourceSet.dependencyClasspath)
+            val kotlinFacet = ideModule.getOrCreateFacet(modelsProvider, false)
+            kotlinFacet.configureFacet(compilerVersion, coroutinesProperty, platform, modelsProvider)
 
-        kotlinFacet.noVersionAutoAdvance()
-
-        with(kotlinFacet.configuration.settings) {
-            kind = kotlinSourceSet.kotlinModule.kind
-
-            sourceSetNames = kotlinSourceSet.sourceSetIdsByName.values.mapNotNull { sourceSetId ->
-                val node = mainModuleNode.findChildModuleById(sourceSetId) ?: return@mapNotNull null
-                val data = node.data as? ModuleData ?: return@mapNotNull null
-                modelsProvider.findIdeModule(data)?.name
+            val compilerArguments = kotlinSourceSet.compilerArguments
+            val defaultCompilerArguments = kotlinSourceSet.defaultCompilerArguments
+            if (compilerArguments != null) {
+                applyCompilerArgumentsToFacet(
+                    compilerArguments,
+                    defaultCompilerArguments,
+                    kotlinFacet,
+                    modelsProvider
+                )
             }
 
-            if (kotlinSourceSet.isTestModule) {
-                testOutputPath = (kotlinSourceSet.compilerArguments as? K2JSCompilerArguments)?.outputFile
-                productionOutputPath = null
-            } else {
-                productionOutputPath = (kotlinSourceSet.compilerArguments as? K2JSCompilerArguments)?.outputFile
-                testOutputPath = null
+            adjustClasspath(kotlinFacet, kotlinSourceSet.dependencyClasspath)
+
+            kotlinFacet.noVersionAutoAdvance()
+
+            with(kotlinFacet.configuration.settings) {
+                kind = kotlinSourceSet.kotlinModule.kind
+
+                isTestModule = kotlinSourceSet.isTestModule
+
+                externalProjectId = kotlinSourceSet.gradleModuleId
+
+                sourceSetNames = kotlinSourceSet.sourceSetIdsByName.values.mapNotNull { sourceSetId ->
+                    val node = mainModuleNode.findChildModuleById(sourceSetId) ?: return@mapNotNull null
+                    val data = node.data as? ModuleData ?: return@mapNotNull null
+                    modelsProvider.findIdeModule(data)?.name
+                }
+
+                if (kotlinSourceSet.isTestModule) {
+                    testOutputPath = (kotlinSourceSet.compilerArguments as? K2JSCompilerArguments)?.outputFile
+                    productionOutputPath = null
+                } else {
+                    productionOutputPath = (kotlinSourceSet.compilerArguments as? K2JSCompilerArguments)?.outputFile
+                    testOutputPath = null
+                }
             }
         }
     }

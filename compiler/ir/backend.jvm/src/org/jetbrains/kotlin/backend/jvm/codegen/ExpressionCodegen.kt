@@ -1149,7 +1149,13 @@ class ExpressionCodegen(
         memberAccessExpression: IrMemberAccessExpression,
         descriptor: CallableDescriptor
     ): IrCallGenerator {
-        val typeArguments = descriptor.original.typeParameters.keysToMap { memberAccessExpression.getTypeArgumentOrDefault(it) }
+        val typeArguments =
+            if (memberAccessExpression.typeArgumentsCount == 0) {
+                //avoid ambiguity with type constructor type parameters
+                emptyMap()
+            } else descriptor.original.typeParameters.keysToMap {
+                memberAccessExpression.getTypeArgumentOrDefault(it)
+            }
 
         val mappings = TypeParameterMappings()
         for (entry in typeArguments.entries) {

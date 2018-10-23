@@ -1,5 +1,7 @@
-// IGNORE_BACKEND: JS_IR
 // EXPECTED_REACHABLE_NODES: 1250
+
+// Unmute when JS_IR supports release coroutines
+
 import kotlin.coroutines.*
 import kotlin.coroutines.intrinsics.*
 
@@ -12,7 +14,7 @@ suspend fun delay(): Unit = suspendCoroutine { c ->
 
 fun build(c: suspend () -> Unit) {
     c.startCoroutine(object : Continuation<Unit> {
-        override fun resumeWith(x: SuccessOrFailure<Unit>) {
+        override fun resumeWith(x: Result<Unit>) {
             stopped = true
         }
 

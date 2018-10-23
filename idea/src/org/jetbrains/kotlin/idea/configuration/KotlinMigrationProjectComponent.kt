@@ -5,12 +5,10 @@
 
 package org.jetbrains.kotlin.idea.configuration
 
-import com.intellij.openapi.actionSystem.ActionManager
-import com.intellij.openapi.actionSystem.ActionPlaces
-import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.externalSystem.service.project.manage.ProjectDataImportListener
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
+import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ProjectRootManager
@@ -24,20 +22,24 @@ import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
-import org.jetbrains.kotlin.idea.configuration.ui.MigrationNotificationDialog
+import org.jetbrains.kotlin.idea.configuration.ui.showMigrationNotification
+import org.jetbrains.kotlin.idea.facet.KotlinFacet
 import org.jetbrains.kotlin.idea.framework.GRADLE_SYSTEM_ID
 import org.jetbrains.kotlin.idea.framework.MAVEN_SYSTEM_ID
-import org.jetbrains.kotlin.idea.migration.CodeMigrationAction
 import org.jetbrains.kotlin.idea.migration.CodeMigrationToggleAction
+import org.jetbrains.kotlin.idea.migration.applicableMigrationTools
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.util.application.runReadAction
+import org.jetbrains.kotlin.idea.util.runReadActionInSmartMode
 import org.jetbrains.kotlin.idea.versions.LibInfo
+import java.io.File
 
 class KotlinMigrationProjectComponent(val project: Project) {
+    @Volatile
     private var old: MigrationState? = null
-    private var new: MigrationState? = null
 
-    private var lastMigrationInfo: MigrationInfo? = null
+    @Volatile
+    private var importFinishListener: ((MigrationTestState?) -> Unit)? = null
 
     init {
         val connection = project.messageBus.connect()
@@ -46,59 +48,69 @@ class KotlinMigrationProjectComponent(val project: Project) {
         })
     }
 
-    @Synchronized
+    class MigrationTestState(val migrationInfo: MigrationInfo?, val hasApplicableTools: Boolean)
+
     @TestOnly
-    fun requestLastMigrationInfo(): MigrationInfo? {
-        val temp = lastMigrationInfo
-        lastMigrationInfo = null
-        return temp
+    fun setImportFinishListener(newListener: ((MigrationTestState?) -> Unit)?) {
+        synchronized(this) {
+            if (newListener != null && importFinishListener != null) {
+                importFinishListener!!.invoke(null)
+            }
+
+            importFinishListener = newListener
+        }
     }
 
-    @Synchronized
+    private fun notifyFinish(migrationInfo: MigrationInfo?, hasApplicableTools: Boolean) {
+        importFinishListener?.invoke(MigrationTestState(migrationInfo, hasApplicableTools))
+    }
+
     fun onImportAboutToStart() {
         if (!CodeMigrationToggleAction.isEnabled(project) || !hasChangesInProjectFiles(project)) {
             old = null
             return
         }
 
-        lastMigrationInfo = null
-
         old = MigrationState.build(project)
     }
 
-    @Synchronized
     fun onImportFinished() {
-        if (!CodeMigrationToggleAction.isEnabled(project)) {
+        if (!CodeMigrationToggleAction.isEnabled(project) || old == null) {
+            notifyFinish(null, false)
             return
         }
 
-        if (old == null) return;
+        ApplicationManager.getApplication().executeOnPooledThread {
+            var migrationInfo: MigrationInfo? = null
+            var hasApplicableTools = false
 
-        new = MigrationState.build(project)
-
-        val migrationInfo = prepareMigrationInfo(old, new) ?: return
-
-        old = null
-        new = null
-
-        if (ApplicationManager.getApplication().isUnitTestMode) {
-            lastMigrationInfo = migrationInfo
-            return
-        }
-
-        ApplicationManager.getApplication().invokeLater {
-            val migrationNotificationDialog = MigrationNotificationDialog(project, migrationInfo)
-            migrationNotificationDialog.show()
-
-            if (migrationNotificationDialog.isOK) {
-                val action = ActionManager.getInstance().getAction(CodeMigrationAction.ACTION_ID)
-
-                val dataContext = getDataContextFromDialog(migrationNotificationDialog)
-                if (dataContext != null) {
-                    val actionEvent = AnActionEvent.createFromAnAction(action, null, ActionPlaces.ACTION_SEARCH, dataContext)
-
-                    action.actionPerformed(actionEvent)
+            try {
+                val new = project.runReadActionInSmartMode {
+                    MigrationState.build(project)
                 }
+
+                val localOld = old.also {
+                    old = null
+                } ?: return@executeOnPooledThread
+
+                migrationInfo = prepareMigrationInfo(localOld, new) ?: return@executeOnPooledThread
+
+                if (applicableMigrationTools(migrationInfo).isEmpty()) {
+                    hasApplicableTools = false
+                    return@executeOnPooledThread
+                } else {
+                    hasApplicableTools = true
+                }
+
+                if (ApplicationManager.getApplication().isUnitTestMode) {
+                    return@executeOnPooledThread
+                }
+
+                ApplicationManager.getApplication().invokeLater {
+                    showMigrationNotification(project, migrationInfo)
+                }
+            } finally {
+                notifyFinish(migrationInfo, hasApplicableTools)
             }
         }
     }
@@ -137,17 +149,37 @@ class KotlinMigrationProjectComponent(val project: Project) {
                 return true
             }
 
+            val checkedFiles = HashSet<File>()
+
+            project.basePath?.let { projectBasePath ->
+                checkedFiles.add(File(projectBasePath))
+            }
+
             val changedFiles = ChangeListManager.getInstance(project).affectedPaths
             for (changedFile in changedFiles) {
                 val extension = changedFile.extension
                 when (extension) {
                     "gradle" -> return true
                     "properties" -> return true
+                    "kts" -> return true
                     "iml" -> return true
                     "xml" -> {
                         if (changedFile.name == "pom.xml") return true
                         val parentDir = changedFile.parentFile
                         if (parentDir.isDirectory && parentDir.name == Project.DIRECTORY_STORE_FOLDER) {
+                            return true
+                        }
+                    }
+                    "kt", "java", "groovy" -> {
+                        val dirs: Sequence<File> = generateSequence(changedFile) { it.parentFile }
+                            .drop(1) // Drop original file
+                            .takeWhile { it.isDirectory }
+
+                        val isInBuildSrc = dirs
+                            .takeWhile { checkedFiles.add(it) }
+                            .any { it.name == BUILD_SRC_FOLDER_NAME }
+
+                        if (isInBuildSrc) {
                             return true
                         }
                     }
@@ -203,6 +235,8 @@ fun MigrationInfo.isLanguageVersionUpdate(old: LanguageVersion, new: LanguageVer
     return oldLanguageVersion <= old && newLanguageVersion >= new
 }
 
+
+private const val BUILD_SRC_FOLDER_NAME = "buildSrc"
 private const val KOTLIN_GROUP_ID = "org.jetbrains.kotlin"
 
 private fun maxKotlinLibVersion(project: Project): LibInfo? {
@@ -223,15 +257,10 @@ private fun maxKotlinLibVersion(project: Project): LibInfo? {
                 continue
             }
 
-            val libName = library.name ?: continue
+            val libraryInfo = parseExternalLibraryName(library) ?: continue
 
-            val version = libName.substringAfterLastNullable(":") ?: continue
-            val artifactId = libName.substringBeforeLastNullable(":")?.substringAfterLastNullable(":") ?: continue
-
-            if (version.isBlank() || artifactId.isBlank()) continue
-
-            if (maxStdlibInfo == null || VersionComparatorUtil.COMPARATOR.compare(version, maxStdlibInfo.version) > 0) {
-                maxStdlibInfo = LibInfo(KOTLIN_GROUP_ID, artifactId, version)
+            if (maxStdlibInfo == null || VersionComparatorUtil.COMPARATOR.compare(libraryInfo.version, maxStdlibInfo.version) > 0) {
+                maxStdlibInfo = LibInfo(KOTLIN_GROUP_ID, libraryInfo.artifactId, libraryInfo.version)
             }
         }
 
@@ -245,6 +274,11 @@ private fun collectMaxCompilerSettings(project: Project): LanguageVersionSetting
         var maxLanguageVersion: LanguageVersion? = null
 
         for (module in ModuleManager.getInstance(project).modules) {
+            if (!module.isKotlinModule()) {
+                // Otherwise project compiler settings will give unreliable maximum for compiler settings
+                continue
+            }
+
             val languageVersionSettings = module.languageVersionSettings
 
             if (maxApiVersion == null || languageVersionSettings.apiVersion > maxApiVersion) {
@@ -260,12 +294,14 @@ private fun collectMaxCompilerSettings(project: Project): LanguageVersionSetting
     }
 }
 
-fun String.substringBeforeLastNullable(delimiter: String, missingDelimiterValue: String? = null): String? {
-    val index = lastIndexOf(delimiter)
-    return if (index == -1) missingDelimiterValue else substring(0, index)
-}
+private fun Module.isKotlinModule(): Boolean {
+    if (isDisposed) return false
 
-fun String.substringAfterLastNullable(delimiter: String, missingDelimiterValue: String? = null): String? {
-    val index = lastIndexOf(delimiter)
-    return if (index == -1) missingDelimiterValue else substring(index + 1, length)
+    if (KotlinFacet.get(this) != null) {
+        return true
+    }
+
+    // This code works only for Maven and Gradle import, and it's expected that Kotlin facets are configured for
+    // all modules with external system.
+    return false
 }

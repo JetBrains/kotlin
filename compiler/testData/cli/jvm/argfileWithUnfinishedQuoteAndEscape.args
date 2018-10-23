@@ -1,1 +1,1 @@
--Xargfile=$TESTDATA_DIR$/argfileWithUnfinishedQuoteAndEscape.argfile
+@$TESTDATA_DIR$/argfileWithUnfinishedQuoteAndEscape.argfile

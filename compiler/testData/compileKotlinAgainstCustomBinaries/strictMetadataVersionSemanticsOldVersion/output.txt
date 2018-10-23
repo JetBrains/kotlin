@@ -1,0 +1,25 @@
+error: incompatible classes were found in dependencies. Remove them from the classpath or use '-Xskip-metadata-version-check' to suppress errors
+$TMP_DIR$/library.jar!/META-INF/main.kotlin_module: error: module was compiled with an incompatible version of Kotlin. The binary version of its metadata is 1.4.0, expected version is $ABI_VERSION$.
+compiler/testData/compileKotlinAgainstCustomBinaries/strictMetadataVersionSemanticsOldVersion/source.kt:3:13: error: class 'a.C' was compiled with an incompatible version of Kotlin. The binary version of its metadata is 1.4.0, expected version is $ABI_VERSION$.
+The class is loaded from $TMP_DIR$/library.jar!/a/C.class
+fun test(c: C) {
+            ^
+compiler/testData/compileKotlinAgainstCustomBinaries/strictMetadataVersionSemanticsOldVersion/source.kt:4:5: error: unresolved reference: f
+    f()
+    ^
+compiler/testData/compileKotlinAgainstCustomBinaries/strictMetadataVersionSemanticsOldVersion/source.kt:5:5: error: unresolved reference: v
+    v
+    ^
+compiler/testData/compileKotlinAgainstCustomBinaries/strictMetadataVersionSemanticsOldVersion/source.kt:6:5: error: class 'a.C' was compiled with an incompatible version of Kotlin. The binary version of its metadata is 1.4.0, expected version is $ABI_VERSION$.
+The class is loaded from $TMP_DIR$/library.jar!/a/C.class
+    c.let { C() }
+    ^
+compiler/testData/compileKotlinAgainstCustomBinaries/strictMetadataVersionSemanticsOldVersion/source.kt:6:7: error: class 'a.C' was compiled with an incompatible version of Kotlin. The binary version of its metadata is 1.4.0, expected version is $ABI_VERSION$.
+The class is loaded from $TMP_DIR$/library.jar!/a/C.class
+    c.let { C() }
+      ^
+compiler/testData/compileKotlinAgainstCustomBinaries/strictMetadataVersionSemanticsOldVersion/source.kt:6:13: error: class 'a.C' was compiled with an incompatible version of Kotlin. The binary version of its metadata is 1.4.0, expected version is $ABI_VERSION$.
+The class is loaded from $TMP_DIR$/library.jar!/a/C.class
+    c.let { C() }
+            ^
+COMPILATION_ERROR

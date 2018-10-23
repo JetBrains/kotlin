@@ -26,6 +26,7 @@ import com.intellij.openapi.roots.ui.configuration.libraries.AddCustomLibraryDia
 import com.intellij.openapi.roots.ui.configuration.libraries.CustomLibraryDescription
 import com.intellij.openapi.roots.ui.configuration.libraries.LibraryPresentationManager
 import org.jetbrains.kotlin.idea.platform.tooling
+import org.jetbrains.kotlin.platform.IdePlatform
 import org.jetbrains.kotlin.platform.IdePlatformKind
 import org.jetbrains.kotlin.platform.impl.isCommon
 import javax.swing.JComponent
@@ -35,9 +36,9 @@ class FrameworkLibraryValidatorWithDynamicDescription(
         private val context: LibrariesValidatorContext,
         private val validatorsManager: FacetValidatorsManager,
         private val libraryCategoryName: String,
-        private val getPlatform: () -> IdePlatformKind<*>
+        private val getPlatform: () -> IdePlatform<*, *>
 ) : FrameworkLibraryValidator() {
-    private val IdePlatformKind<*>.libraryDescription: CustomLibraryDescription
+    private val IdePlatformKind<*>.libraryDescription: CustomLibraryDescription?
         get() = this.tooling.getLibraryDescription(context.module.project)
 
     private fun checkLibraryIsConfigured(platform: IdePlatformKind<*>): Boolean {
@@ -48,7 +49,7 @@ class FrameworkLibraryValidatorWithDynamicDescription(
             it.getLibraryVersions(context.module, platform, context.rootModel).isNotEmpty()
         }) return true
 
-        val libraryDescription = platform.libraryDescription
+        val libraryDescription = platform.libraryDescription ?: return true
         val libraryKinds = libraryDescription.suitableLibraryKinds
         var found = false
         val presentationManager = LibraryPresentationManager.getInstance()
@@ -69,9 +70,12 @@ class FrameworkLibraryValidatorWithDynamicDescription(
     override fun check(): ValidationResult {
         val targetPlatform = getPlatform()
 
-        if (checkLibraryIsConfigured(targetPlatform)) {
-            val conflictingPlatforms = IdePlatformKind.getInstances()
-                .filter { !it.isCommon && it.name != targetPlatform.name && checkLibraryIsConfigured(it) }
+        if (checkLibraryIsConfigured(targetPlatform.kind)) {
+            val conflictingPlatforms = IdePlatformKind.ALL_KINDS
+                .filter {
+                    !it.isCommon && it.name != targetPlatform.kind.name
+                            && it.libraryDescription != null && checkLibraryIsConfigured(it)
+                }
 
             if (conflictingPlatforms.isNotEmpty()) {
                 val platformText = conflictingPlatforms.mapTo(LinkedHashSet()) { it.name }.joinToString()
@@ -81,10 +85,9 @@ class FrameworkLibraryValidatorWithDynamicDescription(
             return ValidationResult.OK
         }
 
-
         return ValidationResult(
                 IdeBundle.message("label.missed.libraries.text", libraryCategoryName),
-                LibrariesQuickFix(targetPlatform.libraryDescription)
+                LibrariesQuickFix(targetPlatform.kind.libraryDescription!!)
         )
     }
 

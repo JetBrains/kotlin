@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 class C {
     fun calc() : String {
         return "OK"

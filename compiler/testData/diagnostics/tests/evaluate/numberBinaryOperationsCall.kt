@@ -19,10 +19,10 @@ fun test() {
     fooLong(1.div(1))
     fooShort(1.div(1))
 
-    fooInt(1.<!DEPRECATION!>mod<!>(1))
-    fooByte(1.<!DEPRECATION!>mod<!>(1))
-    fooLong(1.<!DEPRECATION!>mod<!>(1))
-    fooShort(1.<!DEPRECATION!>mod<!>(1))
+    fooInt(1.<!DEPRECATION_ERROR!>mod<!>(1))
+    fooByte(1.<!DEPRECATION_ERROR!>mod<!>(1))
+    fooLong(1.<!DEPRECATION_ERROR!>mod<!>(1))
+    fooShort(1.<!DEPRECATION_ERROR!>mod<!>(1))
 
     fooInt(1.rem(1))
     fooByte(1.rem(1))

@@ -14,7 +14,19 @@ private const val ERROR_MSG_PREFIX = "Unable to construct script definition: "
 private const val ILLEGAL_CONFIG_ANN_ARG =
     "Illegal argument compilationConfiguration of the KotlinScript annotation: expecting an object or default-constructed class derived from ScriptCompilationConfiguration"
 
-fun createScriptCompilationConfigurationFromAnnotatedBaseClass(
+private const val SCRIPT_RUNTIME_TEMPLATES_PACKAGE = "kotlin.script.templates.standard"
+
+@KotlinScript
+private abstract class DummyScriptTemplate
+
+/**
+ * Creates the compilation configuration from annotated script base class
+ * @param baseClassType the annotated script base class to construct the configuration from
+ * @param hostConfiguration scripting host configuration properties
+ * @param contextClass optional context class to extract classloading strategy from
+ * @param body optional configuration function to add more properties to the compilation configuration
+ */
+fun createCompilationConfigurationFromTemplate(
     baseClassType: KotlinType,
     hostConfiguration: ScriptingHostConfiguration,
     contextClass: KClass<*> = ScriptCompilationConfiguration::class,
@@ -22,7 +34,7 @@ fun createScriptCompilationConfigurationFromAnnotatedBaseClass(
 ): ScriptCompilationConfiguration {
 
     val getScriptingClass = hostConfiguration[ScriptingHostConfiguration.getScriptingClass]
-        ?: throw IllegalArgumentException("${ERROR_MSG_PREFIX}Expecting 'getScriptingClass' parameter in the scripting environment")
+        ?: throw IllegalArgumentException("${ERROR_MSG_PREFIX}Expecting 'getScriptingClass' parameter in the scripting host configuration")
 
     val baseClass: KClass<*> =
         try {
@@ -33,12 +45,22 @@ fun createScriptCompilationConfigurationFromAnnotatedBaseClass(
     val loadedBaseClassType = if (baseClass == baseClassType.fromClass) baseClassType else KotlinType(baseClass)
 
     val mainAnnotation = baseClass.findAnnotation<KotlinScript>()
+        ?: run {
+            // transitions to the new scripting API:
+            // substituting annotations for standard templates from script-runtime
+            when (baseClass.qualifiedName) {
+                "$SCRIPT_RUNTIME_TEMPLATES_PACKAGE.SimpleScriptTemplate",
+                "$SCRIPT_RUNTIME_TEMPLATES_PACKAGE.ScriptTemplateWithArgs",
+                "$SCRIPT_RUNTIME_TEMPLATES_PACKAGE.ScriptTemplateWithBindings" -> DummyScriptTemplate::class
+                else -> null
+            }?.findAnnotation<KotlinScript>()
+        }
         ?: throw IllegalArgumentException("${ERROR_MSG_PREFIX}Expecting KotlinScript annotation on the $baseClass")
 
     fun scriptConfigInstance(kclass: KClass<out ScriptCompilationConfiguration>): ScriptCompilationConfiguration = try {
         kclass.objectInstance ?: kclass.createInstance()
     } catch (e: Throwable) {
-        throw IllegalArgumentException(ILLEGAL_CONFIG_ANN_ARG, e)
+        throw IllegalArgumentException("$ILLEGAL_CONFIG_ANN_ARG: ${e.message}", e)
     }
 
     return ScriptCompilationConfiguration(scriptConfigInstance(mainAnnotation.compilationConfiguration)) {
@@ -46,10 +68,10 @@ fun createScriptCompilationConfigurationFromAnnotatedBaseClass(
             baseClass(loadedBaseClassType)
         }
         if (fileExtension() == null) {
-            fileExtension(mainAnnotation.extension)
+            fileExtension(mainAnnotation.fileExtension)
         }
         if (displayName() == null) {
-            displayName(mainAnnotation.name)
+            displayName(mainAnnotation.displayName)
         }
 
         body()

@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.resolve.descriptorUtil
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationWithTarget
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -20,6 +19,7 @@ private val LOW_PRIORITY_IN_OVERLOAD_RESOLUTION_FQ_NAME = FqName("kotlin.interna
 private val HIDES_MEMBERS_ANNOTATION_FQ_NAME = FqName("kotlin.internal.HidesMembers")
 private val ONLY_INPUT_TYPES_FQ_NAME = FqName("kotlin.internal.OnlyInputTypes")
 private val DYNAMIC_EXTENSION_FQ_NAME = FqName("kotlin.internal.DynamicExtension")
+private val BUILDER_INFERENCE_ANNOTATION_FQ_NAME = FqName("kotlin.BuilderInference")
 
 // @HidesMembers annotation only has effect for members with these names
 val HIDES_MEMBERS_NAME_LIST = setOf(Name.identifier("forEach"))
@@ -40,6 +40,9 @@ fun CallableDescriptor.hasDynamicExtensionAnnotation(): Boolean = annotations.ha
 
 fun TypeParameterDescriptor.hasOnlyInputTypesAnnotation(): Boolean = annotations.hasAnnotation(ONLY_INPUT_TYPES_FQ_NAME)
 
+fun CallableDescriptor.hasBuilderInferenceAnnotation(): Boolean =
+    annotations.hasAnnotation(BUILDER_INFERENCE_ANNOTATION_FQ_NAME)
+
 fun getExactInAnnotations(): Annotations = AnnotationsWithOnly(EXACT_ANNOTATION_FQ_NAME)
 
 private class AnnotationsWithOnly(val presentAnnotation: FqName): Annotations {
@@ -48,8 +51,4 @@ private class AnnotationsWithOnly(val presentAnnotation: FqName): Annotations {
     override fun isEmpty(): Boolean = false
 
     override fun hasAnnotation(fqName: FqName): Boolean = fqName == this.presentAnnotation
-
-    override fun getUseSiteTargetedAnnotations(): List<AnnotationWithTarget> = emptyList()
-
-    override fun getAllAnnotations(): List<AnnotationWithTarget> = emptyList()
 }

@@ -1,6 +1,5 @@
 // !LANGUAGE: +InlineClasses
 // IGNORE_BACKEND: JVM_IR
-// IGNORE_BACKEND: JS_IR
 
 inline class UInt(private val value: Int) {
     fun asInt() = value

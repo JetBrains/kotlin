@@ -6,7 +6,7 @@ This part of the project contains the sources of the following libraries:
   - [kotlin-reflect](reflect), the library for full reflection support
   - [kotlin-test](kotlin.test), the library for multiplatform unit testing
   - [kotlin-annotations-jvm](tools/kotlin-annotations-jvm), the annotations to improve types in the Java code to look better when being consumed in the Kotlin code.
-  
+
 <!--  - [kotlin-annotations-android](tools/kotlin-annotations-android) -->
 
 These libraries are built as a part of the [root](../) Gradle project.
@@ -16,13 +16,13 @@ These libraries are built as a part of the [root](../) Gradle project.
 
 <!-- TODO: Move to another root -->
 
-This area of the project is the root for Maven build. 
+This area of the project is the root for Maven build.
 
 You can work with the maven modules of this maven project in IDEA from the [root IDEA project](../ReadMe.md#working-in-idea). After importing you'll be able to explore maven projects and run goals directly from IDEA with the instruments on the right sidebar.
 
 ### Building
 
-You need to install a recent (at least 3.3) [Maven](http://maven.apache.org/) distribution. 
+You need to install a recent (at least 3.3) [Maven](http://maven.apache.org/) distribution.
 
 Before building this Maven project you need to build and install the required artifacts built with Gradle to the local maven repository, by issuing the following command in the root project:
 
@@ -33,7 +33,7 @@ Before building this Maven project you need to build and install the required ar
 This command assembles and puts the artifacts to the local maven repository to be used by the subsequent maven build.
 See also [root ReadMe.md, section "Building"](../ReadMe.md#building).
 
-    
+
 Then you can build maven artifacts with Maven:
 
     mvn install

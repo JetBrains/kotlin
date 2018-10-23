@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.codegen;
 import kotlin.collections.CollectionsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.codegen.annotation.WrappedAnnotated;
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
 import org.jetbrains.kotlin.config.JvmTarget;
 import org.jetbrains.kotlin.descriptors.*;
@@ -57,12 +56,8 @@ public abstract class AnnotationCodegen {
             this.jvmFlag = jvmFlag;
         }
 
-        public boolean hasAnnotation(@NotNull Annotated annotated) {
-            return Annotations.Companion.findAnyAnnotation(annotated.getAnnotations(), fqName) != null;
-        }
-
-        public int getJvmFlag() {
-            return jvmFlag;
+        public int getJvmFlag(@Nullable Annotated annotated) {
+            return annotated != null && annotated.getAnnotations().hasAnnotation(fqName) ? jvmFlag : 0;
         }
     }
 
@@ -100,28 +95,13 @@ public abstract class AnnotationCodegen {
      * @param returnType can be null if not applicable (e.g. {@code annotated} is a class)
      */
     public void genAnnotations(@Nullable Annotated annotated, @Nullable Type returnType) {
-        genAnnotations(annotated, returnType, null);
-    }
-
-    public void genAnnotations(@Nullable Annotated annotated, @Nullable Type returnType, @Nullable AnnotationUseSiteTarget allowedTarget) {
-        if (annotated == null) {
-            return;
-        }
+        if (annotated == null) return;
 
         Set<String> annotationDescriptorsAlreadyPresent = new HashSet<>();
 
         Annotations annotations = annotated.getAnnotations();
 
-        for (AnnotationWithTarget annotationWithTarget : annotations.getAllAnnotations()) {
-            AnnotationDescriptor annotation = annotationWithTarget.getAnnotation();
-            AnnotationUseSiteTarget annotationTarget = annotationWithTarget.getTarget();
-
-            // Skip targeted annotations by default
-            if (allowedTarget == null && annotationTarget != null) continue;
-
-            // Skip if the target is not the same
-            if (allowedTarget != null && annotationTarget != null && allowedTarget != annotationTarget) continue;
-
+        for (AnnotationDescriptor annotation : annotations) {
             Set<KotlinTarget> applicableTargets = AnnotationChecker.applicableTargetSet(annotation);
             if (annotated instanceof AnonymousFunctionDescriptor
                 && !applicableTargets.contains(KotlinTarget.FUNCTION)
@@ -156,41 +136,54 @@ public abstract class AnnotationCodegen {
             @Nullable Type returnType,
             @NotNull Set<String> annotationDescriptorsAlreadyPresent
     ) {
-        Annotated unwrapped = annotated;
-        if (annotated instanceof WrappedAnnotated) {
-            unwrapped = ((WrappedAnnotated) annotated).getOriginalAnnotated();
+        if (annotated instanceof CallableDescriptor) {
+            generateAdditionalCallableAnnotations((CallableDescriptor) annotated, returnType, annotationDescriptorsAlreadyPresent);
+        }
+        else if (annotated instanceof FieldDescriptor) {
+            generateAdditionalCallableAnnotations(
+                    ((FieldDescriptor) annotated).getCorrespondingProperty(), returnType, annotationDescriptorsAlreadyPresent
+            );
+        }
+        else if (annotated instanceof ClassDescriptor) {
+            generateAdditionalClassAnnotations(annotationDescriptorsAlreadyPresent, (ClassDescriptor) annotated);
+        }
+    }
+
+    private void generateAdditionalCallableAnnotations(
+            @NotNull CallableDescriptor descriptor,
+            @Nullable Type returnType,
+            @NotNull Set<String> annotationDescriptorsAlreadyPresent
+    ) {
+        // No need to annotate privates, synthetic accessors and their parameters
+        if (isInvisibleFromTheOutside(descriptor)) return;
+        if (descriptor instanceof ValueParameterDescriptor && isInvisibleFromTheOutside(descriptor.getContainingDeclaration())) return;
+
+        // No need to annotate annotation methods since they're always non-null
+        if (descriptor instanceof PropertyGetterDescriptor &&
+            DescriptorUtils.isAnnotationClass(descriptor.getContainingDeclaration())) {
+            return;
         }
 
-        if (unwrapped instanceof CallableDescriptor) {
-            CallableDescriptor descriptor = (CallableDescriptor) unwrapped;
-
-            // No need to annotate privates, synthetic accessors and their parameters
-            if (isInvisibleFromTheOutside(descriptor)) return;
-            if (descriptor instanceof ValueParameterDescriptor && isInvisibleFromTheOutside(descriptor.getContainingDeclaration())) return;
-
-            // No need to annotate annotation methods since they're always non-null
-            if (descriptor instanceof PropertyGetterDescriptor &&
-                DescriptorUtils.isAnnotationClass(descriptor.getContainingDeclaration())) {
-                return;
-            }
-
-            if (returnType != null && !AsmUtil.isPrimitive(returnType)) {
-                generateNullabilityAnnotation(descriptor.getReturnType(), annotationDescriptorsAlreadyPresent);
-            }
+        if (returnType != null && !AsmUtil.isPrimitive(returnType)) {
+            generateNullabilityAnnotation(descriptor.getReturnType(), annotationDescriptorsAlreadyPresent);
         }
+    }
 
-        if (unwrapped instanceof ClassDescriptor) {
-            ClassDescriptor classDescriptor = (ClassDescriptor) unwrapped;
-            if (classDescriptor.getKind() == ClassKind.ANNOTATION_CLASS) {
-                generateDocumentedAnnotation(classDescriptor, annotationDescriptorsAlreadyPresent);
-                generateRetentionAnnotation(classDescriptor, annotationDescriptorsAlreadyPresent);
-                generateTargetAnnotation(classDescriptor, annotationDescriptorsAlreadyPresent);
-            }
+    private void generateAdditionalClassAnnotations(
+            @NotNull Set<String> annotationDescriptorsAlreadyPresent,
+            @NotNull ClassDescriptor descriptor
+    ) {
+        if (descriptor.getKind() == ClassKind.ANNOTATION_CLASS) {
+            generateDocumentedAnnotation(descriptor, annotationDescriptorsAlreadyPresent);
+            generateRetentionAnnotation(descriptor, annotationDescriptorsAlreadyPresent);
+            generateTargetAnnotation(descriptor, annotationDescriptorsAlreadyPresent);
         }
     }
 
     private static boolean isInvisibleFromTheOutside(@Nullable DeclarationDescriptor descriptor) {
-        if (descriptor instanceof CallableMemberDescriptor && KotlinTypeMapper.isAccessor((CallableMemberDescriptor) descriptor)) return false;
+        if (descriptor instanceof CallableMemberDescriptor && KotlinTypeMapper.isAccessor((CallableMemberDescriptor) descriptor)) {
+            return true;
+        }
         if (descriptor instanceof MemberDescriptor) {
             return AsmUtil.getVisibilityAccessFlag((MemberDescriptor) descriptor) == Opcodes.ACC_PRIVATE;
         }
@@ -356,7 +349,7 @@ public abstract class AnnotationCodegen {
     private String getAnnotationArgumentJvmName(@Nullable ClassDescriptor annotationClass, @NotNull Name parameterName) {
         if (annotationClass == null) return parameterName.asString();
 
-        Collection<PropertyDescriptor> variables =
+        Collection<? extends PropertyDescriptor> variables =
                 annotationClass.getUnsubstitutedMemberScope().getContributedVariables(parameterName, NoLookupLocation.FROM_BACKEND);
         if (variables.size() != 1) return parameterName.asString();
 
@@ -368,7 +361,7 @@ public abstract class AnnotationCodegen {
             @NotNull ConstantValue<?> value,
             @NotNull AnnotationVisitor annotationVisitor
     ) {
-        AnnotationArgumentVisitor argumentVisitor = new AnnotationArgumentVisitor<Void, Void>() {
+        AnnotationArgumentVisitor<Void, Void> argumentVisitor = new AnnotationArgumentVisitor<Void, Void>() {
             @Override
             public Void visitLongValue(@NotNull LongValue value, Void data) {
                 return visitSimpleValue(value);

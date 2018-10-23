@@ -45,6 +45,9 @@ open class KotlinScriptDefinition(open val template: KClass<out Any>) : UserData
     open fun getScriptName(script: KtScript): Name =
         NameUtils.getScriptNameForFile(script.containingKtFile.name)
 
+    open val fileExtension: String
+        get() = "kts"
+
     open val dependencyResolver: DependenciesResolver get() = DependenciesResolver.NoDependencies
 
     open val acceptedAnnotations: List<KClass<out Annotation>> get() = emptyList()

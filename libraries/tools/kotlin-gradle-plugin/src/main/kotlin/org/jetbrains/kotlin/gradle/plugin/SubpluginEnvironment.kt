@@ -73,11 +73,13 @@ class SubpluginEnvironment(
             val pluginId = subplugin.getCompilerPluginId()
             project.logger.kotlinDebug { "Loading subplugin $pluginId" }
 
-            val artifact = subplugin.getPluginArtifact()
-            val artifactVersion = artifact.version ?: kotlinPluginVersion
-            val mavenCoordinate = "${artifact.groupId}:${artifact.artifactId}:$artifactVersion"
-            project.logger.kotlinDebug { "Adding '$mavenCoordinate' to '$PLUGIN_CLASSPATH_CONFIGURATION_NAME' configuration" }
-            project.dependencies.add(PLUGIN_CLASSPATH_CONFIGURATION_NAME, mavenCoordinate)
+            subplugin.getPluginArtifact().let { artifact ->
+                project.addMavenDependency(PLUGIN_CLASSPATH_CONFIGURATION_NAME, artifact)
+            }
+
+            subplugin.getNativeCompilerPluginArtifact()?.let { artifact ->
+                project.addMavenDependency(NATIVE_COMPILER_PLUGIN_CLASSPATH_CONFIGURATION_NAME, artifact)
+            }
 
             val subpluginOptions =
                 subplugin.apply(project, kotlinTask, javaTask, variantData, androidProjectHandler, kotlinCompilation)
@@ -91,5 +93,12 @@ class SubpluginEnvironment(
         }
 
         return appliedSubplugins
+    }
+
+    private fun Project.addMavenDependency(configuration: String, artifact: SubpluginArtifact) {
+        val artifactVersion = artifact.version ?: kotlinPluginVersion
+        val mavenCoordinate = "${artifact.groupId}:${artifact.artifactId}:$artifactVersion"
+        project.logger.kotlinDebug { "Adding '$mavenCoordinate' to '$configuration' configuration" }
+        project.dependencies.add(configuration, mavenCoordinate)
     }
 }

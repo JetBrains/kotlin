@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.idea.core.platform.impl
 
+import com.intellij.execution.PsiLocation
+import com.intellij.execution.actions.ConfigurationContext
 import com.intellij.execution.actions.RunConfigurationProducer
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.libraries.Library
@@ -12,6 +14,7 @@ import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptorWithResolutionScopes
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.gradle.KotlinPlatform
 import org.jetbrains.kotlin.idea.caches.resolve.JsAnalyzerFacade
 import org.jetbrains.kotlin.idea.compiler.configuration.Kotlin2JsCompilerArgumentsHolder
 import org.jetbrains.kotlin.idea.framework.JSLibraryKind
@@ -20,6 +23,7 @@ import org.jetbrains.kotlin.idea.framework.JsLibraryStdDetectionUtil
 import org.jetbrains.kotlin.idea.highlighter.KotlinTestRunLineMarkerContributor.Companion.getTestStateIcon
 import org.jetbrains.kotlin.idea.js.KotlinJSRunConfigurationDataProvider
 import org.jetbrains.kotlin.idea.platform.IdePlatformKindTooling
+import org.jetbrains.kotlin.idea.run.multiplatform.KotlinMultiplatformRunLocationsProvider
 import org.jetbrains.kotlin.idea.util.string.joinWithEscape
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.platform.impl.JsIdePlatformKind
@@ -30,6 +34,7 @@ import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.utils.PathUtil
+import org.jetbrains.kotlin.utils.ifEmpty
 import javax.swing.Icon
 
 class JsIdePlatformKindTooling : IdePlatformKindTooling() {
@@ -48,6 +53,7 @@ class JsIdePlatformKindTooling : IdePlatformKindTooling() {
 
     override val mavenLibraryIds = listOf(PathUtil.JS_LIB_NAME, MAVEN_OLD_JS_STDLIB_ID)
     override val gradlePluginId = "kotlin-platform-js"
+    override val gradlePlatformIds: List<KotlinPlatform> get() = listOf(KotlinPlatform.JS)
 
     override val libraryKind = JSLibraryKind
     override fun getLibraryDescription(project: Project) = JSLibraryStdDescription(project)
@@ -59,13 +65,15 @@ class JsIdePlatformKindTooling : IdePlatformKindTooling() {
     override fun getTestIcon(declaration: KtNamedDeclaration, descriptor: DeclarationDescriptor): Icon? {
         if (!descriptor.isTest()) return null
 
+        val contexts by lazy { computeConfigurationContexts(declaration) }
+
         val runConfigData = RunConfigurationProducer
             .getProducers(declaration.project)
             .asSequence()
             .filterIsInstance<KotlinJSRunConfigurationDataProvider<*>>()
             .filter { it.isForTests }
-            .mapNotNull { it.getConfigurationData(declaration) }
-            .firstOrNull() ?: return null
+            .flatMap { provider -> contexts.map { context -> provider.getConfigurationData(context) } }
+            .firstOrNull { it != null } ?: return null
 
         val locations = ArrayList<String>()
 
@@ -91,13 +99,22 @@ class JsIdePlatformKindTooling : IdePlatformKindTooling() {
     }
 
     override fun acceptsAsEntryPoint(function: KtFunction): Boolean {
+        val contexts by lazy { computeConfigurationContexts(function) }
+
         return RunConfigurationProducer
             .getProducers(function.project)
             .asSequence()
             .filterIsInstance<KotlinJSRunConfigurationDataProvider<*>>()
             .filter { !it.isForTests }
-            .mapNotNull { it.getConfigurationData(function) }
-            .firstOrNull() != null
+            .flatMap { provider -> contexts.map { context -> provider.getConfigurationData(context) } }
+            .any { it != null }
+    }
+
+    private fun computeConfigurationContexts(declaration: KtNamedDeclaration): Sequence<ConfigurationContext> {
+        val location = PsiLocation(declaration)
+        return KotlinMultiplatformRunLocationsProvider().getAlternativeLocations(location).map {
+            ConfigurationContext.createEmptyContextForLocation(it)
+        }.ifEmpty { listOf(ConfigurationContext.createEmptyContextForLocation(location)) }.asSequence()
     }
 
     private fun DeclarationDescriptor.isIgnored(): Boolean =

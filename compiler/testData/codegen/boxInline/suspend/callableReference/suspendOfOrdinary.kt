@@ -18,7 +18,7 @@ fun builder(c: suspend () -> Unit) {
         override val context: CoroutineContext
             get() = EmptyCoroutineContext
 
-        override fun resumeWith(result: SuccessOrFailure<Unit>) {
+        override fun resumeWith(result: Result<Unit>) {
             result.getOrThrow()
         }
     })

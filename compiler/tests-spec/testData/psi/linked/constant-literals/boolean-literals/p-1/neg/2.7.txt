@@ -1,0 +1,62 @@
+KtFile: 2.7.kt
+  PACKAGE_DIRECTIVE
+    <empty list>
+  IMPORT_LIST
+    <empty list>
+  CLASS
+    MODIFIER_LIST
+      PsiElement(enum)('enum')
+    PsiWhiteSpace(' ')
+    PsiElement(class)('class')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('A')
+    PRIMARY_CONSTRUCTOR
+      VALUE_PARAMETER_LIST
+        PsiElement(LPAR)('(')
+        VALUE_PARAMETER
+          PsiElement(IDENTIFIER)('x1')
+          PsiElement(COLON)(':')
+          PsiWhiteSpace(' ')
+          TYPE_REFERENCE
+            NULLABLE_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('Any')
+              PsiElement(QUEST)('?')
+        PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    CLASS_BODY
+      PsiElement(LBRACE)('{')
+      PsiErrorElement:Expecting ';' after the last enum entry or '}' to close enum class body
+        <empty list>
+      PsiWhiteSpace('\n    ')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(true)('true')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(LPAR)('(')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(OPEN_QUOTE)('"')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(REGULAR_STRING_PART)('1')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(CLOSING_QUOTE)('"')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(RPAR)(')')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(COMMA)(',')
+      PsiWhiteSpace('\n    ')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(false)('false')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(LPAR)('(')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(OPEN_QUOTE)('"')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(REGULAR_STRING_PART)('2')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(CLOSING_QUOTE)('"')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(RPAR)(')')
+      PsiElement(SEMICOLON)(';')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')

@@ -156,7 +156,7 @@ open class AddModifierFix(
             val classDescriptor = type.constructor.declarationDescriptor as? ClassDescriptor ?: return null
             val declaration = DescriptorToSourceUtils.descriptorToDeclaration(classDescriptor) as? KtClass ?: return null
             if (!declaration.canRefactor()) return null
-            if (declaration.isEnum()) return null
+            if (declaration.isEnum() || declaration.isData()) return null
             return AddModifierFix(declaration, KtTokens.OPEN_KEYWORD)
         }
     }

@@ -77,7 +77,7 @@ class ScriptCodegen private constructor(
             classBuilder: ClassBuilder,
             methodContext: MethodContext
     ) {
-        val scriptDefinition = scriptContext.script.kotlinScriptDefinition.value
+        val scriptDefinition = scriptContext.script.kotlinScriptDefinition
 
         val jvmSignature = typeMapper.mapScriptSignature(
             scriptDescriptor,
@@ -99,7 +99,9 @@ class ScriptCodegen private constructor(
                 OtherOrigin(scriptDeclaration, scriptDescriptor.unsubstitutedPrimaryConstructor),
                 ACC_PUBLIC, jvmSignature.asmMethod.name, jvmSignature.asmMethod.descriptor, null, null)
 
-        FunctionCodegen.generateMethodAnnotations(scriptDescriptor.unsubstitutedPrimaryConstructor, asmMethod, mv, this, typeMapper)
+        AnnotationCodegen.forMethod(mv, this, typeMapper).genAnnotations(
+            scriptDescriptor.unsubstitutedPrimaryConstructor, asmMethod.returnType
+        )
 
         if (state.classBuilderMode.generateBodies) {
             mv.visitCode()

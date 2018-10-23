@@ -19,10 +19,10 @@ external interface JsClass<T : Any> {
     val name: String
 }
 
-@Deprecated("Use class literal and extension property `js` instead.", replaceWith = ReplaceWith("T::class.js"), level = DeprecationLevel.WARNING)
+@Deprecated("Use class literal and extension property `js` instead.", replaceWith = ReplaceWith("T::class.js"), level = DeprecationLevel.ERROR)
 external fun <T : Any> jsClass(): JsClass<T>
 
-@Deprecated("Use class literal and extension property `js` instead.", replaceWith = ReplaceWith("this::class.js"), level = DeprecationLevel.WARNING)
+@Deprecated("Use class literal and extension property `js` instead.", replaceWith = ReplaceWith("this::class.js"), level = DeprecationLevel.ERROR)
 val <T : Any> T.jsClass: JsClass<T>
     get() = when (jsTypeOf(this)) {
         "string" -> js("String")

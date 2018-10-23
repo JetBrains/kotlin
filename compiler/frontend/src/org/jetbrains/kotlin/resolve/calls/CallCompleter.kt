@@ -5,16 +5,18 @@
 
 package org.jetbrains.kotlin.resolve.calls
 
-import org.jetbrains.kotlin.builtins.*
+import org.jetbrains.kotlin.builtins.getReturnTypeFromFunctionType
+import org.jetbrains.kotlin.builtins.getValueParameterTypesFromFunctionType
+import org.jetbrains.kotlin.builtins.isFunctionOrSuspendFunctionType
 import org.jetbrains.kotlin.contracts.EffectSystem
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.BindingContext.CONSTRAINT_SYSTEM_COMPLETER
-import org.jetbrains.kotlin.resolve.annotations.hasImplicitIntegerCoercionAnnotation
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.ResolveArgumentsMode.RESOLVE_FUNCTION_ARGUMENTS
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.getEffectiveExpectedType
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.isInvokeCallOnVariable
@@ -41,6 +43,7 @@ import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy
 import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant
 import org.jetbrains.kotlin.resolve.constants.IntegerValueTypeConstant
 import org.jetbrains.kotlin.resolve.constants.IntegerValueTypeConstructor
+import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.expressions.DataFlowAnalyzer
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
@@ -321,10 +324,12 @@ class CallCompleter(
 
         val results = completeCallForArgument(deparenthesized, context)
 
+        val constant = context.trace[BindingContext.COMPILE_TIME_VALUE, deparenthesized]
+        val convertedConst = constant is IntegerValueTypeConstant && constant.convertedFromSigned
+
         if (results != null && results.isSingleResult) {
             val resolvedCall = results.resultingCall
-            val constant = context.trace[BindingContext.COMPILE_TIME_VALUE, deparenthesized]
-            if (constant !is IntegerValueTypeConstant || !constant.convertedFromSigned) {
+            if (!convertedConst) {
                 updatedType =
                         if (resolvedCall.hasInferredReturnType())
                             resolvedCall.makeNullableTypeIfSafeReceiver(resolvedCall.resultingDescriptor?.returnType, context)
@@ -339,7 +344,7 @@ class CallCompleter(
             updatedType = argumentTypeResolver.updateResultArgumentTypeIfNotDenotable(context, expression) ?: updatedType
         }
 
-        if (parameter?.hasImplicitIntegerCoercionAnnotation() == true) {
+        if (parameter != null && ImplicitIntegerCoercion.isEnabledForParameter(parameter)) {
             val argumentCompileTimeValue = context.trace[BindingContext.COMPILE_TIME_VALUE, deparenthesized]
             if (argumentCompileTimeValue != null && argumentCompileTimeValue.parameters.isConvertableConstVal) {
                 val generalNumberType = createTypeForConvertableConstant(argumentCompileTimeValue)
@@ -349,6 +354,8 @@ class CallCompleter(
                     )
                 }
             }
+        } else if (convertedConst) {
+            context.trace.report(Errors.SIGNED_CONSTANT_CONVERTED_TO_UNSIGNED.on(deparenthesized))
         }
 
         updatedType = updateRecordedTypeForArgument(updatedType, recordedType, expression, context.statementFilter, context.trace)

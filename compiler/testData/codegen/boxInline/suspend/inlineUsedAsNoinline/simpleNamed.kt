@@ -1,4 +1,5 @@
 // IGNORE_BACKEND: JVM_IR
+// IGNORE_BACKEND: JS_IR
 // FILE: inlined.kt
 // WITH_RUNTIME
 // WITH_COROUTINES
@@ -36,7 +37,7 @@ fun builder(c: suspend () -> Unit) {
         override val context: CoroutineContext
             get() = EmptyCoroutineContext
 
-        override fun resumeWith(r: SuccessOrFailure<Unit>) {
+        override fun resumeWith(r: Result<Unit>) {
             r.getOrThrow()
             proceed = {
                 result = "OK"

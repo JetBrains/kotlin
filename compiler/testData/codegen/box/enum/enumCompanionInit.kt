@@ -1,6 +1,5 @@
-// IGNORE_BACKEND: NATIVE
-// IGNORE_BACKEND: JVM_IR
 // IGNORE_BACKEND: JS_IR
+// IGNORE_BACKEND: NATIVE
 var result = ""
 
 enum class E(a: String) {

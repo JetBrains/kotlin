@@ -19,8 +19,6 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.diagnostics.reportFromPlugin
@@ -88,10 +86,7 @@ class ParcelableDeclarationChecker : DeclarationChecker {
             bindingContext: BindingContext
     ) {
         fun hasIgnoredOnParcel(): Boolean {
-            fun AnnotationDescriptor.isIgnoredOnParcel() = fqName == IGNORED_ON_PARCEL_FQNAME
-
-            fun Annotations.hasIgnoredOnParcel() = getAllAnnotations()
-                .any { (it.target == null || it.target == AnnotationUseSiteTarget.PROPERTY_GETTER) && it.annotation.isIgnoredOnParcel() }
+            fun Annotations.hasIgnoredOnParcel() = any { it.fqName == IGNORED_ON_PARCEL_FQNAME }
 
             return property.annotations.hasIgnoredOnParcel() || (property.getter?.annotations?.hasIgnoredOnParcel() ?: false)
         }

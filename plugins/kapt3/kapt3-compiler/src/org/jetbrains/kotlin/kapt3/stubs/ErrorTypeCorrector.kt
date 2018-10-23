@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.kapt3.base.mapJList
 import org.jetbrains.kotlin.kapt3.base.mapJListIndexed
 import org.jetbrains.kotlin.kapt3.stubs.ErrorTypeCorrector.TypeKind.METHOD_PARAMETER_TYPE
 import org.jetbrains.kotlin.kapt3.stubs.ErrorTypeCorrector.TypeKind.RETURN_TYPE
+import org.jetbrains.kotlin.kapt3.stubs.ErrorTypeCorrector.TypeKind.SUPER_TYPE
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -62,7 +63,7 @@ class ErrorTypeCorrector(
     }
 
     enum class TypeKind {
-        RETURN_TYPE, METHOD_PARAMETER_TYPE
+        RETURN_TYPE, METHOD_PARAMETER_TYPE, SUPER_TYPE
     }
 
     fun convert(type: KtTypeElement, substitutions: SubstitutionMap): JCTree.JCExpression {
@@ -131,6 +132,7 @@ class ErrorTypeCorrector(
             //TODO figure out if the containing method is an annotation method
             RETURN_TYPE -> TypeMappingMode.getOptimalModeForReturnType(kotlinType, false)
             METHOD_PARAMETER_TYPE -> TypeMappingMode.getOptimalModeForValueParameter(kotlinType)
+            SUPER_TYPE -> TypeMappingMode.getOptimalModeForValueParameter(kotlinType)
         }.updateArgumentModeFromAnnotations(kotlinType)
 
         val typeParameters = (target as? ClassifierDescriptor)?.typeConstructor?.parameters

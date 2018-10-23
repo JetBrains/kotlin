@@ -81,30 +81,30 @@ enum class HintType(desc: String, enabled: Boolean) {
         override fun isApplicable(elem: PsiElement): Boolean = elem is KtValueArgumentList
     },
 
-
     LAMBDA_RETURN_EXPRESSION("Show lambda return expression hints", true) {
         override fun isApplicable(elem: PsiElement) =
-            elem is KtExpression && elem !is KtLambdaExpression && elem !is KtFunctionLiteral &&
-                    !elem.isNameReferenceInCall()
+            elem is KtExpression && elem !is KtFunctionLiteral && !elem.isNameReferenceInCall()
 
         override fun provideHints(elem: PsiElement): List<InlayInfo> {
             if (elem is KtExpression) {
                 return provideLambdaReturnValueHints(elem)
             }
+
             return emptyList()
         }
     },
 
     LAMBDA_IMPLICIT_PARAMETER_RECEIVER("Show hints for implicit receivers and parameters of lambdas", true) {
-        override fun isApplicable(elem: PsiElement) = elem is KtLambdaExpression
+        override fun isApplicable(elem: PsiElement) = elem is KtFunctionLiteral
 
         override fun provideHints(elem: PsiElement): List<InlayInfo> {
-            (elem as? KtLambdaExpression)?.let {
-                return provideLambdaImplicitHints(elem)
+            ((elem as? KtFunctionLiteral)?.parent as? KtLambdaExpression)?.let {
+                return provideLambdaImplicitHints(it)
             }
             return emptyList()
         }
     },
+
     SUSPENDING_CALL("Show hints for suspending calls", false) {
         override fun isApplicable(elem: PsiElement) = elem.isNameReferenceInCall() && ApplicationManager.getApplication().isInternal
 
@@ -115,8 +115,11 @@ enum class HintType(desc: String, enabled: Boolean) {
     };
 
     companion object {
+        fun resolve(elem: PsiElement): HintType? {
+            val applicableTypes = HintType.values().filter { it.isApplicable(elem) }
+            return applicableTypes.firstOrNull()
+        }
 
-        fun resolve(elem: PsiElement): HintType? = HintType.values().find { it.isApplicable(elem) }
         fun resolveToEnabled(elem: PsiElement?): HintType? {
 
             val resolved = elem?.let { resolve(it) } ?: return null

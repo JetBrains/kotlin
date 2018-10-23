@@ -16,21 +16,44 @@ import com.intellij.psi.util.CachedValueProvider
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.caches.resolve.KotlinCacheService
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.idea.caches.project.SourceType.PRODUCTION
+import org.jetbrains.kotlin.idea.caches.project.SourceType.TEST
 import org.jetbrains.kotlin.idea.facet.KotlinFacet
 import org.jetbrains.kotlin.idea.facet.KotlinFacetType
 import org.jetbrains.kotlin.idea.facet.KotlinFacetType.Companion.ID
+import org.jetbrains.kotlin.idea.project.platform
 import org.jetbrains.kotlin.idea.util.rootManager
+import org.jetbrains.kotlin.platform.impl.CommonIdePlatformKind
+import org.jetbrains.kotlin.platform.impl.isCommon
 import org.jetbrains.kotlin.resolve.TargetPlatform
 
-internal val Module.isNewMPPModule: Boolean
-    get() = KotlinFacet.get(this)?.configuration?.settings?.kind?.isNewMPP ?: false
+val Module.isNewMPPModule: Boolean
+    get() = facetSettings?.kind?.isNewMPP ?: false
+
+val Module.externalProjectId: String
+    get() = facetSettings?.externalProjectId ?: ""
+
+val Module.sourceType: SourceType?
+    get() = facetSettings?.isTestModule?.let { isTest -> if (isTest) SourceType.TEST else PRODUCTION }
+
+val Module.isMPPModule: Boolean
+    get() {
+        val settings = facetSettings ?: return false
+        return settings.platform.isCommon ||
+                settings.implementedModuleNames.isNotEmpty() ||
+                settings.kind.isNewMPP
+    }
+
+private val Module.facetSettings get() = KotlinFacet.get(this)?.configuration?.settings
 
 val Module.implementingModules: List<Module>
     get() = cached(CachedValueProvider {
         val moduleManager = ModuleManager.getInstance(project)
         CachedValueProvider.Result(
             if (isNewMPPModule) {
-                moduleManager.getModuleDependentModules(this).filter { it.isNewMPPModule }
+                moduleManager.getModuleDependentModules(this).filter {
+                    it.isNewMPPModule && it.externalProjectId == externalProjectId
+                }
             } else {
                 moduleManager.modules.filter { name in it.findOldFashionedImplementedModuleNames() }
             },
@@ -43,7 +66,9 @@ val Module.implementedModules: List<Module>
         CachedValueProvider {
             CachedValueProvider.Result(
                 if (isNewMPPModule) {
-                    rootManager.dependencies.filter { it.isNewMPPModule }
+                    rootManager.dependencies.filter {
+                        it.isNewMPPModule && it.platform is CommonIdePlatformKind.Platform && it.externalProjectId == externalProjectId
+                    }
                 } else {
                     val modelsProvider = IdeModelsProviderImpl(project)
                     findOldFashionedImplementedModuleNames().mapNotNull { modelsProvider.findIdeModule(it) }
@@ -69,12 +94,15 @@ val ModuleDescriptor.implementingDescriptors: List<ModuleDescriptor>
             return listOf(this)
         }
         val moduleSourceInfo = moduleInfo as? ModuleSourceInfo ?: return emptyList()
-        val implementingModuleInfos = moduleSourceInfo.module.implementingModules.mapNotNull { it.toInfo(moduleSourceInfo.isTests()) }
+        val implementingModuleInfos = moduleSourceInfo.module.implementingModules.mapNotNull { it.toInfo(moduleSourceInfo.sourceType) }
         return implementingModuleInfos.mapNotNull { it.toDescriptor() }
     }
 
-private fun Module.toInfo(isTests: Boolean): ModuleSourceInfo? =
-    if (isTests) testSourceInfo() else productionSourceInfo()
+private fun Module.toInfo(type: SourceType): ModuleSourceInfo? = when (type) {
+    PRODUCTION -> productionSourceInfo()
+    TEST -> testSourceInfo()
+}
+
 
 val ModuleDescriptor.implementedDescriptors: List<ModuleDescriptor>
     get() {
@@ -94,7 +122,7 @@ fun PsiElement.getPlatformModuleInfo(desiredPlatform: TargetPlatform): PlatformM
     val moduleInfo = getModuleInfo() as? ModuleSourceInfo ?: return null
     return when (moduleInfo.platform) {
         TargetPlatform.Common -> {
-            val correspondingImplementingModule = moduleInfo.module.implementingModules.map { it.toInfo(moduleInfo.isTests()) }
+            val correspondingImplementingModule = moduleInfo.module.implementingModules.map { it.toInfo(moduleInfo.sourceType) }
                 .firstOrNull { it?.platform == desiredPlatform } ?: return null
             PlatformModuleInfo(correspondingImplementingModule, correspondingImplementingModule.expectedBy)
         }

@@ -50,7 +50,7 @@ abstract class AbstractCoroutineCodegen(
     element: KtElement,
     closureContext: ClosureContext,
     classBuilder: ClassBuilder,
-    private val userDataForDoResume: Map<out FunctionDescriptor.UserDataKey<*>, *>? = null
+    private val userDataForDoResume: Map<out CallableDescriptor.UserDataKey<*>, *>? = null
 ) : ClosureCodegen(
     outerExpressionCodegen.state,
     element, null, closureContext, null,
@@ -64,7 +64,7 @@ abstract class AbstractCoroutineCodegen(
         if (languageVersionSettings.isReleaseCoroutines())
             createImplMethod(
                 INVOKE_SUSPEND_METHOD_NAME,
-                "result" to classDescriptor.module.getSuccessOrFailure(classDescriptor.builtIns.anyType)
+                "result" to classDescriptor.module.getResult(classDescriptor.builtIns.anyType)
             )
         else
             createImplMethod(
@@ -102,7 +102,7 @@ abstract class AbstractCoroutineCodegen(
         )
 
     override fun generateConstructor(): Method {
-        val args = calculateConstructorParameters(typeMapper, closure, asmType)
+        val args = calculateConstructorParameters(typeMapper, languageVersionSettings, closure, asmType)
         val argTypes = args.map { it.fieldType }.plus(languageVersionSettings.continuationAsmType()).toTypedArray()
 
         val constructor = Method("<init>", Type.VOID_TYPE, argTypes)
@@ -345,9 +345,9 @@ class CoroutineCodegenForLambda private constructor(
             dup()
 
             // pass captured closure to constructor
-            val constructorParameters = calculateConstructorParameters(typeMapper, closure, owner)
+            val constructorParameters = calculateConstructorParameters(typeMapper, languageVersionSettings, closure, owner)
             for (parameter in constructorParameters) {
-                StackValue.field(parameter, thisInstance).put(parameter.fieldType, this)
+                StackValue.field(parameter, thisInstance).put(parameter.fieldType, parameter.fieldKotlinType, this)
             }
 
             // load resultContinuation
@@ -377,7 +377,11 @@ class CoroutineCodegenForLambda private constructor(
                     load(1, AsmTypes.OBJECT_TYPE)
                     iconst(index - 1)
                     aload(AsmTypes.OBJECT_TYPE)
-                    StackValue.coerce(AsmTypes.OBJECT_TYPE, fieldInfoForCoroutineLambdaParameter.fieldType, this)
+                    StackValue.coerce(
+                        AsmTypes.OBJECT_TYPE, builtIns.nullableAnyType,
+                        fieldInfoForCoroutineLambdaParameter.fieldType, fieldInfoForCoroutineLambdaParameter.fieldKotlinType,
+                        this
+                    )
                     putfield(
                         fieldInfoForCoroutineLambdaParameter.ownerInternalName,
                         fieldInfoForCoroutineLambdaParameter.fieldName,
@@ -386,7 +390,11 @@ class CoroutineCodegenForLambda private constructor(
                 } else {
                     if (generateErasedCreate) {
                         load(index, AsmTypes.OBJECT_TYPE)
-                        StackValue.coerce(AsmTypes.OBJECT_TYPE, fieldInfoForCoroutineLambdaParameter.fieldType, this)
+                        StackValue.coerce(
+                            AsmTypes.OBJECT_TYPE, builtIns.nullableAnyType,
+                            fieldInfoForCoroutineLambdaParameter.fieldType, fieldInfoForCoroutineLambdaParameter.fieldKotlinType,
+                            this
+                        )
                     } else {
                         load(index, fieldInfoForCoroutineLambdaParameter.fieldType)
                     }
@@ -434,6 +442,7 @@ class CoroutineCodegenForLambda private constructor(
         FieldInfo.createForHiddenField(
             typeMapper.mapClass(closureContext.thisDescriptor),
             typeMapper.mapType(type),
+            type,
             name
         )
 
@@ -448,7 +457,8 @@ class CoroutineCodegenForLambda private constructor(
                     return CoroutineTransformerMethodVisitor(
                         mv, access, name, desc, null, null,
                         obtainClassBuilderForCoroutineState = { v },
-                        lineNumber = CodegenUtil.getLineNumberForElement(element, false) ?: 0,
+                        element = element,
+                        diagnostics = state.diagnostics,
                         shouldPreserveClassInitialization = constructorCallNormalizationMode.shouldPreserveClassInitialization,
                         containingClassInternalName = v.thisName,
                         isForNamedFunction = false,
@@ -570,7 +580,8 @@ class CoroutineCodegenForNamedFunction private constructor(
                         codegen.v
                     )
 
-                    val captureThisType = closure.captureThis?.let(typeMapper::mapType)
+                    val captureThis = closure.capturedOuterClassDescriptor
+                    val captureThisType = captureThis?.let(typeMapper::mapType)
                     if (captureThisType != null) {
                         StackValue.field(
                             captureThisType, Type.getObjectType(v.thisName), AsmUtil.CAPTURED_THIS_FIELD,
@@ -666,7 +677,7 @@ class CoroutineCodegenForNamedFunction private constructor(
                 ].sure { "There must be a jvm view defined for $originalSuspendDescriptor" }
 
             if (suspendFunctionView.dispatchReceiverParameter != null) {
-                closure.setCaptureThis()
+                closure.setNeedsCaptureOuterClass()
             }
 
             return CoroutineCodegenForNamedFunction(

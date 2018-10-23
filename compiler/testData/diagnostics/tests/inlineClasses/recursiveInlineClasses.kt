@@ -14,3 +14,8 @@ inline class TestNullable(val x: <!INLINE_CLASS_CANNOT_BE_RECURSIVE!>TestNullabl
 inline class TestRecursionInTypeArguments(val x: List<TestRecursionInTypeArguments>)
 
 inline class TestRecursionInArray(val x: Array<TestRecursionInArray>)
+
+inline class TestRecursionInUpperBounds<T : TestRecursionInUpperBounds<T>>(val x: <!INLINE_CLASS_HAS_INAPPLICABLE_PARAMETER_TYPE!>T<!>)
+
+inline class Id<T>(val x: <!INLINE_CLASS_HAS_INAPPLICABLE_PARAMETER_TYPE!>T<!>)
+inline class TestRecursionThroughId(val x: Id<TestRecursionThroughId>)

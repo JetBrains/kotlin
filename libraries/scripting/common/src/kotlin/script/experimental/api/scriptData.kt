@@ -7,53 +7,83 @@
 
 package kotlin.script.experimental.api
 
+import java.io.Serializable
 import java.net.URL
 import kotlin.script.experimental.util.PropertiesCollection
 
-interface ScriptSource {
-    val location: URL?
-    val text: String?
+/**
+ * The interface to the script or snippet source code
+ */
+interface SourceCode {
+    /**
+     * The source code text
+     */
+    val text: String
 
+    /**
+     * The source code position
+     * @param line source code position line
+     * @param col source code position column
+     * @param absolutePos absolute source code text position, if available
+     */
     data class Position(val line: Int, val col: Int, val absolutePos: Int? = null)
+
+    /**
+     * The source code positions range
+     * @param start range start position
+     * @param end range end position (after the last char)
+     */
     data class Range(val start: Position, val end: Position)
+
+    /**
+     * The source code location, pointing either at a position or at a range
+     * @param start location start position
+     * @param end optional range location end position (after the last char)
+     */
     data class Location(val start: Position, val end: Position? = null)
 }
 
-data class ScriptSourceNamedFragment(val name: String?, val range: ScriptSource.Range)
-
-enum class ScriptBodyTarget {
-    Constructor,
-    SAMFunction
+/**
+ * The interface for the source code located externally
+ */
+interface ExternalSourceCode : SourceCode {
+    /**
+     * The source code location url
+     */
+    val externalLocation: URL
 }
 
-data class ResolvingRestrictionRule(
-    val action: Action,
-    val pattern: String // FQN wildcard
-) {
-    enum class Action {
-        Allow,
-        Deny
-    }
-}
+/**
+ * The source code [range] with the the optional [name]
+ */
+data class ScriptSourceNamedFragment(val name: String?, val range: SourceCode.Range)
 
-interface ScriptDependency {
-    // Q: anything generic here?
-}
-
+/**
+ * The general interface to the Script dependency (see platform-specific implementations)
+ */
+interface ScriptDependency : Serializable
 
 interface ScriptCollectedDataKeys
 
+/**
+ * The container for script data collected during compilation
+ * Used for transferring data to the configuration refinement callbacks
+ */
 class ScriptCollectedData(properties: Map<PropertiesCollection.Key<*>, Any>) : PropertiesCollection(properties) {
 
     companion object : ScriptCollectedDataKeys
 }
 
+/**
+ * The script file-level annotations found during script source parsing
+ */
 val ScriptCollectedDataKeys.foundAnnotations by PropertiesCollection.key<List<Annotation>>()
 
-val ScriptCollectedDataKeys.foundFragments by PropertiesCollection.key<List<ScriptSourceNamedFragment>>()
-
+/**
+ * The facade to the script data for refinement callbacks
+ */
 class ScriptConfigurationRefinementContext(
-    val source: ScriptSource,
+    val script: SourceCode,
     val compilationConfiguration: ScriptCompilationConfiguration,
     val collectedData: ScriptCollectedData? = null
 )

@@ -32,11 +32,12 @@ import org.jetbrains.kotlin.resolve.constants.EnumValue
 import org.jetbrains.kotlin.resolve.constants.IntValue
 import org.jetbrains.kotlin.resolve.constants.NullValue
 import org.jetbrains.kotlin.resolve.constants.StringValue
-import org.jetbrains.kotlin.resolve.descriptorUtil.isSourceAnnotation
 import org.jetbrains.kotlin.resolve.descriptorUtil.nonSourceAnnotations
+import org.jetbrains.kotlin.resolve.isInlineClassType
 import org.jetbrains.kotlin.serialization.deserialization.ProtoEnumFlags
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.typeUtil.contains
+import org.jetbrains.kotlin.types.typeUtil.immediateSupertypes
 import java.util.*
 
 class DescriptorSerializer private constructor(
@@ -146,11 +147,35 @@ class DescriptorSerializer private constructor(
 
         extension.serializeClass(classDescriptor, builder, versionRequirementTable)
 
+        writeVersionRequirementForInlineClasses(classDescriptor, builder, versionRequirementTable)
+
         val versionRequirementTableProto = versionRequirementTable.serialize()
         if (versionRequirementTableProto != null) {
             builder.versionRequirementTable = versionRequirementTableProto
         }
         return builder
+    }
+
+    private fun writeVersionRequirementForInlineClasses(
+        classDescriptor: ClassDescriptor,
+        builder: ProtoBuf.Class.Builder,
+        versionRequirementTable: MutableVersionRequirementTable
+    ) {
+        if (!classDescriptor.isInline && !classDescriptor.hasInlineClassTypesInSignature()) return
+
+        builder.addVersionRequirement(
+            DescriptorSerializer.writeLanguageVersionRequirement(LanguageFeature.InlineClasses, versionRequirementTable)
+        )
+    }
+
+    private fun ClassDescriptor.hasInlineClassTypesInSignature(): Boolean {
+        for (typeParameter in declaredTypeParameters) {
+            if (typeParameter.upperBounds.any { it.contains(UnwrappedType::isInlineClassType) }) return true
+        }
+
+        if (defaultType.immediateSupertypes().any { supertype -> supertype.contains(UnwrappedType::isInlineClassType) }) return true
+
+        return false
     }
 
     fun propertyProto(descriptor: PropertyDescriptor): ProtoBuf.Property.Builder {
@@ -164,9 +189,10 @@ class DescriptorSerializer private constructor(
         val compileTimeConstant = descriptor.compileTimeInitializer
         val hasConstant = compileTimeConstant != null && compileTimeConstant !is NullValue
 
-        val hasAnnotations = descriptor.annotations.getAllAnnotations().isNotEmpty()
+        val hasAnnotations =
+            hasAnnotations(descriptor) || hasAnnotations(descriptor.backingField) || hasAnnotations(descriptor.delegateField)
 
-        val propertyFlags = Flags.getAccessorFlags(
+        val defaultAccessorFlags = Flags.getAccessorFlags(
             hasAnnotations,
             ProtoEnumFlags.visibility(normalizeVisibility(descriptor)),
             ProtoEnumFlags.modality(descriptor.modality),
@@ -177,7 +203,7 @@ class DescriptorSerializer private constructor(
         if (getter != null) {
             hasGetter = true
             val accessorFlags = getAccessorFlags(getter)
-            if (accessorFlags != propertyFlags) {
+            if (accessorFlags != defaultAccessorFlags) {
                 builder.getterFlags = accessorFlags
             }
         }
@@ -186,7 +212,7 @@ class DescriptorSerializer private constructor(
         if (setter != null) {
             hasSetter = true
             val accessorFlags = getAccessorFlags(setter)
-            if (accessorFlags != propertyFlags) {
+            if (accessorFlags != defaultAccessorFlags) {
                 builder.setterFlags = accessorFlags
             }
 
@@ -237,6 +263,10 @@ class DescriptorSerializer private constructor(
 
         if (descriptor.isSuspendOrHasSuspendTypesInSignature()) {
             builder.addVersionRequirement(writeVersionRequirementDependingOnCoroutinesVersion())
+        }
+
+        if (descriptor.hasInlineClassTypesInSignature()) {
+            builder.addVersionRequirement(writeVersionRequirement(LanguageFeature.InlineClasses))
         }
 
         extension.serializeProperty(descriptor, builder, versionRequirementTable)
@@ -308,6 +338,10 @@ class DescriptorSerializer private constructor(
             builder.addVersionRequirement(writeVersionRequirementDependingOnCoroutinesVersion())
         }
 
+        if (descriptor.hasInlineClassTypesInSignature()) {
+            builder.addVersionRequirement(writeVersionRequirement(LanguageFeature.InlineClasses))
+        }
+
         contractSerializer.serializeContractOfFunctionIfAny(descriptor, builder, this)
 
         extension.serializeFunction(descriptor, builder)
@@ -337,6 +371,10 @@ class DescriptorSerializer private constructor(
             builder.addVersionRequirement(writeVersionRequirementDependingOnCoroutinesVersion())
         }
 
+        if (descriptor.hasInlineClassTypesInSignature()) {
+            builder.addVersionRequirement(writeVersionRequirement(LanguageFeature.InlineClasses))
+        }
+
         extension.serializeConstructor(descriptor, builder)
 
         return builder
@@ -348,12 +386,20 @@ class DescriptorSerializer private constructor(
     private fun CallableMemberDescriptor.isSuspendOrHasSuspendTypesInSignature(): Boolean {
         if (this is FunctionDescriptor && isSuspend) return true
 
+        return allTypesFromSignature().any { type -> type.contains(UnwrappedType::isSuspendFunctionTypeOrSubtype) }
+    }
+
+    private fun CallableMemberDescriptor.hasInlineClassTypesInSignature(): Boolean {
+        return allTypesFromSignature().any { type -> type.contains(UnwrappedType::isInlineClassType) }
+    }
+
+    private fun CallableMemberDescriptor.allTypesFromSignature(): List<KotlinType> {
         return listOfNotNull(
-                extensionReceiverParameter?.type,
-                returnType,
-                *typeParameters.flatMap { it.upperBounds }.toTypedArray(),
-                *valueParameters.map(ValueParameterDescriptor::getType).toTypedArray()
-        ).any { type -> type.contains(UnwrappedType::isSuspendFunctionTypeOrSubtype) }
+            extensionReceiverParameter?.type,
+            returnType,
+            *typeParameters.flatMap { it.upperBounds }.toTypedArray(),
+            *valueParameters.map(ValueParameterDescriptor::getType).toTypedArray()
+        )
     }
 
     fun typeAliasProto(descriptor: TypeAliasDescriptor): ProtoBuf.TypeAlias.Builder {
@@ -614,15 +660,7 @@ class DescriptorSerializer private constructor(
     }
 
     private fun writeVersionRequirement(languageFeature: LanguageFeature): Int {
-        val languageVersion = languageFeature.sinceVersion!!
-        return writeVersionRequirement(
-            languageVersion.major, languageVersion.minor, 0,
-            ProtoBuf.VersionRequirement.VersionKind.LANGUAGE_VERSION
-        )
-    }
-
-    private fun writeVersionRequirement(major: Int, minor: Int, patch: Int, versionKind: ProtoBuf.VersionRequirement.VersionKind): Int {
-        return writeVersionRequirement(major, minor, patch, versionKind, versionRequirementTable)
+        return writeLanguageVersionRequirement(languageFeature, versionRequirementTable)
     }
 
     // Returns a list of indices into versionRequirementTable, or empty list if there's no @RequireKotlin on the descriptor
@@ -749,17 +787,26 @@ class DescriptorSerializer private constructor(
             Variance.OUT_VARIANCE -> ProtoBuf.Type.Argument.Projection.OUT
         }
 
-        private fun hasAnnotations(descriptor: Annotated): Boolean {
-            // Sadly, we can't just return `descriptor.nonSourceAnnotations.isNotEmpty()` because that would not
-            // consider use-site-targeted annotations
-            return descriptor.annotations.getAllAnnotations().filterNot { it.annotation.isSourceAnnotation }.isNotEmpty()
-        }
+        private fun hasAnnotations(descriptor: Annotated?): Boolean =
+            descriptor != null && descriptor.nonSourceAnnotations.isNotEmpty()
 
         fun <T : DeclarationDescriptor> sort(descriptors: Collection<T>): List<T> =
                 ArrayList(descriptors).apply {
                     //NOTE: the exact comparator does matter here
                     Collections.sort(this, MemberComparator.INSTANCE)
                 }
+
+        fun writeLanguageVersionRequirement(
+            languageFeature: LanguageFeature,
+            versionRequirementTable: MutableVersionRequirementTable
+        ): Int {
+            val languageVersion = languageFeature.sinceVersion!!
+            return writeVersionRequirement(
+                languageVersion.major, languageVersion.minor, 0,
+                ProtoBuf.VersionRequirement.VersionKind.LANGUAGE_VERSION,
+                versionRequirementTable
+            )
+        }
 
         fun writeVersionRequirement(
             major: Int,

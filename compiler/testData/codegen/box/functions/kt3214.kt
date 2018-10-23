@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 class A {
     fun get(vararg x: Int) = x.size
 }

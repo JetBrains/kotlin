@@ -34,3 +34,12 @@ fun testTrue(f: () -> Boolean) {
 fun testFalse(f: () -> Boolean) {
     assertFalse(f(), f.toString())
 }
+
+fun assertFails(block: () -> Unit): Throwable {
+    try {
+        block()
+    } catch (t: Throwable) {
+        return t
+    }
+    fail("Expected an exception to be thrown, but was completed successfully.")
+}

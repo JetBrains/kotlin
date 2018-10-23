@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 const val M = Char.MAX_VALUE
 
 fun box(): String {

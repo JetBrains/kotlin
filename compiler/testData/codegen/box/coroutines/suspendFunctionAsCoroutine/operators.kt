@@ -18,19 +18,20 @@ class A(val x: String) {
     var isMinusAssignCalled = false
     var isIncCalled = false
     operator suspend fun component1() = suspendThere(x + "K")
-    operator suspend fun getValue(thisRef: Any?, property: KProperty<*>) = suspendThere(x + "K")
-    operator suspend fun setValue(thisRef: Any?, property: KProperty<*>, value: String): Unit = suspendCoroutineUninterceptedOrReturn { x ->
-        if (value != "56") return@suspendCoroutineUninterceptedOrReturn Unit
-        isSetValueCalled = true
-        x.resume(Unit)
-        COROUTINE_SUSPENDED
-    }
-
-    operator suspend fun provideDelegate(host: Any?, p: Any): A = suspendCoroutineUninterceptedOrReturn { x ->
-        isProvideDelegateCalled = true
-        x.resume(this)
-        COROUTINE_SUSPENDED
-    }
+    // There is no reason to support these operators until suspend properties are supported
+//    operator suspend fun getValue(thisRef: Any?, property: KProperty<*>) = suspendThere(x + "K")
+//    operator suspend fun setValue(thisRef: Any?, property: KProperty<*>, value: String): Unit = suspendCoroutineUninterceptedOrReturn { x ->
+//        if (value != "56") return@suspendCoroutineUninterceptedOrReturn Unit
+//        isSetValueCalled = true
+//        x.resume(Unit)
+//        COROUTINE_SUSPENDED
+//    }
+//
+//    operator suspend fun provideDelegate(host: Any?, p: Any): A = suspendCoroutineUninterceptedOrReturn { x ->
+//        isProvideDelegateCalled = true
+//        x.resume(this)
+//        COROUTINE_SUSPENDED
+//    }
 
     operator suspend fun plus(y: String) = suspendThere(x + y)
     operator suspend fun unaryPlus() = suspendThere(x + "K")
@@ -65,15 +66,15 @@ fun builder(c: suspend () -> Unit) {
 
 var a = A("O")
 
-suspend fun foo1() {
-    var x by a
-
-    if (x != "OK") throw RuntimeException("fail 1")
-
-    x = "56"
-
-    if (!a.isSetValueCalled || !a.isProvideDelegateCalled) throw RuntimeException("fail 2")
-}
+//suspend fun foo1() {
+//    var x by a
+//
+//    if (x != "OK") throw RuntimeException("fail 1")
+//
+//    x = "56"
+//
+//    if (!a.isSetValueCalled || !a.isProvideDelegateCalled) throw RuntimeException("fail 2")
+//}
 
 suspend fun foo2() {
     val (y) = a
@@ -90,11 +91,10 @@ suspend fun foo4() {
     if (y != "OK") throw RuntimeException("fail 5")
 }
 
-// TODO: KT-15930
-//suspend fun foo5() {
-//    a -= "56"
-//    if (!a.isMinusAssignCalled) throw RuntimeException("fail 6")
-//}
+suspend fun foo5() {
+    a -= "56"
+    if (!a.isMinusAssignCalled) throw RuntimeException("fail 6")
+}
 
 suspend fun foo6() {
     var y = a++
@@ -126,11 +126,11 @@ suspend fun foo9() {
 fun box(): String {
 
     builder {
-        foo1()
+        //foo1()
         foo2()
         foo3()
         foo4()
-        //foo5()
+        foo5()
         foo6()
         foo7()
         //foo8()

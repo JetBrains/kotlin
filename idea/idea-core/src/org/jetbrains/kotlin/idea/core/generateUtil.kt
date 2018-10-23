@@ -96,6 +96,7 @@ private fun moveCaretIntoGeneratedElementDocumentUnblocked(editor: Editor, eleme
         }
     }
 
+    editor.moveCaret(element.endOffset)
     return false
 }
 

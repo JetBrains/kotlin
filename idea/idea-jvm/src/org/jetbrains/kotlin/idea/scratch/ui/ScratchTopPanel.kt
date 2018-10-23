@@ -121,9 +121,9 @@ class ScratchTopPanel private constructor(val scratchFile: ScratchFile) : JPanel
 
     private fun createActionsToolbar(): JComponent {
         val toolbarGroup = DefaultActionGroup().apply {
-            add(RunScratchAction(this@ScratchTopPanel))
+            add(RunScratchAction())
             addSeparator()
-            add(ClearScratchAction(this@ScratchTopPanel))
+            add(ClearScratchAction())
         }
 
         return ActionManager.getInstance().createActionToolbar(ActionPlaces.EDITOR_TOOLBAR, toolbarGroup, true).component

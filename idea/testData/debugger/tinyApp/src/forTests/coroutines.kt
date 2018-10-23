@@ -9,7 +9,7 @@ import java.util.concurrent.TimeUnit
 
 open class EmptyContinuation(override val context: CoroutineContext = EmptyCoroutineContext) : Continuation<Any?> {
     companion object : EmptyContinuation()
-    override fun resumeWith(result: SuccessOrFailure<Any?>) { result.getOrThrow() }
+    override fun resumeWith(result: Result<Any?>) { result.getOrThrow() }
 }
 
 

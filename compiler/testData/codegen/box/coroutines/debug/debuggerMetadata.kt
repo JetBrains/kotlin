@@ -99,7 +99,7 @@ fun box(): String {
     if (res != "first") {
         return "" + res
     }
-    continuation!!.resumeWith(SuccessOrFailure.success(Unit))
+    continuation!!.resumeWith(Result.success(Unit))
     res = (continuation!! as BaseContinuationImpl).getSpilledVariableFieldMapping()!!.toMap()["I$0"] ?: "multipleLocalsInOneSlot fail 2"
     if (res != "second") {
         return "" + res

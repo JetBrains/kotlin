@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtFunction
+import org.jetbrains.kotlin.psi.psiUtil.quoteIfNeeded
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.utils.SmartList
 import java.util.*
@@ -64,7 +65,7 @@ class KotlinChangeSignatureData(
                     KotlinParameterInfo(
                             callableDescriptor = baseDescriptor,
                             originalIndex = parameterDescriptor.index,
-                            name = parameterDescriptor.name.asString(),
+                            name = parameterDescriptor.name.asString().quoteIfNeeded(),
                             originalTypeInfo = KotlinTypeInfo(false, parameterType, parameterTypeText),
                             defaultValueForParameter = jetParameter?.defaultValue,
                             valOrVar = jetParameter?.valOrVarKeyword.toValVar()

@@ -102,7 +102,11 @@ fun <@OnlyInputTypes T> expect(expected: T, message: String?, block: () -> T) {
 /** Asserts that given function [block] fails by throwing an exception. */
 fun assertFails(block: () -> Unit): Throwable = assertFails(null, block)
 
-/** Asserts that given function [block] fails by throwing an exception. */
+/**
+ * Asserts that given function [block] fails by throwing an exception.
+ *
+ * If the assertion fails, the specified [message] is used unless it is null as a prefix for the failure message.
+ */
 @SinceKotlin("1.1")
 fun assertFails(message: String?, block: () -> Unit): Throwable {
     try {
@@ -115,7 +119,8 @@ fun assertFails(message: String?, block: () -> Unit): Throwable {
 }
 
 /** Asserts that a [block] fails with a specific exception of type [T] being thrown.
- *  Since inline method doesn't allow to trace where it was invoked, it is required to pass a [message] to distinguish this method call from others.
+ *
+ * If the assertion fails, the specified [message] is used unless it is null as a prefix for the failure message.
  */
 @InlineOnly
 inline fun <reified T : Throwable> assertFailsWith(message: String? = null, noinline block: () -> Unit): T =

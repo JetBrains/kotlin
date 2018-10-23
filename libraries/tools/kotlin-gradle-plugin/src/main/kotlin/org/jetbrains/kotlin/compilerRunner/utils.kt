@@ -54,26 +54,25 @@ internal fun loadCompilerVersion(compilerClasspath: List<File>): String {
                     val bytes = jar.getInputStream(jar.getEntry(versionClassFileName)).use { it.readBytes() }
                     checkVersion(bytes)
                 }
-            }
-            else if (cpFile.isDirectory) {
+            } else if (cpFile.isDirectory) {
                 File(cpFile, versionClassFileName).takeIf { it.isFile }?.let {
                     checkVersion(it.readBytes())
                 }
             }
             if (result != null) break
         }
+    } catch (e: Throwable) {
     }
-    catch (e: Throwable) {}
 
     return result ?: "<unknown>"
 }
 
 internal fun runToolInSeparateProcess(
-        argsArray: Array<String>, compilerClassName: String, classpath: List<File>,
-        logger: KotlinLogger, messageCollector: MessageCollector
+    argsArray: Array<String>, compilerClassName: String, classpath: List<File>,
+    logger: KotlinLogger, messageCollector: MessageCollector
 ): ExitCode {
     val javaBin = System.getProperty("java.home") + File.separator + "bin" + File.separator + "java"
-    val classpathString = classpath.map {it.absolutePath}.joinToString(separator = File.pathSeparator)
+    val classpathString = classpath.map { it.absolutePath }.joinToString(separator = File.pathSeparator)
     val builder = ProcessBuilder(javaBin, "-cp", classpathString, compilerClassName, *argsArray)
     val process = launchProcessWithFallback(builder, DaemonReportingTargets(messageCollector = messageCollector))
 

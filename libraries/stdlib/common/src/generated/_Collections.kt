@@ -13,9 +13,6 @@ package kotlin.collections
 // See: https://github.com/JetBrains/kotlin/tree/master/libraries/stdlib
 //
 
-import kotlin.*
-import kotlin.text.*
-import kotlin.comparisons.*
 import kotlin.random.*
 
 /**
@@ -69,6 +66,8 @@ public operator fun <@kotlin.internal.OnlyInputTypes T> Iterable<T>.contains(ele
 
 /**
  * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this collection.
+ * 
+ * @sample samples.collections.Collections.Elements.elementAt
  */
 public fun <T> Iterable<T>.elementAt(index: Int): T {
     if (this is List)
@@ -78,6 +77,8 @@ public fun <T> Iterable<T>.elementAt(index: Int): T {
 
 /**
  * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this list.
+ * 
+ * @sample samples.collections.Collections.Elements.elementAt
  */
 @kotlin.internal.InlineOnly
 public inline fun <T> List<T>.elementAt(index: Int): T {
@@ -86,6 +87,8 @@ public inline fun <T> List<T>.elementAt(index: Int): T {
 
 /**
  * Returns an element at the given [index] or the result of calling the [defaultValue] function if the [index] is out of bounds of this collection.
+ * 
+ * @sample samples.collections.Collections.Elements.elementAtOrElse
  */
 public fun <T> Iterable<T>.elementAtOrElse(index: Int, defaultValue: (Int) -> T): T {
     if (this is List)
@@ -104,6 +107,8 @@ public fun <T> Iterable<T>.elementAtOrElse(index: Int, defaultValue: (Int) -> T)
 
 /**
  * Returns an element at the given [index] or the result of calling the [defaultValue] function if the [index] is out of bounds of this list.
+ * 
+ * @sample samples.collections.Collections.Elements.elementAtOrElse
  */
 @kotlin.internal.InlineOnly
 public inline fun <T> List<T>.elementAtOrElse(index: Int, defaultValue: (Int) -> T): T {
@@ -112,6 +117,8 @@ public inline fun <T> List<T>.elementAtOrElse(index: Int, defaultValue: (Int) ->
 
 /**
  * Returns an element at the given [index] or `null` if the [index] is out of bounds of this collection.
+ * 
+ * @sample samples.collections.Collections.Elements.elementAtOrNull
  */
 public fun <T> Iterable<T>.elementAtOrNull(index: Int): T? {
     if (this is List)
@@ -130,6 +137,8 @@ public fun <T> Iterable<T>.elementAtOrNull(index: Int): T? {
 
 /**
  * Returns an element at the given [index] or `null` if the [index] is out of bounds of this list.
+ * 
+ * @sample samples.collections.Collections.Elements.elementAtOrNull
  */
 @kotlin.internal.InlineOnly
 public inline fun <T> List<T>.elementAtOrNull(index: Int): T? {
@@ -1258,7 +1267,7 @@ public inline fun <T, K, V, M : MutableMap<in K, MutableList<V>>> Iterable<T>.gr
  * Creates a [Grouping] source from a collection to be used later with one of group-and-fold operations
  * using the specified [keySelector] function to extract a key from each element.
  * 
- * @sample samples.collections.Collections.Transformations.groupingByEachCount
+ * @sample samples.collections.Grouping.groupingByEachCount
  */
 @SinceKotlin("1.1")
 public inline fun <T, K> Iterable<T>.groupingBy(crossinline keySelector: (T) -> K): Grouping<T, K> {
@@ -1912,6 +1921,9 @@ public operator fun <T> Iterable<T>.minus(element: T): List<T> {
 
 /**
  * Returns a list containing all elements of the original collection except the elements contained in the given [elements] array.
+ * 
+ * The [elements] array may be converted to a [HashSet] to speed up the operation, thus the elements are required to have
+ * a correct and stable implementation of `hashCode()` that doesn't change between successive invocations.
  */
 public operator fun <T> Iterable<T>.minus(elements: Array<out T>): List<T> {
     if (elements.isEmpty()) return this.toList()
@@ -1921,6 +1933,9 @@ public operator fun <T> Iterable<T>.minus(elements: Array<out T>): List<T> {
 
 /**
  * Returns a list containing all elements of the original collection except the elements contained in the given [elements] collection.
+ * 
+ * The [elements] collection may be converted to a [HashSet] to speed up the operation, thus the elements are required to have
+ * a correct and stable implementation of `hashCode()` that doesn't change between successive invocations.
  */
 public operator fun <T> Iterable<T>.minus(elements: Iterable<T>): List<T> {
     val other = elements.convertToSetForSetOperationWith(this)
@@ -1931,6 +1946,9 @@ public operator fun <T> Iterable<T>.minus(elements: Iterable<T>): List<T> {
 
 /**
  * Returns a list containing all elements of the original collection except the elements contained in the given [elements] sequence.
+ * 
+ * The [elements] sequence may be converted to a [HashSet] to speed up the operation, thus the elements are required to have
+ * a correct and stable implementation of `hashCode()` that doesn't change between successive invocations.
  */
 public operator fun <T> Iterable<T>.minus(elements: Sequence<T>): List<T> {
     val other = elements.toHashSet()

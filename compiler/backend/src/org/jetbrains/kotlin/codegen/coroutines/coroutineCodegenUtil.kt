@@ -56,7 +56,7 @@ const val DO_RESUME_METHOD_NAME = "doResume"
 const val INVOKE_SUSPEND_METHOD_NAME = "invokeSuspend"
 const val EXCEPTION_FIELD_NAME = "exception"
 
-private val RELEASE_COROUTINES_VERSION_SETTINGS = LanguageVersionSettingsImpl(LanguageVersion.KOTLIN_1_3, ApiVersion.KOTLIN_1_3)
+val RELEASE_COROUTINES_VERSION_SETTINGS = LanguageVersionSettingsImpl(LanguageVersion.KOTLIN_1_3, ApiVersion.KOTLIN_1_3)
 
 fun LanguageVersionSettings.isResumeImplMethodName(name: String) =
     if (isReleaseCoroutines())
@@ -117,10 +117,10 @@ private val GET_CONTEXT_METHOD_NAME = "getContext"
 data class ResolvedCallWithRealDescriptor(val resolvedCall: ResolvedCall<*>, val fakeContinuationExpression: KtExpression)
 
 @JvmField
-val INITIAL_DESCRIPTOR_FOR_SUSPEND_FUNCTION = object : FunctionDescriptor.UserDataKey<FunctionDescriptor> {}
+val INITIAL_DESCRIPTOR_FOR_SUSPEND_FUNCTION = object : CallableDescriptor.UserDataKey<FunctionDescriptor> {}
 
 @JvmField
-val INITIAL_SUSPEND_DESCRIPTOR_FOR_DO_RESUME = object : FunctionDescriptor.UserDataKey<FunctionDescriptor> {}
+val INITIAL_SUSPEND_DESCRIPTOR_FOR_DO_RESUME = object : CallableDescriptor.UserDataKey<FunctionDescriptor> {}
 
 // Resolved calls to suspension function contain descriptors as they visible within coroutines:
 // E.g. `fun <V> await(f: CompletableFuture<V>): V` instead of `fun <V> await(f: CompletableFuture<V>, machine: Continuation<V>): Unit`
@@ -303,16 +303,16 @@ fun <D : FunctionDescriptor> D.createCustomCopy(
 private fun FunctionDescriptor.getContinuationParameterTypeOfSuspendFunction(isReleaseCoroutines: Boolean) =
     module.getContinuationOfTypeOrAny(returnType!!, if (this.needsExperimentalCoroutinesWrapper()) false else isReleaseCoroutines)
 
-fun ModuleDescriptor.getSuccessOrFailure(kotlinType: KotlinType) =
+fun ModuleDescriptor.getResult(kotlinType: KotlinType) =
     module.resolveTopLevelClass(
-        DescriptorUtils.SUCCESS_OR_FAILURE_FQ_NAME,
+        DescriptorUtils.RESULT_FQ_NAME,
         NoLookupLocation.FROM_BACKEND
     )?.defaultType?.let {
         KotlinTypeFactory.simpleType(
             it,
             arguments = listOf(kotlinType.asTypeProjection())
         )
-    } ?: ErrorUtils.createErrorType("For SuccessOrFailure")
+    } ?: ErrorUtils.createErrorType("For Result")
 
 private fun MethodNode.invokeNormalizeContinuation(languageVersionSettings: LanguageVersionSettings) {
     visitMethodInsn(

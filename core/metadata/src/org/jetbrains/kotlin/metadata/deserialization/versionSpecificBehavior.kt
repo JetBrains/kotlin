@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.metadata.deserialization
 fun isVersionRequirementTableWrittenCorrectly(version: BinaryVersion): Boolean =
     isKotlin1Dot4OrLater(version)
 
-private fun isKotlin1Dot4OrLater(version: BinaryVersion): Boolean {
+fun isKotlin1Dot4OrLater(version: BinaryVersion): Boolean {
     // All metadata versions (JVM, JS, common) will be advanced to 1.4.0 in Kotlin 1.4
     return version.major == 1 && version.minor >= 4
 }

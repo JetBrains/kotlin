@@ -131,6 +131,7 @@ object RangeOps : TemplateGroupBase() {
         }
 
         val fromExpr = if (elementType == fromType) "this" else "this.to$elementType()"
+        val u = if (elementType in PrimitiveType.unsignedPrimitives) "u" else ""
 
         if (elementType == toType) {
             // hack to work around incorrect char overflow behavior in JVM and int overflow behavior in JS
@@ -143,11 +144,11 @@ object RangeOps : TemplateGroupBase() {
                 // <= instead of == for JS
                 """
                 if (to <= $minValue) return $progressionType.EMPTY
-                return $fromExpr .. (to - 1).to$elementType()
+                return $fromExpr .. (to - 1$u).to$elementType()
                 """
             }
         } else {
-            body { "return $fromExpr .. (to.to$elementType() - 1).to$elementType()" }
+            body { "return $fromExpr .. (to.to$elementType() - 1$u).to$elementType()" }
         }
     }
 
@@ -159,6 +160,9 @@ object RangeOps : TemplateGroupBase() {
         signature("contains(value: $itemType)")
 
         check(rangeType.isNumeric() == itemType.isNumeric()) { "Required rangeType and itemType both to be numeric or both not, got: $rangeType, $itemType" }
+        if (rangeType.isIntegral() != itemType.isIntegral()) {
+            deprecate(Deprecation("This `contains` operation mixing integer and floating point arguments has ambiguous semantics and is going to be removed.", level = DeprecationLevel.WARNING))
+        }
         platformName("${rangeType.name.decapitalize()}RangeContains")
         returns("Boolean")
         doc { "Checks if the specified [value] belongs to this range." }
@@ -168,6 +172,25 @@ object RangeOps : TemplateGroupBase() {
             else
                 "return value.to${rangeType}ExactOrNull().let { if (it != null) contains(it) else false }"
         }
+    }
+
+    val f_contains_nullable = fn("contains(element: T?)") {
+        include(RangesOfPrimitives, rangePrimitives)
+    } builder {
+        since("1.3")
+        operator()
+        inlineOnly()
+
+        doc {
+            """
+            Returns `true` if this ${f.collection} contains the specified [element].
+
+            Always returns `false` if the [element] is `null`.
+            """
+        }
+
+        returns("Boolean")
+        body { "return element != null && contains(element)" }
     }
 
     val f_toPrimitiveExactOrNull = fn("to{}ExactOrNull()").byTwoPrimitives {

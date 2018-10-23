@@ -397,6 +397,34 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         }
     }
 
+    @TestMetadata("compiler/testData/codegen/bytecodeText/boxing")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Boxing extends AbstractBytecodeTextTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInBoxing() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/bytecodeText/boxing"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("crossinlineSuspend.kt")
+        public void testCrossinlineSuspend() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/boxing/crossinlineSuspend.kt");
+        }
+
+        @TestMetadata("inlineSuspend.kt")
+        public void testInlineSuspend() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/boxing/inlineSuspend.kt");
+        }
+
+        @TestMetadata("suspend.kt")
+        public void testSuspend() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/boxing/suspend.kt");
+        }
+    }
+
     @TestMetadata("compiler/testData/codegen/bytecodeText/boxingOptimization")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
@@ -1127,6 +1155,11 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             @TestMetadata("probeCoroutineSuspended.kt")
             public void testProbeCoroutineSuspended() throws Exception {
                 runTest("compiler/testData/codegen/bytecodeText/coroutines/debug/probeCoroutineSuspended.kt");
+            }
+
+            @TestMetadata("thisAndResultInLvt.kt")
+            public void testThisAndResultInLvt() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeText/coroutines/debug/thisAndResultInLvt.kt");
             }
         }
 
@@ -2008,6 +2041,11 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             runTest("compiler/testData/codegen/bytecodeText/inlineClasses/boxInlineClassesOnPassingToVarargs.kt");
         }
 
+        @TestMetadata("boxMethodCalledByInlineClass.kt")
+        public void testBoxMethodCalledByInlineClass() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/inlineClasses/boxMethodCalledByInlineClass.kt");
+        }
+
         @TestMetadata("boxResultAfterConstructorCall.kt")
         public void testBoxResultAfterConstructorCall() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/inlineClasses/boxResultAfterConstructorCall.kt");
@@ -2058,9 +2096,14 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             runTest("compiler/testData/codegen/bytecodeText/inlineClasses/checkOuterInlineFunctionCall.kt");
         }
 
-        @TestMetadata("constructorWithInlineClassParametersIsNotMangled.kt")
-        public void testConstructorWithInlineClassParametersIsNotMangled() throws Exception {
-            runTest("compiler/testData/codegen/bytecodeText/inlineClasses/constructorWithInlineClassParametersIsNotMangled.kt");
+        @TestMetadata("equalsIsCalledByInlineClass.kt")
+        public void testEqualsIsCalledByInlineClass() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/inlineClasses/equalsIsCalledByInlineClass.kt");
+        }
+
+        @TestMetadata("factoryMethodForSecondaryConstructorsCalledByInlineClass.kt")
+        public void testFactoryMethodForSecondaryConstructorsCalledByInlineClass() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/inlineClasses/factoryMethodForSecondaryConstructorsCalledByInlineClass.kt");
         }
 
         @TestMetadata("functionsWithInlineClassParametersHaveStableMangledNames.kt")
@@ -2071,6 +2114,11 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         @TestMetadata("generationOfAccessorToUnderlyingValue.kt")
         public void testGenerationOfAccessorToUnderlyingValue() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/inlineClasses/generationOfAccessorToUnderlyingValue.kt");
+        }
+
+        @TestMetadata("hashCodeIsCalledByInlineClass.kt")
+        public void testHashCodeIsCalledByInlineClass() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/inlineClasses/hashCodeIsCalledByInlineClass.kt");
         }
 
         @TestMetadata("inlineClassBoxingOnAssignment.kt")
@@ -2086,6 +2134,16 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         @TestMetadata("inlineClassBoxingUnboxingInsideInlinedLambda.kt")
         public void testInlineClassBoxingUnboxingInsideInlinedLambda() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/inlineClasses/inlineClassBoxingUnboxingInsideInlinedLambda.kt");
+        }
+
+        @TestMetadata("inlineClassInGeneratedToString.kt")
+        public void testInlineClassInGeneratedToString() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/inlineClasses/inlineClassInGeneratedToString.kt");
+        }
+
+        @TestMetadata("inlineClassInStringTemplate.kt")
+        public void testInlineClassInStringTemplate() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/inlineClasses/inlineClassInStringTemplate.kt");
         }
 
         @TestMetadata("inlineClassesUnboxingAfterAssertionOperator.kt")
@@ -2118,9 +2176,34 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             runTest("compiler/testData/codegen/bytecodeText/inlineClasses/noBoxingOperationsOnNonTrivialSpread.kt");
         }
 
+        @TestMetadata("noBoxingUnboxingInAccessorsForDelegatedPropertyWithInlineClassDelegate.kt")
+        public void testNoBoxingUnboxingInAccessorsForDelegatedPropertyWithInlineClassDelegate() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/inlineClasses/noBoxingUnboxingInAccessorsForDelegatedPropertyWithInlineClassDelegate.kt");
+        }
+
+        @TestMetadata("nonOverridingMethodsAreCalledByInlineClass.kt")
+        public void testNonOverridingMethodsAreCalledByInlineClass() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/inlineClasses/nonOverridingMethodsAreCalledByInlineClass.kt");
+        }
+
+        @TestMetadata("overridingMethodsAreCalledByInlineClass.kt")
+        public void testOverridingMethodsAreCalledByInlineClass() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/inlineClasses/overridingMethodsAreCalledByInlineClass.kt");
+        }
+
         @TestMetadata("passInlineClassesWithSpreadOperatorToVarargs.kt")
         public void testPassInlineClassesWithSpreadOperatorToVarargs() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/inlineClasses/passInlineClassesWithSpreadOperatorToVarargs.kt");
+        }
+
+        @TestMetadata("primaryConstructorCalledByInlineClass.kt")
+        public void testPrimaryConstructorCalledByInlineClass() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/inlineClasses/primaryConstructorCalledByInlineClass.kt");
+        }
+
+        @TestMetadata("propertyAccessorsAreCalledByInlineClass.kt")
+        public void testPropertyAccessorsAreCalledByInlineClass() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/inlineClasses/propertyAccessorsAreCalledByInlineClass.kt");
         }
 
         @TestMetadata("propertySetterWithInlineClassTypeArgument.kt")
@@ -2128,14 +2211,19 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             runTest("compiler/testData/codegen/bytecodeText/inlineClasses/propertySetterWithInlineClassTypeArgument.kt");
         }
 
+        @TestMetadata("resultApiDoesntUseBox.kt")
+        public void testResultApiDoesntUseBox() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/inlineClasses/resultApiDoesntUseBox.kt");
+        }
+
         @TestMetadata("skipCallToUnderlyingValueOfInlineClass.kt")
         public void testSkipCallToUnderlyingValueOfInlineClass() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/inlineClasses/skipCallToUnderlyingValueOfInlineClass.kt");
         }
 
-        @TestMetadata("synthesizedBoxMethodIsNotMangled.kt")
-        public void testSynthesizedBoxMethodIsNotMangled() throws Exception {
-            runTest("compiler/testData/codegen/bytecodeText/inlineClasses/synthesizedBoxMethodIsNotMangled.kt");
+        @TestMetadata("toStringIsCalledByInlineClass.kt")
+        public void testToStringIsCalledByInlineClass() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/inlineClasses/toStringIsCalledByInlineClass.kt");
         }
 
         @TestMetadata("uIntArrayIteratorWithoutBoxing.kt")
@@ -2166,6 +2254,11 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         @TestMetadata("unboxInlineClassesAfterSmartCasts.kt")
         public void testUnboxInlineClassesAfterSmartCasts() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/inlineClasses/unboxInlineClassesAfterSmartCasts.kt");
+        }
+
+        @TestMetadata("unboxMethodCalledByInlineClass.kt")
+        public void testUnboxMethodCalledByInlineClass() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/inlineClasses/unboxMethodCalledByInlineClass.kt");
         }
     }
 
@@ -2915,6 +3008,16 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         @TestMetadata("bigEnum.kt")
         public void testBigEnum() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/whenEnumOptimization/bigEnum.kt");
+        }
+
+        @TestMetadata("differentEnumClasses.kt")
+        public void testDifferentEnumClasses() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/whenEnumOptimization/differentEnumClasses.kt");
+        }
+
+        @TestMetadata("differentEnumClasses2.kt")
+        public void testDifferentEnumClasses2() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/whenEnumOptimization/differentEnumClasses2.kt");
         }
 
         @TestMetadata("duplicatingItems.kt")

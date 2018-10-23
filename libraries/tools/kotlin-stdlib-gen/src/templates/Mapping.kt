@@ -429,7 +429,7 @@ object Mapping : TemplateGroupBase() {
             using the specified [keySelector] function to extract a key from each ${f.element}.
             """
         }
-        sample("samples.collections.Collections.Transformations.groupingByEachCount")
+        sample("samples.collections.Grouping.groupingByEachCount")
 
         body {
             """

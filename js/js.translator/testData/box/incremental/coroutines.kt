@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 // EXPECTED_REACHABLE_NODES: 1302
 // FILE: a.kt
 // WITH_RUNTIME
@@ -21,7 +20,7 @@ fun builder(c: suspend () -> Unit) {
     c.startCoroutine(object : Continuation<Unit> {
         override val context = EmptyCoroutineContext
 
-        override fun resumeWith(result: SuccessOrFailure<Unit>) {}
+        override fun resumeWith(result: Result<Unit>) {}
     })
 }
 

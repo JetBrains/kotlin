@@ -14,6 +14,12 @@ import org.jetbrains.kotlin.platform.IdePlatformKind
 import org.jetbrains.kotlin.resolve.TargetPlatform
 
 object CommonIdePlatformKind : IdePlatformKind<CommonIdePlatformKind>() {
+
+    override fun platformByCompilerArguments(arguments: CommonCompilerArguments): IdePlatform<CommonIdePlatformKind, CommonCompilerArguments>? {
+        return if (arguments is K2MetadataCompilerArguments) Platform
+        else null
+    }
+
     override val compilerPlatform get() = TargetPlatform.Common
 
     override val platforms get() = listOf(Platform)

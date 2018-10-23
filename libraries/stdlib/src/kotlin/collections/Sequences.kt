@@ -8,9 +8,6 @@
 
 package kotlin.sequences
 
-import kotlin.*
-import kotlin.coroutines.experimental.buildSequence
-
 /**
  * Given an [iterator] function constructs a [Sequence] that returns values through the [Iterator]
  * provided by that function.
@@ -64,7 +61,7 @@ public inline fun <T> Sequence<T>?.orEmpty(): Sequence<T> = this ?: emptySequenc
  * @sample samples.collections.Sequences.Usage.sequenceIfEmpty
  */
 @SinceKotlin("1.3")
-public fun <T> Sequence<T>.ifEmpty(defaultValue: () -> Sequence<T>): Sequence<T> = buildSequence {
+public fun <T> Sequence<T>.ifEmpty(defaultValue: () -> Sequence<T>): Sequence<T> = sequence {
     val iterator = this@ifEmpty.iterator()
     if (iterator.hasNext()) {
         yieldAll(iterator)
@@ -589,7 +586,7 @@ public fun <T> Sequence<T>.constrainOnce(): Sequence<T> {
  * The returned sequence is constrained to be iterated only once.
  *
  * @see constrainOnce
- * @see kotlin.coroutines.experimental.buildSequence
+ * @see kotlin.sequences.sequence
  *
  * @sample samples.collections.Sequences.Building.generateSequence
  */
@@ -606,7 +603,7 @@ public fun <T : Any> generateSequence(nextFunction: () -> T?): Sequence<T> {
  *
  * The sequence can be iterated multiple times, each time starting with [seed].
  *
- * @see kotlin.coroutines.experimental.buildSequence
+ * @see kotlin.sequences.sequence
  *
  * @sample samples.collections.Sequences.Building.generateSequenceWithSeed
  */
@@ -626,7 +623,7 @@ public fun <T : Any> generateSequence(seed: T?, nextFunction: (T) -> T?): Sequen
  *
  * The sequence can be iterated multiple times.
  *
- * @see kotlin.coroutines.experimental.buildSequence
+ * @see kotlin.sequences.sequence
  *
  * @sample samples.collections.Sequences.Building.generateSequenceWithLazySeed
  */

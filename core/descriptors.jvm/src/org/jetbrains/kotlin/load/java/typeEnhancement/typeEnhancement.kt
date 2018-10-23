@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationWithTarget
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.annotations.CompositeAnnotations
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
@@ -197,10 +196,6 @@ private class EnhancedTypeAnnotations(private val fqNameToMatch: FqName) : Annot
         fqNameToMatch -> EnhancedTypeAnnotationDescriptor
         else -> null
     }
-
-    override fun getAllAnnotations() = this.map { AnnotationWithTarget(it, null) }
-
-    override fun getUseSiteTargetedAnnotations() = emptyList<AnnotationWithTarget>()
 
     // Note, that this class may break Annotations contract (!isEmpty && iterator.isEmpty())
     // It's a hack that we need unless we have stable "user data" in JetType

@@ -75,13 +75,28 @@ public class ForTestCompileRuntime {
     }
 
     @NotNull
+    public static File stdlibMavenSourcesJarForTests() {
+        return assertExists(new File("dist/maven/kotlin-stdlib-sources.jar"));
+    }
+
+    @NotNull
     public static File stdlibCommonForTests() {
         return assertExists(new File("dist/common/kotlin-stdlib-common.jar"));
     }
 
     @NotNull
+    public static File stdlibCommonSourcesForTests() {
+        return assertExists(new File("dist/common/kotlin-stdlib-common-sources.jar"));
+    }
+
+    @NotNull
     public static File stdlibJsForTests() {
         return assertExists(new File("dist/kotlinc/lib/kotlin-stdlib-js.jar"));
+    }
+
+    @NotNull
+    public static File jetbrainsAnnotationsForTests() {
+        return assertExists(new File("dist/kotlinc/lib/annotations-13.0.jar"));
     }
 
     @NotNull

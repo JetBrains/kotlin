@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.BindingContext.COLLECTION_LITERAL_CALL
-import org.jetbrains.kotlin.resolve.annotations.hasImplicitIntegerCoercionAnnotation
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.getEffectiveExpectedType
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
@@ -749,7 +748,7 @@ private class ConstantExpressionEvaluatorVisitor(
 
                 val isConvertableConstVal =
                     callableDescriptor.isConst &&
-                            callableDescriptor.hasImplicitIntegerCoercionAnnotation() &&
+                            ImplicitIntegerCoercion.isEnabledForConstVal(callableDescriptor) &&
                             callableDescriptor.compileTimeInitializer is IntValue
 
                 return callableDescriptor.compileTimeInitializer?.wrap(

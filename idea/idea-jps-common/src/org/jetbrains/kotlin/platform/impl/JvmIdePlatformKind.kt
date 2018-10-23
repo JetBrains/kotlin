@@ -6,6 +6,7 @@
 @file:JvmName("JvmIdePlatformUtil")
 package org.jetbrains.kotlin.platform.impl
 
+import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.platform.IdePlatform
@@ -13,6 +14,14 @@ import org.jetbrains.kotlin.platform.IdePlatformKind
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 
 object JvmIdePlatformKind : IdePlatformKind<JvmIdePlatformKind>() {
+
+    override fun platformByCompilerArguments(arguments: CommonCompilerArguments): IdePlatform<JvmIdePlatformKind, CommonCompilerArguments>? {
+        return if (arguments is K2JVMCompilerArguments) {
+            val jvmTarget = arguments.jvmTarget ?: JvmTarget.DEFAULT.description
+            JvmIdePlatformKind.platforms.firstOrNull { it.version.description >= jvmTarget }
+        } else null
+    }
+
     override val compilerPlatform get() = JvmPlatform
 
     override val platforms = JvmTarget.values().map { ver -> Platform(ver) }

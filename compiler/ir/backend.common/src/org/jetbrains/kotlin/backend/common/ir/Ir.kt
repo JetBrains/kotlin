@@ -25,7 +25,7 @@ abstract class Ir<out T : CommonBackendContext>(val context: T, val irModule: Ir
 
     abstract val symbols: Symbols<T>
 
-    val defaultParameterDeclarationsCache = mutableMapOf<FunctionDescriptor, IrFunction>()
+    val defaultParameterDeclarationsCache = mutableMapOf<IrFunction, IrFunction>()
 
     open fun shouldGenerateHandlerParameterForDefaultBodyFun() = false
 }
@@ -168,6 +168,8 @@ abstract class Symbols<out T : CommonBackendContext>(val context: T, private val
     abstract val coroutineImpl: IrClassSymbol
 
     abstract val coroutineSuspendedGetter: IrSimpleFunctionSymbol
+
+    fun getFunction(parameterCount: Int) = symbolTable.referenceClass(context.builtIns.getFunction(parameterCount))
 
     val functionReference = calc { symbolTable.referenceClass(context.getInternalClass("FunctionReference")) }
 

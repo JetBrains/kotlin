@@ -399,13 +399,13 @@ internal class DescriptorRendererImpl(
         }
     }
 
-    private fun StringBuilder.renderAnnotations(annotated: Annotated) {
+    private fun StringBuilder.renderAnnotations(annotated: Annotated, target: AnnotationUseSiteTarget? = null) {
         if (DescriptorRendererModifier.ANNOTATIONS !in modifiers) return
 
         val excluded = if (annotated is KotlinType) excludedTypeAnnotationClasses else excludedAnnotationClasses
 
         val annotationFilter = annotationFilter
-        for ((annotation, target) in annotated.annotations.getAllAnnotations()) {
+        for (annotation in annotated.annotations) {
             if (annotation.fqName !in excluded && (annotationFilter == null || annotationFilter(annotation))) {
                 append(renderAnnotation(annotation, target))
                 if (eachAnnotationOnNewLine) {
@@ -685,6 +685,8 @@ internal class DescriptorRendererImpl(
     private fun renderReceiver(callableDescriptor: CallableDescriptor, builder: StringBuilder) {
         val receiver = callableDescriptor.extensionReceiverParameter
         if (receiver != null) {
+            builder.renderAnnotations(receiver, AnnotationUseSiteTarget.RECEIVER)
+
             val type = receiver.type
             var result = renderType(type)
             if (shouldRenderAsPrettyFunctionType(type) && !TypeUtils.isNullableType(type)) {
@@ -817,7 +819,7 @@ internal class DescriptorRendererImpl(
     private fun renderProperty(property: PropertyDescriptor, builder: StringBuilder) {
         if (!startFromName) {
             if (!startFromDeclarationKeyword) {
-                builder.renderAnnotations(property)
+                renderPropertyAnnotations(property, builder)
                 renderVisibility(property.visibility, builder)
                 renderModifier(builder, property.isConst, "const")
                 renderMemberModifiers(property, builder)
@@ -839,6 +841,21 @@ internal class DescriptorRendererImpl(
         renderInitializer(property, builder)
 
         renderWhereSuffix(property.typeParameters, builder)
+    }
+
+    private fun renderPropertyAnnotations(property: PropertyDescriptor, builder: StringBuilder) {
+        if (DescriptorRendererModifier.ANNOTATIONS !in modifiers) return
+
+        builder.renderAnnotations(property)
+
+        property.backingField?.let { builder.renderAnnotations(it, AnnotationUseSiteTarget.FIELD) }
+        property.delegateField?.let { builder.renderAnnotations(it, AnnotationUseSiteTarget.PROPERTY_DELEGATE_FIELD) }
+
+        if (propertyAccessorRenderingPolicy == PropertyAccessorRenderingPolicy.NONE) {
+            property.setter?.valueParameters?.single()?.let {
+                builder.renderAnnotations(it, AnnotationUseSiteTarget.SETTER_PARAMETER)
+            }
+        }
     }
 
     private fun renderInitializer(variable: VariableDescriptor, builder: StringBuilder) {

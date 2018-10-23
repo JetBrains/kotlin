@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 package array_test
 
 fun box() : String {

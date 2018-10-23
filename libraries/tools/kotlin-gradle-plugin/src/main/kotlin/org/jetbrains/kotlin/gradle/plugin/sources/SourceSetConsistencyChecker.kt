@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.gradle.plugin.sources
 import org.gradle.api.InvalidUserDataException
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersion
-import org.jetbrains.kotlin.gradle.plugin.source.KotlinSourceSet
+import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 
 internal class ConsistencyCheck<T, S>(
     val name: String,
@@ -44,6 +44,15 @@ object SourceSetConsistencyChecks {
         leftExtendsRightConsistently = { left, right -> left.containsAll(right) },
         consistencyConditionHint = unstableFeaturesHint
     )
+
+    const val experimentalAnnotationsInUseHint = "The dependent source set must use all experimental annotations that its dependency uses."
+
+    internal val experimentalAnnotationsCheck = ConsistencyCheck<KotlinSourceSet, Set<String>>(
+        name = "set of experimental annotations in use",
+        getValue = { sourceSet -> sourceSet.languageSettings.experimentalAnnotationsInUse },
+        leftExtendsRightConsistently = { left, right -> left.containsAll(right) },
+        consistencyConditionHint = experimentalAnnotationsInUseHint
+    )
 }
 
 internal class SourceSetConsistencyChecker(
@@ -76,5 +85,5 @@ internal class SourceSetConsistencyChecker(
 
 internal val defaultSourceSetLanguageSettingsChecker = with(SourceSetConsistencyChecks) {
     // We don't check the progressive mode, since the features it enables are bugfixes
-    SourceSetConsistencyChecker(listOf(languageVersionCheck, unstableFeaturesCheck))
+    SourceSetConsistencyChecker(listOf(languageVersionCheck, experimentalAnnotationsCheck, unstableFeaturesCheck))
 }

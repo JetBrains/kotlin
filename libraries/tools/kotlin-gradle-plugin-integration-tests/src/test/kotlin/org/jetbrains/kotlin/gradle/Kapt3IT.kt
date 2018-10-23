@@ -472,4 +472,16 @@ open class Kapt3IT : Kapt3BaseIT() {
             assertTasksExecuted(":app:kaptGenerateStubsKotlin", ":app:kaptKotlin")
         }
     }
+
+    @Test
+    fun testDependencyOnKaptModule() = with(Project("simpleProject")) {
+        setupWorkingDir()
+
+        val kaptProject = Project("simple", directoryPrefix = "kapt2").apply { setupWorkingDir() }
+        kaptProject.projectDir.copyRecursively(projectDir.resolve("simple"))
+        projectDir.resolve("settings.gradle").writeText("include 'simple'")
+        gradleBuildScript().appendText("\ndependencies { implementation project(':simple') }")
+
+        testResolveAllConfigurations()
+    }
 }

@@ -140,6 +140,15 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
         compileKotlin("main.kt", tmpdir, listOf(compileLibrary("library")))
     }
 
+    fun testSuspensionPointInMonitor() {
+        compileKotlin(
+            "source.kt",
+            tmpdir,
+            listOf(compileLibrary("library", additionalOptions = listOf("-Xskip-metadata-version-check"))),
+            additionalOptions = listOf("-Xskip-metadata-version-check")
+        )
+    }
+
     fun testDuplicateObjectInBinaryAndSources() {
         val allDescriptors = analyzeAndGetAllDescriptors(compileLibrary("library"))
         assertEquals(allDescriptors.toString(), 2, allDescriptors.size)
@@ -330,6 +339,18 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
             "source.kt", File(tmpdir, "usage.js"), listOf(library), K2JSCompiler(),
             additionalOptions = listOf("-Xskip-metadata-version-check")
         )
+    }
+
+    fun testStrictMetadataVersionSemanticsSameVersion() {
+        val library = compileLibrary("library", additionalOptions = listOf("-Xgenerate-strict-metadata-version"))
+        compileKotlin("source.kt", tmpdir, listOf(library))
+    }
+
+    fun testStrictMetadataVersionSemanticsOldVersion() {
+        val library = compileLibrary(
+            "library", additionalOptions = listOf("-Xgenerate-strict-metadata-version", "-Xmetadata-version=1.4.0")
+        )
+        compileKotlin("source.kt", tmpdir, listOf(library))
     }
 
     /*test source mapping generation when source info is absent*/

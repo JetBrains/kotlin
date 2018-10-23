@@ -37,7 +37,6 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtImportDirective
-import org.jetbrains.kotlin.psi.KtScript
 
 class AddReflectionQuickFix(element: KtElement)
         : AddKotlinLibQuickFix(element, listOf(LibraryJarDescriptor.REFLECT_JAR,
@@ -63,16 +62,9 @@ class AddScriptRuntimeQuickFix(element: KtElement) : AddKotlinLibQuickFix(elemen
     )
 
     companion object : KotlinSingleIntentionActionFactory() {
-        override fun createAction(diagnostic: Diagnostic): KotlinQuickFixAction<KtElement>? {
-            val ktScript = Errors.MISSING_SCRIPT_BASE_CLASS.cast(diagnostic).psiElement as? KtScript ?: return null
-            val templateClassName = ktScript.kotlinScriptDefinition.value.template.qualifiedName ?: return null
 
-            if (templateClassName.startsWith("kotlin.script.templates.standard")) {
-                return diagnostic.createIntentionForFirstParentOfType(::AddScriptRuntimeQuickFix)
-            }
-
-            return null
-        }
+        override fun createAction(diagnostic: Diagnostic): KotlinQuickFixAction<KtElement>? =
+            diagnostic.createIntentionForFirstParentOfType(::AddScriptRuntimeQuickFix)
     }
 }
 

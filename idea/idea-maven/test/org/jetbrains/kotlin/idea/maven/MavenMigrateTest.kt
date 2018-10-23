@@ -9,6 +9,7 @@ import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiManager
+import com.intellij.util.concurrency.FutureResult
 import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.idea.configuration.KotlinMigrationProjectComponent
@@ -16,10 +17,10 @@ import org.jetbrains.kotlin.idea.configuration.MigrationInfo
 import org.jetbrains.kotlin.test.testFramework.runInEdtAndWait
 import org.junit.Assert
 import java.io.File
+import java.util.concurrent.TimeUnit
+import java.util.concurrent.TimeoutException
 
 class MavenMigrateTest : MavenImportingTestCase() {
-    private val kotlinVersion = "1.1.3"
-
     override fun setUp() {
         super.setUp()
         repositoryPath = File(myDir, "repo").path
@@ -102,13 +103,29 @@ class MavenMigrateTest : MavenImportingTestCase() {
             }
         }
 
+        val importResult = FutureResult<KotlinMigrationProjectComponent.MigrationTestState?>()
+        val migrationProjectComponent = KotlinMigrationProjectComponent.getInstance(myProject)
+
+        migrationProjectComponent.setImportFinishListener { migrationState ->
+            importResult.set(migrationState)
+        }
+
         importProject()
 
-        val actualMigrationInfo = KotlinMigrationProjectComponent.getInstance(myProject).requestLastMigrationInfo()
+        val migrationTestState = try {
+            importResult.get(5, TimeUnit.SECONDS)
+        } catch (te: TimeoutException) {
+            throw IllegalStateException("No reply with result from migration component")
+        } finally {
+            migrationProjectComponent.setImportFinishListener(null)
+        }
 
         Assert.assertEquals(
-            MigrationInfo.create("1.2.50", ApiVersion.KOTLIN_1_2, LanguageVersion.KOTLIN_1_2,
-                                 newApiVersion = ApiVersion.KOTLIN_1_3, newLanguageVersion = LanguageVersion.KOTLIN_1_3),
-            actualMigrationInfo)
+            MigrationInfo.create(
+                "1.2.50", ApiVersion.KOTLIN_1_2, LanguageVersion.KOTLIN_1_2,
+                newApiVersion = ApiVersion.KOTLIN_1_3, newLanguageVersion = LanguageVersion.KOTLIN_1_3
+            ),
+            migrationTestState?.migrationInfo
+        )
     }
 }

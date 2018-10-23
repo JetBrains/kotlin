@@ -34,8 +34,6 @@ import org.jetbrains.kotlin.psi.KtEscapeStringTemplateEntry
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtStringTemplateExpression
 import org.jetbrains.kotlin.psi.psiUtil.*
-import kotlin.coroutines.experimental.SequenceBuilder
-import kotlin.coroutines.experimental.buildIterator
 
 private val PsiElement.templateContentRange: TextRange?
     get() = this.getParentOfType<KtStringTemplateExpression>(false)?.let{
@@ -219,7 +217,7 @@ private class TemplateTokenSequence(private val inputString: String) : Sequence<
         }
     }
 
-    private suspend fun SequenceBuilder<TemplateChunk>.yieldLiteral(chunk: String) {
+    private suspend fun SequenceScope<TemplateChunk>.yieldLiteral(chunk: String) {
         val splitLines = LineTokenizer.tokenize(chunk, false, false)
         for (i in 0..splitLines.size - 1) {
             if (i != 0) {
@@ -233,7 +231,7 @@ private class TemplateTokenSequence(private val inputString: String) : Sequence<
         if (inputString.isEmpty()) {
             return emptySequence<TemplateChunk>().iterator()
         }
-        return buildIterator {
+        return iterator {
             var from = 0
             var to = 0
             while (to < inputString.length) {

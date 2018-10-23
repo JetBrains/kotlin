@@ -59,7 +59,7 @@ fun box(): String {
     if (!testSize(6, 1u, 1u, 1u, 2u, 3u, 4u))
         return "wrong vararg size when call function with some args (1)"
 
-    if (!testSum(30, 10u, 20u, 0u))
+    if (!testSum(30u, 10u, 20u, 0u))
         return "wrong vararg sum (arguments) when call function with some args (1)"
 
     if (!testSpreadOperator(30u, 10u, 20u, 0u))

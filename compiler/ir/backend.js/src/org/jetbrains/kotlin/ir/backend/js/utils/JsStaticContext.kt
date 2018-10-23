@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsIntrinsicTransfo
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrLoop
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.js.backend.ast.JsClassModel
 import org.jetbrains.kotlin.js.backend.ast.JsGlobalBlock
 import org.jetbrains.kotlin.js.backend.ast.JsName
@@ -17,10 +18,10 @@ import org.jetbrains.kotlin.js.backend.ast.JsRootScope
 
 
 class JsStaticContext(
-    private val rootScope: JsRootScope,
+    val rootScope: JsRootScope,
     private val globalBlock: JsGlobalBlock,
     private val nameGenerator: NameGenerator,
-    backendContext: JsIrBackendContext
+    val backendContext: JsIrBackendContext
 ) {
     val intrinsics = JsIntrinsicTransformers(backendContext)
     // TODO: use IrSymbol instead of JsName
@@ -32,5 +33,6 @@ class JsStaticContext(
     val initializerBlock = JsGlobalBlock()
 
     fun getNameForSymbol(irSymbol: IrSymbol, context: JsGenerationContext) = nameGenerator.getNameForSymbol(irSymbol, context)
+    fun getNameForType(type: IrType, context: JsGenerationContext) = nameGenerator.getNameForType(type, context)
     fun getNameForLoop(loop: IrLoop, context: JsGenerationContext) = nameGenerator.getNameForLoop(loop, context)
 }

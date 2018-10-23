@@ -246,7 +246,7 @@ class MultifileClassCodegenImpl(
         val facadeContext = state.rootContext.intoMultifileClass(packageFragment, facadeClassType, partType)
         val memberCodegen = createCodegenForDelegatesInMultifileFacade(facadeContext)
         for (declaration in CodegenUtil.getDeclarationsToGenerate(file, state.bindingContext)) {
-            if (declaration is KtNamedFunction || declaration is KtProperty || declaration is KtTypeAlias) {
+            if (shouldGenerateInFacade(declaration)) {
                 val descriptor = state.bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, declaration)
                 if (descriptor !is MemberDescriptor) {
                     throw AssertionError("Expected callable member, was " + descriptor + " for " + declaration.text)
@@ -254,6 +254,15 @@ class MultifileClassCodegenImpl(
                 addDelegateGenerationTaskIfNeeded(descriptor, { memberCodegen.genSimpleMember(declaration) })
             }
         }
+    }
+
+    private fun shouldGenerateInFacade(declaration: KtDeclaration): Boolean {
+        if (declaration is KtNamedFunction || declaration is KtProperty) return true
+
+        // In light classes, we intentionally do not analyze type aliases, since they're metadata-only
+        if (declaration is KtTypeAlias && state.classBuilderMode.generateMetadata) return true
+
+        return false
     }
 
     private fun shouldGenerateInFacade(descriptor: MemberDescriptor): Boolean {

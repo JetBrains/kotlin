@@ -131,12 +131,17 @@ private fun readV2AndLaterConfig(element: Element): KotlinFacetSettings {
                 }
             } else null
         } ?: KotlinModuleKind.DEFAULT
+        isTestModule = element.getAttributeValue("isTestModule")?.toBoolean() ?: false
+        externalProjectId = element.getAttributeValue("externalProjectId") ?: ""
         element.getChild("compilerSettings")?.let {
             compilerSettings = CompilerSettings()
             XmlSerializer.deserializeInto(compilerSettings!!, it)
         }
         element.getChild("compilerArguments")?.let {
-            compilerArguments = targetPlatform.createArguments { freeArgs = ArrayList() }
+            compilerArguments = targetPlatform.createArguments {
+                freeArgs = mutableListOf()
+                internalArguments = mutableListOf()
+            }
             XmlSerializer.deserializeInto(compilerArguments!!, it)
             compilerArguments!!.detectVersionAutoAdvance()
         }
@@ -289,6 +294,10 @@ private fun KotlinFacetSettings.writeLatestConfig(element: Element) {
     }
     if (kind != KotlinModuleKind.DEFAULT) {
         element.addContent(Element("newMppModelJpsModuleKind").apply { addContent(kind.name) })
+        element.setAttribute("isTestModule", isTestModule.toString())
+    }
+    if (externalProjectId.isNotEmpty()) {
+        element.setAttribute("externalProjectId", externalProjectId)
     }
     productionOutputPath?.let {
         if (it != (compilerArguments as? K2JSCompilerArguments)?.outputFile) {

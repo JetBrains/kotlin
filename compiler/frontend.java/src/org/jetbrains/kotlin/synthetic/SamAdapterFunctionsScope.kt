@@ -37,8 +37,8 @@ import org.jetbrains.kotlin.load.java.sam.SamAdapterDescriptor
 import org.jetbrains.kotlin.load.java.sam.SamConstructorDescriptor
 import org.jetbrains.kotlin.load.java.sam.SingleAbstractMethodUtils
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.DeprecationResolver
 import org.jetbrains.kotlin.resolve.calls.inference.wrapWithCapturingSubstitution
+import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.ResolutionScope
 import org.jetbrains.kotlin.resolve.scopes.SyntheticScope
@@ -54,11 +54,11 @@ interface SamAdapterExtensionFunctionDescriptor : FunctionDescriptor, SyntheticM
 val SAM_LOOKUP_NAME = Name.special("<SAM-CONSTRUCTOR>")
 
 class SamAdapterFunctionsScope(
-        storageManager: StorageManager,
-        private val languageVersionSettings: LanguageVersionSettings,
-        private val samResolver: SamConversionResolver,
-        private val deprecationResolver: DeprecationResolver,
-        private val lookupTracker: LookupTracker
+    storageManager: StorageManager,
+    private val languageVersionSettings: LanguageVersionSettings,
+    private val samResolver: SamConversionResolver,
+    private val deprecationResolver: DeprecationResolver,
+    private val lookupTracker: LookupTracker
 ) : SyntheticScope {
     private val samViaSyntheticScopeDisabled = languageVersionSettings.supportsFeature(LanguageFeature.NewInference)
 

@@ -56,6 +56,7 @@ import org.jetbrains.kotlin.asJava.elements.KtLightMethod;
 import org.jetbrains.kotlin.idea.MainFunctionDetector;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
 import org.jetbrains.kotlin.idea.core.FileIndexUtilsKt;
+import org.jetbrains.kotlin.idea.project.PlatformKt;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.KtDeclaration;
 import org.jetbrains.kotlin.psi.KtDeclarationContainer;
@@ -96,7 +97,7 @@ public class KotlinRunConfiguration extends JetRunConfiguration {
     public SettingsEditor<? extends RunConfiguration> getConfigurationEditor() {
         SettingsEditorGroup<KotlinRunConfiguration> group = new SettingsEditorGroup<KotlinRunConfiguration>();
         group.addEditor(ExecutionBundle.message("run.configuration.configuration.tab.title"), new KotlinRunConfigurationEditor(getProject()));
-        JavaRunConfigurationExtensionManager.getInstance().appendEditors(this, group);
+        JavaRunConfigurationExtensionManagerUtil.getInstance().appendEditors(this, group);
         group.addEditor(ExecutionBundle.message("logs.tab.title"), new LogConfigurationPanel<KotlinRunConfiguration>());
         return group;
     }
@@ -106,7 +107,7 @@ public class KotlinRunConfiguration extends JetRunConfiguration {
         PathMacroManager.getInstance(getProject()).expandPaths(element);
         super.readExternal(element);
 
-        JavaRunConfigurationExtensionManager.getInstance().readExternal(this, element);
+        JavaRunConfigurationExtensionManagerUtil.getInstance().readExternal(this, element);
         DefaultJDOMExternalizer.readExternal(this, element);
 
         readModule(element);
@@ -116,7 +117,7 @@ public class KotlinRunConfiguration extends JetRunConfiguration {
     @Override
     public void writeExternal(Element element) throws WriteExternalException {
         super.writeExternal(element);
-        JavaRunConfigurationExtensionManager.getInstance().writeExternal(this, element);
+        JavaRunConfigurationExtensionManagerUtil.getInstance().writeExternal(this, element);
         DefaultJDOMExternalizer.writeExternal(this, element);
 
         writeModule(element);
@@ -319,7 +320,8 @@ public class KotlinRunConfiguration extends JetRunConfiguration {
     private static KtNamedFunction findMainFun(@NotNull PsiClass psiClass) {
         for (KtNamedFunction function : getMainFunCandidates(psiClass)) {
             BindingContext bindingContext = ResolutionUtils.analyze(function, BodyResolveMode.FULL);
-            MainFunctionDetector mainFunctionDetector = new MainFunctionDetector(bindingContext);
+            MainFunctionDetector mainFunctionDetector =
+                    new MainFunctionDetector(bindingContext, PlatformKt.getLanguageVersionSettings(function));
             if (mainFunctionDetector.isMain(function)) return function;
         }
         return null;

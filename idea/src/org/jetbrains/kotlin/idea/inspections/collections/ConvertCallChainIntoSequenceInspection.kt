@@ -9,10 +9,13 @@ import com.intellij.codeInspection.LocalQuickFix
 import com.intellij.codeInspection.ProblemDescriptor
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
+import com.intellij.openapi.editor.event.DocumentEvent
+import com.intellij.openapi.editor.event.DocumentListener
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.ui.LabeledComponent
 import com.intellij.psi.PsiWhiteSpace
+import com.intellij.ui.EditorTextField
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.inspections.AbstractKotlinInspection
@@ -20,33 +23,62 @@ import org.jetbrains.kotlin.idea.intentions.callExpression
 import org.jetbrains.kotlin.idea.util.CommentSaver
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.anyDescendantOfType
-import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelector
-import org.jetbrains.kotlin.psi.psiUtil.siblings
-import org.jetbrains.kotlin.psi.psiUtil.startOffset
+import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
-import org.jetbrains.kotlin.resolve.descriptorUtil.isSubclassOf
+import org.jetbrains.kotlin.resolve.calls.resolvedCallUtil.getImplicitReceiverValue
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
-import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
+import java.awt.BorderLayout
+import javax.swing.JPanel
 
 class ConvertCallChainIntoSequenceInspection : AbstractKotlinInspection() {
+
+    private val defaultCallChainLength = 5
+
+    private var callChainLength = defaultCallChainLength
+
+    var callChainLengthText = defaultCallChainLength.toString()
+        set(value) {
+            field = value
+            callChainLength = value.toIntOrNull() ?: defaultCallChainLength
+        }
+
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean) =
         qualifiedExpressionVisitor(fun(expression) {
-            val (targetQualified, targetCall) = expression.findTarget() ?: return
-            val rangeInElement = targetCall.calleeExpression?.textRange?.shiftRight(-targetQualified.startOffset) ?: return
+            val (qualified, firstCall, callChainLength) = expression.findCallChain() ?: return
+            val rangeInElement = firstCall.calleeExpression?.textRange?.shiftRight(-qualified.startOffset) ?: return
+            val highlightType = if (callChainLength >= this.callChainLength)
+                ProblemHighlightType.GENERIC_ERROR_OR_WARNING
+            else
+                ProblemHighlightType.INFORMATION
             holder.registerProblem(
                 holder.manager.createProblemDescriptor(
-                    targetQualified,
+                    qualified,
                     rangeInElement,
-                    "Call chain on collection should be converted into 'Sequence'",
-                    ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
+                    "Call chain on collection could be converted into 'Sequence' to improve performance",
+                    highlightType,
                     isOnTheFly,
                     ConvertCallChainIntoSequenceFix()
                 )
             )
         })
+
+    override fun createOptionsPanel(): JPanel = OptionsPanel(this)
+
+    private class OptionsPanel(owner: ConvertCallChainIntoSequenceInspection) : JPanel() {
+        init {
+            layout = BorderLayout()
+            val regexField = EditorTextField(owner.callChainLengthText).apply { setOneLineMode(true) }
+            regexField.document.addDocumentListener(object : DocumentListener {
+                override fun documentChanged(e: DocumentEvent) {
+                    owner.callChainLengthText = regexField.text
+                }
+            })
+            val labeledComponent = LabeledComponent.create(regexField, "Call chain length to transform:", BorderLayout.WEST)
+            add(labeledComponent, BorderLayout.NORTH)
+        }
+    }
 }
 
 private class ConvertCallChainIntoSequenceFix : LocalQuickFix {
@@ -60,13 +92,15 @@ private class ConvertCallChainIntoSequenceFix : LocalQuickFix {
         val calls = expression.collectCallExpression(context).reversed()
         val firstCall = calls.firstOrNull() ?: return
         val lastCall = calls.lastOrNull() ?: return
-        val first = firstCall.getQualifiedExpressionForSelector() ?: return
+        val first = firstCall.getQualifiedExpressionForSelector() ?: firstCall
         val last = lastCall.getQualifiedExpressionForSelector() ?: return
         val endWithTermination = lastCall.isTermination(context)
 
         val psiFactory = KtPsiFactory(expression)
         val dot = buildString {
-            if (first.receiverExpression.siblings().filterIsInstance<PsiWhiteSpace>().any { it.textContains('\n') }) append("\n")
+            if (first is KtQualifiedExpression
+                && first.receiverExpression.siblings().filterIsInstance<PsiWhiteSpace>().any { it.textContains('\n') }
+            ) append("\n")
             if (first is KtSafeQualifiedExpression) append("?")
             append(".")
         }
@@ -74,8 +108,10 @@ private class ConvertCallChainIntoSequenceFix : LocalQuickFix {
         val firstCommentSaver = CommentSaver(first)
         val firstReplaced = first.replaced(
             psiFactory.buildExpression {
-                appendExpression(first.receiverExpression)
-                appendFixedText(dot)
+                if (first is KtQualifiedExpression) {
+                    appendExpression(first.receiverExpression)
+                    appendFixedText(dot)
+                }
                 appendExpression(psiFactory.createExpression("asSequence()"))
                 appendFixedText(dot)
                 appendExpression(firstCall)
@@ -97,19 +133,28 @@ private class ConvertCallChainIntoSequenceFix : LocalQuickFix {
     }
 }
 
-private fun KtQualifiedExpression.findTarget(): Pair<KtQualifiedExpression, KtCallExpression>? {
+private data class CallChain(
+    val qualified: KtQualifiedExpression,
+    val firstCall: KtCallExpression,
+    val callChainLength: Int
+)
+
+private fun KtQualifiedExpression.findCallChain(): CallChain? {
     if (parent is KtQualifiedExpression) return null
 
     val context = analyze(BodyResolveMode.PARTIAL)
     val calls = collectCallExpression(context)
     if (calls.isEmpty()) return null
 
+    val lastCall = calls.last()
     val receiverType =
-        (calls.last().getQualifiedExpressionForSelector())?.receiverExpression?.getResolvedCall(context)?.resultingDescriptor?.returnType
-    if (receiverType?.isCollection() != true) return null
+        (lastCall.getQualifiedExpressionForSelector())?.receiverExpression?.getResolvedCall(context)?.resultingDescriptor?.returnType
+            ?: lastCall.implicitReceiver(context)?.type
+    if (receiverType?.isIterable(DefaultBuiltIns.Instance) != true) return null
 
-    val qualified = calls.first().getQualifiedExpressionForSelector() ?: return null
-    return qualified to calls.last()
+    val firstCall = calls.first()
+    val qualified = firstCall.getQualifiedExpressionForSelector() ?: firstCall.getQualifiedExpressionForReceiver() ?: return null
+    return CallChain(qualified, lastCall, calls.size)
 }
 
 private fun KtQualifiedExpression.collectCallExpression(context: BindingContext): List<KtCallExpression> {
@@ -119,6 +164,10 @@ private fun KtQualifiedExpression.collectCallExpression(context: BindingContext)
         val call = qualified.callExpression ?: return
         calls.add(call)
         val receiver = qualified.receiverExpression
+        if (receiver is KtCallExpression && receiver.implicitReceiver(context) != null) {
+            calls.add(receiver)
+            return
+        }
         if (receiver is KtQualifiedExpression) collect(receiver)
     }
     collect(this)
@@ -130,17 +179,14 @@ private fun KtQualifiedExpression.collectCallExpression(context: BindingContext)
         .dropWhile { !it.isTransformationOrTermination(context) }
         .takeWhile { it.isTransformationOrTermination(context) && !it.hasReturn() }
         .toList()
+        .dropLastWhile { it.isLazyTermination(context) }
     if (transformationCalls.size < 2) return emptyList()
 
     return transformationCalls
 }
 
-private fun KotlinType.isCollection(): Boolean {
-    val classDescriptor = constructor.declarationDescriptor as? ClassDescriptor ?: return false
-    val className = classDescriptor.name.asString()
-    val builtIns = DefaultBuiltIns.Instance
-    return className.endsWith("List") && classDescriptor.isSubclassOf(builtIns.list)
-            || className.endsWith("Set") && classDescriptor.isSubclassOf(builtIns.set)
+private fun KtExpression.implicitReceiver(context: BindingContext): ImplicitReceiver? {
+    return getResolvedCall(context)?.getImplicitReceiverValue()
 }
 
 private fun KtCallExpression.hasReturn(): Boolean = valueArguments.any { arg ->
@@ -149,12 +195,17 @@ private fun KtCallExpression.hasReturn(): Boolean = valueArguments.any { arg ->
 
 private fun KtCallExpression.isTransformationOrTermination(context: BindingContext): Boolean {
     val fqName = transformationAndTerminations[calleeExpression?.text] ?: return false
-    return fqName == getResolvedCall(context)?.resultingDescriptor?.fqNameSafe
+    return isCalling(fqName, context)
 }
 
 private fun KtCallExpression.isTermination(context: BindingContext): Boolean {
     val fqName = terminations[calleeExpression?.text] ?: return false
-    return fqName == getResolvedCall(context)?.resultingDescriptor?.fqNameSafe
+    return isCalling(fqName, context)
+}
+
+private fun KtCallExpression.isLazyTermination(context: BindingContext): Boolean {
+    val fqName = lazyTerminations[calleeExpression?.text] ?: return false
+    return isCalling(fqName, context)
 }
 
 private val transformations = listOf(
@@ -168,6 +219,7 @@ private val transformations = listOf(
     "filterIsInstance",
     "filterNot",
     "filterNotNull",
+    "flatten",
     "map",
     "mapIndexed",
     "mapIndexedNotNull",
@@ -252,10 +304,13 @@ private val terminations = listOf(
     "toMutableList",
     "toMutableSet",
     "toSet",
-    "toSortedSet"
+    "toSortedSet",
+    "unzip"
 ).associate {
     val pkg = if (it in listOf("contains", "indexOf", "lastIndexOf")) "kotlin.collections.List" else "kotlin.collections"
     it to FqName("$pkg.$it")
 }
+
+private val lazyTerminations = terminations.filter { (key, _) -> key == "groupingBy" }
 
 private val transformationAndTerminations = transformations + terminations

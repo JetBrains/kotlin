@@ -28,7 +28,7 @@ import com.intellij.psi.impl.java.stubs.PsiJavaFileStub
 import com.intellij.psi.impl.java.stubs.impl.PsiJavaFileStubImpl
 import com.intellij.psi.impl.source.tree.TreeElement
 import org.jetbrains.kotlin.codegen.state.GenerationState
-import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -54,7 +54,13 @@ fun buildLightClass(
                 context.module,
                 context.bindingContext,
                 files.toList(),
-                CompilerConfiguration.EMPTY
+                context.languageVersionSettings?.let {
+                    CompilerConfiguration().apply {
+                        languageVersionSettings = it
+                        isReadOnly = true
+                    }
+                } ?: CompilerConfiguration.EMPTY
+
         ).generateDeclaredClassFilter(generateClassFilter).wantsDiagnostics(false).build()
         state.beforeCompile()
 

@@ -17,7 +17,6 @@
 package samples.collections
 
 import samples.*
-import kotlin.coroutines.experimental.buildIterator
 
 @RunWith(Enclosed::class)
 class Iterables {
@@ -27,7 +26,7 @@ class Iterables {
         @Sample
         fun iterable() {
             val iterable = Iterable {
-                buildIterator {
+                iterator {
                     yield(42)
                     yieldAll(1..5 step 2)
                 }

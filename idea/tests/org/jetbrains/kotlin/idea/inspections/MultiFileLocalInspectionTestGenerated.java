@@ -88,4 +88,9 @@ public class MultiFileLocalInspectionTestGenerated extends AbstractMultiFileLoca
     public void testUnusedSymbol_fromKotlinTestClass_FromKotlinTestClass() throws Exception {
         runTest("idea/testData/multiFileLocalInspections/unusedSymbol/fromKotlinTestClass/fromKotlinTestClass.test");
     }
+
+    @TestMetadata("unusedSymbol/inlineClassesImplInterface/inlineClassesImplInterface.test")
+    public void testUnusedSymbol_inlineClassesImplInterface_InlineClassesImplInterface() throws Exception {
+        runTest("idea/testData/multiFileLocalInspections/unusedSymbol/inlineClassesImplInterface/inlineClassesImplInterface.test");
+    }
 }

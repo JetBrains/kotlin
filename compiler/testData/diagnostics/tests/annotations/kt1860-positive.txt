@@ -1,6 +1,6 @@
 package
 
-public var bar: kotlin.Int
+@setparam:test public var bar: kotlin.Int
 public val x: (kotlin.Int) -> kotlin.Int
 public fun foo(/*0*/ @test f: kotlin.Int): kotlin.Unit
 

@@ -19,6 +19,8 @@ sourceSets {
             srcDir 'src'
             srcDir commonSrcDir
             srcDir '../unsigned/src'
+            srcDir '../coroutines/common/src'
+            srcDir '../coroutines/src'
         }
     }
     test {
@@ -29,8 +31,7 @@ sourceSets {
     }
     coroutines {
         kotlin {
-            srcDir '../coroutines/common/src'
-            srcDir '../coroutines/src'
+            srcDir '../coroutines-experimental/src'
         }
     }
 }
@@ -53,10 +54,12 @@ compileKotlinCommon {
         freeCompilerArgs = [
                 "-module-name", project.name,
                 "-Xuse-experimental=kotlin.Experimental",
-                "-Xuse-experimental=kotlin.ExperimentalUnsignedTypes",
+                "-Xuse-experimental=kotlin.ExperimentalMultiplatform",
                 "-Xuse-experimental=kotlin.contracts.ExperimentalContracts",
                 "-XXLanguage:+InlineClasses",
-                "-Xallow-kotlin-package"
+                "-XXLanguage:+ReleaseCoroutines",
+                "-Xallow-kotlin-package",
+                "-Xallow-result-return-type"
         ]
     }
 }
@@ -68,7 +71,10 @@ compileCoroutinesKotlinCommon {
         freeCompilerArgs = [
                 "-module-name", project.name+"-coroutines",
                 "-Xuse-experimental=kotlin.contracts.ExperimentalContracts",
-                "-Xallow-kotlin-package"
+                "-Xuse-experimental=kotlin.Experimental",
+                "-XXLanguage:-ReleaseCoroutines",
+                "-Xallow-kotlin-package",
+                "-Xallow-result-return-type"
         ]
     }
 }
@@ -114,6 +120,7 @@ artifacts {
 // TODO: call the "dist" task instead, once we need to publish kotlin-stdlib-common.jar with the compiler distribution
 task distCommon(type: Copy) {
     from(jar)
+    from(sourcesJar)
     into "$distDir/common"
     rename "-${java.util.regex.Pattern.quote(version)}", ''
 }

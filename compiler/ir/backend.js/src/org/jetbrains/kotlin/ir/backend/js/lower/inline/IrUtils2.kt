@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.ir.backend.js.lower.inline
 
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
+import org.jetbrains.kotlin.descriptors.PropertyAccessorDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationContainer
@@ -43,3 +45,9 @@ object SetDeclarationsParentVisitor : IrElementVisitor<Unit, IrDeclarationParent
         super.visitDeclaration(declaration, data)
     }
 }
+
+@Deprecated("Do not use descriptor-based utils")
+val CallableMemberDescriptor.propertyIfAccessor
+    get() = if (this is PropertyAccessorDescriptor)
+        this.correspondingProperty
+    else this

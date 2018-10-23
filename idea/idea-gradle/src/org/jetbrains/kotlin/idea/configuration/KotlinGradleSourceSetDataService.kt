@@ -41,7 +41,9 @@ import org.jetbrains.kotlin.extensions.ProjectExtensionDescriptor
 import org.jetbrains.kotlin.gradle.ArgsInfo
 import org.jetbrains.kotlin.gradle.CompilerArgumentsBySourceSet
 import org.jetbrains.kotlin.idea.compiler.configuration.KotlinCommonCompilerArgumentsHolder
+import org.jetbrains.kotlin.idea.configuration.GradlePropertiesFileFacade.Companion.KOTLIN_CODE_STYLE_GRADLE_SETTING
 import org.jetbrains.kotlin.idea.facet.*
+import org.jetbrains.kotlin.idea.formatter.ProjectCodeStyleImporter
 import org.jetbrains.kotlin.idea.framework.CommonLibraryKind
 import org.jetbrains.kotlin.idea.framework.JSLibraryKind
 import org.jetbrains.kotlin.idea.framework.detectLibraryKind
@@ -95,7 +97,7 @@ class KotlinGradleProjectSettingsDataService : AbstractProjectDataService<Projec
             if (settings.useProjectSettings) null else settings
         }
         val languageVersion = allSettings.asSequence().mapNotNullTo(LinkedHashSet()) { it.languageLevel }.singleOrNull()
-        val apiVersion = allSettings.asSequence().mapNotNullTo(LinkedHashSet()) { it.apiLevel}.singleOrNull()
+        val apiVersion = allSettings.asSequence().mapNotNullTo(LinkedHashSet()) { it.apiLevel }.singleOrNull()
         KotlinCommonCompilerArgumentsHolder.getInstance(project).update {
             if (languageVersion != null) {
                 this.languageVersion = languageVersion.versionString
@@ -145,6 +147,9 @@ class KotlinGradleProjectDataService : AbstractProjectDataService<ModuleData, Vo
             val kotlinFacet = configureFacetByGradleModule(ideModule, modelsProvider, moduleNode, null) ?: continue
             GradleProjectImportHandler.getInstances(project).forEach { it.importByModule(kotlinFacet, moduleNode) }
         }
+
+        val codeStyleStr = GradlePropertiesFileFacade.forProject(project).readProperty(KOTLIN_CODE_STYLE_GRADLE_SETTING)
+        ProjectCodeStyleImporter.apply(project, codeStyleStr)
     }
 }
 
@@ -162,7 +167,7 @@ class KotlinGradleLibraryDataService : AbstractProjectDataService<LibraryData, V
         @Suppress("UNCHECKED_CAST")
         val moduleDataNodes = projectDataNode.children.filter { it.data is ModuleData } as List<DataNode<ModuleData>>
         val anyNonJvmModules = moduleDataNodes
-            .any { node -> detectPlatformByPlugin(node)?.takeIf { !it.isJvm } != null }
+            .any { node -> detectPlatformKindByPlugin(node)?.takeIf { !it.isJvm } != null }
 
         for (libraryDataNode in toImport) {
             val ideLibrary = modelsProvider.findIdeLibrary(libraryDataNode.data) ?: continue
@@ -202,9 +207,24 @@ class KotlinGradleLibraryDataService : AbstractProjectDataService<LibraryData, V
     }
 }
 
-fun detectPlatformByPlugin(moduleNode: DataNode<ModuleData>): IdePlatformKind<*>? {
+fun detectPlatformKindByPlugin(moduleNode: DataNode<ModuleData>): IdePlatformKind<*>? {
     val pluginId = moduleNode.platformPluginId
     return IdePlatformKind.ALL_KINDS.firstOrNull { it.tooling.gradlePluginId == pluginId }
+}
+
+@Suppress("DEPRECATION_ERROR")
+@Deprecated(
+    "Use detectPlatformKindByPlugin() instead",
+    replaceWith = ReplaceWith("detectPlatformKindByPlugin(moduleNode)"),
+    level = DeprecationLevel.ERROR
+)
+fun detectPlatformByPlugin(moduleNode: DataNode<ModuleData>): TargetPlatformKind<*>? {
+    return when (moduleNode.platformPluginId) {
+        "kotlin-platform-jvm" -> TargetPlatformKind.Jvm[JvmTarget.JVM_1_6]
+        "kotlin-platform-js" -> TargetPlatformKind.JavaScript
+        "kotlin-platform-common" -> TargetPlatformKind.Common
+        else -> null
+    }
 }
 
 private fun detectPlatformByLibrary(moduleNode: DataNode<ModuleData>): IdePlatformKind<*>? {
@@ -245,8 +265,8 @@ fun configureFacetByGradleModule(
     }
 
     val compilerVersion = moduleNode.findAll(BuildScriptClasspathData.KEY).firstOrNull()?.data?.let(::findKotlinPluginVersion)
-            ?: return null
-    val platformKind = detectPlatformByPlugin(moduleNode) ?: detectPlatformByLibrary(moduleNode)
+        ?: return null
+    val platformKind = detectPlatformKindByPlugin(moduleNode) ?: detectPlatformByLibrary(moduleNode)
 
     // TODO there should be a way to figure out the correct platform version
     val platform = platformKind?.defaultPlatform
@@ -262,6 +282,7 @@ fun configureFacetByGradleModule(
         ideModule.compilerArgumentsBySourceSet = moduleNode.compilerArgumentsBySourceSet
         ideModule.sourceSetName = sourceSetName
     }
+    ideModule.hasExternalSdkConfiguration = sourceSetNode?.data?.sdkName != null
 
     val argsInfo = moduleNode.compilerArgumentsBySourceSet?.get(sourceSetName ?: "main")
     if (argsInfo != null) {
@@ -311,15 +332,7 @@ internal fun adjustClasspath(kotlinFacet: KotlinFacet, dependencyClasspath: List
     arguments.classpath = if (newClasspath.isNotEmpty()) newClasspath.joinToString(File.pathSeparator) else null
 }
 
-private val gradlePropertyFiles = listOf("local.properties", "gradle.properties")
-
 internal fun findKotlinCoroutinesProperty(project: Project): String {
-    for (propertyFileName in gradlePropertyFiles) {
-        val propertyFile = project.baseDir.findChild(propertyFileName) ?: continue
-        val properties = Properties()
-        properties.load(propertyFile.inputStream)
-        properties.getProperty("kotlin.coroutines")?.let { return it }
-    }
-
-    return CoroutineSupport.getCompilerArgument(LanguageFeature.Coroutines.defaultState)
+    return GradlePropertiesFileFacade.forProject(project).readProperty("kotlin.coroutines")
+        ?: CoroutineSupport.getCompilerArgument(LanguageFeature.Coroutines.defaultState)
 }

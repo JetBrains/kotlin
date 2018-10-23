@@ -11,7 +11,7 @@ class Test {
     fun method(a: String) {}
 
     /** prop. */
-    val prop: String = ""
+    const val prop: String = ""
 
     /** prop2. */
     @Anno

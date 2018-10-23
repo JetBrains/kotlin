@@ -1,67 +1,67 @@
 package kotlin
 // NO (constructor)
-class SuccessOrFailure<T>(val value: T?) {
+class Result<T>(val value: T?) {
     fun getOrThrow(): T = value ?: throw AssertionError("")
 }
 // YES
 fun getSuccess() = success()
 // YES
-fun getSuccessExplicit(): SuccessOrFailure<Int> = SuccessOrFailure(456)
+fun getSuccessExplicit(): Result<Int> = Result(456)
 // NO (not catching 'correct' available)
-fun correctCatching() = SuccessOrFailure(true)
-// NO (not SuccessOrFailure)
+fun correctCatching() = Result(true)
+// NO (not Result)
 fun correct() = true
 // YES
-fun incorrectCatching() = SuccessOrFailure(3.14)
+fun incorrectCatching() = Result(3.14)
 // YES
 fun strangeCatching() = runCatching { false }
-// NO (not SuccessOrFailure)
+// NO (not Result)
 fun strange() = 1
 
 class Container {
     // YES
-    fun classGetSuccess() = SuccessOrFailure("123")
+    fun classGetSuccess() = Result("123")
     // YES
-    fun classGetSuccessExplicit(): SuccessOrFailure<Int> = SuccessOrFailure(456)
+    fun classGetSuccessExplicit(): Result<Int> = Result(456)
     // NO (not catching 'classCorrect' available)
-    fun classCorrectCatching() = SuccessOrFailure(true)
-    // NO (not SuccessOrFailure)
+    fun classCorrectCatching() = Result(true)
+    // NO (not Result)
     fun classCorrect() = true
     // YES
-    fun classIncorrectCatching() = SuccessOrFailure(3.14)
+    fun classIncorrectCatching() = Result(3.14)
 }
 
 fun test() {
     // YES
-    fun localGetSuccess() = SuccessOrFailure("123")
+    fun localGetSuccess() = Result("123")
     // YES
-    val anonymous = fun() = SuccessOrFailure(45)
+    val anonymous = fun() = Result(45)
     // YES
-    val lambda = { SuccessOrFailure(true) }
+    val lambda = { Result(true) }
     // NO yet (we do not report local *catching functions)
-    fun localCatching() = SuccessOrFailure(2.72)
+    fun localCatching() = Result(2.72)
 }
 
 // NO (stdlib)
-fun success() = SuccessOrFailure(true)
+fun success() = Result(true)
 // NO (stdlib)
-fun failure() = SuccessOrFailure(false)
+fun failure() = Result(false)
 // NO (stdlib)
-fun <T> runCatching(block: () -> T) = SuccessOrFailure(block())
+fun <T> runCatching(block: () -> T) = Result(block())
 // NO (stdlib)
-fun <T> SuccessOrFailure<T>.id() = this
+fun <T> Result<T>.id() = this
 
 class ClassWithExtension() {
-    // NO (not SuccessOrFailure)
+    // NO (not Result)
     fun calc() = 12345
-    // NO (not SuccessOrFailure)
+    // NO (not Result)
     fun calcComplex(arg1: Int, arg2: Double): Double = arg1 + arg2
     // YES (different parameters)
-    fun calcComplexCatching() = SuccessOrFailure(0.0)
+    fun calcComplexCatching() = Result(0.0)
 }
 // NO (extension to calc)
-fun ClassWithExtension.calcCatching() = SuccessOrFailure(calc())
-// NO (not SuccessOrFailure)
+fun ClassWithExtension.calcCatching() = Result(calc())
+// NO (not Result)
 fun Container.extensionAct() = 42
 // YES (different extension receiver)
-fun ClassWithExtension.extensionActCatching() = SuccessOrFailure(42)
+fun ClassWithExtension.extensionActCatching() = Result(42)

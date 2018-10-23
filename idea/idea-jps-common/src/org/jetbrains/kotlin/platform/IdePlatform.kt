@@ -7,14 +7,15 @@ package org.jetbrains.kotlin.platform
 
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.config.TargetPlatformVersion
+import org.jetbrains.kotlin.utils.DescriptionAware
 
-abstract class IdePlatform<Kind : IdePlatformKind<Kind>, Arguments : CommonCompilerArguments> {
+abstract class IdePlatform<Kind : IdePlatformKind<Kind>, out Arguments : CommonCompilerArguments> : DescriptionAware {
     abstract val kind: Kind
     abstract val version: TargetPlatformVersion
 
     abstract fun createArguments(init: Arguments.() -> Unit = {}): Arguments
 
-    val description
+    override val description
         get() = kind.name + " " + version.description
 
     override fun toString() = description

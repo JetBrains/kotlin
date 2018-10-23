@@ -21,24 +21,34 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.IElementType
+import org.jetbrains.kotlin.cfg.pseudocode.containingDeclarationForPseudocode
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.inspections.AbstractApplicabilityBasedInspection
-import org.jetbrains.kotlin.idea.intentions.callExpression
+import org.jetbrains.kotlin.idea.intentions.*
 import org.jetbrains.kotlin.idea.intentions.conventionNameCalls.isAnyEquals
-import org.jetbrains.kotlin.idea.intentions.isReceiverExpressionWithValue
-import org.jetbrains.kotlin.idea.intentions.toResolvedCall
+import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.lexer.KtSingleValueToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getLastParentOfTypeInRow
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
+import org.jetbrains.kotlin.resolve.calls.callUtil.getFirstArgumentExpression
+import org.jetbrains.kotlin.resolve.calls.callUtil.getReceiverExpression
 import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatch
 import org.jetbrains.kotlin.resolve.calls.model.isReallySuccess
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
+import org.jetbrains.kotlin.resolve.calls.smartcasts.getKotlinTypeWithPossibleSmartCastToFP
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
+import org.jetbrains.kotlin.types.typeUtil.*
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 class ReplaceCallWithBinaryOperatorInspection : AbstractApplicabilityBasedInspection<KtDotQualifiedExpression>(
-        KtDotQualifiedExpression::class.java
+    KtDotQualifiedExpression::class.java
 ) {
 
     private fun IElementType.inverted(): KtSingleValueToken? = when (this) {
@@ -69,10 +79,13 @@ class ReplaceCallWithBinaryOperatorInspection : AbstractApplicabilityBasedInspec
     override fun inspectionHighlightType(element: KtDotQualifiedExpression): ProblemHighlightType {
         val calleeExpression = element.callExpression?.calleeExpression as? KtSimpleNameExpression
         val identifier = calleeExpression?.getReferencedNameAsName()
-        return if (identifier == OperatorNameConventions.EQUALS || identifier == OperatorNameConventions.COMPARE_TO) {
+        val isFloatingPointNumberEquals = calleeExpression?.isFloatingPointNumberEquals() ?: false
+
+        return if (isFloatingPointNumberEquals) {
+            ProblemHighlightType.INFORMATION
+        } else if (identifier == OperatorNameConventions.EQUALS || identifier == OperatorNameConventions.COMPARE_TO) {
             ProblemHighlightType.GENERIC_ERROR_OR_WARNING
-        }
-        else {
+        } else {
             ProblemHighlightType.INFORMATION
         }
     }
@@ -84,6 +97,10 @@ class ReplaceCallWithBinaryOperatorInspection : AbstractApplicabilityBasedInspec
 
     override fun fixText(element: KtDotQualifiedExpression): String {
         val calleeExpression = element.callExpression?.calleeExpression as? KtSimpleNameExpression ?: return defaultFixText
+        if (calleeExpression.isFloatingPointNumberEquals()) {
+            return "Replace total order equality with IEEE 754 equality"
+        }
+
         val operation = operation(calleeExpression) ?: return defaultFixText
         return "Replace with '${operation.value}'"
     }
@@ -115,7 +132,7 @@ class ReplaceCallWithBinaryOperatorInspection : AbstractApplicabilityBasedInspec
     }
 
     private fun PsiElement.getWrappingPrefixExpressionIfAny() =
-            (getLastParentOfTypeInRow<KtParenthesizedExpression>() ?: this).parent as? KtPrefixExpression
+        (getLastParentOfTypeInRow<KtParenthesizedExpression>() ?: this).parent as? KtPrefixExpression
 
     private fun operation(calleeExpression: KtSimpleNameExpression): KtSingleValueToken? {
         val identifier = calleeExpression.getReferencedNameAsName()
@@ -123,7 +140,6 @@ class ReplaceCallWithBinaryOperatorInspection : AbstractApplicabilityBasedInspec
         return when (identifier) {
             OperatorNameConventions.EQUALS -> {
                 if (!dotQualified.isAnyEquals()) return null
-
                 val prefixExpression = dotQualified.getWrappingPrefixExpressionIfAny()
                 if (prefixExpression != null && prefixExpression.operationToken == KtTokens.EXCL) KtTokens.EXCLEQ
                 else KtTokens.EQEQ
@@ -140,12 +156,38 @@ class ReplaceCallWithBinaryOperatorInspection : AbstractApplicabilityBasedInspec
                 val token = binaryParent.operationToken as? KtSingleValueToken ?: return null
                 if (token in OperatorConventions.COMPARISON_OPERATIONS) {
                     if (notZero == binaryParent.left) token else token.inverted()
-                }
-                else {
+                } else {
                     null
                 }
             }
             else -> OperatorConventions.BINARY_OPERATION_NAMES.inverse()[identifier]
         }
+    }
+
+    private fun KtDotQualifiedExpression.isFloatingPointNumberEquals(): Boolean {
+        val resolvedCall = resolveToCall() ?: return false
+        val context = analyze(BodyResolveMode.PARTIAL)
+        val dataFlowValueFactory = getResolutionFacade().getFrontendService(DataFlowValueFactory::class.java)
+        val receiverType = resolvedCall.getReceiverExpression()?.getKotlinTypeWithPossibleSmartCastToFP(
+            context, containingDeclarationForPseudocode?.resolveToDescriptorIfAny(), languageVersionSettings, dataFlowValueFactory
+        ) ?: return false
+        val argumentType = resolvedCall.getFirstArgumentExpression()?.getKotlinTypeWithPossibleSmartCastToFP(
+            context, containingDeclarationForPseudocode?.resolveToDescriptorIfAny(), languageVersionSettings, dataFlowValueFactory
+        ) ?: return false
+        return receiverType.isFpType() && argumentType.isNumericType() ||
+                argumentType.isFpType() && receiverType.isNumericType()
+    }
+
+    private fun KtSimpleNameExpression.isFloatingPointNumberEquals(): Boolean {
+        val dotQualified = parent.parent as? KtDotQualifiedExpression ?: return false
+        return dotQualified.isFloatingPointNumberEquals()
+    }
+
+    private fun KotlinType.isFpType(): Boolean {
+        return isFloat() || isDouble()
+    }
+
+    private fun KotlinType.isNumericType(): Boolean {
+        return isFpType() || isByte() || isShort() || isInt() || isLong()
     }
 }

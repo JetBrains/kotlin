@@ -1,5 +1,3 @@
-// TODO: muted automatically, investigate should it be ran for JS or not
-
 enum class IssueState {
 
     FIXED {

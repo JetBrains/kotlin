@@ -1,5 +1,5 @@
 // IGNORE_BACKEND: JS_IR
-// EXPECTED_REACHABLE_NODES: 1128
+// EXPECTED_REACHABLE_NODES: 1300
 open class M() {
     open var b: Int = 0
 }

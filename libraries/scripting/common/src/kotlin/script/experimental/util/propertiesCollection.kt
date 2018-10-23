@@ -5,14 +5,25 @@
 
 package kotlin.script.experimental.util
 
+import java.io.Serializable
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty
 import kotlin.reflect.KType
 import kotlin.script.experimental.api.KotlinType
 
-open class PropertiesCollection(private val properties: Map<Key<*>, Any> = emptyMap()) {
+open class PropertiesCollection(private val properties: Map<Key<*>, Any> = emptyMap()) : Serializable {
 
-    data class Key<T>(val name: String, val defaultValue: T? = null)
+    class Key<T>(val name: String, @Transient val defaultValue: T? = null) : Serializable {
+
+        override fun equals(other: Any?): Boolean = if (other is Key<*>) name == other.name else false
+        override fun hashCode(): Int = name.hashCode()
+        override fun toString(): String = "Key($name)"
+
+        companion object {
+            @JvmStatic
+            private val serialVersionUID = 0L
+        }
+    }
 
     class PropertyKeyDelegate<T>(private val defaultValue: T? = null) {
         operator fun getValue(thisRef: Any?, property: KProperty<*>): Key<T> =
@@ -31,9 +42,14 @@ open class PropertiesCollection(private val properties: Map<Key<*>, Any> = empty
     fun <T> getNoDefault(key: PropertiesCollection.Key<T>): T? =
         properties[key]?.let { it as T }
 
+    fun entries(): Set<Map.Entry<Key<*>, Any>> = properties.entries
+
     companion object {
         fun <T> key(defaultValue: T? = null) = PropertyKeyDelegate(defaultValue)
         fun <T> keyCopy(source: Key<T>) = PropertyKeyCopyDelegate(source)
+
+        @JvmStatic
+        private val serialVersionUID = 0L
     }
 
     // properties builder base class (DSL for building properties collection)

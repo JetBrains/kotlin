@@ -1,7 +1,7 @@
 public final class User$Creator : java/lang/Object, android/os/Parcelable$Creator {
     public void <init>()
 
-    public final java.lang.Object createFromParcel(android.os.Parcel p0) {
+    public final java.lang.Object createFromParcel(android.os.Parcel in) {
         LABEL (L0)
           ALOAD (1)
           LDC (in)
@@ -46,7 +46,7 @@ public final class User$Creator : java/lang/Object, android/os/Parcelable$Creato
         LABEL (L4)
     }
 
-    public final java.lang.Object[] newArray(int p0)
+    public final java.lang.Object[] newArray(int size)
 }
 
 public final class User : java/lang/Object, android/os/Parcelable {
@@ -64,7 +64,7 @@ public final class User : java/lang/Object, android/os/Parcelable {
 
     static void <clinit>()
 
-    public void <init>(android.os.IBinder p0, android.os.IBinder[] p1, java.util.List p2, java.util.ArrayList p3, android.os.IInterface p4)
+    public void <init>(android.os.IBinder binder, android.os.IBinder[] binderArray, java.util.List binderList, java.util.ArrayList binderArrayList, android.os.IInterface intf)
 
     public int describeContents()
 
@@ -78,7 +78,7 @@ public final class User : java/lang/Object, android/os/Parcelable {
 
     public final android.os.IInterface getIntf()
 
-    public void writeToParcel(android.os.Parcel p0, int p1) {
+    public void writeToParcel(android.os.Parcel parcel, int flags) {
         LABEL (L0)
           ALOAD (1)
           LDC (parcel)

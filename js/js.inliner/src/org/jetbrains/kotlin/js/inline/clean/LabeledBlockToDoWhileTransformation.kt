@@ -30,18 +30,18 @@ object LabeledBlockToDoWhileTransformation {
 
     fun apply(root: JsNode) {
         object : JsVisitorWithContextImpl() {
-            val loopStack = Stack<JsStatement>()
+            val loopOrSwitchStack = Stack<JsStatement>()
             val newFakeLoops = HashSet<JsDoWhile>()
-            val loopLabels = HashMap<JsStatement, JsLabel>()
+            val statementsLabels = HashMap<JsStatement, JsLabel>()
 
-            // If labeled block sits in between loop and corresponding unlabeled breaks/continues
+            // If labeled block sits in between loop (or switch) and corresponding unlabeled breaks/continues
             // we have to label this loop, breaks and continues in order to preserve their
             // relationships across new fake do-while loop
-            val loopsToLabel = HashSet<JsStatement>()
+            val loopsAndSwitchesToLabel = HashSet<JsStatement>()
 
             override fun endVisit(x: JsLabel, ctx: JsContext<JsNode>) {
                 if (x.statement is JsBlock) {
-                    loopsToLabel.addIfNotNull(loopStack.lastOrNull())
+                    loopsAndSwitchesToLabel.addIfNotNull(loopOrSwitchStack.lastOrNull())
                     val fakeLoop = JsDoWhile(JsBooleanLiteral(false), x.statement)
                     newFakeLoops.add(fakeLoop)
                     x.statement = fakeLoop
@@ -51,30 +51,46 @@ object LabeledBlockToDoWhileTransformation {
 
             override fun visit(x: JsLabel, ctx: JsContext<JsNode>): Boolean {
                 if (x.statement is JsLoop) {
-                    loopLabels[x.statement] = x
+                    statementsLabels[x.statement] = x
                 }
                 return true
             }
 
             override fun visit(x: JsLoop, ctx: JsContext<JsNode>): Boolean {
-                loopStack.push(x)
+                loopOrSwitchStack.push(x)
                 return true
             }
 
-            override fun endVisit(x: JsLoop, ctx: JsContext<JsNode>) {
-                loopStack.pop()
-                if (loopsToLabel.contains(x)) {
+            override fun visit(x: JsSwitch, ctx: JsContext<JsNode>): Boolean {
+                loopOrSwitchStack.push(x)
+                return true
+            }
+
+            fun endVisitLoopOrSwitch(x: JsStatement, ctx: JsContext<JsNode>) {
+                val top = loopOrSwitchStack.pop()
+                assert(top === x)
+
+                if (loopsAndSwitchesToLabel.contains(x)) {
                     // Reuse loop label if present. Otherwise create new label.
-                    var label = loopLabels[x]
+                    var label = statementsLabels[x]
                     if (label == null) {
                         val labelName = JsScope.declareTemporaryName("loop_label")
                         label = JsLabel(labelName, x)
-                        loopLabels[x] = label
+                        statementsLabels[x] = label
                         ctx.replaceMe(label)
                     }
                     labelLoopBreaksAndContinues(x, newFakeLoops, label.name.makeRef())
                 }
             }
+
+            override fun endVisit(x: JsSwitch, ctx: JsContext<JsNode>) {
+                endVisitLoopOrSwitch(x, ctx)
+            }
+
+            override fun endVisit(x: JsLoop, ctx: JsContext<JsNode>) {
+                endVisitLoopOrSwitch(x, ctx)
+            }
+
         }.accept(root)
     }
 
@@ -82,10 +98,13 @@ object LabeledBlockToDoWhileTransformation {
     Label unlabeled breaks that correspond to current loop.
     Skip newly created fake do-while loops.
      */
-    private fun labelLoopBreaksAndContinues(loop: JsStatement, fakeLoops: Set<JsDoWhile>, label: JsNameRef) {
+    private fun labelLoopBreaksAndContinues(loopOrSwitch: JsStatement, fakeLoops: Set<JsDoWhile>, label: JsNameRef) {
         object : JsVisitorWithContextImpl() {
             override fun visit(x: JsLoop, ctx: JsContext<JsNode>): Boolean =
-                fakeLoops.contains(x) || x === loop
+                fakeLoops.contains(x) || x === loopOrSwitch
+
+            override fun visit(x: JsSwitch, ctx: JsContext<JsNode>): Boolean =
+                x === loopOrSwitch
 
             override fun endVisit(x: JsBreak, ctx: JsContext<JsNode>) {
                 if (x.label == null)
@@ -98,6 +117,6 @@ object LabeledBlockToDoWhileTransformation {
                     ctx.replaceMe(JsContinue(label))
                 super.endVisit(x, ctx)
             }
-        }.accept(loop)
+        }.accept(loopOrSwitch)
     }
 }

@@ -17,9 +17,9 @@ import kotlin.script.experimental.annotations.KotlinScript
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.ScriptingHostConfiguration
 import kotlin.script.experimental.host.configurationDependencies
-import kotlin.script.experimental.host.createScriptCompilationConfigurationFromAnnotatedBaseClass
+import kotlin.script.experimental.host.createCompilationConfigurationFromTemplate
 import kotlin.script.experimental.jvm.JvmDependency
-import kotlin.script.experimental.jvm.defaultJvmScriptingEnvironment
+import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 
 class LazyScriptDefinitionFromDiscoveredClass internal constructor(
     private val annotationsFromAsm: ArrayList<BinAnnData>,
@@ -36,7 +36,7 @@ class LazyScriptDefinitionFromDiscoveredClass internal constructor(
     ) : this(loadAnnotationsFromClass(classBytes), className, classpath, messageCollector)
 
     override val hostConfiguration: ScriptingHostConfiguration by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        ScriptingHostConfiguration(defaultJvmScriptingEnvironment) {
+        ScriptingHostConfiguration(defaultJvmScriptingHostConfiguration) {
             configurationDependencies.append(JvmDependency(classpath))
         }
     }
@@ -47,7 +47,7 @@ class LazyScriptDefinitionFromDiscoveredClass internal constructor(
             "Configure scripting: loading script definition class $className using classpath $classpath\n.  ${Thread.currentThread().stackTrace}"
         )
         try {
-            createScriptCompilationConfigurationFromAnnotatedBaseClass(
+            createCompilationConfigurationFromTemplate(
                 KotlinType(className),
                 hostConfiguration,
                 LazyScriptDefinitionFromDiscoveredClass::class
@@ -64,14 +64,12 @@ class LazyScriptDefinitionFromDiscoveredClass internal constructor(
         }
     }
 
-    override val scriptFileExtensionWithDot: String by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        val extFromAnn = annotationsFromAsm.find { it.name == KotlinScript::class.simpleName }?.args
+    override val fileExtension: String by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        annotationsFromAsm.find { it.name == KotlinScript::class.simpleName }?.args
             ?.find { it.name == "extension" }?.value
-        val ext = extFromAnn
             ?: scriptCompilationConfiguration.let {
-                it[ScriptCompilationConfiguration.fileExtension] ?: "kts"
+                it[ScriptCompilationConfiguration.fileExtension] ?: super.fileExtension
             }
-        ".$ext"
     }
 
     override val name: String by lazy(LazyThreadSafetyMode.PUBLICATION) {

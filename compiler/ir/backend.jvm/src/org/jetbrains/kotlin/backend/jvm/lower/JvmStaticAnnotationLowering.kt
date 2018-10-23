@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlock
+import org.jetbrains.kotlin.backend.common.lower.replaceThisByStaticReference
 import org.jetbrains.kotlin.backend.common.runOnFilePostfix
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
@@ -106,7 +107,8 @@ private class CompanionObjectJvmStaticLowering(val context: JvmBackendContext) :
     }
 
     private fun createProxyBody(target: IrFunction, proxy: IrFunction, companion: IrClass): IrBody {
-        val companionInstanceFieldSymbol = context.descriptorsFactory.getSymbolForObjectInstance(companion.symbol)
+        val companionInstanceField = context.declarationFactory.getFieldForObjectInstance(companion)
+        val companionInstanceFieldSymbol = companionInstanceField.symbol
         val call = IrCallImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, target.returnType, target.symbol)
 
         call.dispatchReceiver = IrGetFieldImpl(
@@ -147,35 +149,15 @@ private class SingletonObjectJvmStaticLowering(
 
         irClass.declarations.filter(::isJvmStaticFunction).forEach {
             val jvmStaticFunction = it as IrSimpleFunction
-            val oldDispatchReceiverParemeter = jvmStaticFunction.dispatchReceiverParameter!!
+            val oldDispatchReceiverParameter = jvmStaticFunction.dispatchReceiverParameter!!
             jvmStaticFunction.dispatchReceiverParameter = null
-            modifyBody(jvmStaticFunction, irClass, oldDispatchReceiverParemeter)
+            modifyBody(jvmStaticFunction, irClass, oldDispatchReceiverParameter)
             functionsMadeStatic.add(jvmStaticFunction.symbol)
         }
     }
 
     fun modifyBody(irFunction: IrFunction, irClass: IrClass, oldDispatchReceiverParameter: IrValueParameter) {
-        irFunction.body = irFunction.body?.transform(ReplaceThisByStaticReference(context, irClass, oldDispatchReceiverParameter), null)
-    }
-}
-
-private class ReplaceThisByStaticReference(
-    val context: JvmBackendContext,
-    val irClass: IrClass,
-    val oldThisReceiverParameter: IrValueParameter
-) : IrElementTransformer<Nothing?> {
-    override fun visitGetValue(expression: IrGetValue, data: Nothing?): IrExpression {
-        val irGetValue = expression
-        if (irGetValue.symbol == oldThisReceiverParameter.symbol) {
-            val instanceSymbol = context.descriptorsFactory.getSymbolForObjectInstance(irClass.symbol)
-            return IrGetFieldImpl(
-                expression.startOffset,
-                expression.endOffset,
-                instanceSymbol,
-                irClass.defaultType
-            )
-        }
-        return super.visitGetValue(irGetValue, data)
+        irFunction.body = irFunction.body?.replaceThisByStaticReference(context, irClass, oldDispatchReceiverParameter)
     }
 }
 

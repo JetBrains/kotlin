@@ -666,6 +666,21 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             runTest("idea/testData/intentions/addBraces/addBracesForIf.kt");
         }
 
+        @TestMetadata("addBracesForIfWithIndent.kt")
+        public void testAddBracesForIfWithIndent() throws Exception {
+            runTest("idea/testData/intentions/addBraces/addBracesForIfWithIndent.kt");
+        }
+
+        @TestMetadata("addBracesForIfWithIndent2.kt")
+        public void testAddBracesForIfWithIndent2() throws Exception {
+            runTest("idea/testData/intentions/addBraces/addBracesForIfWithIndent2.kt");
+        }
+
+        @TestMetadata("addBracesForIfWithIndent3.kt")
+        public void testAddBracesForIfWithIndent3() throws Exception {
+            runTest("idea/testData/intentions/addBraces/addBracesForIfWithIndent3.kt");
+        }
+
         @TestMetadata("addBracesForIfWithNoSpace.kt")
         public void testAddBracesForIfWithNoSpace() throws Exception {
             runTest("idea/testData/intentions/addBraces/addBracesForIfWithNoSpace.kt");
@@ -1470,6 +1485,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
                 runTest("idea/testData/intentions/addPropertyAccessors/both/hasSetter.kt");
             }
 
+            @TestMetadata("jvmField.kt")
+            public void testJvmField() throws Exception {
+                runTest("idea/testData/intentions/addPropertyAccessors/both/jvmField.kt");
+            }
+
             @TestMetadata("lateinit.kt")
             public void testLateinit() throws Exception {
                 runTest("idea/testData/intentions/addPropertyAccessors/both/lateinit.kt");
@@ -1543,6 +1563,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
                 runTest("idea/testData/intentions/addPropertyAccessors/getter/header.kt");
             }
 
+            @TestMetadata("jvmField.kt")
+            public void testJvmField() throws Exception {
+                runTest("idea/testData/intentions/addPropertyAccessors/getter/jvmField.kt");
+            }
+
             @TestMetadata("lateinit.kt")
             public void testLateinit() throws Exception {
                 runTest("idea/testData/intentions/addPropertyAccessors/getter/lateinit.kt");
@@ -1609,6 +1634,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             @TestMetadata("hasSetter.kt")
             public void testHasSetter() throws Exception {
                 runTest("idea/testData/intentions/addPropertyAccessors/setter/hasSetter.kt");
+            }
+
+            @TestMetadata("jvmField.kt")
+            public void testJvmField() throws Exception {
+                runTest("idea/testData/intentions/addPropertyAccessors/setter/jvmField.kt");
             }
 
             @TestMetadata("lateinit.kt")
@@ -2424,6 +2454,26 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             @TestMetadata("otherBlockHasMoreThanOneStatement.kt")
             public void testOtherBlockHasMoreThanOneStatement() throws Exception {
                 runTest("idea/testData/intentions/branched/ifThenToElvis/otherBlockHasMoreThanOneStatement.kt");
+            }
+
+            @TestMetadata("replaceWithLet.kt")
+            public void testReplaceWithLet() throws Exception {
+                runTest("idea/testData/intentions/branched/ifThenToElvis/replaceWithLet.kt");
+            }
+
+            @TestMetadata("replaceWithLetAndRenameIt.kt")
+            public void testReplaceWithLetAndRenameIt() throws Exception {
+                runTest("idea/testData/intentions/branched/ifThenToElvis/replaceWithLetAndRenameIt.kt");
+            }
+
+            @TestMetadata("replaceWithLetInMember.kt")
+            public void testReplaceWithLetInMember() throws Exception {
+                runTest("idea/testData/intentions/branched/ifThenToElvis/replaceWithLetInMember.kt");
+            }
+
+            @TestMetadata("replaceWithLetInMemberWithIs.kt")
+            public void testReplaceWithLetInMemberWithIs() throws Exception {
+                runTest("idea/testData/intentions/branched/ifThenToElvis/replaceWithLetInMemberWithIs.kt");
             }
 
             @TestMetadata("rhsEqualsNull.kt")
@@ -3504,8 +3554,33 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
                 KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
             }
 
+            @TestMetadata("actual.kt")
+            public void testActual() throws Exception {
+                runTest("idea/testData/intentions/changeVisibility/private/actual.kt");
+            }
+
+            @TestMetadata("actual2.kt")
+            public void testActual2() throws Exception {
+                runTest("idea/testData/intentions/changeVisibility/private/actual2.kt");
+            }
+
             public void testAllFilesPresentInPrivate() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/changeVisibility/private"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("annotated.kt")
+            public void testAnnotated() throws Exception {
+                runTest("idea/testData/intentions/changeVisibility/private/annotated.kt");
+            }
+
+            @TestMetadata("expect.kt")
+            public void testExpect() throws Exception {
+                runTest("idea/testData/intentions/changeVisibility/private/expect.kt");
+            }
+
+            @TestMetadata("expect2.kt")
+            public void testExpect2() throws Exception {
+                runTest("idea/testData/intentions/changeVisibility/private/expect2.kt");
             }
 
             @TestMetadata("hasModifier1.kt")
@@ -3526,6 +3601,21 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             @TestMetadata("hasModifier4.kt")
             public void testHasModifier4() throws Exception {
                 runTest("idea/testData/intentions/changeVisibility/private/hasModifier4.kt");
+            }
+
+            @TestMetadata("inAnnotation.kt")
+            public void testInAnnotation() throws Exception {
+                runTest("idea/testData/intentions/changeVisibility/private/inAnnotation.kt");
+            }
+
+            @TestMetadata("interface.kt")
+            public void testInterface() throws Exception {
+                runTest("idea/testData/intentions/changeVisibility/private/interface.kt");
+            }
+
+            @TestMetadata("jvmField.kt")
+            public void testJvmField() throws Exception {
+                runTest("idea/testData/intentions/changeVisibility/private/jvmField.kt");
             }
 
             @TestMetadata("noModifierListAnnotation.kt")
@@ -5725,6 +5815,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             runTest("idea/testData/intentions/convertPrimaryConstructorToSecondary/defaultValueChain.kt");
         }
 
+        @TestMetadata("delegation.kt")
+        public void testDelegation() throws Exception {
+            runTest("idea/testData/intentions/convertPrimaryConstructorToSecondary/delegation.kt");
+        }
+
         @TestMetadata("enum.kt")
         public void testEnum() throws Exception {
             runTest("idea/testData/intentions/convertPrimaryConstructorToSecondary/enum.kt");
@@ -5951,6 +6046,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             runTest("idea/testData/intentions/convertPropertyInitializerToGetter/inapplicableIfNoInitializer.kt");
         }
 
+        @TestMetadata("jvmField.kt")
+        public void testJvmField() throws Exception {
+            runTest("idea/testData/intentions/convertPropertyInitializerToGetter/jvmField.kt");
+        }
+
         @TestMetadata("notInLambda.kt")
         public void testNotInLambda() throws Exception {
             runTest("idea/testData/intentions/convertPropertyInitializerToGetter/notInLambda.kt");
@@ -6037,6 +6137,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("javaUsages.kt")
         public void testJavaUsages() throws Exception {
             runTest("idea/testData/intentions/convertPropertyToFunction/javaUsages.kt");
+        }
+
+        @TestMetadata("jvmField.kt")
+        public void testJvmField() throws Exception {
+            runTest("idea/testData/intentions/convertPropertyToFunction/jvmField.kt");
         }
 
         @TestMetadata("otherRefs.kt")
@@ -9139,6 +9244,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             runTest("idea/testData/intentions/introduceBackingProperty/inapplicableNoBackingField.kt");
         }
 
+        @TestMetadata("jvmField.kt")
+        public void testJvmField() throws Exception {
+            runTest("idea/testData/intentions/introduceBackingProperty/jvmField.kt");
+        }
+
         @TestMetadata("semicolon.kt")
         public void testSemicolon() throws Exception {
             runTest("idea/testData/intentions/introduceBackingProperty/semicolon.kt");
@@ -11820,6 +11930,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/movePropertyToConstructor"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
         }
 
+        @TestMetadata("annotationTarget.kt")
+        public void testAnnotationTarget() throws Exception {
+            runTest("idea/testData/intentions/movePropertyToConstructor/annotationTarget.kt");
+        }
+
         @TestMetadata("annotationWithUseSite.kt")
         public void testAnnotationWithUseSite() throws Exception {
             runTest("idea/testData/intentions/movePropertyToConstructor/annotationWithUseSite.kt");
@@ -11843,6 +11958,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("getter.kt")
         public void testGetter() throws Exception {
             runTest("idea/testData/intentions/movePropertyToConstructor/getter.kt");
+        }
+
+        @TestMetadata("javaAnnotation.kt")
+        public void testJavaAnnotation() throws Exception {
+            runTest("idea/testData/intentions/movePropertyToConstructor/javaAnnotation.kt");
         }
 
         @TestMetadata("lambda.kt")

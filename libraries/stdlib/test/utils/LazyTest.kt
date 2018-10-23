@@ -5,7 +5,6 @@
 
 package test.utils
 
-import kotlin.*
 import kotlin.test.*
 
 class LazyTest {

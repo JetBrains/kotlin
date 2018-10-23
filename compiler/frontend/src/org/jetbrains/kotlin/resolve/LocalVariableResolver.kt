@@ -205,7 +205,7 @@ class LocalVariableResolver(
 
         var setter = propertyDescriptor.setter
         if (setter == null && propertyDescriptor.isVar) {
-            setter = DescriptorFactory.createDefaultSetter(propertyDescriptor, Annotations.EMPTY)
+            setter = DescriptorFactory.createDefaultSetter(propertyDescriptor, Annotations.EMPTY, Annotations.EMPTY)
         }
         propertyDescriptor.initialize(getter, setter)
     }

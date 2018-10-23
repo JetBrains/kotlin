@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.serialization.deserialization.descriptors
 
 import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.descriptors.SupertypeLoopChecker
-import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.AbstractLazyTypeParameterDescriptor
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.upperBounds
@@ -45,9 +44,7 @@ class DeserializedTypeParameterDescriptor(
         if (upperBounds.isEmpty()) {
             return listOf(this.builtIns.defaultBound)
         }
-        return upperBounds.map {
-            c.typeDeserializer.type(it, Annotations.EMPTY)
-        }
+        return upperBounds.map(c.typeDeserializer::type)
     }
 
     override fun reportSupertypeLoopError(type: KotlinType) = throw IllegalStateException(

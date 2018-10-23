@@ -5,7 +5,9 @@
 
 package org.jetbrains.kotlin.metadata.jvm.deserialization
 
+import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.metadata.deserialization.NameResolverImpl
+import org.jetbrains.kotlin.metadata.deserialization.isKotlin1Dot4OrLater
 import org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf
 import java.io.*
 
@@ -29,6 +31,8 @@ class ModuleMapping private constructor(
         @JvmField
         val CORRUPTED: ModuleMapping = ModuleMapping(emptyMap(), BinaryModuleData(emptyList()), "CORRUPTED")
 
+        const val STRICT_METADATA_VERSION_SEMANTICS_FLAG = 1 shl 0
+
         fun loadModuleMapping(
             bytes: ByteArray?,
             debugName: String,
@@ -48,7 +52,16 @@ class ModuleMapping private constructor(
                 return CORRUPTED
             }
 
-            val version = JvmMetadataVersion(*versionNumber)
+            val preVersion = JvmMetadataVersion(*versionNumber)
+            if (!skipMetadataVersionCheck && !preVersion.isCompatible()) {
+                reportIncompatibleVersionError(preVersion)
+                return EMPTY
+            }
+
+            // Since Kotlin 1.4, we write integer flags between the version and the proto
+            val flags = if (isKotlin1Dot4OrLater(preVersion)) stream.readInt() else 0
+
+            val version = JvmMetadataVersion(versionNumber, (flags and STRICT_METADATA_VERSION_SEMANTICS_FLAG) != 0)
             if (!skipMetadataVersionCheck && !version.isCompatible()) {
                 reportIncompatibleVersionError(version)
                 return EMPTY
@@ -207,12 +220,16 @@ class PackageParts(val packageFqName: String) {
         (parts + metadataParts).toString()
 }
 
-fun JvmModuleProtoBuf.Module.serializeToByteArray(versionArray: IntArray): ByteArray {
+fun JvmModuleProtoBuf.Module.serializeToByteArray(version: BinaryVersion, flags: Int): ByteArray {
     val moduleMapping = ByteArrayOutputStream(4096)
     val out = DataOutputStream(moduleMapping)
+    val versionArray = version.toArray()
     out.writeInt(versionArray.size)
     for (number in versionArray) {
         out.writeInt(number)
+    }
+    if (isKotlin1Dot4OrLater(version)) {
+        out.writeInt(flags)
     }
     writeTo(out)
     out.flush()

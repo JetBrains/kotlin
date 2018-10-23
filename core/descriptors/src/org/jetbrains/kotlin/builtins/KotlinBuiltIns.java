@@ -13,7 +13,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.functions.BuiltInFictitiousFunctionClassFactory;
 import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor;
 import org.jetbrains.kotlin.descriptors.*;
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.descriptors.deserialization.AdditionalClassPartsProvider;
 import org.jetbrains.kotlin.descriptors.deserialization.ClassDescriptorFactory;
@@ -27,6 +26,7 @@ import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.FqNameUnsafe;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
+import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.resolve.scopes.ChainedMemberScope;
 import org.jetbrains.kotlin.resolve.scopes.MemberScope;
 import org.jetbrains.kotlin.storage.MemoizedFunctionToNotNull;
@@ -65,7 +65,6 @@ public abstract class KotlinBuiltIns {
     private ModuleDescriptorImpl builtInsModule;
 
     private final NotNullLazyValue<Primitives> primitives;
-    private final MemoizedFunctionToNotNull<ModuleDescriptor, UnsignedPrimitives> unsignedPrimitives;
     private final NotNullLazyValue<PackageFragments> packageFragments;
 
     private final MemoizedFunctionToNotNull<Name, ClassDescriptor> builtInClassesByName;
@@ -112,29 +111,6 @@ public abstract class KotlinBuiltIns {
                 return new Primitives(
                         primitiveTypeToArrayKotlinType, primitiveKotlinTypeToKotlinArrayType, kotlinArrayTypeToPrimitiveKotlinType
                 );
-            }
-        });
-
-        this.unsignedPrimitives = storageManager.createMemoizedFunction(new Function1<ModuleDescriptor, UnsignedPrimitives>() {
-            @Override
-            public UnsignedPrimitives invoke(ModuleDescriptor module) {
-                Map<KotlinType, SimpleType> unsignedKotlinTypeToKotlinArrayType = new HashMap<KotlinType, SimpleType>();
-                Map<SimpleType, SimpleType> kotlinArrayTypeToUnsignedKotlinType = new HashMap<SimpleType, SimpleType>();
-                for (UnsignedType unsigned : UnsignedType.values()) {
-                    ClassDescriptor descriptor = FindClassInModuleKt.findClassAcrossModuleDependencies(module, unsigned.getClassId());
-                    if (descriptor == null) continue;
-
-                    ClassDescriptor arrayDescriptor =
-                            FindClassInModuleKt.findClassAcrossModuleDependencies(module, unsigned.getArrayClassId());
-                    if (arrayDescriptor == null) continue;
-
-                    SimpleType type = descriptor.getDefaultType();
-                    SimpleType arrayType = arrayDescriptor.getDefaultType();
-
-                    unsignedKotlinTypeToKotlinArrayType.put(type, arrayType);
-                    kotlinArrayTypeToUnsignedKotlinType.put(arrayType, type);
-                }
-                return new UnsignedPrimitives(unsignedKotlinTypeToKotlinArrayType, kotlinArrayTypeToUnsignedKotlinType);
             }
         });
 
@@ -825,13 +801,30 @@ public abstract class KotlinBuiltIns {
 
         ModuleDescriptor module = DescriptorUtils.getContainingModuleOrNull(notNullArrayType);
         if (module != null) {
-            //noinspection SuspiciousMethodCalls
-            SimpleType unsignedType = unsignedPrimitives.invoke(module).kotlinArrayTypeToUnsignedKotlinType.get(notNullArrayType);
+            KotlinType unsignedType = getElementTypeForUnsignedArray(notNullArrayType, module);
             if (unsignedType != null) return unsignedType;
         }
 
 
         throw new IllegalStateException("not array: " + arrayType);
+    }
+
+    @Nullable
+    private static KotlinType getElementTypeForUnsignedArray(@NotNull KotlinType notNullArrayType, @NotNull ModuleDescriptor module) {
+        ClassifierDescriptor descriptor = notNullArrayType.getConstructor().getDeclarationDescriptor();
+        if (descriptor == null) return null;
+        if (!UnsignedTypes.INSTANCE.isShortNameOfUnsignedArray(descriptor.getName())) return null;
+
+        ClassId arrayClassId = DescriptorUtilsKt.getClassId(descriptor);
+        if (arrayClassId == null) return null;
+
+        ClassId elementClassId = UnsignedTypes.INSTANCE.getUnsignedClassIdByArrayClassId(arrayClassId);
+        if (elementClassId == null) return null;
+
+        ClassDescriptor elementClassDescriptor = FindClassInModuleKt.findClassAcrossModuleDependencies(module, elementClassId);
+        if (elementClassDescriptor == null) return null;
+
+        return elementClassDescriptor.getDefaultType();
     }
 
     @NotNull
@@ -848,10 +841,21 @@ public abstract class KotlinBuiltIns {
         if (primitiveArray != null) return primitiveArray;
 
         if (UnsignedTypes.INSTANCE.isUnsignedType(kotlinType)) {
+            if (TypeUtils.isNullableType(kotlinType)) return null;
+
             ModuleDescriptor module = DescriptorUtils.getContainingModuleOrNull(kotlinType);
             if (module == null) return null;
 
-            return unsignedPrimitives.invoke(module).unsignedKotlinTypeToKotlinArrayType.get(kotlinType);
+            ClassId unsignedClassId = DescriptorUtilsKt.getClassId(kotlinType.getConstructor().getDeclarationDescriptor());
+            assert unsignedClassId != null : "unsignedClassId should not be null for unsigned type " + kotlinType;
+
+            ClassId arrayClassId = UnsignedTypes.INSTANCE.getUnsignedArrayClassIdByUnsignedClassId(unsignedClassId);
+            assert arrayClassId != null : "arrayClassId should not be null for unsigned type " + unsignedClassId;
+
+            ClassDescriptor arrayClassDescriptor = FindClassInModuleKt.findClassAcrossModuleDependencies(module, arrayClassId);
+            if (arrayClassDescriptor == null) return null;
+
+            return arrayClassDescriptor.getDefaultType();
         }
 
         return null;
@@ -980,6 +984,10 @@ public abstract class KotlinBuiltIns {
 
     public static boolean isNumber(@NotNull KotlinType type) {
         return isConstructedFromGivenClassAndNotNullable(type, FQ_NAMES.number);
+    }
+
+    public static boolean isNumberOrNullableNumber(@NotNull KotlinType type) {
+        return isConstructedFromGivenClass(type, FQ_NAMES.number);
     }
 
     public static boolean isChar(@NotNull KotlinType type) {
@@ -1154,7 +1162,7 @@ public abstract class KotlinBuiltIns {
     }
 
     public static boolean isDeprecated(@NotNull DeclarationDescriptor declarationDescriptor) {
-        if (containsAnnotation(declarationDescriptor, FQ_NAMES.deprecated)) return true;
+        if (declarationDescriptor.getOriginal().getAnnotations().hasAnnotation(FQ_NAMES.deprecated)) return true;
 
         if (declarationDescriptor instanceof PropertyDescriptor) {
             boolean isVar = ((PropertyDescriptor) declarationDescriptor).isVar();
@@ -1172,21 +1180,5 @@ public abstract class KotlinBuiltIns {
 
     public static FqName getPrimitiveFqName(@NotNull PrimitiveType primitiveType) {
         return BUILT_INS_PACKAGE_FQ_NAME.child(primitiveType.getTypeName());
-    }
-
-    private static boolean containsAnnotation(DeclarationDescriptor descriptor, FqName annotationClassFqName) {
-        DeclarationDescriptor original = descriptor.getOriginal();
-        Annotations annotations = original.getAnnotations();
-
-        if (annotations.findAnnotation(annotationClassFqName) != null) return true;
-
-        AnnotationUseSiteTarget associatedUseSiteTarget = AnnotationUseSiteTarget.Companion.getAssociatedUseSiteTarget(descriptor);
-        if (associatedUseSiteTarget != null) {
-            if (Annotations.Companion.findUseSiteTargetedAnnotation(annotations, associatedUseSiteTarget, annotationClassFqName) != null) {
-                return true;
-            }
-        }
-
-        return false;
     }
 }

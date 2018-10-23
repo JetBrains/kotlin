@@ -40,6 +40,7 @@ import kotlin.jvm.internal.FunctionReference
 import kotlin.jvm.internal.PropertyReference
 import kotlin.reflect.KVisibility
 import kotlin.reflect.full.IllegalCallableAccessException
+import kotlin.reflect.jvm.internal.calls.createAnnotationInstance
 import kotlin.reflect.jvm.internal.components.ReflectAnnotationSource
 import kotlin.reflect.jvm.internal.components.ReflectKotlinClass
 import kotlin.reflect.jvm.internal.components.RuntimeSourceElementFactory
@@ -180,6 +181,11 @@ internal val CallableMemberDescriptor.isPublicInBytecode: Boolean
         val visibility = visibility
         return (visibility == Visibilities.PUBLIC || visibility == Visibilities.INTERNAL) && !isEffectivelyInlineOnly()
     }
+
+internal val CallableDescriptor.instanceReceiverParameter: ReceiverParameterDescriptor?
+    get() =
+        if (dispatchReceiverParameter != null) (containingDeclaration as ClassDescriptor).thisAsReceiverParameter
+        else null
 
 internal fun <M : MessageLite, D : CallableDescriptor> deserializeToDescriptor(
     moduleAnchor: Class<*>,
