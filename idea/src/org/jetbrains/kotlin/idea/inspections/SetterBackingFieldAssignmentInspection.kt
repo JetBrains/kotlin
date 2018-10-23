@@ -34,13 +34,17 @@ class SetterBackingFieldAssignmentInspection : AbstractKotlinInspection(), Clean
             if (bodyExpression.anyDescendantOfType<KtExpression> {
                     when (it) {
                         is KtBinaryExpression ->
-                            it.left?.text == KtTokens.FIELD_KEYWORD.value && it.operationToken in assignmentOperators
+                            it.left.isBackingFieldReference(property) && it.operationToken in assignmentOperators
                         is KtUnaryExpression ->
-                            it.baseExpression?.text == KtTokens.FIELD_KEYWORD.value && it.operationToken in incrementAndDecrementOperators
+                            it.baseExpression.isBackingFieldReference(property) && it.operationToken in incrementAndDecrementOperators
                         is KtCallExpression ->
                             it.valueArguments.any { arg ->
-                                arg.text == parameter?.text
-                                        && arg.getArgumentExpression().getResolvedCall(accessorContext)?.resultingDescriptor == parameterDescriptor
+                                arg.text == parameter?.text && run {
+                                    val argumentResultingDescriptor =
+                                        arg.getArgumentExpression().getResolvedCall(accessorContext)?.resultingDescriptor
+                                    argumentResultingDescriptor == parameterDescriptor
+                                }
+
                             }
                         else -> false
                     }
@@ -53,6 +57,10 @@ class SetterBackingFieldAssignmentInspection : AbstractKotlinInspection(), Clean
                 AssignBackingFieldFix()
             )
         })
+    }
+
+    private fun KtExpression?.isBackingFieldReference(property: KtProperty) = with(SuspiciousVarPropertyInspection) {
+        this@isBackingFieldReference != null && isBackingFieldReference(property)
     }
 }
 
