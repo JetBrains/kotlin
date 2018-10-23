@@ -189,7 +189,6 @@ fun ConfigurationContainer.getOrCreate(name: String): Configuration = findByName
 fun Jar.setupPublicJar(baseName: String, classifier: String = "") {
     val buildNumber = project.rootProject.extra["buildNumber"] as String
     this.baseName = baseName
-    this.version = buildNumber
     this.classifier = classifier
     manifest.attributes.apply {
         put("Implementation-Vendor", "JetBrains")
