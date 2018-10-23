@@ -18,7 +18,9 @@ package org.jetbrains.kotlin.idea.completion.test
 
 import com.intellij.codeInsight.completion.CompletionType
 import com.intellij.openapi.util.io.FileUtil
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
+import org.apache.commons.io.FileUtils
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 import java.io.File
 
@@ -26,12 +28,22 @@ abstract class AbstractKotlinSourceInJavaCompletionTest : KotlinFixtureCompletio
     override fun getPlatform() = JvmPlatform
 
     override fun doTest(testPath: String) {
-        val mockLibDir = File(RELATIVE_COMPLETION_TEST_DATA_BASE_PATH + "/injava/mockLib")
-        val paths = mockLibDir.listFiles()!!.map {
-            FileUtil.toSystemIndependentName(it.path)
-        }.toTypedArray()
+        val mockPath = RELATIVE_COMPLETION_TEST_DATA_BASE_PATH + "/injava/mockLib"
+        val mockLibDir = File(mockPath)
+        fun collectPaths(dir: File): List<String> {
+            return dir.listFiles()!!.flatMap {
+                if (it.isDirectory) {
+                    collectPaths(it)
+                } else listOf(FileUtil.toSystemIndependentName(it.path))
+            }
+        }
 
-        myFixture.configureByFiles(*paths)
+        val paths = collectPaths(mockLibDir).toTypedArray()
+        paths.forEach { path ->
+            val vFile = myFixture.copyFileToProject(path, path.substring(mockPath.length))
+            myFixture.configureFromExistingVirtualFile(vFile)
+        }
+
         LightClassComputationControl.testWithControl(project, FileUtil.loadFile(File(testPath))) {
             super.doTest(testPath)
         }
