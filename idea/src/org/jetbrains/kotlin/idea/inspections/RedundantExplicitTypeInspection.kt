@@ -10,7 +10,6 @@ import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.intentions.RemoveExplicitTypeIntention
 import org.jetbrains.kotlin.psi.*
@@ -22,7 +21,7 @@ class RedundantExplicitTypeInspection : AbstractKotlinInspection() {
                 val typeReference = property.typeReference ?: return
                 val initializer = property.initializer ?: return
 
-                val type = (property.resolveToDescriptorIfAny() as? VariableDescriptor)?.type ?: return
+                val type = property.resolveToDescriptorIfAny()?.type ?: return
                 when (initializer) {
                     is KtConstantExpression -> {
                         when (initializer.node.elementType) {

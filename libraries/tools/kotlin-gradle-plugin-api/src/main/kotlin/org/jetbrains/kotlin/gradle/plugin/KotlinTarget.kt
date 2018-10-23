@@ -5,11 +5,20 @@
 
 package org.jetbrains.kotlin.gradle.plugin
 
+import groovy.lang.Closure
+import org.gradle.api.Action
 import org.gradle.api.Named
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.attributes.HasAttributes
+import org.gradle.api.component.SoftwareComponent
 import org.gradle.api.internal.component.UsageContext
+import org.gradle.api.publish.maven.MavenPublication
+
+interface KotlinTargetComponent : SoftwareComponent {
+    val target: KotlinTarget
+    val publishable: Boolean
+}
 
 interface KotlinTarget: Named, HasAttributes {
     val targetName: String
@@ -27,7 +36,14 @@ interface KotlinTarget: Named, HasAttributes {
     val apiElementsConfigurationName: String
     val runtimeElementsConfigurationName: String
 
+    val publishable: Boolean
+
+    val component: KotlinTargetComponent
+
     fun createUsageContexts(): Set<UsageContext>
+
+    fun mavenPublication(action: Closure<Unit>)
+    fun mavenPublication(action: Action<MavenPublication>)
 
     override fun getName(): String = targetName
 }

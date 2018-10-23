@@ -5,83 +5,83 @@ public final annotation class A : kotlin/Annotation {
   // signature: <init>(ZCBSIFJD[Z[C[B[S[I[F[J[DLjava/lang/String;Lkotlin/annotation/AnnotationTarget;Lkotlin/reflect/KClass;LB;)V
   public /* primary */ constructor(z: kotlin/Boolean, c: kotlin/Char, b: kotlin/Byte, s: kotlin/Short, i: kotlin/Int, f: kotlin/Float, j: kotlin/Long, d: kotlin/Double, za: kotlin/BooleanArray, ca: kotlin/CharArray, ba: kotlin/ByteArray, sa: kotlin/ShortArray, ia: kotlin/IntArray, fa: kotlin/FloatArray, ja: kotlin/LongArray, da: kotlin/DoubleArray, str: kotlin/String, enum: kotlin/annotation/AnnotationTarget, klass: kotlin/reflect/KClass<*>, anno: B)
 
-  // field: anno:LB;
+  // getter: anno()LB;
   public final val anno: B
     public final get
 
-  // field: b:B
+  // getter: b()B
   public final val b: kotlin/Byte
     public final get
 
-  // field: ba:[B
+  // getter: ba()[B
   public final val ba: kotlin/ByteArray
     public final get
 
-  // field: c:C
+  // getter: c()C
   public final val c: kotlin/Char
     public final get
 
-  // field: ca:[C
+  // getter: ca()[C
   public final val ca: kotlin/CharArray
     public final get
 
-  // field: d:D
+  // getter: d()D
   public final val d: kotlin/Double
     public final get
 
-  // field: da:[D
+  // getter: da()[D
   public final val da: kotlin/DoubleArray
     public final get
 
-  // field: enum:Lkotlin/annotation/AnnotationTarget;
+  // getter: enum()Lkotlin/annotation/AnnotationTarget;
   public final val enum: kotlin/annotation/AnnotationTarget
     public final get
 
-  // field: f:F
+  // getter: f()F
   public final val f: kotlin/Float
     public final get
 
-  // field: fa:[F
+  // getter: fa()[F
   public final val fa: kotlin/FloatArray
     public final get
 
-  // field: i:I
+  // getter: i()I
   public final val i: kotlin/Int
     public final get
 
-  // field: ia:[I
+  // getter: ia()[I
   public final val ia: kotlin/IntArray
     public final get
 
-  // field: j:J
+  // getter: j()J
   public final val j: kotlin/Long
     public final get
 
-  // field: ja:[J
+  // getter: ja()[J
   public final val ja: kotlin/LongArray
     public final get
 
-  // field: klass:Lkotlin/reflect/KClass;
+  // getter: klass()Ljava/lang/Class;
   public final val klass: kotlin/reflect/KClass<*>
     public final get
 
-  // field: s:S
+  // getter: s()S
   public final val s: kotlin/Short
     public final get
 
-  // field: sa:[S
+  // getter: sa()[S
   public final val sa: kotlin/ShortArray
     public final get
 
-  // field: str:Ljava/lang/String;
+  // getter: str()Ljava/lang/String;
   public final val str: kotlin/String
     public final get
 
-  // field: z:Z
+  // getter: z()Z
   public final val z: kotlin/Boolean
     public final get
 
-  // field: za:[Z
+  // getter: za()[Z
   public final val za: kotlin/BooleanArray
     public final get
 }
@@ -92,7 +92,7 @@ public final annotation class B : kotlin/Annotation {
   // signature: <init>(Ljava/lang/String;)V
   public /* primary */ constructor(value: kotlin/String)
 
-  // field: value:Ljava/lang/String;
+  // getter: value()Ljava/lang/String;
   public final val value: kotlin/String
     public final get
 }
@@ -103,8 +103,22 @@ public final class C : kotlin/Any {
   // signature: <init>()V
   public /* primary */ constructor()
 
-  // signature: typeAnnotation()V
-  public final fun typeAnnotation(): @A(z = true, c = 'x', b = 1.toByte(), s = 42.toShort(), i = 42424242, f = -2.72f, j = 239239239239239L, d = 3.14, za = [true], ca = ['\''], ba = [1.toByte()], sa = [42.toShort()], ia = [42424242], fa = [-2.72f], ja = [239239239239239L], da = [3.14], str = "aba\ncaba'\"\t\u0001\u0002ꙮ", enum = kotlin/annotation/AnnotationTarget.CLASS, klass = C::class, anno = B(value = "aba\ncaba'\"\t\u0001\u0002ꙮ")) kotlin/Unit
+  // signature: parameterTypeAnnotation(Ljava/lang/Object;)Ljava/lang/Object;
+  public final fun parameterTypeAnnotation(p: @JvmNamed(value = "Q_Q") kotlin/Any): kotlin/Any
+
+  // signature: returnTypeAnnotation()V
+  public final fun returnTypeAnnotation(): @A(z = true, c = 'x', b = 1.toByte(), s = 42.toShort(), i = 42424242, f = -2.72f, j = 239239239239239L, d = 3.14, za = [true], ca = ['\''], ba = [1.toByte()], sa = [42.toShort()], ia = [42424242], fa = [-2.72f], ja = [239239239239239L], da = [3.14], str = "aba\ncaba'\"\t\u0001\u0002ꙮ", enum = kotlin/annotation/AnnotationTarget.CLASS, klass = C::class, anno = B(value = "aba\ncaba'\"\t\u0001\u0002ꙮ")) kotlin/Unit
+}
+// JvmNamed.class
+// ------------------------------------------
+public final annotation class JvmNamed : kotlin/Annotation {
+
+  // signature: <init>(Ljava/lang/String;)V
+  public /* primary */ constructor(value: kotlin/String)
+
+  // getter: uglyJvmName()Ljava/lang/String;
+  public final val value: kotlin/String
+    public final get
 }
 // META-INF/test-module.kotlin_module
 // ------------------------------------------

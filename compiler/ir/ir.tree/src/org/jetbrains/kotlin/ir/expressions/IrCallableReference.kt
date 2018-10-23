@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptorWithAccessors
 import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
 
 interface IrCallableReference : IrMemberAccessExpression {
@@ -36,13 +37,13 @@ interface IrFunctionReference : IrCallableReference {
 interface IrPropertyReference : IrCallableReference {
     override val descriptor: PropertyDescriptor
     val field: IrFieldSymbol?
-    val getter: IrFunctionSymbol?
-    val setter: IrFunctionSymbol?
+    val getter: IrSimpleFunctionSymbol?
+    val setter: IrSimpleFunctionSymbol?
 }
 
 interface IrLocalDelegatedPropertyReference : IrCallableReference {
     override val descriptor: VariableDescriptorWithAccessors
     val delegate: IrVariableSymbol
-    val getter: IrFunctionSymbol
-    val setter: IrFunctionSymbol?
+    val getter: IrSimpleFunctionSymbol
+    val setter: IrSimpleFunctionSymbol?
 }

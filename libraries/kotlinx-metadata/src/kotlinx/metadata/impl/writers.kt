@@ -139,7 +139,7 @@ private fun writeConstructor(c: WriteContext, flags: Flags, output: (ProtoBuf.Co
             writeValueParameter(c, flags, name) { t.addValueParameter(it.build()) }
 
         override fun visitVersionRequirement(): KmVersionRequirementVisitor? =
-            writeVersionRequirement(c) { t.versionRequirement = it }
+            writeVersionRequirement(c) { t.addVersionRequirement(it) }
 
         override fun visitExtensions(type: KmExtensionType): KmConstructorExtensionVisitor? =
             c.applySingleExtension(type) {
@@ -171,7 +171,7 @@ private fun writeFunction(c: WriteContext, flags: Flags, name: String, output: (
             writeType(c, flags) { t.returnType = it.build() }
 
         override fun visitVersionRequirement(): KmVersionRequirementVisitor? =
-            writeVersionRequirement(c) { t.versionRequirement = it }
+            writeVersionRequirement(c) { t.addVersionRequirement(it) }
 
         override fun visitContract(): KmContractVisitor? =
             writeContract(c) { t.contract = it.build() }
@@ -208,7 +208,7 @@ fun writeProperty(
         writeType(c, flags) { t.returnType = it.build() }
 
     override fun visitVersionRequirement(): KmVersionRequirementVisitor? =
-        writeVersionRequirement(c) { t.versionRequirement = it }
+        writeVersionRequirement(c) { t.addVersionRequirement(it) }
 
     override fun visitExtensions(type: KmExtensionType): KmPropertyExtensionVisitor? =
         c.applySingleExtension(type) {
@@ -268,7 +268,7 @@ private fun writeTypeAlias(
     }
 
     override fun visitVersionRequirement(): KmVersionRequirementVisitor? =
-        writeVersionRequirement(c) { t.versionRequirement = it }
+        writeVersionRequirement(c) { t.addVersionRequirement(it) }
 
     override fun visitEnd() {
         if (flags != ProtoBuf.TypeAlias.getDefaultInstance().flags) {
@@ -453,7 +453,7 @@ open class ClassWriter(stringTable: StringTable) : KmClassVisitor() {
     }
 
     override fun visitVersionRequirement(): KmVersionRequirementVisitor? =
-        writeVersionRequirement(c) { t.versionRequirement = it }
+        writeVersionRequirement(c) { t.addVersionRequirement(it) }
 
     override fun visitExtensions(type: KmExtensionType): KmClassExtensionVisitor? =
         c.applySingleExtension(type) {

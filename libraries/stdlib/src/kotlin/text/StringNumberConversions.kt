@@ -9,10 +9,6 @@
 
 package kotlin.text
 
-import kotlin.*
-
-
-
 /**
  * Parses the string as a signed [Byte] number and returns the result
  * or `null` if the string is not a valid representation of a number.
@@ -178,3 +174,6 @@ public fun String.toLongOrNull(radix: Int): Long? {
 
     return if (isNegative) result else -result
 }
+
+
+internal fun numberFormatError(input: String): Nothing = throw NumberFormatException("Invalid number format: '$input'")

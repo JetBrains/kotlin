@@ -48,10 +48,10 @@ public abstract class JsVisitorWithContext {
         doAcceptList(collection);
     }
 
+    @SuppressWarnings("unchecked")
     public final <T extends JsStatement> T acceptStatement(T statement) {
         if (statement == null) return null;
 
-        //noinspection unchecked
         return (T) doAcceptStatement(statement);
     }
 

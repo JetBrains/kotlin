@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.kapt3.javac.KaptTreeMaker
 import org.jetbrains.kotlin.kapt3.javac.KaptJavaFileObject
 import org.jetbrains.kotlin.kapt3.base.plus
 import org.jetbrains.kotlin.kapt3.base.javac.kaptError
+import org.jetbrains.kotlin.kapt3.base.javac.reportKaptError
 import org.jetbrains.kotlin.kapt3.base.mapJList
 import org.jetbrains.kotlin.kapt3.base.mapJListIndexed
 import org.jetbrains.kotlin.kapt3.base.pairedListToMap
@@ -51,7 +52,9 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameOrNull
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassOrAny
 import org.jetbrains.kotlin.resolve.source.PsiSourceElement
+import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.isError
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.tree.*
@@ -62,7 +65,8 @@ import com.sun.tools.javac.util.List as JavacList
 class ClassFileToSourceStubConverter(
         val kaptContext: KaptContextForStubGeneration,
         val generateNonExistentClass: Boolean,
-        val correctErrorTypes: Boolean
+        val correctErrorTypes: Boolean,
+        val strictMode: Boolean
 ) {
     private companion object {
         private val VISIBILITY_MODIFIERS = (Opcodes.ACC_PUBLIC or Opcodes.ACC_PRIVATE or Opcodes.ACC_PROTECTED).toLong()
@@ -106,8 +110,6 @@ class ClassFileToSourceStubConverter(
     val treeMaker = TreeMaker.instance(kaptContext.context) as KaptTreeMaker
 
     private val signatureParser = SignatureParser(treeMaker)
-
-    private val anonymousTypeHandler = AnonymousTypeHandler(this)
 
     private val kdocCommentKeeper = KDocCommentKeeper(kaptContext)
 
@@ -287,7 +289,7 @@ class ClassFileToSourceStubConverter(
             isTopLevel: Boolean
     ): JCClassDecl? {
         if (isSynthetic(clazz.access)) return null
-        if (checkIfShouldBeIgnored(Type.getObjectType(clazz.name))) return null
+        if (!checkIfValidTypeName(clazz, Type.getObjectType(clazz.name))) return null
 
         val descriptor = kaptContext.origins[clazz]?.descriptor ?: return null
         val isNested = (descriptor as? ClassDescriptor)?.isNested ?: false
@@ -322,7 +324,6 @@ class ClassFileToSourceStubConverter(
 
         val superClass = treeMaker.FqName(treeMaker.getQualifiedName(clazz.superName))
 
-        val hasSuperClass = clazz.superName != "java/lang/Object" && !isEnum
         val genericType = signatureParser.parseClassSignature(clazz.signature, superClass, interfaces)
 
         class EnumValueData(val field: FieldNode, val innerClass: InnerClassNode?, val correspondingClass: ClassNode?)
@@ -386,30 +387,136 @@ class ClassFileToSourceStubConverter(
 
         lineMappings.registerClass(clazz)
 
+        val superTypes = calculateSuperTypes(clazz, genericType)
+
         return treeMaker.ClassDef(
                 modifiers,
                 treeMaker.name(simpleName),
                 genericType.typeParameters,
-                if (hasSuperClass) genericType.superClass else null,
-                genericType.interfaces,
+                superTypes.superClass,
+                superTypes.interfaces,
                 enumValues + fields + methods + nestedClasses).keepKdocComments(clazz)
     }
 
-    private tailrec fun checkIfShouldBeIgnored(type: Type): Boolean {
-        if (type.sort == Type.ARRAY) {
-            return checkIfShouldBeIgnored(type.elementType)
+    private class ClassSupertypes(val superClass: JCExpression?, val interfaces: JavacList<JCExpression>)
+
+    private fun calculateSuperTypes(clazz: ClassNode, genericType: SignatureParser.ClassGenericSignature): ClassSupertypes {
+        val hasSuperClass = clazz.superName != "java/lang/Object" && !clazz.isEnum()
+
+        val defaultSuperTypes = ClassSupertypes(
+            if (hasSuperClass) genericType.superClass else null,
+            genericType.interfaces
+        )
+
+        if (!correctErrorTypes) {
+            return defaultSuperTypes
         }
 
-        if (type.sort != Type.OBJECT) return false
+        val declaration = kaptContext.origins[clazz]?.element as? KtClassOrObject ?: return defaultSuperTypes
+
+        val (superClass, superInterfaces) = partitionSuperTypes(declaration) ?: return defaultSuperTypes
+
+        val sameSuperClassCount = (superClass == null) == (defaultSuperTypes.superClass == null)
+        val sameSuperInterfaceCount = superInterfaces.size == defaultSuperTypes.interfaces.size
+
+        if (sameSuperClassCount && sameSuperInterfaceCount) {
+            return defaultSuperTypes
+        }
+
+        class SuperTypeCalculationFailure : RuntimeException()
+
+        fun nonErrorType(ref: () -> KtTypeReference?): JCExpression {
+            assert(correctErrorTypes)
+
+            return getNonErrorType<JCExpression>(
+                ErrorUtils.createErrorType("Error super class"),
+                ErrorTypeCorrector.TypeKind.SUPER_TYPE,
+                ref
+            ) { throw SuperTypeCalculationFailure() }
+        }
+
+        return try {
+            ClassSupertypes(
+                superClass?.let { nonErrorType { it } },
+                mapJList(superInterfaces) { nonErrorType { it } }
+            )
+        } catch (e: SuperTypeCalculationFailure) {
+            defaultSuperTypes
+        }
+    }
+
+    private fun partitionSuperTypes(declaration: KtClassOrObject): Pair<KtTypeReference?, List<KtTypeReference>>? {
+        val superTypeEntries = declaration.superTypeListEntries
+            .takeIf { it.isNotEmpty() }
+            ?: return Pair(null, emptyList())
+
+        val resolvedSuperTypes = superTypeEntries
+            .map { it to kaptContext.bindingContext[BindingContext.TYPE, it.typeReference] }
+
+        val (resolvedAsClasses, otherSuperTypes) = resolvedSuperTypes
+            .partition {
+                it.second?.isError == false
+                && (it.second?.constructor?.declarationDescriptor as? ClassDescriptor)?.kind == ClassKind.CLASS
+            }
+
+        if (resolvedAsClasses.size > 1) {
+            // Error in user code, several entries were resolved to classes
+            return null
+        } else if (resolvedAsClasses.size == 1) {
+            return Pair(resolvedAsClasses.single().first.typeReference, otherSuperTypes.mapNotNull { it.first.typeReference })
+        }
+
+        val (withParenthesis, withoutParenthesis) = superTypeEntries.partition { it is KtSuperTypeCallEntry }
+
+        if (withParenthesis.size > 1) {
+            // Error in user code, several entries with super constructor call
+            return null
+        } else if (withParenthesis.size == 1) {
+            return Pair(withParenthesis.single().typeReference, withoutParenthesis.mapNotNull { it.typeReference })
+        }
+
+        if (declaration is KtClass && declaration.primaryConstructor == null && declaration.secondaryConstructors.isNotEmpty()) {
+            return Pair(superTypeEntries.first().typeReference, superTypeEntries.drop(1).mapNotNull { it.typeReference })
+        }
+
+        return Pair(null, superTypeEntries.mapNotNull { it.typeReference })
+    }
+
+    private tailrec fun checkIfValidTypeName(containingClass: ClassNode, type: Type): Boolean {
+        if (type.sort == Type.ARRAY) {
+            return checkIfValidTypeName(containingClass, type.elementType)
+        }
+
+        if (type.sort != Type.OBJECT) return true
 
         val internalName = type.internalName
         // Ignore type names with Java keywords in it
         if (internalName.split('/', '.').any { it in JAVA_KEYWORDS }) {
-            return true
+            if (strictMode) {
+                kaptContext.reportKaptError(
+                    "Can't generate a stub for '${containingClass.className}'.",
+                    "Type name '${type.className}' contains a Java keyword."
+                )
+            }
+
+            return false
         }
 
-        val clazz = kaptContext.compiledClasses.firstOrNull { it.name == internalName } ?: return false
-        return checkIfInnerClassNameConflictsWithOuter(clazz)
+        val clazz = kaptContext.compiledClasses.firstOrNull { it.name == internalName } ?: return true
+
+        if (doesInnerClassNameConflictWithOuter(clazz)) {
+            if (strictMode) {
+                kaptContext.reportKaptError(
+                    "Can't generate a stub for '${containingClass.className}'.",
+                    "Its name '${clazz.simpleName}' is the same as one of the outer class names.",
+                    "Java forbids it. Please change one of the class names."
+                )
+            }
+
+            return false
+        }
+
+        return true
     }
 
     private fun findContainingClassNode(clazz: ClassNode): ClassNode? {
@@ -418,7 +525,7 @@ class ClassFileToSourceStubConverter(
     }
 
     // Java forbids outer and inner class names to be the same. Check if the names are different
-    private tailrec fun checkIfInnerClassNameConflictsWithOuter(
+    private tailrec fun doesInnerClassNameConflictWithOuter(
             clazz: ClassNode,
             outerClass: ClassNode? = findContainingClassNode(clazz)
     ): Boolean {
@@ -426,7 +533,7 @@ class ClassFileToSourceStubConverter(
         if (treeMaker.getSimpleName(clazz) == treeMaker.getSimpleName(outerClass)) return true
         // Try to find the containing class for outerClassNode (to check the whole tree recursively)
         val containingClassForOuterClass = findContainingClassNode(outerClass) ?: return false
-        return checkIfInnerClassNameConflictsWithOuter(clazz, containingClassForOuterClass)
+        return doesInnerClassNameConflictWithOuter(clazz, containingClassForOuterClass)
     }
 
     private fun getClassAccessFlags(clazz: ClassNode, descriptor: DeclarationDescriptor, isInner: Boolean, isNested: Boolean) = when {
@@ -471,7 +578,7 @@ class ClassFileToSourceStubConverter(
         if (!isValidIdentifier(name)) return null
 
         val type = Type.getType(field.desc)
-        if (checkIfShouldBeIgnored(type)) {
+        if (!checkIfValidTypeName(containingClass, type)) {
             return null
         }
 
@@ -479,16 +586,16 @@ class ClassFileToSourceStubConverter(
         val typeExpression = if (isEnum(field.access))
             treeMaker.SimpleName(treeMaker.getQualifiedName(type).substringAfterLast('.'))
         else
-            anonymousTypeHandler.getNonAnonymousType(descriptor) {
-                getNonErrorType((descriptor as? CallableDescriptor)?.returnType, RETURN_TYPE,
-                                ktTypeProvider = {
-                                    val fieldOrigin = (kaptContext.origins[field]?.element as? KtCallableDeclaration)
-                                            ?.takeIf { it !is KtFunction }
+            getNonErrorType(
+                (descriptor as? CallableDescriptor)?.returnType, RETURN_TYPE,
+                ktTypeProvider = {
+                    val fieldOrigin = (kaptContext.origins[field]?.element as? KtCallableDeclaration)
+                        ?.takeIf { it !is KtFunction }
 
-                                    fieldOrigin?.typeReference
-                                },
-                                ifNonError = { signatureParser.parseFieldSignature(field.signature, treeMaker.Type(type)) })
-            }
+                    fieldOrigin?.typeReference
+                },
+                ifNonError = { signatureParser.parseFieldSignature(field.signature, treeMaker.Type(type)) }
+            )
 
         val value = field.value
 
@@ -539,7 +646,9 @@ class ClassFileToSourceStubConverter(
 
         val parametersInfo = method.getParametersInfo(containingClass)
 
-        if (checkIfShouldBeIgnored(asmReturnType) || parametersInfo.any { checkIfShouldBeIgnored(it.type) }) {
+        if (!checkIfValidTypeName(containingClass, asmReturnType)
+            || parametersInfo.any { !checkIfValidTypeName(containingClass, it.type) }
+        ) {
             return null
         }
 
@@ -646,19 +755,19 @@ class ClassFileToSourceStubConverter(
                     }
                 })
 
-        val returnType = anonymousTypeHandler.getNonAnonymousType(descriptor) {
-            getNonErrorType(descriptor.returnType, RETURN_TYPE,
-                            ktTypeProvider = {
-                                val element = kaptContext.origins[method]?.element
-                                when (element) {
-                                    is KtFunction -> element.typeReference
-                                    is KtProperty -> if (descriptor is PropertyGetterDescriptor) element.typeReference else null
-                                    is KtParameter -> if (descriptor is PropertyGetterDescriptor) element.typeReference else null
-                                    else -> null
-                                }
-                            },
-                            ifNonError = { genericSignature.returnType })
-        }
+        val returnType = getNonErrorType(
+            descriptor.returnType, RETURN_TYPE,
+            ktTypeProvider = {
+                val element = kaptContext.origins[method]?.element
+                when (element) {
+                    is KtFunction -> element.typeReference
+                    is KtProperty -> if (descriptor is PropertyGetterDescriptor) element.typeReference else null
+                    is KtParameter -> if (descriptor is PropertyGetterDescriptor) element.typeReference else null
+                    else -> null
+                }
+            },
+            ifNonError = { genericSignature.returnType }
+        )
 
         return Pair(genericSignature, returnType)
     }

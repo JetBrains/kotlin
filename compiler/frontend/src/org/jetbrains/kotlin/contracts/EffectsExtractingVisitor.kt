@@ -19,12 +19,11 @@ package org.jetbrains.kotlin.contracts
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.contracts.interpretation.ContractInterpretationDispatcher
 import org.jetbrains.kotlin.contracts.model.Computation
+import org.jetbrains.kotlin.contracts.model.ConditionalEffect
+import org.jetbrains.kotlin.contracts.model.ESEffect
 import org.jetbrains.kotlin.contracts.model.Functor
 import org.jetbrains.kotlin.contracts.model.functors.*
-import org.jetbrains.kotlin.contracts.model.structure.CallComputation
-import org.jetbrains.kotlin.contracts.model.structure.ESConstant
-import org.jetbrains.kotlin.contracts.model.structure.UNKNOWN_COMPUTATION
-import org.jetbrains.kotlin.contracts.model.structure.lift
+import org.jetbrains.kotlin.contracts.model.structure.*
 import org.jetbrains.kotlin.contracts.parsing.isEqualsDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
@@ -39,6 +38,7 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValue
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant
+import org.jetbrains.kotlin.resolve.constants.UnsignedErrorValueTypeConstant
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.types.KotlinType
@@ -96,6 +96,8 @@ class EffectsExtractingVisitor(
 
         val compileTimeConstant: CompileTimeConstant<*> =
             bindingContext.get(BindingContext.COMPILE_TIME_VALUE, expression) ?: return UNKNOWN_COMPUTATION
+        if (compileTimeConstant.isError || compileTimeConstant is UnsignedErrorValueTypeConstant) return UNKNOWN_COMPUTATION
+
         val value: Any? = compileTimeConstant.getValue(type)
 
         return when (value) {
@@ -112,6 +114,20 @@ class EffectsExtractingVisitor(
             DefaultBuiltIns.Instance.booleanType,
             IsFunctor(rightType, expression.isNegated).invokeWithArguments(listOf(arg))
         )
+    }
+
+    override fun visitSafeQualifiedExpression(expression: KtSafeQualifiedExpression, data: Unit?): Computation {
+        val computation = super.visitSafeQualifiedExpression(expression, data)
+        if (computation === UNKNOWN_COMPUTATION) return computation
+
+        // For safecall any clauses of form 'returns(null) -> ...' are incorrect, because safecall can return
+        // null bypassing function's contract, so we have to filter them out
+
+        fun ESEffect.containsReturnsNull(): Boolean =
+            this == ESReturns(ESConstant.NULL) || this is ConditionalEffect && this.simpleEffect.containsReturnsNull()
+
+        val effectsWithoutReturnsNull = computation.effects.filter { !it.containsReturnsNull() }
+        return CallComputation(computation.type, effectsWithoutReturnsNull)
     }
 
     override fun visitBinaryExpression(expression: KtBinaryExpression, data: Unit): Computation {

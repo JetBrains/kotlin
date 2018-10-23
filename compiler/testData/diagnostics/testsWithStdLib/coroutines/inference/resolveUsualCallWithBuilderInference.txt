@@ -1,0 +1,32 @@
+package
+
+public val extension: [ERROR : Type for build {
+    extensionAdd("foo")
+}]
+public val member: kotlin.collections.List<kotlin.Int>
+public val memberWithoutAnn: [ERROR : Type for wrongBuild {
+    add(42)
+}]
+public val safeExtension: kotlin.collections.List<kotlin.String>
+public fun </*0*/ S> build(/*0*/ @kotlin.BuilderInference g: Builder<S>.() -> kotlin.Unit): kotlin.collections.List<S>
+public fun </*0*/ S> wrongBuild(/*0*/ g: Builder<S>.() -> kotlin.Unit): kotlin.collections.List<S>
+public fun </*0*/ S> Builder<S>.extensionAdd(/*0*/ s: S): kotlin.Unit
+@kotlin.BuilderInference public fun </*0*/ S> Builder<S>.safeExtensionAdd(/*0*/ s: S): kotlin.Unit
+
+public final class Builder</*0*/ T> {
+    public constructor Builder</*0*/ T>()
+    public final fun add(/*0*/ t: T): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+package kotlin {
+
+    public final annotation class BuilderInference : kotlin.Annotation {
+        public constructor BuilderInference()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

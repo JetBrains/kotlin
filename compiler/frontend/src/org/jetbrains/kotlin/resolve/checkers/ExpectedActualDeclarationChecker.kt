@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.resolve.checkers
 
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.config.AnalysisFlag
+import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.Errors
@@ -40,7 +40,7 @@ import org.jetbrains.kotlin.utils.ifEmpty
 import java.io.File
 
 object ExpectedActualDeclarationChecker : DeclarationChecker {
-    internal val OPTIONAL_EXPECTATION_FQ_NAME = FqName("kotlin.OptionalExpectation")
+    val OPTIONAL_EXPECTATION_FQ_NAME = FqName("kotlin.OptionalExpectation")
 
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
         if (!context.languageVersionSettings.supportsFeature(LanguageFeature.MultiPlatformProjects)) return
@@ -51,7 +51,7 @@ object ExpectedActualDeclarationChecker : DeclarationChecker {
         if (descriptor.isExpect) {
             checkExpectedDeclarationHasActual(declaration, descriptor, context.trace, descriptor.module, context.expectActualTracker)
         } else {
-            val checkActual = !context.languageVersionSettings.getFlag(AnalysisFlag.multiPlatformDoNotCheckActual)
+            val checkActual = !context.languageVersionSettings.getFlag(AnalysisFlags.multiPlatformDoNotCheckActual)
             checkActualDeclarationHasExpected(declaration, descriptor, context.trace, checkActual)
         }
     }
@@ -129,7 +129,7 @@ object ExpectedActualDeclarationChecker : DeclarationChecker {
             .safeAs<PsiSourceFile>()
             ?.run { VfsUtilCore.virtualToIoFile(psiFile.virtualFile) }
 
-    private fun Map<out Compatibility, Collection<MemberDescriptor>>.allStrongIncompatibilities(): Boolean =
+    fun Map<out Compatibility, Collection<MemberDescriptor>>.allStrongIncompatibilities(): Boolean =
         this.keys.all { it is Incompatible && it.kind == Compatibility.IncompatibilityKind.STRONG }
 
     private fun checkActualDeclarationHasExpected(

@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea
 
 import com.intellij.ide.IconProvider
 import com.intellij.openapi.project.DumbAware
+import com.intellij.openapi.project.IndexNotReadyException
 import com.intellij.openapi.util.Iconable
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
@@ -52,7 +53,15 @@ class KotlinIconProvider : IconProvider(), DumbAware {
         val result = psiElement.getBaseIcon()
         if (flags and Iconable.ICON_FLAG_VISIBILITY > 0 && result != null && (psiElement is KtModifierListOwner && psiElement !is KtClassInitializer)) {
             val list = psiElement.modifierList
-            return createRowIcon(result.addExpectActualMarker(psiElement), getVisibilityIcon(list))
+            val visibilityIcon = getVisibilityIcon(list)
+
+            val withExpectedActual: Icon = try {
+                result.addExpectActualMarker(psiElement)
+            } catch (indexNotReady: IndexNotReadyException) {
+                result
+            }
+
+            createRowIcon(withExpectedActual, visibilityIcon)
         }
         return result
     }

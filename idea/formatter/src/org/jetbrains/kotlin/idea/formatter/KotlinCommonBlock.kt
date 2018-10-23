@@ -18,7 +18,6 @@ import com.intellij.psi.tree.IElementType
 import com.intellij.psi.tree.TokenSet
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.KtNodeTypes.*
-import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.core.formatter.KotlinCodeStyleSettings
 import org.jetbrains.kotlin.idea.formatter.NodeIndentStrategy.Companion.strategy
 import org.jetbrains.kotlin.idea.util.requireNode
@@ -94,6 +93,16 @@ abstract class KotlinCommonBlock(
     protected abstract fun getNullAlignmentStrategy(): CommonAlignmentStrategy
 
     fun isLeaf(): Boolean = node.firstChildNode == null
+
+    fun isIncomplete(): Boolean {
+        if (isIncompleteInSuper()) {
+            return true
+        }
+
+        // An incomplete declaration is the reason when modifier list can become a class body child, otherwise
+        // it's going to be a declaration child.
+        return node.elementType == MODIFIER_LIST && node.treeParent?.elementType == CLASS_BODY
+    }
 
     fun buildChildren(): List<Block> {
         if (mySubBlocks != null) {
@@ -513,13 +522,13 @@ abstract class KotlinCommonBlock(
                             ANNOTATIONS,
                             !node.treeParent.isFirstParameter()
                         )
-                    is KtClassOrObject ->
+                    is KtClassOrObject, is KtTypeAlias ->
                         return getWrappingStrategyForItemList(
                             commonSettings.CLASS_ANNOTATION_WRAP,
                             ANNOTATIONS
                         )
 
-                    is KtNamedFunction ->
+                    is KtNamedFunction, is KtSecondaryConstructor ->
                         return getWrappingStrategyForItemList(
                             commonSettings.METHOD_ANNOTATION_WRAP,
                             ANNOTATIONS
@@ -539,10 +548,10 @@ abstract class KotlinCommonBlock(
             elementType === KtNodeTypes.VALUE_PARAMETER ->
                 return wrapAfterAnnotation(commonSettings.PARAMETER_ANNOTATION_WRAP)
 
-            nodePsi is KtClassOrObject ->
+            nodePsi is KtClassOrObject || nodePsi is KtTypeAlias ->
                 return wrapAfterAnnotation(commonSettings.CLASS_ANNOTATION_WRAP)
 
-            nodePsi is KtNamedFunction ->
+            nodePsi is KtNamedFunction || nodePsi is KtSecondaryConstructor ->
                 return wrap@{ childElement ->
                     getWrapAfterAnnotation(childElement, commonSettings.METHOD_ANNOTATION_WRAP)?.let {
                         return@wrap it

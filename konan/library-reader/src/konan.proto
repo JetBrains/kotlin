@@ -1,0 +1,97 @@
+/*
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
+ */
+
+syntax = "proto2";
+
+package org.jetbrains.kotlin.metadata.konan;
+
+import "core/metadata/src/metadata.proto";
+
+option java_outer_classname = "KonanProtoBuf";
+option optimize_for = LITE_RUNTIME;
+
+// Konan extensions to the "descriptors" protobuf.
+
+extend Package {
+    optional int32 package_fq_name = 171;
+}
+
+extend Class {
+    repeated Annotation class_annotation = 170;
+}
+
+extend Constructor {
+    repeated Annotation constructor_annotation = 170;
+    optional InlineIrBody inline_constructor_ir_body = 171;
+}
+
+extend Function {
+    repeated Annotation function_annotation = 170;
+    optional InlineIrBody inline_ir_body = 171;
+}
+
+extend Property {
+    repeated Annotation property_annotation = 170;
+    optional bool has_backing_field = 171;
+    optional bool used_as_variable = 172;
+    optional Annotation.Argument.Value compile_time_value = 173;
+    optional InlineIrBody inline_getter_ir_body = 174;
+    optional InlineIrBody inline_setter_ir_body = 175;
+}
+
+extend EnumEntry {
+    repeated Annotation enum_entry_annotation = 170;
+    optional int32 enum_entry_ordinal = 171;
+}
+
+extend ValueParameter {
+    repeated Annotation parameter_annotation = 170;
+}
+
+extend Type {
+    repeated Annotation type_annotation = 170;
+    optional string type_text = 172; // TODO: remove me
+}
+
+extend TypeParameter {
+    repeated Annotation type_parameter_annotation = 170;
+}
+
+message InlineIrBody {
+    // We need to refer from descriptors to ir inline body.
+    // And in ir we need to refer local declaration descriptors
+    // That requires mutual import of KonanIr and KonanLinkData.
+    // I break the circle here by storing encoded IR.
+    // May be we need to merge KonanIr into KonanLinkData.
+    // That'd allow mutually recursive messages.
+    required string encoded_ir = 11;
+}
+
+// Konan Binary Linkdata structures.
+
+message LinkDataPackageFragment {
+    // Make if an index?
+    required string fq_name = 1;
+    required Package package = 4;
+    required LinkDataClasses classes = 5;
+    required bool is_empty = 6;
+
+    // To construct name resolver
+    required QualifiedNameTable name_table = 2;
+    required StringTable string_table = 3;
+}
+
+message LinkDataClasses {
+    // Index in the QualifiedNameIndex table.
+    repeated int32 class_name = 1;
+    repeated Class classes = 2;
+}
+
+message LinkDataLibrary {
+    required string module_name = 1;
+    repeated string package_fragment_name = 2;
+    repeated string empty_package = 3;
+}
+

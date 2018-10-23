@@ -110,21 +110,18 @@ private fun KotlinType.minValue(): Long {
     }
 }
 
+@ExperimentalUnsignedTypes
 private fun KotlinType.maxValue(): Long {
     return when {
         KotlinBuiltIns.isByte(this) -> Byte.MAX_VALUE.toLong()
         KotlinBuiltIns.isShort(this) -> Short.MAX_VALUE.toLong()
         KotlinBuiltIns.isInt(this) -> Int.MAX_VALUE.toLong()
 
-        KotlinBuiltIns.isUByte(this) -> UBYTE_MAX_VALUE
-        KotlinBuiltIns.isUShort(this) -> USHORT_MAX_VALUE
-        KotlinBuiltIns.isUInt(this) -> UINT_MAX_VALUE
+        KotlinBuiltIns.isUByte(this) -> UByte.MAX_VALUE.toLong()
+        KotlinBuiltIns.isUShort(this) -> UShort.MAX_VALUE.toLong()
+        KotlinBuiltIns.isUInt(this) -> UInt.MAX_VALUE.toLong()
 
         else -> error("Can't get max value for type: $this")
     }
 }
-
-private val UBYTE_MAX_VALUE = (-1).toByte().fromUByteToLong()
-private val USHORT_MAX_VALUE = (-1).toShort().fromUShortToLong()
-private val UINT_MAX_VALUE = (-1).fromUIntToLong()
 

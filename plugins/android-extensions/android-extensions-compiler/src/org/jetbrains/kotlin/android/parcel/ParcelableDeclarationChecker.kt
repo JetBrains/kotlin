@@ -14,12 +14,11 @@ import org.jetbrains.kotlin.codegen.ClassBuilderMode
 import org.jetbrains.kotlin.codegen.FrameMap
 import org.jetbrains.kotlin.codegen.state.IncompatibleClassTracker
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
+import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.diagnostics.reportFromPlugin
@@ -27,8 +26,8 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.checkers.DeclarationCheckerContext
 import org.jetbrains.kotlin.resolve.checkers.DeclarationChecker
+import org.jetbrains.kotlin.resolve.checkers.DeclarationCheckerContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.jvm.annotations.findJvmFieldAnnotation
@@ -87,10 +86,7 @@ class ParcelableDeclarationChecker : DeclarationChecker {
             bindingContext: BindingContext
     ) {
         fun hasIgnoredOnParcel(): Boolean {
-            fun AnnotationDescriptor.isIgnoredOnParcel() = fqName == IGNORED_ON_PARCEL_FQNAME
-
-            fun Annotations.hasIgnoredOnParcel() = getAllAnnotations()
-                .any { (it.target == null || it.target == AnnotationUseSiteTarget.PROPERTY_GETTER) && it.annotation.isIgnoredOnParcel() }
+            fun Annotations.hasIgnoredOnParcel() = any { it.fqName == IGNORED_ON_PARCEL_FQNAME }
 
             return property.annotations.hasIgnoredOnParcel() || (property.getter?.annotations?.hasIgnoredOnParcel() ?: false)
         }
@@ -184,9 +180,9 @@ class ParcelableDeclarationChecker : DeclarationChecker {
             ClassBuilderMode.FULL,
             IncompatibleClassTracker.DoNothing,
             descriptor.module.name.asString(),
-            /* isJvm8Target */ false,
-            /* isReleaseCoroutines */ KotlinTypeMapper.RELEASE_COROUTINES_DEFAULT,
-            /* isIrBackend*/false
+            JvmTarget.DEFAULT,
+            KotlinTypeMapper.RELEASE_COROUTINES_DEFAULT,
+            false
         )
 
         for (parameter in primaryConstructor?.valueParameters.orEmpty()) {

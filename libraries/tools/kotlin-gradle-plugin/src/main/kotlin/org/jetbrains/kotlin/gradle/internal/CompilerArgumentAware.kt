@@ -27,8 +27,8 @@ interface CompilerArgumentAware<T : CommonToolArguments> {
 
     val defaultSerializedCompilerArguments: List<String>
         get() = createCompilerArgs()
-                .also { setupCompilerArgs(it, defaultsOnly = true) }
-                .let(ArgumentUtils::convertArgumentsToStringList)
+            .also { setupCompilerArgs(it, defaultsOnly = true) }
+            .let(ArgumentUtils::convertArgumentsToStringList)
 
     val filteredArgumentsMap: Map<String, String>
         get() = CompilerArgumentsGradleInput.createInputsMap(prepareCompilerArguments())
@@ -38,7 +38,7 @@ interface CompilerArgumentAware<T : CommonToolArguments> {
 }
 
 internal fun <T : CommonToolArguments> CompilerArgumentAware<T>.prepareCompilerArguments() =
-        createCompilerArgs().also { setupCompilerArgs(it) }
+    createCompilerArgs().also { setupCompilerArgs(it) }
 
 interface CompilerArgumentAwareWithInput<T : CommonToolArguments> : CompilerArgumentAware<T> {
     @get:Internal

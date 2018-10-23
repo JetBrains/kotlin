@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.backend.jvm.codegen
 
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
-import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.descriptors.JvmDescriptorWithExtraFlags
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding
@@ -39,7 +38,7 @@ import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import java.lang.RuntimeException
 
-class ClassCodegen private constructor(
+open class ClassCodegen protected constructor(
     internal val irClass: IrClass,
     val context: JvmBackendContext,
     private val parentClassCodegen: ClassCodegen? = null
@@ -66,7 +65,9 @@ class ClassCodegen private constructor(
 
     val psiElement = irClass.descriptor.psiElement!!
 
-    val visitor: ClassBuilder = state.factory.newVisitor(OtherOrigin(psiElement, descriptor), type, psiElement.containingFile)
+    val visitor: ClassBuilder = createClassBuilder()
+
+    open fun createClassBuilder() = state.factory.newVisitor(OtherOrigin(psiElement, descriptor), type, psiElement.containingFile)
 
     private var sourceMapper: DefaultSourceMapper? = null
 
@@ -157,7 +158,7 @@ class ClassCodegen private constructor(
             fieldSignature, null/*TODO support default values*/
         )
 
-        if (field.origin == JvmLoweredDeclarationOrigin.FIELD_FOR_ENUM_ENTRY) {
+        if (field.origin == IrDeclarationOrigin.FIELD_FOR_ENUM_ENTRY) {
             AnnotationCodegen.forField(fv, this, typeMapper).genAnnotations(field.descriptor, null)
         } else {
 
@@ -210,13 +211,7 @@ class ClassCodegen private constructor(
 
     fun getOrCreateSourceMapper(): DefaultSourceMapper {
         if (sourceMapper == null) {
-            sourceMapper = DefaultSourceMapper(
-                SourceInfo.createInfoForIr(
-                    fileEntry.getSourceRangeInfo(irClass.startOffset, irClass.endOffset).endLineNumber + 1,
-                    this.visitor.thisName,
-                    this.psiElement.containingFile.name
-                )
-            )
+            sourceMapper = context.getSourceMapper(irClass)
         }
         return sourceMapper!!
     }
@@ -258,7 +253,12 @@ fun MemberDescriptor.calculateCommonFlags(): Int {
 
 private fun MemberDescriptor.calcModalityFlag(): Int {
     var flags = 0
-    when (effectiveModality) {
+    if (this is PropertyDescriptor) {
+        // Modality for a field: set FINAL for vals
+        if (!isVar && !isLateInit) {
+            flags = flags.or(Opcodes.ACC_FINAL)
+        }
+    } else when (effectiveModality) {
         Modality.ABSTRACT -> {
             flags = flags.or(Opcodes.ACC_ABSTRACT)
         }
@@ -289,8 +289,7 @@ private val MemberDescriptor.effectiveModality: Modality
             }
         }
         if (DescriptorUtils.isSealedClass(this) ||
-            DescriptorUtils.isAnnotationClass(this) ||
-            DescriptorUtils.isAnnotationClass(this.containingDeclaration)
+            DescriptorUtils.isAnnotationClass(this)
         ) {
             return Modality.ABSTRACT
         }

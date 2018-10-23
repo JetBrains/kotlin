@@ -1,10 +1,10 @@
 // JVM_FILE_NAME: ContractsKt
 
-@file:Suppress("INVISIBLE_MEMBER")
 package test
 
-import kotlin.internal.contracts.*
+import kotlin.contracts.*
 
+@UseExperimental(ExperimentalContracts::class)
 fun myRequire(x: Boolean) {
     contract {
         returns(true) implies (x)

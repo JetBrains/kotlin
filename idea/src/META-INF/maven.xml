@@ -11,11 +11,14 @@
     <mavenProjectImportHandler implementation="org.jetbrains.kotlin.allopen.ide.AllOpenMavenProjectImportHandler"/>
     <mavenProjectImportHandler implementation="org.jetbrains.kotlin.noarg.ide.NoArgMavenProjectImportHandler"/>
     <mavenProjectImportHandler implementation="org.jetbrains.kotlin.samWithReceiver.ide.SamWithReceiverMavenProjectImportHandler"/>
+    <mavenProjectImportHandler implementation="org.jetbrains.kotlinx.serialization.idea.KotlinSerializationMavenImportHandler"/>
     <buildSystemTypeDetector implementation="org.jetbrains.kotlin.idea.maven.MavenDetector"/>
   </extensions>
 
   <extensions defaultExtensionNs="org.jetbrains.idea.maven">
     <importer implementation="org.jetbrains.kotlin.idea.maven.KotlinMavenImporter" />
+    <importer implementation="org.jetbrains.kotlin.idea.maven.KotlinCodeStyleMavenImporter" />
+
     <archetypesProvider implementation="org.jetbrains.kotlin.idea.maven.KotlinMavenArchetypesProvider" />
 
     <pluginDescriptor mavenId="org.jetbrains.kotlin:kotlin-maven-plugin">
@@ -85,7 +88,7 @@
                      level="WARNING" />
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.maven.inspections.MavenCoroutinesDeprecationInspection"
-                     displayName="Maven dependency is incompatible with Kotlin 1.3+ and should be updated"
+                     displayName="Incompatible kotlinx.coroutines dependency is used with Kotlin 1.3+ in Maven"
                      groupPath="Kotlin,Migration"
                      groupName="Maven"
                      enabledByDefault="true"

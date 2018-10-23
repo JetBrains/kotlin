@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 interface A {
     fun foo(x: Int, y: Int = x + 20, z: Int = y * 2) = z
 }

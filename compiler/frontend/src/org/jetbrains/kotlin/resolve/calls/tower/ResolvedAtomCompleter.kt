@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTrace
-import org.jetbrains.kotlin.resolve.DeprecationResolver
 import org.jetbrains.kotlin.resolve.TemporaryBindingTrace
 import org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver
 import org.jetbrains.kotlin.resolve.calls.checkers.CallCheckerContext
@@ -31,6 +30,7 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategyImpl
 import org.jetbrains.kotlin.resolve.calls.util.CallMaker
+import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
 import org.jetbrains.kotlin.types.IndexedParametersSubstitution
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.UnwrappedType
@@ -159,19 +159,19 @@ class ResolvedAtomCompleter(
         trace.recordType(ktArgumentExpression, substitutedFunctionalType)
 
         // Mainly this is needed for builder-like inference, when we have type `SomeType<K, V>.() -> Unit` and now we want to update those K, V
-        val extensionReceiverParameter = functionDescriptor.extensionReceiverParameter
-        if (extensionReceiverParameter != null) {
-            require(extensionReceiverParameter is ReceiverParameterDescriptorImpl) {
-                "Extension receiver for anonymous function ($extensionReceiverParameter) should be ReceiverParameterDescriptorImpl"
+        val receiver = functionDescriptor.extensionReceiverParameter
+        if (receiver != null) {
+            require(receiver is ReceiverParameterDescriptorImpl) {
+                "Extension receiver for anonymous function ($receiver) should be ReceiverParameterDescriptorImpl"
             }
 
-            val valueType = extensionReceiverParameter.value.type.unwrap()
+            val valueType = receiver.value.type.unwrap()
             val newValueType = resultSubstitutor.substituteKeepAnnotations(valueType)
 
-            val newReceiverValue = extensionReceiverParameter.value.replaceType(newValueType)
+            val newReceiverValue = receiver.value.replaceType(newValueType)
 
             functionDescriptor.setExtensionReceiverParameter(
-                ReceiverParameterDescriptorImpl(extensionReceiverParameter.containingDeclaration, newReceiverValue)
+                ReceiverParameterDescriptorImpl(receiver.containingDeclaration, newReceiverValue, receiver.annotations)
             )
         }
     }

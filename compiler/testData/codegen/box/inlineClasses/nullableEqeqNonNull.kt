@@ -1,5 +1,5 @@
 // !LANGUAGE: +InlineClasses
-// IGNORE_BACKEND: JVM_IR, JS_IR, JS
+// IGNORE_BACKEND: JVM_IR
 
 inline class Z(val value: Int)
 

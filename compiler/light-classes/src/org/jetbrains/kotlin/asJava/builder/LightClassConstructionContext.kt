@@ -16,10 +16,12 @@
 
 package org.jetbrains.kotlin.asJava.builder
 
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.resolve.BindingContext
 
 open class LightClassConstructionContext(
         val bindingContext: BindingContext,
-        val module: ModuleDescriptor
+        val module: ModuleDescriptor,
+        val languageVersionSettings: LanguageVersionSettings? = null
 )

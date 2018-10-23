@@ -1,1 +1,1 @@
--Xargfile=$TESTDATA_DIR$/argfileWithEscaping.argfile
+@$TESTDATA_DIR$/argfileWithEscaping.argfile

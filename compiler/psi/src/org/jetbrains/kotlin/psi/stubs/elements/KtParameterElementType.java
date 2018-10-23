@@ -23,10 +23,10 @@ import com.intellij.psi.stubs.StubOutputStream;
 import com.intellij.util.io.StringRef;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.KtParameter;
 import org.jetbrains.kotlin.psi.stubs.KotlinParameterStub;
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinParameterStubImpl;
-import org.jetbrains.kotlin.name.FqName;
 
 import java.io.IOException;
 
@@ -35,12 +35,15 @@ public class KtParameterElementType extends KtStubElementType<KotlinParameterStu
         super(debugName, KtParameter.class, KotlinParameterStub.class);
     }
 
+    @NotNull
     @Override
     public KotlinParameterStub createStub(@NotNull KtParameter psi, StubElement parentStub) {
         FqName fqName = psi.getFqName();
         StringRef fqNameRef = StringRef.fromString(fqName != null ? fqName.asString() : null);
-        return new KotlinParameterStubImpl(parentStub, fqNameRef, StringRef.fromString(psi.getName()),
-                                           psi.isMutable(), psi.hasValOrVar(), psi.hasDefaultValue());
+        return new KotlinParameterStubImpl(
+                (StubElement<?>) parentStub, fqNameRef, StringRef.fromString(psi.getName()),
+                psi.isMutable(), psi.hasValOrVar(), psi.hasDefaultValue()
+        );
     }
 
     @Override
@@ -62,7 +65,7 @@ public class KtParameterElementType extends KtStubElementType<KotlinParameterStu
         boolean hasDefaultValue = dataStream.readBoolean();
         StringRef fqName = dataStream.readName();
 
-         return new KotlinParameterStubImpl(parentStub, fqName, name, isMutable, hasValOrValNode, hasDefaultValue);
+        return new KotlinParameterStubImpl((StubElement<?>) parentStub, fqName, name, isMutable, hasValOrValNode, hasDefaultValue);
     }
 
     @Override

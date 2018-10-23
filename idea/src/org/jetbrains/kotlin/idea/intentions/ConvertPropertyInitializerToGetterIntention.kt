@@ -22,6 +22,7 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.quickfix.KotlinSingleIntentionActionFactory
+import org.jetbrains.kotlin.idea.util.hasJvmFieldAnnotation
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.KtPsiFactory
@@ -32,7 +33,7 @@ class ConvertPropertyInitializerToGetterIntention : SelfTargetingRangeIntention<
 
     override fun applicabilityRange(element: KtProperty): TextRange? {
         val initializer = element.initializer
-        return if (initializer != null && element.getter == null && !element.isExtensionDeclaration() && !element.isLocal)
+        return if (initializer != null && element.getter == null && !element.isExtensionDeclaration() && !element.isLocal && !element.hasJvmFieldAnnotation())
             initializer.textRange
         else
             null

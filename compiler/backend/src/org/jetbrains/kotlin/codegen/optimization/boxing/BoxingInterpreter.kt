@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.codegen.isRangeOrProgression
 import org.jetbrains.kotlin.codegen.optimization.common.OptimizationBasicInterpreter
 import org.jetbrains.kotlin.codegen.optimization.common.StrictBasicValue
 import org.jetbrains.kotlin.codegen.state.GenerationState
-import org.jetbrains.kotlin.load.java.JvmAbi
+import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.InlineClassDescriptorResolver
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
@@ -236,10 +236,9 @@ private fun AbstractInsnNode.isInlineClassUnboxing(state: GenerationState) =
     }
 
 private fun MethodInsnNode.isInlineClassBoxingMethodDescriptor(state: GenerationState): Boolean {
-    if (name != InlineClassDescriptorResolver.BOX_METHOD_NAME.asString()) return false
-    if (!owner.endsWith(JvmAbi.ERASED_INLINE_CLASS_SUFFIX)) return false
+    if (name != KotlinTypeMapper.BOX_JVM_METHOD_NAME) return false
 
-    val ownerType = Type.getObjectType(owner.removeSuffix(JvmAbi.ERASED_INLINE_CLASS_SUFFIX))
+    val ownerType = Type.getObjectType(owner)
     val descriptor = state.jvmBackendClassResolver.resolveToClassDescriptors(ownerType).singleOrNull() ?: return false
 
     if (!descriptor.isInline) return false
@@ -248,7 +247,7 @@ private fun MethodInsnNode.isInlineClassBoxingMethodDescriptor(state: Generation
 }
 
 private fun MethodInsnNode.isInlineClassUnboxingMethodDescriptor(state: GenerationState): Boolean {
-    if (name != InlineClassDescriptorResolver.UNBOX_METHOD_NAME.asString()) return false
+    if (name != KotlinTypeMapper.UNBOX_JVM_METHOD_NAME) return false
 
     val ownerType = Type.getObjectType(owner)
     val descriptor = state.jvmBackendClassResolver.resolveToClassDescriptors(ownerType).singleOrNull() ?: return false

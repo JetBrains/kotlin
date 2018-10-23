@@ -34,6 +34,7 @@ class IrLazyClass(
     override val isInner: Boolean,
     override val isData: Boolean,
     override val isExternal: Boolean,
+    override val isInline: Boolean,
     stubGenerator: DeclarationStubGenerator,
     typeTranslator: TypeTranslator
 ) :
@@ -56,6 +57,7 @@ class IrLazyClass(
                 isInner = symbol.descriptor.isInner,
                 isData = symbol.descriptor.isData,
                 isExternal = symbol.descriptor.isEffectivelyExternal(),
+                isInline = symbol.descriptor.isInline,
                 stubGenerator = stubGenerator,
                 typeTranslator = TypeTranslator
             )

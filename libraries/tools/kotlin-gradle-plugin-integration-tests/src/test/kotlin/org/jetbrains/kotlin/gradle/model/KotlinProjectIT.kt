@@ -18,7 +18,11 @@ class KotlinProjectIT : BaseGradleIT() {
         val project = Project("kotlinProject")
         val kotlinProject = project.getModels(KotlinProject::class.java).getModel(":")!!
 
-        kotlinProject.assertBasics("kotlinProject", defaultBuildOptions().kotlinVersion, KotlinProject.ProjectType.PLATFORM_JVM, "WARN")
+        kotlinProject.assertBasics(
+            "kotlinProject",
+            defaultBuildOptions().kotlinVersion,
+            KotlinProject.ProjectType.PLATFORM_JVM,
+            "DEFAULT")
         assertTrue(kotlinProject.expectedByDependencies.isEmpty())
 
         assertEquals(2, kotlinProject.sourceSets.size)
@@ -58,7 +62,7 @@ class KotlinProjectIT : BaseGradleIT() {
             "kotlinJavaProject",
             defaultBuildOptions().kotlinVersion,
             KotlinProject.ProjectType.PLATFORM_JVM,
-            "WARN"
+            "DEFAULT"
         )
 
         assertEquals(3, kotlinProject.sourceSets.size)
@@ -80,9 +84,9 @@ class KotlinProjectIT : BaseGradleIT() {
         val libJsKotlinProject = models.getModel(":libJs")!!
         val libJvmKotlinProject = models.getModel(":libJvm")!!
 
-        libKotlinProject.assertBasics("lib", defaultBuildOptions().kotlinVersion, KotlinProject.ProjectType.PLATFORM_COMMON, "WARN")
-        libJsKotlinProject.assertBasics("libJs", defaultBuildOptions().kotlinVersion, KotlinProject.ProjectType.PLATFORM_JS, "WARN")
-        libJvmKotlinProject.assertBasics("libJvm", defaultBuildOptions().kotlinVersion, KotlinProject.ProjectType.PLATFORM_JVM, "WARN")
+        libKotlinProject.assertBasics("lib", defaultBuildOptions().kotlinVersion, KotlinProject.ProjectType.PLATFORM_COMMON, "DEFAULT")
+        libJsKotlinProject.assertBasics("libJs", defaultBuildOptions().kotlinVersion, KotlinProject.ProjectType.PLATFORM_JS, "DEFAULT")
+        libJvmKotlinProject.assertBasics("libJvm", defaultBuildOptions().kotlinVersion, KotlinProject.ProjectType.PLATFORM_JVM, "DEFAULT")
 
         assertEquals(1, libJsKotlinProject.expectedByDependencies.size)
         assertTrue(libJsKotlinProject.expectedByDependencies.contains(":lib"))

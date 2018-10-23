@@ -200,20 +200,20 @@ private val PsiElement.markerDeclaration
 
 private val PLATFORM_ACTUAL = MarkerType(
     "PLATFORM_ACTUAL",
-    { it?.let { getPlatformActualTooltip(it.markerDeclaration) } },
+    { element -> element?.markerDeclaration?.let { getPlatformActualTooltip(it) } },
     object : LineMarkerNavigator() {
         override fun browse(e: MouseEvent?, element: PsiElement?) {
-            element?.let { navigateToPlatformActual(e, it.markerDeclaration) }
+            element?.markerDeclaration?.let { navigateToPlatformActual(e, it) }
         }
     }
 )
 
 private val EXPECTED_DECLARATION = MarkerType(
     "EXPECTED_DECLARATION",
-    { it?.let { getExpectedDeclarationTooltip(it.markerDeclaration) } },
+    { element -> element?.markerDeclaration?.let { getExpectedDeclarationTooltip(it) } },
     object : LineMarkerNavigator() {
         override fun browse(e: MouseEvent?, element: PsiElement?) {
-            element?.let { navigateToExpectedDeclaration(it.markerDeclaration) }
+            element?.markerDeclaration?.let { navigateToExpectedDeclaration(it) }
         }
     }
 )

@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 // EXPECTED_REACHABLE_NODES: 1516
 public fun <T, C : Collection<T>> bar(collection: C, f: (T) -> Unit) { for (item in collection) f(item) }
 

@@ -42,7 +42,7 @@ class KotlinGradleMultiplatformModuleBuilder : GradleModuleBuilder() {
 
     override fun getNodeIcon(): Icon = KotlinIcons.MPP
 
-    override fun getPresentableName() = "Kotlin (Multiplatform - Experimental)"
+    override fun getPresentableName() = "Kotlin (Multiplatform - Deprecated)"
 
     override fun getDescription() =
         "Multiplatform projects allow reusing the same code between multiple platforms supported by Kotlin. Such projects are built with Gradle."

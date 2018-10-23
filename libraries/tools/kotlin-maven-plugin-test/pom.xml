@@ -5,7 +5,7 @@
     <parent>
         <artifactId>kotlin-project</artifactId>
         <groupId>org.jetbrains.kotlin</groupId>
-        <version>1.2-SNAPSHOT</version>
+        <version>1.3-SNAPSHOT</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -124,15 +124,12 @@
                                 <artifact>org.jetbrains.kotlin:kotlin-maven-noarg:${project.version}</artifact>
                                 <artifact>org.jetbrains.kotlin:kotlin-maven-sam-with-receiver:${project.version}</artifact>
                                 <artifact>org.jetbrains.kotlin:kotlin-annotation-processing-maven:${project.version}</artifact>
-                                <artifact>org.jetbrains.kotlin:kotlin-runtime:${project.version}</artifact>
                                 <artifact>org.jetbrains.kotlin:kotlin-script-runtime:${project.version}</artifact>
                                 <artifact>org.jetbrains.kotlin:kotlin-stdlib:${project.version}</artifact>
                                 <artifact>org.jetbrains.kotlin:kotlin-stdlib-common:${project.version}</artifact>
                                 <artifact>org.jetbrains.kotlin:kotlin-stdlib-js:${project.version}</artifact>
                                 <artifact>org.jetbrains.kotlin:kotlin-stdlib-jdk7:${project.version}</artifact>
                                 <artifact>org.jetbrains.kotlin:kotlin-stdlib-jdk8:${project.version}</artifact>
-                                <artifact>org.jetbrains.kotlin:kotlin-stdlib-jre7:${project.version}</artifact>
-                                <artifact>org.jetbrains.kotlin:kotlin-stdlib-jre8:${project.version}</artifact>
                                 <artifact>org.jetbrains.kotlin:kotlin-reflect:${project.version}</artifact>
                                 <artifact>org.jetbrains.kotlin:kotlin-test-common:${project.version}</artifact>
                                 <artifact>org.jetbrains.kotlin:kotlin-test:${project.version}</artifact>

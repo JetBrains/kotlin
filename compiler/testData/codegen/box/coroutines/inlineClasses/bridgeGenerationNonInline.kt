@@ -10,30 +10,30 @@ fun builder(c: suspend () -> Unit) {
 }
 
 @Suppress("UNSUPPORTED_FEATURE")
-inline class SuccessOrFailure<T>(val a: Any?) {
+inline class Result<T>(val a: Any?) {
     fun getOrThrow(): T = a as T
 }
 
-abstract class SuccessOrFailureReceiver<T> {
-    abstract suspend fun receive(result: SuccessOrFailure<T>)
+abstract class ResultReceiver<T> {
+    abstract suspend fun receive(result: Result<T>)
 }
 
-fun <T> SuccessOrFailureReceiver(f: (SuccessOrFailure<T>) -> Unit): SuccessOrFailureReceiver<T> =
-    object : SuccessOrFailureReceiver<T>() {
-        override suspend fun receive(result: SuccessOrFailure<T>) {
+fun <T> ResultReceiver(f: (Result<T>) -> Unit): ResultReceiver<T> =
+    object : ResultReceiver<T>() {
+        override suspend fun receive(result: Result<T>) {
             f(result)
         }
     }
 
 fun test() {
     var invoked = false
-    val receiver = SuccessOrFailureReceiver<Int> { result ->
+    val receiver = ResultReceiver<Int> { result ->
         val intResult = result.getOrThrow()
         invoked = true
     }
 
     builder {
-        receiver.receive(SuccessOrFailure(42))
+        receiver.receive(Result(42))
     }
     if (!invoked) {
         throw RuntimeException("Fail")

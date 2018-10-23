@@ -1,3 +1,4 @@
+// HIGHLIGHT: INFORMATION
 class My(val x: Int)
 
 fun foo(arg: Any?): Int? {

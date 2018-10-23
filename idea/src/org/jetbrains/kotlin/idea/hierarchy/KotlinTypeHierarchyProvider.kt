@@ -28,14 +28,14 @@ import com.intellij.psi.*
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
-import org.jetbrains.kotlin.config.TargetPlatformKind
 import org.jetbrains.kotlin.idea.caches.lightClasses.KtFakeLightClass
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
-import org.jetbrains.kotlin.idea.project.targetPlatform
+import org.jetbrains.kotlin.idea.project.platform
 import org.jetbrains.kotlin.idea.search.allScope
 import org.jetbrains.kotlin.idea.stubindex.KotlinClassShortNameIndex
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.idea.util.module
+import org.jetbrains.kotlin.platform.impl.isJvm
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtConstructor
 import org.jetbrains.kotlin.psi.KtNamedFunction
@@ -46,7 +46,7 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 class KotlinTypeHierarchyProvider : JavaTypeHierarchyProvider() {
     private fun getOriginalPsiClassOrCreateLightClass(classOrObject: KtClassOrObject, module: Module?): PsiClass? {
         val fqName = classOrObject.fqName
-        if (fqName != null && module?.targetPlatform is TargetPlatformKind.Jvm) {
+        if (fqName != null && module?.platform.isJvm) {
             val javaClassId = JavaToKotlinClassMap.mapKotlinToJava(fqName.toUnsafe())
             if (javaClassId != null) {
                 return JavaPsiFacade.getInstance(classOrObject.project).findClass(

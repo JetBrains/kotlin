@@ -9,10 +9,9 @@ import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
-import org.jetbrains.kotlin.ir.backend.js.symbols.JsSymbolBuilder
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
 import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.declarations.IrSymbolOwner
 import org.jetbrains.kotlin.ir.expressions.IrContainerExpression
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrReturn
@@ -76,7 +75,7 @@ class ReturnableBlockLowering(val context: JsIrBackendContext) : FileLoweringPas
     }
 }
 
-private class ReturnableBlockLoweringContext(val containingDeclaration: IrSymbolOwner) {
+private class ReturnableBlockLoweringContext(val containingDeclaration: IrDeclarationParent) {
     var labelCnt = 0
     val returnMap = mutableMapOf<IrReturnableBlockSymbol, (IrReturn) -> IrExpression>()
 }
@@ -91,7 +90,7 @@ private class ReturnableBlockTransformer(
     }
 
     override fun visitDeclaration(declaration: IrDeclaration, data: ReturnableBlockLoweringContext): IrStatement {
-        if (declaration is IrSymbolOwner) {
+        if (declaration is IrDeclarationParent) {
             declaration.transformChildren(this, ReturnableBlockLoweringContext(declaration))
         }
         return super.visitDeclaration(declaration, data)
@@ -103,12 +102,7 @@ private class ReturnableBlockTransformer(
         if (expression !is IrReturnableBlock) return super.visitContainerExpression(expression, data)
 
         val variable by lazy {
-            JsSymbolBuilder.buildTempVar(
-                data.containingDeclaration.symbol,
-                expression.type,
-                "tmp\$ret\$${data.labelCnt++}",
-                true
-            )
+            JsIrBuilder.buildVar(expression.type, data.containingDeclaration, "tmp\$ret\$${data.labelCnt++}", true)
         }
 
         val loop by lazy {
@@ -133,7 +127,7 @@ private class ReturnableBlockTransformer(
                 returnExpression.endOffset,
                 context.irBuiltIns.unitType
             ).apply {
-                statements += JsIrBuilder.buildSetVariable(variable, returnExpression.value, context.irBuiltIns.unitType)
+                statements += JsIrBuilder.buildSetVariable(variable.symbol, returnExpression.value, context.irBuiltIns.unitType)
                 statements += JsIrBuilder.buildBreak(context.irBuiltIns.unitType, loop)
             }
         }
@@ -142,7 +136,7 @@ private class ReturnableBlockTransformer(
             if (i == expression.statements.lastIndex && s is IrReturn && s.returnTargetSymbol == expression.symbol) {
                 s.transformChildren(this, data)
                 if (!hasReturned) s.value else {
-                    JsIrBuilder.buildSetVariable(variable, s.value, context.irBuiltIns.unitType)
+                    JsIrBuilder.buildSetVariable(variable.symbol, s.value, context.irBuiltIns.unitType)
                 }
             } else {
                 s.transform(this, data)
@@ -174,9 +168,9 @@ private class ReturnableBlockTransformer(
                 expression.type,
                 expression.origin
             ).apply {
-                statements += JsIrBuilder.buildVar(variable, type = expression.type)
+                statements += variable
                 statements += loop
-                statements += JsIrBuilder.buildGetValue(variable)
+                statements += JsIrBuilder.buildGetValue(variable.symbol)
             }
         }
     }

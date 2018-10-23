@@ -32,7 +32,7 @@ class SortModifiersInspection : AbstractKotlinInspection(), CleanupLocalInspecti
                     }
                 }
 
-                val modifiers = modifierElements.mapNotNull { it.node.elementType as? KtModifierKeywordToken }.toList()
+                val modifiers = modifierElements.asSequence().mapNotNull { it.node.elementType as? KtModifierKeywordToken }.toList()
                 if (modifiers.isEmpty()) return
 
                 val startElement = modifierElements.firstOrNull { it.node.elementType is KtModifierKeywordToken } ?: return

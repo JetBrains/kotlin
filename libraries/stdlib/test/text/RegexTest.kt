@@ -4,9 +4,8 @@
  */
 
 @file:Suppress("NAMED_ARGUMENTS_NOT_ALLOWED") // for common tests
-package test.text
 
-import kotlin.text.*
+package test.text
 
 import kotlin.test.*
 
@@ -201,6 +200,24 @@ class RegexTest {
 
         assertEquals(listOf("name", "value=5"), "=".toRegex().split("name=value=5", limit = 2))
 
+    }
+
+    @Test fun splitByEmptyMatch() {
+        val input = "test"
+
+        val emptyMatch = "".toRegex()
+
+        assertEquals(input.split(""), input.split(emptyMatch))
+        assertEquals(input.split("", limit = 3), input.split(emptyMatch, limit = 3))
+
+        assertEquals("".split(""), "".split(emptyMatch))
+
+        val emptyMatchBeforeT = "(?=t)".toRegex()
+
+        assertEquals(listOf("", "tes", "t"), input.split(emptyMatchBeforeT))
+        assertEquals(listOf("", "test"), input.split(emptyMatchBeforeT, limit = 2))
+
+        assertEquals(listOf("", "tee"), "tee".split(emptyMatchBeforeT))
     }
 
 

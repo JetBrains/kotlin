@@ -1,0 +1,5 @@
+package
+
+public fun test(/*0*/ x: kotlin.Int?): kotlin.Unit
+public fun kotlin.Any.nullWhenString(): kotlin.Any?
+    Returns(NULL) -> <this> is String

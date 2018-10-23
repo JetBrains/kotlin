@@ -42,11 +42,19 @@ FILE fqName:<root> fileName:/when.kt
                 GET_VAR 'tmp0_subject: Any?' type=kotlin.Any? origin=null
               then: CONST String type=kotlin.String value=String
             BRANCH
-              if: CALL 'contains(Any) on Iterable<Any>: Boolean' type=kotlin.Boolean origin=IN
-                <T>: kotlin.Any
+              if: CALL 'NOT(Boolean): Boolean' type=kotlin.Boolean origin=EXCL
+                arg0: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Number
+                  typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Number modality:ABSTRACT visibility:public flags: superTypes:[kotlin.Any; java.io.Serializable]
+                  GET_VAR 'tmp0_subject: Any?' type=kotlin.Any? origin=null
+              then: CONST String type=kotlin.String value=!Number
+            BRANCH
+              if: CALL 'contains(Number) on Iterable<Number>: Boolean' type=kotlin.Boolean origin=IN
+                <T>: kotlin.Number
                 $receiver: CALL 'setOf(): Set<Nothing>' type=kotlin.collections.Set<kotlin.Nothing> origin=null
                   <T>: kotlin.Nothing
-                element: GET_VAR 'tmp0_subject: Any?' type=kotlin.Any? origin=null
+                element: TYPE_OP type=kotlin.Number origin=IMPLICIT_CAST typeOperand=kotlin.Number
+                  typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Number modality:ABSTRACT visibility:public flags: superTypes:[kotlin.Any; java.io.Serializable]
+                  GET_VAR 'tmp0_subject: Any?' type=kotlin.Any? origin=null
               then: CONST String type=kotlin.String value=nothingness?
             BRANCH
               if: CONST Boolean type=kotlin.Boolean value=true
@@ -72,11 +80,18 @@ FILE fqName:<root> fileName:/when.kt
               GET_VAR 'value-parameter x: Any?' type=kotlin.Any? origin=null
             then: CONST String type=kotlin.String value=String
           BRANCH
-            if: CALL 'contains(Any) on Iterable<Any>: Boolean' type=kotlin.Boolean origin=IN
-              <T>: kotlin.Any
+            if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=kotlin.Number
+              typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Number modality:ABSTRACT visibility:public flags: superTypes:[kotlin.Any; java.io.Serializable]
+              GET_VAR 'value-parameter x: Any?' type=kotlin.Any? origin=null
+            then: CONST String type=kotlin.String value=!Number
+          BRANCH
+            if: CALL 'contains(Number) on Iterable<Number>: Boolean' type=kotlin.Boolean origin=IN
+              <T>: kotlin.Number
               $receiver: CALL 'setOf(): Set<Nothing>' type=kotlin.collections.Set<kotlin.Nothing> origin=null
                 <T>: kotlin.Nothing
-              element: GET_VAR 'value-parameter x: Any?' type=kotlin.Any? origin=null
+              element: TYPE_OP type=kotlin.Number origin=IMPLICIT_CAST typeOperand=kotlin.Number
+                typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Number modality:ABSTRACT visibility:public flags: superTypes:[kotlin.Any; java.io.Serializable]
+                GET_VAR 'value-parameter x: Any?' type=kotlin.Any? origin=null
             then: CONST String type=kotlin.String value=nothingness?
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true

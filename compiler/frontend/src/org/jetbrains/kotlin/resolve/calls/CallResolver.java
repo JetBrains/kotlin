@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.FunctionTypesKt;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
-import org.jetbrains.kotlin.config.AnalysisFlag;
+import org.jetbrains.kotlin.config.AnalysisFlags;
 import org.jetbrains.kotlin.config.LanguageFeature;
 import org.jetbrains.kotlin.config.LanguageVersionSettings;
 import org.jetbrains.kotlin.descriptors.*;
@@ -303,6 +303,7 @@ public class CallResolver {
     }
 
     @NotNull
+    @SuppressWarnings("unchecked")
     public OverloadResolutionResults<FunctionDescriptor> resolveFunctionCall(@NotNull BasicCallResolutionContext context) {
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled();
 
@@ -690,7 +691,7 @@ public class CallResolver {
         //   a.length
         // we should ignore data flow info from assert argument, since assertions can be disabled and
         // thus it will lead to NPE in runtime otherwise
-        if (languageVersionSettings.getFlag(AnalysisFlag.getIgnoreDataFlowInAssert()) && result.isSingleResult()) {
+        if (languageVersionSettings.getFlag(AnalysisFlags.getIgnoreDataFlowInAssert()) && result.isSingleResult()) {
             D descriptor = result.getResultingDescriptor();
             if (descriptor.getName().equals(Name.identifier("assert"))) {
                 DeclarationDescriptor declaration = descriptor.getContainingDeclaration();

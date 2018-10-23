@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+    xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+    <modelVersion>4.0.0</modelVersion>
+    <properties>
+        <maven.version>3.0.5</maven.version>
+        <serialization.src>${basedir}/../../../plugins/kotlin-serialization/kotlin-serialization-compiler/src/</serialization.src>
+        <serialization.src.kt>${basedir}/../../../plugins/kotlin-serialization/kotlin-serialization-compiler/src/org/jetbrains/kotlinx/serialization/compiler</serialization.src.kt>
+        <serialization.maven.plugin.src>${basedir}/src/main/kotlin</serialization.maven.plugin.src>
+        <serialization.maven.plugin.resources>${basedir}/src/main/resources</serialization.maven.plugin.resources>
+        <serialization.target-src>${basedir}/target/src/main/kotlin</serialization.target-src>
+        <serialization.target-src.kt>${basedir}/target/src/main/kotlin/org/jetbrains/kotlinx/serialization/compiler</serialization.target-src.kt>
+        <serialization.target-resources>${basedir}/target/resource</serialization.target-resources>
+    </properties>
+
+    <parent>
+        <groupId>org.jetbrains.kotlin</groupId>
+        <artifactId>kotlin-project</artifactId>
+        <version>1.3-SNAPSHOT</version>
+        <relativePath>../../pom.xml</relativePath>
+    </parent>
+
+    <artifactId>kotlinx-maven-serialization-plugin</artifactId>
+    <packaging>jar</packaging>
+
+    <description>Serialization plugin for Maven</description>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-stdlib</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-maven-plugin</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <sourceDirectory>${serialization.target-src}</sourceDirectory>
+        <resources>
+            <resource>
+                <directory>${serialization.target-resources}</directory>
+            </resource>
+        </resources>
+
+        <plugins>
+            <plugin>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>3.0.0</version>
+                <executions>
+                    <execution>
+                        <id>copy-maven-sources</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${serialization.target-src}</outputDirectory>
+                            <resources>
+                                <resource><directory>${serialization.maven.plugin.src}</directory></resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>copy-sources</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${serialization.target-src.kt}</outputDirectory>
+                            <resources>
+                                <resource><directory>${serialization.src.kt}</directory></resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>copy-resources</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${serialization.target-resources}/META-INF</outputDirectory>
+                            <resources>
+                                <resource><directory>${serialization.src}/META-INF</directory></resource>
+                                <resource><directory>${serialization.maven.plugin.resources}/META-INF</directory></resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>kotlin-maven-plugin</artifactId>
+                <groupId>org.jetbrains.kotlin</groupId>
+                <version>${project.version}</version>
+
+                <executions>
+                    <execution>
+                        <id>compile</id>
+                        <phase>compile</phase>
+                        <goals> <goal>compile</goal> </goals>
+                        <configuration>
+                            <sourceDirs>
+                                <sourceDir>${serialization.target-src}</sourceDir>
+                            </sourceDirs>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.plexus</groupId>
+                <artifactId>plexus-component-metadata</artifactId>
+                <version>1.7.1</version>
+                <executions>
+                    <execution>
+                        <id>process-classes</id>
+                        <goals>
+                            <goal>generate-metadata</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>process-test-classes</id>
+                        <goals>
+                            <goal>generate-test-metadata</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>

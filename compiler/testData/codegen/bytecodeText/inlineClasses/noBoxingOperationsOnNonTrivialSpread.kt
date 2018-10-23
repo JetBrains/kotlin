@@ -10,6 +10,7 @@ fun test1(us: UIntArray) {
 
 // @NoBoxingKt.class:
 // 0 INVOKESTATIC kotlin.UInt\$Erased.box
+// 0 INVOKESTATIC kotlin.UInt\.box
 // 0 INVOKEVIRTUAL kotlin.UInt.unbox
 
 // FILE: Boxing.kt
@@ -21,5 +22,5 @@ fun test2(nullable: UInt?, ns: Array<UInt>) {
 }
 
 // @BoxingKt.class:
-// 2 INVOKESTATIC kotlin.UInt\$Erased.box
+// 2 INVOKESTATIC kotlin.UInt\.box
 // 0 INVOKEVIRTUAL kotlin.UInt.unbox

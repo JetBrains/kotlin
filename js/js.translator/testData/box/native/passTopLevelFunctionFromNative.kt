@@ -1,5 +1,5 @@
 // IGNORE_BACKEND: JS_IR
-// EXPECTED_REACHABLE_NODES: 1110
+// EXPECTED_REACHABLE_NODES: 1282
 package foo
 
 external fun nativeFun(i:Int, s:String): String = definedExternally

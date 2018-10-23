@@ -47,7 +47,7 @@ class LoadJavaPackageAnnotationsTest : KtUsefulTestCase() {
                 put(JVMConfigurationKeys.USE_JAVAC, true)
             }
             languageVersionSettings = LanguageVersionSettingsImpl(
-                    LanguageVersion.LATEST_STABLE, ApiVersion.LATEST_STABLE, mapOf(AnalysisFlag.jsr305 to Jsr305State.STRICT)
+                    LanguageVersion.LATEST_STABLE, ApiVersion.LATEST_STABLE, mapOf(JvmAnalysisFlags.jsr305 to Jsr305State.STRICT)
             )
             configurator(this)
         }

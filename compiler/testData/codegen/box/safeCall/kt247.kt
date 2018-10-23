@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 fun t1() : Boolean {
     val s1 : String? = "sff"
     val s2 : String? = null

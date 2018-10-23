@@ -1,5 +1,5 @@
 // !LANGUAGE: +JvmFieldInInterface +NestedClassesInAnnotations
-// TARGER_BACKEND: JVM
+// TARGET_BACKEND: JVM
 
 // WITH_RUNTIME
 // FILE: Foo.kt

@@ -1,4 +1,4 @@
 $TESTDATA_DIR$/simple.kt
 -d
 $TEMP_DIR$
--Xargfile=$TESTDATA_DIR$/nonexisting.argfile
+@$TESTDATA_DIR$/nonexisting.argfile

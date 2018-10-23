@@ -46,8 +46,7 @@ public enum E2 {
     E2(int n) {
     }
 
-    E2(@org.jetbrains.annotations.NotNull()
-    java.lang.String s) {
+    E2(java.lang.String s) {
     }
 }
 
@@ -68,8 +67,7 @@ public enum E3 {
         return null;
     }
 
-    E3(@org.jetbrains.annotations.NotNull()
-    java.lang.String a) {
+    E3(java.lang.String a) {
     }
 }
 
@@ -104,7 +102,6 @@ public enum E4 {
         return false;
     }
 
-    E4(@org.jetbrains.annotations.NotNull()
-    java.lang.String a, int b, long c, boolean d) {
+    E4(java.lang.String a, int b, long c, boolean d) {
     }
 }

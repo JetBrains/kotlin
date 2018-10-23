@@ -74,12 +74,6 @@ interface ScopeTowerProcessor<out C> {
     fun recordLookups(skippedData: Collection<TowerData>, name: Name)
 }
 
-interface SimpleScopeTowerProcessor<out C> : ScopeTowerProcessor<C> {
-    fun simpleProcess(data: TowerData): Collection<C>
-
-    override fun process(data: TowerData): List<Collection<C>> = listOfNotNull(simpleProcess(data).takeIf { it.isNotEmpty() })
-}
-
 class TowerResolver {
     fun <C : Candidate> runResolve(
         scopeTower: ImplicitScopeTower,
@@ -276,7 +270,7 @@ class TowerResolver {
         val candidatesGroups = if (useOrder) {
             processor.process(towerData)
         } else {
-            listOf(processor.process(towerData).flatMap { it })
+            listOf(processor.process(towerData).flatten())
         }
 
         for (candidatesGroup in candidatesGroups) {

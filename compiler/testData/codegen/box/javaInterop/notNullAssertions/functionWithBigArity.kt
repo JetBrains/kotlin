@@ -1,6 +1,5 @@
 // !LANGUAGE: +FunctionTypesWithBigArity
 // TARGET_BACKEND: JVM
-// IGNORE_BACKEND: JVM, JVM_IR
 // WITH_RUNTIME
 // FILE: Test.java
 
@@ -51,7 +50,9 @@ fun Any.g(
 ): Any = Any()
 
 fun box(): String {
+    @Suppress("DEPRECATION_ERROR")
     Test.test(::f as kotlin.jvm.functions.FunctionN<Any>)
+    @Suppress("DEPRECATION_ERROR")
     Test.test(Any::g as kotlin.jvm.functions.FunctionN<Any>)
     return "OK"
 }

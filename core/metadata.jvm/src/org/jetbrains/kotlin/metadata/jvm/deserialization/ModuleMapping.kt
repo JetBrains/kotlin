@@ -5,7 +5,9 @@
 
 package org.jetbrains.kotlin.metadata.jvm.deserialization
 
+import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.metadata.deserialization.NameResolverImpl
+import org.jetbrains.kotlin.metadata.deserialization.isKotlin1Dot4OrLater
 import org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf
 import java.io.*
 
@@ -21,8 +23,7 @@ class ModuleMapping private constructor(
     override fun toString() = debugName
 
     companion object {
-        @JvmField
-        val MAPPING_FILE_EXT: String = "kotlin_module"
+        const val MAPPING_FILE_EXT: String = "kotlin_module"
 
         @JvmField
         val EMPTY: ModuleMapping = ModuleMapping(emptyMap(), BinaryModuleData(emptyList()), "EMPTY")
@@ -30,11 +31,14 @@ class ModuleMapping private constructor(
         @JvmField
         val CORRUPTED: ModuleMapping = ModuleMapping(emptyMap(), BinaryModuleData(emptyList()), "CORRUPTED")
 
+        const val STRICT_METADATA_VERSION_SEMANTICS_FLAG = 1 shl 0
+
         fun loadModuleMapping(
             bytes: ByteArray?,
             debugName: String,
             skipMetadataVersionCheck: Boolean,
-            isJvmPackageNameSupported: Boolean
+            isJvmPackageNameSupported: Boolean,
+            reportIncompatibleVersionError: (JvmMetadataVersion) -> Unit
         ): ModuleMapping {
             if (bytes == null) {
                 return EMPTY
@@ -44,52 +48,60 @@ class ModuleMapping private constructor(
 
             val versionNumber = try {
                 IntArray(stream.readInt()) { stream.readInt() }
-            }
-            catch (e: IOException) {
+            } catch (e: IOException) {
                 return CORRUPTED
             }
 
-            if (skipMetadataVersionCheck || JvmMetadataVersion(*versionNumber).isCompatible()) {
-                val moduleProto = JvmModuleProtoBuf.Module.parseFrom(stream) ?: return EMPTY
-                val result = linkedMapOf<String, PackageParts>()
-
-                for (proto in moduleProto.packagePartsList) {
-                    val packageFqName = proto.packageFqName
-                    val packageParts = result.getOrPut(packageFqName) { PackageParts(packageFqName) }
-
-                    for ((index, partShortName) in proto.shortClassNameList.withIndex()) {
-                        val multifileFacadeId = proto.multifileFacadeShortNameIdList.getOrNull(index)?.minus(1)
-                        val facadeShortName = multifileFacadeId?.let(proto.multifileFacadeShortNameList::getOrNull)
-                        val facadeInternalName = facadeShortName?.let { internalNameOf(packageFqName, it) }
-                        packageParts.addPart(internalNameOf(packageFqName, partShortName), facadeInternalName)
-                    }
-
-                    if (isJvmPackageNameSupported) {
-                        for ((index, partShortName) in proto.classWithJvmPackageNameShortNameList.withIndex()) {
-                            val packageId = proto.classWithJvmPackageNamePackageIdList.getOrNull(index)
-                                            ?: proto.classWithJvmPackageNamePackageIdList.lastOrNull()
-                                            ?: continue
-                            val jvmPackageName = moduleProto.jvmPackageNameList.getOrNull(packageId) ?: continue
-                            packageParts.addPart(internalNameOf(jvmPackageName, partShortName), null)
-                        }
-                    }
-                }
-
-                for (proto in moduleProto.metadataPartsList) {
-                    val packageParts = result.getOrPut(proto.packageFqName) { PackageParts(proto.packageFqName) }
-                    proto.shortClassNameList.forEach(packageParts::addMetadataPart)
-                }
-
-                // TODO: read arguments of module annotations
-                val nameResolver = NameResolverImpl(moduleProto.stringTable, moduleProto.qualifiedNameTable)
-                val annotations = moduleProto.annotationList.map { proto -> nameResolver.getQualifiedClassName(proto.id) }
-
-                return ModuleMapping(result, BinaryModuleData(annotations), debugName)
-            } else {
-                // TODO: consider reporting "incompatible ABI version" error for package parts
+            val preVersion = JvmMetadataVersion(*versionNumber)
+            if (!skipMetadataVersionCheck && !preVersion.isCompatible()) {
+                reportIncompatibleVersionError(preVersion)
+                return EMPTY
             }
 
-            return EMPTY
+            // Since Kotlin 1.4, we write integer flags between the version and the proto
+            val flags = if (isKotlin1Dot4OrLater(preVersion)) stream.readInt() else 0
+
+            val version = JvmMetadataVersion(versionNumber, (flags and STRICT_METADATA_VERSION_SEMANTICS_FLAG) != 0)
+            if (!skipMetadataVersionCheck && !version.isCompatible()) {
+                reportIncompatibleVersionError(version)
+                return EMPTY
+            }
+
+            val moduleProto = JvmModuleProtoBuf.Module.parseFrom(stream) ?: return EMPTY
+            val result = linkedMapOf<String, PackageParts>()
+
+            for (proto in moduleProto.packagePartsList) {
+                val packageFqName = proto.packageFqName
+                val packageParts = result.getOrPut(packageFqName) { PackageParts(packageFqName) }
+
+                for ((index, partShortName) in proto.shortClassNameList.withIndex()) {
+                    val multifileFacadeId = proto.multifileFacadeShortNameIdList.getOrNull(index)?.minus(1)
+                    val facadeShortName = multifileFacadeId?.let(proto.multifileFacadeShortNameList::getOrNull)
+                    val facadeInternalName = facadeShortName?.let { internalNameOf(packageFqName, it) }
+                    packageParts.addPart(internalNameOf(packageFqName, partShortName), facadeInternalName)
+                }
+
+                if (isJvmPackageNameSupported) {
+                    for ((index, partShortName) in proto.classWithJvmPackageNameShortNameList.withIndex()) {
+                        val packageId = proto.classWithJvmPackageNamePackageIdList.getOrNull(index)
+                            ?: proto.classWithJvmPackageNamePackageIdList.lastOrNull()
+                            ?: continue
+                        val jvmPackageName = moduleProto.jvmPackageNameList.getOrNull(packageId) ?: continue
+                        packageParts.addPart(internalNameOf(jvmPackageName, partShortName), null)
+                    }
+                }
+            }
+
+            for (proto in moduleProto.metadataPartsList) {
+                val packageParts = result.getOrPut(proto.packageFqName) { PackageParts(proto.packageFqName) }
+                proto.shortClassNameList.forEach(packageParts::addMetadataPart)
+            }
+
+            // TODO: read arguments of module annotations
+            val nameResolver = NameResolverImpl(moduleProto.stringTable, moduleProto.qualifiedNameTable)
+            val annotations = moduleProto.annotationList.map { proto -> nameResolver.getQualifiedClassName(proto.id) }
+
+            return ModuleMapping(result, BinaryModuleData(annotations), debugName)
         }
     }
 }
@@ -161,8 +173,8 @@ class PackageParts(val packageFqName: String) {
 
     // Writes information about package parts which have a different JVM package from the Kotlin package (with the help of @JvmPackageName)
     private fun JvmModuleProtoBuf.PackageParts.Builder.writePartsOutsidePackage(
-            parts: List<String>,
-            packageTableBuilder: JvmModuleProtoBuf.Module.Builder
+        parts: List<String>,
+        packageTableBuilder: JvmModuleProtoBuf.Module.Builder
     ) {
         val packageIds = mutableListOf<Int>()
         for ((packageInternalName, partsInPackage) in parts.groupBy { it.packageName }.toSortedMap()) {
@@ -198,22 +210,26 @@ class PackageParts(val packageFqName: String) {
     }
 
     override fun equals(other: Any?) =
-            other is PackageParts &&
-            other.packageFqName == packageFqName && other.packageParts == packageParts && other.metadataParts == metadataParts
+        other is PackageParts &&
+                other.packageFqName == packageFqName && other.packageParts == packageParts && other.metadataParts == metadataParts
 
     override fun hashCode() =
-            (packageFqName.hashCode() * 31 + packageParts.hashCode()) * 31 + metadataParts.hashCode()
+        (packageFqName.hashCode() * 31 + packageParts.hashCode()) * 31 + metadataParts.hashCode()
 
     override fun toString() =
-            (parts + metadataParts).toString()
+        (parts + metadataParts).toString()
 }
 
-fun JvmModuleProtoBuf.Module.serializeToByteArray(versionArray: IntArray): ByteArray {
+fun JvmModuleProtoBuf.Module.serializeToByteArray(version: BinaryVersion, flags: Int): ByteArray {
     val moduleMapping = ByteArrayOutputStream(4096)
     val out = DataOutputStream(moduleMapping)
+    val versionArray = version.toArray()
     out.writeInt(versionArray.size)
     for (number in versionArray) {
         out.writeInt(number)
+    }
+    if (isKotlin1Dot4OrLater(version)) {
+        out.writeInt(flags)
     }
     writeTo(out)
     out.flush()

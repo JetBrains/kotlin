@@ -372,7 +372,10 @@ class KotlinLanguageInjector(
         val injectAnnotation = annotated.annotations.findAnnotation(FqName(AnnotationUtil.LANGUAGE)) ?: return null
 
         val languageId = injectAnnotation.argumentValue("value")?.safeAs<StringValue>()?.value ?: return null
-        return InjectionInfo(languageId, null, null)
+        val prefix = injectAnnotation.argumentValue("prefix")?.safeAs<StringValue>()?.value
+        val suffix = injectAnnotation.argumentValue("suffix")?.safeAs<StringValue>()?.value
+
+        return InjectionInfo(languageId, prefix, suffix)
     }
 
     private fun findInjection(element: PsiElement?, injections: List<BaseInjection>): InjectionInfo? {

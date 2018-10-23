@@ -19,24 +19,19 @@ package org.jetbrains.kotlin.idea.run
 import com.intellij.execution.Location
 import com.intellij.execution.actions.ConfigurationContext
 import com.intellij.execution.actions.RunConfigurationProducer
-import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.util.Ref
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.ClassUtil
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.asJava.toLightClass
-import org.jetbrains.kotlin.config.TargetPlatformKind
 import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
 import org.jetbrains.kotlin.idea.MainFunctionDetector
-import org.jetbrains.kotlin.idea.caches.project.implementingModules
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
-import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
-import org.jetbrains.kotlin.idea.project.targetPlatform
+import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
-import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 class KotlinRunConfigurationProducer : RunConfigurationProducer<KotlinRunConfiguration>(KotlinRunConfigurationType.getInstance()) {
@@ -45,8 +40,8 @@ class KotlinRunConfigurationProducer : RunConfigurationProducer<KotlinRunConfigu
                                                context: ConfigurationContext,
                                                sourceElement: Ref<PsiElement>): Boolean {
         val location = context.location ?: return false
-        val module = location.module ?: return false
-        val container = getEntryPointContainer(location)
+        val module = location.module?.asJvmModule() ?: return false
+        val container = getEntryPointContainer(location) ?: return false
         val startClassFQName = getStartClassFqName(container) ?: return false
 
         configuration.setModule(module)
@@ -60,21 +55,15 @@ class KotlinRunConfigurationProducer : RunConfigurationProducer<KotlinRunConfigu
         if (location == null) return null
         if (DumbService.getInstance(location.project).isDumb) return null
 
-        val module = location.module ?: return null
-
-        if (TargetPlatformDetector.getPlatform(module) !is JvmPlatform && module.findJvmImplementationModule() == null) {
-            return null
-        }
-        val locationElement = location.psiElement
-
-        return getEntryPointContainer(locationElement)
+        return getEntryPointContainer(location.psiElement)
     }
 
     override fun isConfigurationFromContext(configuration: KotlinRunConfiguration, context: ConfigurationContext): Boolean {
-        val startClassFQName = getStartClassFqName(getEntryPointContainer(context.location)) ?: return false
+        val entryPointContainer = getEntryPointContainer(context.location) ?: return false
+        val startClassFQName = getStartClassFqName(entryPointContainer) ?: return false
 
         return configuration.runClass == startClassFQName &&
-               context.module ==  configuration.configurationModule.module
+                context.module?.asJvmModule() == configuration.configurationModule.module
     }
 
     companion object {
@@ -82,7 +71,8 @@ class KotlinRunConfigurationProducer : RunConfigurationProducer<KotlinRunConfigu
             val psiFile = locationElement.containingFile
             if (!(psiFile is KtFile && ProjectRootsUtil.isInProjectOrLibSource(psiFile))) return null
 
-            val mainFunctionDetector = MainFunctionDetector { it.resolveToDescriptorIfAny(BodyResolveMode.FULL) }
+            val mainFunctionDetector =
+                MainFunctionDetector(psiFile.languageVersionSettings) { it.resolveToDescriptorIfAny(BodyResolveMode.FULL) }
 
             var currentElement = locationElement.declarationContainer(false)
             while (currentElement != null) {
@@ -97,8 +87,7 @@ class KotlinRunConfigurationProducer : RunConfigurationProducer<KotlinRunConfigu
             return null
         }
 
-        fun getStartClassFqName(container: KtDeclarationContainer?): String? = when(container) {
-            null -> null
+        fun getStartClassFqName(container: KtDeclarationContainer): String? = when(container) {
             is KtFile -> container.javaFileFacadeFqName.asString()
             is KtClassOrObject -> {
                 if (!container.isValid) {
@@ -124,9 +113,4 @@ class KotlinRunConfigurationProducer : RunConfigurationProducer<KotlinRunConfigu
         }
 
     }
-}
-
-fun Module.findJvmImplementationModule(): Module? {
-    if (targetPlatform != TargetPlatformKind.Common) return null
-    return implementingModules.firstOrNull { it.targetPlatform is TargetPlatformKind.Jvm }
 }

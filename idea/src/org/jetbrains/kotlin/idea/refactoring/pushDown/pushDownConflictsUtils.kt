@@ -132,7 +132,8 @@ private fun checkMemberClashing(
 
         is KtClassOrObject -> {
             targetClass.declarations
-                    .filterIsInstance<KtClassOrObject>()
+                .asSequence()
+                .filterIsInstance<KtClassOrObject>()
                     .firstOrNull() { it.name == member.name }
                     ?.let {
                         val message = "${targetClassDescriptor.renderForConflicts()} " +

@@ -104,12 +104,12 @@ class DynamicCallableDescriptors(storageManager: StorageManager, builtIns: Kotli
             dynamicType,
             createTypeParameters(propertyDescriptor, call),
             createDynamicDispatchReceiverParameter(propertyDescriptor),
-            null as KotlinType?
+            null
         )
 
         val getter = DescriptorFactory.createDefaultGetter(propertyDescriptor, Annotations.EMPTY)
         getter.initialize(propertyDescriptor.type)
-        val setter = DescriptorFactory.createDefaultSetter(propertyDescriptor, Annotations.EMPTY)
+        val setter = DescriptorFactory.createDefaultSetter(propertyDescriptor, Annotations.EMPTY, Annotations.EMPTY)
 
         propertyDescriptor.initialize(getter, setter)
 
@@ -138,7 +138,7 @@ class DynamicCallableDescriptors(storageManager: StorageManager, builtIns: Kotli
     }
 
     private fun createDynamicDispatchReceiverParameter(owner: CallableDescriptor): ReceiverParameterDescriptorImpl {
-        return ReceiverParameterDescriptorImpl(owner, TransientReceiver(dynamicType))
+        return ReceiverParameterDescriptorImpl(owner, TransientReceiver(dynamicType), Annotations.EMPTY)
     }
 
     private fun createTypeParameters(owner: DeclarationDescriptor, call: Call): List<TypeParameterDescriptor> =

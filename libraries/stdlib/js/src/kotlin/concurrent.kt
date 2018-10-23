@@ -5,13 +5,13 @@
 
 package kotlin
 
-import kotlin.internal.contracts.*
+import kotlin.contracts.*
 
 
-@Deprecated("Use Synchronized annotation from kotlin.jvm package", ReplaceWith("kotlin.jvm.Synchronized"), level = DeprecationLevel.WARNING)
+@Deprecated("Do not use Synchronized annotation in pure Kotlin/JS code", level = DeprecationLevel.ERROR)
 public typealias Synchronized = kotlin.jvm.Synchronized
 
-@Deprecated("Use Volatile annotation from kotlin.jvm package", ReplaceWith("kotlin.jvm.Volatile"), level = DeprecationLevel.WARNING)
+@Deprecated("Do not use Volatile annotation in pure Kotlin/JS code", level = DeprecationLevel.ERROR)
 public typealias Volatile = kotlin.jvm.Volatile
 
 @kotlin.internal.InlineOnly

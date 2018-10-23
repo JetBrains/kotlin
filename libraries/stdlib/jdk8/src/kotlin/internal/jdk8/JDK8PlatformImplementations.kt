@@ -21,6 +21,8 @@ import java.util.regex.MatchResult
 import java.util.regex.Matcher
 import kotlin.internal.PlatformImplementations
 import kotlin.internal.jdk7.JDK7PlatformImplementations
+import kotlin.random.Random
+import kotlin.random.jdk8.PlatformThreadLocalRandom
 
 internal open class JDK8PlatformImplementations : JDK7PlatformImplementations() {
 
@@ -33,5 +35,7 @@ internal open class JDK8PlatformImplementations : JDK7PlatformImplementations() 
         else
             null
     }
+
+    override fun defaultPlatformRandom(): Random = PlatformThreadLocalRandom()
 
 }

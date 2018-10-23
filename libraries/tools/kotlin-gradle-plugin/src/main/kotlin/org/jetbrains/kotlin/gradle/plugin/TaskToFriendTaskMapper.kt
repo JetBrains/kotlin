@@ -21,20 +21,20 @@ import org.jetbrains.annotations.TestOnly
 
 internal abstract class TaskToFriendTaskMapper {
     operator fun get(task: Task): String? =
-            getFriendByName(task.name)
+        getFriendByName(task.name)
 
     @TestOnly
     operator fun get(name: String): String? =
-            getFriendByName(name)
+        getFriendByName(name)
 
     protected abstract fun getFriendByName(name: String): String?
 }
 
 sealed internal class RegexTaskToFriendTaskMapper(
-        private val prefix: String,
-        suffix: String,
-        private val targetName: String,
-        private val postfixReplacement: String
+    private val prefix: String,
+    suffix: String,
+    private val targetName: String,
+    private val postfixReplacement: String
 ) : TaskToFriendTaskMapper() {
     class Default(targetName: String) : RegexTaskToFriendTaskMapper("compile", "TestKotlin", targetName, "Kotlin")
     class Android(targetName: String) : RegexTaskToFriendTaskMapper("compile", "(Unit|Android)TestKotlin", targetName, "Kotlin")

@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.common.CodegenUtil
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.context.*
 import org.jetbrains.kotlin.codegen.state.GenerationState
+import org.jetbrains.kotlin.config.isReleaseCoroutines
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.KotlinLookupLocation
 import org.jetbrains.kotlin.incremental.components.LookupLocation
@@ -171,24 +172,30 @@ class PsiSourceCompilerForInline(private val codegen: ExpressionCodegen, overrid
         val strategy = when (expression) {
             is KtCallableReferenceExpression -> {
                 val resolvedCall = expression.callableReference.getResolvedCallWithAssert(state.bindingContext)
-                val receiverType = JvmCodegenUtil.getBoundCallableReferenceReceiver(resolvedCall)?.type?.let(state.typeMapper::mapType)
+                val receiverKotlinType = JvmCodegenUtil.getBoundCallableReferenceReceiver(resolvedCall)?.type
+                val receiverType = receiverKotlinType?.let(state.typeMapper::mapType)
+                val boundReceiverJvmKotlinType = receiverType?.let { JvmKotlinType(receiverType, receiverKotlinType) }
 
                 if (isLambda && lambdaInfo!!.isPropertyReference) {
                     val asmType = state.typeMapper.mapClass(lambdaInfo.classDescriptor)
                     val info = lambdaInfo.propertyReferenceInfo
                     PropertyReferenceCodegen.PropertyReferenceGenerationStrategy(
-                        true, info!!.getFunction, info.target, asmType, receiverType,
+                        true, info!!.getFunction, info.target, asmType,
+                        boundReceiverJvmKotlinType,
                         lambdaInfo.functionWithBodyOrCallableReference, state, true
                     )
                 } else {
-                    FunctionReferenceGenerationStrategy(state, descriptor, resolvedCall, receiverType, null, true)
+                    FunctionReferenceGenerationStrategy(state, descriptor, resolvedCall, boundReceiverJvmKotlinType, null, true)
                 }
             }
             is KtFunctionLiteral -> ClosureGenerationStrategy(state, expression as KtDeclarationWithBody)
             else -> FunctionGenerationStrategy.FunctionDefault(state, expression as KtDeclarationWithBody)
         }
 
-        FunctionCodegen.generateMethodBody(adapter, descriptor, context, jvmMethodSignature, strategy, parentCodegen, state.jvmDefaultMode)
+        FunctionCodegen.generateMethodBody(
+            adapter, descriptor, context, jvmMethodSignature, strategy, parentCodegen, state.jvmDefaultMode,
+            state.languageVersionSettings.isReleaseCoroutines()
+        )
 
         if (isLambda) {
             codegen.propagateChildReifiedTypeParametersUsages(parentCodegen.reifiedTypeParametersUsages)

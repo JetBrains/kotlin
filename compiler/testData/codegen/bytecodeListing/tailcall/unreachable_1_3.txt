@@ -5,49 +5,53 @@ public final class Generic {
 }
 
 @kotlin.Metadata
+@kotlin.coroutines.jvm.internal.DebugMetadata
 final class UnreachableKt$callsIntNotTailCall$1 {
-    synthetic field data: java.lang.Object
     field label: int
+    synthetic field result: java.lang.Object
     inner class UnreachableKt$callsIntNotTailCall$1
     method <init>(p0: kotlin.coroutines.Continuation): void
     public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
 }
 
 @kotlin.Metadata
+@kotlin.coroutines.jvm.internal.DebugMetadata
 final class UnreachableKt$lambdaAsParameterNotTailCall$1 {
     field L$0: java.lang.Object
-    synthetic field data: java.lang.Object
     field label: int
+    synthetic field result: java.lang.Object
     inner class UnreachableKt$lambdaAsParameterNotTailCall$1
     method <init>(p0: kotlin.coroutines.Continuation): void
     public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
 }
 
 @kotlin.Metadata
+@kotlin.coroutines.jvm.internal.DebugMetadata
 final class UnreachableKt$multipleExitPointsNotTailCall$1 {
     field Z$0: boolean
-    synthetic field data: java.lang.Object
     field label: int
+    synthetic field result: java.lang.Object
     inner class UnreachableKt$multipleExitPointsNotTailCall$1
     method <init>(p0: kotlin.coroutines.Continuation): void
     public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
 }
 
+@kotlin.coroutines.jvm.internal.DebugMetadata
 @kotlin.Metadata
 final class UnreachableKt$multipleExitPointsWhen$2 {
     field label: int
     inner class UnreachableKt$multipleExitPointsWhen$2
     method <init>(p0: kotlin.coroutines.Continuation): void
     public final @org.jetbrains.annotations.NotNull method create(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
-    public final @org.jetbrains.annotations.Nullable method invoke(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.Continuation): java.lang.Object
-    public synthetic method invoke(p0: java.lang.Object): java.lang.Object
+    public final method invoke(p0: java.lang.Object): java.lang.Object
     public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
 }
 
 @kotlin.Metadata
+@kotlin.coroutines.jvm.internal.DebugMetadata
 final class UnreachableKt$notTailCall$1 {
-    synthetic field data: java.lang.Object
     field label: int
+    synthetic field result: java.lang.Object
     inner class UnreachableKt$notTailCall$1
     method <init>(p0: kotlin.coroutines.Continuation): void
     public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
@@ -64,9 +68,10 @@ final class UnreachableKt$useGenericInferType$2 {
 }
 
 @kotlin.Metadata
+@kotlin.coroutines.jvm.internal.DebugMetadata
 final class UnreachableKt$useNullableUnit$1 {
-    synthetic field data: java.lang.Object
     field label: int
+    synthetic field result: java.lang.Object
     inner class UnreachableKt$useNullableUnit$1
     method <init>(p0: kotlin.coroutines.Continuation): void
     public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object

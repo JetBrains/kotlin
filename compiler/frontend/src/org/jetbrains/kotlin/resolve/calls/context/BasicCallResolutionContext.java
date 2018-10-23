@@ -89,7 +89,7 @@ public class BasicCallResolutionContext extends CallResolutionContext<BasicCallR
 
     @NotNull
     public static BasicCallResolutionContext create(
-            @NotNull ResolutionContext context, @NotNull Call call, @NotNull CheckArgumentTypesMode checkArguments,
+            @NotNull ResolutionContext<?> context, @NotNull Call call, @NotNull CheckArgumentTypesMode checkArguments,
             @Nullable MutableDataFlowInfoForArguments dataFlowInfoForArguments
     ) {
         return new BasicCallResolutionContext(

@@ -13,7 +13,6 @@ import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
-import org.jetbrains.kotlin.config.LanguageFeature;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.descriptors.impl.ClassDescriptorBase;
@@ -146,14 +145,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
         }
 
         boolean isLocal = classOrObject != null && KtPsiUtil.isLocal(classOrObject);
-        Visibility defaultVisibility;
-        if (kind == ClassKind.ENUM_ENTRY || (kind == ClassKind.OBJECT && isCompanionObject)) {
-            defaultVisibility = Visibilities.PUBLIC;
-        }
-        else {
-            defaultVisibility = Visibilities.DEFAULT_VISIBILITY;
-        }
-        this.visibility = isLocal ? Visibilities.LOCAL : resolveVisibilityFromModifiers(modifierList, defaultVisibility);
+        this.visibility = isLocal ? Visibilities.LOCAL : resolveVisibilityFromModifiers(modifierList, Visibilities.DEFAULT_VISIBILITY);
 
         this.isInner = modifierList != null && modifierList.hasModifier(INNER_KEYWORD) && !isIllegalInner(this);
         this.isData = modifierList != null && modifierList.hasModifier(KtTokens.DATA_KEYWORD);
@@ -359,8 +351,8 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
 
     @NotNull
     @Override
+    @SuppressWarnings("unchecked")
     public Collection<CallableMemberDescriptor> getDeclaredCallableMembers() {
-        //noinspection unchecked
         return (Collection) CollectionsKt.filter(
                 DescriptorUtils.getAllDescriptors(unsubstitutedMemberScope),
                 descriptor -> descriptor instanceof CallableMemberDescriptor

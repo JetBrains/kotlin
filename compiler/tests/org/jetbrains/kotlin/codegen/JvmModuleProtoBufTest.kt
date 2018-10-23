@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.codegen
 
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.config.ApiVersion
+import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.load.kotlin.loadModuleMapping
@@ -50,7 +51,8 @@ class JvmModuleProtoBufTest : KtUsefulTestCase() {
                 File(tmpdir, "META-INF/$moduleName.${ModuleMapping.MAPPING_FILE_EXT}").readBytes(), "test",
                 CompilerDeserializationConfiguration(
                         LanguageVersionSettingsImpl(loadWith, ApiVersion.createByLanguageVersion(loadWith))
-                )
+                ),
+                ::error
         )
         val result = buildString {
             for (annotationClassId in mapping.moduleData.annotations) {

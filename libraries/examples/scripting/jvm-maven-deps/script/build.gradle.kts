@@ -5,7 +5,6 @@ plugins {
 
 dependencies {
     compile(project(":kotlin-scripting-jvm"))
-    compile(project(":kotlin-scripting-misc"))
     compile(project(":kotlin-script-util"))
     runtime("com.jcabi:jcabi-aether:0.10.1")
     runtime("org.sonatype.aether:aether-api:1.13.1")

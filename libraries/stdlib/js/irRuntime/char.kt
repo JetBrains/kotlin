@@ -34,7 +34,7 @@ public class Char(value: Int) : Comparable<Char> {
     public operator fun dec(): Char = Char(value - 1)
 
     /** Creates a range from this value to the specified [other] value. */
-    public operator fun rangeTo(other: Char): CharRange = null!! // TODO
+    public operator fun rangeTo(other: Char): CharRange = CharRange(this, other)
 
     /** Returns the value of this character as a `Byte`. */
     public fun toByte(): Byte = value.toByte()
@@ -61,6 +61,18 @@ public class Char(value: Int) : Comparable<Char> {
     }
 
     companion object {
+        /**
+         * The minimum value of a character code unit.
+         */
+        @SinceKotlin("1.3")
+        public const val MIN_VALUE: Char = '\u0000'
+
+        /**
+         * The maximum value of a character code unit.
+         */
+        @SinceKotlin("1.3")
+        public const val MAX_VALUE: Char = '\uFFFF'
+
         /**
          * The minimum value of a Unicode high-surrogate code unit.
          */

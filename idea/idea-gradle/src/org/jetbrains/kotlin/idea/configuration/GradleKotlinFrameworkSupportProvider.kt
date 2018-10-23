@@ -20,11 +20,15 @@ import com.intellij.framework.FrameworkTypeEx
 import com.intellij.framework.addSupport.FrameworkSupportInModuleConfigurable
 import com.intellij.framework.addSupport.FrameworkSupportInModuleProvider
 import com.intellij.ide.util.frameworkSupport.FrameworkSupportModel
+import com.intellij.openapi.externalSystem.model.ExternalSystemDataKeys
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.roots.ModifiableModelsProvider
 import com.intellij.openapi.roots.ModifiableRootModel
 import org.jetbrains.kotlin.idea.KotlinIcons
+import org.jetbrains.kotlin.idea.core.platform.impl.CommonIdePlatformKindTooling.MAVEN_COMMON_STDLIB_ID
+import org.jetbrains.kotlin.idea.formatter.KotlinStyleGuideCodeStyle
+import org.jetbrains.kotlin.idea.formatter.ProjectCodeStyleImporter
 import org.jetbrains.kotlin.idea.versions.*
 import org.jetbrains.plugins.gradle.frameworkSupport.BuildScriptDataBuilder
 import org.jetbrains.plugins.gradle.frameworkSupport.GradleFrameworkSupportProvider
@@ -65,10 +69,16 @@ abstract class GradleKotlinFrameworkSupportProvider(
         addSupport(buildScriptData, module, rootModel.sdk, true)
     }
 
-    open fun addSupport(buildScriptData: BuildScriptDataBuilder, module: Module, sdk: Sdk?, specifyPluginVersionIfNeeded: Boolean) {
-        var kotlinVersion = bundledRuntimeVersion()
+    open fun addSupport(
+        buildScriptData: BuildScriptDataBuilder,
+        module: Module,
+        sdk: Sdk?,
+        specifyPluginVersionIfNeeded: Boolean,
+        explicitPluginVersion: String? = null
+    ) {
+        var kotlinVersion = explicitPluginVersion ?: bundledRuntimeVersion()
         val additionalRepository = getRepositoryForVersion(kotlinVersion)
-        if (isSnapshot(bundledRuntimeVersion())) {
+        if (isSnapshot(kotlinVersion)) {
             kotlinVersion = LAST_SNAPSHOT_VERSION
         }
 
@@ -124,6 +134,12 @@ abstract class GradleKotlinFrameworkSupportProvider(
         } else {
             buildScriptData.addBuildscriptDependencyNotation(KotlinWithGradleConfigurator.CLASSPATH)
         }
+
+        val isNewProject = module.project.getUserData(ExternalSystemDataKeys.NEWLY_CREATED_PROJECT) == true
+        if (isNewProject) {
+            ProjectCodeStyleImporter.apply(module.project, KotlinStyleGuideCodeStyle.INSTANCE)
+            GradlePropertiesFileFacade.forProject(module.project).addCodeStyleProperty(KotlinStyleGuideCodeStyle.CODE_STYLE_SETTING)
+        }
     }
 
     protected open fun updateSettingsScript(settingsBuilder: SettingsScriptBuilder, specifyPluginVersionIfNeeded: Boolean) { }
@@ -147,8 +163,14 @@ open class GradleKotlinJavaFrameworkSupportProvider(
 
     override fun getDependencies(sdk: Sdk?) = listOf(getStdlibArtifactId(sdk, bundledRuntimeVersion()))
 
-    override fun addSupport(buildScriptData: BuildScriptDataBuilder, module: Module, sdk: Sdk?, specifyPluginVersionIfNeeded: Boolean) {
-        super.addSupport(buildScriptData, module, sdk, specifyPluginVersionIfNeeded)
+    override fun addSupport(
+        buildScriptData: BuildScriptDataBuilder,
+        module: Module,
+        sdk: Sdk?,
+        specifyPluginVersionIfNeeded: Boolean,
+        explicitPluginVersion: String?
+    ) {
+        super.addSupport(buildScriptData, module, sdk, specifyPluginVersionIfNeeded, explicitPluginVersion)
         val jvmTarget = getDefaultJvmTarget(sdk, bundledRuntimeVersion())
         if (jvmTarget != null) {
             val description = jvmTarget.description
@@ -198,6 +220,24 @@ open class GradleKotlinMPPCommonFrameworkSupportProvider :
     override fun getDescription() = "Shared code for a Kotlin multiplatform project (targeting JVM and JS)"
 }
 
+class GradleKotlinMPPFrameworkSupportProvider : GradleKotlinFrameworkSupportProvider(
+    "KOTLIN_MPP", "Kotlin (Multiplatform - Experimental)", KotlinIcons.MPP
+) {
+    override fun getPluginId() = "kotlin-multiplatform"
+    override fun getPluginExpression() = "id 'kotlin-multiplatform'"
+
+    override fun getDependencies(sdk: Sdk?): List<String> = listOf()
+    override fun getTestDependencies(): List<String> = listOf()
+
+    override fun updateSettingsScript(settingsBuilder: SettingsScriptBuilder, specifyPluginVersionIfNeeded: Boolean) {
+        if (specifyPluginVersionIfNeeded) {
+            settingsBuilder.addResolutionStrategy("kotlin-multiplatform")
+        }
+    }
+
+    override fun getDescription() = "Kotlin multiplatform code"
+}
+
 class GradleKotlinMPPJavaFrameworkSupportProvider
     : GradleKotlinJavaFrameworkSupportProvider("KOTLIN_MPP_JVM", "Kotlin (Multiplatform JVM - Experimental)") {
 
@@ -207,8 +247,14 @@ class GradleKotlinMPPJavaFrameworkSupportProvider
     override fun getDescription() = "JVM-specific code for a Kotlin multiplatform project"
     override fun getTestDependencies() = listOf(MAVEN_TEST_ID, MAVEN_TEST_JUNIT_ID, "junit:junit:4.12")
 
-    override fun addSupport(buildScriptData: BuildScriptDataBuilder, module: Module, sdk: Sdk?, specifyPluginVersionIfNeeded: Boolean) {
-        super.addSupport(buildScriptData, module, sdk, specifyPluginVersionIfNeeded)
+    override fun addSupport(
+        buildScriptData: BuildScriptDataBuilder,
+        module: Module,
+        sdk: Sdk?,
+        specifyPluginVersionIfNeeded: Boolean,
+        explicitPluginVersion: String?
+    ) {
+        super.addSupport(buildScriptData, module, sdk, specifyPluginVersionIfNeeded, explicitPluginVersion)
         val jvmTarget = getDefaultJvmTarget(sdk, bundledRuntimeVersion())
         if (jvmTarget != null) {
             val description = jvmTarget.description

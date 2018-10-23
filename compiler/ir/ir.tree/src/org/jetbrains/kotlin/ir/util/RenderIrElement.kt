@@ -139,7 +139,8 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
             "companion".takeIf { isCompanion },
             "inner".takeIf { isInner },
             "data".takeIf { isData },
-            "external".takeIf { isExternal }
+            "external".takeIf { isExternal },
+            "inline".takeIf { isInline }
         )
 
     override fun visitTypeAlias(declaration: IrTypeAlias, data: Nothing?): String =

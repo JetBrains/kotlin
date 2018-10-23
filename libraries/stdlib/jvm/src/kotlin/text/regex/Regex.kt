@@ -79,9 +79,10 @@ public actual enum class RegexOption(override val value: Int, override val mask:
 public actual data class MatchGroup(public actual val value: String, public val range: IntRange)
 
 /**
- * Represents an immutable regular expression.
+ * Represents a compiled regular expression.
+ * Provides functions to match strings in text with a pattern, replace the found occurrences and split text around matches.
  *
- * For pattern syntax reference see [Pattern]
+ * For pattern syntax reference see [Pattern].
  */
 public actual class Regex
 @PublishedApi
@@ -187,10 +188,31 @@ internal constructor(private val nativePattern: Pattern) : Serializable {
     @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
     public actual fun split(input: CharSequence, limit: Int = 0): List<String> {
         require(limit >= 0, { "Limit must be non-negative, but was $limit." })
-        return nativePattern.split(input, if (limit == 0) -1 else limit).asList()
+
+        val matcher = nativePattern.matcher(input)
+        if (!matcher.find() || limit == 1) return listOf(input.toString())
+
+        val result = ArrayList<String>(if (limit > 0) limit.coerceAtMost(10) else 10)
+        var lastStart = 0
+        val lastSplit = limit - 1 // negative if there's no limit
+
+        do {
+            result.add(input.substring(lastStart, matcher.start()))
+            lastStart = matcher.end()
+            if (lastSplit >= 0 && result.size == lastSplit) break
+        } while (matcher.find())
+
+        result.add(input.substring(lastStart, input.length))
+
+        return result
     }
 
-    /** Returns the string representation of this regular expression, namely the [pattern] of this regular expression. */
+    /**
+     * Returns the string representation of this regular expression, namely the [pattern] of this regular expression.
+     *
+     * Note that another regular expression constructed from the same pattern string may have different [options]
+     * and may match strings differently.
+     */
     public override fun toString(): String = nativePattern.toString()
 
     /**
@@ -211,13 +233,22 @@ internal constructor(private val nativePattern: Pattern) : Serializable {
     }
 
     actual companion object {
-        /** Returns a literal regex for the specified [literal] string. */
+        /**
+         * Returns a regular expression that matches the specified [literal] string literally.
+         * No characters of that string will have special meaning when searching for an occurrence of the regular expression.
+         */
         public actual fun fromLiteral(literal: String): Regex = literal.toRegex(RegexOption.LITERAL)
 
-        /** Returns a literal pattern for the specified [literal] string. */
+        /**
+         * Returns a regular expression pattern string that matches the specified [literal] string literally.
+         * No characters of that string will have special meaning when searching for an occurrence of the regular expression.
+         */
         public actual fun escape(literal: String): String = Pattern.quote(literal)
 
-        /** Returns a literal replacement expression for the specified [literal] string. */
+        /**
+         * Returns a literal replacement expression for the specified [literal] string.
+         * No characters of that string will have special meaning when it is used as a replacement string in [Regex.replace] function.
+         */
         public actual fun escapeReplacement(literal: String): String = Matcher.quoteReplacement(literal)
 
         private fun ensureUnicodeCase(flags: Int) = if (flags and Pattern.CASE_INSENSITIVE != 0) flags or Pattern.UNICODE_CASE else flags

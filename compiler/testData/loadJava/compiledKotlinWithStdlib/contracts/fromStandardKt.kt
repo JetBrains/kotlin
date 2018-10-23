@@ -1,9 +1,10 @@
 // !LANGUAGE: +AllowContractsForCustomFunctions +ReadDeserializedContracts
+// !USE_EXPERIMENTAL: kotlin.contracts.ExperimentalContracts
 @file:Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
 
 package test
 
-import kotlin.internal.contracts.*
+import kotlin.contracts.*
 
 public inline fun <R> run(block: () -> R): R {
     contract {

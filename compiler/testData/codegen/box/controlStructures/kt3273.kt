@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 fun printlnMock(a: Any) {}
 
 public fun testCoalesce() {

@@ -72,8 +72,13 @@ val ClassifierDescriptorWithTypeParameters.denotedClassDescriptor: ClassDescript
         else -> throw UnsupportedOperationException("Unexpected descriptor kind: $this")
     }
 
+// Used in https://plugins.jetbrains.com/plugin/10346-extsee
+@Deprecated("The one below with receiver type ClassifierDescriptor? should be used", level = DeprecationLevel.HIDDEN)
 val ClassifierDescriptorWithTypeParameters.classId: ClassId?
-    get() = containingDeclaration.let { owner ->
+    get() = (this as ClassifierDescriptor?).classId
+
+val ClassifierDescriptor?.classId: ClassId?
+    get() = this?.containingDeclaration?.let { owner ->
         when (owner) {
             is PackageFragmentDescriptor -> ClassId(owner.fqName, name)
             is ClassifierDescriptorWithTypeParameters -> owner.classId?.createNestedClassId(name)
@@ -221,7 +226,7 @@ val DeclarationDescriptor.parents: Sequence<DeclarationDescriptor>
 val CallableMemberDescriptor.propertyIfAccessor: CallableMemberDescriptor
     get() = if (this is PropertyAccessorDescriptor) correspondingProperty else this
 
-fun CallableDescriptor.fqNameOrNull(): FqName? = fqNameUnsafe.takeIf { it.isSafe }?.toSafe()
+fun DeclarationDescriptor.fqNameOrNull(): FqName? = fqNameUnsafe.takeIf { it.isSafe }?.toSafe()
 
 fun CallableMemberDescriptor.firstOverridden(
     useOriginal: Boolean = false,

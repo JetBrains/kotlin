@@ -16,9 +16,9 @@
 
 package org.jetbrains.kotlin.gradle.internal
 
-import org.jetbrains.kotlin.gradle.plugin.SubpluginOption
 import org.jetbrains.kotlin.gradle.plugin.CompositeSubpluginOption
 import org.jetbrains.kotlin.gradle.plugin.FilesSubpluginOption
+import org.jetbrains.kotlin.gradle.plugin.SubpluginOption
 import org.jetbrains.kotlin.gradle.tasks.CompilerPluginOptions
 import java.io.ByteArrayOutputStream
 import java.io.File

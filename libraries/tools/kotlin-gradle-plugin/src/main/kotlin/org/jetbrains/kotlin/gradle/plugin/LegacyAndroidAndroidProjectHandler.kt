@@ -24,19 +24,19 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.gradle.utils.checkedReflection
 import java.io.File
 
-internal class LegacyAndroidAndroidProjectHandler(kotlinConfigurationTools: KotlinConfigurationTools)
-    : AbstractAndroidProjectHandler<BaseVariantData<out BaseVariantOutputData>>(kotlinConfigurationTools) {
+internal class LegacyAndroidAndroidProjectHandler(kotlinConfigurationTools: KotlinConfigurationTools) :
+    AbstractAndroidProjectHandler<BaseVariantData<out BaseVariantOutputData>>(kotlinConfigurationTools) {
 
     override fun getSourceProviders(variantData: BaseVariantData<out BaseVariantOutputData>): Iterable<SourceProvider> =
-            variantData.sourceProviders
+        variantData.sourceProviders
 
     override fun getAllJavaSources(variantData: BaseVariantData<out BaseVariantOutputData>): Iterable<File> =
-            AndroidGradleWrapper.getJavaSources(variantData)
+        AndroidGradleWrapper.getJavaSources(variantData)
 
     override fun forEachVariant(project: Project, action: (BaseVariantData<out BaseVariantOutputData>) -> Unit) {
         val plugin = (project.plugins.findPlugin("android")
-                      ?: project.plugins.findPlugin("android-library")
-                      ?: project.plugins.findPlugin("com.android.test")) as BasePlugin
+            ?: project.plugins.findPlugin("android-library")
+            ?: project.plugins.findPlugin("com.android.test")) as BasePlugin
         val variantManager = AndroidGradleWrapper.getVariantDataManager(plugin)
         variantManager.variantDataList.forEach(action)
     }
@@ -76,36 +76,39 @@ internal class LegacyAndroidAndroidProjectHandler(kotlinConfigurationTools: Kotl
         get() =
             checkedReflection(f@{
                 val output = variantConfiguration.javaClass.methods.firstOrNull { it.name == "getOutput" }
-                        ?.invoke(variantConfiguration)
-                        ?: return@f null
+                    ?.invoke(variantConfiguration)
+                    ?: return@f null
 
                 output.javaClass.methods?.firstOrNull { it.name == "getJarFile" }
-                        ?.invoke(output) as? File
+                    ?.invoke(output) as? File
 
             }, { e: Exception ->
-                logger.kotlinDebug("dependencyJarOrNull for lib variant $name failed due to $e")
-                null
-            })
+                                  logger.kotlinDebug("dependencyJarOrNull for lib variant $name failed due to $e")
+                                  null
+                              })
 
     override fun getVariantName(variant: BaseVariantData<out BaseVariantOutputData>): String = variant.name
 
     override fun checkVariantIsValid(variant: BaseVariantData<out BaseVariantOutputData>): Unit {
         if (AndroidGradleWrapper.isJackEnabled(variant)) {
             throw ProjectConfigurationException(
-                    "Kotlin Gradle plugin does not support the deprecated Jack toolchain.\n" +
-                    "Disable Jack or revert to Kotlin Gradle plugin version 1.1.1.", null)
+                "Kotlin Gradle plugin does not support the deprecated Jack toolchain.\n" +
+                        "Disable Jack or revert to Kotlin Gradle plugin version 1.1.1.", null
+            )
         }
     }
 
     override fun getJavaTask(variantData: BaseVariantData<out BaseVariantOutputData>): AbstractCompile? =
-            AndroidGradleWrapper.getJavaTask(variantData)
+        AndroidGradleWrapper.getJavaTask(variantData)
 
-    override fun addJavaSourceDirectoryToVariantModel(variantData: BaseVariantData<out BaseVariantOutputData>,
-                                                      javaSourceDirectory: File) =
-            variantData.addJavaSourceFoldersToModel(javaSourceDirectory)
+    override fun addJavaSourceDirectoryToVariantModel(
+        variantData: BaseVariantData<out BaseVariantOutputData>,
+        javaSourceDirectory: File
+    ) =
+        variantData.addJavaSourceFoldersToModel(javaSourceDirectory)
 
     override fun getTestedVariantData(variantData: BaseVariantData<*>): BaseVariantData<*>? =
-            ((variantData as? TestVariantData)?.testedVariantData as? BaseVariantData<*>)
+        ((variantData as? TestVariantData)?.testedVariantData as? BaseVariantData<*>)
 
     override fun getResDirectories(variantData: BaseVariantData<out BaseVariantOutputData>): List<File> {
         return variantData.mergeResourcesTask?.rawInputFolders?.toList() ?: emptyList()
@@ -114,16 +117,16 @@ internal class LegacyAndroidAndroidProjectHandler(kotlinConfigurationTools: Kotl
     private val BaseVariantData<*>.sourceProviders: List<SourceProvider>
         get() = variantConfiguration.sortedSourceProviders
 
-    private inner class KaptLegacyVariantData(variantData: BaseVariantData<out BaseVariantOutputData>)
-        : KaptVariantData<BaseVariantData<out BaseVariantOutputData>>(variantData) {
+    private inner class KaptLegacyVariantData(variantData: BaseVariantData<out BaseVariantOutputData>) :
+        KaptVariantData<BaseVariantData<out BaseVariantOutputData>>(variantData) {
 
         override val name: String = variantData.name
         override val sourceProviders: Iterable<SourceProvider> = getSourceProviders(variantData)
         override fun addJavaSourceFoldersToModel(generatedFilesDir: File) =
-                addJavaSourceDirectoryToVariantModel(variantData, generatedFilesDir)
+            addJavaSourceDirectoryToVariantModel(variantData, generatedFilesDir)
 
         override val annotationProcessorOptions: Map<String, String>? =
-                AndroidGradleWrapper.getAnnotationProcessorOptionsFromAndroidVariant(variantData)
+            AndroidGradleWrapper.getAnnotationProcessorOptionsFromAndroidVariant(variantData)
 
         override fun registerGeneratedJavaSource(
             project: Project,
@@ -136,5 +139,5 @@ internal class LegacyAndroidAndroidProjectHandler(kotlinConfigurationTools: Kotl
 
     override fun wrapVariantDataForKapt(variantData: BaseVariantData<out BaseVariantOutputData>)
             : KaptVariantData<BaseVariantData<out BaseVariantOutputData>> =
-            KaptLegacyVariantData(variantData)
+        KaptLegacyVariantData(variantData)
 }

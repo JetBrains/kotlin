@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.isInfixCall
 import org.jetbrains.kotlin.resolve.calls.callUtil.isCallableReference
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
+import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameOrNull
 import org.jetbrains.kotlin.serialization.deserialization.KOTLIN_SUSPEND_BUILT_IN_FUNCTION_FQ_NAME
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
@@ -23,18 +24,19 @@ object LambdaWithSuspendModifierCallChecker : CallChecker {
     override fun check(resolvedCall: ResolvedCall<*>, reportOn: PsiElement, context: CallCheckerContext) {
         val descriptor = resolvedCall.candidateDescriptor
         val call = resolvedCall.call
-        val callName = call.referencedName()
+        val calleeName = call.referencedName()
+        val variableCalleeName = resolvedCall.safeAs<VariableAsFunctionResolvedCall>()?.variableCall?.call?.referencedName()
 
-        if (callName != "suspend" && descriptor.name.asString() != "suspend") return
+        if (calleeName != "suspend" && variableCalleeName != "suspend" && descriptor.name.asString() != "suspend") return
 
         when (descriptor.fqNameOrNull()) {
             KOTLIN_SUSPEND_BUILT_IN_FUNCTION_FQ_NAME -> {
-                if (!call.hasFormOfSuspendModifierForLambda() || call.explicitReceiver != null) {
+                if (calleeName != "suspend" || !call.hasFormOfSuspendModifierForLambda() || call.explicitReceiver != null) {
                     context.trace.report(Errors.NON_MODIFIER_FORM_FOR_BUILT_IN_SUSPEND.on(reportOn))
                 }
             }
             else -> {
-                if (call.hasFormOfSuspendModifierForLambda()) {
+                if ((calleeName == "suspend" || variableCalleeName == "suspend") && call.hasFormOfSuspendModifierForLambda()) {
                     context.trace.report(Errors.MODIFIER_FORM_FOR_NON_BUILT_IN_SUSPEND.on(reportOn))
                 }
             }
@@ -42,8 +44,7 @@ object LambdaWithSuspendModifierCallChecker : CallChecker {
     }
 
     private fun Call.hasFormOfSuspendModifierForLambda() =
-        referencedName() == "suspend"
-                && !isCallableReference()
+        !isCallableReference()
                 && typeArguments.isEmpty()
                 && (hasNoArgumentListButDanglingLambdas() || isInfixWithRightLambda())
 

@@ -6,25 +6,24 @@
 package org.jetbrains.kotlin.idea.caches.project
 
 import com.intellij.openapi.module.Module
-import com.intellij.util.containers.MultiMap
-import com.intellij.openapi.project.Project
 import com.intellij.openapi.module.ModuleManager
-import com.intellij.openapi.roots.ModuleRootManager
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ModuleOrderEntry
-import gnu.trove.THashSet
-import com.intellij.util.containers.Queue
-import com.intellij.psi.util.CachedValuesManager
-import com.intellij.psi.util.CachedValueProvider
+import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.roots.ProjectRootModificationTracker
-import java.util.HashSet
+import com.intellij.psi.util.CachedValueProvider
+import com.intellij.psi.util.CachedValuesManager
+import com.intellij.util.containers.MultiMap
+import com.intellij.util.containers.Queue
+import gnu.trove.THashSet
+import java.util.*
 
 //NOTE: this is an approximation that may contain more module infos then the exact solution
 fun ModuleSourceInfo.getDependentModules(): Set<ModuleSourceInfo> {
     val dependents = getDependents(module)
-    return if (isTests()) {
-        dependents.mapNotNullTo(HashSet<ModuleSourceInfo>(), Module::testSourceInfo)
-    } else {
-        dependents.flatMapTo(HashSet<ModuleSourceInfo>()) { it.correspondingModuleInfos() }
+    return when (sourceType) {
+        SourceType.TEST -> dependents.mapNotNullTo(HashSet<ModuleSourceInfo>(), Module::testSourceInfo)
+        SourceType.PRODUCTION -> dependents.flatMapTo(HashSet<ModuleSourceInfo>()) { it.correspondingModuleInfos() }
     }
 }
 

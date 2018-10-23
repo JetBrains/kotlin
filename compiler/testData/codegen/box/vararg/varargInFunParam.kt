@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 fun box(): String {
     if (test1() != "") return "fail 1"
     if (test1(1) != "1") return "fail 2"

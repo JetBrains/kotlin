@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
+import org.jetbrains.kotlin.renderer.PropertyAccessorRenderingPolicy
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.MemberComparator
 import org.jetbrains.kotlin.resolve.MultiTargetPlatform
@@ -50,7 +51,6 @@ import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.io.PrintWriter
 import java.io.StringWriter
-import java.lang.AssertionError
 
 object Renderers {
 
@@ -677,7 +677,7 @@ object Renderers {
     val DEPRECATION_RENDERER = DescriptorRenderer.ONLY_NAMES_WITH_SHORT_TYPES.withOptions {
         withoutTypeParameters = false
         receiverAfterName = false
-        renderAccessors = true
+        propertyAccessorRenderingPolicy = PropertyAccessorRenderingPolicy.PRETTY
     }.asRenderer()
 }
 

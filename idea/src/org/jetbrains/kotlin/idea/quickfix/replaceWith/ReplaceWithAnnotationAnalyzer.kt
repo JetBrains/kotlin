@@ -169,10 +169,12 @@ object ReplaceWithAnnotationAnalyzer {
 
     private fun importFqNames(annotation: ReplaceWith): List<FqName> {
         return annotation.imports
+            .asSequence()
             .filter { FqNameUnsafe.isValid(it) }
             .map(::FqNameUnsafe)
             .filter(FqNameUnsafe::isSafe)
             .map(FqNameUnsafe::toSafe)
+            .toList()
     }
 
     private fun getResolutionScope(

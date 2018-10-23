@@ -149,7 +149,7 @@ class ExpressionsOfTypeProcessor(
 
         runReadAction {
             val scopeElements = scopesToUsePlainSearch.values
-                    .flatMap { it }
+                    .flatten()
                     .filter { it.isValid }
                     .toTypedArray()
             if (scopeElements.isNotEmpty()) {

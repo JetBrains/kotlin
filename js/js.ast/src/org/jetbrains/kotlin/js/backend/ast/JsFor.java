@@ -100,6 +100,7 @@ public class JsFor extends SourceInfoAwareJsNode implements JsLoop {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public void traverse(JsVisitorWithContext v, JsContext ctx) {
         if (v.visit(this, ctx)) {
             assert (!(initExpression != null && initVars != null));

@@ -269,8 +269,7 @@ const val MAVEN_STDLIB_ID_JDK8 = PathUtil.KOTLIN_JAVA_RUNTIME_JDK8_NAME
 const val MAVEN_JS_STDLIB_ID = PathUtil.JS_LIB_NAME
 const val MAVEN_JS_TEST_ID = PathUtil.KOTLIN_TEST_JS_NAME
 
-const val MAVEN_OLD_JS_STDLIB_ID = "kotlin-js-library"
-const val MAVEN_COMMON_STDLIB_ID = "kotlin-stdlib-common" // TODO: KotlinCommonMavenConfigurator
+
 const val MAVEN_TEST_ID = PathUtil.KOTLIN_TEST_NAME
 const val MAVEN_TEST_JUNIT_ID = "kotlin-test-junit"
 const val MAVEN_COMMON_TEST_ID = "kotlin-test-common"

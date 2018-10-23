@@ -153,7 +153,7 @@ public abstract class AbstractAnnotationDescriptorResolveTest extends KotlinTest
     }
 
     private static void checkAnnotationsOnProperty(String expectedAnnotation, PropertyDescriptor prop) {
-        checkDescriptorWithTarget(expectedAnnotation, prop, AnnotationUseSiteTarget.FIELD);
+        checkDescriptor(expectedAnnotation, prop);
         checkDescriptor(expectedAnnotation, prop.getGetter());
         PropertySetterDescriptor propSetter = prop.getSetter();
         assertNotNull(propSetter);
@@ -169,7 +169,8 @@ public abstract class AbstractAnnotationDescriptorResolveTest extends KotlinTest
     protected static FunctionDescriptor getFunctionDescriptor(@NotNull PackageFragmentDescriptor packageView, @NotNull String name) {
         Name functionName = Name.identifier(name);
         MemberScope memberScope = packageView.getMemberScope();
-        Collection<SimpleFunctionDescriptor> functions = memberScope.getContributedFunctions(functionName, NoLookupLocation.FROM_TEST);
+        Collection<? extends SimpleFunctionDescriptor> functions =
+                memberScope.getContributedFunctions(functionName, NoLookupLocation.FROM_TEST);
         assert functions.size() == 1 : "Failed to find function " + functionName + " in class" + "." + packageView.getName();
         return functions.iterator().next();
     }
@@ -178,7 +179,8 @@ public abstract class AbstractAnnotationDescriptorResolveTest extends KotlinTest
     private static FunctionDescriptor getFunctionDescriptor(@NotNull ClassDescriptor classDescriptor, @NotNull String name) {
         Name functionName = Name.identifier(name);
         MemberScope memberScope = classDescriptor.getMemberScope(Collections.emptyList());
-        Collection<SimpleFunctionDescriptor> functions = memberScope.getContributedFunctions(functionName, NoLookupLocation.FROM_TEST);
+        Collection<? extends SimpleFunctionDescriptor> functions =
+                memberScope.getContributedFunctions(functionName, NoLookupLocation.FROM_TEST);
         assert functions.size() == 1 : "Failed to find function " + functionName + " in class" + "." + classDescriptor.getName();
         return functions.iterator().next();
     }
@@ -187,12 +189,13 @@ public abstract class AbstractAnnotationDescriptorResolveTest extends KotlinTest
     protected static PropertyDescriptor getPropertyDescriptor(@NotNull PackageFragmentDescriptor packageView, @NotNull String name, boolean failOnMissing) {
         Name propertyName = Name.identifier(name);
         MemberScope memberScope = packageView.getMemberScope();
-        Collection<PropertyDescriptor> properties = memberScope.getContributedVariables(propertyName, NoLookupLocation.FROM_TEST);
+        Collection<? extends PropertyDescriptor> properties = memberScope.getContributedVariables(propertyName, NoLookupLocation.FROM_TEST);
         if (properties.isEmpty()) {
             for (DeclarationDescriptor descriptor : DescriptorUtils.getAllDescriptors(memberScope)) {
                 if (descriptor instanceof ClassDescriptor) {
-                    Collection<PropertyDescriptor> classProperties = ((ClassDescriptor) descriptor).getMemberScope(Collections.emptyList())
-                            .getContributedVariables(propertyName, NoLookupLocation.FROM_TEST);
+                    Collection<? extends PropertyDescriptor> classProperties =
+                            ((ClassDescriptor) descriptor).getMemberScope(Collections.emptyList())
+                                    .getContributedVariables(propertyName, NoLookupLocation.FROM_TEST);
                     if (!classProperties.isEmpty()) {
                         properties = classProperties;
                         break;
@@ -213,7 +216,7 @@ public abstract class AbstractAnnotationDescriptorResolveTest extends KotlinTest
     private static PropertyDescriptor getPropertyDescriptor(@NotNull ClassDescriptor classDescriptor, @NotNull String name) {
         Name propertyName = Name.identifier(name);
         MemberScope memberScope = classDescriptor.getMemberScope(Collections.emptyList());
-        Collection<PropertyDescriptor> properties = memberScope.getContributedVariables(propertyName, NoLookupLocation.FROM_TEST);
+        Collection<? extends PropertyDescriptor> properties = memberScope.getContributedVariables(propertyName, NoLookupLocation.FROM_TEST);
         assert properties.size() == 1 : "Failed to find property " + propertyName + " in class " + classDescriptor.getName();
         return properties.iterator().next();
     }
@@ -361,30 +364,13 @@ public abstract class AbstractAnnotationDescriptorResolveTest extends KotlinTest
         return KotlinTestUtils.doLoadFile(file).replaceAll("ANNOTATION", annotationText);
     }
 
-    private static String renderAnnotations(Annotations annotations, @Nullable AnnotationUseSiteTarget defaultTarget) {
-        return StringUtil.join(annotations.getAllAnnotations(), annotationWithTarget -> {
-            AnnotationUseSiteTarget targetToRender = annotationWithTarget.getTarget();
-            if (targetToRender == defaultTarget) {
-                targetToRender = null;
-            }
-
-            return WITH_ANNOTATION_ARGUMENT_TYPES.renderAnnotation(annotationWithTarget.getAnnotation(), targetToRender);
-        }, " ");
+    public static String renderAnnotations(Annotations annotations) {
+        return StringUtil.join(annotations, annotation -> WITH_ANNOTATION_ARGUMENT_TYPES.renderAnnotation(annotation, null), " ");
     }
 
-    protected static void checkDescriptor(String expectedAnnotation, DeclarationDescriptor member) {
-        String actual = getAnnotations(member);
+    private static void checkDescriptor(String expectedAnnotation, DeclarationDescriptor member) {
+        String actual = renderAnnotations(member.getAnnotations());
         assertEquals("Failed to resolve annotation descriptor for " + member.toString(), expectedAnnotation, actual);
-    }
-
-    private static void checkDescriptorWithTarget(String expectedAnnotation, DeclarationDescriptor member, AnnotationUseSiteTarget target) {
-        String actual = renderAnnotations(member.getAnnotations(), target);
-        assertEquals("Failed to resolve annotation descriptor for " + member.toString(), expectedAnnotation, actual);
-    }
-
-    @NotNull
-    protected static String getAnnotations(DeclarationDescriptor member) {
-        return renderAnnotations(member.getAnnotations(), null);
     }
 
     @Override

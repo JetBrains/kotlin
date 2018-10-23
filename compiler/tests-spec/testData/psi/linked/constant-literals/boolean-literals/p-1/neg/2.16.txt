@@ -1,0 +1,36 @@
+KtFile: 2.16.kt
+  FILE_ANNOTATION_LIST
+    ANNOTATION
+      PsiElement(AT)('@')
+      ANNOTATION_TARGET
+        PsiElement(file)('file')
+      PsiElement(COLON)(':')
+      PsiElement(LBRACKET)('[')
+      ANNOTATION_ENTRY
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('JvmName')
+              PsiElement(DOT)('.')
+              PsiErrorElement:Expecting type name
+                <empty list>
+  PACKAGE_DIRECTIVE
+    <empty list>
+  IMPORT_LIST
+    <empty list>
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(true)('true')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(LT)('<')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(false)('false')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(GT)('>')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(LPAR)('(')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(RPAR)(')')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(RBRACKET)(']')

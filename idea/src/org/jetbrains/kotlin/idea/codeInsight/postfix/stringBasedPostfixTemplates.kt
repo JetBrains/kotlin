@@ -22,6 +22,7 @@ import com.intellij.codeInsight.template.impl.MacroCallNode
 import com.intellij.codeInsight.template.postfix.templates.PostfixTemplateExpressionSelector
 import com.intellij.codeInsight.template.postfix.templates.StringBasedPostfixTemplate
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.core.IterableTypesDetection
 import org.jetbrains.kotlin.idea.liveTemplates.macro.SuggestVariableNameMacro
@@ -111,4 +112,11 @@ internal object KtWhilePostfixTemplate : ConstantStringBasedPostfixTemplate(
     "while (expr) {}",
     "while (\$expr$) {\n\$END$\n}",
     createExpressionSelector(statementsOnly = true, typePredicate = KotlinType::isBoolean)
+)
+
+internal object KtSpreadPostfixTemplate : ConstantStringBasedPostfixTemplate(
+    "spread",
+    "*expr",
+    "*\$expr$\$END$",
+    createExpressionSelector(typePredicate = { KotlinBuiltIns.isArray(it) || KotlinBuiltIns.isPrimitiveArray(it) })
 )

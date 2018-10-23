@@ -62,9 +62,8 @@ class KtPrimaryConstructor : KtConstructor<KtPrimaryConstructor> {
         return if (modifierList != null) {
             modifierList.addBefore(annotationEntry, modifierList.firstChild) as KtAnnotationEntry
         } else {
-            val parameterList = valueParameterList!!
             val newModifierList = KtPsiFactory(project).createModifierList(annotationEntry.text)
-            (addBefore(newModifierList, parameterList) as KtModifierList).annotationEntries.first()
+            (addBefore(newModifierList, getOrCreateConstructorKeyword()) as KtModifierList).annotationEntries.first()
         }
     }
 }

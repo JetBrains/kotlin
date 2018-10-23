@@ -224,7 +224,7 @@ abstract class GradleImportingTestCase : ExternalSystemImportingTestCase() {
     }
 
     companion object {
-        private const val GRADLE_JDK_NAME = "Gradle JDK"
+        const val GRADLE_JDK_NAME = "Gradle JDK"
         private const val GRADLE_DAEMON_TTL_MS = 10000
 
         @JvmStatic
@@ -236,7 +236,7 @@ abstract class GradleImportingTestCase : ExternalSystemImportingTestCase() {
             return Arrays.asList(*AbstractModelBuilderTest.SUPPORTED_GRADLE_VERSIONS)
         }
 
-        private fun wrapperJar(): File {
+        fun wrapperJar(): File {
             return File(PathUtil.getJarPathForClass(GradleWrapperMain::class.java))
         }
     }

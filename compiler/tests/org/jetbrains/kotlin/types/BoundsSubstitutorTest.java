@@ -72,7 +72,7 @@ public class BoundsSubstitutorTest extends KotlinTestWithEnvironment {
     private void doTest(String text, String expected) {
         KtFile ktFile = KtPsiFactoryKt.KtPsiFactory(getProject()).createFile("fun.kt", text);
         ModuleDescriptor module = JvmResolveUtil.analyze(ktFile, getEnvironment()).getModuleDescriptor();
-        Collection<SimpleFunctionDescriptor> functions =
+        Collection<? extends SimpleFunctionDescriptor> functions =
                 module.getPackage(FqName.ROOT).getMemberScope().getContributedFunctions(Name.identifier("f"), NoLookupLocation.FROM_TEST);
         FunctionDescriptor substituted = BoundsSubstitutor.substituteBounds(CollectionsKt.single(functions));
         String actual = DescriptorRenderer.COMPACT.render(substituted);

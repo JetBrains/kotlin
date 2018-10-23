@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 fun isDigit(a: Int) : String {
     val aa = ArrayList<Int> ()
     aa.add(239)

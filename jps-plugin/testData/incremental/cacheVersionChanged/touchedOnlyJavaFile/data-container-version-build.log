@@ -1,6 +1,10 @@
 ================ Step #1 =================
 
-Actions after cache changed: [REBUILD_ALL_KOTLIN, DO_NOTHING]
+Lookups cache are INVALID: actual=(777, [jvm]) -> expected=(3011001, [jvm])
+Marked as dirty by Kotlin:
+  src/a.kt
+  src/b.kt
+  src/other.kt
 Cleaning output files:
   out/production/module/A.class
   out/production/module/META-INF/module.kotlin_module
@@ -13,10 +17,6 @@ Compiling files:
   src/b.kt
   src/other.kt
 End of files
-Marked as dirty by Kotlin:
-  src/a.kt
-  src/b.kt
-  src/other.kt
 Exit code: OK
 ------------------------------------------
 Compiling files:

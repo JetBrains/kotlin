@@ -32,8 +32,9 @@ object DocExtensions {
     val Family.collection: String
         get() = when (this) {
             CharSequences -> "char sequence"
-            ArraysOfObjects, ArraysOfPrimitives, InvariantArraysOfObjects -> "array"
-            Strings, Sequences, Maps, Lists, Sets, Ranges -> name.singularize().decapitalize()
+            ArraysOfObjects, ArraysOfPrimitives, InvariantArraysOfObjects, ArraysOfUnsigned -> "array"
+            Ranges, RangesOfPrimitives -> "range"
+            Strings, Sequences, Maps, Lists, Sets -> name.singularize().decapitalize()
             else -> "collection"
         }
 

@@ -259,7 +259,7 @@ class NamingConventionOptionsPanel(owner: NamingConventionInspection) : JPanel()
             setOneLineMode(true)
         }
         regexField.document.addDocumentListener(object : DocumentAdapter() {
-            override fun documentChanged(e: DocumentEvent?) {
+            override fun documentChanged(e: DocumentEvent) {
                 owner.namePattern = regexField.text
             }
         })

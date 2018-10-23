@@ -39,7 +39,7 @@ class FileClassLowering(val context: JvmBackendContext) : FileLoweringPass {
 
         if (fileClassMembers.isEmpty()) return
 
-        val fileClassDescriptor = context.descriptorsFactory.createFileClassDescriptor(irFile.fileEntry, irFile.packageFragmentDescriptor)
+        val fileClassDescriptor = context.declarationFactory.createFileClassDescriptor(irFile.fileEntry, irFile.packageFragmentDescriptor)
         val irFileClass = IrClassImpl(0, irFile.fileEntry.maxOffset, IrDeclarationOrigin.DEFINED, fileClassDescriptor, fileClassMembers)
         classes.add(irFileClass)
 

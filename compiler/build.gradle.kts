@@ -46,6 +46,8 @@ val testDistProjects = listOf(
         ":kotlin-stdlib",
         ":kotlin-stdlib-jre7",
         ":kotlin-stdlib-jre8",
+        ":kotlin-stdlib-jdk7",
+        ":kotlin-stdlib-jdk8",
         ":kotlin-stdlib-js",
         ":kotlin-reflect",
         ":kotlin-test:kotlin-test-jvm",
@@ -65,17 +67,16 @@ dependencies {
     testRuntime(intellijDep()) // Should come before compiler, because of "progarded" stuff needed for tests
 
     depDistProjects.forEach {
-        testCompile(projectDist(it))
+        testCompile(project(it))
     }
     testCompile(commonDep("junit:junit"))
-    testCompileOnly(projectDist(":kotlin-test:kotlin-test-jvm"))
-    testCompileOnly(projectDist(":kotlin-test:kotlin-test-junit"))
+    testCompileOnly(project(":kotlin-test:kotlin-test-jvm"))
+    testCompileOnly(project(":kotlin-test:kotlin-test-junit"))
     testCompile(projectTests(":compiler:tests-common"))
     testCompile(projectTests(":generators:test-generator"))
     testCompile(project(":compiler:ir.ir2cfg"))
     testCompile(project(":compiler:ir.tree")) // used for deepCopyWithSymbols call that is removed by proguard from the compiler TODO: make it more straightforward
     testCompile(project(":kotlin-scripting-compiler"))
-    testCompile(project(":kotlin-scripting-misc"))
     testCompile(project(":kotlin-script-util"))
     testCompileOnly(projectRuntimeJar(":kotlin-daemon-client"))
     testCompileOnly(project(":kotlin-reflect-api"))
@@ -83,10 +84,10 @@ dependencies {
         testCompileOnly(project(it))
     }
     testCompileOnly(intellijCoreDep()) { includeJars("intellij-core") }
-    testCompileOnly(intellijDep()) { includeJars("openapi", "idea", "idea_rt", "util", "asm-all") }
+    testCompileOnly(intellijDep()) { includeJars("openapi", "idea", "idea_rt", "util", "asm-all", rootProject = rootProject) }
 
-    testRuntime(projectDist(":kotlin-reflect"))
-    testRuntime(projectDist(":kotlin-daemon-client"))
+    testRuntime(project(":kotlin-reflect"))
+    testRuntime(project(":kotlin-daemon-client"))
     testRuntime(androidDxJar())
     testRuntime(files(toolsJar()))
 
@@ -116,6 +117,7 @@ projectTest {
         systemProperty("kotlin.ant.classpath", antLauncherJar.asPath)
         systemProperty("kotlin.ant.launcher.class", "org.apache.tools.ant.Main")
     }
+    exclude("org/jetbrains/kotlin/codegen/jdk/JvmTarget*")
 }
 
 fun Project.codegenTest(target: Int, jvm: Int,
@@ -124,15 +126,8 @@ fun Project.codegenTest(target: Int, jvm: Int,
     dependsOn(*testDistProjects.map { "$it:dist" }.toTypedArray())
     workingDir = rootDir
 
-    filter.includeTestsMatching("org.jetbrains.kotlin.codegen.BlackBoxCodegenTestGenerated*")
-    filter.includeTestsMatching("org.jetbrains.kotlin.codegen.BlackBoxInlineCodegenTestGenerated*")
-    filter.includeTestsMatching("org.jetbrains.kotlin.codegen.CompileKotlinAgainstInlineKotlinTestGenerated*")
-    filter.includeTestsMatching("org.jetbrains.kotlin.codegen.CompileKotlinAgainstKotlinTestGenerated*")
-    filter.includeTestsMatching("org.jetbrains.kotlin.codegen.BlackBoxAgainstJavaCodegenTestGenerated*")
+    filter.includeTestsMatching("org.jetbrains.kotlin.codegen.jdk.JvmTarget${target}OnJvm${jvm}")
 
-    if (jdk == "JDK_9") {
-        jvmArgs = listOf("--add-opens", "java.desktop/javax.swing=ALL-UNNAMED", "--add-opens", "java.base/java.io=ALL-UNNAMED")
-    }
     body()
     doFirst {
         val jdkPath = project.findProperty(jdk) ?: error("$jdk is not optional to run this test")
@@ -197,6 +192,11 @@ codegenTest(target = 9, jvm = 9) {
 codegenTest(target = 10, jvm = 10) {
     systemProperty("kotlin.test.default.jvm.target", "1.8")
     systemProperty("kotlin.test.substitute.bytecode.1.8.to.10", "true")
+}
+
+codegenTest(target = 8, jvm = 11) {
+    systemProperty("kotlin.test.default.jvm.target", "1.8")
+    jvmArgs!!.add( "-XX:-FailOverToOldVerifier")
 }
 
 val generateTests by generator("org.jetbrains.kotlin.generators.tests.GenerateCompilerTestsKt")

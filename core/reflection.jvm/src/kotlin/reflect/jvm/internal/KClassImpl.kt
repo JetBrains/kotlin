@@ -147,6 +147,14 @@ internal class KClassImpl<T : Any>(override val jClass: Class<T>) : KDeclaration
             result.compact()
         }
 
+        val sealedSubclasses: List<KClass<out T>> by ReflectProperties.lazySoft {
+            descriptor.sealedSubclasses.mapNotNull { subclass ->
+                @Suppress("UNCHECKED_CAST")
+                val jClass = (subclass as ClassDescriptor).toJavaClass() as Class<out T>?
+                jClass?.let { KClassImpl(it) }
+            }
+        }
+
         val declaredNonStaticMembers: Collection<KCallableImpl<*>>
                 by ReflectProperties.lazySoft { getMembers(memberScope, DECLARED) }
         private val declaredStaticMembers: Collection<KCallableImpl<*>>
@@ -174,6 +182,9 @@ internal class KClassImpl<T : Any>(override val jClass: Class<T>) : KDeclaration
 
     private val classId: ClassId get() = RuntimeTypeMapper.mapJvmClassToKotlinClassId(jClass)
 
+    // Note that we load members from the container's default type, which might be confusing. For example, a function declared in a
+    // generic class "A<T>" would have "A<T>" as the receiver parameter even if a concrete type like "A<String>" was specified
+    // in the function reference. Another, maybe slightly less confusing, approach would be to use the star-projected type ("A<*>").
     internal val memberScope: MemberScope get() = descriptor.defaultType.memberScope
 
     internal val staticScope: MemberScope get() = descriptor.staticScope
@@ -238,6 +249,11 @@ internal class KClassImpl<T : Any>(override val jClass: Class<T>) : KDeclaration
     override val typeParameters: List<KTypeParameter> get() = data().typeParameters
 
     override val supertypes: List<KType> get() = data().supertypes
+
+    /**
+     * The list of the immediate subclasses if this class is a sealed class, or an empty list otherwise.
+     */
+    override val sealedSubclasses: List<KClass<out T>> get() = data().sealedSubclasses
 
     override val visibility: KVisibility?
         get() = descriptor.visibility.toKVisibility()

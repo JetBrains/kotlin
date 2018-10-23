@@ -61,7 +61,7 @@ public class JUnit3RunnerWithInnersForJPS extends Runner implements Filterable, 
 
     @Override
     public void filter(Filter filter) throws NoTestsRemainException {
-        delegateRunner = new JUnit38ClassRunner(klass);
+        initialize();
         delegateRunner.filter(filter);
     }
 

@@ -1,7 +1,11 @@
 ================ Step #1 =================
 
+Lookups cache are SHOULD_BE_CLEARED: actual=(3011001, [jvm]) -> expected=null
+Local cache for Module 'module1' production are SHOULD_BE_CLEARED: actual=CacheVersion(version=9011001) -> expected=null
+Local cache for Module 'module2' production are SHOULD_BE_CLEARED: actual=CacheVersion(version=9011001) -> expected=null
+Local cache for Module 'module3' production are SHOULD_BE_CLEARED: actual=CacheVersion(version=9011001) -> expected=null
+Local cache for Module 'module4' production are SHOULD_BE_CLEARED: actual=CacheVersion(version=9011001) -> expected=null
 Building module1
-Actions after cache changed: [CLEAN_NORMAL_CACHES, CLEAN_DATA_CONTAINER]
 Exit code: NOTHING_DONE
 ------------------------------------------
 Building module2

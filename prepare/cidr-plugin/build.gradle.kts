@@ -20,7 +20,7 @@ dependencies {
 }
 
 val pluginXml by tasks.creating {
-    val kotlinVersion = rootProject.extra["kotlinVersion"] as String
+    val kotlinVersion: String by rootProject.extra
     val pluginFullVersionNumber = findProperty("pluginVersion") as? String
             ?: "$kotlinVersion-CIDR"
 

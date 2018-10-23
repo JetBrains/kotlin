@@ -425,6 +425,18 @@ class KotlinInjectionTest : AbstractInjectionTest() {
         shreds = listOf(ShredInfo(range(0, 9), hostRange=range(1, 4), prefix = "abc", suffix = "ghi"))
     )
 
+    fun testSuffixPrefixWithCallWithAnnotation() = doInjectionPresentTest(
+        """
+            fun highlight(@org.intellij.lang.annotations.Language("TEXT", prefix = "fun __f(it: dynamic) = ", suffix = ";") code: String) {}
+
+            fun test() {
+                highlight("<caret>it > 0")
+            }
+        """,
+        languageId = PlainTextLanguage.INSTANCE.id, unInjectShouldBePresent = false,
+        shreds = listOf(ShredInfo(range(0, 30), hostRange = range(1, 7), prefix = "fun __f(it: dynamic) = ", suffix = ";"))
+    )
+
     fun testSuffixPrefixInComment() = doInjectionPresentTest(
         """
             // language="TEXT" prefix="abc" suffix=ghi

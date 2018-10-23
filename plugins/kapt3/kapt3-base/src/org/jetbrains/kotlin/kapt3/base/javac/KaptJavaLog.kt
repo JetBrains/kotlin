@@ -224,8 +224,15 @@ class KaptJavaLog(
     }
 }
 
-fun KaptContext.kaptError(text: String): JCDiagnostic {
+private val LINE_SEPARATOR: String = System.getProperty("line.separator")
+
+fun KaptContext.kaptError(vararg line: String): JCDiagnostic {
+    val text = line.joinToString(LINE_SEPARATOR)
     return JCDiagnostic.Factory.instance(context).errorJava9Aware(null, null, "proc.messager", text)
+}
+
+fun KaptContext.reportKaptError(vararg line: String) {
+    compiler.log.report(kaptError(*line))
 }
 
 private fun JCDiagnostic.Factory.errorJava9Aware(

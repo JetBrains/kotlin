@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationsImpl
 import org.jetbrains.kotlin.descriptors.annotations.BuiltInAnnotationDescriptor
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqNameUnsafe
@@ -58,6 +57,9 @@ val KotlinType.isFunctionType: Boolean
 
 val KotlinType.isSuspendFunctionType: Boolean
     get() = constructor.declarationDescriptor?.getFunctionalClassKind() == FunctionClassDescriptor.Kind.SuspendFunction
+
+val KotlinType.isKSuspendFunctionType: Boolean
+    get() = constructor.declarationDescriptor?.getFunctionalClassKind() == FunctionClassDescriptor.Kind.KSuspendFunction
 
 val KotlinType.isFunctionOrSuspendFunctionType: Boolean
     get() = isFunctionType || isSuspendFunctionType
@@ -165,7 +167,7 @@ fun getFunctionTypeArgumentProjections(
                     KotlinBuiltIns.FQ_NAMES.parameterName,
                     mapOf(Name.identifier("name") to StringValue(name.asString()))
             )
-            type.replaceAnnotations(AnnotationsImpl(type.annotations + parameterNameAnnotation))
+            type.replaceAnnotations(Annotations.create(type.annotations + parameterNameAnnotation))
         }
         else {
             type
@@ -199,8 +201,9 @@ fun createFunctionType(
                 annotations
             }
             else {
-                AnnotationsImpl(annotations +
-                                BuiltInAnnotationDescriptor(builtIns, KotlinBuiltIns.FQ_NAMES.extensionFunctionType, emptyMap()))
+                Annotations.create(
+                    annotations + BuiltInAnnotationDescriptor(builtIns, KotlinBuiltIns.FQ_NAMES.extensionFunctionType, emptyMap())
+                )
             }
 
     return KotlinTypeFactory.simpleNotNullType(typeAnnotations, classDescriptor, arguments)

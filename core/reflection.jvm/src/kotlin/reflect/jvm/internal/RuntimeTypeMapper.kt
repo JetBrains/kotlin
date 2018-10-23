@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.name.NameUtils
 import org.jetbrains.kotlin.resolve.DescriptorFactory
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.propertyIfAccessor
+import org.jetbrains.kotlin.resolve.isInlineClass
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor
@@ -107,7 +108,7 @@ internal sealed class JvmPropertySignature {
         } else {
             val (name, desc) =
                     JvmProtoBufUtil.getJvmFieldSignature(proto, nameResolver, typeTable)
-                            ?: throw KotlinReflectionInternalError("No field signature for property: $descriptor")
+                        ?: throw KotlinReflectionInternalError("No field signature for property: $descriptor")
             JvmAbi.getterName(name) + getManglingSuffix() + "()" + desc
         }
 
@@ -116,7 +117,7 @@ internal sealed class JvmPropertySignature {
             if (descriptor.visibility == Visibilities.INTERNAL && containingDeclaration is DeserializedClassDescriptor) {
                 val classProto = containingDeclaration.classProto
                 val moduleName = classProto.getExtensionOrNull(JvmProtoBuf.classModuleName)?.let(nameResolver::getString)
-                        ?: JvmAbi.DEFAULT_MODULE_NAME
+                    ?: JvmAbi.DEFAULT_MODULE_NAME
                 return "$" + NameUtils.sanitizeAsJavaIdentifier(moduleName)
             }
             if (descriptor.visibility == Visibilities.PRIVATE && containingDeclaration is PackageFragmentDescriptor) {
@@ -172,14 +173,17 @@ internal object RuntimeTypeMapper {
                 }
                 if (proto is ProtoBuf.Constructor) {
                     JvmProtoBufUtil.getJvmConstructorSignature(proto, function.nameResolver, function.typeTable)?.let { signature ->
-                        return JvmFunctionSignature.KotlinConstructor(signature)
+                        return if (possiblySubstitutedFunction.containingDeclaration.isInlineClass())
+                            JvmFunctionSignature.KotlinFunction(signature)
+                        else
+                            JvmFunctionSignature.KotlinConstructor(signature)
                     }
                 }
                 return mapJvmFunctionSignature(function)
             }
             is JavaMethodDescriptor -> {
                 val method = ((function.source as? JavaSourceElement)?.javaElement as? ReflectJavaMethod)?.member
-                        ?: throw KotlinReflectionInternalError("Incorrect resolution sequence for Java method $function")
+                    ?: throw KotlinReflectionInternalError("Incorrect resolution sequence for Java method $function")
 
                 return JvmFunctionSignature.JavaMethod(method)
             }

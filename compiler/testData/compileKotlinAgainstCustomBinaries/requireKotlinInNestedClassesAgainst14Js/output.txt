@@ -1,7 +1,7 @@
-compiler/testData/compileKotlinAgainstCustomBinaries/requireKotlinInNestedClassesAgainst14Js/source.kt:3:19: error: 'Nested' is only available since Kotlin 1.44 and cannot be used in Kotlin 1.2
+compiler/testData/compileKotlinAgainstCustomBinaries/requireKotlinInNestedClassesAgainst14Js/source.kt:3:19: error: 'Nested' is only available since Kotlin 1.44 and cannot be used in Kotlin 1.3
 fun test(a: Outer.Nested) {
                   ^
-compiler/testData/compileKotlinAgainstCustomBinaries/requireKotlinInNestedClassesAgainst14Js/source.kt:4:7: error: 'f(): Unit' is only available since Kotlin 1.88 and cannot be used in Kotlin 1.2
+compiler/testData/compileKotlinAgainstCustomBinaries/requireKotlinInNestedClassesAgainst14Js/source.kt:4:7: error: 'f(): Unit' is only available since Kotlin 1.88 and cannot be used in Kotlin 1.3
     a.f()
       ^
 COMPILATION_ERROR

@@ -1,0 +1,82 @@
+@kotlin.Metadata
+public interface PrivateMarker
+
+@kotlin.Metadata
+public interface ProtectedMarker
+
+@kotlin.Metadata
+public interface PublicMarker
+
+@kotlin.Metadata
+public class TestBasic {
+    private final field z: int
+    private method <init>(p0: int): void
+    private method <init>(p0: int, p1: PrivateMarker): void
+    private method <init>(p0: int, p1: ProtectedMarker): void
+    public synthetic method <init>(p0: int, p1: ProtectedMarker, p2: kotlin.jvm.internal.DefaultConstructorMarker): void
+    private method <init>(p0: int, p1: PublicMarker): void
+    public synthetic method <init>(p0: int, p1: PublicMarker, p2: kotlin.jvm.internal.DefaultConstructorMarker): void
+    public synthetic method <init>(p0: int, p1: kotlin.jvm.internal.DefaultConstructorMarker): void
+    public final method getZ(): int
+}
+
+@kotlin.Metadata
+public final enum class TestEnum {
+    private synthetic final static field $VALUES: TestEnum[]
+    public final static field ANSWER: TestEnum
+    private final field z: int
+    static method <clinit>(): void
+    private method <init>(p0: java.lang.String, p1: int, p2: int): void
+    public final method getZ(): int
+    public static method valueOf(p0: java.lang.String): TestEnum
+    public static method values(): TestEnum[]
+}
+
+@kotlin.Metadata
+public final class TestInner$Inner {
+    synthetic final field this$0: TestInner
+    private final field z: int
+    inner class TestInner$Inner
+    private method <init>(p0: TestInner, p1: int): void
+    public synthetic method <init>(p0: TestInner, p1: int, p2: kotlin.jvm.internal.DefaultConstructorMarker): void
+    public final method getZ(): int
+}
+
+@kotlin.Metadata
+public final class TestInner {
+    inner class TestInner$Inner
+    public method <init>(): void
+}
+
+@kotlin.Metadata
+public final class TestSealed$Case {
+    inner class TestSealed$Case
+    private method <init>(p0: int): void
+    public synthetic method <init>(p0: int, p1: kotlin.jvm.internal.DefaultConstructorMarker): void
+}
+
+@kotlin.Metadata
+public abstract class TestSealed {
+    private final field z: int
+    inner class TestSealed$Case
+    private method <init>(p0: int): void
+    public synthetic method <init>(p0: int, p1: kotlin.jvm.internal.DefaultConstructorMarker): void
+    public final method getZ(): int
+}
+
+@kotlin.Metadata
+public final class Z {
+    private final field x: int
+    private synthetic method <init>(p0: int): void
+    public synthetic final static @org.jetbrains.annotations.NotNull method box-impl(p0: int): Z
+    public static method constructor-impl(p0: int): int
+    public method equals(p0: java.lang.Object): boolean
+    public static method equals-impl(p0: int, @org.jetbrains.annotations.Nullable p1: java.lang.Object): boolean
+    public final static method equals-impl0(p0: int, p1: int): boolean
+    public final method getX(): int
+    public method hashCode(): int
+    public static method hashCode-impl(p0: int): int
+    public method toString(): java.lang.String
+    public static @org.jetbrains.annotations.NotNull method toString-impl(p0: int): java.lang.String
+    public synthetic final method unbox-impl(): int
+}

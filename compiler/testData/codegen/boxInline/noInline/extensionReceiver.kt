@@ -1,5 +1,4 @@
 // IGNORE_BACKEND: JVM_IR
-// IGNORE_BACKEND: JS_IR
 // FILE: 1.kt
 
 inline fun (() -> String).test(): (() -> String) = { invoke() + this.invoke() + this() }

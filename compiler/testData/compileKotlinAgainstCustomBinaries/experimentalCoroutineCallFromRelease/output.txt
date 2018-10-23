@@ -1,29 +1,22 @@
-warning: language version 1.3 is experimental, there are no backwards compatibility guarantees for new language and library features
-compiler/testData/compileKotlinAgainstCustomBinaries/experimentalCoroutineCallFromRelease/release.kt:2:5: error: using 'c: suspend () -> Unit' is an error. Experimental coroutine cannot be used with API version 1.3
-    c()
-    ^
-compiler/testData/compileKotlinAgainstCustomBinaries/experimentalCoroutineCallFromRelease/release.kt:3:5: error: using 'constructor WithTypeParameter<T : suspend () -> Unit>()' is an error. Experimental coroutine cannot be used with API version 1.3
+compiler/testData/compileKotlinAgainstCustomBinaries/experimentalCoroutineCallFromRelease/release.kt:2:5: error: using 'constructor WithTypeParameter<T : suspend () -> Unit>()' is an error. Experimental coroutine cannot be used with API version 1.3
     WithTypeParameter<suspend () -> Unit>()
     ^
-compiler/testData/compileKotlinAgainstCustomBinaries/experimentalCoroutineCallFromRelease/release.kt:4:5: error: using 'returnsSuspend(): suspend () -> Unit' is an error. Experimental coroutine cannot be used with API version 1.3
+compiler/testData/compileKotlinAgainstCustomBinaries/experimentalCoroutineCallFromRelease/release.kt:3:5: error: using 'returnsSuspend(): suspend () -> Unit' is an error. Experimental coroutine cannot be used with API version 1.3
     returnsSuspend()
     ^
-compiler/testData/compileKotlinAgainstCustomBinaries/experimentalCoroutineCallFromRelease/release.kt:5:5: error: using 'builder(suspend () -> Unit): Unit' is an error. Experimental coroutine cannot be used with API version 1.3
-    builder {}
-    ^
-compiler/testData/compileKotlinAgainstCustomBinaries/experimentalCoroutineCallFromRelease/release.kt:6:5: error: using 'withTypeParameter(): () -> Unit' is an error. Experimental coroutine cannot be used with API version 1.3
+compiler/testData/compileKotlinAgainstCustomBinaries/experimentalCoroutineCallFromRelease/release.kt:4:5: error: using 'withTypeParameter(): () -> Unit' is an error. Experimental coroutine cannot be used with API version 1.3
     withTypeParameter<suspend () -> Unit>()
     ^
-compiler/testData/compileKotlinAgainstCustomBinaries/experimentalCoroutineCallFromRelease/release.kt:8:5: error: using 'dummy(): Unit' is an error. Experimental coroutine cannot be used with API version 1.3
-    dummy()
+compiler/testData/compileKotlinAgainstCustomBinaries/experimentalCoroutineCallFromRelease/release.kt:6:5: error: using 'suspendFunctionNested(List<suspend () -> Unit>): Unit' is an error. Experimental coroutine cannot be used with API version 1.3
+    suspendFunctionNested(listOf(suspend {  }))
     ^
-compiler/testData/compileKotlinAgainstCustomBinaries/experimentalCoroutineCallFromRelease/release.kt:9:9: error: using 'dummy(): String' is an error. Experimental coroutine cannot be used with API version 1.3
-    C().dummy()
-        ^
-compiler/testData/compileKotlinAgainstCustomBinaries/experimentalCoroutineCallFromRelease/release.kt:10:25: error: using 'dummy(): String' is an error. Experimental coroutine cannot be used with API version 1.3
-    WithNested.Nested().dummy()
-                        ^
-compiler/testData/compileKotlinAgainstCustomBinaries/experimentalCoroutineCallFromRelease/release.kt:11:25: error: using 'dummy(): String' is an error. Experimental coroutine cannot be used with API version 1.3
-    WithInner().Inner().dummy()
-                        ^
+compiler/testData/compileKotlinAgainstCustomBinaries/experimentalCoroutineCallFromRelease/release.kt:7:5: error: using 'suspendFunctionNestedInFunctionType((suspend () -> Unit) -> Unit): Unit' is an error. Experimental coroutine cannot be used with API version 1.3
+    suspendFunctionNestedInFunctionType {}
+    ^
+compiler/testData/compileKotlinAgainstCustomBinaries/experimentalCoroutineCallFromRelease/release.kt:8:5: error: using 'suspendFunctionType3(suspend (Int, Int, Int) -> Unit): Unit' is an error. Experimental coroutine cannot be used with API version 1.3
+    suspendFunctionType3 { x, y, z -> }
+    ^
+compiler/testData/compileKotlinAgainstCustomBinaries/experimentalCoroutineCallFromRelease/release.kt:10:5: error: using 'suspendVarargs(vararg suspend () -> Unit): Unit' is an error. Experimental coroutine cannot be used with API version 1.3
+    suspendVarargs({}, {})
+    ^
 COMPILATION_ERROR

@@ -1,4 +1,4 @@
-// "Make variable mutable" "true"
+// "Change to var" "true"
 
 class Test {
     val a: String

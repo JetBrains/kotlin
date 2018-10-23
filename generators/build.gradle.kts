@@ -34,7 +34,7 @@ dependencies {
     testCompile(intellijDep("jps-build-test"))
     testCompile(builtinsSourceSet.output)
     testRuntime(intellijDep()) { includeJars("idea_rt") }
-    testRuntime(projectDist(":kotlin-reflect"))
+    testRuntime(project(":kotlin-reflect"))
 }
 
 

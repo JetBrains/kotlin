@@ -73,20 +73,19 @@ object KotlinModuleMappingIndex : FileBasedIndexExtension<String, PackageParts>(
 
     override fun getVersion(): Int = 5
 
-    override fun getIndexer(): DataIndexer<String, PackageParts, FileContent> {
-        return DataIndexer<String, PackageParts, FileContent> { inputData ->
-            val content = inputData.content
-            val file = inputData.file
-            try {
-                val moduleMapping = ModuleMapping.loadModuleMapping(content, file.toString(), DeserializationConfiguration.Default)
-                if (moduleMapping === ModuleMapping.CORRUPTED) {
-                    file.refresh(true, false)
-                }
-                return@DataIndexer moduleMapping.packageFqName2Parts
+    override fun getIndexer(): DataIndexer<String, PackageParts, FileContent> = DataIndexer { inputData ->
+        val content = inputData.content
+        val file = inputData.file
+        try {
+            val moduleMapping = ModuleMapping.loadModuleMapping(content, file.toString(), DeserializationConfiguration.Default) {
+                // Do nothing; it's OK for an IDE index to just ignore incompatible module files
             }
-            catch(e: Exception) {
-                throw RuntimeException("Error on indexing $file", e)
+            if (moduleMapping === ModuleMapping.CORRUPTED) {
+                file.refresh(true, false)
             }
+            return@DataIndexer moduleMapping.packageFqName2Parts
+        } catch (e: Exception) {
+            throw RuntimeException("Error on indexing $file", e)
         }
     }
 }

@@ -1,0 +1,151 @@
+KtFile: 2.23.kt
+  PACKAGE_DIRECTIVE
+    <empty list>
+  IMPORT_LIST
+    <empty list>
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiErrorElement:Expecting property name or receiver type
+      PsiElement(true)('true')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    INTEGER_CONSTANT
+      PsiElement(INTEGER_LITERAL)('10')
+  PsiWhiteSpace('\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiErrorElement:Expecting property name or receiver type
+      PsiElement(false)('false')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    STRING_TEMPLATE
+      PsiElement(OPEN_QUOTE)('"')
+      LITERAL_STRING_TEMPLATE_ENTRY
+        PsiElement(REGULAR_STRING_PART)('.')
+      PsiElement(CLOSING_QUOTE)('"')
+  PsiWhiteSpace('\n\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('value_1')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    BINARY_EXPRESSION
+      BOOLEAN_CONSTANT
+        PsiElement(true)('true')
+      PsiWhiteSpace(' ')
+      OPERATION_REFERENCE
+        PsiElement(MINUS)('-')
+      PsiWhiteSpace(' ')
+      BINARY_EXPRESSION
+        INTEGER_CONSTANT
+          PsiElement(INTEGER_LITERAL)('100')
+        PsiWhiteSpace(' ')
+        OPERATION_REFERENCE
+          PsiElement(PERC)('%')
+        PsiWhiteSpace(' ')
+        BOOLEAN_CONSTANT
+          PsiElement(false)('false')
+  PsiWhiteSpace('\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('value_2')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    DOT_QUALIFIED_EXPRESSION
+      BOOLEAN_CONSTANT
+        PsiElement(true)('true')
+      PsiElement(DOT)('.')
+      CALL_EXPRESSION
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('dec')
+        VALUE_ARGUMENT_LIST
+          PsiElement(LPAR)('(')
+          PsiElement(RPAR)(')')
+  PsiWhiteSpace('\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('value_3')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    STRING_TEMPLATE
+      PsiElement(OPEN_QUOTE)('"')
+      SHORT_STRING_TEMPLATE_ENTRY
+        PsiElement(SHORT_TEMPLATE_ENTRY_START)('$')
+        PsiErrorElement:Keyword cannot be used as a reference
+          PsiElement(false)('false')
+      LITERAL_STRING_TEMPLATE_ENTRY
+        PsiElement(REGULAR_STRING_PART)(' 10')
+      PsiElement(CLOSING_QUOTE)('"')
+  PsiWhiteSpace('\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('value_4')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    STRING_TEMPLATE
+      PsiElement(OPEN_QUOTE)('"')
+      LONG_STRING_TEMPLATE_ENTRY
+        PsiElement(LONG_TEMPLATE_ENTRY_START)('${')
+        BOOLEAN_CONSTANT
+          PsiElement(true)('true')
+        PsiElement(LONG_TEMPLATE_ENTRY_END)('}')
+      PsiElement(CLOSING_QUOTE)('"')
+  PsiWhiteSpace('\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('value_5')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    BINARY_EXPRESSION
+      BINARY_EXPRESSION
+        BINARY_EXPRESSION
+          BOOLEAN_CONSTANT
+            PsiElement(false)('false')
+          PsiWhiteSpace(' ')
+          OPERATION_REFERENCE
+            PsiElement(PLUS)('+')
+          PsiWhiteSpace(' ')
+          STRING_TEMPLATE
+            PsiElement(OPEN_QUOTE)('"')
+            LITERAL_STRING_TEMPLATE_ENTRY
+              PsiElement(REGULAR_STRING_PART)(' 11...')
+            PsiElement(CLOSING_QUOTE)('"')
+        PsiWhiteSpace(' ')
+        OPERATION_REFERENCE
+          PsiElement(PLUS)('+')
+        PsiWhiteSpace(' ')
+        BOOLEAN_CONSTANT
+          PsiElement(true)('true')
+      PsiWhiteSpace(' ')
+      OPERATION_REFERENCE
+        PsiElement(PLUS)('+')
+      PsiWhiteSpace(' ')
+      STRING_TEMPLATE
+        PsiElement(OPEN_QUOTE)('"')
+        LITERAL_STRING_TEMPLATE_ENTRY
+          PsiElement(REGULAR_STRING_PART)('1')
+        PsiElement(CLOSING_QUOTE)('"')
+  PsiWhiteSpace('\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('value_6')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    BOOLEAN_CONSTANT
+      PsiElement(false)('false')

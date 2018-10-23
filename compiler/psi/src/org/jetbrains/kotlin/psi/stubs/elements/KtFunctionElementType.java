@@ -38,6 +38,7 @@ public class KtFunctionElementType extends KtStubElementType<KotlinFunctionStub,
         super(debugName, KtNamedFunction.class, KotlinFunctionStub.class);
     }
 
+    @NotNull
     @Override
     public KotlinFunctionStub createStub(@NotNull KtNamedFunction psi, @NotNull StubElement parentStub) {
         boolean isTopLevel = psi.getParent() instanceof KtFile;
@@ -45,9 +46,11 @@ public class KtFunctionElementType extends KtStubElementType<KotlinFunctionStub,
         FqName fqName = KtPsiUtilKt.safeFqNameForLazyResolve(psi);
         boolean hasBlockBody = psi.hasBlockBody();
         boolean hasBody = psi.hasBody();
-        return new KotlinFunctionStubImpl(parentStub, StringRef.fromString(psi.getName()), isTopLevel, fqName,
-                                          isExtension, hasBlockBody, hasBody, psi.hasTypeParameterListBeforeFunctionName(),
-                                          psi.mayHaveContract());
+        return new KotlinFunctionStubImpl(
+                (StubElement<?>) parentStub, StringRef.fromString(psi.getName()), isTopLevel, fqName,
+                isExtension, hasBlockBody, hasBody, psi.hasTypeParameterListBeforeFunctionName(),
+                psi.mayHaveContract()
+        );
     }
 
     @Override
@@ -80,8 +83,10 @@ public class KtFunctionElementType extends KtStubElementType<KotlinFunctionStub,
         boolean hasTypeParameterListBeforeFunctionName = dataStream.readBoolean();
         boolean mayHaveContract = dataStream.readBoolean();
 
-        return new KotlinFunctionStubImpl(parentStub, name, isTopLevel, fqName, isExtension, hasBlockBody, hasBody,
-                                          hasTypeParameterListBeforeFunctionName, mayHaveContract);
+        return new KotlinFunctionStubImpl(
+                (StubElement<?>) parentStub, name, isTopLevel, fqName, isExtension, hasBlockBody, hasBody,
+                hasTypeParameterListBeforeFunctionName, mayHaveContract
+        );
     }
 
     @Override

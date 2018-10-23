@@ -22,10 +22,10 @@ import org.jetbrains.kotlin.descriptors.impl.ClassConstructorDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.BindingTrace
-import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import org.jetbrains.kotlin.resolve.lazy.declarations.ClassMemberDeclarationProvider
-import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.KotlinTypeFactory
 import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
 
 class LazyScriptClassMemberScope(
@@ -39,16 +39,13 @@ class LazyScriptClassMemberScope(
         val baseClass = scriptDescriptor.baseClassDescriptor()
         val baseConstructorDescriptor = baseClass?.unsubstitutedPrimaryConstructor
         if (baseConstructorDescriptor != null) {
-            val builtIns = scriptDescriptor.builtIns
-            val implicitReceiversParamType =
-                if (scriptDescriptor.scriptDefinition().implicitReceivers.isEmpty()) null
-                else {
-                    "implicitReceivers" to builtIns.array.substitute(builtIns.anyType)!!
+            val implicitReceiversParamTypes =
+                scriptDescriptor.implicitReceivers.mapIndexed { idx, receiver ->
+                    "$IMPLICIT_RECEIVER_PARAM_NAME_PREFIX$idx" to receiver.defaultType
                 }
-            val environmentVarsParamType =
-                if (scriptDescriptor.scriptDefinition().environmentVariables.isEmpty()) null
-                else {
-                    "environmentVariables" to builtIns.map.substitute(builtIns.stringType, builtIns.nullableAnyType)!!
+            val environmentVarsParamTypes =
+                scriptDescriptor.scriptEnvironmentProperties.map {
+                    it.name.identifier to it.type
                 }
             val annotations = baseConstructorDescriptor.annotations
             val constructorDescriptor = ClassConstructorDescriptorImpl.create(
@@ -56,7 +53,7 @@ class LazyScriptClassMemberScope(
             )
             var paramsIndexBase = baseConstructorDescriptor.valueParameters.lastIndex + 1
             val syntheticParameters =
-                listOf(implicitReceiversParamType, environmentVarsParamType).mapNotNull { param: Pair<String, KotlinType>? ->
+                (implicitReceiversParamTypes + environmentVarsParamTypes).mapNotNull { param: Pair<String, KotlinType> ->
                     if (param == null) null
                     else ValueParameterDescriptorImpl(
                         constructorDescriptor,
@@ -94,6 +91,10 @@ class LazyScriptClassMemberScope(
     }
 
     override fun createPropertiesFromPrimaryConstructorParameters(name: Name, result: MutableSet<PropertyDescriptor>) {
+    }
+
+    companion object {
+        const val IMPLICIT_RECEIVER_PARAM_NAME_PREFIX = "\$\$implicitReceiver"
     }
 }
 

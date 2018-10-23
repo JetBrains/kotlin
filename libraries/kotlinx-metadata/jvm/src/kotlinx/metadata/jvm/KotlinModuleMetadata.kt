@@ -8,6 +8,7 @@ package kotlinx.metadata.jvm
 import kotlinx.metadata.InconsistentKotlinMetadataException
 import kotlinx.metadata.KmAnnotation
 import org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf
+import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion
 import org.jetbrains.kotlin.metadata.jvm.deserialization.ModuleMapping
 import org.jetbrains.kotlin.metadata.jvm.deserialization.PackageParts
 import org.jetbrains.kotlin.metadata.jvm.deserialization.serializeToByteArray
@@ -23,7 +24,9 @@ import org.jetbrains.kotlin.metadata.jvm.deserialization.serializeToByteArray
 class KotlinModuleMetadata(@Suppress("CanBeParameter", "MemberVisibilityCanBePrivate") val bytes: ByteArray) {
     internal val data: ModuleMapping = ModuleMapping.loadModuleMapping(
         bytes, javaClass.name, skipMetadataVersionCheck = false, isJvmPackageNameSupported = true
-    )
+    ) {
+        // TODO: report incorrect versions of modules
+    }
 
     /**
      * A [KmModuleVisitor] that generates the metadata of a Kotlin JVM module file.
@@ -60,7 +63,7 @@ class KotlinModuleMetadata(@Suppress("CanBeParameter", "MemberVisibilityCanBePri
          *   [KotlinClassHeader.COMPATIBLE_METADATA_VERSION] by default
          */
         fun write(metadataVersion: IntArray = KotlinClassHeader.COMPATIBLE_METADATA_VERSION): KotlinModuleMetadata =
-            KotlinModuleMetadata(b.build().serializeToByteArray(metadataVersion))
+            KotlinModuleMetadata(b.build().serializeToByteArray(JvmMetadataVersion(*metadataVersion), 0))
     }
 
     /**

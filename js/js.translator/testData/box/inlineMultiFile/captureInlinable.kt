@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 1112
+// EXPECTED_REACHABLE_NODES: 1284
 /*
  * Copy of JVM-backend test
  * Found at: compiler/testData/codegen/boxInline/capture/captureInlinable.1.kt

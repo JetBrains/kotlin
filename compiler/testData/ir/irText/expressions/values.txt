@@ -137,4 +137,3 @@ FILE fqName:<root> fileName:/values.kt
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='test4(): Z.Companion'
         GET_OBJECT 'companion object of Z' type=Z.Companion
-

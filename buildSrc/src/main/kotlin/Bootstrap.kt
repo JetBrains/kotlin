@@ -15,11 +15,12 @@ fun Project.kotlinBootstrapFrom(defaultSource: BootstrapOption) {
     val customVersion = project.findProperty("bootstrap.kotlin.version") as String?
     val customRepo = project.findProperty("bootstrap.kotlin.repo") as String?
     val teamCityVersion = project.findProperty("bootstrap.teamcity.kotlin.version") as String?
+    val teamCityBuild = project.findProperty("bootstrap.teamcity.build.number") as String?
     val teamCityProject = project.findProperty("bootstrap.teamcity.project") as String?
 
     val bootstrapSource = when {
         project.hasProperty("bootstrap.local") -> BootstrapOption.Local(project.findProperty("bootstrap.local.version") as String?, project.findProperty("bootstrap.local.path") as String?)
-        teamCityVersion != null -> BootstrapOption.TeamCity(teamCityVersion, projectExtId = teamCityProject, onlySuccessBootstrap = false)
+        teamCityVersion != null -> BootstrapOption.TeamCity(teamCityVersion, teamCityBuild, projectExtId = teamCityProject, onlySuccessBootstrap = false)
         customVersion != null -> BootstrapOption.Custom(kotlinVersion = customVersion, repo = customRepo)
         else -> defaultSource
     }
@@ -47,14 +48,15 @@ sealed class BootstrapOption {
 
     /** Get bootstrap from teamcity maven artifacts of the specified build configuration
      *
-     * [kotlinVersion] build number and the version of maven artifacts
+     * [kotlinVersion] the version of maven artifacts
+     * [buildNumber] build number of a teamcity build, by default the same as [kotlinVersion],
      * [projectExtId] extId of a teamcity build configuration, by default "Kotlin_dev_Compiler",
      * [onlySuccessBootstrap] allow artifacts only from success builds of the default branch tagged with 'bootstrap' tag
      */
-    class TeamCity(val kotlinVersion: String, val projectExtId: String? = null, val onlySuccessBootstrap: Boolean = true) : BootstrapOption() {
+    class TeamCity(val kotlinVersion: String, val buildNumber: String? = null, val projectExtId: String? = null, val onlySuccessBootstrap: Boolean = true) : BootstrapOption() {
         override fun applyToProject(project: Project) {
             val query = if (onlySuccessBootstrap) "status:SUCCESS,tag:bootstrap,pinned:true" else "branch:default:any"
-            project.bootstrapKotlinRepo = "https://teamcity.jetbrains.com/guestAuth/app/rest/builds/buildType:(id:${projectExtId ?: "Kotlin_dev_Compiler"}),number:$kotlinVersion,$query/artifacts/content/maven/"
+            project.bootstrapKotlinRepo = "https://teamcity.jetbrains.com/guestAuth/app/rest/builds/buildType:(id:${projectExtId ?: "Kotlin_dev_Compiler"}),number:${buildNumber ?: kotlinVersion},$query/artifacts/content/maven/"
             project.bootstrapKotlinVersion = kotlinVersion
         }
     }

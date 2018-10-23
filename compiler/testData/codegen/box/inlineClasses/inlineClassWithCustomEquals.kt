@@ -1,6 +1,8 @@
 // !LANGUAGE: +InlineClasses
 // IGNORE_BACKEND: JVM_IR
 
+@file:Suppress("RESERVED_MEMBER_INSIDE_INLINE_CLASS")
+
 inline class Z(val data: Int) {
     override fun equals(other: Any?): Boolean =
         other is Z &&

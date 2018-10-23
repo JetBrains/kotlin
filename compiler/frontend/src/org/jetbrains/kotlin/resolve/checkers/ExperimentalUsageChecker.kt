@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.resolve.checkers
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.config.AnalysisFlag
+import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory1
@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.getTopmostParentQualifiedExpressionForSelector
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker
@@ -36,6 +37,9 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.constants.ArrayValue
 import org.jetbrains.kotlin.resolve.constants.EnumValue
 import org.jetbrains.kotlin.resolve.constants.KClassValue
+import org.jetbrains.kotlin.resolve.deprecation.CoroutineCompatibilitySupport
+import org.jetbrains.kotlin.resolve.deprecation.DeprecationLevelValue
+import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
 import org.jetbrains.kotlin.resolve.descriptorUtil.annotationClass
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
@@ -164,8 +168,8 @@ class ExperimentalUsageChecker(project: Project) : CallChecker {
             languageVersionSettings: LanguageVersionSettings,
             bindingContext: BindingContext
         ): Boolean =
-            annotationFqName.asString() in languageVersionSettings.getFlag(AnalysisFlag.experimental) ||
-                    annotationFqName.asString() in languageVersionSettings.getFlag(AnalysisFlag.useExperimental) ||
+            annotationFqName.asString() in languageVersionSettings.getFlag(AnalysisFlags.experimental) ||
+                    annotationFqName.asString() in languageVersionSettings.getFlag(AnalysisFlags.useExperimental) ||
                     anyParentMatches { element ->
                         element.isDeclarationAnnotatedWith(annotationFqName, bindingContext) ||
                                 element.isElementAnnotatedWithUseExperimentalOf(annotationFqName, bindingContext)
@@ -208,7 +212,8 @@ class ExperimentalUsageChecker(project: Project) : CallChecker {
             // Ideally, we should run full resolution (with all classifier usage checkers) on classifiers used in "-Xexperimental" and
             // "-Xuse-experimental" arguments. However, it's not easy to do this. This should be solved in the future with the support of
             // module annotations. For now, we only check deprecations because this is needed to correctly retire unneeded compiler arguments.
-            val deprecationResolver = DeprecationResolver(LockBasedStorageManager(), languageVersionSettings)
+            val deprecationResolver =
+                DeprecationResolver(LockBasedStorageManager(), languageVersionSettings, CoroutineCompatibilitySupport.ENABLED)
 
             fun checkAnnotation(fqName: String): Boolean {
                 val descriptor = module.resolveClassByFqName(FqName(fqName), NoLookupLocation.FOR_NON_TRACKED_SCOPE)
@@ -235,8 +240,8 @@ class ExperimentalUsageChecker(project: Project) : CallChecker {
                 return false
             }
 
-            val validExperimental = languageVersionSettings.getFlag(AnalysisFlag.experimental).filter(::checkAnnotation)
-            val validUseExperimental = languageVersionSettings.getFlag(AnalysisFlag.useExperimental).filter { fqName ->
+            val validExperimental = languageVersionSettings.getFlag(AnalysisFlags.experimental).filter(::checkAnnotation)
+            val validUseExperimental = languageVersionSettings.getFlag(AnalysisFlags.useExperimental).filter { fqName ->
                 fqName == EXPERIMENTAL_FQ_NAME.asString() || checkAnnotation(fqName)
             }
 
@@ -259,9 +264,6 @@ class ExperimentalUsageChecker(project: Project) : CallChecker {
                 }
             }
 
-            val experimentalities = targetDescriptor.loadExperimentalities(moduleAnnotationsResolver, context.languageVersionSettings)
-            reportNotAcceptedExperimentalities(experimentalities, element, context)
-
             val targetClass = when (targetDescriptor) {
                 is ClassDescriptor -> targetDescriptor
                 is TypeAliasDescriptor -> targetDescriptor.classDescriptor
@@ -276,10 +278,15 @@ class ExperimentalUsageChecker(project: Project) : CallChecker {
                     )
                 }
             }
+
+            if (element.getParentOfType<KtImportDirective>(false) == null) {
+                val experimentalities = targetDescriptor.loadExperimentalities(moduleAnnotationsResolver, context.languageVersionSettings)
+                reportNotAcceptedExperimentalities(experimentalities, element, context)
+            }
         }
 
         private fun checkUsageOfKotlinExperimentalOrUseExperimental(element: PsiElement, context: CheckerContext) {
-            if (EXPERIMENTAL_FQ_NAME.asString() !in context.languageVersionSettings.getFlag(AnalysisFlag.useExperimental)) {
+            if (EXPERIMENTAL_FQ_NAME.asString() !in context.languageVersionSettings.getFlag(AnalysisFlags.useExperimental)) {
                 context.trace.report(Errors.EXPERIMENTAL_IS_NOT_ENABLED.on(element))
             }
 
@@ -299,8 +306,11 @@ class ExperimentalUsageChecker(project: Project) : CallChecker {
             return false
         }
 
-        private fun PsiElement.isUsageAsUseExperimentalArgument(bindingContext: BindingContext): Boolean =
-            parent is KtClassLiteralExpression &&
+        private fun PsiElement.isUsageAsUseExperimentalArgument(bindingContext: BindingContext): Boolean {
+            val qualifier = (this as? KtSimpleNameExpression)?.getTopmostParentQualifiedExpressionForSelector() ?: this
+            val parent = qualifier.parent
+
+            return parent is KtClassLiteralExpression &&
                     parent.parent is KtValueArgument &&
                     parent.parent.parent is KtValueArgumentList &&
                     parent.parent.parent.parent.let { entry ->
@@ -308,6 +318,7 @@ class ExperimentalUsageChecker(project: Project) : CallChecker {
                             annotation.fqName == USE_EXPERIMENTAL_FQ_NAME || annotation.fqName == WAS_EXPERIMENTAL_FQ_NAME
                         } == true
                     }
+        }
     }
 
     class Overrides(project: Project) : DeclarationChecker {

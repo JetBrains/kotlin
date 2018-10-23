@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 // WITH_RUNTIME
 
 interface Stream<T> {

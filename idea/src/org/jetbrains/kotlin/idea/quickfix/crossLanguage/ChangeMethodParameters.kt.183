@@ -59,7 +59,7 @@ internal class ChangeMethodParameters(
             SourceElement.NO_SOURCE
         ).apply {
             initialize(
-                functionDescriptor.extensionReceiverParameter?.type,
+                functionDescriptor.extensionReceiverParameter?.copy(this),
                 functionDescriptor.dispatchReceiverParameter,
                 functionDescriptor.typeParameters,
                 request.withIndex().map { (index, parameter) ->

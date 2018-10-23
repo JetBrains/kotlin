@@ -91,12 +91,13 @@ fun extractClassMembers(
             result: MutableCollection<KotlinMemberInfo>
     ) {
         declarations
-                .filter {
-                    it is KtNamedDeclaration
-                    && it !is KtConstructor<*>
-                    && !(it is KtObjectDeclaration && it.isCompanion())
-                    && (filter == null || filter(it))
-                }
+            .asSequence()
+            .filter {
+                it is KtNamedDeclaration
+                        && it !is KtConstructor<*>
+                        && !(it is KtObjectDeclaration && it.isCompanion())
+                        && (filter == null || filter(it))
+            }
                 .mapTo(result) { KotlinMemberInfo(it as KtNamedDeclaration, isCompanionMember = isCompanion) }
     }
 
@@ -104,7 +105,8 @@ fun extractClassMembers(
 
     if (collectSuperTypeEntries) {
         aClass.superTypeListEntries
-                .filterIsInstance<KtSuperTypeEntry>()
+            .asSequence()
+            .filterIsInstance<KtSuperTypeEntry>()
                 .mapNotNull {
                     val typeReference = it.typeReference ?: return@mapNotNull null
                     val type = typeReference.analyze(BodyResolveMode.PARTIAL)[BindingContext.TYPE, typeReference]
@@ -121,8 +123,9 @@ fun extractClassMembers(
     }
 
     aClass.primaryConstructor
-            ?.valueParameters
-            ?.filter { it.hasValOrVar() }
+        ?.valueParameters
+        ?.asSequence()
+        ?.filter { it.hasValOrVar() }
             ?.mapTo(result) { KotlinMemberInfo(it) }
 
     aClass.extractFromClassBody(filter, false, result)

@@ -10,9 +10,15 @@ import templates.PrimitiveType.Companion.maxByCapacity
 
 object RangeOps : TemplateGroupBase() {
 
-    private val rangePrimitives = setOf(PrimitiveType.Int, PrimitiveType.Long, PrimitiveType.Char)
-    private fun rangeElementType(fromType: PrimitiveType, toType: PrimitiveType)
-            = maxByCapacity(fromType, toType).let { if (it == PrimitiveType.Char) it else maxByCapacity(it, PrimitiveType.Int) }
+    private val rangePrimitives = PrimitiveType.rangePrimitives
+    private fun rangeElementType(fromType: PrimitiveType, toType: PrimitiveType) =
+        maxByCapacity(fromType, toType).let {
+            when {
+                it == PrimitiveType.Char -> it
+                it in PrimitiveType.unsignedPrimitives -> maxByCapacity(it, PrimitiveType.UInt)
+                else -> maxByCapacity(it, PrimitiveType.Int)
+            }
+        }
 
     private fun <T> Collection<T>.permutations(): List<Pair<T, T>> = flatMap { a -> map { b -> a to b } }
 
@@ -20,7 +26,25 @@ object RangeOps : TemplateGroupBase() {
     private val numericPermutations = numericPrimitives.permutations()
     private val primitivePermutations = numericPermutations + (PrimitiveType.Char to PrimitiveType.Char)
     private val integralPermutations = primitivePermutations.filter { it.first.isIntegral() && it.second.isIntegral() }
+    private val unsignedPermutations = PrimitiveType.unsignedPrimitives.map { it to it }
 
+    val PrimitiveType.stepType get() = when(this) {
+        PrimitiveType.Char -> "Int"
+        PrimitiveType.Int, PrimitiveType.Long -> name
+        PrimitiveType.UInt, PrimitiveType.ULong -> name.drop(1)
+        else -> error("Unsupported progression specialization: $this")
+    }
+
+    init {
+        defaultBuilder {
+            sourceFile(SourceFile.Ranges)
+            if (primitive in PrimitiveType.unsignedPrimitives) {
+                since("1.3")
+                annotation("@ExperimentalUnsignedTypes")
+                sourceFile(SourceFile.URanges)
+            }
+        }
+    }
 
     val f_reversed = fn("reversed()") {
         include(ProgressionsOfPrimitives, rangePrimitives)
@@ -32,11 +56,12 @@ object RangeOps : TemplateGroupBase() {
         }
     }
 
-    val f_step = fn("step(step: SUM)") {
+    val f_step = fn("step(step: STEP)") {
         include(ProgressionsOfPrimitives, rangePrimitives)
     } builder {
         infix(true)
         doc { "Returns a progression that goes over the same range with the given step." }
+        signature("step(step: ${primitive!!.stepType})", notForSorting = true)
         returns("TProgression")
         body {
             """
@@ -47,10 +72,8 @@ object RangeOps : TemplateGroupBase() {
     }
 
     val f_downTo = fn("downTo(to: Primitive)").byTwoPrimitives {
-        include(Primitives, integralPermutations)
+        include(Primitives, integralPermutations + unsignedPermutations)
     } builderWith { (fromType, toType) ->
-        sourceFile(SourceFile.Ranges)
-
         val elementType = rangeElementType(fromType, toType)
         val progressionType = elementType.name + "Progression"
 
@@ -71,7 +94,7 @@ object RangeOps : TemplateGroupBase() {
         val fromExpr = if (elementType == fromType) "this" else "this.to$elementType()"
         val toExpr = if (elementType == toType) "to" else "to.to$elementType()"
         val incrementExpr = when (elementType) {
-            PrimitiveType.Long -> "-1L"
+            PrimitiveType.Long, PrimitiveType.ULong -> "-1L"
             PrimitiveType.Float -> "-1.0F"
             PrimitiveType.Double -> "-1.0"
             else -> "-1"
@@ -84,10 +107,8 @@ object RangeOps : TemplateGroupBase() {
 
 
     val f_until = fn("until(to: Primitive)").byTwoPrimitives {
-        include(Primitives, integralPermutations)
+        include(Primitives, integralPermutations + unsignedPermutations)
     } builderWith { (fromType, toType) ->
-        sourceFile(SourceFile.Ranges)
-
         infix()
         signature("until(to: $toType)")
 
@@ -110,6 +131,7 @@ object RangeOps : TemplateGroupBase() {
         }
 
         val fromExpr = if (elementType == fromType) "this" else "this.to$elementType()"
+        val u = if (elementType in PrimitiveType.unsignedPrimitives) "u" else ""
 
         if (elementType == toType) {
             // hack to work around incorrect char overflow behavior in JVM and int overflow behavior in JS
@@ -122,11 +144,11 @@ object RangeOps : TemplateGroupBase() {
                 // <= instead of == for JS
                 """
                 if (to <= $minValue) return $progressionType.EMPTY
-                return $fromExpr .. (to - 1).to$elementType()
+                return $fromExpr .. (to - 1$u).to$elementType()
                 """
             }
         } else {
-            body { "return $fromExpr .. (to.to$elementType() - 1).to$elementType()" }
+            body { "return $fromExpr .. (to.to$elementType() - 1$u).to$elementType()" }
         }
     }
 
@@ -138,6 +160,9 @@ object RangeOps : TemplateGroupBase() {
         signature("contains(value: $itemType)")
 
         check(rangeType.isNumeric() == itemType.isNumeric()) { "Required rangeType and itemType both to be numeric or both not, got: $rangeType, $itemType" }
+        if (rangeType.isIntegral() != itemType.isIntegral()) {
+            deprecate(Deprecation("This `contains` operation mixing integer and floating point arguments has ambiguous semantics and is going to be removed.", level = DeprecationLevel.WARNING))
+        }
         platformName("${rangeType.name.decapitalize()}RangeContains")
         returns("Boolean")
         doc { "Checks if the specified [value] belongs to this range." }
@@ -149,13 +174,31 @@ object RangeOps : TemplateGroupBase() {
         }
     }
 
+    val f_contains_nullable = fn("contains(element: T?)") {
+        include(RangesOfPrimitives, rangePrimitives)
+    } builder {
+        since("1.3")
+        operator()
+        inlineOnly()
+
+        doc {
+            """
+            Returns `true` if this ${f.collection} contains the specified [element].
+
+            Always returns `false` if the [element] is `null`.
+            """
+        }
+
+        returns("Boolean")
+        body { "return element != null && contains(element)" }
+    }
+
     val f_toPrimitiveExactOrNull = fn("to{}ExactOrNull()").byTwoPrimitives {
         include(Primitives, numericPermutations)
         filter { _, (fromType, toType) -> fromType.capacity > toType.capacity && toType.isIntegral() }
     } builderWith { (fromType, toType) ->
         check(toType.isIntegral())
         visibility("internal")
-        sourceFile(SourceFile.Ranges)
 
         signature("to${toType}ExactOrNull()")
         returns("$toType?")

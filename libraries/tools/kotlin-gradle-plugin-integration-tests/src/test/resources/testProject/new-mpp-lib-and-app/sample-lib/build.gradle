@@ -23,15 +23,35 @@ kotlin {
     targets {
         fromPreset(presets.jvm, 'jvm6')
         fromPreset(presets.js, 'nodeJs')
+        fromPreset(presets.wasm32, 'wasm32')
+        fromPreset(presets.linuxX64, 'linux64')
+        fromPreset(presets.mingwX64, 'mingw64')
+        fromPreset(presets.macosX64, 'macos64')
+
+        all {
+            mavenPublication {
+                pom.withXml {
+                    asNode().appendNode('name', 'Sample MPP library')
+                }
+            }
+        }
     }
+
     sourceSets {
+        commonMain {
+            dependencies {
+                api 'org.jetbrains.kotlin:kotlin-stdlib-common'
+            }
+        }
         jvm6Main {
             dependencies {
+                api 'org.jetbrains.kotlin:kotlin-stdlib'
                 implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:0.23.4'
             }
         }
         nodeJsMain {
         	dependencies {
+                api 'org.jetbrains.kotlin:kotlin-stdlib-js'
         		implementation 'org.jetbrains.kotlinx:kotlinx-html-js:0.6.11'
         	}
         }

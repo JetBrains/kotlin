@@ -1,7 +1,7 @@
 package
 
 @unrepann(x = 0) public var annotated: kotlin.Int
-@unrepann(x = 0) @property:unrepann(x = 1) public var annotated2: kotlin.Int
+@unrepann(x = 0) @unrepann(x = 1) public var annotated2: kotlin.Int
 @ann(y = 0) @ann(y = 1) public fun foo(/*0*/ @ann(y = 7) @ann(y = 2) x: kotlin.Int): kotlin.Int
 
 @unrepann(x = 1) @unrepann(x = 2) public final class DoubleAnnotated {

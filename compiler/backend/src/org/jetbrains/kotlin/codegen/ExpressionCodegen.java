@@ -68,10 +68,7 @@ import org.jetbrains.kotlin.resolve.constants.*;
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluatorKt;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.resolve.inline.InlineUtil;
-import org.jetbrains.kotlin.resolve.jvm.AsmTypes;
-import org.jetbrains.kotlin.resolve.jvm.JvmBindingContextSlices;
-import org.jetbrains.kotlin.resolve.jvm.JvmConstantsKt;
-import org.jetbrains.kotlin.resolve.jvm.RuntimeAssertionInfo;
+import org.jetbrains.kotlin.resolve.jvm.*;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKt;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterSignature;
@@ -298,6 +295,8 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
             StackValue stackValue = selector.accept(visitor, receiver);
 
+            stackValue = suspendFunctionTypeWrapperIfNeeded(selector, stackValue);
+
             RuntimeAssertionInfo runtimeAssertionInfo = null;
             if (selector instanceof KtExpression) {
                 KtExpression expression = (KtExpression) selector;
@@ -319,6 +318,32 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             String message = error.getMessage();
             throw new CompilationException(message != null ? message : "null", error, selector);
         }
+    }
+
+    private StackValue suspendFunctionTypeWrapperIfNeeded(KtElement selector, StackValue stackValue) {
+        Type functionTypeForWrapper =
+                selector instanceof KtExpression
+                ? bindingContext.get(CodegenBinding.FUNCTION_TYPE_FOR_SUSPEND_WRAPPER, (KtExpression) selector)
+                : null;
+
+        if (functionTypeForWrapper == null) return stackValue;
+
+        StackValue stackValueToWrap = stackValue;
+        stackValue = new StackValue(stackValue.type, stackValue.kotlinType) {
+            @Override
+            public void putSelector(
+                    @NotNull Type type, @Nullable KotlinType kotlinType, @NotNull InstructionAdapter v
+            ) {
+                stackValueToWrap.put(functionTypeForWrapper, null, v);
+                invokeCoroutineMigrationMethod(
+                        v,
+                        "toExperimentalSuspendFunction",
+                        Type.getMethodDescriptor(functionTypeForWrapper, functionTypeForWrapper)
+                );
+                coerce(functionTypeForWrapper, type, v);
+            }
+        };
+        return stackValue;
     }
 
     public StackValue gen(KtElement expr) {
@@ -488,7 +513,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             }
         }
 
-        return StackValue.operation(asmType, v -> {
+        return StackValue.operation(asmType, kotlinType, v -> {
             Label elseLabel = new Label();
             BranchedValue.Companion.condJump(condition, elseLabel, true, v);
 
@@ -808,7 +833,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             StringTemplateEntry entry = entries.get(0);
             if (entry instanceof StringTemplateEntry.Expression) {
                 KtExpression expr = ((StringTemplateEntry.Expression) entry).expression;
-                return genToString(gen(expr), expressionType(expr), kotlinType(expr));
+                return genToString(gen(expr), expressionType(expr), kotlinType(expr), typeMapper);
             }
             else {
                 return StackValue.constant(((StringTemplateEntry.Constant) entry).value, type);
@@ -1077,15 +1102,16 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         int paramIndex = 0;
 
         if (putThis) {
-            ClassDescriptor captureThis = closure.getCaptureThis();
+            ClassDescriptor captureThis = closure.getCapturedOuterClassDescriptor();
             if (captureThis != null) {
                 StackValue thisOrOuter = generateThisOrOuter(captureThis, false);
-                assert !isPrimitive(thisOrOuter.type) : "This or outer should be non primitive: " + thisOrOuter.type;
+                assert !isPrimitive(thisOrOuter.type) || captureThis.isInline() :
+                        "This or outer for " + captureThis + " should be non-primitive: " + thisOrOuter.type;
                 callGenerator.putCapturedValueOnStack(thisOrOuter, thisOrOuter.type, paramIndex++);
             }
         }
 
-        KotlinType captureReceiver = closure.getCaptureReceiverType();
+        KotlinType captureReceiver = closure.getCapturedReceiverFromOuterContext();
         if (captureReceiver != null) {
             StackValue capturedReceiver =
                     functionReferenceReceiver != null ? functionReferenceReceiver :
@@ -1110,7 +1136,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         ClassDescriptor superClass = DescriptorUtilsKt.getSuperClassNotAny(classDescriptor);
         if (superClass != null) {
             pushClosureOnStack(
-                    superClass, putThis && closure.getCaptureThis() == null, callGenerator, /* functionReferenceReceiver = */ null
+                    superClass, putThis && closure.getCapturedOuterClassDescriptor() == null, callGenerator, /* functionReferenceReceiver = */ null
             );
         }
 
@@ -1913,11 +1939,15 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
             Type sharedVarType = typeMapper.getSharedVarType(descriptor);
             Type varType = getVariableTypeNoSharing(variableDescriptor);
+            KotlinType delegateKotlinType =
+                    isDelegatedLocalVariable(descriptor)
+                    ? JvmCodegenUtil.getPropertyDelegateType((VariableDescriptorWithAccessors) descriptor, bindingContext)
+                    : null;
             if (sharedVarType != null) {
-                return StackValue.shared(index, varType, variableDescriptor);
+                return StackValue.shared(index, varType, variableDescriptor, delegateKotlinType);
             }
             else {
-                return adjustVariableValue(StackValue.local(index, varType, variableDescriptor), variableDescriptor);
+                return adjustVariableValue(StackValue.local(index, varType, variableDescriptor, delegateKotlinType), variableDescriptor);
             }
         }
         else {
@@ -2039,7 +2069,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         CallableMethod callableGetter = null;
         CallableMethod callableSetter = null;
 
-        CodegenContext backingFieldContext = getBackingFieldContext(fieldAccessorKind, containingDeclaration);
+        CodegenContext<?> backingFieldContext = getBackingFieldContext(fieldAccessorKind, containingDeclaration);
         boolean isPrivateProperty =
                 fieldAccessorKind != AccessorKind.NORMAL &&
                 (AsmUtil.getVisibilityForBackingField(propertyDescriptor, isDelegatedProperty) & ACC_PRIVATE) != 0;
@@ -2127,7 +2157,8 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         return StackValue.property(
                 propertyDescriptor, backingFieldOwner,
                 typeMapper.mapType(isDelegatedProperty && forceField ? delegateType : propertyDescriptor.getOriginal().getType()),
-                isStaticBackingField, fieldName, callableGetter, callableSetter, receiver, this, resolvedCall, skipLateinitAssertion
+                isStaticBackingField, fieldName, callableGetter, callableSetter, receiver, this, resolvedCall, skipLateinitAssertion,
+                isDelegatedProperty && forceField ? delegateType : null
         );
     }
 
@@ -2143,7 +2174,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         CallableMethod callableSetter =
                 setMethod != null ? typeMapper.mapToCallableMethod(context.accessibleDescriptor(setMethod, null), false) : null;
         return StackValue.property(propertyDescriptor, null, type, false, null, callableGetter, callableSetter, receiver, this,
-                                   null, false);
+                                   null, false, null);
     }
 
     @Override
@@ -2152,11 +2183,6 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         FunctionDescriptor descriptor = accessibleFunctionDescriptor(resolvedCall);
 
         if (descriptor instanceof ConstructorDescriptor) {
-            if (InlineClassesUtilsKt.isInlineClass(descriptor.getContainingDeclaration()) && ((ConstructorDescriptor) descriptor).isPrimary()) {
-                // we do not call static function `constructor`, because it's empty
-                return generateInlineClassConstructorCall(expression);
-            }
-
             return generateNewCall(expression, resolvedCall);
         }
 
@@ -2167,24 +2193,6 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         }
 
         return invokeFunction(resolvedCall, receiver);
-    }
-
-    private StackValue generateInlineClassConstructorCall(@NotNull KtCallExpression expression) {
-        KtValueArgument valueArgument = CollectionsKt.singleOrNull(expression.getValueArguments());
-        assert valueArgument != null : "Inline class constructor call should have single argument";
-
-        KotlinType inlineClassType = kotlinType(expression);
-        assert inlineClassType != null && InlineClassesUtilsKt.isInlineClassType(inlineClassType) :
-                "Constructor call expression of inline class should have inline class type, but have: " + inlineClassType;
-
-        Type underlyingType = typeMapper.mapType(inlineClassType);
-        KotlinType underlyingKotlinType = InlineClassesUtilsKt.unsubstitutedUnderlyingType(inlineClassType);
-
-        StackValue argumentValue = gen(valueArgument.getArgumentExpression());
-
-        return StackValue.coercionValueForArgumentOfInlineClassConstructor(
-                argumentValue, underlyingType, inlineClassType, underlyingKotlinType
-        );
     }
 
     @Override
@@ -2251,10 +2259,23 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
         descriptor = CoroutineCodegenUtilKt.unwrapInitialDescriptorForSuspendFunction(descriptor);
 
-        // $default method is not private, so you need no accessor to call it
-        return CallUtilKt.usesDefaultArguments(resolvedCall)
-               ? descriptor
-               : context.accessibleDescriptor(descriptor, getSuperCallTarget(resolvedCall.getCall()));
+        if (CallUtilKt.usesDefaultArguments(resolvedCall)) {
+            // $default method is not private, so you need no accessor to call it
+            return descriptor;
+        }
+        else if (InlineClassManglingRulesKt.shouldHideConstructorDueToInlineClassTypeValueParameters(descriptor.getOriginal())) {
+            // Constructors with inline class type value parameters should always be called using an accessor.
+            // NB this will require accessors even if the constructor itself is in a different module.
+            return new AccessorForConstructorDescriptor(
+                    (ClassConstructorDescriptor) descriptor,
+                    descriptor.getContainingDeclaration(),
+                    getSuperCallTarget(resolvedCall.getCall()),
+                    AccessorKind.NORMAL
+            );
+        }
+        else {
+            return context.accessibleDescriptor(descriptor, getSuperCallTarget(resolvedCall.getCall()));
+        }
     }
 
     @NotNull
@@ -2299,7 +2320,41 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
                 coroutineInstanceValueForSuspensionPoint != null
                 ? coroutineInstanceValueForSuspensionPoint
                 : getContinuationParameterFromEnclosingSuspendFunction(resolvedCall);
+
+        if (coroutineInstanceValue != null && needsExperimentalCoroutinesWrapper(resolvedCall.getCandidateDescriptor())) {
+            StackValue releaseContinuation = coroutineInstanceValue;
+            coroutineInstanceValue = new StackValue(CoroutineCodegenUtilKt.EXPERIMENTAL_CONTINUATION_ASM_TYPE) {
+                @Override
+                public void putSelector(
+                        @NotNull Type type, @Nullable KotlinType kotlinType, @NotNull InstructionAdapter v
+                ) {
+                    releaseContinuation.put(CoroutineCodegenUtilKt.RELEASE_CONTINUATION_ASM_TYPE, v);
+                    invokeCoroutineMigrationMethod(
+                            v,
+                            "toExperimentalContinuation",
+                            Type.getMethodDescriptor(
+                                    CoroutineCodegenUtilKt.EXPERIMENTAL_CONTINUATION_ASM_TYPE,
+                                    CoroutineCodegenUtilKt.RELEASE_CONTINUATION_ASM_TYPE
+                            )
+                    );
+                }
+            };
+        }
+
         tempVariables.put(continuationExpression, coroutineInstanceValue);
+    }
+
+    private static void invokeCoroutineMigrationMethod(
+            @NotNull InstructionAdapter v,
+            String methodName,
+            String descriptor
+    ) {
+        v.invokestatic(
+                "kotlin/coroutines/experimental/migration/CoroutinesMigrationKt",
+                methodName,
+                descriptor,
+                false
+        );
     }
 
     private StackValue getContinuationParameterFromEnclosingSuspendFunction(@NotNull ResolvedCall<?> resolvedCall) {
@@ -2618,28 +2673,8 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     public StackValue generateReceiverValue(@Nullable ReceiverValue receiverValue, boolean isSuper) {
         if (receiverValue instanceof ImplicitClassReceiver) {
             ClassDescriptor receiverDescriptor = ((ImplicitClassReceiver) receiverValue).getDeclarationDescriptor();
-            if (DescriptorUtils.isCompanionObject(receiverDescriptor)) {
-                CallableMemberDescriptor contextDescriptor = context.getContextDescriptor();
-                if (contextDescriptor instanceof FunctionDescriptor && receiverDescriptor == contextDescriptor.getContainingDeclaration()) {
-                    return StackValue.LOCAL_0;
-                }
-                else if (isPossiblyUninitializedSingleton(receiverDescriptor) && isInsideSingleton(receiverDescriptor)) {
-                    return generateThisOrOuterFromContext(receiverDescriptor, false, false);
-                }
-                else if (couldUseDirectAccessToCompanionObject(receiverDescriptor, context)) {
-                    return StackValue.singleton(receiverDescriptor, typeMapper);
-                }
-                else {
-                    return generateAccessorCallForCompanionObject(receiverDescriptor);
-                }
-            }
-            else if (receiverDescriptor instanceof ScriptDescriptor) {
-                return generateScriptReceiver((ScriptDescriptor) receiverDescriptor);
-            }
-            else {
-                return StackValue.thisOrOuter(this, receiverDescriptor, isSuper,
-                                              receiverValue instanceof CastImplicitClassReceiver || isEnumEntry(receiverDescriptor));
-            }
+            return generateInstanceReceiver(receiverDescriptor, isSuper,
+                                         receiverValue instanceof CastImplicitClassReceiver || isEnumEntry(receiverDescriptor));
         }
         else if (receiverValue instanceof ExtensionReceiver) {
             return generateExtensionReceiver(((ExtensionReceiver) receiverValue).getDeclarationDescriptor());
@@ -2656,6 +2691,35 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         }
         else {
             throw new UnsupportedOperationException("Unsupported receiver value: " + receiverValue);
+        }
+    }
+
+    private StackValue generateInstanceReceiver(
+            @NotNull ClassDescriptor receiverDescriptor,
+            boolean isSuper,
+            boolean castReceiver
+
+    ) {
+        if (DescriptorUtils.isCompanionObject(receiverDescriptor)) {
+            CallableMemberDescriptor contextDescriptor = context.getContextDescriptor();
+            if (contextDescriptor instanceof FunctionDescriptor && receiverDescriptor == contextDescriptor.getContainingDeclaration()) {
+                return StackValue.LOCAL_0;
+            }
+            else if (isPossiblyUninitializedSingleton(receiverDescriptor) && isInsideSingleton(receiverDescriptor)) {
+                return generateThisOrOuterFromContext(receiverDescriptor, false, false);
+            }
+            else if (couldUseDirectAccessToCompanionObject(receiverDescriptor, context)) {
+                return StackValue.singleton(receiverDescriptor, typeMapper);
+            }
+            else {
+                return generateAccessorCallForCompanionObject(receiverDescriptor);
+            }
+        }
+        else if (receiverDescriptor instanceof ScriptDescriptor) {
+            return generateScriptReceiver((ScriptDescriptor) receiverDescriptor);
+        }
+        else {
+            return StackValue.thisOrOuter(this, receiverDescriptor, isSuper, castReceiver);
         }
     }
 
@@ -2790,8 +2854,8 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
     private StackValue generateThisOrOuterFromContext(@NotNull ClassDescriptor thisOrOuterClass, boolean isSuper, boolean forceOuter) {
         CodegenContext cur = context;
-        SimpleType thisType = thisOrOuterClass.getDefaultType();
-        StackValue result = StackValue.local(0, asmType(thisType), thisType);
+        SimpleType contextType = cur.getThisDescriptor().getDefaultType();
+        StackValue result = StackValue.local(0, asmType(contextType), contextType);
         boolean inStartConstructorContext = cur instanceof ConstructorContext;
         while (cur != null) {
             ClassDescriptor thisDescriptor = cur.getThisDescriptor();
@@ -2989,7 +3053,9 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         FunctionDescriptor functionDescriptor = bindingContext.get(FUNCTION, expression);
         if (functionDescriptor != null) {
             FunctionReferenceGenerationStrategy strategy = new FunctionReferenceGenerationStrategy(
-                    state, functionDescriptor, resolvedCall, receiver != null ? receiver.type : null, null, false
+                    state, functionDescriptor, resolvedCall,
+                    receiver != null ? new JvmKotlinType(receiver.type, receiver.kotlinType) : null,
+                    null, false
             );
 
             return genClosure(
@@ -3028,10 +3094,10 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
                 element.getContainingFile()
         );
 
-        Type receiverAsmType = receiverValue != null ? receiverValue.type : null;
         PropertyReferenceCodegen codegen = new PropertyReferenceCodegen(
                 state, parentCodegen, context.intoAnonymousClass(classDescriptor, this, OwnerKind.IMPLEMENTATION),
-                element, classBuilder, variableDescriptor, target, receiverAsmType
+                element, classBuilder, variableDescriptor, target,
+                receiverValue != null ? new JvmKotlinType(receiverValue.type, receiverValue.kotlinType) : null
         );
         codegen.generate();
 
@@ -3190,7 +3256,16 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     }
 
     private StackValue genLazyUnlessProvided(@Nullable StackValue pregenerated, @NotNull KtExpression expr, @NotNull Type type) {
-        return pregenerated != null ? StackValue.coercion(pregenerated, type, null) : genLazy(expr, type);
+        return genLazyUnlessProvided(pregenerated, expr, type, null);
+    }
+
+    private StackValue genLazyUnlessProvided(
+            @Nullable StackValue pregenerated,
+            @NotNull KtExpression expr,
+            @NotNull Type type,
+            @Nullable KotlinType kotlinType
+    ) {
+        return pregenerated != null ? StackValue.coercion(pregenerated, type, kotlinType) : genLazy(expr, type, kotlinType);
     }
 
     private StackValue genUnlessProvided(@Nullable StackValue pregenerated, @NotNull KtExpression expr, @NotNull Type type) {
@@ -3335,8 +3410,8 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         KotlinType leftKotlinType = kotlinType(left);
         KotlinType rightKotlinType = kotlinType(right);
 
-        StackValue leftValue = genLazyUnlessProvided(pregeneratedSubject, left, leftType);
-        StackValue rightValue = genLazy(right, rightType);
+        StackValue leftValue = genLazyUnlessProvided(pregeneratedSubject, left, leftType, leftKotlinType);
+        StackValue rightValue = genLazy(right, rightType, rightKotlinType);
 
         return StackValue.operation(Type.BOOLEAN_TYPE, v -> {
             KotlinType nullableAnyType = state.getModule().getBuiltIns().getNullableAnyType();
@@ -3806,7 +3881,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             gen(expr, exprType, exprKotlinType);
         }
 
-        genInvokeAppendMethod(v, exprType.getSort() == Type.ARRAY ? OBJECT_TYPE : exprType, exprKotlinType);
+        genInvokeAppendMethod(v, exprType, exprKotlinType, typeMapper);
     }
 
     @Nullable
@@ -4059,9 +4134,10 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
         Type varType = getVariableTypeNoSharing(variableDescriptor);
 
+        KotlinType delegateKotlinType = JvmCodegenUtil.getPropertyDelegateType(variableDescriptor, bindingContext);
         StackValue storeTo = sharedVarType == null ?
-                             StackValue.local(index, varType, variableDescriptor) :
-                             StackValue.shared(index, varType, variableDescriptor);
+                             StackValue.local(index, varType, variableDescriptor, delegateKotlinType) :
+                             StackValue.shared(index, varType, variableDescriptor, delegateKotlinType);
 
         storeTo.putReceiver(v, false);
         if (variableDescriptor.isLateInit()) {
@@ -4153,8 +4229,12 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     private StackValue generateNewCall(@NotNull KtCallExpression expression, @NotNull ResolvedCall<?> resolvedCall) {
         Type type = expressionType(expression);
         if (type.getSort() == Type.ARRAY) {
-            //noinspection ConstantConditions
-            return generateNewArray(expression, bindingContext.getType(expression), resolvedCall);
+            KotlinType kotlinType = kotlinType(expression);
+            assert kotlinType != null : "No kotlinType for expression of type " + type + ": " + expression.getText();
+            if (KotlinBuiltIns.isArrayOrPrimitiveArray(kotlinType)) {
+                //noinspection ConstantConditions
+                return generateNewArray(expression, bindingContext.getType(expression), resolvedCall);
+            }
         }
 
         return generateConstructorCall(resolvedCall, type);
@@ -4188,14 +4268,16 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
     @NotNull
     public StackValue generateConstructorCall(@NotNull ResolvedCall<?> resolvedCall, @NotNull Type objectType) {
-        return StackValue.functionCall(objectType, null, v -> {
-            v.anew(objectType);
-            v.dup();
-
+        return StackValue.functionCall(objectType, resolvedCall.getResultingDescriptor().getReturnType(), v -> {
             ClassConstructorDescriptor constructor = getConstructorDescriptor(resolvedCall);
-
             ReceiverParameterDescriptor dispatchReceiver = constructor.getDispatchReceiverParameter();
             ClassDescriptor containingDeclaration = constructor.getContainingDeclaration();
+
+            if (!containingDeclaration.isInline()) {
+                v.anew(objectType);
+                v.dup();
+            }
+
             if (dispatchReceiver != null) {
                 KotlinType kotlinType = dispatchReceiver.getType();
                 Type receiverType = typeMapper.mapType(kotlinType);
@@ -4256,21 +4338,22 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     @Override
     public StackValue visitArrayAccessExpression(@NotNull KtArrayAccessExpression expression, StackValue receiver) {
         KtExpression array = expression.getArrayExpression();
-        KotlinType type = array != null ? bindingContext.getType(array) : null;
+        KotlinType arrayKotlinType = array != null ? bindingContext.getType(array) : null;
         Type arrayType = expressionType(array);
         List<KtExpression> indices = expression.getIndexExpressions();
         FunctionDescriptor operationDescriptor = (FunctionDescriptor) bindingContext.get(REFERENCE_TARGET, expression);
         assert operationDescriptor != null;
-        boolean isInlineClassType = type != null && InlineClassesUtilsKt.isInlineClassType(type);
+        boolean isInlineClassType = arrayKotlinType != null && InlineClassesUtilsKt.isInlineClassType(arrayKotlinType);
         if (arrayType.getSort() == Type.ARRAY &&
             indices.size() == 1 &&
             isInt(operationDescriptor.getValueParameters().get(0).getType()) &&
-            !isInlineClassType) {
-            assert type != null;
+            !isInlineClassType
+        ) {
+            assert arrayKotlinType != null;
+            KotlinType elementKotlinType = state.getModule().getBuiltIns().getArrayElementType(arrayKotlinType);
             Type elementType;
-            if (KotlinBuiltIns.isArray(type)) {
-                KotlinType jetElementType = type.getArguments().get(0).getType();
-                elementType = boxType(asmType(jetElementType));
+            if (KotlinBuiltIns.isArray(arrayKotlinType)) {
+                elementType = boxType(asmType(elementKotlinType), elementKotlinType, state);
             }
             else {
                 elementType = correctElementType(arrayType);
@@ -4278,7 +4361,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             StackValue arrayValue = genLazy(array, arrayType);
             StackValue index = genLazy(indices.get(0), Type.INT_TYPE);
 
-            return StackValue.arrayElement(elementType, null, arrayValue, index);
+            return StackValue.arrayElement(elementType, elementKotlinType, arrayValue, index);
         }
         else {
             ResolvedCall<FunctionDescriptor> resolvedSetCall = bindingContext.get(INDEXED_LVALUE_SET, expression);
@@ -4298,8 +4381,8 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
             Type elementType = isGetter ? callableMethod.getReturnType() : ArrayUtil.getLastElement(argumentTypes);
             KotlinType elementKotlinType = isGetter ?
-                                           operationDescriptor.getReturnType() :
-                                           CollectionsKt.last(operationDescriptor.getValueParameters()).getType();
+                                           operationDescriptor.getOriginal().getReturnType() :
+                                           CollectionsKt.last(operationDescriptor.getOriginal().getValueParameters()).getType();
             return StackValue.collectionElement(
                     collectionElementReceiver, elementType, elementKotlinType, resolvedGetCall, resolvedSetCall, this
             );
@@ -4346,8 +4429,9 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     public StackValue visitThisExpression(@NotNull KtThisExpression expression, StackValue receiver) {
         DeclarationDescriptor descriptor = bindingContext.get(REFERENCE_TARGET, expression.getInstanceReference());
         if (descriptor instanceof ClassDescriptor) {
+            return generateInstanceReceiver((ClassDescriptor) descriptor, false, true);
             //TODO rewrite with context.lookupInContext()
-            return StackValue.thisOrOuter(this, (ClassDescriptor) descriptor, false, true);
+            //return StackValue.thisOrOuter(this, (ClassDescriptor) descriptor, false, true);
         }
         if (descriptor instanceof CallableDescriptor) {
             return generateExtensionReceiver((CallableDescriptor) descriptor);
@@ -4542,7 +4626,8 @@ The "returned" value of try expression with no finally is either the last expres
                 return Unit.INSTANCE;
             }
 
-            CodegenUtilKt.generateAsCast(v, rightKotlinType, boxedRightType, safeAs);
+            CodegenUtilKt.generateAsCast(v, rightKotlinType, boxedRightType, safeAs,
+                                         state.getLanguageVersionSettings().supportsFeature(LanguageFeature.ReleaseCoroutines));
 
             return Unit.INSTANCE;
         });
@@ -4595,7 +4680,7 @@ The "returned" value of try expression with no finally is either the last expres
                 return null;
             }
 
-            CodegenUtilKt.generateIsCheck(v, rhsKotlinType, type);
+            CodegenUtilKt.generateIsCheck(v, rhsKotlinType, type, state.getLanguageVersionSettings().supportsFeature(LanguageFeature.ReleaseCoroutines));
             return null;
         });
     }
@@ -4844,7 +4929,7 @@ The "returned" value of try expression with no finally is either the last expres
             @NotNull VariableDescriptorWithAccessors variableDescriptor,
             @NotNull KotlinTypeMapper typeMapper
     ) {
-        return StackValue.delegate(typeMapper.mapType(variableDescriptor.getType()), delegateValue, metadataValue, variableDescriptor, this);
+        return StackValue.localDelegate(typeMapper.mapType(variableDescriptor.getType()), delegateValue, metadataValue, variableDescriptor, this);
     }
 
     @NotNull

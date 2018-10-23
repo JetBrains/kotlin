@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.contracts
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.contracts.description.*
 import org.jetbrains.kotlin.contracts.description.expressions.*
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.Flags
@@ -36,7 +37,7 @@ class ContractDeserializerImpl(private val configuration: DeserializationConfigu
         ownerFunction: FunctionDescriptor,
         typeTable: TypeTable,
         typeDeserializer: TypeDeserializer
-    ): Pair<FunctionDescriptor.UserDataKey<*>, LazyContractProvider>? {
+    ): Pair<CallableDescriptor.UserDataKey<*>, LazyContractProvider>? {
         if (!proto.hasContract()) return null
 
         if (!configuration.readDeserializedContracts) return null

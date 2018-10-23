@@ -22,6 +22,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.caches.project.ModuleSourceInfo
+import org.jetbrains.kotlin.idea.caches.project.ScriptModuleInfo
 import org.jetbrains.kotlin.idea.caches.project.getNullableModuleInfo
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
@@ -52,7 +53,8 @@ class KotlinImportOptimizer : ImportOptimizer {
 
     private class OptimizeProcess(private val file: KtFile) {
         fun execute() {
-            if (file.getNullableModuleInfo() !is ModuleSourceInfo) return
+            val moduleInfo = file.getNullableModuleInfo()
+            if (moduleInfo !is ModuleSourceInfo && moduleInfo !is ScriptModuleInfo) return
 
             val oldImports = file.importDirectives
             if (oldImports.isEmpty()) return

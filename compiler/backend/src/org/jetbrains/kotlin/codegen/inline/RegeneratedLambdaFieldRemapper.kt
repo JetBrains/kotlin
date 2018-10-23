@@ -16,6 +16,8 @@
 
 package org.jetbrains.kotlin.codegen.inline
 
+import org.jetbrains.kotlin.codegen.AsmUtil
+import org.jetbrains.kotlin.codegen.AsmUtil.THIS
 import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
@@ -65,7 +67,7 @@ class RegeneratedLambdaFieldRemapper(
         val field = findFieldInSuper(fin) ?:
                     //search in parent
                     findFieldInSuper(FieldInsnNode(
-                            Opcodes.GETSTATIC, originalLambdaInternalName, THIS_0,
+                            Opcodes.GETSTATIC, originalLambdaInternalName, AsmUtil.CAPTURED_THIS_FIELD,
                             Type.getObjectType(parent!!.originalLambdaInternalName!!).descriptor
                     ))?.also { fromParent = true } ?:
                     throw AssertionError("Couldn't find captured this $originalLambdaInternalName for $fieldName")

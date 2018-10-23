@@ -88,10 +88,10 @@ class ParcelableAnnotationChecker : CallChecker {
         val descriptor = context.trace[BindingContext.DECLARATION_TO_DESCRIPTOR, element] ?: return
         val thisMappedType = resolvedCall.typeArguments.values.takeIf { it.size == 2 }?.first() ?: return
 
-        val duplicatingAnnotationCount = descriptor.annotations.getAllAnnotations()
-                .filter { it.annotation.fqName == TYPE_PARCELER_FQNAME }
-                .mapNotNull { it.annotation.type.arguments.takeIf { it.size == 2 }?.first()?.type }
-                .count { it == thisMappedType }
+        val duplicatingAnnotationCount = descriptor.annotations
+            .filter { it.fqName == TYPE_PARCELER_FQNAME }
+            .mapNotNull { it.type.arguments.takeIf { args -> args.size == 2 }?.first()?.type }
+            .count { it == thisMappedType }
 
         if (duplicatingAnnotationCount > 1) {
             val reportElement = annotationEntry.typeArguments.firstOrNull() ?: annotationEntry
