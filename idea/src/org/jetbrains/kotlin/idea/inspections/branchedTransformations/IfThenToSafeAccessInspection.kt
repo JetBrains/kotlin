@@ -93,12 +93,14 @@ class IfThenToSafeAccessInspection : AbstractApplicabilityBasedInspection<KtIfEx
         else -> false
     }
 
-    private fun KtSafeQualifiedExpression.renameLetParameter(editor: Editor) {
-        val callExpression = selectorExpression as? KtCallExpression ?: return
-        if (callExpression.calleeExpression?.text != "let") return
-        val parameter = callExpression.lambdaArguments.singleOrNull()?.getLambdaExpression()?.valueParameters?.singleOrNull() ?: return
-        PsiDocumentManager.getInstance(project).doPostponedOperationsAndUnblockDocument(editor.document)
-        editor.caretModel.moveToOffset(parameter.startOffset)
-        KotlinVariableInplaceRenameHandler().doRename(parameter, editor, null)
+    companion object {
+        internal fun KtSafeQualifiedExpression.renameLetParameter(editor: Editor) {
+            val callExpression = selectorExpression as? KtCallExpression ?: return
+            if (callExpression.calleeExpression?.text != "let") return
+            val parameter = callExpression.lambdaArguments.singleOrNull()?.getLambdaExpression()?.valueParameters?.singleOrNull() ?: return
+            PsiDocumentManager.getInstance(project).doPostponedOperationsAndUnblockDocument(editor.document)
+            editor.caretModel.moveToOffset(parameter.startOffset)
+            KotlinVariableInplaceRenameHandler().doRename(parameter, editor, null)
+        }
     }
 }

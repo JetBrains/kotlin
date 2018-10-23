@@ -135,6 +135,7 @@ tasks.withType(Test) {
 def jpsIncrementalTestsClass = '**/KotlinGradlePluginJpsParametrizedIT.class'
 
 test {
+    dependsOn(":kotlin-gradle-plugin:validateTaskProperties")
     exclude jpsIncrementalTestsClass
 }
 

@@ -86,6 +86,10 @@ class IrBuiltIns(
     val charType = char.toIrType()
     val charClass = builtIns.char.toIrSymbol()
 
+    val number = builtIns.number.defaultType
+    val numberType = number.toIrType()
+    val numberClass = builtIns.number.toIrSymbol()
+
     val byte = builtIns.byteType
     val byteType = byte.toIrType()
     val byteClass = builtIns.byte.toIrSymbol()
@@ -124,6 +128,8 @@ class IrBuiltIns(
     val stringType = string.toIrType()
     val stringClass = builtIns.string.toIrSymbol()
 
+    val arrayClass = builtIns.array.toIrSymbol()
+
     val throwableType = builtIns.throwable.defaultType.toIrType()
     val throwableClass = builtIns.throwable.toIrSymbol()
 
@@ -152,6 +158,7 @@ class IrBuiltIns(
     val throwIseFun = defineOperator("THROW_ISE", nothing, listOf())
     val booleanNotFun = defineOperator("NOT", bool, listOf(bool))
     val noWhenBranchMatchedExceptionFun = defineOperator("noWhenBranchMatchedException", nothing, listOf())
+    val illegalArgumentExceptionFun = defineOperator("illegalArgumentException", nothing, listOf(string))
 
     val eqeqeq = eqeqeqFun.descriptor
     val eqeq = eqeqFun.descriptor
@@ -159,6 +166,7 @@ class IrBuiltIns(
     val throwCce = throwCceFun.descriptor
     val booleanNot = booleanNotFun.descriptor
     val noWhenBranchMatchedException = noWhenBranchMatchedExceptionFun.descriptor
+    val illegalArgumentException = illegalArgumentExceptionFun.descriptor
 
     val eqeqeqSymbol = eqeqeqFun.symbol
     val eqeqSymbol = eqeqFun.symbol
@@ -167,6 +175,7 @@ class IrBuiltIns(
     val throwIseSymbol = throwIseFun.symbol
     val booleanNotSymbol = booleanNotFun.symbol
     val noWhenBranchMatchedExceptionSymbol = noWhenBranchMatchedExceptionFun.symbol
+    val illegalArgumentExceptionSymbol = illegalArgumentExceptionFun.symbol
 
     val enumValueOfFun = createEnumValueOfFun()
     val enumValueOf = enumValueOfFun.descriptor

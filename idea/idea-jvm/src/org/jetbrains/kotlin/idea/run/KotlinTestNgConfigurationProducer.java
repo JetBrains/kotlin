@@ -16,16 +16,10 @@
 
 package org.jetbrains.kotlin.idea.run;
 
-import com.intellij.execution.configurations.RunConfiguration;
-import com.intellij.execution.JavaExecutionUtil;
-import com.intellij.execution.JavaRunConfigurationExtensionManager;
-import com.intellij.execution.Location;
-import com.intellij.execution.PsiLocation;
-import com.intellij.execution.RunnerAndConfigurationSettings;
-import com.intellij.execution.RunManager;
-import com.intellij.execution.CommonJavaRunConfigurationParameters;
+import com.intellij.execution.*;
 import com.intellij.execution.actions.ConfigurationContext;
 import com.intellij.execution.actions.ConfigurationFromContext;
+import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.execution.junit.InheritorChooser;
 import com.intellij.execution.junit2.info.MethodLocation;
 import com.intellij.openapi.module.Module;
@@ -112,7 +106,7 @@ public class KotlinTestNgConfigurationProducer extends TestNGConfigurationProduc
         Project project = context.getProject();
         PsiElement leaf = location.getPsiElement();
 
-        if (!ProjectRootsUtil.isInProjectOrLibSource(leaf)) {
+        if (!ProjectRootsUtil.isInProjectOrLibSource(leaf, false)) {
             return false;
         }
 
@@ -222,7 +216,7 @@ public class KotlinTestNgConfigurationProducer extends TestNGConfigurationProduc
         }
         configuration.restoreOriginalModule(originalModule);
         configuration.setName(configuration.getName());
-        JavaRunConfigurationExtensionManager.getInstance().extendCreatedConfiguration(configuration, location);
+        JavaRunConfigurationExtensionManagerUtil.getInstance().extendCreatedConfiguration(configuration, location);
         return true;
     }
 

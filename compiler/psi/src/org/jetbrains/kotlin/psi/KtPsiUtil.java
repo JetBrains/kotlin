@@ -266,10 +266,12 @@ public class KtPsiUtil {
     }
 
     @Nullable
+    @SafeVarargs
     @Contract("null, _ -> null")
     public static PsiElement getTopmostParentOfTypes(
             @Nullable PsiElement element,
-            @NotNull Class<? extends PsiElement>... parentTypes) {
+            @NotNull Class<? extends PsiElement>... parentTypes
+    ) {
         if (element instanceof PsiFile) return null;
 
         PsiElement answer = PsiTreeUtil.getParentOfType(element, parentTypes);
@@ -641,12 +643,13 @@ public class KtPsiUtil {
         return parent;
     }
 
+    @SafeVarargs
+    @SuppressWarnings("unchecked")
     public static <T extends PsiElement> T getLastChildByType(@NotNull PsiElement root, @NotNull Class<? extends T>... elementTypes) {
         PsiElement[] children = root.getChildren();
 
         for (int i = children.length - 1; i >= 0; i--) {
             if (PsiTreeUtil.instanceOf(children[i], elementTypes)) {
-                //noinspection unchecked
                 return (T) children[i];
             }
         }

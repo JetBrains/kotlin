@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.test
 
 import kotlin.script.experimental.annotations.*
 
-@KotlinScript(extension = "greet.kts")
+@KotlinScript(fileExtension = "greet.kts")
 abstract class GreetScriptTemplate {
     fun greet(subject: String) {
         println("Hello, $subject!")

@@ -1,6 +1,6 @@
 // "Add annotation target" "true"
 @Target(AnnotationTarget.EXPRESSION)
-@Retention
+@Retention(AnnotationRetention.SOURCE)
 annotation class Foo
 
 fun test() {

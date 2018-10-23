@@ -1,5 +1,5 @@
 // IGNORE_BACKEND: JS_IR
-// EXPECTED_REACHABLE_NODES: 1163
+// EXPECTED_REACHABLE_NODES: 1333
 package foo
 
 public class PublicClass {

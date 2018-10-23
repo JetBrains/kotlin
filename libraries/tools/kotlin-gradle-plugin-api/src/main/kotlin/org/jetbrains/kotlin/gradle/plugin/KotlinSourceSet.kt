@@ -39,4 +39,6 @@ interface KotlinSourceSet : Named, HasKotlinDependencies {
         const val COMMON_MAIN_SOURCE_SET_NAME = "commonMain"
         const val COMMON_TEST_SOURCE_SET_NAME = "commonTest"
     }
+
+    val customSourceFilesExtensions: Iterable<String> // lazy iterable expected
 }

@@ -19,15 +19,15 @@ enum class TestType(val type: String) {
     }
 }
 
-enum class TestArea {
-    PSI,
-    DIAGNOSTICS,
-    CODEGEN
+enum class TestArea(val testDataPath: String) {
+    PSI("psi"),
+    DIAGNOSTICS("diagnostics"),
+    CODEGEN_BOX("codegen/box")
 }
 
-enum class SpecTestLinkedType {
-    LINKED,
-    NOT_LINKED
+enum class SpecTestLinkedType(val testDataPath: String) {
+    LINKED("linked"),
+    NOT_LINKED("notLinked")
 }
 
 interface SpecTestInfoElementType {
@@ -103,28 +103,25 @@ abstract class AbstractSpecTestValidator<T : AbstractSpecTest>(private val testD
     companion object {
         const val ISSUE_TRACKER = "https://youtrack.jetbrains.com/issue/"
         const val INTEGER_REGEX = """[1-9]\d*"""
-        const val MULTILINE_COMMENT_REGEX = """\/\*\s*%s\s+\*\/\n*"""
-        private const val SINGLELINE_COMMENT_REGEX = """\/\/\s*%s\n*"""
 
         val pathSeparator: String = Pattern.quote(File.separator)
         val lineSeparator: String = System.lineSeparator()
-        val testAreaRegex = """(?<testArea>${TestArea.values().joinToString("|")})"""
+        val testAreaRegex = """(?<testArea>${TestArea.values().joinToString("|").replace("_", " ")})"""
         val testTypeRegex = """(?<testType>${TestType.values().joinToString("|")})"""
-        val dirsByLinkedType = mapOf(
-            SpecTestLinkedType.LINKED to "linked",
-            SpecTestLinkedType.NOT_LINKED to "notLinked"
-        )
+        val multilineCommentRegex = """\/\*\s*%s\s+\*\/(?:$lineSeparator)*"""
+        private val singlelineCommentRegex = """\/\/\s*%s(?:$lineSeparator)*"""
         private val testInfoElementPattern: Pattern = Pattern.compile("""\s*(?<name>[A-Z ]+?)(?::\s*(?<value>.*?))?$lineSeparator""")
-        private val testCaseInfoRegex = """(?<infoElements>CASE DESCRIPTION:[\s\S]*?$lineSeparator)$lineSeparator*"""
-        private val testPathBaseRegexTemplate = """^.*?$pathSeparator(?<testArea>diagnostics|psi|codegen)$pathSeparator%s"""
-        val testPathRegexTemplate = """$testPathBaseRegexTemplate$pathSeparator(?<testType>pos|neg)/%s$"""
-        val testCaseInfoSingleLinePattern: Pattern = Pattern.compile(SINGLELINE_COMMENT_REGEX.format(testCaseInfoRegex))
-        val testCaseInfoMultilinePattern: Pattern = Pattern.compile(MULTILINE_COMMENT_REGEX.format(testCaseInfoRegex))
+        private val testCaseInfoRegex = """(?<infoElements>CASE DESCRIPTION:[\s\S]*?$lineSeparator)(?:$lineSeparator)*"""
+        private val testPathBaseRegexTemplate =
+            """^.*?$pathSeparator(?<testArea>diagnostics|psi|(?:codegen${pathSeparator}box))$pathSeparator%s"""
+        val testPathRegexTemplate = """$testPathBaseRegexTemplate$pathSeparator(?<testType>pos|neg)$pathSeparator%s$"""
+        val testCaseInfoSingleLinePattern: Pattern = Pattern.compile(singlelineCommentRegex.format(testCaseInfoRegex))
+        val testCaseInfoMultilinePattern: Pattern = Pattern.compile(multilineCommentRegex.format(testCaseInfoRegex))
 
         fun getInstanceByType(testFile: File) = when {
-            Pattern.compile(testPathBaseRegexTemplate.format(LinkedSpecTestValidator.pathPartRegex)).matcher(testFile.absolutePath).find() ->
+            Pattern.compile(testPathBaseRegexTemplate.format(LinkedSpecTestValidator.pathPartRegex)).matcher(testFile.canonicalPath).find() ->
                 LinkedSpecTestValidator(testFile)
-            Pattern.compile(testPathBaseRegexTemplate.format(NotLinkedSpecTestValidator.pathPartRegex)).matcher(testFile.absolutePath).find() ->
+            Pattern.compile(testPathBaseRegexTemplate.format(NotLinkedSpecTestValidator.pathPartRegex)).matcher(testFile.canonicalPath).find() ->
                 NotLinkedSpecTestValidator(testFile)
             else -> throw SpecTestValidationException(SpecTestValidationFailedReason.FILENAME_NOT_VALID)
         }

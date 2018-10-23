@@ -181,7 +181,9 @@ public abstract class AnnotationCodegen {
     }
 
     private static boolean isInvisibleFromTheOutside(@Nullable DeclarationDescriptor descriptor) {
-        if (descriptor instanceof CallableMemberDescriptor && KotlinTypeMapper.isAccessor((CallableMemberDescriptor) descriptor)) return false;
+        if (descriptor instanceof CallableMemberDescriptor && KotlinTypeMapper.isAccessor((CallableMemberDescriptor) descriptor)) {
+            return true;
+        }
         if (descriptor instanceof MemberDescriptor) {
             return AsmUtil.getVisibilityAccessFlag((MemberDescriptor) descriptor) == Opcodes.ACC_PRIVATE;
         }
@@ -347,7 +349,7 @@ public abstract class AnnotationCodegen {
     private String getAnnotationArgumentJvmName(@Nullable ClassDescriptor annotationClass, @NotNull Name parameterName) {
         if (annotationClass == null) return parameterName.asString();
 
-        Collection<PropertyDescriptor> variables =
+        Collection<? extends PropertyDescriptor> variables =
                 annotationClass.getUnsubstitutedMemberScope().getContributedVariables(parameterName, NoLookupLocation.FROM_BACKEND);
         if (variables.size() != 1) return parameterName.asString();
 
@@ -359,7 +361,7 @@ public abstract class AnnotationCodegen {
             @NotNull ConstantValue<?> value,
             @NotNull AnnotationVisitor annotationVisitor
     ) {
-        AnnotationArgumentVisitor argumentVisitor = new AnnotationArgumentVisitor<Void, Void>() {
+        AnnotationArgumentVisitor<Void, Void> argumentVisitor = new AnnotationArgumentVisitor<Void, Void>() {
             @Override
             public Void visitLongValue(@NotNull LongValue value, Void data) {
                 return visitSimpleValue(value);

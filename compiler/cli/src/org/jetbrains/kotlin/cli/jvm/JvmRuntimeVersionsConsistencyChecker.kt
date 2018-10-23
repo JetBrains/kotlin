@@ -131,7 +131,7 @@ object JvmRuntimeVersionsConsistencyChecker {
             val actualApi = ApiVersion.parse(actualRuntimeVersion.toString())
             if (actualApi == null) {
                 messageCollector.issue(null, "Could not parse runtime JAR version: $actualRuntimeVersion")
-            } else if (!languageVersionSettings.getFlag(AnalysisFlag.explicitApiVersion) && actualApi < currentApi) {
+            } else if (!languageVersionSettings.getFlag(AnalysisFlags.explicitApiVersion) && actualApi < currentApi) {
                 // If there's no explicit "-api-version" AND there's an old stdlib in the classpath (older than the default value of API),
                 // we infer API = the version of that stdlib.
                 // Note that "no explicit -api-version" requirement is necessary because for example, in

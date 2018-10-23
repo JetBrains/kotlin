@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.idea.quickfix.AddModifierFix
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
+import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.BindingContext.LEAKING_THIS
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 
@@ -35,7 +36,7 @@ class LeakingThisInspection : AbstractKotlinInspection() {
                 if (leakingThisDescriptor.classOrObject != klass) continue@these
                 val description = when (leakingThisDescriptor) {
                     is NonFinalClass ->
-                        if (expression is KtThisExpression)
+                        if (expression is KtThisExpression && expression.getStrictParentOfType<KtClassLiteralExpression>() == null)
                             "Leaking 'this' in constructor of non-final class ${leakingThisDescriptor.klass.name}"
                         else
                             continue@these // Not supported yet

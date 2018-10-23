@@ -7,10 +7,6 @@ plugins {
     id("jps-compatible")
 }
 
-repositories {
-    maven("https://repo.gradle.org/gradle/ext-releases-local")
-}
-
 jvmTarget = "1.6"
 
 val nativePlatformVariants = listOf(

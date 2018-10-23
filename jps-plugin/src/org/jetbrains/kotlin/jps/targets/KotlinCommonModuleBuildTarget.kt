@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.jps.targets
 
-import org.jetbrains.jps.ModuleChunk
 import org.jetbrains.jps.builders.storage.BuildDataPaths
 import org.jetbrains.jps.incremental.ModuleBuildTarget
 import org.jetbrains.jps.model.library.JpsOrderRootType
@@ -27,6 +26,11 @@ private const val COMMON_BUILD_META_INFO_FILE_NAME = "common-build-meta-info.txt
 class KotlinCommonModuleBuildTarget(kotlinContext: KotlinCompileContext, jpsModuleBuildTarget: ModuleBuildTarget) :
     KotlinModuleBuildTarget<CommonBuildMetaInfo>(kotlinContext, jpsModuleBuildTarget) {
 
+    override fun isEnabled(chunkCompilerArguments: CommonCompilerArguments): Boolean {
+        val k2MetadataArguments = module.k2MetadataCompilerArguments
+        return k2MetadataArguments.enabledInJps || (chunkCompilerArguments as? K2MetadataCompilerArguments)?.enabledInJps == true
+    }
+
     override val isIncrementalCompilationEnabled: Boolean
         get() = false
 
@@ -40,25 +44,23 @@ class KotlinCommonModuleBuildTarget(kotlinContext: KotlinCompileContext, jpsModu
         get() = "metadata-compiler"
 
     override fun compileModuleChunk(
-        chunk: ModuleChunk,
         commonArguments: CommonCompilerArguments,
         dirtyFilesHolder: KotlinDirtySourceFilesHolder,
         environment: JpsCompilerEnvironment
     ): Boolean {
-        reportAndSkipCircular(chunk, environment)
+        require(chunk.representativeTarget == this)
 
-        val k2MetadataArguments = module.k2MetadataCompilerArguments
-        if (k2MetadataArguments.enabledInJps || (commonArguments as? K2MetadataCompilerArguments)?.enabledInJps == true) {
-            JpsKotlinCompilerRunner().runK2MetadataCompiler(
-                commonArguments,
-                k2MetadataArguments,
-                module.kotlinCompilerSettings,
-                environment,
-                destination,
-                dependenciesOutputDirs + libraryFiles,
-                sourceFiles // incremental K2MetadataCompiler not supported yet
-            )
-        }
+        reportAndSkipCircular(environment)
+
+        JpsKotlinCompilerRunner().runK2MetadataCompiler(
+            commonArguments,
+            module.k2MetadataCompilerArguments,
+            module.kotlinCompilerSettings,
+            environment,
+            destination,
+            dependenciesOutputDirs + libraryFiles,
+            sourceFiles // incremental K2MetadataCompiler not supported yet
+        )
 
         return true
     }

@@ -19,6 +19,13 @@ private const val SCRIPT_RUNTIME_TEMPLATES_PACKAGE = "kotlin.script.templates.st
 @KotlinScript
 private abstract class DummyScriptTemplate
 
+/**
+ * Creates the compilation configuration from annotated script base class
+ * @param baseClassType the annotated script base class to construct the configuration from
+ * @param hostConfiguration scripting host configuration properties
+ * @param contextClass optional context class to extract classloading strategy from
+ * @param body optional configuration function to add more properties to the compilation configuration
+ */
 fun createCompilationConfigurationFromTemplate(
     baseClassType: KotlinType,
     hostConfiguration: ScriptingHostConfiguration,
@@ -53,7 +60,7 @@ fun createCompilationConfigurationFromTemplate(
     fun scriptConfigInstance(kclass: KClass<out ScriptCompilationConfiguration>): ScriptCompilationConfiguration = try {
         kclass.objectInstance ?: kclass.createInstance()
     } catch (e: Throwable) {
-        throw IllegalArgumentException(ILLEGAL_CONFIG_ANN_ARG, e)
+        throw IllegalArgumentException("$ILLEGAL_CONFIG_ANN_ARG: ${e.message}", e)
     }
 
     return ScriptCompilationConfiguration(scriptConfigInstance(mainAnnotation.compilationConfiguration)) {
@@ -61,10 +68,10 @@ fun createCompilationConfigurationFromTemplate(
             baseClass(loadedBaseClassType)
         }
         if (fileExtension() == null) {
-            fileExtension(mainAnnotation.extension)
+            fileExtension(mainAnnotation.fileExtension)
         }
         if (displayName() == null) {
-            displayName(mainAnnotation.name)
+            displayName(mainAnnotation.displayName)
         }
 
         body()

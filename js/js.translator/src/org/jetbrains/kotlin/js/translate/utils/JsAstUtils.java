@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.js.backend.ast.metadata.MetadataProperties;
 import org.jetbrains.kotlin.js.backend.ast.metadata.SideEffectKind;
 import org.jetbrains.kotlin.js.translate.context.Namer;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
+import org.jetbrains.kotlin.js.translate.reference.ReferenceTranslator;
 import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.resolve.source.KotlinSourceElementKt;
 import org.jetbrains.kotlin.util.OperatorNameConventions;
@@ -255,8 +256,7 @@ public final class JsAstUtils {
         ClassDescriptor classDescriptor = findClassAcrossModuleDependencies(context.getCurrentModule(), unsignedClassId);
         assert classDescriptor != null : "Class descriptor is null for " + unsignedClassId;
 
-        JsName descName = context.getInnerNameForDescriptor(classDescriptor);
-        return new JsNew(descName.makeRef(), Collections.singletonList(expression));
+        return new JsNew(ReferenceTranslator.translateAsTypeReference(classDescriptor, context), Collections.singletonList(expression));
     }
 
     @NotNull

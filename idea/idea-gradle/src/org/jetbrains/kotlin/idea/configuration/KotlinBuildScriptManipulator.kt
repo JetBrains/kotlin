@@ -21,6 +21,9 @@ import com.intellij.openapi.roots.ExternalLibraryDescriptor
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.kotlin.cli.common.arguments.CliArgumentStringBuilder.buildArgumentString
+import org.jetbrains.kotlin.cli.common.arguments.CliArgumentStringBuilder.replaceLanguageFeature
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.idea.configuration.KotlinWithGradleConfigurator.Companion.getBuildScriptSettingsPsiFile
 import org.jetbrains.kotlin.idea.inspections.gradle.GradleHeuristicHelper.PRODUCTION_DEPENDENCY_STATEMENTS
 import org.jetbrains.kotlin.idea.util.application.runReadAction
@@ -107,6 +110,13 @@ class KotlinBuildScriptManipulator(
 
     override fun changeCoroutineConfiguration(coroutineOption: String): PsiElement? =
         scriptFile.changeCoroutineConfiguration(coroutineOption)
+
+    override fun changeLanguageFeatureConfiguration(
+        feature: LanguageFeature,
+        state: LanguageFeature.State,
+        forTests: Boolean
+    ): PsiElement? =
+        scriptFile.changeLanguageFeatureConfiguration(feature, state, forTests)
 
     override fun changeLanguageVersion(version: String, forTests: Boolean): PsiElement? =
         scriptFile.changeKotlinTaskParameter("languageVersion", version, forTests)
@@ -298,23 +308,47 @@ class KotlinBuildScriptManipulator(
         }
     }
 
-    private fun KtFile.changeKotlinTaskParameter(parameterName: String, parameterValue: String, forTests: Boolean): PsiElement? {
-        val snippet = "$parameterName = \"$parameterValue\""
+    private fun KtFile.changeLanguageFeatureConfiguration(
+        feature: LanguageFeature,
+        state: LanguageFeature.State,
+        forTests: Boolean
+    ): PsiElement? {
+        val featureArgumentString = feature.buildArgumentString(state)
+        val parameterName = "freeCompilerArgs"
+        return addOrReplaceKotlinTaskParameter(
+            parameterName,
+            "listOf(\"$featureArgumentString\")",
+            forTests
+        ) {
+            val newText = text.replaceLanguageFeature(feature, state, prefix = "$parameterName = listOf(", postfix = ")")
+            replace(psiFactory.createExpression(newText))
+        }
+    }
+
+    private fun KtFile.addOrReplaceKotlinTaskParameter(
+        parameterName: String,
+        defaultValue: String,
+        forTests: Boolean,
+        replaceIt: KtExpression.() -> PsiElement
+    ): PsiElement? {
         val taskName = if (forTests) "compileTestKotlin" else "compileKotlin"
         val optionsBlock = findScriptInitializer("$taskName.kotlinOptions")?.getBlock()
         return if (optionsBlock != null) {
             val assignment = optionsBlock.statements.find {
                 (it as? KtBinaryExpression)?.left?.text == parameterName
             }
-            if (assignment != null) {
-                assignment.replace(psiFactory.createExpression(snippet))
-            } else {
-                optionsBlock.addExpressionIfMissing(snippet)
-            }
+            assignment?.replaceIt() ?: optionsBlock.addExpressionIfMissing("$parameterName = $defaultValue")
         } else {
             addImportIfMissing("org.jetbrains.kotlin.gradle.tasks.KotlinCompile")
             script?.blockExpression?.addDeclarationIfMissing("val $taskName: KotlinCompile by tasks")
-            addTopLevelBlock("$taskName.kotlinOptions")?.addExpressionIfMissing(snippet)
+            addTopLevelBlock("$taskName.kotlinOptions")?.addExpressionIfMissing("$parameterName = $defaultValue")
+        }
+
+    }
+
+    private fun KtFile.changeKotlinTaskParameter(parameterName: String, parameterValue: String, forTests: Boolean): PsiElement? {
+        return addOrReplaceKotlinTaskParameter(parameterName, "\"$parameterValue\"", forTests) {
+            replace(psiFactory.createExpression("$parameterName = \"$parameterValue\""))
         }
     }
 

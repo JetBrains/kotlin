@@ -236,9 +236,9 @@ class SerializerJsTranslator(descriptor: ClassDescriptor,
         }
         val inputVar = JsNameRef(jsFun.scope.declareFreshName("input"))
         val readBeginF = decoderClass.getFuncDesc(CallingConventions.begin).single()
-        val call = JsInvocation(JsNameRef(context.getNameForDescriptor(readBeginF), JsNameRef(jsFun.parameters[0].name)),
-                                serialClassDescRef, JsArrayLiteral(typeParams))
-        +JsVars(JsVars.JsVar(inputVar.name, call))
+        val readBeginCall = JsInvocation(JsNameRef(context.getNameForDescriptor(readBeginF), JsNameRef(jsFun.parameters[0].name)),
+                                         serialClassDescRef, JsArrayLiteral(typeParams))
+        +JsVars(JsVars.JsVar(inputVar.name, readBeginCall))
 
         // while(true) {
         val loop = JsLabel(jsFun.scope.declareFreshName("loopLabel"))

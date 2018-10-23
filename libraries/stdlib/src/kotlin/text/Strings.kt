@@ -6,13 +6,9 @@
 @file:kotlin.jvm.JvmMultifileClass
 @file:kotlin.jvm.JvmName("StringsKt")
 
-
 package kotlin.text
 
-import kotlin.*
-import kotlin.comparisons.*
 import kotlin.contracts.contract
-
 
 /**
  * Returns a sub sequence of this char sequence having leading and trailing characters matching the [predicate] removed.
@@ -1065,7 +1061,7 @@ private class DelimitedRangesSequence(
     private val input: CharSequence,
     private val startIndex: Int,
     private val limit: Int,
-    private val getNextMatch: CharSequence.(Int) -> Pair<Int, Int>?
+    private val getNextMatch: CharSequence.(currentIndex: Int) -> Pair<Int, Int>?
 ) : Sequence<IntRange> {
 
     override fun iterator(): Iterator<IntRange> = object : Iterator<IntRange> {
@@ -1132,8 +1128,8 @@ private class DelimitedRangesSequence(
 private fun CharSequence.rangesDelimitedBy(delimiters: CharArray, startIndex: Int = 0, ignoreCase: Boolean = false, limit: Int = 0): Sequence<IntRange> {
     require(limit >= 0, { "Limit must be non-negative, but was $limit." })
 
-    return DelimitedRangesSequence(this, startIndex, limit, { startIndex ->
-        indexOfAny(delimiters, startIndex, ignoreCase = ignoreCase).let { if (it < 0) null else it to 1 }
+    return DelimitedRangesSequence(this, startIndex, limit, { currentIndex ->
+        indexOfAny(delimiters, currentIndex, ignoreCase = ignoreCase).let { if (it < 0) null else it to 1 }
     })
 }
 
@@ -1156,7 +1152,7 @@ private fun CharSequence.rangesDelimitedBy(delimiters: Array<out String>, startI
     require(limit >= 0, { "Limit must be non-negative, but was $limit." } )
     val delimitersList = delimiters.asList()
 
-    return DelimitedRangesSequence(this, startIndex, limit, { startIndex -> findAnyOf(delimitersList, startIndex, ignoreCase = ignoreCase, last = false)?.let { it.first to it.second.length } })
+    return DelimitedRangesSequence(this, startIndex, limit, { currentIndex -> findAnyOf(delimitersList, currentIndex, ignoreCase = ignoreCase, last = false)?.let { it.first to it.second.length } })
 
 }
 
@@ -1266,10 +1262,14 @@ public inline fun CharSequence.split(regex: Regex, limit: Int = 0): List<String>
 
 /**
  * Splits this char sequence to a sequence of lines delimited by any of the following character sequences: CRLF, LF or CR.
+ *
+ * The lines returned do not include terminating line separators.
  */
 public fun CharSequence.lineSequence(): Sequence<String> = splitToSequence("\r\n", "\n", "\r")
 
 /**
- * * Splits this char sequence to a list of lines delimited by any of the following character sequences: CRLF, LF or CR.
+ * Splits this char sequence to a list of lines delimited by any of the following character sequences: CRLF, LF or CR.
+ *
+ * The lines returned do not include terminating line separators.
  */
 public fun CharSequence.lines(): List<String> = lineSequence().toList()

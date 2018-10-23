@@ -515,12 +515,12 @@ public class BodyResolver {
         return parentEnumOrSealed;
     }
 
+    @SuppressWarnings("unchecked")
     private static void recordConstructorDelegationCall(
             @NotNull BindingTrace trace,
             @NotNull ConstructorDescriptor constructor,
             @NotNull ResolvedCall<?> call
     ) {
-        //noinspection unchecked
         trace.record(CONSTRUCTOR_RESOLVED_DELEGATION_CALL, constructor, (ResolvedCall<ConstructorDescriptor>) call);
     }
 

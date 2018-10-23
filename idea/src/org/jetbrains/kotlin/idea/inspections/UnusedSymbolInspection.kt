@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.asJava.toLightMethods
-import org.jetbrains.kotlin.config.AnalysisFlag
+import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.caches.project.implementingDescriptors
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
@@ -46,6 +46,7 @@ import org.jetbrains.kotlin.idea.core.toDescriptor
 import org.jetbrains.kotlin.idea.findUsages.KotlinFindUsagesHandlerFactory
 import org.jetbrains.kotlin.idea.findUsages.handlers.KotlinFindClassUsagesHandler
 import org.jetbrains.kotlin.idea.imports.importableFqName
+import org.jetbrains.kotlin.idea.isMainFunction
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.quickfix.RemoveUnusedFunctionParameterFix
 import org.jetbrains.kotlin.idea.references.mainReference
@@ -66,6 +67,7 @@ import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
+import org.jetbrains.kotlin.resolve.isInlineClassType
 import org.jetbrains.kotlin.util.findCallableMemberBySignature
 import java.awt.GridBagConstraints
 import java.awt.GridBagLayout
@@ -86,6 +88,12 @@ class UnusedSymbolInspection : AbstractKotlinInspection() {
         fun isEntryPoint(declaration: KtNamedDeclaration): Boolean {
             if (declaration.hasKotlinAdditionalAnnotation()) return true
             if (declaration is KtClass && declaration.declarations.any { it.hasKotlinAdditionalAnnotation() }) return true
+
+            // Some of the main-function-cases are covered by 'javaInspection.isEntryPoint(lightElement)' call
+            // but not all of them: light method for parameterless main still points to parameterless name
+            // that is not an actual entry point from Java language point of view
+            if (declaration.isMainFunction()) return true
+
             val lightElement: PsiElement? = when (declaration) {
                 is KtClassOrObject -> declaration.toLightClass()
                 is KtNamedFunction, is KtSecondaryConstructor -> LightClassUtil.getLightClassMethod(declaration as KtFunction)
@@ -168,8 +176,8 @@ class UnusedSymbolInspection : AbstractKotlinInspection() {
             if (descriptor is ClassDescriptor && descriptor.kind == ClassKind.ANNOTATION_CLASS) {
                 val fqName = descriptor.fqNameSafe.asString()
                 val languageVersionSettings = declaration.languageVersionSettings
-                if (fqName in languageVersionSettings.getFlag(AnalysisFlag.experimental) ||
-                    fqName in languageVersionSettings.getFlag(AnalysisFlag.useExperimental)
+                if (fqName in languageVersionSettings.getFlag(AnalysisFlags.experimental) ||
+                    fqName in languageVersionSettings.getFlag(AnalysisFlags.useExperimental)
                 ) return
             }
 
@@ -302,7 +310,7 @@ class UnusedSymbolInspection : AbstractKotlinInspection() {
             if (referenceUsed) return true
         }
 
-        if (declaration is KtCallableDeclaration && !declaration.hasModifier(KtTokens.INTERNAL_KEYWORD)) {
+        if (declaration is KtCallableDeclaration && declaration.canBeHandledByLightMethods(descriptor)) {
             val lightMethods = declaration.toLightMethods()
             if (lightMethods.isNotEmpty()) {
                 val lightMethodsUsed = lightMethods.any { method ->
@@ -314,6 +322,24 @@ class UnusedSymbolInspection : AbstractKotlinInspection() {
         }
 
         return referenceUsed
+    }
+
+    private fun KtCallableDeclaration.canBeHandledByLightMethods(descriptor: DeclarationDescriptor?): Boolean {
+        return when {
+            hasModifier(KtTokens.INTERNAL_KEYWORD) -> false
+            this !is KtNamedFunction -> true
+            descriptor !is FunctionDescriptor -> true
+            else -> !descriptor.hasInlineClassParameters()
+        }
+
+    }
+
+    private fun FunctionDescriptor.hasInlineClassParameters(): Boolean {
+        return when {
+            dispatchReceiverParameter?.type?.isInlineClassType() == true -> true
+            extensionReceiverParameter?.type?.isInlineClassType() == true -> true
+            else -> valueParameters.any { it.type.isInlineClassType() }
+        }
     }
 
     private fun hasOverrides(declaration: KtNamedDeclaration, useScope: SearchScope): Boolean =

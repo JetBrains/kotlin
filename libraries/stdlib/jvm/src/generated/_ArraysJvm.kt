@@ -13,9 +13,6 @@ package kotlin.collections
 // See: https://github.com/JetBrains/kotlin/tree/master/libraries/stdlib
 //
 
-import kotlin.*
-import kotlin.text.*
-import kotlin.comparisons.*
 
 /**
  * Returns a list containing all elements that are instances of specified class.
@@ -295,9 +292,13 @@ public fun CharArray.binarySearch(element: Char, fromIndex: Int = 0, toIndex: In
  * If any of arrays contains itself on any nesting level the behavior is undefined.
  */
 @SinceKotlin("1.1")
+@JvmName("contentDeepEqualsInline")
 @kotlin.internal.InlineOnly
 public actual inline infix fun <T> Array<out T>.contentDeepEquals(other: Array<out T>): Boolean {
-    return java.util.Arrays.deepEquals(this, other)
+    if (kotlin.internal.apiVersionIsAtLeast(1, 3, 0))
+        return contentDeepEqualsImpl(other)
+    else
+        return java.util.Arrays.deepEquals(this, other)
 }
 
 /**
@@ -307,9 +308,13 @@ public actual inline infix fun <T> Array<out T>.contentDeepEquals(other: Array<o
  * If any of arrays contains itself on any nesting level the behavior is undefined.
  */
 @SinceKotlin("1.1")
+@JvmName("contentDeepHashCodeInline")
 @kotlin.internal.InlineOnly
 public actual inline fun <T> Array<out T>.contentDeepHashCode(): Int {
-    return java.util.Arrays.deepHashCode(this)
+    if (kotlin.internal.apiVersionIsAtLeast(1, 3, 0))
+        return contentDeepHashCodeImpl()
+    else
+        return java.util.Arrays.deepHashCode(this)
 }
 
 /**
@@ -322,9 +327,13 @@ public actual inline fun <T> Array<out T>.contentDeepHashCode(): Int {
  * @sample samples.collections.Arrays.ContentOperations.contentDeepToString
  */
 @SinceKotlin("1.1")
+@JvmName("contentDeepToStringInline")
 @kotlin.internal.InlineOnly
 public actual inline fun <T> Array<out T>.contentDeepToString(): String {
-    return java.util.Arrays.deepToString(this)
+    if (kotlin.internal.apiVersionIsAtLeast(1, 3, 0))
+        return contentDeepToStringImpl()
+    else
+        return java.util.Arrays.deepToString(this)
 }
 
 /**
@@ -608,7 +617,7 @@ public actual inline fun CharArray.contentToString(): String {
  * @param endIndex the end (exclusive) of the subrange to copy, size of this array by default.
  * 
  * @throws IndexOutOfBoundsException or [IllegalArgumentException] when [startIndex] or [endIndex] is out of range of this array indices or when `startIndex > endIndex`.
- * @throws IndexOutOfBoundsException when the subrange doesn't fit into the [destination] array starting at the specified [destinationIndex],
+ * @throws IndexOutOfBoundsException when the subrange doesn't fit into the [destination] array starting at the specified [destinationOffset],
  * or when that index is out of the [destination] array indices range.
  * 
  * @return the [destination] array.
@@ -616,8 +625,6 @@ public actual inline fun CharArray.contentToString(): String {
 @SinceKotlin("1.3")
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun <T> Array<out T>.copyInto(destination: Array<T>, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = size): Array<T> {
-    @Suppress("NAME_SHADOWING")
-    val endIndex = if (endIndex == -1) size else endIndex // TODO: Remove when default value from expect is fixed
     System.arraycopy(this, startIndex, destination, destinationOffset, endIndex - startIndex)
     return destination
 }
@@ -633,7 +640,7 @@ public actual fun <T> Array<out T>.copyInto(destination: Array<T>, destinationOf
  * @param endIndex the end (exclusive) of the subrange to copy, size of this array by default.
  * 
  * @throws IndexOutOfBoundsException or [IllegalArgumentException] when [startIndex] or [endIndex] is out of range of this array indices or when `startIndex > endIndex`.
- * @throws IndexOutOfBoundsException when the subrange doesn't fit into the [destination] array starting at the specified [destinationIndex],
+ * @throws IndexOutOfBoundsException when the subrange doesn't fit into the [destination] array starting at the specified [destinationOffset],
  * or when that index is out of the [destination] array indices range.
  * 
  * @return the [destination] array.
@@ -641,8 +648,6 @@ public actual fun <T> Array<out T>.copyInto(destination: Array<T>, destinationOf
 @SinceKotlin("1.3")
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun ByteArray.copyInto(destination: ByteArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = size): ByteArray {
-    @Suppress("NAME_SHADOWING")
-    val endIndex = if (endIndex == -1) size else endIndex // TODO: Remove when default value from expect is fixed
     System.arraycopy(this, startIndex, destination, destinationOffset, endIndex - startIndex)
     return destination
 }
@@ -658,7 +663,7 @@ public actual fun ByteArray.copyInto(destination: ByteArray, destinationOffset: 
  * @param endIndex the end (exclusive) of the subrange to copy, size of this array by default.
  * 
  * @throws IndexOutOfBoundsException or [IllegalArgumentException] when [startIndex] or [endIndex] is out of range of this array indices or when `startIndex > endIndex`.
- * @throws IndexOutOfBoundsException when the subrange doesn't fit into the [destination] array starting at the specified [destinationIndex],
+ * @throws IndexOutOfBoundsException when the subrange doesn't fit into the [destination] array starting at the specified [destinationOffset],
  * or when that index is out of the [destination] array indices range.
  * 
  * @return the [destination] array.
@@ -666,8 +671,6 @@ public actual fun ByteArray.copyInto(destination: ByteArray, destinationOffset: 
 @SinceKotlin("1.3")
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun ShortArray.copyInto(destination: ShortArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = size): ShortArray {
-    @Suppress("NAME_SHADOWING")
-    val endIndex = if (endIndex == -1) size else endIndex // TODO: Remove when default value from expect is fixed
     System.arraycopy(this, startIndex, destination, destinationOffset, endIndex - startIndex)
     return destination
 }
@@ -683,7 +686,7 @@ public actual fun ShortArray.copyInto(destination: ShortArray, destinationOffset
  * @param endIndex the end (exclusive) of the subrange to copy, size of this array by default.
  * 
  * @throws IndexOutOfBoundsException or [IllegalArgumentException] when [startIndex] or [endIndex] is out of range of this array indices or when `startIndex > endIndex`.
- * @throws IndexOutOfBoundsException when the subrange doesn't fit into the [destination] array starting at the specified [destinationIndex],
+ * @throws IndexOutOfBoundsException when the subrange doesn't fit into the [destination] array starting at the specified [destinationOffset],
  * or when that index is out of the [destination] array indices range.
  * 
  * @return the [destination] array.
@@ -691,8 +694,6 @@ public actual fun ShortArray.copyInto(destination: ShortArray, destinationOffset
 @SinceKotlin("1.3")
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun IntArray.copyInto(destination: IntArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = size): IntArray {
-    @Suppress("NAME_SHADOWING")
-    val endIndex = if (endIndex == -1) size else endIndex // TODO: Remove when default value from expect is fixed
     System.arraycopy(this, startIndex, destination, destinationOffset, endIndex - startIndex)
     return destination
 }
@@ -708,7 +709,7 @@ public actual fun IntArray.copyInto(destination: IntArray, destinationOffset: In
  * @param endIndex the end (exclusive) of the subrange to copy, size of this array by default.
  * 
  * @throws IndexOutOfBoundsException or [IllegalArgumentException] when [startIndex] or [endIndex] is out of range of this array indices or when `startIndex > endIndex`.
- * @throws IndexOutOfBoundsException when the subrange doesn't fit into the [destination] array starting at the specified [destinationIndex],
+ * @throws IndexOutOfBoundsException when the subrange doesn't fit into the [destination] array starting at the specified [destinationOffset],
  * or when that index is out of the [destination] array indices range.
  * 
  * @return the [destination] array.
@@ -716,8 +717,6 @@ public actual fun IntArray.copyInto(destination: IntArray, destinationOffset: In
 @SinceKotlin("1.3")
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun LongArray.copyInto(destination: LongArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = size): LongArray {
-    @Suppress("NAME_SHADOWING")
-    val endIndex = if (endIndex == -1) size else endIndex // TODO: Remove when default value from expect is fixed
     System.arraycopy(this, startIndex, destination, destinationOffset, endIndex - startIndex)
     return destination
 }
@@ -733,7 +732,7 @@ public actual fun LongArray.copyInto(destination: LongArray, destinationOffset: 
  * @param endIndex the end (exclusive) of the subrange to copy, size of this array by default.
  * 
  * @throws IndexOutOfBoundsException or [IllegalArgumentException] when [startIndex] or [endIndex] is out of range of this array indices or when `startIndex > endIndex`.
- * @throws IndexOutOfBoundsException when the subrange doesn't fit into the [destination] array starting at the specified [destinationIndex],
+ * @throws IndexOutOfBoundsException when the subrange doesn't fit into the [destination] array starting at the specified [destinationOffset],
  * or when that index is out of the [destination] array indices range.
  * 
  * @return the [destination] array.
@@ -741,8 +740,6 @@ public actual fun LongArray.copyInto(destination: LongArray, destinationOffset: 
 @SinceKotlin("1.3")
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun FloatArray.copyInto(destination: FloatArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = size): FloatArray {
-    @Suppress("NAME_SHADOWING")
-    val endIndex = if (endIndex == -1) size else endIndex // TODO: Remove when default value from expect is fixed
     System.arraycopy(this, startIndex, destination, destinationOffset, endIndex - startIndex)
     return destination
 }
@@ -758,7 +755,7 @@ public actual fun FloatArray.copyInto(destination: FloatArray, destinationOffset
  * @param endIndex the end (exclusive) of the subrange to copy, size of this array by default.
  * 
  * @throws IndexOutOfBoundsException or [IllegalArgumentException] when [startIndex] or [endIndex] is out of range of this array indices or when `startIndex > endIndex`.
- * @throws IndexOutOfBoundsException when the subrange doesn't fit into the [destination] array starting at the specified [destinationIndex],
+ * @throws IndexOutOfBoundsException when the subrange doesn't fit into the [destination] array starting at the specified [destinationOffset],
  * or when that index is out of the [destination] array indices range.
  * 
  * @return the [destination] array.
@@ -766,8 +763,6 @@ public actual fun FloatArray.copyInto(destination: FloatArray, destinationOffset
 @SinceKotlin("1.3")
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun DoubleArray.copyInto(destination: DoubleArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = size): DoubleArray {
-    @Suppress("NAME_SHADOWING")
-    val endIndex = if (endIndex == -1) size else endIndex // TODO: Remove when default value from expect is fixed
     System.arraycopy(this, startIndex, destination, destinationOffset, endIndex - startIndex)
     return destination
 }
@@ -783,7 +778,7 @@ public actual fun DoubleArray.copyInto(destination: DoubleArray, destinationOffs
  * @param endIndex the end (exclusive) of the subrange to copy, size of this array by default.
  * 
  * @throws IndexOutOfBoundsException or [IllegalArgumentException] when [startIndex] or [endIndex] is out of range of this array indices or when `startIndex > endIndex`.
- * @throws IndexOutOfBoundsException when the subrange doesn't fit into the [destination] array starting at the specified [destinationIndex],
+ * @throws IndexOutOfBoundsException when the subrange doesn't fit into the [destination] array starting at the specified [destinationOffset],
  * or when that index is out of the [destination] array indices range.
  * 
  * @return the [destination] array.
@@ -791,8 +786,6 @@ public actual fun DoubleArray.copyInto(destination: DoubleArray, destinationOffs
 @SinceKotlin("1.3")
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun BooleanArray.copyInto(destination: BooleanArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = size): BooleanArray {
-    @Suppress("NAME_SHADOWING")
-    val endIndex = if (endIndex == -1) size else endIndex // TODO: Remove when default value from expect is fixed
     System.arraycopy(this, startIndex, destination, destinationOffset, endIndex - startIndex)
     return destination
 }
@@ -808,7 +801,7 @@ public actual fun BooleanArray.copyInto(destination: BooleanArray, destinationOf
  * @param endIndex the end (exclusive) of the subrange to copy, size of this array by default.
  * 
  * @throws IndexOutOfBoundsException or [IllegalArgumentException] when [startIndex] or [endIndex] is out of range of this array indices or when `startIndex > endIndex`.
- * @throws IndexOutOfBoundsException when the subrange doesn't fit into the [destination] array starting at the specified [destinationIndex],
+ * @throws IndexOutOfBoundsException when the subrange doesn't fit into the [destination] array starting at the specified [destinationOffset],
  * or when that index is out of the [destination] array indices range.
  * 
  * @return the [destination] array.
@@ -816,8 +809,6 @@ public actual fun BooleanArray.copyInto(destination: BooleanArray, destinationOf
 @SinceKotlin("1.3")
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun CharArray.copyInto(destination: CharArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = size): CharArray {
-    @Suppress("NAME_SHADOWING")
-    val endIndex = if (endIndex == -1) size else endIndex // TODO: Remove when default value from expect is fixed
     System.arraycopy(this, startIndex, destination, destinationOffset, endIndex - startIndex)
     return destination
 }

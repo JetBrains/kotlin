@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 private class One {
     val a1 = arrayOf(
             object { val fy = "text"}

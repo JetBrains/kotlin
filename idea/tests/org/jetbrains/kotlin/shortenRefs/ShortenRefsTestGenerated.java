@@ -39,6 +39,11 @@ public class ShortenRefsTestGenerated extends AbstractShortenRefsTest {
         runTest("idea/testData/shortenRefs/callableRefsOnCompanion.kt");
     }
 
+    @TestMetadata("classInCompanionObject.kt")
+    public void testClassInCompanionObject() throws Exception {
+        runTest("idea/testData/shortenRefs/classInCompanionObject.kt");
+    }
+
     @TestMetadata("ClassNameConflict.kt")
     public void testClassNameConflict() throws Exception {
         runTest("idea/testData/shortenRefs/ClassNameConflict.kt");
@@ -57,6 +62,21 @@ public class ShortenRefsTestGenerated extends AbstractShortenRefsTest {
     @TestMetadata("descriptorsChangeAfterImportInsertion.kt")
     public void testDescriptorsChangeAfterImportInsertion() throws Exception {
         runTest("idea/testData/shortenRefs/descriptorsChangeAfterImportInsertion.kt");
+    }
+
+    @TestMetadata("extensionForCompanionObject.kt")
+    public void testExtensionForCompanionObject() throws Exception {
+        runTest("idea/testData/shortenRefs/extensionForCompanionObject.kt");
+    }
+
+    @TestMetadata("extensionForObject.kt")
+    public void testExtensionForObject() throws Exception {
+        runTest("idea/testData/shortenRefs/extensionForObject.kt");
+    }
+
+    @TestMetadata("extensionForObject2.kt")
+    public void testExtensionForObject2() throws Exception {
+        runTest("idea/testData/shortenRefs/extensionForObject2.kt");
     }
 
     @TestMetadata("extensionFunctionVarInvokedWithQualifier.kt")

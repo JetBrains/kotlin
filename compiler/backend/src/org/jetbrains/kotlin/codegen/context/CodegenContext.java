@@ -224,7 +224,7 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
             if (closure == null) {
                 throw new IllegalStateException("Can't capture this for context without closure: " + this);
             }
-            closure.setCaptureThis();
+            closure.setNeedsCaptureOuterClass();
         }
         return StackValue.changeReceiverForFieldAndSharedVar(outerExpression.invoke(), prefix);
     }
@@ -393,10 +393,14 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
     public CodegenContext findParentContextWithDescriptor(DeclarationDescriptor descriptor) {
         CodegenContext c = this;
         while (c != null) {
-            if (c.getContextDescriptor() == descriptor) break;
+            if (!c.shouldSkipThisContextInHierarchy() && c.getContextDescriptor() == descriptor) break;
             c = c.getParentContext();
         }
         return c;
+    }
+
+    private boolean shouldSkipThisContextInHierarchy() {
+        return getContextKind() == OwnerKind.ERASED_INLINE_CLASS;
     }
 
     @NotNull
@@ -409,7 +413,7 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
         return getAccessor(propertyDescriptor, AccessorKind.NORMAL, null, superCallTarget, getterAccessorRequired, setterAccessorRequired);
     }
 
-
+    @SuppressWarnings("unchecked")
     public  <D extends CallableMemberDescriptor> D getAccessorForJvmDefaultCompatibility(@NotNull D descriptor) {
         if (descriptor instanceof PropertyAccessorDescriptor) {
             PropertyDescriptor propertyAccessor = getAccessor(((PropertyAccessorDescriptor) descriptor).getCorrespondingProperty(),
@@ -567,7 +571,7 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
         }
 
         if (myOuter != null && resultValue != null && !isStaticField(resultValue)) {
-            closure.setCaptureThis();
+            closure.setNeedsCaptureOuterClass();
         }
         return resultValue;
     }

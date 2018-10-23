@@ -33,10 +33,9 @@ public class TrackingSlicedMap extends SlicedMapImpl {
         this.trackWithStackTraces = trackWithStackTraces;
     }
 
+    @SuppressWarnings("unchecked")
     private <K, V> SliceWithStackTrace<K, V> wrapSlice(ReadOnlySlice<K, V> slice) {
-        SliceWithStackTrace<?, ?> translated = sliceTranslationMap.computeIfAbsent(slice, k -> new SliceWithStackTrace<>(slice));
-        //noinspection unchecked
-        return (SliceWithStackTrace) translated;
+        return (SliceWithStackTrace) sliceTranslationMap.computeIfAbsent(slice, k -> new SliceWithStackTrace<>(slice));
     }
 
     @Override

@@ -1,12 +1,10 @@
-// !LANGUAGE: +AllowContractsForCustomFunctions +UseReturnsEffect
-// !DIAGNOSTICS: -INVISIBLE_REFERENCE -INVISIBLE_MEMBER
 // !USE_EXPERIMENTAL: kotlin.contracts.ExperimentalContracts
 
 /*
  KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (POSITIVE)
 
  SECTION: contracts
- CATEGORY: analysis, smartcasts
+ CATEGORIES: analysis, smartcasts
  NUMBER: 7
  DESCRIPTION: Smartcasts using Returns effects with nested or subsequent contract function calls.
  */

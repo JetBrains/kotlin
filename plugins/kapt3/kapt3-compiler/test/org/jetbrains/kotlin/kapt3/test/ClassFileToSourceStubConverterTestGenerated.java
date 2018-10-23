@@ -89,6 +89,16 @@ public class ClassFileToSourceStubConverterTestGenerated extends AbstractClassFi
         runTest("plugins/kapt3/kapt3-compiler/testData/converter/errorLocationMapping.kt");
     }
 
+    @TestMetadata("errorSuperclass.kt")
+    public void testErrorSuperclass() throws Exception {
+        runTest("plugins/kapt3/kapt3-compiler/testData/converter/errorSuperclass.kt");
+    }
+
+    @TestMetadata("errorSuperclassCorrectErrorTypes.kt")
+    public void testErrorSuperclassCorrectErrorTypes() throws Exception {
+        runTest("plugins/kapt3/kapt3-compiler/testData/converter/errorSuperclassCorrectErrorTypes.kt");
+    }
+
     @TestMetadata("fileFacadeJvmName.kt")
     public void testFileFacadeJvmName() throws Exception {
         runTest("plugins/kapt3/kapt3-compiler/testData/converter/fileFacadeJvmName.kt");
@@ -127,6 +137,11 @@ public class ClassFileToSourceStubConverterTestGenerated extends AbstractClassFi
     @TestMetadata("inheritanceSimple.kt")
     public void testInheritanceSimple() throws Exception {
         runTest("plugins/kapt3/kapt3-compiler/testData/converter/inheritanceSimple.kt");
+    }
+
+    @TestMetadata("inlineClasses.kt")
+    public void testInlineClasses() throws Exception {
+        runTest("plugins/kapt3/kapt3-compiler/testData/converter/inlineClasses.kt");
     }
 
     @TestMetadata("innerClassesWithTypeParameters.kt")

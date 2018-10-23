@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.idea.js
 
+import com.intellij.execution.actions.ConfigurationContext
 import com.intellij.openapi.module.Module
 import com.intellij.psi.PsiElement
 
@@ -16,5 +17,5 @@ interface KotlinJSRunConfigurationData {
 
 interface KotlinJSRunConfigurationDataProvider<out T : KotlinJSRunConfigurationData> {
     val isForTests: Boolean
-    fun getConfigurationData(element: PsiElement): T?
+    fun getConfigurationData(context: ConfigurationContext): T?
 }

@@ -1,12 +1,11 @@
-// !LANGUAGE: +AllowContractsForCustomFunctions +UseCallsInPlaceEffect
-// !DIAGNOSTICS: -INVISIBLE_REFERENCE -INVISIBLE_MEMBER -UNUSED_VARIABLE
+// !DIAGNOSTICS: -UNUSED_VARIABLE
 // !USE_EXPERIMENTAL: kotlin.contracts.ExperimentalContracts
 
 /*
  KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (POSITIVE)
 
  SECTION: contracts
- CATEGORY: declarations, contractBuilder, effects, callsInPlace
+ CATEGORIES: declarations, contractBuilder, effects, callsInPlace
  NUMBER: 3
  DESCRIPTION: Contract with 'this' in first parameter of CallsInPlace.
  UNEXPECTED BEHAVIOUR

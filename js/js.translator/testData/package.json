@@ -8,6 +8,7 @@
   },
   "scripts": {
     "runOnTeamcity": "mocha --reporter mocha-teamcity-reporter",
-    "test": "mocha"
+    "test": "mocha",
+    "runIrTestInNode" : "node $NODE_DEBUG_OPTION runIrTestInNode.js"
   }
 }

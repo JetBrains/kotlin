@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.descriptors.WrappedClassConstructorDe
 import org.jetbrains.kotlin.backend.common.descriptors.WrappedPropertyDescriptor
 import org.jetbrains.kotlin.backend.common.ir.DeclarationFactory
 import org.jetbrains.kotlin.backend.common.ir.copyTo
+import org.jetbrains.kotlin.backend.common.ir.copyTypeParametersFrom
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
@@ -103,6 +104,8 @@ class JsDeclarationFactory : DeclarationFactory {
             it.returnType = oldConstructor.returnType
         }
 
+        newConstructor.copyTypeParametersFrom(oldConstructor)
+
         val outerThisValueParameter =
             JsIrBuilder.buildValueParameter(Namer.OUTER_NAME, 0, outerThisType).also { it.parent = newConstructor }
 
@@ -110,10 +113,6 @@ class JsDeclarationFactory : DeclarationFactory {
 
         for (p in oldConstructor.valueParameters) {
             newValueParameters += p.copyTo(newConstructor, 1)
-        }
-
-        for (p in oldConstructor.typeParameters) {
-            newConstructor.typeParameters += p.copyTo(newConstructor)
         }
 
         newConstructor.valueParameters += newValueParameters

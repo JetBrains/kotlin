@@ -20,7 +20,7 @@ import kotlin.script.experimental.jvm.dependenciesFromCurrentContext
 import kotlin.script.experimental.jvm.jvm
 
 @KotlinScript(
-    extension = "scriptwithdeps.kts",
+    fileExtension = "scriptwithdeps.kts",
     compilationConfiguration = ScriptWithMavenDepsConfiguration::class
 )
 abstract class ScriptWithMavenDeps

@@ -1,12 +1,10 @@
-// !LANGUAGE: +AllowContractsForCustomFunctions +UseCallsInPlaceEffect
-// !DIAGNOSTICS: -INVISIBLE_REFERENCE -INVISIBLE_MEMBER
 // !USE_EXPERIMENTAL: kotlin.contracts.ExperimentalContracts
 
 /*
  KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (NEGATIVE)
 
  SECTION: contracts
- CATEGORY: declarations, contractBuilder, effects, returns
+ CATEGORIES: declarations, contractBuilder, effects, returns
  NUMBER: 2
  DESCRIPTION: Using equality with not labeled 'this' in implies.
  */

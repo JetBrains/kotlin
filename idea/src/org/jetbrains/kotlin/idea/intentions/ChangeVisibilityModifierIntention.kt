@@ -22,10 +22,7 @@ import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithVisibility
 import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.idea.core.canBePrivate
-import org.jetbrains.kotlin.idea.core.canBeProtected
-import org.jetbrains.kotlin.idea.core.setVisibility
-import org.jetbrains.kotlin.idea.core.toDescriptor
+import org.jetbrains.kotlin.idea.core.*
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
@@ -105,14 +102,10 @@ open class ChangeVisibilityModifierIntention protected constructor(
         }
     }
 
-    protected fun isAnnotationClassPrimaryConstructor(element: KtDeclaration) =
-        element is KtPrimaryConstructor && (element.parent as? KtClass)?.hasModifier(KtTokens.ANNOTATION_KEYWORD) ?: false
-
     class Public : ChangeVisibilityModifierIntention(KtTokens.PUBLIC_KEYWORD), HighPriorityAction
 
     class Private : ChangeVisibilityModifierIntention(KtTokens.PRIVATE_KEYWORD), HighPriorityAction {
         override fun applicabilityRange(element: KtDeclaration): TextRange? {
-            if (isAnnotationClassPrimaryConstructor(element)) return null
             return if (element.canBePrivate()) super.applicabilityRange(element) else null
         }
     }
@@ -125,8 +118,7 @@ open class ChangeVisibilityModifierIntention protected constructor(
 
     class Internal : ChangeVisibilityModifierIntention(KtTokens.INTERNAL_KEYWORD) {
         override fun applicabilityRange(element: KtDeclaration): TextRange? {
-            if (isAnnotationClassPrimaryConstructor(element)) return null
-            return super.applicabilityRange(element)
+            return if (element.canBeInternal()) super.applicabilityRange(element) else null
         }
     }
 }

@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.generators.tests.generator.testGroup
 import org.jetbrains.kotlin.generators.util.KT_OR_KTS_WITHOUT_DOTS_IN_NAME
 import org.jetbrains.kotlin.integration.AbstractAntTaskTest
 import org.jetbrains.kotlin.ir.AbstractIrCfgTestCase
+import org.jetbrains.kotlin.ir.AbstractIrJsTextTestCase
 import org.jetbrains.kotlin.ir.AbstractIrSourceRangesTestCase
 import org.jetbrains.kotlin.ir.AbstractIrTextTestCase
 import org.jetbrains.kotlin.jvm.compiler.*
@@ -152,6 +153,10 @@ fun main(args: Array<String>) {
             model("codegen/kapt", targetBackend = TargetBackend.JVM)
         }
 
+        testClass<AbstractAsmLikeInstructionListingTest> {
+            model("codegen/asmLike", targetBackend = TargetBackend.JVM)
+        }
+
         testClass<AbstractBlackBoxInlineCodegenTest> {
             model("codegen/boxInline")
         }
@@ -180,6 +185,10 @@ fun main(args: Array<String>) {
             model("ir/irText")
         }
 
+        testClass<AbstractIrJsTextTestCase> {
+            model("ir/irJsText")
+        }
+
         testClass<AbstractIrCfgTestCase> {
             model("ir/irCfg")
         }
@@ -197,7 +206,7 @@ fun main(args: Array<String>) {
         }
 
         testClass<AbstractCheckLocalVariablesTableTest> {
-            model("checkLocalVariablesTable")
+            model("checkLocalVariablesTable", targetBackend = TargetBackend.JVM)
         }
 
         testClass<AbstractWriteFlagsTest> {

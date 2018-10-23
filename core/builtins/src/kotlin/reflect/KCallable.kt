@@ -3,6 +3,7 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("ACTUAL_WITHOUT_EXPECT") // for building kotlin-runtime
 package kotlin.reflect
 
 /**
@@ -10,7 +11,7 @@ package kotlin.reflect
  *
  * @param R return type of the callable.
  */
-public interface KCallable<out R> : KAnnotatedElement {
+public actual interface KCallable<out R> : KAnnotatedElement {
     /**
      * The name of this callable as it was declared in the source code.
      * If the callable has no name, a special invented name is created.
@@ -19,7 +20,7 @@ public interface KCallable<out R> : KAnnotatedElement {
      * - property accessors: the getter for a property named "foo" will have the name "<get-foo>",
      *   the setter, similarly, will have the name "<set-foo>".
      */
-    public val name: String
+    public actual val name: String
 
     /**
      * Parameters required to make a call to this callable.

@@ -41,6 +41,7 @@ public suspend inline fun <T> suspendCoroutineOrReturn(crossinline block: (Conti
  */
 @SinceKotlin("1.2")
 @kotlin.internal.InlineOnly
+@Suppress("UNUSED_PARAMETER", "RedundantSuspendModifier")
 public suspend inline fun <T> suspendCoroutineUninterceptedOrReturn(crossinline block: (Continuation<T>) -> Any?): T =
     throw NotImplementedError("Implementation of suspendCoroutineUninterceptedOrReturn is intrinsic")
 

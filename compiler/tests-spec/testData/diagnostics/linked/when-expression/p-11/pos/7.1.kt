@@ -3,7 +3,7 @@
 /*
  KOTLIN DIAGNOSTICS SPEC TEST (POSITIVE)
 
- SECTION: when-expression
+ SECTIONS: when-expression
  PARAGRAPH: 11
  SENTENCE: [7] The bound expression is of an Enum classes type and all enumerated values are checked for equality using constant conditions;
  NUMBER: 1
@@ -19,6 +19,6 @@ fun case_1(dir: _EnumClass): String = when (dir) {
 }
 
 // CASE DESCRIPTION: Checking for exhaustive 'when' (single enum value covered).
-fun case_2(value: _EnumClassSingle): String = when (value) {
+fun case_2(value_1: _EnumClassSingle): String = when (value_1) {
     _EnumClassSingle.EVERYTHING -> ""
 }

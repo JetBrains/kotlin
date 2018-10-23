@@ -83,7 +83,7 @@ class DeserializedSimpleFunctionDescriptor(
         unsubstitutedReturnType: KotlinType?,
         modality: Modality?,
         visibility: Visibility,
-        userDataMap: Map<out FunctionDescriptor.UserDataKey<*>, *>,
+        userDataMap: Map<out CallableDescriptor.UserDataKey<*>, *>,
         isExperimentalCoroutineInReleaseEnvironment: DeserializedMemberDescriptor.CoroutinesCompatibilityMode
     ): SimpleFunctionDescriptorImpl {
         return super.initialize(

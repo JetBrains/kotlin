@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 1116
+// EXPECTED_REACHABLE_NODES: 1286
 // KT-4263 Wrong capturing a function literal variable
 
 package foo

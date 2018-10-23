@@ -30,7 +30,8 @@ open class KaptWithKotlincTask : KaptTask(), CompilerArgumentAwareWithInput<K2JV
     @get:Classpath
     @get:InputFiles
     @Suppress("unused")
-    internal val kotlinTaskPluginClasspaths get() = kotlinCompileTask.pluginClasspath
+    internal val kotlinTaskPluginClasspaths
+        get() = kotlinCompileTask.pluginClasspath
 
     @get:Classpath
     @get:InputFiles

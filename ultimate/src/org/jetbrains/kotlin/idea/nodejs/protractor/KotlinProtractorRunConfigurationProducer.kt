@@ -19,13 +19,12 @@ package org.jetbrains.kotlin.idea.nodejs.protractor
 import com.intellij.execution.actions.CompatibleRunConfigurationProducer
 import com.intellij.execution.actions.ConfigurationContext
 import com.intellij.openapi.module.Module
-import com.intellij.openapi.module.ModuleUtilCore
 import com.intellij.openapi.util.Ref
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.idea.js.KotlinJSRunConfigurationData
 import org.jetbrains.kotlin.idea.js.KotlinJSRunConfigurationDataProvider
-import org.jetbrains.kotlin.idea.js.jsOrJsImpl
+import org.jetbrains.kotlin.idea.js.asJsModule
 import org.jetbrains.kotlin.idea.js.jsTestOutputFilePath
 import org.jetbrains.kotlin.idea.nodejs.TestElementPath
 import org.jetbrains.kotlin.idea.nodejs.getNodeJsEnvironmentVars
@@ -43,11 +42,13 @@ class KotlinProtractorRunConfigurationProducer :
     override val isForTests: Boolean
         get() = true
 
-    override fun getConfigurationData(element: PsiElement): ProtractorConfigData? {
-        val module = ModuleUtilCore.findModuleForPsiElement(element) ?: return null
+    override fun getConfigurationData(
+        context: ConfigurationContext
+    ): ProtractorConfigData? {
+        val module = context.module?.asJsModule() ?: return null
+        val element = context.psiLocation ?: return null
         if (!TestElementPath.isModuleAssociatedDir(element, module)) return null
-        val jsModule = module.jsOrJsImpl() ?: return null
-        val testFilePath = jsModule.jsTestOutputFilePath ?: return null
+        val testFilePath = module.jsTestOutputFilePath ?: return null
         return ProtractorConfigData(element, module, testFilePath)
     }
 
@@ -55,8 +56,7 @@ class KotlinProtractorRunConfigurationProducer :
         configuration: KotlinProtractorRunConfiguration,
         context: ConfigurationContext
     ): Boolean {
-        val contextPsi = context.psiLocation ?: return false
-        val configData = getConfigurationData(contextPsi) ?: return false
+        val configData = getConfigurationData(context) ?: return false
         return configuration.runSettings.testFileSystemDependentPath == FileUtil.toSystemDependentName(configData.jsOutputFilePath)
     }
 
@@ -66,7 +66,7 @@ class KotlinProtractorRunConfigurationProducer :
         sourceElement: Ref<PsiElement>
     ): Boolean {
         val element = context.psiLocation ?: return false
-        val configData = getConfigurationData(element) ?: return false
+        val configData = getConfigurationData(context) ?: return false
         sourceElement.set(element)
         configuration.runSettings = configuration.runSettings.copy(
                 testFilePath = configData.jsOutputFilePath,

@@ -5,29 +5,14 @@
 
 package org.jetbrains.kotlin.jps.build
 
-import org.jetbrains.kotlin.config.IncrementalCompilation
+import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
+import org.jetbrains.kotlin.config.KotlinFacetSettings
 import org.jetbrains.kotlin.incremental.testingUtils.BuildLogFinder
 import org.jetbrains.kotlin.incremental.testingUtils.BuildLogFinder.Companion.JS_JPS_LOG
+import org.jetbrains.kotlin.jps.model.JpsKotlinFacetModuleExtension
 import java.io.File
 
 abstract class AbstractIncrementalJsJpsTest : AbstractIncrementalJpsTest() {
-    private var isICEnabledForJsBackup: Boolean = false
-
-    override fun setUp() {
-        super.setUp()
-        isICEnabledForJsBackup = IncrementalCompilation.isEnabledForJs()
-        IncrementalCompilation.setIsEnabledForJs(true)
-    }
-
-    override fun tearDown() {
-        IncrementalCompilation.setIsEnabledForJs(isICEnabledForJsBackup)
-        super.tearDown()
-    }
-
-    override fun configureDependencies() {
-        AbstractKotlinJpsBuildTestCase.addKotlinJavaScriptStdlibDependency(myProject)
-    }
-
     override val buildLogFinder: BuildLogFinder
         get() = super.buildLogFinder.copy(isJsEnabled = true)
 
@@ -37,5 +22,17 @@ abstract class AbstractIncrementalJsJpsTest : AbstractIncrementalJpsTest() {
             buildLogFile.writeText("JPS JS LOG PLACEHOLDER")
         }
         super.doTest(testDataPath)
+    }
+
+    override fun overrideModuleSettings() {
+        myProject.modules.forEach {
+            val facet = KotlinFacetSettings()
+            facet.compilerArguments = K2JSCompilerArguments()
+
+            it.container.setChild(
+                JpsKotlinFacetModuleExtension.KIND,
+                JpsKotlinFacetModuleExtension(facet)
+            )
+        }
     }
 }

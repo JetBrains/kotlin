@@ -15,4 +15,8 @@ interface LanguageSettingsBuilder {
     fun enableLanguageFeature(name: String)
 
     val enabledLanguageFeatures: Set<String>
+
+    fun useExperimentalAnnotation(name: String)
+
+    val experimentalAnnotationsInUse: Set<String>
 }

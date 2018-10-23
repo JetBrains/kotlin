@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 // WITH_RUNTIME
 
 val targetNameLists: Map<String, String> = mapOf("1"         to "OK")

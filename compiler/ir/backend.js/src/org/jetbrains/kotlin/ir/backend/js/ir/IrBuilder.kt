@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrTypeParameterSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
@@ -233,6 +234,10 @@ object JsIrBuilder {
     fun buildTypeOperator(type: IrType, operator: IrTypeOperator, argument: IrExpression, toType: IrType, symbol: IrClassifierSymbol) =
         IrTypeOperatorCallImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, type, operator, toType, symbol, argument)
 
+    fun buildImplicitCast(value: IrExpression, toType: IrType) =
+        JsIrBuilder.buildTypeOperator(toType, IrTypeOperator.IMPLICIT_CAST, value, toType, toType.classifierOrFail)
+
+
     fun buildNull(type: IrType) = IrConstImpl.constNull(UNDEFINED_OFFSET, UNDEFINED_OFFSET, type)
     fun buildBoolean(type: IrType, v: Boolean) = IrConstImpl.boolean(UNDEFINED_OFFSET, UNDEFINED_OFFSET, type, v)
     fun buildInt(type: IrType, v: Int) = IrConstImpl.int(UNDEFINED_OFFSET, UNDEFINED_OFFSET, type, v)
@@ -266,4 +271,67 @@ fun IrClass.simpleFunctions(): List<IrSimpleFunction> = this.declarations.flatMa
     }
 }
 
+// TODO extract to common place?
 
+fun irCall(
+    call: IrCall,
+    newFunction: IrFunction,
+    dispatchReceiverAsFirstArgument: Boolean = false,
+    firstArgumentAsDispatchReceiver: Boolean = false
+): IrCall =
+        irCall(call, newFunction.symbol, dispatchReceiverAsFirstArgument, firstArgumentAsDispatchReceiver)
+
+
+fun irCall(
+    call: IrCall,
+    newSymbol: IrFunctionSymbol,
+    dispatchReceiverAsFirstArgument: Boolean = false,
+    firstArgumentAsDispatchReceiver: Boolean = false
+): IrCall =
+    call.run {
+        IrCallImpl(
+            startOffset,
+            endOffset,
+            type,
+            newSymbol,
+            newSymbol.descriptor,
+            typeArgumentsCount,
+            origin
+        ).apply {
+            copyTypeAndValueArgumentsFrom(
+                call,
+                dispatchReceiverAsFirstArgument,
+                firstArgumentAsDispatchReceiver
+            )
+        }
+    }
+
+// TODO extract to common place?
+private fun IrCall.copyTypeAndValueArgumentsFrom(
+    call: IrCall,
+    dispatchReceiverAsFirstArgument: Boolean = false,
+    firstArgumentAsDispatchReceiver: Boolean = false
+) {
+    copyTypeArgumentsFrom(call)
+
+    var toValueArgumentIndex = 0
+    var fromValueArgumentIndex = 0
+
+    when {
+        dispatchReceiverAsFirstArgument -> {
+            putValueArgument(toValueArgumentIndex++, call.dispatchReceiver)
+        }
+        firstArgumentAsDispatchReceiver -> {
+            dispatchReceiver = call.getValueArgument(fromValueArgumentIndex++)
+        }
+        else -> {
+            dispatchReceiver = call.dispatchReceiver
+        }
+    }
+
+    extensionReceiver = call.extensionReceiver
+
+    while (fromValueArgumentIndex < call.valueArgumentsCount) {
+        putValueArgument(toValueArgumentIndex++, call.getValueArgument(fromValueArgumentIndex++))
+    }
+}

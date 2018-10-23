@@ -136,14 +136,14 @@ class IndexOverflowJVMTest {
 
     @Test
     fun foldIndexedOverflow() {
-        assertIndexOverflow { maxIndexSequence.foldIndexed("") { index, acc, s -> checkIndexPositive(index); s } }
-        assertIndexOverflow { maxIndexIterable.foldIndexed("") { index, acc, s -> checkIndexPositive(index); s } }
+        assertIndexOverflow { maxIndexSequence.foldIndexed("") { index, _, s -> checkIndexPositive(index); s } }
+        assertIndexOverflow { maxIndexIterable.foldIndexed("") { index, _, s -> checkIndexPositive(index); s } }
     }
 
     @Test
     fun reduceIndexedOverflow() {
-        assertIndexOverflow { maxIndexSequence.reduceIndexed { index, acc, s -> checkIndexPositive(index); s } }
-        assertIndexOverflow { maxIndexIterable.reduceIndexed { index, acc, s -> checkIndexPositive(index); s } }
+        assertIndexOverflow { maxIndexSequence.reduceIndexed { index, _, s -> checkIndexPositive(index); s } }
+        assertIndexOverflow { maxIndexIterable.reduceIndexed { index, _, s -> checkIndexPositive(index); s } }
     }
 
 

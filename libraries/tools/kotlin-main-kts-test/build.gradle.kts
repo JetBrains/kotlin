@@ -10,7 +10,7 @@ dependencies {
     testCompile(project(":kotlin-main-kts"))
     testCompile(project(":kotlin-scripting-jvm-host"))
     testCompile(commonDep("junit"))
-    testRuntime("org.apache.ivy:ivy:2.4.0")
+    compileOnly("org.apache.ivy:ivy:2.4.0") // for jps/pill
 }
 
 sourceSets {

@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.incremental
 
+import org.jetbrains.kotlin.build.DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS
 import org.jetbrains.kotlin.build.GeneratedFile
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
@@ -28,8 +29,6 @@ import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.parsing.classesFqNames
-import org.jetbrains.kotlin.incremental.storage.version.CacheVersionManager
-import org.jetbrains.kotlin.incremental.storage.version.saveIfNeeded
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus
 import java.io.File
@@ -41,7 +40,6 @@ abstract class IncrementalCompilerRunner<
 >(
     workingDir: File,
     cacheDirName: String,
-    protected val cachesVersionManagers: List<CacheVersionManager>,
     protected val reporter: ICReporter,
     private val buildHistoryFile: File,
         private val localStateDirs: Collection<File> = emptyList()
@@ -50,6 +48,7 @@ abstract class IncrementalCompilerRunner<
     protected val cacheDirectory = File(workingDir, cacheDirName)
     protected val dirtySourcesSinceLastTimeFile = File(workingDir, DIRTY_SOURCES_FILE_NAME)
     protected val lastBuildInfoFile = File(workingDir, LAST_BUILD_INFO_FILE_NAME)
+    protected open val kotlinSourceFilesExtensions: List<String> = DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS
 
     protected abstract fun isICEnabled(): Boolean
     protected abstract fun createCacheManager(args: Args): CacheManager
@@ -85,7 +84,7 @@ abstract class IncrementalCompilerRunner<
             if (providedChangedFiles == null) {
                 caches.inputsCache.sourceSnapshotMap.compareAndUpdate(allSourceFiles)
             }
-            val allKotlinFiles = allSourceFiles.filter { it.isKotlinFile() }
+            val allKotlinFiles = allSourceFiles.filter { it.isKotlinFile(kotlinSourceFilesExtensions) }
             return compileIncrementally(args, caches, allKotlinFiles, CompilationMode.Rebuild(), messageCollector)
         }
 
@@ -269,10 +268,6 @@ abstract class IncrementalCompilerRunner<
         val dirtyData = DirtyData(buildDirtyLookupSymbols, buildDirtyFqNames)
         processChangesAfterBuild(compilationMode, currentBuildInfo, dirtyData)
 
-        if (exitCode == ExitCode.OK) {
-            cachesVersionManagers.forEach { it.saveIfNeeded() }
-        }
-
         return exitCode
     }
 
@@ -281,8 +276,8 @@ abstract class IncrementalCompilerRunner<
         changedFiles: ChangedFiles.Known
     ): DirtyData {
         val removedClasses = HashSet<String>()
-        val dirtyFiles = changedFiles.modified.filterTo(HashSet()) { it.isKotlinFile() }
-        val removedFiles = changedFiles.removed.filterTo(HashSet()) { it.isKotlinFile() }
+        val dirtyFiles = changedFiles.modified.filterTo(HashSet()) { it.isKotlinFile(kotlinSourceFilesExtensions) }
+        val removedFiles = changedFiles.removed.filterTo(HashSet()) { it.isKotlinFile(kotlinSourceFilesExtensions) }
 
         val existingClasses = classesFqNames(dirtyFiles)
         val previousClasses = caches.platformCache

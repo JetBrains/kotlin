@@ -19,9 +19,9 @@ package org.jetbrains.kotlin.script
 import com.intellij.ide.highlighter.JavaClassFileType
 import com.intellij.ide.highlighter.JavaFileType
 import com.intellij.openapi.components.ServiceManager
+import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.psi.KtFile
@@ -43,23 +43,22 @@ interface ScriptDefinitionProvider {
 }
 
 fun findScriptDefinition(file: VirtualFile, project: Project): KotlinScriptDefinition? {
-    if (file.isDirectory) return null
-    if (file.extension == KotlinFileType.EXTENSION || file.extension == JavaClassFileType.INSTANCE.defaultExtension) return null
+    if (file.isDirectory ||
+        file.extension == KotlinFileType.EXTENSION ||
+        file.extension == JavaClassFileType.INSTANCE.defaultExtension
+    ) {
+        return null
+    }
 
     val psiFile = PsiManager.getInstance(project).findFile(file)
     if (psiFile != null) {
-        if (psiFile !is KtFile || !psiFile.isScript()) {
-            return null
+        if (psiFile !is KtFile) return null
+        if (!DumbService.isDumb(project)) {
+            return psiFile.script?.kotlinScriptDefinition
         }
-        return psiFile.script?.kotlinScriptDefinition?.value
     }
 
     return ScriptDefinitionProvider.getInstance(project).findScriptDefinition(file.name)
-}
-
-fun findScriptDefinition(psiFile: PsiFile): KotlinScriptDefinition? {
-    if (psiFile.isDirectory) return null
-    return (psiFile as? KtFile)?.script?.kotlinScriptDefinition?.value
 }
 
 abstract class LazyScriptDefinitionProvider : ScriptDefinitionProvider {
@@ -85,7 +84,7 @@ abstract class LazyScriptDefinitionProvider : ScriptDefinitionProvider {
     }
 
     protected open fun nonScriptFileName(fileName: String) = nonScriptFilenameSuffixes.any {
-        fileName.endsWith( it, ignoreCase = true)
+        fileName.endsWith(it, ignoreCase = true)
     }
 
     override fun findScriptDefinition(fileName: String): KotlinScriptDefinition? =

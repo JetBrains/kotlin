@@ -195,6 +195,7 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements MutableRe
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public void setResultingSubstitutor(@NotNull TypeSubstitutor substitutor) {
         resultingDescriptor = (D) candidateDescriptor.substitute(substitutor);
         //noinspection ConstantConditions

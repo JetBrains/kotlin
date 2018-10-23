@@ -1,5 +1,4 @@
-// !LANGUAGE: +AllowContractsForCustomFunctions +UseCallsInPlaceEffect
-// !DIAGNOSTICS: -INVISIBLE_REFERENCE -INVISIBLE_MEMBER -FINAL_UPPER_BOUND
+// !DIAGNOSTICS: -FINAL_UPPER_BOUND
 // !USE_EXPERIMENTAL: kotlin.contracts.ExperimentalContracts
 // !WITH_CLASSES
 
@@ -7,7 +6,7 @@
  KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (POSITIVE)
 
  SECTION: contracts
- CATEGORY: declarations, contractBuilder, effects, returns
+ CATEGORIES: declarations, contractBuilder, effects, returns
  NUMBER: 2
  DESCRIPTION: Returns effect with complex conditions (using conjunction and disjuntion).
  */

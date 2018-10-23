@@ -1,5 +1,5 @@
 // IGNORE_BACKEND: JS_IR
-// EXPECTED_REACHABLE_NODES: 1127
+// EXPECTED_REACHABLE_NODES: 1283
 class A(val x: Char)
 
 fun typeOf(x: dynamic): String = js("typeof x")

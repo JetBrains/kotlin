@@ -1,5 +1,13 @@
 package
 
+public final inline class Id</*0*/ T> {
+    public constructor Id</*0*/ T>(/*0*/ x: T)
+    public final val x: T
+    public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+}
+
 public final inline class Test1 {
     public constructor Test1(/*0*/ x: Test1)
     public final val x: Test1
@@ -67,6 +75,22 @@ public final inline class TestRecursionInArray {
 public final inline class TestRecursionInTypeArguments {
     public constructor TestRecursionInTypeArguments(/*0*/ x: kotlin.collections.List<TestRecursionInTypeArguments>)
     public final val x: kotlin.collections.List<TestRecursionInTypeArguments>
+    public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+}
+
+public final inline class TestRecursionInUpperBounds</*0*/ T : TestRecursionInUpperBounds<T>> {
+    public constructor TestRecursionInUpperBounds</*0*/ T : TestRecursionInUpperBounds<T>>(/*0*/ x: T)
+    public final val x: T
+    public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+}
+
+public final inline class TestRecursionThroughId {
+    public constructor TestRecursionThroughId(/*0*/ x: Id<TestRecursionThroughId>)
+    public final val x: Id<TestRecursionThroughId>
     public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String

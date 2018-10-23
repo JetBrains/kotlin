@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.load.java.descriptors;
 
+import kotlin.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
@@ -144,7 +145,8 @@ public class JavaMethodDescriptor extends SimpleFunctionDescriptorImpl implement
     public JavaMethodDescriptor enhance(
             @Nullable KotlinType enhancedReceiverType,
             @NotNull List<ValueParameterData> enhancedValueParametersData,
-            @NotNull KotlinType enhancedReturnType
+            @NotNull KotlinType enhancedReturnType,
+            @Nullable Pair<UserDataKey<?>, ?> additionalUserData
     ) {
         List<ValueParameterDescriptor> enhancedValueParameters =
                 UtilKt.copyValueParameters(enhancedValueParametersData, getValueParameters(), this);
@@ -164,6 +166,11 @@ public class JavaMethodDescriptor extends SimpleFunctionDescriptorImpl implement
                         .build();
 
         assert enhancedMethod != null : "null after substitution while enhancing " + toString();
+
+        if (additionalUserData != null) {
+            enhancedMethod.putInUserDataMap(additionalUserData.getFirst(), additionalUserData.getSecond());
+        }
+
         return enhancedMethod;
     }
 }

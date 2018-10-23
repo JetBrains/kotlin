@@ -70,7 +70,7 @@ class KotlinSetupEnvironmentNotificationProvider(
         }
 
         if (!KotlinConfigurationCheckerComponent.getInstance(module.project).isSyncing &&
-            !SuppressNotificationState.isKotlinNotConfiguredSuppressed(module.toModuleGroup()) &&
+            isNotConfiguredNotificationRequired(module.toModuleGroup()) &&
             !hasAnyKotlinRuntimeInScope(module) &&
             UnsupportedAbiVersionNotificationPanelProvider.collectBadRoots(module).isEmpty()
         ) {

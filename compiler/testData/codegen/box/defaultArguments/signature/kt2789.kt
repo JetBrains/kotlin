@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 interface FooTrait<T> {
     fun make(size: Int = 16) : T
 

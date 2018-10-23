@@ -521,6 +521,11 @@ public class BasicCompletionHandlerTestGenerated extends AbstractBasicCompletion
             runTest("idea/idea-completion/testData/handlers/basic/override/KeepModifiersBefore.kt");
         }
 
+        @TestMetadata("kt25312.kt")
+        public void testKt25312() throws Exception {
+            runTest("idea/idea-completion/testData/handlers/basic/override/kt25312.kt");
+        }
+
         @TestMetadata("OverrideFunction.kt")
         public void testOverrideFunction() throws Exception {
             runTest("idea/idea-completion/testData/handlers/basic/override/OverrideFunction.kt");

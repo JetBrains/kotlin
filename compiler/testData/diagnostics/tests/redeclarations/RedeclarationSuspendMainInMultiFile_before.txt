@@ -1,0 +1,4 @@
+package
+
+public suspend fun main(/*0*/ args: kotlin.Array<kotlin.String>): kotlin.Unit
+public suspend fun main(/*0*/ args: kotlin.Array<kotlin.String>): kotlin.Unit

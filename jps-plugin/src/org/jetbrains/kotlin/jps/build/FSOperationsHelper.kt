@@ -64,7 +64,7 @@ class FSOperationsHelper(
     internal fun markFilesForCurrentRound(files: Iterable<File>) {
         files.forEach {
             val root = compileContext.projectDescriptor.buildRootIndex.findJavaRootDescriptor(compileContext, it)
-            if (root != null) dirtyFilesHolder.byTarget[root.target]?._markDirty(it)
+            if (root != null) dirtyFilesHolder.byTarget[root.target]?._markDirty(it, root)
         }
 
         markFilesImpl(files, currentRound = true) { it.exists() && moduleBasedFilter.accept(it) }
@@ -78,7 +78,8 @@ class FSOperationsHelper(
 
         val targetDirtyFiles = dirtyFilesHolder.byTarget[target]!!
         files.forEach {
-            targetDirtyFiles._markDirty(it)
+            val root = compileContext.projectDescriptor.buildRootIndex.findJavaRootDescriptor(compileContext, it)!!
+            targetDirtyFiles._markDirty(it, root)
         }
 
         markFilesImpl(files, currentRound = true) { it.exists() }

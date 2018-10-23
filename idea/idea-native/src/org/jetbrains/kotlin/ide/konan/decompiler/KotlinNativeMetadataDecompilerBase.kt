@@ -101,10 +101,10 @@ sealed class FileWithMetadata {
 
     open class Compatible(
         val proto: KonanProtoBuf.LinkDataPackageFragment,
-        serializerProtocol: SerializerExtensionProtocol
+        serializerProtocol: SerializerExtensionProtocol // TODO: Is it required?
     ) : FileWithMetadata() {
         val nameResolver = NameResolverImpl(proto.stringTable, proto.nameTable)
-        val packageFqName = FqName(nameResolver.getPackageFqName(proto.`package`.getExtension(serializerProtocol.packageFqName)))
+        val packageFqName = FqName(proto.fqName)
 
         open val classesToDecompile: List<ProtoBuf.Class> =
             proto.classes.classesList.filter { proto ->

@@ -34,4 +34,4 @@ fun test() {
 // 0 INVOKESTATIC Result.box-impl
 // 0 INVOKESTATIC Result.unbox-impl
 // 0 Result\$Failure
-// 53 Result
+// 52 Result

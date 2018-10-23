@@ -23,7 +23,7 @@ class KotlinNativeMetadataDecompiler : KotlinNativeMetadataDecompilerBase<Kotlin
 ) {
 
     override fun doReadFile(file: VirtualFile): FileWithMetadata? {
-        val proto = KotlinNativeDescriptorManager.getInstance().getCachedPackageFragment(file)
+        val proto = KotlinNativeLoadingMetadataCache.getInstance().getCachedPackageFragment(file)
         return FileWithMetadata.Compatible(proto, KonanSerializerProtocol) //todo: check version compatibility
     }
 }

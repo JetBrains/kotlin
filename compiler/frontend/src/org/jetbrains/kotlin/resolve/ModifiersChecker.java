@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.lexer.KtModifierKeywordToken;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.checkers.*;
+import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver;
 
 import java.util.Collection;
 import java.util.HashMap;

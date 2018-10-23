@@ -78,5 +78,3 @@ class LocalFilesResolver :
 class FilesAndMavenResolver :
         KotlinAnnotatedScriptDependenciesResolver(emptyList(), arrayListOf(DirectResolver(), MavenResolver()))
 
-class FilesAndIvyResolver :
-    KotlinAnnotatedScriptDependenciesResolver(emptyList(), arrayListOf(DirectResolver(), IvyResolver()))

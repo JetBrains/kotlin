@@ -49,14 +49,15 @@ public final class BindingUtils {
     private BindingUtils() {
     }
 
+    @SuppressWarnings("unchecked")
     @NotNull
-    static private <E extends PsiElement, D extends DeclarationDescriptor>
-    D getDescriptorForExpression(@NotNull BindingContext context, @NotNull E expression, Class<D> descriptorClass) {
+    private static <E extends PsiElement, D extends DeclarationDescriptor> D getDescriptorForExpression(
+            @NotNull BindingContext context, @NotNull E expression, Class<D> descriptorClass
+    ) {
         DeclarationDescriptor descriptor = context.get(BindingContext.DECLARATION_TO_DESCRIPTOR, expression);
         assert descriptor != null;
         assert descriptorClass.isInstance(descriptor)
                 : message(expression, expression.toString() + " expected to have of type" + descriptorClass.toString());
-        //noinspection unchecked
         return (D) descriptor;
     }
 

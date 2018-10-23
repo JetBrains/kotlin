@@ -1,12 +1,10 @@
-// !LANGUAGE: +AllowContractsForCustomFunctions +UseCallsInPlaceEffect
-// !DIAGNOSTICS: -INVISIBLE_REFERENCE -INVISIBLE_MEMBER
 // !USE_EXPERIMENTAL: kotlin.contracts.ExperimentalContracts
 
 /*
  KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (NEGATIVE)
 
  SECTION: contracts
- CATEGORY: declarations, contractBuilder, common
+ CATEGORIES: declarations, contractBuilder, common
  NUMBER: 11
  DESCRIPTION: Functions with contracts and external contract builder.
  ISSUES: KT-26186

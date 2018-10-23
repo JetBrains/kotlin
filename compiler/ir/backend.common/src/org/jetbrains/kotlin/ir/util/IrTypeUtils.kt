@@ -12,7 +12,10 @@ import org.jetbrains.kotlin.ir.declarations.IrPackageFragment
 import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
-import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.types.IrDynamicType
+import org.jetbrains.kotlin.ir.types.IrSimpleType
+import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.DFS
@@ -74,3 +77,15 @@ fun IrType.isNullable(): Boolean = DFS.ifAny(listOf(this), { it.typeParameterSup
         else -> it is IrDynamicType
     }
 })
+
+
+fun IrType.isThrowable(): Boolean {
+    if (this is IrSimpleType) {
+        val classClassifier = classifier as? IrClassSymbol ?: return false
+        if (classClassifier.owner.name.asString() != "Throwable") return false
+        val parent = classClassifier.owner.parent as? IrPackageFragment ?: return false
+        return parent.fqName == kotlinPackageFqn
+    } else return false
+}
+
+fun IrType.isThrowableTypeOrSubtype() = DFS.ifAny(listOf(this), IrType::superTypes, IrType::isThrowable)

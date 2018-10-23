@@ -16,7 +16,24 @@ interface KonanVersion : Serializable {
 
     fun toString(showMeta: Boolean, showBuild: Boolean): String
 
-    companion object
+    companion object {
+        // major.minor.patch-meta-build where patch, meta and build are optional.
+        private val versionPattern = "(\\d+)\\.(\\d+)(?:\\.(\\d+))?(?:-(\\p{Alpha}\\p{Alnum}*))?(?:-(\\d+))?".toRegex()
+
+        fun fromString(version: String): KonanVersion {
+            val (major, minor, maintenance, metaString, build) =
+                    versionPattern.matchEntire(version)?.destructured
+                        ?: throw IllegalArgumentException("Cannot parse Kotlin/Native version: $version")
+
+            return KonanVersionImpl(
+                MetaVersion.findAppropriate(metaString),
+                major.toInt(),
+                minor.toInt(),
+                maintenance.toIntOrNull() ?: 0,
+                build.toIntOrNull() ?: -1
+            )
+        }
+    }
 }
 
 data class KonanVersionImpl(

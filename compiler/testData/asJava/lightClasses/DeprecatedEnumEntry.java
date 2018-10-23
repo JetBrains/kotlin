@@ -9,5 +9,5 @@ public enum E {
     @kotlin.Deprecated(message = "b")
     Entry3;
 
-    protected E() { /* compiled code */ }
+    private E() { /* compiled code */ }
 }

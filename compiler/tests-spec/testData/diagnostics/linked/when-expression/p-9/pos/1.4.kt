@@ -5,7 +5,7 @@
 /*
  KOTLIN DIAGNOSTICS SPEC TEST (POSITIVE)
 
- SECTION: when-expression
+ SECTIONS: when-expression
  PARAGRAPH: 9
  SENTENCE: [1] The type of the resulting expression is the least upper bound of the types of all the entries.
  NUMBER: 4
@@ -13,8 +13,8 @@
  */
 
 // CASE DESCRIPTION: Checking correct type in 'when'.
-fun case_1(value: _SealedClass): String {
-    val whenValue = when (value) {
+fun case_1(value_1: _SealedClass): String {
+    val whenValue = when (value_1) {
         is _SealedChild1 -> _ClassLevel2()
         is _SealedChild2 -> _ClassLevel3()
         is _SealedChild3 -> _ClassLevel4()
@@ -27,8 +27,8 @@ fun case_1(value: _SealedClass): String {
 }
 
 // CASE DESCRIPTION: Checking correct type in 'when' with null-check branch.
-fun case_2(value: _SealedClass?): String {
-    val whenValue = when (value) {
+fun case_2(value_1: _SealedClass?): String {
+    val whenValue = when (value_1) {
         is _SealedChild1 -> _ClassLevel2()
         is _SealedChild2 -> _ClassLevel3()
         is _SealedChild3 -> _ClassLevel4()
@@ -42,8 +42,8 @@ fun case_2(value: _SealedClass?): String {
 }
 
 // CASE DESCRIPTION: Checking Any type (implicit cast to any) in 'when'.
-fun case_3(value: _SealedClass): String {
-    val whenValue = when (value) {
+fun case_3(value_1: _SealedClass): String {
+    val whenValue = when (value_1) {
         is _SealedChild1 -> <!IMPLICIT_CAST_TO_ANY!>10<!>
         is _SealedChild2 -> <!IMPLICIT_CAST_TO_ANY!>""<!>
         is _SealedChild3 -> <!IMPLICIT_CAST_TO_ANY!>object<!> {}
@@ -56,8 +56,8 @@ fun case_3(value: _SealedClass): String {
 }
 
 // CASE DESCRIPTION: Checking Any type (implicit cast to any) in 'when' with null-check branch.
-fun case_4(value: _SealedClass?): String {
-    val whenValue = when (value) {
+fun case_4(value_1: _SealedClass?): String {
+    val whenValue = when (value_1) {
         is _SealedChild1 -> <!IMPLICIT_CAST_TO_ANY!>10<!>
         is _SealedChild2 -> <!IMPLICIT_CAST_TO_ANY!>""<!>
         is _SealedChild3 -> <!IMPLICIT_CAST_TO_ANY!>object<!> {}
@@ -71,8 +71,8 @@ fun case_4(value: _SealedClass?): String {
 }
 
 // CASE DESCRIPTION: Checking correct type in 'when' (equality with objects).
-fun case_5(value: _SealedClassWithObjects): String {
-    val whenValue = when (value) {
+fun case_5(value_1: _SealedClassWithObjects): String {
+    val whenValue = when (value_1) {
         _SealedWithObjectsChild1 -> _ClassLevel2()
         _SealedWithObjectsChild2 -> _ClassLevel3()
         _SealedWithObjectsChild3 -> _ClassLevel4()
@@ -85,8 +85,8 @@ fun case_5(value: _SealedClassWithObjects): String {
 }
 
 // CASE DESCRIPTION: Checking correct type in 'when' (equality with objects) with null-check branch.
-fun case_6(value: _SealedClassWithObjects?): String {
-    val whenValue = when (value) {
+fun case_6(value_1: _SealedClassWithObjects?): String {
+    val whenValue = when (value_1) {
         _SealedWithObjectsChild1 -> _ClassLevel2()
         _SealedWithObjectsChild2 -> _ClassLevel3()
         _SealedWithObjectsChild3 -> _ClassLevel4()
@@ -100,8 +100,8 @@ fun case_6(value: _SealedClassWithObjects?): String {
 }
 
 // CASE DESCRIPTION: Checking Any type (implicit cast to any) in 'when' (equality with objects).
-fun case_7(value: _SealedClassWithObjects): String {
-    val whenValue = when (value) {
+fun case_7(value_1: _SealedClassWithObjects): String {
+    val whenValue = when (value_1) {
         _SealedWithObjectsChild1 -> <!IMPLICIT_CAST_TO_ANY!>10<!>
         _SealedWithObjectsChild2 -> <!IMPLICIT_CAST_TO_ANY!>""<!>
         _SealedWithObjectsChild3 -> <!IMPLICIT_CAST_TO_ANY!>object<!> {}
@@ -114,8 +114,8 @@ fun case_7(value: _SealedClassWithObjects): String {
 }
 
 // CASE DESCRIPTION: Checking Any type (implicit cast to any) in 'when' with null-check branch (equality with objects).
-fun case_8(value: _SealedClassWithObjects?): String {
-    val whenValue = when (value) {
+fun case_8(value_1: _SealedClassWithObjects?): String {
+    val whenValue = when (value_1) {
         _SealedWithObjectsChild1 -> <!IMPLICIT_CAST_TO_ANY!>10<!>
         _SealedWithObjectsChild2 -> <!IMPLICIT_CAST_TO_ANY!>""<!>
         _SealedWithObjectsChild3 -> <!IMPLICIT_CAST_TO_ANY!>object<!> {}
@@ -129,8 +129,8 @@ fun case_8(value: _SealedClassWithObjects?): String {
 }
 
 // CASE DESCRIPTION: Checking correct basic type (Int) in 'when' with.
-fun case_9(value: _SealedClassWithObjects): String {
-    val whenValue = when (value) {
+fun case_9(value_1: _SealedClassWithObjects): String {
+    val whenValue = when (value_1) {
         <!USELESS_IS_CHECK!>is _SealedClassWithObjects<!> -> 10
     }
 

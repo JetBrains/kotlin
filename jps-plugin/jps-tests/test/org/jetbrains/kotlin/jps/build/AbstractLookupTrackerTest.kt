@@ -204,7 +204,7 @@ abstract class AbstractLookupTrackerTest : TestWithWorkingDir() {
 
         val testDir = File(path)
         val workToOriginalFileMap = HashMap(copyTestSources(testDir, srcDir, filePrefix = ""))
-        var dirtyFiles = srcDir.walk().filterTo(HashSet()) { it.isKotlinFile() }
+        var dirtyFiles = srcDir.walk().filterTo(HashSet()) { it.isKotlinFile(listOf("kt", "kts")) }
         val steps = getModificationsToPerform(testDir, moduleNames = null, allowNoFilesWithSuffixInTestData = true, touchPolicy = TouchPolicy.CHECKSUM)
                 .filter { it.isNotEmpty() }
 

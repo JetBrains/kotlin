@@ -45,3 +45,7 @@ val CodeStyleSettings.kotlinCommonSettings: KotlinCommonCodeStyleSettings
 
 val CodeStyleSettings.kotlinCustomSettings: KotlinCodeStyleSettings
     get() = getCustomSettings(KotlinCodeStyleSettings::class.java)
+
+fun CodeStyleSettings.kotlinCodeStyleDefaults(): String? {
+    return kotlinCustomSettings.CODE_STYLE_DEFAULTS ?: kotlinCommonSettings.CODE_STYLE_DEFAULTS
+}

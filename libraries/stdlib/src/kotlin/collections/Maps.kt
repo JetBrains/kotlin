@@ -158,6 +158,8 @@ public inline fun <K, V> Map<out K, V>?.isNullOrEmpty(): Boolean {
 
 /**
  * Returns the [Map] if its not `null`, or the empty [Map] otherwise.
+ *
+ * @sample samples.collections.Maps.Usage.mapOrEmpty
  */
 @kotlin.internal.InlineOnly
 public inline fun <K, V> Map<K, V>?.orEmpty(): Map<K, V> = this ?: emptyMap()
@@ -209,6 +211,8 @@ public inline fun <@kotlin.internal.OnlyInputTypes K> Map<out K, *>.containsKey(
  * Returns `true` if the map maps one or more keys to the specified [value].
  *
  * Allows to overcome type-safety restriction of `containsValue` that requires to pass a value of type `V`.
+ *
+ * @sample samples.collections.Maps.Usage.containsValue
  */
 @Suppress("EXTENSION_SHADOWED_BY_MEMBER") // false warning, extension takes precedence in some cases
 @kotlin.internal.InlineOnly
@@ -292,6 +296,8 @@ public fun <K, V> Map<K, V>.getValue(key: K): V = getOrImplicitDefault(key)
 /**
  * Returns the value for the given key. If the key is not found in the map, calls the [defaultValue] function,
  * puts its result into the map under the given key and returns it.
+ *
+ * Note that the operation is not guaranteed to be atomic if the map is being modified concurrently.
  *
  * @sample samples.collections.Maps.Usage.getOrPut
  */

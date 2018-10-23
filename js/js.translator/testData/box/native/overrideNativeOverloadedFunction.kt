@@ -1,5 +1,5 @@
 // IGNORE_BACKEND: JS_IR
-// EXPECTED_REACHABLE_NODES: 1132
+// EXPECTED_REACHABLE_NODES: 1304
 external open class A {
     open fun f(x: Int): String = definedExternally
 

@@ -5,8 +5,6 @@
 
 package kotlin
 
-import kotlin.coroutines.experimental.SequenceBuilder
-
 // TODO: Ignore FunctionN interfaces
 
 public interface Function0<out R> : Function<R> {
@@ -25,10 +23,37 @@ public interface Function3<in P1, in P2, in P3, out R> : Function<R> {
     public operator fun invoke(p1: P1, p2: P2, p3: P3): R
 }
 
-public inline fun <reified T> arrayOfNulls(size: Int): Array<T?> = js("[]")  // FIXME: Implement
+public inline fun <reified T> arrayOfNulls(size: Int): Array<T?> = Array<T?>(size)
 
-internal inline fun <T> buildSequence(noinline builderAction: suspend SequenceBuilder<T>.() -> Unit): Sequence<T> =
-    kotlin.coroutines.experimental.buildSequence(builderAction)
+public inline fun <T> arrayOf(vararg a: T): Array<T> = a.unsafeCast<Array<T>>()
 
-internal inline fun <T> buildIterator(noinline builderAction: suspend SequenceBuilder<T>.() -> Unit): Iterator<T> =
-    kotlin.coroutines.experimental.buildIterator(builderAction)
+public inline fun booleanArrayOf(vararg a: Boolean) = a
+
+public inline fun byteArrayOf(vararg a: Byte) = a
+
+public inline fun shortArrayOf(vararg a: Short) = a
+
+public inline fun charArrayOf(vararg a: Char) = a
+
+public inline fun intArrayOf(vararg a: Int) = a
+
+public inline fun floatArrayOf(vararg a: Float) = a
+
+public inline fun doubleArrayOf(vararg a: Double) = a
+
+public inline fun longArrayOf(vararg a: Long) = a
+
+
+@PublishedApi
+internal fun throwUninitializedPropertyAccessException(name: String): Nothing =
+    throw UninitializedPropertyAccessException("lateinit property $name has not been initialized")
+
+fun THROW_ISE() {
+    throw IllegalStateException()
+}
+fun THROW_CCE() {
+    throw ClassCastException()
+}
+fun THROW_NPE() {
+    throw NullPointerException()
+}

@@ -25,7 +25,7 @@ import org.jetbrains.kotlinx.serialization.compiler.backend.js.SerializableCompa
 import org.jetbrains.kotlinx.serialization.compiler.backend.js.SerializableJsTranslator
 import org.jetbrains.kotlinx.serialization.compiler.backend.js.SerializerJsTranslator
 
-class SerializationJsExtension: JsSyntheticTranslateExtension {
+open class SerializationJsExtension: JsSyntheticTranslateExtension {
     override fun generateClassSyntheticParts(declaration: KtPureClassOrObject, descriptor: ClassDescriptor, translator: DeclarationBodyVisitor, context: TranslationContext) {
         SerializerJsTranslator.translate(declaration, descriptor, translator, context)
         SerializableJsTranslator.translate(declaration, descriptor, translator, context)

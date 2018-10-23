@@ -62,7 +62,7 @@ public final class Test {
      * prop2.
      */
     @org.jetbrains.annotations.NotNull()
-    private final java.lang.String prop2 = null;
+    private final java.lang.String prop2 = "";
 
     /**
      * method().

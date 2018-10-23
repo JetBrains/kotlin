@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
+import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.SerializerCodegen
@@ -46,7 +47,7 @@ object SERIALIZABLE_PLUGIN_ORIGIN : IrDeclarationOriginImpl("SERIALIZER")
 class SerializerIrGenerator(val irClass: IrClass, override val compilerContext: BackendContext, bindingContext: BindingContext) :
     SerializerCodegen(irClass.descriptor, bindingContext), IrBuilderExtension {
 
-    override val translator: TypeTranslator = TypeTranslator(compilerContext.externalSymbols, compilerContext.irBuiltIns.languageVersionSettings)
+    override val translator: TypeTranslator = compilerContext.createTypeTranslator(serializableDescriptor.module)
     private val _table = SymbolTable()
     override val BackendContext.localSymbolTable: SymbolTable
         get() = _table
@@ -131,7 +132,7 @@ class SerializerIrGenerator(val irClass: IrClass, override val compilerContext: 
             compilerContext.externalSymbols.referenceClass(module.getClassFromInternalSerializationPackage(SpecialBuiltins.nullableSerializer))
         if (serializerClass == null) {
             if (genericIndex == null) return null
-            return TODO("Saved serializer for generic argument")
+            TODO("Saved serializer for generic argument")
         }
         if (serializerClass.kind == ClassKind.OBJECT) {
             return irGetObject(serializerClass)
@@ -144,8 +145,7 @@ class SerializerIrGenerator(val irClass: IrClass, override val compilerContext: 
                 // todo: smth better than constructors[0] ??
                 if (it.type.isMarkedNullable) irInvoke(null, nullableSerClass.constructors.toList()[0], expr) else expr
             }
-            if (serializerClass.classId == referenceArraySerializerId)
-                args = TODO("reference array serializer")
+            if (serializerClass.classId == referenceArraySerializerId) TODO("reference array serializer")
             val serializable = getSerializableClassDescriptorBySerializer(serializerClass)
             val ctor = if (serializable?.declaredTypeParameters?.isNotEmpty() == true) {
                 KSerializerDescriptorResolver.createTypedSerializerConstructorDescriptor(serializerClass, serializableDescriptor)

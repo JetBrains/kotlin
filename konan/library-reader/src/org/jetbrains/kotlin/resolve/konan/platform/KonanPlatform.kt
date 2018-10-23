@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.resolve.PlatformConfigurator
 import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.storage.StorageManager
 
-object KonanPlatform : TargetPlatform("Konan") {
+object KonanPlatform : TargetPlatform("Native") {
 
     override fun computePlatformSpecificDefaultImports(storageManager: StorageManager, result: MutableList<ImportPath>) {
         result.add(ImportPath.fromString("kotlin.native.*"))

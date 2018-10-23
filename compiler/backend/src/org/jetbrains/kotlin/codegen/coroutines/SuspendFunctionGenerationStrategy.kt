@@ -66,7 +66,8 @@ open class SuspendFunctionGenerationStrategy(
         return CoroutineTransformerMethodVisitor(
             mv, access, name, desc, null, null, containingClassInternalName, this::classBuilderForCoroutineState,
             isForNamedFunction = true,
-            lineNumber = CodegenUtil.getLineNumberForElement(declaration, false) ?: 0,
+            element = declaration,
+            diagnostics = state.diagnostics,
             shouldPreserveClassInitialization = constructorCallNormalizationMode.shouldPreserveClassInitialization,
             needDispatchReceiver = originalSuspendDescriptor.dispatchReceiverParameter != null,
             internalNameForDispatchReceiver = containingClassInternalNameOrNull(),

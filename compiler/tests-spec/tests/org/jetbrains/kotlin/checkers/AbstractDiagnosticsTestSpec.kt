@@ -93,6 +93,8 @@ abstract class AbstractDiagnosticsTestSpec : AbstractDiagnosticsTest() {
         moduleBindings: Map<TestModule?, BindingContext>,
         languageVersionSettingsByModule: Map<TestModule?, LanguageVersionSettings>
     ) {
+        if (testValidator.testInfo.unexpectedBehavior!!) return
+
         val diagnosticValidator = DiagnosticTestTypeValidator(testFiles)
         try {
             testValidator.validateTestType(computedTestType = diagnosticValidator.computeTestType())

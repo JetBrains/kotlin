@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 // KT-5956 java.lang.AbstractMethodError: test.Thing.subSequence(II)Ljava/lang/CharSequence
 
 class Thing(val delegate: CharSequence) : CharSequence {

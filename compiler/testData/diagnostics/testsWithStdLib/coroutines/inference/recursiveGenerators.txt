@@ -1,7 +1,7 @@
 package
 
 public val test1: kotlin.collections.List<kotlin.collections.List<kotlin.collections.List<kotlin.collections.List<kotlin.Int>>>>
-public fun </*0*/ S> generate(/*0*/ g: suspend GenericController<S>.() -> kotlin.Unit): kotlin.collections.List<S>
+public fun </*0*/ S> generate(/*0*/ @kotlin.BuilderInference g: suspend GenericController<S>.() -> kotlin.Unit): kotlin.collections.List<S>
 
 public final class GenericController</*0*/ T> {
     public constructor GenericController</*0*/ T>()

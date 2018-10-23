@@ -5,11 +5,12 @@
 
 @file:kotlin.jvm.JvmMultifileClass
 @file:kotlin.jvm.JvmName("SequenceBuilderKt")
+@file:UseExperimental(ExperimentalTypeInference::class)
 
 package kotlin.coroutines.experimental
 
-import kotlin.*
 import kotlin.coroutines.experimental.intrinsics.*
+import kotlin.experimental.ExperimentalTypeInference
 
 /**
  * Builds a [Sequence] lazily yielding values one by one.
@@ -20,7 +21,7 @@ import kotlin.coroutines.experimental.intrinsics.*
  * @sample samples.collections.Sequences.Building.buildFibonacciSequence
  */
 @SinceKotlin("1.1")
-public fun <T> buildSequence(builderAction: suspend SequenceBuilder<T>.() -> Unit): Sequence<T> = Sequence { buildIterator(builderAction) }
+public fun <T> buildSequence(@BuilderInference builderAction: suspend SequenceBuilder<T>.() -> Unit): Sequence<T> = Sequence { buildIterator(builderAction) }
 
 /**
  * Builds an [Iterator] lazily yielding values one by one.
@@ -29,7 +30,7 @@ public fun <T> buildSequence(builderAction: suspend SequenceBuilder<T>.() -> Uni
  * @sample samples.collections.Iterables.Building.iterable
  */
 @SinceKotlin("1.1")
-public fun <T> buildIterator(builderAction: suspend SequenceBuilder<T>.() -> Unit): Iterator<T> {
+public fun <T> buildIterator(@BuilderInference builderAction: suspend SequenceBuilder<T>.() -> Unit): Iterator<T> {
     val iterator = SequenceBuilderIterator<T>()
     iterator.nextStep = builderAction.createCoroutineUnchecked(receiver = iterator, completion = iterator)
     return iterator

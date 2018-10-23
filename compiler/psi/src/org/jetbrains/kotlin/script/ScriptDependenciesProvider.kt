@@ -31,6 +31,3 @@ interface ScriptDependenciesProvider {
             ServiceManager.getService(project, ScriptDependenciesProvider::class.java)
     }
 }
-
-fun getScriptExternalDependencies(file: VirtualFile, project: Project): ScriptDependencies? =
-    ScriptDependenciesProvider.getInstance(project).getScriptDependencies(file)

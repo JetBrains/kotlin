@@ -41,7 +41,7 @@ internal class KotlinTargetsIndexBuilder internal constructor(
             // visit all kotlin build targets
             jpsContext.projectDescriptor.buildTargetIndex.getSortedTargetChunks(jpsContext).forEach { chunk ->
                 val moduleBuildTargets = chunk.targets.mapNotNull {
-                    if (it is ModuleBuildTarget) ensureLoaded(it)!!
+                    if (it is ModuleBuildTarget) ensureLoaded(it)
                     else null
                 }
 
@@ -132,7 +132,7 @@ internal class KotlinTargetsIndexBuilder internal constructor(
     }
 
 
-    private fun ensureLoaded(target: ModuleBuildTarget): KotlinModuleBuildTarget<*>? {
+    private fun ensureLoaded(target: ModuleBuildTarget): KotlinModuleBuildTarget<*> {
         return byJpsModuleBuildTarget.computeIfAbsent(target) {
             val platform = target.module.platform?.kind ?: detectTargetPlatform(target)
 
@@ -140,7 +140,7 @@ internal class KotlinTargetsIndexBuilder internal constructor(
                 platform.isCommon -> KotlinCommonModuleBuildTarget(uninitializedContext, target)
                 platform.isJavaScript -> KotlinJsModuleBuildTarget(uninitializedContext, target)
                 platform.isJvm -> KotlinJvmModuleBuildTarget(uninitializedContext, target)
-                else -> error("Unsupported platform $platform")
+                else -> KotlinUnsupportedModuleBuildTarget(uninitializedContext, target)
             }
         }
     }

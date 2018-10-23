@@ -1,13 +1,11 @@
-// !LANGUAGE: +AllowContractsForCustomFunctions +UseReturnsEffect
 // !WITH_CONTRACT_FUNCTIONS
-// !DIAGNOSTICS: -INVISIBLE_REFERENCE -INVISIBLE_MEMBER
 // !USE_EXPERIMENTAL: kotlin.contracts.ExperimentalContracts
 
 /*
  KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (POSITIVE)
 
  SECTION: contracts
- CATEGORY: analysis, smartcasts
+ CATEGORIES: analysis, smartcasts
  NUMBER: 8
  DESCRIPTION: Smartcasts using some Returns effects.
  */
@@ -103,6 +101,7 @@ fun case_4(value_1: Number, value_2: (() -> Unit)?) {
 }
 
 /*
+ CASE DESCRIPTION: check the conclusion that not-null conditions corresponds to the contract with not null effect
  UNEXPECTED BEHAVIOUR: unsafe calls
  ISSUES: KT-26612
  */
@@ -120,6 +119,7 @@ fun case_5(value_1: Number?, value_2: String?) {
 }
 
 /*
+ CASE DESCRIPTION: check the conclusion that not-null conditions corresponds to the contract with not null effect (with null branch)
  UNEXPECTED BEHAVIOUR: unsafe calls
  ISSUES: KT-26612
  */

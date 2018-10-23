@@ -52,6 +52,7 @@ class IrIntrinsicMethods(irBuiltIns: IrBuiltIns) {
 
         irMapping[irBuiltIns.enumValueOf] = IrEnumValueOf()
         irMapping[irBuiltIns.noWhenBranchMatchedException] = IrNoWhenBranchMatchedException()
+        irMapping[irBuiltIns.illegalArgumentException] = IrIllegalArgumentException()
         irMapping[irBuiltIns.throwNpe] = ThrowNPE()
     }
 

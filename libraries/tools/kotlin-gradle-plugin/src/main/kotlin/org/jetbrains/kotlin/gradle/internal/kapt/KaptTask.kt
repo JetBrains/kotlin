@@ -5,10 +5,10 @@ import org.gradle.api.artifacts.Configuration
 import org.gradle.api.file.FileCollection
 import org.gradle.api.internal.ConventionTask
 import org.gradle.api.tasks.*
-import org.jetbrains.kotlin.gradle.tasks.*
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jetbrains.kotlin.gradle.tasks.cacheOnlyIfEnabledForKotlin
+import org.jetbrains.kotlin.gradle.tasks.isBuildCacheSupported
 import org.jetbrains.kotlin.gradle.utils.isJavaFile
-import org.jetbrains.kotlin.gradle.utils.isParentOf
-import org.jetbrains.kotlin.gradle.utils.toSortedPathsArray
 import java.io.File
 
 @CacheableTask
@@ -18,7 +18,7 @@ abstract class KaptTask : ConventionTask() {
 
         if (isBuildCacheSupported()) {
             val reason = "Caching is disabled by default for kapt because of arbitrary behavior of external " +
-                         "annotation processors. You can enable it by adding 'kapt.useBuildCache = true' to the build script."
+                    "annotation processors. You can enable it by adding 'kapt.useBuildCache = true' to the build script."
             outputs.cacheIf(reason) { useBuildCache }
         }
     }
@@ -29,12 +29,15 @@ abstract class KaptTask : ConventionTask() {
     @get:Internal
     internal lateinit var stubsDir: File
 
-    @get:Classpath @get:InputFiles
+    @get:Classpath
+    @get:InputFiles
     val kaptClasspath: FileCollection
         get() = project.files(*kaptClasspathConfigurations.toTypedArray())
 
-    @get:Classpath @get:InputFiles
-    val compilerClasspath: List<File> get() = kotlinCompileTask.computedCompilerClasspath
+    @get:Classpath
+    @get:InputFiles
+    val compilerClasspath: List<File>
+        get() = kotlinCompileTask.computedCompilerClasspath
 
     @get:Internal
     internal lateinit var kaptClasspathConfigurations: List<Configuration>
@@ -51,14 +54,16 @@ abstract class KaptTask : ConventionTask() {
     @get:Nested
     internal val annotationProcessorOptionProviders: MutableList<Any> = mutableListOf()
 
-    @get:Classpath @get:InputFiles
+    @get:Classpath
+    @get:InputFiles
     val classpath: FileCollection
         get() = kotlinCompileTask.classpath
 
     @get:Internal
     var useBuildCache: Boolean = false
 
-    @get:InputFiles @get:PathSensitive(PathSensitivity.RELATIVE)
+    @get:InputFiles
+    @get:PathSensitive(PathSensitivity.RELATIVE)
     val source: Collection<File>
         get() {
             val result = HashSet<File>()

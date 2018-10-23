@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor;
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor;
 import org.jetbrains.kotlin.idea.MainFunctionDetector;
 import org.jetbrains.kotlin.js.backend.ast.*;
 import org.jetbrains.kotlin.js.backend.ast.metadata.MetadataProperties;
@@ -41,17 +42,22 @@ import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.declaration.FileDeclarationVisitor;
 import org.jetbrains.kotlin.js.translate.expression.ExpressionVisitor;
 import org.jetbrains.kotlin.js.translate.expression.PatternTranslator;
+import org.jetbrains.kotlin.js.translate.reference.ReferenceTranslator;
 import org.jetbrains.kotlin.js.translate.test.JSTestGenerator;
 import org.jetbrains.kotlin.js.translate.utils.*;
 import org.jetbrains.kotlin.js.translate.utils.mutator.AssignToExpressionMutator;
+import org.jetbrains.kotlin.name.FqNameUnsafe;
+import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.KtDeclaration;
 import org.jetbrains.kotlin.psi.KtExpression;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression;
 import org.jetbrains.kotlin.resolve.BindingTrace;
+import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.bindingContextUtil.BindingContextUtilsKt;
 import org.jetbrains.kotlin.resolve.constants.*;
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator;
+import org.jetbrains.kotlin.resolve.scopes.MemberScope;
 import org.jetbrains.kotlin.serialization.js.ast.JsAstDeserializer;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.TypeUtils;
@@ -463,13 +469,29 @@ public final class Translation {
     ) {
         StaticContext staticContext = new StaticContext(trace, config, moduleDescriptor, sourceFilePathResolver);
         TranslationContext context = TranslationContext.rootContext(staticContext);
-        MainFunctionDetector mainFunctionDetector = new MainFunctionDetector(context.bindingContext());
+        MainFunctionDetector mainFunctionDetector = new MainFunctionDetector(context.bindingContext(), config.getLanguageVersionSettings());
         FunctionDescriptor functionDescriptor = mainFunctionDetector.getMainFunction(moduleDescriptor);
         if (functionDescriptor == null) {
             return null;
         }
-        JsArrayLiteral argument = new JsArrayLiteral(toStringLiteralList(arguments));
-        JsExpression call = CallTranslator.INSTANCE.buildCall(context, functionDescriptor, Collections.singletonList(argument), null);
+
+        int parameterCount = functionDescriptor.getValueParameters().size();
+        assert parameterCount <= 1;
+
+        List<JsExpression> args = new ArrayList<>();
+        if (parameterCount != 0) {
+            args.add(new JsArrayLiteral(toStringLiteralList(arguments)));
+        }
+
+        if (functionDescriptor.isSuspend()) {
+            MemberScope scope = moduleDescriptor.getPackage(new FqNameUnsafe("kotlin.coroutines.js.internal").toSafe()).getMemberScope();
+            PropertyDescriptor emptyContinuation = DescriptorUtils.getPropertyByName(scope, Name.identifier("EmptyContinuation"));
+
+            args.add(ReferenceTranslator.translateAsValueReference(emptyContinuation, context));
+            args.add(new JsBooleanLiteral(false));
+        }
+
+        JsExpression call = CallTranslator.INSTANCE.buildCall(context, functionDescriptor, args, null);
         context.addTopLevelStatement(call.makeStmt());
         return staticContext.getFragment();
     }

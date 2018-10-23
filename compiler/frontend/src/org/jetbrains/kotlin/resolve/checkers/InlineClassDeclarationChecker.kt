@@ -120,7 +120,7 @@ object InlineClassDeclarationChecker : DeclarationChecker {
 
     private fun isParameterAcceptableForInlineClass(parameter: KtParameter): Boolean {
         val isOpen = parameter.modalityModifier()?.node?.elementType == KtTokens.OPEN_KEYWORD
-        return parameter.hasValOrVar() && !parameter.isMutable && !parameter.isVarArg && !parameter.hasDefaultValue() && !isOpen
+        return parameter.hasValOrVar() && !parameter.isMutable && !parameter.isVarArg && !isOpen
     }
 }
 

@@ -14,17 +14,6 @@ pill {
 }
 
 sourceSets {
-    annotations {
-        if(!System.properties.'idea.active') {
-            java {
-                srcDir "${rootDir}/core/runtime.jvm/src"
-                include 'org/jetbrains/annotations/**'
-            }
-            kotlin {
-                exclude '**/*'
-            }
-        }
-    }
     main {
         java {
             srcDir "${rootDir}/core/builtins/src"
@@ -93,20 +82,6 @@ jar {
     // from sourceSets.java9.output
 }
 
-task distJar(type: Jar) {
-    baseName = 'dist-kotlin-stdlib'
-    version = null
-    manifestAttributes(manifest, project, 'Main', true)
-    from("${rootDir}/dist/builtins")
-    from sourceSets.annotations.output
-    from sourceSets.main.output
-    from sourceSets.experimental.output
-    from sourceSets.coroutines.output
-    from sourceSets.unsigned.output
-    // TODO: enable as soon as this doesn't cause D8/DX to crash
-    // from sourceSets.java9.output
-}
-
 task coroutinesJar(type: Jar) {
     version = null
     classifier = 'coroutines'
@@ -141,17 +116,26 @@ task distSourcesJar(type: Jar) {
     }
 }
 
+task distMavenSources(type: Copy) {
+    from(sourcesJar)
+    into "$distDir/maven"
+    rename "-${java.util.regex.Pattern.quote(version)}", ''
+}
+
 artifacts {
     archives sourcesJar
     archives javadocJar
 }
 
 dist {
-    [distJar, distSourcesJar].forEach {
+    dependsOn distMavenSources
+
+    [jar, distSourcesJar].forEach {
         from(it) {
             rename('dist-', '')
         }
     }
+
     from (configurations.compile) {
         include 'annotations*.jar'
     }
@@ -178,6 +162,7 @@ compileKotlin {
         freeCompilerArgs = [
                 "-version",
                 "-Xallow-kotlin-package",
+                "-Xallow-result-return-type",
                 "-Xmultifile-parts-inherit",
                 "-Xnormalize-constructor-calls=enable",
                 "-module-name", "kotlin-stdlib",
@@ -213,8 +198,10 @@ compileCoroutinesKotlin {
         freeCompilerArgs = [
                 "-version",
                 "-Xallow-kotlin-package",
+                "-Xallow-result-return-type",
                 "-Xmultifile-parts-inherit",
                 "-Xuse-experimental=kotlin.contracts.ExperimentalContracts",
+                "-Xuse-experimental=kotlin.Experimental",
                 "-XXLanguage:-ReleaseCoroutines",
                 "-module-name", "kotlin-stdlib-coroutines"
         ]

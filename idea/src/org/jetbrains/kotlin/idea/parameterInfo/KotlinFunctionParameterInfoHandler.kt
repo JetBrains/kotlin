@@ -65,6 +65,20 @@ class KotlinFunctionParameterInfoHandler : KotlinParameterInfoWithCallHandlerBas
     override fun getArgumentListAllowedParentClasses() = setOf(KtCallElement::class.java)
 }
 
+class KotlinLambdaParameterInfoHandler :
+    KotlinParameterInfoWithCallHandlerBase<KtLambdaArgument, KtLambdaArgument>(KtLambdaArgument::class, KtLambdaArgument::class) {
+    override fun getActualParameters(lambdaArgument: KtLambdaArgument) = arrayOf(lambdaArgument)
+
+    override fun getActualParametersRBraceType() = KtTokens.RBRACE
+
+    override fun getArgumentListAllowedParentClasses() = setOf(KtLambdaArgument::class.java)
+
+    override fun getParameterIndex(context: UpdateParameterInfoContext, argumentList: KtLambdaArgument): Int {
+        val size = (argumentList.parent as? KtCallElement)?.valueArguments?.size ?: 1
+        return size - 1
+    }
+}
+
 class KotlinArrayAccessParameterInfoHandler : KotlinParameterInfoWithCallHandlerBase<KtContainerNode, KtExpression>(KtContainerNode::class, KtExpression::class) {
     override fun getArgumentListAllowedParentClasses() = setOf(KtArrayAccessExpression::class.java)
 
@@ -115,7 +129,7 @@ abstract class KotlinParameterInfoWithCallHandlerBase<TArgumentList : KtElement,
         val file = context.file as? KtFile ?: return null
 
         val token = file.findElementAt(context.offset) ?: return null
-        val argumentList = PsiTreeUtil.getParentOfType(token, argumentListClass.java) ?: return null
+        val argumentList = PsiTreeUtil.getParentOfType(token, argumentListClass.java, true, KtValueArgumentList::class.java) ?: return null
 
         val bindingContext = argumentList.analyze(BodyResolveMode.PARTIAL)
         val call = findCall(argumentList, bindingContext) ?: return null
@@ -139,12 +153,15 @@ abstract class KotlinParameterInfoWithCallHandlerBase<TArgumentList : KtElement,
         if (context.parameterOwner !== argumentList) {
             context.removeHint()
         }
-
-        val offset = context.offset
-        val parameterIndex = argumentList.allChildren
-                .takeWhile { it.startOffset < offset }
-                .count { it.node.elementType == KtTokens.COMMA }
+        val parameterIndex = getParameterIndex(context, argumentList)
         context.setCurrentParameter(parameterIndex)
+    }
+
+    protected open fun getParameterIndex(context: UpdateParameterInfoContext, argumentList: TArgumentList): Int {
+        val offset = context.offset
+        return argumentList.allChildren
+            .takeWhile { it.startOffset < offset }
+            .count { it.node.elementType == KtTokens.COMMA }
     }
 
     override fun updateUI(itemToShow: FunctionDescriptor, context: ParameterInfoUIContext) {

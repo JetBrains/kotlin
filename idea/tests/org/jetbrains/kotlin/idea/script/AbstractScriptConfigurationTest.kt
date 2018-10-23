@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.idea.core.script.ScriptDefinitionContributor
 import org.jetbrains.kotlin.idea.core.script.ScriptDefinitionsManager
 import org.jetbrains.kotlin.idea.core.script.ScriptDependenciesManager.Companion.updateScriptDependenciesSynchronously
 import org.jetbrains.kotlin.idea.core.script.isScriptDependenciesUpdaterDisabled
+import org.jetbrains.kotlin.idea.core.script.settings.KotlinScriptingSettings
 import org.jetbrains.kotlin.idea.navigation.GotoCheck
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
@@ -106,8 +107,46 @@ abstract class AbstractScriptConfigurationNavigationTest : AbstractScriptConfigu
     }
 }
 
-private val validKeys = setOf("sources", "classpath", "imports")
+
+abstract class AbstractScriptDefinitionsOrderTest : AbstractScriptConfigurationTest() {
+    fun doTest(path: String) {
+        configureScriptFile(path)
+
+        assertException(object : AbstractExceptionCase<ComparisonFailure>() {
+            override fun getExpectedExceptionClass(): Class<ComparisonFailure> = ComparisonFailure::class.java
+
+            override fun tryClosure() {
+                checkHighlighting(editor, false, false)
+            }
+        })
+
+        val definitions = InTextDirectivesUtils
+            .findStringWithPrefixes(myFile.text, "// SCRIPT DEFINITIONS: ")
+            ?.split(";")
+            ?.map { it.substringBefore(":").trim() to it.substringAfter(":").trim() }
+            ?: error("SCRIPT DEFINITIONS directive should be defined")
+
+        val allDefinitions = ScriptDefinitionsManager.getInstance(project).getAllDefinitions()
+        for ((definitionName, action) in definitions) {
+            val scriptDefinition = allDefinitions
+                .find { it.name == definitionName }
+                ?: error("Unknown script definition name in SCRIPT DEFINITIONS directive: name=$definitionName, all={${allDefinitions.joinToString { it.name }}}")
+            when (action) {
+                "off" -> KotlinScriptingSettings.getInstance(project).setEnabled(scriptDefinition, false)
+                else -> KotlinScriptingSettings.getInstance(project).setOrder(scriptDefinition, action.toInt())
+            }
+        }
+
+        ScriptDefinitionsManager.getInstance(project).reorderScriptDefinitions()
+        updateScriptDependenciesSynchronously(myFile.virtualFile, project)
+
+        checkHighlighting(editor, false, false)
+    }
+}
+
+private val validKeys = setOf("sources", "classpath", "imports", "template-classes-names")
 private const val useDefaultTemplate = "// DEPENDENCIES:"
+private const val templatesSettings = "// TEMPLATES: "
 // some bugs can only be reproduced when some module and script have intersecting library dependencies
 private const val configureConflictingModule = "// CONFLICTING_MODULE"
 
@@ -205,20 +244,32 @@ abstract class AbstractScriptConfigurationTest : KotlinCompletionTestCase() {
         val defaultEnvironment = defaultEnvironment(scriptFile.parent + File.separator)
         val env = mutableMapOf<String, Any?>()
         scriptFile.forEachLine { line ->
-            line.trim().takeIf { useDefaultTemplate in it }?.substringAfter(useDefaultTemplate)?.split(";")?.forEach { entry ->
-                val (key, values) = entry.splitOrEmpty(":").map { it.trim() }
-                assert(key in validKeys) { "Unexpected key: $key" }
-                env[key] = values.split(",").map {
-                    val str = it.trim()
-                    defaultEnvironment[str] ?: str
+
+            fun iterateKeysInLine(prefix: String) {
+                if (line.contains(prefix)) {
+                    line.trim().substringAfter(prefix).split(";").forEach { entry ->
+                        val (key, values) = entry.splitOrEmpty(":").map { it.trim() }
+                        assert(key in validKeys) { "Unexpected key: $key" }
+                        env[key] = values.split(",").map {
+                            val str = it.trim()
+                            defaultEnvironment[str] ?: str
+                        }
+                    }
                 }
             }
+
+            iterateKeysInLine(useDefaultTemplate)
+            iterateKeysInLine(templatesSettings)
 
             switches.forEach {
                 if (it in line) {
                     env[it] = true
                 }
             }
+        }
+
+        if (env[useDefaultTemplate] != true && env["template-classes-names"] == null) {
+            env["template-classes-names"] = listOf("custom.scriptDefinition.Template")
         }
 
         env.putAll(defaultEnvironment)

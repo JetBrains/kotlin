@@ -1,14 +1,12 @@
-// !LANGUAGE: +AllowContractsForCustomFunctions +UseReturnsEffect
 // !WITH_CONTRACT_FUNCTIONS
 // !WITH_BASIC_TYPES
-// !DIAGNOSTICS: -INVISIBLE_REFERENCE -INVISIBLE_MEMBER
 // !USE_EXPERIMENTAL: kotlin.contracts.ExperimentalContracts
 
 /*
  KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (POSITIVE)
 
  SECTION: contracts
- CATEGORY: analysis, smartcasts
+ CATEGORIES: analysis, smartcasts
  NUMBER: 9
  DESCRIPTION: Smartcast using complex condition with some contract functions (Returns effect).
  */
@@ -101,9 +99,6 @@ fun case_8(value_1: Any?) {
     }
 }
 
-/*
- UNEXPECTED BEHAVIOUR: unreachable code
- */
 fun case_9(value_1: Any?) {
     if (funWithReturnsFalse(value_1 is String) || funWithReturnsFalse(value_1 is Int)) {
 
@@ -113,9 +108,6 @@ fun case_9(value_1: Any?) {
     }
 }
 
-/*
- UNEXPECTED BEHAVIOUR: unreachable code
- */
 fun case_10(value_1: Any?) {
     if (funWithReturnsFalse(value_1 is String) || getBoolean()) {
 

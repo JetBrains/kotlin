@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.ir.symbols.impl.createFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.createValueSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.DeepCopyIrTree
+import org.jetbrains.kotlin.ir.util.withScope
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
@@ -508,16 +509,19 @@ internal class DeepCopyIrTreeWithDescriptors(val targetDescriptor: FunctionDescr
 
         //---------------------------------------------------------------------//
 
-        override fun visitFunction(declaration: IrFunction): IrFunction =
-            IrFunctionImpl(
-                startOffset = declaration.startOffset,
-                endOffset   = declaration.endOffset,
-                origin      = mapDeclarationOrigin(declaration.origin),
-                descriptor  = mapFunctionDeclaration(declaration.descriptor),
-                body        = declaration.body?.transform(this, null)
-            ).also {
-                it.setOverrides(context.symbolTable)
-            }.transformParameters(declaration)
+        override fun visitFunction(declaration: IrFunction) =
+            context.symbolTable.withScope(mapFunctionDeclaration(declaration.descriptor)) { descriptor ->
+                IrFunctionImpl(
+                    startOffset = declaration.startOffset,
+                    endOffset = declaration.endOffset,
+                    origin = mapDeclarationOrigin(declaration.origin),
+                    descriptor = descriptor,
+                    body = declaration.body?.transform(this@InlineCopyIr, null)
+                ).also {
+                    it.setOverrides(context.symbolTable)
+                    it.transformParameters(declaration)
+                }
+            }
 
         //---------------------------------------------------------------------//
 

@@ -41,7 +41,7 @@ class StaticDefaultFunctionLowering(val state: GenerationState) : IrElementTrans
                 declaration.dispatchReceiverParameter!!.descriptor.type
             )
             // NOTE: Fix it
-            newFunction.createFunctionAndMapVariables(declaration, Visibilities.PUBLIC)
+            newFunction.createFunctionAndMapVariables(declaration, declaration.parent, Visibilities.PUBLIC)
         } else {
             super.visitFunction(declaration)
         }

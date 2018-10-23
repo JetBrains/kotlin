@@ -14,7 +14,7 @@ package kotlin.collections
  *
  * @return a [Map] associating the key of each group with the count of elements in the group.
  *
- * @sample samples.collections.Collections.Transformations.groupingByEachCount
+ * @sample samples.collections.Grouping.groupingByEachCount
  */
 @SinceKotlin("1.1")
 public actual fun <T, K> Grouping<T, K>.eachCount(): Map<K, Int> =

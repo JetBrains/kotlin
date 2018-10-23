@@ -110,7 +110,9 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
     @Argument(
         value = "-Xnormalize-constructor-calls",
         valueDescription = "{disable|enable}",
-        description = "Normalize constructor calls (disable: don't normalize; enable: normalize), default is disable"
+        description = "Normalize constructor calls (disable: don't normalize; enable: normalize),\n" +
+                "default is 'disable' in language version 1.2 and below,\n" +
+                "'enable' since language version 1.3"
     )
     var constructorCallNormalizationMode: String? by NullableStringFreezableVar(null)
 
@@ -259,13 +261,13 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
 
     override fun configureAnalysisFlags(collector: MessageCollector): MutableMap<AnalysisFlag<*>, Any> {
         val result = super.configureAnalysisFlags(collector)
-        result.put(AnalysisFlag.strictMetadataVersionSemantics, strictMetadataVersionSemantics)
-        result[AnalysisFlag.jsr305] = Jsr305Parser(collector).parse(
+        result[JvmAnalysisFlags.strictMetadataVersionSemantics] = strictMetadataVersionSemantics
+        result[JvmAnalysisFlags.jsr305] = Jsr305Parser(collector).parse(
             jsr305,
             supportCompatqualCheckerFrameworkAnnotations
         )
-        result[AnalysisFlag.ignoreDataFlowInAssert] = JVMAssertionsMode.fromString(assertionsMode) != JVMAssertionsMode.LEGACY
-        JvmDefaultMode.fromStringOrNull(jvmDefault)?.let { result[AnalysisFlag.jvmDefaultMode] = it }
+        result[AnalysisFlags.ignoreDataFlowInAssert] = JVMAssertionsMode.fromString(assertionsMode) != JVMAssertionsMode.LEGACY
+        JvmDefaultMode.fromStringOrNull(jvmDefault)?.let { result[JvmAnalysisFlags.jvmDefaultMode] = it }
                 ?: collector.report(
                     CompilerMessageSeverity.ERROR,
                     "Unknown @JvmDefault mode: $jvmDefault, " +

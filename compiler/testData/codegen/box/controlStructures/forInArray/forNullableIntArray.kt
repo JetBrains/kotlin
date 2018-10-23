@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 fun box() : String {
     val b : Array<Int?> = arrayOfNulls<Int> (5)
     var i = 0

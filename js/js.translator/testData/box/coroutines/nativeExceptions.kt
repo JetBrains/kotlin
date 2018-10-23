@@ -1,5 +1,7 @@
-// IGNORE_BACKEND: JS_IR
 // EXPECTED_REACHABLE_NODES: 1250
+
+// Unmute when JS_IR supports release coroutines
+
 import kotlin.coroutines.*
 import kotlin.coroutines.intrinsics.*
 

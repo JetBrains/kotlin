@@ -228,7 +228,7 @@ data class IfThenToSelectData(
                         else -> error("Illegal state")
                     }
                 }
-                hasImplicitReceiverReplaceableBySafeCall() -> factory.createExpressionByPattern("this?.$0", baseClause).insertSafeCalls(factory)
+                hasImplicitReceiverReplaceableBySafeCall() -> factory.createExpressionByPattern("$0?.$1", receiverExpression, baseClause).insertSafeCalls(factory)
                 baseClause is KtCallExpression -> baseClause.replaceCallWithLet(receiverExpression, factory)
                 else -> baseClause.insertSafeCalls(factory)
             }
@@ -277,10 +277,10 @@ data class IfThenToSelectData(
 internal fun KtIfExpression.buildSelectTransformationData(): IfThenToSelectData? {
     val context = analyze()
 
-    val condition = condition as? KtOperationExpression ?: return null
+    val condition = condition?.unwrapBlockOrParenthesis() as? KtOperationExpression ?: return null
     val thenClause = then?.unwrapBlockOrParenthesis()
     val elseClause = `else`?.unwrapBlockOrParenthesis()
-    val receiverExpression = condition.checkedExpression() ?: return null
+    val receiverExpression = condition.checkedExpression()?.unwrapBlockOrParenthesis() ?: return null
 
     val (baseClause, negatedClause) = when (condition) {
         is KtBinaryExpression -> when (condition.operationToken) {
@@ -313,7 +313,7 @@ internal fun KtIfExpression.shouldBeTransformed(): Boolean {
     return when (condition) {
         is KtBinaryExpression -> {
             val baseClause = (if (condition.operationToken == KtTokens.EQEQ) `else` else then)?.unwrapBlockOrParenthesis()
-            !baseClause.isClauseTransformableToLetOnly(checkedExpression())
+            !baseClause.isClauseTransformableToLetOnly(condition.checkedExpression())
         }
         else -> false
     }

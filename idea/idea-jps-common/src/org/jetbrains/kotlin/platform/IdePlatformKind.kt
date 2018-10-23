@@ -6,12 +6,13 @@
 @file:JvmName("IdePlatformKindUtil")
 package org.jetbrains.kotlin.platform
 
-import com.intellij.openapi.application.ApplicationManager
 import org.jetbrains.kotlin.extensions.ApplicationExtensionDescriptor
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
+import org.jetbrains.kotlin.config.isJps
 import org.jetbrains.kotlin.platform.impl.CommonIdePlatformKind
 import org.jetbrains.kotlin.platform.impl.JsIdePlatformKind
 import org.jetbrains.kotlin.platform.impl.JvmIdePlatformKind
+import org.jetbrains.kotlin.platform.impl.NativeIdePlatformKind
 import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
@@ -34,12 +35,19 @@ abstract class IdePlatformKind<Kind : IdePlatformKind<Kind>> {
 
     companion object {
         // We can't use the ApplicationExtensionDescriptor class directly because it's missing in the JPS process
-        private val extension = ApplicationManager.getApplication()?.let {
+        private val extension = run {
+            if (isJps) return@run null
             ApplicationExtensionDescriptor("org.jetbrains.kotlin.idePlatformKind", IdePlatformKind::class.java)
         }
 
         // For using only in JPS
-        private val JPS_KINDS get() = listOf(JvmIdePlatformKind, JsIdePlatformKind, CommonIdePlatformKind)
+        private val JPS_KINDS
+            get() = listOf(
+                JvmIdePlatformKind,
+                JsIdePlatformKind,
+                CommonIdePlatformKind,
+                NativeIdePlatformKind
+            )
 
         val ALL_KINDS by lazy {
             val kinds = extension?.getInstances() ?: return@lazy JPS_KINDS

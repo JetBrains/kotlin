@@ -1,9 +1,9 @@
 public final class User$Creator : java/lang/Object, android/os/Parcelable$Creator {
     public void <init>()
 
-    public final java.lang.Object createFromParcel(android.os.Parcel p0)
+    public final java.lang.Object createFromParcel(android.os.Parcel in)
 
-    public final java.lang.Object[] newArray(int p0)
+    public final java.lang.Object[] newArray(int size)
 }
 
 public final class User : java/lang/Object, android/os/Parcelable {
@@ -19,7 +19,7 @@ public final class User : java/lang/Object, android/os/Parcelable {
 
     static void <clinit>()
 
-    public void <init>(java.lang.String p0, java.lang.String p1, int p2, boolean p3)
+    public void <init>(java.lang.String firstName, java.lang.String lastName, int age, boolean isProUser)
 
     public int describeContents() {
         LABEL (L0)
@@ -37,5 +37,5 @@ public final class User : java/lang/Object, android/os/Parcelable {
 
     public final boolean isProUser()
 
-    public void writeToParcel(android.os.Parcel p0, int p1)
+    public void writeToParcel(android.os.Parcel parcel, int flags)
 }

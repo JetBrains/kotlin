@@ -27,6 +27,8 @@ interface KotlinSourceSet : KotlinModule {
     companion object {
         const val COMMON_MAIN_SOURCE_SET_NAME = "commonMain"
         const val COMMON_TEST_SOURCE_SET_NAME = "commonTest"
+
+        fun commonName(forTests: Boolean) = if (forTests) COMMON_TEST_SOURCE_SET_NAME else COMMON_MAIN_SOURCE_SET_NAME
     }
 }
 
@@ -35,6 +37,9 @@ interface KotlinLanguageSettings : Serializable {
     val apiVersion: String?
     val isProgressiveMode: Boolean
     val enabledLanguageFeatures: Set<String>
+    val experimentalAnnotationsInUse: Set<String>
+    val compilerPluginArguments: List<String>
+    val compilerPluginClasspath: Set<File>
 }
 
 interface KotlinCompilationOutput : Serializable {

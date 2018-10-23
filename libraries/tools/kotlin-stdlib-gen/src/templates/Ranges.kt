@@ -160,6 +160,9 @@ object RangeOps : TemplateGroupBase() {
         signature("contains(value: $itemType)")
 
         check(rangeType.isNumeric() == itemType.isNumeric()) { "Required rangeType and itemType both to be numeric or both not, got: $rangeType, $itemType" }
+        if (rangeType.isIntegral() != itemType.isIntegral()) {
+            deprecate(Deprecation("This `contains` operation mixing integer and floating point arguments has ambiguous semantics and is going to be removed.", level = DeprecationLevel.WARNING))
+        }
         platformName("${rangeType.name.decapitalize()}RangeContains")
         returns("Boolean")
         doc { "Checks if the specified [value] belongs to this range." }
@@ -169,6 +172,25 @@ object RangeOps : TemplateGroupBase() {
             else
                 "return value.to${rangeType}ExactOrNull().let { if (it != null) contains(it) else false }"
         }
+    }
+
+    val f_contains_nullable = fn("contains(element: T?)") {
+        include(RangesOfPrimitives, rangePrimitives)
+    } builder {
+        since("1.3")
+        operator()
+        inlineOnly()
+
+        doc {
+            """
+            Returns `true` if this ${f.collection} contains the specified [element].
+
+            Always returns `false` if the [element] is `null`.
+            """
+        }
+
+        returns("Boolean")
+        body { "return element != null && contains(element)" }
     }
 
     val f_toPrimitiveExactOrNull = fn("to{}ExactOrNull()").byTwoPrimitives {

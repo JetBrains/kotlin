@@ -115,17 +115,16 @@ private class ServerTest(val clientSocket: Socket) : Runnable {
 
             message = input.readObject() as MessageHeader
             assert(message == MessageHeader.CLASS_PATH, { "Class path marker missed, but $message received" })
+            @Suppress("UNCHECKED_CAST")
             val classPath = input.readObject() as Array<URL>
 
             val result = executeTest(URLClassLoader(classPath, JDK_EXT_JARS_CLASS_LOADER))
             output.writeObject(MessageHeader.RESULT)
             output.writeObject(result)
-        }
-        catch (e: Exception) {
+        } catch (e: Throwable) {
             output.writeObject(MessageHeader.ERROR)
             output.writeObject(e)
-        }
-        finally {
+        } finally {
             output.close()
             input.close()
             clientSocket.close()

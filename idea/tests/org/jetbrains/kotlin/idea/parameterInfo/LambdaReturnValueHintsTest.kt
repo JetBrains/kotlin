@@ -17,6 +17,18 @@ class LambdaReturnValueHintsTest : KotlinLightCodeInsightFixtureTestCase() {
         myFixture.testInlays()
     }
 
+    fun testHintType() {
+        myFixture.checkHintType(
+            """
+            val x = run {
+                println("foo")
+                <caret>1
+            }
+            """,
+            HintType.LAMBDA_RETURN_EXPRESSION
+        )
+    }
+
     fun testSimple() {
         check(
             """
@@ -173,6 +185,17 @@ class LambdaReturnValueHintsTest : KotlinLightCodeInsightFixtureTestCase() {
                     val files: Any? = null
                     <hint text="^run"/>run@12
                 }
+            }
+            """
+        )
+    }
+
+    fun testReturnFunctionType() {
+        check(
+            """
+            fun test() = run {
+                val a = 1
+                <hint text="^run"/>{ a }
             }
             """
         )

@@ -10907,6 +10907,11 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 runTest("compiler/testData/diagnostics/tests/inlineClasses/inlineClassCannotImplementInterfaceByDelegation.kt");
             }
 
+            @TestMetadata("inlineClassConstructorParameterWithDefaultValue.kt")
+            public void testInlineClassConstructorParameterWithDefaultValue() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inlineClasses/inlineClassConstructorParameterWithDefaultValue.kt");
+            }
+
             @TestMetadata("inlineClassDeclarationCheck.kt")
             public void testInlineClassDeclarationCheck() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/inlineClasses/inlineClassDeclarationCheck.kt");
@@ -14501,6 +14506,11 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 runTest("compiler/testData/diagnostics/tests/override/ExtendFunctionClass.kt");
             }
 
+            @TestMetadata("fakeEquals.kt")
+            public void testFakeEquals() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/override/fakeEquals.kt");
+            }
+
             @TestMetadata("FakeOverrideAbstractAndNonAbstractFun.kt")
             public void testFakeOverrideAbstractAndNonAbstractFun() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/override/FakeOverrideAbstractAndNonAbstractFun.kt");
@@ -15924,6 +15934,31 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
             @TestMetadata("RedeclarationMainInMultiFile.kt")
             public void testRedeclarationMainInMultiFile() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/redeclarations/RedeclarationMainInMultiFile.kt");
+            }
+
+            @TestMetadata("RedeclarationParameterlessMain.kt")
+            public void testRedeclarationParameterlessMain() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/redeclarations/RedeclarationParameterlessMain.kt");
+            }
+
+            @TestMetadata("RedeclarationParameterlessMainInvalid.kt")
+            public void testRedeclarationParameterlessMainInvalid() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/redeclarations/RedeclarationParameterlessMainInvalid.kt");
+            }
+
+            @TestMetadata("RedeclarationParameterlessMain_before.kt")
+            public void testRedeclarationParameterlessMain_before() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/redeclarations/RedeclarationParameterlessMain_before.kt");
+            }
+
+            @TestMetadata("RedeclarationSuspendMainInMultiFile.kt")
+            public void testRedeclarationSuspendMainInMultiFile() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/redeclarations/RedeclarationSuspendMainInMultiFile.kt");
+            }
+
+            @TestMetadata("RedeclarationSuspendMainInMultiFile_before.kt")
+            public void testRedeclarationSuspendMainInMultiFile_before() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/redeclarations/RedeclarationSuspendMainInMultiFile_before.kt");
             }
 
             @TestMetadata("Redeclarations.kt")
@@ -19092,6 +19127,21 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 runTest("compiler/testData/diagnostics/tests/smartCasts/kt2422.kt");
             }
 
+            @TestMetadata("kt27221.kt")
+            public void testKt27221() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/smartCasts/kt27221.kt");
+            }
+
+            @TestMetadata("kt27221_2.kt")
+            public void testKt27221_2() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/smartCasts/kt27221_2.kt");
+            }
+
+            @TestMetadata("kt27221_irrelevantClasses.kt")
+            public void testKt27221_irrelevantClasses() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/smartCasts/kt27221_irrelevantClasses.kt");
+            }
+
             @TestMetadata("kt2865.kt")
             public void testKt2865() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/smartCasts/kt2865.kt");
@@ -19335,6 +19385,11 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
             @TestMetadata("smartCastOnWhen.kt")
             public void testSmartCastOnWhen() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/smartCasts/smartCastOnWhen.kt");
+            }
+
+            @TestMetadata("smartcastOnSameFieldOfDifferentInstances.kt")
+            public void testSmartcastOnSameFieldOfDifferentInstances() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/smartCasts/smartcastOnSameFieldOfDifferentInstances.kt");
             }
 
             @TestMetadata("thisWithLabel.kt")
@@ -19889,6 +19944,11 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 @TestMetadata("whileNull.kt")
                 public void testWhileNull() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/smartCasts/loops/whileNull.kt");
+                }
+
+                @TestMetadata("whileNullAssignToSomething.kt")
+                public void testWhileNullAssignToSomething() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/smartCasts/loops/whileNullAssignToSomething.kt");
                 }
 
                 @TestMetadata("whileNullWithBreak.kt")

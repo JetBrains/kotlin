@@ -1,28 +1,91 @@
 package org.jetbrains.kotlin.gradle.tasks
 
+import groovy.lang.Closure
 import org.gradle.api.DefaultTask
-import org.gradle.api.artifacts.repositories.ArtifactRepository
-import org.gradle.api.artifacts.repositories.IvyPatternRepositoryLayout
+import org.gradle.api.Project
 import org.gradle.api.file.FileCollection
 import org.gradle.api.file.FileTree
-import org.gradle.api.provider.Property
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
-import org.jetbrains.kotlin.compilerRunner.*
+import org.gradle.api.tasks.compile.AbstractCompile
+import org.jetbrains.kotlin.compilerRunner.KonanCompilerRunner
+import org.jetbrains.kotlin.compilerRunner.KonanInteropRunner
+import org.jetbrains.kotlin.compilerRunner.konanHome
+import org.jetbrains.kotlin.compilerRunner.konanVersion
+import org.jetbrains.kotlin.gradle.dsl.KotlinCommonToolOptions
+import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
+import org.jetbrains.kotlin.gradle.plugin.LanguageSettingsBuilder
+import org.jetbrains.kotlin.gradle.plugin.mpp.DefaultCInteropSettings
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeCompilation
-import org.jetbrains.kotlin.konan.KonanVersion
-import org.jetbrains.kotlin.konan.KonanVersionImpl
-import org.jetbrains.kotlin.konan.MetaVersion
+import org.jetbrains.kotlin.gradle.plugin.mpp.defaultSourceSetName
+import org.jetbrains.kotlin.gradle.plugin.mpp.isMainCompilation
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
-import org.jetbrains.kotlin.konan.target.HostManager
-import org.jetbrains.kotlin.konan.util.DependencyDirectories
+import org.jetbrains.kotlin.konan.target.CompilerOutputKind.*
+import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
 
 // TODO: It's just temporary tasks used while KN isn't integrated with Big Kotlin compilation infrastructure.
+// region Useful extensions
+internal fun MutableList<String>.addArg(parameter: String, value: String) {
+    add(parameter)
+    add(value)
+}
 
-open class KotlinNativeCompile : DefaultTask() {
+internal fun MutableList<String>.addArgs(parameter: String, values: Iterable<String>) {
+    values.forEach {
+        addArg(parameter, it)
+    }
+}
+
+internal fun MutableList<String>.addArgIfNotNull(parameter: String, value: String?) {
+    if (value != null) {
+        addArg(parameter, value)
+    }
+}
+
+internal fun MutableList<String>.addKey(key: String, enabled: Boolean) {
+    if (enabled) {
+        add(key)
+    }
+}
+
+internal fun MutableList<String>.addFileArgs(parameter: String, values: FileCollection) {
+    values.files.forEach {
+        addArg(parameter, it.canonicalPath)
+    }
+}
+
+internal fun MutableList<String>.addFileArgs(parameter: String, values: Collection<FileCollection>) {
+    values.forEach {
+        addFileArgs(parameter, it)
+    }
+}
+
+internal fun MutableList<String>.addListArg(parameter: String, values: List<String>) {
+    if (values.isNotEmpty()) {
+        addArg(parameter, values.joinToString(separator = " "))
+    }
+}
+
+private fun File.providedByCompiler(project: Project): Boolean =
+    toPath().startsWith(project.file(project.konanHome).resolve("klib").toPath())
+
+// We need to filter out interop duplicates because we create copy of them for IDE.
+// TODO: Remove this after interop rework.
+private fun FileCollection.filterOutPublishableInteropLibs(project: Project): FileCollection {
+    val libDirectories = project.rootProject.allprojects.map { it.buildDir.resolve("libs").absoluteFile.toPath() }
+    return filter { file ->
+        !(file.name.contains("-cinterop-") && libDirectories.any { file.toPath().startsWith(it) })
+    }
+}
+
+// endregion
+
+open class KotlinNativeCompile : AbstractCompile() {
 
     init {
-        super.dependsOn(KonanCompilerDownloadTask.KONAN_DOWNLOAD_TASK_NAME)
+        sourceCompatibility = "1.6"
+        targetCompatibility = "1.6"
     }
 
     @Internal
@@ -33,14 +96,24 @@ open class KotlinNativeCompile : DefaultTask() {
     lateinit var outputKind: CompilerOutputKind
 
     // Inputs and outputs
+    @InputFiles
+    @SkipWhenEmpty
+    override fun getSource(): FileTree = project.files(compilation.allSources).asFileTree
 
-    val sources: FileCollection
-        @InputFiles
-        @SkipWhenEmpty
-        get() = compilation.allSources
+    private val commonSources: FileCollection
+        // Already taken into account in getSources method.
+        get() = project.files(compilation.commonSources).asFileTree
 
     val libraries: FileCollection
-        @InputFiles get() = compilation.compileDependencyFiles
+        @InputFiles get() = compilation.compileDependencyFiles.filterOutPublishableInteropLibs(project)
+
+    private val friendModule: FileCollection?
+        get() = compilation.friendCompilation?.output?.allOutputs
+
+    override fun getClasspath(): FileCollection = libraries
+    override fun setClasspath(configuration: FileCollection?) {
+        throw UnsupportedOperationException("Setting classpath directly is unsupported.")
+    }
 
     @Input
     var optimized = false
@@ -53,193 +126,278 @@ open class KotlinNativeCompile : DefaultTask() {
     val target: String
         @Input get() = compilation.target.konanTarget.name
 
+    val entryPoint: String?
+        @Optional @Input get() = compilation.entryPoint
+
+    val linkerOpts: List<String>
+        @Input get() = compilation.linkerOpts
+
     val additionalCompilerOptions: Collection<String>
         @Input get() = compilation.extraOpts
 
-    val kotlinNativeVersion: String
-        @Input get() = KonanCompilerDownloadTask.compilerVersion.toString()
+    // region Language settings imported from a SourceSet.
+    val languageSettings: LanguageSettingsBuilder?
+        @Internal get() = project.kotlinExtension.sourceSets.findByName(compilation.defaultSourceSetName)?.languageSettings
 
-    // We manually register this property as output file or directory depending on output kind.
+    val languageVersion: String?
+        @Optional @Input get() = languageSettings?.languageVersion
+
+    val apiVersion: String?
+        @Optional @Input get() = languageSettings?.apiVersion
+
+    val progressiveMode: Boolean
+        @Input get() = languageSettings?.progressiveMode ?: false
+
+    val enabledLanguageFeatures: Set<String>
+        @Input get() = languageSettings?.enabledLanguageFeatures ?: emptySet()
+
+    val experimentalAnnotationsInUse: Set<String>
+        @Input get() = languageSettings?.experimentalAnnotationsInUse.orEmpty()
+    // endregion.
+
+    // region DSL for compiler options
+    private inner class NativeCompilerOpts : KotlinCommonToolOptions {
+        override var allWarningsAsErrors: Boolean = false
+        override var suppressWarnings: Boolean = false
+        override var verbose: Boolean = false
+
+        // Delegate for compilations's extra options.
+        override var freeCompilerArgs: List<String>
+            get() = compilation.extraOpts
+            set(value) {
+                compilation.extraOpts = value.toMutableList()
+            }
+    }
+
     @Internal
-    val outputFile: Property<File> = project.objects.property(File::class.java)
+    val kotlinOptions: KotlinCommonToolOptions = NativeCompilerOpts()
+
+    fun kotlinOptions(fn: KotlinCommonToolOptions.() -> Unit) {
+        kotlinOptions.fn()
+    }
+
+    fun kotlinOptions(fn: Closure<*>) {
+        fn.delegate = kotlinOptions
+        fn.call()
+    }
+
+    // endregion.
+
+    val kotlinNativeVersion: String
+        @Input get() = project.konanVersion.toString()
+
+    // OutputFile is located under the destinationDir, so there is no need to register it as a separate output.
+    @Internal
+    val outputFile: Provider<File> = project.provider {
+        val konanTarget = compilation.target.konanTarget
+
+        val prefix = outputKind.prefix(konanTarget)
+        val suffix = outputKind.suffix(konanTarget)
+        val baseName = if (compilation.isMainCompilation) project.name else compilation.name
+        var filename = "$prefix$baseName$suffix"
+        if (outputKind in listOf(FRAMEWORK, STATIC, DYNAMIC) || outputKind == PROGRAM && konanTarget == KonanTarget.WASM32) {
+            filename = filename.replace('-', '_')
+        }
+
+        destinationDir.resolve(filename)
+    }
 
     // endregion
+    @Internal
+    val compilerPluginOptions = CompilerPluginOptions()
 
-    // region Useful extensions
-    internal fun MutableList<String>.addArg(parameter: String, value: String) {
-        add(parameter)
-        add(value)
-    }
+    val compilerPluginCommandLine
+        @Input get() = compilerPluginOptions.arguments
 
-    internal fun MutableList<String>.addArgs(parameter: String, values: Iterable<String>) {
-        values.forEach {
-            addArg(parameter, it)
+    @Optional
+    @InputFiles
+    var compilerPluginClasspath: FileCollection? = null
+
+    val serializedCompilerArguments: List<String>
+        @Internal get() = buildCommonArgs()
+
+    val defaultSerializedCompilerArguments: List<String>
+        @Internal get() = buildCommonArgs(true)
+
+    private fun buildCommonArgs(defaultsOnly: Boolean = false) = mutableListOf<String>().apply {
+
+        add("-Xmulti-platform")
+
+        // Language features.
+        addArgIfNotNull("-language-version", languageVersion)
+        addArgIfNotNull("-api-version", apiVersion)
+        addKey("-progressive", progressiveMode)
+        enabledLanguageFeatures.forEach { featureName ->
+            add("-XXLanguage:+$featureName")
         }
-    }
-
-    internal fun MutableList<String>.addArgIfNotNull(parameter: String, value: String?) {
-        if (value != null) {
-            addArg(parameter, value)
+        experimentalAnnotationsInUse.forEach { annotationName ->
+            add("-Xuse-experimental=$annotationName")
         }
-    }
 
-    internal fun MutableList<String>.addKey(key: String, enabled: Boolean) {
-        if (enabled) {
-            add(key)
+        // Compiler plugins.
+        compilerPluginClasspath?.let { pluginClasspath ->
+            pluginClasspath.map { it.canonicalPath }.sorted().forEach { path ->
+                add("-Xplugin=$path")
+            }
+            compilerPluginOptions.arguments.forEach {
+                add("-P")
+                add(it)
+            }
         }
-    }
 
-    internal fun MutableList<String>.addFileArgs(parameter: String, values: FileCollection) {
-        values.files.forEach {
-            addArg(parameter, it.canonicalPath)
-        }
-    }
+        // kotlin options
+        addKey("-Werror", kotlinOptions.allWarningsAsErrors)
+        addKey("-nowarn", kotlinOptions.suppressWarnings)
+        addKey("-verbose", kotlinOptions.verbose)
 
-    internal fun MutableList<String>.addFileArgs(parameter: String, values: Collection<FileCollection>) {
-        values.forEach {
-            addFileArgs(parameter, it)
-        }
-    }
-
-    internal fun MutableList<String>.addListArg(parameter: String, values: List<String>) {
-        if (values.isNotEmpty()) {
-            addArg(parameter, values.joinToString(separator = " "))
-        }
-    }
-    // endregion
-
-    private val File.providedByCompiler: Boolean
-        get() = toPath().startsWith(project.file(project.konanHome).toPath())
-
-    @TaskAction
-    fun compile() {
-        val output = outputFile.get()
-        output.parentFile.mkdirs()
-
-        val args = mutableListOf<String>().apply {
-            addArg("-o", outputFile.get().absolutePath)
-            addKey("-opt", optimized)
-            addKey("-g", debuggable)
-            addKey("-ea", debuggable)
-            addKey("-tr", processTests)
-
-            addArg("-target", target)
-            addArg("-p", outputKind.name.toLowerCase())
-
-            add("-Xmulti-platform")
-
+        if (!defaultsOnly) {
             addAll(additionalCompilerOptions)
+        }
+    }
 
+    private fun buildArgs(defaultsOnly: Boolean = false) = mutableListOf<String>().apply {
+        addKey("-opt", optimized)
+        addKey("-g", debuggable)
+        addKey("-ea", debuggable)
+        addKey("-tr", processTests)
+
+        addArg("-target", target)
+        addArg("-p", outputKind.name.toLowerCase())
+        addArgIfNotNull("-entry", entryPoint)
+
+        if (!defaultsOnly) {
+            addArg("-o", outputFile.get().absolutePath)
+
+            // Libraries.
             libraries.files.filter {
                 // Support only klib files for now.
-                it.extension == "klib" && !it.providedByCompiler
+                it.extension == "klib" && !it.providedByCompiler(project)
             }.forEach { library ->
-                library.parent?.let { addArg("-r", it) }
-                addArg("-l", library.nameWithoutExtension)
+                addArg("-l", library.absolutePath)
             }
-
-            // TODO: Filter only kt files?
-            addAll(sources.files.map { it.absolutePath })
         }
 
-        KonanCompilerRunner(project).run(args)
+        val friends = friendModule?.files
+        if (friends != null && friends.isNotEmpty()) {
+            addArg("-friend-modules", friends.map { it.absolutePath }.joinToString(File.pathSeparator))
+        }
+
+        addListArg("-linker-options", linkerOpts)
+
+        addAll(buildCommonArgs(defaultsOnly))
+
+        // Sources.
+        addAll(getSource().map { it.absolutePath })
+        if (!commonSources.isEmpty) {
+            add("-Xcommon-sources=${commonSources.map { it.absolutePath }.joinToString(separator = ",")}")
+        }
+    }
+
+    @TaskAction
+    override fun compile() {
+        val output = outputFile.get()
+        output.parentFile.mkdirs()
+        KonanCompilerRunner(project).run(buildArgs())
     }
 }
 
-open class KonanCompilerDownloadTask : DefaultTask() {
+open class CInteropProcess : DefaultTask() {
 
-    internal companion object {
+    @Internal
+    lateinit var settings: DefaultCInteropSettings
 
-        val simpleOsName: String = HostManager.simpleOsName()
+    @Internal // Taken into account in the outputFileProvider property
+    lateinit var destinationDir: Provider<File>
 
-        val compilerDirectory: File
-            get() = DependencyDirectories.localKonanDir.resolve("kotlin-native-$simpleOsName-$compilerVersion")
+    val konanTarget: KonanTarget
+        @Internal get() = settings.compilation.target.konanTarget
 
-        // TODO: Support project property for Kotlin/Native compiler version
-        val compilerVersion: KonanVersion = KonanVersionImpl(MetaVersion.RELEASE, 0, 9, 0)
+    val interopName: String
+        @Internal get() = settings.name
 
-        internal const val BASE_DOWNLOAD_URL = "https://download.jetbrains.com/kotlin/native/builds"
-        const val KONAN_DOWNLOAD_TASK_NAME = "checkNativeCompiler"
-    }
-
-    private val useZip = HostManager.hostIsMingw
-
-    private val archiveExtension
-        get() = if (useZip) {
-            "zip"
-        } else {
-            "tar.gz"
-        }
-
-    private fun archiveFileTree(archive: File): FileTree =
-        if (useZip) {
-            project.zipTree(archive)
-        } else {
-            project.tarTree(archive)
-        }
-
-    private fun setupRepo(url: String): ArtifactRepository {
-        return project.repositories.ivy { repo ->
-            repo.setUrl(url)
-            repo.layout("pattern") {
-                val layout = it as IvyPatternRepositoryLayout
-                layout.artifact("[artifact]-[revision].[ext]")
+    val outputFileName: String
+        @Internal get() = with(CompilerOutputKind.LIBRARY) {
+            val baseName = settings.compilation.let {
+                if (it.isMainCompilation) project.name else it.name
             }
-            repo.metadataSources {
-                it.artifact()
-            }
-        }
-    }
-
-    private fun removeRepo(repo: ArtifactRepository) {
-        project.repositories.remove(repo)
-    }
-
-    private fun downloadAndExtract() {
-        val versionString = compilerVersion.toString()
-
-        val url = buildString {
-            append("$BASE_DOWNLOAD_URL/")
-            append(if (compilerVersion.meta == MetaVersion.DEV) "dev/" else "releases/")
-            append("$versionString/")
-            append(simpleOsName)
+            val suffix = suffix(konanTarget)
+            return "$baseName-cinterop-$interopName$suffix"
         }
 
-        val repo = setupRepo(url)
+    val outputFile: File
+        @Internal get() = outputFileProvider.get().asFile
 
-        val compilerDependency = project.dependencies.create(
-            mapOf(
-                "name" to "kotlin-native-$simpleOsName",
-                "version" to versionString,
-                "ext" to archiveExtension
-            )
-        )
+    // Inputs and outputs.
 
-        val configuration = project.configurations.detachedConfiguration(compilerDependency)
-        val archive = configuration.files.single()
-
-        logger.info("Use Kotlin/Native compiler archive: ${archive.absolutePath}")
-        logger.lifecycle("Unpacking Kotlin/Native compiler (version $versionString)...")
-        project.copy {
-            it.from(archiveFileTree(archive))
-            it.into(DependencyDirectories.localKonanDir)
-        }
-
-        removeRepo(repo)
+    @OutputFile
+    val outputFileProvider = newOutputFile().apply {
+        set { destinationDir.get().resolve(outputFileName) }
     }
 
+    val defFile: File
+        @InputFile get() = settings.defFile
+
+    val packageName: String?
+        @Optional @Input get() = settings.packageName
+
+    val compilerOpts: List<String>
+        @Input get() = settings.compilerOpts
+
+    val linkerOpts: List<String>
+        @Input get() = settings.linkerOpts
+
+    val headers: FileCollection
+        @InputFiles get() = settings.headers
+
+    val allHeadersDirs: Set<File>
+        @Input get() = settings.includeDirs.allHeadersDirs.files
+
+    val headerFilterDirs: Set<File>
+        @Input get() = settings.includeDirs.headerFilterDirs.files
+
+    val libraries: FileCollection
+        @InputFiles get() = settings.dependencyFiles.filterOutPublishableInteropLibs(project)
+
+    val extraOpts: List<String>
+        @Input get() = settings.extraOpts
+
+    val kotlinNativeVersion: String
+        @Input get() = project.konanVersion.toString()
+
+    // Task action.
     @TaskAction
-    fun checkCompiler() {
-        if (!project.hasProperty(KotlinNativeProjectProperty.DOWNLOAD_COMPILER)) {
-            val konanHome = project.getProperty(KotlinNativeProjectProperty.KONAN_HOME)
-            logger.info("Use a user-defined compiler path: $konanHome")
-        } else {
-            // TODO: Move Kotlin/Native Distribution class in the Big Kotlin repo and use it here.
-            if (KonanCompilerRunner(project).classpath.isEmpty) {
-                downloadAndExtract()
-            }
-            logger.info("Use Kotlin/Native distribution: $compilerDirectory")
-        }
-    }
+    fun processInterop() {
+        val args = mutableListOf<String>().apply {
+            addArg("-o", outputFile.absolutePath)
 
+            addArgIfNotNull("-target", konanTarget.visibleName)
+            addArgIfNotNull("-def", defFile.canonicalPath)
+            addArgIfNotNull("-pkg", packageName)
+
+            addFileArgs("-h", headers)
+
+            compilerOpts.forEach {
+                addArg("-copt", it)
+            }
+
+            linkerOpts.forEach {
+                addArg("-lopt", it)
+            }
+
+            libraries.files.filter {
+                // Support only klib files for now.
+                it.extension == "klib" && !it.providedByCompiler(project)
+            }.forEach { library ->
+                addArg("-l", library.absolutePath)
+            }
+
+            addArgs("-copt", allHeadersDirs.map { "-I${it.absolutePath}" })
+            addArgs("-headerFilterAdditionalSearchPrefix", headerFilterDirs.map { it.absolutePath })
+
+            addAll(extraOpts)
+        }
+
+        outputFile.parentFile.mkdirs()
+        KonanInteropRunner(project).run(args)
+    }
 }

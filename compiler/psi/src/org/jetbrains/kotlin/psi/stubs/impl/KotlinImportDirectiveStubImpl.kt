@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.psi.stubs.impl
 
-import com.intellij.psi.PsiElement
 import com.intellij.psi.stubs.StubElement
 import com.intellij.util.io.StringRef
 import org.jetbrains.kotlin.name.FqName
@@ -25,7 +24,7 @@ import org.jetbrains.kotlin.psi.stubs.KotlinImportDirectiveStub
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 
 class KotlinImportDirectiveStubImpl(
-    parent: StubElement<PsiElement>,
+    parent: StubElement<*>,
     private val isAllUnder: Boolean,
     private val importedFqName: StringRef?,
     private val isValid: Boolean

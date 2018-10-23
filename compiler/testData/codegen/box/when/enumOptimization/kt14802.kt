@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 // CHECK_CASES_COUNT: function=crash count=2
 // CHECK_IF_COUNT: function=crash count=1
 

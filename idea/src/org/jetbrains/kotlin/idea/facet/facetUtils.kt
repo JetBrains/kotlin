@@ -24,36 +24,46 @@ import com.intellij.openapi.projectRoots.ProjectJdkTable
 import com.intellij.openapi.roots.ExternalProjectSystemRegistry
 import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.roots.ModuleRootModel
+import com.intellij.openapi.roots.ProjectRootManager
+import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.cli.common.arguments.*
 import org.jetbrains.kotlin.compilerRunner.ArgumentUtils
 import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.idea.compiler.configuration.Kotlin2JvmCompilerArgumentsHolder
 import org.jetbrains.kotlin.idea.compiler.configuration.KotlinCommonCompilerArgumentsHolder
 import org.jetbrains.kotlin.idea.compiler.configuration.KotlinCompilerSettings
 import org.jetbrains.kotlin.idea.configuration.externalCompilerVersion
+import org.jetbrains.kotlin.idea.core.isAndroidModule
 import org.jetbrains.kotlin.idea.framework.KotlinSdkType
 import org.jetbrains.kotlin.idea.platform.tooling
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.platform.IdePlatform
 import org.jetbrains.kotlin.platform.IdePlatformKind
 import org.jetbrains.kotlin.platform.impl.JvmIdePlatformKind
+import org.jetbrains.kotlin.psi.NotNullableUserDataProperty
 import kotlin.reflect.KProperty1
 
-private fun getDefaultTargetPlatform(module: Module, rootModel: ModuleRootModel?): IdePlatform<*, *> {
-    for (platform in IdePlatformKind.ALL_KINDS) {
-        if (getRuntimeLibraryVersions(module, rootModel, platform).isNotEmpty()) {
-            //TODO investigate, looks strange
-            return platform.defaultPlatform
-        }
-    }
+var Module.hasExternalSdkConfiguration: Boolean
+        by NotNullableUserDataProperty(Key.create<Boolean>("HAS_EXTERNAL_SDK_CONFIGURATION"), false)
 
-    val sdk = ((rootModel ?: ModuleRootManager.getInstance(module))).sdk
-    val sdkVersion = (sdk?.sdkType as? JavaSdk)?.getVersion(sdk)
-    return when {
-        sdkVersion == null || sdkVersion >= JavaSdkVersion.JDK_1_8 -> JvmIdePlatformKind.Platform(JvmTarget.JVM_1_8)
-        else -> JvmIdePlatformKind.defaultPlatform
+private fun getDefaultTargetPlatform(module: Module, rootModel: ModuleRootModel?): IdePlatform<*, *> {
+    val platformKind = IdePlatformKind.ALL_KINDS.firstOrNull {
+        getRuntimeLibraryVersions(module, rootModel, it).isNotEmpty()
+    } ?: JvmIdePlatformKind
+    if (platformKind == JvmIdePlatformKind) {
+        var jvmTarget = Kotlin2JvmCompilerArgumentsHolder.getInstance(module.project).settings.jvmTarget?.let { JvmTarget.fromString(it) }
+        if (jvmTarget == null) {
+            val sdk = ((rootModel ?: ModuleRootManager.getInstance(module))).sdk
+            val sdkVersion = (sdk?.sdkType as? JavaSdk)?.getVersion(sdk)
+            if (sdkVersion == null || sdkVersion >= JavaSdkVersion.JDK_1_8) {
+                jvmTarget = JvmTarget.JVM_1_8
+            }
+        }
+        return if (jvmTarget != null) JvmIdePlatformKind.Platform(jvmTarget) else JvmIdePlatformKind.defaultPlatform
     }
+    return platformKind.defaultPlatform
 }
 
 fun KotlinFacetSettings.initializeIfNeeded(
@@ -225,23 +235,39 @@ private val CommonCompilerArguments.ignoredFields: List<String>
     }
 
 private fun Module.configureSdkIfPossible(compilerArguments: CommonCompilerArguments, modelsProvider: IdeModifiableModelsProvider) {
+    // SDK for Android module is already configured by Android plugin at this point
+    if (isAndroidModule(modelsProvider) || hasNonOverriddenExternalSdkConfiguration(compilerArguments)) return
+
+    val projectSdk = ProjectRootManager.getInstance(project).projectSdk
     val allSdks = ProjectJdkTable.getInstance().allJdks
     val sdk = if (compilerArguments is K2JVMCompilerArguments) {
-        val jdkHome = compilerArguments.jdkHome ?: return
-        allSdks.firstOrNull { it.sdkType is JavaSdk && FileUtil.comparePaths(it.homePath, jdkHome) == 0 } ?: return
+        val jdkHome = compilerArguments.jdkHome
+        when {
+            jdkHome != null -> allSdks.firstOrNull { it.sdkType is JavaSdk && FileUtil.comparePaths(it.homePath, jdkHome) == 0 }
+            projectSdk != null && projectSdk.sdkType is JavaSdk -> projectSdk
+            else -> allSdks.firstOrNull { it.sdkType is JavaSdk }
+        }
     } else {
         allSdks.firstOrNull { it.sdkType is KotlinSdkType }
-                ?: modelsProvider
-                    .modifiableModuleModel
-                    .modules
-                    .asSequence()
-                    .mapNotNull { modelsProvider.getModifiableRootModel(it).sdk }
-                    .firstOrNull { it.sdkType is KotlinSdkType }
-                ?: KotlinSdkType.INSTANCE.createSdkWithUniqueName(allSdks.toList())
+            ?: modelsProvider
+                .modifiableModuleModel
+                .modules
+                .asSequence()
+                .mapNotNull { modelsProvider.getModifiableRootModel(it).sdk }
+                .firstOrNull { it.sdkType is KotlinSdkType }
+            ?: KotlinSdkType.INSTANCE.createSdkWithUniqueName(allSdks.toList())
     }
 
-    modelsProvider.getModifiableRootModel(this).sdk = sdk
+    val rootModel = modelsProvider.getModifiableRootModel(this)
+    if (sdk == null || sdk == projectSdk) {
+        rootModel.inheritSdk()
+    } else {
+        rootModel.sdk = sdk
+    }
 }
+
+private fun Module.hasNonOverriddenExternalSdkConfiguration(compilerArguments: CommonCompilerArguments): Boolean =
+    hasExternalSdkConfiguration && (compilerArguments !is K2JVMCompilerArguments || compilerArguments.jdkHome == null)
 
 fun parseCompilerArgumentsToFacet(
     arguments: List<String>,

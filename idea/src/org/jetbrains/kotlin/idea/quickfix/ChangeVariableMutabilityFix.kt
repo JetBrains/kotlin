@@ -33,10 +33,12 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 class ChangeVariableMutabilityFix(
     element: KtValVarKeywordOwner,
     private val makeVar: Boolean,
-    private val actionText: String? = null
+    private val actionText: String? = null,
+    private val deleteInitializer: Boolean = false
 ) : KotlinQuickFixAction<KtValVarKeywordOwner>(element) {
 
-    override fun getText() = actionText ?: if (makeVar) "Change to var" else "Change to val"
+    override fun getText() = actionText
+        ?: (if (makeVar) "Change to var" else "Change to val") + (if (deleteInitializer) " and delete initializer" else "")
 
     override fun getFamilyName(): String = text
 
@@ -51,6 +53,9 @@ class ChangeVariableMutabilityFix(
         val factory = KtPsiFactory(project)
         val newKeyword = if (makeVar) factory.createVarKeyword() else factory.createValKeyword()
         element.valOrVarKeyword!!.replace(newKeyword)
+        if (deleteInitializer) {
+            (element as? KtProperty)?.initializer = null
+        }
     }
 
     companion object {

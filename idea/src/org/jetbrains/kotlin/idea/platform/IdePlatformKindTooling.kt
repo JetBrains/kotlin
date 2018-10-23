@@ -32,7 +32,7 @@ abstract class IdePlatformKindTooling {
     abstract val gradlePlatformIds: List<KotlinPlatform>
 
     abstract val libraryKind: PersistentLibraryKind<*>?
-    abstract fun getLibraryDescription(project: Project): CustomLibraryDescription
+    abstract fun getLibraryDescription(project: Project): CustomLibraryDescription?
     abstract fun getLibraryVersionProvider(project: Project): (Library) -> String?
 
     abstract fun getTestIcon(declaration: KtNamedDeclaration, descriptor: DeclarationDescriptor): Icon?

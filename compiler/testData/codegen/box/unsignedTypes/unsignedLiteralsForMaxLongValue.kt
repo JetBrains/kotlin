@@ -1,5 +1,5 @@
 // WITH_UNSIGNED
-// IGNORE_BACKEND: JVM_IR, JS_IR
+// IGNORE_BACKEND: JVM_IR
 
 fun box(): String {
     val maxULong = 0xFFFF_FFFF_FFFF_FFFFuL

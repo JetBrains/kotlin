@@ -105,7 +105,15 @@ object ArrayOps : TemplateGroupBase() {
         returns("Boolean")
         on(Platform.JVM) {
             inlineOnly()
-            body { "return java.util.Arrays.deepEquals(this, other)" }
+            annotation("""@JvmName("contentDeepEqualsInline")""")
+            body {
+                """
+                if (kotlin.internal.apiVersionIsAtLeast(1, 3, 0))
+                    return contentDeepEqualsImpl(other)
+                else
+                    return java.util.Arrays.deepEquals(this, other)
+                """
+            }
         }
         on(Platform.JS) {
             annotation("""@library("arrayDeepEquals")""")
@@ -155,7 +163,15 @@ object ArrayOps : TemplateGroupBase() {
         returns("String")
         on(Platform.JVM) {
             inlineOnly()
-            body { "return java.util.Arrays.deepToString(this)" }
+            annotation("""@JvmName("contentDeepToStringInline")""")
+            body {
+                """
+                if (kotlin.internal.apiVersionIsAtLeast(1, 3, 0))
+                    return contentDeepToStringImpl()
+                else
+                    return java.util.Arrays.deepToString(this)
+                """
+            }
         }
         on(Platform.JS) {
             annotation("""@library("arrayDeepToString")""")
@@ -200,7 +216,15 @@ object ArrayOps : TemplateGroupBase() {
         returns("Int")
         on(Platform.JVM) {
             inlineOnly()
-            body { "return java.util.Arrays.deepHashCode(this)" }
+            annotation("""@JvmName("contentDeepHashCodeInline")""")
+            body {
+                """
+                if (kotlin.internal.apiVersionIsAtLeast(1, 3, 0))
+                    return contentDeepHashCodeImpl()
+                else
+                    return java.util.Arrays.deepHashCode(this)
+                """
+            }
         }
         on(Platform.JS) {
             annotation("""@library("arrayDeepHashCode")""")
@@ -465,8 +489,7 @@ object ArrayOps : TemplateGroupBase() {
         }
     }
 
-    // TODO: Remove -1 from common signature
-    val f_copyInto = fn("copyInto(destination: SELF, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = -1)") {
+    val f_copyInto = fn("copyInto(destination: SELF, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = size)") {
         include(InvariantArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned)
     } builder {
         since("1.3")
@@ -484,7 +507,7 @@ object ArrayOps : TemplateGroupBase() {
             @param endIndex the end (exclusive) of the subrange to copy, size of this array by default.
 
             @throws IndexOutOfBoundsException or [IllegalArgumentException] when [startIndex] or [endIndex] is out of range of this array indices or when `startIndex > endIndex`.
-            @throws IndexOutOfBoundsException when the subrange doesn't fit into the [destination] array starting at the specified [destinationIndex],
+            @throws IndexOutOfBoundsException when the subrange doesn't fit into the [destination] array starting at the specified [destinationOffset],
             or when that index is out of the [destination] array indices range.
 
             @return the [destination] array.
@@ -494,7 +517,10 @@ object ArrayOps : TemplateGroupBase() {
         specialFor(ArraysOfUnsigned) {
             inlineOnly()
             body {
-                "return SELF(storage.copyInto(destination.storage, destinationOffset, startIndex, endIndex))"
+                """
+                storage.copyInto(destination.storage, destinationOffset, startIndex, endIndex)
+                return destination
+                """
             }
         }
         specialFor(ArraysOfPrimitives, InvariantArraysOfObjects) {
@@ -506,8 +532,6 @@ object ArrayOps : TemplateGroupBase() {
                 signature("copyInto(destination: SELF, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = size)")
                 body {
                     """
-                    @Suppress("NAME_SHADOWING")
-                    val endIndex = if (endIndex == -1) size else endIndex // TODO: Remove when default value from expect is fixed
                     System.arraycopy(this, startIndex, destination, destinationOffset, endIndex - startIndex)
                     return destination
                     """

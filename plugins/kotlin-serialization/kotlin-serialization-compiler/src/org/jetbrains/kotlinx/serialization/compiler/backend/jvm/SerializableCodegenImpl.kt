@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassOrAny
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
-import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.SerializableCodegen
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.anonymousInitializers
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.bodyPropertiesDescriptorsMap
@@ -62,14 +61,14 @@ class SerializableCodegenImpl(
     private val SerializableProperty.asmType get() = classCodegen.typeMapper.mapType(this.type)
 
     override fun generateInternalConstructor(constructorDescriptor: ClassConstructorDescriptor) {
-        classCodegen.generateMethod(constructorDescriptor, { sig, expr -> doGenerateConstructorImpl(expr) })
+        classCodegen.generateMethod(constructorDescriptor) { _, expr -> doGenerateConstructorImpl(expr) }
     }
 
     override fun generateWriteSelfMethod(methodDescriptor: FunctionDescriptor) {
-        classCodegen.generateMethod(methodDescriptor, { sig, expr -> doGenerateWriteSelf(expr, sig) })
+        classCodegen.generateMethod(methodDescriptor) { _, expr -> doGenerateWriteSelf(expr) }
     }
 
-    private fun InstructionAdapter.doGenerateWriteSelf(exprCodegen: ExpressionCodegen, signature: JvmMethodSignature) {
+    private fun InstructionAdapter.doGenerateWriteSelf(exprCodegen: ExpressionCodegen) {
         val thisI = 0
         val outputI = 1
         val serialDescI = 2

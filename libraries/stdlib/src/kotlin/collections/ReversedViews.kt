@@ -2,13 +2,11 @@
  * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
+
 @file:kotlin.jvm.JvmMultifileClass
 @file:kotlin.jvm.JvmName("CollectionsKt")
 
 package kotlin.collections
-
-import kotlin.*
-
 
 private open class ReversedListReadOnly<out T>(private val delegate: List<T>) : AbstractList<T>() {
     override val size: Int get() = delegate.size

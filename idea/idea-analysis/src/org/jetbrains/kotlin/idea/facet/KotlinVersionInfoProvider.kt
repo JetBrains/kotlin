@@ -62,24 +62,29 @@ fun getLibraryLanguageLevel(
 }
 
 fun getDefaultLanguageLevel(
-        module: Module,
-        explicitVersion: String? = null,
-        coerceRuntimeLibraryVersionToReleased: Boolean = true
+    module: Module,
+    explicitVersion: String? = null,
+    coerceRuntimeLibraryVersionToReleased: Boolean = true
 ): LanguageVersion {
     val libVersion = explicitVersion
-                     ?: KotlinVersionInfoProvider.EP_NAME.extensions
-                             .mapNotNull { it.getCompilerVersion(module) }
-                             .addReleaseVersionIfNecessary(coerceRuntimeLibraryVersionToReleased)
-                             .minWith(VersionComparatorUtil.COMPARATOR)
-                     ?: return VersionView.RELEASED_VERSION
-    return when {
-        libVersion.startsWith("1.3") -> LanguageVersion.KOTLIN_1_3
-        libVersion.startsWith("1.2") -> LanguageVersion.KOTLIN_1_2
-        libVersion.startsWith("1.1") -> LanguageVersion.KOTLIN_1_1
-        libVersion.startsWith("1.0") -> LanguageVersion.KOTLIN_1_0
-        else -> VersionView.RELEASED_VERSION
-    }
+        ?: KotlinVersionInfoProvider.EP_NAME.extensions
+            .mapNotNull { it.getCompilerVersion(module) }
+            .addReleaseVersionIfNecessary(coerceRuntimeLibraryVersionToReleased)
+            .minWith(VersionComparatorUtil.COMPARATOR)
+        ?: return VersionView.RELEASED_VERSION
+    return libVersion.toLanguageVersion()
 }
+
+fun String?.toLanguageVersion(): LanguageVersion = when {
+    this == null -> VersionView.RELEASED_VERSION
+    startsWith("1.3") -> LanguageVersion.KOTLIN_1_3
+    startsWith("1.2") -> LanguageVersion.KOTLIN_1_2
+    startsWith("1.1") -> LanguageVersion.KOTLIN_1_1
+    startsWith("1.0") -> LanguageVersion.KOTLIN_1_0
+    else -> VersionView.RELEASED_VERSION
+}
+
+fun String?.toApiVersion(): ApiVersion = ApiVersion.createByLanguageVersion(toLanguageVersion())
 
 private fun Iterable<String>.addReleaseVersionIfNecessary(shouldAdd: Boolean): Iterable<String> =
     if (shouldAdd) this + VersionView.RELEASED_VERSION.versionString else this

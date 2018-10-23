@@ -776,6 +776,11 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
             runTest("idea/testData/formatter/WhenLinesBeforeLbrace.after.kt");
         }
 
+        @TestMetadata("WhenWithVariable.after.kt")
+        public void testWhenWithVariable() throws Exception {
+            runTest("idea/testData/formatter/WhenWithVariable.after.kt");
+        }
+
         @TestMetadata("WhereClause.after.kt")
         public void testWhereClause() throws Exception {
             runTest("idea/testData/formatter/WhereClause.after.kt");

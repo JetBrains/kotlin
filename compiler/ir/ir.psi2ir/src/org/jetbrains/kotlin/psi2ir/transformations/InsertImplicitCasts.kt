@@ -23,11 +23,13 @@ import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrVariable
+import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.types.impl.originalKotlinType
+import org.jetbrains.kotlin.ir.util.TypeTranslator
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.psi2ir.containsNull
 import org.jetbrains.kotlin.psi2ir.generators.GeneratorContext
@@ -40,15 +42,15 @@ import org.jetbrains.kotlin.types.typeUtil.makeNullable
 import org.jetbrains.kotlin.types.upperIfFlexible
 
 fun insertImplicitCasts(element: IrElement, context: GeneratorContext) {
-    element.transformChildren(InsertImplicitCasts(context), null)
+    element.transformChildren(InsertImplicitCasts(context.builtIns, context.irBuiltIns, context.typeTranslator), null)
 }
 
-class InsertImplicitCasts(context: GeneratorContext) : IrElementTransformerVoid() {
+open class InsertImplicitCasts(
+    private val builtIns: KotlinBuiltIns,
+    private val irBuiltIns: IrBuiltIns,
+    private val typeTranslator: TypeTranslator
+) : IrElementTransformerVoid() {
 
-    private val builtIns = context.builtIns
-    private val irBuiltIns = context.irBuiltIns
-
-    private val typeTranslator = context.typeTranslator
     private fun KotlinType.toIrType() = typeTranslator.translateType(this)
 
     override fun visitCallableReference(expression: IrCallableReference): IrExpression =
@@ -232,10 +234,16 @@ class InsertImplicitCasts(context: GeneratorContext) : IrElementTransformerVoid(
         )
     }
 
-    private fun IrExpression.coerceToUnit(): IrExpression {
+    protected open fun IrExpression.coerceToUnit(): IrExpression {
         val valueType = getKotlinType(this)
+        return coerceToUnitIfNeeded(valueType)
+    }
 
-        return if (KotlinTypeChecker.DEFAULT.isSubtypeOf(valueType, builtIns.unitType))
+    protected fun getKotlinType(irExpression: IrExpression) =
+        irExpression.type.originalKotlinType!!
+
+    protected fun IrExpression.coerceToUnitIfNeeded(valueType: KotlinType): IrExpression {
+        return if (isUnitSubtype(valueType))
             this
         else
             IrTypeOperatorCallImpl(
@@ -247,10 +255,8 @@ class InsertImplicitCasts(context: GeneratorContext) : IrElementTransformerVoid(
             )
     }
 
-    private fun getKotlinType(irExpression: IrExpression) =
-        if (irExpression is IrCall)
-            irExpression.symbol.descriptor.original.returnType!!
-        else irExpression.type.originalKotlinType!!
+    protected fun isUnitSubtype(valueType: KotlinType) =
+        KotlinTypeChecker.DEFAULT.isSubtypeOf(valueType, builtIns.unitType)
 
     private fun KotlinType.isBuiltInIntegerType(): Boolean =
         KotlinBuiltIns.isByte(this) ||

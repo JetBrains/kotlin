@@ -35,9 +35,9 @@ class SerializableCompanionCodegenImpl(private val codegen: ImplementationBodyCo
 
     override fun generateSerializerGetter(methodDescriptor: FunctionDescriptor) {
         val serial = serializableDescriptor.classSerializer?.toClassDescriptor ?: return
-        codegen.generateMethod(methodDescriptor) {sig, expr ->
+        codegen.generateMethod(methodDescriptor) { _, _ ->
             stackValueSerializerInstance(codegen, serializableDescriptor.module, serializableDescriptor.defaultType, serial, this, null) {
-                load(it+1, kSerializerType)
+                load(it + 1, kSerializerType)
             }
             areturn(kSerializerType)
         }

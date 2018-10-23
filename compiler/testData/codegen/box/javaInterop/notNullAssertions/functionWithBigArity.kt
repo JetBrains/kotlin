@@ -50,7 +50,9 @@ fun Any.g(
 ): Any = Any()
 
 fun box(): String {
+    @Suppress("DEPRECATION_ERROR")
     Test.test(::f as kotlin.jvm.functions.FunctionN<Any>)
+    @Suppress("DEPRECATION_ERROR")
     Test.test(Any::g as kotlin.jvm.functions.FunctionN<Any>)
     return "OK"
 }

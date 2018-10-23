@@ -18,10 +18,7 @@ package org.jetbrains.kotlin.gradle.dsl
 
 import groovy.lang.Closure
 import org.gradle.api.Task
-import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
-import org.jetbrains.kotlin.cli.common.arguments.CommonToolArguments
-import org.jetbrains.kotlin.compilerRunner.ArgumentUtils
 
 interface KotlinCompile<T : KotlinCommonOptions> : Task {
     @get:Internal

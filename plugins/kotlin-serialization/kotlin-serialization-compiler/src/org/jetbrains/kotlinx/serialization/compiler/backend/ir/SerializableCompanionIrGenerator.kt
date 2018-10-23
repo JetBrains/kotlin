@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.util.TypeTranslator
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.SerializableCompanionCodegen
 import org.jetbrains.kotlinx.serialization.compiler.resolve.classSerializer
 import org.jetbrains.kotlinx.serialization.compiler.resolve.getSerializableClassDescriptorByCompanion
@@ -20,15 +21,17 @@ class SerializableCompanionIrGenerator(
     override val compilerContext: BackendContext,
     bindingContext: BindingContext
 ) : SerializableCompanionCodegen(irClass.descriptor), IrBuilderExtension {
-    override val translator: TypeTranslator = TypeTranslator(compilerContext.externalSymbols, compilerContext.irBuiltIns.languageVersionSettings)
+    override val translator: TypeTranslator = compilerContext.createTypeTranslator(serializableDescriptor.module)
     private val _table = SymbolTable()
     override val BackendContext.localSymbolTable: SymbolTable
         get() = _table
 
     companion object {
-        fun generate(irClass: IrClass,
-                     context: BackendContext,
-                     bindingContext: BindingContext) {
+        fun generate(
+            irClass: IrClass,
+            context: BackendContext,
+            bindingContext: BindingContext
+        ) {
             val companionDescriptor = irClass.descriptor
             val serializableClass = getSerializableClassDescriptorByCompanion(companionDescriptor) ?: return
             if (serializableClass.isInternalSerializable)
@@ -37,15 +40,15 @@ class SerializableCompanionIrGenerator(
     }
 
     override fun generateSerializerGetter(methodDescriptor: FunctionDescriptor) =
-        irClass.contributeFunction(methodDescriptor, fromStubs = true) { getter ->
-        val serializer = serializableDescriptor.classSerializer?.toClassDescriptor!!
-        val expr = if (serializer.kind == ClassKind.OBJECT) {
-            irGetObject(serializer)
-        } else {
-            val ctor = compilerContext.externalSymbols.referenceConstructor(serializer.unsubstitutedPrimaryConstructor!!)
-            val args: List<IrExpression> = emptyList() // todo
-            irInvoke(null, ctor, *args.toTypedArray())
+        irClass.contributeFunction(methodDescriptor, fromStubs = true) { _ ->
+            val serializer = serializableDescriptor.classSerializer?.toClassDescriptor!!
+            val expr = if (serializer.kind == ClassKind.OBJECT) {
+                irGetObject(serializer)
+            } else {
+                val ctor = compilerContext.externalSymbols.referenceConstructor(serializer.unsubstitutedPrimaryConstructor!!)
+                val args: List<IrExpression> = emptyList() // todo
+                irInvoke(null, ctor, *args.toTypedArray())
+            }
+            +irReturn(expr)
         }
-        +irReturn(expr)
-    }
 }

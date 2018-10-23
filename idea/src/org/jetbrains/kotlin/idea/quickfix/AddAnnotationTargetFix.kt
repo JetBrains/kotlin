@@ -148,13 +148,16 @@ private fun KtAnnotationEntry.getActualTargetList(): List<KotlinTarget> {
 
 private fun KtClass.addAnnotationTargets(annotationTargets: List<KotlinTarget>, psiFactory: KtPsiFactory) {
     val retentionAnnotationName = KotlinBuiltIns.FQ_NAMES.retention.shortName().asString()
-    if (annotationTargets.any { it == KotlinTarget.EXPRESSION }
-        && annotationEntries.none { it.typeReference?.text == retentionAnnotationName }) {
-        addAnnotationEntry(
-            psiFactory.createAnnotationEntry(
-                "@$retentionAnnotationName(${KotlinBuiltIns.FQ_NAMES.annotationRetention.shortName()}.${AnnotationRetention.SOURCE.name})"
-            )
+    if (annotationTargets.any { it == KotlinTarget.EXPRESSION }) {
+        val retentionEntry = annotationEntries.firstOrNull { it.typeReference?.text == retentionAnnotationName }
+        val newRetentionEntry = psiFactory.createAnnotationEntry(
+            "@$retentionAnnotationName(${KotlinBuiltIns.FQ_NAMES.annotationRetention.shortName()}.${AnnotationRetention.SOURCE.name})"
         )
+        if (retentionEntry == null) {
+            addAnnotationEntry(newRetentionEntry)
+        } else {
+            retentionEntry.replace(newRetentionEntry)
+        }
     }
 
     val targetAnnotationName = KotlinBuiltIns.FQ_NAMES.target.shortName().asString()

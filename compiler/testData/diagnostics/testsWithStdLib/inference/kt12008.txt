@@ -1,0 +1,12 @@
+package
+
+public fun foo(/*0*/ o: java.util.Optional<kotlin.String>): kotlin.Unit
+
+public final class Test {
+    public constructor Test(/*0*/ nullable: kotlin.String?)
+    private final val nullableOptional: java.util.Optional<kotlin.String>
+    public final fun doIt(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

@@ -25,7 +25,10 @@ import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.KtExpression;
 import org.jetbrains.kotlin.psi.ValueArgument;
-import org.jetbrains.kotlin.resolve.*;
+import org.jetbrains.kotlin.resolve.BindingContext;
+import org.jetbrains.kotlin.resolve.DescriptorUtils;
+import org.jetbrains.kotlin.resolve.ImportedFromObjectCallableDescriptor;
+import org.jetbrains.kotlin.resolve.InlineClassesUtilsKt;
 import org.jetbrains.kotlin.resolve.calls.model.DefaultValueArgument;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument;
@@ -160,16 +163,26 @@ public abstract class StackValue {
 
     @NotNull
     public static StackValue local(int index, @NotNull Type type, @NotNull VariableDescriptor descriptor) {
+        return local(index, type, descriptor, null);
+    }
+
+    @NotNull
+    public static StackValue local(int index, @NotNull Type type, @NotNull VariableDescriptor descriptor, @Nullable KotlinType delegateKotlinType) {
         if (descriptor.isLateInit()) {
+            assert delegateKotlinType == null :
+                    "Delegated property can't be lateinit: " + descriptor + ", delegate type: " + delegateKotlinType;
             return new LateinitLocal(index, type, descriptor.getType(), descriptor.getName());
         }
         else {
-            return new Local(index, type, descriptor.getType());
+            return new Local(
+                    index, type,
+                    delegateKotlinType != null ? delegateKotlinType : descriptor.getType()
+            );
         }
     }
 
     @NotNull
-    public static Delegate delegate(
+    public static Delegate localDelegate(
             @NotNull Type type,
             @NotNull StackValue delegateValue,
             @NotNull StackValue metadataValue,
@@ -186,7 +199,16 @@ public abstract class StackValue {
 
     @NotNull
     public static StackValue shared(int index, @NotNull Type type, @NotNull VariableDescriptor descriptor) {
-        return new Shared(index, type, descriptor.getType(), descriptor.isLateInit(), descriptor.getName());
+        return shared(index, type, descriptor, null);
+    }
+
+    @NotNull
+    public static StackValue shared(int index, @NotNull Type type, @NotNull VariableDescriptor descriptor, @Nullable KotlinType delegateKotlinType) {
+        return new Shared(
+                index, type,
+                delegateKotlinType != null ? delegateKotlinType : descriptor.getType(),
+                descriptor.isLateInit(), descriptor.getName()
+        );
     }
 
     @NotNull
@@ -318,7 +340,19 @@ public abstract class StackValue {
 
     @NotNull
     public static Field field(@NotNull Type type, @NotNull Type owner, @NotNull String name, boolean isStatic, @NotNull StackValue receiver) {
-        return field(type, null, owner, name, isStatic, receiver, null);
+        return field(type, null, owner, name, isStatic, receiver);
+    }
+
+    @NotNull
+    public static Field field(
+            @NotNull Type type,
+            @Nullable KotlinType kotlinType,
+            @NotNull Type owner,
+            @NotNull String name,
+            boolean isStatic,
+            @NotNull StackValue receiver
+    ) {
+        return field(type, kotlinType, owner, name, isStatic, receiver, null);
     }
 
     @NotNull
@@ -341,7 +375,14 @@ public abstract class StackValue {
 
     @NotNull
     public static Field field(@NotNull FieldInfo info, @NotNull StackValue receiver) {
-        return field(info.getFieldType(), Type.getObjectType(info.getOwnerInternalName()), info.getFieldName(), info.isStatic(), receiver);
+        return field(
+                info.getFieldType(),
+                info.getFieldKotlinType(),
+                Type.getObjectType(info.getOwnerInternalName()),
+                info.getFieldName(),
+                info.isStatic(),
+                receiver
+        );
     }
 
     @NotNull
@@ -363,10 +404,11 @@ public abstract class StackValue {
             @NotNull StackValue receiver,
             @NotNull ExpressionCodegen codegen,
             @Nullable ResolvedCall resolvedCall,
-            boolean skipLateinitAssertion
+            boolean skipLateinitAssertion,
+            @Nullable KotlinType delegateKotlinType
     ) {
         return new Property(descriptor, backingFieldOwner, getter, setter, isStaticBackingField, fieldName, type, receiver, codegen,
-                            resolvedCall, skipLateinitAssertion);
+                            resolvedCall, skipLateinitAssertion, delegateKotlinType);
     }
 
     @NotNull
@@ -721,7 +763,7 @@ public abstract class StackValue {
     ) {
         // Coerce 'this' for the case when it is smart cast.
         // Do not coerce for other cases due to the 'protected' access issues (JVMS 7, 4.9.2 Structural Constraints).
-        boolean coerceType = descriptor.getKind() == ClassKind.INTERFACE || (castReceiver && !isSuper);
+        boolean coerceType = descriptor.getKind() == ClassKind.INTERFACE || descriptor.isInline() || (castReceiver && !isSuper);
         return new ThisOuter(codegen, descriptor, isSuper, coerceType);
     }
 
@@ -1426,7 +1468,7 @@ public abstract class StackValue {
 
             Type lastParameterType = ArraysKt.last(setter.getParameterTypes());
             KotlinType lastParameterKotlinType =
-                    CollectionsKt.last(resolvedSetCall.getResultingDescriptor().getValueParameters()).getType();
+                    CollectionsKt.last(resolvedSetCall.getResultingDescriptor().getOriginal().getValueParameters()).getType();
 
             coerce(topOfStackType, topOfStackKotlinType, lastParameterType, lastParameterKotlinType, v);
 
@@ -1459,7 +1501,6 @@ public abstract class StackValue {
             }
         }
     }
-
 
     public static class Field extends StackValueWithSimpleReceiver {
         public final Type owner;
@@ -1508,12 +1549,13 @@ public abstract class StackValue {
         private final ExpressionCodegen codegen;
         private final ResolvedCall resolvedCall;
         private final boolean skipLateinitAssertion;
+        private final KotlinType delegateKotlinType;
 
         public Property(
                 @NotNull PropertyDescriptor descriptor, @Nullable Type backingFieldOwner, @Nullable CallableMethod getter,
                 @Nullable CallableMethod setter, boolean isStaticBackingField, @Nullable String fieldName, @NotNull Type type,
                 @NotNull StackValue receiver, @NotNull ExpressionCodegen codegen, @Nullable ResolvedCall resolvedCall,
-                boolean skipLateinitAssertion
+                boolean skipLateinitAssertion, @Nullable KotlinType delegateKotlinType
         ) {
             super(type, descriptor.getType(), isStatic(isStaticBackingField, getter), isStatic(isStaticBackingField, setter), receiver, true);
             this.backingFieldOwner = backingFieldOwner;
@@ -1524,6 +1566,44 @@ public abstract class StackValue {
             this.codegen = codegen;
             this.resolvedCall = resolvedCall;
             this.skipLateinitAssertion = skipLateinitAssertion;
+            this.delegateKotlinType = delegateKotlinType;
+        }
+
+        private static class DelegatePropertyConstructorMarker {
+            private DelegatePropertyConstructorMarker() {}
+            public static final DelegatePropertyConstructorMarker MARKER = new DelegatePropertyConstructorMarker();
+        }
+
+        /**
+         * Given a delegating property, create a "property" corresponding to the underlying delegate itself.
+         * This will take care of backing fields, accessors, and other such stuff.
+         * Note that we just replace <code>kotlinType</code> with the <code>delegateKotlinType</code>
+         * (so that type coercion will work properly),
+         * and <code>delegateKotlinType</code> with <code>null</code>
+         * (so that the resulting property has no underlying delegate of its own).
+         *
+         * @param delegating    delegating property
+         * @param marker        intent marker
+         */
+        @SuppressWarnings("unused")
+        private Property(@NotNull Property delegating, @NotNull DelegatePropertyConstructorMarker marker) {
+            super(delegating.type, delegating.delegateKotlinType,
+                  delegating.isStaticPut, delegating.isStaticStore, delegating.receiver, true);
+
+            this.backingFieldOwner = delegating.backingFieldOwner;
+            this.getter = delegating.getter;
+            this.setter = delegating.setter;
+            this.descriptor = delegating.descriptor;
+            this.fieldName = delegating.fieldName;
+            this.codegen = delegating.codegen;
+            this.resolvedCall = delegating.resolvedCall;
+            this.skipLateinitAssertion = delegating.skipLateinitAssertion;
+            this.delegateKotlinType = null;
+        }
+
+        public Property getDelegateOrNull() {
+            if (delegateKotlinType == null) return null;
+            return new Property(this, DelegatePropertyConstructorMarker.MARKER);
         }
 
         @Override

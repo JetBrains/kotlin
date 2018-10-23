@@ -14,7 +14,7 @@ enum class NotLinkedSpecTestFileInfoElementType(
     override val required: Boolean = false
 ) : SpecTestInfoElementType {
     SECTION(required = true),
-    CATEGORY(
+    CATEGORIES(
         valuePattern = Pattern.compile("""\w+(,\s+\w+)*"""),
         required = true
     ),
@@ -49,11 +49,11 @@ class NotLinkedSpecTest(
 class NotLinkedSpecTestValidator(testDataFile: File) : AbstractSpecTestValidator<NotLinkedSpecTest>(testDataFile) {
     override val testPathPattern = getPathPattern()
     override val testInfoPattern: Pattern =
-        Pattern.compile(MULTILINE_COMMENT_REGEX.format("""KOTLIN $testAreaRegex NOT LINKED SPEC TEST \($testTypeRegex\)$lineSeparator(?<infoElements>[\s\S]*?$lineSeparator)"""))
+        Pattern.compile(multilineCommentRegex.format("""KOTLIN $testAreaRegex NOT LINKED SPEC TEST \($testTypeRegex\)$lineSeparator(?<infoElements>[\s\S]*?$lineSeparator)"""))
 
     companion object : SpecTestValidatorHelperObject {
         override val pathPartRegex =
-            """${dirsByLinkedType[SpecTestLinkedType.NOT_LINKED]}$pathSeparator(?<section>[\w-]+)$pathSeparator(?<categories>(?:[\w-]+)(?:/[\w-]+)*?)"""
+            """${SpecTestLinkedType.NOT_LINKED.testDataPath}$pathSeparator(?<sections>[\w-]+)$pathSeparator(?<categories>(?:[\w-]+)(?:$pathSeparator[\w-]+)*?)"""
         override val filenameRegex = """(?<testNumber>$INTEGER_REGEX)\.kt"""
         override fun getPathPattern(): Pattern = Pattern.compile(testPathRegexTemplate.format(pathPartRegex, filenameRegex))
     }
@@ -66,10 +66,10 @@ class NotLinkedSpecTestValidator(testDataFile: File) : AbstractSpecTestValidator
         issues: Set<String>?
     ) =
         NotLinkedSpecTest(
-            TestArea.valueOf(testInfoMatcher.group("testArea").toUpperCase()),
+            TestArea.valueOf(testInfoMatcher.group("testArea").replace(" ", "_").toUpperCase()),
             TestType.valueOf(testInfoMatcher.group("testType")),
             testInfoElements[NotLinkedSpecTestFileInfoElementType.SECTION]!!.content,
-            testInfoElements[NotLinkedSpecTestFileInfoElementType.CATEGORY]!!.content.split(Regex(""",\s*""")),
+            testInfoElements[NotLinkedSpecTestFileInfoElementType.CATEGORIES]!!.content.split(Regex(""",\s*""")),
             testInfoElements[NotLinkedSpecTestFileInfoElementType.NUMBER]!!.content.toInt(),
             testInfoElements[NotLinkedSpecTestFileInfoElementType.DESCRIPTION]!!.content,
             testCases,
@@ -81,8 +81,8 @@ class NotLinkedSpecTestValidator(testDataFile: File) : AbstractSpecTestValidator
         NotLinkedSpecTest(
             TestArea.valueOf(testInfoMatcher.group("testArea").toUpperCase()),
             TestType.fromValue(testInfoMatcher.group("testType"))!!,
-            testInfoMatcher.group("section"),
-            testInfoMatcher.group("categories").split("/"),
+            testInfoMatcher.group("sections"),
+            testInfoMatcher.group("categories").split(File.separator),
             testNumber = testInfoMatcher.group("testNumber").toInt()
         )
 
@@ -93,7 +93,7 @@ class NotLinkedSpecTestValidator(testDataFile: File) : AbstractSpecTestValidator
         if (testInfoByContent.unexpectedBehavior!!)
             println("(!!!) HAS UNEXPECTED BEHAVIOUR (!!!)")
         println("${testInfoByFilename.testArea} ${testInfoByFilename.testType} NOT LINKED SPEC TEST")
-        println("SECTION: ${testInfoByContent.section}")
+        println("SECTIONS: ${testInfoByContent.section}")
         println("CATEGORIES: ${testInfoByContent.categories.joinToString(", ")}")
         println("TEST NUMBER: ${testInfoByContent.testNumber}")
         println("NUMBER OF TEST CASES: ${testInfoByContent.cases!!.size}")

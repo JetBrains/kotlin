@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 // LANGUAGE_VERSION: 1.2
 // WITH_RUNTIME
 // FILE: lateinit.kt

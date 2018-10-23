@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.idea.KotlinFileType
 import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.idea.test.configureCompilerOptions
+import org.jetbrains.kotlin.idea.test.rollbackCompilerOptions
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 
 abstract class AbstractPartialBodyResolveTest : KotlinLightCodeInsightFixtureTestCase() {
@@ -66,74 +67,82 @@ abstract class AbstractPartialBodyResolveTest : KotlinLightCodeInsightFixtureTes
 
     private fun dump(testPath: String, resolveMode: BodyResolveMode): String {
         myFixture.configureByText(KotlinFileType.INSTANCE, File(testPath).readText())
-        configureCompilerOptions(myFixture.file.text, project, module)
+        val configured = configureCompilerOptions(myFixture.file.text, project, module)
 
-        val file = myFixture.file as KtFile
-        val editor = myFixture.editor
-        val selectionModel = editor.selectionModel
-        val expression = if (selectionModel.hasSelection()) {
-            PsiTreeUtil.findElementOfClassAtRange(file, selectionModel.selectionStart, selectionModel.selectionEnd, KtExpression::class.java)
-                ?: error("No JetExpression at selection range")
-        }
-        else {
-            val offset = editor.caretModel.offset
-            val element = file.findElementAt(offset)!!
-            element.getNonStrictParentOfType<KtSimpleNameExpression>() ?: error("No JetSimpleNameExpression at caret")
-        }
+        try {
+            val file = myFixture.file as KtFile
+            val editor = myFixture.editor
+            val selectionModel = editor.selectionModel
+            val expression = if (selectionModel.hasSelection()) {
+                PsiTreeUtil.findElementOfClassAtRange(
+                    file,
+                    selectionModel.selectionStart,
+                    selectionModel.selectionEnd,
+                    KtExpression::class.java
+                )
+                    ?: error("No JetExpression at selection range")
+            } else {
+                val offset = editor.caretModel.offset
+                val element = file.findElementAt(offset)!!
+                element.getNonStrictParentOfType<KtSimpleNameExpression>() ?: error("No JetSimpleNameExpression at caret")
+            }
 
-        val resolutionFacade = file.getResolutionFacade()
+            val resolutionFacade = file.getResolutionFacade()
 
-        // optimized resolve
-        val (target1, type1, processedStatements1) = doResolve(expression, resolutionFacade.analyze(expression, resolveMode))
+            // optimized resolve
+            val (target1, type1, processedStatements1) = doResolve(expression, resolutionFacade.analyze(expression, resolveMode))
 
-        // full body resolve
-        val (target2, type2, processedStatements2) = doResolve(expression, resolutionFacade.analyze(expression))
+            // full body resolve
+            val (target2, type2, processedStatements2) = doResolve(expression, resolutionFacade.analyze(expression))
 
-        val set = HashSet(processedStatements2)
-        assert (set.containsAll(processedStatements1))
-        set.removeAll(processedStatements1)
+            val set = HashSet(processedStatements2)
+            assert(set.containsAll(processedStatements1))
+            set.removeAll(processedStatements1)
 
-        val builder = StringBuilder()
+            val builder = StringBuilder()
 
-        if (expression is KtReferenceExpression) {
-            builder.append("Resolve target: ${target2.presentation(type2)}\n")
-        }
-        else {
-            builder.append("Expression type:${type2.presentation()}\n")
-        }
-        builder.append("----------------------------------------------\n")
+            if (expression is KtReferenceExpression) {
+                builder.append("Resolve target: ${target2.presentation(type2)}\n")
+            } else {
+                builder.append("Expression type:${type2.presentation()}\n")
+            }
+            builder.append("----------------------------------------------\n")
 
-        val skippedStatements = set
+            val skippedStatements = set
                 .filter { !it.parents.any { it in set } } // do not include skipped statements which are inside other skipped statement
                 .sortedBy { it.textOffset }
 
-        myFixture.project.executeWriteCommand("") {
-            for (statement in skippedStatements) {
-                statement.replace(KtPsiFactory(project).createComment("/* STATEMENT DELETED: ${statement.compactPresentation()} */"))
+            myFixture.project.executeWriteCommand("") {
+                for (statement in skippedStatements) {
+                    statement.replace(KtPsiFactory(project).createComment("/* STATEMENT DELETED: ${statement.compactPresentation()} */"))
+                }
+            }
+
+            val fileText = file.text
+            if (selectionModel.hasSelection()) {
+                val start = selectionModel.selectionStart
+                val end = selectionModel.selectionEnd
+                builder.append(fileText.substring(0, start))
+                builder.append("<selection>")
+                builder.append(fileText.substring(start, end))
+                builder.append("<selection>")
+                builder.append(fileText.substring(end))
+            } else {
+                val newCaretOffset = editor.caretModel.offset
+                builder.append(fileText.substring(0, newCaretOffset))
+                builder.append("<caret>")
+                builder.append(fileText.substring(newCaretOffset))
+            }
+
+            Assert.assertEquals(target2.presentation(null), target1.presentation(null))
+            Assert.assertEquals(type2.presentation(), type1.presentation())
+
+            return builder.toString()
+        } finally {
+            if (configured) {
+                rollbackCompilerOptions(project, module)
             }
         }
-
-        val fileText = file.text
-        if (selectionModel.hasSelection()) {
-            val start = selectionModel.selectionStart
-            val end = selectionModel.selectionEnd
-            builder.append(fileText.substring(0, start))
-            builder.append("<selection>")
-            builder.append(fileText.substring(start, end))
-            builder.append("<selection>")
-            builder.append(fileText.substring(end))
-        }
-        else {
-            val newCaretOffset = editor.caretModel.offset
-            builder.append(fileText.substring(0, newCaretOffset))
-            builder.append("<caret>")
-            builder.append(fileText.substring(newCaretOffset))
-        }
-
-        Assert.assertEquals(target2.presentation(null), target1.presentation(null))
-        Assert.assertEquals(type2.presentation(), type1.presentation())
-
-        return builder.toString()
     }
 
     private data class ResolveData(

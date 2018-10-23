@@ -35,7 +35,7 @@ open class BasicJvmScriptEvaluator : ScriptEvaluator {
                     // return res
                     val scriptClass = res.value
                     val args = ArrayList<Any?>()
-                    scriptEvaluationConfiguration?.get(ScriptEvaluationConfiguration.contextVariables)?.forEach {
+                    scriptEvaluationConfiguration?.get(ScriptEvaluationConfiguration.providedProperties)?.forEach {
                         args.add(it.value)
                     }
                     scriptEvaluationConfiguration?.get(ScriptEvaluationConfiguration.implicitReceivers)?.let {

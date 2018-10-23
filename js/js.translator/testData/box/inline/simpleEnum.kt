@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 1137
+// EXPECTED_REACHABLE_NODES: 1293
 /*
  * Copy of JVM-backend test
  * Found at: compiler/testData/codegen/boxInline/simple/simpleEnum.1.kt

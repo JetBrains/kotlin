@@ -1,3 +1,6 @@
+public abstract interface annotation class kotlin/BuilderInference : java/lang/annotation/Annotation {
+}
+
 public abstract interface annotation class kotlin/Deprecated : java/lang/annotation/Annotation {
 	public abstract fun level ()Lkotlin/DeprecationLevel;
 	public abstract fun message ()Ljava/lang/String;
@@ -149,7 +152,6 @@ public final class kotlin/Result : java/io/Serializable {
 	public static fun equals-impl (Ljava/lang/Object;Ljava/lang/Object;)Z
 	public static final fun equals-impl0 (Ljava/lang/Object;Ljava/lang/Object;)Z
 	public static final fun exceptionOrNull-impl (Ljava/lang/Object;)Ljava/lang/Throwable;
-	public static final fun getOrNull-impl (Ljava/lang/Object;)Ljava/lang/Object;
 	public fun hashCode ()I
 	public static fun hashCode-impl (Ljava/lang/Object;)I
 	public static final fun isFailure-impl (Ljava/lang/Object;)Z
@@ -169,36 +171,6 @@ public final class kotlin/ResultKt {
 
 public abstract interface annotation class kotlin/SinceKotlin : java/lang/annotation/Annotation {
 	public abstract fun version ()Ljava/lang/String;
-}
-
-public final class kotlin/SuccessOrFailure : java/io/Serializable {
-	public static final field Companion Lkotlin/SuccessOrFailure$Companion;
-	public static final synthetic fun box-impl (Ljava/lang/Object;)Lkotlin/SuccessOrFailure;
-	public static fun constructor-impl (Ljava/lang/Object;)Ljava/lang/Object;
-	public fun equals (Ljava/lang/Object;)Z
-	public static fun equals-impl (Ljava/lang/Object;Ljava/lang/Object;)Z
-	public static final fun equals-impl0 (Ljava/lang/Object;Ljava/lang/Object;)Z
-	public static final fun exceptionOrNull-impl (Ljava/lang/Object;)Ljava/lang/Throwable;
-	public static final fun getOrNull-impl (Ljava/lang/Object;)Ljava/lang/Object;
-	public static final fun getOrThrow-impl (Ljava/lang/Object;)Ljava/lang/Object;
-	public fun hashCode ()I
-	public static fun hashCode-impl (Ljava/lang/Object;)I
-	public static final fun isFailure-impl (Ljava/lang/Object;)Z
-	public static final fun isSuccess-impl (Ljava/lang/Object;)Z
-	public fun toString ()Ljava/lang/String;
-	public static fun toString-impl (Ljava/lang/Object;)Ljava/lang/String;
-	public final synthetic fun unbox-impl ()Ljava/lang/Object;
-}
-
-public final class kotlin/SuccessOrFailure$Companion {
-}
-
-public final class kotlin/SuccessOrFailure$Failure : java/io/Serializable {
-	public final field exception Ljava/lang/Throwable;
-	public fun <init> (Ljava/lang/Throwable;)V
-	public fun equals (Ljava/lang/Object;)Z
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
 }
 
 public abstract interface annotation class kotlin/Suppress : java/lang/annotation/Annotation {
@@ -237,57 +209,17 @@ public final class kotlin/UByte : java/lang/Comparable {
 	public static final field MIN_VALUE B
 	public static final field SIZE_BITS I
 	public static final field SIZE_BYTES I
-	public static final fun and-7apg3OU (BB)B
 	public static final synthetic fun box-impl (B)Lkotlin/UByte;
 	public synthetic fun compareTo (Ljava/lang/Object;)I
-	public fun compareTo-7apg3OU (B)I
-	public static fun compareTo-7apg3OU (BB)I
-	public static final fun compareTo-VKZWuLQ (BJ)I
-	public static final fun compareTo-WZ4Q5Ns (BI)I
-	public static final fun compareTo-xj2QHRw (BS)I
 	public static fun constructor-impl (B)B
-	public static final fun dec-impl (B)B
-	public static final fun div-7apg3OU (BB)I
-	public static final fun div-VKZWuLQ (BJ)J
-	public static final fun div-WZ4Q5Ns (BI)I
-	public static final fun div-xj2QHRw (BS)I
 	public fun equals (Ljava/lang/Object;)Z
 	public static fun equals-impl (BLjava/lang/Object;)Z
 	public static final fun equals-impl0 (BB)Z
 	public fun hashCode ()I
 	public static fun hashCode-impl (B)I
-	public static final fun inc-impl (B)B
-	public static final fun inv-impl (B)B
-	public static final fun minus-7apg3OU (BB)I
-	public static final fun minus-VKZWuLQ (BJ)J
-	public static final fun minus-WZ4Q5Ns (BI)I
-	public static final fun minus-xj2QHRw (BS)I
-	public static final fun or-7apg3OU (BB)B
-	public static final fun plus-7apg3OU (BB)I
-	public static final fun plus-VKZWuLQ (BJ)J
-	public static final fun plus-WZ4Q5Ns (BI)I
-	public static final fun plus-xj2QHRw (BS)I
-	public static final fun rangeTo-7apg3OU (BB)Lkotlin/ranges/UIntRange;
-	public static final fun rem-7apg3OU (BB)I
-	public static final fun rem-VKZWuLQ (BJ)J
-	public static final fun rem-WZ4Q5Ns (BI)I
-	public static final fun rem-xj2QHRw (BS)I
-	public static final fun times-7apg3OU (BB)I
-	public static final fun times-VKZWuLQ (BJ)J
-	public static final fun times-WZ4Q5Ns (BI)I
-	public static final fun times-xj2QHRw (BS)I
-	public static final fun toByte-impl (B)B
-	public static final fun toInt-impl (B)I
-	public static final fun toLong-impl (B)J
-	public static final fun toShort-impl (B)S
 	public fun toString ()Ljava/lang/String;
 	public static fun toString-impl (B)Ljava/lang/String;
-	public static final fun toUByte-impl (B)B
-	public static final fun toUInt-impl (B)I
-	public static final fun toULong-impl (B)J
-	public static final fun toUShort-impl (B)S
 	public final synthetic fun unbox-impl ()B
-	public static final fun xor-7apg3OU (BB)B
 }
 
 public final class kotlin/UByte$Companion {
@@ -331,72 +263,23 @@ public final class kotlin/UByteArray : java/util/Collection, kotlin/jvm/internal
 	public final synthetic fun unbox-impl ()[B
 }
 
-public final class kotlin/UByteKt {
-	public static final fun toUByte (B)B
-	public static final fun toUByte (I)B
-	public static final fun toUByte (J)B
-	public static final fun toUByte (S)B
-}
-
 public final class kotlin/UInt : java/lang/Comparable {
 	public static final field Companion Lkotlin/UInt$Companion;
 	public static final field MAX_VALUE I
 	public static final field MIN_VALUE I
 	public static final field SIZE_BITS I
 	public static final field SIZE_BYTES I
-	public static final fun and-WZ4Q5Ns (II)I
 	public static final synthetic fun box-impl (I)Lkotlin/UInt;
 	public synthetic fun compareTo (Ljava/lang/Object;)I
-	public static final fun compareTo-7apg3OU (IB)I
-	public static final fun compareTo-VKZWuLQ (IJ)I
-	public fun compareTo-WZ4Q5Ns (I)I
-	public static fun compareTo-WZ4Q5Ns (II)I
-	public static final fun compareTo-xj2QHRw (IS)I
 	public static fun constructor-impl (I)I
-	public static final fun dec-impl (I)I
-	public static final fun div-7apg3OU (IB)I
-	public static final fun div-VKZWuLQ (IJ)J
-	public static final fun div-WZ4Q5Ns (II)I
-	public static final fun div-xj2QHRw (IS)I
 	public fun equals (Ljava/lang/Object;)Z
 	public static fun equals-impl (ILjava/lang/Object;)Z
 	public static final fun equals-impl0 (II)Z
 	public fun hashCode ()I
 	public static fun hashCode-impl (I)I
-	public static final fun inc-impl (I)I
-	public static final fun inv-impl (I)I
-	public static final fun minus-7apg3OU (IB)I
-	public static final fun minus-VKZWuLQ (IJ)J
-	public static final fun minus-WZ4Q5Ns (II)I
-	public static final fun minus-xj2QHRw (IS)I
-	public static final fun or-WZ4Q5Ns (II)I
-	public static final fun plus-7apg3OU (IB)I
-	public static final fun plus-VKZWuLQ (IJ)J
-	public static final fun plus-WZ4Q5Ns (II)I
-	public static final fun plus-xj2QHRw (IS)I
-	public static final fun rangeTo-WZ4Q5Ns (II)Lkotlin/ranges/UIntRange;
-	public static final fun rem-7apg3OU (IB)I
-	public static final fun rem-VKZWuLQ (IJ)J
-	public static final fun rem-WZ4Q5Ns (II)I
-	public static final fun rem-xj2QHRw (IS)I
-	public static final fun shl-impl (II)I
-	public static final fun shr-impl (II)I
-	public static final fun times-7apg3OU (IB)I
-	public static final fun times-VKZWuLQ (IJ)J
-	public static final fun times-WZ4Q5Ns (II)I
-	public static final fun times-xj2QHRw (IS)I
-	public static final fun toByte-impl (I)B
-	public static final fun toInt-impl (I)I
-	public static final fun toLong-impl (I)J
-	public static final fun toShort-impl (I)S
 	public fun toString ()Ljava/lang/String;
 	public static fun toString-impl (I)Ljava/lang/String;
-	public static final fun toUByte-impl (I)B
-	public static final fun toUInt-impl (I)I
-	public static final fun toULong-impl (I)J
-	public static final fun toUShort-impl (I)S
 	public final synthetic fun unbox-impl ()I
-	public static final fun xor-WZ4Q5Ns (II)I
 }
 
 public final class kotlin/UInt$Companion {
@@ -440,72 +323,23 @@ public final class kotlin/UIntArray : java/util/Collection, kotlin/jvm/internal/
 	public final synthetic fun unbox-impl ()[I
 }
 
-public final class kotlin/UIntKt {
-	public static final fun toUInt (B)I
-	public static final fun toUInt (I)I
-	public static final fun toUInt (J)I
-	public static final fun toUInt (S)I
-}
-
 public final class kotlin/ULong : java/lang/Comparable {
 	public static final field Companion Lkotlin/ULong$Companion;
 	public static final field MAX_VALUE J
 	public static final field MIN_VALUE J
 	public static final field SIZE_BITS I
 	public static final field SIZE_BYTES I
-	public static final fun and-VKZWuLQ (JJ)J
 	public static final synthetic fun box-impl (J)Lkotlin/ULong;
 	public synthetic fun compareTo (Ljava/lang/Object;)I
-	public static final fun compareTo-7apg3OU (JB)I
-	public fun compareTo-VKZWuLQ (J)I
-	public static fun compareTo-VKZWuLQ (JJ)I
-	public static final fun compareTo-WZ4Q5Ns (JI)I
-	public static final fun compareTo-xj2QHRw (JS)I
 	public static fun constructor-impl (J)J
-	public static final fun dec-impl (J)J
-	public static final fun div-7apg3OU (JB)J
-	public static final fun div-VKZWuLQ (JJ)J
-	public static final fun div-WZ4Q5Ns (JI)J
-	public static final fun div-xj2QHRw (JS)J
 	public fun equals (Ljava/lang/Object;)Z
 	public static fun equals-impl (JLjava/lang/Object;)Z
 	public static final fun equals-impl0 (JJ)Z
 	public fun hashCode ()I
 	public static fun hashCode-impl (J)I
-	public static final fun inc-impl (J)J
-	public static final fun inv-impl (J)J
-	public static final fun minus-7apg3OU (JB)J
-	public static final fun minus-VKZWuLQ (JJ)J
-	public static final fun minus-WZ4Q5Ns (JI)J
-	public static final fun minus-xj2QHRw (JS)J
-	public static final fun or-VKZWuLQ (JJ)J
-	public static final fun plus-7apg3OU (JB)J
-	public static final fun plus-VKZWuLQ (JJ)J
-	public static final fun plus-WZ4Q5Ns (JI)J
-	public static final fun plus-xj2QHRw (JS)J
-	public static final fun rangeTo-VKZWuLQ (JJ)Lkotlin/ranges/ULongRange;
-	public static final fun rem-7apg3OU (JB)J
-	public static final fun rem-VKZWuLQ (JJ)J
-	public static final fun rem-WZ4Q5Ns (JI)J
-	public static final fun rem-xj2QHRw (JS)J
-	public static final fun shl-impl (JI)J
-	public static final fun shr-impl (JI)J
-	public static final fun times-7apg3OU (JB)J
-	public static final fun times-VKZWuLQ (JJ)J
-	public static final fun times-WZ4Q5Ns (JI)J
-	public static final fun times-xj2QHRw (JS)J
-	public static final fun toByte-impl (J)B
-	public static final fun toInt-impl (J)I
-	public static final fun toLong-impl (J)J
-	public static final fun toShort-impl (J)S
 	public fun toString ()Ljava/lang/String;
 	public static fun toString-impl (J)Ljava/lang/String;
-	public static final fun toUByte-impl (J)B
-	public static final fun toUInt-impl (J)I
-	public static final fun toULong-impl (J)J
-	public static final fun toUShort-impl (J)S
 	public final synthetic fun unbox-impl ()J
-	public static final fun xor-VKZWuLQ (JJ)J
 }
 
 public final class kotlin/ULong$Companion {
@@ -549,70 +383,23 @@ public final class kotlin/ULongArray : java/util/Collection, kotlin/jvm/internal
 	public final synthetic fun unbox-impl ()[J
 }
 
-public final class kotlin/ULongKt {
-	public static final fun toULong (B)J
-	public static final fun toULong (I)J
-	public static final fun toULong (J)J
-	public static final fun toULong (S)J
-}
-
 public final class kotlin/UShort : java/lang/Comparable {
 	public static final field Companion Lkotlin/UShort$Companion;
 	public static final field MAX_VALUE S
 	public static final field MIN_VALUE S
 	public static final field SIZE_BITS I
 	public static final field SIZE_BYTES I
-	public static final fun and-xj2QHRw (SS)S
 	public static final synthetic fun box-impl (S)Lkotlin/UShort;
 	public synthetic fun compareTo (Ljava/lang/Object;)I
-	public static final fun compareTo-7apg3OU (SB)I
-	public static final fun compareTo-VKZWuLQ (SJ)I
-	public static final fun compareTo-WZ4Q5Ns (SI)I
-	public fun compareTo-xj2QHRw (S)I
-	public static fun compareTo-xj2QHRw (SS)I
 	public static fun constructor-impl (S)S
-	public static final fun dec-impl (S)S
-	public static final fun div-7apg3OU (SB)I
-	public static final fun div-VKZWuLQ (SJ)J
-	public static final fun div-WZ4Q5Ns (SI)I
-	public static final fun div-xj2QHRw (SS)I
 	public fun equals (Ljava/lang/Object;)Z
 	public static fun equals-impl (SLjava/lang/Object;)Z
 	public static final fun equals-impl0 (SS)Z
 	public fun hashCode ()I
 	public static fun hashCode-impl (S)I
-	public static final fun inc-impl (S)S
-	public static final fun inv-impl (S)S
-	public static final fun minus-7apg3OU (SB)I
-	public static final fun minus-VKZWuLQ (SJ)J
-	public static final fun minus-WZ4Q5Ns (SI)I
-	public static final fun minus-xj2QHRw (SS)I
-	public static final fun or-xj2QHRw (SS)S
-	public static final fun plus-7apg3OU (SB)I
-	public static final fun plus-VKZWuLQ (SJ)J
-	public static final fun plus-WZ4Q5Ns (SI)I
-	public static final fun plus-xj2QHRw (SS)I
-	public static final fun rangeTo-xj2QHRw (SS)Lkotlin/ranges/UIntRange;
-	public static final fun rem-7apg3OU (SB)I
-	public static final fun rem-VKZWuLQ (SJ)J
-	public static final fun rem-WZ4Q5Ns (SI)I
-	public static final fun rem-xj2QHRw (SS)I
-	public static final fun times-7apg3OU (SB)I
-	public static final fun times-VKZWuLQ (SJ)J
-	public static final fun times-WZ4Q5Ns (SI)I
-	public static final fun times-xj2QHRw (SS)I
-	public static final fun toByte-impl (S)B
-	public static final fun toInt-impl (S)I
-	public static final fun toLong-impl (S)J
-	public static final fun toShort-impl (S)S
 	public fun toString ()Ljava/lang/String;
 	public static fun toString-impl (S)Ljava/lang/String;
-	public static final fun toUByte-impl (S)B
-	public static final fun toUInt-impl (S)I
-	public static final fun toULong-impl (S)J
-	public static final fun toUShort-impl (S)S
 	public final synthetic fun unbox-impl ()S
-	public static final fun xor-xj2QHRw (SS)S
 }
 
 public final class kotlin/UShort$Companion {
@@ -656,13 +443,6 @@ public final class kotlin/UShortArray : java/util/Collection, kotlin/jvm/interna
 	public final synthetic fun unbox-impl ()[S
 }
 
-public final class kotlin/UShortKt {
-	public static final fun toUShort (B)S
-	public static final fun toUShort (I)S
-	public static final fun toUShort (J)S
-	public static final fun toUShort (S)S
-}
-
 public final class kotlin/UninitializedPropertyAccessException : java/lang/RuntimeException {
 	public fun <init> ()V
 	public fun <init> (Ljava/lang/String;)V
@@ -676,6 +456,15 @@ public final class kotlin/Unit {
 }
 
 public abstract interface annotation class kotlin/UnsafeVariance : java/lang/annotation/Annotation {
+}
+
+public final class kotlin/UnsignedKt {
+	public static final fun uintCompare (II)I
+	public static final fun uintDivide-J1ME1BU (II)I
+	public static final fun uintRemainder-J1ME1BU (II)I
+	public static final fun ulongCompare (JJ)I
+	public static final fun ulongDivide-eb3DHEI (JJ)J
+	public static final fun ulongRemainder-eb3DHEI (JJ)J
 }
 
 public abstract interface annotation class kotlin/UseExperimental : java/lang/annotation/Annotation {
@@ -993,6 +782,9 @@ public final class kotlin/collections/ArraysKt {
 	public static final fun contains ([Ljava/lang/Object;Ljava/lang/Object;)Z
 	public static final fun contains ([SS)Z
 	public static final fun contains ([ZZ)Z
+	public static final fun contentDeepEquals ([Ljava/lang/Object;[Ljava/lang/Object;)Z
+	public static final fun contentDeepHashCode ([Ljava/lang/Object;)I
+	public static final fun contentDeepToString ([Ljava/lang/Object;)Ljava/lang/String;
 	public static final fun copyInto ([B[BIII)[B
 	public static final fun copyInto ([C[CIII)[C
 	public static final fun copyInto ([D[DIII)[D
@@ -2570,7 +2362,7 @@ public final class kotlin/concurrent/TimersKt {
 	public static final fun timer (Ljava/lang/String;Z)Ljava/util/Timer;
 }
 
-public abstract interface class kotlin/contracts/CallsInPlace : kotlin/contracts/SimpleEffect {
+public abstract interface class kotlin/contracts/CallsInPlace : kotlin/contracts/Effect {
 }
 
 public abstract interface class kotlin/contracts/ConditionalEffect : kotlin/contracts/Effect {
@@ -2608,7 +2400,7 @@ public abstract interface class kotlin/contracts/Returns : kotlin/contracts/Simp
 public abstract interface class kotlin/contracts/ReturnsNotNull : kotlin/contracts/SimpleEffect {
 }
 
-public abstract interface class kotlin/contracts/SimpleEffect {
+public abstract interface class kotlin/contracts/SimpleEffect : kotlin/contracts/Effect {
 	public abstract fun implies (Z)Lkotlin/contracts/ConditionalEffect;
 }
 
@@ -2694,6 +2486,7 @@ public abstract interface annotation class kotlin/coroutines/RestrictsSuspension
 }
 
 public final class kotlin/coroutines/SafeContinuation : kotlin/coroutines/Continuation, kotlin/coroutines/jvm/internal/CoroutineStackFrame {
+	public static final field Companion Lkotlin/coroutines/SafeContinuation$Companion;
 	public fun <init> (Lkotlin/coroutines/Continuation;)V
 	public fun getCallerFrame ()Lkotlin/coroutines/jvm/internal/CoroutineStackFrame;
 	public fun getContext ()Lkotlin/coroutines/CoroutineContext;
@@ -2852,9 +2645,23 @@ public final class kotlin/coroutines/intrinsics/IntrinsicsKt {
 	public static final fun intercepted (Lkotlin/coroutines/Continuation;)Lkotlin/coroutines/Continuation;
 }
 
+public final class kotlin/coroutines/jvm/internal/Boxing {
+	public static final fun boxBoolean (Z)Ljava/lang/Boolean;
+	public static final fun boxByte (B)Ljava/lang/Byte;
+	public static final fun boxChar (C)Ljava/lang/Character;
+	public static final fun boxDouble (D)Ljava/lang/Double;
+	public static final fun boxFloat (F)Ljava/lang/Float;
+	public static final fun boxInt (I)Ljava/lang/Integer;
+	public static final fun boxLong (J)Ljava/lang/Long;
+	public static final fun boxShort (S)Ljava/lang/Short;
+}
+
 public abstract interface class kotlin/coroutines/jvm/internal/CoroutineStackFrame {
 	public abstract fun getCallerFrame ()Lkotlin/coroutines/jvm/internal/CoroutineStackFrame;
 	public abstract fun getStackTraceElement ()Ljava/lang/StackTraceElement;
+}
+
+public abstract interface annotation class kotlin/experimental/ExperimentalTypeInference : java/lang/annotation/Annotation {
 }
 
 public final class kotlin/internal/PlatformImplementationsKt {
@@ -3888,6 +3695,7 @@ public final class kotlin/random/PlatformRandomKt {
 
 public abstract class kotlin/random/Random {
 	public static final field Companion Lkotlin/random/Random$Companion;
+	public static final field Default Lkotlin/random/Random$Default;
 	public fun <init> ()V
 	public abstract fun nextBits (I)I
 	public fun nextBoolean ()Z
@@ -3902,14 +3710,17 @@ public abstract class kotlin/random/Random {
 	public fun nextInt ()I
 	public fun nextInt (I)I
 	public fun nextInt (II)I
-	public fun nextInt (Lkotlin/ranges/IntRange;)I
 	public fun nextLong ()J
 	public fun nextLong (J)J
 	public fun nextLong (JJ)J
-	public fun nextLong (Lkotlin/ranges/LongRange;)J
 }
 
 public final class kotlin/random/Random$Companion : kotlin/random/Random {
+	public static final field INSTANCE Lkotlin/random/Random$Companion;
+	public fun nextBits (I)I
+}
+
+public final class kotlin/random/Random$Default : kotlin/random/Random {
 	public fun nextBits (I)I
 	public fun nextBoolean ()Z
 	public fun nextBytes (I)[B
@@ -3922,16 +3733,19 @@ public final class kotlin/random/Random$Companion : kotlin/random/Random {
 	public fun nextInt ()I
 	public fun nextInt (I)I
 	public fun nextInt (II)I
-	public fun nextInt (Lkotlin/ranges/IntRange;)I
 	public fun nextLong ()J
 	public fun nextLong (J)J
 	public fun nextLong (JJ)J
-	public fun nextLong (Lkotlin/ranges/LongRange;)J
 }
 
 public final class kotlin/random/RandomKt {
 	public static final fun Random (I)Lkotlin/random/Random;
 	public static final fun Random (J)Lkotlin/random/Random;
+	public static final fun nextInt (Lkotlin/random/Random;Lkotlin/ranges/IntRange;)I
+	public static final fun nextLong (Lkotlin/random/Random;Lkotlin/ranges/LongRange;)J
+}
+
+public final class kotlin/random/URandomKt {
 	public static final fun nextUBytes (Lkotlin/random/Random;I)[B
 	public static final fun nextUBytes-EVgfTAA (Lkotlin/random/Random;[B)[B
 	public static final fun nextUBytes-Wvrt4B4 (Lkotlin/random/Random;[BII)[B
@@ -4183,7 +3997,6 @@ public final class kotlin/ranges/RangesKt {
 
 public class kotlin/ranges/UIntProgression : java/lang/Iterable, kotlin/jvm/internal/markers/KMappedMarker {
 	public static final field Companion Lkotlin/ranges/UIntProgression$Companion;
-	public synthetic fun <init> (IIILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getFirst ()I
 	public final fun getLast ()I
@@ -4220,7 +4033,6 @@ public final class kotlin/ranges/UIntRange$Companion {
 
 public class kotlin/ranges/ULongProgression : java/lang/Iterable, kotlin/jvm/internal/markers/KMappedMarker {
 	public static final field Companion Lkotlin/ranges/ULongProgression$Companion;
-	public synthetic fun <init> (JJJLkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getFirst ()J
 	public final fun getLast ()J
@@ -4471,16 +4283,11 @@ public abstract interface class kotlin/sequences/Sequence {
 	public abstract fun iterator ()Ljava/util/Iterator;
 }
 
-public abstract class kotlin/sequences/SequenceBuilder {
+public abstract class kotlin/sequences/SequenceScope {
 	public abstract fun yield (Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public final fun yieldAll (Ljava/lang/Iterable;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun yieldAll (Ljava/util/Iterator;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public final fun yieldAll (Lkotlin/sequences/Sequence;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-}
-
-public final class kotlin/sequences/SequenceBuilderKt {
-	public static final fun buildIterator (Lkotlin/jvm/functions/Function2;)Ljava/util/Iterator;
-	public static final fun buildSequence (Lkotlin/jvm/functions/Function2;)Lkotlin/sequences/Sequence;
 }
 
 public final class kotlin/sequences/SequencesKt {
@@ -4551,6 +4358,7 @@ public final class kotlin/sequences/SequencesKt {
 	public static final fun indexOf (Lkotlin/sequences/Sequence;Ljava/lang/Object;)I
 	public static final fun indexOfFirst (Lkotlin/sequences/Sequence;Lkotlin/jvm/functions/Function1;)I
 	public static final fun indexOfLast (Lkotlin/sequences/Sequence;Lkotlin/jvm/functions/Function1;)I
+	public static final fun iterator (Lkotlin/jvm/functions/Function2;)Ljava/util/Iterator;
 	public static final fun joinTo (Lkotlin/sequences/Sequence;Ljava/lang/Appendable;Ljava/lang/CharSequence;Ljava/lang/CharSequence;Ljava/lang/CharSequence;ILjava/lang/CharSequence;Lkotlin/jvm/functions/Function1;)Ljava/lang/Appendable;
 	public static synthetic fun joinTo$default (Lkotlin/sequences/Sequence;Ljava/lang/Appendable;Ljava/lang/CharSequence;Ljava/lang/CharSequence;Ljava/lang/CharSequence;ILjava/lang/CharSequence;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Ljava/lang/Appendable;
 	public static final fun joinToString (Lkotlin/sequences/Sequence;Ljava/lang/CharSequence;Ljava/lang/CharSequence;Ljava/lang/CharSequence;ILjava/lang/CharSequence;Lkotlin/jvm/functions/Function1;)Ljava/lang/String;
@@ -4593,6 +4401,7 @@ public final class kotlin/sequences/SequencesKt {
 	public static final fun reduce (Lkotlin/sequences/Sequence;Lkotlin/jvm/functions/Function2;)Ljava/lang/Object;
 	public static final fun reduceIndexed (Lkotlin/sequences/Sequence;Lkotlin/jvm/functions/Function3;)Ljava/lang/Object;
 	public static final fun requireNoNulls (Lkotlin/sequences/Sequence;)Lkotlin/sequences/Sequence;
+	public static final fun sequence (Lkotlin/jvm/functions/Function2;)Lkotlin/sequences/Sequence;
 	public static final fun sequenceOf ([Ljava/lang/Object;)Lkotlin/sequences/Sequence;
 	public static final fun single (Lkotlin/sequences/Sequence;)Ljava/lang/Object;
 	public static final fun single (Lkotlin/sequences/Sequence;Lkotlin/jvm/functions/Function1;)Ljava/lang/Object;
@@ -5164,7 +4973,7 @@ public final class kotlin/text/Typography {
 	public static final field tm C
 }
 
-public final class kotlin/text/UStringNumberConversionsKt {
+public final class kotlin/text/UStringsKt {
 	public static final fun toString-JSWoG40 (JI)Ljava/lang/String;
 	public static final fun toString-LxnNnR4 (BI)Ljava/lang/String;
 	public static final fun toString-V7xB4Y4 (II)Ljava/lang/String;

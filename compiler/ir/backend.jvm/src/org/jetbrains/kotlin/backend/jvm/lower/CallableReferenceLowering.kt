@@ -37,20 +37,14 @@ import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.*
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.expressions.impl.IrClassReferenceImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrDelegatingConstructorCallImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrInstanceInitializerCallImpl
+import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.IrConstructorSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
-import org.jetbrains.kotlin.ir.types.IrSimpleType
-import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
-import org.jetbrains.kotlin.ir.types.toIrType
-import org.jetbrains.kotlin.ir.types.toKotlinType
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.load.java.JavaVisibilities
@@ -99,8 +93,41 @@ class CallableReferenceLowering(val context: JvmBackendContext) : FileLoweringPa
                     }
                 }
 
+                val argumentsCount = expression.valueArgumentsCount
+                // Change calls to FunctionN with large N to varargs calls.
+                val newCall = if (argumentsCount > MAX_ARGCOUNT_WITHOUT_VARARG &&
+                    descriptor.containingDeclaration in listOf(
+                        context.builtIns.getFunction(argumentsCount),
+                        context.reflectionTypes.getKFunction(argumentsCount)
+                    )
+                ) {
+                    val vararg = IrVarargImpl(
+                        UNDEFINED_OFFSET, UNDEFINED_OFFSET,
+                        context.ir.symbols.array.typeWith(),
+                        context.ir.symbols.any.typeWith(),
+                        (0 until argumentsCount).map { i -> expression.getValueArgument(i)!! }
+                    )
+                    val invokeFunDescriptor = context.getClass(FqName("kotlin.jvm.functions.FunctionN"))
+                        .getFunction("invoke", listOf(expression.type.toKotlinType()))
+                    val invokeFunSymbol = context.ir.symbols.externalSymbolTable.referenceSimpleFunction(invokeFunDescriptor.original)
+
+                    IrCallImpl(
+                        UNDEFINED_OFFSET, UNDEFINED_OFFSET,
+                        expression.type,
+                        invokeFunSymbol, invokeFunDescriptor,
+                        1,
+                        expression.origin,
+                        expression.superQualifier?.let { context.ir.symbols.externalSymbolTable.referenceClass(it) }
+                    ).apply {
+                        putTypeArgument(0, expression.type)
+                        dispatchReceiver = expression.dispatchReceiver
+                        extensionReceiver = expression.extensionReceiver
+                        putValueArgument(0, vararg)
+                    }
+                } else expression
+
                 //TODO: clean
-                return super.visitCall(expression)
+                return super.visitCall(newCall)
             }
 
             override fun visitFunctionReference(expression: IrFunctionReference): IrExpression {
@@ -155,6 +182,8 @@ class CallableReferenceLowering(val context: JvmBackendContext) : FileLoweringPa
 
         private val functionReferenceOrLambda = if (isLambda) context.ir.symbols.lambdaClass else context.ir.symbols.functionReference
 
+        var useVararg: Boolean = false
+
         fun build(): BuiltFunctionReference {
             val startOffset = irFunctionReference.startOffset
             val endOffset = irFunctionReference.endOffset
@@ -165,9 +194,17 @@ class CallableReferenceLowering(val context: JvmBackendContext) : FileLoweringPa
             )
 
             val numberOfParameters = unboundFunctionParameters.size
-            val functionClassDescriptor = context.getClass(FqName("kotlin.jvm.functions.Function$numberOfParameters"))
+            useVararg = (numberOfParameters > MAX_ARGCOUNT_WITHOUT_VARARG)
+
+            val functionClassDescriptor = if (useVararg)
+                context.getClass(FqName("kotlin.jvm.functions.FunctionN"))
+            else
+                context.getClass(FqName("kotlin.jvm.functions.Function$numberOfParameters"))
             val functionParameterTypes = unboundFunctionParameters.map { it.type }
-            val functionClassTypeParameters = functionParameterTypes + returnType
+            val functionClassTypeParameters = if (useVararg)
+                listOf(returnType)
+            else
+                functionParameterTypes + returnType
             superTypes += functionClassDescriptor.defaultType.replace(functionClassTypeParameters)
 
             var suspendFunctionClassDescriptor: ClassDescriptor? = null
@@ -197,15 +234,23 @@ class CallableReferenceLowering(val context: JvmBackendContext) : FileLoweringPa
                 endOffset = endOffset,
                 origin = DECLARATION_ORIGIN_FUNCTION_REFERENCE_IMPL,
                 descriptor = functionReferenceClassDescriptor
-            )
+            ).apply {
+                createParameterDeclarations()
+                val typeTranslator = TypeTranslator(context.ir.symbols.externalSymbolTable, context.state.languageVersionSettings,
+                                                    enterTableScope=true)
+                val constantValueGenerator = ConstantValueGenerator(context.state.module, context.ir.symbols.externalSymbolTable)
+                typeTranslator.constantValueGenerator = constantValueGenerator
+                constantValueGenerator.typeTranslator = typeTranslator
+                functionReferenceClassDescriptor.typeConstructor.supertypes.mapTo(this.superTypes) {
+                    typeTranslator.translateType(it)
+                }
+            }
 
             val contributedDescriptors = mutableListOf<DeclarationDescriptor>()
             val constructorBuilder = createConstructorBuilder()
             functionReferenceClassDescriptor.initialize(
                 SimpleMemberScope(contributedDescriptors), setOf(constructorBuilder.symbol.descriptor), null
             )
-
-            functionReferenceClass.createParameterDeclarations()
 
             functionReferenceThis = functionReferenceClass.thisReceiver!!.symbol
 
@@ -218,7 +263,6 @@ class CallableReferenceLowering(val context: JvmBackendContext) : FileLoweringPa
 
             invokeMethodBuilder.initialize()
             functionReferenceClass.declarations.add(invokeMethodBuilder.ir)
-
 
             if (!isLambda) {
                 val getSignatureBuilder =
@@ -244,7 +288,6 @@ class CallableReferenceLowering(val context: JvmBackendContext) : FileLoweringPa
                                     suspendInvokeMethodBuilder?.symbol?.descriptor + getSignatureBuilder.symbol.descriptor
                             ).filterNotNull()
                 )
-
 
                 getSignatureBuilder.initialize()
                 functionReferenceClass.declarations.add(getSignatureBuilder.ir)
@@ -391,31 +434,74 @@ class CallableReferenceLowering(val context: JvmBackendContext) : FileLoweringPa
                         createParameterDeclarations()
 
                         body = irBuilder.irBlockBody(startOffset, endOffset) {
+                            val arrayGetFun = context.irBuiltIns.arrayClass.owner
+                                .declarations.find {
+                                (it as? IrSimpleFunction)?.name?.toString() == "get"
+                            }!! as IrSimpleFunction
+
+                            if (useVararg) {
+                                val varargParam = valueParameters.single()
+                                val arraySizeProperty = context.irBuiltIns.arrayClass.owner.declarations.find {
+                                    (it as? IrProperty)?.name?.toString() == "size"
+                                } as IrProperty
+                                +irIfThen(
+                                    irNotEquals(
+                                        irCall(arraySizeProperty.getter!!).apply {
+                                            dispatchReceiver = irGet(varargParam)
+                                        },
+                                        irInt(unboundFunctionParameters.size)
+                                    ),
+                                    irCall(context.irBuiltIns.illegalArgumentExceptionFun).apply {
+                                        putValueArgument(0, irString("Expected ${unboundFunctionParameters.size} arguments"))
+                                    }
+                                )
+                            }
                             +irReturn(
                                 irCall(irFunctionReference.symbol).apply {
                                     var unboundIndex = 0
                                     val unboundArgsSet = unboundFunctionParameters.toSet()
-                                    functionParameters.forEach {
-                                        val argument =
-                                            if (!unboundArgsSet.contains(it))
-                                            // Bound parameter - read from field.
-                                                irGetField(irGet(functionReferenceThis.owner), argumentToPropertiesMap[it]!!.owner)
-                                            else {
-                                                if (ourSymbol.descriptor.isSuspend && unboundIndex == valueParameters.size)
+
+                                    functionParameters.forEach { parameter ->
+                                        val argument = when {
+                                            !unboundArgsSet.contains(parameter) ->
+                                                // Bound parameter - read from field.
+                                                irGetField(irGet(functionReferenceThis.owner), argumentToPropertiesMap[parameter]!!.owner)
+                                            ourSymbol.descriptor.isSuspend && unboundIndex == valueParameters.size ->
                                                 // For suspend functions the last argument is continuation and it is implicit.
-                                                    TODO()
+                                                TODO()
 //                                                        irCall(getContinuationSymbol,
 //                                                               listOf(ourSymbol.descriptor.returnType!!))
-                                                else
-                                                    irGet(valueParameters[unboundIndex++])
+                                            useVararg -> {
+                                                val type = parameter.type.toIrType()!!
+                                                val varargParam = valueParameters.single()
+                                                irBlock(resultType = type) {
+                                                    val argValue = irTemporary(
+                                                        irCall(arrayGetFun).apply {
+                                                            dispatchReceiver = irGet(varargParam)
+                                                            putValueArgument(0, irInt(unboundIndex++))
+                                                        }
+                                                    )
+                                                    +irIfThen(
+                                                        irNotIs(irGet(argValue), type),
+                                                        irCall(context.irBuiltIns.illegalArgumentExceptionFun).apply {
+                                                            putValueArgument(0, irString("Wrong type, expected $type"))
+                                                        }
+                                                    )
+                                                    +irGet(argValue)
+                                                }
                                             }
-                                        when (it) {
+                                            else -> {
+                                                irGet(valueParameters[unboundIndex++])
+                                            }
+                                        }
+                                        when (parameter) {
                                             functionDescriptor.dispatchReceiverParameter -> dispatchReceiver = argument
                                             functionDescriptor.extensionReceiverParameter -> extensionReceiver = argument
-                                            else -> putValueArgument((it as ValueParameterDescriptor).index, argument)
+                                            else -> putValueArgument((parameter as ValueParameterDescriptor).index, argument)
                                         }
                                     }
-                                    assert(unboundIndex == valueParameters.size) { "Not all arguments of <invoke> are used" }
+
+                                    if (!useVararg) assert(unboundIndex == valueParameters.size) { "Not all arguments of <invoke> are used" }
                                 }
                             )
                         }
@@ -655,11 +741,12 @@ class CallableReferenceLowering(val context: JvmBackendContext) : FileLoweringPa
                         }
 
                     val clazzDescriptor = globalContext.getClass(FqName("java.lang.Class"))
-                    val clazz = IrClassReferenceImpl(
+                    val clazzSymbol = globalContext.ir.symbols.externalSymbolTable.referenceClass(clazzDescriptor)
+                    val clazzRef = IrClassReferenceImpl(
                         UNDEFINED_OFFSET,
                         UNDEFINED_OFFSET,
                         clazzDescriptor.toIrType(),
-                        clazzDescriptor,
+                        clazzSymbol,
                         CrIrType(type)
                     )
 
@@ -677,17 +764,19 @@ class CallableReferenceLowering(val context: JvmBackendContext) : FileLoweringPa
                             -1, -1, globalContext.irBuiltIns.stringType,
                             state.moduleName
                         )
-                        val function = reflectionClass.getStaticFunction("getOrCreateKotlinPackage", emptyList())
-                        irCall(IrSimpleFunctionSymbolImpl(function), function.returnType!!.toIrType()!!).apply {
-                            putValueArgument(0, clazz)
+                        val functionDescriptor = reflectionClass.getStaticFunction("getOrCreateKotlinPackage", emptyList())
+                        val functionSymbol = globalContext.ir.symbols.externalSymbolTable.referenceSimpleFunction(functionDescriptor)
+                        irCall(functionSymbol, functionSymbol.owner.returnType).apply {
+                            putValueArgument(0, clazzRef)
                             putValueArgument(1, module)
                         }
                     } else {
-                        val function = reflectionClass.staticScope
+                        val functionDescriptor = reflectionClass.staticScope
                             .getContributedFunctions(Name.identifier("getOrCreateKotlinClass"), NoLookupLocation.FROM_BACKEND)
                             .single { it.valueParameters.size == 1 }
-                        irCall(IrSimpleFunctionSymbolImpl(function), function.returnType!!.toIrType()!!).apply {
-                            putValueArgument(0, clazz)
+                        val functionSymbol = globalContext.ir.symbols.externalSymbolTable.referenceSimpleFunction(functionDescriptor)
+                        irCall(functionSymbol, functionSymbol.owner.returnType).apply {
+                            putValueArgument(0, clazzRef)
                         }
                     }
                 }
@@ -702,6 +791,10 @@ class CallableReferenceLowering(val context: JvmBackendContext) : FileLoweringPa
             val name = asString()
             Name.identifier("$${name.substring(1, name.length - 1)}")
         } else this
+    }
+
+    companion object {
+        const val MAX_ARGCOUNT_WITHOUT_VARARG = 22
     }
 }
 

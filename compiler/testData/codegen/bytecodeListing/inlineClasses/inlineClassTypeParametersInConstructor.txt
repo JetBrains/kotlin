@@ -11,11 +11,11 @@ public interface PublicMarker
 public class TestBasic {
     private final field z: int
     private method <init>(p0: int): void
-    public synthetic method <init>(p0: int, @org.jetbrains.annotations.NotNull p1: ProtectedMarker, p2: kotlin.jvm.internal.DefaultConstructorMarker): void
-    public synthetic method <init>(p0: int, @org.jetbrains.annotations.NotNull p1: PublicMarker, p2: kotlin.jvm.internal.DefaultConstructorMarker): void
     private method <init>(p0: int, p1: PrivateMarker): void
     private method <init>(p0: int, p1: ProtectedMarker): void
+    public synthetic method <init>(p0: int, p1: ProtectedMarker, p2: kotlin.jvm.internal.DefaultConstructorMarker): void
     private method <init>(p0: int, p1: PublicMarker): void
+    public synthetic method <init>(p0: int, p1: PublicMarker, p2: kotlin.jvm.internal.DefaultConstructorMarker): void
     public synthetic method <init>(p0: int, p1: kotlin.jvm.internal.DefaultConstructorMarker): void
     public final method getZ(): int
 }
@@ -26,7 +26,7 @@ public final enum class TestEnum {
     public final static field ANSWER: TestEnum
     private final field z: int
     static method <clinit>(): void
-    protected method <init>(p0: java.lang.String, p1: int, p2: int): void
+    private method <init>(p0: java.lang.String, p1: int, p2: int): void
     public final method getZ(): int
     public static method valueOf(p0: java.lang.String): TestEnum
     public static method values(): TestEnum[]

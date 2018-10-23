@@ -42,6 +42,13 @@ open class DeepCopyIrTreeWithSymbols(
     private val typeRemapper: TypeRemapper
 ) : IrElementTransformerVoid() {
 
+    init {
+        // TODO refactor
+        (typeRemapper as? DeepCopyTypeRemapper)?.let {
+            it.deepCopy = this
+        }
+    }
+
     private fun mapDeclarationOrigin(origin: IrDeclarationOrigin) = origin
     private fun mapStatementOrigin(origin: IrStatementOrigin?) = origin
 

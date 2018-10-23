@@ -5,8 +5,6 @@
 
 package kotlin.text
 
-import kotlin.*
-
 /**
  * Represents the Unicode directionality of a character.
  * Character directionality is used to calculate the
