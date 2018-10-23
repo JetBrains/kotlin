@@ -15,6 +15,7 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElementVisitor
 import org.jetbrains.kotlin.idea.core.CollectingNameValidator
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
+import org.jetbrains.kotlin.idea.core.getLastLambdaExpression
 import org.jetbrains.kotlin.idea.inspections.AbstractKotlinInspection
 import org.jetbrains.kotlin.idea.intentions.loopToCallChain.previousStatement
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -40,10 +41,14 @@ class WrapResourceWithUseCallInspection : AbstractKotlinInspection() {
                     val referenceExpression = expression.receiverExpression as? KtNameReferenceExpression ?: return
                     val callExpression = expression.selectorExpression as? KtCallExpression ?: return
 
+                    // Check for closable/lambda expression
+                    val callLambdaArgument = callExpression.lambdaArguments
+                    if (callLambdaArgument.size > 0) return
+
                     val problemDescriptor = holder.manager.createProblemDescriptor(
                         expression.psiOrParent,
                         TextRange(property.startOffset - callExpression.startOffset,
-                                  callExpression.endOffset - expression.startOffset),
+                            callExpression.endOffset - expression.startOffset),
                         "Convert resource to use call with prop", ProblemHighlightType.LIKE_UNUSED_SYMBOL, isOnTheFly,
                         // variable assigned resource
                         ChangeResourceVariableWithUseCall(expression)
@@ -55,10 +60,14 @@ class WrapResourceWithUseCallInspection : AbstractKotlinInspection() {
                     val referenceExpression = expression.receiverExpression as? KtCallExpression ?: return
                     val callExpression = expression.selectorExpression as? KtCallExpression ?: return
 
+                    // Check for closable/lambda expression
+                    val callLambdaArgument = callExpression.lambdaArguments
+                    if (callLambdaArgument.size > 0) return
+
                     val problemDescriptor = holder.manager.createProblemDescriptor(
                         expression.psiOrParent,
                         TextRange(referenceExpression.endOffset - callExpression.startOffset,
-                                  callExpression.endOffset - expression.startOffset),
+                            callExpression.endOffset - expression.startOffset),
                         "Convert resource to use call with prop", ProblemHighlightType.LIKE_UNUSED_SYMBOL, isOnTheFly,
                         // non variable assigned resource
                         ChangeResourceWithUseCall(expression)
