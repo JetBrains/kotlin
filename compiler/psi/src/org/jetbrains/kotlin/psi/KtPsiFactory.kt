@@ -404,6 +404,11 @@ class KtPsiFactory @JvmOverloads constructor(private val project: Project, val m
         return stringTemplateExpression.entries[0] as KtSimpleNameStringTemplateEntry
     }
 
+    fun createLiteralStringTemplateEntry(literal: String): KtLiteralStringTemplateEntry {
+        val stringTemplateExpression = createExpression("\"$literal\"") as KtStringTemplateExpression
+        return stringTemplateExpression.entries[0] as KtLiteralStringTemplateEntry
+    }
+
     fun createStringTemplate(content: String) = createExpression("\"$content\"") as KtStringTemplateExpression
 
     fun createPackageDirective(fqName: FqName): KtPackageDirective {
