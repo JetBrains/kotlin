@@ -63,20 +63,16 @@ class CodegenTestsOnAndroidRunner private constructor(private val pathManager: P
                     }
                     rootSuite.addTest(this)
                 }
-            }
-            catch (e: RuntimeException) {
+            } catch (e: RuntimeException) {
                 e.printStackTrace()
                 throw e
-            }
-            finally {
+            } finally {
                 emulator.stopEmulator()
             }
-        }
-        catch (e: RuntimeException) {
+        } catch (e: RuntimeException) {
             e.printStackTrace()
             throw e
-        }
-        finally {
+        } finally {
             emulator.finishEmulatorProcesses()
         }
 
@@ -88,8 +84,7 @@ class CodegenTestsOnAndroidRunner private constructor(private val pathManager: P
         val lines = file.readLines().map {
             if (it.startsWith("android.enableD8=")) {
                 "android.enableD8=$enable"
-            }
-            else it
+            } else it
         }
         file.writeText(lines.joinToString("\n"))
     }
@@ -118,12 +113,10 @@ class CodegenTestsOnAndroidRunner private constructor(private val pathManager: P
             val resultOutput = gradleRunner.connectedDebugAndroidTest()
             processReport(suite, resultOutput)
             return suite
-        }
-        finally {
+        } finally {
             if (platformPrefixProperty != null) {
                 System.setProperty(PlatformUtils.PLATFORM_PREFIX_KEY, platformPrefixProperty)
-            }
-            else {
+            } else {
                 System.clearProperty(PlatformUtils.PLATFORM_PREFIX_KEY)
             }
         }
@@ -182,8 +175,7 @@ class CodegenTestsOnAndroidRunner private constructor(private val pathManager: P
 
                         }
                     }
-                }
-                else {
+                } else {
                     object : TestCase(name) {
                         @Throws(Throwable::class)
                         override fun runTest() {
