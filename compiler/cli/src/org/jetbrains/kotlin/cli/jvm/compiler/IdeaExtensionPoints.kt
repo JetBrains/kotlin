@@ -12,8 +12,6 @@ import com.intellij.psi.JavaModuleSystem
 import com.intellij.psi.impl.compiled.ClsCustomNavigationPolicy
 
 internal object IdeaExtensionPoints {
-    const val IDEA_COMPATIBLE_BUILD_NUMBER = "182.3040"
-
     fun registerVersionSpecificAppExtensionPoints(area: ExtensionsArea) {
         @Suppress("DEPRECATION")
         CoreApplicationEnvironment.registerExtensionPoint(area, ClsCustomNavigationPolicy.EP_NAME, ClsCustomNavigationPolicy::class.java)
