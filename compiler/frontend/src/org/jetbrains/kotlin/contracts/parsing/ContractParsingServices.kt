@@ -34,16 +34,32 @@ import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.LexicalScopeKind
 
 class ContractParsingServices(val languageVersionSettings: LanguageVersionSettings) {
+    /**
+     * ! IMPORTANT NOTICE !
+     *
+     * This function has very important non-obvious implicit contract:
+     * it *must* call [org.jetbrains.kotlin.contracts.description.LazyContractProvider.setContractDescription]
+     * if FunctionDescriptor had [LazyContractProvider] in the user data.
+     *
+     * Otherwise, it may lead to inconsistent resolve state and failed assertions
+     */
     fun checkContractAndRecordIfPresent(expression: KtExpression, trace: BindingTrace, scope: LexicalScope, isFirstStatement: Boolean) {
-        if (!expression.isContractDescriptionCallPsiCheck()) return // fastpath
+        // Fastpath. Note that it doesn't violates invariant described in KDoc, because 'isContractDescriptionCallPsiCheck'
+        // is a *necessary* (but not sufficient, actually) condition for presence of 'LazyContractProvider'
+        if (!expression.isContractDescriptionCallPsiCheck()) return
 
         val collector = TraceBasedCollector(trace, expression)
         val callContext = ContractCallContext(expression, isFirstStatement, scope, trace.bindingContext)
+        val contractProviderIfAny = (scope.ownerDescriptor as? FunctionDescriptor)?.getUserData(ContractProviderKey)
+
+        if (!callContext.isContractDescriptionCallPreciseCheck()) {
+            contractProviderIfAny?.setContractDescription(null)
+            return
+        }
+
         val parsedContract = doCheckContract(collector, callContext)
 
         collector.flushDiagnostics(parsingFailed = parsedContract == null)
-
-        val contractProviderIfAny = (scope.ownerDescriptor as? FunctionDescriptor)?.getUserData(ContractProviderKey)
 
         if (collector.hasErrors())
             contractProviderIfAny?.setContractDescription(null)
@@ -51,12 +67,10 @@ class ContractParsingServices(val languageVersionSettings: LanguageVersionSettin
             contractProviderIfAny?.setContractDescription(parsedContract)
     }
 
+    private fun ContractCallContext.isContractDescriptionCallPreciseCheck(): Boolean =
+        contractCallExpression.isContractDescriptionCallPreciseCheck(bindingContext)
+
     private fun doCheckContract(collector: ContractParsingDiagnosticsCollector, callContext: ContractCallContext): ContractDescription? {
-        val expression = callContext.contractCallExpression
-        val bindingContext = callContext.bindingContext
-
-        if (!expression.isContractDescriptionCallPreciseCheck(bindingContext)) return null
-
         checkFeatureEnabled(collector)
         checkContractAllowedHere(collector, callContext)
 
