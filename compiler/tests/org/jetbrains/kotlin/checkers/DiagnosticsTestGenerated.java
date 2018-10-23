@@ -8385,6 +8385,11 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     runTest("compiler/testData/diagnostics/tests/generics/nullability/capturedTypeWithPlatformSupertype.kt");
                 }
 
+                @TestMetadata("considerTypeNotNullOnlyIfItHasNotNullBound.kt")
+                public void testConsiderTypeNotNullOnlyIfItHasNotNullBound() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/generics/nullability/considerTypeNotNullOnlyIfItHasNotNullBound.kt");
+                }
+
                 @TestMetadata("correctSubstitutionForIncorporationConstraint.kt")
                 public void testCorrectSubstitutionForIncorporationConstraint() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/generics/nullability/correctSubstitutionForIncorporationConstraint.kt");
