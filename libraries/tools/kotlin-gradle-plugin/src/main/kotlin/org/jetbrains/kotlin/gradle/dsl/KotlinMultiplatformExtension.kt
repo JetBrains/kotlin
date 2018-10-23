@@ -15,4 +15,7 @@ open class KotlinMultiplatformExtension : KotlinProjectExtension() {
 
     lateinit var targets: NamedDomainObjectCollection<KotlinTarget>
         internal set
+
+    internal var isGradleMetadataAvailable: Boolean = false
+    internal var isGradleMetadataExperimental: Boolean = false
 }

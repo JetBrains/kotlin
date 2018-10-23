@@ -13,5 +13,5 @@ fun foo() {
     takeUByte(<!TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH!>id(1)<!>)
 
     1 <!NONE_APPLICABLE!>+<!> 1u
-    (1u + 1) checkType { _<UInt>() }
+    (1u + <!SIGNED_CONSTANT_CONVERTED_TO_UNSIGNED!>1<!>) checkType { _<UInt>() }
 }

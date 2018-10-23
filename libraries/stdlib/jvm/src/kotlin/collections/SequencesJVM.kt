@@ -8,8 +8,6 @@
 
 package kotlin.sequences
 
-import kotlin.*
-
 /**
  * Creates a sequence that returns all values from this enumeration. The sequence is constrained to be iterated only once.
  * @sample samples.collections.Sequences.Building.sequenceFromEnumeration

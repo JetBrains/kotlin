@@ -223,7 +223,7 @@ class DifferenceCalculatorForClass(
                 ProtoBufClassKind.TYPE_TABLE -> {
                     // TODO
                 }
-                ProtoCompareGenerated.ProtoBufClassKind.VERSION_REQUIREMENT,
+                ProtoCompareGenerated.ProtoBufClassKind.VERSION_REQUIREMENT_LIST,
                 ProtoCompareGenerated.ProtoBufClassKind.VERSION_REQUIREMENT_TABLE -> {
                     // TODO
                 }

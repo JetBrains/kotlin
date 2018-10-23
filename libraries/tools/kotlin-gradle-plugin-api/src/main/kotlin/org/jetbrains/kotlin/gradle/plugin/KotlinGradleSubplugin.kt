@@ -67,6 +67,7 @@ interface KotlinGradleSubplugin<in KotlinCompile : AbstractCompile> {
     fun getCompilerPluginId(): String
 
     fun getPluginArtifact(): SubpluginArtifact
+    fun getNativeCompilerPluginArtifact(): SubpluginArtifact? = null
 }
 
 open class SubpluginArtifact(val groupId: String, val artifactId: String, val version: String? = null)

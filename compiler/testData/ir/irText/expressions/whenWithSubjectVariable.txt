@@ -24,9 +24,10 @@ FILE fqName:<root> fileName:/whenWithSubjectVariable.kt
                   typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:String modality:FINAL visibility:public flags: superTypes:[kotlin.Comparable<kotlin.String>; kotlin.CharSequence; java.io.Serializable]
                   GET_VAR 'y: Any' type=kotlin.Any origin=null
             BRANCH
-              if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Int
-                typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Int modality:FINAL visibility:public flags: superTypes:[kotlin.Number; kotlin.Comparable<kotlin.Int>; java.io.Serializable]
-                GET_VAR 'y: Any' type=kotlin.Any origin=null
+              if: CALL 'NOT(Boolean): Boolean' type=kotlin.Boolean origin=EXCL
+                arg0: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Int
+                  typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Int modality:FINAL visibility:public flags: superTypes:[kotlin.Number; kotlin.Comparable<kotlin.Int>; java.io.Serializable]
+                  GET_VAR 'y: Any' type=kotlin.Any origin=null
               then: CONST Int type=kotlin.Int value=2
             BRANCH
               if: CALL 'contains(Int): Boolean' type=kotlin.Boolean origin=IN

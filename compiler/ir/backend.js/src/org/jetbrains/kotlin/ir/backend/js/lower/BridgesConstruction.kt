@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.ir.backend.js.lower
@@ -19,25 +8,23 @@ package org.jetbrains.kotlin.ir.backend.js.lower
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.common.bridges.FunctionHandle
 import org.jetbrains.kotlin.backend.common.bridges.generateBridges
+import org.jetbrains.kotlin.backend.common.ir.copyTo
+import org.jetbrains.kotlin.backend.common.ir.isSuspend
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlockBody
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.descriptors.annotations.Annotations
-import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
-import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
+import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.isStatic
+import org.jetbrains.kotlin.ir.backend.js.utils.asString
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
+import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.types.isUnit
-import org.jetbrains.kotlin.ir.types.toKotlinType
-import org.jetbrains.kotlin.ir.util.createParameterDeclarations
 import org.jetbrains.kotlin.ir.util.isInterface
 import org.jetbrains.kotlin.ir.util.isReal
 import org.jetbrains.kotlin.ir.util.parentAsClass
@@ -49,29 +36,28 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 //  Example: for given class hierarchy
 //
 //          class C<T>  {
-//            fun foo(t: T) = ... // bridge
+//            fun foo(t: T) = ...
 //          }
 //
 //          class D : C<Int> {
-//            override fun foo(t: Int) = impl // delegate to
-//          }
-//
-//          class E : D {
-//            <fake override> fun foo(t: Int)  // function
+//            override fun foo(t: Int) = impl
 //          }
 //
 //  it adds method D that delegates generic calls to implementation:
 //
-//          class E : D {
-//            fun foo(t: Any?) = foo(t as Int) // bridgeDescriptorForIrFunction
+//          class D : C<Int> {
+//            override fun foo(t: Int) = impl
+//            fun foo(t: Any?) = foo(t as Int)  // Constructed bridge
 //          }
 //
 class BridgesConstruction(val context: JsIrBackendContext) : ClassLoweringPass {
 
     override fun lower(irClass: IrClass) {
         irClass.declarations
+            .asSequence()
             .filterIsInstance<IrSimpleFunction>()
             .filter { !it.isStatic }
+            .toList()
             .forEach { generateBridges(it, irClass) }
 
         irClass.declarations
@@ -106,35 +92,38 @@ class BridgesConstruction(val context: JsIrBackendContext) : ClassLoweringPass {
         }
     }
 
+    private val unitValue = JsIrBuilder.buildGetObjectValue(context.irBuiltIns.unitType, context.irBuiltIns.unitClass)
+
     // Ported from from jvm.lower.BridgeLowering
     private fun createBridge(
         function: IrSimpleFunction,
         bridge: IrSimpleFunction,
         delegateTo: IrSimpleFunction
     ): IrFunction {
-        val containingClass = function.parentAsClass.descriptor
-
-        val bridgeDescriptorForIrFunction = SimpleFunctionDescriptorImpl.create(
-            containingClass,
-            Annotations.EMPTY, // TODO: Should we copy annotations?
-            bridge.name,
-            CallableMemberDescriptor.Kind.SYNTHESIZED,
-            function.descriptor.source
-        )
-
-        bridgeDescriptorForIrFunction.initialize(
-            bridge.descriptor.extensionReceiverParameter?.returnType, containingClass.thisAsReceiverParameter,
-            bridge.descriptor.typeParameters,
-            bridge.descriptor.valueParameters.map { it.copy(bridgeDescriptorForIrFunction, it.name, it.index) },
-            bridge.descriptor.returnType, bridge.descriptor.modality, function.visibility
-        )
-
-        bridgeDescriptorForIrFunction.isSuspend = bridge.descriptor.isSuspend
 
         // TODO: Support offsets for debug info
-        val irFunction = IrFunctionImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, IrDeclarationOrigin.DEFINED, bridgeDescriptorForIrFunction)
-        irFunction.createParameterDeclarations()
-        irFunction.returnType = bridge.returnType
+        val irFunction = JsIrBuilder.buildFunction(
+            bridge.name,
+            bridge.visibility,
+            bridge.modality, // TODO: should copy modality?
+            bridge.isInline,
+            bridge.isExternal,
+            bridge.isTailrec,
+            bridge.isSuspend,
+            IrDeclarationOrigin.BRIDGE
+        ).apply {
+
+            // TODO: should dispatch receiver be copied?
+            dispatchReceiverParameter = bridge.dispatchReceiverParameter?.run {
+                IrValueParameterImpl(startOffset, endOffset, origin, descriptor, type, varargElementType).also { it.parent = this@apply }
+            }
+            extensionReceiverParameter = bridge.extensionReceiverParameter?.copyTo(this)
+            typeParameters += bridge.typeParameters
+            valueParameters += bridge.valueParameters.map { p -> p.copyTo(this) }
+            annotations += bridge.annotations
+            returnType = bridge.returnType
+            parent = delegateTo.parent
+        }
 
         context.createIrBuilder(irFunction.symbol).irBlockBody(irFunction) {
             val call = irCall(delegateTo.symbol)
@@ -143,12 +132,24 @@ class BridgesConstruction(val context: JsIrBackendContext) : ClassLoweringPass {
                 call.extensionReceiver = irCastIfNeeded(irGet(it), delegateTo.extensionReceiverParameter!!.type)
             }
 
-            val toTake = irFunction.valueParameters.size - if (call.descriptor.isSuspend xor irFunction.descriptor.isSuspend) 1 else 0
+            val toTake = irFunction.valueParameters.size - if (call.isSuspend xor irFunction.isSuspend) 1 else 0
 
             irFunction.valueParameters.subList(0, toTake).mapIndexed { i, valueParameter ->
                 call.putValueArgument(i, irCastIfNeeded(irGet(valueParameter), delegateTo.valueParameters[i].type))
             }
-            +irReturn(call)
+
+            // This is required for Unit materialization
+            // TODO: generalize for boxed types and inline classes
+            // TODO: use return type in signature too
+            val returnValue = if (delegateTo.returnType.isUnit() && !function.returnType.isUnit()) {
+                irComposite(resultType = irFunction.returnType) {
+                    +call
+                    +unitValue
+                }
+            } else {
+                call
+            }
+            +irReturn(returnValue)
         }.apply {
             irFunction.body = this
         }
@@ -158,7 +159,7 @@ class BridgesConstruction(val context: JsIrBackendContext) : ClassLoweringPass {
 
     // TODO: get rid of Unit check
     private fun IrBlockBodyBuilder.irCastIfNeeded(argument: IrExpression, type: IrType): IrExpression =
-        if (argument.type.classifierOrNull == type.classifierOrNull || type.isUnit()) argument else irAs(argument, type)
+        if (argument.type.classifierOrNull == type.classifierOrNull) argument else irAs(argument, type)
 }
 
 // Handle for common.bridges
@@ -191,12 +192,16 @@ class FunctionAndSignature(val function: IrSimpleFunction) {
 
     private val signature = Signature(
         function.name,
-        function.extensionReceiverParameter?.type?.toKotlinType()?.toString(),
-        function.valueParameters.map { it.type.toKotlinType().toString() }
+        function.extensionReceiverParameter?.type?.asString(),
+        function.valueParameters.map { it.type.asString() }
     )
 
-    override fun equals(other: Any?) =
-        signature == (other as FunctionAndSignature).signature
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is FunctionAndSignature) return false
+
+        return signature == other.signature
+    }
 
     override fun hashCode(): Int = signature.hashCode()
 }

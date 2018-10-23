@@ -3,7 +3,7 @@
 
     <target name="build">
         <kotlinc src="${test.data}/main.kt" output="${temp}/hello.jar">
-            <compilerarg line="-language-version 1.0"/>
+            <compilerarg line="-language-version 1.2"/>
         </kotlinc>
     </target>
 </project>

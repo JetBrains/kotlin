@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.ir.backend.js.lower.coroutines
 
+import org.jetbrains.kotlin.backend.common.ir.isSuspend
 import org.jetbrains.kotlin.backend.common.lower.FinallyBlocksLowering
 import org.jetbrains.kotlin.backend.common.pop
 import org.jetbrains.kotlin.backend.common.push
@@ -44,7 +45,7 @@ open class SuspendableNodesCollector(protected val suspendableNodes: MutableSet<
 
     override fun visitCall(expression: IrCall) {
         super.visitCall(expression)
-        if (expression.descriptor.isSuspend) {
+        if (expression.isSuspend) {
             suspendableNodes += expression
             hasSuspendableChildren = true
         }

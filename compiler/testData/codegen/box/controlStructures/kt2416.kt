@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 fun box(): String {
     9 in 0..9
     val intRange = 0..9

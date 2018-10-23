@@ -3,4 +3,4 @@ interface I {
     val foo: Int
 }
 
-<caret>class A(override val foo: Int) : I
+class A(override val foo: Int<caret>) : I

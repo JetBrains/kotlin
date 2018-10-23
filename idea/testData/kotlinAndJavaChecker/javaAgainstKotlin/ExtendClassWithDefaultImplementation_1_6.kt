@@ -1,10 +1,6 @@
 package test
 
 interface KotlinInterface {
-    fun foo() {
-
-    }
-
     fun bar() {
 
     }

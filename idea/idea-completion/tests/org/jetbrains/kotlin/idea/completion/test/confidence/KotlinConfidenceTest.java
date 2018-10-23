@@ -86,16 +86,6 @@ public class KotlinConfidenceTest extends LightCompletionTestCase {
         TestUtilsKt.invalidateLibraryCache(getProject());
     }
 
-    @Override
-    protected void tearDown() throws Exception {
-        TestUtilsKt.doKotlinTearDown(getProject(), new RunnableWithException() {
-            @Override
-            public void run() throws Exception {
-                KotlinConfidenceTest.super.tearDown();
-            }
-        });
-    }
-
     protected void doTest() {
         boolean completeByChars = CodeInsightSettings.getInstance().SELECT_AUTOPOPUP_SUGGESTIONS_BY_CHARS;
 

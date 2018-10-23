@@ -6,12 +6,15 @@
 package org.jetbrains.kotlin.backend.jvm.codegen
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.codegen.FrameMapBase
+import org.jetbrains.kotlin.codegen.SourceInfo
+import org.jetbrains.kotlin.codegen.inline.DefaultSourceMapper
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithSource
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
-import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.resolve.annotations.JVM_STATIC_ANNOTATION_FQ_NAME
+import org.jetbrains.kotlin.ir.util.isAnnotationClass
+import org.jetbrains.kotlin.ir.util.isInterface
 import org.jetbrains.kotlin.resolve.source.PsiSourceElement
 import org.jetbrains.org.objectweb.asm.Type
 
@@ -41,3 +44,19 @@ internal val IrDeclaration.fileParent: IrFile
 
 internal val DeclarationDescriptorWithSource.psiElement: PsiElement?
     get() = (source as? PsiSourceElement)?.psi
+
+fun JvmBackendContext.getSourceMapper(declaration: IrClass): DefaultSourceMapper {
+    val sourceManager = this.psiSourceManager
+    val fileEntry = sourceManager.getFileEntry(declaration.fileParent)
+    // NOTE: apparently inliner requires the source range to cover the
+    //       whole file the class is declared in rather than the class only.
+    // TODO: revise
+    val endLineNumber = fileEntry.getSourceRangeInfo(0, fileEntry.maxOffset).endLineNumber
+    return DefaultSourceMapper(
+        SourceInfo.createInfoForIr(
+            endLineNumber + 1,
+            this.state.typeMapper.mapType(declaration.descriptor).internalName,
+            declaration.descriptor.psiElement!!.containingFile.name
+        )
+    )
+}

@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.idea.decompiler.common
 
-import org.jetbrains.kotlin.idea.decompiler.stubBuilder.ClassIdWithTarget
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.NameResolver
 import org.jetbrains.kotlin.name.ClassId
@@ -30,7 +29,7 @@ import org.jetbrains.kotlin.types.KotlinType
 
 class AnnotationLoaderForStubBuilderImpl(
         private val protocol: SerializerExtensionProtocol
-) : AnnotationAndConstantLoader<ClassId, Unit, ClassIdWithTarget> {
+) : AnnotationAndConstantLoader<ClassId, Unit> {
 
     override fun loadClassAnnotations(container: ProtoContainer.Class): List<ClassId> =
          container.classProto.getExtension(protocol.classAnnotation).orEmpty().map { container.nameResolver.getClassId(it.id) }
@@ -39,17 +38,21 @@ class AnnotationLoaderForStubBuilderImpl(
             container: ProtoContainer,
             proto: MessageLite,
             kind: AnnotatedCallableKind
-    ): List<ClassIdWithTarget> {
+    ): List<ClassId> {
         val annotations = when (proto) {
             is ProtoBuf.Constructor -> proto.getExtension(protocol.constructorAnnotation)
             is ProtoBuf.Function -> proto.getExtension(protocol.functionAnnotation)
             is ProtoBuf.Property -> proto.getExtension(protocol.propertyAnnotation)
             else -> error("Unknown message: $proto")
         }.orEmpty()
-        return annotations.map {
-            ClassIdWithTarget(container.nameResolver.getClassId(it.id), null)
-        }
+        return annotations.map { container.nameResolver.getClassId(it.id) }
     }
+
+    override fun loadPropertyBackingFieldAnnotations(container: ProtoContainer, proto: ProtoBuf.Property): List<ClassId> =
+        emptyList()
+
+    override fun loadPropertyDelegateFieldAnnotations(container: ProtoContainer, proto: ProtoBuf.Property): List<ClassId> =
+        emptyList()
 
     override fun loadEnumEntryAnnotations(container: ProtoContainer, proto: ProtoBuf.EnumEntry): List<ClassId> =
             proto.getExtension(protocol.enumEntryAnnotation).orEmpty().map { container.nameResolver.getClassId(it.id) }

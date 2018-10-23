@@ -28,7 +28,11 @@ dependencies {
     testCompileOnly(intellijDep())
     testCompileOnly(intellijPluginDep("maven"))
 
-    testRuntime(projectDist(":kotlin-reflect"))
+    testCompile(project(":idea:idea-native")) { isTransitive = false }
+    testRuntime(project(":kotlin-native:kotlin-native-library-reader")) { isTransitive = false }
+    testRuntime(project(":kotlin-native:kotlin-native-utils")) { isTransitive = false }
+
+    testRuntime(project(":kotlin-reflect"))
     testRuntime(project(":idea:idea-jvm"))
     testRuntime(project(":idea:idea-android"))
     testRuntime(project(":plugins:android-extensions-ide"))
@@ -37,6 +41,7 @@ dependencies {
     testRuntime(project(":allopen-ide-plugin"))
     testRuntime(project(":noarg-ide-plugin"))
     testRuntime(project(":kotlin-scripting-idea"))
+    testRuntime(project(":kotlinx-serialization-ide-plugin"))
 
     testRuntime(intellijDep())
     // TODO: the order of the plugins matters here, consider avoiding order-dependency

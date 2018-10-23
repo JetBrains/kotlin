@@ -112,6 +112,9 @@ internal class KTypeImpl(
     override val isMarkedNullable: Boolean
         get() = type.isMarkedNullable
 
+    override val annotations: List<Annotation>
+        get() = type.computeAnnotations()
+
     override fun equals(other: Any?) =
         other is KTypeImpl && type == other.type
 

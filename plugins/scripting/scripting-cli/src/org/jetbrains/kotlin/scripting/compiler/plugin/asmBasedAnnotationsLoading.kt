@@ -7,14 +7,19 @@ package org.jetbrains.kotlin.scripting.compiler.plugin
 
 import org.jetbrains.org.objectweb.asm.*
 
+internal class BinAnnArgData(
+    val name: String?,
+    val value: String
+)
+
 internal class BinAnnData(
     val name: String,
-    val args: ArrayList<String> = arrayListOf()
+    val args: ArrayList<BinAnnArgData> = arrayListOf()
 )
 
 private class TemplateAnnotationVisitor(val anns: ArrayList<BinAnnData> = arrayListOf()) : AnnotationVisitor(Opcodes.ASM5) {
     override fun visit(name: String?, value: Any?) {
-        anns.last().args.add(value.toString())
+        anns.last().args.add(BinAnnArgData(name, value.toString()))
     }
 }
 

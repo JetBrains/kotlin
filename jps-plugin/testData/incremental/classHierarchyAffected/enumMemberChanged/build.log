@@ -2,6 +2,7 @@
 
 Cleaning output files:
   out/production/module/Enum.class
+  out/production/module/EnumKt.class
   out/production/module/META-INF/module.kotlin_module
 End of files
 Compiling files:
@@ -27,6 +28,7 @@ Only safe (?.) or non-null asserted (!!.) calls are allowed on a nullable receiv
 
 Cleaning output files:
   out/production/module/Enum.class
+  out/production/module/EnumKt.class
 End of files
 Compiling files:
   src/Enum.kt

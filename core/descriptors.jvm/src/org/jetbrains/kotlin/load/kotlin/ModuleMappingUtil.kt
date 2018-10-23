@@ -5,17 +5,20 @@
 
 package org.jetbrains.kotlin.load.kotlin
 
+import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion
 import org.jetbrains.kotlin.metadata.jvm.deserialization.ModuleMapping
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationConfiguration
 
 fun ModuleMapping.Companion.loadModuleMapping(
     bytes: ByteArray?,
     debugName: String,
-    configuration: DeserializationConfiguration
+    configuration: DeserializationConfiguration,
+    reportIncompatibleVersionError: (JvmMetadataVersion) -> Unit
 ): ModuleMapping =
     loadModuleMapping(
         bytes,
         debugName,
         configuration.skipMetadataVersionCheck,
-        configuration.isJvmPackageNameSupported
+        configuration.isJvmPackageNameSupported,
+        reportIncompatibleVersionError
     )

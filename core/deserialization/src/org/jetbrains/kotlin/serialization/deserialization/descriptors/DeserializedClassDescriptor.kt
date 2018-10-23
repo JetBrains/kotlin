@@ -66,7 +66,7 @@ class DeserializedClassDescriptor(
         (containingDeclaration as? DeserializedClassDescriptor)?.thisAsProtoContainer
     )
 
-    val versionRequirement: VersionRequirement?
+    val versionRequirements: List<VersionRequirement>
         get() = VersionRequirement.create(classProto, c.nameResolver, c.versionRequirementTable)
 
     override val annotations =

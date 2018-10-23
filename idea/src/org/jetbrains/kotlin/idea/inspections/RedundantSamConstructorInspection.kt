@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.anyDescendantOfType
 import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
+import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelector
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelectorOrThis
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTraceContext
@@ -51,7 +52,7 @@ class RedundantSamConstructorInspection : AbstractKotlinInspection() {
             if (single != null) {
                 val calleeExpression = single.calleeExpression ?: return
                 val problemDescriptor = holder.manager.createProblemDescriptor(
-                    single.getQualifiedExpressionForSelectorOrThis(),
+                    single.getQualifiedExpressionForSelector()?.receiverExpression ?: calleeExpression,
                     single.typeArgumentList ?: calleeExpression,
                     "Redundant SAM-constructor",
                     ProblemHighlightType.LIKE_UNUSED_SYMBOL,
@@ -142,7 +143,7 @@ class RedundantSamConstructorInspection : AbstractKotlinInspection() {
                 newArguments = original.valueArguments.map { argument ->
                     val call = callArgumentMapToConvert[argument]
                     val newExpression = call?.samConstructorValueArgument()?.getArgumentExpression() ?: return@map argument
-                    factory.createArgument(newExpression, argument.getArgumentName()?.asName)
+                    factory.createArgument(newExpression, argument.getArgumentName()?.asName, reformat = false)
                 }
             }
 

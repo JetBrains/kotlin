@@ -3,12 +3,11 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
-@file:Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
-
 package kotlin.coroutines
 
 import kotlin.coroutines.intrinsics.*
 import kotlin.internal.InlineOnly
+import kotlin.jvm.JvmName
 
 /**
  * Interface representing a continuation after a suspension point that returns value of type `T`.
@@ -18,14 +17,13 @@ public interface Continuation<in T> {
     /**
      * Context of the coroutine that corresponds to this continuation.
      */
-    // todo: shall we provide default impl with EmptyCoroutineContext?
     public val context: CoroutineContext
 
     /**
      * Resumes the execution of the corresponding coroutine passing successful or failed [result] as the
      * return value of the last suspension point.
      */
-    public fun resumeWith(result: SuccessOrFailure<T>)
+    public fun resumeWith(result: Result<T>)
 }
 
 /**
@@ -43,7 +41,7 @@ public annotation class RestrictsSuspension
  */
 @SinceKotlin("1.3")
 @InlineOnly public inline fun <T> Continuation<T>.resume(value: T): Unit =
-    resumeWith(SuccessOrFailure.success(value))
+    resumeWith(Result.success(value))
 
 /**
  * Resumes the execution of the corresponding coroutine so that the [exception] is re-thrown right after the
@@ -51,7 +49,7 @@ public annotation class RestrictsSuspension
  */
 @SinceKotlin("1.3")
 @InlineOnly public inline fun <T> Continuation<T>.resumeWithException(exception: Throwable): Unit =
-    resumeWith(SuccessOrFailure.failure(exception))
+    resumeWith(Result.failure(exception))
 
 
 /**
@@ -60,13 +58,13 @@ public annotation class RestrictsSuspension
 @SinceKotlin("1.3")
 @InlineOnly public inline fun <T> Continuation(
     context: CoroutineContext,
-    crossinline resumeWith: (SuccessOrFailure<T>) -> Unit
+    crossinline resumeWith: (Result<T>) -> Unit
 ): Continuation<T> =
     object : Continuation<T> {
         override val context: CoroutineContext
             get() = context
 
-        override fun resumeWith(result: SuccessOrFailure<T>) =
+        override fun resumeWith(result: Result<T>) =
             resumeWith(result)
     }
 

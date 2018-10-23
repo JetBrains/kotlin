@@ -37,13 +37,13 @@ public final class KtStubbedPsiUtil {
 
     //TODO: contribute to idea PsiTreeUtil#getPsiOrStubParent
     @Nullable
+    @SuppressWarnings("unchecked")
     public static <T extends KtElement> T getPsiOrStubParent(
             @NotNull PsiElement element,
             @NotNull Class<T> declarationClass,
             boolean strict
     ) {
         if (!strict && declarationClass.isInstance(element)) {
-            //noinspection unchecked
             return (T) element;
         }
         if (element instanceof KtElementImplStub) {

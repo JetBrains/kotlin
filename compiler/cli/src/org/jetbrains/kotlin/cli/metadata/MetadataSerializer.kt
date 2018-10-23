@@ -135,7 +135,7 @@ open class MetadataSerializer(
             for (table in packageTable.values) {
                 table.addTo(this)
             }
-        }.build().serializeToByteArray(JvmMetadataVersion.INSTANCE.toArray()) // TODO: use another version here, not JVM
+        }.build().serializeToByteArray(JvmMetadataVersion.INSTANCE, 0) // TODO: use another version here, not JVM
         // TODO: also, use CommonConfigurationKeys.METADATA_VERSION if needed
 
         kotlinModuleFile.parentFile.mkdirs()

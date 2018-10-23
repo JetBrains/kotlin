@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 class A() {
     class B(val i: Int) {
     }

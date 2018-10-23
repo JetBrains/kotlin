@@ -5,7 +5,7 @@ plugins {
 }
 
 dependencies {
-    compile(projectDist(":kotlin-stdlib"))
+    compile(project(":kotlin-stdlib"))
     compile(project(":core:util.runtime"))
     compile(project(":compiler:backend"))
     compile(project(":compiler:frontend"))
@@ -14,17 +14,21 @@ dependencies {
 
     // BEWARE: Uast should not depend on IDEA.
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
-    compileOnly(intellijDep()) { includeJars("java-api", "java-impl", "asm-all") }
+    compileOnly(intellijDep()) { includeJars("java-api", "java-impl", "asm-all", rootProject = rootProject) }
 
-    testCompile(projectDist(":kotlin-test:kotlin-test-jvm"))
+    testCompile(project(":kotlin-test:kotlin-test-jvm"))
     testCompile(projectTests(":compiler:tests-common"))
     testCompile(commonDep("junit:junit"))
     testCompile(project(":compiler:util"))
     testCompile(project(":compiler:cli"))
     testCompile(projectTests(":idea:idea-test-framework"))
     testCompileOnly(intellijDep()) { includeJars("java-api", "java-impl") }
+    testCompile(project(":idea:idea-native")) { isTransitive = false }
+    testCompile(project(":idea:idea-gradle-native")) { isTransitive = false }
 
-    testRuntime(projectDist(":kotlin-reflect"))
+    testRuntime(project(":kotlin-native:kotlin-native-library-reader")) { isTransitive = false }
+    testRuntime(project(":kotlin-native:kotlin-native-utils")) { isTransitive = false }
+    testRuntime(project(":kotlin-reflect"))
     testRuntime(project(":idea:idea-android"))
     testRuntime(project(":idea:idea-gradle"))
     testRuntime(project(":plugins:kapt3-idea")) { isTransitive = false }
@@ -34,6 +38,7 @@ dependencies {
     testRuntime(project(":kotlin-scripting-idea"))
     testRuntime(project(":plugins:android-extensions-ide"))
     testRuntime(project(":plugins:kapt3-idea"))
+    testRuntime(project(":kotlinx-serialization-ide-plugin"))
     testRuntime(intellijDep())
     testRuntime(intellijPluginDep("junit"))
     testRuntime(intellijPluginDep("gradle"))

@@ -23,8 +23,8 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiRecursiveElementVisitor
 import com.intellij.psi.codeStyle.CodeStyleManager
-import kotlinx.coroutines.experimental.run
-import kotlinx.coroutines.experimental.runBlocking
+import kotlinx.coroutines.run
+import kotlinx.coroutines.runBlocking
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.resolveImportReference
 import org.jetbrains.kotlin.idea.conversion.copy.range

@@ -17,19 +17,40 @@
 package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
+import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
+import org.jetbrains.kotlin.idea.intentions.branchedTransformations.lineCount
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.anyDescendantOfType
 import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
+import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelector
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
-class ReplaceSingleLineLetInspection : IntentionBasedInspection<KtCallExpression>(ReplaceSingleLineLetIntention::class) {
+class ReplaceSingleLineLetInspection : IntentionBasedInspection<KtCallExpression>(
+    ReplaceSingleLineLetIntention::class,
+    { element -> isApplicable(element) }
+) {
     override fun inspectionTarget(element: KtCallExpression) = element.calleeExpression
+
+    companion object {
+        fun isApplicable(element: KtCallExpression): Boolean {
+            val qualifiedExpression = element.getQualifiedExpressionForSelector() ?: return true
+            var receiver = qualifiedExpression.receiverExpression as? KtQualifiedExpression ?: return true
+            if (receiver.lineCount() > 1) return false
+            var count = 1
+            while (true) {
+                if (count > 2) return false
+                receiver = receiver.receiverExpression as? KtQualifiedExpression ?: break
+                count++
+            }
+            return true
+        }
+    }
 }
 
 class ReplaceSingleLineLetIntention : SelfTargetingOffsetIndependentIntention<KtCallExpression>(
@@ -105,11 +126,20 @@ class ReplaceSingleLineLetIntention : SelfTargetingOffsetIndependentIntention<Kt
         val bodyExpression = lambdaExpression.bodyExpression?.children?.singleOrNull() ?: return false
 
         return when (bodyExpression) {
-            is KtBinaryExpression -> element.parent !is KtSafeQualifiedExpression && bodyExpression.isApplicable(parameterName)
-            is KtDotQualifiedExpression -> bodyExpression.isApplicable(parameterName)
-            is KtCallExpression -> element.parent !is KtSafeQualifiedExpression
-                    && lambdaExpression.functionLiteral.valueParameterReferences(bodyExpression).count() <= 1
-            else -> false
+            is KtBinaryExpression ->
+                element.parent !is KtSafeQualifiedExpression && bodyExpression.isApplicable(parameterName)
+            is KtDotQualifiedExpression ->
+                bodyExpression.isApplicable(parameterName)
+            is KtCallExpression ->
+                if (element.parent is KtSafeQualifiedExpression) {
+                    false
+                } else {
+                    val count = lambdaExpression.functionLiteral.valueParameterReferences(bodyExpression).count()
+                    val destructuringDeclaration = lambdaExpression.functionLiteral.valueParameters.firstOrNull()?.destructuringDeclaration
+                    count == 0 || (count == 1 && destructuringDeclaration == null)
+                }
+            else ->
+                false
         }
     }
 
@@ -163,13 +193,17 @@ class ReplaceSingleLineLetIntention : SelfTargetingOffsetIndependentIntention<Kt
     private fun KtExpression.nameUsed(name: String, except: KtNameReferenceExpression? = null): Boolean =
         anyDescendantOfType<KtNameReferenceExpression> { it != except && it.getReferencedName() == name }
 
-    private fun KtFunctionLiteral.valueParameterReferences(callExpression: KtCallExpression): List<KtReferenceExpression> {
+    private fun KtFunctionLiteral.valueParameterReferences(callExpression: KtCallExpression): List<KtNameReferenceExpression> {
         val context = analyze(BodyResolveMode.PARTIAL)
-        val descriptor = context[BindingContext.FUNCTION, this]?.valueParameters?.singleOrNull() ?: return emptyList()
-        val name = descriptor.name.asString()
+        val parameterDescriptor = context[BindingContext.FUNCTION, this]?.valueParameters?.singleOrNull() ?: return emptyList()
+        val variableDescriptorByName = if (parameterDescriptor is ValueParameterDescriptorImpl.WithDestructuringDeclaration)
+            parameterDescriptor.destructuringVariables.associate { it.name to it }
+        else
+            mapOf(parameterDescriptor.name to parameterDescriptor)
         return callExpression.valueArguments.flatMap { arg ->
-            arg.collectDescendantsOfType<KtReferenceExpression>().filter {
-                it.text == name && it.getResolvedCall(context)?.resultingDescriptor == descriptor
+            arg.collectDescendantsOfType<KtNameReferenceExpression>().filter {
+                val descriptor = variableDescriptorByName[it.getReferencedNameAsName()]
+                descriptor != null && it.getResolvedCall(context)?.resultingDescriptor == descriptor
             }
         }
     }

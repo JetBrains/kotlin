@@ -44,9 +44,19 @@ public class MultiPlatformHighlightingTestGenerated extends AbstractMultiPlatfor
         runTest("idea/testData/multiModuleHighlighting/multiplatform/catchHeaderExceptionInPlatformModule/");
     }
 
+    @TestMetadata("contracts")
+    public void testContracts() throws Exception {
+        runTest("idea/testData/multiModuleHighlighting/multiplatform/contracts/");
+    }
+
     @TestMetadata("depends")
     public void testDepends() throws Exception {
         runTest("idea/testData/multiModuleHighlighting/multiplatform/depends/");
+    }
+
+    @TestMetadata("differentJvmImpls")
+    public void testDifferentJvmImpls() throws Exception {
+        runTest("idea/testData/multiModuleHighlighting/multiplatform/differentJvmImpls/");
     }
 
     @TestMetadata("headerClass")
@@ -94,6 +104,21 @@ public class MultiPlatformHighlightingTestGenerated extends AbstractMultiPlatfor
         runTest("idea/testData/multiModuleHighlighting/multiplatform/javaUsesPlatformFacade/");
     }
 
+    @TestMetadata("jvmKotlinReferencesCommonKotlinThroughJava")
+    public void testJvmKotlinReferencesCommonKotlinThroughJava() throws Exception {
+        runTest("idea/testData/multiModuleHighlighting/multiplatform/jvmKotlinReferencesCommonKotlinThroughJava/");
+    }
+
+    @TestMetadata("jvmKotlinReferencesCommonKotlinThroughJavaDifferentJvmImpls")
+    public void testJvmKotlinReferencesCommonKotlinThroughJavaDifferentJvmImpls() throws Exception {
+        runTest("idea/testData/multiModuleHighlighting/multiplatform/jvmKotlinReferencesCommonKotlinThroughJavaDifferentJvmImpls/");
+    }
+
+    @TestMetadata("jvmNameInCommon")
+    public void testJvmNameInCommon() throws Exception {
+        runTest("idea/testData/multiModuleHighlighting/multiplatform/jvmNameInCommon/");
+    }
+
     @TestMetadata("multifileFacade")
     public void testMultifileFacade() throws Exception {
         runTest("idea/testData/multiModuleHighlighting/multiplatform/multifileFacade/");
@@ -107,6 +132,11 @@ public class MultiPlatformHighlightingTestGenerated extends AbstractMultiPlatfor
     @TestMetadata("platformTypeAliasInterchangebleWithAliasedClass")
     public void testPlatformTypeAliasInterchangebleWithAliasedClass() throws Exception {
         runTest("idea/testData/multiModuleHighlighting/multiplatform/platformTypeAliasInterchangebleWithAliasedClass/");
+    }
+
+    @TestMetadata("sealedTypeAlias")
+    public void testSealedTypeAlias() throws Exception {
+        runTest("idea/testData/multiModuleHighlighting/multiplatform/sealedTypeAlias/");
     }
 
     @TestMetadata("suppressHeaderWithoutImpl")

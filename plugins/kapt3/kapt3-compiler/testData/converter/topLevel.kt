@@ -10,6 +10,8 @@ fun <X : CharSequence, T : List<out X>> topLevelGenericFunction(): T? {
 
 val topLevelProperty = 2
 
+const val topLevelConstProperty = 2
+
 val topLevelProperty2: String
     get() = ""
 

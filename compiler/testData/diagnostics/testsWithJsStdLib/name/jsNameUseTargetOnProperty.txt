@@ -2,7 +2,7 @@ package
 
 public final class A {
     public constructor A()
-    @property:kotlin.js.JsName(name = "x_") public final val x: kotlin.Int = 0
+    @kotlin.js.JsName(name = "x_") public final val x: kotlin.Int = 0
     public final var y: kotlin.Int
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

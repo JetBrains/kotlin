@@ -123,7 +123,7 @@ public class ErrorSimpleFunctionDescriptorImpl extends SimpleFunctionDescriptorI
 
             @NotNull
             @Override
-            public CopyBuilder<SimpleFunctionDescriptor> setExtensionReceiverType(@Nullable KotlinType type) {
+            public CopyBuilder<SimpleFunctionDescriptor> setExtensionReceiverParameter(@Nullable ReceiverParameterDescriptor extensionReceiverParameter) {
                 return this;
             }
 

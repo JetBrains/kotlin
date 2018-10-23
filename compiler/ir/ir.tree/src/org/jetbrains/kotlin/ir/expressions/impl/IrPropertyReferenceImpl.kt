@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrPropertyReference
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
-import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
@@ -31,8 +31,8 @@ class IrPropertyReferenceImpl(
     override val descriptor: PropertyDescriptor,
     typeArgumentsCount: Int,
     override val field: IrFieldSymbol?,
-    override val getter: IrFunctionSymbol?,
-    override val setter: IrFunctionSymbol?,
+    override val getter: IrSimpleFunctionSymbol?,
+    override val setter: IrSimpleFunctionSymbol?,
     origin: IrStatementOrigin? = null
 ) :
     IrNoArgumentsCallableReferenceBase(startOffset, endOffset, type, typeArgumentsCount, origin),

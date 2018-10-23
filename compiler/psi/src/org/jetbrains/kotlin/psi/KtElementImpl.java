@@ -43,6 +43,7 @@ public class KtElementImpl extends ASTWrapperPsiElement implements KtElement {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public final void accept(@NotNull PsiElementVisitor visitor) {
         if (visitor instanceof KtVisitor) {
             accept((KtVisitor) visitor, null);
@@ -81,6 +82,7 @@ public class KtElementImpl extends ASTWrapperPsiElement implements KtElement {
     }
 
     @Override
+    @SuppressWarnings("deprecation")
     public PsiReference getReference() {
         PsiReference[] references = getReferences();
         if (references.length == 1) return references[0];

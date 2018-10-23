@@ -20,27 +20,24 @@ import com.intellij.openapi.module.Module
 import com.intellij.openapi.roots.LibraryOrderEntry
 import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.roots.ModuleRootModel
-import com.intellij.openapi.roots.libraries.Library
-import org.jetbrains.kotlin.config.TargetPlatformKind
-import org.jetbrains.kotlin.idea.framework.JavaRuntimeDetectionUtil
-import org.jetbrains.kotlin.idea.framework.JsLibraryStdDetectionUtil
-import org.jetbrains.kotlin.idea.framework.getCommonRuntimeLibraryVersion
+import org.jetbrains.kotlin.idea.platform.tooling
 import org.jetbrains.kotlin.idea.versions.bundledRuntimeVersion
+import org.jetbrains.kotlin.platform.IdePlatformKind
 
 class KotlinVersionInfoProviderByModuleDependencies : KotlinVersionInfoProvider {
     override fun getCompilerVersion(module: Module) = bundledRuntimeVersion()
 
-    override fun getLibraryVersions(module: Module, targetPlatform: TargetPlatformKind<*>, rootModel: ModuleRootModel?): Collection<String> {
-        val versionProvider: (Library) -> String? = when (targetPlatform) {
-            is TargetPlatformKind.JavaScript -> fun(library: Library) = JsLibraryStdDetectionUtil.getJsLibraryStdVersion(library, module.project)
-            is TargetPlatformKind.Jvm -> JavaRuntimeDetectionUtil::getJavaRuntimeVersion
-            is TargetPlatformKind.Common -> ::getCommonRuntimeLibraryVersion
-        }
+    override fun getLibraryVersions(
+        module: Module,
+        platformKind: IdePlatformKind<*>,
+        rootModel: ModuleRootModel?
+    ): Collection<String> {
+        val versionProvider = platformKind.tooling.getLibraryVersionProvider(module.project)
         return (rootModel ?: ModuleRootManager.getInstance(module))
                 .orderEntries
                 .asSequence()
                 .filterIsInstance<LibraryOrderEntry>()
-                .mapNotNull { it.library?.let { versionProvider(it) } }
+                .mapNotNull { libraryEntry -> libraryEntry.library?.let { versionProvider(it) } }
                 .toList()
     }
 }

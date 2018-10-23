@@ -29,7 +29,8 @@ abstract class AbstractJavaResolverCache(private val resolveSession: ResolveSess
     protected val trace: BindingTrace get() = resolveSession.trace
 
     override fun getClassResolvedFromSource(fqName: FqName): ClassDescriptor? {
-        return trace.get(BindingContext.FQNAME_TO_CLASS_DESCRIPTOR, fqName.toUnsafe()) ?: findInPackageFragments(fqName)
+        return trace.get(BindingContext.FQNAME_TO_CLASS_DESCRIPTOR, fqName.toUnsafe())?.takeUnless { it.isExpect }
+            ?: findInPackageFragments(fqName)
     }
 
     private fun findInPackageFragments(fullFqName: FqName): ClassDescriptor? {

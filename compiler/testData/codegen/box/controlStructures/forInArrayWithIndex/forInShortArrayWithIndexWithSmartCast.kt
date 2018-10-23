@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 // WITH_RUNTIME
 
 val arr = shortArrayOf(10, 20, 30, 40)

@@ -1,0 +1,4 @@
+fun test(import: Int) {
+    import
+    val a = 1
+}

@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.serialization.deserialization
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.NotFoundClasses
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationWithTarget
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.NameResolver
 import org.jetbrains.kotlin.metadata.deserialization.getExtensionOrNull
@@ -32,7 +31,7 @@ class AnnotationAndConstantLoaderImpl(
     module: ModuleDescriptor,
     notFoundClasses: NotFoundClasses,
     private val protocol: SerializerExtensionProtocol
-) : AnnotationAndConstantLoader<AnnotationDescriptor, ConstantValue<*>, AnnotationWithTarget> {
+) : AnnotationAndConstantLoader<AnnotationDescriptor, ConstantValue<*>> {
     private val deserializer = AnnotationDeserializer(module, notFoundClasses)
 
     override fun loadClassAnnotations(container: ProtoContainer.Class): List<AnnotationDescriptor> {
@@ -44,7 +43,7 @@ class AnnotationAndConstantLoaderImpl(
         container: ProtoContainer,
         proto: MessageLite,
         kind: AnnotatedCallableKind
-    ): List<AnnotationWithTarget> {
+    ): List<AnnotationDescriptor> {
         val annotations = when (proto) {
             is ProtoBuf.Constructor -> proto.getExtension(protocol.constructorAnnotation)
             is ProtoBuf.Function -> proto.getExtension(protocol.functionAnnotation)
@@ -52,9 +51,15 @@ class AnnotationAndConstantLoaderImpl(
             else -> error("Unknown message: $proto")
         }.orEmpty()
         return annotations.map { annotationProto ->
-            AnnotationWithTarget(deserializer.deserializeAnnotation(annotationProto, container.nameResolver), null)
+            deserializer.deserializeAnnotation(annotationProto, container.nameResolver)
         }
     }
+
+    override fun loadPropertyBackingFieldAnnotations(container: ProtoContainer, proto: ProtoBuf.Property): List<AnnotationDescriptor> =
+        emptyList()
+
+    override fun loadPropertyDelegateFieldAnnotations(container: ProtoContainer, proto: ProtoBuf.Property): List<AnnotationDescriptor> =
+        emptyList()
 
     override fun loadEnumEntryAnnotations(container: ProtoContainer, proto: ProtoBuf.EnumEntry): List<AnnotationDescriptor> {
         val annotations = proto.getExtension(protocol.enumEntryAnnotation).orEmpty()

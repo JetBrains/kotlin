@@ -1,6 +1,6 @@
-// IGNORE_BACKEND: JS_IR
+// SKIP_JDK6
+// TARGET_BACKEND: JVM
 // WITH_REFLECT
-// IGNORE_BACKEND: JS, NATIVE
 
 abstract class Outer<S> {
     inner class Inner<R>
@@ -9,8 +9,9 @@ abstract class Outer<S> {
 
 fun box(): String {
     kotlin.test.assertEquals(
-            "Outer<S>.Inner<R>",
-            Outer::class.java.declaredMethods.single().genericReturnType.toString())
+        "Outer<S>\$Inner<R>",
+        Outer::class.java.declaredMethods.single().genericReturnType.toString()
+    )
 
     return "OK"
 }

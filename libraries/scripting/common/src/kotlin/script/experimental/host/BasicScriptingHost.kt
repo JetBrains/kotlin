@@ -18,30 +18,33 @@
 
 package kotlin.script.experimental.host
 
-import kotlinx.coroutines.experimental.CoroutineScope
-import kotlinx.coroutines.experimental.runBlocking
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.runBlocking
 import kotlin.script.experimental.api.*
 
-abstract class BasicScriptingHost<ScriptBase : Any>(
-    val configurator: ScriptCompilationConfigurator,
+/**
+ * The base class for scripting host implementations
+ */
+abstract class BasicScriptingHost(
     val compiler: ScriptCompiler,
-    val evaluator: ScriptEvaluator<ScriptBase>
+    val evaluator: ScriptEvaluator
 ) {
+    /**
+     * The overridable wrapper for executing evaluation in a desired coroutines context
+     */
     open fun <T> runInCoroutineContext(block: suspend CoroutineScope.() -> T): T = runBlocking { block() }
 
+    /**
+     * The default implementation of the evaluation function
+     */
     open fun eval(
-        script: ScriptSource,
-        compileConfiguration: ScriptCompileConfiguration,
-        environment: ScriptEvaluationEnvironment
+        script: SourceCode,
+        scriptCompilationConfiguration: ScriptCompilationConfiguration,
+        configuration: ScriptEvaluationConfiguration?
     ): ResultWithDiagnostics<EvaluationResult> =
         runInCoroutineContext {
-            val compiled = compiler.compile(script, configurator, compileConfiguration)
-            when (compiled) {
-                is ResultWithDiagnostics.Failure -> compiled
-                is ResultWithDiagnostics.Success -> {
-                    val compiledScript = compiled.value!! as CompiledScript<ScriptBase>
-                    evaluator.eval(compiledScript, environment)
-                }
+            compiler(script, scriptCompilationConfiguration).onSuccess {
+                evaluator(it, configuration)
             }
         }
 }

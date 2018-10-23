@@ -27,30 +27,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.net.URLConnection;
-import java.net.URLStreamHandler;
-import java.util.Base64;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.jar.Manifest;
 
 public class GeneratedClassLoader extends URLClassLoader {
-    private static final URLStreamHandler FAKE_BASE64_URL_HANDLER = new URLStreamHandler() {
-        @Override
-        protected URLConnection openConnection(URL url) {
-            return new URLConnection(url) {
-                @Override
-                public void connect() {
-                }
-
-                @Override
-                public InputStream getInputStream() {
-                    return new ByteArrayInputStream(Base64.getDecoder().decode(url.getPath()));
-                }
-            };
-        }
-    };
 
     private ClassFileFactory factory;
 
@@ -92,10 +74,9 @@ public class GeneratedClassLoader extends URLClassLoader {
     private URL createFakeURLForResource(@NotNull String name) {
         try {
             OutputFile outputFile = factory.get(name);
-            // Encode the byte array in the URL path to prevent creating unneeded temporary files
             return outputFile == null
                    ? null
-                   : new URL(null, "bytes:" + Base64.getEncoder().encodeToString(outputFile.asByteArray()), FAKE_BASE64_URL_HANDLER);
+                   : BytesUrlUtils.createBytesUrl(outputFile.asByteArray());
         } catch (IOException e) {
             throw ExceptionUtilsKt.rethrow(e);
         }

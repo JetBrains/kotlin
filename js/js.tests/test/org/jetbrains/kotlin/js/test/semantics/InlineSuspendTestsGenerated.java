@@ -133,6 +133,11 @@ public class InlineSuspendTestsGenerated extends AbstractInlineSuspendTests {
         runTestWithPackageReplacement("compiler/testData/codegen/boxInline/suspend/inlineSuspendOfSuspend.kt", "kotlin.coroutines");
     }
 
+    @TestMetadata("kt26658.kt")
+    public void testKt26658() throws Exception {
+        runTest("compiler/testData/codegen/boxInline/suspend/kt26658.kt");
+    }
+
     @TestMetadata("multipleLocals.kt")
     public void testMultipleLocals_1_2() throws Exception {
         runTestWithPackageReplacement("compiler/testData/codegen/boxInline/suspend/multipleLocals.kt", "kotlin.coroutines.experimental");

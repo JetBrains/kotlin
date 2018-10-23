@@ -66,4 +66,13 @@ class StringBuilderTest {
             assertEquals("content", sb.toString())
         }
     }
+
+    @Test fun clear() {
+        val sb = StringBuilder()
+        sb.append("test")
+        val s = sb.toString()
+        sb.clear()
+        assertTrue(sb.isEmpty())
+        assertEquals("test", s)
+    }
 }

@@ -41,7 +41,7 @@ class KotlinSetupEnvironmentNotificationProvider(
 
     init {
         myProject.messageBus.connect(myProject).subscribe(ProjectTopics.PROJECT_ROOTS, object : ModuleRootListener {
-            override fun rootsChanged(event: ModuleRootEvent?) {
+            override fun rootsChanged(event: ModuleRootEvent) {
                 notifications.updateAllNotifications()
             }
         })
@@ -70,7 +70,7 @@ class KotlinSetupEnvironmentNotificationProvider(
         }
 
         if (!KotlinConfigurationCheckerComponent.getInstance(module.project).isSyncing &&
-            !SuppressNotificationState.isKotlinNotConfiguredSuppressed(module.toModuleGroup()) &&
+            isNotConfiguredNotificationRequired(module.toModuleGroup()) &&
             !hasAnyKotlinRuntimeInScope(module) &&
             UnsupportedAbiVersionNotificationPanelProvider.collectBadRoots(module).isEmpty()
         ) {

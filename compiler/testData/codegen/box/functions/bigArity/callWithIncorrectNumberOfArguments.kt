@@ -1,7 +1,6 @@
 // !LANGUAGE: +FunctionTypesWithBigArity
 // WITH_RUNTIME
 // TARGET_BACKEND: JVM
-// IGNORE_BACKEND: JVM, JVM_IR
 // FILE: J.java
 
 // import kotlin.jvm.functions.Arity;
@@ -61,8 +60,11 @@ fun box(): String {
             Any?, Any?, Any?, Any?, Any?, Any?, Any?, Any?, Any?, Any?,
             Any?, Any?, Any?, Any?, Any?, Any?, Any?, Any?, Any?, Any?,
             Unit> = { _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _ -> }
+    @Suppress("DEPRECATION_ERROR")
     J.test(lambda as kotlin.jvm.functions.FunctionN<Unit>)
+    @Suppress("DEPRECATION_ERROR")
     J.test(::foo as kotlin.jvm.functions.FunctionN<Unit>)
+    @Suppress("DEPRECATION_ERROR")
     J.test(Fun() as kotlin.jvm.functions.FunctionN<Unit>)
     return "OK"
 }

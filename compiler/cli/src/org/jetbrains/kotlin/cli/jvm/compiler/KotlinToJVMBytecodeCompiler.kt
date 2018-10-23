@@ -18,7 +18,9 @@ package org.jetbrains.kotlin.cli.jvm.compiler
 
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiJavaModule
 import com.intellij.psi.PsiManager
 import com.intellij.psi.impl.PsiModificationTrackerImpl
@@ -32,7 +34,7 @@ import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.checkKotlinPackageUsage
-import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoots
+import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoot
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.OUTPUT
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.WARNING
@@ -63,18 +65,6 @@ import java.lang.reflect.InvocationTargetException
 import java.net.URLClassLoader
 
 object KotlinToJVMBytecodeCompiler {
-
-    private fun getAbsolutePaths(buildFile: File, module: Module): List<String> {
-        return module.getSourceFiles().map { sourceFile ->
-            val source = File(sourceFile)
-            if (!source.isAbsolute) {
-                File(buildFile.absoluteFile.parentFile, sourceFile).absolutePath
-            } else {
-                source.absolutePath
-            }
-        }
-    }
-
     private fun writeOutput(
         configuration: CompilerConfiguration,
         outputFiles: OutputFileCollection,
@@ -136,10 +126,12 @@ object KotlinToJVMBytecodeCompiler {
 
         val outputs = newLinkedHashMapWithExpectedSize<Module, GenerationState>(chunk.size)
 
+        val localFileSystem = VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL)
+
         for (module in chunk) {
             ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
-            val moduleSourcePaths = getAbsolutePaths(buildFile, module)
-            val ktFiles = environment.getSourceFiles().filter { file -> file.virtualFilePath in moduleSourcePaths }
+            val moduleSourceFiles = getAbsolutePaths(buildFile, module.getSourceFiles()).map(localFileSystem::findFileByPath)
+            val ktFiles = environment.getSourceFiles().filter { file -> file.virtualFile in moduleSourceFiles }
 
             if (!checkKotlinPackageUsage(environment, ktFiles)) return false
 
@@ -180,7 +172,11 @@ object KotlinToJVMBytecodeCompiler {
 
     internal fun configureSourceRoots(configuration: CompilerConfiguration, chunk: List<Module>, buildFile: File) {
         for (module in chunk) {
-            configuration.addKotlinSourceRoots(getAbsolutePaths(buildFile, module))
+            val commonSources = getAbsolutePaths(buildFile, module.getCommonSourceFiles()).toSet()
+
+            for (path in getAbsolutePaths(buildFile, module.getSourceFiles())) {
+                configuration.addKotlinSourceRoot(path, isCommon = path in commonSources)
+            }
         }
 
         for (module in chunk) {
@@ -220,8 +216,13 @@ object KotlinToJVMBytecodeCompiler {
         configuration.addAll(JVMConfigurationKeys.MODULES, chunk)
     }
 
+    private fun getAbsolutePaths(buildFile: File, sourceFilePaths: List<String>): List<String> =
+        sourceFilePaths.map { path ->
+            (File(path).takeIf(File::isAbsolute) ?: buildFile.resolveSibling(path)).absolutePath
+        }
+
     private fun findMainClass(generationState: GenerationState, files: List<KtFile>): FqName? {
-        val mainFunctionDetector = MainFunctionDetector(generationState.bindingContext)
+        val mainFunctionDetector = MainFunctionDetector(generationState.bindingContext, generationState.languageVersionSettings)
         return files.asSequence()
             .map { file ->
                 if (mainFunctionDetector.hasMain(file.declarations))
@@ -342,7 +343,8 @@ object KotlinToJVMBytecodeCompiler {
         }
     }
 
-    private fun analyzeAndGenerate(environment: KotlinCoreEnvironment): GenerationState? {
+    @Suppress("MemberVisibilityCanBePrivate") // Used in ExecuteKotlinScriptMojo
+    fun analyzeAndGenerate(environment: KotlinCoreEnvironment): GenerationState? {
         val result = repeatAnalysisIfNeeded(analyze(environment, null), environment, null) ?: return null
 
         if (!result.shouldGenerateCode) return null

@@ -1,0 +1,3 @@
+package
+
+public fun java.io.InputStream.test(): kotlin.Unit

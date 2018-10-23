@@ -34,9 +34,14 @@ import org.jetbrains.kotlin.resolve.calls.components.isActualParameterWithCorres
 import org.jetbrains.kotlin.resolve.checkers.DeclarationChecker
 import org.jetbrains.kotlin.resolve.checkers.DeclarationCheckerContext
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
+import org.jetbrains.kotlin.resolve.isInlineClass
+import org.jetbrains.kotlin.resolve.jvm.annotations.VOLATILE_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.resolve.jvm.annotations.findJvmOverloadsAnnotation
+import org.jetbrains.kotlin.resolve.jvm.annotations.findSynchronizedAnnotation
 import org.jetbrains.kotlin.resolve.jvm.annotations.hasJvmFieldAnnotation
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
+import org.jetbrains.kotlin.resolve.jvm.isInlineClassThatRequiresMangling
+import org.jetbrains.kotlin.resolve.jvm.requiresFunctionNameMangling
 
 class LocalFunInlineChecker : DeclarationChecker {
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
@@ -120,9 +125,9 @@ class JvmStaticChecker(jvmTarget: JvmTarget, languageVersionSettings: LanguageVe
 
 class JvmNameAnnotationChecker : DeclarationChecker {
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
-        val platformNameAnnotation = DescriptorUtils.getJvmNameAnnotation(descriptor)
-        if (platformNameAnnotation != null) {
-            checkDeclaration(descriptor, platformNameAnnotation, context.trace)
+        val jvmNameAnnotation = DescriptorUtils.findJvmNameAnnotation(descriptor)
+        if (jvmNameAnnotation != null) {
+            checkDeclaration(descriptor, jvmNameAnnotation, context.trace)
         }
     }
 
@@ -141,6 +146,10 @@ class JvmNameAnnotationChecker : DeclarationChecker {
         if (descriptor is CallableMemberDescriptor) {
             if (DescriptorUtils.isOverride(descriptor) || descriptor.isOverridable) {
                 diagnosticHolder.report(ErrorsJvm.INAPPLICABLE_JVM_NAME.on(annotationEntry))
+            } else if (descriptor.containingDeclaration.isInlineClassThatRequiresMangling() ||
+                requiresFunctionNameMangling(descriptor.valueParameters.map { it.type })
+            ) {
+                diagnosticHolder.report(ErrorsJvm.INAPPLICABLE_JVM_NAME.on(annotationEntry))
             }
         }
     }
@@ -154,23 +163,25 @@ class JvmNameAnnotationChecker : DeclarationChecker {
 
 class VolatileAnnotationChecker : DeclarationChecker {
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
-        val volatileAnnotation = DescriptorUtils.getVolatileAnnotation(descriptor)
-        if (volatileAnnotation != null) {
-            if (descriptor is PropertyDescriptor && !descriptor.isVar) {
-                val annotationEntry = DescriptorToSourceUtils.getSourceFromAnnotation(volatileAnnotation) ?: return
-                context.trace.report(ErrorsJvm.VOLATILE_ON_VALUE.on(annotationEntry))
-            }
-            if (declaration is KtProperty && declaration.hasDelegate()) {
-                val annotationEntry = DescriptorToSourceUtils.getSourceFromAnnotation(volatileAnnotation) ?: return
-                context.trace.report(ErrorsJvm.VOLATILE_ON_DELEGATE.on(annotationEntry))
-            }
+        if (descriptor !is PropertyDescriptor) return
+
+        val fieldAnnotation = descriptor.backingField?.annotations?.findAnnotation(VOLATILE_ANNOTATION_FQ_NAME)
+        if (fieldAnnotation != null && !descriptor.isVar) {
+            val annotationEntry = DescriptorToSourceUtils.getSourceFromAnnotation(fieldAnnotation) ?: return
+            context.trace.report(ErrorsJvm.VOLATILE_ON_VALUE.on(annotationEntry))
+        }
+
+        val delegateAnnotation = descriptor.delegateField?.annotations?.findAnnotation(VOLATILE_ANNOTATION_FQ_NAME)
+        if (delegateAnnotation != null) {
+            val annotationEntry = DescriptorToSourceUtils.getSourceFromAnnotation(delegateAnnotation) ?: return
+            context.trace.report(ErrorsJvm.VOLATILE_ON_DELEGATE.on(annotationEntry))
         }
     }
 }
 
 class SynchronizedAnnotationChecker : DeclarationChecker {
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
-        val synchronizedAnnotation = DescriptorUtils.getSynchronizedAnnotation(descriptor)
+        val synchronizedAnnotation = descriptor.findSynchronizedAnnotation()
         if (synchronizedAnnotation != null && descriptor is FunctionDescriptor && descriptor.modality == Modality.ABSTRACT) {
             val annotationEntry = DescriptorToSourceUtils.getSourceFromAnnotation(synchronizedAnnotation) ?: return
             context.trace.report(ErrorsJvm.SYNCHRONIZED_ON_ABSTRACT.on(annotationEntry))

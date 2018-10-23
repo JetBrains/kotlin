@@ -8,7 +8,7 @@
 
 package kotlin
 
-import kotlin.internal.contracts.*
+import kotlin.contracts.contract
 
 /**
  * Throws an [IllegalArgumentException] if the [value] is false.

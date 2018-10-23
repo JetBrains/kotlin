@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.resolve
 
 import com.intellij.util.containers.MultiMap
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.diagnostics.reportOnDeclaration
@@ -31,8 +32,11 @@ import java.util.*
 class OverloadResolver(
     private val trace: BindingTrace,
     private val overloadFilter: OverloadFilter,
-    private val overloadChecker: OverloadChecker
+    private val overloadChecker: OverloadChecker,
+    languageVersionSettings: LanguageVersionSettings
 ) {
+
+    private val mainFunctionDetector = MainFunctionDetector(trace.bindingContext, languageVersionSettings)
 
     fun checkOverloads(c: BodiesResolveContext) {
         val inClasses = findConstructorsInNestedClassesAndTypeAliases(c)
@@ -268,7 +272,7 @@ class OverloadResolver(
     }
 
     private fun isTopLevelMainInDifferentFiles(member1: DeclarationDescriptor, member2: DeclarationDescriptor): Boolean {
-        if (!MainFunctionDetector.isMain(member1) || !MainFunctionDetector.isMain(member2)) {
+        if (!mainFunctionDetector.isMain(member1) || !mainFunctionDetector.isMain(member2)) {
             return false
         }
 

@@ -42,7 +42,6 @@ import org.jetbrains.kotlin.utils.KotlinJavascriptMetadataUtils;
 import java.io.File;
 import java.util.*;
 
-import static org.jetbrains.kotlin.config.CommonConfigurationKeysKt.getLanguageVersionSettings;
 import static org.jetbrains.kotlin.utils.PathUtil.getKotlinPathsForDistDirectory;
 
 public class JsConfig {
@@ -135,6 +134,11 @@ public class JsConfig {
         return getConfiguration().getList(JSConfigurationKeys.FRIEND_PATHS);
     }
 
+    @NotNull
+    public LanguageVersionSettings getLanguageVersionSettings() {
+        return CommonConfigurationKeysKt.getLanguageVersionSettings(configuration);
+    }
+
     public boolean isAtLeast(@NotNull LanguageVersion expected) {
         LanguageVersion actual = CommonConfigurationKeysKt.getLanguageVersionSettings(configuration).getLanguageVersion();
         return actual.getMajor() > expected.getMajor() ||
@@ -165,7 +169,7 @@ public class JsConfig {
 
         Set<String> modules = new HashSet<>();
 
-        boolean skipMetadataVersionCheck = getLanguageVersionSettings(configuration).getFlag(AnalysisFlag.getSkipMetadataVersionCheck());
+        boolean skipMetadataVersionCheck = getLanguageVersionSettings().getFlag(AnalysisFlags.getSkipMetadataVersionCheck());
 
         for (String path : libraries) {
             if (librariesToSkip != null && librariesToSkip.contains(path)) continue;
@@ -302,7 +306,7 @@ public class JsConfig {
         return factoryMap.computeIfAbsent(metadata, m -> {
             LanguageVersionSettings languageVersionSettings = CommonConfigurationKeysKt.getLanguageVersionSettings(configuration);
             assert m.getVersion().isCompatible() ||
-                   languageVersionSettings.getFlag(AnalysisFlag.getSkipMetadataVersionCheck()) :
+                   languageVersionSettings.getFlag(AnalysisFlags.getSkipMetadataVersionCheck()) :
                     "Expected JS metadata version " + JsMetadataVersion.INSTANCE + ", but actual metadata version is " + m.getVersion();
 
             ModuleDescriptorImpl moduleDescriptor = new ModuleDescriptorImpl(

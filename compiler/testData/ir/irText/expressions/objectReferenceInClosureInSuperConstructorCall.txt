@@ -43,6 +43,9 @@ FILE fqName:<root> fileName:/objectReferenceInClosureInSuperConstructorCall.kt
             FUNCTION_REFERENCE '<anonymous>(): Test' type=() -> Test origin=LAMBDA
         INSTANCE_INITIALIZER_CALL classDescriptor='Test'
     PROPERTY FAKE_OVERRIDE name:lambda visibility:public modality:FINAL flags:val
+      FIELD FAKE_OVERRIDE name:lambda type:() -> kotlin.Any visibility:public flags:final
+        overridden:
+          FIELD PROPERTY_BACKING_FIELD name:lambda type:() -> kotlin.Any visibility:public flags:final
       FUN FAKE_OVERRIDE name:<get-lambda> visibility:public modality:FINAL <> ($this:Base) returnType:() -> kotlin.Any flags:
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:lambda visibility:public modality:FINAL flags:val
         overridden:

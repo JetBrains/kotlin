@@ -36,7 +36,7 @@
             </snapshots>
             <id>bintray.kotlin.eap</id>
             <name>Bintray Kotlin EAP Repository</name>
-            <url>http://dl.bintray.com/kotlin/kotlin-eap</url>
+            <url>https://dl.bintray.com/kotlin/kotlin-eap</url>
         </repository>
     </repositories>
 
@@ -50,7 +50,7 @@
             </snapshots>
             <id>bintray.kotlin.eap</id>
             <name>Bintray Kotlin EAP Repository</name>
-            <url>http://dl.bintray.com/kotlin/kotlin-eap</url>
+            <url>https://dl.bintray.com/kotlin/kotlin-eap</url>
         </pluginRepository>
     </pluginRepositories>
 

@@ -100,11 +100,11 @@ fun Location.safeMethod(): Method? {
     return DebuggerUtilsEx.getMethod(this)
 }
 
-fun isInsideInlineFunctionBody(visibleVariables: List<LocalVariableProxyImpl>): Boolean {
+fun isInsideInlineFunctionBody(visibleVariables: List<LocalVariable>): Boolean {
     return visibleVariables.any { it.name().startsWith(JvmAbi.LOCAL_VARIABLE_NAME_PREFIX_INLINE_FUNCTION) }
 }
 
-fun numberOfInlinedFunctions(visibleVariables: List<LocalVariableProxyImpl>): Int {
+fun numberOfInlinedFunctions(visibleVariables: List<LocalVariable>): Int {
     return visibleVariables.count { it.name().startsWith(JvmAbi.LOCAL_VARIABLE_NAME_PREFIX_INLINE_FUNCTION) }
 }
 

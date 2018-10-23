@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 class Test {
     val Long.foo: Long
         get() = this + 1

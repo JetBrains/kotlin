@@ -24,14 +24,14 @@ fun builder(c: <!UNSUPPORTED!>suspend<!> () -> Unit) {}
 }
 
 fun test2() {
-    kotlin.coroutines.experimental.<!DEPRECATION_ERROR, UNSUPPORTED!>buildSequence<!><Int> {
-        <!DEPRECATION_ERROR!>yield<!>(1)
+    kotlin.coroutines.experimental.<!DEPRECATION, UNSUPPORTED!>buildSequence<!><Int> {
+        <!DEPRECATION!>yield<!>(1)
     }
     kotlin.sequences.<!UNRESOLVED_REFERENCE!>buildSequence<!><Int> {
         <!UNRESOLVED_REFERENCE!>yield<!>(1)
     }
 }
 
-<!UNSUPPORTED!>suspend<!> fun test3(): Unit = kotlin.coroutines.experimental.<!DEPRECATION_ERROR!>suspendCoroutine<!> { _ -> Unit }
+<!UNSUPPORTED!>suspend<!> fun test3(): Unit = kotlin.coroutines.experimental.<!DEPRECATION!>suspendCoroutine<!> { _ -> Unit }
 
 <!UNSUPPORTED!>suspend<!> fun test4(): Unit = kotlin.coroutines.<!UNRESOLVED_REFERENCE!>suspendCoroutine<!> { <!CANNOT_INFER_PARAMETER_TYPE!>_<!> -> Unit }

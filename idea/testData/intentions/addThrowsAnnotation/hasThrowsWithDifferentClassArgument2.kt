@@ -1,4 +1,5 @@
 // WITH_RUNTIME
+// DISABLE-ERRORS
 class FooException : Exception()
 
 class BarException : Exception()

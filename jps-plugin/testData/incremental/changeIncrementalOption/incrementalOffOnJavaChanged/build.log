@@ -1,7 +1,10 @@
 ================ Step #1 =================
 
+Lookups cache are SHOULD_BE_CLEARED: actual=(3011001, [jvm]) -> expected=null
+Local cache for Module 'module1' production are SHOULD_BE_CLEARED: actual=CacheVersion(version=9011001) -> expected=null
+Local cache for Module 'module2' production are SHOULD_BE_CLEARED: actual=CacheVersion(version=9011001) -> expected=null
+Local cache for Module 'module3' production are SHOULD_BE_CLEARED: actual=CacheVersion(version=9011001) -> expected=null
 Building module1
-Actions after cache changed: [CLEAN_NORMAL_CACHES, CLEAN_DATA_CONTAINER]
 Exit code: NOTHING_DONE
 ------------------------------------------
 Building module2
@@ -13,8 +16,12 @@ Exit code: NOTHING_DONE
 
 ================ Step #2 =================
 
+Lookups cache are INVALID: actual=null -> expected=(3011001, [jvm])
+Marked as dirty by Kotlin:
+  module1/src/a.kt
+  module2/src/c.kt
+  module3/src/d.kt
 Building module1
-Actions after cache changed: [REBUILD_ALL_KOTLIN, REBUILD_CHUNK]
 Cleaning output files:
   out/production/module1/AKt.class
   out/production/module1/META-INF/module1.kotlin_module
@@ -22,14 +29,9 @@ End of files
 Compiling files:
   module1/src/a.kt
 End of files
-Marked as dirty by Kotlin:
-  module1/src/a.kt
-  module2/src/c.kt
-  module3/src/d.kt
 Exit code: OK
 ------------------------------------------
 Building module2
-Actions after cache changed: [REBUILD_CHUNK, DO_NOTHING]
 Cleaning output files:
   out/production/module2/B.class
   out/production/module2/CKt.class
@@ -44,7 +46,6 @@ Compiling files:
   module2/src/B.java
 End of files
 Building module3
-Actions after cache changed: [REBUILD_CHUNK, DO_NOTHING]
 Cleaning output files:
   out/production/module3/DKt.class
   out/production/module3/META-INF/module3.kotlin_module

@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 fun Array<String>.test1(): Array<String> {
     val func = { i:Int  -> this}
     return func(1)

@@ -5,8 +5,8 @@
 
 package kotlin.jvm.internal
 
-public abstract class Lambda(private val arity: Int) : FunctionBase {
-    override fun getArity() = arity
+import java.io.Serializable
 
-    override fun toString() = Reflection.renderLambdaToString(this)
+abstract class Lambda<out R>(override val arity: Int) : FunctionBase<R>, Serializable {
+    override fun toString(): String = Reflection.renderLambdaToString(this)
 }

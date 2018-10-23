@@ -22,6 +22,18 @@ public class Byte private constructor() : Number(), Comparable<Byte> {
          * A constant holding the maximum value an instance of Byte can have.
          */
         public const val MAX_VALUE: Byte = 127
+
+        /**
+         * The number of bytes used to represent an instance of Byte in a binary form.
+         */
+        @SinceKotlin("1.3")
+        public const val SIZE_BYTES: Int = 1
+
+        /**
+         * The number of bits used to represent an instance of Byte in a binary form.
+         */
+        @SinceKotlin("1.3")
+        public const val SIZE_BITS: Int = 8
     }
 
     /**
@@ -119,22 +131,22 @@ public class Byte private constructor() : Number(), Comparable<Byte> {
     public operator fun div(other: Double): Double
 
     /** Calculates the remainder of dividing this value by the other value. */
-    @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.WARNING)
+    @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.ERROR)
     public operator fun mod(other: Byte): Int
     /** Calculates the remainder of dividing this value by the other value. */
-    @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.WARNING)
+    @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.ERROR)
     public operator fun mod(other: Short): Int
     /** Calculates the remainder of dividing this value by the other value. */
-    @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.WARNING)
+    @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.ERROR)
     public operator fun mod(other: Int): Int
     /** Calculates the remainder of dividing this value by the other value. */
-    @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.WARNING)
+    @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.ERROR)
     public operator fun mod(other: Long): Long
     /** Calculates the remainder of dividing this value by the other value. */
-    @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.WARNING)
+    @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.ERROR)
     public operator fun mod(other: Float): Float
     /** Calculates the remainder of dividing this value by the other value. */
-    @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.WARNING)
+    @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.ERROR)
     public operator fun mod(other: Double): Double
 
     /** Calculates the remainder of dividing this value by the other value. */
@@ -198,6 +210,18 @@ public class Short private constructor() : Number(), Comparable<Short> {
          * A constant holding the maximum value an instance of Short can have.
          */
         public const val MAX_VALUE: Short = 32767
+
+        /**
+         * The number of bytes used to represent an instance of Short in a binary form.
+         */
+        @SinceKotlin("1.3")
+        public const val SIZE_BYTES: Int = 2
+
+        /**
+         * The number of bits used to represent an instance of Short in a binary form.
+         */
+        @SinceKotlin("1.3")
+        public const val SIZE_BITS: Int = 16
     }
 
     /**
@@ -295,22 +319,22 @@ public class Short private constructor() : Number(), Comparable<Short> {
     public operator fun div(other: Double): Double
 
     /** Calculates the remainder of dividing this value by the other value. */
-    @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.WARNING)
+    @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.ERROR)
     public operator fun mod(other: Byte): Int
     /** Calculates the remainder of dividing this value by the other value. */
-    @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.WARNING)
+    @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.ERROR)
     public operator fun mod(other: Short): Int
     /** Calculates the remainder of dividing this value by the other value. */
-    @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.WARNING)
+    @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.ERROR)
     public operator fun mod(other: Int): Int
     /** Calculates the remainder of dividing this value by the other value. */
-    @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.WARNING)
+    @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.ERROR)
     public operator fun mod(other: Long): Long
     /** Calculates the remainder of dividing this value by the other value. */
-    @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.WARNING)
+    @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.ERROR)
     public operator fun mod(other: Float): Float
     /** Calculates the remainder of dividing this value by the other value. */
-    @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.WARNING)
+    @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.ERROR)
     public operator fun mod(other: Double): Double
 
     /** Calculates the remainder of dividing this value by the other value. */
@@ -374,6 +398,18 @@ public class Int private constructor() : Number(), Comparable<Int> {
          * A constant holding the maximum value an instance of Int can have.
          */
         public const val MAX_VALUE: Int = 2147483647
+
+        /**
+         * The number of bytes used to represent an instance of Int in a binary form.
+         */
+        @SinceKotlin("1.3")
+        public const val SIZE_BYTES: Int = 4
+
+        /**
+         * The number of bits used to represent an instance of Int in a binary form.
+         */
+        @SinceKotlin("1.3")
+        public const val SIZE_BITS: Int = 32
     }
 
     /**
@@ -471,22 +507,22 @@ public class Int private constructor() : Number(), Comparable<Int> {
     public operator fun div(other: Double): Double
 
     /** Calculates the remainder of dividing this value by the other value. */
-    @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.WARNING)
+    @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.ERROR)
     public operator fun mod(other: Byte): Int
     /** Calculates the remainder of dividing this value by the other value. */
-    @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.WARNING)
+    @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.ERROR)
     public operator fun mod(other: Short): Int
     /** Calculates the remainder of dividing this value by the other value. */
-    @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.WARNING)
+    @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.ERROR)
     public operator fun mod(other: Int): Int
     /** Calculates the remainder of dividing this value by the other value. */
-    @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.WARNING)
+    @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.ERROR)
     public operator fun mod(other: Long): Long
     /** Calculates the remainder of dividing this value by the other value. */
-    @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.WARNING)
+    @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.ERROR)
     public operator fun mod(other: Float): Float
     /** Calculates the remainder of dividing this value by the other value. */
-    @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.WARNING)
+    @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.ERROR)
     public operator fun mod(other: Double): Double
 
     /** Calculates the remainder of dividing this value by the other value. */
@@ -565,6 +601,18 @@ public class Long private constructor() : Number(), Comparable<Long> {
          * A constant holding the maximum value an instance of Long can have.
          */
         public const val MAX_VALUE: Long = 9223372036854775807L
+
+        /**
+         * The number of bytes used to represent an instance of Long in a binary form.
+         */
+        @SinceKotlin("1.3")
+        public const val SIZE_BYTES: Int = 8
+
+        /**
+         * The number of bits used to represent an instance of Long in a binary form.
+         */
+        @SinceKotlin("1.3")
+        public const val SIZE_BITS: Int = 64
     }
 
     /**
@@ -662,22 +710,22 @@ public class Long private constructor() : Number(), Comparable<Long> {
     public operator fun div(other: Double): Double
 
     /** Calculates the remainder of dividing this value by the other value. */
-    @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.WARNING)
+    @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.ERROR)
     public operator fun mod(other: Byte): Long
     /** Calculates the remainder of dividing this value by the other value. */
-    @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.WARNING)
+    @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.ERROR)
     public operator fun mod(other: Short): Long
     /** Calculates the remainder of dividing this value by the other value. */
-    @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.WARNING)
+    @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.ERROR)
     public operator fun mod(other: Int): Long
     /** Calculates the remainder of dividing this value by the other value. */
-    @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.WARNING)
+    @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.ERROR)
     public operator fun mod(other: Long): Long
     /** Calculates the remainder of dividing this value by the other value. */
-    @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.WARNING)
+    @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.ERROR)
     public operator fun mod(other: Float): Float
     /** Calculates the remainder of dividing this value by the other value. */
-    @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.WARNING)
+    @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.ERROR)
     public operator fun mod(other: Double): Double
 
     /** Calculates the remainder of dividing this value by the other value. */
@@ -868,22 +916,22 @@ public class Float private constructor() : Number(), Comparable<Float> {
     public operator fun div(other: Double): Double
 
     /** Calculates the remainder of dividing this value by the other value. */
-    @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.WARNING)
+    @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.ERROR)
     public operator fun mod(other: Byte): Float
     /** Calculates the remainder of dividing this value by the other value. */
-    @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.WARNING)
+    @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.ERROR)
     public operator fun mod(other: Short): Float
     /** Calculates the remainder of dividing this value by the other value. */
-    @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.WARNING)
+    @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.ERROR)
     public operator fun mod(other: Int): Float
     /** Calculates the remainder of dividing this value by the other value. */
-    @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.WARNING)
+    @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.ERROR)
     public operator fun mod(other: Long): Float
     /** Calculates the remainder of dividing this value by the other value. */
-    @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.WARNING)
+    @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.ERROR)
     public operator fun mod(other: Float): Float
     /** Calculates the remainder of dividing this value by the other value. */
-    @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.WARNING)
+    @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.ERROR)
     public operator fun mod(other: Double): Double
 
     /** Calculates the remainder of dividing this value by the other value. */
@@ -1051,22 +1099,22 @@ public class Double private constructor() : Number(), Comparable<Double> {
     public operator fun div(other: Double): Double
 
     /** Calculates the remainder of dividing this value by the other value. */
-    @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.WARNING)
+    @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.ERROR)
     public operator fun mod(other: Byte): Double
     /** Calculates the remainder of dividing this value by the other value. */
-    @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.WARNING)
+    @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.ERROR)
     public operator fun mod(other: Short): Double
     /** Calculates the remainder of dividing this value by the other value. */
-    @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.WARNING)
+    @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.ERROR)
     public operator fun mod(other: Int): Double
     /** Calculates the remainder of dividing this value by the other value. */
-    @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.WARNING)
+    @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.ERROR)
     public operator fun mod(other: Long): Double
     /** Calculates the remainder of dividing this value by the other value. */
-    @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.WARNING)
+    @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.ERROR)
     public operator fun mod(other: Float): Double
     /** Calculates the remainder of dividing this value by the other value. */
-    @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.WARNING)
+    @Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.ERROR)
     public operator fun mod(other: Double): Double
 
     /** Calculates the remainder of dividing this value by the other value. */

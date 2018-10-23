@@ -21,8 +21,9 @@ import org.gradle.api.*
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.ProjectDependency
 import org.gradle.api.file.SourceDirectorySet
+import org.gradle.api.plugins.JavaPluginConvention
+import org.gradle.api.tasks.SourceSet
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
-import org.jetbrains.kotlin.gradle.plugin.source.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 
 abstract class KotlinPlatformPluginBase(protected val platformName: String) : Plugin<Project> {
@@ -44,7 +45,7 @@ const val EXPECTED_BY_CONFIG_NAME = "expectedBy"
 
 const val IMPLEMENT_CONFIG_NAME = "implement"
 const val IMPLEMENT_DEPRECATION_WARNING = "The '$IMPLEMENT_CONFIG_NAME' configuration is deprecated and will be removed. " +
-                                          "Use '$EXPECTED_BY_CONFIG_NAME' instead."
+        "Use '$EXPECTED_BY_CONFIG_NAME' instead."
 
 open class KotlinPlatformImplementationPluginBase(platformName: String) : KotlinPlatformPluginBase(platformName) {
     private val commonProjects = arrayListOf<Project>()
@@ -75,8 +76,7 @@ open class KotlinPlatformImplementationPluginBase(platformName: String) : Kotlin
                     configurationsForCommonModuleDependency(project).forEach { configuration ->
                         configuration.dependencies.add(dep)
                     }
-                }
-                else {
+                } else {
                     throw GradleException("$project '${config.name}' dependency is not a project: $dep")
                 }
             }
@@ -101,9 +101,10 @@ open class KotlinPlatformImplementationPluginBase(platformName: String) : Kotlin
         commonProject.whenEvaluated {
             if (!commonProject.pluginManager.hasPlugin("kotlin-platform-common")) {
                 throw GradleException(
-                        "Platform project $platformProject has an " +
-                        "'$EXPECTED_BY_CONFIG_NAME'${if (implementConfigurationIsUsed) "/'$IMPLEMENT_CONFIG_NAME'" else ""} " +
-                        "dependency to non-common project $commonProject")
+                    "Platform project $platformProject has an " +
+                            "'$EXPECTED_BY_CONFIG_NAME'${if (implementConfigurationIsUsed) "/'$IMPLEMENT_CONFIG_NAME'" else ""} " +
+                            "dependency to non-common project $commonProject"
+                )
             }
 
             // Since the two projects may add source sets in arbitrary order, and both may do that after the plugin is applied,
@@ -114,6 +115,15 @@ open class KotlinPlatformImplementationPluginBase(platformName: String) : Kotlin
                 namedSourceSetsContainer(platformProject)
             ) { commonSourceSet: Named, _ ->
                 addCommonSourceSetToPlatformSourceSet(commonSourceSet, platformProject)
+
+                // Workaround for older versions of Kotlin/Native overriding the old signature
+                commonProject.convention.findPlugin(JavaPluginConvention::class.java)
+                    ?.sourceSets
+                    ?.findByName(commonSourceSet.name)
+                    ?.let { javaSourceSet ->
+                        @Suppress("DEPRECATION")
+                        addCommonSourceSetToPlatformSourceSet(javaSourceSet, platformProject)
+                    }
             }
         }
     }
@@ -149,12 +159,17 @@ open class KotlinPlatformImplementationPluginBase(platformName: String) : Kotlin
         project.kotlinExtension.sourceSets
 
     protected open fun addCommonSourceSetToPlatformSourceSet(commonSourceSet: Named, platformProject: Project) {
-        platformProject.whenEvaluated { // At the point when the source set in the platform module is created, the task does not exist
+        platformProject.whenEvaluated {
+            // At the point when the source set in the platform module is created, the task does not exist
             val platformTask = platformProject.tasks
-                .filterIsInstance<AbstractKotlinCompile<*>>()
-                .single { it.sourceSetName == commonSourceSet.name }
+                .withType(AbstractKotlinCompile::class.java)
+                .singleOrNull { it.sourceSetName == commonSourceSet.name } // TODO use strict check once this code is not run in K/N
 
-            platformTask.source(getKotlinSourceDirectorySetSafe(commonSourceSet))
+            val commonSources = getKotlinSourceDirectorySetSafe(commonSourceSet)!!
+            if (platformTask != null) {
+                platformTask.source(commonSources)
+                platformTask.commonSourceSet += commonSources
+            }
         }
     }
 
@@ -170,13 +185,26 @@ open class KotlinPlatformImplementationPluginBase(platformName: String) : Kotlin
         val getKotlin = from.javaClass.getMethod("getKotlin")
         return getKotlin(from) as? SourceDirectorySet
     }
+
+    @Deprecated("Migrate to the new Kotlin source sets and use the addCommonSourceSetToPlatformSourceSet(Named, Project) overload")
+    protected open fun addCommonSourceSetToPlatformSourceSet(sourceSet: SourceSet, platformProject: Project) = Unit
+
+    @Deprecated("Retained for older Kotlin/Native MPP plugin binary compatibility")
+    protected val SourceSet.kotlin: SourceDirectorySet?
+        get() {
+            // Access through reflection, because another project's KotlinSourceSet might be loaded
+            // by a different class loader:
+            val convention = (getConvention("kotlin") ?: getConvention("kotlin2js")) ?: return null
+            val kotlinSourceSetIface = convention.javaClass.interfaces.find { it.name == KotlinSourceSet::class.qualifiedName }
+            val getKotlin = kotlinSourceSetIface?.methods?.find { it.name == "getKotlin" } ?: return null
+            return getKotlin(convention) as? SourceDirectorySet
+        }
 }
 
 internal fun <T> Project.whenEvaluated(fn: Project.() -> T) {
     if (state.executed) {
         fn()
-    }
-    else {
+    } else {
         afterEvaluate { it.fn() }
     }
 }
@@ -189,7 +217,7 @@ open class KotlinPlatformAndroidPlugin : KotlinPlatformImplementationPluginBase(
 
     override fun configurationsForCommonModuleDependency(project: Project): List<Configuration> =
         (project.configurations.findByName("api"))?.let(::listOf)
-                ?: super.configurationsForCommonModuleDependency(project) // older Android plugins don't have api/implementation configs
+            ?: super.configurationsForCommonModuleDependency(project) // older Android plugins don't have api/implementation configs
 
     override fun namedSourceSetsContainer(project: Project): NamedDomainObjectContainer<*> =
         (project.extensions.getByName("android") as BaseExtension).sourceSets
@@ -198,7 +226,7 @@ open class KotlinPlatformAndroidPlugin : KotlinPlatformImplementationPluginBase(
         val androidExtension = platformProject.extensions.getByName("android") as BaseExtension
         val androidSourceSet = androidExtension.sourceSets.findByName(commonSourceSet.name) ?: return
         val kotlinSourceSet = androidSourceSet.getConvention(KOTLIN_DSL_NAME) as? KotlinSourceSet
-                ?: return
+            ?: return
         kotlinSourceSet.kotlin.source(getKotlinSourceDirectorySetSafe(commonSourceSet)!!)
     }
 }

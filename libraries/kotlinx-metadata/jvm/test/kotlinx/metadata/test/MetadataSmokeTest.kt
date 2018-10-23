@@ -15,10 +15,9 @@ import java.net.URLClassLoader
 import kotlin.reflect.full.primaryConstructor
 
 class MetadataSmokeTest {
-    @Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
     private fun Class<*>.readMetadata(): KotlinClassHeader {
         return getAnnotation(Metadata::class.java).run {
-            KotlinClassHeader(k, mv, bv, d1, d2, xs, pn, xi)
+            KotlinClassHeader(kind, metadataVersion, bytecodeVersion, data1, data2, extraString, packageName, extraInt)
         }
     }
 

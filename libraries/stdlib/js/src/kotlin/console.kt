@@ -86,17 +86,17 @@ internal var output = run {
 @kotlin.internal.InlineOnly
 private inline fun String(value: Any?): String = js("String")(value)
 
-/** Prints a newline to the standard output stream. */
+/** Prints the line separator to the standard output stream. */
 public actual fun println() {
     output.println()
 }
 
-/** Prints the given message and newline to the standard output stream. */
+/** Prints the given [message] and the line separator to the standard output stream. */
 public actual fun println(message: Any?) {
     output.println(message)
 }
 
-/** Prints the given message to the standard output stream. */
+/** Prints the given [message] to the standard output stream. */
 public actual fun print(message: Any?) {
     output.print(message)
 }

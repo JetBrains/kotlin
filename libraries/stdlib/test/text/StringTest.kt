@@ -9,6 +9,8 @@ import kotlin.test.*
 import test.*
 import test.collections.behaviors.iteratorBehavior
 import test.collections.compare
+import kotlin.math.sign
+import kotlin.random.Random
 
 
 fun createString(content: String): CharSequence = content
@@ -755,6 +757,59 @@ class StringTest {
         assertTrue(null.equals(null, ignoreCase = false))
     }
 
+    @Test fun compareToIgnoreCase() {
+
+        fun assertCompareResult(expectedResult: Int, v1: String, v2: String, ignoreCase: Boolean) {
+            val result = v1.compareTo(v2, ignoreCase = ignoreCase).sign
+            assertEquals(expectedResult, result, "Comparing '$v1' with '$v2', ignoreCase = $ignoreCase")
+            if (expectedResult == 0)
+                assertTrue(v1.equals(v2, ignoreCase = ignoreCase))
+            if (!ignoreCase)
+                assertEquals(v1.compareTo(v2).sign, result)
+        }
+
+        fun assertCompareResult(expectedResult: Int, expectedResultIgnoreCase: Int, v1: String, v2: String) {
+            assertCompareResult(expectedResult, v1, v2, false)
+            assertCompareResult(expectedResultIgnoreCase, v1, v2, true)
+        }
+
+        val (EQ, LT, GT) = listOf(0, -1, 1)
+
+        assertCompareResult(EQ, EQ, "ABC", "ABC")
+        assertCompareResult(LT, EQ, "ABC", "ABc")
+        assertCompareResult(GT, EQ, "ABc", "ABC")
+
+        assertCompareResult(LT, LT, "ABC", "ABx")
+        assertCompareResult(LT, GT, "ABX", "ABc")
+
+        assertCompareResult(LT, LT, "[", "aa")
+        assertCompareResult(GT, LT, "[", "AA")
+        assertCompareResult(EQ, EQ, "", "")
+        assertCompareResult(LT, LT, "", "A")
+        assertCompareResult(GT, GT, "A", "")
+
+        run {
+            val a32 = "A".repeat(32)
+            assertCompareResult(LT, EQ, a32 + "B", a32 + "b")
+            assertCompareResult(LT, GT, a32 + "BB", a32 + "b")
+            assertCompareResult(LT, GT, a32 + "C", a32 + "b")
+
+        }
+
+        val equalIgnoringCase = listOf("ABC", "ABc", "aBC", "AbC", "abc")
+        for (item1 in equalIgnoringCase) {
+            for (item2 in equalIgnoringCase) {
+                assertCompareResult(EQ, item1, item2, ignoreCase = true)
+            }
+        }
+    }
+
+
+    @Test fun orderIgnoringCase() {
+        val list = listOf("Beast", "Ast", "asterisk", "[]")
+        assertEquals(listOf("Ast", "Beast", "[]", "asterisk"), list.sorted())
+        assertEquals(listOf("[]", "Ast", "asterisk", "Beast"), list.sortedWith(String.CASE_INSENSITIVE_ORDER))
+    }
 
     @Test fun replace() {
         val input = "abbAb"
@@ -880,6 +935,29 @@ class StringTest {
     @Test fun findNot() = withOneCharSequenceArg("1a2b3c") { data ->
         assertEquals('a', data.filterNot { it.isAsciiDigit() }.firstOrNull())
         assertNull(data.filterNot { it.isAsciiLetter() || it.isAsciiDigit() }.firstOrNull())
+    }
+
+    @Test fun random() = withOneCharSequenceArg { data ->
+        data("abcdefg").let { charSeq ->
+            val tosses = List(10) { charSeq.random() }
+            assertTrue(tosses.distinct().size > 1, "Should be some distinct elements in $tosses")
+
+            val seed = Random.nextInt()
+            val random1 = Random(seed)
+            val random2 = Random(seed)
+
+            val tosses1 = List(10) { charSeq.random(random1) }
+            val tosses2 = List(10) { charSeq.random(random2) }
+
+            assertEquals(tosses1, tosses2)
+        }
+
+        data("x").let { singletonCharSeq ->
+            val tosses = List(10) { singletonCharSeq.random() }
+            assertEquals(singletonCharSeq.toList(), tosses.distinct())
+        }
+
+        assertFailsWith<NoSuchElementException> { data("").random() }
     }
 
     @Test fun partition() {
@@ -1103,6 +1181,14 @@ class StringTest {
         assertEquals(2, result.size)
         assertEquals(listOf('a', 'b', 'b', 'a', 'c'), result[false])
         assertEquals(listOf('A', 'A', 'B', 'D'), result[true])
+    }
+
+    @Test fun associateWith() = withOneCharSequenceArg("abc") { data ->
+        val result = data.associateWith { it + 1 }
+        assertEquals(mapOf('a' to 'b', 'b' to 'c', 'c' to 'd'), result)
+
+        val mutableResult = data.drop(1).associateWithTo(result.toMutableMap()) { it - 1 }
+        assertEquals(mapOf('a' to 'b', 'b' to 'a', 'c' to 'b'), mutableResult)
     }
 
     @Test fun joinToString() {

@@ -2,13 +2,11 @@
  * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
+
 @file:kotlin.jvm.JvmMultifileClass
 @file:kotlin.jvm.JvmName("CharsKt")
 
-
 package kotlin.text
-
-import kotlin.*
 
 /**
  * Returns `true` if this character (Unicode code point) is defined in Unicode.
@@ -18,18 +16,21 @@ public inline fun Char.isDefined(): Boolean = Character.isDefined(this)
 
 /**
  * Returns `true` if this character is a letter.
+ * @sample samples.text.Chars.isLetter
  */
 @kotlin.internal.InlineOnly
 public inline fun Char.isLetter(): Boolean = Character.isLetter(this)
 
 /**
  * Returns `true` if this character is a letter or digit.
+ * @sample samples.text.Chars.isLetterOrDigit
  */
 @kotlin.internal.InlineOnly
 public inline fun Char.isLetterOrDigit(): Boolean = Character.isLetterOrDigit(this)
 
 /**
  * Returns `true` if this character (Unicode code point) is a digit.
+ * @sample samples.text.Chars.isDigit
  */
 @kotlin.internal.InlineOnly
 public inline fun Char.isDigit(): Boolean = Character.isDigit(this)
@@ -44,18 +45,21 @@ public inline fun Char.isIdentifierIgnorable(): Boolean = Character.isIdentifier
 
 /**
  * Returns `true` if this character is an ISO control character.
+ * @sample samples.text.Chars.isISOControl
  */
 @kotlin.internal.InlineOnly
 public inline fun Char.isISOControl(): Boolean = Character.isISOControl(this)
 
 /**
  * Returns `true` if this  character (Unicode code point) may be part of a Java identifier as other than the first character.
+ * @sample samples.text.Chars.isJavaIdentifierPart
  */
 @kotlin.internal.InlineOnly
 public inline fun Char.isJavaIdentifierPart(): Boolean = Character.isJavaIdentifierPart(this)
 
 /**
  * Returns `true` if this character is permissible as the first character in a Java identifier.
+ * @sample samples.text.Chars.isJavaIdentifierStart
  */
 @kotlin.internal.InlineOnly
 public inline fun Char.isJavaIdentifierStart(): Boolean = Character.isJavaIdentifierStart(this)
@@ -63,35 +67,41 @@ public inline fun Char.isJavaIdentifierStart(): Boolean = Character.isJavaIdenti
 /**
  * Determines whether a character is whitespace according to the Unicode standard.
  * Returns `true` if the character is whitespace.
+ * @sample samples.text.Chars.isWhitespace
  */
 public actual fun Char.isWhitespace(): Boolean = Character.isWhitespace(this) || Character.isSpaceChar(this)
 
 /**
  * Returns `true` if this character is upper case.
+ * @sample samples.text.Chars.isUpperCase
  */
 @kotlin.internal.InlineOnly
 public inline fun Char.isUpperCase(): Boolean = Character.isUpperCase(this)
 
 /**
  * Returns `true` if this character is lower case.
+ * @sample samples.text.Chars.isLowerCase
  */
 @kotlin.internal.InlineOnly
 public inline fun Char.isLowerCase(): Boolean = Character.isLowerCase(this)
 
 /**
  * Converts this character to uppercase.
+ * @sample samples.text.Chars.toUpperCase
  */
 @kotlin.internal.InlineOnly
 public actual inline fun Char.toUpperCase(): Char = Character.toUpperCase(this)
 
 /**
  * Converts this character to lowercase.
+ * @sample samples.text.Chars.toLowerCase
  */
 @kotlin.internal.InlineOnly
 public actual inline fun Char.toLowerCase(): Char = Character.toLowerCase(this)
 
 /**
  * Returns `true` if this character is a titlecase character.
+ * @sample samples.text.Chars.isTitleCase
  */
 @kotlin.internal.InlineOnly
 public inline fun Char.isTitleCase(): Boolean = Character.isTitleCase(this)
@@ -100,6 +110,7 @@ public inline fun Char.isTitleCase(): Boolean = Character.isTitleCase(this)
  * Converts this character to titlecase.
  *
  * @see Character.toTitleCase
+ * @sample samples.text.Chars.toTitleCase
  */
 @kotlin.internal.InlineOnly
 public inline fun Char.toTitleCase(): Char = Character.toTitleCase(this)

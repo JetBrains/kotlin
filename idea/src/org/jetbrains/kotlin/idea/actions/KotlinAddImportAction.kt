@@ -83,7 +83,7 @@ internal fun createSingleImportActionForConstructor(
                 .filterIsInstance<ClassDescriptor>()
                 .flatMap { it.constructors }
 
-        val priority = sameFqNameDescriptors.map { prioritizer.priority(it) }.min() ?: return@mapNotNull null
+        val priority = sameFqNameDescriptors.asSequence().map { prioritizer.priority(it) }.min() ?: return@mapNotNull null
         Prioritizer.VariantWithPriority(SingleImportVariant(fqName, sameFqNameDescriptors), priority)
     }.sortedBy { it.priority }.map { it.variant }
     return KotlinAddImportAction(project, editor, element, variants)
@@ -260,7 +260,7 @@ private class DescriptorGroupPrioritizer(file: KtFile) {
     private val prioritizer = Prioritizer(file, false)
 
     inner class Priority(val descriptors: List<DeclarationDescriptor>) : Comparable<Priority> {
-        val ownDescriptorsPriority = descriptors.map { prioritizer.priority(it) }.max()!!
+        val ownDescriptorsPriority = descriptors.asSequence().map { prioritizer.priority(it) }.max()!!
 
         override fun compareTo(other: Priority): Int {
             val c1 = ownDescriptorsPriority.compareTo(other.ownDescriptorsPriority)

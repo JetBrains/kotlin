@@ -1,0 +1,4 @@
+package
+
+public fun passAnonymousFunction(/*0*/ x: kotlin.Boolean): kotlin.Unit
+public fun passLambdaValue(/*0*/ l: kotlin.contracts.ContractBuilder.() -> kotlin.Unit): kotlin.Unit

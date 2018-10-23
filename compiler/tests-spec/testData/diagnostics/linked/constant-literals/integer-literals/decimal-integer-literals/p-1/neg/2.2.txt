@@ -1,0 +1,10 @@
+package
+
+public val value_1: [ERROR : Type for _5678_90]
+public val value_2: [ERROR : Type for _2_3_4_5_6_7_8_9_]
+public val value_3: [ERROR : Type for _____________0000]
+public val value_4: [ERROR : Type for _______________________________________________________________________________________________________________________________________________________0]
+public val value_5: [ERROR : Type for ____________________________________________________]
+public val value_6: [ERROR : Type for _]
+public val value_7: [ERROR : Type for _0_]
+public val value_8: [ERROR : Type for _9_]

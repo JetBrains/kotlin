@@ -18,7 +18,7 @@ fun box(): String {
     if (b1.hashCode() == b2.hashCode()) return "Fail 1"
     if (b1.equals(b2)) return "Fail 2"
 
-    val anno = C::class.java.annotations.first() as Anno
+    val anno = C::class.java.annotations.filterIsInstance<Anno>().first()
     val c1 = C(anno)
     val c2 = C(anno)
     if (c1.hashCode() != c2.hashCode()) return "Fail 3"

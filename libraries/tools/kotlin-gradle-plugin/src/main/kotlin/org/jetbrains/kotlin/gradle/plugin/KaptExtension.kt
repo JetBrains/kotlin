@@ -32,6 +32,8 @@ open class KaptExtension {
 
     open var mapDiagnosticLocations: Boolean = false
 
+    open var strictMode: Boolean = false
+
     @Deprecated("Use `annotationProcessor()` and `annotationProcessors()` instead")
     open var processors: String = ""
 
@@ -41,10 +43,10 @@ open class KaptExtension {
     var useBuildCache: Boolean = false
 
     private val apOptionsActions =
-            mutableListOf<(KaptAnnotationProcessorOptions) -> Unit>()
+        mutableListOf<(KaptAnnotationProcessorOptions) -> Unit>()
 
     private val javacOptionsActions =
-            mutableListOf<(KaptJavacOptionsDelegate) -> Unit>()
+        mutableListOf<(KaptJavacOptionsDelegate) -> Unit>()
 
     private var apOptionsClosure: Closure<*>? = null
     private var javacOptionsClosure: Closure<*>? = null
@@ -103,9 +105,9 @@ open class KaptExtension {
  * [project], [variant] and [android] properties are intended to be used inside the closure.
  */
 open class KaptAnnotationProcessorOptions(
-        @Suppress("unused") open val project: Project,
-        @Suppress("unused") open val variant: Any?,
-        @Suppress("unused") open val android: Any?
+    @Suppress("unused") open val project: Project,
+    @Suppress("unused") open val variant: Any?,
+    @Suppress("unused") open val android: Any?
 ) {
     internal val options = LinkedHashMap<String, String>()
 

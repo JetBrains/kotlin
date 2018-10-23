@@ -77,6 +77,7 @@ fun KotlinType.isPrimitiveNumberOrNullableType(): Boolean =
 fun KotlinType.isTypeParameter(): Boolean = TypeUtils.isTypeParameter(this)
 
 fun KotlinType.isInterface(): Boolean = (constructor.declarationDescriptor as? ClassDescriptor)?.kind == ClassKind.INTERFACE
+fun KotlinType.isEnum(): Boolean = (constructor.declarationDescriptor as? ClassDescriptor)?.kind == ClassKind.ENUM_CLASS
 
 fun KotlinType?.isArrayOfNothing(): Boolean {
     if (this == null || !KotlinBuiltIns.isArray(this)) return false

@@ -109,10 +109,7 @@ class TypeTranslator(
     }
 
     private fun translateTypeAnnotations(annotations: Annotations): List<IrCall> =
-        annotations.getAllAnnotations().map {
-            // TODO filter out annotation targets
-            constantValueGenerator.generateAnnotationConstructorCall(it.annotation)
-        }
+        annotations.map(constantValueGenerator::generateAnnotationConstructorCall)
 
     private fun translateTypeArguments(arguments: List<TypeProjection>) =
         arguments.map {

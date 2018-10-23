@@ -15,9 +15,13 @@ def builtinsSrcDir = "${buildDir}/builtin-sources"
 def builtinsSrcDir2 = "${buildDir}/builtin-sources-for-builtins"
 def commonSrcDir = "${projectDir}/../src/kotlin"
 def commonSrcDir2 = "${projectDir}/../common/src"
-def coroutinesJsSrcDir = "${projectDir}/../coroutines/js/src"
+def coroutinesCommonHSrcDir = "${rootDir}/libraries/stdlib/coroutines/common/src"
+def coroutinesCommonSrcDir = "${rootDir}/libraries/stdlib/coroutines/src"
+def coroutinesJsSrcDir = "${rootDir}/libraries/stdlib/coroutines/js/src"
+def coroutinesExpJsSrcDir = "${rootDir}/libraries/stdlib/coroutines-experimental/js/src"
 
 def builtinsDir = "${rootDir}/core/builtins"
+def unsignedCommonSrcDir = "${rootDir}/libraries/stdlib/unsigned/src"
 def experimentalSrcDir = "${rootDir}/libraries/stdlib/experimental"
 def experimentalJsModuleName = 'kotlin-experimental'
 def coroutinesJsModuleName = 'kotlin-stdlib-coroutines'
@@ -46,6 +50,7 @@ sourceSets {
         kotlin {
             srcDir builtinsSrcDir
             srcDir jsSrcDir
+            srcDir coroutinesJsSrcDir
         }
     }
 
@@ -64,7 +69,7 @@ sourceSets {
 
     coroutines {
         kotlin {
-            srcDir coroutinesJsSrcDir
+            srcDir coroutinesExpJsSrcDir
         }
     }
 }
@@ -126,6 +131,7 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile) {
         freeCompilerArgs = [
                 "-version",
                 "-Xallow-kotlin-package",
+                "-Xallow-result-return-type"
         ]
     }
 }
@@ -147,8 +153,12 @@ compileKotlin2Js {
         sourceMap = true
         sourceMapPrefix = "./"
         freeCompilerArgs += [
-            "-source-map-base-dirs", [builtinsSrcDir, jsSrcDir, commonSrcDir, commonSrcDir2].collect { file(it).absoluteFile }.join(File.pathSeparator),
-            "-Xuse-experimental=kotlin.Experimental"
+            "-source-map-base-dirs", [builtinsSrcDir, jsSrcDir, commonSrcDir, commonSrcDir2, coroutinesJsSrcDir, coroutinesCommonSrcDir, coroutinesCommonHSrcDir, unsignedCommonSrcDir].collect { file(it).absoluteFile }.join(File.pathSeparator),
+            "-Xuse-experimental=kotlin.Experimental",
+            "-Xuse-experimental=kotlin.ExperimentalMultiplatform",
+            "-Xuse-experimental=kotlin.contracts.ExperimentalContracts",
+            "-XXLanguage:+InlineClasses",
+            "-XXLanguage:+ReleaseCoroutines"
         ]
     }
 }
@@ -172,12 +182,21 @@ compileCoroutinesKotlin2Js {
         outputFile = "${buildDir}/classes/coroutines/kotlin.js"
         sourceMap = true
         sourceMapPrefix = "./"
+        freeCompilerArgs += [
+            "-Xuse-experimental=kotlin.contracts.ExperimentalContracts",
+            "-Xuse-experimental=kotlin.Experimental",
+            "-XXLanguage:-ReleaseCoroutines"
+        ]
     }
 }
 
 compileTestKotlin2Js {
     kotlinOptions {
         moduleKind = "umd"
+        freeCompilerArgs += [
+            "-XXLanguage:+ReleaseCoroutines",
+            "-Xuse-experimental=kotlin.ExperimentalUnsignedTypes"
+        ]
     }
 }
 
@@ -237,7 +256,7 @@ task compileJs(type: JavaExec) {
             if (prefixToRemove != null) sourcePath.substring(prefixToRemove.length()) else sourcePath
         }
 
-        def sourceMapSourcesBaseDirs = [jsSrcDir, jsSrcJsDir, builtinsSrcDir, commonSrcDir, commonSrcDir2, projectDir, experimentalSrcDir]
+        def sourceMapSourcesBaseDirs = [jsSrcDir, jsSrcJsDir, builtinsSrcDir, commonSrcDir, commonSrcDir2, projectDir, experimentalSrcDir,  unsignedCommonSrcDir, coroutinesJsSrcDir, coroutinesCommonSrcDir, coroutinesCommonHSrcDir]
 
         sourceMap.sourcesContent = sourceMap.sources.collect { sourceName ->
             def text = sourceMapSourcesBaseDirs.collect { file("$it/$sourceName") }.find { it.exists() }?.text
@@ -346,10 +365,6 @@ dist {
     [mergedJar, distSourcesJar].forEach {
         rename("dist-", "")
         from(it)
-        // legacy
-        from(it) {
-            rename("kotlin-stdlib-js", 'kotlin-jslib')
-        }
     }
 }
 

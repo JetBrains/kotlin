@@ -1,0 +1,13 @@
+compiler/testData/cli/jvm/kt19628_progressive.kt:5:29: error: unresolved reference: CollapsedStringAdapter
+    @get:XmlJavaTypeAdapter(CollapsedStringAdapter::class)
+                            ^
+compiler/testData/cli/jvm/kt19628_progressive.kt:5:29: error: an annotation argument must be a compile-time constant
+    @get:XmlJavaTypeAdapter(CollapsedStringAdapter::class)
+                            ^
+compiler/testData/cli/jvm/kt19628_progressive.kt:8:29: error: unresolved reference: CollapsedStringAdapter
+    @get:XmlJavaTypeAdapter(CollapsedStringAdapter::class)
+                            ^
+compiler/testData/cli/jvm/kt19628_progressive.kt:8:29: error: an annotation argument must be a compile-time constant
+    @get:XmlJavaTypeAdapter(CollapsedStringAdapter::class)
+                            ^
+COMPILATION_ERROR

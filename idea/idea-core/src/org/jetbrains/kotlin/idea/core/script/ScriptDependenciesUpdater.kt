@@ -34,6 +34,7 @@ import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.core.script.dependencies.FromFileAttributeScriptDependenciesLoader
 import org.jetbrains.kotlin.idea.core.script.dependencies.ScriptDependenciesLoader
+import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.NotNullableUserDataProperty
 import org.jetbrains.kotlin.script.findScriptDefinition
@@ -56,7 +57,7 @@ class ScriptDependenciesUpdater(
         val scriptDef = findScriptDefinition(file, project) ?: return ScriptDependencies.Empty
 
         FromFileAttributeScriptDependenciesLoader(file, scriptDef, project).updateDependencies()
-        ScriptDependenciesLoader.updateDependencies(file, scriptDef, project, shouldNotifyRootsChanged = false)
+        ScriptDependenciesLoader.updateDependencies(file, scriptDef, project)
 
         return cache[file] ?: ScriptDependencies.Empty
     }
@@ -75,10 +76,12 @@ class ScriptDependenciesUpdater(
                 if (file.fileType != KotlinFileType.INSTANCE) return
                 val ktFile = PsiManager.getInstance(project).findFile(file) as? KtFile ?: return
 
-                val scriptDef = findScriptDefinition(ktFile) ?: return
+                if (ApplicationManager.getApplication().isUnitTestMode && ApplicationManager.getApplication().isScriptDependenciesUpdaterDisabled == true) return
 
-                if (!ScriptDefinitionsManager.getInstance(project).isInExpectedLocation(ktFile, scriptDef)) return
-                ScriptDependenciesLoader.updateDependencies(file, scriptDef, project, shouldNotifyRootsChanged = true)
+                val scriptDef = ktFile.script?.kotlinScriptDefinition ?: return
+
+                if (!ProjectRootsUtil.isInProjectSource(ktFile, includeScriptsOutsideSourceRoots = true)) return
+                ScriptDependenciesLoader.updateDependencies(file, scriptDef, project)
             }
         })
 
@@ -101,16 +104,16 @@ class ScriptDependenciesUpdater(
                 }
 
                 val ktFile = PsiManager.getInstance(project).findFile(file) as? KtFile ?: return
-                val scriptDef = findScriptDefinition(ktFile) ?: return
+                val scriptDef = ktFile.script?.kotlinScriptDefinition ?: return
 
-                if (!ScriptDefinitionsManager.getInstance(project).isInExpectedLocation(ktFile, scriptDef)) return
+                if (!ProjectRootsUtil.isInProjectSource(ktFile, includeScriptsOutsideSourceRoots = true)) return
 
                 scriptsQueue.cancelAllRequests()
 
                 scriptsQueue.addRequest(
                     {
                         FileDocumentManager.getInstance().saveDocument(document)
-                        ScriptDependenciesLoader.updateDependencies(file, scriptDef, project, shouldNotifyRootsChanged = true)
+                        ScriptDependenciesLoader.updateDependencies(file, scriptDef, project)
                     },
                     scriptChangesListenerDelay,
                     true

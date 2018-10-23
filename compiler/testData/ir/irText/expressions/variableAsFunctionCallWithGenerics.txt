@@ -1,0 +1,42 @@
+FILE fqName:<root> fileName:/variableAsFunctionCallWithGenerics.kt
+  PROPERTY name:gk visibility:public modality:FINAL flags:val
+    FUN name:<get-gk> visibility:public modality:FINAL <T> ($receiver:T) returnType:() -> T flags:
+      correspondingProperty: PROPERTY name:gk visibility:public modality:FINAL flags:val
+      TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.CharSequence]
+      $receiver: VALUE_PARAMETER name:<this> type:T flags:
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='<get-gk>() on T: () -> T'
+          BLOCK type=() -> T origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:T flags:
+              BLOCK_BODY
+                RETURN type=kotlin.Nothing from='<anonymous>(): T'
+                  GET_VAR 'this@gk: T' type=T origin=null
+            FUNCTION_REFERENCE '<anonymous>(): T' type=() -> T origin=LAMBDA
+  FUN name:testGeneric1 visibility:public modality:FINAL <> (x:kotlin.String) returnType:kotlin.String flags:
+    VALUE_PARAMETER name:x index:0 type:kotlin.String flags:
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='testGeneric1(String): String'
+        CALL 'invoke(): String' type=kotlin.String origin=INVOKE
+          $this: CALL '<get-gk>() on String: () -> String' type=() -> kotlin.String origin=GET_PROPERTY
+            <`0>: kotlin.String
+            $receiver: GET_VAR 'value-parameter x: String' type=kotlin.String origin=null
+  PROPERTY name:kt26531Val visibility:public modality:FINAL flags:val
+    FUN name:<get-kt26531Val> visibility:public modality:FINAL <T> ($receiver:T) returnType:() -> T flags:
+      correspondingProperty: PROPERTY name:kt26531Val visibility:public modality:FINAL flags:val
+      TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
+      $receiver: VALUE_PARAMETER name:<this> type:T flags:
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='<get-kt26531Val>() on T: () -> T'
+          BLOCK type=() -> T origin=ANONYMOUS_FUNCTION
+            FUN name:<no name provided> visibility:local modality:FINAL <> () returnType:T flags:
+              BLOCK_BODY
+                RETURN type=kotlin.Nothing from='<no name provided>(): T'
+                  GET_VAR 'this@kt26531Val: T' type=T origin=null
+            FUNCTION_REFERENCE '<no name provided>(): T' type=() -> T origin=ANONYMOUS_FUNCTION
+  FUN name:kt26531 visibility:public modality:FINAL <> () returnType:kotlin.Int flags:
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='kt26531(): Int'
+        CALL 'invoke(): Int' type=kotlin.Int origin=INVOKE
+          $this: CALL '<get-kt26531Val>() on Int: () -> Int' type=() -> kotlin.Int origin=GET_PROPERTY
+            <`0>: kotlin.Int
+            $receiver: CONST Int type=kotlin.Int value=7

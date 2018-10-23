@@ -38,9 +38,11 @@ public actual open class ArrayList<E> internal constructor(private var array: Ar
     public actual fun ensureCapacity(minCapacity: Int) {}
 
     actual override val size: Int get() = array.size
+    @Suppress("UNCHECKED_CAST")
     actual override fun get(index: Int): E = array[rangeCheck(index)] as E
     actual override fun set(index: Int, element: E): E {
         rangeCheck(index)
+        @Suppress("UNCHECKED_CAST")
         return array[index].apply { array[index] = element } as E
     }
 

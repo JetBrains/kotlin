@@ -1,5 +1,6 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-multiplatform'
+apply plugin: 'kotlin-android-extensions'
 
 android {
     compileSdkVersion 27
@@ -54,5 +55,17 @@ kotlin {
         fromPreset(presets.android, 'androidApp')
         fromPreset(presets.jvm, 'jvmApp')
         fromPreset(presets.js, 'jsApp')
+    }
+}
+
+// test diagnostic task, not needed by the build
+task printCompilerPluginOptions {
+    doFirst {
+        kotlin.sourceSets.each { sourceSet ->
+            def args = sourceSet.languageSettings.compilerPluginArguments
+            def cp = sourceSet.languageSettings.compilerPluginClasspath.files
+            println sourceSet.name + '=args=>' + args
+            println sourceSet.name + '=cp=>' + cp
+        }
     }
 }

@@ -17,9 +17,7 @@
 package org.jetbrains.kotlin.serialization.deserialization.descriptors
 
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationWithTarget
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.storage.getValue
 
@@ -31,10 +29,6 @@ open class DeserializedAnnotations(
 
     override fun isEmpty(): Boolean = annotations.isEmpty()
 
-    override fun getUseSiteTargetedAnnotations(): List<AnnotationWithTarget> = emptyList()
-
-    override fun getAllAnnotations(): List<AnnotationWithTarget> = annotations.map { AnnotationWithTarget(it, null) }
-
     override fun iterator(): Iterator<AnnotationDescriptor> = annotations.iterator()
 }
 
@@ -42,32 +36,5 @@ class NonEmptyDeserializedAnnotations(
     storageManager: StorageManager,
     compute: () -> List<AnnotationDescriptor>
 ) : DeserializedAnnotations(storageManager, compute) {
-    override fun isEmpty(): Boolean = false
-}
-
-open class DeserializedAnnotationsWithPossibleTargets(
-    storageManager: StorageManager,
-    compute: () -> List<AnnotationWithTarget>
-) : Annotations {
-    private val annotations by storageManager.createLazyValue(compute)
-
-    override fun isEmpty(): Boolean = annotations.isEmpty()
-
-    override fun findAnnotation(fqName: FqName): AnnotationDescriptor? =
-        annotations.firstOrNull { (annotation, target) -> target == null && annotation.fqName == fqName }?.annotation
-
-    override fun getUseSiteTargetedAnnotations(): List<AnnotationWithTarget> = annotations.filter { it.target != null }
-
-    override fun getAllAnnotations(): List<AnnotationWithTarget> = annotations
-
-    override fun iterator(): Iterator<AnnotationDescriptor> {
-        return annotations.asSequence().filter { it.target == null }.map { it.annotation }.iterator()
-    }
-}
-
-class NonEmptyDeserializedAnnotationsWithPossibleTargets(
-    storageManager: StorageManager,
-    compute: () -> List<AnnotationWithTarget>
-) : DeserializedAnnotationsWithPossibleTargets(storageManager, compute) {
     override fun isEmpty(): Boolean = false
 }

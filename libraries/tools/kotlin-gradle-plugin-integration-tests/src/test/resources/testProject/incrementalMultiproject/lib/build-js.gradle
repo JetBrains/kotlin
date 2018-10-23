@@ -1,0 +1,6 @@
+apply plugin: 'kotlin2js'
+
+dependencies {
+    // do not remove until KT-25488 is fixed
+    compile "org.jetbrains.kotlin:kotlin-stdlib-js:$kotlin_version"
+}

@@ -127,15 +127,14 @@ class KtLightAnnotationForSourceEntry(
     }
 
 
-    override fun getNameReferenceElement(): PsiJavaCodeReferenceElement? {
-        val reference = (kotlinOrigin as? KtAnnotationEntry)?.typeReference?.reference
+    override fun getNameReferenceElement(): PsiJavaCodeReferenceElement? = KtLightPsiJavaCodeReferenceElement(
+        kotlinOrigin.navigationElement,
+        {
+            (kotlinOrigin as? KtAnnotationEntry)?.typeReference?.reference
                 ?: (kotlinOrigin.calleeExpression?.nameReference)?.references?.firstOrNull()
-                ?: return null
-        return KtLightPsiJavaCodeReferenceElement(
-            kotlinOrigin.navigationElement,
-            reference,
-            { super.getNameReferenceElement()!! })
-    }
+        },
+        { super.getNameReferenceElement() }
+    )
 
 
     private val ktLightAnnotationParameterList by lazyPub { KtLightAnnotationParameterList() }

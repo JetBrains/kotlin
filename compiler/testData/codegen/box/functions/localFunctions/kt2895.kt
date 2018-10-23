@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 fun outer() {
     fun inner(i: Int) {
         if (i > 0){

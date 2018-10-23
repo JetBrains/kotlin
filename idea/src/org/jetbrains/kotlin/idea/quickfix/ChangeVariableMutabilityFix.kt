@@ -36,7 +36,7 @@ class ChangeVariableMutabilityFix(
     private val actionText: String? = null
 ) : KotlinQuickFixAction<KtValVarKeywordOwner>(element) {
 
-    override fun getText() = actionText ?: if (makeVar) "Make variable mutable" else "Make variable immutable"
+    override fun getText() = actionText ?: if (makeVar) "Change to var" else "Change to val"
 
     override fun getFamilyName(): String = text
 

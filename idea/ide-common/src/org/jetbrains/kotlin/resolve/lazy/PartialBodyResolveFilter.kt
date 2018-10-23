@@ -116,7 +116,7 @@ class PartialBodyResolveFilter(
                 if (!smartCastPlaces.isEmpty()) {
                     //TODO: do we really need correct resolve for ALL smart cast places?
                     smartCastPlaces.values
-                            .flatMap { it }
+                            .flatten()
                             .forEach { statementMarks.mark(it, MarkLevel.NEED_REFERENCE_RESOLVE) }
                     updateNameFilter()
                 }

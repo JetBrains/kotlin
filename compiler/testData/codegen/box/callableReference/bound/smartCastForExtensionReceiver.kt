@@ -1,5 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
-// IGNORE_BACKEND: JS_IR
 class B
 
 fun B.magic() {

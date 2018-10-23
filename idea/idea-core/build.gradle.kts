@@ -5,7 +5,7 @@ plugins {
 }
 
 dependencies {
-    compile(projectDist(":kotlin-stdlib"))
+    compile(project(":kotlin-stdlib"))
     compileOnly(project(":kotlin-reflect-api"))
     compile(project(":core:descriptors"))
     compile(project(":core:descriptors.jvm"))

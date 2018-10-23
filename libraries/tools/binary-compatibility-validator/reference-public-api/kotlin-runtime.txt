@@ -26,6 +26,17 @@ public class kotlin/KotlinNullPointerException : java/lang/NullPointerException 
 	public fun <init> (Ljava/lang/String;)V
 }
 
+public abstract interface annotation class kotlin/Metadata : java/lang/annotation/Annotation {
+	public abstract fun bv ()[I
+	public abstract fun d1 ()[Ljava/lang/String;
+	public abstract fun d2 ()[Ljava/lang/String;
+	public abstract fun k ()I
+	public abstract fun mv ()[I
+	public abstract fun pn ()Ljava/lang/String;
+	public abstract fun xi ()I
+	public abstract fun xs ()Ljava/lang/String;
+}
+
 public class kotlin/NoWhenBranchMatchedException : java/lang/RuntimeException {
 	public fun <init> ()V
 	public fun <init> (Ljava/lang/String;)V
@@ -339,6 +350,11 @@ public abstract interface class kotlin/jvm/functions/Function9 : kotlin/Function
 	public abstract fun invoke (Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
 }
 
+public abstract interface class kotlin/jvm/functions/FunctionN : kotlin/Function, kotlin/jvm/internal/FunctionBase {
+	public abstract fun getArity ()I
+	public abstract fun invoke ([Ljava/lang/Object;)Ljava/lang/Object;
+}
+
 public final class kotlin/jvm/internal/ArrayIteratorKt {
 	public static final fun iterator ([Ljava/lang/Object;)Ljava/util/Iterator;
 }
@@ -354,6 +370,10 @@ public final class kotlin/jvm/internal/ArrayIteratorsKt {
 	public static final fun iterator ([Z)Lkotlin/collections/BooleanIterator;
 }
 
+public final class kotlin/jvm/internal/BooleanCompanionObject {
+	public static final field INSTANCE Lkotlin/jvm/internal/BooleanCompanionObject;
+}
+
 public final class kotlin/jvm/internal/BooleanSpreadBuilder : kotlin/jvm/internal/PrimitiveSpreadBuilder {
 	public fun <init> (I)V
 	public final fun add (Z)V
@@ -365,6 +385,8 @@ public final class kotlin/jvm/internal/ByteCompanionObject {
 	public static final field INSTANCE Lkotlin/jvm/internal/ByteCompanionObject;
 	public static final field MAX_VALUE B
 	public static final field MIN_VALUE B
+	public static final field SIZE_BITS I
+	public static final field SIZE_BYTES I
 }
 
 public final class kotlin/jvm/internal/ByteSpreadBuilder : kotlin/jvm/internal/PrimitiveSpreadBuilder {
@@ -396,6 +418,7 @@ public abstract class kotlin/jvm/internal/CallableReference : java/io/Serializab
 	public fun isAbstract ()Z
 	public fun isFinal ()Z
 	public fun isOpen ()Z
+	public fun isSuspend ()Z
 }
 
 public final class kotlin/jvm/internal/CharCompanionObject {
@@ -403,9 +426,13 @@ public final class kotlin/jvm/internal/CharCompanionObject {
 	public static final field MAX_HIGH_SURROGATE C
 	public static final field MAX_LOW_SURROGATE C
 	public static final field MAX_SURROGATE C
+	public static final field MAX_VALUE C
 	public static final field MIN_HIGH_SURROGATE C
 	public static final field MIN_LOW_SURROGATE C
 	public static final field MIN_SURROGATE C
+	public static final field MIN_VALUE C
+	public static final field SIZE_BITS I
+	public static final field SIZE_BYTES I
 }
 
 public final class kotlin/jvm/internal/CharSpreadBuilder : kotlin/jvm/internal/PrimitiveSpreadBuilder {
@@ -429,6 +456,7 @@ public final class kotlin/jvm/internal/ClassReference : kotlin/jvm/internal/Clas
 	public fun getNestedClasses ()Ljava/util/Collection;
 	public fun getObjectInstance ()Ljava/lang/Object;
 	public fun getQualifiedName ()Ljava/lang/String;
+	public fun getSealedSubclasses ()Ljava/util/List;
 	public fun getSimpleName ()Ljava/lang/String;
 	public fun getSupertypes ()Ljava/util/List;
 	public fun getTypeParameters ()Ljava/util/List;
@@ -486,7 +514,7 @@ public final class kotlin/jvm/internal/FloatSpreadBuilder : kotlin/jvm/internal/
 	public final fun toArray ()[F
 }
 
-public abstract interface class kotlin/jvm/internal/FunctionBase : java/io/Serializable, kotlin/Function {
+public abstract interface class kotlin/jvm/internal/FunctionBase : kotlin/Function {
 	public abstract fun getArity ()I
 }
 
@@ -557,6 +585,8 @@ public final class kotlin/jvm/internal/IntCompanionObject {
 	public static final field INSTANCE Lkotlin/jvm/internal/IntCompanionObject;
 	public static final field MAX_VALUE I
 	public static final field MIN_VALUE I
+	public static final field SIZE_BITS I
+	public static final field SIZE_BYTES I
 }
 
 public final class kotlin/jvm/internal/IntSpreadBuilder : kotlin/jvm/internal/PrimitiveSpreadBuilder {
@@ -607,7 +637,7 @@ public class kotlin/jvm/internal/Intrinsics {
 	public static fun throwUninitializedPropertyAccessException (Ljava/lang/String;)V
 }
 
-public abstract class kotlin/jvm/internal/Lambda : kotlin/jvm/internal/FunctionBase {
+public abstract class kotlin/jvm/internal/Lambda : java/io/Serializable, kotlin/jvm/internal/FunctionBase {
 	public fun <init> (I)V
 	public fun getArity ()I
 	public fun toString ()Ljava/lang/String;
@@ -623,6 +653,8 @@ public final class kotlin/jvm/internal/LongCompanionObject {
 	public static final field INSTANCE Lkotlin/jvm/internal/LongCompanionObject;
 	public static final field MAX_VALUE J
 	public static final field MIN_VALUE J
+	public static final field SIZE_BITS I
+	public static final field SIZE_BYTES I
 }
 
 public final class kotlin/jvm/internal/LongSpreadBuilder : kotlin/jvm/internal/PrimitiveSpreadBuilder {
@@ -906,6 +938,8 @@ public final class kotlin/jvm/internal/ShortCompanionObject {
 	public static final field INSTANCE Lkotlin/jvm/internal/ShortCompanionObject;
 	public static final field MAX_VALUE S
 	public static final field MIN_VALUE S
+	public static final field SIZE_BITS I
+	public static final field SIZE_BYTES I
 }
 
 public final class kotlin/jvm/internal/ShortSpreadBuilder : kotlin/jvm/internal/PrimitiveSpreadBuilder {
@@ -1132,6 +1166,7 @@ public abstract interface class kotlin/reflect/KCallable : kotlin/reflect/KAnnot
 	public abstract fun isAbstract ()Z
 	public abstract fun isFinal ()Z
 	public abstract fun isOpen ()Z
+	public abstract fun isSuspend ()Z
 }
 
 public abstract interface class kotlin/reflect/KClass : kotlin/reflect/KAnnotatedElement, kotlin/reflect/KClassifier, kotlin/reflect/KDeclarationContainer {
@@ -1141,6 +1176,7 @@ public abstract interface class kotlin/reflect/KClass : kotlin/reflect/KAnnotate
 	public abstract fun getNestedClasses ()Ljava/util/Collection;
 	public abstract fun getObjectInstance ()Ljava/lang/Object;
 	public abstract fun getQualifiedName ()Ljava/lang/String;
+	public abstract fun getSealedSubclasses ()Ljava/util/List;
 	public abstract fun getSimpleName ()Ljava/lang/String;
 	public abstract fun getSupertypes ()Ljava/util/List;
 	public abstract fun getTypeParameters ()Ljava/util/List;
@@ -1259,7 +1295,7 @@ public abstract interface class kotlin/reflect/KProperty2 : kotlin/jvm/functions
 public abstract interface class kotlin/reflect/KProperty2$Getter : kotlin/jvm/functions/Function2, kotlin/reflect/KProperty$Getter {
 }
 
-public abstract interface class kotlin/reflect/KType {
+public abstract interface class kotlin/reflect/KType : kotlin/reflect/KAnnotatedElement {
 	public abstract fun getArguments ()Ljava/util/List;
 	public abstract fun getClassifier ()Lkotlin/reflect/KClassifier;
 	public abstract fun isMarkedNullable ()Z

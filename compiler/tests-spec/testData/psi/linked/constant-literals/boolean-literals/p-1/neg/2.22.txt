@@ -1,0 +1,400 @@
+KtFile: 2.22.kt
+  PACKAGE_DIRECTIVE
+    <empty list>
+  IMPORT_LIST
+    <empty list>
+  FUN
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('f')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    BLOCK
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n    ')
+      PROPERTY
+        PsiElement(val)('val')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('lambda_1')
+        PsiWhiteSpace(' ')
+        PsiElement(EQ)('=')
+        PsiWhiteSpace(' ')
+        CALL_EXPRESSION
+          BOOLEAN_CONSTANT
+            PsiElement(true)('true')
+          LAMBDA_ARGUMENT
+            ANNOTATED_EXPRESSION
+              PsiErrorElement:Expected annotation identifier after '@'
+                PsiElement(AT)('@')
+              PsiWhiteSpace(' ')
+              LAMBDA_EXPRESSION
+                FUNCTION_LITERAL
+                  PsiElement(LBRACE)('{')
+                  BLOCK
+                    <empty list>
+                  PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n\n    ')
+      PROPERTY
+        PsiElement(val)('val')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('lambda_2')
+        PsiWhiteSpace(' ')
+        PsiElement(EQ)('=')
+        PsiWhiteSpace(' ')
+        CALL_EXPRESSION
+          BOOLEAN_CONSTANT
+            PsiElement(false)('false')
+          LAMBDA_ARGUMENT
+            ANNOTATED_EXPRESSION
+              PsiErrorElement:Expected annotation identifier after '@'
+                PsiElement(AT)('@')
+              PsiWhiteSpace(' ')
+              LAMBDA_EXPRESSION
+                FUNCTION_LITERAL
+                  PsiElement(LBRACE)('{')
+                  PsiWhiteSpace('\n        ')
+                  BLOCK
+                    CALL_EXPRESSION
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('println')
+                      VALUE_ARGUMENT_LIST
+                        PsiElement(LPAR)('(')
+                        VALUE_ARGUMENT
+                          INTEGER_CONSTANT
+                            PsiElement(INTEGER_LITERAL)('1')
+                        PsiElement(RPAR)(')')
+                  PsiWhiteSpace('\n    ')
+                  PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n\n    ')
+      PROPERTY
+        PsiElement(val)('val')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('lambda_3')
+        PsiWhiteSpace(' ')
+        PsiElement(EQ)('=')
+        PsiWhiteSpace(' ')
+        ANNOTATED_EXPRESSION
+          ANNOTATION_ENTRY
+            PsiElement(AT)('@')
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('someAnotation')
+          PsiWhiteSpace(' ')
+          CALL_EXPRESSION
+            BOOLEAN_CONSTANT
+              PsiElement(true)('true')
+            LAMBDA_ARGUMENT
+              ANNOTATED_EXPRESSION
+                PsiErrorElement:Expected annotation identifier after '@'
+                  PsiElement(AT)('@')
+                PsiWhiteSpace(' ')
+                LAMBDA_EXPRESSION
+                  FUNCTION_LITERAL
+                    PsiElement(LBRACE)('{')
+                    PsiWhiteSpace('\n        ')
+                    BLOCK
+                      CALL_EXPRESSION
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('println')
+                        VALUE_ARGUMENT_LIST
+                          PsiElement(LPAR)('(')
+                          VALUE_ARGUMENT
+                            INTEGER_CONSTANT
+                              PsiElement(INTEGER_LITERAL)('1')
+                          PsiElement(RPAR)(')')
+                    PsiWhiteSpace('\n    ')
+                    PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n\n    ')
+      PROPERTY
+        PsiElement(val)('val')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('lambda_4')
+        PsiWhiteSpace(' ')
+        PsiElement(EQ)('=')
+        PsiWhiteSpace(' ')
+        ANNOTATED_EXPRESSION
+          ANNOTATION_ENTRY
+            PsiElement(AT)('@')
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('someAnotation1')
+          PsiWhiteSpace(' ')
+          ANNOTATION_ENTRY
+            PsiElement(AT)('@')
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('someAnotation2')
+          PsiWhiteSpace(' ')
+          ANNOTATION_ENTRY
+            PsiElement(AT)('@')
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('someAnotation3')
+          PsiWhiteSpace(' ')
+          CALL_EXPRESSION
+            BOOLEAN_CONSTANT
+              PsiElement(false)('false')
+            LAMBDA_ARGUMENT
+              ANNOTATED_EXPRESSION
+                PsiErrorElement:Expected annotation identifier after '@'
+                  PsiElement(AT)('@')
+                PsiWhiteSpace(' ')
+                LAMBDA_EXPRESSION
+                  FUNCTION_LITERAL
+                    PsiElement(LBRACE)('{')
+                    PsiWhiteSpace('\n        ')
+                    BLOCK
+                      CALL_EXPRESSION
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('println')
+                        VALUE_ARGUMENT_LIST
+                          PsiElement(LPAR)('(')
+                          VALUE_ARGUMENT
+                            INTEGER_CONSTANT
+                              PsiElement(INTEGER_LITERAL)('1')
+                          PsiElement(RPAR)(')')
+                    PsiWhiteSpace('\n    ')
+                    PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n\n    ')
+      PROPERTY
+        PsiElement(val)('val')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('x1')
+        PsiWhiteSpace(' ')
+        PsiElement(EQ)('=')
+        PsiWhiteSpace(' ')
+        BOOLEAN_CONSTANT
+          PsiElement(true)('true')
+      PsiErrorElement:Unexpected tokens (use ';' to separate expressions on the same line)
+        PsiElement(AT)('@')
+        PsiWhiteSpace(' ')
+        PsiElement(INTEGER_LITERAL)('10')
+        PsiWhiteSpace(' ')
+        PsiElement(MINUS)('-')
+        PsiWhiteSpace(' ')
+        PsiElement(INTEGER_LITERAL)('1')
+      PsiWhiteSpace('\n    ')
+      PROPERTY
+        PsiElement(val)('val')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('x2')
+        PsiWhiteSpace(' ')
+        PsiElement(EQ)('=')
+        PsiWhiteSpace(' ')
+        BOOLEAN_CONSTANT
+          PsiElement(false)('false')
+      PsiErrorElement:Unexpected tokens (use ';' to separate expressions on the same line)
+        PsiElement(AT)('@')
+        PsiElement(LPAR)('(')
+        PsiElement(IDENTIFIER)('listOf')
+        PsiElement(LPAR)('(')
+        PsiElement(INTEGER_LITERAL)('1')
+        PsiElement(RPAR)(')')
+        PsiElement(RPAR)(')')
+      PsiWhiteSpace('\n    ')
+      PROPERTY
+        PsiElement(val)('val')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('x3')
+        PsiWhiteSpace(' ')
+        PsiElement(EQ)('=')
+        PsiWhiteSpace(' ')
+        BOOLEAN_CONSTANT
+          PsiElement(true)('true')
+      PsiErrorElement:Unexpected tokens (use ';' to separate expressions on the same line)
+        PsiElement(AT)('@')
+        PsiElement(LPAR)('(')
+        PsiElement(return)('return')
+        PsiWhiteSpace(' ')
+        PsiElement(return)('return')
+        PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(ANDAND)('&&')
+        PsiWhiteSpace(' ')
+        PsiElement(false)('false')
+        PsiElement(AT)('@')
+        PsiWhiteSpace(' ')
+        PsiElement(return)('return')
+        PsiWhiteSpace(' ')
+        PsiElement(return)('return')
+      PsiWhiteSpace('\n    ')
+      PROPERTY
+        PsiElement(val)('val')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('x4')
+        PsiWhiteSpace(' ')
+        PsiElement(EQ)('=')
+        PsiWhiteSpace(' ')
+        BOOLEAN_CONSTANT
+          PsiElement(true)('true')
+      PsiErrorElement:Unexpected tokens (use ';' to separate expressions on the same line)
+        PsiElement(AT)('@')
+        PsiWhiteSpace(' ')
+        PsiElement(try)('try')
+      PsiWhiteSpace(' ')
+      BINARY_EXPRESSION
+        BINARY_EXPRESSION
+          LAMBDA_EXPRESSION
+            FUNCTION_LITERAL
+              PsiElement(LBRACE)('{')
+              BLOCK
+                <empty list>
+              PsiElement(RBRACE)('}')
+          PsiWhiteSpace(' ')
+          OPERATION_REFERENCE
+            PsiElement(IDENTIFIER)('finally')
+          PsiWhiteSpace(' ')
+          LAMBDA_EXPRESSION
+            FUNCTION_LITERAL
+              PsiElement(LBRACE)('{')
+              BLOCK
+                <empty list>
+              PsiElement(RBRACE)('}')
+        PsiWhiteSpace(' ')
+        OPERATION_REFERENCE
+          PsiElement(ANDAND)('&&')
+        PsiWhiteSpace(' ')
+        BOOLEAN_CONSTANT
+          PsiElement(false)('false')
+      PsiErrorElement:Unexpected tokens (use ';' to separate expressions on the same line)
+        PsiElement(AT)('@')
+        PsiWhiteSpace(' ')
+        PsiElement(return)('return')
+        PsiWhiteSpace(' ')
+        PsiElement(return)('return')
+      PsiWhiteSpace('\n    ')
+      PROPERTY
+        PsiElement(val)('val')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('x5')
+        PsiWhiteSpace(' ')
+        PsiElement(EQ)('=')
+        PsiWhiteSpace(' ')
+        BOOLEAN_CONSTANT
+          PsiElement(true)('true')
+      PsiErrorElement:Unexpected tokens (use ';' to separate expressions on the same line)
+        PsiElement(AT)('@')
+        PsiWhiteSpace(' ')
+        PsiElement(try)('try')
+      PsiWhiteSpace(' ')
+      BINARY_EXPRESSION
+        LAMBDA_EXPRESSION
+          FUNCTION_LITERAL
+            PsiElement(LBRACE)('{')
+            PsiWhiteSpace(' ')
+            BLOCK
+              BOOLEAN_CONSTANT
+                PsiElement(false)('false')
+            PsiWhiteSpace(' ')
+            PsiElement(RBRACE)('}')
+        PsiWhiteSpace(' ')
+        OPERATION_REFERENCE
+          PsiElement(IDENTIFIER)('catch')
+        PARENTHESIZED
+          PsiElement(LPAR)('(')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('e')
+          PsiErrorElement:Expecting ')'
+            <empty list>
+      PsiErrorElement:Unexpected tokens (use ';' to separate expressions on the same line)
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('E')
+        PsiElement(RPAR)(')')
+      PsiWhiteSpace(' ')
+      BINARY_EXPRESSION
+        LAMBDA_EXPRESSION
+          FUNCTION_LITERAL
+            PsiElement(LBRACE)('{')
+            BLOCK
+              <empty list>
+            PsiElement(RBRACE)('}')
+        PsiWhiteSpace(' ')
+        OPERATION_REFERENCE
+          PsiElement(IDENTIFIER)('catch')
+        PsiWhiteSpace(' ')
+        PARENTHESIZED
+          PsiElement(LPAR)('(')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('e')
+          PsiErrorElement:Expecting ')'
+            <empty list>
+      PsiErrorElement:Unexpected tokens (use ';' to separate expressions on the same line)
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('Exception')
+        PsiElement(RPAR)(')')
+      PsiWhiteSpace(' ')
+      BINARY_EXPRESSION
+        LAMBDA_EXPRESSION
+          FUNCTION_LITERAL
+            PsiElement(LBRACE)('{')
+            PsiWhiteSpace(' ')
+            BLOCK
+              BOOLEAN_CONSTANT
+                PsiElement(true)('true')
+            PsiWhiteSpace(' ')
+            PsiElement(RBRACE)('}')
+        PsiWhiteSpace(' ')
+        OPERATION_REFERENCE
+          PsiElement(ANDAND)('&&')
+        PsiWhiteSpace(' ')
+        BOOLEAN_CONSTANT
+          PsiElement(false)('false')
+      PsiErrorElement:Unexpected tokens (use ';' to separate expressions on the same line)
+        PsiElement(AT)('@')
+        PsiWhiteSpace(' ')
+        PsiElement(when)('when')
+        PsiWhiteSpace(' ')
+        PsiElement(LPAR)('(')
+        PsiElement(IDENTIFIER)('value')
+        PsiElement(RPAR)(')')
+      PsiWhiteSpace(' ')
+      LAMBDA_EXPRESSION
+        FUNCTION_LITERAL
+          PsiElement(LBRACE)('{')
+          PsiWhiteSpace(' ')
+          BLOCK
+            BOOLEAN_CONSTANT
+              PsiElement(true)('true')
+            PsiErrorElement:Unexpected tokens (use ';' to separate expressions on the same line)
+              PsiElement(AT)('@')
+              PsiWhiteSpace(' ')
+              PsiElement(true)('true')
+              PsiWhiteSpace(' ')
+              PsiElement(ARROW)('->')
+              PsiWhiteSpace(' ')
+              PsiElement(false)('false')
+              PsiElement(AT)('@')
+              PsiWhiteSpace(' ')
+              PsiElement(false)('false')
+            PsiErrorElement:Expecting an element
+              PsiElement(SEMICOLON)(';')
+            PsiWhiteSpace(' ')
+            BOOLEAN_CONSTANT
+              PsiElement(true)('true')
+            PsiErrorElement:Unexpected tokens (use ';' to separate expressions on the same line)
+              PsiElement(AT)('@')
+              PsiWhiteSpace(' ')
+              PsiElement(false)('false')
+              PsiWhiteSpace(' ')
+              PsiElement(ARROW)('->')
+              PsiWhiteSpace(' ')
+              PsiElement(false)('false')
+              PsiElement(AT)('@')
+              PsiWhiteSpace(' ')
+              PsiElement(true)('true')
+          PsiWhiteSpace(' ')
+          PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')

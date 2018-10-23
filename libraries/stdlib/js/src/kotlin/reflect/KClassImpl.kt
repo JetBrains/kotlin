@@ -40,6 +40,8 @@ internal abstract class KClassImpl<T : Any>(
         get() = TODO()
     override val typeParameters: List<KTypeParameter>
         get() = TODO()
+    override val sealedSubclasses: List<KClass<out T>>
+        get() = TODO()
     override val visibility: KVisibility?
         get() = TODO()
 
@@ -60,7 +62,7 @@ internal class SimpleKClassImpl<T : Any>(jClass: JsClass<T>) : KClassImpl<T>(jCl
     override val simpleName: String? = jClass.asDynamic().`$metadata$`?.simpleName.unsafeCast<String?>()
 
     override fun isInstance(value: Any?): Boolean {
-        return js("Kotlin").isType(value, jClass)
+        return jsIsType(value, jClass)
     }
 }
 

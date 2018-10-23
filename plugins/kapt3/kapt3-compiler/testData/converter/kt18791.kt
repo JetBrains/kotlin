@@ -1,8 +1,3 @@
-// EXPECTED_ERROR class B is public, should be declared in a file named B.java
-// EXPECTED_ERROR class R is public, should be declared in a file named R.java
-// EXPECTED_ERROR class R is public, should be declared in a file named R.java
-// EXPECTED_ERROR class R2 is public, should be declared in a file named R2.java
-
 //FILE: lib/R.java
 package lib;
 
@@ -88,3 +83,8 @@ class MyActivity {
     @Bind(B.id.textView)
     fun plainIntConstant() {}
 }
+
+// EXPECTED_ERROR class B is public, should be declared in a file named B.java
+// EXPECTED_ERROR class R is public, should be declared in a file named R.java
+// EXPECTED_ERROR class R is public, should be declared in a file named R.java
+// EXPECTED_ERROR class R2 is public, should be declared in a file named R2.java

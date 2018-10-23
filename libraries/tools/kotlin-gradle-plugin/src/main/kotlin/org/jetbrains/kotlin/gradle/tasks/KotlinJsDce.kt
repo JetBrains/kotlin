@@ -66,8 +66,8 @@ open class KotlinJsDce : AbstractKotlinCompileTool<K2JSDceArguments>(), KotlinJs
     @TaskAction
     fun performDce() {
         val inputFiles = (listOf(getSource()) + classpath.map { project.fileTree(it) })
-                .reduce(FileTree::plus)
-                .files.map { it.path }
+            .reduce(FileTree::plus)
+            .files.map { it.path }
 
         val outputDirArgs = arrayOf("-output-dir", destinationDir.path)
 
@@ -75,8 +75,10 @@ open class KotlinJsDce : AbstractKotlinCompileTool<K2JSDceArguments>(), KotlinJs
 
         val log = GradleKotlinLogger(project.logger)
         val allArgs = argsArray + outputDirArgs + inputFiles
-        val exitCode = runToolInSeparateProcess(allArgs, K2JSDce::class.java.name, computedCompilerClasspath,
-                log, createLoggingMessageCollector(log))
+        val exitCode = runToolInSeparateProcess(
+            allArgs, K2JSDce::class.java.name, computedCompilerClasspath,
+            log, createLoggingMessageCollector(log)
+        )
         throwGradleExceptionIfError(exitCode)
     }
 }

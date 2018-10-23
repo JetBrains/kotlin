@@ -9,6 +9,8 @@ expect annotation class Anno(val s: String)
 
 // FILE: jvm.kt
 
+@file:Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE") // TODO: support common sources in the test infrastructure
+
 import java.lang.reflect.AnnotatedElement
 
 @Anno("Foo")

@@ -19,12 +19,11 @@ package org.jetbrains.kotlin.contracts
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.contracts.interpretation.ContractInterpretationDispatcher
 import org.jetbrains.kotlin.contracts.model.Computation
+import org.jetbrains.kotlin.contracts.model.ConditionalEffect
+import org.jetbrains.kotlin.contracts.model.ESEffect
 import org.jetbrains.kotlin.contracts.model.Functor
 import org.jetbrains.kotlin.contracts.model.functors.*
-import org.jetbrains.kotlin.contracts.model.structure.CallComputation
-import org.jetbrains.kotlin.contracts.model.structure.ESConstant
-import org.jetbrains.kotlin.contracts.model.structure.UNKNOWN_COMPUTATION
-import org.jetbrains.kotlin.contracts.model.structure.lift
+import org.jetbrains.kotlin.contracts.model.structure.*
 import org.jetbrains.kotlin.contracts.parsing.isEqualsDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
@@ -34,12 +33,12 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
-import org.jetbrains.kotlin.resolve.calls.model.ExpressionValueArgument
-import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
+import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValue
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant
+import org.jetbrains.kotlin.resolve.constants.UnsignedErrorValueTypeConstant
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.types.KotlinType
@@ -97,6 +96,8 @@ class EffectsExtractingVisitor(
 
         val compileTimeConstant: CompileTimeConstant<*> =
             bindingContext.get(BindingContext.COMPILE_TIME_VALUE, expression) ?: return UNKNOWN_COMPUTATION
+        if (compileTimeConstant.isError || compileTimeConstant is UnsignedErrorValueTypeConstant) return UNKNOWN_COMPUTATION
+
         val value: Any? = compileTimeConstant.getValue(type)
 
         return when (value) {
@@ -113,6 +114,20 @@ class EffectsExtractingVisitor(
             DefaultBuiltIns.Instance.booleanType,
             IsFunctor(rightType, expression.isNegated).invokeWithArguments(listOf(arg))
         )
+    }
+
+    override fun visitSafeQualifiedExpression(expression: KtSafeQualifiedExpression, data: Unit?): Computation {
+        val computation = super.visitSafeQualifiedExpression(expression, data)
+        if (computation === UNKNOWN_COMPUTATION) return computation
+
+        // For safecall any clauses of form 'returns(null) -> ...' are incorrect, because safecall can return
+        // null bypassing function's contract, so we have to filter them out
+
+        fun ESEffect.containsReturnsNull(): Boolean =
+            this == ESReturns(ESConstant.NULL) || this is ConditionalEffect && this.simpleEffect.containsReturnsNull()
+
+        val effectsWithoutReturnsNull = computation.effects.filter { !it.containsReturnsNull() }
+        return CallComputation(computation.type, effectsWithoutReturnsNull)
     }
 
     override fun visitBinaryExpression(expression: KtBinaryExpression, data: Unit): Computation {
@@ -170,14 +185,36 @@ class EffectsExtractingVisitor(
         arguments.addIfNotNull(extensionReceiver?.toComputation())
         arguments.addIfNotNull(dispatchReceiver?.toComputation())
 
-        valueArgumentsByIndex?.mapTo(arguments) {
-            val valueArgument = (it as? ExpressionValueArgument)?.valueArgument ?: return null
-            when (valueArgument) {
-                is KtLambdaArgument -> valueArgument.getLambdaExpression()?.let { ESLambda(it) } ?: return null
-                else -> extractOrGetCached(valueArgument.getArgumentExpression() ?: return null)
-            }
-        } ?: return null
+        val passedValueArguments = valueArgumentsByIndex ?: return null
+
+        passedValueArguments.mapTo(arguments) { it.toComputation() ?: return null }
 
         return arguments
+    }
+
+    private fun ResolvedValueArgument.toComputation(): Computation? {
+        return when (this) {
+            // Assume that we don't know anything about default arguments
+            // Note that we don't want to return 'null' here, because 'null' indicates that we can't
+            // analyze whole call, which is undesired for cases like `kotlin.test.assertNotNull`
+            is DefaultValueArgument -> UNKNOWN_COMPUTATION
+
+            // We prefer to throw away calls with varags completely, just to be safe
+            // Potentially, we could return UNKNOWN_COMPUTATION here too
+            is VarargValueArgument -> null
+
+            is ExpressionValueArgument -> valueArgument?.toComputation()
+
+            // Should be exhaustive
+            else -> throw IllegalStateException("Unexpected ResolvedValueArgument $this")
+        }
+    }
+
+    private fun ValueArgument.toComputation(): Computation? {
+        return when (this) {
+            is KtLambdaArgument -> getLambdaExpression()?.let { ESLambda(it) }
+            is KtValueArgument -> getArgumentExpression()?.let { extractOrGetCached(it) }
+            else -> null
+        }
     }
 }

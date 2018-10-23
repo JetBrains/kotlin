@@ -77,13 +77,14 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
         val pluginLoadResult = loadPlugins(arguments, configuration)
         if (pluginLoadResult != ExitCode.OK) return pluginLoadResult
 
+        val commonSources = arguments.commonSources?.toSet().orEmpty()
         if (!arguments.script && arguments.buildFile == null) {
             for (arg in arguments.freeArgs) {
                 val file = File(arg)
                 if (file.extension == JavaFileType.DEFAULT_EXTENSION) {
                     configuration.addJavaSourceRoot(file)
                 } else {
-                    configuration.addKotlinSourceRoot(arg)
+                    configuration.addKotlinSourceRoot(arg, isCommon = arg in commonSources)
                     if (file.isDirectory) {
                         configuration.addJavaSourceRoot(file)
                     }
@@ -93,17 +94,15 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
 
         configuration.put(CommonConfigurationKeys.MODULE_NAME, arguments.moduleName ?: JvmAbi.DEFAULT_MODULE_NAME)
 
-        if (arguments.buildFile == null) {
-            configureContentRoots(paths, arguments, configuration)
+        configureContentRoots(paths, arguments, configuration)
 
-            if (arguments.freeArgs.isEmpty() && !arguments.version) {
-                if (arguments.script) {
-                    messageCollector.report(ERROR, "Specify script source path to evaluate")
-                    return COMPILATION_ERROR
-                }
-                ReplFromTerminal.run(rootDisposable, configuration)
-                return ExitCode.OK
+        if (arguments.buildFile == null && arguments.freeArgs.isEmpty() && !arguments.version) {
+            if (arguments.script) {
+                messageCollector.report(ERROR, "Specify script source path to evaluate")
+                return COMPILATION_ERROR
             }
+            ReplFromTerminal.run(rootDisposable, configuration)
+            return ExitCode.OK
         }
 
         if (arguments.includeRuntime) {
@@ -243,9 +242,9 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
                 with(PathUtil) {
                     val jars = arrayOf(
                         KOTLIN_SCRIPTING_COMPILER_PLUGIN_JAR, KOTLIN_SCRIPTING_COMMON_JAR,
-                        KOTLIN_SCRIPTING_JVM_JAR, KOTLIN_SCRIPTING_MISC_JAR
-                    ).mapNotNull { File(libPath, it).takeIf(File::exists)?.canonicalPath }
-                    if (jars.size == 4) {
+                        KOTLIN_SCRIPTING_JVM_JAR
+                    ).mapNotNull { File(libPath, it).takeIf { it.exists() }?.canonicalPath }
+                    if (jars.size == 3) {
                         pluginClasspaths = jars + pluginClasspaths
                     }
                 }
@@ -410,13 +409,18 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
         }
 
         private fun configureContentRoots(paths: KotlinPaths?, arguments: K2JVMCompilerArguments, configuration: CompilerConfiguration) {
+            for (modularRoot in arguments.javaModulePath?.split(File.pathSeparatorChar).orEmpty()) {
+                configuration.add(CLIConfigurationKeys.CONTENT_ROOTS, JvmModulePathRoot(File(modularRoot)))
+            }
+
+            if (arguments.buildFile != null) {
+                // In the .xml compilation mode, all content roots except module path will be loaded from the .xml build file.
+                return
+            }
+
             val messageCollector = configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
             for (path in arguments.classpath?.split(File.pathSeparatorChar).orEmpty()) {
                 configuration.add(CLIConfigurationKeys.CONTENT_ROOTS, JvmClasspathRoot(File(path)))
-            }
-
-            for (modularRoot in arguments.javaModulePath?.split(File.pathSeparatorChar).orEmpty()) {
-                configuration.add(CLIConfigurationKeys.CONTENT_ROOTS, JvmModulePathRoot(File(modularRoot)))
             }
 
             val isModularJava = configuration.get(JVMConfigurationKeys.JDK_HOME).let { it != null && CoreJrtFileSystem.isModularJdk(it) }

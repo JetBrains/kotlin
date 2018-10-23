@@ -128,7 +128,7 @@ class KotlinCopyPasteReferenceProcessor : CopyPastePostProcessor<KotlinReference
             file.elementsInRange(it).filter { it is KtElement || it is KDocElement }
         })
 
-        val allElementsToResolve = elementsByRange.values.flatMap { it }.flatMap { it.collectDescendantsOfType<KtElement>() }
+        val allElementsToResolve = elementsByRange.values.flatten().flatMap { it.collectDescendantsOfType<KtElement>() }
         val bindingContext = file.getResolutionFacade().analyze(allElementsToResolve, BodyResolveMode.PARTIAL)
 
         val result = ArrayList<KotlinReferenceData>()
@@ -347,7 +347,7 @@ class KotlinCopyPasteReferenceProcessor : CopyPastePostProcessor<KotlinReference
             = findImportableDescriptors(fqName, file).firstIsInstanceOrNull<CallableDescriptor>()
 
     private fun showRestoreReferencesDialog(project: Project, referencesToRestore: List<ReferenceToRestoreData>): Collection<ReferenceToRestoreData> {
-        val fqNames = referencesToRestore.map { it.refData.fqName }.toSortedSet()
+        val fqNames = referencesToRestore.asSequence().map { it.refData.fqName }.toSortedSet()
 
         if (ApplicationManager.getApplication().isUnitTestMode) {
             declarationsToImportSuggested = fqNames

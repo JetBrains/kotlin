@@ -6,14 +6,15 @@
 package org.jetbrains.kotlin.backend.jvm
 
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
-import org.jetbrains.kotlin.backend.common.ReflectionTypes
 import org.jetbrains.kotlin.backend.common.ir.Ir
 import org.jetbrains.kotlin.backend.common.ir.Symbols
-import org.jetbrains.kotlin.backend.jvm.descriptors.JvmDescriptorsFactory
+import org.jetbrains.kotlin.backend.jvm.descriptors.JvmDeclarationFactory
 import org.jetbrains.kotlin.backend.jvm.descriptors.JvmSharedVariablesManager
+import org.jetbrains.kotlin.builtins.ReflectionTypes
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.NotFoundClasses
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrFile
@@ -26,6 +27,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi2ir.PsiSourceManager
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
+import org.jetbrains.kotlin.storage.LockBasedStorageManager
 
 class JvmBackendContext(
     val state: GenerationState,
@@ -34,54 +36,13 @@ class JvmBackendContext(
     irModuleFragment: IrModuleFragment, symbolTable: SymbolTable
 ) : CommonBackendContext {
     override val builtIns = state.module.builtIns
-    override val descriptorsFactory: JvmDescriptorsFactory = JvmDescriptorsFactory(psiSourceManager, builtIns)
+    override val declarationFactory: JvmDeclarationFactory = JvmDeclarationFactory(psiSourceManager, builtIns, state, symbolTable)
     override val sharedVariablesManager = JvmSharedVariablesManager(builtIns, irBuiltIns)
 
-    override val reflectionTypes: ReflectionTypes by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        ReflectionTypes(state.module, FqName("kotlin.reflect.jvm.internal"))
-    }
+    // TODO: inject a correct StorageManager instance, or store NotFoundClasses inside ModuleDescriptor
+    internal val reflectionTypes = ReflectionTypes(state.module, NotFoundClasses(LockBasedStorageManager.NO_LOCKS, state.module))
 
-    override val ir: Ir<CommonBackendContext> = object : Ir<CommonBackendContext>(this, irModuleFragment) {
-        override val symbols: Symbols<CommonBackendContext> = object : Symbols<CommonBackendContext>(this@JvmBackendContext, symbolTable.lazyWrapper) {
-
-            override val areEqual
-                get () = symbolTable.referenceSimpleFunction(context.getInternalFunctions("areEqual").single())
-
-            override val ThrowNullPointerException
-                get () = symbolTable.referenceSimpleFunction(
-                    context.getInternalFunctions("ThrowNullPointerException").single()
-                )
-
-            override val ThrowNoWhenBranchMatchedException
-                get () = symbolTable.referenceSimpleFunction(
-                    context.getInternalFunctions("ThrowNoWhenBranchMatchedException").single()
-                )
-
-            override val ThrowTypeCastException
-                get () = symbolTable.referenceSimpleFunction(
-                    context.getInternalFunctions("ThrowTypeCastException").single()
-                )
-
-            override val ThrowUninitializedPropertyAccessException =
-                symbolTable.referenceSimpleFunction(
-                    context.getInternalFunctions("ThrowUninitializedPropertyAccessException").single()
-                )
-
-            override val stringBuilder
-                get() = symbolTable.referenceClass(
-                    context.getClass(FqName("java.lang.StringBuilder"))
-                )
-
-            override val copyRangeTo: Map<ClassDescriptor, IrSimpleFunctionSymbol>
-                get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
-            override val coroutineImpl: IrClassSymbol
-                get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
-            override val coroutineSuspendedGetter: IrSimpleFunctionSymbol
-                get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
-        }
-
-        override fun shouldGenerateHandlerParameterForDefaultBodyFun() = true
-    }
+    override val ir = JvmIr(irModuleFragment, symbolTable)
 
     private fun find(memberScope: MemberScope, className: String): ClassDescriptor {
         return find(memberScope, Name.identifier(className))
@@ -118,5 +79,55 @@ class JvmBackendContext(
     override fun report(element: IrElement?, irFile: IrFile?, message: String, isError: Boolean) {
         /*TODO*/
         print(message)
+    }
+
+    inner class JvmIr(
+        irModuleFragment: IrModuleFragment,
+        private val symbolTable: SymbolTable
+    ) : Ir<JvmBackendContext>(this, irModuleFragment) {
+        override val symbols = JvmSymbols()
+
+        inner class JvmSymbols : Symbols<JvmBackendContext>(this@JvmBackendContext, symbolTable.lazyWrapper) {
+
+            override val areEqual
+                get () = symbolTable.referenceSimpleFunction(context.getInternalFunctions("areEqual").single())
+
+            override val ThrowNullPointerException
+                get () = symbolTable.referenceSimpleFunction(
+                    context.getInternalFunctions("ThrowNullPointerException").single()
+                )
+
+            override val ThrowNoWhenBranchMatchedException
+                get () = symbolTable.referenceSimpleFunction(
+                    context.getInternalFunctions("ThrowNoWhenBranchMatchedException").single()
+                )
+
+            override val ThrowTypeCastException
+                get () = symbolTable.referenceSimpleFunction(
+                    context.getInternalFunctions("ThrowTypeCastException").single()
+                )
+
+            override val ThrowUninitializedPropertyAccessException =
+                symbolTable.referenceSimpleFunction(
+                    context.getInternalFunctions("ThrowUninitializedPropertyAccessException").single()
+                )
+
+            override val stringBuilder
+                get() = symbolTable.referenceClass(
+                    context.getClass(FqName("java.lang.StringBuilder"))
+                )
+
+            override val copyRangeTo: Map<ClassDescriptor, IrSimpleFunctionSymbol>
+                get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
+            override val coroutineImpl: IrClassSymbol
+                get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
+            override val coroutineSuspendedGetter: IrSimpleFunctionSymbol
+                get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
+
+            val lambdaClass = calc { symbolTable.referenceClass(context.getInternalClass("Lambda")) }
+        }
+
+
+        override fun shouldGenerateHandlerParameterForDefaultBodyFun() = true
     }
 }

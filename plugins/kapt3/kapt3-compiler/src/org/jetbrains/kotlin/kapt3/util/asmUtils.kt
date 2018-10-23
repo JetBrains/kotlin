@@ -51,3 +51,9 @@ private val ANNOTATION_TYPE_DESCRIPTOR_FOR_JVMOVERLOADS_GENERATED_METHODS: Strin
 private fun AnnotationNode.isJvmOverloadsGenerated(): Boolean {
     return this.desc == ANNOTATION_TYPE_DESCRIPTOR_FOR_JVMOVERLOADS_GENERATED_METHODS
 }
+
+val ClassNode.className: String
+    get() = Type.getObjectType(name).className
+
+val ClassNode.simpleName: String
+    get() = name.substringAfterLast('/').substringAfterLast('$')

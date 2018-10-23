@@ -54,7 +54,7 @@ fun Project.configureInstrumentation() {
     val instrumentationClasspathCfg = configurations.create("instrumentationClasspath")
 
     dependencies {
-        instrumentationClasspathCfg(intellijDep()) { includeJars("javac2", "jdom", "asm-all") }
+        instrumentationClasspathCfg(intellijDep()) { includeJars("javac2", "jdom", "asm-all", rootProject = rootProject) }
     }
 
     afterEvaluate {
@@ -105,12 +105,12 @@ open class IntelliJInstrumentCodeTask : ConventionTask() {
         get() = project.files(sourceSet!!.allSource.srcDirs.filter { !sourceSet!!.resources.contains(it) && it.exists() })
 
     @get:OutputDirectory
-    var output: File? = null
+    lateinit var output: File
 
     @TaskAction
     fun instrumentClasses() {
         logger.info("input files are: ${originalClassesDirs?.joinToString("; ", transform = { "'${it.name}'${if (it.exists()) "" else " (does not exists)" }"})}")
-        output?.deleteRecursively()
+        output.deleteRecursively()
         copyOriginalClasses()
 
         val classpath = instrumentationClasspath!!

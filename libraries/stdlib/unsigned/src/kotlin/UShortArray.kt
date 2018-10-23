@@ -12,7 +12,10 @@ package kotlin
 public inline class UShortArray
 @Suppress("NON_PUBLIC_PRIMARY_CONSTRUCTOR_OF_INLINE_CLASS")
 @PublishedApi
-internal constructor(private val storage: ShortArray) : Collection<UShort> {
+internal constructor(@PublishedApi internal val storage: ShortArray) : Collection<UShort> {
+
+    /** Creates a new array of the specified [size], with all elements initialized to zero. */
+    public constructor(size: Int) : this(ShortArray(size))
 
     /** Returns the array element at the given [index]. This method can be called using the index operator. */
     public operator fun get(index: Int): UShort = storage[index].toUShort()
@@ -43,11 +46,12 @@ internal constructor(private val storage: ShortArray) : Collection<UShort> {
 
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
 public inline fun UShortArray(size: Int, init: (Int) -> UShort): UShortArray {
     return UShortArray(ShortArray(size) { index -> init(index).toShort() })
 }
 
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
-// TODO: @kotlin.internal.InlineOnly
+@kotlin.internal.InlineOnly
 public inline fun ushortArrayOf(vararg elements: UShort): UShortArray = elements

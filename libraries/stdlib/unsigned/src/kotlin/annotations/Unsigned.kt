@@ -13,8 +13,11 @@ import kotlin.internal.RequireKotlinVersionKind
 /**
  * Marks the API that is dependent on the experimental unsigned types, including those types themselves.
  *
- * Usages of such API will be reported as warnings unless an explicit opt-in with the [UseExperimental] annotation
- * or the `-Xuse-experimental=kotlin.ExperimentalUnsignedTypes` compiler option is done.
+ * Usages of such API will be reported as warnings unless an explicit opt-in with
+ * the [UseExperimental] annotation, e.g. `@UseExperimental(ExperimentalUnsignedTypes::class)`,
+ * or with the `-Xuse-experimental=kotlin.ExperimentalUnsignedTypes` compiler option is given.
+ *
+ * It's recommended to propagate the experimental status to the API that depends on unsigned types by annotating it with this annotation.
  */
 @Experimental(level = Experimental.Level.WARNING)
 @Target(CLASS, ANNOTATION_CLASS, PROPERTY, FIELD, LOCAL_VARIABLE, VALUE_PARAMETER, CONSTRUCTOR, FUNCTION, PROPERTY_GETTER, PROPERTY_SETTER, TYPEALIAS)

@@ -1,7 +1,8 @@
 // !LANGUAGE: +AllowContractsForCustomFunctions +UseReturnsEffect
 // !DIAGNOSTICS: -INVISIBLE_REFERENCE -INVISIBLE_MEMBER
+// !USE_EXPERIMENTAL: kotlin.contracts.ExperimentalContracts
 
-import kotlin.internal.contracts.*
+import kotlin.contracts.*
 
 fun test(x: Any?) {
     if (isString(x)) {

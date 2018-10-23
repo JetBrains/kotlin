@@ -84,7 +84,7 @@ internal class MutableCodeToInline(
 internal fun CodeToInline.toMutable(): MutableCodeToInline {
     return MutableCodeToInline(
         mainExpression?.copied(),
-        statementsBefore.map { it.copied() }.toMutableList(),
+        statementsBefore.asSequence().map { it.copied() }.toMutableList(),
         fqNamesToImport.toMutableSet(),
         alwaysKeepMainExpression
     )

@@ -1,8 +1,11 @@
+// IGNORE_BACKEND: NATIVE
 // IGNORE_BACKEND: JVM_IR
 // IGNORE_BACKEND: JS_IR
 // IGNORE_BACKEND: JS
 // KOTLIN_CONFIGURATION_FLAGS: ASSERTIONS_MODE=jvm
 // WITH_RUNTIME
+
+package ordinary
 
 interface Checker {
     fun checkTrue(): Boolean
@@ -73,8 +76,8 @@ class ShouldBeEnabled: Checker {
 
 fun setDesiredAssertionStatus(v: Boolean): Checker {
     val loader = Checker::class.java.classLoader
-    loader.setDefaultAssertionStatus(v)
-    val c = loader.loadClass(if (v) "ShouldBeEnabled" else "ShouldBeDisabled")
+    loader.setPackageAssertionStatus("ordinary", v)
+    val c = loader.loadClass(if (v) "ordinary.ShouldBeEnabled" else "ordinary.ShouldBeDisabled")
     return c.newInstance() as Checker
 }
 

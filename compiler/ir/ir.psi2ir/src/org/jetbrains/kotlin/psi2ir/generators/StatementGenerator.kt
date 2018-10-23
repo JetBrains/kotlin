@@ -44,6 +44,7 @@ import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
+import org.jetbrains.kotlin.util.OperatorNameConventions
 
 class StatementGenerator(
     val bodyGenerator: BodyGenerator,
@@ -294,7 +295,16 @@ class StatementGenerator(
             return CallGenerator(this).generateCall(expression, functionCall, IrStatementOrigin.INVOKE)
         }
 
-        return CallGenerator(this).generateCall(expression.startOffset, expression.endOffset, pregenerateCall(resolvedCall))
+        val calleeExpression = expression.calleeExpression
+        val origin =
+            if (resolvedCall.resultingDescriptor.name == OperatorNameConventions.INVOKE &&
+                calleeExpression !is KtSimpleNameExpression && calleeExpression !is KtQualifiedExpression
+            )
+                IrStatementOrigin.INVOKE
+            else
+                null
+
+        return CallGenerator(this).generateCall(expression.startOffset, expression.endOffset, pregenerateCall(resolvedCall), origin)
     }
 
     override fun visitArrayAccessExpression(expression: KtArrayAccessExpression, data: Nothing?): IrStatement {

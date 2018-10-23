@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.test.testFramework;
 import com.intellij.core.CoreASTFactory;
 import com.intellij.lang.*;
 import com.intellij.lang.impl.PsiBuilderFactoryImpl;
-import com.intellij.mock.MockFileDocumentManagerImpl;
+import com.intellij.mock.*;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.editor.Document;
@@ -55,7 +55,6 @@ import com.intellij.util.messages.MessageBusFactory;
 import junit.framework.TestCase;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.test.testFramework.mock.*;
 import org.picocontainer.ComponentAdapter;
 import org.picocontainer.MutablePicoContainer;
 
@@ -139,7 +138,7 @@ public abstract class KtParsingTestCase extends KtPlatformLiteFixture {
         addExplicitExtension(LanguageParserDefinitions.INSTANCE, this.myLanguage, definition);
         registerComponentInstance(
                 getApplication().getPicoContainer(), FileTypeManager.class,
-                new KtMockFileTypeManager(new KtMockLanguageFileType(myLanguage, myFileExt)));
+                new MockFileTypeManager(new MockLanguageFileType(myLanguage, myFileExt)));
     }
 
     protected <T> void addExplicitExtension(final LanguageExtension<T> instance, final Language language, final T object) {

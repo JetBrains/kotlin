@@ -8,7 +8,8 @@
 
 package kotlin.collections
 
-import kotlin.*
+import kotlin.internal.InlineOnly
+import kotlin.internal.apiVersionIsAtLeast
 
 /**
  * Returns an immutable list containing only the specified object [element].
@@ -32,6 +33,7 @@ internal actual inline fun copyToArrayImpl(collection: Collection<*>): Array<Any
     kotlin.jvm.internal.collectionToArray(collection)
 
 @kotlin.internal.InlineOnly
+@Suppress("UNCHECKED_CAST")
 internal actual inline fun <T> copyToArrayImpl(collection: Collection<*>, array: Array<T>): Array<T> =
     kotlin.jvm.internal.collectionToArray(collection, array as Array<Any?>) as Array<T>
 
@@ -42,3 +44,31 @@ internal actual fun <T> Array<out T>.copyToArrayOfAny(isVarargs: Boolean): Array
         @Suppress("UNCHECKED_CAST") (this as Array<Any?>)
     else
         java.util.Arrays.copyOf(this, this.size, Array<Any?>::class.java)
+
+
+@PublishedApi
+@SinceKotlin("1.3")
+@InlineOnly
+internal actual inline fun checkIndexOverflow(index: Int): Int {
+    if (index < 0) {
+        if (apiVersionIsAtLeast(1, 3, 0))
+            throwIndexOverflow()
+        else
+            throw ArithmeticException("Index overflow has happened.")
+    }
+    return index
+}
+
+@PublishedApi
+@SinceKotlin("1.3")
+@InlineOnly
+internal actual inline fun checkCountOverflow(count: Int): Int {
+    if (count < 0) {
+        if (apiVersionIsAtLeast(1, 3, 0))
+            throwCountOverflow()
+        else
+            throw ArithmeticException("Count overflow has happened.")
+    }
+    return count
+}
+

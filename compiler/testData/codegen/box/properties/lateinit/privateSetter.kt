@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 class My {
     lateinit var x: String
         private set

@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 1119
+// EXPECTED_REACHABLE_NODES: 1291
 class Outer() {
     open class InnerBase() {
     }

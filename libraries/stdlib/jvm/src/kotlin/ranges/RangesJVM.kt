@@ -8,8 +8,6 @@
 
 package kotlin.ranges
 
-import kotlin.*
-
 /**
  * A closed range of values of type `Float`.
  *

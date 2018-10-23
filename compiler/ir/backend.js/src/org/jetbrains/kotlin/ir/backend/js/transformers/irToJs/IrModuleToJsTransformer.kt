@@ -12,18 +12,14 @@ import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.utils.DFS
 
-class IrModuleToJsTransformer(val backendContext: JsIrBackendContext) : BaseIrElementToJsNodeTransformer<JsNode, Nothing?> {
+class IrModuleToJsTransformer(private val backendContext: JsIrBackendContext) : BaseIrElementToJsNodeTransformer<JsNode, Nothing?> {
     override fun visitModuleFragment(declaration: IrModuleFragment, data: Nothing?): JsNode {
         val program = JsProgram()
         val rootContext = JsGenerationContext(JsRootScope(program), backendContext)
 
         // TODO: fix it up with new name generator
-        val symbolTable = backendContext.symbolTable
-
-        val anySymbol = symbolTable.referenceClass(backendContext.builtIns.any)
-        val throwableSymbol = symbolTable.referenceClass(backendContext.builtIns.throwable)
-        val anyName = rootContext.getNameForSymbol(anySymbol)
-        val throwableName = rootContext.getNameForSymbol(throwableSymbol)
+        val anyName = rootContext.getNameForSymbol(backendContext.irBuiltIns.anyClass)
+        val throwableName = rootContext.getNameForSymbol(backendContext.irBuiltIns.throwableClass)
 
         program.globalBlock.statements += JsVars(JsVars.JsVar(anyName, Namer.JS_OBJECT))
         program.globalBlock.statements += JsVars(JsVars.JsVar(throwableName, Namer.JS_ERROR))

@@ -6,7 +6,6 @@
 package test.collections.js
 
 import kotlin.test.*
-import kotlin.comparisons.*
 
 class JsCollectionsTest {
     val TEST_LIST = arrayOf(2, 0, 9, 7, 1).toList()

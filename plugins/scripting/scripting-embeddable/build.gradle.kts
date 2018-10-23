@@ -9,7 +9,6 @@ val packedJars by configurations.creating
 dependencies {
     packedJars(project(":kotlin-scripting-compiler")) { isTransitive = false }
     packedJars(project(":kotlin-scripting-common")) { isTransitive = false }
-    packedJars(project(":kotlin-scripting-misc")) { isTransitive = false }
     packedJars(project(":kotlin-scripting-jvm")) { isTransitive = false }
 }
 

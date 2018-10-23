@@ -17,10 +17,14 @@
 package org.jetbrains.kotlin.resolve;
 
 import com.intellij.psi.util.PsiTreeUtil;
+import kotlin.collections.CollectionsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
-import org.jetbrains.kotlin.descriptors.annotations.*;
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationWithTarget;
+import org.jetbrains.kotlin.descriptors.annotations.Annotations;
+import org.jetbrains.kotlin.descriptors.annotations.TargetedAnnotations;
 import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.calls.CallResolver;
@@ -79,7 +83,9 @@ public class AnnotationResolverImpl extends AnnotationResolver {
             boolean shouldResolveArguments
     ) {
         if (annotationEntryElements.isEmpty()) return Annotations.Companion.getEMPTY();
-        List<AnnotationWithTarget> result = new ArrayList<>(0);
+
+        List<AnnotationDescriptor> standard = new ArrayList<>();
+        List<AnnotationWithTarget> targeted = new ArrayList<>();
 
         for (KtAnnotationEntry entryElement : annotationEntryElements) {
             AnnotationDescriptor descriptor = trace.get(BindingContext.ANNOTATION, entryElement);
@@ -92,13 +98,13 @@ public class AnnotationResolverImpl extends AnnotationResolver {
 
             KtAnnotationUseSiteTarget target = entryElement.getUseSiteTarget();
             if (target != null) {
-                result.add(new AnnotationWithTarget(descriptor, target.getAnnotationUseSiteTarget()));
+                targeted.add(new AnnotationWithTarget(descriptor, target.getAnnotationUseSiteTarget()));
             }
             else {
-                result.add(new AnnotationWithTarget(descriptor, null));
+                standard.add(descriptor);
             }
         }
-        return AnnotationsImpl.create(result);
+        return new TargetedAnnotations(CollectionsKt.toList(standard), CollectionsKt.toList(targeted));
     }
 
     @Override

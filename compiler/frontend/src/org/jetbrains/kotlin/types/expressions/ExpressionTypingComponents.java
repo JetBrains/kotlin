@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker;
 import org.jetbrains.kotlin.resolve.calls.checkers.RttiExpressionChecker;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory;
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator;
+import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver;
 import org.jetbrains.kotlin.types.WrappedTypeFactory;
 
 import javax.inject.Inject;

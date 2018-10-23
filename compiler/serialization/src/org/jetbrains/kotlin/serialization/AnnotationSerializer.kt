@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.serialization
 
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationArgumentVisitor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
@@ -99,11 +100,23 @@ class AnnotationSerializer(private val stringTable: DescriptorAwareStringTable) 
             }
 
             override fun visitKClassValue(value: KClassValue, data: Unit) {
-                val descriptor = value.value.constructor.declarationDescriptor as? ClassDescriptor
-                ?: throw UnsupportedOperationException("Class literal annotation argument should be a class: $value")
+                var kotlinType = value.value
+                var arrayDimensions = 0
+                while (KotlinBuiltIns.isArray(kotlinType)) {
+                    // We only support invariant projections and non-null array element types, see KT-26568
+                    kotlinType = kotlinType.arguments.single().type
+                    arrayDimensions++
+                }
+
+                val descriptor = kotlinType.constructor.declarationDescriptor as? ClassDescriptor
+                    ?: throw UnsupportedOperationException("Class literal annotation argument should be a class: $value")
 
                 type = Type.CLASS
                 classId = stringTable.getFqNameIndex(descriptor)
+
+                if (arrayDimensions > 0) {
+                    arrayDimensionCount = arrayDimensions
+                }
             }
 
             override fun visitLongValue(value: LongValue, data: Unit) {

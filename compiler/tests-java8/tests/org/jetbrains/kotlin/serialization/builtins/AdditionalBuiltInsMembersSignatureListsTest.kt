@@ -57,8 +57,13 @@ class AdditionalBuiltInsMembersSignatureListsTest : KotlinTestWithEnvironment() 
 
             val scope = classDescriptor.unsubstitutedMemberScope
 
+            val lateJdkSignatures = LATE_JDK_SIGNATURES[internalName] ?: emptySet()
+
             jvmDescriptors.forEach {
                 jvmDescriptor ->
+
+                if (jvmDescriptor in lateJdkSignatures) return@forEach
+
                 val stringName = jvmDescriptor.split("(")[0]
                 val functions =
                         if (stringName == "<init>")
@@ -72,4 +77,8 @@ class AdditionalBuiltInsMembersSignatureListsTest : KotlinTestWithEnvironment() 
             }
         }
     }
+
+    private val LATE_JDK_SIGNATURES = mapOf(
+        "java/lang/String" to setOf("isBlank()Z", "lines()Ljava/util/stream/Stream;", "repeat(I)Ljava/lang/String;")
+    )
 }

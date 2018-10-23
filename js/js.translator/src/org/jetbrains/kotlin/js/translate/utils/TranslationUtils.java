@@ -11,6 +11,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.FunctionTypesKt;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
+import org.jetbrains.kotlin.builtins.PrimitiveType;
 import org.jetbrains.kotlin.config.CoroutineLanguageVersionSettingsUtilKt;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor;
@@ -26,7 +27,9 @@ import org.jetbrains.kotlin.js.translate.context.TemporaryConstVariable;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.expression.InlineMetadata;
 import org.jetbrains.kotlin.js.translate.general.Translation;
+import org.jetbrains.kotlin.js.translate.intrinsic.functions.factories.ArrayFIF;
 import org.jetbrains.kotlin.js.translate.reference.ReferenceTranslator;
+import org.jetbrains.kotlin.js.translate.utils.jsAstUtils.AstUtilsKt;
 import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.FqNameUnsafe;
@@ -520,6 +523,25 @@ public final class TranslationUtils {
         else if (KotlinBuiltIns.isUnit(from)) {
             if (!KotlinBuiltIns.isUnit(to) && !MetadataProperties.isUnit(value)) {
                 value = voidToUnit(context, value);
+            }
+        }
+
+        PrimitiveType signedPrimitiveFromUnsigned = ArrayFIF.INSTANCE.unsignedPrimitiveToSigned(to);
+        if (signedPrimitiveFromUnsigned != null) {
+            if (KotlinBuiltIns.isInt(from)) {
+                switch (signedPrimitiveFromUnsigned) {
+                    case BYTE:
+                        value = AstUtilsKt.toByte(context, value);
+                        break;
+                    case SHORT:
+                        value = AstUtilsKt.toShort(context, value);
+                        break;
+                }
+                DeclarationDescriptor d = to.getConstructor().getDeclarationDescriptor();
+                if (d instanceof ClassDescriptor) {
+                    value =  new JsNew(ReferenceTranslator.translateAsTypeReference((ClassDescriptor) d, context),
+                                     Collections.singletonList(value));
+                }
             }
         }
 

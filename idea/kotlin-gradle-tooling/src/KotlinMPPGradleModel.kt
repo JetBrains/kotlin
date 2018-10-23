@@ -12,7 +12,6 @@ import java.io.Serializable
 typealias KotlinDependency = ExternalDependency
 
 interface KotlinModule : Serializable {
-    val isAndroid: Boolean
     val name: String
     val platform: KotlinPlatform
     val dependencies: Set<KotlinDependency>
@@ -20,9 +19,27 @@ interface KotlinModule : Serializable {
 }
 
 interface KotlinSourceSet : KotlinModule {
+    val languageSettings: KotlinLanguageSettings
     val sourceDirs: Set<File>
     val resourceDirs: Set<File>
     val dependsOnSourceSets: Set<String>
+
+    companion object {
+        const val COMMON_MAIN_SOURCE_SET_NAME = "commonMain"
+        const val COMMON_TEST_SOURCE_SET_NAME = "commonTest"
+
+        fun commonName(forTests: Boolean) = if (forTests) COMMON_TEST_SOURCE_SET_NAME else COMMON_MAIN_SOURCE_SET_NAME
+    }
+}
+
+interface KotlinLanguageSettings : Serializable {
+    val languageVersion: String?
+    val apiVersion: String?
+    val isProgressiveMode: Boolean
+    val enabledLanguageFeatures: Set<String>
+    val experimentalAnnotationsInUse: Set<String>
+    val compilerPluginArguments: List<String>
+    val compilerPluginClasspath: Set<File>
 }
 
 interface KotlinCompilationOutput : Serializable {
@@ -52,7 +69,9 @@ interface KotlinCompilation : KotlinModule {
 enum class KotlinPlatform(val id: String) {
     COMMON("common"),
     JVM("jvm"),
-    JS("js");
+    JS("js"),
+    NATIVE("native"),
+    ANDROID("androidJvm");
 
     companion object {
         fun byId(id: String) = values().firstOrNull { it.id == id }
@@ -64,12 +83,15 @@ interface KotlinTargetJar : Serializable {
 }
 
 interface KotlinTarget : Serializable {
-    val isAndroid: Boolean
     val name: String
     val disambiguationClassifier: String?
     val platform: KotlinPlatform
     val compilations: Collection<KotlinCompilation>
     val jar: KotlinTargetJar?
+
+    companion object {
+        const val METADATA_TARGET_NAME = "metadata"
+    }
 }
 
 interface ExtraFeatures : Serializable {

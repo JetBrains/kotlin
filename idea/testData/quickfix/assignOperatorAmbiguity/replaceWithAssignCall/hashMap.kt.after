@@ -1,0 +1,7 @@
+// "Replace with 'plusAssign()' call" "true"
+// WITH_RUNTIME
+
+fun test() {
+    var set = HashMap<Int, Int>()
+    set.plusAssign(2 to 2)
+}

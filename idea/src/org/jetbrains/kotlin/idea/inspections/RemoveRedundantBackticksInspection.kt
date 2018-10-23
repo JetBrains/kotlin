@@ -46,7 +46,7 @@ class RemoveRedundantBackticksInspection : AbstractKotlinInspection() {
     }
 
     private fun isKeyword(text: String): Boolean {
-        return (KtTokens.KEYWORDS.types + KtTokens.SOFT_KEYWORDS.types).any { it.toString() == text }
+        return text == "yield" || (KtTokens.KEYWORDS.types + KtTokens.SOFT_KEYWORDS.types).any { it.toString() == text }
     }
 
     private fun isRedundantBackticks(node: ASTNode): Boolean {
@@ -57,10 +57,12 @@ class RemoveRedundantBackticksInspection : AbstractKotlinInspection() {
     }
 
     private fun registerProblem(holder: ProblemsHolder, element: PsiElement) {
-        holder.registerProblem(element,
-                               "Remove redundant backticks",
-                               ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
-                               RemoveRedundantBackticksQuickFix())
+        holder.registerProblem(
+            element,
+            "Remove redundant backticks",
+            ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
+            RemoveRedundantBackticksQuickFix()
+        )
     }
 }
 

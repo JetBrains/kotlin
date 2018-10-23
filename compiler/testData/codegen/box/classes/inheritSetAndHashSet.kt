@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 // IGNORE_BACKEND: NATIVE
 
 interface A : Set<String>

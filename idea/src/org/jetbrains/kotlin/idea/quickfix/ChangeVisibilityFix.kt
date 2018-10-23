@@ -23,6 +23,7 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithVisibility
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.idea.core.canBeInternal
 import org.jetbrains.kotlin.idea.core.canBePrivate
 import org.jetbrains.kotlin.idea.core.canBeProtected
 import org.jetbrains.kotlin.idea.core.setVisibility
@@ -65,7 +66,13 @@ open class ChangeVisibilityFix(
     }
 
     protected class ChangeToInternalFix(element: KtModifierListOwner, elementName: String) :
-            ChangeVisibilityFix(element, elementName, KtTokens.INTERNAL_KEYWORD)
+            ChangeVisibilityFix(element, elementName, KtTokens.INTERNAL_KEYWORD) {
+
+        override fun isAvailable(project: Project, editor: Editor?, file: KtFile): Boolean {
+            val element = element ?: return false
+            return element.canBeInternal()
+        }
+    }
 
     protected class ChangeToPrivateFix(element: KtModifierListOwner, elementName: String) :
             ChangeVisibilityFix(element, elementName, KtTokens.PRIVATE_KEYWORD), HighPriorityAction {

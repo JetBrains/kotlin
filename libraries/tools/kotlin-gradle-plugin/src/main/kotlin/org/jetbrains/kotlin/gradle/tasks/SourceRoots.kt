@@ -13,7 +13,7 @@ import java.util.*
 internal sealed class SourceRoots(val kotlinSourceFiles: List<File>) {
     private companion object {
         fun dumpPaths(files: Iterable<File>): String =
-                "[${files.map { it.canonicalPath }.sorted().joinToString(prefix = "\n\t", separator = ",\n\t")}]"
+            "[${files.map { it.canonicalPath }.sorted().joinToString(prefix = "\n\t", separator = ",\n\t")}]"
     }
 
     open fun log(taskName: String, logger: Logger) {
@@ -22,10 +22,11 @@ internal sealed class SourceRoots(val kotlinSourceFiles: List<File>) {
 
     class ForJvm(kotlinSourceFiles: List<File>, val javaSourceRoots: Set<File>) : SourceRoots(kotlinSourceFiles) {
         companion object {
-            fun create(taskSource: FileTree, sourceRoots: FilteringSourceRootsContainer): ForJvm {
-                val kotlinSourceFiles = (taskSource as Iterable<File>).filter(File::isKotlinFile)
+            fun create(taskSource: FileTree, sourceRoots: FilteringSourceRootsContainer, sourceFilesExtensions: List<String>): ForJvm {
+                val kotlinSourceFiles = (taskSource as Iterable<File>).filter { it.isKotlinFile(sourceFilesExtensions) }
                 val javaSourceRoots = findRootsForSources(
-                        sourceRoots.sourceRoots, taskSource.filter(File::isJavaFile))
+                    sourceRoots.sourceRoots, taskSource.filter(File::isJavaFile)
+                )
                 return ForJvm(kotlinSourceFiles, javaSourceRoots)
             }
 
@@ -53,7 +54,8 @@ internal sealed class SourceRoots(val kotlinSourceFiles: List<File>) {
 
     class KotlinOnly(kotlinSourceFiles: List<File>) : SourceRoots(kotlinSourceFiles) {
         companion object {
-            fun create(taskSource: FileTree) = KotlinOnly((taskSource as Iterable<File>).filter(File::isKotlinFile))
+            fun create(taskSource: FileTree, sourceFilesExtensions: List<String>) =
+                KotlinOnly((taskSource as Iterable<File>).filter { it.isKotlinFile(sourceFilesExtensions) })
         }
     }
 }

@@ -1,6 +1,7 @@
 ================ Step #1 =================
 
 Marked as dirty by Kotlin:
+  src/A.kt
   src/companionExtension.kt
   src/companionReferenceExplicit.kt
 Cleaning output files:

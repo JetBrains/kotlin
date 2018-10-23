@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.codegen.binding.CodegenBinding
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding.CAPTURES_CROSSINLINE_SUSPEND_LAMBDA
 import org.jetbrains.kotlin.codegen.context.ClosureContext
 import org.jetbrains.kotlin.codegen.context.MethodContext
+import org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings.METHOD_FOR_FUNCTION
 import org.jetbrains.kotlin.codegen.serialization.JvmSerializerExtension
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.isReleaseCoroutines
@@ -19,6 +20,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtCallableReferenceExpression
@@ -48,7 +50,7 @@ abstract class AbstractCoroutineCodegen(
     element: KtElement,
     closureContext: ClosureContext,
     classBuilder: ClassBuilder,
-    private val userDataForDoResume: Map<out FunctionDescriptor.UserDataKey<*>, *>? = null
+    private val userDataForDoResume: Map<out CallableDescriptor.UserDataKey<*>, *>? = null
 ) : ClosureCodegen(
     outerExpressionCodegen.state,
     element, null, closureContext, null,
@@ -62,7 +64,7 @@ abstract class AbstractCoroutineCodegen(
         if (languageVersionSettings.isReleaseCoroutines())
             createImplMethod(
                 INVOKE_SUSPEND_METHOD_NAME,
-                "result" to classDescriptor.module.getSuccessOrFailure(classDescriptor.builtIns.anyType)
+                "result" to classDescriptor.module.getResult(classDescriptor.builtIns.anyType)
             )
         else
             createImplMethod(
@@ -100,7 +102,7 @@ abstract class AbstractCoroutineCodegen(
         )
 
     override fun generateConstructor(): Method {
-        val args = calculateConstructorParameters(typeMapper, closure, asmType)
+        val args = calculateConstructorParameters(typeMapper, languageVersionSettings, closure, asmType)
         val argTypes = args.map { it.fieldType }.plus(languageVersionSettings.continuationAsmType()).toTypedArray()
 
         val constructor = Method("<init>", Type.VOID_TYPE, argTypes)
@@ -165,9 +167,17 @@ class CoroutineCodegenForLambda private constructor(
 
     private val constructorCallNormalizationMode = outerExpressionCodegen.state.constructorCallNormalizationMode
 
+    private val erasedInvokeFunction by lazy {
+        getErasedInvokeFunction(funDescriptor).createCustomCopy { setModality(Modality.FINAL) }
+    }
+
     private lateinit var constructorToUseFromInvoke: Method
 
-    private val createCoroutineDescriptor = SimpleFunctionDescriptorImpl.create(
+    private val createCoroutineDescriptor by lazy {
+        if (generateErasedCreate) getErasedCreateFunction() else getCreateFunction()
+    }
+
+    private fun getCreateFunction(): SimpleFunctionDescriptor = SimpleFunctionDescriptorImpl.create(
         funDescriptor.containingDeclaration,
         Annotations.EMPTY,
         Name.identifier(SUSPEND_FUNCTION_CREATE_METHOD_NAME),
@@ -175,7 +185,7 @@ class CoroutineCodegenForLambda private constructor(
         funDescriptor.source
     ).also {
         it.initialize(
-            funDescriptor.extensionReceiverParameter?.type,
+            funDescriptor.extensionReceiverParameter?.copy(it),
             funDescriptor.dispatchReceiverParameter,
             funDescriptor.typeParameters,
             funDescriptor.valueParameters,
@@ -186,6 +196,28 @@ class CoroutineCodegenForLambda private constructor(
             funDescriptor.modality,
             Visibilities.PUBLIC
         )
+    }
+
+    private fun getErasedCreateFunction(): SimpleFunctionDescriptor {
+        val typedCreate = getCreateFunction()
+        assert(generateErasedCreate) { "cannot create erased create function: $typedCreate" }
+        val argumentsNum = typeMapper.mapSignatureSkipGeneric(typedCreate).asmMethod.argumentTypes.size
+        assert(argumentsNum == 1 || argumentsNum == 2) {
+            "too many arguments of create to have an erased signature: $argumentsNum: $typedCreate"
+        }
+        return typedCreate.module.resolveClassByFqName(
+            languageVersionSettings.coroutinesJvmInternalPackageFqName().child(
+                if (languageVersionSettings.isReleaseCoroutines())
+                    Name.identifier("BaseContinuationImpl")
+                else
+                    Name.identifier("CoroutineImpl")
+            ),
+            NoLookupLocation.FROM_BACKEND
+        ).sure { "BaseContinuationImpl or CoroutineImpl is not found" }.defaultType.memberScope
+            .getContributedFunctions(typedCreate.name, NoLookupLocation.FROM_BACKEND)
+            .find { it.valueParameters.size == argumentsNum }
+            .sure { "erased parent of $typedCreate is not found" }
+            .createCustomCopy { setModality(Modality.FINAL) }
     }
 
     override fun generateClosureBody() {
@@ -202,8 +234,20 @@ class CoroutineCodegenForLambda private constructor(
         generateResumeImpl()
     }
 
+    private val generateErasedCreate: Boolean = allFunctionParameters().size <= 1
+
+    private val doNotGenerateInvokeBridge: Boolean = !originalSuspendFunctionDescriptor.isLocalSuspendFunctionNotSuspendLambda()
+
     override fun generateBody() {
         super.generateBody()
+
+        if (doNotGenerateInvokeBridge) {
+            v.serializationBindings.put<FunctionDescriptor, Method>(
+                METHOD_FOR_FUNCTION,
+                originalSuspendFunctionDescriptor,
+                typeMapper.mapAsmMethod(erasedInvokeFunction)
+            )
+        }
 
         // create() = ...
         functionCodegen.generateMethod(JvmDeclarationOrigin.NO_ORIGIN, createCoroutineDescriptor,
@@ -213,39 +257,52 @@ class CoroutineCodegenForLambda private constructor(
                                            }
                                        })
 
-        // invoke(..) = create(..).resume(Unit)
-        functionCodegen.generateMethod(JvmDeclarationOrigin.NO_ORIGIN, funDescriptor,
-                                       object : FunctionGenerationStrategy.CodegenBased(state) {
-                                           override fun doGenerateBody(codegen: ExpressionCodegen, signature: JvmMethodSignature) {
-                                               codegen.v.generateInvokeMethod(signature)
-                                           }
-                                       })
-
-        if (allFunctionParameters().size <= 1) {
-            val delegate = typeMapper.mapSignatureSkipGeneric(createCoroutineDescriptor).asmMethod
-
-            val bridgeParameterAsmTypes =
-                List(delegate.argumentTypes.size - 1) { AsmTypes.OBJECT_TYPE } + delegate.argumentTypes.last()
-
-            val bridgeParameterKotlinTypes =
-                List(delegate.argumentTypes.size - 1) { builtIns.nullableAnyType } + createCoroutineDescriptor.valueParameters.last().type
-
-            val bridge = Method(delegate.name, delegate.returnType, bridgeParameterAsmTypes.toTypedArray())
-
-            generateBridge(
-                bridge, bridgeParameterKotlinTypes, createCoroutineDescriptor.returnType,
-                delegate, createCoroutineDescriptor.returnType,
-                false
-            )
+        if (doNotGenerateInvokeBridge) {
+            generateUntypedInvokeMethod()
+        } else {
+            // invoke(..) = create(..).resume(Unit)
+            functionCodegen.generateMethod(JvmDeclarationOrigin.NO_ORIGIN, funDescriptor,
+                                           object : FunctionGenerationStrategy.CodegenBased(state) {
+                                               override fun doGenerateBody(codegen: ExpressionCodegen, signature: JvmMethodSignature) {
+                                                   codegen.v.generateInvokeMethod(signature)
+                                               }
+                                           })
         }
+    }
+
+    override fun generateBridges() {
+        if (!doNotGenerateInvokeBridge) {
+            super.generateBridges()
+        }
+    }
+
+    private fun generateUntypedInvokeMethod() {
+        val untypedDescriptor = getErasedInvokeFunction(funDescriptor)
+        val untypedAsmMethod = typeMapper.mapAsmMethod(untypedDescriptor)
+        val jvmMethodSignature = typeMapper.mapSignatureSkipGeneric(untypedDescriptor)
+        val mv = v.newMethod(
+            OtherOrigin(element, funDescriptor), AsmUtil.getVisibilityAccessFlag(untypedDescriptor) or Opcodes.ACC_FINAL,
+            untypedAsmMethod.name, untypedAsmMethod.descriptor, null, ArrayUtil.EMPTY_STRING_ARRAY
+        )
+        mv.visitCode()
+        with(InstructionAdapter(mv)) {
+            generateInvokeMethod(jvmMethodSignature)
+        }
+
+        FunctionCodegen.endVisit(mv, "invoke", element)
     }
 
     private fun InstructionAdapter.generateInvokeMethod(signature: JvmMethodSignature) {
         // this
         load(0, AsmTypes.OBJECT_TYPE)
         val parameterTypes = signature.valueParameters.map { it.asmType }
-        parameterTypes.withVariableIndices().forEach { (index, type) ->
-            load(index + 1, type)
+        val createArgumentTypes =
+            if (generateErasedCreate || doNotGenerateInvokeBridge) typeMapper.mapAsmMethod(createCoroutineDescriptor).argumentTypes.asList()
+            else parameterTypes
+        var index = 0
+        parameterTypes.withVariableIndices().forEach { (varIndex, type) ->
+            load(varIndex + 1, type)
+            StackValue.coerce(type, createArgumentTypes[index++], this)
         }
 
         // this.create(..)
@@ -254,7 +311,7 @@ class CoroutineCodegenForLambda private constructor(
             createCoroutineDescriptor.name.identifier,
             Type.getMethodDescriptor(
                 languageVersionSettings.continuationAsmType(),
-                *parameterTypes.toTypedArray()
+                *createArgumentTypes.toTypedArray()
             ),
             false
         )
@@ -281,19 +338,30 @@ class CoroutineCodegenForLambda private constructor(
         val owner = typeMapper.mapClass(classDescriptor)
 
         val thisInstance = StackValue.thisOrOuter(codegen, classDescriptor, false, false)
+        val isBigArity = JvmCodegenUtil.isDeclarationOfBigArityCreateCoroutineMethod(createCoroutineDescriptor)
 
         with(codegen.v) {
             anew(owner)
             dup()
 
             // pass captured closure to constructor
-            val constructorParameters = calculateConstructorParameters(typeMapper, closure, owner)
+            val constructorParameters = calculateConstructorParameters(typeMapper, languageVersionSettings, closure, owner)
             for (parameter in constructorParameters) {
-                StackValue.field(parameter, thisInstance).put(parameter.fieldType, this)
+                StackValue.field(parameter, thisInstance).put(parameter.fieldType, parameter.fieldKotlinType, this)
             }
 
             // load resultContinuation
-            load(allFunctionParameters().map { typeMapper.mapType(it.type).size }.sum() + 1, AsmTypes.OBJECT_TYPE)
+            if (isBigArity) {
+                load(1, AsmTypes.OBJECT_TYPE)
+                iconst(allFunctionParameters().size)
+                aload(AsmTypes.OBJECT_TYPE)
+            } else {
+                if (generateErasedCreate) {
+                    load(allFunctionParameters().size + 1, AsmTypes.OBJECT_TYPE)
+                } else {
+                    load(allFunctionParameters().map { typeMapper.mapType(it.type).size }.sum() + 1, AsmTypes.OBJECT_TYPE)
+                }
+            }
 
             invokespecial(owner.internalName, constructorToUseFromInvoke.name, constructorToUseFromInvoke.descriptor, false)
 
@@ -304,9 +372,41 @@ class CoroutineCodegenForLambda private constructor(
             var index = 1
             for (parameter in allFunctionParameters()) {
                 val fieldInfoForCoroutineLambdaParameter = parameter.getFieldInfoForCoroutineLambdaParameter()
-                load(index, fieldInfoForCoroutineLambdaParameter.fieldType)
-                AsmUtil.genAssignInstanceFieldFromParam(fieldInfoForCoroutineLambdaParameter, index, this, cloneIndex)
-                index += fieldInfoForCoroutineLambdaParameter.fieldType.size
+                if (isBigArity) {
+                    load(cloneIndex, fieldInfoForCoroutineLambdaParameter.ownerType)
+                    load(1, AsmTypes.OBJECT_TYPE)
+                    iconst(index - 1)
+                    aload(AsmTypes.OBJECT_TYPE)
+                    StackValue.coerce(
+                        AsmTypes.OBJECT_TYPE, builtIns.nullableAnyType,
+                        fieldInfoForCoroutineLambdaParameter.fieldType, fieldInfoForCoroutineLambdaParameter.fieldKotlinType,
+                        this
+                    )
+                    putfield(
+                        fieldInfoForCoroutineLambdaParameter.ownerInternalName,
+                        fieldInfoForCoroutineLambdaParameter.fieldName,
+                        fieldInfoForCoroutineLambdaParameter.fieldType.descriptor
+                    )
+                } else {
+                    if (generateErasedCreate) {
+                        load(index, AsmTypes.OBJECT_TYPE)
+                        StackValue.coerce(
+                            AsmTypes.OBJECT_TYPE, builtIns.nullableAnyType,
+                            fieldInfoForCoroutineLambdaParameter.fieldType, fieldInfoForCoroutineLambdaParameter.fieldKotlinType,
+                            this
+                        )
+                    } else {
+                        load(index, fieldInfoForCoroutineLambdaParameter.fieldType)
+                    }
+                    AsmUtil.genAssignInstanceFieldFromParam(
+                        fieldInfoForCoroutineLambdaParameter,
+                        index,
+                        this,
+                        cloneIndex,
+                        generateErasedCreate
+                    )
+                }
+                index += if (isBigArity || generateErasedCreate) 1 else fieldInfoForCoroutineLambdaParameter.fieldType.size
             }
 
             load(cloneIndex, AsmTypes.OBJECT_TYPE)
@@ -342,6 +442,7 @@ class CoroutineCodegenForLambda private constructor(
         FieldInfo.createForHiddenField(
             typeMapper.mapClass(closureContext.thisDescriptor),
             typeMapper.mapType(type),
+            type,
             name
         )
 
@@ -356,11 +457,13 @@ class CoroutineCodegenForLambda private constructor(
                     return CoroutineTransformerMethodVisitor(
                         mv, access, name, desc, null, null,
                         obtainClassBuilderForCoroutineState = { v },
-                        lineNumber = CodegenUtil.getLineNumberForElement(element, false) ?: 0,
+                        element = element,
+                        diagnostics = state.diagnostics,
                         shouldPreserveClassInitialization = constructorCallNormalizationMode.shouldPreserveClassInitialization,
                         containingClassInternalName = v.thisName,
                         isForNamedFunction = false,
-                        languageVersionSettings = languageVersionSettings
+                        languageVersionSettings = languageVersionSettings,
+                        sourceFile = element.containingFile.name
                     )
                 }
 
@@ -439,7 +542,7 @@ class CoroutineCodegenForNamedFunction private constructor(
 
         v.newField(
             JvmDeclarationOrigin.NO_ORIGIN, Opcodes.ACC_SYNTHETIC or AsmUtil.NO_FLAG_PACKAGE_PRIVATE,
-            DATA_FIELD_NAME, AsmTypes.OBJECT_TYPE.descriptor, null, null
+            languageVersionSettings.dataFieldName(), AsmTypes.OBJECT_TYPE.descriptor, null, null
         )
 
         if (!languageVersionSettings.isReleaseCoroutines()) {
@@ -457,7 +560,7 @@ class CoroutineCodegenForNamedFunction private constructor(
             object : FunctionGenerationStrategy.CodegenBased(state) {
                 override fun doGenerateBody(codegen: ExpressionCodegen, signature: JvmMethodSignature) {
                     StackValue.field(
-                        AsmTypes.OBJECT_TYPE, Type.getObjectType(v.thisName), DATA_FIELD_NAME, false,
+                        AsmTypes.OBJECT_TYPE, Type.getObjectType(v.thisName), languageVersionSettings.dataFieldName(), false,
                         StackValue.LOCAL_0
                     ).store(StackValue.local(1, AsmTypes.OBJECT_TYPE), codegen.v)
 
@@ -477,7 +580,8 @@ class CoroutineCodegenForNamedFunction private constructor(
                         codegen.v
                     )
 
-                    val captureThisType = closure.captureThis?.let(typeMapper::mapType)
+                    val captureThis = closure.capturedOuterClassDescriptor
+                    val captureThisType = captureThis?.let(typeMapper::mapType)
                     if (captureThisType != null) {
                         StackValue.field(
                             captureThisType, Type.getObjectType(v.thisName), AsmUtil.CAPTURED_THIS_FIELD,
@@ -573,7 +677,7 @@ class CoroutineCodegenForNamedFunction private constructor(
                 ].sure { "There must be a jvm view defined for $originalSuspendDescriptor" }
 
             if (suspendFunctionView.dispatchReceiverParameter != null) {
-                closure.setCaptureThis()
+                closure.setNeedsCaptureOuterClass()
             }
 
             return CoroutineCodegenForNamedFunction(

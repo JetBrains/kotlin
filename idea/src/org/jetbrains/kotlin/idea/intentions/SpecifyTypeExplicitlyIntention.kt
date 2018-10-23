@@ -201,7 +201,7 @@ class SpecifyTypeExplicitlyIntention : SelfTargetingRangeIntention<KtCallableDec
             editor: Editor? = null
         ): TemplateEditingAdapter {
             return object : TemplateEditingAdapter() {
-                override fun templateFinished(template: Template?, brokenOff: Boolean) {
+                override fun templateFinished(template: Template, brokenOff: Boolean) {
                     val typeRef = declaration.typeReference
                     if (typeRef != null && typeRef.isValid) {
                         runWriteAction {

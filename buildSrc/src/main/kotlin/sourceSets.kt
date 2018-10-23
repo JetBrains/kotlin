@@ -4,6 +4,8 @@ import org.gradle.api.*
 import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.api.tasks.*
 import org.gradle.kotlin.dsl.*
+import org.gradle.language.jvm.tasks.ProcessResources
+
 //import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 
 inline fun Project.sourceSets(crossinline body: SourceSetsBuilder.() -> Unit) =
@@ -25,18 +27,20 @@ fun SourceSet.none() {
     resources.setSrcDirs(emptyList<String>())
 }
 
-fun SourceSet.projectDefault() {
-    when (name) {
-        "main" -> {
-            java.srcDirs("src")
-            resources.srcDir("resources").apply { include("**") }
-            resources.srcDir("src").apply { include("META-INF/**", "**/*.properties") }
-        }
-        "test" -> {
-            java.srcDirs("test", "tests")
+val SourceSet.projectDefault: Project.() -> Unit
+    get() = {
+        when (this@projectDefault.name) {
+            "main" -> {
+                java.srcDirs("src")
+                val processResources = tasks.getByName(processResourcesTaskName) as ProcessResources
+                processResources.from("resources") { include("**") }
+                processResources.from("src") { include("META-INF/**", "**/*.properties") }
+            }
+            "test" -> {
+                java.srcDirs("test", "tests")
+            }
         }
     }
-}
 
 // TODO: adding KotlinSourceSet dep to the plugin breaks the build unexpectedly, resolve and uncomment
 //val SourceSet.kotlin: SourceDirectorySet

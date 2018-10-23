@@ -3,15 +3,15 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
-@file:Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 @file:kotlin.jvm.JvmMultifileClass
-@file:kotlin.jvm.JvmName("SequenceBuilderKt")
+@file:kotlin.jvm.JvmName("SequencesKt")
+@file:UseExperimental(ExperimentalTypeInference::class)
 
 package kotlin.sequences
 
-import kotlin.*
 import kotlin.coroutines.*
 import kotlin.coroutines.intrinsics.*
+import kotlin.experimental.ExperimentalTypeInference
 
 /**
  * Builds a [Sequence] lazily yielding values one by one.
@@ -22,7 +22,12 @@ import kotlin.coroutines.intrinsics.*
  * @sample samples.collections.Sequences.Building.buildFibonacciSequence
  */
 @SinceKotlin("1.3")
-public fun <T> buildSequence(builderAction: suspend SequenceBuilder<T>.() -> Unit): Sequence<T> = Sequence { buildIterator(builderAction) }
+public fun <T> sequence(@BuilderInference block: suspend SequenceScope<T>.() -> Unit): Sequence<T> = Sequence { iterator(block) }
+
+@SinceKotlin("1.3")
+@Deprecated("Use 'sequence { }' function instead.", ReplaceWith("sequence(builderAction)"), level = DeprecationLevel.ERROR)
+@kotlin.internal.InlineOnly
+public inline fun <T> buildSequence(@BuilderInference noinline builderAction: suspend SequenceScope<T>.() -> Unit): Sequence<T> = Sequence { iterator(builderAction) }
 
 /**
  * Builds an [Iterator] lazily yielding values one by one.
@@ -31,24 +36,29 @@ public fun <T> buildSequence(builderAction: suspend SequenceBuilder<T>.() -> Uni
  * @sample samples.collections.Iterables.Building.iterable
  */
 @SinceKotlin("1.3")
-public fun <T> buildIterator(builderAction: suspend SequenceBuilder<T>.() -> Unit): Iterator<T> {
+public fun <T> iterator(@BuilderInference block: suspend SequenceScope<T>.() -> Unit): Iterator<T> {
     val iterator = SequenceBuilderIterator<T>()
-    iterator.nextStep = builderAction.createCoroutineUnintercepted(receiver = iterator, completion = iterator)
+    iterator.nextStep = block.createCoroutineUnintercepted(receiver = iterator, completion = iterator)
     return iterator
 }
 
+@SinceKotlin("1.3")
+@Deprecated("Use 'iterator { }' function instead.", ReplaceWith("iterator(builderAction)"), level = DeprecationLevel.ERROR)
+@kotlin.internal.InlineOnly
+public inline fun <T> buildIterator(@BuilderInference noinline builderAction: suspend SequenceScope<T>.() -> Unit): Iterator<T> = iterator(builderAction)
+
 /**
- * Builder for a [Sequence] or an [Iterator], provides [yield] and [yieldAll] suspension functions.
+ * The scope for yielding values of a [Sequence] or an [Iterator], provides [yield] and [yieldAll] suspension functions.
  *
- * @see buildSequence
- * @see buildIterator
+ * @see sequence
+ * @see iterator
  *
  * @sample samples.collections.Sequences.Building.buildSequenceYieldAll
  * @sample samples.collections.Sequences.Building.buildFibonacciSequence
  */
 @RestrictsSuspension
 @SinceKotlin("1.3")
-public abstract class SequenceBuilder<in T> internal constructor() {
+public abstract class SequenceScope<in T> internal constructor() {
     /**
      * Yields a value to the [Iterator] being built.
      *
@@ -86,6 +96,9 @@ public abstract class SequenceBuilder<in T> internal constructor() {
     public suspend fun yieldAll(sequence: Sequence<T>) = yieldAll(sequence.iterator())
 }
 
+@Deprecated("Use SequenceScope class instead.", ReplaceWith("SequenceScope<T>"), level = DeprecationLevel.ERROR)
+public typealias SequenceBuilder<T> = SequenceScope<T>
+
 private typealias State = Int
 
 private const val State_NotReady: State = 0
@@ -95,7 +108,7 @@ private const val State_Ready: State = 3
 private const val State_Done: State = 4
 private const val State_Failed: State = 5
 
-private class SequenceBuilderIterator<T> : SequenceBuilder<T>(), Iterator<T>, Continuation<Unit> {
+private class SequenceBuilderIterator<T> : SequenceScope<T>(), Iterator<T>, Continuation<Unit> {
     private var state = State_NotReady
     private var nextValue: T? = null
     private var nextIterator: Iterator<T>? = null
@@ -173,7 +186,7 @@ private class SequenceBuilderIterator<T> : SequenceBuilder<T>(), Iterator<T>, Co
     }
 
     // Completion continuation implementation
-    override fun resumeWith(result: SuccessOrFailure<Unit>) {
+    override fun resumeWith(result: Result<Unit>) {
         result.getOrThrow() // just rethrow exception if it is there
         state = State_Done
     }

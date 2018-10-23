@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.analyzer.AnalysisResult;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.descriptors.PackageFragmentProvider;
+import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl;
 import org.jetbrains.kotlin.descriptors.impl.ReceiverParameterDescriptorImpl;
 import org.jetbrains.kotlin.psi.KtExpression;
@@ -544,7 +545,8 @@ public class KotlinTypeCheckerTest extends KotlinTestWithEnvironment {
         KotlinType thisType = makeType(contextType);
         ReceiverParameterDescriptorImpl receiverParameterDescriptor = new ReceiverParameterDescriptorImpl(
                 scopeWithImports.getOwnerDescriptor(),
-                new TransientReceiver(thisType)
+                new TransientReceiver(thisType),
+                Annotations.Companion.getEMPTY()
         );
 
         LexicalScope scope = new LexicalScopeImpl(scopeWithImports, scopeWithImports.getOwnerDescriptor(), false,

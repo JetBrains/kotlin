@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
+import org.jetbrains.kotlin.idea.inspections.branchedTransformations.IfThenToSafeAccessInspection
 import org.jetbrains.kotlin.idea.intentions.SelfTargetingOffsetIndependentIntention
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.*
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
@@ -54,7 +55,9 @@ class IfThenToElvisIntention : SelfTargetingOffsetIndependentIntention<KtIfExpre
                 false
             baseClause.evaluatesTo(receiverExpression) ->
                 true
-            receiverExpression is KtThisExpression && hasImplicitReceiver() || baseClause.hasFirstReceiverOf(receiverExpression) ->
+            baseClause.anyArgumentEvaluatesTo(receiverExpression) ->
+                true
+            hasImplicitReceiverReplaceableBySafeCall() || baseClause.hasFirstReceiverOf(receiverExpression) ->
                 !baseClause.hasNullableType(context)
             else ->
                 false
@@ -95,6 +98,9 @@ class IfThenToElvisIntention : SelfTargetingOffsetIndependentIntention<KtIfExpre
 
         if (editor != null) {
             elvis.inlineLeftSideIfApplicableWithPrompt(editor)
+            with(IfThenToSafeAccessInspection) {
+                (elvis.left as? KtSafeQualifiedExpression)?.renameLetParameter(editor)
+            }
         }
     }
 }

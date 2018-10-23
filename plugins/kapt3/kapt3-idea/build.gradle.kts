@@ -7,11 +7,12 @@ plugins {
 jvmTarget = "1.6"
 
 dependencies {
-    compile(projectDist(":kotlin-stdlib"))
+    compile(project(":kotlin-stdlib"))
     compile(project(":compiler:frontend"))
     compile(project(":idea")) { isTransitive = false }
     compile(project(":idea:kotlin-gradle-tooling"))
-    compile(project(":kotlin-annotation-processing"))
+    compile(project(":idea:idea-core"))
+    compile(project(":idea:idea-gradle"))
     compileOnly(intellijDep())
     compileOnly(intellijPluginDep("gradle"))
     compileOnly(intellijPluginDep("android"))

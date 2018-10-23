@@ -6,10 +6,7 @@
 package org.jetbrains.kotlin.kotlinp
 
 import kotlinx.metadata.jvm.KotlinClassHeader
-import org.objectweb.asm.AnnotationVisitor
-import org.objectweb.asm.ClassReader
-import org.objectweb.asm.ClassVisitor
-import org.objectweb.asm.Opcodes
+import org.objectweb.asm.*
 import java.io.File
 import java.io.FileInputStream
 
@@ -17,9 +14,10 @@ internal fun File.readKotlinClassHeader(): KotlinClassHeader? {
     var header: KotlinClassHeader? = null
 
     try {
+        val metadataDesc = Type.getDescriptor(Metadata::class.java)
         ClassReader(FileInputStream(this)).accept(object : ClassVisitor(Opcodes.ASM4) {
             override fun visitAnnotation(desc: String, visible: Boolean): AnnotationVisitor? =
-                if (desc == "Lkotlin/Metadata;") readMetadataVisitor { header = it }
+                if (desc == metadataDesc) readMetadataVisitor { header = it }
                 else null
         }, ClassReader.SKIP_CODE or ClassReader.SKIP_DEBUG or ClassReader.SKIP_FRAMES)
     } catch (e: Exception) {
@@ -29,7 +27,6 @@ internal fun File.readKotlinClassHeader(): KotlinClassHeader? {
     return header
 }
 
-@Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
 private fun readMetadataVisitor(output: (KotlinClassHeader) -> Unit): AnnotationVisitor =
     object : AnnotationVisitor(Opcodes.ASM4) {
         var kind: Int? = null
@@ -43,19 +40,19 @@ private fun readMetadataVisitor(output: (KotlinClassHeader) -> Unit): Annotation
 
         override fun visit(name: String?, value: Any?) {
             when (name) {
-                Metadata::k.name -> kind = value as? Int
-                Metadata::mv.name -> metadataVersion = value as? IntArray
-                Metadata::bv.name -> bytecodeVersion = value as? IntArray
-                Metadata::xs.name -> extraString = value as? String
-                Metadata::xi.name -> extraInt = value as? Int
-                Metadata::pn.name -> packageName = value as? String
+                "k" -> kind = value as? Int
+                "mv" -> metadataVersion = value as? IntArray
+                "bv" -> bytecodeVersion = value as? IntArray
+                "xs" -> extraString = value as? String
+                "xi" -> extraInt = value as? Int
+                "pn" -> packageName = value as? String
             }
         }
 
         override fun visitArray(name: String?): AnnotationVisitor? =
             when (name) {
-                Metadata::d1.name -> stringArrayVisitor { data1 = it }
-                Metadata::d2.name -> stringArrayVisitor { data2 = it }
+                "d1" -> stringArrayVisitor { data1 = it }
+                "d2" -> stringArrayVisitor { data2 = it }
                 else -> null
             }
 

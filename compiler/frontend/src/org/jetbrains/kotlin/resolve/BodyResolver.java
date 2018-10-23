@@ -40,7 +40,9 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.calls.util.CallMaker;
+import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil;
+import org.jetbrains.kotlin.resolve.multiplatform.ExpectedActualResolver;
 import org.jetbrains.kotlin.resolve.scopes.*;
 import org.jetbrains.kotlin.types.*;
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices;
@@ -497,18 +499,28 @@ public class BodyResolver {
                         parentEnumOrSealed = new HashSet<>();
                     }
                     parentEnumOrSealed.add(currentDescriptor.getTypeConstructor());
+                    if (currentDescriptor.isExpect()) {
+                        List<MemberDescriptor> actualDescriptors = ExpectedActualResolver.INSTANCE.findCompatibleActualForExpected(
+                                currentDescriptor, DescriptorUtilsKt.getModule( currentDescriptor)
+                        );
+                        for (MemberDescriptor actualDescriptor: actualDescriptors) {
+                            if (actualDescriptor instanceof TypeAliasDescriptor) {
+                                parentEnumOrSealed.add(((TypeAliasDescriptor) actualDescriptor).getExpandedType().getConstructor());
+                            }
+                        }
+                    }
                 }
             }
         }
         return parentEnumOrSealed;
     }
 
+    @SuppressWarnings("unchecked")
     private static void recordConstructorDelegationCall(
             @NotNull BindingTrace trace,
             @NotNull ConstructorDescriptor constructor,
             @NotNull ResolvedCall<?> call
     ) {
-        //noinspection unchecked
         trace.record(CONSTRUCTOR_RESOLVED_DELEGATION_CALL, constructor, (ResolvedCall<ConstructorDescriptor>) call);
     }
 
@@ -546,6 +558,9 @@ public class BodyResolver {
                 }
                 else if (FunctionTypesKt.isSuspendFunctionType(supertype)) {
                     trace.report(SUPERTYPE_IS_SUSPEND_FUNCTION_TYPE.on(typeReference));
+                }
+                else if (FunctionTypesKt.isKSuspendFunctionType(supertype)) {
+                    trace.report(SUPERTYPE_IS_KSUSPEND_FUNCTION_TYPE.on(typeReference));
                 }
 
                 if (classDescriptor.getKind() != ClassKind.INTERFACE) {
@@ -690,6 +705,18 @@ public class BodyResolver {
             PropertyDescriptor descriptor = trace.getBindingContext().get(BindingContext.PRIMARY_CONSTRUCTOR_PARAMETER, parameter);
             if (descriptor != null) {
                 ForceResolveUtil.forceResolveAllContents(descriptor.getAnnotations());
+
+                if (languageVersionSettings.supportsFeature(LanguageFeature.ProhibitErroneousExpressionsInAnnotationsWithUseSiteTargets)) {
+                    PropertyGetterDescriptor getterDescriptor = descriptor.getGetter();
+                    if (getterDescriptor != null) {
+                        ForceResolveUtil.forceResolveAllContents(getterDescriptor.getAnnotations());
+                    }
+
+                    PropertySetterDescriptor setterDescriptor = descriptor.getSetter();
+                    if (setterDescriptor != null) {
+                        ForceResolveUtil.forceResolveAllContents(setterDescriptor.getAnnotations());
+                    }
+                }
             }
         }
     }
@@ -730,6 +757,8 @@ public class BodyResolver {
         }
 
         resolvePropertyAccessors(c, property, propertyDescriptor);
+
+        ForceResolveUtil.forceResolveAllContents(propertyDescriptor.getAnnotations());
     }
 
     private void resolvePropertyDeclarationBodies(@NotNull BodiesResolveContext c) {
@@ -780,18 +809,33 @@ public class BodyResolver {
 
         KtPropertyAccessor getter = property.getGetter();
         PropertyGetterDescriptor getterDescriptor = propertyDescriptor.getGetter();
-        if (getter != null && getterDescriptor != null) {
-            LexicalScope accessorScope = makeScopeForPropertyAccessor(c, getter, propertyDescriptor);
-            ForceResolveUtil.forceResolveAllContents(getterDescriptor.getAnnotations());
-            resolveFunctionBody(c.getOuterDataFlowInfo(), fieldAccessTrackingTrace, getter, getterDescriptor, accessorScope);
+
+        boolean forceResolveAnnotations =
+                languageVersionSettings.supportsFeature(LanguageFeature.ProhibitErroneousExpressionsInAnnotationsWithUseSiteTargets);
+
+        if (getterDescriptor != null) {
+            if (getter != null) {
+                LexicalScope accessorScope = makeScopeForPropertyAccessor(c, getter, propertyDescriptor);
+                resolveFunctionBody(c.getOuterDataFlowInfo(), fieldAccessTrackingTrace, getter, getterDescriptor, accessorScope);
+            }
+
+            if (getter != null || forceResolveAnnotations) {
+                ForceResolveUtil.forceResolveAllContents(getterDescriptor.getAnnotations());
+            }
         }
 
         KtPropertyAccessor setter = property.getSetter();
         PropertySetterDescriptor setterDescriptor = propertyDescriptor.getSetter();
-        if (setter != null && setterDescriptor != null) {
-            LexicalScope accessorScope = makeScopeForPropertyAccessor(c, setter, propertyDescriptor);
-            ForceResolveUtil.forceResolveAllContents(setterDescriptor.getAnnotations());
-            resolveFunctionBody(c.getOuterDataFlowInfo(), fieldAccessTrackingTrace, setter, setterDescriptor, accessorScope);
+
+        if (setterDescriptor != null) {
+            if (setter != null) {
+                LexicalScope accessorScope = makeScopeForPropertyAccessor(c, setter, propertyDescriptor);
+                resolveFunctionBody(c.getOuterDataFlowInfo(), fieldAccessTrackingTrace, setter, setterDescriptor, accessorScope);
+            }
+
+            if (setter != null || forceResolveAnnotations) {
+                ForceResolveUtil.forceResolveAllContents(setterDescriptor.getAnnotations());
+            }
         }
     }
 

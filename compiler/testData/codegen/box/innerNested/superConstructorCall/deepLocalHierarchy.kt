@@ -1,5 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
-// IGNORE_BACKEND: JS_IR
 fun box(): String {
     abstract class L1 {
         abstract fun foo(): String

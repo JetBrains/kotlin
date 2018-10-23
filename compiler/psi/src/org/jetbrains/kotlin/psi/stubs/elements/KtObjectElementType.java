@@ -38,13 +38,16 @@ public class KtObjectElementType extends KtStubElementType<KotlinObjectStub, KtO
         super(debugName, KtObjectDeclaration.class, KotlinObjectStub.class);
     }
 
+    @NotNull
     @Override
     public KotlinObjectStub createStub(@NotNull KtObjectDeclaration psi, StubElement parentStub) {
         String name = psi.getName();
         FqName fqName = KtPsiUtilKt.safeFqNameForLazyResolve(psi);
         List<String> superNames = KtPsiUtilKt.getSuperNames(psi);
-        return new KotlinObjectStubImpl(parentStub, StringRef.fromString(name), fqName, Utils.INSTANCE.wrapStrings(superNames),
-                                        psi.isTopLevel(), psi.isCompanion(), psi.isLocal(), psi.isObjectLiteral());
+        return new KotlinObjectStubImpl(
+                (StubElement<?>) parentStub, StringRef.fromString(name), fqName, Utils.INSTANCE.wrapStrings(superNames),
+                psi.isTopLevel(), psi.isCompanion(), psi.isLocal(), psi.isObjectLiteral()
+        );
     }
 
     @Override
@@ -84,7 +87,9 @@ public class KtObjectElementType extends KtStubElementType<KotlinObjectStub, KtO
             superNames[i] = dataStream.readName();
         }
 
-        return new KotlinObjectStubImpl(parentStub, name, fqName, superNames, isTopLevel, isCompanion, isLocal, isObjectLiteral);
+        return new KotlinObjectStubImpl(
+                (StubElement<?>) parentStub, name, fqName, superNames, isTopLevel, isCompanion, isLocal, isObjectLiteral
+        );
     }
 
     @Override

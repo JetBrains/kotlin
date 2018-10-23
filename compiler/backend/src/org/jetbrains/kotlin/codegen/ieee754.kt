@@ -10,13 +10,12 @@ import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.psi.KtExpression
-import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfoBefore
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactoryImpl
+import org.jetbrains.kotlin.resolve.calls.smartcasts.getKotlinTypeForComparison
+import org.jetbrains.kotlin.resolve.calls.smartcasts.getKotlinTypeWithPossibleSmartCastToFP
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
-import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 import org.jetbrains.org.objectweb.asm.Type
 
 class TypeAndNullability(@JvmField val type: Type, @JvmField val isNullable: Boolean)
@@ -35,60 +34,31 @@ fun calcProperTypeForIeee754ArithmeticIfNeeded(
     return TypeAndNullability(asmType, isNullable)
 }
 
-private fun KotlinType.isFloatingPointOrNullable() =
-    KotlinBuiltIns.isDoubleOrNullableDouble(this) || KotlinBuiltIns.isFloatOrNullableFloat(this)
-
-private fun KtExpression.getKotlinTypeForComparison(bindingContext: BindingContext): KotlinType? =
-    when {
-        this is KtProperty -> bindingContext[BindingContext.VARIABLE, this]?.type
-        else -> kotlinType(bindingContext)
-    }
-
 fun legacyCalcTypeForIeee754ArithmeticIfNeeded(
     expression: KtExpression?,
     bindingContext: BindingContext,
     descriptor: DeclarationDescriptor,
     languageVersionSettings: LanguageVersionSettings
 ): TypeAndNullability? {
-    val ktType = expression?.getKotlinTypeForComparison(bindingContext) ?: return null
-
-    if (KotlinBuiltIns.isDoubleOrNullableDouble(ktType)) {
-        return TypeAndNullability(
-            Type.DOUBLE_TYPE,
-            TypeUtils.isNullableType(ktType)
-        )
-    }
-
-    if (KotlinBuiltIns.isFloatOrNullableFloat(ktType)) {
-        return TypeAndNullability(
-            Type.FLOAT_TYPE,
-            TypeUtils.isNullableType(ktType)
-        )
-    }
-
-    // NB. Using DataFlowValueFactoryImpl is a hack, but it is ok for 'legacy'
-    val dataFlow = DataFlowValueFactoryImpl(languageVersionSettings).createDataFlowValue(
-        expression,
-        ktType,
-        bindingContext,
-        descriptor
+    val ktType = expression.getKotlinTypeWithPossibleSmartCastToFP(
+        // NB. Using DataFlowValueFactoryImpl is a hack, but it is ok for 'legacy'
+        bindingContext, descriptor, languageVersionSettings, DataFlowValueFactoryImpl(languageVersionSettings)
     )
-    val stableTypes = bindingContext.getDataFlowInfoBefore(expression).getStableTypes(dataFlow, languageVersionSettings)
-    return stableTypes.firstNotNullResult {
-        when {
-            KotlinBuiltIns.isDoubleOrNullableDouble(it) -> TypeAndNullability(
+
+    if (ktType != null) {
+        if (KotlinBuiltIns.isDoubleOrNullableDouble(ktType)) {
+            return TypeAndNullability(
                 Type.DOUBLE_TYPE,
-                TypeUtils.isNullableType(
-                    it
-                )
+                TypeUtils.isNullableType(ktType)
             )
-            KotlinBuiltIns.isFloatOrNullableFloat(it) -> TypeAndNullability(
+        }
+
+        if (KotlinBuiltIns.isFloatOrNullableFloat(ktType)) {
+            return TypeAndNullability(
                 Type.FLOAT_TYPE,
-                TypeUtils.isNullableType(
-                    it
-                )
+                TypeUtils.isNullableType(ktType)
             )
-            else -> null
         }
     }
+    return null
 }

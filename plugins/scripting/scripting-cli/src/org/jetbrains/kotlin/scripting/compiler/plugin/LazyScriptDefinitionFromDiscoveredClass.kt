@@ -14,11 +14,12 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import java.io.File
 import kotlin.script.experimental.annotations.KotlinScript
-import kotlin.script.experimental.annotations.KotlinScriptFileExtension
 import kotlin.script.experimental.api.*
-import kotlin.script.experimental.definitions.ScriptDefinitionFromAnnotatedBaseClass
+import kotlin.script.experimental.host.ScriptingHostConfiguration
+import kotlin.script.experimental.host.configurationDependencies
+import kotlin.script.experimental.host.createCompilationConfigurationFromTemplate
 import kotlin.script.experimental.jvm.JvmDependency
-import kotlin.script.experimental.jvm.JvmGetScriptingClass
+import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 
 class LazyScriptDefinitionFromDiscoveredClass internal constructor(
     private val annotationsFromAsm: ArrayList<BinAnnData>,
@@ -34,18 +35,22 @@ class LazyScriptDefinitionFromDiscoveredClass internal constructor(
         messageCollector: MessageCollector
     ) : this(loadAnnotationsFromClass(classBytes), className, classpath, messageCollector)
 
-    override val scriptDefinition: ScriptDefinition by lazy(LazyThreadSafetyMode.PUBLICATION) {
+    override val hostConfiguration: ScriptingHostConfiguration by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        ScriptingHostConfiguration(defaultJvmScriptingHostConfiguration) {
+            configurationDependencies.append(JvmDependency(classpath))
+        }
+    }
+
+    override val scriptCompilationConfiguration: ScriptCompilationConfiguration by lazy(LazyThreadSafetyMode.PUBLICATION) {
         messageCollector.report(
             CompilerMessageSeverity.LOGGING,
             "Configure scripting: loading script definition class $className using classpath $classpath\n.  ${Thread.currentThread().stackTrace}"
         )
         try {
-            ScriptDefinitionFromAnnotatedBaseClass(
-                ScriptingEnvironment(
-                    ScriptingEnvironmentProperties.baseClass to KotlinType(className),
-                    ScriptingEnvironmentProperties.configurationDependencies to listOf(JvmDependency(classpath)),
-                    ScriptingEnvironmentProperties.getScriptingClass to JvmGetScriptingClass()
-                )
+            createCompilationConfigurationFromTemplate(
+                KotlinType(className),
+                hostConfiguration,
+                LazyScriptDefinitionFromDiscoveredClass::class
             )
         } catch (ex: ClassNotFoundException) {
             messageCollector.report(CompilerMessageSeverity.ERROR, "Cannot find script definition class $className")
@@ -59,25 +64,18 @@ class LazyScriptDefinitionFromDiscoveredClass internal constructor(
         }
     }
 
-    override val scriptFileExtensionWithDot: String by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        val ext = annotationsFromAsm.find { it.name == KotlinScriptFileExtension::class.simpleName!! }?.args?.first()
-                ?: scriptDefinition.properties.let {
-                    it.getOrNull(ScriptDefinitionProperties.fileExtension) ?: "kts"
-                }
-        ".$ext"
+    override val fileExtension: String by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        annotationsFromAsm.find { it.name == KotlinScript::class.simpleName }?.args
+            ?.find { it.name == "extension" }?.value
+            ?: scriptCompilationConfiguration.let {
+                it[ScriptCompilationConfiguration.fileExtension] ?: super.fileExtension
+            }
     }
 
     override val name: String by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        annotationsFromAsm.find { it.name == KotlinScript::class.simpleName!! }?.args?.first()
-                ?: super.name
+        annotationsFromAsm.find { it.name == KotlinScript::class.simpleName!! }?.args?.find { it.name == "name" }?.value
+            ?: super.name
     }
 }
 
-object InvalidScriptDefinition : ScriptDefinition {
-    override val properties: ScriptDefinitionPropertiesBag = ScriptDefinitionPropertiesBag()
-    override val compilationConfigurator: ScriptCompilationConfigurator = object : ScriptCompilationConfigurator {
-        override val defaultConfiguration: ScriptCompileConfiguration = ScriptDefinitionPropertiesBag()
-    }
-    override val evaluator: ScriptEvaluator<*>? = null
-}
-
+val InvalidScriptDefinition = ScriptCompilationConfiguration()

@@ -69,8 +69,8 @@ object IntroduceIndexMatcher : TransformationMatcher {
 
         val pseudocode = state.pseudocodeProvider()
         val firstStatement = state.statements.first()
-        val firstInstruction = pseudocode.instructionForElement(firstStatement)!!
-        val incrementInstruction = pseudocode.instructionForElement(incrementExpression)!!
+        val firstInstruction = pseudocode.instructionForElement(firstStatement) ?: return null
+        val incrementInstruction = pseudocode.instructionForElement(incrementExpression) ?: return null
         if (!isAlwaysReachedOrExitedLoop(firstInstruction, incrementInstruction, state.outerLoop, state.innerLoop)) return null
 
         val variableDescriptor = variable.unsafeResolveToDescriptor() as VariableDescriptor

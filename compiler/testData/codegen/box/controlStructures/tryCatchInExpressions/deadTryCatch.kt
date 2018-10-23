@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 inline fun catchAll(x: String, block: () -> Unit): String {
     try {
         block()

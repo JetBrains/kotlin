@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.jvm.compiler.LoadDescriptorUtil
-import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.ProtoBuf.VersionRequirement.VersionKind.COMPILER_VERSION
 import org.jetbrains.kotlin.metadata.deserialization.VersionRequirement
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil
@@ -41,7 +40,7 @@ class JvmVersionRequirementTest : AbstractVersionRequirementTest() {
                     languageVersionSettings = LanguageVersionSettingsImpl(
                         languageVersion,
                         ApiVersion.createByLanguageVersion(languageVersion),
-                        mapOf(AnalysisFlag.jvmDefaultMode to JvmDefaultMode.ENABLE),
+                        mapOf(JvmAnalysisFlags.jvmDefaultMode to JvmDefaultMode.ENABLE),
                         emptyMap()
                     )
                 },

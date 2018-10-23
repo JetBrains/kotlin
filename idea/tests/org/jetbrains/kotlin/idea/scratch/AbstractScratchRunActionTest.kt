@@ -20,11 +20,11 @@ import com.intellij.ide.scratch.ScratchFileService
 import com.intellij.ide.scratch.ScratchRootType
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.CommonDataKeys
-import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.CompilerModuleExtension
 import com.intellij.openapi.roots.ModuleRootModificationUtil
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiManager
 import com.intellij.testFramework.FileEditorManagerTestCase
@@ -33,6 +33,8 @@ import com.intellij.testFramework.PsiTestUtil
 import com.intellij.testFramework.TestActionEvent
 import com.intellij.util.ui.UIUtil
 import org.jetbrains.kotlin.idea.KotlinLanguage
+import org.jetbrains.kotlin.idea.core.script.ScriptDependenciesManager
+import org.jetbrains.kotlin.idea.highlighter.KotlinHighlightingUtil
 import org.jetbrains.kotlin.idea.scratch.actions.RunScratchAction
 import org.jetbrains.kotlin.idea.scratch.output.InlayScratchFileRenderer
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
@@ -102,11 +104,16 @@ abstract class AbstractScratchRunActionTest : FileEditorManagerTestCase() {
 
         myFixture.openFileInEditor(scratchFile)
 
+        ScriptDependenciesManager.updateScriptDependenciesSynchronously(scratchFile, project)
+
         val psiFile = PsiManager.getInstance(project).findFile(scratchFile) ?: error("Couldn't find psi file ${sourceFile.path}")
+
+        if (!KotlinHighlightingUtil.shouldHighlight(psiFile)) error("Highlighting for scratch file is switched off")
+
         val (editor, scratchPanel) = getEditorWithScratchPanel(myManager, scratchFile)?: error("Couldn't find scratch panel")
         scratchPanel.setReplMode(isRepl)
 
-        val action = RunScratchAction(scratchPanel)
+        val action = RunScratchAction()
         val event = getActionEvent(scratchFile, action)
         launchAction(event, action)
 
@@ -153,7 +160,8 @@ abstract class AbstractScratchRunActionTest : FileEditorManagerTestCase() {
     private fun getActionEvent(virtualFile: VirtualFile, action: AnAction): TestActionEvent {
         val context = MapDataContext()
         context.put(CommonDataKeys.VIRTUAL_FILE_ARRAY, arrayOf(virtualFile))
-        context.put<Project>(CommonDataKeys.PROJECT, project)
+        context.put(CommonDataKeys.PROJECT, project)
+        context.put(CommonDataKeys.EDITOR, myFixture.editor)
         return TestActionEvent(context, action)
     }
 
@@ -164,11 +172,15 @@ abstract class AbstractScratchRunActionTest : FileEditorManagerTestCase() {
     override fun setUp() {
         super.setUp()
 
+        VfsRootAccess.allowRootAccess(KotlinTestUtils.getHomeDirectory())
+
         PluginTestCaseBase.addJdk(myFixture.projectDisposable) { PluginTestCaseBase.fullJdk() }
     }
 
     override fun tearDown() {
         super.tearDown()
+
+        VfsRootAccess.disallowRootAccess(KotlinTestUtils.getHomeDirectory())
 
         ScratchFileService.getInstance().scratchesMapping.mappings.forEach { file, _ ->
             runWriteAction { file.delete(this) }

@@ -1,0 +1,6 @@
+package
+
+public fun </*0*/ T : kotlin.Number?> T.case_1(): kotlin.Unit
+public fun </*0*/ T : kotlin.Number, /*1*/ K : kotlin.String> T?.case_2(/*0*/ value_1: K?): kotlin.Unit
+public inline fun </*0*/ reified T : kotlin.Number> T?.case_3(/*0*/ value_1: kotlin.Any?): kotlin.Unit
+public inline fun </*0*/ reified T : kotlin.Number, /*1*/ K> K?.case_4(/*0*/ value_1: kotlin.Any?): kotlin.Unit

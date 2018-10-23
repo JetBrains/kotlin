@@ -60,7 +60,7 @@ class UseExpressionBodyInspection(private val convertEmptyToUnit: Boolean) : Abs
 
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean) =
         declarationVisitor(fun(declaration) {
-            declaration as? KtDeclarationWithBody ?: return
+            if (declaration !is KtDeclarationWithBody) return
             val (toHighlightElement, suffix, highlightType) = statusFor(declaration) ?: return
             // Change range to start with left brace
             val hasHighlighting = highlightType != INFORMATION

@@ -150,7 +150,10 @@ public class TypeIntersector {
      */
     @NotNull
     public static KotlinType getUpperBoundsAsType(@NotNull TypeParameterDescriptor descriptor) {
-        List<KotlinType> upperBounds = descriptor.getUpperBounds();
+        return intersectUpperBounds(descriptor, descriptor.getUpperBounds());
+    }
+
+    public static KotlinType intersectUpperBounds(@NotNull TypeParameterDescriptor descriptor, @NotNull List<KotlinType> upperBounds) {
         assert !upperBounds.isEmpty() : "Upper bound list is empty: " + descriptor;
         KotlinType upperBoundsAsType = intersectTypes(upperBounds);
         return upperBoundsAsType != null ? upperBoundsAsType : getBuiltIns(descriptor).getNothingType();

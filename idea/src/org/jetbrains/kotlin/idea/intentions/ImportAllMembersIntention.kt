@@ -64,7 +64,7 @@ class ImportAllMembersIntention : SelfTargetingIntention<KtDotQualifiedExpressio
 
     companion object {
         fun KtDotQualifiedExpression.importReceiverMembers() {
-            val target = target(this)!!
+            val target = target(this) ?: return
             val classFqName = target.importableFqName!!.parent()
 
             ImportInsertHelper.getInstance(project).importDescriptor(containingKtFile, target, forceAllUnderImport = true)

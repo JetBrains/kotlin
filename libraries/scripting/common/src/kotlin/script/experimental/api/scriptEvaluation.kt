@@ -7,30 +7,73 @@
 
 package kotlin.script.experimental.api
 
-import kotlin.script.experimental.util.ChainedPropertyBag
-import kotlin.script.experimental.util.typedKey
+import kotlin.script.experimental.util.PropertiesCollection
 
-object ScriptEvaluationEnvironmentParams {
-    val implicitReceivers by typedKey<List<Any>>()
+interface ScriptEvaluationConfigurationKeys
 
-    val contextVariables by typedKey<Map<String, Any?>>() // external variables
+/**
+ * The container for script evaluation configuration
+ * For usages see actual code examples
+ */
+class ScriptEvaluationConfiguration(baseEvaluationConfigurations: Iterable<ScriptEvaluationConfiguration>, body: Builder.() -> Unit) :
+    PropertiesCollection(Builder(baseEvaluationConfigurations).apply(body).data) {
 
-    val constructorArgs by typedKey<List<Any?>>()
+    constructor(body: Builder.() -> Unit = {}) : this(emptyList(), body)
+    constructor(
+        vararg baseConfigurations: ScriptEvaluationConfiguration, body: Builder.() -> Unit = {}
+    ) : this(baseConfigurations.asIterable(), body)
 
-    val runArgs by typedKey<List<Any?>>()
+    class Builder internal constructor(baseEvaluationConfigurations: Iterable<ScriptEvaluationConfiguration>) :
+        ScriptEvaluationConfigurationKeys,
+        PropertiesCollection.Builder(baseEvaluationConfigurations)
+
+    companion object : ScriptEvaluationConfigurationKeys
 }
 
-typealias ScriptEvaluationEnvironment = ChainedPropertyBag
+/**
+ * The list of actual script implicit receiver object, in the same order as specified in {@link ScriptCompilationConfigurationKeys#implicitReceivers}
+ */
+val ScriptEvaluationConfigurationKeys.implicitReceivers by PropertiesCollection.key<List<Any>>()
 
-data class EvaluationResult(val returnValue: Any?, val environment: ScriptEvaluationEnvironment)
+/**
+ * The map of names to actual provided properties objects, according to the properties specified in
+ * {@link ScriptCompilationConfigurationKeys#providedProperties}
+ */
+val ScriptEvaluationConfigurationKeys.providedProperties by PropertiesCollection.key<Map<String, Any?>>() // external variables
 
-// NOTE: name inconsistency: run vs evaluate
-interface ScriptEvaluator<in ScriptBase : Any> {
+/**
+ * Constructor arguments, additional to implicit receivers and provided properties, according to the script base class constructor
+ */
+val ScriptEvaluationConfigurationKeys.constructorArgs by PropertiesCollection.key<List<Any?>>()
 
-    // constructor(environment: ScriptingEnvironment) // the constructor is expected from implementations
+/**
+ * The script evaluation result value
+ */
+sealed class ResultValue {
+    class Value(val name: String, val value: Any?, val type: String) : ResultValue() {
+        override fun toString(): String = "$name: $type = $value"
+    }
 
-    suspend fun eval(
-        compiledScript: CompiledScript<ScriptBase>,
-        scriptEvaluationEnvironment: ScriptEvaluationEnvironment
+    object Unit : ResultValue()
+}
+
+/**
+ * The facade for the evaluation result and evaluation configuration, used in the evaluator interface
+ */
+data class EvaluationResult(val returnValue: ResultValue, val configuration: ScriptEvaluationConfiguration?)
+
+/**
+ * The functional interface to the script evaluator
+ */
+interface ScriptEvaluator {
+
+    /**
+     * Evaluates [compiledScript] using the data from [scriptEvaluationConfiguration]
+     * @param compiledScript the compiled script class
+     * @param scriptEvaluationConfiguration evaluation configuration
+     */
+    suspend operator fun invoke(
+        compiledScript: CompiledScript<*>,
+        scriptEvaluationConfiguration: ScriptEvaluationConfiguration?
     ): ResultWithDiagnostics<EvaluationResult>
 }

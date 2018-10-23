@@ -18,12 +18,12 @@ package org.jetbrains.kotlin.backend.common.lower
 
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrBlock
+import org.jetbrains.kotlin.ir.expressions.impl.IrBlockBodyImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrBlockImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrExpressionBodyImpl
@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.isPrimitiveType
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
-import org.jetbrains.kotlin.types.KotlinType
 
 class LateinitLowering(
     val context: CommonBackendContext,
@@ -52,19 +51,19 @@ class LateinitLowering(
                 val endOffset = getter.endOffset
                 val irBuilder = context.createIrBuilder(getter.symbol, startOffset, endOffset)
                 irBuilder.run {
-                    val block = irBlock(type)
+                    val body = IrBlockBodyImpl(startOffset, endOffset)
                     val resultVar = scope.createTemporaryVariable(
                         irGetField(getter.dispatchReceiverParameter?.let { irGet(it) }, backingField)
                     )
-                    block.statements.add(resultVar)
+                    body.statements.add(resultVar)
                     val throwIfNull = irIfThenElse(
                         context.irBuiltIns.nothingType,
                         irNotEquals(irGet(resultVar), irNull()),
                         irReturn(irGet(resultVar)),
                         throwUninitializedPropertyAccessException(backingField)
                     )
-                    block.statements.add(throwIfNull)
-                    getter.body = IrExpressionBodyImpl(startOffset, endOffset, block)
+                    body.statements.add(throwIfNull)
+                    getter.body = body
                 }
             }
         })

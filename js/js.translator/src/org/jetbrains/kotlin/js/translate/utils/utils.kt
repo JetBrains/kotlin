@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.js.translate.utils
 
+import com.intellij.lang.ASTNode
 import com.intellij.psi.PsiElement
 import com.intellij.util.SmartList
 import org.jetbrains.kotlin.backend.common.COROUTINE_SUSPENDED_NAME
@@ -12,13 +13,11 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.coroutinesIntrinsicsPackageFqName
 import org.jetbrains.kotlin.config.languageVersionSettings
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.backend.ast.metadata.*
+import org.jetbrains.kotlin.js.translate.callTranslator.CallTranslator
 import org.jetbrains.kotlin.js.translate.context.Namer
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
 import org.jetbrains.kotlin.js.translate.intrinsic.functions.basic.FunctionIntrinsicWithReceiverComputed
@@ -28,7 +27,14 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.components.isActualParameterWithCorrespondingExpectedDefault
+import org.jetbrains.kotlin.resolve.calls.model.ArgumentUnmapped
+import org.jetbrains.kotlin.resolve.calls.model.DataFlowInfoForArguments
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument
+import org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus
+import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
+import org.jetbrains.kotlin.resolve.scopes.receivers.Receiver
+import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
@@ -167,12 +173,13 @@ fun JsFunction.fillCoroutineMetadata(
         .memberScope
         .getContributedVariables(COROUTINE_SUSPENDED_NAME, NoLookupLocation.FROM_BACKEND).first()
 
-    fun getCoroutinePropertyName(id: String) =
-        context.getNameForDescriptor(TranslationUtils.getCoroutineProperty(context, id))
+    fun getCoroutinePropertyName(id: String) = context.getNameForDescriptor(TranslationUtils.getCoroutineProperty(context, id))
+
+    val suspendObject = CallTranslator.translateGet(context, resolveAccessorCall(suspendPropertyDescriptor, context), null)
 
     coroutineMetadata = CoroutineMetadata(
         doResumeName = context.getNameForDescriptor(TranslationUtils.getCoroutineDoResumeFunction(context)),
-        suspendObjectRef = ReferenceTranslator.translateAsValueReference(suspendPropertyDescriptor, context),
+        suspendObjectRef = suspendObject,
         baseClassRef = ReferenceTranslator.translateAsTypeReference(TranslationUtils.getCoroutineBaseClass(context), context),
         stateName = getCoroutinePropertyName("state"),
         exceptionStateName = getCoroutinePropertyName("exceptionState"),
@@ -183,6 +190,41 @@ fun JsFunction.fillCoroutineMetadata(
         hasReceiver = descriptor.dispatchReceiverParameter != null,
         psiElement = descriptor.source.getPsi()
     )
+}
+
+private fun resolveAccessorCall(
+    suspendPropertyDescriptor: PropertyDescriptor,
+    context: TranslationContext
+): ResolvedCall<PropertyDescriptor> {
+    return object : ResolvedCall<PropertyDescriptor> {
+        override fun getStatus() = ResolutionStatus.SUCCESS
+
+        override fun getCall(): Call = object : Call {
+            override fun getCallOperationNode(): ASTNode? = null
+            override fun getExplicitReceiver(): Receiver? = null
+            override fun getDispatchReceiver(): ReceiverValue? = null
+            override fun getCalleeExpression(): KtExpression? = null
+            override fun getValueArgumentList(): KtValueArgumentList? = null
+            override fun getValueArguments(): List<ValueArgument> = emptyList()
+            override fun getFunctionLiteralArguments(): List<LambdaArgument> = emptyList()
+            override fun getTypeArguments(): List<KtTypeProjection> = emptyList()
+            override fun getTypeArgumentList(): KtTypeArgumentList? = null
+            override fun getCallElement(): KtElement = KtPsiFactory(context.config.project).createExpression("COROUTINE_SUSPENDED")
+            override fun getCallType(): Call.CallType = Call.CallType.DEFAULT
+        }
+
+        override fun getCandidateDescriptor() = suspendPropertyDescriptor
+        override fun getResultingDescriptor() = suspendPropertyDescriptor
+        override fun getExtensionReceiver() = null
+        override fun getDispatchReceiver() = null
+        override fun getExplicitReceiverKind() = ExplicitReceiverKind.NO_EXPLICIT_RECEIVER
+        override fun getValueArguments(): MutableMap<ValueParameterDescriptor, ResolvedValueArgument> = mutableMapOf()
+        override fun getValueArgumentsByIndex(): MutableList<ResolvedValueArgument> = mutableListOf()
+        override fun getArgumentMapping(valueArgument: ValueArgument) = ArgumentUnmapped
+        override fun getTypeArguments(): MutableMap<TypeParameterDescriptor, KotlinType> = mutableMapOf()
+        override fun getDataFlowInfoForArguments(): DataFlowInfoForArguments = throw IllegalStateException()
+        override fun getSmartCastDispatchReceiverType(): KotlinType? = null
+    }
 }
 
 fun definePackageAlias(name: String, varName: JsName, tag: String, parentRef: JsExpression): JsStatement {

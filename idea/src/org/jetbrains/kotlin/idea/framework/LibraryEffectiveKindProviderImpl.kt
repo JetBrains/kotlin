@@ -23,7 +23,7 @@ class LibraryEffectiveKindProviderImpl(project: Project) : LibraryEffectiveKindP
         project.messageBus.connect(project).subscribe(
                 ProjectTopics.PROJECT_ROOTS,
                 object : ModuleRootListener {
-                    override fun rootsChanged(event: ModuleRootEvent?) {
+                    override fun rootsChanged(event: ModuleRootEvent) {
                         synchronized(effectiveKindMap) {
                             effectiveKindMap.clear()
                         }

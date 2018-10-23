@@ -29,11 +29,32 @@ import org.jetbrains.plugins.gradle.tooling.ErrorMessageBuilder
 import java.io.Serializable
 import java.lang.Exception
 
+interface DumpedPluginModel {
+    val className: String
+
+    // May contain primitives, Strings and collections of primitives/Strings
+    val args: Array<*>
+
+    operator fun component1() = className
+    operator fun component2() = args
+}
+
+class DumpedPluginModelImpl(
+    override val className: String,
+    override val args: Array<*>
+) : DumpedPluginModel, Serializable {
+    constructor(clazz: Class<*>, vararg args: Any?) : this(clazz.canonicalName, args)
+}
+
 interface AnnotationBasedPluginModel : Serializable {
     val annotations: List<String>
     val presets: List<String>
 
-    fun copy(): AnnotationBasedPluginModel
+    /*
+        Objects returned from Gradle importer are implicitly wrapped in a proxy that can potentially leak internal Gradle structures.
+        So we need a way to safely serialize the arbitrary annotation plugin model.
+     */
+    fun dump(): DumpedPluginModel
 
     val isEnabled get() = annotations.isNotEmpty() || presets.isNotEmpty()
 }
@@ -58,7 +79,12 @@ abstract class AnnotationBasedPluginProjectResolverExtension<T : AnnotationBased
         val model = resolverCtx.getExtraProject(gradleModule, modelClass)
 
         if (model != null) {
-            ideModule.putCopyableUserData(userDataKey, model.copy() as T)
+            val (className, args) = model.dump()
+
+            @Suppress("UNCHECKED_CAST")
+            val refurbishedModel = Class.forName(className).constructors.single().newInstance(*args) as T
+
+            ideModule.putCopyableUserData(userDataKey, refurbishedModel)
         }
 
         super.populateModuleExtraModels(gradleModule, ideModule)
