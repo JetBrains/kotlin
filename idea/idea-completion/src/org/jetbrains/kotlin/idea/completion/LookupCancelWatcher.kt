@@ -38,7 +38,7 @@ class LookupCancelWatcher(val project: Project) : ProjectComponent {
         private var marker: RangeMarker? = editor.document.createRangeMarker(offset, offset)
 
         // forget about auto-popup cancellation when the caret is moved to the start or before it
-        private var editorListener: CaretListener? = object : CaretAdapter() {
+        private var editorListener: CaretListener? = object : CaretListener {
             override fun caretPositionChanged(e: CaretEvent) {
                 if (!marker!!.isValid || editor.logicalPositionToOffset(e.newPosition) <= offset) {
                     dispose()
@@ -78,7 +78,7 @@ class LookupCancelWatcher(val project: Project) : ProjectComponent {
         return lastReminiscence?.matches(editor, offset) ?: false
     }
 
-    private val lookupCancelListener = object : LookupAdapter() {
+    private val lookupCancelListener = object : LookupListener {
         override fun lookupCanceled(event: LookupEvent) {
             val lookup = event.lookup
             if (event.isCanceledExplicitly && lookup.isCompletion) {
@@ -91,18 +91,34 @@ class LookupCancelWatcher(val project: Project) : ProjectComponent {
                 }
             }
         }
+
+        override fun itemSelected(event: LookupEvent) {
+            // BUNCH: 183
+            // Has default implementation since 183
+        }
+
+        override fun currentItemChanged(event: LookupEvent) {
+            // BUNCH: 183
+            // Has default implementation since 183
+        }
     }
 
     override fun initComponent() {
         EditorFactory.getInstance().addEditorFactoryListener(
-                object : EditorFactoryAdapter() {
-                    override fun editorReleased(event: EditorFactoryEvent) {
-                        if (lastReminiscence?.editor == event.editor) {
-                            lastReminiscence!!.dispose()
-                        }
+            object : EditorFactoryListener {
+                override fun editorReleased(event: EditorFactoryEvent) {
+                    if (lastReminiscence?.editor == event.editor) {
+                        lastReminiscence!!.dispose()
                     }
-                },
-                myProject)
+                }
+
+                override fun editorCreated(event: EditorFactoryEvent) {
+                    // BUNCH: 183 Has default implementation since 183
+                    // Do nothing
+                }
+            },
+            project
+        )
 
         LookupManager.getInstance(project).addPropertyChangeListener { event ->
             if (event.propertyName == LookupManager.PROP_ACTIVE_LOOKUP) {
