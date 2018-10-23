@@ -25,6 +25,7 @@ import com.intellij.openapi.roots.ExternalProjectSystemRegistry
 import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.roots.ModuleRootModel
 import com.intellij.openapi.roots.ProjectRootManager
+import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.cli.common.arguments.*
@@ -41,7 +42,11 @@ import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.platform.IdePlatform
 import org.jetbrains.kotlin.platform.IdePlatformKind
 import org.jetbrains.kotlin.platform.impl.JvmIdePlatformKind
+import org.jetbrains.kotlin.psi.NotNullableUserDataProperty
 import kotlin.reflect.KProperty1
+
+var Module.hasExternalSdkConfiguration: Boolean
+        by NotNullableUserDataProperty(Key.create<Boolean>("HAS_EXTERNAL_SDK_CONFIGURATION"), false)
 
 private fun getDefaultTargetPlatform(module: Module, rootModel: ModuleRootModel?): IdePlatform<*, *> {
     val platformKind = IdePlatformKind.ALL_KINDS.firstOrNull {
@@ -231,7 +236,7 @@ private val CommonCompilerArguments.ignoredFields: List<String>
 
 private fun Module.configureSdkIfPossible(compilerArguments: CommonCompilerArguments, modelsProvider: IdeModifiableModelsProvider) {
     // SDK for Android module is already configured by Android plugin at this point
-    if (isAndroidModule(modelsProvider)) return
+    if (isAndroidModule(modelsProvider) || hasNonOverriddenExternalSdkConfiguration(compilerArguments)) return
 
     val projectSdk = ProjectRootManager.getInstance(project).projectSdk
     val allSdks = ProjectJdkTable.getInstance().allJdks
@@ -260,6 +265,9 @@ private fun Module.configureSdkIfPossible(compilerArguments: CommonCompilerArgum
         rootModel.sdk = sdk
     }
 }
+
+private fun Module.hasNonOverriddenExternalSdkConfiguration(compilerArguments: CommonCompilerArguments): Boolean =
+    hasExternalSdkConfiguration && (compilerArguments !is K2JVMCompilerArguments || compilerArguments.jdkHome == null)
 
 fun parseCompilerArgumentsToFacet(
     arguments: List<String>,

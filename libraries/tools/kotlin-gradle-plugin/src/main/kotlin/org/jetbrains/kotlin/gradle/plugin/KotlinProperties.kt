@@ -72,13 +72,12 @@ internal class PropertiesProvider(private val project: Project) {
         get() = booleanProperty("kotlin.useFallbackCompilerSearch")
 
     private fun booleanProperty(propName: String): Boolean? =
-            property(propName)?.toBoolean()
+        property(propName)?.toBoolean()
 
     private fun property(propName: String): String? =
-            if (project.hasProperty(propName)) {
-                project.property(propName) as? String
-            }
-            else {
-                localProperties.getProperty(propName)
-            }
+        if (project.hasProperty(propName)) {
+            project.property(propName) as? String
+        } else {
+            localProperties.getProperty(propName)
+        }
 }

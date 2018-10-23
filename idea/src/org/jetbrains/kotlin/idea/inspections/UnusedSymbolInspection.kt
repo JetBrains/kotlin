@@ -67,6 +67,7 @@ import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
+import org.jetbrains.kotlin.resolve.isInlineClassType
 import org.jetbrains.kotlin.util.findCallableMemberBySignature
 import java.awt.GridBagConstraints
 import java.awt.GridBagLayout
@@ -309,7 +310,7 @@ class UnusedSymbolInspection : AbstractKotlinInspection() {
             if (referenceUsed) return true
         }
 
-        if (declaration is KtCallableDeclaration && !declaration.hasModifier(KtTokens.INTERNAL_KEYWORD)) {
+        if (declaration is KtCallableDeclaration && declaration.canBeHandledByLightMethods(descriptor)) {
             val lightMethods = declaration.toLightMethods()
             if (lightMethods.isNotEmpty()) {
                 val lightMethodsUsed = lightMethods.any { method ->
@@ -321,6 +322,24 @@ class UnusedSymbolInspection : AbstractKotlinInspection() {
         }
 
         return referenceUsed
+    }
+
+    private fun KtCallableDeclaration.canBeHandledByLightMethods(descriptor: DeclarationDescriptor?): Boolean {
+        return when {
+            hasModifier(KtTokens.INTERNAL_KEYWORD) -> false
+            this !is KtNamedFunction -> true
+            descriptor !is FunctionDescriptor -> true
+            else -> !descriptor.hasInlineClassParameters()
+        }
+
+    }
+
+    private fun FunctionDescriptor.hasInlineClassParameters(): Boolean {
+        return when {
+            dispatchReceiverParameter?.type?.isInlineClassType() == true -> true
+            extensionReceiverParameter?.type?.isInlineClassType() == true -> true
+            else -> valueParameters.any { it.type.isInlineClassType() }
+        }
     }
 
     private fun hasOverrides(declaration: KtNamedDeclaration, useScope: SearchScope): Boolean =

@@ -11,9 +11,9 @@ import org.jetbrains.jps.incremental.FSOperations
 import org.jetbrains.jps.incremental.GlobalContextKey
 import org.jetbrains.jps.incremental.fs.CompilationRound
 import org.jetbrains.kotlin.incremental.LookupSymbol
-import org.jetbrains.kotlin.incremental.storage.version.CacheAttributesDiff
-import org.jetbrains.kotlin.incremental.storage.version.CacheStatus
-import org.jetbrains.kotlin.incremental.storage.version.loadDiff
+import org.jetbrains.kotlin.jps.incremental.CacheAttributesDiff
+import org.jetbrains.kotlin.jps.incremental.CacheStatus
+import org.jetbrains.kotlin.jps.incremental.loadDiff
 import org.jetbrains.kotlin.jps.incremental.*
 import org.jetbrains.kotlin.jps.targets.KotlinTargetsIndex
 import org.jetbrains.kotlin.jps.targets.KotlinTargetsIndexBuilder
@@ -149,7 +149,7 @@ class KotlinCompileContext(val jpsContext: CompileContext) {
      */
     fun ensureLookupsCacheAttributesSaved() {
         if (lookupAttributesSaved.compareAndSet(false, true)) {
-            initialLookupsCacheStateDiff.saveExpectedIfNeeded()
+            initialLookupsCacheStateDiff.manager.writeVersion()
         }
     }
 
@@ -207,7 +207,7 @@ class KotlinCompileContext(val jpsContext: CompileContext) {
     private fun clearLookupCache() {
         KotlinBuilder.LOG.info("Clearing lookup cache")
         dataManager.cleanLookupStorage(KotlinBuilder.LOG)
-        initialLookupsCacheStateDiff.saveExpectedIfNeeded()
+        initialLookupsCacheStateDiff.manager.writeVersion()
     }
 
     fun cleanupCaches() {

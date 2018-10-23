@@ -1,5 +1,5 @@
 // !LANGUAGE: +MultiPlatformProjects
-// IGNORE_BACKEND: JVM_IR, JS_IR, NATIVE
+// IGNORE_BACKEND: JVM_IR, NATIVE
 // FILE: common.kt
 
 expect interface I {

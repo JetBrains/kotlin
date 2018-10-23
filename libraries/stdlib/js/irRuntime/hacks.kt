@@ -42,3 +42,18 @@ public inline fun floatArrayOf(vararg a: Float) = a
 public inline fun doubleArrayOf(vararg a: Double) = a
 
 public inline fun longArrayOf(vararg a: Long) = a
+
+
+@PublishedApi
+internal fun throwUninitializedPropertyAccessException(name: String): Nothing =
+    throw UninitializedPropertyAccessException("lateinit property $name has not been initialized")
+
+fun THROW_ISE() {
+    throw IllegalStateException()
+}
+fun THROW_CCE() {
+    throw ClassCastException()
+}
+fun THROW_NPE() {
+    throw NullPointerException()
+}

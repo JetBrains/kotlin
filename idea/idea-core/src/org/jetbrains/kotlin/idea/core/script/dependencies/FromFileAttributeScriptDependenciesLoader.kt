@@ -15,7 +15,7 @@ class FromFileAttributeScriptDependenciesLoader(
     file: VirtualFile,
     scriptDef: KotlinScriptDefinition,
     project: Project
-) : ScriptDependenciesLoader(file, scriptDef, project, true) {
+) : ScriptDependenciesLoader(file, scriptDef, project) {
 
     override fun loadDependencies() {
         val deserializedDependencies = file.scriptDependencies ?: return

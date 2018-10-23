@@ -126,8 +126,8 @@ public class SimpleFunctionDescriptorImpl extends FunctionDescriptorImpl impleme
 
     @NotNull
     @Override
+    @SuppressWarnings("unchecked")
     public CopyBuilder<? extends SimpleFunctionDescriptor> newCopyBuilder() {
-        //noinspection unchecked
         return (CopyBuilder<? extends SimpleFunctionDescriptor>) super.newCopyBuilder();
     }
 }

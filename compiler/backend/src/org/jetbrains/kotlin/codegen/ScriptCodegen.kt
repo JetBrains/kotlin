@@ -77,7 +77,7 @@ class ScriptCodegen private constructor(
             classBuilder: ClassBuilder,
             methodContext: MethodContext
     ) {
-        val scriptDefinition = scriptContext.script.kotlinScriptDefinition.value
+        val scriptDefinition = scriptContext.script.kotlinScriptDefinition
 
         val jvmSignature = typeMapper.mapScriptSignature(
             scriptDescriptor,

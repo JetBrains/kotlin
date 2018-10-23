@@ -15,11 +15,12 @@ import org.jetbrains.kotlin.idea.codeInsight.gradle.GradleImportingTestCase
 import org.jetbrains.kotlin.platform.impl.CommonIdePlatformKind
 import org.jetbrains.kotlin.platform.impl.JsIdePlatformKind
 import org.jetbrains.kotlin.platform.impl.JvmIdePlatformKind
+import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.junit.Test
 import org.junit.runners.Parameterized
 
 class NewMultiplatformProjectImportingTest : GradleImportingTestCase() {
-    private val kotlinVersion = "1.3.0-rc-6"
+    private val kotlinVersion = "1.3.0-rc-146"
 
     @Test
     fun testProjectDependency() {
@@ -139,9 +140,9 @@ class NewMultiplatformProjectImportingTest : GradleImportingTestCase() {
             }
             module("app_commonTest") {
                 platform(CommonIdePlatformKind.Platform)
-                libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:$kotlinVersion", DependencyScope.COMPILE)
-                moduleDependency("lib_commonMain", DependencyScope.COMPILE)
-                moduleDependency("app_commonMain", DependencyScope.COMPILE)
+                libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:$kotlinVersion", DependencyScope.TEST)
+                moduleDependency("lib_commonMain", DependencyScope.TEST)
+                moduleDependency("app_commonMain", DependencyScope.TEST)
                 sourceFolder("app/src/commonTest/kotlin", KotlinSourceRootType.TestSource)
                 sourceFolder("app/src/commonTest/resources", KotlinResourceRootType.TestResource)
                 inheritProjectOutput()
@@ -159,13 +160,13 @@ class NewMultiplatformProjectImportingTest : GradleImportingTestCase() {
             }
             module("app_jsTest") {
                 platform(JsIdePlatformKind.Platform)
-                libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-js:$kotlinVersion", DependencyScope.COMPILE)
-                libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:$kotlinVersion", DependencyScope.COMPILE)
-                moduleDependency("lib_jsMain", DependencyScope.COMPILE)
-                moduleDependency("lib_commonMain", DependencyScope.COMPILE)
-                moduleDependency("app_commonMain", DependencyScope.COMPILE)
-                moduleDependency("app_commonTest", DependencyScope.COMPILE)
-                moduleDependency("app_jsMain", DependencyScope.COMPILE)
+                libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-js:$kotlinVersion", DependencyScope.TEST)
+                libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:$kotlinVersion", DependencyScope.TEST)
+                moduleDependency("lib_jsMain", DependencyScope.TEST)
+                moduleDependency("lib_commonMain", DependencyScope.TEST)
+                moduleDependency("app_commonMain", DependencyScope.TEST)
+                moduleDependency("app_commonTest", DependencyScope.TEST)
+                moduleDependency("app_jsMain", DependencyScope.TEST)
                 sourceFolder("app/src/jsTest/kotlin", KotlinSourceRootType.TestSource)
                 sourceFolder("app/src/jsTest/resources", KotlinResourceRootType.TestResource)
                 outputPath("app/build/classes/kotlin/js/test", false)
@@ -185,15 +186,15 @@ class NewMultiplatformProjectImportingTest : GradleImportingTestCase() {
             }
             module("app_jvmTest") {
                 platform(JvmIdePlatformKind.Platform(JvmTarget.JVM_1_6))
-                libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion", DependencyScope.COMPILE)
-                libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:$kotlinVersion", DependencyScope.COMPILE)
-                libraryDependency("Gradle: org.jetbrains:annotations:13.0", DependencyScope.COMPILE)
-                moduleDependency("lib_jvmMain", DependencyScope.COMPILE)
-                moduleDependency("lib_commonMain", DependencyScope.COMPILE)
-                moduleDependency("app_test", DependencyScope.COMPILE)
-                moduleDependency("app_jvmMain", DependencyScope.COMPILE)
-                moduleDependency("app_commonMain", DependencyScope.COMPILE)
-                moduleDependency("app_commonTest", DependencyScope.COMPILE)
+                libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion", DependencyScope.TEST)
+                libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:$kotlinVersion", DependencyScope.TEST)
+                libraryDependency("Gradle: org.jetbrains:annotations:13.0", DependencyScope.TEST)
+                moduleDependency("lib_jvmMain", DependencyScope.TEST)
+                moduleDependency("lib_commonMain", DependencyScope.TEST)
+                moduleDependency("app_test", DependencyScope.TEST)
+                moduleDependency("app_jvmMain", DependencyScope.TEST)
+                moduleDependency("app_commonMain", DependencyScope.TEST)
+                moduleDependency("app_commonTest", DependencyScope.TEST)
                 sourceFolder("app/src/jvmTest/kotlin", JavaSourceRootType.TEST_SOURCE)
                 sourceFolder("app/src/jvmTest/resources", JavaResourceRootType.TEST_RESOURCE)
                 outputPath("app/build/classes/kotlin/jvm/test", false)
@@ -211,11 +212,11 @@ class NewMultiplatformProjectImportingTest : GradleImportingTestCase() {
             }
             module("app_test") {
                 platform(JvmIdePlatformKind.Platform(JvmTarget.JVM_1_8))
-                libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion", DependencyScope.COMPILE)
-                libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:$kotlinVersion", DependencyScope.COMPILE)
-                libraryDependency("Gradle: org.jetbrains:annotations:13.0", DependencyScope.COMPILE)
-                moduleDependency("lib_commonMain", DependencyScope.COMPILE)
-                moduleDependency("app_main", DependencyScope.COMPILE)
+                libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion", DependencyScope.TEST)
+                libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:$kotlinVersion", DependencyScope.TEST)
+                libraryDependency("Gradle: org.jetbrains:annotations:13.0", DependencyScope.TEST)
+                moduleDependency("lib_commonMain", DependencyScope.TEST)
+                moduleDependency("app_main", DependencyScope.TEST)
                 sourceFolder("app/src/test/java", JavaSourceRootType.TEST_SOURCE)
                 sourceFolder("app/src/test/kotlin", JavaSourceRootType.TEST_SOURCE)
                 sourceFolder("app/src/test/resources", JavaResourceRootType.TEST_RESOURCE)
@@ -231,8 +232,8 @@ class NewMultiplatformProjectImportingTest : GradleImportingTestCase() {
             }
             module("lib_commonTest") {
                 platform(CommonIdePlatformKind.Platform)
-                libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:$kotlinVersion", DependencyScope.COMPILE)
-                moduleDependency("lib_commonMain", DependencyScope.COMPILE)
+                libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:$kotlinVersion", DependencyScope.TEST)
+                moduleDependency("lib_commonMain", DependencyScope.TEST)
                 sourceFolder("lib/src/commonTest/kotlin", KotlinSourceRootType.TestSource)
                 sourceFolder("lib/src/commonTest/resources", KotlinResourceRootType.TestResource)
                 inheritProjectOutput()
@@ -248,11 +249,11 @@ class NewMultiplatformProjectImportingTest : GradleImportingTestCase() {
             }
             module("lib_jsTest") {
                 platform(JsIdePlatformKind.Platform)
-                libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-js:$kotlinVersion", DependencyScope.COMPILE)
-                libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:$kotlinVersion", DependencyScope.COMPILE)
-                moduleDependency("lib_commonMain", DependencyScope.COMPILE)
-                moduleDependency("lib_commonTest", DependencyScope.COMPILE)
-                moduleDependency("lib_jsMain", DependencyScope.COMPILE)
+                libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-js:$kotlinVersion", DependencyScope.TEST)
+                libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:$kotlinVersion", DependencyScope.TEST)
+                moduleDependency("lib_commonMain", DependencyScope.TEST)
+                moduleDependency("lib_commonTest", DependencyScope.TEST)
+                moduleDependency("lib_jsMain", DependencyScope.TEST)
                 sourceFolder("lib/src/jsTest/kotlin", KotlinSourceRootType.TestSource)
                 sourceFolder("lib/src/jsTest/resources", KotlinResourceRootType.TestResource)
                 outputPath("lib/build/classes/kotlin/js/test", false)
@@ -269,12 +270,12 @@ class NewMultiplatformProjectImportingTest : GradleImportingTestCase() {
             }
             module("lib_jvmTest") {
                 platform(JvmIdePlatformKind.Platform(JvmTarget.JVM_1_6))
-                libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion", DependencyScope.COMPILE)
-                libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:$kotlinVersion", DependencyScope.COMPILE)
-                libraryDependency("Gradle: org.jetbrains:annotations:13.0", DependencyScope.COMPILE)
-                moduleDependency("lib_commonTest", DependencyScope.COMPILE)
-                moduleDependency("lib_commonMain", DependencyScope.COMPILE)
-                moduleDependency("lib_jvmMain", DependencyScope.COMPILE)
+                libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion", DependencyScope.TEST)
+                libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:$kotlinVersion", DependencyScope.TEST)
+                libraryDependency("Gradle: org.jetbrains:annotations:13.0", DependencyScope.TEST)
+                moduleDependency("lib_commonTest", DependencyScope.TEST)
+                moduleDependency("lib_commonMain", DependencyScope.TEST)
+                moduleDependency("lib_jvmMain", DependencyScope.TEST)
                 sourceFolder("lib/src/jvmTest/kotlin", JavaSourceRootType.TEST_SOURCE)
                 sourceFolder("lib/src/jvmTest/resources", JavaResourceRootType.TEST_RESOURCE)
                 outputPath("lib/build/classes/kotlin/jvm/test", false)
@@ -392,6 +393,380 @@ class NewMultiplatformProjectImportingTest : GradleImportingTestCase() {
             module("project_jvmTest")
             module("project_main")
             module("project_test")
+        }
+    }
+
+    @Test
+    fun testAndroidDependencyOnMPP() {
+        createProjectSubFile(
+            "settings.gradle",
+            """
+                include ':app'
+                include ':shared'
+            """.trimIndent()
+        )
+        createProjectSubFile(
+            "build.gradle",
+            """
+                buildscript {
+                    ext.kotlin_version = '$kotlinVersion'
+                    repositories {
+                        google()
+                        jcenter()
+                        maven { url 'https://dl.bintray.com/kotlin/kotlin-dev' }
+                    }
+                    dependencies {
+                        classpath 'com.android.tools.build:gradle:3.2.0'
+                        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${'$'}kotlin_version"
+                    }
+                }
+
+                allprojects {
+                    repositories {
+                        google()
+                        jcenter()
+                        maven { url 'https://dl.bintray.com/kotlin/kotlin-dev' }
+                    }
+                }
+
+                task clean(type: Delete) {
+                    delete rootProject.buildDir
+                }
+            """.trimIndent()
+        )
+        createProjectSubFile(
+            "local.properties",
+            "sdk.dir=/${KotlinTestUtils.getAndroidSdkSystemIndependentPath()}"
+        )
+        createProjectSubFile(
+            "shared/build.gradle",
+            """
+                apply plugin: 'kotlin-multiplatform'
+
+                kotlin {
+                    targets {
+                        fromPreset(presets.jvm, 'android')
+
+                        fromPreset(presets.iosArm64, 'iOS') {
+                            compilations.main.outputKinds('FRAMEWORK')
+                        }
+                    }
+
+                    sourceSets {
+                        commonMain.dependencies {
+                            api 'org.jetbrains.kotlin:kotlin-stdlib-common'
+                        }
+
+                        androidMain.dependencies {
+                            api 'org.jetbrains.kotlin:kotlin-stdlib'
+                        }
+                    }
+                }
+
+                configurations {
+                    compileClasspath
+                }
+            """.trimIndent()
+        )
+
+        createProjectSubFile(
+            "app/build.gradle",
+            """
+                apply plugin: 'com.android.application'
+
+                apply plugin: 'kotlin-android'
+
+                apply plugin: 'kotlin-android-extensions'
+
+                android {
+                    compileSdkVersion 26
+                    defaultConfig {
+                        applicationId "jetbrains.org.myapplication"
+                        minSdkVersion 15
+                        targetSdkVersion 26
+                        versionCode 1
+                        versionName "1.0"
+                        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+                    }
+                    buildTypes {
+                        release {
+                            minifyEnabled false
+                            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+                        }
+                    }
+                }
+
+                dependencies {
+                    implementation project(':shared')
+                    implementation fileTree(dir: 'libs', include: ['*.jar'])
+                    implementation"org.jetbrains.kotlin:kotlin-stdlib-jdk7:${'$'}kotlin_version"
+                    implementation 'com.android.support:appcompat-v7:27.1.1'
+                    implementation 'com.android.support.constraint:constraint-layout:1.1.3'
+                    testImplementation 'junit:junit:4.12'
+                    androidTestImplementation 'com.android.support.test:runner:1.0.2'
+                    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+                }
+            """.trimIndent()
+        )
+
+        importProject()
+
+        checkProjectStructure {
+            module("project")
+            module("app") {
+                libraryDependency("Gradle: android-android-26", DependencyScope.COMPILE)
+                libraryDependency("Gradle: android.arch.core:common:1.1.0@jar", DependencyScope.COMPILE)
+                libraryDependency("Gradle: android.arch.core:runtime-1.1.0", DependencyScope.COMPILE)
+                libraryDependency("Gradle: android.arch.lifecycle:common:1.1.0@jar", DependencyScope.COMPILE)
+                libraryDependency("Gradle: android.arch.lifecycle:livedata-core-1.1.0", DependencyScope.COMPILE)
+                libraryDependency("Gradle: android.arch.lifecycle:runtime-1.1.0", DependencyScope.COMPILE)
+                libraryDependency("Gradle: android.arch.lifecycle:viewmodel-1.1.0", DependencyScope.COMPILE)
+                libraryDependency("Gradle: com.android.support.constraint:constraint-layout-1.1.3", DependencyScope.COMPILE)
+                libraryDependency("Gradle: com.android.support.constraint:constraint-layout-solver:1.1.3@jar", DependencyScope.COMPILE)
+                libraryDependency("Gradle: com.android.support.test.espresso:espresso-core-3.0.2", DependencyScope.TEST)
+                libraryDependency("Gradle: com.android.support.test.espresso:espresso-idling-resource-3.0.2", DependencyScope.TEST)
+                libraryDependency("Gradle: com.android.support.test:monitor-1.0.2", DependencyScope.TEST)
+                libraryDependency("Gradle: com.android.support.test:runner-1.0.2", DependencyScope.TEST)
+                libraryDependency("Gradle: com.android.support:animated-vector-drawable-27.1.1", DependencyScope.COMPILE)
+                libraryDependency("Gradle: com.android.support:appcompat-v7-27.1.1", DependencyScope.COMPILE)
+                libraryDependency("Gradle: com.android.support:support-annotations:27.1.1@jar", DependencyScope.COMPILE)
+                libraryDependency("Gradle: com.android.support:support-compat-27.1.1", DependencyScope.COMPILE)
+                libraryDependency("Gradle: com.android.support:support-core-ui-27.1.1", DependencyScope.COMPILE)
+                libraryDependency("Gradle: com.android.support:support-core-utils-27.1.1", DependencyScope.COMPILE)
+                libraryDependency("Gradle: com.android.support:support-fragment-27.1.1", DependencyScope.COMPILE)
+                libraryDependency("Gradle: com.android.support:support-vector-drawable-27.1.1", DependencyScope.COMPILE)
+                libraryDependency("Gradle: com.google.code.findbugs:jsr305:2.0.1@jar", DependencyScope.TEST)
+                libraryDependency("Gradle: com.squareup:javawriter:2.1.1@jar", DependencyScope.TEST)
+                libraryDependency("Gradle: javax.inject:javax.inject:1@jar", DependencyScope.TEST)
+                libraryDependency("Gradle: junit:junit:4.12@jar", DependencyScope.TEST)
+                libraryDependency("Gradle: net.sf.kxml:kxml2:2.3.0@jar", DependencyScope.TEST)
+                libraryDependency("Gradle: org.hamcrest:hamcrest-core:1.3@jar", DependencyScope.TEST)
+                libraryDependency("Gradle: org.hamcrest:hamcrest-integration:1.3@jar", DependencyScope.TEST)
+                libraryDependency("Gradle: org.hamcrest:hamcrest-library:1.3@jar", DependencyScope.TEST)
+                libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:$kotlinVersion@jar", DependencyScope.COMPILE)
+                libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlinVersion@jar", DependencyScope.COMPILE)
+                libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion@jar", DependencyScope.COMPILE)
+                libraryDependency("Gradle: org.jetbrains:annotations:13.0@jar", DependencyScope.COMPILE)
+                moduleDependency("shared", DependencyScope.COMPILE)
+                moduleDependency("shared_androidMain", DependencyScope.COMPILE)
+                moduleDependency("shared_androidTest", DependencyScope.TEST)
+                moduleDependency("shared_commonMain", DependencyScope.COMPILE)
+                moduleDependency("shared_commonTest", DependencyScope.TEST)
+            }
+            module("shared")
+            module("shared_commonMain") {
+                libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:1.3.0-rc-146", DependencyScope.COMPILE)
+                sourceFolder("shared/src/commonMain/kotlin", KotlinSourceRootType.Source)
+                sourceFolder("shared/src/commonMain/resources", KotlinResourceRootType.Resource)
+            }
+            module("shared_commonTest") {
+                libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:1.3.0-rc-146", DependencyScope.TEST)
+                moduleDependency("shared_commonMain", DependencyScope.TEST)
+                sourceFolder("shared/src/commonTest/kotlin", KotlinSourceRootType.TestSource)
+                sourceFolder("shared/src/commonTest/resources", KotlinResourceRootType.TestResource)
+            }
+            module("shared_androidMain") {
+                libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:1.3.0-rc-146", DependencyScope.COMPILE)
+                libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib:1.3.0-rc-146", DependencyScope.COMPILE)
+                libraryDependency("Gradle: org.jetbrains:annotations:13.0", DependencyScope.COMPILE)
+                moduleDependency("shared_commonMain", DependencyScope.COMPILE)
+                sourceFolder("shared/src/androidMain/kotlin", JavaSourceRootType.SOURCE)
+                sourceFolder("shared/src/androidMain/resources", JavaResourceRootType.RESOURCE)
+            }
+            module("shared_androidTest") {
+                libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:1.3.0-rc-146", DependencyScope.TEST)
+                libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib:1.3.0-rc-146", DependencyScope.TEST)
+                libraryDependency("Gradle: org.jetbrains:annotations:13.0", DependencyScope.TEST)
+                moduleDependency("shared_androidMain", DependencyScope.TEST)
+                moduleDependency("shared_commonMain", DependencyScope.TEST)
+                moduleDependency("shared_commonTest", DependencyScope.TEST)
+                sourceFolder("shared/src/androidTest/kotlin", JavaSourceRootType.TEST_SOURCE)
+                sourceFolder("shared/src/androidTest/resources", JavaResourceRootType.TEST_RESOURCE)
+            }
+            module("shared_iOSMain") {
+                libraryDependency("Gradle: Kotlin/Native:stdlib:0.9.3", DependencyScope.COMPILE)
+                libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:1.3.0-rc-146", DependencyScope.COMPILE)
+                moduleDependency("shared_commonMain", DependencyScope.COMPILE)
+                sourceFolder("shared/src/iOSMain/kotlin", KotlinSourceRootType.Source)
+                sourceFolder("shared/src/iOSMain/resources", KotlinResourceRootType.Resource)
+            }
+            module("shared_iOSTest") {
+                libraryDependency("Gradle: Kotlin/Native:stdlib:0.9.3", DependencyScope.TEST)
+                libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:1.3.0-rc-146", DependencyScope.TEST)
+                moduleDependency("shared_iOSMain", DependencyScope.TEST)
+                moduleDependency("shared_commonMain", DependencyScope.TEST)
+                moduleDependency("shared_commonTest", DependencyScope.TEST)
+                sourceFolder("shared/src/iOSTest/kotlin", KotlinSourceRootType.TestSource)
+                sourceFolder("shared/src/iOSTest/resources", KotlinResourceRootType.TestResource)
+            }
+        }
+    }
+
+    @Test
+    fun testNestedDependencies() {
+        createProjectSubFile(
+            "settings.gradle",
+            "include 'aaa', 'bbb', 'ccc'"
+        )
+        createProjectSubFile(
+            "build.gradle",
+            """
+                buildscript {
+                    repositories {
+                        mavenLocal()
+                        jcenter()
+                        maven { url 'https://dl.bintray.com/kotlin/kotlin-dev' }
+                    }
+                    dependencies {
+                        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
+                    }
+                }
+
+                allprojects {
+                    repositories {
+                        mavenLocal()
+                        jcenter()
+                        maven { url 'https://dl.bintray.com/kotlin/kotlin-dev' }
+                    }
+                }
+            """.trimIndent()
+        )
+        createProjectSubFile(
+            "aaa/build.gradle",
+            """
+                apply plugin: 'kotlin-multiplatform'
+
+                kotlin {
+                    sourceSets {
+                        commonMain {
+                            dependencies {
+                                implementation 'org.jetbrains.kotlin:kotlin-stdlib-common'
+                                api project(':bbb')
+                            }
+                        }
+                    }
+                    targets {
+                        fromPreset(presets.jvm, 'jvm')
+                    }
+                }
+            """.trimIndent()
+        )
+        createProjectSubFile(
+            "bbb/build.gradle",
+            """
+                apply plugin: 'kotlin-multiplatform'
+
+                kotlin {
+                    sourceSets {
+                        commonMain {
+                            dependencies {
+                                implementation 'org.jetbrains.kotlin:kotlin-stdlib-common'
+                                api project(':ccc')
+                            }
+                        }
+                    }
+                    targets {
+                        fromPreset(presets.jvm, 'jvm')
+                    }
+                }
+            """.trimIndent()
+        )
+        createProjectSubFile(
+            "ccc/build.gradle",
+            """
+                apply plugin: 'kotlin-multiplatform'
+
+                kotlin {
+                    sourceSets {
+                        commonMain {
+                            dependencies {
+                                implementation 'org.jetbrains.kotlin:kotlin-stdlib-common'
+                            }
+                        }
+                    }
+                    targets {
+                        fromPreset(presets.jvm, 'jvm')
+                    }
+                }
+            """.trimIndent()
+        )
+
+        importProject()
+
+        checkProjectStructure(exhaustiveSourceSourceRootList = false) {
+            module("project")
+            module("aaa")
+            module("aaa_commonMain") {
+                libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:1.3.0-rc-146", DependencyScope.COMPILE)
+                moduleDependency("bbb_commonMain", DependencyScope.COMPILE)
+                moduleDependency("ccc_commonMain", DependencyScope.COMPILE)
+            }
+            module("aaa_commonTest") {
+                libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:1.3.0-rc-146", DependencyScope.TEST)
+                moduleDependency("aaa_commonMain", DependencyScope.TEST)
+                moduleDependency("bbb_commonMain", DependencyScope.TEST)
+                moduleDependency("ccc_commonMain", DependencyScope.TEST)
+            }
+            module("aaa_jvmMain") {
+                libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:1.3.0-rc-146", DependencyScope.COMPILE)
+                moduleDependency("aaa_commonMain", DependencyScope.COMPILE)
+                moduleDependency("bbb_commonMain", DependencyScope.COMPILE)
+                moduleDependency("bbb_jvmMain", DependencyScope.COMPILE)
+                moduleDependency("ccc_commonMain", DependencyScope.COMPILE)
+                moduleDependency("ccc_jvmMain", DependencyScope.COMPILE)
+            }
+            module("aaa_jvmTest") {
+                libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:1.3.0-rc-146", DependencyScope.TEST)
+                moduleDependency("aaa_commonMain", DependencyScope.TEST)
+                moduleDependency("aaa_commonTest", DependencyScope.TEST)
+                moduleDependency("aaa_jvmMain", DependencyScope.TEST)
+                moduleDependency("bbb_commonMain", DependencyScope.TEST)
+                moduleDependency("bbb_jvmMain", DependencyScope.TEST)
+                moduleDependency("ccc_commonMain", DependencyScope.TEST)
+                moduleDependency("ccc_jvmMain", DependencyScope.TEST)
+            }
+            module("bbb")
+            module("bbb_commonMain") {
+                libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:1.3.0-rc-146", DependencyScope.COMPILE)
+                moduleDependency("ccc_commonMain", DependencyScope.COMPILE)
+            }
+            module("bbb_commonTest") {
+                libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:1.3.0-rc-146", DependencyScope.TEST)
+                moduleDependency("bbb_commonMain", DependencyScope.TEST)
+                moduleDependency("ccc_commonMain", DependencyScope.TEST)
+            }
+            module("bbb_jvmMain") {
+                libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:1.3.0-rc-146", DependencyScope.COMPILE)
+                moduleDependency("bbb_commonMain", DependencyScope.COMPILE)
+                moduleDependency("ccc_commonMain", DependencyScope.COMPILE)
+                moduleDependency("ccc_jvmMain", DependencyScope.COMPILE)
+            }
+            module("bbb_jvmTest") {
+                libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:1.3.0-rc-146", DependencyScope.TEST)
+                moduleDependency("bbb_commonMain", DependencyScope.TEST)
+                moduleDependency("bbb_commonTest", DependencyScope.TEST)
+                moduleDependency("bbb_jvmMain", DependencyScope.TEST)
+                moduleDependency("ccc_commonMain", DependencyScope.TEST)
+                moduleDependency("ccc_jvmMain", DependencyScope.TEST)
+            }
+            module("ccc")
+            module("ccc_commonMain") {
+                libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:1.3.0-rc-146", DependencyScope.COMPILE)
+            }
+            module("ccc_commonTest") {
+                libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:1.3.0-rc-146", DependencyScope.TEST)
+                moduleDependency("ccc_commonMain", DependencyScope.TEST)
+            }
+            module("ccc_jvmMain") {
+                libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:1.3.0-rc-146", DependencyScope.COMPILE)
+                moduleDependency("ccc_commonMain", DependencyScope.COMPILE)
+            }
+            module("ccc_jvmTest") {
+                libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:1.3.0-rc-146", DependencyScope.TEST)
+                moduleDependency("ccc_commonMain", DependencyScope.TEST)
+                moduleDependency("ccc_commonTest", DependencyScope.TEST)
+                moduleDependency("ccc_jvmMain", DependencyScope.TEST)
+            }
         }
     }
 

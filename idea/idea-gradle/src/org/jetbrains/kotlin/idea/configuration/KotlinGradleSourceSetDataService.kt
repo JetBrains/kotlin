@@ -282,6 +282,7 @@ fun configureFacetByGradleModule(
         ideModule.compilerArgumentsBySourceSet = moduleNode.compilerArgumentsBySourceSet
         ideModule.sourceSetName = sourceSetName
     }
+    ideModule.hasExternalSdkConfiguration = sourceSetNode?.data?.sdkName != null
 
     val argsInfo = moduleNode.compilerArgumentsBySourceSet?.get(sourceSetName ?: "main")
     if (argsInfo != null) {

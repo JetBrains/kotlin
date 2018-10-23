@@ -12,12 +12,10 @@ import org.jetbrains.kotlin.idea.core.getFqNameWithImplicitPrefix
 import java.util.*
 
 class KotlinDefaultTemplatePropertiesProvider : DefaultTemplatePropertiesProvider {
-    override fun fillProperties(directory: PsiDirectory?, props: Properties?) {
-        if (directory != null && props != null) {
-            props.setProperty(
-                FileTemplate.ATTRIBUTE_PACKAGE_NAME,
-                directory.getFqNameWithImplicitPrefix().asString()
-            )
-        }
+    override fun fillProperties(directory: PsiDirectory, props: Properties) {
+        props.setProperty(
+            FileTemplate.ATTRIBUTE_PACKAGE_NAME,
+            directory.getFqNameWithImplicitPrefix().asString()
+        )
     }
 }

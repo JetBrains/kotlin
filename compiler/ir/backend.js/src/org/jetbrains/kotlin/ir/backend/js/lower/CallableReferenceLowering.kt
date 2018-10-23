@@ -42,26 +42,26 @@ class CallableReferenceLowering(val context: JsIrBackendContext) {
 
     private val newDeclarations = mutableListOf<IrDeclaration>()
 
-    fun getReferenceCollector() = object : FileLoweringPass {
+    val referenceCollector = object : FileLoweringPass {
         private val collector = CallableReferenceCollector()
         override fun lower(irFile: IrFile) = irFile.acceptVoid(collector)
-    }::lower
+    }
 
-    fun getClosureBuilder() = object : FileLoweringPass {
+    val closureBuilder = object : FileLoweringPass {
         override fun lower(irFile: IrFile) {
             newDeclarations.clear()
             buildClosures(irFile)
             irFile.declarations += newDeclarations
         }
 
-    }::lower
+    }
 
-    fun getReferenceReplacer() = object : FileLoweringPass {
+    val referenceReplacer = object : FileLoweringPass {
         private val replacer = CallableReferenceTransformer()
         override fun lower(irFile: IrFile) {
             irFile.transformChildrenVoid(replacer)
         }
-    }::lower
+    }
 
     private fun makeCallableKey(declaration: IrFunction, reference: IrCallableReference) =
         CallableReferenceKey(declaration, reference.dispatchReceiver != null, reference.extensionReceiver != null)

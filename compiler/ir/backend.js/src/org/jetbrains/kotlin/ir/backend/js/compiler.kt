@@ -6,10 +6,9 @@
 package org.jetbrains.kotlin.ir.backend.js
 
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.backend.common.FileLoweringPass
+import org.jetbrains.kotlin.backend.common.*
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.lower.*
-import org.jetbrains.kotlin.backend.common.runOnFilePostfix
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
@@ -74,10 +73,10 @@ fun compile(
         moduleFragment.files.forEach { irFile -> extension.generate(irFile, context, psi2IrContext.bindingContext) }
     }
 
-    MoveExternalDeclarationsToSeparatePlace().lower(moduleFragment.files)
-
-    moduleFragment.files.forEach(CoroutineIntrinsicLowering(context)::lower)
-    moduleFragment.files.forEach { ArrayInlineConstructorLowering(context).lower(it) }
+    MoveExternalDeclarationsToSeparatePlace().lower(moduleFragment)
+    ExpectDeclarationsRemoving(context).lower(moduleFragment)
+    CoroutineIntrinsicLowering(context).lower(moduleFragment)
+    ArrayInlineConstructorLowering(context).lower(moduleFragment)
 
     val moduleFragmentCopy = moduleFragment.deepCopyWithSymbols()
 
@@ -96,44 +95,64 @@ private fun JsIrBackendContext.performInlining(moduleFragment: IrModuleFragment)
     moduleFragment.replaceUnboundSymbols(this)
     moduleFragment.patchDeclarationParents()
 
-    moduleFragment.files.forEach { file ->
-        RemoveInlineFunctionsWithReifiedTypeParametersLowering.runOnFilePostfix(file)
-    }
+    RemoveInlineFunctionsWithReifiedTypeParametersLowering.runOnFilesPostfix(moduleFragment)
 }
 
 private fun JsIrBackendContext.lower(moduleFragment: IrModuleFragment, dependencies: List<IrModuleFragment>) {
-    moduleFragment.files.forEach(UnitMaterializationLowering(this)::lower)
-    moduleFragment.files.forEach(EnumClassLowering(this)::runOnFilePostfix)
-    moduleFragment.files.forEach(EnumUsageLowering(this)::lower)
-    moduleFragment.files.forEach(VarargLowering(this)::lower)
-    moduleFragment.files.forEach(LateinitLowering(this, true)::lower)
-    moduleFragment.files.forEach(DefaultArgumentStubGenerator(this)::runOnFilePostfix)
-    moduleFragment.files.forEach(DefaultParameterInjector(this)::runOnFilePostfix)
-    moduleFragment.files.forEach(DefaultParameterCleaner(this)::runOnFilePostfix)
-    moduleFragment.files.forEach(SharedVariablesLowering(this)::runOnFilePostfix)
-    moduleFragment.files.forEach(ReturnableBlockLowering(this)::lower)
-    moduleFragment.files.forEach(LocalDelegatedPropertiesLowering()::lower)
-    moduleFragment.files.forEach(LocalDeclarationsLowering(this)::runOnFilePostfix)
-    moduleFragment.files.forEach(InnerClassesLowering(this)::runOnFilePostfix)
-    moduleFragment.files.forEach(InnerClassConstructorCallsLowering(this)::runOnFilePostfix)
-    moduleFragment.files.forEach(SuspendFunctionsLowering(this)::lower)
-    moduleFragment.files.forEach(PropertiesLowering()::lower)
-    moduleFragment.files.forEach(InitializersLowering(this, JsLoweredDeclarationOrigin.CLASS_STATIC_INITIALIZER, false)::runOnFilePostfix)
-    moduleFragment.files.forEach(MultipleCatchesLowering(this)::lower)
-    moduleFragment.files.forEach(BridgesConstruction(this)::runOnFilePostfix)
-    moduleFragment.files.forEach(TypeOperatorLowering(this)::lower)
-    moduleFragment.files.forEach(BlockDecomposerLowering(this)::runOnFilePostfix)
-    val sctor = SecondaryCtorLowering(this)
-    (moduleFragment.files + dependencies.flatMap { it.files }).forEach(sctor.getConstructorProcessorLowering())
-    moduleFragment.files.forEach(sctor.getConstructorRedirectorLowering())
-    val clble = CallableReferenceLowering(this)
-    moduleFragment.files.forEach(clble.getReferenceCollector())
-    moduleFragment.files.forEach(clble.getClosureBuilder())
-    moduleFragment.files.forEach(clble.getReferenceReplacer())
-    moduleFragment.files.forEach(ClassReferenceLowering(this)::lower)
-    moduleFragment.files.forEach(PrimitiveCompanionLowering(this)::lower)
-    moduleFragment.files.forEach(ConstLowering(this)::lower)
-    moduleFragment.files.forEach(CallsLowering(this)::lower)
+    ThrowableSuccessorsLowering(this).lower(moduleFragment)
+    TailrecLowering(this).runOnFilesPostfix(moduleFragment)
+    UnitMaterializationLowering(this).lower(moduleFragment)
+    EnumClassLowering(this).runOnFilesPostfix(moduleFragment)
+    EnumUsageLowering(this).lower(moduleFragment)
+    VarargLowering(this).lower(moduleFragment)
+    LateinitLowering(this, true).lower(moduleFragment)
+    DefaultArgumentStubGenerator(this).runOnFilesPostfix(moduleFragment)
+    DefaultParameterInjector(this).runOnFilesPostfix(moduleFragment)
+    DefaultParameterCleaner(this).runOnFilesPostfix(moduleFragment)
+    SharedVariablesLowering(this).runOnFilesPostfix(moduleFragment)
+    ReturnableBlockLowering(this).lower(moduleFragment)
+    LocalDelegatedPropertiesLowering().lower(moduleFragment)
+    LocalDeclarationsLowering(this).runOnFilesPostfix(moduleFragment)
+    InnerClassesLowering(this).runOnFilesPostfix(moduleFragment)
+    InnerClassConstructorCallsLowering(this).runOnFilesPostfix(moduleFragment)
+    SuspendFunctionsLowering(this).lower(moduleFragment)
+    PropertiesLowering().lower(moduleFragment)
+    InitializersLowering(this, JsLoweredDeclarationOrigin.CLASS_STATIC_INITIALIZER, false).runOnFilesPostfix(moduleFragment)
+    MultipleCatchesLowering(this).lower(moduleFragment)
+    BridgesConstruction(this).runOnFilesPostfix(moduleFragment)
+    TypeOperatorLowering(this).lower(moduleFragment)
+    BlockDecomposerLowering(this).runOnFilesPostfix(moduleFragment)
+
+    SecondaryCtorLowering(this).apply {
+        constructorProcessorLowering.runOnFilesPostfix(moduleFragment.files + dependencies.flatMap { it.files })
+        constructorRedirectorLowering.runOnFilesPostfix(moduleFragment)
+    }
+
+    CallableReferenceLowering(this).apply {
+        referenceCollector.lower(moduleFragment)
+        closureBuilder.lower(moduleFragment)
+        referenceReplacer.lower(moduleFragment)
+    }
+
+    ClassReferenceLowering(this).lower(moduleFragment)
+    PrimitiveCompanionLowering(this).lower(moduleFragment)
+    ConstLowering(this).lower(moduleFragment)
+    CallsLowering(this).lower(moduleFragment)
 }
 
-private fun FileLoweringPass.lower(files: List<IrFile>) = files.forEach { lower(it) }
+private fun FileLoweringPass.lower(moduleFragment: IrModuleFragment) = moduleFragment.files.forEach { lower(it) }
+
+private fun DeclarationContainerLoweringPass.runOnFilesPostfix(moduleFragment: IrModuleFragment) =
+    moduleFragment.files.forEach { runOnFilePostfix(it) }
+
+private fun DeclarationContainerLoweringPass.runOnFilesPostfix(files: Iterable<IrFile>) =
+    files.forEach { runOnFilePostfix(it) }
+
+private fun BodyLoweringPass.runOnFilesPostfix(moduleFragment: IrModuleFragment) =
+    moduleFragment.files.forEach { runOnFilePostfix(it) }
+
+private fun FunctionLoweringPass.runOnFilesPostfix(moduleFragment: IrModuleFragment) =
+    moduleFragment.files.forEach { runOnFilePostfix(it) }
+
+private fun ClassLoweringPass.runOnFilesPostfix(moduleFragment: IrModuleFragment) =
+    moduleFragment.files.forEach { runOnFilePostfix(it) }

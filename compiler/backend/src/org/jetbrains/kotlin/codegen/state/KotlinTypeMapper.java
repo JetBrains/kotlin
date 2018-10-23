@@ -1047,6 +1047,9 @@ public class KotlinTypeMapper {
         else if (isInterface(containingDeclaration)) {
             return OwnerKind.DEFAULT_IMPLS;
         }
+        else if (InlineClassesUtilsKt.isInlineClass(containingDeclaration)) {
+            return OwnerKind.ERASED_INLINE_CLASS;
+        }
         return OwnerKind.IMPLEMENTATION;
     }
 
@@ -1368,8 +1371,12 @@ public class KotlinTypeMapper {
     ) {
         String descriptor = method.getDescriptor();
         int maskArgumentsCount = (callableDescriptor.getValueParameters().size() + Integer.SIZE - 1) / Integer.SIZE;
-        String additionalArgs = StringUtil.repeat(Type.INT_TYPE.getDescriptor(), maskArgumentsCount);
-        additionalArgs += (isConstructor(method) ? DEFAULT_CONSTRUCTOR_MARKER : OBJECT_TYPE).getDescriptor();
+        Type defaultConstructorMarkerType =
+                isConstructor(method) || isInlineClassConstructor(callableDescriptor)
+                ? DEFAULT_CONSTRUCTOR_MARKER
+                : OBJECT_TYPE;
+        String additionalArgs = StringUtil.repeat(Type.INT_TYPE.getDescriptor(), maskArgumentsCount)
+                                + defaultConstructorMarkerType.getDescriptor();
         String result = descriptor.replace(")", additionalArgs + ")");
         if (dispatchReceiverDescriptor != null && !isConstructor(method)) {
             return result.replace("(", "(" + dispatchReceiverDescriptor);
@@ -1383,6 +1390,11 @@ public class KotlinTypeMapper {
 
     private static boolean isConstructor(@NotNull Method method) {
         return "<init>".equals(method.getName());
+    }
+
+    private static boolean isInlineClassConstructor(@NotNull CallableDescriptor callableDescriptor) {
+        return callableDescriptor instanceof ClassConstructorDescriptor
+                && InlineClassesUtilsKt.isInlineClass(callableDescriptor.getContainingDeclaration());
     }
 
     @NotNull

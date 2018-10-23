@@ -12,12 +12,12 @@ import org.gradle.api.artifacts.Configuration
 import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.api.tasks.*
 import org.gradle.api.tasks.compile.AbstractCompile
+import org.jetbrains.kotlin.gradle.internal.KaptGenerateStubsTask
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.scripting.ScriptingExtension
 import org.jetbrains.kotlin.gradle.tasks.GradleMessageCollector
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.script.KotlinScriptDefinition
-import org.jetbrains.kotlin.gradle.internal.KaptGenerateStubsTask
 import org.jetbrains.kotlin.scripting.compiler.plugin.ScriptDefinitionsFromClasspathDiscoverySource
 import kotlin.properties.Delegates
 
@@ -129,7 +129,7 @@ class ScriptingKotlinGradleSubplugin : KotlinGradleSubplugin<AbstractCompile> {
         if (!ScriptingGradleSubplugin.isEnabled(project)) return emptyList()
 
         val scriptingExtension = project.extensions.findByType(ScriptingExtension::class.java)
-                ?: project.extensions.create("kotlinScripting", ScriptingExtension::class.java)
+            ?: project.extensions.create("kotlinScripting", ScriptingExtension::class.java)
 
         val options = mutableListOf<SubpluginOption>()
 

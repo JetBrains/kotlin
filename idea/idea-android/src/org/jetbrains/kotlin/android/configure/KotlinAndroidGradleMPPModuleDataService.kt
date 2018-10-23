@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.android.configure
 
-import com.android.tools.idea.gradle.project.model.AndroidModuleModel
+import com.android.tools.idea.gradle.project.sync.idea.data.service.AndroidProjectKeys
 import com.android.tools.idea.gradle.util.ContentEntries.findParentContentEntry
 import com.android.tools.idea.io.FilePaths
 import com.intellij.openapi.diagnostic.Logger
@@ -31,6 +31,7 @@ import org.jetbrains.jps.model.module.JpsModuleSourceRootType
 import org.jetbrains.kotlin.gradle.KotlinCompilation
 import org.jetbrains.kotlin.gradle.KotlinPlatform
 import org.jetbrains.kotlin.gradle.KotlinSourceSet
+import org.jetbrains.kotlin.idea.addModuleDependencyIfNeeded
 import org.jetbrains.kotlin.idea.configuration.*
 import org.jetbrains.kotlin.idea.facet.KotlinFacet
 import org.jetbrains.kotlin.utils.addIfNotNull
@@ -78,7 +79,9 @@ class KotlinAndroidGradleMPPModuleDataService : AbstractProjectDataService<Modul
                     }
                 }
             }
-            val androidModel = AndroidModuleModel.get(module) ?: continue
+            addExtraDependeeModules(nodeToImport, projectNode, modelsProvider, rootModel, false)
+            addExtraDependeeModules(nodeToImport, projectNode, modelsProvider, rootModel, true)
+            val androidModel = getAndroidModuleModel(nodeToImport) ?: continue
             val variantName = androidModel.selectedVariant.name
             val activeSourceSetInfos = nodeToImport.kotlinAndroidSourceSets?.filter { it.kotlinModule.name.startsWith(variantName) } ?: emptyList()
             for (activeSourceSetInfo in activeSourceSetInfos) {
@@ -94,8 +97,6 @@ class KotlinAndroidGradleMPPModuleDataService : AbstractProjectDataService<Modul
                     }
                 }
             }
-            addExtraDependeeModules(androidModel, projectNode, modelsProvider, rootModel, false)
-            addExtraDependeeModules(androidModel, projectNode, modelsProvider, rootModel, true)
 
             val mainSourceSetInfo = activeSourceSetInfos.firstOrNull { it.kotlinModule.name == variantName }
             if (mainSourceSetInfo != null) {
@@ -109,43 +110,64 @@ class KotlinAndroidGradleMPPModuleDataService : AbstractProjectDataService<Modul
         }
     }
 
-    private fun addModuleDependencyIfNeeded(
-        rootModel: ModifiableRootModel,
-        dependeeModule: Module,
+    private fun getDependeeModuleNodes(
+        moduleNode: DataNode<ModuleData>,
+        projectNode: DataNode<ProjectData>,
+        modelsProvider: IdeModifiableModelsProvider,
         testScope: Boolean
-    ) {
-        val dependencyScope = if (testScope) DependencyScope.TEST else DependencyScope.COMPILE
-        val existingEntry = rootModel.findModuleOrderEntry(dependeeModule)
-        if (existingEntry != null && existingEntry.scope == dependencyScope) return
-        rootModel.addModuleOrderEntry(dependeeModule).also { it.scope = dependencyScope }
+    ): List<DataNode<out ModuleData>> {
+        val androidModel = getAndroidModuleModel(moduleNode)
+        if (androidModel != null) {
+            val dependencies = if (testScope) {
+                androidModel.selectedAndroidTestCompileDependencies
+            } else {
+                androidModel.selectedMainCompileLevel2Dependencies
+            } ?: return emptyList()
+            return dependencies
+                .moduleDependencies
+                .mapNotNull { projectNode.findChildModuleById(it.projectPath) }
+        }
+
+        val javaModel = getJavaModuleModel(moduleNode)
+        if (javaModel != null) {
+            val scope = if (testScope) DependencyScope.TEST.name else DependencyScope.COMPILE.name
+            val moduleNames = javaModel
+                .javaModuleDependencies
+                .filter { scope == it.scope ?: DependencyScope.COMPILE.name }
+                .mapTo(HashSet()) { it.moduleName }
+            return ExternalSystemApiUtil
+                .getChildren(projectNode, ProjectKeys.MODULE)
+                .filter { modelsProvider.findIdeModule(it.data)?.name in moduleNames }
+        }
+
+        return emptyList()
+    }
+
+    private fun List<DataNode<GradleSourceSetData>>.firstByPlatformOrNull(platform: KotlinPlatform) = firstOrNull {
+        it.kotlinSourceSet?.platform == platform
     }
 
     private fun addExtraDependeeModules(
-        androidModel: AndroidModuleModel,
+        moduleNode: DataNode<ModuleData>,
         projectNode: DataNode<ProjectData>,
         modelsProvider: IdeModifiableModelsProvider,
         rootModel: ModifiableRootModel,
         testScope: Boolean
     ) {
-        val dependencies = if (testScope) {
-            androidModel.selectedAndroidTestCompileDependencies
-        } else {
-            androidModel.selectedMainCompileLevel2Dependencies
-        } ?: return
-        val commonSourceSetName = KotlinSourceSet.commonName(testScope)
-        val relevantNodes = dependencies
-            .moduleDependencies
-            .mapNotNull { projectNode.findChildModuleById(it.projectPath) }
+        val dependeeModuleNodes = getDependeeModuleNodes(moduleNode, projectNode, modelsProvider, testScope)
+        val relevantNodes = dependeeModuleNodes
             .flatMap { ExternalSystemApiUtil.getChildren(it, GradleSourceSetData.KEY) }
             .filter {
                 val ktModule = it.kotlinSourceSet?.kotlinModule
                 ktModule != null && ktModule.isTestModule == testScope
             }
+        val commonSourceSetName = KotlinSourceSet.commonName(testScope)
+        val isAndroidModule = getAndroidModuleModel(moduleNode) != null
         SmartList<DataNode<GradleSourceSetData>>()
             .apply {
                 addIfNotNull(
-                    relevantNodes.firstOrNull { it.kotlinSourceSet?.platform == KotlinPlatform.ANDROID }
-                        ?: relevantNodes.firstOrNull { it.kotlinSourceSet?.platform == KotlinPlatform.JVM }
+                    (if (isAndroidModule) relevantNodes.firstByPlatformOrNull(KotlinPlatform.ANDROID) else null)
+                        ?: relevantNodes.firstByPlatformOrNull(KotlinPlatform.JVM)
                 )
                 addIfNotNull(
                     relevantNodes.firstOrNull {
@@ -162,6 +184,12 @@ class KotlinAndroidGradleMPPModuleDataService : AbstractProjectDataService<Modul
                 }
             }
     }
+
+    private fun getAndroidModuleModel(moduleNode: DataNode<ModuleData>) =
+        ExternalSystemApiUtil.getChildren(moduleNode, AndroidProjectKeys.ANDROID_MODEL).firstOrNull()?.data
+
+    private fun getJavaModuleModel(moduleNode: DataNode<ModuleData>) =
+        ExternalSystemApiUtil.getChildren(moduleNode, AndroidProjectKeys.JAVA_MODULE_MODEL).firstOrNull()?.data
 
     private fun addSourceRoot(
         sourceRoot: File,

@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.jps.build
 
 import org.jetbrains.jps.incremental.CompileContext
 import org.jetbrains.jps.incremental.ModuleLevelBuilder
-import org.jetbrains.kotlin.incremental.storage.version.CacheAttributesDiff
+import org.jetbrains.kotlin.jps.incremental.CacheAttributesDiff
 import org.jetbrains.kotlin.jps.targets.KotlinModuleBuildTarget
 import java.io.File
 

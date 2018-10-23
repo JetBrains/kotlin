@@ -137,7 +137,11 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
 
             writeFiles(
                 rawFiles.map {
-                    CodegenTestFiles.create(it.first, it.second, environment.project).psiFile
+                    try {
+                        CodegenTestFiles.create(it.first, it.second, environment.project).psiFile
+                    } catch (e: Throwable) {
+                        throw RuntimeException("Error on processing ${it.first}:\n${it.second}", e)
+                    }
                 }, environment
             )
             Disposer.dispose(disposable)
@@ -202,6 +206,10 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
                 if (fullFileText.contains("// WITH_COROUTINES")) continue
                 // TODO: Support jvm assertions
                 if (fullFileText.contains("// KOTLIN_CONFIGURATION_FLAGS: ASSERTIONS_MODE=jvm")) continue
+                // TODO: support JVM 8 test with D8
+                if (fullFileText.contains("// JVM_TARGET")) continue
+                // TODO: support SKIP_JDK6 on new platforms
+                if (fullFileText.contains("// SKIP_JDK6")) continue
 
                 if (hasBoxMethod(fullFileText)) {
                     val testFiles = createTestFiles(file, fullFileText)

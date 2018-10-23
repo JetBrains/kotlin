@@ -391,8 +391,8 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
         DeclarationDescriptor container = descriptor.getContainingDeclaration();
 
         if (container instanceof ClassDescriptor) {
-            // TODO: getDefaultType() here is wrong and won't work for arrays
-            putJavaLangClassInstance(iv, state.getTypeMapper().mapType(((ClassDescriptor) container).getDefaultType()));
+            // TODO: would it work for arrays?
+            putJavaLangClassInstance(iv, state.getTypeMapper().mapClass((ClassDescriptor) container));
         }
         else if (container instanceof PackageFragmentDescriptor) {
             iv.aconst(state.getTypeMapper().mapOwner(descriptor));
@@ -438,13 +438,25 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
             mv.visitCode();
             InstructionAdapter iv = new InstructionAdapter(mv);
 
-            Pair<Integer, Type> receiverIndexAndType =
+            Pair<Integer, FieldInfo> receiverIndexAndFieldInfo =
                     CallableReferenceUtilKt.generateClosureFieldsInitializationFromParameters(iv, closure, args);
-            if (shouldHaveBoundReferenceReceiver && receiverIndexAndType == null) {
+            if (shouldHaveBoundReferenceReceiver && receiverIndexAndFieldInfo == null) {
                 throw new AssertionError("No bound reference receiver in constructor parameters: " + args);
             }
-            int boundReferenceReceiverParameterIndex = shouldHaveBoundReferenceReceiver ? receiverIndexAndType.getFirst() : -1;
-            Type boundReferenceReceiverType = shouldHaveBoundReferenceReceiver ? receiverIndexAndType.getSecond() : null;
+
+            int boundReceiverParameterIndex;
+            Type boundReceiverType;
+            KotlinType boundReceiverKotlinType;
+            if (shouldHaveBoundReferenceReceiver) {
+                boundReceiverParameterIndex = receiverIndexAndFieldInfo.getFirst();
+                boundReceiverType = receiverIndexAndFieldInfo.getSecond().getFieldType();
+                boundReceiverKotlinType = receiverIndexAndFieldInfo.getSecond().getFieldKotlinType();
+            }
+            else {
+                boundReceiverParameterIndex = -1;
+                boundReceiverType = null;
+                boundReceiverKotlinType = null;
+            }
 
             iv.load(0, superClassAsmType);
 
@@ -454,7 +466,7 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
                 int arity = calculateArity();
                 iv.iconst(arity);
                 if (shouldHaveBoundReferenceReceiver) {
-                    CallableReferenceUtilKt.loadBoundReferenceReceiverParameter(iv, boundReferenceReceiverParameterIndex, boundReferenceReceiverType);
+                    CallableReferenceUtilKt.loadBoundReferenceReceiverParameter(iv, boundReceiverParameterIndex, boundReceiverType, boundReceiverKotlinType);
                     superClassConstructorDescriptor = "(ILjava/lang/Object;)V";
                 }
                 else {

@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.jps.incremental
 
-import org.jetbrains.kotlin.incremental.storage.version.CacheStatus
-import org.jetbrains.kotlin.incremental.storage.version.loadDiff
+import org.jetbrains.kotlin.jps.incremental.CacheStatus
+import org.jetbrains.kotlin.jps.incremental.loadDiff
 import org.junit.Test
 import java.io.File
 import kotlin.test.assertEquals

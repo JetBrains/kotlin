@@ -12,9 +12,7 @@ import com.intellij.execution.actions.RunConfigurationProducer
 import com.intellij.execution.configurations.ModuleBasedConfiguration
 import com.intellij.execution.junit.*
 import com.intellij.execution.testframework.AbstractPatternBasedConfigurationProducer
-import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.DumbService
-import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.util.Ref
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
@@ -61,7 +59,7 @@ class KotlinJUnitRunConfigurationProducer : RunConfigurationProducer<JUnitConfig
         if (vmParameters != null && configuration.vmParameters != vmParameters) return false
 
         val template = RunManager.getInstance(configuration.project).getConfigurationTemplate(configurationFactory)
-        val predefinedModule = (template.configuration as ModuleBasedConfiguration<*>).configurationModule.module
+        val predefinedModule = (template.configuration as ModuleBasedConfigurationAny).configurationModule.module
         val configurationModule = configuration.configurationModule.module
         return configurationModule == context.location?.module?.asJvmModule() || configurationModule == predefinedModule
     }
@@ -88,33 +86,20 @@ class KotlinJUnitRunConfigurationProducer : RunConfigurationProducer<JUnitConfig
         val methodLocation = getTestMethodLocation(leaf)
         if (methodLocation != null) {
             configuration.beMethodConfiguration(methodLocation)
-            JavaRunConfigurationExtensionManager.getInstance().extendCreatedConfiguration(configuration, location)
-            configuration.setSdkAndModule(module)
+            JavaRunConfigurationExtensionManagerUtil.getInstance().extendCreatedConfiguration(configuration, location)
+            configuration.setModule(module)
             return true
         }
 
         val testClass = getTestClass(leaf)
         if (testClass != null) {
             configuration.beClassConfiguration(testClass)
-            JavaRunConfigurationExtensionManager.getInstance().extendCreatedConfiguration(configuration, location)
-            configuration.setSdkAndModule(module)
+            JavaRunConfigurationExtensionManagerUtil.getInstance().extendCreatedConfiguration(configuration, location)
+            configuration.setModule(module)
             return true
         }
 
         return false
-    }
-
-    private fun JUnitConfiguration.setSdkAndModule(module: Module) {
-        if (configurationModule.module == module) {
-            return
-        }
-
-        setModule(module)
-        val sdk = ModuleRootManager.getInstance(module).sdk
-        if (sdk != null) {
-            isAlternativeJrePathEnabled = true
-            alternativeJrePath = sdk.homePath
-        }
     }
 
     override fun onFirstRun(fromContext: ConfigurationFromContext, context: ConfigurationContext, performRunnable: Runnable) {

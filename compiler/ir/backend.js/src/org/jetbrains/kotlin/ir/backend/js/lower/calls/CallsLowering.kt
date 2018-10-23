@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.types.isLong
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
@@ -19,6 +20,7 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 class CallsLowering(val context: JsIrBackendContext) : FileLoweringPass {
     private val transformers = listOf(
         NumberOperatorCallsTransformer(context),
+        NumberConversionCallsTransformer(context),
         DynamicCallsTransformer(context),
         EqualityAndComparisonCallsTransformer(context),
         PrimitiveContainerMemberCallTransformer(context),

@@ -28,7 +28,6 @@ import com.intellij.refactoring.MoveDestination
 import com.intellij.refactoring.PackageWrapper
 import com.intellij.refactoring.RefactoringBundle
 import com.intellij.refactoring.copy.CopyFilesOrDirectoriesDialog
-import com.intellij.refactoring.move.moveClassesOrPackages.DestinationFolderComboBox
 import com.intellij.refactoring.ui.PackageNameReferenceEditorCombo
 import com.intellij.ui.EditorTextField
 import com.intellij.ui.RecentsManager
@@ -41,6 +40,7 @@ import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.idea.core.getPackage
 import org.jetbrains.kotlin.idea.refactoring.Pass
 import org.jetbrains.kotlin.idea.refactoring.hasIdentifiersOnly
+import org.jetbrains.kotlin.idea.refactoring.ui.KotlinDestinationFolderComboBox
 import org.jetbrains.kotlin.idea.util.sourceRoot
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
@@ -61,7 +61,7 @@ class CopyKotlinDeclarationDialog(
     private val packageLabel = JLabel()
     private lateinit var packageNameField: ReferenceEditorComboWithBrowseButton
     private val openInEditorCheckBox = CopyFilesOrDirectoriesDialog.createOpenInEditorCB()
-    private val destinationComboBox = object : DestinationFolderComboBox() {
+    private val destinationComboBox = object : KotlinDestinationFolderComboBox() {
         override fun getTargetPackage() = packageNameField.text.trim()
         override fun reportBaseInTestSelectionInSource() = true
     }

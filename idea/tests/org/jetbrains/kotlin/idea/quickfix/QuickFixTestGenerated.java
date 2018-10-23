@@ -5251,6 +5251,29 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @TestMetadata("idea/testData/quickfix/deprecatedJavaAnnotation")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class DeprecatedJavaAnnotation extends AbstractQuickFixTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInDeprecatedJavaAnnotation() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/deprecatedJavaAnnotation"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("withArgument.kt")
+        public void testWithArgument() throws Exception {
+            runTest("idea/testData/quickfix/deprecatedJavaAnnotation/withArgument.kt");
+        }
+
+        @TestMetadata("withoutArguments.kt")
+        public void testWithoutArguments() throws Exception {
+            runTest("idea/testData/quickfix/deprecatedJavaAnnotation/withoutArguments.kt");
+        }
+    }
+
     @TestMetadata("idea/testData/quickfix/deprecatedSymbolUsage")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

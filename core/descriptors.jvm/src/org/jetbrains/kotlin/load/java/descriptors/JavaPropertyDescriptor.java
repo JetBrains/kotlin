@@ -168,9 +168,9 @@ public class JavaPropertyDescriptor extends PropertyDescriptorImpl implements Ja
 
     @Nullable
     @Override
+    @SuppressWarnings("unchecked")
     public <V> V getUserData(UserDataKey<V> key) {
         if (singleUserData != null && singleUserData.getFirst().equals(key)) {
-            //noinspection unchecked
             return (V) singleUserData.getSecond();
         }
 

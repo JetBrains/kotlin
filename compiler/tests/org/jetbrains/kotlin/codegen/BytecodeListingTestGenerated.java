@@ -163,6 +163,11 @@ public class BytecodeListingTestGenerated extends AbstractBytecodeListingTest {
         runTestWithPackageReplacement("compiler/testData/codegen/bytecodeListing/oomInReturnUnit.kt", "kotlin.coroutines");
     }
 
+    @TestMetadata("privateDefaultSetter.kt")
+    public void testPrivateDefaultSetter() throws Exception {
+        runTest("compiler/testData/codegen/bytecodeListing/privateDefaultSetter.kt");
+    }
+
     @TestMetadata("privateSuspendFun.kt")
     public void testPrivateSuspendFun() throws Exception {
         runTest("compiler/testData/codegen/bytecodeListing/privateSuspendFun.kt");
@@ -312,6 +317,11 @@ public class BytecodeListingTestGenerated extends AbstractBytecodeListingTest {
         @TestMetadata("computablePropertiesInsideInlineClass.kt")
         public void testComputablePropertiesInsideInlineClass() throws Exception {
             runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/computablePropertiesInsideInlineClass.kt");
+        }
+
+        @TestMetadata("constructorsWithDefaultParameterValues.kt")
+        public void testConstructorsWithDefaultParameterValues() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/constructorsWithDefaultParameterValues.kt");
         }
 
         @TestMetadata("inlineClassMembersVisibility.kt")

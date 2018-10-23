@@ -111,13 +111,13 @@ class MoveDeclarationsProcessor(
         }
 
         val declarationProcessor = MoveKotlinDeclarationsProcessor(
-                MoveDeclarationsDescriptor(
-                        elementsToMove = stubDeclarations,
-                        moveTarget = KotlinMoveTargetForExistingElement(targetPsiFile),
-                        delegate = MoveDeclarationsDelegate.TopLevel,
-                        project = project
-                ),
-                mover
+            MoveDeclarationsDescriptor(
+                moveSource = MoveSource(stubDeclarations),
+                moveTarget = KotlinMoveTargetForExistingElement(targetPsiFile),
+                delegate = MoveDeclarationsDelegate.TopLevel,
+                project = project
+            ),
+            mover
         )
 
         val declarationUsages = project.runSynchronouslyWithProgress(RefactoringBundle.message("progress.text"), true) {

@@ -8,6 +8,8 @@ import org.jetbrains.kotlin.gradle.util.modify
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.junit.Test
 import java.io.File
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 
 class KotlinAndroidGradleIT : AbstractKotlinAndroidGradleTests(androidGradlePluginVersion = "2.3.0") {
@@ -22,7 +24,7 @@ class KotlinAndroid32GradleIT : KotlinAndroid3GradleIT(androidGradlePluginVersio
 
     @Test
     fun testAndroidWithNewMppApp() = with(Project("new-mpp-android")) {
-        build("assemble", "compileDebugUnitTestJavaWithJavac") {
+        build("assemble", "compileDebugUnitTestJavaWithJavac", "printCompilerPluginOptions") {
             assertSuccessful()
 
             assertTasksExecuted(
@@ -47,6 +49,25 @@ class KotlinAndroid32GradleIT : KotlinAndroid3GradleIT(androidGradlePluginVersio
 
                 assertFileExists("app/build/tmp/kotlin-classes/$variant/com/example/app/AKt.class")
                 assertFileExists("app/build/tmp/kotlin-classes/$variant/com/example/app/KtUsageKt.class")
+            }
+
+            // Check that Android extensions arguments are available only in the Android source sets:
+            val compilerPluginArgsRegex = "(\\w+)${Regex.escape("=args=>")}(.*)".toRegex()
+            val compilerPluginOptionsBySourceSet =
+                compilerPluginArgsRegex.findAll(output).associate { it.groupValues[1] to it.groupValues[2] }
+
+            compilerPluginOptionsBySourceSet.entries.forEach { (sourceSetName, argsString) ->
+                val shouldHaveAndroidExtensionArgs = sourceSetName.startsWith("androidApp")
+                if (shouldHaveAndroidExtensionArgs)
+                    assertTrue("$sourceSetName is an Android source set and should have Android Extensions in the args") {
+                        "plugin:org.jetbrains.kotlin.android" in argsString
+                    }
+                else
+                    assertEquals(
+                        "[]",
+                        argsString,
+                        "$sourceSetName is not an Android source set and should not have Android Extensions in the args"
+                    )
             }
         }
     }

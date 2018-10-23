@@ -181,6 +181,9 @@ class SimpleNameGenerator : NameGenerator {
                         nameBuilder.append(getNameForDeclaration(declaration.parent as IrDeclaration, context))
                         nameBuilder.append('.')
                     }
+                    if (declaration.dispatchReceiverParameter == null) {
+                        nameDeclarator = context.staticContext.rootScope::declareFreshName
+                    }
 
                     nameBuilder.append(declaration.name.asString())
                     // TODO should we skip type parameters and use upper bound of type parameter when print type of value parameters?

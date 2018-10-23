@@ -42,11 +42,9 @@ class TestProxy(val serverPort: Int, val testClass: String, val classPath: List<
                 val message = input.readObject() as MessageHeader
                 if (message == MessageHeader.RESULT) {
                     input.readObject() as String
-                }
-                else if (message == MessageHeader.ERROR) {
-                    throw input.readObject() as Exception
-                }
-                else {
+                } else if (message == MessageHeader.ERROR) {
+                    throw input.readObject() as Throwable
+                } else {
                     fail("Unknown message: $message")
                 }
             } finally {

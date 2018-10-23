@@ -12,6 +12,7 @@ import kotlin.coroutines.*
  * This interface is implemented by compiler-generated implementations of
  * [Continuation] interface.
  */
+@SinceKotlin("1.3")
 public interface CoroutineStackFrame {
     /**
      * Returns a reference to the stack frame of the caller of this frame,

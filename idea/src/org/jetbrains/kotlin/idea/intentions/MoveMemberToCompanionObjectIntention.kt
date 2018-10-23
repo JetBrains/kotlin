@@ -271,7 +271,7 @@ class MoveMemberToCompanionObjectIntention : SelfTargetingRangeIntention<KtNamed
                 }
             }
             val moveDescriptor = MoveDeclarationsDescriptor(project,
-                                                            listOf(element),
+                                                            MoveSource(element),
                                                             KotlinMoveTargetForCompanion(containingClass),
                                                             MoveDeclarationsDelegate.NestedClass(null, outerInstanceName),
                                                             moveCallback = MoveCallback { runTemplateForInstanceParam(movedClass!!, nameSuggestions, editor) })

@@ -6404,6 +6404,11 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             runTest("js/js.translator/testData/box/number/longUnaryOperations.kt");
         }
 
+        @TestMetadata("mixedTypesOverflow.kt")
+        public void testMixedTypesOverflow() throws Exception {
+            runTest("js/js.translator/testData/box/number/mixedTypesOverflow.kt");
+        }
+
         @TestMetadata("mulInt32.kt")
         public void testMulInt32() throws Exception {
             runTest("js/js.translator/testData/box/number/mulInt32.kt");

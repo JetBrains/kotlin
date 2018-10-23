@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.cli.common.messages.GroupingMessageCollector;
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector;
 import org.jetbrains.kotlin.cli.common.messages.MessageCollectorUtil;
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer;
-import org.jetbrains.kotlin.cli.jvm.compiler.CompilerJarLocator;
 import org.jetbrains.kotlin.config.CommonConfigurationKeys;
 import org.jetbrains.kotlin.config.CommonConfigurationKeysKt;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
@@ -80,7 +79,7 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> extends CLI
         configuration.put(MESSAGE_COLLECTOR_KEY, groupingCollector);
         configuration.put(CLIConfigurationKeys.PERF_MANAGER, performanceManager);
         try {
-            setupCommonArgumentsAndServices(configuration, arguments, services);
+            setupCommonArguments(configuration, arguments);
             setupPlatformSpecificArgumentsAndServices(configuration, arguments, services);
             KotlinPaths paths = computeKotlinPaths(groupingCollector, arguments);
             if (groupingCollector.hasErrors()) {
@@ -138,9 +137,7 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> extends CLI
         }
     }
 
-    private void setupCommonArgumentsAndServices(
-            @NotNull CompilerConfiguration configuration, @NotNull A arguments, @NotNull Services services
-    ) {
+    private void setupCommonArguments(@NotNull CompilerConfiguration configuration, @NotNull A arguments) {
         if (arguments.getNoInline()) {
             configuration.put(CommonConfigurationKeys.DISABLE_INLINE, true);
         }
@@ -160,12 +157,6 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> extends CLI
             else {
                 configuration.put(CommonConfigurationKeys.METADATA_VERSION, createMetadataVersion(versionArray));
             }
-        }
-
-        @SuppressWarnings("deprecation")
-        CompilerJarLocator locator = services.get(CompilerJarLocator.class);
-        if (locator != null) {
-            configuration.put(CLIConfigurationKeys.COMPILER_JAR_LOCATOR, locator);
         }
 
         setupLanguageVersionSettings(configuration, arguments);

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.ir.backend.js.lower
 
 import org.jetbrains.kotlin.backend.common.DeclarationContainerLoweringPass
 import org.jetbrains.kotlin.backend.common.ir.copyTo
+import org.jetbrains.kotlin.backend.common.ir.copyTypeParametersFrom
 import org.jetbrains.kotlin.backend.common.runOnFilePostfix
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrElement
@@ -35,13 +36,13 @@ class SecondaryCtorLowering(val context: JsIrBackendContext) {
 
     private val oldCtorToNewMap = mutableMapOf<IrConstructorSymbol, ConstructorPair>()
 
-    fun getConstructorProcessorLowering() = object : DeclarationContainerLoweringPass {
+    val constructorProcessorLowering = object : DeclarationContainerLoweringPass {
         override fun lower(irDeclarationContainer: IrDeclarationContainer) {
             irDeclarationContainer.declarations.filterIsInstance<IrClass>().forEach { lowerClass(it) }
         }
-    }::runOnFilePostfix
+    }
 
-    fun getConstructorRedirectorLowering() = object : DeclarationContainerLoweringPass {
+    val constructorRedirectorLowering = object : DeclarationContainerLoweringPass {
         override fun lower(irDeclarationContainer: IrDeclarationContainer) {
             if (irDeclarationContainer is IrClass) {
                 updateConstructorDeclarations(irDeclarationContainer)
@@ -50,7 +51,7 @@ class SecondaryCtorLowering(val context: JsIrBackendContext) {
                 it.accept(CallsiteRedirectionTransformer(), null)
             }
         }
-    }::runOnFilePostfix
+    }
 
     private fun updateConstructorDeclarations(irClass: IrClass) {
         irClass.declarations.transformFlat {
@@ -153,11 +154,10 @@ class SecondaryCtorLowering(val context: JsIrBackendContext) {
             val retStmt = JsIrBuilder.buildReturn(it.symbol, JsIrBuilder.buildGetValue(thisParam.symbol), context.irBuiltIns.nothingType)
             val statements = (declaration.body!!.deepCopyWithSymbols(it) as IrStatementContainer).statements
 
+            it.copyTypeParametersFrom(declaration)
+
             val newValueParameters = declaration.valueParameters.map { p -> p.copyTo(it) }
-
             it.valueParameters += (newValueParameters + thisParam)
-
-            it.typeParameters += declaration.typeParameters.map { p -> p.copyTo(it) }
 
             it.returnType = type
             it.parent = declaration.parent
@@ -187,8 +187,8 @@ class SecondaryCtorLowering(val context: JsIrBackendContext) {
             declaration.isInline,
             declaration.isExternal
         ).also {
+            it.copyTypeParametersFrom(declaration)
             it.valueParameters += declaration.valueParameters.map { p -> p.copyTo(it) }
-            it.typeParameters += declaration.typeParameters.map { p -> p.copyTo(it) }
             it.parent = declaration.parent
 
             it.returnType = type

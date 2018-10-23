@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.idea.configuration
 
-import com.intellij.openapi.module.Module
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.idea.configuration.xcode.XcodeProjectConfigurator
 import org.jetbrains.plugins.gradle.frameworkSupport.BuildScriptDataBuilder
@@ -48,7 +47,7 @@ class KotlinGradleMobileMultiplatformModuleBuilder :
         addRepositoriesDefinition("jcenter()")
     }
 
-    override fun createProjectSkeleton(module: Module, rootDir: VirtualFile) {
+    override fun createProjectSkeleton(rootDir: VirtualFile) {
         val appDir = rootDir.findChild(androidAppName)!!
         val src = appDir.createChildDirectory(this, "src")
 
@@ -285,12 +284,12 @@ sdk.dir=PleaseSpecifyAndroidSdkPathHere
             android {
                 compileSdkVersion 28
                 defaultConfig {
-                    applicationId "org.jetbrains.kotlin.mpp_app_android"
+                    applicationId 'org.jetbrains.kotlin.mpp_app_android'
                     minSdkVersion 15
                     targetSdkVersion 28
                     versionCode 1
-                    versionName "1.0"
-                    testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+                    versionName '1.0'
+                    testInstrumentationRunner 'android.support.test.runner.AndroidJUnitRunner'
                 }
                 buildTypes {
                     release {
@@ -312,7 +311,7 @@ sdk.dir=PleaseSpecifyAndroidSdkPathHere
                     // This preset is for iPhone emulator
                     // Switch here to presets.iosArm64 (or iosArm32) to build library for iPhone device
                     fromPreset(presets.iosX64, '$nativeTargetName') {
-                        compilations.main.outputKinds('FRAMEWORK')
+                        compilations.main.outputKinds 'FRAMEWORK'
                     }
                 }
                 sourceSets {
@@ -351,13 +350,13 @@ sdk.dir=PleaseSpecifyAndroidSdkPathHere
             // Before opening the project from iosApp directory in Xcode,
             // make sure all Gradle infrastructure exists (gradle.wrapper, gradlew).
             task copyFramework {
-                def buildType = project.findProperty("kotlin.build.type") ?: "DEBUG"
-                def target = project.findProperty("kotlin.target") ?: "ios"
-                dependsOn "link${"$"}{buildType.toLowerCase().capitalize()}Framework${"$"}{target.capitalize()}"
+                def buildType = project.findProperty('kotlin.build.type') ?: 'DEBUG'
+                def target = project.findProperty('kotlin.target') ?: 'ios'
+                dependsOn kotlin.targets."${"$"}target".compilations.main.linkTaskName('FRAMEWORK', buildType)
 
                 doLast {
-                    def srcFile = kotlin.targets."${"$"}target".compilations.main.getBinary("FRAMEWORK", buildType)
-                    def targetDir = getProperty("configuration.build.dir")
+                    def srcFile = kotlin.targets."${"$"}target".compilations.main.getBinary('FRAMEWORK', buildType)
+                    def targetDir = getProperty('configuration.build.dir')
                     copy {
                         from srcFile.parent
                         into targetDir

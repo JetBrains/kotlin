@@ -278,5 +278,5 @@ objectLiteral
   ;
 
 collectionLiteral
-  : "[" element{","}? "]"
+  : "[" expression{","}? "]"
   ;

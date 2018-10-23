@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.idea.caches.project.isNewMPPModule
 import org.jetbrains.kotlin.idea.caches.project.sourceType
 import org.jetbrains.kotlin.idea.configuration.toModuleGroup
 import org.jetbrains.kotlin.idea.core.getSourceType
+import org.jetbrains.kotlin.idea.core.isAndroidModule
 import org.jetbrains.kotlin.idea.facet.KotlinFacet
 
 class KotlinMultiplatformRunLocationsProvider : MultipleRunLocationsProvider() {
@@ -51,5 +52,5 @@ private fun modulesToRunFrom(
     val compilations = modules.filter {
         KotlinFacet.get(it)?.configuration?.settings?.kind == KotlinModuleKind.COMPILATION_AND_SOURCE_SET_HOLDER
     }
-    return compilations.filter { it.sourceType == originalSourceType }
+    return compilations.filter { it.isAndroidModule() || it.sourceType == originalSourceType }
 }

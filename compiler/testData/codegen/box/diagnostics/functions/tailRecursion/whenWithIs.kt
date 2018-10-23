@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 // DONT_RUN_GENERATED_CODE: JS
 
 tailrec fun withWhen(counter : Int, d : Any) : Int =

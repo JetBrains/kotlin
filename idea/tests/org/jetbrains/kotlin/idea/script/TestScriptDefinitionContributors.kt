@@ -28,7 +28,7 @@ class CustomScriptTemplateProvider(
     override val id = "Test"
 
     override fun getDefinitions() = loadDefinitionsFromTemplates(
-            templateClassNames = listOf("custom.scriptDefinition.Template"),
+            templateClassNames = environment["template-classes-names"] as List<String>,
             templateClasspath = listOfNotNull(environment["template-classes"] as? File),
             environment = environment
     )

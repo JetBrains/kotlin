@@ -50,8 +50,6 @@ class IncrementalCompilationOptions(
         val modifiedFiles: List<File>?,
         val deletedFiles: List<File>?,
         val workingDir: File,
-        val customCacheVersionFileName: String,
-        val customCacheVersion: Int,
         compilerMode: CompilerMode,
         targetPlatform: CompileService.TargetPlatform,
         /** @See [ReportCategory] */
@@ -79,8 +77,6 @@ class IncrementalCompilationOptions(
                "modifiedFiles=$modifiedFiles, " +
                "deletedFiles=$deletedFiles, " +
                "workingDir=$workingDir, " +
-               "customCacheVersionFileName='$customCacheVersionFileName', " +
-               "customCacheVersion=$customCacheVersion, " +
                "multiModuleICSettings=$multiModuleICSettings, " +
                "usePreciseJavaTracking=$usePreciseJavaTracking" +
                "localStateDirs=$localStateDirs" +

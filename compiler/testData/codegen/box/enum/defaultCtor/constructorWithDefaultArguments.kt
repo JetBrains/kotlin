@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 enum class Test(val str: String = "OK") {
     OK
 }

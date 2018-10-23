@@ -330,7 +330,8 @@ public class FunctionCodegen {
             @NotNull DeclarationDescriptor containingDeclaration
     ) {
         return !canDelegateMethodBodyToInlineClass(origin, functionDescriptor, contextKind, containingDeclaration) ||
-               !functionDescriptor.getOverriddenDescriptors().isEmpty();
+               !functionDescriptor.getOverriddenDescriptors().isEmpty() ||
+               CodegenUtilKt.isJvmStaticInInlineClass(functionDescriptor);
     }
 
     private static boolean canDelegateMethodBodyToInlineClass(
@@ -342,6 +343,9 @@ public class FunctionCodegen {
         // special kind / function
         if (contextKind == OwnerKind.ERASED_INLINE_CLASS) return false;
         if (origin.getOriginKind() == JvmDeclarationOriginKind.UNBOX_METHOD_OF_INLINE_CLASS) return false;
+
+        // Synthesized class member descriptors corresponding to JvmStatic members of companion object
+        if (CodegenUtilKt.isJvmStaticInInlineClass(functionDescriptor)) return false;
 
         // descriptor corresponds to the underlying value
         if (functionDescriptor instanceof PropertyAccessorDescriptor) {
@@ -1151,6 +1155,10 @@ public class FunctionCodegen {
             return;
         }
 
+        if (InlineClassesUtilsKt.isInlineClass(contextClass) && kind != OwnerKind.ERASED_INLINE_CLASS) {
+            return;
+        }
+
         if (!isDefaultNeeded(functionDescriptor, function)) {
             return;
         }
@@ -1161,7 +1169,9 @@ public class FunctionCodegen {
                              isEffectivelyInlineOnly(functionDescriptor) ?
                              AsmUtil.NO_FLAG_PACKAGE_PRIVATE : Opcodes.ACC_PUBLIC;
         int flags =  visibilityFlag | getDeprecatedAccessFlag(functionDescriptor) | ACC_SYNTHETIC;
-        if (!(functionDescriptor instanceof ConstructorDescriptor)) {
+        if (!(functionDescriptor instanceof ConstructorDescriptor &&
+              !InlineClassesUtilsKt.isInlineClass(functionDescriptor.getContainingDeclaration()))
+        ) {
             flags |= ACC_STATIC;
         }
 
@@ -1266,7 +1276,8 @@ public class FunctionCodegen {
                 Label loadArg = new Label();
                 iv.ifeq(loadArg);
 
-                StackValue.local(parameterIndex, type).store(loadStrategy.genValue(parameterDescriptor, codegen), iv);
+                StackValue.local(parameterIndex, type, parameterDescriptor.getType())
+                        .store(loadStrategy.genValue(parameterDescriptor, codegen), iv);
 
                 iv.mark(loadArg);
             }
@@ -1282,7 +1293,7 @@ public class FunctionCodegen {
             generator.putValueIfNeeded(new JvmKotlinType(type, null), StackValue.local(parameterIndex, type));
         }
 
-        CallableMethod method = state.getTypeMapper().mapToCallableMethod(functionDescriptor, false);
+        CallableMethod method = state.getTypeMapper().mapToCallableMethod(functionDescriptor, false, methodContext.getContextKind());
 
         generator.genCall(method, null, false, codegen);
 

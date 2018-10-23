@@ -6,11 +6,10 @@
 package org.jetbrains.kotlin.ir.backend.js.lower.calls
 
 import org.jetbrains.kotlin.ir.backend.js.ir.irCall
-import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
-import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.originalKotlinType
 import org.jetbrains.kotlin.name.Name
@@ -18,13 +17,13 @@ import org.jetbrains.kotlin.types.SimpleType
 
 typealias SymbolToTransformer = MutableMap<IrFunctionSymbol, (IrCall) -> IrExpression>
 
-internal fun SymbolToTransformer.add(from: Map<SimpleType, IrSimpleFunction>, to: IrSimpleFunction) {
+internal fun SymbolToTransformer.add(from: Map<SimpleType, IrFunction>, to: IrFunction) {
     from.forEach { _, func ->
         add(func.symbol, to)
     }
 }
 
-internal fun SymbolToTransformer.add(from: Map<SimpleType, IrSimpleFunction>, to: (IrCall) -> IrExpression) {
+internal fun SymbolToTransformer.add(from: Map<SimpleType, IrFunction>, to: (IrCall) -> IrExpression) {
     from.forEach { _, func ->
         add(func.symbol, to)
     }
@@ -34,7 +33,7 @@ internal fun SymbolToTransformer.add(from: IrFunctionSymbol, to: (IrCall) -> IrE
     put(from, to)
 }
 
-internal fun SymbolToTransformer.add(from: IrFunctionSymbol, to: IrSimpleFunction, dispatchReceiverAsFirstArgument: Boolean = false) {
+internal fun SymbolToTransformer.add(from: IrFunctionSymbol, to: IrFunction, dispatchReceiverAsFirstArgument: Boolean = false) {
     put(from) { call -> irCall(call, to.symbol, dispatchReceiverAsFirstArgument) }
 }
 
@@ -48,11 +47,11 @@ internal fun <K> MutableMap<K, (IrCall) -> IrExpression>.addWithPredicate(
 
 internal typealias MemberToTransformer = HashMap<SimpleMemberKey, (IrCall) -> IrExpression>
 
-internal fun MemberToTransformer.add(type: IrType, name: Name, v: IrSimpleFunctionSymbol) {
+internal fun MemberToTransformer.add(type: IrType, name: Name, v: IrFunctionSymbol) {
     add(type, name) { irCall(it, v, dispatchReceiverAsFirstArgument = true) }
 }
 
-internal fun MemberToTransformer.add(type: IrType, name: Name, v: IrSimpleFunction) {
+internal fun MemberToTransformer.add(type: IrType, name: Name, v: IrFunction) {
     add(type, name, v.symbol)
 }
 
