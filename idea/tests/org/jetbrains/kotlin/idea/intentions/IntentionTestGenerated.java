@@ -696,6 +696,21 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             runTest("idea/testData/intentions/addBraces/addBracesForIfWithSemicolonAndExpression.kt");
         }
 
+        @TestMetadata("addBracesForSingleLineIfWithCommentBeneath.kt")
+        public void testAddBracesForSingleLineIfWithCommentBeneath() throws Exception {
+            runTest("idea/testData/intentions/addBraces/addBracesForSingleLineIfWithCommentBeneath.kt");
+        }
+
+        @TestMetadata("addBracesForSingleLineIfWithCommentBeneath2.kt")
+        public void testAddBracesForSingleLineIfWithCommentBeneath2() throws Exception {
+            runTest("idea/testData/intentions/addBraces/addBracesForSingleLineIfWithCommentBeneath2.kt");
+        }
+
+        @TestMetadata("addBracesForSingleLineIfWithCommentBeneath3.kt")
+        public void testAddBracesForSingleLineIfWithCommentBeneath3() throws Exception {
+            runTest("idea/testData/intentions/addBraces/addBracesForSingleLineIfWithCommentBeneath3.kt");
+        }
+
         @TestMetadata("addBracesForWhile.kt")
         public void testAddBracesForWhile() throws Exception {
             runTest("idea/testData/intentions/addBraces/addBracesForWhile.kt");

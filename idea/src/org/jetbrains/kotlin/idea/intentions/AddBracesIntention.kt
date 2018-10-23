@@ -17,14 +17,15 @@
 package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
-import com.intellij.psi.PsiComment
-import com.intellij.psi.PsiWhiteSpace
+import com.intellij.psi.*
+import org.jetbrains.kotlin.idea.refactoring.getLineCount
 import org.jetbrains.kotlin.idea.refactoring.getLineNumber
 import org.jetbrains.kotlin.idea.util.CommentSaver
+import org.jetbrains.kotlin.j2k.isInSingleLine
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
-import java.lang.IllegalArgumentException
+import org.jetbrains.kotlin.resolve.calls.CallExpressionElement
 
 class AddBracesIntention : SelfTargetingIntention<KtElement>(KtElement::class.java, "Add braces") {
     override fun isApplicableTo(element: KtElement, caretOffset: Int): Boolean {
@@ -51,7 +52,7 @@ class AddBracesIntention : SelfTargetingIntention<KtElement>(KtElement::class.ja
     override fun applyTo(element: KtElement, editor: Editor?) {
         if (editor == null) throw IllegalArgumentException("This intention requires an editor")
         val expression = element.getTargetExpression(editor.caretModel.offset)!!
-
+        var isCommentBeneath = false
         val psiFactory = KtPsiFactory(element)
 
         val semicolon = element.getNextSiblingIgnoringWhitespaceAndComments()?.takeIf { it.node.elementType == KtTokens.SEMICOLON }
@@ -61,6 +62,21 @@ class AddBracesIntention : SelfTargetingIntention<KtElement>(KtElement::class.ja
                 semicolon.replace(psiFactory.createNewLine())
             else
                 semicolon.delete()
+        }
+
+        // Check for single line if expression
+        if (element is KtIfExpression && expression.isInSingleLine() && element.`else` == null) {
+            // Check if a comment is actually underneath (\n) the expression
+            val allElements = element.siblings(withItself = false).filterIsInstance<PsiElement>()
+            val sibling = allElements.firstOrNull { it is PsiComment }
+            if (sibling is PsiComment) {
+                // Check if \n before first received comment sibling
+                // if false, the normal procedure of adding braces occurs.
+                isCommentBeneath =
+                        sibling.prevSibling is PsiWhiteSpace &&
+                        sibling.prevSibling.textContains('\n') &&
+                        (sibling.prevSibling.prevSibling is PsiComment || sibling.prevSibling.prevSibling is PsiElement)
+            }
         }
 
         val nextComment = when {
@@ -83,7 +99,9 @@ class AddBracesIntention : SelfTargetingIntention<KtElement>(KtElement::class.ja
             is KtIfExpression ->
                 (result?.parent?.nextSibling as? PsiWhiteSpace)?.delete()
         }
-        saver.restore(result)
+
+        // Check for single line expression with comment beneath.
+        saver.restore(result, isCommentBeneath, forceAdjustIndent = false)
     }
 
     private fun KtElement.getTargetExpression(caretLocation: Int): KtExpression? {
