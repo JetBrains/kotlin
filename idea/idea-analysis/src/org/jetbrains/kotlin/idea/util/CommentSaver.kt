@@ -33,8 +33,6 @@ class CommentSaver(originalElements: PsiChildRange, private val saveLineBreaks: 
     private val SAVED_TREE_KEY = Key<TreeElement>("SAVED_TREE")
     private val psiFactory = KtPsiFactory(originalElements.first!!)
 
-    private var testCount = 0
-
     private abstract class TreeElement {
         companion object {
             fun create(element: PsiElement): TreeElement? {
@@ -238,15 +236,14 @@ class CommentSaver(originalElements: PsiChildRange, private val saveLineBreaks: 
     }
 
     fun restore(resultElement: PsiElement, isCommentBeneathSingleLine: Boolean, forceAdjustIndent: Boolean = false) {
-        isSingleExpressionWithCommentBeneath = isCommentBeneathSingleLine
-        restore(PsiChildRange.singleElement(resultElement), forceAdjustIndent)
+        restore(PsiChildRange.singleElement(resultElement), forceAdjustIndent, isCommentBeneathSingleLine)
     }
 
     fun restore(resultElement: PsiElement, forceAdjustIndent: Boolean = false) {
         restore(PsiChildRange.singleElement(resultElement), forceAdjustIndent)
     }
 
-    fun restore(resultElements: PsiChildRange, forceAdjustIndent: Boolean = false) {
+    fun restore(resultElements: PsiChildRange, forceAdjustIndent: Boolean = false, isCommentBeneathSingleLine: Boolean = false) {
         assert(!isFinished)
         assert(!resultElements.isEmpty)
 
@@ -268,7 +265,7 @@ class CommentSaver(originalElements: PsiChildRange, private val saveLineBreaks: 
                     })
                 }
 
-                restoreComments(resultElements)
+                restoreComments(resultElements, isCommentBeneathSingleLine)
 
                 restoreLineBreaks()
 
@@ -299,7 +296,7 @@ class CommentSaver(originalElements: PsiChildRange, private val saveLineBreaks: 
         isFinished = true
     }
 
-    private fun restoreComments(resultElements: PsiChildRange) {
+    private fun restoreComments(resultElements: PsiChildRange, isCommentBeneathSingleLine: Boolean = false) {
         var putAbandonedCommentsAfter = resultElements.last!!
 
         for (commentTreeElement in commentsToRestore) {
@@ -341,7 +338,7 @@ class CommentSaver(originalElements: PsiChildRange, private val saveLineBreaks: 
             }
 
             // shift (possible contained) comment in expression underneath braces
-            if (isSingleExpressionWithCommentBeneath && resultElements.count() == 1) {
+            if (isCommentBeneathSingleLine && resultElements.count() == 1) {
                 val element = resultElements.first
                 element?.add(psiFactory.createWhiteSpace("\n"))
                 element?.add(restored)
