@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 fun box(): String {
     if (1F != 1.toFloat()) return "fail 1"
     if (1.0F != 1.0.toFloat()) return "fail 2"
