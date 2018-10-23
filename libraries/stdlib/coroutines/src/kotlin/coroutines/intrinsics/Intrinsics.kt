@@ -41,7 +41,7 @@ public suspend inline fun <T> suspendCoroutineUninterceptedOrReturn(crossinline 
     throw NotImplementedError("Implementation of suspendCoroutineUninterceptedOrReturn is intrinsic")
 
 /**
- * This value is used as a return value of [suspendCoroutineOrReturn] `block` argument to state that
+ * This value is used as a return value of [suspendCoroutineUninterceptedOrReturn] `block` argument to state that
  * the execution was suspended and will not return any result immediately.
  */
 // It is implemented as property with getter to avoid ProGuard <clinit> problem with multifile IntrinsicsKt class

@@ -60,6 +60,7 @@ class EnumClassTransformer(val context: JsIrBackendContext, private val irClass:
     private val enumEntries = irClass.declarations.filterIsInstance<IrEnumEntry>()
     private val loweredEnumConstructors = HashMap<IrConstructorSymbol, IrConstructor>()
     private val enumName = irClass.name.identifier
+    private val throwISESymbol = context.throwISEymbol
 
     fun transform(): List<IrDeclaration> {
         // Add `name` and `ordinal` parameters to enum class constructors
@@ -140,7 +141,7 @@ class EnumClassTransformer(val context: JsIrBackendContext, private val irClass:
                             irBranch(
                                 irEquals(irString(it.name.identifier), irGet(nameParameter)), irCall(getInstance)
                             )
-                        } + irElseBranch(irCall(context.irBuiltIns.throwIseSymbol))
+                        } + irElseBranch(irCall(throwISESymbol))
                     )
                 )
             }

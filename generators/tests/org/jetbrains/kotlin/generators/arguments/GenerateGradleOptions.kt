@@ -194,7 +194,9 @@ private fun Printer.generateImpl(
             generatePropertyDeclaration(property, modifiers = "override")
             withIndent {
                 println("get() = $backingField ?: ${property.gradleDefaultValue}")
-                println("set(value) { $backingField = value }")
+                println("set(value) {")
+                withIndent { println("$backingField = value") }
+                println("}")
             }
         }
 

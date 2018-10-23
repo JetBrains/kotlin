@@ -7,9 +7,11 @@ package kotlin.reflect.jvm.internal.calls
 
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
+import org.jetbrains.kotlin.resolve.isInlineClass
 import org.jetbrains.kotlin.resolve.isInlineClassType
 import org.jetbrains.kotlin.types.KotlinType
 import java.lang.reflect.Member
@@ -49,15 +51,34 @@ internal class InlineClassAwareCaller<out M : Member>(
                 // and in that case the number of expected arguments is one less than usual, hence -1
                 -1
             }
-            descriptor.dispatchReceiverParameter != null && caller !is BoundCaller -> 1
+
+            descriptor.dispatchReceiverParameter != null && caller !is BoundCaller -> {
+                // If we have an unbound reference to the inline class member,
+                // its receiver (which is passed as argument 0) should also be unboxed.
+                if (descriptor.containingDeclaration.isInlineClass())
+                    0
+                else
+                    1
+            }
+
             else -> 0
         }
 
         val extraArgumentsTail = if (isDefault) 2 else 0
 
-        val kotlinParameterTypes =
-            listOfNotNull(descriptor.extensionReceiverParameter?.type) +
-                    descriptor.valueParameters.map(ValueParameterDescriptor::getType)
+        val kotlinParameterTypes: List<KotlinType> = ArrayList<KotlinType>().also { kotlinParameterTypes ->
+            val extensionReceiverType = descriptor.extensionReceiverParameter?.type
+            if (extensionReceiverType != null) {
+                kotlinParameterTypes.add(extensionReceiverType)
+            } else if (descriptor !is ConstructorDescriptor) {
+                val containingDeclaration = descriptor.containingDeclaration
+                if (containingDeclaration is ClassDescriptor && containingDeclaration.isInline) {
+                    kotlinParameterTypes.add(containingDeclaration.defaultType)
+                }
+            }
+
+            descriptor.valueParameters.mapTo(kotlinParameterTypes, ValueParameterDescriptor::getType)
+        }
         val expectedArgsSize = kotlinParameterTypes.size + shift + extraArgumentsTail
         if (arity != expectedArgsSize) {
             throw KotlinReflectionInternalError(
@@ -74,7 +95,7 @@ internal class InlineClassAwareCaller<out M : Member>(
 
         val unbox = Array(expectedArgsSize) { i ->
             if (i in argumentRange) {
-                kotlinParameterTypes[i - shift].toInlineClass()?.getUnboxMethod()
+                kotlinParameterTypes[i - shift].toInlineClass()?.getUnboxMethod(descriptor)
             } else null
         }
 
@@ -103,26 +124,9 @@ internal class InlineClassAwareCaller<out M : Member>(
     }
 
     private fun Class<*>.getBoxMethod(): Method = try {
-        getDeclaredMethod("box" + JvmAbi.IMPL_SUFFIX_FOR_INLINE_CLASS_MEMBERS, getUnboxMethod().returnType)
+        getDeclaredMethod("box" + JvmAbi.IMPL_SUFFIX_FOR_INLINE_CLASS_MEMBERS, getUnboxMethod(descriptor).returnType)
     } catch (e: NoSuchMethodException) {
         throw KotlinReflectionInternalError("No box method found in inline class: $this (calling $descriptor)")
-    }
-
-    private fun Class<*>.getUnboxMethod(): Method = try {
-        getDeclaredMethod("unbox" + JvmAbi.IMPL_SUFFIX_FOR_INLINE_CLASS_MEMBERS)
-    } catch (e: NoSuchMethodException) {
-        throw KotlinReflectionInternalError("No unbox method found in inline class: $this (calling $descriptor)")
-    }
-
-    private fun KotlinType.toInlineClass(): Class<*>? {
-        val descriptor = constructor.declarationDescriptor
-        if (descriptor is ClassDescriptor && descriptor.isInline) {
-            return descriptor.toJavaClass() ?: throw KotlinReflectionInternalError(
-                "Class object for the class ${descriptor.name} cannot be found (classId=${descriptor.classId})"
-            )
-        }
-
-        return null
     }
 }
 
@@ -133,6 +137,38 @@ internal fun <M : Member> CallerImpl<M>.createInlineClassAwareCallerIfNeeded(
     val needsInlineAwareCaller =
         descriptor.valueParameters.any { it.type.isInlineClassType() } ||
                 descriptor.returnType?.isInlineClassType() == true ||
-                (this !is BoundCaller && descriptor.extensionReceiverParameter?.type?.isInlineClassType() == true)
+                this !is BoundCaller && descriptor.hasInlineClassReceiver()
+
     return if (needsInlineAwareCaller) InlineClassAwareCaller(descriptor, this, isDefault) else this
+}
+
+private fun CallableMemberDescriptor.hasInlineClassReceiver() =
+    expectedReceiverType?.isInlineClassType() == true
+
+internal fun Class<*>.getUnboxMethod(descriptor: CallableMemberDescriptor): Method = try {
+    getDeclaredMethod("unbox" + JvmAbi.IMPL_SUFFIX_FOR_INLINE_CLASS_MEMBERS)
+} catch (e: NoSuchMethodException) {
+    throw KotlinReflectionInternalError("No unbox method found in inline class: $this (calling $descriptor)")
+}
+
+internal fun KotlinType.toInlineClass(): Class<*>? {
+    val descriptor = constructor.declarationDescriptor
+    if (descriptor is ClassDescriptor && descriptor.isInline) {
+        return descriptor.toJavaClass() ?: throw KotlinReflectionInternalError(
+            "Class object for the class ${descriptor.name} cannot be found (classId=${descriptor.classId})"
+        )
+    }
+
+    return null
+}
+
+private val CallableMemberDescriptor.expectedReceiverType
+    get() =
+        extensionReceiverParameter?.type
+            ?: (containingDeclaration as? ClassDescriptor)?.defaultType.takeIf { dispatchReceiverParameter != null }
+
+internal fun Any?.coerceToExpectedReceiverType(descriptor: CallableMemberDescriptor): Any? {
+    val unboxMethod = descriptor.expectedReceiverType?.toInlineClass()?.getUnboxMethod(descriptor) ?: return this
+
+    return unboxMethod.invoke(this)
 }

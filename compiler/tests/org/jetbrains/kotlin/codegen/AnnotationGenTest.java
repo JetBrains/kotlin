@@ -167,8 +167,8 @@ public class AnnotationGenTest extends CodegenTestCase {
     public void testConstructor() throws NoSuchFieldException, NoSuchMethodException {
         loadText("class A @[java.lang.Deprecated] constructor() {}");
         Class<?> aClass = generateClass("A");
-        Constructor x = aClass.getDeclaredConstructor();
-        Deprecated annotation = (Deprecated) x.getAnnotation(Deprecated.class);
+        Constructor<?> x = aClass.getDeclaredConstructor();
+        Deprecated annotation = x.getAnnotation(Deprecated.class);
         assertNotNull(annotation);
     }
 
@@ -181,8 +181,8 @@ public class AnnotationGenTest extends CodegenTestCase {
 
     public void testClass() throws NoSuchFieldException, NoSuchMethodException {
         loadText("@[java.lang.Deprecated] class A () {}");
-        Class aClass = generateClass("A");
-        Deprecated annotation = (Deprecated) aClass.getAnnotation(Deprecated.class);
+        Class<?> aClass = generateClass("A");
+        Deprecated annotation = aClass.getAnnotation(Deprecated.class);
         assertNotNull(annotation);
     }
 
@@ -209,9 +209,10 @@ public class AnnotationGenTest extends CodegenTestCase {
                  "@java.lang.annotation.Retention(RetentionPolicy.RUNTIME) annotation class A(val a: String)\n" +
                  "" +
                  "@A(\"239\") class B()");
-        Class aClass = generateClass("A");
+        @SuppressWarnings("unchecked")
+        Class<? extends Annotation> aClass = (Class) generateClass("A");
 
-        Retention annotation = (Retention)aClass.getAnnotation(Retention.class);
+        Retention annotation = aClass.getAnnotation(Retention.class);
         RetentionPolicy value = annotation.value();
         assertEquals(RetentionPolicy.RUNTIME, value);
 
@@ -243,9 +244,10 @@ public class AnnotationGenTest extends CodegenTestCase {
                  "@java.lang.annotation.Retention(RetentionPolicy.RUNTIME) annotation class A(val a: C)\n" +
                  "" +
                  "@A(C(\"239\")) class B()");
-        Class aClass = generateClass("A");
+        @SuppressWarnings("unchecked")
+        Class<? extends Annotation> aClass = (Class) generateClass("A");
 
-        Retention annotation = (Retention)aClass.getAnnotation(Retention.class);
+        Retention annotation = aClass.getAnnotation(Retention.class);
         RetentionPolicy value = annotation.value();
         assertEquals(RetentionPolicy.RUNTIME, value);
 
@@ -280,9 +282,10 @@ public class AnnotationGenTest extends CodegenTestCase {
                  "@java.lang.annotation.Retention(RetentionPolicy.RUNTIME) annotation class A(val a: Array<String>)\n" +
                  "" +
                  "@A(arrayOf(\"239\",\"932\")) class B()");
-        Class aClass = generateClass("A");
+        @SuppressWarnings("unchecked")
+        Class<? extends Annotation> aClass = (Class) generateClass("A");
 
-        Retention annotation = (Retention)aClass.getAnnotation(Retention.class);
+        Retention annotation = aClass.getAnnotation(Retention.class);
         RetentionPolicy value = annotation.value();
         assertEquals(RetentionPolicy.RUNTIME, value);
 
@@ -315,9 +318,10 @@ public class AnnotationGenTest extends CodegenTestCase {
                  "@java.lang.annotation.Retention(RetentionPolicy.RUNTIME) annotation class A(val a: IntArray)\n" +
                  "" +
                  "@A(intArrayOf(239,932)) class B()");
-        Class aClass = generateClass("A");
+        @SuppressWarnings("unchecked")
+        Class<? extends Annotation> aClass = (Class) generateClass("A");
 
-        Retention annotation = (Retention)aClass.getAnnotation(Retention.class);
+        Retention annotation = aClass.getAnnotation(Retention.class);
         RetentionPolicy value = annotation.value();
         assertEquals(RetentionPolicy.RUNTIME, value);
 
@@ -348,9 +352,9 @@ public class AnnotationGenTest extends CodegenTestCase {
         loadText("import java.lang.annotation.*\n" +
                  "" +
                  "@java.lang.annotation.Target(ElementType.TYPE, ElementType.METHOD) annotation class A");
-        Class aClass = generateClass("A");
+        Class<?> aClass = generateClass("A");
 
-        Target annotation = (Target)aClass.getAnnotation(Target.class);
+        Target annotation = aClass.getAnnotation(Target.class);
         ElementType[] value = annotation.value();
         assertEquals(2, value.length);
 
@@ -372,7 +376,8 @@ public class AnnotationGenTest extends CodegenTestCase {
                  "@Retention(RetentionPolicy.RUNTIME) annotation class A(val a: Array<Retention>)\n" +
                  "" +
                  "@A(arrayOf(Retention(RetentionPolicy.RUNTIME),Retention(RetentionPolicy.SOURCE))) class B()");
-        Class aClass = generateClass("A");
+        @SuppressWarnings("unchecked")
+        Class<? extends Annotation> aClass = (Class) generateClass("A");
 
         Method[] methods = aClass.getDeclaredMethods();
         assertEquals(1, methods.length);

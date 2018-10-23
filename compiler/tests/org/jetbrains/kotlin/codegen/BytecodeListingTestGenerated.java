@@ -163,6 +163,11 @@ public class BytecodeListingTestGenerated extends AbstractBytecodeListingTest {
         runTestWithPackageReplacement("compiler/testData/codegen/bytecodeListing/oomInReturnUnit.kt", "kotlin.coroutines");
     }
 
+    @TestMetadata("privateDefaultSetter.kt")
+    public void testPrivateDefaultSetter() throws Exception {
+        runTest("compiler/testData/codegen/bytecodeListing/privateDefaultSetter.kt");
+    }
+
     @TestMetadata("privateSuspendFun.kt")
     public void testPrivateSuspendFun() throws Exception {
         runTest("compiler/testData/codegen/bytecodeListing/privateSuspendFun.kt");

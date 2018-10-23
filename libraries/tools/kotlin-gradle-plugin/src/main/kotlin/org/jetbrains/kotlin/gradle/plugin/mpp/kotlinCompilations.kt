@@ -11,10 +11,8 @@ import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.attributes.AttributeContainer
 import org.gradle.api.file.FileCollection
-import org.gradle.api.file.FileTree
 import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.tasks.SourceSet
-import org.gradle.api.tasks.SourceSetOutput
 import org.gradle.util.ConfigureUtil
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
@@ -26,7 +24,6 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile
 import org.jetbrains.kotlin.gradle.utils.addExtendsFromRelation
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import java.io.File
-import java.lang.IllegalArgumentException
 import java.util.*
 import java.util.concurrent.Callable
 
@@ -327,11 +324,13 @@ class KotlinNativeCompilation(
     }
 
     var entryPoint: String? = null
-    fun entryPoint(value: String) { entryPoint = value }
+    fun entryPoint(value: String) {
+        entryPoint = value
+    }
 
     // Interop DSL.
     val cinterops = project.container(DefaultCInteropSettings::class.java) { cinteropName ->
-        DefaultCInteropSettings(project, cinteropName,this)
+        DefaultCInteropSettings(project, cinteropName, this)
     }
 
     var linkerOpts = mutableListOf<String>()
@@ -350,8 +349,8 @@ class KotlinNativeCompilation(
     fun findLinkTask(kind: NativeOutputKind, buildType: NativeBuildType): KotlinNativeCompile? = binaryTasks[kind to buildType]
 
     fun getLinkTask(kind: NativeOutputKind, buildType: NativeBuildType): KotlinNativeCompile =
-        findLinkTask(kind, buildType) ?:
-        throw IllegalArgumentException("Cannot find a link task for the binary kind '$kind' and the build type '$buildType'")
+        findLinkTask(kind, buildType)
+            ?: throw IllegalArgumentException("Cannot find a link task for the binary kind '$kind' and the build type '$buildType'")
 
     fun findLinkTask(kind: String, buildType: String) =
         findLinkTask(NativeOutputKind.valueOf(kind.toUpperCase()), NativeBuildType.valueOf(buildType.toUpperCase()))

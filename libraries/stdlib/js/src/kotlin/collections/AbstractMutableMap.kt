@@ -12,7 +12,7 @@ package kotlin.collections
 /**
  * Provides a skeletal implementation of the [MutableMap] interface.
  *
- * The implementor is required to implement the [entries] property, which should return mutable set of map entries, and the [put] function.
+ * The implementor is required to implement [entries] property, which should return mutable set of map entries, and [put] function.
  *
  * @param K the type of map keys. The map is invariant on its key type.
  * @param V the type of map values. The map is invariant on its value type.

@@ -10,7 +10,7 @@ import org.gradle.api.NamedDomainObjectFactory
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 
-interface KotlinCompilationFactory<T: KotlinCompilation> : NamedDomainObjectFactory<T> {
+interface KotlinCompilationFactory<T : KotlinCompilation> : NamedDomainObjectFactory<T> {
     val itemClass: Class<T>
 }
 
@@ -68,7 +68,7 @@ class KotlinJsCompilationFactory(
         get() = KotlinJsCompilation::class.java
 
     override fun create(name: String): KotlinJsCompilation =
-            KotlinJsCompilation(target, name)
+        KotlinJsCompilation(target, name)
 }
 
 class KotlinNativeCompilationFactory(

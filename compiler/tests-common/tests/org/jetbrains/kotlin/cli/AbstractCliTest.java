@@ -204,7 +204,7 @@ public abstract class AbstractCliTest extends TestCaseWithTmpdir {
         String argWithTestPathsReplaced = replaceTestPaths(argWithColonsReplaced, testDataDir, tempDir);
 
         if (arg.startsWith(BUILD_FILE_ARGUMENT_PREFIX)) {
-            return createTempFileWithPathsReplaced(argWithTestPathsReplaced, BUILD_FILE_ARGUMENT_PREFIX, ".xml", testDataDir, tempDir);
+            return replacePathsInBuildXml(argWithTestPathsReplaced, testDataDir, tempDir);
         }
 
         if (arg.startsWith(ARGFILE_ARGUMENT)) {
@@ -212,6 +212,11 @@ public abstract class AbstractCliTest extends TestCaseWithTmpdir {
         }
 
         return argWithTestPathsReplaced;
+    }
+
+    @NotNull
+    public static String replacePathsInBuildXml(@NotNull String argument, @NotNull String testDataDir, @NotNull String tempDir) {
+        return createTempFileWithPathsReplaced(argument, BUILD_FILE_ARGUMENT_PREFIX, ".xml", testDataDir, tempDir);
     }
 
     // Create new temporary file with all test paths replaced and return the new argument value with the new file path

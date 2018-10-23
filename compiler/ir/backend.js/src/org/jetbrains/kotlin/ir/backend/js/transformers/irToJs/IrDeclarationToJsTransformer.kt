@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
 import org.jetbrains.kotlin.ir.backend.js.utils.JsGenerationContext
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.js.backend.ast.JsDeclarationScope
 import org.jetbrains.kotlin.js.backend.ast.JsEmpty
 import org.jetbrains.kotlin.js.backend.ast.JsStatement
 import org.jetbrains.kotlin.js.backend.ast.JsVars
@@ -23,7 +24,15 @@ class IrDeclarationToJsTransformer : BaseIrElementToJsNodeTransformer<JsStatemen
     }
 
     override fun visitClass(declaration: IrClass, context: JsGenerationContext): JsStatement {
-        return JsClassGenerator(declaration, context).generate()
+        return JsClassGenerator(
+            declaration,
+            context.newDeclaration(
+                JsDeclarationScope(
+                    context.currentScope,
+                    "scope for class ${declaration.name.asString()}"
+                )
+            )
+        ).generate()
     }
 
     override fun visitField(declaration: IrField, context: JsGenerationContext): JsStatement {

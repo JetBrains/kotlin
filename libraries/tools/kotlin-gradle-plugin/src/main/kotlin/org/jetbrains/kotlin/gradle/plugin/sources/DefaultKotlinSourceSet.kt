@@ -63,7 +63,8 @@ class DefaultKotlinSourceSet(
 
     override val resources: SourceDirectorySet = createDefaultSourceDirectorySet(displayName + " resources", fileResolver)
 
-    override fun kotlin(configureClosure: Closure<Any?>): SourceDirectorySet = kotlin.apply { ConfigureUtil.configure(configureClosure, this) }
+    override fun kotlin(configureClosure: Closure<Any?>): SourceDirectorySet =
+        kotlin.apply { ConfigureUtil.configure(configureClosure, this) }
 
     override fun languageSettings(configureClosure: Closure<Any?>): LanguageSettingsBuilder = languageSettings.apply {
         ConfigureUtil.configure(configureClosure, this)

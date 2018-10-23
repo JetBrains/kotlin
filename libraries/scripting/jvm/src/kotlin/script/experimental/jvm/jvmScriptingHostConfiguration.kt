@@ -19,7 +19,10 @@ open class JvmScriptingHostConfigurationBuilder : JvmScriptingHostConfigurationK
     companion object : JvmScriptingHostConfigurationKeys
 }
 
+@Deprecated("Unused")
 val JvmScriptingHostConfigurationKeys.javaHome by PropertiesCollection.key<File>(File(System.getProperty("java.home")))
+
+val JvmScriptingHostConfigurationKeys.jdkHome by PropertiesCollection.key<File>()
 
 @Suppress("unused")
 val ScriptingHostConfigurationKeys.jvm

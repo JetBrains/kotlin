@@ -16,9 +16,9 @@ import java.rmi.Remote
 import java.rmi.server.UnicastRemoteObject
 
 internal open class GradleCompilerServicesFacadeImpl(
-        project: Project,
-        val compilerMessageCollector: MessageCollector,
-        port: Int = SOCKET_ANY_FREE_PORT
+    project: Project,
+    val compilerMessageCollector: MessageCollector,
+    port: Int = SOCKET_ANY_FREE_PORT
 ) : UnicastRemoteObject(port, LoopbackNetworkInterface.clientLoopbackSocketFactory, LoopbackNetworkInterface.serverLoopbackSocketFactory),
     CompilerServicesFacadeBase,
     Remote {
@@ -35,19 +35,20 @@ internal open class GradleCompilerServicesFacadeImpl(
             }
             else -> {
                 compilerMessageCollector.reportFromDaemon(
-                        outputsCollector = null,
-                        category = category,
-                        severity = severity,
-                        message = message,
-                        attachment = attachment)
+                    outputsCollector = null,
+                    category = category,
+                    severity = severity,
+                    message = message,
+                    attachment = attachment
+                )
             }
         }
     }
 }
 
 internal class GradleIncrementalCompilerServicesFacadeImpl(
-        project: Project,
-        environment: GradleIncrementalCompilerEnvironment,
-        port: Int = SOCKET_ANY_FREE_PORT
+    project: Project,
+    environment: GradleIncrementalCompilerEnvironment,
+    port: Int = SOCKET_ANY_FREE_PORT
 ) : GradleCompilerServicesFacadeImpl(project, environment.messageCollector, port),
     IncrementalCompilerServicesFacade

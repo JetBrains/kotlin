@@ -36,13 +36,13 @@ class SecondaryCtorLowering(val context: JsIrBackendContext) {
 
     private val oldCtorToNewMap = mutableMapOf<IrConstructorSymbol, ConstructorPair>()
 
-    fun getConstructorProcessorLowering() = object : DeclarationContainerLoweringPass {
+    val constructorProcessorLowering = object : DeclarationContainerLoweringPass {
         override fun lower(irDeclarationContainer: IrDeclarationContainer) {
             irDeclarationContainer.declarations.filterIsInstance<IrClass>().forEach { lowerClass(it) }
         }
-    }::runOnFilePostfix
+    }
 
-    fun getConstructorRedirectorLowering() = object : DeclarationContainerLoweringPass {
+    val constructorRedirectorLowering = object : DeclarationContainerLoweringPass {
         override fun lower(irDeclarationContainer: IrDeclarationContainer) {
             if (irDeclarationContainer is IrClass) {
                 updateConstructorDeclarations(irDeclarationContainer)
@@ -51,7 +51,7 @@ class SecondaryCtorLowering(val context: JsIrBackendContext) {
                 it.accept(CallsiteRedirectionTransformer(), null)
             }
         }
-    }::runOnFilePostfix
+    }
 
     private fun updateConstructorDeclarations(irClass: IrClass) {
         irClass.declarations.transformFlat {

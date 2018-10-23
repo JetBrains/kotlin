@@ -38,7 +38,8 @@ import javax.inject.Inject
 import javax.xml.parsers.DocumentBuilderFactory
 
 // Use apply plugin: 'kotlin-android-extensions' to enable Android Extensions in an Android project.
-class AndroidExtensionsSubpluginIndicator @Inject internal constructor(private val registry: ToolingModelBuilderRegistry) : Plugin<Project> {
+class AndroidExtensionsSubpluginIndicator @Inject internal constructor(private val registry: ToolingModelBuilderRegistry) :
+    Plugin<Project> {
     override fun apply(project: Project) {
         val extension = project.extensions.create("androidExtensions", AndroidExtensionsExtension::class.java)
 
@@ -69,8 +70,11 @@ class AndroidExtensionsSubpluginIndicator @Inject internal constructor(private v
 
             if (name != requiredConfigurationName) return@all
 
-            configuration.dependencies.add(project.dependencies.create(
-                    "org.jetbrains.kotlin:kotlin-android-extensions-runtime:$kotlinPluginVersion"))
+            configuration.dependencies.add(
+                project.dependencies.create(
+                    "org.jetbrains.kotlin:kotlin-android-extensions-runtime:$kotlinPluginVersion"
+                )
+            )
         }
     }
 }
@@ -107,8 +111,10 @@ class AndroidSubplugin : KotlinGradleSubplugin<KotlinCompile> {
         val androidExtensionsExtension = project.extensions.getByType(AndroidExtensionsExtension::class.java)
 
         if (androidExtensionsExtension.isExperimental) {
-            return applyExperimental(kotlinCompile, androidExtension, androidExtensionsExtension,
-                    project, variantData, androidProjectHandler)
+            return applyExperimental(
+                kotlinCompile, androidExtension, androidExtensionsExtension,
+                project, variantData, androidProjectHandler
+            )
         }
 
         val sourceSets = androidExtension.sourceSets
@@ -120,19 +126,22 @@ class AndroidSubplugin : KotlinGradleSubplugin<KotlinCompile> {
         val manifestFile = mainSourceSet.manifest.srcFile
         val applicationPackage = getApplicationPackageFromManifest(manifestFile) ?: run {
             project.logger.warn(
-                    "Application package name is not present in the manifest file (${manifestFile.absolutePath})")
+                "Application package name is not present in the manifest file (${manifestFile.absolutePath})"
+            )
             ""
         }
         pluginOptions += SubpluginOption("package", applicationPackage)
 
         fun addVariant(sourceSet: AndroidSourceSet) {
             val optionValue = sourceSet.name + ';' +
-                              sourceSet.res.srcDirs.joinToString(";") { it.absolutePath }
-            pluginOptions += CompositeSubpluginOption("variant", optionValue, listOf(
+                    sourceSet.res.srcDirs.joinToString(";") { it.absolutePath }
+            pluginOptions += CompositeSubpluginOption(
+                "variant", optionValue, listOf(
                     SubpluginOption("sourceSetName", sourceSet.name),
                     //use the INTERNAL option kind since the resources are tracked as sources (see below)
                     FilesSubpluginOption("resDirs", sourceSet.res.srcDirs.toList())
-            ))
+                )
+            )
             kotlinCompile.source(project.files(getLayoutDirectories(sourceSet.res.srcDirs)))
         }
 
@@ -157,23 +166,25 @@ class AndroidSubplugin : KotlinGradleSubplugin<KotlinCompile> {
     }
 
     private fun applyExperimental(
-            kotlinCompile: KotlinCompile,
-            androidExtension: BaseExtension,
-            androidExtensionsExtension: AndroidExtensionsExtension,
-            project: Project,
-            variantData: Any?,
-            androidProjectHandler: Any?
+        kotlinCompile: KotlinCompile,
+        androidExtension: BaseExtension,
+        androidExtensionsExtension: AndroidExtensionsExtension,
+        project: Project,
+        variantData: Any?,
+        androidProjectHandler: Any?
     ): List<SubpluginOption> {
         @Suppress("UNCHECKED_CAST")
         androidProjectHandler as? AbstractAndroidProjectHandler<Any?> ?: return emptyList()
 
         val pluginOptions = arrayListOf<SubpluginOption>()
         pluginOptions += SubpluginOption("features",
-                AndroidExtensionsFeature.parseFeatures(androidExtensionsExtension.features).joinToString(",") { it.featureName })
+                                         AndroidExtensionsFeature.parseFeatures(androidExtensionsExtension.features).joinToString(",") { it.featureName })
 
         pluginOptions += SubpluginOption("experimental", "true")
-        pluginOptions += SubpluginOption("defaultCacheImplementation",
-                androidExtensionsExtension.defaultCacheImplementation.optionName)
+        pluginOptions += SubpluginOption(
+            "defaultCacheImplementation",
+            androidExtensionsExtension.defaultCacheImplementation.optionName
+        )
 
         val mainSourceSet = androidExtension.sourceSets.getByName("main")
         pluginOptions += SubpluginOption("package", getApplicationPackage(project, mainSourceSet))
@@ -184,10 +195,13 @@ class AndroidSubplugin : KotlinGradleSubplugin<KotlinCompile> {
                 append(';')
                 resDirectories.joinTo(this, separator = ";") { it.canonicalPath }
             }
-            pluginOptions += CompositeSubpluginOption("variant", optionValue, listOf(
+            pluginOptions += CompositeSubpluginOption(
+                "variant", optionValue, listOf(
                     SubpluginOption("variantName", name),
                     // use INTERNAL option kind since the resources are tracked as sources (see below)
-                    FilesSubpluginOption("resDirs", resDirectories)))
+                    FilesSubpluginOption("resDirs", resDirectories)
+                )
+            )
 
             kotlinCompile.source(project.files(getLayoutDirectories(resDirectories)))
         }
@@ -227,13 +241,15 @@ class AndroidSubplugin : KotlinGradleSubplugin<KotlinCompile> {
     }
 
     // Android25ProjectHandler.KaptVariant actually contains BaseVariant, not BaseVariantData
-    private fun getVariantComponentNames(flavorData: Any?): VariantComponentNames? = when(flavorData) {
+    private fun getVariantComponentNames(flavorData: Any?): VariantComponentNames? = when (flavorData) {
         is KaptVariantData<*> -> getVariantComponentNames(flavorData.variantData)
         is TestVariantData -> getVariantComponentNames(flavorData.testedVariantData)
         is TestVariant -> getVariantComponentNames(flavorData.testedVariant)
         is BaseVariant -> VariantComponentNames(flavorData.name, flavorData.flavorName, flavorData.buildType.name)
-        is BaseVariantData<*> -> VariantComponentNames(flavorData.name, flavorData.variantConfiguration.flavorName,
-                flavorData.variantConfiguration.buildType.name)
+        is BaseVariantData<*> -> VariantComponentNames(
+            flavorData.name, flavorData.variantConfiguration.flavorName,
+            flavorData.variantConfiguration.buildType.name
+        )
         else -> null
     }
 
@@ -254,8 +270,10 @@ class AndroidSubplugin : KotlinGradleSubplugin<KotlinCompile> {
         val applicationPackage = getApplicationPackageFromManifest(manifestFile)
 
         if (applicationPackage == null) {
-            project.logger.warn("Application package name is not present in the manifest file " +
-                    "(${manifestFile.absolutePath})")
+            project.logger.warn(
+                "Application package name is not present in the manifest file " +
+                        "(${manifestFile.absolutePath})"
+            )
 
             return ""
         } else {
@@ -266,8 +284,7 @@ class AndroidSubplugin : KotlinGradleSubplugin<KotlinCompile> {
     private fun getApplicationPackageFromManifest(manifestFile: File): String? {
         try {
             return manifestFile.parseXml().documentElement.getAttribute("package")
-        }
-        catch (e: Exception) {
+        } catch (e: Exception) {
             return null
         }
     }

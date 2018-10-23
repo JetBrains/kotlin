@@ -42,8 +42,8 @@ class TypeOperatorLowering(val context: JsIrBackendContext) : FileLoweringPass {
     private val calculator = JsIrArithBuilder(context)
 
     //NOTE: Should we define JS-own functions similar to current implementation?
-    private val throwCCE = context.irBuiltIns.throwCceSymbol
-    private val throwNPE = context.irBuiltIns.throwNpeSymbol
+    private val throwCCE = context.ir.symbols.ThrowTypeCastException
+    private val throwNPE = context.ir.symbols.ThrowNullPointerException
 
     private val eqeq = context.irBuiltIns.eqeqSymbol
 
@@ -62,6 +62,7 @@ class TypeOperatorLowering(val context: JsIrBackendContext) : FileLoweringPass {
     private val numberMarker = JsIrBuilder.buildString(context.irBuiltIns.stringType, "number")
 
     private val litTrue: IrExpression = JsIrBuilder.buildBoolean(context.irBuiltIns.booleanType, true)
+    private val litFalse: IrExpression = JsIrBuilder.buildBoolean(context.irBuiltIns.booleanType, false)
     private val litNull: IrExpression = JsIrBuilder.buildNull(context.irBuiltIns.nothingNType)
 
     override fun lower(irFile: IrFile) {
@@ -214,6 +215,7 @@ class TypeOperatorLowering(val context: JsIrBackendContext) : FileLoweringPass {
                 assert(!toType.isMarkedNullable())
                 return when {
                     toType.isAny() -> generateIsObjectCheck(argument)
+                    toType.isNothing() -> JsIrBuilder.buildComposite(context.irBuiltIns.booleanType, listOf(argument, litFalse))
                     isTypeOfCheckingType(toType) -> generateTypeOfCheck(argument, toType)
 //                    toType.isChar() -> generateCheckForChar(argument)
                     toType.isNumber() -> generateNumberCheck(argument)

@@ -7,7 +7,6 @@ package {
 
   // field: topLevelProp:Ljava/lang/String;
   // getter: getTopLevelProp()Ljava/lang/String;
-  // setter: setTopLevelProp(Ljava/lang/String;)V
   public final var topLevelProp: kotlin/String?
     public final get
     private final /* non-default */ set(<set-?>: kotlin/String?)

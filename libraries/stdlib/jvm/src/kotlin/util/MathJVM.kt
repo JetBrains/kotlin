@@ -36,7 +36,7 @@ private object Constants {
 
 }
 
-// ================ Double Math ========================================
+// region ================ Double Math ========================================
 
 /** Computes the sine of the angle [x] given in radians.
  *
@@ -619,8 +619,11 @@ public actual fun Double.roundToInt(): Int = when {
 public actual fun Double.roundToLong(): Long =
     if (isNaN()) throw IllegalArgumentException("Cannot round NaN value.") else nativeMath.round(this)
 
+// endregion
 
-// ================ Float Math ========================================
+
+
+// region ================ Float Math ========================================
 
 /** Computes the sine of the angle [x] given in radians.
  *
@@ -1142,8 +1145,10 @@ public actual fun Float.roundToInt(): Int =
 public actual fun Float.roundToLong(): Long = toDouble().roundToLong()
 
 
+// endregion
 
-// ================== Integer math functions =====================================
+// region ================ Integer Math ========================================
+
 
 /**
  * Returns the absolute value of the given value [n].
@@ -1249,3 +1254,5 @@ public actual val Long.sign: Int get() = when {
     else -> 0
 }
 
+
+// endregion

@@ -33,7 +33,7 @@ internal class DefaultLanguageSettingsBuilder : LanguageSettingsBuilder {
     override var apiVersion: String?
         get() = apiVersionImpl?.versionString
         set(value) {
-            apiVersionImpl = value ?.let { versionString ->
+            apiVersionImpl = value?.let { versionString ->
                 parseApiVersionSettings(versionString) ?: throw InvalidUserDataException(
                     "Incorrect API version. Expected one of: ${apiVersionValues.joinToString { "'${it.versionString}'" }}"
                 )
@@ -63,25 +63,25 @@ internal class DefaultLanguageSettingsBuilder : LanguageSettingsBuilder {
     }
 
     /* A Kotlin task that is responsible for code analysis of the owner of this language settings builder. */
-    lateinit var compilerPluginOptionsTask: Lazy<AbstractCompile>
+    var compilerPluginOptionsTask: Lazy<AbstractCompile?> = lazyOf(null)
 
-    val compilerPluginArguments: List<String>
+    val compilerPluginArguments: List<String>?
         get() {
-            val pluginOptionsTask = compilerPluginOptionsTask.value
+            val pluginOptionsTask = compilerPluginOptionsTask.value ?: return null
             return when (pluginOptionsTask) {
                 is AbstractKotlinCompile<*> -> pluginOptionsTask.pluginOptions
                 is KotlinNativeCompile -> pluginOptionsTask.compilerPluginOptions
-                else -> error("Unexpected task: $compilerPluginOptionsTask")
+                else -> error("Unexpected task: $pluginOptionsTask")
             }.arguments
         }
 
-    val compilerPluginClasspath: FileCollection
+    val compilerPluginClasspath: FileCollection?
         get() {
-            val pluginClasspathTask = compilerPluginOptionsTask.value
+            val pluginClasspathTask = compilerPluginOptionsTask.value ?: return null
             return when (pluginClasspathTask) {
                 is AbstractKotlinCompile<*> -> pluginClasspathTask.pluginClasspath
                 is KotlinNativeCompile -> pluginClasspathTask.compilerPluginClasspath ?: pluginClasspathTask.project.files()
-                else -> error("Unexpected task: $compilerPluginOptionsTask")
+                else -> error("Unexpected task: $pluginClasspathTask")
             }
         }
 }

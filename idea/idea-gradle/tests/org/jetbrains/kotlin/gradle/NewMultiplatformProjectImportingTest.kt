@@ -602,6 +602,174 @@ class NewMultiplatformProjectImportingTest : GradleImportingTestCase() {
         }
     }
 
+    @Test
+    fun testNestedDependencies() {
+        createProjectSubFile(
+            "settings.gradle",
+            "include 'aaa', 'bbb', 'ccc'"
+        )
+        createProjectSubFile(
+            "build.gradle",
+            """
+                buildscript {
+                    repositories {
+                        mavenLocal()
+                        jcenter()
+                        maven { url 'https://dl.bintray.com/kotlin/kotlin-dev' }
+                    }
+                    dependencies {
+                        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
+                    }
+                }
+
+                allprojects {
+                    repositories {
+                        mavenLocal()
+                        jcenter()
+                        maven { url 'https://dl.bintray.com/kotlin/kotlin-dev' }
+                    }
+                }
+            """.trimIndent()
+        )
+        createProjectSubFile(
+            "aaa/build.gradle",
+            """
+                apply plugin: 'kotlin-multiplatform'
+
+                kotlin {
+                    sourceSets {
+                        commonMain {
+                            dependencies {
+                                implementation 'org.jetbrains.kotlin:kotlin-stdlib-common'
+                                api project(':bbb')
+                            }
+                        }
+                    }
+                    targets {
+                        fromPreset(presets.jvm, 'jvm')
+                    }
+                }
+            """.trimIndent()
+        )
+        createProjectSubFile(
+            "bbb/build.gradle",
+            """
+                apply plugin: 'kotlin-multiplatform'
+
+                kotlin {
+                    sourceSets {
+                        commonMain {
+                            dependencies {
+                                implementation 'org.jetbrains.kotlin:kotlin-stdlib-common'
+                                api project(':ccc')
+                            }
+                        }
+                    }
+                    targets {
+                        fromPreset(presets.jvm, 'jvm')
+                    }
+                }
+            """.trimIndent()
+        )
+        createProjectSubFile(
+            "ccc/build.gradle",
+            """
+                apply plugin: 'kotlin-multiplatform'
+
+                kotlin {
+                    sourceSets {
+                        commonMain {
+                            dependencies {
+                                implementation 'org.jetbrains.kotlin:kotlin-stdlib-common'
+                            }
+                        }
+                    }
+                    targets {
+                        fromPreset(presets.jvm, 'jvm')
+                    }
+                }
+            """.trimIndent()
+        )
+
+        importProject()
+
+        checkProjectStructure(exhaustiveSourceSourceRootList = false) {
+            module("project")
+            module("aaa")
+            module("aaa_commonMain") {
+                libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:1.3.0-rc-146", DependencyScope.COMPILE)
+                moduleDependency("bbb_commonMain", DependencyScope.COMPILE)
+                moduleDependency("ccc_commonMain", DependencyScope.COMPILE)
+            }
+            module("aaa_commonTest") {
+                libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:1.3.0-rc-146", DependencyScope.TEST)
+                moduleDependency("aaa_commonMain", DependencyScope.TEST)
+                moduleDependency("bbb_commonMain", DependencyScope.TEST)
+                moduleDependency("ccc_commonMain", DependencyScope.TEST)
+            }
+            module("aaa_jvmMain") {
+                libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:1.3.0-rc-146", DependencyScope.COMPILE)
+                moduleDependency("aaa_commonMain", DependencyScope.COMPILE)
+                moduleDependency("bbb_commonMain", DependencyScope.COMPILE)
+                moduleDependency("bbb_jvmMain", DependencyScope.COMPILE)
+                moduleDependency("ccc_commonMain", DependencyScope.COMPILE)
+                moduleDependency("ccc_jvmMain", DependencyScope.COMPILE)
+            }
+            module("aaa_jvmTest") {
+                libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:1.3.0-rc-146", DependencyScope.TEST)
+                moduleDependency("aaa_commonMain", DependencyScope.TEST)
+                moduleDependency("aaa_commonTest", DependencyScope.TEST)
+                moduleDependency("aaa_jvmMain", DependencyScope.TEST)
+                moduleDependency("bbb_commonMain", DependencyScope.TEST)
+                moduleDependency("bbb_jvmMain", DependencyScope.TEST)
+                moduleDependency("ccc_commonMain", DependencyScope.TEST)
+                moduleDependency("ccc_jvmMain", DependencyScope.TEST)
+            }
+            module("bbb")
+            module("bbb_commonMain") {
+                libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:1.3.0-rc-146", DependencyScope.COMPILE)
+                moduleDependency("ccc_commonMain", DependencyScope.COMPILE)
+            }
+            module("bbb_commonTest") {
+                libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:1.3.0-rc-146", DependencyScope.TEST)
+                moduleDependency("bbb_commonMain", DependencyScope.TEST)
+                moduleDependency("ccc_commonMain", DependencyScope.TEST)
+            }
+            module("bbb_jvmMain") {
+                libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:1.3.0-rc-146", DependencyScope.COMPILE)
+                moduleDependency("bbb_commonMain", DependencyScope.COMPILE)
+                moduleDependency("ccc_commonMain", DependencyScope.COMPILE)
+                moduleDependency("ccc_jvmMain", DependencyScope.COMPILE)
+            }
+            module("bbb_jvmTest") {
+                libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:1.3.0-rc-146", DependencyScope.TEST)
+                moduleDependency("bbb_commonMain", DependencyScope.TEST)
+                moduleDependency("bbb_commonTest", DependencyScope.TEST)
+                moduleDependency("bbb_jvmMain", DependencyScope.TEST)
+                moduleDependency("ccc_commonMain", DependencyScope.TEST)
+                moduleDependency("ccc_jvmMain", DependencyScope.TEST)
+            }
+            module("ccc")
+            module("ccc_commonMain") {
+                libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:1.3.0-rc-146", DependencyScope.COMPILE)
+            }
+            module("ccc_commonTest") {
+                libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:1.3.0-rc-146", DependencyScope.TEST)
+                moduleDependency("ccc_commonMain", DependencyScope.TEST)
+            }
+            module("ccc_jvmMain") {
+                libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:1.3.0-rc-146", DependencyScope.COMPILE)
+                moduleDependency("ccc_commonMain", DependencyScope.COMPILE)
+            }
+            module("ccc_jvmTest") {
+                libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:1.3.0-rc-146", DependencyScope.TEST)
+                moduleDependency("ccc_commonMain", DependencyScope.TEST)
+                moduleDependency("ccc_commonTest", DependencyScope.TEST)
+                moduleDependency("ccc_jvmMain", DependencyScope.TEST)
+            }
+        }
+    }
+
     private fun checkProjectStructure(
         exhaustiveModuleList: Boolean = true,
         exhaustiveSourceSourceRootList: Boolean = true,

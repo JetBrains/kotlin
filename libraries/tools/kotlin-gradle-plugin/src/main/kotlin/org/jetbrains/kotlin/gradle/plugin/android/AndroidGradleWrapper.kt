@@ -150,7 +150,7 @@ object AndroidGradleWrapper {
 
         val compileDependencies = variantDependency("getCompileDependencies") ?: return null
         val result = compileDependencies("getDirectAndroidDependencies") // android >= 2.3
-                ?: compileDependencies("getAndroidDependencies") // android 2.2
+            ?: compileDependencies("getAndroidDependencies") // android 2.2
 
         return result as? Iterable<*>
     }

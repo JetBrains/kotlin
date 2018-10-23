@@ -43,9 +43,6 @@ private val runtimeSourcesCommon = listOfKtFilesFrom(
     // TODO: Support Int.pow
     "libraries/stdlib/js/src/kotlin/random/PlatformRandom.kt",
 
-    // TODO: Unify exceptions
-    "libraries/stdlib/common/src/kotlin/ExceptionsH.kt",
-
     // Fails with: EXPERIMENTAL_IS_NOT_ENABLED
     "libraries/stdlib/common/src/kotlin/annotations/Annotations.kt",
 
@@ -62,9 +59,6 @@ private val runtimeSourcesCommon = listOfKtFilesFrom(
     "libraries/stdlib/js/src/kotlin/dom",
     "libraries/stdlib/js/src/kotlin/browser",
 
-    // TODO: Unify exceptions
-    "libraries/stdlib/js/src/kotlin/exceptions.kt",
-
     // TODO: fix compilation issues in arrayPlusCollection
     // Replaced with irRuntime/kotlinHacks.kt
     "libraries/stdlib/js/src/kotlin/kotlin.kt",
@@ -79,7 +73,8 @@ private val runtimeSourcesCommon = listOfKtFilesFrom(
     "libraries/stdlib/js/src/kotlin/builtins.kt",
 
     // Inlining of js fun doesn't update the variables inside
-    "libraries/stdlib/js/src/kotlin/jsTypeOf.kt"
+    "libraries/stdlib/js/src/kotlin/jsTypeOf.kt",
+    "libraries/stdlib/js/src/kotlin/collections/utils.kt"
 )
 
 
@@ -119,7 +114,10 @@ abstract class BasicIrBoxTest(
     targetBackend = TargetBackend.JS_IR
 ) {
 
-    override var skipMinification = true
+    override val skipMinification = true
+
+    // TODO Design incremental compilation for IR and add test support
+    override val incrementalCompilationChecksEnabled = false
 
     private val compilationCache = mutableMapOf<String, Result>()
 

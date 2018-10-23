@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
+import org.jetbrains.kotlin.ir.types.IrDynamicType
 import org.jetbrains.kotlin.ir.util.isFunctionTypeOrSubtype
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -107,15 +108,11 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
             return it(expression, context)
         }
 
-        val dispatchReceiver = expression.dispatchReceiver
         val jsDispatchReceiver = expression.dispatchReceiver?.accept(this, context)
         val jsExtensionReceiver = expression.extensionReceiver?.accept(this, context)
         val arguments = translateCallArguments(expression, context)
 
-        val isSuspend = (symbol.owner as? IrSimpleFunction)?.isSuspend ?: false
-
-        if (dispatchReceiver != null && symbol.owner.name == OperatorNameConventions.INVOKE && !isSuspend && dispatchReceiver.type.isFunctionTypeOrSubtype()
-        ) {
+        if (isNativeInvoke(expression)) {
             return JsInvocation(jsDispatchReceiver!!, arguments)
         }
 
@@ -146,5 +143,16 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
             IrTypeOperator.IMPLICIT_CAST -> expression.argument.accept(this, data)
             else -> throw IllegalStateException("All type operator calls except IMPLICIT_CAST should be lowered at this point")
         }
+    }
+
+    private fun isNativeInvoke(call: IrCall): Boolean {
+        val simpleFunction = call.symbol.owner as? IrSimpleFunction ?: return false
+        val receiverType = simpleFunction.dispatchReceiverParameter?.type ?: return false
+
+        if (simpleFunction.isSuspend) return false
+
+        if (receiverType is IrDynamicType) return call.origin == IrStatementOrigin.INVOKE
+
+        return simpleFunction.name == OperatorNameConventions.INVOKE && receiverType.isFunctionTypeOrSubtype()
     }
 }

@@ -261,9 +261,9 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public <V> V getUserData(UserDataKey<V> key) {
         if (userDataMap == null) return null;
-        //noinspection unchecked
         return (V) userDataMap.get(key);
     }
 
@@ -273,8 +273,8 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public void setOverriddenDescriptors(@NotNull Collection<? extends CallableMemberDescriptor> overriddenDescriptors) {
-        //noinspection unchecked
         overriddenFunctions = (Collection<? extends FunctionDescriptor>) overriddenDescriptors;
         for (FunctionDescriptor function : overriddenFunctions) {
             if (function.isHiddenForResolutionEverywhereBesideSupercalls()) {

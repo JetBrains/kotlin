@@ -7,7 +7,6 @@ import groovy.lang.Closure
 import org.gradle.api.*
 import org.gradle.api.artifacts.ExternalDependency
 import org.gradle.api.attributes.Usage
-import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.FileCollection
 import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.logging.Logger
@@ -18,7 +17,6 @@ import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.api.tasks.CompileClasspathNormalizer
 import org.gradle.api.tasks.Delete
 import org.gradle.api.tasks.SourceSet
-import org.gradle.api.tasks.SourceSetOutput
 import org.gradle.api.tasks.compile.AbstractCompile
 import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.jvm.tasks.Jar
@@ -159,7 +157,7 @@ internal class Kotlin2JvmSourceSetProcessor(
             super.defaultKotlinDestinationDir
 
     override fun doCreateTask(project: Project, taskName: String): KotlinCompile =
-            tasksProvider.createKotlinJVMTask(project, taskName, kotlinCompilation)
+        tasksProvider.createKotlinJVMTask(project, taskName, kotlinCompilation)
 
     override fun doTargetSpecificProcessing() {
         Kapt3KotlinGradleSubplugin.createAptConfigurationIfNeeded(project, kotlinCompilation.compilationName)
@@ -200,35 +198,35 @@ internal class Kotlin2JvmSourceSetProcessor(
         val configuration = project.configurations.getByName("apiElements")
 
         checkedReflection({
-            val getOutgoing = configuration.javaClass.getMethod("getOutgoing")
-            val outgoing = getOutgoing(configuration)
+                              val getOutgoing = configuration.javaClass.getMethod("getOutgoing")
+                              val outgoing = getOutgoing(configuration)
 
-            val getVariants = outgoing.javaClass.getMethod("getVariants")
-            val variants = getVariants(outgoing) as NamedDomainObjectCollection<*>
+                              val getVariants = outgoing.javaClass.getMethod("getVariants")
+                              val variants = getVariants(outgoing) as NamedDomainObjectCollection<*>
 
-            val variant = variants.getByName("classes")
+                              val variant = variants.getByName("classes")
 
-            val artifactMethod = variant.javaClass.getMethod("artifact", Any::class.java)
+                              val artifactMethod = variant.javaClass.getMethod("artifact", Any::class.java)
 
-            val artifactMap = mapOf(
-                    "file" to outputDir,
-                    "type" to "java-classes-directory",
-                    "builtBy" to taskDependency
-            )
+                              val artifactMap = mapOf(
+                                  "file" to outputDir,
+                                  "type" to "java-classes-directory",
+                                  "builtBy" to taskDependency
+                              )
 
-            artifactMethod(variant, artifactMap)
+                              artifactMethod(variant, artifactMap)
 
-            return true
+                              return true
 
-        }, { reflectException ->
-            logger.kotlinWarn("Could not register Kotlin output of source set $sourceSetName for java-library: $reflectException")
-            return false
-        })
+                          }, { reflectException ->
+                              logger.kotlinWarn("Could not register Kotlin output of source set $sourceSetName for java-library: $reflectException")
+                              return false
+                          })
     }
 }
 
 internal fun KotlinCompilationOutput.tryAddClassesDir(
-        classesDirProvider: () -> FileCollection
+    classesDirProvider: () -> FileCollection
 ): Boolean =
     if (isGradleVersionAtLeast(4, 0)) {
         classesDirs.from(Callable { classesDirProvider() })
@@ -247,7 +245,7 @@ internal class Kotlin2JsSourceSetProcessor(
     kotlinCompilation = kotlinCompilation
 ) {
     override fun doCreateTask(project: Project, taskName: String): Kotlin2JsCompile =
-            tasksProvider.createKotlinJSTask(project, taskName, kotlinCompilation)
+        tasksProvider.createKotlinJSTask(project, taskName, kotlinCompilation)
 
     override fun doTargetSpecificProcessing() {
         project.tasks.findByName(kotlinCompilation.compileAllTaskName)!!.dependsOn(kotlinTask)
@@ -265,14 +263,16 @@ internal class Kotlin2JsSourceSetProcessor(
 
             val subpluginEnvironment: SubpluginEnvironment = SubpluginEnvironment.loadSubplugins(project, kotlinPluginVersion)
             val appliedPlugins = subpluginEnvironment.addSubpluginOptions(
-                    project, kotlinTask, null, null, null, kotlinCompilation)
+                project, kotlinTask, null, null, null, kotlinCompilation
+            )
 
             if (outputDir.isParentOf(project.rootDir))
                 throw InvalidUserDataException(
-                        "The output directory '$outputDir' (defined by outputFile of $kotlinTask) contains or " +
-                        "matches the project root directory '${project.rootDir}'.\n" +
-                        "Gradle will not be able to build the project because of the root directory lock.\n" +
-                        "To fix this, consider using the default outputFile location instead of providing it explicitly.")
+                    "The output directory '$outputDir' (defined by outputFile of $kotlinTask) contains or " +
+                            "matches the project root directory '${project.rootDir}'.\n" +
+                            "Gradle will not be able to build the project because of the root directory lock.\n" +
+                            "To fix this, consider using the default outputFile location instead of providing it explicitly."
+                )
 
             kotlinTask.destinationDir = outputDir
 
@@ -281,8 +281,8 @@ internal class Kotlin2JsSourceSetProcessor(
             }
 
             appliedPlugins
-                    .flatMap { it.getSubpluginKotlinTasks(project, kotlinTask) }
-                    .forEach { task -> kotlinCompilation.allKotlinSourceSets.forEach { sourceSet -> task.source(sourceSet.kotlin) } }
+                .flatMap { it.getSubpluginKotlinTasks(project, kotlinTask) }
+                .forEach { task -> kotlinCompilation.allKotlinSourceSets.forEach { sourceSet -> task.source(sourceSet.kotlin) } }
         }
     }
 
@@ -325,16 +325,20 @@ internal class KotlinCommonSourceSetProcessor(
     }
 
     override fun doCreateTask(project: Project, taskName: String): KotlinCompileCommon =
-            tasksProvider.createKotlinCommonTask(project, taskName, kotlinCompilation)
+        tasksProvider.createKotlinCommonTask(project, taskName, kotlinCompilation)
 }
 
 internal abstract class AbstractKotlinPlugin(
     val tasksProvider: KotlinTasksProvider,
     protected val kotlinPluginVersion: String,
-        val registry: ToolingModelBuilderRegistry
+    val registry: ToolingModelBuilderRegistry
 ) : Plugin<Project> {
 
-    internal abstract fun buildSourceSetProcessor(project: Project, compilation: KotlinCompilation, kotlinPluginVersion: String): KotlinSourceSetProcessor<*>
+    internal abstract fun buildSourceSetProcessor(
+        project: Project,
+        compilation: KotlinCompilation,
+        kotlinPluginVersion: String
+    ): KotlinSourceSetProcessor<*>
 
     override fun apply(project: Project) {
         project.plugins.apply(JavaPlugin::class.java)
@@ -355,7 +359,7 @@ internal abstract class AbstractKotlinPlugin(
         fun configureProjectGlobalSettings(project: Project, kotlinPluginVersion: String) {
             configureDefaultVersionsResolutionStrategy(project, kotlinPluginVersion)
             configureClassInspectionForIC(project)
-    }
+        }
 
         fun configureTarget(
             target: KotlinWithJavaTarget,
@@ -399,7 +403,8 @@ internal abstract class AbstractKotlinPlugin(
             val compilationsUnderConstruction = mutableMapOf<String, KotlinWithJavaCompilation>()
 
             javaSourceSets.all { javaSourceSet ->
-                val kotlinCompilation = compilationsUnderConstruction[javaSourceSet.name] ?: kotlinTarget.compilations.maybeCreate(javaSourceSet.name)
+                val kotlinCompilation =
+                    compilationsUnderConstruction[javaSourceSet.name] ?: kotlinTarget.compilations.maybeCreate(javaSourceSet.name)
                 kotlinCompilation.javaSourceSet = javaSourceSet
                 val kotlinSourceSet = project.kotlinExtension.sourceSets.maybeCreate(kotlinCompilation.name)
                 javaSourceSet.addConvention(kotlinSourceSetDslName, kotlinSourceSet)
@@ -490,7 +495,7 @@ internal open class KotlinPlugin(
     }
 
     override fun buildSourceSetProcessor(project: Project, compilation: KotlinCompilation, kotlinPluginVersion: String) =
-            Kotlin2JvmSourceSetProcessor(project, tasksProvider, compilation, kotlinPluginVersion)
+        Kotlin2JvmSourceSetProcessor(project, tasksProvider, compilation, kotlinPluginVersion)
 
     override fun apply(project: Project) {
         val target = KotlinWithJavaTarget(project, KotlinPlatformType.jvm, targetName).apply {
@@ -668,14 +673,16 @@ abstract class AbstractAndroidProjectHandler<V>(private val kotlinConfigurationT
                 setUpDependencyResolution(variant, compilation)
             }
 
-            val androidPluginIds = listOf("android", "com.android.application", "android-library", "com.android.library",
-                    "com.android.test", "com.android.feature", "com.android.dynamic-feature", "com.android.instantapp")
+            val androidPluginIds = listOf(
+                "android", "com.android.application", "android-library", "com.android.library",
+                "com.android.test", "com.android.feature", "com.android.dynamic-feature", "com.android.instantapp"
+            )
             val plugin = androidPluginIds.asSequence()
-                                 .mapNotNull { project.plugins.findPlugin(it) as? BasePlugin }
-                                 .firstOrNull()
-                         ?: throw InvalidPluginException("'kotlin-android' expects one of the Android Gradle " +
-                                                         "plugins to be applied to the project:\n\t" +
-                                                         androidPluginIds.joinToString("\n\t") { "* $it" })
+                .mapNotNull { project.plugins.findPlugin(it) as? BasePlugin }
+                .firstOrNull()
+                ?: throw InvalidPluginException("'kotlin-android' expects one of the Android Gradle " +
+                                                        "plugins to be applied to the project:\n\t" +
+                                                        androidPluginIds.joinToString("\n\t") { "* $it" })
 
             checkAndroidAnnotationProcessorDependencyUsage(project)
 
@@ -751,10 +758,11 @@ abstract class AbstractAndroidProjectHandler<V>(private val kotlinConfigurationT
         val javaTask = getJavaTask(variantData)
 
         val appliedPlugins = subpluginEnvironment.addSubpluginOptions(
-                project, kotlinTask, javaTask, wrapVariantDataForKapt(variantData), this, null)
+            project, kotlinTask, javaTask, wrapVariantDataForKapt(variantData), this, null
+        )
 
         appliedPlugins.flatMap { it.getSubpluginKotlinTasks(project, kotlinTask) }
-                .forEach { configureSources(it, variantData, null) }
+            .forEach { configureSources(it, variantData, null) }
     }
 
     private fun configureSources(compileTask: AbstractCompile, variantData: V, compilation: KotlinCompilation?) {
@@ -785,8 +793,7 @@ internal fun configureJavaTask(kotlinTask: KotlinCompile, javaTask: AbstractComp
             dir(kotlinTask.destinationDir)
                 .withNormalizer(CompileClasspathNormalizer::class.java)
                 .withPropertyName("${kotlinTask.name}OutputClasses")
-        }
-        else {
+        } else {
             dirCompatible(kotlinTask.destinationDir)
         }
     }
@@ -806,10 +813,10 @@ internal fun configureJavaTask(kotlinTask: KotlinCompile, javaTask: AbstractComp
 internal fun syncOutputTaskName(variantName: String) = "copy${variantName.capitalize()}KotlinClasses"
 
 internal fun createSyncOutputTask(
-        project: Project,
-        kotlinCompile: KotlinCompile,
-        javaTask: AbstractCompile,
-        variantName: String
+    project: Project,
+    kotlinCompile: KotlinCompile,
+    javaTask: AbstractCompile,
+    variantName: String
 ): SyncOutputTask {
     val kotlinDir = kotlinCompile.destinationDir
     val javaDir = javaTask.destinationDir

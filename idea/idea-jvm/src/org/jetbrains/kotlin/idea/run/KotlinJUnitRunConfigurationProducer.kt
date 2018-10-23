@@ -59,7 +59,7 @@ class KotlinJUnitRunConfigurationProducer : RunConfigurationProducer<JUnitConfig
         if (vmParameters != null && configuration.vmParameters != vmParameters) return false
 
         val template = RunManager.getInstance(configuration.project).getConfigurationTemplate(configurationFactory)
-        val predefinedModule = (template.configuration as ModuleBasedConfiguration<*>).configurationModule.module
+        val predefinedModule = (template.configuration as ModuleBasedConfigurationAny).configurationModule.module
         val configurationModule = configuration.configurationModule.module
         return configurationModule == context.location?.module?.asJvmModule() || configurationModule == predefinedModule
     }
@@ -86,7 +86,7 @@ class KotlinJUnitRunConfigurationProducer : RunConfigurationProducer<JUnitConfig
         val methodLocation = getTestMethodLocation(leaf)
         if (methodLocation != null) {
             configuration.beMethodConfiguration(methodLocation)
-            JavaRunConfigurationExtensionManager.getInstance().extendCreatedConfiguration(configuration, location)
+            JavaRunConfigurationExtensionManagerUtil.getInstance().extendCreatedConfiguration(configuration, location)
             configuration.setModule(module)
             return true
         }
@@ -94,7 +94,7 @@ class KotlinJUnitRunConfigurationProducer : RunConfigurationProducer<JUnitConfig
         val testClass = getTestClass(leaf)
         if (testClass != null) {
             configuration.beClassConfiguration(testClass)
-            JavaRunConfigurationExtensionManager.getInstance().extendCreatedConfiguration(configuration, location)
+            JavaRunConfigurationExtensionManagerUtil.getInstance().extendCreatedConfiguration(configuration, location)
             configuration.setModule(module)
             return true
         }

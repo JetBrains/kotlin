@@ -21,15 +21,15 @@ import org.gradle.api.file.FileCollection
 import org.gradle.api.tasks.*
 import org.gradle.api.tasks.incremental.IncrementalTaskInputs
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
+import org.jetbrains.kotlin.gradle.incremental.ChangedFiles
 import org.jetbrains.kotlin.gradle.plugin.kotlinDebug
 import org.jetbrains.kotlin.gradle.tasks.FilteringSourceRootsContainer
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.SourceRoots
-import org.jetbrains.kotlin.gradle.incremental.ChangedFiles
 import org.jetbrains.kotlin.gradle.utils.isParentOf
+import org.jetbrains.kotlin.gradle.utils.pathsAsStringRelativeTo
 import org.jetbrains.kotlin.incremental.classpathAsList
 import org.jetbrains.kotlin.incremental.destinationAsFile
-import org.jetbrains.kotlin.gradle.utils.pathsAsStringRelativeTo
 import java.io.File
 
 @CacheableTask
@@ -45,27 +45,32 @@ open class KaptGenerateStubsTask : KotlinCompile() {
     @get:Internal
     lateinit var generatedSourcesDir: File
 
-    @get:Classpath @get:InputFiles
+    @get:Classpath
+    @get:InputFiles
     val kaptClasspath: FileCollection
         get() = project.files(*kaptClasspathConfigurations.toTypedArray())
 
     @get:Internal
     internal lateinit var kaptClasspathConfigurations: List<Configuration>
 
-    @get:Classpath @get:InputFiles @Suppress("unused")
-    internal val kotlinTaskPluginClasspath get() = kotlinCompileTask.pluginClasspath
+    @get:Classpath
+    @get:InputFiles
+    @Suppress("unused")
+    internal val kotlinTaskPluginClasspath
+        get() = kotlinCompileTask.pluginClasspath
 
     override fun source(vararg sources: Any?): SourceTask? {
         return super.source(sourceRootsContainer.add(sources))
     }
+
     override fun setSource(sources: Any?) {
         super.setSource(sourceRootsContainer.set(sources))
     }
 
     private fun isSourceRootAllowed(source: File): Boolean =
         !destinationDir.isParentOf(source) &&
-           !stubsDir.isParentOf(source) &&
-           !generatedSourcesDir.isParentOf(source)
+                !stubsDir.isParentOf(source) &&
+                !generatedSourcesDir.isParentOf(source)
 
     override fun setupCompilerArgs(args: K2JVMCompilerArguments, defaultsOnly: Boolean) {
         kotlinCompileTask.setupCompilerArgs(args)

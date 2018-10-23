@@ -1,0 +1,6 @@
+<modules>
+  <module name="app" type="java-production" outputDir="$TEMP_DIR$/app">
+    <sources path="$TESTDATA_DIR$/usage/usage.kt"/>
+    <javaSourceRoots path="$TESTDATA_DIR$/usage"/>
+  </module>
+</modules>

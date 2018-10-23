@@ -1,9 +1,9 @@
 // COMPILER_ARGUMENTS: -XXLanguage:+AllowContractsForCustomFunctions -XXLanguage:+UseReturnsEffect
-@file:Suppress("INVISIBLE_MEMBER")
 package test
 
-import kotlin.internal.contracts.*
+import kotlin.contracts.*
 
+@UseExperimental(ExperimentalContracts::class)
 fun myRequire(x: Boolean) {
     contract {
         returns() implies x

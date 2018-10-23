@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 
 object O {
     val mmmap = HashMap<String, Int>();

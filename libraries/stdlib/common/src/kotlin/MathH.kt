@@ -20,7 +20,7 @@ public const val PI: Double = 3.141592653589793
 @SinceKotlin("1.2")
 public const val E: Double = 2.718281828459045
 
-// ================ Double Math ========================================
+// region ================ Double Math ========================================
 
 /** Computes the sine of the angle [x] given in radians.
  *
@@ -477,10 +477,11 @@ public expect fun Double.roundToInt(): Int
 @SinceKotlin("1.2")
 public expect fun Double.roundToLong(): Long
 
+// endregion
 
 
 
-// ================ Float Math ========================================
+// region ================ Float Math ========================================
 
 /** Computes the sine of the angle [x] given in radians.
  *
@@ -906,6 +907,9 @@ public expect fun Float.roundToInt(): Int
 public expect fun Float.roundToLong(): Long
 
 
+// endregion
+
+// region ================ Integer Math ========================================
 
 
 /**
@@ -997,5 +1001,4 @@ public expect val Long.absoluteValue: Long
 public expect val Long.sign: Int
 
 
-
-
+// endregion

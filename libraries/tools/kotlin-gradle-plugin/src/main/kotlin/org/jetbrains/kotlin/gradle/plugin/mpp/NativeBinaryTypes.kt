@@ -11,7 +11,7 @@ object KotlinNativeUsage {
     const val FRAMEWORK = "kotlin-native-framework"
 }
 
-enum class NativeBuildType(val optimized: Boolean, val debuggable: Boolean): Named {
+enum class NativeBuildType(val optimized: Boolean, val debuggable: Boolean) : Named {
     RELEASE(true, false),
     DEBUG(false, true);
 
