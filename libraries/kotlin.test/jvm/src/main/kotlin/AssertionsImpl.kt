@@ -45,8 +45,9 @@ actual fun <T : Throwable> assertFailsWith(exceptionClass: KClass<T>, message: S
 
 
 /**
- * Comments out a [block] of test code until it is implemented while keeping a link to the code
- * to implement in your unit test output
+ * Takes the given [block] of test code and _doesn't_ execute it.
+ *
+ * This keeps the code under test referenced, but doesn't actually test it until it is implemented.
  */
 @InlineOnly
 actual inline fun todo(@Suppress("UNUSED_PARAMETER") block: () -> Unit) {
