@@ -71,7 +71,7 @@ actual data class MatchGroup(actual val value: String, val range: IntRange)
  */
 actual public class Regex internal constructor(internal val nativePattern: Pattern) {
 
-    enum class Mode {
+    internal enum class Mode {
         FIND, MATCH
     }
 
