@@ -70,16 +70,16 @@ abstract class AbstractScratchRunActionTest : FileEditorManagerTestCase() {
         javaFiles.forEach { myFixture.copyFileToProject(it.path, FileUtil.getRelativePath(baseDir, it)!!) }
         kotlinFiles.forEach { myFixture.copyFileToProject(it.path, FileUtil.getRelativePath(baseDir, it)!!) }
 
-        val outputDir = myFixture.tempDirFixture.findOrCreateDir("out")
-
-        MockLibraryUtil.compileKotlin(baseDir.path, File(outputDir.path))
+        val outputDir = createTempDir(dirName)
 
         if (javaFiles.isNotEmpty()) {
             val options = Arrays.asList("-d", outputDir.path)
             KotlinTestUtils.compileJavaFiles(javaFiles, options)
         }
 
-        PsiTestUtil.setCompilerOutputPath(myModule, outputDir.url, false)
+        MockLibraryUtil.compileKotlin(baseDir.path, outputDir)
+
+        PsiTestUtil.setCompilerOutputPath(myModule, outputDir.path, false)
 
         val mainFileName = "$dirName/${getTestName(true)}.kts"
         doCompilingTest(mainFileName)
