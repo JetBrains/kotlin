@@ -48,16 +48,13 @@ class ContractParsingServices(val languageVersionSettings: LanguageVersionSettin
         // is a *necessary* (but not sufficient, actually) condition for presence of 'LazyContractProvider'
         if (!expression.isContractDescriptionCallPsiCheck()) return
 
-        val callContext = ContractCallContext(expression, isFirstStatement, scope, trace.bindingContext)
+        val callContext = ContractCallContext(expression, isFirstStatement, scope, trace)
         val contractProviderIfAny = (scope.ownerDescriptor as? FunctionDescriptor)?.getUserData(ContractProviderKey)
         var resultingContractDescription: ContractDescription? = null
 
         try {
             if (!callContext.isContractDescriptionCallPreciseCheck()) return
-
-            val collector = TraceBasedCollector(trace, expression)
-            resultingContractDescription = doCheckContract(collector, callContext)
-            collector.flushDiagnostics(parsingFailed = resultingContractDescription == null)
+            resultingContractDescription = parseContractAndReportErrors(callContext)
         } finally {
             contractProviderIfAny?.setContractDescription(resultingContractDescription)
         }
@@ -66,14 +63,32 @@ class ContractParsingServices(val languageVersionSettings: LanguageVersionSettin
     private fun ContractCallContext.isContractDescriptionCallPreciseCheck(): Boolean =
         contractCallExpression.isContractDescriptionCallPreciseCheck(bindingContext)
 
-    private fun doCheckContract(collector: ContractParsingDiagnosticsCollector, callContext: ContractCallContext): ContractDescription? {
-        checkFeatureEnabled(collector)
-        checkContractAllowedHere(collector, callContext)
+    /**
+     * This function deals with some call that is guaranteed to resolve to 'contract' from stdlib, so,
+     * ideally, it should satisfy following condition: null returned <=> at least one error was reported
+     */
+    private fun parseContractAndReportErrors(callContext: ContractCallContext): ContractDescription? {
+        val collector = TraceBasedCollector(callContext.trace, callContext.contractCallExpression)
 
-        return if (!collector.hasErrors())
-            PsiContractParserDispatcher(collector, callContext).parseContract()
-        else
-            null
+        try {
+            checkFeatureEnabled(collector)
+            checkContractAllowedHere(collector, callContext)
+
+            // Small optimization: do not even try to parse contract if we already have errors
+            if (collector.hasErrors()) return null
+
+            val parsedContract = PsiContractParserDispatcher(collector, callContext).parseContract()
+
+            // Make sure that at least generic error will be reported if we couldn't parse contract
+            // (null returned => at least one error was reported)
+            if (parsedContract == null) collector.addFallbackErrorIfNecessary()
+
+            // Make sure that we don't return non-null value if there were some errors
+            // (null returned <= at least one error was reported)
+            return parsedContract?.takeUnless { collector.hasErrors() }
+        } finally {
+            collector.flushDiagnostics()
+        }
     }
 
     private fun checkFeatureEnabled(collector: ContractParsingDiagnosticsCollector) {
@@ -117,8 +132,9 @@ class ContractCallContext(
     val contractCallExpression: KtExpression,
     val isFirstStatement: Boolean,
     val scope: LexicalScope,
-    val bindingContext: BindingContext
+    val trace: BindingTrace
 ) {
     val ownerDescriptor: DeclarationDescriptor = scope.ownerDescriptor
     val functionDescriptor: FunctionDescriptor = ownerDescriptor as FunctionDescriptor
+    val bindingContext: BindingContext = trace.bindingContext
 }
