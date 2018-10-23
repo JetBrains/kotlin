@@ -132,6 +132,8 @@ class SimpleNameGenerator : NameGenerator {
                     if (declaration.parent is IrDeclaration) {
                         nameBuilder.append('.')
                         nameBuilder.append(getNameForDeclaration(declaration.parent as IrDeclaration, context))
+                    } else {
+                        nameDeclarator = context.staticContext.rootScope::declareFreshName
                     }
                 }
                 is IrClass -> {
