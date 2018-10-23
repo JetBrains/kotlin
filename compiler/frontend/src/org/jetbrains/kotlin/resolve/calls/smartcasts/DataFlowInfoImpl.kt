@@ -250,7 +250,14 @@ internal class DataFlowInfoImpl private constructor(
         if (!value.type.isFlexible() && value.type.isSubtypeOf(type)) return this
 
         val nullabilityInfo = hashMapOf<DataFlowValue, Nullability>()
-        if (!type.isMarkedNullable) {
+
+        val isTypeNotNull =
+            if (languageVersionSettings.supportsFeature(LanguageFeature.NewInference))
+                !TypeUtils.isNullableType(type)
+            else
+                !type.isMarkedNullable
+
+        if (isTypeNotNull) {
             putNullabilityAndTypeInfo(nullabilityInfo, value, NOT_NULL, languageVersionSettings)
         }
 
