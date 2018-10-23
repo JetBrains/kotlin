@@ -19,13 +19,6 @@ package org.jetbrains.kotlin.backend.common.lower
 import org.jetbrains.kotlin.backend.common.BackendContext
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.makePhase
-import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
-import org.jetbrains.kotlin.builtins.getFunctionalClassKind
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
-import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
-import org.jetbrains.kotlin.ir.builders.IrGeneratorContextBase
-import org.jetbrains.kotlin.ir.builders.Scope
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrProperty
@@ -35,12 +28,9 @@ import org.jetbrains.kotlin.ir.expressions.IrCallableReference
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
-import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.isSubclassOf
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
-import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.types.KotlinType
 
 class KCallableNamePropertyLowering(val context: BackendContext) : FileLoweringPass {
     override fun lower(irFile: IrFile) {
@@ -63,7 +53,7 @@ private class KCallableNamePropertyTransformer(val lower: KCallableNamePropertyL
         val name = when (directMember) {
             is IrSimpleFunction -> directMember.name
             is IrProperty -> directMember.name
-            else -> throw AssertionError("Should be IrSimpleFunction or IrProperty, ${directMember}")
+            else -> throw AssertionError("Should be IrSimpleFunction or IrProperty, got $directMember")
         }
         if (name.asString() != "name") return expression
 
@@ -85,32 +75,4 @@ private class KCallableNamePropertyTransformer(val lower: KCallableNamePropertyL
             )
         }
     }
-
-
-    //TODO move all to common utils
-    val KotlinType.isKFunctionType: Boolean
-        get() {
-            val kind = constructor.declarationDescriptor?.getFunctionalClassKind()
-            return kind == FunctionClassDescriptor.Kind.KFunction
-        }
-
-    fun BackendContext.createIrBuilder(
-        symbol: IrSymbol,
-        startOffset: Int = UNDEFINED_OFFSET,
-        endOffset: Int = UNDEFINED_OFFSET
-    ) =
-        DeclarationIrBuilder(this, symbol, startOffset, endOffset)
-
-    class DeclarationIrBuilder(
-        backendContext: BackendContext,
-        symbol: IrSymbol,
-        startOffset: Int = UNDEFINED_OFFSET, endOffset: Int = UNDEFINED_OFFSET
-    ) : IrBuilderWithScope(
-        IrLoweringContext(backendContext),
-        Scope(symbol),
-        startOffset,
-        endOffset
-    )
-
-    class IrLoweringContext(backendContext: BackendContext) : IrGeneratorContextBase(backendContext.irBuiltIns)
 }
