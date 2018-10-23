@@ -17,19 +17,22 @@
 package org.jetbrains.kotlin.idea.completion
 
 import com.intellij.codeInsight.lookup.Lookup
-import com.intellij.codeInsight.lookup.LookupAdapter
 import com.intellij.codeInsight.lookup.LookupEvent
+import com.intellij.codeInsight.lookup.LookupListener
 import com.intellij.codeInsight.lookup.LookupManager
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.components.AbstractProjectComponent
+import com.intellij.openapi.components.ProjectComponent
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.EditorFactory
 import com.intellij.openapi.editor.RangeMarker
-import com.intellij.openapi.editor.event.*
+import com.intellij.openapi.editor.event.CaretEvent
+import com.intellij.openapi.editor.event.CaretListener
+import com.intellij.openapi.editor.event.EditorFactoryEvent
+import com.intellij.openapi.editor.event.EditorFactoryListener
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
 
-class LookupCancelWatcher(project: Project) : AbstractProjectComponent(project) {
+class LookupCancelWatcher(val project: Project) : ProjectComponent {
     private class Reminiscence(editor: Editor, offset: Int) {
         var editor: Editor? = editor
         private var marker: RangeMarker? = editor.document.createRangeMarker(offset, offset)
@@ -101,7 +104,7 @@ class LookupCancelWatcher(project: Project) : AbstractProjectComponent(project) 
                 },
                 myProject)
 
-        LookupManager.getInstance(myProject).addPropertyChangeListener { event ->
+        LookupManager.getInstance(project).addPropertyChangeListener { event ->
             if (event.propertyName == LookupManager.PROP_ACTIVE_LOOKUP) {
                 (event.newValue as Lookup?)?.addLookupListener(lookupCancelListener)
             }
