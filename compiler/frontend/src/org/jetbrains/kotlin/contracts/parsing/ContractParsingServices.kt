@@ -48,23 +48,19 @@ class ContractParsingServices(val languageVersionSettings: LanguageVersionSettin
         // is a *necessary* (but not sufficient, actually) condition for presence of 'LazyContractProvider'
         if (!expression.isContractDescriptionCallPsiCheck()) return
 
-        val collector = TraceBasedCollector(trace, expression)
         val callContext = ContractCallContext(expression, isFirstStatement, scope, trace.bindingContext)
         val contractProviderIfAny = (scope.ownerDescriptor as? FunctionDescriptor)?.getUserData(ContractProviderKey)
+        var resultingContractDescription: ContractDescription? = null
 
-        if (!callContext.isContractDescriptionCallPreciseCheck()) {
-            contractProviderIfAny?.setContractDescription(null)
-            return
+        try {
+            if (!callContext.isContractDescriptionCallPreciseCheck()) return
+
+            val collector = TraceBasedCollector(trace, expression)
+            resultingContractDescription = doCheckContract(collector, callContext)
+            collector.flushDiagnostics(parsingFailed = resultingContractDescription == null)
+        } finally {
+            contractProviderIfAny?.setContractDescription(resultingContractDescription)
         }
-
-        val parsedContract = doCheckContract(collector, callContext)
-
-        collector.flushDiagnostics(parsingFailed = parsedContract == null)
-
-        if (collector.hasErrors())
-            contractProviderIfAny?.setContractDescription(null)
-        else
-            contractProviderIfAny?.setContractDescription(parsedContract)
     }
 
     private fun ContractCallContext.isContractDescriptionCallPreciseCheck(): Boolean =
