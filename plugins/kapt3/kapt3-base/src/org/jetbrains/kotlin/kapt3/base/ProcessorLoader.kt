@@ -21,7 +21,7 @@ class ProcessorLoader(
 ) : Closeable {
     private var annotationProcessingClassLoader: URLClassLoader? = null
 
-    fun loadProcessors(parentClassLoader: ClassLoader = ClassLoader.getSystemClassLoader()): List<Processor> {
+    fun loadProcessors(parentClassLoader: ClassLoader = javaClass.classLoader): List<Processor> {
         clearJarURLCache()
 
         val classpath = (paths.annotationProcessingClasspath + paths.compileClasspath).distinct()
