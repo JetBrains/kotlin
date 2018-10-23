@@ -140,7 +140,6 @@ class CommentSaver(originalElements: PsiChildRange, private val saveLineBreaks: 
     private val lineBreaksToRestore = ArrayList<LineBreakTreeElement>()
     private var toNewPsiElementMap by Delegates.notNull<MutableMap<TreeElement, MutableCollection<PsiElement>>>()
     private var needAdjustIndentAfterRestore = false
-    private var isSingleExpressionWithCommentBeneath = false
 
     init {
         if (saveLineBreaks || originalElements.any { it.anyDescendantOfType<PsiComment>() }) {
