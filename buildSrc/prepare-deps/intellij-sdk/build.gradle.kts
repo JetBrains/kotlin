@@ -50,6 +50,10 @@ val studioOs by lazy {
 repositories {
     if (androidStudioRelease != null) {
         ivy {
+            if (cacheRedirectorEnabled) {
+                artifactPattern("https://cache-redirector.jetbrains.com/dl.google.com/dl/android/studio/ide-zips/$androidStudioRelease/[artifact]-[revision]-$studioOs.zip")
+            }
+
             artifactPattern("https://dl.google.com/dl/android/studio/ide-zips/$androidStudioRelease/[artifact]-[revision]-$studioOs.zip")
             metadataSources {
                 artifact()
