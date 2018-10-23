@@ -1,0 +1,21 @@
+package
+
+package my {
+    public fun callTopLevelDifferentPsi(): kotlin.Unit
+    public fun callTopLevelSamePsi(): kotlin.Unit
+    public fun callTopLevelSamePsiNotFirstStatement(): kotlin.Unit
+    public fun contract(/*0*/ block: () -> kotlin.Unit): kotlin.Unit
+    public fun contract(/*0*/ i: kotlin.Int): kotlin.Unit
+    public fun doStuff(): kotlin.Unit
+
+    public final class SomeClass {
+        public constructor SomeClass()
+        public final fun callMemberContractWithThis(): kotlin.Unit
+        public final fun callMemberContractWithoutThis(): kotlin.Unit
+        public final fun callTopLevelSamePsiInMember(): kotlin.Unit
+        public final fun contract(): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

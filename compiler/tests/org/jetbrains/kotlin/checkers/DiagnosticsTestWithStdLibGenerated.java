@@ -1112,6 +1112,11 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/contracts/dsl"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
+            @TestMetadata("callUsualContractFunction.kt")
+            public void testCallUsualContractFunction() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/dsl/callUsualContractFunction.kt");
+            }
+
             @TestMetadata("useBeforeDeclaration.kt")
             public void testUseBeforeDeclaration() throws Exception {
                 runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/dsl/useBeforeDeclaration.kt");
