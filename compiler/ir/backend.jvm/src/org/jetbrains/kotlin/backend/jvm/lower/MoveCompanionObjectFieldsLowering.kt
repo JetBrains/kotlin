@@ -107,7 +107,7 @@ class MoveCompanionObjectFieldsLowering(val context: CommonBackendContext) : Cla
     ): IrAnonymousInitializer =
         with(oldInitializer) {
             IrAnonymousInitializerImpl(
-                startOffset, endOffset, origin, IrAnonymousInitializerSymbolImpl(newParent.descriptor),
+                startOffset, endOffset, origin, IrAnonymousInitializerSymbolImpl(newParent.symbol),
                 isStatic = true
             ).apply {
                 parent = newParent
