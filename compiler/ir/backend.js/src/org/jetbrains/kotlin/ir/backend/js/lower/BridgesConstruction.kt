@@ -123,6 +123,7 @@ class BridgesConstruction(val context: JsIrBackendContext) : ClassLoweringPass {
             annotations += bridge.annotations
             returnType = bridge.returnType
             parent = delegateTo.parent
+            overriddenSymbols.addAll(delegateTo.overriddenSymbols)
         }
 
         context.createIrBuilder(irFunction.symbol).irBlockBody(irFunction) {
