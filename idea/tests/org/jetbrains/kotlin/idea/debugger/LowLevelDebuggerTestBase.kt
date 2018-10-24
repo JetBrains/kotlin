@@ -15,12 +15,12 @@ import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.org.objectweb.asm.tree.ClassNode
-import org.jetbrains.org.objectweb.asm.Type as AsmType
 import java.io.File
 import java.io.IOException
 import java.net.Socket
 import java.nio.file.Files
 import kotlin.properties.Delegates
+import org.jetbrains.org.objectweb.asm.Type as AsmType
 
 abstract class LowLevelDebuggerTestBase : CodegenTestCase() {
     private companion object {
@@ -34,7 +34,7 @@ abstract class LowLevelDebuggerTestBase : CodegenTestCase() {
 
         val options = wholeFile.readLines()
             .asSequence()
-            .filter { it.matches("^// ?[\\w_]+(:.*)$".toRegex()) }
+            .filter { it.matches("^// ?[\\w_]+(:.*)?$".toRegex()) }
             .map { it.drop(2).trim() }
             .filter { !it.startsWith("FILE:") }
             .toSet()

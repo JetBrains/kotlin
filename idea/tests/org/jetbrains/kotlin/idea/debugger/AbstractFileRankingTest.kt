@@ -18,8 +18,9 @@ abstract class AbstractFileRankingTest : LowLevelDebuggerTestBase() {
         fun getKtFiles(name: String) = allKtFiles.filter { it.name == name }
 
         val doNotCheckClassFqName = "DO_NOT_CHECK_CLASS_FQNAME" in options
+        val strictMode = "DISABLE_STRICT_MODE" !in options
 
-        val calculator = object : FileRankingCalculator(checkClassFqName = !doNotCheckClassFqName, strictMode = true) {
+        val calculator = object : FileRankingCalculator(checkClassFqName = !doNotCheckClassFqName, strictMode = strictMode) {
             override fun analyze(element: KtElement) = state.bindingContext
         }
 
