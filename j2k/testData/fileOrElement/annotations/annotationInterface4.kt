@@ -9,5 +9,5 @@ internal interface I2
 @Anon("c", "d", x = 1)
 internal interface I3
 
-@Anon(value = *arrayOf("c", "d"))
+@Anon(value = ["c", "d"])
 internal interface I4
