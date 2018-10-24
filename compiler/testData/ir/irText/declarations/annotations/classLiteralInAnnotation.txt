@@ -59,7 +59,7 @@ FILE fqName:<root> fileName:/classLiteralInAnnotation.kt
           CLASS CLASS name:<no name provided> modality:FINAL visibility:local flags: superTypes:[kotlin.Any]
             annotations:
               CALL 'constructor A(KClass<*>)' type=A origin=null
-                klass: CLASS_REFERENCE '<reified T>' type=kotlin.reflect.KClass<T>
+                klass: CLASS_REFERENCE 'Any' type=kotlin.reflect.KClass<kotlin.Any>
             $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:test2.<no name provided><T> flags:
             CONSTRUCTOR visibility:public <> () returnType:test2.<no name provided><T> flags:primary
               BLOCK_BODY
@@ -90,7 +90,7 @@ FILE fqName:<root> fileName:/classLiteralInAnnotation.kt
             CLASS CLASS name:<no name provided> modality:FINAL visibility:local flags: superTypes:[kotlin.Any]
               annotations:
                 CALL 'constructor A(KClass<*>)' type=A origin=null
-                  klass: CLASS_REFERENCE '<reified T>' type=kotlin.reflect.KClass<T>
+                  klass: CLASS_REFERENCE 'Any' type=kotlin.reflect.KClass<kotlin.Any>
               $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<get-test3>.<no name provided> flags:
               CONSTRUCTOR visibility:public <> () returnType:<get-test3>.<no name provided> flags:primary
                 BLOCK_BODY
@@ -122,7 +122,7 @@ FILE fqName:<root> fileName:/classLiteralInAnnotation.kt
             CLASS CLASS name:<no name provided> modality:FINAL visibility:local flags: superTypes:[kotlin.Any]
               annotations:
                 CALL 'constructor A(KClass<*>)' type=A origin=null
-                  klass: CLASS_REFERENCE '<reified T>' type=kotlin.reflect.KClass<T>
+                  klass: CLASS_REFERENCE 'Any' type=kotlin.reflect.KClass<kotlin.Any>
               $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<set-test3>.<no name provided> flags:
               CONSTRUCTOR visibility:public <> () returnType:<set-test3>.<no name provided> flags:primary
                 BLOCK_BODY
@@ -142,4 +142,3 @@ FILE fqName:<root> fileName:/classLiteralInAnnotation.kt
                   FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:
                 $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
             CALL 'constructor <no name provided>()' type=<set-test3>.<no name provided> origin=OBJECT_LITERAL
-

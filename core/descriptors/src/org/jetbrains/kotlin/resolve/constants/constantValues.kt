@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.resolve.constants
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationArgumentVisitor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
@@ -193,9 +194,20 @@ class KClassValue(value: ClassLiteralValue) : ConstantValue<ClassLiteralValue>(v
                 arrayDimensions++
             }
 
-            val descriptor = type.constructor.declarationDescriptor as? ClassDescriptor ?: return null
-            val classId = descriptor.classId ?: return null
-            return KClassValue(classId, arrayDimensions)
+            return when (val descriptor = type.constructor.declarationDescriptor) {
+                is ClassDescriptor -> {
+                    val classId = descriptor.classId ?: return null
+                    KClassValue(classId, arrayDimensions)
+                }
+                is TypeParameterDescriptor -> {
+                    // This is possible if a reified type parameter is used in annotation on a local class / anonymous object.
+                    // In JVM class file, we can't represent such literal properly, so we're writing java.lang.Object instead.
+                    // This has no effect on the compiler front-end or other back-ends, so we use kotlin.Any for simplicity here.
+                    // Overall, it looks like such code should be disallowed: https://youtrack.jetbrains.com/issue/KT-27799
+                    KClassValue(ClassId.topLevel(KotlinBuiltIns.FQ_NAMES.any.toSafe()), 0)
+                }
+                else -> null
+            }
         }
     }
 }
