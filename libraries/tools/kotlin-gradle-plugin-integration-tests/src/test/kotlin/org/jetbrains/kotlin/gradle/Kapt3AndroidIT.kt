@@ -13,7 +13,7 @@ class Kapt3WorkersAndroid32IT : Kapt3Android32IT() {
 
 open class Kapt3Android32IT : Kapt3AndroidIT() {
     override val androidGradlePluginVersion: String
-        get() = "3.2.0-beta01"
+        get() = "3.2.0"
 
     override val defaultGradleVersion: GradleVersionRequired
         get() = GradleVersionRequired.AtLeast("4.6")
