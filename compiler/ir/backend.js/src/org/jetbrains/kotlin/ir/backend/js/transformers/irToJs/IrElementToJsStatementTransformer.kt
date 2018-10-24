@@ -5,8 +5,10 @@
 
 package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
+import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.COROUTINE_SWITCH
 import org.jetbrains.kotlin.ir.backend.js.utils.JsGenerationContext
+import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.isAny
@@ -15,6 +17,12 @@ import org.jetbrains.kotlin.js.backend.ast.*
 
 @Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")
 class IrElementToJsStatementTransformer : BaseIrElementToJsNodeTransformer<JsStatement, JsGenerationContext> {
+
+    override fun visitFunction(declaration: IrFunction, data: JsGenerationContext) = JsEmpty.also {
+        assert(declaration.origin == JsIrBackendContext.callableClosureOrigin) {
+            "The only possible Function Declarartion is one composed in Callable Reference Lowering"
+        }
+    }
 
     override fun visitBlockBody(body: IrBlockBody, context: JsGenerationContext): JsStatement {
         return JsBlock(body.statements.map { it.accept(this, context) })

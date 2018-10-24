@@ -103,6 +103,8 @@ class JsIrBackendContext(
         // TODO: due to name clash those weird suffix is required, remove it once `NameGenerator` is implemented
         private val COROUTINE_SUSPEND_OR_RETURN_JS_NAME = "suspendCoroutineUninterceptedOrReturnJS"
         private val GET_COROUTINE_CONTEXT_NAME = "getCoroutineContext"
+
+        val callableClosureOrigin = object : IrDeclarationOriginImpl("CALLABLE_CLOSURE_DECLARATION") {}
     }
 
     private val internalPackage = module.getPackage(JS_PACKAGE_FQNAME)

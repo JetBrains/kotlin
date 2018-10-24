@@ -218,7 +218,7 @@ class CallableReferenceLowering(val context: JsIrBackendContext) {
                 putValueArgument(1, callableNameConst)
                 putValueArgument(2, JsIrBuilder.buildString(context.irBuiltIns.stringType, getReferenceName(declaration)))
             }
-            Pair(listOf(irVar, irSetName), irVar.symbol)
+            Pair(listOf(refClosureFunction, irVar, irSetName), irVar.symbol)
         }
 
 
@@ -254,7 +254,7 @@ class CallableReferenceLowering(val context: JsIrBackendContext) {
         val setterFunction = propertyReference.setter?.let { buildClosureFunction(it.owner, refGetFunction, propertyReference) }
 
         val additionalDeclarations = generateGetterBodyWithGuard(refGetFunction) {
-            val statements = mutableListOf<IrStatement>()
+            val statements = mutableListOf<IrStatement>(getterDeclaration)
 
             val getterFunctionType = context.builtIns.getFunction(getterFunction.valueParameters.size + 1)
             val type = getterFunctionType.toIrType(symbolTable = context.symbolTable)
@@ -270,6 +270,7 @@ class CallableReferenceLowering(val context: JsIrBackendContext) {
             }
 
             if (setterFunction != null) {
+                statements += setterFunction
                 val setterFunctionType = context.builtIns.getFunction(setterFunction.valueParameters.size + 1)
                 val irSetReference = JsIrBuilder.buildFunctionReference(
                     setterFunctionType.toIrType(symbolTable = context.symbolTable),
@@ -324,7 +325,7 @@ class CallableReferenceLowering(val context: JsIrBackendContext) {
         val getterFunction = buildClosureFunction(context.irBuiltIns.throwIseFun, refGetFunction, propertyReference)
 
         val additionalDeclarations = generateGetterBodyWithGuard(refGetFunction) {
-            val statements = mutableListOf<IrStatement>()
+            val statements = mutableListOf<IrStatement>(getterFunction)
 
             val getterFunctionType = context.builtIns.getFunction(getterFunction.valueParameters.size + 1)
             val type = getterFunctionType.toIrType(symbolTable = context.symbolTable)
@@ -520,7 +521,9 @@ class CallableReferenceLowering(val context: JsIrBackendContext) {
         reference: IrCallableReference
     ): IrFunction {
         val closureName = createClosureInstanceName(declaration)
-        val refClosureDeclaration = JsIrBuilder.buildFunction(closureName, Visibilities.LOCAL).also { it.parent = refGetFunction }
+        val refClosureDeclaration =
+            JsIrBuilder.buildFunction(closureName, Visibilities.LOCAL, origin = JsIrBackendContext.callableClosureOrigin)
+                .also { it.parent = refGetFunction }
 
         // the params which are passed to closure
         val closureParamDeclarations = generateSignatureForClosure(declaration, refGetFunction, refClosureDeclaration, reference)
