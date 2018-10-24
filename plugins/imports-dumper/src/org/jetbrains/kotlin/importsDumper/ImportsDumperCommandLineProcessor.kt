@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.config.CompilerConfigurationKey
 
 object ImportsDumperCliOptions {
     val DESTINATION = CliOption(
-        name = "output-imports",
+        optionName = "output-imports",
         valueDescription = "<path>",
         description = "Output imports from all compiled files to the specified file in JSON format",
         required = false // non-required because importsDumper is a bundled plugin

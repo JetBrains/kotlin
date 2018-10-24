@@ -84,12 +84,14 @@ object PluginCliParser {
             it.pluginId
         } ?: mapOf()
 
+        // TODO issue a warning on using deprecated command line processors when all official plugin migrate to the newer convention
+
         val commandLineProcessors = ServiceLoader.load(CommandLineProcessor::class.java, classLoader).toMutableList()
         commandLineProcessors.addAll(BundledCompilerPlugins.commandLineProcessors)
 
         for (processor in commandLineProcessors) {
-            val declaredOptions = processor.pluginOptions.associateBy { it.name }
-            val optionsToValues = MultiMap<CliOption, CliOptionValue>()
+            val declaredOptions = processor.pluginOptions.associateBy { it.optionName }
+            val optionsToValues = MultiMap<AbstractCliOption, CliOptionValue>()
 
             for (optionValue in optionValuesByPlugin[processor.pluginId].orEmpty()) {
                 val option = declaredOptions[optionValue!!.optionName]
@@ -103,14 +105,14 @@ object PluginCliParser {
                     throw PluginCliOptionProcessingException(
                         processor.pluginId,
                         processor.pluginOptions,
-                        "Required plugin option not present: ${processor.pluginId}:${option.name}"
+                        "Required plugin option not present: ${processor.pluginId}:${option.optionName}"
                     )
                 }
                 if (!option.allowMultipleOccurrences && values.size > 1) {
                     throw PluginCliOptionProcessingException(
                         processor.pluginId,
                         processor.pluginOptions,
-                        "Multiple values are not allowed for plugin option ${processor.pluginId}:${option.name}"
+                        "Multiple values are not allowed for plugin option ${processor.pluginId}:${option.optionName}"
                     )
                 }
 
