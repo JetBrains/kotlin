@@ -26,18 +26,10 @@ import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatch
 import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatchStatus
 import org.jetbrains.kotlin.resolve.calls.model.VarargValueArgument
 
-class AddNamesToCallArgumentsIntention : SelfTargetingRangeIntention<KtCallElement>(
+open class AddNamesToCallArgumentsIntention : SelfTargetingRangeIntention<KtCallElement>(
     KtCallElement::class.java,
     "Add names to call arguments"
 ) {
-    override fun applicabilityRange(element: KtCallElement): TextRange? {
-        if (!canAddNamesToCallArguments(element)) return null
-        return element.calleeExpression?.textRange
-    }
-
-    override fun applyTo(element: KtCallElement, editor: Editor?) {
-        addNamesToCallArguments(element)
-    }
 
     companion object {
         fun canAddNamesToCallArguments(element: KtCallElement): Boolean {
@@ -63,21 +55,26 @@ class AddNamesToCallArgumentsIntention : SelfTargetingRangeIntention<KtCallEleme
 
             return true
         }
+    }
 
-        fun addNamesToCallArguments(element: KtCallElement) {
-            val arguments = element.valueArguments
-            val resolvedCall = element.resolveToCall() ?: return
-            for (argument in arguments) {
-                if (argument !is KtValueArgument || argument is KtLambdaArgument) continue
-                val argumentMatch = resolvedCall.getArgumentMapping(argument) as? ArgumentMatch ?: continue
-                val name = argumentMatch.valueParameter.name
-                val newArgument = KtPsiFactory(element).createArgument(
-                    argument.getArgumentExpression()!!,
-                    name,
-                    argument.getSpreadElement() != null
-                )
-                argument.replace(newArgument)
-            }
+    override fun applicabilityRange(element: KtCallElement): TextRange? {
+        if (!canAddNamesToCallArguments(element)) return null
+        return element.calleeExpression?.textRange
+    }
+
+    override fun applyTo(element: KtCallElement, editor: Editor?) {
+        val arguments = element.valueArguments
+        val resolvedCall = element.resolveToCall() ?: return
+        for (argument in arguments) {
+            if (argument !is KtValueArgument || argument is KtLambdaArgument) continue
+            val argumentMatch = resolvedCall.getArgumentMapping(argument) as? ArgumentMatch ?: continue
+            val name = argumentMatch.valueParameter.name
+            val newArgument = KtPsiFactory(element).createArgument(
+                argument.getArgumentExpression()!!,
+                name,
+                argument.getSpreadElement() != null
+            )
+            argument.replace(newArgument)
         }
     }
 }
