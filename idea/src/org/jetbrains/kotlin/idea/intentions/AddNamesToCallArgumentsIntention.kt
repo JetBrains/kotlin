@@ -23,26 +23,12 @@ import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatch
 
-class AddNamesToCallArgumentsIntention : SelfTargetingRangeIntention<KtCallElement>(
+open class AddNamesToCallArgumentsIntention : SelfTargetingRangeIntention<KtCallElement>(
     KtCallElement::class.java,
     "Add names to call arguments"
 ) {
-    override fun applicabilityRange(element: KtCallElement): TextRange? {
-        val arguments = element.valueArguments
-        if (arguments.all { it.isNamed() || it is LambdaArgument }) return null
-
-        val resolvedCall = element.resolveToCall() ?: return null
-        if (!resolvedCall.resultingDescriptor.hasStableParameterNames()) return null
-
-        if (arguments.all {
-                AddNameToArgumentIntention.argumentMatchedAndCouldBeNamedInCall(it, resolvedCall, element.languageVersionSettings)
-            }
-        ) {
-            return element.calleeExpression?.textRange
-        }
-
-        return null
-    }
+    override fun applicabilityRange(element: KtCallElement): TextRange? =
+        element.calleeExpression?.textRange?.takeIf { canAddNamesToCallArguments(element) }
 
     override fun applyTo(element: KtCallElement, editor: Editor?) {
         val arguments = element.valueArguments
@@ -57,6 +43,21 @@ class AddNamesToCallArgumentsIntention : SelfTargetingRangeIntention<KtCallEleme
                 argument.getSpreadElement() != null
             )
             argument.replace(newArgument)
+        }
+    }
+
+    companion object {
+        fun canAddNamesToCallArguments(element: KtCallElement): Boolean {
+            val arguments = element.valueArguments
+            if (arguments.all { it.isNamed() || it is LambdaArgument }) return false
+
+            val resolvedCall = element.resolveToCall() ?: return false
+            if (!resolvedCall.resultingDescriptor.hasStableParameterNames()) return false
+
+            return arguments.all {
+                AddNameToArgumentIntention.argumentMatchedAndCouldBeNamedInCall(it, resolvedCall, element.languageVersionSettings)
+            }
+
         }
     }
 }
