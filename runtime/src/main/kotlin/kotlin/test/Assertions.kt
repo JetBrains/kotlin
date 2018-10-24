@@ -90,10 +90,22 @@ public fun <@OnlyInputTypes T> expect(expected: T, message: String?, block: () -
     assertEquals(expected, block(), message)
 }
 
-/** Asserts that given function [block] fails by throwing an exception. */
+/**
+ * Asserts that given function [block] fails by throwing an exception.
+ *
+ * @return An exception that was expected to be thrown and was successfully caught.
+ * The returned exception can be inspected further, for example by asserting its property values.
+ */
 public fun assertFails(block: () -> Unit): Throwable = assertFails(null, block)
 
-/** Asserts that given function [block] fails by throwing an exception. */
+/**
+ * Asserts that given function [block] fails by throwing an exception.
+ *
+ * If the assertion fails, the specified [message] is used unless it is null as a prefix for the failure message.
+ *
+ * @return An exception that was expected to be thrown and was successfully caught.
+ * The returned exception can be inspected further, for example by asserting its property values.
+ */
 @SinceKotlin("1.1")
 public fun assertFails(message: String?, block: () -> Unit): Throwable {
     try {
@@ -106,28 +118,46 @@ public fun assertFails(message: String?, block: () -> Unit): Throwable {
 }
 
 /** Asserts that a [block] fails with a specific exception of type [T] being thrown.
- *  Since inline method doesn't allow to trace where it was invoked, it is required to pass a [message] to distinguish this method call from others.
+ *
+ * If the assertion fails, the specified [message] is used unless it is null as a prefix for the failure message.
+ *
+ * @return An exception of the expected exception type [T] that successfully caught.
+ * The returned exception can be inspected further, for example by asserting its property values.
  */
+
 @InlineOnly
 public inline fun <reified T : Throwable> assertFailsWith(message: String? = null, noinline block: () -> Unit) : T =
         assertFailsWith(T::class, message, block)
 
-/** Asserts that a [block] fails with a specific exception of type [exceptionClass] being thrown. */
+/**
+ * Asserts that a [block] fails with a specific exception of type [exceptionClass] being thrown.
+ *
+ * @return An exception of the expected exception type [T] that successfully caught.
+ * The returned exception can be inspected further, for example by asserting its property values.
+ */
 public fun <T : Throwable> assertFailsWith(exceptionClass: KClass<T>, block: () -> Unit): T =
         assertFailsWith(exceptionClass, null, block)
 
 
 // From AssertionsH.kt
 /**
- * Comments out a block of test code until it is implemented while keeping a link to the code
- * to implement in your unit test output
+ * Takes the given [block] of test code and _doesn't_ execute it.
+ *
+ * This keeps the code under test referenced, but doesn't actually test it until it is implemented.
  */
 @Suppress("UNUSED_PARAMETER")
 public inline fun todo(block: () -> Unit) {
     println("TODO")
 }
 
-/** Asserts that a [block] fails with a specific exception of type [exceptionClass] being thrown. */
+/**
+ * Asserts that a [block] fails with a specific exception of type [exceptionClass] being thrown.
+ *
+ * If the assertion fails, the specified [message] is used unless it is null as a prefix for the failure message.
+ *
+ * @return An exception of the expected exception type [T] that successfully caught.
+ * The returned exception can be inspected further, for example by asserting its property values.
+ */
 public fun <T : Throwable> assertFailsWith(exceptionClass: KClass<T>, message: String?, block: () -> Unit): T {
     try {
         block()

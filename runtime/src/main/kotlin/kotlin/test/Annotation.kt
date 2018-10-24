@@ -42,7 +42,7 @@ public annotation class BeforeEach
 public annotation class AfterEach
 
 /**
- * Marks a test or a suite as ignored/pending.
+ * Marks a test or a suite as ignored.
  */
 @Retention(AnnotationRetention.SOURCE)
 @Target(AnnotationTarget.CLASS, AnnotationTarget.FUNCTION)
