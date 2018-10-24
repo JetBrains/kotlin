@@ -5,10 +5,12 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
+import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Dependency
 import org.gradle.api.artifacts.repositories.IvyArtifactRepository
 import org.gradle.api.artifacts.repositories.IvyPatternRepositoryLayout
+import org.gradle.api.artifacts.repositories.RepositoryLayout
 import org.gradle.api.internal.file.FileResolver
 import org.gradle.api.plugins.JavaPlugin
 import org.gradle.internal.reflect.Instantiator
@@ -23,6 +25,7 @@ import org.jetbrains.kotlin.gradle.plugin.sources.applyLanguageSettingsToKotlinT
 import org.jetbrains.kotlin.gradle.tasks.AndroidTasksProvider
 import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
 import org.jetbrains.kotlin.gradle.utils.NativeCompilerDownloader
+import org.jetbrains.kotlin.gradle.utils.isGradleVersionAtLeast
 import org.jetbrains.kotlin.konan.KonanVersion
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -280,7 +283,16 @@ class KotlinNativeTargetPreset(
         this.repositories.ivy { repo ->
             repo.name = KOTLIN_NATIVE_FAKE_REPO_NAME
             repo.setUrl("file://$konanHome/klib")
-            repo.layout("pattern") {
+
+            fun IvyArtifactRepository.layoutCompatible(configureAction: (RepositoryLayout) -> Unit) =
+                if (isGradleVersionAtLeast(5, 0)) {
+                    val patternLayoutFunction = javaClass.getMethod("patternLayout", Action::class.java)
+                    patternLayoutFunction(repo, Action<RepositoryLayout> { configureAction(it) })
+                } else {
+                    layout("pattern", configureAction)
+                }
+
+            repo.layoutCompatible {
                 val layout = it as IvyPatternRepositoryLayout
                 layout.artifact("common/[artifact]")
                 layout.artifact("platform/[classifier]/[artifact]")

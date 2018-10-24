@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinDependencyHandler
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.LanguageSettingsBuilder
 import org.jetbrains.kotlin.gradle.plugin.mpp.DefaultKotlinDependencyHandler
+import org.jetbrains.kotlin.gradle.utils.isGradleVersionAtLeast
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import java.lang.reflect.Constructor
 import java.util.*
@@ -53,7 +54,7 @@ class DefaultKotlinSourceSet(
     override val runtimeOnlyMetadataConfigurationName: String
         get() = lowerCamelCaseName(runtimeOnlyConfigurationName, METADATA_CONFIGURATION_NAME_SUFFIX)
 
-    override val kotlin: SourceDirectorySet = createDefaultSourceDirectorySet(name + " Kotlin source", fileResolver).apply {
+    override val kotlin: SourceDirectorySet = createDefaultSourceDirectorySet(project, "$name Kotlin source", fileResolver).apply {
         filter.include("**/*.java")
         filter.include("**/*.kt")
         filter.include("**/*.kts")
@@ -61,7 +62,7 @@ class DefaultKotlinSourceSet(
 
     override val languageSettings: LanguageSettingsBuilder = DefaultLanguageSettingsBuilder()
 
-    override val resources: SourceDirectorySet = createDefaultSourceDirectorySet(displayName + " resources", fileResolver)
+    override val resources: SourceDirectorySet = createDefaultSourceDirectorySet(project, "$name resources", fileResolver)
 
     override fun kotlin(configureClosure: Closure<Any?>): SourceDirectorySet =
         kotlin.apply { ConfigureUtil.configure(configureClosure, this) }
@@ -137,20 +138,26 @@ internal fun KotlinSourceSet.disambiguateName(simpleName: String): String {
     return lowerCamelCaseName(*nameParts.toTypedArray())
 }
 
-private val createDefaultSourceDirectorySet: (name: String?, resolver: FileResolver?) -> SourceDirectorySet = run {
+private fun createDefaultSourceDirectorySet(project: Project, name: String?, resolver: FileResolver?): SourceDirectorySet {
+    if (isGradleVersionAtLeast(5, 0)) {
+        val objects = project.objects
+        val sourceDirectorySetMethod = objects.javaClass.methods.single { it.name == "sourceDirectorySet" && it.parameterCount == 2 }
+        return sourceDirectorySetMethod(objects, name, name) as SourceDirectorySet
+    }
+
     val klass = DefaultSourceDirectorySet::class.java
     val defaultConstructor = klass.constructorOrNull(String::class.java, FileResolver::class.java)
 
-    if (defaultConstructor != null && defaultConstructor.getAnnotation(java.lang.Deprecated::class.java) == null) {
+    return if (defaultConstructor != null && defaultConstructor.getAnnotation(java.lang.Deprecated::class.java) == null) {
         // TODO: drop when gradle < 2.12 are obsolete
-        { name, resolver -> defaultConstructor.newInstance(name, resolver) }
+        defaultConstructor.newInstance(name, resolver)
     } else {
         val directoryFileTreeFactoryClass = Class.forName("org.gradle.api.internal.file.collections.DirectoryFileTreeFactory")
         val alternativeConstructor = klass.getConstructor(String::class.java, FileResolver::class.java, directoryFileTreeFactoryClass)
 
         val defaultFileTreeFactoryClass = Class.forName("org.gradle.api.internal.file.collections.DefaultDirectoryFileTreeFactory")
         val defaultFileTreeFactory = defaultFileTreeFactoryClass.getConstructor().newInstance()
-        return@run { name, resolver -> alternativeConstructor.newInstance(name, resolver, defaultFileTreeFactory) }
+        alternativeConstructor.newInstance(name, resolver, defaultFileTreeFactory)
     }
 }
 
