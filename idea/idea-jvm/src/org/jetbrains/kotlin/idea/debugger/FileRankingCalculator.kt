@@ -40,28 +40,18 @@ object FileRankingCalculatorForIde : FileRankingCalculator() {
     override fun analyze(element: KtElement) = element.analyze(BodyResolveMode.PARTIAL)
 }
 
-abstract class FileRankingCalculator(
-    private val checkClassFqName: Boolean = true,
-    private val strictMode: Boolean = false
-) {
+abstract class FileRankingCalculator(private val checkClassFqName: Boolean = true) {
     abstract fun analyze(element: KtElement): BindingContext
 
     fun findMostAppropriateSource(files: Collection<KtFile>, location: Location): KtFile {
-        assert(files.isNotEmpty())
-
-        val fileWithRankings = files.keysToMap { fileRankingSafe(it, location) }
+        val fileWithRankings: Map<KtFile, Int> = rankFiles(files, location)
         val fileWithMaxScore = fileWithRankings.maxBy { it.value }!!
-
-        if (strictMode) {
-            require(fileWithMaxScore.value.value >= 0) { "Max score is negative" }
-
-            // Allow only one element with max ranking
-            require(fileWithRankings.count { it.value == fileWithMaxScore.value } == 1) {
-                "Score is the same for several files"
-            }
-        }
-
         return fileWithMaxScore.key
+    }
+
+    fun rankFiles(files: Collection<KtFile>, location: Location): Map<KtFile, Int> {
+        assert(files.isNotEmpty())
+        return files.keysToMap { fileRankingSafe(it, location).value }
     }
 
     private class Ranking(val value: Int) : Comparable<Ranking> {
