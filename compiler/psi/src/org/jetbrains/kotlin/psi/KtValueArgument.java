@@ -54,6 +54,7 @@ public class KtValueArgument extends KtElementImplStub<KotlinPlaceHolderStub<? e
             KtStubElementTypes.INTEGER_CONSTANT,
 
             KtStubElementTypes.REFERENCE_EXPRESSION,
+            KtStubElementTypes.DOT_QUALIFIED_EXPRESSION,
 
             KtStubElementTypes.STRING_TEMPLATE
     );

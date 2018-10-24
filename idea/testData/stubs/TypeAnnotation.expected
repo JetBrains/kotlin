@@ -35,6 +35,9 @@ PsiJetFileStubImpl[package=]
                       REFERENCE_EXPRESSION[referencedName=b]
                 VALUE_ARGUMENT_LIST
                   VALUE_ARGUMENT
+                    DOT_QUALIFIED_EXPRESSION
+                      REFERENCE_EXPRESSION[referencedName=E]
+                      REFERENCE_EXPRESSION[referencedName=E1]
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=DoubleRange]
     TYPE_REFERENCE
@@ -53,5 +56,8 @@ PsiJetFileStubImpl[package=]
                   REFERENCE_EXPRESSION[referencedName=b]
             VALUE_ARGUMENT_LIST
               VALUE_ARGUMENT
+                DOT_QUALIFIED_EXPRESSION
+                  REFERENCE_EXPRESSION[referencedName=E]
+                  REFERENCE_EXPRESSION[referencedName=E2]
       USER_TYPE
         REFERENCE_EXPRESSION[referencedName=Unit]
