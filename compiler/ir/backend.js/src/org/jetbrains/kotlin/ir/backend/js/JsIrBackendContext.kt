@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.SourceManager
 import org.jetbrains.kotlin.ir.SourceRangeInfo
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
+import org.jetbrains.kotlin.ir.backend.js.lower.CallableReferenceKey
 import org.jetbrains.kotlin.ir.backend.js.lower.inline.ModuleIndex
 import org.jetbrains.kotlin.ir.backend.js.utils.OperatorNames
 import org.jetbrains.kotlin.ir.declarations.*
@@ -53,7 +54,7 @@ class JsIrBackendContext(
     override val builtIns = module.builtIns
 
     val internalPackageFragmentDescriptor = KnownPackageFragmentDescriptor(builtIns.builtInsModule, FqName("kotlin.js.internal"))
-    private val implicitDeclarationFile by lazy {
+    val implicitDeclarationFile by lazy {
         IrFileImpl(object : SourceManager.FileEntry {
             override val name = "<implicitDeclarations>"
             override val maxOffset = UNDEFINED_OFFSET
@@ -113,6 +114,7 @@ class JsIrBackendContext(
     private val coroutineIntrinsicsPackage = module.getPackage(COROUTINE_INTRINSICS_PACKAGE_FQNAME)
 
     val enumEntryToGetInstanceFunction = mutableMapOf<IrEnumEntrySymbol, () -> IrExpression>()
+    val callablereferenceCache = mutableMapOf<CallableReferenceKey, IrSimpleFunction>()
 
     val coroutineGetContext: IrFunctionSymbol
         get() {

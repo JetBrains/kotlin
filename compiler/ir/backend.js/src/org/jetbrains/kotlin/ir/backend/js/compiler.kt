@@ -129,11 +129,7 @@ private fun JsIrBackendContext.lower(moduleFragment: IrModuleFragment, dependenc
         constructorRedirectorLowering.runOnFilesPostfix(moduleFragment)
     }
 
-    CallableReferenceLowering(this).apply {
-        referenceCollector.lower(moduleFragment)
-        closureBuilder.lower(moduleFragment)
-        referenceReplacer.lower(moduleFragment)
-    }
+    CallableReferenceLowering(this).lower(moduleFragment)
 
     ClassReferenceLowering(this).lower(moduleFragment)
     PrimitiveCompanionLowering(this).lower(moduleFragment)
