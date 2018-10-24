@@ -132,12 +132,18 @@ open class DefaultArgumentStubGenerator constructor(val context: CommonBackendCo
                     symbol = irFunction.symbol, descriptor = irFunction.symbol.descriptor,
                     typeArgumentsCount = irFunction.typeParameters.size
                 ).apply {
+                    (0 until typeArgumentsCount).forEach { i ->
+                        putTypeArgument(i, newIrFunction.typeParameters[i].defaultType)
+                    }
                     dispatchReceiver = newIrFunction.dispatchReceiverParameter?.let { irGet(it) }
 
                     params.forEachIndexed { i, variable -> putValueArgument(i, irGet(variable)) }
                 }
             } else {
                 +irReturn(irCall(irFunction).apply {
+                    (0 until typeArgumentsCount).forEach { i ->
+                        putTypeArgument(i, newIrFunction.typeParameters[i].defaultType)
+                    }
                     dispatchReceiver = newIrFunction.dispatchReceiverParameter?.let { irGet(it) }
                     extensionReceiver = newIrFunction.extensionReceiverParameter?.let { irGet(it) }
 
@@ -196,6 +202,7 @@ open class DefaultParameterInjector constructor(
                     typeArgumentsCount = symbolForCall.owner.typeParameters.size
                 )
                     .apply {
+                        copyTypeArgumentsFrom(expression)
                         params.forEach {
                             log { "call::params@${it.first.index}/${it.first.name.asString()}: ${ir2string(it.second)}" }
                             putValueArgument(it.first.index, it.second)
@@ -385,9 +392,7 @@ private fun IrFunction.generateDefaultsFunctionImpl(
     }
 
     newFunction.returnType = returnType
-    newFunction.dispatchReceiverParameter = dispatchReceiverParameter?.run {
-        IrValueParameterImpl(startOffset, endOffset, origin, descriptor, type, varargElementType).also { it.parent = newFunction }
-    }
+    newFunction.dispatchReceiverParameter = dispatchReceiverParameter?.copyTo(newFunction)
     newFunction.extensionReceiverParameter = extensionReceiverParameter?.copyTo(newFunction)
     newFunction.valueParameters += newValueParameters
 
