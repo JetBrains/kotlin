@@ -37,6 +37,26 @@ public final class Bar {
 import java.lang.System;
 
 @kotlin.Metadata()
+public final class Baz {
+    @org.jetbrains.annotations.NotNull()
+    @FieldAnno()
+    public final java.lang.String a = "";
+
+    @Anno()
+    public static void a$annotations() {
+    }
+
+    public Baz() {
+        super();
+    }
+}
+
+////////////////////
+
+
+import java.lang.System;
+
+@kotlin.Metadata()
 @java.lang.annotation.Target(value = {java.lang.annotation.ElementType.FIELD})
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 @kotlin.annotation.Target(allowedTargets = {kotlin.annotation.AnnotationTarget.FIELD})
