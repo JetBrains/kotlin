@@ -5,8 +5,9 @@
 
 package org.jetbrains.kotlin.ir.backend.js.utils
 
+import org.jetbrains.kotlin.backend.common.ir.isStatic
+import org.jetbrains.kotlin.backend.common.ir.isTopLevel
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.isStatic
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrLoop
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
@@ -129,11 +130,11 @@ class SimpleNameGenerator : NameGenerator {
                 }
                 is IrField -> {
                     nameBuilder.append(declaration.name.asString())
-                    if (declaration.parent is IrDeclaration) {
+                    if (declaration.isTopLevel) {
+                        nameDeclarator = context.staticContext.rootScope::declareFreshName
+                    } else {
                         nameBuilder.append('.')
                         nameBuilder.append(getNameForDeclaration(declaration.parent as IrDeclaration, context))
-                    } else {
-                        nameDeclarator = context.staticContext.rootScope::declareFreshName
                     }
                 }
                 is IrClass -> {

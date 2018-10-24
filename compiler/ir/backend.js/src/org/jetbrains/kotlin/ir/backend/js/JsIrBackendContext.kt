@@ -114,7 +114,7 @@ class JsIrBackendContext(
     private val coroutineIntrinsicsPackage = module.getPackage(COROUTINE_INTRINSICS_PACKAGE_FQNAME)
 
     val enumEntryToGetInstanceFunction = mutableMapOf<IrEnumEntrySymbol, () -> IrExpression>()
-    val callablereferenceCache = mutableMapOf<CallableReferenceKey, IrSimpleFunction>()
+    val callableReferencesCache = mutableMapOf<CallableReferenceKey, IrSimpleFunction>()
 
     val coroutineGetContext: IrFunctionSymbol
         get() {

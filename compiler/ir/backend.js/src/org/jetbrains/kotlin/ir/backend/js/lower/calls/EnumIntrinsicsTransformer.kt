@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.ir.backend.js.lower.calls
 
+import org.jetbrains.kotlin.backend.common.ir.isStatic
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.irCall
-import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.isStatic
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression

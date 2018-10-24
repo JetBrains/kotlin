@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.common.bridges.FunctionHandle
 import org.jetbrains.kotlin.backend.common.bridges.generateBridges
 import org.jetbrains.kotlin.backend.common.ir.copyTo
+import org.jetbrains.kotlin.backend.common.ir.isStatic
 import org.jetbrains.kotlin.backend.common.ir.isSuspend
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlockBody
@@ -16,7 +17,6 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
-import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.isStatic
 import org.jetbrains.kotlin.ir.backend.js.utils.asString
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*

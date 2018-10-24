@@ -323,3 +323,10 @@ object SetDeclarationsParentVisitor : IrElementVisitor<Unit, IrDeclarationParent
         super.visitDeclaration(declaration, data)
     }
 }
+
+
+val IrFunction.isStatic: Boolean
+    get() = parent is IrClass && dispatchReceiverParameter == null
+
+val IrDeclaration.isTopLevel: Boolean
+    get() = parent is IrPackageFragment

@@ -37,7 +37,7 @@ class CallableReferenceLowering(val context: JsIrBackendContext) : FileLoweringP
     private val callableNameConst = JsIrBuilder.buildString(context.irBuiltIns.stringType, Namer.KCALLABLE_NAME)
     private val getterConst = JsIrBuilder.buildString(context.irBuiltIns.stringType, Namer.KPROPERTY_GET)
     private val setterConst = JsIrBuilder.buildString(context.irBuiltIns.stringType, Namer.KPROPERTY_SET)
-    private val callableToGetterFunction = context.callablereferenceCache
+    private val callableToGetterFunction = context.callableReferencesCache
 
     private val newDeclarations = mutableListOf<IrDeclaration>()
     private val implicitDeclarationFile = context.implicitDeclarationFile
