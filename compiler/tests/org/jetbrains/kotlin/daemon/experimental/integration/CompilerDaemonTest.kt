@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.cli.metadata.K2MetadataCompiler
 import org.jetbrains.kotlin.daemon.*
 import org.jetbrains.kotlin.daemon.client.KotlinCompilerClientInstance
-import org.jetbrains.kotlin.daemon.client.impls.DaemonReportingTargets
+import org.jetbrains.kotlin.daemon.client.DaemonReportingTargets
 import org.jetbrains.kotlin.daemon.client.experimental.CompilerCallbackServicesFacadeServerServerSide
 import org.jetbrains.kotlin.daemon.client.KotlinCompilerDaemonClient
 import org.jetbrains.kotlin.daemon.client.experimental.KotlinRemoteReplCompilerClientAsync

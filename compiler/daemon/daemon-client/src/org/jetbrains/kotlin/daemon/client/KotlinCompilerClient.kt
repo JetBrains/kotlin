@@ -7,12 +7,13 @@ package org.jetbrains.kotlin.daemon.client
 
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.daemon.client.impls.DaemonReportingTargets
 import org.jetbrains.kotlin.daemon.common.*
 import org.jetbrains.kotlin.daemon.common.impls.CompilationResults
+import org.jetbrains.kotlin.daemon.common.impls.DaemonReportCategory
 import org.jetbrains.kotlin.daemon.common.impls.ReportSeverity
 import org.jetbrains.kotlin.daemon.common.impls.SOCKET_ANY_FREE_PORT
 import java.io.File
+import java.io.PrintStream
 import java.io.Serializable
 
 data class CompileServiceSession(val compileService: CompileServiceAsync, val sessionId: Int)
@@ -162,3 +163,12 @@ class KotlinCompilerClient : KotlinCompilerDaemonClient {
     override fun main(vararg args: String) = oldKotlinCompilerClient.main(*args)
 
 }
+
+data class DaemonReportMessage(val category: DaemonReportCategory, val message: String)
+
+class DaemonReportingTargets(
+    val out: PrintStream? = null,
+    val messages: MutableCollection<DaemonReportMessage>? = null,
+    val messageCollector: MessageCollector? = null,
+    val compilerServices: CompilerServicesFacadeBaseAsync? = null
+)

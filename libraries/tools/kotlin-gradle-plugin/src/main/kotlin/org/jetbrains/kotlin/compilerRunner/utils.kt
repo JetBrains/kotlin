@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
-import org.jetbrains.kotlin.daemon.client.impls.DaemonReportingTargets
+import org.jetbrains.kotlin.daemon.client.DaemonReportingTargets
 import org.jetbrains.kotlin.daemon.client.launchProcessWithFallback
 import org.jetbrains.org.objectweb.asm.ClassReader
 import org.jetbrains.org.objectweb.asm.ClassVisitor
@@ -74,9 +74,7 @@ internal fun runToolInSeparateProcess(
     val javaBin = System.getProperty("java.home") + File.separator + "bin" + File.separator + "java"
     val classpathString = classpath.map { it.absolutePath }.joinToString(separator = File.pathSeparator)
     val builder = ProcessBuilder(javaBin, "-cp", classpathString, compilerClassName, *argsArray)
-    val process = launchProcessWithFallback(builder,
-                                            DaemonReportingTargets(messageCollector = messageCollector)
-    )
+    val process = launchProcessWithFallback(builder, DaemonReportingTargets(messageCollector = messageCollector))
 
     // important to read inputStream, otherwise the process may hang on some systems
     val readErrThread = thread {

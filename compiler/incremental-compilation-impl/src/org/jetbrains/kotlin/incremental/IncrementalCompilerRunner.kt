@@ -35,14 +35,14 @@ import java.io.File
 import java.util.*
 
 abstract class IncrementalCompilerRunner<
-    Args : CommonCompilerArguments,
-    CacheManager : IncrementalCachesManager<*>
->(
+        Args : CommonCompilerArguments,
+        CacheManager : IncrementalCachesManager<*>
+        >(
     workingDir: File,
     cacheDirName: String,
     protected val reporter: ICReporter,
     private val buildHistoryFile: File,
-        private val localStateDirs: Collection<File> = emptyList()
+    private val localStateDirs: Collection<File> = emptyList()
 ) {
 
     protected val cacheDirectory = File(workingDir, cacheDirName)
@@ -55,12 +55,12 @@ abstract class IncrementalCompilerRunner<
     protected abstract fun destinationDir(args: Args): File
 
     fun compile(
-            allSourceFiles: List<File>,
-            args: Args,
-            messageCollector: MessageCollector,
-            // when [providedChangedFiles] is not null, changes are provided by external system (e.g. Gradle)
-            // otherwise we track source files changes ourselves.
-            providedChangedFiles: ChangedFiles?
+        allSourceFiles: List<File>,
+        args: Args,
+        messageCollector: MessageCollector,
+        // when [providedChangedFiles] is not null, changes are provided by external system (e.g. Gradle)
+        // otherwise we track source files changes ourselves.
+        providedChangedFiles: ChangedFiles?
     ): ExitCode {
         assert(isICEnabled()) { "Incremental compilation is not enabled" }
         var caches = createCacheManager(args)
@@ -112,10 +112,10 @@ abstract class IncrementalCompilerRunner<
     }
 
     private fun sourcesToCompile(caches: CacheManager, changedFiles: ChangedFiles, args: Args): CompilationMode =
-            when (changedFiles) {
-                is ChangedFiles.Known -> calculateSourcesToCompile(caches, changedFiles, args)
-                is ChangedFiles.Unknown -> CompilationMode.Rebuild { "inputs' changes are unknown (first or clean build)" }
-            }
+        when (changedFiles) {
+            is ChangedFiles.Known -> calculateSourcesToCompile(caches, changedFiles, args)
+            is ChangedFiles.Unknown -> CompilationMode.Rebuild { "inputs' changes are unknown (first or clean build)" }
+        }
 
     protected abstract fun calculateSourcesToCompile(caches: CacheManager, changedFiles: ChangedFiles.Known, args: Args): CompilationMode
 
@@ -141,26 +141,26 @@ abstract class IncrementalCompilerRunner<
     }
 
     protected abstract fun updateCaches(
-            services: Services,
-            caches: CacheManager,
-            generatedFiles: List<GeneratedFile>,
-            changesCollector: ChangesCollector
+        services: Services,
+        caches: CacheManager,
+        generatedFiles: List<GeneratedFile>,
+        changesCollector: ChangesCollector
     )
 
     protected open fun preBuildHook(args: Args, compilationMode: CompilationMode) {}
     protected open fun postCompilationHook(exitCode: ExitCode) {}
     protected open fun additionalDirtyFiles(caches: CacheManager, generatedFiles: List<GeneratedFile>): Iterable<File> =
-            emptyList()
+        emptyList()
 
     protected open fun additionalDirtyLookupSymbols(): Iterable<LookupSymbol> =
-            emptyList()
+        emptyList()
 
     protected open fun makeServices(
-            args: Args,
-            lookupTracker: LookupTracker,
-            expectActualTracker: ExpectActualTracker,
-            caches: CacheManager,
-            compilationMode: CompilationMode
+        args: Args,
+        lookupTracker: LookupTracker,
+        expectActualTracker: ExpectActualTracker,
+        caches: CacheManager,
+        compilationMode: CompilationMode
     ): Services.Builder =
         Services.Builder().apply {
             register(LookupTracker::class.java, lookupTracker)
@@ -169,19 +169,19 @@ abstract class IncrementalCompilerRunner<
         }
 
     protected abstract fun runCompiler(
-            sourcesToCompile: Set<File>,
-            args: Args,
-            caches: CacheManager,
-            services: Services,
-            messageCollector: MessageCollector
+        sourcesToCompile: Set<File>,
+        args: Args,
+        caches: CacheManager,
+        services: Services,
+        messageCollector: MessageCollector
     ): ExitCode
 
     private fun compileIncrementally(
-            args: Args,
-            caches: CacheManager,
-            allKotlinSources: List<File>,
-            compilationMode: CompilationMode,
-            messageCollector: MessageCollector
+        args: Args,
+        caches: CacheManager,
+        allKotlinSources: List<File>,
+        compilationMode: CompilationMode,
+        messageCollector: MessageCollector
     ): ExitCode {
         preBuildHook(args, compilationMode)
 

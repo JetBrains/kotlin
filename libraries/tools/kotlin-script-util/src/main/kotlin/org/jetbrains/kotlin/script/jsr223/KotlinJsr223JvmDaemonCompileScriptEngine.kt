@@ -16,13 +16,14 @@
 
 package org.jetbrains.kotlin.script.jsr223
 
+import kotlinx.coroutines.runBlocking
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector
 import org.jetbrains.kotlin.cli.common.repl.*
-import org.jetbrains.kotlin.daemon.client.impls.DaemonReportMessage
-import org.jetbrains.kotlin.daemon.client.impls.DaemonReportingTargets
-import org.jetbrains.kotlin.daemon.client.KotlinCompilerClient
-import org.jetbrains.kotlin.daemon.client.impls.KotlinRemoteReplCompilerClient
+import org.jetbrains.kotlin.daemon.client.KotlinCompilerDaemonClient
+import org.jetbrains.kotlin.daemon.client.DaemonReportMessage
+import org.jetbrains.kotlin.daemon.client.DaemonReportingTargets
+import org.jetbrains.kotlin.daemon.client.impls.KotlinRemoteReplCompilerClientImpl
 import org.jetbrains.kotlin.daemon.common.*
 import org.jetbrains.kotlin.daemon.common.impls.makeAutodeletingFlagFile
 import java.io.File
@@ -37,32 +38,40 @@ import kotlin.reflect.KClass
 // TODO: need to manage resources here, i.e. call replCompiler.dispose when engine is collected
 
 class KotlinJsr223JvmDaemonCompileScriptEngine(
-        factory: ScriptEngineFactory,
-        compilerClasspath: List<File>,
-        templateClasspath: List<File>,
-        templateClassName: String,
-        val getScriptArgs: (ScriptContext, Array<out KClass<out Any>>?) -> ScriptArgsWithTypes?,
-        val scriptArgsTypes: Array<out KClass<out Any>>?,
-        compilerOut: OutputStream = System.err
+    factory: ScriptEngineFactory,
+    compilerClasspath: List<File>,
+    templateClasspath: List<File>,
+    templateClassName: String,
+    val getScriptArgs: (ScriptContext, Array<out KClass<out Any>>?) -> ScriptArgsWithTypes?,
+    val scriptArgsTypes: Array<out KClass<out Any>>?,
+    compilerOut: OutputStream = System.err
 ) : KotlinJsr223JvmScriptEngineBase(factory), KotlinJsr223JvmInvocableScriptEngine {
 
-    private val daemon by lazy { connectToCompileService(compilerClasspath) }
+    private val daemon by lazy { runBlocking { connectToCompileService(compilerClasspath) } }
 
     override val replCompiler by lazy {
         daemon.let {
-            KotlinRemoteReplCompilerClient(
-                it,
+            KotlinRemoteReplCompilerClientImpl(
+                it.toRMI(),
                 makeAutodeletingFlagFile("jsr223-repl-session"),
                 CompileService.TargetPlatform.JVM,
                 emptyArray(),
                 PrintingMessageCollector(PrintStream(compilerOut), MessageRenderer.WITHOUT_PATHS, false),
                 templateClasspath,
-                templateClassName)
+                templateClassName
+            )
         }
     }
 
     // TODO: bindings passing works only once on the first eval, subsequent setContext/setBindings call have no effect. Consider making it dynamic, but take history into account
-    val localEvaluator by lazy { GenericReplCompilingEvaluator(replCompiler, templateClasspath, Thread.currentThread().contextClassLoader, getScriptArgs(getContext(), scriptArgsTypes)) }
+    val localEvaluator by lazy {
+        GenericReplCompilingEvaluator(
+            replCompiler,
+            templateClasspath,
+            Thread.currentThread().contextClassLoader,
+            getScriptArgs(getContext(), scriptArgsTypes)
+        )
+    }
 
     override val replEvaluator: ReplFullEvaluator get() = localEvaluator
 
@@ -72,18 +81,24 @@ class KotlinJsr223JvmDaemonCompileScriptEngine(
 
     override fun overrideScriptArgs(context: ScriptContext): ScriptArgsWithTypes? = getScriptArgs(context, scriptArgsTypes)
 
-    private fun connectToCompileService(compilerCP: List<File>): CompileService {
+    private suspend fun connectToCompileService(compilerCP: List<File>): CompileServiceAsync {
         val compilerId = CompilerId.makeCompilerId(*compilerCP.toTypedArray())
         val daemonOptions = configureDaemonOptions()
         val daemonJVMOptions = DaemonJVMOptions()
 
         val daemonReportMessages = arrayListOf<DaemonReportMessage>()
 
-        return KotlinCompilerClient.connectToCompileService(compilerId, daemonJVMOptions, daemonOptions,
-                                                            DaemonReportingTargets(
-                                                                null,
-                                                                daemonReportMessages
-                                                            ), true, true)
-               ?: throw ScriptException("Unable to connect to repl server:" + daemonReportMessages.joinToString("\n  ", prefix = "\n  ") { "${it.category.name} ${it.message}" })
+        return KotlinCompilerDaemonClient.instantiate(Version.RMI).connectToCompileService(
+            compilerId, daemonJVMOptions, daemonOptions,
+            DaemonReportingTargets(
+                null,
+                daemonReportMessages
+            ), true, true
+        )
+            ?: throw ScriptException(
+                "Unable to connect to repl server:" + daemonReportMessages.joinToString(
+                    "\n  ",
+                    prefix = "\n  "
+                ) { "${it.category.name} ${it.message}" })
     }
 }

@@ -31,14 +31,14 @@ import org.jetbrains.kotlin.incremental.multiproject.ModulesApiHistory
 import java.io.File
 
 fun makeJsIncrementally(
-        cachesDir: File,
-        sourceRoots: Iterable<File>,
-        args: K2JSCompilerArguments,
-        messageCollector: MessageCollector = MessageCollector.NONE,
-        reporter: ICReporter = EmptyICReporter
+    cachesDir: File,
+    sourceRoots: Iterable<File>,
+    args: K2JSCompilerArguments,
+    messageCollector: MessageCollector = MessageCollector.NONE,
+    reporter: ICReporter = EmptyICReporter
 ) {
     val allKotlinFiles = sourceRoots.asSequence().flatMap { it.walk() }
-            .filter { it.isFile && it.extension.equals("kt", ignoreCase = true) }.toList()
+        .filter { it.isFile && it.extension.equals("kt", ignoreCase = true) }.toList()
     val buildHistoryFile = File(cachesDir, "build-history.bin")
 
     withJsIC {
@@ -64,13 +64,13 @@ inline fun <R> withJsIC(fn: () -> R): R {
 class IncrementalJsCompilerRunner(
     workingDir: File,
     reporter: ICReporter,
-        buildHistoryFile: File,
-        private val modulesApiHistory: ModulesApiHistory
+    buildHistoryFile: File,
+    private val modulesApiHistory: ModulesApiHistory
 ) : IncrementalCompilerRunner<K2JSCompilerArguments, IncrementalJsCachesManager>(
     workingDir,
     "caches-js",
     reporter,
-        buildHistoryFile = buildHistoryFile
+    buildHistoryFile = buildHistoryFile
 ) {
     override fun isICEnabled(): Boolean =
         IncrementalCompilation.isEnabledForJs()
@@ -83,7 +83,7 @@ class IncrementalJsCompilerRunner(
 
     override fun calculateSourcesToCompile(caches: IncrementalJsCachesManager, changedFiles: ChangedFiles.Known, args: K2JSCompilerArguments): CompilationMode {
         val lastBuildInfo = BuildInfo.read(lastBuildInfoFile)
-            ?: return CompilationMode.Rebuild { "No information on previous build" }
+                ?: return CompilationMode.Rebuild { "No information on previous build" }
 
         val dirtyFiles = DirtyFilesContainer(caches, reporter, kotlinSourceFilesExtensions)
         initDirtyFiles(dirtyFiles, changedFiles)
@@ -130,10 +130,10 @@ class IncrementalJsCompilerRunner(
         }
 
     override fun updateCaches(
-            services: Services,
-            caches: IncrementalJsCachesManager,
-            generatedFiles: List<GeneratedFile>,
-            changesCollector: ChangesCollector
+        services: Services,
+        caches: IncrementalJsCachesManager,
+        generatedFiles: List<GeneratedFile>,
+        changesCollector: ChangesCollector
     ) {
         val incrementalResults = services.get(IncrementalResultsConsumer::class.java) as IncrementalResultsConsumerImpl
 
@@ -145,11 +145,11 @@ class IncrementalJsCompilerRunner(
     }
 
     override fun runCompiler(
-            sourcesToCompile: Set<File>,
-            args: K2JSCompilerArguments,
-            caches: IncrementalJsCachesManager,
-            services: Services,
-            messageCollector: MessageCollector
+        sourcesToCompile: Set<File>,
+        args: K2JSCompilerArguments,
+        caches: IncrementalJsCachesManager,
+        services: Services,
+        messageCollector: MessageCollector
     ): ExitCode {
         val freeArgsBackup = args.freeArgs
 
