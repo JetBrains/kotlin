@@ -1,6 +1,5 @@
 package org.jetbrains.kotlin.compilerRunner
 
-import org.gradle.api.Project
 import org.jetbrains.kotlin.daemon.common.CompilationResultCategory
 import org.jetbrains.kotlin.daemon.common.CompilationResults
 import org.jetbrains.kotlin.daemon.common.LoopbackNetworkInterface
@@ -8,22 +7,20 @@ import org.jetbrains.kotlin.daemon.common.SOCKET_ANY_FREE_PORT
 import org.jetbrains.kotlin.daemon.common.CompileIterationResult
 import org.jetbrains.kotlin.gradle.plugin.kotlinDebug
 import org.jetbrains.kotlin.gradle.utils.pathsAsStringRelativeTo
+import java.io.File
 import java.io.Serializable
 import java.rmi.RemoteException
 import java.rmi.server.UnicastRemoteObject
 
 internal class GradleCompilationResults(
-    project: Project
+    private val log: KotlinLogger,
+    private val projectRootFile: File
 ) : CompilationResults,
     UnicastRemoteObject(
         SOCKET_ANY_FREE_PORT,
         LoopbackNetworkInterface.clientLoopbackSocketFactory,
         LoopbackNetworkInterface.serverLoopbackSocketFactory
     ) {
-
-    private val log = project.logger
-    private val projectRootFile = project.rootProject.projectDir
-
     @Throws(RemoteException::class)
     override fun add(compilationResultCategory: Int, value: Serializable) {
         if (compilationResultCategory == CompilationResultCategory.IC_COMPILE_ITERATION.code) {

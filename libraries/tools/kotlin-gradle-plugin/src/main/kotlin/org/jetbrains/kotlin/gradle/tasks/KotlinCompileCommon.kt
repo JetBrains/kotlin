@@ -67,9 +67,8 @@ internal open class KotlinCompileCommon : AbstractKotlinCompile<K2MetadataCompil
     override fun callCompiler(args: K2MetadataCompilerArguments, sourceRoots: SourceRoots, changedFiles: ChangedFiles) {
         val messageCollector = GradleMessageCollector(logger)
         val outputItemCollector = OutputItemsCollectorImpl()
-        val compilerRunner = GradleCompilerRunner(project)
-        val environment = GradleCompilerEnvironment(computedCompilerClasspath, messageCollector, outputItemCollector, args)
-        val exitCode = compilerRunner.runMetadataCompiler(sourceRoots.kotlinSourceFiles, args, environment)
-        throwGradleExceptionIfError(exitCode)
+        val compilerRunner = compilerRunner()
+        val environment = GradleCompilerEnvironment(computedCompilerClasspath, messageCollector, outputItemCollector)
+        compilerRunner.runMetadataCompiler(sourceRoots.kotlinSourceFiles, args, environment)
     }
 }

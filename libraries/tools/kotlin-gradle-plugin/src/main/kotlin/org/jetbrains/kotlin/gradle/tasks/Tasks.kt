@@ -15,6 +15,7 @@ import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.compile.AbstractCompile
 import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.api.tasks.incremental.IncrementalTaskInputs
+import org.gradle.workers.WorkerExecutor
 import org.jetbrains.kotlin.build.DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
@@ -41,6 +42,7 @@ import org.jetbrains.kotlin.incremental.destinationAsFile
 import org.jetbrains.kotlin.utils.LibraryUtils
 import java.io.File
 import java.util.*
+import javax.inject.Inject
 import kotlin.properties.Delegates
 
 const val KOTLIN_BUILD_DIR_NAME = "kotlin"
@@ -248,6 +250,9 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKo
         }
     }
 
+    internal open fun compilerRunner(): GradleCompilerRunner =
+        GradleCompilerRunner(project)
+
     override fun compile() {
         assert(false, { "unexpected call to compile()" })
     }
@@ -381,31 +386,25 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
 
         val messageCollector = GradleMessageCollector(logger)
         val outputItemCollector = OutputItemsCollectorImpl()
-        val compilerRunner = GradleCompilerRunner(project)
+        val compilerRunner = compilerRunner()
 
-        val environment = when {
-            !incremental ->
-                GradleCompilerEnvironment(computedCompilerClasspath, messageCollector, outputItemCollector, args)
-            else -> {
-                logger.info(USING_INCREMENTAL_COMPILATION_MESSAGE)
-                GradleIncrementalCompilerEnvironment(
-                    computedCompilerClasspath,
-                    if (hasFilesInTaskBuildDirectory()) changedFiles else ChangedFiles.Unknown(),
-                    taskBuildDirectory,
-                    messageCollector, outputItemCollector, args,
-                    usePreciseJavaTracking = usePreciseJavaTracking,
-                    localStateDirs = outputDirectories,
-                    multiModuleICSettings = multiModuleICSettings
-                )
-            }
-        }
-
-        if (!incremental) {
+        val icEnv = if (incremental) {
+            logger.info(USING_INCREMENTAL_COMPILATION_MESSAGE)
+            IncrementalCompilationEnvironment(
+                if (hasFilesInTaskBuildDirectory()) changedFiles else ChangedFiles.Unknown(),
+                taskBuildDirectory,
+                usePreciseJavaTracking = usePreciseJavaTracking,
+                localStateDirs = outputDirectories,
+                multiModuleICSettings = multiModuleICSettings
+            )
+        } else {
             clearOutputDirectories(reason = "IC is disabled for the task")
+            null
         }
 
         try {
-            val exitCode = compilerRunner.runJvmCompiler(
+            val environment = GradleCompilerEnvironment(computedCompilerClasspath, messageCollector, outputItemCollector, icEnv)
+            compilerRunner.runJvmCompiler(
                 sourceRoots.kotlinSourceFiles,
                 commonSourceSet.toList(),
                 sourceRoots.javaSourceRoots,
@@ -415,7 +414,6 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
             )
 
             disableMultiModuleICIfNeeded()
-            processCompilerExitCode(exitCode)
         } catch (e: Throwable) {
             cleanupOnError()
             throw e
@@ -447,14 +445,6 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
         destinationDir.deleteRecursively()
     }
 
-    private fun processCompilerExitCode(exitCode: ExitCode) {
-        if (exitCode != ExitCode.OK) {
-            cleanupOnError()
-        }
-
-        throwGradleExceptionIfError(exitCode)
-    }
-
     // override setSource to track source directory sets and files (for generated android folders)
     override fun setSource(sources: Any?) {
         sourceRootsContainer.set(sources)
@@ -466,6 +456,27 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
         sourceRootsContainer.add(*sources)
         return super.source(*sources)
     }
+}
+
+@CacheableTask
+internal open class KotlinCompileWithWorkers @Inject constructor(
+    @Suppress("UnstableApiUsage") private val workerExecutor: WorkerExecutor
+) : KotlinCompile() {
+    override fun compilerRunner() = GradleCompilerRunnerWithWorkers(project, workerExecutor)
+}
+
+@CacheableTask
+internal open class Kotlin2JsCompileWithWorkers @Inject constructor(
+    @Suppress("UnstableApiUsage") private val workerExecutor: WorkerExecutor
+) : Kotlin2JsCompile() {
+    override fun compilerRunner() = GradleCompilerRunnerWithWorkers(project, workerExecutor)
+}
+
+@CacheableTask
+internal open class KotlinCompileCommonWithWorkers @Inject constructor(
+    @Suppress("UnstableApiUsage") private val workerExecutor: WorkerExecutor
+) : KotlinCompileCommon() {
+    override fun compilerRunner() = GradleCompilerRunnerWithWorkers(project, workerExecutor)
 }
 
 @CacheableTask
@@ -538,28 +549,19 @@ open class Kotlin2JsCompile() : AbstractKotlinCompile<K2JSCompilerArguments>(), 
 
         val messageCollector = GradleMessageCollector(logger)
         val outputItemCollector = OutputItemsCollectorImpl()
-        val compilerRunner = GradleCompilerRunner(project)
+        val compilerRunner = compilerRunner()
 
-        val environment = when {
-            incremental -> {
-                logger.warn(USING_EXPERIMENTAL_JS_INCREMENTAL_COMPILATION_MESSAGE)
-                GradleIncrementalCompilerEnvironment(
-                    computedCompilerClasspath,
-                    if (hasFilesInTaskBuildDirectory()) changedFiles else ChangedFiles.Unknown(),
-                    taskBuildDirectory,
-                    messageCollector,
-                    outputItemCollector,
-                    args,
-                    multiModuleICSettings = multiModuleICSettings
-                )
-            }
-            else -> {
-                GradleCompilerEnvironment(computedCompilerClasspath, messageCollector, outputItemCollector, args)
-            }
-        }
+        val icEnv = if (incremental) {
+            logger.warn(USING_EXPERIMENTAL_JS_INCREMENTAL_COMPILATION_MESSAGE)
+            IncrementalCompilationEnvironment(
+                if (hasFilesInTaskBuildDirectory()) changedFiles else ChangedFiles.Unknown(),
+                taskBuildDirectory,
+                multiModuleICSettings = multiModuleICSettings
+            )
+        } else null
 
-        val exitCode = compilerRunner.runJsCompiler(sourceRoots.kotlinSourceFiles, commonSourceSet.toList(), args, environment)
-        throwGradleExceptionIfError(exitCode)
+        val environment = GradleCompilerEnvironment(computedCompilerClasspath, messageCollector, outputItemCollector, icEnv)
+        compilerRunner.runJsCompiler(sourceRoots.kotlinSourceFiles, commonSourceSet.toList(), args, environment)
     }
 }
 
@@ -577,7 +579,9 @@ private fun Task.getGradleVersion(): ParsedGradleVersion? {
     return result
 }
 
-internal class GradleMessageCollector(val logger: Logger) : MessageCollector {
+internal class GradleMessageCollector(val logger: KotlinLogger) : MessageCollector {
+    constructor(logger: Logger) : this(GradleKotlinLogger(logger))
+
     private var hasErrors = false
 
     override fun hasErrors() = hasErrors

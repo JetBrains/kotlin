@@ -68,8 +68,11 @@ internal fun loadCompilerVersion(compilerClasspath: List<File>): String {
 }
 
 internal fun runToolInSeparateProcess(
-    argsArray: Array<String>, compilerClassName: String, classpath: List<File>,
-    logger: KotlinLogger, messageCollector: MessageCollector
+    argsArray: Array<String>,
+    compilerClassName: String,
+    classpath: List<File>,
+    logger: KotlinLogger,
+    messageCollector: MessageCollector
 ): ExitCode {
     val javaBin = System.getProperty("java.home") + File.separator + "bin" + File.separator + "java"
     val classpathString = classpath.map { it.absolutePath }.joinToString(separator = File.pathSeparator)
