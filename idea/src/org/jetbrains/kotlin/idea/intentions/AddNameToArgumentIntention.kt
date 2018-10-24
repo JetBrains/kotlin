@@ -20,6 +20,8 @@ import com.intellij.codeInsight.intention.LowPriorityAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.conversion.copy.end
 import org.jetbrains.kotlin.idea.conversion.copy.start
@@ -27,11 +29,14 @@ import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatch
-import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatchStatus
+import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatchStatus.ARGUMENT_HAS_NO_TYPE
+import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatchStatus.SUCCESS
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.VarargValueArgument
 
-class AddNameToArgumentIntention
-  : SelfTargetingIntention<KtValueArgument>(KtValueArgument::class.java, "Add name to argument"), LowPriorityAction {
+class AddNameToArgumentIntention : SelfTargetingIntention<KtValueArgument>(
+    KtValueArgument::class.java, "Add name to argument"
+), LowPriorityAction {
 
     override fun isApplicableTo(element: KtValueArgument, caretOffset: Int): Boolean {
         val expression = element.getArgumentExpression() ?: return false
@@ -47,8 +52,8 @@ class AddNameToArgumentIntention
         return true
     }
 
-    override fun allowCaretInsideElement(element: PsiElement)
-            = element !is KtValueArgumentList && element !is KtContainerNode && super.allowCaretInsideElement(element)
+    override fun allowCaretInsideElement(element: PsiElement) =
+        element !is KtValueArgumentList && element !is KtContainerNode && super.allowCaretInsideElement(element)
 
     override fun applyTo(element: KtValueArgument, editor: Editor?) {
         val name = detectNameToAdd(element)!!
@@ -65,20 +70,30 @@ class AddNameToArgumentIntention
 
         val callExpr = argumentList.parent as? KtCallElement ?: return null
         val resolvedCall = callExpr.resolveToCall() ?: return null
-        val argumentMatch = resolvedCall.getArgumentMapping(argument) as? ArgumentMatch ?: return null
-        if (argumentMatch.status != ArgumentMatchStatus.SUCCESS) return null
-
         if (!resolvedCall.resultingDescriptor.hasStableParameterNames()) return null
 
-        if (argumentMatch.valueParameter.varargElementType != null) {
-            val varargArgument = resolvedCall.valueArguments[argumentMatch.valueParameter] as? VarargValueArgument ?: return null
-            if (varargArgument.arguments.size != 1) return null
-            val versionSettings = callExpr.languageVersionSettings
-            if (versionSettings.supportsFeature(LanguageFeature.ProhibitAssigningSingleElementsToVarargsInNamedForm)) {
-                if (argument.getSpreadElement() == null) return null
-            }
-        }
+        if (!argumentMatchedAndCouldBeNamedInCall(argument, resolvedCall, callExpr.languageVersionSettings)) return null
 
-        return argumentMatch.valueParameter.name
+        return (resolvedCall.getArgumentMapping(argument) as? ArgumentMatch)?.valueParameter?.name
+    }
+
+    companion object {
+        fun argumentMatchedAndCouldBeNamedInCall(
+            argument: ValueArgument,
+            resolvedCall: ResolvedCall<out CallableDescriptor>,
+            versionSettings: LanguageVersionSettings
+        ): Boolean {
+            val argumentMatch = resolvedCall.getArgumentMapping(argument) as? ArgumentMatch ?: return false
+            if (argumentMatch.status != SUCCESS && argumentMatch.status != ARGUMENT_HAS_NO_TYPE) return false
+
+            if (argumentMatch.valueParameter.varargElementType != null) {
+                val varargArgument = resolvedCall.valueArguments[argumentMatch.valueParameter] as? VarargValueArgument ?: return false
+                if (varargArgument.arguments.size != 1) return false
+                if (versionSettings.supportsFeature(LanguageFeature.ProhibitAssigningSingleElementsToVarargsInNamedForm)) {
+                    if (argument.getSpreadElement() == null) return false
+                }
+            }
+            return true
+        }
     }
 }

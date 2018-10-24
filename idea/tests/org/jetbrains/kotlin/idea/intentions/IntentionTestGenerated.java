@@ -1151,6 +1151,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             runTest("idea/testData/intentions/addNameToArgument/functionLiteralArgument.kt");
         }
 
+        @TestMetadata("genericCall.kt")
+        public void testGenericCall() throws Exception {
+            runTest("idea/testData/intentions/addNameToArgument/genericCall.kt");
+        }
+
         @TestMetadata("incompleteCall.kt")
         public void testIncompleteCall() throws Exception {
             runTest("idea/testData/intentions/addNameToArgument/incompleteCall.kt");
@@ -1252,6 +1257,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("ambiguousCall.kt")
         public void testAmbiguousCall() throws Exception {
             runTest("idea/testData/intentions/addNamesToCallArguments/ambiguousCall.kt");
+        }
+
+        @TestMetadata("genericCall.kt")
+        public void testGenericCall() throws Exception {
+            runTest("idea/testData/intentions/addNamesToCallArguments/genericCall.kt");
         }
 
         @TestMetadata("incompleteCall.kt")
