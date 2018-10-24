@@ -41,6 +41,12 @@ interface KotlinNativeBinary : ComponentWithDependencies, BuildableComponent, Co
     val sources: FileCollection
 
     /**
+     * Returns common sources used to build this binary
+     * (both common for all native targets and avalable via expectedBy relation).
+     */
+    val commonSources: FileCollection
+
+    /**
      * Konan target the library is built for
      */
     val konanTarget: KonanTarget

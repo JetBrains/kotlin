@@ -60,6 +60,11 @@ open class KotlinNativeTestExecutableImpl @Inject constructor(
     override val sources: FileCollection
         get() = super.sources + mainSources.getAllSources(konanTarget)
 
+    override val commonSources: FileCollection
+        get() = super.commonSources +
+                mainSources.getCommonNativeSources() +
+                mainSources.getCommonMultiplatformSources()
+
     override val outputRootName: String = "test-exe"
 
     override val additionalCompilerOptions: Collection<String>

@@ -1036,4 +1036,40 @@ class ExperimentalPluginTests {
             "Project property 'konan.home' is deprecated. Use 'org.jetbrains.kotlin.native.home' instead."
         ))
     }
+
+    @Test
+    fun `Plugin should support OptionalExpectation`() {
+        val project = KonanProject.createEmpty(projectDirectory).apply {
+            buildFile.writeText("""
+                plugins {
+                    id 'kotlin-native'
+                }
+
+                components.main.targets = ['host']
+                components.test.targets = ['host']
+            """.trimIndent())
+            generateSrcFile("main.kt", """
+                import kotlin.jvm.*
+
+                class A {
+                    @JvmField
+                    val a = "A.a"
+                }
+
+                fun foo() {
+                    println(A().a)
+                }
+            """.trimIndent())
+            generateSrcFile(listOf("src", "test", "kotlin"), "test.kt", """
+                import kotlin.test.*
+
+                @Test
+                fun test() {
+                    foo()
+                }
+            """.trimIndent())
+        }
+        val result = project.createRunner().withArguments("build").build()
+        assertTrue(result.output.contains("A.a"))
+    }
 }

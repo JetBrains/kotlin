@@ -94,6 +94,9 @@ abstract class AbstractKotlinNativeBinary(
     override val sources: FileCollection
         get() = sourceSet.getAllSources(konanTarget)
 
+    override val commonSources: FileCollection
+        get() = sourceSet.getCommonMultiplatformSources() + sourceSet.getCommonNativeSources()
+
     private val dependencies = objects.newInstance<DefaultComponentDependencies>(
         DefaultComponentDependencies::class.java,
         name + "Implementation"

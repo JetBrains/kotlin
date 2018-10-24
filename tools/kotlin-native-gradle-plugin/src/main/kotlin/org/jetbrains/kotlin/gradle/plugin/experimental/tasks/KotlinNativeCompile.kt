@@ -49,9 +49,7 @@ open class KotlinNativeCompile @Inject constructor(internal val binary: Abstract
     override fun getSource(): FileTree = sources.asFileTree
 
     private val commonSources: FileCollection
-        get() = with(binary.sourceSet) {
-            getCommonMultiplatformSources() + getCommonNativeSources()
-        }
+        get() = binary.commonSources
 
     val libraries: Configuration
         @InputFiles get() = binary.klibs
