@@ -193,7 +193,7 @@ abstract class ObjCExportHeaderGenerator(
                         if (classDescriptor != null) {
                             extensions.getOrPut(classDescriptor, { mutableListOf() }) += it
                         } else {
-                            topLevel.getOrPut(it.source.containingFile, { mutableListOf() }) += it
+                            topLevel.getOrPut(it.findSourceFile(), { mutableListOf() }) += it
                         }
                     }
 

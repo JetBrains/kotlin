@@ -7,12 +7,21 @@ package org.jetbrains.kotlin.backend.konan.descriptors
 
 import org.jetbrains.kotlin.backend.konan.binaryTypeIsReference
 import org.jetbrains.kotlin.backend.konan.irasdescriptors.*
+import org.jetbrains.kotlin.backend.konan.irasdescriptors.ClassDescriptor
+import org.jetbrains.kotlin.backend.konan.irasdescriptors.ConstructorDescriptor
+import org.jetbrains.kotlin.backend.konan.irasdescriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.backend.konan.irasdescriptors.FunctionDescriptor
+import org.jetbrains.kotlin.backend.konan.irasdescriptors.PackageFragmentDescriptor
+import org.jetbrains.kotlin.backend.konan.irasdescriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.backend.konan.isInlined
-import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.types.isUnit
+import org.jetbrains.kotlin.metadata.konan.KonanProtoBuf
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPropertyDescriptor
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedSimpleFunctionDescriptor
+import org.jetbrains.kotlin.serialization.konan.KonanPackageFragment
 import org.jetbrains.kotlin.types.SimpleType
 
 /**
@@ -231,3 +240,22 @@ tailrec internal fun DeclarationDescriptor.findPackage(): PackageFragmentDescrip
 
 fun FunctionDescriptor.isComparisonDescriptor(map: Map<SimpleType, IrSimpleFunction>): Boolean =
         this in map.values
+
+private fun sourceByIndex(descriptor: CallableMemberDescriptor, index: Int): SourceFile {
+    val fragment = descriptor.findPackage() as KonanPackageFragment
+    return fragment.sourceFileMap.sourceFile(index)
+}
+
+fun CallableMemberDescriptor.findSourceFile(): SourceFile {
+    val source = this.source.containingFile
+    if (source != SourceFile.NO_SOURCE_FILE)
+        return source
+    return when {
+        this is DeserializedSimpleFunctionDescriptor && proto.hasExtension(KonanProtoBuf.functionFile) -> sourceByIndex(
+                this, proto.getExtension(KonanProtoBuf.functionFile))
+        this is DeserializedPropertyDescriptor && proto.hasExtension(KonanProtoBuf.propertyFile) ->
+            sourceByIndex(
+                    this, proto.getExtension(KonanProtoBuf.propertyFile))
+        else -> TODO()
+    }
+}

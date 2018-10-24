@@ -13,14 +13,13 @@ import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.metadata.konan.KonanProtoBuf
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.checkers.ExpectedActualDeclarationChecker
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter.Companion.CALLABLES
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter.Companion.CLASSIFIERS
 import org.jetbrains.kotlin.resolve.scopes.getDescriptorsFiltered
 import org.jetbrains.kotlin.serialization.KonanDescriptorSerializer
+import org.jetbrains.kotlin.serialization.konan.SourceFileMap
 
 /*
  * This is Konan specific part of public descriptor 
@@ -37,6 +36,8 @@ internal class KonanSerializationUtil(val context: Context, private val metadata
 
     lateinit var serializerContext: SerializerContext
 
+    val sourceFileMap = SourceFileMap()
+
     data class SerializerContext(
             val serializerExtension: KonanSerializerExtension,
             val topSerializer: KonanDescriptorSerializer,
@@ -44,7 +45,7 @@ internal class KonanSerializationUtil(val context: Context, private val metadata
     )
 
     private fun createNewContext(): SerializerContext {
-        val extension = KonanSerializerExtension(context, metadataVersion)
+        val extension = KonanSerializerExtension(context, metadataVersion, sourceFileMap)
         return SerializerContext(
                 extension,
                 KonanDescriptorSerializer.createTopLevel(context, extension)
@@ -213,7 +214,8 @@ internal class KonanSerializationUtil(val context: Context, private val metadata
         val fragmentNames = mutableListOf<String>()
 
         getPackagesFqNames(moduleDescriptor).forEach iteration@{ packageFqName ->
-            val packageProtos = serializePackage(packageFqName, moduleDescriptor)
+            val packageProtos =
+                    serializePackage(packageFqName, moduleDescriptor)
             if (packageProtos.isEmpty()) return@iteration
 
             val packageFqNameStr = packageFqName.asString()
@@ -223,7 +225,13 @@ internal class KonanSerializationUtil(val context: Context, private val metadata
             }
             fragments.add(packageProtos.map { it.toByteArray() })
             fragmentNames.add(packageFqNameStr)
+
         }
+
+        sourceFileMap.filesAndClear().map { it.name ?: "" }.forEach {
+            libraryProto.addFile(it)
+        }
+
         val libraryAsByteArray = libraryProto.build().toByteArray()
         return LinkData(libraryAsByteArray, fragments, fragmentNames)
     }
