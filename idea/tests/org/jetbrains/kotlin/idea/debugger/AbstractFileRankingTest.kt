@@ -1,7 +1,9 @@
 package org.jetbrains.kotlin.idea.debugger
 
 import com.sun.jdi.ThreadReference
+import org.jetbrains.kotlin.codegen.ClassFileFactory
 import org.jetbrains.kotlin.codegen.OriginCollectingClassBuilderFactory
+import org.jetbrains.kotlin.codegen.getClassFiles
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
@@ -12,9 +14,10 @@ abstract class AbstractFileRankingTest : LowLevelDebuggerTestBase() {
         options: Set<String>,
         mainThread: ThreadReference,
         factory: OriginCollectingClassBuilderFactory,
+        classFileFactory: ClassFileFactory,
         state: GenerationState
     ) {
-        val allKtFiles = factory.origins.mapNotNull { it.value.element?.containingFile as? KtFile }.distinct()
+        val allKtFiles = classFileFactory.inputFiles.distinct()
         fun getKtFiles(name: String) = allKtFiles.filter { it.name == name }
 
         val doNotCheckClassFqName = "DO_NOT_CHECK_CLASS_FQNAME" in options
@@ -26,15 +29,25 @@ abstract class AbstractFileRankingTest : LowLevelDebuggerTestBase() {
 
         val problems = mutableListOf<String>()
 
-        val skipClasses = skipLoadingClasses(options)
-        for ((node, origin) in factory.origins) {
-            val classNode = node as? ClassNode ?: continue
-            val expectedFile = origin.element?.containingFile as? KtFile ?: continue
-            val className = classNode.name.replace('/', '.')
+        val classNameToKtFile = factory.origins.asSequence()
+            .filter { it.key is ClassNode }
+            .map {
+                val ktFile = (it.value.element?.containingFile as? KtFile) ?: return@map null
+                val name = (it.key as ClassNode).name.replace('/', '.')
 
+                name to ktFile
+            }
+            .filterNotNull()
+            .toMap()
+
+        val skipClasses = skipLoadingClasses(options)
+        for (outputFile in classFileFactory.getClassFiles()) {
+            val className = outputFile.internalName.replace('/', '.')
             if (className in skipClasses) {
                 continue
             }
+
+            val expectedFile = classNameToKtFile[className] ?: throw IllegalStateException("Can't find source for $className")
 
             val jdiClass = mainThread.virtualMachine().classesByName(className).singleOrNull()
                 ?: error("Class '$className' was not found in the debuggee process class loader")

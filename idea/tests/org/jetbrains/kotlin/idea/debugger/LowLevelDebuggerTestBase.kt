@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.backend.common.output.OutputFile
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.test.ConfigurationKind
-import org.jetbrains.org.objectweb.asm.tree.ClassNode
 import java.io.File
 import java.io.IOException
 import java.net.Socket
@@ -63,8 +62,8 @@ abstract class LowLevelDebuggerTestBase : CodegenTestCase() {
 
             try {
                 val mainThread = virtualMachine.allThreads().single { it.name() == "main" }
-                waitUntil { areCompiledClassesLoaded(mainThread, classBuilderFactory, skipLoadingClasses) }
-                doTest(options, mainThread, classBuilderFactory, generationState)
+                waitUntil { areCompiledClassesLoaded(mainThread, classFileFactory, skipLoadingClasses) }
+                doTest(options, mainThread, classBuilderFactory, classFileFactory, generationState)
             } finally {
                 virtualMachine.exit(0)
                 process.destroy()
@@ -78,6 +77,7 @@ abstract class LowLevelDebuggerTestBase : CodegenTestCase() {
         options: Set<String>,
         mainThread: ThreadReference,
         factory: OriginCollectingClassBuilderFactory,
+        classFileFactory: ClassFileFactory,
         state: GenerationState
     )
 
@@ -92,13 +92,12 @@ abstract class LowLevelDebuggerTestBase : CodegenTestCase() {
 
     private fun areCompiledClassesLoaded(
         mainThread: ThreadReference,
-        factory: OriginCollectingClassBuilderFactory,
+        classFileFactory: ClassFileFactory,
         skipLoadingClasses: Set<String>
     ): Boolean {
-        for ((node, _) in factory.origins) {
-            val classNode = node as? ClassNode ?: continue
 
-            val fqName = classNode.name.replace('/', '.')
+        for (outputFile in classFileFactory.getClassFiles()) {
+            val fqName = outputFile.internalName.replace('/', '.')
             if (fqName in skipLoadingClasses) {
                 continue
             }
@@ -155,10 +154,10 @@ abstract class LowLevelDebuggerTestBase : CodegenTestCase() {
         File(classesDir, mainClassResourceName).mkdirAndWriteBytes(mainClassBytes)
     }
 
-    private val OutputFile.internalName
+    internal val OutputFile.internalName
         get() = relativePath.substringBeforeLast(".class")
 
-    private val OutputFile.qualifiedName
+    internal val OutputFile.qualifiedName
         get() = internalName.replace('/', '.')
 }
 
