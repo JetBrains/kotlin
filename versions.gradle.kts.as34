@@ -27,6 +27,8 @@ if (intellijVersionDelimiterIndex == -1) {
 val platformBaseVersion = intellijVersion.substring(0, intellijVersionDelimiterIndex)
 val platform = androidStudioVersion?.let { "AS$it" } ?: platformBaseVersion
 
+rootProject.extra["versions.platform"] = platform
+
 when (platform) {
     "183" -> {
         extra["versions.jar.guava"] = "25.1-jre"
