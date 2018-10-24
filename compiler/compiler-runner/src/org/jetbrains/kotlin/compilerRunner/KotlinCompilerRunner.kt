@@ -43,115 +43,28 @@ interface KotlinLogger {
 }
 
 abstract class KotlinCompilerRunner<in Env : CompilerEnvironment> {
-    protected val K2JVM_COMPILER = "org.jetbrains.kotlin.cli.jvm.K2JVMCompiler"
-    protected val K2JS_COMPILER = "org.jetbrains.kotlin.cli.js.K2JSCompiler"
-    protected val K2METADATA_COMPILER = "org.jetbrains.kotlin.cli.metadata.K2MetadataCompiler"
     protected val INTERNAL_ERROR = ExitCode.INTERNAL_ERROR.toString()
 
     protected abstract val log: KotlinLogger
 
-    protected abstract fun getDaemonConnection(environment: Env): CompileServiceSession?
-
-    @Synchronized
-    protected fun newDaemonConnection(
-            compilerId: CompilerId,
-            clientAliveFlagFile: File,
-            sessionAliveFlagFile: File,
-            environment: Env,
-            daemonOptions: DaemonOptions = configureDaemonOptions(),
-            additionalJvmParams: Array<String> = arrayOf()
-    ): CompileServiceSession? {
-        val daemonJVMOptions = configureDaemonJVMOptions(
-            additionalParams = *additionalJvmParams,
-            inheritMemoryLimits = true,
-            inheritOtherJvmOptions = false,
-            inheritAdditionalProperties = true
-        )
-
-        val daemonReportMessages = ArrayList<DaemonReportMessage>()
-        val daemonReportingTargets = DaemonReportingTargets(messages = daemonReportMessages)
-
-        val profiler = if (daemonOptions.reportPerf) WallAndThreadAndMemoryTotalProfiler(withGC = false) else DummyProfiler()
-
-        val connection = profiler.withMeasure(null) {
-            KotlinCompilerClient.connectAndLease(compilerId,
-                                                 clientAliveFlagFile,
-                                                 daemonJVMOptions,
-                                                 daemonOptions,
-                                                 daemonReportingTargets,
-                                                 autostart = true,
-                                                 leaseSession = true,
-                                                 sessionAliveFlagFile = sessionAliveFlagFile)
-        }
-
-        if (connection == null || log.isDebugEnabled) {
-            for (message in daemonReportMessages) {
-                val severity = when(message.category) {
-                    DaemonReportCategory.DEBUG -> CompilerMessageSeverity.INFO
-                    DaemonReportCategory.INFO -> CompilerMessageSeverity.INFO
-                    DaemonReportCategory.EXCEPTION -> CompilerMessageSeverity.EXCEPTION
-                }
-                environment.messageCollector.report(severity, message.message)
-            }
-        }
-
-        fun reportTotalAndThreadPerf(message: String, daemonOptions: DaemonOptions, messageCollector: MessageCollector, profiler: Profiler) {
-            if (daemonOptions.reportPerf) {
-                fun Long.ms() = TimeUnit.NANOSECONDS.toMillis(this)
-                val counters = profiler.getTotalCounters()
-                messageCollector.report(CompilerMessageSeverity.INFO, "PERF: $message ${counters.time.ms()} ms, thread ${counters.threadTime.ms()}")
-            }
-        }
-
-        reportTotalAndThreadPerf("Daemon connect", daemonOptions, environment.messageCollector, profiler)
-        return connection
-    }
-
-    protected fun processCompilerOutput(
-            environment: Env,
-            stream: ByteArrayOutputStream,
-            exitCode: ExitCode?
+    protected open fun runCompiler(
+        compilerClassName: String,
+        compilerArgs: CommonCompilerArguments,
+        environment: Env
     ) {
-        val reader = BufferedReader(StringReader(stream.toString()))
-        CompilerOutputParser.parseCompilerMessagesFromReader(environment.messageCollector, reader, environment.outputItemsCollector)
-
-        if (ExitCode.INTERNAL_ERROR == exitCode) {
-            reportInternalCompilerError(environment.messageCollector)
-        }
-    }
-
-    protected fun reportInternalCompilerError(messageCollector: MessageCollector): ExitCode {
-        messageCollector.report(CompilerMessageSeverity.ERROR, "Compiler terminated with internal error")
-        return ExitCode.INTERNAL_ERROR
-    }
-
-    protected fun runCompiler(
-            compilerClassName: String,
-            compilerArgs: CommonCompilerArguments,
-            environment: Env): ExitCode {
-        return try {
+        try {
             compileWithDaemonOrFallback(compilerClassName, compilerArgs, environment)
-        }
-        catch (e: Throwable) {
+        } catch (e: Throwable) {
             MessageCollectorUtil.reportException(environment.messageCollector, e)
             reportInternalCompilerError(environment.messageCollector)
         }
     }
 
     protected abstract fun compileWithDaemonOrFallback(
-            compilerClassName: String,
-            compilerArgs: CommonCompilerArguments,
-            environment: Env
-    ): ExitCode
-
-    /**
-     * Returns null if could not connect to daemon
-     */
-    protected abstract fun compileWithDaemon(
-            compilerClassName: String,
-            compilerArgs: CommonCompilerArguments,
-            environment: Env
-    ): ExitCode?
+        compilerClassName: String,
+        compilerArgs: CommonCompilerArguments,
+        environment: Env
+    )
 
     protected fun exitCodeFromProcessExitCode(code: Int): ExitCode = Companion.exitCodeFromProcessExitCode(log, code)
 
@@ -162,6 +75,69 @@ abstract class KotlinCompilerRunner<in Env : CompilerEnvironment> {
 
             log.debug("Could not find exit code by value: $code")
             return if (code == 0) ExitCode.OK else ExitCode.COMPILATION_ERROR
+        }
+
+        @Synchronized
+        @JvmStatic
+        protected fun newDaemonConnection(
+            compilerId: CompilerId,
+            clientAliveFlagFile: File,
+            sessionAliveFlagFile: File,
+            messageCollector: MessageCollector,
+            isDebugEnabled: Boolean,
+            daemonOptions: DaemonOptions = configureDaemonOptions(),
+            additionalJvmParams: Array<String> = arrayOf()
+        ): CompileServiceSession? {
+            val daemonJVMOptions = configureDaemonJVMOptions(
+                additionalParams = *additionalJvmParams,
+                inheritMemoryLimits = true,
+                inheritOtherJvmOptions = false,
+                inheritAdditionalProperties = true
+            )
+
+            val daemonReportMessages = ArrayList<DaemonReportMessage>()
+            val daemonReportingTargets = DaemonReportingTargets(messages = daemonReportMessages)
+
+            val profiler = if (daemonOptions.reportPerf) WallAndThreadAndMemoryTotalProfiler(withGC = false) else DummyProfiler()
+
+            val connection = profiler.withMeasure(null) {
+                KotlinCompilerClient.connectAndLease(
+                    compilerId,
+                    clientAliveFlagFile,
+                    daemonJVMOptions,
+                    daemonOptions,
+                    daemonReportingTargets,
+                    autostart = true,
+                    leaseSession = true,
+                    sessionAliveFlagFile = sessionAliveFlagFile
+                )
+            }
+
+            if (connection == null || isDebugEnabled) {
+                for (message in daemonReportMessages) {
+                    val severity = when (message.category) {
+                        DaemonReportCategory.DEBUG -> CompilerMessageSeverity.INFO
+                        DaemonReportCategory.INFO -> CompilerMessageSeverity.INFO
+                        DaemonReportCategory.EXCEPTION -> CompilerMessageSeverity.EXCEPTION
+                    }
+                    messageCollector.report(severity, message.message)
+                }
+            }
+
+            fun reportTotalAndThreadPerf(
+                message: String, daemonOptions: DaemonOptions, messageCollector: MessageCollector, profiler: Profiler
+            ) {
+                if (daemonOptions.reportPerf) {
+                    fun Long.ms() = TimeUnit.NANOSECONDS.toMillis(this)
+                    val counters = profiler.getTotalCounters()
+                    messageCollector.report(
+                        CompilerMessageSeverity.INFO, "PERF: $message ${counters.time.ms()} ms, thread ${counters.threadTime.ms()}"
+                    )
+                }
+            }
+
+            reportTotalAndThreadPerf("Daemon connect", daemonOptions, MessageCollector.NONE, profiler)
+            return connection
         }
     }
 }

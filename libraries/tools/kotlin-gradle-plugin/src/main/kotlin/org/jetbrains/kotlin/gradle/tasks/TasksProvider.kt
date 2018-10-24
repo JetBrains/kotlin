@@ -22,25 +22,35 @@ import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.defaultSourceSetName
 import org.jetbrains.kotlin.gradle.plugin.sources.applyLanguageSettingsToKotlinTask
 
-internal open class KotlinTasksProvider(val targetName: String) {
+internal open class KotlinTasksProvider(
+    val targetName: String,
+    private val useWorkersForCompilation: Boolean = false
+) {
     open fun createKotlinJVMTask(
         project: Project,
         name: String,
         compilation: KotlinCompilation
-    ): KotlinCompile =
-        project.tasks.create(name, KotlinCompile::class.java).apply {
+    ): KotlinCompile {
+        val taskClass = if (useWorkersForCompilation) KotlinCompileWithWorkers::class.java else KotlinCompile::class.java
+        return project.tasks.create(name, taskClass).apply {
             configure(this, project, compilation)
         }
+    }
 
-    fun createKotlinJSTask(project: Project, name: String, compilation: KotlinCompilation): Kotlin2JsCompile =
-        project.tasks.create(name, Kotlin2JsCompile::class.java).apply {
+    fun createKotlinJSTask(project: Project, name: String, compilation: KotlinCompilation): Kotlin2JsCompile {
+        val taskClass = if (useWorkersForCompilation) Kotlin2JsCompileWithWorkers::class.java else Kotlin2JsCompile::class.java
+        return project.tasks.create(name, taskClass).apply {
             configure(this, project, compilation)
         }
+    }
 
-    fun createKotlinCommonTask(project: Project, name: String, compilation: KotlinCompilation): KotlinCompileCommon =
-        project.tasks.create(name, KotlinCompileCommon::class.java).apply {
+
+    fun createKotlinCommonTask(project: Project, name: String, compilation: KotlinCompilation): KotlinCompileCommon {
+        val taskClass = if (useWorkersForCompilation) KotlinCompileCommonWithWorkers::class.java else KotlinCompileCommon::class.java
+        return project.tasks.create(name, taskClass).apply {
             configure(this, project, compilation)
         }
+    }
 
     open fun configure(
         kotlinTask: AbstractKotlinCompile<*>,
@@ -64,7 +74,10 @@ internal open class KotlinTasksProvider(val targetName: String) {
         RegexTaskToFriendTaskMapper.Default(targetName)
 }
 
-internal class AndroidTasksProvider(targetName: String) : KotlinTasksProvider(targetName) {
+internal class AndroidTasksProvider(
+    targetName: String,
+    useWorkersForCompilation: Boolean = false
+) : KotlinTasksProvider(targetName, useWorkersForCompilation = useWorkersForCompilation) {
     override val taskToFriendTaskMapper: TaskToFriendTaskMapper =
         RegexTaskToFriendTaskMapper.Android(targetName)
 

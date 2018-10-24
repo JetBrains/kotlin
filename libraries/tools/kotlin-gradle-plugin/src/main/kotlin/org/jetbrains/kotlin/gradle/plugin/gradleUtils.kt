@@ -22,6 +22,7 @@ import org.gradle.api.internal.HasConvention
 import org.gradle.api.logging.Logger
 import org.gradle.api.plugins.ExtensionAware
 import org.gradle.api.tasks.compile.AbstractCompile
+import org.jetbrains.kotlin.compilerRunner.KotlinLogger
 import java.io.File
 
 internal fun AbstractCompile.appendClasspathDynamically(file: File) {
@@ -75,5 +76,12 @@ internal fun Logger.kotlinWarn(message: String) {
 internal inline fun Logger.kotlinDebug(message: () -> String) {
     if (isDebugEnabled) {
         kotlinDebug(message())
+    }
+}
+
+internal inline fun KotlinLogger.kotlinDebug(fn: () -> String) {
+    if (isDebugEnabled) {
+        val msg = fn()
+        debug("[KOTLIN] $msg")
     }
 }

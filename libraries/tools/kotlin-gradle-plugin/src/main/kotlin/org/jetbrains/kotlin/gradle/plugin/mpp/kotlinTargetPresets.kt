@@ -82,13 +82,10 @@ class KotlinMetadataTargetPreset(
     override val platformType: KotlinPlatformType
         get() = KotlinPlatformType.common
 
-    override fun buildCompilationProcessor(compilation: KotlinCommonCompilation): KotlinSourceSetProcessor<*> =
-        KotlinCommonSourceSetProcessor(
-            project,
-            compilation,
-            KotlinTasksProvider(compilation.target.targetName),
-            kotlinPluginVersion
-        )
+    override fun buildCompilationProcessor(compilation: KotlinCommonCompilation): KotlinSourceSetProcessor<*> {
+        val tasksProvider = KotlinTasksProvider(compilation.target.targetName, useWorkersForCompilation = true)
+        return KotlinCommonSourceSetProcessor(project, compilation, tasksProvider, kotlinPluginVersion)
+    }
 
     companion object {
         const val PRESET_NAME = "metadata"
@@ -131,8 +128,10 @@ class KotlinJvmTargetPreset(
     override val platformType: KotlinPlatformType
         get() = KotlinPlatformType.jvm
 
-    override fun buildCompilationProcessor(compilation: KotlinJvmCompilation): KotlinSourceSetProcessor<*> =
-        Kotlin2JvmSourceSetProcessor(project, KotlinTasksProvider(compilation.target.targetName), compilation, kotlinPluginVersion)
+    override fun buildCompilationProcessor(compilation: KotlinJvmCompilation): KotlinSourceSetProcessor<*> {
+        val tasksProvider = KotlinTasksProvider(compilation.target.targetName, useWorkersForCompilation = true)
+        return Kotlin2JvmSourceSetProcessor(project, tasksProvider, compilation, kotlinPluginVersion)
+    }
 
     companion object {
         const val PRESET_NAME = "jvm"
@@ -158,8 +157,10 @@ class KotlinJsTargetPreset(
     override val platformType: KotlinPlatformType
         get() = KotlinPlatformType.js
 
-    override fun buildCompilationProcessor(compilation: KotlinJsCompilation): KotlinSourceSetProcessor<*> =
-        Kotlin2JsSourceSetProcessor(project, KotlinTasksProvider(compilation.target.targetName), compilation, kotlinPluginVersion)
+    override fun buildCompilationProcessor(compilation: KotlinJsCompilation): KotlinSourceSetProcessor<*> {
+        val tasksProvider = KotlinTasksProvider(compilation.target.targetName, useWorkersForCompilation = true)
+        return Kotlin2JsSourceSetProcessor(project, tasksProvider, compilation, kotlinPluginVersion)
+    }
 
     companion object {
         const val PRESET_NAME = "js"
@@ -179,7 +180,7 @@ class KotlinAndroidTargetPreset(
         }
 
         KotlinAndroidPlugin.applyToTarget(
-            project, result, AndroidTasksProvider(name),
+            project, result, AndroidTasksProvider(name, useWorkersForCompilation = true),
             kotlinPluginVersion
         )
 
@@ -206,7 +207,8 @@ class KotlinJvmWithJavaTargetPreset(
         }
 
         AbstractKotlinPlugin.configureTarget(target) { compilation ->
-            Kotlin2JvmSourceSetProcessor(project, KotlinTasksProvider(name), compilation, kotlinPluginVersion)
+            val tasksProvider = KotlinTasksProvider(name, useWorkersForCompilation = true)
+            Kotlin2JvmSourceSetProcessor(project, tasksProvider, compilation, kotlinPluginVersion)
         }
 
         target.compilations.all { compilation ->
