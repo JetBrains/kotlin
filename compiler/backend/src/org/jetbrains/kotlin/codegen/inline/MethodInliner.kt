@@ -405,7 +405,7 @@ class MethodInliner(
             node.signature, node.exceptions?.toTypedArray()
         )
 
-        val transformationVisitor = object : MethodVisitor(API, transformedNode) {
+        val transformationVisitor = object : InlineMethodInstructionAdapter(transformedNode) {
             private val GENERATE_DEBUG_INFO = GENERATE_SMAP && inlineOnlySmapSkipper == null
 
             private val isInliningLambda = nodeRemapper.isInsideInliningLambda
