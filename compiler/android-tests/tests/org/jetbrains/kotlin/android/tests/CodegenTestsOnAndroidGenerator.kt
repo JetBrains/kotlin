@@ -199,11 +199,17 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
                     continue
                 }
 
-                val fullFileText = FileUtil.loadFile(file, true)
+                val fullFileText = FileUtil.loadFile(file, true).let {
+                    it.replace("COROUTINES_PACKAGE", "kotlin.coroutines")
+                }
+
+                if (fullFileText.contains("// WITH_COROUTINES")) {
+                    if (fullFileText.contains("kotlin.coroutines.experimental")) continue
+                    if (fullFileText.contains("// LANGUAGE_VERSION: 1.2")) continue
+                }
+
                 //TODO support JvmPackageName
                 if (fullFileText.contains("@file:JvmPackageName(")) continue
-                // TODO: Support coroutines tests
-                if (fullFileText.contains("// WITH_COROUTINES")) continue
                 // TODO: Support jvm assertions
                 if (fullFileText.contains("// KOTLIN_CONFIGURATION_FLAGS: ASSERTIONS_MODE=jvm")) continue
                 // TODO: support JVM 8 test with D8
@@ -248,7 +254,9 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
                 override fun create(fileName: String, text: String, directives: Map<String, String>): CodegenTestCase.TestFile {
                     return CodegenTestCase.TestFile(fileName, text)
                 }
-            })
+            }, false,
+            "kotlin.coroutines"
+        )
 
 
     private fun generateTestName(fileName: String): String {
