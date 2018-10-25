@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.expressions.IrLoop
+import org.jetbrains.kotlin.ir.util.DeepCopyIrTreeWithSymbols
 import org.jetbrains.kotlin.ir.util.DeepCopySymbolRemapper
 import org.jetbrains.kotlin.ir.util.DeepCopyTypeRemapper
 import org.jetbrains.kotlin.ir.util.DescriptorsRemapper
@@ -45,7 +46,7 @@ fun <T : IrElement> T.deepCopyWithVariables(): T {
     val typesRemapper = DeepCopyTypeRemapper(symbolsRemapper)
 
     return this.transform(
-            object : DeepCopyIrTreeWithReturnableBlockSymbols(symbolsRemapper, typesRemapper) {
+            object : DeepCopyIrTreeWithSymbols(symbolsRemapper, typesRemapper) {
                 override fun getNonTransformedLoop(irLoop: IrLoop): IrLoop {
                     return irLoop
                 }
