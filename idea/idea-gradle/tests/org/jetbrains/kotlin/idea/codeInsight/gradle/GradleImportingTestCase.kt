@@ -42,6 +42,7 @@ import org.gradle.wrapper.GradleWrapperMain
 import org.intellij.lang.annotations.Language
 import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
+import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.plugins.gradle.settings.DistributionType
 import org.jetbrains.plugins.gradle.settings.GradleProjectSettings
 import org.jetbrains.plugins.gradle.settings.GradleSettings
@@ -112,6 +113,51 @@ abstract class GradleImportingTestCase : ExternalSystemImportingTestCase() {
         } finally {
             super.tearDown()
         }
+    }
+
+    /**
+     * Creates test project, consisting of:
+     * - file at [projectDirPath]
+     * - all other files in the same directory and with the same name as the main build file
+     * - destination of those files in test project is determined *by the directives in file content*, not by its physical location
+     *   (see [loadFileIntoTestProject])
+     */
+    open fun doTest(projectDirPath: String) {
+        val projectDir = File(projectDirPath)
+        require(projectDir.isDirectory) { "${projectDir.absolutePath} is not a folder" }
+
+        val buildFile = projectDir.resolve("build.gradle")
+        require(buildFile.exists()) { "${buildFile.absolutePath} not found" }
+
+        projectDir.walk().filter { it.isFile }.forEach {
+            val relativePathInProject = it.relativeTo(projectDir).path
+            loadFileIntoTestProject(it, relativePathInProject)
+        }
+
+        val configuration = loadTestConfiguration(buildFile)
+        myProjectSettings.isResolveModulePerSourceSet = !configuration.singleModulePerSourceSet
+
+        importProject()
+    }
+
+    data class FacetImportingTestConfiguration(val singleModulePerSourceSet: Boolean)
+
+    private fun loadTestConfiguration(file: File): FacetImportingTestConfiguration {
+        val fileText = KotlinTestUtils.doLoadFile(file)
+        val singleModulePerSourceSet = fileText.lines().any { it.startsWith("// !SINGLE_MODULE_PER_SOURCE_SET") }
+        return FacetImportingTestConfiguration(singleModulePerSourceSet)
+    }
+
+    private fun loadFileIntoTestProject(file: File, targetRelativePath: String) {
+        val buildFileText = KotlinTestUtils.doLoadFile(file)
+
+        val processedFileText = runPreprocessor(buildFileText)
+
+        createProjectSubFile(targetRelativePath, processedFileText)
+    }
+
+    private fun runPreprocessor(fileText: String): String {
+        return fileText.replace("\$\$ANDROID_SDK\$\$", KotlinTestUtils.getAndroidSdkSystemIndependentPath())
     }
 
     override fun collectAllowedRoots(roots: MutableList<String>) {
