@@ -1,9 +1,15 @@
 package org.jetbrains.uast.test.kotlin
 
+import com.intellij.openapi.util.Conditions
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiRecursiveElementVisitor
 import com.intellij.psi.impl.source.tree.LeafPsiElement
+import com.intellij.util.PairProcessor
+import com.intellij.util.ref.DebugReflectionUtil
+import junit.framework.TestCase
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.utils.addToStdlib.assertedCast
@@ -37,6 +43,7 @@ abstract class AbstractKotlinRenderLogTest : AbstractKotlinUastTest(), RenderLog
 
         file.checkContainingFileForAllElements()
         file.checkJvmDeclarationsImplementations()
+        file.checkDescriptorsLeak()
     }
 
     private fun checkParentConsistency(file: UFile) {
@@ -106,6 +113,15 @@ abstract class AbstractKotlinRenderLogTest : AbstractKotlinUastTest(), RenderLog
         })
     }
 
+    private fun UFile.checkDescriptorsLeak() {
+        accept(object : UastVisitor {
+            override fun visitElement(node: UElement): Boolean {
+                checkDescriptorsLeak(node)
+                return false
+            }
+        })
+    }
+
     private fun UFile.checkJvmDeclarationsImplementations() {
         accept(object : UastVisitor {
             override fun visitElement(node: UElement): Boolean {
@@ -130,6 +146,22 @@ abstract class AbstractKotlinRenderLogTest : AbstractKotlinUastTest(), RenderLog
             }
         })
     }
+}
+
+private val descriptorsClasses = listOf(AnnotationDescriptor::class, DeclarationDescriptor::class)
+
+fun checkDescriptorsLeak(node: UElement) {
+    DebugReflectionUtil.walkObjects(
+        10,
+        mapOf(node to node.javaClass.name),
+        Any::class.java,
+        Conditions.alwaysTrue(),
+        PairProcessor { value, backLink ->
+            descriptorsClasses.find { it.isInstance(value) }?.let {
+                TestCase.fail("""Leaked descriptor ${it.qualifiedName} in ${node.javaClass.name}\n$backLink""")
+                false
+            } ?: true
+        })
 }
 
 private fun PsiFile.clearUastCaches() {

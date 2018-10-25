@@ -306,6 +306,7 @@ class KotlinUastApiTest : AbstractKotlinUastTest() {
                     .toUElementOfType<UAnnotation>()
                         ?: throw AssertionError("haven't got annotation from $referenceExpression(${referenceExpression?.javaClass})")
 
+                checkDescriptorsLeak(convertedUAnnotation)
                 assertEquals("Annotation", convertedUAnnotation.qualifiedName)
                 val lightAnnotation = convertedUAnnotation.getAsJavaPsiElement(PsiAnnotation::class.java)
                         ?: throw AssertionError("can't get lightAnnotation from $convertedUAnnotation")
