@@ -23,11 +23,16 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderWithTextStub;
 
 public abstract class KtStringTemplateEntry extends KtElementImplStub<KotlinPlaceHolderWithTextStub<? extends KtStringTemplateEntry>> {
+    public static final KtStringTemplateEntry[] EMPTY_ARRAY = new KtStringTemplateEntry[0];
+
     public KtStringTemplateEntry(@NotNull ASTNode node) {
         super(node);
     }
 
-    public KtStringTemplateEntry(@NotNull KotlinPlaceHolderWithTextStub<? extends KtStringTemplateEntry> stub, @NotNull IStubElementType elementType) {
+    public KtStringTemplateEntry(
+            @NotNull KotlinPlaceHolderWithTextStub<? extends KtStringTemplateEntry> stub,
+            @NotNull IStubElementType elementType
+    ) {
         super(stub, elementType);
     }
 

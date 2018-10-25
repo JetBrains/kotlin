@@ -49,9 +49,16 @@ public class KtStringTemplateExpression extends KtElementImplStub<KotlinPlaceHol
         return visitor.visitStringTemplateExpression(this, data);
     }
 
+    private static final TokenSet STRING_ENTRIES_TYPES = TokenSet.create(
+            KtStubElementTypes.LONG_STRING_TEMPLATE_ENTRY,
+            KtStubElementTypes.SHORT_STRING_TEMPLATE_ENTRY,
+            KtStubElementTypes.LITERAL_STRING_TEMPLATE_ENTRY,
+            KtStubElementTypes.ESCAPE_STRING_TEMPLATE_ENTRY
+    );
+
     @NotNull
     public KtStringTemplateEntry[] getEntries() {
-        return findChildrenByClass(KtStringTemplateEntry.class);
+        return getStubOrPsiChildren(STRING_ENTRIES_TYPES, KtStringTemplateEntry.EMPTY_ARRAY);
     }
 
     @Override
