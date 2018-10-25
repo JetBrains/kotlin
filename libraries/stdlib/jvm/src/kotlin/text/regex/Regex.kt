@@ -50,17 +50,13 @@ public actual enum class RegexOption(override val value: Int, override val mask:
 //    /** Enables Unicode-aware case folding. */
 //    UNICODE_CASE(Pattern.UNICODE_CASE)
 
-    /** Enables Unix lines mode.
-     * In this mode, only the `'\n'` is recognized as a line terminator.
-     */
+    /** Enables Unix lines mode. In this mode, only the `'\n'` is recognized as a line terminator. */
     UNIX_LINES(Pattern.UNIX_LINES),
 
     /** Permits whitespace and comments in pattern. */
     COMMENTS(Pattern.COMMENTS),
 
-    /** Enables the mode, when the expression `.` matches any character,
-     * including a line terminator.
-     */
+    /** Enables the mode, when the expression `.` matches any character, including a line terminator. */
     DOT_MATCHES_ALL(Pattern.DOTALL),
 
     /** Enables equivalence by canonical decomposition. */
