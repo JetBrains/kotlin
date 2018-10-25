@@ -8,13 +8,12 @@ import org.gradle.api.Project
 interface CompatibilityPredicate {
     fun matches(ide: Ide): Boolean
 
-    operator fun invoke(block: () -> Unit): Any? {
+    operator fun invoke(): Boolean = matches(IdeVersionConfigurator.currentIde)
+
+    operator fun invoke(block: () -> Unit): Unit {
         if (matches(IdeVersionConfigurator.currentIde)) {
             block()
-            return emptyList()
         }
-
-        return null
     }
 }
 
