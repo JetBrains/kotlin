@@ -82,8 +82,15 @@ public class RemappingClassBuilder extends DelegatingClassBuilder {
             @Nullable String signature,
             @Nullable String[] exceptions
     ) {
+        String newDescriptor = remapper.mapMethodDesc(desc);
+        // MethodRemapper doesn't extends LocalVariablesSorter, but RemappingMethodAdapter does.
+        // So wrapping with LocalVariablesSorter to keep old behavior.
+        // TODO: investigate LocalVariablesSorter removing (see also same code in MethodInliner)
         return new MethodRemapper(
-                builder.newMethod(origin, access, name, remapper.mapMethodDesc(desc), remapper.mapSignature(signature, false), exceptions),
+                new LocalVariablesSorter(
+                        access, newDescriptor,
+                        builder.newMethod(origin, access, name, newDescriptor, remapper.mapSignature(signature, false),
+                                          exceptions)),
                 remapper
         );
     }

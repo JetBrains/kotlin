@@ -151,6 +151,7 @@ class MethodInliner(
 
         // MethodRemapper doesn't extends LocalVariablesSorter, but RemappingMethodAdapter does.
         // So wrapping with LocalVariablesSorter to keep old behavior
+        // TODO: investigate LocalVariablesSorter removing (see also same code in RemappingClassBuilder.java)
         val remappingMethodAdapter = MethodRemapper(
             LocalVariablesSorter(
                 resultNode.access,
