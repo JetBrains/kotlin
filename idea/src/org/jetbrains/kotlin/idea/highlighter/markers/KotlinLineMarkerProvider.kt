@@ -198,28 +198,52 @@ private val OVERRIDDEN_PROPERTY = object : MarkerType(
     }
 }
 
-private val PsiElement.markerDeclaration
+val PsiElement.markerDeclaration
     get() = (this as? KtDeclaration) ?: (parent as? KtDeclaration)
 
-private val PLATFORM_ACTUAL = MarkerType(
+private val PLATFORM_ACTUAL = object : MarkerType(
     "PLATFORM_ACTUAL",
     { element -> element?.markerDeclaration?.let { getPlatformActualTooltip(it) } },
     object : LineMarkerNavigator() {
         override fun browse(e: MouseEvent?, element: PsiElement?) {
-            element?.markerDeclaration?.let { navigateToPlatformActual(e, it) }
+            buildNavigateToActualDeclarationsPopup(e, element)?.showPopup(e)
+        }
+    }) {
+    override fun getNavigationHandler(): GutterIconNavigationHandler<PsiElement> {
+        val superHandler = super.getNavigationHandler()
+        return object : GutterIconNavigationHandler<PsiElement>, TestableLineMarkerNavigator {
+            override fun navigate(e: MouseEvent?, elt: PsiElement?) {
+                superHandler.navigate(e, elt)
+            }
+
+            override fun getTargetsPopupDescriptor(element: PsiElement?): NavigationPopupDescriptor? {
+                return buildNavigateToActualDeclarationsPopup(null, element)
+            }
         }
     }
-)
+}
 
-private val EXPECTED_DECLARATION = MarkerType(
+private val EXPECTED_DECLARATION = object : MarkerType(
     "EXPECTED_DECLARATION",
     { element -> element?.markerDeclaration?.let { getExpectedDeclarationTooltip(it) } },
     object : LineMarkerNavigator() {
         override fun browse(e: MouseEvent?, element: PsiElement?) {
-            element?.markerDeclaration?.let { navigateToExpectedDeclaration(e, it) }
+            buildNavigateToExpectedDeclarationsPopup(e, element)?.showPopup(e)
+        }
+    }) {
+    override fun getNavigationHandler(): GutterIconNavigationHandler<PsiElement> {
+        val superHandler = super.getNavigationHandler()
+        return object : GutterIconNavigationHandler<PsiElement>, TestableLineMarkerNavigator {
+            override fun navigate(e: MouseEvent?, elt: PsiElement?) {
+                superHandler.navigate(e, elt)
+            }
+
+            override fun getTargetsPopupDescriptor(element: PsiElement?): NavigationPopupDescriptor? {
+                return buildNavigateToExpectedDeclarationsPopup(null, element)
+            }
         }
     }
-)
+}
 
 private fun isImplementsAndNotOverrides(
     descriptor: CallableMemberDescriptor,
