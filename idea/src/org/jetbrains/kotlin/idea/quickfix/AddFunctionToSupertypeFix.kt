@@ -172,16 +172,9 @@ class AddFunctionToSupertypeFix private constructor(
 
         private fun MutableList<KotlinType>.sortSubtypesFirst(): List<KotlinType> {
             val typeChecker = KotlinTypeChecker.DEFAULT
-            for (i in 1 until size) {
-                val currentType = this[i]
-                for (j in 0 until i) {
-                    if (typeChecker.isSubtypeOf(currentType, this[j])) {
-                        this.removeAt(i)
-                        this.add(j, currentType)
-                        break
-                    }
-                }
-            }
+            sortWith(Comparator { a, b ->
+                if (typeChecker.isSubtypeOf(a, b)) -1 else 1
+            })
             return this
         }
 
