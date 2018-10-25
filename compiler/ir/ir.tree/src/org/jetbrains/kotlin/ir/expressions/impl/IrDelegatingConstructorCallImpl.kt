@@ -30,14 +30,15 @@ class IrDelegatingConstructorCallImpl(
     type: IrType,
     override val symbol: IrConstructorSymbol,
     override val descriptor: ClassConstructorDescriptor,
-    typeArgumentsCount: Int
+    typeArgumentsCount: Int,
+    valueArgumentsCount: Int
 ) :
     IrCallWithIndexedArgumentsBase(
         startOffset,
         endOffset,
         type,
         typeArgumentsCount = typeArgumentsCount,
-        valueArgumentsCount = symbol.descriptor.valueParameters.size
+        valueArgumentsCount = valueArgumentsCount
     ),
     IrDelegatingConstructorCall {
 
@@ -47,7 +48,16 @@ class IrDelegatingConstructorCallImpl(
         type: IrType,
         symbol: IrConstructorSymbol,
         descriptor: ClassConstructorDescriptor
-    ) : this(startOffset, endOffset, type, symbol, descriptor, descriptor.typeParametersCount)
+    ) : this(startOffset, endOffset, type, symbol, descriptor, descriptor.typeParametersCount, descriptor.valueParameters.size)
+
+    constructor(
+        startOffset: Int,
+        endOffset: Int,
+        type: IrType,
+        symbol: IrConstructorSymbol,
+        descriptor: ClassConstructorDescriptor,
+        typeArgumentsCount: Int
+    ) : this(startOffset, endOffset, type, symbol, descriptor, typeArgumentsCount, descriptor.valueParameters.size)
 
     @Deprecated("Creates unbound symbol")
     constructor(
@@ -60,7 +70,8 @@ class IrDelegatingConstructorCallImpl(
         startOffset, endOffset, type,
         IrConstructorSymbolImpl(descriptor.original),
         descriptor,
-        typeArgumentsCount
+        typeArgumentsCount,
+        descriptor.valueParameters.size
     )
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R {
