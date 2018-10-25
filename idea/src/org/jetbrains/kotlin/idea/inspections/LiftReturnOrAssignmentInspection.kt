@@ -17,6 +17,8 @@
 package org.jetbrains.kotlin.idea.inspections
 
 import com.intellij.codeInspection.*
+import com.intellij.codeInspection.ProblemHighlightType.GENERIC_ERROR_OR_WARNING
+import com.intellij.codeInspection.ProblemHighlightType.INFORMATION
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.BranchedFoldingUtils
@@ -38,42 +40,38 @@ class LiftReturnOrAssignmentInspection : AbstractKotlinInspection() {
                 if (foldableReturns?.isNotEmpty() == true) {
                     val hasOtherReturns = expression.anyDescendantOfType<KtReturnExpression> { it !in foldableReturns }
                     val isSerious = !hasOtherReturns && foldableReturns.size > 1
-                    val verb = if (isSerious) "should" else "can"
-                    val description = "Return $verb be lifted out of '${keyword.text}'"
-                    holder.registerProblemWithoutOfflineInformation(
-                        expression,
-                        description,
-                        isOnTheFly,
-                        if (isSerious) ProblemHighlightType.GENERIC_ERROR_OR_WARNING
-                        else ProblemHighlightType.INFORMATION,
-                        keyword.textRange?.shiftRight(-expression.startOffset),
-                        LiftReturnOutFix(keyword.text)
-                    )
+                    registerProblem(expression, keyword, isSerious, LiftReturnOutFix(keyword.text))
                     foldableReturns.forEach {
-                        holder.registerProblemWithoutOfflineInformation(
-                            expression,
-                            description,
-                            isOnTheFly,
-                            ProblemHighlightType.INFORMATION,
-                            it.returnKeyword.textRange?.shiftRight(-expression.startOffset),
-                            LiftReturnOutFix(keyword.text)
-                        )
+                        registerProblem(expression, keyword, isSerious, LiftReturnOutFix(keyword.text), it, INFORMATION)
                     }
                     return
                 }
+
                 val assignmentNumber = BranchedFoldingUtils.getFoldableAssignmentNumber(expression)
                 if (assignmentNumber > 0) {
-                    val verb = if (assignmentNumber > 1) "should" else "can"
-                    holder.registerProblemWithoutOfflineInformation(
-                        expression,
-                        "Assignment $verb be lifted out of '${keyword.text}'",
-                        isOnTheFly,
-                        if (assignmentNumber > 1) ProblemHighlightType.GENERIC_ERROR_OR_WARNING
-                        else ProblemHighlightType.INFORMATION,
-                        keyword.textRange?.shiftRight(-expression.startOffset),
-                        LiftAssignmentOutFix(keyword.text)
-                    )
+                    val isSerious = assignmentNumber > 1
+                    registerProblem(expression, keyword, isSerious, LiftAssignmentOutFix(keyword.text))
                 }
+            }
+
+            private fun registerProblem(
+                expression: KtExpression,
+                keyword: PsiElement,
+                isSerious: Boolean,
+                fix: LocalQuickFix,
+                highlightElement: PsiElement = keyword,
+                highlightType: ProblemHighlightType = if (isSerious) GENERIC_ERROR_OR_WARNING else INFORMATION
+            ) {
+                val subject = if (fix is LiftReturnOutFix) "Return" else "Assignment"
+                val verb = if (isSerious) "should" else "can"
+                holder.registerProblemWithoutOfflineInformation(
+                    expression,
+                    "$subject $verb be lifted out of '${keyword.text}'",
+                    isOnTheFly,
+                    highlightType,
+                    highlightElement.textRange?.shiftRight(-expression.startOffset),
+                    fix
+                )
             }
 
             override fun visitIfExpression(expression: KtIfExpression) {
