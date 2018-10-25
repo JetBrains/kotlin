@@ -137,6 +137,11 @@
         <applicationService
             serviceInterface="org.jetbrains.kotlin.platform.DefaultIdeTargetPlatformKindProvider"
             serviceImplementation="org.jetbrains.kotlin.platform.impl.IdeaDefaultIdeTargetPlatformKindProvider"/>
+
+      <registryKey key="kotlin.use.ultra.light.classes"
+                   description="Whether to use an experimental implementation of Kotlin-as-Java classes"
+                   defaultValue="false"
+                   restartRequired="false"/>
     </extensions>
 
     <extensions defaultExtensionNs="org.jetbrains.uast">
@@ -145,8 +150,7 @@
 
     <extensions defaultExtensionNs="org.jetbrains.kotlin">
         <diagnosticSuppressor implementation="org.jetbrains.kotlin.idea.debugger.DiagnosticSuppressorForDebugger"/>
-
-        <storageComponentContainerContributor implementation="org.jetbrains.kotlin.samWithReceiver.ide.IdeSamWithReceiverComponentContributor"/>
+                                                                    <storageComponentContainerContributor implementation="org.jetbrains.kotlin.samWithReceiver.ide.IdeSamWithReceiverComponentContributor"/>
 
         <declarationAttributeAltererExtension implementation="org.jetbrains.kotlin.allopen.ide.IdeAllOpenDeclarationAttributeAltererExtension"/>
 
@@ -170,10 +174,5 @@
 
         <idePlatformKindTooling implementation="org.jetbrains.kotlin.idea.core.platform.impl.JvmIdePlatformKindTooling"/>
         <idePlatformKindTooling implementation="org.jetbrains.kotlin.idea.core.platform.impl.JsIdePlatformKindTooling"/>
-
-        <registryKey key="kotlin.use.ultra.light.classes"
-                     description="Whether to use an experimental implementation of Kotlin-as-Java classes"
-                     defaultValue="false"
-                     restartRequired="false"/>
     </extensions>
 </idea-plugin>
