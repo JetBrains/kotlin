@@ -5,7 +5,7 @@ import org.jetbrains.kotlin.daemon.common.CompilationResultCategory
 import org.jetbrains.kotlin.daemon.common.CompilationResults
 import org.jetbrains.kotlin.daemon.common.LoopbackNetworkInterface
 import org.jetbrains.kotlin.daemon.common.SOCKET_ANY_FREE_PORT
-import org.jetbrains.kotlin.daemon.report.CompileIterationResult
+import org.jetbrains.kotlin.daemon.common.CompileIterationResult
 import org.jetbrains.kotlin.gradle.plugin.kotlinDebug
 import org.jetbrains.kotlin.gradle.utils.pathsAsStringRelativeTo
 import java.io.Serializable
