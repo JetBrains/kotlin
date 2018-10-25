@@ -108,9 +108,10 @@
           <Problem reference="com.intellij.notification.NotificationAction#createSimple" reason="Absent in 173." />
           <Problem reference="com.intellij.notification.NotificationAction#create" reason="Absent in 173." />
           <Problem reference="com.intellij.util.JdomKt#element" reason="Removed in 191" />
-          <Problem reference="com.intellij.execution.JavaRunConfigurationExtensionManager#getInstance" reason="Can't be used in Kotlin, because method was replaced with property after J2K in 191. Use JavaRunConfigurationExtensionManagerUtil instead." />
-          <Problem reference="com.intellij.execution.configurations.RunConfigurationBase" reason="Generalized in 191. Use RunConfigurationBaseAny instead in signatures." />
-          <Problem reference="com.intellij.execution.configurations.ModuleBasedConfiguration" reason="Generalized in 191. Use ModuleBasedConfigurationElement instead." />
+          <Problem reference="com.intellij.execution.JavaRunConfigurationExtensionManager#getInstance" reason="Can't be used in Kotlin, because method was replaced with property after J2K in 183. Use JavaRunConfigurationExtensionManagerUtil instead." />
+          <Problem reference="com.intellij.execution.configurations.RunConfigurationBase" reason="Generalized in 183. Use RunConfigurationBaseAny instead in signatures." />
+          <Problem reference="com.intellij.execution.configurations.LocatableConfigurationBase" reason="Generalized in 183. Use LocatableConfigurationBaseAny instead in signatures." />
+          <Problem reference="com.intellij.execution.configurations.ModuleBasedConfiguration" reason="Generalized in 183. Use ModuleBasedConfigurationElement instead." />
         </list>
       </option>
     </inspection_tool>

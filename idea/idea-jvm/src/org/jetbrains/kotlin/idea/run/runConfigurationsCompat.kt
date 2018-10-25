@@ -7,18 +7,23 @@
 
 package org.jetbrains.kotlin.idea.run
 
+import com.intellij.execution.configurations.LocatableConfigurationBase
 import com.intellij.execution.configurations.ModuleBasedConfiguration
 import com.intellij.execution.configurations.RunConfigurationBase
 import org.jdom.Element
 
-// Generalized in 191
-// BUNCH: 191
+// Generalized in 183
+// BUNCH: 183
 typealias RunConfigurationBaseAny = RunConfigurationBase
 
-// Generalized in 191
-// BUNCH: 191
+// Generalized in 183
+// BUNCH: 183
 typealias ModuleBasedConfigurationAny = ModuleBasedConfiguration<*>
 
-// Generalized in 191
-// BUNCH: 191
+// Generalized in 183
+// BUNCH: 183
+typealias LocatableConfigurationBaseAny = LocatableConfigurationBase
+
+// Generalized in 183
+// BUNCH: 183
 typealias ModuleBasedConfigurationElement<T> = ModuleBasedConfiguration<T>
