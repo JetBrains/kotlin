@@ -29,59 +29,59 @@ import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 class LiftReturnOrAssignmentInspection : AbstractKotlinInspection() {
 
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean, session: LocalInspectionToolSession) =
-            object : KtVisitorVoid() {
-                private fun visitIfOrWhenOrTry(expression: KtExpression, keyword: PsiElement) {
-                    if (expression.lineCount() > LINES_LIMIT) return
-                    if (expression.isElseIf()) return
+        object : KtVisitorVoid() {
+            private fun visitIfOrWhenOrTry(expression: KtExpression, keyword: PsiElement) {
+                if (expression.lineCount() > LINES_LIMIT) return
+                if (expression.isElseIf()) return
 
-                    val foldableReturns = BranchedFoldingUtils.getFoldableReturns(expression)
-                    if (foldableReturns?.isNotEmpty() == true) {
-                        val hasOtherReturns = expression.anyDescendantOfType<KtReturnExpression> { it !in foldableReturns }
-                        val isSerious = !hasOtherReturns && foldableReturns.size > 1
-                        val verb = if (isSerious) "should" else "can"
-                        holder.registerProblemWithoutOfflineInformation(
-                                keyword,
-                                "Return $verb be lifted out of '${keyword.text}'",
-                                isOnTheFly,
-                                if (isSerious) ProblemHighlightType.GENERIC_ERROR_OR_WARNING
-                                else ProblemHighlightType.INFORMATION,
-                                LiftReturnOutFix(keyword.text)
-                        )
-                        return
-                    }
-                    val assignmentNumber = BranchedFoldingUtils.getFoldableAssignmentNumber(expression)
-                    if (assignmentNumber > 0) {
-                        val verb = if (assignmentNumber > 1) "should" else "can"
-                        holder.registerProblemWithoutOfflineInformation(
-                                keyword,
-                                "Assignment $verb be lifted out of '${keyword.text}'",
-                                isOnTheFly,
-                                if (assignmentNumber > 1) ProblemHighlightType.GENERIC_ERROR_OR_WARNING
-                                else ProblemHighlightType.INFORMATION,
-                                LiftAssignmentOutFix(keyword.text)
-                        )
-                    }
+                val foldableReturns = BranchedFoldingUtils.getFoldableReturns(expression)
+                if (foldableReturns?.isNotEmpty() == true) {
+                    val hasOtherReturns = expression.anyDescendantOfType<KtReturnExpression> { it !in foldableReturns }
+                    val isSerious = !hasOtherReturns && foldableReturns.size > 1
+                    val verb = if (isSerious) "should" else "can"
+                    holder.registerProblemWithoutOfflineInformation(
+                        keyword,
+                        "Return $verb be lifted out of '${keyword.text}'",
+                        isOnTheFly,
+                        if (isSerious) ProblemHighlightType.GENERIC_ERROR_OR_WARNING
+                        else ProblemHighlightType.INFORMATION,
+                        LiftReturnOutFix(keyword.text)
+                    )
+                    return
                 }
-
-                override fun visitIfExpression(expression: KtIfExpression) {
-                    super.visitIfExpression(expression)
-                    visitIfOrWhenOrTry(expression, expression.ifKeyword)
-                }
-
-                override fun visitWhenExpression(expression: KtWhenExpression) {
-                    super.visitWhenExpression(expression)
-                    visitIfOrWhenOrTry(expression, expression.whenKeyword)
-                }
-
-                override fun visitTryExpression(expression: KtTryExpression) {
-                    super.visitTryExpression(expression)
-                    expression.tryKeyword?.let {
-                        visitIfOrWhenOrTry(expression, it)
-                    }
+                val assignmentNumber = BranchedFoldingUtils.getFoldableAssignmentNumber(expression)
+                if (assignmentNumber > 0) {
+                    val verb = if (assignmentNumber > 1) "should" else "can"
+                    holder.registerProblemWithoutOfflineInformation(
+                        keyword,
+                        "Assignment $verb be lifted out of '${keyword.text}'",
+                        isOnTheFly,
+                        if (assignmentNumber > 1) ProblemHighlightType.GENERIC_ERROR_OR_WARNING
+                        else ProblemHighlightType.INFORMATION,
+                        LiftAssignmentOutFix(keyword.text)
+                    )
                 }
             }
 
-    private class LiftReturnOutFix (private val keyword: String) : LocalQuickFix {
+            override fun visitIfExpression(expression: KtIfExpression) {
+                super.visitIfExpression(expression)
+                visitIfOrWhenOrTry(expression, expression.ifKeyword)
+            }
+
+            override fun visitWhenExpression(expression: KtWhenExpression) {
+                super.visitWhenExpression(expression)
+                visitIfOrWhenOrTry(expression, expression.whenKeyword)
+            }
+
+            override fun visitTryExpression(expression: KtTryExpression) {
+                super.visitTryExpression(expression)
+                expression.tryKeyword?.let {
+                    visitIfOrWhenOrTry(expression, it)
+                }
+            }
+        }
+
+    private class LiftReturnOutFix(private val keyword: String) : LocalQuickFix {
         override fun getName() = "Lift return out of '$keyword'"
 
         override fun getFamilyName() = name
@@ -91,7 +91,7 @@ class LiftReturnOrAssignmentInspection : AbstractKotlinInspection() {
         }
     }
 
-    private class LiftAssignmentOutFix (private val keyword: String) : LocalQuickFix {
+    private class LiftAssignmentOutFix(private val keyword: String) : LocalQuickFix {
         override fun getName() = "Lift assignment out of '$keyword'"
 
         override fun getFamilyName() = name
@@ -102,6 +102,6 @@ class LiftReturnOrAssignmentInspection : AbstractKotlinInspection() {
     }
 
     companion object {
-        private val LINES_LIMIT = 15
+        private const val LINES_LIMIT = 15
     }
 }
