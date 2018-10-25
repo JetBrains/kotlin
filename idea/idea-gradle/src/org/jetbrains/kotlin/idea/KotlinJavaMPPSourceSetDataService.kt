@@ -40,7 +40,7 @@ class KotlinJavaMPPSourceSetDataService : AbstractProjectDataService<GradleSourc
             val rootModel = modelsProvider.getModifiableRootModel(module)
             val libraryEntries = rootModel.orderEntries.filterIsInstance<LibraryOrderEntry>()
             libraryEntries.forEach { libraryEntry ->
-                val library = libraryEntry.library
+                val library = libraryEntry.library ?: return@forEach
                 val libraryModel = modelsProvider.getModifiableLibraryModel(library)
                 val classesUrl = libraryModel.getUrls(OrderRootType.CLASSES).singleOrNull() ?: return@forEach
                 val targetNode = targetsByUrl[classesUrl]?.singleOrNull() ?: return@forEach
