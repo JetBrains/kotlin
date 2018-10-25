@@ -29,7 +29,8 @@ import org.jetbrains.kotlin.ir.AbstractIrSourceRangesTestCase
 import org.jetbrains.kotlin.ir.AbstractIrTextTestCase
 import org.jetbrains.kotlin.jvm.compiler.*
 import org.jetbrains.kotlin.jvm.compiler.javac.AbstractLoadJavaUsingJavacTest
-import org.jetbrains.kotlin.kdoc.AbstractKDocLexerTest
+import org.jetbrains.kotlin.lexer.kdoc.AbstractKDocLexerTest
+import org.jetbrains.kotlin.lexer.kotlin.AbstractKotlinLexerTest
 import org.jetbrains.kotlin.modules.xml.AbstractModuleXmlParserTest
 import org.jetbrains.kotlin.multiplatform.AbstractMultiPlatformIntegrationTest
 import org.jetbrains.kotlin.parsing.AbstractParsingTest
@@ -350,7 +351,11 @@ fun main(args: Array<String>) {
         }
 
         testClass<AbstractKDocLexerTest> {
-            model("kdoc/lexer")
+            model("lexer/kdoc")
+        }
+
+        testClass<AbstractKotlinLexerTest> {
+            model("lexer/kotlin")
         }
 
         testClass<AbstractIrBlackBoxCodegenTest> {
