@@ -47,7 +47,8 @@ class KotlinAndroidGradleMPPModuleDataService : AbstractProjectDataService<Modul
             val moduleData = nodeToImport.data
             val module = modelsProvider.findIdeModule(moduleData) ?: continue
             val rootModel = modelsProvider.getModifiableRootModel(module)
-            for (sourceSetInfo in nodeToImport.kotlinAndroidSourceSets ?: emptyList()) {
+            val kotlinAndroidSourceSets = nodeToImport.kotlinAndroidSourceSets ?: continue
+            for (sourceSetInfo in kotlinAndroidSourceSets) {
                 val compilation = sourceSetInfo.kotlinModule as? KotlinCompilation ?: continue
                 for (sourceSet in compilation.sourceSets) {
                     if (sourceSet.platform == KotlinPlatform.ANDROID) {
