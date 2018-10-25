@@ -11,13 +11,13 @@ fun box(): String {
         when (en2) {
             En.A -> {res += "O"}
             En.B -> {}
-            En.С -> {}
+            En.C -> {}
         }
 
         when (en2 as En) {
             En.A -> {res += "K"}
             En.B -> {}
-            En.С -> {}
+            En.C -> {}
         }
     }
 
