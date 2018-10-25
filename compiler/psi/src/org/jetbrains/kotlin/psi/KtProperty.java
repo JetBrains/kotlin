@@ -25,6 +25,7 @@ import com.intellij.psi.PsiModifiableCodeBlock;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.util.AstLoadingFilter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.KtNodeTypes;
@@ -251,7 +252,9 @@ public class KtProperty extends KtTypeParameterListOwnerStub<KotlinPropertyStub>
             return null;
         }
 
-        return PsiTreeUtil.getNextSiblingOfType(findChildByType(EQ), KtExpression.class);
+        return AstLoadingFilter.forceEnableTreeLoading(this.getContainingFile(), () ->
+                PsiTreeUtil.getNextSiblingOfType(findChildByType(EQ), KtExpression.class)
+        );
     }
 
     public boolean hasDelegateExpressionOrInitializer() {
