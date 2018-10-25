@@ -418,11 +418,18 @@ fun returnExpressionVisitor(block: (KtReturnExpression) -> Unit) =
         }
     }
 
-
 fun delegatedSuperTypeEntry(block: (KtDelegatedSuperTypeEntry) -> Unit) =
     object : KtVisitorVoid() {
         override fun visitDelegatedSuperTypeEntry(delegatedSuperTypeEntry: KtDelegatedSuperTypeEntry) {
             super.visitDelegatedSuperTypeEntry(delegatedSuperTypeEntry)
             block(delegatedSuperTypeEntry)
+        }
+    }
+
+fun postfixExpressionVisitor(block: (KtPostfixExpression) -> Unit) =
+    object : KtVisitorVoid() {
+        override fun visitPostfixExpression(expression: KtPostfixExpression) {
+            super.visitPostfixExpression(expression)
+            block(expression)
         }
     }
