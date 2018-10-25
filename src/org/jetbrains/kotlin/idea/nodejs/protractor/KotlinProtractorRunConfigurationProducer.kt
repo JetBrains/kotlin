@@ -72,7 +72,7 @@ class KotlinProtractorRunConfigurationProducer :
                 testFilePath = configData.jsOutputFilePath,
                 envData = configData.module.getNodeJsEnvironmentVars(true)
         )
-        configuration.name = configuration.suggestedName()
+        configuration.name = configuration.suggestedName() ?: "Unknown"
         configuration.addBuildTask()
         return true
     }
