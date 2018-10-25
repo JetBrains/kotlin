@@ -5,31 +5,29 @@
 
 package kotlin.text
 
-import kotlin.comparisons.*
-
 /**
  * Returns the index within this string of the first occurrence of the specified character, starting from the specified offset.
  */
 @SymbolName("Kotlin_String_indexOfChar")
-external internal actual inline fun String.nativeIndexOf(ch: Char, fromIndex: Int): Int
+internal actual external fun String.nativeIndexOf(ch: Char, fromIndex: Int): Int
 
 /**
  * Returns the index within this string of the first occurrence of the specified substring, starting from the specified offset.
  */
 @SymbolName("Kotlin_String_indexOfString")
-external internal actual fun String.nativeIndexOf(str: String, fromIndex: Int): Int
+internal actual external fun String.nativeIndexOf(str: String, fromIndex: Int): Int
 
 /**
  * Returns the index within this string of the last occurrence of the specified character.
  */
 @SymbolName("Kotlin_String_lastIndexOfChar")
-external internal actual inline fun String.nativeLastIndexOf(ch: Char, fromIndex: Int): Int
+internal actual external fun String.nativeLastIndexOf(ch: Char, fromIndex: Int): Int
 
 /**
  * Returns the index within this string of the last occurrence of the specified character, starting from the specified offset.
  */
 @SymbolName("Kotlin_String_lastIndexOfString")
-external internal actual fun String.nativeLastIndexOf(str: String, fromIndex: Int): Int
+internal actual external fun String.nativeLastIndexOf(str: String, fromIndex: Int): Int
 
 /**
  * Returns `true` if this string is equal to [other], optionally ignoring character case.
@@ -48,13 +46,13 @@ public actual fun String?.equals(other: String?, ignoreCase: Boolean): Boolean {
 }
 
 @SymbolName("Kotlin_String_equalsIgnoreCase")
-external internal fun stringEqualsIgnoreCase(thiz: String, other: String): Boolean
+internal external fun stringEqualsIgnoreCase(thiz: String, other: String): Boolean
 
 /**
  * Returns a new string with all occurrences of [oldChar] replaced with [newChar].
  */
 @SymbolName("Kotlin_String_replace")
-external public actual fun String.replace(
+public actual external fun String.replace(
         oldChar: Char, newChar: Char, ignoreCase: Boolean): String
 
 
@@ -157,7 +155,7 @@ public actual fun CharSequence.regionMatches(
  * @param length the length of the substring to compare.
  */
 @SymbolName("Kotlin_String_regionMatches")
-external public fun String.regionMatches(
+public external fun String.regionMatches(
         thisOffset: Int, other: String, otherOffset: Int, length: Int,
         ignoreCase: Boolean = false): Boolean
 
@@ -165,20 +163,20 @@ external public fun String.regionMatches(
  * Returns a copy of this string converted to upper case using the rules of the default locale.
  */
 @SymbolName("Kotlin_String_toUpperCase")
-external public actual fun String.toUpperCase(): String
+public actual external fun String.toUpperCase(): String
 
 /**
  * Returns a copy of this string converted to lower case using the rules of the default locale.
  */
 @SymbolName("Kotlin_String_toLowerCase")
 @Suppress("NOTHING_TO_INLINE")
-external public actual inline fun String.toLowerCase(): String
+public actual external fun String.toLowerCase(): String
 
 /**
  * Returns a new character array containing the characters from this string.
  */
 @SymbolName("Kotlin_String_toCharArray")
-external public fun String.toCharArray(): CharArray
+public external fun String.toCharArray(): CharArray
 
 /**
  * Returns a copy of this string having its first letter uppercased, or the original string,
@@ -228,14 +226,14 @@ public actual fun String(chars: CharArray): String = fromCharArray(chars, 0, cha
 public actual fun String(chars: CharArray, offset: Int, length: Int): String = fromCharArray(chars, offset, length)
 
 @SymbolName("Kotlin_String_compareToIgnoreCase")
-external fun compareToIgnoreCase(thiz: String, other: String): Int
+internal external fun compareToIgnoreCase(thiz: String, other: String): Int
 
-actual fun String.compareTo(other: String, ignoreCase: Boolean): Int {
+public actual fun String.compareTo(other: String, ignoreCase: Boolean): Int {
     return if (!ignoreCase) this.compareTo(other)
     else compareToIgnoreCase(this, other)
 }
 
 private val STRING_CASE_INSENSITIVE_ORDER = Comparator<String> { a, b -> a.compareTo(b, ignoreCase = true) }
 
-actual val String.Companion.CASE_INSENSITIVE_ORDER: Comparator<String>
+public actual val String.Companion.CASE_INSENSITIVE_ORDER: Comparator<String>
     get() = STRING_CASE_INSENSITIVE_ORDER
