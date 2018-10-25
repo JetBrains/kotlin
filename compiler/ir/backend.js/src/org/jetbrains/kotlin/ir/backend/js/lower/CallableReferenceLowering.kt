@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.ir.backend.js.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
+import org.jetbrains.kotlin.backend.common.descriptors.WrappedTypeParameterDescriptor
 import org.jetbrains.kotlin.backend.common.descriptors.WrappedValueParameterDescriptor
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.IrStatement
@@ -13,10 +14,12 @@ import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.utils.Namer
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.impl.IrTypeParameterImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
+import org.jetbrains.kotlin.ir.symbols.impl.IrTypeParameterSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.toIrType
@@ -50,6 +53,7 @@ class CallableReferenceLowering(val context: JsIrBackendContext) : FileLoweringP
 
     inner class CallableReferenceLowerTransformer : IrElementTransformerVoid() {
         override fun visitFunctionReference(expression: IrFunctionReference): IrExpression {
+            expression.transformChildrenVoid(this)
             val declaration = expression.symbol.owner
             if (declaration.origin == JsIrBackendContext.callableClosureOrigin) return expression
             val key = makeCallableKey(declaration, expression)
@@ -58,6 +62,7 @@ class CallableReferenceLowering(val context: JsIrBackendContext) : FileLoweringP
         }
 
         override fun visitPropertyReference(expression: IrPropertyReference): IrExpression {
+            expression.transformChildrenVoid(this)
             val declaration = expression.getter!!.owner
             val key = makeCallableKey(declaration, expression)
             val factory = callableToGetterFunction.getOrPut(key) { lowerKPropertyReference(declaration, expression) }
@@ -65,6 +70,7 @@ class CallableReferenceLowering(val context: JsIrBackendContext) : FileLoweringP
         }
 
         override fun visitLocalDelegatedPropertyReference(expression: IrLocalDelegatedPropertyReference): IrExpression {
+            expression.transformChildrenVoid(this)
             val key = makeCallableKey(expression.getter.owner, expression)
             val factory = callableToGetterFunction.getOrPut(key) { lowerLocalKPropertyReference(expression) }
             return redirectToFunction(expression, factory)
@@ -440,6 +446,26 @@ class CallableReferenceLowering(val context: JsIrBackendContext) : FileLoweringP
                 p.varargElementType,
                 p.isCrossinline,
                 p.isNoinline
+            ).also {
+                descriptor.bind(it)
+                it.parent = refGetDeclaration
+            }
+        }
+
+        val typeParameters =
+            if (declaration is IrConstructor) (declaration.parent as IrClass).typeParameters else declaration.typeParameters
+
+        for (t in typeParameters) {
+            val descriptor = WrappedTypeParameterDescriptor()
+            refGetDeclaration.typeParameters += IrTypeParameterImpl(
+                t.startOffset,
+                t.endOffset,
+                t.origin,
+                IrTypeParameterSymbolImpl(descriptor),
+                t.name,
+                t.index,
+                t.isReified,
+                t.variance
             ).also {
                 descriptor.bind(it)
                 it.parent = refGetDeclaration
