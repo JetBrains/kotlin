@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.common.CodegenUtil
 import org.jetbrains.kotlin.backend.common.makePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
+import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredStatementOrigin
 import org.jetbrains.kotlin.backend.jvm.codegen.isJvmInterface
 import org.jetbrains.kotlin.backend.jvm.descriptors.DefaultImplsClassDescriptor
@@ -43,7 +44,7 @@ class InterfaceDelegationLowering(val context: JvmBackendContext) : IrElementTra
 
     private fun generateInterfaceMethods(irClass: IrClass) {
         val irClassDescriptor = irClass.descriptor
-        val actualClassDescriptor = (irClassDescriptor as? DefaultImplsClassDescriptor)?.correspondingInterface ?: irClassDescriptor
+        val actualClassDescriptor = (irClass.takeIf { it.origin == JvmLoweredDeclarationOrigin.DEFAULT_IMPLS }?.parent as? IrClass)?.descriptor ?: irClassDescriptor
         val isDefaultImplsGeneration = actualClassDescriptor !== irClassDescriptor
         for ((interfaceFun, value) in CodegenUtil.getNonPrivateTraitMethods(actualClassDescriptor, !isDefaultImplsGeneration)) {
             //skip java 8 default methods
