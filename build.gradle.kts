@@ -133,6 +133,7 @@ rootProject.apply {
     from(rootProject.file("versions.gradle.kts"))
     from(rootProject.file("report.gradle.kts"))
 }
+IdeVersionConfigurator.setCurrentIde(this)
 
 extra["versions.protobuf-java"] = "2.6.1"
 extra["versions.javax.inject"] = "1"
@@ -165,7 +166,7 @@ extra["intellijSeparateSdks"] = intellijSeparateSdks
 
 extra["IntellijCoreDependencies"] =
         listOf("annotations",
-               "asm-all",
+               if (Platform[191].orHigher()) "asm-all-7.0-beta" else "asm-all",
                "guava",
                "jdom",
                "jna",
@@ -263,8 +264,6 @@ fun Task.listConfigurationContents(configName: String) {
         }
     }
 }
-
-IdeVersionConfigurator.setCurrentIde(this)
 
 val defaultJvmTarget = "1.8"
 val defaultJavaHome = jdkPath(defaultJvmTarget)
