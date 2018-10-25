@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.idea.intentions.branchedTransformations.isElseIf
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.lineCount
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.anyDescendantOfType
-import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
 class LiftReturnOrAssignmentInspection : AbstractKotlinInspection() {
 
@@ -39,25 +39,38 @@ class LiftReturnOrAssignmentInspection : AbstractKotlinInspection() {
                     val hasOtherReturns = expression.anyDescendantOfType<KtReturnExpression> { it !in foldableReturns }
                     val isSerious = !hasOtherReturns && foldableReturns.size > 1
                     val verb = if (isSerious) "should" else "can"
+                    val description = "Return $verb be lifted out of '${keyword.text}'"
                     holder.registerProblemWithoutOfflineInformation(
-                        keyword,
-                        "Return $verb be lifted out of '${keyword.text}'",
+                        expression,
+                        description,
                         isOnTheFly,
                         if (isSerious) ProblemHighlightType.GENERIC_ERROR_OR_WARNING
                         else ProblemHighlightType.INFORMATION,
+                        keyword.textRange?.shiftRight(-expression.startOffset),
                         LiftReturnOutFix(keyword.text)
                     )
+                    foldableReturns.forEach {
+                        holder.registerProblemWithoutOfflineInformation(
+                            expression,
+                            description,
+                            isOnTheFly,
+                            ProblemHighlightType.INFORMATION,
+                            it.returnKeyword.textRange?.shiftRight(-expression.startOffset),
+                            LiftReturnOutFix(keyword.text)
+                        )
+                    }
                     return
                 }
                 val assignmentNumber = BranchedFoldingUtils.getFoldableAssignmentNumber(expression)
                 if (assignmentNumber > 0) {
                     val verb = if (assignmentNumber > 1) "should" else "can"
                     holder.registerProblemWithoutOfflineInformation(
-                        keyword,
+                        expression,
                         "Assignment $verb be lifted out of '${keyword.text}'",
                         isOnTheFly,
                         if (assignmentNumber > 1) ProblemHighlightType.GENERIC_ERROR_OR_WARNING
                         else ProblemHighlightType.INFORMATION,
+                        keyword.textRange?.shiftRight(-expression.startOffset),
                         LiftAssignmentOutFix(keyword.text)
                     )
                 }
@@ -87,7 +100,8 @@ class LiftReturnOrAssignmentInspection : AbstractKotlinInspection() {
         override fun getFamilyName() = name
 
         override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
-            BranchedFoldingUtils.foldToReturn(descriptor.psiElement.getParentOfType(true)!!)
+            val replaced = BranchedFoldingUtils.foldToReturn(descriptor.psiElement as KtExpression)
+            replaced.findExistingEditor()?.caretModel?.moveToOffset(replaced.startOffset)
         }
     }
 
@@ -97,7 +111,7 @@ class LiftReturnOrAssignmentInspection : AbstractKotlinInspection() {
         override fun getFamilyName() = name
 
         override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
-            BranchedFoldingUtils.foldToAssignment(descriptor.psiElement.getParentOfType(true)!!)
+            BranchedFoldingUtils.foldToAssignment(descriptor.psiElement as KtExpression)
         }
     }
 
