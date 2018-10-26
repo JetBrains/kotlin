@@ -893,6 +893,11 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             runTest("js/js.translator/testData/box/coroutines/debugStatement.kt");
         }
 
+        @TestMetadata("inlineLambdaNonLocalReturn.kt")
+        public void testInlineLambdaNonLocalReturn() throws Exception {
+            runTest("js/js.translator/testData/box/coroutines/inlineLambdaNonLocalReturn.kt");
+        }
+
         @TestMetadata("localVarOptimization.kt")
         public void testLocalVarOptimization() throws Exception {
             runTest("js/js.translator/testData/box/coroutines/localVarOptimization.kt");
