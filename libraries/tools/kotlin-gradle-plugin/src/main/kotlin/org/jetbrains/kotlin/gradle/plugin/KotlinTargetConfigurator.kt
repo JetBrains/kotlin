@@ -705,7 +705,7 @@ open class KotlinNativeTargetConfigurator(
                 usesPlatformOf(target)
                 isVisible = false
                 isCanBeConsumed = false
-                attributes.attribute(USAGE_ATTRIBUTE, compilation.target.project.usageByName(Usage.JAVA_API))
+                attributes.attribute(USAGE_ATTRIBUTE, compilation.target.project.usageByName(KotlinUsages.KOTLIN_API))
                 description = "Dependencies for cinterop '${cinterop.name}' (compilation '${compilation.name}')."
             }
         }
