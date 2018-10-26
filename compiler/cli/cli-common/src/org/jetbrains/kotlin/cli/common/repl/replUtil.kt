@@ -24,8 +24,8 @@ import java.io.File
 import java.net.URLClassLoader
 
 // using '#' to avoid collisions with xml escaping
-private val SOURCE_CHARS: List<String> = listOf("\n", "#")
-private val XML_REPLACEMENTS: List<String> = listOf("#n", "#diez")
+private val SOURCE_CHARS: List<String> = listOf("\r", "\n", "#")
+private val XML_REPLACEMENTS: List<String> = listOf("#r", "#n", "#diez")
 
 private val END_LINE: String = LineSeparator.getSystemLineSeparator().separatorString
 private const val XML_PREAMBLE = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
@@ -45,6 +45,7 @@ fun String.replInputAsXml(): String {
 
 fun String.replAddLineBreak() = this + END_LINE
 fun String.replRemoveLineBreaksInTheEnd() = trimEnd(*END_LINE.toCharArray())
+fun String.replNormalizeLineBreaks() = replace(END_LINE, "\n")
 
 fun makeScriptBaseName(codeLine: ReplCodeLine) =
         "Line_${codeLine.no}${if (codeLine.generation > REPL_CODE_LINE_FIRST_GEN) "_gen_${codeLine.generation}" else ""}"

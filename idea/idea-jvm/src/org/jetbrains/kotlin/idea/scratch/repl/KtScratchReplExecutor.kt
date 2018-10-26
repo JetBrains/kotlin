@@ -21,6 +21,7 @@ import com.intellij.execution.process.OSProcessHandler
 import com.intellij.execution.process.ProcessOutputTypes
 import com.intellij.openapi.util.Key
 import org.jetbrains.kotlin.cli.common.repl.replInputAsXml
+import org.jetbrains.kotlin.cli.common.repl.replNormalizeLineBreaks
 import org.jetbrains.kotlin.cli.common.repl.replRemoveLineBreaksInTheEnd
 import org.jetbrains.kotlin.cli.common.repl.replUnescapeLineBreaks
 import org.jetbrains.kotlin.console.KotlinConsoleKeeper
@@ -123,7 +124,7 @@ class KtScratchReplExecutor(file: ScratchFile) : ScratchExecutor(file) {
 
             val root = output.firstChild as Element
             val outputType = root.getAttribute("type")
-            val content = root.textContent.replUnescapeLineBreaks().replRemoveLineBreaksInTheEnd()
+            val content = root.textContent.replUnescapeLineBreaks().replNormalizeLineBreaks().replRemoveLineBreaksInTheEnd()
 
             LOG.printDebugMessage("REPL output: $outputType $content")
 

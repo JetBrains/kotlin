@@ -20,6 +20,7 @@ import com.intellij.execution.process.OSProcessHandler
 import com.intellij.execution.process.ProcessOutputTypes
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.TextRange
+import org.jetbrains.kotlin.cli.common.repl.replNormalizeLineBreaks
 import org.jetbrains.kotlin.cli.common.repl.replUnescapeLineBreaks
 import org.jetbrains.kotlin.console.actions.logError
 import org.jetbrains.kotlin.diagnostics.Severity
@@ -75,7 +76,7 @@ class ReplOutputHandler(
 
         val root = output.firstChild as Element
         val outputType = ReplEscapeType.valueOfOrNull(root.getAttribute("type"))
-        val content = root.textContent.replUnescapeLineBreaks()
+        val content = root.textContent.replUnescapeLineBreaks().replNormalizeLineBreaks()
 
         when (outputType) {
             INITIAL_PROMPT  -> buildWarningIfNeededBeforeInit(content)
