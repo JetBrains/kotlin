@@ -2,12 +2,16 @@
 
 # See http://yann.lecun.com/exdb/mnist/
 
-wget http://yann.lecun.com/exdb/mnist/train-images-idx3-ubyte.gz
-wget http://yann.lecun.com/exdb/mnist/train-labels-idx1-ubyte.gz
-wget http://yann.lecun.com/exdb/mnist/t10k-images-idx3-ubyte.gz
-wget http://yann.lecun.com/exdb/mnist/t10k-labels-idx1-ubyte.gz
+MNIST_TARGET_DIRECTORY="`pwd`/build/3rd-party/MNIST"
 
-gzip -d train-images-idx3-ubyte.gz
-gzip -d train-labels-idx1-ubyte.gz
-gzip -d t10k-images-idx3-ubyte.gz
-gzip -d t10k-labels-idx1-ubyte.gz
+echo "Downloading MNIST databases into $MNIST_TARGET_DIRECTORY ..."
+
+mkdir -p $MNIST_TARGET_DIRECTORY
+cd $MNIST_TARGET_DIRECTORY
+
+wget -nv -N http://yann.lecun.com/exdb/mnist/train-images-idx3-ubyte.gz
+wget -nv -N http://yann.lecun.com/exdb/mnist/train-labels-idx1-ubyte.gz
+wget -nv -N http://yann.lecun.com/exdb/mnist/t10k-images-idx3-ubyte.gz
+wget -nv -N http://yann.lecun.com/exdb/mnist/t10k-labels-idx1-ubyte.gz
+
+gunzip -fk *.gz

@@ -1,46 +1,55 @@
-apply plugin: 'org.jetbrains.kotlin.platform.native'
-apply plugin: 'maven-publish'
+import java.nio.file.Paths
 
-group 'org.jetbrains.kotlin.native'
+plugins {
+    id 'kotlin-multiplatform'
+    id 'maven-publish'
+}
+
+group 'org.jetbrains.kotlin.sample.native'
 version '1.0'
 
-// Native component
-components.main {
-    targets = ['macos_x64', 'linux_x64']
-
-    dependencies {
-        cinterop('libcurl-interop') {
-            defFile 'src/main/c_interop/libcurl.def'
-
-            target('linux_x64') {
-                includeDirs.headerFilterOnly '/usr/include', '/usr/include/x86_64-linux-gnu'
-            }
-            target('macos_x64') {
-                includeDirs.headerFilterOnly '/opt/local/include', '/usr/local/include'
-            }
-        }
-    }
-
-    pom {
-        withXml {
-            def root = asNode()
-            root.appendNode('name', 'libcurl interop library')
-            root.appendNode('description', 'A library providing interoperability with host libcurl')
-        }
-    }
-}
-
-// Publishing
-def localMavenRepo="file://${new File(System.properties['user.home'] as String)}/.m2-kotlin-native"
-
-task cleanLocalRepo(type: Delete) {
-    delete localMavenRepo
-}
+def localRepo = rootProject.file('build/.m2-repo')
 
 publishing {
     repositories {
-        maven {
-            url = localMavenRepo
+        maven { url = "file://$localRepo" }
+    }
+}
+
+task cleanLocalRepo(type: Delete) {
+    delete localRepo
+}
+
+kotlin {
+    presets {
+        // Determine host preset.
+        MPPTools.defaultHostPreset(project, [macosX64, linuxX64])
+    }
+
+    targets {
+        fromPreset(hostPreset, 'libcurl') {
+            compilations.main.cinterops {
+                libcurl {
+                    switch (hostPreset) {
+                        case presets.macosX64:
+                            includeDirs.headerFilterOnly '/opt/local/include', '/usr/local/include'
+                            break
+                        case presets.linuxX64:
+                            includeDirs.headerFilterOnly '/usr/include', '/usr/include/x86_64-linux-gnu'
+                            break
+                    }
+                }
+            }
+
+            mavenPublication {
+                pom {
+                    withXml {
+                        def root = asNode()
+                        root.appendNode('name', 'libcurl interop library')
+                        root.appendNode('description', 'A library providing interoperability with host libcurl')
+                    }
+                }
+            }
         }
     }
 }

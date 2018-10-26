@@ -7,11 +7,11 @@ are being suspended and resumed whenever relevant.
 Thus, while server can process multiple connections concurrently,
 each individual connection handler is written in simple linear manner.
 
-To build use `../gradlew assemble` or `./build.sh`.
+To build use `../gradlew assemble`.
 
-Now you can run the server 
+To run use `../gradlew runProgram` or execute the program directly:
 
-    ./build/exe/main/release/<platform>/EchoServer.kexe 3000 &
+    ./build/bin/nonBlockingEchoServer/main/release/executable/nonBlockingEchoServer.kexe 3000 &
 
 Test the server by connecting to it, for example with telnet:
 
@@ -20,7 +20,6 @@ Test the server by connecting to it, for example with telnet:
 Write something to console and watch server echoing it back.
 Concurrently connect from another terminal. Note that each connection gets its own
 connection id prefixed to echo response.
-
 
 ~~Quit telnet by pressing ctrl+] ctrl+D~~
 

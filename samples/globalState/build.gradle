@@ -1,10 +1,17 @@
-apply plugin: 'org.jetbrains.kotlin.platform.native'
+plugins {
+    id 'kotlin-multiplatform'
+}
 
-components.main {
-    targets = ['macos_x64', 'linux_x64', 'mingw_x64']
-    outputKinds = [EXECUTABLE]
-
-    dependencies {
-        cinterop('global')
+kotlin {
+    targets {
+        fromPreset(MPPTools.defaultHostPreset(project), 'globalState') {
+            compilations.main.outputKinds 'EXECUTABLE'
+            compilations.main.entryPoint 'sample.globalstate.main'
+            compilations.main.cinterops {
+                global
+            }
+        }
     }
 }
+
+MPPTools.createRunTask(project, 'runProgram', kotlin.targets.globalState)

@@ -10,7 +10,11 @@ fi
 
 DIR=$(cd "$(dirname "${BASH_SOURCE[0]}" )" && pwd )
 
-source "$DIR/../konan.sh"
+if [ -z "$KONAN_HOME" ]; then
+    PATH="$DIR/../../dist/bin:$DIR/../../bin:$PATH"
+else
+    PATH="$KONAN_HOME/bin:$PATH"
+fi
 
 if [ x$TARGET == x ]; then
 case "$OSTYPE" in

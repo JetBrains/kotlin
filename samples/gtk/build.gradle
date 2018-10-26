@@ -1,17 +1,27 @@
-apply plugin: 'org.jetbrains.kotlin.platform.native'
+plugins {
+    id 'kotlin-multiplatform'
+}
 
-def includePrefixes = [ '/opt/local/include', '/usr/include', '/usr/local/include' ]
+kotlin {
+    presets {
+        // Determine host preset.
+        MPPTools.defaultHostPreset(project, [macosX64, linuxX64])
+    }
 
-components.main {
-    targets = ['macos_x64', 'linux_x64']
-    outputKinds = [EXECUTABLE]
-
-    dependencies {
-        cinterop('gtk3') {
-            includePrefixes.each {
-                includeDirs "$it/atk-1.0", "$it/gdk-pixbuf-2.0", "$it/cairo", "$it/pango-1.0", "$it/gtk-3.0", "$it/glib-2.0"
+    targets {
+        fromPreset(hostPreset, 'gtk') {
+            compilations.main.outputKinds 'EXECUTABLE'
+            compilations.main.entryPoint 'sample.gtk.main'
+            compilations.main.cinterops {
+                gtk3 {
+                    ['/opt/local/include', '/usr/include', '/usr/local/include'].each {
+                        includeDirs "$it/atk-1.0", "$it/gdk-pixbuf-2.0", "$it/cairo", "$it/pango-1.0", "$it/gtk-3.0", "$it/glib-2.0"
+                    }
+                    includeDirs '/opt/local/lib/glib-2.0/include', '/usr/lib/x86_64-linux-gnu/glib-2.0/include', '/usr/local/lib/glib-2.0/include'
+                }
             }
-            includeDirs '/opt/local/lib/glib-2.0/include', '/usr/lib/x86_64-linux-gnu/glib-2.0/include', '/usr/local/lib/glib-2.0/include'
         }
     }
 }
+
+MPPTools.createRunTask(project, 'runProgram', kotlin.targets.gtk)

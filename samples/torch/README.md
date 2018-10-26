@@ -15,10 +15,10 @@ make sure you have Python 2.X and pyyaml installed:
     sudo easy_install pip
     # Linux: if you don't have pip
     apt-get -y install python-pip
-    
+
     # if you don't have pyyaml or typing
     sudo pip install pyyaml typing
-    
+
 Now
 
     ./downloadTorch.sh
@@ -26,23 +26,23 @@ Now
 will install it into `$HOME/.konan/third-party/torch` (if not yet done). One may override the location of
 `third-party/torch` by setting the `KONAN_DATA_DIR` environment variable.
 
-To build use `../gradlew build` or `./build.sh`.
+To build use `../gradlew assemble`.
 
     ./downloadMNIST.sh
 
-will download and unzip the [MNIST dataset](https://en.wikipedia.org/wiki/MNIST_database) of 
-[70000 labeled handwritten digits](http://yann.lecun.com/exdb/mnist/) for training and testing a classifier.
+will download and unzip the [MNIST dataset](https://en.wikipedia.org/wiki/MNIST_database) of
+[70000 labeled handwritten digits](http://yann.lecun.com/exdb/mnist/) for training and testing a classifier (if not yet done).
 
-Then run 
+Then run
 
-    ../gradlew run
-    
+    ../gradlew runProgram
+
 Alternatively you can run the artifact directly through
 
-    ./build/konan/bin/macbook/HelloTorch.kexe
-    
-You may need to specify `LD_LIBRARY_PATH` or `DYLD_LIBRARY_PATH` to `$HOME/.konan/third-party/torch/lib`
-if the ATen dynamic library cannot be found.
+    ./build/bin/torch/main/release/executable/torch.kexe
 
-Even on a CPU, training should only take some minutes, 
+You may need to specify `LD_LIBRARY_PATH` or `DYLD_LIBRARY_PATH` environment variables
+to point to `$HOME/.konan/third-party/torch/lib` if the ATen dynamic library cannot be found.
+
+Even on a CPU, training should only take some minutes,
 and you should observe a classification accuracy of about 95% on the test dataset.

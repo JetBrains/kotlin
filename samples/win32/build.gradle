@@ -1,11 +1,15 @@
-apply plugin: 'org.jetbrains.kotlin.platform.native'
+plugins {
+    id 'kotlin-multiplatform'
+}
 
-components.main {
-    targets = ['mingw_x64']
-    outputKinds = [EXECUTABLE]
-    baseName = 'MessageBox'
-
-    target('mingw_x64') {
-        linkerOpts "-Wl,--subsystem,windows"
+kotlin {
+    targets {
+        fromPreset(MPPTools.defaultHostPreset(project, [presets.mingwX64]), 'win32') {
+            compilations.main.outputKinds 'EXECUTABLE'
+            compilations.main.entryPoint 'sample.win32.main'
+            compilations.main.linkerOpts '-Wl,--subsystem,windows'
+        }
     }
 }
+
+MPPTools.createRunTask(project, 'runProgram', kotlin.targets.win32)

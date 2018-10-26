@@ -1,33 +1,58 @@
-buildscript {
-    repositories {
-        maven {
-            url 'https://cache-redirector.jetbrains.com/maven-central'
-        }
-        maven {
-            url "https://dl.bintray.com/jetbrains/kotlin-native-dependencies"
-        }
-    }
+import java.nio.file.Paths
 
-    dependencies {
-        classpath "org.jetbrains.kotlin:kotlin-native-gradle-plugin:${project.property('konan.plugin.version')}"
-    }
+plugins {
+    id 'kotlin-multiplatform'
 }
 
-apply plugin: 'org.jetbrains.kotlin.platform.native'
-
-def localMavenRepo="file://${new File(System.properties['user.home'] as String)}/.m2-kotlin-native"
+def localRepo = rootProject.file('build/.m2-repo')
 
 repositories {
-    maven {
-        url = localMavenRepo
+    maven { url = "file://$localRepo" }
+}
+
+kotlin {
+    presets {
+        // Determine host preset.
+        MPPTools.defaultHostPreset(project, [macosX64, linuxX64])
+    }
+
+    targets {
+        fromPreset(hostPreset, 'curl') {
+            compilations.main.outputKinds 'EXECUTABLE'
+            compilations.main.entryPoint 'sample.curl.main'
+        }
+    }
+
+    sourceSets {
+        curlMain {
+            dependencies {
+                implementation 'org.jetbrains.kotlin.sample.native:libcurl:1.0'
+            }
+        }
     }
 }
 
-components.main {
-    targets = ['macos_x64', 'linux_x64']
-    outputKinds = [ EXECUTABLE ]
+MPPTools.createRunTask(project, 'runProgram', kotlin.targets.curl) {
+    args 'https://www.jetbrains.com/'
+}
 
-    dependencies {
-        implementation 'org.jetbrains.kotlin.native:libcurl:1.0'
+// The code snippet below is needed to make all compile tasks depend on publication of
+// "libcurl" library. So that to the time of compilation the library will already be
+// in Maven repo and will be successfully resolved as a dependency of this project.
+tasks.withType(AbstractCompile) {
+    dependsOn ':libcurl:publish'
+}
+
+// The following snippet is needed to give instructions for IDEA user who just imported project
+// and sees "Could not resolve..." message in IDEA console.
+gradle.buildFinished {
+    String configurationName = kotlin.targets.curl.compilations.main.compileDependencyConfigurationName
+    Configuration configuration = project.configurations.getByName(configurationName)
+    if (configuration.canBeResolved && configuration.state == Configuration.State.RESOLVED_WITH_FAILURES) {
+        println(
+                "\nIMPORTANT:\n" +
+                "\tThe message about unresolved \"libcurl\" dependency likely means that \"libcurl\" has not been built and published to local Maven repo yet.\n" +
+                "\tPlease run \"publish\" task for \"libcurl\" sub-project and re-import Kotlin/Native samples in IDEA.\n"
+        )
     }
 }

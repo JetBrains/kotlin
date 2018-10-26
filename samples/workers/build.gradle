@@ -1,5 +1,14 @@
-apply plugin: 'org.jetbrains.kotlin.platform.native'
-
-components.main {
-    outputKinds = [ EXECUTABLE ]
+plugins {
+    id 'kotlin-multiplatform'
 }
+
+kotlin {
+    targets {
+        fromPreset(MPPTools.defaultHostPreset(project), 'workers') {
+            compilations.main.outputKinds 'EXECUTABLE'
+            compilations.main.entryPoint 'sample.workers.main'
+        }
+    }
+}
+
+MPPTools.createRunTask(project, 'runProgram', kotlin.targets.workers)

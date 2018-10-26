@@ -1,17 +1,37 @@
-include ':common'
-include ':jvm'
-include ':ios'
-
-def localProperties = new Properties()
-def localPropertiesFile = file('local.properties')
-if (localPropertiesFile.exists()) {
-    localPropertiesFile.withReader { localProperties.load(it) }
+// Reuse Kotlin version from the root project.
+File rootProjectGradlePropertiesFile = file("${rootProject.projectDir}/../gradle.properties")
+if (!rootProjectGradlePropertiesFile.isFile()) {
+    throw new Exception("File $rootProjectGradlePropertiesFile does not exist or is not a file")
 }
+
+Properties rootProjectProperties = new Properties()
+rootProjectGradlePropertiesFile.withInputStream { inputStream ->
+    rootProjectProperties.load(inputStream)
+    if (!rootProjectProperties.containsKey('kotlin_version')) {
+        throw new Exception("No 'kotlin_version' property in $rootProjectGradlePropertiesFile file")
+    }
+}
+
+gradle.beforeProject { project ->
+    rootProjectProperties.forEach { String key, value ->
+        if (!project.hasProperty(key))
+            project.ext[key] = value
+    }
+}
+
+include ':arithmeticParser'
+include ':cliApp'
+
+boolean sdkDirPropertySpecified = false
+File localPropertiesFile = file("${rootProject.projectDir}/local.properties")
+if (localPropertiesFile.isFile()) {
+    Properties properties = new Properties()
+    localPropertiesFile.withInputStream { inputStream -> properties.load(inputStream) }
+    sdkDirPropertySpecified = properties.containsKey('sdk.dir')
+}
+
 
 // Don't create Android tasks if a user has no Android SDK.
-if (localProperties.containsKey("sdk.dir") || System.getenv('ANDROID_HOME') != null) {
-    include ':android'
+if (sdkDirPropertySpecified || System.getenv('ANDROID_HOME') != null) {
+    include ':androidApp'
 }
-
-includeBuild '../../shared'
-includeBuild '../../tools/kotlin-native-gradle-plugin'

@@ -3,10 +3,10 @@
 This example shows how one could perform statistics on Git repository.
 libgit2 is required for this to work (`apt-get install libgit2-dev`).
 
-To build use `../gradlew assemble` or `./build.sh`.
+To build use `../gradlew assemble`.
 
-Now you can run the program directly 
+To run use `../gradlew runProgram` or execute the program directly:
 
-    ./build/exe/main/release/<platform>/gitchurn.kexe ../../
+    ./build/bin/gitChurn/main/release/executable/gitchurn.kexe ../../
 
 It will print most frequently modified (by number of commits) files in repository.

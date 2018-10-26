@@ -1,6 +1,0 @@
-apply plugin: 'org.jetbrains.kotlin.platform.native'
-
-components.main {
-    outputKinds = [EXECUTABLE]
-    baseName = 'EchoServer'
-}

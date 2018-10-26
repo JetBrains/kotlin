@@ -1,23 +1,24 @@
-allprojects {
-    buildscript {
-        repositories {
-            maven { url "https://dl.bintray.com/kotlin/kotlin-dev" }
-        }
-    }
-
+buildscript {
     repositories {
-        maven { url "https://dl.bintray.com/kotlin/kotlin-dev" }
+        google()
+        jcenter()
+        mavenCentral()
+        maven { url 'https://dl.bintray.com/kotlin/kotlin-dev' }
+        maven { url 'https://dl.bintray.com/kotlin/kotlin-eap' }
+    }
+
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath 'com.android.tools.build:gradle:3.2.1'
     }
 }
 
-task build {
-    subprojects.each {
-        dependsOn("${it.path}:build")
-    }
-}
-
-task clean {
-    subprojects.each {
-        dependsOn("${it.path}:clean")
+allprojects {
+    repositories {
+        google()
+        jcenter()
+        mavenCentral()
+        maven { url 'https://dl.bintray.com/kotlin/kotlin-dev' }
+        maven { url 'https://dl.bintray.com/kotlin/kotlin-eap' }
     }
 }

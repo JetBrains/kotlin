@@ -1,7 +1,59 @@
-apply plugin: 'konan'
+plugins {
+    id 'kotlin-multiplatform'
+}
 
-konan.targets = ['iphone', 'iphone_sim']
+kotlin {
+    targets {
+        fromPreset(determinePreset(), 'ios') {
+            compilations.main.outputKinds 'EXECUTABLE'
+            compilations.main.entryPoint 'sample.uikit.main'
+        }
+    }
+}
 
-konanArtifacts {
-    program('app')
+// Special Gradle task that is called from Xcode.
+// Two Gradle properties must be specified for this task:
+// - uikit.configuration.name=[Release|Debug]
+// - uikit.binary.location
+task buildAppForXcode {
+    doLast {
+        if (!isCalledFromXcode()) {
+            throw new Exception("Please run 'buildAppForXcode' task with all necessary properties!")
+        }
+
+        copy {
+            from file(kotlin.targets.ios.compilations.main.getBinary('EXECUTABLE', getBuildTypeForXcode()))
+            into file(getBinaryLocationForXcode().parentFile)
+            rename {
+                getBinaryLocationForXcode().name
+            }
+        }
+    }
+}
+
+afterEvaluate {
+    if (isCalledFromXcode()) {
+        buildAppForXcode.dependsOn kotlin.targets.ios.compilations.main.linkTaskName('EXECUTABLE', getBuildTypeForXcode())
+    }
+}
+
+// If custom preset specified in 'uikit.preset.name' property, then use it for building.
+// Otherwise build for iPhone simulator (by default).
+private def determinePreset() {
+    String presetName = project.hasProperty('uikit.preset.name') ? project.properties['uikit.preset.name'] : 'iosX64'
+    def preset = project.kotlin.presets[presetName]
+    println("$project has been configured for $presetName platform.")
+    preset
+}
+
+private boolean isCalledFromXcode() {
+    project.hasProperty('uikit.configuration.name') && project.hasProperty('uikit.binary.location')
+}
+
+private String getBuildTypeForXcode() {
+    project.properties['uikit.configuration.name'] as String
+}
+
+private File getBinaryLocationForXcode() {
+    file(project.properties['uikit.binary.location'])
 }

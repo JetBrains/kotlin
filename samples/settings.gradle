@@ -1,27 +1,50 @@
-// NOTE: If a new sample uses only platform libs,
-// please add it into the 'buildSamplesWithPlatfromLibs' task in build.gradle.
-enableFeaturePreview('GRADLE_METADATA')
-include ':csvparser'
-include ':gitchurn'
-include ':globalState'
-include ':gtk'
-include ':libcurl'
-include ':nonBlockingEchoServer'
-include ':opengl'
-include ':socket'
-include ':tetris'
-// ML samples have non-trivial deps, disable from here.
-// include ':tensorflow'
-// include ':torch'
-// Android native activity build requires Android SDK.
-// So temporary switching off for now, as it breaks the build
-// of other samples if SDK is not present.
-// include ':androidNativeActivity'
-include ':objc'
-include ':uikit'
-include ':win32'
-include ':videoplayer'
-include ':workers'
+pluginManagement {
+    resolutionStrategy {
+        eachPlugin {
+            if (requested.id.id == "kotlin-multiplatform") {
+                useModule("org.jetbrains.kotlin:kotlin-gradle-plugin:${requested.version}")
+            }
+        }
+    }
 
-includeBuild '../shared'
-includeBuild '../tools/kotlin-native-gradle-plugin'
+    repositories {
+        mavenCentral()
+        maven { url 'https://dl.bintray.com/kotlin/kotlin-dev' }
+        maven { url 'https://dl.bintray.com/kotlin/kotlin-eap' }
+    }
+}
+
+enableFeaturePreview('GRADLE_METADATA')
+
+/*
+ * The following projects are only available for certain platforms:
+ */
+if (MPPTools.isMacos() || MPPTools.isLinux() || MPPTools.isWindows()) {
+    include ':csvparser'
+    include ':echoServer'
+    include ':globalState'
+    include ':html5Canvas'
+    include ':tetris'
+    include ':videoplayer'
+    include ':workers'
+}
+
+if (MPPTools.isMacos() || MPPTools.isLinux()) {
+    include ':curl'
+    include ':gitchurn'
+    include ':gtk'
+    include ':libcurl'
+    include ':nonBlockingEchoServer'
+    include ':tensorflow'
+    include ':torch'
+}
+
+if (MPPTools.isMacos()) {
+    include ':objc'
+    include ':opengl'
+    include ':uikit'
+}
+
+if (MPPTools.isWindows()) {
+    include ':win32'
+}

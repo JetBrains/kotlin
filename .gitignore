@@ -4,6 +4,7 @@
 /dependencies/all
 dist
 kotlin-native-*.tar.gz
+kotlin-native-*.zip
 translator/src/test/kotlin/tests/*/linked
 out
 tmp

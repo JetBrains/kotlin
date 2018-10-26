@@ -1,50 +1,32 @@
-buildscript {
-    repositories {
-        maven {
-            url 'https://cache-redirector.jetbrains.com/maven-central'
-        }
-        maven {
-            url "https://dl.bintray.com/jetbrains/kotlin-native-dependencies"
-        }
-    }
-
-    dependencies {
-        classpath "org.jetbrains.kotlin:kotlin-native-gradle-plugin:${project.property('konan.plugin.version')}"
-    }
+plugins {
+    id 'kotlin-multiplatform'
 }
 
-apply plugin: 'konan'
+def tensorflowHome = "${MPPTools.kotlinNativeDataPath()}/third-party/tensorflow"
 
-konan.targets = ['macbook', 'linux']
-
-def konanUserDir = System.getenv("KONAN_DATA_DIR") ?: "${System.getProperty("user.home")}/.konan"
-def tensorflowHome = "$konanUserDir/third-party/tensorflow"
+kotlin {
+    targets {
+        fromPreset(MPPTools.defaultHostPreset(project, [presets.macosX64, presets.linuxX64]), 'tensorflow') {
+            compilations.main.outputKinds 'EXECUTABLE'
+            compilations.main.entryPoint 'sample.tensorflow.main'
+            compilations.main.linkerOpts "-L$tensorflowHome/lib", '-ltensorflow'
+            compilations.main.cinterops {
+                tensorflow {
+                    includeDirs "$tensorflowHome/include"
+                }
+            }
+        }
+    }
+}
 
 task downloadTensorflow(type: Exec) {
-    workingDir getProjectDir()
+    workingDir projectDir
     commandLine './downloadTensorflow.sh'
 }
+tasks[kotlin.targets.tensorflow.compilations.main.cinterops.tensorflow.interopProcessingTaskName].dependsOn downloadTensorflow
 
-konanArtifacts {
-    interop('TensorflowInterop') {
-        defFile "src/main/c_interop/tensorflow.def"
-        includeDirs "${tensorflowHome}/include"
-        dependsOn 'downloadTensorflow'
-    }
 
-    program('Tensorflow') {
-        libraries {
-            artifact 'TensorflowInterop'
-        }
-        linkerOpts "-L${tensorflowHome}/lib -ltensorflow"
-    }
-}
-
-tasks.findByName("runTensorflow")?.dependsOn 'warning'
-
-task warning {
-    doLast {
-        println "Note: You may need to specify LD_LIBRARY_PATH or DYLD_LIBRARY_PATH env variables to $tensorflowHome/lib if the TensorFlow dynamic library cannot be found."
-
-    }
+MPPTools.createRunTask(project, 'runProgram', kotlin.targets.tensorflow) {
+    environment 'LD_LIBRARY_PATH': "$tensorflowHome/lib"
+    environment 'DYLD_LIBRARY_PATH': "$tensorflowHome/lib"
 }

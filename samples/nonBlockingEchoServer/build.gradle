@@ -1,7 +1,21 @@
-apply plugin: 'org.jetbrains.kotlin.platform.native'
+plugins {
+    id 'kotlin-multiplatform'
+}
 
-components.main {
-    targets = ['macos_x64', 'linux_x64']
-    outputKinds = [EXECUTABLE]
-    baseName = 'EchoServer'
+kotlin {
+    presets {
+        // Determine host preset.
+        MPPTools.defaultHostPreset(project, [macosX64, linuxX64])
+    }
+
+    targets {
+        fromPreset(hostPreset, 'nonBlockingEchoServer') {
+            compilations.main.outputKinds 'EXECUTABLE'
+            compilations.main.entryPoint 'sample.nbechoserver.main'
+        }
+    }
+}
+
+MPPTools.createRunTask(project, 'runProgram', kotlin.targets.nonBlockingEchoServer) {
+    args 3000
 }

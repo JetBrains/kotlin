@@ -1,85 +1,100 @@
 buildscript {
     repositories {
+        google()
         jcenter()
         mavenCentral()
-        google()
-        maven {
-            url "https://dl.bintray.com/jetbrains/kotlin-native-dependencies"
-        }
+        maven { url 'https://dl.bintray.com/kotlin/kotlin-dev' }
+        maven { url 'https://dl.bintray.com/kotlin/kotlin-eap' }
     }
+
     dependencies {
-        classpath "org.jetbrains.kotlin:kotlin-native-gradle-plugin:${project.property('konan.plugin.version')}"
-        classpath 'com.android.tools.build:gradle:3.1.2'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath 'com.android.tools.build:gradle:3.2.1'
     }
 }
 
 repositories {
-    jcenter()
     google()
+    jcenter()
+    mavenCentral()
+    maven { url 'https://dl.bintray.com/kotlin/kotlin-dev' }
+    maven { url 'https://dl.bintray.com/kotlin/kotlin-eap' }
 }
 
-apply plugin: 'konan'
+apply plugin: 'org.jetbrains.kotlin.multiplatform'
 apply plugin: 'com.android.application'
 
-konan.targets = ['android_arm32', 'android_arm64']
-
-def outDir = file('Polyhedron')
-def libsDir = file("$outDir/libs")
-def platforms = [
-        "armeabi-v7a": [konanTarget: "android_arm32"],
-        "arm64-v8a"  : [konanTarget: "android_arm64"]
+def appDir = file("$buildDir/Polyhedron")
+def libsDir = file("$appDir/libs")
+Map<String, String> libsDirMapping = [
+        'arm32' : "$libsDir/armeabi-v7a",
+        'arm64' : "$libsDir/arm64-v8a"
 ]
 
-konanArtifacts {
-    program('Polyhedron') {
-        artifactName 'libpoly'
-    }
-}
-
-task copyLibs(type: Copy) {
-    dependsOn konanArtifacts.Polyhedron
-    destinationDir libsDir
-
-    platforms.each { name, platform ->
-        into(name) {
-            from konanArtifacts.Polyhedron."${platform.konanTarget}".artifact
-        }
-    }
-}
-
-task deleteOut(type: Delete) {
-    delete outDir
-}
-
-clean.dependsOn deleteOut
-
-tasks.matching { it.name == 'preBuild' }.all {
-    it.dependsOn copyLibs
-}
-
 android {
-    compileSdkVersion 25
+    compileSdkVersion 28
 
     defaultConfig {
         applicationId 'com.jetbrains.konan_activity2'
         minSdkVersion 9
-        targetSdkVersion 25
+        targetSdkVersion 28
 
         ndk {
-            abiFilters "armeabi-v7a", "arm64-v8a"
+            abiFilters 'armeabi-v7a', 'arm64-v8a'
         }
     }
 
     sourceSets {
         main {
+            root 'src/arm32Main'
             jniLibs.srcDir libsDir
         }
     }
-
 }
 
-task buildApk(type: Copy) {
-    dependsOn "assembleDebug"
-    destinationDir outDir
-    from 'build/outputs/apk'
+kotlin {
+    targets {
+        fromPreset(presets.androidNativeArm32, 'arm32')
+        fromPreset(presets.androidNativeArm64, 'arm64')
+
+        configure([arm32, arm64]) {
+            compilations.main.outputKinds 'EXECUTABLE'
+            compilations.main.entryPoint 'sample.androidnative.main'
+            compilations.main.cinterops {
+                bmpformat
+            }
+        }
+    }
+
+    sourceSets {
+        arm64Main.dependsOn arm32Main
+    }
+}
+
+// Disable generating Kotlin metadata.
+tasks.compileKotlinMetadata.enabled = false
+
+afterEvaluate {
+    kotlin.targets { targets ->
+        [arm32, arm64].collect { target ->
+            target.compilations.main { mainCompilation ->
+                String buildType = 'RELEASE' // Change to 'DEBUG' to include debug symbols.
+                Object linkTask = mainCompilation.getLinkTask('EXECUTABLE', buildType)
+
+                // Rename binary files to 'libpoly.so' and put them to the appropriate location.
+                File binaryFile = linkTask.outputFile.get()
+                linkTask.doLast {
+                    copy {
+                        from binaryFile
+                        into libsDirMapping[target.targetName]
+                        rename {
+                            'libpoly.so'
+                        }
+                    }
+                }
+
+                tasks.preBuild.dependsOn linkTask
+            }
+        }
+    }
 }

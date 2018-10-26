@@ -17,6 +17,7 @@ import groovy.io.FileType
 import org.jetbrains.kotlin.konan.target.*
 import org.jetbrains.kotlin.konan.properties.*
 import org.jetbrains.kotlin.konan.util.*
+import org.jetbrains.kotlin.CopySamples
 
 buildscript {
     apply from: "gradle/kotlinGradlePlugin.gradle"
@@ -390,33 +391,7 @@ task bundle(type: (isWindows()) ? Zip : Tar) {
     }
     from(project.rootDir) {
         include 'RELEASE_NOTES.md'
-        include 'samples/**'
-        exclude '**/gradle.properties'
-        exclude '**/settings.gradle'
-        exclude '**/build'
-        exclude '**/.gradle'
-        exclude 'samples/**/*.kt.bc-build'
         into baseName
-    }
-
-    from(project.file("samples")) {
-        include '**/settings.gradle'
-        into "$baseName/samples"
-        filter { it.startsWith("includeBuild") ? null : it }
-    }
-
-    from(project.file("samples")) {
-        include '**/gradle.properties'
-        into "$baseName/samples"
-        filter {
-            if (it.startsWith("konan.home=")) {
-                return it.replace("/dist", "")
-            }
-            if (it.startsWith("konan.plugin.version=")) {
-                return "konan.plugin.version=$gradlePluginVersion"
-            }
-            return it
-        }
     }
 
     destinationDir = file('.')
@@ -424,6 +399,45 @@ task bundle(type: (isWindows()) ? Zip : Tar) {
         extension = 'tar.gz'
         compression = Compression.GZIP
     }
+}
+
+task samples {
+    dependsOn 'samplesZip', 'samplesTar'
+}
+
+task samplesZip(type: Zip)
+task samplesTar(type: Tar) {
+    extension = 'tar.gz'
+    compression = Compression.GZIP
+}
+
+configure([samplesZip, samplesTar]) {
+    baseName "kotlin-native-samples-$konanVersionFull"
+    destinationDir = projectDir
+    into(baseName)
+
+    from(file('samples')) {
+        // Process properties files separately.
+        exclude '**/gradle.properties'
+    }
+
+    from(file('samples')) {
+        include '**/gradle.properties'
+        filter {
+            it.startsWith('org.jetbrains.kotlin.native.home=') || it.startsWith('# Use custom Kotlin/Native home:') ? null : it
+        }
+    }
+
+    // Exclude build artifacts.
+    exclude '**/build'
+    exclude '**/.gradle'
+    exclude '**/.idea'
+    exclude '**/*.kt.bc-build/'
+}
+
+task copy_samples(dependsOn: 'copySamples')
+task copySamples(type: CopySamples) {
+    destinationDir file('build/samples-under-test')
 }
 
 task uploadBundle {

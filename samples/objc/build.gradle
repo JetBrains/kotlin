@@ -1,7 +1,14 @@
-apply plugin: 'org.jetbrains.kotlin.platform.native'
-
-components.main {
-    targets = ['macos_x64']
-    outputKinds = [EXECUTABLE]
-    baseName = 'Window'
+plugins {
+    id 'kotlin-multiplatform'
 }
+
+kotlin {
+    targets {
+        fromPreset(MPPTools.defaultHostPreset(project, [presets.macosX64]), 'objc') {
+            compilations.main.outputKinds 'EXECUTABLE'
+            compilations.main.entryPoint 'sample.objc.main'
+        }
+    }
+}
+
+MPPTools.createRunTask(project, 'runProgram', kotlin.targets.objc)

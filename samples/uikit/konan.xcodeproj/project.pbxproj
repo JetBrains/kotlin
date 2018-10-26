@@ -103,7 +103,6 @@
 				2CB540351F56C2C4006EE521 /* Sources */,
 				2CB540361F56C2C4006EE521 /* Frameworks */,
 				2C901F991F59928A004412FA /* Build Binary From Kotlin Sources */,
-				2C901F911F597BFC004412FA /* Replace Binary */,
 				2CB540371F56C2C4006EE521 /* Resources */,
 			);
 			buildRules = (
@@ -162,20 +161,6 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		2C901F911F597BFC004412FA /* Replace Binary */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Replace Binary";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "cp \"$TARGET_BUILD_DIR/app.kexe\" \"$TARGET_BUILD_DIR/$EXECUTABLE_PATH\"";
-		};
 		2C901F991F59928A004412FA /* Build Binary From Kotlin Sources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -188,7 +173,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"$SRCROOT/../gradlew\" -p \"$SRCROOT\" \"$KONAN_TASK\"          \\\n-Pkonan.configuration.build.dir=\"$CONFIGURATION_BUILD_DIR\" \\\n-Pkonan.debugging.symbols=\"$DEBUGGING_SYMBOLS\"             \\\n-Pkonan.optimizations.enable=\"$KONAN_ENABLE_OPTIMIZATIONS\"";
+			shellScript = "\"$SRCROOT/../gradlew\" -p \"$SRCROOT\" buildAppForXcode \\\n-Puikit.preset.name=\"$KOTLIN_NATIVE_PRESET\" \\\n-Puikit.configuration.name=\"$CONFIGURATION\" \\\n-Puikit.binary.location=\"$TARGET_BUILD_DIR/$EXECUTABLE_PATH\"\n";
 		};
 		2C901F9C1F5D7074004412FA /* Remove Original Binary */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -202,7 +187,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "rm -f \"$TARGET_BUILD_DIR/$EXECUTABLE_PATH\"";
+			shellScript = "rm -f \"$TARGET_BUILD_DIR/$EXECUTABLE_PATH\"\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -333,9 +318,8 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				INFOPLIST_FILE = konan/Info.plist;
-				KONAN_ENABLE_OPTIMIZATIONS = NO;
-				"KONAN_TASK[sdk=iphoneos*]" = compileKonanappIos_arm64;
-				"KONAN_TASK[sdk=iphonesimulator*]" = compileKonanappIos_x64;
+				"KOTLIN_NATIVE_PRESET[sdk=iphoneos*]" = iosArm64;
+				"KOTLIN_NATIVE_PRESET[sdk=iphonesimulator*]" = iosX64;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = org.jetbrains.konan;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -347,9 +331,8 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				INFOPLIST_FILE = konan/Info.plist;
-				KONAN_ENABLE_OPTIMIZATIONS = YES;
-				"KONAN_TASK[sdk=iphoneos*]" = compileKonanappIos_arm64;
-				"KONAN_TASK[sdk=iphonesimulator*]" = compileKonanappIos_x64;
+				"KOTLIN_NATIVE_PRESET[sdk=iphoneos*]" = iosArm64;
+				"KOTLIN_NATIVE_PRESET[sdk=iphonesimulator*]" = iosX64;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = org.jetbrains.konan;
 				PRODUCT_NAME = "$(TARGET_NAME)";

@@ -1,5 +1,16 @@
-apply plugin: 'org.jetbrains.kotlin.platform.native'
+plugins {
+    id 'kotlin-multiplatform'
+}
 
-components.main {
-    outputKinds = [ EXECUTABLE ]
+kotlin {
+    targets {
+        fromPreset(MPPTools.defaultHostPreset(project), 'csvParser') {
+            compilations.main.outputKinds 'EXECUTABLE'
+            compilations.main.entryPoint 'sample.csvparser.main'
+        }
+    }
+}
+
+MPPTools.createRunTask(project, 'runProgram', kotlin.targets.csvParser) {
+    args './European_Mammals_Red_List_Nov_2009.csv', 4, 100
 }

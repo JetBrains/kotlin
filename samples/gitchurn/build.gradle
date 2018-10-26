@@ -1,19 +1,33 @@
-apply plugin: 'org.jetbrains.kotlin.platform.native'
+plugins {
+    id 'kotlin-multiplatform'
+}
 
-components.main {
-    targets = ['macos_x64', 'linux_x64']
-    outputKinds = [EXECUTABLE]
+kotlin {
+    presets {
+        // Determine host preset.
+        MPPTools.defaultHostPreset(project, [macosX64, linuxX64])
+    }
 
-    dependencies {
-        cinterop('libgit2') {
-            target('linux') {
-                includeDirs.headerFilterOnly '/usr/include'
-            }
-
-            target('macbook') {
-                includeDirs.headerFilterOnly '/opt/local/include', '/usr/local/include'
+    targets {
+        fromPreset(hostPreset, 'gitChurn') {
+            compilations.main.outputKinds 'EXECUTABLE'
+            compilations.main.entryPoint 'sample.gitchurn.main'
+            compilations.main.cinterops {
+                libgit2 {
+                    switch (hostPreset) {
+                        case presets.macosX64:
+                            includeDirs.headerFilterOnly '/opt/local/include', '/usr/local/include'
+                            break
+                        case presets.linuxX64:
+                            includeDirs.headerFilterOnly '/usr/include'
+                            break
+                    }
+                }
             }
         }
     }
 }
 
+MPPTools.createRunTask(project, 'runProgram', kotlin.targets.gitChurn) {
+    args project.getRootProject().getRootDir().toString() + '/..'
+}

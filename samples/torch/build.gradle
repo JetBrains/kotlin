@@ -1,50 +1,37 @@
-buildscript {
-    repositories {
-        maven {
-            url 'https://cache-redirector.jetbrains.com/maven-central'
-        }
-        maven {
-            url "https://dl.bintray.com/jetbrains/kotlin-native-dependencies"
-        }
-    }
-
-    dependencies {
-        classpath "org.jetbrains.kotlin:kotlin-native-gradle-plugin:${project.property('konan.plugin.version')}"
-    }
+plugins {
+    id 'kotlin-multiplatform'
 }
 
-apply plugin: 'konan'
+def torchHome = "${MPPTools.kotlinNativeDataPath()}/third-party/torch"
 
-konan.targets = ['macbook', 'linux']
-
-def konanUserDir = System.getenv("KONAN_DATA_DIR") ?: "${System.getProperty("user.home")}/.konan"
-def torchHome = "$konanUserDir/third-party/torch"
+kotlin {
+    targets {
+        fromPreset(MPPTools.defaultHostPreset(project, [presets.macosX64, presets.linuxX64]), 'torch') {
+            compilations.main.outputKinds 'EXECUTABLE'
+            compilations.main.entryPoint 'sample.torch.main'
+            compilations.main.linkerOpts "-L$torchHome/lib", '-lATen'
+            compilations.main.cinterops {
+                torch {
+                    includeDirs "$torchHome/include", "$torchHome/include/TH"
+                }
+            }
+        }
+    }
+}
 
 task downloadTorch(type: Exec) {
-    workingDir getProjectDir()
+    workingDir projectDir
     commandLine './downloadTorch.sh'
 }
+tasks[kotlin.targets.torch.compilations.main.cinterops.torch.interopProcessingTaskName].dependsOn downloadTorch
 
-konanArtifacts {
-    interop('TorchInterop') {
-        defFile "src/main/c_interop/torch.def"
-        includeDirs "${torchHome}/include", "${torchHome}/include/TH"
-        dependsOn 'downloadTorch'
-    }
-
-    program('Torch') {
-        libraries {
-            artifact 'TorchInterop'
-        }
-        linkerOpts "-L${torchHome}/lib -lATen"
-    }
+task downloadMNIST(type: Exec) {
+    workingDir projectDir
+    commandLine './downloadMNIST.sh'
 }
 
-tasks.findByName("runTorch")?.dependsOn 'warning'
-
-task warning {
-    doLast {
-        println "Note: You may need to specify LD_LIBRARY_PATH or DYLD_LIBRARY_PATH env variables to $torchHome/lib if the ATen dynamic library cannot be found."
-
-    }
+MPPTools.createRunTask(project, 'runProgram', kotlin.targets.torch) {
+    dependsOn downloadMNIST
+    environment 'LD_LIBRARY_PATH': "$torchHome/lib"
+    environment 'DYLD_LIBRARY_PATH': "$torchHome/lib"
 }

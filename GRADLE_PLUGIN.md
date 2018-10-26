@@ -3,7 +3,7 @@
 ### IMPORTANT NOTICE
 
 This document describes Kotlin/Native experimental Gradle plugin, which is not the plugin yet supported by IDE
-or in multiplatform projects. See MPP Gradle plugin [documentation](https://kotlinlang.org/docs/reference/building-mpp-with-gradle.html
+or in multiplatform projects. See MPP Gradle plugin [documentation](https://kotlinlang.org/docs/reference/building-mpp-with-gradle.html)
 for more information.
 
 ### Overview

@@ -1,10 +1,10 @@
 # Calculator sample
 
-This example shows how to use Kotlin common module (located in [common/](common/)) in different environments.
+This example shows how to use Kotlin common module (located in [arithmeticParser](arithmeticParser/)) in different environments.
 Currently for
-* Android (see [android](android/))
-* iOS (see [ios/calculator](ios/calculator/))
-* plain JVM (cli) (see [jvm](jvm/))
+* Android (see [androidApp](androidApp/))
+* iOS (see [iosApp](iosApp/))
+* plain JVM (cli) (see [cliApp](cliApp/))
 
 ## Common
 
@@ -13,18 +13,26 @@ Common Kotlin module contains arithmetic expressions parser.
 ## Android App
 The common module may be used in an Android application.
 
-To build and run the Android sample do the following:
+Please make sure that Android SDK version 28 is installed, using Android SDK manager in Android Studio.
+See https://developer.android.com/studio/index.html for more details on Android Studio or
+`$ANDROID_HOME/tools/bin/sdkmanager "platforms;android-28" "build-tools;28.0.3"` from command line.
 
-1.  Open the project in Android Studio 3.1
-2.  Create a new Android App configuration. Choose module `android`.
-3.  Now build and run the configuration created.
+To build use `ANDROID_HOME=<your path to android sdk> ../gradlew assemble`.
+
+Run `$ANDROID_HOME/platform-tools/adb install -r androidApp/build/outputs/apk/debug/androidApp-debug.apk`
+to deploy the apk on the Android device or emulator.
+
+Note: If you are importing project to IDEA for the first time, you might need to put `local.properties` file
+with the following content:
+
+    sdk.dir=<your path to Android SDK>
 
 ## iOS
-The iOS project compiles Kotlin module to a framework (see [ios](ios/)). The framework can be easily included in an existing iOS project (e.g. written in Swift or Objective-C)
+The iOS project compiles Kotlin module to a framework (see [iosApp](iosApp/)). The framework can be easily included in an existing iOS project (e.g. written in Swift or Objective-C)
 
 To build and run the iOS sample do the following:
 
-1.  Open `ios/calculator.xcodeproj` with Xcode.
+1.  Open `iosApp/calculator.xcodeproj` with Xcode.
 2.  Open the project's target through project navigator, go to tab 'General'.
     In 'Identity' section change the bundle ID to the unique string in
     reverse-DNS format. Then select the team in 'Signing' section.
@@ -41,14 +49,7 @@ the Xcode project.
 
 ## Plain JVM
 The common module can also be used in JVM application built by Kotlin/JVM compiler with Gradle.
-To build and run it, go to [jvm](jvm/) directory and use
+To build and run it, go to [cliApp](cliApp/) directory and use
 ```
-../gradlew run
+../gradlew runProgram
 ```
-
-To build the distribution:
-```
-../gradlew distZip
-```
-(the result will be available as
-`jvm/build/distributions/KotlinCalculator.zip`)

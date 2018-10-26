@@ -1,39 +1,59 @@
-subprojects {
-    buildscript {
-        repositories {
-            maven {
-                url 'https://cache-redirector.jetbrains.com/maven-central'
-            }
-            maven {
-                url "https://dl.bintray.com/jetbrains/kotlin-native-dependencies"
-            }
-        }
+buildscript {
+    repositories {
+        mavenCentral()
+        maven { url 'https://dl.bintray.com/kotlin/kotlin-dev' }
+        maven { url 'https://dl.bintray.com/kotlin/kotlin-eap' }
+    }
 
-        dependencies {
-            classpath "org.jetbrains.kotlin:kotlin-native-gradle-plugin:${project.property('konan.plugin.version')}"
-        }
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+
+allprojects {
+    repositories {
+        mavenCentral()
+        maven { url 'https://dl.bintray.com/kotlin/kotlin-dev' }
+        maven { url 'https://dl.bintray.com/kotlin/kotlin-eap' }
     }
 }
 
 task buildSh(type: Exec) {
-    commandLine "${projectDir.canonicalPath}/build.sh"
-    workingDir projectDir.canonicalPath
+    errorOutput = System.out
+    ignoreExitValue = true
+    workingDir projectDir
+    enabled = !MPPTools.isWindows()
+    if (MPPTools.isLinux() || MPPTools.isMacos()) {
+        commandLine "$projectDir/build.sh"
+    }
 }
 
 task buildSamplesWithPlatformLibs() {
-    dependsOn ':csvparser:build'
-    dependsOn ':nonBlockingEchoServer:build'
-    dependsOn ':objc:build'
-    dependsOn ':opengl:build'
-    dependsOn ':socket:build'
-    dependsOn ':uikit:build'
-    dependsOn ':win32:build'
-    dependsOn ':workers:build'
-    dependsOn ':globalState:build'
+    dependsOn ':csvparser:assemble'
+    dependsOn ':echoServer:assemble'
+    dependsOn ':globalState:assemble'
+    dependsOn ':html5Canvas:assemble'
+    dependsOn ':workers:assemble'
+
+    if (MPPTools.isMacos() || MPPTools.isLinux()) {
+        dependsOn ':nonBlockingEchoServer:assemble'
+        dependsOn ':tensorflow:assemble'
+    }
+
+    if (MPPTools.isMacos()) {
+        dependsOn ':objc:assemble'
+        dependsOn ':opengl:assemble'
+        dependsOn ':uikit:assemble'
+    }
+
+    if (MPPTools.isWindows()) {
+        dependsOn ':win32:assemble'
+    }
 }
 
 task buildAllSamples() {
+    dependsOn buildSh
     subprojects.each {
-        dependsOn("${it.path}:build")
+        dependsOn("${it.path}:assemble")
     }
 }

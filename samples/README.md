@@ -1,22 +1,34 @@
 # Samples
 
 This directory contains a set of samples demonstrating how one can work with Kotlin/Native. The samples can be
-built using either command line tools (via `build.sh` script presented in each sample directory) or using a gradle build.
-See `README.md` in sample directories to learn more about specific samples and the building process.
+built using Gradle build tool. See `README.md` in sample directories to learn more about specific samples and
+the building process.
 
-**Note**: If the samples are built from a source tree (not from a distribution archive) the compiler and the gradle
-plugin built from the sources are used. So one must build the compiler by running `./gradlew cross_dist` from the 
-Kotlin/Native root directory before building samples (see
+  * `androidNativeActivity` - Android Native Activity rendering 3D graphics using OpenGLES
+  * `calculator` - iOS Swift application, using Kotlin/Native code compiled into the framework
+  * `csvparser` - simple CSV file parser and analyzer
+  * `echoServer` - TCP/IP echo server
+  * `gitchurn` - program interoperating with `libgit2` for GIT repository analysis
+  * `gtk` - GTK2 interoperability example
+  * `html5Canvas` - WebAssembly example
+  * `libcurl` - using of FTP/HTTP/HTTPS client library `libcurl`
+  * `nonBlockingEchoServer` - multi-client TCP/IP echo server using co-routines
+  * `objc` - AppKit Objective-C interoperability example for macOS
+  * `opengl` - OpenGL/GLUT teapot example
+  * `python_extension` - Python extension written in Kotlin/Native
+  * `tensorflow` - simple client for TensorFlow Machine Intelligence library
+  * `tetris` - Tetris game implementation (using SDL2 for rendering)
+  * `uikit` - UIKit Objective-C interoperability example for iOS
+  * `videoplayer` - SDL and FFMPEG-based video and audio player
+  * `win32` - trivial Win32 GUI application
+  * `workers` - example of using workers API
+
+
+**Note**: If the samples are built from a source tree (not from a distribution archive) the compiler built from
+the sources is used. So one must build the compiler and the necessary platform libraries by running
+`./gradlew bundle` from the Kotlin/Native root directory before building samples (see
 [README.md](https://github.com/JetBrains/kotlin-native/blob/master/README.md) for details).
 
-One may also build all the samples with one command. To build them using the command line tools run:
+One may also build all the samples with one command. To build them using Gradle run:
 
-    ./build.sh
-    
-To build all the samples using the gradle build:
-
-    ./gradlew build
-    
-One also may launch the command line build via a gradle task `buildSh` (equivalent of `./build.sh` executing):
-
-    ./gradlew buildSh
+    ./gradlew buildAllSamples

@@ -1,85 +1,114 @@
-apply plugin: 'org.jetbrains.kotlin.platform.native'
+plugins {
+    id 'kotlin-multiplatform'
+}
 
-def konanUserDir = System.getenv("KONAN_DATA_DIR") ?: "${System.getProperty("user.home")}/.konan"
-def resFile = file("$buildDir/konan/res/Tetris.res")
+File winCompiledResourceFile = file("$buildDir/compiledWindowsResources/Tetris.res")
+project.ext.hostPreset = determinePreset()
 
-components.main {
-    targets = ['macos_x64', 'linux_x64', 'raspberrypi', 'mingw_x64']
-    outputKinds = [EXECUTABLE]
-    baseName = 'tetris'
+kotlin {
+    targets {
+        fromPreset(hostPreset, 'tetris') {
+            compilations.main.outputKinds 'EXECUTABLE'
+            compilations.main.entryPoint 'sample.tetris.main'
 
-    target 'macbook', {
-        linkerOpts "-F ${System.getProperty("user.home")}/Library/Frameworks -F /Library/Frameworks -framework SDL2"
-        // Use this line instead of the previous one if you've got a 'No SDL-framework' error.
-        //linkerOpts "-L/opt/local/lib -L/usr/local/lib -lSDL2"
-    }
-
-    target 'linux', {
-        linkerOpts '-L/usr/lib64 -L/usr/lib/x86_64-linux-gnu -lSDL2'
-    }
-
-    target 'raspberrypi', {
-        linkerOpts '-lSDL2'
-    }
-
-    target 'mingw', {
-        linkerOpts "$resFile -L${System.getenv("MINGW64_DIR")?:"c:/msys64/mingw64"}/lib -Wl,-Bstatic -lstdc++ -static -lSDL2 -limm32 -lole32 -loleaut32 -lversion -lwinmm -mwindows"
-    }
-
-    dependencies {
-        cinterop('sdl') {
-            packageName 'sdl'
-            target 'macos_x64', {
-                includeDirs '/Library/Frameworks/SDL2.framework/Headers',
-                        "${System.getProperty("user.home")}/Library/Frameworks/SDL2.framework/Headers",
-                        '/opt/local/include/SDL2',
-                        '/usr/local/include/SDL2'
+            switch (hostPreset) {
+                case presets.macosX64:
+                    compilations.main.linkerOpts '-L/opt/local/lib', '-L/usr/local/lib', '-lSDL2'
+                    break
+                case presets.linuxX64:
+                    compilations.main.linkerOpts '-L/usr/lib64', '-L/usr/lib/x86_64-linux-gnu', '-lSDL2'
+                    break
+                case presets.mingwX64:
+                    compilations.main.linkerOpts winCompiledResourceFile.path,
+                            "-L${MPPTools.mingwPath()}/lib",
+                            '-Wl,-Bstatic',
+                            '-lstdc++',
+                            '-static',
+                            '-lSDL2',
+                            '-limm32',
+                            '-lole32',
+                            '-loleaut32',
+                            '-lversion',
+                            '-lwinmm',
+                            '-mwindows'
+                    break
+                case presets.linuxArm32Hfp:
+                    compilations.main.linkerOpts '-lSDL2'
+                    break
             }
 
-            target 'linux_x64', {
-                includeDirs '/usr/include/SDL2'
-            }
-
-            target 'raspberrypi', {
-                includeDirs "$konanUserDir/dependencies/target-sysroot-1-raspberrypi/usr/include/SDL2"
-            }
-
-            target 'mingw_x64', {
-                includeDirs "${System.getenv("MINGW64_DIR") ?: "c:/msys64/mingw64"}/include/SDL2"
+            compilations.main.cinterops {
+                sdl {
+                    switch (hostPreset) {
+                        case presets.macosX64:
+                            includeDirs '/opt/local/include/SDL2', '/usr/local/include/SDL2'
+                            break
+                        case presets.linuxX64:
+                            includeDirs '/usr/include/SDL2'
+                            break
+                        case presets.mingwX64:
+                            includeDirs "${MPPTools.mingwPath()}/include/SDL2"
+                            break
+                        case presets.linuxArm32Hfp:
+                            includeDirs "${MPPTools.kotlinNativeDataPath()}/dependencies/target-sysroot-1-raspberrypi/usr/include/SDL2"
+                            break
+                    }
+                }
             }
         }
     }
 }
 
-assemble {
-    doLast {
-        components.main.binaries.get().each { binary ->
-            copy {
-                from 'src/main/resources'
-                into binary.runtimeFile.asFile.get().parentFile
+if (hostPreset == kotlin.presets.mingwX64) {
+    tasks.create('compileWindowsResources', Exec) {
+        def winResourceFile = kotlin.sourceSets.tetrisMain.resources.files.find { it.name == 'Tetris.rc' }
+        def windresDir = "${MPPTools.kotlinNativeDataPath()}/dependencies/msys2-mingw-w64-x86_64-gcc-7.3.0-clang-llvm-lld-6.0.1/bin"
+        def path = System.getenv('PATH')
+
+        commandLine "$windresDir/windres", winResourceFile, '-O', 'coff', '-o', winCompiledResourceFile
+        environment 'PATH', "$windresDir;$path"
+
+        inputs.file winResourceFile
+        outputs.file winCompiledResourceFile
+    }
+}
+
+MPPTools.createRunTask(project, 'runProgram', kotlin.targets.tetris) {
+    workingDir = project.provider {
+        kotlin.targets.tetris.compilations.main.getBinary('EXECUTABLE', buildType).parentFile
+    }
+}
+
+afterEvaluate {
+    kotlin.targets.tetris.compilations.main { mainCompilation ->
+        def linkTasks = ['RELEASE', 'DEBUG']
+                .collect { mainCompilation.findLinkTask('EXECUTABLE', it) }
+                .findAll { it != null }
+
+        def compileWindowsResourcesTask = tasks.findByName('compileWindowsResources')
+
+        linkTasks.each { task ->
+            if (compileWindowsResourcesTask != null)
+                task.dependsOn compileWindowsResourcesTask
+
+            task.doLast {
+                copy {
+                    from kotlin.sourceSets.tetrisMain.resources
+                    into task.outputFile.get().parentFile
+                    exclude '*.rc'
+                }
             }
         }
     }
 }
 
-task windowsResources (type: Exec) {
-    def rcFile = file('Tetris.rc')
-    def path = System.getenv("PATH")
-
-    def windresDir = "$konanUserDir/dependencies/msys2-mingw-w64-x86_64-gcc-7.3.0-clang-llvm-lld-6.0.1/bin"
-
-    commandLine "$windresDir/windres", rcFile, '-O', 'coff', '-o', resFile
-    environment 'PATH', "$windresDir;$path"
-
-    inputs.file rcFile
-    outputs.file resFile
+private def determinePreset() {
+    def preset = isRaspberryPiBuild() ? kotlin.presets.linuxArm32Hfp /* aka RaspberryPi */ : MPPTools.defaultHostPreset(project)
+    println("$project has been configured for ${preset.name} platform.")
+    preset
 }
 
-project.tasks.matching {
-    it.name == 'compileDebugMingw_x64KotlinNative' ||
-    it.name == 'compileReleaseMingw_x64KotlinNative'
-}.all {
-    it.dependsOn 'windowsResources'
-    it.inputs.file resFile
+// If host platform is Linux and RaspberryPi target is activated.
+private boolean isRaspberryPiBuild() {
+    MPPTools.isLinux() && Boolean.parseBoolean(project.findProperty('tetris.raspberrypi.build') as String)
 }
-

@@ -1,11 +1,11 @@
 # Workers
 
- This example shows how one could implement computation offload to other workers
+This example shows how one could implement computation offload to other workers
 (usually mapped to OS threads) and transfer data back and forth between workers.
 Idea of workers is to avoid most common problems with concurrent programming, related
 to simultaneous computations on the same data. Instead, each object belongs to
 one or other worker's object graph, but could be disconnected from one worker
-and connected to other worker. This relies on fact that memory management
+and connected to other worker. This relies on the fact that memory management
 engine can ensure, that one worker doesn't keep references to certain object and
 whatever it refers to, and so the object could be safely transferred to another worker.
 
@@ -15,11 +15,13 @@ between workers, as long, as they do not refer to objects, having external refer
 
 The transfer is implemented with the function `execute()` having the following signature
 
-    fun <T1, T2> execute(mode: TransferMode,
-             producer: () -> T1,
-             @VolatileLambda job: (T1) -> T2): Future<T2>
+    fun <T1, T2> execute(
+            mode: TransferMode,
+            producer: () -> T1,
+            @VolatileLambda job: (T1) -> T2
+    ): Future<T2>
 
-  Kotlin/Native runtime invokes `producer()` function, and makes sure object it produces
+Kotlin/Native runtime invokes `producer()` function, and makes sure object it produces
 have a property, that no external references to subgraph rooted by this object, exists.
 If property doesn't hold, either (depending on `mode` argument) exception is being thrown
 or program may crash unexpectedly.
@@ -29,11 +31,13 @@ is being created. Once worker peeks the job from the queue, it executes stateles
 with object provided, and stores stable pointer to result in future's data. Whenever
 future is being consumed, object is passed to the consumer's callback.
 
- This particular example starts several workers, and gives them some computational jobs.
+This particular example starts several workers, and gives them some computational jobs.
 Then it continues execution, and waits on future objects encapsulating the
 computation results. Afterwards, worker execution termination is requested with the
 `requestTermination()` operation.
 
-To build use `./build.sh` or `./gradlew assemble`
+To build use `../gradlew assemble`.
 
-To run use `./build/exe/main/release/workers.kexe`
+To run use `../gradlew runProgram` or execute the program directly:
+
+    ./build/bin/workers/main/release/executable/workers.kexe
