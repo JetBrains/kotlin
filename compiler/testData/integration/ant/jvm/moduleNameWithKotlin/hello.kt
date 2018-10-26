@@ -1,6 +1,6 @@
 package hello
 
-fun main(args: Array<String>) {
+fun main() {
     val systemClassLoader = ClassLoader.getSystemClassLoader()
     val moduleFile = "META-INF/build.kotlin_module"
     val resourceAsStream = systemClassLoader.getResourceAsStream(moduleFile)

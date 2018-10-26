@@ -3,7 +3,8 @@ fun box(): String {
     return "OK"
 }
 
-fun main(<!UNUSED_PARAMETER!>args<!>: Array<String>) {
+fun main(args: Array<String>) {
+    args.size
     D.foo(array())
 }
 

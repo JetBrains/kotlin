@@ -9,7 +9,7 @@ fun foo() {}
 @AnnInt(intArrayOf(1, 2))
 fun bar() {}
 
-fun main(args: Array<String>) {
+fun main() {
     foo()
     bar()
 }
