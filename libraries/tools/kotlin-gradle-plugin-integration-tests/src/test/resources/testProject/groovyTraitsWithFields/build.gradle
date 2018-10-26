@@ -9,7 +9,6 @@ buildscript {
 }
 
 apply plugin: "kotlin"
-apply plugin: "groovy"
 apply plugin: "java"
 
 repositories {
@@ -19,14 +18,7 @@ repositories {
 
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    compile 'org.codehaus.groovy:groovy-all:2.5.3'
-}
-
-compileGroovy.dependsOn = compileGroovy.taskDependencies.values - 'compileJava'
-
-compileKotlin {
-    dependsOn compileGroovy
-    classpath += files(compileGroovy.destinationDir)
+    compile project(":lib")
 }
 
 compileKotlin {
