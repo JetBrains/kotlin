@@ -217,29 +217,27 @@ class ExperimentalUsageChecker(project: Project) : CallChecker {
             val deprecationResolver =
                 DeprecationResolver(LockBasedStorageManager(), languageVersionSettings, CoroutineCompatibilitySupport.ENABLED)
 
+            // Returns true if fqName refers to a valid experimental API marker.
             fun checkAnnotation(fqName: String): Boolean {
                 val descriptor = module.resolveClassByFqName(FqName(fqName), NoLookupLocation.FOR_NON_TRACKED_SCOPE)
-                val experimentality = descriptor?.loadExperimentalityForMarkerAnnotation()
-                val message = when {
-                    descriptor == null ->
-                        "Experimental API marker $fqName is unresolved. Please make sure it's present in the module dependencies"
-                    experimentality == null ->
-                        "Class $fqName is not an experimental API marker annotation"
-                    else -> {
-                        for (deprecation in deprecationResolver.getDeprecations(descriptor)) {
-                            val report = when (deprecation.deprecationLevel) {
-                                DeprecationLevelValue.WARNING -> reportWarning
-                                DeprecationLevelValue.ERROR, DeprecationLevelValue.HIDDEN -> reportError
-                            }
-                            report("Experimental API marker $fqName is deprecated" + deprecation.message?.let { ". $it" }.orEmpty())
-                        }
-                        return true
-                    }
+                if (descriptor == null) {
+                    reportWarning("Experimental API marker $fqName is unresolved. Please make sure it's present in the module dependencies")
+                    return false
                 }
 
-                reportError(message)
+                if (descriptor.loadExperimentalityForMarkerAnnotation() == null) {
+                    reportWarning("Class $fqName is not an experimental API marker annotation")
+                    return false
+                }
 
-                return false
+                for (deprecation in deprecationResolver.getDeprecations(descriptor)) {
+                    val report = when (deprecation.deprecationLevel) {
+                        DeprecationLevelValue.WARNING -> reportWarning
+                        DeprecationLevelValue.ERROR, DeprecationLevelValue.HIDDEN -> reportError
+                    }
+                    report("Experimental API marker $fqName is deprecated" + deprecation.message?.let { ". $it" }.orEmpty())
+                }
+                return true
             }
 
             val validExperimental = languageVersionSettings.getFlag(AnalysisFlags.experimental).filter(::checkAnnotation)
