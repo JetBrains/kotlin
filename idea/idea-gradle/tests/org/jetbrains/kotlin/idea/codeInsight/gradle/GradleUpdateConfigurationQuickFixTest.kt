@@ -48,30 +48,30 @@ class GradleUpdateConfigurationQuickFixTest : GradleImportingTestCase() {
 
     @Test
     fun testUpdateLanguageVersion() {
-        doTest("Set module language version to 1.1")
+        testIntention("Set module language version to 1.1")
     }
 
     @Test
     fun testUpdateApiVersion() {
-        doTest("Set module API version to 1.1")
+        testIntention("Set module API version to 1.1")
     }
 
     @Test
     fun testUpdateLanguageAndApiVersion() {
-        doTest("Set module language version to 1.1")
+        testIntention("Set module language version to 1.1")
     }
 
     @Test
     fun testEnableCoroutines() {
-        doTest("Enable coroutine support in the current module")
+        testIntention("Enable coroutine support in the current module")
     }
 
     @Test
     fun testAddKotlinReflect() {
-        doTest("Add kotlin-reflect.jar to the classpath")
+        testIntention("Add kotlin-reflect.jar to the classpath")
     }
 
-    private fun doTest(intentionName: String) {
+    private fun testIntention(intentionName: String) {
         val buildGradleVFile = createProjectSubFile("build.gradle", File(getTestDataPath(), "build.gradle").readText())
         val sourceVFile = createProjectSubFile("src/main/kotlin/src.kt", File(getTestDataPath(), "src.kt").readText())
         importProject()
