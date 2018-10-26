@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.cli.jvm.repl.reader
 
-import org.jetbrains.kotlin.cli.jvm.repl.messages.unescapeLineBreaks
+import org.jetbrains.kotlin.cli.common.repl.replUnescapeLineBreaks
 import org.jetbrains.kotlin.cli.jvm.repl.writer.ReplWriter
 import org.w3c.dom.Element
 import org.xml.sax.InputSource
@@ -79,7 +79,7 @@ class ReplSystemInWrapper(
         val unescapedXml = parseXml(xmlInput)
 
         return if (isReplScriptExecuting)
-            unescapeLineBreaks(unescapedXml)
+            unescapedXml.replUnescapeLineBreaks()
         else
             unescapedXml
     }

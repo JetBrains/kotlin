@@ -20,10 +20,10 @@ import com.intellij.execution.configurations.GeneralCommandLine
 import com.intellij.execution.process.OSProcessHandler
 import com.intellij.execution.process.ProcessOutputTypes
 import com.intellij.openapi.util.Key
-import com.intellij.openapi.util.text.StringUtil
+import org.jetbrains.kotlin.cli.common.repl.replInputAsXml
+import org.jetbrains.kotlin.cli.common.repl.replRemoveLineBreaksInTheEnd
+import org.jetbrains.kotlin.cli.common.repl.replUnescapeLineBreaks
 import org.jetbrains.kotlin.console.KotlinConsoleKeeper
-import org.jetbrains.kotlin.console.SOURCE_CHARS
-import org.jetbrains.kotlin.console.XML_REPLACEMENTS
 import org.jetbrains.kotlin.console.actions.logError
 import org.jetbrains.kotlin.idea.scratch.*
 import org.jetbrains.kotlin.idea.scratch.output.ScratchOutput
@@ -33,8 +33,6 @@ import org.xml.sax.InputSource
 import java.io.ByteArrayInputStream
 import java.nio.charset.Charset
 import javax.xml.parsers.DocumentBuilderFactory
-
-private val XML_PREAMBLE = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
 
 class KtScratchReplExecutor(file: ScratchFile) : ScratchExecutor(file) {
     private val history: ReplHistory = ReplHistory()
@@ -63,12 +61,7 @@ class KtScratchReplExecutor(file: ScratchFile) : ScratchExecutor(file) {
         val processInputOS = osProcessHandler.processInput ?: return logError(this::class.java, "<p>Broken execute stream</p>")
         val charset = osProcessHandler.charset ?: Charsets.UTF_8
 
-        val xmlRes = XML_PREAMBLE +
-                "<input>" +
-                StringUtil.escapeXml(
-                    StringUtil.replace(command, SOURCE_CHARS, XML_REPLACEMENTS)
-                ) +
-                "</input>"
+        val xmlRes = command.replInputAsXml()
 
         val bytes = ("$xmlRes\n").toByteArray(charset)
         processInputOS.write(bytes)
@@ -130,7 +123,7 @@ class KtScratchReplExecutor(file: ScratchFile) : ScratchExecutor(file) {
 
             val root = output.firstChild as Element
             val outputType = root.getAttribute("type")
-            val content = StringUtil.replace(root.textContent, XML_REPLACEMENTS, SOURCE_CHARS).trim('\n')
+            val content = root.textContent.replUnescapeLineBreaks().replRemoveLineBreaksInTheEnd()
 
             LOG.printDebugMessage("REPL output: $outputType $content")
 
