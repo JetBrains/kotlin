@@ -99,20 +99,16 @@ open class LazyImportResolver<I : KtImportInfo>(
         }
     }
 
-    fun <D : DeclarationDescriptor> collectFromImports(
-        name: Name,
-        descriptorsSelector: (ImportingScope, Name) -> Collection<D>
-    ): Collection<D> {
-        return components.storageManager.compute {
+    fun <D : DeclarationDescriptor> collectFromImports(name: Name, descriptorsSelector: (ImportingScope) -> Collection<D>): Collection<D> =
+        components.storageManager.compute {
             var descriptors: Collection<D>? = null
             for (directive in indexedImports.importsForName(name)) {
-                val descriptorsForImport = descriptorsSelector(getImportScope(directive), name)
+                val descriptorsForImport = descriptorsSelector(getImportScope(directive))
                 descriptors = descriptors.concat(descriptorsForImport)
             }
 
-            descriptors ?: emptySet<D>()
+            descriptors.orEmpty()
         }
-    }
 
     fun getImportScope(directive: KtImportInfo): ImportingScope {
         return importedScopesProvider(directive) ?: ImportingScope.Empty
@@ -257,15 +253,15 @@ class LazyImportScope(
 
     override fun getContributedVariables(name: Name, location: LookupLocation): Collection<VariableDescriptor> {
         if (filteringKind == FilteringKind.INVISIBLE_CLASSES) return listOf()
-        return importResolver.collectFromImports(name) { scope, _ -> scope.getContributedVariables(name, location) }.ifEmpty {
-            secondaryImportResolver?.collectFromImports(name) { scope, _ -> scope.getContributedVariables(name, location) }.orEmpty()
+        return importResolver.collectFromImports(name) { scope -> scope.getContributedVariables(name, location) }.ifEmpty {
+            secondaryImportResolver?.collectFromImports(name) { scope -> scope.getContributedVariables(name, location) }.orEmpty()
         }
     }
 
     override fun getContributedFunctions(name: Name, location: LookupLocation): Collection<FunctionDescriptor> {
         if (filteringKind == FilteringKind.INVISIBLE_CLASSES) return listOf()
-        return importResolver.collectFromImports(name) { scope, _ -> scope.getContributedFunctions(name, location) }.ifEmpty {
-            secondaryImportResolver?.collectFromImports(name) { scope, _ -> scope.getContributedFunctions(name, location) }.orEmpty()
+        return importResolver.collectFromImports(name) { scope -> scope.getContributedFunctions(name, location) }.ifEmpty {
+            secondaryImportResolver?.collectFromImports(name) { scope -> scope.getContributedFunctions(name, location) }.orEmpty()
         }
     }
 
