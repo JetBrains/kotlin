@@ -122,7 +122,7 @@ abstract class GradleImportingTestCase : ExternalSystemImportingTestCase() {
      * - destination of those files in test project is determined *by the directives in file content*, not by its physical location
      *   (see [loadFileIntoTestProject])
      */
-    open fun doTest(projectDirPath: String) {
+    open fun loadProject(projectDirPath: String) {
         val projectDir = File(projectDirPath)
         require(projectDir.isDirectory) { "${projectDir.absolutePath} is not a folder" }
 

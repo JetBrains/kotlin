@@ -53,7 +53,6 @@ import org.jetbrains.kotlin.platform.impl.isCommon
 import org.jetbrains.kotlin.platform.impl.isJavaScript
 import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
-import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.junit.Assert
 import org.junit.Test
 import java.util.*
@@ -95,7 +94,7 @@ class GradleFacetImportTest : GradleImportingTestCase() {
 
     @Test
     fun testJvmImport() {
-        doTest("idea/testData/gradle/facets/jvmImport")
+        loadProject("idea/testData/gradle/facets/jvmImport")
 
         with(facetSettings) {
             Assert.assertEquals("1.1", languageLevel!!.versionString)
@@ -140,14 +139,14 @@ class GradleFacetImportTest : GradleImportingTestCase() {
 
     @Test
     fun testJvmImportWithPlugin() {
-        doTest("idea/testData/gradle/facets/jvmImportWithPlugin")
+        loadProject("idea/testData/gradle/facets/jvmImportWithPlugin")
 
         assertAllModulesConfigured()
     }
 
     @Test
     fun testJvmImport_1_1_2() {
-        doTest("idea/testData/gradle/facets/jvmImport_1_1_2")
+        loadProject("idea/testData/gradle/facets/jvmImport_1_1_2")
 
         with(facetSettings) {
             Assert.assertEquals("1.1", languageLevel!!.versionString)
@@ -186,7 +185,7 @@ class GradleFacetImportTest : GradleImportingTestCase() {
 
     @Test
     fun testJvmImportWithCustomSourceSets() {
-        doTest("idea/testData/gradle/facets/jvmImportWithCustomSourceSets")
+        loadProject("idea/testData/gradle/facets/jvmImportWithCustomSourceSets")
 
         with(facetSettings("project_myMain")) {
             Assert.assertEquals("1.1", languageLevel!!.versionString)
@@ -227,7 +226,7 @@ class GradleFacetImportTest : GradleImportingTestCase() {
 
     @Test
     fun testJvmImportWithCustomSourceSets_1_1_2() {
-        doTest("idea/testData/gradle/facets/jvmImportWithCustomSourceSets_1_1_2")
+        loadProject("idea/testData/gradle/facets/jvmImportWithCustomSourceSets_1_1_2")
 
         with(facetSettings("project_myMain")) {
             Assert.assertEquals("1.1", languageLevel!!.versionString)
@@ -266,7 +265,7 @@ class GradleFacetImportTest : GradleImportingTestCase() {
 
     @Test
     fun testCoroutineImportByOptions() {
-        doTest("idea/testData/gradle/facets/coroutineImportByOptions")
+        loadProject("idea/testData/gradle/facets/coroutineImportByOptions")
         with(facetSettings) {
             Assert.assertEquals(LanguageFeature.State.ENABLED, coroutineSupport)
         }
@@ -274,7 +273,7 @@ class GradleFacetImportTest : GradleImportingTestCase() {
 
     @Test
     fun testCoroutineImportByProperties() {
-        doTest(
+        loadProject(
             "idea/testData/gradle/facets/coroutineImportByProperties"
         )
 
@@ -285,7 +284,7 @@ class GradleFacetImportTest : GradleImportingTestCase() {
 
     @Test
     fun testJsImport() {
-        doTest("idea/testData/gradle/facets/jsImport")
+        loadProject("idea/testData/gradle/facets/jsImport")
 
         with(facetSettings) {
             Assert.assertEquals("1.1", languageLevel!!.versionString)
@@ -344,7 +343,7 @@ class GradleFacetImportTest : GradleImportingTestCase() {
 
     @Test
     fun testJsImportTransitive() {
-        doTest("idea/testData/gradle/facets/jsImportTransitive")
+        loadProject("idea/testData/gradle/facets/jsImportTransitive")
 
         with(facetSettings) {
             Assert.assertEquals("1.1", languageLevel!!.versionString)
@@ -377,7 +376,7 @@ class GradleFacetImportTest : GradleImportingTestCase() {
 
     @Test
     fun testJsImportWithCustomSourceSets() {
-        doTest("idea/testData/gradle/facets/jsImportWithCustomSourceSets")
+        loadProject("idea/testData/gradle/facets/jsImportWithCustomSourceSets")
 
         with(facetSettings("project_myMain")) {
             Assert.assertEquals("1.1", languageLevel!!.versionString)
@@ -425,7 +424,7 @@ class GradleFacetImportTest : GradleImportingTestCase() {
 
     @Test
     fun testDetectOldJsStdlib() {
-        doTest("idea/testData/gradle/facets/detectOldJsStdlib")
+        loadProject("idea/testData/gradle/facets/detectOldJsStdlib")
 
         with(facetSettings) {
             Assert.assertTrue(platform.isJavaScript)
@@ -434,7 +433,7 @@ class GradleFacetImportTest : GradleImportingTestCase() {
 
     @Test
     fun testJvmImportByPlatformPlugin() {
-        doTest("idea/testData/gradle/facets/jvmImportByPlatformPlugin")
+        loadProject("idea/testData/gradle/facets/jvmImportByPlatformPlugin")
 
         with(facetSettings) {
             Assert.assertEquals("1.1", languageLevel!!.versionString)
@@ -458,7 +457,7 @@ class GradleFacetImportTest : GradleImportingTestCase() {
 
     @Test
     fun testJsImportByPlatformPlugin() {
-        doTest("idea/testData/gradle/facets/jsImportByPlatformPlugin")
+        loadProject("idea/testData/gradle/facets/jsImportByPlatformPlugin")
 
         with(facetSettings) {
             Assert.assertEquals("1.1", languageLevel!!.versionString)
@@ -487,7 +486,7 @@ class GradleFacetImportTest : GradleImportingTestCase() {
 
     @Test
     fun testCommonImportByPlatformPlugin() {
-        doTest("idea/testData/gradle/facets/commonImportByPlatformPlugin")
+        loadProject("idea/testData/gradle/facets/commonImportByPlatformPlugin")
 
         with(facetSettings) {
             Assert.assertEquals("1.1", languageLevel!!.versionString)
@@ -515,7 +514,7 @@ class GradleFacetImportTest : GradleImportingTestCase() {
 
     @Test
     fun testCommonImportByPlatformPlugin_SingleModule() {
-        doTest("idea/testData/gradle/facets/commonImportByPlatformPlugin_SingleModule")
+        loadProject("idea/testData/gradle/facets/commonImportByPlatformPlugin_SingleModule")
 
         with(facetSettings("project")) {
             Assert.assertEquals("1.1", languageLevel!!.versionString)
@@ -540,7 +539,7 @@ class GradleFacetImportTest : GradleImportingTestCase() {
 
     @Test
     fun testJvmImportByKotlinPlugin() {
-        doTest("idea/testData/gradle/facets/jvmImportByKotlinPlugin")
+        loadProject("idea/testData/gradle/facets/jvmImportByKotlinPlugin")
 
         with(facetSettings) {
             Assert.assertEquals("1.1", languageLevel!!.versionString)
@@ -564,7 +563,7 @@ class GradleFacetImportTest : GradleImportingTestCase() {
 
     @Test
     fun testJsImportByKotlin2JsPlugin() {
-        doTest("idea/testData/gradle/facets/jsImportByKotlin2JsPlugin")
+        loadProject("idea/testData/gradle/facets/jsImportByKotlin2JsPlugin")
 
         with(facetSettings) {
             Assert.assertEquals("1.1", languageLevel!!.versionString)
@@ -588,7 +587,7 @@ class GradleFacetImportTest : GradleImportingTestCase() {
 
     @Test
     fun testArgumentEscaping() {
-        doTest("idea/testData/gradle/facets/argumentEscaping")
+        loadProject("idea/testData/gradle/facets/argumentEscaping")
 
         with(facetSettings) {
             Assert.assertEquals(
@@ -600,7 +599,7 @@ class GradleFacetImportTest : GradleImportingTestCase() {
 
     @Test
     fun testNoPluginsInAdditionalArgs() {
-        doTest("idea/testData/gradle/facets/noPluginsInAdditionalArgs")
+        loadProject("idea/testData/gradle/facets/noPluginsInAdditionalArgs")
 
         with(facetSettings) {
             Assert.assertEquals(
@@ -623,7 +622,7 @@ class GradleFacetImportTest : GradleImportingTestCase() {
 
     @Test
     fun testNoArgInvokeInitializers() {
-        doTest("idea/testData/gradle/facets/noArgInvokeInitializers")
+        loadProject("idea/testData/gradle/facets/noArgInvokeInitializers")
 
         with(facetSettings) {
             Assert.assertEquals(
@@ -642,7 +641,7 @@ class GradleFacetImportTest : GradleImportingTestCase() {
 
     @Test
     fun testAndroidGradleJsDetection() {
-        doTest("idea/testData/gradle/facets/androidGradleJsDetection")
+        loadProject("idea/testData/gradle/facets/androidGradleJsDetection")
 
         with(facetSettings("js-module")) {
             Assert.assertTrue(platform.isJavaScript)
@@ -660,7 +659,7 @@ class GradleFacetImportTest : GradleImportingTestCase() {
 
     @Test
     fun testKotlinAndroidPluginDetection() {
-        doTest("idea/testData/gradle/facets/kotlinAndroidPluginDetection")
+        loadProject("idea/testData/gradle/facets/kotlinAndroidPluginDetection")
 
         val kotlinFacet = KotlinFacet.get(getModule("project"))!!
         Assert.assertTrue(kotlinFacet.configuration.settings.mergedCompilerArguments!!.progressiveMode)
@@ -668,7 +667,7 @@ class GradleFacetImportTest : GradleImportingTestCase() {
 
     @Test
     fun testNoFacetInModuleWithoutKotlinPlugin() {
-        doTest("idea/testData/gradle/facets/noFacetInModuleWithoutKotlinPlugin")
+        loadProject("idea/testData/gradle/facets/noFacetInModuleWithoutKotlinPlugin")
 
         Assert.assertNotNull(KotlinFacet.get(getModule("gr01_main")))
         Assert.assertNotNull(KotlinFacet.get(getModule("gr01_test")))
@@ -678,7 +677,7 @@ class GradleFacetImportTest : GradleImportingTestCase() {
 
     @Test
     fun testClasspathWithDependenciesImport() {
-        doTest("idea/testData/gradle/facets/classpathWithDependenciesImport")
+        loadProject("idea/testData/gradle/facets/classpathWithDependenciesImport")
 
         with(facetSettings) {
             Assert.assertEquals("tmp.jar", (compilerArguments as K2JVMCompilerArguments).classpath)
@@ -687,7 +686,7 @@ class GradleFacetImportTest : GradleImportingTestCase() {
 
     @Test
     fun testDependenciesClasspathImport() {
-        doTest("idea/testData/gradle/facets/dependenciesClasspathImport")
+        loadProject("idea/testData/gradle/facets/dependenciesClasspathImport")
 
         with(facetSettings) {
             Assert.assertEquals(null, (compilerArguments as K2JVMCompilerArguments).classpath)
@@ -752,7 +751,7 @@ class GradleFacetImportTest : GradleImportingTestCase() {
 
     @Test
     fun testImplementsDependency() {
-        doTest("idea/testData/gradle/facets/implementsDependency")
+        loadProject("idea/testData/gradle/facets/implementsDependency")
 
         Assert.assertEquals(listOf("MultiTest_main"), facetSettings("MultiTest-jvm_main").implementedModuleNames)
         Assert.assertEquals(listOf("MultiTest_test"), facetSettings("MultiTest-jvm_test").implementedModuleNames)
@@ -762,7 +761,7 @@ class GradleFacetImportTest : GradleImportingTestCase() {
 
     @Test
     fun testImplementsDependencyWithCustomSourceSets() {
-        doTest("idea/testData/gradle/facets/implementsDependencyWithCustomSourceSets")
+        loadProject("idea/testData/gradle/facets/implementsDependencyWithCustomSourceSets")
 
         Assert.assertEquals(listOf("MultiTest_myMain"), facetSettings("MultiTest-jvm_myMain").implementedModuleNames)
         Assert.assertEquals(listOf("MultiTest_myTest"), facetSettings("MultiTest-jvm_myTest").implementedModuleNames)
@@ -772,7 +771,7 @@ class GradleFacetImportTest : GradleImportingTestCase() {
 
     @Test
     fun testAPIVersionExceedingLanguageVersion() {
-        doTest("idea/testData/gradle/facets/APIVersionExceedingLanguageVersion")
+        loadProject("idea/testData/gradle/facets/APIVersionExceedingLanguageVersion")
 
         with(facetSettings) {
             Assert.assertEquals("1.1", languageLevel!!.versionString)
@@ -823,7 +822,7 @@ class GradleFacetImportTest : GradleImportingTestCase() {
 
     @Test
     fun testCommonArgumentsImport() {
-        doTest("idea/testData/gradle/facets/commonArgumentsImport")
+        loadProject("idea/testData/gradle/facets/commonArgumentsImport")
 
         with(facetSettings) {
             Assert.assertEquals("1.1", languageLevel!!.versionString)
@@ -865,7 +864,7 @@ class GradleFacetImportTest : GradleImportingTestCase() {
 
     @Test
     fun testInternalArgumentsFacetImporting() {
-        doTest("idea/testData/gradle/facets/internalArgumentsFacetImporting")
+        loadProject("idea/testData/gradle/facets/internalArgumentsFacetImporting")
 
         // Version is indeed 1.2
         Assert.assertEquals(LanguageVersion.KOTLIN_1_2, facetSettings.languageLevel)
@@ -884,7 +883,7 @@ class GradleFacetImportTest : GradleImportingTestCase() {
 
     @Test
     fun testStableModuleNameWhileUsingGradle_JS() {
-        doTest("idea/testData/gradle/facets/stableModuleNameWhileUsingGradle_JS")
+        loadProject("idea/testData/gradle/facets/stableModuleNameWhileUsingGradle_JS")
 
         checkStableModuleName("project_main", "project", JsPlatform, isProduction = true)
         // Note "_test" suffix: this is current behavior of K2JS Compiler
@@ -895,7 +894,7 @@ class GradleFacetImportTest : GradleImportingTestCase() {
 
     @Test
     fun testStableModuleNameWhileUsingGradle_JVM() {
-        doTest("idea/testData/gradle/facets/stableModuleNameWhileUsingGradle_JVM")
+        loadProject("idea/testData/gradle/facets/stableModuleNameWhileUsingGradle_JVM")
 
         checkStableModuleName("project_main", "project", JvmPlatform, isProduction = true)
         checkStableModuleName("project_test", "project", JvmPlatform, isProduction = false)
@@ -905,7 +904,7 @@ class GradleFacetImportTest : GradleImportingTestCase() {
 
     @Test
     fun testNoFriendPathsAreShown() {
-        doTest("idea/testData/gradle/facets/noFriendPathsAreShown")
+        loadProject("idea/testData/gradle/facets/noFriendPathsAreShown")
 
         Assert.assertEquals(
             "-version",
@@ -917,7 +916,7 @@ class GradleFacetImportTest : GradleImportingTestCase() {
 
     @Test
     fun testSharedLanguageVersion() {
-        doTest("idea/testData/gradle/facets/sharedLanguageVersion")
+        loadProject("idea/testData/gradle/facets/sharedLanguageVersion")
 
         val holder = KotlinCommonCompilerArgumentsHolder.getInstance(myProject)
 
@@ -930,7 +929,7 @@ class GradleFacetImportTest : GradleImportingTestCase() {
 
     @Test
     fun testNonSharedLanguageVersion() {
-        doTest("idea/testData/gradle/facets/nonSharedLanguageVersion")
+        loadProject("idea/testData/gradle/facets/nonSharedLanguageVersion")
 
         val holder = KotlinCommonCompilerArgumentsHolder.getInstance(myProject)
 
