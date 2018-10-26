@@ -63,7 +63,7 @@ class KtUltraLightClass(classOrObject: KtClassOrObject, private val support: Ult
 
     private fun allSuperTypes() =
         getDescriptor()?.typeConstructor?.supertypes?.mapNotNull {
-            it.asPsiType(classOrObject, support, TypeMappingMode.SUPER_TYPE) as? PsiClassType
+            it.asPsiType(classOrObject, support, TypeMappingMode.SUPER_TYPE, this) as? PsiClassType
         }.orEmpty()
 
     override fun createExtendsList(): PsiReferenceList? =
@@ -290,7 +290,7 @@ class KtUltraLightClass(classOrObject: KtClassOrObject, private val support: Ult
         }
         val returnType: PsiType? by lazyPub {
             if (isConstructor) null
-            else methodReturnType(f)
+            else methodReturnType(f, wrapper)
         }
         method.setMethodReturnType { returnType }
         return wrapper
@@ -303,14 +303,14 @@ class KtUltraLightClass(classOrObject: KtClassOrObject, private val support: Ult
         }
     }
 
-    private fun methodReturnType(f: KtDeclaration): PsiType {
+    private fun methodReturnType(f: KtDeclaration, wrapper: KtUltraLightMethod): PsiType {
         val desc = f.resolve()?.let { if (it is PropertyDescriptor) it.getter else it }
         val kotlinType = (desc as? FunctionDescriptor)?.returnType ?: return PsiType.NULL
         val mode = when {
             typeMapper(support).forceBoxedReturnType(desc) -> TypeMappingMode.RETURN_TYPE_BOXED
             else -> TypeMappingMode.getOptimalModeForReturnType(kotlinType, false)
         }
-        return kotlinType.asPsiType(f, support, mode)
+        return kotlinType.asPsiType(f, support, mode, wrapper)
     }
 
     private fun lightMethod(name: String, declaration: KtDeclaration, forceStatic: Boolean): LightMethodBuilder {
@@ -413,10 +413,10 @@ class KtUltraLightClass(classOrObject: KtClassOrObject, private val support: Ult
 
         if (needsAccessor(ktGetter)) {
             val getterName = mangleIfNeeded(listOfNotNull(ktGetter, declaration), JvmAbi.getterName(propertyName))
-            val getterType: PsiType by lazyPub { methodReturnType(declaration) }
             val getterPrototype = lightMethod(getterName, ktGetter ?: declaration, onlyJvmStatic)
-                .setMethodReturnType { getterType }
             val getterWrapper = KtUltraLightMethod(getterPrototype, declaration, support, this)
+            val getterType: PsiType by lazyPub { methodReturnType(declaration, getterWrapper) }
+            getterPrototype.setMethodReturnType { getterType }
             addReceiverParameter(declaration, getterWrapper)
             result.add(getterWrapper)
         }

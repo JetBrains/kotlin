@@ -77,7 +77,7 @@ internal fun KotlinType.asPsiType(
     declaration: KtDeclaration,
     support: UltraLightSupport,
     mode: TypeMappingMode,
-    psiContext: PsiElement = declaration
+    psiContext: PsiElement
 ): PsiType {
     val typeFqName = constructor.declarationDescriptor?.fqNameSafe?.asString()
     if (typeFqName == "kotlin.Unit" && declaration is KtFunction) return PsiType.VOID
