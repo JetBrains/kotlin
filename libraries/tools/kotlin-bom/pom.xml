@@ -128,7 +128,48 @@
                 <artifactId>kotlin-test-annotations-common</artifactId>
                 <version>${kotlin.version}</version>
             </dependency>
-            <!--scripting?-->
+            <!-- Scripting -->
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>kotlin-main-kts</artifactId>
+                <version>${kotlin.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>kotlin-script-runtime</artifactId>
+                <version>${kotlin.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>kotlin-script-util</artifactId>
+                <version>${kotlin.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>kotlin-scripting-common</artifactId>
+                <version>${kotlin.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>kotlin-scripting-jvm</artifactId>
+                <version>${kotlin.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>kotlin-scripting-jvm-host</artifactId>
+                <version>${kotlin.version}</version>
+            </dependency>
+            <!-- Compiler dependency required by scripting -->
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>kotlin-compiler</artifactId>
+                <version>${kotlin.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>kotlin-daemon-client</artifactId>
+                <version>${kotlin.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
