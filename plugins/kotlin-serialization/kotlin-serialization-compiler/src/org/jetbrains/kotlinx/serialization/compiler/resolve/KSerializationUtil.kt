@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.ValueArgument
+import org.jetbrains.kotlin.resolve.constants.KClassValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyAnnotationDescriptor
 import org.jetbrains.kotlin.resolve.scopes.getDescriptorsFiltered
@@ -58,15 +59,15 @@ internal fun extractKSerializerArgumentFromImplementation(implementationClass: C
     return kSerializerSupertype.arguments.first().type
 }
 
-internal val Annotations.serializableWith: KotlinType?
-    get() = findAnnotationValue(SerializationAnnotations.serializableAnnotationFqName, "with")
+internal val DeclarationDescriptor.serializableWith: KotlinType?
+    get() = annotations.findAnnotationKotlinTypeValue(SerializationAnnotations.serializableAnnotationFqName, module,"with")
 
-internal val Annotations.serializerForClass: KotlinType?
-    get() = findAnnotationValue(SerializationAnnotations.serializerAnnotationFqName, "forClass")
+internal val DeclarationDescriptor.serializerForClass: KotlinType?
+    get() = annotations.findAnnotationKotlinTypeValue(SerializationAnnotations.serializerAnnotationFqName, module, "forClass")
 
 val Annotations.serialNameValue: String?
     get() {
-        val value = findAnnotationValue<String?>(SerializationAnnotations.serialNameAnnotationFqName, "value")
+        val value = findAnnotationConstantValue<String?>(SerializationAnnotations.serialNameAnnotationFqName, "value")
         return value
     }
 
@@ -89,7 +90,7 @@ val ClassDescriptor.isInternalSerializable: Boolean //todo normal checking
         // If provided descriptor is lazy, carefully look at psi in order not to trigger full resolve which may be recursive.
         // Otherwise, this descriptor is deserialized from another module and it is OK to check value right away.
         val lazyDesc = annotations.findAnnotation(SerializationAnnotations.serializableAnnotationFqName)
-                as? LazyAnnotationDescriptor ?: return (annotations.serializableWith == null)
+                as? LazyAnnotationDescriptor ?: return (serializableWith == null)
         val psi = lazyDesc.annotationEntry
         return psi.valueArguments.isEmpty()
     }
@@ -98,7 +99,7 @@ val ClassDescriptor.isInternalSerializable: Boolean //todo normal checking
 internal val ClassDescriptor?.classSerializer: KotlinType?
     get() = this?.let {
         // serializer annotation on class?
-        annotations.serializableWith?.let { return it }
+        serializableWith?.let { return it }
         // default serializable?
         if (isInternalSerializable) {
             // companion object serializer?
@@ -112,7 +113,7 @@ internal val ClassDescriptor?.classSerializer: KotlinType?
     }
 
 internal val ClassDescriptor.hasCompanionObjectAsSerializer: Boolean
-    get() = companionObjectDescriptor?.annotations?.serializerForClass == this.defaultType
+    get() = companionObjectDescriptor?.serializerForClass == this.defaultType
 
 internal fun checkSerializerNullability(classType: KotlinType, serializerType: KotlinType): KotlinType {
     val castedToKSerial = requireNotNull(
@@ -126,7 +127,7 @@ internal fun checkSerializerNullability(classType: KotlinType, serializerType: K
 
 // returns only user-overriden Serializer
 val KotlinType.overridenSerializer: KotlinType?
-    get() = (this.toClassDescriptor?.annotations?.serializableWith)?.let { checkSerializerNullability(this, it) }
+    get() = (this.toClassDescriptor?.serializableWith)?.let { checkSerializerNullability(this, it) }
 
 // serializer that was declared for this specific type or annotation from a class declaration
 val KotlinType.typeSerializer: KotlinType?
@@ -143,7 +144,7 @@ fun getSerializableClassDescriptorByCompanion(thisDescriptor: ClassDescriptor): 
 }
 
 fun getSerializableClassDescriptorBySerializer(serializerDescriptor: ClassDescriptor): ClassDescriptor? {
-    val serializerForClass = serializerDescriptor.annotations.serializerForClass
+    val serializerForClass = serializerDescriptor.serializerForClass
     if (serializerForClass != null) return serializerForClass.toClassDescriptor
     if (serializerDescriptor.name !in setOf(
             SerialEntityNames.SERIALIZER_CLASS_NAME,
@@ -173,10 +174,20 @@ fun ClassDescriptor.checkLoadMethodResult(type: KotlinType): Boolean = getSerial
 
 // ----------------
 
-inline fun <reified R> Annotations.findAnnotationValue(annotationFqName: FqName, property: String): R? =
-        findAnnotation(annotationFqName)?.let { annotation ->
-            annotation.allValueArguments.entries.singleOrNull { it.key.asString() == property }?.value?.value
-        } as? R
+inline fun <reified R> Annotations.findAnnotationConstantValue(annotationFqName: FqName, property: String): R? =
+    findAnnotation(annotationFqName)?.let { annotation ->
+        annotation.allValueArguments.entries.singleOrNull { it.key.asString() == property }?.value?.value
+    } as? R
+
+fun Annotations.findAnnotationKotlinTypeValue(
+    annotationFqName: FqName,
+    moduleForResolve: ModuleDescriptor,
+    property: String
+): KotlinType? =
+    findAnnotation(annotationFqName)?.let { annotation ->
+        val maybeKClass = annotation.allValueArguments.entries.singleOrNull { it.key.asString() == property }?.value as? KClassValue
+        maybeKClass?.getArgumentType(moduleForResolve)
+    }
 
 // Search utils
 

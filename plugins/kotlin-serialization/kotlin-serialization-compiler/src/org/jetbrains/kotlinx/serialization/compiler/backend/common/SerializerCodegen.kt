@@ -45,7 +45,7 @@ abstract class SerializerCodegen(
 //        if (save || load || prop)
 //            generateSerialDesc()
         if (serializableDescriptor.declaredTypeParameters.isNotEmpty()) {
-            findSerializerConstructorForTypeArgumentsSerializers(serializerDescriptor)?.let {
+            findSerializerConstructorForTypeArgumentsSerializers(serializerDescriptor, onlyIfSynthetic = true)?.let {
                 generateGenericFieldsAndConstructor(it)
             }
         }

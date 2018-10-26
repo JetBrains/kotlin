@@ -36,9 +36,9 @@ class SerializableProperty(val descriptor: PropertyDescriptor, val isConstructor
         descriptor.annotationsWithArguments()
 
     private fun extractSerializableWith(annotations: Annotations): KotlinType? {
-        annotations.serializableWith?.let { return it }
-        if (annotations.hasAnnotation(SerializationAnnotations.contextualFqName))
-            return module.getClassFromSerializationPackage(SpecialBuiltins.contextSerializer).defaultType
-        return null
+        descriptor.serializableWith?.let { return it }
+        return if (annotations.hasAnnotation(SerializationAnnotations.contextualFqName))
+            module.getClassFromSerializationPackage(SpecialBuiltins.contextSerializer).defaultType
+        else null
     }
 }
