@@ -6613,6 +6613,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             runTest("idea/testData/inspectionsLocal/unusedSymbol/inAnonymousRunWrapped.kt");
         }
 
+        @TestMetadata("inlineClassConstructor.kt")
+        public void testInlineClassConstructor() throws Exception {
+            runTest("idea/testData/inspectionsLocal/unusedSymbol/inlineClassConstructor.kt");
+        }
+
         @TestMetadata("inlineClassMemberFunction.kt")
         public void testInlineClassMemberFunction() throws Exception {
             runTest("idea/testData/inspectionsLocal/unusedSymbol/inlineClassMemberFunction.kt");
