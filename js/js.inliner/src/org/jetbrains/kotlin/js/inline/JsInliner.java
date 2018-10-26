@@ -69,6 +69,8 @@ public class JsInliner extends JsVisitorWithContextImpl {
 
     private final List<JsNameBinding> additionalNameBindings = new ArrayList<>();
 
+    private final Set<JsName> inlinedModuleAliases = new HashSet<>();
+
     public static void process(
             @NotNull JsConfig.Reporter reporter,
             @NotNull JsConfig config,
@@ -94,9 +96,12 @@ public class JsInliner extends JsVisitorWithContextImpl {
             inliner.processImportStatement(statement);
         }
 
+        Map<JsName, JsImportedModule> moduleMap = fillModuleMap(buildModuleMap(fragments), fragmentsToProcess);
+
         for (JsProgramFragment fragment : fragmentsToProcess) {
             inliner.existingImports.clear();
             inliner.additionalNameBindings.clear();
+            inliner.inlinedModuleAliases.clear();
             inliner.existingNameBindings = CollectUtilsKt.collectNameBindings(Collections.singletonList(fragment));
 
             inliner.acceptStatement(fragment.getDeclarationBlock());
@@ -110,6 +115,7 @@ public class JsInliner extends JsVisitorWithContextImpl {
 
             fragment.getInitializerBlock().getStatements().addAll(0, initWrapper.getStatements());
             fragment.getNameBindings().addAll(inliner.additionalNameBindings);
+            inliner.addInlinedModules(fragment, moduleMap);
         }
 
         for (JsProgramFragment fragment : fragmentsToProcess) {
@@ -119,6 +125,29 @@ public class JsInliner extends JsVisitorWithContextImpl {
             RemoveUnusedFunctionDefinitionsKt.removeUnusedFunctionDefinitions(block, CollectUtilsKt.collectNamedFunctions(block));
         }
     }
+
+    private void addInlinedModules(JsProgramFragment fragment, Map<JsName, JsImportedModule> moduleMap) {
+        Set<JsName> localMap = buildModuleMap(Collections.singletonList(fragment)).keySet();
+        for (JsName inlinedModuleName : inlinedModuleAliases) {
+            if (!localMap.contains(inlinedModuleName)) {
+                fragment.getImportedModules().add(moduleMap.get(inlinedModuleName));
+            }
+        }
+    }
+
+    private static Map<JsName, JsImportedModule> buildModuleMap(List<JsProgramFragment> fragments) {
+        return fillModuleMap(new HashMap<>(), fragments);
+    }
+
+    private static Map<JsName, JsImportedModule> fillModuleMap(Map<JsName, JsImportedModule> map, List<JsProgramFragment> fragments) {
+        for (JsProgramFragment fragment : fragments) {
+            for (JsImportedModule module : fragment.getImportedModules()) {
+                map.put(module.getInternalName(), module);
+            }
+        }
+        return map;
+    }
+
 
     private JsInliner(
             @NotNull JsConfig config,
@@ -489,7 +518,7 @@ public class JsInliner extends JsVisitorWithContextImpl {
         }
     }
 
-    private static void replaceExpressionsWithLocalAliases(@NotNull JsStatement statement) {
+    private void replaceExpressionsWithLocalAliases(@NotNull JsStatement statement) {
         new JsVisitorWithContextImpl() {
             @Override
             public void endVisit(@NotNull JsNameRef x, @NotNull JsContext ctx) {
@@ -507,6 +536,7 @@ public class JsInliner extends JsVisitorWithContextImpl {
                     @SuppressWarnings("unchecked")
                     JsContext<JsNode> context = (JsContext) ctx;
                     context.replaceMe(alias.makeRef());
+                    inlinedModuleAliases.add(alias);
                 }
             }
 
