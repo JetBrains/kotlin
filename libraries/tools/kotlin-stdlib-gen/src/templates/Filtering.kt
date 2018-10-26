@@ -749,7 +749,7 @@ object Filtering : TemplateGroupBase() {
         typeParam("reified R")
         typeParam("C : MutableCollection<in R>")
         inline()
-        receiverAsterisk = true
+        genericStarProjection = true
         returns("C")
         body {
             """
@@ -766,7 +766,7 @@ object Filtering : TemplateGroupBase() {
         typeParam("reified R")
         returns("List<@kotlin.internal.NoInfer R>")
         inline()
-        receiverAsterisk = true
+        genericStarProjection = true
         body {
             """
             return filterIsInstanceTo(ArrayList<R>())
@@ -790,7 +790,7 @@ object Filtering : TemplateGroupBase() {
         include(Iterables, ArraysOfObjects, Sequences)
     } builder {
         doc { "Appends all elements that are instances of specified class to the given [destination]." }
-        receiverAsterisk = true
+        genericStarProjection = true
         typeParam("C : MutableCollection<in R>")
         typeParam("R")
         returns("C")
@@ -808,7 +808,7 @@ object Filtering : TemplateGroupBase() {
         include(Iterables, ArraysOfObjects, Sequences)
     } builder {
         doc { "Returns a list containing all elements that are instances of specified class." }
-        receiverAsterisk= true
+        genericStarProjection = true
         typeParam("R")
         returns("List<R>")
         body {

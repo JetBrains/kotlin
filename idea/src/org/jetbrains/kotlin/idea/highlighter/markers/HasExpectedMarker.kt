@@ -16,8 +16,6 @@
 
 package org.jetbrains.kotlin.idea.highlighter.markers
 
-import com.intellij.codeInsight.daemon.impl.PsiElementListNavigator
-import com.intellij.ide.util.DefaultPsiElementCellRenderer
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.MemberDescriptor
 import org.jetbrains.kotlin.idea.caches.project.implementedDescriptors
@@ -38,20 +36,22 @@ fun getExpectedDeclarationTooltip(declaration: KtDeclaration): String? {
     return "Has declaration in common module"
 }
 
-fun navigateToExpectedDeclaration(e: MouseEvent?, declaration: KtDeclaration) {
-    val expectedDeclarations =
-        listOfNotNull(declaration.expectedDeclarationIfAny()) +
-                declaration.findMarkerBoundDeclarations().mapNotNull { it.expectedDeclarationIfAny() }
-    if (expectedDeclarations.isEmpty()) return
+fun KtDeclaration.allNavigatableExpectedDeclarations(): List<KtDeclaration> =
+    listOfNotNull(expectedDeclarationIfAny()) + findMarkerBoundDeclarations().mapNotNull { it.expectedDeclarationIfAny() }
 
-    val renderer = object : DefaultPsiElementCellRenderer() {
-        override fun getContainerText(element: PsiElement?, name: String?) = ""
+fun KtDeclaration.navigateToExpectedTitle() = "Choose expected for $name"
+
+fun KtDeclaration.navigateToExpectedUsagesTitle() = "Expected for $name"
+
+fun buildNavigateToExpectedDeclarationsPopup(e: MouseEvent?, element: PsiElement?): NavigationPopupDescriptor? {
+    return element?.markerDeclaration?.let {
+        val navigatableExpectedDeclarations = it.allNavigatableExpectedDeclarations()
+        if (navigatableExpectedDeclarations.isEmpty()) return null
+        return NavigationPopupDescriptor(
+            navigatableExpectedDeclarations,
+            it.navigateToExpectedTitle(),
+            it.navigateToExpectedUsagesTitle(),
+            ActualExpectedPsiElementCellRenderer()
+        )
     }
-    PsiElementListNavigator.openTargets(
-        e,
-        expectedDeclarations.toTypedArray(),
-        "Choose expected for ${declaration.name}",
-        "Expected for ${declaration.name}",
-        renderer
-    )
 }

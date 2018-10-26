@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.idea.highlighter.markers
 
-import com.intellij.codeInsight.daemon.impl.PsiElementListNavigator
 import com.intellij.ide.util.DefaultPsiElementCellRenderer
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analyzer.ModuleInfo
@@ -64,19 +63,26 @@ fun getPlatformActualTooltip(declaration: KtDeclaration): String? {
         }
 }
 
-fun navigateToPlatformActual(e: MouseEvent?, declaration: KtDeclaration) {
-    val actualDeclarations =
-        declaration.actualsForExpected() + declaration.findMarkerBoundDeclarations().flatMap { it.actualsForExpected() }
-    if (actualDeclarations.isEmpty()) return
+fun KtDeclaration.allNavigatableActualDeclarations(): Set<KtDeclaration> =
+    actualsForExpected() + findMarkerBoundDeclarations().flatMap { it.actualsForExpected() }
 
-    val renderer = object : DefaultPsiElementCellRenderer() {
-        override fun getContainerText(element: PsiElement?, name: String?) = ""
+class ActualExpectedPsiElementCellRenderer : DefaultPsiElementCellRenderer() {
+    override fun getContainerText(element: PsiElement?, name: String?) = ""
+}
+
+fun KtDeclaration.navigateToActualTitle() = "Choose actual for $name"
+
+fun KtDeclaration.navigateToActualUsagesTitle() = "Actuals for $name"
+
+fun buildNavigateToActualDeclarationsPopup(e: MouseEvent?, element: PsiElement?): NavigationPopupDescriptor? {
+    return element?.markerDeclaration?.let {
+        val navigatableActualDeclarations = it.allNavigatableActualDeclarations()
+        if (navigatableActualDeclarations.isEmpty()) return null
+        return NavigationPopupDescriptor(
+            navigatableActualDeclarations,
+            it.navigateToActualTitle(),
+            it.navigateToActualUsagesTitle(),
+            ActualExpectedPsiElementCellRenderer()
+        )
     }
-    PsiElementListNavigator.openTargets(
-        e,
-        actualDeclarations.toTypedArray(),
-        "Choose actual for ${declaration.name}",
-        "Actuals for ${declaration.name}",
-        renderer
-    )
 }
