@@ -285,11 +285,18 @@ abstract class BaseGradleIT {
             setupWorkingDir()
         }
 
-        val connection = GradleConnector.newConnector().forProjectDirectory(projectDir).connect()
         val options = defaultBuildOptions()
         val arguments = mutableListOf("-Pkotlin_version=${options.kotlinVersion}")
         options.androidGradlePluginVersion?.let { arguments.add("-Pandroid_tools_version=$it") }
         val env = createEnvironmentVariablesMap(options)
+        val wrapperVersion = chooseWrapperVersionOrFinishTest()
+        prepareWrapper(wrapperVersion, env)
+
+        val connection = GradleConnector
+            .newConnector()
+            .useGradleVersion(wrapperVersion)
+            .forProjectDirectory(projectDir)
+            .connect()
         val model = connection.action(ModelFetcherBuildAction(modelType)).withArguments(arguments).setEnvironmentVariables(env).run()
         connection.close()
         return model
