@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.constants.KClassValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.firstArgument
+import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializationAnnotations
 
@@ -24,7 +25,7 @@ abstract class AbstractSerialGenerator(val bindingContext: BindingContext, val c
             ?: return emptyList()
         @Suppress("UNCHECKED_CAST")
         val typeList: List<KClassValue> = annotation.firstArgument()?.value as? List<KClassValue> ?: return emptyList()
-        return typeList.map { it.value }
+        return typeList.map { it.getArgumentType(declarationInFile.module) }
     }
 
     val contextualKClassListInCurrentFile: Set<KotlinType> by lazy {

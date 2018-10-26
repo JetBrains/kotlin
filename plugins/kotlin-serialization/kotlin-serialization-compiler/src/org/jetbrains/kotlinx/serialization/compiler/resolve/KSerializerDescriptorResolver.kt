@@ -137,7 +137,12 @@ object KSerializerDescriptorResolver {
         ) {
             result.add(createSerializableClassPropertyDescriptor(thisDescriptor, classDescriptor))
         }
-        result.addAll(createLocalSerializersFieldsDescriptors(classDescriptor, thisDescriptor))
+        // don't add local serializer fields if typed constructor is not synthetic
+        if (classDescriptor.declaredTypeParameters.isNotEmpty() &&
+            findSerializerConstructorForTypeArgumentsSerializers(thisDescriptor, onlyIfSynthetic = true) != null
+        ) {
+            result.addAll(createLocalSerializersFieldsDescriptors(classDescriptor, thisDescriptor))
+        }
     }
 
     fun generateCompanionObjectMethods(
@@ -296,15 +301,19 @@ object KSerializerDescriptorResolver {
     }
 
     // finds constructor (KSerializer<T0>, KSerializer<T1>...) on a KSerializer<T<T0, T1...>>
-    fun findSerializerConstructorForTypeArgumentsSerializers(serializerDescriptor: ClassDescriptor): ClassConstructorDescriptor? {
+    fun findSerializerConstructorForTypeArgumentsSerializers(
+        serializerDescriptor: ClassDescriptor,
+        onlyIfSynthetic: Boolean = false
+    ): ClassConstructorDescriptor? {
         val serializableImplementationTypeArguments = extractKSerializerArgumentFromImplementation(serializerDescriptor)?.arguments
             ?: throw AssertionError("Serializer does not implement KSerializer??")
 
         val typeParamsCount = serializableImplementationTypeArguments.size
         if (typeParamsCount == 0) return null //don't need it
-        return serializerDescriptor.constructors.find { ctor ->
+        val ctor = serializerDescriptor.constructors.find { ctor ->
             ctor.valueParameters.size == typeParamsCount && ctor.valueParameters.all { isKSerializer(it.type) }
         }
+        return if (!onlyIfSynthetic) ctor else ctor?.takeIf { it.kind == CallableMemberDescriptor.Kind.SYNTHESIZED }
     }
 
     private fun createTypedSerializerConstructorDescriptor(
