@@ -177,8 +177,8 @@ expect fun String.compareTo(other: String, ignoreCase: Boolean = false): Int
 
 // From stringsCode.kt
 
-internal inline expect fun String.nativeIndexOf(ch: Char, fromIndex: Int): Int
-internal inline expect fun String.nativeLastIndexOf(ch: Char, fromIndex: Int): Int
+internal expect fun String.nativeIndexOf(ch: Char, fromIndex: Int): Int
+internal expect fun String.nativeLastIndexOf(ch: Char, fromIndex: Int): Int
 
 expect fun CharSequence.isBlank(): Boolean
 /**
