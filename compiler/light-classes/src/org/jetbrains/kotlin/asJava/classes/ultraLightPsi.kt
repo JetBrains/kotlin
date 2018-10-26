@@ -10,6 +10,7 @@ import com.intellij.lang.Language
 import com.intellij.psi.*
 import com.intellij.psi.impl.PsiClassImplUtil
 import com.intellij.psi.impl.PsiImplUtil
+import com.intellij.psi.impl.PsiSuperMethodImplUtil
 import com.intellij.psi.impl.light.*
 import com.intellij.psi.util.TypeConversionUtil
 import org.jetbrains.annotations.NonNls
@@ -57,7 +58,9 @@ class KtUltraLightClass(classOrObject: KtClassOrObject, private val support: Ult
     override fun findLightClassData(): LightClassData = super.findLightClassData().also {
         if (!isClsDelegateLoaded) {
             isClsDelegateLoaded = true
-            check(tooComplex) { "Cls delegate shouldn't be loaded for not too complex ultra-light classes!" }
+            check(tooComplex) {
+                "Cls delegate shouldn't be loaded for not too complex ultra-light classes! Qualified name: $qualifiedName"
+            }
         }
     }
 
@@ -92,6 +95,7 @@ class KtUltraLightClass(classOrObject: KtClassOrObject, private val support: Ult
     override fun getSuperClass(): PsiClass? = PsiClassImplUtil.getSuperClass(this)
     override fun getSupers(): Array<PsiClass> = PsiClassImplUtil.getSupers(this)
     override fun getSuperTypes(): Array<PsiClassType> = PsiClassImplUtil.getSuperTypes(this)
+    override fun getVisibleSignatures(): MutableCollection<HierarchicalMethodSignature> = PsiSuperMethodImplUtil.getVisibleSignatures(this)
 
     override fun getRBrace(): PsiElement? = null
     override fun getLBrace(): PsiElement? = null
