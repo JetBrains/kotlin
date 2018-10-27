@@ -52,6 +52,8 @@ val IrDeclaration.parentsWithSelf: Sequence<IrDeclarationParent>
 val IrDeclaration.parents: Sequence<IrDeclarationParent>
     get() = parentsWithSelf.drop(1)
 
+object BOUND_VALUE_PARAMETER: IrDeclarationOriginImpl("BOUND_VALUE_PARAMETER")
+
 class LocalDeclarationsLowering(
     val context: BackendContext,
     val localNameProvider: LocalNameProvider = LocalNameProvider.DEFAULT,
@@ -540,7 +542,7 @@ class LocalDeclarationsLowering(
                 val parameterDescriptor = WrappedValueParameterDescriptor()
                 val p = capturedValue.owner
                 IrValueParameterImpl(
-                    p.startOffset, p.endOffset, p.origin, IrValueParameterSymbolImpl(parameterDescriptor),
+                    p.startOffset, p.endOffset, BOUND_VALUE_PARAMETER, IrValueParameterSymbolImpl(parameterDescriptor),
                     suggestNameForCapturedValue(p), i, p.type, null, false, false
                 ).also {
                     parameterDescriptor.bind(it)

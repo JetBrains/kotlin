@@ -105,11 +105,7 @@ private fun JsIrBackendContext.lower(moduleFragment: IrModuleFragment, dependenc
     UnitMaterializationLowering(this).lower(moduleFragment)
     EnumClassLowering(this).runOnFilesPostfix(moduleFragment)
     EnumUsageLowering(this).lower(moduleFragment)
-    VarargLowering(this).lower(moduleFragment)
     LateinitLowering(this, true).lower(moduleFragment)
-    DefaultArgumentStubGenerator(this).runOnFilesPostfix(moduleFragment)
-    DefaultParameterInjector(this).runOnFilesPostfix(moduleFragment)
-    DefaultParameterCleaner(this).runOnFilesPostfix(moduleFragment)
     SharedVariablesLowering(this).runOnFilesPostfix(moduleFragment)
     ReturnableBlockLowering(this).lower(moduleFragment)
     LocalDelegatedPropertiesLowering().lower(moduleFragment)
@@ -117,6 +113,11 @@ private fun JsIrBackendContext.lower(moduleFragment: IrModuleFragment, dependenc
     InnerClassesLowering(this).runOnFilesPostfix(moduleFragment)
     InnerClassConstructorCallsLowering(this).runOnFilesPostfix(moduleFragment)
     SuspendFunctionsLowering(this).lower(moduleFragment)
+    CallableReferenceLowering(this).lower(moduleFragment)
+    DefaultArgumentStubGenerator(this).runOnFilesPostfix(moduleFragment)
+    DefaultParameterInjector(this).runOnFilesPostfix(moduleFragment)
+    DefaultParameterCleaner(this).runOnFilesPostfix(moduleFragment)
+    VarargLowering(this).lower(moduleFragment)
     PropertiesLowering().lower(moduleFragment)
     InitializersLowering(this, JsLoweredDeclarationOrigin.CLASS_STATIC_INITIALIZER, false).runOnFilesPostfix(moduleFragment)
     MultipleCatchesLowering(this).lower(moduleFragment)
@@ -129,7 +130,6 @@ private fun JsIrBackendContext.lower(moduleFragment: IrModuleFragment, dependenc
         constructorRedirectorLowering.runOnFilesPostfix(moduleFragment)
     }
 
-    CallableReferenceLowering(this).lower(moduleFragment)
 
     ClassReferenceLowering(this).lower(moduleFragment)
     PrimitiveCompanionLowering(this).lower(moduleFragment)
