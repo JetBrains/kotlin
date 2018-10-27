@@ -194,7 +194,6 @@ fun Jar.setupPublicJar(baseName: String, classifier: String = "") {
         put("Implementation-Vendor", "JetBrains")
         put("Implementation-Title", baseName)
         put("Implementation-Version", buildNumber)
-        put("Build-Jdk", System.getProperty("java.version"))
     }
 }
 
