@@ -52,11 +52,18 @@ public actual fun <T> lazy(lock: Any?, initializer: () -> T): Lazy<T> = Synchron
 
 
 
-private class SynchronizedLazyImpl<out T>(initializer: () -> T, lock: Any? = null) : Lazy<T>, Serializable {
+private class SynchronizedLazyImpl<out T>(initializer: () -> T, lock: Any? = null) : Lazy<T>, java.util.concurrent.locks.AbstractQueuedSynchronizer(), Serializable {
     private var initializer: (() -> T)? = initializer
     @Volatile private var _value: Any? = UNINITIALIZED_VALUE
-    // final field is required to enable safe publication of constructed instance
-    private val lock = lock ?: this
+
+    override fun tryAcquireShared(ignore: Int): Int {
+        return getState()
+    }
+
+    override fun tryReleaseShared(ignore: Int): Boolean  {
+        setState(1)
+        return true
+    }
 
     override val value: T
         get() {
@@ -66,16 +73,18 @@ private class SynchronizedLazyImpl<out T>(initializer: () -> T, lock: Any? = nul
                 return _v1 as T
             }
 
-            return synchronized(lock) {
+            //Ensure only a single thread can run the initializer. All others are waiting.
+            if (compareAndSetState(0, -1)) {
+                val typedValue = initializer!!()
+                _value = typedValue
+                releaseShared(1)
+                initializer = null
+                return typedValue
+            } else {
+                acquireSharedInterruptibly(1)
                 val _v2 = _value
-                if (_v2 !== UNINITIALIZED_VALUE) {
-                    @Suppress("UNCHECKED_CAST") (_v2 as T)
-                } else {
-                    val typedValue = initializer!!()
-                    _value = typedValue
-                    initializer = null
-                    typedValue
-                }
+                @Suppress("UNCHECKED_CAST")
+                return _v2 as T
             }
         }
 
