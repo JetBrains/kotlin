@@ -10,6 +10,8 @@ import org.jetbrains.jps.incremental.CompileContext
 import org.jetbrains.jps.incremental.FSOperations
 import org.jetbrains.jps.incremental.GlobalContextKey
 import org.jetbrains.jps.incremental.fs.CompilationRound
+import org.jetbrains.jps.incremental.messages.BuildMessage
+import org.jetbrains.jps.incremental.messages.CompilerMessage
 import org.jetbrains.kotlin.incremental.LookupSymbol
 import org.jetbrains.kotlin.incremental.storage.version.CacheAttributesDiff
 import org.jetbrains.kotlin.incremental.storage.version.CacheStatus
@@ -61,8 +63,6 @@ class KotlinCompileContext(val jpsContext: CompileContext) {
 
     val lookupsCacheAttributesManager: CompositeLookupsCacheAttributesManager = makeLookupsCacheAttributesManager()
 
-    val initialLookupsCacheStateDiff: CacheAttributesDiff<CompositeLookupsCacheAttributes> = loadLookupsCacheStateDiff()
-
     val shouldCheckCacheVersions = System.getProperty(KotlinBuilder.SKIP_CACHE_VERSION_CHECK_PROPERTY) == null
 
     val hasKotlinMarker = HasKotlinMarker(dataManager)
@@ -75,6 +75,12 @@ class KotlinCompileContext(val jpsContext: CompileContext) {
     val rebuildAfterCacheVersionChanged = RebuildAfterCacheVersionChangeMarker(dataManager)
 
     var rebuildingAllKotlin = false
+
+    /**
+     * Note, [loadLookupsCacheStateDiff] should be initialized last as it requires initialized
+     * [targetsIndex], [hasKotlinMarker] and [rebuildAfterCacheVersionChanged] (see [markChunkForRebuildBeforeBuild])
+     */
+    private val initialLookupsCacheStateDiff: CacheAttributesDiff<CompositeLookupsCacheAttributes> = loadLookupsCacheStateDiff()
 
     private fun makeLookupsCacheAttributesManager(): CompositeLookupsCacheAttributesManager {
         val expectedLookupsCacheComponents = mutableSetOf<String>()
@@ -102,7 +108,15 @@ class KotlinCompileContext(val jpsContext: CompileContext) {
                     it.get(LookupSymbol("<#NAME#>", "<#SCOPE#>"))
                 }
             } catch (e: Exception) {
-                jpsReportInternalBuilderError(jpsContext, Error("Lookup storage is corrupted, probe failed: ${e.message}", e))
+                // replace to jpsReportInternalBuilderError when IDEA-201297 will be implemented
+                jpsContext.processMessage(
+                    CompilerMessage(
+                        "Kotlin", BuildMessage.Kind.WARNING,
+                        "Incremental caches are corrupted. All Kotlin code will be rebuilt."
+                    )
+                )
+                KotlinBuilder.LOG.info(Error("Lookup storage is corrupted, probe failed: ${e.message}", e))
+
                 markAllKotlinForRebuild("Lookup storage is corrupted")
                 return diff.copy(actual = null)
             }
