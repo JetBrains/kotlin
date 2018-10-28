@@ -37,12 +37,16 @@ class KotlinScriptDependenciesClassFinder(project: Project,
                                           private val scriptDependenciesManager: ScriptDependenciesManager
 ) : NonClasspathClassFinder(project), KotlinSafeClassFinder {
 
-    private val myCaches by lazy {
+    // The property myCaches is made volatile as a workaround for IDEA-200807.
+    // The constructor of the parent class NonClassPathFinder leaks partially initialized "this" when
+    // registering listeners. The listeners call clearCache, which causes NPEs occasionally.
+    // Also we cannot use lazy initialization here as volatile doesn't apply to property delegates.
+    @Volatile
+    private var myCaches = 
         ConcurrentFactoryMap.createMap<VirtualFile, PackageDirectoryCache> { file ->
             val scriptClasspath = scriptDependenciesManager.getScriptClasspath(file)
             createCache(scriptClasspath)
         }
-    }
 
     override fun calcClassRoots(): List<VirtualFile> = scriptDependenciesManager.getAllScriptsClasspath().toList()
 
@@ -55,7 +59,9 @@ class KotlinScriptDependenciesClassFinder(project: Project,
 
     override fun clearCache() {
         super.clearCache()
-        myCaches.clear()
+        if (myCaches != null) {
+            myCaches.clear()
+        }
     }
 
     override fun findClass(qualifiedName: String, scope: GlobalSearchScope): PsiClass? {
