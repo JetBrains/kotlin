@@ -1,5 +1,5 @@
 // !LANGUAGE: +NewInference
-// IGNORE_BACKEND: JS, JS_IR, JVM_IR
+// IGNORE_BACKEND: JS, JVM_IR
 
 fun foo(s: String = "kotlin", vararg t: String): Boolean {
     if (s != "kotlin") throw AssertionError(s)

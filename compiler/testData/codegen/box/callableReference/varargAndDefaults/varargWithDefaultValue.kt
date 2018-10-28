@@ -1,5 +1,5 @@
 // !LANGUAGE: +NewInference
-// IGNORE_BACKEND: JS, JS_IR, JVM_IR
+// IGNORE_BACKEND: JS, JVM_IR
 
 fun foo(x: Int, vararg y: String = arrayOf("Aaa")): String =
         if (y[0].length == x) "OK" else "Fail"

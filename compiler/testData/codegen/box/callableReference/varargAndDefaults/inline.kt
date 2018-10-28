@@ -1,5 +1,5 @@
 // !LANGUAGE: +NewInference
-// IGNORE_BACKEND: JS, JS_IR, JVM_IR
+// IGNORE_BACKEND: JS, JVM_IR
 
 fun foo(vararg l: Long, s: String = "OK"): String =
         if (l.size == 0) s else "Fail"
