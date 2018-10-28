@@ -54,14 +54,12 @@ class KotlinScriptDependenciesClassFinder(project: Project,
             (scope as? ScriptModuleSearchScope ?:
              (scope as? AbstractJavaClassFinder.FilterOutKotlinSourceFilesScope)?.base as? ScriptModuleSearchScope
             )?.let {
-                myCaches[it.scriptFile]
+                myCaches?.get(it.scriptFile)
             } ?: super.getCache(scope)
 
     override fun clearCache() {
         super.clearCache()
-        if (myCaches != null) {
-            myCaches.clear()
-        }
+        myCaches?.clear()
     }
 
     override fun findClass(qualifiedName: String, scope: GlobalSearchScope): PsiClass? {
