@@ -12,18 +12,34 @@ import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
+import com.intellij.psi.PsiCall
+import com.intellij.psi.PsiCallExpression
+import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
+import org.jetbrains.kotlin.codegen.kotlinType
+import org.jetbrains.kotlin.descriptors.buildPossiblyInnerType
+import org.jetbrains.kotlin.idea.analysis.computeTypeInfoInContext
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.CollectingNameValidator
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
+import org.jetbrains.kotlin.idea.intentions.callExpression
 import org.jetbrains.kotlin.idea.intentions.calleeName
 import org.jetbrains.kotlin.idea.intentions.loopToCallChain.previousStatement
+import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.contains
+import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.getExpressionForTypeGuess
+import org.jetbrains.kotlin.idea.refactoring.introduce.findExpressionsByCopyableDataAndClearIt
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.addRemoveModifier.addModifier
-import org.jetbrains.kotlin.psi.psiUtil.endOffset
-import org.jetbrains.kotlin.psi.psiUtil.referenceExpression
-import org.jetbrains.kotlin.psi.psiUtil.startOffset
+import org.jetbrains.kotlin.psi.psiUtil.*
+import org.jetbrains.kotlin.psi.synthetics.findClassDescriptor
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.types.expressions.BasicExpressionTypingVisitor
+import org.jetbrains.kotlin.types.typeUtil.contains
+import org.jetbrains.kotlin.types.typeUtil.containsTypeAliases
+import org.jetbrains.kotlin.types.typeUtil.supertypes
+import java.io.Closeable
 
 class WrapResourceWithUseCallInspection : AbstractKotlinInspection() {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
@@ -40,7 +56,14 @@ class WrapResourceWithUseCallInspection : AbstractKotlinInspection() {
                     val referenceExpression = expression.receiverExpression as? KtNameReferenceExpression ?: return
                     val callExpression = expression.selectorExpression as? KtCallExpression ?: return
 
-                    // Check for closable/lambda expression
+                    // Check if variable referenced class in expression (KtNameReferenceExpression) contains inner supertype Closeable
+                    val bindingContext = referenceExpression.analyze(BodyResolveMode.FULL)
+                    val closeableSuperType = referenceExpression.kotlinType(bindingContext)?.supertypes()?.first()
+                    val constructorType = closeableSuperType?.constructor
+                    val descriptor = constructorType?.declarationDescriptor
+                    if (descriptor?.name.toString() != "Closeable") return
+
+                    // Check for lambda expression
                     val callLambdaArgument = callExpression.lambdaArguments
                     if (callLambdaArgument.size > 0) return
 
@@ -53,13 +76,20 @@ class WrapResourceWithUseCallInspection : AbstractKotlinInspection() {
                         ChangeResourceVariableWithUseCall(expression)
                     )
                     holder.registerProblem(problemDescriptor)
-                } else if (expression.receiverExpression is KtCallExpression && expression.selectorExpression is KtCallExpression){
+                } else if (expression.receiverExpression is KtCallExpression && expression.selectorExpression is KtCallExpression) {
 
                     // Check if reference and receiver are there and both are KtCallExpression.
                     val referenceExpression = expression.receiverExpression as? KtCallExpression ?: return
                     val callExpression = expression.selectorExpression as? KtCallExpression ?: return
 
-                    // Check for closable/lambda expression
+                    // Check if class in expression (KtCallExpression) contains inner supertype Closeable
+                    val bindingContext = referenceExpression.analyze(BodyResolveMode.FULL)
+                    val closeableSuperType = referenceExpression.kotlinType(bindingContext)?.supertypes()?.first()
+                    val constructorType = closeableSuperType?.constructor
+                    val descriptor = constructorType?.declarationDescriptor
+                    if (descriptor?.name.toString() != "Closeable") return
+
+                    // Check for lambda expression
                     val callLambdaArgument = callExpression.lambdaArguments
                     if (callLambdaArgument.size > 0) return
 
