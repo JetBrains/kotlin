@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.test
 import com.intellij.ide.highlighter.ModuleFileType
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.module.ModuleManager
+import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileVisitor
@@ -35,6 +36,11 @@ abstract class KotlinMultiFileTestCase : MultiFileTestCase() {
     override fun setUp() {
         super.setUp()
         VfsRootAccess.allowRootAccess(KotlinTestUtils.getHomeDirectory())
+
+        runWriteAction {
+            PluginTestCaseBase.addJdk(testRootDisposable, PluginTestCaseBase::mockJdk6)
+            ProjectRootManager.getInstance(project).projectSdk = PluginTestCaseBase.mockJdk6()
+        }
     }
 
     protected fun getTestDirName(lowercaseFirstLetter : Boolean) : String {
