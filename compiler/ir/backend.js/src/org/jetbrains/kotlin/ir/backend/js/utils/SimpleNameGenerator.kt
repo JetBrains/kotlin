@@ -135,6 +135,7 @@ class SimpleNameGenerator : NameGenerator {
                     } else {
                         nameBuilder.append('.')
                         nameBuilder.append(getNameForDeclaration(declaration.parent as IrDeclaration, context))
+                        if (declaration.visibility == Visibilities.PRIVATE) nameDeclarator = context.currentScope::declareFreshName
                     }
                 }
                 is IrClass -> {

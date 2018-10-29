@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 interface  B<T> {
     val bar: T
 }
