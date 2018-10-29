@@ -325,9 +325,15 @@ class KonanDescriptorSerializer private constructor(
             builder.addVersionRequirement(writeVersionRequirementDependingOnCoroutinesVersion())
         }
 
-        // TODO: K/N & Contracts???
-        // contractSerializer.serializeContractOfFunctionIfAny(descriptor, builder, this)
-        //
+        val descriptorSerializer = DescriptorSerializer(
+                containingDeclaration = containingDeclaration,
+                typeParameters = typeParameters,
+                extension = extension,
+                typeTable = typeTable,
+                versionRequirementTable = versionRequirementTable,
+                serializeTypeTableToFunction = serializeTypeTableToFunction)
+        contractSerializer.serializeContractOfFunctionIfAny(descriptor, builder, descriptorSerializer)
+
         extension.serializeFunction(descriptor, builder)
 
         /* Konan specific chunk */
