@@ -206,6 +206,14 @@ class JsIrBackendContext(
                     NoLookupLocation.FROM_BACKEND
                 ).filterNot { it.isExpect }.single().getter!!
             )
+
+            override val lateinitIsInitializedPropertyGetter = symbolTable.referenceSimpleFunction(
+                module.getPackage(kotlinPackageFqn).memberScope.getContributedVariables(
+                    Name.identifier("isInitialized"), NoLookupLocation.FROM_BACKEND
+                ).single {
+                    it.extensionReceiverParameter != null && !it.isExternal
+                }.getter!!
+            )
         }
 
         override fun shouldGenerateHandlerParameterForDefaultBodyFun() = true
