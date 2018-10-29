@@ -483,3 +483,7 @@
 
 - [`KT-25374`](https://youtrack.jetbrains.com/issue/KT-25374) Kapt: Build fails with Unresolved local class
 - [`KT-26540`](https://youtrack.jetbrains.com/issue/KT-26540) kapt3 fails to handle to-be-generated superclasses
+
+## Previous releases
+
+This release also includes the fixes and improvements from the previous releases: [1.3-M1](https://github.com/JetBrains/kotlin/blob/1.3-M1/ChangeLog.md) and [1.3-M2](https://github.com/JetBrains/kotlin/blob/1.3-M2/ChangeLog.md)
