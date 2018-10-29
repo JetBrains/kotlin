@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollectorUtil
 import org.jetbrains.kotlin.compiler.plugin.*
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import java.io.File
+import java.net.URLClassLoader
 import java.util.*
 
 object PluginCliParser {
@@ -58,7 +59,7 @@ object PluginCliParser {
 
     @JvmStatic
     fun loadPlugins(pluginClasspaths: Iterable<String>?, pluginOptions: Iterable<String>?, configuration: CompilerConfiguration) {
-        val classLoader = PluginURLClassLoader(
+        val classLoader = URLClassLoader(
             pluginClasspaths
                 ?.map { File(it).toURI().toURL() }
                 ?.toTypedArray()
