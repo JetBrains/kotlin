@@ -1183,6 +1183,11 @@ task classDelegation_linkTest(type: LinkKonanTest) {
     lib = "codegen/classDelegation/linkTest_lib.kt"
 }
 
+task contracts(type: RunStandaloneKonanTest) {
+    flags = [ '-Xuse-experimental=kotlin.Experimental', '-tr' ]
+    source = "codegen/contracts/contracts.kt"
+}
+
 task delegatedProperty_simpleVal(type: RunKonanTest) {
     goldValue = "x\n42\n"
     source = "codegen/delegatedProperty/simpleVal.kt"
