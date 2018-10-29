@@ -24,6 +24,7 @@ import com.sun.jdi.Location
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.idea.KotlinFileTypeFactory
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
@@ -169,7 +170,7 @@ object DebuggerUtils {
         fullResolveContext: BindingContext? = null
     ): BindingContext {
         val project = element.project
-        val inlineFunctions = HashSet<KtNamedFunction>()
+        val declarationsWithBody = HashSet<KtDeclarationWithBody>()
 
         val innerContexts = ArrayList<BindingContext>()
         innerContexts.addIfNotNull(fullResolveContext)
@@ -216,19 +217,32 @@ object DebuggerUtils {
                 val descriptor = resolvedCall.resultingDescriptor
                 if (descriptor is DeserializedSimpleFunctionDescriptor) return
 
-                if (InlineUtil.isInline(descriptor) && (analyzeInlineFunctions || hasReifiedTypeParameters(descriptor))) {
-                    val declaration = DescriptorToSourceUtilsIde.getAnyDeclaration(project, descriptor)
-                    if (declaration != null && declaration is KtNamedFunction && !analyzedElements.contains(declaration)) {
-                        inlineFunctions.add(declaration)
+                isAdditionalResolveNeededForDescriptor(descriptor)
+
+                if (descriptor is PropertyDescriptor) {
+                    for (accessor in descriptor.accessors) {
+                        isAdditionalResolveNeededForDescriptor(accessor)
                     }
+                }
+            }
+
+            private fun isAdditionalResolveNeededForDescriptor(descriptor: CallableDescriptor) {
+                if (!(InlineUtil.isInline(descriptor) && (analyzeInlineFunctions || hasReifiedTypeParameters(descriptor)))) {
+                    return
+                }
+
+                val declaration = DescriptorToSourceUtilsIde.getAnyDeclaration(project, descriptor)
+                if (declaration != null && declaration is KtDeclarationWithBody && !analyzedElements.contains(declaration)) {
+                    declarationsWithBody.add(declaration)
+                    return
                 }
             }
         })
 
         analyzedElements.add(element)
 
-        if (!inlineFunctions.isEmpty() && deep < 10) {
-            for (inlineFunction in inlineFunctions) {
+        if (!declarationsWithBody.isEmpty() && deep < 10) {
+            for (inlineFunction in declarationsWithBody) {
                 val body = inlineFunction.bodyExpression
                 if (body != null) {
                     innerContexts.add(
@@ -243,7 +257,7 @@ object DebuggerUtils {
                 }
             }
 
-            analyzedElements.addAll(inlineFunctions)
+            analyzedElements.addAll(declarationsWithBody)
         }
 
         return CompositeBindingContext.create(innerContexts)
