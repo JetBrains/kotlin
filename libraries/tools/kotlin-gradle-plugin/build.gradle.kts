@@ -1,161 +1,162 @@
-apply plugin: 'java'
-apply plugin: 'java-gradle-plugin'
-apply plugin: 'kotlin'
-apply plugin: 'org.jetbrains.dokka'
-apply plugin: 'jps-compatible'
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+import com.gradle.publish.PluginConfig
+import org.jetbrains.dokka.gradle.DokkaTask
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jetbrains.kotlin.pill.PillExtension
 
-buildscript {
-    repositories {
-        jcenter()
-    }
-    dependencies {
-        classpath 'org.jetbrains.dokka:dokka-gradle-plugin:0.9.13'
-    }
+plugins {
+    java
+    kotlin("jvm")
+    `java-gradle-plugin`
+    id("org.jetbrains.dokka")
+    id("jps-compatible")
 }
 
-configureJvmProject(project)
-configurePublishing(project)
+// todo: make lazy
+val jar: Jar by tasks
+runtimeJar(rewriteDepsToShadedCompiler(jar))
+
+sourcesJar()
+javadocJar()
+publish()
 
 repositories {
-    jcenter()
-    mavenLocal()
-    maven { url 'https://maven.google.com' }
+    google()
 }
 
-configurations {
-    agp25CompileOnly
-}
+val agp25CompileOnly by configurations.creating
 
 pill {
-    variant = "FULL"
+    variant = PillExtension.Variant.FULL
 }
 
 dependencies {
-    compile project(':kotlin-gradle-plugin-api')
-    compile project(':kotlin-gradle-plugin-model')
-    compileOnly project(':compiler')
-    compileOnly project(':compiler:incremental-compilation-impl')
-    compileOnly project(':compiler:daemon-common')
+    compile(project(":kotlin-gradle-plugin-api"))
+    compile(project(":kotlin-gradle-plugin-model"))
+    compileOnly(project(":compiler"))
+    compileOnly(project(":compiler:incremental-compilation-impl"))
+    compileOnly(project(":compiler:daemon-common"))
 
-    compile project(':kotlin-stdlib')
-    compile project(':kotlin-native:kotlin-native-utils')
-    compileOnly project(':kotlin-reflect-api')
-    compileOnly project(':kotlin-android-extensions')
-    compileOnly project(':kotlin-build-common')
-    compileOnly project(':kotlin-compiler-runner')
-    compileOnly project(':kotlin-annotation-processing')
-    compileOnly project(':kotlin-annotation-processing-gradle')
-    compileOnly project(':kotlin-scripting-compiler')
+    compile(project(":kotlin-stdlib"))
+    compile(project(":kotlin-native:kotlin-native-utils"))
+    compileOnly(project(":kotlin-reflect-api"))
+    compileOnly(project(":kotlin-android-extensions"))
+    compileOnly(project(":kotlin-build-common"))
+    compileOnly(project(":kotlin-compiler-runner"))
+    compileOnly(project(":kotlin-annotation-processing"))
+    compileOnly(project(":kotlin-annotation-processing-gradle"))
+    compileOnly(project(":kotlin-scripting-compiler"))
 
-    compileOnly 'com.android.tools.build:gradle:2.0.0'
-    compileOnly 'org.codehaus.groovy:groovy-all:2.4.12'
-    compileOnly gradleApi()
+    compileOnly("com.android.tools.build:gradle:2.0.0")
+    compileOnly("org.codehaus.groovy:groovy-all:2.4.12")
+    compileOnly(gradleApi())
 
-    compileOnly("kotlin.build.custom.deps:intellij-core:${rootProject.ext["versions.intellijSdk"]}") {
-        artifact {
-            name = 'intellij-core'
-            type = 'jar'
-            extension = 'jar'
-        }
-    }
+    compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
 
-    runtime project(path: ':kotlin-compiler-embeddable', configuration: "runtimeJar")
-    runtime project(path: ':kotlin-annotation-processing-gradle', configuration: "runtimeJar")
-    runtime project(path: ':kotlin-android-extensions', configuration: 'runtimeJar')
-    runtime project(path: ':kotlin-compiler-runner', configuration: 'runtimeJar')
-    runtime project(path: ':kotlin-scripting-compiler-embeddable', configuration: 'runtimeJar')
-    runtime project(':kotlin-reflect')
+    runtime(projectRuntimeJar(":kotlin-compiler-embeddable"))
+    runtime(projectRuntimeJar(":kotlin-annotation-processing-gradle"))
+    runtime(projectRuntimeJar(":kotlin-android-extensions"))
+    runtime(projectRuntimeJar(":kotlin-compiler-runner"))
+    runtime(projectRuntimeJar(":kotlin-scripting-compiler-embeddable"))
+    runtime(project(":kotlin-reflect"))
 
     // com.android.tools.build:gradle has ~50 unneeded transitive dependencies
-    agp25CompileOnly('com.android.tools.build:gradle:3.0.0-alpha1') { transitive = false }
-    agp25CompileOnly('com.android.tools.build:gradle-core:3.0.0-alpha1') { transitive = false }
-    agp25CompileOnly('com.android.tools.build:builder-model:3.0.0-alpha1') { transitive = false }
-    agp25CompileOnly 'org.codehaus.groovy:groovy-all:2.4.12'
-    agp25CompileOnly gradleApi()
-    agp25CompileOnly project(':kotlin-annotation-processing')
-    agp25CompileOnly project(':kotlin-annotation-processing-gradle')
+    agp25CompileOnly("com.android.tools.build:gradle:3.0.0-alpha1") { isTransitive = false }
+    agp25CompileOnly("com.android.tools.build:gradle-core:3.0.0-alpha1") { isTransitive = false }
+    agp25CompileOnly("com.android.tools.build:builder-model:3.0.0-alpha1") { isTransitive = false }
+    agp25CompileOnly("org.codehaus.groovy:groovy-all:2.4.12")
+    agp25CompileOnly(gradleApi())
+    agp25CompileOnly(project(":kotlin-annotation-processing"))
+    agp25CompileOnly(project(":kotlin-annotation-processing-gradle"))
 
-    testCompileOnly project(':compiler')
-    testCompile project(path: ':kotlin-build-common', configuration: 'tests-jar')
-    testCompile project(':kotlin-android-extensions')
-    testCompile project(':kotlin-compiler-runner')
-    testCompile project(':kotlin-test::kotlin-test-junit')
-    testCompile "junit:junit:4.12"
-    testCompileOnly project(':kotlin-reflect-api')
-    testCompileOnly project(':kotlin-annotation-processing')
-    testCompileOnly project(':kotlin-annotation-processing-gradle')
+    testCompileOnly (project(":compiler"))
+    testCompile(projectTests(":kotlin-build-common"))
+    testCompile(project(":kotlin-android-extensions"))
+    testCompile(project(":kotlin-compiler-runner"))
+    testCompile(project(":kotlin-test::kotlin-test-junit"))
+    testCompile("junit:junit:4.12")
+    testCompileOnly(project(":kotlin-reflect-api"))
+    testCompileOnly(project(":kotlin-annotation-processing"))
+    testCompileOnly(project(":kotlin-annotation-processing-gradle"))
 }
 
-tasks.withType(project.compileKotlin.class) {
-    kotlinOptions.jdkHome = JDK_18
-    kotlinOptions.languageVersion = "1.2"
-    kotlinOptions.apiVersion = "1.2"
-    kotlinOptions.freeCompilerArgs += ["-Xskip-metadata-version-check"]
-}
+val agp25 by sourceSets.creating
+agp25.compileClasspath += configurations.compile + agp25CompileOnly + mainSourceSet.output
 
-sourceSets.main.java.srcDirs += sourceSets.main.kotlin.srcDirs
+tasks {
+    withType<KotlinCompile> {
+        kotlinOptions.jdkHome = rootProject.extra["JDK_18"] as String
+        kotlinOptions.languageVersion = "1.2"
+        kotlinOptions.apiVersion = "1.2"
+        kotlinOptions.freeCompilerArgs += listOf("-Xskip-metadata-version-check")
+    }
 
-sourceSets {
-    agp25 {
-        compileClasspath += configurations.compile + configurations.agp25CompileOnly + sourceSets.main.output
+    named<ProcessResources>("processResources") {
+        val propertiesToExpand = mapOf("projectVersion" to project.version)
+        for ((name, value) in propertiesToExpand) {
+            inputs.property(name, value)
+        }
+        expand("projectVersion" to project.version)
+    }
+
+    named<Jar>("jar") {
+        dependsOn(tasks.named("agp25Classes"))
+        from(agp25.output.classesDirs)
+        callGroovy("manifestAttributes", manifest, project)
+    }
+
+    named<ValidateTaskProperties>("validateTaskProperties") {
+        failOnWarning = true
+    }
+
+    named<DokkaTask>("dokka") {
+        outputFormat = "markdown"
+        includes = listOf("$projectDir/Module.md")
     }
 }
 
-processResources {
-    def props = ["projectVersion" : project.version]
-    inputs.properties(props)
-    expand(props)
-}
-
-jar.dependsOn agp25Classes
-
-jar {
-    from sourceSets.agp25.output.classesDirs
-    manifestAttributes(manifest, project)
-}
-
-ArtifactsKt.runtimeJar(project, EmbeddableKt.rewriteDepsToShadedCompiler(project, jar, {}), {})
-
-artifacts {
-    archives sourcesJar
-    archives javadocJar
-}
-
-test.executable = "${JDK_18}/bin/java"
-test.dependsOn(validateTaskProperties)
-
-validateTaskProperties.failOnWarning = true
-
-dokka {
-    outputFormat = 'markdown'
-    includes = ["${projectDir}/Module.md"]
+projectTest {
+    executable = "${rootProject.extra["JDK_18"]!!}/bin/java"
+    dependsOn(tasks.named("validateTaskProperties"))
 }
 
 pluginBundle {
-    plugins {
-        kotlinJvmPlugin {
-            id = 'org.jetbrains.kotlin.jvm'
-            description = displayName = 'Kotlin JVM plugin'
-        }
-        kotlinMultiplatformPlugin {
-            id = 'org.jetbrains.kotlin.multiplatform'
-            description = displayName = 'Kotlin Multiplatform plugin'
-        }
-        kotlinAndroidPlugin {
-            id = 'org.jetbrains.kotlin.android'
-            description = displayName = 'Kotlin Android plugin'
-        }
-        kotlinAndroidExtensionsPlugin {
-            id = 'org.jetbrains.kotlin.android.extensions'
-            description = displayName = 'Kotlin Android Extensions plugin'
-        }
-        kotlinKaptPlugin {
-            id = 'org.jetbrains.kotlin.kapt'
-            description = displayName = 'Kotlin Kapt plugin'
-        }
-        kotlinScriptingPlugin {
-            id = 'org.jetbrains.kotlin.plugin.scripting'
-            description = displayName = 'Gradle plugin for kotlin scripting'
+    fun create(name: String, id: String, display: String) {
+        (plugins).create(name) {
+            this.id = id
+            this.displayName = display
+            this.description = display
         }
     }
+
+    create(
+        name = "kotlinJvmPlugin",
+        id = "org.jetbrains.kotlin.jvm",
+        display = "Kotlin JVM plugin"
+    )
+    create(
+        name = "kotlinMultiplatformPlugin",
+        id = "org.jetbrains.kotlin.multiplatform",
+        display = "Kotlin Multiplatform plugin"
+    )
+    create(
+        name = "kotlinAndroidPlugin",
+        id = "org.jetbrains.kotlin.android",
+        display = "Android"
+    )
+    create(
+        name = "kotlinAndroidExtensionsPlugin",
+        id = "org.jetbrains.kotlin.android.extensions",
+        display = "Kotlin Android Extensions plugin"
+    )
+    create(
+        name = "kotlinKaptPlugin",
+        id = "org.jetbrains.kotlin.kapt",
+        display = "Kotlin Kapt plugin"
+    )
+    create(
+        name = "kotlinScriptingPlugin",
+        id = "org.jetbrains.kotlin.plugin.scripting",
+        display = "Gradle plugin for kotlin scripting"
+    )
 }
