@@ -35,13 +35,13 @@ interface CommandLineProcessor {
     fun processOption(option: CliOption, value: String, configuration: CompilerConfiguration) {}
 
     fun <T> CompilerConfiguration.appendList(option: CompilerConfigurationKey<List<T>>, value: T) {
-        val paths = getList(option).toMutableList()
+        val paths = getList(option).asMutableList()
         paths.add(value)
         put(option, paths)
     }
 
     fun <T> CompilerConfiguration.appendList(option: CompilerConfigurationKey<List<T>>, values: List<T>) {
-        val paths = getList(option).toMutableList()
+        val paths = getList(option).asMutableList()
         paths.addAll(values)
         put(option, paths)
     }
@@ -54,5 +54,13 @@ interface CommandLineProcessor {
                 processOption(option, value, this)
             }
         }
+    }
+
+    private fun <T> List<T>.asMutableList(): MutableList<T> {
+        if (this is ArrayList<T>) {
+            return this
+        }
+
+        return this.toMutableList()
     }
 }
