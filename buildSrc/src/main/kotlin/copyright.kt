@@ -51,7 +51,7 @@ open class WriteCopyrightToFile : DefaultTask() {
         val xmlParser = XmlParser()
         val node = xmlParser.parse(file)
         assert(node.attribute("name") == "CopyrightManager") {
-            "Copyright format changed occasionally?"
+            "Format changed occasionally?"
         }
 
         val copyrightBlock = node.children().filterIsInstance<Node>().single()
