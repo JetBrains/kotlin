@@ -50,9 +50,7 @@ const val COULD_NOT_CONNECT_TO_DAEMON_MESSAGE = "Could not connect to Kotlin com
 internal fun kotlinCompilerExecutionStrategy(): String =
     System.getProperty(KOTLIN_COMPILER_EXECUTION_STRATEGY_PROPERTY) ?: DAEMON_EXECUTION_STRATEGY
 
-internal open class GradleCompilerRunner(protected val project: Project) : KotlinCompilerRunner<GradleCompilerEnvironment>() {
-    override val log = GradleKotlinLogger(project.logger)
-
+internal open class GradleCompilerRunner(protected val project: Project) {
     fun runJvmCompiler(
         sourcesToCompile: List<File>,
         commonSources: List<File>,
@@ -106,7 +104,7 @@ internal open class GradleCompilerRunner(protected val project: Project) : Kotli
         return runCompiler(KotlinCompilerClass.METADATA, args, environment)
     }
 
-    override fun runCompiler(
+    private fun runCompiler(
         compilerClassName: String,
         compilerArgs: CommonCompilerArguments,
         environment: GradleCompilerEnvironment
@@ -118,10 +116,10 @@ internal open class GradleCompilerRunner(protected val project: Project) : Kotli
             )
             compilerArgs.version = false
         }
-        super.runCompiler(compilerClassName, compilerArgs, environment)
+        compileWithDaemonOrFallback(compilerClassName, compilerArgs, environment)
     }
 
-    override fun compileWithDaemonOrFallback(
+    protected open fun compileWithDaemonOrFallback(
         compilerClassName: String,
         compilerArgs: CommonCompilerArguments,
         environment: GradleCompilerEnvironment
@@ -148,7 +146,7 @@ internal open class GradleCompilerRunner(protected val project: Project) : Kotli
             isDebugEnabled: Boolean
         ): CompileServiceSession? {
             val compilerId = CompilerId.makeCompilerId(compilerFullClasspath)
-            return newDaemonConnection(
+            return KotlinCompilerRunnerUtils.newDaemonConnection(
                 compilerId, clientIsAliveFlagFile, sessionIsAliveFlagFile,
                 messageCollector = messageCollector,
                 isDebugEnabled = isDebugEnabled

@@ -21,6 +21,7 @@ import org.jetbrains.jps.api.GlobalOptions
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY
 import org.jetbrains.kotlin.cli.common.arguments.*
+import org.jetbrains.kotlin.cli.common.messages.MessageCollectorUtil
 import org.jetbrains.kotlin.config.CompilerSettings
 import org.jetbrains.kotlin.config.IncrementalCompilation
 import org.jetbrains.kotlin.config.additionalArgumentsAsList
@@ -32,8 +33,8 @@ import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.PrintStream
 
-class JpsKotlinCompilerRunner : KotlinCompilerRunner<JpsCompilerEnvironment>() {
-    override val log: KotlinLogger = JpsKotlinLogger(KotlinBuilder.LOG)
+class JpsKotlinCompilerRunner {
+    private val log: KotlinLogger = JpsKotlinLogger(KotlinBuilder.LOG)
 
     private var compilerSettings: CompilerSettings? = null
 
@@ -153,7 +154,7 @@ class JpsKotlinCompilerRunner : KotlinCompilerRunner<JpsCompilerEnvironment>() {
         }
     }
 
-    override fun compileWithDaemonOrFallback(
+    private fun compileWithDaemonOrFallback(
         compilerClassName: String,
         compilerArgs: CommonCompilerArguments,
         environment: JpsCompilerEnvironment
@@ -164,6 +165,15 @@ class JpsKotlinCompilerRunner : KotlinCompilerRunner<JpsCompilerEnvironment>() {
             withDaemon = { compileWithDaemon(compilerClassName, compilerArgs, environment) },
             fallback = { fallbackCompileStrategy(compilerArgs, compilerClassName, environment) }
         )
+    }
+
+    private fun runCompiler(compilerClassName: String, compilerArgs: CommonCompilerArguments, environment: JpsCompilerEnvironment) {
+        try {
+            compileWithDaemonOrFallback(compilerClassName, compilerArgs, environment)
+        } catch (e: Throwable) {
+            MessageCollectorUtil.reportException(environment.messageCollector, e)
+            reportInternalCompilerError(environment.messageCollector)
+        }
     }
 
     private fun compileWithDaemon(
@@ -311,7 +321,7 @@ class JpsKotlinCompilerRunner : KotlinCompilerRunner<JpsCompilerEnvironment>() {
     }
 
     private fun getReturnCodeFromObject(rc: Any?): String = when {
-        rc == null -> INTERNAL_ERROR
+        rc == null -> ExitCode.INTERNAL_ERROR.toString()
         ExitCode::class.java.name == rc::class.java.name -> rc.toString()
         else -> throw IllegalStateException("Unexpected return: " + rc)
     }
@@ -333,7 +343,7 @@ class JpsKotlinCompilerRunner : KotlinCompilerRunner<JpsCompilerEnvironment>() {
 
             environment.withProgressReporter { progress ->
                 progress.progress("connecting to daemon")
-                newDaemonConnection(
+                KotlinCompilerRunnerUtils.newDaemonConnection(
                     compilerId,
                     clientFlagFile,
                     sessionFlagFile,
