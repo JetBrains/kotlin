@@ -80,7 +80,7 @@ abstract class KotlinModuleBuildTarget<BuildMetaInfoType : BuildMetaInfo> intern
     val isTests: Boolean
         get() = jpsModuleBuildTarget.isTests
 
-    val targetId: TargetId
+    open val targetId: TargetId
         get() {
             // Since IDEA 2016 each gradle source root is imported as a separate module.
             // One gradle module X is imported as two JPS modules:

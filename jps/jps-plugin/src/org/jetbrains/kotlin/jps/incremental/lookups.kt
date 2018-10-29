@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.jps.incremental
 import java.io.File
 
 private val DATA_CONTAINER_VERSION_FILE_NAME = "data-container-format-version.txt"
-private val DATA_CONTAINER_VERSION = 3
+private val DATA_CONTAINER_VERSION = 4
 
 fun lookupsCacheVersionManager(dataRoot: File, isEnabled: Boolean) =
     CacheVersionManager(
