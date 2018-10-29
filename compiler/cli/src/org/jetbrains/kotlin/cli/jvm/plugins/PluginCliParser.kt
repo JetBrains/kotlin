@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollectorUtil
-import org.jetbrains.kotlin.cli.jvm.BundledCompilerPlugins
 import org.jetbrains.kotlin.compiler.plugin.*
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import java.io.File
@@ -68,7 +67,6 @@ object PluginCliParser {
         )
 
         val componentRegistrars = ServiceLoader.load(ComponentRegistrar::class.java, classLoader).toMutableList()
-        componentRegistrars.addAll(BundledCompilerPlugins.componentRegistrars)
         configuration.addAll(ComponentRegistrar.PLUGIN_COMPONENT_REGISTRARS, componentRegistrars)
 
         processPluginOptions(pluginOptions, configuration, classLoader)
@@ -85,9 +83,7 @@ object PluginCliParser {
         } ?: mapOf()
 
         // TODO issue a warning on using deprecated command line processors when all official plugin migrate to the newer convention
-
-        val commandLineProcessors = ServiceLoader.load(CommandLineProcessor::class.java, classLoader).toMutableList()
-        commandLineProcessors.addAll(BundledCompilerPlugins.commandLineProcessors)
+        val commandLineProcessors = ServiceLoader.load(CommandLineProcessor::class.java, classLoader)
 
         for (processor in commandLineProcessors) {
             val declaredOptions = processor.pluginOptions.associateBy { it.optionName }
