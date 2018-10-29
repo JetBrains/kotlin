@@ -1,37 +1,35 @@
-apply plugin: 'kotlin'
-apply plugin: 'maven'
-apply plugin: 'jps-compatible'
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jetbrains.kotlin.pill.PillExtension
 
-configureJvmProject(project)
-configurePublishing(project)
+plugins {
+    kotlin("jvm")
+    maven
+    id("jps-compatible")
+}
 
-repositories {
-    mavenLocal()
+standardPublicJars()
+publish()
+
+dependencies {
+    compile(project(":kotlin-stdlib"))
+    compile(project(":kotlin-native:kotlin-native-utils"))
+
+    compileOnly(gradleApi())
+    compileOnly("com.android.tools.build:gradle:0.4.2")
 }
 
 pill {
-    variant = "FULL"
+    variant = PillExtension.Variant.FULL
 }
 
-dependencies {
-    compile project(':kotlin-stdlib')
-    compile project('::kotlin-native:kotlin-native-utils')
+tasks {
+    withType<KotlinCompile> {
+        kotlinOptions.languageVersion = "1.2"
+        kotlinOptions.apiVersion = "1.2"
+        kotlinOptions.freeCompilerArgs += listOf("-Xskip-metadata-version-check")
+    }
 
-    compileOnly gradleApi()
-    compileOnly 'com.android.tools.build:gradle:0.4.2'
-}
-
-tasks.withType(project.compileKotlin.class) {
-    kotlinOptions.languageVersion = "1.2"
-    kotlinOptions.apiVersion = "1.2"
-    kotlinOptions.freeCompilerArgs += ["-Xskip-metadata-version-check"]
-}
-
-artifacts {
-    archives sourcesJar
-    archives javadocJar
-}
-
-jar {
-    manifestAttributes(manifest, project)
+    named<Jar>("jar") {
+        callGroovy("manifestAttributes", manifest, project)
+    }
 }
