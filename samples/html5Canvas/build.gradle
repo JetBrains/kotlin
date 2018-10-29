@@ -9,7 +9,7 @@ plugins {
 
 repositories {
     jcenter()
-    maven { url "https://dl.bintray.com/kotlin/ktor" }
+    maven { url 'https://dl.bintray.com/kotlin/ktor' }
 }
 
 String packageName = 'kotlinx.interop.wasm.dom'
@@ -31,7 +31,7 @@ kotlin {
         }
         httpServerMain {
             dependencies {
-                implementation "io.ktor:ktor-server-netty:1.0.0-beta-1"
+                implementation 'io.ktor:ktor-server-netty:1.0.0-beta-2'
             }
         }
     }
@@ -40,9 +40,9 @@ kotlin {
 task jsinterop(type: Exec) {
     workingDir projectDir
     def ext = MPPTools.isWindows() ? '.bat' : ''
-    def distributionPath = project.properties['org.jetbrains.kotlin.native.home']
+    def distributionPath = project.properties['org.jetbrains.kotlin.native.home'] as String
     if (distributionPath != null) {
-        commandLine Paths.get(distributionPath as String, 'bin', "jsinterop$ext").toString(),
+        commandLine Paths.get(file(distributionPath).path, 'bin', "jsinterop$ext").toString(),
                 '-pkg', packageName,
                 '-o', jsinteropKlibFileName,
                 '-target', 'wasm32'
