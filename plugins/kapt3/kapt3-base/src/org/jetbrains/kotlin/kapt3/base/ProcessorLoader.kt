@@ -14,7 +14,7 @@ import java.net.URLClassLoader
 import java.util.*
 import javax.annotation.processing.Processor
 
-class ProcessorLoader(
+open class ProcessorLoader(
     private val paths: KaptPaths,
     private val annotationProcessorFqNames: List<String>,
     private val logger: KaptLogger
@@ -33,7 +33,7 @@ class ProcessorLoader(
             annotationProcessorFqNames.mapNotNull { tryLoadProcessor(it, classLoader) }
         } else {
             logger.info("Need to discovery annotation processors in the AP classpath")
-            ServiceLoader.load(Processor::class.java, classLoader).toList()
+            doLoadProcessors(classLoader)
         }
 
         if (processors.isEmpty()) {
@@ -43,6 +43,10 @@ class ProcessorLoader(
         }
 
         return processors
+    }
+
+    open fun doLoadProcessors(classLoader: URLClassLoader): List<Processor> {
+        return ServiceLoader.load(Processor::class.java, classLoader).toList()
     }
 
     private fun tryLoadProcessor(fqName: String, classLoader: ClassLoader): Processor? {

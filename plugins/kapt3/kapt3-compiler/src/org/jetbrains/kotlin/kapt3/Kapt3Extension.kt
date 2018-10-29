@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.OUTPUT
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.messages.OutputMessageUtil
 import org.jetbrains.kotlin.cli.common.output.writeAll
+import org.jetbrains.kotlin.cli.jvm.plugins.ServiceLoaderLite
 import org.jetbrains.kotlin.codegen.ClassBuilderMode
 import org.jetbrains.kotlin.codegen.CompilationErrorHandler
 import org.jetbrains.kotlin.codegen.KotlinCodegenFacade
@@ -60,6 +61,7 @@ import org.jetbrains.kotlin.resolve.jvm.extensions.PartialAnalysisHandlerExtensi
 import java.io.File
 import java.io.StringWriter
 import java.io.Writer
+import java.net.URLClassLoader
 import javax.annotation.processing.Processor
 import com.sun.tools.javac.util.List as JavacList
 
@@ -87,7 +89,14 @@ class ClasspathBasedKapt3Extension(
     private var processorLoader: ProcessorLoader? = null
 
     override fun loadProcessors(): List<Processor> {
-        return ProcessorLoader(paths, annotationProcessorFqNames, logger).also { this.processorLoader = it }.loadProcessors()
+        val efficientProcessorLoader = object : ProcessorLoader(paths, annotationProcessorFqNames, logger) {
+            override fun doLoadProcessors(classLoader: URLClassLoader): List<Processor> {
+                return ServiceLoaderLite.loadImplementations(Processor::class.java, classLoader)
+            }
+        }
+
+        this.processorLoader = efficientProcessorLoader
+        return efficientProcessorLoader.loadProcessors()
     }
 
     override fun analysisCompleted(

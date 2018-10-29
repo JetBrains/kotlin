@@ -1,14 +1,20 @@
-
 import java.io.File
 import org.gradle.api.tasks.bundling.Jar
 import org.jetbrains.kotlin.gradle.dsl.KotlinCompile
+import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompile
 
 plugins {
     kotlin("jvm")
     id("jps-compatible")
 }
 
-jvmTarget = "1.6"
+tasks.named<KotlinJvmCompile>("compileKotlin") {
+    kotlinOptions.jvmTarget = "1.6"
+}
+
+tasks.named<KotlinJvmCompile>("compileTestKotlin") {
+    kotlinOptions.jvmTarget = "1.8"
+}
 
 val compilerModules: Array<String> by rootProject.extra
 val otherCompilerModules = compilerModules.filter { it != path }
