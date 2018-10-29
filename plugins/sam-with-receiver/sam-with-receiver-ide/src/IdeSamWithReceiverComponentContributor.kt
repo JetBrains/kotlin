@@ -39,7 +39,7 @@ import org.jetbrains.kotlin.samWithReceiver.SamWithReceiverResolverExtension
 
 class IdeSamWithReceiverComponentContributor(val project: Project) : StorageComponentContainerContributor {
     private companion object {
-        val ANNOTATION_OPTION_PREFIX = "plugin:$PLUGIN_ID:${ANNOTATION_OPTION.name}="
+        val ANNOTATION_OPTION_PREFIX = "plugin:$PLUGIN_ID:${ANNOTATION_OPTION.optionName}="
     }
 
     private val cache = CachedValuesManager.getManager(project).createCachedValue({

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.scripting.compiler.plugin
 
+import org.jetbrains.kotlin.compiler.plugin.AbstractCliOption
 import java.io.File
 import org.jetbrains.kotlin.compiler.plugin.CliOption
 import org.jetbrains.kotlin.compiler.plugin.CliOptionProcessingException
@@ -77,7 +78,7 @@ class ScriptingCommandLineProcessor : CommandLineProcessor {
             LEGACY_SCRIPT_RESOLVER_ENVIRONMENT_OPTION
         )
 
-    override fun processOption(option: CliOption, value: String, configuration: CompilerConfiguration) = when (option) {
+    override fun processOption(option: AbstractCliOption, value: String, configuration: CompilerConfiguration) = when (option) {
         DISABLE_SCRIPTING_PLUGIN_OPTION -> {
             configuration.put(
                 ScriptingConfigurationKeys.DISABLE_SCRIPTING_PLUGIN_OPTION,
@@ -128,6 +129,6 @@ class ScriptingCommandLineProcessor : CommandLineProcessor {
             }
             configuration.put(ScriptingConfigurationKeys.LEGACY_SCRIPT_RESOLVER_ENVIRONMENT_OPTION, currentEnv)
         }
-        else -> throw CliOptionProcessingException("Unknown option: ${option.name}")
+        else -> throw CliOptionProcessingException("Unknown option: ${option.optionName}")
     }
 }
