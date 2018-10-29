@@ -96,6 +96,10 @@ public class KotlinJavaPsiFacade {
         });
     }
 
+    public void clearPackageCaches() {
+        packageCache = null;
+    }
+
     public LightModifierList getEmptyModifierList() {
         return emptyModifierList;
     }
