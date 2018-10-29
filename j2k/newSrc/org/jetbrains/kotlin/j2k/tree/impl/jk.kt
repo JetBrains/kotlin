@@ -17,6 +17,8 @@
 package org.jetbrains.kotlin.j2k.tree.impl
 
 import com.intellij.psi.PsiClass
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.j2k.JKSymbolProvider
 import org.jetbrains.kotlin.j2k.ast.Mutability
 import org.jetbrains.kotlin.j2k.ast.Nullability
 import org.jetbrains.kotlin.j2k.tree.*
@@ -24,6 +26,7 @@ import org.jetbrains.kotlin.j2k.tree.JKLiteralExpression.LiteralType
 import org.jetbrains.kotlin.j2k.tree.JKLiteralExpression.LiteralType.BOOLEAN
 import org.jetbrains.kotlin.j2k.tree.JKLiteralExpression.LiteralType.NULL
 import org.jetbrains.kotlin.j2k.tree.visitors.JKVisitor
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.KtClass
 
 class JKFileImpl : JKFile, JKBranchElementBase() {
@@ -232,6 +235,20 @@ class JKBooleanLiteral(val value: Boolean) : JKLiteralExpression, JKElementBase(
 
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitLiteralExpression(this, data)
 }
+
+fun JKLiteralExpression.LiteralType.toJkType(symbolProvider: JKSymbolProvider): JKType =
+    when (this) {
+        JKLiteralExpression.LiteralType.CHAR -> JKJavaPrimitiveTypeImpl.CHAR
+        JKLiteralExpression.LiteralType.BOOLEAN -> JKJavaPrimitiveTypeImpl.BOOLEAN
+        JKLiteralExpression.LiteralType.INT -> JKJavaPrimitiveTypeImpl.INT
+        JKLiteralExpression.LiteralType.LONG -> JKJavaPrimitiveTypeImpl.LONG
+        JKLiteralExpression.LiteralType.FLOAT -> JKJavaPrimitiveTypeImpl.FLOAT
+        JKLiteralExpression.LiteralType.DOUBLE -> JKJavaPrimitiveTypeImpl.DOUBLE
+        JKLiteralExpression.LiteralType.NULL ->
+            ClassId.topLevel(KotlinBuiltIns.FQ_NAMES.unit.toSafe()).toKtClassType(symbolProvider)
+        JKLiteralExpression.LiteralType.STRING ->
+            ClassId.topLevel(KotlinBuiltIns.FQ_NAMES.string.toSafe()).toKtClassType(symbolProvider)
+    }
 
 class JKLocalVariableImpl(modifierList: JKModifierList, type: JKTypeElement, name: JKNameIdentifier, initializer: JKExpression) :
     JKLocalVariable, JKBranchElementBase() {
