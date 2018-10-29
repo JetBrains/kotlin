@@ -1,5 +1,90 @@
 # CHANGELOG
 
+## 1.3.0
+
+### IDE
+
+- [`KT-25429`](https://youtrack.jetbrains.com/issue/KT-25429) Replace update channel in IDE plugin
+- [`KT-27793`](https://youtrack.jetbrains.com/issue/KT-27793) kotlinx.android.synthetic is unresolved on project reopening
+
+### IDE. Inspections and Intentions
+
+- [`KT-27619`](https://youtrack.jetbrains.com/issue/KT-27619) Inspection "Invalid property key" should check whether reference is soft or not
+
+## 1.3-RC4
+
+### Compiler
+
+#### Fixes
+
+- [`KT-26858`](https://youtrack.jetbrains.com/issue/KT-26858) Inline class access to private companion object value fails with NSME
+- [`KT-27030`](https://youtrack.jetbrains.com/issue/KT-27030) Non-capturing lambda in inline class members fails with internal error (NPE in genClosure)
+- [`KT-27031`](https://youtrack.jetbrains.com/issue/KT-27031) Inline extension lambda in inline class fun fails with internal error (wrong bytecode generated)
+- [`KT-27033`](https://youtrack.jetbrains.com/issue/KT-27033) Anonymous object in inline class fun fails with internal error (NPE in generateObjectLiteral/.../writeOuterClassAndEnclosingMethod)
+- [`KT-27096`](https://youtrack.jetbrains.com/issue/KT-27096) AnalyzerException: Error at instruction 71: Expected I, but found . when function takes unsigned type with default value and returns nullable inline class
+- [`KT-27130`](https://youtrack.jetbrains.com/issue/KT-27130) Suspension point is inside a critical section regression
+- [`KT-27132`](https://youtrack.jetbrains.com/issue/KT-27132) CCE when inline class is boxed
+- [`KT-27258`](https://youtrack.jetbrains.com/issue/KT-27258) Report diagnostic for suspension point inside critical section for crossinline suspend lambdas
+- [`KT-27393`](https://youtrack.jetbrains.com/issue/KT-27393) Incorrect inline class type coercion in '==' with generic call
+- [`KT-27484`](https://youtrack.jetbrains.com/issue/KT-27484) Suspension points in synchronized blocks checker crashes
+- [`KT-27502`](https://youtrack.jetbrains.com/issue/KT-27502) Boxed inline class backed by Any is not unboxed before method invocation
+- [`KT-27526`](https://youtrack.jetbrains.com/issue/KT-27526) Functional type with inline class argument and suspend modified expects unboxed value while it is boxed
+- [`KT-27615`](https://youtrack.jetbrains.com/issue/KT-27615) Double wrap when inline class is printing if it was obtained from list/map
+- [`KT-27620`](https://youtrack.jetbrains.com/issue/KT-27620) Report error when using value of kotlin.Result type as an extension receiver with safe call
+
+### IDE
+
+- [`KT-27298`](https://youtrack.jetbrains.com/issue/KT-27298) Deadlock on project open
+- [`KT-27329`](https://youtrack.jetbrains.com/issue/KT-27329) Migration doesn't work for kts projects when versions are stored in kt files inside buildSrc directory
+- [`KT-27355`](https://youtrack.jetbrains.com/issue/KT-27355) Assertion error from light classes (expected callable member was null) for type alias in JvmMultifileClass annotated file
+- [`KT-27456`](https://youtrack.jetbrains.com/issue/KT-27456) New Project wizard: Kotlin (Multiplatform Library): consider generating source files with different names to work around KT-21186
+- [`KT-27473`](https://youtrack.jetbrains.com/issue/KT-27473) "Gradle sync failed: Already disposed: Module: 'moduleName-app_commonMain'" on reimport of a multiplatform project with Android target between different IDEs
+- [`KT-27485`](https://youtrack.jetbrains.com/issue/KT-27485) Gradle import failed with "Already disposed" error on reopening of a multiplatform project with Android target
+- [`KT-27572`](https://youtrack.jetbrains.com/issue/KT-27572) ISE: "Could not generate LightClass for entry declared in <null>" at CompilationErrorHandler.lambda$static$0()
+
+### IDE. Android
+
+- [`KT-26975`](https://youtrack.jetbrains.com/issue/KT-26975) CNFDE KotlinAndroidGradleOrderEnumerationHandler$FactoryImpl in AS 3.3 with Kotlin 1.3.0-rc-51
+- [`KT-27451`](https://youtrack.jetbrains.com/issue/KT-27451) `main` target platform selection is not working in a multiplatform project with Android and JVM targets in Android Studio
+
+### IDE. Gradle
+
+- [`KT-27365`](https://youtrack.jetbrains.com/issue/KT-27365) Dependencies between Java project and MPP one are not respected by import
+- [`KT-27643`](https://youtrack.jetbrains.com/issue/KT-27643) First import of Android project miss skips some dependencies in IDEA 183
+
+### IDE. Multiplatform
+
+- [`KT-27356`](https://youtrack.jetbrains.com/issue/KT-27356) Use `kotlin-stdlib` instead of `kotlin-stdlib-jdk8` in Android-related MPP templates
+
+### IDE. Scratch
+
+- [`KT-24180`](https://youtrack.jetbrains.com/issue/KT-24180) Add key shortcut and action for running a kotlin scratch file (green arrow button in the editor tool-buttons)
+
+### JavaScript
+
+- [`KT-26320`](https://youtrack.jetbrains.com/issue/KT-26320) JS: forEach + firstOrNull + when combination does not compile correctly
+- [`KT-26787`](https://youtrack.jetbrains.com/issue/KT-26787) Incorrect JS code translation: `when` statement inside `for` loop breaks out of the loop
+
+### Libraries
+
+- [`KT-27508`](https://youtrack.jetbrains.com/issue/KT-27508) Rename Random companion object to Default
+
+### Tools. Gradle
+
+- [`KT-26758`](https://youtrack.jetbrains.com/issue/KT-26758) Unify Gradle DSL for compiler flags in new multiplatform model
+- [`KT-26840`](https://youtrack.jetbrains.com/issue/KT-26840) Support -Xuse-experimental in the new MPP language settings DSL
+- [`KT-27278`](https://youtrack.jetbrains.com/issue/KT-27278) New MPP plugin is binary-incompatible with Gradle 5.0
+- [`KT-27499`](https://youtrack.jetbrains.com/issue/KT-27499) In new MPP, support compiler plugins (subplugins) options import into the IDE for each source set
+
+### Tools. JPS
+
+- [`KT-27044`](https://youtrack.jetbrains.com/issue/KT-27044) JPS rebuilds twice when dependency is updated
+
+### Tools. kapt
+
+- [`KT-27119`](https://youtrack.jetbrains.com/issue/KT-27119) kapt: val without explicit type that is assigned an object expression implementing a generic interface breaks compilation
+
+
 ## 1.3-RC3
 
 ### Compiler
