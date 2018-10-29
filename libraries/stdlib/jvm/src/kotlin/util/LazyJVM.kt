@@ -77,10 +77,12 @@ private class SynchronizedLazyImpl<out T>(initializer: () -> T, lock: Any? = nul
             if (compareAndSetState(0, -1)) {
                 val typedValue = initializer!!()
                 _value = typedValue
+                //Immediately release shared lock permanently
                 releaseShared(1)
                 initializer = null
                 return typedValue
             } else {
+                //Waiting threads will block here until shared lock is released
                 acquireSharedInterruptibly(1)
                 val _v2 = _value
                 @Suppress("UNCHECKED_CAST")
