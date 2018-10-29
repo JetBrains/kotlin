@@ -12,7 +12,7 @@ import com.intellij.openapi.roots.ModuleRootEvent
 import com.intellij.openapi.roots.ModuleRootListener
 import com.intellij.openapi.roots.ProjectRootManager
 
-// This is a workaround until IDEA-200525 is fixed.
+// This is a workaround for IDEA < 183. For details, see IDEA-200525.
 class ProjectRootModificationTrackerFixer(val project: Project) : ProjectComponent {
     override fun initComponent() {
         project.messageBus.connect(project).subscribe(
