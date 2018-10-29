@@ -18939,6 +18939,11 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
                 runTest("compiler/testData/codegen/box/reflection/annotations/findAnnotation.kt");
             }
 
+            @TestMetadata("localClassParameterAnnotation.kt")
+            public void testLocalClassParameterAnnotation() throws Exception {
+                runTest("compiler/testData/codegen/box/reflection/annotations/localClassParameterAnnotation.kt");
+            }
+
             @TestMetadata("openSuspendFun.kt")
             public void testOpenSuspendFun() throws Exception {
                 runTest("compiler/testData/codegen/box/reflection/annotations/openSuspendFun.kt");

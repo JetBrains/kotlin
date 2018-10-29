@@ -160,8 +160,12 @@ class BytecodeListingTextCollectingVisitor(val filter: Filter, val withSignature
         val parameterAnnotations = hashMapOf<Int, MutableList<String>>()
 
         handleModifiers(access, methodAnnotations)
+        val methodParamCount = Type.getArgumentTypes(desc).size
 
         return object : MethodVisitor(ASM5) {
+            private var visibleAnnotableParameterCount = methodParamCount
+            private var invisibleAnnotableParameterCount = methodParamCount
+
             override fun visitAnnotation(desc: String, visible: Boolean): AnnotationVisitor? {
                 val type = Type.getType(desc).className
                 methodAnnotations += "@$type "
@@ -170,7 +174,9 @@ class BytecodeListingTextCollectingVisitor(val filter: Filter, val withSignature
 
             override fun visitParameterAnnotation(parameter: Int, desc: String, visible: Boolean): AnnotationVisitor? {
                 val type = Type.getType(desc).className
-                parameterAnnotations.getOrPut(parameter, { arrayListOf() }).add("@$type ")
+                parameterAnnotations.getOrPut(
+                    parameter + methodParamCount - (if (visible) visibleAnnotableParameterCount else invisibleAnnotableParameterCount),
+                    { arrayListOf() }).add("@$type ")
                 return super.visitParameterAnnotation(parameter, desc, visible)
             }
 
@@ -184,6 +190,15 @@ class BytecodeListingTextCollectingVisitor(val filter: Filter, val withSignature
                         Declaration("${signatureIfRequired}method $name($parameterWithAnnotations): $returnType", methodAnnotations)
                 )
                 super.visitEnd()
+            }
+
+            @Suppress("NOTHING_TO_OVERRIDE")
+            override fun visitAnnotableParameterCount(parameterCount: Int, visible: Boolean) {
+                if (visible)
+                    visibleAnnotableParameterCount = parameterCount
+                else {
+                    invisibleAnnotableParameterCount = parameterCount
+                }
             }
         }
     }

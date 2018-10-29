@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.kapt3.stubs
 
+import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.kapt3.util.isAbstract
 import org.jetbrains.kotlin.kapt3.util.isEnum
 import org.jetbrains.kotlin.kapt3.util.isJvmOverloadsGenerated
@@ -34,7 +35,7 @@ internal class ParameterInfo(
     val invisibleAnnotations: List<AnnotationNode>?
 )
 
-internal fun MethodNode.getParametersInfo(containingClass: ClassNode): List<ParameterInfo> {
+internal fun MethodNode.getParametersInfo(containingClass: ClassNode, isInnerClassMember: Boolean): List<ParameterInfo> {
     val localVariables = this.localVariables ?: emptyList()
     val parameters = this.parameters ?: emptyList()
     val isStatic = isStatic(access)
@@ -42,7 +43,9 @@ internal fun MethodNode.getParametersInfo(containingClass: ClassNode): List<Para
 
     // First and second parameters in enum constructors are synthetic, we should ignore them
     val isEnumConstructor = (name == "<init>") && containingClass.isEnum()
-    val startParameterIndex = if (isEnumConstructor) 2 else 0
+    val startParameterIndex =
+        if (isEnumConstructor) 2 else
+            if (isInnerClassMember && name == "<init>") 1 else 0
 
     val parameterTypes = Type.getArgumentTypes(desc)
 
@@ -71,8 +74,9 @@ internal fun MethodNode.getParametersInfo(containingClass: ClassNode): List<Para
             name = "p${index - startParameterIndex}"
         }
 
-        val visibleAnnotations = visibleParameterAnnotations?.get(index)
-        val invisibleAnnotations = invisibleParameterAnnotations?.get(index)
+        val indexForAnnotation = if (AsmUtil.IS_BUILT_WITH_ASM6) index else index - startParameterIndex
+        val visibleAnnotations = visibleParameterAnnotations?.get(indexForAnnotation)
+        val invisibleAnnotations = invisibleParameterAnnotations?.get(indexForAnnotation)
         parameterInfos += ParameterInfo(0, name, type, visibleAnnotations, invisibleAnnotations)
     }
     return parameterInfos

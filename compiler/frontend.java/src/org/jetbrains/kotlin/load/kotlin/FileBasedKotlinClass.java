@@ -252,7 +252,12 @@ public abstract class FileBasedKotlinClass implements KotlinJvmBinaryClass {
                 MethodAnnotationVisitor v = memberVisitor.visitMethod(Name.identifier(name), desc);
                 if (v == null) return null;
 
+                int methodParamCount = Type.getArgumentTypes(desc).length;
                 return new MethodVisitor(ASM5) {
+
+                    private int visibleAnnotableParameterCount = methodParamCount;
+                    private int invisibleAnnotableParameterCount = methodParamCount;
+
                     @Override
                     public org.jetbrains.org.objectweb.asm.AnnotationVisitor visitAnnotation(@NotNull String desc, boolean visible) {
                         return convertAnnotationVisitor(v, desc, innerClasses);
@@ -260,8 +265,17 @@ public abstract class FileBasedKotlinClass implements KotlinJvmBinaryClass {
 
                     @Override
                     public org.jetbrains.org.objectweb.asm.AnnotationVisitor visitParameterAnnotation(int parameter, @NotNull String desc, boolean visible) {
-                        AnnotationArgumentVisitor av = v.visitParameterAnnotation(parameter, resolveNameByDesc(desc, innerClasses), SourceElement.NO_SOURCE);
+                        int parameterIndex = parameter + methodParamCount - (visible ? visibleAnnotableParameterCount : invisibleAnnotableParameterCount);
+                        AnnotationArgumentVisitor av = v.visitParameterAnnotation(parameterIndex, resolveNameByDesc(desc, innerClasses), SourceElement.NO_SOURCE);
                         return av == null ? null : convertAnnotationVisitor(av, innerClasses);
+                    }
+
+                    public void visitAnnotableParameterCount(int parameterCount, boolean visible) {
+                        if (visible)
+                            visibleAnnotableParameterCount = parameterCount;
+                        else {
+                            invisibleAnnotableParameterCount = parameterCount;
+                        }
                     }
 
                     @Override

@@ -382,7 +382,7 @@ class ClassFileToSourceStubConverter(
                 if (it.name == "valueOf" && it.desc == "(Ljava/lang/String;)L${clazz.name};") return@mapJList null
             }
 
-            convertMethod(it, clazz, lineMappings, packageFqName)
+            convertMethod(it, clazz, lineMappings, packageFqName, isInner)
         }
 
         val nestedClasses = mapJList<InnerClassNode, JCTree>(clazz.innerClasses) { innerClass ->
@@ -626,7 +626,8 @@ class ClassFileToSourceStubConverter(
         method: MethodNode,
         containingClass: ClassNode,
         lineMappings: KaptLineMappingCollector,
-        packageFqName: String
+        packageFqName: String,
+        isInner: Boolean
     ): JCMethodDecl? {
         if (isIgnored(method.invisibleAnnotations)) return null
         val descriptor = kaptContext.origins[method]?.descriptor as? CallableDescriptor ?: return null
@@ -659,7 +660,7 @@ class ClassFileToSourceStubConverter(
         val asmReturnType = Type.getReturnType(method.desc)
         val jcReturnType = if (isConstructor) null else treeMaker.Type(asmReturnType)
 
-        val parametersInfo = method.getParametersInfo(containingClass)
+        val parametersInfo = method.getParametersInfo(containingClass, isInner)
 
         if (!checkIfValidTypeName(containingClass, asmReturnType)
             || parametersInfo.any { !checkIfValidTypeName(containingClass, it.type) }

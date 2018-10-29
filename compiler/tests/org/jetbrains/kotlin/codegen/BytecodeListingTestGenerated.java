@@ -230,6 +230,11 @@ public class BytecodeListingTestGenerated extends AbstractBytecodeListingTest {
             runTest("compiler/testData/codegen/bytecodeListing/annotations/literals.kt");
         }
 
+        @TestMetadata("localClassWithCapturedParams.kt")
+        public void testLocalClassWithCapturedParams() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/annotations/localClassWithCapturedParams.kt");
+        }
+
         @TestMetadata("noAdditionalAnnotationsInAccessors.kt")
         public void testNoAdditionalAnnotationsInAccessors() throws Exception {
             runTest("compiler/testData/codegen/bytecodeListing/annotations/noAdditionalAnnotationsInAccessors.kt");

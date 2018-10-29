@@ -517,12 +517,27 @@ public class FunctionCodegen {
 
         Iterator<ValueParameterDescriptor> iterator = valueParameters.iterator();
         List<JvmMethodParameterSignature> kotlinParameterTypes = jvmSignature.getValueParameters();
+        int syntheticParameterCount = 0;
+        for (int i = 0; i < kotlinParameterTypes.size(); i++) {
+            JvmMethodParameterSignature parameterSignature = kotlinParameterTypes.get(i);
+            JvmMethodParameterKind kind = parameterSignature.getKind();
+            if (kind.isSkippedInGenericSignature()) {
+                if (AsmUtil.IS_BUILT_WITH_ASM6) {
+                    markEnumOrInnerConstructorParameterAsSynthetic(mv, i, state.getClassBuilderMode());
+                }
+                else {
+                    syntheticParameterCount++;
+                }
+            }
+        }
+        if (!AsmUtil.IS_BUILT_WITH_ASM6) {
+            Asm7UtilKt.visitAnnotableParameterCount(mv, kotlinParameterTypes.size() - syntheticParameterCount);
+        }
 
         for (int i = 0; i < kotlinParameterTypes.size(); i++) {
             JvmMethodParameterSignature parameterSignature = kotlinParameterTypes.get(i);
             JvmMethodParameterKind kind = parameterSignature.getKind();
             if (kind.isSkippedInGenericSignature()) {
-                markEnumOrInnerConstructorParameterAsSynthetic(mv, i, state.getClassBuilderMode());
                 continue;
             }
 
@@ -534,7 +549,9 @@ public class FunctionCodegen {
                       : null;
 
             if (annotated != null) {
-                AnnotationCodegen.forParameter(i, mv, innerClassConsumer, state).genAnnotations(annotated, parameterSignature.getAsmType());
+                //noinspection ConstantConditions
+                AnnotationCodegen.forParameter(AsmUtil.IS_BUILT_WITH_ASM6 ? i : i - syntheticParameterCount, mv, innerClassConsumer, state)
+                        .genAnnotations(annotated, parameterSignature.getAsmType());
             }
         }
     }

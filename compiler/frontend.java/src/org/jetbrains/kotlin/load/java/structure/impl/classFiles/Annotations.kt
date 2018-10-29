@@ -60,7 +60,7 @@ internal class AnnotationsAndParameterCollectorMethodVisitor(
             )
 
     override fun visitParameterAnnotation(parameter: Int, desc: String, visible: Boolean): AnnotationVisitor? {
-        val index = parameter - parametersToSkipNumber
+        val index = if (Opcodes.API_VERSION <= Opcodes.ASM6) parameter - parametersToSkipNumber else parameter
         if (index < 0) return null
 
         val annotations =

@@ -291,6 +291,11 @@ public class LoadJavaWithFastClassReadingTestGenerated extends AbstractLoadJavaW
             runTest("compiler/testData/loadJava/compiledJava/annotations/AnnotatedMethod.java");
         }
 
+        @TestMetadata("AnnotatedParameterInInnerClassConstructor.java")
+        public void testAnnotatedParameterInInnerClassConstructor() throws Exception {
+            runTest("compiler/testData/loadJava/compiledJava/annotations/AnnotatedParameterInInnerClassConstructor.java");
+        }
+
         @TestMetadata("AnnotatedValueParameter.java")
         public void testAnnotatedValueParameter() throws Exception {
             runTest("compiler/testData/loadJava/compiledJava/annotations/AnnotatedValueParameter.java");
