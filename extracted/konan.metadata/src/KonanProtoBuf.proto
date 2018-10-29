@@ -37,6 +37,8 @@ extend Function {
 
 extend Property {
     repeated Annotation property_annotation = 170;
+    repeated Annotation property_getter_annotation = 177;
+    repeated Annotation property_setter_annotation = 178;
     optional bool has_backing_field = 171;
     optional bool used_as_variable = 172;
     optional Annotation.Argument.Value compile_time_value = 173;

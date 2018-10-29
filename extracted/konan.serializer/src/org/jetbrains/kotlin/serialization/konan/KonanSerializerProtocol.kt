@@ -11,6 +11,8 @@ object KonanSerializerProtocol : SerializerExtensionProtocol(
         KonanProtoBuf.classAnnotation,
         KonanProtoBuf.functionAnnotation,
         KonanProtoBuf.propertyAnnotation,
+        KonanProtoBuf.propertyGetterAnnotation,
+        KonanProtoBuf.propertySetterAnnotation,
         KonanProtoBuf.enumEntryAnnotation,
         KonanProtoBuf.compileTimeValue,
         KonanProtoBuf.parameterAnnotation,

@@ -272,12 +272,12 @@ class ContentsTest {
             class Foo constructor() {
                 @A val annotated: Int = 0
                 var annotatedAccessors: Int
-                    get
-                    set
+                    @A get
+                    @A set
                 val annotatedGetter: Int = 0
-                    get
+                    @A get
                 var annotatedSetter: Int
-                    set
+                    @A set
                 var privateSetter: Int
                     private set
                 protected val protectedSimple: Int = 0
