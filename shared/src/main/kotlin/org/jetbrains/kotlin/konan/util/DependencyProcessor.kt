@@ -289,17 +289,15 @@ internal object InternalServer {
         }
     }
 
-    private fun checkAccessible(): Boolean {
+    private fun checkAccessible() = try {
         if (!InetAddress.getLocalHost().canonicalHostName.endsWith(".$internalDomain")) {
             // Fast path:
-            return false
-        }
-
-        try {
+            false
+        } else {
             InetAddress.getByName(host)
-            return true
-        } catch (e: UnknownHostException) {
-            return false
+            true
         }
+    } catch (e: UnknownHostException) {
+        false
     }
 }
