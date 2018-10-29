@@ -82,7 +82,7 @@ class ClasspathBasedKapt3Extension(
     compilerConfiguration
 ) {
     override val analyzePartially: Boolean
-        get() = useLightAnalysis
+        get() = useLightAnalysis && super.analyzePartially
 
     private var processorLoader: ProcessorLoader? = null
 
@@ -125,6 +125,9 @@ abstract class AbstractKapt3Extension(
         annotationProcessingComplete = true
         return false
     }
+
+    override val analyzePartially: Boolean
+        get() = !annotationProcessingComplete
 
     override fun doAnalysis(
         project: Project,
