@@ -1,21 +1,26 @@
-apply plugin: 'kotlin'
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jetbrains.kotlin.pill.PillExtension
 
-configureJvmProject(project)
-configurePublishing(project)
-
-repositories {
-    mavenLocal()
+plugins {
+    kotlin("jvm")
+    maven
 }
+
+standardPublicJars()
+publish()
 
 dependencies {
-    compile project(':kotlin-stdlib')
+    compile(project(":kotlin-stdlib"))
 }
 
-artifacts {
-    archives sourcesJar
-    archives javadocJar
-}
+tasks {
+    withType<KotlinCompile> {
+        kotlinOptions.languageVersion = "1.2"
+        kotlinOptions.apiVersion = "1.2"
+        kotlinOptions.freeCompilerArgs += listOf("-Xskip-metadata-version-check")
+    }
 
-jar {
-    manifestAttributes(manifest, project)
+    named<Jar>("jar") {
+        callGroovy("manifestAttributes", manifest, project)
+    }
 }
