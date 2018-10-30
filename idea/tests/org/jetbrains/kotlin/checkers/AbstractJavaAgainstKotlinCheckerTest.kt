@@ -16,8 +16,17 @@
 
 package org.jetbrains.kotlin.checkers
 
-abstract class AbstractJavaAgainstKotlinSourceCheckerTest : AbstractJavaAgainstKotlinCheckerTest()  {
+import org.jetbrains.kotlin.idea.perf.forceUsingUltraLightClassesForTest
+
+abstract class AbstractJavaAgainstKotlinSourceCheckerTest : AbstractJavaAgainstKotlinCheckerTest() {
     fun doTest(path: String) {
         doTest(true, true, path.replace(".kt", ".java"), path)
+    }
+}
+
+abstract class AbstractJavaAgainstKotlinSourceCheckerWithUltraLightTest : AbstractJavaAgainstKotlinSourceCheckerTest() {
+    override fun setUp() {
+        super.setUp()
+        forceUsingUltraLightClassesForTest()
     }
 }

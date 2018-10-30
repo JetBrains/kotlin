@@ -34,10 +34,7 @@ import org.jetbrains.kotlin.android.synthetic.test.AbstractAndroidBytecodeShapeT
 import org.jetbrains.kotlin.android.synthetic.test.AbstractAndroidSyntheticPropertyDescriptorTest
 import org.jetbrains.kotlin.asJava.classes.AbstractUltraLightClassLoadingTest
 import org.jetbrains.kotlin.asJava.classes.AbstractUltraLightClassSanityTest
-import org.jetbrains.kotlin.checkers.AbstractJavaAgainstKotlinBinariesCheckerTest
-import org.jetbrains.kotlin.checkers.AbstractJavaAgainstKotlinSourceCheckerTest
-import org.jetbrains.kotlin.checkers.AbstractJsCheckerTest
-import org.jetbrains.kotlin.checkers.AbstractPsiCheckerTest
+import org.jetbrains.kotlin.checkers.*
 import org.jetbrains.kotlin.findUsages.AbstractFindUsagesTest
 import org.jetbrains.kotlin.findUsages.AbstractKotlinFindUsagesWithLibraryTest
 import org.jetbrains.kotlin.formatter.AbstractFormatterTest
@@ -188,6 +185,11 @@ fun main(args: Array<String>) {
         }
 
         testClass<AbstractJavaAgainstKotlinSourceCheckerTest> {
+            model("kotlinAndJavaChecker/javaAgainstKotlin")
+            model("kotlinAndJavaChecker/javaWithKotlin")
+        }
+
+        testClass<AbstractJavaAgainstKotlinSourceCheckerWithUltraLightTest> {
             model("kotlinAndJavaChecker/javaAgainstKotlin")
             model("kotlinAndJavaChecker/javaWithKotlin")
         }
