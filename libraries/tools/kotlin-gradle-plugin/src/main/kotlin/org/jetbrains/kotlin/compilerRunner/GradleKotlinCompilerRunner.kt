@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.daemon.client.CompileServiceSession
 import org.jetbrains.kotlin.daemon.common.*
 import org.jetbrains.kotlin.gradle.plugin.kotlinDebug
 import org.jetbrains.kotlin.gradle.tasks.*
+import org.jetbrains.kotlin.gradle.utils.SerializableOptional
 import org.jetbrains.kotlin.gradle.utils.newTmpFile
 import org.jetbrains.kotlin.gradle.utils.relativeToRoot
 import org.jetbrains.kotlin.incremental.*
@@ -130,8 +131,8 @@ internal open class GradleCompilerRunner(protected val project: Project) {
             compilerClassName = compilerClassName,
             compilerArgs = ArgumentUtils.convertArgumentsToStringList(compilerArgs).toTypedArray(),
             isVerbose = compilerArgs.verbose,
-            incrementalCompilationEnvironment = environment.incrementalCompilationEnvironment,
-            incrementalModuleInfo = buildModulesInfo(project.gradle)
+            incrementalCompilationEnvironment = SerializableOptional(environment.incrementalCompilationEnvironment),
+            incrementalModuleInfo = SerializableOptional(buildModulesInfo(project.gradle))
         )
         kotlinCompilerRunnable.run()
     }
