@@ -6,9 +6,11 @@
 package org.jetbrains.kotlin.compilerRunner
 
 import org.gradle.api.Project
+import org.gradle.workers.ForkMode
 import org.gradle.workers.IsolationMode
 import org.gradle.workers.WorkerExecutor
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
+import org.jetbrains.kotlin.gradle.utils.SerializableOptional
 
 internal class GradleCompilerRunnerWithWorkers(
     project: Project,
@@ -19,16 +21,20 @@ internal class GradleCompilerRunnerWithWorkers(
         compilerArgs: CommonCompilerArguments,
         environment: GradleCompilerEnvironment
     ) {
+        val icEnv = environment.incrementalCompilationEnvironment
+        val modulesInfo = icEnv?.let { buildModulesInfo(project.gradle) }
+
         workersExecutor.submit(KotlinCompilerRunnable::class.java) { config ->
             config.isolationMode = IsolationMode.NONE
+            config.forkMode = ForkMode.NEVER
             config.params(
                 ProjectFilesForCompilation(project),
                 environment.compilerFullClasspath,
                 compilerClassName,
                 ArgumentUtils.convertArgumentsToStringList(compilerArgs).toTypedArray(),
                 compilerArgs.verbose,
-                environment.incrementalCompilationEnvironment,
-                buildModulesInfo(project.gradle)
+                SerializableOptional(icEnv),
+                SerializableOptional(modulesInfo)
             )
         }
     }

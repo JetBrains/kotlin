@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.daemon.common.*
 import org.jetbrains.kotlin.gradle.plugin.kotlinDebug
 import org.jetbrains.kotlin.gradle.tasks.GradleMessageCollector
 import org.jetbrains.kotlin.gradle.tasks.throwGradleExceptionIfError
+import org.jetbrains.kotlin.gradle.utils.SerializableOptional
 import org.jetbrains.kotlin.incremental.ChangedFiles
 import org.slf4j.LoggerFactory
 import java.io.ByteArrayOutputStream
@@ -48,15 +49,15 @@ internal class KotlinCompilerRunnable @Inject constructor(
     private val compilerClassName: String,
     private val compilerArgs: Array<String>,
     private val isVerbose: Boolean,
-    private val incrementalCompilationEnvironment: IncrementalCompilationEnvironment?,
-    private val incrementalModuleInfo: IncrementalModuleInfo?
+    private val incrementalCompilationEnvironment: SerializableOptional<IncrementalCompilationEnvironment>,
+    private val incrementalModuleInfo: SerializableOptional<IncrementalModuleInfo>
 ) : Runnable {
     private val log: KotlinLogger =
         SL4JKotlinLogger(LoggerFactory.getLogger("KotlinCompilerRunnable"))
     private val messageCollector = GradleMessageCollector(log)
 
     private val isIncremental: Boolean
-        get() = incrementalCompilationEnvironment != null
+        get() = incrementalCompilationEnvironment.value != null
 
     override fun run() {
         val exitCode = compileWithDaemonOrFallbackImpl()
@@ -165,7 +166,7 @@ internal class KotlinCompilerRunnable @Inject constructor(
         sessionId: Int,
         targetPlatform: CompileService.TargetPlatform
     ): CompileService.CallResult<Int> {
-        val icEnv = incrementalCompilationEnvironment ?: error("incrementalCompilationEnvironment is null!")
+        val icEnv = incrementalCompilationEnvironment.value ?: error("incrementalCompilationEnvironment is null!")
         val knownChangedFiles = icEnv.changedFiles as? ChangedFiles.Known
 
         val compilationOptions = IncrementalCompilationOptions(
@@ -181,7 +182,7 @@ internal class KotlinCompilerRunnable @Inject constructor(
             usePreciseJavaTracking = icEnv.usePreciseJavaTracking,
             localStateDirs = icEnv.localStateDirs,
             multiModuleICSettings = icEnv.multiModuleICSettings,
-            modulesInfo = incrementalModuleInfo!!
+            modulesInfo = incrementalModuleInfo.value!!
         )
 
         log.info("Options for KOTLIN DAEMON: $compilationOptions")
