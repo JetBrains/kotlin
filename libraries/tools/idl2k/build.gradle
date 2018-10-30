@@ -1,18 +1,11 @@
 buildscript {
     ext.antlr4_version = '4.7.1'
-    ext.kotlin_version = '1.3.0'
-
-    repositories {
-        mavenCentral()
-    }
-
-    dependencies {
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-    }
 }
 
-apply plugin: "kotlin"
 apply plugin: "antlr"
+apply plugin: "kotlin"
+
+configurePublishing(project)
 
 repositories {
     mavenCentral()
@@ -23,13 +16,11 @@ project.sourceSets.main.antlr.srcDirs = ["src/main/antlr4"]
 dependencies {
     antlr "org.antlr:antlr4:$antlr4_version"
     implementation "org.antlr:antlr4-runtime:$antlr4_version"
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    implementation project(':kotlin-stdlib')
     implementation "org.jsoup:jsoup:1.8.2"
 }
 
-
 sourceSets.main.kotlin.srcDirs += file("$buildDir/generated-src/antlr/main/")
-
 
 generateGrammarSource {
     arguments += ["-visitor", "-long-messages", "-package", "org.antlr.webidl"]
@@ -44,7 +35,7 @@ task downloadAllIdls(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
 }
 
-task idl2k(type:JavaExec) {
+task idl2k(type: JavaExec) {
     main = "org.jetbrains.idl2k.MainKt"
     classpath = sourceSets.main.runtimeClasspath
 }
