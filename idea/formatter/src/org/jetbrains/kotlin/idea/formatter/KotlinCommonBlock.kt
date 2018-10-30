@@ -163,7 +163,15 @@ abstract class KotlinCommonBlock(
             operationBlock.requireNode(),
             subList(index, size),
             null, indent, wrap, spacingBuilder
-        ) { createSyntheticSpacingNodeBlock(it) }
+        ) {
+            val parent = it.treeParent ?: node
+            val skipOperationNodeParent = if (parent.elementType === KtNodeTypes.OPERATION_REFERENCE) {
+                parent.treeParent ?: parent
+            } else {
+                parent
+            }
+            createSyntheticSpacingNodeBlock(skipOperationNodeParent)
+        }
 
         return subList(0, index) + operationSyntheticBlock
     }
