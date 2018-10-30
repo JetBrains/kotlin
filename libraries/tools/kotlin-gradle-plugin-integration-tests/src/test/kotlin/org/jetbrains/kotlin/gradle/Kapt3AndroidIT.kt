@@ -1,7 +1,6 @@
 package org.jetbrains.kotlin.gradle
 
 import org.jetbrains.kotlin.gradle.util.getFileByName
-import org.jetbrains.kotlin.gradle.util.isLegacyAndroidGradleVersion
 import org.jetbrains.kotlin.gradle.util.modify
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.junit.Test
@@ -21,7 +20,7 @@ open class Kapt3Android32IT : Kapt3AndroidIT() {
 
 open class Kapt3AndroidIT : Kapt3BaseIT() {
     protected open val androidGradlePluginVersion: String
-        get() = "2.3.0"
+        get() = "3.0.0"
 
     override val defaultGradleVersion: GradleVersionRequired
         get() = GradleVersionRequired.InRange("4.1", "4.10.2")
@@ -41,20 +40,11 @@ open class Kapt3AndroidIT : Kapt3BaseIT() {
             assertKaptSuccessful()
             assertFileExists("app/build/generated/source/kapt/debug/org/example/kotlin/butterknife/SimpleActivity\$\$ViewBinder.java")
 
-            val butterknifeJavaClassesDir =
-                if (isLegacyAndroidGradleVersion(androidGradlePluginVersion))
-                    "app/build/intermediates/classes/debug/org/example/kotlin/butterknife/"
-                else
-                    "app/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/org/example/kotlin/butterknife/"
+            val butterknifeJavaClassesDir = "app/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/org/example/kotlin/butterknife/"
 
             assertFileExists(butterknifeJavaClassesDir + "SimpleActivity\$\$ViewBinder.class")
 
             assertFileExists("app/build/tmp/kotlin-classes/debug/org/example/kotlin/butterknife/SimpleAdapter\$ViewHolder.class")
-
-            if (isLegacyAndroidGradleVersion(androidGradlePluginVersion)) {
-                // we don't copy classes with new AGP
-                assertFileExists("app/build/intermediates/classes/debug/org/example/kotlin/butterknife/SimpleAdapter\$ViewHolder.class")
-            }
         }
 
         project.build("assembleDebug") {
@@ -73,19 +63,11 @@ open class Kapt3AndroidIT : Kapt3BaseIT() {
             assertFileExists("app/build/generated/source/kapt/debug/com/example/dagger/kotlin/DaggerApplicationComponent.java")
             assertFileExists("app/build/generated/source/kapt/debug/com/example/dagger/kotlin/ui/HomeActivity_MembersInjector.java")
 
-            val daggerJavaClassesDir =
-                if (isLegacyAndroidGradleVersion(androidGradlePluginVersion))
-                    "app/build/intermediates/classes/debug/com/example/dagger/kotlin/"
-                else
-                    "app/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/example/dagger/kotlin/"
+            val daggerJavaClassesDir = "app/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/example/dagger/kotlin/"
 
             assertFileExists(daggerJavaClassesDir + "DaggerApplicationComponent.class")
 
             assertFileExists("app/build/tmp/kotlin-classes/debug/com/example/dagger/kotlin/AndroidModule.class")
-            if (isLegacyAndroidGradleVersion(androidGradlePluginVersion)) {
-                // we don't copy classes with new AGP
-                assertFileExists("app/build/intermediates/classes/debug/com/example/dagger/kotlin/AndroidModule.class")
-            }
         }
     }
 
@@ -154,29 +136,14 @@ open class Kapt3AndroidIT : Kapt3BaseIT() {
         val project = Project("android-databinding", directoryPrefix = "kapt2")
         setupDataBinding(project, "app")
 
-        if (isLegacyAndroidGradleVersion(androidGradlePluginVersion)) {
-            // Aapt from the older Android SDK crashes with the 'library' subproject structure.
-            project.projectDir.getFileByName("settings.gradle")
-                .modify {
-                    assert(it.contains(", ':library'"))
-                    it.replace(", ':library'", "")
-                }
-        }
-
         project.build("assembleDebug", "assembleAndroidTest") {
             assertSuccessful()
             assertKaptSuccessful()
             assertFileExists("app/build/generated/source/kapt/debug/com/example/databinding/BR.java")
 
-            if (!isLegacyAndroidGradleVersion(androidGradlePluginVersion)) {
-                assertFileExists("library/build/generated/source/kapt/debugAndroidTest/android/databinding/DataBinderMapperImpl.java")
-            }
+            assertFileExists("library/build/generated/source/kapt/debugAndroidTest/android/databinding/DataBinderMapperImpl.java")
 
-            if (isLegacyAndroidGradleVersion(androidGradlePluginVersion)) {
-                assertFileExists("app/build/generated/source/kapt/debug/com/example/databinding/databinding/ActivityTestBinding.java")
-            } else {
-                assertFileExists("app/build/generated/source/kapt/debug/com/example/databinding/databinding/ActivityTestBindingImpl.java")
-            }
+            assertFileExists("app/build/generated/source/kapt/debug/com/example/databinding/databinding/ActivityTestBindingImpl.java")
 
             // KT-23866
             assertNotContains("The following options were not recognized by any processor")
@@ -186,22 +153,20 @@ open class Kapt3AndroidIT : Kapt3BaseIT() {
     private fun setupDataBinding(project: Project, projectName: String?) {
         project.setupWorkingDir()
 
-        if (!isLegacyAndroidGradleVersion(androidGradlePluginVersion)) {
-            // With new AGP, there's no need in the Databinding kapt dependency:
-            project.gradleBuildScript(projectName).modify {
-                it.lines().filterNot {
-                    it.contains("kapt \"com.android.databinding:compiler")
-                }.joinToString("\n")
-            }
+        // With new AGP, there's no need in the Databinding kapt dependency:
+        project.gradleBuildScript(projectName).modify {
+            it.lines().filterNot {
+                it.contains("kapt \"com.android.databinding:compiler")
+            }.joinToString("\n")
+        }
 
-            // Workaround for KT-24915
-            project.gradleBuildScript(projectName).appendText(
-                "\n" + """
+        // Workaround for KT-24915
+        project.gradleBuildScript(projectName).appendText(
+            "\n" + """
                afterEvaluate {
                     kaptDebugKotlin.dependsOn dataBindingExportFeaturePackageIdsDebug
                }
             """.trimIndent()
-            )
-        }
+        )
     }
 }

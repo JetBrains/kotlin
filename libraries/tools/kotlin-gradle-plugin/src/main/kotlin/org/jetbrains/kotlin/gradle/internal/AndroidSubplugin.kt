@@ -248,16 +248,11 @@ class AndroidSubplugin : KotlinGradleSubplugin<KotlinCompile> {
         return wrapPluginOptions(pluginOptions, "configuration")
     }
 
-    // Android25ProjectHandler.KaptVariant actually contains BaseVariant, not BaseVariantData
     private fun getVariantComponentNames(flavorData: Any?): VariantComponentNames? = when (flavorData) {
         is KaptVariantData<*> -> getVariantComponentNames(flavorData.variantData)
         is TestVariantData -> getVariantComponentNames(flavorData.testedVariantData)
         is TestVariant -> getVariantComponentNames(flavorData.testedVariant)
         is BaseVariant -> VariantComponentNames(flavorData.name, flavorData.flavorName, flavorData.buildType.name)
-        is BaseVariantData<*> -> VariantComponentNames(
-            flavorData.name, flavorData.variantConfiguration.flavorName,
-            flavorData.variantConfiguration.buildType.name
-        )
         else -> null
     }
 

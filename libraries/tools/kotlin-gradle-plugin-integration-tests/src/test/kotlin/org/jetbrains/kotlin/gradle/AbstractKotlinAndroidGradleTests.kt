@@ -3,19 +3,12 @@ package org.jetbrains.kotlin.gradle
 import org.gradle.api.logging.LogLevel
 import org.jetbrains.kotlin.gradle.util.getFileByName
 import org.jetbrains.kotlin.gradle.util.getFilesByNames
-import org.jetbrains.kotlin.gradle.util.isLegacyAndroidGradleVersion
 import org.jetbrains.kotlin.gradle.util.modify
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.junit.Test
 import java.io.File
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
-
-
-class KotlinAndroidGradleIT : AbstractKotlinAndroidGradleTests(androidGradlePluginVersion = "2.3.0") {
-    override val defaultGradleVersion: GradleVersionRequired
-        get() = GradleVersionRequired.InRange("4.0", "4.10.2")
-}
 
 // TODO If we there is a way to fetch the latest Android plugin version, test against the latest version
 class KotlinAndroid32GradleIT : KotlinAndroid3GradleIT(androidGradlePluginVersion = "3.2.0") {
@@ -491,11 +484,6 @@ fun getSomething() = 10
 
     @Test
     fun testAndroidExtensionsManyVariants() {
-        if (isLegacyAndroidGradleVersion(androidGradlePluginVersion)) {
-            // Library dependencies are not supported in older versions of Android Gradle plugin (< 3.0)
-            return
-        }
-
         val project = Project("AndroidExtensionsManyVariants")
         val options = defaultBuildOptions().copy(incremental = false)
 
@@ -555,16 +543,14 @@ fun getSomething() = 10
     fun testMultiplatformAndroidCompile() = with(Project("multiplatformAndroidProject")) {
         setupWorkingDir()
 
-        if (!isLegacyAndroidGradleVersion(androidGradlePluginVersion)) {
-            // Check that the common module is not added to the deprecated configuration 'compile' (KT-23719):
-            gradleBuildScript("libAndroid").appendText(
-                """${'\n'}
+        // Check that the common module is not added to the deprecated configuration 'compile' (KT-23719):
+        gradleBuildScript("libAndroid").appendText(
+            """${'\n'}
                 configurations.compile.dependencies.all { aDependencyExists ->
                     throw GradleException("Check failed")
                 }
                 """.trimIndent()
-            )
-        }
+        )
 
         build("build") {
             assertSuccessful()
