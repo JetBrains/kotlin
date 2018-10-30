@@ -280,22 +280,23 @@ public abstract class FileBasedKotlinClass implements KotlinJvmBinaryClass {
         return resolveNameByInternalName(name, innerClasses);
     }
 
+    // See ReflectKotlinStructure.classLiteralValue
     @NotNull
     private static ClassLiteralValue resolveKotlinNameByType(@NotNull Type type, @NotNull InnerClassesInfo innerClasses) {
         String typeDesc = type.getDescriptor();
-        int nestedness = typeDesc.charAt(0) == '[' ? type.getDimensions() : 0;
-        String elementDesc = nestedness == 0 ? typeDesc : type.getElementType().getDescriptor();
+        int dimensions = typeDesc.charAt(0) == '[' ? type.getDimensions() : 0;
+        String elementDesc = dimensions == 0 ? typeDesc : type.getElementType().getDescriptor();
         JvmPrimitiveType primType = JvmPrimitiveType.getByDesc(elementDesc);
         if (primType != null) {
-            if (nestedness > 0) {
+            if (dimensions > 0) {
                 // "int[][]" should be loaded as "Array<IntArray>", not as "Array<Array<Int>>"
-                return new ClassLiteralValue(ClassId.topLevel(primType.getPrimitiveType().getArrayTypeFqName()), nestedness - 1);
+                return new ClassLiteralValue(ClassId.topLevel(primType.getPrimitiveType().getArrayTypeFqName()), dimensions - 1);
             }
-            return new ClassLiteralValue(ClassId.topLevel(primType.getPrimitiveType().getTypeFqName()), nestedness);
+            return new ClassLiteralValue(ClassId.topLevel(primType.getPrimitiveType().getTypeFqName()), dimensions);
         }
         ClassId javaClassId = resolveNameByDesc(elementDesc, innerClasses);
         ClassId kotlinClassId = JavaToKotlinClassMap.INSTANCE.mapJavaToKotlin(javaClassId.asSingleFqName());
-        return new ClassLiteralValue(kotlinClassId != null ? kotlinClassId : javaClassId, nestedness);
+        return new ClassLiteralValue(kotlinClassId != null ? kotlinClassId : javaClassId, dimensions);
     }
 
     @NotNull
