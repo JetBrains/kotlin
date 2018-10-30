@@ -17,7 +17,7 @@
 
     <properties>
         <kotlin.version>${project.version}</kotlin.version>
-        <antlr.version>4.5.3</antlr.version>
+        <antlr.version>4.7.1</antlr.version>
         <idl2k.deploy.skip>true</idl2k.deploy.skip>
     </properties>
 
@@ -84,36 +84,6 @@
                         </goals>
                     </execution>
                 </executions>
-            </plugin>
-
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>exec-maven-plugin</artifactId>
-                <version>1.2.1</version>
-                <executions>
-                    <execution>
-                        <id>download-idl</id>
-                        <goals>
-                            <goal>java</goal>
-                        </goals>
-                        <configuration>
-                            <mainClass>org.jetbrains.idl2k.dl.DlPackage</mainClass>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>idl2k</id>
-                        <goals>
-                            <goal>java</goal>
-                        </goals>
-                        <configuration>
-                            <mainClass>org.jetbrains.idl2k.Idl2kPackage</mainClass>
-                        </configuration>
-                    </execution>
-                </executions>
-                <configuration>
-                    <workingDirectory>${project.basedir}</workingDirectory>
-                    <classpathScope>compile</classpathScope>
-                </configuration>
             </plugin>
 
             <plugin>
