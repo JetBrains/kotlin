@@ -160,7 +160,10 @@ internal fun SerializerJsTranslator.serializerInstance(
             val desc = requireNotNull(
                 KSerializerDescriptorResolver.findSerializerConstructorForTypeArgumentsSerializers(serializerClass)
             ) { "Generated serializer does not have constructor with required number of arguments" }
-            JsInvocation(context.getInnerReference(desc), args)
+            if (!desc.isPrimary)
+                JsInvocation(context.getInnerReference(desc), args)
+            else
+                JsNew(context.getInnerReference(desc), args)
         } else {
             JsNew(context.translateQualifiedReference(serializerClass), args)
         }
