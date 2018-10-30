@@ -102,6 +102,7 @@ class KtUltraLightClass(classOrObject: KtClassOrObject, private val support: Ult
 
     // the following logic should be in the platform (super), overrides can be removed once that happens
     override fun getInterfaces(): Array<PsiClass> = PsiClassImplUtil.getInterfaces(this)
+
     override fun getSuperClass(): PsiClass? = PsiClassImplUtil.getSuperClass(this)
     override fun getSupers(): Array<PsiClass> = PsiClassImplUtil.getSupers(this)
     override fun getSuperTypes(): Array<PsiClassType> = PsiClassImplUtil.getSuperTypes(this)
@@ -559,9 +560,13 @@ internal class KtUltraLightMethod(
     containingClass: KtUltraLightClass
 ) : KtLightMethodImpl({ delegate }, LightMemberOriginForDeclaration(originalElement, JvmDeclarationOriginKind.OTHER), containingClass) {
 
+    // These two overrides are necessary because ones from KtLightMethodImpl suppose that clsDelegate.returnTypeElement is valid
+    // While here we only set return type for LightMethodBuilder (see org.jetbrains.kotlin.asJava.classes.KtUltraLightClass.asJavaMethod)
     override fun getReturnTypeElement(): PsiTypeElement? = null
+
     override fun getReturnType(): PsiType? = clsDelegate.returnType
-    override fun getParameterList(): PsiParameterList = clsDelegate.parameterList
+
+    override fun buildParametersForList(): List<PsiParameter> = clsDelegate.parameterList.parameters.toList()
 
     // should be in super
     override fun isVarArgs() = PsiImplUtil.isVarArgs(this)

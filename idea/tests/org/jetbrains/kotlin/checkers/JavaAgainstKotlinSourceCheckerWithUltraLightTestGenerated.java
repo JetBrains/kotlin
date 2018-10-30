@@ -126,6 +126,11 @@ public class JavaAgainstKotlinSourceCheckerWithUltraLightTestGenerated extends A
             runTest("idea/testData/kotlinAndJavaChecker/javaAgainstKotlin/KotlinAnnotations.kt");
         }
 
+        @TestMetadata("MyFunctionType.kt")
+        public void testMyFunctionType() throws Exception {
+            runTest("idea/testData/kotlinAndJavaChecker/javaAgainstKotlin/MyFunctionType.kt");
+        }
+
         @TestMetadata("ReturnInnerClasses.kt")
         public void testReturnInnerClasses() throws Exception {
             runTest("idea/testData/kotlinAndJavaChecker/javaAgainstKotlin/ReturnInnerClasses.kt");

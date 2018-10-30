@@ -53,9 +53,18 @@ open class KtLightMethodImpl protected constructor(
 
     private val paramsList: PsiParameterList by lazyPub {
         KtLightParameterList(this, dummyDelegate?.parameterList?.parametersCount ?: clsDelegate.parameterList.parametersCount) {
-            clsDelegate.parameterList.parameters.mapIndexed { index, clsParameter -> KtLightParameter(clsParameter, index, this@KtLightMethodImpl) }
+            buildParametersForList()
         }
     }
+
+    protected open fun buildParametersForList(): List<PsiParameter> =
+        clsDelegate.parameterList.parameters.mapIndexed { index, clsParameter ->
+            KtLightParameter(
+                clsParameter,
+                index,
+                this@KtLightMethodImpl
+            )
+        }
 
     private val typeParamsList: PsiTypeParameterList? by lazyPub { buildTypeParameterList() }
 
