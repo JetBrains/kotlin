@@ -80,7 +80,10 @@ class SerializerCodegenImpl(
         if (isStatic) {
             assert(serializerDescriptor.kind == ClassKind.OBJECT) { "Serializer for type without type parameters must be an object" }
             // static descriptor means serializer is an object. it is safer to get it from correct field
-            StackValue.singleton(serializerDescriptor, codegen.typeMapper).put(generatedSerializerType, this)
+            if (isGeneratedSerializer)
+                StackValue.singleton(serializerDescriptor, codegen.typeMapper).put(generatedSerializerType, this)
+            else
+                aconst(null)
         } else {
             load(0, serializerAsmType)
         }

@@ -176,6 +176,7 @@ object KSerializerDescriptorResolver {
         val isLoad = name == SerialEntityNames.LOAD_NAME &&
                 shouldAddSerializerFunction { classDescriptor.checkLoadMethodParameters(it.valueParameters) }
         val isDescriptorGetter = name == SerialEntityNames.GENERATED_DESCRIPTOR_GETTER &&
+                thisDescriptor.typeConstructor.supertypes.any(::isGeneratedKSerializer) &&
                 shouldAddSerializerFunction { true /* TODO? */ }
 
         if (isSave || isLoad || isDescriptorGetter) {

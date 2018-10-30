@@ -81,11 +81,12 @@ class SerializerIrGenerator(val irClass: IrClass, override val compilerContext: 
             compilerContext.localSymbolTable.withScope(initIrBody.descriptor) {
                 initIrBody.body = compilerContext.createIrBuilder(initIrBody.symbol).irBlockBody {
                     val localDesc = irTemporary(
-                            irInvoke(null, serialClassDescImplCtor,
-                                    irString(serialName), irGet(thisAsReceiverParameter),
-                                    typeHint = serialClassDescImplCtor.owner.returnType
-                            ),
-                            nameHint = "serialDesc"
+                        irInvoke(
+                            null, serialClassDescImplCtor,
+                            irString(serialName), if (isGeneratedSerializer) irGet(thisAsReceiverParameter) else irNull(),
+                            typeHint = serialClassDescImplCtor.owner.returnType
+                        ),
+                        nameHint = "serialDesc"
                     )
 
                     fun addFieldCall(fieldName: String) =
