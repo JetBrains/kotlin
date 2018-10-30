@@ -79,8 +79,6 @@
 
         <module>tools/maven-archetypes</module>
 
-
-        <module>tools/idl2k</module>
         <module>tools/kotlin-annotation-processing-maven</module>
         <module>tools/kotlin-maven-allopen</module>
         <module>tools/kotlin-maven-noarg</module>
