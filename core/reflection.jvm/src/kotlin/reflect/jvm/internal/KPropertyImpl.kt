@@ -221,8 +221,7 @@ private fun KPropertyImpl.Accessor<*, *>.computeCallerForAccessor(isGetter: Bool
             val accessor = accessorSignature?.let { signature ->
                 property.container.findMethodBySignature(
                     jvmSignature.nameResolver.getString(signature.name),
-                    jvmSignature.nameResolver.getString(signature.desc),
-                    descriptor.isPublicInBytecode
+                    jvmSignature.nameResolver.getString(signature.desc)
                 )
             }
 
@@ -257,10 +256,9 @@ private fun KPropertyImpl.Accessor<*, *>.computeCallerForAccessor(isGetter: Bool
             val signature =
                 if (isGetter) jvmSignature.getterSignature
                 else (jvmSignature.setterSignature ?: throw KotlinReflectionInternalError("No setter found for property $property"))
-            val accessor = property.container.findMethodBySignature(
-                signature.methodName, signature.methodDesc, descriptor.isPublicInBytecode
-            ) ?: throw KotlinReflectionInternalError("No accessor found for property $property")
-
+            val accessor =
+                property.container.findMethodBySignature(signature.methodName, signature.methodDesc)
+                    ?: throw KotlinReflectionInternalError("No accessor found for property $property")
             assert(!Modifier.isStatic(accessor.modifiers)) { "Mapped property cannot have a static accessor: $property" }
 
             return if (isBound) CallerImpl.Method.BoundInstance(accessor, boundReceiver)

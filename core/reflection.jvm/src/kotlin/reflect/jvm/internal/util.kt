@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotated
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
-import org.jetbrains.kotlin.descriptors.annotations.isEffectivelyInlineOnly
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinarySourceElement
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
@@ -185,12 +184,6 @@ internal val ReflectKotlinClass.packageModuleName: String?
             }
             else -> null
         }
-    }
-
-internal val CallableMemberDescriptor.isPublicInBytecode: Boolean
-    get() {
-        val visibility = visibility
-        return (visibility == Visibilities.PUBLIC || visibility == Visibilities.INTERNAL) && !isEffectivelyInlineOnly()
     }
 
 internal val CallableDescriptor.instanceReceiverParameter: ReceiverParameterDescriptor?

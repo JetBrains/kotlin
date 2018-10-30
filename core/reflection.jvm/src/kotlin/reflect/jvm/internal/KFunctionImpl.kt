@@ -63,10 +63,9 @@ internal class KFunctionImpl private constructor(
             is KotlinConstructor -> {
                 if (isAnnotationConstructor)
                     return@caller AnnotationConstructorCaller(container.jClass, parameters.map { it.name!! }, POSITIONAL_CALL, KOTLIN)
-                container.findConstructorBySignature(jvmSignature.constructorDesc, descriptor.isPublicInBytecode)
+                container.findConstructorBySignature(jvmSignature.constructorDesc)
             }
-            is KotlinFunction ->
-                container.findMethodBySignature(jvmSignature.methodName, jvmSignature.methodDesc, descriptor.isPublicInBytecode)
+            is KotlinFunction -> container.findMethodBySignature(jvmSignature.methodName, jvmSignature.methodDesc)
             is JavaMethod -> jvmSignature.method
             is JavaConstructor -> jvmSignature.constructor
             is FakeJavaAnnotationConstructor -> {
@@ -94,15 +93,12 @@ internal class KFunctionImpl private constructor(
         val jvmSignature = RuntimeTypeMapper.mapSignature(descriptor)
         val member: Member? = when (jvmSignature) {
             is KotlinFunction -> {
-                container.findDefaultMethod(
-                    jvmSignature.methodName, jvmSignature.methodDesc,
-                    !Modifier.isStatic(caller.member!!.modifiers), descriptor.isPublicInBytecode
-                )
+                container.findDefaultMethod(jvmSignature.methodName, jvmSignature.methodDesc, !Modifier.isStatic(caller.member!!.modifiers))
             }
             is KotlinConstructor -> {
                 if (isAnnotationConstructor)
                     return@defaultCaller AnnotationConstructorCaller(container.jClass, parameters.map { it.name!! }, CALL_BY_NAME, KOTLIN)
-                container.findDefaultConstructor(jvmSignature.constructorDesc, descriptor.isPublicInBytecode)
+                container.findDefaultConstructor(jvmSignature.constructorDesc)
             }
             is FakeJavaAnnotationConstructor -> {
                 val methods = jvmSignature.methods

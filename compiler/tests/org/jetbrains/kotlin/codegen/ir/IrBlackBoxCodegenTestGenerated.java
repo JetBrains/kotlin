@@ -20135,6 +20135,11 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
                 runTest("compiler/testData/codegen/box/reflection/mapping/methodsFromObject.kt");
             }
 
+            @TestMetadata("methodsFromSuperInterface.kt")
+            public void testMethodsFromSuperInterface() throws Exception {
+                runTest("compiler/testData/codegen/box/reflection/mapping/methodsFromSuperInterface.kt");
+            }
+
             @TestMetadata("openSuspendFun.kt")
             public void testOpenSuspendFun() throws Exception {
                 runTest("compiler/testData/codegen/box/reflection/mapping/openSuspendFun.kt");
