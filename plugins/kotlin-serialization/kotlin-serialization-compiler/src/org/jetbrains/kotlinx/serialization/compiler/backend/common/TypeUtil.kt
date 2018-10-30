@@ -49,10 +49,14 @@ open class SerialTypeInfo(
     val unit: Boolean = false
 )
 
+@Suppress("FunctionName", "LocalVariableName")
 fun AbstractSerialGenerator.getSerialTypeInfo(property: SerializableProperty): SerialTypeInfo {
+    fun SerializableInfo(serializer: ClassDescriptor?) =
+        SerialTypeInfo(property, if (property.type.isMarkedNullable) "Nullable" else "", serializer)
+
     val T = property.type
-    val serializableWith = property.serializableWith?.toClassDescriptor
-    if (serializableWith != null) return SerialTypeInfo(property, if (property.type.isMarkedNullable) "Nullable" else "", serializableWith)
+    T.overridenSerializer?.toClassDescriptor?.let { return SerializableInfo(it) }
+    property.serializableWith?.toClassDescriptor?.let { return SerializableInfo(it) }
     return when {
         T.isTypeParameter() -> SerialTypeInfo(property, if (property.type.isMarkedNullable) "Nullable" else "", null)
         T.isPrimitiveNumberType() or T.isBoolean() -> SerialTypeInfo(
@@ -67,16 +71,16 @@ fun AbstractSerialGenerator.getSerialTypeInfo(property: SerializableProperty): S
             val serializer = property.serializableWith?.toClassDescriptor ?: property.module.findClassAcrossModuleDependencies(
                 referenceArraySerializerId
             )
-            SerialTypeInfo(property, if (property.type.isMarkedNullable) "Nullable" else "", serializer)
+            SerializableInfo(serializer)
         }
         T.toClassDescriptor?.kind == ClassKind.ENUM_CLASS -> {
             val serializer = property.module.findClassAcrossModuleDependencies(enumSerializerId)
-            SerialTypeInfo(property, if (property.type.isMarkedNullable) "Nullable" else "", serializer)
+            SerializableInfo(serializer)
         }
         else -> {
             val serializer =
                 findTypeSerializerOrContext(property.module, property.type, property.descriptor.annotations, property.descriptor.findPsi())
-            SerialTypeInfo(property, if (property.type.isMarkedNullable) "Nullable" else "", serializer)
+            SerializableInfo(serializer)
         }
     }
 }
