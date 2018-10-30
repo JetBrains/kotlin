@@ -710,6 +710,13 @@ private val INDENT_RULES = arrayOf(
         }
         .continuationIf(KotlinCodeStyleSettings::CONTINUATION_INDENT_FOR_EXPRESSION_BODIES),
 
+    strategy("Destructuring declaration")
+        .within(KtNodeTypes.DESTRUCTURING_DECLARATION)
+        .forElement {
+            it.psi is KtExpression
+        }
+        .continuationIf(KotlinCodeStyleSettings::CONTINUATION_INDENT_FOR_EXPRESSION_BODIES),
+
     strategy("Indent for parts")
         .within(KtNodeTypes.PROPERTY, KtNodeTypes.FUN, KtNodeTypes.DESTRUCTURING_DECLARATION, KtNodeTypes.SECONDARY_CONSTRUCTOR)
         .notForType(
