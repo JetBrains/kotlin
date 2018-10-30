@@ -17772,6 +17772,11 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
                 runTest("compiler/testData/codegen/box/reflection/annotations/annotationsOnJavaMembers.kt");
             }
 
+            @TestMetadata("classLiteralWithVoidDefault.kt")
+            public void testClassLiteralWithVoidDefault() throws Exception {
+                runTest("compiler/testData/codegen/box/reflection/annotations/classLiteralWithVoidDefault.kt");
+            }
+
             @TestMetadata("findAnnotation.kt")
             public void testFindAnnotation() throws Exception {
                 runTest("compiler/testData/codegen/box/reflection/annotations/findAnnotation.kt");
