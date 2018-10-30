@@ -122,7 +122,7 @@ class JKBinaryExpressionImpl(
 
     companion object {
         private fun methodSymbolForToken(
-            token: KtSingleValueToken,
+            token: JKKtOperatorToken,
             leftType: JKType,
             rightType: JKType,
             symbolProvider: JKSymbolProvider
@@ -143,7 +143,7 @@ class JKBinaryExpressionImpl(
             return classSymbol.target.declarations// todo look for extensions
                 .asSequence()
                 .filterIsInstance<KtNamedFunction>()
-                .filter { it.name == operatorName }
+                .filter { it.name == token.operatorName }
                 .mapNotNull { symbolProvider.provideDirectSymbol(it) as? JKMethodSymbol }
                 .firstOrNull { it.parameterTypes.singleOrNull()?.takeIf { it.isSubtypeOf(rightType, symbolProvider) } != null }!!
         }
@@ -152,7 +152,7 @@ class JKBinaryExpressionImpl(
         fun createKotlinBinaryExpression(
             left: JKExpression,
             right: JKExpression,
-            token: KtSingleValueToken,
+            token: JKKtOperatorToken,
             context: ConversionContext
         ): JKBinaryExpression? {
             val leftType = left.type(context)

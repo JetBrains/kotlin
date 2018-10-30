@@ -97,7 +97,7 @@ class ForConversion(private val context: ConversionContext) : RecursiveApplicabl
             val start = loopVar.initializer
             val operationType =
                 (loopStatement.updater as? JKExpressionStatement)?.expression?.isVariableIncrementOrDecrement(loopVar)
-            val reversed = when ((operationType  as? JKJavaOperatorImpl)?.token) {
+            val reversed = when ((operationType  as? JKJavaOperatorImpl)?.token?.token) {
                 JavaTokenType.PLUSPLUS -> false
                 JavaTokenType.MINUSMINUS -> true
                 else -> return null
@@ -160,7 +160,7 @@ class ForConversion(private val context: ConversionContext) : RecursiveApplicabl
             else -> JKBinaryExpressionImpl.createKotlinBinaryExpression(
                 start,
                 convertBound(bound, if (inclusiveComparison) 0 else -1),
-                KtTokens.RANGE,
+                JKKtSingleValueOperatorToken(KtTokens.RANGE),
                 context
             )!!
         }
@@ -178,8 +178,9 @@ class ForConversion(private val context: ConversionContext) : RecursiveApplicabl
         return JKBinaryExpressionImpl.createKotlinBinaryExpression(
             bound,
             JKKtLiteralExpressionImpl(Math.abs(correction).toString(), JKLiteralExpression.LiteralType.INT),
-            sign,
-            context)!!
+            JKKtSingleValueOperatorToken(sign),
+            context
+        )!!
     }
 
     private fun indicesIterationRange(

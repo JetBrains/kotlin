@@ -21,8 +21,16 @@ import org.jetbrains.kotlin.j2k.tree.impl.JKClassSymbol
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
 
 interface JKOperator {
-    val operatorText: String
+    val token: JKOperatorToken
     val precedence: Int
+}
+
+interface JKOperatorToken {
+    val text: String
+}
+
+interface JKKtOperatorToken : JKOperatorToken {
+    val operatorName: String
 }
 
 interface JKQualifier

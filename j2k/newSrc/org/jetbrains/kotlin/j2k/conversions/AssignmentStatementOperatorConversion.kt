@@ -5,28 +5,39 @@
 
 package org.jetbrains.kotlin.j2k.conversions
 
-import org.jetbrains.kotlin.j2k.copyTree
+import com.intellij.psi.JavaTokenType
+import org.jetbrains.kotlin.j2k.copyTreeAndDetach
 import org.jetbrains.kotlin.j2k.tree.JKKtAssignmentStatement
 import org.jetbrains.kotlin.j2k.tree.JKTreeElement
-import org.jetbrains.kotlin.j2k.tree.impl.JKBinaryExpressionImpl
-import org.jetbrains.kotlin.j2k.tree.impl.JKKtOperatorImpl
-import org.jetbrains.kotlin.j2k.tree.impl.JKKtWordOperatorImpl
-import org.jetbrains.kotlin.j2k.tree.impl.JKStubExpressionImpl
-import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.j2k.tree.detached
+import org.jetbrains.kotlin.j2k.tree.impl.*
 
 class AssignmentStatementOperatorConversion : RecursiveApplicableConversionBase() {
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
-        //todo fix
-//        if (element !is JKKtAssignmentStatement) return recurse(element)
-//        val newOperator = JKKtOperatorImpl.javaToKotlinOperator[element.operator] ?: return recurse(element)
-//        if (newOperator is JKKtWordOperatorImpl) {
-//            element.operator = JKKtOperatorImpl.tokenToOperator[KtTokens.EQ] ?: return recurse(element)
-//            val expr = element.expression
-//            element.expression = JKStubExpressionImpl()
-//            element.expression = JKBinaryExpressionImpl(element.field.copyTree(), expr, newOperator)
-//        } else {
-//            element.operator = newOperator
-//        }
+        if (element !is JKKtAssignmentStatement) return recurse(element)
+        val operator = element.operator as? JKJavaOperatorImpl ?: return recurse(element)
+        operator.token.correnspondingBinaryOperation()
+            ?.apply {
+                val expression = element.expression.copyTreeAndDetach()
+                element.expression =
+                        JKBinaryExpressionImpl(
+                            element.field.copyTreeAndDetach(),
+                            expression,
+                            this
+                        )
+                element.operator = JKJavaOperatorImpl.tokenToOperator[JavaTokenType.EQ]!!
+            }
         return recurse(element)
     }
+
+    private fun JKJavaOperatorToken.correnspondingBinaryOperation() =
+        when (psiToken) {
+            JavaTokenType.OREQ -> JavaTokenType.OR
+            JavaTokenType.ANDEQ -> JavaTokenType.AND
+            JavaTokenType.LTLTEQ -> JavaTokenType.LTLT
+            JavaTokenType.GTGTEQ -> JavaTokenType.GTGT
+            JavaTokenType.GTGTGTEQ -> JavaTokenType.GTGTGT
+            JavaTokenType.XOREQ -> JavaTokenType.XOR
+            else -> null
+        }?.let { JKJavaOperatorImpl.tokenToOperator[it] }
 }

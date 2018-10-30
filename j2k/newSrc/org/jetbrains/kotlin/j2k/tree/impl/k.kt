@@ -18,10 +18,12 @@ package org.jetbrains.kotlin.j2k.tree.impl
 
 import com.intellij.psi.JavaTokenType
 import org.jetbrains.kotlin.j2k.ast.Nullability
+import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.j2k.tree.*
 import org.jetbrains.kotlin.j2k.tree.visitors.JKVisitor
 import org.jetbrains.kotlin.lexer.KtSingleValueToken
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.utils.addToStdlib.assertedCast
 import org.jetbrains.kotlin.utils.addToStdlib.cast
 
@@ -83,33 +85,26 @@ class JKKtLiteralExpressionImpl(
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitKtLiteralExpression(this, data)
 }
 
-fun JKJavaOperatorImpl.toKtToken(): KtSingleValueToken =
-    when (this.token) {
-        JavaTokenType.DIV -> KtTokens.DIV
-        JavaTokenType.MINUS -> KtTokens.MINUS
-        JavaTokenType.ANDAND -> KtTokens.ANDAND
-        JavaTokenType.OROR -> KtTokens.OROR
-        JavaTokenType.PLUS -> KtTokens.PLUS
-        JavaTokenType.ASTERISK -> KtTokens.MUL
-        JavaTokenType.GT -> KtTokens.GT
-        JavaTokenType.GE -> KtTokens.GTEQ
-        JavaTokenType.LT -> KtTokens.LT
-        JavaTokenType.LE -> KtTokens.LTEQ
-        JavaTokenType.PERC -> KtTokens.PERC
-        else -> TODO(this.token::class.java.toString())
-    }
-
-class JKKtOperatorImpl(val token: KtSingleValueToken, val methodSymbol: JKMethodSymbol) : JKOperator, JKElementBase() {
-    override val precedence: Int
-        get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
-    override val operatorText: String
-        get() = token.value
+class JKKtSingleValueOperatorToken(val token: KtSingleValueToken) : JKKtOperatorToken {
+    override val operatorName: String
+        get() = OperatorConventions.BINARY_OPERATION_NAMES[token]?.identifier!!
+    override val text: String = token.value
 }
 
-class JKKtWordOperatorImpl constructor(override val operatorText: String) : JKOperator, JKElementBase() {
+class JKKtWordOperatorToken(override val text: String) : JKKtOperatorToken {
+    override val operatorName: String = text
+}
+
+class JKKtOperatorImpl(override val token: JKKtOperatorToken, val methodSymbol: JKMethodSymbol) : JKOperator, JKElementBase() {
+    constructor(singleValueToken: KtSingleValueToken, methodSymbol: JKMethodSymbol) : this(
+        JKKtSingleValueOperatorToken(singleValueToken),
+        methodSymbol
+    )
+
     override val precedence: Int
         get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
 }
+
 
 class JKKtModifierImpl(override val type: JKKtModifier.KtModifierType) : JKKtModifier, JKElementBase() {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitKtModifier(this, data)

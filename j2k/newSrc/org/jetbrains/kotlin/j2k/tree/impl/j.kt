@@ -64,19 +64,88 @@ class JKJavaModifierImpl(override val type: JKJavaModifier.JavaModifierType) : J
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitJavaModifier(this, data)
 }
 
-class JKJavaOperatorImpl private constructor(val token: IElementType) : JKOperator {
-    override val operatorText: String
+class JKJavaOperatorToken(val token: IElementType) : JKOperatorToken {
+    override val text: String
         get() = when (token) {
-            JavaTokenType.MINUSMINUS -> "--"
-            JavaTokenType.PLUSPLUS -> "++"
-            JavaTokenType.EXCL -> "!"
-            JavaTokenType.ASTERISKEQ -> "*="
+            JavaTokenType.EQ -> "="
             JavaTokenType.EQEQ -> "=="
-            else -> TODO("TODO $token")
+            JavaTokenType.NE -> "!="
+            JavaTokenType.ANDAND -> "&&"
+            JavaTokenType.OROR -> "||"
+            JavaTokenType.GT -> ">"
+            JavaTokenType.LT -> "<"
+            JavaTokenType.GE -> ">="
+            JavaTokenType.LE -> "<="
+            JavaTokenType.EXCL -> "!"
+            JavaTokenType.PLUS -> "+"
+            JavaTokenType.MINUS -> "-"
+            JavaTokenType.ASTERISK -> "*"
+            JavaTokenType.DIV -> "/"
+            JavaTokenType.PERC -> "%"
+            JavaTokenType.PLUSEQ -> "+="
+            JavaTokenType.MINUSEQ -> "-="
+            JavaTokenType.ASTERISKEQ -> "*="
+            JavaTokenType.DIVEQ -> "/="
+            JavaTokenType.PERCEQ -> "%="
+            JavaTokenType.GTGT -> "shr"
+            JavaTokenType.LTLT -> "shl"
+            JavaTokenType.XOR -> "xor"
+            JavaTokenType.AND -> "and"
+            JavaTokenType.OR -> "or"
+            JavaTokenType.GTGTGT -> "ushr"
+            JavaTokenType.GTGTEQ -> "shr"
+            JavaTokenType.LTLTEQ -> "shl"
+            JavaTokenType.XOREQ -> "xor"
+            JavaTokenType.ANDEQ -> "and"
+            JavaTokenType.OREQ -> "or"
+            JavaTokenType.GTGTGTEQ -> "ushr"
+            JavaTokenType.PLUSPLUS -> "++"
+            JavaTokenType.MINUSMINUS -> "--"
+            else -> TODO(token.toString())
         }
+}
+
+fun JKJavaOperatorToken.toKtToken(): JKKtOperatorToken =
+    when (this.token) {
+        JavaTokenType.DIV -> JKKtSingleValueOperatorToken(KtTokens.DIV)
+        JavaTokenType.MINUS -> JKKtSingleValueOperatorToken(KtTokens.MINUS)
+        JavaTokenType.ANDAND -> JKKtSingleValueOperatorToken(KtTokens.ANDAND)
+        JavaTokenType.OROR -> JKKtSingleValueOperatorToken(KtTokens.OROR)
+        JavaTokenType.PLUS -> JKKtSingleValueOperatorToken(KtTokens.PLUS)
+        JavaTokenType.ASTERISK -> JKKtSingleValueOperatorToken(KtTokens.MUL)
+        JavaTokenType.GT -> JKKtSingleValueOperatorToken(KtTokens.GT)
+        JavaTokenType.GE -> JKKtSingleValueOperatorToken(KtTokens.GTEQ)
+        JavaTokenType.LT -> JKKtSingleValueOperatorToken(KtTokens.LT)
+        JavaTokenType.LE -> JKKtSingleValueOperatorToken(KtTokens.LTEQ)
+        JavaTokenType.PERC -> JKKtSingleValueOperatorToken(KtTokens.PERC)
+
+        JavaTokenType.EQ -> JKKtSingleValueOperatorToken(KtTokens.EQ)
+        JavaTokenType.PLUSEQ -> JKKtSingleValueOperatorToken(KtTokens.PLUSEQ)
+        JavaTokenType.MINUSEQ -> JKKtSingleValueOperatorToken(KtTokens.MINUSEQ)
+
+        JavaTokenType.AND -> JKKtWordOperatorToken("and")
+        JavaTokenType.OR -> JKKtWordOperatorToken("or")
+        JavaTokenType.XOR -> JKKtWordOperatorToken("xor")
+        JavaTokenType.GTGTGT -> JKKtWordOperatorToken("ushr")
+        JavaTokenType.GTGT -> JKKtWordOperatorToken("shr")
+        JavaTokenType.LTLT -> JKKtWordOperatorToken("shl")
+
+        JavaTokenType.OREQ -> JKKtWordOperatorToken("or")
+        JavaTokenType.ANDEQ -> JKKtWordOperatorToken("and")
+        JavaTokenType.LTLTEQ -> JKKtWordOperatorToken("shl")
+        JavaTokenType.GTGTEQ -> JKKtWordOperatorToken("shr")
+        JavaTokenType.GTGTGTEQ -> JKKtWordOperatorToken("ushr")
+        JavaTokenType.XOREQ -> JKKtWordOperatorToken("xor")
+
+        else -> TODO(this.token::class.java.toString())
+    }
+
+
+class JKJavaOperatorImpl private constructor(psiToken: IElementType) : JKOperator {
+    override val token: JKJavaOperatorToken = JKJavaOperatorToken(psiToken)
 
     override val precedence: Int
-        get() = when (token) {
+        get() = when (token.token) {
             JavaTokenType.ASTERISK, JavaTokenType.DIV, JavaTokenType.PERC -> 3
             JavaTokenType.PLUS, JavaTokenType.MINUS -> 4
             KtTokens.ELVIS -> 7
