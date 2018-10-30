@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.gradle.plugin
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.attributes.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaTarget
-import org.jetbrains.kotlin.gradle.utils.isGradleVersionAtLeast
 
 object ProjectLocalConfigurations {
     val ATTRIBUTE: Attribute<String> = Attribute.of("org.jetbrains.kotlin.localToProject", String::class.java)
@@ -18,10 +17,8 @@ object ProjectLocalConfigurations {
 
     fun setupAttributesMatchingStrategy(attributesSchema: AttributesSchema) = with(attributesSchema) {
         attribute(ATTRIBUTE) {
-            if (gradleVersionSupportsAttributeRules) {
-                it.compatibilityRules.add(ProjectLocalCompatibility::class.java)
-                it.disambiguationRules.add(ProjectLocalDisambiguation::class.java)
-            }
+            it.compatibilityRules.add(ProjectLocalCompatibility::class.java)
+            it.disambiguationRules.add(ProjectLocalDisambiguation::class.java)
         }
     }
 
@@ -41,23 +38,17 @@ object ProjectLocalConfigurations {
 }
 
 internal fun Configuration.setupAsLocalTargetSpecificConfigurationIfSupported(target: KotlinTarget) {
-    if (gradleVersionSupportsAttributeRules &&
-        // don't setup in old MPP common modules, as their output configurations with KotlinPlatformType attribute would
-        // fail to resolve as transitive dependencies of the platform modules, just as we don't mark their
-        // `api/RuntimeElements` with the KotlinPlatformType
-        (target !is KotlinWithJavaTarget<*> || target.platformType != KotlinPlatformType.common)
-    ) {
+    // don't setup in old MPP common modules, as their output configurations with KotlinPlatformType attribute would
+    // fail to resolve as transitive dependencies of the platform modules, just as we don't mark their
+    // `api/RuntimeElements` with the KotlinPlatformType
+    if ((target !is KotlinWithJavaTarget<*> || target.platformType != KotlinPlatformType.common)) {
         usesPlatformOf(target)
         attributes.attribute(ProjectLocalConfigurations.ATTRIBUTE, ProjectLocalConfigurations.LOCAL_TO_PROJECT_PREFIX + target.project.path)
     }
 }
 
 internal fun Configuration.setupAsPublicConfigurationIfSupported(target: KotlinTarget) {
-    if (gradleVersionSupportsAttributeRules &&
-        (target !is KotlinWithJavaTarget<*> || target.platformType != KotlinPlatformType.common)
-    ) {
+    if ((target !is KotlinWithJavaTarget<*> || target.platformType != KotlinPlatformType.common)) {
         attributes.attribute(ProjectLocalConfigurations.ATTRIBUTE, ProjectLocalConfigurations.PUBLIC_VALUE)
     }
 }
-
-internal val gradleVersionSupportsAttributeRules = isGradleVersionAtLeast(4, 0)

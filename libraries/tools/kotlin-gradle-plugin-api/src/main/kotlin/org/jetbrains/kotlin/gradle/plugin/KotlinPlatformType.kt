@@ -47,14 +47,9 @@ enum class KotlinPlatformType: Named, Serializable {
 
         fun setupAttributesMatchingStrategy(attributesSchema: AttributesSchema) {
             attributesSchema.attribute(KotlinPlatformType.attribute).run {
-                if (isGradleAtLeast(4, 0)) {
-                    compatibilityRules.add(CompatibilityRule::class.java)
-                    disambiguationRules.add(DisambiguationRule::class.java)
-                }
+                compatibilityRules.add(CompatibilityRule::class.java)
+                disambiguationRules.add(DisambiguationRule::class.java)
             }
         }
     }
 }
-
-private fun isGradleAtLeast(major: Int, minor: Int) =
-    GradleVersion.current() >= GradleVersion.version("$major.$minor")

@@ -97,11 +97,9 @@ object KotlinUsages {
     }
 
     internal fun setupAttributesMatchingStrategy(attributesSchema: AttributesSchema) {
-        if (isGradleVersionAtLeast(4, 0)) {
-            attributesSchema.attribute(Usage.USAGE_ATTRIBUTE) { strategy ->
-                strategy.compatibilityRules.add(KotlinJavaRuntimeJarsCompatibility::class.java)
-                strategy.disambiguationRules.add(KotlinUsagesDisambiguation::class.java)
-            }
+        attributesSchema.attribute(Usage.USAGE_ATTRIBUTE) { strategy ->
+            strategy.compatibilityRules.add(KotlinJavaRuntimeJarsCompatibility::class.java)
+            strategy.disambiguationRules.add(KotlinUsagesDisambiguation::class.java)
         }
     }
 }

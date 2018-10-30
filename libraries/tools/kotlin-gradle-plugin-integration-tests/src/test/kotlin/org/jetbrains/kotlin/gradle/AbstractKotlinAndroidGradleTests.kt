@@ -14,7 +14,7 @@ import kotlin.test.assertTrue
 
 class KotlinAndroidGradleIT : AbstractKotlinAndroidGradleTests(androidGradlePluginVersion = "2.3.0") {
     override val defaultGradleVersion: GradleVersionRequired
-        get() = GradleVersionRequired.InRange("3.4", "4.10.2")
+        get() = GradleVersionRequired.InRange("4.0", "4.10.2")
 }
 
 // TODO If we there is a way to fetch the latest Android plugin version, test against the latest version
@@ -329,17 +329,6 @@ abstract class AbstractKotlinAndroidGradleTests(val androidGradlePluginVersion: 
         // Execute 'assembleAndroidTest' first, without 'build' side effects
         project.build("assembleAndroidTest") {
             assertSuccessful()
-            if (project.testGradleVersionBelow("4.0")) {
-                val tasks = ArrayList<String>().apply {
-                    for (subProject in listOf("Android", "Lib")) {
-                        for (flavor in listOf("Flavor1", "Flavor2")) {
-                            add(":$subProject:copy${flavor}DebugKotlinClasses")
-                        }
-                    }
-                }
-                // with the new AGP we don't need copy classes tasks
-                assertTasksExecuted(tasks)
-            }
         }
     }
 
@@ -590,12 +579,10 @@ fun getSomething() = 10
                 ":libAndroid:compileReleaseUnitTestKotlin"
             )
 
-            val kotlinFolder = if (project.testGradleVersionAtLeast("4.0")) "kotlin" else ""
-
-            assertFileExists("lib/build/classes/$kotlinFolder/main/foo/PlatformClass.kotlin_metadata")
-            assertFileExists("lib/build/classes/$kotlinFolder/test/foo/PlatformTest.kotlin_metadata")
-            assertFileExists("libJvm/build/classes/$kotlinFolder/main/foo/PlatformClass.class")
-            assertFileExists("libJvm/build/classes/$kotlinFolder/test/foo/PlatformTest.class")
+            assertFileExists("lib/build/classes/kotlin/main/foo/PlatformClass.kotlin_metadata")
+            assertFileExists("lib/build/classes/kotlin/test/foo/PlatformTest.kotlin_metadata")
+            assertFileExists("libJvm/build/classes/kotlin/main/foo/PlatformClass.class")
+            assertFileExists("libJvm/build/classes/kotlin/test/foo/PlatformTest.class")
 
             assertFileExists("libAndroid/build/tmp/kotlin-classes/debug/foo/PlatformClass.class")
             assertFileExists("libAndroid/build/tmp/kotlin-classes/release/foo/PlatformClass.class")

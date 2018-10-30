@@ -29,7 +29,7 @@ class MultiplatformGradleIT : BaseGradleIT() {
 
     @Test
     fun testMultiplatformCompile() {
-        val project = Project("multiplatformProject", GradleVersionRequired.AtLeast("4.0"))
+        val project = Project("multiplatformProject")
 
         project.build("build") {
             assertSuccessful()
@@ -89,7 +89,7 @@ class MultiplatformGradleIT : BaseGradleIT() {
 
     @Test
     fun testSubprojectWithAnotherClassLoader() {
-        with(Project("multiplatformProject", GradleVersionRequired.AtLeast("4.0"))) {
+        with(Project("multiplatformProject")) {
             setupWorkingDir()
 
             // Make sure there is a plugin applied with the plugins DSL, so that Gradle loads the
