@@ -10,8 +10,6 @@ import org.gradle.api.file.FileCollection
 import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.api.tasks.*
 import org.gradle.jvm.tasks.Jar
-import org.jetbrains.kotlin.gradle.utils.isClassFile
-import org.jetbrains.kotlin.gradle.utils.isGradleVersionAtLeast
 import java.io.File
 
 internal open class InspectClassesForMultiModuleIC : DefaultTask() {
@@ -33,13 +31,8 @@ internal open class InspectClassesForMultiModuleIC : DefaultTask() {
             val convention = project.convention.findPlugin(JavaPluginConvention::class.java)
             val sourceSet = convention?.sourceSets?.findByName(sourceSetName) ?: return project.files()
 
-            return if (isGradleVersionAtLeast(4, 0)) {
-                val fileTrees = sourceSet.output.classesDirs.map { project.fileTree(it).include("**/*.class") }
-                project.files(fileTrees)
-            } else {
-                sourceSet.output.asFileTree.filter { it.isClassFile() }
-            }
-
+            val fileTrees = sourceSet.output.classesDirs.map { project.fileTree(it).include("**/*.class") }
+            return project.files(fileTrees)
         }
 
     @get:Input

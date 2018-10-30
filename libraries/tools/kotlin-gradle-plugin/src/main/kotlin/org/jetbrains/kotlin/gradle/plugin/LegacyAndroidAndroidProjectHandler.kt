@@ -63,14 +63,7 @@ internal class LegacyAndroidAndroidProjectHandler(kotlinConfigurationTools: Kotl
             javaTask.classpath + project.files(AndroidGradleWrapper.getRuntimeJars(androidPlugin, androidExt))
         }
 
-        getTestedVariantData(variantData)?.let { testedVariantData ->
-            // Android Gradle plugin bypasses the Gradle finalizedBy for its tasks in some cases, and
-            // the Kotlin classes may not be copied for the tested variant. Make sure they are.
-            kotlinTask.dependsOn(syncOutputTaskName(getVariantName(testedVariantData)))
-        }
-
         configureJavaTask(kotlinTask, javaTask, logger)
-        registerSyncOutputTask(project, kotlinTask, javaTask, getVariantName(variantData))
 
         // In lib modules, the androidTest variants get the classes jar in their classpath instead of the Java
         // destination dir. Attach the JAR to be consumed as friend path:

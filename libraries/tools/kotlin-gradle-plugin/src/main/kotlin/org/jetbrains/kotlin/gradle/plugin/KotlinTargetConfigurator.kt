@@ -35,7 +35,6 @@ import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinNativeCompile
 import org.jetbrains.kotlin.gradle.tasks.CInteropProcess
 import org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinNativeLink
-import org.jetbrains.kotlin.gradle.utils.isGradleVersionAtLeast
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import java.io.File
 import java.util.*
@@ -517,7 +516,7 @@ open class KotlinNativeTargetConfigurator(
 
             destinationDir = klibOutputDirectory(compilation)
             addCompilerPlugins()
-            compilation.output.tryAddClassesDir {
+            compilation.output.addClassesDir {
                 project.files(this.outputFile).builtBy(this)
             }
         }
@@ -777,14 +776,7 @@ open class KotlinNativeTargetConfigurator(
 }
 
 internal fun Project.usageByName(usageName: String): Usage =
-    if (isGradleVersionAtLeast(4, 0)) {
-        // `project.objects` is an API introduced in Gradle 4.0
-        project.objects.named(Usage::class.java, usageName)
-    } else {
-        val usagesClass = Class.forName("org.gradle.api.internal.attributes.Usages")
-        val usagesMethod = usagesClass.getMethod("usage", String::class.java)
-        usagesMethod(null, usageName) as Usage
-    }
+    project.objects.named(Usage::class.java, usageName)
 
 fun Configuration.usesPlatformOf(target: KotlinTarget): Configuration {
     attributes.attribute(KotlinPlatformType.attribute, target.platformType)

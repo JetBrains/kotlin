@@ -9,7 +9,6 @@ import org.gradle.api.Project
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.FileCollection
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationOutput
-import org.jetbrains.kotlin.gradle.utils.isGradleVersionAtLeast
 import java.io.File
 import java.util.concurrent.Callable
 
@@ -48,12 +47,7 @@ class KotlinWithJavaCompilationOutput(
         }
 
     override val classesDirs: ConfigurableFileCollection =
-        if (isGradleVersionAtLeast(4, 0))
-            javaSourceSetOutput.classesDirs as ConfigurableFileCollection
-        else
-        // In Gradle < 4.0 `SourceSetOutput` does not have `classesDirs`
-            @Suppress("DEPRECATION")
-            compilation.target.project.files(Callable { javaSourceSetOutput.classesDir })
+        javaSourceSetOutput.classesDirs as ConfigurableFileCollection
 
     override val allOutputs: FileCollection
         get() = javaSourceSetOutput

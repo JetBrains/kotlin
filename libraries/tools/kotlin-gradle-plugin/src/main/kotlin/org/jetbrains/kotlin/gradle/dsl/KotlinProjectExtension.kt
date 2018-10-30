@@ -51,13 +51,7 @@ open class KotlinSingleJavaTargetExtension : KotlinProjectExtension() {
     internal lateinit var target: KotlinWithJavaTarget<*>
 }
 
-open class KotlinJvmProjectExtension : KotlinSingleJavaTargetExtension() {
-    /**
-     * With Gradle 4.0+, disables the separate output directory for Kotlin, falling back to sharing the deprecated
-     * single classes directory per source set. With Gradle < 4.0, has no effect.
-     * */
-    var copyClassesToJavaOutput = false
-}
+open class KotlinJvmProjectExtension : KotlinSingleJavaTargetExtension()
 
 open class ExperimentalExtension {
     var coroutines: Coroutines? = null

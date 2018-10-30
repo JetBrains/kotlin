@@ -379,9 +379,8 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
 
         kotlinCompilation?.run {
             output.apply {
-                if (tryAddClassesDir { project.files(classesOutputDir).builtBy(kaptTask) }) {
-                    kotlinCompile.attachClassesDir { classesOutputDir }
-                }
+                addClassesDir { project.files(classesOutputDir).builtBy(kaptTask) }
+                kotlinCompile.attachClassesDir { classesOutputDir }
             }
         }
 

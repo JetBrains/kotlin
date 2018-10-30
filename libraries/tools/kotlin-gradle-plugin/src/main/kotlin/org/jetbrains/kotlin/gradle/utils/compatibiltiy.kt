@@ -16,10 +16,12 @@
 
 package org.jetbrains.kotlin.gradle.utils
 
+import org.gradle.api.GradleException
 import org.gradle.api.Task
 import org.gradle.api.tasks.SourceSetOutput
 import org.gradle.api.tasks.TaskInputs
 import org.gradle.api.tasks.TaskOutputs
+import org.gradle.util.GradleVersion
 
 internal val Task.inputsCompatible: TaskInputs get() = inputs
 
@@ -93,4 +95,14 @@ private val setClassesDirMethod by lazy {
 
 internal fun SourceSetOutput.setClassesDirCompatible(dirPath: Any) {
     setClassesDirMethod(this, dirPath)
+}
+
+internal fun checkGradleCompatibility(minSupportedVersion: GradleVersion = GradleVersion.version("4.0")) {
+    val currentVersion = GradleVersion.current()
+    if (currentVersion < minSupportedVersion) {
+        throw GradleException(
+            "Current version of Gradle $currentVersion is not compatible with Kotlin plugin. " +
+                    "Please use Gradle $minSupportedVersion or newer or previous version of Kotlin plugin."
+        )
+    }
 }

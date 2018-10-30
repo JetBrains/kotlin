@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.gradle
 
 import org.gradle.api.logging.LogLevel
-import org.jetbrains.kotlin.gradle.plugin.CopyClassesToJavaOutputStatus
 import org.jetbrains.kotlin.gradle.tasks.USING_JVM_INCREMENTAL_COMPILATION_MESSAGE
 import org.jetbrains.kotlin.gradle.util.*
 import org.junit.Test
@@ -260,24 +259,6 @@ class KotlinGradleIT : BaseGradleIT() {
     }
 
     @Test
-    fun testWipeClassesDirectoryBetweenBuilds() {
-        val project = Project("kotlinJavaProject", GradleVersionRequired.Exact("3.5"))
-
-        project.build("build") {
-            assertSuccessful()
-        }
-
-        val javaOutputDir = File(project.projectDir, "build/classes")
-        assert(javaOutputDir.isDirectory) { "Classes directory does not exist $javaOutputDir" }
-        javaOutputDir.deleteRecursively()
-
-        project.build("build") {
-            assertSuccessful()
-            assertTasksUpToDate(":compileKotlin")
-        }
-    }
-
-    @Test
     fun testMoveClassToOtherModule() {
         val project = Project("moveClassToOtherModule")
 
@@ -317,7 +298,7 @@ class KotlinGradleIT : BaseGradleIT() {
 
     @Test
     fun testKotlinBuiltins() {
-        val project = Project("kotlinBuiltins", GradleVersionRequired.AtLeast("4.0"))
+        val project = Project("kotlinBuiltins")
 
         project.build("build") {
             assertSuccessful()
@@ -358,42 +339,6 @@ class KotlinGradleIT : BaseGradleIT() {
         project.build("build") {
             assertSuccessful()
             assertFileExists(kotlinClassesDir() + "META-INF/$customModuleName.kotlin_module")
-        }
-    }
-
-    @Test
-    fun testChangeDestinationDir() {
-        val project = Project("kotlinProject", GradleVersionRequired.Exact("3.5"))
-        project.setupWorkingDir()
-
-        val fileToRemove = File(project.projectDir, "src/main/kotlin/removeMe.kt")
-        fileToRemove.writeText("val x = 1")
-        val classFilePath = "build/classes/main/RemoveMeKt.class"
-
-        project.build("build") {
-            assertSuccessful()
-            assertFileExists(classFilePath)
-        }
-
-        // Check that after the change the build succeeds and no stale classes remain in the java classes dir
-        File(project.projectDir, "build.gradle").modify {
-            "$it\n\ncompileKotlin.destinationDir = file(\"\${project.buildDir}/compileKotlin\")"
-        }
-        fileToRemove.delete()
-
-        project.build("build") {
-            assertSuccessful()
-            assertNoSuchFile(classFilePath)
-            // Check that the fallback to non-incremental copying was chosen
-            assertContains("Non-incremental copying files")
-        }
-
-        // Check that the classes are copied incrementally under normal conditions
-        fileToRemove.writeText("val x = 1")
-        project.build("build") {
-            assertSuccessful()
-            assertFileExists(classFilePath)
-            assertNotContains("Non-incremental copying files")
         }
     }
 
@@ -515,7 +460,7 @@ class KotlinGradleIT : BaseGradleIT() {
 
     @Test
     fun testSeparateOutputGradle40() {
-        val project = Project("kotlinJavaProject", GradleVersionRequired.AtLeast("4.0"))
+        val project = Project("kotlinJavaProject")
         project.build("compileDeployKotlin", "assemble") {
             assertSuccessful()
 
@@ -529,10 +474,6 @@ class KotlinGradleIT : BaseGradleIT() {
 
             // Check that the Java output is intact:
             assertFileExists("build/classes/java/main/demo/Greeter.class")
-
-            // Check that the sync output task is not used with Gradle 4.0+ and there's no old Kotlin output layout
-            assertNotContains(":copyMainKotlinClasses")
-            assertNoSuchFile("build/kotlin-classes")
         }
     }
 
@@ -571,80 +512,6 @@ class KotlinGradleIT : BaseGradleIT() {
                 File(project.projectDir, kotlinClassesDir() + "my/pack/name/app/MyApp.class"),
                 "my/pack/name/util/JUtil.util"
             )
-        }
-    }
-
-    @Test
-    fun testDisableSeparateClassesDirs() {
-
-        fun CompiledProject.check(
-            copyClassesToJavaOutput: Boolean?,
-            expectBuildCacheWarning: Boolean,
-            expectGradleLowVersionWarning: Boolean
-        ) {
-
-            val separateDirPath = kotlinClassesDir() + "demo/KotlinGreetingJoiner.class"
-            val singleDirPath = javaClassesDir() + "demo/KotlinGreetingJoiner.class"
-
-            assertSuccessful()
-            when (copyClassesToJavaOutput) {
-                true -> {
-                    assertNoSuchFile(separateDirPath)
-                    assertFileExists(singleDirPath)
-                }
-                false -> {
-                    assertFileExists(separateDirPath)
-                    assertNoSuchFile(singleDirPath)
-                }
-            }
-
-            if (expectBuildCacheWarning)
-                assertContains(CopyClassesToJavaOutputStatus.buildCacheWarningMessage)
-            else
-                assertNotContains(CopyClassesToJavaOutputStatus.buildCacheWarningMessage)
-
-            if (expectGradleLowVersionWarning)
-                assertContains(CopyClassesToJavaOutputStatus.gradleVersionTooLowWarningMessage)
-            else
-                assertNotContains(CopyClassesToJavaOutputStatus.gradleVersionTooLowWarningMessage)
-        }
-
-        Project("simpleProject", GradleVersionRequired.Exact("4.0")).apply {
-            build("build") {
-                check(
-                    copyClassesToJavaOutput = false,
-                    expectBuildCacheWarning = false,
-                    expectGradleLowVersionWarning = false
-                )
-            }
-            File(projectDir, "build.gradle").appendText("\nkotlin.copyClassesToJavaOutput = true")
-            build("clean", "build") {
-                check(
-                    copyClassesToJavaOutput = true,
-                    expectBuildCacheWarning = false,
-                    expectGradleLowVersionWarning = false
-                )
-            }
-            build("clean", "build", options = defaultBuildOptions().copy(withBuildCache = true)) {
-                check(
-                    copyClassesToJavaOutput = true,
-                    expectBuildCacheWarning = true,
-                    expectGradleLowVersionWarning = false
-                )
-            }
-            projectDir.deleteRecursively()
-        }
-
-        Project("simpleProject", GradleVersionRequired.Exact("3.4")).apply {
-            setupWorkingDir()
-            File(projectDir, "build.gradle").appendText("\nkotlin.copyClassesToJavaOutput = true")
-            build("build") {
-                check(
-                    copyClassesToJavaOutput = null,
-                    expectBuildCacheWarning = false,
-                    expectGradleLowVersionWarning = true
-                )
-            }
         }
     }
 

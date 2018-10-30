@@ -21,10 +21,7 @@ import org.junit.Assume
 
 sealed class GradleVersionRequired(val minVersion: String, val maxVersion: String?) {
     companion object {
-        //TODO once the plugin is compiled with API level 1.0, replace with the really supported one (3.2)
-        // Currently, it will lead to failing tests due to the conflict with the pre-release kotlin-reflect
-        // bundled into Gradle 3.2...3.4
-        const val OLDEST_SUPPORTED = "3.5"
+        const val OLDEST_SUPPORTED = "4.0"
     }
 
     class Exact(version: String) : GradleVersionRequired(version, version)

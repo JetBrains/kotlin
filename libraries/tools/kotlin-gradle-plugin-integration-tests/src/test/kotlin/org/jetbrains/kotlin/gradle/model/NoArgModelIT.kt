@@ -14,9 +14,6 @@ import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 class NoArgModelIT : BaseGradleIT() {
-    override val defaultGradleVersion: GradleVersionRequired
-        get() = GradleVersionRequired.AtLeast("4.0")
-
     @Test
     fun testNoArgKt18668() {
         val project = Project("noArgKt18668")
