@@ -5,6 +5,14 @@ public class ClassObjectArrayInParam {
         Class<?>[] value();
     }
 
-    @Anno({ClassObjectArrayInParam.class, Nested.class, String.class, java.util.List.class, String[][].class, int[][].class})
+    @Anno({
+            ClassObjectArrayInParam.class,
+            Nested.class,
+            String.class,
+            java.util.List.class,
+            String[][].class,
+            int[][].class,
+            void.class
+    })
     public static class Nested {}
 }
