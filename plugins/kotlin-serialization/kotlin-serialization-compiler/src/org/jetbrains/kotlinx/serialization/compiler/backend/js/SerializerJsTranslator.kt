@@ -58,7 +58,10 @@ class SerializerJsTranslator(descriptor: ClassDescriptor,
 
         // this.serialDesc = new SerialDescImpl(...)
         val correctThis = context.getDispatchReceiver(JsDescriptorUtils.getReceiverParameterForDeclaration(desc.containingDeclaration))
-        val value = JsNew(context.getInnerReference(serialDescImplConstructor), listOf(JsStringLiteral(serialName), correctThis))
+        val value = JsNew(
+            context.getInnerReference(serialDescImplConstructor),
+            listOf(JsStringLiteral(serialName), if (isGeneratedSerializer) correctThis else JsNullLiteral())
+        )
         val assgmnt = TranslationUtils.assignmentToBackingField(context, desc, value)
         translator.addInitializerStatement(assgmnt.makeStmt())
 

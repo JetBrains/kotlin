@@ -72,6 +72,9 @@ abstract class SerializerCodegen(
 
     val localSerializersFieldsDescriptors: List<PropertyDescriptor> = findLocalSerializersFieldDescriptors()
 
+    // Can be false if user specified inheritance from KSerializer explicitly
+    protected val isGeneratedSerializer = serializerDescriptor.typeConstructor.supertypes.any(::isGeneratedKSerializer)
+
     private fun findLocalSerializersFieldDescriptors(): List<PropertyDescriptor> {
         val count = serializableDescriptor.declaredTypeParameters.size
         if (count == 0) return emptyList()
