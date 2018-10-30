@@ -1,0 +1,14 @@
+moduleName=project_main
+languageLevel=1.1
+apiLevel=1.0
+platform=Common (experimental)
+implementedModuleNames=[]
+compilerArguments=K2MetadataCompilerArguments
+    [-classpath, my/classpath, -d, my/destination, -api-version, 1.0, -Xcoroutines=warn, -language-version, 1.1]
+compilerSettings
+sourceRoots
+    file:///src/main/kotlin -> KotlinSourceRootType.Source
+    file:///src/main/resources -> KotlinResourceRootType.Resource
+Libraries:
+    name=Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:1.2.0-rc-39, kind=LibraryKind:kotlin.common, hasFiles=true
+hasKotlinSdk=true

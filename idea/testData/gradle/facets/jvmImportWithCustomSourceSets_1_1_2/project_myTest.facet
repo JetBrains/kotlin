@@ -1,0 +1,13 @@
+moduleName=project_myTest
+languageLevel=1.1
+apiLevel=1.0
+platform=Platform(version=JVM_1_6)
+compilerArguments=K2JVMCompilerArguments
+    [-Xadd-compiler-builtins, -d, /build/kotlin-classes/myTest, -Xload-builtins-from-dependencies, -module-name, project_myTest, -no-reflect, -no-stdlib, -api-version, 1.0, -Xcoroutines=warn, -language-version, 1.1]
+compilerSettings
+    -Xdump-declarations-to=tmpTest
+sourceRoots
+    file:///src/myTest/java -> JavaSourceRootType.SOURCE
+    file:///src/myTest/kotlin -> JavaSourceRootType.SOURCE
+    file:///src/myTest/resources -> JavaResourceRootType.RESOURCE
+    file:///test -> JavaSourceRootType.SOURCE

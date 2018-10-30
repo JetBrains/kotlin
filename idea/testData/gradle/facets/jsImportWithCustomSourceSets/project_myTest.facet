@@ -1,0 +1,13 @@
+moduleName=project_myTest
+languageLevel=1.1
+apiLevel=1.0
+platform=JavaScript
+compilerArguments=K2JSCompilerArguments
+    [-meta-info, -module-kind, umd, -no-stdlib, -output, /build/classes/myTest/project_myTest.js, -target, v5, -api-version, 1.0, -Xcoroutines=warn, -language-version, 1.1]
+compilerSettings
+    -main callTest
+sourceRoots
+    file:///src/myTest/java -> KotlinSourceRootType.Source
+    file:///src/myTest/kotlin -> KotlinSourceRootType.Source
+    file:///src/myTest/resources -> KotlinResourceRootType.Resource
+    file:///test -> KotlinSourceRootType.Source

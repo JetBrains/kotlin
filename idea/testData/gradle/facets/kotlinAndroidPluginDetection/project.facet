@@ -1,0 +1,66 @@
+moduleName=project
+languageLevel=1.2
+apiLevel=1.2
+platform=Platform(version=JVM_1_6)
+implementedModuleNames=[]
+compilerArguments=K2JVMCompilerArguments
+    [-Xadd-compiler-builtins, -d, /build/tmp/kotlin-classes/debug, -Xload-builtins-from-dependencies, -module-name, project_debug, -no-reflect, -no-stdlib, -api-version, 1.2, -Xcoroutines=warn, -language-version, 1.2]
+compilerSettings
+    -progressive
+sourceRoots
+    file:///build/generated/res/resValues/androidTest/debug -> JavaResourceRootType.TEST_RESOURCE
+    file:///build/generated/res/resValues/debug -> JavaResourceRootType.RESOURCE
+    file:///build/generated/res/rs/androidTest/debug -> JavaResourceRootType.TEST_RESOURCE
+    file:///build/generated/res/rs/debug -> JavaResourceRootType.RESOURCE
+    file:///build/generated/source/aidl/androidTest/debug -> JavaSourceRootType.TEST_SOURCE
+    file:///build/generated/source/aidl/debug -> JavaSourceRootType.SOURCE
+    file:///build/generated/source/apt/androidTest/debug -> JavaSourceRootType.TEST_SOURCE
+    file:///build/generated/source/apt/debug -> JavaSourceRootType.SOURCE
+    file:///build/generated/source/buildConfig/androidTest/debug -> JavaSourceRootType.TEST_SOURCE
+    file:///build/generated/source/buildConfig/debug -> JavaSourceRootType.SOURCE
+    file:///build/generated/source/r/androidTest/debug -> JavaSourceRootType.TEST_SOURCE
+    file:///build/generated/source/r/debug -> JavaSourceRootType.SOURCE
+    file:///build/generated/source/rs/androidTest/debug -> JavaSourceRootType.TEST_SOURCE
+    file:///build/generated/source/rs/debug -> JavaSourceRootType.SOURCE
+    file:///src/androidTest/aidl -> JavaSourceRootType.TEST_SOURCE
+    file:///src/androidTest/assets -> JavaResourceRootType.TEST_RESOURCE
+    file:///src/androidTest/java -> JavaSourceRootType.TEST_SOURCE
+    file:///src/androidTest/res -> JavaResourceRootType.TEST_RESOURCE
+    file:///src/androidTest/resources -> JavaResourceRootType.TEST_RESOURCE
+    file:///src/androidTest/rs -> JavaSourceRootType.TEST_SOURCE
+    file:///src/androidTest/shaders -> JavaSourceRootType.TEST_SOURCE
+    file:///src/debug/aidl -> JavaSourceRootType.SOURCE
+    file:///src/debug/assets -> JavaResourceRootType.RESOURCE
+    file:///src/debug/java -> JavaSourceRootType.SOURCE
+    file:///src/debug/res -> JavaResourceRootType.RESOURCE
+    file:///src/debug/resources -> JavaResourceRootType.RESOURCE
+    file:///src/debug/rs -> JavaSourceRootType.SOURCE
+    file:///src/debug/shaders -> JavaSourceRootType.SOURCE
+    file:///src/main/aidl -> JavaSourceRootType.SOURCE
+    file:///src/main/assets -> JavaResourceRootType.RESOURCE
+    file:///src/main/java -> JavaSourceRootType.SOURCE
+    file:///src/main/res -> JavaResourceRootType.RESOURCE
+    file:///src/main/resources -> JavaResourceRootType.RESOURCE
+    file:///src/main/rs -> JavaSourceRootType.SOURCE
+    file:///src/main/shaders -> JavaSourceRootType.SOURCE
+    file:///src/test/aidl -> JavaSourceRootType.TEST_SOURCE
+    file:///src/test/assets -> JavaResourceRootType.TEST_RESOURCE
+    file:///src/test/java -> JavaSourceRootType.TEST_SOURCE
+    file:///src/test/res -> JavaResourceRootType.TEST_RESOURCE
+    file:///src/test/resources -> JavaResourceRootType.TEST_RESOURCE
+    file:///src/test/rs -> JavaSourceRootType.TEST_SOURCE
+    file:///src/test/shaders -> JavaSourceRootType.TEST_SOURCE
+    file:///src/testDebug/aidl -> JavaSourceRootType.TEST_SOURCE
+    file:///src/testDebug/assets -> JavaResourceRootType.TEST_RESOURCE
+    file:///src/testDebug/java -> JavaSourceRootType.TEST_SOURCE
+    file:///src/testDebug/res -> JavaResourceRootType.TEST_RESOURCE
+    file:///src/testDebug/resources -> JavaResourceRootType.TEST_RESOURCE
+    file:///src/testDebug/rs -> JavaSourceRootType.TEST_SOURCE
+    file:///src/testDebug/shaders -> JavaSourceRootType.TEST_SOURCE
+Libraries:
+    name=Gradle: com.android.databinding:library-1.3.1, kind=Can't get LibraryKind, hasFiles=false
+    name=Gradle: com.android.databinding:adapters-1.3.1, kind=Can't get LibraryKind, hasFiles=false
+    name=Gradle: com.android.support:support-annotations:21.0.3@jar, kind=Can't get LibraryKind, hasFiles=true
+    name=Gradle: com.android.support:support-v4-21.0.3, kind=Can't get LibraryKind, hasFiles=false
+    name=Gradle: android-android-26, kind=Can't get LibraryKind, hasFiles=true
+hasKotlinSdk=false

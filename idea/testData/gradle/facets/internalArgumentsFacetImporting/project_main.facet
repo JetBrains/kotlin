@@ -1,0 +1,18 @@
+moduleName=project_main
+languageLevel=1.2
+apiLevel=1.2
+platform=Platform(version=JVM_1_6)
+implementedModuleNames=[]
+compilerArguments=K2JVMCompilerArguments
+    [-Xadd-compiler-builtins, -d, /build/classes/kotlin/main, -Xload-builtins-from-dependencies, -module-name, project, -no-reflect, -no-stdlib, -api-version, 1.2, -Xcoroutines=warn, -language-version, 1.2]
+compilerSettings
+    -XXLanguage:+InlineClasses
+sourceRoots
+    file:///src/main/java -> JavaSourceRootType.SOURCE
+    file:///src/main/kotlin -> JavaSourceRootType.SOURCE
+    file:///src/main/resources -> JavaResourceRootType.RESOURCE
+Libraries:
+    name=Gradle: org.jetbrains.kotlin:kotlin-stdlib:1.2.50, kind=Can't get LibraryKind, hasFiles=true
+    name=Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:1.2.50, kind=LibraryKind:kotlin.common, hasFiles=true
+    name=Gradle: org.jetbrains:annotations:13.0, kind=Can't get LibraryKind, hasFiles=true
+hasKotlinSdk=false

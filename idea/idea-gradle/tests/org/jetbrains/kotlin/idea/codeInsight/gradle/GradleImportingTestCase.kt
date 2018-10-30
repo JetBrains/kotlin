@@ -25,9 +25,14 @@ import com.intellij.openapi.externalSystem.settings.ExternalProjectSettings
 import com.intellij.openapi.externalSystem.settings.ExternalSystemSettingsListenerAdapter
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.fileTypes.FileTypeManager
+import com.intellij.openapi.module.Module
 import com.intellij.openapi.projectRoots.JavaSdk
 import com.intellij.openapi.projectRoots.ProjectJdkTable
 import com.intellij.openapi.projectRoots.impl.SdkConfigurationUtil
+import com.intellij.openapi.roots.LibraryOrderEntry
+import com.intellij.openapi.roots.ModuleRootManager
+import com.intellij.openapi.roots.OrderRootType
+import com.intellij.openapi.roots.impl.libraries.LibraryEx
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.ui.TestDialog
 import com.intellij.openapi.util.io.FileUtil
@@ -41,8 +46,21 @@ import org.gradle.util.GradleVersion
 import org.gradle.wrapper.GradleWrapperMain
 import org.intellij.lang.annotations.Language
 import org.jetbrains.annotations.NonNls
+import org.jetbrains.jps.model.java.JavaResourceRootType
+import org.jetbrains.jps.model.java.JavaSourceRootType
+import org.jetbrains.jps.model.module.JpsModuleSourceRootType
+import org.jetbrains.kotlin.cli.common.arguments.Argument
+import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
+import org.jetbrains.kotlin.compilerRunner.ArgumentUtils
+import org.jetbrains.kotlin.config.CompilerSettings
+import org.jetbrains.kotlin.config.KotlinResourceRootType
+import org.jetbrains.kotlin.config.KotlinSourceRootType
+import org.jetbrains.kotlin.idea.facet.KotlinFacet
+import org.jetbrains.kotlin.idea.framework.KotlinSdkType
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
+import org.jetbrains.kotlin.idea.util.projectStructure.sdk
 import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.plugins.gradle.settings.DistributionType
 import org.jetbrains.plugins.gradle.settings.GradleProjectSettings
 import org.jetbrains.plugins.gradle.settings.GradleSettings
@@ -56,6 +74,7 @@ import org.junit.runners.Parameterized
 import java.io.File
 import java.io.IOException
 import java.io.StringWriter
+import java.lang.IllegalArgumentException
 import java.net.URISyntaxException
 import java.util.*
 
@@ -158,6 +177,111 @@ abstract class GradleImportingTestCase : ExternalSystemImportingTestCase() {
 
     private fun runPreprocessor(fileText: String): String {
         return fileText.replace("\$\$ANDROID_SDK\$\$", KotlinTestUtils.getAndroidSdkSystemIndependentPath())
+    }
+
+    open fun checkFacet(projectDirPath: String, module: Module) {
+        val actualFacet = KotlinFacet.get(module)
+        // TODO. More accurate check: either
+        //  - render absent facet in a file (i.e. make 'module'-'.facet' a 1-1 correspondence)
+        //  - do not render absent facet (but then check that we haven't expected it to be present, i.e. that there's no '.facet'-file)
+        if (actualFacet == null) return
+
+        val expectedFacetFile = File(projectDirPath).resolve("${actualFacet.module.name}.facet")
+        val actualRenderedFacet = buildString {
+            val printer = Printer(this)
+            renderFacet(actualFacet, printer)
+
+            printer.println("Libraries:")
+            printer.pushIndent()
+            renderLibraries(module, printer)
+            printer.popIndent()
+
+            printer.println("hasKotlinSdk=${module.sdk?.sdkType is KotlinSdkType}")
+        }
+        KotlinTestUtils.assertEqualsToFile(expectedFacetFile, actualRenderedFacet)
+    }
+
+    private fun renderLibraries(module: Module, printer: Printer) {
+        val rootManager = ModuleRootManager.getInstance(module)
+        val libraries = rootManager.orderEntries.filterIsInstance<LibraryOrderEntry>().mapNotNull { it.library }
+
+        for (library in libraries) {
+            printer.println(
+                "name=${library.name}, " +
+                        "kind=${(library as? LibraryEx)?.kind ?: "Can't get LibraryKind"}, " +
+                        "hasFiles=${library.getFiles(OrderRootType.CLASSES).isNotEmpty()}"
+            )
+        }
+    }
+
+    fun renderFacet(facet: KotlinFacet, printer: Printer) {
+        val facetSettings = facet.configuration.settings
+
+        with(printer) {
+            println("moduleName=${facet.module.name}")
+            println("languageLevel=${facetSettings.languageLevel}")
+            println("apiLevel=${facetSettings.apiLevel}")
+            println("platform=${facetSettings.platform}")
+
+            println("implementedModuleNames=${facetSettings.implementedModuleNames}")
+
+            println("compilerArguments=${facetSettings.compilerArguments?.javaClass?.simpleName}")
+            pushIndent()
+            renderCompilerArguments(facetSettings.compilerArguments, printer)
+            popIndent()
+
+            println("compilerSettings")
+            pushIndent()
+            renderCompilerSettings(facetSettings.compilerSettings, printer)
+            popIndent()
+
+            println("sourceRoots")
+            pushIndent()
+            renderSourceRootInfos(printer, facet.module.name)
+            popIndent()
+        }
+    }
+
+    private fun renderCompilerSettings(compilerSettings: CompilerSettings?, printer: Printer) {
+        if (compilerSettings == null) return
+
+        fun Printer.printIfNonDefault(value: Any?, defaultValue: Any?) {
+            if (value != defaultValue) println(value)
+        }
+
+        with(printer) {
+            printIfNonDefault(compilerSettings.additionalArguments, CompilerSettings.DEFAULT_ADDITIONAL_ARGUMENTS)
+            printIfNonDefault(compilerSettings.copyJsLibraryFiles, true)
+            printIfNonDefault(compilerSettings.outputDirectoryForJsLibraryFiles, CompilerSettings.DEFAULT_OUTPUT_DIRECTORY)
+            printIfNonDefault(compilerSettings.scriptTemplates, "")
+            printIfNonDefault(compilerSettings.scriptTemplatesClasspath, "")
+        }
+    }
+
+    private fun renderCompilerArguments(compilerArguments: CommonCompilerArguments?, printer: Printer) {
+        if (compilerArguments == null) return
+        printer.println(ArgumentUtils.convertArgumentsToStringList(compilerArguments).map { it.replace(projectPath, "") })
+    }
+
+    private fun renderSourceRootInfos(printer: Printer, moduleName: String) {
+        fun JpsModuleSourceRootType<*>.render(): String = when (this) {
+            JavaSourceRootType.SOURCE -> "JavaSourceRootType.SOURCE"
+            JavaSourceRootType.TEST_SOURCE -> "JavaSourceRootType.TEST_SOURCE"
+            JavaResourceRootType.RESOURCE -> "JavaResourceRootType.RESOURCE"
+            JavaResourceRootType.TEST_RESOURCE -> "JavaResourceRootType.TEST_RESOURCE"
+            KotlinSourceRootType.Source -> "KotlinSourceRootType.Source"
+            KotlinSourceRootType.TestSource -> "KotlinSourceRootType.TestSource"
+            KotlinResourceRootType.Resource -> "KotlinResourceRootType.Resource"
+            KotlinResourceRootType.TestResource -> "KotlinResourceRootType.TestResource"
+            else -> throw IllegalArgumentException("Unknown JpsModuleSourceRootType: ${this}")
+        }
+
+        with(printer) {
+            val sourceRoots = getSourceRootInfos(moduleName).sortedBy { (relativePath, _) -> relativePath }
+            for ((relativePath, sourceRootType) in sourceRoots) {
+                println("$relativePath -> ${sourceRootType.render()}")
+            }
+        }
     }
 
     override fun collectAllowedRoots(roots: MutableList<String>) {

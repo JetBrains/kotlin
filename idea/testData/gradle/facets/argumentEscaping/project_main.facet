@@ -1,0 +1,15 @@
+moduleName=project_main
+languageLevel=1.1
+apiLevel=1.1
+platform=Platform(version=JVM_1_6)
+implementedModuleNames=[]
+compilerArguments=K2JVMCompilerArguments
+    [-Xadd-compiler-builtins, -Xload-builtins-from-dependencies, -module-name, project_main, -no-reflect, -no-stdlib, -api-version, 1.1, -Xcoroutines=warn, -language-version, 1.1]
+compilerSettings
+    "-Xbuild-file=module with spaces"
+sourceRoots
+    file:///src/main/java -> JavaSourceRootType.SOURCE
+    file:///src/main/kotlin -> JavaSourceRootType.SOURCE
+    file:///src/main/resources -> JavaResourceRootType.RESOURCE
+Libraries:
+hasKotlinSdk=false

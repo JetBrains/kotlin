@@ -1,0 +1,12 @@
+moduleName=MultiTest-js_main
+languageLevel=1.1
+apiLevel=1.1
+platform=JavaScript
+implementedModuleNames=[MultiTest_main]
+compilerArguments=K2JSCompilerArguments
+    [-main, call, -meta-info, -no-stdlib, -output, /MultiTest-js/build/classes/main/MultiTest-js_main.js, -target, v5, -api-version, 1.1, -Xcoroutines=warn, -language-version, 1.1, -Xmulti-platform]
+compilerSettings
+sourceRoots
+    file:///MultiTest-js/src/main/java -> KotlinSourceRootType.Source
+    file:///MultiTest-js/src/main/kotlin -> KotlinSourceRootType.Source
+    file:///MultiTest-js/src/main/resources -> KotlinResourceRootType.Resource

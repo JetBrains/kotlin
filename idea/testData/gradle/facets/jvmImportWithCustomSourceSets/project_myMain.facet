@@ -1,0 +1,16 @@
+moduleName=project_myMain
+languageLevel=1.1
+apiLevel=1.1
+platform=Platform(version=JVM_1_8)
+implementedModuleNames=[]
+compilerArguments=K2JVMCompilerArguments
+    [-Xadd-compiler-builtins, -jvm-target, 1.7, -Xload-builtins-from-dependencies, -module-name, project_myMain, -no-reflect, -no-stdlib, -api-version, 1.1, -Xcoroutines=warn, -language-version, 1.1]
+compilerSettings
+    -Xdump-declarations-to=tmp -Xsingle-module
+sourceRoots
+    file:///src -> JavaSourceRootType.SOURCE
+    file:///src/myMain/java -> JavaSourceRootType.SOURCE
+    file:///src/myMain/kotlin -> JavaSourceRootType.SOURCE
+    file:///src/myMain/resources -> JavaResourceRootType.RESOURCE
+Libraries:
+hasKotlinSdk=false

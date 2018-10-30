@@ -1,0 +1,16 @@
+moduleName=MultiTest-jvm_main
+languageLevel=1.1
+apiLevel=1.1
+platform=Platform(version=JVM_1_6)
+implementedModuleNames=[MultiTest_main]
+compilerArguments=K2JVMCompilerArguments
+    [-Xadd-compiler-builtins, -Xload-builtins-from-dependencies, -module-name, MultiTest-jvm_main, -no-reflect, -no-stdlib, -api-version, 1.1, -Xcoroutines=warn, -language-version, 1.1, -Xmulti-platform]
+compilerSettings
+sourceRoots
+    file:///MultiTest-jvm/src/main/java -> JavaSourceRootType.SOURCE
+    file:///MultiTest-jvm/src/main/kotlin -> JavaSourceRootType.SOURCE
+    file:///MultiTest-jvm/src/main/resources -> JavaResourceRootType.RESOURCE
+Libraries:
+    name=Gradle: org.jetbrains.kotlin:kotlin-stdlib:1.1.0, kind=Can't get LibraryKind, hasFiles=true
+    name=Gradle: org.jetbrains:annotations:13.0, kind=Can't get LibraryKind, hasFiles=true
+hasKotlinSdk=false

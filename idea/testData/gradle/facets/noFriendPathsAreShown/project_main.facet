@@ -1,0 +1,17 @@
+moduleName=project_main
+languageLevel=1.2
+apiLevel=1.2
+platform=Platform(version=JVM_1_6)
+implementedModuleNames=[]
+compilerArguments=K2JVMCompilerArguments
+    [-Xadd-compiler-builtins, -classpath, /Users/dmitry.savvinov/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-stdlib/1.2.70-eap-4/fe72202a5b60711138e0641a78133b281e9d7740/kotlin-stdlib-1.2.70-eap-4.jar:/Users/dmitry.savvinov/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-stdlib-common/1.2.70-eap-4/90e7cdf0ecc617d8dc0649572dc80fd172923505/kotlin-stdlib-common-1.2.70-eap-4.jar:/Users/dmitry.savvinov/.gradle/caches/modules-2/files-2.1/org.jetbrains/annotations/13.0/919f0dfe192fb4e063e7dacadee7f8bb9a2672a9/annotations-13.0.jar, -d, /build/kotlin-classes/main, -Xload-builtins-from-dependencies, -module-name, project, -no-reflect, -no-stdlib, -api-version, 1.2, -Xcoroutines=warn, -language-version, 1.2]
+compilerSettings
+sourceRoots
+    file:///src/main/java -> JavaSourceRootType.SOURCE
+    file:///src/main/kotlin -> JavaSourceRootType.SOURCE
+    file:///src/main/resources -> JavaResourceRootType.RESOURCE
+Libraries:
+    name=Gradle: org.jetbrains.kotlin:kotlin-stdlib:1.2.70-eap-4, kind=Can't get LibraryKind, hasFiles=true
+    name=Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:1.2.70-eap-4, kind=LibraryKind:kotlin.common, hasFiles=true
+    name=Gradle: org.jetbrains:annotations:13.0, kind=Can't get LibraryKind, hasFiles=true
+hasKotlinSdk=false

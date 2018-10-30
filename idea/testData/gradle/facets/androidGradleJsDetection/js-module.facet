@@ -1,0 +1,18 @@
+moduleName=js-module
+languageLevel=1.1
+apiLevel=1.1
+platform=JavaScript
+implementedModuleNames=[]
+compilerArguments=K2JSCompilerArguments
+    [-main, call, -meta-info, -no-stdlib, -output, /js-module/build/classes/java/main/js-module_main.js, -target, v5, -api-version, 1.1, -Xcoroutines=warn, -language-version, 1.1]
+compilerSettings
+sourceRoots
+    file:///js-module/src/main/java -> KotlinSourceRootType.Source
+    file:///js-module/src/main/kotlin -> KotlinSourceRootType.Source
+    file:///js-module/src/main/resources -> KotlinResourceRootType.Resource
+    file:///js-module/src/test/java -> KotlinSourceRootType.TestSource
+    file:///js-module/src/test/kotlin -> KotlinSourceRootType.TestSource
+    file:///js-module/src/test/resources -> KotlinResourceRootType.TestResource
+Libraries:
+    name=Gradle: kotlin-stdlib-js-1.1.0, kind=LibraryKind:kotlin.js, hasFiles=true
+hasKotlinSdk=true

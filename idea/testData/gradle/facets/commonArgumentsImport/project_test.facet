@@ -1,0 +1,11 @@
+moduleName=project_test
+languageLevel=1.1
+apiLevel=1.0
+platform=Common (experimental)
+implementedModuleNames=[]
+compilerArguments=K2MetadataCompilerArguments
+    [-classpath, my/test/classpath, -d, my/test/destination, -api-version, 1.0, -Xcoroutines=warn, -language-version, 1.1]
+compilerSettings
+sourceRoots
+    file:///src/test/kotlin -> KotlinSourceRootType.TestSource
+    file:///src/test/resources -> KotlinResourceRootType.TestResource

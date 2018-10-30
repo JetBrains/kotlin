@@ -1,0 +1,15 @@
+moduleName=project_main
+languageLevel=1.0
+apiLevel=1.0
+platform=JavaScript
+implementedModuleNames=[]
+compilerArguments=K2JSCompilerArguments
+    [-api-version, 1.0, -Xcoroutines=warn, -language-version, 1.0]
+compilerSettings
+sourceRoots
+    file:///src/main/java -> KotlinSourceRootType.Source
+    file:///src/main/kotlin -> KotlinSourceRootType.Source
+    file:///src/main/resources -> KotlinResourceRootType.Resource
+Libraries:
+    name=Gradle: org.jetbrains.kotlin:kotlin-js-library:1.0.6, kind=Can't get LibraryKind, hasFiles=false
+hasKotlinSdk=false

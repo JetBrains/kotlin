@@ -1,0 +1,14 @@
+moduleName=project_main
+languageLevel=1.2
+apiLevel=1.2
+platform=Platform(version=JVM_1_6)
+implementedModuleNames=[]
+compilerArguments=K2JVMCompilerArguments
+    [-Xadd-compiler-builtins, -d, /build/kotlin-classes/main, -Xload-builtins-from-dependencies, -module-name, project, -no-reflect, -no-stdlib, -api-version, 1.2, -Xcoroutines=warn, -language-version, 1.2, -Xplugin=/Users/dmitry.savvinov/Repos/kotlin/dist/kotlinc/lib/allopen-compiler-plugin.jar, -P, plugin:org.jetbrains.kotlin.allopen:annotation=org.springframework.stereotype.Component,plugin:org.jetbrains.kotlin.allopen:annotation=org.springframework.transaction.annotation.Transactional,plugin:org.jetbrains.kotlin.allopen:annotation=org.springframework.scheduling.annotation.Async,plugin:org.jetbrains.kotlin.allopen:annotation=org.springframework.cache.annotation.Cacheable,plugin:org.jetbrains.kotlin.allopen:annotation=org.springframework.boot.test.context.SpringBootTest,plugin:org.jetbrains.kotlin.allopen:annotation=org.springframework.validation.annotation.Validated]
+compilerSettings
+sourceRoots
+    file:///src/main/java -> JavaSourceRootType.SOURCE
+    file:///src/main/kotlin -> JavaSourceRootType.SOURCE
+    file:///src/main/resources -> JavaResourceRootType.RESOURCE
+Libraries:
+hasKotlinSdk=false

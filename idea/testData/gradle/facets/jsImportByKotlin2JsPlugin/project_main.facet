@@ -1,0 +1,14 @@
+moduleName=project_main
+languageLevel=1.1
+apiLevel=1.1
+platform=JavaScript
+implementedModuleNames=[]
+compilerArguments=K2JSCompilerArguments
+    [-main, call, -meta-info, -no-stdlib, -output, /build/classes/main/project_main.js, -target, v5, -api-version, 1.1, -Xcoroutines=warn, -language-version, 1.1]
+compilerSettings
+sourceRoots
+    file:///src/main/java -> KotlinSourceRootType.Source
+    file:///src/main/kotlin -> KotlinSourceRootType.Source
+    file:///src/main/resources -> KotlinResourceRootType.Resource
+Libraries:
+hasKotlinSdk=true

@@ -1,0 +1,16 @@
+moduleName=project_main
+languageLevel=1.1
+apiLevel=1.1
+platform=JavaScript
+implementedModuleNames=[]
+compilerArguments=K2JSCompilerArguments
+    [-meta-info, -no-stdlib, -output, /build/classes/main/project_main.js, -source-map, -target, v5, -api-version, 1.1, -Xcoroutines=warn, -language-version, 1.1]
+compilerSettings
+    -main callMain
+sourceRoots
+    file:///src/main/java -> KotlinSourceRootType.Source
+    file:///src/main/kotlin -> KotlinSourceRootType.Source
+    file:///src/main/resources -> KotlinResourceRootType.Resource
+Libraries:
+    name=Gradle: org.jetbrains.kotlin:kotlin-stdlib-js:1.1.0, kind=LibraryKind:kotlin.js, hasFiles=true
+hasKotlinSdk=true

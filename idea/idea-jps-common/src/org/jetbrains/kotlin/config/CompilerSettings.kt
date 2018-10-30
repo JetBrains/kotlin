@@ -28,7 +28,7 @@ class CompilerSettings : Freezable() {
 
     companion object {
         val DEFAULT_ADDITIONAL_ARGUMENTS = "-version"
-        private val DEFAULT_OUTPUT_DIRECTORY = "lib"
+        val DEFAULT_OUTPUT_DIRECTORY = "lib"
     }
 }
 
