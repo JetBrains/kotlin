@@ -96,12 +96,6 @@ internal fun findKotlinStdlibClasspath(project: Project): List<File> =
 internal fun findKotlinScriptRuntimeClasspath(project: Project): List<File> =
     findKotlinModuleJar(project, KOTLIN_SCRIPT_RUNTIME_EXPECTED_CLASS, KOTLIN_SCRIPT_RUNTIME)
 
-internal fun findKotlinScriptCommonClasspath(project: Project): List<File> =
-    findKotlinModuleJar(project, KOTLIN_SCRIPT_ANNOTATION_EXPECTED_CLASS, KOTLIN_SCRIPT_COMMON)
-
-internal fun findKotlinScriptJvmClasspath(project: Project): List<File> =
-    findKotlinModuleJar(project, KOTLIN_JVM_SCRIPT_COMPILER_EXPECTED_CLASS, KOTLIN_SCRIPT_JVM)
-
 internal fun findKotlinReflectClasspath(project: Project): List<File> =
     findKotlinModuleJar(project, KOTLIN_REFLECT_EXPECTED_CLASS, KOTLIN_REFLECT)
 
@@ -118,18 +112,6 @@ internal fun findToolsJar(): File? {
             )
         }
     return javacUtilContextClass?.let(::findJarByClass)
-}
-
-internal fun findCoroutinesClasspath(): List<File> {
-    val classLoader = Thread.currentThread().contextClassLoader
-    val prefix = "kotlinx." // because shadow plugin rewrites strings too, so the fqn should be constructed on runtime
-    val clazz = try {
-        classLoader.loadClass(prefix + "coroutines.experimental.BuildersKt")
-    } catch (e: ClassNotFoundException) {
-        null
-    } ?: return emptyList()
-
-    return (findJarByClass(clazz))?.let { listOf(it) } ?: emptyList()
 }
 
 private fun findJarByClass(klass: Class<*>): File? {

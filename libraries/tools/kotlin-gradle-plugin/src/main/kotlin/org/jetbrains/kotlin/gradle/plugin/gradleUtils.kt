@@ -41,12 +41,6 @@ internal fun AbstractCompile.appendClasspathDynamically(file: File) {
     }
 }
 
-// Extends finalizedBy clause so that finalizing task does not run if finalized task failed
-internal fun Task.finalizedByIfNotFailed(finalizer: Task) {
-    finalizer.onlyIf { this@finalizedByIfNotFailed.state.failure == null }
-    this.finalizedBy(finalizer)
-}
-
 fun AbstractCompile.mapClasspath(fn: () -> FileCollection) {
     conventionMapping.map("classpath", fn)
 }
