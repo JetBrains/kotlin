@@ -49,9 +49,10 @@ class JvmSerializerExtension(private val bindings: JvmSerializationBindings, sta
     override fun shouldUseTypeTable(): Boolean = useTypeTable
 
     override fun serializeClass(
-        descriptor: ClassDescriptor,
-        proto: ProtoBuf.Class.Builder,
-        versionRequirementTable: MutableVersionRequirementTable
+            descriptor: ClassDescriptor,
+            proto: ProtoBuf.Class.Builder,
+            versionRequirementTable: MutableVersionRequirementTable,
+            childSerializer: DescriptorSerializer
     ) {
         if (moduleName != JvmAbi.DEFAULT_MODULE_NAME) {
             proto.setExtension(JvmProtoBuf.classModuleName, stringTable.getStringIndex(moduleName))
@@ -134,7 +135,9 @@ class JvmSerializerExtension(private val bindings: JvmSerializationBindings, sta
         }
     }
 
-    override fun serializeConstructor(descriptor: ConstructorDescriptor, proto: ProtoBuf.Constructor.Builder) {
+    override fun serializeConstructor(descriptor: ConstructorDescriptor,
+                                      proto: ProtoBuf.Constructor.Builder,
+                                      childSerializer: DescriptorSerializer) {
         val method = bindings.get(METHOD_FOR_FUNCTION, descriptor)
         if (method != null) {
             val signature = SignatureSerializer().methodSignature(descriptor, method)
@@ -144,7 +147,9 @@ class JvmSerializerExtension(private val bindings: JvmSerializationBindings, sta
         }
     }
 
-    override fun serializeFunction(descriptor: FunctionDescriptor, proto: ProtoBuf.Function.Builder) {
+    override fun serializeFunction(descriptor: FunctionDescriptor,
+                                   proto: ProtoBuf.Function.Builder,
+                                   childSerializer: DescriptorSerializer) {
         val method = bindings.get(METHOD_FOR_FUNCTION, descriptor)
         if (method != null) {
             val signature = SignatureSerializer().methodSignature(descriptor, method)
@@ -155,9 +160,10 @@ class JvmSerializerExtension(private val bindings: JvmSerializationBindings, sta
     }
 
     override fun serializeProperty(
-        descriptor: PropertyDescriptor,
-        proto: ProtoBuf.Property.Builder,
-        versionRequirementTable: MutableVersionRequirementTable
+            descriptor: PropertyDescriptor,
+            proto: ProtoBuf.Property.Builder,
+            versionRequirementTable: MutableVersionRequirementTable,
+            childSerializer: DescriptorSerializer
     ) {
         val signatureSerializer = SignatureSerializer()
 

@@ -44,13 +44,13 @@ class DescriptorSerializer private constructor(
         private val containingDeclaration: DeclarationDescriptor?,
         private val typeParameters: Interner<TypeParameterDescriptor>,
         private val extension: SerializerExtension,
-        private val typeTable: MutableTypeTable,
+        val typeTable: MutableTypeTable,
         private val versionRequirementTable: MutableVersionRequirementTable,
         private val serializeTypeTableToFunction: Boolean
 ) {
     private val contractSerializer = ContractSerializer()
 
-    private fun createChildSerializer(descriptor: DeclarationDescriptor): DescriptorSerializer =
+    fun createChildSerializer(descriptor: DeclarationDescriptor): DescriptorSerializer =
             DescriptorSerializer(descriptor, Interner(typeParameters), extension, typeTable, versionRequirementTable,
                                  serializeTypeTableToFunction = false)
 
@@ -145,7 +145,7 @@ class DescriptorSerializer private constructor(
 
         builder.addAllVersionRequirement(serializeVersionRequirements(classDescriptor))
 
-        extension.serializeClass(classDescriptor, builder, versionRequirementTable)
+        extension.serializeClass(classDescriptor, builder, versionRequirementTable, this)
 
         writeVersionRequirementForInlineClasses(classDescriptor, builder, versionRequirementTable)
 
@@ -269,7 +269,7 @@ class DescriptorSerializer private constructor(
             builder.addVersionRequirement(writeVersionRequirement(LanguageFeature.InlineClasses))
         }
 
-        extension.serializeProperty(descriptor, builder, versionRequirementTable)
+        extension.serializeProperty(descriptor, builder, versionRequirementTable, local)
 
         return builder
     }
@@ -344,7 +344,7 @@ class DescriptorSerializer private constructor(
 
         contractSerializer.serializeContractOfFunctionIfAny(descriptor, builder, this)
 
-        extension.serializeFunction(descriptor, builder)
+        extension.serializeFunction(descriptor, builder, local)
 
         return builder
     }
@@ -375,7 +375,7 @@ class DescriptorSerializer private constructor(
             builder.addVersionRequirement(writeVersionRequirement(LanguageFeature.InlineClasses))
         }
 
-        extension.serializeConstructor(descriptor, builder)
+        extension.serializeConstructor(descriptor, builder, local)
 
         return builder
     }
@@ -402,7 +402,7 @@ class DescriptorSerializer private constructor(
         )
     }
 
-    fun typeAliasProto(descriptor: TypeAliasDescriptor): ProtoBuf.TypeAlias.Builder {
+    private fun typeAliasProto(descriptor: TypeAliasDescriptor): ProtoBuf.TypeAlias.Builder {
         val builder = ProtoBuf.TypeAlias.newBuilder()
         val local = createChildSerializer(descriptor)
 
@@ -442,7 +442,7 @@ class DescriptorSerializer private constructor(
         return builder
     }
 
-    fun enumEntryProto(descriptor: ClassDescriptor): ProtoBuf.EnumEntry.Builder {
+    private fun enumEntryProto(descriptor: ClassDescriptor): ProtoBuf.EnumEntry.Builder {
         val builder = ProtoBuf.EnumEntry.newBuilder()
         builder.name = getSimpleNameIndex(descriptor.name)
         extension.serializeEnumEntry(descriptor, builder)
@@ -517,7 +517,7 @@ class DescriptorSerializer private constructor(
         return builder
     }
 
-    internal fun typeId(type: KotlinType): Int = typeTable[type(type)]
+    fun typeId(type: KotlinType): Int = typeTable[type(type)]
 
     internal fun type(type: KotlinType): ProtoBuf.Type.Builder {
         val builder = ProtoBuf.Type.newBuilder()
