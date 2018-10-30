@@ -81,8 +81,13 @@ public interface ContractBuilder {
     * @sample samples.contracts.callsInPlaceExactlyOnceContract
     * @sample samples.contracts.callsInPlaceUnknownContract
     */
-    @ContractsDsl public fun <R> callsInPlace(lambda: Function<R>, kind: InvocationKind = InvocationKind.UNKNOWN): CallsInPlace
+    @ContractsDsl public fun <R> callsInPlace(function: Function<R>, kind: InvocationKind = InvocationKind.UNKNOWN): CallsInPlace
 }
+
+@ContractsDsl
+@Deprecated("Parameter 'lambda' was renamed to 'function'", ReplaceWith("this.callsInPlace(function = lambda, kind = kind)"))
+public fun <R> ContractBuilder.callsInPlace(lambda: Function<R>, kind: InvocationKind = InvocationKind.UNKNOWN): CallsInPlace =
+    callsInPlace(function = lambda, kind = kind)
 
 /**
  * Specifies how many times a function invokes its function parameter in place.
