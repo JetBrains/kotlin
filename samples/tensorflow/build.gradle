@@ -4,9 +4,12 @@ plugins {
 
 def tensorflowHome = "${MPPTools.kotlinNativeDataPath()}/third-party/tensorflow"
 
+// Determine host preset.
+def hostPreset = MPPTools.defaultHostPreset(project, [kotlin.presets.macosX64, kotlin.presets.linuxX64])
+
 kotlin {
     targets {
-        fromPreset(MPPTools.defaultHostPreset(project, [presets.macosX64, presets.linuxX64]), 'tensorflow') {
+        fromPreset(hostPreset, 'tensorflow') {
             compilations.main.outputKinds 'EXECUTABLE'
             compilations.main.entryPoint 'sample.tensorflow.main'
             compilations.main.linkerOpts "-L$tensorflowHome/lib", '-ltensorflow'

@@ -2,9 +2,12 @@ plugins {
     id 'kotlin-multiplatform'
 }
 
+// Determine host preset.
+def hostPreset = MPPTools.defaultHostPreset(project, [kotlin.presets.mingwX64])
+
 kotlin {
     targets {
-        fromPreset(MPPTools.defaultHostPreset(project, [presets.mingwX64]), 'win32') {
+        fromPreset(hostPreset, 'win32') {
             compilations.main.outputKinds 'EXECUTABLE'
             compilations.main.entryPoint 'sample.win32.main'
             compilations.main.linkerOpts '-Wl,--subsystem,windows'

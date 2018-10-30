@@ -2,9 +2,12 @@ plugins {
     id 'kotlin-multiplatform'
 }
 
+// Determine host preset.
+def hostPreset = MPPTools.defaultHostPreset(project)
+
 kotlin {
     targets {
-        fromPreset(MPPTools.defaultHostPreset(project), 'globalState') {
+        fromPreset(hostPreset, 'globalState') {
             compilations.main.outputKinds 'EXECUTABLE'
             compilations.main.entryPoint 'sample.globalstate.main'
             compilations.main.cinterops {

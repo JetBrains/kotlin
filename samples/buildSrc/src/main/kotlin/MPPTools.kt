@@ -52,14 +52,10 @@ fun defaultHostPreset(
         else -> null
     }
 
-    val preset = if (presetCandidate != null && presetCandidate in whitelist)
+    return if (presetCandidate != null && presetCandidate in whitelist)
         presetCandidate
     else
         throw Exception("Host OS '$hostOs' is not supported in Kotlin/Native ${subproject.displayName}.")
-
-    subproject.ext.set("hostPreset", preset)
-
-    return preset
 }
 
 // A short-cut to add a Kotlin/Native run task.

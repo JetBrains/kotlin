@@ -2,12 +2,10 @@ plugins {
     id 'kotlin-multiplatform'
 }
 
-kotlin {
-    presets {
-        // Determine host preset.
-        MPPTools.defaultHostPreset(project, [macosX64, linuxX64])
-    }
+// Determine host preset.
+def hostPreset = MPPTools.defaultHostPreset(project, [kotlin.presets.macosX64, kotlin.presets.linuxX64])
 
+kotlin {
     targets {
         fromPreset(hostPreset, 'gitChurn') {
             compilations.main.outputKinds 'EXECUTABLE'

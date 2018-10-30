@@ -1,5 +1,3 @@
-import java.nio.file.Paths
-
 plugins {
     id 'kotlin-multiplatform'
 }
@@ -10,12 +8,10 @@ repositories {
     maven { url = "file://$localRepo" }
 }
 
-kotlin {
-    presets {
-        // Determine host preset.
-        MPPTools.defaultHostPreset(project, [macosX64, linuxX64])
-    }
+// Determine host preset.
+def hostPreset = MPPTools.defaultHostPreset(project, [kotlin.presets.macosX64, kotlin.presets.linuxX64])
 
+kotlin {
     targets {
         fromPreset(hostPreset, 'curl') {
             compilations.main.outputKinds 'EXECUTABLE'

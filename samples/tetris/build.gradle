@@ -3,7 +3,7 @@ plugins {
 }
 
 File winCompiledResourceFile = file("$buildDir/compiledWindowsResources/Tetris.res")
-project.ext.hostPreset = determinePreset()
+def hostPreset = determinePreset()
 
 kotlin {
     targets {
