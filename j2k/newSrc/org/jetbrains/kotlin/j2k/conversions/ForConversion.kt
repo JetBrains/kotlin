@@ -157,11 +157,12 @@ class ForConversion(private val context: ConversionContext) : RecursiveApplicabl
                     context,
                     psiContext
                 )
-            else -> JKBinaryExpressionImpl(
+            else -> JKBinaryExpressionImpl.createKotlinBinaryExpression(
                 start,
                 convertBound(bound, if (inclusiveComparison) 0 else -1),
-                JKKtOperatorImpl.tokenToOperator[KtTokens.RANGE]!!
-            )
+                KtTokens.RANGE,
+                context
+            )!!
         }
     }
 
@@ -174,11 +175,11 @@ class ForConversion(private val context: ConversionContext) : RecursiveApplicabl
         }
 
         val sign = if (correction > 0) KtTokens.PLUS else KtTokens.MINUS
-        return JKBinaryExpressionImpl(
+        return JKBinaryExpressionImpl.createKotlinBinaryExpression(
             bound,
             JKKtLiteralExpressionImpl(Math.abs(correction).toString(), JKLiteralExpression.LiteralType.INT),
-            JKKtOperatorImpl.tokenToOperator[sign]!!
-        )
+            sign,
+            context)!!
     }
 
     private fun indicesIterationRange(

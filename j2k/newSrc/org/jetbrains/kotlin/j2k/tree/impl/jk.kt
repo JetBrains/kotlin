@@ -18,16 +18,21 @@ package org.jetbrains.kotlin.j2k.tree.impl
 
 import com.intellij.psi.PsiClass
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.j2k.ConversionContext
 import org.jetbrains.kotlin.j2k.JKSymbolProvider
 import org.jetbrains.kotlin.j2k.ast.Mutability
 import org.jetbrains.kotlin.j2k.ast.Nullability
+import org.jetbrains.kotlin.j2k.conversions.resolveFqName
 import org.jetbrains.kotlin.j2k.tree.*
 import org.jetbrains.kotlin.j2k.tree.JKLiteralExpression.LiteralType
 import org.jetbrains.kotlin.j2k.tree.JKLiteralExpression.LiteralType.BOOLEAN
 import org.jetbrains.kotlin.j2k.tree.JKLiteralExpression.LiteralType.NULL
 import org.jetbrains.kotlin.j2k.tree.visitors.JKVisitor
+import org.jetbrains.kotlin.lexer.KtSingleValueToken
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.KtClass
+import org.jetbrains.kotlin.psi.KtNamedFunction
+import org.jetbrains.kotlin.types.expressions.OperatorConventions
 
 class JKFileImpl : JKFile, JKBranchElementBase() {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitFile(this, data)
@@ -104,7 +109,7 @@ class JKBlockImpl(statements: List<JKStatement> = emptyList()) : JKBlock, JKBran
     override var statements by children(statements)
 }
 
-
+//todo split to java and kt sbinary expression
 class JKBinaryExpressionImpl(
     left: JKExpression,
     right: JKExpression,
@@ -112,10 +117,60 @@ class JKBinaryExpressionImpl(
 ) : JKBinaryExpression,
     JKBranchElementBase() {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitBinaryExpression(this, data)
-
     override var right by child(right)
     override var left by child(left)
+
+    companion object {
+        private fun methodSymbolForToken(
+            token: KtSingleValueToken,
+            leftType: JKType,
+            rightType: JKType,
+            symbolProvider: JKSymbolProvider
+        ): JKMethodSymbol {
+            val classSymbol =
+                when (leftType) {
+                    is JKClassType -> leftType.classReference as JKMultiverseKtClassSymbol
+                    is JKJavaPrimitiveType -> {
+                        val psiClass = resolveFqName(
+                            ClassId.fromString(leftType.jvmPrimitiveType.primitiveType.typeFqName.asString()),
+                            symbolProvider.symbolsByPsi.keys.first()
+                        )!!
+                        symbolProvider.provideDirectSymbol(psiClass) as JKMultiverseKtClassSymbol
+                    }
+                    else ->
+                        TODO(leftType::class.java.toString())
+                }
+            return classSymbol.target.declarations// todo look for extensions
+                .asSequence()
+                .filterIsInstance<KtNamedFunction>()
+                .filter { it.name == operatorName }
+                .mapNotNull { symbolProvider.provideDirectSymbol(it) as? JKMethodSymbol }
+                .firstOrNull { it.parameterTypes.singleOrNull()?.takeIf { it.isSubtypeOf(rightType, symbolProvider) } != null }!!
+        }
+
+
+        fun createKotlinBinaryExpression(
+            left: JKExpression,
+            right: JKExpression,
+            token: KtSingleValueToken,
+            context: ConversionContext
+        ): JKBinaryExpression? {
+            val leftType = left.type(context)
+            val rightType = right.type(context)
+            val methodSymbol = methodSymbolForToken(token, leftType, rightType, context.symbolProvider)
+            return JKBinaryExpressionImpl(left, right, JKKtOperatorImpl(token, methodSymbol))
+        }
+    }
 }
+
+infix fun JKType?.equalsIgnoreMutability(other: JKType?) =
+    when {
+        (this is JKClassTypeImpl && other is JKClassTypeImpl) ->
+            this.classReference == other.classReference && this.parameters == other.parameters
+        else -> TODO("No comparation for $this and $other")
+    }
+
+
 
 class JKPrefixExpressionImpl(expression: JKExpression, override var operator: JKOperator) : JKPrefixExpression, JKBranchElementBase() {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitPrefixExpression(this, data)
@@ -236,19 +291,27 @@ class JKBooleanLiteral(val value: Boolean) : JKLiteralExpression, JKElementBase(
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitLiteralExpression(this, data)
 }
 
-fun JKLiteralExpression.LiteralType.toJkType(symbolProvider: JKSymbolProvider): JKType =
-    when (this) {
-        JKLiteralExpression.LiteralType.CHAR -> JKJavaPrimitiveTypeImpl.CHAR
-        JKLiteralExpression.LiteralType.BOOLEAN -> JKJavaPrimitiveTypeImpl.BOOLEAN
-        JKLiteralExpression.LiteralType.INT -> JKJavaPrimitiveTypeImpl.INT
-        JKLiteralExpression.LiteralType.LONG -> JKJavaPrimitiveTypeImpl.LONG
-        JKLiteralExpression.LiteralType.FLOAT -> JKJavaPrimitiveTypeImpl.FLOAT
-        JKLiteralExpression.LiteralType.DOUBLE -> JKJavaPrimitiveTypeImpl.DOUBLE
+fun JKLiteralExpression.LiteralType.toJkType(symbolProvider: JKSymbolProvider): JKType  {
+    fun defaultTypeByName(name: String) =
+        JKClassTypeImpl(
+            symbolProvider.provideDirectSymbol(
+                resolveFqName(ClassId.fromString("kotlin.$name"), symbolProvider.symbolsByPsi.keys.first())!!
+            ) as JKClassSymbol, emptyList(), Nullability.NotNull
+        )
+
+    return when (this) {
+        JKLiteralExpression.LiteralType.CHAR -> defaultTypeByName("Char")
+        JKLiteralExpression.LiteralType.BOOLEAN -> defaultTypeByName("Boolean")
+        JKLiteralExpression.LiteralType.INT -> defaultTypeByName("Int")
+        JKLiteralExpression.LiteralType.LONG -> defaultTypeByName("Long")
+        JKLiteralExpression.LiteralType.FLOAT -> defaultTypeByName("Float")
+        JKLiteralExpression.LiteralType.DOUBLE -> defaultTypeByName("Double")
         JKLiteralExpression.LiteralType.NULL ->
             ClassId.topLevel(KotlinBuiltIns.FQ_NAMES.unit.toSafe()).toKtClassType(symbolProvider)
         JKLiteralExpression.LiteralType.STRING ->
             ClassId.topLevel(KotlinBuiltIns.FQ_NAMES.string.toSafe()).toKtClassType(symbolProvider)
     }
+}
 
 class JKLocalVariableImpl(modifierList: JKModifierList, type: JKTypeElement, name: JKNameIdentifier, initializer: JKExpression) :
     JKLocalVariable, JKBranchElementBase() {

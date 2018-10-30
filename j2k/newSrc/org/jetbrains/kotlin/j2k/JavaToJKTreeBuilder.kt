@@ -167,7 +167,7 @@ class JavaToJKTreeBuilder(var symbolProvider: JKSymbolProvider) {
         fun PsiArrayInitializerExpression.toJK(): JKExpression {
             return JKJavaNewArrayImpl(
                 initializers.map { it.toJK() },
-                JKTypeElementImpl(type?.toJK().safeAs<JKJavaArrayType>()?.type ?: JKContextType)
+                JKTypeElementImpl(type?.toJK(symbolProvider).safeAs<JKJavaArrayType>()?.type ?: JKContextType)
             )
         }
 
@@ -190,7 +190,7 @@ class JavaToJKTreeBuilder(var symbolProvider: JKSymbolProvider) {
                     }
                     JKJavaNewEmptyArrayImpl(
                         dimensions.map { it?.toJK() ?: JKStubExpressionImpl() },
-                        JKTypeElementImpl(generateSequence(type?.toJK()) { it.safeAs<JKJavaArrayType>()?.type }.last())
+                        JKTypeElementImpl(generateSequence(type?.toJK(symbolProvider)) { it.safeAs<JKJavaArrayType>()?.type }.last())
                     )
                 }
             }
@@ -226,30 +226,8 @@ class JavaToJKTreeBuilder(var symbolProvider: JKSymbolProvider) {
         }
 
         fun PsiTypeElement.toJK(): JKTypeElement {
-            return JKTypeElementImpl(type.toJK()).also {
+            return JKTypeElementImpl(type.toJK(symbolProvider)).also {
                 backAnnotation[it] = this
-            }
-        }
-
-        fun PsiType.toJK(nullability: Nullability = Nullability.Default): JKType {
-            return when (this) {
-                is PsiClassType -> {
-                    val target = resolve()
-                    val parameters = parameters.map { it.toJK() }
-                    if (target != null) {
-                        JKClassTypeImpl(
-                            target.let { symbolProvider.provideDirectSymbol(it) as JKClassSymbol },
-                            parameters,
-                            nullability
-                        )
-                    } else {
-                        JKUnresolvedClassType(this.rawType().canonicalText, parameters, nullability)
-                    }
-                }
-                is PsiArrayType -> JKJavaArrayTypeImpl(componentType.toJK(), nullability)
-                is PsiPrimitiveType -> JKJavaPrimitiveTypeImpl.KEYWORD_TO_INSTANCE[presentableText]
-                        ?: error("Invalid primitive type $presentableText")
-                else -> throw Exception("Invalid PSI")
             }
         }
     }
@@ -264,7 +242,7 @@ class JavaToJKTreeBuilder(var symbolProvider: JKSymbolProvider) {
             }
 
             fun PsiReferenceList.mapTypes() =
-                this.referencedTypes.map { with(expressionTreeMapper) { JKTypeElementImpl(it.toJK(Nullability.NotNull)) } }
+                this.referencedTypes.map { with(expressionTreeMapper) { JKTypeElementImpl(it.toJK(symbolProvider, Nullability.NotNull)) } }
 
             val implTypes = this.implementsList?.mapTypes().orEmpty()
             val extTypes = this.extendsList?.mapTypes().orEmpty()

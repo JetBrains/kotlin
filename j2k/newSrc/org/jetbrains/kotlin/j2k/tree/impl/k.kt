@@ -83,56 +83,27 @@ class JKKtLiteralExpressionImpl(
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitKtLiteralExpression(this, data)
 }
 
-class JKKtOperatorImpl private constructor(val token: KtSingleValueToken) : JKOperator, JKElementBase() {
+fun JKJavaOperatorImpl.toKtToken(): KtSingleValueToken =
+    when (this.token) {
+        JavaTokenType.DIV -> KtTokens.DIV
+        JavaTokenType.MINUS -> KtTokens.MINUS
+        JavaTokenType.ANDAND -> KtTokens.ANDAND
+        JavaTokenType.OROR -> KtTokens.OROR
+        JavaTokenType.PLUS -> KtTokens.PLUS
+        JavaTokenType.ASTERISK -> KtTokens.MUL
+        JavaTokenType.GT -> KtTokens.GT
+        JavaTokenType.GE -> KtTokens.GTEQ
+        JavaTokenType.LT -> KtTokens.LT
+        JavaTokenType.LE -> KtTokens.LTEQ
+        JavaTokenType.PERC -> KtTokens.PERC
+        else -> TODO(this.token::class.java.toString())
+    }
+
+class JKKtOperatorImpl(val token: KtSingleValueToken, val methodSymbol: JKMethodSymbol) : JKOperator, JKElementBase() {
     override val precedence: Int
         get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
     override val operatorText: String
         get() = token.value
-
-    companion object {
-        val tokenToOperator = KtTokens.OPERATIONS.types.filter { it is KtSingleValueToken }.associate {
-            it to JKKtOperatorImpl(it as KtSingleValueToken)
-        }
-
-        val javaToKotlinOperator = mutableMapOf<JKOperator, JKOperator>()
-
-        init {
-            javaToKotlinOperator.apply {
-                this[JKJavaOperatorImpl.tokenToOperator[JavaTokenType.DIV]!!] = JKKtOperatorImpl.tokenToOperator[KtTokens.DIV]!!
-                this[JKJavaOperatorImpl.tokenToOperator[JavaTokenType.MINUS]!!] = JKKtOperatorImpl.tokenToOperator[KtTokens.MINUS]!!
-                this[JKJavaOperatorImpl.tokenToOperator[JavaTokenType.ANDAND]!!] = JKKtOperatorImpl.tokenToOperator[KtTokens.ANDAND]!!
-                this[JKJavaOperatorImpl.tokenToOperator[JavaTokenType.OROR]!!] = JKKtOperatorImpl.tokenToOperator[KtTokens.OROR]!!
-                this[JKJavaOperatorImpl.tokenToOperator[JavaTokenType.PLUS]!!] = JKKtOperatorImpl.tokenToOperator[KtTokens.PLUS]!!
-                this[JKJavaOperatorImpl.tokenToOperator[JavaTokenType.ASTERISK]!!] = JKKtOperatorImpl.tokenToOperator[KtTokens.MUL]!!
-                this[JKJavaOperatorImpl.tokenToOperator[JavaTokenType.GT]!!] = JKKtOperatorImpl.tokenToOperator[KtTokens.GT]!!
-                this[JKJavaOperatorImpl.tokenToOperator[JavaTokenType.GE]!!] = JKKtOperatorImpl.tokenToOperator[KtTokens.GTEQ]!!
-                this[JKJavaOperatorImpl.tokenToOperator[JavaTokenType.LT]!!] = JKKtOperatorImpl.tokenToOperator[KtTokens.LT]!!
-                this[JKJavaOperatorImpl.tokenToOperator[JavaTokenType.LE]!!] = JKKtOperatorImpl.tokenToOperator[KtTokens.LTEQ]!!
-                this[JKJavaOperatorImpl.tokenToOperator[JavaTokenType.PERC]!!] = JKKtOperatorImpl.tokenToOperator[KtTokens.PERC]!!
-
-                this[JKJavaOperatorImpl.tokenToOperator[JavaTokenType.EQ]!!] = JKKtOperatorImpl.tokenToOperator[KtTokens.EQ]!!
-                this[JKJavaOperatorImpl.tokenToOperator[JavaTokenType.PLUSEQ]!!] = JKKtOperatorImpl.tokenToOperator[KtTokens.PLUSEQ]!!
-                this[JKJavaOperatorImpl.tokenToOperator[JavaTokenType.MINUSEQ]!!] = JKKtOperatorImpl.tokenToOperator[KtTokens.MINUSEQ]!!
-                this[JKJavaOperatorImpl.tokenToOperator[JavaTokenType.ASTERISKEQ]!!] = JKKtOperatorImpl.tokenToOperator[KtTokens.MULTEQ]!!
-                this[JKJavaOperatorImpl.tokenToOperator[JavaTokenType.DIVEQ]!!] = JKKtOperatorImpl.tokenToOperator[KtTokens.DIVEQ]!!
-                this[JKJavaOperatorImpl.tokenToOperator[JavaTokenType.PERCEQ]!!] = JKKtOperatorImpl.tokenToOperator[KtTokens.PERCEQ]!!
-
-                this[JKJavaOperatorImpl.tokenToOperator[JavaTokenType.AND]!!] = JKKtWordOperatorImpl("and")
-                this[JKJavaOperatorImpl.tokenToOperator[JavaTokenType.OR]!!] = JKKtWordOperatorImpl("or")
-                this[JKJavaOperatorImpl.tokenToOperator[JavaTokenType.XOR]!!] = JKKtWordOperatorImpl("xor")
-                this[JKJavaOperatorImpl.tokenToOperator[JavaTokenType.GTGTGT]!!] = JKKtWordOperatorImpl("ushr")
-                this[JKJavaOperatorImpl.tokenToOperator[JavaTokenType.GTGT]!!] = JKKtWordOperatorImpl("shr")
-                this[JKJavaOperatorImpl.tokenToOperator[JavaTokenType.LTLT]!!] = JKKtWordOperatorImpl("shl")
-
-                this[JKJavaOperatorImpl.tokenToOperator[JavaTokenType.OREQ]!!] = JKKtWordOperatorImpl("or")
-                this[JKJavaOperatorImpl.tokenToOperator[JavaTokenType.ANDEQ]!!] = JKKtWordOperatorImpl("and")
-                this[JKJavaOperatorImpl.tokenToOperator[JavaTokenType.XOREQ]!!] = JKKtWordOperatorImpl("xor")
-                this[JKJavaOperatorImpl.tokenToOperator[JavaTokenType.GTGTGTEQ]!!] = JKKtWordOperatorImpl("ushr")
-                this[JKJavaOperatorImpl.tokenToOperator[JavaTokenType.GTGTEQ]!!] = JKKtWordOperatorImpl("shr")
-                this[JKJavaOperatorImpl.tokenToOperator[JavaTokenType.LTLTEQ]!!] = JKKtWordOperatorImpl("shl")
-            }
-        }
-    }
 }
 
 class JKKtWordOperatorImpl constructor(override val operatorText: String) : JKOperator, JKElementBase() {

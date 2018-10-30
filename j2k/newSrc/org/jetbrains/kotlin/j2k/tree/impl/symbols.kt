@@ -11,13 +11,11 @@ import com.intellij.psi.PsiMethod
 import com.intellij.psi.PsiReference
 import org.jetbrains.kotlin.j2k.JKSymbolProvider
 import org.jetbrains.kotlin.j2k.conversions.parentOfType
-import org.jetbrains.kotlin.j2k.tree.JKClass
-import org.jetbrains.kotlin.j2k.tree.JKField
-import org.jetbrains.kotlin.j2k.tree.JKMethod
-import org.jetbrains.kotlin.j2k.tree.JKTreeElement
+import org.jetbrains.kotlin.j2k.tree.*
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.KtProperty
+import org.jetbrains.kotlin.psi.psiUtil.getValueParameterList
 
 interface JKSymbol {
     val target: Any
@@ -37,6 +35,9 @@ interface JKClassSymbol : JKNamedSymbol
 
 interface JKMethodSymbol : JKNamedSymbol {
     override val fqName: String
+    val recivierType: JKType?
+    val parameterTypes: List<JKType>
+    val returnType: JKType
 }
 
 interface JKFieldSymbol : JKNamedSymbol {
@@ -75,6 +76,14 @@ class JKMultiverseKtClassSymbol(override val target: KtClassOrObject) : JKClassS
 }
 
 class JKUniverseMethodSymbol(private val symbolProvider: JKSymbolProvider) : JKMethodSymbol, JKUniverseSymbol<JKMethod> {
+    override val recivierType: JKType?
+        get() = (target.parent as? JKClass)?.let {
+            JKClassTypeImpl(symbolProvider.provideUniverseSymbol(it), emptyList()/*TODO*/)
+        }
+    override val parameterTypes: List<JKType>
+        get() = target.parameters.map { it.type.type }
+    override val returnType: JKType
+        get() = target.returnType.type
     override val name: String
         get() = target.name.value
     override lateinit var target: JKMethod
@@ -85,6 +94,14 @@ class JKUniverseMethodSymbol(private val symbolProvider: JKSymbolProvider) : JKM
 }
 
 class JKMultiverseMethodSymbol(override val target: PsiMethod, private val symbolProvider: JKSymbolProvider) : JKMethodSymbol {
+    override val recivierType: JKType?
+        get() = target.containingClass?.let {
+            JKClassTypeImpl(symbolProvider.provideDirectSymbol(it) as JKClassSymbol, emptyList()/*TODO*/)
+        }
+    override val parameterTypes: List<JKType>
+        get() = target.parameterList.parameters.map { it.type.toJK(symbolProvider) }
+    override val returnType: JKType
+        get() = target.returnType!!.toJK(symbolProvider)
     override val name: String
         get() = target.name
     override val declaredIn: JKSymbol?
@@ -93,7 +110,13 @@ class JKMultiverseMethodSymbol(override val target: PsiMethod, private val symbo
         get() = target.name // TODO("Fix this")
 }
 
-class JKMultiverseFunctionSymbol(override val target: KtNamedFunction) : JKMethodSymbol {
+class JKMultiverseFunctionSymbol(override val target: KtNamedFunction, private val symbolProvider: JKSymbolProvider) : JKMethodSymbol {
+    override val recivierType: JKType?
+        get() = target.receiverTypeReference?.typeElement?.toJK(symbolProvider)
+    override val parameterTypes: List<JKType>
+        get() = target.valueParameters.map { it.typeReference!!.typeElement!!.toJK(symbolProvider) }
+    override val returnType: JKType
+        get() = target.typeReference!!.typeElement!!.toJK(symbolProvider)
     override val name: String
         get() = target.name!!
     override val declaredIn: JKSymbol
@@ -146,7 +169,12 @@ class JKUnresolvedMethod(override val target: String) : JKMethodSymbol {
     override val declaredIn: JKSymbol
         get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
     override val fqName: String = target
-
+    override val recivierType: JKType?
+        get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
+    override val parameterTypes: List<JKType>
+        get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
+    override val returnType: JKType
+        get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
     override val name: String
         get() = target
 }
