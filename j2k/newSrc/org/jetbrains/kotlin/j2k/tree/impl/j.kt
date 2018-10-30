@@ -120,6 +120,7 @@ fun JKJavaOperatorToken.toKtToken(): JKKtOperatorToken =
         JavaTokenType.PERC -> JKKtSingleValueOperatorToken(KtTokens.PERC)
 
         JavaTokenType.EQ -> JKKtSingleValueOperatorToken(KtTokens.EQ)
+        JavaTokenType.NE -> JKKtSingleValueOperatorToken(KtTokens.EXCLEQ)
         JavaTokenType.PLUSEQ -> JKKtSingleValueOperatorToken(KtTokens.PLUSEQ)
         JavaTokenType.MINUSEQ -> JKKtSingleValueOperatorToken(KtTokens.MINUSEQ)
 
@@ -137,7 +138,7 @@ fun JKJavaOperatorToken.toKtToken(): JKKtOperatorToken =
         JavaTokenType.GTGTGTEQ -> JKKtWordOperatorToken("ushr")
         JavaTokenType.XOREQ -> JKKtWordOperatorToken("xor")
 
-        else -> TODO(this.token::class.java.toString())
+        else -> TODO(this.token.toString())
     }
 
 
