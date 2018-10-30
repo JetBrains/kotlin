@@ -24,7 +24,9 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 
-internal fun DeclarationDescriptor.symbolName(): String = when (this) {
+
+// TODO: merge with FunctionDescriptor.symbolName in BinaryInterface.kt.
+internal val DeclarationDescriptor.symbolName: String get() = when (this) {
     is FunctionDescriptor 
         -> this.uniqueName
     is PropertyDescriptor 
@@ -35,7 +37,7 @@ internal fun DeclarationDescriptor.symbolName(): String = when (this) {
 }
 
 internal val DeclarationDescriptor.uniqId 
-    get() = this.symbolName().localHash.value
+    get() = this.symbolName.localHash.value
 
 internal val DeclarationDescriptor.isSerializableExpectClass: Boolean
     get() = this is ClassDescriptor && ExpectedActualDeclarationChecker.shouldGenerateExpectClass(this)
@@ -154,6 +156,8 @@ internal tailrec fun DeclarationDescriptor.isExported(): Boolean {
 
 private val symbolNameAnnotation = FqName("kotlin.native.SymbolName")
 
+private val intrinsicAnnotation = FqName("kotlin.native.internal.Intrinsic")
+
 private val exportForCppRuntimeAnnotation = FqName("kotlin.native.internal.ExportForCppRuntime")
 
 private val cnameAnnotation = FqName("kotlin.native.internal.CName")
@@ -244,13 +248,16 @@ private val FunctionDescriptor.uniqueName: String
             throw AssertionError(this.toString())
         }
 
-        this.annotations.findAnnotation(symbolNameAnnotation)?.let {
-            if (this.isExternal) {
+        if (this.isExternal) {
+            this.annotations.findAnnotation(symbolNameAnnotation)?.let {
                 return getStringValue(it)!!
-            } else {
-                // ignore; TODO: report compile error
+            }
+            if (!annotations.hasAnnotation(intrinsicAnnotation)) {
+                throw Error("external function $this must have @SymbolName annotation")
             }
         }
+        // TODO: check that only external function has @SymbolName.
+
 
         this.annotations.findAnnotation(exportForCppRuntimeAnnotation)?.let {
             val name = getStringValue(it) ?: this.name.asString()

@@ -461,12 +461,3 @@ typealias CArrayPointerVar<T> = CPointerVar<T>
  * The C function.
  */
 class CFunction<T : Function<*>>(rawPtr: NativePtr) : CPointed(rawPtr)
-
-/**
- * Returns a pointer to C function which calls given Kotlin *static* function.
- *
- * @param function must be *static*, i.e. an (unbound) reference to a Kotlin function or
- * a closure which doesn't capture any variable
- */
-@Deprecated("The function type is too general. Supply argument with known arity.", level = DeprecationLevel.ERROR)
-external fun <F : Function<*>> staticCFunction(function: F): CPointer<CFunction<F>>

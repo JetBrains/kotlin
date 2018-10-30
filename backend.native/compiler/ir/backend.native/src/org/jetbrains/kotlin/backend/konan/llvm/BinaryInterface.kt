@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.konan.llvm
 
 import llvm.LLVMTypeRef
+import org.jetbrains.kotlin.backend.common.ir.ir2string
 import org.jetbrains.kotlin.backend.konan.descriptors.isAbstract
 import org.jetbrains.kotlin.backend.konan.irasdescriptors.*
 import org.jetbrains.kotlin.backend.konan.isInlined
@@ -103,6 +104,9 @@ internal tailrec fun DeclarationDescriptor.isExported(): Boolean {
 }
 
 private val symbolNameAnnotation = FqName("kotlin.native.SymbolName")
+
+private val intrinsicAnnotation = FqName("kotlin.native.internal.Intrinsic")
+private val objCMethodAnnotation = FqName("kotlinx.cinterop.ObjCMethod")
 
 private val cnameAnnotation = FqName("kotlin.native.CName")
 
@@ -205,13 +209,17 @@ internal val FunctionDescriptor.symbolName: String
         if (!this.isExported()) {
             throw AssertionError(this.descriptor.toString())
         }
-        this.descriptor.annotations.findAnnotation(symbolNameAnnotation)?.let {
-            if (this.isExternal) {
+
+        if (isExternal) {
+            this.descriptor.annotations.findAnnotation(symbolNameAnnotation)?.let {
                 return getStringValue(it)!!
-            } else {
-                // ignore; TODO: report compile error
+            }
+            if (!this.descriptor.annotations.hasAnnotation(intrinsicAnnotation) &&
+                    !this.descriptor.annotations.hasAnnotation(objCMethodAnnotation)) {
+                throw Error("external function ${this.descriptor} must have @SymbolName, @Intrinsic or @ObjCMethod annotation")
             }
         }
+
         this.descriptor.annotations.findAnnotation(exportForCppRuntimeAnnotation)?.let {
             val name = getStringValue(it) ?: this.name.asString()
             return name // no wrapping currently required

@@ -602,7 +602,7 @@ class StubGenerator(
                 } else {
                     sequenceOf(
                             annotationForUnableToImport,
-                            "external $header"
+                            "$header = throw UnsupportedOperationException()"
                     )
                 }
 
