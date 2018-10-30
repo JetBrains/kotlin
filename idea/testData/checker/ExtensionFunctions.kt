@@ -50,7 +50,7 @@ fun Int.foo() = this
         fun Any?.equals1(<warning>other</warning> : Any?) : Boolean = true
         fun Any.equals2(<warning>other</warning> : Any?) : Boolean = true
 
-        fun main(<warning>args</warning>: Array<String>) {
+        fun main(args: Array<String>) {
 
             System.out.print(1)
 

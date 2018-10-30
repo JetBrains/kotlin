@@ -1,6 +1,6 @@
 fun Any.<warning>equals</warning>(<warning>other</warning> : Any?) : Boolean = true
 
-fun main(<warning>args</warning>: Array<String>) {
+fun main(args: Array<String>) {
 
     val command : Any = 1
 

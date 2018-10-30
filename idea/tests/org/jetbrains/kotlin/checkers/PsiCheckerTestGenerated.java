@@ -156,6 +156,16 @@ public class PsiCheckerTestGenerated extends AbstractPsiCheckerTest {
             runTest("idea/testData/checker/LocalObjects.kt");
         }
 
+        @TestMetadata("MainWithWarningOnUnusedParam.kt")
+        public void testMainWithWarningOnUnusedParam() throws Exception {
+            runTest("idea/testData/checker/MainWithWarningOnUnusedParam.kt");
+        }
+
+        @TestMetadata("MainWithoutWarningOnUnusedParam.kt")
+        public void testMainWithoutWarningOnUnusedParam() throws Exception {
+            runTest("idea/testData/checker/MainWithoutWarningOnUnusedParam.kt");
+        }
+
         @TestMetadata("MultipleBounds.kt")
         public void testMultipleBounds() throws Exception {
             runTest("idea/testData/checker/MultipleBounds.kt");
@@ -319,16 +329,6 @@ public class PsiCheckerTestGenerated extends AbstractPsiCheckerTest {
         @TestMetadata("Unused.kt")
         public void testUnused() throws Exception {
             runTest("idea/testData/checker/Unused.kt");
-        }
-
-        @TestMetadata("UnusedParameterInEntry12.kt")
-        public void testUnusedParameterInEntry12() throws Exception {
-            runTest("idea/testData/checker/UnusedParameterInEntry12.kt");
-        }
-
-        @TestMetadata("UnusedParameterInEntry13.kt")
-        public void testUnusedParameterInEntry13() throws Exception {
-            runTest("idea/testData/checker/UnusedParameterInEntry13.kt");
         }
 
         @TestMetadata("Variance.kt")

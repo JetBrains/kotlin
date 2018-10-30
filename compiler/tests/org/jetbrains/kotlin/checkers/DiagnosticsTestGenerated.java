@@ -3608,14 +3608,14 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/localObjectInConstructor.kt");
             }
 
-            @TestMetadata("mainWith12.kt")
-            public void testMainWith12() throws Exception {
-                runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/mainWith12.kt");
+            @TestMetadata("mainWithWarningOnUnusedParam.kt")
+            public void testMainWithWarningOnUnusedParam() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/mainWithWarningOnUnusedParam.kt");
             }
 
-            @TestMetadata("mainWith13.kt")
-            public void testMainWith13() throws Exception {
-                runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/mainWith13.kt");
+            @TestMetadata("mainWithoutWarningOnUnusedParam.kt")
+            public void testMainWithoutWarningOnUnusedParam() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/mainWithoutWarningOnUnusedParam.kt");
             }
 
             @TestMetadata("nestedTryFinally.kt")
