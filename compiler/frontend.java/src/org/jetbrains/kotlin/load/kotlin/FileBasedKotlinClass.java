@@ -281,18 +281,19 @@ public abstract class FileBasedKotlinClass implements KotlinJvmBinaryClass {
         return resolveNameByInternalName(name, innerClasses);
     }
 
+    // See ReflectKotlinStructure.classLiteralValue
     @NotNull
     private static ClassLiteralId resolveKotlinNameByType(@NotNull Type type, @NotNull InnerClassesInfo innerClasses) {
         String typeDesc = type.getDescriptor();
-        int nestedness = typeDesc.charAt(0) == '[' ? type.getDimensions() : 0;
-        String elementDesc = nestedness == 0 ? typeDesc : type.getElementType().getDescriptor();
+        int dimensions = typeDesc.charAt(0) == '[' ? type.getDimensions() : 0;
+        String elementDesc = dimensions == 0 ? typeDesc : type.getElementType().getDescriptor();
         JvmPrimitiveType primType = JvmPrimitiveType.getByDesc(elementDesc);
         if (primType != null) {
-            return new ClassLiteralId(ClassId.topLevel(primType.getPrimitiveType().getTypeFqName()), nestedness);
+            return new ClassLiteralId(ClassId.topLevel(primType.getPrimitiveType().getTypeFqName()), dimensions);
         }
         ClassId javaClassId = resolveNameByDesc(elementDesc, innerClasses);
         ClassId kotlinClassId = JavaToKotlinClassMap.INSTANCE.mapJavaToKotlin(javaClassId.asSingleFqName());
-        return new ClassLiteralId(kotlinClassId != null ? kotlinClassId : javaClassId, nestedness);
+        return new ClassLiteralId(kotlinClassId != null ? kotlinClassId : javaClassId, dimensions);
     }
 
     @NotNull
