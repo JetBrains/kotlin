@@ -188,6 +188,8 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                 if (arguments.friendModules != null)
                     put(FRIEND_MODULES, arguments.friendModules!!.split(File.pathSeparator).filterNot(String::isEmpty))
 
+                put(EXPORTED_LIBRARIES, selectExportedLibraries(configuration, arguments, outputKind))
+
                 put(BITCODE_EMBEDDING_MODE, selectBitcodeEmbeddingMode(this, arguments, outputKind))
                 put(DEBUG_INFO_VERSION, arguments.debugInfoFormatVersion.toInt())
             }
@@ -251,6 +253,23 @@ private fun selectBitcodeEmbeddingMode(
             BitcodeEmbedding.Mode.FULL
         }
         else -> BitcodeEmbedding.Mode.NONE
+    }
+}
+
+private fun selectExportedLibraries(
+        configuration: CompilerConfiguration,
+        arguments: K2NativeCompilerArguments,
+        outputKind: CompilerOutputKind
+): List<String> {
+    val exportedLibraries = arguments.exportedLibraries?.toList().orEmpty()
+
+    return if (exportedLibraries.isNotEmpty() && outputKind != CompilerOutputKind.FRAMEWORK) {
+        configuration.report(STRONG_WARNING, "-Xexport-library is only supported when producing frameworks, " +
+                "but the compiler is producing ${outputKind.name.toLowerCase()}")
+
+        emptyList()
+    } else {
+        exportedLibraries
     }
 }
 

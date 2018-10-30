@@ -28,6 +28,8 @@ class KonanConfigKeys {
                 = CompilerConfigurationKey.create("enable backend phases")
         val ENTRY: CompilerConfigurationKey<String?>
                 = CompilerConfigurationKey.create("fully qualified main() name")
+        val EXPORTED_LIBRARIES: CompilerConfigurationKey<List<String>>
+                = CompilerConfigurationKey.create<List<String>>("libraries included into produced framework API")
         val FRIEND_MODULES: CompilerConfigurationKey<List<String>>
                 = CompilerConfigurationKey.create<List<String>>("friend module paths")
         val GENERATE_TEST_RUNNER: CompilerConfigurationKey<Boolean>

@@ -31,8 +31,18 @@ interface ObjCExportNamer {
 }
 
 fun createNamer(moduleDescriptor: ModuleDescriptor,
+                topLevelNamePrefix: String = moduleDescriptor.namePrefix): ObjCExportNamer =
+        createNamer(moduleDescriptor, emptyList(), topLevelNamePrefix)
+
+fun createNamer(moduleDescriptor: ModuleDescriptor,
+                exportedDependencies: List<ModuleDescriptor>,
                 topLevelNamePrefix: String = moduleDescriptor.namePrefix): ObjCExportNamer {
-    val generator = object : ObjCExportHeaderGenerator(moduleDescriptor, moduleDescriptor.builtIns, topLevelNamePrefix) {
+    val generator = object : ObjCExportHeaderGenerator(
+            moduleDescriptor,
+            exportedDependencies,
+            moduleDescriptor.builtIns,
+            topLevelNamePrefix
+    ) {
         override fun reportWarning(text: String) {}
         override fun reportWarning(method: FunctionDescriptor, text: String) {}
     }
@@ -40,10 +50,10 @@ fun createNamer(moduleDescriptor: ModuleDescriptor,
 }
 
 internal class ObjCExportNamerImpl(
-        val moduleDescriptor: ModuleDescriptor,
+        val moduleDescriptors: Set<ModuleDescriptor>,
         builtIns: KotlinBuiltIns,
         val mapper: ObjCExportMapper,
-        private val topLevelNamePrefix: String = moduleDescriptor.namePrefix
+        private val topLevelNamePrefix: String
 ) : ObjCExportNamer {
 
     private fun String.toUnmangledClassOrProtocolName(): ObjCExportNamer.ClassOrProtocolName =
@@ -128,10 +138,15 @@ internal class ObjCExportNamerImpl(
 
     override fun getFileClassName(file: SourceFile): ObjCExportNamer.ClassOrProtocolName {
         val baseName by lazy {
-            val psiSourceFile = file as? PsiSourceFile ?: error("SourceFile '$file' is not PsiSourceFile")
-            val psiFile = psiSourceFile.psiFile
-            val ktFile = psiFile as? KtFile ?: error("PsiFile '$psiFile' is not KtFile")
-            PackagePartClassUtils.getFilePartShortName(ktFile.name)
+            val fileName = when (file) {
+                is PsiSourceFile -> {
+                    val psiFile = file.psiFile
+                    val ktFile = psiFile as? KtFile ?: error("PsiFile '$psiFile' is not KtFile")
+                    ktFile.name
+                }
+                else -> file.name ?: error("$file has no name")
+            }
+            PackagePartClassUtils.getFilePartShortName(fileName)
         }
 
         val objCName = objCClassNames.getOrPut(file) {
@@ -196,7 +211,7 @@ internal class ObjCExportNamerImpl(
     }
 
     private fun StringBuilder.appendTopLevelClassBaseName(descriptor: ClassDescriptor) = apply {
-        if (descriptor.module != moduleDescriptor) {
+        if (descriptor.module !in moduleDescriptors) {
             append(descriptor.module.namePrefix)
         }
         append(descriptor.name.asString())

@@ -103,6 +103,14 @@ class K2NativeCompilerArguments : CommonCompilerArguments() {
     @Argument(value = "-Xenable", deprecatedName = "--enable", valueDescription = "<Phase>", description = "Enable backend phase")
     var enablePhases: Array<String>? = null
 
+    @Argument(
+            value = "-Xexport-library",
+            valueDescription = "<path>",
+            description = "Path to the library to be included into produced framework API\n" +
+                    "Must be the path of a library passed with '-library'"
+    )
+    var exportedLibraries: Array<String>? = null
+
     @Argument(value=  "-Xlist-phases", deprecatedName = "--list_phases", description = "List all backend phases")
     var listPhases: Boolean = false
 
