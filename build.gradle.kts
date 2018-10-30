@@ -470,6 +470,7 @@ tasks {
         dependsOn("scriptingTest")
         dependsOn(":kotlin-build-common:test")
         dependsOn(":compiler:incremental-compilation-impl:test")
+        dependsOn(":core:descriptors.runtime:test")
     }
 
     create("toolsTest") {
