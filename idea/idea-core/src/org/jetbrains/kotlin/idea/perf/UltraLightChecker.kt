@@ -5,7 +5,10 @@
 
 package org.jetbrains.kotlin.idea.perf
 
+import com.intellij.openapi.Disposable
+import com.intellij.openapi.util.Disposer
 import com.intellij.psi.*
+import com.intellij.testFramework.UsefulTestCase
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForSourceDeclaration
@@ -13,6 +16,13 @@ import org.jetbrains.kotlin.asJava.classes.KtUltraLightClass
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
 import org.junit.Assert
+
+fun UsefulTestCase.forceUsingUltraLightClassesForTest() {
+    KtUltraLightClass.forceUsingUltraLightClasses = true
+    Disposer.register(testRootDisposable, Disposable {
+        KtUltraLightClass.forceUsingUltraLightClasses = false
+    })
+}
 
 @TestOnly
 object UltraLightChecker {

@@ -14,6 +14,7 @@ import com.intellij.psi.impl.PsiSuperMethodImplUtil
 import com.intellij.psi.impl.light.*
 import com.intellij.psi.util.TypeConversionUtil
 import org.jetbrains.annotations.NonNls
+import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
 import org.jetbrains.kotlin.asJava.builder.LightClassData
 import org.jetbrains.kotlin.asJava.builder.LightMemberOriginForDeclaration
@@ -47,6 +48,15 @@ import org.jetbrains.kotlin.types.KotlinType
 
 class KtUltraLightClass(classOrObject: KtClassOrObject, private val support: UltraLightSupport) :
     KtLightClassImpl(classOrObject) {
+    companion object {
+
+        // This property may be removed once IntelliJ versions earlier than 2018.3 become unsupported
+        // And usages of that property may be replaced with relevant registry change
+        @Volatile
+        @TestOnly
+        var forceUsingUltraLightClasses = false
+    }
+
     private val tooComplex: Boolean by lazyPub { support.isTooComplexForUltraLightGeneration(classOrObject) }
 
     override fun isFinal(isFinalByPsi: Boolean) = if (tooComplex) super.isFinal(isFinalByPsi) else isFinalByPsi
