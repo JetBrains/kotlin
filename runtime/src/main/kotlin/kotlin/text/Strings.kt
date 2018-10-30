@@ -115,19 +115,19 @@ public actual inline fun String.substring(startIndex: Int): String =
 /**
  * Returns `true` if this string starts with the specified prefix.
  */
-public fun String.startsWith(prefix: String, ignoreCase: Boolean = false): Boolean =
+public actual fun String.startsWith(prefix: String, ignoreCase: Boolean): Boolean =
         regionMatches(0, prefix, 0, prefix.length, ignoreCase)
 
 /**
  * Returns `true` if a substring of this string starting at the specified offset [startIndex] starts with the specified prefix.
  */
-public fun String.startsWith(prefix: String, startIndex: Int, ignoreCase: Boolean = false): Boolean =
+public actual fun String.startsWith(prefix: String, startIndex: Int, ignoreCase: Boolean): Boolean =
         regionMatches(startIndex, prefix, 0, prefix.length, ignoreCase)
 
 /**
  * Returns `true` if this string ends with the specified suffix.
  */
-public fun String.endsWith(suffix: String, ignoreCase: Boolean = false): Boolean =
+public actual fun String.endsWith(suffix: String, ignoreCase: Boolean): Boolean =
         regionMatches(length - suffix.length, suffix, 0, suffix.length, ignoreCase)
 
 /**

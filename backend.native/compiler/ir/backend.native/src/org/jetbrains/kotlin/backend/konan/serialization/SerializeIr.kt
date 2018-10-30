@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.types.toKotlinType
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.serialization.KonanDescriptorSerializer
 import org.jetbrains.kotlin.metadata.KonanIr
 import org.jetbrains.kotlin.metadata.KonanIr.IrConst.ValueCase.*
 import org.jetbrains.kotlin.metadata.KonanIr.IrOperation.OperationCase.*
@@ -38,6 +37,7 @@ import org.jetbrains.kotlin.metadata.KonanIr.IrVarargElement.VarargElementCase.*
 import org.jetbrains.kotlin.metadata.konan.KonanProtoBuf
 import org.jetbrains.kotlin.resolve.calls.components.hasDefaultValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.parents
+import org.jetbrains.kotlin.serialization.DescriptorSerializer
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassConstructorDescriptor
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPropertyDescriptor
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedSimpleFunctionDescriptor
@@ -50,7 +50,7 @@ import org.jetbrains.kotlin.types.TypeSubstitutor
 internal class IrSerializer(val context: Context,
                             descriptorTable: DescriptorTable,
                             stringTable: KonanStringTable,
-                            rootFunctionSerializer: KonanDescriptorSerializer,
+                            rootFunctionSerializer: DescriptorSerializer,
                             private var rootFunction: FunctionDescriptor) {
 
     private val loopIndex = mutableMapOf<IrLoop, Int>()

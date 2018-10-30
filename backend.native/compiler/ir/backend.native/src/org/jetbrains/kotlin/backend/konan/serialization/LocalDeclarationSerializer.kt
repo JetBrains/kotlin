@@ -18,12 +18,12 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations.Companion.EMPTY
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
 import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl
 import org.jetbrains.kotlin.ir.descriptors.IrTemporaryVariableDescriptor
-import org.jetbrains.kotlin.serialization.KonanDescriptorSerializer
 import org.jetbrains.kotlin.metadata.KonanIr
+import org.jetbrains.kotlin.serialization.DescriptorSerializer
 import org.jetbrains.kotlin.types.KotlinType
 
 /* 
- * This class knows how to create KonanDescriptorSerializer 
+ * This class knows how to create DescriptorSerializer
  * invocations to serialize function local declaration descriptors.
  * Those descriptors are not part of the public descriptor tree.
  *
@@ -32,9 +32,9 @@ import org.jetbrains.kotlin.types.KotlinType
  * And class serialization is context specific.
  */
 
-internal class LocalDeclarationSerializer(val context: Context, val rootFunctionSerializer: KonanDescriptorSerializer) {
+internal class LocalDeclarationSerializer(val context: Context, val rootFunctionSerializer: DescriptorSerializer) {
 
-    private val contextStack = mutableListOf<KonanDescriptorSerializer>(rootFunctionSerializer)
+    private val contextStack = mutableListOf(rootFunctionSerializer)
 
     fun pushContext(descriptor: DeclarationDescriptor) {
         val previousContext = contextStack.peek()!!
