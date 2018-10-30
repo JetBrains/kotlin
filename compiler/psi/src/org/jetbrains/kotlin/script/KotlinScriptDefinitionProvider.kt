@@ -20,7 +20,6 @@ import com.intellij.ide.highlighter.JavaClassFileType
 import com.intellij.ide.highlighter.JavaFileType
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.fileTypes.FileTypeRegistry
-import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiManager
@@ -52,15 +51,20 @@ fun findScriptDefinition(file: VirtualFile, project: Project): KotlinScriptDefin
         return null
     }
 
+    val scriptDefinitionProvider = ScriptDefinitionProvider.getInstance(project)
     val psiFile = PsiManager.getInstance(project).findFile(file)
     if (psiFile != null) {
         if (psiFile !is KtFile) return null
-        if (!DumbService.isDumb(project)) {
-            return psiFile.script?.kotlinScriptDefinition
-        }
+
+        // Do not use psiFile.script here because this method can be called during indexes access
+        // and accessing stubs may cause deadlock
+        // If script definition cannot be find, default script definition is used
+        // because all KtFile-s with KotlinFileType and non-kts extensions are parsed as scripts
+        val definition = scriptDefinitionProvider.findScriptDefinition(file.name)
+        return definition ?: scriptDefinitionProvider.getDefaultScriptDefinition()
     }
 
-    return ScriptDefinitionProvider.getInstance(project).findScriptDefinition(file.name)
+    return scriptDefinitionProvider.findScriptDefinition(file.name)
 }
 
 abstract class LazyScriptDefinitionProvider : ScriptDefinitionProvider {
