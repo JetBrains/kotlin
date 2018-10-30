@@ -35,25 +35,30 @@ class JavaClassesSerializerExtension : KotlinSerializerExtensionBase(BuiltInSeri
         get() = JvmMetadataVersion.INVALID_VERSION
 
     override fun serializeClass(
-        descriptor: ClassDescriptor,
-        proto: ProtoBuf.Class.Builder,
-        versionRequirementTable: MutableVersionRequirementTable
+            descriptor: ClassDescriptor,
+            proto: ProtoBuf.Class.Builder,
+            versionRequirementTable: MutableVersionRequirementTable,
+            childSerializer: DescriptorSerializer
     ) {
-        super.serializeClass(descriptor, proto, versionRequirementTable)
+        super.serializeClass(descriptor, proto, versionRequirementTable, childSerializer)
         if (descriptor.visibility == JavaVisibilities.PACKAGE_VISIBILITY) {
             proto.setExtension(JavaClassProtoBuf.isPackagePrivateClass, true)
         }
     }
 
-    override fun serializeConstructor(descriptor: ConstructorDescriptor, proto: ProtoBuf.Constructor.Builder) {
-        super.serializeConstructor(descriptor, proto)
+    override fun serializeConstructor(descriptor: ConstructorDescriptor,
+                                      proto: ProtoBuf.Constructor.Builder,
+                                      childSerializer: DescriptorSerializer) {
+        super.serializeConstructor(descriptor, proto, childSerializer)
         if (descriptor.visibility == JavaVisibilities.PACKAGE_VISIBILITY) {
             proto.setExtension(JavaClassProtoBuf.isPackagePrivateConstructor, true)
         }
     }
 
-    override fun serializeFunction(descriptor: FunctionDescriptor, proto: ProtoBuf.Function.Builder) {
-        super.serializeFunction(descriptor, proto)
+    override fun serializeFunction(descriptor: FunctionDescriptor,
+                                   proto: ProtoBuf.Function.Builder,
+                                   childSerializer: DescriptorSerializer) {
+        super.serializeFunction(descriptor, proto, childSerializer)
         if (descriptor.visibility == JavaVisibilities.PACKAGE_VISIBILITY) {
             proto.setExtension(JavaClassProtoBuf.isPackagePrivateMethod, true)
         }
@@ -64,11 +69,12 @@ class JavaClassesSerializerExtension : KotlinSerializerExtensionBase(BuiltInSeri
     }
 
     override fun serializeProperty(
-        descriptor: PropertyDescriptor,
-        proto: ProtoBuf.Property.Builder,
-        versionRequirementTable: MutableVersionRequirementTable
+            descriptor: PropertyDescriptor,
+            proto: ProtoBuf.Property.Builder,
+            versionRequirementTable: MutableVersionRequirementTable,
+            childSerializer: DescriptorSerializer
     ) {
-        super.serializeProperty(descriptor, proto, versionRequirementTable)
+        super.serializeProperty(descriptor, proto, versionRequirementTable, childSerializer)
         if (descriptor.visibility == JavaVisibilities.PACKAGE_VISIBILITY) {
             proto.setExtension(JavaClassProtoBuf.isPackagePrivateField, true)
         }

@@ -28,9 +28,10 @@ abstract class KotlinSerializerExtensionBase(private val protocol: SerializerExt
     override val stringTable = StringTableImpl()
 
     override fun serializeClass(
-        descriptor: ClassDescriptor,
-        proto: ProtoBuf.Class.Builder,
-        versionRequirementTable: MutableVersionRequirementTable
+            descriptor: ClassDescriptor,
+            proto: ProtoBuf.Class.Builder,
+            versionRequirementTable: MutableVersionRequirementTable,
+            childSerializer: DescriptorSerializer
     ) {
         for (annotation in descriptor.nonSourceAnnotations) {
             proto.addExtension(protocol.classAnnotation, annotationSerializer.serializeAnnotation(annotation))
@@ -41,22 +42,27 @@ abstract class KotlinSerializerExtensionBase(private val protocol: SerializerExt
         proto.setExtension(protocol.packageFqName, stringTable.getPackageFqNameIndex(packageFqName))
     }
 
-    override fun serializeConstructor(descriptor: ConstructorDescriptor, proto: ProtoBuf.Constructor.Builder) {
+    override fun serializeConstructor(descriptor: ConstructorDescriptor,
+                                      proto: ProtoBuf.Constructor.Builder,
+                                      childSerializer: DescriptorSerializer) {
         for (annotation in descriptor.nonSourceAnnotations) {
             proto.addExtension(protocol.constructorAnnotation, annotationSerializer.serializeAnnotation(annotation))
         }
     }
 
-    override fun serializeFunction(descriptor: FunctionDescriptor, proto: ProtoBuf.Function.Builder) {
+    override fun serializeFunction(descriptor: FunctionDescriptor,
+                                   proto: ProtoBuf.Function.Builder,
+                                   childSerializer: DescriptorSerializer) {
         for (annotation in descriptor.nonSourceAnnotations) {
             proto.addExtension(protocol.functionAnnotation, annotationSerializer.serializeAnnotation(annotation))
         }
     }
 
     override fun serializeProperty(
-        descriptor: PropertyDescriptor,
-        proto: ProtoBuf.Property.Builder,
-        versionRequirementTable: MutableVersionRequirementTable
+            descriptor: PropertyDescriptor,
+            proto: ProtoBuf.Property.Builder,
+            versionRequirementTable: MutableVersionRequirementTable,
+            childSerializer: DescriptorSerializer
     ) {
         for (annotation in descriptor.nonSourceAnnotations) {
             proto.addExtension(protocol.propertyAnnotation, annotationSerializer.serializeAnnotation(annotation))
