@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrFieldImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrTypeParameterImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.IrTypeParameterSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
@@ -481,3 +482,69 @@ fun ReferenceSymbolTable.referenceFunction(callable: CallableDescriptor): IrFunc
         else ->
             throw IllegalArgumentException("Unexpected callable descriptor: $callable")
     }
+
+/**
+ * Create new call based on given [call] and [newFunction]
+ * [dispatchReceiverAsFirstArgument]: optionally convert call with dispatch receiver to static call
+ * [firstArgumentAsDispatchReceiver]: optionally convert static call to call with dispatch receiver
+ */
+fun irCall(
+    call: IrMemberAccessExpression,
+    newFunction: IrFunction,
+    dispatchReceiverAsFirstArgument: Boolean = false,
+    firstArgumentAsDispatchReceiver: Boolean = false
+): IrCall =
+    irCall(call, newFunction.symbol, dispatchReceiverAsFirstArgument, firstArgumentAsDispatchReceiver)
+
+fun irCall(
+    call: IrMemberAccessExpression,
+    newSymbol: IrFunctionSymbol,
+    dispatchReceiverAsFirstArgument: Boolean = false,
+    firstArgumentAsDispatchReceiver: Boolean = false
+): IrCall =
+    call.run {
+        IrCallImpl(
+            startOffset,
+            endOffset,
+            type,
+            newSymbol,
+            newSymbol.descriptor,
+            typeArgumentsCount,
+            origin
+        ).apply {
+            copyTypeAndValueArgumentsFrom(
+                call,
+                dispatchReceiverAsFirstArgument,
+                firstArgumentAsDispatchReceiver
+            )
+        }
+    }
+
+private fun IrCall.copyTypeAndValueArgumentsFrom(
+    call: IrMemberAccessExpression,
+    dispatchReceiverAsFirstArgument: Boolean = false,
+    firstArgumentAsDispatchReceiver: Boolean = false
+) {
+    copyTypeArgumentsFrom(call)
+
+    var toValueArgumentIndex = 0
+    var fromValueArgumentIndex = 0
+
+    when {
+        dispatchReceiverAsFirstArgument -> {
+            putValueArgument(toValueArgumentIndex++, call.dispatchReceiver)
+        }
+        firstArgumentAsDispatchReceiver -> {
+            dispatchReceiver = call.getValueArgument(fromValueArgumentIndex++)
+        }
+        else -> {
+            dispatchReceiver = call.dispatchReceiver
+        }
+    }
+
+    extensionReceiver = call.extensionReceiver
+
+    while (fromValueArgumentIndex < call.valueArgumentsCount) {
+        putValueArgument(toValueArgumentIndex++, call.getValueArgument(fromValueArgumentIndex++))
+    }
+}
