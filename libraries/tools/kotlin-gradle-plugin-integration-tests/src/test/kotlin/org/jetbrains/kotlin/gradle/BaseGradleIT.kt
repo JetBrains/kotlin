@@ -3,6 +3,7 @@ package org.jetbrains.kotlin.gradle
 import org.gradle.api.logging.LogLevel
 import org.gradle.tooling.GradleConnector
 import org.gradle.util.GradleVersion
+import org.gradle.util.VersionNumber
 import org.jetbrains.kotlin.gradle.model.ModelContainer
 import org.jetbrains.kotlin.gradle.model.ModelFetcherBuildAction
 import org.jetbrains.kotlin.gradle.util.*
@@ -171,7 +172,7 @@ abstract class BaseGradleIT {
         val incrementalJs: Boolean? = null,
         val androidHome: File? = null,
         val javaHome: File? = null,
-        val androidGradlePluginVersion: String? = null,
+        val androidGradlePluginVersion: AGPVersion? = null,
         val forceOutputToStdout: Boolean = false,
         val debug: Boolean = false,
         val freeCommandLineArgs: List<String> = emptyList(),

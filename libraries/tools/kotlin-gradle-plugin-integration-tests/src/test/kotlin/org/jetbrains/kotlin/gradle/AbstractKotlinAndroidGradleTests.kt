@@ -1,6 +1,7 @@
 package org.jetbrains.kotlin.gradle
 
 import org.gradle.api.logging.LogLevel
+import org.jetbrains.kotlin.gradle.util.AGPVersion
 import org.jetbrains.kotlin.gradle.util.getFileByName
 import org.jetbrains.kotlin.gradle.util.getFilesByNames
 import org.jetbrains.kotlin.gradle.util.modify
@@ -11,7 +12,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 // TODO If we there is a way to fetch the latest Android plugin version, test against the latest version
-class KotlinAndroid32GradleIT : KotlinAndroid3GradleIT(androidGradlePluginVersion = "3.2.0") {
+class KotlinAndroid32GradleIT : KotlinAndroid3GradleIT(androidGradlePluginVersion = AGPVersion.v3_2_0) {
     override val defaultGradleVersion: GradleVersionRequired
         get() = GradleVersionRequired.AtLeast("4.6")
 
@@ -230,12 +231,12 @@ class KotlinAndroid32GradleIT : KotlinAndroid3GradleIT(androidGradlePluginVersio
     }
 }
 
-class KotlinAndroid30GradleIT : KotlinAndroid3GradleIT(androidGradlePluginVersion = "3.0.0") {
+class KotlinAndroid30GradleIT : KotlinAndroid3GradleIT(androidGradlePluginVersion = AGPVersion.v3_0_0) {
     override val defaultGradleVersion: GradleVersionRequired
         get() = GradleVersionRequired.InRange("4.1", "4.10.2")
 }
 
-abstract class KotlinAndroid3GradleIT(androidGradlePluginVersion: String) : AbstractKotlinAndroidGradleTests(androidGradlePluginVersion) {
+abstract class KotlinAndroid3GradleIT(androidGradlePluginVersion: AGPVersion) : AbstractKotlinAndroidGradleTests(androidGradlePluginVersion) {
     @Test
     fun testApplyWithFeaturePlugin() {
         val project = Project("AndroidProject")
@@ -264,7 +265,7 @@ abstract class KotlinAndroid3GradleIT(androidGradlePluginVersion: String) : Abst
     }
 }
 
-abstract class AbstractKotlinAndroidGradleTests(val androidGradlePluginVersion: String) : BaseGradleIT() {
+abstract class AbstractKotlinAndroidGradleTests(val androidGradlePluginVersion: AGPVersion) : BaseGradleIT() {
 
     override fun defaultBuildOptions() =
         super.defaultBuildOptions().copy(
