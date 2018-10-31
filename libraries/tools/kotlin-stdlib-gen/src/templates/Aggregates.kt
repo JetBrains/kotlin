@@ -298,6 +298,7 @@ object Aggregates : TemplateGroupBase() {
     } builder {
         inline()
         doc { "Returns the first ${f.element} yielding the smallest value of the given function or `null` if there are no ${f.element.pluralize()}." }
+        sample("samples.collections.Collections.Aggregates.minBy")
         typeParam("R : Comparable<R>")
         returns("T?")
         body {
@@ -380,6 +381,7 @@ object Aggregates : TemplateGroupBase() {
         inline()
 
         doc { "Returns the first ${f.element} yielding the largest value of the given function or `null` if there are no ${f.element.pluralize()}." }
+        sample("samples.collections.Collections.Aggregates.maxBy")
         typeParam("R : Comparable<R>")
         returns("T?")
         body {

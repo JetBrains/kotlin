@@ -1026,6 +1026,8 @@ public fun CharSequence.max(): Char? {
 
 /**
  * Returns the first character yielding the largest value of the given function or `null` if there are no characters.
+ * 
+ * @sample samples.collections.Collections.Aggregates.maxBy
  */
 public inline fun <R : Comparable<R>> CharSequence.maxBy(selector: (Char) -> R): Char? {
     if (isEmpty()) return null
@@ -1070,6 +1072,8 @@ public fun CharSequence.min(): Char? {
 
 /**
  * Returns the first character yielding the smallest value of the given function or `null` if there are no characters.
+ * 
+ * @sample samples.collections.Collections.Aggregates.minBy
  */
 public inline fun <R : Comparable<R>> CharSequence.minBy(selector: (Char) -> R): Char? {
     if (isEmpty()) return null
