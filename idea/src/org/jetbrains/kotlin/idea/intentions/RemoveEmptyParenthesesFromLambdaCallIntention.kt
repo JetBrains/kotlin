@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.idea.conversion.copy.range
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
 import org.jetbrains.kotlin.idea.refactoring.getLineNumber
 import org.jetbrains.kotlin.psi.KtCallExpression
-import org.jetbrains.kotlin.psi.KtLambdaExpression
+import org.jetbrains.kotlin.psi.KtQualifiedExpression
 import org.jetbrains.kotlin.psi.KtValueArgumentList
 import org.jetbrains.kotlin.psi.psiUtil.getPrevSiblingIgnoringWhitespaceAndComments
 
@@ -44,8 +44,9 @@ class RemoveEmptyParenthesesFromLambdaCallIntention : SelfTargetingRangeIntentio
         val parent = element.parent as? KtCallExpression ?: return null
         val singleLambdaArgument = parent.lambdaArguments.singleOrNull() ?: return null
         if (element.getLineNumber(start = false) != singleLambdaArgument.getLineNumber(start = true)) return null
-        if (element.getPrevSiblingIgnoringWhitespaceAndComments() !is KtCallExpression) return element.range
-        return null
+        val prev = element.getPrevSiblingIgnoringWhitespaceAndComments()
+        if (prev is KtCallExpression || (prev as? KtQualifiedExpression)?.callExpression != null) return null
+        return element.range
     }
 
     override fun applyTo(element: KtValueArgumentList, editor: Editor?) {
