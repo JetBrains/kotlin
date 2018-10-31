@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.script
 import com.intellij.ide.highlighter.JavaClassFileType
 import com.intellij.ide.highlighter.JavaFileType
 import com.intellij.openapi.components.ServiceManager
+import com.intellij.openapi.fileTypes.FileTypeRegistry
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
@@ -45,7 +46,8 @@ interface ScriptDefinitionProvider {
 fun findScriptDefinition(file: VirtualFile, project: Project): KotlinScriptDefinition? {
     if (file.isDirectory ||
         file.extension == KotlinFileType.EXTENSION ||
-        file.extension == JavaClassFileType.INSTANCE.defaultExtension
+        file.extension == JavaClassFileType.INSTANCE.defaultExtension ||
+        !FileTypeRegistry.getInstance().isFileOfType(file, KotlinFileType.INSTANCE)
     ) {
         return null
     }
