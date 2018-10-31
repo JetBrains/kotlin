@@ -35,6 +35,10 @@ interface JKTreeElement : JKElement {
     fun copy(): JKTreeElement
 }
 
+interface PsiOwner {
+    var psi: PsiElement?
+}
+
 interface JKDeclaration : JKTreeElement
 
 interface JKFile : JKTreeElement, JKBranchElement {

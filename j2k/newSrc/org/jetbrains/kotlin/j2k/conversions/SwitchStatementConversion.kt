@@ -92,7 +92,7 @@ class SwitchStatementConversion(private val context: ConversionContext) : Recurs
             is JKBreakStatement, is JKReturnStatement -> false
             is JKBlockStatement -> block.statements.fallsThrough()
             is JKIfStatement, is JKJavaSwitchStatement, is JKKtWhenStatement ->
-                context.backAnnotator(this)!!.canCompleteNormally()
+                this.psi!!.canCompleteNormally()
             else -> true
         }
 

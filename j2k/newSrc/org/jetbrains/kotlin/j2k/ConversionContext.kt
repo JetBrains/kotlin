@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.j2k.tree.JKElement
 data class ConversionContext(
     val symbolProvider: JKSymbolProvider,
     val converter: NewJavaToKotlinConverter,
-    val backAnnotator: (JKElement) -> PsiElement?,
     val inConversionContext: (PsiElement) -> Boolean
 ) {
 

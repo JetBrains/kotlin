@@ -50,7 +50,6 @@ class NewJavaToKotlinConverter(
         val context = ConversionContext(
             symbolProvider,
             this,
-            { it: JKElement -> treeBuilder.backAnnotation[it] },
             { it: PsiElement -> it.containingFile in files }
         )
 

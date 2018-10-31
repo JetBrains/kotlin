@@ -14,11 +14,10 @@ import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.j2k.*
 import org.jetbrains.kotlin.j2k.ast.Nullability
 import org.jetbrains.kotlin.j2k.tree.*
-import org.jetbrains.kotlin.j2k.tree.impl.JKClassTypeImpl
-import org.jetbrains.kotlin.j2k.tree.impl.JKJavaVoidType
-import org.jetbrains.kotlin.j2k.tree.impl.JKTypeElementImpl
+import org.jetbrains.kotlin.j2k.tree.impl.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.psi.KtClassOrObject
 
 class TypeMappingConversion(val context: ConversionContext) : RecursiveApplicableConversionBase() {
 
@@ -59,7 +58,7 @@ class TypeMappingConversion(val context: ConversionContext) : RecursiveApplicabl
         is JKJavaVoidType -> JKClassTypeImpl(
             context.symbolProvider.provideByFqName(
                 ClassId.topLevel(KotlinBuiltIns.FQ_NAMES.unit.toSafe()),
-                context.backAnnotator.invoke(element.parentOfType<JKClass>()!!)!!
+                element.parentOfType<JKClass>()!!.psi!!
             ),
             nullability = Nullability.NotNull
         )
@@ -87,9 +86,9 @@ class TypeMappingConversion(val context: ConversionContext) : RecursiveApplicabl
 
     private fun calculateNullability(parent: JKElement?): Nullability {
         return when (parent) {
-            is JKJavaMethod -> typeFlavorCalculator.methodNullability(context.backAnnotator(parent) as PsiMethod)
-            is JKJavaField -> typeFlavorCalculator.variableNullability(context.backAnnotator(parent) as PsiVariable)
-            is JKLocalVariable -> typeFlavorCalculator.variableNullability(context.backAnnotator(parent) as PsiVariable)
+            is JKJavaMethod -> typeFlavorCalculator.methodNullability(parent.psi as PsiMethod)
+            is JKJavaField -> typeFlavorCalculator.variableNullability(parent.psi as PsiVariable)
+            is JKLocalVariable -> typeFlavorCalculator.variableNullability(parent.psi as PsiVariable)
             else -> Nullability.Default
         }
     }

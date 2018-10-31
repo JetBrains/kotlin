@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.j2k.ConversionContext
 import org.jetbrains.kotlin.j2k.tree.*
 import org.jetbrains.kotlin.j2k.tree.impl.JKKtCallExpressionImpl
 import org.jetbrains.kotlin.j2k.tree.impl.JKMethodSymbol
+import org.jetbrains.kotlin.j2k.tree.impl.psi
 import org.jetbrains.kotlin.name.ClassId
 
 // TODO: Full special methods conversion
@@ -31,7 +32,7 @@ class PrintlnConversion(private val context: ConversionContext) : RecursiveAppli
         if (selector.identifier.name != "println") return element
 
         val contextElement = element.parentOfType<JKClass>() ?: return element
-        val targetElements = multiResolveFqName(ClassId.fromString("kotlin/io/println"), context.backAnnotator(contextElement)!!)
+        val targetElements = multiResolveFqName(ClassId.fromString("kotlin/io/println"), contextElement.psi!!)
         if (targetElements.isEmpty()) return element
         selector.invalidate()
 

@@ -9,6 +9,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiPolyVariantReference
 import org.jetbrains.kotlin.j2k.ConversionContext
 import org.jetbrains.kotlin.j2k.tree.JKTreeElement
+import org.jetbrains.kotlin.j2k.tree.impl.psi
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.KtDotQualifiedExpression
 import org.jetbrains.kotlin.psi.KtImportDirective
@@ -19,7 +20,7 @@ import org.jetbrains.kotlin.resolve.ImportPath
 
 
 internal fun resolveFqName(classId: ClassId, contextElement: JKTreeElement, context: ConversionContext): PsiElement? {
-    val element = context.backAnnotator(contextElement) ?: return null
+    val element = contextElement.psi ?: return null
     return resolveFqName(classId, element)
 }
 

@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.j2k.tree.impl
 
 import com.intellij.psi.PsiClass
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.j2k.ConversionContext
 import org.jetbrains.kotlin.j2k.JKSymbolProvider
@@ -32,7 +33,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtNamedFunction
 
-class JKFileImpl : JKFile, JKBranchElementBase() {
+class JKFileImpl : JKFile, JKBranchElementBase(), PsiOwner by PsiOwnerImpl() {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitFile(this, data)
 
     override var declarationList by children<JKDeclaration>()
@@ -43,7 +44,7 @@ class JKClassImpl(
     name: JKNameIdentifier,
     inheritance: JKInheritanceInfo,
     override var classKind: JKClass.ClassKind
-) : JKClass, JKBranchElementBase() {
+) : JKClass, JKBranchElementBase(), PsiOwner by PsiOwnerImpl() {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitClass(this, data)
 
     override var name by child(name)
@@ -52,13 +53,13 @@ class JKClassImpl(
     override val inheritance by child(inheritance)
 }
 
-class JKNameIdentifierImpl(override val value: String) : JKNameIdentifier, JKElementBase() {
+class JKNameIdentifierImpl(override val value: String) : JKNameIdentifier, JKElementBase(), PsiOwner by PsiOwnerImpl() {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitNameIdentifier(this, data)
 }
 
 class JKModifierListImpl(
     modifiers: List<JKModifier> = emptyList()
-) : JKModifierList, JKBranchElementBase() {
+) : JKModifierList, JKBranchElementBase(), PsiOwner by PsiOwnerImpl() {
     constructor(vararg modifiers: JKModifier) : this(modifiers.asList())
 
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitModifierList(this, data)
@@ -92,7 +93,7 @@ class JKParameterImpl(
     modifierList: JKModifierList,
     initializer: JKExpression = JKStubExpressionImpl()
 
-) : JKParameter, JKBranchElementBase() {
+) : JKParameter, JKBranchElementBase(), PsiOwner by PsiOwnerImpl() {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitParameter(this, data)
 
     override var modifierList by child(modifierList)
@@ -101,7 +102,7 @@ class JKParameterImpl(
     override var type by child(type)
 }
 
-class JKBlockImpl(statements: List<JKStatement> = emptyList()) : JKBlock, JKBranchElementBase() {
+class JKBlockImpl(statements: List<JKStatement> = emptyList()) : JKBlock, JKBranchElementBase(), PsiOwner by PsiOwnerImpl() {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitBlock(this, data)
 
     override var statements by children(statements)
@@ -113,7 +114,7 @@ class JKBinaryExpressionImpl(
     right: JKExpression,
     override var operator: JKOperator
 ) : JKBinaryExpression,
-    JKBranchElementBase() {
+    JKBranchElementBase(), PsiOwner by PsiOwnerImpl() {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitBinaryExpression(this, data)
     override var right by child(right)
     override var left by child(left)
@@ -163,21 +164,20 @@ class JKBinaryExpressionImpl(
 
 
 
-class JKPrefixExpressionImpl(expression: JKExpression, override var operator: JKOperator) : JKPrefixExpression, JKBranchElementBase() {
+class JKPrefixExpressionImpl(expression: JKExpression, override var operator: JKOperator) : JKPrefixExpression, JKBranchElementBase(), PsiOwner by PsiOwnerImpl() {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitPrefixExpression(this, data)
 
     override var expression by child(expression)
 }
 
-class JKPostfixExpressionImpl(expression: JKExpression, override var operator: JKOperator) : JKPostfixExpression, JKBranchElementBase() {
+class JKPostfixExpressionImpl(expression: JKExpression, override var operator: JKOperator) : JKPostfixExpression, JKBranchElementBase(), PsiOwner by PsiOwnerImpl() {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitPostfixExpression(this, data)
 
     override var expression by child(expression)
 }
 
-class JKExpressionListImpl(expressions: List<JKExpression> = emptyList()) : JKExpressionList, JKBranchElementBase() {
+class JKExpressionListImpl(expressions: List<JKExpression> = emptyList()) : JKExpressionList, JKBranchElementBase(), PsiOwner by PsiOwnerImpl() {
     constructor(vararg expresions: JKExpression) : this(expresions.asList())
-
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitExpressionList(this, data)
 
     override var expressions by children(expressions)
@@ -187,20 +187,20 @@ class JKQualifiedExpressionImpl(
     receiver: JKExpression,
     override var operator: JKQualifier,
     selector: JKExpression
-) : JKQualifiedExpression, JKBranchElementBase() {
+) : JKQualifiedExpression, JKBranchElementBase(), PsiOwner by PsiOwnerImpl() {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitQualifiedExpression(this, data)
 
     override var receiver: JKExpression by child(receiver)
     override var selector: JKExpression by child(selector)
 }
 
-class JKExpressionStatementImpl(expression: JKExpression) : JKExpressionStatement, JKBranchElementBase() {
+class JKExpressionStatementImpl(expression: JKExpression) : JKExpressionStatement, JKBranchElementBase(), PsiOwner by PsiOwnerImpl() {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitExpressionStatement(this, data)
 
     override val expression: JKExpression by child(expression)
 }
 
-class JKDeclarationStatementImpl(declaredStatements: List<JKDeclaration>) : JKDeclarationStatement, JKBranchElementBase() {
+class JKDeclarationStatementImpl(declaredStatements: List<JKDeclaration>) : JKDeclarationStatement, JKBranchElementBase(), PsiOwner by PsiOwnerImpl() {
     override val declaredStatements by children(declaredStatements)
 
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitDeclarationStatement(this, data)
@@ -209,26 +209,26 @@ class JKDeclarationStatementImpl(declaredStatements: List<JKDeclaration>) : JKDe
 class JKArrayAccessExpressionImpl(
     expression: JKExpression,
     indexExpression: JKExpression
-) : JKArrayAccessExpression, JKBranchElementBase() {
+) : JKArrayAccessExpression, JKBranchElementBase(), PsiOwner by PsiOwnerImpl() {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitArrayAccessExpression(this, data)
 
     override var expression: JKExpression by child(expression)
     override var indexExpression: JKExpression by child(indexExpression)
 }
 
-class JKParenthesizedExpressionImpl(expression: JKExpression) : JKParenthesizedExpression, JKBranchElementBase() {
+class JKParenthesizedExpressionImpl(expression: JKExpression) : JKParenthesizedExpression, JKBranchElementBase(), PsiOwner by PsiOwnerImpl() {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitParenthesizedExpression(this, data)
 
     override var expression: JKExpression by child(expression)
 }
 
-class JKTypeCastExpressionImpl(override var expression: JKExpression, type: JKTypeElement) : JKTypeCastExpression, JKBranchElementBase() {
+class JKTypeCastExpressionImpl(override var expression: JKExpression, type: JKTypeElement) : JKTypeCastExpression, JKBranchElementBase(), PsiOwner by PsiOwnerImpl() {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitTypeCastExpression(this, data)
 
     override var type by child(type)
 }
 
-class JKTypeElementImpl(override var type: JKType) : JKTypeElement, JKElementBase() {
+class JKTypeElementImpl(override var type: JKType) : JKTypeElement, JKElementBase(), PsiOwner by PsiOwnerImpl() {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitTypeElement(this, data)
 }
 
@@ -264,7 +264,7 @@ fun JKType.fqName(): String =
 fun JKType.equalsByName(other: JKType) = fqName() == other.fqName()
 
 
-class JKNullLiteral : JKLiteralExpression, JKElementBase() {
+class JKNullLiteral : JKLiteralExpression, JKElementBase(), PsiOwner by PsiOwnerImpl() {
     override val literal: String
         get() = "null"
     override val type: LiteralType
@@ -273,7 +273,7 @@ class JKNullLiteral : JKLiteralExpression, JKElementBase() {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitLiteralExpression(this, data)
 }
 
-class JKBooleanLiteral(val value: Boolean) : JKLiteralExpression, JKElementBase() {
+class JKBooleanLiteral(val value: Boolean) : JKLiteralExpression, JKElementBase(), PsiOwner by PsiOwnerImpl() {
     override val literal: String
         get() = value.toString()
     override val type: LiteralType
@@ -305,7 +305,7 @@ fun JKLiteralExpression.LiteralType.toJkType(symbolProvider: JKSymbolProvider): 
 }
 
 class JKLocalVariableImpl(modifierList: JKModifierList, type: JKTypeElement, name: JKNameIdentifier, initializer: JKExpression) :
-    JKLocalVariable, JKBranchElementBase() {
+    JKLocalVariable, JKBranchElementBase(), PsiOwner by PsiOwnerImpl() {
     override var modifierList by child(modifierList)
     override var initializer by child(initializer)
     override var name by child(name)
@@ -314,7 +314,7 @@ class JKLocalVariableImpl(modifierList: JKModifierList, type: JKTypeElement, nam
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitLocalVariable(this, data)
 }
 
-class JKStubExpressionImpl : JKStubExpression, JKElementBase() {
+class JKStubExpressionImpl : JKStubExpression, JKElementBase(), PsiOwner by PsiOwnerImpl() {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitStubExpression(this, data)
 }
 
@@ -339,42 +339,41 @@ object JKBodyStub : JKBlock, JKTreeElement {
     }
 }
 
-class JKBlockStatementImpl(block: JKBlock) : JKBlockStatement, JKBranchElementBase() {
+class JKBlockStatementImpl(block: JKBlock) : JKBlockStatement, JKBranchElementBase(), PsiOwner by PsiOwnerImpl() {
     override var block by child(block)
 
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitBlockStatement(this, data)
 }
 
-class JKThisExpressionImpl : JKThisExpression, JKElementBase() {
+class JKThisExpressionImpl : JKThisExpression, JKElementBase(), PsiOwner by PsiOwnerImpl() {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitThisExpression(this, data)
 }
 
-class JKSuperExpressionImpl : JKSuperExpression, JKElementBase() {
+class JKSuperExpressionImpl : JKSuperExpression, JKElementBase(), PsiOwner by PsiOwnerImpl() {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitSuperExpression(this, data)
 }
 
-class JKWhileStatementImpl(condition: JKExpression, body: JKStatement) : JKWhileStatement, JKBranchElementBase() {
+class JKWhileStatementImpl(condition: JKExpression, body: JKStatement) : JKWhileStatement, JKBranchElementBase(), PsiOwner by PsiOwnerImpl() {
     override var condition by child(condition)
     override var body by child(body)
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitWhileStatement(this, data)
 }
 
-class JKDoWhileStatementImpl(body: JKStatement, condition: JKExpression) : JKDoWhileStatement, JKBranchElementBase() {
+class JKDoWhileStatementImpl(body: JKStatement, condition: JKExpression) : JKDoWhileStatement, JKBranchElementBase(), PsiOwner by PsiOwnerImpl() {
     override var condition by child(condition)
     override var body by child(body)
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitDoWhileStatement(this, data)
 }
 
-
-class JKBreakStatementImpl : JKBreakStatement, JKElementBase() {
+class JKBreakStatementImpl : JKBreakStatement, JKElementBase(), PsiOwner by PsiOwnerImpl() {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitBreakStatement(this, data)
 }
 
-class JKBreakWithLabelStatementImpl(override var label: JKNameIdentifier) : JKBreakWithLabelStatement, JKElementBase() {
+class JKBreakWithLabelStatementImpl(override var label: JKNameIdentifier) : JKBreakWithLabelStatement, JKElementBase(), PsiOwner by PsiOwnerImpl() {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitBreakWithLabelStatement(this, data)
 }
 
-class JKIfStatementImpl(condition: JKExpression, thenBranch: JKStatement) : JKIfStatement, JKBranchElementBase() {
+class JKIfStatementImpl(condition: JKExpression, thenBranch: JKStatement) : JKIfStatement, JKBranchElementBase(), PsiOwner by PsiOwnerImpl() {
     override var thenBranch by child(thenBranch)
     override var condition by child(condition)
 
@@ -382,7 +381,7 @@ class JKIfStatementImpl(condition: JKExpression, thenBranch: JKStatement) : JKIf
 }
 
 class JKIfElseStatementImpl(condition: JKExpression, thenBranch: JKStatement, elseBranch: JKStatement) : JKIfElseStatement,
-    JKBranchElementBase() {
+    JKBranchElementBase(), PsiOwner by PsiOwnerImpl() {
     override var elseBranch by child(elseBranch)
     override var thenBranch by child(thenBranch)
     override var condition by child(condition)
@@ -391,7 +390,7 @@ class JKIfElseStatementImpl(condition: JKExpression, thenBranch: JKStatement, el
 }
 
 class JKIfElseExpressionImpl(condition: JKExpression, thenBranch: JKExpression, elseBranch: JKExpression) : JKIfElseExpression,
-    JKBranchElementBase() {
+    JKBranchElementBase(), PsiOwner by PsiOwnerImpl() {
     override var elseBranch by child(elseBranch)
     override var thenBranch by child(thenBranch)
     override var condition by child(condition)
@@ -399,19 +398,19 @@ class JKIfElseExpressionImpl(condition: JKExpression, thenBranch: JKExpression, 
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitIfElseExpression(this, data)
 }
 
-class JKClassAccessExpressionImpl(override var identifier: JKClassSymbol) : JKClassAccessExpression, JKElementBase() {
+class JKClassAccessExpressionImpl(override var identifier: JKClassSymbol) : JKClassAccessExpression, JKElementBase(), PsiOwner by PsiOwnerImpl() {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitClassAccessExpression(this, data)
 }
 
-class JKModalityModifierImpl(override val modality: JKModalityModifier.Modality) : JKModalityModifier, JKElementBase() {
+class JKModalityModifierImpl(override val modality: JKModalityModifier.Modality) : JKModalityModifier, JKElementBase(), PsiOwner by PsiOwnerImpl() {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitModalityModifier(this, data)
 }
 
-class JKAccessModifierImpl(override val visibility: JKAccessModifier.Visibility) : JKAccessModifier, JKElementBase() {
+class JKAccessModifierImpl(override val visibility: JKAccessModifier.Visibility) : JKAccessModifier, JKElementBase(), PsiOwner by PsiOwnerImpl() {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitAccessModifier(this, data)
 }
 
-class JKMutabilityModifierImpl(override val mutability: Mutability) : JKMutabilityModifier, JKElementBase() {
+class JKMutabilityModifierImpl(override val mutability: Mutability) : JKMutabilityModifier, JKElementBase(), PsiOwner by PsiOwnerImpl() {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitMutabilityModifier(this, data)
 }
 
@@ -419,14 +418,14 @@ class JKLambdaExpressionImpl(
     parameters: List<JKParameter> = listOf(
         JKParameterImpl(JKTypeElementImpl(JKJavaVoidType), JKNameIdentifierImpl("it"), JKModifierListImpl())
     ), statement: JKStatement, returnType: JKTypeElement = JKTypeElementImpl(JKContextType)
-) : JKLambdaExpression, JKBranchElementBase() {
+) : JKLambdaExpression, JKBranchElementBase(), PsiOwner by PsiOwnerImpl() {
     override var statement by child(statement)
     override val returnType by child(returnType)
     override var parameters by children(parameters)
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitLambdaExpression(this, data)
 }
 
-class JKInheritanceInfoImpl(implements: List<JKTypeElement>) : JKInheritanceInfo, JKBranchElementBase() {
+class JKInheritanceInfoImpl(implements: List<JKTypeElement>) : JKInheritanceInfo, JKBranchElementBase(), PsiOwner by PsiOwnerImpl() {
     override val inherit: List<JKTypeElement> by children(implements)
 
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitInheritanceInfo(this, data)
@@ -436,7 +435,7 @@ class JKDelegationConstructorCallImpl(
     override val identifier: JKMethodSymbol,
     expression: JKExpression,
     arguments: JKExpressionList
-) : JKBranchElementBase(), JKDelegationConstructorCall {
+) : JKBranchElementBase(), JKDelegationConstructorCall, PsiOwner by PsiOwnerImpl() {
     override var typeArguments by children(emptyList<JKTypeElement>())
     override val expression: JKExpression by child(expression)
     override val arguments: JKExpressionList by child(arguments)
@@ -444,7 +443,7 @@ class JKDelegationConstructorCallImpl(
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitDelegationConstructorCall(this, data)
 }
 
-class JKFieldAccessExpressionImpl(override var identifier: JKFieldSymbol) : JKFieldAccessExpression, JKElementBase() {
+class JKFieldAccessExpressionImpl(override var identifier: JKFieldSymbol) : JKFieldAccessExpression, JKElementBase(), PsiOwner by PsiOwnerImpl() {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitFieldAccessExpression(this, data)
 }
 val JKStatement.statements: List<JKStatement>
@@ -454,21 +453,26 @@ val JKStatement.statements: List<JKStatement>
             else -> listOf(this)
         }
 
-class JKLabelEmptyImpl : JKLabelEmpty, JKElementBase() {
+class JKLabelEmptyImpl : JKLabelEmpty, JKElementBase(), PsiOwner by PsiOwnerImpl() {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitLabelEmpty(this, data)
 }
-class JKLabelTextImpl(label: JKNameIdentifier) : JKLabelText, JKBranchElementBase() {
+class JKLabelTextImpl(label: JKNameIdentifier) : JKLabelText, JKBranchElementBase(), PsiOwner by PsiOwnerImpl() {
     override val label: JKNameIdentifier by child(label)
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitLabelText(this, data)
 }
 
-class JKContinueStatementImpl(label: JKLabel) : JKContinueStatement, JKBranchElementBase() {
+class JKContinueStatementImpl(label: JKLabel) : JKContinueStatement, JKBranchElementBase(), PsiOwner by PsiOwnerImpl() {
     override var label: JKLabel by child(label)
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitContinueStatement(this, data)
 }
 
-class JKLabeledStatementImpl(statement: JKStatement, labels: List<JKNameIdentifier>) : JKLabeledStatement, JKBranchElementBase() {
+class JKLabeledStatementImpl(statement: JKStatement, labels: List<JKNameIdentifier>) : JKLabeledStatement, JKBranchElementBase(), PsiOwner by PsiOwnerImpl() {
     override var statement: JKStatement by child(statement)
     override val labels: List<JKNameIdentifier> by children(labels)
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitLabeledStatement(this, data)
 }
+
+class PsiOwnerImpl(override var psi: PsiElement? = null) : PsiOwner
+
+val JKElement.psi: PsiElement?
+    get() = (this as? PsiOwner)?.psi

@@ -17,7 +17,7 @@ class AssignmentAsExpressionToAlsoConversion(val context: ConversionContext) : R
         val alsoExpression = JKKtAlsoCallExpressionImpl(
             JKBlockStatementImpl(
                 JKBlockImpl(listOf(JKKtAssignmentStatementImpl(element.field, JKStubExpressionImpl(), element.operator)))
-            ), context.symbolProvider.provideByFqName("kotlin/also", context.backAnnotator.invoke(element.parentOfType<JKClass>()!!)!!)
+            ), context.symbolProvider.provideByFqName("kotlin/also", element.parentOfType<JKClass>()!!.psi!!)
         ).also {
             it.statement.cast<JKBlockStatement>().block.statements.first().cast<JKKtAssignmentStatement>().expression =
                     JKFieldAccessExpressionImpl(context.symbolProvider.provideUniverseSymbol(it.parameter))

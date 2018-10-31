@@ -41,8 +41,6 @@ class JavaToJKTreeBuilder(var symbolProvider: JKSymbolProvider) {
 
     private val modifierMapper = ModifierMapper()
 
-    val backAnnotation = mutableMapOf<JKElement, PsiElement>()//TODO preserve consistency
-
     private inner class ExpressionTreeMapper {
         fun PsiExpression?.toJK(): JKExpression {
             return when (this) {
@@ -74,7 +72,7 @@ class JavaToJKTreeBuilder(var symbolProvider: JKSymbolProvider) {
                     throw RuntimeException("Not supported: ${this::class}")
                 }
             }.also {
-                if (this != null) backAnnotation[it] = this
+                if (this != null) (it as PsiOwner).psi = this
             }
         }
 
@@ -191,7 +189,9 @@ class JavaToJKTreeBuilder(var symbolProvider: JKSymbolProvider) {
                     JKJavaNewEmptyArrayImpl(
                         dimensions.map { it?.toJK() ?: JKStubExpressionImpl() },
                         JKTypeElementImpl(generateSequence(type?.toJK(symbolProvider)) { it.safeAs<JKJavaArrayType>()?.type }.last())
-                    )
+                    ).also {
+                        it.psi = this
+                    }
                 }
             }
             val constructedClass = classOrAnonymousClassReference?.resolve()
@@ -227,7 +227,7 @@ class JavaToJKTreeBuilder(var symbolProvider: JKSymbolProvider) {
 
         fun PsiTypeElement.toJK(): JKTypeElement {
             return JKTypeElementImpl(type.toJK(symbolProvider)).also {
-                backAnnotation[it] = this
+                (it as PsiOwner).psi = this
             }
         }
     }
@@ -253,7 +253,7 @@ class JavaToJKTreeBuilder(var symbolProvider: JKSymbolProvider) {
                 jkClassImpl.declarationList = children.mapNotNull {
                     ElementVisitor().apply { it.accept(this) }.resultElement as? JKDeclaration
                 }
-                backAnnotation[jkClassImpl] = this
+                jkClassImpl.psi = this
                 symbolProvider.provideUniverseSymbol(this, jkClassImpl)
             }
         }
@@ -266,7 +266,7 @@ class JavaToJKTreeBuilder(var symbolProvider: JKSymbolProvider) {
                 with(expressionTreeMapper) { initializer.toJK() }
             ).also {
                 symbolProvider.provideUniverseSymbol(this, it)
-                backAnnotation[it] = this
+                it.psi = this
             }
         }
 
@@ -282,9 +282,8 @@ class JavaToJKTreeBuilder(var symbolProvider: JKSymbolProvider) {
                 parameterList.parameters.map { it.toJK() },
                 body?.toJK() ?: JKBodyStub
             ).also {
-                backAnnotation[it] = this
+                it.psi = this
                 symbolProvider.provideUniverseSymbol(this, it)
-                backAnnotation[it] = this
             }
         }
 
@@ -299,7 +298,7 @@ class JavaToJKTreeBuilder(var symbolProvider: JKSymbolProvider) {
                                    JKNameIdentifierImpl(name!!),
                                    with(modifierMapper) { modifierList.toJK() }).also {
                 symbolProvider.provideUniverseSymbol(this, it)
-                backAnnotation[it] = this
+                it.psi = this
             }
         }
 
@@ -317,7 +316,7 @@ class JavaToJKTreeBuilder(var symbolProvider: JKSymbolProvider) {
                         with(expressionTreeMapper) { it.initializer.toJK() }
                     ).also { i ->
                         symbolProvider.provideUniverseSymbol(it, i)
-                        backAnnotation[i] = it
+                        i.psi = it
                     }
                 } else TODO()
             }
@@ -382,7 +381,7 @@ class JavaToJKTreeBuilder(var symbolProvider: JKSymbolProvider) {
                 }
                 else -> TODO("for ${this::class}")
             }.also {
-                if (this != null) backAnnotation[it] = this
+                if (this != null) (it as PsiOwner).psi = this
             }
         }
     }

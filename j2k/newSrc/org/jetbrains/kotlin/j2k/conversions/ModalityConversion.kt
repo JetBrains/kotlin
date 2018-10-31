@@ -10,6 +10,7 @@ import com.intellij.psi.PsiMethod
 import org.jetbrains.kotlin.j2k.ConversionContext
 import org.jetbrains.kotlin.j2k.tree.*
 import org.jetbrains.kotlin.j2k.tree.impl.modality
+import org.jetbrains.kotlin.j2k.tree.impl.psi
 
 class ModalityConversion(private val context: ConversionContext) : RecursiveApplicableConversionBase() {
 
@@ -26,13 +27,13 @@ class ModalityConversion(private val context: ConversionContext) : RecursiveAppl
         if (klass.classKind != JKClass.ClassKind.CLASS) return
         if (klass.modifierList.modality != JKModalityModifier.Modality.OPEN) return
         if (context.converter.settings.openByDefault) return
-        if (!context.converter.converterServices.oldServices.referenceSearcher.hasInheritors(context.backAnnotator(klass) as PsiClass)) {
+        if (!context.converter.converterServices.oldServices.referenceSearcher.hasInheritors(klass.psi as PsiClass)) {
             klass.modifierList.modality = JKModalityModifier.Modality.FINAL
         }
     }
 
     private fun processMethod(method: JKJavaMethod) {
-        if ((context.backAnnotator(method)!! as PsiMethod).findSuperMethods().isNotEmpty()) {
+        if ((method.psi!! as PsiMethod).findSuperMethods().isNotEmpty()) {
             method.modifierList.modality = JKModalityModifier.Modality.OVERRIDE
         }
     }
