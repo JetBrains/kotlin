@@ -14,6 +14,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ex.ProjectRootManagerEx
 import com.intellij.openapi.util.EmptyRunnable
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.util.ui.UIUtil
 import org.jetbrains.kotlin.idea.core.script.*
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.script.*
@@ -25,8 +26,7 @@ import kotlin.script.experimental.dependencies.ScriptDependencies
 abstract class ScriptDependenciesLoader(
     protected val file: VirtualFile,
     protected val scriptDef: KotlinScriptDefinition,
-    protected val project: Project,
-    private val shouldNotifyRootsChanged: Boolean
+    protected val project: Project
 ) {
     companion object {
         private val loaders = ConcurrentHashMap<VirtualFile, ScriptDependenciesLoader>()
@@ -34,8 +34,7 @@ abstract class ScriptDependenciesLoader(
         fun updateDependencies(
             file: VirtualFile,
             scriptDef: KotlinScriptDefinition,
-            project: Project,
-            shouldNotifyRootsChanged: Boolean
+            project: Project
         ) {
             val existingLoader = loaders[file]
             if (existingLoader != null) return existingLoader.updateDependencies()
@@ -43,7 +42,7 @@ abstract class ScriptDependenciesLoader(
             val newLoader = when (scriptDef.dependencyResolver) {
                 is AsyncDependenciesResolver,
                 is LegacyResolverWrapper -> AsyncScriptDependenciesLoader(file, scriptDef, project)
-                else -> SyncScriptDependenciesLoader(file, scriptDef, project, shouldNotifyRootsChanged)
+                else -> SyncScriptDependenciesLoader(file, scriptDef, project)
             }
             loaders.put(file, newLoader)
             newLoader.updateDependencies()
@@ -107,8 +106,6 @@ abstract class ScriptDependenciesLoader(
 
     @Suppress("EXPERIMENTAL_FEATURE_WARNING")
     protected fun notifyRootsChanged() {
-        if (!shouldNotifyRootsChanged) return
-
         val doNotifyRootsChanged = Runnable {
             runWriteAction {
                 if (project.isDisposed) return@runWriteAction
@@ -119,7 +116,7 @@ abstract class ScriptDependenciesLoader(
         }
 
         if (ApplicationManager.getApplication().isUnitTestMode) {
-            doNotifyRootsChanged.run()
+            UIUtil.invokeLaterIfNeeded(doNotifyRootsChanged)
         } else {
             TransactionGuard.getInstance().submitTransactionLater(project, doNotifyRootsChanged)
         }

@@ -34,18 +34,17 @@ open class KotlinVariant(
 open class KotlinVariantWithCoordinates(
     target: KotlinTarget
 ) : KotlinVariant(target),
-    ComponentWithCoordinates /* Gradle 4.7+ API, don't use with older versions */
-{
+    ComponentWithCoordinates /* Gradle 4.7+ API, don't use with older versions */ {
     override fun getCoordinates() = object : ModuleVersionIdentifier {
         private val project get() = target.project
 
-        private val moduleName: String get() =
-            publicationDelegate?.artifactId ?:
-            "${project.name}-${target.name.toLowerCase()}"
+        private val moduleName: String
+            get() =
+                publicationDelegate?.artifactId ?: "${project.name}-${target.name.toLowerCase()}"
 
-        private val moduleGroup: String get() =
-            publicationDelegate?.groupId ?:
-            project.group.toString()
+        private val moduleGroup: String
+            get() =
+                publicationDelegate?.groupId ?: project.group.toString()
 
         override fun getGroup() = moduleGroup
         override fun getName() = moduleName
@@ -58,13 +57,13 @@ open class KotlinVariantWithCoordinates(
     }
 }
 
-class KotlinVariantWithMetadataVariant(target: KotlinTarget, private val metadataTarget: KotlinTarget)
-    : KotlinVariantWithCoordinates(target), ComponentWithVariants {
+class KotlinVariantWithMetadataVariant(target: KotlinTarget, private val metadataTarget: KotlinTarget) :
+    KotlinVariantWithCoordinates(target), ComponentWithVariants {
     override fun getVariants() = setOf(metadataTarget.component)
 }
 
-class KotlinVariantWithMetadataDependency(target: KotlinTarget, private val metadataTarget: KotlinTarget)
-    : KotlinVariantWithCoordinates(target) {
+class KotlinVariantWithMetadataDependency(target: KotlinTarget, private val metadataTarget: KotlinTarget) :
+    KotlinVariantWithCoordinates(target) {
     override fun getUsages(): Set<UsageContext> = target.createUsageContexts().mapTo(mutableSetOf()) { usageContext ->
         UsageContextWithAdditionalDependencies(usageContext, setOf(metadataDependency()))
     }

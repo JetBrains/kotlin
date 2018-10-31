@@ -413,7 +413,7 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
         return getAccessor(propertyDescriptor, AccessorKind.NORMAL, null, superCallTarget, getterAccessorRequired, setterAccessorRequired);
     }
 
-
+    @SuppressWarnings("unchecked")
     public  <D extends CallableMemberDescriptor> D getAccessorForJvmDefaultCompatibility(@NotNull D descriptor) {
         if (descriptor instanceof PropertyAccessorDescriptor) {
             PropertyDescriptor propertyAccessor = getAccessor(((PropertyAccessorDescriptor) descriptor).getCorrespondingProperty(),

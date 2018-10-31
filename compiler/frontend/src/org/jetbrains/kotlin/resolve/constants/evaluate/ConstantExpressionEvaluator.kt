@@ -888,7 +888,9 @@ private class ConstantExpressionEvaluatorVisitor(
     override fun visitClassLiteralExpression(expression: KtClassLiteralExpression, expectedType: KotlinType?): CompileTimeConstant<*>? {
         val type = trace.getType(expression)!!
         if (type.isError) return null
-        return KClassValue(type).wrap()
+        val descriptor = type.constructor.declarationDescriptor
+        if (descriptor !is ClassDescriptor || !KotlinBuiltIns.isKClass(descriptor)) return null
+        return KClassValue.create(type.arguments.first().type)?.wrap()
     }
 
     private fun resolveArguments(valueArguments: List<ValueArgument>, expectedType: KotlinType): List<CompileTimeConstant<*>?> {

@@ -124,9 +124,7 @@ public class PropertyGenTest extends CodegenTestCase {
         getFoo.setAccessible(true);
         assertTrue((getFoo.getModifiers() & Modifier.PROTECTED) != 0);
         assertEquals(349, getFoo.invoke(instance));
-        Method setFoo = findDeclaredMethodByName(aClass, "setFoo");
-        setFoo.setAccessible(true);
-        assertTrue((setFoo.getModifiers() & Modifier.PRIVATE) != 0);
+        assertNull(findDeclaredMethodByNameOrNull(aClass, "setFoo"));
         Method setter = findDeclaredMethodByName(aClass, "setter");
         setter.invoke(instance);
         assertEquals(610, getFoo.invoke(instance));

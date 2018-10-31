@@ -3,9 +3,6 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
-
-import kotlin.js.*
-
 /** Concat regular Array's and TypedArray's into an Array.
  */
 @PublishedApi

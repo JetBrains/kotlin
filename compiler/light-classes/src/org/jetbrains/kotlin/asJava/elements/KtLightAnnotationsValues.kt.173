@@ -12,11 +12,12 @@ import com.intellij.psi.impl.light.LightIdentifier
 import com.intellij.psi.impl.light.LightTypeElement
 import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
 import org.jetbrains.kotlin.asJava.classes.lazyPub
+import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
+import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.constants.KClassValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
-import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.SimpleType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
@@ -43,7 +44,8 @@ open class KtLightPsiLiteral(
     override fun getType(): PsiType? {
         val bindingContext = LightClassGenerationSupport.getInstance(this.project).analyze(kotlinOrigin)
         val kotlinType = bindingContext[BindingContext.EXPECTED_EXPRESSION_TYPE, kotlinOrigin] ?: return null
-        return psiType(kotlinType, kotlinOrigin)
+        val typeFqName = kotlinType.constructor.declarationDescriptor?.fqNameSafe?.asString() ?: return null
+        return psiType(typeFqName, kotlinOrigin)
     }
 
     override fun getParent(): PsiElement = lightParent
@@ -64,29 +66,43 @@ class KtLightPsiClassObjectAccessExpression(override val kotlinOrigin: KtClassLi
     KtLightPsiLiteral(kotlinOrigin, lightParent), PsiClassObjectAccessExpression {
     override fun getType(): PsiType {
         val bindingContext = LightClassGenerationSupport.getInstance(this.project).analyze(kotlinOrigin)
-        val kotlinType = bindingContext[BindingContext.COMPILE_TIME_VALUE, kotlinOrigin]
-            ?.getValue(TypeUtils.NO_EXPECTED_TYPE).safeAs<SimpleType>() ?: return PsiType.VOID
-        return psiType(kotlinType, kotlinOrigin) ?: return PsiType.VOID
+        val (classId, arrayDimensions) = bindingContext[BindingContext.COMPILE_TIME_VALUE, kotlinOrigin]
+            ?.toConstantValue(TypeUtils.NO_EXPECTED_TYPE)?.safeAs<KClassValue>()?.value ?: return PsiType.VOID
+        var type = psiType(classId.asSingleFqName().asString(), kotlinOrigin, boxPrimitiveType = arrayDimensions > 0) ?: return PsiType.VOID
+        repeat(arrayDimensions) {
+            type = type.createArrayType()
+        }
+        return type
     }
 
     override fun getOperand(): PsiTypeElement = LightTypeElement(kotlinOrigin.manager, type)
 }
 
-private fun psiType(kotlinType: KotlinType, context: PsiElement): PsiType? {
-    val typeFqName = kotlinType.constructor.declarationDescriptor?.fqNameSafe?.asString() ?: return null
-    return when (typeFqName) {
-        "kotlin.Int" -> PsiType.INT
-        "kotlin.Long" -> PsiType.LONG
-        "kotlin.Short" -> PsiType.SHORT
-        "kotlin.Boolean" -> PsiType.BOOLEAN
-        "kotlin.Byte" -> PsiType.BYTE
-        "kotlin.Char" -> PsiType.CHAR
-        "kotlin.Double" -> PsiType.DOUBLE
-        "kotlin.Float" -> PsiType.FLOAT
-        "kotlin.Unit" -> PsiType.VOID
-        "kotlin.String" -> PsiType.getJavaLangString(context.manager, context.resolveScope)
-        else -> PsiType.getTypeByName(typeFqName, context.project, context.resolveScope)
+private fun psiType(kotlinFqName: String, context: PsiElement, boxPrimitiveType: Boolean = false): PsiType? {
+    if (!boxPrimitiveType) {
+        when (kotlinFqName) {
+            "kotlin.Int" -> return PsiType.INT
+            "kotlin.Long" -> return PsiType.LONG
+            "kotlin.Short" -> return PsiType.SHORT
+            "kotlin.Boolean" -> return PsiType.BOOLEAN
+            "kotlin.Byte" -> return PsiType.BYTE
+            "kotlin.Char" -> return PsiType.CHAR
+            "kotlin.Double" -> return PsiType.DOUBLE
+            "kotlin.Float" -> return PsiType.FLOAT
+        }
     }
+    when (kotlinFqName) {
+        "kotlin.IntArray" -> return PsiType.INT.createArrayType()
+        "kotlin.LongArray" -> return PsiType.LONG.createArrayType()
+        "kotlin.ShortArray" -> return PsiType.SHORT.createArrayType()
+        "kotlin.BooleanArray" -> return PsiType.BOOLEAN.createArrayType()
+        "kotlin.ByteArray" -> return PsiType.BYTE.createArrayType()
+        "kotlin.CharArray" -> return PsiType.CHAR.createArrayType()
+        "kotlin.DoubleArray" -> return PsiType.DOUBLE.createArrayType()
+        "kotlin.FloatArray" -> return PsiType.FLOAT.createArrayType()
+    }
+    val javaFqName = JavaToKotlinClassMap.mapKotlinToJava(FqNameUnsafe(kotlinFqName))?.asSingleFqName()?.asString() ?: kotlinFqName
+    return PsiType.getTypeByName(javaFqName, context.project, context.resolveScope)
 }
 
 class KtLightPsiNameValuePair private constructor(

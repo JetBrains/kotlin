@@ -4,6 +4,26 @@ PsiJetFileStubImpl[package=foo.TopLevelMembers]
       REFERENCE_EXPRESSION[referencedName=foo]
       REFERENCE_EXPRESSION[referencedName=TopLevelMembers]
   IMPORT_LIST
+  PROPERTY[fqName=foo.TopLevelMembers.Main, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=Main]
+    MODIFIER_LIST[internal]
+      ANNOTATION_ENTRY[hasValueArguments=false, shortName=A]
+        ANNOTATION_TARGET[useSiteTarget=FIELD]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=foo]
+                REFERENCE_EXPRESSION[referencedName=TopLevelMembers]
+              REFERENCE_EXPRESSION[referencedName=A]
+    TYPE_REFERENCE
+      NULLABLE_TYPE
+        USER_TYPE
+          USER_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=foo]
+            REFERENCE_EXPRESSION[referencedName=TopLevelMembers]
+          REFERENCE_EXPRESSION[referencedName=D]
   PROPERTY[fqName=foo.TopLevelMembers.certainlyNothing, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=certainlyNothing]
     MODIFIER_LIST[private]
     TYPE_REFERENCE
@@ -25,6 +45,23 @@ PsiJetFileStubImpl[package=foo.TopLevelMembers]
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Float]
+  PROPERTY[fqName=foo.TopLevelMembers.Main, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=true, isTopLevel=true, isVar=false, name=Main]
+    MODIFIER_LIST[public]
+    TYPE_REFERENCE
+      USER_TYPE
+        USER_TYPE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=foo]
+          REFERENCE_EXPRESSION[referencedName=TopLevelMembers]
+        REFERENCE_EXPRESSION[referencedName=D]
+    TYPE_REFERENCE
+      NULLABLE_TYPE
+        USER_TYPE
+          USER_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=foo]
+            REFERENCE_EXPRESSION[referencedName=TopLevelMembers]
+          REFERENCE_EXPRESSION[referencedName=D]
   PROPERTY[fqName=foo.TopLevelMembers.ext, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=true, isTopLevel=true, isVar=false, name=ext]
     MODIFIER_LIST[public]
     TYPE_REFERENCE

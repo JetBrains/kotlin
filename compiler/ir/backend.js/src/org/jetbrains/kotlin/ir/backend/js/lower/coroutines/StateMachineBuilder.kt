@@ -18,7 +18,10 @@ import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
-import org.jetbrains.kotlin.ir.symbols.*
+import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.IrReturnableBlockSymbol
+import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
+import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.visitors.*
 
@@ -276,7 +279,7 @@ class StateMachineBuilder(
         if (expression is IrReturnableBlock) processReturnableBlock(expression) else super.visitBlock(expression)
 
     private fun implicitCast(value: IrExpression, toType: IrType) =
-        JsIrBuilder.buildTypeOperator(toType, IrTypeOperator.IMPLICIT_CAST, value, toType, toType.classifierOrFail)
+        JsIrBuilder.buildImplicitCast(value, toType)
 
     override fun visitCall(expression: IrCall) {
         super.visitCall(expression)
@@ -412,6 +415,12 @@ class StateMachineBuilder(
         transformLastExpression { expression.apply { value = it } }
     }
 
+    override fun visitTypeOperator(expression: IrTypeOperatorCall) {
+        if (expression !in suspendableNodes) return addStatement(expression)
+        expression.acceptChildrenVoid(this)
+        transformLastExpression { expression.apply { argument = it } }
+    }
+
     override fun visitVariable(declaration: IrVariable) {
         if (declaration !in suspendableNodes) return addStatement(declaration)
         declaration.acceptChildrenVoid(this)
@@ -542,7 +551,7 @@ class StateMachineBuilder(
         currentState.successors += catchBlockStack.peek()!!
     }
 
-    private fun hasResultingValue(expression: IrExpression) = expression.type.run { !isUnit() && !isNothing() }
+    private fun hasResultingValue(expression: IrExpression) = !expression.type.isNothing()
 
     override fun visitThrow(expression: IrThrow) {
         expression.acceptChildrenVoid(this)

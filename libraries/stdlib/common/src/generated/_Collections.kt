@@ -13,9 +13,6 @@ package kotlin.collections
 // See: https://github.com/JetBrains/kotlin/tree/master/libraries/stdlib
 //
 
-import kotlin.*
-import kotlin.text.*
-import kotlin.comparisons.*
 import kotlin.random.*
 
 /**
@@ -1270,7 +1267,7 @@ public inline fun <T, K, V, M : MutableMap<in K, MutableList<V>>> Iterable<T>.gr
  * Creates a [Grouping] source from a collection to be used later with one of group-and-fold operations
  * using the specified [keySelector] function to extract a key from each element.
  * 
- * @sample samples.collections.Collections.Transformations.groupingByEachCount
+ * @sample samples.collections.Grouping.groupingByEachCount
  */
 @SinceKotlin("1.1")
 public inline fun <T, K> Iterable<T>.groupingBy(crossinline keySelector: (T) -> K): Grouping<T, K> {
@@ -1924,6 +1921,9 @@ public operator fun <T> Iterable<T>.minus(element: T): List<T> {
 
 /**
  * Returns a list containing all elements of the original collection except the elements contained in the given [elements] array.
+ * 
+ * The [elements] array may be converted to a [HashSet] to speed up the operation, thus the elements are required to have
+ * a correct and stable implementation of `hashCode()` that doesn't change between successive invocations.
  */
 public operator fun <T> Iterable<T>.minus(elements: Array<out T>): List<T> {
     if (elements.isEmpty()) return this.toList()
@@ -1933,6 +1933,9 @@ public operator fun <T> Iterable<T>.minus(elements: Array<out T>): List<T> {
 
 /**
  * Returns a list containing all elements of the original collection except the elements contained in the given [elements] collection.
+ * 
+ * The [elements] collection may be converted to a [HashSet] to speed up the operation, thus the elements are required to have
+ * a correct and stable implementation of `hashCode()` that doesn't change between successive invocations.
  */
 public operator fun <T> Iterable<T>.minus(elements: Iterable<T>): List<T> {
     val other = elements.convertToSetForSetOperationWith(this)
@@ -1943,6 +1946,9 @@ public operator fun <T> Iterable<T>.minus(elements: Iterable<T>): List<T> {
 
 /**
  * Returns a list containing all elements of the original collection except the elements contained in the given [elements] sequence.
+ * 
+ * The [elements] sequence may be converted to a [HashSet] to speed up the operation, thus the elements are required to have
+ * a correct and stable implementation of `hashCode()` that doesn't change between successive invocations.
  */
 public operator fun <T> Iterable<T>.minus(elements: Sequence<T>): List<T> {
     val other = elements.toHashSet()

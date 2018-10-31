@@ -1,9 +1,6 @@
 <idea-plugin xmlns:xi="http://www.w3.org/2001/XInclude">
     <application-components>
         <component>
-            <implementation-class>org.jetbrains.kotlin.ide.konan.KotlinNativeApplicationComponent</implementation-class>
-        </component>
-        <component>
             <implementation-class>org.jetbrains.kotlin.ide.konan.decompiler.KotlinNativeLoadingMetadataCache</implementation-class>
         </component>
     </application-components>
@@ -16,6 +13,7 @@
         <filetype.stubBuilder filetype="KNM" implementationClass="com.intellij.psi.impl.compiled.ClassFileStubBuilder"/>
         <filetype.decompiler filetype="KNM" implementationClass="com.intellij.psi.impl.compiled.ClassFileDecompiler"/>
         <fileTypeFactory implementation="org.jetbrains.kotlin.ide.konan.decompiler.KotlinNativeMetaFileTypeFactory"/>
+        <fileTypeFactory implementation="org.jetbrains.kotlin.ide.konan.KotlinNativeFileTypeFactory"/>
         <fileBasedIndex implementation="org.jetbrains.kotlin.ide.konan.index.KotlinNativeMetaFileIndex"/>
         <library.type implementation="org.jetbrains.kotlin.ide.konan.NativeLibraryType"/>
     </extensions>

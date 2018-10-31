@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.asJava.toLightMethods
-import org.jetbrains.kotlin.config.AnalysisFlag
+import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.caches.project.implementingDescriptors
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
@@ -67,6 +67,7 @@ import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
+import org.jetbrains.kotlin.resolve.isInlineClassType
 import org.jetbrains.kotlin.util.findCallableMemberBySignature
 import java.awt.GridBagConstraints
 import java.awt.GridBagLayout
@@ -175,8 +176,8 @@ class UnusedSymbolInspection : AbstractKotlinInspection() {
             if (descriptor is ClassDescriptor && descriptor.kind == ClassKind.ANNOTATION_CLASS) {
                 val fqName = descriptor.fqNameSafe.asString()
                 val languageVersionSettings = declaration.languageVersionSettings
-                if (fqName in languageVersionSettings.getFlag(AnalysisFlag.experimental) ||
-                    fqName in languageVersionSettings.getFlag(AnalysisFlag.useExperimental)
+                if (fqName in languageVersionSettings.getFlag(AnalysisFlags.experimental) ||
+                    fqName in languageVersionSettings.getFlag(AnalysisFlags.useExperimental)
                 ) return
             }
 
@@ -309,7 +310,7 @@ class UnusedSymbolInspection : AbstractKotlinInspection() {
             if (referenceUsed) return true
         }
 
-        if (declaration is KtCallableDeclaration && !declaration.hasModifier(KtTokens.INTERNAL_KEYWORD)) {
+        if (declaration is KtCallableDeclaration && declaration.canBeHandledByLightMethods(descriptor)) {
             val lightMethods = declaration.toLightMethods()
             if (lightMethods.isNotEmpty()) {
                 val lightMethodsUsed = lightMethods.any { method ->
@@ -321,6 +322,23 @@ class UnusedSymbolInspection : AbstractKotlinInspection() {
         }
 
         return referenceUsed
+    }
+
+    private fun KtCallableDeclaration.canBeHandledByLightMethods(descriptor: DeclarationDescriptor?): Boolean {
+        return when {
+            hasModifier(KtTokens.INTERNAL_KEYWORD) -> false
+            descriptor !is FunctionDescriptor -> true
+            descriptor is ConstructorDescriptor -> !descriptor.constructedClass.isInline
+            else -> !descriptor.hasInlineClassParameters()
+        }
+    }
+
+    private fun FunctionDescriptor.hasInlineClassParameters(): Boolean {
+        return when {
+            dispatchReceiverParameter?.type?.isInlineClassType() == true -> true
+            extensionReceiverParameter?.type?.isInlineClassType() == true -> true
+            else -> valueParameters.any { it.type.isInlineClassType() }
+        }
     }
 
     private fun hasOverrides(declaration: KtNamedDeclaration, useScope: SearchScope): Boolean =

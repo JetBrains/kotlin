@@ -6,6 +6,7 @@ description = "Kotlin \"main\" script definition"
 
 plugins {
     kotlin("jvm")
+    id("jps-compatible")
 }
 
 // You can run Gradle with "-Pkotlin.build.proguard=true" to enable ProGuard run on the jar (on TeamCity, ProGuard always runs)
@@ -37,6 +38,7 @@ dependencies {
         fatJarContents(project(it)) { isTransitive = false }
         testCompile(project(it))
     }
+    compileOnly("org.apache.ivy:ivy:2.4.0")
     runtime(project(":kotlin-compiler"))
     runtime(project(":kotlin-reflect"))
     fatJarContents("org.apache.ivy:ivy:2.4.0")

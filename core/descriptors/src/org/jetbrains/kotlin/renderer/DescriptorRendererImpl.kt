@@ -458,7 +458,11 @@ internal class DescriptorRendererImpl(
         return when (value) {
             is ArrayValue -> value.value.joinToString(", ", "{", "}") { renderConstant(it) }
             is AnnotationValue -> renderAnnotation(value.value).removePrefix("@")
-            is KClassValue -> renderType(value.value) + "::class"
+            is KClassValue -> {
+                var type = value.classId.asSingleFqName().asString()
+                repeat(value.arrayDimensions) { type = "kotlin.Array<$type>" }
+                "$type::class"
+            }
             else -> value.toString()
         }
     }
@@ -852,8 +856,16 @@ internal class DescriptorRendererImpl(
         property.delegateField?.let { builder.renderAnnotations(it, AnnotationUseSiteTarget.PROPERTY_DELEGATE_FIELD) }
 
         if (propertyAccessorRenderingPolicy == PropertyAccessorRenderingPolicy.NONE) {
-            property.setter?.valueParameters?.single()?.let {
-                builder.renderAnnotations(it, AnnotationUseSiteTarget.SETTER_PARAMETER)
+            property.getter?.let {
+                builder.renderAnnotations(it, AnnotationUseSiteTarget.PROPERTY_GETTER)
+            }
+            property.setter?.let { setter ->
+                setter.let {
+                    builder.renderAnnotations(it, AnnotationUseSiteTarget.PROPERTY_SETTER)
+                }
+                setter.valueParameters.single().let {
+                    builder.renderAnnotations(it, AnnotationUseSiteTarget.SETTER_PARAMETER)
+                }
             }
         }
     }

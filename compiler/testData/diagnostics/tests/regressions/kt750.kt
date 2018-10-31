@@ -1,5 +1,5 @@
 //KT-750 Type inference failed: Constraint violation
-fun main(args : Array<String>) {
+fun main() {
   var i : Int? = Integer.valueOf(100)
   var s : Int? = Integer.valueOf(100)
 

@@ -3,6 +3,50 @@ package test;
 import java.lang.System;
 
 @kotlin.Metadata()
+public final class Child extends kotlin.collections.AbstractList<java.lang.String> implements test.Parent<java.lang.String, java.lang.Integer>, java.util.List<java.lang.String> {
+
+    public Child() {
+        super();
+    }
+
+    @java.lang.Override()
+    public boolean contains(java.lang.String p0) {
+        return false;
+    }
+
+    @java.lang.Override()
+    public final boolean contains(java.lang.Object p0) {
+        return false;
+    }
+
+    @java.lang.Override()
+    public int indexOf(java.lang.String p0) {
+        return 0;
+    }
+
+    @java.lang.Override()
+    public final int indexOf(java.lang.Object p0) {
+        return 0;
+    }
+
+    @java.lang.Override()
+    public int lastIndexOf(java.lang.String p0) {
+        return 0;
+    }
+
+    @java.lang.Override()
+    public final int lastIndexOf(java.lang.Object p0) {
+        return 0;
+    }
+}
+
+////////////////////
+
+package test;
+
+import java.lang.System;
+
+@kotlin.Metadata()
 public class Cl {
 
     public Cl() {
@@ -60,6 +104,41 @@ import java.lang.System;
 
 @kotlin.Metadata()
 public abstract interface Intf {
+}
+
+////////////////////
+
+package test;
+
+import java.lang.System;
+
+@kotlin.Metadata()
+public final class MappedList<R extends java.lang.Object> extends kotlin.collections.AbstractList<R> implements java.util.List<R> {
+
+    @org.jetbrains.annotations.NotNull()
+    @java.lang.Override()
+    public java.lang.Void get(int index) {
+        return null;
+    }
+
+    @java.lang.Override()
+    public int getSize() {
+        return 0;
+    }
+
+    public MappedList() {
+        super();
+    }
+}
+
+////////////////////
+
+package test;
+
+import java.lang.System;
+
+@kotlin.Metadata()
+public abstract interface Parent<A extends java.lang.CharSequence, B extends java.lang.Object> {
 }
 
 ////////////////////

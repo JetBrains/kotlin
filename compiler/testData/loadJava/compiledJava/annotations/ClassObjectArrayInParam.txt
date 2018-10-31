@@ -8,7 +8,7 @@ public open class ClassObjectArrayInParam {
         public final val value: kotlin.Array<kotlin.reflect.KClass<*>>
     }
 
-    @test.ClassObjectArrayInParam.Anno(value = {test.ClassObjectArrayInParam::class, test.ClassObjectArrayInParam.Nested::class, kotlin.String::class, kotlin.collections.(Mutable)List<(raw) kotlin.Any?>::class, kotlin.Array<(out) kotlin.Array<(out) kotlin.String!>!>::class, kotlin.Array<(out) kotlin.IntArray!>::class}) public open class Nested {
+    @test.ClassObjectArrayInParam.Anno(value = {test.ClassObjectArrayInParam::class, test.ClassObjectArrayInParam.Nested::class, kotlin.String::class, kotlin.collections.MutableList::class, kotlin.Array<kotlin.Array<kotlin.String>>::class, kotlin.Array<kotlin.IntArray>::class}) public open class Nested {
         public constructor Nested()
     }
 }

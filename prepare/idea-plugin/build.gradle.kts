@@ -8,7 +8,7 @@ plugins {
 }
 
 repositories {
-    maven("https://dl.bintray.com/jetbrains/markdown")
+    maven("https://jetbrains.bintray.com/markdown")
 }
 
 // Do not rename, used in JPS importer
@@ -45,6 +45,7 @@ val projectsToShadow by extra(listOf(
         ":js:js.frontend",
         ":js:js.parser",
         ":js:js.serializer",
+        ":js:js.translator",
         ":kotlin-native:kotlin-native-utils",
         ":kotlin-native:kotlin-native-library-reader",
         ":compiler:light-classes",

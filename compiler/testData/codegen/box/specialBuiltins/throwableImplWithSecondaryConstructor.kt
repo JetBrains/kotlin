@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 class MyThrowable : Throwable {
     val x: String
 

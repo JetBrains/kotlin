@@ -102,7 +102,7 @@ class MoveDeclarationToSeparateFileIntention :
         }
         val descriptor = MoveDeclarationsDescriptor(
             project = project,
-            elementsToMove = listOf(element),
+            moveSource = MoveSource(element),
             moveTarget = moveTarget,
             delegate = MoveDeclarationsDelegate.TopLevel,
             searchInCommentsAndStrings = false,

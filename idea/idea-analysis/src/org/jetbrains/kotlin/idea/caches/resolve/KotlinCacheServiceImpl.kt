@@ -45,6 +45,7 @@ import org.jetbrains.kotlin.idea.caches.project.IdeaModuleInfo
 import org.jetbrains.kotlin.idea.caches.resolve.util.contextWithNewLockAndCompositeExceptionTracker
 import org.jetbrains.kotlin.idea.compiler.IDELanguageSettingsProvider
 import org.jetbrains.kotlin.idea.core.script.ScriptDependenciesModificationTracker
+import org.jetbrains.kotlin.idea.core.script.dependencies.ScriptRelatedModulesProvider
 import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
 import org.jetbrains.kotlin.idea.project.outOfBlockModificationCount
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
@@ -58,8 +59,6 @@ import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.sumByLong
-import java.lang.AssertionError
-import java.lang.IllegalStateException
 
 internal val LOG = Logger.getInstance(KotlinCacheService::class.java)
 
@@ -111,12 +110,13 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
         )
 
         val scriptFile = (dependenciesModuleInfo as? ScriptDependenciesInfo.ForFile)?.scriptFile
-        val relatedModuleSourceInfo = scriptFile?.let { getScriptRelatedModuleInfo(project, it) }
-        val globalFacade = if (relatedModuleSourceInfo != null) {
-            globalFacade(settings)
-        } else {
-            getOrBuildGlobalFacade(settings).facadeForSdk
-        }
+        val relatedModules = scriptFile?.let { ScriptRelatedModulesProvider.getRelatedModules(it, project) }
+        val globalFacade =
+            if (relatedModules?.isNotEmpty() == true) {
+                globalFacade(settings)
+            } else {
+                getOrBuildGlobalFacade(settings).facadeForSdk
+            }
 
         val globalContext = globalFacade.globalContext.contextWithNewLockAndCompositeExceptionTracker()
         return ProjectResolutionFacade(

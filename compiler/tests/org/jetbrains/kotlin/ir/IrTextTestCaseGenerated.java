@@ -229,6 +229,11 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
             runTest("compiler/testData/ir/irText/declarations/classLevelProperties.kt");
         }
 
+        @TestMetadata("constValInitializers.kt")
+        public void testConstValInitializers() throws Exception {
+            runTest("compiler/testData/ir/irText/declarations/constValInitializers.kt");
+        }
+
         @TestMetadata("defaultArguments.kt")
         public void testDefaultArguments() throws Exception {
             runTest("compiler/testData/ir/irText/declarations/defaultArguments.kt");
@@ -257,6 +262,11 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
         @TestMetadata("interfaceProperties.kt")
         public void testInterfaceProperties() throws Exception {
             runTest("compiler/testData/ir/irText/declarations/interfaceProperties.kt");
+        }
+
+        @TestMetadata("kt27005.kt")
+        public void testKt27005() throws Exception {
+            runTest("compiler/testData/ir/irText/declarations/kt27005.kt");
         }
 
         @TestMetadata("localClassWithOverrides.kt")

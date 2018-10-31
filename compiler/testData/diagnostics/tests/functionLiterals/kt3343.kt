@@ -1,6 +1,6 @@
 // KT-3343 Type mismatch when function literal consists of try-catch with Int returning call, and Unit is expected
 
-fun main(args : Array<String>) {
+fun main() {
     "hello world".prt{
         try{
             print(it)

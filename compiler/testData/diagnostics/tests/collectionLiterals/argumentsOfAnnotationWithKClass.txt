@@ -2,8 +2,8 @@ package
 
 @Foo(a = {}) public fun test1(): kotlin.Unit
 @Foo(a = {kotlin.Int::class, kotlin.String::class}) public fun test2(): kotlin.Unit
-@Foo(a = {kotlin.Array<*>::class}) public fun test3(): kotlin.Unit
-@Foo(a = {Gen<kotlin.Int>::class}) public fun test4(): kotlin.Unit
+@Foo(a = {kotlin.Array<kotlin.Any>::class}) public fun test3(): kotlin.Unit
+@Foo(a = {Gen::class}) public fun test4(): kotlin.Unit
 @Foo(a = {""}) public fun test5(): kotlin.Unit
 @Foo(a = {kotlin.Int::class, 1}) public fun test6(): kotlin.Unit
 @Bar public fun test7(): kotlin.Unit

@@ -27,7 +27,9 @@ import org.jetbrains.kotlin.android.synthetic.AndroidCommandLineProcessor.Compan
 import org.jetbrains.kotlin.android.synthetic.AndroidCommandLineProcessor.Companion.DEFAULT_CACHE_IMPL_OPTION
 import org.jetbrains.kotlin.android.synthetic.AndroidComponentRegistrar.Companion.parseCacheImplementationType
 import org.jetbrains.kotlin.compiler.plugin.CliOption
+import org.jetbrains.kotlin.idea.core.unwrapModuleSourceInfo
 import org.jetbrains.kotlin.idea.facet.KotlinFacet
+import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 
 private val ANNOTATION_OPTION_PREFIX = "plugin:$ANDROID_COMPILER_PLUGIN_ID:"
 
@@ -50,6 +52,8 @@ private fun isTestMode(module: Module): Boolean {
 
 internal val Module.androidExtensionsIsEnabled: Boolean
     get() = isTestMode(this) || getOptionValueInFacet(ENABLED_OPTION) == "true"
+
+internal fun ModuleInfo.findAndroidModuleInfo() = unwrapModuleSourceInfo()?.takeIf { it.platform is JvmPlatform }
 
 internal val ModuleInfo.androidExtensionsIsEnabled: Boolean
     get() {

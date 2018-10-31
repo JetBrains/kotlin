@@ -321,6 +321,16 @@ public class PsiCheckerTestGenerated extends AbstractPsiCheckerTest {
             runTest("idea/testData/checker/Unused.kt");
         }
 
+        @TestMetadata("UnusedParameterInEntry12.kt")
+        public void testUnusedParameterInEntry12() throws Exception {
+            runTest("idea/testData/checker/UnusedParameterInEntry12.kt");
+        }
+
+        @TestMetadata("UnusedParameterInEntry13.kt")
+        public void testUnusedParameterInEntry13() throws Exception {
+            runTest("idea/testData/checker/UnusedParameterInEntry13.kt");
+        }
+
         @TestMetadata("Variance.kt")
         public void testVariance() throws Exception {
             runTest("idea/testData/checker/Variance.kt");

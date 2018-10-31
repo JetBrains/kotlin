@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.idea.refactoring.SeparateFileWrapper
 import org.jetbrains.kotlin.idea.refactoring.canRefactor
 import org.jetbrains.kotlin.idea.refactoring.chooseContainerElementIfNecessary
 import org.jetbrains.kotlin.idea.refactoring.getOrCreateKotlinFile
+import org.jetbrains.kotlin.idea.refactoring.ui.CreateKotlinClassDialog
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.util.application.executeCommand
@@ -184,7 +185,7 @@ open class CreateClassFromUsageFix<E : KtElement> protected constructor (
 
             val ideaClassKind = classInfo.kind.toIdeaClassKind()
             val defaultPackageFqName = file.packageFqName
-            val dialog = object : CreateClassDialog(
+            val dialog = object : CreateKotlinClassDialog(
                     file.project,
                     "Create ${ideaClassKind.description.capitalize()}",
                     className,

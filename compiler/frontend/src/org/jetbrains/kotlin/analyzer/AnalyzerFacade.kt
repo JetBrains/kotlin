@@ -45,7 +45,6 @@ import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.storage.getValue
 import java.util.*
-import kotlin.coroutines.experimental.buildSequence
 
 class ResolverForModule(
     val packageFragmentProvider: PackageFragmentProvider,
@@ -346,7 +345,7 @@ class LazyModuleDependencies<M : ModuleInfo>(
 ) : ModuleDependencies {
     private val dependencies = storageManager.createLazyValue {
         val moduleDescriptor = resolverForProject.descriptorForModule(module)
-        buildSequence {
+        sequence {
             if (firstDependency != null) {
                 yield(resolverForProject.descriptorForModule(firstDependency))
             }

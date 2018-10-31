@@ -16,6 +16,8 @@
 
 package org.jetbrains.kotlin.integration;
 
+import org.jetbrains.kotlin.cli.AbstractCliTest;
+
 import java.io.File;
 
 public class CompilerSmokeTest extends CompilerSmokeTestBase {
@@ -119,5 +121,14 @@ public class CompilerSmokeTest extends CompilerSmokeTestBase {
 
     public void testPrintVersion() throws Exception {
         runCompiler("test.compile", "-version");
+    }
+
+    public void testBuildFile() throws Exception {
+        File buildXml = new File(getTestDataDir(), "build.xml");
+        runCompiler(
+                "buildFile.compile",
+                AbstractCliTest.replacePathsInBuildXml("-Xbuild-file=" + buildXml, getTestDataDir(), tmpdir.getPath())
+        );
+        run("buildFile.run", "-cp", tmpdir.getAbsolutePath(), "MainKt");
     }
 }

@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 open class Bar<T>(val prop: String)
 class Foo {
     companion object : Bar<Foo>("OK") {

@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.resolve.checkers
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.config.AnalysisFlag
+import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory1
@@ -168,8 +168,8 @@ class ExperimentalUsageChecker(project: Project) : CallChecker {
             languageVersionSettings: LanguageVersionSettings,
             bindingContext: BindingContext
         ): Boolean =
-            annotationFqName.asString() in languageVersionSettings.getFlag(AnalysisFlag.experimental) ||
-                    annotationFqName.asString() in languageVersionSettings.getFlag(AnalysisFlag.useExperimental) ||
+            annotationFqName.asString() in languageVersionSettings.getFlag(AnalysisFlags.experimental) ||
+                    annotationFqName.asString() in languageVersionSettings.getFlag(AnalysisFlags.useExperimental) ||
                     anyParentMatches { element ->
                         element.isDeclarationAnnotatedWith(annotationFqName, bindingContext) ||
                                 element.isElementAnnotatedWithUseExperimentalOf(annotationFqName, bindingContext)
@@ -189,7 +189,9 @@ class ExperimentalUsageChecker(project: Project) : CallChecker {
                 if (descriptor?.fqName == USE_EXPERIMENTAL_FQ_NAME) {
                     val annotationClasses = descriptor.allValueArguments[USE_EXPERIMENTAL_ANNOTATION_CLASS]
                     annotationClasses is ArrayValue && annotationClasses.value.any { annotationClass ->
-                        (annotationClass as? KClassValue)?.value?.constructor?.declarationDescriptor?.fqNameSafe == annotationFqName
+                        annotationClass is KClassValue && annotationClass.value.let { (classId, arrayDimensions) ->
+                            classId.asSingleFqName() == annotationFqName && arrayDimensions == 0
+                        }
                     }
                 } else false
             }
@@ -215,33 +217,31 @@ class ExperimentalUsageChecker(project: Project) : CallChecker {
             val deprecationResolver =
                 DeprecationResolver(LockBasedStorageManager(), languageVersionSettings, CoroutineCompatibilitySupport.ENABLED)
 
+            // Returns true if fqName refers to a valid experimental API marker.
             fun checkAnnotation(fqName: String): Boolean {
                 val descriptor = module.resolveClassByFqName(FqName(fqName), NoLookupLocation.FOR_NON_TRACKED_SCOPE)
-                val experimentality = descriptor?.loadExperimentalityForMarkerAnnotation()
-                val message = when {
-                    descriptor == null ->
-                        "Experimental API marker $fqName is unresolved. Please make sure it's present in the module dependencies"
-                    experimentality == null ->
-                        "Class $fqName is not an experimental API marker annotation"
-                    else -> {
-                        for (deprecation in deprecationResolver.getDeprecations(descriptor)) {
-                            val report = when (deprecation.deprecationLevel) {
-                                DeprecationLevelValue.WARNING -> reportWarning
-                                DeprecationLevelValue.ERROR, DeprecationLevelValue.HIDDEN -> reportError
-                            }
-                            report("Experimental API marker $fqName is deprecated" + deprecation.message?.let { ". $it" }.orEmpty())
-                        }
-                        return true
-                    }
+                if (descriptor == null) {
+                    reportWarning("Experimental API marker $fqName is unresolved. Please make sure it's present in the module dependencies")
+                    return false
                 }
 
-                reportError(message)
+                if (descriptor.loadExperimentalityForMarkerAnnotation() == null) {
+                    reportWarning("Class $fqName is not an experimental API marker annotation")
+                    return false
+                }
 
-                return false
+                for (deprecation in deprecationResolver.getDeprecations(descriptor)) {
+                    val report = when (deprecation.deprecationLevel) {
+                        DeprecationLevelValue.WARNING -> reportWarning
+                        DeprecationLevelValue.ERROR, DeprecationLevelValue.HIDDEN -> reportError
+                    }
+                    report("Experimental API marker $fqName is deprecated" + deprecation.message?.let { ". $it" }.orEmpty())
+                }
+                return true
             }
 
-            val validExperimental = languageVersionSettings.getFlag(AnalysisFlag.experimental).filter(::checkAnnotation)
-            val validUseExperimental = languageVersionSettings.getFlag(AnalysisFlag.useExperimental).filter { fqName ->
+            val validExperimental = languageVersionSettings.getFlag(AnalysisFlags.experimental).filter(::checkAnnotation)
+            val validUseExperimental = languageVersionSettings.getFlag(AnalysisFlags.useExperimental).filter { fqName ->
                 fqName == EXPERIMENTAL_FQ_NAME.asString() || checkAnnotation(fqName)
             }
 
@@ -286,7 +286,7 @@ class ExperimentalUsageChecker(project: Project) : CallChecker {
         }
 
         private fun checkUsageOfKotlinExperimentalOrUseExperimental(element: PsiElement, context: CheckerContext) {
-            if (EXPERIMENTAL_FQ_NAME.asString() !in context.languageVersionSettings.getFlag(AnalysisFlag.useExperimental)) {
+            if (EXPERIMENTAL_FQ_NAME.asString() !in context.languageVersionSettings.getFlag(AnalysisFlags.useExperimental)) {
                 context.trace.report(Errors.EXPERIMENTAL_IS_NOT_ENABLED.on(element))
             }
 

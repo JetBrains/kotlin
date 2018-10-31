@@ -8,7 +8,6 @@
 
 package kotlin.collections
 
-import kotlin.*
 import kotlin.internal.InlineOnly
 import kotlin.internal.apiVersionIsAtLeast
 

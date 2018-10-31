@@ -41,7 +41,7 @@ import kotlin.script.experimental.host.getMergedScriptText
 import kotlin.script.experimental.host.getScriptingClass
 import kotlin.script.experimental.jvm.JvmDependency
 import kotlin.script.experimental.jvm.impl.BridgeDependenciesResolver
-import kotlin.script.experimental.jvm.javaHome
+import kotlin.script.experimental.jvm.jdkHome
 import kotlin.script.experimental.jvm.jvm
 import kotlin.script.experimental.jvmhost.KJvmCompilerProxy
 import kotlin.script.experimental.util.getOrError
@@ -82,8 +82,8 @@ class KJvmCompilerImpl(val hostConfiguration: ScriptingHostConfiguration) : KJvm
                 put(JVMConfigurationKeys.RETAIN_OUTPUT_IN_MEMORY, true)
 
                 var isModularJava = false
-                (updatedConfiguration.getNoDefault(ScriptCompilationConfiguration.jvm.javaHome)
-                    ?: hostConfiguration[ScriptingHostConfiguration.jvm.javaHome])?.let {
+                (updatedConfiguration.getNoDefault(ScriptCompilationConfiguration.jvm.jdkHome)
+                    ?: hostConfiguration[ScriptingHostConfiguration.jvm.jdkHome])?.let {
                     put(JVMConfigurationKeys.JDK_HOME, it)
                     isModularJava = CoreJrtFileSystem.isModularJdk(it)
                 }
@@ -109,7 +109,7 @@ class KJvmCompilerImpl(val hostConfiguration: ScriptingHostConfiguration) : KJvm
 
                 put(CommonConfigurationKeys.MODULE_NAME, "kotlin-script") // TODO" take meaningful and valid name from somewhere
                 languageVersionSettings = LanguageVersionSettingsImpl(
-                    LanguageVersion.LATEST_STABLE, ApiVersion.LATEST_STABLE, mapOf(AnalysisFlag.skipMetadataVersionCheck to true)
+                    LanguageVersion.LATEST_STABLE, ApiVersion.LATEST_STABLE, mapOf(AnalysisFlags.skipMetadataVersionCheck to true)
                 )
             }
             environment = KotlinCoreEnvironment.createForProduction(

@@ -33,3 +33,6 @@ fun test7() {}
 
 @AnnArray(arrayOf(<!ANNOTATION_ARGUMENT_MUST_BE_KCLASS_LITERAL!>""::class<!>, String::class, AnObject::class))
 fun test8() {}
+
+inline val <reified T> T.test9
+    get() = @Ann(T::class) object {}

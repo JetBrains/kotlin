@@ -124,8 +124,8 @@ public abstract class ResolutionContext<Context extends ResolutionContext<Contex
     );
 
     @NotNull
+    @SuppressWarnings("unchecked")
     private Context self() {
-        //noinspection unchecked
         return (Context) this;
     }
 
@@ -220,14 +220,15 @@ public abstract class ResolutionContext<Context extends ResolutionContext<Contex
     }
 
     @Nullable
-    public <T extends PsiElement> T getContextParentOfType(@NotNull KtExpression expression, @NotNull Class<? extends T>... classes) {
+    @SafeVarargs
+    @SuppressWarnings("unchecked")
+    public final <T extends PsiElement> T getContextParentOfType(@NotNull KtExpression expression, @NotNull Class<? extends T>... classes) {
         KtExpression context = expressionContextProvider.invoke(expression);
         PsiElement current = context != null ? context : expression.getParent();
 
         while (current != null) {
             for (Class<? extends T> klass : classes) {
                 if (klass.isInstance(current)) {
-                    //noinspection unchecked
                     return (T) current;
                 }
             }

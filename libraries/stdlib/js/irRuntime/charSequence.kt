@@ -10,7 +10,7 @@ internal annotation class DoNotIntrinsify
 @PublishedApi
 @DoNotIntrinsify
 internal fun charSequenceGet(a: CharSequence, index: Int): Char {
-    return  if (a is String) {
+    return if (isString(a)) {
         Char(a.asDynamic().charCodeAt(index).unsafeCast<Int>())
     } else {
         a[index]
@@ -20,8 +20,8 @@ internal fun charSequenceGet(a: CharSequence, index: Int): Char {
 @PublishedApi
 @DoNotIntrinsify
 internal fun charSequenceLength(a: CharSequence): Int {
-    return if (a is String) {
-        a.asDynamic().length.unsafeCast<Int>()
+    return if (isString(a)) {
+        js("a.length").unsafeCast<Int>()
     } else {
         a.length
     }
@@ -30,9 +30,12 @@ internal fun charSequenceLength(a: CharSequence): Int {
 @PublishedApi
 @DoNotIntrinsify
 internal fun charSequenceSubSequence(a: CharSequence, startIndex: Int, endIndex: Int): CharSequence {
-    return if (a is String) {
+    return if (isString(a)) {
         a.asDynamic().substring(startIndex, endIndex).unsafeCast<String>()
     } else {
         a.subSequence(startIndex, endIndex)
     }
 }
+
+// Keeping this function as separate non-inline to intrincify `is` operator
+internal fun isString(a: CharSequence) = a is String

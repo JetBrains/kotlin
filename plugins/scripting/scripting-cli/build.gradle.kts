@@ -17,7 +17,7 @@ dependencies {
     compile(project(":kotlin-stdlib"))
     compileOnly(project(":kotlin-reflect-api"))
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
-    compileOnly(intellijDep()) { includeJars("asm-all") }
+    compileOnly(intellijDep()) { includeJars("asm-all", rootProject = rootProject) }
 
     testCompile(project(":compiler:frontend"))
     testCompile(project(":compiler:frontend.script"))

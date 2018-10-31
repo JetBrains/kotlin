@@ -5,7 +5,6 @@
 
 package kotlin.random
 
-import kotlin.*
 import kotlin.math.nextDown
 
 /**
@@ -238,7 +237,7 @@ public abstract class Random {
      *
      * @sample samples.random.Randoms.defaultRandom
      */
-    companion object : Random() {
+    companion object Default : Random() {
 
         private val defaultRandom: Random = defaultPlatformRandom()
 
@@ -263,13 +262,25 @@ public abstract class Random {
         override fun nextBytes(size: Int): ByteArray = defaultRandom.nextBytes(size)
         override fun nextBytes(array: ByteArray, fromIndex: Int, toIndex: Int): ByteArray = defaultRandom.nextBytes(array, fromIndex, toIndex)
 
+        @Deprecated("Use Default companion object instead", level = DeprecationLevel.HIDDEN)
+        @Suppress("DEPRECATION_ERROR")
+        @kotlin.jvm.JvmField
+        public val Companion: Random.Companion = Random.Companion
+    }
+
+    @Deprecated("Use Default companion object instead", level = DeprecationLevel.HIDDEN)
+    public object Companion : Random() {
+        override fun nextBits(bitCount: Int): Int = Default.nextBits(bitCount)
     }
 }
 
 /**
  * Returns a repeatable random number generator seeded with the given [seed] `Int` value.
  *
- * Two generators with the same seed produce the same sequence of values.
+ * Two generators with the same seed produce the same sequence of values within the same version of Kotlin runtime.
+ *
+ * *Note:* Future versions of Kotlin may change the algorithm of this seeded number generator so that it will return
+ * a sequence of values different from the current one for a given seed.
  *
  * @sample samples.random.Randoms.seededRandom
  */
@@ -279,7 +290,10 @@ public fun Random(seed: Int): Random = XorWowRandom(seed, seed.shr(31))
 /**
  * Returns a repeatable random number generator seeded with the given [seed] `Long` value.
  *
- * Two generators with the same seed produce the same sequence of values.
+ * Two generators with the same seed produce the same sequence of values within the same version of Kotlin runtime.
+ *
+ * *Note:* Future versions of Kotlin may change the algorithm of this seeded number generator so that it will return
+ * a sequence of values different from the current one for a given seed.
  *
  * @sample samples.random.Randoms.seededRandom
  */

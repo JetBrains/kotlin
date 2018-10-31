@@ -9,8 +9,6 @@
 
 package kotlin.collections
 
-import kotlin.*
-
 /**
  * Provides a skeletal implementation of the read-only [List] interface.
  *

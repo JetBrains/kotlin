@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.psi2ir.generators
 
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrPropertyImpl
@@ -32,7 +31,6 @@ import org.jetbrains.kotlin.psi2ir.pureEndOffsetOrUndefined
 import org.jetbrains.kotlin.psi2ir.pureStartOffsetOrUndefined
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.hasBackingField
-import org.jetbrains.kotlin.resolve.source.KotlinSourceElement
 
 class PropertyGenerator(declarationGenerator: DeclarationGenerator) : DeclarationGeneratorExtension(declarationGenerator) {
     fun generatePropertyDeclaration(ktProperty: KtProperty): IrProperty {
@@ -112,7 +110,16 @@ class PropertyGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
                     if (propertyDescriptor.hasBackingField(context.bindingContext))
                         generatePropertyBackingField(ktProperty, propertyDescriptor) { irField ->
                             ktProperty.initializer?.let { ktInitializer ->
-                                declarationGenerator.generateInitializerBody(irField.symbol, ktInitializer)
+                                val compileTimeConst = propertyDescriptor.compileTimeInitializer
+                                if (propertyDescriptor.isConst && compileTimeConst != null)
+                                    IrExpressionBodyImpl(
+                                        context.constantValueGenerator.generateConstantValueAsExpression(
+                                            ktInitializer.startOffset, ktInitializer.endOffset,
+                                            compileTimeConst
+                                        )
+                                    )
+                                else
+                                    declarationGenerator.generateInitializerBody(irField.symbol, ktInitializer)
                             }
                         }
                     else

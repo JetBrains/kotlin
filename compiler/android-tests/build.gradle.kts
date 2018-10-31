@@ -11,6 +11,8 @@ dependencies {
     compile(project(":compiler:cli"))
     compile(project(":compiler:frontend"))
     compile(project(":compiler:backend"))
+    compile(project(":kotlin-stdlib"))
+    compile(project(":kotlin-reflect"))
     compile(projectTests(":compiler:tests-common"))
     compile(commonDep("junit:junit"))
     compileOnly(intellijDep()) { includeJars("openapi") }
@@ -32,6 +34,7 @@ sourceSets {
 }
 
 projectTest {
+    dependsOn(*testDistProjects.map { "$it:dist" }.toTypedArray())
     doFirst {
         environment("kotlin.tests.android.timeout", "45")
     }

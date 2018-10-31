@@ -6,9 +6,9 @@
 package org.jetbrains.kotlin.jps.incremental
 
 import org.jetbrains.annotations.TestOnly
-import org.jetbrains.kotlin.incremental.storage.version.CacheAttributesManager
-import org.jetbrains.kotlin.incremental.storage.version.CacheVersion
-import org.jetbrains.kotlin.incremental.storage.version.lookupsCacheVersionManager
+import org.jetbrains.kotlin.jps.incremental.CacheAttributesManager
+import org.jetbrains.kotlin.jps.incremental.CacheVersion
+import org.jetbrains.kotlin.jps.incremental.lookupsCacheVersionManager
 import java.io.File
 import java.io.IOException
 
@@ -47,12 +47,12 @@ class CompositeLookupsCacheAttributesManager(
         return CompositeLookupsCacheAttributes(version.version, components)
     }
 
-    override fun writeActualVersion(values: CompositeLookupsCacheAttributes?) {
+    override fun writeVersion(values: CompositeLookupsCacheAttributes?) {
         if (values == null) {
-            versionManager.writeActualVersion(null)
+            versionManager.writeVersion(null)
             actualComponentsFile.delete()
         } else {
-            versionManager.writeActualVersion(CacheVersion(values.version))
+            versionManager.writeVersion(CacheVersion(values.version))
 
             actualComponentsFile.parentFile.mkdirs()
             actualComponentsFile.writeText(values.components.joinToString("\n"))

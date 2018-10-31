@@ -39,7 +39,7 @@ class MultipleKotlinFacetEditor(
     override fun createComponent(): JComponent? {
         return KotlinFacetEditorGeneralTab.EditorComponent(project, null).apply {
             initialize()
-            editors.flatMap { it.editorTabs.filterIsInstance<KotlinFacetEditorGeneralTab>() }.forEach { it.initialize() }
+            editors.flatMap { it.editorTabs.filterIsInstance<KotlinFacetEditorGeneralTab>() }.forEach { it.initializeIfNeeded() }
             helper.bind(useProjectSettingsCheckBox, editors) { it.tabEditor.useProjectSettingsCheckBox }
             helper.bind(targetPlatformComboBox, editors) { it.tabEditor.targetPlatformComboBox }
             with(compilerConfigurable) {

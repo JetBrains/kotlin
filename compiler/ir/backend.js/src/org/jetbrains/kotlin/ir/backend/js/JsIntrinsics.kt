@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.ir.backend.js
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.utils.Namer
@@ -14,12 +13,12 @@ import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.symbols.impl.IrExternalPackageFragmentSymbolImpl
+import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.getPropertyGetter
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi2ir.findSingleFunction
 import org.jetbrains.kotlin.types.KotlinType
-
 import java.util.*
 
 class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendContext) {
@@ -101,6 +100,7 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
     val jsNumberToInt = getInternalFunction("numberToInt")
     val jsNumberToShort = getInternalFunction("numberToShort")
     val jsNumberToLong = getInternalFunction("numberToLong")
+    val jsNumberToChar = getInternalFunction("numberToChar")
     val jsToByte = getInternalFunction("toByte")
     val jsToShort = getInternalFunction("toShort")
     val jsToLong = getInternalFunction("toLong")
@@ -113,6 +113,9 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
     //    val isCharSymbol = getInternalFunction("isChar")
     val isObjectSymbol = getInternalFunction("isObject")
 
+    val isNumberSymbol = getInternalFunction("isNumber")
+    val isComparableSymbol = getInternalFunction("isComparable")
+
     val isPrimitiveArray = mapOf(
         PrimitiveType.BOOLEAN to getInternalFunction("isBooleanArray"),
         PrimitiveType.BYTE to getInternalFunction("isByteArray"),
@@ -124,9 +127,17 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
         PrimitiveType.DOUBLE to getInternalFunction("isLongArray")
     )
 
+
+    // Enum
+
+    val enumValueOfIntrinsic = getInternalFunction("enumValueOfIntrinsic")
+    val enumValuesIntrinsic = getInternalFunction("enumValuesIntrinsic")
+
+
     // Other:
 
     val jsObjectCreate = defineObjectCreateIntrinsic() // Object.create
+    val jsGetJSField = defineGetJSPropertyIntrinsic() // till we don't have dynamic type we use intrinsic which sets a field with any name
     val jsSetJSField = defineSetJSPropertyIntrinsic() // till we don't have dynamic type we use intrinsic which sets a field with any name
     val jsCode = getInternalFunction("js") // js("<code>")
     val jsHashCode = getInternalFunction("hashCode")
@@ -134,9 +145,9 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
     val jsToString = getInternalFunction("toString")
     val jsAnyToString = getInternalFunction("anyToString")
     val jsCompareTo = getInternalFunction("compareTo")
-    // TODO: Use annotations
-    val compareToDoNotIntrinsicify = getInternalFunction("compareToDoNotIntrinsicify")
     val jsEquals = getInternalFunction("equals")
+
+    val jsImul = getInternalFunction("imul")
 
     // Coroutines
 
@@ -167,6 +178,7 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
     )
 
     val charClassSymbol = getInternalClassWithoutPackage("kotlin.Char")
+    val charConstructor = charClassSymbol.constructors.single().owner
 
     val uByteClassSymbol = getInternalClassWithoutPackage("kotlin.UByte")
     val uShortClassSymbol = getInternalClassWithoutPackage("kotlin.UShort")
@@ -258,6 +270,16 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
             typeParameter.superTypes += anyType
             it.typeParameters += typeParameter
             it.returnType = anyType
+            it.parent = externalPackageFragment
+            externalPackageFragment.declarations += it
+        }
+
+    private fun defineGetJSPropertyIntrinsic() =
+        JsIrBuilder.buildFunction("\$getJSProperty\$", origin = JsLoweredDeclarationOrigin.JS_INTRINSICS_STUB).also {
+            it.returnType = irBuiltIns.anyNType
+            listOf("receiver", "fieldName").mapIndexedTo(it.valueParameters) { i, p ->
+                JsIrBuilder.buildValueParameter(p, i, irBuiltIns.anyType).also { v -> v.parent = it }
+            }
             it.parent = externalPackageFragment
             externalPackageFragment.declarations += it
         }

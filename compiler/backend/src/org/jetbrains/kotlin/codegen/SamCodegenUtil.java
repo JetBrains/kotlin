@@ -25,15 +25,16 @@ import org.jetbrains.kotlin.synthetic.SamAdapterExtensionFunctionDescriptor;
 
 public class SamCodegenUtil {
     @Nullable
+    @SuppressWarnings("unchecked")
     public static FunctionDescriptor getOriginalIfSamAdapter(@NotNull FunctionDescriptor fun) {
         if (fun instanceof SamAdapterDescriptor<?> || fun instanceof SamAdapterExtensionFunctionDescriptor) {
-            //noinspection unchecked
             return ((SyntheticMemberDescriptor<FunctionDescriptor>) fun).getBaseDescriptorForSynthetic();
         }
 
         return null;
     }
 
+    @SuppressWarnings("unchecked")
     public static <T extends FunctionDescriptor> T resolveSamAdapter(@NotNull T descriptor) {
         FunctionDescriptor original = getOriginalIfSamAdapter(descriptor);
         return original != null ? (T) original : descriptor;

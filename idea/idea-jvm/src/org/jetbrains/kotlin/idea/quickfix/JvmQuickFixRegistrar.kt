@@ -41,6 +41,6 @@ class JvmQuickFixRegistrar : QuickFixContributor {
 
         NO_REFLECTION_IN_CLASS_PATH.registerFactory(AddReflectionQuickFix)
 
-        MISSING_SCRIPT_BASE_CLASS.registerFactory(AddScriptRuntimeQuickFix)
+        MISSING_SCRIPT_STANDARD_TEMPLATE.registerFactory(AddScriptRuntimeQuickFix)
     }
 }

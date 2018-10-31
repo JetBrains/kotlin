@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.constants.ClassLiteralValue
 
 interface KotlinJvmBinaryClass {
     val classId: ClassId
@@ -53,12 +54,10 @@ interface KotlinJvmBinaryClass {
         fun visitParameterAnnotation(index: Int, classId: ClassId, source: SourceElement): AnnotationArgumentVisitor?
     }
 
-    class ClassLiteralId(val classId: ClassId, val arrayNestedness: Int)
-
     interface AnnotationArgumentVisitor {
         fun visit(name: Name?, value: Any?)
 
-        fun visitClassLiteral(name: Name, classLiteralId: ClassLiteralId)
+        fun visitClassLiteral(name: Name, value: ClassLiteralValue)
 
         fun visitEnum(name: Name, enumClassId: ClassId, enumEntryName: Name)
 
@@ -74,7 +73,7 @@ interface KotlinJvmBinaryClass {
 
         fun visitEnum(enumClassId: ClassId, enumEntryName: Name)
 
-        fun visitClassLiteral(classLiteralId: ClassLiteralId)
+        fun visitClassLiteral(value: ClassLiteralValue)
 
         fun visitEnd()
     }

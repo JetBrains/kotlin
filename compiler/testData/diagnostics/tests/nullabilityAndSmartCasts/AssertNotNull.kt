@@ -1,7 +1,7 @@
 // !WITH_NEW_INFERENCE
 // !CHECK_TYPE
 
-fun main(args : Array<String>) {
+fun main() {
     val a : Int? = null
     val b : Int? = null
     checkSubtype<Int>(a!!)

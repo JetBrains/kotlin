@@ -2486,6 +2486,7 @@ public abstract interface annotation class kotlin/coroutines/RestrictsSuspension
 }
 
 public final class kotlin/coroutines/SafeContinuation : kotlin/coroutines/Continuation, kotlin/coroutines/jvm/internal/CoroutineStackFrame {
+	public static final field Companion Lkotlin/coroutines/SafeContinuation$Companion;
 	public fun <init> (Lkotlin/coroutines/Continuation;)V
 	public fun getCallerFrame ()Lkotlin/coroutines/jvm/internal/CoroutineStackFrame;
 	public fun getContext ()Lkotlin/coroutines/CoroutineContext;
@@ -3694,6 +3695,7 @@ public final class kotlin/random/PlatformRandomKt {
 
 public abstract class kotlin/random/Random {
 	public static final field Companion Lkotlin/random/Random$Companion;
+	public static final field Default Lkotlin/random/Random$Default;
 	public fun <init> ()V
 	public abstract fun nextBits (I)I
 	public fun nextBoolean ()Z
@@ -3714,6 +3716,11 @@ public abstract class kotlin/random/Random {
 }
 
 public final class kotlin/random/Random$Companion : kotlin/random/Random {
+	public static final field INSTANCE Lkotlin/random/Random$Companion;
+	public fun nextBits (I)I
+}
+
+public final class kotlin/random/Random$Default : kotlin/random/Random {
 	public fun nextBits (I)I
 	public fun nextBoolean ()Z
 	public fun nextBytes (I)[B

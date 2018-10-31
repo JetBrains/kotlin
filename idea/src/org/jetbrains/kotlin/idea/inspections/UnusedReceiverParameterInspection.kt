@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithContent
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.core.isOverridable
 import org.jetbrains.kotlin.idea.isMainFunction
+import org.jetbrains.kotlin.idea.quickfix.RemoveUnusedFunctionParameterFix
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinChangeSignatureConfiguration
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinMethodDescriptor
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.modify
@@ -75,7 +76,7 @@ class UnusedReceiverParameterInspection : AbstractKotlinInspection() {
                 val receiverTypeDeclaration = receiverType.constructor.declarationDescriptor
                 if (DescriptorUtils.isCompanionObject(receiverTypeDeclaration)) return
 
-                val callable = callableDeclaration.descriptor ?: return
+                val callable = context[BindingContext.DECLARATION_TO_DESCRIPTOR, callableDeclaration] ?: return
 
                 if (callableDeclaration.isMainFunction(callable)) return
 
@@ -133,12 +134,13 @@ class UnusedReceiverParameterInspection : AbstractKotlinInspection() {
         }
 
         override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
-            val element = descriptor.psiElement
+            val element = descriptor.psiElement as? KtTypeReference ?: return
             if (!FileModificationService.getInstance().preparePsiElementForWrite(element)) return
 
             val function = element.parent as? KtCallableDeclaration ?: return
             val callableDescriptor = function.resolveToDescriptorIfAny(BodyResolveMode.FULL) as? CallableDescriptor ?: return
 
+            val typeParameters = RemoveUnusedFunctionParameterFix.typeParameters(element)
             if (inSameClass) {
                 runWriteAction {
                     val explicateAsTextForReceiver = callableDescriptor.explicateAsTextForReceiver()
@@ -150,6 +152,7 @@ class UnusedReceiverParameterInspection : AbstractKotlinInspection() {
             } else {
                 runChangeSignature(project, callableDescriptor, configureChangeSignature(), element, name)
             }
+            RemoveUnusedFunctionParameterFix.runRemoveUnusedTypeParameters(typeParameters)
         }
 
         override fun getFamilyName(): String = name

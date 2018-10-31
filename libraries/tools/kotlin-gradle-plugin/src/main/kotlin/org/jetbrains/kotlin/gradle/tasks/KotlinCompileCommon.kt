@@ -37,13 +37,13 @@ internal open class KotlinCompileCommon : AbstractKotlinCompile<K2MetadataCompil
         get() = kotlinOptionsImpl
 
     override fun createCompilerArgs(): K2MetadataCompilerArguments =
-            K2MetadataCompilerArguments()
+        K2MetadataCompilerArguments()
 
     override fun getSourceRoots(): SourceRoots =
-            SourceRoots.KotlinOnly.create(getSource(), sourceFilesExtensions)
+        SourceRoots.KotlinOnly.create(getSource(), sourceFilesExtensions)
 
-    override fun findKotlinCompilerClasspath(project: Project): List<File>  =
-            findKotlinMetadataCompilerClasspath(project)
+    override fun findKotlinCompilerClasspath(project: Project): List<File> =
+        findKotlinMetadataCompilerClasspath(project)
 
     override fun setupCompilerArgs(args: K2MetadataCompilerArguments, defaultsOnly: Boolean) {
         args.apply { fillDefaultValues() }

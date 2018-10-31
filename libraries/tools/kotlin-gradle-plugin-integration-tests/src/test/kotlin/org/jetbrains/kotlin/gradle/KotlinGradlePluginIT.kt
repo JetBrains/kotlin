@@ -861,4 +861,31 @@ class KotlinGradleIT : BaseGradleIT() {
             expectedKotlinDirs.forEach { assertTrue(it in reportedSrcDirs, "$it should be included into the Java source sets") }
         }
     }
+
+    @Test
+    fun testNoTaskConfigurationForcing() {
+        val gradleVersionRequirement = GradleVersionRequired.AtLeast("4.9")
+        val projects = listOf(
+            Project("simpleProject", gradleVersionRequirement),
+            Project("kotlin2JsNoOutputFileProject", gradleVersionRequirement),
+            Project("sample-app", gradleVersionRequirement, "new-mpp-lib-and-app")
+        )
+
+        projects.forEach {
+            it.apply {
+                setupWorkingDir()
+
+                val taskConfigureFlag = "Configured the task!"
+
+                gradleBuildScript().appendText("\n" + """
+                    tasks.register("myTask") { println '$taskConfigureFlag' }
+                """.trimIndent())
+
+                build("help") {
+                    assertSuccessful()
+                    assertNotContains(taskConfigureFlag)
+                }
+            }
+        }
+    }
 }

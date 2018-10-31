@@ -39,7 +39,6 @@ import com.intellij.refactoring.util.RefactoringUtil;
 import com.intellij.ui.EditorTextField;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.IncorrectOperationException;
-import kotlin.collections.CollectionsKt;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -71,6 +70,8 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.Collections;
 import java.util.List;
+
+import static org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.MoveKotlinDeclarationsProcessorKt.MoveSource;
 
 public class MoveKotlinNestedClassesToUpperLevelDialog extends MoveDialogBase {
     @NonNls private static final String RECENTS_KEY = MoveKotlinNestedClassesToUpperLevelDialog.class.getName() + ".RECENTS_KEY";
@@ -416,12 +417,11 @@ public class MoveKotlinNestedClassesToUpperLevelDialog extends MoveDialogBase {
         MoveDeclarationsDelegate delegate = new MoveDeclarationsDelegate.NestedClass(newClassName, outerInstanceParameterName);
         MoveDeclarationsDescriptor moveDescriptor = new MoveDeclarationsDescriptor(
                 project,
-                CollectionsKt.listOf(innerClass),
+                MoveSource(innerClass),
                 moveTarget,
                 delegate,
                 isSearchInComments(),
                 isSearchInNonJavaFiles(),
-                false,
                 false,
                 null,
                 isOpenInEditor()

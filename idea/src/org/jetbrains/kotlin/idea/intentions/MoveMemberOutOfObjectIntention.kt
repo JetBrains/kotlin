@@ -50,7 +50,7 @@ abstract class MoveMemberOutOfObjectIntention(text: String) : SelfTargetingRange
         if (element is KtClassOrObject) {
             val moveDescriptor = MoveDeclarationsDescriptor(
                     project,
-                    listOf(element),
+                    MoveSource(element),
                     KotlinMoveTargetForExistingElement(destination),
                     MoveDeclarationsDelegate.NestedClass()
             )

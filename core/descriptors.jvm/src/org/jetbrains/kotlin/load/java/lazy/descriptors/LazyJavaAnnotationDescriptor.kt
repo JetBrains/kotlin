@@ -18,9 +18,7 @@ package org.jetbrains.kotlin.load.java.lazy.descriptors
 
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
-import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.findNonGenericClassAcrossDependencies
-import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames.DEFAULT_ANNOTATION_MEMBER_NAME
 import org.jetbrains.kotlin.load.java.components.DescriptorResolverUtils
 import org.jetbrains.kotlin.load.java.components.TypeUsage
@@ -33,9 +31,10 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.constants.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.annotationClass
-import org.jetbrains.kotlin.resolve.descriptorUtil.resolveTopLevelClass
 import org.jetbrains.kotlin.storage.getValue
-import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.ErrorUtils
+import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.types.isError
 
 class LazyJavaAnnotationDescriptor(
         private val c: LazyJavaResolverContext,
@@ -101,21 +100,8 @@ class LazyJavaAnnotationDescriptor(
         return EnumValue(enumClassId, entryName)
     }
 
-    private fun resolveFromJavaClassObjectType(javaType: JavaType): ConstantValue<*>? {
-        // Class type is never nullable in 'Foo.class' in Java
-        val type = TypeUtils.makeNotNullable(c.typeResolver.transformJavaType(
-                javaType,
-                TypeUsage.COMMON.toAttributes())
-        )
-
-        val jlClass = c.module.resolveTopLevelClass(FqName("java.lang.Class"), NoLookupLocation.FOR_NON_TRACKED_SCOPE) ?: return null
-
-        val arguments = listOf(TypeProjectionImpl(type))
-
-        val javaClassObjectType = KotlinTypeFactory.simpleNotNullType(Annotations.EMPTY, jlClass, arguments)
-
-        return KClassValue(javaClassObjectType)
-    }
+    private fun resolveFromJavaClassObjectType(javaType: JavaType): ConstantValue<*>? =
+        KClassValue.create(c.typeResolver.transformJavaType(javaType, TypeUsage.COMMON.toAttributes()))
 
     override fun toString(): String {
         return DescriptorRenderer.FQ_NAMES_IN_TYPES.renderAnnotation(this)

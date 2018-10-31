@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 interface I<T> {
     fun foo(x: T): String = "foo($x)"
 

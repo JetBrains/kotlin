@@ -73,7 +73,7 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
     public final GenerationState state;
 
     protected final T element;
-    protected final FieldOwnerContext context;
+    protected final FieldOwnerContext<?> context;
 
     public final ClassBuilder v;
     public final FunctionCodegen functionCodegen;
@@ -260,7 +260,7 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
         int flags = ACC_DEPRECATED | ACC_STATIC | ACC_SYNTHETIC | AsmUtil.getVisibilityAccessFlag(descriptor);
         MethodVisitor mv = v.newMethod(JvmDeclarationOriginKt.OtherOrigin(descriptor), flags, syntheticMethod.getName(),
                                        syntheticMethod.getDescriptor(), null, null);
-        AnnotationCodegen.forMethod(mv, this, typeMapper).genAnnotations(new AnnotatedImpl(annotations), Type.VOID_TYPE);
+        AnnotationCodegen.forMethod(mv, this, state).genAnnotations(new AnnotatedImpl(annotations), Type.VOID_TYPE);
         mv.visitCode();
         mv.visitInsn(Opcodes.RETURN);
         mv.visitEnd();
@@ -510,19 +510,29 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
                 propertyDescriptor, true, false, null, true, StackValue.LOCAL_0, null, false
         );
 
-        ResolvedCall<FunctionDescriptor> provideDelegateResolvedCall = bindingContext.get(PROVIDE_DELEGATE_RESOLVED_CALL, propertyDescriptor);
-        if (provideDelegateResolvedCall == null) {
+        if (property.getDelegateExpression() == null) {
             propValue.store(codegen.gen(initializer), codegen.v);
-            return;
         }
+        else {
+            StackValue.Property delegate = propValue.getDelegateOrNull();
+            assert delegate != null : "No delegate for delegated property: " + propertyDescriptor;
 
-        StackValue provideDelegateReceiver = codegen.gen(initializer);
+            ResolvedCall<FunctionDescriptor> provideDelegateResolvedCall =
+                    bindingContext.get(PROVIDE_DELEGATE_RESOLVED_CALL, propertyDescriptor);
 
-        StackValue delegateValue = PropertyCodegen.invokeDelegatedPropertyConventionMethod(
-                codegen, provideDelegateResolvedCall, provideDelegateReceiver, propertyDescriptor
-        );
+            if (provideDelegateResolvedCall == null) {
+                delegate.store(codegen.gen(initializer), codegen.v);
+            }
+            else {
+                StackValue provideDelegateReceiver = codegen.gen(initializer);
 
-        propValue.store(delegateValue, codegen.v);
+                StackValue delegateValue = PropertyCodegen.invokeDelegatedPropertyConventionMethod(
+                        codegen, provideDelegateResolvedCall, provideDelegateReceiver, propertyDescriptor
+                );
+
+                delegate.store(delegateValue, codegen.v);
+            }
+        }
     }
 
     // Public accessible for serialization plugin to check whether call to initializeProperty(..) is legal.

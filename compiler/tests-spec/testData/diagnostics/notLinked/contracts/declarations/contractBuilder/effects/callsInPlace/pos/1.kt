@@ -1,12 +1,10 @@
-// !LANGUAGE: +AllowContractsForCustomFunctions +UseCallsInPlaceEffect
-// !DIAGNOSTICS: -INVISIBLE_REFERENCE -INVISIBLE_MEMBER
 // !USE_EXPERIMENTAL: kotlin.contracts.ExperimentalContracts
 
 /*
  KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (POSITIVE)
 
  SECTION: contracts
- CATEGORY: declarations, contractBuilder, effects, callsInPlace
+ CATEGORIES: declarations, contractBuilder, effects, callsInPlace
  NUMBER: 1
  DESCRIPTION: contract functions with CallsInPlace effects with different invocation kinds.
  */

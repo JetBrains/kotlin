@@ -21,6 +21,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.io.FileUtilRt
 import com.intellij.psi.search.GlobalSearchScope
 import com.sun.jdi.Location
+import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.idea.KotlinFileTypeFactory
@@ -42,6 +43,9 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 import java.util.*
 
 object DebuggerUtils {
+    @TestOnly
+    var forceRanking = false
+
     fun findSourceFileForClassIncludeLibrarySources(
         project: Project,
         scope: GlobalSearchScope,
@@ -74,7 +78,7 @@ object DebuggerUtils {
 
         if (filesWithExactName.isEmpty()) return null
 
-        if (filesWithExactName.size == 1) {
+        if (filesWithExactName.size == 1 && !forceRanking) {
             return filesWithExactName.single()
         }
 

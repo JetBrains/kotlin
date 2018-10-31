@@ -9,10 +9,10 @@ package kotlin.text
 public actual fun Char.isWhitespace(): Boolean = toString().matches("[\\s\\xA0]")
 
 @kotlin.internal.InlineOnly
-public actual inline fun Char.toLowerCase(): Char = js("String.fromCharCode")(this).toLowerCase().charCodeAt(0)
+public actual inline fun Char.toLowerCase(): Char = js("String.fromCharCode")(toInt()).toLowerCase().charCodeAt(0).unsafeCast<Int>().toChar()
 
 @kotlin.internal.InlineOnly
-public actual inline fun Char.toUpperCase(): Char = js("String.fromCharCode")(this).toUpperCase().charCodeAt(0)
+public actual inline fun Char.toUpperCase(): Char = js("String.fromCharCode")(toInt()).toUpperCase().charCodeAt(0).unsafeCast<Int>().toChar()
 
 /**
  * Returns `true` if this character is a Unicode high-surrogate code unit (also known as leading-surrogate code unit).

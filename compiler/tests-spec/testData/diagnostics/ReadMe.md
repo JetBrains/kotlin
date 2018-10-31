@@ -35,7 +35,7 @@ A comment with meta information has the following format:
 /*
  KOTLIN SPEC TEST (<POSITIVE|NEGATIVE>)
 
- SECTION: <sectionName>
+ SECTIONS: <sectionNames{,}>
  PARAGRAPH: <paragraphNumber>
  SENTENCE: [<setenceNumber>] <setence>
  NUMBER: <testNumber>
@@ -47,7 +47,7 @@ Example:
 /*
  KOTLIN DIAGNOSTICS SPEC TEST (POSITIVE)
 
- SECTION: when-expression
+ SECTIONS: when-expression
  PARAGRAPH: 2
  SENTENCE: [3] When expression has two different forms: with bound value and without it.
  NUMBER: 1
@@ -93,7 +93,7 @@ During the test run, the following information is displayed for each test:
 
 ```
 DIAGNOSTICS <POSITIVE|NEGATIVE> SPEC TEST
-SECTION: <sectionName> (paragraph: <paragraphNumber>)
+SECTIONS: <sectionName> (paragraph: <paragraphNumber>)
 SENTENCE <sentenceNumber>: <sentence>
 TEST NUMBER: <testNumber>
 TEST CASES: <casesNumber>
@@ -103,7 +103,7 @@ DIAGNOSTICS: <diagnosticSeverities> | <diagnostics>
 Example:
 ```
 DIAGNOSTICS NEGATIVE SPEC TEST
-SECTION: when-expression (paragraph: 3)
+SECTIONS: when-expression (paragraph: 3)
 SENTENCE 1: 
 TEST NUMBER: 1
 NUMBER OF TEST CASES: 3

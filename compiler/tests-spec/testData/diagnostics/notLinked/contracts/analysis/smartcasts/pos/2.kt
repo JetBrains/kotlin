@@ -1,4 +1,3 @@
-// !LANGUAGE: +AllowContractsForCustomFunctions +UseReturnsEffect
 // !USE_EXPERIMENTAL: kotlin.contracts.ExperimentalContracts
 // !WITH_CONTRACT_FUNCTIONS
 // SKIP_TXT
@@ -7,7 +6,7 @@
  KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (POSITIVE)
 
  SECTION: contracts
- CATEGORY: analysis, smartcasts
+ CATEGORIES: analysis, smartcasts
  NUMBER: 2
  DESCRIPTION: Smartcasts using Returns effects with complex (conjunction/disjunction) type checking and not-null conditions outside contract (custom condition).
  */
@@ -150,4 +149,15 @@ class case_10_class {
             println(<!DEBUG_INFO_SMARTCAST!>o.prop_1<!>.plus(3))
         }
     }
+}
+
+/*
+ CASE DESCRIPTION: check resolve reference when is used not null assertion and safe call operators
+ UNEXPECTED BEHAVIOUR
+ ISSUES: KT-26747
+ */
+fun case_12(value_1: Any?, value_2: Any?, value_3: Any?) {
+    funWithReturnsAndInvertCondition(value_1 !is String || value_2 !is Number || <!USELESS_IS_CHECK!>value_3 !is Any?<!>)
+    println(<!DEBUG_INFO_SMARTCAST!>value_1<!><!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>.<!UNRESOLVED_REFERENCE!>length<!>)
+    println(<!DEBUG_INFO_SMARTCAST!>value_2<!><!UNNECESSARY_SAFE_CALL!>?.<!>toByte())
 }

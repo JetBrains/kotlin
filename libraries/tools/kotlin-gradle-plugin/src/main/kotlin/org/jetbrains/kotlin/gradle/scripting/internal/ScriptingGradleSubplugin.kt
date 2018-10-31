@@ -12,12 +12,12 @@ import org.gradle.api.artifacts.Configuration
 import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.api.tasks.*
 import org.gradle.api.tasks.compile.AbstractCompile
+import org.jetbrains.kotlin.gradle.internal.KaptGenerateStubsTask
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.scripting.ScriptingExtension
 import org.jetbrains.kotlin.gradle.tasks.GradleMessageCollector
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.script.KotlinScriptDefinition
-import org.jetbrains.kotlin.gradle.internal.KaptGenerateStubsTask
 import org.jetbrains.kotlin.scripting.compiler.plugin.ScriptDefinitionsFromClasspathDiscoverySource
 import kotlin.properties.Delegates
 
@@ -44,8 +44,8 @@ class ScriptingGradleSubplugin : Plugin<Project> {
             val javaPluginConvention = project.convention.findPlugin(JavaPluginConvention::class.java)
             if (javaPluginConvention?.sourceSets?.isEmpty() == false) {
 
-                project.tasks.all { task ->
-                    if (task is KotlinCompile && task !is KaptGenerateStubsTask) {
+                project.tasks.withType(KotlinCompile::class.java) { task ->
+                    if (task !is KaptGenerateStubsTask) {
                         val configuration = project.configurations.findByName(getConfigurationName(task.sourceSetName))
                         if (configuration?.isEmpty == false) {
                             javaPluginConvention.sourceSets.findByName(task.sourceSetName)?.let { sourceSet ->
@@ -74,7 +74,8 @@ open class DiscoverScriptExtensionsTask : DefaultTask() {
     @get:Internal
     internal var sourceSet: SourceSet by Delegates.notNull()
 
-    @get:Internal
+    @get:InputFiles
+    @get:Classpath
     internal var discoveryClasspathConfiguration: Configuration by Delegates.notNull()
 
     @get:Internal
@@ -128,7 +129,7 @@ class ScriptingKotlinGradleSubplugin : KotlinGradleSubplugin<AbstractCompile> {
         if (!ScriptingGradleSubplugin.isEnabled(project)) return emptyList()
 
         val scriptingExtension = project.extensions.findByType(ScriptingExtension::class.java)
-                ?: project.extensions.create("kotlinScripting", ScriptingExtension::class.java)
+            ?: project.extensions.create("kotlinScripting", ScriptingExtension::class.java)
 
         val options = mutableListOf<SubpluginOption>()
 

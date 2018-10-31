@@ -22,7 +22,7 @@ open class DefaultCInteropSettings @Inject constructor(
     override val compilation: KotlinNativeCompilation
 ) : CInteropSettings {
 
-    inner class DefaultIncludeDirectories: CInteropSettings.IncludeDirectories {
+    inner class DefaultIncludeDirectories : CInteropSettings.IncludeDirectories {
         var allHeadersDirs: FileCollection = project.files()
         var headerFilterDirs: FileCollection = project.files()
 
@@ -59,8 +59,8 @@ open class DefaultCInteropSettings @Inject constructor(
     var packageName: String? = null
 
     val compilerOpts = mutableListOf<String>()
-    val linkerOpts   = mutableListOf<String>()
-    val extraOpts    = mutableListOf<String>()
+    val linkerOpts = mutableListOf<String>()
+    val extraOpts = mutableListOf<String>()
 
     val includeDirs = DefaultIncludeDirectories()
     var headers: FileCollection = project.files()

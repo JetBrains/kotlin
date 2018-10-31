@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.kapt3.base.util
 
-inline fun <T> measureTimeMillisWithResult(block: () -> T) : Pair<Long, T> {
+inline fun <T> measureTimeMillisWithResult(block: () -> T): Pair<Long, T> {
     val start = System.currentTimeMillis()
     val result = block()
     return Pair(System.currentTimeMillis() - start, result)

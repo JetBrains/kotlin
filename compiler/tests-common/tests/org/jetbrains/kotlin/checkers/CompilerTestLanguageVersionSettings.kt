@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.junit.Assert
 import java.io.File
 import java.util.regex.Pattern
-import kotlin.collections.HashMap
 
 const val LANGUAGE_DIRECTIVE = "LANGUAGE"
 const val API_VERSION_DIRECTIVE = "API_VERSION"
@@ -54,12 +53,12 @@ fun parseLanguageVersionSettingsOrDefault(directiveMap: Map<String, String>): Co
 fun parseLanguageVersionSettings(directiveMap: Map<String, String>): CompilerTestLanguageVersionSettings? {
     val apiVersionString = directiveMap[API_VERSION_DIRECTIVE]
     val languageFeaturesString = directiveMap[LANGUAGE_DIRECTIVE]
-    val experimental = directiveMap[EXPERIMENTAL_DIRECTIVE]?.split(' ')?.let { AnalysisFlag.experimental to it }
-    val useExperimental = directiveMap[USE_EXPERIMENTAL_DIRECTIVE]?.split(' ')?.let { AnalysisFlag.useExperimental to it }
-    val ignoreDataFlowInAssert = AnalysisFlag.ignoreDataFlowInAssert to directiveMap.containsKey(IGNORE_DATA_FLOW_IN_ASSERT_DIRECTIVE)
-    val enableJvmDefault = directiveMap[JVM_DEFAULT_MODE]?.let { AnalysisFlag.jvmDefaultMode to JvmDefaultMode.fromStringOrNull(it)!! }
-    val skipMetadataVersionCheck = AnalysisFlag.skipMetadataVersionCheck to directiveMap.containsKey(SKIP_METADATA_VERSION_CHECK)
-    val allowResultReturnType = AnalysisFlag.allowResultReturnType to directiveMap.containsKey(ALLOW_RESULT_RETURN_TYPE)
+    val experimental = directiveMap[EXPERIMENTAL_DIRECTIVE]?.split(' ')?.let { AnalysisFlags.experimental to it }
+    val useExperimental = directiveMap[USE_EXPERIMENTAL_DIRECTIVE]?.split(' ')?.let { AnalysisFlags.useExperimental to it }
+    val ignoreDataFlowInAssert = AnalysisFlags.ignoreDataFlowInAssert to directiveMap.containsKey(IGNORE_DATA_FLOW_IN_ASSERT_DIRECTIVE)
+    val enableJvmDefault = directiveMap[JVM_DEFAULT_MODE]?.let { JvmAnalysisFlags.jvmDefaultMode to JvmDefaultMode.fromStringOrNull(it)!! }
+    val skipMetadataVersionCheck = AnalysisFlags.skipMetadataVersionCheck to directiveMap.containsKey(SKIP_METADATA_VERSION_CHECK)
+    val allowResultReturnType = AnalysisFlags.allowResultReturnType to directiveMap.containsKey(ALLOW_RESULT_RETURN_TYPE)
 
     if (apiVersionString == null && languageFeaturesString == null && experimental == null &&
         useExperimental == null && !ignoreDataFlowInAssert.second && !allowResultReturnType.second

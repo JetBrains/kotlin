@@ -335,4 +335,131 @@ public class CompileKotlinAgainstKotlinTestGenerated extends AbstractCompileKotl
             runTest("compiler/testData/compileKotlinAgainstKotlin/coroutines/simple.kt");
         }
     }
+
+    @TestMetadata("compiler/testData/compileKotlinAgainstKotlin/jvm8")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Jvm8 extends AbstractCompileKotlinAgainstKotlinTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInJvm8() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/compileKotlinAgainstKotlin/jvm8"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("compiler/testData/compileKotlinAgainstKotlin/jvm8/defaults")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Defaults extends AbstractCompileKotlinAgainstKotlinTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInDefaults() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/compileKotlinAgainstKotlin/jvm8/defaults"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("superCall.kt")
+            public void testSuperCall() throws Exception {
+                runTest("compiler/testData/compileKotlinAgainstKotlin/jvm8/defaults/superCall.kt");
+            }
+
+            @TestMetadata("superCallFromInterface.kt")
+            public void testSuperCallFromInterface() throws Exception {
+                runTest("compiler/testData/compileKotlinAgainstKotlin/jvm8/defaults/superCallFromInterface.kt");
+            }
+
+            @TestMetadata("superCallFromInterface2.kt")
+            public void testSuperCallFromInterface2() throws Exception {
+                runTest("compiler/testData/compileKotlinAgainstKotlin/jvm8/defaults/superCallFromInterface2.kt");
+            }
+
+            @TestMetadata("superPropAccess.kt")
+            public void testSuperPropAccess() throws Exception {
+                runTest("compiler/testData/compileKotlinAgainstKotlin/jvm8/defaults/superPropAccess.kt");
+            }
+
+            @TestMetadata("superPropAccessFromInterface.kt")
+            public void testSuperPropAccessFromInterface() throws Exception {
+                runTest("compiler/testData/compileKotlinAgainstKotlin/jvm8/defaults/superPropAccessFromInterface.kt");
+            }
+
+            @TestMetadata("superPropAccessFromInterface2.kt")
+            public void testSuperPropAccessFromInterface2() throws Exception {
+                runTest("compiler/testData/compileKotlinAgainstKotlin/jvm8/defaults/superPropAccessFromInterface2.kt");
+            }
+        }
+
+        @TestMetadata("compiler/testData/compileKotlinAgainstKotlin/jvm8/jvm8against6")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Jvm8against6 extends AbstractCompileKotlinAgainstKotlinTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInJvm8against6() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/compileKotlinAgainstKotlin/jvm8/jvm8against6"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("jdk8Against6.kt")
+            public void testJdk8Against6() throws Exception {
+                runTest("compiler/testData/compileKotlinAgainstKotlin/jvm8/jvm8against6/jdk8Against6.kt");
+            }
+
+            @TestMetadata("simpleCall.kt")
+            public void testSimpleCall() throws Exception {
+                runTest("compiler/testData/compileKotlinAgainstKotlin/jvm8/jvm8against6/simpleCall.kt");
+            }
+
+            @TestMetadata("simpleCallWithBigHierarchy.kt")
+            public void testSimpleCallWithBigHierarchy() throws Exception {
+                runTest("compiler/testData/compileKotlinAgainstKotlin/jvm8/jvm8against6/simpleCallWithBigHierarchy.kt");
+            }
+
+            @TestMetadata("simpleCallWithHierarchy.kt")
+            public void testSimpleCallWithHierarchy() throws Exception {
+                runTest("compiler/testData/compileKotlinAgainstKotlin/jvm8/jvm8against6/simpleCallWithHierarchy.kt");
+            }
+
+            @TestMetadata("simpleProp.kt")
+            public void testSimpleProp() throws Exception {
+                runTest("compiler/testData/compileKotlinAgainstKotlin/jvm8/jvm8against6/simpleProp.kt");
+            }
+
+            @TestMetadata("simplePropWithHierarchy.kt")
+            public void testSimplePropWithHierarchy() throws Exception {
+                runTest("compiler/testData/compileKotlinAgainstKotlin/jvm8/jvm8against6/simplePropWithHierarchy.kt");
+            }
+
+            @TestMetadata("compiler/testData/compileKotlinAgainstKotlin/jvm8/jvm8against6/delegation")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class Delegation extends AbstractCompileKotlinAgainstKotlinTest {
+                private void runTest(String testDataFilePath) throws Exception {
+                    KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                }
+
+                public void testAllFilesPresentInDelegation() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/compileKotlinAgainstKotlin/jvm8/jvm8against6/delegation"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+                }
+
+                @TestMetadata("diamond.kt")
+                public void testDiamond() throws Exception {
+                    runTest("compiler/testData/compileKotlinAgainstKotlin/jvm8/jvm8against6/delegation/diamond.kt");
+                }
+
+                @TestMetadata("diamond2.kt")
+                public void testDiamond2() throws Exception {
+                    runTest("compiler/testData/compileKotlinAgainstKotlin/jvm8/jvm8against6/delegation/diamond2.kt");
+                }
+
+                @TestMetadata("diamond3.kt")
+                public void testDiamond3() throws Exception {
+                    runTest("compiler/testData/compileKotlinAgainstKotlin/jvm8/jvm8against6/delegation/diamond3.kt");
+                }
+            }
+        }
+    }
 }

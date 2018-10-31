@@ -126,6 +126,8 @@ public class GenerateRangesCodegenTestData {
 
     private static final List<String> IGNORED_FOR_NATIVE_BACKEND = Collections.emptyList();
 
+    private static final List<String> WHITELISTED_FOR_JVM_IR_BACKEND = Collections.singletonList("overflowZeroDownToMaxValue.kt");
+
     private static void writeIgnoreBackendDirective(PrintWriter out, String backendName) {
         out.printf("// TODO: muted automatically, investigate should it be ran for %s or not%n", backendName);
         out.printf("// IGNORE_BACKEND: %s%n%n", backendName);
@@ -142,7 +144,9 @@ public class GenerateRangesCodegenTestData {
         }
 
         // Ranges are not supported in JVM_IR yet
-        writeIgnoreBackendDirective(out, "JVM_IR");
+        if (!WHITELISTED_FOR_JVM_IR_BACKEND.contains(file.getName())) {
+            writeIgnoreBackendDirective(out, "JVM_IR");
+        }
 
         if (IGNORED_FOR_JS_BACKEND.contains(file.getName())) {
             writeIgnoreBackendDirective(out, "JS");

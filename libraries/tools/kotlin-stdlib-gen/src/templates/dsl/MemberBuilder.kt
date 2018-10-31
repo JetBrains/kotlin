@@ -60,7 +60,7 @@ class MemberBuilder(
     val typeParams = mutableListOf<String>()
     var primaryTypeParameter: String? = null; private set
     var customReceiver: String? = null; private set
-    var receiverAsterisk: Boolean = false // TODO: rename to genericStarProjection
+    var genericStarProjection: Boolean = false
     var toNullableT: Boolean = false
 
     var returns: String? = null; private set
@@ -246,19 +246,19 @@ class MemberBuilder(
             return answer.toString()
         }
 
-        val isAsteriskOrT = if (receiverAsterisk) "*" else primaryTypeParameter
+        val receiverT = if (genericStarProjection) "*" else primaryTypeParameter
         val self = (when (family) {
-            Iterables -> "Iterable<$isAsteriskOrT>"
-            Collections -> "Collection<$isAsteriskOrT>"
-            Lists -> "List<$isAsteriskOrT>"
+            Iterables -> "Iterable<$receiverT>"
+            Collections -> "Collection<$receiverT>"
+            Lists -> "List<$receiverT>"
             Maps -> "Map<out K, V>"
-            Sets -> "Set<$isAsteriskOrT>"
-            Sequences -> "Sequence<$isAsteriskOrT>"
+            Sets -> "Set<$receiverT>"
+            Sequences -> "Sequence<$receiverT>"
             InvariantArraysOfObjects -> "Array<$primaryTypeParameter>"
-            ArraysOfObjects -> "Array<${isAsteriskOrT.replace(primaryTypeParameter, "out $primaryTypeParameter")}>"
+            ArraysOfObjects -> "Array<${receiverT.replace(primaryTypeParameter, "out $primaryTypeParameter")}>"
             Strings -> "String"
             CharSequences -> "CharSequence"
-            Ranges -> "ClosedRange<$isAsteriskOrT>"
+            Ranges -> "ClosedRange<$receiverT>"
             ArraysOfPrimitives, ArraysOfUnsigned -> primitive?.let { it.name + "Array" } ?: throw IllegalArgumentException("Primitive array should specify primitive type")
             RangesOfPrimitives -> primitive?.let { it.name + "Range" } ?: throw IllegalArgumentException("Primitive range should specify primitive type")
             ProgressionsOfPrimitives -> primitive?.let { it.name + "Progression" } ?: throw IllegalArgumentException("Primitive progression should specify primitive type")

@@ -1,4 +1,3 @@
-
 @file:Suppress("PropertyName")
 
 import org.gradle.api.publish.ivy.internal.artifact.FileBasedIvyArtifact
@@ -7,19 +6,10 @@ import org.gradle.api.publish.ivy.internal.publication.DefaultIvyPublicationIden
 import org.gradle.api.publish.ivy.internal.publisher.IvyDescriptorFileGenerator
 import java.io.File
 import org.gradle.internal.os.OperatingSystem
-import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
-buildscript {
-    repositories {
-        jcenter()
-    }
-    dependencies {
-        classpath("com.github.jengelman.gradle.plugins:shadow:${property("versions.shadow")}")
-    }
-}
+val cacheRedirectorEnabled = findProperty("cacheRedirectorEnabled")?.toString()?.toBoolean() == true
 
 val intellijUltimateEnabled: Boolean by rootProject.extra
-val intellijRepo: String by rootProject.extra
 val intellijReleaseType: String by rootProject.extra
 val intellijVersion = rootProject.extra["versions.intellijSdk"] as String
 val androidStudioRelease = rootProject.findProperty("versions.androidStudioRelease") as String?
@@ -60,14 +50,24 @@ val studioOs by lazy {
 repositories {
     if (androidStudioRelease != null) {
         ivy {
+            if (cacheRedirectorEnabled) {
+                artifactPattern("https://cache-redirector.jetbrains.com/dl.google.com/dl/android/studio/ide-zips/$androidStudioRelease/[artifact]-[revision]-$studioOs.zip")
+            }
+
             artifactPattern("https://dl.google.com/dl/android/studio/ide-zips/$androidStudioRelease/[artifact]-[revision]-$studioOs.zip")
             metadataSources {
                 artifact()
             }
         }
     }
-    maven { setUrl("$intellijRepo/$intellijReleaseType") }
-    maven { setUrl("https://plugins.jetbrains.com/maven") }
+
+    if (cacheRedirectorEnabled) {
+        maven("https://cache-redirector.jetbrains.com/www.jetbrains.com/intellij-repository/$intellijReleaseType")
+        maven("https://cache-redirector.jetbrains.com/plugins.jetbrains.com/maven")
+    }
+
+    maven("https://www.jetbrains.com/intellij-repository/$intellijReleaseType")
+    maven("https://plugins.jetbrains.com/maven")
 }
 
 val intellij by configurations.creating
@@ -152,12 +152,9 @@ val unzipIntellijCore by tasks.creating { configureExtractFromConfigurationTask(
 
 val unzipJpsStandalone by tasks.creating { configureExtractFromConfigurationTask(`jps-standalone`) { zipTree(it.singleFile) } }
 
-val copyIntellijSdkSources by tasks.creating(ShadowJar::class.java) {
+val copyIntellijSdkSources by tasks.creating(Copy::class.java) {
     from(sources)
-    baseName = "ideaIC"
-    version = intellijVersion
-    classifier = "sources"
-    destinationDir = File(repoDir, sources.name)
+    into(File(repoDir, sources.name))
 }
 
 val copyJpsBuildTest by tasks.creating { configureExtractFromConfigurationTask(`jps-build-test`) { it.singleFile } }

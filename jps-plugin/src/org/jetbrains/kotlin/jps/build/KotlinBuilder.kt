@@ -23,6 +23,7 @@ import org.jetbrains.jps.builders.FileProcessor
 import org.jetbrains.jps.builders.impl.DirtyFilesHolderBase
 import org.jetbrains.jps.builders.java.JavaBuilderUtil
 import org.jetbrains.jps.builders.java.JavaSourceRootDescriptor
+import org.jetbrains.jps.builders.storage.BuildDataCorruptedException
 import org.jetbrains.jps.incremental.*
 import org.jetbrains.jps.incremental.ModuleLevelBuilder.ExitCode.*
 import org.jetbrains.jps.incremental.java.JavaBuilder
@@ -305,6 +306,9 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
 
             return actualExitCode
         } catch (e: StopBuildException) {
+            LOG.info("Caught exception: $e")
+            throw e
+        } catch (e: BuildDataCorruptedException) {
             LOG.info("Caught exception: $e")
             throw e
         } catch (e: Throwable) {

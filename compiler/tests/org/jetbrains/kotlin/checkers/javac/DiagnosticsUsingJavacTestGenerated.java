@@ -3608,6 +3608,16 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                 runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/localObjectInConstructor.kt");
             }
 
+            @TestMetadata("mainWith12.kt")
+            public void testMainWith12() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/mainWith12.kt");
+            }
+
+            @TestMetadata("mainWith13.kt")
+            public void testMainWith13() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/mainWith13.kt");
+            }
+
             @TestMetadata("nestedTryFinally.kt")
             public void testNestedTryFinally() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/nestedTryFinally.kt");
@@ -10907,6 +10917,11 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                 runTest("compiler/testData/diagnostics/tests/inlineClasses/inlineClassCannotImplementInterfaceByDelegation.kt");
             }
 
+            @TestMetadata("inlineClassConstructorParameterWithDefaultValue.kt")
+            public void testInlineClassConstructorParameterWithDefaultValue() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inlineClasses/inlineClassConstructorParameterWithDefaultValue.kt");
+            }
+
             @TestMetadata("inlineClassDeclarationCheck.kt")
             public void testInlineClassDeclarationCheck() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/inlineClasses/inlineClassDeclarationCheck.kt");
@@ -14499,6 +14514,11 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
             @TestMetadata("ExtendFunctionClass.kt")
             public void testExtendFunctionClass() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/override/ExtendFunctionClass.kt");
+            }
+
+            @TestMetadata("fakeEquals.kt")
+            public void testFakeEquals() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/override/fakeEquals.kt");
             }
 
             @TestMetadata("FakeOverrideAbstractAndNonAbstractFun.kt")
@@ -19117,6 +19137,21 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                 runTest("compiler/testData/diagnostics/tests/smartCasts/kt2422.kt");
             }
 
+            @TestMetadata("kt27221.kt")
+            public void testKt27221() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/smartCasts/kt27221.kt");
+            }
+
+            @TestMetadata("kt27221_2.kt")
+            public void testKt27221_2() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/smartCasts/kt27221_2.kt");
+            }
+
+            @TestMetadata("kt27221_irrelevantClasses.kt")
+            public void testKt27221_irrelevantClasses() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/smartCasts/kt27221_irrelevantClasses.kt");
+            }
+
             @TestMetadata("kt2865.kt")
             public void testKt2865() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/smartCasts/kt2865.kt");
@@ -19360,6 +19395,11 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
             @TestMetadata("smartCastOnWhen.kt")
             public void testSmartCastOnWhen() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/smartCasts/smartCastOnWhen.kt");
+            }
+
+            @TestMetadata("smartcastOnSameFieldOfDifferentInstances.kt")
+            public void testSmartcastOnSameFieldOfDifferentInstances() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/smartCasts/smartcastOnSameFieldOfDifferentInstances.kt");
             }
 
             @TestMetadata("thisWithLabel.kt")
@@ -19914,6 +19954,11 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                 @TestMetadata("whileNull.kt")
                 public void testWhileNull() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/smartCasts/loops/whileNull.kt");
+                }
+
+                @TestMetadata("whileNullAssignToSomething.kt")
+                public void testWhileNullAssignToSomething() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/smartCasts/loops/whileNullAssignToSomething.kt");
                 }
 
                 @TestMetadata("whileNullWithBreak.kt")

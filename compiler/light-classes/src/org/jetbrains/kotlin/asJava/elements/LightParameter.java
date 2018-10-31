@@ -25,14 +25,14 @@ public class LightParameter extends LightVariableBuilder implements PsiParameter
     public static final LightParameter[] EMPTY_ARRAY = new LightParameter[0];
 
     private final String myName;
-    private final PsiElement myDeclarationScope;
+    private final KtLightMethod myDeclarationScope;
     private final boolean myVarArgs;
 
-    public LightParameter(@NotNull String name, @NotNull PsiType type, PsiElement declarationScope, Language language) {
+    public LightParameter(@NotNull String name, @NotNull PsiType type, @NotNull KtLightMethod declarationScope, Language language) {
         this(name, type, declarationScope, language, type instanceof PsiEllipsisType);
     }
 
-    public LightParameter(@NotNull String name, @NotNull PsiType type, PsiElement declarationScope, Language language, boolean isVarArgs) {
+    public LightParameter(@NotNull String name, @NotNull PsiType type, @NotNull KtLightMethod declarationScope, Language language, boolean isVarArgs) {
         super(declarationScope.getManager(), name, type, language);
         myName = name;
         myDeclarationScope = declarationScope;
@@ -41,7 +41,11 @@ public class LightParameter extends LightVariableBuilder implements PsiParameter
 
     @NotNull
     @Override
-    public PsiElement getDeclarationScope() {
+    public KtLightMethod getDeclarationScope() {
+        return myDeclarationScope;
+    }
+
+    public KtLightMethod getMethod() {
         return myDeclarationScope;
     }
 

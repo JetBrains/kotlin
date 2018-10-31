@@ -133,7 +133,11 @@ object ProjectRootsUtil {
         }
         if (includeLibrarySource && !isBinary) {
             if (fileIndex.isInLibrarySource(file)) return true
-            if (scriptConfigurationManager?.getAllLibrarySourcesScope()?.contains(file) == true) return true
+            if (scriptConfigurationManager?.getAllLibrarySourcesScope()?.contains(file) == true &&
+                !fileIndex.isInSourceContentWithoutInjected(file)
+            ) {
+                return true
+            }
         }
 
         return false
@@ -166,6 +170,7 @@ object ProjectRootsUtil {
         }
     }
 
+    @JvmOverloads
     @JvmStatic
     fun isInProjectSource(element: PsiElement, includeScriptsOutsideSourceRoots: Boolean = false): Boolean {
         return isInContent(
@@ -178,6 +183,7 @@ object ProjectRootsUtil {
         )
     }
 
+    @JvmOverloads
     @JvmStatic
     fun isProjectSourceFile(project: Project, file: VirtualFile, includeScriptsOutsideSourceRoots: Boolean = false): Boolean {
         return isInContent(
@@ -191,6 +197,7 @@ object ProjectRootsUtil {
         )
     }
 
+    @JvmOverloads
     @JvmStatic
     fun isInProjectOrLibSource(element: PsiElement, includeScriptsOutsideSourceRoots: Boolean = false): Boolean {
         return isInContent(

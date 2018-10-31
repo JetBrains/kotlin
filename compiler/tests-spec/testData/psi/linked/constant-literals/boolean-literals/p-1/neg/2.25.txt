@@ -1,0 +1,142 @@
+KtFile: 2.25.kt
+  PACKAGE_DIRECTIVE
+    <empty list>
+  IMPORT_LIST
+    <empty list>
+  FUN
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('f1')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    BLOCK
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n    ')
+      CALL_EXPRESSION
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('f2')
+        VALUE_ARGUMENT_LIST
+          PsiElement(LPAR)('(')
+          VALUE_ARGUMENT
+            BINARY_EXPRESSION
+              BOOLEAN_CONSTANT
+                PsiElement(true)('true')
+              PsiWhiteSpace(' ')
+              OPERATION_REFERENCE
+                PsiElement(EQ)('=')
+              PsiWhiteSpace(' ')
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('expr')
+          PsiElement(RPAR)(')')
+      PsiWhiteSpace('\n\n    ')
+      CALL_EXPRESSION
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('f3')
+        VALUE_ARGUMENT_LIST
+          PsiElement(LPAR)('(')
+          VALUE_ARGUMENT
+            BINARY_EXPRESSION
+              BOOLEAN_CONSTANT
+                PsiElement(false)('false')
+              PsiWhiteSpace(' ')
+              OPERATION_REFERENCE
+                PsiElement(EQ)('=')
+              PsiWhiteSpace(' ')
+              PARENTHESIZED
+                PsiElement(LPAR)('(')
+                BINARY_EXPRESSION
+                  BINARY_EXPRESSION
+                    INTEGER_CONSTANT
+                      PsiElement(INTEGER_LITERAL)('0L')
+                    PsiWhiteSpace(' ')
+                    OPERATION_REFERENCE
+                      PsiElement(MINUS)('-')
+                    PsiWhiteSpace(' ')
+                    INTEGER_CONSTANT
+                      PsiElement(INTEGER_LITERAL)('10')
+                  PsiWhiteSpace(' ')
+                  OPERATION_REFERENCE
+                    PsiElement(PLUS)('+')
+                  PsiWhiteSpace(' ')
+                  THROW
+                    PsiElement(throw)('throw')
+                    PsiWhiteSpace(' ')
+                    BINARY_EXPRESSION
+                      CALL_EXPRESSION
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('E')
+                        VALUE_ARGUMENT_LIST
+                          PsiElement(LPAR)('(')
+                          PsiElement(RPAR)(')')
+                      PsiWhiteSpace(' ')
+                      OPERATION_REFERENCE
+                        PsiElement(MINUS)('-')
+                      PsiWhiteSpace(' ')
+                      PREFIX_EXPRESSION
+                        OPERATION_REFERENCE
+                          PsiElement(MINUS)('-')
+                        FLOAT_CONSTANT
+                          PsiElement(FLOAT_CONSTANT)('.09')
+                PsiElement(RPAR)(')')
+          PsiElement(RPAR)(')')
+      PsiWhiteSpace('\n\n    ')
+      CALL_EXPRESSION
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('f4')
+        VALUE_ARGUMENT_LIST
+          PsiElement(LPAR)('(')
+          PsiWhiteSpace('\n        ')
+          VALUE_ARGUMENT
+            BINARY_EXPRESSION
+              BOOLEAN_CONSTANT
+                PsiElement(true)('true')
+              PsiWhiteSpace(' ')
+              OPERATION_REFERENCE
+                PsiElement(EQ)('=')
+              PsiWhiteSpace(' ')
+              RETURN
+                PsiElement(return)('return')
+                PsiWhiteSpace(' ')
+                RETURN
+                  PsiElement(return)('return')
+          PsiElement(COMMA)(',')
+          PsiWhiteSpace('\n        ')
+          VALUE_ARGUMENT
+            BINARY_EXPRESSION
+              BOOLEAN_CONSTANT
+                PsiElement(false)('false')
+              PsiWhiteSpace(' ')
+              OPERATION_REFERENCE
+                PsiElement(EQ)('=')
+              PsiWhiteSpace(' ')
+              TRY
+                PsiElement(try)('try')
+                PsiWhiteSpace(' ')
+                BLOCK
+                  PsiElement(LBRACE)('{')
+                  PsiElement(RBRACE)('}')
+                PsiWhiteSpace(' ')
+                FINALLY
+                  PsiElement(finally)('finally')
+                  PsiWhiteSpace(' ')
+                  BLOCK
+                    PsiElement(LBRACE)('{')
+                    PsiElement(RBRACE)('}')
+          PsiElement(COMMA)(',')
+          PsiWhiteSpace('\n        ')
+          VALUE_ARGUMENT
+            BINARY_EXPRESSION
+              BOOLEAN_CONSTANT
+                PsiElement(true)('true')
+              PsiWhiteSpace(' ')
+              OPERATION_REFERENCE
+                PsiElement(EQ)('=')
+              PsiWhiteSpace(' ')
+              INTEGER_CONSTANT
+                PsiElement(INTEGER_LITERAL)('0x10')
+          PsiWhiteSpace('\n    ')
+          PsiElement(RPAR)(')')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')

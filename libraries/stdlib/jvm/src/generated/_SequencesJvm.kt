@@ -13,9 +13,6 @@ package kotlin.sequences
 // See: https://github.com/JetBrains/kotlin/tree/master/libraries/stdlib
 //
 
-import kotlin.*
-import kotlin.text.*
-import kotlin.comparisons.*
 
 /**
  * Returns a sequence containing all elements that are instances of specified class.

@@ -22,6 +22,7 @@ fun nullableOperators(r1: Result<Int>?, b: Boolean) {
 
     if (b) {
         r1<!RESULT_CLASS_WITH_NULLABLE_OPERATOR!>?.<!>toString()
+        r1<!RESULT_CLASS_WITH_NULLABLE_OPERATOR!>?.<!>let { }
         returnInt()?.intResult<!RESULT_CLASS_WITH_NULLABLE_OPERATOR!>?.<!>toString()
         asFun()<!RESULT_CLASS_WITH_NULLABLE_OPERATOR!>?.<!>toString()
         id(r1)<!RESULT_CLASS_WITH_NULLABLE_OPERATOR!>?.<!>toString()

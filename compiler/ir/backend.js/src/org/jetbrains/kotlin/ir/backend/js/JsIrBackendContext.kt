@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.ir.backend.js
 
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
-import org.jetbrains.kotlin.backend.common.ReflectionTypes
 import org.jetbrains.kotlin.backend.common.atMostOne
 import org.jetbrains.kotlin.backend.common.descriptors.KnownPackageFragmentDescriptor
 import org.jetbrains.kotlin.backend.common.ir.Ir
@@ -22,11 +21,13 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.SourceManager
 import org.jetbrains.kotlin.ir.SourceRangeInfo
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
+import org.jetbrains.kotlin.ir.backend.js.lower.CallableReferenceKey
 import org.jetbrains.kotlin.ir.backend.js.lower.inline.ModuleIndex
 import org.jetbrains.kotlin.ir.backend.js.utils.OperatorNames
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
+import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrEnumEntrySymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
@@ -34,6 +35,7 @@ import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.impl.IrDynamicTypeImpl
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.util.getPropertyDeclaration
+import org.jetbrains.kotlin.ir.util.kotlinPackageFqn
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
@@ -52,7 +54,7 @@ class JsIrBackendContext(
     override val builtIns = module.builtIns
 
     val internalPackageFragmentDescriptor = KnownPackageFragmentDescriptor(builtIns.builtInsModule, FqName("kotlin.js.internal"))
-    private val implicitDeclarationFile by lazy {
+    val implicitDeclarationFile by lazy {
         IrFileImpl(object : SourceManager.FileEntry {
             override val name = "<implicitDeclarations>"
             override val maxOffset = UNDEFINED_OFFSET
@@ -78,12 +80,10 @@ class JsIrBackendContext(
     override val sharedVariablesManager =
         JsSharedVariablesManager(irBuiltIns, implicitDeclarationFile)
     override val declarationFactory = JsDeclarationFactory()
-    override val reflectionTypes: ReflectionTypes by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        // TODO
-        ReflectionTypes(module, REFLECT_PACKAGE_FQNAME)
-    }
 
     companion object {
+        val KOTLIN_PACKAGE_FQN = FqName.fromSegments(listOf("kotlin"))
+
         private val INTRINSICS_PACKAGE_NAME = Name.identifier("intrinsics")
         private val COROUTINE_SUSPENDED_NAME = Name.identifier("COROUTINE_SUSPENDED")
         private val COROUTINE_CONTEXT_NAME = Name.identifier("coroutineContext")
@@ -91,10 +91,10 @@ class JsIrBackendContext(
         private val CONTINUATION_NAME = Name.identifier("Continuation")
         // TODO: what is more clear way reference this getter?
         private val CONTINUATION_CONTEXT_GETTER_NAME = Name.special("<get-context>")
-        private val CONTINUATION_CONTEXT_PROPERTY_NAME = Name.identifier("context")
 
-        private val REFLECT_PACKAGE_FQNAME = FqName.fromSegments(listOf("kotlin", "reflect"))
-        private val JS_PACKAGE_FQNAME = FqName.fromSegments(listOf("kotlin", "js"))
+        private val CONTINUATION_CONTEXT_PROPERTY_NAME = Name.identifier("context")
+        private val REFLECT_PACKAGE_FQNAME = KOTLIN_PACKAGE_FQN.child(Name.identifier("reflect"))
+        private val JS_PACKAGE_FQNAME = KOTLIN_PACKAGE_FQN.child(Name.identifier("js"))
         private val JS_INTERNAL_PACKAGE_FQNAME = JS_PACKAGE_FQNAME.child(Name.identifier("internal"))
         private val COROUTINE_PACKAGE_FQNAME_12 = FqName.fromSegments(listOf("kotlin", "coroutines", "experimental"))
         private val COROUTINE_PACKAGE_FQNAME_13 = FqName.fromSegments(listOf("kotlin", "coroutines"))
@@ -104,6 +104,8 @@ class JsIrBackendContext(
         // TODO: due to name clash those weird suffix is required, remove it once `NameGenerator` is implemented
         private val COROUTINE_SUSPEND_OR_RETURN_JS_NAME = "suspendCoroutineUninterceptedOrReturnJS"
         private val GET_COROUTINE_CONTEXT_NAME = "getCoroutineContext"
+
+        val callableClosureOrigin = object : IrDeclarationOriginImpl("CALLABLE_CLOSURE_DECLARATION") {}
     }
 
     private val internalPackage = module.getPackage(JS_PACKAGE_FQNAME)
@@ -111,7 +113,8 @@ class JsIrBackendContext(
     private val coroutinePackage = module.getPackage(COROUTINE_PACKAGE_FQNAME)
     private val coroutineIntrinsicsPackage = module.getPackage(COROUTINE_INTRINSICS_PACKAGE_FQNAME)
 
-    val enumEntryToGetInstanceFunction = mutableMapOf<IrEnumEntrySymbol, IrSimpleFunctionSymbol>()
+    val enumEntryToGetInstanceFunction = mutableMapOf<IrEnumEntrySymbol, () -> IrExpression>()
+    val callableReferencesCache = mutableMapOf<CallableReferenceKey, IrSimpleFunction>()
 
     val coroutineGetContext: IrFunctionSymbol
         get() {
@@ -122,8 +125,8 @@ class JsIrBackendContext(
                 ) as ClassDescriptor
             )
             val contextGetter =
-                continuation.owner.declarations.filterIsInstance<IrFunction>().atMostOne { it.descriptor.name == CONTINUATION_CONTEXT_GETTER_NAME }
-                    ?: continuation.owner.declarations.filterIsInstance<IrProperty>().atMostOne { it.descriptor.name == CONTINUATION_CONTEXT_PROPERTY_NAME }?.getter!!
+                continuation.owner.declarations.filterIsInstance<IrFunction>().atMostOne { it.name == CONTINUATION_CONTEXT_GETTER_NAME }
+                    ?: continuation.owner.declarations.filterIsInstance<IrProperty>().atMostOne { it.name == CONTINUATION_CONTEXT_PROPERTY_NAME }?.getter!!
             return contextGetter.symbol
         }
 
@@ -146,10 +149,6 @@ class JsIrBackendContext(
     private val operatorMap = referenceOperators()
 
     val functions = (0..22).map { symbolTable.referenceClass(builtIns.getFunction(it)) }
-
-    val kFunctions by lazy {
-        (0..22).map { symbolTable.referenceClass(reflectionTypes.getKFunction(it)) }
-    }
 
     val primitiveCompanionObjects = PrimitiveType.NUMBER_TYPES
         .asSequence()
@@ -184,14 +183,14 @@ class JsIrBackendContext(
             override val areEqual
                 get () = TODO("not implemented")
 
-            override val ThrowNullPointerException
-                get () = irBuiltIns.throwNpeSymbol
+            override val ThrowNullPointerException = getFunctions(kotlinPackageFqn.child(Name.identifier("THROW_NPE"))).singleOrNull()?.let {
+                symbolTable.referenceSimpleFunction(it) } ?: irBuiltIns.throwNpeSymbol
 
             override val ThrowNoWhenBranchMatchedException
                 get () = irBuiltIns.noWhenBranchMatchedExceptionSymbol
 
-            override val ThrowTypeCastException
-                get () = irBuiltIns.throwCceSymbol
+            override val ThrowTypeCastException = getFunctions(kotlinPackageFqn.child(Name.identifier("THROW_CCE"))).singleOrNull()?.let {
+                symbolTable.referenceSimpleFunction(it) } ?: irBuiltIns.throwCceSymbol
 
             override val ThrowUninitializedPropertyAccessException=
                 symbolTable.referenceSimpleFunction(getFunctions(FqName("kotlin.throwUninitializedPropertyAccessException")).single())
@@ -211,6 +210,9 @@ class JsIrBackendContext(
 
         override fun shouldGenerateHandlerParameterForDefaultBodyFun() = true
     }
+
+    val throwISEymbol = getFunctions(kotlinPackageFqn.child(Name.identifier("THROW_CCE"))).singleOrNull()?.let {
+        symbolTable.referenceSimpleFunction(it) } ?: irBuiltIns.throwIseSymbol
 
     val coroutineImplLabelProperty by lazy { ir.symbols.coroutineImpl.getPropertyDeclaration("state")!! }
     val coroutineImplResultSymbol by lazy { ir.symbols.coroutineImpl.getPropertyDeclaration("result")!! }

@@ -3,7 +3,7 @@
 /*
  KOTLIN DIAGNOSTICS SPEC TEST (POSITIVE)
 
- SECTION: when-expression
+ SECTIONS: when-expression
  PARAGRAPH: 7
  SENTENCE: [1] Type test condition: type checking operator followed by type.
  NUMBER: 4
@@ -11,28 +11,28 @@
  */
 
 // CASE DESCRIPTION: 'When' with direct and invert type checking operator in the one branch and other branch.
-fun case_1(value: _SealedClass): String = when (value) {
+fun case_1(value_1: _SealedClass): String = when (value_1) {
     is _SealedChild1, !is _SealedChild3 -> ""
     <!USELESS_IS_CHECK!>is _SealedChild3<!> -> ""
 }
 
 // CASE DESCRIPTION: 'When' with three invert type checking operator in the one branch.
-fun case_2(value: _SealedClass) = when (value) {
+fun case_2(value_1: _SealedClass) = when (value_1) {
     !is _SealedChild1, !is _SealedChild2, !is _SealedChild3 -> {}
 }
 
 // CASE DESCRIPTION: 'When' with direct (first) and invert (second) type checking operator on the some type in the one branch.
-fun case_3(value: _SealedClass): String = when (value) {
+fun case_3(value_1: _SealedClass): String = when (value_1) {
     is _SealedChild2, !is _SealedChild2 -> ""
 }
 
 // CASE DESCRIPTION: 'When' with direct (second) and invert (first) type checking operator in the one branch.
-fun case_4(value: _SealedClass): String = when (value) {
+fun case_4(value_1: _SealedClass): String = when (value_1) {
     !is _SealedChild1, <!USELESS_IS_CHECK!>is _SealedChild1<!> -> ""
 }
 
 // CASE DESCRIPTION: 'When' with direct and invert (nullable) type checking operator on the some type in the one branch.
-fun case_5(value: Any?): String = when (value) {
+fun case_5(value_1: Any?): String = when (value_1) {
     is _SealedChild3, !is _SealedChild3? -> ""
     else -> ""
 }
@@ -42,7 +42,7 @@ fun case_5(value: Any?): String = when (value) {
  UNEXPECTED BEHAVIOUR
  ISSUES: KT-22996
  */
-fun case_6(value: Any?): String = when (value) {
+fun case_6(value_1: Any?): String = when (value_1) {
     is Boolean?, !is _SealedChild3 -> "" // double nullable type check in the one branch
     <!USELESS_IS_CHECK!>is _SealedChild3<!> -> ""
     else -> ""
@@ -53,7 +53,7 @@ fun case_6(value: Any?): String = when (value) {
  UNEXPECTED BEHAVIOUR
  ISSUES: KT-22996
  */
-fun case_7(value: Any?): String = when (value) {
+fun case_7(value_1: Any?): String = when (value_1) {
     is Number?, null, !is _SealedChild3 -> "" // triple nullable type check in the one branch
     else -> ""
 }

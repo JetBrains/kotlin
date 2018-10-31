@@ -1,5 +1,3 @@
-// !LANGUAGE: +AllowContractsForCustomFunctions +UseCallsInPlaceEffect
-// !DIAGNOSTICS: -INVISIBLE_REFERENCE -INVISIBLE_MEMBER
 // !USE_EXPERIMENTAL: kotlin.contracts.ExperimentalContracts
 // !WITH_OBJECTS
 
@@ -7,7 +5,7 @@
  KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (NEGATIVE)
 
  SECTION: contracts
- CATEGORY: declarations, contractBuilder, effects, returns
+ CATEGORIES: declarations, contractBuilder, effects, returns
  NUMBER: 3
  DESCRIPTION: Using reference equality in implies.
  ISSUES: KT-26177

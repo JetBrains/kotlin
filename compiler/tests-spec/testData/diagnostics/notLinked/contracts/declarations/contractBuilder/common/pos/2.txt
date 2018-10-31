@@ -1,11 +1,8 @@
 package
 
-public fun _funWithAnyArg(/*0*/ value_1: kotlin.Any): kotlin.Int
-public fun _funWithoutArgs(): kotlin.Int
-internal inline fun case_1(/*0*/ block: () -> kotlin.Unit): kotlin.Unit
-public fun case_2(): kotlin.Unit
-public inline fun case_3(/*0*/ block: () -> kotlin.Unit): kotlin.Unit
-public inline fun case_4(/*0*/ block: () -> kotlin.Unit): kotlin.Unit
-public inline fun case_5(/*0*/ block: () -> kotlin.Unit): kotlin.Unit
-public inline fun case_6(/*0*/ block: () -> kotlin.Unit): kotlin.Unit
-public inline fun case_7(/*0*/ block: () -> kotlin.Unit): kotlin.Unit
+public inline fun case_1(/*0*/ block: () -> kotlin.Unit): kotlin.Unit
+    CallsInPlace(block, EXACTLY_ONCE)
+
+public inline fun case_2(/*0*/ block: () -> kotlin.Unit): kotlin.Unit
+    CallsInPlace(block, EXACTLY_ONCE)
+

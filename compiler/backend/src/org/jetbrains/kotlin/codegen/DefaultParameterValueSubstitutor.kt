@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtPureClassOrObject
 import org.jetbrains.kotlin.psi.KtPureElement
 import org.jetbrains.kotlin.resolve.calls.components.hasDefaultValue
+import org.jetbrains.kotlin.resolve.isInlineClass
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.annotations.findJvmOverloadsAnnotation
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.OtherOriginFromPure
@@ -139,7 +140,7 @@ class DefaultParameterValueSubstitutor(val state: GenerationState) {
             FunctionCodegen.getThrownExceptions(functionDescriptor, typeMapper)
         )
 
-        AnnotationCodegen.forMethod(mv, memberCodegen, typeMapper).genAnnotations(functionDescriptor, signature.returnType)
+        AnnotationCodegen.forMethod(mv, memberCodegen, state).genAnnotations(functionDescriptor, signature.returnType)
 
         if (state.classBuilderMode == ClassBuilderMode.KAPT3) {
             mv.visitAnnotation(ANNOTATION_TYPE_DESCRIPTOR_FOR_JVM_OVERLOADS_GENERATED_METHODS, false)
@@ -223,7 +224,7 @@ class DefaultParameterValueSubstitutor(val state: GenerationState) {
         v.aconst(null)
 
         val defaultMethod = typeMapper.mapDefaultMethod(delegateFunctionDescriptor, contextKind)
-        if (functionDescriptor is ConstructorDescriptor) {
+        if (functionDescriptor is ConstructorDescriptor && !functionDescriptor.containingDeclaration.isInlineClass()) {
             v.invokespecial(methodOwner.internalName, defaultMethod.name, defaultMethod.descriptor, false)
         } else {
             v.invokestatic(methodOwner.internalName, defaultMethod.name, defaultMethod.descriptor, false)
@@ -250,6 +251,7 @@ class DefaultParameterValueSubstitutor(val state: GenerationState) {
         if (classDescriptor.kind != ClassKind.CLASS) return false
 
         if (classOrObject.isLocal) return false
+        if (classDescriptor.isInline) return false
 
         if (CodegenBinding.canHaveOuter(state.bindingContext, classDescriptor)) return false
 

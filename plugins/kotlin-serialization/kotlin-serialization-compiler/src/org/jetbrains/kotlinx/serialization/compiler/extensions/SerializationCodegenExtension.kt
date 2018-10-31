@@ -23,7 +23,7 @@ import org.jetbrains.kotlinx.serialization.compiler.backend.jvm.SerializableCode
 import org.jetbrains.kotlinx.serialization.compiler.backend.jvm.SerializableCompanionCodegenImpl
 import org.jetbrains.kotlinx.serialization.compiler.backend.jvm.SerializerCodegenImpl
 
-class SerializationCodegenExtension : ExpressionCodegenExtension {
+open class SerializationCodegenExtension : ExpressionCodegenExtension {
     override fun generateClassSyntheticParts(codegen: ImplementationBodyCodegen) {
         SerialInfoCodegenImpl.generateSerialInfoImplBody(codegen)
         SerializableCodegenImpl.generateSerializableExtensions(codegen)

@@ -18,8 +18,8 @@
 
 package kotlin.script.experimental.host
 
-import kotlinx.coroutines.experimental.CoroutineScope
-import kotlinx.coroutines.experimental.runBlocking
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.runBlocking
 import kotlin.script.experimental.api.*
 
 /**

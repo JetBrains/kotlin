@@ -24,16 +24,16 @@ public final class CustomDelegate {
 
 private final class EffetivelyPrivate {
     private constructor EffetivelyPrivate(/*0*/ x0: kotlin.Int, /*1*/ x1: kotlin.Int, /*2*/ x2: kotlin.Int)
-    public final val x0: kotlin.Int
-    protected final val x1: kotlin.Int
-    internal final val x2: kotlin.Int
+    @get:Ann public final val x0: kotlin.Int
+    @get:Ann protected final val x1: kotlin.Int
+    @get:Ann internal final val x2: kotlin.Int
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
     private final class Nested {
         public constructor Nested()
-        public final val fofo: kotlin.Int = 0
+        @get:Ann public final val fofo: kotlin.Int = 0
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
@@ -42,17 +42,17 @@ private final class EffetivelyPrivate {
 
 public final class Foo {
     public constructor Foo(/*0*/ y0: kotlin.Int, /*1*/ vararg y1: kotlin.String /*kotlin.Array<out kotlin.String>*/)
-    private final val x1: kotlin.String = ""
-    private final var x2: kotlin.String
+    @get:Ann private final val x1: kotlin.String = ""
+    @set:Ann private final var x2: kotlin.String
     @setparam:Ann private final var x3: kotlin.String
     @setparam:Ann @setparam:AnnRepeat private final var x4: kotlin.String
-    internal final val x5: kotlin.String = ""
-    protected final val x6: kotlin.String = ""
-    private final val x7: kotlin.String = ""
-    private final var x8: kotlin.String
-    private final var x9: kotlin.String
-    private final val y0: kotlin.Int
-    private final val y1: kotlin.Array<out kotlin.String>
+    @get:Ann internal final val x5: kotlin.String = ""
+    @get:Ann protected final val x6: kotlin.String = ""
+    @get:Ann @get:AnnRepeat private final val x7: kotlin.String = ""
+    @get:Ann @set:Ann private final var x8: kotlin.String
+    @get:Ann @set:Ann private final var x9: kotlin.String
+    @get:Ann private final val y0: kotlin.Int
+    @get:Ann private final val y1: kotlin.Array<out kotlin.String>
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
@@ -60,7 +60,7 @@ public final class Foo {
 
 private final class Other {
     public constructor Other(/*0*/ @Ann param: kotlin.Int)
-    @delegate:Ann private final val delegate: kotlin.String
+    @delegate:Ann @get:Ann private final val delegate: kotlin.String
     @Ann @field:Ann private final val other: kotlin.String = ""
     private final val param: kotlin.Int
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
@@ -71,7 +71,7 @@ private final class Other {
 
 public final class PrivateToThis</*0*/ in I> {
     public constructor PrivateToThis</*0*/ in I>()
-    @setparam:Ann private/*private to this*/ final var x0: I
+    @get:Ann @set:Ann @setparam:Ann private/*private to this*/ final var x0: I
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
@@ -86,19 +86,19 @@ public final class PrivateToThis</*0*/ in I> {
 
 public final class Statics {
     public constructor Statics()
-    public final lateinit var y0: kotlin.String
-    private final lateinit var y1: kotlin.String
+    @get:Ann public final lateinit var y0: kotlin.String
+    @get:Ann private final lateinit var y1: kotlin.String
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
     public companion object Companion {
         private constructor Companion()
-        @field:kotlin.jvm.JvmField public final val x0: kotlin.String = ""
-        public const final val x1: kotlin.String = ""
-        @kotlin.jvm.JvmStatic public final val x2: kotlin.String = ""
-        @kotlin.jvm.JvmStatic private final val x3: kotlin.String = ""
-        @kotlin.jvm.JvmStatic private final val x4: kotlin.String = ""
+        @field:kotlin.jvm.JvmField @get:Ann public final val x0: kotlin.String = ""
+        @get:Ann public const final val x1: kotlin.String = ""
+        @kotlin.jvm.JvmStatic @get:Ann public final val x2: kotlin.String = ""
+        @kotlin.jvm.JvmStatic @get:Ann private final val x3: kotlin.String = ""
+        @kotlin.jvm.JvmStatic @get:Ann private final val x4: kotlin.String = ""
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
@@ -107,8 +107,8 @@ public final class Statics {
 
 public final class WithSource {
     public constructor WithSource()
-    @setparam:SourceAnn private final var x0: kotlin.String
-    private final val x1: kotlin.String = ""
+    @get:SourceAnn @set:SourceAnn @setparam:SourceAnn private final var x0: kotlin.String
+    @get:SourceAnn private final val x1: kotlin.String = ""
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

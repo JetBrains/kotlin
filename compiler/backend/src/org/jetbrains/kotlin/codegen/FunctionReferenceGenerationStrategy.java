@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.resolve.calls.util.CallMaker;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
+import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.org.objectweb.asm.Type;
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
 
@@ -51,6 +52,7 @@ public class FunctionReferenceGenerationStrategy extends FunctionGenerationStrat
     private final FunctionDescriptor referencedFunction;
     private final FunctionDescriptor functionDescriptor;
     private final Type receiverType; // non-null for bound references
+    private final KotlinType receiverKotlinType;
     private final StackValue receiverValue;
     private final boolean isInliningStrategy;
 
@@ -58,7 +60,7 @@ public class FunctionReferenceGenerationStrategy extends FunctionGenerationStrat
             @NotNull GenerationState state,
             @NotNull FunctionDescriptor functionDescriptor,
             @NotNull ResolvedCall<?> resolvedCall,
-            @Nullable Type receiverType,
+            @Nullable JvmKotlinType receiverJvmKotlinType,
             @Nullable StackValue receiverValue,
             boolean isInliningStrategy
     ) {
@@ -73,7 +75,8 @@ public class FunctionReferenceGenerationStrategy extends FunctionGenerationStrat
             this.referencedFunction = referencedFunction;
             this.functionDescriptor = functionDescriptor;
         }
-        this.receiverType = receiverType;
+        this.receiverType = receiverJvmKotlinType != null ? receiverJvmKotlinType.getType() : null;
+        this.receiverKotlinType = receiverJvmKotlinType != null ? receiverJvmKotlinType.getKotlinType() : null;
         this.receiverValue = receiverValue;
         this.isInliningStrategy = isInliningStrategy;
         assert receiverType != null || receiverValue == null
@@ -240,7 +243,7 @@ public class FunctionReferenceGenerationStrategy extends FunctionGenerationStrat
         if (receiverType != null) {
             ClassDescriptor classDescriptor = (ClassDescriptor) codegen.getContext().getParentContext().getContextDescriptor();
             Type asmType = codegen.getState().getTypeMapper().mapClass(classDescriptor);
-            return CallableReferenceUtilKt.capturedBoundReferenceReceiver(asmType, receiverType, isInliningStrategy);
+            return CallableReferenceUtilKt.capturedBoundReferenceReceiver(asmType, receiverType, receiverKotlinType, isInliningStrategy);
         }
 
         // 0 is this (the callable reference class), 1 is the invoke() method's first parameter

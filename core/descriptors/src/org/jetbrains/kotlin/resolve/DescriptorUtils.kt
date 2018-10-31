@@ -72,6 +72,11 @@ val ClassifierDescriptorWithTypeParameters.denotedClassDescriptor: ClassDescript
         else -> throw UnsupportedOperationException("Unexpected descriptor kind: $this")
     }
 
+// Used in https://plugins.jetbrains.com/plugin/10346-extsee
+@Deprecated("The one below with receiver type ClassifierDescriptor? should be used", level = DeprecationLevel.HIDDEN)
+val ClassifierDescriptorWithTypeParameters.classId: ClassId?
+    get() = (this as ClassifierDescriptor?).classId
+
 val ClassifierDescriptor?.classId: ClassId?
     get() = this?.containingDeclaration?.let { owner ->
         when (owner) {

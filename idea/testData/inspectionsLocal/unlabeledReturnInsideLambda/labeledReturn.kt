@@ -1,7 +1,9 @@
 // PROBLEM: none
-// WITH_RUNTIME
-fun test() {
-    listOf(1).forEach {
-        if (it == 10) <caret>return@forEach
+inline fun foo(f: () -> Unit) {}
+
+fun test(): Int {
+    foo {
+        <caret>return@test 0
     }
+    return 1
 }

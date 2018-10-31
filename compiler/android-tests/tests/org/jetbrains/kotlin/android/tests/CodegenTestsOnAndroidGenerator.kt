@@ -76,9 +76,9 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
     private fun generateAndSave() {
         println("Generating test files...")
         val testSourceFilePath =
-            pathManager.srcFolderInAndroidTmpFolder + "/" + testClassPackage.replace(".", "/") + "/" + testClassName + ".java"
+            pathManager.srcFolderInAndroidTmpFolder + "/androidTest/java/" + testClassPackage.replace(".", "/") + "/" + testClassName + ".java"
 
-        FileWriter(File(testSourceFilePath)).use {
+        FileWriter(File(testSourceFilePath).also { it.parentFile.mkdirs() }).use {
             val p = Printer(it)
             p.print(FileUtil.loadFile(File("license/LICENSE.txt")))
             p.println(
@@ -137,7 +137,11 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
 
             writeFiles(
                 rawFiles.map {
-                    CodegenTestFiles.create(it.first, it.second, environment.project).psiFile
+                    try {
+                        CodegenTestFiles.create(it.first, it.second, environment.project).psiFile
+                    } catch (e: Throwable) {
+                        throw RuntimeException("Error on processing ${it.first}:\n${it.second}", e)
+                    }
                 }, environment
             )
             Disposer.dispose(disposable)
@@ -195,13 +199,23 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
                     continue
                 }
 
-                val fullFileText = FileUtil.loadFile(file, true)
+                val fullFileText = FileUtil.loadFile(file, true).let {
+                    it.replace("COROUTINES_PACKAGE", "kotlin.coroutines")
+                }
+
+                if (fullFileText.contains("// WITH_COROUTINES")) {
+                    if (fullFileText.contains("kotlin.coroutines.experimental")) continue
+                    if (fullFileText.contains("// LANGUAGE_VERSION: 1.2")) continue
+                }
+
                 //TODO support JvmPackageName
                 if (fullFileText.contains("@file:JvmPackageName(")) continue
-                // TODO: Support coroutines tests
-                if (fullFileText.contains("// WITH_COROUTINES")) continue
                 // TODO: Support jvm assertions
                 if (fullFileText.contains("// KOTLIN_CONFIGURATION_FLAGS: ASSERTIONS_MODE=jvm")) continue
+                // TODO: support JVM 8 test with D8
+                if (fullFileText.contains("// JVM_TARGET")) continue
+                // TODO: support SKIP_JDK6 on new platforms
+                if (fullFileText.contains("// SKIP_JDK6")) continue
 
                 if (hasBoxMethod(fullFileText)) {
                     val testFiles = createTestFiles(file, fullFileText)
@@ -240,7 +254,9 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
                 override fun create(fileName: String, text: String, directives: Map<String, String>): CodegenTestCase.TestFile {
                     return CodegenTestCase.TestFile(fileName, text)
                 }
-            })
+            }, false,
+            "kotlin.coroutines"
+        )
 
 
     private fun generateTestName(fileName: String): String {

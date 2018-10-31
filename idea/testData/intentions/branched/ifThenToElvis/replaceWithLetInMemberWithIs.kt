@@ -1,4 +1,3 @@
-// IS_APPLICABLE: false
 // WITH_RUNTIME
 
 class Test {
@@ -6,9 +5,8 @@ class Test {
         return param1
     }
 
-    fun doAThingIfPresent(param1: String?) {
-        // In theory could propose transformation to 'let'
-        <caret>if (param1 is String) {
+    fun doAThingIfPresent(param1: Any?): String {
+        return <caret>if (param1 is String) {
             doAThing(param1)
         } else {
             ""

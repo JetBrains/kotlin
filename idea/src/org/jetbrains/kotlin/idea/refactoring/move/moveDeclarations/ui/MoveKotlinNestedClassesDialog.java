@@ -49,6 +49,7 @@ import org.jetbrains.kotlin.idea.refactoring.memberInfo.KotlinMemberInfo;
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.KotlinMemberSelectionPanel;
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.KotlinMemberSelectionTable;
 import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.*;
+import static org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.MoveKotlinDeclarationsProcessorKt.MoveSource;
 import org.jetbrains.kotlin.idea.refactoring.ui.KotlinTypeReferenceEditorComboWithBrowseButton;
 import org.jetbrains.kotlin.psi.*;
 
@@ -262,7 +263,15 @@ public class MoveKotlinNestedClassesDialog extends RefactoringDialog {
         KotlinMoveTarget target = new KotlinMoveTargetForExistingElement((KtClassOrObject) targetClass);
         MoveDeclarationsDelegate.NestedClass delegate = new MoveDeclarationsDelegate.NestedClass();
         MoveDeclarationsDescriptor descriptor = new MoveDeclarationsDescriptor(
-                myProject, elementsToMove, target, delegate, false, false, false, false, moveCallback, openInEditorCheckBox.isSelected()
+                myProject,
+                MoveSource(elementsToMove),
+                target,
+                delegate,
+                false,
+                false,
+                false,
+                moveCallback,
+                openInEditorCheckBox.isSelected()
         );
         invokeRefactoring(new MoveKotlinDeclarationsProcessor(descriptor, Mover.Default.INSTANCE));
     }

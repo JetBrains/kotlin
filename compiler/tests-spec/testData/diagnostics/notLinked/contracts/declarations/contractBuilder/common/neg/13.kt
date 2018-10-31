@@ -1,12 +1,11 @@
-// !LANGUAGE: +AllowContractsForCustomFunctions +UseCallsInPlaceEffect
-// !DIAGNOSTICS: -INVISIBLE_REFERENCE -INVISIBLE_MEMBER -UNUSED_VARIABLE -UNUSED_PARAMETER -UNREACHABLE_CODE -UNUSED_EXPRESSION
+// !DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER -UNREACHABLE_CODE -UNUSED_EXPRESSION
 // !USE_EXPERIMENTAL: kotlin.contracts.ExperimentalContracts
 
 /*
  KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (NEGATIVE)
 
  SECTION: contracts
- CATEGORY: declarations, contractBuilder, common
+ CATEGORIES: declarations, contractBuilder, common
  NUMBER: 13
  DESCRIPTION: Contract function with CallsInPlace effect with not allowed implies.
  ISSUES: KT-26409

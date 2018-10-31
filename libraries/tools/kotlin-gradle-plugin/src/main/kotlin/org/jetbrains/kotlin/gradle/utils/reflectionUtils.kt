@@ -33,14 +33,11 @@ internal fun Class<*>.getDeclaredFieldInHierarchy(name: String): Field? {
 internal inline fun <T> checkedReflection(block: () -> T, onReflectionException: (Exception) -> T): T {
     return try {
         block()
-    }
-    catch (e: InvocationTargetException) {
+    } catch (e: InvocationTargetException) {
         throw e.targetException
-    }
-    catch (e: ReflectiveOperationException) {
+    } catch (e: ReflectiveOperationException) {
         onReflectionException(e)
-    }
-    catch (e: IllegalArgumentException) {
+    } catch (e: IllegalArgumentException) {
         onReflectionException(e)
     }
 }

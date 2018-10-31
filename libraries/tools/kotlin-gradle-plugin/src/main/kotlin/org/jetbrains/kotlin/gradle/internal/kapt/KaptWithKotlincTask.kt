@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.internal
 
-import com.intellij.openapi.util.text.StringUtil
+import com.intellij.openapi.util.SystemInfo
 import org.gradle.api.GradleException
 import org.gradle.api.file.FileCollection
 import org.gradle.api.tasks.Classpath
@@ -30,7 +30,8 @@ open class KaptWithKotlincTask : KaptTask(), CompilerArgumentAwareWithInput<K2JV
     @get:Classpath
     @get:InputFiles
     @Suppress("unused")
-    internal val kotlinTaskPluginClasspaths get() = kotlinCompileTask.pluginClasspath
+    internal val kotlinTaskPluginClasspaths
+        get() = kotlinCompileTask.pluginClasspath
 
     @get:Classpath
     @get:InputFiles
@@ -80,7 +81,7 @@ open class KaptWithKotlincTask : KaptTask(), CompilerArgumentAwareWithInput<K2JV
     }
 
     private val isAtLeastJava9: Boolean
-        get() = StringUtil.compareVersionNumbers(getJavaRuntimeVersion(), "9") >= 0
+        get() = SystemInfo.isJavaVersionAtLeast(9, 0, 0)
 
     private fun getJavaRuntimeVersion(): String {
         val rtVersion = System.getProperty("java.runtime.version")

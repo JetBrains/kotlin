@@ -7,7 +7,7 @@ public fun kotlin.Any.foo(): kotlin.Unit
 
 public final class C {
     public constructor C()
-    public final var rwProp: kotlin.Int
+    @get:kotlin.jvm.JvmName(name = "get_rwProp") @set:kotlin.jvm.JvmName(name = "set_rwProp") public final var rwProp: kotlin.Int
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public final fun getRwProp(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

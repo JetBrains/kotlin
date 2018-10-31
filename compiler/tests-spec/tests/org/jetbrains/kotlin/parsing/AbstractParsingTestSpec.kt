@@ -24,6 +24,8 @@ abstract class AbstractParsingTestSpec : AbstractParsingTest() {
 
         super.doParsingTest(filePath, testValidator::testInfoFilter)
 
+        if (testValidator.testInfo.unexpectedBehavior!!) return
+
         try {
             testValidator.validateTestType(computedTestType = ParsingTestTypeValidator.computeTestType(myFile))
         } catch (e: SpecTestValidationException) {

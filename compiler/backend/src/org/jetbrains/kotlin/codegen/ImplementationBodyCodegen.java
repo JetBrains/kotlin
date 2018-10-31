@@ -228,7 +228,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         writeEnclosingMethod();
 
-        AnnotationCodegen.forClass(v.getVisitor(), this, typeMapper).genAnnotations(descriptor, null);
+        AnnotationCodegen.forClass(v.getVisitor(), this, state).genAnnotations(descriptor, null);
 
         generateEnumEntries();
     }
@@ -467,7 +467,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             return;
         }
 
-        Collection<SimpleFunctionDescriptor> functions = descriptor.getDefaultType().getMemberScope().getContributedFunctions(
+        Collection<? extends SimpleFunctionDescriptor> functions = descriptor.getDefaultType().getMemberScope().getContributedFunctions(
                 Name.identifier("toArray"), NoLookupLocation.FROM_BACKEND
         );
         boolean hasGenericToArray = false;
@@ -786,12 +786,15 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 state.getLanguageVersionSettings().supportsFeature(LanguageFeature.DeprecatedFieldForInvisibleCompanionObject);
         boolean properVisibilityForCompanionObjectInstanceField =
                 state.getLanguageVersionSettings().supportsFeature(LanguageFeature.ProperVisibilityForCompanionObjectInstanceField);
+        boolean hasPrivateOrProtectedProperVisibility = (properFieldVisibilityFlag & (ACC_PRIVATE | ACC_PROTECTED)) != 0;
+        boolean hasPackagePrivateProperVisibility = (properFieldVisibilityFlag & (ACC_PUBLIC | ACC_PRIVATE | ACC_PROTECTED)) == 0;
         boolean fieldShouldBeDeprecated =
                 deprecatedFieldForInvisibleCompanionObject &&
                 !properVisibilityForCompanionObjectInstanceField &&
-                (properFieldVisibilityFlag & (ACC_PRIVATE | ACC_PROTECTED)) != 0;
+                (hasPrivateOrProtectedProperVisibility || hasPackagePrivateProperVisibility ||
+                 isNonIntrinsicPrivateCompanionObjectInInterface(companionObjectDescriptor));
         boolean doNotGeneratePublic =
-                properVisibilityForCompanionObjectInstanceField && (properFieldVisibilityFlag & (ACC_PRIVATE | ACC_PROTECTED)) != 0;
+                properVisibilityForCompanionObjectInstanceField && hasPrivateOrProtectedProperVisibility;
         int fieldAccessFlags;
         if (doNotGeneratePublic) {
             fieldAccessFlags = ACC_STATIC | ACC_FINAL;
@@ -805,11 +808,16 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         if (fieldShouldBeDeprecated) {
             fieldAccessFlags |= ACC_DEPRECATED;
         }
+        if (properVisibilityForCompanionObjectInstanceField &&
+            JvmCodegenUtil.isCompanionObjectInInterfaceNotIntrinsic(companionObjectDescriptor) &&
+            Visibilities.isPrivate(companionObjectDescriptor.getVisibility())) {
+            fieldAccessFlags |= ACC_SYNTHETIC;
+        }
         StackValue.Field field = StackValue.singleton(companionObjectDescriptor, typeMapper);
         FieldVisitor fv = v.newField(JvmDeclarationOriginKt.OtherOrigin(companionObject == null ? myClass.getPsiOrParent() : companionObject),
                                      fieldAccessFlags, field.name, field.type.getDescriptor(), null, null);
         if (fieldShouldBeDeprecated) {
-            AnnotationCodegen.forField(fv, this, typeMapper).visitAnnotation("Ljava/lang/Deprecated;", true).visitEnd();
+            AnnotationCodegen.forField(fv, this, state).visitAnnotation("Ljava/lang/Deprecated;", true).visitEnd();
         }
     }
 
@@ -894,7 +902,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                                          type.getDescriptor(), typeMapper.mapFieldSignature(property.getType(), property),
                                          info.defaultValue);
 
-            AnnotationCodegen.forField(fv, this, typeMapper).genAnnotations(property, type);
+            AnnotationCodegen.forField(fv, this, state).genAnnotations(property, type);
 
             //This field are always static and final so if it has constant initializer don't do anything in clinit,
             //field would be initialized via default value in v.newField(...) - see JVM SPEC Ch.4
@@ -1055,7 +1063,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             int isDeprecated = KotlinBuiltIns.isDeprecated(descriptor) ? ACC_DEPRECATED : 0;
             FieldVisitor fv = v.newField(JvmDeclarationOriginKt.OtherOrigin(enumEntry, descriptor), ACC_PUBLIC | ACC_ENUM | ACC_STATIC | ACC_FINAL | isDeprecated,
                                          descriptor.getName().asString(), classAsmType.getDescriptor(), null, null);
-            AnnotationCodegen.forField(fv, this, typeMapper).genAnnotations(descriptor, null);
+            AnnotationCodegen.forField(fv, this, state).genAnnotations(descriptor, null);
         }
 
         initializeEnumConstants(enumEntries);

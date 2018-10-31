@@ -4,6 +4,7 @@
  */
 
 @file:Suppress("SIGNED_CONSTANT_CONVERTED_TO_UNSIGNED")
+
 package test.collections
 
 import test.assertStaticTypeIs
@@ -11,7 +12,6 @@ import test.assertTypeEquals
 import test.collections.behaviors.*
 import test.comparisons.STRING_CASE_INSENSITIVE_ORDER
 import kotlin.test.*
-import kotlin.comparisons.*
 import kotlin.random.Random
 
 fun <T> assertArrayNotSameButEquals(expected: Array<out T>, actual: Array<out T>, message: String = "") { assertTrue(expected !== actual && expected contentEquals actual, message) }

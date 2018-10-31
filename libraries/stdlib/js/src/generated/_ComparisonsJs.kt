@@ -11,9 +11,6 @@ package kotlin.comparisons
 //
 
 import kotlin.js.*
-import kotlin.*
-import kotlin.text.*
-import kotlin.comparisons.*
 
 /**
  * Returns the greater of two values.

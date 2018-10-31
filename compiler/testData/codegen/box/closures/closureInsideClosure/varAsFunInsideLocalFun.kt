@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 //KT-3276
 
 fun box(): String {

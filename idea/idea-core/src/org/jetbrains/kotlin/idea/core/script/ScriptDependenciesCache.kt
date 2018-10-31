@@ -24,7 +24,7 @@ import com.intellij.psi.PsiElementFinder
 import com.intellij.psi.PsiManager
 import com.intellij.psi.search.NonClasspathDirectoriesScope
 import com.intellij.util.containers.SLRUMap
-import kotlinx.coroutines.experimental.launch
+import kotlinx.coroutines.launch
 import org.jetbrains.kotlin.idea.core.util.EDT
 import org.jetbrains.kotlin.utils.addIfNotNull
 import java.io.File

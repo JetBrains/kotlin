@@ -38,13 +38,20 @@ kotlin {
     }
 
     sourceSets {
+        commonMain {
+            dependencies {
+                api 'org.jetbrains.kotlin:kotlin-stdlib-common'
+            }
+        }
         jvm6Main {
             dependencies {
+                api 'org.jetbrains.kotlin:kotlin-stdlib'
                 implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:0.23.4'
             }
         }
         nodeJsMain {
         	dependencies {
+                api 'org.jetbrains.kotlin:kotlin-stdlib-js'
         		implementation 'org.jetbrains.kotlinx:kotlinx-html-js:0.6.11'
         	}
         }

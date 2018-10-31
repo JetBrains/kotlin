@@ -22,7 +22,6 @@ import org.gradle.api.internal.FeaturePreviews
 import org.gradle.api.internal.file.FileResolver
 import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
-import org.gradle.internal.cleanup.BuildOutputCleanupRegistry
 import org.gradle.internal.reflect.Instantiator
 import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
 import org.jetbrains.kotlin.gradle.dsl.*
@@ -39,7 +38,7 @@ import kotlin.reflect.KClass
 
 abstract class KotlinBasePluginWrapper(
     protected val fileResolver: FileResolver
-): Plugin<Project> {
+) : Plugin<Project> {
     private val log = Logging.getLogger(this.javaClass)
     val kotlinPluginVersion = loadKotlinVersionFromResource(log)
 
@@ -93,9 +92,9 @@ abstract class KotlinBasePluginWrapper(
 open class KotlinPluginWrapper @Inject constructor(
     fileResolver: FileResolver,
     protected val registry: ToolingModelBuilderRegistry
-): KotlinBasePluginWrapper(fileResolver) {
+) : KotlinBasePluginWrapper(fileResolver) {
     override fun getPlugin(project: Project, kotlinGradleBuildServices: KotlinGradleBuildServices): Plugin<Project> =
-            KotlinPlugin(kotlinPluginVersion, registry)
+        KotlinPlugin(kotlinPluginVersion, registry)
 
     override val projectExtensionClass: KClass<out KotlinJvmProjectExtension>
         get() = KotlinJvmProjectExtension::class
@@ -104,9 +103,9 @@ open class KotlinPluginWrapper @Inject constructor(
 open class KotlinCommonPluginWrapper @Inject constructor(
     fileResolver: FileResolver,
     protected val registry: ToolingModelBuilderRegistry
-): KotlinBasePluginWrapper(fileResolver) {
+) : KotlinBasePluginWrapper(fileResolver) {
     override fun getPlugin(project: Project, kotlinGradleBuildServices: KotlinGradleBuildServices): Plugin<Project> =
-            KotlinCommonPlugin(kotlinPluginVersion, registry)
+        KotlinCommonPlugin(kotlinPluginVersion, registry)
 
     override val projectExtensionClass: KClass<out KotlinSingleJavaTargetExtension>
         get() = KotlinSingleJavaTargetExtension::class
@@ -115,7 +114,7 @@ open class KotlinCommonPluginWrapper @Inject constructor(
 open class KotlinAndroidPluginWrapper @Inject constructor(
     fileResolver: FileResolver,
     protected val registry: ToolingModelBuilderRegistry
-): KotlinBasePluginWrapper(fileResolver) {
+) : KotlinBasePluginWrapper(fileResolver) {
     override fun getPlugin(project: Project, kotlinGradleBuildServices: KotlinGradleBuildServices): Plugin<Project> =
         KotlinAndroidPlugin(kotlinPluginVersion)
 }
@@ -123,7 +122,7 @@ open class KotlinAndroidPluginWrapper @Inject constructor(
 open class Kotlin2JsPluginWrapper @Inject constructor(
     fileResolver: FileResolver,
     protected val registry: ToolingModelBuilderRegistry
-): KotlinBasePluginWrapper(fileResolver) {
+) : KotlinBasePluginWrapper(fileResolver) {
     override fun getPlugin(project: Project, kotlinGradleBuildServices: KotlinGradleBuildServices): Plugin<Project> =
         Kotlin2JsPlugin(kotlinPluginVersion, registry)
 
@@ -134,12 +133,11 @@ open class Kotlin2JsPluginWrapper @Inject constructor(
 open class KotlinMultiplatformPluginWrapper @Inject constructor(
     fileResolver: FileResolver,
     private val instantiator: Instantiator,
-    private val buildOutputCleanupRegistry: BuildOutputCleanupRegistry,
     private val featurePreviews: FeaturePreviews
-): KotlinBasePluginWrapper(fileResolver) {
+) : KotlinBasePluginWrapper(fileResolver) {
     override fun getPlugin(project: Project, kotlinGradleBuildServices: KotlinGradleBuildServices): Plugin<Project> =
         KotlinMultiplatformPlugin(
-            buildOutputCleanupRegistry, fileResolver,
+            fileResolver,
             instantiator, kotlinPluginVersion, featurePreviews
         )
 
@@ -154,8 +152,8 @@ fun Plugin<*>.loadKotlinVersionFromResource(log: Logger): String {
     log.kotlinDebug("Loading version information")
     val props = Properties()
     val propFileName = "project.properties"
-    val inputStream = javaClass.classLoader!!.getResourceAsStream(propFileName) ?:
-            throw FileNotFoundException("property file '$propFileName' not found in the classpath")
+    val inputStream = javaClass.classLoader!!.getResourceAsStream(propFileName)
+        ?: throw FileNotFoundException("property file '$propFileName' not found in the classpath")
 
     props.load(inputStream)
 

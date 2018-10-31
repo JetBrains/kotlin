@@ -20,8 +20,8 @@ import org.gradle.tooling.model.idea.IdeaModule
 import org.jetbrains.kotlin.gradle.KotlinMPPGradleModel
 import org.jetbrains.kotlin.gradle.KotlinMPPGradleModelBuilder
 import org.jetbrains.kotlin.gradle.KotlinPlatform
+import org.jetbrains.kotlin.idea.configuration.KotlinAndroidSourceSetData
 import org.jetbrains.kotlin.idea.configuration.KotlinMPPGradleProjectResolver
-import org.jetbrains.kotlin.idea.configuration.kotlinAndroidSourceSets
 import org.jetbrains.kotlin.idea.configuration.kotlinSourceSet
 import org.jetbrains.plugins.gradle.model.data.GradleSourceSetData
 import org.jetbrains.plugins.gradle.service.project.AbstractProjectResolverExtension
@@ -55,9 +55,8 @@ class KotlinAndroidMPPGradleProjectResolver : AbstractProjectResolverExtension()
             for (childNode in ExternalSystemApiUtil.getChildren(ideModule, GradleSourceSetData.KEY)) {
                 if (childNode.kotlinSourceSet == null) continue
                 val moduleName = childNode.data.internalName
-                val importedModule = object : ImportedModule(gradleModule) {
-                    override fun getName() = moduleName
-                }
+                val importedModule = ImportedModule(gradleModule)
+                importedModuleNameField.set(importedModule, moduleName)
                 ideModule.createChild(IMPORTED_MODULE, importedModule)
             }
         }
@@ -81,12 +80,19 @@ class KotlinAndroidMPPGradleProjectResolver : AbstractProjectResolverExtension()
 
         val mppModel = resolverCtx.getExtraProject(gradleModule, KotlinMPPGradleModel::class.java) ?: return
 
-        mainModuleData.kotlinAndroidSourceSets = mppModel
+        val androidSourceSets = mppModel
             .targets
             .asSequence()
             .flatMap { it.compilations.asSequence() }
             .filter { it.platform == KotlinPlatform.ANDROID }
             .map { KotlinMPPGradleProjectResolver.createSourceSetInfo(it, gradleModule, resolverCtx) }
             .toList()
+        mainModuleData.createChild(KotlinAndroidSourceSetData.KEY, KotlinAndroidSourceSetData(androidSourceSets))
+    }
+
+    companion object {
+        val importedModuleNameField by lazy {
+            ImportedModule::class.java.getDeclaredField("myName").apply { isAccessible = true }
+        }
     }
 }

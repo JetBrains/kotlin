@@ -13,12 +13,12 @@ import proguard.gradle.ProGuardTask
 buildscript {
     extra["defaultSnapshotVersion"] = "1.3-SNAPSHOT"
 
-    kotlinBootstrapFrom(BootstrapOption.TeamCity("1.3.20-dev-384", onlySuccessBootstrap = false))
+    kotlinBootstrapFrom(BootstrapOption.TeamCity("1.3.20-dev-564", onlySuccessBootstrap = false))
 
-    repositories {
+    repositories.withRedirector(project) {
         bootstrapKotlinRepo?.let(::maven)
         maven("https://plugins.gradle.org/m2")
-        }
+    }
 
     // a workaround for kotlin compiler classpath in kotlin project: sometimes gradle substitutes
     // kotlin-stdlib external dependency with local project :kotlin-stdlib in kotlinCompilerClasspath configuration.
@@ -35,7 +35,7 @@ buildscript {
 }
 
 plugins {
-    `build-scan`
+    `build-scan` version "1.15"
     idea
     id("jps-compatible")
 }
@@ -102,12 +102,31 @@ extra["ideaUltimatePluginDir"] = project.file(ideaUltimatePluginDir)
 extra["cidrPluginDir"] = project.file(cidrPluginDir)
 extra["isSonatypeRelease"] = false
 
+// Work-around necessary to avoid setting null javaHome. Will be removed after support of lazy task configuration
+val jdkNotFoundConst = "JDK NOT FOUND"
+
 extra["JDK_16"] = jdkPath("1.6")
 extra["JDK_17"] = jdkPath("1.7")
 extra["JDK_18"] = jdkPath("1.8")
 extra["JDK_9"] = jdkPath("9")
-extra["JDK_10"] = jdkPathIfFound("10")
-extra["JDK_11"] = jdkPathIfFound("11")
+extra["JDK_10"] = jdkPath("10")
+extra["JDK_11"] = jdkPath("11")
+
+gradle.taskGraph.beforeTask() {
+    checkJDK()
+}
+
+var jdkChecked: Boolean = false
+fun checkJDK() {
+    if (jdkChecked) {
+        return
+    }
+    var unpresentJdks = JdkMajorVersion.values().filter { it.isMandatory() }.map { it -> it.name }.filter { it == null || extra[it] == jdkNotFoundConst }.toList()
+    if (!unpresentJdks.isEmpty()) {
+        throw GradleException("Please set environment variable${if (unpresentJdks.size > 1) "s" else ""}: ${unpresentJdks.joinToString()} to point to corresponding JDK installation.")
+    }
+    jdkChecked = true
+}
 
 rootProject.apply {
     from(rootProject.file("versions.gradle.kts"))
@@ -123,8 +142,8 @@ extra["versions.junit"] = "4.12"
 extra["versions.javaslang"] = "2.0.6"
 extra["versions.ant"] = "1.8.2"
 extra["versions.android"] = "2.3.1"
-extra["versions.kotlinx-coroutines-core"] = "0.20"
-extra["versions.kotlinx-coroutines-jdk8"] = "0.20"
+extra["versions.kotlinx-coroutines-core"] = "0.26.1-eap13"
+extra["versions.kotlinx-coroutines-jdk8"] = "0.26.1-eap13"
 extra["versions.json"] = "20160807"
 extra["versions.native-platform"] = "0.14"
 extra["versions.ant-launcher"] = "1.8.0"
@@ -244,14 +263,21 @@ fun Task.listConfigurationContents(configName: String) {
     }
 }
 
+IdeVersionConfigurator.setCurrentIde(this)
+
 val defaultJvmTarget = "1.8"
-val defaultJavaHome = jdkPath(defaultJvmTarget!!)
+val defaultJavaHome = jdkPath(defaultJvmTarget)
 val ignoreTestFailures by extra(project.findProperty("ignoreTestFailures")?.toString()?.toBoolean() ?: project.hasProperty("teamcity"))
 
 allprojects {
 
     jvmTarget = defaultJvmTarget
-    javaHome = defaultJavaHome
+    if (defaultJavaHome != null) {
+        javaHome = defaultJavaHome
+    } else {
+        logger.error("Could not find default java home. Please set environment variable JDK_${defaultJavaHome} to point to JDK ${defaultJavaHome} installation.")
+    }
+
 
     // There are problems with common build dir:
     //  - some tests (in particular js and binary-compatibility-validator depend on the fixed (default) location
@@ -261,21 +287,20 @@ allprojects {
 
     val mirrorRepo: String? = findProperty("maven.repository.mirror")?.toString()
 
-    repositories {
+    repositories.withRedirector(project) {
         intellijSdkRepo(project)
         androidDxJarRepo(project)
         mirrorRepo?.let(::maven)
         bootstrapKotlinRepo?.let(::maven)
         jcenter()
-        }
+    }
 
     configureJvmProject(javaHome!!, jvmTarget!!)
 
     val commonCompilerArgs = listOfNotNull(
         "-Xallow-kotlin-package",
         "-Xread-deserialized-contracts",
-        "-Xprogressive".takeIf { hasProperty("test.progressive.mode") }, // TODO: change to "-progressive" after bootstrap
-        "-XXLanguage:-ReleaseCoroutines"
+        "-Xprogressive".takeIf { hasProperty("test.progressive.mode") } // TODO: change to "-progressive" after bootstrap
     )
 
     tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>> {
@@ -315,10 +340,10 @@ allprojects {
     task("listDistJar") { listConfigurationContents("distJar") }
 
     afterEvaluate {
-        logger.info("configuring project $name to compile to the target jvm version $jvmTarget using jdk: $javaHome")
         if (javaHome != defaultJavaHome || jvmTarget != defaultJvmTarget) {
+            logger.info("configuring project $name to compile to the target jvm version $jvmTarget using jdk: $javaHome")
             configureJvmProject(javaHome!!, jvmTarget!!)
-        }
+        } // else we will actually fail during the first task execution. We could not fail before configuration is done due to impact on import in IDE
 
         fun File.toProjectRootRelativePathOrSelf() = (relativeToOrNull(rootDir)?.takeUnless { it.startsWith("..") } ?: this).path
 
@@ -424,7 +449,8 @@ tasks {
         dependsOn("dist")
         dependsOn(":compiler:test",
                   ":compiler:container:test",
-                  ":compiler:tests-java8:test")
+                  ":compiler:tests-java8:test",
+                  ":compiler:tests-spec:remoteRunTests")
     }
 
     create("jsCompilerTest") {
@@ -644,14 +670,12 @@ configure<IdeaModel> {
     }
 }
 
-fun jdkPathIfFound(version: String): String? {
+fun jdkPath(version: String): String {
     val jdkName = "JDK_${version.replace(".", "")}"
     val jdkMajorVersion = JdkMajorVersion.valueOf(jdkName)
-    return configuredJdks.find { it.majorVersion == jdkMajorVersion }?.homeDir?.canonicalPath
+    return configuredJdks.find { it.majorVersion == jdkMajorVersion }?.homeDir?.canonicalPath?:jdkNotFoundConst
 }
 
-fun jdkPath(version: String): String = jdkPathIfFound(version)
-        ?: throw GradleException ("Please set environment variable JDK_${version.replace(".", "")} to point to JDK $version installation")
 
 fun Project.configureJvmProject(javaHome: String, javaVersion: String) {
     tasks.withType<JavaCompile> {

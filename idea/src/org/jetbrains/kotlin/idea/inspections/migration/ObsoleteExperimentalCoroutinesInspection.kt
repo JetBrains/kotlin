@@ -5,9 +5,15 @@
 
 package org.jetbrains.kotlin.idea.inspections.migration
 
+import com.intellij.analysis.AnalysisScope
 import com.intellij.codeInspection.*
+import com.intellij.codeInspection.actions.RunInspectionIntention
+import com.intellij.codeInspection.ex.InspectionManagerEx
+import com.intellij.codeInspection.ex.InspectionProfileImpl
+import com.intellij.codeInspection.ex.InspectionToolWrapper
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
+import com.intellij.profile.codeInspection.InspectionProjectProfileManager
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
@@ -22,6 +28,7 @@ import org.jetbrains.kotlin.idea.quickfix.migration.MigrationFix
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.references.resolveMainReferenceToDescriptors
+import org.jetbrains.kotlin.idea.stubindex.KotlinSourceFilterScope
 import org.jetbrains.kotlin.idea.stubindex.KotlinTopLevelFunctionFqnNameIndex
 import org.jetbrains.kotlin.idea.util.ImportInsertHelper
 import org.jetbrains.kotlin.name.FqName
@@ -82,6 +89,52 @@ private interface CoroutineMigrationProblem {
     fun report(holder: ProblemsHolder, isOnTheFly: Boolean, simpleNameExpression: KtSimpleNameExpression): Boolean
 }
 
+// Shortcut quick fix for running inspection in the project scope.
+// Should work like RunInspectionAction.runInspection.
+private class ObsoleteCoroutineUsageInWholeFix : LocalQuickFix {
+    override fun getFamilyName(): String = "Fix experimental coroutines usages in the project"
+
+    override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
+        val toolWrapper = InspectionProjectProfileManager.getInstance(project).currentProfile.getInspectionTool(
+            ObsoleteExperimentalCoroutinesInspection().shortName,
+            project
+        )!!
+
+        runToolInProject(project, toolWrapper)
+    }
+
+    override fun startInWriteAction(): Boolean = false
+
+    companion object {
+        val INSTANCE = ObsoleteCoroutineUsageInWholeFix()
+
+        private fun runToolInProject(project: Project, toolWrapper: InspectionToolWrapper<*, *>) {
+            val managerEx = InspectionManager.getInstance(project) as InspectionManagerEx
+            val kotlinSourcesScope: GlobalSearchScope = KotlinSourceFilterScope.projectSources(GlobalSearchScope.allScope(project), project)
+            val cleanupScope = AnalysisScope(kotlinSourcesScope, project)
+
+            val cleanupToolProfile = runInInspectionProfileInitMode { RunInspectionIntention.createProfile(toolWrapper, managerEx, null) }
+            managerEx.createNewGlobalContext(false)
+                .codeCleanup(cleanupScope, cleanupToolProfile, "Apply in the project: " + toolWrapper.displayName, null, false)
+        }
+
+        // Overcome failure during profile creating because of absent tools in tests
+        inline fun <T> runInInspectionProfileInitMode(runnable: () -> T): T {
+            return if (!ApplicationManager.getApplication().isUnitTestMode) {
+                runnable()
+            } else {
+                val old = InspectionProfileImpl.INIT_INSPECTIONS
+                try {
+                    InspectionProfileImpl.INIT_INSPECTIONS = true
+                    runnable()
+                } finally {
+                    InspectionProfileImpl.INIT_INSPECTIONS = old
+                }
+            }
+        }
+    }
+}
+
 /**
  * There should be a single fix class with the same family name, this way it can be executed for all found coroutines problems from UI.
  */
@@ -99,36 +152,48 @@ private class ObsoleteCoroutineUsageFix(val delegate: CoroutineFix) : LocalQuick
     }
 }
 
+private fun isTopLevelCallForReplace(simpleNameExpression: KtSimpleNameExpression, oldFqName: String, newFqName: String): Boolean {
+    if (simpleNameExpression.parent !is KtCallExpression) return false
+
+    val descriptor = simpleNameExpression.resolveMainReferenceToDescriptors().firstOrNull() ?: return false
+    val callableDescriptor = descriptor as? CallableDescriptor ?: return false
+
+    val resolvedToFqName = callableDescriptor.fqNameOrNull()?.asString() ?: return false
+    if (resolvedToFqName != oldFqName) return false
+
+    val project = simpleNameExpression.project
+
+    val isInIndex = KotlinTopLevelFunctionFqnNameIndex.getInstance()
+        .get(newFqName, project, GlobalSearchScope.allScope(project))
+        .isEmpty()
+
+    return !isInIndex
+}
+
+private fun fixesWithWholeProject(isOnTheFly: Boolean, fix: LocalQuickFix): Array<LocalQuickFix> {
+    if (!isOnTheFly) {
+        return arrayOf(fix)
+    }
+
+    return arrayOf(fix, ObsoleteCoroutineUsageInWholeFix.INSTANCE)
+}
+
 private class ObsoleteTopLevelFunctionUsage(
     val textMarker: String, val oldFqName: String, val newFqName: String
 ) : CoroutineMigrationProblem {
     override fun report(holder: ProblemsHolder, isOnTheFly: Boolean, simpleNameExpression: KtSimpleNameExpression): Boolean {
         if (simpleNameExpression.text != textMarker) return false
 
-        if (simpleNameExpression.parent !is KtCallExpression) return false
+        if (!isTopLevelCallForReplace(simpleNameExpression, oldFqName, newFqName)) {
+            return false
+        }
 
-        val descriptor = simpleNameExpression.resolveMainReferenceToDescriptors().firstOrNull() ?: return false
-        val callableDescriptor = descriptor as? CallableDescriptor ?: return false
-
-        val resolvedToFqName = callableDescriptor.fqNameOrNull()?.asString() ?: return false
-        if (resolvedToFqName != oldFqName) return false
-
-        val project = simpleNameExpression.project
-
-        KotlinTopLevelFunctionFqnNameIndex.getInstance()
-            .get(newFqName, project, GlobalSearchScope.allScope(project))
-            .asSequence()
-            .firstOrNull() ?: return false
-
-        val problemDescriptor = holder.manager.createProblemDescriptor(
-            simpleNameExpression,
+        holder.registerProblem(
             simpleNameExpression,
             "`$newFqName` is expected to be used since Kotlin 1.3",
             ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
-            isOnTheFly,
-            ObsoleteCoroutineUsageFix(fix)
+            *fixesWithWholeProject(isOnTheFly, ObsoleteCoroutineUsageFix(fix))
         )
-        holder.registerProblem(problemDescriptor)
 
         return true
     }
@@ -150,29 +215,22 @@ private class ObsoleteTopLevelFunctionUsage(
 }
 
 private class ObsoleteExtensionFunctionUsage(
-    val textMarker: String, val oldFqName: String, newFqName: String
+    val textMarker: String, val oldFqName: String, val newFqName: String
 ) : CoroutineMigrationProblem {
     override fun report(holder: ProblemsHolder, isOnTheFly: Boolean, simpleNameExpression: KtSimpleNameExpression): Boolean {
         if (simpleNameExpression.text != textMarker) return false
 
-        if (simpleNameExpression.parent !is KtCallExpression) return false
+        if (!isTopLevelCallForReplace(simpleNameExpression, oldFqName, newFqName)) {
+            return false
+        }
 
-        val descriptor = simpleNameExpression.resolveMainReferenceToDescriptors().firstOrNull() ?: return false
-        val callableDescriptor = descriptor as? CallableDescriptor ?: return false
-
-        val resolvedToFqName = callableDescriptor.fqNameOrNull()?.asString() ?: return false
-        if (resolvedToFqName != oldFqName) return false
-
-        val problemDescriptor = holder.manager.createProblemDescriptor(
-            simpleNameExpression,
+        holder.registerProblem(
             simpleNameExpression,
             "Methods are absent in coroutines class since 1.3",
             ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
-            isOnTheFly,
-            ObsoleteCoroutineUsageFix(fix)
+            *fixesWithWholeProject(isOnTheFly, ObsoleteCoroutineUsageFix(fix))
         )
 
-        holder.registerProblem(problemDescriptor)
         return true
     }
 
@@ -206,16 +264,13 @@ private class ExperimentalImportUsage : CoroutineMigrationProblem {
 
         findBinding(simpleNameExpression) ?: return false
 
-        val problemDescriptor = holder.manager.createProblemDescriptor(
-            reportExpression,
+        holder.registerProblem(
             reportExpression,
             "Experimental coroutines usages are obsolete since 1.3",
             ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
-            isOnTheFly,
-            ObsoleteCoroutineUsageFix(ObsoleteCoroutineImportFix)
+            *fixesWithWholeProject(isOnTheFly, ObsoleteCoroutineUsageFix(ObsoleteCoroutineImportFix))
         )
 
-        holder.registerProblem(problemDescriptor)
         return true
     }
 

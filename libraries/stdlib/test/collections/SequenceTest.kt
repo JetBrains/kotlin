@@ -6,7 +6,6 @@
 package test.collections
 
 import kotlin.test.*
-import kotlin.comparisons.*
 
 fun fibonacci(): Sequence<Int> {
     // fibonacci terms

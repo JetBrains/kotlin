@@ -1,12 +1,10 @@
-// !LANGUAGE: +AllowContractsForCustomFunctions +UseReturnsEffect
-// !DIAGNOSTICS: -INVISIBLE_REFERENCE -INVISIBLE_MEMBER
 // !USE_EXPERIMENTAL: kotlin.contracts.ExperimentalContracts
 
 /*
  KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (POSITIVE)
 
  SECTION: contracts
- CATEGORY: analysis, smartcasts
+ CATEGORIES: analysis, smartcasts
  NUMBER: 4
  DESCRIPTION: Smartcasts using Returns effects with simple type checking and not-null conditions on receiver inside contract.
  */
@@ -141,13 +139,14 @@ fun <T : String?> T.case_8_4(): Boolean? {
     return if (this@case_8_4 == null) null else true
 }
 
-fun <T : Number?> T.case_9_1(): Boolean? {
-    contract { returnsNotNull() implies (this@case_9_1 != null) }
-    return if (this@case_9_1 != null) true else null
+fun <T> T?.case_9_1(): Boolean {
+    contract { returns(true) implies (this@case_9_1 is Float) }
+    return this@case_9_1 is Float
 }
-fun <T : Number?> T.case_9_2(): Boolean? {
-    contract { returns(null) implies (this@case_9_2 != null) }
-    return if (this@case_9_2 != null) null else true
+
+fun <T> T?.case_9_2(): Boolean {
+    contract { returns(false) implies (this@case_9_2 is Double) }
+    return !(this@case_9_2 is Double)
 }
 
 // FILE: usages.kt
@@ -231,10 +230,12 @@ fun case_8(value_1: String?, value_2: String?) {
 }
 
 /*
+ CASE DESCRIPTION: check the infererence of the Number super type
  UNEXPECTED BEHAVIOUR
- KT-26382
+ ISSUES: KT-1982
  */
-fun case_9(value_1: Number?) {
-    if (value_1?.case_9_1() != null) println(<!DEBUG_INFO_SMARTCAST!>value_1<!>.toByte())
-    if (value_1?.case_9_2() != null) println(<!DEBUG_INFO_SMARTCAST!>value_1<!>.toByte())
+fun case_9(value_1: Any?) {
+    if (value_1.case_9_1() || !value_1.case_9_2()) {
+        println(value_1.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>toByte<!>())
+    }
 }

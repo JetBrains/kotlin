@@ -522,8 +522,8 @@ public class PropertyDescriptorImpl extends VariableDescriptorWithInitializerImp
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public void setOverriddenDescriptors(@NotNull Collection<? extends CallableMemberDescriptor> overriddenDescriptors) {
-        //noinspection unchecked
         this.overriddenProperties = (Collection<? extends PropertyDescriptor>) overriddenDescriptors;
     }
 

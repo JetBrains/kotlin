@@ -1,5 +1,4 @@
 // IGNORE_BACKEND: JVM_IR
-// IGNORE_BACKEND: JS_IR
 var recivier : Any? = "fail"
 var value2 : Any? = "fail2"
 

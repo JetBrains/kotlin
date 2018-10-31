@@ -7,8 +7,17 @@ package org.jetbrains.kotlin.gradle.plugin
 
 import org.gradle.api.Named
 import org.gradle.api.attributes.HasAttributes
+import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.FileCollection
-import org.gradle.api.tasks.SourceSetOutput
+import java.io.File
+
+interface KotlinCompilationOutput {
+    var resourcesDirProvider: Any
+    val resourcesDir: File
+    val classesDirs: ConfigurableFileCollection
+
+    val allOutputs: FileCollection
+}
 
 interface KotlinCompilation: Named, HasAttributes, HasKotlinDependencies {
     val target: KotlinTarget
@@ -21,7 +30,7 @@ interface KotlinCompilation: Named, HasAttributes, HasKotlinDependencies {
 
     var compileDependencyFiles: FileCollection
 
-    val output: SourceSetOutput
+    val output: KotlinCompilationOutput
 
     val platformType get() = target.platformType
 

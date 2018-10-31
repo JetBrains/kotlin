@@ -47,7 +47,12 @@ class AnnotationAndConstantLoaderImpl(
         val annotations = when (proto) {
             is ProtoBuf.Constructor -> proto.getExtension(protocol.constructorAnnotation)
             is ProtoBuf.Function -> proto.getExtension(protocol.functionAnnotation)
-            is ProtoBuf.Property -> proto.getExtension(protocol.propertyAnnotation)
+            is ProtoBuf.Property -> when (kind) {
+                AnnotatedCallableKind.PROPERTY -> proto.getExtension(protocol.propertyAnnotation)
+                AnnotatedCallableKind.PROPERTY_GETTER -> proto.getExtension(protocol.propertyGetterAnnotation)
+                AnnotatedCallableKind.PROPERTY_SETTER -> proto.getExtension(protocol.propertySetterAnnotation)
+                else -> error("Unsupported callable kind with property proto")
+            }
             else -> error("Unknown message: $proto")
         }.orEmpty()
         return annotations.map { annotationProto ->

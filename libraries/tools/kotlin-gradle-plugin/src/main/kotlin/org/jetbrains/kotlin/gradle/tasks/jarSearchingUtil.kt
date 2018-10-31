@@ -48,34 +48,34 @@ private val KOTLIN_SCRIPT_JVM = "kotlin-scripting-jvm"
 private val KOTLIN_REFLECT = "kotlin-reflect"
 
 internal fun findKotlinJvmCompilerClasspath(project: Project): List<File> =
-        findKotlinModuleJar(project, K2JVM_COMPILER_CLASS, KOTLIN_COMPILER_EMBEDDABLE).let {
-            if (it.isEmpty()) it
-            else it + findKotlinStdlibClasspath(project) + findKotlinScriptRuntimeClasspath(project) + findKotlinReflectClasspath(project)
-        }
+    findKotlinModuleJar(project, K2JVM_COMPILER_CLASS, KOTLIN_COMPILER_EMBEDDABLE).let {
+        if (it.isEmpty()) it
+        else it + findKotlinStdlibClasspath(project) + findKotlinScriptRuntimeClasspath(project) + findKotlinReflectClasspath(project)
+    }
 
 internal fun findKotlinJsCompilerClasspath(project: Project): List<File> =
-        findKotlinModuleJar(project, K2JS_COMPILER_CLASS, KOTLIN_COMPILER_EMBEDDABLE).let {
-            if (it.isEmpty()) it
-            else it + findKotlinStdlibClasspath(project) + findKotlinScriptRuntimeClasspath(project) + findKotlinReflectClasspath(project)
-        }
+    findKotlinModuleJar(project, K2JS_COMPILER_CLASS, KOTLIN_COMPILER_EMBEDDABLE).let {
+        if (it.isEmpty()) it
+        else it + findKotlinStdlibClasspath(project) + findKotlinScriptRuntimeClasspath(project) + findKotlinReflectClasspath(project)
+    }
 
 internal fun findKotlinMetadataCompilerClasspath(project: Project): List<File> =
-        findKotlinModuleJar(project, K2METADATA_COMPILER_CLASS, KOTLIN_COMPILER_EMBEDDABLE).let {
-            if (it.isEmpty()) it
-            else it + findKotlinStdlibClasspath(project) + findKotlinScriptRuntimeClasspath(project) + findKotlinReflectClasspath(project)
-        }
+    findKotlinModuleJar(project, K2METADATA_COMPILER_CLASS, KOTLIN_COMPILER_EMBEDDABLE).let {
+        if (it.isEmpty()) it
+        else it + findKotlinStdlibClasspath(project) + findKotlinScriptRuntimeClasspath(project) + findKotlinReflectClasspath(project)
+    }
 
 internal fun findKotlinJsDceClasspath(project: Project): List<File> =
-        findKotlinModuleJar(project, K2JS_DCE_CLASS, KOTLIN_COMPILER_EMBEDDABLE).let {
-            if (it.isEmpty()) it
-            else it + findKotlinStdlibClasspath(project) + findKotlinScriptRuntimeClasspath(project) + findKotlinReflectClasspath(project)
-        }
+    findKotlinModuleJar(project, K2JS_DCE_CLASS, KOTLIN_COMPILER_EMBEDDABLE).let {
+        if (it.isEmpty()) it
+        else it + findKotlinStdlibClasspath(project) + findKotlinScriptRuntimeClasspath(project) + findKotlinReflectClasspath(project)
+    }
 
 internal fun findKotlinStdlibClasspath(project: Project): List<File> =
-        findKotlinModuleJar(project, KOTLIN_STDLIB_EXPECTED_CLASS, KOTLIN_STDLIB)
+    findKotlinModuleJar(project, KOTLIN_STDLIB_EXPECTED_CLASS, KOTLIN_STDLIB)
 
 internal fun findKotlinScriptRuntimeClasspath(project: Project): List<File> =
-        findKotlinModuleJar(project, KOTLIN_SCRIPT_RUNTIME_EXPECTED_CLASS, KOTLIN_SCRIPT_RUNTIME)
+    findKotlinModuleJar(project, KOTLIN_SCRIPT_RUNTIME_EXPECTED_CLASS, KOTLIN_SCRIPT_RUNTIME)
 
 internal fun findKotlinScriptCommonClasspath(project: Project): List<File> =
     findKotlinModuleJar(project, KOTLIN_SCRIPT_ANNOTATION_EXPECTED_CLASS, KOTLIN_SCRIPT_COMMON)
@@ -84,7 +84,7 @@ internal fun findKotlinScriptJvmClasspath(project: Project): List<File> =
     findKotlinModuleJar(project, KOTLIN_JVM_SCRIPT_COMPILER_EXPECTED_CLASS, KOTLIN_SCRIPT_JVM)
 
 internal fun findKotlinReflectClasspath(project: Project): List<File> =
-        findKotlinModuleJar(project, KOTLIN_REFLECT_EXPECTED_CLASS, KOTLIN_REFLECT)
+    findKotlinModuleJar(project, KOTLIN_REFLECT_EXPECTED_CLASS, KOTLIN_REFLECT)
 
 internal fun findToolsJar(): File? {
     val javacUtilContextClass =
@@ -127,27 +127,27 @@ private fun findKotlinModuleJar(project: Project, expectedClassName: String, mod
     val pluginVersion = pluginVersionFromAppliedPlugin(project)
 
     val filesToCheck = sequenceOf(pluginVersion?.let { version -> getModuleFromClassLoader(moduleId, version) }) +
-                       Sequence { findPotentialModuleJars(project, moduleId).iterator() } //call the body only when queried
+            Sequence { findPotentialModuleJars(project, moduleId).iterator() } //call the body only when queried
     val entryToFind = expectedClassName.replace(".", "/") + ".class"
     return filesToCheck.filterNotNull().firstOrNull { it.hasEntry(entryToFind) }?.let { listOf(it) } ?: emptyList()
 }
 
 private fun pluginVersionFromAppliedPlugin(project: Project): String? =
-        project.plugins.filterIsInstance<KotlinBasePluginWrapper>().firstOrNull()?.kotlinPluginVersion
+    project.plugins.filterIsInstance<KotlinBasePluginWrapper>().firstOrNull()?.kotlinPluginVersion
 
 private fun getModuleFromClassLoader(moduleId: String, moduleVersion: String): File? {
     val urlClassLoader = KotlinPlugin::class.java.classLoader as? URLClassLoader ?: return null
     return urlClassLoader.urLs
-            .firstOrNull { it.toString().endsWith("$moduleId-$moduleVersion.jar") }
-            ?.let { File(it.toURI()) }
-            ?.takeIf(File::exists)
+        .firstOrNull { it.toString().endsWith("$moduleId-$moduleVersion.jar") }
+        ?.let { File(it.toURI()) }
+        ?.takeIf(File::exists)
 }
 
 private fun findPotentialModuleJars(project: Project, moduleId: String): Iterable<File> {
     val projects = generateSequence(project) { it.parent }
     val classpathConfigurations = projects
-            .map { it.buildscript.configurations.findByName(ScriptHandler.CLASSPATH_CONFIGURATION) }
-            .filterNotNull()
+        .map { it.buildscript.configurations.findByName(ScriptHandler.CLASSPATH_CONFIGURATION) }
+        .filterNotNull()
 
     val allFiles = HashSet<File>()
 
@@ -156,8 +156,7 @@ private fun findPotentialModuleJars(project: Project, moduleId: String): Iterabl
 
         if (compilerEmbeddable != null) {
             return compilerEmbeddable.moduleArtifacts.map { it.file }
-        }
-        else {
+        } else {
             allFiles.addAll(configuration.files)
         }
     }
@@ -167,7 +166,7 @@ private fun findPotentialModuleJars(project: Project, moduleId: String): Iterabl
 
 private fun findKotlinModuleDependency(configuration: Configuration, moduleId: String): ResolvedDependency? {
     fun Iterable<ResolvedDependency>.findDependency(group: String, name: String): ResolvedDependency? =
-            find { it.moduleGroup == group && it.moduleName == name }
+        find { it.moduleGroup == group && it.moduleName == name }
 
     val firstLevelModuleDependencies = configuration.resolvedConfiguration.firstLevelModuleDependencies
     val gradlePlugin = firstLevelModuleDependencies.findDependency(KOTLIN_MODULE_GROUP, KOTLIN_GRADLE_PLUGIN)
@@ -179,11 +178,9 @@ private fun File.hasEntry(entryToFind: String): Boolean {
 
     try {
         return zip.getEntry(entryToFind) != null
-    }
-    catch (e: Exception) {
+    } catch (e: Exception) {
         return false
-    }
-    finally {
+    } finally {
         zip.close()
     }
 }

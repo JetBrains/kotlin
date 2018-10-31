@@ -151,3 +151,15 @@ public fun jsIsType(obj: dynamic, jsClass: dynamic): Boolean {
 
     return false
 }
+
+fun isNumber(a: dynamic) = jsTypeOf(a) == "number" || a is Long
+
+fun isComparable(value: dynamic): Boolean {
+    var type = jsTypeOf(value)
+
+    return type == "string" ||
+           type == "boolean" ||
+           isNumber(value) ||
+           isInterface(value, Comparable::class.js)
+}
+

@@ -15,16 +15,19 @@ import org.jetbrains.kotlin.kapt3.base.util.KaptBaseError
 import org.jetbrains.kotlin.kapt3.base.util.isJava9OrLater
 import org.jetbrains.kotlin.kapt3.base.util.measureTimeMillisWithResult
 import java.io.File
+import javax.annotation.processing.ProcessingEnvironment
 import javax.annotation.processing.Processor
 import javax.annotation.processing.RoundEnvironment
+import javax.lang.model.SourceVersion
 import javax.lang.model.element.TypeElement
 import javax.tools.JavaFileObject
+import kotlin.system.measureTimeMillis
 import com.sun.tools.javac.util.List as JavacList
 
 fun KaptContext.doAnnotationProcessing(
-        javaSourceFiles: List<File>,
-        processors: List<Processor>,
-        additionalSources: JavacList<JCTree.JCCompilationUnit> = JavacList.nil()
+    javaSourceFiles: List<File>,
+    processors: List<Processor>,
+    additionalSources: JavacList<JCTree.JCCompilationUnit> = JavacList.nil()
 ) {
     val processingEnvironment = JavacProcessingEnvironment.instance(context)
     val wrappedProcessors = processors.map { ProcessorWrapper(it) }
@@ -34,8 +37,7 @@ fun KaptContext.doAnnotationProcessing(
         if (isJava9OrLater()) {
             val initProcessAnnotationsMethod = JavaCompiler::class.java.declaredMethods.single { it.name == "initProcessAnnotations" }
             initProcessAnnotationsMethod.invoke(compiler, wrappedProcessors, emptyList<JavaFileObject>(), emptyList<String>())
-        }
-        else {
+        } else {
             compiler.initProcessAnnotations(wrappedProcessors)
         }
 
@@ -44,14 +46,14 @@ fun KaptContext.doAnnotationProcessing(
         compilerAfterAP = try {
             javaLog.interceptorData.files = parsedJavaFiles.map { it.sourceFile to it }.toMap()
             val analyzedFiles = compiler.stopIfErrorOccurred(
-                    CompileState.PARSE, compiler.enterTrees(parsedJavaFiles + additionalSources))
+                CompileState.PARSE, compiler.enterTrees(parsedJavaFiles + additionalSources)
+            )
 
             if (isJava9OrLater()) {
                 val processAnnotationsMethod = compiler.javaClass.getMethod("processAnnotations", JavacList::class.java)
                 processAnnotationsMethod.invoke(compiler, analyzedFiles)
                 compiler
-            }
-            else {
+            } else {
                 compiler.processAnnotations(analyzedFiles)
             }
         } catch (e: AnnotationProcessingError) {
@@ -69,11 +71,7 @@ fun KaptContext.doAnnotationProcessing(
 
             logger.info("Annotation processor stats:")
             wrappedProcessors.forEach { processor ->
-                val rounds = processor.rounds
-                val roundMs = rounds.joinToString { "$it ms" }
-                val totalMs = rounds.sum()
-
-                logger.info("${processor.name}: ${rounds.size} rounds ($roundMs), $totalMs ms in total")
+                logger.info(processor.renderSpentTime())
             }
 
             filer.displayState()
@@ -89,28 +87,65 @@ fun KaptContext.doAnnotationProcessing(
 }
 
 private class ProcessorWrapper(private val delegate: Processor) : Processor by delegate {
-    val rounds = mutableListOf<Long>()
-
-    val name: String
-        get() = delegate.javaClass.simpleName
+    private var initTime: Long = 0
+    private val roundTime = mutableListOf<Long>()
 
     override fun process(annotations: MutableSet<out TypeElement>?, roundEnv: RoundEnvironment?): Boolean {
         val (time, result) = measureTimeMillisWithResult {
             delegate.process(annotations, roundEnv)
         }
 
-        rounds += time
+        roundTime += time
         return result
+    }
+
+    override fun init(processingEnv: ProcessingEnvironment?) {
+        initTime += measureTimeMillis {
+            delegate.init(processingEnv)
+        }
+    }
+
+    override fun getSupportedOptions(): MutableSet<String> {
+        val (time, result) = measureTimeMillisWithResult { delegate.supportedOptions }
+        initTime += time
+        return result
+    }
+
+    override fun getSupportedSourceVersion(): SourceVersion {
+        val (time, result) = measureTimeMillisWithResult { delegate.supportedSourceVersion }
+        initTime += time
+        return result
+    }
+
+    override fun getSupportedAnnotationTypes(): MutableSet<String> {
+        val (time, result) = measureTimeMillisWithResult { delegate.supportedAnnotationTypes }
+        initTime += time
+        return result
+    }
+
+    fun renderSpentTime(): String {
+        val processorName = delegate.javaClass.simpleName
+        val totalTime = initTime + roundTime.sum()
+
+        return "$processorName: " +
+                "total: $totalTime ms, " +
+                "init: $initTime ms, " +
+                "${roundTime.size} round(s): ${roundTime.joinToString { "$it ms" }}"
     }
 }
 
 fun KaptContext.parseJavaFiles(javaSourceFiles: List<File>): JavacList<JCTree.JCCompilationUnit> {
     val javaFileObjects = fileManager.getJavaFileObjectsFromFiles(javaSourceFiles)
 
-    return compiler.stopIfErrorOccurred(CompileState.PARSE,
-                    initModulesIfNeeded(
-                            compiler.stopIfErrorOccurred(CompileState.PARSE,
-                                    compiler.parseFiles(javaFileObjects))))
+    return compiler.stopIfErrorOccurred(
+        CompileState.PARSE,
+        initModulesIfNeeded(
+            compiler.stopIfErrorOccurred(
+                CompileState.PARSE,
+                compiler.parseFiles(javaFileObjects)
+            )
+        )
+    )
 }
 
 private fun KaptContext.initModulesIfNeeded(files: JavacList<JCTree.JCCompilationUnit>): JavacList<JCTree.JCCompilationUnit> {
@@ -119,8 +154,9 @@ private fun KaptContext.initModulesIfNeeded(files: JavacList<JCTree.JCCompilatio
 
         @Suppress("UNCHECKED_CAST")
         return compiler.stopIfErrorOccurred(
-                CompileState.PARSE,
-                initModulesMethod.invoke(compiler, files) as JavacList<JCTree.JCCompilationUnit>)
+            CompileState.PARSE,
+            initModulesMethod.invoke(compiler, files) as JavacList<JCTree.JCCompilationUnit>
+        )
     }
 
     return files

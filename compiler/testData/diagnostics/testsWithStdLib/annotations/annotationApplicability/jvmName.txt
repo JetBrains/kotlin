@@ -1,9 +1,9 @@
 package
 
 @kotlin.jvm.JvmName(name = "c") public val px: kotlin.Int = 1
-public val valx: kotlin.Int
-public var vardef: kotlin.Int
-public var varx: kotlin.Int
+@get:kotlin.jvm.JvmName(name = "e") public val valx: kotlin.Int
+@get:kotlin.jvm.JvmName(name = "h") @set:kotlin.jvm.JvmName(name = "i") public var vardef: kotlin.Int
+@get:kotlin.jvm.JvmName(name = "f") @set:kotlin.jvm.JvmName(name = "g") public var varx: kotlin.Int
 @kotlin.jvm.JvmName(name = "d") public val kotlin.Any.px: kotlin.Int
 @kotlin.jvm.JvmName(name = "a") public fun foo(): kotlin.Unit
 public fun foo1(): kotlin.Unit
@@ -23,8 +23,8 @@ public abstract class AB {
     @kotlin.jvm.JvmName(name = "primary") public constructor C()
     @kotlin.jvm.JvmName(name = "ctr") public constructor C(/*0*/ x: kotlin.Int)
     @kotlin.jvm.JvmName(name = "c") public final val px: kotlin.Int = 1
-    public final val valx: kotlin.Int
-    public final var varx: kotlin.Int
+    @get:kotlin.jvm.JvmName(name = "e") public final val valx: kotlin.Int
+    @get:kotlin.jvm.JvmName(name = "f") @set:kotlin.jvm.JvmName(name = "g") public final var varx: kotlin.Int
     @kotlin.jvm.JvmName(name = "d") public final val kotlin.Any.px: kotlin.Int
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     @kotlin.jvm.JvmName(name = "a") public final fun foo(): kotlin.Unit
@@ -45,7 +45,7 @@ public final class D : AB {
 }
 
 public interface Intf {
-    public abstract var foo: kotlin.Int
+    @get:kotlin.jvm.JvmName(name = "getBar") @set:kotlin.jvm.JvmName(name = "setBar") public abstract var foo: kotlin.Int
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

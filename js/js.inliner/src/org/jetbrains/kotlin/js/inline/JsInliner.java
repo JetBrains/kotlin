@@ -10,7 +10,8 @@ import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.backend.common.CommonCoroutineCodegenUtilKt;
-import org.jetbrains.kotlin.config.*;
+import org.jetbrains.kotlin.config.CommonConfigurationKeysKt;
+import org.jetbrains.kotlin.config.LanguageVersionSettings;
 import org.jetbrains.kotlin.descriptors.CallableDescriptor;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
@@ -24,7 +25,6 @@ import org.jetbrains.kotlin.js.inline.context.FunctionContext;
 import org.jetbrains.kotlin.js.inline.context.InliningContext;
 import org.jetbrains.kotlin.js.inline.context.NamingContext;
 import org.jetbrains.kotlin.js.inline.util.*;
-import org.jetbrains.kotlin.js.translate.expression.InlineMetadata;
 import org.jetbrains.kotlin.resolve.inline.InlineStrategy;
 
 import java.util.*;
@@ -303,7 +303,9 @@ public class JsInliner extends JsVisitorWithContextImpl {
     @Override
     public void endVisit(@NotNull JsInvocation x, @NotNull JsContext ctx) {
         if (hasToBeInlined(x)) {
-            inline(x, ctx);
+            @SuppressWarnings("unchecked")
+            JsContext<JsNode> context = (JsContext) ctx;
+            inline(x, context);
         }
 
         JsCallInfo lastCallInfo = null;
@@ -335,7 +337,7 @@ public class JsInliner extends JsVisitorWithContextImpl {
         super.doAcceptStatementList(statements);
     }
 
-    private void inline(@NotNull JsInvocation call, @NotNull JsContext context) {
+    private void inline(@NotNull JsInvocation call, @NotNull JsContext<JsNode> context) {
         DeclarationDescriptor callDescriptor = MetadataProperties.getDescriptor(call);
         if (isSuspendWithCurrentContinuation(callDescriptor,
                                              CommonConfigurationKeysKt.getLanguageVersionSettings(config.getConfiguration()))) {
@@ -403,7 +405,7 @@ public class JsInliner extends JsVisitorWithContextImpl {
     ) {
         // Apparently we should avoid this trick when we implement fair support for crossinline
         Function<JsWrapperKey, Map<JsName, JsNameRef>> replacementGen = k -> {
-            JsContext ctx = k.context;
+            JsContext<JsStatement> ctx = k.context;
 
             Map<JsName, JsNameRef> newReplacements = new HashMap<>();
 
@@ -499,9 +501,11 @@ public class JsInliner extends JsVisitorWithContextImpl {
                 replaceIfNecessary(x, ctx);
             }
 
-            private void replaceIfNecessary(@NotNull JsExpression expression, @NotNull JsContext context) {
+            private void replaceIfNecessary(@NotNull JsExpression expression, @NotNull JsContext ctx) {
                 JsName alias = MetadataProperties.getLocalAlias(expression);
                 if (alias != null) {
+                    @SuppressWarnings("unchecked")
+                    JsContext<JsNode> context = (JsContext) ctx;
                     context.replaceMe(alias.makeRef());
                 }
             }
@@ -519,7 +523,7 @@ public class JsInliner extends JsVisitorWithContextImpl {
         );
     }
 
-    private void inlineSuspendWithCurrentContinuation(@NotNull JsInvocation call, @NotNull JsContext context) {
+    private void inlineSuspendWithCurrentContinuation(@NotNull JsInvocation call, @NotNull JsContext<JsNode> context) {
         JsExpression lambda = call.getArguments().get(0);
         JsExpression continuationArg = call.getArguments().get(call.getArguments().size() - 1);
 
@@ -632,10 +636,10 @@ public class JsInliner extends JsVisitorWithContextImpl {
     }
 
     static class JsWrapperKey {
-        final JsContext context;
+        final JsContext<JsStatement> context;
         private final JsFunction function;
 
-        public JsWrapperKey(@NotNull JsContext context, @NotNull JsFunction function) {
+        public JsWrapperKey(@NotNull JsContext<JsStatement> context, @NotNull JsFunction function) {
             this.context = context;
             this.function = function;
         }

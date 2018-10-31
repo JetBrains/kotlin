@@ -5,7 +5,6 @@
 package kotlin.coroutines
 
 import java.util.concurrent.atomic.AtomicReferenceFieldUpdater
-import kotlin.*
 import kotlin.coroutines.intrinsics.CoroutineSingletons.*
 import kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED
 import kotlin.coroutines.jvm.internal.CoroutineStackFrame

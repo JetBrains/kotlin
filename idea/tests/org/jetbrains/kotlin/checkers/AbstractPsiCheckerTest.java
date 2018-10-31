@@ -25,6 +25,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
 import org.jetbrains.kotlin.idea.highlighter.NameHighlighter;
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase;
+import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCaseKt;
 import org.jetbrains.kotlin.psi.KtDeclaration;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.psi.KtTreeVisitorVoid;
@@ -71,8 +72,9 @@ public abstract class AbstractPsiCheckerTest extends KotlinLightCodeInsightFixtu
     }
 
     protected long checkHighlighting(boolean checkWarnings, boolean checkInfos, boolean checkWeakWarnings) {
+        PsiFile file = getFile();
+        boolean configured = KotlinLightCodeInsightFixtureTestCaseKt.configureCompilerOptions(file.getText(), getProject(), getModule());
         try {
-            PsiFile file = getFile();
             if (file instanceof KtFile && ((KtFile) file).isScript() && myFixture instanceof JavaCodeInsightTestFixtureImpl) {
                 ((JavaCodeInsightTestFixtureImpl) myFixture).canChangeDocumentDuringHighlighting(true);
             }
@@ -80,6 +82,10 @@ public abstract class AbstractPsiCheckerTest extends KotlinLightCodeInsightFixtu
         }
         catch (FileComparisonFailure e) {
             throw new FileComparisonFailure(e.getMessage(), e.getExpected(), e.getActual(), new File(e.getFilePath()).getAbsolutePath());
+        } finally {
+            if (configured) {
+                KotlinLightCodeInsightFixtureTestCaseKt.rollbackCompilerOptions(getProject(), getModule());
+            }
         }
     }
 

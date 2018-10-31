@@ -5,8 +5,6 @@
 
 package kotlin
 
-import kotlin.js.*
-
 // TODO: Ignore FunctionN interfaces
 
 public interface Function0<out R> : Function<R> {
@@ -44,3 +42,21 @@ public inline fun floatArrayOf(vararg a: Float) = a
 public inline fun doubleArrayOf(vararg a: Double) = a
 
 public inline fun longArrayOf(vararg a: Long) = a
+
+
+@PublishedApi
+internal fun throwUninitializedPropertyAccessException(name: String): Nothing =
+    throw UninitializedPropertyAccessException("lateinit property $name has not been initialized")
+
+internal fun noWhenBranchMatchedException(): Nothing = throw NoWhenBranchMatchedException()
+
+
+fun THROW_ISE() {
+    throw IllegalStateException()
+}
+fun THROW_CCE() {
+    throw ClassCastException()
+}
+fun THROW_NPE() {
+    throw NullPointerException()
+}

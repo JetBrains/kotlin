@@ -366,7 +366,7 @@ class FloatMathTest {
         assertAlmostEquals(0.0F, sin(PI))
 
         assertEquals(0.0F, asin(0.0F))
-        assertAlmostEquals(PI / 2, asin(1.0F))
+        assertAlmostEquals(PI / 2, asin(1.0F), 0.0000002)
 
         assertEquals(1.0F, cos(0.0F))
         assertAlmostEquals(-1.0F, cos(PI))

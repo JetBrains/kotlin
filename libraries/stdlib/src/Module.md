@@ -34,13 +34,28 @@ Helper functions for creating [Comparator][java.util.Comparator] instances.
 
 Utility functions for concurrent programming.
 
+# Package kotlin.contracts
+
+Experimental DSL for declaring custom function contracts.
+
+# Package kotlin.coroutines
+
+Basic primitives for creating and suspending coroutines: [Continuation][kotlin.coroutines.Continuation], 
+[CoroutineContext][kotlin.coroutines.CoroutineContext] interfaces, coroutine creation and suspension top-level functions.
+
+# Package kotlin.coroutines.intrinsics
+
+Low-level building blocks for libraries that provide coroutine-based APIs.
+
 # Package kotlin.coroutines.experimental
 
-Library support for coroutines, including support for lazy sequences.
+Deprecated support for experimental coroutines, provided for compatibility.
+It's recommended to migrate to `kotlin.coroutines` API.
 
 # Package kotlin.coroutines.experimental.intrinsics
 
-Low-level building blocks for libraries that provide coroutine-based APIs.
+Deprecated support for experimental coroutines, provided for compatibility.
+It's recommended to migrate to `kotlin.coroutines.intrinsics` API.
 
 # Package kotlin.dom
 
@@ -72,6 +87,10 @@ The functions include trigonometric, hyperbolic, exponentiation and power, logar
 
 Standard implementations of delegates for [delegated properties](/docs/reference/delegated-properties.html)
 and helper functions for implementing custom delegates.
+
+# Package kotlin.random
+
+Provides the default generator of pseudo-random values, the repeatable generator, and a base class for other RNG implementations.
 
 # Package kotlin.ranges
 

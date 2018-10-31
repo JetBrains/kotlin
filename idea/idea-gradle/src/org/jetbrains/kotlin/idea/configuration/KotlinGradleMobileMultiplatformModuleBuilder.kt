@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.idea.configuration
 
-import com.intellij.openapi.module.Module
 import com.intellij.openapi.vfs.VirtualFile
+import org.jetbrains.kotlin.idea.configuration.xcode.XcodeProjectConfigurator
 import org.jetbrains.plugins.gradle.frameworkSupport.BuildScriptDataBuilder
 import java.io.BufferedWriter
 
@@ -47,13 +47,13 @@ class KotlinGradleMobileMultiplatformModuleBuilder :
         addRepositoriesDefinition("jcenter()")
     }
 
-    override fun createProjectSkeleton(module: Module, rootDir: VirtualFile) {
+    override fun createProjectSkeleton(rootDir: VirtualFile) {
         val appDir = rootDir.findChild(androidAppName)!!
         val src = appDir.createChildDirectory(this, "src")
 
         val commonMain = src.createKotlinSampleFileWriter(commonSourceName)
         val commonTest = src.createKotlinSampleFileWriter(commonTestName, fileName = "SampleTests.kt")
-        val androidMain = src.createKotlinSampleFileWriter(mainSourceName, languageName = "java")
+        val androidMain = src.createKotlinSampleFileWriter(mainSourceName, jvmTargetName, languageName = "java")
         val androidTest = src.createKotlinSampleFileWriter(mainTestName, languageName = "java", fileName = "SampleTestsAndroid.kt")
 
         val androidLocalProperties = rootDir.createChildData(this, "local.properties").bufferedWriter()
@@ -66,7 +66,7 @@ class KotlinGradleMobileMultiplatformModuleBuilder :
         val androidStyles = androidValues.createChildData(this, "styles.xml").bufferedWriter()
         val androidActivityMain = androidLayout.createChildData(this, "activity_main.xml").bufferedWriter()
 
-        val nativeMain = src.createKotlinSampleFileWriter(nativeSourceName)
+        val nativeMain = src.createKotlinSampleFileWriter(nativeSourceName, nativeTargetName)
         val nativeTest = src.createKotlinSampleFileWriter(nativeTestName, fileName = "SampleTestsIOS.kt")
 
         try {
@@ -83,6 +83,10 @@ class KotlinGradleMobileMultiplatformModuleBuilder :
                 }
 
                 fun hello(): String = "Hello from ${"$"}{Platform.name}"
+
+                class Proxy {
+                    fun proxyHello() = hello()
+                }
 
                 fun main(args: Array<String>) {
                     println(hello())
@@ -142,6 +146,11 @@ class KotlinGradleMobileMultiplatformModuleBuilder :
                     @Test
                     fun testMe() {
                         assertTrue(Sample().checkMe() > 0)
+                    }
+
+                    @Test
+                    fun testProxy() {
+                        assertTrue(Proxy().proxyHello().isNotEmpty())
                     }
                 }
             """.trimIndent()
@@ -262,6 +271,8 @@ sdk.dir=PleaseSpecifyAndroidSdkPathHere
                 androidLocalProperties, androidManifest, androidStrings, androidStyles, androidActivityMain
             ).forEach(BufferedWriter::close)
         }
+
+        XcodeProjectConfigurator().createSkeleton(rootDir)
     }
 
 
@@ -273,12 +284,12 @@ sdk.dir=PleaseSpecifyAndroidSdkPathHere
             android {
                 compileSdkVersion 28
                 defaultConfig {
-                    applicationId "org.jetbrains.kotlin.mpp_app_android"
+                    applicationId 'org.jetbrains.kotlin.mpp_app_android'
                     minSdkVersion 15
                     targetSdkVersion 28
                     versionCode 1
-                    versionName "1.0"
-                    testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+                    versionName '1.0'
+                    testInstrumentationRunner 'android.support.test.runner.AndroidJUnitRunner'
                 }
                 buildTypes {
                     release {
@@ -296,10 +307,12 @@ sdk.dir=PleaseSpecifyAndroidSdkPathHere
 
             kotlin {
                 targets {
-                    // For ARM, preset should be changed to presets.android_arm32 or presets.android_arm64
                     fromPreset(presets.android, '$jvmTargetName')
-                    // For ARM, preset should be changed to presets.iosArm32 or presets.iosArm64
-                    fromPreset(presets.iosX64, '$nativeTargetName')
+                    // This preset is for iPhone emulator
+                    // Switch here to presets.iosArm64 (or iosArm32) to build library for iPhone device
+                    fromPreset(presets.iosX64, '$nativeTargetName') {
+                        compilations.main.outputKinds 'FRAMEWORK'
+                    }
                 }
                 sourceSets {
                     $commonSourceName {
@@ -315,7 +328,7 @@ sdk.dir=PleaseSpecifyAndroidSdkPathHere
                     }
                     $jvmSourceName {
                         dependencies {
-                            implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
+                            implementation 'org.jetbrains.kotlin:kotlin-stdlib'
                         }
                     }
                     $jvmTestName {
@@ -331,19 +344,19 @@ sdk.dir=PleaseSpecifyAndroidSdkPathHere
                 }
             }
 
-            // Please set configuration.build.dir in gradle.properties before running this task.
-            // In this directory, you will get a native framework capable to be included into Xсode (с) project.
-            // Alternatively, you can directly run this task from Xсode (с).
-            // Example of Xcode (c) project can be found here:
-            // https://github.com/JetBrains/kotlin-mpp-example/tree/master/iosApp
+            // This task attaches native framework built from ios module to Xcode project
+            // (see iosApp directory). Don't run this task directly,
+            // Xcode runs this task itself during its build process.
+            // Before opening the project from iosApp directory in Xcode,
+            // make sure all Gradle infrastructure exists (gradle.wrapper, gradlew).
             task copyFramework {
-                def buildType = project.findProperty("kotlin.build.type") ?: "DEBUG"
-                def target = project.findProperty("kotlin.target") ?: "ios"
-                dependsOn "link${"$"}{buildType.toLowerCase().capitalize()}Framework${"$"}{target.capitalize()}"
+                def buildType = project.findProperty('kotlin.build.type') ?: 'DEBUG'
+                def target = project.findProperty('kotlin.target') ?: 'ios'
+                dependsOn kotlin.targets."${"$"}target".compilations.main.linkTaskName('FRAMEWORK', buildType)
 
                 doLast {
-                    def srcFile = kotlin.targets."${"$"}target".compilations.main.getBinary("FRAMEWORK", buildType)
-                    def targetDir = getProperty("configuration.build.dir")
+                    def srcFile = kotlin.targets."${"$"}target".compilations.main.getBinary('FRAMEWORK', buildType)
+                    def targetDir = getProperty('configuration.build.dir')
                     copy {
                         from srcFile.parent
                         into targetDir

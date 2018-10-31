@@ -47,8 +47,8 @@ class KaptLineMappingCollector(private val kaptContext: KaptContextForStubGenera
         register(field, clazz.name + "#" + field.name)
     }
 
-    fun registerSignature(decl: JCTree.JCMethodDecl, method: MethodNode) {
-        signatureInfo[decl.getJavacSignature()] = method.name + method.desc
+    fun registerSignature(declaration: JCTree.JCMethodDecl, method: MethodNode) {
+        signatureInfo[declaration.getJavacSignature()] = method.name + method.desc
     }
 
     private fun register(asmNode: Any, fqName: String) {

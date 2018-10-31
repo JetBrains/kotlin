@@ -3,13 +3,14 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
+package org.jetbrains.kotlin.kapt.base.test
+
+import junit.framework.TestCase
 import org.jetbrains.kotlin.kapt3.base.KaptContext
 import org.jetbrains.kotlin.kapt3.base.KaptPaths
 import org.jetbrains.kotlin.kapt3.base.doAnnotationProcessing
 import org.jetbrains.kotlin.kapt3.base.util.KaptBaseError
 import org.jetbrains.kotlin.kapt3.base.util.WriterBackedKaptLogger
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
 import org.junit.Test
 import java.io.File
 import java.nio.file.Files
@@ -18,7 +19,7 @@ import javax.annotation.processing.Processor
 import javax.annotation.processing.RoundEnvironment
 import javax.lang.model.element.TypeElement
 
-class JavaKaptContextTest {
+class JavaKaptContextTest : TestCase() {
     companion object {
         private val TEST_DATA_DIR = File("plugins/kapt3/kapt3-base/testData/runner")
 
@@ -78,9 +79,10 @@ class JavaKaptContextTest {
         }
     }
 
-    @Test(expected = KaptBaseError::class)
+    @Test
     fun testException() {
         val exceptionMessage = "Here we are!"
+        var triggered = false
 
         val processor = object : AbstractProcessor() {
             override fun process(annotations: Set<TypeElement>, roundEnv: RoundEnvironment): Boolean {
@@ -95,17 +97,23 @@ class JavaKaptContextTest {
         } catch (e: KaptBaseError) {
             assertEquals(KaptBaseError.Kind.EXCEPTION, e.kind)
             assertEquals("Here we are!", e.cause!!.message)
-            throw e
+            triggered = true
         }
+
+        assertTrue(triggered)
     }
 
-    @Test(expected = KaptBaseError::class)
+    @Test
     fun testParsingError() {
+        var triggered = false
+
         try {
             doAnnotationProcessing(File(TEST_DATA_DIR, "ParseError.java"), simpleProcessor(), TEST_DATA_DIR)
         } catch (e: KaptBaseError) {
             assertEquals(KaptBaseError.Kind.ERROR_RAISED, e.kind)
-            throw e
+            triggered = true
         }
+
+        assertTrue(triggered)
     }
 }

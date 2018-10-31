@@ -13,7 +13,6 @@ object Numeric : TemplateGroupBase() {
         }
     }
 
-    // TODO: use just numericPrimitives
     private val numericPrimitivesDefaultOrder = PrimitiveType.defaultPrimitives intersect PrimitiveType.numericPrimitives
 
     val f_sum = fn("sum()") {

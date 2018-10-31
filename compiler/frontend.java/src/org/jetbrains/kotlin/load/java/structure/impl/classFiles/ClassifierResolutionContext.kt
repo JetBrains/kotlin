@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.load.java.structure.impl.classFiles
 
-import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.JavaClassifier
 import org.jetbrains.kotlin.load.java.structure.JavaTypeParameter
@@ -78,45 +77,17 @@ class ClassifierResolutionContext private constructor(
         }
 
         if ('$' in internalName) {
-            val innerClassInfo = innerClasses.getOrNull(internalName) ?: return mapInternalNameToClassIdNaively(internalName)
-            if (Name.isValidIdentifier(innerClassInfo.simpleName)) {
+            val innerClassInfo = innerClasses.getOrNull(internalName)
+            if (innerClassInfo != null && Name.isValidIdentifier(innerClassInfo.simpleName)) {
                 val outerClassId = mapInternalNameToClassId(innerClassInfo.outerInternalName)
                 return outerClassId.createNestedClassId(Name.identifier(innerClassInfo.simpleName))
             }
         }
 
-        return createClassIdForTopLevel(internalName)
+        return ClassId.topLevel(FqName(internalName.replace('/', '.')))
     }
 
-    // See com.intellij.psi.impl.compiled.StubBuildingVisitor.GUESSING_MAPPER
-    private fun mapInternalNameToClassIdNaively(internalName: String): ClassId {
-        val splitPoints = ContainerUtil.newSmartList<Int>()
-        for (p in 0..internalName.length - 1) {
-            val c = internalName[p]
-            if (c == '$' && p > 0 && internalName[p - 1] != '/' && p < internalName.length - 1 && internalName[p + 1] != '$') {
-                splitPoints.add(p)
-            }
-        }
-
-        if (splitPoints.isNotEmpty()) {
-            val substrings = (listOf(-1) + splitPoints).zip(splitPoints + internalName.length).map { (from, to) ->
-                internalName.substring(from + 1, to)
-            }
-
-            val outerFqName = FqName(substrings[0].replace('/', '.'))
-            val packageFqName = outerFqName.parent()
-            val relativeName =
-                FqName(outerFqName.shortName().asString() + "." + substrings.subList(1, substrings.size).joinToString("."))
-
-            return ClassId(packageFqName, relativeName, false)
-        }
-
-        return createClassIdForTopLevel(internalName)
-    }
-
-    private fun createClassIdForTopLevel(internalName: String) = ClassId.topLevel(FqName(internalName.replace('/', '.')))
-
-    internal fun resolveByInternalName(c: String) = resolveClass(mapInternalNameToClassId(c))
+    internal fun resolveByInternalName(c: String): Result = resolveClass(mapInternalNameToClassId(c))
 
     internal fun mapDescToClassId(desc: String): ClassId = mapInternalNameToClassId(Type.getType(desc).internalName)
 }
