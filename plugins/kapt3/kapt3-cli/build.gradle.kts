@@ -5,11 +5,15 @@ plugins {
 
 dependencies {
     compile(project(":compiler:cli"))
+
+    testCompile(projectTests(":compiler:tests-common"))
+    testCompile(projectTests(":compiler"))
+    testCompile(commonDep("junit:junit"))
 }
 
 sourceSets {
     "main" { projectDefault() }
-    "test" { }
+    "test" { projectDefault() }
 }
 
 testsJar {}

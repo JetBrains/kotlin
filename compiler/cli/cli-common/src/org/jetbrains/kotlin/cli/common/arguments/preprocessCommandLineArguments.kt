@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.cli.common.arguments
 
+import org.jetbrains.annotations.TestOnly
 import java.io.File
 import java.io.FileNotFoundException
 import java.io.IOException
@@ -34,6 +35,12 @@ fun preprocessCommandLineArguments(args: List<String>, errors: ArgumentParseErro
             listOf(arg)
         }
     }
+
+@TestOnly
+fun readArgumentsFromArgFile(content: String): List<String> {
+    val reader = content.reader()
+    return generateSequence { reader.parseNextArgument() }.toList()
+}
 
 private fun File.expand(errors: ArgumentParseErrors): List<String> {
     return try {

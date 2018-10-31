@@ -1,0 +1,3 @@
+-cp %KOTLIN_STDLIB%
+-d output/ap
+ap/Processor.kt

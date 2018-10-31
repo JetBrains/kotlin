@@ -1,0 +1,50 @@
+# copy
+../correctErrorTypesOn/ap
+ap
+
+# copy
+../correctErrorTypesOn/Test.kt
+Test.kt
+
+# mkdir
+output/ap
+output/stubs
+output/classes
+output/javaClasses
+output/sources
+
+# kotlinc
+-cp %KOTLIN_STDLIB%
+-d output/ap
+ap/Processor.kt
+
+# kapt
+-Kapt-stubs=output/stubs
+-Kapt-classes=output/classes
+-Kapt-sources=output/sources
+-Kapt-classpath=output/ap
+-Kapt-processors=apt.SampleApt
+-d output/classes
+-cp output/ap:%KOTLIN_STDLIB%
+Test.kt
+
+# javac
+-cp output/ap
+-d output/javaClasses
+-proc:none
+output/sources/generated/Property.java
+
+# java
+-cp output/classes:output/javaClasses:output/ap:%KOTLIN_STDLIB%
+test.Test
+
+# after
+Return code: 1
+
+error: error: NonExistentClass type occurred
+Test.kt:4:8: error: unresolved reference: generated
+import generated.Property
+       ^
+Test.kt:8:28: error: unresolved reference: Property
+    lateinit var property: Property
+                           ^
