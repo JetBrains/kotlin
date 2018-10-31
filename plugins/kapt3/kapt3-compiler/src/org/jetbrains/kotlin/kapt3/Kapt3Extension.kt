@@ -109,7 +109,16 @@ class ClasspathBasedKapt3Extension(
             return super.analysisCompleted(project, module, bindingTrace, files)
         } finally {
             processorLoader?.close()
+            clearJavacZipCaches()
         }
+    }
+
+    private fun clearJavacZipCaches() {
+        try {
+            val zipFileIndexCacheClass = Class.forName("com.sun.tools.javac.file.ZipFileIndexCache")
+            val zipFileIndexCacheInstance = zipFileIndexCacheClass.getMethod("getSharedInstance").invoke(null)
+            zipFileIndexCacheClass.getMethod("clearCache").invoke(zipFileIndexCacheInstance)
+        } catch (e: Throwable) {}
     }
 }
 
