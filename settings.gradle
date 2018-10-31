@@ -196,7 +196,8 @@ include ":kotlin-build-common",
         ":kotlinx-serialization-compiler-plugin",
         ":kotlinx-serialization-ide-plugin",
         ":kotlin-serialization",
-        ":kotlin-serialization-unshaded"
+        ":kotlin-serialization-unshaded",
+        ":kotlin-idl2k"
 
 def isTeamcityBuild = hasProperty("teamcity") || System.getenv("TEAMCITY_VERSION") != null
 def includeUltimate = hasProperty("intellijUltimateEnabled") && intellijUltimateEnabled != 'false'
@@ -317,3 +318,4 @@ project(':kotlinx-serialization-compiler-plugin').projectDir = file("$rootDir/pl
 project(':kotlinx-serialization-ide-plugin').projectDir = file("$rootDir/plugins/kotlin-serialization/kotlin-serialization-ide")
 project(':kotlin-serialization').projectDir = file("$rootDir/libraries/tools/kotlin-serialization")
 project(':kotlin-serialization-unshaded').projectDir = file("$rootDir/libraries/tools/kotlin-serialization-unshaded")
+project(':kotlin-idl2k').projectDir = file("$rootDir/libraries/tools/idl2k")
