@@ -981,13 +981,6 @@ KBoolean Kotlin_String_regionMatches(KString thiz, KInt thizOffset,
   return true;
 }
 
-KBoolean Kotlin_CharSequence_regionMatches(KString thiz, KInt thizOffset,
-                                           KString other, KInt otherOffset,
-                                           KInt length, KBoolean ignoreCase) {
-  return Kotlin_String_regionMatches(thiz, thizOffset, other, otherOffset,
-                                     length, ignoreCase);
-}
-
 KBoolean Kotlin_Char_isDefined(KChar ch) {
   // TODO: fixme!
   RuntimeAssert(false, "Kotlin_Char_isDefined() is not implemented");

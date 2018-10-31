@@ -139,11 +139,15 @@ public fun String.endsWith(suffix: String, ignoreCase: Boolean = false): Boolean
  * @param otherOffset the start offset in the other char sequence of the substring to compare.
  * @param length the length of the substring to compare.
  */
-@SymbolName("Kotlin_CharSequence_regionMatches")
-external public actual fun CharSequence.regionMatches(
+public actual fun CharSequence.regionMatches(
         thisOffset: Int, other: CharSequence, otherOffset: Int, length: Int,
-        ignoreCase: Boolean): Boolean
-
+        ignoreCase: Boolean): Boolean {
+    return if (this is String && other is String) {
+        this.regionMatches(thisOffset, other, otherOffset, length, ignoreCase)
+    } else {
+        regionMatchesImpl(thisOffset, other, otherOffset, length, ignoreCase)
+    }
+}
 
 /**
  * Returns `true` if the specified range in this string is equal to the specified range in another string.
@@ -174,7 +178,7 @@ external public actual inline fun String.toLowerCase(): String
  * Returns a new character array containing the characters from this string.
  */
 @SymbolName("Kotlin_String_toCharArray")
-external public fun String.toCharArray() : CharArray
+external public fun String.toCharArray(): CharArray
 
 /**
  * Returns a copy of this string having its first letter uppercased, or the original string,
@@ -192,7 +196,7 @@ public actual fun String.capitalize(): String {
  * @sample samples.text.Strings.repeat
  */
 public actual fun CharSequence.repeat(n: Int): String {
-    require (n >= 0) { "Count 'n' must be non-negative, but was $n." }
+    require(n >= 0) { "Count 'n' must be non-negative, but was $n." }
 
     return when (n) {
         0 -> ""
@@ -224,7 +228,7 @@ public actual fun String(chars: CharArray): String = fromCharArray(chars, 0, cha
 public actual fun String(chars: CharArray, offset: Int, length: Int): String = fromCharArray(chars, offset, length)
 
 @SymbolName("Kotlin_String_compareToIgnoreCase")
-external fun compareToIgnoreCase(thiz:String, other:String):Int
+external fun compareToIgnoreCase(thiz: String, other: String): Int
 
 actual fun String.compareTo(other: String, ignoreCase: Boolean): Int {
     return if (!ignoreCase) this.compareTo(other)
@@ -234,4 +238,4 @@ actual fun String.compareTo(other: String, ignoreCase: Boolean): Int {
 private val STRING_CASE_INSENSITIVE_ORDER = Comparator<String> { a, b -> a.compareTo(b, ignoreCase = true) }
 
 actual val String.Companion.CASE_INSENSITIVE_ORDER: Comparator<String>
-  get() = STRING_CASE_INSENSITIVE_ORDER
+    get() = STRING_CASE_INSENSITIVE_ORDER
