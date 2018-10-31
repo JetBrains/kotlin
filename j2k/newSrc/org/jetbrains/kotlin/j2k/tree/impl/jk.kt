@@ -28,11 +28,9 @@ import org.jetbrains.kotlin.j2k.tree.JKLiteralExpression.LiteralType
 import org.jetbrains.kotlin.j2k.tree.JKLiteralExpression.LiteralType.BOOLEAN
 import org.jetbrains.kotlin.j2k.tree.JKLiteralExpression.LiteralType.NULL
 import org.jetbrains.kotlin.j2k.tree.visitors.JKVisitor
-import org.jetbrains.kotlin.lexer.KtSingleValueToken
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtNamedFunction
-import org.jetbrains.kotlin.types.expressions.OperatorConventions
 
 class JKFileImpl : JKFile, JKBranchElementBase() {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitFile(this, data)
@@ -163,13 +161,6 @@ class JKBinaryExpressionImpl(
     }
 }
 
-infix fun JKType?.equalsIgnoreMutability(other: JKType?) =
-    when {
-        (this is JKClassTypeImpl && other is JKClassTypeImpl) ->
-            this.classReference == other.classReference && this.parameters == other.parameters
-        else -> TODO("No comparation for $this and $other")
-    }
-
 
 
 class JKPrefixExpressionImpl(expression: JKExpression, override var operator: JKOperator) : JKPrefixExpression, JKBranchElementBase() {
@@ -291,7 +282,7 @@ class JKBooleanLiteral(val value: Boolean) : JKLiteralExpression, JKElementBase(
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitLiteralExpression(this, data)
 }
 
-fun JKLiteralExpression.LiteralType.toJkType(symbolProvider: JKSymbolProvider): JKType  {
+fun JKLiteralExpression.LiteralType.toJkType(symbolProvider: JKSymbolProvider): JKType {
     fun defaultTypeByName(name: String) =
         JKClassTypeImpl(
             symbolProvider.provideDirectSymbol(

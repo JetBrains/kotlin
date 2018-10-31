@@ -33,6 +33,7 @@ interface JKUniverseSymbol<T: JKTreeElement> : JKSymbol {
 
 interface JKClassSymbol : JKNamedSymbol
 
+
 interface JKMethodSymbol : JKNamedSymbol {
     override val fqName: String
     val receiverType: JKType?
