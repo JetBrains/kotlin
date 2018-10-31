@@ -406,7 +406,7 @@ class MethodInliner(
 
             private val isInliningLambda = nodeRemapper.isInsideInliningLambda
 
-            override fun visitAnnotableParameterCount(parameterCount: Int, visible: Boolean) {
+            /*override*/ fun visitAnnotableParameterCount(parameterCount: Int, visible: Boolean) {
 
             }
 
