@@ -41,7 +41,7 @@ abstract class FileAttributeProperty<T : Any>(name: String, version: Int, privat
     )
 
     private fun computeValue(file: VirtualFile): T? {
-        if (file !is VirtualFileWithId) return null
+        if (file !is VirtualFileWithId || !file.isValid) return null
 
         return attribute.readAttribute(file)?.use { input ->
             input.readNullable {
@@ -51,7 +51,7 @@ abstract class FileAttributeProperty<T : Any>(name: String, version: Int, privat
     }
 
     operator fun setValue(file: VirtualFile, property: KProperty<*>, newValue: T?) {
-        if (file !is VirtualFileWithId) return
+        if (file !is VirtualFileWithId || !file.isValid) return
 
         attribute.writeAttribute(file).use { output ->
             output.writeNullable(newValue) { value ->
