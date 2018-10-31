@@ -887,8 +887,15 @@ fun runTest() {
         return result
     }
 
+    static def excludeList = [
+            "build/external/compiler/codegen/box/functions/functionExpression/functionExpressionWithThisReference.kt", // KT-26973
+            "build/external/compiler/codegen/box/inlineClasses/kt27096_innerClass.kt" // KT-27665
+    ]
+
     boolean isEnabledForNativeBackend(String fileName) {
         def text = project.file(fileName).text
+
+        if (excludeList.contains(fileName)) return false
 
         def languageSettings = findLinesWithPrefixesRemoved(text, '// !LANGUAGE: ')
         if (!languageSettings.empty) {
