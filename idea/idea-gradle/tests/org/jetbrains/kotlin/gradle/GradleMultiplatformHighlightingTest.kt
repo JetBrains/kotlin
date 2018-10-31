@@ -27,17 +27,22 @@ class GradleMultiplatformHighlightingTest : GradleImportingTestCase() {
     @TargetVersions("4.7+")
     @Test
     fun testFirst() {
+        doTest()
+    }
+
+    private fun doTest() {
         val files = importProjectFromTestData()
         val project = myTestFixture.project
 
         checkFiles(files, project) { editor ->
-            daemonAnalyzerTestCase.checkHighlighting(editor, project)
+            daemonAnalyzerTestCase.checkHighlighting(project, editor)
         }
-
     }
 
     private val daemonAnalyzerTestCase = object : DaemonAnalyzerTestCase() {
-        fun checkHighlighting(editor: Editor, project: Project) {
+        override fun doTestLineMarkers() = true
+
+        fun checkHighlighting(project: Project, editor: Editor) {
             myProject = project
             runInEdtAndWait {
                 checkHighlighting(editor, /* checkWarnings = */ true, /* checkInfos = */ false)
@@ -47,32 +52,48 @@ class GradleMultiplatformHighlightingTest : GradleImportingTestCase() {
 
     private fun checkFiles(files: List<VirtualFile>, project: Project, check: (Editor) -> Unit) {
         var atLeastOneFile = false
-        files.filter { it.extension == "kt" }.forEach { file ->
-            val editor = configureEditorByExistingFile(file, project)
+        val kotlinFiles = files.filter { it.extension == "kt" }
+        val content = mutableMapOf<VirtualFile, String>()
+        kotlinFiles.forEach { file ->
+            val (_, textWithTags) = configureEditorByExistingFile(file, project)
             atLeastOneFile = true
-            check(editor)
+            content[file] = textWithTags
         }
         Assert.assertTrue(atLeastOneFile)
+        kotlinFiles.forEach { file ->
+            val (editor, _) = configureEditorByExistingFile(file, project, content[file])
+            check(editor)
+        }
     }
 
-    private fun configureEditorByExistingFile(virtualFile: VirtualFile, project: Project): Editor {
-        var result: Editor? = null
+    private fun configureEditorByExistingFile(
+        virtualFile: VirtualFile,
+        project: Project,
+        contentToSet: String? = null
+    ): Pair<Editor, String> {
+        var result: Pair<Editor, String>? = null
         runInEdtAndWait {
             val editor = createEditor(virtualFile, project)
             val document = editor.document
             val editorInfo = EditorInfo(document.text)
-            val newFileText = editorInfo.newFileText
+            val textWithTags = editorInfo.newFileText
             ApplicationManager.getApplication().runWriteAction {
-                if (document.text != newFileText) {
-                    document.setText(newFileText)
+                val newText = contentToSet ?: textWithTags.withoutTags()
+                if (document.text != newText) {
+                    document.setText(newText)
                 }
 
                 editorInfo.applyToEditor(editor)
             }
             PsiDocumentManager.getInstance(project).commitAllDocuments()
-            result = editor
+            result = editor to textWithTags
         }
         return result!!
+    }
+
+    private fun String.withoutTags(): String {
+        val regex = "</?(error|warning|lineMarker).*?>".toRegex()
+        return regex.replace(this, "")
     }
 
     private fun createEditor(file: VirtualFile, project: Project): Editor {
