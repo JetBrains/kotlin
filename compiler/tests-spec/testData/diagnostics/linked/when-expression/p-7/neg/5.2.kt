@@ -1,14 +1,14 @@
 /*
- KOTLIN DIAGNOSTICS SPEC TEST (NEGATIVE)
-
- SECTIONS: when-expression
- PARAGRAPH: 7
- SENTENCE: [5] Any other expression.
- NUMBER: 2
- DESCRIPTION: 'When' with bound value and not allowed break and continue expression (without labels) in 'when condition'.
+ * KOTLIN DIAGNOSTICS SPEC TEST (NEGATIVE)
+ *
+ * SECTIONS: when-expression
+ * PARAGRAPH: 7
+ * SENTENCE: [5] Any other expression.
+ * NUMBER: 2
+ * DESCRIPTION: 'When' with bound value and not allowed break and continue expression (without labels) in 'when condition'.
  */
 
-// CASE DESCRIPTION: 'When' with break expression (without label).
+// TESTCASE NUMBER: 1
 fun case_1(value_1: Int): String {
     while (true) {
         when (value_1) {
@@ -19,7 +19,7 @@ fun case_1(value_1: Int): String {
     return ""
 }
 
-// CASE DESCRIPTION: 'When' with continue expression (without label).
+// TESTCASE NUMBER: 2
 fun case_2(value_1: Int): String {
     while (true) {
         when (value_1) {

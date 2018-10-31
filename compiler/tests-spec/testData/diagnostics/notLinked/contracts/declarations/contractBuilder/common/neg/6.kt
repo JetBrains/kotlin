@@ -3,16 +3,16 @@
 // !WITH_BASIC_TYPES
 
 /*
- KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (NEGATIVE)
-
- SECTION: contracts
- CATEGORIES: declarations, contractBuilder, common
- NUMBER: 6
- DESCRIPTION: contracts with not function parameters in implies.
+ * KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (NEGATIVE)
+ *
+ * SECTIONS: contracts, declarations, contractBuilder, common
+ * NUMBER: 6
+ * DESCRIPTION: contracts with not function parameters in implies.
  */
 
 import kotlin.contracts.*
 
+// TESTCASE NUMBER: 1
 object case_1 {
     val value_1 = getBoolean()
     const val value_2 = true
@@ -22,7 +22,6 @@ object case_1 {
         <!CONTRACT_NOT_ALLOWED!>contract<!> { returnsNotNull() implies (value_1) }
         return if (value_1) true else null
     }
-
     fun case_1_2(): Boolean? {
         <!CONTRACT_NOT_ALLOWED!>contract<!> { returns(null) implies (value_2) }
         return if (value_2) null else true
@@ -34,6 +33,7 @@ object case_1 {
     }
 }
 
+// TESTCASE NUMBER: 2
 class case_2(value_5: Boolean, val value_1: Boolean) {
     val value_2 = getBoolean()
 

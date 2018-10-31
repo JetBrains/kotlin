@@ -3,14 +3,14 @@
 // SKIP_TXT
 
 /*
- KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (NEGATIVE)
-
- SECTION: contracts
- CATEGORIES: analysis, controlFlow, initialization
- NUMBER: 2
- DESCRIPTION: val/var reassignment and/or uninitialized variable usages based on nested CallsInPlace effects with wrong invocation kind
+ * KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (NEGATIVE)
+ *
+ * SECTIONS: contracts, analysis, controlFlow, initialization
+ * NUMBER: 2
+ * DESCRIPTION: val/var reassignment and/or uninitialized variable usages based on nested CallsInPlace effects with wrong invocation kind
  */
 
+// TESTCASE NUMBER: 1
 fun case_1() {
     val value_1: Int
     funWithAtLeastOnceCallsInPlace {
@@ -28,6 +28,7 @@ fun case_1() {
     value_1.inc()
 }
 
+// TESTCASE NUMBER: 2
 fun case_2() {
     val value_1: Int
     funWithAtMostOnceCallsInPlace {
@@ -45,6 +46,7 @@ fun case_2() {
     value_1.inc()
 }
 
+// TESTCASE NUMBER: 3
 fun case_3() {
     var value_1: Int
     funWithAtLeastOnceCallsInPlace {
@@ -62,6 +64,7 @@ fun case_3() {
     value_1.inc()
 }
 
+// TESTCASE NUMBER: 4
 fun case_4() {
     var value_1: Int
     funWithAtLeastOnceCallsInPlace {

@@ -1,11 +1,11 @@
 /*
- KOTLIN CODEGEN BOX SPEC TEST (POSITIVE)
-
- SECTIONS: constant-literals, integer-literals, binary-integer-literals
- PARAGRAPH: 1
- SENTENCE: [2] A sequence of decimal digit symbols (0 though 9) is a decimal integer literal.
- NUMBER: 1
- DESCRIPTION: Sequences with binary digit symbols separated by underscores.
+ * KOTLIN CODEGEN BOX SPEC TEST (POSITIVE)
+ *
+ * SECTIONS: constant-literals, integer-literals, binary-integer-literals
+ * PARAGRAPH: 1
+ * SENTENCE: [2] A sequence of decimal digit symbols (0 though 9) is a decimal integer literal.
+ * NUMBER: 1
+ * DESCRIPTION: Sequences with binary digit symbols separated by underscores.
  */
 
 val value_1 = 0b1_110110100

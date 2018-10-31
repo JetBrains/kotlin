@@ -4,14 +4,14 @@
 // SKIP_TXT
 
 /*
- KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (NEGATIVE)
-
- SECTION: contracts
- CATEGORIES: analysis, controlFlow, initialization
- NUMBER: 3
- DESCRIPTION: val/var reassignment and/or uninitialized variable usages with compelx control flow inside/outside lambda of contract function with CallsInPlace effect
+ * KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (NEGATIVE)
+ *
+ * SECTIONS: contracts, analysis, controlFlow, initialization
+ * NUMBER: 3
+ * DESCRIPTION: val/var reassignment and/or uninitialized variable usages with compelx control flow inside/outside lambda of contract function with CallsInPlace effect
  */
 
+// TESTCASE NUMBER: 1
 fun case_1(value_1: _EnumClass?) {
     val value_2: Int
 
@@ -25,6 +25,7 @@ fun case_1(value_1: _EnumClass?) {
     <!UNINITIALIZED_VARIABLE!>value_2<!>.inc()
 }
 
+// TESTCASE NUMBER: 2
 fun case_2(value_1: Any?) {
     val value_2: Int
 
@@ -41,6 +42,7 @@ fun case_2(value_1: Any?) {
     value_2.dec()
 }
 
+// TESTCASE NUMBER: 3
 class case_3(value_1: Any?) {
     <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>var value_2: Int<!>
 
@@ -59,6 +61,7 @@ class case_3(value_1: Any?) {
     }
 }
 
+// TESTCASE NUMBER: 4
 fun case_4(value_1: _EnumClassSingle?) {
     var value_2: Int
 
@@ -77,6 +80,7 @@ fun case_4(value_1: _EnumClassSingle?) {
     value_2.minus(5)
 }
 
+// TESTCASE NUMBER: 5
 fun case_5() {
     var value_2: Int
 
@@ -89,6 +93,7 @@ fun case_5() {
     <!UNINITIALIZED_VARIABLE!>value_2<!>++
 }
 
+// TESTCASE NUMBER: 6
 fun case_6() {
     var value_2: Int
 
@@ -103,6 +108,7 @@ fun case_6() {
     value_2++
 }
 
+// TESTCASE NUMBER: 7
 fun case_7() {
     var value_1: Int
 
@@ -119,21 +125,8 @@ fun case_7() {
     println(<!UNINITIALIZED_VARIABLE!>value_1<!>.inc())
 }
 
+// TESTCASE NUMBER: 8
 fun case_8() {
-    val x: Int
-    funWithExactlyOnceCallsInPlace outer@ {
-        funWithAtMostOnceCallsInPlace {
-            funWithExactlyOnceCallsInPlace {
-                x = 42
-                return@outer
-            }
-        }
-        throw Exception()
-    }
-    println(x.inc())
-}
-
-fun case_9() {
     val x: Int
     funWithExactlyOnceCallsInPlace outer@ {
         funWithAtMostOnceCallsInPlace {
@@ -147,7 +140,8 @@ fun case_9() {
     println(<!UNINITIALIZED_VARIABLE!>x<!>.inc())
 }
 
-fun case_10() {
+// TESTCASE NUMBER: 9
+fun case_9() {
     val x: Int
     funWithExactlyOnceCallsInPlace outer@ {
         funWithAtMostOnceCallsInPlace {
@@ -158,7 +152,8 @@ fun case_10() {
     println(<!UNINITIALIZED_VARIABLE!>x<!>.inc())
 }
 
-fun case_11() {
+// TESTCASE NUMBER: 10
+fun case_10() {
     var x: Int
     funWithAtLeastOnceCallsInPlace outer@ {
         funWithAtMostOnceCallsInPlace {

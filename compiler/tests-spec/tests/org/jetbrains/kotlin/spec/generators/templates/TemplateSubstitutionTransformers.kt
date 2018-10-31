@@ -3,7 +3,7 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.spec.generators.featureinteraction
+package org.jetbrains.kotlin.spec.generators.templates
 
 enum class TemplateValidationTransformerType {
     TRIM_BACKTICKS

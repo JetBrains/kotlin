@@ -3,7 +3,7 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.spec.generators.featureinteraction
+package org.jetbrains.kotlin.spec.generators.templates
 
 import org.jetbrains.kotlin.spec.utils.GeneralConfiguration.TESTDATA_PATH
 import java.io.File

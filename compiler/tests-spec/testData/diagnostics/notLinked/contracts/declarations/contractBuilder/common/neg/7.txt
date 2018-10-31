@@ -13,7 +13,7 @@ public fun getNothing(): kotlin.Nothing
 public fun getShort(/*0*/ arg: kotlin.Any = ...): kotlin.Short
 public fun getString(/*0*/ arg: kotlin.Any = ...): kotlin.String
 public fun getUnit(): () -> kotlin.Unit
-public fun </*0*/ T> T?.case_3(): kotlin.Unit
+public fun </*0*/ T> T?.case_1(): kotlin.Unit
 
 public final class _BasicTypesProvider {
     public constructor _BasicTypesProvider()

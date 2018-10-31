@@ -3,14 +3,14 @@
 // SKIP_TXT
 
 /*
- KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (NEGATIVE)
-
- SECTION: contracts
- CATEGORIES: analysis, controlFlow, initialization
- NUMBER: 4
- DESCRIPTION: CallsInPlace contract functions with name shadowing and wrong invocation kind
+ * KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (NEGATIVE)
+ *
+ * SECTIONS: contracts, analysis, controlFlow, initialization
+ * NUMBER: 4
+ * DESCRIPTION: CallsInPlace contract functions with name shadowing and wrong invocation kind
  */
 
+// TESTCASE NUMBER: 1
 fun case_1() {
     val value_1: Int
     funWithExactlyOnceCallsInPlace {
@@ -20,6 +20,7 @@ fun case_1() {
     <!UNINITIALIZED_VARIABLE!>value_1<!>.inc()
 }
 
+// TESTCASE NUMBER: 2
 fun case_2() {
     val value_1: Int
     funWithExactlyOnceCallsInPlace {
@@ -35,6 +36,7 @@ fun case_2() {
     <!UNINITIALIZED_VARIABLE!>value_1<!>.inc()
 }
 
+// TESTCASE NUMBER: 3
 fun case_3() {
     val value_1: Int
     funWithAtLeastOnceCallsInPlace {
@@ -53,7 +55,8 @@ fun case_3() {
     <!UNINITIALIZED_VARIABLE!>value_1<!>.inc()
 }
 
-fun case_6() {
+// TESTCASE NUMBER: 4
+fun case_4() {
     var value_1: Int
     funWithAtLeastOnceCallsInPlace {
         val <!NAME_SHADOWING!>value_1<!>: Int
@@ -71,7 +74,8 @@ fun case_6() {
     <!UNINITIALIZED_VARIABLE!>value_1<!>.dec()
 }
 
-fun case_7() {
+// TESTCASE NUMBER: 5
+fun case_5() {
     val value_1: Int
     funWithUnknownCallsInPlace {
         var <!NAME_SHADOWING!>value_1<!>: Int

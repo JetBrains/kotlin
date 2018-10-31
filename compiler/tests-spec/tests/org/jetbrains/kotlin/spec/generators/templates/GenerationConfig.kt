@@ -3,11 +3,11 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.spec.generators.featureinteraction
+package org.jetbrains.kotlin.spec.generators.templates
 
-import org.jetbrains.kotlin.spec.validators.SpecTestLinkedType
-import org.jetbrains.kotlin.spec.validators.TestArea
-import org.jetbrains.kotlin.spec.validators.TestType
+import org.jetbrains.kotlin.spec.SpecTestLinkedType
+import org.jetbrains.kotlin.spec.TestArea
+import org.jetbrains.kotlin.spec.TestType
 
 enum class SubstitutionTag(val passType: SubstitutionPassType = SubstitutionPassType.FIRST) {
     DIRECTIVES,

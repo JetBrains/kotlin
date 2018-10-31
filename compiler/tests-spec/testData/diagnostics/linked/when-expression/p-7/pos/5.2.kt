@@ -3,16 +3,16 @@
 // !WITH_FUNCTIONS
 
 /*
- KOTLIN DIAGNOSTICS SPEC TEST (POSITIVE)
-
- SECTIONS: when-expression
- PARAGRAPH: 7
- SENTENCE: [5] Any other expression.
- NUMBER: 2
- DESCRIPTION: 'When' with different variants of the arithmetic expressions (additive expression and multiplicative expression) in 'when condition'.
+ * KOTLIN DIAGNOSTICS SPEC TEST (POSITIVE)
+ *
+ * SECTIONS: when-expression
+ * PARAGRAPH: 7
+ * SENTENCE: [5] Any other expression.
+ * NUMBER: 2
+ * DESCRIPTION: 'When' with different variants of the arithmetic expressions (additive expression and multiplicative expression) in 'when condition'.
  */
 
-// CASE DESCRIPTION: 'When' with condition as literals.
+// TESTCASE NUMBER: 1
 fun case_1(value_1: Any?) {
     when (value_1) {
         true, 100, -.09f -> {}
@@ -20,14 +20,14 @@ fun case_1(value_1: Any?) {
     }
 }
 
-// CASE DESCRIPTION: 'When' with condition as arithmetic expressions.
+// TESTCASE NUMBER: 2
 fun case_2(value_1: Number, value_2: Int) {
     when (value_1) {
         -.09 % 10L, value_2 / -5, getByte(99) - 11 + 90 -> {}
     }
 }
 
-// CASE DESCRIPTION: 'When' with condition as boolean expressions (logical, equality and comparison).
+// TESTCASE NUMBER: 3
 fun case_3(value_1: Boolean, value_2: Boolean, value_3: Long) {
     when (value_1) {
         value_2, !value_2, getBoolean() && value_2, getChar(10) != 'a' -> {}
@@ -35,14 +35,14 @@ fun case_3(value_1: Boolean, value_2: Boolean, value_3: Long) {
     }
 }
 
-// CASE DESCRIPTION: 'When' with condition as concatenations.
+// TESTCASE NUMBER: 4
 fun case_4(value_1: String, value_2: String, value_3: String) {
     when (value_1) {
         "..." + value_2 + "" + "$value_3" + "...", value_2 + getString() -> {}
     }
 }
 
-// CASE DESCRIPTION: 'When' with condition as when expression.
+// TESTCASE NUMBER: 5
 fun case_5(value_1: Int, value_2: Int, value_3: Boolean?) {
     when (value_1) {
         when {
@@ -60,35 +60,35 @@ fun case_5(value_1: Int, value_2: Int, value_3: Boolean?) {
     }
 }
 
-// CASE DESCRIPTION: 'When' with condition as if expression.
+// TESTCASE NUMBER: 6
 fun case_6(value_1: Int, value_2: Int) {
     when (value_1) {
         if (value_2 > 1000) 1 else 2, if (value_2 < 100) 1 else if (value_2 < 10) 2 else 3 -> {}
     }
 }
 
-// CASE DESCRIPTION: 'When' with condition as try expression.
+// TESTCASE NUMBER: 7
 fun case_7(value_1: Any, value_2: String, value_3: String) {
     when (value_1) {
         try { 4 } catch (e: Exception) { 5 }, try { throw Exception() } catch (e: Exception) { value_2 }, try { throw Exception() } catch (e: Exception) { {value_3} } finally { } -> {}
     }
 }
 
-// CASE DESCRIPTION: 'When' with condition as elvis operator expression.
+// TESTCASE NUMBER: 8
 fun case_8(value_1: Int, value_2: Int?, value_3: Int?) {
     when (value_1) {
         value_2 ?: 0, value_2 ?: value_3 ?: 0, value_2!! <!USELESS_ELVIS!>?: 0<!> -> {}
     }
 }
 
-// CASE DESCRIPTION: 'When' with condition as range expression.
+// TESTCASE NUMBER: 9
 fun case_9(value_1: Any) {
     when (value_1) {
         1..10, -100L..100L, -getInt()..getLong() -> {}
     }
 }
 
-// CASE DESCRIPTION: 'When' with condition as cast expression.
+// TESTCASE NUMBER: 10
 fun case_10(value_1: Collection<Int>, value_2: Collection<Int>, value_3: Collection<Int>?) {
     when (value_1) {
         value_2 as MutableList<Int>, value_2 <!USELESS_CAST!>as? MutableList<Int><!> -> {}
@@ -96,7 +96,7 @@ fun case_10(value_1: Collection<Int>, value_2: Collection<Int>, value_3: Collect
     }
 }
 
-// CASE DESCRIPTION: 'When' with condition as prefix operator expression.
+// TESTCASE NUMBER: 11
 fun case_11(value_1: Any, value_2: Int, value_3: Int, value_4: Boolean) {
     var mutableValue1 = value_2
     var mutableValue2 = value_3
@@ -106,7 +106,7 @@ fun case_11(value_1: Any, value_2: Int, value_3: Int, value_4: Boolean) {
     }
 }
 
-// CASE DESCRIPTION: 'When' with condition as postfix operator expression.
+// TESTCASE NUMBER: 12
 fun case_12(value_1: Int, value_2: Int, value_3: Int, value_4: Int?) {
     var mutableValue1 = value_2
     var mutableValue2 = value_3
@@ -116,14 +116,14 @@ fun case_12(value_1: Int, value_2: Int, value_3: Int, value_4: Int?) {
     }
 }
 
-// CASE DESCRIPTION: 'When' with condition as indexing expression.
+// TESTCASE NUMBER: 13
 fun case_13(value_1: Int, value_2: List<Int>, value_3: List<List<List<List<Int>>>>) {
     when (value_1) {
         value_2[0], value_3[0][-4][1][-1] -> {}
     }
 }
 
-// CASE DESCRIPTION: 'When' with condition as call expression.
+// TESTCASE NUMBER: 14
 fun case_14(value_1: Any, value_2: _Class, value_3: _Class?, value_4: Int) {
     fun __fun_1(): () -> Unit { return fun() { } }
 
@@ -133,7 +133,7 @@ fun case_14(value_1: Any, value_2: _Class, value_3: _Class?, value_4: Int) {
     }
 }
 
-// CASE DESCRIPTION: 'When' with condition as property access expression.
+// TESTCASE NUMBER: 15
 fun case_15(value_1: Int, value_2: _Class, value_3: _Class?) {
     when (value_1) {
         value_2.prop_1, value_3?.prop_2 -> {}
@@ -141,7 +141,7 @@ fun case_15(value_1: Int, value_2: _Class, value_3: _Class?) {
     }
 }
 
-// CASE DESCRIPTION: 'When' with condition as fun literal.
+// TESTCASE NUMBER: 16
 fun case_16(value_1: () -> Any): Any {
     val fun_1 = fun() { return }
 
@@ -151,7 +151,7 @@ fun case_16(value_1: () -> Any): Any {
     }
 }
 
-// CASE DESCRIPTION: 'When' with condition as lambda literal.
+// TESTCASE NUMBER: 17
 fun case_17(value_1: () -> Any) {
     val lambda_1 = { 0 }
 
@@ -161,7 +161,7 @@ fun case_17(value_1: () -> Any) {
     }
 }
 
-// CASE DESCRIPTION: 'When' with condition as object literal.
+// TESTCASE NUMBER: 18
 fun case_18(value_1: Any) {
     val object_1 = object {
         val prop_1 = 1
@@ -175,7 +175,7 @@ fun case_18(value_1: Any) {
     }
 }
 
-// CASE DESCRIPTION: 'When' with condition as this expression.
+// TESTCASE NUMBER: 19
 class A {
     val prop_1 = 1
     val lambda_1 = { 1 }
@@ -190,29 +190,29 @@ class A {
     }
 }
 
-// CASE DESCRIPTION: 'When' with condition as throw expression.
+// TESTCASE NUMBER: 20
 fun case_20(value_1: Nothing) {
     when (value_1) {
         <!UNREACHABLE_CODE!>throw Exception(), throw throw throw Exception() -> {}<!>
     }
 }
 
-// CASE DESCRIPTION: 'When' with condition as return expression.
+// TESTCASE NUMBER: 21
 fun case_21(value_1: Nothing) {
-    fun r_1() {
+    fun f1() {
         when (value_1) {
             <!UNREACHABLE_CODE!>return, return return return -> 2<!>
         }
     }
 
-    fun r_2(): List<Int>? {
+    fun f2(): List<Int>? {
         when (value_1) {
             <!UNREACHABLE_CODE!>return listOf(0, 1, 2), return null -> 2<!>
         }
     }
 }
 
-// CASE DESCRIPTION: 'When' with condition as continue expression.
+// TESTCASE NUMBER: 22
 fun case_22(value_1: Nothing) {
     loop1@ while (true) {
         loop2@ while (true) {
@@ -223,7 +223,7 @@ fun case_22(value_1: Nothing) {
     }
 }
 
-// CASE DESCRIPTION: 'When' with condition as break expression.
+// TESTCASE NUMBER: 23
 fun case_23(value_1: Nothing) {
     loop1@ while (true) {
         loop2@ while (true) {
@@ -234,7 +234,7 @@ fun case_23(value_1: Nothing) {
     }
 }
 
-// CASE DESCRIPTION: 'When' with condition as mixed Nothing expressions.
+// TESTCASE NUMBER: 24
 fun case_24(value_1: Nothing?) = when (<!DEBUG_INFO_CONSTANT!>value_1<!>) {
     throw Exception()<!UNREACHABLE_CODE!><!>, <!UNREACHABLE_CODE!>return ""<!> -> <!UNREACHABLE_CODE!>""<!>
     <!UNREACHABLE_CODE!>null, return return return "", throw throw throw Exception() -> ""<!>
@@ -242,9 +242,9 @@ fun case_24(value_1: Nothing?) = when (<!DEBUG_INFO_CONSTANT!>value_1<!>) {
 }
 
 /*
- CASE DESCRIPTION: 'When' with condition as mixed Nothing expressions.
- DISCUSSION
- ISSUES: KT-25948
+ * TESTCASE NUMBER: 25
+ * DISCUSSION
+ * ISSUES: KT-25948
  */
 fun case_25(value_1: Boolean) = when (value_1) {
     true -> {}
@@ -253,9 +253,9 @@ fun case_25(value_1: Boolean) = when (value_1) {
 }
 
 /*
- CASE DESCRIPTION: 'When' with two labels in condition: with const value and nullable const value.
- UNEXPECTED BEHAVIOUR
- ISSUES: KT-26045
+ * TESTCASE NUMBER: 26
+ * UNEXPECTED BEHAVIOUR
+ * ISSUES: KT-26045
  */
 fun case_26(value_1: Int?, value_2: _Class, value_3: _Class?) {
     when (value_1) {

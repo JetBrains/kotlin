@@ -3,16 +3,16 @@
 // !WITH_OBJECTS
 
 /*
- KOTLIN DIAGNOSTICS SPEC TEST (POSITIVE)
-
- SECTIONS: when-expression
- PARAGRAPH: 7
- SENTENCE: [1] Type test condition: type checking operator followed by type.
- NUMBER: 3
- DESCRIPTION: 'When' with bound value and enumaration of type test conditions.
+ * KOTLIN DIAGNOSTICS SPEC TEST (POSITIVE)
+ *
+ * SECTIONS: when-expression
+ * PARAGRAPH: 7
+ * SENTENCE: [1] Type test condition: type checking operator followed by type.
+ * NUMBER: 3
+ * DESCRIPTION: 'When' with bound value and enumaration of type test conditions.
  */
 
-// CASE DESCRIPTION: 'When' with type test condition on the various basic types.
+// TESTCASE NUMBER: 1
 fun case_1(value_1: Any) = when (value_1) {
     is Int -> {}
     is Float, is Char, is Boolean -> {}
@@ -20,7 +20,7 @@ fun case_1(value_1: Any) = when (value_1) {
     else -> {}
 }
 
-// CASE DESCRIPTION: 'When' with 'else' branch and type test condition on the various nullable basic types.
+// TESTCASE NUMBER: 2
 fun case_2(value_1: Any?) = when (value_1) {
     is Float, is Char, is _SealedClass? -> "" // if value is null then this branch will be executed
     is Double, is Boolean, is _ClassWithCompanionObject.Companion -> ""
@@ -28,9 +28,9 @@ fun case_2(value_1: Any?) = when (value_1) {
 }
 
 /*
- CASE DESCRIPTION: 'When' with 'else' branch and type test condition on the various nullable basic types (two nullable type check in the different branches).
- UNEXPECTED BEHAVIOUR
- ISSUES: KT-22996
+ * TESTCASE NUMBER: 3
+ * UNEXPECTED BEHAVIOUR
+ * ISSUES: KT-22996
  */
 fun case_3(value_1: Any?) = when (value_1) {
     is Float, is Char, is Int? -> "" // if value is null then this branch will be executed
@@ -39,9 +39,9 @@ fun case_3(value_1: Any?) = when (value_1) {
 }
 
 /*
- CASE DESCRIPTION: 'When' with 'else' branch and type test condition on the various nullable basic types (two nullable type check in the one branch).
- UNEXPECTED BEHAVIOUR
- ISSUES: KT-22996
+ * TESTCASE NUMBER: 4
+ * UNEXPECTED BEHAVIOUR
+ * ISSUES: KT-22996
  */
 fun case_4(value_1: Any?) = when (value_1) {
     is Float, is Char?, is Int? -> "" // double nullable type check in the one branch
@@ -50,9 +50,9 @@ fun case_4(value_1: Any?) = when (value_1) {
 }
 
 /*
- CASE DESCRIPTION: 'When' with 'else' branch and type test condition on the various nullable basic types (two nullable type check).
- UNEXPECTED BEHAVIOUR
- ISSUES: KT-22996
+ * TESTCASE NUMBER: 5
+ * UNEXPECTED BEHAVIOUR
+ * ISSUES: KT-22996
  */
 fun case_5(value_1: Any?): String {
     when (value_1) {
@@ -64,9 +64,9 @@ fun case_5(value_1: Any?): String {
 }
 
 /*
- CASE DESCRIPTION: 'When' with 'else' branch and type test condition on the various nullable basic types (two different nullable type check in the one branch).
- UNEXPECTED BEHAVIOUR
- ISSUES: KT-22996
+ * TESTCASE NUMBER: 6
+ * UNEXPECTED BEHAVIOUR
+ * ISSUES: KT-22996
  */
 fun case_6(value_1: Any?): String {
     when (value_1) {

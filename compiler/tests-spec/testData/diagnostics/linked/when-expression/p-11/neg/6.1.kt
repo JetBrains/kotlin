@@ -2,55 +2,55 @@
 // !WITH_SEALED_CLASSES
 
 /*
- KOTLIN DIAGNOSTICS SPEC TEST (NEGATIVE)
-
- SECTIONS: when-expression
- PARAGRAPH: 11
- SENTENCE: [6] The bound expression is of a sealed class type and all its possible subtypes are covered using type test conditions of this expression;
- NUMBER: 1
- DESCRIPTION: Checking for not exhaustive 'when' when not covered by all possible subtypes or 'when' does not have bound value.
+ * KOTLIN DIAGNOSTICS SPEC TEST (NEGATIVE)
+ *
+ * SECTIONS: when-expression
+ * PARAGRAPH: 11
+ * SENTENCE: [6] The bound expression is of a sealed class type and all its possible subtypes are covered using type test conditions of this expression;
+ * NUMBER: 1
+ * DESCRIPTION: Checking for not exhaustive 'when' when not covered by all possible subtypes or 'when' does not have bound value.
  */
 
-// CASE DESCRIPTION: Checking for not exhaustive 'when' on the sealed class (type checking).
+// TESTCASE NUMBER: 1
 fun case_1(value_1: _SealedClass): String = <!NO_ELSE_IN_WHEN!>when<!>(value_1) {
     is _SealedChild1 -> ""
     is _SealedChild2 -> ""
 }
 
-// CASE DESCRIPTION: Checking for not exhaustive 'when' on the sealed class (type checking with enumeration).
+// TESTCASE NUMBER: 2
 fun case_2(value_1: _SealedClass): String = <!NO_ELSE_IN_WHEN!>when<!>(value_1) {
     is _SealedChild1, is _SealedChild2 -> ""
 }
 
-// CASE DESCRIPTION: Checking for not exhaustive 'when' on the sealed class (type checking and equality with object).
+// TESTCASE NUMBER: 3
 fun case_3(value_1: _SealedClassMixed): String = <!NO_ELSE_IN_WHEN!>when<!>(value_1) {
     is _SealedMixedChild1 -> ""
     is _SealedMixedChild2 -> ""
     _SealedMixedChildObject1 -> ""
 }
 
-// CASE DESCRIPTION: Checking for not exhaustive 'when' on the sealed class (type checking and equality with object with enumeration).
+// TESTCASE NUMBER: 4
 fun case_4(value_1: _SealedClassMixed): String = <!NO_ELSE_IN_WHEN!>when<!>(value_1) {
     _SealedMixedChildObject1, is _SealedMixedChild2, is _SealedMixedChild1 -> ""
 }
 
-// CASE DESCRIPTION: Checking for not exhaustive 'when' on the sealed class (type checking).
+// TESTCASE NUMBER: 5
 fun case_5(value_1: _SealedClassMixed): String = <!NO_ELSE_IN_WHEN!>when<!>(value_1) {
     is _SealedMixedChild1 -> ""
     is _SealedMixedChild2 -> ""
     is _SealedMixedChild3 -> ""
 }
 
-// CASE DESCRIPTION: Checking for not exhaustive 'when' on the sealed class with several subtypes (no branches).
+// TESTCASE NUMBER: 6
 fun case_6(value_1: _SealedClassMixed): Int = <!NO_ELSE_IN_WHEN!>when<!>(value_1) { }
 
-// CASE DESCRIPTION: Checking for not exhaustive 'when' on the sealed class with one subtype (no branches).
+// TESTCASE NUMBER: 7
 fun case_7(value_1: _SealedClassSingleWithObject): Int = <!NO_ELSE_IN_WHEN!>when<!>(value_1) { }
 
-// CASE DESCRIPTION: Checking for not exhaustive 'when' on the empty sealed class (without subtypes).
+// TESTCASE NUMBER: 8
 fun case_8(value_1: _SealedClassEmpty): String = <!NO_ELSE_IN_WHEN!>when<!> (value_1) { }
 
-// CASE DESCRIPTION: Checking for not exhaustive 'when' on the not sealed class.
+// TESTCASE NUMBER: 9
 fun case_9(value_1: Number): String = <!NO_ELSE_IN_WHEN!>when<!> (value_1) {
     is Byte -> ""
     is Double -> ""
@@ -61,21 +61,21 @@ fun case_9(value_1: Number): String = <!NO_ELSE_IN_WHEN!>when<!> (value_1) {
 }
 
 /*
- CASE DESCRIPTION: Checking for not exhaustive 'when' on the Any.
- DISCUSSION: maybe make exhaustive without else?
+ * TESTCASE NUMBER: 10
+ * DISCUSSION: maybe make exhaustive without else?
  */
 fun case_10(value_1: Any): String = <!NO_ELSE_IN_WHEN!>when<!> (value_1) {
     <!USELESS_IS_CHECK!>is Any<!> -> ""
 }
 
-// CASE DESCRIPTION: Checking for not exhaustive 'when' without bound value on the Sealed class with all subtypes covered.
+// TESTCASE NUMBER: 11
 fun case_11(value_1: _SealedClass): String = <!NO_ELSE_IN_WHEN!>when<!> {
     value_1 is _SealedChild1 -> ""
     value_1 is _SealedChild2 -> ""
     value_1 is _SealedChild3 -> ""
 }
 
-// CASE DESCRIPTION: Checking for not exhaustive 'when' on the sealed class (type checking).
+// TESTCASE NUMBER: 12
 fun case_12(value_1: _SealedClassMixed): String = <!NO_ELSE_IN_WHEN!>when<!>(value_1) {
     is _SealedMixedChild1 -> ""
     is _SealedMixedChild2 -> ""

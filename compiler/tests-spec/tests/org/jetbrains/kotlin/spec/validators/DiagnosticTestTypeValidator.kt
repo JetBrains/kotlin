@@ -8,20 +8,44 @@ package org.jetbrains.kotlin.spec.validators
 import org.jetbrains.kotlin.checkers.BaseDiagnosticsTest
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Severity
+import org.jetbrains.kotlin.spec.models.AbstractSpecTest
+import org.jetbrains.kotlin.spec.TestCasesByNumbers
+import org.jetbrains.kotlin.spec.TestType
+import java.io.File
 
-class DiagnosticTestTypeValidator(testFiles: List<BaseDiagnosticsTest.TestFile>) {
+class DiagnosticTestTypeValidator(
+    testFiles: List<BaseDiagnosticsTest.TestFile>,
+    testDataFile: File,
+    private val testInfo: AbstractSpecTest
+) : AbstractTestValidator(testInfo, testDataFile) {
     private val diagnostics = mutableListOf<Diagnostic>()
     private val diagnosticStats = mutableMapOf<String, Int>()
-    private val diagnosticSeverityStats = mutableMapOf<Severity, Int>()
+    private val diagnosticSeverityStats = mutableMapOf<Int, MutableMap<Severity, Int>>()
 
     init {
         collectDiagnostics(testFiles)
     }
 
+    private fun findTestCases(diagnostic: Diagnostic): TestCasesByNumbers {
+        val ranges = diagnostic.textRanges
+        val filename = diagnostic.psiFile.name
+        val foundTestCases = testInfo.cases.byRanges[filename]!!.floorEntry(ranges[0].startOffset)
+
+        if (foundTestCases != null)
+            return foundTestCases.value
+
+        throw SpecTestValidationException(SpecTestValidationFailedReason.INVALID_TEST_CASES_STRUCTURE)
+    }
+
     private fun collectDiagnosticStatistic() {
         diagnostics.forEach {
+            val testCases = findTestCases(it)
             val severity = it.factory.severity
-            diagnosticSeverityStats.run { put(severity, getOrDefault(severity, 0) + 1) }
+
+            for ((caseNumber, _) in testCases) {
+                diagnosticSeverityStats.putIfAbsent(caseNumber, mutableMapOf())
+                diagnosticSeverityStats[caseNumber]!!.run { put(severity, getOrDefault(severity, 0) + 1) }
+            }
         }
     }
 
@@ -36,8 +60,9 @@ class DiagnosticTestTypeValidator(testFiles: List<BaseDiagnosticsTest.TestFile>)
         collectDiagnosticStatistic()
     }
 
-    fun computeTestType() =
-        if (Severity.ERROR in diagnosticSeverityStats) TestType.NEGATIVE else TestType.POSITIVE
+    override fun computeTestTypes() = diagnosticSeverityStats.mapValues {
+        if (Severity.ERROR in it.value) TestType.NEGATIVE else TestType.POSITIVE
+    }
 
     fun printDiagnosticStatistic() {
         val diagnostics = if (diagnosticStats.isNotEmpty()) "$diagnosticSeverityStats | $diagnosticStats" else "does not contain"

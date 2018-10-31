@@ -1,12 +1,11 @@
 // !USE_EXPERIMENTAL: kotlin.contracts.ExperimentalContracts
 
 /*
- KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (POSITIVE)
-
- SECTION: contracts
- CATEGORIES: analysis, smartcasts
- NUMBER: 7
- DESCRIPTION: Smartcasts using Returns effects with nested or subsequent contract function calls.
+ * KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (POSITIVE)
+ *
+ * SECTIONS: contracts, analysis, smartcasts
+ * NUMBER: 7
+ * DESCRIPTION: Smartcasts using Returns effects with nested or subsequent contract function calls.
  */
 
 // FILE: contracts.kt
@@ -15,6 +14,7 @@ package contracts
 
 import kotlin.contracts.*
 
+// TESTCASE NUMBER: 1
 fun case_1_1(value_1: Int?) {
     contract { returns() implies (value_1 != null) }
     if (!(value_1 != null)) throw Exception()
@@ -24,6 +24,7 @@ fun case_1_2(value_1: Int?) {
     if (!(value_1 == null)) throw Exception()
 }
 
+// TESTCASE NUMBER: 2
 fun case_2_1(value_1: Number?) {
     contract { returns() implies (value_1 is Float) }
     if (!(value_1 is Float)) throw Exception()
@@ -33,6 +34,7 @@ fun case_2_2(value_1: Number?) {
     if (!(value_1 is Int)) throw Exception()
 }
 
+// TESTCASE NUMBER: 3
 fun case_3_1(value_1: Any?) {
     contract { returns() implies (value_1 is String) }
     if (!(value_1 is String)) throw Exception()
@@ -42,6 +44,7 @@ fun case_3_2(value_1: Any?) {
     if (!(value_1 !is String)) throw Exception()
 }
 
+// TESTCASE NUMBER: 4
 fun case_4_1(value_1: Any?) {
     contract { returns() implies (value_1 is Number?) }
     if (!(value_1 is Number?)) throw Exception()
@@ -55,6 +58,7 @@ fun case_4_3(value_1: Number) {
     if (!(value_1 is Int)) throw Exception()
 }
 
+// TESTCASE NUMBER: 5
 fun case_5_1(value_1: Int?): Boolean {
     contract { returns(true) implies (value_1 != null) }
     return value_1 != null
@@ -88,6 +92,7 @@ fun case_5_8(value_1: Int?): Boolean? {
     return if (value_1 == null) null else true
 }
 
+// TESTCASE NUMBER: 6
 fun case_6_1(value_1: Number?): Boolean {
     contract { returns(true) implies (value_1 is Float) }
     return value_1 is Float
@@ -121,6 +126,7 @@ fun case_6_8(value_1: Number?): Boolean? {
     return if (value_1 is Int) null else true
 }
 
+// TESTCASE NUMBER: 7
 fun case_7_1(value_1: Any?): Boolean {
     contract { returns(true) implies (value_1 is String) }
     return value_1 is String
@@ -154,6 +160,7 @@ fun case_7_8(value_1: Any?): Boolean? {
     return if (value_1 !is String) null else true
 }
 
+// TESTCASE NUMBER: 8
 fun case_8_1(value_1: Any?): Boolean {
     contract { returns(true) implies (value_1 is Number?) }
     return value_1 is Number?
@@ -203,10 +210,11 @@ fun case_8_12(value_1: Number): Boolean? {
     return if (value_1 is Int) null else true
 }
 
-// FILE: usages.kt
+// FILE: main.kt
 
 import contracts.*
 
+// TESTCASE NUMBER: 1
 fun case_1(value_1: Int?) {
     case_1_1(value_1)
     <!DEBUG_INFO_SMARTCAST!>value_1<!>.inv()
@@ -216,6 +224,7 @@ fun case_1(value_1: Int?) {
     <!UNREACHABLE_CODE!><!DEBUG_INFO_SMARTCAST!>value_1<!>.inv()<!>
 }
 
+// TESTCASE NUMBER: 2
 fun case_2(value_1: Number?) {
     case_2_1(value_1)
     <!DEBUG_INFO_SMARTCAST!>value_1<!>.toByte()
@@ -223,6 +232,7 @@ fun case_2(value_1: Number?) {
     <!DEBUG_INFO_SMARTCAST!>value_1<!>.inv()
 }
 
+// TESTCASE NUMBER: 3
 fun case_3(value_1: Any?) {
     case_3_1(value_1)
     <!DEBUG_INFO_SMARTCAST!>value_1<!>.length
@@ -230,6 +240,7 @@ fun case_3(value_1: Any?) {
     <!DEBUG_INFO_SMARTCAST!>value_1<!>.length
 }
 
+// TESTCASE NUMBER: 4
 fun case_4(value_1: Any?) {
     case_4_1(value_1)
     <!DEBUG_INFO_SMARTCAST!>value_1<!>?.toByte()
@@ -239,6 +250,7 @@ fun case_4(value_1: Any?) {
     <!DEBUG_INFO_SMARTCAST!>value_1<!>.inv()
 }
 
+// TESTCASE NUMBER: 5
 fun case_5(value_1: Int?, value_2: Int?) {
     if (case_5_1(value_1)) {
         <!DEBUG_INFO_SMARTCAST!>value_1<!>.inv()
@@ -270,6 +282,7 @@ fun case_5(value_1: Int?, value_2: Int?) {
     }
 }
 
+// TESTCASE NUMBER: 6
 fun case_6(value_1: Number?, value_2: Number?) {
     when {
         case_6_1(value_1) -> {
@@ -297,6 +310,7 @@ fun case_6(value_1: Number?, value_2: Number?) {
     }
 }
 
+// TESTCASE NUMBER: 7
 fun case_7(value_1: Any?, value_2: Any?) {
     if (case_7_1(value_1)) {
         <!DEBUG_INFO_SMARTCAST!>value_1<!>.length
@@ -316,6 +330,7 @@ fun case_7(value_1: Any?, value_2: Any?) {
     }
 }
 
+// TESTCASE NUMBER: 8
 fun case_8(value_1: Any?, value_2: Any?) {
     if (case_8_1(value_1)) {
         <!DEBUG_INFO_SMARTCAST!>value_1<!>?.toByte()

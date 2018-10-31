@@ -3,14 +3,14 @@
 // SKIP_TXT
 
 /*
- KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (NEGATIVE)
-
- SECTION: contracts
- CATEGORIES: analysis, controlFlow, unreachableCode
- NUMBER: 1
- DESCRIPTION: Using not allowed break and continue inside lambda of contract function
+ * KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (NEGATIVE)
+ *
+ * SECTIONS: contracts, analysis, controlFlow, unreachableCode
+ * NUMBER: 1
+ * DESCRIPTION: Using not allowed break and continue inside lambda of contract function
  */
 
+// TESTCASE NUMBER: 1
 fun case_1(value_1: Boolean) {
     while (value_1) {
         funWithExactlyOnceCallsInPlace {
@@ -27,6 +27,7 @@ fun case_1(value_1: Boolean) {
     }
 }
 
+// TESTCASE NUMBER: 2
 fun case_2(value_1: Boolean) {
     for (i in 0..10) {
         funWithExactlyOnceCallsInPlace {

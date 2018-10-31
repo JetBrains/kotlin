@@ -3,14 +3,14 @@
 // SKIP_TXT
 
 /*
- KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (POSITIVE)
-
- SECTION: contracts
- CATEGORIES: analysis, controlFlow, initialization
- NUMBER: 2
- DESCRIPTION: Nested val/var assignments using contract functions with CallsInPlace effect
+ * KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (POSITIVE)
+ *
+ * SECTIONS: contracts, analysis, controlFlow, initialization
+ * NUMBER: 2
+ * DESCRIPTION: Nested val/var assignments using contract functions with CallsInPlace effect
  */
 
+// TESTCASE NUMBER: 1
 fun case_1() {
     val value_1: Int
     funWithExactlyOnceCallsInPlace {
@@ -28,6 +28,7 @@ fun case_1() {
     value_1.inc()
 }
 
+// TESTCASE NUMBER: 2
 fun case_2() {
     val value_1: Int
     funWithAtMostOnceCallsInPlace {
@@ -44,6 +45,7 @@ fun case_2() {
     }
 }
 
+// TESTCASE NUMBER: 3
 fun case_3() {
     var value_1: Int
     funWithExactlyOnceCallsInPlace {
@@ -61,6 +63,7 @@ fun case_3() {
     value_1.inc()
 }
 
+// TESTCASE NUMBER: 4
 fun case_4() {
     var value_1: Int
     funWithAtMostOnceCallsInPlace {
@@ -80,7 +83,8 @@ fun case_4() {
     }
 }
 
-fun case_7() {
+// TESTCASE NUMBER: 5
+fun case_5() {
     var value_1: Int
     funWithAtLeastOnceCallsInPlace {
         funWithAtLeastOnceCallsInPlace {
@@ -97,7 +101,8 @@ fun case_7() {
     value_1.inc()
 }
 
-fun case_8() {
+// TESTCASE NUMBER: 6
+fun case_6() {
     var value_1: Int
     funWithUnknownCallsInPlace {
         funWithAtMostOnceCallsInPlace {
@@ -120,7 +125,8 @@ fun case_8() {
     }
 }
 
-fun case_9() {
+// TESTCASE NUMBER: 7
+fun case_7() {
     var value_1: Int
     funWithAtMostOnceCallsInPlace {
         funWithUnknownCallsInPlace {

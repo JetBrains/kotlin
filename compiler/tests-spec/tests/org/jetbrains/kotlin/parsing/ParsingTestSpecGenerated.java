@@ -228,6 +228,16 @@ public class ParsingTestSpecGenerated extends AbstractParsingTestSpec {
                             KotlinTestUtils.runTest(this::doParsingTest, TargetBackend.ANY, testDataFilePath);
                         }
 
+                        @TestMetadata("1.1.kt")
+                        public void test1_1() throws Exception {
+                            runTest("compiler/tests-spec/testData/psi/linked/constant-literals/boolean-literals/p-1/pos/1.1.kt");
+                        }
+
+                        @TestMetadata("1.2.kt")
+                        public void test1_2() throws Exception {
+                            runTest("compiler/tests-spec/testData/psi/linked/constant-literals/boolean-literals/p-1/pos/1.2.kt");
+                        }
+
                         @TestMetadata("2.1.kt")
                         public void test2_1() throws Exception {
                             runTest("compiler/tests-spec/testData/psi/linked/constant-literals/boolean-literals/p-1/pos/2.1.kt");

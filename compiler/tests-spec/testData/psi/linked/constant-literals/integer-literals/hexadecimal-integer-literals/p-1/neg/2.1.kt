@@ -1,11 +1,11 @@
 /*
- KOTLIN PSI SPEC TEST (NEGATIVE)
-
- SECTIONS: constant-literals, integer-literals, hexadecimal-integer-literals
- PARAGRAPH: 1
- SENTENCE: [2] Digits may be separated by an underscore symbol, but no underscore can be placed before the first digit or after the last one.
- NUMBER: 1
- DESCRIPTION: Hexadecimal integer literals with underscore breaking the prefix (in it).
+ * KOTLIN PSI SPEC TEST (NEGATIVE)
+ *
+ * SECTIONS: constant-literals, integer-literals, hexadecimal-integer-literals
+ * PARAGRAPH: 1
+ * SENTENCE: [2] Digits may be separated by an underscore symbol, but no underscore can be placed before the first digit or after the last one.
+ * NUMBER: 1
+ * DESCRIPTION: Hexadecimal integer literals with underscore breaking the prefix (in it).
  */
 
 val value = 0_x3_4_5_6_7_8

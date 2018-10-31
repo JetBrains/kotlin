@@ -5,15 +5,15 @@
 
 package org.jetbrains.kotlin.spec.tasks
 
+import org.jetbrains.kotlin.spec.SpecTestLinkedType
 import org.jetbrains.kotlin.spec.utils.SpecTestsStatElement
 import org.jetbrains.kotlin.spec.utils.SpecTestsStatElementType
 import org.jetbrains.kotlin.spec.utils.TestsStatisticCollector
-import org.jetbrains.kotlin.spec.validators.SpecTestLinkedType
 
 const val PRINT_BASE_INDENT = "  "
 
 fun linkedSpecTestsPrint() {
-    println("SPEC TESTS STATISTIC")
+    println("LINKED SPEC TESTS STATISTIC")
     println("--------------------------------------------------")
 
     val statistic = TestsStatisticCollector.collect(SpecTestLinkedType.LINKED)
@@ -21,14 +21,9 @@ fun linkedSpecTestsPrint() {
     for ((areaName, areaElement) in statistic) {
         println("$areaName: ${areaElement.number} tests")
         for ((sectionName, sectionElement) in areaElement.elements) {
-            println("  $sectionName: ${sectionElement.number} tests")
-            for ((paragraphName, paragraphElement) in sectionElement.elements) {
-                val testsStatByType = mutableListOf<String>()
-                for ((typeName, typeElement) in paragraphElement.elements)
-                    testsStatByType.add(" [ $typeName: ${typeElement.number} ]")
-                print(PRINT_BASE_INDENT.repeat(2))
-                println("PARAGRAPH $paragraphName: ${paragraphElement.number} tests${testsStatByType.joinToString("")}")
-            }
+            print("  $sectionName: ${sectionElement.number} tests")
+            notLinkedSpecTestsCategoriesPrint(sectionElement.elements)
+            println()
         }
     }
 }

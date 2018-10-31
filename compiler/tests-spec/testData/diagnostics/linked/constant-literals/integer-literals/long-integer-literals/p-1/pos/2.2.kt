@@ -2,22 +2,26 @@
 // SKIP_TXT
 
 /*
- KOTLIN DIAGNOSTICS SPEC TEST (POSITIVE)
-
- SECTIONS: constant-literals, integer-literals, long-integer-literals
- PARAGRAPH: 1
- SENTENCE: [2] An integer literal with the long literal mark has type kotlin.Long; an integer literal without it has one of the types kotlin.Int/kotlin.Short/kotlin.Byte (the selected type is dependent on the context), if its value is in range of the corresponding type, or type kotlin.Long otherwise.
- NUMBER: 2
- DESCRIPTION: Type checking of decimal integer literals.
+ * KOTLIN DIAGNOSTICS SPEC TEST (POSITIVE)
+ *
+ * SECTIONS: constant-literals, integer-literals, long-integer-literals
+ * PARAGRAPH: 1
+ * SENTENCE: [2] An integer literal with the long literal mark has type kotlin.Long; an integer literal without it has one of the types kotlin.Int/kotlin.Short/kotlin.Byte (the selected type is dependent on the context), if its value is in range of the corresponding type, or type kotlin.Long otherwise.
+ * NUMBER: 2
+ * DESCRIPTION: Type checking of decimal integer literals.
  */
 
+// TESTCASE NUMBER: 1
 fun case_1() {
     0 checkType { _<Int>() }
     checkSubtype<Int>(0)
     checkSubtype<Short>(0)
     checkSubtype<Byte>(0)
     checkSubtype<Long>(0)
+}
 
+// TESTCASE NUMBER: 2
+fun case_2() {
     127 checkType { _<Int>() }
     checkSubtype<Int>(127)
     checkSubtype<Short>(127)
@@ -39,7 +43,10 @@ fun case_1() {
     checkSubtype<Int>(-129)
     checkSubtype<Short>(-129)
     checkSubtype<Long>(-129)
+}
 
+// TESTCASE NUMBER: 3
+fun case_3() {
     32767 checkType { _<Int>() }
     checkSubtype<Int>(32767)
     checkSubtype<Short>(32767)
@@ -57,7 +64,10 @@ fun case_1() {
     -32769 checkType { _<Int>() }
     checkSubtype<Int>(-32769)
     checkSubtype<Long>(-32769)
+}
 
+// TESTCASE NUMBER: 4
+fun case_4() {
     2147483647 checkType { _<Int>() }
     checkSubtype<Int>(2147483647)
     checkSubtype<Long>(2147483647)
@@ -71,7 +81,10 @@ fun case_1() {
 
     -2147483649 checkType { _<Long>() }
     checkSubtype<Long>(-2147483649)
+}
 
+// TESTCASE NUMBER: 5
+fun case_5() {
     9223372036854775807 checkType { _<Long>() }
     checkSubtype<Long>(9223372036854775807)
 

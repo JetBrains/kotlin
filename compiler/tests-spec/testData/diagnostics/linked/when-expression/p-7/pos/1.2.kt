@@ -3,16 +3,16 @@
 // !WITH_OBJECTS
 
 /*
- KOTLIN DIAGNOSTICS SPEC TEST (POSITIVE)
-
- SECTIONS: when-expression
- PARAGRAPH: 7
- SENTENCE: [1] Type test condition: type checking operator followed by type.
- NUMBER: 2
- DESCRIPTION: 'When' with bound value and type test condition (invert type checking operator).
+ * KOTLIN DIAGNOSTICS SPEC TEST (POSITIVE)
+ *
+ * SECTIONS: when-expression
+ * PARAGRAPH: 7
+ * SENTENCE: [1] Type test condition: type checking operator followed by type.
+ * NUMBER: 2
+ * DESCRIPTION: 'When' with bound value and type test condition (invert type checking operator).
  */
 
-// CASE DESCRIPTION: 'When' in which all branches includes invert type checking operators.
+// TESTCASE NUMBER: 1
 fun case_1(value_1: _SealedClass) = when (value_1) {
     !is _SealedChild1 -> {}
     !is _SealedChild2 -> {}
@@ -20,9 +20,9 @@ fun case_1(value_1: _SealedClass) = when (value_1) {
 }
 
 /*
- CASE DESCRIPTION: 'When' with direct and invert (with null-check) type checking operators on the same types and redundant null-check.
- UNEXPECTED BEHAVIOUR
- ISSUES: KT-22996
+ * TESTCASE NUMBER: 2
+ * UNEXPECTED BEHAVIOUR
+ * ISSUES: KT-22996
  */
 fun case_2(value_1: _SealedClass?): String = when (value_1) {
     !is _SealedChild2 -> "" // including null
@@ -30,7 +30,7 @@ fun case_2(value_1: _SealedClass?): String = when (value_1) {
     null -> "" // redundant
 }
 
-// CASE DESCRIPTION: 'When' with direct and invert type checking operators on the same types and null-check.
+// TESTCASE NUMBER: 3
 fun case_3(value_1: _SealedClass?): String = when (value_1) {
     !is _SealedChild2? -> "" // null isn't included
     is _SealedChild2 -> ""
@@ -38,9 +38,9 @@ fun case_3(value_1: _SealedClass?): String = when (value_1) {
 }
 
 /*
- CASE DESCRIPTION: 'When' with direct and invert (with null-check) type checking operators on the same types.
- UNEXPECTED BEHAVIOUR
- ISSUES: KT-22996
+ * TESTCASE NUMBER: 4
+ * UNEXPECTED BEHAVIOUR
+ * ISSUES: KT-22996
  */
 fun case_4(value_1: _SealedClass?) {
     when (value_1) {
@@ -49,7 +49,7 @@ fun case_4(value_1: _SealedClass?) {
     }
 }
 
-// CASE DESCRIPTION: 'When' with direct and invert type checking operator on the objects.
+// TESTCASE NUMBER: 5
 fun case_5(value_1: Any): String {
     when (value_1) {
         is _EmptyObject -> return ""

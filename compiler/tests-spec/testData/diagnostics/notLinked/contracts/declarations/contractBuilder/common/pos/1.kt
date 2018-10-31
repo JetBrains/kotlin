@@ -1,21 +1,22 @@
 // !USE_EXPERIMENTAL: kotlin.contracts.ExperimentalContracts
 
 /*
- KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (POSITIVE)
-
- SECTION: contracts
- CATEGORIES: declarations, contractBuilder, common
- NUMBER: 1
- DESCRIPTION: Functions with simple contracts.
+ * KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (POSITIVE)
+ *
+ * SECTIONS: contracts, declarations, contractBuilder, common
+ * NUMBER: 1
+ * DESCRIPTION: Functions with simple contracts.
  */
 
 import kotlin.contracts.*
 
+// TESTCASE NUMBER: 1
 inline fun case_1(block: () -> Unit) {
     contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) }
     return block()
 }
 
+// TESTCASE NUMBER: 2
 inline fun case_2(value_1: Int?, block: () -> Unit): Boolean {
     contract {
         callsInPlace(block, InvocationKind.EXACTLY_ONCE)
@@ -25,6 +26,7 @@ inline fun case_2(value_1: Int?, block: () -> Unit): Boolean {
     return value_1 != null
 }
 
+// TESTCASE NUMBER: 3
 inline fun <T> T?.case_3(value_1: Int?, value_2: Boolean, value_3: Int?, block: () -> Unit): Boolean? {
     contract {
         callsInPlace(block, InvocationKind.EXACTLY_ONCE)

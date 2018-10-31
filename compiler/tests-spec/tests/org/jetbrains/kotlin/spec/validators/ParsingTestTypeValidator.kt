@@ -8,11 +8,17 @@ package org.jetbrains.kotlin.spec.validators
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiErrorElement
 import com.intellij.psi.PsiFile
+import org.jetbrains.kotlin.spec.TestType
+import org.jetbrains.kotlin.spec.models.AbstractSpecTest
+import java.io.File
 
-object ParsingTestTypeValidator {
+class ParsingTestTypeValidator(
+    private val psiFile: PsiFile,
+    testDataFile: File,
+    testInfo: AbstractSpecTest
+) : AbstractTestValidator(testInfo, testDataFile) {
     private fun checkErrorElement(psi: PsiElement): Boolean =
         psi.children.any { it is PsiErrorElement || checkErrorElement(it) }
 
-    fun computeTestType(psiFile: PsiFile) =
-        if (checkErrorElement(psiFile)) TestType.NEGATIVE else TestType.POSITIVE
+    override fun computeTestTypes() = mapOf(1 to if (checkErrorElement(psiFile)) TestType.NEGATIVE else TestType.POSITIVE)
 }
