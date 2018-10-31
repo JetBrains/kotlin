@@ -1,5 +1,6 @@
 package org.jetbrains.kotlin.gradle
 
+import org.jetbrains.kotlin.gradle.util.AGPVersion
 import org.jetbrains.kotlin.gradle.util.getFileByName
 import org.jetbrains.kotlin.gradle.util.modify
 import org.jetbrains.kotlin.test.KotlinTestUtils
@@ -11,16 +12,16 @@ class Kapt3WorkersAndroid32IT : Kapt3Android32IT() {
 }
 
 open class Kapt3Android32IT : Kapt3AndroidIT() {
-    override val androidGradlePluginVersion: String
-        get() = "3.2.0"
+    override val androidGradlePluginVersion: AGPVersion
+        get() = AGPVersion.v3_2_0
 
     override val defaultGradleVersion: GradleVersionRequired
         get() = GradleVersionRequired.AtLeast("4.6")
 }
 
 open class Kapt3AndroidIT : Kapt3BaseIT() {
-    protected open val androidGradlePluginVersion: String
-        get() = "3.0.0"
+    protected open val androidGradlePluginVersion: AGPVersion
+        get() = AGPVersion.v3_0_0
 
     override val defaultGradleVersion: GradleVersionRequired
         get() = GradleVersionRequired.InRange("4.1", "4.10.2")
