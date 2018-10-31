@@ -1,0 +1,9 @@
+# before
+-Kapt-sources
+blah
+
+# after
+-P
+plugin:org.jetbrains.kotlin.kapt3:aptMode=compile
+-Kapt-sources
+blah

@@ -149,6 +149,8 @@ import org.jetbrains.kotlin.jps.build.android.AbstractAndroidJpsTestCase
 import org.jetbrains.kotlin.jps.build.dependeciestxt.actualizeMppJpsIncTestCaseDirs
 import org.jetbrains.kotlin.jps.incremental.AbstractJsProtoComparisonTest
 import org.jetbrains.kotlin.jps.incremental.AbstractJvmProtoComparisonTest
+import org.jetbrains.kotlin.kapt.cli.test.AbstractArgumentParsingTest
+import org.jetbrains.kotlin.kapt.cli.test.AbstractKaptToolIntegrationTest
 import org.jetbrains.kotlin.kapt3.test.AbstractClassFileToSourceStubConverterTest
 import org.jetbrains.kotlin.kapt3.test.AbstractKotlinKaptContextTest
 import org.jetbrains.kotlin.noarg.AbstractBlackBoxCodegenTestForNoArg
@@ -1070,6 +1072,16 @@ fun main(args: Array<String>) {
 
         testClass<AbstractKotlinKaptContextTest> {
             model("kotlinRunner")
+        }
+    }
+
+    testGroup("plugins/kapt3/kapt3-cli/test", "plugins/kapt3/kapt3-cli/testData") {
+        testClass<AbstractArgumentParsingTest> {
+            model("argumentParsing", extension = "txt")
+        }
+
+        testClass<AbstractKaptToolIntegrationTest> {
+            model("integration", recursive = false, extension = null)
         }
     }
 
