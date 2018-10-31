@@ -11,15 +11,6 @@ import org.junit.Test
 
 class GradleMultiplatformWizardTest : AbstractGradleMultiplatformWizardTest() {
     @Test
-    fun testShared() {
-        // NB: I'm not quite sure this thing really works in 181 (Native is inside)
-        testImportFromBuilder(
-            KotlinGradleSharedMultiplatformModuleBuilder(),
-            "SampleTests", "SampleTestsJVM", metadataInside = true
-        )
-    }
-
-    @Test
     fun testWeb() {
         testImportFromBuilder(KotlinGradleWebMultiplatformModuleBuilder(), "SampleTests", "SampleTestsJVM")
     }
