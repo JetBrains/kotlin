@@ -87,7 +87,9 @@ class JKKtLiteralExpressionImpl(
 
 class JKKtSingleValueOperatorToken(val token: KtSingleValueToken) : JKKtOperatorToken {
     override val operatorName: String
-        get() = OperatorConventions.BINARY_OPERATION_NAMES[token]?.identifier!!
+        get() = OperatorConventions.getNameForOperationSymbol(token, true, true)?.identifier
+            ?: OperatorConventions.BOOLEAN_OPERATIONS[token]?.identifier
+            ?: TODO(token.value)
     override val text: String = token.value
 }
 
