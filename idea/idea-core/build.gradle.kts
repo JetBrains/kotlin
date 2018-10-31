@@ -14,7 +14,6 @@ dependencies {
     compile(project(":compiler:frontend.script"))
     compile(project(":compiler:light-classes"))
     compile(project(":compiler:util"))
-    compile(project(":j2k"))
     compile(project(":idea:ide-common"))
     compile(project(":idea:idea-jps-common"))
     compile(project(":plugins:android-extensions-compiler"))
