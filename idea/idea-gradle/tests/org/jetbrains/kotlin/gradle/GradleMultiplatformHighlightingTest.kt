@@ -30,6 +30,12 @@ class GradleMultiplatformHighlightingTest : GradleImportingTestCase() {
         doTest()
     }
 
+    @TargetVersions("4.7+")
+    @Test
+    fun testNoErrors() {
+        doTest()
+    }
+
     private fun doTest() {
         val files = importProjectFromTestData()
         val project = myTestFixture.project
