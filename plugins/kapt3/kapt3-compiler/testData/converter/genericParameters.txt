@@ -1,0 +1,29 @@
+import java.lang.System;
+
+@kotlin.Metadata()
+public final class MappedList<T extends java.lang.Object, R extends java.lang.Object> extends kotlin.collections.AbstractList<R> implements java.util.List<R> {
+    @org.jetbrains.annotations.NotNull()
+    private final java.util.List<T> list = null;
+    private final kotlin.jvm.functions.Function1<T, R> function = null;
+
+    @java.lang.Override()
+    public R get(int index) {
+        return null;
+    }
+
+    @java.lang.Override()
+    public int getSize() {
+        return 0;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.util.List<T> getList() {
+        return null;
+    }
+
+    public MappedList(@org.jetbrains.annotations.NotNull()
+    java.util.List<? extends T> list, @org.jetbrains.annotations.NotNull()
+    kotlin.jvm.functions.Function1<? super T, ? extends R> function) {
+        super();
+    }
+}

@@ -430,6 +430,8 @@ class BlockDecomposerTransformer(context: JsIrBackendContext) : IrElementTransfo
 
         override fun visitReturn(expression: IrReturn) = expression.asExpression(JsIrBuilder.buildCall(unreachableFunction.symbol, nothingType))
 
+        override fun visitVariable(declaration: IrVariable) = declaration.asExpression(unitValue)
+
         override fun visitStringConcatenation(expression: IrStringConcatenation): IrExpression {
             expression.transformChildrenVoid(expressionTransformer)
 

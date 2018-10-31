@@ -14,6 +14,8 @@ public final class DebugKonanProtoBuf {
     registry.add(org.jetbrains.kotlin.metadata.konan.DebugKonanProtoBuf.functionAnnotation);
     registry.add(org.jetbrains.kotlin.metadata.konan.DebugKonanProtoBuf.inlineIrBody);
     registry.add(org.jetbrains.kotlin.metadata.konan.DebugKonanProtoBuf.propertyAnnotation);
+    registry.add(org.jetbrains.kotlin.metadata.konan.DebugKonanProtoBuf.propertyGetterAnnotation);
+    registry.add(org.jetbrains.kotlin.metadata.konan.DebugKonanProtoBuf.propertySetterAnnotation);
     registry.add(org.jetbrains.kotlin.metadata.konan.DebugKonanProtoBuf.hasBackingField);
     registry.add(org.jetbrains.kotlin.metadata.konan.DebugKonanProtoBuf.usedAsVariable);
     registry.add(org.jetbrains.kotlin.metadata.konan.DebugKonanProtoBuf.compileTimeValue);
@@ -3930,6 +3932,28 @@ public final class DebugKonanProtoBuf {
           .newFileScopedGeneratedExtension(
         org.jetbrains.kotlin.metadata.DebugProtoBuf.Annotation.class,
         org.jetbrains.kotlin.metadata.DebugProtoBuf.Annotation.getDefaultInstance());
+  public static final int PROPERTY_GETTER_ANNOTATION_FIELD_NUMBER = 176;
+  /**
+   * <code>extend .org.jetbrains.kotlin.metadata.Property { ... }</code>
+   */
+  public static final
+    org.jetbrains.kotlin.protobuf.GeneratedMessage.GeneratedExtension<
+      org.jetbrains.kotlin.metadata.DebugProtoBuf.Property,
+      java.util.List<org.jetbrains.kotlin.metadata.DebugProtoBuf.Annotation>> propertyGetterAnnotation = org.jetbrains.kotlin.protobuf.GeneratedMessage
+          .newFileScopedGeneratedExtension(
+        org.jetbrains.kotlin.metadata.DebugProtoBuf.Annotation.class,
+        org.jetbrains.kotlin.metadata.DebugProtoBuf.Annotation.getDefaultInstance());
+  public static final int PROPERTY_SETTER_ANNOTATION_FIELD_NUMBER = 177;
+  /**
+   * <code>extend .org.jetbrains.kotlin.metadata.Property { ... }</code>
+   */
+  public static final
+    org.jetbrains.kotlin.protobuf.GeneratedMessage.GeneratedExtension<
+      org.jetbrains.kotlin.metadata.DebugProtoBuf.Property,
+      java.util.List<org.jetbrains.kotlin.metadata.DebugProtoBuf.Annotation>> propertySetterAnnotation = org.jetbrains.kotlin.protobuf.GeneratedMessage
+          .newFileScopedGeneratedExtension(
+        org.jetbrains.kotlin.metadata.DebugProtoBuf.Annotation.class,
+        org.jetbrains.kotlin.metadata.DebugProtoBuf.Annotation.getDefaultInstance());
   public static final int HAS_BACKING_FIELD_FIELD_NUMBER = 171;
   /**
    * <code>extend .org.jetbrains.kotlin.metadata.Property { ... }</code>
@@ -4120,35 +4144,41 @@ public final class DebugKonanProtoBuf {
       "nlineIrBody:p\n\023property_annotation\022\'.org" +
       ".jetbrains.kotlin.metadata.Property\030\252\001 \003" +
       "(\0132).org.jetbrains.kotlin.metadata.Annot" +
-      "ation:C\n\021has_backing_field\022\'.org.jetbrai" +
-      "ns.kotlin.metadata.Property\030\253\001 \001(\010:B\n\020us" +
-      "ed_as_variable\022\'.org.jetbrains.kotlin.me" +
-      "tadata.Property\030\254\001 \001(\010:~\n\022compile_time_v",
-      "alue\022\'.org.jetbrains.kotlin.metadata.Pro" +
-      "perty\030\255\001 \001(\01328.org.jetbrains.kotlin.meta" +
-      "data.Annotation.Argument.Value:z\n\025inline" +
-      "_getter_ir_body\022\'.org.jetbrains.kotlin.m" +
-      "etadata.Property\030\256\001 \001(\01321.org.jetbrains." +
-      "kotlin.metadata.konan.InlineIrBody:z\n\025in" +
-      "line_setter_ir_body\022\'.org.jetbrains.kotl" +
-      "in.metadata.Property\030\257\001 \001(\01321.org.jetbra" +
-      "ins.kotlin.metadata.konan.InlineIrBody:s" +
-      "\n\025enum_entry_annotation\022(.org.jetbrains.",
-      "kotlin.metadata.EnumEntry\030\252\001 \003(\0132).org.j" +
-      "etbrains.kotlin.metadata.Annotation:E\n\022e" +
-      "num_entry_ordinal\022(.org.jetbrains.kotlin" +
-      ".metadata.EnumEntry\030\253\001 \001(\005:w\n\024parameter_" +
-      "annotation\022-.org.jetbrains.kotlin.metada" +
-      "ta.ValueParameter\030\252\001 \003(\0132).org.jetbrains" +
-      ".kotlin.metadata.Annotation:h\n\017type_anno" +
-      "tation\022#.org.jetbrains.kotlin.metadata.T" +
-      "ype\030\252\001 \003(\0132).org.jetbrains.kotlin.metada" +
-      "ta.Annotation:7\n\ttype_text\022#.org.jetbrai",
-      "ns.kotlin.metadata.Type\030\254\001 \001(\t:{\n\031type_p" +
-      "arameter_annotation\022,.org.jetbrains.kotl" +
-      "in.metadata.TypeParameter\030\252\001 \003(\0132).org.j" +
-      "etbrains.kotlin.metadata.AnnotationB\024B\022D" +
-      "ebugKonanProtoBuf"
+      "ation:w\n\032property_getter_annotation\022\'.or" +
+      "g.jetbrains.kotlin.metadata.Property\030\260\001 " +
+      "\003(\0132).org.jetbrains.kotlin.metadata.Anno" +
+      "tation:w\n\032property_setter_annotation\022\'.o",
+      "rg.jetbrains.kotlin.metadata.Property\030\261\001" +
+      " \003(\0132).org.jetbrains.kotlin.metadata.Ann" +
+      "otation:C\n\021has_backing_field\022\'.org.jetbr" +
+      "ains.kotlin.metadata.Property\030\253\001 \001(\010:B\n\020" +
+      "used_as_variable\022\'.org.jetbrains.kotlin." +
+      "metadata.Property\030\254\001 \001(\010:~\n\022compile_time" +
+      "_value\022\'.org.jetbrains.kotlin.metadata.P" +
+      "roperty\030\255\001 \001(\01328.org.jetbrains.kotlin.me" +
+      "tadata.Annotation.Argument.Value:z\n\025inli" +
+      "ne_getter_ir_body\022\'.org.jetbrains.kotlin",
+      ".metadata.Property\030\256\001 \001(\01321.org.jetbrain" +
+      "s.kotlin.metadata.konan.InlineIrBody:z\n\025" +
+      "inline_setter_ir_body\022\'.org.jetbrains.ko" +
+      "tlin.metadata.Property\030\257\001 \001(\01321.org.jetb" +
+      "rains.kotlin.metadata.konan.InlineIrBody" +
+      ":s\n\025enum_entry_annotation\022(.org.jetbrain" +
+      "s.kotlin.metadata.EnumEntry\030\252\001 \003(\0132).org" +
+      ".jetbrains.kotlin.metadata.Annotation:E\n" +
+      "\022enum_entry_ordinal\022(.org.jetbrains.kotl" +
+      "in.metadata.EnumEntry\030\253\001 \001(\005:w\n\024paramete",
+      "r_annotation\022-.org.jetbrains.kotlin.meta" +
+      "data.ValueParameter\030\252\001 \003(\0132).org.jetbrai" +
+      "ns.kotlin.metadata.Annotation:h\n\017type_an" +
+      "notation\022#.org.jetbrains.kotlin.metadata" +
+      ".Type\030\252\001 \003(\0132).org.jetbrains.kotlin.meta" +
+      "data.Annotation:7\n\ttype_text\022#.org.jetbr" +
+      "ains.kotlin.metadata.Type\030\254\001 \001(\t:{\n\031type" +
+      "_parameter_annotation\022,.org.jetbrains.ko" +
+      "tlin.metadata.TypeParameter\030\252\001 \003(\0132).org" +
+      ".jetbrains.kotlin.metadata.AnnotationB\024B",
+      "\022DebugKonanProtoBuf"
     };
     org.jetbrains.kotlin.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new org.jetbrains.kotlin.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -4194,17 +4224,19 @@ public final class DebugKonanProtoBuf {
     functionAnnotation.internalInit(descriptor.getExtensions().get(4));
     inlineIrBody.internalInit(descriptor.getExtensions().get(5));
     propertyAnnotation.internalInit(descriptor.getExtensions().get(6));
-    hasBackingField.internalInit(descriptor.getExtensions().get(7));
-    usedAsVariable.internalInit(descriptor.getExtensions().get(8));
-    compileTimeValue.internalInit(descriptor.getExtensions().get(9));
-    inlineGetterIrBody.internalInit(descriptor.getExtensions().get(10));
-    inlineSetterIrBody.internalInit(descriptor.getExtensions().get(11));
-    enumEntryAnnotation.internalInit(descriptor.getExtensions().get(12));
-    enumEntryOrdinal.internalInit(descriptor.getExtensions().get(13));
-    parameterAnnotation.internalInit(descriptor.getExtensions().get(14));
-    typeAnnotation.internalInit(descriptor.getExtensions().get(15));
-    typeText.internalInit(descriptor.getExtensions().get(16));
-    typeParameterAnnotation.internalInit(descriptor.getExtensions().get(17));
+    propertyGetterAnnotation.internalInit(descriptor.getExtensions().get(7));
+    propertySetterAnnotation.internalInit(descriptor.getExtensions().get(8));
+    hasBackingField.internalInit(descriptor.getExtensions().get(9));
+    usedAsVariable.internalInit(descriptor.getExtensions().get(10));
+    compileTimeValue.internalInit(descriptor.getExtensions().get(11));
+    inlineGetterIrBody.internalInit(descriptor.getExtensions().get(12));
+    inlineSetterIrBody.internalInit(descriptor.getExtensions().get(13));
+    enumEntryAnnotation.internalInit(descriptor.getExtensions().get(14));
+    enumEntryOrdinal.internalInit(descriptor.getExtensions().get(15));
+    parameterAnnotation.internalInit(descriptor.getExtensions().get(16));
+    typeAnnotation.internalInit(descriptor.getExtensions().get(17));
+    typeText.internalInit(descriptor.getExtensions().get(18));
+    typeParameterAnnotation.internalInit(descriptor.getExtensions().get(19));
     org.jetbrains.kotlin.metadata.DebugProtoBuf.getDescriptor();
   }
 

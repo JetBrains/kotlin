@@ -26,6 +26,7 @@ import com.intellij.diagnostic.LogMessageEx
 import com.intellij.openapi.diagnostic.Attachment
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.progress.ProcessCanceledException
+import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.CharsetToolkit
 import com.intellij.psi.JavaPsiFacade
@@ -132,6 +133,10 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
     override fun evaluate(context: EvaluationContextImpl): Any? {
         if (codeFragment.text.isEmpty()) {
             return context.debugProcess.virtualMachineProxy.mirrorOfVoid()
+        }
+
+        if (DumbService.getInstance(codeFragment.project).isDumb) {
+            throw EvaluateExceptionUtil.createEvaluateException("Code fragment evaluation is not available in the dumb mode")
         }
 
         var isCompiledDataFromCache = true

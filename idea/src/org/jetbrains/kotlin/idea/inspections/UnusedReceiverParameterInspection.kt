@@ -76,7 +76,7 @@ class UnusedReceiverParameterInspection : AbstractKotlinInspection() {
                 val receiverTypeDeclaration = receiverType.constructor.declarationDescriptor
                 if (DescriptorUtils.isCompanionObject(receiverTypeDeclaration)) return
 
-                val callable = callableDeclaration.descriptor ?: return
+                val callable = context[BindingContext.DECLARATION_TO_DESCRIPTOR, callableDeclaration] ?: return
 
                 if (callableDeclaration.isMainFunction(callable)) return
 

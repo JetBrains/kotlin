@@ -1,7 +1,7 @@
 package
 
 @kotlin.UseExperimental(markerClass = {api.E::class}) public val property: kotlin.String
-public var propertyAccessors: kotlin.String
+@get:kotlin.UseExperimental(markerClass = {api.E::class}) @set:kotlin.UseExperimental(markerClass = {api.E::class}) public var propertyAccessors: kotlin.String
 public fun expression(): kotlin.String
 @kotlin.UseExperimental(markerClass = {api.E::class}) public fun function(): kotlin.Unit
 public fun valueParameter(/*0*/ @kotlin.UseExperimental(markerClass = {api.E::class}) p: kotlin.String = ...): kotlin.String

@@ -11,11 +11,19 @@ import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite
 import org.jetbrains.kotlin.serialization.SerializerExtensionProtocol
 
 object BuiltInSerializerProtocol : SerializerExtensionProtocol(
-    ExtensionRegistryLite.newInstance().apply { BuiltInsProtoBuf.registerAllExtensions(this) },
+    ExtensionRegistryLite.newInstance().apply(BuiltInsProtoBuf::registerAllExtensions),
     BuiltInsProtoBuf.packageFqName,
-    BuiltInsProtoBuf.constructorAnnotation, BuiltInsProtoBuf.classAnnotation, BuiltInsProtoBuf.functionAnnotation,
-    BuiltInsProtoBuf.propertyAnnotation, BuiltInsProtoBuf.enumEntryAnnotation, BuiltInsProtoBuf.compileTimeValue,
-    BuiltInsProtoBuf.parameterAnnotation, BuiltInsProtoBuf.typeAnnotation, BuiltInsProtoBuf.typeParameterAnnotation
+    BuiltInsProtoBuf.constructorAnnotation,
+    BuiltInsProtoBuf.classAnnotation,
+    BuiltInsProtoBuf.functionAnnotation,
+    BuiltInsProtoBuf.propertyAnnotation,
+    BuiltInsProtoBuf.propertyGetterAnnotation,
+    BuiltInsProtoBuf.propertySetterAnnotation,
+    BuiltInsProtoBuf.enumEntryAnnotation,
+    BuiltInsProtoBuf.compileTimeValue,
+    BuiltInsProtoBuf.parameterAnnotation,
+    BuiltInsProtoBuf.typeAnnotation,
+    BuiltInsProtoBuf.typeParameterAnnotation
 ) {
     const val BUILTINS_FILE_EXTENSION = "kotlin_builtins"
 

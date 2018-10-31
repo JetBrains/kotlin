@@ -65,19 +65,33 @@ object KotlinUsages {
         override fun execute(details: MultipleCandidatesDetails<Usage?>) = with(details) {
             val candidateNames = candidateValues.map { it?.name }.toSet()
 
+            fun chooseCandidateByName(name: String?): Unit = closestMatch(candidateValues.single { it?.name == name }!!)
+
             // if both API and runtime artifacts are chosen according to the compatibility rules, then
             // the consumer requested nothing specific, so provide them with the runtime variant, which is more complete:
             if (candidateNames.filterNotNull().toSet() == setOf(KOTLIN_RUNTIME, KOTLIN_API)) {
-                details.closestMatch(candidateValues.single { it?.name == KOTLIN_RUNTIME }!!)
+                chooseCandidateByName(KOTLIN_RUNTIME)
             }
-            if (JAVA_API in candidateNames && JAVA_RUNTIME_JARS in candidateNames && values.none { it in candidateNames }) {
-                details.closestMatch(candidateValues.single { it?.name == JAVA_RUNTIME_JARS }!!)
+
+            // The consumer value is available and can be used for disambiguation in Gradle 4.1+
+            if (isGradleVersionAtLeast(4, 1)) {
+                val javaRuntimeUsages = setOf(JAVA_RUNTIME_JARS, JAVA_RUNTIME)
+
+                if (JAVA_API in candidateNames &&
+                    javaRuntimeUsages.any { it in candidateNames } &&
+                    values.none { it in candidateNames }
+                ) {
+                    when (consumerValue?.name) {
+                        KOTLIN_API, JAVA_API ->
+                            chooseCandidateByName(JAVA_API)
+                        null, KOTLIN_RUNTIME, in javaRuntimeUsages ->
+                            chooseCandidateByName(javaRuntimeUsages.first { it in candidateNames })
+                    }
+                }
             }
-            if (JAVA_API in candidateNames && JAVA_RUNTIME in candidateNames && values.none { it in candidateNames }) {
-                details.closestMatch(candidateValues.single { it?.name == JAVA_RUNTIME }!!)
-            }
+
             if (JAVA_RUNTIME_CLASSES in candidateNames && JAVA_RUNTIME_RESOURCES in candidateNames && KOTLIN_RUNTIME in candidateNames) {
-                closestMatch(candidateValues.single { it?.name == KOTLIN_RUNTIME }!!)
+                chooseCandidateByName(KOTLIN_RUNTIME)
             }
         }
     }

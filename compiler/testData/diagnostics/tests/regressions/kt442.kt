@@ -24,7 +24,7 @@ infix fun <T> T.with(f :  T.() -> Unit) {
     f()
 }
 
-fun main(args : Array<String>) {
+fun main() {
     val <!UNUSED_VARIABLE!>a<!> = 1 with {
         plus(1)
     }

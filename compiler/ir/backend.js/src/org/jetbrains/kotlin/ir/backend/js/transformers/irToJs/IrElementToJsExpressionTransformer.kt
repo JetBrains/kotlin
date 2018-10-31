@@ -44,10 +44,12 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
             is IrConstKind.Int -> JsIntLiteral(kind.valueOf(expression))
             is IrConstKind.Long -> throw IllegalStateException("Long const should have been lowered at this point")
             is IrConstKind.Char -> throw IllegalStateException("Char const should have been lowered at this point")
-            is IrConstKind.Float -> JsDoubleLiteral(kind.valueOf(expression).toDouble())
+            is IrConstKind.Float -> JsDoubleLiteral(toDoubleConst(kind.valueOf(expression)))
             is IrConstKind.Double -> JsDoubleLiteral(kind.valueOf(expression))
         }
     }
+
+    private fun toDoubleConst(f: Float) = if (f.isInfinite() || f.isNaN()) f.toDouble() else f.toString().toDouble()
 
     override fun visitStringConcatenation(expression: IrStringConcatenation, context: JsGenerationContext): JsExpression {
         // TODO revisit

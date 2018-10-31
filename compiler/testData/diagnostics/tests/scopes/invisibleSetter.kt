@@ -3,7 +3,7 @@ class A<T> {
         private set
 }
 
-fun main(args: Array<String>) {
+fun main() {
     val a = A<Any>()
     <!INVISIBLE_SETTER!>a.x<!> = 1
 }

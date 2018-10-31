@@ -6,7 +6,9 @@
 package example.cinterop.published
 
 import example.cinterop.published.stdio.*
+import com.example.lib.*
 
 fun publishedPrint(str: String) {
     printf(str + '\n')
+    println(id(42))
 }

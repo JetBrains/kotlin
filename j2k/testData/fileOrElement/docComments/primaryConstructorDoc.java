@@ -14,5 +14,5 @@ class CtorComment2 {
     /**
      * This constructor is especially useful
      */
-    public CtorComment() {}
+    public CtorComment2() {}
 }

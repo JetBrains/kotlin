@@ -54,6 +54,7 @@ fun StorageComponentContainer.configureModule(
     useInstance(platformVersion)
 
     platform.platformConfigurator.configureModuleComponents(this)
+    platform.platformConfigurator.configureModuleDependentCheckers(this)
 
     for (extension in StorageComponentContainerContributor.getInstances(moduleContext.project)) {
         extension.registerModuleComponents(this, platform, moduleContext.module)

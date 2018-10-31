@@ -263,6 +263,8 @@ fun Task.listConfigurationContents(configName: String) {
     }
 }
 
+IdeVersionConfigurator.setCurrentIde(this)
+
 val defaultJvmTarget = "1.8"
 val defaultJavaHome = jdkPath(defaultJvmTarget)
 val ignoreTestFailures by extra(project.findProperty("ignoreTestFailures")?.toString()?.toBoolean() ?: project.hasProperty("teamcity"))

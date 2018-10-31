@@ -21,7 +21,7 @@ public fun invokeOnB(b: B) = b.z + b.test()
 
 public fun invokeOnC(c: C) = c.z + c.test()
 
-fun main(args: Array<String>) {
+fun main() {
     val b = B()
     println(invokeOnA(b))
     println(invokeOnB(b))

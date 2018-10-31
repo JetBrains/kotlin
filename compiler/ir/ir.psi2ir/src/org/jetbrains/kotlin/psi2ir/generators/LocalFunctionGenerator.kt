@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionReferenceImpl
 import org.jetbrains.kotlin.psi.KtLambdaExpression
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
-import org.jetbrains.kotlin.psi.psiUtil.startOffset
+import org.jetbrains.kotlin.psi.psiUtil.startOffsetSkippingComments
 
 class LocalFunctionGenerator(statementGenerator: StatementGenerator) : StatementGeneratorExtension(statementGenerator) {
     fun generateLambda(ktLambda: KtLambdaExpression): IrStatement {
@@ -50,14 +50,14 @@ class LocalFunctionGenerator(statementGenerator: StatementGenerator) : Statement
         } else {
             // anonymous function expression
             val funExpressionType = getInferredTypeWithImplicitCastsOrFail(ktFun).toIrType()
-            val irBlock = IrBlockImpl(ktFun.startOffset, ktFun.endOffset, funExpressionType, IrStatementOrigin.ANONYMOUS_FUNCTION)
+            val irBlock = IrBlockImpl(ktFun.startOffsetSkippingComments, ktFun.endOffset, funExpressionType, IrStatementOrigin.ANONYMOUS_FUNCTION)
 
             val irFun = generateFunctionDeclaration(ktFun)
             irBlock.statements.add(irFun)
 
             irBlock.statements.add(
                 IrFunctionReferenceImpl(
-                    ktFun.startOffset, ktFun.endOffset, funExpressionType,
+                    ktFun.startOffsetSkippingComments, ktFun.endOffset, funExpressionType,
                     irFun.symbol, irFun.symbol.descriptor, 0,
                     IrStatementOrigin.ANONYMOUS_FUNCTION
                 )

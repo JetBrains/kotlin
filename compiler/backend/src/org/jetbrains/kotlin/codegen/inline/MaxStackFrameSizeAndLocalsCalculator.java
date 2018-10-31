@@ -314,6 +314,10 @@ public class MaxStackFrameSizeAndLocalsCalculator extends MaxLocalsCalculator {
             LabelWrapper e = handler.end;
 
             while (l != e) {
+                if (l == null) {
+                    throw new IllegalStateException("Bad exception handler end");
+                }
+
                 l.addSuccessor(handler.handlerLabel, 0, true);
                 l = l.nextLabel;
             }

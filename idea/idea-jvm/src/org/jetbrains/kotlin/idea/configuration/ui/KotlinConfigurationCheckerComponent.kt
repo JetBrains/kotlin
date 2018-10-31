@@ -20,7 +20,7 @@ import com.intellij.ProjectTopics
 import com.intellij.notification.NotificationDisplayType
 import com.intellij.notification.NotificationsConfiguration
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.components.AbstractProjectComponent
+import com.intellij.openapi.components.ProjectComponent
 import com.intellij.openapi.externalSystem.service.project.manage.ProjectDataImportListener
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
@@ -37,7 +37,7 @@ import org.jetbrains.kotlin.idea.versions.collectModulesWithOutdatedRuntime
 import org.jetbrains.kotlin.idea.versions.findOutdatedKotlinLibraries
 import java.util.concurrent.atomic.AtomicInteger
 
-class KotlinConfigurationCheckerComponent(project: Project) : AbstractProjectComponent(project) {
+class KotlinConfigurationCheckerComponent(val project: Project) : ProjectComponent {
     private val syncDepth = AtomicInteger()
 
     @Volatile
@@ -54,12 +54,12 @@ class KotlinConfigurationCheckerComponent(project: Project) : AbstractProjectCom
 
                 if (notificationPostponed && !isSyncing) {
                     ApplicationManager.getApplication().executeOnPooledThread {
-                        DumbService.getInstance(myProject).waitForSmartMode()
+                        DumbService.getInstance(project).waitForSmartMode()
                         if (!isSyncing) {
                             notificationPostponed = false
                             showConfigureKotlinNotificationIfNeeded(
-                                myProject,
-                                collectModulesWithOutdatedRuntime(findOutdatedKotlinLibraries(myProject))
+                                project,
+                                collectModulesWithOutdatedRuntime(findOutdatedKotlinLibraries(project))
                             )
                         }
                     }
@@ -79,23 +79,23 @@ class KotlinConfigurationCheckerComponent(project: Project) : AbstractProjectCom
     override fun projectOpened() {
         super.projectOpened()
 
-        StartupManager.getInstance(myProject).registerPostStartupActivity {
+        StartupManager.getInstance(project).registerPostStartupActivity {
             performProjectPostOpenActions()
         }
     }
 
     fun performProjectPostOpenActions() {
         ApplicationManager.getApplication().executeOnPooledThread {
-            DumbService.getInstance(myProject).waitForSmartMode()
+            DumbService.getInstance(project).waitForSmartMode()
 
-            for (module in getModulesWithKotlinFiles(myProject)) {
+            for (module in getModulesWithKotlinFiles(project)) {
                 module.getAndCacheLanguageLevelByDependencies()
             }
 
             if (!isSyncing) {
-                val libraries = findOutdatedKotlinLibraries(myProject)
+                val libraries = findOutdatedKotlinLibraries(project)
                 val excludeModules = collectModulesWithOutdatedRuntime(libraries)
-                showConfigureKotlinNotificationIfNeeded(myProject, excludeModules)
+                showConfigureKotlinNotificationIfNeeded(project, excludeModules)
             } else {
                 notificationPostponed = true
             }

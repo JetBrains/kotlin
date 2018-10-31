@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.intentions.branchedTransformations
 import org.jetbrains.kotlin.cfg.WhenChecker
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.intentions.branches
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
@@ -206,7 +207,7 @@ object BranchedFoldingUtils {
         expression.replace(psiFactory.createExpressionByPattern("$0 $1 $2", lhs!!, op!!, expression))
     }
 
-    fun foldToReturn(expression: KtExpression) {
+    fun foldToReturn(expression: KtExpression): KtExpression {
         fun KtReturnExpression.replaceWithReturned() {
             replace(returnedExpression!!)
         }
@@ -226,7 +227,7 @@ object BranchedFoldingUtils {
             }
         }
         lift(expression)
-        expression.replace(KtPsiFactory(expression).createExpressionByPattern("return $0", expression))
+        return expression.replaced(KtPsiFactory(expression).createExpressionByPattern("return $0", expression))
     }
 
     private fun KtTryExpression.tryBlockAndCatchBodies(): List<KtExpression?> = listOf(tryBlock) + catchClauses.map { it.catchBody }

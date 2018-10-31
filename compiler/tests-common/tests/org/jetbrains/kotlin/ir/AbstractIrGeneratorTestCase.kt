@@ -116,7 +116,7 @@ abstract class AbstractIrGeneratorTestCase : CodegenTestCase() {
         internal fun shouldIgnoreErrors(wholeFile: File): Boolean =
             IGNORE_ERRORS_PATTERN.containsMatchIn(wholeFile.readText())
 
-        internal fun createExpectedTextFile(testFile: TestFile, dir: File, fileName: String): File {
+        fun createExpectedTextFile(testFile: TestFile, dir: File, fileName: String): File {
             val textFile = File(dir, fileName)
             if (!textFile.exists()) {
                 TestCase.assertTrue("Can't create an expected text containingFile: ${textFile.absolutePath}", textFile.createNewFile())

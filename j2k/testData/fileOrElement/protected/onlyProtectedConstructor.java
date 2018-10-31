@@ -1,7 +1,7 @@
 package test;
 
 public class BaseProtectedConstructor {
-    protected BaseSamePackage() {
+    protected BaseProtectedConstructor() {
 
     }
 }

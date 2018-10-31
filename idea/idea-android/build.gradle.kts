@@ -54,7 +54,11 @@ dependencies {
     testRuntime(project(":kotlinx-serialization-ide-plugin"))
 
     testRuntime(intellijPluginDep("android"))
-    testRuntime(intellijPluginDep("smali"))
+
+    (Platform[181].orHigher.or(Ide.AS31)) {
+        testRuntime(intellijPluginDep("smali"))
+    }
+
     testRuntime(intellijPluginDep("copyright"))
     testRuntime(intellijPluginDep("coverage"))
     testRuntime(intellijPluginDep("gradle"))
@@ -63,13 +67,22 @@ dependencies {
     testRuntime(intellijPluginDep("java-decompiler"))
     testRuntime(intellijPluginDep("java-i18n"))
     testRuntime(intellijPluginDep("junit"))
-    testRuntime(intellijPluginDep("maven"))
+
+    Ide.IJ {
+        testRuntime(intellijPluginDep("maven"))
+    }
+
     testRuntime(intellijPluginDep("testng"))
 }
 
 sourceSets {
-    "main" { projectDefault() }
-    "test" { projectDefault() }
+    Ide.AS33.orHigher {
+        "main" { }
+        "test" { }
+    } ?: run {
+        "main" { projectDefault() }
+        "test" { projectDefault() }
+    }
 }
 
 projectTest {

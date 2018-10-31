@@ -8,6 +8,6 @@ interface T {
     abstract fun foo()
 }
 
-fun main(args : Array<String>) {
+fun main() {
     println("Hi!")
 }

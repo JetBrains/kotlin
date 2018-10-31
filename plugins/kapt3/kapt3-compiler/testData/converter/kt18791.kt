@@ -52,6 +52,9 @@ import lib.R.id.textView
 
 annotation class Bind(val id: Int)
 
+@Target(AnnotationTarget.FIELD)
+annotation class BindField(val id: Int)
+
 annotation class Anno(
         val a1: Boolean,
         val a2: Byte,
@@ -64,6 +67,31 @@ annotation class Anno(
         val a9: String)
 
 class MyActivity {
+    @Bind(LibR.id.textView)
+    @BindField(LibR.id.textView)
+    val a = 0
+
+    @Bind(lib.R.id.textView)
+    @BindField(lib.R.id.textView)
+    val b = 0
+
+    @Bind(app.R.layout.mainActivity)
+    @BindField(app.R.layout.mainActivity)
+    val c = 0
+
+    @Bind(R.layout.mainActivity)
+    @BindField(R.layout.mainActivity)
+    val d = 0
+
+    @Bind(R2.layout.mainActivity)
+    @BindField(R2.layout.mainActivity)
+    @Anno(a1 = B.a1, a2 = B.a2, a3 = B.a3, a4 = B.a4, a5 = B.a5, a6 = B.a6, a7 = B.a7, a8 = B.a8, a9 = B.a9)
+    val e = 0
+
+    @Bind(B.id.textView)
+    @BindField(B.id.textView)
+    val f = 0
+
     @Bind(LibR.id.textView)
     fun foo() {}
 

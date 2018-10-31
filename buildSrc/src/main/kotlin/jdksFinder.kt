@@ -8,10 +8,10 @@ import java.io.File
 import net.rubygrapefruit.platform.WindowsRegistry.Key.HKEY_LOCAL_MACHINE
 import org.gradle.internal.os.OperatingSystem
 
-enum class JdkMajorVersion(val mandatory: Boolean = true) {
-    JDK_16, JDK_17, JDK_18, JDK_9(false), JDK_10(false), JDK_11(false);
+enum class JdkMajorVersion(private val mandatory: Boolean = true) {
+    JDK_16, JDK_17, JDK_18, JDK_9, JDK_10(false), JDK_11(false);
 
-    fun isMandatory() : Boolean = mandatory
+    fun isMandatory(): Boolean = mandatory
 }
 
 val jdkAlternativeVarNames = mapOf(JdkMajorVersion.JDK_9 to listOf("JDK_19"))

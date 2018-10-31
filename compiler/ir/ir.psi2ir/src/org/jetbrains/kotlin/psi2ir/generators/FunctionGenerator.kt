@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.pureEndOffset
 import org.jetbrains.kotlin.psi.psiUtil.pureStartOffset
-import org.jetbrains.kotlin.psi.psiUtil.startOffset
+import org.jetbrains.kotlin.psi.psiUtil.startOffsetSkippingComments
 import org.jetbrains.kotlin.psi2ir.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
@@ -144,7 +144,7 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
     ): IrBlockBody {
         val property = getter.correspondingProperty
 
-        val startOffset = ktProperty.startOffset
+        val startOffset = ktProperty.startOffsetSkippingComments
         val endOffset = ktProperty.endOffset
         val irBody = IrBlockBodyImpl(startOffset, endOffset)
 
@@ -172,7 +172,7 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
     ): IrBlockBody {
         val property = setter.correspondingProperty
 
-        val startOffset = ktProperty.startOffset
+        val startOffset = ktProperty.startOffsetSkippingComments
         val endOffset = ktProperty.endOffset
         val irBody = IrBlockBodyImpl(startOffset, endOffset)
 
@@ -197,7 +197,7 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
             is ClassDescriptor -> {
                 val thisAsReceiverParameter = containingDeclaration.thisAsReceiverParameter
                 IrGetValueImpl(
-                    ktProperty.startOffset, ktProperty.endOffset,
+                    ktProperty.startOffsetSkippingComments, ktProperty.endOffset,
                     thisAsReceiverParameter.type.toIrType(),
                     context.symbolTable.referenceValue(thisAsReceiverParameter)
                 )

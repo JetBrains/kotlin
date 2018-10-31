@@ -355,22 +355,27 @@ open class Kapt3IT : Kapt3BaseIT() {
 
     @Test
     fun testLocationMapping() {
-        fun String.modifyNumbers(fn: (Int) -> Int): String =
-            replace("\\d+".toRegex()) { fn(it.value.toInt()).toString() }
-
         val project = Project("locationMapping", directoryPrefix = "kapt2")
         val regex = "((Test\\.java)|(test\\.kt)):(\\d+): error: GenError element".toRegex()
 
         fun CompiledProject.getErrorMessages(): String =
-            regex.findAll(output)
-                .map { it.value }
-                .joinToString("\n") { if (isWindows) it.modifyNumbers { it + 1 } else it }
+            regex.findAll(output).map { it.value }.joinToString("\n")
+
+        fun genJavaErrorString(vararg lines: Int) =
+            lines.joinToString("\n") { "Test.java:$it: error: GenError element" }
+
+        fun genKotlinErrorString(vararg lines: Int) =
+            lines.joinToString("\n") { "test.kt:$it: error: GenError element" }
 
         project.build("build") {
             assertFailed()
-
-            val expected = arrayOf(9, 17).joinToString("\n") { "Test.java:$it: error: GenError element" }
-            Assert.assertEquals(expected, getErrorMessages())
+            val actual = getErrorMessages()
+            // try as 0 starting lines first, then as 1 starting line
+            try {
+                Assert.assertEquals(genJavaErrorString(9, 17), actual)
+            } catch (e: AssertionError) {
+                Assert.assertEquals(genJavaErrorString(10, 18), actual)
+            }
         }
 
         project.projectDir.getFileByName("build.gradle").modify {
@@ -379,9 +384,13 @@ open class Kapt3IT : Kapt3BaseIT() {
 
         project.build("build") {
             assertFailed()
-
-            val expected = arrayOf(3, 7).joinToString("\n") { "test.kt:$it: error: GenError element" }
-            Assert.assertEquals(expected, getErrorMessages())
+            val actual = getErrorMessages()
+            // try as 0 starting lines first, then as 1 starting line
+            try {
+                Assert.assertEquals(genKotlinErrorString(2, 6), actual)
+            } catch (e: AssertionError) {
+                Assert.assertEquals(genKotlinErrorString(3, 7), actual)
+            }
         }
     }
 

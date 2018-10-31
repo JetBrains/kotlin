@@ -1,5 +1,5 @@
 package org.jetbrains.kotlin.test
 
-fun main(args: Array<String>) {
+fun main() {
     println("OK")
 }

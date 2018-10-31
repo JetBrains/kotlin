@@ -20,7 +20,7 @@ class MessageCollectorBackedKaptLogger(
     val messageCollector: MessageCollector = PrintingMessageCollector(System.err, MessageRenderer.PLAIN_FULL_PATHS, isVerbose)
 ) : KaptLogger {
     private companion object {
-        val PREFIX = "[kapt] "
+        const val PREFIX = "[kapt] "
     }
 
     override val errorWriter = makeWriter(ERROR)

@@ -18,13 +18,10 @@ package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatch
-import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatchStatus
-import org.jetbrains.kotlin.resolve.calls.model.VarargValueArgument
 
 open class AddNamesToCallArgumentsIntention : SelfTargetingRangeIntention<KtCallElement>(
     KtCallElement::class.java,
@@ -39,27 +36,14 @@ open class AddNamesToCallArgumentsIntention : SelfTargetingRangeIntention<KtCall
             val resolvedCall = element.resolveToCall() ?: return false
             if (!resolvedCall.resultingDescriptor.hasStableParameterNames()) return false
 
-            for (argument in arguments) {
-                val argumentMatch = resolvedCall.getArgumentMapping(argument) as? ArgumentMatch ?: return false
-                if (argumentMatch.status != ArgumentMatchStatus.SUCCESS) return false
-
-                if (argumentMatch.valueParameter.varargElementType != null) {
-                    val varargArgument = resolvedCall.valueArguments[argumentMatch.valueParameter] as? VarargValueArgument ?: return false
-                    if (varargArgument.arguments.size != 1) return false
-                    val versionSettings = element.languageVersionSettings
-                    if (versionSettings.supportsFeature(LanguageFeature.ProhibitAssigningSingleElementsToVarargsInNamedForm)) {
-                        if (argument.getSpreadElement() == null) return false
-                    }
-                }
+            return arguments.all {
+                AddNameToArgumentIntention.argumentMatchedAndCouldBeNamedInCall(it, resolvedCall, element.languageVersionSettings)
             }
-
-            return true
         }
     }
 
     override fun applicabilityRange(element: KtCallElement): TextRange? {
-        if (!canAddNamesToCallArguments(element)) return null
-        return element.calleeExpression?.textRange
+        return if (canAddNamesToCallArguments(element)) element.calleeExpression?.textRange else null
     }
 
     override fun applyTo(element: KtCallElement, editor: Editor?) {

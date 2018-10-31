@@ -9,7 +9,7 @@ package kt770_351_735 {
     public fun fooWithAnuNullableResult(/*0*/ s: kotlin.String?, /*1*/ name: kotlin.String, /*2*/ optional: kotlin.Boolean): kotlin.Any?
     public fun fooWithAnyArg(/*0*/ arg: kotlin.Any): kotlin.Unit
     public fun fooWithAnyNullableArg(/*0*/ arg: kotlin.Any?): kotlin.Unit
-    public fun main(/*0*/ args: kotlin.Array<kotlin.String>): kotlin.Unit
+    public fun main(): kotlin.Unit
     public fun test1(): kotlin.Unit
     public fun test2(): kotlin.Unit
     public fun testCoercionToAny(): kotlin.Unit

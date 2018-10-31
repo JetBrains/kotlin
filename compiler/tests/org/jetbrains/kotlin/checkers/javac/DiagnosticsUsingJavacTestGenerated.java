@@ -3608,6 +3608,16 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                 runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/localObjectInConstructor.kt");
             }
 
+            @TestMetadata("mainWith12.kt")
+            public void testMainWith12() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/mainWith12.kt");
+            }
+
+            @TestMetadata("mainWith13.kt")
+            public void testMainWith13() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/mainWith13.kt");
+            }
+
             @TestMetadata("nestedTryFinally.kt")
             public void testNestedTryFinally() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/nestedTryFinally.kt");

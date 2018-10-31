@@ -1151,6 +1151,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             runTest("idea/testData/intentions/addNameToArgument/functionLiteralArgument.kt");
         }
 
+        @TestMetadata("genericCall.kt")
+        public void testGenericCall() throws Exception {
+            runTest("idea/testData/intentions/addNameToArgument/genericCall.kt");
+        }
+
         @TestMetadata("incompleteCall.kt")
         public void testIncompleteCall() throws Exception {
             runTest("idea/testData/intentions/addNameToArgument/incompleteCall.kt");
@@ -1252,6 +1257,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("ambiguousCall.kt")
         public void testAmbiguousCall() throws Exception {
             runTest("idea/testData/intentions/addNamesToCallArguments/ambiguousCall.kt");
+        }
+
+        @TestMetadata("genericCall.kt")
+        public void testGenericCall() throws Exception {
+            runTest("idea/testData/intentions/addNamesToCallArguments/genericCall.kt");
         }
 
         @TestMetadata("incompleteCall.kt")
@@ -12982,6 +12992,21 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("afterLambda3.kt")
         public void testAfterLambda3() throws Exception {
             runTest("idea/testData/intentions/removeEmptyParenthesesFromLambdaCall/afterLambda3.kt");
+        }
+
+        @TestMetadata("afterLambda4.kt")
+        public void testAfterLambda4() throws Exception {
+            runTest("idea/testData/intentions/removeEmptyParenthesesFromLambdaCall/afterLambda4.kt");
+        }
+
+        @TestMetadata("afterLambda5.kt")
+        public void testAfterLambda5() throws Exception {
+            runTest("idea/testData/intentions/removeEmptyParenthesesFromLambdaCall/afterLambda5.kt");
+        }
+
+        @TestMetadata("afterLambda6.kt")
+        public void testAfterLambda6() throws Exception {
+            runTest("idea/testData/intentions/removeEmptyParenthesesFromLambdaCall/afterLambda6.kt");
         }
 
         public void testAllFilesPresentInRemoveEmptyParenthesesFromLambdaCall() throws Exception {

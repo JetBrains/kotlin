@@ -26,9 +26,6 @@
     <component>
       <implementation-class>org.jetbrains.kotlin.idea.configuration.KotlinMigrationProjectComponent</implementation-class>
     </component>
-    <component>
-      <implementation-class>org.jetbrains.kotlin.idea.caches.ProjectRootModificationTrackerFixer</implementation-class>
-    </component>
   </project-components>
 
   <application-components>

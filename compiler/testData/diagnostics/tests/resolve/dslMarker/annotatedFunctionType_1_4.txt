@@ -4,7 +4,7 @@ public fun baz1(/*0*/ x: (@MyDsl A).() -> kotlin.Unit): kotlin.Unit
 public fun baz2(/*0*/ x: (@MyDsl B).() -> kotlin.Unit): kotlin.Unit
 public fun baz3(/*0*/ x: @MyDsl() (A.() -> kotlin.Unit)): kotlin.Unit
 public fun baz4(/*0*/ x: @MyDsl() (B.() -> kotlin.Unit)): kotlin.Unit
-public fun main(/*0*/ args: kotlin.Array<kotlin.String>): kotlin.Unit
+public fun main(): kotlin.Unit
 public fun @MyDsl A.baz5(): kotlin.Unit
 
 public interface A {

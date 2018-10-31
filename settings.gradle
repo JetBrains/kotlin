@@ -141,6 +141,7 @@ include ":kotlin-build-common",
         ":kotlin-reflect-api",
         ":kotlin-ant",
         ":compiler:tests-java8",
+        ":compiler:tests-different-jdk",
         ":compiler:tests-spec",
         ":generators",
         ":generators:test-generator",
@@ -171,6 +172,7 @@ include ":kotlin-build-common",
         ":kotlin-scripting-common",
         ":kotlin-scripting-jvm",
         ":kotlin-scripting-jvm-host",
+        ":kotlin-scripting-intellij",
         ":kotlin-scripting-compiler",
         ":kotlin-scripting-idea",
         ":kotlin-scripting-compiler-embeddable",
@@ -292,6 +294,7 @@ project(':kotlin-annotations-android').projectDir = "$rootDir/libraries/tools/ko
 project(':kotlin-scripting-common').projectDir = "$rootDir/libraries/scripting/common" as File
 project(':kotlin-scripting-jvm').projectDir = "$rootDir/libraries/scripting/jvm" as File
 project(':kotlin-scripting-jvm-host').projectDir = "$rootDir/libraries/scripting/jvm-host" as File
+project(':kotlin-scripting-intellij').projectDir = "$rootDir/libraries/scripting/intellij" as File
 project(':kotlin-scripting-compiler').projectDir = "$rootDir/plugins/scripting/scripting-cli" as File
 project(':kotlin-scripting-compiler-embeddable').projectDir = "$rootDir/plugins/scripting/scripting-embeddable" as File
 project(':kotlin-scripting-idea').projectDir = "$rootDir/plugins/scripting/scripting-idea" as File

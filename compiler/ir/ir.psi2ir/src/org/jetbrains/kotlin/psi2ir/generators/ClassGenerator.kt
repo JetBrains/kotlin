@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.psi.KtPureClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.pureEndOffset
 import org.jetbrains.kotlin.psi.psiUtil.pureStartOffset
-import org.jetbrains.kotlin.psi.psiUtil.startOffset
+import org.jetbrains.kotlin.psi.psiUtil.startOffsetSkippingComments
 import org.jetbrains.kotlin.psi.synthetics.SyntheticClassOrObjectDescriptor
 import org.jetbrains.kotlin.psi.synthetics.findClassDescriptor
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -141,7 +141,7 @@ class ClassGenerator(
                 ?: throw AssertionError("Unexpected supertype constructor for delegation: $superTypeConstructorDescriptor")
         val delegateDescriptor = IrImplementingDelegateDescriptorImpl(irClass.descriptor, delegateType, superType)
         val irDelegateField = context.symbolTable.declareField(
-            ktDelegateExpression.startOffset, ktDelegateExpression.endOffset,
+            ktDelegateExpression.startOffsetSkippingComments, ktDelegateExpression.endOffset,
             IrDeclarationOrigin.DELEGATE,
             delegateDescriptor, delegateDescriptor.type.toIrType(),
             createBodyGenerator(irClass.symbol).generateExpressionBody(ktDelegateExpression)
@@ -385,7 +385,7 @@ class ClassGenerator(
     fun generateEnumEntry(ktEnumEntry: KtEnumEntry): IrEnumEntry {
         val enumEntryDescriptor = getOrFail(BindingContext.CLASS, ktEnumEntry)
         return context.symbolTable.declareEnumEntry(
-            ktEnumEntry.startOffset,
+            ktEnumEntry.startOffsetSkippingComments,
             ktEnumEntry.endOffset,
             IrDeclarationOrigin.DEFINED,
             enumEntryDescriptor

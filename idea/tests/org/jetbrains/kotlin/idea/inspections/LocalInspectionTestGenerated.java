@@ -2928,6 +2928,16 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
                 runTest("idea/testData/inspectionsLocal/liftOut/ifToReturn/innerIfTransformed.kt");
             }
 
+            @TestMetadata("onReturn.kt")
+            public void testOnReturn() throws Exception {
+                runTest("idea/testData/inspectionsLocal/liftOut/ifToReturn/onReturn.kt");
+            }
+
+            @TestMetadata("onReturn2.kt")
+            public void testOnReturn2() throws Exception {
+                runTest("idea/testData/inspectionsLocal/liftOut/ifToReturn/onReturn2.kt");
+            }
+
             @TestMetadata("simpleIf.kt")
             public void testSimpleIf() throws Exception {
                 runTest("idea/testData/inspectionsLocal/liftOut/ifToReturn/simpleIf.kt");
@@ -3059,6 +3069,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
                 runTest("idea/testData/inspectionsLocal/liftOut/tryToReturn/inner.kt");
             }
 
+            @TestMetadata("onReturn.kt")
+            public void testOnReturn() throws Exception {
+                runTest("idea/testData/inspectionsLocal/liftOut/tryToReturn/onReturn.kt");
+            }
+
             @TestMetadata("withoutReturn.kt")
             public void testWithoutReturn() throws Exception {
                 runTest("idea/testData/inspectionsLocal/liftOut/tryToReturn/withoutReturn.kt");
@@ -3173,6 +3188,16 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             @TestMetadata("localReturns.kt")
             public void testLocalReturns() throws Exception {
                 runTest("idea/testData/inspectionsLocal/liftOut/whenToReturn/localReturns.kt");
+            }
+
+            @TestMetadata("onReturn.kt")
+            public void testOnReturn() throws Exception {
+                runTest("idea/testData/inspectionsLocal/liftOut/whenToReturn/onReturn.kt");
+            }
+
+            @TestMetadata("onReturn2.kt")
+            public void testOnReturn2() throws Exception {
+                runTest("idea/testData/inspectionsLocal/liftOut/whenToReturn/onReturn2.kt");
             }
 
             @TestMetadata("otherReturns.kt")
@@ -6649,6 +6674,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         @TestMetadata("inAnonymousRunWrapped.kt")
         public void testInAnonymousRunWrapped() throws Exception {
             runTest("idea/testData/inspectionsLocal/unusedSymbol/inAnonymousRunWrapped.kt");
+        }
+
+        @TestMetadata("inlineClassConstructor.kt")
+        public void testInlineClassConstructor() throws Exception {
+            runTest("idea/testData/inspectionsLocal/unusedSymbol/inlineClassConstructor.kt");
         }
 
         @TestMetadata("inlineClassMemberFunction.kt")

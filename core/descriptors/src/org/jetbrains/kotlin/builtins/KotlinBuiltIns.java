@@ -608,6 +608,11 @@ public abstract class KotlinBuiltIns {
     }
 
     @NotNull
+    public ClassDescriptor getKClass() {
+        return getBuiltInClassByFqName(FQ_NAMES.kClass.toSafe());
+    }
+
+    @NotNull
     private ClassDescriptor getCollectionClassByName(@NotNull String simpleName) {
         return getBuiltInClassByName(simpleName, packageFragments.invoke().collectionsPackageFragment);
     }
