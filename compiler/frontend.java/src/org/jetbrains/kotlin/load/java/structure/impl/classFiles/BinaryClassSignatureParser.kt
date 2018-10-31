@@ -136,9 +136,9 @@ class BinaryClassSignatureParser {
         }
         signature.next()
 
-        val internedCanonicalName = canonicalNameInterner.intern(canonicalName.toString())
+        val internalName = canonicalNameInterner.intern(canonicalName.toString().replace('.', '$'))
         return PlainJavaClassifierType(
-            { context.resolveByInternalName(internedCanonicalName) },
+            { context.resolveByInternalName(internalName) },
             argumentGroups.reversed().flattenTo(arrayListOf()).compact()
         )
     }

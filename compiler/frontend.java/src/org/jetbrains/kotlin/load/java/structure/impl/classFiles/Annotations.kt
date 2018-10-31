@@ -168,7 +168,8 @@ class BinaryJavaAnnotationVisitor(
     }
 
     override fun visitEnum(name: String?, desc: String, value: String) {
-        addArgument(PlainJavaEnumValueAnnotationArgument(name, context.mapDescToClassId(desc), value))
+        val enumClassId = context.mapInternalNameToClassId(Type.getType(desc).internalName)
+        addArgument(PlainJavaEnumValueAnnotationArgument(name, enumClassId, value))
     }
 
     override fun visit(name: String?, value: Any?) {

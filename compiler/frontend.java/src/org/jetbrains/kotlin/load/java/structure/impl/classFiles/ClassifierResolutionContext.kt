@@ -26,8 +26,6 @@ import org.jetbrains.kotlin.util.javaslang.ImmutableHashMap
 import org.jetbrains.kotlin.util.javaslang.ImmutableMap
 import org.jetbrains.kotlin.util.javaslang.getOrNull
 
-import org.jetbrains.org.objectweb.asm.Type
-
 typealias ClassIdToJavaClass = (ClassId) -> JavaClass?
 
 class ClassifierResolutionContext private constructor(
@@ -63,19 +61,7 @@ class ClassifierResolutionContext private constructor(
 
     internal fun copyForMember() = ClassifierResolutionContext(classesByQName, typeParameters, innerClasses)
 
-    // See com.intellij.psi.impl.compiled.StubBuildingVisitor.createMapping(byte[])
     internal fun mapInternalNameToClassId(internalName: String): ClassId {
-        if ('.' in internalName) {
-            val parts = internalName.split('.')
-
-            val outerClass = mapInternalNameToClassId(parts[0])
-            val nestedParts = parts.subList(1, parts.size)
-
-            return nestedParts.fold(outerClass) { classId, part ->
-                classId.createNestedClassId(Name.identifier(part))
-            }
-        }
-
         if ('$' in internalName) {
             val innerClassInfo = innerClasses.getOrNull(internalName)
             if (innerClassInfo != null && Name.isValidIdentifier(innerClassInfo.simpleName)) {
@@ -88,6 +74,4 @@ class ClassifierResolutionContext private constructor(
     }
 
     internal fun resolveByInternalName(c: String): Result = resolveClass(mapInternalNameToClassId(c))
-
-    internal fun mapDescToClassId(desc: String): ClassId = mapInternalNameToClassId(Type.getType(desc).internalName)
 }
