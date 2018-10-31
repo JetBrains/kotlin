@@ -1,0 +1,450 @@
+KtFile: 1.2.kt
+  PACKAGE_DIRECTIVE
+    <empty list>
+  IMPORT_LIST
+    <empty list>
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('value')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    BINARY_EXPRESSION
+      FLOAT_CONSTANT
+        PsiElement(FLOAT_CONSTANT)('0.0e')
+      OPERATION_REFERENCE
+        PsiElement(IDENTIFIER)('e0f')
+      PsiErrorElement:Expecting an element
+        <empty list>
+  PsiWhiteSpace('\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('value')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    BINARY_EXPRESSION
+      FLOAT_CONSTANT
+        PsiElement(FLOAT_CONSTANT)('0.0E-')
+      OPERATION_REFERENCE
+        PsiElement(IDENTIFIER)('e')
+      PREFIX_EXPRESSION
+        OPERATION_REFERENCE
+          PsiElement(MINUS)('-')
+        FLOAT_CONSTANT
+          PsiElement(FLOAT_CONSTANT)('00F')
+  PsiWhiteSpace('\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('value')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    BINARY_EXPRESSION
+      FLOAT_CONSTANT
+        PsiElement(FLOAT_CONSTANT)('0.0e')
+      OPERATION_REFERENCE
+        PsiElement(IDENTIFIER)('E')
+      PREFIX_EXPRESSION
+        OPERATION_REFERENCE
+          PsiElement(PLUS)('+')
+        FLOAT_CONSTANT
+          PsiElement(FLOAT_CONSTANT)('000f')
+  PsiWhiteSpace('\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('value')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    BINARY_EXPRESSION
+      FLOAT_CONSTANT
+        PsiElement(FLOAT_CONSTANT)('0.0e+')
+      OPERATION_REFERENCE
+        PsiElement(IDENTIFIER)('e0000F')
+      PsiErrorElement:Expecting an element
+        <empty list>
+  PsiWhiteSpace('\n\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('value')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    BINARY_EXPRESSION
+      FLOAT_CONSTANT
+        PsiElement(FLOAT_CONSTANT)('00.0E+')
+      OPERATION_REFERENCE
+        PsiElement(PLUS)('+')
+      REFERENCE_EXPRESSION
+        PsiElement(IDENTIFIER)('e0f')
+  PsiWhiteSpace('\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('value')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    BINARY_EXPRESSION
+      FLOAT_CONSTANT
+        PsiElement(FLOAT_CONSTANT)('000.00e+')
+      OPERATION_REFERENCE
+        PsiElement(IDENTIFIER)('E')
+      PREFIX_EXPRESSION
+        OPERATION_REFERENCE
+          PsiElement(MINUS)('-')
+        FLOAT_CONSTANT
+          PsiElement(FLOAT_CONSTANT)('00f')
+  PsiWhiteSpace('\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('value')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    BINARY_EXPRESSION
+      FLOAT_CONSTANT
+        PsiElement(FLOAT_CONSTANT)('0000.000e-')
+      OPERATION_REFERENCE
+        PsiElement(IDENTIFIER)('e000f')
+      PsiErrorElement:Expecting an element
+        <empty list>
+  PsiWhiteSpace('\n\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('value')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    BINARY_EXPRESSION
+      FLOAT_CONSTANT
+        PsiElement(FLOAT_CONSTANT)('1.0e')
+      OPERATION_REFERENCE
+        PsiElement(IDENTIFIER)('e')
+      PREFIX_EXPRESSION
+        OPERATION_REFERENCE
+          PsiElement(PLUS)('+')
+        FLOAT_CONSTANT
+          PsiElement(FLOAT_CONSTANT)('1F')
+  PsiWhiteSpace('\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('value')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    BINARY_EXPRESSION
+      FLOAT_CONSTANT
+        PsiElement(FLOAT_CONSTANT)('22.00e')
+      OPERATION_REFERENCE
+        PsiElement(IDENTIFIER)('E22F')
+      PsiErrorElement:Expecting an element
+        <empty list>
+  PsiWhiteSpace('\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('value')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    BINARY_EXPRESSION
+      FLOAT_CONSTANT
+        PsiElement(FLOAT_CONSTANT)('333.000e')
+      OPERATION_REFERENCE
+        PsiElement(IDENTIFIER)('e')
+      PREFIX_EXPRESSION
+        OPERATION_REFERENCE
+          PsiElement(MINUS)('-')
+        FLOAT_CONSTANT
+          PsiElement(FLOAT_CONSTANT)('333F')
+  PsiWhiteSpace('\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('value')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    BINARY_EXPRESSION
+      FLOAT_CONSTANT
+        PsiElement(FLOAT_CONSTANT)('4444.0000e+')
+      OPERATION_REFERENCE
+        PsiElement(IDENTIFIER)('E')
+      PREFIX_EXPRESSION
+        OPERATION_REFERENCE
+          PsiElement(PLUS)('+')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('e4444f')
+  PsiWhiteSpace('\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('value')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    BINARY_EXPRESSION
+      FLOAT_CONSTANT
+        PsiElement(FLOAT_CONSTANT)('55555.0e')
+      OPERATION_REFERENCE
+        PsiElement(IDENTIFIER)('E')
+      PREFIX_EXPRESSION
+        OPERATION_REFERENCE
+          PsiElement(MINUS)('-')
+        FLOAT_CONSTANT
+          PsiElement(FLOAT_CONSTANT)('55555f')
+  PsiWhiteSpace('\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('value')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    BINARY_EXPRESSION
+      FLOAT_CONSTANT
+        PsiElement(FLOAT_CONSTANT)('666666.00e')
+      OPERATION_REFERENCE
+        PsiElement(IDENTIFIER)('eeeeeeee666666f')
+      PsiErrorElement:Expecting an element
+        <empty list>
+  PsiWhiteSpace('\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('value')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    BINARY_EXPRESSION
+      FLOAT_CONSTANT
+        PsiElement(FLOAT_CONSTANT)('7777777.000e+')
+      OPERATION_REFERENCE
+        PsiElement(IDENTIFIER)('E')
+      BINARY_EXPRESSION
+        BINARY_EXPRESSION
+          PREFIX_EXPRESSION
+            OPERATION_REFERENCE
+              PsiElement(PLUS)('+')
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('e')
+          OPERATION_REFERENCE
+            PsiElement(PLUS)('+')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('E')
+        OPERATION_REFERENCE
+          PsiElement(PLUS)('+')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('e7777777F')
+  PsiWhiteSpace('\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('value')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    BINARY_EXPRESSION
+      FLOAT_CONSTANT
+        PsiElement(FLOAT_CONSTANT)('88888888.0000e')
+      OPERATION_REFERENCE
+        PsiElement(IDENTIFIER)('EeEeEe')
+      PREFIX_EXPRESSION
+        OPERATION_REFERENCE
+          PsiElement(MINUS)('-')
+        FLOAT_CONSTANT
+          PsiElement(FLOAT_CONSTANT)('88888888f')
+  PsiWhiteSpace('\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('value')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    BINARY_EXPRESSION
+      FLOAT_CONSTANT
+        PsiElement(FLOAT_CONSTANT)('999999999.0E')
+      OPERATION_REFERENCE
+        PsiElement(IDENTIFIER)('EEEEEEE')
+      PREFIX_EXPRESSION
+        OPERATION_REFERENCE
+          PsiElement(PLUS)('+')
+        FLOAT_CONSTANT
+          PsiElement(FLOAT_CONSTANT)('999999999F')
+  PsiWhiteSpace('\n\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('value')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    BINARY_EXPRESSION
+      FLOAT_CONSTANT
+        PsiElement(FLOAT_CONSTANT)('1.0e')
+      OPERATION_REFERENCE
+        PsiElement(IDENTIFIER)('e')
+      PREFIX_EXPRESSION
+        OPERATION_REFERENCE
+          PsiElement(PLUS)('+')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('f')
+  PsiWhiteSpace('\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('value')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    BINARY_EXPRESSION
+      FLOAT_CONSTANT
+        PsiElement(FLOAT_CONSTANT)('22.00e')
+      OPERATION_REFERENCE
+        PsiElement(IDENTIFIER)('Ef')
+      PsiErrorElement:Expecting an element
+        <empty list>
+  PsiWhiteSpace('\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('value')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    BINARY_EXPRESSION
+      FLOAT_CONSTANT
+        PsiElement(FLOAT_CONSTANT)('333.000e')
+      OPERATION_REFERENCE
+        PsiElement(IDENTIFIER)('e')
+      PREFIX_EXPRESSION
+        OPERATION_REFERENCE
+          PsiElement(MINUS)('-')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('F')
+  PsiWhiteSpace('\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('value')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    BINARY_EXPRESSION
+      FLOAT_CONSTANT
+        PsiElement(FLOAT_CONSTANT)('4444.0000e+')
+      OPERATION_REFERENCE
+        PsiElement(IDENTIFIER)('E')
+      PREFIX_EXPRESSION
+        OPERATION_REFERENCE
+          PsiElement(PLUS)('+')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('f')
+  PsiWhiteSpace('\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('value')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    BINARY_EXPRESSION
+      FLOAT_CONSTANT
+        PsiElement(FLOAT_CONSTANT)('55555.0e')
+      OPERATION_REFERENCE
+        PsiElement(IDENTIFIER)('E')
+      PREFIX_EXPRESSION
+        OPERATION_REFERENCE
+          PsiElement(MINUS)('-')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('f')
+  PsiWhiteSpace('\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('value')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    BINARY_EXPRESSION
+      FLOAT_CONSTANT
+        PsiElement(FLOAT_CONSTANT)('666666.00e')
+      OPERATION_REFERENCE
+        PsiElement(IDENTIFIER)('eeeeeeeF')
+      PsiErrorElement:Expecting an element
+        <empty list>
+  PsiWhiteSpace('\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('value')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    BINARY_EXPRESSION
+      FLOAT_CONSTANT
+        PsiElement(FLOAT_CONSTANT)('7777777.000e+')
+      OPERATION_REFERENCE
+        PsiElement(IDENTIFIER)('E')
+      BINARY_EXPRESSION
+        BINARY_EXPRESSION
+          PREFIX_EXPRESSION
+            OPERATION_REFERENCE
+              PsiElement(PLUS)('+')
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('e')
+          OPERATION_REFERENCE
+            PsiElement(PLUS)('+')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('E')
+        OPERATION_REFERENCE
+          PsiElement(PLUS)('+')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('eF')
+  PsiWhiteSpace('\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('value')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    BINARY_EXPRESSION
+      FLOAT_CONSTANT
+        PsiElement(FLOAT_CONSTANT)('88888888.0000e')
+      OPERATION_REFERENCE
+        PsiElement(IDENTIFIER)('EeEeEe')
+      PREFIX_EXPRESSION
+        OPERATION_REFERENCE
+          PsiElement(MINUS)('-')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('f')
+  PsiWhiteSpace('\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('value')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    BINARY_EXPRESSION
+      FLOAT_CONSTANT
+        PsiElement(FLOAT_CONSTANT)('999999999.0E')
+      OPERATION_REFERENCE
+        PsiElement(IDENTIFIER)('EEEEEEE')
+      PREFIX_EXPRESSION
+        OPERATION_REFERENCE
+          PsiElement(PLUS)('+')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('F')
