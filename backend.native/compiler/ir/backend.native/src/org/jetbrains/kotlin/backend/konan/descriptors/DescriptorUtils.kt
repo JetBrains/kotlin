@@ -17,11 +17,7 @@ import org.jetbrains.kotlin.backend.konan.isInlined
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.types.isUnit
-import org.jetbrains.kotlin.metadata.konan.KonanProtoBuf
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPropertyDescriptor
-import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedSimpleFunctionDescriptor
-import org.jetbrains.kotlin.serialization.konan.KonanPackageFragment
 import org.jetbrains.kotlin.types.SimpleType
 
 /**
@@ -81,17 +77,9 @@ internal fun IrSimpleFunction.resolveFakeOverride(): IrSimpleFunction {
     return realSupers.first { it.modality != Modality.ABSTRACT }
 }
 
-private val intrinsicAnnotation = FqName("kotlin.native.internal.Intrinsic")
-private val frozenAnnotation = FqName("kotlin.native.internal.Frozen")
-
 // TODO: don't forget to remove descriptor access here.
 internal val FunctionDescriptor.isIntrinsic: Boolean
-    get() = this.descriptor.annotations.hasAnnotation(intrinsicAnnotation)
-
-internal val org.jetbrains.kotlin.descriptors.DeclarationDescriptor.isFrozen: Boolean
-    get() = this.annotations.hasAnnotation(frozenAnnotation) ||
-            // RTTI is used for non-reference type box:
-            this is org.jetbrains.kotlin.descriptors.ClassDescriptor && !this.defaultType.binaryTypeIsReference()
+    get() = this.descriptor.isIntrinsic
 
 internal val DeclarationDescriptor.isFrozen: Boolean
     get() = this.descriptor.isFrozen
@@ -240,22 +228,3 @@ tailrec internal fun DeclarationDescriptor.findPackage(): PackageFragmentDescrip
 
 fun FunctionDescriptor.isComparisonDescriptor(map: Map<SimpleType, IrSimpleFunction>): Boolean =
         this in map.values
-
-private fun sourceByIndex(descriptor: CallableMemberDescriptor, index: Int): SourceFile {
-    val fragment = descriptor.findPackage() as KonanPackageFragment
-    return fragment.sourceFileMap.sourceFile(index)
-}
-
-fun CallableMemberDescriptor.findSourceFile(): SourceFile {
-    val source = this.source.containingFile
-    if (source != SourceFile.NO_SOURCE_FILE)
-        return source
-    return when {
-        this is DeserializedSimpleFunctionDescriptor && proto.hasExtension(KonanProtoBuf.functionFile) -> sourceByIndex(
-                this, proto.getExtension(KonanProtoBuf.functionFile))
-        this is DeserializedPropertyDescriptor && proto.hasExtension(KonanProtoBuf.propertyFile) ->
-            sourceByIndex(
-                    this, proto.getExtension(KonanProtoBuf.propertyFile))
-        else -> TODO()
-    }
-}

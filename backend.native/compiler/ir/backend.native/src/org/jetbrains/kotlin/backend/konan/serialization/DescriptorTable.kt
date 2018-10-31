@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.konan.serialization
 
+import org.jetbrains.kotlin.backend.konan.descriptors.externalSymbolOrThrow
 import org.jetbrains.kotlin.backend.konan.descriptors.isExpectMember
 import org.jetbrains.kotlin.backend.konan.getInlinedClass
 import org.jetbrains.kotlin.backend.konan.getObjCMethodInfo
@@ -156,8 +157,6 @@ internal tailrec fun DeclarationDescriptor.isExported(): Boolean {
 
 private val symbolNameAnnotation = FqName("kotlin.native.SymbolName")
 
-private val intrinsicAnnotation = FqName("kotlin.native.internal.Intrinsic")
-
 private val exportForCppRuntimeAnnotation = FqName("kotlin.native.internal.ExportForCppRuntime")
 
 private val cnameAnnotation = FqName("kotlin.native.internal.CName")
@@ -249,11 +248,8 @@ private val FunctionDescriptor.uniqueName: String
         }
 
         if (this.isExternal) {
-            this.annotations.findAnnotation(symbolNameAnnotation)?.let {
-                return getStringValue(it)!!
-            }
-            if (!annotations.hasAnnotation(intrinsicAnnotation)) {
-                throw Error("external function $this must have @SymbolName annotation")
+            externalSymbolOrThrow()?.let {
+                return it
             }
         }
         // TODO: check that only external function has @SymbolName.

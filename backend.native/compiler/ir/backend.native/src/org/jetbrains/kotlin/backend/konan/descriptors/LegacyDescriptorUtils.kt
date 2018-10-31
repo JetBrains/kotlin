@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.konan.descriptors
 
 import org.jetbrains.kotlin.backend.common.atMostOne
+import org.jetbrains.kotlin.backend.konan.binaryTypeIsReference
 import org.jetbrains.kotlin.backend.konan.serialization.isExported
 import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
 import org.jetbrains.kotlin.builtins.getFunctionalClassKind
@@ -15,15 +16,21 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.FunctionDescriptorImpl
+import org.jetbrains.kotlin.metadata.konan.KonanProtoBuf
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.DescriptorFactory
 import org.jetbrains.kotlin.resolve.OverridingUtil
+import org.jetbrains.kotlin.resolve.constants.StringValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPropertyDescriptor
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedSimpleFunctionDescriptor
+import org.jetbrains.kotlin.serialization.konan.KonanPackageFragment
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.util.OperatorNameConventions
+import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 
 
 /**
@@ -207,3 +214,54 @@ internal fun FunctionDescriptorImpl.initialize(
         modality,
         visibility
 )
+
+private fun sourceByIndex(descriptor: CallableMemberDescriptor, index: Int): SourceFile {
+    val fragment = descriptor.findPackage() as KonanPackageFragment
+    return fragment.sourceFileMap.sourceFile(index)
+}
+
+fun CallableMemberDescriptor.findSourceFile(): SourceFile {
+    val source = this.source.containingFile
+    if (source != SourceFile.NO_SOURCE_FILE)
+        return source
+    return when {
+        this is DeserializedSimpleFunctionDescriptor && proto.hasExtension(KonanProtoBuf.functionFile) -> sourceByIndex(
+                this, proto.getExtension(KonanProtoBuf.functionFile))
+        this is DeserializedPropertyDescriptor && proto.hasExtension(KonanProtoBuf.propertyFile) ->
+            sourceByIndex(
+                    this, proto.getExtension(KonanProtoBuf.propertyFile))
+        else -> TODO()
+    }
+}
+
+private val intrinsicAnnotation = FqName("kotlin.native.internal.Intrinsic")
+private val symbolNameAnnotation = FqName("kotlin.native.SymbolName")
+private val objCMethodAnnotation = FqName("kotlinx.cinterop.ObjCMethod")
+private val frozenAnnotation = FqName("kotlin.native.internal.Frozen")
+
+internal val DeclarationDescriptor.isFrozen: Boolean
+    get() = this.annotations.hasAnnotation(frozenAnnotation) ||
+            // RTTI is used for non-reference type box:
+            this is org.jetbrains.kotlin.descriptors.ClassDescriptor && !this.defaultType.binaryTypeIsReference()
+
+internal val FunctionDescriptor.isIntrinsic: Boolean
+    get() = this.annotations.hasAnnotation(intrinsicAnnotation)
+
+// TODO: coalesce all our annotation value getters into fewer functions.
+fun getAnnotationValue(annotation: AnnotationDescriptor): String? {
+    return annotation.allValueArguments.values.ifNotEmpty {
+        val stringValue = single() as? StringValue
+        stringValue?.value
+    }
+}
+
+fun CallableMemberDescriptor.externalSymbolOrThrow(): String? {
+    this.annotations.findAnnotation(symbolNameAnnotation)?.let {
+        return getAnnotationValue(it)!!
+    }
+    if (this.annotations.hasAnnotation(intrinsicAnnotation)) return null
+
+    if (this.annotations.hasAnnotation(objCMethodAnnotation)) return null
+
+    throw Error("external function ${this} must have @SymbolName, @Intrinsic or @ObjCMethod annotation")
+}

@@ -6,7 +6,8 @@
 package org.jetbrains.kotlin.backend.konan.llvm
 
 import llvm.LLVMTypeRef
-import org.jetbrains.kotlin.backend.common.ir.ir2string
+import org.jetbrains.kotlin.backend.konan.descriptors.externalSymbolOrThrow
+import org.jetbrains.kotlin.backend.konan.descriptors.getAnnotationValue
 import org.jetbrains.kotlin.backend.konan.descriptors.isAbstract
 import org.jetbrains.kotlin.backend.konan.irasdescriptors.*
 import org.jetbrains.kotlin.backend.konan.isInlined
@@ -23,8 +24,6 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.konan.library.uniqueName
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.constants.StringValue
-import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 
 
 // This file describes the ABI for Kotlin descriptors of exported declarations.
@@ -104,9 +103,6 @@ internal tailrec fun DeclarationDescriptor.isExported(): Boolean {
 }
 
 private val symbolNameAnnotation = FqName("kotlin.native.SymbolName")
-
-private val intrinsicAnnotation = FqName("kotlin.native.internal.Intrinsic")
-private val objCMethodAnnotation = FqName("kotlinx.cinterop.ObjCMethod")
 
 private val cnameAnnotation = FqName("kotlin.native.CName")
 
@@ -211,17 +207,13 @@ internal val FunctionDescriptor.symbolName: String
         }
 
         if (isExternal) {
-            this.descriptor.annotations.findAnnotation(symbolNameAnnotation)?.let {
-                return getStringValue(it)!!
-            }
-            if (!this.descriptor.annotations.hasAnnotation(intrinsicAnnotation) &&
-                    !this.descriptor.annotations.hasAnnotation(objCMethodAnnotation)) {
-                throw Error("external function ${this.descriptor} must have @SymbolName, @Intrinsic or @ObjCMethod annotation")
+            this.descriptor.externalSymbolOrThrow()?.let {
+                return it
             }
         }
 
         this.descriptor.annotations.findAnnotation(exportForCppRuntimeAnnotation)?.let {
-            val name = getStringValue(it) ?: this.name.asString()
+            val name = getAnnotationValue(it) ?: this.name.asString()
             return name // no wrapping currently required
         }
 
@@ -241,13 +233,6 @@ internal val IrField.symbolName: String
         return "kprop:$containingDeclarationPart$name"
 
     }
-
-internal fun getStringValue(annotation: AnnotationDescriptor): String? {
-    return annotation.allValueArguments.values.ifNotEmpty {
-        val stringValue = single() as? StringValue
-        stringValue?.value
-    }
-}
 
 // TODO: bring here dependencies of this method?
 internal fun RuntimeAware.getLlvmFunctionType(function: FunctionDescriptor): LLVMTypeRef {

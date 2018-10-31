@@ -91,7 +91,7 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
     private fun exportTypeInfoIfRequired(classDesc: ClassDescriptor, typeInfoGlobal: LLVMValueRef?) {
         val annot = classDesc.descriptor.annotations.findAnnotation(EXPORT_TYPE_INFO_FQ_NAME)
         if (annot != null) {
-            val name = getStringValue(annot)!!
+            val name = getAnnotationValue(annot)!!
             // TODO: use LLVMAddAlias.
             val global = addGlobal(name, pointerType(runtime.typeInfoType), isExported = true)
             LLVMSetInitializer(global, typeInfoGlobal)
