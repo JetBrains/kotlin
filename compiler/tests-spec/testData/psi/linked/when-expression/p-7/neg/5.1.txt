@@ -1,0 +1,138 @@
+KtFile: 5.1.kt
+  PACKAGE_DIRECTIVE
+    <empty list>
+  IMPORT_LIST
+    <empty list>
+  FUN
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('case_1')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    BLOCK
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n    ')
+      WHEN
+        PsiElement(when)('when')
+        PsiWhiteSpace(' ')
+        PsiElement(LPAR)('(')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('value')
+        PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(LBRACE)('{')
+        PsiWhiteSpace('\n        ')
+        WHEN_ENTRY
+          WHEN_CONDITION_WITH_EXPRESSION
+            PsiErrorElement:Expecting an expression
+              <empty list>
+          PsiErrorElement:Expecting '->'
+            PsiElement(MUL)('*')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('value')
+        PsiWhiteSpace(' ')
+        WHEN_ENTRY
+          WHEN_CONDITION_WITH_EXPRESSION
+            PsiErrorElement:Expecting an expression, is-condition or in-condition
+              <empty list>
+          PsiElement(ARROW)('->')
+          PsiWhiteSpace(' ')
+          RETURN
+            PsiElement(return)('return')
+            PsiWhiteSpace(' ')
+            STRING_TEMPLATE
+              PsiElement(OPEN_QUOTE)('"')
+              PsiElement(CLOSING_QUOTE)('"')
+        PsiWhiteSpace('\n        ')
+        WHEN_ENTRY
+          WHEN_CONDITION_WITH_EXPRESSION
+            PsiErrorElement:Expecting an expression
+              <empty list>
+          PsiErrorElement:Expecting '->'
+            PsiElement(MUL)('*')
+          CALL_EXPRESSION
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('arrayOf')
+            VALUE_ARGUMENT_LIST
+              PsiElement(LPAR)('(')
+              VALUE_ARGUMENT
+                STRING_TEMPLATE
+                  PsiElement(OPEN_QUOTE)('"')
+                  LITERAL_STRING_TEMPLATE_ENTRY
+                    PsiElement(REGULAR_STRING_PART)('a')
+                  PsiElement(CLOSING_QUOTE)('"')
+              PsiElement(COMMA)(',')
+              PsiWhiteSpace(' ')
+              VALUE_ARGUMENT
+                STRING_TEMPLATE
+                  PsiElement(OPEN_QUOTE)('"')
+                  LITERAL_STRING_TEMPLATE_ENTRY
+                    PsiElement(REGULAR_STRING_PART)('b')
+                  PsiElement(CLOSING_QUOTE)('"')
+              PsiElement(COMMA)(',')
+              PsiWhiteSpace(' ')
+              VALUE_ARGUMENT
+                STRING_TEMPLATE
+                  PsiElement(OPEN_QUOTE)('"')
+                  LITERAL_STRING_TEMPLATE_ENTRY
+                    PsiElement(REGULAR_STRING_PART)('c')
+                  PsiElement(CLOSING_QUOTE)('"')
+              PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        WHEN_ENTRY
+          WHEN_CONDITION_WITH_EXPRESSION
+            PsiErrorElement:Expecting an expression, is-condition or in-condition
+              <empty list>
+          PsiElement(ARROW)('->')
+          PsiWhiteSpace(' ')
+          RETURN
+            PsiElement(return)('return')
+            PsiWhiteSpace(' ')
+            STRING_TEMPLATE
+              PsiElement(OPEN_QUOTE)('"')
+              PsiElement(CLOSING_QUOTE)('"')
+        PsiWhiteSpace('\n        ')
+        WHEN_ENTRY
+          WHEN_CONDITION_WITH_EXPRESSION
+            PsiErrorElement:Expecting an expression
+              <empty list>
+          PsiErrorElement:Expecting '->'
+            PsiElement(MUL)('*')
+          CALL_EXPRESSION
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('listOf')
+            VALUE_ARGUMENT_LIST
+              PsiElement(LPAR)('(')
+              VALUE_ARGUMENT
+                NULL
+                  PsiElement(null)('null')
+              PsiElement(COMMA)(',')
+              PsiWhiteSpace(' ')
+              VALUE_ARGUMENT
+                NULL
+                  PsiElement(null)('null')
+              PsiElement(COMMA)(',')
+              PsiWhiteSpace(' ')
+              VALUE_ARGUMENT
+                NULL
+                  PsiElement(null)('null')
+              PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        WHEN_ENTRY
+          WHEN_CONDITION_WITH_EXPRESSION
+            PsiErrorElement:Expecting an expression, is-condition or in-condition
+              <empty list>
+          PsiElement(ARROW)('->')
+          PsiWhiteSpace(' ')
+          RETURN
+            PsiElement(return)('return')
+            PsiWhiteSpace(' ')
+            STRING_TEMPLATE
+              PsiElement(OPEN_QUOTE)('"')
+              PsiElement(CLOSING_QUOTE)('"')
+        PsiWhiteSpace('\n    ')
+        PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')

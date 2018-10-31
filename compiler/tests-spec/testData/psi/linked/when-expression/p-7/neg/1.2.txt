@@ -1,0 +1,27 @@
+KtFile: 1.2.kt
+  PACKAGE_DIRECTIVE
+    <empty list>
+  IMPORT_LIST
+    <empty list>
+  PsiWhiteSpace('    ')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(return)('return')
+  PsiWhiteSpace(' ')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(OPEN_QUOTE)('"')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(CLOSING_QUOTE)('"')
+  PsiWhiteSpace('\n')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(RBRACE)('}')
+  PsiWhiteSpace('\n\n    ')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(return)('return')
+  PsiWhiteSpace(' ')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(OPEN_QUOTE)('"')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(CLOSING_QUOTE)('"')
+  PsiWhiteSpace('\n')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(RBRACE)('}')

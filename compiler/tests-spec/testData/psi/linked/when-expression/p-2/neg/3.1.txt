@@ -1,0 +1,28 @@
+KtFile: 3.1.kt
+  PACKAGE_DIRECTIVE
+    <empty list>
+  IMPORT_LIST
+    <empty list>
+  FUN
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('case_1')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    BLOCK
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n    ')
+      WHEN
+        PsiElement(when)('when')
+        PsiWhiteSpace(' ')
+        PsiElement(LPAR)('(')
+        PsiErrorElement:Expecting an expression
+          <empty list>
+        PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(LBRACE)('{')
+        PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')

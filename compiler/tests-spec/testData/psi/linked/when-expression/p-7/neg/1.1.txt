@@ -1,0 +1,86 @@
+KtFile: 1.1.kt
+  PACKAGE_DIRECTIVE
+    <empty list>
+  IMPORT_LIST
+    <empty list>
+  FUN
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('case_1')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    BLOCK
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n    ')
+      WHEN
+        PsiElement(when)('when')
+        PsiWhiteSpace(' ')
+        PsiElement(LPAR)('(')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('value')
+        PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(LBRACE)('{')
+        PsiWhiteSpace('\n        ')
+        WHEN_ENTRY
+          WHEN_CONDITION_IS_PATTERN
+            PsiElement(is)('is')
+            PsiErrorElement:Expecting a type
+              <empty list>
+          PsiWhiteSpace(' ')
+          PsiElement(ARROW)('->')
+          PsiWhiteSpace(' ')
+          RETURN
+            PsiElement(return)('return')
+            PsiWhiteSpace(' ')
+            STRING_TEMPLATE
+              PsiElement(OPEN_QUOTE)('"')
+              PsiElement(CLOSING_QUOTE)('"')
+        PsiWhiteSpace('\n    ')
+        PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n    ')
+      WHEN
+        PsiElement(when)('when')
+        PsiWhiteSpace(' ')
+        PsiElement(LPAR)('(')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('value')
+        PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(LBRACE)('{')
+        PsiWhiteSpace('\n        ')
+        WHEN_ENTRY
+          WHEN_CONDITION_IS_PATTERN
+            PsiElement(is)('is')
+            PsiErrorElement:Expecting a type
+              <empty list>
+          PsiWhiteSpace(' ')
+          PsiElement(ARROW)('->')
+          PsiWhiteSpace(' ')
+          RETURN
+            PsiElement(return)('return')
+            PsiWhiteSpace(' ')
+            STRING_TEMPLATE
+              PsiElement(OPEN_QUOTE)('"')
+              PsiElement(CLOSING_QUOTE)('"')
+        PsiWhiteSpace('\n        ')
+        WHEN_ENTRY
+          WHEN_CONDITION_IS_PATTERN
+            PsiElement(is)('is')
+            PsiErrorElement:Expecting a type
+              <empty list>
+          PsiWhiteSpace(' ')
+          PsiElement(ARROW)('->')
+          PsiWhiteSpace(' ')
+          RETURN
+            PsiElement(return)('return')
+            PsiWhiteSpace(' ')
+            STRING_TEMPLATE
+              PsiElement(OPEN_QUOTE)('"')
+              PsiElement(CLOSING_QUOTE)('"')
+        PsiWhiteSpace('\n    ')
+        PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')
