@@ -24,6 +24,8 @@ import com.intellij.openapi.externalSystem.model.settings.ExternalSystemExecutio
 import com.intellij.openapi.externalSystem.settings.ExternalProjectSettings
 import com.intellij.openapi.externalSystem.settings.ExternalSystemSettingsListenerAdapter
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
+import com.intellij.openapi.fileEditor.FileDocumentManager
+import com.intellij.openapi.fileEditor.impl.LoadTextUtil
 import com.intellij.openapi.fileTypes.FileTypeManager
 import com.intellij.openapi.projectRoots.JavaSdk
 import com.intellij.openapi.projectRoots.ProjectJdkTable
@@ -42,6 +44,7 @@ import org.gradle.wrapper.GradleWrapperMain
 import org.intellij.lang.annotations.Language
 import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
+import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.plugins.gradle.settings.DistributionType
 import org.jetbrains.plugins.gradle.settings.GradleProjectSettings
 import org.jetbrains.plugins.gradle.settings.GradleSettings
@@ -214,6 +217,33 @@ abstract class GradleImportingTestCase : ExternalSystemImportingTestCase() {
             }
         }.toList()
     }
+
+    protected fun importProjectFromTestData(): List<VirtualFile> {
+        val files = configureByFiles()
+        importProject()
+        return files
+    }
+
+    protected fun checkFiles(files: List<VirtualFile>) {
+        FileDocumentManager.getInstance().saveAllDocuments()
+
+        files.filter {
+            it.name == GradleConstants.DEFAULT_SCRIPT_NAME
+                    || it.name == GradleConstants.KOTLIN_DSL_SCRIPT_NAME
+                    || it.name == GradleConstants.SETTINGS_FILE_NAME
+        }
+            .forEach {
+                if (it.name == GradleConstants.SETTINGS_FILE_NAME && !File(testDataDirectory(), it.name + SUFFIX).exists()) return@forEach
+                val actualText = LoadTextUtil.loadText(it).toString()
+                val expectedFileName = if (File(testDataDirectory(), it.name + ".$gradleVersion" + SUFFIX).exists()) {
+                    it.name + ".$gradleVersion" + SUFFIX
+                } else {
+                    it.name + SUFFIX
+                }
+                KotlinTestUtils.assertEqualsToFile(File(testDataDirectory(), expectedFileName), actualText)
+            }
+    }
+
 
     private fun runWrite(f: () -> Unit) {
         object : WriteAction<Any>() {
