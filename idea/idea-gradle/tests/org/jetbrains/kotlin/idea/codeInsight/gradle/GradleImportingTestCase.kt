@@ -19,6 +19,7 @@ import com.intellij.compiler.server.BuildManager
 import com.intellij.openapi.application.PathManager
 import com.intellij.openapi.application.Result
 import com.intellij.openapi.application.WriteAction
+import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.externalSystem.model.ProjectSystemId
 import com.intellij.openapi.externalSystem.model.settings.ExternalSystemExecutionSettings
 import com.intellij.openapi.externalSystem.settings.ExternalProjectSettings
@@ -55,9 +56,13 @@ import org.jetbrains.kotlin.compilerRunner.ArgumentUtils
 import org.jetbrains.kotlin.config.CompilerSettings
 import org.jetbrains.kotlin.config.KotlinResourceRootType
 import org.jetbrains.kotlin.config.KotlinSourceRootType
+import org.jetbrains.kotlin.idea.configuration.ConfigureKotlinStatus
+import org.jetbrains.kotlin.idea.configuration.ModuleSourceRootMap
+import org.jetbrains.kotlin.idea.configuration.allConfigurators
 import org.jetbrains.kotlin.idea.facet.KotlinFacet
 import org.jetbrains.kotlin.idea.framework.KotlinSdkType
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
+import org.jetbrains.kotlin.idea.util.projectStructure.allModules
 import org.jetbrains.kotlin.idea.util.projectStructure.sdk
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.utils.Printer
@@ -66,6 +71,7 @@ import org.jetbrains.plugins.gradle.settings.GradleProjectSettings
 import org.jetbrains.plugins.gradle.settings.GradleSettings
 import org.jetbrains.plugins.gradle.util.GradleConstants
 import org.jetbrains.plugins.groovy.GroovyFileType
+import org.junit.Assert
 import org.junit.Assume.assumeThat
 import org.junit.Rule
 import org.junit.rules.TestName
@@ -157,6 +163,19 @@ abstract class GradleImportingTestCase : ExternalSystemImportingTestCase() {
         myProjectSettings.isResolveModulePerSourceSet = !configuration.singleModulePerSourceSet
 
         importProject()
+
+        assertAllModulesConfigured()
+    }
+
+    private fun assertAllModulesConfigured() {
+        runReadAction {
+            for (moduleGroup in ModuleSourceRootMap(myProject).groupByBaseModules(myProject.allModules())) {
+                val configurator = allConfigurators().find {
+                    it.getStatus(moduleGroup) == ConfigureKotlinStatus.CAN_BE_CONFIGURED
+                }
+                Assert.assertNull("Configurator $configurator tells that ${moduleGroup.baseModule} can be configured", configurator)
+            }
+        }
     }
 
     data class FacetImportingTestConfiguration(val singleModulePerSourceSet: Boolean)

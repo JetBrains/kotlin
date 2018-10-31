@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.idea.codeInsight.gradle
 
 import com.intellij.openapi.application.Result
 import com.intellij.openapi.application.WriteAction
-import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.projectRoots.JavaSdk
 import com.intellij.openapi.projectRoots.ProjectJdkTable
 import com.intellij.openapi.roots.LibraryOrderEntry
@@ -26,36 +25,21 @@ import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.roots.OrderRootType
 import com.intellij.openapi.roots.impl.libraries.LibraryEx
 import junit.framework.TestCase
-import org.jetbrains.jps.model.java.JavaResourceRootType
-import org.jetbrains.jps.model.java.JavaSourceRootType
 import org.jetbrains.jps.model.module.JpsModuleSourceRootType
 import org.jetbrains.kotlin.caches.resolve.KotlinCacheService
-import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
-import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
-import org.jetbrains.kotlin.cli.common.arguments.K2MetadataCompilerArguments
-import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.config.KotlinFacetSettings
 import org.jetbrains.kotlin.idea.caches.project.productionSourceInfo
 import org.jetbrains.kotlin.idea.caches.project.testSourceInfo
 import org.jetbrains.kotlin.idea.compiler.configuration.KotlinCommonCompilerArgumentsHolder
-import org.jetbrains.kotlin.idea.configuration.ConfigureKotlinStatus
-import org.jetbrains.kotlin.idea.configuration.ModuleSourceRootMap
-import org.jetbrains.kotlin.idea.configuration.allConfigurators
 import org.jetbrains.kotlin.idea.facet.KotlinFacet
-import org.jetbrains.kotlin.idea.framework.CommonLibraryKind
 import org.jetbrains.kotlin.idea.framework.JSLibraryKind
 import org.jetbrains.kotlin.idea.framework.KotlinSdkType
-import org.jetbrains.kotlin.idea.project.languageVersionSettings
-import org.jetbrains.kotlin.idea.util.projectStructure.allModules
 import org.jetbrains.kotlin.idea.util.projectStructure.sdk
 import org.jetbrains.kotlin.js.resolve.JsPlatform
-import org.jetbrains.kotlin.platform.impl.JvmIdePlatformKind
-import org.jetbrains.kotlin.platform.impl.isCommon
-import org.jetbrains.kotlin.platform.impl.isJavaScript
 import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 import org.junit.Assert
 import org.junit.Test
-import java.util.*
 
 internal fun GradleImportingTestCase.facetSettings(moduleName: String) = kotlinFacet(moduleName)!!.configuration.settings
 
@@ -101,15 +85,11 @@ class GradleFacetImportTest : GradleImportingTestCase() {
 
         checkFacet("idea/testData/gradle/facets/jvmImport", getModule("project_main"))
         checkFacet("idea/testData/gradle/facets/jvmImport", getModule("project_test"))
-
-
     }
 
     @Test
     fun testJvmImportWithPlugin() {
         loadProject("idea/testData/gradle/facets/jvmImportWithPlugin")
-
-        assertAllModulesConfigured()
     }
 
     @Test
@@ -152,22 +132,12 @@ class GradleFacetImportTest : GradleImportingTestCase() {
     fun testJsImport() {
         loadProject("idea/testData/gradle/facets/jsImport")
         checkFacet("idea/testData/gradle/facets/jsImport", getModule("project_main"))
-
-        val rootManager = ModuleRootManager.getInstance(getModule("project_main"))
-        val stdlib = rootManager.orderEntries.filterIsInstance<LibraryOrderEntry>().single().library
-        assertEquals(JSLibraryKind, (stdlib as LibraryEx).kind)
-        assertTrue(stdlib.getFiles(OrderRootType.CLASSES).isNotEmpty())
-
-        assertKotlinSdk("project_main", "project_test")
-
-        assertAllModulesConfigured()
     }
 
     @Test
     fun testJsImportTransitive() {
         loadProject("idea/testData/gradle/facets/jsImportTransitive")
         checkFacet("idea/testData/gradle/facets/jsImportTransitive", getModule("project_main"))
-        assertAllModulesConfigured()
     }
 
     @Test
@@ -175,8 +145,6 @@ class GradleFacetImportTest : GradleImportingTestCase() {
         loadProject("idea/testData/gradle/facets/jsImportWithCustomSourceSets")
         checkFacet("idea/testData/gradle/facets/jsImportWithCustomSourceSets", getModule("project_myMain"))
         checkFacet("idea/testData/gradle/facets/jsImportWithCustomSourceSets", getModule("project_myTest"))
-
-        assertAllModulesConfigured()
     }
 
     @Test
@@ -353,8 +321,6 @@ class GradleFacetImportTest : GradleImportingTestCase() {
     fun testAPIVersionExceedingLanguageVersion() {
         loadProject("idea/testData/gradle/facets/APIVersionExceedingLanguageVersion")
         checkFacet("idea/testData/gradle/facets/APIVersionExceedingLanguageVersion", getModule("project_main"))
-
-        assertAllModulesConfigured()
     }
 
     @Test
@@ -393,8 +359,6 @@ class GradleFacetImportTest : GradleImportingTestCase() {
             Assert.assertEquals("1.1", languageLevel!!.versionString)
             Assert.assertEquals("1.1", apiLevel!!.versionString)
         }
-
-        assertAllModulesConfigured()
     }
 
     @Test
@@ -410,8 +374,6 @@ class GradleFacetImportTest : GradleImportingTestCase() {
     fun testInternalArgumentsFacetImporting() {
         loadProject("idea/testData/gradle/facets/internalArgumentsFacetImporting")
         checkFacet("idea/testData/gradle/facets/internalArgumentsFacetImporting", getModule("project_main"))
-
-        assertAllModulesConfigured()
     }
 
     @Test
@@ -421,8 +383,6 @@ class GradleFacetImportTest : GradleImportingTestCase() {
         checkStableModuleName("project_main", "project", JsPlatform, isProduction = true)
         // Note "_test" suffix: this is current behavior of K2JS Compiler
         checkStableModuleName("project_test", "project_test", JsPlatform, isProduction = false)
-
-        assertAllModulesConfigured()
     }
 
     @Test
@@ -431,16 +391,12 @@ class GradleFacetImportTest : GradleImportingTestCase() {
 
         checkStableModuleName("project_main", "project", JvmPlatform, isProduction = true)
         checkStableModuleName("project_test", "project", JvmPlatform, isProduction = false)
-
-        assertAllModulesConfigured()
     }
 
     @Test
     fun testNoFriendPathsAreShown() {
         loadProject("idea/testData/gradle/facets/noFriendPathsAreShown")
         checkFacet("idea/testData/gradle/facets/noFriendPathsAreShown", getModule("project_main"))
-
-        assertAllModulesConfigured()
     }
 
     @Test
@@ -477,16 +433,5 @@ class GradleFacetImportTest : GradleImportingTestCase() {
         val moduleDescriptor = resolutionFacade.moduleDescriptor
 
         Assert.assertEquals("<$expectedName>", moduleDescriptor.stableName?.asString())
-    }
-
-    private fun assertAllModulesConfigured() {
-        runReadAction {
-            for (moduleGroup in ModuleSourceRootMap(myProject).groupByBaseModules(myProject.allModules())) {
-                val configurator = allConfigurators().find {
-                    it.getStatus(moduleGroup) == ConfigureKotlinStatus.CAN_BE_CONFIGURED
-                }
-                Assert.assertNull("Configurator $configurator tells that ${moduleGroup.baseModule} can be configured", configurator)
-            }
-        }
     }
 }
