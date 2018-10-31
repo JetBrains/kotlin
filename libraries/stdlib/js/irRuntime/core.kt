@@ -109,3 +109,6 @@ internal fun newThrowable(message: String?, cause: Throwable?): Throwable {
     throwable.name = "Throwable"
     return throwable
 }
+
+internal fun <T, R> boxIntrinsic(x: T): R = error("Should be lowered")
+internal fun <T, R> unboxIntrinsic(x: T): R = error("Should be lowered")

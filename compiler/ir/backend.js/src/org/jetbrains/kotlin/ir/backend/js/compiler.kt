@@ -9,6 +9,7 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.backend.common.*
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.lower.*
+import org.jetbrains.kotlin.backend.common.lower.InlineClassLowering
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
@@ -130,6 +131,11 @@ private fun JsIrBackendContext.lower(moduleFragment: IrModuleFragment, dependenc
         constructorRedirectorLowering.runOnFilesPostfix(moduleFragment)
     }
 
+    InlineClassLowering(this).apply {
+        inlineClassDeclarationLowering.runOnFilesPostfix(moduleFragment)
+        inlineClassUsageLowering.lower(moduleFragment)
+    }
+    AutoboxingTransformer(this).lower(moduleFragment)
 
     ClassReferenceLowering(this).lower(moduleFragment)
     PrimitiveCompanionLowering(this).lower(moduleFragment)

@@ -8,12 +8,14 @@ package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.backend.js.utils.JsGenerationContext
 import org.jetbrains.kotlin.ir.backend.js.utils.Namer
+import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.types.IrDynamicType
 import org.jetbrains.kotlin.ir.util.isFunctionTypeOrSubtype
+import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
@@ -63,6 +65,12 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
     }
 
     override fun visitGetField(expression: IrGetField, context: JsGenerationContext): JsExpression {
+        if (expression.symbol.isBound) {
+            val fieldParent = expression.symbol.owner.parent
+            if (fieldParent is IrClass && fieldParent.isInline) {
+                return expression.receiver!!.accept(this, context)
+            }
+        }
         val fieldName = context.getNameForSymbol(expression.symbol)
         return JsNameRef(fieldName, expression.receiver?.accept(this, context))
     }
@@ -100,6 +108,15 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
         val thisRef =
             if (fromPrimary) JsThisRef() else context.getNameForSymbol(context.currentFunction!!.valueParameters.last().symbol).makeRef()
         val arguments = translateCallArguments(expression, context)
+
+        val constructor = expression.symbol.owner
+        if (constructor.parentAsClass.isInline) {
+            assert(constructor.isPrimary) {
+                "Delegation to secondary inline constructors must be lowered into simple function calls"
+            }
+            return JsBinaryOperation(JsBinaryOperator.ASG, thisRef, arguments.single())
+        }
+
         return JsInvocation(callFuncRef, listOf(thisRef) + arguments)
     }
 
@@ -127,7 +144,19 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
         }
 
         return if (symbol is IrConstructorSymbol) {
-            JsNew(context.getNameForSymbol(symbol).makeRef(), arguments)
+            // Inline class primary constructor takes a single value of to
+            // initialize underlying property.
+            // TODO: Support initialization block
+            val klass = symbol.owner.parentAsClass
+            if (klass.isInline) {
+                assert(symbol.owner.isPrimary) {
+                    "Inline class secondary constructors must be lowered into static methods"
+                }
+                // Argument value constructs unboxed inline class instance
+                arguments.single()
+            } else {
+                JsNew(context.getNameForSymbol(symbol).makeRef(), arguments)
+            }
         } else {
             val symbolName = context.getNameForSymbol(symbol)
             val ref = if (jsDispatchReceiver != null) JsNameRef(symbolName, jsDispatchReceiver) else JsNameRef(symbolName)

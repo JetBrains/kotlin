@@ -250,6 +250,9 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
     val jsCharSequenceLength = getInternalFunction("charSequenceLength")
     val jsCharSequenceSubSequence = getInternalFunction("charSequenceSubSequence")
 
+    val jsBoxIntrinsic = getInternalFunction("boxIntrinsic")
+    val jsUnboxIntrinsic = getInternalFunction("unboxIntrinsic")
+
     // Helpers:
 
     private fun getInternalFunction(name: String) =

@@ -38,14 +38,18 @@ class SecondaryCtorLowering(val context: JsIrBackendContext) {
 
     val constructorProcessorLowering = object : DeclarationContainerLoweringPass {
         override fun lower(irDeclarationContainer: IrDeclarationContainer) {
-            irDeclarationContainer.declarations.filterIsInstance<IrClass>().forEach { lowerClass(it) }
+            irDeclarationContainer.declarations.filterIsInstance<IrClass>().forEach {
+                if (!it.isInline)  // Inline classes are lowered separately
+                    lowerClass(it)
+            }
         }
     }
 
     val constructorRedirectorLowering = object : DeclarationContainerLoweringPass {
         override fun lower(irDeclarationContainer: IrDeclarationContainer) {
             if (irDeclarationContainer is IrClass) {
-                updateConstructorDeclarations(irDeclarationContainer)
+                if (!irDeclarationContainer.isInline)   // Inline classes are lowered separately
+                    updateConstructorDeclarations(irDeclarationContainer)
             }
             for (it in irDeclarationContainer.declarations) {
                 it.accept(CallsiteRedirectionTransformer(), null)
