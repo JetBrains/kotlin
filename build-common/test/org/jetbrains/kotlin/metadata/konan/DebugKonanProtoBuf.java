@@ -13,6 +13,7 @@ public final class DebugKonanProtoBuf {
     registry.add(org.jetbrains.kotlin.metadata.konan.DebugKonanProtoBuf.inlineConstructorIrBody);
     registry.add(org.jetbrains.kotlin.metadata.konan.DebugKonanProtoBuf.functionAnnotation);
     registry.add(org.jetbrains.kotlin.metadata.konan.DebugKonanProtoBuf.inlineIrBody);
+    registry.add(org.jetbrains.kotlin.metadata.konan.DebugKonanProtoBuf.functionFile);
     registry.add(org.jetbrains.kotlin.metadata.konan.DebugKonanProtoBuf.propertyAnnotation);
     registry.add(org.jetbrains.kotlin.metadata.konan.DebugKonanProtoBuf.propertyGetterAnnotation);
     registry.add(org.jetbrains.kotlin.metadata.konan.DebugKonanProtoBuf.propertySetterAnnotation);
@@ -21,6 +22,7 @@ public final class DebugKonanProtoBuf {
     registry.add(org.jetbrains.kotlin.metadata.konan.DebugKonanProtoBuf.compileTimeValue);
     registry.add(org.jetbrains.kotlin.metadata.konan.DebugKonanProtoBuf.inlineGetterIrBody);
     registry.add(org.jetbrains.kotlin.metadata.konan.DebugKonanProtoBuf.inlineSetterIrBody);
+    registry.add(org.jetbrains.kotlin.metadata.konan.DebugKonanProtoBuf.propertyFile);
     registry.add(org.jetbrains.kotlin.metadata.konan.DebugKonanProtoBuf.enumEntryAnnotation);
     registry.add(org.jetbrains.kotlin.metadata.konan.DebugKonanProtoBuf.enumEntryOrdinal);
     registry.add(org.jetbrains.kotlin.metadata.konan.DebugKonanProtoBuf.parameterAnnotation);
@@ -3060,6 +3062,25 @@ public final class DebugKonanProtoBuf {
      */
     org.jetbrains.kotlin.protobuf.ByteString
         getEmptyPackageBytes(int index);
+
+    /**
+     * <code>repeated string file = 4;</code>
+     */
+    org.jetbrains.kotlin.protobuf.ProtocolStringList
+        getFileList();
+    /**
+     * <code>repeated string file = 4;</code>
+     */
+    int getFileCount();
+    /**
+     * <code>repeated string file = 4;</code>
+     */
+    java.lang.String getFile(int index);
+    /**
+     * <code>repeated string file = 4;</code>
+     */
+    org.jetbrains.kotlin.protobuf.ByteString
+        getFileBytes(int index);
   }
   /**
    * Protobuf type {@code org.jetbrains.kotlin.metadata.konan.LinkDataLibrary}
@@ -3137,6 +3158,15 @@ public final class DebugKonanProtoBuf {
               emptyPackage_.add(bs);
               break;
             }
+            case 34: {
+              org.jetbrains.kotlin.protobuf.ByteString bs = input.readBytes();
+              if (!((mutable_bitField0_ & 0x00000008) == 0x00000008)) {
+                file_ = new org.jetbrains.kotlin.protobuf.LazyStringArrayList();
+                mutable_bitField0_ |= 0x00000008;
+              }
+              file_.add(bs);
+              break;
+            }
           }
         }
       } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
@@ -3150,6 +3180,9 @@ public final class DebugKonanProtoBuf {
         }
         if (((mutable_bitField0_ & 0x00000004) == 0x00000004)) {
           emptyPackage_ = emptyPackage_.getUnmodifiableView();
+        }
+        if (((mutable_bitField0_ & 0x00000008) == 0x00000008)) {
+          file_ = file_.getUnmodifiableView();
         }
         this.unknownFields = unknownFields.build();
         makeExtensionsImmutable();
@@ -3283,10 +3316,40 @@ public final class DebugKonanProtoBuf {
       return emptyPackage_.getByteString(index);
     }
 
+    public static final int FILE_FIELD_NUMBER = 4;
+    private org.jetbrains.kotlin.protobuf.LazyStringList file_;
+    /**
+     * <code>repeated string file = 4;</code>
+     */
+    public org.jetbrains.kotlin.protobuf.ProtocolStringList
+        getFileList() {
+      return file_;
+    }
+    /**
+     * <code>repeated string file = 4;</code>
+     */
+    public int getFileCount() {
+      return file_.size();
+    }
+    /**
+     * <code>repeated string file = 4;</code>
+     */
+    public java.lang.String getFile(int index) {
+      return file_.get(index);
+    }
+    /**
+     * <code>repeated string file = 4;</code>
+     */
+    public org.jetbrains.kotlin.protobuf.ByteString
+        getFileBytes(int index) {
+      return file_.getByteString(index);
+    }
+
     private void initFields() {
       moduleName_ = "";
       packageFragmentName_ = org.jetbrains.kotlin.protobuf.LazyStringArrayList.EMPTY;
       emptyPackage_ = org.jetbrains.kotlin.protobuf.LazyStringArrayList.EMPTY;
+      file_ = org.jetbrains.kotlin.protobuf.LazyStringArrayList.EMPTY;
     }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
@@ -3313,6 +3376,9 @@ public final class DebugKonanProtoBuf {
       }
       for (int i = 0; i < emptyPackage_.size(); i++) {
         output.writeBytes(3, emptyPackage_.getByteString(i));
+      }
+      for (int i = 0; i < file_.size(); i++) {
+        output.writeBytes(4, file_.getByteString(i));
       }
       getUnknownFields().writeTo(output);
     }
@@ -3344,6 +3410,15 @@ public final class DebugKonanProtoBuf {
         }
         size += dataSize;
         size += 1 * getEmptyPackageList().size();
+      }
+      {
+        int dataSize = 0;
+        for (int i = 0; i < file_.size(); i++) {
+          dataSize += org.jetbrains.kotlin.protobuf.CodedOutputStream
+            .computeBytesSizeNoTag(file_.getByteString(i));
+        }
+        size += dataSize;
+        size += 1 * getFileList().size();
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSerializedSize = size;
@@ -3468,6 +3543,8 @@ public final class DebugKonanProtoBuf {
         bitField0_ = (bitField0_ & ~0x00000002);
         emptyPackage_ = org.jetbrains.kotlin.protobuf.LazyStringArrayList.EMPTY;
         bitField0_ = (bitField0_ & ~0x00000004);
+        file_ = org.jetbrains.kotlin.protobuf.LazyStringArrayList.EMPTY;
+        bitField0_ = (bitField0_ & ~0x00000008);
         return this;
       }
 
@@ -3510,6 +3587,11 @@ public final class DebugKonanProtoBuf {
           bitField0_ = (bitField0_ & ~0x00000004);
         }
         result.emptyPackage_ = emptyPackage_;
+        if (((bitField0_ & 0x00000008) == 0x00000008)) {
+          file_ = file_.getUnmodifiableView();
+          bitField0_ = (bitField0_ & ~0x00000008);
+        }
+        result.file_ = file_;
         result.bitField0_ = to_bitField0_;
         onBuilt();
         return result;
@@ -3548,6 +3630,16 @@ public final class DebugKonanProtoBuf {
           } else {
             ensureEmptyPackageIsMutable();
             emptyPackage_.addAll(other.emptyPackage_);
+          }
+          onChanged();
+        }
+        if (!other.file_.isEmpty()) {
+          if (file_.isEmpty()) {
+            file_ = other.file_;
+            bitField0_ = (bitField0_ & ~0x00000008);
+          } else {
+            ensureFileIsMutable();
+            file_.addAll(other.file_);
           }
           onChanged();
         }
@@ -3844,6 +3936,99 @@ public final class DebugKonanProtoBuf {
         return this;
       }
 
+      private org.jetbrains.kotlin.protobuf.LazyStringList file_ = org.jetbrains.kotlin.protobuf.LazyStringArrayList.EMPTY;
+      private void ensureFileIsMutable() {
+        if (!((bitField0_ & 0x00000008) == 0x00000008)) {
+          file_ = new org.jetbrains.kotlin.protobuf.LazyStringArrayList(file_);
+          bitField0_ |= 0x00000008;
+         }
+      }
+      /**
+       * <code>repeated string file = 4;</code>
+       */
+      public org.jetbrains.kotlin.protobuf.ProtocolStringList
+          getFileList() {
+        return file_.getUnmodifiableView();
+      }
+      /**
+       * <code>repeated string file = 4;</code>
+       */
+      public int getFileCount() {
+        return file_.size();
+      }
+      /**
+       * <code>repeated string file = 4;</code>
+       */
+      public java.lang.String getFile(int index) {
+        return file_.get(index);
+      }
+      /**
+       * <code>repeated string file = 4;</code>
+       */
+      public org.jetbrains.kotlin.protobuf.ByteString
+          getFileBytes(int index) {
+        return file_.getByteString(index);
+      }
+      /**
+       * <code>repeated string file = 4;</code>
+       */
+      public Builder setFile(
+          int index, java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  ensureFileIsMutable();
+        file_.set(index, value);
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>repeated string file = 4;</code>
+       */
+      public Builder addFile(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  ensureFileIsMutable();
+        file_.add(value);
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>repeated string file = 4;</code>
+       */
+      public Builder addAllFile(
+          java.lang.Iterable<java.lang.String> values) {
+        ensureFileIsMutable();
+        org.jetbrains.kotlin.protobuf.AbstractMessageLite.Builder.addAll(
+            values, file_);
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>repeated string file = 4;</code>
+       */
+      public Builder clearFile() {
+        file_ = org.jetbrains.kotlin.protobuf.LazyStringArrayList.EMPTY;
+        bitField0_ = (bitField0_ & ~0x00000008);
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>repeated string file = 4;</code>
+       */
+      public Builder addFileBytes(
+          org.jetbrains.kotlin.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  ensureFileIsMutable();
+        file_.add(value);
+        onChanged();
+        return this;
+      }
+
       // @@protoc_insertion_point(builder_scope:org.jetbrains.kotlin.metadata.konan.LinkDataLibrary)
     }
 
@@ -3921,6 +4106,17 @@ public final class DebugKonanProtoBuf {
           .newFileScopedGeneratedExtension(
         org.jetbrains.kotlin.metadata.konan.DebugKonanProtoBuf.InlineIrBody.class,
         org.jetbrains.kotlin.metadata.konan.DebugKonanProtoBuf.InlineIrBody.getDefaultInstance());
+  public static final int FUNCTION_FILE_FIELD_NUMBER = 172;
+  /**
+   * <code>extend .org.jetbrains.kotlin.metadata.Function { ... }</code>
+   */
+  public static final
+    org.jetbrains.kotlin.protobuf.GeneratedMessage.GeneratedExtension<
+      org.jetbrains.kotlin.metadata.DebugProtoBuf.Function,
+      java.lang.Integer> functionFile = org.jetbrains.kotlin.protobuf.GeneratedMessage
+          .newFileScopedGeneratedExtension(
+        java.lang.Integer.class,
+        null);
   public static final int PROPERTY_ANNOTATION_FIELD_NUMBER = 170;
   /**
    * <code>extend .org.jetbrains.kotlin.metadata.Property { ... }</code>
@@ -3932,7 +4128,7 @@ public final class DebugKonanProtoBuf {
           .newFileScopedGeneratedExtension(
         org.jetbrains.kotlin.metadata.DebugProtoBuf.Annotation.class,
         org.jetbrains.kotlin.metadata.DebugProtoBuf.Annotation.getDefaultInstance());
-  public static final int PROPERTY_GETTER_ANNOTATION_FIELD_NUMBER = 176;
+  public static final int PROPERTY_GETTER_ANNOTATION_FIELD_NUMBER = 177;
   /**
    * <code>extend .org.jetbrains.kotlin.metadata.Property { ... }</code>
    */
@@ -3943,7 +4139,7 @@ public final class DebugKonanProtoBuf {
           .newFileScopedGeneratedExtension(
         org.jetbrains.kotlin.metadata.DebugProtoBuf.Annotation.class,
         org.jetbrains.kotlin.metadata.DebugProtoBuf.Annotation.getDefaultInstance());
-  public static final int PROPERTY_SETTER_ANNOTATION_FIELD_NUMBER = 177;
+  public static final int PROPERTY_SETTER_ANNOTATION_FIELD_NUMBER = 178;
   /**
    * <code>extend .org.jetbrains.kotlin.metadata.Property { ... }</code>
    */
@@ -4009,6 +4205,17 @@ public final class DebugKonanProtoBuf {
           .newFileScopedGeneratedExtension(
         org.jetbrains.kotlin.metadata.konan.DebugKonanProtoBuf.InlineIrBody.class,
         org.jetbrains.kotlin.metadata.konan.DebugKonanProtoBuf.InlineIrBody.getDefaultInstance());
+  public static final int PROPERTY_FILE_FIELD_NUMBER = 176;
+  /**
+   * <code>extend .org.jetbrains.kotlin.metadata.Property { ... }</code>
+   */
+  public static final
+    org.jetbrains.kotlin.protobuf.GeneratedMessage.GeneratedExtension<
+      org.jetbrains.kotlin.metadata.DebugProtoBuf.Property,
+      java.lang.Integer> propertyFile = org.jetbrains.kotlin.protobuf.GeneratedMessage
+          .newFileScopedGeneratedExtension(
+        java.lang.Integer.class,
+        null);
   public static final int ENUM_ENTRY_ANNOTATION_FIELD_NUMBER = 170;
   /**
    * <code>extend .org.jetbrains.kotlin.metadata.EnumEntry { ... }</code>
@@ -4122,63 +4329,67 @@ public final class DebugKonanProtoBuf {
       "\0132*.org.jetbrains.kotlin.metadata.String" +
       "Table\"\\\n\017LinkDataClasses\022\022\n\nclass_name\030\001" +
       " \003(\005\0225\n\007classes\030\002 \003(\0132$.org.jetbrains.ko" +
-      "tlin.metadata.Class\"\\\n\017LinkDataLibrary\022\023" +
+      "tlin.metadata.Class\"j\n\017LinkDataLibrary\022\023" +
       "\n\013module_name\030\001 \002(\t\022\035\n\025package_fragment_" +
-      "name\030\002 \003(\t\022\025\n\rempty_package\030\003 \003(\t:@\n\017pac" +
-      "kage_fq_name\022&.org.jetbrains.kotlin.meta" +
-      "data.Package\030\253\001 \001(\005:j\n\020class_annotation\022" +
-      "$.org.jetbrains.kotlin.metadata.Class\030\252\001",
-      " \003(\0132).org.jetbrains.kotlin.metadata.Ann" +
-      "otation:v\n\026constructor_annotation\022*.org." +
-      "jetbrains.kotlin.metadata.Constructor\030\252\001" +
-      " \003(\0132).org.jetbrains.kotlin.metadata.Ann" +
-      "otation:\202\001\n\032inline_constructor_ir_body\022*" +
-      ".org.jetbrains.kotlin.metadata.Construct" +
-      "or\030\253\001 \001(\01321.org.jetbrains.kotlin.metadat" +
-      "a.konan.InlineIrBody:p\n\023function_annotat" +
-      "ion\022\'.org.jetbrains.kotlin.metadata.Func" +
-      "tion\030\252\001 \003(\0132).org.jetbrains.kotlin.metad",
-      "ata.Annotation:s\n\016inline_ir_body\022\'.org.j" +
-      "etbrains.kotlin.metadata.Function\030\253\001 \001(\013" +
-      "21.org.jetbrains.kotlin.metadata.konan.I" +
-      "nlineIrBody:p\n\023property_annotation\022\'.org" +
-      ".jetbrains.kotlin.metadata.Property\030\252\001 \003" +
+      "name\030\002 \003(\t\022\025\n\rempty_package\030\003 \003(\t\022\014\n\004fil" +
+      "e\030\004 \003(\t:@\n\017package_fq_name\022&.org.jetbrai" +
+      "ns.kotlin.metadata.Package\030\253\001 \001(\005:j\n\020cla" +
+      "ss_annotation\022$.org.jetbrains.kotlin.met",
+      "adata.Class\030\252\001 \003(\0132).org.jetbrains.kotli" +
+      "n.metadata.Annotation:v\n\026constructor_ann" +
+      "otation\022*.org.jetbrains.kotlin.metadata." +
+      "Constructor\030\252\001 \003(\0132).org.jetbrains.kotli" +
+      "n.metadata.Annotation:\202\001\n\032inline_constru" +
+      "ctor_ir_body\022*.org.jetbrains.kotlin.meta" +
+      "data.Constructor\030\253\001 \001(\01321.org.jetbrains." +
+      "kotlin.metadata.konan.InlineIrBody:p\n\023fu" +
+      "nction_annotation\022\'.org.jetbrains.kotlin" +
+      ".metadata.Function\030\252\001 \003(\0132).org.jetbrain",
+      "s.kotlin.metadata.Annotation:s\n\016inline_i" +
+      "r_body\022\'.org.jetbrains.kotlin.metadata.F" +
+      "unction\030\253\001 \001(\01321.org.jetbrains.kotlin.me" +
+      "tadata.konan.InlineIrBody:?\n\rfunction_fi" +
+      "le\022\'.org.jetbrains.kotlin.metadata.Funct" +
+      "ion\030\254\001 \001(\005:p\n\023property_annotation\022\'.org." +
+      "jetbrains.kotlin.metadata.Property\030\252\001 \003(" +
+      "\0132).org.jetbrains.kotlin.metadata.Annota" +
+      "tion:w\n\032property_getter_annotation\022\'.org" +
+      ".jetbrains.kotlin.metadata.Property\030\261\001 \003",
       "(\0132).org.jetbrains.kotlin.metadata.Annot" +
-      "ation:w\n\032property_getter_annotation\022\'.or" +
-      "g.jetbrains.kotlin.metadata.Property\030\260\001 " +
+      "ation:w\n\032property_setter_annotation\022\'.or" +
+      "g.jetbrains.kotlin.metadata.Property\030\262\001 " +
       "\003(\0132).org.jetbrains.kotlin.metadata.Anno" +
-      "tation:w\n\032property_setter_annotation\022\'.o",
-      "rg.jetbrains.kotlin.metadata.Property\030\261\001" +
-      " \003(\0132).org.jetbrains.kotlin.metadata.Ann" +
-      "otation:C\n\021has_backing_field\022\'.org.jetbr" +
-      "ains.kotlin.metadata.Property\030\253\001 \001(\010:B\n\020" +
-      "used_as_variable\022\'.org.jetbrains.kotlin." +
-      "metadata.Property\030\254\001 \001(\010:~\n\022compile_time" +
-      "_value\022\'.org.jetbrains.kotlin.metadata.P" +
-      "roperty\030\255\001 \001(\01328.org.jetbrains.kotlin.me" +
-      "tadata.Annotation.Argument.Value:z\n\025inli" +
-      "ne_getter_ir_body\022\'.org.jetbrains.kotlin",
-      ".metadata.Property\030\256\001 \001(\01321.org.jetbrain" +
-      "s.kotlin.metadata.konan.InlineIrBody:z\n\025" +
-      "inline_setter_ir_body\022\'.org.jetbrains.ko" +
-      "tlin.metadata.Property\030\257\001 \001(\01321.org.jetb" +
-      "rains.kotlin.metadata.konan.InlineIrBody" +
-      ":s\n\025enum_entry_annotation\022(.org.jetbrain" +
-      "s.kotlin.metadata.EnumEntry\030\252\001 \003(\0132).org" +
-      ".jetbrains.kotlin.metadata.Annotation:E\n" +
-      "\022enum_entry_ordinal\022(.org.jetbrains.kotl" +
-      "in.metadata.EnumEntry\030\253\001 \001(\005:w\n\024paramete",
-      "r_annotation\022-.org.jetbrains.kotlin.meta" +
-      "data.ValueParameter\030\252\001 \003(\0132).org.jetbrai" +
-      "ns.kotlin.metadata.Annotation:h\n\017type_an" +
-      "notation\022#.org.jetbrains.kotlin.metadata" +
-      ".Type\030\252\001 \003(\0132).org.jetbrains.kotlin.meta" +
-      "data.Annotation:7\n\ttype_text\022#.org.jetbr" +
-      "ains.kotlin.metadata.Type\030\254\001 \001(\t:{\n\031type" +
-      "_parameter_annotation\022,.org.jetbrains.ko" +
-      "tlin.metadata.TypeParameter\030\252\001 \003(\0132).org" +
-      ".jetbrains.kotlin.metadata.AnnotationB\024B",
-      "\022DebugKonanProtoBuf"
+      "tation:C\n\021has_backing_field\022\'.org.jetbra" +
+      "ins.kotlin.metadata.Property\030\253\001 \001(\010:B\n\020u" +
+      "sed_as_variable\022\'.org.jetbrains.kotlin.m" +
+      "etadata.Property\030\254\001 \001(\010:~\n\022compile_time_" +
+      "value\022\'.org.jetbrains.kotlin.metadata.Pr" +
+      "operty\030\255\001 \001(\01328.org.jetbrains.kotlin.met",
+      "adata.Annotation.Argument.Value:z\n\025inlin" +
+      "e_getter_ir_body\022\'.org.jetbrains.kotlin." +
+      "metadata.Property\030\256\001 \001(\01321.org.jetbrains" +
+      ".kotlin.metadata.konan.InlineIrBody:z\n\025i" +
+      "nline_setter_ir_body\022\'.org.jetbrains.kot" +
+      "lin.metadata.Property\030\257\001 \001(\01321.org.jetbr" +
+      "ains.kotlin.metadata.konan.InlineIrBody:" +
+      "?\n\rproperty_file\022\'.org.jetbrains.kotlin." +
+      "metadata.Property\030\260\001 \001(\005:s\n\025enum_entry_a" +
+      "nnotation\022(.org.jetbrains.kotlin.metadat",
+      "a.EnumEntry\030\252\001 \003(\0132).org.jetbrains.kotli" +
+      "n.metadata.Annotation:E\n\022enum_entry_ordi" +
+      "nal\022(.org.jetbrains.kotlin.metadata.Enum" +
+      "Entry\030\253\001 \001(\005:w\n\024parameter_annotation\022-.o" +
+      "rg.jetbrains.kotlin.metadata.ValueParame" +
+      "ter\030\252\001 \003(\0132).org.jetbrains.kotlin.metada" +
+      "ta.Annotation:h\n\017type_annotation\022#.org.j" +
+      "etbrains.kotlin.metadata.Type\030\252\001 \003(\0132).o" +
+      "rg.jetbrains.kotlin.metadata.Annotation:" +
+      "7\n\ttype_text\022#.org.jetbrains.kotlin.meta",
+      "data.Type\030\254\001 \001(\t:{\n\031type_parameter_annot" +
+      "ation\022,.org.jetbrains.kotlin.metadata.Ty" +
+      "peParameter\030\252\001 \003(\0132).org.jetbrains.kotli" +
+      "n.metadata.AnnotationB\024B\022DebugKonanProto" +
+      "Buf"
     };
     org.jetbrains.kotlin.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new org.jetbrains.kotlin.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -4216,27 +4427,29 @@ public final class DebugKonanProtoBuf {
     internal_static_org_jetbrains_kotlin_metadata_konan_LinkDataLibrary_fieldAccessorTable = new
       org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_org_jetbrains_kotlin_metadata_konan_LinkDataLibrary_descriptor,
-        new java.lang.String[] { "ModuleName", "PackageFragmentName", "EmptyPackage", });
+        new java.lang.String[] { "ModuleName", "PackageFragmentName", "EmptyPackage", "File", });
     packageFqName.internalInit(descriptor.getExtensions().get(0));
     classAnnotation.internalInit(descriptor.getExtensions().get(1));
     constructorAnnotation.internalInit(descriptor.getExtensions().get(2));
     inlineConstructorIrBody.internalInit(descriptor.getExtensions().get(3));
     functionAnnotation.internalInit(descriptor.getExtensions().get(4));
     inlineIrBody.internalInit(descriptor.getExtensions().get(5));
-    propertyAnnotation.internalInit(descriptor.getExtensions().get(6));
-    propertyGetterAnnotation.internalInit(descriptor.getExtensions().get(7));
-    propertySetterAnnotation.internalInit(descriptor.getExtensions().get(8));
-    hasBackingField.internalInit(descriptor.getExtensions().get(9));
-    usedAsVariable.internalInit(descriptor.getExtensions().get(10));
-    compileTimeValue.internalInit(descriptor.getExtensions().get(11));
-    inlineGetterIrBody.internalInit(descriptor.getExtensions().get(12));
-    inlineSetterIrBody.internalInit(descriptor.getExtensions().get(13));
-    enumEntryAnnotation.internalInit(descriptor.getExtensions().get(14));
-    enumEntryOrdinal.internalInit(descriptor.getExtensions().get(15));
-    parameterAnnotation.internalInit(descriptor.getExtensions().get(16));
-    typeAnnotation.internalInit(descriptor.getExtensions().get(17));
-    typeText.internalInit(descriptor.getExtensions().get(18));
-    typeParameterAnnotation.internalInit(descriptor.getExtensions().get(19));
+    functionFile.internalInit(descriptor.getExtensions().get(6));
+    propertyAnnotation.internalInit(descriptor.getExtensions().get(7));
+    propertyGetterAnnotation.internalInit(descriptor.getExtensions().get(8));
+    propertySetterAnnotation.internalInit(descriptor.getExtensions().get(9));
+    hasBackingField.internalInit(descriptor.getExtensions().get(10));
+    usedAsVariable.internalInit(descriptor.getExtensions().get(11));
+    compileTimeValue.internalInit(descriptor.getExtensions().get(12));
+    inlineGetterIrBody.internalInit(descriptor.getExtensions().get(13));
+    inlineSetterIrBody.internalInit(descriptor.getExtensions().get(14));
+    propertyFile.internalInit(descriptor.getExtensions().get(15));
+    enumEntryAnnotation.internalInit(descriptor.getExtensions().get(16));
+    enumEntryOrdinal.internalInit(descriptor.getExtensions().get(17));
+    parameterAnnotation.internalInit(descriptor.getExtensions().get(18));
+    typeAnnotation.internalInit(descriptor.getExtensions().get(19));
+    typeText.internalInit(descriptor.getExtensions().get(20));
+    typeParameterAnnotation.internalInit(descriptor.getExtensions().get(21));
     org.jetbrains.kotlin.metadata.DebugProtoBuf.getDescriptor();
   }
 
