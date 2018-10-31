@@ -531,11 +531,6 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             runTest("idea/testData/quickfix/addExclExclCall/array4.kt");
         }
 
-        @TestMetadata("array5.kt")
-        public void testArray5() throws Exception {
-            runTest("idea/testData/quickfix/addExclExclCall/array5.kt");
-        }
-
         @TestMetadata("implicit.kt")
         public void testImplicit() throws Exception {
             runTest("idea/testData/quickfix/addExclExclCall/implicit.kt");

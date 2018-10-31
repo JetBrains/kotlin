@@ -89,64 +89,56 @@ class AddExclExclCallFix(psiElement: PsiElement, val checkImplicitReceivers: Boo
     override fun getText() = KotlinBundle.message("introduce.non.null.assertion")
 
     override fun isAvailable(project: Project, editor: Editor?, file: KtFile): Boolean =
-        getExpressionForIntroduceCall().isNotEmpty()
+        getExpressionForIntroduceCall() != null
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         if (!FileModificationService.getInstance().prepareFileForWrite(file)) return
-        getExpressionForIntroduceCall().forEach { expr ->
-            val modifiedExpression = expr.expression
-            val exclExclExpression = if (expr.implicitReceiver) {
-                KtPsiFactory(project).createExpressionByPattern("this!!.$0", modifiedExpression)
-            } else {
-                KtPsiFactory(project).createExpressionByPattern("$0!!", modifiedExpression)
-            }
-            modifiedExpression.replace(exclExclExpression)
+
+        val expr = getExpressionForIntroduceCall() ?: return
+        val modifiedExpression = expr.expression
+        val exclExclExpression = if (expr.implicitReceiver) {
+            KtPsiFactory(project).createExpressionByPattern("this!!.$0", modifiedExpression)
+        } else {
+            KtPsiFactory(project).createExpressionByPattern("$0!!", modifiedExpression)
         }
+        modifiedExpression.replace(exclExclExpression)
     }
 
     private class ExpressionForCall(val expression: KtExpression, val implicitReceiver: Boolean)
 
     private fun KtExpression?.expressionForCall(implicitReceiver: Boolean = false) = this?.let { ExpressionForCall(it, implicitReceiver) }
 
-    private fun getExpressionForIntroduceCall(): List<ExpressionForCall> {
-        val psiElement = element ?: return emptyList()
+    private fun getExpressionForIntroduceCall(): ExpressionForCall? {
+        val psiElement = element ?: return null
         if ((psiElement as? KtExpression).isNullExpression()) {
-            return emptyList()
+            return null
         }
         if (psiElement is LeafPsiElement && psiElement.elementType == KtTokens.DOT) {
-            return listOfNotNull((psiElement.prevSibling as? KtExpression).expressionForCall())
+            return (psiElement.prevSibling as? KtExpression).expressionForCall()
         }
         return when (psiElement) {
             is KtArrayAccessExpression -> {
-                val arrayExpression = psiElement.arrayExpression
-                val type = arrayExpression?.resolveToCall()?.resultingDescriptor?.returnType
-                val calls = mutableListOf<ExpressionForCall>()
-                if ((arrayExpression as? KtPostfixExpression)?.operationToken != KtTokens.EXCLEXCL && type?.isNullable() == true) {
-                    arrayExpression.expressionForCall()?.also { calls.add(it) }
-                }
+                val arrayExpr = psiElement.arrayExpression
                 if (psiElement.getStrictParentOfType<KtPostfixExpression>()?.operationToken != KtTokens.EXCLEXCL
-                    && type?.arguments?.singleOrNull()?.type?.isNullable() == true
-                ) {
-                    psiElement.expressionForCall()?.also { calls.add(it) }
-                }
-                calls
+                    && arrayExpr?.resolveToCall()?.resultingDescriptor?.returnType?.arguments?.singleOrNull()?.type?.isNullable() == true
+                ) psiElement.expressionForCall() else arrayExpr.expressionForCall()
             }
             is KtOperationReferenceExpression -> {
                 val parent = psiElement.parent
                 when (parent) {
-                    is KtUnaryExpression -> listOfNotNull(parent.baseExpression.expressionForCall())
+                    is KtUnaryExpression -> parent.baseExpression.expressionForCall()
                     is KtBinaryExpression -> {
                         val receiver = if (KtPsiUtil.isInOrNotInOperation(parent)) parent.right else parent.left
-                        listOfNotNull(receiver.expressionForCall())
+                        receiver.expressionForCall()
                     }
-                    else -> emptyList()
+                    else -> null
                 }
             }
             is KtExpression -> {
                 val context = psiElement.analyze()
                 if (checkImplicitReceivers && psiElement.getResolvedCall(context)?.getImplicitReceiverValue() != null) {
                     val expressionToReplace = psiElement.parent as? KtCallExpression ?: psiElement
-                    listOfNotNull(expressionToReplace.expressionForCall(implicitReceiver = true))
+                    expressionToReplace.expressionForCall(implicitReceiver = true)
                 } else {
                     context[BindingContext.EXPRESSION_TYPE_INFO, psiElement]?.let {
                         val type = it.type
@@ -157,13 +149,13 @@ class AddExclExclCallFix(psiElement: PsiElement, val checkImplicitReceivers: Boo
                             val nullability = it.dataFlowInfo.getStableNullability(
                                 dataFlowValueFactory.createDataFlowValue(psiElement, type, context, psiElement.findModuleDescriptor())
                             )
-                            if (!nullability.canBeNonNull()) return emptyList()
+                            if (!nullability.canBeNonNull()) return null
                         }
                     }
-                    listOfNotNull(psiElement.expressionForCall())
+                    psiElement.expressionForCall()
                 }
             }
-            else -> emptyList()
+            else -> null
         }
     }
 
