@@ -3,14 +3,14 @@
 // SKIP_TXT
 
 /*
- KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (POSITIVE)
-
- SECTION: contracts
- CATEGORIES: analysis, controlFlow, unreachableCode
- NUMBER: 4
- DESCRIPTION: Unreachable code detection using nested contract functions with CallsInPlace effect
+ * KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (POSITIVE)
+ *
+ * SECTIONS: contracts, analysis, controlFlow, unreachableCode
+ * NUMBER: 4
+ * DESCRIPTION: Unreachable code detection using nested contract functions with CallsInPlace effect
  */
 
+// TESTCASE NUMBER: 1
 fun case_1() {
     funWithExactlyOnceCallsInPlace {
         funWithExactlyOnceCallsInPlace {
@@ -24,6 +24,7 @@ fun case_1() {
     <!UNREACHABLE_CODE!>println("3")<!>
 }
 
+// TESTCASE NUMBER: 2
 fun case_2() {
     funWithAtLeastOnceCallsInPlace {
         funWithAtLeastOnceCallsInPlace label_1@ {
@@ -40,6 +41,7 @@ fun case_2() {
     <!UNREACHABLE_CODE!>println("3")<!>
 }
 
+// TESTCASE NUMBER: 3
 fun case_3() {
     funWithExactlyOnceCallsInPlace {
         funWithExactlyOnceCallsInPlace {

@@ -2,17 +2,17 @@
 // !WITH_CLASSES
 
 /*
- KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (NEGATIVE)
-
- SECTION: contracts
- CATEGORIES: declarations, contractFunction
- NUMBER: 2
- DESCRIPTION: Check report about use contracts in literal functions, lambdas or not top-level functions.
- ISSUES: KT-26149
+ * KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (NEGATIVE)
+ *
+ * SECTIONS: contracts, declarations, contractFunction
+ * NUMBER: 2
+ * DESCRIPTION: Check report about use contracts in literal functions, lambdas or not top-level functions.
+ * ISSUES: KT-26149
  */
 
 import kotlin.contracts.*
 
+// TESTCASE NUMBER: 1
 fun case_1() {
     val fun_1 = fun(block: () -> Unit) {
         <!CONTRACT_NOT_ALLOWED!>contract<!> { callsInPlace(block, InvocationKind.EXACTLY_ONCE) }
@@ -23,6 +23,7 @@ fun case_1() {
     println("1")
 }
 
+// TESTCASE NUMBER: 2
 fun case_2() {
     val lambda_1 = { block: () -> Unit ->
         <!CONTRACT_NOT_ALLOWED!>contract<!> { callsInPlace(block, InvocationKind.EXACTLY_ONCE) }
@@ -33,6 +34,7 @@ fun case_2() {
     println("1")
 }
 
+// TESTCASE NUMBER: 3
 object case_3 {
     fun case_3(block: () -> Unit) {
         <!CONTRACT_NOT_ALLOWED!>contract<!> { callsInPlace(block, InvocationKind.EXACTLY_ONCE) }
@@ -40,8 +42,12 @@ object case_3 {
     }
 }
 
-// ISSUES: KT-26244
+/*
+ * TESTCASE NUMBER: 4
+ * ISSUES: KT-26244
+ */
 class case_4 : _ClassLevel3() {
+
     fun <T : Number?>T.case_4_1(): Boolean {
         <!CONTRACT_NOT_ALLOWED!>contract<!> { returns(false) implies (<!USELESS_IS_CHECK!>this@case_4 !is _ClassLevel1<!>) }
         return this == null
@@ -74,7 +80,10 @@ class case_4 : _ClassLevel3() {
     fun case_4_5() = _ClassLevel3().case_4_5_wrap()
 }
 
-// ISSUES: KT-26244
+/*
+ * TESTCASE NUMBER: 5
+ * ISSUES: KT-26244
+ */
 class case_5<T> : _ClassLevel5() {
     inner class case_5_1 {
         fun <K : Number?>K.case_5_1_1() {

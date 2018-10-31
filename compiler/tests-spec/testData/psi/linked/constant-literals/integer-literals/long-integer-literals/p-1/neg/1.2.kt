@@ -1,11 +1,11 @@
 /*
- KOTLIN PSI SPEC TEST (NEGATIVE)
-
- SECTIONS: constant-literals, integer-literals, long-integer-literals
- PARAGRAPH: 1
- SENTENCE: [1] Any of the decimal, hexadecimal or binary literals may be suffixed by the long literal mark (symbol L).
- NUMBER: 2
- DESCRIPTION: Various integer literals with a long literal mark in not allowed positions.
+ * KOTLIN PSI SPEC TEST (NEGATIVE)
+ *
+ * SECTIONS: constant-literals, integer-literals, long-integer-literals
+ * PARAGRAPH: 1
+ * SENTENCE: [1] Any of the decimal, hexadecimal or binary literals may be suffixed by the long literal mark (symbol L).
+ * NUMBER: 2
+ * DESCRIPTION: Various integer literals with a long literal mark in not allowed places.
  */
 
 val value = 0x0123456L789abcdef

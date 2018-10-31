@@ -4,14 +4,14 @@
 // SKIP_TXT
 
 /*
- KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (POSITIVE)
-
- SECTION: contracts
- CATEGORIES: analysis, controlFlow, initialization
- NUMBER: 3
- DESCRIPTION: val/var assignments or subsequent usages with compelx control flow inside/outside lambda of contract function with CallsInPlace effect
+ * KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (POSITIVE)
+ *
+ * SECTIONS: contracts, analysis, controlFlow, initialization
+ * NUMBER: 3
+ * DESCRIPTION: val/var assignments or subsequent usages with compelx control flow inside/outside lambda of contract function with CallsInPlace effect
  */
 
+// TESTCASE NUMBER: 1
 fun case_1(value_1: _EnumClass?) {
     val value_2: Int
 
@@ -26,6 +26,7 @@ fun case_1(value_1: _EnumClass?) {
     value_2.inc()
 }
 
+// TESTCASE NUMBER: 2
 fun case_2(value_1: Any?) {
     val value_2: Int
 
@@ -42,6 +43,7 @@ fun case_2(value_1: Any?) {
     }
 }
 
+// TESTCASE NUMBER: 3
 class case_3(value_1: Any?) {
     var value_2: Int
 
@@ -60,6 +62,7 @@ class case_3(value_1: Any?) {
     }
 }
 
+// TESTCASE NUMBER: 4
 fun case_4(value_1: _EnumClassSingle?) {
     var value_2: Int
 
@@ -78,6 +81,7 @@ fun case_4(value_1: _EnumClassSingle?) {
     }
 }
 
+// TESTCASE NUMBER: 5
 fun case_5() {
     var value_2: Int
 
@@ -90,6 +94,7 @@ fun case_5() {
     value_2++
 }
 
+// TESTCASE NUMBER: 6
 fun case_6() {
     var value_2: Int
 
@@ -104,6 +109,7 @@ fun case_6() {
     value_2++
 }
 
+// TESTCASE NUMBER: 7
 fun case_7() {
     var value_1: Int
 
@@ -122,6 +128,7 @@ fun case_7() {
     println(value_1.inc())
 }
 
+// TESTCASE NUMBER: 8
 fun case_8() {
     var value_1: Int
 
@@ -138,6 +145,7 @@ fun case_8() {
     println(value_1.inc())
 }
 
+// TESTCASE NUMBER: 9
 fun case_9() {
     val x: Int
     funWithExactlyOnceCallsInPlace outer@ {
@@ -152,6 +160,7 @@ fun case_9() {
     println(x.inc())
 }
 
+// TESTCASE NUMBER: 10
 fun case_10() {
     val x: Int
     funWithExactlyOnceCallsInPlace outer@ {
@@ -163,6 +172,7 @@ fun case_10() {
     println(x.inc())
 }
 
+// TESTCASE NUMBER: 11
 fun case_11() {
     var x: Int
     funWithAtLeastOnceCallsInPlace outer@ {

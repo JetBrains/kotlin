@@ -1,18 +1,18 @@
 // !USE_EXPERIMENTAL: kotlin.contracts.ExperimentalContracts
 
 /*
- KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (NEGATIVE)
-
- SECTION: contracts
- CATEGORIES: declarations, contractBuilder, effects, callsInPlace
- NUMBER: 2
- DESCRIPTION: functions with contract and duplicate CallsInPlace.
- UNEXPECTED BEHAVIOUR
- ISSUES: KT-26150
+ * KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (NEGATIVE)
+ *
+ * SECTIONS: contracts, declarations, contractBuilder, effects, callsInPlace
+ * NUMBER: 2
+ * DESCRIPTION: functions with contract and duplicate CallsInPlace.
+ * UNEXPECTED BEHAVIOUR
+ * ISSUES: KT-26150
  */
 
 import kotlin.contracts.*
 
+// TESTCASE NUMBER: 1
 inline fun case_1(block: () -> Unit) {
     contract {
         callsInPlace(block, InvocationKind.EXACTLY_ONCE)
@@ -21,6 +21,7 @@ inline fun case_1(block: () -> Unit) {
     return block()
 }
 
+// TESTCASE NUMBER: 2
 inline fun case_2(block: () -> Unit) {
     contract {
         callsInPlace(block, InvocationKind.EXACTLY_ONCE)

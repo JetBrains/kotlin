@@ -128,7 +128,7 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
         private val diagnosedRanges: List<CheckerTestUtil.DiagnosedRange> = ArrayList()
         val actualDiagnostics: MutableList<ActualDiagnostic> = ArrayList()
         val expectedText: String
-        private val clearText: String
+        val clearText: String
         private val createKtFile: Lazy<KtFile?>
         private val whatDiagnosticsToConsider: Condition<Diagnostic>
         val customLanguageVersionSettings: LanguageVersionSettings?

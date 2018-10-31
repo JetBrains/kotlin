@@ -2,18 +2,18 @@
 // !USE_EXPERIMENTAL: kotlin.contracts.ExperimentalContracts
 
 /*
- KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (NEGATIVE)
-
- SECTION: contracts
- CATEGORIES: declarations, contractFunction
- NUMBER: 4
- DESCRIPTION: Check that fun with contract and CallsInPlace effect is an inline function.
- UNEXPECTED BEHAVIOUR
- ISSUES: KT-27090
+ * KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (NEGATIVE)
+ *
+ * SECTIONS: contracts, declarations, contractFunction
+ * NUMBER: 4
+ * DESCRIPTION: Check that fun with contract and CallsInPlace effect is an inline function.
+ * UNEXPECTED BEHAVIOUR
+ * ISSUES: KT-27090
  */
 
 import kotlin.contracts.*
 
+// TESTCASE NUMBER: 1
 val Boolean.case_1: () -> Unit
     get() {
         contract {
@@ -22,6 +22,7 @@ val Boolean.case_1: () -> Unit
         return {}
     }
 
+// TESTCASE NUMBER: 2
 val (() -> Unit).case_2: () -> Unit
     get() {
         contract {
@@ -30,6 +31,7 @@ val (() -> Unit).case_2: () -> Unit
         return {}
     }
 
+// TESTCASE NUMBER: 3
 var Boolean.case_3: () -> Unit
     get() {
         return {}
@@ -40,6 +42,7 @@ var Boolean.case_3: () -> Unit
         }
     }
 
+// TESTCASE NUMBER: 4
 var (() -> Unit).case_4: () -> Unit
     get() {
         return {}
@@ -50,6 +53,7 @@ var (() -> Unit).case_4: () -> Unit
         }
     }
 
+// TESTCASE NUMBER: 5
 val Boolean.case_5: () -> Unit
     get() {
         contract {

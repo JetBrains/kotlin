@@ -3,44 +3,50 @@
 // SKIP_TXT
 
 /*
- KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (NEGATIVE)
-
- SECTION: contracts
- CATEGORIES: analysis, smartcasts
- NUMBER: 1
- DESCRIPTION: Smartcasts using Returns effects with simple type checking, not-null conditions and custom condition (condition for smartcast outside contract).
+ * KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (NEGATIVE)
+ *
+ * SECTIONS: contracts, analysis, smartcasts
+ * NUMBER: 1
+ * DESCRIPTION: Smartcasts using Returns effects with simple type checking, not-null conditions and custom condition (condition for smartcast outside contract).
  */
 
+// TESTCASE NUMBER: 1
 fun case_1(value_1: Any?) {
     funWithReturns(value_1 !is String)
     println(value_1.<!UNRESOLVED_REFERENCE!>length<!>)
 }
 
+// TESTCASE NUMBER: 2
 fun case_2(value_1: Int?) {
     funWithReturnsAndInvertCondition(value_1 != null)
     println(<!DEBUG_INFO_CONSTANT!>value_1<!><!UNSAFE_CALL!>.<!>inc())
 }
 
+// TESTCASE NUMBER: 3
 fun case_3(value_1: Int?) {
     funWithReturns(value_1 == null)
     println(<!DEBUG_INFO_CONSTANT!>value_1<!><!UNSAFE_CALL!>.<!>inc())
 }
 
+// TESTCASE NUMBER: 4
 fun case_4(value_1: Any?) {
     funWithReturnsAndInvertTypeCheck(value_1)
     println(value_1.<!UNRESOLVED_REFERENCE!>length<!>)
 }
 
+// TESTCASE NUMBER: 5
 fun case_5(value_1: String?) {
     funWithReturnsAndNullCheck(value_1)
     println(<!DEBUG_INFO_CONSTANT!>value_1<!><!UNSAFE_CALL!>.<!>length)
 }
 
+// TESTCASE NUMBER: 6
 fun case_6(value_1: String?) {
     funWithReturnsAndNullCheck(value_1)
     println(<!DEBUG_INFO_CONSTANT!>value_1<!><!UNSAFE_CALL!>.<!>length)
 }
 
+// TESTCASE NUMBER: 7
 object case_7_object {
     val prop_1: Int? = 10
 }
@@ -49,6 +55,7 @@ fun case_7() {
     <!DEBUG_INFO_CONSTANT!>case_7_object.prop_1<!><!UNSAFE_CALL!>.<!>inc()
 }
 
+// TESTCASE NUMBER: 8
 fun case_8(value_1: Any?) {
     if (!funWithReturnsTrue(value_1 is String)) println(value_1.<!UNRESOLVED_REFERENCE!>length<!>)
     if (!funWithReturnsTrueAndInvertCondition(value_1 !is String)) println(value_1.<!UNRESOLVED_REFERENCE!>length<!>)
@@ -60,6 +67,7 @@ fun case_8(value_1: Any?) {
     if (funWithReturnsNull(value_1 is String) != null) println(value_1.<!UNRESOLVED_REFERENCE!>length<!>)
 }
 
+// TESTCASE NUMBER: 9
 fun case_9(value_1: String?) {
     if (!funWithReturnsTrue(value_1 != null)) println(value_1<!UNSAFE_CALL!>.<!>length)
     if (!funWithReturnsTrueAndInvertCondition(value_1 == null)) println(value_1<!UNSAFE_CALL!>.<!>length)
@@ -71,6 +79,7 @@ fun case_9(value_1: String?) {
     if (funWithReturnsNullAndInvertCondition(value_1 == null) != null) println(value_1<!UNSAFE_CALL!>.<!>length)
 }
 
+// TESTCASE NUMBER: 10
 fun case_10(value_1: Any?) {
     if (!funWithReturnsTrueAndTypeCheck(value_1)) println(value_1.<!UNRESOLVED_REFERENCE!>length<!>)
     if (!!funWithReturnsFalseAndTypeCheck(value_1)) println(value_1.<!UNRESOLVED_REFERENCE!>length<!>)
@@ -80,6 +89,7 @@ fun case_10(value_1: Any?) {
     if (!(funWithReturnsNullAndTypeCheck(value_1) == null)) println(value_1.<!UNRESOLVED_REFERENCE!>length<!>)
 }
 
+// TESTCASE NUMBER: 11
 fun case_11(value_1: Number?) {
     if (!funWithReturnsTrueAndNotNullCheck(value_1)) println(value_1<!UNSAFE_CALL!>.<!>toByte())
     if (!funWithReturnsTrueAndNullCheck(value_1)) println(value_1)

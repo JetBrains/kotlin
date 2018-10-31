@@ -1,11 +1,11 @@
 /*
- KOTLIN PSI SPEC TEST (NEGATIVE)
-
- SECTIONS: constant-literals, integer-literals, binary-integer-literals
- PARAGRAPH: 1
- SENTENCE: [2] A sequence of binary digit symbols (0 or 1) prefixed by 0b or 0B is a binary integer literal.
- NUMBER: 1
- DESCRIPTION: Binary integer literals with underscore breaking the prefix (in it).
+ * KOTLIN PSI SPEC TEST (NEGATIVE)
+ *
+ * SECTIONS: constant-literals, integer-literals, binary-integer-literals
+ * PARAGRAPH: 1
+ * SENTENCE: [2] A sequence of binary digit symbols (0 or 1) prefixed by 0b or 0B is a binary integer literal.
+ * NUMBER: 1
+ * DESCRIPTION: Binary integer literals with underscore breaking the prefix (in it).
  */
 
 val value = 0_b1_1_0_1_0_1

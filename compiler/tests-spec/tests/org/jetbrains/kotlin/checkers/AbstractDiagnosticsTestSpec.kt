@@ -9,10 +9,16 @@ import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.spec.models.AbstractSpecTest
+import org.jetbrains.kotlin.spec.SpecTestLinkedType
+import org.jetbrains.kotlin.spec.parsers.CommonParser
+import org.jetbrains.kotlin.spec.parsers.CommonPatterns.ls
 import org.jetbrains.kotlin.spec.validators.*
 import org.jetbrains.kotlin.test.*
+import org.jetbrains.kotlin.utils.KotlinExceptionWithAttachments
 import org.junit.Assert
 import java.io.File
+import java.util.regex.Pattern
 
 abstract class AbstractDiagnosticsTestSpec : AbstractDiagnosticsTest() {
     companion object {
@@ -35,18 +41,22 @@ abstract class AbstractDiagnosticsTestSpec : AbstractDiagnosticsTest() {
         private const val MODULE_PATH = "compiler/tests-spec"
         private const val DIAGNOSTICS_TESTDATA_PATH = "$MODULE_PATH/testData/diagnostics"
         private const val HELPERS_PATH = "$DIAGNOSTICS_TESTDATA_PATH/helpers"
+        private val exceptionPattern =
+            Pattern.compile("""Exception while analyzing expression at \((?<lineNumber>\d+),(?<symbolNumber>\d+)\) in /(?<filename>.*?)$""")
     }
 
-    private lateinit var testValidator: AbstractSpecTestValidator<out AbstractSpecTest>
+    lateinit var specTest: AbstractSpecTest
+    lateinit var testLinkedType: SpecTestLinkedType
+
     private var skipDescriptors = true
 
     private fun checkDirective(directive: String, testFiles: List<TestFile>) =
         testFiles.any { it.directives.contains(directive) }
 
-    private fun enableDescriptorsGenerationIfNeeded(testDataFile: File) {
+    private fun enableDescriptorsGenerationIfNeeded(testFilePath: String) {
         skipDescriptors = withoutDescriptorsTestGroups.any {
             val testGroupAbsolutePath = File("$DIAGNOSTICS_TESTDATA_PATH/$it").absolutePath
-            testDataFile.absolutePath.startsWith(testGroupAbsolutePath)
+            testFilePath.startsWith(testGroupAbsolutePath)
         }
     }
 
@@ -70,19 +80,37 @@ abstract class AbstractDiagnosticsTestSpec : AbstractDiagnosticsTest() {
     }
 
     override fun analyzeAndCheck(testDataFile: File, files: List<TestFile>) {
-        enableDescriptorsGenerationIfNeeded(testDataFile)
+        val testFilePath = testDataFile.canonicalPath
 
-        testValidator = AbstractSpecTestValidator.getInstanceByType(testDataFile)
+        enableDescriptorsGenerationIfNeeded(testFilePath)
 
-        try {
-            testValidator.parseTestInfo()
-        } catch (e: SpecTestValidationException) {
-            Assert.fail(e.description)
+        CommonParser.parseSpecTest(testFilePath, files.associate { Pair(it.ktFile!!.name, it.clearText) }).apply {
+            specTest = first
+            testLinkedType = second
         }
 
-        testValidator.printTestInfo()
+        println(specTest)
 
-        super.analyzeAndCheck(testDataFile, files)
+        try {
+            super.analyzeAndCheck(testDataFile, files)
+        } catch (e: KotlinExceptionWithAttachments) {
+            val matches = exceptionPattern.matcher(e.message)
+
+            if (!matches.find())
+                Assert.fail(SpecTestValidationFailedReason.UNKNOWN_FRONTEND_EXCEPTION.description)
+
+            val lineNumber = matches.group("lineNumber").toInt()
+            val symbolNumber = matches.group("symbolNumber").toInt()
+            val filename = matches.group("filename")
+            val fileContent = files.find { it.ktFile?.name == filename }!!.clearText
+            val exceptionPosition =
+                fileContent.lines().subList(0, lineNumber).joinToString("\n").length + symbolNumber
+            val testCases = specTest.cases.byRanges[filename]
+            val isExpectedException = testCases!!.floorEntry(exceptionPosition).value.all { it.value.unexpectedBehavior }
+
+            if (!isExpectedException)
+                Assert.fail()
+        }
     }
 
     override fun performAdditionalChecksAfterDiagnostics(
@@ -93,11 +121,16 @@ abstract class AbstractDiagnosticsTestSpec : AbstractDiagnosticsTest() {
         moduleBindings: Map<TestModule?, BindingContext>,
         languageVersionSettingsByModule: Map<TestModule?, LanguageVersionSettings>
     ) {
-        if (testValidator.testInfo.unexpectedBehavior!!) return
+        val diagnosticValidator = try {
+            DiagnosticTestTypeValidator(testFiles, testDataFile, specTest)
+        } catch (e: SpecTestValidationException) {
+            Assert.fail(e.description)
+            return
+        }
 
-        val diagnosticValidator = DiagnosticTestTypeValidator(testFiles)
         try {
-            testValidator.validateTestType(computedTestType = diagnosticValidator.computeTestType())
+            diagnosticValidator.validatePathConsistency(testLinkedType)
+            diagnosticValidator.validateTestType()
         } catch (e: SpecTestValidationException) {
             Assert.fail(e.description)
         } finally {

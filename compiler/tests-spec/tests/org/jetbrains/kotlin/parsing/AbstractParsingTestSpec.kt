@@ -5,29 +5,28 @@
 
 package org.jetbrains.kotlin.parsing
 
+import com.intellij.openapi.util.io.FileUtil
+import org.jetbrains.kotlin.spec.parsers.CommonParser
 import org.jetbrains.kotlin.spec.validators.*
 import org.junit.Assert
+import java.io.File
 
 abstract class AbstractParsingTestSpec : AbstractParsingTest() {
-    private lateinit var testValidator: AbstractSpecTestValidator<out AbstractSpecTest>
-
     override fun doParsingTest(filePath: String) {
-        testValidator = AbstractSpecTestValidator.getInstanceByType(filePath)
+        val (specTest, testLinkedType) = CommonParser.parseSpecTest(
+            filePath,
+            mapOf("main.kt" to FileUtil.loadFile(File(filePath), true))
+        )
+
+        println(specTest)
+
+        super.doParsingTest(filePath, CommonParser::testInfoFilter)
+
+        val psiTestValidator = ParsingTestTypeValidator(myFile, File(filePath), specTest)
 
         try {
-            testValidator.parseTestInfo()
-        } catch (e: SpecTestValidationException) {
-            Assert.fail(e.description)
-        }
-
-        testValidator.printTestInfo()
-
-        super.doParsingTest(filePath, testValidator::testInfoFilter)
-
-        if (testValidator.testInfo.unexpectedBehavior!!) return
-
-        try {
-            testValidator.validateTestType(computedTestType = ParsingTestTypeValidator.computeTestType(myFile))
+            psiTestValidator.validatePathConsistency(testLinkedType)
+            psiTestValidator.validateTestType()
         } catch (e: SpecTestValidationException) {
             Assert.fail(e.description)
         }

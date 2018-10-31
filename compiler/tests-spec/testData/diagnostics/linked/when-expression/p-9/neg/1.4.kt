@@ -3,16 +3,16 @@
 // !WITH_CLASSES
 
 /*
- KOTLIN DIAGNOSTICS SPEC TEST (NEGATIVE)
-
- SECTIONS: when-expression
- PARAGRAPH: 9
- SENTENCE: [1] The type of the resulting expression is the least upper bound of the types of all the entries.
- NUMBER: 4
- DESCRIPTION: 'When' least upper bound of the types check (when exhaustive via sealed class).
+ * KOTLIN DIAGNOSTICS SPEC TEST (NEGATIVE)
+ *
+ * SECTIONS: when-expression
+ * PARAGRAPH: 9
+ * SENTENCE: [1] The type of the resulting expression is the least upper bound of the types of all the entries.
+ * NUMBER: 4
+ * DESCRIPTION: 'When' least upper bound of the types check (when exhaustive via sealed class).
  */
 
-// CASE DESCRIPTION: Checking all types except the correct one in 'when'.
+// TESTCASE NUMBER: 1
 fun case_1(value_1: _SealedClass): String {
     val whenValue = when (value_1) {
         is _SealedChild1 -> _ClassLevel2()
@@ -29,7 +29,7 @@ fun case_1(value_1: _SealedClass): String {
     return ""
 }
 
-// CASE DESCRIPTION: Checking all types except the correct one in 'when' with null-check branch.
+// TESTCASE NUMBER: 2
 fun case_2(value_1: _SealedClass?): String {
     val whenValue = when (value_1) {
         is _SealedChild1 -> _ClassLevel2()
@@ -49,7 +49,7 @@ fun case_2(value_1: _SealedClass?): String {
     return ""
 }
 
-// CASE DESCRIPTION: Checking all types except the Any (implicit cast to any) in 'when'.
+// TESTCASE NUMBER: 3
 fun case_3(value_1: _SealedClass): String {
     val whenValue = when (value_1) {
         is _SealedChild1 -> <!IMPLICIT_CAST_TO_ANY!>10<!>
@@ -65,7 +65,7 @@ fun case_3(value_1: _SealedClass): String {
     return ""
 }
 
-// CASE DESCRIPTION: Checking all types except the Any (implicit cast to any) in 'when' with null-check branch.
+// TESTCASE NUMBER: 4
 fun case_4(value_1: _SealedClass?): String {
     val whenValue = when (value_1) {
         is _SealedChild1 -> <!IMPLICIT_CAST_TO_ANY!>10<!>
@@ -84,7 +84,7 @@ fun case_4(value_1: _SealedClass?): String {
     return ""
 }
 
-// CASE DESCRIPTION: Checking objects except the correct one in 'when'.
+// TESTCASE NUMBER: 5
 fun case_5(value_1: _SealedClassWithObjects): String {
     val whenValue = when (value_1) {
         _SealedWithObjectsChild1 -> _ClassLevel2()
@@ -101,7 +101,7 @@ fun case_5(value_1: _SealedClassWithObjects): String {
     return ""
 }
 
-// CASE DESCRIPTION: Checking objects except the correct one in 'when' with null-check branch.
+// TESTCASE NUMBER: 6
 fun case_6(value_1: _SealedClassWithObjects?): String {
     val whenValue = when (value_1) {
         _SealedWithObjectsChild1 -> _ClassLevel2()
@@ -121,7 +121,7 @@ fun case_6(value_1: _SealedClassWithObjects?): String {
     return ""
 }
 
-// CASE DESCRIPTION: Checking objects except the Any (implicit cast to any) in 'when'.
+// TESTCASE NUMBER: 7
 fun case_7(value_1: _SealedClassWithObjects): String {
     val whenValue = when (value_1) {
         _SealedWithObjectsChild1 -> <!IMPLICIT_CAST_TO_ANY!>10<!>
@@ -137,7 +137,7 @@ fun case_7(value_1: _SealedClassWithObjects): String {
     return ""
 }
 
-// CASE DESCRIPTION: Checking objects except the Any (implicit cast to any) in 'when' with null-check branch.
+// TESTCASE NUMBER: 8
 fun case_8(value_1: _SealedClassWithObjects?): String {
     val whenValue = when (value_1) {
         _SealedWithObjectsChild1 -> <!IMPLICIT_CAST_TO_ANY!>10<!>
@@ -156,7 +156,7 @@ fun case_8(value_1: _SealedClassWithObjects?): String {
     return ""
 }
 
-// CASE DESCRIPTION: Checking all types except the correct one in 'when' with 'else' branch.
+// TESTCASE NUMBER: 9
 fun case_9(value_1: _SealedClassWithObjects?): String {
     val whenValue = when (value_1) {
         is _SealedClassWithObjects -> _ClassLevel2()

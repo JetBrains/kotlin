@@ -1,11 +1,11 @@
 /*
- KOTLIN PSI SPEC TEST (POSITIVE)
-
- SECTIONS: constant-literals, integer-literals, binary-integer-literals
- PARAGRAPH: 1
- SENTENCE: [2] Digits may be separated by an underscore symbol, but no underscore can be placed before the first digit or after the last one.
- NUMBER: 1
- DESCRIPTION: Binary integer literals with underscore symbols in the valid positions.
+ * KOTLIN PSI SPEC TEST (POSITIVE)
+ *
+ * SECTIONS: constant-literals, integer-literals, binary-integer-literals
+ * PARAGRAPH: 1
+ * SENTENCE: [2] Digits may be separated by an underscore symbol, but no underscore can be placed before the first digit or after the last one.
+ * NUMBER: 1
+ * DESCRIPTION: Binary integer literals with underscore symbols in valid places.
  */
 
 val value = 0b0_00_01_11_11_00_00

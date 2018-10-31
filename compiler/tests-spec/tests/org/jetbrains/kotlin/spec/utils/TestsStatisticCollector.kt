@@ -5,8 +5,11 @@
 
 package org.jetbrains.kotlin.spec.utils
 
+import org.jetbrains.kotlin.spec.SpecTestLinkedType
+import org.jetbrains.kotlin.spec.TestArea
+import org.jetbrains.kotlin.spec.models.AbstractSpecTest
+import org.jetbrains.kotlin.spec.parsers.CommonParser
 import org.jetbrains.kotlin.spec.utils.GeneralConfiguration.TESTDATA_PATH
-import org.jetbrains.kotlin.spec.validators.*
 import java.io.File
 
 open class SpecTestsStatElement(val type: SpecTestsStatElementType) {
@@ -42,27 +45,18 @@ object TestsStatisticCollector {
         val statistic = mutableMapOf<TestArea, SpecTestsStatElement>()
 
         for (specTestArea in TestArea.values()) {
-            val specTestsPath = "$TESTDATA_PATH/${specTestArea.name.toLowerCase()}/${testLinkedType.testDataPath}"
+            val specTestsPath = "$TESTDATA_PATH/${specTestArea.name.toLowerCase().replace("_", "/")}/${testLinkedType.testDataPath}"
 
             statistic[specTestArea] = SpecTestsStatElement(SpecTestsStatElementType.AREA)
 
             File(specTestsPath).walkTopDown().forEach areaTests@{
                 if (!it.isFile || it.extension != "kt") return@areaTests
 
-                val specTestsValidator = AbstractSpecTestValidator.getInstanceByType(it)
-
-                try {
-                    specTestsValidator.parseTestInfo()
-                } catch (e: SpecTestValidationException) {
-                    return@areaTests
-                }
+                val (specTest, _) = CommonParser.parseSpecTest(it.canonicalPath, mapOf("main.kt" to it.readText()))
 
                 incrementStatCounters(
                     statistic[specTestArea]!!,
-                    when (testLinkedType) {
-                        SpecTestLinkedType.LINKED -> getStatElementsByLinkedTests(specTestsValidator.testInfo as LinkedSpecTest)
-                        SpecTestLinkedType.NOT_LINKED -> getStatElementsByNotLinkedTests(specTestsValidator.testInfo as NotLinkedSpecTest)
-                    }
+                    getStatElements(specTest)
                 )
             }
         }
@@ -70,15 +64,9 @@ object TestsStatisticCollector {
         return statistic
     }
 
-    private fun getStatElementsByLinkedTests(testInfo: LinkedSpecTest) = listOf(
-        SpecTestsStatElementType.SECTION to testInfo.section,
-        SpecTestsStatElementType.PARAGRAPH to testInfo.paragraphNumber,
-        SpecTestsStatElementType.TYPE to testInfo.testType.type
-    )
-
-    private fun getStatElementsByNotLinkedTests(testInfo: NotLinkedSpecTest) =
-        mutableListOf(SpecTestsStatElementType.SECTION to testInfo.section).apply {
-            addAll(testInfo.categories.map { SpecTestsStatElementType.CATEGORY to it })
+    private fun getStatElements(testInfo: AbstractSpecTest) =
+        mutableListOf(SpecTestsStatElementType.SECTION to testInfo.sections[0]).apply {
+            addAll(testInfo.sections.map { SpecTestsStatElementType.CATEGORY to it })
             add(SpecTestsStatElementType.TYPE to testInfo.testType.type)
         }
 }

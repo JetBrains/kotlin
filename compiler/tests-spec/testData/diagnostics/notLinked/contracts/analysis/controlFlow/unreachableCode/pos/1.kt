@@ -4,14 +4,14 @@
 // SKIP_TXT
 
 /*
- KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (POSITIVE)
-
- SECTION: contracts
- CATEGORIES: analysis, controlFlow, unreachableCode
- NUMBER: 1
- DESCRIPTION: Unreachable code detection using contract function with CallsInPlace effect
+ * KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (POSITIVE)
+ *
+ * SECTIONS: contracts, analysis, controlFlow, unreachableCode
+ * NUMBER: 1
+ * DESCRIPTION: Unreachable code detection using contract function with CallsInPlace effect
  */
 
+// TESTCASE NUMBER: 1
 fun case_1() {
     funWithExactlyOnceCallsInPlace {
         throw Exception()
@@ -19,6 +19,7 @@ fun case_1() {
     <!UNREACHABLE_CODE!>println("1")<!>
 }
 
+// TESTCASE NUMBER: 2
 fun case_2() {
     funWithAtLeastOnceCallsInPlace {
         throw Exception()
@@ -26,6 +27,7 @@ fun case_2() {
     <!UNREACHABLE_CODE!>println("1")<!>
 }
 
+// TESTCASE NUMBER: 3
 fun case_3() {
     funWithExactlyOnceCallsInPlace {
         return
@@ -33,6 +35,7 @@ fun case_3() {
     <!UNREACHABLE_CODE!>println("1")<!>
 }
 
+// TESTCASE NUMBER: 4
 fun case_4() {
     funWithAtLeastOnceCallsInPlace {
         return
@@ -40,6 +43,7 @@ fun case_4() {
     <!UNREACHABLE_CODE!>println("1")<!>
 }
 
+// TESTCASE NUMBER: 5
 fun case_5(args: Array<String>) {
     fun nestedFun_1() {
         funWithAtLeastOnceCallsInPlace {
@@ -66,6 +70,7 @@ fun case_5(args: Array<String>) {
     }
 }
 
+// TESTCASE NUMBER: 6
 fun case_6(args: Array<String>) {
     args.forEach {
         funWithExactlyOnceCallsInPlace {
@@ -91,6 +96,7 @@ fun case_6(args: Array<String>) {
     }
 }
 
+// TESTCASE NUMBER: 7
 fun case_7() {
     <!UNREACHABLE_CODE!>val value_1 =<!> funWithExactlyOnceCallsInPlace {
         throw Exception()
@@ -100,6 +106,7 @@ fun case_7() {
 }
 
 
+// TESTCASE NUMBER: 8
 fun case_8() {
     <!UNREACHABLE_CODE!>println(<!>funWithExactlyOnceCallsInPlace { return; <!UNREACHABLE_CODE!>println(1)<!> }<!UNREACHABLE_CODE!>)<!>
     <!UNREACHABLE_CODE!>return<!>

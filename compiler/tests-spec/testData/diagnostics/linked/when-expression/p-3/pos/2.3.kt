@@ -1,18 +1,18 @@
 // !WITH_BASIC_TYPES
 
 /*
- KOTLIN DIAGNOSTICS SPEC TEST (POSITIVE)
-
- SECTIONS: when-expression
- PARAGRAPH: 3
- SENTENCE: [2] Each entry consists of a boolean condition (or a special else condition), each of which is checked and evaluated in order of appearance.
- NUMBER: 3
- DESCRIPTION: 'When' without bound value and with Nothing in condition (subtype of Boolean).
- DISCUSSION
- ISSUES: KT-25948
+ * KOTLIN DIAGNOSTICS SPEC TEST (POSITIVE)
+ *
+ * SECTIONS: when-expression
+ * PARAGRAPH: 3
+ * SENTENCE: [2] Each entry consists of a boolean condition (or a special else condition), each of which is checked and evaluated in order of appearance.
+ * NUMBER: 3
+ * DESCRIPTION: 'When' without bound value and with Nothing in condition (subtype of Boolean).
+ * DISCUSSION
+ * ISSUES: KT-25948
  */
 
-// CASE DESCRIPTION: 'When' with return expression in condition.
+// TESTCASE NUMBER: 1
 fun case_1(<!UNUSED_PARAMETER!>value_1<!>: _BasicTypesProvider) {
     when {
         return -> <!UNREACHABLE_CODE!>return<!>
@@ -23,7 +23,7 @@ fun case_1(<!UNUSED_PARAMETER!>value_1<!>: _BasicTypesProvider) {
     }
 }
 
-// CASE DESCRIPTION: 'When' with throw expression in condition.
+// TESTCASE NUMBER: 2
 fun case_2(<!UNUSED_PARAMETER!>value_1<!>: _BasicTypesProvider) {
     when {
         throw Exception() -> <!UNREACHABLE_CODE!>return<!>
@@ -34,7 +34,7 @@ fun case_2(<!UNUSED_PARAMETER!>value_1<!>: _BasicTypesProvider) {
     }
 }
 
-// CASE DESCRIPTION: 'When' with break expression in condition.
+// TESTCASE NUMBER: 3
 fun case_3(<!UNUSED_PARAMETER!>value_1<!>: _BasicTypesProvider) {
     loop1@ while (true) {
         loop2@ while (true) {
@@ -49,7 +49,7 @@ fun case_3(<!UNUSED_PARAMETER!>value_1<!>: _BasicTypesProvider) {
     }
 }
 
-// CASE DESCRIPTION: 'When' with continue expression in condition.
+// TESTCASE NUMBER: 4
 fun case_4(<!UNUSED_PARAMETER!>value_1<!>: _BasicTypesProvider): String {
     loop1@ while (true) {
         loop2@ while (true) {
@@ -64,7 +64,7 @@ fun case_4(<!UNUSED_PARAMETER!>value_1<!>: _BasicTypesProvider): String {
     }
 }
 
-// CASE DESCRIPTION: 'When' with values of Nothing type.
+// TESTCASE NUMBER: 6
 fun case_6(value_1: Nothing, <!UNUSED_PARAMETER!>value_2<!>: _BasicTypesProvider): String {
     when {
         value_1 -> <!UNREACHABLE_CODE!>return ""<!>
@@ -76,7 +76,7 @@ fun case_6(value_1: Nothing, <!UNUSED_PARAMETER!>value_2<!>: _BasicTypesProvider
     <!UNREACHABLE_CODE!>return ""<!>
 }
 
-// CASE DESCRIPTION: 'When' with mixed Nothing expression in condition.
+// TESTCASE NUMBER: 5
 fun case_5(<!UNUSED_PARAMETER!>value_1<!>: _BasicTypesProvider, <!UNUSED_PARAMETER!>value_2<!>: Nothing) {
     loop1@ while (true) {
         loop2@ while (true) {

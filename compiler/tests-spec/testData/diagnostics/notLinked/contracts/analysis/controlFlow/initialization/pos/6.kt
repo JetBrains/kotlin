@@ -2,14 +2,13 @@
 // !WITH_CONTRACT_FUNCTIONS
 
 /*
- KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (POSITIVE)
-
- SECTION: contracts
- CATEGORIES: analysis, controlFlow, initialization
- NUMBER: 6
- DESCRIPTION: Check the lack of CallsInPlace effect on the lambda in the parentheses.
- UNEXPECTED BEHAVIOUR
- ISSUES: KT-26229
+ * KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (POSITIVE)
+ *
+ * SECTIONS: contracts, analysis, controlFlow, initialization
+ * NUMBER: 6
+ * DESCRIPTION: Check the lack of CallsInPlace effect on the lambda in the parentheses.
+ * UNEXPECTED BEHAVIOUR
+ * ISSUES: KT-26229
  */
 
 // FILE: contracts.kt
@@ -18,6 +17,7 @@ package contracts
 
 import kotlin.contracts.*
 
+// TESTCASE NUMBER: 3
 inline fun case_3(block1: () -> Unit, block2: () -> Unit, block3: () -> Unit) {
     contract {
         callsInPlace(block1, InvocationKind.EXACTLY_ONCE)
@@ -30,22 +30,25 @@ inline fun case_3(block1: () -> Unit, block2: () -> Unit, block3: () -> Unit) {
     block3()
 }
 
-// FILE: usages.kt
+// FILE: main.kt
 
 import contracts.*
 
+// TESTCASE NUMBER: 1
 fun case_1() {
     val value_1: Int
     funWithExactlyOnceCallsInPlace({ <!CAPTURED_VAL_INITIALIZATION!>value_1<!> = 11 })
     <!UNINITIALIZED_VARIABLE!>value_1<!>.inc()
 }
 
+// TESTCASE NUMBER: 2
 fun case_2() {
     var value_1: Int
     funWithAtLeastOnceCallsInPlace({ value_1 = 11 })
     <!UNINITIALIZED_VARIABLE!>value_1<!>.inc()
 }
 
+// TESTCASE NUMBER: 3
 fun case_3() {
     val value_1: Int
     var value_2: Int
