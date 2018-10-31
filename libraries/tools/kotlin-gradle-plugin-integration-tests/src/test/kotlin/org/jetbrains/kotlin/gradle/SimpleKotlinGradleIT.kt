@@ -109,8 +109,8 @@ class SimpleKotlinGradleIT : BaseGradleIT() {
     }
 
     @Test
-    fun testGroovyTraitsWithFields() {
-        Project("groovyTraitsWithFields").build("build") {
+    fun testGroovyInterop() {
+        Project("groovyInterop").build("build") {
             assertSuccessful()
         }
     }

@@ -33,7 +33,7 @@ import java.text.StringCharacterIterator
 class BinaryJavaClass(
         override val virtualFile: VirtualFile,
         override val fqName: FqName,
-        private val context: ClassifierResolutionContext,
+        internal val context: ClassifierResolutionContext,
         private val signatureParser: BinaryClassSignatureParser,
         override var access: Int = 0,
         override val outerClass: JavaClass?,
