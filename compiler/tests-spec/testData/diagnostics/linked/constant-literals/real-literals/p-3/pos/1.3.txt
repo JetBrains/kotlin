@@ -1,0 +1,8 @@
+package
+
+public val value_1: kotlin.Double = 0.99901.toDouble()
+public val value_2: kotlin.Float = 0.1.toFloat()
+public val value_3: kotlin.Double = 0.1.toDouble()
+public val value_4: kotlin.Double = 1.0.toDouble()
+public val value_5: kotlin.Float = 0.1.toFloat()
+public val value_6: kotlin.Double = 0.0.toDouble()
