@@ -6,8 +6,10 @@
 package org.jetbrains.kotlin.ide.konan.gradle
 
 import com.intellij.openapi.vfs.VirtualFile
+import org.jetbrains.kotlin.idea.KotlinIcons
 import org.jetbrains.kotlin.idea.configuration.KotlinGradleAbstractMultiplatformModuleBuilder
 import org.jetbrains.kotlin.konan.target.presetName
+import javax.swing.Icon
 
 class KotlinGradleNativeMultiplatformModuleBuilder : KotlinGradleAbstractMultiplatformModuleBuilder() {
 
@@ -16,6 +18,8 @@ class KotlinGradleNativeMultiplatformModuleBuilder : KotlinGradleAbstractMultipl
 
     private val nativeSourceName get() = "$nativeTargetName$productionSuffix"
     val nativeTestName get() = "$nativeTargetName$testSuffix"
+
+    override fun getNodeIcon(): Icon = KotlinIcons.NATIVE
 
     override fun getBuilderId() = "kotlin.gradle.multiplatform.native"
 
