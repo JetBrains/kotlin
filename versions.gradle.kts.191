@@ -27,7 +27,7 @@ val platform = androidStudioVersion?.let { "AS$it" } ?: platformBaseVersion
 
 rootProject.extra["versions.platform"] = platform
 
-extra["versions.jar.asm-all"] = "7.0-beta"
+extra["versions.jar.asm-all"] = "7.0"
 extra["versions.jar.guava"] = "25.1-jre"
 extra["versions.jar.groovy-all"] = "2.4.15"
 extra["versions.jar.lombok-ast"] = "0.2.3"
