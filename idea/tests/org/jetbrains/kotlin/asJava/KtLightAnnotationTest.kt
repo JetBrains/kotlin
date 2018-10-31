@@ -27,6 +27,7 @@ import com.intellij.testFramework.LightProjectDescriptor
 import com.intellij.testFramework.UsefulTestCase
 import junit.framework.TestCase
 import org.jetbrains.kotlin.asJava.elements.KtLightAnnotationForSourceEntry
+import org.jetbrains.kotlin.asJava.elements.KtLightPsiArrayInitializerMemberValue
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.idea.completion.test.assertInstanceOf
 import org.jetbrains.kotlin.idea.facet.configureFacet
@@ -236,6 +237,44 @@ class KtLightAnnotationTest : KotlinLightCodeInsightFixtureTestCase() {
         TestCase.assertEquals(
             PsiType.getJavaLangString(myFixture.psiManager, GlobalSearchScope.everythingScope(project)),
             annotationAttributeVal.operand.type
+        )
+    }
+
+    fun testArrayOfClassLiterals() {
+        myFixture.addClass(
+            """
+            public @interface ClazzAnnotation {
+                  Class<?>[] cls();
+            }
+        """.trimIndent()
+        )
+
+        myFixture.configureByText(
+            "AnnotatedClass.kt", """
+            @ClazzAnnotation(cls = [String::class, Throwable::class, ShortArray::class, Array<Array<Int>>::class, Long::class, Unit::class])
+            class AnnotatedClass
+        """.trimIndent()
+        )
+        myFixture.testHighlighting("AnnotatedClass.kt")
+
+        val annotations = myFixture.findClass("AnnotatedClass").expectAnnotations(1)
+        val annotationAttributeVal = annotations.first().findAttributeValue("cls") as KtLightPsiArrayInitializerMemberValue
+        assertTextAndRange(
+            "[String::class, Throwable::class, ShortArray::class, Array<Array<Int>>::class, Long::class, Unit::class]",
+            annotationAttributeVal
+        )
+        val classLiterals = annotationAttributeVal.initializers.toList().map { it as PsiClassObjectAccessExpression }
+        val scope = GlobalSearchScope.everythingScope(project)
+        TestCase.assertEquals(
+            listOf(
+                PsiType.getJavaLangString(myFixture.psiManager, scope),
+                PsiType.getTypeByName("java.lang.Throwable", project, scope),
+                PsiType.SHORT.createArrayType(),
+                PsiType.getTypeByName("java.lang.Integer", project, scope).createArrayType().createArrayType(),
+                PsiType.LONG,
+                PsiType.getTypeByName("kotlin.Unit", project, scope)
+            ),
+            classLiterals.map { it.operand.type }
         )
     }
 

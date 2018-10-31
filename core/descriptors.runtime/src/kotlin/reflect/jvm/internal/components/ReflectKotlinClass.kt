@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.load.kotlin.header.ReadKotlinClassHeaderAnnotationVisitor
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.constants.ClassLiteralValue
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
 import java.lang.reflect.Constructor
 import java.lang.reflect.Field
@@ -184,7 +185,7 @@ private object ReflectClassStructure {
         visitor.visitEnd()
     }
 
-    private fun Class<*>.classLiteralId(): KotlinJvmBinaryClass.ClassLiteralId {
+    private fun Class<*>.classLiteralValue(): ClassLiteralValue {
         var currentClass = this
         var nestedness = 0
         while (currentClass.isArray) {
@@ -194,14 +195,14 @@ private object ReflectClassStructure {
         val classId =
             if (!currentClass.isPrimitive) currentClass.classId
             else ClassId.topLevel(JvmPrimitiveType.get(currentClass.name).primitiveType.typeFqName)
-        return KotlinJvmBinaryClass.ClassLiteralId(classId, nestedness)
+        return ClassLiteralValue(classId, nestedness)
     }
 
     private fun processAnnotationArgumentValue(visitor: KotlinJvmBinaryClass.AnnotationArgumentVisitor, name: Name, value: Any) {
         val clazz = value::class.java
         when {
             clazz == Class::class.java -> {
-                visitor.visitClassLiteral(name, (value as Class<*>).classLiteralId())
+                visitor.visitClassLiteral(name, (value as Class<*>).classLiteralValue())
             }
             clazz in TYPES_ELIGIBLE_FOR_SIMPLE_VISIT -> {
                 visitor.visit(name, value)
@@ -227,7 +228,7 @@ private object ReflectClassStructure {
                 }
                 else if (componentType == Class::class.java) {
                     for (element in value as Array<*>) {
-                        v.visitClassLiteral((element as Class<*>).classLiteralId())
+                        v.visitClassLiteral((element as Class<*>).classLiteralValue())
                     }
                 }
                 else {

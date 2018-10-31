@@ -4,6 +4,7 @@ fun box(): String {
 }
 
 fun main(args: Array<String>) {
+    args.size
     D.foo(array())
 }
 

@@ -35,7 +35,7 @@ class EnumUsageLowering(val context: JsIrBackendContext) : FileLoweringPass {
     override fun lower(irFile: IrFile) {
         irFile.transformChildrenVoid(object : IrElementTransformerVoid() {
             override fun visitGetEnumValue(expression: IrGetEnumValue) =
-                JsIrBuilder.buildCall(context.enumEntryToGetInstanceFunction[expression.symbol]!!)
+                context.enumEntryToGetInstanceFunction[expression.symbol]!!.invoke()
         })
     }
 }
@@ -49,7 +49,7 @@ class EnumClassLowering(val context: JsIrBackendContext) : DeclarationContainerL
                 } else {
                     EnumClassTransformer(context, declaration).transform()
                 }
-        } else
+            } else
                 listOf(declaration)
         }
     }
@@ -137,9 +137,9 @@ class EnumClassTransformer(val context: JsIrBackendContext, private val irClass:
                     irWhen(
                         irClass.defaultType,
                         enumEntries.map {
-                            val getInstance = entryInstanceToFunction[it.symbol]!!
                             irBranch(
-                                irEquals(irString(it.name.identifier), irGet(nameParameter)), irCall(getInstance)
+                                irEquals(irString(it.name.identifier), irGet(nameParameter)),
+                                entryInstanceToFunction[it.symbol]!!.invoke()
                             )
                         } + irElseBranch(irCall(throwISESymbol))
                     )
@@ -163,10 +163,8 @@ class EnumClassTransformer(val context: JsIrBackendContext, private val irClass:
         return context.createIrBuilder(valuesFun.symbol).run {
             irBlockBody {
                 +irReturn(
-                    enumEntries.map {
-                        val function = entryInstanceToFunction[it.symbol]!!
-                        irCall(function)
-                    }.toArrayLiteral(valuesFun.returnType, irClass.defaultType)
+                    enumEntries.map { entryInstanceToFunction[it.symbol]!!.invoke() }
+                        .toArrayLiteral(valuesFun.returnType, irClass.defaultType)
                 )
             }
         }
@@ -246,7 +244,7 @@ class EnumClassTransformer(val context: JsIrBackendContext, private val irClass:
             +irCall(initEntryInstancesFun)
             +irReturn(irGet(entryInstances[index]))
         }.apply {
-            context.enumEntryToGetInstanceFunction[enumEntry.symbol] = this@apply.symbol
+            context.enumEntryToGetInstanceFunction[enumEntry.symbol] = { JsIrBuilder.buildCall(this@apply.symbol) }
         }
     }
 

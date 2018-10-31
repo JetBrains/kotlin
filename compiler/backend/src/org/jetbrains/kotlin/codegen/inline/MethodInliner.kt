@@ -36,7 +36,8 @@ import org.jetbrains.org.objectweb.asm.MethodVisitor
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
-import org.jetbrains.org.objectweb.asm.commons.RemappingMethodAdapter
+import org.jetbrains.org.objectweb.asm.commons.LocalVariablesSorter
+import org.jetbrains.org.objectweb.asm.commons.MethodRemapper
 import org.jetbrains.org.objectweb.asm.tree.*
 import org.jetbrains.org.objectweb.asm.tree.analysis.*
 import org.jetbrains.org.objectweb.asm.util.Printer
@@ -145,11 +146,16 @@ class MethodInliner(
         val iterator = transformations.iterator()
 
         val remapper = TypeRemapper.createFrom(currentTypeMapping)
-        val remappingMethodAdapter = RemappingMethodAdapter(
+
+        // MethodRemapper doesn't extends LocalVariablesSorter, but RemappingMethodAdapter does.
+        // So wrapping with LocalVariablesSorter to keep old behavior
+        // TODO: investigate LocalVariablesSorter removing (see also same code in RemappingClassBuilder.java)
+        val remappingMethodAdapter = MethodRemapper(
+            LocalVariablesSorter(
                 resultNode.access,
                 resultNode.desc,
-                resultNode,
-                AsmTypeRemapper(remapper, result)
+                resultNode
+            ), AsmTypeRemapper(remapper, result)
         )
 
         val markerShift = calcMarkerShift(parameters, node)
@@ -402,7 +408,7 @@ class MethodInliner(
             node.signature, node.exceptions?.toTypedArray()
         )
 
-        val transformationVisitor = object : MethodVisitor(API, transformedNode) {
+        val transformationVisitor = object : InlineMethodInstructionAdapter(transformedNode) {
             private val GENERATE_DEBUG_INFO = GENERATE_SMAP && inlineOnlySmapSkipper == null
 
             private val isInliningLambda = nodeRemapper.isInsideInliningLambda

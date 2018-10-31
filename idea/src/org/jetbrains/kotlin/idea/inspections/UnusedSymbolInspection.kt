@@ -327,11 +327,10 @@ class UnusedSymbolInspection : AbstractKotlinInspection() {
     private fun KtCallableDeclaration.canBeHandledByLightMethods(descriptor: DeclarationDescriptor?): Boolean {
         return when {
             hasModifier(KtTokens.INTERNAL_KEYWORD) -> false
-            this !is KtNamedFunction -> true
             descriptor !is FunctionDescriptor -> true
+            descriptor is ConstructorDescriptor -> !descriptor.constructedClass.isInline
             else -> !descriptor.hasInlineClassParameters()
         }
-
     }
 
     private fun FunctionDescriptor.hasInlineClassParameters(): Boolean {

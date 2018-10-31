@@ -1,3 +1,3 @@
-error: class org.test.NotAMarker1 is not an experimental API marker annotation
-error: class org.test.NotAMarker2 is not an experimental API marker annotation
-COMPILATION_ERROR
+warning: class org.test.NotAMarker1 is not an experimental API marker annotation
+warning: class org.test.NotAMarker2 is not an experimental API marker annotation
+OK

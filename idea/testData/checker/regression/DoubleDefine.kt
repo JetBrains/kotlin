@@ -38,7 +38,7 @@ fun evaluate(expr: StringBuilder, numbers: ArrayList<Int>): Int {
   return lhs
 }
 
-fun main(args: Array<String>) {
+fun main(<warning>args</warning>: Array<String>) {
   System.out.println("24 game")
   val numbers = ArrayList<Int>(4)
   val rnd = Random();

@@ -10,7 +10,10 @@ dependencies {
     compile(project(":compiler:util"))
     compile(project(":jps-plugin"))
     compile(project(":plugins:android-extensions-compiler"))
-    compileOnly(intellijDep()) { includeJars("openapi", "platform-api", "jps-builders", "jps-model", "jdom") }
+    compileOnly(intellijDep()) { includeJars("openapi", "jps-builders", "jps-model", "jdom") }
+    Platform[181].orHigher {
+        compileOnly(intellijDep()) { includeJars("platform-api") }
+    }
     compileOnly(intellijPluginDep("android")) { includeJars("jps/android-jps-plugin") }
     compile(intellijPluginDep("android")) { includeJars("jps/android-jps-plugin") }
 
@@ -23,14 +26,23 @@ dependencies {
     testCompileOnly(intellijDep()) { includeJars("jps-model") }
 
     testRuntime(intellijPluginDep("android"))
-    testRuntime(intellijPluginDep("smali"))
+    (Platform[181].orHigher.or(Ide.AS31)) {
+        testRuntime(intellijPluginDep("smali"))
+    }
     testRuntime(intellijDep("jps-build-test"))
     testRuntime(intellijDep("jps-standalone"))
 }
 
 sourceSets {
-    "main" { projectDefault() }
-    "test" { projectDefault() }
+    Ide.IJ {
+        "main" { projectDefault() }
+        "test" { projectDefault() }
+    }
+
+    Ide.AS {
+        "main" {}
+        "test" {}
+    }
 }
 
 projectTest {

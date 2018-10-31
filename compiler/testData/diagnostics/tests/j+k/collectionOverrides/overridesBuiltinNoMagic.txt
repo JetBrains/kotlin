@@ -4,7 +4,7 @@ public fun main(): kotlin.Unit
 
 public open class X : kotlin.collections.MutableList<kotlin.String!> {
     public constructor X()
-    public open override /*1*/ val size: kotlin.Int
+    @get:java.lang.Override public open override /*1*/ val size: kotlin.Int
     @java.lang.Override public open override /*1*/ fun add(/*0*/ index: kotlin.Int, /*1*/ element: kotlin.String!): kotlin.Unit
     @java.lang.Override public open override /*1*/ fun add(/*0*/ element: kotlin.String!): kotlin.Boolean
     @java.lang.Override public open override /*1*/ fun addAll(/*0*/ index: kotlin.Int, /*1*/ elements: kotlin.collections.Collection<kotlin.String!>): kotlin.Boolean
@@ -36,7 +36,7 @@ public open class X : kotlin.collections.MutableList<kotlin.String!> {
 
 public final class Y : X {
     public constructor Y()
-    public open override /*1*/ /*fake_override*/ val size: kotlin.Int
+    @get:java.lang.Override public open override /*1*/ /*fake_override*/ val size: kotlin.Int
     @java.lang.Override public open override /*1*/ /*fake_override*/ fun add(/*0*/ index: kotlin.Int, /*1*/ element: kotlin.String!): kotlin.Unit
     @java.lang.Override public open override /*1*/ /*fake_override*/ fun add(/*0*/ element: kotlin.String!): kotlin.Boolean
     @java.lang.Override public open override /*1*/ /*fake_override*/ fun addAll(/*0*/ index: kotlin.Int, /*1*/ elements: kotlin.collections.Collection<kotlin.String!>): kotlin.Boolean
@@ -68,7 +68,7 @@ public final class Y : X {
 
 public final class Y2 : X {
     public constructor Y2()
-    public open override /*1*/ /*fake_override*/ val size: kotlin.Int
+    @get:java.lang.Override public open override /*1*/ /*fake_override*/ val size: kotlin.Int
     @java.lang.Override public open override /*1*/ /*fake_override*/ fun add(/*0*/ index: kotlin.Int, /*1*/ element: kotlin.String!): kotlin.Unit
     @java.lang.Override public open override /*1*/ /*fake_override*/ fun add(/*0*/ element: kotlin.String!): kotlin.Boolean
     @java.lang.Override public open override /*1*/ /*fake_override*/ fun addAll(/*0*/ index: kotlin.Int, /*1*/ elements: kotlin.collections.Collection<kotlin.String!>): kotlin.Boolean

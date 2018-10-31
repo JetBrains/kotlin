@@ -22,6 +22,7 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Comparing
 import com.intellij.openapi.util.Key
+import com.intellij.openapi.util.registry.Registry
 import com.intellij.psi.*
 import com.intellij.psi.impl.PsiSubstitutorImpl
 import com.intellij.psi.impl.java.stubs.PsiJavaFileStub
@@ -37,6 +38,7 @@ import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT
 import com.intellij.psi.util.PsiUtilCore
 import com.intellij.util.IncorrectOperationException
+import com.intellij.util.SystemProperties
 import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.asJava.ImpreciseResolveResult
@@ -73,15 +75,11 @@ abstract class KtLightClassForSourceDeclaration(protected val classOrObject: KtC
     : KtLazyLightClass(classOrObject.manager), StubBasedPsiElement<KotlinClassOrObjectStub<out KtClassOrObject>> {
     private val lightIdentifier = KtLightIdentifier(this, classOrObject)
 
-    private val _extendsList by lazyPub {
-        val listDelegate = super.getExtendsList() ?: return@lazyPub null
-        KtLightPsiReferenceList(listDelegate, this)
-    }
+    private val _extendsList by lazyPub { createExtendsList() }
+    private val _implementsList by lazyPub { createImplementsList() }
 
-    private val _implementsList by lazyPub {
-        val listDelegate = super.getImplementsList() ?: return@lazyPub null
-        KtLightPsiReferenceList(listDelegate, this)
-    }
+    protected open fun createExtendsList(): PsiReferenceList? = super.getExtendsList()?.let { KtLightPsiReferenceList(it, this) }
+    protected open fun createImplementsList(): PsiReferenceList? = super.getImplementsList()?.let { KtLightPsiReferenceList(it, this) }
 
     override val kotlinOrigin: KtClassOrObject = classOrObject
 
@@ -92,7 +90,7 @@ abstract class KtLightClassForSourceDeclaration(protected val classOrObject: KtC
     override val lightClassData: LightClassData
         get() = findLightClassData()
 
-    open protected fun findLightClassData() = getLightClassDataHolder().findDataForClassOrObject(classOrObject)
+    protected open fun findLightClassData() = getLightClassDataHolder().findDataForClassOrObject(classOrObject)
 
     private fun getJavaFileStub(): PsiJavaFileStub = getLightClassDataHolder().javaFileStub
 
@@ -110,9 +108,9 @@ abstract class KtLightClassForSourceDeclaration(protected val classOrObject: KtC
 
     private val _containingFile: PsiFile by lazyPub {
         object : FakeFileForLightClass(
-                classOrObject.containingKtFile,
-                { if (classOrObject.isTopLevel()) this else create(getOutermostClassOrObject(classOrObject))!! },
-                { getJavaFileStub() }
+            classOrObject.containingKtFile,
+            { if (classOrObject.isTopLevel()) this else create(getOutermostClassOrObject(classOrObject))!! },
+            { getJavaFileStub() }
         ) {
             override fun findReferenceAt(offset: Int) = ktFile.findReferenceAt(offset)
 
@@ -173,9 +171,9 @@ abstract class KtLightClassForSourceDeclaration(protected val classOrObject: KtC
         return super.getContainingClass()
     }
 
-    private val _typeParameterList: PsiTypeParameterList by lazyPub {
-        LightClassUtil.buildLightTypeParameterList(this, classOrObject)
-    }
+    private val _typeParameterList: PsiTypeParameterList by lazyPub { buildTypeParameterList() }
+
+    open protected fun buildTypeParameterList() = LightClassUtil.buildLightTypeParameterList(this, classOrObject)
 
     override fun getTypeParameterList(): PsiTypeParameterList? = _typeParameterList
 
@@ -322,9 +320,8 @@ abstract class KtLightClassForSourceDeclaration(protected val classOrObject: KtC
 
     override fun getNameIdentifier(): KtLightIdentifier? = lightIdentifier
 
-    override fun getExtendsList() = _extendsList
-
-    override fun getImplementsList() = _implementsList
+    override fun getExtendsList(): PsiReferenceList? = _extendsList
+    override fun getImplementsList(): PsiReferenceList? = _implementsList
 
     companion object {
         private val JAVA_API_STUB = Key.create<CachedValue<LightClassDataHolder.ForClass>>("JAVA_API_STUB")
@@ -345,6 +342,10 @@ abstract class KtLightClassForSourceDeclaration(protected val classOrObject: KtC
         fun createNoCache(classOrObject: KtClassOrObject): KtLightClassForSourceDeclaration? {
             if (classOrObject.shouldNotBeVisibleAsLightClass()) {
                 return null
+            }
+
+            if (Registry.`is`("kotlin.use.ultra.light.classes", false)) {
+                LightClassGenerationSupport.getInstance(classOrObject.project).createUltraLightClass(classOrObject)?.let { return it }
             }
 
             return when {
@@ -456,17 +457,16 @@ abstract class KtLightClassForSourceDeclaration(protected val classOrObject: KtC
 
         private val modifiers by lazyPub { containingClass.computeModifiers() }
 
-        override fun hasModifierProperty(name: String): Boolean {
-            if (name != PsiModifier.FINAL) {
-                return name in modifiers
-            }
+        override fun hasModifierProperty(name: String): Boolean =
+            if (name != PsiModifier.FINAL) name in modifiers else owner.isFinal(PsiModifier.FINAL in modifiers)
 
-            val isFinalByPsi = PsiModifier.FINAL in modifiers
-            // annotations can make class open via 'allopen' plugin
-            if (!owner.isPossiblyAffectedByAllOpen() || !isFinalByPsi) return isFinalByPsi
+    }
 
-            return clsDelegate.hasModifierProperty(PsiModifier.FINAL)
-        }
+    open fun isFinal(isFinalByPsi: Boolean): Boolean {
+        // annotations can make class open via 'allopen' plugin
+        if (!isPossiblyAffectedByAllOpen() || !isFinalByPsi) return isFinalByPsi
+
+        return clsDelegate.hasModifierProperty(PsiModifier.FINAL)
     }
 }
 

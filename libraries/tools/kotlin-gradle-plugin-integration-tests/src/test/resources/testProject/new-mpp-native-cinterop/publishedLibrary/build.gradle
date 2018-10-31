@@ -12,7 +12,11 @@ repositories {
 
 kotlin {
     sourceSets {
-        allNative
+        allNative {
+            dependencies {
+                implementation 'com.example:sample-lib:1.0'
+            }
+        }
         nativeTest
 
         macos64Main { dependsOn sourceSets.allNative }
@@ -40,7 +44,6 @@ kotlin {
     }
 
 }
-
 
 publishing {
     repositories {

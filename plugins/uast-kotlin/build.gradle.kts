@@ -12,9 +12,16 @@ dependencies {
     compile(project(":compiler:frontend.java"))
     compile(project(":compiler:light-classes"))
 
-    // BEWARE: Uast should not depend on IDEA.
-    compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
-    compileOnly(intellijDep()) { includeJars("java-api", "java-impl", "asm-all", rootProject = rootProject) }
+    Platform[181].orHigher {
+        // BEWARE: Uast should not depend on IDEA.
+        compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
+        compileOnly(intellijDep()) { includeJars("java-api", "java-impl", "asm-all", rootProject = rootProject) }
+    }
+
+    Platform[173].orLower {
+        compile(project(":idea:idea-core"))
+        compileOnly(intellijDep()) { includeJars("openapi", "idea", "util", "extensions", "asm-all", rootProject = rootProject) }
+    }
 
     testCompile(project(":kotlin-test:kotlin-test-jvm"))
     testCompile(projectTests(":compiler:tests-common"))
@@ -22,7 +29,15 @@ dependencies {
     testCompile(project(":compiler:util"))
     testCompile(project(":compiler:cli"))
     testCompile(projectTests(":idea:idea-test-framework"))
-    testCompileOnly(intellijDep()) { includeJars("java-api", "java-impl") }
+
+    Platform[181].orHigher {
+        testCompileOnly(intellijDep()) { includeJars("java-api", "java-impl") }
+    }
+
+    Platform[173].orLower {
+        testCompileOnly(intellijDep()) { includeJars("idea_rt") }
+    }
+
     testCompile(project(":idea:idea-native")) { isTransitive = false }
     testCompile(project(":idea:idea-gradle-native")) { isTransitive = false }
 

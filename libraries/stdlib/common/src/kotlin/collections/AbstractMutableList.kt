@@ -22,6 +22,11 @@ expect abstract class AbstractMutableList<E> : MutableList<E> {
 
     // From MutableList
 
+    /**
+     * Adds the specified element to the end of this list.
+     *
+     * @return `true` because the list is always modified as the result of this operation.
+     */
     override fun add(element: E): Boolean
     override fun remove(element: E): Boolean
     override fun addAll(elements: Collection<E>): Boolean

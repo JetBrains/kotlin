@@ -26,9 +26,6 @@
     <component>
       <implementation-class>org.jetbrains.kotlin.idea.configuration.KotlinMigrationProjectComponent</implementation-class>
     </component>
-    <component>
-      <implementation-class>org.jetbrains.kotlin.idea.caches.ProjectRootModificationTrackerFixer</implementation-class>
-    </component>
   </project-components>
 
   <application-components>
@@ -3057,6 +3054,24 @@
                      groupName="Style issues"
                      enabledByDefault="true"
                      level="WEAK WARNING"
+                     language="kotlin"
+    />
+
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.SetterBackingFieldAssignmentInspection"
+                     displayName="Existing backing field is not assigned by the setter"
+                     groupPath="Kotlin"
+                     groupName="Probable bugs"
+                     enabledByDefault="true"
+                     level="WARNING"
+                     language="kotlin"
+    />
+
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.SuspiciousVarPropertyInspection"
+                     displayName="Suspicious 'var' property: its setter does not influence its getter result"
+                     groupPath="Kotlin"
+                     groupName="Probable bugs"
+                     enabledByDefault="true"
+                     level="WARNING"
                      language="kotlin"
     />
 

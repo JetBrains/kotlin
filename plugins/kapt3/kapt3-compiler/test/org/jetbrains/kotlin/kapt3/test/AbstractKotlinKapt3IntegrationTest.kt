@@ -68,22 +68,22 @@ abstract class AbstractKotlinKapt3IntegrationTest : CodegenTestCase() {
     }
 
     protected open fun test(
-            name: String,
-            vararg supportedAnnotations: String,
-            options: Map<String, String> = emptyMap(),
-            process: (Set<TypeElement>, RoundEnvironment, ProcessingEnvironment) -> Unit
+        name: String,
+        vararg supportedAnnotations: String,
+        options: Map<String, String> = emptyMap(),
+        process: (Set<TypeElement>, RoundEnvironment, ProcessingEnvironment) -> Unit
     ) = testAP(true, name, options, process, *supportedAnnotations)
 
-    protected fun testAP(
-            shouldRun: Boolean,
-            name: String,
-            options: Map<String, String>,
-            process: (Set<TypeElement>, RoundEnvironment, ProcessingEnvironment) -> Unit,
-            vararg supportedAnnotations: String
+    private fun testAP(
+        shouldRun: Boolean,
+        name: String,
+        options: Map<String, String>,
+        process: (Set<TypeElement>, RoundEnvironment, ProcessingEnvironment) -> Unit,
+        vararg supportedAnnotations: String
     ) {
         this._options = options
 
-        val ktFileName = File(TEST_DATA_DIR, name + ".kt")
+        val ktFileName = File(TEST_DATA_DIR, "$name.kt")
         var started = false
         val processor = object : Processor {
             lateinit var processingEnv: ProcessingEnvironment
@@ -103,10 +103,10 @@ abstract class AbstractKotlinKapt3IntegrationTest : CodegenTestCase() {
             }
 
             override fun getCompletions(
-                    element: Element?,
-                    annotation: AnnotationMirror?,
-                    member: ExecutableElement?,
-                    userText: String?
+                element: Element?,
+                annotation: AnnotationMirror?,
+                member: ExecutableElement?,
+                userText: String?
             ): Iterable<Completion>? {
                 return emptyList()
             }
@@ -134,8 +134,10 @@ abstract class AbstractKotlinKapt3IntegrationTest : CodegenTestCase() {
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.ALL, *javaSources)
 
         val project = myEnvironment.project
-        val kapt3Extension = Kapt3ExtensionForTests(project, processors, javaSources.toList(), sourceOutputDir, this.options,
-                                                    stubsOutputDir = stubsDir, incrementalDataOutputDir = incrementalDataDir)
+        val kapt3Extension = Kapt3ExtensionForTests(
+            project, processors, javaSources.toList(), sourceOutputDir, this.options,
+            stubsOutputDir = stubsDir, incrementalDataOutputDir = incrementalDataDir
+        )
 
         AnalysisHandlerExtension.registerExtension(project, kapt3Extension)
 
@@ -146,9 +148,9 @@ abstract class AbstractKotlinKapt3IntegrationTest : CodegenTestCase() {
             GenerationUtils.compileFiles(myFiles.psiFiles, myEnvironment, classBuilderFactory).factory
 
             val actualRaw = kapt3Extension.savedStubs ?: error("Stubs were not saved")
-            val actual = StringUtil.convertLineSeparators(actualRaw.trim({ it <= ' ' }))
-                    .trimTrailingWhitespacesAndAddNewlineAtEOF()
-                    .let { AbstractClassFileToSourceStubConverterTest.removeMetadataAnnotationContents(it) }
+            val actual = StringUtil.convertLineSeparators(actualRaw.trim { it <= ' ' })
+                .trimTrailingWhitespacesAndAddNewlineAtEOF()
+                .let { AbstractClassFileToSourceStubConverterTest.removeMetadataAnnotationContents(it) }
 
             KotlinTestUtils.assertEqualsToFile(txtFile, actual)
         } finally {
@@ -158,13 +160,13 @@ abstract class AbstractKotlinKapt3IntegrationTest : CodegenTestCase() {
     }
 
     protected class Kapt3ExtensionForTests(
-            project: Project,
-            private val processors: List<Processor>,
-            javaSourceRoots: List<File>,
-            outputDir: File,
-            options: Map<String, String>,
-            stubsOutputDir: File,
-            incrementalDataOutputDir: File
+        project: Project,
+        private val processors: List<Processor>,
+        javaSourceRoots: List<File>,
+        outputDir: File,
+        options: Map<String, String>,
+        stubsOutputDir: File,
+        incrementalDataOutputDir: File
     ) : AbstractKapt3Extension(
         KaptPaths(
             project.basePath?.let(::File),
@@ -186,17 +188,17 @@ abstract class AbstractKotlinKapt3IntegrationTest : CodegenTestCase() {
             }
 
             this.savedStubs = stubs
-                    .map { it.file.prettyPrint(kaptContext.context) }
-                    .sorted()
-                    .joinToString(AbstractKotlinKapt3Test.FILE_SEPARATOR)
+                .map { it.file.prettyPrint(kaptContext.context) }
+                .sorted()
+                .joinToString(AbstractKotlinKapt3Test.FILE_SEPARATOR)
 
             super.saveStubs(kaptContext, stubs)
         }
 
         override fun saveIncrementalData(
-                kaptContext: KaptContextForStubGeneration,
-                messageCollector: MessageCollector,
-                converter: ClassFileToSourceStubConverter
+            kaptContext: KaptContextForStubGeneration,
+            messageCollector: MessageCollector,
+            converter: ClassFileToSourceStubConverter
         ) {
             if (this.savedBindings != null) {
                 error("Bindings are already saved")

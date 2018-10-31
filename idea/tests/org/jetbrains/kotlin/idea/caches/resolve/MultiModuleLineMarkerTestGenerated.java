@@ -25,6 +25,11 @@ public class MultiModuleLineMarkerTestGenerated extends AbstractMultiModuleLineM
         KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
     }
 
+    @TestMetadata("actualConstructorWithProperties")
+    public void testActualConstructorWithProperties() throws Exception {
+        runTest("idea/testData/multiModuleLineMarker/actualConstructorWithProperties/");
+    }
+
     @TestMetadata("actualDerived")
     public void testActualDerived() throws Exception {
         runTest("idea/testData/multiModuleLineMarker/actualDerived/");
@@ -35,13 +40,28 @@ public class MultiModuleLineMarkerTestGenerated extends AbstractMultiModuleLineM
         runTest("idea/testData/multiModuleLineMarker/actualEnumEntries/");
     }
 
+    @TestMetadata("actualEnumEntriesInOneLine")
+    public void testActualEnumEntriesInOneLine() throws Exception {
+        runTest("idea/testData/multiModuleLineMarker/actualEnumEntriesInOneLine/");
+    }
+
     public void testAllFilesPresentInMultiModuleLineMarker() throws Exception {
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/multiModuleLineMarker"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, false);
+    }
+
+    @TestMetadata("expectConstructorWithProperties")
+    public void testExpectConstructorWithProperties() throws Exception {
+        runTest("idea/testData/multiModuleLineMarker/expectConstructorWithProperties/");
     }
 
     @TestMetadata("expectEnumEntries")
     public void testExpectEnumEntries() throws Exception {
         runTest("idea/testData/multiModuleLineMarker/expectEnumEntries/");
+    }
+
+    @TestMetadata("expectEnumEntriesInOneLine")
+    public void testExpectEnumEntriesInOneLine() throws Exception {
+        runTest("idea/testData/multiModuleLineMarker/expectEnumEntriesInOneLine/");
     }
 
     @TestMetadata("fromActualAnnotation")

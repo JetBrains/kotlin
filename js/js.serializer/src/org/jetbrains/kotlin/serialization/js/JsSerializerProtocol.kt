@@ -12,16 +12,14 @@ import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite
 import org.jetbrains.kotlin.serialization.SerializerExtensionProtocol
 
 object JsSerializerProtocol : SerializerExtensionProtocol(
-    ExtensionRegistryLite.newInstance().apply {
-        JsProtoBuf.registerAllExtensions(
-            this
-        )
-    },
+    ExtensionRegistryLite.newInstance().apply(JsProtoBuf::registerAllExtensions),
     JsProtoBuf.packageFqName,
     JsProtoBuf.constructorAnnotation,
     JsProtoBuf.classAnnotation,
     JsProtoBuf.functionAnnotation,
     JsProtoBuf.propertyAnnotation,
+    JsProtoBuf.propertyGetterAnnotation,
+    JsProtoBuf.propertySetterAnnotation,
     JsProtoBuf.enumEntryAnnotation,
     JsProtoBuf.compileTimeValue,
     JsProtoBuf.parameterAnnotation,

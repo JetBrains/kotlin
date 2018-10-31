@@ -1,0 +1,7 @@
+class Test<T> {
+    fun foo() {}
+
+    fun test(t: T) {
+        foo()
+    }
+}

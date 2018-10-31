@@ -5,7 +5,7 @@ import kotlin.js.Date
 
 var ok = "FAIL"
 
-fun main(args: Array<String>) {
+fun main() {
     val x = ClassA().value
     if (x == 100) {
         ok = "OK"

@@ -671,7 +671,7 @@ class ControlFlowInformationProvider private constructor(
                 val mainFunctionDetector = MainFunctionDetector(trace.bindingContext, languageVersionSettings)
                 val isMain = owner is KtNamedFunction && mainFunctionDetector.isMain(owner)
                 val functionName = functionDescriptor.name
-                if (isMain
+                if (isMain && !languageVersionSettings.supportsFeature(LanguageFeature.ExtendedMainConvention)
                     || functionDescriptor.isOverridableOrOverrides
                     || owner.hasModifier(KtTokens.OVERRIDE_KEYWORD)
                     || OperatorNameConventions.GET_VALUE == functionName

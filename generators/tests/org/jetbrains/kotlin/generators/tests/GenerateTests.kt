@@ -32,6 +32,8 @@ import org.jetbrains.kotlin.android.quickfix.AbstractAndroidQuickFixMultiFileTes
 import org.jetbrains.kotlin.android.synthetic.test.AbstractAndroidBoxTest
 import org.jetbrains.kotlin.android.synthetic.test.AbstractAndroidBytecodeShapeTest
 import org.jetbrains.kotlin.android.synthetic.test.AbstractAndroidSyntheticPropertyDescriptorTest
+import org.jetbrains.kotlin.asJava.classes.AbstractUltraLightClassLoadingTest
+import org.jetbrains.kotlin.asJava.classes.AbstractUltraLightClassSanityTest
 import org.jetbrains.kotlin.checkers.AbstractJavaAgainstKotlinBinariesCheckerTest
 import org.jetbrains.kotlin.checkers.AbstractJavaAgainstKotlinSourceCheckerTest
 import org.jetbrains.kotlin.checkers.AbstractJsCheckerTest
@@ -823,6 +825,13 @@ fun main(args: Array<String>) {
 
         testClass<AbstractIdeLightClassTest> {
             model("asJava/lightClasses", excludeDirs = listOf("delegation"), pattern = KT_OR_KTS_WITHOUT_DOTS_IN_NAME)
+        }
+
+        testClass<AbstractUltraLightClassSanityTest> {
+            model("asJava/lightClasses", pattern = KT_OR_KTS)
+        }
+        testClass<AbstractUltraLightClassLoadingTest> {
+            model("asJava/ultraLightClasses", pattern = KT_OR_KTS)
         }
 
         testClass<AbstractIdeCompiledLightClassTest> {

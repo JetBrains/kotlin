@@ -45,6 +45,7 @@ import org.jetbrains.kotlin.resolve.calls.util.UnderscoreUtilKt;
 import org.jetbrains.kotlin.resolve.constants.ArrayValue;
 import org.jetbrains.kotlin.resolve.constants.ConstantValue;
 import org.jetbrains.kotlin.resolve.constants.KClassValue;
+import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.resolve.inline.InlineUtil;
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes;
 import org.jetbrains.kotlin.resolve.jvm.RuntimeAssertionInfo;
@@ -307,7 +308,7 @@ public class FunctionCodegen {
             annotationsOwner = functionDescriptor;
         }
 
-        AnnotationCodegen.forMethod(mv, memberCodegen, typeMapper).genAnnotations(annotationsOwner, asmMethod.getReturnType());
+        AnnotationCodegen.forMethod(mv, memberCodegen, state).genAnnotations(annotationsOwner, asmMethod.getReturnType());
         generateParameterAnnotations(annotationsOwner, mv, jvmSignature, memberCodegen, state);
     }
 
@@ -514,7 +515,7 @@ public class FunctionCodegen {
             @NotNull GenerationState state
     ) {
         if (isAccessor(functionDescriptor)) return;
-        KotlinTypeMapper typeMapper = state.getTypeMapper();
+
         Iterator<ValueParameterDescriptor> iterator = valueParameters.iterator();
         List<JvmMethodParameterSignature> kotlinParameterTypes = jvmSignature.getValueParameters();
 
@@ -526,7 +527,6 @@ public class FunctionCodegen {
                 continue;
             }
 
-            AnnotationCodegen annotationCodegen = AnnotationCodegen.forParameter(i, mv, innerClassConsumer, typeMapper);
             Annotated annotated =
                     kind == JvmMethodParameterKind.VALUE
                     ? iterator.next()
@@ -535,7 +535,7 @@ public class FunctionCodegen {
                       : null;
 
             if (annotated != null) {
-                annotationCodegen.genAnnotations(annotated, parameterSignature.getAsmType());
+                AnnotationCodegen.forParameter(i, mv, innerClassConsumer, state).genAnnotations(annotated, parameterSignature.getAsmType());
             }
         }
     }
@@ -1113,32 +1113,36 @@ public class FunctionCodegen {
 
     @NotNull
     public static String[] getThrownExceptions(@NotNull FunctionDescriptor function, @NotNull KotlinTypeMapper mapper) {
+        return ArrayUtil.toStringArray(CollectionsKt.map(getThrownExceptions(function), d -> mapper.mapClass(d).getInternalName()));
+    }
+
+    @NotNull
+    public static List<ClassDescriptor> getThrownExceptions(@NotNull FunctionDescriptor function) {
         AnnotationDescriptor annotation = function.getAnnotations().findAnnotation(new FqName("kotlin.throws"));
         if (annotation == null) {
             annotation = function.getAnnotations().findAnnotation(new FqName("kotlin.jvm.Throws"));
         }
 
-        if (annotation == null) return ArrayUtil.EMPTY_STRING_ARRAY;
+        if (annotation == null) return Collections.emptyList();
 
         Collection<ConstantValue<?>> values = annotation.getAllValueArguments().values();
-        if (values.isEmpty()) return ArrayUtil.EMPTY_STRING_ARRAY;
+        if (values.isEmpty()) return Collections.emptyList();
 
         Object value = values.iterator().next();
-        if (!(value instanceof ArrayValue)) return ArrayUtil.EMPTY_STRING_ARRAY;
+        if (!(value instanceof ArrayValue)) return Collections.emptyList();
         ArrayValue arrayValue = (ArrayValue) value;
 
-        List<String> strings = CollectionsKt.mapNotNull(
+        return CollectionsKt.mapNotNull(
                 arrayValue.getValue(),
                 (ConstantValue<?> constant) -> {
                     if (constant instanceof KClassValue) {
-                        KClassValue classValue = (KClassValue) constant;
-                        ClassDescriptor classDescriptor = DescriptorUtils.getClassDescriptorForType(classValue.getValue());
-                        return mapper.mapClass(classDescriptor).getInternalName();
+                        return DescriptorUtils.getClassDescriptorForType(
+                                ((KClassValue) constant).getArgumentType(DescriptorUtilsKt.getModule(function))
+                        );
                     }
                     return null;
                 }
         );
-        return ArrayUtil.toStringArray(strings);
     }
 
     void generateDefaultIfNeeded(
@@ -1187,7 +1191,7 @@ public class FunctionCodegen {
 
         // Only method annotations are copied to the $default method. Parameter annotations are not copied until there are valid use cases;
         // enum constructors have two additional synthetic parameters which somewhat complicate this task
-        AnnotationCodegen.forMethod(mv, memberCodegen, typeMapper).genAnnotations(functionDescriptor, defaultMethod.getReturnType());
+        AnnotationCodegen.forMethod(mv, memberCodegen, state).genAnnotations(functionDescriptor, defaultMethod.getReturnType());
 
         if (!state.getClassBuilderMode().generateBodies) {
             if (this.owner instanceof MultifileClassFacadeContext)

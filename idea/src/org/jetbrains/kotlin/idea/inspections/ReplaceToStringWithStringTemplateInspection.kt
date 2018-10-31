@@ -32,7 +32,7 @@ class ReplaceToStringWithStringTemplateInspection : AbstractApplicabilityBasedIn
         element.replace(KtPsiFactory(element).createExpression("\"$$variable\""))
     }
 
-    override fun inspectionText(element: KtDotQualifiedExpression) = "Should be replaced 'toString' with string template"
+    override fun inspectionText(element: KtDotQualifiedExpression) = "Call of 'toString' could be replaced with string template"
 
     override fun inspectionTarget(element: KtDotQualifiedExpression) = element
 

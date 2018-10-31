@@ -45,5 +45,5 @@ class CtorComment2 {
      * The magic of comments
      */
     // single line magic comments
-    public CtorComment() {}
+    public CtorComment2() {}
 }

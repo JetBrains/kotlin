@@ -21,6 +21,7 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.asJava.builder.LightClassBuilderResult
 import org.jetbrains.kotlin.asJava.builder.LightClassConstructionContext
 import org.jetbrains.kotlin.asJava.builder.LightClassDataHolder
+import org.jetbrains.kotlin.asJava.classes.KtUltraLightClass
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -39,6 +40,8 @@ abstract class LightClassGenerationSupport {
     abstract fun analyze(element: KtElement): BindingContext
 
     abstract fun analyzeWithContent(element: KtClassOrObject): BindingContext
+
+    abstract fun createUltraLightClass(element: KtClassOrObject): KtUltraLightClass?
 
     companion object {
         @JvmStatic

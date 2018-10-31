@@ -13,7 +13,7 @@ package api {
 
 package usage {
     public var inlineUse2: kotlin.Unit
-    public var inlineUse3: kotlin.Unit
+    @set:api.API public var inlineUse3: kotlin.Unit
     private var privateInline3: kotlin.Unit
     public val use2: kotlin.Unit
     public inline fun inlineUse1(): kotlin.Unit

@@ -1,6 +1,6 @@
 package hello
 
-fun main(args : Array<String>) {
+fun main() {
     for (s in listOf("a")) {
         println("Hello, $s!")
     }

@@ -76,11 +76,16 @@ abstract class KotlinScriptDefinitionAdapterFromNewAPIBase : KotlinScriptDefinit
         get() = scriptCompilationConfiguration[ScriptCompilationConfiguration.compilerOptions]
             .orEmpty()
 
-    override val scriptExpectedLocations: List<ScriptExpectedLocation> =
-        listOf(
-            ScriptExpectedLocation.SourcesOnly,
-            ScriptExpectedLocation.TestsOnly
-        )
+    override val scriptExpectedLocations: List<ScriptExpectedLocation>
+        get() = scriptCompilationConfiguration[ScriptCompilationConfiguration.ide.acceptedLocations]?.map {
+            when(it) {
+                ScriptAcceptedLocation.Sources -> ScriptExpectedLocation.SourcesOnly
+                ScriptAcceptedLocation.Tests -> ScriptExpectedLocation.TestsOnly
+                ScriptAcceptedLocation.Libraries -> ScriptExpectedLocation.Libraries
+                ScriptAcceptedLocation.Project -> ScriptExpectedLocation.Project
+                ScriptAcceptedLocation.Everywhere -> ScriptExpectedLocation.Everywhere
+            }
+        } ?: listOf(ScriptExpectedLocation.SourcesOnly, ScriptExpectedLocation.TestsOnly)
 
     private val scriptingClassGetter by lazy(LazyThreadSafetyMode.PUBLICATION) {
         hostConfiguration[ScriptingHostConfiguration.getScriptingClass]

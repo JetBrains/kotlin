@@ -244,10 +244,10 @@ public class JvmCodegenUtil {
         if (DescriptorPsiUtilsKt.hasBody(accessor)) return false;
 
         // If the accessor is private or final, it can't be overridden in the subclass and thus we can use direct access
-        return Visibilities.isPrivate(property.getVisibility()) || accessor.getModality() == FINAL;
+        return Visibilities.isPrivate(accessor.getVisibility()) || accessor.getModality() == FINAL;
     }
 
-    private static boolean isDebuggerContext(@NotNull CodegenContext context) {
+    public static boolean isDebuggerContext(@NotNull CodegenContext context) {
         KtFile file = DescriptorToSourceUtils.getContainingFile(context.getContextDescriptor());
         return file != null && CodeFragmentUtilKt.getSuppressDiagnosticsInDebugMode(file);
     }

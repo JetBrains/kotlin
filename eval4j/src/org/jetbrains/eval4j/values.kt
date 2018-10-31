@@ -28,7 +28,7 @@ interface Value : org.jetbrains.org.objectweb.asm.tree.analysis.Value {
 }
 
 object NOT_A_VALUE: Value {
-    override val asmType = Type.getType("<invalid>")
+    override val asmType = Type.getObjectType("<invalid>")
     override val valid = false
     override fun getSize(): Int = 1
 

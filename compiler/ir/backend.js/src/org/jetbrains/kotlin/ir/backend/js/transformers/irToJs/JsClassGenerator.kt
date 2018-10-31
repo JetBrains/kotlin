@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
+import org.jetbrains.kotlin.backend.common.ir.isStatic
 import org.jetbrains.kotlin.backend.common.onlyIf
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.backend.js.utils.JsGenerationContext
@@ -59,13 +60,13 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
         classBlock.statements += generateClassMetadata()
         irClass.onlyIf({ kind == ClassKind.OBJECT }) { classBlock.statements += maybeGenerateObjectInstance() }
         if (irClass.superTypes.any { it.isThrowable() }) {
-            classBlock.statements += genereateThrowableProperties()
+            classBlock.statements += generateThrowableProperties()
         }
         context.staticContext.classModels[className] = classModel
         return classBlock
     }
 
-    private fun genereateThrowableProperties(): List<JsStatement> {
+    private fun generateThrowableProperties(): List<JsStatement> {
         val functions = irClass.declarations.filterIsInstance<IrSimpleFunction>()
 
         val messageGetter = functions.single { it.name == Name.special("<get-message>") }

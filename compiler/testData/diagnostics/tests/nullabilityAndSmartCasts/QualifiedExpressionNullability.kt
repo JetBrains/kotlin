@@ -3,7 +3,7 @@ class Foo {
     fun foo(a: Foo): Foo = a
 }
 
-fun main(args : Array<String>) {
+fun main() {
     val x: Foo? = null
     val y: Foo? = null
     

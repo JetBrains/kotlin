@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
+import org.jetbrains.kotlin.kapt.base.test.JavaKaptContextTest
 import org.jetbrains.kotlin.kapt3.*
 import org.jetbrains.kotlin.kapt3.Kapt3ComponentRegistrar.KaptComponentContributor
 import org.jetbrains.kotlin.kapt3.base.KaptContext
@@ -207,7 +208,7 @@ abstract class AbstractKotlinKapt3Test : CodegenTestCase() {
         lines.filter { it.startsWith("// $name") }.toList()
     }
 
-    protected fun File.getOptionValues(name: String) = getRawOptionValues(name).map { it.drop("// ".length + name.length).trim() }
+    private fun File.getOptionValues(name: String) = getRawOptionValues(name).map { it.drop("// ".length + name.length).trim() }
 
     protected abstract fun check(
         kaptContext: KaptContextForStubGeneration,

@@ -1,7 +1,7 @@
 // CHECK_CASES_COUNT: function=box count=18
 // CHECK_IF_COUNT: function=box count=3
 
-enum class En { A, B, С }
+enum class En { A, B, C }
 
 fun box(): String {
     var res1 = "fail"
@@ -11,13 +11,13 @@ fun box(): String {
     when (en) {
         En.A -> {res1 = ""}
         En.B -> {}
-        En.С -> {}
+        En.C -> {}
     }
 
     when (en as En) {
         En.A -> {res1 += "O"}
         En.B -> {}
-        En.С -> {}
+        En.C -> {}
     }
 
 
@@ -27,13 +27,13 @@ fun box(): String {
         when (en2) {
             En.A -> {res1 += "K"}
             En.B -> {}
-            En.С -> {}
+            En.C -> {}
         }
 
         when (en2 as En) {
             En.A -> {res2 = ""}
             En.B -> {}
-            En.С -> {}
+            En.C -> {}
         }
     }
 
@@ -44,13 +44,13 @@ fun box(): String {
         when (en1) {
             En.A -> {res2 += "O"}
             En.B -> {}
-            En.С -> {}
+            En.C -> {}
         }
         // Working without other examples
         when (en1 as En) {
             En.A -> {res2 += "K"}
             En.B -> {}
-            En.С -> {}
+            En.C -> {}
         }
     }
 

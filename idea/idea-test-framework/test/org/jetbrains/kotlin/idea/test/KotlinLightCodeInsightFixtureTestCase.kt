@@ -32,6 +32,8 @@ import com.intellij.testFramework.LoggedErrorProcessor
 import org.apache.log4j.Logger
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.config.CompilerSettings
+import org.jetbrains.kotlin.config.CompilerSettings.Companion.DEFAULT_ADDITIONAL_ARGUMENTS
+import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.idea.KotlinFileType
@@ -207,7 +209,7 @@ object CompilerTestDirectives {
     val ALL_COMPILER_TEST_DIRECTIVES = listOf(LANGUAGE_VERSION_DIRECTIVE, JVM_TARGET_DIRECTIVE, COMPILER_ARGUMENTS_DIRECTIVE)
 }
 
-fun configureCompilerOptions(fileText: String, project: Project, module: Module) {
+fun configureCompilerOptions(fileText: String, project: Project, module: Module): Boolean {
     val version = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// $LANGUAGE_VERSION_DIRECTIVE ")
     val jvmTarget = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// $JVM_TARGET_DIRECTIVE ")
     val options = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// $COMPILER_ARGUMENTS_DIRECTIVE ")
@@ -230,7 +232,24 @@ fun configureCompilerOptions(fileText: String, project: Project, module: Module)
 
             KotlinCompilerSettings.getInstance(project).update { this.additionalArguments = options }
         }
+        return true
     }
+
+    return false
+}
+
+fun rollbackCompilerOptions(project: Project, module: Module) {
+    configureLanguageAndApiVersion(project, module, LanguageVersion.LATEST_STABLE.versionString)
+
+    val facetSettings = KotlinFacet.get(module)!!.configuration.settings
+    (facetSettings.compilerArguments as K2JVMCompilerArguments).jvmTarget = JvmTarget.DEFAULT.description
+
+    val compilerSettings = facetSettings.compilerSettings ?: CompilerSettings().also {
+        facetSettings.compilerSettings = it
+    }
+    compilerSettings.additionalArguments = DEFAULT_ADDITIONAL_ARGUMENTS
+    facetSettings.updateMergedArguments()
+    KotlinCompilerSettings.getInstance(project).update { this.additionalArguments = DEFAULT_ADDITIONAL_ARGUMENTS }
 }
 
 fun configureLanguageAndApiVersion(

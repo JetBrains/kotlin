@@ -107,4 +107,11 @@ class SimpleKotlinGradleIT : BaseGradleIT() {
             assertNoSuchFile("build")
         }
     }
+
+    @Test
+    fun testGroovyTraitsWithFields() {
+        Project("groovyTraitsWithFields").build("build") {
+            assertSuccessful()
+        }
+    }
 }

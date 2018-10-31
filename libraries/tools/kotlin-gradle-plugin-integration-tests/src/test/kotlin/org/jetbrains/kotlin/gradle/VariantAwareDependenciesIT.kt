@@ -241,6 +241,30 @@ class VariantAwareDependenciesIT : BaseGradleIT() {
             }
         }
 
+    @Test
+    fun testCompileAndRuntimeResolutionOfElementsConfigurations() =
+        with(Project("sample-app", gradleVersion, "new-mpp-lib-and-app")) {
+            val libProject = Project("sample-lib", gradleVersion, "new-mpp-lib-and-app")
+            embedProject(libProject)
+            gradleBuildScript().modify {
+                it.replace("'com.example:sample-lib:1.0'", "project('${libProject.projectName}')")
+            }
+
+            listOf("jvm6" to "Classpath", "nodeJs" to "Classpath", "wasm32" to "Klibraries").forEach { (target, suffix) ->
+                build("dependencyInsight", "--configuration", "${target}Compile$suffix", "--dependency", "sample-lib") {
+                    assertSuccessful()
+                    assertContains("variant \"${target}ApiElements\" [")
+                }
+
+                if (suffix == "Classpath") {
+                    build("dependencyInsight", "--configuration", "${target}Runtime$suffix", "--dependency", "sample-lib") {
+                        assertSuccessful()
+                        assertContains("variant \"${target}RuntimeElements\" [")
+                    }
+                }
+            }
+        }
+
     private fun Project.embedProject(other: Project) {
         setupWorkingDir()
         other.setupWorkingDir()

@@ -1,6 +1,6 @@
 package
 
 public fun log(/*0*/ str: kotlin.String): kotlin.Int
-public fun main(/*0*/ args: kotlin.Array<kotlin.String>): kotlin.Unit
+public fun main(): kotlin.Unit
 public fun print(/*0*/ obj: kotlin.Any): kotlin.Unit
 public fun kotlin.String.prt(/*0*/ action: (kotlin.String) -> kotlin.Unit): kotlin.Unit

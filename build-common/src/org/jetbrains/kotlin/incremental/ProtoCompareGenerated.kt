@@ -522,6 +522,24 @@ open class ProtoCompareGenerated(val oldNameResolver: NameResolver, val newNameR
             }
         }
 
+        if (old.getExtensionCount(JsProtoBuf.propertyGetterAnnotation) != new.getExtensionCount(JsProtoBuf.propertyGetterAnnotation)) {
+            return false
+        }
+        else {
+            for(i in 0..old.getExtensionCount(JsProtoBuf.propertyGetterAnnotation) - 1) {
+                if (!checkEquals(old.getExtension(JsProtoBuf.propertyGetterAnnotation, i), new.getExtension(JsProtoBuf.propertyGetterAnnotation, i))) return false
+            }
+        }
+
+        if (old.getExtensionCount(JsProtoBuf.propertySetterAnnotation) != new.getExtensionCount(JsProtoBuf.propertySetterAnnotation)) {
+            return false
+        }
+        else {
+            for(i in 0..old.getExtensionCount(JsProtoBuf.propertySetterAnnotation) - 1) {
+                if (!checkEquals(old.getExtension(JsProtoBuf.propertySetterAnnotation, i), new.getExtension(JsProtoBuf.propertySetterAnnotation, i))) return false
+            }
+        }
+
         if (old.hasExtension(JsProtoBuf.compileTimeValue) != new.hasExtension(JsProtoBuf.compileTimeValue)) return false
         if (old.hasExtension(JsProtoBuf.compileTimeValue)) {
             if (!checkEquals(old.getExtension(JsProtoBuf.compileTimeValue), new.getExtension(JsProtoBuf.compileTimeValue))) return false
@@ -548,6 +566,24 @@ open class ProtoCompareGenerated(val oldNameResolver: NameResolver, val newNameR
         else {
             for(i in 0..old.getExtensionCount(BuiltInsProtoBuf.propertyAnnotation) - 1) {
                 if (!checkEquals(old.getExtension(BuiltInsProtoBuf.propertyAnnotation, i), new.getExtension(BuiltInsProtoBuf.propertyAnnotation, i))) return false
+            }
+        }
+
+        if (old.getExtensionCount(BuiltInsProtoBuf.propertyGetterAnnotation) != new.getExtensionCount(BuiltInsProtoBuf.propertyGetterAnnotation)) {
+            return false
+        }
+        else {
+            for(i in 0..old.getExtensionCount(BuiltInsProtoBuf.propertyGetterAnnotation) - 1) {
+                if (!checkEquals(old.getExtension(BuiltInsProtoBuf.propertyGetterAnnotation, i), new.getExtension(BuiltInsProtoBuf.propertyGetterAnnotation, i))) return false
+            }
+        }
+
+        if (old.getExtensionCount(BuiltInsProtoBuf.propertySetterAnnotation) != new.getExtensionCount(BuiltInsProtoBuf.propertySetterAnnotation)) {
+            return false
+        }
+        else {
+            for(i in 0..old.getExtensionCount(BuiltInsProtoBuf.propertySetterAnnotation) - 1) {
+                if (!checkEquals(old.getExtension(BuiltInsProtoBuf.propertySetterAnnotation, i), new.getExtension(BuiltInsProtoBuf.propertySetterAnnotation, i))) return false
             }
         }
 
@@ -1779,6 +1815,14 @@ fun ProtoBuf.Property.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int)
         hashCode = 31 * hashCode + getExtension(JsProtoBuf.propertyAnnotation, i).hashCode(stringIndexes, fqNameIndexes)
     }
 
+    for(i in 0..getExtensionCount(JsProtoBuf.propertyGetterAnnotation) - 1) {
+        hashCode = 31 * hashCode + getExtension(JsProtoBuf.propertyGetterAnnotation, i).hashCode(stringIndexes, fqNameIndexes)
+    }
+
+    for(i in 0..getExtensionCount(JsProtoBuf.propertySetterAnnotation) - 1) {
+        hashCode = 31 * hashCode + getExtension(JsProtoBuf.propertySetterAnnotation, i).hashCode(stringIndexes, fqNameIndexes)
+    }
+
     if (hasExtension(JsProtoBuf.compileTimeValue)) {
         hashCode = 31 * hashCode + getExtension(JsProtoBuf.compileTimeValue).hashCode(stringIndexes, fqNameIndexes)
     }
@@ -1797,6 +1841,14 @@ fun ProtoBuf.Property.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int)
 
     for(i in 0..getExtensionCount(BuiltInsProtoBuf.propertyAnnotation) - 1) {
         hashCode = 31 * hashCode + getExtension(BuiltInsProtoBuf.propertyAnnotation, i).hashCode(stringIndexes, fqNameIndexes)
+    }
+
+    for(i in 0..getExtensionCount(BuiltInsProtoBuf.propertyGetterAnnotation) - 1) {
+        hashCode = 31 * hashCode + getExtension(BuiltInsProtoBuf.propertyGetterAnnotation, i).hashCode(stringIndexes, fqNameIndexes)
+    }
+
+    for(i in 0..getExtensionCount(BuiltInsProtoBuf.propertySetterAnnotation) - 1) {
+        hashCode = 31 * hashCode + getExtension(BuiltInsProtoBuf.propertySetterAnnotation, i).hashCode(stringIndexes, fqNameIndexes)
     }
 
     if (hasExtension(BuiltInsProtoBuf.compileTimeValue)) {

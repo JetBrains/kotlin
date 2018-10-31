@@ -4,7 +4,7 @@
 
 fun <T> array1(vararg a : T) = a
 
-fun main(args : Array<String>) {
+fun main() {
     val a = array1("a", "b")
     val b = array1(1, 1)
     join(1)

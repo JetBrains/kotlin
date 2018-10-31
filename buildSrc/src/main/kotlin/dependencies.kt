@@ -124,3 +124,26 @@ fun AbstractCopyTask.fromEmbeddedComponents() {
         }
     }
 }
+
+// TODO: it seems incomplete, find and add missing dependencies
+val testDistProjects = listOf(
+    "", // for root project
+    ":kotlin-stdlib:jvm-minimal-for-test",
+    ":kotlin-compiler",
+    ":kotlin-script-runtime",
+    ":kotlin-stdlib",
+    ":kotlin-stdlib-jre7",
+    ":kotlin-stdlib-jre8",
+    ":kotlin-stdlib-jdk7",
+    ":kotlin-stdlib-jdk8",
+    ":kotlin-stdlib-js",
+    ":kotlin-reflect",
+    ":kotlin-test:kotlin-test-jvm",
+    ":kotlin-test:kotlin-test-junit",
+    ":kotlin-test:kotlin-test-js",
+    ":kotlin-preloader",
+    ":plugins:android-extensions-compiler",
+    ":kotlin-ant",
+    ":kotlin-annotations-jvm",
+    ":kotlin-annotations-android"
+)

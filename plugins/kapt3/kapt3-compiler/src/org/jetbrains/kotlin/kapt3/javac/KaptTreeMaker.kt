@@ -38,6 +38,7 @@ class KaptTreeMaker(context: Context, kaptContext: KaptContextForStubGeneration)
 
     val nameTable: Name.Table = Names.instance(context).table
 
+    @Suppress("FunctionName")
     fun Type(type: Type): JCTree.JCExpression {
         convertBuiltinType(type)?.let { return it }
         if (type.sort == ARRAY) {
@@ -46,14 +47,17 @@ class KaptTreeMaker(context: Context, kaptContext: KaptContextForStubGeneration)
         return FqName(type.internalName)
     }
 
+    @Suppress("FunctionName")
     fun FqName(internalOrFqName: String): JCTree.JCExpression {
         val path = getQualifiedName(internalOrFqName).convertSpecialFqName().split('.')
         assert(path.isNotEmpty())
         return FqName(path)
     }
 
+    @Suppress("FunctionName")
     fun FqName(fqName: FqName) = FqName(fqName.pathSegments().map { it.asString() })
 
+    @Suppress("FunctionName")
     private fun FqName(path: List<String>): JCTree.JCExpression {
         if (path.size == 1) return SimpleName(path.single())
 
@@ -162,6 +166,7 @@ class KaptTreeMaker(context: Context, kaptContext: KaptContextForStubGeneration)
         return TypeIdent(typeTag)
     }
 
+    @Suppress("FunctionName")
     fun SimpleName(name: String): JCTree.JCExpression = Ident(name(name))
 
     fun name(name: String): Name = nameTable.fromString(name)

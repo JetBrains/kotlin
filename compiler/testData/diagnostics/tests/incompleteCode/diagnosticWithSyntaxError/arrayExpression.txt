@@ -1,5 +1,5 @@
 package
 
 package bar {
-    public fun main(/*0*/ args: kotlin.Array<kotlin.String>): kotlin.Unit
+    public fun main(): kotlin.Unit
 }
