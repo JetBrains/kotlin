@@ -5,7 +5,9 @@ buildscript {
 apply plugin: "antlr"
 apply plugin: "kotlin"
 
-configurePublishing(project)
+if (System.getProperty("idl2k.deploy", "false").toBoolean()) {
+    configurePublishing(project)
+}
 
 repositories {
     mavenCentral()
