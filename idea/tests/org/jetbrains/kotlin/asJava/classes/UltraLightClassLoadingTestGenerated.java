@@ -94,6 +94,11 @@ public class UltraLightClassLoadingTestGenerated extends AbstractUltraLightClass
         runTest("compiler/testData/asJava/ultraLightClasses/inlineClasses.kt");
     }
 
+    @TestMetadata("inlineOnly.kt")
+    public void testInlineOnly() throws Exception {
+        runTest("compiler/testData/asJava/ultraLightClasses/inlineOnly.kt");
+    }
+
     @TestMetadata("jvmName.kt")
     public void testJvmName() throws Exception {
         runTest("compiler/testData/asJava/ultraLightClasses/jvmName.kt");

@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.resolve.annotations.argumentValue
 import org.jetbrains.kotlin.resolve.constants.EnumValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.isPublishedApi
+import org.jetbrains.kotlin.resolve.inline.isInlineOnly
 import org.jetbrains.kotlin.resolve.jvm.annotations.STRICTFP_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.resolve.jvm.annotations.SYNCHRONIZED_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.resolve.jvm.annotations.TRANSIENT_ANNOTATION_FQ_NAME
@@ -385,7 +386,17 @@ class KtUltraLightClass(classOrObject: KtClassOrObject, private val support: Ult
                 fun KtDeclaration.isPrivate() =
                     hasModifier(PRIVATE_KEYWORD) ||
                             this is KtConstructor<*> && classOrObject.hasModifier(SEALED_KEYWORD) ||
-                            this is KtFunction && typeParameters.any { it.hasModifier(REIFIED_KEYWORD) }
+                            isInlineOnly()
+
+                private fun KtDeclaration.isInlineOnly(): Boolean {
+                    if (this !is KtCallableDeclaration || !hasModifier(INLINE_KEYWORD)) return false
+                    if (typeParameters.any { it.hasModifier(REIFIED_KEYWORD) }) return true
+                    if (annotationEntries.isEmpty()) return false
+
+                    val descriptor = resolve() as? CallableMemberDescriptor ?: return false
+
+                    return descriptor.isInlineOnly()
+                }
             }
         ).setConstructor(declaration is KtConstructor<*>)
     }
