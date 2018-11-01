@@ -21,10 +21,6 @@ import org.antlr.v4.runtime.CommonTokenStream
 import org.antlr.v4.runtime.ParserRuleContext
 import org.antlr.v4.runtime.tree.ParseTree
 import org.antlr.v4.runtime.tree.TerminalNode
-import org.antlr.webidl.WebIDLBaseVisitor
-import org.antlr.webidl.WebIDLLexer
-import org.antlr.webidl.WebIDLParser
-import org.antlr.webidl.WebIDLParser.*
 import java.util.*
 
 data class ExtendedAttribute(val name: String?, val call: String, val arguments: List<Attribute>)
@@ -589,7 +585,7 @@ fun parseIDL(reader: CharStream): Repository {
             declarations.filterIsInstance<InterfaceDefinition>().filter { it.name.isEmpty().not() }.groupBy { it.name }.mapValues { it.value.reduce(::merge) },
             declarations.filterIsInstance<TypedefDefinition>().groupBy { it.name }.mapValues { it.value.first() },
             declarations.filterIsInstance<ExtensionInterfaceDefinition>().groupBy { it.name }.mapValues { it.value.map { it.implements } },
-            declarations.filterIsInstance<EnumDefinition>().groupBy { it.name }.mapValues { it.value.reduce { a, b -> a } }
+            declarations.filterIsInstance<EnumDefinition>().groupBy { it.name }.mapValues { it.value.reduce { a, _ -> a } }
     )
 }
 
