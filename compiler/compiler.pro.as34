@@ -238,6 +238,10 @@ messages/**)
 # for kapt
 -keep class com.intellij.openapi.project.Project { *; }
 
+-keepclassmembers class com.intellij.util.PathUtil {
+    public static java.lang.String getJarPathForClass(java.lang.Class);
+}
+
 # remove when KT-18563 would be fixed
 -keep class org.jetbrains.kotlin.psi.psiUtil.PsiUtilsKt { *; }
 
