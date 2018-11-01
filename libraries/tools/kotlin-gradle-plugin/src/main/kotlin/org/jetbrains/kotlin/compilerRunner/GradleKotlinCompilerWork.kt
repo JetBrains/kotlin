@@ -14,9 +14,11 @@ import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.daemon.common.*
 import org.jetbrains.kotlin.gradle.plugin.kotlinDebug
+import org.jetbrains.kotlin.gradle.plugin.kotlinInfo
 import org.jetbrains.kotlin.gradle.tasks.GradleMessageCollector
 import org.jetbrains.kotlin.gradle.tasks.throwGradleExceptionIfError
 import org.jetbrains.kotlin.incremental.ChangedFiles
+import org.jetbrains.kotlin.incremental.DELETE_MODULE_FILE_PROPERTY
 import org.slf4j.LoggerFactory
 import java.io.ByteArrayOutputStream
 import java.io.File
@@ -49,7 +51,8 @@ internal class GradleKotlinCompilerWorkArguments(
     val compilerArgs: Array<String>,
     val isVerbose: Boolean,
     val incrementalCompilationEnvironment: IncrementalCompilationEnvironment?,
-    val incrementalModuleInfo: IncrementalModuleInfo?
+    val incrementalModuleInfo: IncrementalModuleInfo?,
+    val buildFile: File?
 ) : Serializable {
     companion object {
         const val serialVersionUID: Long = 0
@@ -75,6 +78,7 @@ internal class GradleKotlinCompilerWork @Inject constructor(
     private val isVerbose = config.isVerbose
     private val incrementalCompilationEnvironment = config.incrementalCompilationEnvironment
     private val incrementalModuleInfo = config.incrementalModuleInfo
+    private val buildFile = config.buildFile
 
     private val log: KotlinLogger =
         SL4JKotlinLogger(LoggerFactory.getLogger("GradleKotlinCompilerWork"))
@@ -84,8 +88,40 @@ internal class GradleKotlinCompilerWork @Inject constructor(
         get() = incrementalCompilationEnvironment != null
 
     override fun run() {
-        val exitCode = compileWithDaemonOrFallbackImpl()
+        val exitCode = try {
+            compileWithDaemonOrFallbackImpl()
+        } finally {
+            if (buildFile != null && System.getProperty(DELETE_MODULE_FILE_PROPERTY) != "false") {
+                buildFile.delete()
+            }
+        }
+
+        if (incrementalCompilationEnvironment != null) {
+            if (incrementalCompilationEnvironment.disableMultiModuleIC) {
+                incrementalCompilationEnvironment.multiModuleICSettings.buildHistoryFile.delete()
+            }
+
+            if (exitCode != ExitCode.OK) {
+                // for non-incremental compilation cleanup is always performed before compiler is called
+                cleanupOnError(incrementalCompilationEnvironment)
+            }
+        }
+
         throwGradleExceptionIfError(exitCode)
+    }
+
+    private fun cleanupOnError(incrementalCompilationEnvironment: IncrementalCompilationEnvironment) {
+        val localStateDirs = incrementalCompilationEnvironment.localStateDirs
+        log.info("Deleting output directories on error: ${localStateDirs.joinToString()}")
+        for (dir in localStateDirs) {
+            if (dir.exists()) {
+                if (dir.deleteRecursively()) {
+                    log.debug("Deleted $dir")
+                } else {
+                    log.debug("Could not delete $dir")
+                }
+            }
+        }
     }
 
     private fun compileWithDaemonOrFallbackImpl(): ExitCode {

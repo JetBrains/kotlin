@@ -15,6 +15,7 @@ internal class IncrementalCompilationEnvironment(
     val workingDir: File,
     val usePreciseJavaTracking: Boolean = false,
     val localStateDirs: List<File> = emptyList(),
+    val disableMultiModuleIC: Boolean = false,
     val multiModuleICSettings: MultiModuleICSettings
 ) : Serializable {
     companion object {
