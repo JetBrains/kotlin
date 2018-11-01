@@ -47,12 +47,14 @@ class CoroutineTransformer : JsVisitorWithContextImpl() {
             if (function?.coroutineMetadata != null) {
                 val name = ((lhs as? JsNameRef)?.name ?: function.name)?.ident
                 additionalStatementsByNode[x] = CoroutineFunctionTransformer(function, name).transform()
+                function.coroutineMetadata = null
                 return false
             }
         }
         else if (expression is JsFunction) {
             if (expression.coroutineMetadata != null) {
                 additionalStatementsByNode[x] = CoroutineFunctionTransformer(expression, expression.name?.ident).transform()
+                expression.coroutineMetadata = null
                 return false
             }
         }
@@ -74,6 +76,7 @@ class CoroutineTransformer : JsVisitorWithContextImpl() {
             if (function?.coroutineMetadata != null) {
                 val name = x.name.ident
                 additionalStatementsByNode[x] = CoroutineFunctionTransformer(function, name).transform()
+                function.coroutineMetadata = null
                 return false
             }
         }

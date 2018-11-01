@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.js.translate.callTranslator
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.isFunctionTypeOrSubtype
+import org.jetbrains.kotlin.builtins.isSuspendFunctionTypeOrSubtype
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
@@ -109,7 +110,7 @@ private fun translateCall(
     if (resolvedCall is VariableAsFunctionResolvedCall) {
         assert(explicitReceivers.extensionReceiver == null) { "VariableAsFunctionResolvedCall must have one receiver" }
         val variableCall = resolvedCall.variableCall
-        val isFunctionType = variableCall.resultingDescriptor.type.isFunctionTypeOrSubtype
+        val isFunctionType = variableCall.resultingDescriptor.type.run { isFunctionTypeOrSubtype || isSuspendFunctionTypeOrSubtype }
         val inlineCall = if (isFunctionType) variableCall else resolvedCall
 
         val newExplicitReceivers = if (variableCall.expectedReceivers()) {

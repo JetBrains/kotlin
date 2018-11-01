@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.js.inline.util.rewriters
 
 import org.jetbrains.kotlin.js.backend.ast.*
+import org.jetbrains.kotlin.js.backend.ast.metadata.coroutineMetadata
 
 class NameReplacingVisitor(private val replaceMap: Map<JsName, JsExpression>) : JsVisitorWithContextImpl() {
 
@@ -42,6 +43,16 @@ class NameReplacingVisitor(private val replaceMap: Map<JsName, JsExpression>) : 
     override fun endVisit(x: JsFunction, ctx: JsContext<*>) = applyToNamedNode(x)
 
     override fun endVisit(x: JsParameter, ctx: JsContext<*>) = applyToNamedNode(x)
+
+    override fun visit(x: JsFunction, ctx: JsContext<*>): Boolean {
+        x.coroutineMetadata?.let { coroutineMetadata ->
+            x.coroutineMetadata = coroutineMetadata.copy(
+                baseClassRef = accept(coroutineMetadata.baseClassRef.deepCopy()),
+                suspendObjectRef = accept(coroutineMetadata.suspendObjectRef.deepCopy())
+            )
+        }
+        return super.visit(x, ctx)
+    }
 
     private fun applyToNamedNode(x: HasName) {
         while (true) {
