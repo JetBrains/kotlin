@@ -276,6 +276,7 @@ class KtUltraLightClass(classOrObject: KtClassOrObject, private val support: Ult
 
     private fun shouldGenerateNoArgOverload(primary: KtPrimaryConstructor): Boolean {
         return !primary.hasModifier(PRIVATE_KEYWORD) &&
+                !classOrObject.hasModifier(INNER_KEYWORD) &&
                 primary.valueParameters.isNotEmpty() &&
                 primary.valueParameters.all { it.defaultValue != null } &&
                 classOrObject.allConstructors.none { it.valueParameters.isEmpty() }

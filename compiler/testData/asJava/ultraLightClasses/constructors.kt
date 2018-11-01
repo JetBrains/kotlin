@@ -6,3 +6,8 @@ class B {
     @Deprecated("", level = DeprecationLevel.HIDDEN)
     constructor()
 }
+
+class Outer {
+    inner class Inner(x: Int = 1, y: String = "")
+    class Nested(x: Int = 1, y: String = "")
+}
