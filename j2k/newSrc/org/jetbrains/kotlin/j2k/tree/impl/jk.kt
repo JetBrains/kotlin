@@ -476,3 +476,6 @@ class PsiOwnerImpl(override var psi: PsiElement? = null) : PsiOwner
 
 val JKElement.psi: PsiElement?
     get() = (this as? PsiOwner)?.psi
+
+fun <Elem : PsiElement>JKElement.psi(): Elem? =
+    (this as? PsiOwner)?.psi as? Elem

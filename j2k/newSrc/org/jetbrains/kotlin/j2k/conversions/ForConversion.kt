@@ -98,17 +98,19 @@ class ForConversion(private val context: ConversionContext) : RecursiveApplicabl
             val start = loopVar::initializer.detached()
             val operationType =
                 (loopStatement.updater as? JKExpressionStatement)?.expression?.isVariableIncrementOrDecrement(loopVar)
-            val reversed = when ((operationType  as? JKJavaOperatorImpl)?.token?.psiToken) {
-                JavaTokenType.PLUSPLUS -> false
-                JavaTokenType.MINUSMINUS -> true
+            val reversed = when (operationType?.token?.text) {
+                "++" -> false
+                "--" -> true
                 else -> return null
             }
-            val inclusive = when ((condition.operator as? JKJavaOperatorImpl)?.token ?: (condition.operator as? JKKtOperatorImpl)?.token) {
-                JavaTokenType.LT, KtTokens.LT -> if (reversed) return null else false
-                JavaTokenType.LE, KtTokens.LTEQ -> if (reversed) return null else true
-                JavaTokenType.GT, KtTokens.GT -> if (reversed) false else return null
-                JavaTokenType.GE, KtTokens.GTEQ -> if (reversed) true else return null
-                JavaTokenType.NE, KtTokens.EXCLEQ -> false
+            val operatorToken =
+                ((condition.operator as? JKKtOperatorImpl)?.token as? JKKtSingleValueOperatorToken)?.psiToken
+            val inclusive = when (operatorToken) {
+                KtTokens.LT -> if (reversed) return null else false
+                KtTokens.LTEQ -> if (reversed) return null else true
+                KtTokens.GT -> if (reversed) false else return null
+                KtTokens.GTEQ -> if (reversed) true else return null
+                KtTokens.EXCLEQ -> false
                 else -> return null
             }
             val range = forIterationRange(start, right, reversed, inclusive, loopVarPsi)
@@ -195,7 +197,7 @@ class ForConversion(private val context: ConversionContext) : RecursiveApplicabl
                 if ((bound as? JKLiteralExpression)?.literal?.toIntOrNull() != 0) return null
 
                 if (start !is JKBinaryExpression) return null
-                if ((start.operator as? JKKtOperatorImpl)?.token != KtTokens.MINUS) return null
+                if (start.operator.token.text != "-") return null
                 if ((start.right as? JKLiteralExpression)?.literal?.toIntOrNull() != 1) return null
                 start.left
             } else {
@@ -242,12 +244,12 @@ class ForConversion(private val context: ConversionContext) : RecursiveApplicabl
     }
 
     private fun toIndicesCall(javaSizeCall: JKQualifiedExpression): JKQualifiedExpression? {
-        val psiContext = javaSizeCall.psi<PsiExpression>() ?: return null
+        val psiContext = javaSizeCall.psi ?: return null
         val indiciesSymbol = context.symbolProvider.provideDirectSymbol(
             multiResolveFqName(ClassId.fromString("kotlin/collections/indices"), psiContext).first()
         ) as JKMultiversePropertySymbol
-        javaSizeCall.selector = JKFieldAccessExpressionImpl(indiciesSymbol)
-        return javaSizeCall
+        val selector = JKFieldAccessExpressionImpl(indiciesSymbol)
+        return JKQualifiedExpressionImpl(javaSizeCall::receiver.detached(), javaSizeCall.operator, selector)
     }
 
 
@@ -260,7 +262,4 @@ class ForConversion(private val context: ConversionContext) : RecursiveApplicabl
         if ((pair.second as? JKFieldAccessExpression)?.identifier?.target != variable) return null
         return pair.first
     }
-
-    private inline fun <reified ElementType : PsiElement> JKElement.psi() =
-        this.psi as? ElementType
 }
