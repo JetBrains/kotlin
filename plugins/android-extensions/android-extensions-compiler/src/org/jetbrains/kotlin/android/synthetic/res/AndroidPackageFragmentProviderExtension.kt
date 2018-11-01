@@ -62,8 +62,9 @@ abstract class AndroidPackageFragmentProviderExtension : PackageFragmentProvider
         for (variantData in moduleData.variants) {
             for ((layoutName, layouts) in variantData.layouts) {
                 fun createPackageFragment(fqName: String, forView: Boolean, isDeprecated: Boolean = false) {
-                    val resources = layoutXmlFileManager.extractResources(AndroidLayoutGroupData(layoutName, layouts), module)
-                    val packageData = AndroidSyntheticPackageData(moduleData, forView, isDeprecated, resources)
+                    val packageData = AndroidSyntheticPackageData(moduleData, forView, isDeprecated) {
+                        layoutXmlFileManager.extractResources(AndroidLayoutGroupData(layoutName, layouts), module)
+                    }
                     val packageDescriptor = AndroidSyntheticPackageFragmentDescriptor(
                             module, FqName(fqName), packageData, lazyContext, storageManager, isExperimental,
                             lookupTracker, layoutName
