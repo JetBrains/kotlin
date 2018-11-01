@@ -1,8 +1,8 @@
 // !LANGUAGE: +AllowContractsForCustomFunctions +UseCallsInPlaceEffect +ReadDeserializedContracts
 // !USE_EXPERIMENTAL: kotlin.contracts.ExperimentalContracts
 // IGNORE_BACKEND: JVM_IR
-// IGNORE_BACKEND: JS_IR
 // IGNORE_BACKEND: NATIVE
+// NO_CHECK_LAMBDA_INLINING
 // FILE: 1.kt
 package test
 
@@ -16,19 +16,23 @@ public inline fun <R> myrun(block: () -> R): R {
     return block()
 }
 
-// FILE: 2.kt
 
+// FILE: 2.kt
 import test.*
 
 class A {
-    val z: String
+    val x: String
+
+    constructor() {
+    }
+
     init {
-        myrun {
-            z = "OK"
-        }
+        val o: String
+        val k: String = "K"
+        myrun { o = "O" }
+        fun baz() = o + k
+        x = baz()
     }
 }
 
-fun box(): String {
-    return A().z
-}
+fun box() = A().x

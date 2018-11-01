@@ -31,6 +31,8 @@ abstract class AbstractInlineDefaultValuesTests : BorrowedInlineTest("defaultVal
 
 abstract class AbstractInlineSuspendTests : BorrowedInlineTest("suspend/")
 
+abstract class AbstractJsInlineContractsTests : BorrowedInlineTest("contracts/")
+
 abstract class AbstractBoxJsTest : BasicBoxTest(
         BasicBoxTest.TEST_DATA_DIR_PATH + "box/",
         "box/"
@@ -85,3 +87,5 @@ abstract class AbstractIrEnumValuesInlineTests : BorrowedIrInlineTest("enum/")
 abstract class AbstractIrInlineDefaultValuesTests : BorrowedIrInlineTest("defaultValues/")
 
 abstract class AbstractIrInlineSuspendTests : BorrowedIrInlineTest("suspend/")
+
+abstract class AbstractIrJsInlineContractsTests : BorrowedIrInlineTest("contracts/")

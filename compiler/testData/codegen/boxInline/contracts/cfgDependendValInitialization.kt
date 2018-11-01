@@ -1,7 +1,6 @@
 // !LANGUAGE: +AllowContractsForCustomFunctions +UseCallsInPlaceEffect +ReadDeserializedContracts
 // !USE_EXPERIMENTAL: kotlin.contracts.ExperimentalContracts
 // IGNORE_BACKEND: JVM_IR
-// IGNORE_BACKEND: JS_IR
 // IGNORE_BACKEND: NATIVE
 // FILE: 1.kt
 package test
@@ -16,19 +15,26 @@ public inline fun <R> myrun(block: () -> R): R {
     return block()
 }
 
-// FILE: 2.kt
 
+// FILE: 2.kt
 import test.*
 
-class A {
-    val z: String
-    init {
+fun test(b: Boolean): Int {
+    val x: Int
+
+    if (b) {
+        x = 1
+    } else {
         myrun {
-            z = "OK"
+            x = -1
         }
     }
+    return x
 }
 
 fun box(): String {
-    return A().z
+
+    if (test(true) != 1) return "Fail 1"
+    if (test(false) != -1) return "Fail 2"
+    return "OK"
 }

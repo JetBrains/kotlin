@@ -989,6 +989,11 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/contracts"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
+        @TestMetadata("cfgDependendValInitialization.kt")
+        public void testCfgDependendValInitialization() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/contracts/cfgDependendValInitialization.kt");
+        }
+
         @TestMetadata("complexInitializer.kt")
         public void testComplexInitializer() throws Exception {
             runTest("compiler/testData/codegen/boxInline/contracts/complexInitializer.kt");
@@ -1007,6 +1012,11 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
         @TestMetadata("definiteNestedValInitialization.kt")
         public void testDefiniteNestedValInitialization() throws Exception {
             runTest("compiler/testData/codegen/boxInline/contracts/definiteNestedValInitialization.kt");
+        }
+
+        @TestMetadata("definiteValInitInInitializer.kt")
+        public void testDefiniteValInitInInitializer() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/contracts/definiteValInitInInitializer.kt");
         }
 
         @TestMetadata("definiteValInitialization.kt")
