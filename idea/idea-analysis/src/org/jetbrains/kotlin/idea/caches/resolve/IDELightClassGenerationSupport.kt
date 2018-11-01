@@ -33,8 +33,10 @@ import org.jetbrains.kotlin.asJava.builder.InvalidLightClassDataHolder
 import org.jetbrains.kotlin.asJava.builder.LightClassDataHolder
 import org.jetbrains.kotlin.asJava.classes.KtUltraLightClass
 import org.jetbrains.kotlin.asJava.classes.UltraLightSupport
+import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.classes.shouldNotBeVisibleAsLightClass
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
+import org.jetbrains.kotlin.codegen.JvmCodegenUtil
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
@@ -86,7 +88,10 @@ class IDELightClassGenerationSupport(private val project: Project) : LightClassG
                 return false
             }
 
-            override val moduleName: String = module.name
+            override val moduleName: String by lazyPub {
+                val moduleDescriptor = element.getResolutionFacade().moduleDescriptor
+                JvmCodegenUtil.getModuleName(moduleDescriptor)
+            }
 
             override fun findAnnotation(owner: KtAnnotated, fqName: FqName): Pair<KtAnnotationEntry, AnnotationDescriptor>? {
                 val candidates = owner.annotationEntries.filter { it.shortName == fqName.shortName() || hasAlias(owner, fqName.shortName()) }
@@ -125,7 +130,7 @@ class IDELightClassGenerationSupport(private val project: Project) : LightClassG
 
             for (d in declaration.declarations) {
                 if (d is KtClassOrObject && !(d is KtObjectDeclaration && d.isCompanion())) continue
-                
+
                 findTooComplexDeclaration(d)?.let { return it }
             }
 
