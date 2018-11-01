@@ -5593,6 +5593,21 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             runTest("idea/testData/inspectionsLocal/safeCastWithReturn/labeledReturn.kt");
         }
 
+        @TestMetadata("lambdaLastStatement.kt")
+        public void testLambdaLastStatement() throws Exception {
+            runTest("idea/testData/inspectionsLocal/safeCastWithReturn/lambdaLastStatement.kt");
+        }
+
+        @TestMetadata("lambdaLastStatement2.kt")
+        public void testLambdaLastStatement2() throws Exception {
+            runTest("idea/testData/inspectionsLocal/safeCastWithReturn/lambdaLastStatement2.kt");
+        }
+
+        @TestMetadata("lambdaLastStatement3.kt")
+        public void testLambdaLastStatement3() throws Exception {
+            runTest("idea/testData/inspectionsLocal/safeCastWithReturn/lambdaLastStatement3.kt");
+        }
+
         @TestMetadata("simple.kt")
         public void testSimple() throws Exception {
             runTest("idea/testData/inspectionsLocal/safeCastWithReturn/simple.kt");
