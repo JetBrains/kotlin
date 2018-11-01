@@ -59,7 +59,7 @@ internal fun genPropertyForWidget(
         resolvedWidget: ResolvedWidget,
         context: SyntheticElementResolveContext
 ): PropertyDescriptor {
-    val sourceEl = resolvedWidget.widget.sourceElement?.let(::XmlSourceElement) ?: SourceElement.NO_SOURCE
+    val sourceEl = resolvedWidget.widget.sourceElement?.element?.let(::XmlSourceElement) ?: SourceElement.NO_SOURCE
 
     val classDescriptor = resolvedWidget.viewClassDescriptor
     val type = classDescriptor?.let {
@@ -83,7 +83,7 @@ internal fun genPropertyForFragment(
         type: SimpleType,
         fragment: AndroidResource.Fragment
 ): PropertyDescriptor {
-    val sourceElement = fragment.sourceElement?.let(::XmlSourceElement) ?: SourceElement.NO_SOURCE
+    val sourceElement = fragment.sourceElement?.element?.let(::XmlSourceElement) ?: SourceElement.NO_SOURCE
     return genProperty(fragment, receiverType, type, packageFragmentDescriptor, sourceElement, null)
 }
 
