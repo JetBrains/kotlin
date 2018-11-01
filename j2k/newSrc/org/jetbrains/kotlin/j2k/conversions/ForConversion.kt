@@ -29,7 +29,7 @@ class ForConversion(private val context: ConversionContext) : RecursiveApplicabl
     private fun convertToWhile(loopStatement: JKJavaForLoopStatement): JKStatement? {
         val whileBody = createWhileBody(loopStatement)
         val condition =
-            if (loopStatement.condition !is JKStubExpression) loopStatement.condition.detached()
+            if (loopStatement.condition !is JKStubExpression) loopStatement::condition.detached()
             else JKKtLiteralExpressionImpl("true", JKLiteralExpression.LiteralType.BOOLEAN)
         val whileStatement = JKWhileStatementImpl(condition, whileBody)
 
@@ -37,7 +37,7 @@ class ForConversion(private val context: ConversionContext) : RecursiveApplicabl
         //TODO check for error conflict
 
         return JKKtConvertedFromForLoopSyntheticWhileStatementImpl(
-            loopStatement.initializer.detached(),
+            loopStatement::initializer.detached(),
             JKWhileStatementImpl(condition, whileBody)
         )
     }
@@ -55,7 +55,7 @@ class ForConversion(private val context: ConversionContext) : RecursiveApplicabl
 
         }
 
-        val body = loopStatement.body
+        val body = loopStatement::body.detached()
 
         if (body is JKBlockStatement) {
             val initializer = loopStatement.initializer
@@ -70,15 +70,16 @@ class ForConversion(private val context: ConversionContext) : RecursiveApplicabl
 
             val statements =
                 if (hasNameConflict) {
-                    listOf(continueStatementConverter.applyToElement(body) as JKStatement, loopStatement.updater)
+
+                    listOf(continueStatementConverter.applyToElement(body) as JKStatement, loopStatement::updater.detached())
                 } else {
-                    body.block.statements + loopStatement.updater
+                    body.block::statements.detached() + loopStatement::updater.detached()
                 }
-            return JKBlockStatementImpl(JKBlockImpl(statements.map { it.detached() }))
+            return JKBlockStatementImpl(JKBlockImpl(statements))
         } else {
             val statements =
                 listOf(continueStatementConverter.applyToElement(body) as JKStatement, loopStatement::updater.detached())
-            return JKBlockStatementImpl(JKBlockImpl(statements.map { it.detached() }))
+            return JKBlockStatementImpl(JKBlockImpl(statements))
         }
     }
 
@@ -91,10 +92,10 @@ class ForConversion(private val context: ConversionContext) : RecursiveApplicabl
             && !loopVarPsi.hasWriteAccesses(referenceSearcher, loopStatement.condition.psi())
         ) {
             val left = condition.left as? JKFieldAccessExpression ?: return null
-            val right = condition.right
+            val right = condition::right.detached()
             if (right.psi<PsiExpression>()?.type in listOf(PsiType.DOUBLE, PsiType.FLOAT, PsiType.CHAR)) return null
             if (left.identifier.target != loopVar) return null
-            val start = loopVar.initializer
+            val start = loopVar::initializer.detached()
             val operationType =
                 (loopStatement.updater as? JKExpressionStatement)?.expression?.isVariableIncrementOrDecrement(loopVar)
             val reversed = when ((operationType  as? JKJavaOperatorImpl)?.token?.psiToken) {
@@ -116,9 +117,9 @@ class ForConversion(private val context: ConversionContext) : RecursiveApplicabl
 //                JKJavaPrimitiveTypeImpl.INT
 //            else null
             return JKKtForInStatementImpl(
-                loopVar.name.detached(),
-                range.detached(),
-                loopStatement.body.detached()
+                loopVar::name.detached(),
+                range,
+                loopStatement::body.detached()
             )
 
         }
@@ -141,8 +142,6 @@ class ForConversion(private val context: ConversionContext) : RecursiveApplicabl
         psiContext: PsiElement
     ): JKExpression {
         indicesIterationRange(start, bound, reversed, inclusiveComparison)?.also { return it }
-        if (start.parent != null) start.detach(start.parent!!)
-        if (bound.parent != null) bound.detach(bound.parent!!)
         return when {
             reversed -> downToExpression(
                 start,
@@ -215,7 +214,7 @@ class ForConversion(private val context: ConversionContext) : RecursiveApplicabl
                 multiResolveFqName(ClassId.fromString("kotlin/collections/reversed"), psiContext).first()
             ) as JKMethodSymbol
             JKQualifiedExpressionImpl(
-                indices.detached(),
+                indices,
                 JKKtQualifierImpl.DOT,
                 JKJavaMethodCallExpressionImpl(reversedSymbol, JKExpressionListImpl())
             )

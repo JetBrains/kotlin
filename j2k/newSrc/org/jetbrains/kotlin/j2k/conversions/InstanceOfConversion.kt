@@ -6,10 +6,7 @@
 package org.jetbrains.kotlin.j2k.conversions
 
 import com.intellij.psi.PsiClass
-import org.jetbrains.kotlin.j2k.tree.JKBinaryExpression
-import org.jetbrains.kotlin.j2k.tree.JKClassType
-import org.jetbrains.kotlin.j2k.tree.JKJavaInstanceOfExpression
-import org.jetbrains.kotlin.j2k.tree.JKTreeElement
+import org.jetbrains.kotlin.j2k.tree.*
 import org.jetbrains.kotlin.j2k.tree.impl.*
 import org.jetbrains.kotlin.psi.KtClass
 
@@ -35,6 +32,6 @@ class InstanceOfConversion : RecursiveApplicableConversionBase() {
                 )
 
             } else checkingType
-        return recurse(JKKtIsExpressionImpl(element.expression.also { it.detach(it.parent!!) }, JKTypeElementImpl(type)))
+        return recurse(JKKtIsExpressionImpl(element::expression.detached(), JKTypeElementImpl(type)))
     }
 }

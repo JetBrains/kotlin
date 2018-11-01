@@ -19,6 +19,8 @@ package org.jetbrains.kotlin.j2k.tree
 import org.jetbrains.kotlin.j2k.ast.Nullability
 import org.jetbrains.kotlin.j2k.tree.impl.JKClassSymbol
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
+import kotlin.reflect.KProperty0
+import kotlin.jvm.internal.CallableReference
 
 interface JKOperator {
     val token: JKOperatorToken
@@ -91,5 +93,18 @@ inline fun <reified T> JKElement.getParentOfType(): T? {
     }
 }
 
-fun <T : JKElement> T.detached() =
-    also { if (parent != null) detach(parent!!) }
+private fun <T : JKElement> KProperty0<Any>.detach(element: T) {
+    if (element.parent == null) return
+    // TODO: Fix when KT-16818 is implemented
+    val boundReceiver = (this as CallableReference).boundReceiver
+    require(boundReceiver != CallableReference.NO_RECEIVER)
+    require(boundReceiver is JKElement)
+    element.detach(boundReceiver)
+}
+
+fun <T : JKElement> KProperty0<T>.detached(): T =
+    get().also { detach(it) }
+
+fun <T : JKElement> KProperty0<List<T>>.detached(): List<T> =
+    get().also { list -> list.forEach { detach(it) } }
+

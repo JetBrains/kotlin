@@ -51,7 +51,5 @@ fun rangeExpression(
     val symbol = conversionContext.symbolProvider.provideDirectSymbol(
         multiResolveFqName(ClassId.fromString("kotlin/ranges/$operatorName"), psiContext).first()
     ) as JKMethodSymbol
-    if (from.parent != null) from.detach(from.parent!!)
-    if (to.parent != null) to.detach(to.parent!!)
     return JKKtOperatorExpressionImpl(from, symbol, to)
 }

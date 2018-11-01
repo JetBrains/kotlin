@@ -30,7 +30,7 @@ class FieldInitializersInPrimaryFromParamsConversion : TransformerBasedConversio
                     (it as? JKField)?.name?.value == fieldTarget.name.value
                 } as? JKField ?: continue
                 if (!fieldDeclaration.type.type.equalsByName(parameter.type.type)) continue//TODO better way to compare types??
-                parameter.modifierList = fieldDeclaration.modifierList.also { it.detach(it.parent!!) }
+                parameter.modifierList = fieldDeclaration::modifierList.detached()
                 containingClass.declarationList -= fieldDeclaration
 
                 if (parameter.name.value != fieldTarget.name.value) {
@@ -42,7 +42,7 @@ class FieldInitializersInPrimaryFromParamsConversion : TransformerBasedConversio
         }
         ktPrimaryConstructor.block.statements -= removedStatements
         if (ktPrimaryConstructor.block.statements.isNotEmpty()) {
-            ktPrimaryConstructor.block.detach(ktPrimaryConstructor)
+            ktPrimaryConstructor::block.detached()
             containingClass.getOrCreateInitDeclaration().block = ktPrimaryConstructor.block
         }
     }
