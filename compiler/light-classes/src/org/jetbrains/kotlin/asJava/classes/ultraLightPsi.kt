@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.asJava.builder.LightClassData
 import org.jetbrains.kotlin.asJava.builder.LightMemberOriginForDeclaration
 import org.jetbrains.kotlin.asJava.elements.*
 import org.jetbrains.kotlin.codegen.FunctionCodegen
+import org.jetbrains.kotlin.codegen.JvmCodegenUtil
 import org.jetbrains.kotlin.codegen.PropertyCodegen
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.descriptors.*
@@ -45,6 +46,7 @@ import org.jetbrains.kotlin.resolve.jvm.annotations.TRANSIENT_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.resolve.jvm.annotations.VOLATILE_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.typeUtil.isAnyOrNullableAny
 
 class KtUltraLightClass(classOrObject: KtClassOrObject, private val support: UltraLightSupport) :
     KtLightClassImpl(classOrObject) {
@@ -75,24 +77,35 @@ class KtUltraLightClass(classOrObject: KtClassOrObject, private val support: Ult
     }
 
     private fun allSuperTypes() =
-        getDescriptor()?.typeConstructor?.supertypes?.mapNotNull {
-            it.asPsiType(classOrObject, support, TypeMappingMode.SUPER_TYPE, this) as? PsiClassType
-        }.orEmpty()
+        getDescriptor()?.typeConstructor?.supertypes.orEmpty().asSequence()
+
+    private fun mapSupertype(supertype: KotlinType) =
+        supertype.asPsiType(classOrObject, support, TypeMappingMode.SUPER_TYPE, this) as? PsiClassType
 
     override fun createExtendsList(): PsiReferenceList? =
         if (tooComplex) super.createExtendsList()
-        else LightReferenceListBuilder(manager, language, PsiReferenceList.Role.EXTENDS_LIST).also { list ->
+        else KotlinLightReferenceListBuilder(
+            manager,
+            language,
+            PsiReferenceList.Role.EXTENDS_LIST
+        ).also { list ->
             allSuperTypes()
-                .filter { (isInterface || it.resolve()?.isInterface == false) && !it.equalsToText(CommonClassNames.JAVA_LANG_OBJECT) }
+                .filter { (isInterface || !JvmCodegenUtil.isJvmInterface(it)) && !it.isAnyOrNullableAny() }
+                .map(this::mapSupertype)
                 .forEach(list::addReference)
         }
 
     override fun createImplementsList(): PsiReferenceList? =
         if (tooComplex) super.createImplementsList()
-        else LightReferenceListBuilder(manager, language, PsiReferenceList.Role.IMPLEMENTS_LIST).also { list ->
+        else KotlinLightReferenceListBuilder(
+            manager,
+            language,
+            PsiReferenceList.Role.IMPLEMENTS_LIST
+        ).also { list ->
             if (!isInterface) {
                 allSuperTypes()
-                    .filter { it.resolve()?.isInterface == true }
+                    .filter { JvmCodegenUtil.isJvmInterface(it) }
+                    .map(this::mapSupertype)
                     .forEach(list::addReference)
             }
         }
@@ -579,7 +592,7 @@ internal class KtUltraLightMethod(
     }
 
     private val _throwsList: PsiReferenceList by lazyPub {
-        val list = LightReferenceListBuilder(manager, language, PsiReferenceList.Role.THROWS_LIST)
+        val list = KotlinLightReferenceListBuilder(manager, language, PsiReferenceList.Role.THROWS_LIST)
         (kotlinOrigin?.resolve() as? FunctionDescriptor)?.let {
             for (ex in FunctionCodegen.getThrownExceptions(it)) {
                 list.addReference(ex.fqNameSafe.asString())

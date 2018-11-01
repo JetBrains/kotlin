@@ -47,9 +47,6 @@ public class KotlinLightReferenceListBuilder extends LightReferenceListBuilder i
 
     @Override
     public void addReference(PsiClassType type) {
-        final PsiClass resolved = type.resolve();
-        if (resolved == null) return;
-
         final PsiJavaCodeReferenceElement ref = myFactory.createReferenceElementByType(type);
         myRefs.add(ref);
     }

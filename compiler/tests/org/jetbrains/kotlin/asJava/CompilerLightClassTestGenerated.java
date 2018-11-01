@@ -134,6 +134,11 @@ public class CompilerLightClassTestGenerated extends AbstractCompilerLightClassT
         runTest("compiler/testData/asJava/lightClasses/StubOrderForOverloads.kt");
     }
 
+    @TestMetadata("TypePararametersInClass.kt")
+    public void testTypePararametersInClass() throws Exception {
+        runTest("compiler/testData/asJava/lightClasses/TypePararametersInClass.kt");
+    }
+
     @TestMetadata("VarArgs.kt")
     public void testVarArgs() throws Exception {
         runTest("compiler/testData/asJava/lightClasses/VarArgs.kt");
