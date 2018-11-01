@@ -67,7 +67,10 @@ internal open class KotlinCompileCommon : AbstractKotlinCompile<K2MetadataCompil
         val messageCollector = GradleMessageCollector(logger)
         val outputItemCollector = OutputItemsCollectorImpl()
         val compilerRunner = compilerRunner()
-        val environment = GradleCompilerEnvironment(computedCompilerClasspath, messageCollector, outputItemCollector)
+        val environment = GradleCompilerEnvironment(
+            computedCompilerClasspath, messageCollector, outputItemCollector,
+            localStateDirectories = localStateDirectories()
+        )
         compilerRunner.runMetadataCompilerAsync(sourceRoots.kotlinSourceFiles, args, environment)
     }
 }

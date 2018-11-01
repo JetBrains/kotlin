@@ -134,7 +134,8 @@ internal open class GradleCompilerRunner(protected val project: Project) {
             isVerbose = compilerArgs.verbose,
             incrementalCompilationEnvironment = incrementalCompilationEnvironment,
             incrementalModuleInfo = modulesInfo,
-            buildFile = buildFile
+            buildFile = buildFile,
+            localStateDirectories = environment.localStateDirectories
         )
         runCompilerAsync(workArgs)
     }

@@ -397,16 +397,16 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
                 if (hasFilesInTaskBuildDirectory()) changedFiles else ChangedFiles.Unknown(),
                 taskBuildDirectory,
                 usePreciseJavaTracking = usePreciseJavaTracking,
-                localStateDirs = outputDirectories,
                 disableMultiModuleIC = disableMultiModuleIC(),
                 multiModuleICSettings = multiModuleICSettings
             )
-        } else {
-            clearOutputDirectories(reason = "IC is disabled for the task")
-            null
-        }
+        } else null
 
-        val environment = GradleCompilerEnvironment(computedCompilerClasspath, messageCollector, outputItemCollector, icEnv)
+        val environment = GradleCompilerEnvironment(
+            computedCompilerClasspath, messageCollector, outputItemCollector,
+            localStateDirectories = localStateDirectories(),
+            incrementalCompilationEnvironment = icEnv
+        )
         compilerRunner.runJvmCompilerAsync(
             sourceRoots.kotlinSourceFiles,
             commonSourceSet.toList(),
@@ -554,7 +554,11 @@ open class Kotlin2JsCompile() : AbstractKotlinCompile<K2JSCompilerArguments>(), 
             )
         } else null
 
-        val environment = GradleCompilerEnvironment(computedCompilerClasspath, messageCollector, outputItemCollector, icEnv)
+        val environment = GradleCompilerEnvironment(
+            computedCompilerClasspath, messageCollector, outputItemCollector,
+            localStateDirectories = localStateDirectories(),
+            incrementalCompilationEnvironment = icEnv
+        )
         compilerRunner.runJsCompilerAsync(sourceRoots.kotlinSourceFiles, commonSourceSet.toList(), args, environment)
     }
 }
