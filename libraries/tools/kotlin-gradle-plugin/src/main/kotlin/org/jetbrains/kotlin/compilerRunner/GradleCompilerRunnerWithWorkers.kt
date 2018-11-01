@@ -14,7 +14,7 @@ internal class GradleCompilerRunnerWithWorkers(
     project: Project,
     private val workersExecutor: WorkerExecutor
 ) : GradleCompilerRunner(project) {
-    override fun compileWithDaemonOrFallback(workArgs: GradleKotlinCompilerWorkArguments) {
+    override fun runCompilerAsync(workArgs: GradleKotlinCompilerWorkArguments) {
         workersExecutor.submit(GradleKotlinCompilerWork::class.java) { config ->
             config.isolationMode = IsolationMode.NONE
             config.forkMode = ForkMode.NEVER

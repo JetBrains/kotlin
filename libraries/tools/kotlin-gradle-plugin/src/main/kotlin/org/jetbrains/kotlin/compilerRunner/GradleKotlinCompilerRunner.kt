@@ -51,7 +51,11 @@ internal fun kotlinCompilerExecutionStrategy(): String =
     System.getProperty(KOTLIN_COMPILER_EXECUTION_STRATEGY_PROPERTY) ?: DAEMON_EXECUTION_STRATEGY
 
 internal open class GradleCompilerRunner(protected val project: Project) {
-    fun runJvmCompiler(
+    /**
+     * Compiler might be executed asynchronuosly. Do not do anything requiring end of compilation after this function is called.
+     * @see [GradleKotlinCompilerWork]
+     */
+    fun runJvmCompilerAsync(
         sourcesToCompile: List<File>,
         commonSources: List<File>,
         javaSourceRoots: Iterable<File>,
@@ -75,16 +79,14 @@ internal open class GradleCompilerRunner(protected val project: Project) {
             args.destination = null
         }
 
-        try {
-            runCompiler(KotlinCompilerClass.JVM, args, environment)
-        } finally {
-            if (System.getProperty(DELETE_MODULE_FILE_PROPERTY) != "false") {
-                buildFile.delete()
-            }
-        }
+        runCompilerAsync(KotlinCompilerClass.JVM, args, environment, buildFile = buildFile)
     }
 
-    fun runJsCompiler(
+    /**
+     * Compiler might be executed asynchronuosly. Do not do anything requiring end of compilation after this function is called.
+     * @see [GradleKotlinCompilerWork]
+     */
+    fun runJsCompilerAsync(
         kotlinSources: List<File>,
         kotlinCommonSources: List<File>,
         args: K2JSCompilerArguments,
@@ -92,22 +94,27 @@ internal open class GradleCompilerRunner(protected val project: Project) {
     ) {
         args.freeArgs += kotlinSources.map { it.absolutePath }
         args.commonSources = kotlinCommonSources.map { it.absolutePath }.toTypedArray()
-        runCompiler(KotlinCompilerClass.JS, args, environment)
+        runCompilerAsync(KotlinCompilerClass.JS, args, environment)
     }
 
-    fun runMetadataCompiler(
+    /**
+     * Compiler might be executed asynchronuosly. Do not do anything requiring end of compilation after this function is called.
+     * @see [GradleKotlinCompilerWork]
+     */
+    fun runMetadataCompilerAsync(
         kotlinSources: List<File>,
         args: K2MetadataCompilerArguments,
         environment: GradleCompilerEnvironment
     ) {
         args.freeArgs += kotlinSources.map { it.absolutePath }
-        runCompiler(KotlinCompilerClass.METADATA, args, environment)
+        runCompilerAsync(KotlinCompilerClass.METADATA, args, environment)
     }
 
-    private fun runCompiler(
+    private fun runCompilerAsync(
         compilerClassName: String,
         compilerArgs: CommonCompilerArguments,
-        environment: GradleCompilerEnvironment
+        environment: GradleCompilerEnvironment,
+        buildFile: File? = null
     ) {
         if (compilerArgs.version) {
             project.logger.lifecycle(
@@ -126,12 +133,13 @@ internal open class GradleCompilerRunner(protected val project: Project) {
             compilerArgs = argsArray,
             isVerbose = compilerArgs.verbose,
             incrementalCompilationEnvironment = incrementalCompilationEnvironment,
-            incrementalModuleInfo = modulesInfo
+            incrementalModuleInfo = modulesInfo,
+            buildFile = buildFile
         )
-        compileWithDaemonOrFallback(workArgs)
+        runCompilerAsync(workArgs)
     }
 
-    protected open fun compileWithDaemonOrFallback(workArgs: GradleKotlinCompilerWorkArguments) {
+    protected open fun runCompilerAsync(workArgs: GradleKotlinCompilerWorkArguments) {
         val kotlinCompilerRunnable = GradleKotlinCompilerWork(workArgs)
         kotlinCompilerRunnable.run()
     }
