@@ -54,6 +54,7 @@ import org.jetbrains.kotlin.cli.common.arguments.Argument
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.compilerRunner.ArgumentUtils
 import org.jetbrains.kotlin.config.CompilerSettings
+import org.jetbrains.kotlin.config.KotlinFacetSettings
 import org.jetbrains.kotlin.config.KotlinResourceRootType
 import org.jetbrains.kotlin.config.KotlinSourceRootType
 import org.jetbrains.kotlin.idea.configuration.ConfigureKotlinStatus
@@ -411,6 +412,21 @@ abstract class GradleImportingTestCase : ExternalSystemImportingTestCase() {
             }
         }.execute()
     }
+
+    protected fun facetSettings(moduleName: String) = kotlinFacet(moduleName)!!.configuration.settings
+
+    protected fun kotlinFacet(moduleName: String) =
+        KotlinFacet.get(getModule(moduleName))
+
+    protected fun getSourceRootInfos(moduleName: String): List<Pair<String, JpsModuleSourceRootType<*>>> {
+        return ModuleRootManager.getInstance(getModule(moduleName)).contentEntries.flatMap {
+            it.sourceFolders.map { it.url.replace(projectPath, "") to it.rootType }
+        }
+    }
+
+    protected val facetSettings: KotlinFacetSettings
+        get() = facetSettings("project_main")
+
 
     companion object {
         const val GRADLE_JDK_NAME = "Gradle JDK"

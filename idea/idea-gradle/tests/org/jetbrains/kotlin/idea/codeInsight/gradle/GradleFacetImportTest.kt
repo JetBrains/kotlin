@@ -16,47 +16,7 @@
 
 package org.jetbrains.kotlin.idea.codeInsight.gradle
 
-import com.intellij.openapi.application.Result
-import com.intellij.openapi.application.WriteAction
-import com.intellij.openapi.projectRoots.JavaSdk
-import com.intellij.openapi.projectRoots.ProjectJdkTable
-import com.intellij.openapi.roots.LibraryOrderEntry
-import com.intellij.openapi.roots.ModuleRootManager
-import com.intellij.openapi.roots.OrderRootType
-import com.intellij.openapi.roots.impl.libraries.LibraryEx
-import junit.framework.TestCase
-import org.jetbrains.jps.model.module.JpsModuleSourceRootType
-import org.jetbrains.kotlin.caches.resolve.KotlinCacheService
-import org.jetbrains.kotlin.config.KotlinFacetSettings
-import org.jetbrains.kotlin.idea.caches.project.productionSourceInfo
-import org.jetbrains.kotlin.idea.caches.project.testSourceInfo
-import org.jetbrains.kotlin.idea.compiler.configuration.KotlinCommonCompilerArgumentsHolder
-import org.jetbrains.kotlin.idea.facet.KotlinFacet
-import org.jetbrains.kotlin.idea.framework.JSLibraryKind
-import org.jetbrains.kotlin.idea.framework.KotlinSdkType
-import org.jetbrains.kotlin.idea.util.projectStructure.sdk
-import org.jetbrains.kotlin.js.resolve.JsPlatform
-import org.jetbrains.kotlin.resolve.TargetPlatform
-import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
-import org.junit.Assert
 import org.junit.Test
-
-internal fun GradleImportingTestCase.facetSettings(moduleName: String) = kotlinFacet(moduleName)!!.configuration.settings
-
-private fun GradleImportingTestCase.kotlinFacet(moduleName: String) =
-    KotlinFacet.get(getModule(moduleName))
-
-internal val GradleImportingTestCase.facetSettings: KotlinFacetSettings
-    get() = facetSettings("project_main")
-
-internal val GradleImportingTestCase.testFacetSettings: KotlinFacetSettings
-    get() = facetSettings("project_test")
-
-internal fun GradleImportingTestCase.getSourceRootInfos(moduleName: String): List<Pair<String, JpsModuleSourceRootType<*>>> {
-    return ModuleRootManager.getInstance(getModule(moduleName)).contentEntries.flatMap {
-        it.sourceFolders.map { it.url.replace(projectPath, "") to it.rootType }
-    }
-}
 
 class GradleFacetImportTest : GradleImportingTestCase() {
     private var isCreateEmptyContentRootDirectories = true
@@ -70,13 +30,6 @@ class GradleFacetImportTest : GradleImportingTestCase() {
     override fun tearDown() {
         currentExternalProjectSettings.isCreateEmptyContentRootDirectories = isCreateEmptyContentRootDirectories
         super.tearDown()
-    }
-
-    private fun assertKotlinSdk(vararg moduleNames: String) {
-        val sdks = moduleNames.map { getModule(it).sdk!! }
-        val refSdk = sdks.firstOrNull() ?: return
-        Assert.assertTrue(refSdk.sdkType is KotlinSdkType)
-        Assert.assertTrue(sdks.all { it === refSdk })
     }
 
     @Test
