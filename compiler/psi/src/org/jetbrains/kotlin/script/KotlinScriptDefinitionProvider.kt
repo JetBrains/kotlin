@@ -46,7 +46,7 @@ fun findScriptDefinition(file: VirtualFile, project: Project): KotlinScriptDefin
     if (file.isDirectory ||
         file.extension == KotlinFileType.EXTENSION ||
         file.extension == JavaClassFileType.INSTANCE.defaultExtension ||
-        !FileTypeRegistry.getInstance().isFileOfType(file, KotlinFileType.INSTANCE)
+        FileTypeRegistry.getInstance().getFileTypeByFileName(file.name) != KotlinFileType.INSTANCE
     ) {
         return null
     }
