@@ -47,12 +47,15 @@ abstract class AbstractAndroidSyntheticPropertyDescriptorTest : KtUsefulTestCase
                 ) as AndroidSyntheticPackageFragmentProvider
 
         val renderer = DescriptorRenderer.COMPACT_WITH_MODIFIERS
-        val expected = fragmentProvider.packageFragments.sortedBy { it.fqName.asString() }.map {
-            val descriptors = it.getMemberScope().getContributedDescriptors()
+        val expected = fragmentProvider.packages.values
+            .map { it() }
+            .sortedBy { it.fqName.asString() }
+            .joinToString(separator = "\n\n\n") {
+                val descriptors = it.getMemberScope().getContributedDescriptors()
                     .sortedWith(MemberComparator.INSTANCE)
                     .map { "    " + renderer.render(it) }.joinToString("\n")
-            it.fqName.asString() + (if (descriptors.isNotEmpty()) "\n\n" + descriptors else "")
-        }.joinToString("\n\n\n")
+                it.fqName.asString() + (if (descriptors.isNotEmpty()) "\n\n" + descriptors else "")
+            }
 
         KotlinTestUtils.assertEqualsToFile(File(path, "result.txt"), expected)
     }
