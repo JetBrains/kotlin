@@ -40,7 +40,8 @@ internal fun buildTypeParameterList(
     for ((i, ktParam) in declaration.typeParameters.withIndex()) {
         tpList.addParameter(object : LightTypeParameterBuilder(ktParam.name.orEmpty(), owner, i) {
             private val superList: LightReferenceListBuilder by lazyPub {
-                val boundList = LightReferenceListBuilder(manager, PsiReferenceList.Role.EXTENDS_BOUNDS_LIST)
+                val boundList =
+                    KotlinLightReferenceListBuilder(manager, PsiReferenceList.Role.EXTENDS_BOUNDS_LIST)
                 if (ktParam.extendsBound != null || declaration.typeConstraints.isNotEmpty()) {
                     val boundTypes = (ktParam.resolve() as? TypeParameterDescriptor)?.upperBounds.orEmpty()
                         .mapNotNull { it.asPsiType(ktParam, support, TypeMappingMode.DEFAULT, this) as? PsiClassType }
