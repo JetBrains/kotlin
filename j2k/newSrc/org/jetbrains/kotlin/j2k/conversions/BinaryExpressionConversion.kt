@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.j2k.tree.JKTreeElement
 import org.jetbrains.kotlin.j2k.tree.impl.JKBinaryExpressionImpl
 import org.jetbrains.kotlin.j2k.tree.impl.JKJavaOperatorImpl
 import org.jetbrains.kotlin.j2k.tree.impl.toKtToken
+import org.jetbrains.kotlin.j2k.kotlinBinaryExpression
 
 
 class BinaryExpressionConversion(private val context: ConversionContext) : RecursiveApplicableConversionBase() {
@@ -21,7 +22,7 @@ class BinaryExpressionConversion(private val context: ConversionContext) : Recur
         val left = recurse(element.left)
         val right = recurse(element.right)
         (element as? JKBranchElement)?.invalidate()
-        val ktBinaryExpression = JKBinaryExpressionImpl.createKotlinBinaryExpression(left, right, ktOperatorToken, context)
+        val ktBinaryExpression = kotlinBinaryExpression(left, right, ktOperatorToken, context)
             ?: return JKBinaryExpressionImpl(left, right, element.operator)
         return recurse(ktBinaryExpression)
     }
