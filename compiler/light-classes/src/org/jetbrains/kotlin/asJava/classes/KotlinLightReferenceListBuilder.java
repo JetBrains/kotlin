@@ -19,8 +19,8 @@ import java.util.List;
  */
 public class KotlinLightReferenceListBuilder extends LightReferenceListBuilder implements PsiReferenceList {
     private final List<PsiJavaCodeReferenceElement> myRefs = new ArrayList<>();
-    private PsiJavaCodeReferenceElement[] myCachedRefs;
-    private PsiClassType[] myCachedTypes;
+    private volatile PsiJavaCodeReferenceElement[] myCachedRefs;
+    private volatile PsiClassType[] myCachedTypes;
     private final Role myRole;
     private final PsiElementFactory myFactory;
 
@@ -57,34 +57,27 @@ public class KotlinLightReferenceListBuilder extends LightReferenceListBuilder i
     @NotNull
     @Override
     public PsiJavaCodeReferenceElement[] getReferenceElements() {
-        if (myCachedRefs == null) {
-            if (myRefs.isEmpty()) {
-                myCachedRefs = PsiJavaCodeReferenceElement.EMPTY_ARRAY;
-            }
-            else {
-                myCachedRefs = myRefs.toArray(PsiJavaCodeReferenceElement.EMPTY_ARRAY);
-            }
+        PsiJavaCodeReferenceElement[] refs = myCachedRefs;
+        if (refs == null) {
+            myCachedRefs = refs = myRefs.toArray(PsiJavaCodeReferenceElement.EMPTY_ARRAY);
         }
-        return myCachedRefs;
+        return refs;
     }
 
     @NotNull
     @Override
     public PsiClassType[] getReferencedTypes() {
-        if (myCachedTypes == null) {
-            if (myRefs.isEmpty()) {
-                myCachedTypes = PsiClassType.EMPTY_ARRAY;
+        PsiClassType[] types = myCachedTypes;
+        if (types == null) {
+            int size = myRefs.size();
+            types = size == 0 ? PsiClassType.EMPTY_ARRAY : new PsiClassType[size];
+            for (int i = 0; i < size; i++) {
+                types[i] = myFactory.createType(myRefs.get(i));
             }
-            else {
-                final int size = myRefs.size();
-                myCachedTypes = new PsiClassType[size];
-                for (int i = 0; i < size; i++) {
-                    myCachedTypes[i] = myFactory.createType(myRefs.get(i));
-                }
-            }
+            myCachedTypes = types;
         }
 
-        return myCachedTypes;
+        return types;
     }
 
     @Override
