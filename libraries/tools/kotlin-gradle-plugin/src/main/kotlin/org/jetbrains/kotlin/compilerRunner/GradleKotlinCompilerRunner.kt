@@ -102,7 +102,7 @@ internal open class GradleCompilerRunner(protected val project: Project) {
         environment: GradleCompilerEnvironment
     ) {
         args.freeArgs += kotlinSources.map { it.absolutePath }
-        return runCompiler(KotlinCompilerClass.METADATA, args, environment)
+        runCompiler(KotlinCompilerClass.METADATA, args, environment)
     }
 
     private fun runCompiler(
