@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.compilerRunner.OutputItemsCollectorImpl
 import org.jetbrains.kotlin.gradle.plugin.PLUGIN_CLASSPATH_CONFIGURATION_NAME
 import org.jetbrains.kotlin.gradle.tasks.CompilerPluginOptions
 import org.jetbrains.kotlin.gradle.tasks.GradleMessageCollector
-import org.jetbrains.kotlin.gradle.tasks.clearOutputDirectories
+import org.jetbrains.kotlin.gradle.tasks.localStateDirectories
 import org.jetbrains.kotlin.gradle.utils.toSortedPathsArray
 
 open class KaptWithKotlincTask : KaptTask(), CompilerArgumentAwareWithInput<K2JVMCompilerArguments> {
@@ -55,15 +55,14 @@ open class KaptWithKotlincTask : KaptTask(), CompilerArgumentAwareWithInput<K2JV
     fun compile() {
         logger.debug("Running kapt annotation processing using the Kotlin compiler")
 
-        /** Delete everything inside generated sources and classes output directory
-         * (annotation processing is not incremental) */
-        clearOutputDirectories()
-
         val args = prepareCompilerArguments()
 
         val messageCollector = GradleMessageCollector(GradleKotlinLogger(logger))
         val outputItemCollector = OutputItemsCollectorImpl()
-        val environment = GradleCompilerEnvironment(compilerClasspath, messageCollector, outputItemCollector)
+        val environment = GradleCompilerEnvironment(
+            compilerClasspath, messageCollector, outputItemCollector,
+            localStateDirectories = localStateDirectories()
+        )
         if (environment.toolsJar == null && !isAtLeastJava9) {
             throw GradleException("Could not find tools.jar in system classpath, which is required for kapt to work")
         }
