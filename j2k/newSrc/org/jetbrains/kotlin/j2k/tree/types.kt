@@ -22,11 +22,17 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 
 import org.jetbrains.kotlin.idea.caches.resolve.util.*
+import org.jetbrains.kotlin.load.java.structure.impl.JavaPrimitiveTypeImpl
 
 fun JKExpression.type(context: ConversionContext): JKType =
     when (this) {
         is JKLiteralExpression -> type.toJkType(context.symbolProvider)
-        is JKBinaryExpression -> (operator as JKKtOperatorImpl).methodSymbol.returnType
+        is JKBinaryExpression -> {
+            val operatorSymbol = (operator as JKKtOperatorImpl).methodSymbol
+            if (operatorSymbol.name == "compareTo") {
+                kotlinTypeByName("kotlin.Boolean", context.symbolProvider)
+            } else operatorSymbol.returnType
+        }
         is JKMethodCallExpression -> identifier.returnType
         is JKFieldAccessExpressionImpl -> identifier.fieldType
         is JKQualifiedExpressionImpl -> this.selector.type(context)
@@ -84,6 +90,8 @@ fun KtTypeElement.toJK(symbolProvider: JKSymbolProvider): JKType =
 fun JKType.toKtType(symbolProvider: JKSymbolProvider): KotlinType =
     when (this) {
         is JKClassType -> classReference!!.toKtType(symbolProvider)
+        is JKJavaPrimitiveType ->
+            kotlinTypeByName(jvmPrimitiveType.primitiveType.typeFqName.asString(), symbolProvider).toKtType(symbolProvider)
         else -> TODO(this::class.java.toString())
     }
 

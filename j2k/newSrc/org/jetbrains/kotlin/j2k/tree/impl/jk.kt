@@ -139,10 +139,13 @@ class JKBinaryExpressionImpl(
                     else ->
                         TODO(leftType::class.java.toString())
                 }
+            val operatorNames =
+                if(token.operatorName == "equals") listOf("equals", "compareTo")
+                else listOf(token.operatorName)
             return classSymbol.target.declarations// todo look for extensions
                 .asSequence()
                 .filterIsInstance<KtNamedFunction>()
-                .filter { it.name == token.operatorName }
+                .filter { it.name in operatorNames }
                 .mapNotNull { symbolProvider.provideDirectSymbol(it) as? JKMethodSymbol }
                 .firstOrNull { it.parameterTypes.singleOrNull()?.takeIf { it.isSubtypeOf(rightType, symbolProvider) } != null }!!
         }
