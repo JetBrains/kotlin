@@ -5,8 +5,16 @@
 
 package kotlin.collections
 
-expect abstract class AbstractMutableMap<K, V> : MutableMap<K, V> {
-
+/**
+ * Provides a skeletal implementation of the [MutableMap] interface.
+ *
+ * The implementor is required to implement [entries] property, which should return mutable set of map entries, and [put] function.
+ *
+ * @param K the type of map keys. The map is invariant on its key type.
+ * @param V the type of map values. The map is invariant on its value type.
+ */
+@SinceKotlin("1.3")
+public expect abstract class AbstractMutableMap<K, V> : MutableMap<K, V> {
     protected constructor()
 
     /**
@@ -18,4 +26,17 @@ expect abstract class AbstractMutableMap<K, V> : MutableMap<K, V> {
      * @return the previous value associated with the key, or `null` if the key was not present in the map.
      */
     abstract override fun put(key: K, value: V): V?
+
+    abstract override val entries: MutableSet<MutableMap.MutableEntry<K, V>>
+
+    override val keys: MutableSet<K>
+    override val size: Int
+    override val values: MutableCollection<V>
+    override fun clear()
+    override fun containsKey(key: K): Boolean
+    override fun containsValue(value: V): Boolean
+    override fun get(key: K): V?
+    override fun isEmpty(): Boolean
+    override fun putAll(from: Map<out K, V>)
+    override fun remove(key: K): V?
 }

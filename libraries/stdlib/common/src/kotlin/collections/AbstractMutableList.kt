@@ -5,7 +5,12 @@
 
 package kotlin.collections
 
-expect abstract class AbstractMutableList<E> : MutableList<E> {
+/**
+ * Provides a skeletal implementation of the [MutableList] interface.
+ *
+ * @param E the type of elements contained in the list. The list is invariant on its element type.
+ */
+public expect abstract class AbstractMutableList<E> : MutableList<E> {
     protected constructor()
 
     // From List
