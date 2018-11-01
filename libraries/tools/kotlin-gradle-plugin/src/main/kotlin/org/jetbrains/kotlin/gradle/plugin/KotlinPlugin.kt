@@ -559,7 +559,8 @@ internal open class Kotlin2JsPlugin(
 }
 
 internal open class KotlinAndroidPlugin(
-    private val kotlinPluginVersion: String
+    private val kotlinPluginVersion: String,
+    private val registry: ToolingModelBuilderRegistry
 ) : Plugin<Project> {
 
     override fun apply(project: Project) {
@@ -570,6 +571,7 @@ internal open class KotlinAndroidPlugin(
             project, androidTarget, tasksProvider,
             kotlinPluginVersion
         )
+        registry.register(KotlinModelBuilder(kotlinPluginVersion))
     }
 
     companion object {
@@ -733,7 +735,7 @@ abstract class AbstractAndroidProjectHandler<V>(private val kotlinConfigurationT
         kotlinTask.destinationDir = File(project.buildDir, "tmp/kotlin-classes/$variantDataName")
         kotlinTask.description = "Compiles the $variantDataName kotlin."
 
-        // Register the source only after the task is created, because tne task is required for that:
+        // Register the source only after the task is created, because the task is required for that:
         compilation.source(defaultSourceSet)
         configureSources(kotlinTask, variantData, compilation)
 
