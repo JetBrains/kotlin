@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.daemon.client.CompileServiceSession
 import org.jetbrains.kotlin.daemon.common.*
 import org.jetbrains.kotlin.gradle.plugin.kotlinDebug
 import org.jetbrains.kotlin.gradle.tasks.*
-import org.jetbrains.kotlin.gradle.utils.SerializableOptional
 import org.jetbrains.kotlin.gradle.utils.newTmpFile
 import org.jetbrains.kotlin.gradle.utils.relativeToRoot
 import org.jetbrains.kotlin.incremental.*
@@ -117,23 +116,23 @@ internal open class GradleCompilerRunner(protected val project: Project) {
             )
             compilerArgs.version = false
         }
-        compileWithDaemonOrFallback(compilerClassName, compilerArgs, environment)
-    }
-
-    protected open fun compileWithDaemonOrFallback(
-        compilerClassName: String,
-        compilerArgs: CommonCompilerArguments,
-        environment: GradleCompilerEnvironment
-    ) {
-        val kotlinCompilerRunnable = KotlinCompilerRunnable(
+        val argsArray = ArgumentUtils.convertArgumentsToStringList(compilerArgs).toTypedArray()
+        val incrementalCompilationEnvironment = environment.incrementalCompilationEnvironment
+        val modulesInfo = incrementalCompilationEnvironment?.let { buildModulesInfo(project.gradle) }
+        val workArgs = GradleKotlinCompilerWorkArguments(
             projectFiles = ProjectFilesForCompilation(project),
             compilerFullClasspath = environment.compilerFullClasspath,
             compilerClassName = compilerClassName,
-            compilerArgs = ArgumentUtils.convertArgumentsToStringList(compilerArgs).toTypedArray(),
+            compilerArgs = argsArray,
             isVerbose = compilerArgs.verbose,
-            incrementalCompilationEnvironment = SerializableOptional(environment.incrementalCompilationEnvironment),
-            incrementalModuleInfo = SerializableOptional(buildModulesInfo(project.gradle))
+            incrementalCompilationEnvironment = incrementalCompilationEnvironment,
+            incrementalModuleInfo = modulesInfo
         )
+        compileWithDaemonOrFallback(workArgs)
+    }
+
+    protected open fun compileWithDaemonOrFallback(workArgs: GradleKotlinCompilerWorkArguments) {
+        val kotlinCompilerRunnable = GradleKotlinCompilerWork(workArgs)
         kotlinCompilerRunnable.run()
     }
 

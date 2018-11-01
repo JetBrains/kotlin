@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.daemon.common.*
 import org.jetbrains.kotlin.gradle.plugin.kotlinDebug
 import org.jetbrains.kotlin.gradle.tasks.GradleMessageCollector
 import org.jetbrains.kotlin.gradle.tasks.throwGradleExceptionIfError
-import org.jetbrains.kotlin.gradle.utils.SerializableOptional
 import org.jetbrains.kotlin.incremental.ChangedFiles
 import org.slf4j.LoggerFactory
 import java.io.ByteArrayOutputStream
@@ -43,21 +42,46 @@ internal class ProjectFilesForCompilation(
     }
 }
 
-internal class KotlinCompilerRunnable @Inject constructor(
-    private val projectFiles: ProjectFilesForCompilation,
-    private val compilerFullClasspath: List<File>,
-    private val compilerClassName: String,
-    private val compilerArgs: Array<String>,
-    private val isVerbose: Boolean,
-    private val incrementalCompilationEnvironment: SerializableOptional<IncrementalCompilationEnvironment>,
-    private val incrementalModuleInfo: SerializableOptional<IncrementalModuleInfo>
+internal class GradleKotlinCompilerWorkArguments(
+    val projectFiles: ProjectFilesForCompilation,
+    val compilerFullClasspath: List<File>,
+    val compilerClassName: String,
+    val compilerArgs: Array<String>,
+    val isVerbose: Boolean,
+    val incrementalCompilationEnvironment: IncrementalCompilationEnvironment?,
+    val incrementalModuleInfo: IncrementalModuleInfo?
+) : Serializable {
+    companion object {
+        const val serialVersionUID: Long = 0
+    }
+}
+
+internal class GradleKotlinCompilerWork @Inject constructor(
+    /**
+     * Arguments are passed through [GradleKotlinCompilerWorkArguments],
+     * because Gradle Workers API does not support nullable arguments (https://github.com/gradle/gradle/issues/2405),
+     * and because Workers API does not support named arguments,
+     * which are useful when there are many arguments with the same type
+     * (to protect against parameters reordering bugs)
+     */
+    config: GradleKotlinCompilerWorkArguments
 ) : Runnable {
+    private val projectRootFile = config.projectFiles.projectRootFile
+    private val clientIsAliveFlagFile = config.projectFiles.clientIsAliveFlagFile
+    private val sessionFlagFile = config.projectFiles.sessionFlagFile
+    private val compilerFullClasspath = config.compilerFullClasspath
+    private val compilerClassName = config.compilerClassName
+    private val compilerArgs = config.compilerArgs
+    private val isVerbose = config.isVerbose
+    private val incrementalCompilationEnvironment = config.incrementalCompilationEnvironment
+    private val incrementalModuleInfo = config.incrementalModuleInfo
+
     private val log: KotlinLogger =
-        SL4JKotlinLogger(LoggerFactory.getLogger("KotlinCompilerRunnable"))
+        SL4JKotlinLogger(LoggerFactory.getLogger("GradleKotlinCompilerWork"))
     private val messageCollector = GradleMessageCollector(log)
 
     private val isIncremental: Boolean
-        get() = incrementalCompilationEnvironment.value != null
+        get() = incrementalCompilationEnvironment != null
 
     override fun run() {
         val exitCode = compileWithDaemonOrFallbackImpl()
@@ -66,8 +90,8 @@ internal class KotlinCompilerRunnable @Inject constructor(
 
     private fun compileWithDaemonOrFallbackImpl(): ExitCode {
         with(log) {
-            kotlinDebug { "Kotlin compiler class: $compilerClassName" }
-            kotlinDebug { "Kotlin compiler classpath: ${compilerFullClasspath.map { it.canonicalPath }.joinToString()}" }
+            kotlinDebug { "Kotlin compiler class: ${compilerClassName}" }
+            kotlinDebug { "Kotlin compiler classpath: ${compilerFullClasspath.joinToString { it.canonicalPath }}" }
             kotlinDebug { "Kotlin compiler args: ${compilerArgs.joinToString(" ")}" }
         }
 
@@ -94,8 +118,8 @@ internal class KotlinCompilerRunnable @Inject constructor(
         val connection =
             try {
                 GradleCompilerRunner.getDaemonConnectionImpl(
-                    projectFiles.clientIsAliveFlagFile,
-                    projectFiles.sessionFlagFile,
+                    clientIsAliveFlagFile,
+                    sessionFlagFile,
                     compilerFullClasspath,
                     messageCollector,
                     log.isDebugEnabled
@@ -166,7 +190,7 @@ internal class KotlinCompilerRunnable @Inject constructor(
         sessionId: Int,
         targetPlatform: CompileService.TargetPlatform
     ): CompileService.CallResult<Int> {
-        val icEnv = incrementalCompilationEnvironment.value ?: error("incrementalCompilationEnvironment is null!")
+        val icEnv = incrementalCompilationEnvironment ?: error("incrementalCompilationEnvironment is null!")
         val knownChangedFiles = icEnv.changedFiles as? ChangedFiles.Known
 
         val compilationOptions = IncrementalCompilationOptions(
@@ -182,12 +206,12 @@ internal class KotlinCompilerRunnable @Inject constructor(
             usePreciseJavaTracking = icEnv.usePreciseJavaTracking,
             localStateDirs = icEnv.localStateDirs,
             multiModuleICSettings = icEnv.multiModuleICSettings,
-            modulesInfo = incrementalModuleInfo.value!!
+            modulesInfo = incrementalModuleInfo!!
         )
 
         log.info("Options for KOTLIN DAEMON: $compilationOptions")
         val servicesFacade = GradleIncrementalCompilerServicesFacadeImpl(log, messageCollector)
-        val compilationResults = GradleCompilationResults(log, projectFiles.projectRootFile)
+        val compilationResults = GradleCompilationResults(log, projectRootFile)
         return daemon.compile(sessionId, compilerArgs, compilationOptions, servicesFacade, compilationResults)
     }
 
