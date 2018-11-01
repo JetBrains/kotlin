@@ -79,7 +79,7 @@ interface JKKtInitDeclaration : JKDeclaration {
 }
 
 interface JKKtForInStatement : JKStatement {
-    var variableIdentifier: JKNameIdentifier
+    var declaration: JKDeclaration
     var iterationExpression: JKExpression
     var body: JKStatement
 }

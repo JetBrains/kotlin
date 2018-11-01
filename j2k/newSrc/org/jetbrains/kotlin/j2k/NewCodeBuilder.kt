@@ -47,7 +47,7 @@ class NewCodeBuilder {
 
         override fun visitKtForInStatement(ktForInStatement: JKKtForInStatement) {
             printer.printWithNoIndent("for (")
-            printer.printWithNoIndent(ktForInStatement.variableIdentifier.value)
+            ktForInStatement.declaration.accept(this)
             printer.printWithNoIndent(" in ")
             ktForInStatement.iterationExpression.accept(this)
             printer.printWithNoIndent(") ")
@@ -190,7 +190,6 @@ class NewCodeBuilder {
                 printer.printWithNoIndent(" = ")
                 ktProperty.initializer.accept(this)
             }
-            printer.printlnWithNoIndent()
         }
 
         override fun visitKtInitDeclaration(ktInitDeclaration: JKKtInitDeclaration) {
@@ -369,6 +368,7 @@ class NewCodeBuilder {
         override fun visitDeclarationStatement(declarationStatement: JKDeclarationStatement) {
             declarationStatement.declaredStatements.forEach {
                 it.accept(this)
+                printer.printlnWithNoIndent()
             }
         }
 
@@ -386,14 +386,16 @@ class NewCodeBuilder {
         }
 
         override fun visitLocalVariable(localVariable: JKLocalVariable) {
-            if (localVariable.modifierList.modality == JKModalityModifier.Modality.FINAL) {
-                printer.print("val")
-            } else {
-                printer.print("var")
+            if (localVariable.parent !is JKKtForInStatement) {
+                if (localVariable.modifierList.modality == JKModalityModifier.Modality.FINAL) {
+                    printer.print("val")
+                } else {
+                    printer.print("var")
+                }
             }
 
             printer.printWithNoIndent(" ", localVariable.name.value)
-            if (localVariable.type.type != JKContextType) {
+            if (localVariable.type.type != JKContextType && localVariable.type.type !is JKNoTypeImpl) {
                 printer.printWithNoIndent(": ")
                 localVariable.type.accept(this)
             }
@@ -401,7 +403,6 @@ class NewCodeBuilder {
                 printer.printWithNoIndent(" = ")
                 localVariable.initializer.accept(this)
             }
-            printer.printlnWithNoIndent()
         }
 
         override fun visitKtConvertedFromForLoopSyntheticWhileStatement(
@@ -413,6 +414,7 @@ class NewCodeBuilder {
         }
 
         private fun renderType(type: JKType) {
+            if (type is JKNoTypeImpl) return
             when (type) {
                 is JKClassType -> type.classReference.fqName?.let { printer.printWithNoIndent(FqName(it).shortName().asString()) }
                 is JKUnresolvedClassType -> printer.printWithNoIndent(type.name)

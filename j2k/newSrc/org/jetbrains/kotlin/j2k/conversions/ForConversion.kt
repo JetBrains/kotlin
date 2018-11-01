@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.j2k.conversions
 
 import com.intellij.psi.*
 import org.jetbrains.kotlin.j2k.*
+import org.jetbrains.kotlin.j2k.ast.Mutability
 import org.jetbrains.kotlin.j2k.tree.*
 import org.jetbrains.kotlin.j2k.tree.impl.*
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -118,8 +119,15 @@ class ForConversion(private val context: ConversionContext) : RecursiveApplicabl
 //            val explicitType = if (context.converter.settings.specifyLocalVariableTypeByDefault)
 //                JKJavaPrimitiveTypeImpl.INT
 //            else null
+            val loopVarDeclaration =
+                JKLocalVariableImpl(
+                    JKModifierListImpl(JKModalityModifierImpl(JKModalityModifier.Modality.FINAL)),
+                    JKTypeElementImpl(JKNoTypeImpl),
+                    loopVar::name.detached(),
+                    JKStubExpressionImpl()
+                )
             return JKKtForInStatementImpl(
-                loopVar::name.detached(),
+                loopVarDeclaration,
                 range,
                 loopStatement::body.detached()
             )

@@ -234,10 +234,9 @@ fun JKClass.getOrCreateInitDeclaration(): JKKtInitDeclaration {
     return newDeclaration
 }
 
-class JKKtForInStatementImpl(variableIdentifier: JKNameIdentifier, iterationExpression: JKExpression, body: JKStatement) :
-    JKKtForInStatement,
-    JKBranchElementBase() {
-    override var variableIdentifier: JKNameIdentifier by child(variableIdentifier)
+class JKKtForInStatementImpl(declaration: JKDeclaration, iterationExpression: JKExpression, body: JKStatement) :
+    JKKtForInStatement, JKBranchElementBase() {
+    override var declaration: JKDeclaration by child(declaration)
     override var iterationExpression: JKExpression by child(iterationExpression)
     override var body: JKStatement by child(body)
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitKtForInStatement(this, data)
