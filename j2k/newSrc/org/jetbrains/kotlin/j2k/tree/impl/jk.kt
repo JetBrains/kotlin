@@ -434,6 +434,10 @@ class JKLabeledStatementImpl(statement: JKStatement, labels: List<JKNameIdentifi
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitLabeledStatement(this, data)
 }
 
+class JKEmptyStatementImpl: JKEmptyStatement, JKElementBase() , PsiOwner by PsiOwnerImpl() {
+    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitEmptyStatement(this, data)
+}
+
 class PsiOwnerImpl(override var psi: PsiElement? = null) : PsiOwner
 
 val JKElement.psi: PsiElement?
@@ -441,3 +445,4 @@ val JKElement.psi: PsiElement?
 
 fun <Elem : PsiElement>JKElement.psi(): Elem? =
     (this as? PsiOwner)?.psi as? Elem
+

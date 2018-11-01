@@ -272,3 +272,5 @@ interface JKLabeledStatement : JKStatement {
     var statement: JKStatement
     val labels: List<JKNameIdentifier>
 }
+
+interface JKEmptyStatement : JKStatement

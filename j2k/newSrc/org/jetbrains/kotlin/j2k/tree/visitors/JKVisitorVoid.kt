@@ -115,6 +115,8 @@ interface JKVisitorVoid : JKVisitor<Unit, Nothing?> {
     override fun visitContinueStatement(continueStatement: JKContinueStatement, data: Nothing?) = visitContinueStatement(continueStatement)
     fun visitLabeledStatement(labeledStatement: JKLabeledStatement) = visitStatement(labeledStatement, null)
     override fun visitLabeledStatement(labeledStatement: JKLabeledStatement, data: Nothing?) = visitLabeledStatement(labeledStatement)
+    fun visitEmptyStatement(emptyStatement: JKEmptyStatement) = visitStatement(emptyStatement, null)
+    override fun visitEmptyStatement(emptyStatement: JKEmptyStatement, data: Nothing?) = visitEmptyStatement(emptyStatement)
     fun visitJavaField(javaField: JKJavaField) = visitField(javaField, null)
     override fun visitJavaField(javaField: JKJavaField, data: Nothing?) = visitJavaField(javaField)
     fun visitJavaMethod(javaMethod: JKJavaMethod) = visitMethod(javaMethod, null)

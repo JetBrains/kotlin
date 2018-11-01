@@ -59,6 +59,7 @@ interface JKVisitor<out R, in D> {
     fun visitLabelText(labelText: JKLabelText, data: D): R = visitLabel(labelText, data)
     fun visitContinueStatement(continueStatement: JKContinueStatement, data: D): R = visitStatement(continueStatement, data)
     fun visitLabeledStatement(labeledStatement: JKLabeledStatement, data: D): R = visitStatement(labeledStatement, data)
+    fun visitEmptyStatement(emptyStatement: JKEmptyStatement, data: D): R = visitStatement(emptyStatement, data)
     fun visitJavaField(javaField: JKJavaField, data: D): R = visitField(javaField, data)
     fun visitJavaMethod(javaMethod: JKJavaMethod, data: D): R = visitMethod(javaMethod, data)
     fun visitJavaMethodCallExpression(javaMethodCallExpression: JKJavaMethodCallExpression, data: D): R = visitMethodCallExpression(javaMethodCallExpression, data)
