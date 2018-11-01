@@ -68,7 +68,7 @@ class KotlinAndroidGradleMPPModuleDataService : AbstractProjectDataService<Modul
             val module = modelsProvider.findIdeModule(moduleData) ?: continue
             val shouldCreateEmptySourceRoots = shouldCreateEmptySourceRoots(nodeToImport, module)
             val rootModel = modelsProvider.getModifiableRootModel(module)
-            val kotlinAndroidSourceSets = nodeToImport.kotlinAndroidSourceSets ?: continue
+            val kotlinAndroidSourceSets = nodeToImport.kotlinAndroidSourceSets ?: emptyList()
             for (sourceSetInfo in kotlinAndroidSourceSets) {
                 val compilation = sourceSetInfo.kotlinModule as? KotlinCompilation ?: continue
                 for (sourceSet in compilation.sourceSets) {
@@ -82,6 +82,11 @@ class KotlinAndroidGradleMPPModuleDataService : AbstractProjectDataService<Modul
             }
             addExtraDependeeModules(nodeToImport, projectNode, modelsProvider, rootModel, false)
             addExtraDependeeModules(nodeToImport, projectNode, modelsProvider, rootModel, true)
+
+            if (nodeToImport.kotlinAndroidSourceSets == null) {
+                continue
+            }
+
             val androidModel = getAndroidModuleModel(nodeToImport) ?: continue
             val variantName = androidModel.selectedVariant.name
             val activeSourceSetInfos = nodeToImport.kotlinAndroidSourceSets?.filter { it.kotlinModule.name.startsWith(variantName) } ?: emptyList()
