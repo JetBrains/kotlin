@@ -199,8 +199,11 @@ class KtUltraLightClass(classOrObject: KtClassOrObject, private val support: Ult
 
         val visibility = when {
             property.hasModifier(PRIVATE_KEYWORD) -> PsiModifier.PRIVATE
-            property.hasModifier(PROTECTED_KEYWORD) && property.hasModifier(LATEINIT_KEYWORD) -> PsiModifier.PROTECTED
-            property.hasModifier(CONST_KEYWORD) || (property.hasModifier(LATEINIT_KEYWORD) && property.setter == null) -> PsiModifier.PUBLIC
+            property.hasModifier(LATEINIT_KEYWORD) -> {
+                val declaration = property.setter ?: property
+                simpleVisibility(declaration)
+            }
+            property.hasModifier(CONST_KEYWORD) -> PsiModifier.PUBLIC
             else -> PsiModifier.PRIVATE
         }
         val modifiers = hashSetOf(visibility)

@@ -104,6 +104,11 @@ public class UltraLightClassLoadingTestGenerated extends AbstractUltraLightClass
         runTest("compiler/testData/asJava/ultraLightClasses/jvmOverloads.kt");
     }
 
+    @TestMetadata("lateinitProperty.kt")
+    public void testLateinitProperty() throws Exception {
+        runTest("compiler/testData/asJava/ultraLightClasses/lateinitProperty.kt");
+    }
+
     @TestMetadata("objects.kt")
     public void testObjects() throws Exception {
         runTest("compiler/testData/asJava/ultraLightClasses/objects.kt");
