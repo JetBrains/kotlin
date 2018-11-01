@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 
 /**
  * [ToolingModelBuilder] for [KotlinProject] models.
- * This model builder is registered for base Kotlin JVM, Kotlin JS and Kotlin Common plugins.
+ * This model builder is registered for base Kotlin JVM (including Android), Kotlin JS and Kotlin Common plugins.
  */
 class KotlinModelBuilder(private val kotlinPluginVersion: String) : ToolingModelBuilder {
 
@@ -42,7 +42,9 @@ class KotlinModelBuilder(private val kotlinPluginVersion: String) : ToolingModel
                 project.name,
                 kotlinPluginVersion,
                 projectType,
-                kotlinCompileTasks.mapNotNull { it.createSourceSet(project, projectType) },
+                kotlinCompileTasks.mapNotNull {
+                    if (project.isAndroid()) it.createAndroidSourceSet() else it.createSourceSet(project, projectType)
+                },
                 getExpectedByDependencies(project),
                 kotlinCompileTasks.first()!!.createExperimentalFeatures()
             )
@@ -51,9 +53,14 @@ class KotlinModelBuilder(private val kotlinPluginVersion: String) : ToolingModel
     }
 
     companion object {
+        private fun Project.isAndroid(): Boolean {
+            return project.plugins.hasPlugin("kotlin-android")
+        }
 
         private fun getProjectType(project: Project): KotlinProject.ProjectType {
-            return if (project.plugins.hasPlugin("kotlin") || project.plugins.hasPlugin("kotlin-platform-jvm")) {
+            return if (project.plugins.hasPlugin("kotlin") || project.plugins.hasPlugin("kotlin-platform-jvm") ||
+                project.isAndroid()
+            ) {
                 KotlinProject.ProjectType.PLATFORM_JVM
             } else if (project.plugins.hasPlugin("kotlin2js") || project.plugins.hasPlugin("kotlin-platform-js")) {
                 KotlinProject.ProjectType.PLATFORM_JS
@@ -89,6 +96,24 @@ class KotlinModelBuilder(private val kotlinPluginVersion: String) : ToolingModel
                     createCompilerArguments()
                 )
             } else null
+        }
+
+        /**
+         * The [SourceSet] returned by this method is not intended to be complete, most of the information here is exposed by the
+         * Android Gradle plugin and as such is not populated here. The important information here that is required by
+         * Android Studio are the [CompilerArguments].
+         */
+        private fun AbstractKotlinCompile<*>.createAndroidSourceSet(): SourceSet {
+            return SourceSetImpl(
+                sourceSetName,
+                if (sourceSetName.contains("test", true)) SourceSet.SourceSetType.TEST else SourceSet.SourceSetType.PRODUCTION,
+                findFriendSourceSets(),
+                emptyList(), // Obtained from the Android model
+                emptyList(), // Obtained from the Android model
+                destinationDir,
+                destinationDir, // Obtained from the Android model
+                createCompilerArguments()
+            )
         }
 
         private fun AbstractKotlinCompile<*>.findFriendSourceSets(): Collection<String> {

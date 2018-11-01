@@ -7,14 +7,23 @@ package org.jetbrains.kotlin.gradle.model
 
 import org.jetbrains.kotlin.gradle.BaseGradleIT
 import org.jetbrains.kotlin.gradle.GradleVersionRequired
+import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.junit.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
+import kotlin.test.assertNotEquals
 import kotlin.test.assertTrue
 
 class KotlinProjectIT : BaseGradleIT() {
     override val defaultGradleVersion: GradleVersionRequired
-        get() = GradleVersionRequired.AtLeast("4.0")
+        get() = GradleVersionRequired.AtLeast("4.1")
+
+    override fun defaultBuildOptions(): BuildOptions {
+        return super.defaultBuildOptions().copy(
+            androidGradlePluginVersion = "3.0.0",
+            androidHome = KotlinTestUtils.findAndroidSdk()
+        )
+    }
 
     @Test
     fun testKotlinProject() {
@@ -25,7 +34,8 @@ class KotlinProjectIT : BaseGradleIT() {
             "kotlinProject",
             defaultBuildOptions().kotlinVersion,
             KotlinProject.ProjectType.PLATFORM_JVM,
-            "DEFAULT")
+            "DEFAULT"
+        )
         assertTrue(kotlinProject.expectedByDependencies.isEmpty())
 
         assertEquals(2, kotlinProject.sourceSets.size)
@@ -118,6 +128,39 @@ class KotlinProjectIT : BaseGradleIT() {
         assertTrue(testJsSourceSet.resourcesDirectories.contains(project.projectDir.resolve("libJs/src/test/resources")))
         assertEquals(project.projectDir.resolve("libJs/build/classes/kotlin/test"), testJsSourceSet.classesOutputDirectory)
         assertEquals(project.projectDir.resolve("libJs/build/resources/test"), testJsSourceSet.resourcesOutputDirectory)
+    }
+
+    @Test
+    fun testAndroidProject() {
+        val project = Project("AndroidExtensionsProject")
+        val kotlinProject = project.getModels(KotlinProject::class.java).getModel(":app")!!
+
+        kotlinProject.assertBasics(
+            "app",
+            defaultBuildOptions().kotlinVersion,
+            KotlinProject.ProjectType.PLATFORM_JVM,
+            "DEFAULT"
+        )
+
+        val expectedSourceSetNames = listOf("release", "debug", "releaseUnitTest", "debugUnitTest", "debugAndroidTest")
+        assertTrue(kotlinProject.expectedByDependencies.isEmpty())
+        assertEquals(5, kotlinProject.sourceSets.size)
+
+        fun verifySourceSet(sourceSet: SourceSet) {
+            // These are unused in Android projects so will be empty.
+            assertEquals(0, sourceSet.sourceDirectories.size)
+            assertEquals(0, sourceSet.resourcesDirectories.size)
+            assertEquals(project.projectDir.resolve("build/tmp/kotlin-classes/${sourceSet.name}"), sourceSet.classesOutputDirectory)
+            // This value is just a placeholder since this information is obtained from the Android Plugin models.
+            assertEquals(project.projectDir.resolve("build/tmp/kotlin-classes/${sourceSet.name}"), sourceSet.resourcesOutputDirectory)
+            assertNotEquals(0, sourceSet.compilerArguments.currentArguments.size)
+            assertNotEquals(0, sourceSet.compilerArguments.defaultArguments.size)
+        }
+
+        assertEquals(0, kotlinProject.sourceSets.filter {
+            verifySourceSet(it)
+            expectedSourceSetNames.contains(it.name)
+        }.size)
     }
 
     @Test
