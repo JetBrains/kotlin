@@ -1,20 +1,40 @@
 plugins {
-    id 'kotlin-multiplatform' version '1.3.0-rc-190'
+    id 'kotlin-multiplatform' version '1.3.0'
 }
+
 repositories {
-    maven { url 'http://dl.bintray.com/kotlin/kotlin-eap' }
     mavenCentral()
 }
+
 kotlin {
     targets {
+        // For ARM, preset should be changed to presets.iosArm32 or presets.iosArm64
+        // For Linux, preset should be changed to e.g. presets.linuxX64
+        // For MacOS, preset should be changed to e.g. presets.macosX64
         fromPreset(presets.{% platform %}, 'HelloWorld')
 
         configure([HelloWorld]) {
-            compilations.main.outputKinds('EXECUTABLE')
+            // Comment to generate Kotlin/Native library (KLIB) instead of executable file:
+            compilations.main.outputKinds 'EXECUTABLE'
+            // Change to specify fully qualified name of your application's entry point:
+            compilations.main.entryPoint 'sample.helloworld.main'
         }
     }
+
     sourceSets {
         HelloWorldMain {
+        }
+        HelloWorldTest {
+        }
+    }
+}
+
+task runProgram {
+    def buildType = 'RELEASE' // Change to 'DEBUG' to run application with debug symbols.
+    dependsOn kotlin.targets.HelloWorld.compilations.main.linkTaskName('EXECUTABLE', buildType)
+    doLast {
+        exec {
+            executable kotlin.targets.HelloWorld.compilations.main.getBinary('EXECUTABLE', buildType)
         }
     }
 }

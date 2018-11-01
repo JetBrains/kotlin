@@ -1,6 +1,6 @@
 //IDE main file
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
+ * Copyright 2010-2018 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,6 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+package sample.csvparser
 
 import kotlinx.cinterop.*
 import platform.posix.*
@@ -41,7 +43,7 @@ fun parseLine(line: String, separator: Char) : List<String> {
 
 fun main(args: Array<String>) {
     if (args.size != 3) {
-        println("usage: csvparser.kexe file.csv column count")
+        println("Usage: csvparser.kexe <file.csv> <column> <count>")
         return
     }
     val fileName = args[0]

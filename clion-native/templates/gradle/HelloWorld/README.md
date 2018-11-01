@@ -2,6 +2,7 @@
 
 A basic "Hello, World" in Kotlin/Native and Gradle.
 
-To run use `./gradlew run` command.
-
-
+Use the following Gradle commands
+* to build: `./gradlew assemble`
+* to test: `./gradlew check`
+* to run:  `./gradlew runProgram`

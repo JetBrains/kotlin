@@ -1,20 +1,35 @@
 plugins {
-    id 'kotlin-multiplatform' version '1.3.0-rc-190'
+    id 'kotlin-multiplatform' version '1.3.0'
 }
+
 repositories {
-    maven { url 'http://dl.bintray.com/kotlin/kotlin-eap' }
     mavenCentral()
 }
+
 kotlin {
     targets {
-        fromPreset(presets.{% platform %}, 'CSVParser')
-
-        configure([CSVParser]) {
-            compilations.main.outputKinds('EXECUTABLE')
+        // For ARM, preset should be changed to presets.iosArm32 or presets.iosArm64
+        // For Linux, preset should be changed to e.g. presets.linuxX64
+        // For MacOS, preset should be changed to e.g. presets.macosX64
+        fromPreset(presets.{% platform %}, 'CSVParser') {
+            compilations.main.outputKinds 'EXECUTABLE'
+            compilations.main.entryPoint 'sample.csvparser.main'
         }
     }
+
     sourceSets {
         CSVParserMain {
+        }
+    }
+}
+
+task runProgram {
+    def buildType = 'RELEASE' // Change to 'DEBUG' to run application with debug symbols.
+    dependsOn kotlin.targets.CSVParser.compilations.main.linkTaskName('EXECUTABLE', buildType)
+    doLast {
+        exec {
+            executable kotlin.targets.CSVParser.compilations.main.getBinary('EXECUTABLE', buildType)
+            args './European_Mammals_Red_List_Nov_2009.csv', '4', '100'
         }
     }
 }
