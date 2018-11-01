@@ -26,7 +26,6 @@ import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.roots.ModifiableModelsProvider
 import com.intellij.openapi.roots.ModifiableRootModel
 import org.jetbrains.kotlin.idea.KotlinIcons
-import org.jetbrains.kotlin.idea.core.platform.impl.CommonIdePlatformKindTooling.MAVEN_COMMON_STDLIB_ID
 import org.jetbrains.kotlin.idea.formatter.KotlinStyleGuideCodeStyle
 import org.jetbrains.kotlin.idea.formatter.ProjectCodeStyleImporter
 import org.jetbrains.kotlin.idea.versions.*
@@ -203,23 +202,6 @@ open class GradleKotlinJSFrameworkSupportProvider(
     override fun getDescription() = "A Kotlin library or application targeting JavaScript"
 }
 
-open class GradleKotlinMPPCommonFrameworkSupportProvider :
-    GradleKotlinFrameworkSupportProvider("KOTLIN_MPP_COMMON", "Kotlin (Multiplatform Common - Experimental)", KotlinIcons.MPP) {
-    override fun getPluginId() = "kotlin-platform-common"
-    override fun getPluginExpression() = "id 'kotlin-platform-common'"
-
-    override fun getDependencies(sdk: Sdk?) = listOf(MAVEN_COMMON_STDLIB_ID)
-    override fun getTestDependencies() = listOf(MAVEN_COMMON_TEST_ID, MAVEN_COMMON_TEST_ANNOTATIONS_ID)
-
-    override fun updateSettingsScript(settingsBuilder: SettingsScriptBuilder, specifyPluginVersionIfNeeded: Boolean) {
-        if (specifyPluginVersionIfNeeded) {
-            settingsBuilder.addResolutionStrategy("kotlin-platform-common")
-        }
-    }
-
-    override fun getDescription() = "Shared code for a Kotlin multiplatform project (targeting JVM and JS)"
-}
-
 class GradleKotlinMPPFrameworkSupportProvider : GradleKotlinFrameworkSupportProvider(
     "KOTLIN_MPP", "Kotlin (Multiplatform - Experimental)", KotlinIcons.MPP
 ) {
@@ -238,48 +220,3 @@ class GradleKotlinMPPFrameworkSupportProvider : GradleKotlinFrameworkSupportProv
     override fun getDescription() = "Kotlin multiplatform code"
 }
 
-class GradleKotlinMPPJavaFrameworkSupportProvider
-    : GradleKotlinJavaFrameworkSupportProvider("KOTLIN_MPP_JVM", "Kotlin (Multiplatform JVM - Experimental)") {
-
-    override fun getPluginId() = "kotlin-platform-jvm"
-    override fun getPluginExpression() = "id 'kotlin-platform-jvm'"
-
-    override fun getDescription() = "JVM-specific code for a Kotlin multiplatform project"
-    override fun getTestDependencies() = listOf(MAVEN_TEST_ID, MAVEN_TEST_JUNIT_ID, "junit:junit:4.12")
-
-    override fun addSupport(
-        buildScriptData: BuildScriptDataBuilder,
-        module: Module,
-        sdk: Sdk?,
-        specifyPluginVersionIfNeeded: Boolean,
-        explicitPluginVersion: String?
-    ) {
-        super.addSupport(buildScriptData, module, sdk, specifyPluginVersionIfNeeded, explicitPluginVersion)
-        val jvmTarget = getDefaultJvmTarget(sdk, bundledRuntimeVersion())
-        if (jvmTarget != null) {
-            val description = jvmTarget.description
-            buildScriptData.addOther("sourceCompatibility = \"$description\"\n\n")
-        }
-    }
-
-    override fun updateSettingsScript(settingsBuilder: SettingsScriptBuilder, specifyPluginVersionIfNeeded: Boolean) {
-        if (specifyPluginVersionIfNeeded) {
-            settingsBuilder.addResolutionStrategy("kotlin-platform-jvm")
-        }
-    }
-}
-
-class GradleKotlinMPPJSFrameworkSupportProvider
-    : GradleKotlinJSFrameworkSupportProvider("KOTLIN_MPP_JS", "Kotlin (Multiplatform JS - Experimental)") {
-
-    override fun getPluginId() = "kotlin-platform-js"
-    override fun getPluginExpression() = "id 'kotlin-platform-js'"
-
-    override fun updateSettingsScript(settingsBuilder: SettingsScriptBuilder, specifyPluginVersionIfNeeded: Boolean) {
-        if (specifyPluginVersionIfNeeded) {
-            settingsBuilder.addResolutionStrategy("kotlin-platform-js")
-        }
-    }
-
-    override fun getDescription() = "JavaScript-specific code for a Kotlin multiplatform project"
-}
