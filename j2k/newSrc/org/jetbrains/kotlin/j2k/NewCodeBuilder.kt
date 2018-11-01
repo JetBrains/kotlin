@@ -437,10 +437,8 @@ class NewCodeBuilder {
         override fun visitJavaNewExpression(javaNewExpression: JKJavaNewExpression) {
             printer.printWithNoIndent(FqName(javaNewExpression.constructorSymbol.fqName).shortName())//TODO import name somehow?
             printer.printWithNoIndent("(")
-            //TODO use new sequence generator in future
-            for ((index, argument) in javaNewExpression.arguments.expressions.withIndex()) {
-                if (index > 0) printer.printWithNoIndent(", ")
-                argument.accept(this)
+            renderList(javaNewExpression.arguments.expressions, ", ") {
+                it.accept(this)
             }
             printer.printWithNoIndent(")")
         }

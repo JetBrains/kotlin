@@ -97,7 +97,7 @@ class ForConversion(private val context: ConversionContext) : RecursiveApplicabl
             val start = loopVar.initializer
             val operationType =
                 (loopStatement.updater as? JKExpressionStatement)?.expression?.isVariableIncrementOrDecrement(loopVar)
-            val reversed = when ((operationType  as? JKJavaOperatorImpl)?.token?.token) {
+            val reversed = when ((operationType  as? JKJavaOperatorImpl)?.token?.psiToken) {
                 JavaTokenType.PLUSPLUS -> false
                 JavaTokenType.MINUSMINUS -> true
                 else -> return null

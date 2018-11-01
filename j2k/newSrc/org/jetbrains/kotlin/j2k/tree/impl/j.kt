@@ -64,9 +64,9 @@ class JKJavaModifierImpl(override val type: JKJavaModifier.JavaModifierType) : J
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitJavaModifier(this, data)
 }
 
-class JKJavaOperatorToken(val token: IElementType) : JKOperatorToken {
+class JKJavaOperatorToken(val psiToken: IElementType) : JKOperatorToken {
     override val text: String
-        get() = when (token) {
+        get() = when (psiToken) {
             JavaTokenType.EQ -> "="
             JavaTokenType.EQEQ -> "=="
             JavaTokenType.NE -> "!="
@@ -101,12 +101,12 @@ class JKJavaOperatorToken(val token: IElementType) : JKOperatorToken {
             JavaTokenType.GTGTGTEQ -> "ushr"
             JavaTokenType.PLUSPLUS -> "++"
             JavaTokenType.MINUSMINUS -> "--"
-            else -> TODO(token.toString())
+            else -> TODO(psiToken.toString())
         }
 }
 
 fun JKJavaOperatorToken.toKtToken(): JKKtOperatorToken =
-    when (this.token) {
+    when (this.psiToken) {
         JavaTokenType.DIV -> JKKtSingleValueOperatorToken(KtTokens.DIV)
         JavaTokenType.MINUS -> JKKtSingleValueOperatorToken(KtTokens.MINUS)
         JavaTokenType.ANDAND -> JKKtSingleValueOperatorToken(KtTokens.ANDAND)
@@ -138,7 +138,7 @@ fun JKJavaOperatorToken.toKtToken(): JKKtOperatorToken =
         JavaTokenType.GTGTGTEQ -> JKKtWordOperatorToken("ushr")
         JavaTokenType.XOREQ -> JKKtWordOperatorToken("xor")
 
-        else -> TODO(this.token.toString())
+        else -> TODO(this.psiToken.toString())
     }
 
 
@@ -146,7 +146,7 @@ class JKJavaOperatorImpl private constructor(psiToken: IElementType) : JKOperato
     override val token: JKJavaOperatorToken = JKJavaOperatorToken(psiToken)
 
     override val precedence: Int
-        get() = when (token.token) {
+        get() = when (token.psiToken) {
             JavaTokenType.ASTERISK, JavaTokenType.DIV, JavaTokenType.PERC -> 3
             JavaTokenType.PLUS, JavaTokenType.MINUS -> 4
             KtTokens.ELVIS -> 7

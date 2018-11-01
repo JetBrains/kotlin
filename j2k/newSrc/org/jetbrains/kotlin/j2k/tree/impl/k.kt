@@ -22,9 +22,7 @@ import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.j2k.tree.*
 import org.jetbrains.kotlin.j2k.tree.visitors.JKVisitor
 import org.jetbrains.kotlin.lexer.KtSingleValueToken
-import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
-import org.jetbrains.kotlin.utils.addToStdlib.assertedCast
 import org.jetbrains.kotlin.utils.addToStdlib.cast
 
 class JKKtPropertyImpl(
@@ -85,12 +83,12 @@ class JKKtLiteralExpressionImpl(
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitKtLiteralExpression(this, data)
 }
 
-class JKKtSingleValueOperatorToken(val token: KtSingleValueToken) : JKKtOperatorToken {
+class JKKtSingleValueOperatorToken(val psiToken: KtSingleValueToken) : JKKtOperatorToken {
     override val operatorName: String
-        get() = OperatorConventions.getNameForOperationSymbol(token, true, true)?.identifier
-            ?: OperatorConventions.BOOLEAN_OPERATIONS[token]?.identifier
-            ?: TODO(token.value)
-    override val text: String = token.value
+        get() = OperatorConventions.getNameForOperationSymbol(psiToken, true, true)?.identifier
+            ?: OperatorConventions.BOOLEAN_OPERATIONS[psiToken]?.identifier
+            ?: TODO(psiToken.value)
+    override val text: String = psiToken.value
 }
 
 class JKKtWordOperatorToken(override val text: String) : JKKtOperatorToken {

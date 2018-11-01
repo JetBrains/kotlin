@@ -49,7 +49,7 @@ object ConversionsRunner {
             +ClassToObjectPromotionConversion()
             +PolyadicExpressionConversion()
             +SwitchStatementConversion(context)
-            +InstanceofConversion()
+            +InstanceOfConversion()
             +ForConversion(context)
             +LabeledStatementConversion()
         }

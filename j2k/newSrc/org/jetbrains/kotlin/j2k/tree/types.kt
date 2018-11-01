@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.j2k.tree
 
 import com.intellij.psi.*
-import com.intellij.psi.impl.source.resolve.reference.impl.PsiMultiReference
 import com.intellij.util.reverse
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
@@ -16,12 +15,9 @@ import org.jetbrains.kotlin.j2k.ast.Nullability
 import org.jetbrains.kotlin.j2k.conversions.resolveFqName
 import org.jetbrains.kotlin.j2k.tree.impl.*
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtTypeElement
-import org.jetbrains.kotlin.psi.KtTypeReference
 import org.jetbrains.kotlin.psi.KtUserType
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.calls.callUtil.getType
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 
@@ -32,7 +28,7 @@ fun JKExpression.type(context: ConversionContext): JKType =
         is JKLiteralExpression -> type.toJkType(context.symbolProvider)
         is JKBinaryExpression -> (operator as JKKtOperatorImpl).methodSymbol.returnType
         is JKMethodCallExpression -> identifier.returnType
-        is JKFieldAccessExpressionImpl -> identifier.filedType
+        is JKFieldAccessExpressionImpl -> identifier.fieldType
         is JKQualifiedExpressionImpl -> this.selector.type(context)
         else -> TODO(this::class.java.toString())
     }
