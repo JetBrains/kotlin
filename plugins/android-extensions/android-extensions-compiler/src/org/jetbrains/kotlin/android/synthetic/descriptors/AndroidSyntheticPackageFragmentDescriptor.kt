@@ -38,7 +38,7 @@ class AndroidSyntheticPackageData(
         val moduleData: AndroidModuleData,
         val forView: Boolean,
         val isDeprecated: Boolean,
-        val resources: List<AndroidResource>)
+        val lazyResources: () -> List<AndroidResource>)
 
 class AndroidSyntheticPackageFragmentDescriptor(
         module: ModuleDescriptor,
@@ -62,7 +62,7 @@ class AndroidSyntheticPackageFragmentDescriptor(
             val fragmentTypes = context.fragmentTypes
 
             val properties = ArrayList<PropertyDescriptor>(0)
-            for (resource in packageData.resources) {
+            for (resource in packageData.lazyResources()) {
                 when (resource) {
                     is AndroidResource.Widget -> {
                         val resolvedWidget = resource.resolve(module)
