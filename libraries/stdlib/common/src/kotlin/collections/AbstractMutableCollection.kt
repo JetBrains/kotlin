@@ -6,12 +6,12 @@
 package kotlin.collections
 
 /**
- * Provides a skeletal implementation of the [MutableSet] interface.
+ * Provides a skeletal implementation of the [MutableCollection] interface.
  *
- * @param E the type of elements contained in the set. The set is invariant on its element type.
+ * @param E the type of elements contained in the collection. The collection is invariant on its element type.
  */
 @SinceKotlin("1.3")
-public expect abstract class AbstractMutableSet<E> : MutableSet<E> {
+public expect abstract class AbstractMutableCollection<E> : MutableCollection<E> {
     protected constructor()
 
     abstract override val size: Int
@@ -29,3 +29,4 @@ public expect abstract class AbstractMutableSet<E> : MutableSet<E> {
     override fun retainAll(elements: Collection<E>): Boolean
     override fun clear(): Unit
 }
+
