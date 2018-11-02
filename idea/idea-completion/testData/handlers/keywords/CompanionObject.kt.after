@@ -1,5 +1,3 @@
 class C {
-    companion object {
-        <caret>
-    }
+    companion object<caret>
 }
