@@ -155,8 +155,7 @@ compileKotlin2Js {
             "-Xuse-experimental=kotlin.Experimental",
             "-Xuse-experimental=kotlin.ExperimentalMultiplatform",
             "-Xuse-experimental=kotlin.contracts.ExperimentalContracts",
-            "-XXLanguage:+InlineClasses",
-            "-XXLanguage:+ReleaseCoroutines"
+            "-XXLanguage:+InlineClasses"
         ]
     }
 }
@@ -193,7 +192,6 @@ compileTestKotlin2Js {
     kotlinOptions {
         moduleKind = "umd"
         freeCompilerArgs += [
-            "-XXLanguage:+ReleaseCoroutines",
             "-Xuse-experimental=kotlin.ExperimentalUnsignedTypes"
         ]
     }
