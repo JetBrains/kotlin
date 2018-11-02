@@ -2561,6 +2561,7 @@ task inline_statementAsLastExprInBlock(type: RunKonanTest) {
 }
 
 task inline_returnLocalClassFromBlock(type: RunKonanTest) {
+    disabled = true
     goldValue = "Zzz\n"
     source = "codegen/inline/returnLocalClassFromBlock.kt"
 }
@@ -3082,7 +3083,7 @@ task buildKonanTests(type: BuildKonanTest) {
     compileList = [ "codegen",  "datagen", "lower", "runtime", "serialization"]
 
     // These tests should not be built into the TestRunner's test executable
-    excludeList = []
+    excludeList = ["codegen/inline/returnLocalClassFromBlock.kt"]
     project.tasks.withType(KonanTest)
             .matching { ! (it instanceof RunKonanTest) }
             .each {
