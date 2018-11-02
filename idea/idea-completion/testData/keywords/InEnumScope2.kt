@@ -14,7 +14,7 @@ enum class Test {
 // EXIST:  private
 // EXIST:  protected
 // EXIST:  public
-// EXIST: { itemText: "companion object", tailText: " {...}" }
+// EXIST:  companion object
 // EXIST:  operator
 // EXIST:  infix
 // EXIST:  sealed class
