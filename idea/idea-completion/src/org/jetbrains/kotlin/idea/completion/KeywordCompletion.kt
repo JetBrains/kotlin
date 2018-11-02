@@ -58,7 +58,8 @@ object KeywordCompletion {
             ENUM_KEYWORD to CLASS_KEYWORD,
             ANNOTATION_KEYWORD to CLASS_KEYWORD,
             SEALED_KEYWORD to CLASS_KEYWORD,
-            LATEINIT_KEYWORD to VAR_KEYWORD
+            LATEINIT_KEYWORD to VAR_KEYWORD,
+            CONST_KEYWORD to VAL_KEYWORD
     )
 
     private val KEYWORD_CONSTRUCTS = mapOf<KtKeywordToken, String>(

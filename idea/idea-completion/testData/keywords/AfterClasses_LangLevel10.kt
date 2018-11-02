@@ -33,5 +33,5 @@ class B {
 // EXIST:  tailrec
 // EXIST:  external
 // EXIST:  annotation class
-// EXIST:  const
+// EXIST:  const val
 // NOTHING_ELSE

@@ -24,7 +24,7 @@ annotation class Test {
 // EXIST:  tailrec
 // EXIST:  external
 // EXIST:  annotation class
-// EXIST:  const
+// EXIST:  const val
 // EXIST:  suspend
 // EXIST:  typealias
 // EXIST:  expect
