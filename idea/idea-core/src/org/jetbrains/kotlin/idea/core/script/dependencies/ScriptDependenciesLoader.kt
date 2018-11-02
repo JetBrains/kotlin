@@ -67,12 +67,14 @@ abstract class ScriptDependenciesLoader(
     protected val contentLoader = ScriptContentLoader(project)
     protected val cache: ScriptDependenciesCache = ServiceManager.getService(project, ScriptDependenciesCache::class.java)
 
+    private val reporter: ScriptReportSink = ServiceManager.getService(project, ScriptReportSink::class.java)
+
     protected fun processResult(result: DependenciesResolver.ResolveResult) {
         loaders.remove(file)
 
         if (cache[file] == null) {
             saveDependencies(result)
-            attachReports(result)
+            attachReportsIfChanged(result)
             return
         }
 
@@ -81,14 +83,14 @@ abstract class ScriptDependenciesLoader(
             if (shouldShowNotification() && !ApplicationManager.getApplication().isUnitTestMode) {
                 file.addScriptDependenciesNotificationPanel(result, project) {
                     saveDependencies(it)
-                    attachReports(it)
+                    attachReportsIfChanged(it)
                 }
             } else {
                 saveDependencies(result)
-                attachReports(result)
+                attachReportsIfChanged(result)
             }
         } else {
-            attachReports(result)
+            attachReportsIfChanged(result)
 
             if (shouldShowNotification()) {
                 file.removeScriptDependenciesNotificationPanel(project)
@@ -96,8 +98,10 @@ abstract class ScriptDependenciesLoader(
         }
     }
 
-    private fun attachReports(result: DependenciesResolver.ResolveResult) {
-        ServiceManager.getService(project, ScriptReportSink::class.java)?.attachReports(file, result.reports)
+    private fun attachReportsIfChanged(result: DependenciesResolver.ResolveResult) {
+        if (file.getUserData(IdeScriptReportSink.Reports) != result.reports.takeIf { it.isNotEmpty() }) {
+            reporter.attachReports(file, result.reports)
+        }
     }
 
     private fun saveDependencies(result: DependenciesResolver.ResolveResult) {
