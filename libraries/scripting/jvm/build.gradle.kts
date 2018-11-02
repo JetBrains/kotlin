@@ -1,4 +1,3 @@
-import org.jetbrains.kotlin.gradle.dsl.Coroutines
 
 plugins {
     kotlin("jvm")
@@ -17,8 +16,6 @@ sourceSets {
     "main" { projectDefault() }
     "test" {}
 }
-
-kotlin.experimental.coroutines = Coroutines.ENABLE
 
 val jar = runtimeJar()
 val sourcesJar = sourcesJar()

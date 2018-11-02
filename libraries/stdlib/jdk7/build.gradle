@@ -86,8 +86,6 @@ compileTestKotlin {
 
 compileJava9Sources(project, 'kotlin.stdlib.jdk7')
 
-kotlin.experimental.coroutines 'enable'
-
 test {
     executable = "$JDK_17/bin/java"
 }

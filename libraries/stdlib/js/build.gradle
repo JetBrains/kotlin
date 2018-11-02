@@ -122,8 +122,6 @@ task prepareBuiltinsSources(type: Copy) {
     into builtinsSrcDir
 }
 
-kotlin.experimental.coroutines "enable"
-
 tasks.withType(org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile) {
     kotlinOptions {
         main = "noCall"
@@ -185,6 +183,7 @@ compileCoroutinesKotlin2Js {
         freeCompilerArgs += [
             "-Xuse-experimental=kotlin.contracts.ExperimentalContracts",
             "-Xuse-experimental=kotlin.Experimental",
+            "-Xcoroutines=enable",
             "-XXLanguage:-ReleaseCoroutines"
         ]
     }

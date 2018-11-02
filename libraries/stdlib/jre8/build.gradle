@@ -74,8 +74,6 @@ compileTestKotlin {
     kotlinOptions.freeCompilerArgs = ["-Xallow-kotlin-package", "-Xnormalize-constructor-calls=enable", "-Xmulti-platform", "-XXLanguage:+ReleaseCoroutines", "-Xuse-experimental=kotlin.ExperimentalUnsignedTypes"]
 }
 
-kotlin.experimental.coroutines 'enable'
-
 test {
     executable = "$JDK_18/bin/java"
 }

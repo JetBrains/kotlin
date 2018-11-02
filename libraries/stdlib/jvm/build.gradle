@@ -212,6 +212,7 @@ compileCoroutinesKotlin {
                 "-Xmultifile-parts-inherit",
                 "-Xuse-experimental=kotlin.contracts.ExperimentalContracts",
                 "-Xuse-experimental=kotlin.Experimental",
+                "-Xcoroutines=enable",
                 "-XXLanguage:-ReleaseCoroutines",
                 "-module-name", "kotlin-stdlib-coroutines"
         ]
@@ -264,5 +265,3 @@ test {
         systemProperty("kotlin.stdlib.test.long.sequences", "true")
     }
 }
-
-kotlin.experimental.coroutines 'enable'

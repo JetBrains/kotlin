@@ -1,6 +1,4 @@
 
-import org.jetbrains.kotlin.gradle.dsl.Coroutines
-
 plugins {
     kotlin("jvm")
     id("jps-compatible")
@@ -24,8 +22,6 @@ sourceSets {
     "main" { projectDefault() }
     "test" { projectDefault() }
 }
-
-kotlin.experimental.coroutines = Coroutines.ENABLE
 
 standardPublicJars()
 
