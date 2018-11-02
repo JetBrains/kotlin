@@ -46,18 +46,16 @@ class ScriptingGradleSubplugin : Plugin<Project> {
                 project.tasks.all { task ->
                     if (task is KotlinCompile && task !is KaptGenerateStubsTask) {
                         javaPluginConvention.sourceSets.findByName(task.sourceSetName)?.let { sourceSet ->
-                            project.tasks.register(
+                            project.tasks.create(
                                 "discover${task.sourceSetName.capitalize()}ScriptsExtensions",
                                 DiscoverScriptExtensionsTask::class.java
-                            )
-                                .also { provider -> task.dependsOn(provider) }
-                                .configure { extensionsTask ->
-                                    extensionsTask.sourceSet = sourceSet
-                                    extensionsTask.discoveryClasspathConfiguration =
-                                            project.configurations.findByName(getConfigurationName(task.sourceSetName))
-                                    extensionsTask.kotlinCompile = task
-                                    task.dependsOn.add(extensionsTask)
-                                }
+                            ) { extensionsTask ->
+                                extensionsTask.sourceSet = sourceSet
+                                extensionsTask.discoveryClasspathConfiguration =
+                                        project.configurations.findByName(getConfigurationName(task.sourceSetName))
+                                extensionsTask.kotlinCompile = task
+                                task.dependsOn(extensionsTask)
+                            }
                         }
                     }
                 }
