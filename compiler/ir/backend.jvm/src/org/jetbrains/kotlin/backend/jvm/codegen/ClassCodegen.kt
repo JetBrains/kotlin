@@ -89,7 +89,7 @@ open class ClassCodegen protected constructor(
             signature.superclassName,
             signature.interfaces.toTypedArray()
         )
-        AnnotationCodegen.forClass(visitor.visitor, this, typeMapper).genAnnotations(descriptor, null)
+        AnnotationCodegen.forClass(visitor.visitor, this, context.state).genAnnotations(descriptor, null)
         /* TODO: Temporary workaround: ClassBuilder needs a pathless name. */
         val shortName = File(fileEntry.name).name
         visitor.visitSource(shortName, null)

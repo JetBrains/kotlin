@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
-import org.jetbrains.kotlin.backend.common.makePhase
 import org.jetbrains.kotlin.backend.common.descriptors.WrappedSimpleFunctionDescriptor
 import org.jetbrains.kotlin.backend.common.ir.copyParameterDeclarationsFrom
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
@@ -98,6 +97,7 @@ class InterfaceDelegationLowering(val context: JvmBackendContext) : IrElementTra
                     name,
                     Visibilities.PUBLIC,
                     inheritedFun.modality,
+                    inheritedFun.returnType,
                     isInline = inheritedFun.isInline,
                     isExternal = false,
                     isTailrec = false,
@@ -105,7 +105,6 @@ class InterfaceDelegationLowering(val context: JvmBackendContext) : IrElementTra
                 ).apply {
                     descriptor.bind(this)
                     parent = inheritedFun.parent
-                    returnType = inheritedFun.returnType
                     overriddenSymbols.addAll(inheritedFun.overriddenSymbols)
                     copyParameterDeclarationsFrom(inheritedFun)
                 }
@@ -137,16 +136,4 @@ class InterfaceDelegationLowering(val context: JvmBackendContext) : IrElementTra
     private fun IrSimpleFunction.isDefinitelyNotDefaultImplsMethod() =
         resolveFakeOverride()?.let { origin == IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB } == true ||
                 hasAnnotation(PLATFORM_DEPENDENT_ANNOTATION_FQ_NAME)
-
-    private fun IrClass.getNonPrivateInterfaceMethods(): List<Pair<IrSimpleFunction, IrSimpleFunction>> {
-        return declarations.filterIsInstance<IrSimpleFunction>().mapNotNull { function ->
-            val resolved = function.resolveFakeOverride()
-            resolved?.takeIf {
-                resolved !== function && // TODO: take a better look
-                        (resolved.parent as? IrClass)?.isInterface == true &&
-                        !Visibilities.isPrivate(resolved.visibility) &&
-                        resolved.visibility != Visibilities.INVISIBLE_FAKE
-            }?.let { Pair(resolved, function) }
-        }
-    }
 }
