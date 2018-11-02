@@ -70,9 +70,15 @@ abstract class ScriptDependenciesLoader(
     protected fun processResult(result: DependenciesResolver.ResolveResult) {
         loaders.remove(file)
 
-        val newDependencies = result.dependencies?.adjustByDefinition(scriptDef) ?: return
+        if (cache[file] == null) {
+            saveDependencies(result)
+            attachReports(result)
+            return
+        }
+
+        val newDependencies = result.dependencies?.adjustByDefinition(scriptDef)
         if (cache[file] != newDependencies) {
-            if (shouldShowNotification() && cache[file] != null && !ApplicationManager.getApplication().isUnitTestMode) {
+            if (shouldShowNotification() && !ApplicationManager.getApplication().isUnitTestMode) {
                 file.addScriptDependenciesNotificationPanel(result, project) {
                     saveDependencies(it)
                     attachReports(it)
