@@ -46,19 +46,19 @@ class ScriptingGradleSubplugin : Plugin<Project> {
 
                 project.tasks.withType(KotlinCompile::class.java) { task ->
                     if (task !is KaptGenerateStubsTask) {
-                        val configuration = project.configurations.findByName(getConfigurationName(task.sourceSetName))
-                        if (configuration?.isEmpty == false) {
-                            javaPluginConvention.sourceSets.findByName(task.sourceSetName)?.let { sourceSet ->
-                                val extensionsTask =
-                                    project.tasks.create(
-                                        "discover${task.sourceSetName.capitalize()}ScriptsExtensions",
-                                        DiscoverScriptExtensionsTask::class.java
-                                    )
-                                extensionsTask.sourceSet = sourceSet
-                                extensionsTask.discoveryClasspathConfiguration = configuration
-                                extensionsTask.kotlinCompile = task
-                                task.dependsOn.add(extensionsTask)
-                            }
+                        javaPluginConvention.sourceSets.findByName(task.sourceSetName)?.let { sourceSet ->
+                            project.tasks.register(
+                                "discover${task.sourceSetName.capitalize()}ScriptsExtensions",
+                                DiscoverScriptExtensionsTask::class.java
+                            )
+                                .also { provider -> task.dependsOn(provider) }
+                                .configure { extensionsTask ->
+                                    extensionsTask.sourceSet = sourceSet
+                                    extensionsTask.discoveryClasspathConfiguration =
+                                            project.configurations.findByName(getConfigurationName(task.sourceSetName))
+                                    extensionsTask.kotlinCompile = task
+                                    task.dependsOn.add(extensionsTask)
+                                }
                         }
                     }
                 }
@@ -76,7 +76,8 @@ open class DiscoverScriptExtensionsTask : DefaultTask() {
 
     @get:InputFiles
     @get:Classpath
-    internal var discoveryClasspathConfiguration: Configuration by Delegates.notNull()
+    @get:Optional
+    internal var discoveryClasspathConfiguration: Configuration? = null
 
     @get:Internal
     internal var kotlinCompile: KotlinCompile by Delegates.notNull()
@@ -87,7 +88,7 @@ open class DiscoverScriptExtensionsTask : DefaultTask() {
     @TaskAction
     @Suppress("unused")
     fun findKnownScriptExtensions() {
-        val scriptingClasspath = discoveryClasspathConfiguration.files.takeIf { it.isNotEmpty() } ?: return
+        val scriptingClasspath = discoveryClasspathConfiguration?.files?.takeIf { it.isNotEmpty() } ?: return
 
         val definitions =
             ScriptDefinitionsFromClasspathDiscoverySource(
