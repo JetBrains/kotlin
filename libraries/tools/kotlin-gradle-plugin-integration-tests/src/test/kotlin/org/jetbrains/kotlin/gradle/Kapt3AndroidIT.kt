@@ -154,11 +154,23 @@ open class Kapt3AndroidIT : Kapt3BaseIT() {
         val project = Project("android-databinding", directoryPrefix = "kapt2")
         setupDataBinding(project, "app")
 
+        if (isLegacyAndroidGradleVersion(androidGradlePluginVersion)) {
+            // Aapt from the older Android SDK crashes with the 'library' subproject structure.
+            project.projectDir.getFileByName("settings.gradle")
+                .modify {
+                    assert(it.contains(", ':library'"))
+                    it.replace(", ':library'", "")
+                }
+        }
+
         project.build("assembleDebug", "assembleAndroidTest") {
             assertSuccessful()
             assertKaptSuccessful()
             assertFileExists("app/build/generated/source/kapt/debug/com/example/databinding/BR.java")
-            assertFileExists("library/build/generated/source/kapt/debugAndroidTest/android/databinding/DataBinderMapperImpl.java")
+
+            if (!isLegacyAndroidGradleVersion(androidGradlePluginVersion)) {
+                assertFileExists("library/build/generated/source/kapt/debugAndroidTest/android/databinding/DataBinderMapperImpl.java")
+            }
 
             if (isLegacyAndroidGradleVersion(androidGradlePluginVersion)) {
                 assertFileExists("app/build/generated/source/kapt/debug/com/example/databinding/databinding/ActivityTestBinding.java")
@@ -172,9 +184,9 @@ open class Kapt3AndroidIT : Kapt3BaseIT() {
     }
 
     private fun setupDataBinding(project: Project, projectName: String?) {
-        if (!isLegacyAndroidGradleVersion(androidGradlePluginVersion)) {
-            project.setupWorkingDir()
+        project.setupWorkingDir()
 
+        if (!isLegacyAndroidGradleVersion(androidGradlePluginVersion)) {
             // With new AGP, there's no need in the Databinding kapt dependency:
             project.gradleBuildScript(projectName).modify {
                 it.lines().filterNot {
