@@ -22,7 +22,6 @@ import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.KtNodeTypes;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
 import org.jetbrains.kotlin.psi.stubs.elements.KtPlaceHolderStubElementType;
@@ -76,7 +75,7 @@ public class KtValueArgument extends KtElementImplStub<KotlinPlaceHolderStub<? e
     @Override
     @Nullable
     public KtValueArgumentName getArgumentName() {
-        return (KtValueArgumentName) findChildByType(KtNodeTypes.VALUE_ARGUMENT_NAME);
+        return getStubOrPsiChild(KtStubElementTypes.VALUE_ARGUMENT_NAME);
     }
 
     @Nullable
