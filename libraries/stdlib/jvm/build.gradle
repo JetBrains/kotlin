@@ -179,7 +179,6 @@ compileKotlin {
                 "-Xuse-experimental=kotlin.Experimental",
                 "-Xuse-experimental=kotlin.ExperimentalMultiplatform",
                 "-Xuse-experimental=kotlin.contracts.ExperimentalContracts",
-                "-XXLanguage:+ReleaseCoroutines",
                 "-XXLanguage:+InlineClasses"
         ]
     }
@@ -254,8 +253,7 @@ compileUnsignedKotlin {
 compileTestKotlin {
     kotlinOptions {
         freeCompilerArgs += [
-                "-Xuse-experimental=kotlin.ExperimentalUnsignedTypes",
-                "-XXLanguage:+ReleaseCoroutines"
+                "-Xuse-experimental=kotlin.ExperimentalUnsignedTypes"
         ]
     }
 }
