@@ -191,6 +191,20 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
     )
     var javacArguments: Array<String>? by FreezableVar(null)
 
+
+    @Argument(
+        value = "-Xjava-source-roots",
+        valueDescription = "<path>",
+        description = "Paths to output directories for friend modules (whose internals should be visible)"
+    )
+    var javaSourceRoots: Array<String>? by FreezableVar(null)
+
+    @Argument(
+        value = "-Xjava-package-prefix",
+        description = "Package prefix for Java files"
+    )
+    var javaPackagePrefix: String? by FreezableVar(null)
+
     @Argument(
         value = "-Xjsr305",
         deprecatedName = "-Xjsr305-annotations",

@@ -420,9 +420,11 @@ object KotlinToJVMBytecodeCompiler {
 
     private fun GenerationState.Builder.withModule(module: Module?) =
         apply {
-            targetId(module?.let { TargetId(it) })
-            moduleName(module?.getModuleName())
-            outDirectory(module?.let { File(it.getOutputDirectory()) })
+            if (module != null) {
+                targetId(TargetId(module))
+                moduleName(module.getModuleName())
+                outDirectory(File(module.getOutputDirectory()))
+            }
         }
 
     private fun generate(

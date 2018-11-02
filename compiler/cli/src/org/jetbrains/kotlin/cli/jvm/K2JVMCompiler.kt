@@ -85,6 +85,10 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
                     }
                 }
             }
+
+            for (path in arguments.javaSourceRoots ?: emptyArray()) {
+                configuration.addJavaSourceRoot(File(path), arguments.javaPackagePrefix)
+            }
         }
 
         configuration.put(CommonConfigurationKeys.MODULE_NAME, arguments.moduleName ?: JvmAbi.DEFAULT_MODULE_NAME)
@@ -108,11 +112,17 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
             val destination = arguments.destination
 
             if (arguments.buildFile != null) {
+                fun strongWarning(message: String) {
+                    messageCollector.report(STRONG_WARNING, message)
+                }
                 if (destination != null) {
-                    messageCollector.report(
-                        STRONG_WARNING,
-                        "The '-d' option with a directory destination is ignored because '-Xbuild-file' is specified"
-                    )
+                    strongWarning("The '-d' option with a directory destination is ignored because '-Xbuild-file' is specified")
+                }
+                if (arguments.javaSourceRoots != null) {
+                    strongWarning("The '-Xjava-source-roots' option is ignored because '-Xbuild-file' is specified")
+                }
+                if (arguments.javaPackagePrefix != null) {
+                    strongWarning("The '-Xjava-package-prefix' option is ignored because '-Xbuild-file' is specified")
                 }
 
                 val sanitizedCollector = FilteringMessageCollector(messageCollector, VERBOSE::contains)

@@ -62,11 +62,11 @@ fun makeIncrementally(
     val files = rootsWalk.filter(File::isFile)
     val sourceFiles = files.filter { it.extension.toLowerCase() in allExtensions }.toList()
     val buildHistoryFile = File(cachesDir, "build-history.bin")
+    args.javaSourceRoots = sourceRoots.map { it.absolutePath }.toTypedArray()
 
     withIC {
         val compiler = IncrementalJvmCompilerRunner(
             cachesDir,
-            sourceRoots.map { JvmSourceRoot(it, null) }.toSet(),
             reporter,
             // Use precise setting in case of non-Gradle build
             usePreciseJavaTracking = true,
@@ -104,7 +104,6 @@ inline fun <R> withIC(enabled: Boolean = true, fn: ()->R): R {
 
 class IncrementalJvmCompilerRunner(
     workingDir: File,
-    private val javaSourceRoots: Set<JvmSourceRoot>,
     reporter: ICReporter,
     private val usePreciseJavaTracking: Boolean,
     buildHistoryFile: File,
@@ -367,28 +366,11 @@ class IncrementalJvmCompilerRunner(
             messageCollector: MessageCollector
     ): ExitCode {
         val compiler = K2JVMCompiler()
-        val outputDir = args.destinationAsFile
-        val classpath = args.classpathAsList
-        val moduleFile = makeModuleFile(
-            args.moduleName!!,
-            isTest = false,
-            outputDir = outputDir,
-            sourcesToCompile = sourcesToCompile,
-            commonSources = args.commonSources?.map(::File).orEmpty(),
-            javaSourceRoots = javaSourceRoots,
-            classpath = classpath,
-            friendDirs = listOf()
-        )
-        val destination = args.destination
-        args.destination = null
-        args.buildFile = moduleFile.absolutePath
-
-        return try {
-            compiler.exec(messageCollector, services, args)
-        } finally {
-            args.destination = destination
-            moduleFile.delete()
-        }
+        val freeArgsBackup = args.freeArgs.toList()
+        args.freeArgs += sourcesToCompile.map { it.absolutePath }
+        val exitCode = compiler.exec(messageCollector, services, args)
+        args.freeArgs = freeArgsBackup
+        return exitCode
     }
 }
 

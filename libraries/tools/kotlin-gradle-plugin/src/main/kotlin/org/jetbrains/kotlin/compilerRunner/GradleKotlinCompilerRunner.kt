@@ -22,7 +22,6 @@ import org.gradle.api.invocation.Gradle
 import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.api.tasks.bundling.AbstractArchiveTask
 import org.gradle.jvm.tasks.Jar
-import org.jetbrains.kotlin.build.JvmSourceRoot
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
@@ -73,23 +72,16 @@ internal open class GradleCompilerRunner(protected val task: Task) {
         args: K2JVMCompilerArguments,
         environment: GradleCompilerEnvironment
     ) {
-        val buildFile = makeModuleFile(
-            args.moduleName!!,
-            isTest = false,
-            outputDir = args.destinationAsFile,
-            sourcesToCompile = sourcesToCompile,
-            commonSources = commonSources,
-            javaSourceRoots = javaSourceRoots.map { JvmSourceRoot(it, javaPackagePrefix) },
-            classpath = args.classpathAsList,
-            friendDirs = args.friendPaths?.map(::File).orEmpty()
-        )
-        args.buildFile = buildFile.absolutePath
+        args.freeArgs += sourcesToCompile.map { it.absolutePath }
+        args.commonSources = commonSources.map { it.absolutePath }.toTypedArray()
+        args.javaSourceRoots = javaSourceRoots.map { it.absolutePath }.toTypedArray()
+        args.javaPackagePrefix = javaPackagePrefix
 
         if (environment.incrementalCompilationEnvironment == null || kotlinCompilerExecutionStrategy() != DAEMON_EXECUTION_STRATEGY) {
             args.destination = null
         }
 
-        runCompilerAsync(KotlinCompilerClass.JVM, args, environment, buildFile = buildFile)
+        runCompilerAsync(KotlinCompilerClass.JVM, args, environment)
     }
 
     /**
@@ -123,8 +115,7 @@ internal open class GradleCompilerRunner(protected val task: Task) {
     private fun runCompilerAsync(
         compilerClassName: String,
         compilerArgs: CommonCompilerArguments,
-        environment: GradleCompilerEnvironment,
-        buildFile: File? = null
+        environment: GradleCompilerEnvironment
     ) {
         if (compilerArgs.version) {
             task.logger.lifecycle(
@@ -144,10 +135,10 @@ internal open class GradleCompilerRunner(protected val task: Task) {
             isVerbose = compilerArgs.verbose,
             incrementalCompilationEnvironment = incrementalCompilationEnvironment,
             incrementalModuleInfo = modulesInfo,
-            buildFile = buildFile,
             outputFiles = environment.outputFiles.toList(),
             taskPath = task.path,
-            buildReportMode = environment.buildReportMode
+            buildReportMode = environment.buildReportMode,
+            kotlinScriptExtensions = environment.kotlinScriptExtensions
         )
         TaskLoggers.put(task.path, task.logger)
         runCompilerAsync(workArgs)

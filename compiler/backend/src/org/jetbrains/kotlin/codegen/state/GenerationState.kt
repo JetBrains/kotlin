@@ -149,8 +149,12 @@ class GenerationState private constructor(
     init {
         val icComponents = configuration.get(JVMConfigurationKeys.INCREMENTAL_COMPILATION_COMPONENTS)
         if (icComponents != null) {
-            incrementalCacheForThisTarget =
-                    icComponents.getIncrementalCache(targetId ?: error("Target ID should be specified for incremental compilation"))
+            val targetId = targetId
+                ?: moduleName?.let {
+                    // hack for Gradle IC, Gradle does not use build.xml file, so there is no way to pass target id
+                    TargetId(it, "java-production")
+                } ?: error("Target ID should be specified for incremental compilation")
+            incrementalCacheForThisTarget = icComponents.getIncrementalCache(targetId)
             packagesWithObsoleteParts = incrementalCacheForThisTarget.getObsoletePackageParts().map {
                 JvmClassName.byInternalName(it).packageFqName
             }.toSet()
