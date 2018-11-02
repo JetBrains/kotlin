@@ -34,6 +34,8 @@ open class KaptExtension {
 
     open var strictMode: Boolean = false
 
+    open var detectMemoryLeaks: Boolean = true
+
     @Deprecated("Use `annotationProcessor()` and `annotationProcessors()` instead")
     open var processors: String = ""
 

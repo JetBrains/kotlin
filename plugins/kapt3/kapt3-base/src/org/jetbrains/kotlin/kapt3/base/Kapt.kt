@@ -47,7 +47,7 @@ object Kapt {
             val processors = processorLoader.loadProcessors(findClassLoaderWithJavac())
 
             val annotationProcessingTime = measureTimeMillis {
-                kaptContext.doAnnotationProcessing(javaSourceFiles, processors)
+                kaptContext.doAnnotationProcessing(javaSourceFiles, processors.processors)
             }
 
             logger.info { "Annotation processing took $annotationProcessingTime ms" }

@@ -14,6 +14,8 @@ import java.net.URLClassLoader
 import java.util.*
 import javax.annotation.processing.Processor
 
+class LoadedProcessors(val processors: List<Processor>, val classLoader: ClassLoader)
+
 open class ProcessorLoader(
     private val paths: KaptPaths,
     private val annotationProcessorFqNames: List<String>,
@@ -21,7 +23,7 @@ open class ProcessorLoader(
 ) : Closeable {
     private var annotationProcessingClassLoader: URLClassLoader? = null
 
-    fun loadProcessors(parentClassLoader: ClassLoader = ClassLoader.getSystemClassLoader()): List<Processor> {
+    fun loadProcessors(parentClassLoader: ClassLoader = ClassLoader.getSystemClassLoader()): LoadedProcessors {
         clearJarURLCache()
 
         val classpath = (paths.annotationProcessingClasspath + paths.compileClasspath).distinct()
@@ -42,7 +44,7 @@ open class ProcessorLoader(
             logger.info { "Annotation processors: " + processors.joinToString { it::class.java.canonicalName } }
         }
 
-        return processors
+        return LoadedProcessors(processors, classLoader)
     }
 
     open fun doLoadProcessors(classLoader: URLClassLoader): List<Processor> {
