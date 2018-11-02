@@ -72,6 +72,7 @@ compileCoroutinesKotlinCommon {
                 "-module-name", project.name+"-coroutines",
                 "-Xuse-experimental=kotlin.contracts.ExperimentalContracts",
                 "-Xuse-experimental=kotlin.Experimental",
+                "-Xcoroutines=enable",
                 "-XXLanguage:-ReleaseCoroutines",
                 "-Xallow-kotlin-package",
                 "-Xallow-result-return-type"
@@ -86,8 +87,6 @@ compileTestKotlinCommon {
         ]
     }
 }
-
-kotlin.experimental.coroutines 'enable'
 
 jar {
     manifestAttributes(manifest, project, 'Main')

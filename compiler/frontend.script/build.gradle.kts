@@ -1,4 +1,3 @@
-import org.jetbrains.kotlin.gradle.dsl.Coroutines
 
 plugins {
     kotlin("jvm")
@@ -20,8 +19,4 @@ dependencies {
 sourceSets {
     "main" { projectDefault() }
     "test" {}
-}
-
-kotlin {
-    experimental.coroutines = Coroutines.ENABLE
 }
