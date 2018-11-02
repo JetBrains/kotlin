@@ -115,6 +115,9 @@ object Kapt3ConfigurationKeys {
 
     val STRICT_MODE: CompilerConfigurationKey<String> =
         CompilerConfigurationKey.create<String>(STRICT_MODE_OPTION.description)
+
+    val DETECT_MEMORY_LEAKS: CompilerConfigurationKey<String> =
+        CompilerConfigurationKey.create<String>(DETECT_MEMORY_LEAKS_OPTION.description)
 }
 
 class Kapt3CommandLineProcessor : CommandLineProcessor {
@@ -147,6 +150,7 @@ class Kapt3CommandLineProcessor : CommandLineProcessor {
             MAP_DIAGNOSTIC_LOCATIONS_OPTION -> configuration.put(Kapt3ConfigurationKeys.MAP_DIAGNOSTIC_LOCATIONS, value)
             INFO_AS_WARNINGS_OPTION -> configuration.put(Kapt3ConfigurationKeys.INFO_AS_WARNINGS, value)
             STRICT_MODE_OPTION -> configuration.put(Kapt3ConfigurationKeys.STRICT_MODE, value)
+            DETECT_MEMORY_LEAKS_OPTION -> configuration.put(Kapt3ConfigurationKeys.DETECT_MEMORY_LEAKS, value)
             CONFIGURATION -> configuration.applyOptionsFrom(decodePluginOptions(value), pluginOptions)
             TOOLS_JAR_OPTION -> throw CliOptionProcessingException("'${TOOLS_JAR_OPTION.optionName}' is only supported in the kapt CLI tool")
         }
@@ -199,6 +203,7 @@ class Kapt3ComponentRegistrar : ComponentRegistrar {
         val isVerbose = configuration.get(Kapt3ConfigurationKeys.VERBOSE_MODE) == "true"
         val infoAsWarnings = configuration.get(Kapt3ConfigurationKeys.INFO_AS_WARNINGS) == "true"
         val strictMode = configuration.get(Kapt3ConfigurationKeys.STRICT_MODE) == "true"
+        val detectMemoryLeaks = configuration.get(Kapt3ConfigurationKeys.DETECT_MEMORY_LEAKS) != "false"
         val messageCollector = configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
             ?: PrintingMessageCollector(System.err, MessageRenderer.PLAIN_FULL_PATHS, isVerbose)
         val logger = MessageCollectorBackedKaptLogger(isVerbose, infoAsWarnings, messageCollector)
@@ -291,7 +296,7 @@ class Kapt3ComponentRegistrar : ComponentRegistrar {
 
         val kapt3AnalysisCompletedHandlerExtension = ClasspathBasedKapt3Extension(
             paths, apOptions, javacOptions, annotationProcessors,
-            aptMode, useLightAnalysis, correctErrorTypes, mapDiagnosticLocations, strictMode,
+            aptMode, useLightAnalysis, correctErrorTypes, mapDiagnosticLocations, strictMode, detectMemoryLeaks,
             System.currentTimeMillis(), logger, configuration
         )
 

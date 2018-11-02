@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.kapt3.*
 import org.jetbrains.kotlin.kapt3.AptMode.STUBS_AND_APT
 import org.jetbrains.kotlin.kapt3.base.KaptContext
 import org.jetbrains.kotlin.kapt3.base.KaptPaths
+import org.jetbrains.kotlin.kapt3.base.LoadedProcessors
 import org.jetbrains.kotlin.kapt3.javac.KaptJavaFileObject
 import org.jetbrains.kotlin.kapt3.stubs.ClassFileToSourceStubConverter
 import org.jetbrains.kotlin.kapt3.stubs.ClassFileToSourceStubConverter.KaptStub
@@ -174,13 +175,13 @@ abstract class AbstractKotlinKapt3IntegrationTest : CodegenTestCase() {
             emptyList(), javaSourceRoots, outputDir, outputDir, stubsOutputDir, incrementalDataOutputDir
         ), options, emptyMap(), emptyList(), STUBS_AND_APT, System.currentTimeMillis(),
         MessageCollectorBackedKaptLogger(true),
-        correctErrorTypes = true, mapDiagnosticLocations = true, strictMode = true,
+        correctErrorTypes = true, mapDiagnosticLocations = true, strictMode = true, detectMemoryLeaks = false,
         compilerConfiguration = CompilerConfiguration.EMPTY
     ) {
         internal var savedStubs: String? = null
         internal var savedBindings: Map<String, KaptJavaFileObject>? = null
 
-        override fun loadProcessors() = processors
+        override fun loadProcessors() = LoadedProcessors(processors, Kapt3ExtensionForTests::class.java.classLoader)
 
         override fun saveStubs(kaptContext: KaptContext, stubs: List<KaptStub>) {
             if (this.savedStubs != null) {

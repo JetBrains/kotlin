@@ -41,10 +41,7 @@ import org.jetbrains.kotlin.context.ProjectContext
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.kapt3.AptMode.APT_ONLY
 import org.jetbrains.kotlin.kapt3.AptMode.WITH_COMPILATION
-import org.jetbrains.kotlin.kapt3.base.KaptContext
-import org.jetbrains.kotlin.kapt3.base.KaptPaths
-import org.jetbrains.kotlin.kapt3.base.ProcessorLoader
-import org.jetbrains.kotlin.kapt3.base.doAnnotationProcessing
+import org.jetbrains.kotlin.kapt3.base.*
 import org.jetbrains.kotlin.kapt3.base.stubs.KaptStubLineInformation.Companion.KAPT_METADATA_EXTENSION
 import org.jetbrains.kotlin.kapt3.base.util.KaptBaseError
 import org.jetbrains.kotlin.kapt3.base.util.getPackageNameJava9Aware
@@ -58,6 +55,7 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.jvm.extensions.PartialAnalysisHandlerExtension
+import org.jetbrains.kotlin.utils.kapt.MemoryLeakDetector
 import java.io.File
 import java.io.StringWriter
 import java.io.Writer
@@ -75,12 +73,13 @@ class ClasspathBasedKapt3Extension(
     correctErrorTypes: Boolean,
     mapDiagnosticLocations: Boolean,
     strictMode: Boolean,
+    detectMemoryLeaks: Boolean,
     pluginInitializedTime: Long,
     logger: MessageCollectorBackedKaptLogger,
     compilerConfiguration: CompilerConfiguration
 ) : AbstractKapt3Extension(
     paths, options, javacOptions, annotationProcessorFqNames,
-    aptMode, pluginInitializedTime, logger, correctErrorTypes, mapDiagnosticLocations, strictMode,
+    aptMode, pluginInitializedTime, logger, correctErrorTypes, mapDiagnosticLocations, strictMode, detectMemoryLeaks,
     compilerConfiguration
 ) {
     override val analyzePartially: Boolean
@@ -88,7 +87,7 @@ class ClasspathBasedKapt3Extension(
 
     private var processorLoader: ProcessorLoader? = null
 
-    override fun loadProcessors(): List<Processor> {
+    override fun loadProcessors(): LoadedProcessors {
         val efficientProcessorLoader = object : ProcessorLoader(paths, annotationProcessorFqNames, logger) {
             override fun doLoadProcessors(classLoader: URLClassLoader): List<Processor> {
                 return ServiceLoaderLite.loadImplementations(Processor::class.java, classLoader)
@@ -133,6 +132,7 @@ abstract class AbstractKapt3Extension(
     val correctErrorTypes: Boolean,
     val mapDiagnosticLocations: Boolean,
     val strictMode: Boolean,
+    val detectMemoryLeaks: Boolean,
     val compilerConfiguration: CompilerConfiguration
 ) : PartialAnalysisHandlerExtension() {
     private var annotationProcessingComplete = false
@@ -186,7 +186,7 @@ abstract class AbstractKapt3Extension(
         if (!aptMode.runAnnotationProcessing) return doNotGenerateCode()
 
         val processors = loadProcessors()
-        if (processors.isEmpty()) return if (aptMode != WITH_COMPILATION) doNotGenerateCode() else null
+        if (processors.processors.isEmpty()) return if (aptMode != WITH_COMPILATION) doNotGenerateCode() else null
 
         val kaptContext = KaptContext(paths, false, logger, mapDiagnosticLocations, options, javacOptions)
 
@@ -230,17 +230,32 @@ abstract class AbstractKapt3Extension(
         }
     }
 
-    private fun runAnnotationProcessing(kaptContext: KaptContext, processors: List<Processor>) {
+    private fun runAnnotationProcessing(kaptContext: KaptContext, processors: LoadedProcessors) {
         if (!aptMode.runAnnotationProcessing) return
 
         val javaSourceFiles = paths.collectJavaSourceFiles()
         logger.info { "Java source files: " + javaSourceFiles.joinToString { it.canonicalPath } }
 
         val (annotationProcessingTime) = measureTimeMillis {
-            kaptContext.doAnnotationProcessing(javaSourceFiles, processors)
+            kaptContext.doAnnotationProcessing(javaSourceFiles, processors.processors)
         }
 
         logger.info { "Annotation processing took $annotationProcessingTime ms" }
+
+        if (detectMemoryLeaks) {
+            MemoryLeakDetector.add(processors.classLoader)
+
+            val (leakDetectionTime, leaks) = measureTimeMillis { MemoryLeakDetector.process() }
+            logger.info { "Leak detection took $leakDetectionTime ms" }
+
+            for (leak in leaks) {
+                logger.warn(buildString {
+                    appendln("Memory leak detected!")
+                    appendln("Location: '${leak.className}', static field '${leak.fieldName}'")
+                    append(leak.description)
+                })
+            }
+        }
     }
 
     private fun contextForStubGeneration(
@@ -344,7 +359,7 @@ abstract class AbstractKapt3Extension(
         )
     }
 
-    protected abstract fun loadProcessors(): List<Processor>
+    protected abstract fun loadProcessors(): LoadedProcessors
 }
 
 internal fun JCTree.prettyPrint(context: Context): String {

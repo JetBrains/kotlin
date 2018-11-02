@@ -141,6 +141,8 @@ enum class KaptCliOption(
         cliToolOption = CliToolOption("-Kapt-strict", FLAG)
     ),
 
+    DETECT_MEMORY_LEAKS_OPTION("detectMemoryLeaks", "true | false", "Detect memory leaks in annotation processors"),
+
     INFO_AS_WARNINGS_OPTION("infoAsWarnings", "true | false", "Show information messages as warnings"),
 
     @Deprecated("Do not use in CLI")
