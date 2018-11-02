@@ -4,11 +4,23 @@ import org.antlr.v4.runtime.CharStreams
 import java.io.File
 import java.io.IOException
 import java.net.URL
-import java.nio.charset.StandardCharsets
 import java.util.ArrayList
 import java.util.LinkedHashMap
 import kotlin.collections.HashSet
-
+import kotlin.collections.List
+import kotlin.collections.Map
+import kotlin.collections.MutableList
+import kotlin.collections.asSequence
+import kotlin.collections.contains
+import kotlin.collections.emptyMap
+import kotlin.collections.fold
+import kotlin.collections.forEach
+import kotlin.collections.map
+import kotlin.collections.mapValues
+import kotlin.collections.plus
+import kotlin.collections.reduce
+import kotlin.collections.set
+import kotlin.collections.sortedBy
 
 class BuildWebIdl(val mdnCacheFile: File, val srcDir: File) {
     val repositoryPre = loadPreliminaryRepository()
@@ -23,7 +35,7 @@ class BuildWebIdl(val mdnCacheFile: File, val srcDir: File) {
             .sortedBy { it.absolutePath }.fold(Repository(emptyMap(), emptyMap(), emptyMap(), emptyMap())) { acc, e ->
             System.err.flush()
             System.err.println("Parsing ${e.absolutePath}")
-            val fileRepository = parseIDL(CharStreams.fromFileName(e.absolutePath, StandardCharsets.UTF_8))
+            val fileRepository = parseIDL(CharStreams.fromFileName(e.absolutePath, Charsets.UTF_8))
 
             Repository(
                 interfaces = acc.interfaces.mergeReduce(fileRepository.interfaces, ::merge),

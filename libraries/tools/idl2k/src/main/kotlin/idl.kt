@@ -21,6 +21,10 @@ import org.antlr.v4.runtime.CommonTokenStream
 import org.antlr.v4.runtime.ParserRuleContext
 import org.antlr.v4.runtime.tree.ParseTree
 import org.antlr.v4.runtime.tree.TerminalNode
+import org.antlr.webidl.WebIDLBaseVisitor
+import org.antlr.webidl.WebIDLLexer
+import org.antlr.webidl.WebIDLParser
+import org.antlr.webidl.WebIDLParser.*
 import java.util.*
 
 data class ExtendedAttribute(val name: String?, val call: String, val arguments: List<Attribute>)
