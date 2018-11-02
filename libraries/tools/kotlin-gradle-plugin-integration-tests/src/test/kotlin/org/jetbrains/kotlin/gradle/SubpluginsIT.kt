@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle
 
 import org.jetbrains.kotlin.gradle.util.checkBytecodeContains
+import org.jetbrains.kotlin.gradle.util.modify
 import org.junit.Test
 import java.io.File
 import kotlin.test.assertTrue
@@ -114,12 +115,39 @@ class SubpluginsIT : BaseGradleIT() {
 
     @Test
     fun testScripting() {
-        Project("kotlinScripting").build("build") {
+        Project("scripting").build("build") {
             assertSuccessful()
             assertCompiledKotlinSources(
                 listOf("app/src/main/kotlin/world.greet.kts", "script-template/src/main/kotlin/GreetScriptTemplate.kt")
             )
             assertFileExists("${kotlinClassesDir("app", "main")}World_greet.class")
+        }
+    }
+
+    @Test
+    fun testScriptingCustomExtensionIncremental() {
+        val project = Project("scriptingCustomExtension")
+        val options = defaultBuildOptions().copy(incremental = true, kotlinDaemonDebugPort = null)
+
+        project.setupWorkingDir()
+        val bobGreet = project.projectFile("bob.greet")
+        val aliceGreet = project.projectFile("alice.greet")
+        val worldGreet = project.projectFile("world.greet")
+        val greetScriptTemplateKt = project.projectFile("GreetScriptTemplate.kt")
+
+        project.build("build", options = options) {
+            assertSuccessful()
+            assertCompiledKotlinSources(project.relativize(bobGreet, aliceGreet, worldGreet, greetScriptTemplateKt))
+            val classesDir = kotlinClassesDir("app", "main")
+            assertFileExists("${classesDir}World.class")
+            assertFileExists("${classesDir}Alice.class")
+            assertFileExists("${classesDir}Bob.class")
+        }
+
+        bobGreet.modify { it.replace("Bob", "Uncle Bob") }
+        project.build("build", options = options) {
+            assertSuccessful()
+            assertCompiledKotlinSources(project.relativize(bobGreet))
         }
     }
 
