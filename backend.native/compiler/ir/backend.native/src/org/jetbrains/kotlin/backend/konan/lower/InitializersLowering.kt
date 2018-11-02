@@ -21,9 +21,7 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
-import org.jetbrains.kotlin.ir.util.constructors
-import org.jetbrains.kotlin.ir.util.createDispatchReceiverParameter
-import org.jetbrains.kotlin.ir.util.transformFlat
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.js.descriptorUtils.hasPrimaryConstructor
@@ -88,7 +86,7 @@ internal class InitializersLowering(val context: CommonBackendContext) : ClassLo
         }
 
         private fun createInitializerMethod(): IrSimpleFunctionSymbol? {
-            if (irClass.descriptor.hasPrimaryConstructor())
+            if (irClass.declarations.any { it is IrConstructor && it.isPrimary })
                 return null // Place initializers in the primary constructor.
             val initializerMethodDescriptor = SimpleFunctionDescriptorImpl.create(
                     /* containingDeclaration        = */ irClass.descriptor,
@@ -125,9 +123,8 @@ internal class InitializersLowering(val context: CommonBackendContext) : ClassLo
                                     initializer.dispatchReceiverParameter!!.type,
                                     initializer.dispatchReceiverParameter!!.symbol
                             )
-                        } else {
-                            return expression
                         }
+                        return expression
                     }
                 })
             }
@@ -191,6 +188,7 @@ internal class InitializersLowering(val context: CommonBackendContext) : ClassLo
                             else -> null
                         }
                     }
+                    declaration.parent = irClass
 
                     return declaration
                 }

@@ -1309,10 +1309,9 @@ internal class IrDeserializer(val context: Context,
             (key,value) ->
         key to value}
 
-        return DeepCopyIrTreeWithDescriptors(rootFunction, rootFunction.parents.first(), context).copy(
-            irElement       = declaration,
-            typeSubstitutor = TypeSubstitutor.create(substitutionContext)
-        ) as IrFunction
+        return DeepCopyIrTreeWithDescriptors(rootFunction, rootFunction.parents.first(), context,
+                TypeSubstitutor.create(substitutionContext)
+        ).copy(declaration) as IrFunction
     }
 
     private val extractInlineProto: KonanProtoBuf.InlineIrBody
