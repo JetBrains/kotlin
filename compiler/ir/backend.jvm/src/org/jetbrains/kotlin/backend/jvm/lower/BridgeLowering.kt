@@ -306,9 +306,7 @@ class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPass {
                     when (typeSafeBarrierDescription) {
                         BuiltinMethodsWithSpecialGenericSignature.TypeSafeBarrierDescription.MAP_GET_OR_DEFAULT -> irGet(
                             bridgeDescriptor.valueParameters[1].type.toIrType()!!,
-                            IrVariableSymbolImpl(
-                                bridgeDescriptor.valueParameters[1]
-                            )
+                            bridgeFunction.valueParameters[1].symbol
                         )
                         BuiltinMethodsWithSpecialGenericSignature.TypeSafeBarrierDescription.NULL -> irNull()
                         BuiltinMethodsWithSpecialGenericSignature.TypeSafeBarrierDescription.INDEX -> IrConstImpl.int(

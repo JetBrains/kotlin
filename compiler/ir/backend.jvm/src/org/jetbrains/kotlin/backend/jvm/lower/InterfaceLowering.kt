@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.backend.common.ir.copyTo
 import org.jetbrains.kotlin.backend.common.ir.copyTypeParametersFrom
 import org.jetbrains.kotlin.backend.common.lower.DECLARATION_ORIGIN_FUNCTION_FOR_DEFAULT_PARAMETER
 import org.jetbrains.kotlin.backend.common.lower.InitializersLowering.Companion.clinitName
-import org.jetbrains.kotlin.backend.common.makePhase
 import org.jetbrains.kotlin.backend.common.lower.VariableRemapper
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.descriptors.*
@@ -37,9 +36,7 @@ class InterfaceLowering(val context: JvmBackendContext) : IrElementTransformerVo
         val members = defaultImplsIrClass.declarations
 
         irClass.declarations.filterIsInstance<IrFunction>().forEach {
-            if (it.origin == DECLARATION_ORIGIN_FUNCTION_FOR_DEFAULT_PARAMETER) {
-                members.add(it) //just copy $default to DefaultImpls
-            } else if (it is IrSimpleFunction && it.modality != Modality.ABSTRACT && it.origin != IrDeclarationOrigin.FAKE_OVERRIDE) {
+            if (it is IrSimpleFunction && it.modality != Modality.ABSTRACT && it.origin != IrDeclarationOrigin.FAKE_OVERRIDE) {
                 val element = context.declarationFactory.getDefaultImplsFunction(it)
                 members.add(element)
                 element.body = it.body
@@ -79,11 +76,11 @@ internal fun createStaticFunctionWithReceivers(
         name,
         oldFunction.visibility,
         Modality.FINAL,
+        oldFunction.returnType,
         isInline = false, isExternal = false, isTailrec = false, isSuspend = false
     ).apply {
         descriptor.bind(this)
         parent = irParent
-        returnType = oldFunction.returnType
 
         copyTypeParametersFrom(oldFunction)
 

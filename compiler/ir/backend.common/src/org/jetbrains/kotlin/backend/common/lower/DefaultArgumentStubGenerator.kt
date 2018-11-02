@@ -447,7 +447,7 @@ private fun buildFunctionDeclaration(irFunction: IrFunction, origin: IrDeclarati
                 IrSimpleFunctionSymbolImpl(descriptor),
                 name,
                 irFunction.visibility,
-                Modality.FINAL,
+                if (irFunction.modality === Modality.ABSTRACT) Modality.OPEN else irFunction.modality,
                 irFunction.returnType,
                 irFunction.isInline,
                 false,
