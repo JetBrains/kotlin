@@ -21,8 +21,6 @@ import org.jetbrains.kotlin.script.*
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.script.experimental.dependencies.AsyncDependenciesResolver
 import kotlin.script.experimental.dependencies.DependenciesResolver
-import kotlin.script.experimental.dependencies.ScriptDependencies
-import kotlin.script.experimental.dependencies.ScriptReport
 
 abstract class ScriptDependenciesLoader(
     protected val file: VirtualFile,
@@ -75,16 +73,16 @@ abstract class ScriptDependenciesLoader(
         val newDependencies = result.dependencies?.adjustByDefinition(scriptDef) ?: return
         if (cache[file] != newDependencies) {
             if (shouldShowNotification() && cache[file] != null && !ApplicationManager.getApplication().isUnitTestMode) {
-                file.addScriptDependenciesNotificationPanel(newDependencies, project) {
-                    saveDependencies(newDependencies)
-                    attachReports(result.reports)
+                file.addScriptDependenciesNotificationPanel(result, project) {
+                    saveDependencies(it)
+                    attachReports(it)
                 }
             } else {
-                saveDependencies(newDependencies)
-                attachReports(result.reports)
+                saveDependencies(result)
+                attachReports(result)
             }
         } else {
-            attachReports(result.reports)
+            attachReports(result)
 
             if (shouldShowNotification()) {
                 file.removeScriptDependenciesNotificationPanel(project)
@@ -92,15 +90,16 @@ abstract class ScriptDependenciesLoader(
         }
     }
 
-    private fun attachReports(reports: List<ScriptReport>) {
-        ServiceManager.getService(project, ScriptReportSink::class.java)?.attachReports(file, reports)
+    private fun attachReports(result: DependenciesResolver.ResolveResult) {
+        ServiceManager.getService(project, ScriptReportSink::class.java)?.attachReports(file, result.reports)
     }
 
-    private fun saveDependencies(dependencies: ScriptDependencies) {
+    private fun saveDependencies(result: DependenciesResolver.ResolveResult) {
         if (shouldShowNotification()) {
             file.removeScriptDependenciesNotificationPanel(project)
         }
 
+        val dependencies = result.dependencies?.adjustByDefinition(scriptDef) ?: return
         val rootsChanged = cache.hasNotCachedRoots(dependencies)
         if (cache.save(file, dependencies)) {
             file.scriptDependencies = dependencies
