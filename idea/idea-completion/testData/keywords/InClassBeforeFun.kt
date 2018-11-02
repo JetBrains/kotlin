@@ -26,7 +26,7 @@ public class Test {
 // EXIST:  var
 // EXIST:  constructor
 // EXIST:  init
-// EXIST: { itemText: "companion object", tailText: " {...}" }
+// EXIST:  companion object
 // EXIST:  operator
 // EXIST:  infix
 // EXIST:  sealed class
