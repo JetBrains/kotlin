@@ -179,11 +179,6 @@ class NewCodeBuilder {
         override fun visitKtProperty(ktProperty: JKKtProperty) {
             ktProperty.modifierList.accept(this)
 
-            when (ktProperty.modifierList.mutability) {
-                Mutability.Default, Mutability.Mutable -> printer.print("var")
-                Mutability.NonMutable -> printer.print("val")
-            }
-
             printer.printWithNoIndent(" ", ktProperty.name.value, ": ")
             ktProperty.type.accept(this)
             if (ktProperty.initializer !is JKStubExpression) {
