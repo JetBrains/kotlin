@@ -40,7 +40,7 @@ object ConversionsRunner {
             +ConstructorConversion(context)
             +PrimaryConstructorDetectConversion(context)
             +InsertDefaultPrimaryConstructorConversion(context)
-            +FieldInitializersInPrimaryFromParamsConversion()
+            +FieldInitializersInPrimaryFromParamsConversion(context)
             +JavaMethodToKotlinFunctionConversion()
             +LiteralConversion()
             +InnerClassConversion()

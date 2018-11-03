@@ -5,55 +5,64 @@
 
 package org.jetbrains.kotlin.j2k.conversions
 
+import org.jetbrains.kotlin.j2k.ConversionContext
 import org.jetbrains.kotlin.j2k.tree.*
 import org.jetbrains.kotlin.j2k.tree.impl.*
 
 
-class FieldInitializersInPrimaryFromParamsConversion : TransformerBasedConversion() {
-    override fun visitTreeElement(treeElement: JKTreeElement) {
-        treeElement.acceptChildren(this, null)
+class FieldInitializersInPrimaryFromParamsConversion(private val context: ConversionContext) : RecursiveApplicableConversionBase() {
+    override fun applyToElement(element: JKTreeElement): JKTreeElement {
+        if (element !is JKClass) return recurse(element)
+        val primaryConstructorConversion = PrimaryConstructorConversion()
+        primaryConstructorConversion.runConversion(element, context)
+        element.getOrCreateInitDeclaration().block = JKBlockImpl(primaryConstructorConversion.initDeclarationStatements)
+        element.declarationList -= primaryConstructorConversion.declarationsToRemove
+        return recurse(element)
     }
 
-    override fun visitKtPrimaryConstructor(ktPrimaryConstructor: JKKtPrimaryConstructor) {
-        val containingClass = ktPrimaryConstructor.parentOfType<JKClass>() ?: return
-        val removedStatements = mutableListOf<JKStatement>()
-        for (constructorStatement in ktPrimaryConstructor.block.statements) {
-            val assignmentExpression =
-                (constructorStatement as? JKExpressionStatement)?.expression as? JKJavaAssignmentExpression ?: continue
-            //TODO check if operator is `=`
-            val smartField = assignmentExpression.smartField() ?: continue
-            val fieldTarget = smartField.identifier.target as? JKJavaFieldImpl ?: continue
-            val parameter =
-                (assignmentExpression.expression as? JKFieldAccessExpression)?.identifier?.target as? JKParameter ?: continue
-            if (ktPrimaryConstructor.parameters.contains(parameter)) {
-                val fieldDeclaration = containingClass.declarationList.find {
-                    (it as? JKField)?.name?.value == fieldTarget.name.value
-                } as? JKField ?: continue
-                if (!fieldDeclaration.type.type.equalsByName(parameter.type.type)) continue//TODO better way to compare types??
-                parameter.modifierList = fieldDeclaration::modifierList.detached()
-                containingClass.declarationList -= fieldDeclaration
+    private class PrimaryConstructorConversion : RecursiveApplicableConversionBase() {
+        val initDeclarationStatements = mutableListOf<JKStatement>()
+        val declarationsToRemove = mutableListOf<JKDeclaration>()
 
-                if (parameter.name.value != fieldTarget.name.value) {
-                    parameter.name = JKNameIdentifierImpl(fieldTarget.name.value)
+        override fun applyToElement(element: JKTreeElement): JKTreeElement {
+            if (element !is JKKtPrimaryConstructor) return recurse(element)
+            val containingClass = element.parentOfType<JKClass>() ?: return recurse(element)
+            val removedStatements = mutableListOf<JKStatement>()
+            for (constructorStatement in element.block.statements) {
+                val assignmentExpression =
+                    (constructorStatement as? JKExpressionStatement)?.expression as? JKJavaAssignmentExpression ?: continue
+                //TODO check if operator is `=`
+                val smartField = assignmentExpression.smartField() ?: continue
+                val fieldTarget = smartField.identifier.target as? JKJavaFieldImpl ?: continue
+                val parameter =
+                    (assignmentExpression.expression as? JKFieldAccessExpression)?.identifier?.target as? JKParameter ?: continue
+                if (element.parameters.contains(parameter)) {
+                    val fieldDeclaration = containingClass.declarationList.find {
+                        (it as? JKField)?.name?.value == fieldTarget.name.value
+                    } as? JKField ?: continue
+                    if (!fieldDeclaration.type.type.equalsByName(parameter.type.type)) continue//TODO better way to compare types??
+                    parameter.modifierList = fieldDeclaration::modifierList.detached()
+                    declarationsToRemove += fieldDeclaration
+
+                    if (parameter.name.value != fieldTarget.name.value) {
+                        parameter.name = JKNameIdentifierImpl(fieldTarget.name.value)
+                    }
+                    removedStatements += constructorStatement
                 }
-                somethingChanged = true
-                removedStatements += constructorStatement
             }
+            initDeclarationStatements.addAll(element.block.statements - removedStatements)
+            element.block.statements = emptyList()
+            return element
         }
-        ktPrimaryConstructor.block.statements -= removedStatements
-        if (ktPrimaryConstructor.block.statements.isNotEmpty()) {
-            ktPrimaryConstructor::block.detached()
-            containingClass.getOrCreateInitDeclaration().block = ktPrimaryConstructor.block
-        }
-    }
 
-    private fun JKJavaAssignmentExpression.smartField(): JKFieldAccessExpression? {
-        val field = this.field
-        return when (field) {
-            is JKQualifiedExpression ->
-                (field.selector as? JKFieldAccessExpression)?.takeIf { field.receiver is JKThisExpression }
-            is JKFieldAccessExpression -> field
-            else -> null
+        private fun JKJavaAssignmentExpression.smartField(): JKFieldAccessExpression? {
+            val field = this.field
+            return when (field) {
+                is JKQualifiedExpression ->
+                    (field.selector as? JKFieldAccessExpression)?.takeIf { field.receiver is JKThisExpression }
+                is JKFieldAccessExpression -> field
+                else -> null
+            }
         }
     }
 }
