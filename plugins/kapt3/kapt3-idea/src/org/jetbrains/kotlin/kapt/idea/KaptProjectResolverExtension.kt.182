@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.kapt.idea
 
+import com.android.tools.idea.gradle.project.model.AndroidModuleModel
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.externalSystem.model.DataNode
 import com.intellij.openapi.externalSystem.model.ProjectKeys
@@ -79,6 +80,8 @@ class KaptProjectResolverExtension : AbstractProjectResolverExtension() {
 
         if (kaptModel.isEnabled) {
             for (sourceSet in kaptModel.sourceSets) {
+                populateAndroidModuleModelIfNeeded(ideModule, sourceSet)
+
                 val sourceSetDataNode = ideModule.findGradleSourceSet(sourceSet.sourceSetName) ?: continue
 
                 fun addSourceSet(path: String, type: ExternalSystemSourceType) {
@@ -101,6 +104,42 @@ class KaptProjectResolverExtension : AbstractProjectResolverExtension() {
         }
 
         super.populateModuleExtraModels(gradleModule, ideModule)
+    }
+
+    private fun populateAndroidModuleModelIfNeeded(ideModule: DataNode<ModuleData>, sourceSet: KaptSourceSetModel) {
+        ideModule.findAndroidModuleModel()?.let { androidModelAny ->
+            // We can cast to AndroidModuleModel cause we already checked in findAndroidModuleModel() that the class exists
+
+            val generatedKotlinSources = sourceSet.generatedKotlinSourcesDirFile ?: return
+
+            val androidModel = androidModelAny.data as? AndroidModuleModel ?: return
+            val variant = androidModel.findVariantByName(sourceSet.sourceSetName) ?: return
+
+            androidModel.registerExtraGeneratedSourceFolder(generatedKotlinSources)
+
+            // TODO remove this when IDEA eventually migrate to the newer Android plugin
+            try {
+                variant.mainArtifact.generatedSourceFolders += generatedKotlinSources
+            } catch (e: Throwable) {
+                // There was an error being thrown here, but the code above doesn't work for the newer versions of Android Studio 3
+                // (generatedSourceFolders returns a wrapped unmodifiable list), and the thrown exception breaks the import.
+                // The error will be moved back when I find a work-around for AS3.
+            }
+        }
+    }
+
+    private fun DataNode<ModuleData>.findAndroidModuleModel(): DataNode<*>? {
+        val modelClassName = "com.android.tools.idea.gradle.project.model.AndroidModuleModel"
+        val node = children.firstOrNull { it.key.dataType == modelClassName } ?: return null
+        return if (!hasClassInClasspath(modelClassName)) null else node
+    }
+
+    private fun hasClassInClasspath(name: String): Boolean {
+        return try {
+            Class.forName(name) != null
+        } catch (thr: Throwable) {
+            false
+        }
     }
 
     private fun DataNode<ModuleData>.findGradleSourceSet(sourceSetName: String): DataNode<GradleSourceSetData>? {

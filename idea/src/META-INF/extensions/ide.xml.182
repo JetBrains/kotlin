@@ -7,6 +7,14 @@
                         interface="org.jetbrains.kotlin.extensions.DeclarationAttributeAltererExtension"
                         area="IDEA_PROJECT"/>
 
+        <extensionPoint qualifiedName="org.jetbrains.kotlin.androidDexer"
+                        interface="org.jetbrains.kotlin.idea.debugger.evaluate.classLoading.AndroidDexer"
+                        area="IDEA_PROJECT"/>
+
+        <extensionPoint qualifiedName="org.jetbrains.kotlin.android.model.androidModuleInfoProvider"
+                        interface="org.jetbrains.kotlin.android.model.AndroidModuleInfoProvider"
+                        area="IDEA_MODULE"/>
+
         <extensionPoint qualifiedName="org.jetbrains.kotlin.idePlatformKindResolution"
                         interface="org.jetbrains.kotlin.caches.resolve.IdePlatformKindResolution"/>
 

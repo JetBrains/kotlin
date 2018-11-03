@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.android.model.impl
 import com.android.builder.model.SourceProvider
 import com.android.tools.idea.gradle.project.GradleProjectInfo
 import com.android.tools.idea.gradle.project.model.AndroidModuleModel
-import com.android.tools.idea.res.ResourceRepositoryManager
+import com.android.tools.idea.res.AppResourceRepository
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.android.facet.AndroidFacet
@@ -36,7 +36,7 @@ class AndroidModuleInfoProviderImpl(override val module: Module) : AndroidModule
     }
 
     override fun getApplicationResourceDirectories(createIfNecessary: Boolean): Collection<VirtualFile> {
-        return ResourceRepositoryManager.getOrCreateInstance(module)?.getAppResources(createIfNecessary)?.resourceDirs ?: emptyList()
+        return AppResourceRepository.getOrCreateInstance(module)?.resourceDirs ?: emptyList()
     }
 
     override fun getAllSourceProviders(): List<AndroidModuleInfoProvider.SourceProviderMirror> {

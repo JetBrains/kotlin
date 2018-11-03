@@ -26,7 +26,7 @@ dependencies {
     testCompile(projectTests(":idea:idea-test-framework"))
 
     testCompileOnly(intellijDep())
-    //testCompileOnly(intellijPluginDep("maven"))
+    testCompileOnly(intellijPluginDep("maven"))
 
     testCompile(project(":idea:idea-native")) { isTransitive = false }
     testRuntime(project(":kotlin-native:kotlin-native-library-reader")) { isTransitive = false }
@@ -51,14 +51,14 @@ dependencies {
     testRuntime(intellijPluginDep("gradle"))
     testRuntime(intellijPluginDep("Groovy"))
     testRuntime(intellijPluginDep("coverage"))
-    //testRuntime(intellijPluginDep("maven"))
+    testRuntime(intellijPluginDep("maven"))
     testRuntime(intellijPluginDep("android"))
     testRuntime(intellijPluginDep("smali"))
 }
 
 sourceSets {
-    "main" { /*projectDefault()*/ }
-    "test" { /*projectDefault()*/ }
+    "main" { projectDefault() }
+    "test" { projectDefault() }
 }
 
 testsJar()

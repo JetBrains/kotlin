@@ -3,7 +3,36 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("DEPRECATION")
+
 package org.jetbrains.kotlin.idea
 
+import com.intellij.featureStatistics.FeatureStatisticsBundleProvider
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.extensions.Extensions
+import java.lang.IllegalStateException
+
+private const val CIDR_FEATURE_STATISTICS_PROVIDER_FQNAME = "com.jetbrains.cidr.lang.OCFeatureStatisticsBundleProvider"
+
 fun registerAdditionalResourceBundleInTests() {
+    if (!ApplicationManager.getApplication().isUnitTestMode) {
+        return
+    }
+
+    val isAlreadyRegistered = FeatureStatisticsBundleProvider.EP_NAME.extensions.any { provider ->
+        provider.javaClass.name == CIDR_FEATURE_STATISTICS_PROVIDER_FQNAME
+    }
+    if (isAlreadyRegistered) {
+        throw IllegalStateException("Remove this registration for the current platform: bundle is already registered.")
+    }
+
+    val cidrFSBundleProviderClass = try {
+        Class.forName(CIDR_FEATURE_STATISTICS_PROVIDER_FQNAME)
+    } catch (_: ClassNotFoundException) {
+        throw IllegalStateException("Remove this registration for the current platform: class wasn't found.")
+    }
+
+    val cidrFSBundleProvider = cidrFSBundleProviderClass.newInstance() as FeatureStatisticsBundleProvider
+
+    Extensions.getRootArea().getExtensionPoint(FeatureStatisticsBundleProvider.EP_NAME).registerExtension(cidrFSBundleProvider)
 }
