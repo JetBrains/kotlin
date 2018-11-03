@@ -35,20 +35,7 @@ class ModifiersConversion(private val context: ConversionContext) : RecursiveApp
     }
 
     private fun convertParameterModifiers(jkParameter: JKParameter) {
-        jkParameter.filterModifiers {
-            when (it) {
-                is JKModalityModifier -> it.modality != JKModalityModifier.Modality.OPEN
-                else -> true
-            }
-        }
-        if (jkParameter.parent is JKKtPrimaryConstructor) {
-            val hasNonDefaultMutabilityModifier =
-                jkParameter.modifierList.modifiers.find {
-                    it is JKMutabilityModifier && it.mutability != Mutability.Default
-                } != null
-            if (!hasNonDefaultMutabilityModifier)
-                jkParameter.modifierList.modifiers = emptyList()
-        } else {
+        if (jkParameter.modifierList.mutability == Mutability.Default) {
             jkParameter.modifierList.modifiers = emptyList()
         }
     }
