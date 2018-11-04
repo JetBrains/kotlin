@@ -64,6 +64,10 @@ class DefFile(val file:File?, val config:DefFileConfig, val manifestAddendProper
             properties.getSpaceSeparated("excludedFunctions")
         }
 
+        val excludedMacros by lazy {
+            properties.getSpaceSeparated("excludedMacros")
+        }
+
         val staticLibraries by lazy {
             properties.getSpaceSeparated("staticLibraries")
         }

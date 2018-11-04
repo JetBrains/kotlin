@@ -57,6 +57,9 @@ class StubGenerator(
     val excludedFunctions: Set<String>
         get() = configuration.excludedFunctions
 
+    val excludedMacros: Set<String>
+        get() = configuration.excludedMacros
+
     val noStringConversion: Set<String>
         get() = configuration.noStringConversion
 
@@ -838,13 +841,23 @@ class StubGenerator(
             ObjCCategoryStub(this, it)
         }
 
-        nativeIndex.macroConstants.forEach {
+        nativeIndex.macroConstants.filter { it.name !in excludedMacros }.forEach {
             try {
                 stubs.add(
                         generateKotlinFragmentBy { generateConstant(it) }
                 )
             } catch (e: Throwable) {
                 log("Warning: cannot generate stubs for constant ${it.name}")
+            }
+        }
+
+        nativeIndex.wrappedMacros.filter { it.name !in excludedMacros }.forEach {
+            try {
+                stubs.add(
+                        GlobalVariableStub(GlobalDecl(it.name, it.type, isConst = true), this)
+                )
+            } catch (e: Throwable) {
+                log("Warning: cannot generate stubs for macro ${it.name}")
             }
         }
 

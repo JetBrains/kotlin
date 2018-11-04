@@ -145,6 +145,7 @@ internal class NativeIndexImpl(val library: NativeLibrary) : NativeIndex() {
         get() = functionById.values
 
     override val macroConstants = mutableListOf<ConstantDef>()
+    override val wrappedMacros = mutableListOf<WrappedMacroDef>()
 
     private val globalById = mutableMapOf<DeclarationID, GlobalDecl>()
 
@@ -904,7 +905,7 @@ internal class NativeIndexImpl(val library: NativeLibrary) : NativeIndex() {
 fun buildNativeIndexImpl(library: NativeLibrary): NativeIndex {
     val result = NativeIndexImpl(library)
     indexDeclarations(result)
-    findMacroConstants(result)
+    findMacros(result)
     return result
 }
 

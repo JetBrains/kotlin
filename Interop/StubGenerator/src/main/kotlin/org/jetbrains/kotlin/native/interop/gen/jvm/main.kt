@@ -207,6 +207,7 @@ private fun processCLib(args: Array<String>): Array<String>? {
     val linker = "${tool.llvmHome}/bin/$linkerName"
     val compiler = "${tool.llvmHome}/bin/clang"
     val excludedFunctions = def.config.excludedFunctions.toSet()
+    val excludedMacros = def.config.excludedMacros.toSet()
     val staticLibraries = def.config.staticLibraries + arguments.staticLibrary
     val libraryPaths = def.config.libraryPaths + arguments.libraryPath
     val fqParts = (arguments.pkg ?: def.config.packageName)?.let {
@@ -231,6 +232,7 @@ private fun processCLib(args: Array<String>): Array<String>? {
             library = library,
             pkgName = outKtPkg,
             excludedFunctions = excludedFunctions,
+            excludedMacros = excludedMacros,
             strictEnums = def.config.strictEnums.toSet(),
             nonStrictEnums = def.config.nonStrictEnums.toSet(),
             noStringConversion = def.config.noStringConversion.toSet(),

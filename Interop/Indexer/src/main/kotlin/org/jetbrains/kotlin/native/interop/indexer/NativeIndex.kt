@@ -67,6 +67,7 @@ abstract class NativeIndex {
     abstract val typedefs: Collection<TypedefDef>
     abstract val functions: Collection<FunctionDecl>
     abstract val macroConstants: Collection<ConstantDef>
+    abstract val wrappedMacros: Collection<WrappedMacroDef>
     abstract val globals: Collection<GlobalDecl>
     abstract val includedHeaders: Collection<HeaderId>
 }
@@ -190,13 +191,16 @@ class FunctionDecl(val name: String, val parameters: List<Parameter>, val return
  */
 class TypedefDef(val aliased: Type, val name: String, override val location: Location) : TypeDeclaration
 
-abstract class ConstantDef(val name: String, val type: Type)
+abstract class MacroDef(val name: String)
+
+abstract class ConstantDef(name: String, val type: Type): MacroDef(name)
 class IntegerConstantDef(name: String, type: Type, val value: Long) : ConstantDef(name, type)
 class FloatingConstantDef(name: String, type: Type, val value: Double) : ConstantDef(name, type)
 class StringConstantDef(name: String, type: Type, val value: String) : ConstantDef(name, type)
 
-class GlobalDecl(val name: String, val type: Type, val isConst: Boolean)
+class WrappedMacroDef(name: String, val type: Type) : MacroDef(name)
 
+class GlobalDecl(val name: String, val type: Type, val isConst: Boolean)
 
 /**
  * C type.

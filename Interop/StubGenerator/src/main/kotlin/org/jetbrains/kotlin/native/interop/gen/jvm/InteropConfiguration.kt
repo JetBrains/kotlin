@@ -26,6 +26,7 @@ class InteropConfiguration(
         val library: NativeLibrary,
         val pkgName: String,
         val excludedFunctions: Set<String>,
+        val excludedMacros: Set<String>,
         val strictEnums: Set<String>,
         val nonStrictEnums: Set<String>,
         val noStringConversion: Set<String>,
