@@ -142,25 +142,120 @@ class KotlinProjectIT : BaseGradleIT() {
             "DEFAULT"
         )
 
-        val expectedSourceSetNames = listOf("release", "debug", "releaseUnitTest", "debugUnitTest", "debugAndroidTest")
         assertTrue(kotlinProject.expectedByDependencies.isEmpty())
         assertEquals(5, kotlinProject.sourceSets.size)
 
-        fun verifySourceSet(sourceSet: SourceSet) {
-            // These are unused in Android projects so will be empty.
-            assertEquals(0, sourceSet.sourceDirectories.size)
-            assertEquals(0, sourceSet.resourcesDirectories.size)
-            assertEquals(project.projectDir.resolve("build/tmp/kotlin-classes/${sourceSet.name}"), sourceSet.classesOutputDirectory)
-            // This value is just a placeholder since this information is obtained from the Android Plugin models.
-            assertEquals(project.projectDir.resolve("build/tmp/kotlin-classes/${sourceSet.name}"), sourceSet.resourcesOutputDirectory)
-            assertNotEquals(0, sourceSet.compilerArguments.currentArguments.size)
-            assertNotEquals(0, sourceSet.compilerArguments.defaultArguments.size)
+        val sourceSets = kotlinProject.sourceSets.sortedBy { it.name }
+
+        fun SourceSet.verifySourceSet(
+            name: String, type: SourceSet.SourceSetType, friends: List<String>, sources: List<String>, resources: List<String>,
+            classesOutputDir: String, resourcesOutputDir: String
+        ) {
+            assertEquals(name, name)
+            assertEquals(type, this.type)
+
+            assertEquals(friends.size, friendSourceSets.size)
+            assertEquals(friends, friendSourceSets)
+
+            assertEquals(sources.size, sourceDirectories.size)
+            assertEquals(sources.map { project.projectDir.resolve(it) }, sourceDirectories)
+
+            assertEquals(resources.size, resourcesDirectories.size)
+            assertEquals(resources.map { project.projectDir.resolve(it) }, resourcesDirectories)
+
+            assertEquals(project.projectDir.resolve(classesOutputDir), classesOutputDirectory)
+            assertEquals(project.projectDir.resolve(resourcesOutputDir), resourcesOutputDirectory)
+
+            assertNotEquals(0, compilerArguments.currentArguments.size)
+            assertNotEquals(0, compilerArguments.defaultArguments.size)
         }
 
-        assertEquals(0, kotlinProject.sourceSets.filter {
-            verifySourceSet(it)
-            expectedSourceSetNames.contains(it.name)
-        }.size)
+        sourceSets[0].verifySourceSet(
+            "debug",
+            SourceSet.SourceSetType.PRODUCTION,
+            listOf(),
+            listOf(
+                "app/src/debug/kotlin",
+                "app/src/debug/java",
+                "app/src/main/kotlin",
+                "app/src/main/java"
+            ),
+            listOf(
+                "app/src/debug/resources",
+                "app/src/main/resources"
+            ),
+            "app/build/tmp/kotlin-classes/debug", "app/build/processedResources/debug"
+        )
+        sourceSets[1].verifySourceSet(
+            "debugAndroidTest",
+            SourceSet.SourceSetType.TEST,
+            listOf("debug"),
+            listOf(
+                "app/src/debugAndroidTest/kotlin",
+                "app/src/androidTest/kotlin",
+                "app/src/androidTest/java",
+                "app/src/androidTestDebug/kotlin",
+                "app/src/androidTestDebug/java"
+            ),
+            listOf(
+                "app/src/debugAndroidTest/resources",
+                "app/src/androidTest/resources",
+                "app/src/androidTestDebug/resources"
+            ),
+            "app/build/tmp/kotlin-classes/debugAndroidTest", "app/build/processedResources/debugAndroidTest"
+        )
+        sourceSets[2].verifySourceSet(
+            "debugUnitTest",
+            SourceSet.SourceSetType.TEST,
+            listOf("debug"),
+            listOf(
+                "app/src/debugUnitTest/kotlin",
+                "app/src/test/kotlin",
+                "app/src/test/java",
+                "app/src/testDebug/kotlin",
+                "app/src/testDebug/java"
+            ),
+            listOf(
+                "app/src/debugUnitTest/resources",
+                "app/src/test/resources",
+                "app/src/testDebug/resources"
+            ),
+            "app/build/tmp/kotlin-classes/debugUnitTest", "app/build/processedResources/debugUnitTest"
+        )
+        sourceSets[3].verifySourceSet(
+            "release",
+            SourceSet.SourceSetType.PRODUCTION,
+            listOf(),
+            listOf(
+                "app/src/release/kotlin",
+                "app/src/release/java",
+                "app/src/main/kotlin",
+                "app/src/main/java"
+            ),
+            listOf(
+                "app/src/release/resources",
+                "app/src/main/resources"
+            ),
+            "app/build/tmp/kotlin-classes/release", "app/build/processedResources/release"
+        )
+        sourceSets[4].verifySourceSet(
+            "releaseUnitTest",
+            SourceSet.SourceSetType.TEST,
+            listOf("release"),
+            listOf(
+                "app/src/releaseUnitTest/kotlin",
+                "app/src/test/kotlin",
+                "app/src/test/java",
+                "app/src/testRelease/kotlin",
+                "app/src/testRelease/java"
+            ),
+            listOf(
+                "app/src/releaseUnitTest/resources",
+                "app/src/test/resources",
+                "app/src/testRelease/resources"
+            ),
+            "app/build/tmp/kotlin-classes/releaseUnitTest", "app/build/processedResources/releaseUnitTest"
+        )
     }
 
     @Test

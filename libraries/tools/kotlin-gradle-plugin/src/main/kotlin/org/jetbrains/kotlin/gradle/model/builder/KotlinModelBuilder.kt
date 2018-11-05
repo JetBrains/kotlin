@@ -22,13 +22,16 @@ import org.jetbrains.kotlin.gradle.plugin.KOTLIN_DSL_NAME
 import org.jetbrains.kotlin.gradle.plugin.KOTLIN_JS_DSL_NAME
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.getConvention
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 
 /**
  * [ToolingModelBuilder] for [KotlinProject] models.
  * This model builder is registered for base Kotlin JVM (including Android), Kotlin JS and Kotlin Common plugins.
+ *
+ * [androidTarget] should always be null for none Android plugins.
  */
-class KotlinModelBuilder(private val kotlinPluginVersion: String) : ToolingModelBuilder {
+class KotlinModelBuilder(private val kotlinPluginVersion: String, private val androidTarget: KotlinAndroidTarget?) : ToolingModelBuilder {
 
     override fun canBuild(modelName: String): Boolean {
         return modelName == KotlinProject::class.java.name
@@ -43,7 +46,7 @@ class KotlinModelBuilder(private val kotlinPluginVersion: String) : ToolingModel
                 kotlinPluginVersion,
                 projectType,
                 kotlinCompileTasks.mapNotNull {
-                    if (project.isAndroid()) it.createAndroidSourceSet() else it.createSourceSet(project, projectType)
+                    if (androidTarget != null) it.createAndroidSourceSet(androidTarget) else it.createSourceSet(project, projectType)
                 },
                 getExpectedByDependencies(project),
                 kotlinCompileTasks.first()!!.createExperimentalFeatures()
@@ -103,15 +106,24 @@ class KotlinModelBuilder(private val kotlinPluginVersion: String) : ToolingModel
          * Android Gradle plugin and as such is not populated here. The important information here that is required by
          * Android Studio are the [CompilerArguments].
          */
-        private fun AbstractKotlinCompile<*>.createAndroidSourceSet(): SourceSet {
+        private fun AbstractKotlinCompile<*>.createAndroidSourceSet(androidTarget: KotlinAndroidTarget): SourceSet {
+            val variantName = sourceSetName
+            val compilation = androidTarget.compilations.getByName(variantName)
+            // Merge all sources and resource dirs from the different Source Sets that make up this variant.
+            val sources = compilation.kotlinSourceSets.flatMap {
+                it.kotlin.srcDirs
+            }.distinctBy { it.absolutePath }
+            val resources = compilation.kotlinSourceSets.flatMap {
+                it.resources.srcDirs
+            }.distinctBy { it.absolutePath }
             return SourceSetImpl(
                 sourceSetName,
                 if (sourceSetName.contains("test", true)) SourceSet.SourceSetType.TEST else SourceSet.SourceSetType.PRODUCTION,
                 findFriendSourceSets(),
-                emptyList(), // Obtained from the Android model
-                emptyList(), // Obtained from the Android model
+                sources,
+                resources,
                 destinationDir,
-                destinationDir, // Obtained from the Android model
+                compilation.output.resourcesDir,
                 createCompilerArguments()
             )
         }

@@ -352,7 +352,7 @@ internal abstract class AbstractKotlinPlugin(
 
         configureAttributes(target)
         configureProjectGlobalSettings(project, kotlinPluginVersion)
-        registry.register(KotlinModelBuilder(kotlinPluginVersion))
+        registry.register(KotlinModelBuilder(kotlinPluginVersion, null))
     }
 
     companion object {
@@ -571,7 +571,7 @@ internal open class KotlinAndroidPlugin(
             project, androidTarget, tasksProvider,
             kotlinPluginVersion
         )
-        registry.register(KotlinModelBuilder(kotlinPluginVersion))
+        registry.register(KotlinModelBuilder(kotlinPluginVersion, androidTarget))
     }
 
     companion object {
