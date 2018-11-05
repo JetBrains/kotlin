@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.gradle.model.builder
 
 import org.jetbrains.kotlin.gradle.model.KotlinProject
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.junit.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
