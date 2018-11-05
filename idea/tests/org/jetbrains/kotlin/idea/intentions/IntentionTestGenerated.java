@@ -1698,6 +1698,144 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         }
     }
 
+    @TestMetadata("idea/testData/intentions/addThrowsAnnotation")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class AddThrowsAnnotation extends AbstractIntentionTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInAddThrowsAnnotation() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/addThrowsAnnotation"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("fqName.kt")
+        public void testFqName() throws Exception {
+            runTest("idea/testData/intentions/addThrowsAnnotation/fqName.kt");
+        }
+
+        @TestMetadata("fqName2.kt")
+        public void testFqName2() throws Exception {
+            runTest("idea/testData/intentions/addThrowsAnnotation/fqName2.kt");
+        }
+
+        @TestMetadata("functionCall.kt")
+        public void testFunctionCall() throws Exception {
+            runTest("idea/testData/intentions/addThrowsAnnotation/functionCall.kt");
+        }
+
+        @TestMetadata("hasThrowsWithDifferentClassArgument.kt")
+        public void testHasThrowsWithDifferentClassArgument() throws Exception {
+            runTest("idea/testData/intentions/addThrowsAnnotation/hasThrowsWithDifferentClassArgument.kt");
+        }
+
+        @TestMetadata("hasThrowsWithDifferentClassArgument2.kt")
+        public void testHasThrowsWithDifferentClassArgument2() throws Exception {
+            runTest("idea/testData/intentions/addThrowsAnnotation/hasThrowsWithDifferentClassArgument2.kt");
+        }
+
+        @TestMetadata("hasThrowsWithDifferentClassArgument3.kt")
+        public void testHasThrowsWithDifferentClassArgument3() throws Exception {
+            runTest("idea/testData/intentions/addThrowsAnnotation/hasThrowsWithDifferentClassArgument3.kt");
+        }
+
+        @TestMetadata("hasThrowsWithDifferentClassArgument4.kt")
+        public void testHasThrowsWithDifferentClassArgument4() throws Exception {
+            runTest("idea/testData/intentions/addThrowsAnnotation/hasThrowsWithDifferentClassArgument4.kt");
+        }
+
+        @TestMetadata("hasThrowsWithDifferentClassArgument5.kt")
+        public void testHasThrowsWithDifferentClassArgument5() throws Exception {
+            runTest("idea/testData/intentions/addThrowsAnnotation/hasThrowsWithDifferentClassArgument5.kt");
+        }
+
+        @TestMetadata("hasThrowsWithEmptyArgument.kt")
+        public void testHasThrowsWithEmptyArgument() throws Exception {
+            runTest("idea/testData/intentions/addThrowsAnnotation/hasThrowsWithEmptyArgument.kt");
+        }
+
+        @TestMetadata("hasThrowsWithNoArgument.kt")
+        public void testHasThrowsWithNoArgument() throws Exception {
+            runTest("idea/testData/intentions/addThrowsAnnotation/hasThrowsWithNoArgument.kt");
+        }
+
+        @TestMetadata("hasThrowsWithSameClassArgument.kt")
+        public void testHasThrowsWithSameClassArgument() throws Exception {
+            runTest("idea/testData/intentions/addThrowsAnnotation/hasThrowsWithSameClassArgument.kt");
+        }
+
+        @TestMetadata("hasThrowsWithSameClassArgument2.kt")
+        public void testHasThrowsWithSameClassArgument2() throws Exception {
+            runTest("idea/testData/intentions/addThrowsAnnotation/hasThrowsWithSameClassArgument2.kt");
+        }
+
+        @TestMetadata("hasThrowsWithSameClassArgument3.kt")
+        public void testHasThrowsWithSameClassArgument3() throws Exception {
+            runTest("idea/testData/intentions/addThrowsAnnotation/hasThrowsWithSameClassArgument3.kt");
+        }
+
+        @TestMetadata("hasThrowsWithSameClassArgument4.kt")
+        public void testHasThrowsWithSameClassArgument4() throws Exception {
+            runTest("idea/testData/intentions/addThrowsAnnotation/hasThrowsWithSameClassArgument4.kt");
+        }
+
+        @TestMetadata("if.kt")
+        public void testIf() throws Exception {
+            runTest("idea/testData/intentions/addThrowsAnnotation/if.kt");
+        }
+
+        @TestMetadata("inConstructor.kt")
+        public void testInConstructor() throws Exception {
+            runTest("idea/testData/intentions/addThrowsAnnotation/inConstructor.kt");
+        }
+
+        @TestMetadata("inFunction.kt")
+        public void testInFunction() throws Exception {
+            runTest("idea/testData/intentions/addThrowsAnnotation/inFunction.kt");
+        }
+
+        @TestMetadata("inGetter.kt")
+        public void testInGetter() throws Exception {
+            runTest("idea/testData/intentions/addThrowsAnnotation/inGetter.kt");
+        }
+
+        @TestMetadata("inGetter2.kt")
+        public void testInGetter2() throws Exception {
+            runTest("idea/testData/intentions/addThrowsAnnotation/inGetter2.kt");
+        }
+
+        @TestMetadata("inInit.kt")
+        public void testInInit() throws Exception {
+            runTest("idea/testData/intentions/addThrowsAnnotation/inInit.kt");
+        }
+
+        @TestMetadata("inLambda.kt")
+        public void testInLambda() throws Exception {
+            runTest("idea/testData/intentions/addThrowsAnnotation/inLambda.kt");
+        }
+
+        @TestMetadata("inSetter.kt")
+        public void testInSetter() throws Exception {
+            runTest("idea/testData/intentions/addThrowsAnnotation/inSetter.kt");
+        }
+
+        @TestMetadata("inSetter2.kt")
+        public void testInSetter2() throws Exception {
+            runTest("idea/testData/intentions/addThrowsAnnotation/inSetter2.kt");
+        }
+
+        @TestMetadata("js.kt")
+        public void testJs() throws Exception {
+            runTest("idea/testData/intentions/addThrowsAnnotation/js.kt");
+        }
+
+        @TestMetadata("localException.kt")
+        public void testLocalException() throws Exception {
+            runTest("idea/testData/intentions/addThrowsAnnotation/localException.kt");
+        }
+    }
+
     @TestMetadata("idea/testData/intentions/addValOrVar")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
