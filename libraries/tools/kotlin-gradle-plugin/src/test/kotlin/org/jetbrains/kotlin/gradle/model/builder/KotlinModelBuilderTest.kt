@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.model.builder
 
 import org.jetbrains.kotlin.gradle.model.KotlinProject
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.junit.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -13,7 +14,7 @@ import kotlin.test.assertTrue
 class KotlinModelBuilderTest {
     @Test
     fun testCanBuild() {
-        val modelBuilder = KotlinModelBuilder("version")
+        val modelBuilder = KotlinModelBuilder("version", null)
         assertTrue(modelBuilder.canBuild(KotlinProject::class.java.name))
         assertFalse(modelBuilder.canBuild("wrongModel"))
     }
