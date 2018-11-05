@@ -74,6 +74,7 @@ object Kapt3ConfigurationKeys {
     val ANNOTATION_PROCESSOR_CLASSPATH: CompilerConfigurationKey<List<String>> =
         CompilerConfigurationKey.create<List<String>>(ANNOTATION_PROCESSOR_CLASSPATH_OPTION.description)
 
+    @Suppress("DEPRECATION")
     @Deprecated("Use APT_OPTION instead.")
     val APT_OPTIONS: CompilerConfigurationKey<String> =
         CompilerConfigurationKey.create<String>(APT_OPTIONS_OPTION.description)
@@ -81,6 +82,7 @@ object Kapt3ConfigurationKeys {
     val APT_OPTION: CompilerConfigurationKey<Map<String, String>> =
         CompilerConfigurationKey.create<Map<String, String>>(APT_OPTION_OPTION.description)
 
+    @Suppress("DEPRECATION")
     @Deprecated("Use JAVAC_OPTION instead.")
     val JAVAC_CLI_OPTIONS: CompilerConfigurationKey<String> =
         CompilerConfigurationKey.create<String>(JAVAC_CLI_OPTIONS_OPTION.description)
@@ -97,6 +99,7 @@ object Kapt3ConfigurationKeys {
     val INFO_AS_WARNINGS: CompilerConfigurationKey<String> =
         CompilerConfigurationKey.create<String>(INFO_AS_WARNINGS_OPTION.description)
 
+    @Suppress("DEPRECATION")
     @Deprecated("Use APT_MODE instead.")
     val APT_ONLY: CompilerConfigurationKey<String> =
         CompilerConfigurationKey.create<String>(APT_ONLY_OPTION.description)
@@ -130,6 +133,7 @@ class Kapt3CommandLineProcessor : CommandLineProcessor {
             throw CliOptionProcessingException("Unknown option: ${option.optionName}")
         }
 
+        @Suppress("DEPRECATION")
         return when (option) {
             ANNOTATION_PROCESSOR_CLASSPATH_OPTION -> configuration.appendList(ANNOTATION_PROCESSOR_CLASSPATH, value)
             ANNOTATION_PROCESSORS_OPTION -> configuration.appendList(
@@ -198,6 +202,7 @@ class Kapt3ComponentRegistrar : ComponentRegistrar {
     }
 
     override fun registerProjectComponents(project: MockProject, configuration: CompilerConfiguration) {
+        @Suppress("DEPRECATION")
         val aptMode = AptMode.parse(configuration.get(Kapt3ConfigurationKeys.APT_MODE) ?: configuration.get(Kapt3ConfigurationKeys.APT_ONLY))
 
         val isVerbose = configuration.get(Kapt3ConfigurationKeys.VERBOSE_MODE) == "true"
@@ -256,10 +261,12 @@ class Kapt3ComponentRegistrar : ComponentRegistrar {
             return
         }
 
-        val apOptions = (configuration.get(APT_OPTIONS)?.let { decodeMap(it) } ?: emptyMap()).toMutableMap()
+        @Suppress("DEPRECATION")
+        val apOptions = decodeMap(configuration.get(APT_OPTIONS).orEmpty()).toMutableMap()
         configuration.get(APT_OPTION)?.let { apOptions += it }
 
-        val javacOptions = (configuration.get(JAVAC_CLI_OPTIONS)?.let { decodeMap(it) } ?: emptyMap()).toMutableMap()
+        @Suppress("DEPRECATION")
+        val javacOptions = decodeMap(configuration.get(JAVAC_CLI_OPTIONS).orEmpty()).toMutableMap()
         configuration.get(JAVAC_OPTION)?.let { javacOptions += it }
 
         sourcesOutputDir.mkdirs()
@@ -354,8 +361,6 @@ enum class AptMode(val optionName: String) {
         get() = this != APT_ONLY
 
     companion object {
-       fun supports(mode: String?) = AptMode.values().any { it.optionName == mode }
-
         // Supports both deprecated APT_ONLY and new APT_MODE options
         fun parse(mode: String?): AptMode {
             return when (mode) {
