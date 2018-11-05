@@ -40,6 +40,7 @@ class RedundantCompanionReferenceInspection : AbstractKotlinInspection() {
             if (expression.text != objectDeclaration.name) return
 
             val containingClass = objectDeclaration.containingClass() ?: return
+            if (parent.getStrictParentOfType<KtEnumEntry>()?.containingClass() == containingClass) return
             val containingClassDescriptor = containingClass.descriptor as? ClassDescriptor ?: return
             val selectorDescriptor = selectorExpression?.getCallableDescriptor()
             when (selectorDescriptor) {
@@ -52,9 +53,9 @@ class RedundantCompanionReferenceInspection : AbstractKotlinInspection() {
                 is FunctionDescriptor -> {
                     val name = selectorDescriptor.name
                     val function = containingClass.findFunctionByName(name.asString())?.descriptor
-                            ?: expression.getResolutionScope().findFunction(name, NoLookupLocation.FROM_IDE)?.takeIf {
-                                it.isLocalOrExtension(containingClassDescriptor)
-                            }
+                        ?: expression.getResolutionScope().findFunction(name, NoLookupLocation.FROM_IDE)?.takeIf {
+                            it.isLocalOrExtension(containingClassDescriptor)
+                        }
                     if (function is FunctionDescriptor) {
                         val functionParams = function.valueParameters
                         val calleeParams =
