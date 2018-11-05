@@ -7450,6 +7450,21 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             runTest("idea/testData/intentions/convertToStringTemplate/templatePlusStringLiteral.kt");
         }
 
+        @TestMetadata("this.kt")
+        public void testThis() throws Exception {
+            runTest("idea/testData/intentions/convertToStringTemplate/this.kt");
+        }
+
+        @TestMetadata("this2.kt")
+        public void testThis2() throws Exception {
+            runTest("idea/testData/intentions/convertToStringTemplate/this2.kt");
+        }
+
+        @TestMetadata("this3.kt")
+        public void testThis3() throws Exception {
+            runTest("idea/testData/intentions/convertToStringTemplate/this3.kt");
+        }
+
         @TestMetadata("tricky.kt")
         public void testTricky() throws Exception {
             runTest("idea/testData/intentions/convertToStringTemplate/tricky.kt");
