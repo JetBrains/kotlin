@@ -228,7 +228,8 @@ abstract class AbstractKapt3Extension(
         if (options.detectMemoryLeaks != DetectMemoryLeaksMode.NONE) {
             MemoryLeakDetector.add(processors.classLoader)
 
-            val (leakDetectionTime, leaks) = measureTimeMillis { MemoryLeakDetector.process() }
+            val isParanoid = options.detectMemoryLeaks == DetectMemoryLeaksMode.PARANOID
+            val (leakDetectionTime, leaks) = measureTimeMillis { MemoryLeakDetector.process(isParanoid) }
             logger.info { "Leak detection took $leakDetectionTime ms" }
 
             for (leak in leaks) {
