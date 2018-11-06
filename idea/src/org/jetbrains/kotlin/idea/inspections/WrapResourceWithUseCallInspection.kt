@@ -12,34 +12,21 @@ import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
-import com.intellij.psi.PsiCall
-import com.intellij.psi.PsiCallExpression
-import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
 import org.jetbrains.kotlin.codegen.kotlinType
-import org.jetbrains.kotlin.descriptors.buildPossiblyInnerType
-import org.jetbrains.kotlin.idea.analysis.computeTypeInfoInContext
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.CollectingNameValidator
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
-import org.jetbrains.kotlin.idea.intentions.callExpression
 import org.jetbrains.kotlin.idea.intentions.calleeName
+import org.jetbrains.kotlin.idea.intentions.loopToCallChain.nextStatement
 import org.jetbrains.kotlin.idea.intentions.loopToCallChain.previousStatement
-import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.contains
-import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.getExpressionForTypeGuess
-import org.jetbrains.kotlin.idea.refactoring.introduce.findExpressionsByCopyableDataAndClearIt
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.addRemoveModifier.addModifier
 import org.jetbrains.kotlin.psi.psiUtil.*
-import org.jetbrains.kotlin.psi.synthetics.findClassDescriptor
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.Variance
-import org.jetbrains.kotlin.types.expressions.BasicExpressionTypingVisitor
-import org.jetbrains.kotlin.types.typeUtil.contains
-import org.jetbrains.kotlin.types.typeUtil.containsTypeAliases
 import org.jetbrains.kotlin.types.typeUtil.supertypes
-import java.io.Closeable
 
 class WrapResourceWithUseCallInspection : AbstractKotlinInspection() {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
@@ -49,6 +36,7 @@ class WrapResourceWithUseCallInspection : AbstractKotlinInspection() {
 
                 // Differentiate between resource of variable or non variable reference expression
                 // TODO: check variable definition expression anywhere, not just the previous statement expression.
+                // TODO: And highlight all references or just definition dependend on definition.
                 if (expression.previousStatement() is KtProperty) {
                     val property = expression.previousStatement() as KtProperty
 
@@ -69,8 +57,10 @@ class WrapResourceWithUseCallInspection : AbstractKotlinInspection() {
 
                     val problemDescriptor = holder.manager.createProblemDescriptor(
                         expression.psiOrParent,
-                        TextRange(property.startOffset - callExpression.startOffset,
-                            callExpression.endOffset - expression.startOffset),
+                        TextRange(
+                            property.startOffset - callExpression.startOffset,
+                            callExpression.endOffset - expression.startOffset
+                        ),
                         "Convert resource to use call with prop", ProblemHighlightType.LIKE_UNUSED_SYMBOL, isOnTheFly,
                         // variable assigned resource
                         ChangeResourceVariableWithUseCall(expression)
@@ -95,8 +85,10 @@ class WrapResourceWithUseCallInspection : AbstractKotlinInspection() {
 
                     val problemDescriptor = holder.manager.createProblemDescriptor(
                         expression.psiOrParent,
-                        TextRange(referenceExpression.endOffset - callExpression.startOffset,
-                            callExpression.endOffset - expression.startOffset),
+                        TextRange(
+                            referenceExpression.endOffset - callExpression.startOffset,
+                            callExpression.endOffset - expression.startOffset
+                        ),
                         "Convert resource to use call with prop", ProblemHighlightType.LIKE_UNUSED_SYMBOL, isOnTheFly,
                         // non variable assigned resource
                         ChangeResourceWithUseCall(expression)
@@ -177,12 +169,41 @@ class WrapResourceWithUseCallInspection : AbstractKotlinInspection() {
             val referenceExpression = element.receiverExpression as KtNameReferenceExpression
             val variableName = referenceExpression.getReferencedNameAsName()
 
-            // Get the call expression used by the resource variable
+            // Get the (or multiple) call expression(s) used by the resource variable
             val callExpression = element.selectorExpression as KtCallExpression
-            val callReferenceExpression = callExpression?.referenceExpression()
+            val callReferenceExpression = callExpression.referenceExpression()
+            val callExpressionTextList = mutableListOf<KtDotQualifiedExpression>()
+            var singleCallExpression = true
+
+            // Save single/multiple variable call expression(s)
+            val nextStatement = element.nextStatement()
+            if (nextStatement is KtDotQualifiedExpression &&
+                ((nextStatement as KtDotQualifiedExpression).receiverExpression as
+                        KtNameReferenceExpression).getReferencedNameAsName() == variableName
+            ) {
+                // Multiple referenced expressions
+                singleCallExpression = false
+
+                // Iterate through multiple referenced expressions and save them in a mutable list
+                element.parent.accept(object : KtTreeVisitorVoid() {
+                    override fun visitDotQualifiedExpression(expression: KtDotQualifiedExpression) {
+                        super.visitDotQualifiedExpression(expression)
+                        if ((expression.receiverExpression as KtNameReferenceExpression).getReferencedNameAsName() == variableName) {
+                            callExpressionTextList.add(expression)
+                        }
+                    }
+                })
+            }
 
             // Create the actual use {} call with property
             val factory = KtPsiFactory(element)
+
+            // Take last item to add without "\n"
+            val lastItem = callExpressionTextList.takeLast(1).single()
+            // Drop last item to only add "\n" to all items except last
+            val useExpressionList = callExpressionTextList.dropLast(1)
+            // Drop first item to delete all other references except the first one for replace
+            val deleteExpressionList = callExpressionTextList.drop(1)
 
             val useCallExpression = factory.buildExpression {
                 if (resourceName != null) {
@@ -198,15 +219,34 @@ class WrapResourceWithUseCallInspection : AbstractKotlinInspection() {
 
                 appendFixedText("\n")
                 if (callReferenceExpression != null) {
-                    appendName(variableName)
-                    appendFixedText(".")
-                    appendFixedText(callExpression.text)
+                    if (singleCallExpression) {
+                        appendName(variableName)
+                        appendFixedText(".")
+                        appendFixedText(callExpression.text)
+                    } else {
+                        useExpressionList.forEach {
+                            appendName(variableName)
+                            appendFixedText(".")
+                            appendFixedText(it.selectorExpression?.text!!)
+                            appendFixedText("\n")
+                        }
+                        appendName(variableName)
+                        appendFixedText(".")
+                        appendFixedText(lastItem.selectorExpression?.text!!)
+                    }
                 }
                 appendFixedText("\n}")
             }
 
             // Delete the variable assigned statement
             resourceStatementExpression.delete()
+
+            // Delete multiple referenced expressions of same variable name
+            if (!singleCallExpression) {
+                deleteExpressionList.forEach {
+                    it.delete()
+                }
+            }
 
             val result = element.replace(useCallExpression) as KtExpression
 
@@ -216,5 +256,15 @@ class WrapResourceWithUseCallInspection : AbstractKotlinInspection() {
             addModifier(typeParameter, if (result == Variance.IN_VARIANCE) KtTokens.IN_KEYWORD else KtTokens.OUT_KEYWORD)
 
         }
+    }
+
+    private fun KtDotQualifiedExpression.multipleExpressions(): Boolean {
+        var result = false
+        accept(object : KtTreeVisitorVoid() {
+            override fun visitDotQualifiedExpression(expression: KtDotQualifiedExpression) {
+                result = true
+            }
+        })
+        return result
     }
 }
