@@ -1,3 +1,5 @@
+// !MODULES: project_main
+
 group 'Again'
 version '1.0-SNAPSHOT'
 

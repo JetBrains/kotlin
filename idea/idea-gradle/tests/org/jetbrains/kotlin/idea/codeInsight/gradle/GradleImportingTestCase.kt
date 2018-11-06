@@ -199,6 +199,26 @@ abstract class GradleImportingTestCase : ExternalSystemImportingTestCase() {
         return fileText.replace("\$\$ANDROID_SDK\$\$", KotlinTestUtils.getAndroidSdkSystemIndependentPath())
     }
 
+    open fun doTest(projectDirPath: String) {
+        loadProject(projectDirPath)
+
+        val modules = loadRelevantModules(File(projectDirPath).resolve("build.gradle"))
+        for (module in modules) {
+            checkFacet(projectDirPath, module)
+        }
+    }
+
+    private fun loadRelevantModules(buildFile: File): List<Module> {
+        val buildFileContent = KotlinTestUtils.doLoadFile(buildFile)
+        val relevantModulesNames = buildFileContent.lines().single { it.startsWith("// !MODULES ") }
+            .removePrefix("// !MODULES ")
+            .trim()
+            .split(",")
+
+        return relevantModulesNames.map { getModule(it) }
+    }
+
+
     open fun checkFacet(projectDirPath: String, module: Module) {
         val actualFacet = KotlinFacet.get(module)
         // TODO. More accurate check: either

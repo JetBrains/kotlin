@@ -19,222 +19,158 @@ package org.jetbrains.kotlin.idea.codeInsight.gradle
 import org.junit.Test
 
 class GradleFacetImportTest : GradleImportingTestCase() {
-    private var isCreateEmptyContentRootDirectories = true
-
-    override fun setUp() {
-        super.setUp()
-        isCreateEmptyContentRootDirectories = currentExternalProjectSettings.isCreateEmptyContentRootDirectories
-        currentExternalProjectSettings.isCreateEmptyContentRootDirectories = true
-    }
-
-    override fun tearDown() {
-        currentExternalProjectSettings.isCreateEmptyContentRootDirectories = isCreateEmptyContentRootDirectories
-        super.tearDown()
-    }
-
     @Test
     fun testJvmImport() {
-        loadProject("idea/testData/gradle/facets/jvmImport")
-
-        checkFacet("idea/testData/gradle/facets/jvmImport", getModule("project_main"))
-        checkFacet("idea/testData/gradle/facets/jvmImport", getModule("project_test"))
+        doTest("idea/testData/gradle/facets/jvmImport")
     }
 
     @Test
     fun testJvmImportWithPlugin() {
-        loadProject("idea/testData/gradle/facets/jvmImportWithPlugin")
+        doTest("idea/testData/gradle/facets/jvmImportWithPlugin")
     }
 
     @Test
     fun testJvmImport_1_1_2() {
-        loadProject("idea/testData/gradle/facets/jvmImport_1_1_2")
-
-        checkFacet("idea/testData/gradle/facets/jvmImport_1_1_2", getModule("project_main"))
-        checkFacet("idea/testData/gradle/facets/jvmImport_1_1_2", getModule("project_test"))
+        doTest("idea/testData/gradle/facets/jvmImport_1_1_2")
     }
 
     @Test
     fun testJvmImportWithCustomSourceSets() {
-        loadProject("idea/testData/gradle/facets/jvmImportWithCustomSourceSets")
-
-        checkFacet("idea/testData/gradle/facets/jvmImportWithCustomSourceSets", getModule("project_myMain"))
-        checkFacet("idea/testData/gradle/facets/jvmImportWithCustomSourceSets", getModule("project_myTest"))
+        doTest("idea/testData/gradle/facets/jvmImportWithCustomSourceSets")
     }
 
     @Test
     fun testJvmImportWithCustomSourceSets_1_1_2() {
-        loadProject("idea/testData/gradle/facets/jvmImportWithCustomSourceSets_1_1_2")
-
-        checkFacet("idea/testData/gradle/facets/jvmImportWithCustomSourceSets_1_1_2", getModule("project_myMain"))
-        checkFacet("idea/testData/gradle/facets/jvmImportWithCustomSourceSets_1_1_2", getModule("project_myTest"))
+        doTest("idea/testData/gradle/facets/jvmImportWithCustomSourceSets_1_1_2")
     }
 
     @Test
     fun testCoroutineImportByOptions() {
-        loadProject("idea/testData/gradle/facets/coroutineImportByOptions")
-        checkFacet("idea/testData/gradle/facets/coroutineImportByOptions", getModule("project_main"))
+        doTest("idea/testData/gradle/facets/coroutineImportByOptions")
     }
 
     @Test
     fun testCoroutineImportByProperties() {
-        loadProject("idea/testData/gradle/facets/coroutineImportByProperties")
-        checkFacet("idea/testData/gradle/facets/coroutineImportByProperties", getModule("project_main"))
+        doTest("idea/testData/gradle/facets/coroutineImportByProperties")
     }
 
     @Test
     fun testJsImport() {
-        loadProject("idea/testData/gradle/facets/jsImport")
-        checkFacet("idea/testData/gradle/facets/jsImport", getModule("project_main"))
+        doTest("idea/testData/gradle/facets/jsImport")
     }
 
     @Test
     fun testJsImportTransitive() {
-        loadProject("idea/testData/gradle/facets/jsImportTransitive")
-        checkFacet("idea/testData/gradle/facets/jsImportTransitive", getModule("project_main"))
+        doTest("idea/testData/gradle/facets/jsImportTransitive")
     }
 
     @Test
     fun testJsImportWithCustomSourceSets() {
-        loadProject("idea/testData/gradle/facets/jsImportWithCustomSourceSets")
-        checkFacet("idea/testData/gradle/facets/jsImportWithCustomSourceSets", getModule("project_myMain"))
-        checkFacet("idea/testData/gradle/facets/jsImportWithCustomSourceSets", getModule("project_myTest"))
+        doTest("idea/testData/gradle/facets/jsImportWithCustomSourceSets")
     }
 
     @Test
     fun testDetectOldJsStdlib() {
-        loadProject("idea/testData/gradle/facets/detectOldJsStdlib")
-        checkFacet("idea/testData/gradle/facets/detectOldJsStdlib", getModule("project_main"))
+        doTest("idea/testData/gradle/facets/detectOldJsStdlib")
     }
 
     @Test
     fun testJvmImportByPlatformPlugin() {
-        loadProject("idea/testData/gradle/facets/jvmImportByPlatformPlugin")
-        checkFacet("idea/testData/gradle/facets/jvmImportByPlatformPlugin", getModule("project_main"))
+        doTest("idea/testData/gradle/facets/jvmImportByPlatformPlugin")
     }
 
     @Test
     fun testJsImportByPlatformPlugin() {
-        loadProject("idea/testData/gradle/facets/jsImportByPlatformPlugin")
-        checkFacet("idea/testData/gradle/facets/jsImportByPlatformPlugin", getModule("project_main"))
+        doTest("idea/testData/gradle/facets/jsImportByPlatformPlugin")
     }
 
     @Test
     fun testCommonImportByPlatformPlugin() {
-        loadProject("idea/testData/gradle/facets/commonImportByPlatformPlugin")
-        checkFacet("idea/testData/gradle/facets/commonImportByPlatformPlugin", getModule("project_main"))
+        doTest("idea/testData/gradle/facets/commonImportByPlatformPlugin")
     }
 
     @Test
     fun testCommonImportByPlatformPlugin_SingleModule() {
-        loadProject("idea/testData/gradle/facets/commonImportByPlatformPlugin_SingleModule")
-        checkFacet("idea/testData/gradle/facets/commonImportByPlatformPlugin_SingleModule", getModule("project"))
+        doTest("idea/testData/gradle/facets/commonImportByPlatformPlugin_SingleModule")
     }
 
     @Test
     fun testJvmImportByKotlinPlugin() {
-        loadProject("idea/testData/gradle/facets/jvmImportByKotlinPlugin")
-        checkFacet("idea/testData/gradle/facets/jvmImportByKotlinPlugin", getModule("project_main"))
+        doTest("idea/testData/gradle/facets/jvmImportByKotlinPlugin")
     }
 
     @Test
     fun testJsImportByKotlin2JsPlugin() {
-        loadProject("idea/testData/gradle/facets/jsImportByKotlin2JsPlugin")
-        checkFacet("idea/testData/gradle/facets/jsImportByKotlin2JsPlugin", getModule("project_main"))
+        doTest("idea/testData/gradle/facets/jsImportByKotlin2JsPlugin")
     }
 
     @Test
     fun testArgumentEscaping() {
-        loadProject("idea/testData/gradle/facets/argumentEscaping")
-        checkFacet("idea/testData/gradle/facets/argumentEscaping", getModule("project_main"))
+        doTest("idea/testData/gradle/facets/argumentEscaping")
     }
 
     @Test
     fun testNoPluginsInAdditionalArgs() {
-        loadProject("idea/testData/gradle/facets/noPluginsInAdditionalArgs")
-        checkFacet("idea/testData/gradle/facets/noPluginsInAdditionalArgs", getModule("project_main"))
+        doTest("idea/testData/gradle/facets/noPluginsInAdditionalArgs")
     }
 
     @Test
     fun testNoArgInvokeInitializers() {
-        loadProject("idea/testData/gradle/facets/noArgInvokeInitializers")
-        checkFacet("idea/testData/gradle/facets/noArgInvokeInitializers", getModule("project_main"))
+        doTest("idea/testData/gradle/facets/noArgInvokeInitializers")
     }
 
     @Test
     fun testAndroidGradleJsDetection() {
-        loadProject("idea/testData/gradle/facets/androidGradleJsDetection")
-        checkFacet("idea/testData/gradle/facets/androidGradleJsDetection", getModule("js-module"))
+        doTest("idea/testData/gradle/facets/androidGradleJsDetection")
     }
 
     @Test
     fun testKotlinAndroidPluginDetection() {
-        loadProject("idea/testData/gradle/facets/kotlinAndroidPluginDetection")
-        checkFacet("idea/testData/gradle/facets/kotlinAndroidPluginDetection", getModule("project"))
+        doTest("idea/testData/gradle/facets/kotlinAndroidPluginDetection")
     }
 
     @Test
     fun testNoFacetInModuleWithoutKotlinPlugin() {
-        loadProject("idea/testData/gradle/facets/noFacetInModuleWithoutKotlinPlugin")
-        checkFacet("idea/testData/gradle/facets/noFacetInModuleWithoutKotlinPlugin", getModule("gr01_main"))
-        checkFacet("idea/testData/gradle/facets/noFacetInModuleWithoutKotlinPlugin", getModule("gr01_test"))
-        checkFacet("idea/testData/gradle/facets/noFacetInModuleWithoutKotlinPlugin", getModule("m1_main"))
-        checkFacet("idea/testData/gradle/facets/noFacetInModuleWithoutKotlinPlugin", getModule("m1_test"))
+        doTest("idea/testData/gradle/facets/noFacetInModuleWithoutKotlinPlugin")
     }
 
     @Test
     fun testClasspathWithDependenciesImport() {
-        loadProject("idea/testData/gradle/facets/classpathWithDependenciesImport")
-        checkFacet("idea/testData/gradle/facets/classpathWithDependenciesImport", getModule("project_main"))
+        doTest("idea/testData/gradle/facets/classpathWithDependenciesImport")
     }
 
     @Test
     fun testDependenciesClasspathImport() {
-        loadProject("idea/testData/gradle/facets/dependenciesClasspathImport")
-        checkFacet("idea/testData/gradle/facets/dependenciesClasspathImport", getModule("project_main"))
+        doTest("idea/testData/gradle/facets/dependenciesClasspathImport")
     }
 
     @Test
     fun testImplementsDependency() {
-        loadProject("idea/testData/gradle/facets/implementsDependency")
-
-        checkFacet("idea/testData/gradle/facets/implementsDependency", getModule("MultiTest-jvm_main"))
-        checkFacet("idea/testData/gradle/facets/implementsDependency", getModule("MultiTest-jvm_test"))
-        checkFacet("idea/testData/gradle/facets/implementsDependency", getModule("MultiTest-js_main"))
-        checkFacet("idea/testData/gradle/facets/implementsDependency", getModule("MultiTest-jvm_main"))
+        doTest("idea/testData/gradle/facets/implementsDependency")
     }
 
     @Test
     fun testImplementsDependencyWithCustomSourceSets() {
-        loadProject("idea/testData/gradle/facets/implementsDependencyWithCustomSourceSets")
-
-        checkFacet("idea/testData/gradle/facets/implementsDependencyWithCustomSourceSets", getModule("MultiTest-jvm_main"))
-        checkFacet("idea/testData/gradle/facets/implementsDependencyWithCustomSourceSets", getModule("MultiTest-jvm_test"))
-        checkFacet("idea/testData/gradle/facets/implementsDependencyWithCustomSourceSets", getModule("MultiTest-js_main"))
-        checkFacet("idea/testData/gradle/facets/implementsDependencyWithCustomSourceSets", getModule("MultiTest-jvm_main"))
+        doTest("idea/testData/gradle/facets/implementsDependencyWithCustomSourceSets")
     }
 
     @Test
     fun testAPIVersionExceedingLanguageVersion() {
-        loadProject("idea/testData/gradle/facets/APIVersionExceedingLanguageVersion")
-        checkFacet("idea/testData/gradle/facets/APIVersionExceedingLanguageVersion", getModule("project_main"))
+        doTest("idea/testData/gradle/facets/APIVersionExceedingLanguageVersion")
     }
 
     @Test
     fun testCommonArgumentsImport() {
-        loadProject("idea/testData/gradle/facets/commonArgumentsImport")
-        checkFacet("idea/testData/gradle/facets/commonArgumentsImport", getModule("project_main"))
-        checkFacet("idea/testData/gradle/facets/commonArgumentsImport", getModule("project_test"))
+        doTest("idea/testData/gradle/facets/commonArgumentsImport")
     }
 
     @Test
     fun testInternalArgumentsFacetImporting() {
-        loadProject("idea/testData/gradle/facets/internalArgumentsFacetImporting")
-        checkFacet("idea/testData/gradle/facets/internalArgumentsFacetImporting", getModule("project_main"))
+        doTest("idea/testData/gradle/facets/internalArgumentsFacetImporting")
     }
 
     @Test
     fun testNoFriendPathsAreShown() {
-        loadProject("idea/testData/gradle/facets/noFriendPathsAreShown")
-        checkFacet("idea/testData/gradle/facets/noFriendPathsAreShown", getModule("project_main"))
+        doTest("idea/testData/gradle/facets/noFriendPathsAreShown")
     }
 }

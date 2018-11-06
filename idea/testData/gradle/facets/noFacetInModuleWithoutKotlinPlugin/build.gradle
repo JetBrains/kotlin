@@ -1,3 +1,5 @@
+// !MODULES: gr01_main, gr01_test
+
 group 'gr01'
 version '1.0-SNAPSHOT'
 

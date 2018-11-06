@@ -1,3 +1,4 @@
+// !MODULES: project_main, project_test
 // !SINGLE_MODULE_PER_SOURCE_SET
 
 group 'Again'

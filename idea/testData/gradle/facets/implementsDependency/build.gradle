@@ -1,3 +1,5 @@
+// !MODULES: project_main, project_test
+
 buildscript {
     repositories {
         mavenCentral()
