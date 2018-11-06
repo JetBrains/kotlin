@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.compilerRunner
 
 import org.gradle.api.Project
+import org.gradle.api.Task
 import org.gradle.api.invocation.Gradle
 import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.jvm.tasks.Jar
@@ -50,7 +51,10 @@ const val COULD_NOT_CONNECT_TO_DAEMON_MESSAGE = "Could not connect to Kotlin com
 internal fun kotlinCompilerExecutionStrategy(): String =
     System.getProperty(KOTLIN_COMPILER_EXECUTION_STRATEGY_PROPERTY) ?: DAEMON_EXECUTION_STRATEGY
 
-internal open class GradleCompilerRunner(protected val project: Project) {
+internal open class GradleCompilerRunner(protected val task: Task) {
+    protected val project: Project
+        get() = task.project
+
     /**
      * Compiler might be executed asynchronuosly. Do not do anything requiring end of compilation after this function is called.
      * @see [GradleKotlinCompilerWork]

@@ -178,7 +178,8 @@ abstract class BaseGradleIT {
         val kotlinDaemonDebugPort: Int? = null,
         val usePreciseJavaTracking: Boolean? = null,
         val withBuildCache: Boolean = false,
-        val kaptOptions: KaptOptions? = null
+        val kaptOptions: KaptOptions? = null,
+        val parallelTasksInProject: Boolean? = null
     )
 
     data class KaptOptions(val verbose: Boolean, val useWorkers: Boolean)
@@ -446,6 +447,18 @@ abstract class BaseGradleIT {
         assertTasksUpToDate(tasks.toList())
     }
 
+    fun CompiledProject.assertTasksSubmittedWork(vararg tasks: String) {
+        for (task in tasks) {
+            assertContains("Starting Kotlin compiler work from task '$task'")
+        }
+    }
+
+    fun CompiledProject.assertTasksDidNotSubmitWork(vararg tasks: String) {
+        for (task in tasks) {
+            assertNotContains("Starting Kotlin compiler work from task '$task'")
+        }
+    }
+
     fun CompiledProject.getOutputForTask(taskName: String): String {
         val taskOutputRegex = ("\\[LIFECYCLE] \\[class org\\.gradle(?:\\.internal\\.buildevents)?\\.TaskExecutionLogger] :$taskName" +
                 "([\\s\\S]+?)" +
@@ -565,6 +578,10 @@ abstract class BaseGradleIT {
             options.kaptOptions?.also { kaptOptions ->
                 add("-Pkapt.verbose=${kaptOptions.verbose}")
                 add("-Pkapt.use.worker.api=${kaptOptions.useWorkers}")
+            }
+
+            options.parallelTasksInProject?.let {
+                add("-Pkotlin.parallel.tasks.in.project=$it")
             }
 
             // Workaround: override a console type set in the user machine gradle.properties (since Gradle 4.3):

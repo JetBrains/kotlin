@@ -23,21 +23,19 @@ import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.util.*
 
-fun mapKotlinTaskProperties(project: Project, task: AbstractKotlinCompile<*>) {
-    PropertiesProvider(project).apply {
-        coroutines?.let { task.coroutinesFromGradleProperties = it }
-        useFallbackCompilerSearch?.let { task.useFallbackCompilerSearch = it }
+internal fun PropertiesProvider.mapKotlinTaskProperties(task: AbstractKotlinCompile<*>) {
+    coroutines?.let { task.coroutinesFromGradleProperties = it }
+    useFallbackCompilerSearch?.let { task.useFallbackCompilerSearch = it }
 
-        if (task is KotlinCompile) {
-            incrementalJvm?.let { task.incremental = it }
-            usePreciseJavaTracking?.let {
-                task.usePreciseJavaTracking = it
-            }
+    if (task is KotlinCompile) {
+        incrementalJvm?.let { task.incremental = it }
+        usePreciseJavaTracking?.let {
+            task.usePreciseJavaTracking = it
         }
+    }
 
-        if (task is Kotlin2JsCompile) {
-            incrementalJs?.let { task.incremental = it }
-        }
+    if (task is Kotlin2JsCompile) {
+        incrementalJs?.let { task.incremental = it }
     }
 }
 
@@ -70,6 +68,14 @@ internal class PropertiesProvider(private val project: Project) {
 
     val useFallbackCompilerSearch: Boolean?
         get() = booleanProperty("kotlin.useFallbackCompilerSearch")
+
+    /**
+     * Enables parallel tasks execution within a project with Workers API.
+     * Does not enable using actual worker proccesses
+     * (Kotlin Daemon can be shared which uses less memory)
+     */
+    val parallelTasksInProject: Boolean?
+        get() = booleanProperty("kotlin.parallel.tasks.in.project")
 
     private fun booleanProperty(propName: String): Boolean? =
         property(propName)?.toBoolean()

@@ -250,7 +250,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKo
     }
 
     internal open fun compilerRunner(): GradleCompilerRunner =
-        GradleCompilerRunner(project)
+        GradleCompilerRunner(this)
 
     override fun compile() {
         assert(false, { "unexpected call to compile()" })
@@ -456,21 +456,21 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
 internal open class KotlinCompileWithWorkers @Inject constructor(
     @Suppress("UnstableApiUsage") private val workerExecutor: WorkerExecutor
 ) : KotlinCompile() {
-    override fun compilerRunner() = GradleCompilerRunnerWithWorkers(project, workerExecutor)
+    override fun compilerRunner() = GradleCompilerRunnerWithWorkers(this, workerExecutor)
 }
 
 @CacheableTask
 internal open class Kotlin2JsCompileWithWorkers @Inject constructor(
     @Suppress("UnstableApiUsage") private val workerExecutor: WorkerExecutor
 ) : Kotlin2JsCompile() {
-    override fun compilerRunner() = GradleCompilerRunnerWithWorkers(project, workerExecutor)
+    override fun compilerRunner() = GradleCompilerRunnerWithWorkers(this, workerExecutor)
 }
 
 @CacheableTask
 internal open class KotlinCompileCommonWithWorkers @Inject constructor(
     @Suppress("UnstableApiUsage") private val workerExecutor: WorkerExecutor
 ) : KotlinCompileCommon() {
-    override fun compilerRunner() = GradleCompilerRunnerWithWorkers(project, workerExecutor)
+    override fun compilerRunner() = GradleCompilerRunnerWithWorkers(this, workerExecutor)
 }
 
 @CacheableTask
