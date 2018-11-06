@@ -397,13 +397,18 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
 
     @NotNull
     protected GeneratedClassLoader generateAndCreateClassLoader() {
+        return generateAndCreateClassLoader(true);
+    }
+
+    @NotNull
+    protected GeneratedClassLoader generateAndCreateClassLoader(boolean reportProblems) {
         if (initializedClassLoader != null) {
             fail("Double initialization of class loader in same test");
         }
 
         initializedClassLoader = createClassLoader();
 
-        if (!verifyAllFilesWithAsm(generateClassesInFile(), initializedClassLoader)) {
+        if (!verifyAllFilesWithAsm(generateClassesInFile(reportProblems), initializedClassLoader, reportProblems)) {
             fail("Verification failed: see exceptions above");
         }
 
@@ -486,11 +491,16 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
         FqName facadeClassFqName = JvmFileClassUtil.getFileClassInfoNoResolve(myFiles.getPsiFile()).getFacadeClassFqName();
         return generateClass(facadeClassFqName.asString());
     }
-
+    
     @NotNull
     protected Class<?> generateClass(@NotNull String name) {
+        return generateClass(name, true);
+    }
+
+    @NotNull
+    protected Class<?> generateClass(@NotNull String name, boolean reportProblems) {
         try {
-            return generateAndCreateClassLoader().loadClass(name);
+            return generateAndCreateClassLoader(reportProblems).loadClass(name);
         }
         catch (ClassNotFoundException e) {
             fail("No class file was generated for: " + name);
@@ -500,6 +510,11 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
 
     @NotNull
     protected ClassFileFactory generateClassesInFile() {
+        return generateClassesInFile(true);
+    }
+
+    @NotNull
+    protected ClassFileFactory generateClassesInFile(boolean reportProblems) {
         if (classFileFactory == null) {
             try {
                 GenerationState generationState = GenerationUtils.compileFiles(
@@ -513,22 +528,26 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
                 }
             }
             catch (Throwable e) {
-                e.printStackTrace();
-                System.err.println("Generating instructions as text...");
-                try {
-                    if (classFileFactory == null) {
-                        System.err.println("Cannot generate text: exception was thrown during generation");
+                if (reportProblems) {
+                    e.printStackTrace();
+                    System.err.println("Generating instructions as text...");
+                    try {
+                        if (classFileFactory == null) {
+                            System.err.println("Cannot generate text: exception was thrown during generation");
+                        }
+                        else {
+                            System.err.println(classFileFactory.createText());
+                        }
                     }
-                    else {
-                        System.err.println(classFileFactory.createText());
+                    catch (Throwable e1) {
+                        System.err.println("Exception thrown while trying to generate text, the actual exception follows:");
+                        e1.printStackTrace();
+                        System.err.println("-----------------------------------------------------------------------------");
                     }
+                    fail("See exceptions above");
+                } else {
+                    fail("Compilation failure");
                 }
-                catch (Throwable e1) {
-                    System.err.println("Exception thrown while trying to generate text, the actual exception follows:");
-                    e1.printStackTrace();
-                    System.err.println("-----------------------------------------------------------------------------");
-                }
-                fail("See exceptions above");
             }
         }
         return classFileFactory;
@@ -538,15 +557,15 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
         return true;
     }
 
-    protected static boolean verifyAllFilesWithAsm(ClassFileFactory factory, ClassLoader loader) {
+    protected static boolean verifyAllFilesWithAsm(ClassFileFactory factory, ClassLoader loader, boolean reportProblems) {
         boolean noErrors = true;
         for (OutputFile file : ClassFileUtilsKt.getClassFiles(factory)) {
-            noErrors &= verifyWithAsm(file, loader);
+            noErrors &= verifyWithAsm(file, loader, reportProblems);
         }
         return noErrors;
     }
 
-    private static boolean verifyWithAsm(@NotNull OutputFile file, ClassLoader loader) {
+    private static boolean verifyWithAsm(@NotNull OutputFile file, ClassLoader loader, boolean reportProblems) {
         ClassNode classNode = new ClassNode();
         new ClassReader(file.asByteArray()).accept(classNode, 0);
 
@@ -560,20 +579,22 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
                 analyzer.analyze(classNode.name, method);
             }
             catch (Throwable e) {
-                System.err.println(file.asText());
-                System.err.println(classNode.name + "::" + method.name + method.desc);
+                if (reportProblems) {
+                    System.err.println(file.asText());
+                    System.err.println(classNode.name + "::" + method.name + method.desc);
 
-                //noinspection InstanceofCatchParameter
-                if (e instanceof AnalyzerException) {
-                    // Print the erroneous instruction
-                    TraceMethodVisitor tmv = new TraceMethodVisitor(new Textifier());
-                    ((AnalyzerException) e).node.accept(tmv);
-                    PrintWriter pw = new PrintWriter(System.err);
-                    tmv.p.print(pw);
-                    pw.flush();
+                    //noinspection InstanceofCatchParameter
+                    if (e instanceof AnalyzerException) {
+                        // Print the erroneous instruction
+                        TraceMethodVisitor tmv = new TraceMethodVisitor(new Textifier());
+                        ((AnalyzerException) e).node.accept(tmv);
+                        PrintWriter pw = new PrintWriter(System.err);
+                        tmv.p.print(pw);
+                        pw.flush();
+                    }
+
+                    e.printStackTrace();
                 }
-
-                e.printStackTrace();
                 noErrors = false;
             }
         }
@@ -632,6 +653,14 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
             @NotNull List<TestFile> files,
             @Nullable File javaSourceDir
     ) {
+        compile(files, javaSourceDir, true);
+    }
+
+    protected void compile(
+            @NotNull List<TestFile> files,
+            @Nullable File javaSourceDir,
+            boolean reportProblems
+    ) {
         configurationKind = extractConfigurationKind(files);
         boolean loadAndroidAnnotations = files.stream().anyMatch(it ->
                 InTextDirectivesUtils.isDirectiveDefined(it.content, "ANDROID_ANNOTATIONS")
@@ -659,7 +688,7 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
 
         loadMultiFiles(files);
 
-        generateClassesInFile();
+        generateClassesInFile(reportProblems);
 
         if (javaSourceDir != null) {
             // If there are Java files, they should be compiled against the class files produced by Kotlin, so we dump them to the disk

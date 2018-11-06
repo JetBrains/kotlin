@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.codegen.AbstractBlackBoxAgainstJavaCodegenTest
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.test.ConfigurationKind
+import org.jetbrains.kotlin.test.TargetBackend
 import java.io.File
 
 abstract class AbstractIrBlackBoxAgainstJavaCodegenTest : AbstractBlackBoxAgainstJavaCodegenTest() {
@@ -22,4 +23,6 @@ abstract class AbstractIrBlackBoxAgainstJavaCodegenTest : AbstractBlackBoxAgains
     override fun extractConfigurationKind(files: MutableList<TestFile>): ConfigurationKind {
         return ConfigurationKind.ALL
     }
+
+    override fun getBackend() = TargetBackend.JVM_IR
 }
