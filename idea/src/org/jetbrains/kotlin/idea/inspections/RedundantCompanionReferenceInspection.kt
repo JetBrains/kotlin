@@ -40,6 +40,7 @@ class RedundantCompanionReferenceInspection : AbstractKotlinInspection() {
             if (expression.text != objectDeclaration.name) return
 
             val containingClass = objectDeclaration.containingClass() ?: return
+            if (expression.containingClass() != containingClass && expression == parent.receiverExpression) return
             if (parent.getStrictParentOfType<KtEnumEntry>()?.containingClass() == containingClass) return
             val containingClassDescriptor = containingClass.descriptor as? ClassDescriptor ?: return
             val selectorDescriptor = selectorExpression?.getCallableDescriptor()
