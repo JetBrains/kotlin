@@ -16,8 +16,9 @@
 
 package org.jetbrains.kotlin.kapt3.test
 
-import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.text.StringUtil
+import org.jetbrains.kotlin.base.kapt3.DetectMemoryLeaksMode
+import org.jetbrains.kotlin.base.kapt3.KaptOptions
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.codegen.ClassBuilderMode
 import org.jetbrains.kotlin.codegen.CodegenTestCase
@@ -25,9 +26,7 @@ import org.jetbrains.kotlin.codegen.GenerationUtils
 import org.jetbrains.kotlin.codegen.OriginCollectingClassBuilderFactory
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.kapt3.*
-import org.jetbrains.kotlin.kapt3.AptMode.STUBS_AND_APT
 import org.jetbrains.kotlin.kapt3.base.KaptContext
-import org.jetbrains.kotlin.kapt3.base.KaptPaths
 import org.jetbrains.kotlin.kapt3.base.LoadedProcessors
 import org.jetbrains.kotlin.kapt3.javac.KaptJavaFileObject
 import org.jetbrains.kotlin.kapt3.stubs.ClassFileToSourceStubConverter
@@ -59,12 +58,11 @@ abstract class AbstractKotlinKapt3IntegrationTest : CodegenTestCase() {
     private var _processors: List<Processor>? = null
     private val processors get() = _processors!!
 
-    private var _options: Map<String, String>? = null
-    private val options get() = _options!!
+    private var mutableOptions: Map<String, String>? = null
 
     override fun tearDown() {
         _processors = null
-        _options = null
+        mutableOptions = null
         super.tearDown()
     }
 
@@ -82,7 +80,7 @@ abstract class AbstractKotlinKapt3IntegrationTest : CodegenTestCase() {
         process: (Set<TypeElement>, RoundEnvironment, ProcessingEnvironment) -> Unit,
         vararg supportedAnnotations: String
     ) {
-        this._options = options
+        this.mutableOptions = options
 
         val ktFileName = File(TEST_DATA_DIR, "$name.kt")
         var started = false
@@ -128,18 +126,25 @@ abstract class AbstractKotlinKapt3IntegrationTest : CodegenTestCase() {
         val javaSources = javaFilesDir?.let { arrayOf(it) } ?: emptyArray()
 
         val txtFile = File(wholeFile.parentFile, wholeFile.nameWithoutExtension + ".it.txt")
-        val sourceOutputDir = Files.createTempDirectory("kaptRunner").toFile()
-        val stubsDir = Files.createTempDirectory("kaptStubs").toFile()
-        val incrementalDataDir = Files.createTempDirectory("kaptIncrementalData").toFile()
 
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.ALL, *javaSources)
-
         val project = myEnvironment.project
-        val kapt3Extension = Kapt3ExtensionForTests(
-            project, processors, javaSources.toList(), sourceOutputDir, this.options,
-            stubsOutputDir = stubsDir, incrementalDataOutputDir = incrementalDataDir
-        )
 
+        val options = KaptOptions.Builder().apply {
+            projectBaseDir = project.basePath?.let(::File)
+            compileClasspath.addAll(PathUtil.getJdkClassesRootsFromCurrentJre() + PathUtil.kotlinPathsForIdeaPlugin.stdlibPath)
+            javaSourceRoots.addAll(javaSources)
+
+            sourcesOutputDir = Files.createTempDirectory("kaptRunner").toFile()
+            classesOutputDir = sourcesOutputDir
+            stubsOutputDir = Files.createTempDirectory("kaptStubs").toFile()
+            incrementalDataOutputDir = Files.createTempDirectory("kaptIncrementalData").toFile()
+
+            mutableOptions?.let { processingOptions.putAll(it) }
+            detectMemoryLeaks = DetectMemoryLeaksMode.NONE
+        }.build()
+
+        val kapt3Extension = Kapt3ExtensionForTests(options, processors)
         AnalysisHandlerExtension.registerExtension(project, kapt3Extension)
 
         try {
@@ -155,28 +160,13 @@ abstract class AbstractKotlinKapt3IntegrationTest : CodegenTestCase() {
 
             KotlinTestUtils.assertEqualsToFile(txtFile, actual)
         } finally {
-            sourceOutputDir.deleteRecursively()
-            incrementalDataDir.deleteRecursively()
+            options.sourcesOutputDir.deleteRecursively()
+            options.incrementalDataOutputDir?.deleteRecursively()
         }
     }
 
-    protected class Kapt3ExtensionForTests(
-        project: Project,
-        private val processors: List<Processor>,
-        javaSourceRoots: List<File>,
-        outputDir: File,
-        options: Map<String, String>,
-        stubsOutputDir: File,
-        incrementalDataOutputDir: File
-    ) : AbstractKapt3Extension(
-        KaptPaths(
-            project.basePath?.let(::File),
-            PathUtil.getJdkClassesRootsFromCurrentJre() + PathUtil.kotlinPathsForIdeaPlugin.stdlibPath,
-            emptyList(), javaSourceRoots, outputDir, outputDir, stubsOutputDir, incrementalDataOutputDir
-        ), options, emptyMap(), emptyList(), STUBS_AND_APT, System.currentTimeMillis(),
-        MessageCollectorBackedKaptLogger(true),
-        correctErrorTypes = true, mapDiagnosticLocations = true, strictMode = true, detectMemoryLeaks = false,
-        compilerConfiguration = CompilerConfiguration.EMPTY
+    protected class Kapt3ExtensionForTests(options: KaptOptions, private val processors: List<Processor>) : AbstractKapt3Extension(
+        options, MessageCollectorBackedKaptLogger(options), compilerConfiguration = CompilerConfiguration.EMPTY
     ) {
         internal var savedStubs: String? = null
         internal var savedBindings: Map<String, KaptJavaFileObject>? = null

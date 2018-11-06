@@ -149,10 +149,7 @@ enum class KaptCliOption(
     APT_OPTIONS_OPTION("apoptions", "options map", "Encoded annotation processor options", false),
 
     @Deprecated("Do not use in CLI")
-    JAVAC_CLI_OPTIONS_OPTION("javacArguments", "javac CLI options map", "Encoded javac CLI options", false),
-
-    @Deprecated("Use APT_MODE_OPTION instead.")
-    APT_ONLY_OPTION("aptOnly", "true | false", "Run only annotation processing, do not compile Kotlin files");
+    JAVAC_CLI_OPTIONS_OPTION("javacArguments", "javac CLI options map", "Encoded javac CLI options", false);
 
     override val required: Boolean = false
 

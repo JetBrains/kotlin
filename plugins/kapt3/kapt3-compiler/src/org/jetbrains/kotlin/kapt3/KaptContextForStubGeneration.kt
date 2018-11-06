@@ -19,9 +19,9 @@ package org.jetbrains.kotlin.kapt3
 import com.intellij.openapi.project.Project
 import com.sun.tools.javac.tree.TreeMaker
 import com.sun.tools.javac.util.Context
+import org.jetbrains.kotlin.base.kapt3.KaptOptions
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.kapt3.base.KaptContext
-import org.jetbrains.kotlin.kapt3.base.KaptPaths
 import org.jetbrains.kotlin.kapt3.base.util.KaptLogger
 import org.jetbrains.kotlin.kapt3.javac.KaptTreeMaker
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -29,18 +29,15 @@ import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.org.objectweb.asm.tree.ClassNode
 
 class KaptContextForStubGeneration(
-    paths: KaptPaths,
+    options: KaptOptions,
     withJdk: Boolean,
     logger: KaptLogger,
     val project: Project,
     val bindingContext: BindingContext,
     val compiledClasses: List<ClassNode>,
     val origins: Map<Any, JvmDeclarationOrigin>,
-    val generationState: GenerationState,
-    mapDiagnosticLocations: Boolean,
-    processorOptions: Map<String, String>,
-    javacOptions: Map<String, String> = emptyMap()
-) : KaptContext(paths, withJdk, logger, mapDiagnosticLocations, processorOptions, javacOptions) {
+    val generationState: GenerationState
+) : KaptContext(options, withJdk, logger) {
     private val treeMaker = TreeMaker.instance(context)
 
     override fun preregisterTreeMaker(context: Context) {

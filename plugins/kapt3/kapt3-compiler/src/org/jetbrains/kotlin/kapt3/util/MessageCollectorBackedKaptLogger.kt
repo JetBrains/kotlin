@@ -5,10 +5,12 @@
 
 package org.jetbrains.kotlin.kapt3.util
 
+import org.jetbrains.kotlin.base.kapt3.KaptFlag
+import org.jetbrains.kotlin.base.kapt3.KaptFlags
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
+import org.jetbrains.kotlin.cli.common.messages.MessageRenderer.PLAIN_FULL_PATHS
 import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector
 import org.jetbrains.kotlin.kapt3.base.util.KaptLogger
 import java.io.PrintWriter
@@ -16,16 +18,20 @@ import java.io.StringWriter
 
 class MessageCollectorBackedKaptLogger(
     override val isVerbose: Boolean,
-    infoAsWarnings: Boolean = true,
-    val messageCollector: MessageCollector = PrintingMessageCollector(System.err, MessageRenderer.PLAIN_FULL_PATHS, isVerbose)
+    isInfoAsWarnings: Boolean,
+    val messageCollector: MessageCollector = defaultMessageCollector(isVerbose)
 ) : KaptLogger {
+    constructor(flags: KaptFlags, messageCollector: MessageCollector = defaultMessageCollector(flags[KaptFlag.VERBOSE]))
+            : this(flags[KaptFlag.VERBOSE], flags[KaptFlag.INFO_AS_WARNINGS], messageCollector)
+
     private companion object {
         const val PREFIX = "[kapt] "
+        fun defaultMessageCollector(isVerbose: Boolean) = PrintingMessageCollector(System.err, PLAIN_FULL_PATHS, isVerbose)
     }
 
     override val errorWriter = makeWriter(ERROR)
     override val warnWriter = makeWriter(STRONG_WARNING)
-    override val infoWriter = makeWriter(if (infoAsWarnings) WARNING else INFO)
+    override val infoWriter = makeWriter(if (isInfoAsWarnings) WARNING else INFO)
 
     override fun info(message: String) {
         if (isVerbose) {

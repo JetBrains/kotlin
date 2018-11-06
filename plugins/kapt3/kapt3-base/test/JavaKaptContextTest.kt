@@ -6,8 +6,10 @@
 package org.jetbrains.kotlin.kapt.base.test
 
 import junit.framework.TestCase
+import org.jetbrains.kotlin.base.kapt3.DetectMemoryLeaksMode
+import org.jetbrains.kotlin.base.kapt3.KaptFlag
+import org.jetbrains.kotlin.base.kapt3.KaptOptions
 import org.jetbrains.kotlin.kapt3.base.KaptContext
-import org.jetbrains.kotlin.kapt3.base.KaptPaths
 import org.jetbrains.kotlin.kapt3.base.doAnnotationProcessing
 import org.jetbrains.kotlin.kapt3.base.util.KaptBaseError
 import org.jetbrains.kotlin.kapt3.base.util.WriterBackedKaptLogger
@@ -49,22 +51,20 @@ class JavaKaptContextTest : TestCase() {
     }
 
     private fun doAnnotationProcessing(javaSourceFile: File, processor: Processor, outputDir: File) {
-        KaptContext(
-            KaptPaths(
-                projectBaseDir = javaSourceFile.parentFile,
-                compileClasspath = emptyList(),
-                annotationProcessingClasspath = emptyList(),
-                javaSourceRoots = emptyList(),
-                sourcesOutputDir = outputDir,
-                classFilesOutputDir = outputDir,
-                stubsOutputDir = outputDir,
-                incrementalDataOutputDir = outputDir
-            ),
-            withJdk = true,
-            logger = WriterBackedKaptLogger(isVerbose = true),
-            mapDiagnosticLocations = true,
-            processorOptions = emptyMap()
-        ).doAnnotationProcessing(listOf(javaSourceFile), listOf(processor))
+        val options = KaptOptions.Builder().apply {
+            projectBaseDir = javaSourceFile.parentFile
+
+            sourcesOutputDir = outputDir
+            classesOutputDir = outputDir
+            stubsOutputDir = outputDir
+            incrementalDataOutputDir = outputDir
+
+            flags.add(KaptFlag.MAP_DIAGNOSTIC_LOCATIONS)
+            detectMemoryLeaks = DetectMemoryLeaksMode.NONE
+        }.build()
+
+        val logger = WriterBackedKaptLogger(isVerbose = true)
+        KaptContext(options, true, logger).doAnnotationProcessing(listOf(javaSourceFile), listOf(processor))
     }
 
     @Test
