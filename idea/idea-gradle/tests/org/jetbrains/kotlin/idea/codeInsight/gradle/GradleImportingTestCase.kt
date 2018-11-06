@@ -95,7 +95,9 @@ abstract class GradleImportingTestCase : ExternalSystemImportingTestCase() {
             FileTypeManager.getInstance().associateExtension(GroovyFileType.GROOVY_FILE_TYPE, "gradle")
 
         }
-        myProjectSettings = GradleProjectSettings()
+        myProjectSettings = GradleProjectSettings().apply {
+            this.isUseQualifiedModuleNames = false
+        }
         GradleSettings.getInstance(myProject).gradleVmOptions = "-Xmx128m -XX:MaxPermSize=64m"
         System.setProperty(ExternalSystemExecutionSettings.REMOTE_PROCESS_IDLE_TTL_IN_MS_KEY, GRADLE_DAEMON_TTL_MS.toString())
         configureWrapper()
