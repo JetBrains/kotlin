@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.gradle.plugin.KOTLIN_JS_DSL_NAME
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.getConvention
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.allKotlinSourceSets
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 
 /**
@@ -102,18 +103,16 @@ class KotlinModelBuilder(private val kotlinPluginVersion: String, private val an
         }
 
         /**
-         * The [SourceSet] returned by this method is not intended to be complete, most of the information here is exposed by the
-         * Android Gradle plugin and as such is not populated here. The important information here that is required by
-         * Android Studio are the [CompilerArguments].
+         * Constructs the Android [SourceSet] that should be returned to the IDE for each compile task/variant.
          */
         private fun AbstractKotlinCompile<*>.createAndroidSourceSet(androidTarget: KotlinAndroidTarget): SourceSet {
             val variantName = sourceSetName
             val compilation = androidTarget.compilations.getByName(variantName)
             // Merge all sources and resource dirs from the different Source Sets that make up this variant.
-            val sources = compilation.kotlinSourceSets.flatMap {
+            val sources = compilation.allKotlinSourceSets.flatMap {
                 it.kotlin.srcDirs
             }.distinctBy { it.absolutePath }
-            val resources = compilation.kotlinSourceSets.flatMap {
+            val resources = compilation.allKotlinSourceSets.flatMap {
                 it.resources.srcDirs
             }.distinctBy { it.absolutePath }
             return SourceSetImpl(
