@@ -16,7 +16,8 @@ internal actual inline fun String.nativeLastIndexOf(ch: Char, fromIndex: Int): I
 /**
  * Returns `true` if this string starts with the specified prefix.
  */
-public fun String.startsWith(prefix: String, ignoreCase: Boolean = false): Boolean {
+@Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+public actual fun String.startsWith(prefix: String, ignoreCase: Boolean = false): Boolean {
     if (!ignoreCase)
         return nativeStartsWith(prefix, 0)
     else
@@ -26,7 +27,8 @@ public fun String.startsWith(prefix: String, ignoreCase: Boolean = false): Boole
 /**
  * Returns `true` if a substring of this string starting at the specified offset [startIndex] starts with the specified prefix.
  */
-public fun String.startsWith(prefix: String, startIndex: Int, ignoreCase: Boolean = false): Boolean {
+@Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+public actual fun String.startsWith(prefix: String, startIndex: Int, ignoreCase: Boolean = false): Boolean {
     if (!ignoreCase)
         return nativeStartsWith(prefix, startIndex)
     else
@@ -36,7 +38,8 @@ public fun String.startsWith(prefix: String, startIndex: Int, ignoreCase: Boolea
 /**
  * Returns `true` if this string ends with the specified suffix.
  */
-public fun String.endsWith(suffix: String, ignoreCase: Boolean = false): Boolean {
+@Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+public actual fun String.endsWith(suffix: String, ignoreCase: Boolean = false): Boolean {
     if (!ignoreCase)
         return nativeEndsWith(suffix)
     else

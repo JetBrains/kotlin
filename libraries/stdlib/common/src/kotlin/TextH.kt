@@ -175,6 +175,10 @@ expect fun String?.equals(other: String?, ignoreCase: Boolean = false): Boolean
 expect fun String.compareTo(other: String, ignoreCase: Boolean = false): Int
 
 
+public expect fun String.startsWith(prefix: String, ignoreCase: Boolean = false): Boolean
+public expect fun String.startsWith(prefix: String, startIndex: Int, ignoreCase: Boolean = false): Boolean
+public expect fun String.endsWith(suffix: String, ignoreCase: Boolean = false): Boolean
+
 // From stringsCode.kt
 
 internal expect fun String.nativeIndexOf(ch: Char, fromIndex: Int): Int
