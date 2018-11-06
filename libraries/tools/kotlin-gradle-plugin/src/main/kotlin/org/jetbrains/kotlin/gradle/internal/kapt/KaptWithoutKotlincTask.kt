@@ -55,30 +55,34 @@ open class KaptWithoutKotlincTask @Inject constructor(private val workerExecutor
             compileClasspath.addAll(0, PathUtil.getJdkClassesRootsFromCurrentJre())
         }
 
-        val paths = KaptPathsForWorker(
+        val kaptFlagsForWorker = mutableSetOf<String>().apply {
+            if (isVerbose) add("VERBOSE")
+            if (mapDiagnosticLocations) add("MAP_DIAGNOSTIC_LOCATIONS")
+        }
+
+        val optionsForWorker = KaptOptionsForWorker(
             project.projectDir,
             compileClasspath,
-            kaptClasspath.files.toList(),
             javaSourceRoots.toList(),
+
             destinationDir,
             classesDir,
-            stubsDir
-        )
+            stubsDir,
 
-        val options = KaptOptionsForWorker(
-            isVerbose,
-            mapDiagnosticLocations,
+            kaptClasspath.files.toList(),
             annotationProcessorFqNames,
+
             processorOptions,
-            javacOptions
+            javacOptions,
+
+            kaptFlagsForWorker
         )
 
         val kaptClasspath = kaptJars + findKotlinStdlibClasspath(project)
 
         workerExecutor.submit(KaptExecution::class.java) { config ->
             config.isolationMode = IsolationMode.PROCESS
-            config.params(options, paths, findToolsJar(), kaptClasspath)
-
+            config.params(optionsForWorker, findToolsJar(), kaptClasspath)
             logger.info("Kapt worker classpath: ${config.classpath}")
         }
 
@@ -87,40 +91,29 @@ open class KaptWithoutKotlincTask @Inject constructor(private val workerExecutor
 }
 
 private class KaptExecution @Inject constructor(
-    val options: KaptOptionsForWorker,
-    val paths: KaptPathsForWorker,
+    val optionsForWorker: KaptOptionsForWorker,
     val toolsJar: File?,
     val kaptClasspath: List<File>
 ) : Runnable {
     private companion object {
         private const val JAVAC_CONTEXT_CLASS = "com.sun.tools.javac.util.Context"
+
+        private fun kaptClass(classLoader: ClassLoader) = Class.forName("org.jetbrains.kotlin.kapt3.base.Kapt", true, classLoader)
     }
 
-    override fun run(): Unit = with(options) {
+    override fun run(): Unit = with(optionsForWorker) {
         val kaptClasspathUrls = kaptClasspath.map { it.toURI().toURL() }.toTypedArray()
-
         val rootClassLoader = findRootClassLoader()
 
         val classLoaderWithToolsJar = if (toolsJar != null && !javacIsAlreadyHere()) {
-            toolsJar.let { URLClassLoader(arrayOf(it.toURI().toURL()), rootClassLoader) }
+            URLClassLoader(arrayOf(toolsJar.toURI().toURL()), rootClassLoader)
         } else {
             rootClassLoader
         }
 
         val kaptClassLoader = URLClassLoader(kaptClasspathUrls, classLoaderWithToolsJar)
-
-        val kaptMethod = Class.forName("org.jetbrains.kotlin.kapt3.base.Kapt", true, kaptClassLoader)
-            .declaredMethods.single { it.name == "kapt" }
-
-        kaptMethod.invoke(
-            null,
-            createKaptPaths(kaptClassLoader),
-            isVerbose,
-            mapDiagnosticLocations,
-            annotationProcessorFqNames,
-            processorOptions,
-            javacOptions
-        )
+        val kaptMethod = kaptClass(kaptClassLoader).declaredMethods.single { it.name == "kapt" }
+        kaptMethod.invoke(null, createKaptOptions(kaptClassLoader))
     }
 
     private fun javacIsAlreadyHere(): Boolean {
@@ -131,16 +124,34 @@ private class KaptExecution @Inject constructor(
         }
     }
 
-    private fun createKaptPaths(classLoader: ClassLoader) = with(paths) {
-        Class.forName("org.jetbrains.kotlin.kapt3.base.KaptPaths", true, classLoader).constructors.single().newInstance(
+    private fun createKaptOptions(classLoader: ClassLoader) = with (optionsForWorker) {
+        val flags = kaptClass(classLoader).declaredMethods.single { it.name == "kaptFlags" }.invoke(null, flags)
+
+        val mode = Class.forName("org.jetbrains.kotlin.base.kapt3.AptMode", true, classLoader)
+            .enumConstants.single { (it as Enum<*>).name == "APT_ONLY" }
+
+        val detectMemoryLeaksMode = Class.forName("org.jetbrains.kotlin.base.kapt3.DetectMemoryLeaksMode", true, classLoader)
+            .enumConstants.single { (it as Enum<*>).name == "NONE" }
+
+        Class.forName("org.jetbrains.kotlin.base.kapt3.KaptOptions", true, classLoader).constructors.single().newInstance(
             projectBaseDir,
             compileClasspath,
-            annotationProcessingClasspath,
             javaSourceRoots,
+
             sourcesOutputDir,
-            classFilesOutputDir,
+            classesOutputDir,
             stubsOutputDir,
-            stubsOutputDir // sic!
+            stubsOutputDir, // sic!
+
+            processingClasspath,
+            processors,
+
+            processingOptions,
+            javacOptions,
+
+            flags,
+            mode,
+            detectMemoryLeaksMode
         )
     }
 
@@ -154,19 +165,19 @@ private class KaptExecution @Inject constructor(
 }
 
 private data class KaptOptionsForWorker(
-    val isVerbose: Boolean,
-    val mapDiagnosticLocations: Boolean,
-    val annotationProcessorFqNames: List<String>,
-    val processorOptions: Map<String, String>,
-    val javacOptions: Map<String, String>
-) : Serializable
-
-private data class KaptPathsForWorker(
     val projectBaseDir: File,
     val compileClasspath: List<File>,
-    val annotationProcessingClasspath: List<File>,
     val javaSourceRoots: List<File>,
+
     val sourcesOutputDir: File,
-    val classFilesOutputDir: File,
-    val stubsOutputDir: File
+    val classesOutputDir: File,
+    val stubsOutputDir: File,
+
+    val processingClasspath: List<File>,
+    val processors: List<String>,
+
+    val processingOptions: Map<String, String>,
+    val javacOptions: Map<String, String>,
+
+    val flags: Set<String>
 ) : Serializable
