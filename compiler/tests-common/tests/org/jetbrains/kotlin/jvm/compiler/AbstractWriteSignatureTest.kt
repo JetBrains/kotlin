@@ -16,13 +16,15 @@ import java.util.regex.MatchResult
 abstract class AbstractWriteSignatureTest : CodegenTestCase() {
 
 
-    override fun doMultiFileTest(wholeFile: File, files: MutableList<TestFile>, javaFilesDir: File?) {
+    override fun doMultiFileTest(wholeFile: File, files: MutableList<TestFile>, javaFilesDir: File?, reportFailures: Boolean) {
         compile(files, javaFilesDir)
         try {
             parseExpectations(wholeFile).check()
         } catch (e: Throwable) {
-            println(classFileFactory.createText())
-            throw e
+            if (reportFailures) {
+                println(classFileFactory.createText())
+                throw e
+            }
         }
     }
 

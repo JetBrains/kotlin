@@ -52,7 +52,7 @@ public abstract class AbstractWriteFlagsTest extends CodegenTestCase {
 
     @Override
     protected void doMultiFileTest(
-            @NotNull File wholeFile, @NotNull List<TestFile> files, @Nullable File javaFilesDir
+            @NotNull File wholeFile, @NotNull List<TestFile> files, @Nullable File javaFilesDir, boolean reportFailures
     ) throws Exception {
         compile(files, null);
 

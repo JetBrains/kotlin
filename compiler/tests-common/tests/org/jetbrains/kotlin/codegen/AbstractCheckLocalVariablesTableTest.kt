@@ -32,7 +32,7 @@ import java.util.regex.Pattern
 
 abstract class AbstractCheckLocalVariablesTableTest : CodegenTestCase() {
 
-    override fun doMultiFileTest(wholeFile: File, files: List<CodegenTestCase.TestFile>, javaFilesDir: File?) {
+    override fun doMultiFileTest(wholeFile: File, files: List<CodegenTestCase.TestFile>, javaFilesDir: File?, reportFailures: Boolean) {
         compile(files, javaFilesDir)
 
         try {
@@ -52,8 +52,10 @@ abstract class AbstractCheckLocalVariablesTableTest : CodegenTestCase() {
 
             doCompare(wholeFile, files.single().content, actualLocalVariables)
         } catch (e: Throwable) {
-            println(classFileFactory.createText())
-            throw e
+            if (reportFailures) {
+                println(classFileFactory.createText())
+                throw e
+            }
         }
     }
 

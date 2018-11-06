@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.codegen.defaultConstructor;
 import com.intellij.openapi.util.io.FileUtil;
 import org.jetbrains.kotlin.codegen.CodegenTestCase;
 import org.jetbrains.kotlin.test.ConfigurationKind;
+import org.jetbrains.kotlin.test.TargetBackend;
 
 import java.io.File;
 import java.io.IOException;
@@ -35,7 +36,7 @@ public abstract class AbstractDefaultArgumentsReflectionTest extends CodegenTest
     }
 
     @Override
-    protected void doTest(String path) throws IOException {
+    protected void doTest(String path, TargetBackend targetBackend, boolean reportFailures) throws IOException {
         loadFileByFullPath(path);
 
         String fileText = FileUtil.loadFile(new File(path), true);

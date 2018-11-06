@@ -106,6 +106,9 @@ public class KotlinTestUtils {
     private static final boolean DONT_IGNORE_TESTS_WORKING_ON_COMPATIBLE_BACKEND =
             Boolean.getBoolean("org.jetbrains.kotlin.dont.ignore.tests.working.on.compatible.backend");
 
+    public static final boolean SUPPRESS_EXPECTED_FAILURES =
+            Boolean.getBoolean("kotlin.suppress.expected.test.failures");
+
 
     private static final boolean AUTOMATICALLY_UNMUTE_PASSED_TESTS = false;
     private static final boolean AUTOMATICALLY_MUTE_FAILED_TESTS = false;
@@ -1022,10 +1025,24 @@ public class KotlinTestUtils {
         void invoke(String filePath) throws Exception;
     }
 
+    // Sometimes we need to pass additional parameters to the test.
+    // A two-argument function conflicts with ParsingTestGenerated, so let's have three.
+    public interface DoTest3 {
+        void invoke(String filePath, TargetBackend targetBackend, boolean reportFailures) throws Exception;
+    }
+
     // In this test runner version the `testDataFile` parameter is annotated by `TestDataFile`.
     // So only file paths passed to this parameter will be used in navigation actions, like "Navigate to testdata" and "Related Symbol..."
     public static void runTest(DoTest test, TargetBackend targetBackend, @TestDataFile String testDataFile) throws Exception {
         runTest0(test, targetBackend, testDataFile);
+    }
+
+    public static void runTest(DoTest3 test, TargetBackend targetBackend, @TestDataFile String testDataFile) throws Exception {
+        runTest3(test, targetBackend, testDataFile);
+    }
+
+    public static void runTest0(DoTest test, TargetBackend targetBackend, String testDataFilePath) throws Exception {
+        runTest3((filePath, targetBackend2, reportFailures) -> test.invoke(filePath), targetBackend, testDataFilePath);
     }
 
     // In this test runner version, NONE of the parameters are annotated by `TestDataFile`.
@@ -1036,7 +1053,7 @@ public class KotlinTestUtils {
     // Cons:
     // * sometimes, for too common/general names, it shows many variants to navigate
     // * it adds an additional step for navigation -- you must choose an exact file to navigate
-    public static void runTest0(DoTest test, TargetBackend targetBackend, String testDataFilePath) throws Exception {
+    private static void runTest3(DoTest3 test, TargetBackend targetBackend, String testDataFilePath) throws Exception {
         File testDataFile = new File(testDataFilePath);
 
         boolean isIgnored = isIgnoredTarget(targetBackend, testDataFile);
@@ -1048,8 +1065,10 @@ public class KotlinTestUtils {
             isIgnored &= isIgnoredTarget(targetBackend.getCompatibleWith(), testDataFile);
         }
 
+        boolean reportFailures = !isIgnored || !SUPPRESS_EXPECTED_FAILURES;
+
         try {
-            test.invoke(testDataFilePath);
+            test.invoke(testDataFilePath, targetBackend, reportFailures);
         }
         catch (Throwable e) {
 
