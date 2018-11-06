@@ -926,8 +926,9 @@ fun runTest() {
             for (String s : ignoredBackends) {
                 if (s.contains("NATIVE")) { return false }
             }
-            // No ignored backends. Check if test is targeted to FULL_JDK
+            // No ignored backends. Check if test is targeted to FULL_JDK or has JVM_TARGET set
             if (!findLinesWithPrefixesRemoved(text, "// FULL_JDK").isEmpty()) { return false }
+            if (!findLinesWithPrefixesRemoved(text, "// JVM_TARGET:").isEmpty()) { return false }
             return true
         }
     }
