@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.codegen.AbstractBlackBoxCodegenTest
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.test.ConfigurationKind
+import org.jetbrains.kotlin.test.TargetBackend
 
 abstract class AbstractIrBlackBoxCodegenTest : AbstractBlackBoxCodegenTest() {
     override fun updateConfiguration(configuration: CompilerConfiguration) {
@@ -31,4 +32,6 @@ abstract class AbstractIrBlackBoxCodegenTest : AbstractBlackBoxCodegenTest() {
     override fun extractConfigurationKind(files: MutableList<TestFile>): ConfigurationKind {
         return ConfigurationKind.ALL
     }
+
+    override fun getBackend() = TargetBackend.JVM_IR
 }

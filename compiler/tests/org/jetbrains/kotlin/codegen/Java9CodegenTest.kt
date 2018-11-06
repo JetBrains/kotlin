@@ -25,7 +25,7 @@ class Java9CodegenTest : AbstractBlackBoxCodegenTest() {
 
     override fun getPrefix(): String = "java9/box"
 
-    override fun blackBox() {
+    override fun blackBox(reportFailures: Boolean) {
         val tmpdir = KotlinTestUtils.tmpDirForTest(this)
         generateClassesInFile().writeAll(tmpdir, null)
 
@@ -49,6 +49,6 @@ class Java9CodegenTest : AbstractBlackBoxCodegenTest() {
 
     fun testVarHandle() {
         loadFile()
-        blackBox()
+        blackBox(true)
     }
 }
