@@ -142,19 +142,11 @@ public class ErrorUtils {
         };
     }
 
-    public static boolean containsErrorType(@NotNull CallableDescriptor callableDescriptor) {
-        if (callableDescriptor instanceof FunctionDescriptor) {
-            return containsErrorType((FunctionDescriptor) callableDescriptor);
-        }
-        else {
-            return containsErrorType(callableDescriptor.getReturnType());
-        }
-    }
-
-    public static boolean containsErrorType(@NotNull FunctionDescriptor function) {
-        if (containsErrorType(function.getReturnType())) {
-            return true;
-        }
+    /**
+     * @return true iff any of the types referenced in parameter types (including type parameters and extension receiver) of the function
+     * is an error type. Does not check the return type of the function.
+     */
+    public static boolean containsErrorTypeInParameters(@NotNull FunctionDescriptor function) {
         ReceiverParameterDescriptor receiverParameter = function.getExtensionReceiverParameter();
         if (receiverParameter != null && containsErrorType(receiverParameter.getType())) {
             return true;

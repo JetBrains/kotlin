@@ -16,7 +16,10 @@
 
 package org.jetbrains.kotlin.idea.codeInliner
 
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
+import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.core.asExpression
@@ -90,7 +93,10 @@ class CodeToInlineBuilder(
 
     private fun getParametersForFunctionLiteral(functionLiteralExpression: KtLambdaExpression, context: BindingContext): String? {
         val lambdaDescriptor = context.get(BindingContext.FUNCTION, functionLiteralExpression.functionLiteral)
-        if (lambdaDescriptor == null || ErrorUtils.containsErrorType(lambdaDescriptor)) return null
+        if (lambdaDescriptor == null ||
+            ErrorUtils.containsErrorTypeInParameters(lambdaDescriptor) ||
+            ErrorUtils.containsErrorType(lambdaDescriptor.returnType)
+        ) return null
         return lambdaDescriptor.valueParameters.joinToString {
             it.name.render() + ": " + IdeDescriptorRenderers.SOURCE_CODE.renderType(it.type)
         }
