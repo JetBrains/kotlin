@@ -11,6 +11,7 @@ import com.sun.tools.javac.processing.AnnotationProcessingError
 import com.sun.tools.javac.processing.JavacFiler
 import com.sun.tools.javac.processing.JavacProcessingEnvironment
 import com.sun.tools.javac.tree.JCTree
+import org.jetbrains.kotlin.base.kapt3.KaptFlag
 import org.jetbrains.kotlin.kapt3.base.util.KaptBaseError
 import org.jetbrains.kotlin.kapt3.base.util.isJava9OrLater
 import org.jetbrains.kotlin.kapt3.base.util.measureTimeMillisWithResult
@@ -68,12 +69,15 @@ fun KaptContext.doAnnotationProcessing(
 
         if (logger.isVerbose) {
             logger.info("Annotation processing complete, errors: $errorCount, warnings: $warningCount")
+        }
 
-            logger.info("Annotation processor stats:")
-            wrappedProcessors.forEach { processor ->
-                logger.info(processor.renderSpentTime())
-            }
+        val showProcessorTimings = options[KaptFlag.SHOW_PROCESSOR_TIMINGS]
+        if (logger.isVerbose || showProcessorTimings) {
+            val loggerFun = if (showProcessorTimings) logger::warn else logger::info
+            showProcessorTimings(wrappedProcessors, loggerFun)
+        }
 
+        if (logger.isVerbose) {
             filer.displayState()
         }
 
@@ -83,6 +87,13 @@ fun KaptContext.doAnnotationProcessing(
     } finally {
         processingEnvironment.close()
         this@doAnnotationProcessing.close()
+    }
+}
+
+private fun showProcessorTimings(wrappedProcessors: List<ProcessorWrapper>, logger: (String) -> Unit) {
+    logger("Annotation processor stats:")
+    wrappedProcessors.forEach { processor ->
+        logger(processor.renderSpentTime())
     }
 }
 
