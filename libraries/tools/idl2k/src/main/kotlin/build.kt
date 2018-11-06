@@ -6,21 +6,6 @@ import java.io.IOException
 import java.net.URL
 import java.util.ArrayList
 import java.util.LinkedHashMap
-import kotlin.collections.HashSet
-import kotlin.collections.List
-import kotlin.collections.Map
-import kotlin.collections.MutableList
-import kotlin.collections.asSequence
-import kotlin.collections.contains
-import kotlin.collections.emptyMap
-import kotlin.collections.fold
-import kotlin.collections.forEach
-import kotlin.collections.map
-import kotlin.collections.mapValues
-import kotlin.collections.plus
-import kotlin.collections.reduce
-import kotlin.collections.set
-import kotlin.collections.sortedBy
 
 class BuildWebIdl(val mdnCacheFile: File, val srcDir: File) {
     val repositoryPre = loadPreliminaryRepository()
