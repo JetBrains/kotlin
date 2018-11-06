@@ -331,10 +331,11 @@ class CallCompleter(
             val resolvedCall = results.resultingCall
             if (!convertedConst) {
                 updatedType =
-                        if (resolvedCall.hasInferredReturnType())
+                        if (resolvedCall.hasInferredReturnType()) {
                             resolvedCall.makeNullableTypeIfSafeReceiver(resolvedCall.resultingDescriptor?.returnType, context)
-                        else
+                        } else {
                             null
+                        }
             }
         }
 
