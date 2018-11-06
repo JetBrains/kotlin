@@ -82,6 +82,7 @@ interface KaptFlags {
 }
 
 enum class KaptFlag(val description: String) {
+    SHOW_PROCESSOR_TIMINGS("Show processor time"),
     VERBOSE("Verbose mode"),
     INFO_AS_WARNINGS("Info as warnings"),
     USE_LIGHT_ANALYSIS("Use light analysis"),

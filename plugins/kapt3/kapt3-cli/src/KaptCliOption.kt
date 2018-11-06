@@ -134,6 +134,13 @@ enum class KaptCliOption(
         cliToolOption = CliToolOption("-Kapt-verbose", FLAG)
     ),
 
+    SHOW_PROCESSOR_TIMINGS(
+        "showProcessorTimings",
+        "true | false",
+        "Show processor timings",
+        cliToolOption = CliToolOption("-Kapt-show-processor-timings", FLAG)
+    ),
+
     STRICT_MODE_OPTION(
         "strict",
         "true | false",
