@@ -34,4 +34,4 @@ FILE fqName:<root> fileName:/typeAliasesWithAnnotations.kt
   TYPEALIAS typealias TestTypeAlias = String type=kotlin.String
     annotations:
       CALL 'constructor TestAnn(String)' type=TestAnn origin=null
-        x: CONST String type=kotlin.String value=TestTypeAlias
+        x: CONST String type=kotlin.String value="TestTypeAlias"

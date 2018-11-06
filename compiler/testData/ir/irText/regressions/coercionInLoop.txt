@@ -24,7 +24,7 @@ FILE fqName:<root> fileName:/coercionInLoop.kt
                     $this: GET_VAR 'x: DoubleIterator' type=kotlin.collections.DoubleIterator origin=null
               then: RETURN type=kotlin.Nothing from='box(): String'
                 STRING_CONCATENATION type=kotlin.String
-                  CONST String type=kotlin.String value=Fail 
+                  CONST String type=kotlin.String value="Fail "
                   GET_VAR 'i: Int' type=kotlin.Int origin=null
           TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
             typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public flags: superTypes:[kotlin.Any]
@@ -36,5 +36,4 @@ FILE fqName:<root> fileName:/coercionInLoop.kt
                   $this: GET_VAR 'tmp0: Int' type=kotlin.Int origin=null
               GET_VAR 'tmp0: Int' type=kotlin.Int origin=null
       RETURN type=kotlin.Nothing from='box(): String'
-        CONST String type=kotlin.String value=OK
-
+        CONST String type=kotlin.String value="OK"

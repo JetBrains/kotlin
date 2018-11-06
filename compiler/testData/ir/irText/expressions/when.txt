@@ -30,23 +30,23 @@ FILE fqName:<root> fileName:/when.kt
               if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
                 arg0: GET_VAR 'tmp0_subject: Any?' type=kotlin.Any? origin=null
                 arg1: CONST Null type=kotlin.Nothing? value=null
-              then: CONST String type=kotlin.String value=null
+              then: CONST String type=kotlin.String value="null"
             BRANCH
               if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
                 arg0: GET_VAR 'tmp0_subject: Any?' type=kotlin.Any? origin=null
                 arg1: GET_OBJECT 'A' type=A
-              then: CONST String type=kotlin.String value=A
+              then: CONST String type=kotlin.String value="A"
             BRANCH
               if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.String
                 typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:String modality:FINAL visibility:public flags: superTypes:[kotlin.Comparable<kotlin.String>; kotlin.CharSequence; java.io.Serializable]
                 GET_VAR 'tmp0_subject: Any?' type=kotlin.Any? origin=null
-              then: CONST String type=kotlin.String value=String
+              then: CONST String type=kotlin.String value="String"
             BRANCH
               if: CALL 'NOT(Boolean): Boolean' type=kotlin.Boolean origin=EXCL
                 arg0: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Number
                   typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Number modality:ABSTRACT visibility:public flags: superTypes:[kotlin.Any; java.io.Serializable]
                   GET_VAR 'tmp0_subject: Any?' type=kotlin.Any? origin=null
-              then: CONST String type=kotlin.String value=!Number
+              then: CONST String type=kotlin.String value="!Number"
             BRANCH
               if: CALL 'contains(Number) on Iterable<Number>: Boolean' type=kotlin.Boolean origin=IN
                 <T>: kotlin.Number
@@ -55,10 +55,10 @@ FILE fqName:<root> fileName:/when.kt
                 element: TYPE_OP type=kotlin.Number origin=IMPLICIT_CAST typeOperand=kotlin.Number
                   typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Number modality:ABSTRACT visibility:public flags: superTypes:[kotlin.Any; java.io.Serializable]
                   GET_VAR 'tmp0_subject: Any?' type=kotlin.Any? origin=null
-              then: CONST String type=kotlin.String value=nothingness?
+              then: CONST String type=kotlin.String value="nothingness?"
             BRANCH
               if: CONST Boolean type=kotlin.Boolean value=true
-              then: CONST String type=kotlin.String value=something
+              then: CONST String type=kotlin.String value="something"
   FUN name:test visibility:public modality:FINAL <> (x:kotlin.Any?) returnType:kotlin.String flags:
     VALUE_PARAMETER name:x index:0 type:kotlin.Any? flags:
     BLOCK_BODY
@@ -68,22 +68,22 @@ FILE fqName:<root> fileName:/when.kt
             if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
               arg0: GET_VAR 'value-parameter x: Any?' type=kotlin.Any? origin=null
               arg1: CONST Null type=kotlin.Nothing? value=null
-            then: CONST String type=kotlin.String value=null
+            then: CONST String type=kotlin.String value="null"
           BRANCH
             if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
               arg0: GET_VAR 'value-parameter x: Any?' type=kotlin.Any? origin=null
               arg1: GET_OBJECT 'A' type=A
-            then: CONST String type=kotlin.String value=A
+            then: CONST String type=kotlin.String value="A"
           BRANCH
             if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.String
               typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:String modality:FINAL visibility:public flags: superTypes:[kotlin.Comparable<kotlin.String>; kotlin.CharSequence; java.io.Serializable]
               GET_VAR 'value-parameter x: Any?' type=kotlin.Any? origin=null
-            then: CONST String type=kotlin.String value=String
+            then: CONST String type=kotlin.String value="String"
           BRANCH
             if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=kotlin.Number
               typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Number modality:ABSTRACT visibility:public flags: superTypes:[kotlin.Any; java.io.Serializable]
               GET_VAR 'value-parameter x: Any?' type=kotlin.Any? origin=null
-            then: CONST String type=kotlin.String value=!Number
+            then: CONST String type=kotlin.String value="!Number"
           BRANCH
             if: CALL 'contains(Number) on Iterable<Number>: Boolean' type=kotlin.Boolean origin=IN
               <T>: kotlin.Number
@@ -92,10 +92,10 @@ FILE fqName:<root> fileName:/when.kt
               element: TYPE_OP type=kotlin.Number origin=IMPLICIT_CAST typeOperand=kotlin.Number
                 typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Number modality:ABSTRACT visibility:public flags: superTypes:[kotlin.Any; java.io.Serializable]
                 GET_VAR 'value-parameter x: Any?' type=kotlin.Any? origin=null
-            then: CONST String type=kotlin.String value=nothingness?
+            then: CONST String type=kotlin.String value="nothingness?"
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
-            then: CONST String type=kotlin.String value=something
+            then: CONST String type=kotlin.String value="something"
   FUN name:testComma visibility:public modality:FINAL <> (x:kotlin.Int) returnType:kotlin.String flags:
     VALUE_PARAMETER name:x index:0 type:kotlin.Int flags:
     BLOCK_BODY
@@ -132,7 +132,7 @@ FILE fqName:<root> fileName:/when.kt
                   then: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
                     arg0: GET_VAR 'tmp0_subject: Int' type=kotlin.Int origin=null
                     arg1: CONST Int type=kotlin.Int value=4
-              then: CONST String type=kotlin.String value=1234
+              then: CONST String type=kotlin.String value="1234"
             BRANCH
               if: WHEN type=kotlin.Boolean origin=WHEN_COMMA
                 BRANCH
@@ -153,7 +153,7 @@ FILE fqName:<root> fileName:/when.kt
                   then: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
                     arg0: GET_VAR 'tmp0_subject: Int' type=kotlin.Int origin=null
                     arg1: CONST Int type=kotlin.Int value=7
-              then: CONST String type=kotlin.String value=567
+              then: CONST String type=kotlin.String value="567"
             BRANCH
               if: WHEN type=kotlin.Boolean origin=WHEN_COMMA
                 BRANCH
@@ -166,8 +166,7 @@ FILE fqName:<root> fileName:/when.kt
                   then: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
                     arg0: GET_VAR 'tmp0_subject: Int' type=kotlin.Int origin=null
                     arg1: CONST Int type=kotlin.Int value=9
-              then: CONST String type=kotlin.String value=89
+              then: CONST String type=kotlin.String value="89"
             BRANCH
               if: CONST Boolean type=kotlin.Boolean value=true
-              then: CONST String type=kotlin.String value=?
-
+              then: CONST String type=kotlin.String value="?"

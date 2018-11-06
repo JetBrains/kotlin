@@ -31,14 +31,14 @@ FILE fqName:<root> fileName:/annotationsWithVarargParameters.kt
     annotations:
       CALL 'constructor A(vararg String)' type=A origin=null
         xs: VARARG type=kotlin.Array<out kotlin.String> varargElementType=kotlin.String
-          CONST String type=kotlin.String value=abc
-          CONST String type=kotlin.String value=def
+          CONST String type=kotlin.String value="abc"
+          CONST String type=kotlin.String value="def"
     BLOCK_BODY
   FUN name:test2 visibility:public modality:FINAL <> () returnType:kotlin.Unit flags:
     annotations:
       CALL 'constructor A(vararg String)' type=A origin=null
         xs: VARARG type=kotlin.Array<out kotlin.String> varargElementType=kotlin.String
-          CONST String type=kotlin.String value=abc
+          CONST String type=kotlin.String value="abc"
     BLOCK_BODY
   FUN name:test3 visibility:public modality:FINAL <> () returnType:kotlin.Unit flags:
     annotations:

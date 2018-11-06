@@ -13,7 +13,7 @@ FILE fqName:<root> fileName:/localFun.kt
             CONST Int type=kotlin.Int value=0
         VALUE_PARAMETER name:j index:1 type:kotlin.String flags:
           EXPRESSION_BODY
-            CONST String type=kotlin.String value=
+            CONST String type=kotlin.String value=""
         BLOCK_BODY
       FUN name:test3 visibility:local modality:FINAL <> (args:kotlin.Array<out kotlin.String>) returnType:kotlin.Unit flags:
         VALUE_PARAMETER name:args index:0 type:kotlin.Array<out kotlin.String> varargElementType:kotlin.String flags:vararg

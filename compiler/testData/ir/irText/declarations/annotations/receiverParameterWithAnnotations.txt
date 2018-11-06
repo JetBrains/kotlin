@@ -28,7 +28,7 @@ FILE fqName:<root> fileName:/receiverParameterWithAnnotations.kt
           CALL 'constructor Ann()' type=Ann origin=null
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='f() on String: String'
-          CONST String type=kotlin.String value=
+          CONST String type=kotlin.String value=""
     PROPERTY name:p visibility:public modality:FINAL flags:val
       FUN name:<get-p> visibility:public modality:FINAL <> ($this:A, $receiver:kotlin.String?) returnType:kotlin.String flags:
         correspondingProperty: PROPERTY name:p visibility:public modality:FINAL flags:val
@@ -38,7 +38,7 @@ FILE fqName:<root> fileName:/receiverParameterWithAnnotations.kt
             CALL 'constructor Ann()' type=Ann origin=null
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='<get-p>() on String?: String'
-            CONST String type=kotlin.String value=
+            CONST String type=kotlin.String value=""
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:
       overridden:
         FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:
@@ -58,7 +58,7 @@ FILE fqName:<root> fileName:/receiverParameterWithAnnotations.kt
         CALL 'constructor Ann()' type=Ann origin=null
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='topLevelF() on String?: String'
-        CONST String type=kotlin.String value=
+        CONST String type=kotlin.String value=""
   PROPERTY name:topLevelP visibility:public modality:FINAL flags:val
     FUN name:<get-topLevelP> visibility:public modality:FINAL <> ($receiver:kotlin.String) returnType:kotlin.String flags:
       correspondingProperty: PROPERTY name:topLevelP visibility:public modality:FINAL flags:val
@@ -67,5 +67,4 @@ FILE fqName:<root> fileName:/receiverParameterWithAnnotations.kt
           CALL 'constructor Ann()' type=Ann origin=null
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-topLevelP>() on String: String'
-          CONST String type=kotlin.String value=
-
+          CONST String type=kotlin.String value=""

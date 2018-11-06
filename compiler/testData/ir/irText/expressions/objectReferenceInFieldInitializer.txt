@@ -8,7 +8,7 @@ FILE fqName:<root> fileName:/objectReferenceInFieldInitializer.kt
     PROPERTY name:a visibility:private modality:FINAL flags:val
       FIELD PROPERTY_BACKING_FIELD name:a type:kotlin.String visibility:private flags:final
         EXPRESSION_BODY
-          CONST String type=kotlin.String value=$
+          CONST String type=kotlin.String value="$"
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-a> visibility:private modality:FINAL <> ($this:A) returnType:kotlin.String flags:
         correspondingProperty: PROPERTY name:a visibility:private modality:FINAL flags:val
         $this: VALUE_PARAMETER name:<this> type:A flags:
@@ -20,7 +20,7 @@ FILE fqName:<root> fileName:/objectReferenceInFieldInitializer.kt
       FIELD PROPERTY_BACKING_FIELD name:b type:kotlin.String visibility:private flags:final
         EXPRESSION_BODY
           STRING_CONCATENATION type=kotlin.String
-            CONST String type=kotlin.String value=1234
+            CONST String type=kotlin.String value="1234"
             CALL '<get-a>(): String' type=kotlin.String origin=GET_PROPERTY
               $this: GET_VAR 'this@A: A' type=A origin=null
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-b> visibility:private modality:FINAL <> ($this:A) returnType:kotlin.String flags:

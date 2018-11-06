@@ -91,7 +91,7 @@ FILE fqName:<root> fileName:/delegatedPropertyAccessorsWithAnnotations.kt
     FUN DELEGATED_PROPERTY_ACCESSOR name:<get-test1> visibility:public modality:FINAL <> () returnType:kotlin.Int flags:
       annotations:
         CALL 'constructor A(String)' type=A origin=null
-          x: CONST String type=kotlin.String value=test1.get
+          x: CONST String type=kotlin.String value="test1.get"
       correspondingProperty: PROPERTY name:test1 visibility:public modality:FINAL flags:delegated,val
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-test1>(): Int'
@@ -107,7 +107,7 @@ FILE fqName:<root> fileName:/delegatedPropertyAccessorsWithAnnotations.kt
     FUN DELEGATED_PROPERTY_ACCESSOR name:<get-test2> visibility:public modality:FINAL <> () returnType:kotlin.Int flags:
       annotations:
         CALL 'constructor A(String)' type=A origin=null
-          x: CONST String type=kotlin.String value=test2.get
+          x: CONST String type=kotlin.String value="test2.get"
       correspondingProperty: PROPERTY name:test2 visibility:public modality:FINAL flags:delegated,var
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-test2>(): Int'
@@ -118,12 +118,12 @@ FILE fqName:<root> fileName:/delegatedPropertyAccessorsWithAnnotations.kt
     FUN DELEGATED_PROPERTY_ACCESSOR name:<set-test2> visibility:public modality:FINAL <> (<set-?>:kotlin.Int) returnType:kotlin.Unit flags:
       annotations:
         CALL 'constructor A(String)' type=A origin=null
-          x: CONST String type=kotlin.String value=test2.set
+          x: CONST String type=kotlin.String value="test2.set"
       correspondingProperty: PROPERTY name:test2 visibility:public modality:FINAL flags:delegated,var
       VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int flags:
         annotations:
           CALL 'constructor A(String)' type=A origin=null
-            x: CONST String type=kotlin.String value=test2.set.param
+            x: CONST String type=kotlin.String value="test2.set.param"
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<set-test2>(Int): Unit'
           CALL 'setValue(Any?, Any?, Int): Unit' type=kotlin.Unit origin=null

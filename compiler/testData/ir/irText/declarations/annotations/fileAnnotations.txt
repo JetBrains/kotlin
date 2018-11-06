@@ -3,7 +3,7 @@ FILE fqName:test fileName:/fileAnnotations.kt
     @test.A(x = "File annotation")
   annotations:
     CALL 'constructor A(String)' type=test.A origin=null
-      x: CONST String type=kotlin.String value=File annotation
+      x: CONST String type=kotlin.String value="File annotation"
   CLASS ANNOTATION_CLASS name:A modality:FINAL visibility:public flags: superTypes:[kotlin.Annotation]
     annotations:
       CALL 'constructor Target(vararg AnnotationTarget)' type=kotlin.annotation.Target origin=null

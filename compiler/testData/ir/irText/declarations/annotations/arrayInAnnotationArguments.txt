@@ -64,9 +64,9 @@ FILE fqName:<root> fileName:/arrayInAnnotationArguments.kt
           CONST Int type=kotlin.Int value=3
       CALL 'constructor TestAnnWithStringArray(Array<String>)' type=TestAnnWithStringArray origin=null
         x: VARARG type=kotlin.Array<kotlin.String> varargElementType=kotlin.String
-          CONST String type=kotlin.String value=a
-          CONST String type=kotlin.String value=b
-          CONST String type=kotlin.String value=c
+          CONST String type=kotlin.String value="a"
+          CONST String type=kotlin.String value="b"
+          CONST String type=kotlin.String value="c"
       CALL 'constructor TestAnnWithIntArray(IntArray)' type=TestAnnWithIntArray origin=null
         x: VARARG type=kotlin.IntArray varargElementType=kotlin.Int
           CONST Int type=kotlin.Int value=1
@@ -74,9 +74,9 @@ FILE fqName:<root> fileName:/arrayInAnnotationArguments.kt
           CONST Int type=kotlin.Int value=3
       CALL 'constructor TestAnnWithStringArray(Array<String>)' type=TestAnnWithStringArray origin=null
         x: VARARG type=kotlin.Array<kotlin.String> varargElementType=kotlin.String
-          CONST String type=kotlin.String value=a
-          CONST String type=kotlin.String value=b
-          CONST String type=kotlin.String value=c
+          CONST String type=kotlin.String value="a"
+          CONST String type=kotlin.String value="b"
+          CONST String type=kotlin.String value="c"
     BLOCK_BODY
   FUN name:test2 visibility:public modality:FINAL <> () returnType:kotlin.Unit flags:
     annotations:
@@ -87,9 +87,9 @@ FILE fqName:<root> fileName:/arrayInAnnotationArguments.kt
           CONST Int type=kotlin.Int value=6
       CALL 'constructor TestAnnWithStringArray(Array<String>)' type=TestAnnWithStringArray origin=null
         x: VARARG type=kotlin.Array<kotlin.String> varargElementType=kotlin.String
-          CONST String type=kotlin.String value=d
-          CONST String type=kotlin.String value=e
-          CONST String type=kotlin.String value=f
+          CONST String type=kotlin.String value="d"
+          CONST String type=kotlin.String value="e"
+          CONST String type=kotlin.String value="f"
       CALL 'constructor TestAnnWithIntArray(IntArray)' type=TestAnnWithIntArray origin=null
         x: VARARG type=kotlin.IntArray varargElementType=kotlin.Int
           CONST Int type=kotlin.Int value=4
@@ -97,8 +97,8 @@ FILE fqName:<root> fileName:/arrayInAnnotationArguments.kt
           CONST Int type=kotlin.Int value=6
       CALL 'constructor TestAnnWithStringArray(Array<String>)' type=TestAnnWithStringArray origin=null
         x: VARARG type=kotlin.Array<kotlin.String> varargElementType=kotlin.String
-          CONST String type=kotlin.String value=d
-          CONST String type=kotlin.String value=e
-          CONST String type=kotlin.String value=f
+          CONST String type=kotlin.String value="d"
+          CONST String type=kotlin.String value="e"
+          CONST String type=kotlin.String value="f"
     BLOCK_BODY
 

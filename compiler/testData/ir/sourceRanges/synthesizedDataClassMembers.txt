@@ -81,19 +81,19 @@
       @0:0..4:1 BLOCK_BODY
         @0:0..4:1 RETURN type=kotlin.Nothing from='toString(): String'
           @0:0..4:1 STRING_CONCATENATION type=kotlin.String
-            @0:0..4:1 CONST String type=kotlin.String value=C(
-            @0:0..4:1 CONST String type=kotlin.String value=x=
+            @0:0..4:1 CONST String type=kotlin.String value="C("
+            @0:0..4:1 CONST String type=kotlin.String value="x="
             @0:0..4:1 CALL '<get-x>(): Int' type=kotlin.Int origin=GET_PROPERTY
               @0:0..4:1 GET_VAR 'this@C: C' type=C origin=null
-            @0:0..4:1 CONST String type=kotlin.String value=,
-            @0:0..4:1 CONST String type=kotlin.String value=y=
+            @0:0..4:1 CONST String type=kotlin.String value=", "
+            @0:0..4:1 CONST String type=kotlin.String value="y="
             @0:0..4:1 CALL '<get-y>(): String' type=kotlin.String origin=GET_PROPERTY
               @0:0..4:1 GET_VAR 'this@C: C' type=C origin=null
-            @0:0..4:1 CONST String type=kotlin.String value=,
-            @0:0..4:1 CONST String type=kotlin.String value=z=
+            @0:0..4:1 CONST String type=kotlin.String value=", "
+            @0:0..4:1 CONST String type=kotlin.String value="z="
             @0:0..4:1 CALL '<get-z>(): Any' type=kotlin.Any origin=GET_PROPERTY
               @0:0..4:1 GET_VAR 'this@C: C' type=C origin=null
-            @0:0..4:1 CONST String type=kotlin.String value=)
+            @0:0..4:1 CONST String type=kotlin.String value=")"
     @0:0..4:1 FUN GENERATED_DATA_CLASS_MEMBER name:hashCode visibility:public modality:OPEN <> ($this:C) returnType:kotlin.Int flags:
       @-1:-1..-1 VALUE_PARAMETER name:<this> type:C flags:
       @0:0..4:1 BLOCK_BODY

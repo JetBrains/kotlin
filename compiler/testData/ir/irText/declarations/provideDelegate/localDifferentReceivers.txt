@@ -51,7 +51,7 @@ FILE fqName:<root> fileName:/localDifferentReceivers.kt
         VAR DELEGATE name:testO$delegate type:kotlin.String flags:val
           CALL 'provideDelegate(Any?, Any) on MyClass: String' type=kotlin.String origin=null
             $receiver: CALL 'constructor MyClass(String)' type=MyClass origin=null
-              value: CONST String type=kotlin.String value=O
+              value: CONST String type=kotlin.String value="O"
             host: CONST Null type=kotlin.Nothing? value=null
             p: LOCAL_DELEGATED_PROPERTY_REFERENCE 'testO: String' delegate='`testO$delegate`: String' getter='<get-testO>(): String' setter=null type=kotlin.reflect.KProperty0<kotlin.String> origin=PROPERTY_REFERENCE_FOR_DELEGATE
         FUN DELEGATED_PROPERTY_ACCESSOR name:<get-testO> visibility:local modality:FINAL <> () returnType:kotlin.String flags:
@@ -63,7 +63,7 @@ FILE fqName:<root> fileName:/localDifferentReceivers.kt
                 p: LOCAL_DELEGATED_PROPERTY_REFERENCE 'testO: String' delegate='`testO$delegate`: String' getter='<get-testO>(): String' setter=null type=kotlin.reflect.KProperty0<kotlin.String> origin=PROPERTY_REFERENCE_FOR_DELEGATE
       LOCAL_DELEGATED_PROPERTY name:testK type:kotlin.String flags:val
         VAR DELEGATE name:testK$delegate type:kotlin.String flags:val
-          CONST String type=kotlin.String value=K
+          CONST String type=kotlin.String value="K"
         FUN DELEGATED_PROPERTY_ACCESSOR name:<get-testK> visibility:local modality:FINAL <> () returnType:kotlin.String flags:
           BLOCK_BODY
             RETURN type=kotlin.Nothing from='<get-testK>(): String'

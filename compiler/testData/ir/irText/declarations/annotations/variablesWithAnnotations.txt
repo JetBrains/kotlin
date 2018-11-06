@@ -32,11 +32,10 @@ FILE fqName:<root> fileName:/variablesWithAnnotations.kt
       VAR name:testVal type:kotlin.String flags:val
         annotations:
           CALL 'constructor TestAnn(String)' type=TestAnn origin=null
-            x: CONST String type=kotlin.String value=foo/testVal
-        CONST String type=kotlin.String value=testVal
+            x: CONST String type=kotlin.String value="foo/testVal"
+        CONST String type=kotlin.String value="testVal"
       VAR name:testVar type:kotlin.String flags:var
         annotations:
           CALL 'constructor TestAnn(String)' type=TestAnn origin=null
-            x: CONST String type=kotlin.String value=foo/testVar
-        CONST String type=kotlin.String value=testVar
-
+            x: CONST String type=kotlin.String value="foo/testVar"
+        CONST String type=kotlin.String value="testVar"

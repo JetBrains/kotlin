@@ -2,7 +2,7 @@ FILE fqName:<root> fileName:/stringTemplates.kt
   FUN name:foo visibility:public modality:FINAL <> () returnType:kotlin.String flags:
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='foo(): String'
-        CONST String type=kotlin.String value=
+        CONST String type=kotlin.String value=""
   PROPERTY name:x visibility:public modality:FINAL flags:val
     FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:public flags:final,static
       EXPRESSION_BODY
@@ -15,7 +15,7 @@ FILE fqName:<root> fileName:/stringTemplates.kt
   PROPERTY name:test1 visibility:public modality:FINAL flags:val
     FIELD PROPERTY_BACKING_FIELD name:test1 type:kotlin.String visibility:public flags:final,static
       EXPRESSION_BODY
-        CONST String type=kotlin.String value=
+        CONST String type=kotlin.String value=""
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test1> visibility:public modality:FINAL <> () returnType:kotlin.String flags:
       correspondingProperty: PROPERTY name:test1 visibility:public modality:FINAL flags:val
       BLOCK_BODY
@@ -24,7 +24,7 @@ FILE fqName:<root> fileName:/stringTemplates.kt
   PROPERTY name:test2 visibility:public modality:FINAL flags:val
     FIELD PROPERTY_BACKING_FIELD name:test2 type:kotlin.String visibility:public flags:final,static
       EXPRESSION_BODY
-        CONST String type=kotlin.String value=abc
+        CONST String type=kotlin.String value="abc"
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test2> visibility:public modality:FINAL <> () returnType:kotlin.String flags:
       correspondingProperty: PROPERTY name:test2 visibility:public modality:FINAL flags:val
       BLOCK_BODY
@@ -33,7 +33,7 @@ FILE fqName:<root> fileName:/stringTemplates.kt
   PROPERTY name:test3 visibility:public modality:FINAL flags:val
     FIELD PROPERTY_BACKING_FIELD name:test3 type:kotlin.String visibility:public flags:final,static
       EXPRESSION_BODY
-        CONST String type=kotlin.String value=
+        CONST String type=kotlin.String value=""
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test3> visibility:public modality:FINAL <> () returnType:kotlin.String flags:
       correspondingProperty: PROPERTY name:test3 visibility:public modality:FINAL flags:val
       BLOCK_BODY
@@ -42,7 +42,7 @@ FILE fqName:<root> fileName:/stringTemplates.kt
   PROPERTY name:test4 visibility:public modality:FINAL flags:val
     FIELD PROPERTY_BACKING_FIELD name:test4 type:kotlin.String visibility:public flags:final,static
       EXPRESSION_BODY
-        CONST String type=kotlin.String value=abc
+        CONST String type=kotlin.String value="abc"
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test4> visibility:public modality:FINAL <> () returnType:kotlin.String flags:
       correspondingProperty: PROPERTY name:test4 visibility:public modality:FINAL flags:val
       BLOCK_BODY
@@ -51,12 +51,7 @@ FILE fqName:<root> fileName:/stringTemplates.kt
   PROPERTY name:test5 visibility:public modality:FINAL flags:val
     FIELD PROPERTY_BACKING_FIELD name:test5 type:kotlin.String visibility:public flags:final,static
       EXPRESSION_BODY
-        STRING_CONCATENATION type=kotlin.String
-          CONST String type=kotlin.String value=
-
-          CONST String type=kotlin.String value=abc
-          CONST String type=kotlin.String value=
-
+        CONST String type=kotlin.String value="\nabc\n"
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test5> visibility:public modality:FINAL <> () returnType:kotlin.String flags:
       correspondingProperty: PROPERTY name:test5 visibility:public modality:FINAL flags:val
       BLOCK_BODY
@@ -67,7 +62,7 @@ FILE fqName:<root> fileName:/stringTemplates.kt
       EXPRESSION_BODY
         STRING_CONCATENATION type=kotlin.String
           CALL '<get-test1>(): String' type=kotlin.String origin=GET_PROPERTY
-          CONST String type=kotlin.String value= 
+          CONST String type=kotlin.String value=" "
           CALL 'foo(): String' type=kotlin.String origin=null
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test6> visibility:public modality:FINAL <> () returnType:kotlin.String flags:
       correspondingProperty: PROPERTY name:test6 visibility:public modality:FINAL flags:val
@@ -104,4 +99,3 @@ FILE fqName:<root> fileName:/stringTemplates.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-test9>(): String'
           GET_FIELD 'test9: String' type=kotlin.String origin=null
-

@@ -49,11 +49,11 @@ FILE fqName:<root> fileName:/lambdaInDataClassDefaultParameter.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='toString(): String'
           STRING_CONCATENATION type=kotlin.String
-            CONST String type=kotlin.String value=A(
-            CONST String type=kotlin.String value=runA=
+            CONST String type=kotlin.String value="A("
+            CONST String type=kotlin.String value="runA="
             CALL '<get-runA>(): A.(String) -> Unit' type=A.(kotlin.String) -> kotlin.Unit origin=GET_PROPERTY
               $this: GET_VAR 'this@A: A' type=A origin=null
-            CONST String type=kotlin.String value=)
+            CONST String type=kotlin.String value=")"
     FUN GENERATED_DATA_CLASS_MEMBER name:hashCode visibility:public modality:OPEN <> ($this:A) returnType:kotlin.Int flags:
       overridden:
         FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int flags:
@@ -166,11 +166,11 @@ FILE fqName:<root> fileName:/lambdaInDataClassDefaultParameter.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='toString(): String'
           STRING_CONCATENATION type=kotlin.String
-            CONST String type=kotlin.String value=B(
-            CONST String type=kotlin.String value=x=
+            CONST String type=kotlin.String value="B("
+            CONST String type=kotlin.String value="x="
             CALL '<get-x>(): Any' type=kotlin.Any origin=GET_PROPERTY
               $this: GET_VAR 'this@B: B' type=B origin=null
-            CONST String type=kotlin.String value=)
+            CONST String type=kotlin.String value=")"
     FUN GENERATED_DATA_CLASS_MEMBER name:hashCode visibility:public modality:OPEN <> ($this:B) returnType:kotlin.Int flags:
       overridden:
         FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int flags:

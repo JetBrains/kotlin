@@ -83,7 +83,7 @@ FILE fqName:<root> fileName:/topLevel.kt
       EXPRESSION_BODY
         CALL 'provideDelegate(Any?, Any?): Delegate' type=Delegate origin=null
           $this: CALL 'constructor DelegateProvider(String)' type=DelegateProvider origin=null
-            value: CONST String type=kotlin.String value=OK
+            value: CONST String type=kotlin.String value="OK"
           thisRef: CONST Null type=kotlin.Nothing? value=null
           property: PROPERTY_REFERENCE 'testTopLevel: String' field=null getter='<get-testTopLevel>(): String' setter=null type=kotlin.reflect.KProperty0<kotlin.String> origin=PROPERTY_REFERENCE_FOR_DELEGATE
     FUN DELEGATED_PROPERTY_ACCESSOR name:<get-testTopLevel> visibility:public modality:FINAL <> () returnType:kotlin.String flags:

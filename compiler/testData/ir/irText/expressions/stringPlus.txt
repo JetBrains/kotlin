@@ -15,7 +15,7 @@ FILE fqName:<root> fileName:/stringPlus.kt
         CALL 'plus(Any?): String' type=kotlin.String origin=PLUS
           $this: CALL 'plus(Any?): String' type=kotlin.String origin=PLUS
             $this: GET_VAR 'value-parameter a: String' type=kotlin.String origin=null
-            other: CONST String type=kotlin.String value=+
+            other: CONST String type=kotlin.String value="+"
           other: GET_VAR 'value-parameter b: Int' type=kotlin.Int origin=null
   FUN name:test3 visibility:public modality:FINAL <> (a:kotlin.String, b:kotlin.Int) returnType:kotlin.String flags:
     VALUE_PARAMETER name:a index:0 type:kotlin.String flags:
@@ -26,7 +26,7 @@ FILE fqName:<root> fileName:/stringPlus.kt
           $this: CALL 'plus(Any?): String' type=kotlin.String origin=PLUS
             $this: CALL 'plus(Any?): String' type=kotlin.String origin=PLUS
               $this: GET_VAR 'value-parameter a: String' type=kotlin.String origin=null
-              other: CONST String type=kotlin.String value=+
+              other: CONST String type=kotlin.String value="+"
             other: CALL 'plus(Int): Int' type=kotlin.Int origin=PLUS
               $this: GET_VAR 'value-parameter b: Int' type=kotlin.Int origin=null
               other: CONST Int type=kotlin.Int value=1

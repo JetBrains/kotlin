@@ -37,7 +37,7 @@ FILE fqName:<root> fileName:/fixationOrder1.kt
         CALL 'check(String, Int, (String) -> Int): Inv2<String, Int>' type=Inv2<kotlin.String, kotlin.Int> origin=null
           <T>: kotlin.String
           <R>: kotlin.Int
-          x: CONST String type=kotlin.String value=
+          x: CONST String type=kotlin.String value=""
           y: CONST Int type=kotlin.Int value=1
           f: CALL 'foo(): (String) -> Int' type=(kotlin.String) -> kotlin.Int origin=null
             <X>: kotlin.String
@@ -47,5 +47,4 @@ FILE fqName:<root> fileName:/fixationOrder1.kt
       VAR name:x type:Inv2<kotlin.String, kotlin.Int> flags:val
         CALL 'test(): Inv2<String, Int>' type=Inv2<kotlin.String, kotlin.Int> origin=null
       RETURN type=kotlin.Nothing from='box(): String'
-        CONST String type=kotlin.String value=OK
-
+        CONST String type=kotlin.String value="OK"

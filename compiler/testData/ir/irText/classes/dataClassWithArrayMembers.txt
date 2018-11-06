@@ -224,52 +224,52 @@ FILE fqName:<root> fileName:/dataClassWithArrayMembers.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='toString(): String'
           STRING_CONCATENATION type=kotlin.String
-            CONST String type=kotlin.String value=Test1(
-            CONST String type=kotlin.String value=stringArray=
+            CONST String type=kotlin.String value="Test1("
+            CONST String type=kotlin.String value="stringArray="
             CALL 'dataClassArrayMemberToString(Any?): String' type=kotlin.String origin=null
               arg0: CALL '<get-stringArray>(): Array<String>' type=kotlin.Array<kotlin.String> origin=GET_PROPERTY
                 $this: GET_VAR 'this@Test1: Test1' type=Test1 origin=null
-            CONST String type=kotlin.String value=, 
-            CONST String type=kotlin.String value=charArray=
+            CONST String type=kotlin.String value=", "
+            CONST String type=kotlin.String value="charArray="
             CALL 'dataClassArrayMemberToString(Any?): String' type=kotlin.String origin=null
               arg0: CALL '<get-charArray>(): CharArray' type=kotlin.CharArray origin=GET_PROPERTY
                 $this: GET_VAR 'this@Test1: Test1' type=Test1 origin=null
-            CONST String type=kotlin.String value=, 
-            CONST String type=kotlin.String value=booleanArray=
+            CONST String type=kotlin.String value=", "
+            CONST String type=kotlin.String value="booleanArray="
             CALL 'dataClassArrayMemberToString(Any?): String' type=kotlin.String origin=null
               arg0: CALL '<get-booleanArray>(): BooleanArray' type=kotlin.BooleanArray origin=GET_PROPERTY
                 $this: GET_VAR 'this@Test1: Test1' type=Test1 origin=null
-            CONST String type=kotlin.String value=, 
-            CONST String type=kotlin.String value=byteArray=
+            CONST String type=kotlin.String value=", "
+            CONST String type=kotlin.String value="byteArray="
             CALL 'dataClassArrayMemberToString(Any?): String' type=kotlin.String origin=null
               arg0: CALL '<get-byteArray>(): ByteArray' type=kotlin.ByteArray origin=GET_PROPERTY
                 $this: GET_VAR 'this@Test1: Test1' type=Test1 origin=null
-            CONST String type=kotlin.String value=, 
-            CONST String type=kotlin.String value=shortArray=
+            CONST String type=kotlin.String value=", "
+            CONST String type=kotlin.String value="shortArray="
             CALL 'dataClassArrayMemberToString(Any?): String' type=kotlin.String origin=null
               arg0: CALL '<get-shortArray>(): ShortArray' type=kotlin.ShortArray origin=GET_PROPERTY
                 $this: GET_VAR 'this@Test1: Test1' type=Test1 origin=null
-            CONST String type=kotlin.String value=, 
-            CONST String type=kotlin.String value=intArray=
+            CONST String type=kotlin.String value=", "
+            CONST String type=kotlin.String value="intArray="
             CALL 'dataClassArrayMemberToString(Any?): String' type=kotlin.String origin=null
               arg0: CALL '<get-intArray>(): IntArray' type=kotlin.IntArray origin=GET_PROPERTY
                 $this: GET_VAR 'this@Test1: Test1' type=Test1 origin=null
-            CONST String type=kotlin.String value=, 
-            CONST String type=kotlin.String value=longArray=
+            CONST String type=kotlin.String value=", "
+            CONST String type=kotlin.String value="longArray="
             CALL 'dataClassArrayMemberToString(Any?): String' type=kotlin.String origin=null
               arg0: CALL '<get-longArray>(): LongArray' type=kotlin.LongArray origin=GET_PROPERTY
                 $this: GET_VAR 'this@Test1: Test1' type=Test1 origin=null
-            CONST String type=kotlin.String value=, 
-            CONST String type=kotlin.String value=floatArray=
+            CONST String type=kotlin.String value=", "
+            CONST String type=kotlin.String value="floatArray="
             CALL 'dataClassArrayMemberToString(Any?): String' type=kotlin.String origin=null
               arg0: CALL '<get-floatArray>(): FloatArray' type=kotlin.FloatArray origin=GET_PROPERTY
                 $this: GET_VAR 'this@Test1: Test1' type=Test1 origin=null
-            CONST String type=kotlin.String value=, 
-            CONST String type=kotlin.String value=doubleArray=
+            CONST String type=kotlin.String value=", "
+            CONST String type=kotlin.String value="doubleArray="
             CALL 'dataClassArrayMemberToString(Any?): String' type=kotlin.String origin=null
               arg0: CALL '<get-doubleArray>(): DoubleArray' type=kotlin.DoubleArray origin=GET_PROPERTY
                 $this: GET_VAR 'this@Test1: Test1' type=Test1 origin=null
-            CONST String type=kotlin.String value=)
+            CONST String type=kotlin.String value=")"
     FUN GENERATED_DATA_CLASS_MEMBER name:hashCode visibility:public modality:OPEN <> ($this:Test1) returnType:kotlin.Int flags:
       overridden:
         FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int flags:
@@ -506,12 +506,12 @@ FILE fqName:<root> fileName:/dataClassWithArrayMembers.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='toString(): String'
           STRING_CONCATENATION type=kotlin.String
-            CONST String type=kotlin.String value=Test2(
-            CONST String type=kotlin.String value=genericArray=
+            CONST String type=kotlin.String value="Test2("
+            CONST String type=kotlin.String value="genericArray="
             CALL 'dataClassArrayMemberToString(Any?): String' type=kotlin.String origin=null
               arg0: CALL '<get-genericArray>(): Array<T>' type=kotlin.Array<T> origin=GET_PROPERTY
                 $this: GET_VAR 'this@Test2: Test2<T>' type=Test2<T> origin=null
-            CONST String type=kotlin.String value=)
+            CONST String type=kotlin.String value=")"
     FUN GENERATED_DATA_CLASS_MEMBER name:hashCode visibility:public modality:OPEN <> ($this:Test2<T>) returnType:kotlin.Int flags:
       overridden:
         FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int flags:
@@ -602,12 +602,12 @@ FILE fqName:<root> fileName:/dataClassWithArrayMembers.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='toString(): String'
           STRING_CONCATENATION type=kotlin.String
-            CONST String type=kotlin.String value=Test3(
-            CONST String type=kotlin.String value=anyArrayN=
+            CONST String type=kotlin.String value="Test3("
+            CONST String type=kotlin.String value="anyArrayN="
             CALL 'dataClassArrayMemberToString(Any?): String' type=kotlin.String origin=null
               arg0: CALL '<get-anyArrayN>(): Array<Any>?' type=kotlin.Array<kotlin.Any>? origin=GET_PROPERTY
                 $this: GET_VAR 'this@Test3: Test3' type=Test3 origin=null
-            CONST String type=kotlin.String value=)
+            CONST String type=kotlin.String value=")"
     FUN GENERATED_DATA_CLASS_MEMBER name:hashCode visibility:public modality:OPEN <> ($this:Test3) returnType:kotlin.Int flags:
       overridden:
         FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int flags:

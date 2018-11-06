@@ -32,7 +32,7 @@ FILE fqName:<root> fileName:/spreadOperatorInAnnotationArguments.kt
       CALL 'constructor A(vararg String)' type=A origin=null
         xs: VARARG type=kotlin.Array<out kotlin.String> varargElementType=kotlin.String
           VARARG type=kotlin.Array<kotlin.String> varargElementType=kotlin.String
-            CONST String type=kotlin.String value=a
+            CONST String type=kotlin.String value="a"
           VARARG type=kotlin.Array<kotlin.String> varargElementType=kotlin.String
-            CONST String type=kotlin.String value=b
+            CONST String type=kotlin.String value="b"
     BLOCK_BODY

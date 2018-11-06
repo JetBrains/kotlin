@@ -31,7 +31,7 @@ FILE fqName:<root> fileName:/valueParametersWithAnnotations.kt
     VALUE_PARAMETER name:x index:0 type:kotlin.Int flags:
       annotations:
         CALL 'constructor TestAnn(String)' type=TestAnn origin=null
-          x: CONST String type=kotlin.String value=testFun.x
+          x: CONST String type=kotlin.String value="testFun.x"
     BLOCK_BODY
   CLASS CLASS name:TestClassConstructor1 modality:FINAL visibility:public flags: superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:TestClassConstructor1 flags:
@@ -39,7 +39,7 @@ FILE fqName:<root> fileName:/valueParametersWithAnnotations.kt
       VALUE_PARAMETER name:x index:0 type:kotlin.Int flags:
         annotations:
           CALL 'constructor TestAnn(String)' type=TestAnn origin=null
-            x: CONST String type=kotlin.String value=TestClassConstructor1.x
+            x: CONST String type=kotlin.String value="TestClassConstructor1.x"
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='TestClassConstructor1'

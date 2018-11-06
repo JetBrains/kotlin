@@ -6,7 +6,7 @@ FILE fqName:<root> fileName:/dataClassMembers.kt
       VALUE_PARAMETER name:x index:0 type:T flags:
       VALUE_PARAMETER name:y index:1 type:kotlin.String flags:
         EXPRESSION_BODY
-          CONST String type=kotlin.String value=
+          CONST String type=kotlin.String value=""
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='Test'
@@ -67,15 +67,15 @@ FILE fqName:<root> fileName:/dataClassMembers.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='toString(): String'
           STRING_CONCATENATION type=kotlin.String
-            CONST String type=kotlin.String value=Test(
-            CONST String type=kotlin.String value=x=
+            CONST String type=kotlin.String value="Test("
+            CONST String type=kotlin.String value="x="
             CALL '<get-x>(): T' type=T origin=GET_PROPERTY
               $this: GET_VAR 'this@Test: Test<T>' type=Test<T> origin=null
-            CONST String type=kotlin.String value=, 
-            CONST String type=kotlin.String value=y=
+            CONST String type=kotlin.String value=", "
+            CONST String type=kotlin.String value="y="
             CALL '<get-y>(): String' type=kotlin.String origin=GET_PROPERTY
               $this: GET_VAR 'this@Test: Test<T>' type=Test<T> origin=null
-            CONST String type=kotlin.String value=)
+            CONST String type=kotlin.String value=")"
     FUN GENERATED_DATA_CLASS_MEMBER name:hashCode visibility:public modality:OPEN <> ($this:Test<T>) returnType:kotlin.Int flags:
       overridden:
         FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int flags:

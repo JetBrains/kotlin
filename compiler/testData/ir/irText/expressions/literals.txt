@@ -38,7 +38,7 @@ FILE fqName:<root> fileName:/literals.kt
   PROPERTY name:test5 visibility:public modality:FINAL flags:val
     FIELD PROPERTY_BACKING_FIELD name:test5 type:kotlin.String visibility:public flags:final,static
       EXPRESSION_BODY
-        CONST String type=kotlin.String value=abc
+        CONST String type=kotlin.String value="abc"
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test5> visibility:public modality:FINAL <> () returnType:kotlin.String flags:
       correspondingProperty: PROPERTY name:test5 visibility:public modality:FINAL flags:val
       BLOCK_BODY
@@ -110,7 +110,7 @@ FILE fqName:<root> fileName:/literals.kt
   PROPERTY name:test13 visibility:public modality:FINAL flags:val
     FIELD PROPERTY_BACKING_FIELD name:test13 type:kotlin.Char visibility:public flags:final,static
       EXPRESSION_BODY
-        CONST Char type=kotlin.Char value=a
+        CONST Char type=kotlin.Char value='a'
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test13> visibility:public modality:FINAL <> () returnType:kotlin.Char flags:
       correspondingProperty: PROPERTY name:test13 visibility:public modality:FINAL flags:val
       BLOCK_BODY

@@ -38,7 +38,7 @@ FILE fqName:<root> fileName:/smartCastsWithDestructuring.kt
     $receiver: VALUE_PARAMETER name:<this> type:I2 flags:
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='component2() on I2: String'
-        CONST String type=kotlin.String value=
+        CONST String type=kotlin.String value=""
   FUN name:test visibility:public modality:FINAL <> (x:I1) returnType:kotlin.Unit flags:
     VALUE_PARAMETER name:x index:0 type:I1 flags:
     BLOCK_BODY

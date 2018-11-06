@@ -218,7 +218,7 @@ class StatementGenerator(
         generateConstantExpression(
             expression,
             ConstantExpressionEvaluator.getConstant(expression, context.bindingContext)
-                    ?: error("KtConstantExpression was not evaluated: ${expression.text}")
+                ?: error("KtConstantExpression was not evaluated: ${expression.text}")
         )
 
     fun generateConstantExpression(expression: KtExpression, constant: CompileTimeConstant<*>): IrExpression =
@@ -229,22 +229,59 @@ class StatementGenerator(
         )
 
     override fun visitStringTemplateExpression(expression: KtStringTemplateExpression, data: Nothing?): IrStatement {
-        val entries = expression.entries
+        val startOffset = expression.startOffsetSkippingComments
+        val endOffset = expression.endOffset
+
         val resultType = getInferredTypeWithImplicitCastsOrFail(expression).toIrType()
+        val entries = expression.entries.map { it.genExpr() }.postprocessStringTemplateEntries()
+
         return when (entries.size) {
+            0 -> IrConstImpl.string(startOffset, endOffset, resultType, "")
+
             1 -> {
-                val irArg = entries[0].genExpr()
-                if (irArg is IrConst<*> && irArg.kind == IrConstKind.String)
-                    irArg
+                val first = entries.first()
+                if (first is IrConst<*> && first.kind == IrConstKind.String)
+                    first
                 else
-                    IrStringConcatenationImpl(expression.startOffsetSkippingComments, expression.endOffset, resultType, listOf(irArg))
+                    IrStringConcatenationImpl(startOffset, endOffset, resultType, listOf(first))
             }
-            0 ->
-                IrConstImpl.string(expression.startOffsetSkippingComments, expression.endOffset, resultType, "")
-            else ->
-                IrStringConcatenationImpl(expression.startOffsetSkippingComments, expression.endOffset, resultType, entries.map { it.genExpr() })
+
+            else -> IrStringConcatenationImpl(startOffset, endOffset, resultType, entries)
         }
     }
+
+    private fun List<IrExpression>.postprocessStringTemplateEntries(): List<IrExpression> =
+        ArrayList<IrExpression>(this.size).also { result ->
+            val stringType = context.irBuiltIns.stringType
+
+            val constString = StringBuilder()
+            var constStringStartOffset = 0
+            var constStringEndOffset = 0
+
+            for (entry in this) {
+                if (entry is IrConst<*> && entry.kind == IrConstKind.String) {
+                    if (constString.isEmpty()) {
+                        constStringStartOffset = entry.startOffset
+                    }
+                    constString.append(IrConstKind.String.valueOf(entry))
+                    constStringEndOffset = entry.endOffset
+                } else {
+                    if (constString.isNotEmpty()) {
+                        result.add(
+                            IrConstImpl.string(constStringStartOffset, constStringEndOffset, stringType, constString.toString())
+                        )
+                        constString.clear()
+                    }
+                    result.add(entry)
+                }
+            }
+
+            if (constString.isNotEmpty()) {
+                result.add(
+                    IrConstImpl.string(constStringStartOffset, constStringEndOffset, stringType, constString.toString())
+                )
+            }
+        }
 
     override fun visitLiteralStringTemplateEntry(entry: KtLiteralStringTemplateEntry, data: Nothing?): IrStatement =
         IrConstImpl.string(entry.startOffsetSkippingComments, entry.endOffset, context.irBuiltIns.stringType, entry.text)
@@ -304,7 +341,12 @@ class StatementGenerator(
             else
                 null
 
-        return CallGenerator(this).generateCall(expression.startOffsetSkippingComments, expression.endOffset, pregenerateCall(resolvedCall), origin)
+        return CallGenerator(this).generateCall(
+            expression.startOffsetSkippingComments,
+            expression.endOffset,
+            pregenerateCall(resolvedCall),
+            origin
+        )
     }
 
     override fun visitArrayAccessExpression(expression: KtArrayAccessExpression, data: Nothing?): IrStatement {

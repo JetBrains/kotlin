@@ -12,7 +12,7 @@ FILE fqName:<root> fileName:/genericPropertyCall.kt
       EXPRESSION_BODY
         CALL '<get-id>() on String: String' type=kotlin.String origin=GET_PROPERTY
           <`0>: kotlin.String
-          $receiver: CONST String type=kotlin.String value=abc
+          $receiver: CONST String type=kotlin.String value="abc"
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test> visibility:public modality:FINAL <> () returnType:kotlin.String flags:
       correspondingProperty: PROPERTY name:test visibility:public modality:FINAL flags:val
       BLOCK_BODY

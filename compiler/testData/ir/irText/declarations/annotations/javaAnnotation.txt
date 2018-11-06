@@ -6,13 +6,13 @@ FILE fqName:<root> fileName:/javaAnnotation.kt
   FUN name:test2 visibility:public modality:FINAL <> () returnType:kotlin.Unit flags:
     annotations:
       CALL 'constructor JavaAnn(String = ..., Int = ...)' type=JavaAnn origin=null
-        value: CONST String type=kotlin.String value=abc
+        value: CONST String type=kotlin.String value="abc"
         i: CONST Int type=kotlin.Int value=123
     BLOCK_BODY
   FUN name:test3 visibility:public modality:FINAL <> () returnType:kotlin.Unit flags:
     annotations:
       CALL 'constructor JavaAnn(String = ..., Int = ...)' type=JavaAnn origin=null
-        value: CONST String type=kotlin.String value=abc
+        value: CONST String type=kotlin.String value="abc"
         i: CONST Int type=kotlin.Int value=123
     BLOCK_BODY
 

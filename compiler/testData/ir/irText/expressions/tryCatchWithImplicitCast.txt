@@ -18,5 +18,4 @@ FILE fqName:<root> fileName:/tryCatchWithImplicitCast.kt
           CATCH parameter=e: Throwable
             VAR CATCH_PARAMETER name:e type:kotlin.Throwable flags:val
             BLOCK type=kotlin.String origin=null
-              CONST String type=kotlin.String value=
-
+              CONST String type=kotlin.String value=""

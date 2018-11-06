@@ -15,9 +15,9 @@ FILE fqName:<root> fileName:/vararg.kt
         CALL 'arrayOf(vararg String): Array<String>' type=kotlin.Array<kotlin.String> origin=null
           <reified T>: kotlin.String
           elements: VARARG type=kotlin.Array<out kotlin.String> varargElementType=kotlin.String
-            CONST String type=kotlin.String value=1
-            CONST String type=kotlin.String value=2
-            CONST String type=kotlin.String value=3
+            CONST String type=kotlin.String value="1"
+            CONST String type=kotlin.String value="2"
+            CONST String type=kotlin.String value="3"
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test2> visibility:public modality:FINAL <> () returnType:kotlin.Array<kotlin.String> flags:
       correspondingProperty: PROPERTY name:test2 visibility:public modality:FINAL flags:val
       BLOCK_BODY
@@ -29,12 +29,12 @@ FILE fqName:<root> fileName:/vararg.kt
         CALL 'arrayOf(vararg String): Array<String>' type=kotlin.Array<kotlin.String> origin=null
           <reified T>: kotlin.String
           elements: VARARG type=kotlin.Array<out kotlin.String> varargElementType=kotlin.String
-            CONST String type=kotlin.String value=0
+            CONST String type=kotlin.String value="0"
             SPREAD_ELEMENT
               CALL '<get-test2>(): Array<String>' type=kotlin.Array<kotlin.String> origin=GET_PROPERTY
             SPREAD_ELEMENT
               CALL '<get-test1>(): Array<String>' type=kotlin.Array<kotlin.String> origin=GET_PROPERTY
-            CONST String type=kotlin.String value=4
+            CONST String type=kotlin.String value="4"
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test3> visibility:public modality:FINAL <> () returnType:kotlin.Array<kotlin.String> flags:
       correspondingProperty: PROPERTY name:test3 visibility:public modality:FINAL flags:val
       BLOCK_BODY

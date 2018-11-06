@@ -56,14 +56,14 @@ FILE fqName:<root> fileName:/elvis.kt
             typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:String modality:FINAL visibility:public flags: superTypes:[kotlin.Comparable<kotlin.String>; kotlin.CharSequence; java.io.Serializable]
             GET_VAR 'value-parameter b: Any?' type=kotlin.Any? origin=null
           then: RETURN type=kotlin.Nothing from='test3(Any?, Any?): String'
-            CONST String type=kotlin.String value=
+            CONST String type=kotlin.String value=""
       WHEN type=kotlin.Unit origin=null
         BRANCH
           if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=kotlin.String?
             typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:String modality:FINAL visibility:public flags: superTypes:[kotlin.Comparable<kotlin.String>; kotlin.CharSequence; java.io.Serializable]
             GET_VAR 'value-parameter a: Any?' type=kotlin.Any? origin=null
           then: RETURN type=kotlin.Nothing from='test3(Any?, Any?): String'
-            CONST String type=kotlin.String value=
+            CONST String type=kotlin.String value=""
       RETURN type=kotlin.Nothing from='test3(Any?, Any?): String'
         BLOCK type=kotlin.String origin=ELVIS
           VAR IR_TEMPORARY_VARIABLE name:tmp0_elvis_lhs type:kotlin.Any? flags:val
@@ -113,4 +113,3 @@ FILE fqName:<root> fileName:/elvis.kt
             BRANCH
               if: CONST Boolean type=kotlin.Boolean value=true
               then: GET_VAR 'tmp0_elvis_lhs: Any?' type=kotlin.Any? origin=null
-

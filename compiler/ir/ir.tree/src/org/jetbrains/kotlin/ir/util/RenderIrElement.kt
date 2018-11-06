@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.ir.util
 
+import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
 import org.jetbrains.kotlin.ir.IrElement
@@ -210,7 +211,14 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
         "? ${expression::class.java.simpleName} type=${expression.type.render()}"
 
     override fun <T> visitConst(expression: IrConst<T>, data: Nothing?): String =
-        "CONST ${expression.kind} type=${expression.type.render()} value=${expression.value}"
+        "CONST ${expression.kind} type=${expression.type.render()} value=${expression.value?.escapeIfRequired()}"
+
+    private fun Any.escapeIfRequired() =
+        when (this) {
+            is String -> "\"${StringUtil.escapeStringCharacters(this)}\""
+            is Char -> "'${StringUtil.escapeStringCharacters(this.toString())}'"
+            else -> this
+        }
 
     override fun visitVararg(expression: IrVararg, data: Nothing?): String =
         "VARARG type=${expression.type.render()} varargElementType=${expression.varargElementType.render()}"

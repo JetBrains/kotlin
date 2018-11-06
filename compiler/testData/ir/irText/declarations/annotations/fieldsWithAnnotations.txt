@@ -31,9 +31,9 @@ FILE fqName:<root> fileName:/fieldsWithAnnotations.kt
     FIELD PROPERTY_BACKING_FIELD name:testVal type:kotlin.String visibility:public flags:final,static
       annotations:
         CALL 'constructor TestAnn(String)' type=TestAnn origin=null
-          x: CONST String type=kotlin.String value=testVal.field
+          x: CONST String type=kotlin.String value="testVal.field"
       EXPRESSION_BODY
-        CONST String type=kotlin.String value=a val
+        CONST String type=kotlin.String value="a val"
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-testVal> visibility:public modality:FINAL <> () returnType:kotlin.String flags:
       correspondingProperty: PROPERTY name:testVal visibility:public modality:FINAL flags:val
       BLOCK_BODY
@@ -43,9 +43,9 @@ FILE fqName:<root> fileName:/fieldsWithAnnotations.kt
     FIELD PROPERTY_BACKING_FIELD name:testVar type:kotlin.String visibility:public flags:static
       annotations:
         CALL 'constructor TestAnn(String)' type=TestAnn origin=null
-          x: CONST String type=kotlin.String value=testVar.field
+          x: CONST String type=kotlin.String value="testVar.field"
       EXPRESSION_BODY
-        CONST String type=kotlin.String value=a var
+        CONST String type=kotlin.String value="a var"
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-testVar> visibility:public modality:FINAL <> () returnType:kotlin.String flags:
       correspondingProperty: PROPERTY name:testVar visibility:public modality:FINAL flags:var
       BLOCK_BODY

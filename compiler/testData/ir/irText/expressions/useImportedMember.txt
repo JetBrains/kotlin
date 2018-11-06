@@ -169,17 +169,17 @@ FILE fqName:<root> fileName:/useImportedMember.kt
                 s: CONST Int type=kotlin.Int value=1
               arg1: CONST Int type=kotlin.Int value=1
           then: RETURN type=kotlin.Nothing from='box(): String'
-            CONST String type=kotlin.String value=1
+            CONST String type=kotlin.String value="1"
       WHEN type=kotlin.Unit origin=null
         BRANCH
           if: CALL 'NOT(Boolean): Boolean' type=kotlin.Boolean origin=EXCLEQ
             arg0: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EXCLEQ
               arg0: CALL 'f(String): Int' type=kotlin.Int origin=null
                 $this: GET_OBJECT 'C' type=C
-                s: CONST String type=kotlin.String value=s
+                s: CONST String type=kotlin.String value="s"
               arg1: CONST Int type=kotlin.Int value=2
           then: RETURN type=kotlin.Nothing from='box(): String'
-            CONST String type=kotlin.String value=2
+            CONST String type=kotlin.String value="2"
       WHEN type=kotlin.Unit origin=null
         BRANCH
           if: CALL 'NOT(Boolean): Boolean' type=kotlin.Boolean origin=EXCLEQ
@@ -189,7 +189,7 @@ FILE fqName:<root> fileName:/useImportedMember.kt
                 $receiver: CONST Boolean type=kotlin.Boolean value=true
               arg1: CONST Int type=kotlin.Int value=3
           then: RETURN type=kotlin.Nothing from='box(): String'
-            CONST String type=kotlin.String value=3
+            CONST String type=kotlin.String value="3"
       WHEN type=kotlin.Unit origin=null
         BRANCH
           if: CALL 'NOT(Boolean): Boolean' type=kotlin.Boolean origin=EXCLEQ
@@ -198,7 +198,7 @@ FILE fqName:<root> fileName:/useImportedMember.kt
                 $this: GET_OBJECT 'C' type=C
               arg1: CONST Int type=kotlin.Int value=4
           then: RETURN type=kotlin.Nothing from='box(): String'
-            CONST String type=kotlin.String value=4
+            CONST String type=kotlin.String value="4"
       CALL '<set-p>(Int): Unit' type=kotlin.Unit origin=EQ
         $this: GET_OBJECT 'C' type=C
         <set-?>: CONST Int type=kotlin.Int value=5
@@ -210,7 +210,7 @@ FILE fqName:<root> fileName:/useImportedMember.kt
                 $this: GET_OBJECT 'C' type=C
               arg1: CONST Int type=kotlin.Int value=5
           then: RETURN type=kotlin.Nothing from='box(): String'
-            CONST String type=kotlin.String value=5
+            CONST String type=kotlin.String value="5"
       WHEN type=kotlin.Unit origin=null
         BRANCH
           if: CALL 'NOT(Boolean): Boolean' type=kotlin.Boolean origin=EXCLEQ
@@ -220,7 +220,7 @@ FILE fqName:<root> fileName:/useImportedMember.kt
                 $receiver: CONST Int type=kotlin.Int value=5
               arg1: CONST Int type=kotlin.Int value=6
           then: RETURN type=kotlin.Nothing from='box(): String'
-            CONST String type=kotlin.String value=6
+            CONST String type=kotlin.String value="6"
       WHEN type=kotlin.Unit origin=null
         BRANCH
           if: CALL 'NOT(Boolean): Boolean' type=kotlin.Boolean origin=EXCLEQ
@@ -228,10 +228,10 @@ FILE fqName:<root> fileName:/useImportedMember.kt
               arg0: CALL 'g1(String): String' type=kotlin.String origin=null
                 <T>: kotlin.String
                 $this: GET_OBJECT 'C' type=C
-                t: CONST String type=kotlin.String value=7
-              arg1: CONST String type=kotlin.String value=7
+                t: CONST String type=kotlin.String value="7"
+              arg1: CONST String type=kotlin.String value="7"
           then: RETURN type=kotlin.Nothing from='box(): String'
-            CONST String type=kotlin.String value=7
+            CONST String type=kotlin.String value="7"
       WHEN type=kotlin.Unit origin=null
         BRANCH
           if: CALL 'NOT(Boolean): Boolean' type=kotlin.Boolean origin=EXCLEQ
@@ -239,10 +239,10 @@ FILE fqName:<root> fileName:/useImportedMember.kt
               arg0: CALL '<get-g2>() on String: String' type=kotlin.String origin=GET_PROPERTY
                 <`0>: kotlin.String
                 $this: GET_OBJECT 'C' type=C
-                $receiver: CONST String type=kotlin.String value=8
-              arg1: CONST String type=kotlin.String value=8
+                $receiver: CONST String type=kotlin.String value="8"
+              arg1: CONST String type=kotlin.String value="8"
           then: RETURN type=kotlin.Nothing from='box(): String'
-            CONST String type=kotlin.String value=8
+            CONST String type=kotlin.String value="8"
       WHEN type=kotlin.Unit origin=null
         BRANCH
           if: CALL 'NOT(Boolean): Boolean' type=kotlin.Boolean origin=EXCLEQ
@@ -253,7 +253,7 @@ FILE fqName:<root> fileName:/useImportedMember.kt
                 $receiver: CONST Int type=kotlin.Int value=9
               arg1: CONST Int type=kotlin.Int value=9
           then: RETURN type=kotlin.Nothing from='box(): String'
-            CONST String type=kotlin.String value=9
+            CONST String type=kotlin.String value="9"
       WHEN type=kotlin.Unit origin=null
         BRANCH
           if: CALL 'NOT(Boolean): Boolean' type=kotlin.Boolean origin=EXCLEQ
@@ -261,20 +261,19 @@ FILE fqName:<root> fileName:/useImportedMember.kt
               arg0: CALL '<get-fromClass>() on String: String' type=kotlin.String origin=GET_PROPERTY
                 <`0>: kotlin.String
                 $this: GET_OBJECT 'C' type=C
-                $receiver: CONST String type=kotlin.String value=10
-              arg1: CONST String type=kotlin.String value=10
+                $receiver: CONST String type=kotlin.String value="10"
+              arg1: CONST String type=kotlin.String value="10"
           then: RETURN type=kotlin.Nothing from='box(): String'
-            CONST String type=kotlin.String value=10
+            CONST String type=kotlin.String value="10"
       WHEN type=kotlin.Unit origin=null
         BRANCH
           if: CALL 'NOT(Boolean): Boolean' type=kotlin.Boolean origin=EXCLEQ
             arg0: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EXCLEQ
               arg0: CALL 'genericFromSuper(String): String' type=kotlin.String origin=null
                 $this: GET_OBJECT 'C' type=C
-                g: CONST String type=kotlin.String value=11
-              arg1: CONST String type=kotlin.String value=11
+                g: CONST String type=kotlin.String value="11"
+              arg1: CONST String type=kotlin.String value="11"
           then: RETURN type=kotlin.Nothing from='box(): String'
-            CONST String type=kotlin.String value=11
+            CONST String type=kotlin.String value="11"
       RETURN type=kotlin.Nothing from='box(): String'
-        CONST String type=kotlin.String value=OK
-
+        CONST String type=kotlin.String value="OK"

@@ -3,14 +3,14 @@ FILE fqName:<root> fileName:/jvmStaticFieldReference.kt
     BLOCK_BODY
       CALL 'println(String!): Unit' type=kotlin.Unit origin=null
         $this: GET_FIELD 'out: PrintStream!' type=java.io.PrintStream? origin=GET_PROPERTY
-        x: CONST String type=kotlin.String value=testFun
+        x: CONST String type=kotlin.String value="testFun"
   PROPERTY name:testProp visibility:public modality:FINAL flags:var
     FUN name:<get-testProp> visibility:public modality:FINAL <> () returnType:kotlin.Any flags:
       correspondingProperty: PROPERTY name:testProp visibility:public modality:FINAL flags:var
       BLOCK_BODY
         CALL 'println(String!): Unit' type=kotlin.Unit origin=null
           $this: GET_FIELD 'out: PrintStream!' type=java.io.PrintStream? origin=GET_PROPERTY
-          x: CONST String type=kotlin.String value=testProp/get
+          x: CONST String type=kotlin.String value="testProp/get"
         RETURN type=kotlin.Nothing from='<get-testProp>(): Any'
           CONST Int type=kotlin.Int value=42
     FUN name:<set-testProp> visibility:public modality:FINAL <> (value:kotlin.Any) returnType:kotlin.Unit flags:
@@ -19,7 +19,7 @@ FILE fqName:<root> fileName:/jvmStaticFieldReference.kt
       BLOCK_BODY
         CALL 'println(String!): Unit' type=kotlin.Unit origin=null
           $this: GET_FIELD 'out: PrintStream!' type=java.io.PrintStream? origin=GET_PROPERTY
-          x: CONST String type=kotlin.String value=testProp/set
+          x: CONST String type=kotlin.String value="testProp/set"
   CLASS CLASS name:TestClass modality:FINAL visibility:public flags: superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:TestClass flags:
     CONSTRUCTOR visibility:public <> () returnType:TestClass flags:primary
@@ -35,7 +35,7 @@ FILE fqName:<root> fileName:/jvmStaticFieldReference.kt
               then: BLOCK type=kotlin.Int origin=null
                 CALL 'println(String!): Unit' type=kotlin.Unit origin=null
                   $this: GET_FIELD 'out: PrintStream!' type=java.io.PrintStream? origin=GET_PROPERTY
-                  x: CONST String type=kotlin.String value=TestClass/test
+                  x: CONST String type=kotlin.String value="TestClass/test"
                 CONST Int type=kotlin.Int value=42
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test> visibility:public modality:FINAL <> ($this:TestClass) returnType:kotlin.Int flags:
         correspondingProperty: PROPERTY name:test visibility:public modality:FINAL flags:val
@@ -48,7 +48,7 @@ FILE fqName:<root> fileName:/jvmStaticFieldReference.kt
       BLOCK_BODY
         CALL 'println(String!): Unit' type=kotlin.Unit origin=null
           $this: GET_FIELD 'out: PrintStream!' type=java.io.PrintStream? origin=GET_PROPERTY
-          x: CONST String type=kotlin.String value=TestClass/init
+          x: CONST String type=kotlin.String value="TestClass/init"
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:
       overridden:
         FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:

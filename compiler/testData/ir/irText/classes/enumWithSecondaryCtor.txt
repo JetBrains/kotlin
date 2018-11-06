@@ -181,7 +181,7 @@ FILE fqName:<root> fileName:/enumWithSecondaryCtor.kt
           $this: VALUE_PARAMETER name:<this> type:Test2.ZERO flags:
           BLOCK_BODY
             CALL 'println(Any?): Unit' type=kotlin.Unit origin=null
-              message: CONST String type=kotlin.String value=ZERO
+              message: CONST String type=kotlin.String value="ZERO"
         FUN FAKE_OVERRIDE name:clone visibility:protected modality:FINAL <> ($this:kotlin.Enum<Test2>) returnType:kotlin.Any flags:
           overridden:
             FUN FAKE_OVERRIDE name:clone visibility:protected modality:FINAL <> ($this:kotlin.Enum<Test2>) returnType:kotlin.Any flags:
@@ -250,7 +250,7 @@ FILE fqName:<root> fileName:/enumWithSecondaryCtor.kt
           $this: VALUE_PARAMETER name:<this> type:Test2.ONE flags:
           BLOCK_BODY
             CALL 'println(Any?): Unit' type=kotlin.Unit origin=null
-              message: CONST String type=kotlin.String value=ONE
+              message: CONST String type=kotlin.String value="ONE"
         FUN FAKE_OVERRIDE name:clone visibility:protected modality:FINAL <> ($this:kotlin.Enum<Test2>) returnType:kotlin.Any flags:
           overridden:
             FUN FAKE_OVERRIDE name:clone visibility:protected modality:FINAL <> ($this:kotlin.Enum<Test2>) returnType:kotlin.Any flags:

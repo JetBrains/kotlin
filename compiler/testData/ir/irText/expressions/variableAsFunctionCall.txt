@@ -21,13 +21,13 @@ FILE fqName:<root> fileName:/variableAsFunctionCall.kt
       RETURN type=kotlin.Nothing from='test2(String.() -> Unit): Unit'
         CALL 'invoke(String): Unit' type=kotlin.Unit origin=INVOKE
           $this: GET_VAR 'value-parameter f: String.() -> Unit' type=kotlin.String.() -> kotlin.Unit origin=VARIABLE_AS_FUNCTION
-          p1: CONST String type=kotlin.String value=hello
+          p1: CONST String type=kotlin.String value="hello"
   FUN name:test3 visibility:public modality:FINAL <> () returnType:kotlin.String flags:
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='test3(): String'
         CALL 'invoke(): String' type=kotlin.String origin=null
           $this: CALL 'k() on String: () -> String' type=() -> kotlin.String origin=null
-            $receiver: CONST String type=kotlin.String value=hello
+            $receiver: CONST String type=kotlin.String value="hello"
   FUN name:test4 visibility:public modality:FINAL <> (ns:kotlin.String?) returnType:kotlin.String? flags:
     VALUE_PARAMETER name:ns index:0 type:kotlin.String? flags:
     BLOCK_BODY
