@@ -49,7 +49,12 @@ public abstract class AbstractCompileKotlinAgainstKotlinTest extends CodegenTest
     }
 
     @Override
-    protected void doMultiFileTest(@NotNull File wholeFile, @NotNull List<TestFile> files, @Nullable File javaFilesDir) throws Exception {
+    protected void doMultiFileTest(
+            @NotNull File wholeFile,
+            @NotNull List<TestFile> files,
+            @Nullable File javaFilesDir,
+            boolean reportFailures
+    ) throws Exception {
         assert javaFilesDir == null : ".java files are not supported yet in this test";
         doTwoFileTest(files);
     }

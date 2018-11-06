@@ -29,7 +29,7 @@ import kotlin.collections.ArrayList
 abstract class AbstractLineNumberTest : CodegenTestCase() {
 
     override fun doMultiFileTest(
-        wholeFile: File, files: MutableList<CodegenTestCase.TestFile>, javaFilesDir: File?
+        wholeFile: File, files: MutableList<CodegenTestCase.TestFile>, javaFilesDir: File?, reportFailures: Boolean
     ) {
         val isCustomTest = wholeFile.parentFile.name.equals("custom", ignoreCase = true)
         if (!isCustomTest) {
@@ -49,8 +49,10 @@ abstract class AbstractLineNumberTest : CodegenTestCase() {
                 KtUsefulTestCase.assertSameElements(actualLineNumbers, expectedLineNumbers)
             }
         } catch (e: Throwable) {
-            println(classFileFactory.createText())
-            throw e
+            if (reportFailures) {
+                println(classFileFactory.createText())
+                throw e
+            }
         }
     }
 

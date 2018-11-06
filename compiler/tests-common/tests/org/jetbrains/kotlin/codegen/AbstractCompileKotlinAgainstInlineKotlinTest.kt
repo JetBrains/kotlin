@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.codegen
 import java.io.File
 
 abstract class AbstractCompileKotlinAgainstInlineKotlinTest : AbstractCompileKotlinAgainstKotlinTest() {
-    override fun doMultiFileTest(wholeFile: File, files: List<TestFile>, javaFilesDir: File?) {
+    override fun doMultiFileTest(wholeFile: File, files: List<TestFile>, javaFilesDir: File?, reportFailures: Boolean) {
         val (factory1, factory2) = doTwoFileTest(files.filter { it.name.endsWith(".kt") })
         try {
             val allGeneratedFiles = factory1.asList() + factory2.asList()
@@ -28,8 +28,10 @@ abstract class AbstractCompileKotlinAgainstInlineKotlinTest : AbstractCompileKot
             SMAPTestUtil.checkSMAP(files, allGeneratedFiles.filterClassFiles(), true)
         }
         catch (e: Throwable) {
-            println("FIRST:\n\n${factory1.createText()}\n\nSECOND:\n\n${factory2.createText()}")
-            throw e
+            if (reportFailures) {
+                println("FIRST:\n\n${factory1.createText()}\n\nSECOND:\n\n${factory2.createText()}")
+                throw e
+            }
         }
     }
 }

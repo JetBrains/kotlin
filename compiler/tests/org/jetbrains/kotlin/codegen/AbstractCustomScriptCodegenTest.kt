@@ -41,7 +41,7 @@ abstract class AbstractCustomScriptCodegenTest : CodegenTestCase() {
         configuration.addJvmClasspathRoots(additionalDependencies.orEmpty())
     }
 
-    override fun doMultiFileTest(wholeFile: File, files: MutableList<TestFile>, javaFilesDir: File?) {
+    override fun doMultiFileTest(wholeFile: File, files: MutableList<TestFile>, javaFilesDir: File?, reportFailures: Boolean) {
         if (files.size > 1) {
             throw UnsupportedOperationException("Multiple files are not yet supported in this test")
         }
@@ -78,8 +78,10 @@ abstract class AbstractCustomScriptCodegenTest : CodegenTestCase() {
             val expectedFields = extractAllKeyValPairs(content, "expected:")
             checkExpectedFields(expectedFields, scriptClass, scriptInstance)
         } catch (e: Throwable) {
-            println(generateToText())
-            throw e
+            if (reportFailures) {
+                println(generateToText())
+                throw e
+            }
         }
     }
 

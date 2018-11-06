@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.codegen.AbstractBlackBoxAgainstJavaCodegenTest
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.test.ConfigurationKind
-import java.io.File
 
 abstract class AbstractIrBlackBoxAgainstJavaCodegenTest : AbstractBlackBoxAgainstJavaCodegenTest() {
 

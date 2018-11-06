@@ -20,6 +20,7 @@ import com.intellij.openapi.util.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.test.ConfigurationKind;
+import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 
 import java.lang.reflect.Constructor;
@@ -33,7 +34,7 @@ public abstract class AbstractScriptCodegenTest extends CodegenTestCase {
     }
 
     @Override
-    protected void doTest(@NotNull String filename) {
+    protected void doTest(@NotNull String filename, TargetBackend targetBackend, boolean reportFailures) {
         loadFileByFullPath(filename);
 
         try {
