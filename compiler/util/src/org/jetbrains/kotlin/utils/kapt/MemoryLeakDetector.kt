@@ -51,7 +51,7 @@ object MemoryLeakDetector {
         }
     }
 
-    fun process(): Set<MemoryLeak> {
+    fun process(isParanoid: Boolean): Set<MemoryLeak> {
         val memoryLeaks = mutableSetOf<MemoryLeak>()
 
         synchronized(classLoaderData) {
@@ -60,7 +60,7 @@ object MemoryLeakDetector {
                 val classLoader = data.ref.get() ?: continue
                 data.age += 1
 
-                if (data.age >= 5) {
+                if (isParanoid || data.age >= 5) {
                     // Inspect statics just once.
                     // Note the 'data' is not added to 'nextClassLoaderData' used the next time.
                     inspectStatics(classLoader)
