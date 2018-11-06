@@ -168,7 +168,6 @@ class GradleInspectionTest : GradleImportingTestCase() {
         Assert.assertEquals("Plugin version (1.1.0-beta-17) is not the same as library version (1.1.0-beta-22)", problems.single())
     }
 
-
     @Test
     fun testDifferentStdlibGradleVersionWithVariables() {
         createProjectSubFile(
@@ -384,6 +383,76 @@ class GradleInspectionTest : GradleImportingTestCase() {
     }
 
     @Test
+    fun testNoDifferentStdlibCommonGradleVersion() {
+        val localFile = createProjectSubFile(
+            "build.gradle", """
+            group 'Again'
+            version '1.0-SNAPSHOT'
+
+            buildscript {
+                repositories {
+                    mavenCentral()
+                    maven {
+                        url 'http://dl.bintray.com/kotlin/kotlin-eap'
+                    }
+                }
+
+                dependencies {
+                    classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.2.40-eap-51")
+                }
+            }
+
+            apply plugin: 'kotlin-platform-common'
+
+            dependencies {
+                compile "org.jetbrains.kotlin:kotlin-stdlib-common:1.2.40-eap-51"
+            }
+        """
+        )
+        importProject()
+
+        val tool = DifferentStdlibGradleVersionInspection()
+        val problems = getInspectionResult(tool, localFile)
+
+        Assert.assertTrue(problems.toString(), problems.isEmpty())
+    }
+
+    @Test
+    fun testNoDifferentStdlibJdk7GradleVersion() {
+        val localFile = createProjectSubFile(
+            "build.gradle", """
+            group 'Again'
+            version '1.0-SNAPSHOT'
+
+            buildscript {
+                repositories {
+                    mavenCentral()
+                    maven {
+                        url 'http://dl.bintray.com/kotlin/kotlin-eap'
+                    }
+                }
+
+                dependencies {
+                    classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.2.40-eap-51")
+                }
+            }
+
+            apply plugin: 'kotlin'
+
+            dependencies {
+                compile "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.2.40-eap-51"
+            }
+        """
+        )
+        importProject()
+
+        val tool = DifferentStdlibGradleVersionInspection()
+        val problems = getInspectionResult(tool, localFile)
+
+        Assert.assertTrue(problems.toString(), problems.isEmpty())
+    }
+
+    @Test
     fun testObsoleteCoroutinesUsage() {
         val localFile = createProjectSubFile(
             "build.gradle", """
@@ -428,7 +497,7 @@ class GradleInspectionTest : GradleImportingTestCase() {
         )
     }
 
-    fun getInspectionResult(tool: LocalInspectionTool, file: VirtualFile): List<String> {
+    private fun getInspectionResult(tool: LocalInspectionTool, file: VirtualFile): List<String> {
         val resultRef = Ref<List<String>>()
         invokeTestRunnable {
             val presentation = runInspection(tool, myProject, listOf(file))
