@@ -129,6 +129,11 @@ public class JavaAgainstKotlinBinariesCheckerTestGenerated extends AbstractJavaA
         runTest("idea/testData/kotlinAndJavaChecker/javaAgainstKotlin/MyFunctionType.kt");
     }
 
+    @TestMetadata("OverridesAmbiguity.kt")
+    public void testOverridesAmbiguity() throws Exception {
+        runTest("idea/testData/kotlinAndJavaChecker/javaAgainstKotlin/OverridesAmbiguity.kt");
+    }
+
     @TestMetadata("ReturnInnerClasses.kt")
     public void testReturnInnerClasses() throws Exception {
         runTest("idea/testData/kotlinAndJavaChecker/javaAgainstKotlin/ReturnInnerClasses.kt");

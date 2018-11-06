@@ -616,6 +616,8 @@ internal class KtUltraLightMethod(
         list
     }
 
+    override fun getHierarchicalMethodSignature() = PsiSuperMethodImplUtil.getHierarchicalMethodSignature(this)
+
     override fun getThrowsList(): PsiReferenceList = _throwsList
 }
 
