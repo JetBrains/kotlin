@@ -17,7 +17,7 @@ dependencies {
 
     compile(intellijCoreDep()) { includeJars("intellij-core") }
     compile(intellijDep()) {
-        includeJars("trove4j", "picocontainer-1.2", "annotations", rootProject = rootProject)
+        includeJars("trove4j", "picocontainer", "annotations", rootProject = rootProject)
         isTransitive = false
     }
     compile(intellijDep()) { includeJars("guava", rootProject = rootProject) }
