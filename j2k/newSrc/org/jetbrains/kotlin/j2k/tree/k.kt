@@ -94,3 +94,8 @@ interface JKKtConvertedFromForLoopSyntheticWhileStatement : JKStatement {
     var variableDeclaration: JKStatement
     var whileStatement: JKWhileStatement
 }
+
+
+interface JKKtThrowExpression : JKExpression {
+    var exception: JKExpression
+}

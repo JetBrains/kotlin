@@ -261,3 +261,8 @@ class JKKtConvertedFromForLoopSyntheticWhileStatementImpl(
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R =
         visitor.visitKtConvertedFromForLoopSyntheticWhileStatement(this, data)
 }
+
+class JKKtThrowExpressionImpl(exception: JKExpression) : JKKtThrowExpression, JKBranchElementBase() {
+    override var exception: JKExpression by child(exception)
+    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitKtThrowExpression(this, data)
+}

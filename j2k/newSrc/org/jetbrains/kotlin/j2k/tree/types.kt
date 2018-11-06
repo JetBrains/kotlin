@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.j2k.tree
 
 import com.intellij.psi.*
 import com.intellij.util.reverse
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.j2k.ConversionContext
@@ -36,6 +37,7 @@ fun JKExpression.type(context: ConversionContext): JKType =
         is JKMethodCallExpression -> identifier.returnType
         is JKFieldAccessExpressionImpl -> identifier.fieldType
         is JKQualifiedExpressionImpl -> this.selector.type(context)
+        is JKKtThrowExpression -> kotlinTypeByName(KotlinBuiltIns.FQ_NAMES.nothing.asString(), context.symbolProvider)
         else -> TODO(this::class.java.toString())
     }
 

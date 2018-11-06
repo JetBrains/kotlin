@@ -54,6 +54,11 @@ class NewCodeBuilder {
             ktForInStatement.body.accept(this)
         }
 
+        override fun visitKtThrowExpression(ktThrowExpression: JKKtThrowExpression) {
+            printer.printlnWithNoIndent("throw ")
+            ktThrowExpression.exception.accept(this)
+        }
+
         override fun visitDoWhileStatement(doWhileStatement: JKDoWhileStatement) {
             printer.printWithNoIndent("do")
             doWhileStatement.body.accept(this)

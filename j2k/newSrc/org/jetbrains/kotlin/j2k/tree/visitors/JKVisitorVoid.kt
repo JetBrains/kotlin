@@ -147,6 +147,8 @@ interface JKVisitorVoid : JKVisitor<Unit, Nothing?> {
     override fun visitJavaPolyadicExpression(javaPolyadicExpression: JKJavaPolyadicExpression, data: Nothing?) = visitJavaPolyadicExpression(javaPolyadicExpression)
     fun visitJavaAssignmentExpression(javaAssignmentExpression: JKJavaAssignmentExpression) = visitExpression(javaAssignmentExpression, null)
     override fun visitJavaAssignmentExpression(javaAssignmentExpression: JKJavaAssignmentExpression, data: Nothing?) = visitJavaAssignmentExpression(javaAssignmentExpression)
+    fun visitJavaThrowStatement(javaThrowStatement: JKJavaThrowStatement) = visitStatement(javaThrowStatement, null)
+    override fun visitJavaThrowStatement(javaThrowStatement: JKJavaThrowStatement, data: Nothing?) = visitJavaThrowStatement(javaThrowStatement)
     fun visitJavaSwitchStatement(javaSwitchStatement: JKJavaSwitchStatement) = visitStatement(javaSwitchStatement, null)
     override fun visitJavaSwitchStatement(javaSwitchStatement: JKJavaSwitchStatement, data: Nothing?) = visitJavaSwitchStatement(javaSwitchStatement)
     fun visitJavaSwitchCase(javaSwitchCase: JKJavaSwitchCase) = visitTreeElement(javaSwitchCase, null)
@@ -197,4 +199,6 @@ interface JKVisitorVoid : JKVisitor<Unit, Nothing?> {
     override fun visitKtOperatorExpression(ktOperatorExpression: JKKtOperatorExpression, data: Nothing?) = visitKtOperatorExpression(ktOperatorExpression)
     fun visitKtConvertedFromForLoopSyntheticWhileStatement(ktConvertedFromForLoopSyntheticWhileStatement: JKKtConvertedFromForLoopSyntheticWhileStatement) = visitStatement(ktConvertedFromForLoopSyntheticWhileStatement, null)
     override fun visitKtConvertedFromForLoopSyntheticWhileStatement(ktConvertedFromForLoopSyntheticWhileStatement: JKKtConvertedFromForLoopSyntheticWhileStatement, data: Nothing?) = visitKtConvertedFromForLoopSyntheticWhileStatement(ktConvertedFromForLoopSyntheticWhileStatement)
+    fun visitKtThrowExpression(ktThrowExpression: JKKtThrowExpression) = visitExpression(ktThrowExpression, null)
+    override fun visitKtThrowExpression(ktThrowExpression: JKKtThrowExpression, data: Nothing?) = visitKtThrowExpression(ktThrowExpression)
 }

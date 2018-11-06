@@ -75,6 +75,7 @@ interface JKVisitor<out R, in D> {
     fun visitJavaInstanceOfExpression(javaInstanceOfExpression: JKJavaInstanceOfExpression, data: D): R = visitExpression(javaInstanceOfExpression, data)
     fun visitJavaPolyadicExpression(javaPolyadicExpression: JKJavaPolyadicExpression, data: D): R = visitExpression(javaPolyadicExpression, data)
     fun visitJavaAssignmentExpression(javaAssignmentExpression: JKJavaAssignmentExpression, data: D): R = visitExpression(javaAssignmentExpression, data)
+    fun visitJavaThrowStatement(javaThrowStatement: JKJavaThrowStatement, data: D): R = visitStatement(javaThrowStatement, data)
     fun visitJavaContinueStatement(javaContinueStatement: JKJavaContinueStatement, data: D): R = visitStatement(javaContinueStatement, data)
     fun visitJavaSwitchStatement(javaSwitchStatement: JKJavaSwitchStatement, data: D): R = visitStatement(javaSwitchStatement, data)
     fun visitJavaSwitchCase(javaSwitchCase: JKJavaSwitchCase, data: D): R = visitTreeElement(javaSwitchCase, data)
@@ -100,4 +101,5 @@ interface JKVisitor<out R, in D> {
     fun visitKtForInStatement(ktForInStatement: JKKtForInStatement, data: D): R = visitStatement(ktForInStatement, data)
     fun visitKtOperatorExpression(ktOperatorExpression: JKKtOperatorExpression, data: D): R = visitExpression(ktOperatorExpression, data)
     fun visitKtConvertedFromForLoopSyntheticWhileStatement(ktConvertedFromForLoopSyntheticWhileStatement: JKKtConvertedFromForLoopSyntheticWhileStatement, data: D): R = visitStatement(ktConvertedFromForLoopSyntheticWhileStatement, data)
+    fun visitKtThrowExpression(ktThrowExpression: JKKtThrowExpression, data: D): R = visitExpression(ktThrowExpression, data)
 }

@@ -88,6 +88,11 @@ interface JKJavaAssignmentExpression : JKExpression, JKBranchElement {
     var operator: JKOperator
 }
 
+
+interface JKJavaThrowStatement : JKStatement {
+    var exception: JKExpression
+}
+
 interface JKJavaSwitchStatement : JKStatement {
     var expression: JKExpression
     var cases: List<JKJavaSwitchCase>

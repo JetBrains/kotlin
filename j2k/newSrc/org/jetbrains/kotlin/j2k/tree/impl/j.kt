@@ -306,3 +306,8 @@ class JKJavaLabelSwitchCaseImpl(
     override var label: JKExpression by child(label)
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitJavaLabelSwitchCase(this, data)
 }
+
+class JKJavaThrowStatementImpl(exception: JKExpression) : JKJavaThrowStatement, JKBranchElementBase(), PsiOwner by PsiOwnerImpl() {
+    override var exception: JKExpression by child(exception)
+    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitJavaThrowStatement(this, data)
+}
