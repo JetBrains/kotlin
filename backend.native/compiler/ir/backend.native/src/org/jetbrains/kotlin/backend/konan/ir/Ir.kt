@@ -114,6 +114,13 @@ internal class KonanIr(context: Context, irModule: IrModuleFragment): Ir<Context
 }
 
 internal class KonanSymbols(context: Context, val symbolTable: SymbolTable, val lazySymbolTable: ReferenceSymbolTable): Symbols<Context>(context, lazySymbolTable) {
+    /**
+     * @note:
+     * [lateinitIsInitializedPropertyGetter] is used in [org.jetbrains.kotlin.backend.common.lower.LateinitLowering] and
+     * it's irrelevant for [org.jetbrains.kotlin.backend.konan.lower.LateinitLowering].
+     */
+    override val lateinitIsInitializedPropertyGetter: IrSimpleFunctionSymbol
+       get() = TODO("unimplemented")
 
     val entryPoint = findMainEntryPoint(context)?.let { symbolTable.referenceSimpleFunction(it) }
 
