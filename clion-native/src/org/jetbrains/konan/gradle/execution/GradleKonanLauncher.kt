@@ -23,7 +23,6 @@ import com.intellij.openapi.util.ThrowableComputable
 import com.intellij.util.containers.ContainerUtil
 import com.intellij.xdebugger.XDebugSession
 import com.jetbrains.cidr.cpp.CPPLog
-import com.jetbrains.cidr.cpp.cmake.workspace.CMakeWorkspace
 import com.jetbrains.cidr.cpp.execution.CLionRunConfigurationExtensionsManager
 import com.jetbrains.cidr.cpp.execution.CLionRunParameters
 import com.jetbrains.cidr.cpp.toolchains.CPPEnvironment
@@ -42,7 +41,7 @@ class GradleKonanLauncher(protected val myEnvironment: ExecutionEnvironment,
   private val myExtensionsManager: CLionRunConfigurationExtensionsManager
 
   private val projectBaseDir: File?
-    get() = CMakeWorkspace.getInstance(project).modelProjectDir
+    get() = project.basePath?.let { File(it) }
 
   private val buildAndRunConfigurations: GradleKonanAppRunConfiguration.BuildAndRunConfigurations
     @Throws(ExecutionException::class)
