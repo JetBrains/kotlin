@@ -96,8 +96,8 @@ class KotlinKapt3IntegrationTests : AbstractKotlinKapt3IntegrationTest(), Java9T
         test(name, "test.MyAnnotation") { _, _, _ ->
             val kaptExtension = AnalysisHandlerExtension.getInstances(myEnvironment.project).firstIsInstance<Kapt3ExtensionForTests>()
 
-            val stubsOutputDir = kaptExtension.paths.stubsOutputDir
-            val incrementalDataOutputDir = kaptExtension.paths.incrementalDataOutputDir
+            val stubsOutputDir = kaptExtension.options.stubsOutputDir
+            val incrementalDataOutputDir = kaptExtension.options.incrementalDataOutputDir
 
             val bindings = kaptExtension.savedBindings!!
 

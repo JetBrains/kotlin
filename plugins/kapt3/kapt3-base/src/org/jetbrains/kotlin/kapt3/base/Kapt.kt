@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.kapt3.base
 
 import com.sun.tools.javac.util.Context
+import org.jetbrains.kotlin.base.kapt3.*
 import org.jetbrains.kotlin.kapt3.base.util.KaptLogger
 import org.jetbrains.kotlin.kapt3.base.util.WriterBackedKaptLogger
 import org.jetbrains.kotlin.kapt3.base.util.info
@@ -16,32 +17,26 @@ object Kapt {
 
     @JvmStatic
     @Suppress("unused")
-    fun kapt(
-        paths: KaptPaths,
-        isVerbose: Boolean,
-        mapDiagnosticLocations: Boolean,
-        annotationProcessorFqNames: List<String>,
-        processorOptions: Map<String, String>,
-        javacOptions: Map<String, String>
-    ): Boolean {
-        val logger = WriterBackedKaptLogger(isVerbose)
+    fun kaptFlags(rawFlags: Set<String>): KaptFlags {
+        return KaptFlags.fromSet(KaptFlag.values().filterTo(mutableSetOf()) { it.name in rawFlags })
+    }
+
+    @JvmStatic
+    @Suppress("unused")
+    fun kapt(options: KaptOptions): Boolean {
+        val logger = WriterBackedKaptLogger(options[KaptFlag.VERBOSE])
 
         if (!Kapt.checkJavacComponentsAccess(logger)) {
             return false
         }
 
-        val kaptContext = KaptContext(paths, false, logger, mapDiagnosticLocations, processorOptions, javacOptions)
+        val kaptContext = KaptContext(options, false, logger)
 
-        logger.info { "Kapt3 is enabled (stand-alone mode)." }
-        logger.info { "Map diagnostic locations: $mapDiagnosticLocations" }
-        paths.log(logger)
-        logger.info { "Javac options: $javacOptions" }
-        logger.info { "AP options: $processorOptions" }
+        logger.info { options.logString("stand-alone mode") }
 
-        val javaSourceFiles = paths.collectJavaSourceFiles()
-        logger.info { "Java source files: " + javaSourceFiles.joinToString { it.canonicalPath } }
+        val javaSourceFiles = options.collectJavaSourceFiles()
 
-        val processorLoader = ProcessorLoader(paths, annotationProcessorFqNames, logger)
+        val processorLoader = ProcessorLoader(options, logger)
 
         processorLoader.use {
             val processors = processorLoader.loadProcessors(findClassLoaderWithJavac())

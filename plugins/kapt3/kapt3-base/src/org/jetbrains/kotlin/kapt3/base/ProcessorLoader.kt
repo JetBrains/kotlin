@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.kapt3.base
 
+import org.jetbrains.kotlin.base.kapt3.KaptOptions
 import org.jetbrains.kotlin.kapt3.base.util.KaptLogger
 import org.jetbrains.kotlin.kapt3.base.util.info
 import java.io.Closeable
@@ -16,23 +17,19 @@ import javax.annotation.processing.Processor
 
 class LoadedProcessors(val processors: List<Processor>, val classLoader: ClassLoader)
 
-open class ProcessorLoader(
-    private val paths: KaptPaths,
-    private val annotationProcessorFqNames: List<String>,
-    private val logger: KaptLogger
-) : Closeable {
+open class ProcessorLoader(private val options: KaptOptions, private val logger: KaptLogger) : Closeable {
     private var annotationProcessingClassLoader: URLClassLoader? = null
 
     fun loadProcessors(parentClassLoader: ClassLoader = ClassLoader.getSystemClassLoader()): LoadedProcessors {
         clearJarURLCache()
 
-        val classpath = (paths.annotationProcessingClasspath + paths.compileClasspath).distinct()
+        val classpath = (options.processingClasspath + options.compileClasspath).distinct()
         val classLoader = URLClassLoader(classpath.map { it.toURI().toURL() }.toTypedArray(), parentClassLoader)
         this.annotationProcessingClassLoader = classLoader
 
-        val processors = if (annotationProcessorFqNames.isNotEmpty()) {
+        val processors = if (options.processors.isNotEmpty()) {
             logger.info("Annotation processor class names are set, skip AP discovery")
-            annotationProcessorFqNames.mapNotNull { tryLoadProcessor(it, classLoader) }
+            options.processors.mapNotNull { tryLoadProcessor(it, classLoader) }
         } else {
             logger.info("Need to discovery annotation processors in the AP classpath")
             doLoadProcessors(classLoader)

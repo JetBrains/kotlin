@@ -6,7 +6,8 @@
 package org.jetbrains.kotlin.kapt.base.test
 
 import junit.framework.TestCase
-import org.jetbrains.kotlin.kapt3.base.KaptPaths
+import org.jetbrains.kotlin.base.kapt3.KaptOptions
+import org.jetbrains.kotlin.base.kapt3.collectJavaSourceFiles
 import org.junit.Test
 import java.io.File
 import java.nio.file.Files
@@ -36,16 +37,12 @@ class KaptPathsTest : TestCase() {
 
             val javaRoots = listOf(simpleJava, symlinkToOtherJava, symlinkToNotJava, symlinkToJavaRootDir, javaRootDir)
 
-            val paths = KaptPaths(
-                projectBaseDir = null,
-                compileClasspath = emptyList(),
-                annotationProcessingClasspath = emptyList(),
-                javaSourceRoots = javaRoots,
-                sourcesOutputDir = outputDir,
-                classFilesOutputDir = outputDir,
-                stubsOutputDir = outputDir,
-                incrementalDataOutputDir = null
-            )
+            val paths = KaptOptions.Builder().apply {
+                javaSourceRoots.addAll(javaRoots)
+                sourcesOutputDir = outputDir
+                classesOutputDir = outputDir
+                stubsOutputDir = outputDir
+            }.build()
 
             val javaSourceFiles = paths.collectJavaSourceFiles()
 

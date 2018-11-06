@@ -24,6 +24,7 @@ import com.sun.tools.javac.tree.JCTree.*
 import com.sun.tools.javac.tree.TreeMaker
 import com.sun.tools.javac.tree.TreeScanner
 import kotlinx.kapt.KaptIgnored
+import org.jetbrains.kotlin.base.kapt3.KaptFlag
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
@@ -63,12 +64,7 @@ import java.io.File
 import javax.lang.model.element.ElementKind
 import com.sun.tools.javac.util.List as JavacList
 
-class ClassFileToSourceStubConverter(
-    val kaptContext: KaptContextForStubGeneration,
-    val generateNonExistentClass: Boolean,
-    val correctErrorTypes: Boolean,
-    val strictMode: Boolean
-) {
+class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGeneration, val generateNonExistentClass: Boolean) {
     private companion object {
         private const val VISIBILITY_MODIFIERS = (Opcodes.ACC_PUBLIC or Opcodes.ACC_PRIVATE or Opcodes.ACC_PROTECTED).toLong()
         private const val MODALITY_MODIFIERS = (Opcodes.ACC_FINAL or Opcodes.ACC_ABSTRACT).toLong()
@@ -95,15 +91,19 @@ class ClassFileToSourceStubConverter(
 
         private val JAVA_KEYWORD_FILTER_REGEX = "[a-z]+".toRegex()
 
+        @Suppress("UselessCallOnNotNull") // nullable toString(), KT-27724
         private val JAVA_KEYWORDS = Tokens.TokenKind.values()
             .filter { JAVA_KEYWORD_FILTER_REGEX.matches(it.toString().orEmpty()) }
             .mapTo(hashSetOf(), Any::toString)
     }
 
-    private val _bindings = mutableMapOf<String, KaptJavaFileObject>()
+    private val correctErrorTypes = kaptContext.options[KaptFlag.CORRECT_ERROR_TYPES]
+    private val strictMode = kaptContext.options[KaptFlag.STRICT]
+
+    private val mutableBindings = mutableMapOf<String, KaptJavaFileObject>()
 
     val bindings: Map<String, KaptJavaFileObject>
-        get() = _bindings
+        get() = mutableBindings
 
     private val typeMapper
         get() = kaptContext.generationState.typeMapper
@@ -193,7 +193,7 @@ class ClassFileToSourceStubConverter(
 
         KaptJavaFileObject(topLevel, classDeclaration).apply {
             topLevel.sourcefile = this
-            _bindings[clazz.name] = this
+            mutableBindings[clazz.name] = this
         }
 
         postProcess(topLevel)
