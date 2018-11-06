@@ -177,6 +177,7 @@ include ":kotlin-build-common",
         ":kotlin-scripting-common",
         ":kotlin-scripting-jvm",
         ":kotlin-scripting-jvm-host",
+        ":kotlin-scripting-jvm-host-embeddable",
         ":kotlin-scripting-intellij",
         ":kotlin-scripting-compiler",
         ":kotlin-scripting-idea",
@@ -187,6 +188,7 @@ include ":kotlin-build-common",
         ":examples:scripting-jvm-simple-script-host",
         ":examples:scripting-jvm-maven-deps",
         ":examples:scripting-jvm-maven-deps-host",
+        ":examples:scripting-jvm-embeddable-host",
         ":pill:generate-all-tests",
         ":libraries:kotlin-prepush-hook",
         ":libraries:tools:mutability-annotations-compat",
@@ -300,6 +302,7 @@ project(':kotlin-annotations-android').projectDir = "$rootDir/libraries/tools/ko
 project(':kotlin-scripting-common').projectDir = "$rootDir/libraries/scripting/common" as File
 project(':kotlin-scripting-jvm').projectDir = "$rootDir/libraries/scripting/jvm" as File
 project(':kotlin-scripting-jvm-host').projectDir = "$rootDir/libraries/scripting/jvm-host" as File
+project(':kotlin-scripting-jvm-host-embeddable').projectDir = "$rootDir/libraries/scripting/jvm-host-embeddable" as File
 project(':kotlin-scripting-intellij').projectDir = "$rootDir/libraries/scripting/intellij" as File
 project(':kotlin-scripting-compiler').projectDir = "$rootDir/plugins/scripting/scripting-cli" as File
 project(':kotlin-scripting-compiler-embeddable').projectDir = "$rootDir/plugins/scripting/scripting-embeddable" as File
@@ -310,6 +313,7 @@ project(':examples:scripting-jvm-simple-script').projectDir = "$rootDir/librarie
 project(':examples:scripting-jvm-simple-script-host').projectDir = "$rootDir/libraries/examples/scripting/jvm-simple-script/host" as File
 project(':examples:scripting-jvm-maven-deps').projectDir = "$rootDir/libraries/examples/scripting/jvm-maven-deps/script" as File
 project(':examples:scripting-jvm-maven-deps-host').projectDir = "$rootDir/libraries/examples/scripting/jvm-maven-deps/host" as File
+project(':examples:scripting-jvm-embeddable-host').projectDir = "$rootDir/libraries/examples/scripting/jvm-embeddable-host" as File
 project(':pill:generate-all-tests').projectDir = "$rootDir/plugins/pill/generate-all-tests" as File
 project(':kotlin-imports-dumper-compiler-plugin').projectDir = "$rootDir/plugins/imports-dumper" as File
 project(':libraries:kotlin-prepush-hook').projectDir = "$rootDir/libraries/tools/kotlin-prepush-hook" as File
