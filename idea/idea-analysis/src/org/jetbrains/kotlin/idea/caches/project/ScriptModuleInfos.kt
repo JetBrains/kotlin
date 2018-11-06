@@ -44,7 +44,10 @@ data class ScriptModuleInfo(
         return arrayListOf<IdeaModuleInfo>(this).apply {
             val scriptDependentModules = ScriptRelatedModulesProvider.getRelatedModules(scriptFile, project)
             if (scriptDependentModules.isNotEmpty()) {
-                addAll(scriptDependentModules.mapNotNull { it.productionSourceInfo() ?: it.testSourceInfo() })
+                scriptDependentModules.mapNotNull { it.productionSourceInfo() ?: it.testSourceInfo() }.forEach {
+                    this@apply.add(it)
+                    this@apply.addAll(it.dependencies())
+                }
             }
 
             val dependenciesInfo = ScriptDependenciesInfo.ForFile(project, scriptFile, scriptDefinition)
