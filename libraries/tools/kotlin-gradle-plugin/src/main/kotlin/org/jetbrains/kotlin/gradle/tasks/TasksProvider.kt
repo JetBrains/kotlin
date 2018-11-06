@@ -22,44 +22,45 @@ import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.defaultSourceSetName
 import org.jetbrains.kotlin.gradle.plugin.sources.applyLanguageSettingsToKotlinTask
 
-internal open class KotlinTasksProvider(
-    val targetName: String,
-    private val useWorkersForCompilation: Boolean = false
-) {
+internal open class KotlinTasksProvider(val targetName: String) {
     open fun createKotlinJVMTask(
         project: Project,
         name: String,
         compilation: KotlinCompilation
     ): KotlinCompile {
-        val taskClass = if (useWorkersForCompilation) KotlinCompileWithWorkers::class.java else KotlinCompile::class.java
+        val properties = PropertiesProvider(project)
+        val taskClass = taskOrWorkersTask<KotlinCompile, KotlinCompileWithWorkers>(properties)
         return project.tasks.create(name, taskClass).apply {
-            configure(this, project, compilation)
+            configure(this, project, properties, compilation)
         }
     }
 
     fun createKotlinJSTask(project: Project, name: String, compilation: KotlinCompilation): Kotlin2JsCompile {
-        val taskClass = if (useWorkersForCompilation) Kotlin2JsCompileWithWorkers::class.java else Kotlin2JsCompile::class.java
+        val properties = PropertiesProvider(project)
+        val taskClass = taskOrWorkersTask<Kotlin2JsCompile, Kotlin2JsCompileWithWorkers>(properties)
         return project.tasks.create(name, taskClass).apply {
-            configure(this, project, compilation)
+            configure(this, project, properties, compilation)
         }
     }
 
 
     fun createKotlinCommonTask(project: Project, name: String, compilation: KotlinCompilation): KotlinCompileCommon {
-        val taskClass = if (useWorkersForCompilation) KotlinCompileCommonWithWorkers::class.java else KotlinCompileCommon::class.java
+        val properties = PropertiesProvider(project)
+        val taskClass = taskOrWorkersTask<KotlinCompileCommon, KotlinCompileCommonWithWorkers>(properties)
         return project.tasks.create(name, taskClass).apply {
-            configure(this, project, compilation)
+            configure(this, project, properties, compilation)
         }
     }
 
     open fun configure(
         kotlinTask: AbstractKotlinCompile<*>,
         project: Project,
+        propertiesProvider: PropertiesProvider,
         compilation: KotlinCompilation
     ) {
         kotlinTask.sourceSetName = compilation.name
         kotlinTask.friendTaskName = taskToFriendTaskMapper[kotlinTask]
-        mapKotlinTaskProperties(project, kotlinTask)
+        propertiesProvider.mapKotlinTaskProperties(kotlinTask)
 
         project.whenEvaluated {
             val languageSettings = project.kotlinExtension.sourceSets.findByName(compilation.defaultSourceSetName)?.languageSettings
@@ -72,17 +73,22 @@ internal open class KotlinTasksProvider(
 
     protected open val taskToFriendTaskMapper: TaskToFriendTaskMapper =
         RegexTaskToFriendTaskMapper.Default(targetName)
+
+    private inline fun <reified Task, reified WorkersTask : Task> taskOrWorkersTask(properties: PropertiesProvider): Class<out Task> =
+        if (properties.parallelTasksInProject != true) Task::class.java else WorkersTask::class.java
 }
 
-internal class AndroidTasksProvider(
-    targetName: String,
-    useWorkersForCompilation: Boolean = false
-) : KotlinTasksProvider(targetName, useWorkersForCompilation = useWorkersForCompilation) {
+internal class AndroidTasksProvider(targetName: String) : KotlinTasksProvider(targetName) {
     override val taskToFriendTaskMapper: TaskToFriendTaskMapper =
         RegexTaskToFriendTaskMapper.Android(targetName)
 
-    override fun configure(kotlinTask: AbstractKotlinCompile<*>, project: Project, compilation: KotlinCompilation) {
-        super.configure(kotlinTask, project, compilation)
+    override fun configure(
+        kotlinTask: AbstractKotlinCompile<*>,
+        project: Project,
+        propertiesProvider: PropertiesProvider,
+        compilation: KotlinCompilation
+    ) {
+        super.configure(kotlinTask, project, propertiesProvider, compilation)
         kotlinTask.useModuleDetection = true
     }
 }

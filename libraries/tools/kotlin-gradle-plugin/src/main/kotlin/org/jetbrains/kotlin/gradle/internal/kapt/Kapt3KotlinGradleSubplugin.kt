@@ -419,7 +419,7 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
         kaptTask.destinationDir = getKaptIncrementalDataDir()
         kaptTask.mapClasspath { kotlinCompile.classpath }
         kaptTask.generatedSourcesDir = sourcesOutputDir
-        mapKotlinTaskProperties(project, kaptTask)
+        PropertiesProvider(project).mapKotlinTaskProperties(kaptTask)
 
         kaptTask.kaptClasspathConfigurations = kaptClasspathConfigurations
         buildAndAddOptionsTo(kaptTask, kaptTask.pluginOptions, aptMode = "stubs")

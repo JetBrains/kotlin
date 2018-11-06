@@ -5,16 +5,19 @@
 
 package org.jetbrains.kotlin.compilerRunner
 
-import org.gradle.api.Project
+import org.gradle.api.Task
 import org.gradle.workers.ForkMode
 import org.gradle.workers.IsolationMode
 import org.gradle.workers.WorkerExecutor
+import org.jetbrains.kotlin.gradle.plugin.kotlinDebug
 
 internal class GradleCompilerRunnerWithWorkers(
-    project: Project,
+    task: Task,
     private val workersExecutor: WorkerExecutor
-) : GradleCompilerRunner(project) {
+) : GradleCompilerRunner(task) {
     override fun runCompilerAsync(workArgs: GradleKotlinCompilerWorkArguments) {
+        project.logger.kotlinDebug { "Starting Kotlin compiler work from task '${task.path}'" }
+        // todo: write tests with Workers enabled;
         workersExecutor.submit(GradleKotlinCompilerWork::class.java) { config ->
             config.isolationMode = IsolationMode.NONE
             config.forkMode = ForkMode.NEVER
