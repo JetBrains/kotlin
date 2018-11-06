@@ -3548,8 +3548,8 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
         return genEqualsForExpressionsOnStack(
                 opToken,
-                genLazyUnlessProvided(pregeneratedLeft, left, leftType),
-                genLazy(right, rightType)
+                genLazyUnlessProvided(pregeneratedLeft, left, leftType, kotlinType(left)),
+                genLazy(right, rightType, kotlinType(right))
         );
     }
 

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.codegen;
 
+import kotlin.Unit;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.backend.common.FunctionsFromAnyGenerator;
@@ -96,7 +97,7 @@ public class FunctionsFromAnyGeneratorImpl extends FunctionsFromAnyGenerator {
         boolean first = true;
         for (PropertyDescriptor propertyDescriptor : properties) {
             if (first) {
-                iv.aconst(classDescriptor.getName() + "(" + propertyDescriptor.getName().asString()+"=");
+                iv.aconst(classDescriptor.getName() + "(" + propertyDescriptor.getName().asString() + "=");
                 first = false;
             }
             else {
@@ -237,23 +238,32 @@ public class FunctionsFromAnyGeneratorImpl extends FunctionsFromAnyGenerator {
             KotlinType kotlinType = propertyDescriptor.getReturnType();
             Type asmType = typeMapper.mapType(kotlinType);
 
-            JvmKotlinType thisPropertyType = genOrLoadOnStack(iv,context, propertyDescriptor, 0);
-            StackValue.coerce(thisPropertyType.getType(), thisPropertyType.getKotlinType(), asmType, kotlinType, iv);
-
-            JvmKotlinType otherPropertyType = genOrLoadOnStack(iv,context, propertyDescriptor, storedValueIndex);
-            StackValue.coerce(otherPropertyType.getType(), otherPropertyType.getKotlinType(), asmType, kotlinType, iv);
+            StackValue thisPropertyValue = StackValue.operation(asmType, kotlinType, (InstructionAdapter iiv) -> {
+                JvmKotlinType thisPropertyType = genOrLoadOnStack(iiv, context, propertyDescriptor, 0);
+                StackValue.coerce(thisPropertyType.getType(), thisPropertyType.getKotlinType(), asmType, kotlinType, iiv);
+                return Unit.INSTANCE;
+            });
+            StackValue otherPropertyValue = StackValue.operation(asmType, kotlinType, (InstructionAdapter iiv) -> {
+                JvmKotlinType otherPropertyType = genOrLoadOnStack(iiv, context, propertyDescriptor, storedValueIndex);
+                StackValue.coerce(otherPropertyType.getType(), otherPropertyType.getKotlinType(), asmType, kotlinType, iiv);
+                return Unit.INSTANCE;
+            });
 
             if (asmType.getSort() == Type.FLOAT) {
+                thisPropertyValue.put(asmType, kotlinType, iv);
+                otherPropertyValue.put(asmType, kotlinType, iv);
                 iv.invokestatic("java/lang/Float", "compare", "(FF)I", false);
                 iv.ifne(ne);
             }
             else if (asmType.getSort() == Type.DOUBLE) {
+                thisPropertyValue.put(asmType, kotlinType, iv);
+                otherPropertyValue.put(asmType, kotlinType, iv);
                 iv.invokestatic("java/lang/Double", "compare", "(DD)I", false);
                 iv.ifne(ne);
             }
             else {
                 StackValue value = genEqualsForExpressionsOnStack(
-                        KtTokens.EQEQ, StackValue.onStack(asmType, kotlinType), StackValue.onStack(asmType, kotlinType)
+                        KtTokens.EQEQ, thisPropertyValue, otherPropertyValue
                 );
                 value.put(Type.BOOLEAN_TYPE, iv);
                 iv.ifeq(ne);
