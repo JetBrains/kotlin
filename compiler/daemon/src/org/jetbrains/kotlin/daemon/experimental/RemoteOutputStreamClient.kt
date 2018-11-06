@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.daemon.experimental
 
-import kotlinx.coroutines.experimental.runBlocking
+import kotlinx.coroutines.runBlocking
 import org.jetbrains.kotlin.daemon.common.DummyProfiler
 import org.jetbrains.kotlin.daemon.common.Profiler
 import org.jetbrains.kotlin.daemon.common.experimental.RemoteOutputStreamAsyncClientSide

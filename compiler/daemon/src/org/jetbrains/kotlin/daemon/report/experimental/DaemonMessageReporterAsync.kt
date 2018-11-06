@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.daemon.report.experimental
 
-import kotlinx.coroutines.experimental.async
+import kotlinx.coroutines.async
 import org.jetbrains.kotlin.daemon.common.CompilationOptions
 import org.jetbrains.kotlin.daemon.common.impls.ReportCategory
 import org.jetbrains.kotlin.daemon.common.impls.ReportSeverity

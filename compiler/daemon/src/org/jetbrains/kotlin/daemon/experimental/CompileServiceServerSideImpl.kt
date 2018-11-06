@@ -12,10 +12,10 @@ import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.impl.ZipHandler
 import com.intellij.openapi.vfs.impl.jar.CoreJarFileSystem
 import io.ktor.network.sockets.Socket
-import kotlinx.coroutines.experimental.*
-import kotlinx.coroutines.experimental.channels.Channel
-import kotlinx.coroutines.experimental.channels.actor
-import kotlinx.coroutines.experimental.channels.consumeEach
+import kotlinx.coroutines.*
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.channels.actor
+import kotlinx.coroutines.channels.consumeEach
 import org.jetbrains.kotlin.build.JvmSourceRoot
 import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.ExitCode
@@ -52,6 +52,7 @@ import org.jetbrains.kotlin.daemon.report.experimental.DaemonMessageReporterAsyn
 import org.jetbrains.kotlin.daemon.report.experimental.RemoteICReporterAsync
 import org.jetbrains.kotlin.incremental.*
 import org.jetbrains.kotlin.incremental.components.LookupTracker
+import org.jetbrains.kotlin.incremental.parsing.classesFqNames
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 import org.jetbrains.kotlin.modules.Module
 import org.jetbrains.kotlin.progress.experimental.CompilationCanceledStatus
@@ -409,6 +410,15 @@ class CompileServiceServerSideImpl(
             registerClientImpl(aliveFlagPath)
         }
     }
+
+    override suspend fun classesFqNamesByFiles(
+        sessionId: Int, sourceFiles: Set<File>
+    ): CompileService.CallResult<Set<String>> =
+        ifAlive {
+            withValidClientOrSessionProxy(sessionId) {
+                CompileService.CallResult.Good(classesFqNames(sourceFiles))
+            }
+        }
 
     private fun registerClientImpl(aliveFlagPath: String?): CompileService.CallResult<Nothing> {
         state.addClient(aliveFlagPath)
