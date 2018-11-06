@@ -266,3 +266,23 @@ class JKKtThrowExpressionImpl(exception: JKExpression) : JKKtThrowExpression, JK
     override var exception: JKExpression by child(exception)
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitKtThrowExpression(this, data)
 }
+
+class JKKtTryExpressionImpl(
+    tryBlock: JKBlock,
+    finallyBlock: JKBlock,
+    catchSections: List<JKKtTryCatchSection>
+) : JKKtTryExpression, JKBranchElementBase(){
+    override var tryBlock: JKBlock by child(tryBlock)
+    override var finallyBlock: JKBlock by child(finallyBlock)
+    override var catchSections: List<JKKtTryCatchSection> by children(catchSections)
+    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitKtTryExpression(this, data)
+}
+
+class JKKtTryCatchSectionImpl(
+    parameter: JKParameter,
+    block: JKBlock
+) : JKKtTryCatchSection, JKBranchElementBase() {
+    override var parameter: JKParameter by child(parameter)
+    override var block: JKBlock by child(block)
+    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitKtTryCatchSection(this, data)
+}

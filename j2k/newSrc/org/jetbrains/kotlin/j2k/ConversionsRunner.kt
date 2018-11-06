@@ -26,6 +26,7 @@ object ConversionsRunner {
             +BinaryExpressionConversion(context)
             +ThrowStatementConversion()
             +ArrayInitializerConversion(context)
+            +TryStatementConversion(context)
             +ModalityConversion(context)
             +ImplicitInitializerConversion()
             +DefaultArgumentsConversion(context)

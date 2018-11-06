@@ -68,7 +68,9 @@ fun PsiType.toJK(symbolProvider: JKSymbolProvider, nullability: Nullability = Nu
         is PsiArrayType -> JKJavaArrayTypeImpl(componentType.toJK(symbolProvider, nullability), nullability)
         is PsiPrimitiveType -> JKJavaPrimitiveTypeImpl.KEYWORD_TO_INSTANCE[presentableText]
             ?: error("Invalid primitive type $presentableText")
-        else -> throw Exception("Invalid PSI")
+        is PsiDisjunctionType ->
+            JKJavaDisjunctionTypeImpl(disjunctions.map { it.toJK(symbolProvider) })
+        else -> throw Exception("Invalid PSI ${this::class.java}")
     }
 }
 

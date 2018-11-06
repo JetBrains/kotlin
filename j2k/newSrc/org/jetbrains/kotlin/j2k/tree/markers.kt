@@ -86,6 +86,10 @@ interface JKStarProjectionType : JKType {
         get() = Nullability.NotNull
 }
 
+interface JKJavaDisjunctionType : JKType {
+    val disjunctions: List<JKType>
+}
+
 inline fun <reified T> JKElement.getParentOfType(): T? {
     var p = parent
     while (true) {

@@ -88,10 +88,21 @@ interface JKJavaAssignmentExpression : JKExpression, JKBranchElement {
     var operator: JKOperator
 }
 
-
 interface JKJavaThrowStatement : JKStatement {
     var exception: JKExpression
 }
+
+interface JKJavaTryStatement : JKStatement {
+    var tryBlock: JKBlock
+    var finallyBlock: JKBlock
+    var catchSections: List<JKJavaTryCatchSection>
+}
+
+interface JKJavaTryCatchSection : JKTreeElement {
+    var parameter: JKParameter
+    var block: JKBlock
+}
+
 
 interface JKJavaSwitchStatement : JKStatement {
     var expression: JKExpression

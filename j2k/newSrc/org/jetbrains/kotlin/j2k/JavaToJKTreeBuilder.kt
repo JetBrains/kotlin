@@ -382,11 +382,21 @@ class JavaToJKTreeBuilder(var symbolProvider: JKSymbolProvider) {
                 is PsiEmptyStatement -> JKEmptyStatementImpl()
                 is PsiThrowStatement ->
                     JKJavaThrowStatementImpl(with(expressionTreeMapper) { exception.toJK() })
+                is PsiTryStatement ->
+                    JKJavaTryStatementImpl(
+                        tryBlock?.toJK() ?: JKBodyStub,
+                        finallyBlock?.toJK() ?: JKBodyStub,
+                        catchSections.map { it.toJK() }
+                    )
                 else -> TODO("for ${this::class}")
             }.also {
                 if (this != null) (it as PsiOwner).psi = this
             }
         }
+
+        fun PsiCatchSection.toJK(): JKJavaTryCatchSection =
+            JKJavaTryCatchSectionImpl(parameter?.toJK()!!, catchBlock?.toJK() ?: JKBodyStub)
+                .also { it.psi = this }
     }
 
     //TODO better way than generateSequence.last??

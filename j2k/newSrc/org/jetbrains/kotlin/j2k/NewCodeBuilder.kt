@@ -45,6 +45,28 @@ class NewCodeBuilder {
             printer.print("/* !!! Hit visitElement for element type: ${treeElement::class} !!! */")
         }
 
+        override fun visitKtTryExpression(ktTryExpression: JKKtTryExpression) {
+            printer.printlnWithNoIndent("try ")
+            if (ktTryExpression.tryBlock != JKBodyStub) {
+                printer.block { ktTryExpression.tryBlock.accept(this) }
+            }
+            ktTryExpression.catchSections.forEach { it.accept(this) }
+            if (ktTryExpression.finallyBlock != JKBodyStub) {
+                printer.printlnWithNoIndent("finally ")
+                printer.block { ktTryExpression.finallyBlock.accept(this) }
+            }
+        }
+
+        override fun visitKtTryCatchSection(ktTryCatchSection: JKKtTryCatchSection) {
+            printer.printWithNoIndent("catch ")
+            printer.par {
+                ktTryCatchSection.parameter.accept(this)
+            }
+            if (ktTryCatchSection.block != JKBodyStub) {
+                printer.block { ktTryCatchSection.block.accept(this) }
+            }
+        }
+
         override fun visitKtForInStatement(ktForInStatement: JKKtForInStatement) {
             printer.printWithNoIndent("for (")
             ktForInStatement.declaration.accept(this)

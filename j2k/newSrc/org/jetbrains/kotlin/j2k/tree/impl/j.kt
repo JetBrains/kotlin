@@ -20,6 +20,7 @@ import com.intellij.psi.JavaTokenType
 import com.intellij.psi.impl.source.tree.ElementType.OPERATION_BIT_SET
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.j2k.ast.Nullability
+import org.jetbrains.kotlin.j2k.ast.Parameter
 import org.jetbrains.kotlin.j2k.tree.*
 import org.jetbrains.kotlin.j2k.tree.JKLiteralExpression.LiteralType.*
 import org.jetbrains.kotlin.j2k.tree.visitors.JKVisitor
@@ -232,6 +233,11 @@ object JKJavaVoidType : JKType {
 class JKJavaArrayTypeImpl(override val type: JKType, override var nullability: Nullability = Nullability.Default) : JKJavaArrayType {
 }
 
+class JKJavaDisjunctionTypeImpl(
+    override val disjunctions: List<JKType>,
+    override val nullability: Nullability = Nullability.Default
+) : JKJavaDisjunctionType
+
 class JKReturnStatementImpl(expression: JKExpression) : JKBranchElementBase(), JKReturnStatement, PsiOwner by PsiOwnerImpl() {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitReturnStatement(this, data)
 
@@ -310,4 +316,25 @@ class JKJavaLabelSwitchCaseImpl(
 class JKJavaThrowStatementImpl(exception: JKExpression) : JKJavaThrowStatement, JKBranchElementBase(), PsiOwner by PsiOwnerImpl() {
     override var exception: JKExpression by child(exception)
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitJavaThrowStatement(this, data)
+}
+
+class JKJavaTryStatementImpl(
+    tryBlock: JKBlock,
+    finallyBlock: JKBlock,
+    catchSections: List<JKJavaTryCatchSection>
+) : JKJavaTryStatement,
+    JKBranchElementBase(), PsiOwner by PsiOwnerImpl() {
+    override var tryBlock: JKBlock by child(tryBlock)
+    override var finallyBlock: JKBlock by child(finallyBlock)
+    override var catchSections: List<JKJavaTryCatchSection> by children(catchSections)
+    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitJavaTryStatement(this, data)
+}
+
+class JKJavaTryCatchSectionImpl(
+    parameter: JKParameter,
+    block: JKBlock
+) : JKJavaTryCatchSection, JKBranchElementBase(), PsiOwner by PsiOwnerImpl() {
+    override var parameter: JKParameter by child(parameter)
+    override var block: JKBlock by child(block)
+    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitJavaTryCatchSection(this, data)
 }

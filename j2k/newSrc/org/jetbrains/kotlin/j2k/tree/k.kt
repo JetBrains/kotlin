@@ -99,3 +99,14 @@ interface JKKtConvertedFromForLoopSyntheticWhileStatement : JKStatement {
 interface JKKtThrowExpression : JKExpression {
     var exception: JKExpression
 }
+
+interface JKKtTryExpression : JKExpression {
+    var tryBlock: JKBlock
+    var finallyBlock: JKBlock
+    var catchSections: List<JKKtTryCatchSection>
+}
+
+interface JKKtTryCatchSection : JKTreeElement {
+    var parameter: JKParameter
+    var block: JKBlock
+}
