@@ -23,8 +23,20 @@ import org.jetbrains.kotlin.ir.types.isMarkedNullable
 fun IrType.getInlinedClass(): IrClass? {
     if (this is IrSimpleType) {
         val erased = erase(this) ?: return null
-        if (!this.isMarkedNullable() && erased.isInline) {
-            // TODO: Don't box nullable type inline classes with non-nullable underlying type (JS IR BE)
+        if (erased.isInline) {
+            if (this.isMarkedNullable()) {
+                var fieldType: IrType
+                var fieldInlinedClass = erased
+                while (true) {
+                    fieldType = getInlineClassBackingField(fieldInlinedClass).type
+                    if (fieldType.isMarkedNullable()) {
+                        return null
+                    }
+
+                    fieldInlinedClass = fieldType.getInlinedClass() ?: break
+                }
+            }
+
             return erased
         }
     }

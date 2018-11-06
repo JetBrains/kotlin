@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.ir.types.isNothing
 import org.jetbrains.kotlin.ir.types.makeNotNull
 import org.jetbrains.kotlin.ir.util.getInlinedClass
 import org.jetbrains.kotlin.ir.util.isInlined
+import org.jetbrains.kotlin.ir.util.isNullable
 
 
 // Copied and adapted from Kotlin/Native
@@ -64,7 +65,7 @@ class AutoboxingTransformer(val context: JsIrBackendContext) : AbstractValueUsag
             else -> this.type
         }
 
-        // TODO: Default parameters are passed as nulls and they need not to be unboxed. Fix this
+        // // TODO: Default parameters are passed as nulls and they need not to be unboxed. Fix this
         if (actualType.makeNotNull().isNothing())
             return this
 
@@ -80,12 +81,43 @@ class AutoboxingTransformer(val context: JsIrBackendContext) : AbstractValueUsag
             else -> return this
         }
 
-        return JsIrBuilder.buildCall(
-            function,
-            expectedType,
-            typeArguments = listOf(actualType, expectedType)
-        ).also {
-            it.putValueArgument(0, this)
+        return buildSafeCall(this, actualType, expectedType) { arg ->
+            JsIrBuilder.buildCall(
+                function,
+                expectedType,
+                typeArguments = listOf(actualType, expectedType)
+            ).also {
+                it.putValueArgument(0, arg)
+            }
+        }
+    }
+
+    private fun buildSafeCall(
+        arg: IrExpression,
+        actualType: IrType,
+        resultType: IrType,
+        call: (IrExpression) -> IrExpression
+    ): IrExpression {
+        if (!actualType.isNullable())
+            return call(arg)
+        return JsIrBuilder.run {
+            val tmp = buildVar(actualType, parent = null, initializer = arg)
+            val nullCheck = buildIfElse(
+                type = resultType,
+                cond = buildCall(irBuiltIns.eqeqSymbol).apply {
+                    putValueArgument(0, buildGetValue(tmp.symbol))
+                    putValueArgument(1, buildNull(irBuiltIns.nothingNType))
+                },
+                thenBranch = buildNull(irBuiltIns.nothingNType),
+                elseBranch = call(buildGetValue(tmp.symbol))
+            )
+            buildBlock(
+                type = resultType,
+                statements = listOf(
+                    tmp,
+                    nullCheck
+                )
+            )
         }
     }
 

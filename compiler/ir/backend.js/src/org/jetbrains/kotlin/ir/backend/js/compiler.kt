@@ -124,7 +124,6 @@ private fun JsIrBackendContext.lower(moduleFragment: IrModuleFragment, dependenc
     MultipleCatchesLowering(this).lower(moduleFragment)
     BridgesConstruction(this).runOnFilesPostfix(moduleFragment)
     TypeOperatorLowering(this).lower(moduleFragment)
-    BlockDecomposerLowering(this).runOnFilesPostfix(moduleFragment)
 
     SecondaryCtorLowering(this).apply {
         constructorProcessorLowering.runOnFilesPostfix(moduleFragment.files + dependencies.flatMap { it.files })
@@ -136,6 +135,7 @@ private fun JsIrBackendContext.lower(moduleFragment: IrModuleFragment, dependenc
         inlineClassUsageLowering.lower(moduleFragment)
     }
     AutoboxingTransformer(this).lower(moduleFragment)
+    BlockDecomposerLowering(this).runOnFilesPostfix(moduleFragment)
 
     ClassReferenceLowering(this).lower(moduleFragment)
     PrimitiveCompanionLowering(this).lower(moduleFragment)
