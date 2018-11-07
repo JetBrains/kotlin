@@ -59,10 +59,12 @@ class KotlinScriptingSettings : PersistentStateComponent<Element> {
     }
 
     override fun loadState(state: Element) {
-        isAutoReloadEnabled =
-                state.getAttributeBooleanValue(KotlinScriptingSettings::isAutoReloadEnabled.name)
-        suppressDefinitionsCheck =
-                state.getAttributeBooleanValue(KotlinScriptingSettings::suppressDefinitionsCheck.name)
+        state.getOptionTag(KotlinScriptingSettings::isAutoReloadEnabled.name)?.let {
+            isAutoReloadEnabled = it
+        }
+        state.getOptionTag(KotlinScriptingSettings::suppressDefinitionsCheck.name)?.let {
+            suppressDefinitionsCheck = it
+        }
 
         val scriptDefinitionsList = state.getChildren(SCRIPT_DEFINITION_TAG)
         for (scriptDefinitionElement in scriptDefinitionsList) {
@@ -123,6 +125,9 @@ class KotlinScriptingSettings : PersistentStateComponent<Element> {
 
         return KotlinScriptDefinitionValue(order, isEnabled)
     }
+
+    private fun Element.getOptionTag(name: String) =
+        getChildren("option").firstOrNull { it.getAttribute("name").value == name }?.getAttributeBooleanValue("value")
 
     companion object {
         fun getInstance(project: Project): KotlinScriptingSettings =
