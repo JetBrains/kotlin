@@ -647,7 +647,8 @@ public class KotlinTypeMapper {
         if (classDescriptor instanceof FunctionClassDescriptor) {
             FunctionClassDescriptor functionClass = (FunctionClassDescriptor) classDescriptor;
             if (functionClass.hasBigArity() ||
-                functionClass.getFunctionKind() == FunctionClassDescriptor.Kind.KFunction) {
+                functionClass.getFunctionKind() == FunctionClassDescriptor.Kind.KFunction ||
+                functionClass.getFunctionKind() == FunctionClassDescriptor.Kind.KSuspendFunction) {
                 // kotlin.reflect.KFunction{n}<P1, ..., Pn, R> is mapped to kotlin.reflect.KFunction<R> (for all n), and
                 // kotlin.Function{n}<P1, ..., Pn, R> is mapped to kotlin.jvm.functions.FunctionN<R> (for n > 22).
                 // So for these classes, we need to skip all type arguments except the very last one
