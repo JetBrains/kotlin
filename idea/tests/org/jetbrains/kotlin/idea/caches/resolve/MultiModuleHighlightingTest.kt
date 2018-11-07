@@ -29,6 +29,7 @@ import com.intellij.psi.impl.PsiModificationTrackerImpl
 import com.intellij.psi.util.PsiModificationTracker
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.analyzer.ResolverForModuleComputationTracker
+import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.LanguageFeature
@@ -43,7 +44,6 @@ import org.jetbrains.kotlin.idea.facet.KotlinFacetType
 import org.jetbrains.kotlin.idea.framework.JSLibraryKind
 import org.jetbrains.kotlin.idea.project.KotlinCodeBlockModificationListener
 import org.jetbrains.kotlin.idea.project.KotlinModuleModificationTracker
-import org.jetbrains.kotlin.idea.project.getLanguageVersionSettings
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.idea.test.allKotlinFiles
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
@@ -241,7 +241,10 @@ open class MultiModuleHighlightingTest : AbstractMultiModuleHighlightingTest() {
             )
         )
 
-        module("usage").addLibrary(lib, kind = JSLibraryKind)
+        val usageModule = module("usage")
+        usageModule.makeJsModule()
+        usageModule.addLibrary(lib, kind = JSLibraryKind)
+
         checkHighlightingInProject()
     }
 
@@ -295,6 +298,12 @@ open class MultiModuleHighlightingTest : AbstractMultiModuleHighlightingTest() {
             configuration.settings.useProjectSettings = false
 
             configuration.configure()
+        }
+    }
+
+    private fun Module.makeJsModule() {
+        setupKotlinFacet {
+            settings.compilerArguments = K2JSCompilerArguments()
         }
     }
 }
