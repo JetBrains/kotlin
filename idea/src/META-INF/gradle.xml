@@ -20,12 +20,4 @@
         <externalProjectDataService implementation="org.jetbrains.kotlin.idea.configuration.KotlinSourceSetDataService"/>
         <externalProjectDataService implementation="org.jetbrains.kotlin.idea.configuration.KotlinGradleProjectSettingsDataService"/>
     </extensions>
-
-    <!-- NATIVE PART -->
-    <application-components>
-        <component>
-            <implementation-class>org.jetbrains.kotlin.ide.konan.gradle.KotlinNativeIdeInitializer</implementation-class>
-        </component>
-    </application-components>
-    <!-- /NATIVE PART -->
 </idea-plugin>
