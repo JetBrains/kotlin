@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.backend.konan.llvm.findMainEntryPoint
 import org.jetbrains.kotlin.backend.konan.lower.TestProcessor
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.UnsignedType
-import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.config.coroutinesIntrinsicsPackageFqName
 import org.jetbrains.kotlin.config.coroutinesPackageFqName
 import org.jetbrains.kotlin.config.languageVersionSettings
@@ -370,6 +369,9 @@ internal class KonanSymbols(context: Context, val symbolTable: SymbolTable, val 
     val getContinuation = symbolTable.referenceSimpleFunction(
             context.getInternalFunctions("getContinuation").single())
 
+    val returnIfSuspended = symbolTable.referenceSimpleFunction(
+            context.getInternalFunctions("returnIfSuspended").single())
+
     val konanSuspendCoroutineUninterceptedOrReturn = symbolTable.referenceSimpleFunction(
             context.getInternalFunctions("suspendCoroutineUninterceptedOrReturn").single())
 
@@ -435,9 +437,13 @@ internal class KonanSymbols(context: Context, val symbolTable: SymbolTable, val 
                 } && !it.isExpect
             }
 
-    val isInitializedGetterDescriptor = isInitializedPropertyDescriptor.getter!!
+    val isInitializedGetter = symbolTable.referenceSimpleFunction(isInitializedPropertyDescriptor.getter!!)
 
     val kFunctionImpl =  symbolTable.referenceClass(context.reflectionTypes.kFunctionImpl)
+
+    val kMutableProperty0 = symbolTable.referenceClass(context.reflectionTypes.kMutableProperty0)
+    val kMutableProperty1 = symbolTable.referenceClass(context.reflectionTypes.kMutableProperty1)
+    val kMutableProperty2 = symbolTable.referenceClass(context.reflectionTypes.kMutableProperty2)
 
     val kProperty0Impl = symbolTable.referenceClass(context.reflectionTypes.kProperty0Impl)
     val kProperty1Impl = symbolTable.referenceClass(context.reflectionTypes.kProperty1Impl)
@@ -501,32 +507,6 @@ internal class KonanSymbols(context: Context, val symbolTable: SymbolTable, val 
     val baseClassSuite   = getKonanTestClass("BaseClassSuite")
     val topLevelSuite    = getKonanTestClass("TopLevelSuite")
     val testFunctionKind = getKonanTestClass("TestFunctionKind")
-
-    val baseClassSuiteConstructor = baseClassSuite.descriptor.constructors.single {
-        it.valueParameters.size == 2 &&
-        KotlinBuiltIns.isString(it.valueParameters[0].type) && // name: String
-        KotlinBuiltIns.isBoolean(it.valueParameters[1].type)   // ignored: Boolean
-    }
-
-    val topLevelSuiteConstructor = symbolTable.referenceConstructor(topLevelSuite.descriptor.constructors.single {
-        it.valueParameters.size == 1 &&
-        KotlinBuiltIns.isString(it.valueParameters[0].type) // name: String
-    })
-
-    val topLevelSuiteRegisterFunction =
-            getFunction(Name.identifier("registerFunction"), topLevelSuite.descriptor.defaultType) {
-                it.valueParameters.size == 2 &&
-                it.valueParameters[0].type == testFunctionKind.descriptor.defaultType && // kind: TestFunctionKind
-                it.valueParameters[1].type.isFunctionType                                // function: () -> Unit
-            }
-
-    val topLevelSuiteRegisterTestCase =
-            getFunction(Name.identifier("registerTestCase"), topLevelSuite.descriptor.defaultType) {
-                it.valueParameters.size == 3 &&
-                KotlinBuiltIns.isString(it.valueParameters[0].type) &&  // name: String
-                it.valueParameters[1].type.isFunctionType &&            // function: () -> Unit
-                KotlinBuiltIns.isBoolean(it.valueParameters[2].type)    // ignored: Boolean
-            }
 
     private val testFunctionKindCache = mutableMapOf<TestProcessor.FunctionKind, IrEnumEntrySymbol>()
     fun getTestFunctionKind(kind: TestProcessor.FunctionKind): IrEnumEntrySymbol = testFunctionKindCache.getOrPut(kind) {

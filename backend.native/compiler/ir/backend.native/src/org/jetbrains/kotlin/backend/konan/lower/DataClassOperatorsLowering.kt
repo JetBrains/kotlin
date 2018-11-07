@@ -57,12 +57,11 @@ internal class DataClassOperatorsLowering(val context: Context): FunctionLowerin
                             extensionReceiver = argument
                         }
                     } else {
-                        val tmp = scope.createTemporaryVariable(argument)
-                        val call = irCall(newCallee, typeArguments).apply {
-                            extensionReceiver = irGet(tmp)
-                        }
                         irBlock(argument) {
-                            +tmp
+                            val tmp = irTemporary(argument)
+                            val call = irCall(newCallee, typeArguments).apply {
+                                extensionReceiver = irGet(tmp)
+                            }
                             +irIfThenElse(call.type,
                                     irEqeqeq(irGet(tmp), irNull()),
                                     if (isToString)

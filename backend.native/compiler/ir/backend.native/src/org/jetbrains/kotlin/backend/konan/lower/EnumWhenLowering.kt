@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.konan.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
+import org.jetbrains.kotlin.backend.common.descriptors.WrappedVariableDescriptor
 import org.jetbrains.kotlin.backend.common.peek
 import org.jetbrains.kotlin.backend.common.pop
 import org.jetbrains.kotlin.backend.common.push
@@ -16,11 +17,11 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
-import org.jetbrains.kotlin.ir.descriptors.IrTemporaryVariableDescriptorImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
+import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
 import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.util.getArguments
@@ -87,24 +88,33 @@ internal class EnumWhenLowering(private val context: Context) : IrElementTransfo
         return expression
     }
 
-    private fun createEnumOrdinalVariable(enumVariable: IrVariable): IrVariable {
-        val ordinalPropertyGetter = context.ir.symbols.enum.getPropertyGetter("ordinal")!!
-        val getOrdinal = IrCallImpl(
+    // Create temporary variable for subject's ordinal.
+    private fun createEnumOrdinalVariable(enumVariable: IrVariable) = WrappedVariableDescriptor().let {
+        IrVariableImpl(
                 enumVariable.startOffset, enumVariable.endOffset,
-                ordinalPropertyGetter.owner.returnType,
-                ordinalPropertyGetter
+                IrDeclarationOrigin.IR_TEMPORARY_VARIABLE,
+                IrVariableSymbolImpl(it),
+                Name.identifier(enumVariable.name.asString() + "_ordinal"),
+                context.irBuiltIns.intType,
+                isVar = false,
+                isConst = false,
+                isLateinit = false
         ).apply {
-            dispatchReceiver = IrGetValueImpl(
+            it.bind(this)
+            parent = enumVariable.parent
+
+            val ordinalPropertyGetter = context.ir.symbols.enum.getPropertyGetter("ordinal")!!
+            initializer = IrCallImpl(
                     enumVariable.startOffset, enumVariable.endOffset,
-                    enumVariable.type, enumVariable.symbol
-            )
+                    ordinalPropertyGetter.owner.returnType,
+                    ordinalPropertyGetter
+            ).apply {
+                dispatchReceiver = IrGetValueImpl(
+                        enumVariable.startOffset, enumVariable.endOffset,
+                        enumVariable.type, enumVariable.symbol
+                )
+            }
         }
-        // Create temporary variable for subject's ordinal.
-        val ordinalDescriptor = IrTemporaryVariableDescriptorImpl(enumVariable.descriptor.containingDeclaration,
-                Name.identifier(enumVariable.name.asString() + "_ordinal"), context.builtIns.intType)
-        return IrVariableImpl(enumVariable.startOffset, enumVariable.endOffset,
-                IrDeclarationOrigin.IR_TEMPORARY_VARIABLE, ordinalDescriptor,
-                context.irBuiltIns.intType, getOrdinal)
     }
 
     override fun visitCall(expression: IrCall): IrExpression {

@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.backend.konan
 import llvm.LLVMDumpModule
 import llvm.LLVMModuleRef
 import org.jetbrains.kotlin.backend.common.DumpIrTreeWithDescriptorsVisitor
+import org.jetbrains.kotlin.backend.common.descriptors.WrappedSimpleFunctionDescriptor
+import org.jetbrains.kotlin.backend.common.descriptors.WrappedTypeParameterDescriptor
 import org.jetbrains.kotlin.backend.common.validateIrModule
 import org.jetbrains.kotlin.backend.konan.descriptors.*
 import org.jetbrains.kotlin.backend.konan.ir.KonanIr
@@ -20,8 +22,6 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.ReceiverParameterDescriptorImpl
-import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
-import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.SourceManager
@@ -29,15 +29,13 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFieldImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrTypeParameterImpl
-import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
-import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.toKotlinType
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
+import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.metadata.konan.KonanProtoBuf
 import org.jetbrains.kotlin.name.FqName
@@ -51,6 +49,8 @@ import org.jetbrains.kotlin.serialization.deserialization.getName
 import java.lang.System.out
 import kotlin.LazyThreadSafetyMode.PUBLICATION
 import kotlin.reflect.KProperty
+import org.jetbrains.kotlin.backend.common.ir.copyTo
+import org.jetbrains.kotlin.ir.symbols.impl.IrTypeParameterSymbolImpl
 
 /**
  * Offset for synthetic elements created by lowerings and not attributable to other places in the source code.
@@ -97,7 +97,7 @@ internal class SpecialDeclarationsFactory(val context: Context) {
         }
 
     fun getLoweredEnum(enumClass: IrClass): LoweredEnum {
-        assert(enumClass.kind == ClassKind.ENUM_CLASS, { "Expected enum class but was: ${enumClass.descriptor}" })
+        assert(enumClass.kind == ClassKind.ENUM_CLASS) { "Expected enum class but was: ${enumClass.descriptor}" }
         return loweredEnums.getOrPut(enumClass) {
             enumSpecialDeclarationsFactory.createLoweredEnum(enumClass)
         }
@@ -125,143 +125,81 @@ internal class SpecialDeclarationsFactory(val context: Context) {
 
     fun getBridge(overriddenFunctionDescriptor: OverriddenFunctionDescriptor): IrSimpleFunction {
         val irFunction = overriddenFunctionDescriptor.descriptor
-        assert(overriddenFunctionDescriptor.needBridge,
-                { "Function ${irFunction.descriptor} is not needed in a bridge to call overridden function ${overriddenFunctionDescriptor.overriddenDescriptor.descriptor}" })
+        assert(overriddenFunctionDescriptor.needBridge) {
+            "Function ${irFunction.descriptor} is not needed in a bridge to call overridden function ${overriddenFunctionDescriptor.overriddenDescriptor.descriptor}"
+        }
         val bridgeDirections = overriddenFunctionDescriptor.bridgeDirections
         return bridgesDescriptors.getOrPut(irFunction to bridgeDirections) {
             createBridge(irFunction, bridgeDirections)
         }
     }
 
-    private fun createBridge(function: IrFunction, bridgeDirections: BridgeDirections): IrFunctionImpl {
+    private fun createBridge(function: IrSimpleFunction,
+                             bridgeDirections: BridgeDirections) = WrappedSimpleFunctionDescriptor().let { descriptor ->
+        val startOffset = function.startOffset
+        val endOffset = function.endOffset
         val returnType = when (bridgeDirections.array[0]) {
             BridgeDirection.TO_VALUE_TYPE,
             BridgeDirection.NOT_NEEDED -> function.returnType
             BridgeDirection.FROM_VALUE_TYPE -> context.irBuiltIns.anyNType
         }
-
-        val dispatchReceiver = when (bridgeDirections.array[1]) {
-            BridgeDirection.TO_VALUE_TYPE   -> function.dispatchReceiverParameter!!
-            BridgeDirection.NOT_NEEDED      -> function.dispatchReceiverParameter
-            BridgeDirection.FROM_VALUE_TYPE -> context.irBuiltIns.anyClass.owner.thisReceiver!!
-        }
-
-        val extensionReceiverType = when (bridgeDirections.array[2]) {
-            BridgeDirection.TO_VALUE_TYPE   -> function.extensionReceiverParameter!!.type
-            BridgeDirection.NOT_NEEDED      -> function.extensionReceiverParameter?.type
-            BridgeDirection.FROM_VALUE_TYPE -> context.irBuiltIns.anyNType
-        }
-
-        val valueParameterTypes = function.valueParameters.mapIndexed { index, valueParameter ->
-            when (bridgeDirections.array[index + 3]) {
-                BridgeDirection.TO_VALUE_TYPE   -> valueParameter.type
-                BridgeDirection.NOT_NEEDED      -> valueParameter.type
-                BridgeDirection.FROM_VALUE_TYPE -> context.irBuiltIns.anyNType
-            }
-        }
-        val bridgeDescriptor = createBridgeDescriptor(
-                function,
-                bridgeDirections,
-                returnType,
-                dispatchReceiver,
-                extensionReceiverType,
-                valueParameterTypes
-        )
-
-        val bridge = IrFunctionImpl(
-                function.startOffset,
-                function.endOffset,
+        IrFunctionImpl(
+                startOffset, endOffset,
                 DECLARATION_ORIGIN_BRIDGE_METHOD(function),
-                bridgeDescriptor,
-                returnType
+                IrSimpleFunctionSymbolImpl(descriptor),
+                "<bridge-$bridgeDirections>${function.functionName}".synthesizedName,
+                function.visibility,
+                function.modality,
+                isInline = false,
+                isExternal = false,
+                isTailrec = false,
+                isSuspend = function.isSuspend,
+                returnType = returnType
         ).apply {
-            this.parent = function.parent
-        }
+            descriptor.bind(this)
+            parent = function.parent
 
-        bridge.dispatchReceiverParameter = dispatchReceiver?.let {
-            IrValueParameterImpl(
-                    it.startOffset,
-                    it.endOffset,
-                    IrDeclarationOrigin.DEFINED,
-                    it.descriptor,
-                    it.type,
-                    null
-            )
-        }
+            val dispatchReceiver = when (bridgeDirections.array[1]) {
+                BridgeDirection.TO_VALUE_TYPE -> function.dispatchReceiverParameter!!
+                BridgeDirection.NOT_NEEDED -> function.dispatchReceiverParameter
+                BridgeDirection.FROM_VALUE_TYPE -> context.irBuiltIns.anyClass.owner.thisReceiver!!
+            }
 
-        extensionReceiverType?.let {
-            val extensionReceiverParameter = function.extensionReceiverParameter!!
-            bridge.extensionReceiverParameter = IrValueParameterImpl(
-                    extensionReceiverParameter.startOffset,
-                    extensionReceiverParameter.endOffset,
-                    extensionReceiverParameter.origin,
-                    bridge.descriptor.extensionReceiverParameter!!,
-                    it, null
-            )
-        }
-        function.valueParameters.mapIndexedTo(bridge.valueParameters) { index, valueParameter ->
-            val type = valueParameterTypes[index]
+            val extensionReceiver = when (bridgeDirections.array[2]) {
+                BridgeDirection.TO_VALUE_TYPE -> function.extensionReceiverParameter!!
+                BridgeDirection.NOT_NEEDED -> function.extensionReceiverParameter
+                BridgeDirection.FROM_VALUE_TYPE -> context.irBuiltIns.anyClass.owner.thisReceiver!!
+            }
 
-            IrValueParameterImpl(
-                    valueParameter.startOffset,
-                    valueParameter.endOffset,
-                    valueParameter.origin,
-                    bridge.descriptor.valueParameters[index],
-                    type, valueParameter.varargElementType
-            )
-        }
+            val valueParameterTypes = function.valueParameters.mapIndexed { index, valueParameter ->
+                when (bridgeDirections.array[index + 3]) {
+                    BridgeDirection.TO_VALUE_TYPE -> valueParameter.type
+                    BridgeDirection.NOT_NEEDED -> valueParameter.type
+                    BridgeDirection.FROM_VALUE_TYPE -> context.irBuiltIns.anyNType
+                }
+            }
 
-        function.typeParameters.mapTo(bridge.typeParameters) {
-            IrTypeParameterImpl(it.startOffset, it.endOffset, it.origin, it.descriptor).apply {
-                superTypes += it.superTypes
+            dispatchReceiverParameter = dispatchReceiver?.copyTo(this)
+            extensionReceiverParameter = extensionReceiver?.copyTo(this)
+            function.valueParameters.mapTo(valueParameters) { it.copyTo(this, type = valueParameterTypes[it.index]) }
+
+            function.typeParameters.mapIndexedTo(typeParameters) { index, parameter ->
+                WrappedTypeParameterDescriptor().let {
+                    IrTypeParameterImpl(
+                            startOffset, endOffset,
+                            origin,
+                            IrTypeParameterSymbolImpl(it),
+                            parameter.name,
+                            index,
+                            parameter.isReified,
+                            parameter.variance
+                    ).apply {
+                        it.bind(this)
+                        superTypes += parameter.superTypes
+                    }
+                }
             }
         }
-
-        return bridge
-    }
-
-    private fun createBridgeDescriptor(
-            function: IrFunction,
-            bridgeDirections: BridgeDirections,
-            returnType: IrType,
-            dispatchReceiverParameter: IrValueParameter?,
-            extensionReceiverType: IrType?,
-            valueParameterTypes: List<IrType>
-    ): SimpleFunctionDescriptor {
-
-        val descriptor = function.descriptor
-        val bridgeDescriptor = SimpleFunctionDescriptorImpl.create(
-                /* containingDeclaration = */ descriptor.containingDeclaration,
-                /* annotations           = */ Annotations.EMPTY,
-                /* name                  = */ "<bridge-$bridgeDirections>${function.functionName}".synthesizedName,
-                /* kind                  = */ CallableMemberDescriptor.Kind.DECLARATION,
-                /* source                = */ SourceElement.NO_SOURCE)
-
-        val valueParameters = descriptor.valueParameters.mapIndexed { index, valueParameterDescriptor ->
-            ValueParameterDescriptorImpl(
-                    containingDeclaration = valueParameterDescriptor.containingDeclaration,
-                    original = null,
-                    index = index,
-                    annotations = Annotations.EMPTY,
-                    name = valueParameterDescriptor.name,
-                    outType = valueParameterTypes[index].toKotlinType(),
-                    declaresDefaultValue = valueParameterDescriptor.declaresDefaultValue(),
-                    isCrossinline = valueParameterDescriptor.isCrossinline,
-                    isNoinline = valueParameterDescriptor.isNoinline,
-                    varargElementType = valueParameterDescriptor.varargElementType,
-                    source = SourceElement.NO_SOURCE)
-        }
-        bridgeDescriptor.initialize(
-                /* receiverParameterType        = */ extensionReceiverType?.toKotlinType(),
-                /* dispatchReceiverParameter    = */ dispatchReceiverParameter?.descriptor as ReceiverParameterDescriptor?,
-                /* typeParameters               = */ descriptor.typeParameters,
-                /* unsubstitutedValueParameters = */ valueParameters,
-                /* unsubstitutedReturnType      = */ returnType.toKotlinType(),
-                /* modality                     = */ descriptor.modality,
-                /* visibility                   = */ descriptor.visibility).apply {
-            isSuspend = descriptor.isSuspend
-        }
-        return bridgeDescriptor
     }
 }
 

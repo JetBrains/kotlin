@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.backend.konan.lower
 import org.jetbrains.kotlin.backend.common.AbstractValueUsageTransformer
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.atMostOne
+import org.jetbrains.kotlin.backend.common.descriptors.WrappedSimpleFunctionDescriptor
+import org.jetbrains.kotlin.backend.common.ir.copyTo
 import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.descriptors.target
@@ -15,9 +17,7 @@ import org.jetbrains.kotlin.backend.konan.irasdescriptors.constructedClass
 import org.jetbrains.kotlin.backend.konan.irasdescriptors.containsNull
 import org.jetbrains.kotlin.backend.konan.irasdescriptors.isOverridable
 import org.jetbrains.kotlin.backend.konan.irasdescriptors.isSuspend
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrBlockImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetObjectValueImpl
 import org.jetbrains.kotlin.ir.symbols.*
+import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
@@ -67,17 +68,17 @@ private class AutoboxingTransformer(val context: Context) : AbstractValueUsageTr
         }
     }
 
-    private var currentFunctionDescriptor: IrFunction? = null
+    private var currentFunction: IrFunction? = null
 
     override fun visitFunction(declaration: IrFunction): IrStatement {
-        currentFunctionDescriptor = declaration
+        currentFunction = declaration
         val result = super.visitFunction(declaration)
-        currentFunctionDescriptor = null
+        currentFunction = null
         return result
     }
 
     override fun IrExpression.useAsReturnValue(returnTarget: IrReturnTargetSymbol): IrExpression = when (returnTarget) {
-        is IrSimpleFunctionSymbol -> if (returnTarget.owner.isSuspend && returnTarget == currentFunctionDescriptor?.symbol) {
+        is IrSimpleFunctionSymbol -> if (returnTarget.owner.isSuspend && returnTarget == currentFunction?.symbol) {
             this.useAs(irBuiltIns.anyNType)
         } else {
             this.useAs(returnTarget.owner.returnType)
@@ -389,6 +390,7 @@ private class InlineClassTransformer(private val context: Context) : IrBuildingT
             }
 
             (irConstructor.body as IrBlockBody).statements.forEach { statement ->
+                statement.setDeclarationsParent(result)
                 +statement.transform(object : IrElementTransformerVoid() {
                     override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall): IrExpression {
                         expression.transformChildrenVoid()
@@ -435,38 +437,22 @@ private val Context.getLoweredInlineClassConstructor: (IrConstructor) -> IrSimpl
     require(irConstructor.constructedClass.isInlined())
     require(!irConstructor.isPrimary)
 
-    val descriptor = SimpleFunctionDescriptorImpl.create(
-            irConstructor.descriptor.containingDeclaration,
-            irConstructor.descriptor.annotations,
-            Name.special("<constructor>"),
-            CallableMemberDescriptor.Kind.SYNTHESIZED,
-            irConstructor.descriptor.source
-    )
-
-    val parameterDescriptors = irConstructor.descriptor.valueParameters.map {
-        it.copy(descriptor, it.name, it.index)
-    }
-
-    descriptor.initialize(
-            null,
-            null,
-            emptyList(),
-            parameterDescriptors,
-            irConstructor.descriptor.returnType,
-            Modality.FINAL,
-            irConstructor.visibility
-    )
-
+    val descriptor = WrappedSimpleFunctionDescriptor(irConstructor.descriptor.annotations, irConstructor.descriptor.source)
     IrFunctionImpl(
-            irConstructor.startOffset,
-            irConstructor.endOffset,
+            irConstructor.startOffset, irConstructor.endOffset,
             IrDeclarationOrigin.DEFINED,
-            descriptor,
-            irConstructor.returnType
+            IrSimpleFunctionSymbolImpl(descriptor),
+            Name.special("<constructor>"),
+            irConstructor.visibility,
+            Modality.FINAL,
+            isInline = false,
+            isExternal = false,
+            isTailrec = false,
+            isSuspend = false,
+            returnType = irConstructor.returnType
     ).apply {
+        descriptor.bind(this)
         parent = irConstructor.parent
-        irConstructor.valueParameters.mapTo(this.valueParameters) {
-            it.copy(this.descriptor.valueParameters[it.index])
-        }
+        irConstructor.valueParameters.mapTo(valueParameters) { it.copyTo(this) }
     }
 }

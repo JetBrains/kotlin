@@ -37,7 +37,7 @@ internal class BackingFieldVisitor(val context: Context) : IrElementVisitorVoid 
 
     override fun visitClass(declaration: IrClass) {
         if (declaration.isInner)
-            declaration.addChild(context.specialDeclarationsFactory.getOuterThisField(declaration))
+            declaration.declarations += context.specialDeclarationsFactory.getOuterThisField(declaration)
 
         // Mark all dangling fields (they are created when class is inherited via delegation).
         declaration.declarations.filterIsInstance<IrField>().forEach {

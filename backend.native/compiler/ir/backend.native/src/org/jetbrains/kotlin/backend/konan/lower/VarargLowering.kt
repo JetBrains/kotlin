@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.backend.common.DeclarationContainerLoweringPass
 import org.jetbrains.kotlin.backend.common.descriptors.synthesizedString
 import org.jetbrains.kotlin.backend.common.ir.ir2string
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
+import org.jetbrains.kotlin.backend.common.lower.irBlock
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.builtins.UnsignedType
 import org.jetbrains.kotlin.ir.IrElement
@@ -37,7 +38,6 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.util.OperatorNameConventions
-
 
 class VarargInjectionLowering constructor(val context: CommonBackendContext): DeclarationContainerLoweringPass {
     override fun lower(irDeclarationContainer: IrDeclarationContainer) {
@@ -99,63 +99,53 @@ class VarargInjectionLowering constructor(val context: CommonBackendContext): De
 
             override fun visitVararg(expression: IrVararg): IrExpression {
                 expression.transformChildrenVoid(transformer)
+
                 val hasSpreadElement = hasSpreadElement(expression)
                 val irBuilder = context.createIrBuilder(owner, expression.startOffset, expression.endOffset)
-                irBuilder.run {
+                return irBuilder.irBlock(expression, null, expression.type) {
                     val type = expression.varargElementType
                     log { "$expression: array type:$type, is array of primitives ${!expression.type.isArray()}" }
                     val arrayHandle = arrayType(expression.type)
-                    val block = irBlock(expression.type)
 
                     val vars = expression.elements.map {
-                        val initVar = scope.createTemporaryVariable(
-                            (it as? IrSpreadElement)?.expression ?: it as IrExpression,
-                            "elem".synthesizedString, true)
-                        block.statements.add(initVar)
-                        it to initVar
+                        it to irTemporaryVar(
+                                (it as? IrSpreadElement)?.expression ?: it as IrExpression,
+                                "elem".synthesizedString
+                        )
                     }.toMap()
                     val arraySize = calculateArraySize(arrayHandle, hasSpreadElement, scope, expression, vars)
                     val array = arrayHandle.createArray(this, expression.varargElementType, arraySize)
 
-                    val arrayTmpVariable = scope.createTemporaryVariable(array, "array".synthesizedString, true)
-                    val indexTmpVariable = scope.createTemporaryVariable(kIntZero, "index".synthesizedString, true)
-                    block.statements.add(arrayTmpVariable)
-                    if (hasSpreadElement) {
-                        block.statements.add(indexTmpVariable)
-                    }
+                    val arrayTmpVariable = irTemporaryVar(array, "array".synthesizedString)
+                    lateinit var indexTmpVariable: IrVariable
+                    if (hasSpreadElement)
+                        indexTmpVariable = irTemporaryVar(kIntZero, "index".synthesizedString)
                     expression.elements.forEachIndexed { i, element ->
-                        irBuilder.startOffset = element.startOffset
-                        irBuilder.endOffset   = element.endOffset
-                        irBuilder.apply {
-                            log { "element:$i> ${ir2string(element)}" }
-                            val dst = vars[element]!!
-                            if (element !is IrSpreadElement) {
-                                val setArrayElementCall = irCall(arrayHandle.setMethodSymbol.owner)
-                                setArrayElementCall.dispatchReceiver = irGet(arrayTmpVariable)
-                                setArrayElementCall.putValueArgument(0, if (hasSpreadElement) irGet(indexTmpVariable) else irConstInt(i))
-                                setArrayElementCall.putValueArgument(1, irGet(dst))
-                                block.statements.add(setArrayElementCall)
-                                if (hasSpreadElement) {
-                                    block.statements.add(incrementVariable(indexTmpVariable, kIntOne))
-                                }
-                            } else {
-                                val arraySizeVariable = scope.createTemporaryVariable(irArraySize(arrayHandle, irGet(dst)), "length".synthesizedString)
-                                block.statements.add(arraySizeVariable)
-                                val copyCall = irCall(arrayHandle.copyRangeToSymbol.owner).apply {
-                                    extensionReceiver = irGet(dst)
-                                    putValueArgument(0, irGet(arrayTmpVariable))  /* destination */
-                                    putValueArgument(1, kIntZero)                            /* fromIndex */
-                                    putValueArgument(2, irGet(arraySizeVariable)) /* toIndex */
-                                    putValueArgument(3, irGet(indexTmpVariable))  /* destinationIndex */
-                                }
-                                block.statements.add(copyCall)
-                                block.statements.add(incrementVariable(indexTmpVariable, irGet(arraySizeVariable)))
-                                log { "element:$i:spread element> ${ir2string(element.expression)}" }
+                        irBuilder.at(element.startOffset, element.endOffset)
+                        log { "element:$i> ${ir2string(element)}" }
+                        val dst = vars[element]!!
+                        if (element !is IrSpreadElement) {
+                            +irCall(arrayHandle.setMethodSymbol.owner).apply {
+                                dispatchReceiver = irGet(arrayTmpVariable)
+                                putValueArgument(0, if (hasSpreadElement) irGet(indexTmpVariable) else irConstInt(i))
+                                putValueArgument(1, irGet(dst))
                             }
+                            if (hasSpreadElement)
+                                +incrementVariable(indexTmpVariable, kIntOne)
+                        } else {
+                            val arraySizeVariable = irTemporary(irArraySize(arrayHandle, irGet(dst)), "length".synthesizedString)
+                            +irCall(arrayHandle.copyRangeToSymbol.owner).apply {
+                                extensionReceiver = irGet(dst)
+                                putValueArgument(0, irGet(arrayTmpVariable))  /* destination */
+                                putValueArgument(1, kIntZero)                            /* fromIndex */
+                                putValueArgument(2, irGet(arraySizeVariable)) /* toIndex */
+                                putValueArgument(3, irGet(indexTmpVariable))  /* destinationIndex */
+                            }
+                            +incrementVariable(indexTmpVariable, irGet(arraySizeVariable))
+                            log { "element:$i:spread element> ${ir2string(element.expression)}" }
                         }
                     }
-                    block.statements.add(irGet(arrayTmpVariable))
-                    return block
+                    +irGet(arrayTmpVariable)
                 }
             }
         })
@@ -273,6 +263,5 @@ class VarargInjectionLowering constructor(val context: CommonBackendContext): De
 
 private fun IrBuilderWithScope.irConstInt(value: Int): IrConst<Int> =
     IrConstImpl.int(startOffset, endOffset, context.irBuiltIns.intType, value)
-private fun IrBuilderWithScope.irBlock(type: IrType): IrBlock = IrBlockImpl(startOffset, endOffset, type)
 private val IrBuilderWithScope.kIntZero get() = irConstInt(0)
 private val IrBuilderWithScope.kIntOne get() = irConstInt(1)

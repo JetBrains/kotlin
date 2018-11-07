@@ -7,15 +7,14 @@ package org.jetbrains.kotlin.backend.konan.lower
 
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.common.DeclarationContainerLoweringPass
+import org.jetbrains.kotlin.backend.common.descriptors.WrappedSimpleFunctionDescriptor
+import org.jetbrains.kotlin.backend.common.descriptors.WrappedValueParameterDescriptor
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlockBody
 import org.jetbrains.kotlin.backend.common.lower.irIfThen
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.descriptors.*
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.annotations.Annotations
-import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
-import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
@@ -26,6 +25,8 @@ import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
+import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.isNullableAny
 import org.jetbrains.kotlin.ir.util.simpleFunctions
@@ -64,54 +65,41 @@ internal class WorkersBridgesBuilding(val context: Context) : DeclarationContain
 
                 val job = expression.getValueArgument(3) as IrFunctionReference
                 val jobFunction = (job.symbol as IrSimpleFunctionSymbol).owner
-                val jobDescriptor = job.descriptor
-                val arg = jobDescriptor.valueParameters[0]
+
                 if (!::runtimeJobFunction.isInitialized) {
-                    val runtimeJobDescriptor = SimpleFunctionDescriptorImpl.create(
-                            jobDescriptor.containingDeclaration,
-                            jobDescriptor.annotations,
-                            jobDescriptor.name,
-                            jobDescriptor.kind,
-                            jobDescriptor.source
+                    val arg = jobFunction.valueParameters[0]
+                    val startOffset = jobFunction.startOffset
+                    val endOffset = jobFunction.endOffset
+                    runtimeJobFunction = WrappedSimpleFunctionDescriptor().let {
+                        IrFunctionImpl(
+                                startOffset, endOffset,
+                                IrDeclarationOrigin.DEFINED,
+                                IrSimpleFunctionSymbolImpl(it),
+                                jobFunction.name,
+                                jobFunction.visibility,
+                                jobFunction.modality,
+                                isInline = false,
+                                isExternal = false,
+                                isTailrec = false,
+                                isSuspend = false,
+                                returnType = context.irBuiltIns.anyNType
                     ).apply {
-                        initialize(
-                                null,
-                                null,
-                                emptyList(),
-                                listOf(ValueParameterDescriptorImpl(
-                                        containingDeclaration = this,
-                                        original              = null,
-                                        index                 = 0,
-                                        annotations           = Annotations.EMPTY,
-                                        name                  = arg.name,
-                                        outType               = nullableAnyType,
-                                        declaresDefaultValue  = arg.declaresDefaultValue(),
-                                        isCrossinline         = arg.isCrossinline,
-                                        isNoinline            = arg.isNoinline,
-                                        varargElementType     = arg.varargElementType,
-                                        source                = arg.source
-                                )),
-                                nullableAnyType,
-                                jobDescriptor.modality,
-                                jobDescriptor.visibility
-                        )
+                            it.bind(this)
+                        }
                     }
 
-                    runtimeJobFunction = IrFunctionImpl(
-                            jobFunction.startOffset,
-                            jobFunction.endOffset,
-                            IrDeclarationOrigin.DEFINED,
-                            runtimeJobDescriptor,
-                            context.irBuiltIns.anyNType
-                    ).also {
-                        it.valueParameters += IrValueParameterImpl(
-                                it.startOffset,
-                                it.endOffset,
+                    runtimeJobFunction.valueParameters += WrappedValueParameterDescriptor().let {
+                        IrValueParameterImpl(
+                                startOffset, endOffset,
                                 IrDeclarationOrigin.DEFINED,
-                                it.descriptor.valueParameters.single(),
-                                context.irBuiltIns.anyNType,
-                                null
-                        )
+                                IrValueParameterSymbolImpl(it),
+                                arg.name,
+                                arg.index,
+                                type = context.irBuiltIns.anyNType,
+                                varargElementType = null,
+                                isCrossinline = arg.isCrossinline,
+                                isNoinline = arg.isNoinline
+                        ).apply { it.bind(this) }
                     }
                 }
                 val overriddenJobDescriptor = OverriddenFunctionDescriptor(jobFunction, runtimeJobFunction)

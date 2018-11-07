@@ -10,6 +10,7 @@ package org.jetbrains.kotlin.backend.konan.lower
 import org.jetbrains.kotlin.backend.common.*
 import org.jetbrains.kotlin.backend.common.descriptors.explicitParameters
 import org.jetbrains.kotlin.backend.common.ir.ir2stringWhole
+import org.jetbrains.kotlin.backend.common.lower.CoroutineIntrinsicLambdaOrigin
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.descriptors.isFunctionInvoke
@@ -150,7 +151,7 @@ internal class FunctionInlining(val context: Context): IrElementTransformerWithC
         if (!callSite.descriptor.needsInlining)
             return callSite
         val functionDescriptor = callSite.descriptor.resolveFakeOverride().original
-        if (functionDescriptor == context.ir.symbols.isInitializedGetterDescriptor)
+        if (callSite.symbol == context.ir.symbols.isInitializedGetter)
             return callSite
 
         val callee = getFunctionDeclaration(functionDescriptor)
