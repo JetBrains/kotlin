@@ -3994,6 +3994,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             runTest("idea/testData/inspectionsLocal/redundantCompanionReference/inEnumEntry2.kt");
         }
 
+        @TestMetadata("inEnumEntry3.kt")
+        public void testInEnumEntry3() throws Exception {
+            runTest("idea/testData/inspectionsLocal/redundantCompanionReference/inEnumEntry3.kt");
+        }
+
         @TestMetadata("methodArgument.kt")
         public void testMethodArgument() throws Exception {
             runTest("idea/testData/inspectionsLocal/redundantCompanionReference/methodArgument.kt");
