@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.j2k
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.j2k.conversions.multiResolveFqName
 import org.jetbrains.kotlin.j2k.conversions.resolveFqName
 import org.jetbrains.kotlin.j2k.tree.*
@@ -106,3 +107,32 @@ fun rangeExpression(
 
 fun blockStatement(vararg statements: JKStatement) =
     JKBlockStatementImpl(JKBlockImpl(statements.toList()))
+
+fun useExpression(
+    receiver: JKExpression,
+    variableIdentifier: JKNameIdentifier,
+    body: JKStatement,
+    symbolProvider: JKSymbolProvider
+): JKExpression {
+    val useSymbol =
+        symbolProvider
+            .provideDirectSymbol(
+                resolveFqName(
+                    ClassId.fromString("kotlin.io.use"),
+                    symbolProvider.symbolsByPsi.keys.first()
+                )!!
+            ) as JKMethodSymbol
+    val lambdaParameter =
+        JKParameterImpl(JKTypeElementImpl(JKNoTypeImpl), variableIdentifier, JKModifierListImpl())
+
+    val lambda = JKLambdaExpressionImpl(
+        listOf(lambdaParameter),
+        body
+    )
+    val methodCall =
+        JKJavaMethodCallExpressionImpl(
+            useSymbol,
+            JKExpressionListImpl(listOf(lambda))
+        )
+    return JKQualifiedExpressionImpl(receiver, JKKtQualifierImpl.DOT, methodCall)
+}
