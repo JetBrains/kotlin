@@ -94,7 +94,7 @@ class KotlinGenerateToStringAction : KotlinGenerateMemberActionBase<KotlinGenera
                             val ref = (DescriptorToSourceUtilsIde.getAnyDeclaration(info.project, it) as PsiNameIdentifierOwner).nameIdentifier!!.text
                             append("\"$ref=${renderVariableValue(it, ref)}")
                             if (varIterator.hasNext()) {
-                                append(',')
+                                append(", ")
                             }
                             append("\" +\n")
                         }
