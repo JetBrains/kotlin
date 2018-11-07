@@ -32,7 +32,7 @@ class KonanConfigKeys {
                 = CompilerConfigurationKey.create<List<String>>("libraries included into produced framework API")
         val FRIEND_MODULES: CompilerConfigurationKey<List<String>>
                 = CompilerConfigurationKey.create<List<String>>("friend module paths")
-        val GENERATE_TEST_RUNNER: CompilerConfigurationKey<Boolean>
+        val GENERATE_TEST_RUNNER: CompilerConfigurationKey<TestRunnerKind>
                 = CompilerConfigurationKey.create("generate test runner") 
         val INCLUDED_BINARY_FILES: CompilerConfigurationKey<List<String>>
                 = CompilerConfigurationKey.create("included binary file paths")

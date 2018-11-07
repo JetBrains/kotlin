@@ -177,14 +177,17 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
 
                 put(ENABLE_ASSERTIONS, arguments.enableAssertions)
 
-                put(GENERATE_TEST_RUNNER, arguments.generateTestRunner)
-
+                when {
+                    arguments.generateWorkerTestRunner -> put(GENERATE_TEST_RUNNER, TestRunnerKind.WORKER)
+                    arguments.generateTestRunner -> put(GENERATE_TEST_RUNNER, TestRunnerKind.MAIN_THREAD)
+                    else -> put(GENERATE_TEST_RUNNER, TestRunnerKind.NONE)
+                }
                 // We need to download dependencies only if we use them ( = there are files to compile).
                 put(CHECK_DEPENDENCIES, if (configuration.kotlinSourceRoots.isNotEmpty()) {
-                        true
-                    } else {
-                        arguments.checkDependencies
-                    })
+                    true
+                } else {
+                    arguments.checkDependencies
+                })
                 if (arguments.friendModules != null)
                     put(FRIEND_MODULES, arguments.friendModules!!.split(File.pathSeparator).filterNot(String::isEmpty))
 

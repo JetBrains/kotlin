@@ -5,12 +5,10 @@
 
 package org.jetbrains.kotlin.backend.konan.llvm
 
-import org.jetbrains.kotlin.backend.konan.reportCompilationError
-import org.jetbrains.kotlin.backend.konan.Context
-import org.jetbrains.kotlin.backend.konan.KonanConfigKeys
+import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.descriptors.isArray
-import org.jetbrains.kotlin.backend.konan.report
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
+import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
@@ -28,8 +26,7 @@ internal fun findMainEntryPoint(context: Context): FunctionDescriptor? {
     val config = context.config.configuration
     if (config.get(KonanConfigKeys.PRODUCE) != PROGRAM) return null
 
-    val entryPoint = FqName(config.get(KonanConfigKeys.ENTRY) ?:
-            if (context.shouldGenerateTestRunner()) testEntryName else defaultEntryName)
+    val entryPoint = FqName(config.get(KonanConfigKeys.ENTRY) ?: defaultEntryName(config))
 
     val entryName = entryPoint.shortName()
     val packageName = entryPoint.parent()
@@ -59,10 +56,12 @@ internal fun findMainEntryPoint(context: Context): FunctionDescriptor? {
     return main
 }
 
-private val defaultEntryName = "main"
-private val testEntryName = "kotlin.native.internal.test.main"
-
-private val defaultEntryPackage = FqName.ROOT
+private fun defaultEntryName(config: CompilerConfiguration): String =
+    when (config.get(KonanConfigKeys.GENERATE_TEST_RUNNER)) {
+        TestRunnerKind.MAIN_THREAD -> "kotlin.native.internal.test.main"
+        TestRunnerKind.WORKER -> "kotlin.native.internal.test.worker"
+        else -> "main"
+    }
 
 private val KotlinType.filterClass: ClassDescriptor?
     get() {

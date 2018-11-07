@@ -502,9 +502,6 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config) {
 
     fun shouldOptimize() = config.configuration.getBoolean(KonanConfigKeys.OPTIMIZATION)
 
-    fun shouldGenerateTestRunner() =
-            config.configuration.getBoolean(KonanConfigKeys.GENERATE_TEST_RUNNER)
-
     override fun log(message: () -> String) {
         if (phase?.verbose ?: false) {
             println(message())

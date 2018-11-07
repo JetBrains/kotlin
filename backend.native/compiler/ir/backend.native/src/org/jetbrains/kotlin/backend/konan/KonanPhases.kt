@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.konan
 
+import org.jetbrains.kotlin.config.CompilerConfigurationKey
 import org.jetbrains.kotlin.konan.util.*
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 
@@ -83,7 +84,8 @@ object KonanPhases {
                 (config.produce == CompilerOutputKind.LIBRARY)
             KonanPhase.LINK_STAGE.enabled = config.produce.isNativeBinary
 
-            KonanPhase.TEST_PROCESSOR.enabled = getBoolean(GENERATE_TEST_RUNNER)
+            KonanPhase.TEST_PROCESSOR.enabled =
+                    getNotNull(KonanConfigKeys.GENERATE_TEST_RUNNER) != TestRunnerKind.NONE
 
             val disabled = get(DISABLED_PHASES)
             disabled?.forEach { phases[known(it)]!!.enabled = false }

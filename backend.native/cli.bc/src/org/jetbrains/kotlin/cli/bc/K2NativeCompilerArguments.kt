@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.cli.bc
 
+import org.jetbrains.kotlin.backend.konan.TestRunnerKind
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.Argument
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
@@ -22,8 +23,12 @@ class K2NativeCompilerArguments : CommonCompilerArguments() {
     @Argument(value = "-g", description = "Enable emitting debug information")
     var debug: Boolean = false
 
-    @Argument(value = "-generate-test-runner", deprecatedName = "-generate_test_runner", shortName = "-tr", description = "Produce a runner for unit tests")
-    var generateTestRunner: Boolean = false
+    @Argument(value = "-generate-test-runner", deprecatedName = "-generate_test_runner",
+            shortName = "-tr", description = "Produce a runner for unit tests")
+    var generateTestRunner = false
+    @Argument(value = "-generate-worker-test-runner",
+            shortName = "-trw", description = "Produce a worker runner for unit tests")
+    var generateWorkerTestRunner = false
 
     @Argument(value="-include-binary", deprecatedName = "-includeBinary", shortName = "-ib", valueDescription = "<path>", description = "Pack external binary within the klib")
     var includeBinaries: Array<String>? = null

@@ -6,6 +6,7 @@
 package kotlin.native.internal.test
 
 import kotlin.system.exitProcess
+import kotlin.native.concurrent.*
 
 @ThreadLocal
 private val _generatedSuites = mutableListOf<TestSuite>()
@@ -20,4 +21,13 @@ fun testLauncherEntryPoint(args: Array<String>): Int {
 
 fun main(args: Array<String>) {
     exitProcess(testLauncherEntryPoint(args))
+}
+
+fun worker(args: Array<String>) {
+    val worker = Worker.start()
+    val result = worker.execute(TransferMode.SAFE, { args.freeze() }) {
+        it -> testLauncherEntryPoint(it)
+    }.result
+    worker.requestTermination().result
+    exitProcess(result)
 }
