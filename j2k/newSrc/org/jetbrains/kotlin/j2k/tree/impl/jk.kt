@@ -446,3 +446,12 @@ val JKElement.psi: PsiElement?
 fun <Elem : PsiElement>JKElement.psi(): Elem? =
     (this as? PsiOwner)?.psi as? Elem
 
+class JKTypeParameterListImpl(typeParameters: List<JKTypeParameter> = emptyList()) : JKTypeParameterList, JKBranchElementBase() {
+    override var typeParameters by children(typeParameters)
+    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitTypeParameterList(this, data)
+}
+
+class JKTypeParameterImpl(name: JKNameIdentifier) : JKTypeParameter, JKBranchElementBase() {
+    override var name: JKNameIdentifier by child(name)
+    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitTypeParameter(this, data)
+}

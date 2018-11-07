@@ -274,3 +274,15 @@ interface JKLabeledStatement : JKStatement {
 }
 
 interface JKEmptyStatement : JKStatement
+
+interface JKTypeParameterList : JKTreeElement {
+    var typeParameters: List<JKTypeParameter>
+}
+
+interface JKTypeParameter : JKTreeElement {
+    var name: JKNameIdentifier
+}
+
+interface JKTypeParameterListOwner : JKTreeElement {
+    var typeParameterList: JKTypeParameterList
+}

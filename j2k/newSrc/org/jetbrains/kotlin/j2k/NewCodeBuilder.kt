@@ -304,6 +304,20 @@ class NewCodeBuilder {
             binaryExpression.right.accept(this)
         }
 
+        override fun visitTypeParameterList(typeParameterList: JKTypeParameterList) {
+            if (typeParameterList.typeParameters.isNotEmpty()) {
+                printer.par(ANGLE) {
+                    renderList(typeParameterList.typeParameters) {
+                        it.accept(this)
+                    }
+                }
+            }
+        }
+
+        override fun visitTypeParameter(typeParameter: JKTypeParameter) {
+            typeParameter.name.accept(this)
+        }
+
         override fun visitLiteralExpression(literalExpression: JKLiteralExpression) {
             printer.printWithNoIndent(literalExpression.literal)
         }

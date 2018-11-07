@@ -233,6 +233,12 @@ class JavaToJKTreeBuilder(var symbolProvider: JKSymbolProvider) {
     }
 
     private inner class DeclarationMapper(val expressionTreeMapper: ExpressionTreeMapper) {
+        fun PsiTypeParameterList.toJK(): JKTypeParameterList =
+            JKTypeParameterListImpl(typeParameters.map { it.toJK() })
+
+        fun PsiTypeParameter.toJK(): JKTypeParameter =
+            JKTypeParameterImpl(JKNameIdentifierImpl(name!!))
+
         fun PsiClass.toJK(): JKClass {
             val classKind: JKClass.ClassKind = when {
                 isAnnotationType -> JKClass.ClassKind.ANNOTATION
