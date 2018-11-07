@@ -26,12 +26,10 @@ import com.intellij.openapi.command.CommandProcessor
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.packageDependencies.DependencyValidationManager
-import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiErrorElement
-import com.intellij.psi.PsiFile
-import com.intellij.psi.PsiModifier
+import com.intellij.psi.*
+import com.intellij.psi.impl.light.LightElement
+import com.intellij.psi.search.PsiShortNamesCache
 import com.intellij.psi.util.PsiModificationTracker
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
@@ -46,17 +44,20 @@ import org.jetbrains.kotlin.idea.analysis.analyzeInContext
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.util.getResolveScope
+import org.jetbrains.kotlin.idea.caches.resolve.util.javaResolutionFacade
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.core.KotlinIndicesHelper
 import org.jetbrains.kotlin.idea.core.isVisible
 import org.jetbrains.kotlin.idea.imports.canBeReferencedViaImport
 import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
-import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.references.mainReference
-import org.jetbrains.kotlin.idea.util.*
+import org.jetbrains.kotlin.idea.util.CallTypeAndReceiver
+import org.jetbrains.kotlin.idea.util.ReceiverType
+import org.jetbrains.kotlin.idea.util.getResolutionScope
+import org.jetbrains.kotlin.idea.util.receiverTypesWithIndex
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
-import org.jetbrains.kotlin.js.resolve.JsPlatform
+import org.jetbrains.kotlin.load.java.structure.impl.JavaClassImpl
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
@@ -67,6 +68,7 @@ import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfoBefore
 import org.jetbrains.kotlin.resolve.calls.callUtil.getParentCall
 import org.jetbrains.kotlin.resolve.calls.context.ContextDependency
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
+import org.jetbrains.kotlin.resolve.jvm.JavaDescriptorResolver
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.ExplicitImportsScope
@@ -624,14 +626,39 @@ internal object ImportForMissingOperatorFactory : ImportFixBase.Factory() {
     }
 }
 
-
-private fun KotlinIndicesHelper.getClassesByName(expressionForPlatform: KtExpression, name: String) =
-    when (TargetPlatformDetector.getPlatform(expressionForPlatform.containingKtFile)) {
-        JvmPlatform -> getJvmClassesByName(name)
+private fun KotlinIndicesHelper.getClassesByName(expressionForPlatform: KtExpression, name: String): Collection<ClassDescriptor> {
+    return when (TargetPlatformDetector.getPlatform(expressionForPlatform.containingKtFile)) {
+        JvmPlatform -> {
+            getJvmClassesByName(name) + findAndroidRClasses(expressionForPlatform, name)
+        }
         else -> getKotlinClasses({ it == name },
             // Enum entries should be contributes with members import fix
                                  psiFilter = { ktDeclaration -> ktDeclaration !is KtEnumEntry },
                                  kindFilter = { kind -> kind != ClassKind.ENUM_ENTRY })
     }
+}
+
+private fun findAndroidRClasses(expression: KtExpression, name: String): List<ClassDescriptor> {
+    if (name != "R") return emptyList()
+
+    val resolveScope = expression.containingFile.resolveScope
+    val classesByName = PsiShortNamesCache.getInstance(expression.project).getClassesByName(name, resolveScope)
+
+    val probablyRClasses = classesByName.filter { klass: PsiClass ->
+        klass.containingFile?.originalFile?.virtualFile == null && klass is SyntheticElement && klass is LightElement
+    }
+
+    if (probablyRClasses.isEmpty()) {
+        return emptyList()
+    }
+
+    val javaResolutionFacade = expression.javaResolutionFacade() ?: return emptyList()
+    val javaDescriptorResolver =
+        javaResolutionFacade.tryGetFrontendService(expression, JavaDescriptorResolver::class.java) ?: return emptyList()
+
+    return probablyRClasses.mapNotNull { klass ->
+        javaDescriptorResolver.resolveClass(JavaClassImpl(klass))
+    }
+}
 
 private fun CallTypeAndReceiver<*, *>.toFilter() = { descriptor: DeclarationDescriptor -> this.callType.descriptorKindFilter.accepts(descriptor) }
