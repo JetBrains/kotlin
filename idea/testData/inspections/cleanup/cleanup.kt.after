@@ -51,7 +51,7 @@ fun foo() {
 class C {
     fun foo() {}
 
-    fun bar() = C::foo
+    fun bar() = ::foo
 
     infix fun willBeInfix(i: Int) {}
 }
@@ -63,11 +63,6 @@ fun <T> withTypeParameters() where T : Cloneable, T : Comparable<T> {
 }
 
 val x = C() willBeInfix 1
-
-fun infixTest() {
-    arrayListOf(1, 2, 3).map { it }
-}
-
 
 fun bar(yield: Int = 4) {}
 
@@ -100,7 +95,8 @@ annotation class yield
 fun test2(p: Int) {
     `yield`@ p
 
-    @`yield` fun f() {}
+    @`yield`
+    fun f() {}
 }
 
 object X {

@@ -11,7 +11,7 @@ fun box(): Int {
     return local()
 }
 
-fun main(args: Array<String>) {
+fun main() {
     box()
 }
 

@@ -241,7 +241,7 @@ class KotlinFacetEditorGeneralTab(
         }
     }
 
-    fun initialize() {
+    fun initializeIfNeeded() {
         if (isInitialized) return
 
         editor.initialize()
@@ -277,7 +277,7 @@ class KotlinFacetEditorGeneralTab(
     }
 
     override fun onTabEntering() {
-        initialize()
+        initializeIfNeeded()
     }
 
     override fun isModified(): Boolean {
@@ -298,6 +298,7 @@ class KotlinFacetEditorGeneralTab(
     }
 
     override fun apply() {
+        initializeIfNeeded()
         validateOnce {
             editor.compilerConfigurable.apply()
             with(configuration.settings) {

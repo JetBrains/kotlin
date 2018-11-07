@@ -49,6 +49,11 @@ public class StubBuilderTestGenerated extends AbstractStubBuilderTest {
         runTest("idea/testData/stubs/AnnotationOnLocalFunction.kt");
     }
 
+    @TestMetadata("AnnotationValues.kt")
+    public void testAnnotationValues() throws Exception {
+        runTest("idea/testData/stubs/AnnotationValues.kt");
+    }
+
     @TestMetadata("AnnotationWithValue.kt")
     public void testAnnotationWithValue() throws Exception {
         runTest("idea/testData/stubs/AnnotationWithValue.kt");

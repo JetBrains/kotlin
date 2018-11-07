@@ -1,10 +1,10 @@
 package
 
-public val v1: kotlin.String
+@get:kotlin.SinceKotlin(version = "1.1") public val v1: kotlin.String
 @kotlin.SinceKotlin(version = "1.1") public val v2: kotlin.String = ""
-public var v3: kotlin.String
-public var v4: kotlin.String
-public var v5: kotlin.String
+@get:kotlin.SinceKotlin(version = "1.1") public var v3: kotlin.String
+@set:kotlin.SinceKotlin(version = "1.1") public var v4: kotlin.String
+@get:kotlin.SinceKotlin(version = "1.1") @set:kotlin.SinceKotlin(version = "1.1") public var v5: kotlin.String
 @kotlin.SinceKotlin(version = "1.1") public var v6: kotlin.String
-@kotlin.SinceKotlin(version = "1.0") public val v7: kotlin.String
+@kotlin.SinceKotlin(version = "1.0") @get:kotlin.SinceKotlin(version = "1.1") public val v7: kotlin.String
 public fun test(): kotlin.Unit

@@ -41,7 +41,9 @@ open class KotlinProjectExtension {
     var sourceSets: NamedDomainObjectContainer<out KotlinSourceSet>
         @Suppress("UNCHECKED_CAST")
         get() = DslObject(this).extensions.getByName("sourceSets") as NamedDomainObjectContainer<out KotlinSourceSet>
-        internal set(value) { DslObject(this).extensions.add("sourceSets", value) }
+        internal set(value) {
+            DslObject(this).extensions.add("sourceSets", value)
+        }
 }
 
 open class KotlinSingleJavaTargetExtension : KotlinProjectExtension() {

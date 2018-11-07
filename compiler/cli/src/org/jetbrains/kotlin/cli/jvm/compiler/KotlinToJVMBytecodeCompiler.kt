@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.cli.jvm.compiler
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.StandardFileSystems
+import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiJavaModule
@@ -130,8 +131,17 @@ object KotlinToJVMBytecodeCompiler {
 
         for (module in chunk) {
             ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
-            val moduleSourceFiles = getAbsolutePaths(buildFile, module.getSourceFiles()).map(localFileSystem::findFileByPath)
-            val ktFiles = environment.getSourceFiles().filter { file -> file.virtualFile in moduleSourceFiles }
+            val (moduleSourceDirs, moduleSourceFiles) =
+                    getAbsolutePaths(buildFile, module.getSourceFiles())
+                        .mapNotNull(localFileSystem::findFileByPath)
+                        .partition(VirtualFile::isDirectory)
+
+            val ktFiles = environment.getSourceFiles().filter { file ->
+                val virtualFile = file.virtualFile
+                virtualFile in moduleSourceFiles || moduleSourceDirs.any { dir ->
+                    VfsUtilCore.isAncestor(dir, virtualFile, true)
+                }
+            }
 
             if (!checkKotlinPackageUsage(environment, ktFiles)) return false
 

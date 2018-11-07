@@ -26,6 +26,8 @@ import javax.swing.Icon
 abstract class KotlinGradleAbstractMultiplatformModuleBuilder(
     val mppInApplication: Boolean = false
 ) : GradleModuleBuilder() {
+    var explicitPluginVersion: String? = null
+
     override fun getNodeIcon(): Icon = KotlinIcons.MPP
 
     override fun createWizardSteps(wizardContext: WizardContext, modulesProvider: ModulesProvider): Array<ModuleWizardStep> {
@@ -41,7 +43,13 @@ abstract class KotlinGradleAbstractMultiplatformModuleBuilder(
         val buildGradle = moduleDir.createChildData(null, "build.gradle")
         val builder = BuildScriptDataBuilder(buildGradle)
         builder.setupAdditionalDependenciesForApplication()
-        GradleKotlinMPPFrameworkSupportProvider().addSupport(builder, module, sdk = null, specifyPluginVersionIfNeeded = true)
+        GradleKotlinMPPFrameworkSupportProvider().addSupport(
+            builder,
+            module,
+            sdk = null,
+            specifyPluginVersionIfNeeded = true,
+            explicitPluginVersion = explicitPluginVersion
+        )
         VfsUtil.saveText(buildGradle, builder.buildConfigurationPart() + builder.buildMainPart() + buildMultiPlatformPart())
         return moduleDir
     }
@@ -75,7 +83,13 @@ abstract class KotlinGradleAbstractMultiplatformModuleBuilder(
                 enableGradleMetadataPreview(rootDir)
             }
             val buildGradleText = if (!mppInApplication) {
-                GradleKotlinMPPFrameworkSupportProvider().addSupport(builder, module, sdk = null, specifyPluginVersionIfNeeded = true)
+                GradleKotlinMPPFrameworkSupportProvider().addSupport(
+                    builder,
+                    module,
+                    sdk = null,
+                    specifyPluginVersionIfNeeded = true,
+                    explicitPluginVersion = explicitPluginVersion
+                )
                 builder.buildConfigurationPart() + builder.buildMainPart() + buildMultiPlatformPart()
             } else {
                 builder.buildConfigurationPart() + builder.buildMainPart()
@@ -86,7 +100,7 @@ abstract class KotlinGradleAbstractMultiplatformModuleBuilder(
                     it.addIncludedModules(listOf(":app"))
                 }
             }
-            createProjectSkeleton(module, rootDir)
+            createProjectSkeleton(rootDir)
             if (externalProjectSettings.distributionType == DistributionType.DEFAULT_WRAPPED) {
                 setGradleWrapperToUseVersion(rootDir, "4.7")
             }
@@ -123,15 +137,16 @@ abstract class KotlinGradleAbstractMultiplatformModuleBuilder(
 
     protected fun VirtualFile.createKotlinSampleFileWriter(
         sourceRootName: String,
+        platformName: String = "",
         languageName: String = "kotlin",
-        fileName: String = "Sample.kt"
+        fileName: String = "Sample${platformName.capitalize()}.kt"
     ) = createChildDirectory(this, sourceRootName)
         .createChildDirectory(this, languageName)
         .createChildDirectory(this, "sample")
         .createChildData(this, fileName)
         .bufferedWriter()
 
-    protected open fun createProjectSkeleton(module: Module, rootDir: VirtualFile) {}
+    protected open fun createProjectSkeleton(rootDir: VirtualFile) {}
 
     protected open val notImportedCommonSourceSets = false
 

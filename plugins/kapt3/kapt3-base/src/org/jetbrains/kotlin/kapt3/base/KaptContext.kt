@@ -73,6 +73,7 @@ open class KaptContext(
             put(Option.PROC, "only") // Only process annotations
 
             if (!withJdk) {
+                @Suppress("SpellCheckingInspection")
                 putJavacOption("BOOTCLASSPATH", "BOOT_CLASS_PATH", "") // No boot classpath
             }
 
@@ -82,6 +83,8 @@ open class KaptContext(
 
             putJavacOption("CLASSPATH", "CLASS_PATH",
                            paths.compileClasspath.joinToString(File.pathSeparator) { it.canonicalPath })
+
+            @Suppress("SpellCheckingInspection")
             putJavacOption("PROCESSORPATH", "PROCESSOR_PATH",
                            paths.annotationProcessingClasspath.joinToString(File.pathSeparator) { it.canonicalPath })
 

@@ -29,47 +29,51 @@ class LiveTemplatesTest : KotlinLightCodeInsightFixtureTestCase() {
     }
 
     fun testSout() {
-        paremeterless()
+        parameterless()
     }
 
     fun testSout_BeforeCall() {
-        paremeterless()
+        parameterless()
     }
 
     fun testSout_BeforeCallSpace() {
-        paremeterless()
+        parameterless()
     }
 
     fun testSout_BeforeBinary() {
-        paremeterless()
+        parameterless()
     }
 
     fun testSout_InCallArguments() {
-        paremeterless()
+        parameterless()
     }
 
     fun testSout_BeforeQualifiedCall() {
-        paremeterless()
+        parameterless()
     }
 
     fun testSout_AfterSemicolon() {
-        paremeterless()
+        parameterless()
     }
 
     fun testSoutf() {
-        paremeterless()
+        parameterless()
     }
 
     fun testSoutf_InCompanion() {
-        paremeterless()
+        parameterless()
     }
 
     fun testSerr() {
-        paremeterless()
+        parameterless()
     }
 
     fun testMain() {
-        paremeterless()
+        parameterless()
+    }
+
+    fun testMaina() {
+        parameterless()
     }
 
     fun testSoutv() {
@@ -82,7 +86,7 @@ class LiveTemplatesTest : KotlinLightCodeInsightFixtureTestCase() {
     }
 
     fun testSoutp() {
-        paremeterless()
+        parameterless()
     }
 
     fun testFun0() {
@@ -228,7 +232,7 @@ class LiveTemplatesTest : KotlinLightCodeInsightFixtureTestCase() {
         doTestIfnInn()
     }
 
-    private fun paremeterless() {
+    private fun parameterless() {
         start()
 
         checkAfter()
@@ -268,17 +272,18 @@ class LiveTemplatesTest : KotlinLightCodeInsightFixtureTestCase() {
         val project = project
         UIUtil.invokeAndWaitIfNeeded(Runnable {
             CommandProcessor.getInstance().executeCommand(
-                    project,
-                    {
-                        templateState!!.nextTab()
-                    },
-                    "nextTab",
-                    null)
+                project,
+                {
+                    templateState!!.nextTab()
+                },
+                "nextTab",
+                null
+            )
         })
     }
 
     private fun nextTab(times: Int) {
-        for (i in 0..times - 1) {
+        for (i in 0 until times) {
             nextTab()
         }
     }

@@ -99,13 +99,21 @@ fun <@OnlyInputTypes T> expect(expected: T, message: String?, block: () -> T) {
     assertEquals(expected, block(), message)
 }
 
-/** Asserts that given function [block] fails by throwing an exception. */
+/**
+ * Asserts that given function [block] fails by throwing an exception.
+ *
+ * @return An exception that was expected to be thrown and was successfully caught.
+ * The returned exception can be inspected further, for example by asserting its property values.
+ */
 fun assertFails(block: () -> Unit): Throwable = assertFails(null, block)
 
 /**
  * Asserts that given function [block] fails by throwing an exception.
  *
  * If the assertion fails, the specified [message] is used unless it is null as a prefix for the failure message.
+ *
+ * @return An exception that was expected to be thrown and was successfully caught.
+ * The returned exception can be inspected further, for example by asserting its property values.
  */
 @SinceKotlin("1.1")
 fun assertFails(message: String?, block: () -> Unit): Throwable {
@@ -121,12 +129,20 @@ fun assertFails(message: String?, block: () -> Unit): Throwable {
 /** Asserts that a [block] fails with a specific exception of type [T] being thrown.
  *
  * If the assertion fails, the specified [message] is used unless it is null as a prefix for the failure message.
+ *
+ * @return An exception of the expected exception type [T] that successfully caught.
+ * The returned exception can be inspected further, for example by asserting its property values.
  */
 @InlineOnly
 inline fun <reified T : Throwable> assertFailsWith(message: String? = null, noinline block: () -> Unit): T =
     assertFailsWith(T::class, message, block)
 
-/** Asserts that a [block] fails with a specific exception of type [exceptionClass] being thrown. */
+/**
+ * Asserts that a [block] fails with a specific exception of type [exceptionClass] being thrown.
+ *
+ * @return An exception of the expected exception type [T] that successfully caught.
+ * The returned exception can be inspected further, for example by asserting its property values.
+ */
 fun <T : Throwable> assertFailsWith(exceptionClass: KClass<T>, block: () -> Unit): T = assertFailsWith(exceptionClass, null, block)
 
 

@@ -281,6 +281,11 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
             runTest("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/privateClass.kt");
         }
 
+        @TestMetadata("privateFieldInCompanion.kt")
+        public void testPrivateFieldInCompanion() throws Exception {
+            runTest("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/privateFieldInCompanion.kt");
+        }
+
         @TestMetadata("privateMember.kt")
         public void testPrivateMember() throws Exception {
             runTest("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/privateMember.kt");

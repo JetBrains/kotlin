@@ -30,7 +30,12 @@ class SafeCastWithReturnInspection : AbstractKotlinInspection() {
             if (KtPsiUtil.deparenthesize(parent.right) !is KtReturnExpression) return
 
             val context = expression.analyze(BodyResolveMode.PARTIAL_WITH_DIAGNOSTICS)
-            if (context[BindingContext.USED_AS_EXPRESSION, parent] == true) return
+            if (context[BindingContext.USED_AS_EXPRESSION, parent] == true) {
+                val lambda = expression.getStrictParentOfType<KtLambdaExpression>() ?: return
+                if (lambda.functionLiteral.bodyExpression?.statements?.lastOrNull() != parent) return
+                val call = lambda.getStrictParentOfType<KtCallExpression>() ?: return
+                if (context[BindingContext.USED_AS_EXPRESSION, call] == true) return
+            }
             if (context.diagnostics.forElement(expression.operationReference).any { it.factory == Errors.CAST_NEVER_SUCCEEDS }) return
 
             holder.registerProblem(

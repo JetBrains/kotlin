@@ -561,6 +561,11 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/jvm/suppressAllWarningsJvm.args");
         }
 
+        @TestMetadata("suspensionPointInMonitor.args")
+        public void testSuspensionPointInMonitor() throws Exception {
+            runTest("compiler/testData/cli/jvm/suspensionPointInMonitor.args");
+        }
+
         @TestMetadata("syntheticAccessorForPropertiesSignatureClash.args")
         public void testSyntheticAccessorForPropertiesSignatureClash() throws Exception {
             runTest("compiler/testData/cli/jvm/syntheticAccessorForPropertiesSignatureClash.args");

@@ -126,15 +126,13 @@ class KaptJavaLog(
             if (nerrors > oldErrors) {
                 _reportedDiagnostics += diagnostic
             }
-        }
-        else if (diagnostic.kind == Diagnostic.Kind.WARNING) {
+        } else if (diagnostic.kind == Diagnostic.Kind.WARNING) {
             val oldWarnings = nwarnings
             super.report(diagnostic)
             if (nwarnings > oldWarnings) {
                 _reportedDiagnostics += diagnostic
             }
-        }
-        else {
+        } else {
             super.report(diagnostic)
         }
     }
@@ -153,14 +151,14 @@ class KaptJavaLog(
         }
 
         val formattedMessage = diagnosticFormatter.format(diagnostic, javacMessages.currentLocale)
-                .lines()
-                .joinToString(LINE_SEPARATOR) { original ->
-                    // Kotlin location is put as a sub-diagnostic, so the formatter indents it with four additional spaces (6 in total).
-                    // It looks weird, especially in the build log inside IntelliJ, so let's make things a bit better.
-                    val trimmed = original.trimStart()
-                    // Typically, javac places additional details about the diagnostics indented by two spaces
-                    if (trimmed.startsWith(KOTLIN_LOCATION_PREFIX)) "  " + trimmed else original
-                }
+            .lines()
+            .joinToString(LINE_SEPARATOR) { original ->
+                // Kotlin location is put as a sub-diagnostic, so the formatter indents it with four additional spaces (6 in total).
+                // It looks weird, especially in the build log inside IntelliJ, so let's make things a bit better.
+                val trimmed = original.trimStart()
+                // Typically, javac places additional details about the diagnostics indented by two spaces
+                if (trimmed.startsWith(KOTLIN_LOCATION_PREFIX)) "  " + trimmed else original
+            }
 
         writer.print(formattedMessage)
         writer.flush()
@@ -170,8 +168,7 @@ class KaptJavaLog(
         return if (pos.isRelativePath) {
             val basePath = this.projectBaseDir
             if (basePath != null) File(basePath, pos.path) else null
-        }
-        else {
+        } else {
             File(pos.path)
         }
     }
@@ -215,7 +212,8 @@ class KaptJavaLog(
             "compiler.err.doesnt.exist",
             "compiler.err.duplicate.annotation.missing.container",
             "compiler.err.not.def.access.package.cant.access",
-            "compiler.err.package.not.visible"
+            "compiler.err.package.not.visible",
+            "compiler.err.not.def.public.cant.access"
         )
     }
 
@@ -236,23 +234,23 @@ fun KaptContext.reportKaptError(vararg line: String) {
 }
 
 private fun JCDiagnostic.Factory.errorJava9Aware(
-        source: DiagnosticSource?,
-        pos: JCDiagnostic.DiagnosticPosition?,
-        key: String,
-        vararg args: String
+    source: DiagnosticSource?,
+    pos: JCDiagnostic.DiagnosticPosition?,
+    key: String,
+    vararg args: String
 ): JCDiagnostic {
     return if (isJava9OrLater()) {
         val errorMethod = this::class.java.getDeclaredMethod(
-                "error",
-                JCDiagnostic.DiagnosticFlag::class.java,
-                DiagnosticSource::class.java,
-                JCDiagnostic.DiagnosticPosition::class.java,
-                String::class.java,
-                Array<Any>::class.java)
+            "error",
+            JCDiagnostic.DiagnosticFlag::class.java,
+            DiagnosticSource::class.java,
+            JCDiagnostic.DiagnosticPosition::class.java,
+            String::class.java,
+            Array<Any>::class.java
+        )
 
         errorMethod.invoke(this, JCDiagnostic.DiagnosticFlag.MANDATORY, source, pos, key, args) as JCDiagnostic
-    }
-    else {
+    } else {
         this.error(source, pos, key, *args)
     }
 }

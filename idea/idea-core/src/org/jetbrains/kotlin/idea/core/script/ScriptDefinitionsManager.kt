@@ -32,9 +32,12 @@ import com.intellij.openapi.projectRoots.ex.PathUtilEx
 import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.ui.EditorNotifications
+import com.intellij.util.containers.SLRUMap
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.caches.project.SdkInfo
 import org.jetbrains.kotlin.idea.caches.project.getScriptRelatedModuleInfo
+import org.jetbrains.kotlin.idea.core.script.settings.KotlinScriptingSettings
 import org.jetbrains.kotlin.script.*
 import org.jetbrains.kotlin.scripting.compiler.plugin.KotlinScriptDefinitionAdapterFromNewAPI
 import org.jetbrains.kotlin.utils.PathUtil
@@ -42,6 +45,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.flattenTo
 import java.io.File
 import java.net.URLClassLoader
+import java.util.concurrent.locks.ReentrantReadWriteLock
 import kotlin.concurrent.write
 import kotlin.script.dependencies.Environment
 import kotlin.script.dependencies.ScriptContents
@@ -59,7 +63,25 @@ import kotlin.script.templates.standard.ScriptTemplateWithArgs
 
 class ScriptDefinitionsManager(private val project: Project) : LazyScriptDefinitionProvider() {
     private var definitionsByContributor = mutableMapOf<ScriptDefinitionContributor, List<KotlinScriptDefinition>>()
-    private var definitions: Sequence<KotlinScriptDefinition>? = null
+    private var definitions: List<KotlinScriptDefinition>? = null
+
+    private val scriptDefinitionsCacheLock = ReentrantReadWriteLock()
+    private val scriptDefinitionsCache = SLRUMap<String, KotlinScriptDefinition>(10, 10)
+
+    override fun findScriptDefinition(fileName: String): KotlinScriptDefinition? {
+        if (nonScriptFileName(fileName)) return null
+
+        val cached = synchronized(scriptDefinitionsCacheLock) { scriptDefinitionsCache.get(fileName) }
+        if (cached != null) return cached
+
+        val definition = super.findScriptDefinition(fileName) ?: return null
+
+        synchronized(scriptDefinitionsCacheLock) {
+            scriptDefinitionsCache.put(fileName, definition)
+        }
+
+        return definition
+    }
 
     fun reloadDefinitionsBy(contributor: ScriptDefinitionContributor) = lock.write {
         if (definitions == null) return // not loaded yet
@@ -67,6 +89,8 @@ class ScriptDefinitionsManager(private val project: Project) : LazyScriptDefinit
         if (contributor !in definitionsByContributor) error("Unknown contributor: ${contributor.id}")
 
         definitionsByContributor[contributor] = contributor.safeGetDefinitions()
+
+        definitions = definitionsByContributor.values.flattenTo(mutableListOf())
 
         updateDefinitions()
     }
@@ -81,10 +105,10 @@ class ScriptDefinitionsManager(private val project: Project) : LazyScriptDefinit
 
     override val currentDefinitions: Sequence<KotlinScriptDefinition>
         get() =
-            definitions ?: kotlin.run {
+            (definitions ?: kotlin.run {
                 reloadScriptDefinitions()
                 definitions!!
-            }
+            }).asSequence().filter { KotlinScriptingSettings.getInstance(project).isScriptDefinitionEnabled(it) }
 
     private fun getContributors(): List<ScriptDefinitionContributor> {
         @Suppress("DEPRECATION")
@@ -100,7 +124,20 @@ class ScriptDefinitionsManager(private val project: Project) : LazyScriptDefinit
             definitionsByContributor[contributor] = definitions
         }
 
+        definitions = definitionsByContributor.values.flattenTo(mutableListOf())
+
         updateDefinitions()
+    }
+
+    fun reorderScriptDefinitions() = lock.write {
+        updateDefinitions()
+    }
+
+    fun getAllDefinitions(): List<KotlinScriptDefinition> {
+        return definitions ?: kotlin.run {
+            reloadScriptDefinitions()
+            definitions!!
+        }
     }
 
     override fun getDefaultScriptDefinition(): KotlinScriptDefinition {
@@ -109,7 +146,10 @@ class ScriptDefinitionsManager(private val project: Project) : LazyScriptDefinit
 
     private fun updateDefinitions() {
         assert(lock.isWriteLocked) { "updateDefinitions should only be called under the write lock" }
-        definitions = definitionsByContributor.values.flattenTo(mutableListOf()).asSequence()
+
+        definitions = definitions?.sortedBy {
+            KotlinScriptingSettings.getInstance(project).getScriptDefinitionOrder(it)
+        }
 
         val fileTypeManager = FileTypeManager.getInstance()
 
@@ -129,8 +169,16 @@ class ScriptDefinitionsManager(private val project: Project) : LazyScriptDefinit
         }
 
         clearCache()
+        scriptDefinitionsCache.clear()
+
         // TODO: clear by script type/definition
         ServiceManager.getService(project, ScriptDependenciesCache::class.java).clear()
+
+        ApplicationManager.getApplication().invokeLater {
+            if (!project.isDisposed) {
+                EditorNotifications.getInstance(project).updateAllNotifications()
+            }
+        }
     }
 
     private fun ScriptDefinitionContributor.safeGetDefinitions(): List<KotlinScriptDefinition> {

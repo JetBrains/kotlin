@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 open class Bar<T>(val prop: String)
 object Foo : Bar<Foo>("OK") {
 

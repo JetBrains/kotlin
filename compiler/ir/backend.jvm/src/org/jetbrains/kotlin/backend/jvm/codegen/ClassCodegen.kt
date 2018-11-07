@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.backend.jvm.codegen
 
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
-import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.descriptors.JvmDescriptorWithExtraFlags
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding
@@ -37,7 +36,6 @@ import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
-import java.lang.RuntimeException
 
 open class ClassCodegen protected constructor(
     internal val irClass: IrClass,
@@ -85,7 +83,7 @@ open class ClassCodegen protected constructor(
             signature.superclassName,
             signature.interfaces.toTypedArray()
         )
-        AnnotationCodegen.forClass(visitor.visitor, this, typeMapper).genAnnotations(descriptor, null)
+        AnnotationCodegen.forClass(visitor.visitor, this, state).genAnnotations(descriptor, null)
         visitor.visitSource(irClass.symbol.descriptor.source.containingFile.name!!, null)
 
         irClass.declarations.forEach {
@@ -159,8 +157,8 @@ open class ClassCodegen protected constructor(
             fieldSignature, null/*TODO support default values*/
         )
 
-        if (field.origin == JvmLoweredDeclarationOrigin.FIELD_FOR_ENUM_ENTRY) {
-            AnnotationCodegen.forField(fv, this, typeMapper).genAnnotations(field.descriptor, null)
+        if (field.origin == IrDeclarationOrigin.FIELD_FOR_ENUM_ENTRY) {
+            AnnotationCodegen.forField(fv, this, state).genAnnotations(field.descriptor, null)
         } else {
 
         }
@@ -254,7 +252,12 @@ fun MemberDescriptor.calculateCommonFlags(): Int {
 
 private fun MemberDescriptor.calcModalityFlag(): Int {
     var flags = 0
-    when (effectiveModality) {
+    if (this is PropertyDescriptor) {
+        // Modality for a field: set FINAL for vals
+        if (!isVar && !isLateInit) {
+            flags = flags.or(Opcodes.ACC_FINAL)
+        }
+    } else when (effectiveModality) {
         Modality.ABSTRACT -> {
             flags = flags.or(Opcodes.ACC_ABSTRACT)
         }
@@ -285,8 +288,7 @@ private val MemberDescriptor.effectiveModality: Modality
             }
         }
         if (DescriptorUtils.isSealedClass(this) ||
-            DescriptorUtils.isAnnotationClass(this) ||
-            DescriptorUtils.isAnnotationClass(this.containingDeclaration)
+            DescriptorUtils.isAnnotationClass(this)
         ) {
             return Modality.ABSTRACT
         }

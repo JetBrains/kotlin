@@ -86,6 +86,10 @@ class IrBuiltIns(
     val charType = char.toIrType()
     val charClass = builtIns.char.toIrSymbol()
 
+    val number = builtIns.number.defaultType
+    val numberType = number.toIrType()
+    val numberClass = builtIns.number.toIrSymbol()
+
     val byte = builtIns.byteType
     val byteType = byte.toIrType()
     val byteClass = builtIns.byte.toIrSymbol()

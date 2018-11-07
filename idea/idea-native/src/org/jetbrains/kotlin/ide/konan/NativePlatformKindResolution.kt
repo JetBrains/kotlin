@@ -26,12 +26,12 @@ import org.jetbrains.kotlin.idea.caches.project.getModuleInfosFromIdeaModel
 import org.jetbrains.kotlin.idea.caches.resolve.PlatformAnalysisSettings
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.library.*
-import org.jetbrains.kotlin.resolve.ImplicitIntegerCoercion
-import org.jetbrains.kotlin.platform.impl.NativeIdePlatformKind
-import org.jetbrains.kotlin.resolve.konan.platform.KonanPlatform
-import org.jetbrains.kotlin.resolve.CompilerDeserializationConfiguration
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.konan.util.KonanFactories
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.platform.impl.NativeIdePlatformKind
+import org.jetbrains.kotlin.resolve.CompilerDeserializationConfiguration
+import org.jetbrains.kotlin.resolve.ImplicitIntegerCoercion
+import org.jetbrains.kotlin.resolve.konan.platform.KonanPlatform
 
 class NativePlatformKindResolution : IdePlatformKindResolution {
 
@@ -39,19 +39,25 @@ class NativePlatformKindResolution : IdePlatformKindResolution {
         return library.getFiles(OrderRootType.CLASSES)
             .mapNotNull { file -> PathUtil.getLocalPath(file) }
             .map { path -> File(path) }
-            .filter { file -> file.exists }
             .map { file -> NativeLibraryInfo(project, library, file) }
     }
 
     override fun isLibraryFileForPlatform(virtualFile: VirtualFile): Boolean {
-        return if (virtualFile.isDirectory) {
-            val dir = virtualFile.findChild("linkdata") ?: return false
-            // False means we hit .knm file
-            !VfsUtil.processFilesRecursively(dir) {
-                it.extension != KLIB_METADATA_FILE_EXTENSION
+        return when {
+            // The virtual file for a library packed in a ZIP file will have path like "/some/path/to/the/file.klib!/",
+            // and therefore will be recognized by VFS as a directory (isDirectory == true).
+            // So, first, let's check the extension.
+            virtualFile.extension == KLIB_FILE_EXTENSION -> true
+
+            virtualFile.isDirectory -> {
+                val linkdataDir = virtualFile.findChild("linkdata") ?: return false
+                // False means we hit .knm file
+                !VfsUtil.processFilesRecursively(linkdataDir) {
+                    it.extension != KLIB_METADATA_FILE_EXTENSION
+                }
             }
-        } else {
-            virtualFile.extension == KLIB_FILE_EXTENSION
+
+            else -> false
         }
     }
 

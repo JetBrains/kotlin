@@ -56,14 +56,23 @@ dependencies {
     testRuntime(intellijPluginDep("gradle"))
     testRuntime(intellijPluginDep("Groovy"))
     testRuntime(intellijPluginDep("java-decompiler"))
-    testRuntime(intellijPluginDep("maven"))
+    Ide.IJ {
+        testRuntime(intellijPluginDep("maven"))
+    }
     testRuntime(intellijPluginDep("android"))
-    testRuntime(intellijPluginDep("smali"))
+    (Platform[181].orHigher.or(Ide.AS31)) {
+        testRuntime(intellijPluginDep("smali"))
+    }
 }
 
 sourceSets {
-    "main" { projectDefault() }
-    "test" { projectDefault() }
+    Ide.AS33.orHigher {
+        "main" { }
+        "test" { }
+    } ?: run {
+        "main" { projectDefault() }
+        "test" { projectDefault() }
+    }
 }
 
 testsJar {}

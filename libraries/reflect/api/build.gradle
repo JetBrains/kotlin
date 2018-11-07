@@ -44,8 +44,7 @@ jar {
 
 task java9Jar(type: Jar) {
     classifier = "java9"
-    // TODO: enable as soon as this doesn't cause D8/DX to crash
-    // from sourceSets.java9.output
+    from sourceSets.java9.output
 }
 
 artifacts {

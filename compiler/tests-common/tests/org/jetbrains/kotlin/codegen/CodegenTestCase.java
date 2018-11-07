@@ -308,7 +308,7 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
         assert configurationKeyField != null : "Expected [+|-][namespace.]configurationKey, got: " + flag;
 
         try {
-            //noinspection unchecked
+            @SuppressWarnings("unchecked")
             CompilerConfigurationKey<Boolean> configurationKey = (CompilerConfigurationKey<Boolean>) configurationKeyField.get(null);
             configuration.put(configurationKey, flagEnabled);
         }
@@ -615,9 +615,9 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
     }
 
     @NotNull
+    @SuppressWarnings("unchecked")
     public Class<? extends Annotation> loadAnnotationClassQuietly(@NotNull String fqName) {
         try {
-            //noinspection unchecked
             return (Class<? extends Annotation>) initializedClassLoader.loadClass(fqName);
         }
         catch (ClassNotFoundException e) {

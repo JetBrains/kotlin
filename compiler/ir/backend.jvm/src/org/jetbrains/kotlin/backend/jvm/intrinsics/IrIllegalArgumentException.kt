@@ -27,7 +27,7 @@ import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
 class IrIllegalArgumentException : IntrinsicMethod() {
-    val exceptionTypeDescriptor = Type.getInternalName(IllegalArgumentException::class.java)
+    val exceptionTypeDescriptor = Type.getType(IllegalArgumentException::class.java)!!
 
     override fun toCallable(
         expression: IrMemberAccessExpression,
@@ -36,12 +36,17 @@ class IrIllegalArgumentException : IntrinsicMethod() {
     ): IrIntrinsicFunction {
         return object : IrIntrinsicFunction(expression, signature, context, listOf(JAVA_STRING_TYPE)) {
             override fun genInvokeInstruction(v: InstructionAdapter) {
-                v.invokespecial(exceptionTypeDescriptor, "<init>", Type.getMethodDescriptor(Type.VOID_TYPE, JAVA_STRING_TYPE), false)
+                v.invokespecial(
+                    exceptionTypeDescriptor.internalName,
+                    "<init>",
+                    Type.getMethodDescriptor(Type.VOID_TYPE, JAVA_STRING_TYPE),
+                    false
+                )
                 v.athrow()
             }
 
             override fun invoke(v: InstructionAdapter, codegen: ExpressionCodegen, data: BlockInfo): StackValue {
-                v.anew(Type.getType(exceptionTypeDescriptor))
+                v.anew(exceptionTypeDescriptor)
                 v.dup()
                 return super.invoke(v, codegen, data)
             }

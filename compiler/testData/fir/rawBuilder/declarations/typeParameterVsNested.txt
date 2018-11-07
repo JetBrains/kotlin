@@ -1,0 +1,22 @@
+FILE: typeParameterVsNested.kt
+    public? abstract interface Some() {
+    }
+    <T : Some> public? abstract class My() {
+        public? final class T(inner) {
+        }
+
+        public? abstract property x(val): T
+            public? get(): T
+
+        public? abstract function foo(arg: T): <implicit>
+
+        public? abstract property y(val): My.T
+            public? get(): My.T
+
+        public? abstract property z(val): test.My.T
+            public? get(): test.My.T
+
+        public? final class Some() : T {
+        }
+
+    }

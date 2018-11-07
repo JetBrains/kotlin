@@ -85,7 +85,7 @@ class ConstantValueGenerator(
             is AnnotationValue -> generateAnnotationConstructorCall(constantValue.value)
 
             is KClassValue -> {
-                val classifierKtType = constantValue.value
+                val classifierKtType = constantValue.getArgumentType(moduleDescriptor)
                 val classifierDescriptor = classifierKtType.constructor.declarationDescriptor
                         ?: throw AssertionError("Unexpected KClassValue: $classifierKtType")
 

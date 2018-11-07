@@ -1,0 +1,6 @@
+FILE: simpleTypeAlias.kt
+    public? abstract interface B() {
+    }
+    public? final typealias C = B
+    public? final class D() : C {
+    }

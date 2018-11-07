@@ -5,6 +5,7 @@
 package org.jetbrains.kotlin.gradle
 
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMultiplatformPlugin
+import org.jetbrains.kotlin.gradle.plugin.mpp.UnusedSourceSetsChecker
 import org.jetbrains.kotlin.gradle.plugin.sources.METADATA_CONFIGURATION_NAME_SUFFIX
 import org.jetbrains.kotlin.gradle.plugin.sources.SourceSetConsistencyChecks
 import org.jetbrains.kotlin.gradle.util.checkBytecodeContains
@@ -311,18 +312,29 @@ class NewMultiplatformIT : BaseGradleIT() {
 
         gradleBuildScript().appendText(
             "\n" + """
-                kotlin.sourceSets.jvm6Main.languageSettings {
-                    languageVersion = '1.3'
-                    apiVersion = '1.3'
-                    enableLanguageFeature('InlineClasses')
-                    progressiveMode = true
+                kotlin.sourceSets.all {
+                    it.languageSettings {
+                        languageVersion = '1.3'
+                        apiVersion = '1.3'
+                        enableLanguageFeature('InlineClasses')
+                        useExperimentalAnnotation('kotlin.ExperimentalUnsignedTypes')
+                        useExperimentalAnnotation('kotlin.contracts.ExperimentalContracts')
+                        progressiveMode = true
+                    }
                 }
             """.trimIndent()
         )
 
-        build("compileKotlinJvm6") {
-            assertSuccessful()
-            assertContains("-language-version 1.3", "-api-version 1.3", "-XXLanguage:+InlineClasses", " -progressive")
+        listOf("compileKotlinJvm6", "compileKotlinNodeJs", "compileKotlin${nativeHostTargetName.capitalize()}").forEach {
+            build(it) {
+                assertSuccessful()
+                assertTasksExecuted(":$it")
+                assertContains(
+                    "-language-version 1.3", "-api-version 1.3", "-XXLanguage:+InlineClasses",
+                    " -progressive", "-Xuse-experimental=kotlin.ExperimentalUnsignedTypes",
+                    "-Xuse-experimental=kotlin.contracts.ExperimentalContracts"
+                )
+            }
         }
     }
 
@@ -351,8 +363,20 @@ class NewMultiplatformIT : BaseGradleIT() {
             }
         }
 
-        testMonotonousCheck("languageSettings.languageVersion = '1.4'", SourceSetConsistencyChecks.languageVersionCheckHint)
-        testMonotonousCheck("languageSettings.enableLanguageFeature('InlineClasses')", SourceSetConsistencyChecks.unstableFeaturesHint)
+        testMonotonousCheck(
+            "languageSettings.languageVersion = '1.4'",
+            SourceSetConsistencyChecks.languageVersionCheckHint
+        )
+
+        testMonotonousCheck(
+            "languageSettings.enableLanguageFeature('InlineClasses')",
+            SourceSetConsistencyChecks.unstableFeaturesHint
+        )
+
+        testMonotonousCheck(
+            "languageSettings.useExperimentalAnnotation('kotlin.ExperimentalUnsignedTypes')",
+            SourceSetConsistencyChecks.experimentalAnnotationsInUseHint
+        )
 
         // check that enabling a bugfix feature and progressive mode or advancing API level
         // don't require doing the same for dependent source sets:
@@ -416,7 +440,10 @@ class NewMultiplatformIT : BaseGradleIT() {
 
                 val expectedFileName = "sample-lib-${KotlinMultiplatformPlugin.METADATA_TARGET_NAME}-1.0.jar"
 
-                val paths = metadataDependencyRegex.findAll(output).map { it.groupValues[1] to it.groupValues[2] }.toSet()
+                val paths = metadataDependencyRegex
+                    .findAll(output).map { it.groupValues[1] to it.groupValues[2] }
+                    .filter { (_, f) -> "sample-lib" in f }
+                    .toSet()
 
                 Assert.assertEquals(
                     listOf("Api", "Implementation", "CompileOnly", "RuntimeOnly").map {
@@ -792,44 +819,62 @@ class NewMultiplatformIT : BaseGradleIT() {
     }
 
     @Test
-    fun testCinterop() = with(Project("new-mpp-native-cinterop", gradleVersion)) {
-        val host = nativeHostTargetName
-        build(":projectLibrary:build") {
+    fun testCinterop() {
+        val libProject = Project("sample-lib", gradleVersion, "new-mpp-lib-and-app")
+        libProject.build("publish") {
             assertSuccessful()
-            assertTasksExecuted(":projectLibrary:cinteropStdio${host.capitalize()}")
-            assertTrue(output.contains("Project test"), "No test output found")
-            assertFileExists("projectLibrary/build/classes/kotlin/$host/main/projectLibrary-cinterop-stdio.klib")
         }
+        val repo = libProject.projectDir.resolve("repo").absolutePath.replace('\\', '/')
 
-        build(":publishedLibrary:build", ":publishedLibrary:publish") {
-            assertSuccessful()
-            assertTasksExecuted(":publishedLibrary:cinteropStdio${host.capitalize()}")
-            assertTrue(output.contains("Published test"), "No test output found")
-            assertFileExists("publishedLibrary/build/classes/kotlin/$host/main/publishedLibrary-cinterop-stdio.klib")
-            assertFileExists("repo/org/example/publishedLibrary-$host/1.0/publishedLibrary-$host-1.0-cinterop-stdio.klib")
-        }
+        with(Project("new-mpp-native-cinterop", gradleVersion)) {
 
-        build(":build") {
-            assertSuccessful()
-            assertTrue(output.contains("Dependent: Project print"), "No test output found")
-            assertTrue(output.contains("Dependent: Published print"), "No test output found")
-        }
+            setupWorkingDir()
+            listOf(gradleBuildScript(), gradleBuildScript("publishedLibrary")).forEach {
+                it.appendText("""
+                    repositories {
+                        maven { url '$repo' }
+                    }
+                """.trimIndent())
+            }
 
-        // Check that changing the compiler version in properties causes interop reprocessing and source recompilation.
-        build(":projectLibrary:build") {
-            assertSuccessful()
-            assertTasksUpToDate(
-                ":projectLibrary:cinteropStdio${host.capitalize()}",
-                ":projectLibrary:compileKotlin${host.capitalize()}"
-            )
-        }
+            val host = nativeHostTargetName
+            build(":projectLibrary:build") {
+                assertSuccessful()
+                assertTasksExecuted(":projectLibrary:cinteropStdio${host.capitalize()}")
+                assertTrue(output.contains("Project test"), "No test output found")
+                assertFileExists("projectLibrary/build/classes/kotlin/$host/main/projectLibrary-cinterop-stdio.klib")
+            }
 
-        build(":projectLibrary:build", "-Porg.jetbrains.kotlin.native.version=0.9.2") {
-            assertSuccessful()
-            assertTasksExecuted(
-                ":projectLibrary:cinteropStdio${host.capitalize()}",
-                ":projectLibrary:compileKotlin${host.capitalize()}"
-            )
+            build(":publishedLibrary:build", ":publishedLibrary:publish") {
+                assertSuccessful()
+                assertTasksExecuted(":publishedLibrary:cinteropStdio${host.capitalize()}")
+                assertTrue(output.contains("Published test"), "No test output found")
+                assertFileExists("publishedLibrary/build/classes/kotlin/$host/main/publishedLibrary-cinterop-stdio.klib")
+                assertFileExists("repo/org/example/publishedLibrary-$host/1.0/publishedLibrary-$host-1.0-cinterop-stdio.klib")
+            }
+
+            build(":build") {
+                assertSuccessful()
+                assertTrue(output.contains("Dependent: Project print"), "No test output found")
+                assertTrue(output.contains("Dependent: Published print"), "No test output found")
+            }
+
+            // Check that changing the compiler version in properties causes interop reprocessing and source recompilation.
+            build(":projectLibrary:build") {
+                assertSuccessful()
+                assertTasksUpToDate(
+                    ":projectLibrary:cinteropStdio${host.capitalize()}",
+                    ":projectLibrary:compileKotlin${host.capitalize()}"
+                )
+            }
+
+            build(":projectLibrary:build", "-Porg.jetbrains.kotlin.native.version=0.9.2") {
+                assertSuccessful()
+                assertTasksExecuted(
+                    ":projectLibrary:cinteropStdio${host.capitalize()}",
+                    ":projectLibrary:compileKotlin${host.capitalize()}"
+                )
+            }
         }
     }
 
@@ -906,6 +951,94 @@ class NewMultiplatformIT : BaseGradleIT() {
     }
 
     @Test
+    fun testMppBuildWithCompilerPlugins() = with(Project("sample-lib", gradleVersion, "new-mpp-lib-and-app")) {
+        setupWorkingDir()
+
+        val printOptionsTaskName = "printCompilerPluginOptions"
+        val argsMarker = "=args=>"
+        val classpathMarker = "=cp=>"
+        val compilerPluginArgsRegex = "(\\w+)${Regex.escape(argsMarker)}(.*)".toRegex()
+        val compilerPluginClasspathRegex = "(\\w+)${Regex.escape(classpathMarker)}(.*)".toRegex()
+
+        gradleBuildScript().appendText(
+            "\n" + """
+            buildscript {
+                dependencies {
+                    classpath "org.jetbrains.kotlin:kotlin-allopen:${'$'}kotlin_version"
+                    classpath "org.jetbrains.kotlin:kotlin-noarg:${'$'}kotlin_version"
+                }
+            }
+            apply plugin: 'kotlin-allopen'
+            apply plugin: 'kotlin-noarg'
+
+            allOpen { annotation 'com.example.Annotation' }
+            noArg { annotation 'com.example.Annotation' }
+
+            task $printOptionsTaskName {
+                doFirst {
+                    kotlin.sourceSets.each { sourceSet ->
+                        def args = sourceSet.languageSettings.compilerPluginArguments
+                        def cp = sourceSet.languageSettings.compilerPluginClasspath.files
+                        println sourceSet.name + '$argsMarker' + args
+                        println sourceSet.name + '$classpathMarker' + cp
+                    }
+                }
+            }
+            """.trimIndent()
+        )
+
+        projectDir.resolve("src/commonMain/kotlin/Annotation.kt").writeText(
+            """
+            package com.example
+            annotation class Annotation
+            """.trimIndent()
+        )
+        projectDir.resolve("src/commonMain/kotlin/Annotated.kt").writeText(
+            """
+            package com.example
+            @Annotation
+            open class Annotated(var y: Int) { var x = 2 }
+            """.trimIndent()
+        )
+        // TODO once Kotlin/Native properly supports compiler plugins, move this class to the common sources
+        listOf("jvm6", "nodeJs").forEach {
+            projectDir.resolve("src/${it}Main/kotlin/Override.kt").writeText(
+                """
+                package com.example
+                @Annotation
+                class Override : Annotated(0) {
+                    override var x = 3
+                }
+                """.trimIndent()
+            )
+        }
+
+        build("assemble", printOptionsTaskName) {
+            assertSuccessful()
+            assertTasksExecuted(*listOf("Jvm6", "NodeJs", nativeHostTargetName.capitalize()).map { ":compileKotlin$it" }.toTypedArray())
+            assertFileExists("build/classes/kotlin/jvm6/main/com/example/Annotated.class")
+            assertFileExists("build/classes/kotlin/jvm6/main/com/example/Override.class")
+            assertFileContains("build/classes/kotlin/nodeJs/main/sample-lib.js", "Override")
+
+            val (compilerPluginArgsBySourceSet, compilerPluginClasspathBySourceSet) =
+                    listOf(compilerPluginArgsRegex, compilerPluginClasspathRegex)
+                        .map { marker ->
+                            marker.findAll(output).associate { it.groupValues[1] to it.groupValues[2] }
+                        }
+
+            // TODO once Kotlin/Native properly supports compiler plugins, expand this to all source sets:
+            listOf("commonMain", "commonTest", "jvm6Main", "jvm6Test", "nodeJsMain", "nodeJsTest").forEach {
+                val expectedArgs = "[plugin:org.jetbrains.kotlin.allopen:annotation=com.example.Annotation, " +
+                        "plugin:org.jetbrains.kotlin.noarg:annotation=com.example.Annotation]"
+
+                assertEquals(expectedArgs, compilerPluginArgsBySourceSet[it], "Expected $expectedArgs as plugin args for $it")
+                assertTrue { compilerPluginClasspathBySourceSet[it]!!.contains("kotlin-allopen") }
+                assertTrue { compilerPluginClasspathBySourceSet[it]!!.contains("kotlin-noarg") }
+            }
+        }
+    }
+
+    @Test
     fun testJsDceInMpp() = with(Project("new-mpp-js-dce", gradleVersion)) {
         build("runRhino") {
             assertSuccessful()
@@ -918,6 +1051,67 @@ class NewMultiplatformIT : BaseGradleIT() {
 
             assertFileExists("$pathPrefix/kotlin.js")
             assertTrue(fileInWorkingDir("$pathPrefix/kotlin.js").length() < 500 * 1000, "Looks like kotlin.js file was not minified by DCE")
+        }
+    }
+
+
+    @Test
+    fun testStaleOutputCleanup() = with(Project("new-mpp-lib-with-tests", gradleVersion)) {
+        setupWorkingDir()
+        // Check that output directories of Kotlin compilations are registered for Gradle stale outputs cleanup.
+        // One way to check that is to run a Gradle build with no Gradle history (no .gradle directory) and see that the compilation
+        // output directories are cleaned up, even those outside the project's buildDir
+
+        gradleBuildScript().appendText(
+            "\n" + """
+            kotlin.targets.js.compilations.main.output.classesDirs.from("foo") // should affect Gradle's behavior wrt stale output cleanup
+            task('foo') {
+                outputs.dir("foo")
+                doFirst {
+                    println 'hello'
+                    file("foo/2.txt").text = System.currentTimeMillis()
+                }
+            }
+            """.trimIndent()
+        )
+
+        val staleFilePath = "foo/1.txt"
+        projectDir.resolve(staleFilePath).run { parentFile.mkdirs(); createNewFile() }
+
+        build("foo") {
+            assertSuccessful()
+            assertNoSuchFile(staleFilePath)
+            assertFileExists("foo/2.txt")
+        }
+    }
+
+    @Test
+    fun testUnusedSourceSetsReport() = with(Project("sample-lib", gradleVersion, "new-mpp-lib-and-app")) {
+        setupWorkingDir()
+
+        gradleBuildScript().appendText("\nkotlin { sourceSets { foo { } } }")
+
+        build {
+            assertSuccessful()
+            assertContains(UnusedSourceSetsChecker.WARNING_PREFIX_ONE, UnusedSourceSetsChecker.WARNING_INTRO)
+        }
+
+        gradleBuildScript().appendText("\nkotlin { sourceSets { bar { dependsOn foo } } }")
+
+        build {
+            assertSuccessful()
+            assertContains(UnusedSourceSetsChecker.WARNING_PREFIX_MANY, UnusedSourceSetsChecker.WARNING_INTRO)
+        }
+
+        gradleBuildScript().appendText("\nkotlin { sourceSets { jvm6Main { dependsOn bar } } }")
+
+        build {
+            assertSuccessful()
+            assertNotContains(
+                UnusedSourceSetsChecker.WARNING_PREFIX_ONE,
+                UnusedSourceSetsChecker.WARNING_PREFIX_MANY,
+                UnusedSourceSetsChecker.WARNING_INTRO
+            )
         }
     }
 }

@@ -15,4 +15,5 @@ package kotlin
     level = DeprecationLevel.ERROR,
     replaceWith = ReplaceWith("Result")
 )
+@SinceKotlin("1.3")
 public typealias SuccessOrFailure<T> = Result<T>

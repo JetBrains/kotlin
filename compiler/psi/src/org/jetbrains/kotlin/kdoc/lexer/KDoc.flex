@@ -104,7 +104,7 @@ CODE_FENCE_END=("```" | "~~~")
         return KDocTokens.MARKDOWN_LINK;
     }
 
-    . {
+    [^\n] {
         yybegin(CONTENTS);
         return KDocTokens.TEXT;
     }
@@ -124,7 +124,7 @@ CODE_FENCE_END=("```" | "~~~")
     {CODE_LINK} { yybegin(CONTENTS);
                   return KDocTokens.MARKDOWN_LINK; }
 
-    . {
+    [^\n] {
         yybegin(CONTENTS);
         return KDocTokens.TEXT;
     }
@@ -174,7 +174,7 @@ CODE_FENCE_END=("```" | "~~~")
         return KDocTokens.MARKDOWN_LINK;
     }
 
-    . {
+    [^\n] {
         yybegin(CONTENTS);
         return KDocTokens.TEXT;
     }
@@ -204,10 +204,10 @@ CODE_FENCE_END=("```" | "~~~")
         return KDocTokens.CODE_BLOCK_TEXT;
     }
 
-    . {
+    [^\n] {
         yybegin(yystate() == INDENTED_CODE_BLOCK ? INDENTED_CODE_BLOCK : CODE_BLOCK);
         return KDocTokens.CODE_BLOCK_TEXT;
     }
 }
 
-. { return TokenType.BAD_CHARACTER; }
+[\s\S] { return TokenType.BAD_CHARACTER; }

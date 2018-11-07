@@ -13,9 +13,13 @@ import java.rmi.RemoteException
 import java.rmi.server.UnicastRemoteObject
 
 internal class GradleCompilationResults(
-        project: Project
-): CompilationResults,
-   UnicastRemoteObject(SOCKET_ANY_FREE_PORT, LoopbackNetworkInterface.clientLoopbackSocketFactory, LoopbackNetworkInterface.serverLoopbackSocketFactory) {
+    project: Project
+) : CompilationResults,
+    UnicastRemoteObject(
+        SOCKET_ANY_FREE_PORT,
+        LoopbackNetworkInterface.clientLoopbackSocketFactory,
+        LoopbackNetworkInterface.serverLoopbackSocketFactory
+    ) {
 
     private val log = project.logger
     private val projectRootFile = project.rootProject.projectDir

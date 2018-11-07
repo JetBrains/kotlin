@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.codegen.coroutines
 
 import com.intellij.util.containers.Stack
+import org.jetbrains.kotlin.backend.common.CodegenUtil
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.ClassBuilder
 import org.jetbrains.kotlin.codegen.StackValue
@@ -19,7 +20,10 @@ import org.jetbrains.kotlin.codegen.optimization.fixStack.top
 import org.jetbrains.kotlin.codegen.optimization.transformer.MethodTransformer
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.isReleaseCoroutines
+import org.jetbrains.kotlin.diagnostics.DiagnosticSink
+import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
+import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.kotlin.utils.addToStdlib.cast
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
@@ -56,9 +60,11 @@ class CoroutineTransformerMethodVisitor(
     obtainClassBuilderForCoroutineState: () -> ClassBuilder,
     private val isForNamedFunction: Boolean,
     private val shouldPreserveClassInitialization: Boolean,
-    private val lineNumber: Int,
     private val languageVersionSettings: LanguageVersionSettings,
     private val sourceFile: String,
+    // These two are needed to report diagnostics about suspension points inside critical section
+    private val element: KtElement,
+    private val diagnostics: DiagnosticSink,
     // It's only matters for named functions, may differ from '!isStatic(access)' in case of DefaultImpls
     private val needDispatchReceiver: Boolean = false,
     // May differ from containingClassInternalName in case of DefaultImpls
@@ -68,6 +74,7 @@ class CoroutineTransformerMethodVisitor(
 ) : TransformationMethodVisitor(delegate, access, name, desc, signature, exceptions) {
 
     private val classBuilderForCoroutineState: ClassBuilder by lazy(obtainClassBuilderForCoroutineState)
+    private val lineNumber = element?.let { CodegenUtil.getLineNumberForElement(it, false) } ?: 0
 
     private var continuationIndex = if (isForNamedFunction) -1 else 0
     private var dataIndex = if (isForNamedFunction) -1 else 1
@@ -89,6 +96,8 @@ class CoroutineTransformerMethodVisitor(
         updateMaxStack(methodNode)
 
         val suspensionPoints = collectSuspensionPoints(methodNode)
+
+        checkForSuspensionPointInsideMonitor(methodNode, suspensionPoints)
 
         // First instruction in the method node may change in case of named function
         val actualCoroutineStart = methodNode.instructions.first
@@ -129,10 +138,7 @@ class CoroutineTransformerMethodVisitor(
 
         val suspendMarkerVarIndex = methodNode.maxLocals++
 
-        val suspensionPointLineNumbers =
-            suspensionPoints.map { suspensionPoint ->
-                suspensionPoint.suspensionCallBegin.findPreviousOrNull { it is LineNumberNode } as LineNumberNode?
-            }
+        val suspensionPointLineNumbers = suspensionPoints.map { findSuspensionPointLineNumber(it) }
 
         val continuationLabels = suspensionPoints.withIndex().map {
             transformCallAndReturnContinuationLabel(it.index + 1, it.value, methodNode, suspendMarkerVarIndex)
@@ -188,6 +194,46 @@ class CoroutineTransformerMethodVisitor(
 
         if (languageVersionSettings.isReleaseCoroutines() && !isCrossinlineLambda) {
             writeDebugMetadata(methodNode, suspensionPointLineNumbers, spilledToVariableMapping)
+        }
+    }
+
+    private fun findSuspensionPointLineNumber(suspensionPoint: SuspensionPoint) =
+        suspensionPoint.suspensionCallBegin.findPreviousOrNull { it is LineNumberNode } as LineNumberNode?
+
+    private fun checkForSuspensionPointInsideMonitor(methodNode: MethodNode, suspensionPoints: List<SuspensionPoint>) {
+        if (methodNode.instructions.asSequence().none { it.opcode == Opcodes.MONITORENTER }) return
+
+        val cfg = ControlFlowGraph.build(methodNode)
+        val monitorDepthMap = hashMapOf<AbstractInsnNode, Int>()
+        fun addMonitorDepthToSuccs(index: Int, depth: Int) {
+            val insn = methodNode.instructions[index]
+            monitorDepthMap[insn] = depth
+            val newDepth = when (insn.opcode) {
+                Opcodes.MONITORENTER -> depth + 1
+                Opcodes.MONITOREXIT -> depth - 1
+                else -> depth
+            }
+            for (succIndex in cfg.getSuccessorsIndices(index)) {
+                if (monitorDepthMap[methodNode.instructions[succIndex]] == null) {
+                    addMonitorDepthToSuccs(succIndex, newDepth)
+                }
+            }
+        }
+
+        addMonitorDepthToSuccs(0, 0)
+
+        for (suspensionPoint in suspensionPoints) {
+            if (monitorDepthMap[suspensionPoint.suspensionCallBegin]?.let { it > 0 } == true) {
+                // TODO: Support crossinline suspend lambdas
+                val stackTraceElement = StackTraceElement(
+                    containingClassInternalName,
+                    methodNode.name,
+                    sourceFile,
+                    findSuspensionPointLineNumber(suspensionPoint)?.line ?: -1
+                )
+                diagnostics.report(ErrorsJvm.SUSPENSION_POINT_INSIDE_MONITOR.on(element, "$stackTraceElement"))
+                return
+            }
         }
     }
 
@@ -898,17 +944,11 @@ private fun allSuspensionPointsAreTailCalls(
         }
         if (insideTryBlock) return@all false
 
-        safelyReachableReturns[endIndex + 1]?.all { returnIndex ->
-            sourceFrames[returnIndex].top().sure {
-                "There must be some value on stack to return"
-            }.insns.all { sourceInsn ->
-                sourceInsn?.let(instructions::indexOf) in beginIndex..endIndex
-            }
-        } ?: false
+        safelyReachableReturns[endIndex + 1] != null
     }
 }
 
-internal class IgnoringCopyOperationSourceInterpreter : SourceInterpreter() {
+internal class IgnoringCopyOperationSourceInterpreter : SourceInterpreter(OPTIMIZATION_ASM_API_VERSION) {
     override fun copyOperation(insn: AbstractInsnNode?, value: SourceValue?) = value
 }
 

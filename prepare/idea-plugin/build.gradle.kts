@@ -8,7 +8,7 @@ plugins {
 }
 
 repositories {
-    maven("https://dl.bintray.com/jetbrains/markdown")
+    maven("https://jetbrains.bintray.com/markdown")
 }
 
 // Do not rename, used in JPS importer

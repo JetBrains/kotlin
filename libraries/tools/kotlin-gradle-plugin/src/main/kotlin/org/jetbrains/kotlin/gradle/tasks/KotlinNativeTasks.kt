@@ -5,7 +5,6 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.Project
 import org.gradle.api.file.FileCollection
 import org.gradle.api.file.FileTree
-import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.gradle.api.tasks.compile.AbstractCompile
@@ -21,10 +20,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.defaultSourceSetName
 import org.jetbrains.kotlin.gradle.plugin.mpp.isMainCompilation
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
-import org.jetbrains.kotlin.konan.target.CompilerOutputKind.DYNAMIC
-import org.jetbrains.kotlin.konan.target.CompilerOutputKind.FRAMEWORK
-import org.jetbrains.kotlin.konan.target.CompilerOutputKind.PROGRAM
-import org.jetbrains.kotlin.konan.target.CompilerOutputKind.STATIC
+import org.jetbrains.kotlin.konan.target.CompilerOutputKind.*
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
 
@@ -72,7 +68,7 @@ internal fun MutableList<String>.addListArg(parameter: String, values: List<Stri
 }
 
 private fun File.providedByCompiler(project: Project): Boolean =
-    toPath().startsWith(project.file(project.konanHome).toPath())
+    toPath().startsWith(project.file(project.konanHome).resolve("klib").toPath())
 
 // We need to filter out interop duplicates because we create copy of them for IDE.
 // TODO: Remove this after interop rework.
@@ -112,7 +108,7 @@ open class KotlinNativeCompile : AbstractCompile() {
         @InputFiles get() = compilation.compileDependencyFiles.filterOutPublishableInteropLibs(project)
 
     private val friendModule: FileCollection?
-        get() = compilation.friendCompilation?.output
+        get() = compilation.friendCompilation?.output?.allOutputs
 
     override fun getClasspath(): FileCollection = libraries
     override fun setClasspath(configuration: FileCollection?) {
@@ -154,6 +150,9 @@ open class KotlinNativeCompile : AbstractCompile() {
 
     val enabledLanguageFeatures: Set<String>
         @Input get() = languageSettings?.enabledLanguageFeatures ?: emptySet()
+
+    val experimentalAnnotationsInUse: Set<String>
+        @Input get() = languageSettings?.experimentalAnnotationsInUse.orEmpty()
     // endregion.
 
     // region DSL for compiler options
@@ -165,10 +164,13 @@ open class KotlinNativeCompile : AbstractCompile() {
         // Delegate for compilations's extra options.
         override var freeCompilerArgs: List<String>
             get() = compilation.extraOpts
-            set(value) { compilation.extraOpts = value.toMutableList() }
+            set(value) {
+                compilation.extraOpts = value.toMutableList()
+            }
     }
 
-    @Internal val kotlinOptions: KotlinCommonToolOptions = NativeCompilerOpts()
+    @Internal
+    val kotlinOptions: KotlinCommonToolOptions = NativeCompilerOpts()
 
     fun kotlinOptions(fn: KotlinCommonToolOptions.() -> Unit) {
         kotlinOptions.fn()
@@ -205,9 +207,10 @@ open class KotlinNativeCompile : AbstractCompile() {
     val compilerPluginOptions = CompilerPluginOptions()
 
     val compilerPluginCommandLine
-        @Input get()= compilerPluginOptions.arguments
+        @Input get() = compilerPluginOptions.arguments
 
-    @Optional @InputFiles
+    @Optional
+    @InputFiles
     var compilerPluginClasspath: FileCollection? = null
 
     val serializedCompilerArguments: List<String>
@@ -227,6 +230,9 @@ open class KotlinNativeCompile : AbstractCompile() {
         enabledLanguageFeatures.forEach { featureName ->
             add("-XXLanguage:+$featureName")
         }
+        experimentalAnnotationsInUse.forEach { annotationName ->
+            add("-Xuse-experimental=$annotationName")
+        }
 
         // Compiler plugins.
         compilerPluginClasspath?.let { pluginClasspath ->
@@ -234,7 +240,8 @@ open class KotlinNativeCompile : AbstractCompile() {
                 add("-Xplugin=$path")
             }
             compilerPluginOptions.arguments.forEach {
-                add("-P$it")
+                add("-P")
+                add(it)
             }
         }
 
@@ -294,7 +301,7 @@ open class KotlinNativeCompile : AbstractCompile() {
     }
 }
 
-open class CInteropProcess: DefaultTask() {
+open class CInteropProcess : DefaultTask() {
 
     @Internal
     lateinit var settings: DefaultCInteropSettings

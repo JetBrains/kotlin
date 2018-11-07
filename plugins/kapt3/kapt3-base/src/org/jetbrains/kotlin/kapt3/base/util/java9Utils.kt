@@ -35,7 +35,9 @@ fun Options.putJavacOption(jdk8Name: String, jdk9Name: String, value: String) {
     put(option, value)
 }
 
+@Suppress("FunctionName")
 fun TreeMaker.TopLevelJava9Aware(packageClause: JCTree.JCExpression?, declarations: JavacList<JCTree>): JCTree.JCCompilationUnit {
+    @Suppress("SpellCheckingInspection")
     return if (isJava9OrLater()) {
         val topLevelMethod = TreeMaker::class.java.declaredMethods.single { it.name == "TopLevel" }
         val packageDecl: JCTree? = packageClause?.let {

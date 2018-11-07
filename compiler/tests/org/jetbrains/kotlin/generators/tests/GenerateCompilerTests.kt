@@ -17,15 +17,20 @@ import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.defaultConstructor.AbstractDefaultArgumentsReflectionTest
 import org.jetbrains.kotlin.codegen.flags.AbstractWriteFlagsTest
 import org.jetbrains.kotlin.codegen.ir.*
+import org.jetbrains.kotlin.fir.AbstractFirResolveTestCase
+import org.jetbrains.kotlin.fir.builder.AbstractRawFirBuilderTestCase
 import org.jetbrains.kotlin.generators.tests.generator.testGroup
 import org.jetbrains.kotlin.generators.util.KT_OR_KTS_WITHOUT_DOTS_IN_NAME
+import org.jetbrains.kotlin.generators.util.KT_WITHOUT_DOTS_IN_NAME
 import org.jetbrains.kotlin.integration.AbstractAntTaskTest
 import org.jetbrains.kotlin.ir.AbstractIrCfgTestCase
+import org.jetbrains.kotlin.ir.AbstractIrJsTextTestCase
 import org.jetbrains.kotlin.ir.AbstractIrSourceRangesTestCase
 import org.jetbrains.kotlin.ir.AbstractIrTextTestCase
 import org.jetbrains.kotlin.jvm.compiler.*
 import org.jetbrains.kotlin.jvm.compiler.javac.AbstractLoadJavaUsingJavacTest
-import org.jetbrains.kotlin.kdoc.AbstractKDocLexerTest
+import org.jetbrains.kotlin.lexer.kdoc.AbstractKDocLexerTest
+import org.jetbrains.kotlin.lexer.kotlin.AbstractKotlinLexerTest
 import org.jetbrains.kotlin.modules.xml.AbstractModuleXmlParserTest
 import org.jetbrains.kotlin.multiplatform.AbstractMultiPlatformIntegrationTest
 import org.jetbrains.kotlin.parsing.AbstractParsingTest
@@ -184,12 +189,24 @@ fun main(args: Array<String>) {
             model("ir/irText")
         }
 
+        testClass<AbstractIrJsTextTestCase> {
+            model("ir/irJsText")
+        }
+
         testClass<AbstractIrCfgTestCase> {
             model("ir/irCfg")
         }
 
         testClass<AbstractIrSourceRangesTestCase> {
             model("ir/sourceRanges")
+        }
+
+        testClass<AbstractRawFirBuilderTestCase> {
+            model("fir/rawBuilder", testMethod = "doRawFirTest")
+        }
+
+        testClass<AbstractFirResolveTestCase> {
+            model("fir/resolve", pattern = KT_WITHOUT_DOTS_IN_NAME)
         }
 
         testClass<AbstractBytecodeListingTest> {
@@ -334,7 +351,11 @@ fun main(args: Array<String>) {
         }
 
         testClass<AbstractKDocLexerTest> {
-            model("kdoc/lexer")
+            model("lexer/kdoc")
+        }
+
+        testClass<AbstractKotlinLexerTest> {
+            model("lexer/kotlin")
         }
 
         testClass<AbstractIrBlackBoxCodegenTest> {

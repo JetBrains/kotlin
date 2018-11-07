@@ -12,12 +12,12 @@ import org.gradle.api.artifacts.Configuration
 import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.api.tasks.*
 import org.gradle.api.tasks.compile.AbstractCompile
+import org.jetbrains.kotlin.gradle.internal.KaptGenerateStubsTask
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.scripting.ScriptingExtension
 import org.jetbrains.kotlin.gradle.tasks.GradleMessageCollector
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.script.KotlinScriptDefinition
-import org.jetbrains.kotlin.gradle.internal.KaptGenerateStubsTask
 import org.jetbrains.kotlin.scripting.compiler.plugin.ScriptDefinitionsFromClasspathDiscoverySource
 import kotlin.properties.Delegates
 
@@ -46,18 +46,16 @@ class ScriptingGradleSubplugin : Plugin<Project> {
 
                 project.tasks.withType(KotlinCompile::class.java) { task ->
                     if (task !is KaptGenerateStubsTask) {
-                        val configuration = project.configurations.findByName(getConfigurationName(task.sourceSetName))
-                        if (configuration?.isEmpty == false) {
-                            javaPluginConvention.sourceSets.findByName(task.sourceSetName)?.let { sourceSet ->
-                                val extensionsTask =
-                                    project.tasks.create(
-                                        "discover${task.sourceSetName.capitalize()}ScriptsExtensions",
-                                        DiscoverScriptExtensionsTask::class.java
-                                    )
+                        javaPluginConvention.sourceSets.findByName(task.sourceSetName)?.let { sourceSet ->
+                            project.tasks.create(
+                                "discover${task.sourceSetName.capitalize()}ScriptsExtensions",
+                                DiscoverScriptExtensionsTask::class.java
+                            ) { extensionsTask ->
                                 extensionsTask.sourceSet = sourceSet
-                                extensionsTask.discoveryClasspathConfiguration = configuration
+                                extensionsTask.discoveryClasspathConfiguration =
+                                        project.configurations.findByName(getConfigurationName(task.sourceSetName))
                                 extensionsTask.kotlinCompile = task
-                                task.dependsOn.add(extensionsTask)
+                                task.dependsOn(extensionsTask)
                             }
                         }
                     }
@@ -76,7 +74,8 @@ open class DiscoverScriptExtensionsTask : DefaultTask() {
 
     @get:InputFiles
     @get:Classpath
-    internal var discoveryClasspathConfiguration: Configuration by Delegates.notNull()
+    @get:Optional
+    internal var discoveryClasspathConfiguration: Configuration? = null
 
     @get:Internal
     internal var kotlinCompile: KotlinCompile by Delegates.notNull()
@@ -87,7 +86,7 @@ open class DiscoverScriptExtensionsTask : DefaultTask() {
     @TaskAction
     @Suppress("unused")
     fun findKnownScriptExtensions() {
-        val scriptingClasspath = discoveryClasspathConfiguration.files.takeIf { it.isNotEmpty() } ?: return
+        val scriptingClasspath = discoveryClasspathConfiguration?.files?.takeIf { it.isNotEmpty() } ?: return
 
         val definitions =
             ScriptDefinitionsFromClasspathDiscoverySource(
@@ -129,7 +128,7 @@ class ScriptingKotlinGradleSubplugin : KotlinGradleSubplugin<AbstractCompile> {
         if (!ScriptingGradleSubplugin.isEnabled(project)) return emptyList()
 
         val scriptingExtension = project.extensions.findByType(ScriptingExtension::class.java)
-                ?: project.extensions.create("kotlinScripting", ScriptingExtension::class.java)
+            ?: project.extensions.create("kotlinScripting", ScriptingExtension::class.java)
 
         val options = mutableListOf<SubpluginOption>()
 

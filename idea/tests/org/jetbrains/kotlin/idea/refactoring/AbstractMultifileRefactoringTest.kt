@@ -130,14 +130,12 @@ fun runRefactoringTest(
     catch(e: BaseRefactoringProcessor.ConflictsInTestsException) {
         KotlinTestUtils.assertEqualsToFile(conflictFile, e.messages.distinct().sorted().joinToString("\n"))
 
-        BaseRefactoringProcessor.ConflictsInTestsException.setTestIgnore(true)
-
-        // Run refactoring again with ConflictsInTestsException suppressed
-        action.runRefactoring(rootDir, mainPsiFile, elementsAtCaret, config)
+        BaseRefactoringProcessor.ConflictsInTestsException.withIgnoredConflicts<Throwable> {
+            // Run refactoring again with ConflictsInTestsException suppressed
+            action.runRefactoring(rootDir, mainPsiFile, elementsAtCaret, config)
+        }
     }
     finally {
-        BaseRefactoringProcessor.ConflictsInTestsException.setTestIgnore(false)
-
         EditorFactory.getInstance()!!.releaseEditor(editor)
     }
 }

@@ -1,5 +1,5 @@
 // !LANGUAGE: +InlineClasses
-// IGNORE_BACKEND: JS, JS_IR, JVM_IR
+// IGNORE_BACKEND: JS, JS_IR, JVM_IR, NATIVE
 // WITH_RUNTIME
 
 class CharacterLiteral(private val prefix: NamelessString, private val s: NamelessString) {

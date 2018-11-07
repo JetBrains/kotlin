@@ -23,7 +23,7 @@ object KotlinStubVersions {
     // Though only kotlin declarations (no code in the bodies) are stubbed, please do increase this version
     //      if you are not 100% sure it can be avoided.
     // Increasing this version will lead to reindexing of all kotlin source files on the first IDE startup with the new version.
-    const val SOURCE_STUB_VERSION = 127
+    const val SOURCE_STUB_VERSION = 134
 
     // Binary stub version should be increased if stub format (org.jetbrains.kotlin.psi.stubs.impl) is changed
     //      or changes are made to the core stub building code (org.jetbrains.kotlin.idea.decompiler.stubBuilder).
@@ -36,9 +36,9 @@ object KotlinStubVersions {
 
     // BuiltIn stub version should be increased if changes are made to builtIn stub building subsystem (org.jetbrains.kotlin.idea.decompiler.builtIns)
     // Increasing this version will lead to reindexing of all builtIn files (see KotlinBuiltInFileType).
-    const val BUILTIN_STUB_VERSION = BINARY_STUB_VERSION + 2
+    const val BUILTIN_STUB_VERSION = BINARY_STUB_VERSION + 3
 
     // JS stub version should be increased if changes are made to js stub building subsystem (org.jetbrains.kotlin.idea.decompiler.js)
     // Increasing this version will lead to reindexing of js binary files (see KotlinJavaScriptMetaFileType).
-    const val JS_STUB_VERSION = BINARY_STUB_VERSION + 2
+    const val JS_STUB_VERSION = BINARY_STUB_VERSION + 3
 }

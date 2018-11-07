@@ -19,6 +19,10 @@ internal fun JavaCodeInsightTestFixture.checkHintType(text: String, hintType: Hi
     configureByText("A.kt", text.trimIndent())
     doHighlighting()
 
+    checkHintType(hintType)
+}
+
+internal fun JavaCodeInsightTestFixture.checkHintType(hintType: HintType) {
     val hintInfo = getHintInfoFromProvider(caretOffset, file, editor)
     Assert.assertNotNull("No hint available at caret", hintInfo)
     Assert.assertEquals(hintType.option.name, (hintInfo as HintInfo.OptionInfo).optionName)

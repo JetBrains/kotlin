@@ -65,11 +65,6 @@ fun <T : Cloneable> withTypeParameters() where T : Comparable<T> {
 
 val x = C() willBeInfix 1
 
-fun infixTest() {
-    arrayListOf(1, 2, 3) map { it }
-}
-
-
 fun bar(yield: Int = 4) {}
 
 fun yield(yield: Int) {

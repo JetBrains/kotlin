@@ -5240,9 +5240,37 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             runTest("idea/testData/quickfix/decreaseVisibility/exposedSuperInterfacePrivate.kt");
         }
 
+        @TestMetadata("exposedTypeInAnnotation.kt")
+        public void testExposedTypeInAnnotation() throws Exception {
+            runTest("idea/testData/quickfix/decreaseVisibility/exposedTypeInAnnotation.kt");
+        }
+
         @TestMetadata("exposedTypeParameterBound.kt")
         public void testExposedTypeParameterBound() throws Exception {
             runTest("idea/testData/quickfix/decreaseVisibility/exposedTypeParameterBound.kt");
+        }
+    }
+
+    @TestMetadata("idea/testData/quickfix/deprecatedJavaAnnotation")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class DeprecatedJavaAnnotation extends AbstractQuickFixTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInDeprecatedJavaAnnotation() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/deprecatedJavaAnnotation"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("withArgument.kt")
+        public void testWithArgument() throws Exception {
+            runTest("idea/testData/quickfix/deprecatedJavaAnnotation/withArgument.kt");
+        }
+
+        @TestMetadata("withoutArguments.kt")
+        public void testWithoutArguments() throws Exception {
+            runTest("idea/testData/quickfix/deprecatedJavaAnnotation/withoutArguments.kt");
         }
     }
 

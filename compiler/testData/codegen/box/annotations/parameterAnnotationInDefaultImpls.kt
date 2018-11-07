@@ -1,7 +1,7 @@
-// IGNORE_BACKEND: JS_IR
+// SKIP_JDK6
+// TARGET_BACKEND: JVM
 // FULL_JDK
 // WITH_REFLECT
-// IGNORE_BACKEND: JS, NATIVE
 
 annotation class Anno(val value: String)
 

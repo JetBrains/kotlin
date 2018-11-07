@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.idea.caches.project.LibraryModificationTracker
 import org.jetbrains.kotlin.idea.test.CompilerTestDirectives
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.configureCompilerOptions
+import org.jetbrains.kotlin.idea.test.rollbackCompilerOptions
 import org.jetbrains.kotlin.resolve.TargetPlatform
 import java.io.File
 
@@ -38,9 +39,9 @@ abstract class KotlinFixtureCompletionBaseTestCase : KotlinLightCodeInsightFixtu
     open fun doTest(testPath: String) {
         setUpFixture(testPath)
 
+        val fileText = FileUtil.loadFile(File(testPath), true)
+        val configured = configureCompilerOptions(fileText, project, module)
         try {
-            val fileText = FileUtil.loadFile(File(testPath), true)
-            configureCompilerOptions(fileText, project, module)
 
             assertTrue("\"<caret>\" is missing in file \"$testPath\"", fileText.contains("<caret>"))
 
@@ -57,6 +58,9 @@ abstract class KotlinFixtureCompletionBaseTestCase : KotlinLightCodeInsightFixtu
                 additionalValidDirectives = CompilerTestDirectives.ALL_COMPILER_TEST_DIRECTIVES
             )
         } finally {
+            if (configured) {
+                rollbackCompilerOptions(project, module)
+            }
             tearDownFixture()
         }
     }

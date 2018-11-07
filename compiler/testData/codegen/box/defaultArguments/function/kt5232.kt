@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 interface A {
     fun visit(a:String, b:String="") : String = b + a
 }

@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.idea.configuration.KotlinWithGradleConfigurator.Comp
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.idea.util.module
 import org.jetbrains.kotlin.psi.psiUtil.getChildrenOfType
+import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.plugins.groovy.lang.psi.GroovyFile
 import org.jetbrains.plugins.groovy.lang.psi.GroovyPsiElementFactory
 import org.jetbrains.plugins.groovy.lang.psi.api.statements.GrStatement
@@ -246,6 +247,34 @@ class GroovyBuildScriptManipulator(
             )
     }
 
+    private fun usesNewMultiplatform(): Boolean {
+        val fileText = runReadAction { scriptFile.text }
+        return fileText.contains("kotlin-multiplatform")
+    }
+
+    private fun GrClosableBlock.addParameterAssignment(
+        parameterName: String,
+        defaultValue: String,
+        replaceIt: GrStatement.(Boolean) -> GrStatement
+    ) {
+        statements.firstOrNull { stmt ->
+            (stmt as? GrAssignmentExpression)?.lValue?.text == parameterName
+        }?.let { stmt ->
+            stmt.replaceIt(false)
+        } ?: addLastExpressionInBlockIfNeeded("$parameterName = $defaultValue")
+    }
+
+    private fun String.extractTextFromQuotes(quoteCharacter: Char): String? {
+        val quoteIndex = indexOf(quoteCharacter)
+        if (quoteIndex != -1) {
+            val lastQuoteIndex = lastIndexOf(quoteCharacter)
+            return if (lastQuoteIndex > quoteIndex) substring(quoteIndex + 1, lastQuoteIndex) else null
+        }
+        return null
+    }
+
+    private fun String.extractTextFromQuotes(): String = extractTextFromQuotes('\'') ?: extractTextFromQuotes('"') ?: this
+
     private fun addOrReplaceKotlinTaskParameter(
         gradleFile: GroovyFile,
         parameterName: String,
@@ -253,6 +282,39 @@ class GroovyBuildScriptManipulator(
         forTests: Boolean,
         replaceIt: GrStatement.(Boolean) -> GrStatement
     ): PsiElement? {
+        if (usesNewMultiplatform()) {
+            val kotlinBlock = gradleFile.getBlockOrCreate("kotlin")
+            val kotlinTargets = kotlinBlock.getBlockOrCreate("targets")
+            val targetNames = mutableListOf<String>()
+
+            fun GrStatement.handleTarget(targetExpectedText: String) {
+                if (this is GrMethodCallExpression && invokedExpression.text == targetExpectedText) {
+                    val targetNameArgument = argumentList.expressionArguments.getOrNull(1)?.text
+                    if (targetNameArgument != null) {
+                        targetNames += targetNameArgument.extractTextFromQuotes()
+                    }
+                }
+            }
+
+            for (target in kotlinTargets.statements) {
+                target.handleTarget("fromPreset")
+            }
+            for (target in kotlinBlock.statements) {
+                target.handleTarget("targets.fromPreset")
+            }
+
+            val configureBlock = kotlinTargets.getBlockOrCreate("configure")
+            val factory = GroovyPsiElementFactory.getInstance(kotlinTargets.project)
+            val argumentList = factory.createArgumentListFromText(
+                targetNames.joinToString(prefix = "([", postfix = "])", separator = ", ")
+            )
+            configureBlock.getStrictParentOfType<GrMethodCallExpression>()!!.argumentList.replaceWithArgumentList(argumentList)
+
+            val kotlinOptions = configureBlock.getBlockOrCreate("tasks.getByName(compilations.main.compileKotlinTaskName).kotlinOptions")
+            kotlinOptions.addParameterAssignment(parameterName, defaultValue, replaceIt)
+            return kotlinOptions.parent.parent
+        }
+
         val kotlinBlock = gradleFile.getBlockOrCreate(if (forTests) "compileTestKotlin" else "compileKotlin")
 
         for (stmt in kotlinBlock.statements) {
@@ -261,13 +323,7 @@ class GroovyBuildScriptManipulator(
             }
         }
 
-        kotlinBlock.getBlockOrCreate("kotlinOptions").apply {
-            statements.firstOrNull { stmt ->
-                (stmt as? GrAssignmentExpression)?.lValue?.text == parameterName
-            }?.let { stmt ->
-                stmt.replaceIt(false)
-            } ?: addLastExpressionInBlockIfNeeded("$parameterName = $defaultValue")
-        }
+        kotlinBlock.getBlockOrCreate("kotlinOptions").addParameterAssignment(parameterName, defaultValue, replaceIt)
 
         return kotlinBlock.parent
     }

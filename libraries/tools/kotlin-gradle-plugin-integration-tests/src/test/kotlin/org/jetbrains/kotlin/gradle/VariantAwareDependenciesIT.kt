@@ -180,6 +180,91 @@ class VariantAwareDependenciesIT : BaseGradleIT() {
         }
     }
 
+    @Test
+    fun testResolvesOldKotlinArtifactsPublishedWithMetadata() = with(Project("multiplatformProject", gradleVersion)) {
+        setupWorkingDir()
+        projectDir.resolve("settings.gradle").appendText("\nenableFeaturePreview 'GRADLE_METADATA'")
+        gradleBuildScript().appendText(
+            "\n" + """
+                configure([project(':lib'), project(':libJvm'), project(':libJs')]) {
+                    group 'com.example.oldmpp'
+                    version '1.0'
+                    apply plugin: 'maven-publish'
+                    publishing {
+                        repositories { maven { url "file://${'$'}{rootDir.absolutePath.replace('\\', '/')}/repo" } }
+                        publications { kotlin(MavenPublication) { from(components.java) } }
+                    }
+                }
+            """.trimIndent()
+        )
+        build("publish") { assertSuccessful() }
+
+        gradleBuildScript().modify {
+            it.replace("'com.example.oldmpp'", "'com.example.consumer'") +
+                    "\nsubprojects { repositories { maven { url \"file://${'$'}{rootDir.absolutePath.replace('\\\\', '/')}/repo\" } } }"
+        }
+
+        gradleBuildScript("lib").appendText("\ndependencies { compile 'com.example.oldmpp:lib:1.0' }")
+        testResolveAllConfigurations("lib")
+
+        gradleBuildScript("libJvm").appendText("\ndependencies { compile 'com.example.oldmpp:libJvm:1.0' }")
+        testResolveAllConfigurations("libJvm")
+
+        gradleBuildScript("libJs").appendText("\ndependencies { compile 'com.example.oldmpp:libJs:1.0' }")
+        testResolveAllConfigurations("libJs")
+
+        embedProject(Project("sample-lib", directoryPrefix = "new-mpp-lib-and-app"))
+        gradleBuildScript("sample-lib").appendText("\n" + """
+            dependencies {
+                commonMainApi 'com.example.oldmpp:lib:1.0'
+                jvm6MainApi 'com.example.oldmpp:libJvm:1.0'
+                nodeJsMainApi 'com.example.oldmpp:libJs:1.0'
+            }
+        """.trimIndent())
+        testResolveAllConfigurations("sample-lib")
+    }
+
+    @Test
+    fun testConfigurationsWithNoExplicitUsageResolveRuntime() =
+    // Starting with Gradle 5.0, plain Maven dependencies are represented as two variants, and resolving them to the API one leads
+    // to transitive dependencies left out of the resolution results. We need to ensure that our attributes schema does not lead to the API
+    // variants chosen over the runtime ones when resolving a configuration with no required Usage:
+        with(Project("simpleProject", GradleVersionRequired.AtLeast("5.0-milestone-1"))) {
+            setupWorkingDir()
+            gradleBuildScript().appendText("\ndependencies { compile 'org.jetbrains.kotlin:kotlin-compiler-embeddable' }")
+
+            testResolveAllConfigurations {
+                assertContains(">> :compile --> kotlin-compiler-embeddable-${defaultBuildOptions().kotlinVersion}.jar")
+
+                // Check that the transitive dependencies with 'runtime' scope are also available:
+                assertContains(">> :compile --> kotlin-script-runtime-${defaultBuildOptions().kotlinVersion}.jar")
+            }
+        }
+
+    @Test
+    fun testCompileAndRuntimeResolutionOfElementsConfigurations() =
+        with(Project("sample-app", gradleVersion, "new-mpp-lib-and-app")) {
+            val libProject = Project("sample-lib", gradleVersion, "new-mpp-lib-and-app")
+            embedProject(libProject)
+            gradleBuildScript().modify {
+                it.replace("'com.example:sample-lib:1.0'", "project('${libProject.projectName}')")
+            }
+
+            listOf("jvm6" to "Classpath", "nodeJs" to "Classpath", "wasm32" to "Klibraries").forEach { (target, suffix) ->
+                build("dependencyInsight", "--configuration", "${target}Compile$suffix", "--dependency", "sample-lib") {
+                    assertSuccessful()
+                    assertContains("variant \"${target}ApiElements\" [")
+                }
+
+                if (suffix == "Classpath") {
+                    build("dependencyInsight", "--configuration", "${target}Runtime$suffix", "--dependency", "sample-lib") {
+                        assertSuccessful()
+                        assertContains("variant \"${target}RuntimeElements\" [")
+                    }
+                }
+            }
+        }
+
     private fun Project.embedProject(other: Project) {
         setupWorkingDir()
         other.setupWorkingDir()

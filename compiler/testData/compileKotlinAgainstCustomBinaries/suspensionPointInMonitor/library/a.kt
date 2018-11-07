@@ -15,3 +15,12 @@ inline fun monitorInFinally(a: () -> Unit, b: () -> Unit) {
         }
     }
 }
+
+inline fun withCrossinline(crossinline a: suspend () -> Unit): suspend () -> Unit {
+    val c : suspend () -> Unit = {
+        inlineMe {
+            a()
+        }
+    }
+    return c
+}

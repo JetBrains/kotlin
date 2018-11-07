@@ -98,7 +98,8 @@ private fun rewriteMppDependenciesToTargetModuleDependencies(
         }
     )
 
-    val resolvedCompileDependencies by lazy { // don't resolve if no project dependencies on MPP projects are found
+    val resolvedCompileDependencies by lazy {
+        // don't resolve if no project dependencies on MPP projects are found
         targetCompileDependenciesConfiguration.resolvedConfiguration.lenientConfiguration.allModuleDependencies.associateBy {
             Triple(it.moduleGroup, it.moduleName, it.moduleVersion)
         }

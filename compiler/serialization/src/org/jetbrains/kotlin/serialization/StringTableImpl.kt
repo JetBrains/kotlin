@@ -50,7 +50,7 @@ open class StringTableImpl : DescriptorAwareStringTable {
     override fun getQualifiedClassNameIndex(className: String, isLocal: Boolean): Int =
         getQualifiedClassNameIndex(ClassId.fromString(className, isLocal))
 
-    private fun getQualifiedClassNameIndex(classId: ClassId): Int {
+    override fun getQualifiedClassNameIndex(classId: ClassId): Int {
         val builder = QualifiedName.newBuilder()
         builder.kind = QualifiedName.Kind.CLASS
 

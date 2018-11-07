@@ -33,7 +33,7 @@ class ProtoBasedClassDataFinder(
             nameResolver.getClassId(klass.fqName)
         }
 
-    internal val allClassIds: Collection<ClassId> get() = classIdToProto.keys
+    val allClassIds: Collection<ClassId> get() = classIdToProto.keys
 
     override fun findClassData(classId: ClassId): ClassData? {
         val classProto = classIdToProto[classId] ?: return null

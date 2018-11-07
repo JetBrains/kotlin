@@ -60,7 +60,7 @@ internal open class SyncOutputTask : DefaultTask() {
     // Marked as input to make Gradle fall back to non-incremental build when it changes.
     @get:Input
     protected val classesDirs: List<File>
-            get() = listOf(kotlinOutputDir, kaptClassesDir).filter(File::exists)
+        get() = listOf(kotlinOutputDir, kaptClassesDir).filter(File::exists)
 
     @get:OutputDirectory
     var javaOutputDir: File by Delegates.notNull()
@@ -108,8 +108,7 @@ internal open class SyncOutputTask : DefaultTask() {
             logger.kotlinDebug { "Incremental copying files from $sourceDirs to $javaOutputDir" }
             inputs.outOfDate { processIncrementally(it) }
             inputs.removed { processIncrementally(it) }
-        }
-        else {
+        } else {
             logger.kotlinDebug { "Non-incremental copying files from $sourceDirs to $javaOutputDir" }
             processNonIncrementally()
         }
@@ -143,8 +142,7 @@ internal open class SyncOutputTask : DefaultTask() {
         if (input.isRemoved) {
             // file was removed in kotlin dir, remove from java as well
             remove(fileInJavaDir)
-        }
-        else {
+        } else {
             // copy modified or added file from kotlin to java
             copy(fileInKotlinDir, fileInJavaDir)
         }
@@ -203,8 +201,7 @@ private fun saveTimestamps(snapshotFile: File, timestamps: Map<File, Long>, file
     if (!snapshotFile.exists()) {
         snapshotFile.parentFile.mkdirs()
         snapshotFile.createNewFile()
-    }
-    else {
+    } else {
         snapshotFile.delete()
     }
 

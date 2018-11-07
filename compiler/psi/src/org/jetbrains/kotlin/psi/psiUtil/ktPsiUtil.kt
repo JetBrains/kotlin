@@ -293,11 +293,11 @@ inline fun <reified T : KtElement, R> flatMapDescendantsOfTypeVisitor(
 
 // ----------- Contracts -------------------------------------------------------------------------------------------------------------------
 
-fun KtElement.isContractPresentPsiCheck(): Boolean {
-    val contractAllowedHere = this is KtNamedFunction &&
-            isTopLevel &&
-            hasBlockBody() &&
-            !hasModifier(KtTokens.OPERATOR_KEYWORD)
+fun KtNamedFunction.isContractPresentPsiCheck(): Boolean {
+    val contractAllowedHere =
+        isTopLevel &&
+        hasBlockBody() &&
+        !hasModifier(KtTokens.OPERATOR_KEYWORD)
     if (!contractAllowedHere) return false
 
     val firstExpression = ((this as? KtFunction)?.bodyExpression as? KtBlockExpression)?.statements?.firstOrNull() ?: return false
@@ -454,6 +454,8 @@ fun KtModifierListOwner.visibilityModifierType(): KtModifierKeywordToken? =
 fun KtModifierListOwner.visibilityModifierTypeOrDefault(): KtModifierKeywordToken = visibilityModifierType() ?: KtTokens.DEFAULT_VISIBILITY_KEYWORD
 
 fun KtDeclaration.modalityModifier() = modifierFromTokenSet(MODALITY_MODIFIERS)
+
+fun KtDeclaration.modalityModifierType(): KtModifierKeywordToken? = modalityModifier()?.node?.elementType as KtModifierKeywordToken?
 
 fun KtStringTemplateExpression.isPlain() = entries.all { it is KtLiteralStringTemplateEntry }
 fun KtStringTemplateExpression.isPlainWithEscapes() =

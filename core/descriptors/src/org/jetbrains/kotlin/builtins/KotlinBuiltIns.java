@@ -608,6 +608,11 @@ public abstract class KotlinBuiltIns {
     }
 
     @NotNull
+    public ClassDescriptor getKClass() {
+        return getBuiltInClassByFqName(FQ_NAMES.kClass.toSafe());
+    }
+
+    @NotNull
     private ClassDescriptor getCollectionClassByName(@NotNull String simpleName) {
         return getBuiltInClassByName(simpleName, packageFragments.invoke().collectionsPackageFragment);
     }
@@ -984,6 +989,10 @@ public abstract class KotlinBuiltIns {
 
     public static boolean isNumber(@NotNull KotlinType type) {
         return isConstructedFromGivenClassAndNotNullable(type, FQ_NAMES.number);
+    }
+
+    public static boolean isNumberOrNullableNumber(@NotNull KotlinType type) {
+        return isConstructedFromGivenClass(type, FQ_NAMES.number);
     }
 
     public static boolean isChar(@NotNull KotlinType type) {

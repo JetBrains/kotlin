@@ -4,7 +4,6 @@ import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.builtins.UnsignedType
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.findClassAcrossModuleDependencies
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.declarations.IrFunction
@@ -168,6 +167,8 @@ abstract class Symbols<out T : CommonBackendContext>(val context: T, private val
     abstract val coroutineImpl: IrClassSymbol
 
     abstract val coroutineSuspendedGetter: IrSimpleFunctionSymbol
+
+    abstract val lateinitIsInitializedPropertyGetter: IrSimpleFunctionSymbol
 
     fun getFunction(parameterCount: Int) = symbolTable.referenceClass(context.builtIns.getFunction(parameterCount))
 

@@ -59,6 +59,11 @@ public class BytecodeToolWindowTestGenerated extends AbstractBytecodeToolWindowT
         runTest("idea/testData/internal/toolWindow/inlineFunctionReifiedParam/");
     }
 
+    @TestMetadata("inlineProperty")
+    public void testInlineProperty() throws Exception {
+        runTest("idea/testData/internal/toolWindow/inlineProperty/");
+    }
+
     @TestMetadata("iteratorFun")
     public void testIteratorFun() throws Exception {
         runTest("idea/testData/internal/toolWindow/iteratorFun/");

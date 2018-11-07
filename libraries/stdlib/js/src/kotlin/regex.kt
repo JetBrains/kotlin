@@ -28,9 +28,15 @@ public actual enum class RegexOption(val value: String) {
  */
 public actual data class MatchGroup(actual val value: String)
 
-/** A compiled representation of a regular expression.
+
+/**
+ * Represents a compiled regular expression.
+ * Provides functions to match strings in text with a pattern, replace the found occurrences and split text around matches.
  *
- * For pattern syntax reference see [https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp] and [http://www.w3schools.com/jsref/jsref_obj_regexp.asp]
+ * For pattern syntax reference see [MDN RegExp](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp#Special_characters_meaning_in_regular_expressions)
+ * and [http://www.w3schools.com/jsref/jsref_obj_regexp.asp](https://www.w3schools.com/jsref/jsref_obj_regexp.asp).
+ *
+ * @constructor Creates a regular expression from the specified [pattern] string and the specified set of [options].
  */
 public actual class Regex actual constructor(pattern: String, options: Set<RegexOption>) {
 
@@ -89,7 +95,7 @@ public actual class Regex actual constructor(pattern: String, options: Set<Regex
     /**
      * Replaces all occurrences of this regular expression in the specified [input] string with specified [replacement] expression.
      *
-     * @param replacement A replacement expression that can include substitutions. See [https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/replace] for details.
+     * @param replacement A replacement expression that can include substitutions. See [String.prototype.replace](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/replace) function docs for details.
      */
     public actual fun replace(input: CharSequence, replacement: String): String = input.toString().nativeReplace(nativePattern, replacement)
 
@@ -123,7 +129,7 @@ public actual class Regex actual constructor(pattern: String, options: Set<Regex
     /**
      * Replaces the first occurrence of this regular expression in the specified [input] string with specified [replacement] expression.
      *
-     * @param replacement A replacement expression that can include substitutions. See [Matcher.appendReplacement] for details.
+     * @param replacement A replacement expression that can include substitutions. See [String.prototype.replace](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/replace) function docs for details.
      */
     public actual fun replaceFirst(input: CharSequence, replacement: String): String {
         val nonGlobalOptions = options.map { it.value }.joinToString(separator = "")
@@ -131,9 +137,10 @@ public actual class Regex actual constructor(pattern: String, options: Set<Regex
     }
 
     /**
-     * Splits this string around matches of the given regular expression.
+     * Splits the [input] CharSequence around matches of this regular expression.
      *
-     * @param limit The maximum number of times the split can occur.
+     * @param limit Non-negative value specifying the maximum number of substrings the string can be split to.
+     * Zero by default means no limit is set.
      */
     @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
     public actual fun split(input: CharSequence, limit: Int = 0): List<String> {
@@ -150,17 +157,32 @@ public actual class Regex actual constructor(pattern: String, options: Set<Regex
         return result
     }
 
-    /** Returns the string representation of this regular expression. */
+
+    /**
+     * Returns the string representation of this regular expression, namely the [pattern] of this regular expression.
+     *
+     * Note that another regular expression constructed from the same pattern string may have different [options]
+     * and may match strings differently.
+     */
     public override fun toString(): String = nativePattern.toString()
 
     actual companion object {
-        /** Returns a literal regex for the specified [literal] string. */
+        /**
+         * Returns a regular expression that matches the specified [literal] string literally.
+         * No characters of that string will have special meaning when searching for an occurrence of the regular expression.
+         */
         public actual fun fromLiteral(literal: String): Regex = Regex(escape(literal))
 
-        /** Returns a literal pattern for the specified [literal] string. */
+        /**
+         * Returns a regular expression pattern string that matches the specified [literal] string literally.
+         * No characters of that string will have special meaning when searching for an occurrence of the regular expression.
+         */
         public actual fun escape(literal: String): String = literal.nativeReplace(patternEscape, "\\$&")
 
-        /** Returns a literal replacement exression for the specified [literal] string. */
+        /**
+         * Returns a literal replacement expression for the specified [literal] string.
+         * No characters of that string will have special meaning when it is used as a replacement string in [Regex.replace] function.
+         */
         public actual fun escapeReplacement(literal: String): String = literal.nativeReplace(replacementEscape, "$$$$")
 
         private val patternEscape = RegExp("""[-\\^$*+?.()|[\]{}]""", "g")

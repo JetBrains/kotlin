@@ -25,14 +25,24 @@ dependencies {
 archivesBaseName = 'kotlin-test'
 
 jar {
-    manifestAttributes(manifest, project, 'Test', true)
+    manifestAttributes(manifest, project, 'Test' /*true*/)
     // TODO: enable as soon as this doesn't cause D8/DX to crash
     // from sourceSets.java9.output
+}
+
+task modularJar(type: Jar) {
+    dependsOn(jar)
+    manifestAttributes(manifest, project, 'Test', true)
+    classifier = 'modular'
+
+    from zipTree(jar.outputs.files.singleFile)
+    from sourceSets.java9.output
 }
 
 artifacts {
     archives sourcesJar
     archives javadocJar
+    archives modularJar
 }
 
 dist {

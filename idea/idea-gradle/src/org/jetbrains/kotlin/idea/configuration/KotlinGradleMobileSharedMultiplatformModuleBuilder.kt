@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.idea.configuration
 
-import com.intellij.openapi.module.Module
 import com.intellij.openapi.vfs.VirtualFile
 import java.io.BufferedWriter
 
@@ -20,7 +19,7 @@ class KotlinGradleMobileSharedMultiplatformModuleBuilder : KotlinGradleAbstractM
     private val jvmSourceName get() = "$jvmTargetName$productionSuffix"
     private val jvmTestName get() = "$jvmTargetName$testSuffix"
     private val nativeSourceName get() = "$nativeTargetName$productionSuffix"
-    private val nativeTestName get() = "$nativeTargetName$testSuffix"
+    val nativeTestName get() = "$nativeTargetName$testSuffix"
 
     override val shouldEnableGradleMetadataPreview: Boolean = true
 
@@ -31,14 +30,14 @@ class KotlinGradleMobileSharedMultiplatformModuleBuilder : KotlinGradleAbstractM
     override fun getDescription() =
         "Multiplatform Gradle projects allow sharing the same Kotlin code between two mobile platforms (JVM/Android, Native)."
 
-    override fun createProjectSkeleton(module: Module, rootDir: VirtualFile) {
+    override fun createProjectSkeleton(rootDir: VirtualFile) {
         val src = rootDir.createChildDirectory(this, "src")
 
         val commonMain = src.createKotlinSampleFileWriter(commonSourceName)
         val commonTest = src.createKotlinSampleFileWriter(commonTestName, fileName = "SampleTests.kt")
-        val jvmMain = src.createKotlinSampleFileWriter(jvmSourceName)
+        val jvmMain = src.createKotlinSampleFileWriter(jvmSourceName, jvmTargetName)
         val jvmTest = src.createKotlinSampleFileWriter(jvmTestName, fileName = "SampleTestsJVM.kt")
-        val nativeMain = src.createKotlinSampleFileWriter(nativeSourceName)
+        val nativeMain = src.createKotlinSampleFileWriter(nativeSourceName, nativeTargetName)
         val nativeTest = src.createKotlinSampleFileWriter(nativeTestName, fileName = "SampleTestsNative.kt")
 
         try {
@@ -151,7 +150,7 @@ class KotlinGradleMobileSharedMultiplatformModuleBuilder : KotlinGradleAbstractM
                     // This preset is for iPhone emulator
                     // Switch here to presets.iosArm64 to build library for iPhone device
                     fromPreset(presets.iosX64, '$nativeTargetName') {
-                        compilations.main.outputKinds('FRAMEWORK')
+                        compilations.main.outputKinds 'FRAMEWORK'
                     }
                 }
                 sourceSets {

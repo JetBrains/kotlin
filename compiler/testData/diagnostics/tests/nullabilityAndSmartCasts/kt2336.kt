@@ -1,4 +1,4 @@
-fun main(args: Array<String>) {
+fun main() {
     val b: Boolean? = null
     if (b != null) {
         if (!<!DEBUG_INFO_SMARTCAST!>b<!>) {} // OK

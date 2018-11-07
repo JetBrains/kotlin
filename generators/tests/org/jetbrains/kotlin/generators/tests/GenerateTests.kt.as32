@@ -132,6 +132,7 @@ import org.jetbrains.kotlin.idea.scratch.AbstractScratchRunActionTest
 import org.jetbrains.kotlin.idea.script.AbstractScriptConfigurationCompletionTest
 import org.jetbrains.kotlin.idea.script.AbstractScriptConfigurationHighlightingTest
 import org.jetbrains.kotlin.idea.script.AbstractScriptConfigurationNavigationTest
+import org.jetbrains.kotlin.idea.script.AbstractScriptDefinitionsOrderTest
 import org.jetbrains.kotlin.idea.slicer.AbstractSlicerLeafGroupingTest
 import org.jetbrains.kotlin.idea.slicer.AbstractSlicerNullnessGroupingTest
 import org.jetbrains.kotlin.idea.slicer.AbstractSlicerTreeTest
@@ -753,6 +754,10 @@ fun main(args: Array<String>) {
 
         testClass<AbstractScriptConfigurationCompletionTest> {
             model("script/definition/completion", extension = null, recursive = false)
+        }
+
+        testClass<AbstractScriptDefinitionsOrderTest> {
+            model("script/definition/order", extension = null, recursive = false)
         }
 
         testClass<AbstractNameSuggestionProviderTest> {

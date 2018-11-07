@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.BackendContext
 import org.jetbrains.kotlin.backend.common.DeclarationContainerLoweringPass
 import org.jetbrains.kotlin.backend.common.descriptors.*
 import org.jetbrains.kotlin.backend.common.ir.copyTo
+import org.jetbrains.kotlin.backend.common.ir.copyTypeParametersFrom
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl
@@ -50,6 +51,8 @@ val IrDeclaration.parentsWithSelf: Sequence<IrDeclarationParent>
 
 val IrDeclaration.parents: Sequence<IrDeclarationParent>
     get() = parentsWithSelf.drop(1)
+
+object BOUND_VALUE_PARAMETER: IrDeclarationOriginImpl("BOUND_VALUE_PARAMETER")
 
 class LocalDeclarationsLowering(
     val context: BackendContext,
@@ -516,14 +519,12 @@ class LocalDeclarationsLowering(
 
             newDeclaration.parent = memberOwner
             newDeclaration.returnType = oldDeclaration.returnType
+            newDeclaration.copyTypeParametersFrom(oldDeclaration)
             newDeclaration.dispatchReceiverParameter = newDispatchReceiverParameter
             newDeclaration.extensionReceiverParameter = oldDeclaration.extensionReceiverParameter?.run {
                 copyTo(newDeclaration).also {
                     newParameterToOld.putAbsentOrSame(it, this)
                 }
-            }
-            oldDeclaration.typeParameters.mapTo(newDeclaration.typeParameters) {
-                it.copyTo(newDeclaration).also { p -> p.superTypes += it.superTypes }
             }
 
             newDeclaration.valueParameters += createTransformedValueParameters(capturedValues, oldDeclaration, newDeclaration)
@@ -541,7 +542,7 @@ class LocalDeclarationsLowering(
                 val parameterDescriptor = WrappedValueParameterDescriptor()
                 val p = capturedValue.owner
                 IrValueParameterImpl(
-                    p.startOffset, p.endOffset, p.origin, IrValueParameterSymbolImpl(parameterDescriptor),
+                    p.startOffset, p.endOffset, BOUND_VALUE_PARAMETER, IrValueParameterSymbolImpl(parameterDescriptor),
                     suggestNameForCapturedValue(p), i, p.type, null, false, false
                 ).also {
                     parameterDescriptor.bind(it)
@@ -596,6 +597,8 @@ class LocalDeclarationsLowering(
 
             newDeclaration.parent = localClassContext.declaration
             newDeclaration.returnType = oldDeclaration.returnType
+            newDeclaration.copyTypeParametersFrom(oldDeclaration)
+
             // TODO: should dispatch receiver be copied?
             newDeclaration.dispatchReceiverParameter = oldDeclaration.dispatchReceiverParameter?.run {
                 IrValueParameterImpl(startOffset, endOffset, origin, descriptor, type, varargElementType).also {
@@ -605,10 +608,6 @@ class LocalDeclarationsLowering(
             }
             newDeclaration.extensionReceiverParameter = oldDeclaration.extensionReceiverParameter?.run {
                 throw AssertionError("constructors can't have extension receiver")
-            }
-
-            oldDeclaration.typeParameters.mapTo(newDeclaration.typeParameters) {
-                it.copyTo(newDeclaration).also { p -> p.superTypes += it.superTypes }
             }
 
             newDeclaration.valueParameters += createTransformedValueParameters(capturedValues, oldDeclaration, newDeclaration)

@@ -210,6 +210,7 @@ public class Context {
         return (Context) threadContexts.get(t);
     }
 
+    @SuppressWarnings("unchecked")
     private static void setThreadContext(Context cx) {
         if (threadLocalCx != null) {
             try {

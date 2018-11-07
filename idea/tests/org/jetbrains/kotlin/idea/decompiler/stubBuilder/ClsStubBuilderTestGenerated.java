@@ -39,6 +39,11 @@ public class ClsStubBuilderTestGenerated extends AbstractClsStubBuilderTest {
         runTest("idea/testData/decompiler/stubBuilder/AnnotationClass/");
     }
 
+    @TestMetadata("AnnotationValues")
+    public void testAnnotationValues() throws Exception {
+        runTest("idea/testData/decompiler/stubBuilder/AnnotationValues/");
+    }
+
     @TestMetadata("Annotations")
     public void testAnnotations() throws Exception {
         runTest("idea/testData/decompiler/stubBuilder/Annotations/");

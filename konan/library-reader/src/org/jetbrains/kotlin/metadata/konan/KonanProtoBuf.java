@@ -13,12 +13,16 @@ public final class KonanProtoBuf {
     registry.add(org.jetbrains.kotlin.metadata.konan.KonanProtoBuf.inlineConstructorIrBody);
     registry.add(org.jetbrains.kotlin.metadata.konan.KonanProtoBuf.functionAnnotation);
     registry.add(org.jetbrains.kotlin.metadata.konan.KonanProtoBuf.inlineIrBody);
+    registry.add(org.jetbrains.kotlin.metadata.konan.KonanProtoBuf.functionFile);
     registry.add(org.jetbrains.kotlin.metadata.konan.KonanProtoBuf.propertyAnnotation);
+    registry.add(org.jetbrains.kotlin.metadata.konan.KonanProtoBuf.propertyGetterAnnotation);
+    registry.add(org.jetbrains.kotlin.metadata.konan.KonanProtoBuf.propertySetterAnnotation);
     registry.add(org.jetbrains.kotlin.metadata.konan.KonanProtoBuf.hasBackingField);
     registry.add(org.jetbrains.kotlin.metadata.konan.KonanProtoBuf.usedAsVariable);
     registry.add(org.jetbrains.kotlin.metadata.konan.KonanProtoBuf.compileTimeValue);
     registry.add(org.jetbrains.kotlin.metadata.konan.KonanProtoBuf.inlineGetterIrBody);
     registry.add(org.jetbrains.kotlin.metadata.konan.KonanProtoBuf.inlineSetterIrBody);
+    registry.add(org.jetbrains.kotlin.metadata.konan.KonanProtoBuf.propertyFile);
     registry.add(org.jetbrains.kotlin.metadata.konan.KonanProtoBuf.enumEntryAnnotation);
     registry.add(org.jetbrains.kotlin.metadata.konan.KonanProtoBuf.enumEntryOrdinal);
     registry.add(org.jetbrains.kotlin.metadata.konan.KonanProtoBuf.parameterAnnotation);
@@ -2453,6 +2457,25 @@ public final class KonanProtoBuf {
      */
     org.jetbrains.kotlin.protobuf.ByteString
         getEmptyPackageBytes(int index);
+
+    /**
+     * <code>repeated string file = 4;</code>
+     */
+    org.jetbrains.kotlin.protobuf.ProtocolStringList
+        getFileList();
+    /**
+     * <code>repeated string file = 4;</code>
+     */
+    int getFileCount();
+    /**
+     * <code>repeated string file = 4;</code>
+     */
+    java.lang.String getFile(int index);
+    /**
+     * <code>repeated string file = 4;</code>
+     */
+    org.jetbrains.kotlin.protobuf.ByteString
+        getFileBytes(int index);
   }
   /**
    * Protobuf type {@code org.jetbrains.kotlin.metadata.konan.LinkDataLibrary}
@@ -2528,6 +2551,15 @@ public final class KonanProtoBuf {
               emptyPackage_.add(bs);
               break;
             }
+            case 34: {
+              org.jetbrains.kotlin.protobuf.ByteString bs = input.readBytes();
+              if (!((mutable_bitField0_ & 0x00000008) == 0x00000008)) {
+                file_ = new org.jetbrains.kotlin.protobuf.LazyStringArrayList();
+                mutable_bitField0_ |= 0x00000008;
+              }
+              file_.add(bs);
+              break;
+            }
           }
         }
       } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
@@ -2541,6 +2573,9 @@ public final class KonanProtoBuf {
         }
         if (((mutable_bitField0_ & 0x00000004) == 0x00000004)) {
           emptyPackage_ = emptyPackage_.getUnmodifiableView();
+        }
+        if (((mutable_bitField0_ & 0x00000008) == 0x00000008)) {
+          file_ = file_.getUnmodifiableView();
         }
         try {
           unknownFieldsCodedOutput.flush();
@@ -2668,10 +2703,40 @@ public final class KonanProtoBuf {
       return emptyPackage_.getByteString(index);
     }
 
+    public static final int FILE_FIELD_NUMBER = 4;
+    private org.jetbrains.kotlin.protobuf.LazyStringList file_;
+    /**
+     * <code>repeated string file = 4;</code>
+     */
+    public org.jetbrains.kotlin.protobuf.ProtocolStringList
+        getFileList() {
+      return file_;
+    }
+    /**
+     * <code>repeated string file = 4;</code>
+     */
+    public int getFileCount() {
+      return file_.size();
+    }
+    /**
+     * <code>repeated string file = 4;</code>
+     */
+    public java.lang.String getFile(int index) {
+      return file_.get(index);
+    }
+    /**
+     * <code>repeated string file = 4;</code>
+     */
+    public org.jetbrains.kotlin.protobuf.ByteString
+        getFileBytes(int index) {
+      return file_.getByteString(index);
+    }
+
     private void initFields() {
       moduleName_ = "";
       packageFragmentName_ = org.jetbrains.kotlin.protobuf.LazyStringArrayList.EMPTY;
       emptyPackage_ = org.jetbrains.kotlin.protobuf.LazyStringArrayList.EMPTY;
+      file_ = org.jetbrains.kotlin.protobuf.LazyStringArrayList.EMPTY;
     }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
@@ -2698,6 +2763,9 @@ public final class KonanProtoBuf {
       }
       for (int i = 0; i < emptyPackage_.size(); i++) {
         output.writeBytes(3, emptyPackage_.getByteString(i));
+      }
+      for (int i = 0; i < file_.size(); i++) {
+        output.writeBytes(4, file_.getByteString(i));
       }
       output.writeRawBytes(unknownFields);
     }
@@ -2729,6 +2797,15 @@ public final class KonanProtoBuf {
         }
         size += dataSize;
         size += 1 * getEmptyPackageList().size();
+      }
+      {
+        int dataSize = 0;
+        for (int i = 0; i < file_.size(); i++) {
+          dataSize += org.jetbrains.kotlin.protobuf.CodedOutputStream
+            .computeBytesSizeNoTag(file_.getByteString(i));
+        }
+        size += dataSize;
+        size += 1 * getFileList().size();
       }
       size += unknownFields.size();
       memoizedSerializedSize = size;
@@ -2830,6 +2907,8 @@ public final class KonanProtoBuf {
         bitField0_ = (bitField0_ & ~0x00000002);
         emptyPackage_ = org.jetbrains.kotlin.protobuf.LazyStringArrayList.EMPTY;
         bitField0_ = (bitField0_ & ~0x00000004);
+        file_ = org.jetbrains.kotlin.protobuf.LazyStringArrayList.EMPTY;
+        bitField0_ = (bitField0_ & ~0x00000008);
         return this;
       }
 
@@ -2867,6 +2946,11 @@ public final class KonanProtoBuf {
           bitField0_ = (bitField0_ & ~0x00000004);
         }
         result.emptyPackage_ = emptyPackage_;
+        if (((bitField0_ & 0x00000008) == 0x00000008)) {
+          file_ = file_.getUnmodifiableView();
+          bitField0_ = (bitField0_ & ~0x00000008);
+        }
+        result.file_ = file_;
         result.bitField0_ = to_bitField0_;
         return result;
       }
@@ -2895,6 +2979,16 @@ public final class KonanProtoBuf {
           } else {
             ensureEmptyPackageIsMutable();
             emptyPackage_.addAll(other.emptyPackage_);
+          }
+          
+        }
+        if (!other.file_.isEmpty()) {
+          if (file_.isEmpty()) {
+            file_ = other.file_;
+            bitField0_ = (bitField0_ & ~0x00000008);
+          } else {
+            ensureFileIsMutable();
+            file_.addAll(other.file_);
           }
           
         }
@@ -3192,6 +3286,99 @@ public final class KonanProtoBuf {
         return this;
       }
 
+      private org.jetbrains.kotlin.protobuf.LazyStringList file_ = org.jetbrains.kotlin.protobuf.LazyStringArrayList.EMPTY;
+      private void ensureFileIsMutable() {
+        if (!((bitField0_ & 0x00000008) == 0x00000008)) {
+          file_ = new org.jetbrains.kotlin.protobuf.LazyStringArrayList(file_);
+          bitField0_ |= 0x00000008;
+         }
+      }
+      /**
+       * <code>repeated string file = 4;</code>
+       */
+      public org.jetbrains.kotlin.protobuf.ProtocolStringList
+          getFileList() {
+        return file_.getUnmodifiableView();
+      }
+      /**
+       * <code>repeated string file = 4;</code>
+       */
+      public int getFileCount() {
+        return file_.size();
+      }
+      /**
+       * <code>repeated string file = 4;</code>
+       */
+      public java.lang.String getFile(int index) {
+        return file_.get(index);
+      }
+      /**
+       * <code>repeated string file = 4;</code>
+       */
+      public org.jetbrains.kotlin.protobuf.ByteString
+          getFileBytes(int index) {
+        return file_.getByteString(index);
+      }
+      /**
+       * <code>repeated string file = 4;</code>
+       */
+      public Builder setFile(
+          int index, java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  ensureFileIsMutable();
+        file_.set(index, value);
+        
+        return this;
+      }
+      /**
+       * <code>repeated string file = 4;</code>
+       */
+      public Builder addFile(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  ensureFileIsMutable();
+        file_.add(value);
+        
+        return this;
+      }
+      /**
+       * <code>repeated string file = 4;</code>
+       */
+      public Builder addAllFile(
+          java.lang.Iterable<java.lang.String> values) {
+        ensureFileIsMutable();
+        org.jetbrains.kotlin.protobuf.AbstractMessageLite.Builder.addAll(
+            values, file_);
+        
+        return this;
+      }
+      /**
+       * <code>repeated string file = 4;</code>
+       */
+      public Builder clearFile() {
+        file_ = org.jetbrains.kotlin.protobuf.LazyStringArrayList.EMPTY;
+        bitField0_ = (bitField0_ & ~0x00000008);
+        
+        return this;
+      }
+      /**
+       * <code>repeated string file = 4;</code>
+       */
+      public Builder addFileBytes(
+          org.jetbrains.kotlin.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  ensureFileIsMutable();
+        file_.add(value);
+        
+        return this;
+      }
+
       // @@protoc_insertion_point(builder_scope:org.jetbrains.kotlin.metadata.konan.LinkDataLibrary)
     }
 
@@ -3299,6 +3486,22 @@ public final class KonanProtoBuf {
         171,
         org.jetbrains.kotlin.protobuf.WireFormat.FieldType.MESSAGE,
         org.jetbrains.kotlin.metadata.konan.KonanProtoBuf.InlineIrBody.class);
+  public static final int FUNCTION_FILE_FIELD_NUMBER = 172;
+  /**
+   * <code>extend .org.jetbrains.kotlin.metadata.Function { ... }</code>
+   */
+  public static final
+    org.jetbrains.kotlin.protobuf.GeneratedMessageLite.GeneratedExtension<
+      org.jetbrains.kotlin.metadata.ProtoBuf.Function,
+      java.lang.Integer> functionFile = org.jetbrains.kotlin.protobuf.GeneratedMessageLite
+          .newSingularGeneratedExtension(
+        org.jetbrains.kotlin.metadata.ProtoBuf.Function.getDefaultInstance(),
+        0,
+        null,
+        null,
+        172,
+        org.jetbrains.kotlin.protobuf.WireFormat.FieldType.INT32,
+        java.lang.Integer.class);
   public static final int PROPERTY_ANNOTATION_FIELD_NUMBER = 170;
   /**
    * <code>extend .org.jetbrains.kotlin.metadata.Property { ... }</code>
@@ -3312,6 +3515,38 @@ public final class KonanProtoBuf {
         org.jetbrains.kotlin.metadata.ProtoBuf.Annotation.getDefaultInstance(),
         null,
         170,
+        org.jetbrains.kotlin.protobuf.WireFormat.FieldType.MESSAGE,
+        false,
+        org.jetbrains.kotlin.metadata.ProtoBuf.Annotation.class);
+  public static final int PROPERTY_GETTER_ANNOTATION_FIELD_NUMBER = 177;
+  /**
+   * <code>extend .org.jetbrains.kotlin.metadata.Property { ... }</code>
+   */
+  public static final
+    org.jetbrains.kotlin.protobuf.GeneratedMessageLite.GeneratedExtension<
+      org.jetbrains.kotlin.metadata.ProtoBuf.Property,
+      java.util.List<org.jetbrains.kotlin.metadata.ProtoBuf.Annotation>> propertyGetterAnnotation = org.jetbrains.kotlin.protobuf.GeneratedMessageLite
+          .newRepeatedGeneratedExtension(
+        org.jetbrains.kotlin.metadata.ProtoBuf.Property.getDefaultInstance(),
+        org.jetbrains.kotlin.metadata.ProtoBuf.Annotation.getDefaultInstance(),
+        null,
+        177,
+        org.jetbrains.kotlin.protobuf.WireFormat.FieldType.MESSAGE,
+        false,
+        org.jetbrains.kotlin.metadata.ProtoBuf.Annotation.class);
+  public static final int PROPERTY_SETTER_ANNOTATION_FIELD_NUMBER = 178;
+  /**
+   * <code>extend .org.jetbrains.kotlin.metadata.Property { ... }</code>
+   */
+  public static final
+    org.jetbrains.kotlin.protobuf.GeneratedMessageLite.GeneratedExtension<
+      org.jetbrains.kotlin.metadata.ProtoBuf.Property,
+      java.util.List<org.jetbrains.kotlin.metadata.ProtoBuf.Annotation>> propertySetterAnnotation = org.jetbrains.kotlin.protobuf.GeneratedMessageLite
+          .newRepeatedGeneratedExtension(
+        org.jetbrains.kotlin.metadata.ProtoBuf.Property.getDefaultInstance(),
+        org.jetbrains.kotlin.metadata.ProtoBuf.Annotation.getDefaultInstance(),
+        null,
+        178,
         org.jetbrains.kotlin.protobuf.WireFormat.FieldType.MESSAGE,
         false,
         org.jetbrains.kotlin.metadata.ProtoBuf.Annotation.class);
@@ -3395,6 +3630,22 @@ public final class KonanProtoBuf {
         175,
         org.jetbrains.kotlin.protobuf.WireFormat.FieldType.MESSAGE,
         org.jetbrains.kotlin.metadata.konan.KonanProtoBuf.InlineIrBody.class);
+  public static final int PROPERTY_FILE_FIELD_NUMBER = 176;
+  /**
+   * <code>extend .org.jetbrains.kotlin.metadata.Property { ... }</code>
+   */
+  public static final
+    org.jetbrains.kotlin.protobuf.GeneratedMessageLite.GeneratedExtension<
+      org.jetbrains.kotlin.metadata.ProtoBuf.Property,
+      java.lang.Integer> propertyFile = org.jetbrains.kotlin.protobuf.GeneratedMessageLite
+          .newSingularGeneratedExtension(
+        org.jetbrains.kotlin.metadata.ProtoBuf.Property.getDefaultInstance(),
+        0,
+        null,
+        null,
+        176,
+        org.jetbrains.kotlin.protobuf.WireFormat.FieldType.INT32,
+        java.lang.Integer.class);
   public static final int ENUM_ENTRY_ANNOTATION_FIELD_NUMBER = 170;
   /**
    * <code>extend .org.jetbrains.kotlin.metadata.EnumEntry { ... }</code>

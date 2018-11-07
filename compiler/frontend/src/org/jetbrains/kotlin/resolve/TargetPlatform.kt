@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.builtins.PlatformToKotlinClassMap
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.container.StorageComponentContainer
 import org.jetbrains.kotlin.container.composeContainer
+import org.jetbrains.kotlin.container.useImpl
 import org.jetbrains.kotlin.container.useInstance
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.calls.checkers.*
@@ -139,9 +140,7 @@ private val DEFAULT_CLASSIFIER_USAGE_CHECKERS = listOf(
     DeprecatedClassifierUsageChecker(), ApiVersionClassifierUsageChecker, MissingDependencyClassChecker.ClassifierUsage,
     OptionalExpectationUsageChecker()
 )
-private val DEFAULT_ANNOTATION_CHECKERS = listOf<AdditionalAnnotationChecker>(
-    ExperimentalMarkerDeclarationAnnotationChecker
-)
+private val DEFAULT_ANNOTATION_CHECKERS = listOf<AdditionalAnnotationChecker>()
 
 
 abstract class PlatformConfigurator(
@@ -180,6 +179,10 @@ abstract class PlatformConfigurator(
         useInstance(delegationFilter)
         useInstance(overridesBackwardCompatibilityHelper)
         useInstance(declarationReturnTypeSanitizer)
+    }
+
+    fun configureModuleDependentCheckers(container: StorageComponentContainer) {
+        container.useImpl<ExperimentalMarkerDeclarationAnnotationChecker>()
     }
 }
 

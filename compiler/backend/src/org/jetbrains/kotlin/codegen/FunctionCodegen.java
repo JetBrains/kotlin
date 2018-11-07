@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.config.LanguageFeature;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotated;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationUtilKt;
 import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl;
 import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialGenericSignature;
@@ -45,6 +44,7 @@ import org.jetbrains.kotlin.resolve.calls.util.UnderscoreUtilKt;
 import org.jetbrains.kotlin.resolve.constants.ArrayValue;
 import org.jetbrains.kotlin.resolve.constants.ConstantValue;
 import org.jetbrains.kotlin.resolve.constants.KClassValue;
+import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.resolve.inline.InlineUtil;
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes;
 import org.jetbrains.kotlin.resolve.jvm.RuntimeAssertionInfo;
@@ -73,9 +73,9 @@ import static org.jetbrains.kotlin.codegen.serialization.JvmSerializationBinding
 import static org.jetbrains.kotlin.codegen.state.KotlinTypeMapper.isAccessor;
 import static org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.DECLARATION;
 import static org.jetbrains.kotlin.descriptors.ModalityKt.isOverridable;
-import static org.jetbrains.kotlin.descriptors.annotations.AnnotationUtilKt.isEffectivelyInlineOnly;
 import static org.jetbrains.kotlin.resolve.DescriptorToSourceUtils.getSourceFromDescriptor;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.*;
+import static org.jetbrains.kotlin.resolve.inline.InlineOnlyKt.isEffectivelyInlineOnly;
 import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE;
 import static org.jetbrains.kotlin.resolve.jvm.InlineClassManglingRulesKt.shouldHideConstructorDueToInlineClassTypeValueParameters;
 import static org.jetbrains.kotlin.resolve.jvm.annotations.JvmAnnotationUtilKt.hasJvmDefaultAnnotation;
@@ -127,7 +127,7 @@ public class FunctionCodegen {
         if (owner.getContextKind() != OwnerKind.DEFAULT_IMPLS || function.hasBody()) {
             FunctionGenerationStrategy strategy;
             if (functionDescriptor.isSuspend()) {
-                if (AnnotationUtilKt.isEffectivelyInlineOnly(functionDescriptor)) {
+                if (isEffectivelyInlineOnly(functionDescriptor)) {
                     strategy = new FunctionGenerationStrategy.FunctionDefault(state, function);
                 } else if (!functionDescriptor.isInline()) {
                     strategy = new SuspendFunctionGenerationStrategy(
@@ -307,7 +307,7 @@ public class FunctionCodegen {
             annotationsOwner = functionDescriptor;
         }
 
-        AnnotationCodegen.forMethod(mv, memberCodegen, typeMapper).genAnnotations(annotationsOwner, asmMethod.getReturnType());
+        AnnotationCodegen.forMethod(mv, memberCodegen, state).genAnnotations(annotationsOwner, asmMethod.getReturnType());
         generateParameterAnnotations(annotationsOwner, mv, jvmSignature, memberCodegen, state);
     }
 
@@ -330,7 +330,8 @@ public class FunctionCodegen {
             @NotNull DeclarationDescriptor containingDeclaration
     ) {
         return !canDelegateMethodBodyToInlineClass(origin, functionDescriptor, contextKind, containingDeclaration) ||
-               !functionDescriptor.getOverriddenDescriptors().isEmpty();
+               !functionDescriptor.getOverriddenDescriptors().isEmpty() ||
+               CodegenUtilKt.isJvmStaticInInlineClass(functionDescriptor);
     }
 
     private static boolean canDelegateMethodBodyToInlineClass(
@@ -342,6 +343,9 @@ public class FunctionCodegen {
         // special kind / function
         if (contextKind == OwnerKind.ERASED_INLINE_CLASS) return false;
         if (origin.getOriginKind() == JvmDeclarationOriginKind.UNBOX_METHOD_OF_INLINE_CLASS) return false;
+
+        // Synthesized class member descriptors corresponding to JvmStatic members of companion object
+        if (CodegenUtilKt.isJvmStaticInInlineClass(functionDescriptor)) return false;
 
         // descriptor corresponds to the underlying value
         if (functionDescriptor instanceof PropertyAccessorDescriptor) {
@@ -510,7 +514,7 @@ public class FunctionCodegen {
             @NotNull GenerationState state
     ) {
         if (isAccessor(functionDescriptor)) return;
-        KotlinTypeMapper typeMapper = state.getTypeMapper();
+
         Iterator<ValueParameterDescriptor> iterator = valueParameters.iterator();
         List<JvmMethodParameterSignature> kotlinParameterTypes = jvmSignature.getValueParameters();
 
@@ -522,7 +526,6 @@ public class FunctionCodegen {
                 continue;
             }
 
-            AnnotationCodegen annotationCodegen = AnnotationCodegen.forParameter(i, mv, innerClassConsumer, typeMapper);
             Annotated annotated =
                     kind == JvmMethodParameterKind.VALUE
                     ? iterator.next()
@@ -531,7 +534,7 @@ public class FunctionCodegen {
                       : null;
 
             if (annotated != null) {
-                annotationCodegen.genAnnotations(annotated, parameterSignature.getAsmType());
+                AnnotationCodegen.forParameter(i, mv, innerClassConsumer, state).genAnnotations(annotated, parameterSignature.getAsmType());
             }
         }
     }
@@ -1109,32 +1112,36 @@ public class FunctionCodegen {
 
     @NotNull
     public static String[] getThrownExceptions(@NotNull FunctionDescriptor function, @NotNull KotlinTypeMapper mapper) {
+        return ArrayUtil.toStringArray(CollectionsKt.map(getThrownExceptions(function), d -> mapper.mapClass(d).getInternalName()));
+    }
+
+    @NotNull
+    public static List<ClassDescriptor> getThrownExceptions(@NotNull FunctionDescriptor function) {
         AnnotationDescriptor annotation = function.getAnnotations().findAnnotation(new FqName("kotlin.throws"));
         if (annotation == null) {
             annotation = function.getAnnotations().findAnnotation(new FqName("kotlin.jvm.Throws"));
         }
 
-        if (annotation == null) return ArrayUtil.EMPTY_STRING_ARRAY;
+        if (annotation == null) return Collections.emptyList();
 
         Collection<ConstantValue<?>> values = annotation.getAllValueArguments().values();
-        if (values.isEmpty()) return ArrayUtil.EMPTY_STRING_ARRAY;
+        if (values.isEmpty()) return Collections.emptyList();
 
         Object value = values.iterator().next();
-        if (!(value instanceof ArrayValue)) return ArrayUtil.EMPTY_STRING_ARRAY;
+        if (!(value instanceof ArrayValue)) return Collections.emptyList();
         ArrayValue arrayValue = (ArrayValue) value;
 
-        List<String> strings = CollectionsKt.mapNotNull(
+        return CollectionsKt.mapNotNull(
                 arrayValue.getValue(),
                 (ConstantValue<?> constant) -> {
                     if (constant instanceof KClassValue) {
-                        KClassValue classValue = (KClassValue) constant;
-                        ClassDescriptor classDescriptor = DescriptorUtils.getClassDescriptorForType(classValue.getValue());
-                        return mapper.mapClass(classDescriptor).getInternalName();
+                        return DescriptorUtils.getClassDescriptorForType(
+                                ((KClassValue) constant).getArgumentType(DescriptorUtilsKt.getModule(function))
+                        );
                     }
                     return null;
                 }
         );
-        return ArrayUtil.toStringArray(strings);
     }
 
     void generateDefaultIfNeeded(
@@ -1151,6 +1158,10 @@ public class FunctionCodegen {
             return;
         }
 
+        if (InlineClassesUtilsKt.isInlineClass(contextClass) && kind != OwnerKind.ERASED_INLINE_CLASS) {
+            return;
+        }
+
         if (!isDefaultNeeded(functionDescriptor, function)) {
             return;
         }
@@ -1161,7 +1172,9 @@ public class FunctionCodegen {
                              isEffectivelyInlineOnly(functionDescriptor) ?
                              AsmUtil.NO_FLAG_PACKAGE_PRIVATE : Opcodes.ACC_PUBLIC;
         int flags =  visibilityFlag | getDeprecatedAccessFlag(functionDescriptor) | ACC_SYNTHETIC;
-        if (!(functionDescriptor instanceof ConstructorDescriptor)) {
+        if (!(functionDescriptor instanceof ConstructorDescriptor &&
+              !InlineClassesUtilsKt.isInlineClass(functionDescriptor.getContainingDeclaration()))
+        ) {
             flags |= ACC_STATIC;
         }
 
@@ -1177,7 +1190,7 @@ public class FunctionCodegen {
 
         // Only method annotations are copied to the $default method. Parameter annotations are not copied until there are valid use cases;
         // enum constructors have two additional synthetic parameters which somewhat complicate this task
-        AnnotationCodegen.forMethod(mv, memberCodegen, typeMapper).genAnnotations(functionDescriptor, defaultMethod.getReturnType());
+        AnnotationCodegen.forMethod(mv, memberCodegen, state).genAnnotations(functionDescriptor, defaultMethod.getReturnType());
 
         if (!state.getClassBuilderMode().generateBodies) {
             if (this.owner instanceof MultifileClassFacadeContext)
@@ -1266,7 +1279,8 @@ public class FunctionCodegen {
                 Label loadArg = new Label();
                 iv.ifeq(loadArg);
 
-                StackValue.local(parameterIndex, type).store(loadStrategy.genValue(parameterDescriptor, codegen), iv);
+                StackValue.local(parameterIndex, type, parameterDescriptor.getType())
+                        .store(loadStrategy.genValue(parameterDescriptor, codegen), iv);
 
                 iv.mark(loadArg);
             }
@@ -1282,7 +1296,7 @@ public class FunctionCodegen {
             generator.putValueIfNeeded(new JvmKotlinType(type, null), StackValue.local(parameterIndex, type));
         }
 
-        CallableMethod method = state.getTypeMapper().mapToCallableMethod(functionDescriptor, false);
+        CallableMethod method = state.getTypeMapper().mapToCallableMethod(functionDescriptor, false, methodContext.getContextKind());
 
         generator.genCall(method, null, false, codegen);
 

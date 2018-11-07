@@ -61,6 +61,12 @@ abstract class KotlinSerializerExtensionBase(private val protocol: SerializerExt
         for (annotation in descriptor.nonSourceAnnotations) {
             proto.addExtension(protocol.propertyAnnotation, annotationSerializer.serializeAnnotation(annotation))
         }
+        for (annotation in descriptor.getter?.nonSourceAnnotations.orEmpty()) {
+            proto.addExtension(protocol.propertyGetterAnnotation, annotationSerializer.serializeAnnotation(annotation))
+        }
+        for (annotation in descriptor.setter?.nonSourceAnnotations.orEmpty()) {
+            proto.addExtension(protocol.propertySetterAnnotation, annotationSerializer.serializeAnnotation(annotation))
+        }
         val constantInitializer = descriptor.compileTimeInitializer ?: return
         if (constantInitializer !is NullValue) {
             proto.setExtension(protocol.compileTimeValue, annotationSerializer.valueProto(constantInitializer).build())

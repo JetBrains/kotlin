@@ -6,17 +6,41 @@ suspend fun suspensionPoint() {}
 
 fun test() {
     builder {
-        synchronized(lock) {
-            suspensionPoint()
-        }
-
         inlineMe {
             suspensionPoint()
         }
+    }
 
+    builder {
         monitorInFinally(
-            { suspensionPoint() },
+            {},
             { suspensionPoint() }
         )
     }
+
+    builder {
+        withCrossinline {}
+
+        withCrossinline {
+            suspensionPoint()
+        }
+    }
+
+    synchronized(lock) {
+        builder {
+            suspensionPoint()
+        }
+    }
+
+    synchronized(lock) {
+        object : SuspendRunnable {
+            override suspend fun run() {
+                suspensionPoint()
+            }
+        }
+    }
+}
+
+interface SuspendRunnable {
+    suspend fun run()
 }

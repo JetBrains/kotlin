@@ -8,6 +8,11 @@ pluginManagement {
         }
         gradlePluginPortal()
     }
+
+    if (cacheRedirectorEnabled == 'true') {
+        println("cache-redirector is enabled for pluginManagement")
+        JbCacheRedirectorKt.redirect(repositories)
+    }
 }
 
 // modules
@@ -23,6 +28,11 @@ include ":kotlin-build-common",
         ":compiler:resolution",
         ":compiler:serialization",
         ":compiler:psi",
+        ":compiler:fir:cones",
+        ":compiler:fir:tree",
+        ":compiler:fir:tree:visitors-generator",
+        ":compiler:fir:psi2fir",
+        ":compiler:fir:resolve",
         ":compiler:frontend",
         ":compiler:frontend.java",
         ":compiler:frontend.script",
@@ -136,6 +146,7 @@ include ":kotlin-build-common",
         ":kotlin-reflect-api",
         ":kotlin-ant",
         ":compiler:tests-java8",
+        ":compiler:tests-different-jdk",
         ":compiler:tests-spec",
         ":generators",
         ":generators:test-generator",
@@ -166,6 +177,7 @@ include ":kotlin-build-common",
         ":kotlin-scripting-common",
         ":kotlin-scripting-jvm",
         ":kotlin-scripting-jvm-host",
+        ":kotlin-scripting-intellij",
         ":kotlin-scripting-compiler",
         ":kotlin-scripting-idea",
         ":kotlin-scripting-compiler-embeddable",
@@ -189,7 +201,8 @@ include ":kotlin-build-common",
         ":kotlinx-serialization-compiler-plugin",
         ":kotlinx-serialization-ide-plugin",
         ":kotlin-serialization",
-        ":kotlin-serialization-unshaded"
+        ":kotlin-serialization-unshaded",
+        ":kotlin-idl2k"
 
 def isTeamcityBuild = hasProperty("teamcity") || System.getenv("TEAMCITY_VERSION") != null
 def includeUltimate = hasProperty("intellijUltimateEnabled") && intellijUltimateEnabled != 'false'
@@ -287,6 +300,7 @@ project(':kotlin-annotations-android').projectDir = "$rootDir/libraries/tools/ko
 project(':kotlin-scripting-common').projectDir = "$rootDir/libraries/scripting/common" as File
 project(':kotlin-scripting-jvm').projectDir = "$rootDir/libraries/scripting/jvm" as File
 project(':kotlin-scripting-jvm-host').projectDir = "$rootDir/libraries/scripting/jvm-host" as File
+project(':kotlin-scripting-intellij').projectDir = "$rootDir/libraries/scripting/intellij" as File
 project(':kotlin-scripting-compiler').projectDir = "$rootDir/plugins/scripting/scripting-cli" as File
 project(':kotlin-scripting-compiler-embeddable').projectDir = "$rootDir/plugins/scripting/scripting-embeddable" as File
 project(':kotlin-scripting-idea').projectDir = "$rootDir/plugins/scripting/scripting-idea" as File
@@ -309,3 +323,4 @@ project(':kotlinx-serialization-compiler-plugin').projectDir = file("$rootDir/pl
 project(':kotlinx-serialization-ide-plugin').projectDir = file("$rootDir/plugins/kotlin-serialization/kotlin-serialization-ide")
 project(':kotlin-serialization').projectDir = file("$rootDir/libraries/tools/kotlin-serialization")
 project(':kotlin-serialization-unshaded').projectDir = file("$rootDir/libraries/tools/kotlin-serialization-unshaded")
+project(':kotlin-idl2k').projectDir = file("$rootDir/libraries/tools/idl2k")

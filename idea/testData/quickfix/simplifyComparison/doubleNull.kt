@@ -5,7 +5,9 @@ fun foo(x: String?) {
     }
     else {
         if (<caret>x == null) {
-
+            bar()
         }
     }
 }
+
+fun bar() {}

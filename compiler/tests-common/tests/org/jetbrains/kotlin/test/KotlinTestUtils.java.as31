@@ -102,7 +102,7 @@ public class KotlinTestUtils {
     private static final boolean PRINT_STACKTRACE_FOR_IGNORED_TESTS =
             Boolean.getBoolean("org.jetbrains.kotlin.print.stacktrace.for.ignored.tests");
 
-    private static final boolean AUTOMATICALLY_UNMUTE_PASSED_TESTS = true;
+    private static final boolean AUTOMATICALLY_UNMUTE_PASSED_TESTS = false;
     private static final boolean AUTOMATICALLY_MUTE_FAILED_TESTS = false;
 
     private static final List<File> filesToDelete = new ArrayList<>();

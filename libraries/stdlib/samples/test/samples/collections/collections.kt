@@ -497,6 +497,28 @@ class Collections {
             val emptyList = emptyList<Int>()
             assertFalse(emptyList.any { true })
         }
+
+        @Sample
+        fun maxBy() {
+            val nameToAge = listOf("Alice" to 42, "Bob" to 28, "Carol" to 51)
+            val oldestPerson = nameToAge.maxBy { it.second }
+            assertPrints(oldestPerson, "(Carol, 51)")
+
+            val emptyList = emptyList<Pair<String, Int>>()
+            val emptyMax = emptyList.maxBy { it.second }
+            assertPrints(emptyMax, "null")
+        }
+
+        @Sample
+        fun minBy() {
+            val list = listOf("abcd", "abc", "ab", "abcde")
+            val shortestString = list.minBy { it.length }
+            assertPrints(shortestString, "ab")
+
+            val emptyList = emptyList<String>()
+            val emptyMin = emptyList.minBy { it.length }
+            assertPrints(emptyMin, "null")
+        }
     }
 
     class Elements {

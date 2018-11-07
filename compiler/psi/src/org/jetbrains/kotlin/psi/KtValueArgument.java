@@ -19,14 +19,25 @@ package org.jetbrains.kotlin.psi;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
+import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.KtNodeTypes;
 import org.jetbrains.kotlin.lexer.KtTokens;
+import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
+import org.jetbrains.kotlin.psi.stubs.elements.KtPlaceHolderStubElementType;
+import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes;
 
-public class KtValueArgument extends KtElementImpl implements ValueArgument {
+public class KtValueArgument extends KtElementImplStub<KotlinPlaceHolderStub<? extends KtValueArgument>> implements ValueArgument {
     public KtValueArgument(@NotNull ASTNode node) {
         super(node);
+    }
+
+    public KtValueArgument(@NotNull KotlinPlaceHolderStub<KtValueArgument> stub) {
+        super(stub, KtStubElementTypes.VALUE_ARGUMENT);
+    }
+
+    protected KtValueArgument(KotlinPlaceHolderStub<? extends KtValueArgument> stub, KtPlaceHolderStubElementType<?> nodeType) {
+        super(stub, nodeType);
     }
 
     @Override
@@ -34,16 +45,37 @@ public class KtValueArgument extends KtElementImpl implements ValueArgument {
         return visitor.visitArgument(this, data);
     }
 
+    private static final TokenSet CONSTANT_EXPRESSIONS_TYPES = TokenSet.create(
+            KtStubElementTypes.NULL,
+            KtStubElementTypes.BOOLEAN_CONSTANT,
+            KtStubElementTypes.FLOAT_CONSTANT,
+            KtStubElementTypes.CHARACTER_CONSTANT,
+            KtStubElementTypes.INTEGER_CONSTANT,
+
+            KtStubElementTypes.REFERENCE_EXPRESSION,
+            KtStubElementTypes.DOT_QUALIFIED_EXPRESSION,
+
+            KtStubElementTypes.STRING_TEMPLATE
+    );
+
     @Override
     @Nullable @IfNotParsed
     public KtExpression getArgumentExpression() {
+        KotlinPlaceHolderStub<? extends KtValueArgument> stub = getStub();
+        if (stub != null) {
+            KtExpression[] constantExpressions = stub.getChildrenByType(CONSTANT_EXPRESSIONS_TYPES, KtExpression.EMPTY_ARRAY);
+            if (constantExpressions.length != 0) {
+                return constantExpressions[0];
+            }
+        }
+
         return findChildByClass(KtExpression.class);
     }
 
     @Override
     @Nullable
     public KtValueArgumentName getArgumentName() {
-        return (KtValueArgumentName) findChildByType(KtNodeTypes.VALUE_ARGUMENT_NAME);
+        return getStubOrPsiChild(KtStubElementTypes.VALUE_ARGUMENT_NAME);
     }
 
     @Nullable

@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.idea.inspections.runInspection
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.TestFixtureExtension
 import org.jetbrains.kotlin.idea.test.configureCompilerOptions
+import org.jetbrains.kotlin.idea.test.rollbackCompilerOptions
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.idea.versions.bundledRuntimeVersion
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
@@ -70,7 +71,7 @@ abstract class AbstractInspectionTest : KotlinLightCodeInsightFixtureTestCase() 
 
         val fixtureClasses = InTextDirectivesUtils.findListWithPrefixes(options, "// FIXTURE_CLASS: ")
 
-        configureCompilerOptions(options, project, module)
+        val configured = configureCompilerOptions(options, project, module)
 
         val inspectionsTestDir = optionsFile.parentFile!!
         val srcDir = inspectionsTestDir.parentFile!!
@@ -147,6 +148,9 @@ abstract class AbstractInspectionTest : KotlinLightCodeInsightFixtureTestCase() 
                 }
 
             } finally {
+                if (configured) {
+                    rollbackCompilerOptions(project, module)
+                }
                 fixtureClasses.forEach { TestFixtureExtension.unloadFixture(it) }
             }
         }

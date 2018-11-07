@@ -71,7 +71,7 @@ class KotlinJsDcePlugin : Plugin<Project> {
 
             val configuration = project.configurations.getByName(kotlinCompilation.compileDependencyConfigurationName)
 
-            with (dceTask) {
+            with(dceTask) {
                 classpath = configuration
                 destinationDir = dceTask.dceOptions.outputDirectory?.let { File(it) } ?: outputDir
                 source(kotlinTask.outputFile)

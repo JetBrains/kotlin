@@ -63,11 +63,11 @@ public interface LocalLookup {
                 if (sharedVarType != null) {
                     StackValue.Field wrapperValue = StackValue.receiverWithRefWrapper(localType, classType, fieldName, thiz, vd);
                     innerValue = StackValue.fieldForSharedVar(localType, classType, fieldName, wrapperValue, vd);
-                    enclosedValueDescriptor = new EnclosedValueDescriptor(fieldName, d, innerValue, wrapperValue, type);
+                    enclosedValueDescriptor = new EnclosedValueDescriptor(fieldName, d, innerValue, wrapperValue, type, kotlinType);
                 }
                 else {
                     innerValue = StackValue.field(type, kotlinType, classType, fieldName, false, thiz, vd);
-                    enclosedValueDescriptor = new EnclosedValueDescriptor(fieldName, d, innerValue, type);
+                    enclosedValueDescriptor = new EnclosedValueDescriptor(fieldName, d, innerValue, type, kotlinType);
                 }
 
                 closure.captureVariable(enclosedValueDescriptor);
@@ -118,7 +118,7 @@ public interface LocalLookup {
                         localType, null, classType, fieldName, false, StackValue.LOCAL_0, vd
                 );
 
-                closure.captureVariable(new EnclosedValueDescriptor(fieldName, d, innerValue, localType));
+                closure.captureVariable(new EnclosedValueDescriptor(fieldName, d, innerValue, localType, null));
 
                 return innerValue;
             }

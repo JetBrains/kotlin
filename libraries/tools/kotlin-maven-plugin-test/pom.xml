@@ -132,9 +132,14 @@
                                 <artifact>org.jetbrains.kotlin:kotlin-stdlib-jdk8:${project.version}</artifact>
                                 <artifact>org.jetbrains.kotlin:kotlin-reflect:${project.version}</artifact>
                                 <artifact>org.jetbrains.kotlin:kotlin-test-common:${project.version}</artifact>
+                                <artifact>org.jetbrains.kotlin:kotlin-test-annotations-common:${project.version}</artifact>
                                 <artifact>org.jetbrains.kotlin:kotlin-test:${project.version}</artifact>
+                                <artifact>org.jetbrains.kotlin:kotlin-test-junit:${project.version}</artifact>
+                                <artifact>org.jetbrains.kotlin:kotlin-test-junit5:${project.version}</artifact>
+                                <artifact>org.jetbrains.kotlin:kotlin-test-testng:${project.version}</artifact>
                                 <artifact>org.jetbrains.kotlin:kotlin-test-js:${project.version}</artifact>
                                 <artifact>org.jetbrains.kotlin:kotlin-script-util:${project.version}</artifact>
+                                <artifact>org.jetbrains.kotlin:kotlin-bom:${project.version}:pom</artifact>
                             </extraArtifacts>
                             <showErrors>true</showErrors>
                             <postBuildHookScript>verify</postBuildHookScript>

@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.asJava.toLightMethods
 import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinReferencesSearchOptions
 import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinReferencesSearchParameters
+import org.jetbrains.kotlin.idea.search.or
 import org.jetbrains.kotlin.idea.search.projectScope
 import org.jetbrains.kotlin.idea.util.actualsForExpected
 import org.jetbrains.kotlin.idea.util.liftToExpected
@@ -46,9 +47,9 @@ abstract class RenameKotlinPsiProcessor : RenamePsiElementProcessor() {
 
     override fun findReferences(element: PsiElement): Collection<PsiReference> {
         val searchParameters = KotlinReferencesSearchParameters(
-                element,
-                element.useScope,
-                kotlinOptions = KotlinReferencesSearchOptions(searchForComponentConventions = false)
+            element,
+            element.project.projectScope() or element.useScope,
+            kotlinOptions = KotlinReferencesSearchOptions(searchForComponentConventions = false)
         )
         val references = ReferencesSearch.search(searchParameters).toMutableList()
         if (element is KtNamedFunction

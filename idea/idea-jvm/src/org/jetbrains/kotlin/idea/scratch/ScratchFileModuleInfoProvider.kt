@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.idea.scratch
 
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer
 import com.intellij.ide.scratch.ScratchFileService
-import com.intellij.openapi.components.AbstractProjectComponent
+import com.intellij.openapi.components.ProjectComponent
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileEditor.FileEditorManagerListener
@@ -34,11 +34,11 @@ import org.jetbrains.kotlin.parsing.KotlinParserDefinition.Companion.STD_SCRIPT_
 import org.jetbrains.kotlin.parsing.KotlinParserDefinition.Companion.STD_SCRIPT_SUFFIX
 import org.jetbrains.kotlin.psi.KtFile
 
-class ScratchFileModuleInfoProvider(project: Project) : AbstractProjectComponent(project) {
+class ScratchFileModuleInfoProvider(val project: Project) : ProjectComponent {
     private val LOG = Logger.getInstance(this.javaClass)
 
     override fun projectOpened() {
-        myProject.messageBus.connect(myProject).subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, ScratchFileModuleListener())
+        project.messageBus.connect(project).subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, ScratchFileModuleListener())
     }
 
     private inner class ScratchFileModuleListener : FileEditorManagerListener {
@@ -46,7 +46,7 @@ class ScratchFileModuleInfoProvider(project: Project) : AbstractProjectComponent
             if (!file.isValid) return
             if (!ScratchFileService.isInScratchRoot(file)) return
 
-            val ktFile = PsiManager.getInstance(myProject).findFile(file) as? KtFile ?: return
+            val ktFile = PsiManager.getInstance(project).findFile(file) as? KtFile ?: return
 
             // Hack before api in IDEA will be introduced
             if (file.extension == KotlinFileType.EXTENSION) {
@@ -71,16 +71,16 @@ class ScratchFileModuleInfoProvider(project: Project) : AbstractProjectComponent
                 psiFile.virtualFile.scriptRelatedModuleName = module.name
 
                 // Drop caches for old module
-                ScriptDependenciesModificationTracker.getInstance(myProject).incModificationCount()
+                ScriptDependenciesModificationTracker.getInstance(project).incModificationCount()
                 // Force re-highlighting
-                DaemonCodeAnalyzer.getInstance(myProject).restart(psiFile)
+                DaemonCodeAnalyzer.getInstance(project).restart(psiFile)
             }
 
-            val module = ktFile.virtualFile.scriptRelatedModuleName?.let { ModuleManager.getInstance(myProject).findModuleByName(it) }
+            val module = ktFile.virtualFile.scriptRelatedModuleName?.let { ModuleManager.getInstance(project).findModuleByName(it) }
             if (module != null) {
                 scratchPanel?.setModule(module)
             } else {
-                val firstModule = ModuleManager.getInstance(myProject).modules.firstOrNull()
+                val firstModule = ModuleManager.getInstance(project).modules.firstOrNull()
                 if (firstModule != null) {
                     scratchPanel?.setModule(firstModule)
                 }

@@ -2,5 +2,5 @@ package
 
 package d {
     public fun </*0*/ T> asList(/*0*/ t: T): kotlin.collections.List<T>?
-    public fun main(/*0*/ args: kotlin.Array<kotlin.String>): kotlin.Unit
+    public fun main(): kotlin.Unit
 }

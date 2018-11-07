@@ -14,8 +14,8 @@ package
     @kotlin.jvm.JvmField public abstract val c: kotlin.Int
     @field:kotlin.jvm.JvmField public final val customGetter: kotlin.String = ""
     @field:kotlin.jvm.JvmField public final var customSetter: kotlin.String
-    @field:kotlin.jvm.JvmField public final val explicitDefaultAnnotatedGetter: kotlin.String = ""
-    @field:kotlin.jvm.JvmField public final var explicitDefaultAnnotatedSetter: kotlin.String
+    @field:kotlin.jvm.JvmField @get:DemoAnnotation public final val explicitDefaultAnnotatedGetter: kotlin.String = ""
+    @field:kotlin.jvm.JvmField @set:DemoAnnotation public final var explicitDefaultAnnotatedSetter: kotlin.String
     @field:kotlin.jvm.JvmField public final val explicitDefaultGetter: kotlin.String = ""
     @field:kotlin.jvm.JvmField public final var explicitDefaultSetter: kotlin.String
     @kotlin.jvm.JvmField public final val noBackingField: kotlin.String

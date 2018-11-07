@@ -63,6 +63,7 @@ class KotlinAndroidViewConstructorFix(element: KtSuperTypeEntry) : KotlinQuickFi
         primaryConstructor.valueParameterList?.let { ShortenReferences.DEFAULT.process(it) }
 
         primaryConstructor.addAnnotation(fqNameAnnotation, whiteSpaceText = " ")
+        primaryConstructor.addAfter(factory.createWhiteSpace(" "), primaryConstructor.modifierList)
 
         element.replace(factory.createSuperTypeCallEntry(element.text + "(context, attrs, defStyleAttr)"))
     }

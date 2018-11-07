@@ -1,0 +1,19 @@
+EOL_COMMENT ('// somecomment')
+WHITE_SPACE ('\n')
+EOL_COMMENT ('//some comment')
+WHITE_SPACE ('\n\n')
+BLOCK_COMMENT ('/**/')
+WHITE_SPACE ('\n')
+BLOCK_COMMENT ('/* somecomment */')
+WHITE_SPACE ('\n')
+BLOCK_COMMENT ('/*some comment */')
+WHITE_SPACE ('\n')
+BLOCK_COMMENT ('/* some comment*/')
+WHITE_SPACE ('\n\n')
+KDoc ('/***/')
+WHITE_SPACE ('\n')
+KDoc ('/** somedoc */')
+WHITE_SPACE ('\n')
+KDoc ('/**some doc */')
+WHITE_SPACE ('\n')
+KDoc ('/** some doc*/')

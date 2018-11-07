@@ -54,10 +54,15 @@ public actual inline fun <R, T> (suspend R.() -> T).startCoroutineUninterceptedO
  * The [completion] continuation is invoked when coroutine completes with result or exception.
  *
  * This function returns unintercepted continuation.
- * Invocation of `resume(Unit)` starts coroutine directly in the invoker's thread without going through the
+ * Invocation of `resume(Unit)` starts coroutine immediately in the invoker's call stack without going through the
  * [ContinuationInterceptor] that might be present in the completion's [CoroutineContext].
  * It is invoker's responsibility to ensure that the proper invocation context is established.
+ * Note that [completion] of this function may get invoked in an arbitrary context.
+ *
  * [Continuation.intercepted] can be used to acquire the intercepted continuation.
+ * Invocation of `resume(Unit)` on intercepted continuation guarantees that execution of
+ * both the coroutine and [completion] happens in the invocation context established by
+ * [ContinuationInterceptor].
  *
  * Repeated invocation of any resume function on the resulting continuation corrupts the
  * state machine of the coroutine and may result in arbitrary behaviour or exception.
@@ -84,10 +89,15 @@ public actual fun <T> (suspend () -> T).createCoroutineUnintercepted(
  * The [completion] continuation is invoked when coroutine completes with result or exception.
  *
  * This function returns unintercepted continuation.
- * Invocation of `resume(Unit)` starts coroutine directly in the invoker's thread without going through the
+ * Invocation of `resume(Unit)` starts coroutine immediately in the invoker's call stack without going through the
  * [ContinuationInterceptor] that might be present in the completion's [CoroutineContext].
  * It is invoker's responsibility to ensure that the proper invocation context is established.
+ * Note that [completion] of this function may get invoked in an arbitrary context.
+ *
  * [Continuation.intercepted] can be used to acquire the intercepted continuation.
+ * Invocation of `resume(Unit)` on intercepted continuation guarantees that execution of
+ * both the coroutine and [completion] happens in the invocation context established by
+ * [ContinuationInterceptor].
  *
  * Repeated invocation of any resume function on the resulting continuation corrupts the
  * state machine of the coroutine and may result in arbitrary behaviour or exception.
@@ -109,6 +119,12 @@ public actual fun <R, T> (suspend R.() -> T).createCoroutineUnintercepted(
 
 /**
  * Intercepts this continuation with [ContinuationInterceptor].
+ *
+ * This function shall be used on the immediate result of [createCoroutineUnintercepted] or [suspendCoroutineUninterceptedOrReturn],
+ * in which case it checks for [ContinuationInterceptor] in the continuation's [context][Continuation.context],
+ * invokes [ContinuationInterceptor.interceptContinuation], caches and returns result.
+ *
+ * If this function is invoked on other [Continuation] instances it returns `this` continuation unchanged.
  */
 @SinceKotlin("1.3")
 public actual fun <T> Continuation<T>.intercepted(): Continuation<T> =

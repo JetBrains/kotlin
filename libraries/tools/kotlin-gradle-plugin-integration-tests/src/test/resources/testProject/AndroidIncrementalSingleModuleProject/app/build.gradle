@@ -1,8 +1,8 @@
 buildscript {
     repositories {
         mavenLocal()
-        jcenter()
         maven { url 'https://maven.google.com' }
+        jcenter()
     }
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
@@ -39,8 +39,8 @@ android {
 
 repositories {
     mavenLocal()
-    jcenter()
     maven { url 'https://maven.google.com' }
+    jcenter()
 }
 
 dependencies {

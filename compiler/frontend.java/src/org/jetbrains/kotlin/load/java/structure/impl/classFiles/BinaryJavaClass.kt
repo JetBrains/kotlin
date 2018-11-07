@@ -50,8 +50,11 @@ class BinaryJavaClass(
 
     override val annotationsByFqName by buildLazyValueForMap()
 
-    private val innerClassNameToAccess: MutableMap<Name, Int> = THashMap()
-    override val innerClassNames get() = innerClassNameToAccess.keys
+    // Short name of a nested class of this class -> access flags as seen in the InnerClasses attribute value.
+    // Note that it doesn't include classes mentioned in other InnerClasses attribute values (those which are not nested in this class).
+    private val ownInnerClassNameToAccess: MutableMap<Name, Int> = THashMap()
+
+    override val innerClassNames get() = ownInnerClassNameToAccess.keys
 
     override val name: Name
         get() = fqName.shortName()
@@ -100,9 +103,14 @@ class BinaryJavaClass(
         if (access.isSet(Opcodes.ACC_SYNTHETIC)) return
         if (innerName == null || outerName == null) return
 
-        if (myInternalName == outerName) {
+        // Do not read InnerClasses attribute values where full name != outer + $ + inner; treat those classes as top level instead.
+        // This is possible for example for Groovy-generated $Trait$FieldHelper classes.
+        if (name == "$outerName$$innerName") {
             context.addInnerClass(name, outerName, innerName)
-            innerClassNameToAccess[context.mapInternalNameToClassId(name).shortClassName] = access
+
+            if (myInternalName == outerName) {
+                ownInnerClassNameToAccess[context.mapInternalNameToClassId(name).shortClassName] = access
+            }
         }
     }
 
@@ -195,7 +203,7 @@ class BinaryJavaClass(
             BinaryJavaAnnotation.addAnnotation(annotations, desc, context, signatureParser)
 
     override fun findInnerClass(name: Name): JavaClass? {
-        val access = innerClassNameToAccess[name] ?: return null
+        val access = ownInnerClassNameToAccess[name] ?: return null
 
         return virtualFile.parent.findChild("${virtualFile.nameWithoutExtension}$$name.class")?.let {
             BinaryJavaClass(it, fqName.child(name), context.copyForMember(), signatureParser, access, this)

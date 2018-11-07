@@ -255,17 +255,17 @@ class FunctionDescriptorResolver(
         dataFlowInfo: DataFlowInfo,
         function: KtFunction
     ): LazyContractProvider? {
-        val provideByDeferredForceResolve = LazyContractProvider {
-            expressionTypingServices.getBodyExpressionType(trace, scope, dataFlowInfo, function, functionDescriptor)
-        }
+        if (function !is KtNamedFunction) return null
 
         val isContractsEnabled = languageVersionSettings.supportsFeature(LanguageFeature.AllowContractsForCustomFunctions) ||
                 // We need to enable contracts if we're compiling "kotlin"-package to be able to ship contracts in stdlib in 1.2
                 languageVersionSettings.getFlag(AnalysisFlags.allowKotlinPackage)
 
-        if (!isContractsEnabled || !function.isContractPresentPsiCheck()) return null
+        if (!isContractsEnabled || !function.mayHaveContract()) return null
 
-        return provideByDeferredForceResolve
+        return LazyContractProvider {
+            expressionTypingServices.getBodyExpressionType(trace, scope, dataFlowInfo, function, functionDescriptor)
+        }
     }
 
     private fun createValueParameterDescriptors(

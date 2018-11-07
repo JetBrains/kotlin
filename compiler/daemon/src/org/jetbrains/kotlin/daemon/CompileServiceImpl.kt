@@ -510,17 +510,9 @@ class CompileServiceImpl(
         }
 
         val workingDir = incrementalCompilationOptions.workingDir
-        val versionManagers = commonCacheVersionsManagers(workingDir, enabled = true) +
-                customCacheVersionManager(
-                    incrementalCompilationOptions.customCacheVersion,
-                    incrementalCompilationOptions.customCacheVersionFileName,
-                    workingDir,
-                    enabled = true
-                )
         val modulesApiHistory = ModulesApiHistoryJs(incrementalCompilationOptions.modulesInfo)
         val compiler = IncrementalJsCompilerRunner(
             workingDir = workingDir,
-            cachesVersionManagers = versionManagers,
             reporter = reporter,
             buildHistoryFile = incrementalCompilationOptions.multiModuleICSettings.buildHistoryFile,
             modulesApiHistory = modulesApiHistory
@@ -576,13 +568,6 @@ class CompileServiceImpl(
         }
 
         val workingDir = incrementalCompilationOptions.workingDir
-        val versions = commonCacheVersionsManagers(workingDir, enabled = true) +
-                customCacheVersionManager(
-                    incrementalCompilationOptions.customCacheVersion,
-                    incrementalCompilationOptions.customCacheVersionFileName,
-                    workingDir,
-                    enabled = true
-                )
 
         val modulesApiHistory = incrementalCompilationOptions.run {
             if (!multiModuleICSettings.useModuleDetection) {
@@ -595,7 +580,6 @@ class CompileServiceImpl(
         val compiler = IncrementalJvmCompilerRunner(
             workingDir,
             javaSourceRoots,
-            versions,
             reporter,
             buildHistoryFile = incrementalCompilationOptions.multiModuleICSettings.buildHistoryFile,
             localStateDirs = incrementalCompilationOptions.localStateDirs,

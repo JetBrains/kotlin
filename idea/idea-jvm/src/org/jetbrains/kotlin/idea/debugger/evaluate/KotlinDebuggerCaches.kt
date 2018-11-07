@@ -41,7 +41,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyzeAndGetResult
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithAllCompilerChecks
 import org.jetbrains.kotlin.idea.debugger.BinaryCacheKey
 import org.jetbrains.kotlin.idea.debugger.BytecodeDebugInfo
-import org.jetbrains.kotlin.idea.debugger.WeakBytecodeDebugInfoStorage
+import org.jetbrains.kotlin.idea.debugger.createWeakBytecodeDebugInfoStorage
 import org.jetbrains.kotlin.idea.debugger.evaluate.classLoading.ClassToLoad
 import org.jetbrains.kotlin.idea.runInReadActionWithWriteActionPriorityWithPCE
 import org.jetbrains.kotlin.idea.util.application.runReadAction
@@ -78,8 +78,8 @@ class KotlinDebuggerCaches(project: Project) {
 
     private val debugInfoCache = CachedValuesManager.getManager(project).createCachedValue(
             {
-                CachedValueProvider.Result<WeakBytecodeDebugInfoStorage>(
-                        WeakBytecodeDebugInfoStorage(),
+                CachedValueProvider.Result(
+                        createWeakBytecodeDebugInfoStorage(),
                         PsiModificationTracker.MODIFICATION_COUNT)
             }, false)
 
