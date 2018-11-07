@@ -21,17 +21,31 @@ import kotlin.annotation.AnnotationRetention.SOURCE
 import kotlin.annotation.AnnotationTarget.*
 
 /**
- * Marks the annotated class, function, property, variable or parameter as deprecated.
- * @property message the message explaining the deprecation and recommending an alternative API to use.
- * @property replaceWith if present, specifies a code fragment which should be used as a replacement for
- *     the deprecated API usage.
+ * Marks the annotated declaration as deprecated.
+ *
+ * A deprecated API element is not recommended to use, typically because it's being phased out or a better alternative exists.
+ *
+ * To help removing deprecated API gradually, the property [level] could be used.
+ * Usually a gradual phase-out goes through the "warning", then "error", then "hidden" or "removed" stages:
+ * - First and by default, [DeprecationLevel.WARNING] is used to notify API consumers, but not to break their compilation or runtime usages.
+ * - Then, some time later the deprecation level is raised to [DeprecationLevel.ERROR], so that no new Kotlin code can be compiled
+ *   using the deprecated API.
+ * - Finally, the API is either removed entirely, or hidden ([DeprecationLevel.HIDDEN]) from code,
+ * so its usages look like unresolved references, while the API remains in the compiled code
+ * preserving binary compatibility with previously compiled code.
+ *
+ * @property message The message explaining the deprecation and recommending an alternative API to use.
+ * @property replaceWith If present, specifies a code fragment which should be used as a replacement for
+ *  the deprecated API usage.
+ * @property level Specifies how the deprecated element usages are reported in code.
+ *  See the [DeprecationLevel] enum for the possible values.
  */
 @Target(CLASS, FUNCTION, PROPERTY, ANNOTATION_CLASS, CONSTRUCTOR, PROPERTY_SETTER, PROPERTY_GETTER, TYPEALIAS)
 @MustBeDocumented
 public annotation class Deprecated(
-        val message: String,
-        val replaceWith: ReplaceWith = ReplaceWith(""),
-        val level: DeprecationLevel = DeprecationLevel.WARNING
+    val message: String,
+    val replaceWith: ReplaceWith = ReplaceWith(""),
+    val level: DeprecationLevel = DeprecationLevel.WARNING
 )
 
 /**
@@ -53,12 +67,14 @@ public annotation class Deprecated(
 public annotation class ReplaceWith(val expression: String, vararg val imports: String)
 
 /**
- * Contains levels for deprecation levels.
+ * Possible levels of a deprecation. The level specifies how the deprecated element usages are reported in code.
+ *
+ * @see Deprecated
  */
 public enum class DeprecationLevel {
-    /** Usage of the deprecated element will be marked as a warning. */
+    /** Usage of the deprecated element will be reported as a warning. */
     WARNING,
-    /** Usage of the deprecated element will be marked as an error. */
+    /** Usage of the deprecated element will be reported as an error. */
     ERROR,
     /** Deprecated element will not be accessible from code. */
     HIDDEN
