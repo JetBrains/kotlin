@@ -242,7 +242,7 @@ fun rollbackCompilerOptions(project: Project, module: Module) {
     configureLanguageAndApiVersion(project, module, LanguageVersion.LATEST_STABLE.versionString)
 
     val facetSettings = KotlinFacet.get(module)!!.configuration.settings
-    (facetSettings.compilerArguments as K2JVMCompilerArguments).jvmTarget = JvmTarget.DEFAULT.description
+    (facetSettings.compilerArguments as? K2JVMCompilerArguments)?.jvmTarget = JvmTarget.DEFAULT.description
 
     val compilerSettings = facetSettings.compilerSettings ?: CompilerSettings().also {
         facetSettings.compilerSettings = it
