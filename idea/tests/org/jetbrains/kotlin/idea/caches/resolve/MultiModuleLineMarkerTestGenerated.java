@@ -45,6 +45,11 @@ public class MultiModuleLineMarkerTestGenerated extends AbstractMultiModuleLineM
         runTest("idea/testData/multiModuleLineMarker/actualEnumEntriesInOneLine/");
     }
 
+    @TestMetadata("actualWithOverload")
+    public void testActualWithOverload() throws Exception {
+        runTest("idea/testData/multiModuleLineMarker/actualWithOverload/");
+    }
+
     public void testAllFilesPresentInMultiModuleLineMarker() throws Exception {
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/multiModuleLineMarker"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, false);
     }
@@ -62,6 +67,11 @@ public class MultiModuleLineMarkerTestGenerated extends AbstractMultiModuleLineM
     @TestMetadata("expectEnumEntriesInOneLine")
     public void testExpectEnumEntriesInOneLine() throws Exception {
         runTest("idea/testData/multiModuleLineMarker/expectEnumEntriesInOneLine/");
+    }
+
+    @TestMetadata("expectWithOverload")
+    public void testExpectWithOverload() throws Exception {
+        runTest("idea/testData/multiModuleLineMarker/expectWithOverload/");
     }
 
     @TestMetadata("fromActualAnnotation")
