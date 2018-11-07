@@ -253,14 +253,4 @@ class WrapResourceWithUseCallInspection : AbstractKotlinInspection() {
 
         }
     }
-
-    private fun KtDotQualifiedExpression.multipleExpressions(): Boolean {
-        var result = false
-        accept(object : KtTreeVisitorVoid() {
-            override fun visitDotQualifiedExpression(expression: KtDotQualifiedExpression) {
-                result = true
-            }
-        })
-        return result
-    }
 }
