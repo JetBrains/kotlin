@@ -46,4 +46,22 @@ public class IrJsTextTestCaseGenerated extends AbstractIrJsTextTestCase {
             runTest("compiler/testData/ir/irJsText/dynamic/invokeOperator.kt");
         }
     }
+
+    @TestMetadata("compiler/testData/ir/irJsText/native")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Native extends AbstractIrJsTextTestCase {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInNative() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/ir/irJsText/native"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("nativeNativeKotlin.kt")
+        public void testNativeNativeKotlin() throws Exception {
+            runTest("compiler/testData/ir/irJsText/native/nativeNativeKotlin.kt");
+        }
+    }
 }

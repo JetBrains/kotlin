@@ -28,7 +28,9 @@ import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.pureEndOffset
 import org.jetbrains.kotlin.psi.psiUtil.pureStartOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffsetSkippingComments
-import org.jetbrains.kotlin.psi2ir.*
+import org.jetbrains.kotlin.psi2ir.isConstructorDelegatingToSuper
+import org.jetbrains.kotlin.psi2ir.pureEndOffsetOrUndefined
+import org.jetbrains.kotlin.psi2ir.pureStartOffsetOrUndefined
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -213,23 +215,28 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
         declareConstructor(ktClassOrObject, ktClassOrObject.primaryConstructor ?: ktClassOrObject, primaryConstructorDescriptor) {
             if (
                 primaryConstructorDescriptor.isExpect ||
-                DescriptorUtils.isAnnotationClass(primaryConstructorDescriptor.constructedClass)
+                DescriptorUtils.isAnnotationClass(primaryConstructorDescriptor.constructedClass) ||
+                primaryConstructorDescriptor.constructedClass.isExternal
             )
                 null
             else
                 generatePrimaryConstructorBody(ktClassOrObject)
         }
 
-    fun generateSecondaryConstructor(ktConstructor: KtSecondaryConstructor): IrConstructor =
-        declareConstructor(
-            ktConstructor, ktConstructor,
-            getOrFail(BindingContext.CONSTRUCTOR, ktConstructor) as ClassConstructorDescriptor
-        ) {
-            if (ktConstructor.isConstructorDelegatingToSuper(context.bindingContext))
-                generateSecondaryConstructorBodyWithNestedInitializers(ktConstructor)
-            else
-                generateSecondaryConstructorBody(ktConstructor)
+    fun generateSecondaryConstructor(ktConstructor: KtSecondaryConstructor): IrConstructor {
+        val constructorDescriptor = getOrFail(BindingContext.CONSTRUCTOR, ktConstructor) as ClassConstructorDescriptor
+        return declareConstructor(ktConstructor, ktConstructor, constructorDescriptor) {
+            when {
+                constructorDescriptor.constructedClass.isExternal ->
+                    null
+
+                ktConstructor.isConstructorDelegatingToSuper(context.bindingContext) ->
+                    generateSecondaryConstructorBodyWithNestedInitializers(ktConstructor)
+
+                else -> generateSecondaryConstructorBody(ktConstructor)
+            }
         }
+    }
 
 
     private inline fun declareConstructor(
