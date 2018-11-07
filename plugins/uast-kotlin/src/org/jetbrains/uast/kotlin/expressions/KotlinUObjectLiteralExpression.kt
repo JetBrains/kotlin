@@ -23,11 +23,12 @@ import org.jetbrains.kotlin.psi.KtObjectLiteralExpression
 import org.jetbrains.kotlin.psi.KtSuperTypeCallEntry
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.uast.*
+import org.jetbrains.uast.kotlin.internal.DelegatedMultiResolve
 
 class KotlinUObjectLiteralExpression(
     override val psi: KtObjectLiteralExpression,
     givenParent: UElement?
-) : KotlinAbstractUExpression(givenParent), UObjectLiteralExpression, UCallExpressionEx, KotlinUElementWithType {
+) : KotlinAbstractUExpression(givenParent), UObjectLiteralExpression, UCallExpressionEx, DelegatedMultiResolve, KotlinUElementWithType {
 
     override val declaration: UClass by lz {
         psi.objectDeclaration.toLightClass()

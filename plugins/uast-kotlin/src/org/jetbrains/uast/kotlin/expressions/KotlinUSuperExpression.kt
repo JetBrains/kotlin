@@ -22,11 +22,12 @@ import org.jetbrains.uast.UElement
 import org.jetbrains.uast.UIdentifier
 import org.jetbrains.uast.USuperExpression
 import org.jetbrains.uast.kotlin.declarations.KotlinUIdentifier
+import org.jetbrains.uast.kotlin.internal.DelegatedMultiResolve
 
 class KotlinUSuperExpression(
         override val psi: KtSuperExpression,
         givenParent: UElement?
-) : KotlinAbstractUExpression(givenParent), USuperExpression, KotlinUElementWithType, KotlinEvaluatableUElement {
+) : KotlinAbstractUExpression(givenParent), USuperExpression, DelegatedMultiResolve, KotlinUElementWithType, KotlinEvaluatableUElement {
     override val label: String?
         get() = psi.getLabelName()
 

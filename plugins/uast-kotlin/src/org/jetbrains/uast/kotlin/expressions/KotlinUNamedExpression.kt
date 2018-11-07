@@ -20,6 +20,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiType
 import org.jetbrains.kotlin.psi.ValueArgument
 import org.jetbrains.uast.*
+import org.jetbrains.uast.kotlin.internal.DelegatedMultiResolve
 
 class KotlinUNamedExpression private constructor(
     override val name: String?,
@@ -60,7 +61,7 @@ class KotlinUNamedExpression private constructor(
 class KotlinUVarargExpression(
     private val valueArgs: List<ValueArgument>,
     uastParent: UElement?
-) : KotlinAbstractUExpression(uastParent), UCallExpressionEx {
+) : KotlinAbstractUExpression(uastParent), UCallExpressionEx, DelegatedMultiResolve {
     override val kind: UastCallKind = UastCallKind.NESTED_ARRAY_INITIALIZER
 
     override val valueArguments: List<UExpression> by lz {

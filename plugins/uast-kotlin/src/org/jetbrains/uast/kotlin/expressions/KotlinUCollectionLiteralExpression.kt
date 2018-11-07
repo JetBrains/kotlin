@@ -14,11 +14,12 @@ import org.jetbrains.uast.*
 import org.jetbrains.uast.kotlin.KotlinAbstractUExpression
 import org.jetbrains.uast.kotlin.KotlinConverter
 import org.jetbrains.uast.kotlin.KotlinUElementWithType
+import org.jetbrains.uast.kotlin.internal.DelegatedMultiResolve
 
 class KotlinUCollectionLiteralExpression(
     override val sourcePsi: KtCollectionLiteralExpression,
     givenParent: UElement?
-) : KotlinAbstractUExpression(givenParent), UCallExpressionEx, KotlinUElementWithType {
+) : KotlinAbstractUExpression(givenParent), UCallExpressionEx, DelegatedMultiResolve, KotlinUElementWithType {
 
     override val classReference: UReferenceExpression? get() = null
 

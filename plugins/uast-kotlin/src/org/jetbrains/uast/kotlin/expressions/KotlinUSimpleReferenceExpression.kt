@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
 import org.jetbrains.kotlin.utils.addToStdlib.constant
 import org.jetbrains.uast.*
 import org.jetbrains.uast.kotlin.declarations.KotlinUIdentifier
+import org.jetbrains.uast.kotlin.internal.DelegatedMultiResolve
 import org.jetbrains.uast.visitor.UastVisitor
 
 open class KotlinUSimpleReferenceExpression(
@@ -102,7 +103,7 @@ open class KotlinUSimpleReferenceExpression(
         private val resolvedCall: ResolvedCall<*>,
         private val accessorDescriptor: DeclarationDescriptor,
         val setterValue: KtExpression?
-    ) : UCallExpressionEx, JvmDeclarationUElementPlaceholder {
+    ) : UCallExpressionEx, DelegatedMultiResolve, JvmDeclarationUElementPlaceholder {
         override val methodName: String?
             get() = accessorDescriptor.name.asString()
 
