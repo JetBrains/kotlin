@@ -32,32 +32,8 @@ import org.junit.Test
 class GradleInspectionTest : GradleImportingTestCase() {
     @Test
     fun testDifferentStdlibGradleVersion() {
-        val localFile = createProjectSubFile(
-            "build.gradle", """
-            group 'Again'
-            version '1.0-SNAPSHOT'
-
-            buildscript {
-                repositories {
-                    mavenCentral()
-                }
-
-                dependencies {
-                    classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.0.2")
-                }
-            }
-
-            apply plugin: 'kotlin'
-
-            dependencies {
-                compile "org.jetbrains.kotlin:kotlin-stdlib:1.0.3"
-            }
-        """
-        )
-        importProject()
-
         val tool = DifferentStdlibGradleVersionInspection()
-        val problems = getInspectionResult(tool, localFile)
+        val problems = getInspectionResultFromTestDataProject(tool)
 
         Assert.assertTrue(problems.size == 1)
         Assert.assertEquals("Plugin version (1.0.2) is not the same as library version (1.0.3)", problems.single())
@@ -65,32 +41,8 @@ class GradleInspectionTest : GradleImportingTestCase() {
 
     @Test
     fun testDifferentStdlibGradleVersionWithImplementation() {
-        val localFile = createProjectSubFile(
-            "build.gradle", """
-            group 'Again'
-            version '1.0-SNAPSHOT'
-
-            buildscript {
-                repositories {
-                    mavenCentral()
-                }
-
-                dependencies {
-                    classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.0.2")
-                }
-            }
-
-            apply plugin: 'kotlin'
-
-            dependencies {
-                implementation "org.jetbrains.kotlin:kotlin-stdlib:1.0.3"
-            }
-        """
-        )
-        importProject()
-
         val tool = DifferentStdlibGradleVersionInspection()
-        val problems = getInspectionResult(tool, localFile)
+        val problems = getInspectionResultFromTestDataProject(tool)
 
         Assert.assertTrue(problems.size == 1)
         Assert.assertEquals("Plugin version (1.0.2) is not the same as library version (1.0.3)", problems.single())
@@ -98,35 +50,8 @@ class GradleInspectionTest : GradleImportingTestCase() {
 
     @Test
     fun testDifferentStdlibJre7GradleVersion() {
-        val localFile = createProjectSubFile(
-            "build.gradle", """
-            group 'Again'
-            version '1.0-SNAPSHOT'
-
-            buildscript {
-                repositories {
-                    mavenCentral()
-                    maven {
-                        url 'http://dl.bintray.com/kotlin/kotlin-eap-1.1'
-                    }
-                }
-
-                dependencies {
-                    classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.1.0-beta-17")
-                }
-            }
-
-            apply plugin: 'kotlin'
-
-            dependencies {
-                compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:1.1.0-beta-22"
-            }
-        """
-        )
-        importProject()
-
         val tool = DifferentStdlibGradleVersionInspection()
-        val problems = getInspectionResult(tool, localFile)
+        val problems = getInspectionResultFromTestDataProject(tool)
 
         Assert.assertTrue(problems.size == 1)
         Assert.assertEquals("Plugin version (1.1.0-beta-17) is not the same as library version (1.1.0-beta-22)", problems.single())
@@ -134,35 +59,8 @@ class GradleInspectionTest : GradleImportingTestCase() {
 
     @Test
     fun testDifferentStdlibJdk7GradleVersion() {
-        val localFile = createProjectSubFile(
-            "build.gradle", """
-            group 'Again'
-            version '1.0-SNAPSHOT'
-
-            buildscript {
-                repositories {
-                    mavenCentral()
-                    maven {
-                        url 'http://dl.bintray.com/kotlin/kotlin-eap-1.1'
-                    }
-                }
-
-                dependencies {
-                    classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.1.0-beta-17")
-                }
-            }
-
-            apply plugin: 'kotlin'
-
-            dependencies {
-                compile "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.1.0-beta-22"
-            }
-        """
-        )
-        importProject()
-
         val tool = DifferentStdlibGradleVersionInspection()
-        val problems = getInspectionResult(tool, localFile)
+        val problems = getInspectionResultFromTestDataProject(tool)
 
         Assert.assertTrue(problems.size == 1)
         Assert.assertEquals("Plugin version (1.1.0-beta-17) is not the same as library version (1.1.0-beta-22)", problems.single())
@@ -170,37 +68,8 @@ class GradleInspectionTest : GradleImportingTestCase() {
 
     @Test
     fun testDifferentStdlibGradleVersionWithVariables() {
-        createProjectSubFile(
-            "gradle.properties", """
-        |kotlin=1.0.1
-        |lib_version=1.0.3""".trimMargin()
-        )
-        val localFile = createProjectSubFile(
-            "build.gradle", """
-            group 'Again'
-            version '1.0-SNAPSHOT'
-
-            buildscript {
-                repositories {
-                    mavenCentral()
-                }
-
-                dependencies {
-                    classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:${'$'}kotlin")
-                }
-            }
-
-            apply plugin: 'kotlin'
-
-            dependencies {
-                compile group: 'org.jetbrains.kotlin', name: 'kotlin-stdlib', version: lib_version
-            }
-        """
-        )
-        importProject()
-
         val tool = DifferentStdlibGradleVersionInspection()
-        val problems = getInspectionResult(tool, localFile)
+        val problems = getInspectionResultFromTestDataProject(tool)
 
         Assert.assertTrue(problems.size == 1)
         Assert.assertEquals("Plugin version (1.0.1) is not the same as library version (1.0.3)", problems.single())
@@ -208,30 +77,9 @@ class GradleInspectionTest : GradleImportingTestCase() {
 
     @Test
     fun testDifferentKotlinGradleVersion() {
-        createProjectSubFile("gradle.properties", """test=1.0.1""")
-        val localFile = createProjectSubFile(
-            "build.gradle", """
-            group 'Again'
-            version '1.0-SNAPSHOT'
-
-            buildscript {
-                repositories {
-                    mavenCentral()
-                }
-
-                dependencies {
-                    classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:${'$'}{test}")
-                }
-            }
-
-            apply plugin: 'kotlin'
-        """
-        )
-        importProject()
-
         val tool = DifferentKotlinGradleVersionInspection()
         tool.testVersionMessage = "\$PLUGIN_VERSION"
-        val problems = getInspectionResult(tool, localFile)
+        val problems = getInspectionResultFromTestDataProject(tool)
 
         Assert.assertTrue(problems.size == 1)
         Assert.assertEquals(
@@ -242,64 +90,16 @@ class GradleInspectionTest : GradleImportingTestCase() {
 
     @Test
     fun testJreInOldVersion() {
-        val localFile = createProjectSubFile(
-            "build.gradle", """
-            group 'Again'
-            version '1.0-SNAPSHOT'
-
-            buildscript {
-                repositories {
-                    mavenCentral()
-                }
-
-                dependencies {
-                    classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.1.60")
-                }
-            }
-
-            apply plugin: 'kotlin'
-
-            dependencies {
-                compile "org.jetbrains.kotlin:kotlin-stdlib-jre8:1.1.60"
-            }
-        """
-        )
-        importProject()
-
         val tool = DeprecatedGradleDependencyInspection()
-        val problems = getInspectionResult(tool, localFile)
+        val problems = getInspectionResultFromTestDataProject(tool)
 
         Assert.assertTrue(problems.isEmpty())
     }
 
     @Test
     fun testJreIsDeprecated() {
-        val localFile = createProjectSubFile(
-            "build.gradle", """
-            group 'Again'
-            version '1.0-SNAPSHOT'
-
-            buildscript {
-                repositories {
-                    mavenCentral()
-                }
-
-                dependencies {
-                    classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.1.60")
-                }
-            }
-
-            apply plugin: 'kotlin'
-
-            dependencies {
-                compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:1.2.0"
-            }
-        """
-        )
-        importProject()
-
         val tool = DeprecatedGradleDependencyInspection()
-        val problems = getInspectionResult(tool, localFile)
+        val problems = getInspectionResultFromTestDataProject(tool)
 
         Assert.assertTrue(problems.size == 1)
         Assert.assertEquals(
@@ -310,32 +110,8 @@ class GradleInspectionTest : GradleImportingTestCase() {
 
     @Test
     fun testJreIsDeprecatedWithImplementation() {
-        val localFile = createProjectSubFile(
-            "build.gradle", """
-            group 'Again'
-            version '1.0-SNAPSHOT'
-
-            buildscript {
-                repositories {
-                    mavenCentral()
-                }
-
-                dependencies {
-                    classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.2.0")
-                }
-            }
-
-            apply plugin: 'kotlin'
-
-            dependencies {
-                implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:1.2.0"
-            }
-        """
-        )
-        importProject()
-
         val tool = DeprecatedGradleDependencyInspection()
-        val problems = getInspectionResult(tool, localFile)
+        val problems = getInspectionResultFromTestDataProject(tool)
 
         Assert.assertTrue(problems.size == 1)
         Assert.assertEquals(
@@ -347,33 +123,8 @@ class GradleInspectionTest : GradleImportingTestCase() {
     @TargetVersions("4.9+")
     @Test
     fun testJreIsDeprecatedWithoutImplicitVersion() {
-        val localFile = createProjectSubFile(
-            "build.gradle", """
-            group 'Again'
-            version '1.0-SNAPSHOT'
-
-            buildscript {
-                repositories {
-                    mavenCentral()
-                }
-
-                dependencies {
-                    classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.2.0")
-                }
-            }
-
-            apply plugin: 'kotlin'
-
-            dependencies {
-                compile "org.jetbrains.kotlin:kotlin-stdlib-jre8"
-            }
-            """
-        )
-
-        importProject()
-
         val tool = DeprecatedGradleDependencyInspection()
-        val problems = getInspectionResult(tool, localFile)
+        val problems = getInspectionResultFromTestDataProject(tool)
 
         Assert.assertTrue(problems.size == 1)
         Assert.assertEquals(
@@ -384,117 +135,35 @@ class GradleInspectionTest : GradleImportingTestCase() {
 
     @Test
     fun testNoDifferentStdlibCommonGradleVersion() {
-        val localFile = createProjectSubFile(
-            "build.gradle", """
-            group 'Again'
-            version '1.0-SNAPSHOT'
-
-            buildscript {
-                repositories {
-                    mavenCentral()
-                    maven {
-                        url 'http://dl.bintray.com/kotlin/kotlin-eap'
-                    }
-                }
-
-                dependencies {
-                    classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.2.40-eap-51")
-                }
-            }
-
-            apply plugin: 'kotlin-platform-common'
-
-            dependencies {
-                compile "org.jetbrains.kotlin:kotlin-stdlib-common:1.2.40-eap-51"
-            }
-        """
-        )
-        importProject()
-
         val tool = DifferentStdlibGradleVersionInspection()
-        val problems = getInspectionResult(tool, localFile)
+        val problems = getInspectionResultFromTestDataProject(tool)
 
         Assert.assertTrue(problems.toString(), problems.isEmpty())
     }
 
     @Test
     fun testNoDifferentStdlibJdk7GradleVersion() {
-        val localFile = createProjectSubFile(
-            "build.gradle", """
-            group 'Again'
-            version '1.0-SNAPSHOT'
-
-            buildscript {
-                repositories {
-                    mavenCentral()
-                    maven {
-                        url 'http://dl.bintray.com/kotlin/kotlin-eap'
-                    }
-                }
-
-                dependencies {
-                    classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.2.40-eap-51")
-                }
-            }
-
-            apply plugin: 'kotlin'
-
-            dependencies {
-                compile "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.2.40-eap-51"
-            }
-        """
-        )
-        importProject()
-
         val tool = DifferentStdlibGradleVersionInspection()
-        val problems = getInspectionResult(tool, localFile)
+        val problems = getInspectionResultFromTestDataProject(tool)
 
         Assert.assertTrue(problems.toString(), problems.isEmpty())
     }
 
     @Test
     fun testObsoleteCoroutinesUsage() {
-        val localFile = createProjectSubFile(
-            "build.gradle", """
-            group 'Again'
-            version '1.0-SNAPSHOT'
-
-            buildscript {
-                repositories {
-                    mavenCentral()
-                }
-
-                dependencies {
-                    classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.2.0")
-                }
-            }
-
-            apply plugin: 'kotlin'
-
-            repositories {
-                mavenCentral()
-                maven { url "https://kotlin.bintray.com/kotlinx" }
-            }
-
-            dependencies {
-                compile 'org.jetbrains.kotlinx:kotlinx-coroutines-core:0.23.4'
-            }
-
-            compileKotlin {
-                kotlinOptions.languageVersion = "1.3"
-            }
-        """
-        )
-        importProject()
-
         val tool = GradleKotlinxCoroutinesDeprecationInspection()
-        val problems = getInspectionResult(tool, localFile)
+        val problems = getInspectionResultFromTestDataProject(tool)
 
         Assert.assertTrue(problems.size == 1)
         Assert.assertEquals(
             "Library should be updated to be compatible with Kotlin 1.3",
             problems.single()
         )
+    }
+
+    private fun getInspectionResultFromTestDataProject(tool: LocalInspectionTool): List<String> {
+        val buildGradle = importProjectFromTestData().find { it.name == "build.gradle" }!!
+        return getInspectionResult(tool, buildGradle)
     }
 
     private fun getInspectionResult(tool: LocalInspectionTool, file: VirtualFile): List<String> {
@@ -511,5 +180,9 @@ class GradleInspectionTest : GradleImportingTestCase() {
         }
 
         return resultRef.get()
+    }
+
+    override fun testDataDirName(): String {
+        return "inspections"
     }
 }
