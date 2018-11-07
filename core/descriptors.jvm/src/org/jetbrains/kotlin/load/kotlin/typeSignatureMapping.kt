@@ -366,7 +366,12 @@ open class JvmDescriptorTypeWriter<T : Any>(private val jvmTypeFactory: JvmTypeF
 
     protected fun writeJvmTypeAsIs(type: T) {
         if (jvmCurrentType == null) {
-            jvmCurrentType = jvmTypeFactory.createFromString("[".repeat(jvmCurrentTypeArrayLevel) + jvmTypeFactory.toString(type))
+            jvmCurrentType =
+                    if (jvmCurrentTypeArrayLevel > 0) {
+                        jvmTypeFactory.createFromString("[".repeat(jvmCurrentTypeArrayLevel) + jvmTypeFactory.toString(type))
+                    } else {
+                        type
+                    }
         }
     }
 
