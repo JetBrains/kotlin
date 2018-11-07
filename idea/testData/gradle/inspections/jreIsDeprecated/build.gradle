@@ -1,3 +1,5 @@
+// TOOL: DeprecatedGradleDependencyInspection
+
 group 'Again'
 version '1.0-SNAPSHOT'
 

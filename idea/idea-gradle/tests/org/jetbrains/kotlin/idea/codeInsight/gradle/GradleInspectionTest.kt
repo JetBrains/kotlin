@@ -20,20 +20,17 @@ import com.intellij.codeInspection.LocalInspectionTool
 import com.intellij.codeInspection.ProblemDescriptorBase
 import com.intellij.openapi.util.Ref
 import com.intellij.openapi.vfs.VirtualFile
-import org.jetbrains.kotlin.idea.inspections.gradle.DeprecatedGradleDependencyInspection
 import org.jetbrains.kotlin.idea.inspections.gradle.DifferentKotlinGradleVersionInspection
-import org.jetbrains.kotlin.idea.inspections.gradle.DifferentStdlibGradleVersionInspection
-import org.jetbrains.kotlin.idea.inspections.gradle.GradleKotlinxCoroutinesDeprecationInspection
 import org.jetbrains.kotlin.idea.inspections.runInspection
 import org.jetbrains.plugins.gradle.tooling.annotation.TargetVersions
 import org.junit.Assert
 import org.junit.Test
+import java.io.File
 
 class GradleInspectionTest : GradleImportingTestCase() {
     @Test
     fun testDifferentStdlibGradleVersion() {
-        val tool = DifferentStdlibGradleVersionInspection()
-        val problems = getInspectionResultFromTestDataProject(tool)
+        val problems = getInspectionResultFromTestDataProject()
 
         Assert.assertTrue(problems.size == 1)
         Assert.assertEquals("Plugin version (1.0.2) is not the same as library version (1.0.3)", problems.single())
@@ -41,8 +38,7 @@ class GradleInspectionTest : GradleImportingTestCase() {
 
     @Test
     fun testDifferentStdlibGradleVersionWithImplementation() {
-        val tool = DifferentStdlibGradleVersionInspection()
-        val problems = getInspectionResultFromTestDataProject(tool)
+        val problems = getInspectionResultFromTestDataProject()
 
         Assert.assertTrue(problems.size == 1)
         Assert.assertEquals("Plugin version (1.0.2) is not the same as library version (1.0.3)", problems.single())
@@ -50,8 +46,7 @@ class GradleInspectionTest : GradleImportingTestCase() {
 
     @Test
     fun testDifferentStdlibJre7GradleVersion() {
-        val tool = DifferentStdlibGradleVersionInspection()
-        val problems = getInspectionResultFromTestDataProject(tool)
+        val problems = getInspectionResultFromTestDataProject()
 
         Assert.assertTrue(problems.size == 1)
         Assert.assertEquals("Plugin version (1.1.0-beta-17) is not the same as library version (1.1.0-beta-22)", problems.single())
@@ -59,8 +54,7 @@ class GradleInspectionTest : GradleImportingTestCase() {
 
     @Test
     fun testDifferentStdlibJdk7GradleVersion() {
-        val tool = DifferentStdlibGradleVersionInspection()
-        val problems = getInspectionResultFromTestDataProject(tool)
+        val problems = getInspectionResultFromTestDataProject()
 
         Assert.assertTrue(problems.size == 1)
         Assert.assertEquals("Plugin version (1.1.0-beta-17) is not the same as library version (1.1.0-beta-22)", problems.single())
@@ -68,8 +62,7 @@ class GradleInspectionTest : GradleImportingTestCase() {
 
     @Test
     fun testDifferentStdlibGradleVersionWithVariables() {
-        val tool = DifferentStdlibGradleVersionInspection()
-        val problems = getInspectionResultFromTestDataProject(tool)
+        val problems = getInspectionResultFromTestDataProject()
 
         Assert.assertTrue(problems.size == 1)
         Assert.assertEquals("Plugin version (1.0.1) is not the same as library version (1.0.3)", problems.single())
@@ -90,16 +83,14 @@ class GradleInspectionTest : GradleImportingTestCase() {
 
     @Test
     fun testJreInOldVersion() {
-        val tool = DeprecatedGradleDependencyInspection()
-        val problems = getInspectionResultFromTestDataProject(tool)
+        val problems = getInspectionResultFromTestDataProject()
 
         Assert.assertTrue(problems.isEmpty())
     }
 
     @Test
     fun testJreIsDeprecated() {
-        val tool = DeprecatedGradleDependencyInspection()
-        val problems = getInspectionResultFromTestDataProject(tool)
+        val problems = getInspectionResultFromTestDataProject()
 
         Assert.assertTrue(problems.size == 1)
         Assert.assertEquals(
@@ -110,8 +101,7 @@ class GradleInspectionTest : GradleImportingTestCase() {
 
     @Test
     fun testJreIsDeprecatedWithImplementation() {
-        val tool = DeprecatedGradleDependencyInspection()
-        val problems = getInspectionResultFromTestDataProject(tool)
+        val problems = getInspectionResultFromTestDataProject()
 
         Assert.assertTrue(problems.size == 1)
         Assert.assertEquals(
@@ -123,8 +113,7 @@ class GradleInspectionTest : GradleImportingTestCase() {
     @TargetVersions("4.9+")
     @Test
     fun testJreIsDeprecatedWithoutImplicitVersion() {
-        val tool = DeprecatedGradleDependencyInspection()
-        val problems = getInspectionResultFromTestDataProject(tool)
+        val problems = getInspectionResultFromTestDataProject()
 
         Assert.assertTrue(problems.size == 1)
         Assert.assertEquals(
@@ -135,24 +124,21 @@ class GradleInspectionTest : GradleImportingTestCase() {
 
     @Test
     fun testNoDifferentStdlibCommonGradleVersion() {
-        val tool = DifferentStdlibGradleVersionInspection()
-        val problems = getInspectionResultFromTestDataProject(tool)
+        val problems = getInspectionResultFromTestDataProject()
 
         Assert.assertTrue(problems.toString(), problems.isEmpty())
     }
 
     @Test
     fun testNoDifferentStdlibJdk7GradleVersion() {
-        val tool = DifferentStdlibGradleVersionInspection()
-        val problems = getInspectionResultFromTestDataProject(tool)
+        val problems = getInspectionResultFromTestDataProject()
 
         Assert.assertTrue(problems.toString(), problems.isEmpty())
     }
 
     @Test
     fun testObsoleteCoroutinesUsage() {
-        val tool = GradleKotlinxCoroutinesDeprecationInspection()
-        val problems = getInspectionResultFromTestDataProject(tool)
+        val problems = getInspectionResultFromTestDataProject()
 
         Assert.assertTrue(problems.size == 1)
         Assert.assertEquals(
@@ -161,8 +147,12 @@ class GradleInspectionTest : GradleImportingTestCase() {
         )
     }
 
-    private fun getInspectionResultFromTestDataProject(tool: LocalInspectionTool): List<String> {
+    private fun getInspectionResultFromTestDataProject(explicitTool: LocalInspectionTool? = null): List<String> {
         val buildGradle = importProjectFromTestData().find { it.name == "build.gradle" }!!
+        val tool = explicitTool ?: run {
+            val toolName = File(buildGradle.path).readLines().find { it.startsWith(TOOL) }!!.substring(TOOL.length)
+            Class.forName("org.jetbrains.kotlin.idea.inspections.gradle.$toolName").newInstance() as LocalInspectionTool
+        }
         return getInspectionResult(tool, buildGradle)
     }
 
@@ -184,5 +174,9 @@ class GradleInspectionTest : GradleImportingTestCase() {
 
     override fun testDataDirName(): String {
         return "inspections"
+    }
+
+    companion object {
+        private const val TOOL = "// TOOL: "
     }
 }

@@ -1,3 +1,5 @@
+// TOOL: DifferentStdlibGradleVersionInspection
+
 group 'Again'
 version '1.0-SNAPSHOT'
 
