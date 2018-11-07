@@ -38,7 +38,12 @@ class JKJavaFieldImpl(modifierList: JKModifierList, type: JKTypeElement, name: J
 }
 
 class JKJavaMethodImpl(
-    modifierList: JKModifierList, returnType: JKTypeElement, name: JKNameIdentifier, parameters: List<JKParameter>, block: JKBlock
+    modifierList: JKModifierList,
+    returnType: JKTypeElement,
+    name: JKNameIdentifier,
+    parameters: List<JKParameter>,
+    block: JKBlock,
+    typeParameterList: JKTypeParameterList
 ) : JKJavaMethod, JKBranchElementBase(), PsiOwner by PsiOwnerImpl() {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitJavaMethod(this, data)
 
@@ -47,7 +52,7 @@ class JKJavaMethodImpl(
     override var name: JKNameIdentifier by child(name)
     override var parameters: List<JKParameter> by children(parameters)
     override var block: JKBlock by child(block)
-
+    override var typeParameterList: JKTypeParameterList by child(typeParameterList)
 }
 
 class JKJavaLiteralExpressionImpl(

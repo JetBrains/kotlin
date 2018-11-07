@@ -290,7 +290,8 @@ class JavaToJKTreeBuilder(var symbolProvider: JKSymbolProvider) {
                 },
                 JKNameIdentifierImpl(name),
                 parameterList.parameters.map { it.toJK() },
-                body?.toJK() ?: JKBodyStub
+                body?.toJK() ?: JKBodyStub,
+                typeParameterList?.toJK() ?: JKTypeParameterListImpl()
             ).also {
                 it.psi = this
                 symbolProvider.provideUniverseSymbol(this, it)

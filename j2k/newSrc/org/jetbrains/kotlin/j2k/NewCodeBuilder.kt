@@ -266,12 +266,15 @@ class NewCodeBuilder {
         override fun visitKtFunction(ktFunction: JKKtFunction) {
             printer.printIndent()
             ktFunction.modifierList.accept(this)
-            printer.printWithNoIndent(" fun ", ktFunction.name.value, "(")
+            printer.printWithNoIndent(" fun ")
+            ktFunction.typeParameterList.accept(this)
+            printer.printWithNoIndent(ktFunction.name.value, "(")
             renderList(ktFunction.parameters) {
                 it.accept(this)
             }
             printer.printWithNoIndent(")", ": ")
             ktFunction.returnType.accept(this)
+            renderExtraTypeParametersUpperBounds(ktFunction.typeParameterList)
             if (ktFunction.block !== JKBodyStub) {
                 printer.block(multiline = ktFunction.block.statements.isNotEmpty()) {
                     ktFunction.block.accept(this)

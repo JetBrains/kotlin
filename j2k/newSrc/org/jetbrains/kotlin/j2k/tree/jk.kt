@@ -62,7 +62,7 @@ interface JKInheritanceInfo : JKTreeElement, JKBranchElement {
     val inherit: List<JKTypeElement>
 }
 
-interface JKMethod : JKDeclaration, JKModifierListOwner {
+interface JKMethod : JKDeclaration, JKModifierListOwner, JKTypeParameterListOwner {
     val name: JKNameIdentifier
     var parameters: List<JKParameter>
     val returnType: JKTypeElement
