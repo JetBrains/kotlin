@@ -2659,6 +2659,21 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
                     runTest("idea/testData/intentions/branched/ifWhen/ifToWhen/multipleIfWithSingleReturns.kt");
                 }
 
+                @TestMetadata("onElseIf.kt")
+                public void testOnElseIf() throws Exception {
+                    runTest("idea/testData/intentions/branched/ifWhen/ifToWhen/onElseIf.kt");
+                }
+
+                @TestMetadata("onElseIf2.kt")
+                public void testOnElseIf2() throws Exception {
+                    runTest("idea/testData/intentions/branched/ifWhen/ifToWhen/onElseIf2.kt");
+                }
+
+                @TestMetadata("onElseIf3.kt")
+                public void testOnElseIf3() throws Exception {
+                    runTest("idea/testData/intentions/branched/ifWhen/ifToWhen/onElseIf3.kt");
+                }
+
                 @TestMetadata("secondIfNoThen.kt")
                 public void testSecondIfNoThen() throws Exception {
                     runTest("idea/testData/intentions/branched/ifWhen/ifToWhen/secondIfNoThen.kt");
