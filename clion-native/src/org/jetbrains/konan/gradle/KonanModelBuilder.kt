@@ -5,12 +5,14 @@
 
 package org.jetbrains.konan.gradle
 
-import org.gradle.api.*
+import org.gradle.api.NamedDomainObjectContainer
+import org.gradle.api.Project
+import org.gradle.api.Task
 import org.gradle.api.provider.Provider
-import org.jetbrains.kotlin.gradle.*
+import org.jetbrains.kotlin.clion.konan.KotlinNativeHomeEvaluator.getKotlinNativeHome
 import org.jetbrains.kotlin.gradle.KotlinMPPGradleModelBuilder.Companion.getTargets
+import org.jetbrains.kotlin.gradle.getMethodOrNull
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
-import org.jetbrains.kotlin.utils.addToStdlib.flatMapToNullable
 import org.jetbrains.plugins.gradle.tooling.ErrorMessageBuilder
 import org.jetbrains.plugins.gradle.tooling.ModelBuilderService
 import java.io.File
@@ -44,7 +46,7 @@ class KonanModelBuilder : ModelBuilderService {
             }
             .mapNotNull { buildArtifact(it) }
 
-        return KonanModelImpl(artifacts)
+        return KonanModelImpl(artifacts, getKotlinNativeHome(project))
     }
 
     private fun buildArtifact(task: Task): KonanModelArtifact? {
@@ -73,5 +75,4 @@ class KonanModelBuilder : ModelBuilderService {
         if (this == null) return null
         return this::class.java.getMethodOrNull(methodName, *paramTypes.toTypedArray())?.invoke(this, *params.toTypedArray())
     }
-
 }

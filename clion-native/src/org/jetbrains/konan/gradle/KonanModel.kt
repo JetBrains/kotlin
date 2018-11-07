@@ -11,6 +11,7 @@ import java.io.Serializable
 
 interface KonanModel : Serializable {
     val artifacts: List<KonanModelArtifact>
+    val kotlinNativeHome: String?
 }
 
 interface KonanModelArtifact : Serializable {

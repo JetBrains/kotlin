@@ -35,6 +35,7 @@ class KonanProjectResolver : AbstractProjectResolverExtension() {
 
     private class MyKonanModel(konanModel: KonanModel) : KonanModel {
         override val artifacts: List<KonanModelArtifact> = konanModel.artifacts.map { MyKonanArtifactEx(it) }
+        override val kotlinNativeHome: String? = konanModel.kotlinNativeHome
 
         private class MyKonanArtifactEx(artifact: KonanModelArtifact) : KonanModelArtifact {
             override val name: String = artifact.name

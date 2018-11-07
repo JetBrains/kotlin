@@ -8,7 +8,10 @@ package org.jetbrains.konan.gradle
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import java.io.File
 
-data class KonanModelImpl(override val artifacts: List<KonanModelArtifact>) : KonanModel
+data class KonanModelImpl(
+    override val artifacts: List<KonanModelArtifact>,
+    override val kotlinNativeHome: String?
+) : KonanModel
 
 data class KonanModelArtifactImpl(
     override val name: String,
