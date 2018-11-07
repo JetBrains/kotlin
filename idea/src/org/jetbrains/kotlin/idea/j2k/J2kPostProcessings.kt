@@ -96,6 +96,7 @@ object J2KPostProcessingRegistrar {
         registerGeneralInspectionBasedProcessing(CanBeValInspection(ignoreNotUsedVals = false))
 
         registerIntentionBasedProcessing(FoldInitializerAndIfToElvisIntention())
+        registerIntentionBasedProcessing(RemoveEmptyClassBodyIntention())
 
         registerIntentionBasedProcessing(FoldIfToReturnIntention()) { it.then.isTrivialStatementBody() && it.`else`.isTrivialStatementBody() }
         registerIntentionBasedProcessing(FoldIfToReturnAsymmetricallyIntention()) { it.then.isTrivialStatementBody() && (KtPsiUtil.skipTrailingWhitespacesAndComments(it) as KtReturnExpression).returnedExpression.isTrivialStatementBody() }
