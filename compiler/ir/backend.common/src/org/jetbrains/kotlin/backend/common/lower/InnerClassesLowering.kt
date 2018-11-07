@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.common.lower
 import org.jetbrains.kotlin.backend.common.BackendContext
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
+import org.jetbrains.kotlin.backend.common.makePhase
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
@@ -25,6 +26,10 @@ import org.jetbrains.kotlin.ir.util.transformFlat
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import java.util.*
+
+val InnerClassesPhase = makePhase<InnerClassesLowering, BackendContext>(
+    description = "Move inner classes to toplevel"
+)
 
 class InnerClassesLowering(val context: BackendContext) : ClassLoweringPass {
     override fun lower(irClass: IrClass) {
@@ -166,6 +171,10 @@ class InnerClassesLowering(val context: BackendContext) : ClassLoweringPass {
         }
     }
 }
+
+val InnerClassConstructorCallsPhase = makePhase<InnerClassConstructorCallsLowering, BackendContext>(
+    description = "Handle constructor calls for inner classes"
+)
 
 class InnerClassConstructorCallsLowering(val context: BackendContext) : BodyLoweringPass {
     override fun lower(irBody: IrBody) {

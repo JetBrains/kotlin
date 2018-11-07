@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
+import org.jetbrains.kotlin.backend.common.makePhase
+import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
@@ -15,8 +17,17 @@ import org.jetbrains.kotlin.ir.util.TypeTranslator
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.psi2ir.transformations.InsertImplicitCasts
 
-class JvmCoercionToUnitPatcher(builtIns: KotlinBuiltIns, irBuiltIns: IrBuiltIns, typeTranslator: TypeTranslator) :
-    InsertImplicitCasts(builtIns, irBuiltIns, typeTranslator), FileLoweringPass {
+val JvmCoercionToUnitPhase = makePhase<JvmCoercionToUnitPatcher, JvmBackendContext>(
+    description = "Insert conversions to unit after IrCalls where needed"
+)
+
+class JvmCoercionToUnitPatcher(context: JvmBackendContext) :
+    InsertImplicitCasts(
+        context.builtIns,
+        context.irBuiltIns,
+        TypeTranslator(context.ir.symbols.externalSymbolTable, context.state.languageVersionSettings)
+    ),
+    FileLoweringPass {
 
     override fun lower(irFile: IrFile) {
         irFile.transformChildrenVoid(this)

@@ -8,22 +8,27 @@ package org.jetbrains.kotlin.backend.common
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
+import org.jetbrains.kotlin.ir.declarations.IrFile
+import kotlin.reflect.KClass
 
-interface CompilerPhase {
+interface CompilerPhase<in Context : BackendContext, Data> {
+    val name: String
     val description: String
-    val prerequisite: Set<CompilerPhase>
+    val prerequisite: Set<CompilerPhase<Context, *>>
+
+    fun invoke(context: Context, source: Data): Data
 }
 
-class CompilerPhases<Phase>(phaseArray: Array<Phase>, config: CompilerConfiguration)
-        where Phase : CompilerPhase, Phase : Enum<Phase> {
+private typealias AnyPhase = CompilerPhase<*, *>
+class CompilerPhases(val phaseList: List<AnyPhase>, config: CompilerConfiguration) {
 
-    val phases = phaseArray.associate { it.name to it }
+    val phases = phaseList.associate { it.name to it }
 
     val enabled = computeEnabled(config)
     val verbose = phaseSetFromConfiguration(config, CommonConfigurationKeys.VERBOSE_PHASES)
 
-    val toDumpStateBefore: Set<Phase>
-    val toDumpStateAfter: Set<Phase>
+    val toDumpStateBefore: Set<AnyPhase>
+    val toDumpStateAfter: Set<AnyPhase>
 
     init {
         with(CommonConfigurationKeys) {
@@ -43,11 +48,11 @@ class CompilerPhases<Phase>(phaseArray: Array<Phase>, config: CompilerConfigurat
     }
 
     fun list() {
-        phases.forEach { key, phase ->
+        phaseList.forEach { phase ->
             val enabled = if (phase in enabled) "(Enabled)" else ""
             val verbose = if (phase in verbose) "(Verbose)" else ""
 
-            println(String.format("%1$-30s%2$-30s%3$-10s", "$key:", phase.description, "$enabled $verbose"))
+            println(String.format("%1$-30s %2$-50s %3$-10s", "${phase.name}:", phase.description, "$enabled $verbose"))
         }
     }
 
@@ -57,30 +62,30 @@ class CompilerPhases<Phase>(phaseArray: Array<Phase>, config: CompilerConfigurat
             phases.values.toSet() - disabledPhases
         }
 
-    private fun phaseSetFromConfiguration(config: CompilerConfiguration, key: CompilerConfigurationKey<Set<String>>): Set<Phase> {
+    private fun phaseSetFromConfiguration(config: CompilerConfiguration, key: CompilerConfigurationKey<Set<String>>): Set<AnyPhase> {
         val phaseNames = config.get(key) ?: emptySet()
         if ("ALL" in phaseNames) return phases.values.toSet()
         return phaseNames.map { phases[it]!! }.toSet()
     }
 }
 
-interface PhaseRunner<Context : CommonBackendContext, Data> {
-    fun reportBefore(context: Context, data: Data, phase: CompilerPhase, depth: Int)
-    fun runBody(context: Context, phase: CompilerPhase, body: () -> Unit)
-    fun reportAfter(context: Context, data: Data, phase: CompilerPhase, depth: Int)
+interface PhaseRunner<Context : BackendContext, Data> {
+    fun reportBefore(phase: CompilerPhase<Context, Data>, depth: Int, context: Context, data: Data)
+    fun runBody(phase: CompilerPhase<Context, Data>, context: Context, source: Data): Data
+    fun reportAfter(phase: CompilerPhase<Context, Data>, depth: Int, context: Context, data: Data)
 }
 
 /* We assume that `element` is being modified by each phase, retaining its identity in the process. */
-class CompilerPhaseManager<Context : CommonBackendContext, Data, Phase>(
+class CompilerPhaseManager<Context : BackendContext, Data>(
     val context: Context,
-    val phases: CompilerPhases<Phase>,
+    val phases: CompilerPhases,
     val data: Data,
     private val phaseRunner: PhaseRunner<Context, Data>,
-    val parent: CompilerPhaseManager<Context, *, Phase>? = null
-) where Phase : CompilerPhase, Phase : Enum<Phase> {
+    val parent: CompilerPhaseManager<Context, *>? = null
+) {
     val depth: Int = parent?.depth?.inc() ?: 0
 
-    private val previousPhases = mutableSetOf<Phase>()
+    private val previousPhases = mutableSetOf<CompilerPhase<Context, Data>>()
 
     fun <NewData> createChild(
         newData: NewData,
@@ -91,12 +96,12 @@ class CompilerPhaseManager<Context : CommonBackendContext, Data, Phase>(
 
     fun createChild() = createChild(data, phaseRunner)
 
-    private fun checkPrerequisite(phase: CompilerPhase): Boolean =
+    private fun checkPrerequisite(phase: CompilerPhase<*, *>): Boolean =
         previousPhases.contains(phase) || parent?.checkPrerequisite(phase) == true
 
-    fun phase(phase: Phase, body: () -> Unit) {
+    fun phase(phase: CompilerPhase<Context, Data>, context: Context, source: Data): Data {
 
-        if (phase !in phases.enabled) return
+        if (phase !in phases.enabled) return source
 
         phase.prerequisite.forEach {
             if (!checkPrerequisite(it))
@@ -105,8 +110,51 @@ class CompilerPhaseManager<Context : CommonBackendContext, Data, Phase>(
 
         previousPhases.add(phase)
 
-        phaseRunner.reportBefore(context, data, phase, depth)
-        phaseRunner.runBody(context, phase, body)
-        phaseRunner.reportAfter(context, data, phase, depth)
+        phaseRunner.reportBefore(phase, depth, context, source)
+        val result = phaseRunner.runBody(phase, context, source)
+        phaseRunner.reportAfter(phase, depth, context, result)
+        return result
     }
+}
+
+inline fun <reified Lowering : FileLoweringPass, reified Context : BackendContext> makePhase(
+    description: String,
+    name: String = Lowering::class.simpleName!!,
+    prerequisite: Set<CompilerPhase<Context, *>> = emptySet()
+) =
+    object : CompilerPhase<Context, IrFile> {
+        override val name = name
+        override val description = description
+        override val prerequisite = prerequisite
+
+        override fun invoke(context: Context, source: IrFile): IrFile {
+            val loweringConstructorWithContext = Lowering::class.constructors.filter {
+                it.parameters.size == 1 &&
+                        (it.parameters[0].type.classifier as? KClass<*>)?.isSubclassOf(Context::class) == true
+            }.singleOrNull()
+            val loweringConstructorWithoutParameters = Lowering::class.constructors.filter { it.parameters.size == 0 }.singleOrNull()
+            val lowering =
+                (loweringConstructorWithContext?.call(context) ?: loweringConstructorWithoutParameters?.call()) as Lowering
+            lowering.lower(source)
+            // `source` is modified in place
+            return source
+        }
+    }
+
+fun KClass<*>.isSubclassOf(base: KClass<*>): Boolean =
+    if (this == base) true
+    else supertypes.mapNotNull { it.classifier as? KClass<*> }.any { it.isSubclassOf(base) }
+
+object IrFileStartPhase : CompilerPhase<BackendContext, IrFile> {
+    override val name = "IrFileStart"
+    override val description = "State at start of IrFile lowering"
+    override val prerequisite = emptySet()
+    override fun invoke(_context: BackendContext, source: IrFile) = source
+}
+
+object IrFileEndPhase : CompilerPhase<BackendContext, IrFile> {
+    override val name = "IrFileEnd"
+    override val description = "State at end of IrFile lowering"
+    override val prerequisite = emptySet()
+    override fun invoke(_context: BackendContext, source: IrFile) = source
 }

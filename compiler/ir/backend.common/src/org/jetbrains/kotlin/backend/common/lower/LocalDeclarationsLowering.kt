@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.common.DeclarationContainerLoweringPass
 import org.jetbrains.kotlin.backend.common.descriptors.*
 import org.jetbrains.kotlin.backend.common.ir.copyTo
 import org.jetbrains.kotlin.backend.common.ir.copyTypeParametersFrom
+import org.jetbrains.kotlin.backend.common.makePhase
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl
@@ -34,8 +35,17 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.NameUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.parents
 import java.util.*
+
+val LocalDeclarationsPhase = makePhase<LocalDeclarationsLowering, BackendContext>(
+    description = "Move local declarations to classes"
+)
+
+val JvmLocalDeclarationsPhase = makePhase<JvmLocalDeclarationsLowering, BackendContext>(
+    description = "Move local declarations to classes"
+)
 
 interface LocalNameProvider {
     fun localName(descriptor: DeclarationDescriptor): String =
@@ -52,7 +62,18 @@ val IrDeclaration.parentsWithSelf: Sequence<IrDeclarationParent>
 val IrDeclaration.parents: Sequence<IrDeclarationParent>
     get() = parentsWithSelf.drop(1)
 
-class LocalDeclarationsLowering(
+class JvmLocalDeclarationsLowering(context: BackendContext) :
+    LocalDeclarationsLowering(
+        context,
+        object : LocalNameProvider {
+            override fun localName(descriptor: DeclarationDescriptor): String =
+                NameUtils.sanitizeAsJavaIdentifier(super.localName(descriptor))
+        },
+        Visibilities.PUBLIC, //TODO properly figure out visibility
+        true
+    )
+
+open class LocalDeclarationsLowering(
     val context: BackendContext,
     val localNameProvider: LocalNameProvider = LocalNameProvider.DEFAULT,
     val loweredConstructorVisibility: Visibility = Visibilities.PRIVATE,

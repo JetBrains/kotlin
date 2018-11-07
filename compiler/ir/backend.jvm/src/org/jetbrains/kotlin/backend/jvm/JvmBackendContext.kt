@@ -47,7 +47,7 @@ class JvmBackendContext(
 
     override val ir = JvmIr(irModuleFragment, symbolTable)
 
-    val phases = CompilerPhases(JvmLoweringPhase.values(), state.configuration)
+    val phases = CompilerPhases(jvmPhases, state.configuration)
 
     init {
         if (state.configuration.get(CommonConfigurationKeys.LIST_PHASES) == true) {
