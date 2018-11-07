@@ -8,8 +8,8 @@ class A(val n: Int, val s: String) {
 
     override fun toString(): String {
         return "A(" +
-                "n=$n," +
-                "s='$s'," +
+                "n=$n, " +
+                "s='$s', " +
                 "f=$f" +
                 ")"
     }
