@@ -453,7 +453,8 @@ class JKTypeParameterListImpl(typeParameters: List<JKTypeParameter> = emptyList(
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitTypeParameterList(this, data)
 }
 
-class JKTypeParameterImpl(name: JKNameIdentifier) : JKTypeParameter, JKBranchElementBase() {
+class JKTypeParameterImpl(name: JKNameIdentifier, upperBounds: List<JKTypeElement>) : JKTypeParameter, JKBranchElementBase() {
     override var name: JKNameIdentifier by child(name)
+    override var upperBounds: List<JKTypeElement> by children(upperBounds)
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitTypeParameter(this, data)
 }

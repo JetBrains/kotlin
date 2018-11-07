@@ -237,7 +237,8 @@ class JavaToJKTreeBuilder(var symbolProvider: JKSymbolProvider) {
             JKTypeParameterListImpl(typeParameters.map { it.toJK() })
 
         fun PsiTypeParameter.toJK(): JKTypeParameter =
-            JKTypeParameterImpl(JKNameIdentifierImpl(name!!))
+            JKTypeParameterImpl(JKNameIdentifierImpl(name!!),
+                                extendsListTypes.map { JKTypeElementImpl(it.toJK(symbolProvider, Nullability.NotNull)) })
 
         fun PsiClass.toJK(): JKClass {
             val classKind: JKClass.ClassKind = when {

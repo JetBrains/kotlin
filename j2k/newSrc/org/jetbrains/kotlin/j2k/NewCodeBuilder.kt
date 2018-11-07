@@ -41,6 +41,25 @@ class NewCodeBuilder {
     }
 
     inner class Visitor : JKVisitorVoid {
+        private fun renderExtraTypeParametersUpperBounds(typeParameterList: JKTypeParameterList) {
+            val extraTypeBounds = typeParameterList.typeParameters
+                .filter { it.upperBounds.size > 1 }
+            if (extraTypeBounds.isNotEmpty()) {
+                printer.printWithNoIndent(" where ")
+                val typeParametersWithBoudnds =
+                    extraTypeBounds.flatMap { typeParameter ->
+                        typeParameter.upperBounds.map { bound ->
+                            typeParameter.name to bound
+                        }
+                    }
+                renderList(typeParametersWithBoudnds) { (name, bound) ->
+                    name.accept(this)
+                    printer.printWithNoIndent(" : ")
+                    bound.accept(this)
+                }
+            }
+        }
+
         override fun visitTreeElement(treeElement: JKTreeElement) {
             printer.print("/* !!! Hit visitElement for element type: ${treeElement::class} !!! */")
         }
@@ -195,6 +214,9 @@ class NewCodeBuilder {
                 }
             }
 
+            //TODO should it be here?
+            renderExtraTypeParametersUpperBounds(klass.typeParameterList)
+
             if (klass.declarationList.any { it !is JKKtPrimaryConstructor }) {
                 printer.block(multiline = true) {
                     klass.declarationList.forEach { it.accept(this) }
@@ -317,6 +339,10 @@ class NewCodeBuilder {
 
         override fun visitTypeParameter(typeParameter: JKTypeParameter) {
             typeParameter.name.accept(this)
+            if (typeParameter.upperBounds.size == 1) {
+                printer.printlnWithNoIndent(" : ")
+                typeParameter.upperBounds.single().accept(this)
+            }
         }
 
         override fun visitLiteralExpression(literalExpression: JKLiteralExpression) {
