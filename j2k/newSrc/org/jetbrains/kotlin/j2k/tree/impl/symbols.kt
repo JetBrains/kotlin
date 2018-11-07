@@ -5,10 +5,7 @@
 
 package org.jetbrains.kotlin.j2k.tree.impl
 
-import com.intellij.psi.PsiClass
-import com.intellij.psi.PsiField
-import com.intellij.psi.PsiMethod
-import com.intellij.psi.PsiReference
+import com.intellij.psi.*
 import com.intellij.psi.impl.source.tree.java.PsiReferenceExpressionImpl
 import com.intellij.util.reverse
 import org.jetbrains.kotlin.j2k.JKSymbolProvider
@@ -144,15 +141,15 @@ class JKUniverseFieldSymbol : JKFieldSymbol, JKUniverseSymbol<JKField> {
         get() = target.name.value // TODO("Fix this")
 }
 
-class JKMultiverseFieldSymbol(override val target: PsiField, private val symbolProvider: JKSymbolProvider) : JKFieldSymbol {
+class JKMultiverseFieldSymbol(override val target: PsiVariable, private val symbolProvider: JKSymbolProvider) : JKFieldSymbol {
     override val fieldType: JKType
         get() = target.type.toJK(symbolProvider)
     override val name: String
-        get() = target.name
+        get() = target.name!!
     override val declaredIn: JKSymbol
         get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
     override val fqName: String
-        get() = target.name // TODO("Fix this")
+        get() = target.name!! // TODO("Fix this")
 }
 
 class JKMultiversePropertySymbol(override val target: KtProperty, private val symbolProvider: JKSymbolProvider) : JKFieldSymbol {

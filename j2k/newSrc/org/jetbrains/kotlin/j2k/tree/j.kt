@@ -93,6 +93,7 @@ interface JKJavaThrowStatement : JKStatement {
 }
 
 interface JKJavaTryStatement : JKStatement {
+    var resourceDeclarations: List<JKDeclaration>
     var tryBlock: JKBlock
     var finallyBlock: JKBlock
     var catchSections: List<JKJavaTryCatchSection>

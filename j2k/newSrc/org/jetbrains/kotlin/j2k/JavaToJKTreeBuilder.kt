@@ -309,18 +309,21 @@ class JavaToJKTreeBuilder(var symbolProvider: JKSymbolProvider) {
         fun Array<out PsiElement>.toJK(): List<JKDeclaration> {
             return this.map {
                 if (it is PsiLocalVariable) {
-                    JKLocalVariableImpl(
-                        with(modifierMapper) { it.modifierList.toJK() },
-                        with(expressionTreeMapper) { it.typeElement.toJK() },
-                        JKNameIdentifierImpl(it.name ?: TODO()),
-                        with(expressionTreeMapper) { it.initializer.toJK() }
-                    ).also { i ->
-                        symbolProvider.provideUniverseSymbol(it, i)
-                        i.psi = it
-                    }
+                    it.toJK()
                 } else TODO()
             }
         }
+
+        fun PsiLocalVariable.toJK(): JKLocalVariable =
+            JKLocalVariableImpl(
+                with(modifierMapper) { modifierList.toJK() },
+                with(expressionTreeMapper) { typeElement.toJK() },
+                JKNameIdentifierImpl(this.name ?: TODO()),
+                with(expressionTreeMapper) { initializer.toJK() }
+            ).also { i ->
+                symbolProvider.provideUniverseSymbol(this, i)
+                i.psi = this
+            }
 
         fun PsiStatement?.toJK(): JKStatement {
             return when (this) {
@@ -384,6 +387,7 @@ class JavaToJKTreeBuilder(var symbolProvider: JKSymbolProvider) {
                     JKJavaThrowStatementImpl(with(expressionTreeMapper) { exception.toJK() })
                 is PsiTryStatement ->
                     JKJavaTryStatementImpl(
+                        resourceList?.toList()?.map { (it as PsiLocalVariable).toJK() }.orEmpty(),
                         tryBlock?.toJK() ?: JKBodyStub,
                         finallyBlock?.toJK() ?: JKBodyStub,
                         catchSections.map { it.toJK() }

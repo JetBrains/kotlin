@@ -319,11 +319,13 @@ class JKJavaThrowStatementImpl(exception: JKExpression) : JKJavaThrowStatement, 
 }
 
 class JKJavaTryStatementImpl(
+    resourceDeclarations: List<JKDeclaration>,
     tryBlock: JKBlock,
     finallyBlock: JKBlock,
     catchSections: List<JKJavaTryCatchSection>
 ) : JKJavaTryStatement,
     JKBranchElementBase(), PsiOwner by PsiOwnerImpl() {
+    override var resourceDeclarations: List<JKDeclaration> by children(resourceDeclarations)
     override var tryBlock: JKBlock by child(tryBlock)
     override var finallyBlock: JKBlock by child(finallyBlock)
     override var catchSections: List<JKJavaTryCatchSection> by children(catchSections)
