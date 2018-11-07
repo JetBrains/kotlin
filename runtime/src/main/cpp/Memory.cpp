@@ -709,10 +709,14 @@ void ScanRoots(MemoryState* state) {
 }
 
 void CollectRoots(MemoryState* state) {
+  // Here we might free some objects and call deallocation hooks on them,
+  // which in turn might call DecrementRC and trigger new GC - forbid that.
+  state->gcSuspendCount++;
   for (auto container : *(state->roots)) {
     container->resetBuffered();
     CollectWhite(state, container);
   }
+  state->gcSuspendCount--;
 }
 
 void Scan(ContainerHeader* container) {
