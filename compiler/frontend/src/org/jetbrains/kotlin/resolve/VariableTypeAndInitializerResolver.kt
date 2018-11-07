@@ -143,7 +143,10 @@ class VariableTypeAndInitializerResolver(
             variableDescriptor, delegateExpression, type, trace, scopeForInitializer, dataFlowInfo
         )
 
-        getterReturnType?.let { approximateType(it, local) } ?: ErrorUtils.createErrorType("Type from delegate")
+        val delegatedType = getterReturnType?.let { approximateType(it, local) }
+            ?: ErrorUtils.createErrorType("Type from delegate")
+
+        transformAnonymousTypeIfNeeded(variableDescriptor, property, delegatedType, trace, anonymousTypeTransformers)
     }
 
     private fun resolveInitializerType(
