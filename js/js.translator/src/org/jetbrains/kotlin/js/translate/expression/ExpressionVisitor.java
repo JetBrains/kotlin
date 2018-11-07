@@ -74,7 +74,6 @@ import static org.jetbrains.kotlin.js.translate.utils.JsAstUtils.*;
 import static org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils.getReceiverParameterForDeclaration;
 import static org.jetbrains.kotlin.js.translate.utils.TranslationUtils.translateInitializerForProperty;
 import static org.jetbrains.kotlin.resolve.BindingContext.*;
-import static org.jetbrains.kotlin.resolve.BindingContextUtils.isVarCapturedInClosure;
 import static org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt.getResolvedCallWithAssert;
 import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt.getAnnotationClass;
 import static org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils.isFunctionExpression;
@@ -244,7 +243,7 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
             initializer = PropertyTranslatorKt.translateDelegateOrInitializerExpression(context, expression);
             assert initializer != null : "Initializer must be non-null for property with delegate";
         }
-        else if (isVarCapturedInClosure(context.bindingContext(), descriptor)) {
+        else if (context.isBoxedLocalCapturedInClosure(descriptor)) {
             JsNameRef alias = getCapturedVarAccessor(name.makeRef());
             initializer = JsAstUtils.wrapValue(alias, initializer == null ? new JsNullLiteral() : initializer);
         }
