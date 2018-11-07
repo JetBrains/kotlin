@@ -174,6 +174,7 @@ class NewCodeBuilder {
             printer.print(classKindString(klass.classKind))
             builder.append(" ")
             printer.printWithNoIndent(klass.name.value)
+            klass.typeParameterList.accept(this)
 
             val primaryConstructor = klass.primaryConstructor()
             if (primaryConstructor != null && primaryConstructor.parameters.isNotEmpty()) {

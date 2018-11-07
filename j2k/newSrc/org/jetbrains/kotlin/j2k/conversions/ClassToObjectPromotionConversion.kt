@@ -23,7 +23,13 @@ class ClassToObjectPromotionConversion : RecursiveApplicableConversionBase() {
                     companion.invalidate()
                     element.invalidate()
                     return recurse(
-                        JKClassImpl(element.modifierList, element.name, element.inheritance, JKClass.ClassKind.OBJECT)
+                        JKClassImpl(
+                            element.modifierList,
+                            element.name,
+                            element.inheritance,
+                            JKClass.ClassKind.OBJECT,
+                            element.typeParameterList
+                        )
                             .apply {
                                 declarationList = companion.declarationList
                             }

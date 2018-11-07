@@ -45,7 +45,7 @@ interface JKFile : JKTreeElement, JKBranchElement {
     var declarationList: List<JKDeclaration>
 }
 
-interface JKClass : JKDeclaration, JKModifierListOwner, JKBranchElement {
+interface JKClass : JKDeclaration, JKModifierListOwner, JKTypeParameterListOwner, JKBranchElement {
     val name: JKNameIdentifier
 
     val inheritance: JKInheritanceInfo

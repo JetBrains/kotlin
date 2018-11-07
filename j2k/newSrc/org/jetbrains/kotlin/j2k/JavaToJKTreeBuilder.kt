@@ -253,8 +253,11 @@ class JavaToJKTreeBuilder(var symbolProvider: JKSymbolProvider) {
             val implTypes = this.implementsList?.mapTypes().orEmpty()
             val extTypes = this.extendsList?.mapTypes().orEmpty()
             return JKClassImpl(
-                with(modifierMapper) { modifierList.toJK() }, JKNameIdentifierImpl(name!!), JKInheritanceInfoImpl(extTypes + implTypes),
-                classKind
+                with(modifierMapper) { modifierList.toJK() },
+                JKNameIdentifierImpl(name!!),
+                JKInheritanceInfoImpl(extTypes + implTypes),
+                classKind,
+                typeParameterList?.toJK() ?: JKTypeParameterListImpl()
             ).also { jkClassImpl ->
                 jkClassImpl.declarationList = children.mapNotNull {
                     ElementVisitor().apply { it.accept(this) }.resultElement as? JKDeclaration
