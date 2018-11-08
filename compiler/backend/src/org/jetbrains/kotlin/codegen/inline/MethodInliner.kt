@@ -109,13 +109,16 @@ class MethodInliner(
                 API, transformedNode.access, transformedNode.name, transformedNode.desc,
                 transformedNode.signature, transformedNode.exceptions?.toTypedArray()
         )
-        val visitor = RemapVisitor(
-                resultNode, remapper, nodeRemapper,
-                /*copy annotation and attributes*/
-                isTransformingAnonymousObject
-        )
+
+        val visitor = RemapVisitor(resultNode, remapper, nodeRemapper)
+
         try {
-            transformedNode.accept(visitor)
+            transformedNode.accept(
+                if (isTransformingAnonymousObject) {
+                    /*keep annotations and attributes during anonymous object transformations*/
+                    visitor
+                } else MethodBodyVisitor(visitor)
+            )
         }
         catch (e: Throwable) {
             throw wrapException(e, transformedNode, "couldn't inline method call")
@@ -132,7 +135,7 @@ class MethodInliner(
 
         processReturns(resultNode, labelOwner, remapReturn, end)
         //flush transformed node to output
-        resultNode.accept(MethodBodyVisitor(adapter, true))
+        resultNode.accept(SkipMaxAndEndVisitor(adapter))
 
         sourceMapper.endMapping()
         return result

@@ -26,7 +26,7 @@ import org.jetbrains.org.objectweb.asm.tree.FieldInsnNode;
 
 import static org.jetbrains.kotlin.codegen.inline.InlineCodegenUtilsKt.CAPTURED_FIELD_FOLD_PREFIX;
 
-public class RemapVisitor extends MethodBodyVisitor {
+public class RemapVisitor extends SkipMaxAndEndVisitor {
     private final LocalVarRemapper remapper;
     private final FieldRemapper nodeRemapper;
     private final InstructionAdapter instructionAdapter;
@@ -34,10 +34,9 @@ public class RemapVisitor extends MethodBodyVisitor {
     public RemapVisitor(
             @NotNull MethodVisitor mv,
             @NotNull LocalVarRemapper remapper,
-            @NotNull FieldRemapper nodeRemapper,
-            boolean copyAnnotationsAndAttributes
+            @NotNull FieldRemapper nodeRemapper
     ) {
-        super(mv, copyAnnotationsAndAttributes);
+        super(mv);
         this.instructionAdapter = new InstructionAdapter(mv);
         this.remapper = remapper;
         this.nodeRemapper = nodeRemapper;
