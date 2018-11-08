@@ -43,8 +43,11 @@ val CallableMemberDescriptor.isOverridable: Boolean
             && modality != Modality.FINAL
             && (containingDeclaration as? ClassDescriptor)?.isFinalClass != true
 
+val CallableMemberDescriptor.isOverride: Boolean
+    get() = DescriptorUtils.isOverride(this)
+
 val CallableMemberDescriptor.isOverridableOrOverrides: Boolean
-    get() = isOverridable || DescriptorUtils.isOverride(this)
+    get() = isOverridable || isOverride
 
 val ClassDescriptor.isFinalClass: Boolean
     get() = modality == Modality.FINAL && kind != ClassKind.ENUM_CLASS
