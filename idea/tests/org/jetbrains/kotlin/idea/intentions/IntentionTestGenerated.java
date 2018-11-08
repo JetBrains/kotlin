@@ -16261,6 +16261,16 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             runTest("idea/testData/intentions/usePropertyAccessSyntax/superCall.kt");
         }
 
+        @TestMetadata("suppressedByAtomicIntegerList.kt")
+        public void testSuppressedByAtomicIntegerList() throws Exception {
+            runTest("idea/testData/intentions/usePropertyAccessSyntax/suppressedByAtomicIntegerList.kt");
+        }
+
+        @TestMetadata("suppressedByAtomicLongList.kt")
+        public void testSuppressedByAtomicLongList() throws Exception {
+            runTest("idea/testData/intentions/usePropertyAccessSyntax/suppressedByAtomicLongList.kt");
+        }
+
         @TestMetadata("suppressedByNotPropertyList.kt")
         public void testSuppressedByNotPropertyList() throws Exception {
             runTest("idea/testData/intentions/usePropertyAccessSyntax/suppressedByNotPropertyList.kt");
