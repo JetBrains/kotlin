@@ -55,14 +55,18 @@ fun PsiType.toJK(symbolProvider: JKSymbolProvider, nullability: Nullability = Nu
         is PsiClassType -> {
             val target = resolve()
             val parameters = parameters.map { it.toJK(symbolProvider, nullability) }
-            if (target != null) {
-                JKClassTypeImpl(
-                    target.let { symbolProvider.provideDirectSymbol(it) as JKClassSymbol },
-                    parameters,
-                    nullability
-                )
-            } else {
-                JKUnresolvedClassType(this.rawType().canonicalText, parameters, nullability)
+            when (target) {
+                null ->
+                    JKUnresolvedClassType(rawType().canonicalText, parameters, nullability)
+                is PsiTypeParameter ->
+                    JKTypeParameterTypeImpl(target.name!!)
+                else -> {
+                    JKClassTypeImpl(
+                        target.let { symbolProvider.provideDirectSymbol(it) as JKClassSymbol },
+                        parameters,
+                        nullability
+                    )
+                }
             }
         }
         is PsiArrayType -> JKJavaArrayTypeImpl(componentType.toJK(symbolProvider, nullability), nullability)

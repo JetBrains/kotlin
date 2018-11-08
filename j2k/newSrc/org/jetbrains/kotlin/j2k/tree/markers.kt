@@ -71,6 +71,10 @@ interface JKVarianceTypeParameterType : JKType {
     }
 }
 
+interface JKTypeParameterType : JKType {
+    val name: String
+}
+
 interface JKNoType : JKType
 
 interface JKParametrizedType : JKType {

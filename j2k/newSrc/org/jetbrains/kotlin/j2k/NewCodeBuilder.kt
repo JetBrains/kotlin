@@ -493,6 +493,8 @@ class NewCodeBuilder {
                 is JKContextType -> return
                 is JKStarProjectionType ->
                     printer.printWithNoIndent("*")
+                is JKTypeParameterType ->
+                    printer.printWithNoIndent(type.name)
                 is JKVarianceTypeParameterType -> {
                     when (type.variance) {
                         JKVarianceTypeParameterType.Variance.IN -> printer.printWithNoIndent("in ")
