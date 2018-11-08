@@ -180,10 +180,8 @@ class ThrowableSuccessorsLowering(context: JsIrBackendContext) : FileLoweringPas
 
         private fun createPropertyAccessor(fakeAccessor: IrSimpleFunction, field: IrField) {
             val name = fakeAccessor.name
-            val function = JsIrBuilder.buildFunction(name).apply {
-                parent = fakeAccessor.parent
+            val function = JsIrBuilder.buildFunction(name, fakeAccessor.returnType, fakeAccessor.parent).apply {
                 overriddenSymbols += fakeAccessor.overriddenSymbols
-                returnType = fakeAccessor.returnType
                 correspondingProperty = fakeAccessor.correspondingProperty
                 dispatchReceiverParameter = fakeAccessor.dispatchReceiverParameter
             }

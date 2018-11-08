@@ -149,6 +149,8 @@ class SecondaryCtorLowering(val context: JsIrBackendContext) {
 
         return JsIrBuilder.buildFunction(
             functionName,
+            type,
+            declaration.parent,
             declaration.visibility,
             Modality.FINAL,
             declaration.isInline,
@@ -162,9 +164,6 @@ class SecondaryCtorLowering(val context: JsIrBackendContext) {
 
             val newValueParameters = declaration.valueParameters.map { p -> p.copyTo(it) }
             it.valueParameters += (newValueParameters + thisParam)
-
-            it.returnType = type
-            it.parent = declaration.parent
 
             val oldValueParameters = declaration.valueParameters + oldThisReceiver
 
@@ -186,6 +185,8 @@ class SecondaryCtorLowering(val context: JsIrBackendContext) {
 
         return JsIrBuilder.buildFunction(
             functionName,
+            type,
+            declaration.parent,
             declaration.visibility,
             Modality.FINAL,
             declaration.isInline,
@@ -193,9 +194,6 @@ class SecondaryCtorLowering(val context: JsIrBackendContext) {
         ).also {
             it.copyTypeParametersFrom(declaration)
             it.valueParameters += declaration.valueParameters.map { p -> p.copyTo(it) }
-            it.parent = declaration.parent
-
-            it.returnType = type
 
             val createFunctionIntrinsic = context.intrinsics.jsObjectCreate
             val irCreateCall = JsIrBuilder.buildCall(createFunctionIntrinsic.symbol, type, listOf(type))
