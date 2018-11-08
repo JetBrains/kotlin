@@ -211,7 +211,16 @@ include ":kotlin-build-common",
         ":kotlinx-serialization-ide-plugin",
         ":kotlin-serialization",
         ":kotlin-serialization-unshaded",
-        ":kotlin-idl2k"
+        ":kotlin-idl2k",
+        
+        // contracts
+        ":kotlin-contracts-plugin",
+        ":kotlin-contracts-dsl",
+        ":kotlin-contracts",
+
+        ":kotlin-contracts-compiler-subplugins",
+        ":kotlin-contracts-subplugins-dsl",
+        ":kotlin-contracts-subplugins"
 
 
 def includeCidr = hasProperty("cidrPluginsEnabled") && cidrPluginsEnabled != 'false'
@@ -349,3 +358,12 @@ project(':kotlinx-serialization-ide-plugin').projectDir = file("$rootDir/plugins
 project(':kotlin-serialization').projectDir = file("$rootDir/libraries/tools/kotlin-serialization")
 project(':kotlin-serialization-unshaded').projectDir = file("$rootDir/libraries/tools/kotlin-serialization-unshaded")
 project(':kotlin-idl2k').projectDir = file("$rootDir/libraries/tools/idl2k")
+
+// contracts:
+project(':kotlin-contracts-plugin').projectDir = file("$rootDir/plugins/contracts/contracts-plugin")
+project(':kotlin-contracts-dsl').projectDir = "$rootDir/plugins/contracts/contracts-plugin/dsl" as File
+project(':kotlin-contracts').projectDir = "$rootDir/plugins/contracts/contracts-plugin/shaded-plugin" as File
+
+project(':kotlin-contracts-compiler-subplugins').projectDir = file("$rootDir/plugins/contracts/contracts-subplugins")
+project(':kotlin-contracts-subplugins-dsl').projectDir = file("$rootDir/plugins/contracts/contracts-subplugins/dsl")
+project(':kotlin-contracts-subplugins').projectDir = file("$rootDir/plugins/contracts/contracts-subplugins/shaded-plugin")
