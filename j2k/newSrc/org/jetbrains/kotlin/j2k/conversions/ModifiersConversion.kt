@@ -79,8 +79,9 @@ class ModifiersConversion(private val context: ConversionContext) : RecursiveApp
                         JKModalityModifier.Modality.OVERRIDE -> 2
                     }
                 is JKJavaModifier -> 3
-                is JKMutabilityModifier -> 4
-                else -> TODO(this.toString())
+                is JKKtModifier -> 4
+                is JKMutabilityModifier -> 5
+                else -> 6
             }
 
 
