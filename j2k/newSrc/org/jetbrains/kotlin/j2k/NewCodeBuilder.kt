@@ -229,10 +229,15 @@ class NewCodeBuilder {
             }
         }
 
+
         override fun visitKtProperty(ktProperty: JKKtProperty) {
             ktProperty.modifierList.accept(this)
 
-            printer.printWithNoIndent(" ", ktProperty.name.value, ": ")
+            printer.printWithNoIndent(" ", ktProperty.name.value)
+            if (ktProperty.type.type != JKNoTypeImpl) {
+                printer.printWithNoIndent(":")
+                ktProperty.type.accept(this)
+            }
             ktProperty.type.accept(this)
             if (ktProperty.initializer !is JKStubExpression) {
                 printer.printWithNoIndent(" = ")

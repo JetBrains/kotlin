@@ -271,7 +271,7 @@ class JavaToJKTreeBuilder(var symbolProvider: JKSymbolProvider) {
         fun PsiField.toJK(): JKJavaField {
             return JKJavaFieldImpl(
                 with(modifierMapper) { modifierList.toJK(finalAsMutability = true) },
-                with(expressionTreeMapper) { typeElement?.toJK() } ?: TODO(),
+                with(expressionTreeMapper) { typeElement?.toJK() } ?: JKTypeElementImpl(JKNoTypeImpl),
                 JKNameIdentifierImpl(name),
                 with(expressionTreeMapper) { initializer.toJK() }
             ).also {
