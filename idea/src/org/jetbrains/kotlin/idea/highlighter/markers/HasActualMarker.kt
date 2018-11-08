@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.resolve.MultiTargetPlatform
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.getMultiTargetPlatform
-import java.awt.event.MouseEvent
 
 private fun ModuleDescriptor?.getMultiTargetPlatformName(): String? {
     if (this == null) return null
@@ -74,7 +73,7 @@ fun KtDeclaration.navigateToActualTitle() = "Choose actual for $name"
 
 fun KtDeclaration.navigateToActualUsagesTitle() = "Actuals for $name"
 
-fun buildNavigateToActualDeclarationsPopup(e: MouseEvent?, element: PsiElement?): NavigationPopupDescriptor? {
+fun buildNavigateToActualDeclarationsPopup(element: PsiElement?): NavigationPopupDescriptor? {
     return element?.markerDeclaration?.let {
         val navigatableActualDeclarations = it.allNavigatableActualDeclarations()
         if (navigatableActualDeclarations.isEmpty()) return null

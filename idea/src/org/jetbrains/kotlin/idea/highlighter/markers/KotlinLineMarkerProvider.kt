@@ -206,7 +206,7 @@ private val PLATFORM_ACTUAL = object : MarkerType(
     { element -> element?.markerDeclaration?.let { getPlatformActualTooltip(it) } },
     object : LineMarkerNavigator() {
         override fun browse(e: MouseEvent?, element: PsiElement?) {
-            buildNavigateToActualDeclarationsPopup(e, element)?.showPopup(e)
+            buildNavigateToActualDeclarationsPopup(element)?.showPopup(e)
         }
     }) {
     override fun getNavigationHandler(): GutterIconNavigationHandler<PsiElement> {
@@ -217,7 +217,7 @@ private val PLATFORM_ACTUAL = object : MarkerType(
             }
 
             override fun getTargetsPopupDescriptor(element: PsiElement?): NavigationPopupDescriptor? {
-                return buildNavigateToActualDeclarationsPopup(null, element)
+                return buildNavigateToActualDeclarationsPopup(element)
             }
         }
     }
@@ -228,7 +228,7 @@ private val EXPECTED_DECLARATION = object : MarkerType(
     { element -> element?.markerDeclaration?.let { getExpectedDeclarationTooltip(it) } },
     object : LineMarkerNavigator() {
         override fun browse(e: MouseEvent?, element: PsiElement?) {
-            buildNavigateToExpectedDeclarationsPopup(e, element)?.showPopup(e)
+            buildNavigateToExpectedDeclarationsPopup(element)?.showPopup(e)
         }
     }) {
     override fun getNavigationHandler(): GutterIconNavigationHandler<PsiElement> {
@@ -239,7 +239,7 @@ private val EXPECTED_DECLARATION = object : MarkerType(
             }
 
             override fun getTargetsPopupDescriptor(element: PsiElement?): NavigationPopupDescriptor? {
-                return buildNavigateToExpectedDeclarationsPopup(null, element)
+                return buildNavigateToExpectedDeclarationsPopup(element)
             }
         }
     }
