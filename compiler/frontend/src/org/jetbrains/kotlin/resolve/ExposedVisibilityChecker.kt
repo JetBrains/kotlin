@@ -16,10 +16,12 @@
 
 package org.jetbrains.kotlin.resolve
 
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.diagnostics.DiagnosticFactory3
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink.DO_NOTHING
-import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.diagnostics.Errors.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.isError
@@ -27,6 +29,15 @@ import org.jetbrains.kotlin.types.isError
 // Checker for all seven EXPOSED_* errors
 // All functions return true if everything is OK, or false in case of any errors
 class ExposedVisibilityChecker(private val trace: DiagnosticSink = DO_NOTHING) {
+
+    private fun <E : PsiElement> reportExposure(
+        diagnostic: DiagnosticFactory3<E, EffectiveVisibility, DescriptorWithRelation, EffectiveVisibility>,
+        element: E,
+        elementVisibility: EffectiveVisibility,
+        restrictingDescriptor: DescriptorWithRelation
+    ) {
+        trace.report(diagnostic.on(element, elementVisibility, restrictingDescriptor, restrictingDescriptor.effectiveVisibility()))
+    }
 
     // NB: does not check any members
     fun checkClassHeader(klass: KtClassOrObject, classDescriptor: ClassDescriptor): Boolean {
@@ -61,12 +72,7 @@ class ExposedVisibilityChecker(private val trace: DiagnosticSink = DO_NOTHING) {
         val typeAliasVisibility = typeAliasDescriptor.effectiveVisibility()
         val restricting = expandedType.leastPermissiveDescriptor(typeAliasVisibility)
         if (restricting != null) {
-            trace.report(
-                Errors.EXPOSED_TYPEALIAS_EXPANDED_TYPE.on(
-                    typeAlias.nameIdentifier ?: typeAlias,
-                    typeAliasVisibility, restricting, restricting.effectiveVisibility()
-                )
-            )
+            reportExposure(EXPOSED_TYPEALIAS_EXPANDED_TYPE, typeAlias.nameIdentifier ?: typeAlias, typeAliasVisibility, restricting)
         }
     }
 
@@ -81,12 +87,7 @@ class ExposedVisibilityChecker(private val trace: DiagnosticSink = DO_NOTHING) {
         if (function !is KtConstructor<*>) {
             val restricting = functionDescriptor.returnType?.leastPermissiveDescriptor(functionVisibility)
             if (restricting != null) {
-                trace.report(
-                    Errors.EXPOSED_FUNCTION_RETURN_TYPE.on(
-                        function.nameIdentifier ?: function, functionVisibility,
-                        restricting, restricting.effectiveVisibility()
-                    )
-                )
+                reportExposure(EXPOSED_FUNCTION_RETURN_TYPE, function.nameIdentifier ?: function, functionVisibility, restricting)
                 result = false
             }
         }
@@ -95,23 +96,15 @@ class ExposedVisibilityChecker(private val trace: DiagnosticSink = DO_NOTHING) {
                 val valueParameter = function.valueParameters[i]
                 val restricting = parameterDescriptor.type.leastPermissiveDescriptor(functionVisibility)
                 if (restricting != null) {
-                    trace.report(
-                        Errors.EXPOSED_PARAMETER_TYPE.on(
-                            valueParameter, functionVisibility,
-                            restricting, restricting.effectiveVisibility()
-                        )
-                    )
+                    reportExposure(EXPOSED_PARAMETER_TYPE, valueParameter, functionVisibility, restricting)
                     result = false
                 } else if (functionDescriptor is ClassConstructorDescriptor && valueParameter.hasValOrVar()) {
                     val propertyDescriptor = (trace as? BindingTrace)?.get(BindingContext.VALUE_PARAMETER_AS_PROPERTY, parameterDescriptor)
                     val propertyOrClassVisibility = (propertyDescriptor ?: functionDescriptor.constructedClass).effectiveVisibility()
                     val restrictingByProperty = parameterDescriptor.type.leastPermissiveDescriptor(propertyOrClassVisibility)
                     if (restrictingByProperty != null) {
-                        trace.report(
-                            Errors.EXPOSED_PROPERTY_TYPE_IN_CONSTRUCTOR.on(
-                                valueParameter, propertyOrClassVisibility,
-                                restrictingByProperty, restrictingByProperty.effectiveVisibility()
-                            )
+                        reportExposure(
+                            EXPOSED_PROPERTY_TYPE_IN_CONSTRUCTOR, valueParameter, propertyOrClassVisibility, restrictingByProperty
                         )
                         result = false
                     }
@@ -131,12 +124,7 @@ class ExposedVisibilityChecker(private val trace: DiagnosticSink = DO_NOTHING) {
         val restricting = propertyDescriptor.type.leastPermissiveDescriptor(propertyVisibility)
         var result = true
         if (restricting != null) {
-            trace.report(
-                Errors.EXPOSED_PROPERTY_TYPE.on(
-                    property.nameIdentifier ?: property, propertyVisibility,
-                    restricting, restricting.effectiveVisibility()
-                )
-            )
+            reportExposure(EXPOSED_PROPERTY_TYPE, property.nameIdentifier ?: property, propertyVisibility, restricting)
             result = false
         }
         return result and checkMemberReceiver(property.receiverTypeReference, propertyDescriptor)
@@ -148,12 +136,7 @@ class ExposedVisibilityChecker(private val trace: DiagnosticSink = DO_NOTHING) {
         val memberVisibility = memberDescriptor.effectiveVisibility()
         val restricting = receiverParameterDescriptor.type.leastPermissiveDescriptor(memberVisibility)
         if (restricting != null) {
-            trace.report(
-                Errors.EXPOSED_RECEIVER_TYPE.on(
-                    typeReference, memberVisibility,
-                    restricting, restricting.effectiveVisibility()
-                )
-            )
+            reportExposure(EXPOSED_RECEIVER_TYPE, typeReference, memberVisibility, restricting)
             return false
         }
         return true
@@ -173,21 +156,9 @@ class ExposedVisibilityChecker(private val trace: DiagnosticSink = DO_NOTHING) {
             }
             val restricting = superType.leastPermissiveDescriptor(classVisibility)
             if (restricting != null) {
-                if (isInterface) {
-                    trace.report(
-                        Errors.EXPOSED_SUPER_INTERFACE.on(
-                            delegationList[i], classVisibility,
-                            restricting, restricting.effectiveVisibility()
-                        )
-                    )
-                } else {
-                    trace.report(
-                        Errors.EXPOSED_SUPER_CLASS.on(
-                            delegationList[i], classVisibility,
-                            restricting, restricting.effectiveVisibility()
-                        )
-                    )
-                }
+                reportExposure(
+                    if (isInterface) EXPOSED_SUPER_INTERFACE else EXPOSED_SUPER_CLASS, delegationList[i], classVisibility, restricting
+                )
                 result = false
             }
         }
@@ -203,12 +174,7 @@ class ExposedVisibilityChecker(private val trace: DiagnosticSink = DO_NOTHING) {
             for (upperBound in typeParameterDescriptor.upperBounds) {
                 val restricting = upperBound.leastPermissiveDescriptor(classVisibility)
                 if (restricting != null) {
-                    trace.report(
-                        Errors.EXPOSED_TYPE_PARAMETER_BOUND.on(
-                            typeParameterList[i], classVisibility,
-                            restricting, restricting.effectiveVisibility()
-                        )
-                    )
+                    reportExposure(EXPOSED_TYPE_PARAMETER_BOUND, typeParameterList[i], classVisibility, restricting)
                     result = false
                     break
                 }
