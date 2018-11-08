@@ -13,9 +13,13 @@ import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElementVisitor
+import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.kotlin.psi.KtContainerNodeForControlStructureBody
 import org.jetbrains.kotlin.psi.KtFunctionLiteral
+import org.jetbrains.kotlin.psi.KtWhenEntry
 import org.jetbrains.kotlin.psi.lambdaExpressionVisitor
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
+import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.calls.util.isSingleUnderscore
 
@@ -27,6 +31,11 @@ class RedundantLambdaArrowInspection : AbstractKotlinInspection() {
             val parameters = functionLiteral.valueParameters
             val singleParameter = parameters.singleOrNull()
             if (parameters.isNotEmpty() && singleParameter?.isSingleUnderscore != true) return@lambdaExpressionVisitor
+
+            if (lambdaExpression.getStrictParentOfType<KtWhenEntry>()?.expression == lambdaExpression) return@lambdaExpressionVisitor
+            if (lambdaExpression.getStrictParentOfType<KtContainerNodeForControlStructureBody>()?.let {
+                    it.node.elementType in listOf(KtNodeTypes.THEN, KtNodeTypes.ELSE) && it.expression == lambdaExpression
+                } == true) return@lambdaExpressionVisitor
 
             val startOffset = functionLiteral.startOffset
             holder.registerProblem(

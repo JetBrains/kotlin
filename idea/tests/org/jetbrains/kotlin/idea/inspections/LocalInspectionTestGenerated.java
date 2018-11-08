@@ -4233,6 +4233,36 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             runTest("idea/testData/inspectionsLocal/redundantLambdaArrow/hasArguments.kt");
         }
 
+        @TestMetadata("inIfElse.kt")
+        public void testInIfElse() throws Exception {
+            runTest("idea/testData/inspectionsLocal/redundantLambdaArrow/inIfElse.kt");
+        }
+
+        @TestMetadata("inIfElse2.kt")
+        public void testInIfElse2() throws Exception {
+            runTest("idea/testData/inspectionsLocal/redundantLambdaArrow/inIfElse2.kt");
+        }
+
+        @TestMetadata("inIfThen.kt")
+        public void testInIfThen() throws Exception {
+            runTest("idea/testData/inspectionsLocal/redundantLambdaArrow/inIfThen.kt");
+        }
+
+        @TestMetadata("inIfThen2.kt")
+        public void testInIfThen2() throws Exception {
+            runTest("idea/testData/inspectionsLocal/redundantLambdaArrow/inIfThen2.kt");
+        }
+
+        @TestMetadata("inIfWhenEntry.kt")
+        public void testInIfWhenEntry() throws Exception {
+            runTest("idea/testData/inspectionsLocal/redundantLambdaArrow/inIfWhenEntry.kt");
+        }
+
+        @TestMetadata("inIfWhenEntry2.kt")
+        public void testInIfWhenEntry2() throws Exception {
+            runTest("idea/testData/inspectionsLocal/redundantLambdaArrow/inIfWhenEntry2.kt");
+        }
+
         @TestMetadata("simple.kt")
         public void testSimple() throws Exception {
             runTest("idea/testData/inspectionsLocal/redundantLambdaArrow/simple.kt");
