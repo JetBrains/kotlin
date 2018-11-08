@@ -121,6 +121,7 @@ enum class LanguageFeature(
 
     InlineClasses(sinceVersion = KOTLIN_1_3, defaultState = State.ENABLED_WITH_WARNING, kind = UNSTABLE_FEATURE),
 
+    ContextualEffects(sinceVersion = KOTLIN_1_4, defaultState = State.DISABLED, kind = UNSTABLE_FEATURE)
     ;
 
     val presentableName: String
