@@ -15,4 +15,4 @@ fun test() {
 //INFO: <div class='definition'><pre><font color="808080"><i>OnMethodUsageWithBracketsInParam.kt</i></font><br>public fun <b>testMethod</b>(
 //INFO:     a: Int,
 //INFO:     b: String
-//INFO: ): Unit</pre></div><div class='content'><p>Some documentation</p></div><table class='sections'><tr><td valign='top' class='section'><p>Params:</td><td valign='top'><p><code>a</code> - Some int<p><code>b</code> - String</td></table>
+//INFO: ): Unit</pre></div><div class='content'><p>Some documentation</p></div><table class='sections'><tr><td valign='top' class='section'><p>Params:</td><td><p><code>a</code> - Some int<p><code>b</code> - String</td></table>
