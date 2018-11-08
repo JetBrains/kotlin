@@ -14,29 +14,36 @@ import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 class ClassToObjectPromotionConversion : RecursiveApplicableConversionBase() {
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
         if (element is JKClass && element.classKind == JKClass.ClassKind.CLASS) {
-            val constructor = element.declarationList.firstIsInstanceOrNull<JKKtPrimaryConstructor>()
-            val companion = element.declarationList.firstOrNull { it is JKClass && it.classKind == JKClass.ClassKind.COMPANION }
-            if (companion != null && (constructor == null || constructor.parameters.isEmpty())) {
-                val declarations = element.declarationList - companion - listOfNotNull(constructor)
-                if (declarations.isEmpty()) {
-                    companion as JKClass
-                    companion.invalidate()
-                    element.invalidate()
-                    return recurse(
-                        JKClassImpl(
-                            element.modifierList,
-                            element.name,
-                            element.inheritance,
-                            JKClass.ClassKind.OBJECT,
-                            element.typeParameterList
-                        )
-                            .apply {
-                                declarationList = companion.declarationList
-                            }
-                    )
+            val companion =
+                element.declarationList.firstIsInstanceOrNull<JKClass>()
+                    ?.takeIf { it.classKind == JKClass.ClassKind.COMPANION }
+                    ?: return recurse(element)
+
+            val allDeclarationsMatches = element.declarationList.all {
+                when (it) {
+                    is JKKtPrimaryConstructor -> it.parameters.isEmpty() && it.block.statements.isEmpty()
+                    is JKClass -> it.classKind == JKClass.ClassKind.COMPANION
+                    else -> false
                 }
             }
+
+            if (allDeclarationsMatches) {
+                companion.invalidate()
+                element.invalidate()
+                return recurse(
+                    JKClassImpl(
+                        element.modifierList,
+                        element.name,
+                        element.inheritance,
+                        JKClass.ClassKind.OBJECT,
+                        element.typeParameterList
+                    ).apply {
+                        declarationList = companion.declarationList
+                    }
+                )
+            }
         }
+
         return recurse(element)
     }
 }
