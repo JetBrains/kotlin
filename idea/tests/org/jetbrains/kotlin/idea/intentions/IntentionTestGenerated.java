@@ -7495,6 +7495,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             runTest("idea/testData/intentions/convertToStringTemplate/this3.kt");
         }
 
+        @TestMetadata("toString.kt")
+        public void testToString() throws Exception {
+            runTest("idea/testData/intentions/convertToStringTemplate/toString.kt");
+        }
+
         @TestMetadata("tricky.kt")
         public void testTricky() throws Exception {
             runTest("idea/testData/intentions/convertToStringTemplate/tricky.kt");
