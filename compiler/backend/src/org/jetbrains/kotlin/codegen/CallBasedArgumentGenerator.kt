@@ -3,101 +3,66 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.codegen;
+package org.jetbrains.kotlin.codegen
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.descriptors.CallableDescriptor;
-import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor;
-import org.jetbrains.kotlin.psi.KtExpression;
-import org.jetbrains.kotlin.psi.ValueArgument;
-import org.jetbrains.kotlin.resolve.calls.model.DefaultValueArgument;
-import org.jetbrains.kotlin.resolve.calls.model.ExpressionValueArgument;
-import org.jetbrains.kotlin.resolve.calls.model.VarargValueArgument;
-import org.jetbrains.kotlin.types.FlexibleTypesKt;
-import org.jetbrains.org.objectweb.asm.Type;
+import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.resolve.calls.model.DefaultValueArgument
+import org.jetbrains.kotlin.resolve.calls.model.ExpressionValueArgument
+import org.jetbrains.kotlin.resolve.calls.model.VarargValueArgument
+import org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE
+import org.jetbrains.kotlin.types.upperIfFlexible
+import org.jetbrains.org.objectweb.asm.Type
 
-import java.util.List;
+class CallBasedArgumentGenerator(
+    private val codegen: ExpressionCodegen,
+    private val callGenerator: CallGenerator,
+    private val valueParameters: List<ValueParameterDescriptor>,
+    private val valueParameterTypes: List<Type>
+) : ArgumentGenerator() {
+    private val isVarargInvoke: Boolean =
+        JvmCodegenUtil.isDeclarationOfBigArityFunctionInvoke(valueParameters.firstOrNull()?.containingDeclaration)
 
-import static org.jetbrains.kotlin.codegen.StackValue.createDefaultValue;
-import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE;
-
-public class CallBasedArgumentGenerator extends ArgumentGenerator {
-    private final ExpressionCodegen codegen;
-    private final CallGenerator callGenerator;
-    private final List<ValueParameterDescriptor> valueParameters;
-    private final List<Type> valueParameterTypes;
-    private final boolean isVarargInvoke;
-
-    public CallBasedArgumentGenerator(
-            @NotNull ExpressionCodegen codegen,
-            @NotNull CallGenerator callGenerator,
-            @NotNull List<ValueParameterDescriptor> valueParameters,
-            @NotNull List<Type> valueParameterTypes
-    ) {
-        this.codegen = codegen;
-        this.callGenerator = callGenerator;
-        this.valueParameters = valueParameters;
-        this.valueParameterTypes = valueParameterTypes;
-
-        CallableDescriptor container = valueParameters.isEmpty() ? null : valueParameters.get(0).getContainingDeclaration();
-        this.isVarargInvoke = JvmCodegenUtil.isDeclarationOfBigArityFunctionInvoke(container);
-
+    init {
         if (!isVarargInvoke) {
-            assert valueParameters.size() == valueParameterTypes.size() :
-                    "Value parameters and their types mismatch in sizes: " + valueParameters.size() + " != " + valueParameterTypes.size();
+            assert(valueParameters.size == valueParameterTypes.size) {
+                "Value parameters and their types mismatch in sizes: ${valueParameters.size} != ${valueParameterTypes.size}"
+            }
         }
     }
 
-    @Override
-    protected void generateExpression(int i, @NotNull ExpressionValueArgument argument) {
-        ValueParameterDescriptor parameter = valueParameters.get(i);
-        ValueArgument valueArgument = argument.getValueArgument();
-        assert valueArgument != null;
-        KtExpression argumentExpression = valueArgument.getArgumentExpression();
-        assert argumentExpression != null : valueArgument.asElement().getText();
-        callGenerator.genValueAndPut(parameter, argumentExpression, isVarargInvoke ? OBJECT_TYPE : valueParameterTypes.get(i), i);
+    override fun generateExpression(i: Int, argument: ExpressionValueArgument) {
+        val parameter = valueParameters[i]
+        val valueArgument = argument.valueArgument!!
+        val argumentExpression = valueArgument.getArgumentExpression() ?: error(valueArgument.asElement().text)
+        callGenerator.genValueAndPut(parameter, argumentExpression, if (isVarargInvoke) OBJECT_TYPE else valueParameterTypes[i], i)
     }
 
-    @Override
-    protected void generateDefault(int i, @NotNull DefaultValueArgument argument) {
+    override fun generateDefault(i: Int, argument: DefaultValueArgument) {
         callGenerator.putValueIfNeeded(
-                getJvmKotlinType(valueParameterTypes, valueParameters, i),
-                createDefaultValue(valueParameterTypes.get(i)),
-                ValueKind.DEFAULT_PARAMETER,
-                i
-        );
+            getJvmKotlinType(i),
+            StackValue.createDefaultValue(valueParameterTypes[i]),
+            ValueKind.DEFAULT_PARAMETER,
+            i
+        )
     }
 
-    @Override
-    protected void generateVararg(int i, @NotNull VarargValueArgument argument) {
-        ValueParameterDescriptor parameter = valueParameters.get(i);
+    override fun generateVararg(i: Int, argument: VarargValueArgument) {
         // Upper bound for type of vararg parameter should always have a form of 'Array<out T>',
         // while its lower bound may be Nothing-typed after approximation
-        StackValue lazyVararg = codegen.genVarargs(argument, FlexibleTypesKt.upperIfFlexible(parameter.getType()));
-        callGenerator.putValueIfNeeded(getJvmKotlinType(valueParameterTypes, valueParameters, i), lazyVararg, ValueKind.GENERAL_VARARG, i);
+        val lazyVararg = codegen.genVarargs(argument, valueParameters[i].type.upperIfFlexible())
+        callGenerator.putValueIfNeeded(getJvmKotlinType(i), lazyVararg, ValueKind.GENERAL_VARARG, i)
     }
 
-    @Override
-    protected void generateDefaultJava(int i, @NotNull DefaultValueArgument argument) {
-        StackValue argumentValue = StackValueKt.findJavaDefaultArgumentValue(
-                valueParameters.get(i),
-                valueParameterTypes.get(i),
-                codegen.typeMapper
-        );
+    override fun generateDefaultJava(i: Int, argument: DefaultValueArgument) {
+        val argumentValue = valueParameters[i].findJavaDefaultArgumentValue(valueParameterTypes[i], codegen.typeMapper)
 
-        callGenerator.putValueIfNeeded(getJvmKotlinType(valueParameterTypes, valueParameters, i), argumentValue);
+        callGenerator.putValueIfNeeded(getJvmKotlinType(i), argumentValue)
     }
 
-    @Override
-    protected void reorderArgumentsIfNeeded(@NotNull List<ArgumentAndDeclIndex> actualArgsWithDeclIndex) {
-        callGenerator.reorderArgumentsIfNeeded(actualArgsWithDeclIndex, valueParameterTypes);
+    override fun reorderArgumentsIfNeeded(args: List<ArgumentAndDeclIndex>) {
+        callGenerator.reorderArgumentsIfNeeded(args, valueParameterTypes)
     }
 
-    @NotNull
-    private static JvmKotlinType getJvmKotlinType(
-            @NotNull List<Type> valueParameterTypes,
-            @NotNull List<ValueParameterDescriptor> valueParameters, int i
-    ) {
-        return new JvmKotlinType(valueParameterTypes.get(i), valueParameters.get(i).getOriginal().getType());
-    }
+    private fun getJvmKotlinType(i: Int): JvmKotlinType =
+        JvmKotlinType(valueParameterTypes[i], valueParameters[i].original.type)
 }
