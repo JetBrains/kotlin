@@ -259,6 +259,16 @@ public class QuickFixMultiModuleTestGenerated extends AbstractQuickFixMultiModul
         runTest("idea/testData/multiModuleQuickFix/functionTypeReceiverToParameterByImpl/");
     }
 
+    @TestMetadata("generateEqualsInExpect")
+    public void testGenerateEqualsInExpect() throws Exception {
+        runTest("idea/testData/multiModuleQuickFix/generateEqualsInExpect/");
+    }
+
+    @TestMetadata("generateHashCodeInExpect")
+    public void testGenerateHashCodeInExpect() throws Exception {
+        runTest("idea/testData/multiModuleQuickFix/generateHashCodeInExpect/");
+    }
+
     @TestMetadata("implementAbstractExpectMemberInheritedFromInterface")
     public void testImplementAbstractExpectMemberInheritedFromInterface() throws Exception {
         runTest("idea/testData/multiModuleQuickFix/implementAbstractExpectMemberInheritedFromInterface/");
