@@ -374,6 +374,11 @@ public class ClassFileToSourceStubConverterTestGenerated extends AbstractClassFi
         runTest("plugins/kapt3/kapt3-compiler/testData/converter/strangeNames.kt");
     }
 
+    @TestMetadata("suspendErrorTypes.kt")
+    public void testSuspendErrorTypes() throws Exception {
+        runTest("plugins/kapt3/kapt3-compiler/testData/converter/suspendErrorTypes.kt");
+    }
+
     @TestMetadata("topLevel.kt")
     public void testTopLevel() throws Exception {
         runTest("plugins/kapt3/kapt3-compiler/testData/converter/topLevel.kt");
