@@ -132,7 +132,8 @@ fun KtDeclaration.isEffectivelyActual(): Boolean {
     return descriptor.isEffectivelyActual()
 }
 
-private fun MemberDescriptor.isEffectivelyActual() = isActual || isEnumEntryInActual()
+private fun MemberDescriptor.isEffectivelyActual(): Boolean =
+    isActual || isEnumEntryInActual() || (this is ClassConstructorDescriptor && containingDeclaration.isEffectivelyActual())
 
 private fun MemberDescriptor.isEnumEntryInActual() =
     (DescriptorUtils.isEnumEntry(this) && (containingDeclaration as? MemberDescriptor)?.isActual == true)
