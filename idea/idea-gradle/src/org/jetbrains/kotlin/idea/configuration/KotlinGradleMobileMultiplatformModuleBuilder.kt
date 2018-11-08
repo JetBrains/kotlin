@@ -88,7 +88,7 @@ class KotlinGradleMobileMultiplatformModuleBuilder :
                     fun proxyHello() = hello()
                 }
 
-                fun main(args: Array<String>) {
+                fun main() {
                     println(hello())
                 }
             """.trimIndent()
