@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
+import org.jetbrains.kotlin.idea.core.getDeepestSuperDeclarations
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.core.setType
 import org.jetbrains.kotlin.idea.references.mainReference
@@ -41,7 +42,6 @@ import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.isFlexible
 import org.jetbrains.kotlin.types.typeUtil.isUnit
-import java.lang.IllegalArgumentException
 
 fun KtContainerNode.description(): String? {
     when (node.elementType) {
@@ -320,4 +320,13 @@ fun KtDeclaration.isFinalizeMethod(descriptor: DeclarationDescriptor? = null): B
     return function.name == "finalize"
             && function.valueParameters.isEmpty()
             && ((descriptor ?: function.descriptor) as? FunctionDescriptor)?.returnType?.isUnit() == true
+}
+
+fun KtDotQualifiedExpression.isToString(): Boolean {
+    val callExpression = selectorExpression as? KtCallExpression ?: return false
+    val referenceExpression = callExpression.calleeExpression as? KtNameReferenceExpression ?: return false
+    if (referenceExpression.getReferencedName() != "toString") return false
+    val resolvedCall = toResolvedCall(BodyResolveMode.PARTIAL) ?: return false
+    val callableDescriptor = resolvedCall.resultingDescriptor as? CallableMemberDescriptor ?: return false
+    return callableDescriptor.getDeepestSuperDeclarations().any { it.fqNameUnsafe.asString() == "kotlin.Any.toString" }
 }

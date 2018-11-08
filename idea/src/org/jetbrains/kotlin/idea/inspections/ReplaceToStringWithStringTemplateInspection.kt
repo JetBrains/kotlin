@@ -8,14 +8,12 @@ package org.jetbrains.kotlin.idea.inspections
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
+import org.jetbrains.kotlin.idea.intentions.isToString
+import org.jetbrains.kotlin.psi.KtBlockStringTemplateEntry
 import org.jetbrains.kotlin.psi.KtDotQualifiedExpression
-import org.jetbrains.kotlin.idea.core.getDeepestSuperDeclarations
-import org.jetbrains.kotlin.idea.intentions.toResolvedCall
-import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.KtPsiFactory
+import org.jetbrains.kotlin.psi.KtReferenceExpression
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
-import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 class ReplaceToStringWithStringTemplateInspection : AbstractApplicabilityBasedInspection<KtDotQualifiedExpression>(
     KtDotQualifiedExpression::class.java
@@ -37,13 +35,4 @@ class ReplaceToStringWithStringTemplateInspection : AbstractApplicabilityBasedIn
     override fun inspectionTarget(element: KtDotQualifiedExpression) = element
 
     override val defaultFixText = "Replace 'toString' with string template"
-
-    private fun KtDotQualifiedExpression.isToString(): Boolean {
-        val callExpression = selectorExpression as? KtCallExpression ?: return false
-        val referenceExpression = callExpression.calleeExpression as? KtNameReferenceExpression ?: return false
-        if (referenceExpression.getReferencedName() != "toString") return false
-        val resolvedCall = toResolvedCall(BodyResolveMode.PARTIAL) ?: return false
-        val callableDescriptor = resolvedCall.resultingDescriptor as? CallableMemberDescriptor ?: return false
-        return callableDescriptor.getDeepestSuperDeclarations().any { it.fqNameUnsafe.asString() == "kotlin.Any.toString" }
-    }
 }
