@@ -394,7 +394,9 @@ class CallableReferenceLowering(val context: JsIrBackendContext) : FileLoweringP
 
         callable.dispatchReceiverParameter?.let { dispatch ->
             if (reference.dispatchReceiver == null) {
-                result.add(JsIrBuilder.buildValueParameter(dispatch.name, result.size, dispatch.type.boxIfInlined()).also { it.parent = closure })
+                result.add(JsIrBuilder.buildValueParameter(dispatch.name, result.size, dispatch.type.boxIfInlined()).also {
+                    it.parent = closure
+                })
             } else {
                 // do not add dispatch receiver in result signature if it is bound
                 capturedParams--
@@ -434,10 +436,7 @@ class CallableReferenceLowering(val context: JsIrBackendContext) : FileLoweringP
 
         val boundValueParameters = receivers + declaration.valueParameters.filter { it.origin == BOUND_VALUE_PARAMETER }
 
-        val factoryDeclaration = JsIrBuilder.buildFunction(getterName, declaration.visibility)
-
-        factoryDeclaration.parent = implicitDeclarationFile
-        factoryDeclaration.returnType = reference.type
+        val factoryDeclaration = JsIrBuilder.buildFunction(getterName, reference.type, implicitDeclarationFile, declaration.visibility)
 
         for ((i, p) in boundValueParameters.withIndex()) {
             val descriptor = WrappedValueParameterDescriptor()
@@ -491,18 +490,22 @@ class CallableReferenceLowering(val context: JsIrBackendContext) : FileLoweringP
         arity: Int
     ): IrFunction {
         val closureName = createClosureInstanceName(declaration)
+        val returnType = declaration.returnType.boxIfInlined()
         val closureFunction =
-            JsIrBuilder.buildFunction(closureName, Visibilities.LOCAL, origin = JsIrBackendContext.callableClosureOrigin)
-                .also { it.parent = factoryFunction }
+            JsIrBuilder.buildFunction(
+                closureName,
+                returnType,
+                factoryFunction,
+                Visibilities.LOCAL,
+                origin = JsIrBackendContext.callableClosureOrigin
+            )
 
         // the params which are passed to closure
         val boundParamSymbols = factoryFunction.valueParameters.map { it.symbol }
         val unboundParamDeclarations = generateSignatureForClosure(declaration, factoryFunction, closureFunction, reference, arity)
         val unboundParamSymbols = unboundParamDeclarations.map { it.symbol }
-        val returnType = declaration.returnType.boxIfInlined()
 
         closureFunction.valueParameters += unboundParamDeclarations
-        closureFunction.returnType = returnType
 
         val callTarget = context.ir.defaultParameterDeclarationsCache[declaration] ?: declaration
 

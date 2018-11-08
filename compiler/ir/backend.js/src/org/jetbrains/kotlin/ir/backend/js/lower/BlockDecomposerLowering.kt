@@ -55,10 +55,12 @@ class BlockDecomposerLowering(context: JsIrBackendContext) : DeclarationContaine
 
     fun lower(irField: IrField, container: IrDeclarationContainer): List<IrDeclaration> {
         irField.initializer?.apply {
-            val initFunction = JsIrBuilder.buildFunction(irField.name.asString() + "\$init\$", irField.visibility).also {
-                it.parent = container
-                it.returnType = expression.type
-            }
+            val initFunction = JsIrBuilder.buildFunction(
+                irField.name.asString() + "\$init\$",
+                expression.type,
+                container,
+                irField.visibility
+            )
 
             val newBody = toBlockBody(initFunction)
 
@@ -425,11 +427,14 @@ class BlockDecomposerTransformer(context: JsIrBackendContext) : IrElementTransfo
 
         override fun visitSetField(expression: IrSetField) = expression.asExpression(unitValue)
 
-        override fun visitBreakContinue(jump: IrBreakContinue) = jump.asExpression(JsIrBuilder.buildCall(unreachableFunction.symbol, nothingType))
+        override fun visitBreakContinue(jump: IrBreakContinue) =
+            jump.asExpression(JsIrBuilder.buildCall(unreachableFunction.symbol, nothingType))
 
-        override fun visitThrow(expression: IrThrow) = expression.asExpression(JsIrBuilder.buildCall(unreachableFunction.symbol, nothingType))
+        override fun visitThrow(expression: IrThrow) =
+            expression.asExpression(JsIrBuilder.buildCall(unreachableFunction.symbol, nothingType))
 
-        override fun visitReturn(expression: IrReturn) = expression.asExpression(JsIrBuilder.buildCall(unreachableFunction.symbol, nothingType))
+        override fun visitReturn(expression: IrReturn) =
+            expression.asExpression(JsIrBuilder.buildCall(unreachableFunction.symbol, nothingType))
 
         override fun visitVariable(declaration: IrVariable) = declaration.asExpression(unitValue)
 

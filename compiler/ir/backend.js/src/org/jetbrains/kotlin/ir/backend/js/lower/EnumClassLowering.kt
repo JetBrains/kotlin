@@ -72,10 +72,11 @@ class EnumUsageLowering(val context: JsIrBackendContext) : FileLoweringPass {
 
     private fun lowerEnumEntry(enumEntry: IrEnumEntry, klass: IrClass) =
         context.enumEntryToGetInstanceFunction.getOrPut(enumEntry.symbol) {
-            JsIrBuilder.buildFunction(createEntryAccessorName(klass.name.identifier, enumEntry)).also {
-                it.returnType = enumEntry.getType(klass)
-                it.parent = klass
-            }
+            JsIrBuilder.buildFunction(
+                createEntryAccessorName(klass.name.identifier, enumEntry),
+                returnType = enumEntry.getType(klass),
+                parent = klass
+            )
         }.run { JsIrBuilder.buildCall(symbol) }
 }
 
@@ -442,18 +443,13 @@ class EnumClassTransformer(val context: JsIrBackendContext, private val irClass:
     private fun buildFunction(
         name: String,
         returnType: IrType = context.irBuiltIns.unitType
-    ) = JsIrBuilder.buildFunction(name).also {
-        it.returnType = returnType
-        it.parent = irClass
-    }
+    ) = JsIrBuilder.buildFunction(name, returnType, irClass)
 
     private fun buildFunction(
         name: String,
         returnType: IrType = context.irBuiltIns.unitType,
         bodyBuilder: IrBlockBodyBuilder.() -> Unit
-    ) = JsIrBuilder.buildFunction(name).also {
-        it.returnType = returnType
-        it.parent = irClass
+    ) = JsIrBuilder.buildFunction(name, returnType, irClass).also {
         it.body = context.createIrBuilder(it.symbol).irBlockBody(it, bodyBuilder)
     }
 

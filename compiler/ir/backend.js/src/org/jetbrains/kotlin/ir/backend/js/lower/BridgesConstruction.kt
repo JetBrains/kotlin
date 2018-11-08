@@ -104,6 +104,8 @@ class BridgesConstruction(val context: JsIrBackendContext) : ClassLoweringPass {
         // TODO: Support offsets for debug info
         val irFunction = JsIrBuilder.buildFunction(
             bridge.name,
+            bridge.returnType,
+            delegateTo.parent,
             bridge.visibility,
             bridge.modality, // TODO: should copy modality?
             bridge.isInline,
@@ -121,8 +123,6 @@ class BridgesConstruction(val context: JsIrBackendContext) : ClassLoweringPass {
             typeParameters += bridge.typeParameters
             valueParameters += bridge.valueParameters.map { p -> p.copyTo(this) }
             annotations += bridge.annotations
-            returnType = bridge.returnType
-            parent = delegateTo.parent
             overriddenSymbols.addAll(delegateTo.overriddenSymbols)
         }
 

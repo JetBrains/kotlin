@@ -97,6 +97,8 @@ object JsIrBuilder {
 
     fun buildFunction(
         name: String,
+        returnType: IrType,
+        parent: IrDeclarationParent,
         visibility: Visibility = Visibilities.PUBLIC,
         modality: Modality = Modality.FINAL,
         isInline: Boolean = false,
@@ -104,10 +106,23 @@ object JsIrBuilder {
         isTailrec: Boolean = false,
         isSuspend: Boolean = false,
         origin: IrDeclarationOrigin = SYNTHESIZED_DECLARATION
-    ) = JsIrBuilder.buildFunction(Name.identifier(name), visibility, modality, isInline, isExternal, isTailrec, isSuspend, origin)
+    ) = JsIrBuilder.buildFunction(
+        Name.identifier(name),
+        returnType,
+        parent,
+        visibility,
+        modality,
+        isInline,
+        isExternal,
+        isTailrec,
+        isSuspend,
+        origin
+    )
 
     fun buildFunction(
         name: Name,
+        returnType: IrType,
+        parent: IrDeclarationParent,
         visibility: Visibility = Visibilities.PUBLIC,
         modality: Modality = Modality.FINAL,
         isInline: Boolean = false,
@@ -129,7 +144,11 @@ object JsIrBuilder {
             isExternal,
             isTailrec,
             isSuspend
-        ).also { descriptor.bind(it) }
+        ).also {
+            descriptor.bind(it)
+            it.returnType = returnType
+            it.parent = parent
+        }
     }
 
     fun buildGetObjectValue(type: IrType, classSymbol: IrClassSymbol) =

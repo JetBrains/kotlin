@@ -440,6 +440,8 @@ internal class SuspendFunctionsLowering(val context: JsIrBackendContext): FileLo
 
             fun createFakeOverride(irFunction: IrSimpleFunction) = JsIrBuilder.buildFunction(
                 irFunction.name,
+                irFunction.returnType,
+                this,
                 irFunction.visibility,
                 Modality.FINAL,
                 irFunction.isInline,
@@ -448,8 +450,6 @@ internal class SuspendFunctionsLowering(val context: JsIrBackendContext): FileLo
                 irFunction.isSuspend,
                 IrDeclarationOrigin.FAKE_OVERRIDE
             ).apply {
-                parent = this@setSuperSymbolsAndAddFakeOverrides
-                returnType = irFunction.returnType
                 overriddenSymbols += irFunction.symbol
                 copyParameterDeclarationsFrom(irFunction)
             }
