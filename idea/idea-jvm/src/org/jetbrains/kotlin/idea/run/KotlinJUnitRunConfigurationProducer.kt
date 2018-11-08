@@ -5,17 +5,20 @@
 
 package org.jetbrains.kotlin.idea.run
 
-import com.intellij.execution.*
+import com.intellij.execution.CommonJavaRunConfigurationParameters
+import com.intellij.execution.PsiLocation
+import com.intellij.execution.RunManager
+import com.intellij.execution.RunnerAndConfigurationSettings
 import com.intellij.execution.actions.ConfigurationContext
 import com.intellij.execution.actions.ConfigurationFromContext
 import com.intellij.execution.actions.RunConfigurationProducer
-import com.intellij.execution.configurations.ModuleBasedConfiguration
 import com.intellij.execution.junit.*
 import com.intellij.execution.testframework.AbstractPatternBasedConfigurationProducer
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.util.Ref
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiMember
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.asJava.toLightClass
@@ -40,11 +43,11 @@ class KotlinJUnitRunConfigurationProducer : RunConfigurationProducer<JUnitConfig
         }
 
         val leaf = context.location?.psiElement ?: return false
-        val methodLocation = getTestMethodLocation(leaf)
+        val method = getTestMethod(leaf)
         val testClass = getTestClass(leaf)
         val testObject = configuration.testObject
 
-        if (!testObject.isConfiguredByElement(configuration, testClass, methodLocation?.psiElement, null, null)) {
+        if (!testObject.isConfiguredByElement(configuration, testClass, method, null, null)) {
             return false
         }
 
@@ -83,9 +86,9 @@ class KotlinJUnitRunConfigurationProducer : RunConfigurationProducer<JUnitConfig
             return false
         }
 
-        val methodLocation = getTestMethodLocation(leaf)
-        if (methodLocation != null) {
-            configuration.beMethodConfiguration(methodLocation)
+        val method = getTestMethod(leaf)
+        if (method != null) {
+            configuration.beMethodConfiguration(method.toLocation())
             JavaRunConfigurationExtensionManagerUtil.getInstance().extendCreatedConfiguration(configuration, location)
             configuration.setModule(module)
             return true
@@ -104,22 +107,27 @@ class KotlinJUnitRunConfigurationProducer : RunConfigurationProducer<JUnitConfig
 
     override fun onFirstRun(fromContext: ConfigurationFromContext, context: ConfigurationContext, performRunnable: Runnable) {
         val leaf = fromContext.sourceElement
-        getTestClass(leaf)?.let { testClass ->
-            val fromContextSubstitute = object : ConfigurationFromContext() {
-                override fun getConfigurationSettings() = fromContext.configurationSettings
+        val sourceElement = getTestClass(leaf) ?: return super.onFirstRun(fromContext, context, performRunnable)
 
-                override fun setConfigurationSettings(configurationSettings: RunnerAndConfigurationSettings) {
-                    fromContext.configurationSettings = configurationSettings
-                }
+        val contextWithLightElement = createDelegatingContextWithLightElement(fromContext, sourceElement)
+        // TODO: use TestClassConfigurationProducer when constructor becomes public
+        return object : AbstractTestClassConfigurationProducer(JUnitConfigurationType.getInstance()) {}
+            .onFirstRun(contextWithLightElement, context, performRunnable)
+    }
 
-                override fun getSourceElement() = testClass
+    private fun createDelegatingContextWithLightElement(
+        fromContext: ConfigurationFromContext,
+        lightElement: PsiMember
+    ): ConfigurationFromContext {
+        return object : ConfigurationFromContext() {
+            override fun getConfigurationSettings() = fromContext.configurationSettings
+
+            override fun setConfigurationSettings(configurationSettings: RunnerAndConfigurationSettings) {
+                fromContext.configurationSettings = configurationSettings
             }
-            // TODO: use TestClassConfigurationProducer when constructor becomes public
-            return object : AbstractTestClassConfigurationProducer(JUnitConfigurationType.getInstance()){}
-                .onFirstRun(fromContextSubstitute, context, performRunnable)
-        }
 
-        super.onFirstRun(fromContext, context, performRunnable)
+            override fun getSourceElement() = lightElement
+        }
     }
 
     companion object {
@@ -132,16 +140,15 @@ class KotlinJUnitRunConfigurationProducer : RunConfigurationProducer<JUnitConfig
             return ktClass?.toLightClass()
         }
 
-        fun getTestMethodLocation(leaf: PsiElement): Location<PsiMethod>? {
+        fun getTestMethod(leaf: PsiElement): PsiMethod? {
             val function = leaf.getParentOfType<KtNamedFunction>(false) ?: return null
             val owner = PsiTreeUtil.getParentOfType(function, KtFunction::class.java, KtClass::class.java)
 
             if (owner is KtClass) {
                 val delegate = owner.toLightClass() ?: return null
                 val method = delegate.methods.firstOrNull() { it.navigationElement == function } ?: return null
-                val methodLocation = PsiLocation.fromPsiElement(method)
-                if (JUnitUtil.isTestMethod(methodLocation, false)) {
-                    return methodLocation
+                if (JUnitUtil.isTestMethod(method.toLocation(), false)) {
+                    return method
                 }
             }
             return null
@@ -154,3 +161,5 @@ class KotlinJUnitRunConfigurationProducer : RunConfigurationProducer<JUnitConfig
             ktFile.declarations.filterIsInstance<KtClass>().singleOrNull { it.isJUnitTestClass() }
     }
 }
+
+private fun PsiMethod.toLocation() = PsiLocation.fromPsiElement(this)
