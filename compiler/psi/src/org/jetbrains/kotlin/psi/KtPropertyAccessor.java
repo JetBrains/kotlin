@@ -97,6 +97,22 @@ public class KtPropertyAccessor extends KtDeclarationStub<KotlinPropertyAccessor
         );
     }
 
+    @Nullable
+    @Override
+    public KtBlockExpression getBodyBlockExpression() {
+        KotlinPropertyAccessorStub stub = getStub();
+        if (stub != null && !(stub.hasBlockBody() && stub.hasBody())) {
+            return null;
+        }
+
+        KtExpression bodyExpression = findChildByClass(KtExpression.class);
+        if (bodyExpression instanceof KtBlockExpression) {
+            return (KtBlockExpression) bodyExpression;
+        }
+
+        return null;
+    }
+
     @Override
     public boolean hasBlockBody() {
         KotlinPropertyAccessorStub stub = getStub();
