@@ -234,11 +234,10 @@ class NewCodeBuilder {
             ktProperty.modifierList.accept(this)
 
             printer.printWithNoIndent(" ", ktProperty.name.value)
-            if (ktProperty.type.type != JKNoTypeImpl) {
+            if (ktProperty.type.present()) {
                 printer.printWithNoIndent(":")
                 ktProperty.type.accept(this)
             }
-            ktProperty.type.accept(this)
             if (ktProperty.initializer !is JKStubExpression) {
                 printer.printWithNoIndent(" = ")
                 ktProperty.initializer.accept(this)
@@ -469,7 +468,7 @@ class NewCodeBuilder {
             }
 
             printer.printWithNoIndent(" ", localVariable.name.value)
-            if (localVariable.type.type != JKContextType && localVariable.type.type !is JKNoTypeImpl) {
+            if (localVariable.type.present() && localVariable.type.type != JKContextType) {
                 printer.printWithNoIndent(": ")
                 localVariable.type.accept(this)
             }
