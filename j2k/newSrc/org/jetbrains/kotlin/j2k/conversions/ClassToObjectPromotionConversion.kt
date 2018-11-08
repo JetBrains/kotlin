@@ -5,13 +5,15 @@
 
 package org.jetbrains.kotlin.j2k.conversions
 
+import org.jetbrains.kotlin.j2k.ConversionContext
 import org.jetbrains.kotlin.j2k.tree.JKClass
 import org.jetbrains.kotlin.j2k.tree.JKKtPrimaryConstructor
 import org.jetbrains.kotlin.j2k.tree.JKTreeElement
 import org.jetbrains.kotlin.j2k.tree.impl.JKClassImpl
+import org.jetbrains.kotlin.j2k.tree.impl.psi
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
-class ClassToObjectPromotionConversion : RecursiveApplicableConversionBase() {
+class ClassToObjectPromotionConversion(private val context: ConversionContext) : RecursiveApplicableConversionBase() {
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
         if (element is JKClass && element.classKind == JKClass.ClassKind.CLASS) {
             val companion =
@@ -27,7 +29,7 @@ class ClassToObjectPromotionConversion : RecursiveApplicableConversionBase() {
                 }
             }
 
-            if (allDeclarationsMatches) {
+            if (allDeclarationsMatches && !element.hasInheritors()) {
                 companion.invalidate()
                 element.invalidate()
                 return recurse(
@@ -46,4 +48,7 @@ class ClassToObjectPromotionConversion : RecursiveApplicableConversionBase() {
 
         return recurse(element)
     }
+
+    private fun JKClass.hasInheritors() =
+        context.converter.converterServices.oldServices.referenceSearcher.hasInheritors(psi()!!)
 }
