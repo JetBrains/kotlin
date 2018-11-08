@@ -60,6 +60,17 @@ interface JKType {
     val nullability: Nullability
 }
 
+interface JKVarianceTypeParameterType : JKType {
+    val variance: Variance
+    val boundType: JKType
+    override val nullability: Nullability
+        get() = Nullability.NotNull
+
+    enum class Variance {
+        IN, OUT
+    }
+}
+
 interface JKNoType : JKType
 
 interface JKParametrizedType : JKType {

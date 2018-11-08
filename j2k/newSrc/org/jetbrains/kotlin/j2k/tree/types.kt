@@ -70,7 +70,20 @@ fun PsiType.toJK(symbolProvider: JKSymbolProvider, nullability: Nullability = Nu
             ?: error("Invalid primitive type $presentableText")
         is PsiDisjunctionType ->
             JKJavaDisjunctionTypeImpl(disjunctions.map { it.toJK(symbolProvider) })
-        is PsiWildcardType -> JKStarProjectionTypeImpl()
+        is PsiWildcardType ->
+            when {
+                isExtends ->
+                    JKVarianceTypeParameterTypeImpl(
+                        JKVarianceTypeParameterType.Variance.OUT,
+                        extendsBound.toJK(symbolProvider)
+                    )
+                isSuper ->
+                    JKVarianceTypeParameterTypeImpl(
+                        JKVarianceTypeParameterType.Variance.IN,
+                        superBound.toJK(symbolProvider)
+                    )
+                else -> JKStarProjectionTypeImpl()
+            }
         else -> throw Exception("Invalid PSI ${this::class.java}")
     }
 }
