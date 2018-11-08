@@ -137,6 +137,11 @@ messages/**)
     public protected *;
 }
 
+# This is needed for contracts
+-keep class org.jdom.input.SAXBuilder { *; }
+-keep class org.jdom.Document { *; }
+-keep class javaslang.collection.HashMap { *; }
+
 # This is needed so that the platform code which parses XML wouldn't fail, see KT-16968
 # This API is used from org.jdom.input.SAXBuilder via reflection.
 -keep class org.jdom.input.JAXPParserFactory { public ** createParser(...); }

@@ -144,6 +144,11 @@ messages/**)
 # Without this class PluginManagerCore.loadDescriptorFromJar fails
 -keep class org.jdom.output.XMLOutputter { *; }
 
+# This is needed for contracts
+-keep class org.jdom.input.SAXBuilder { *; }
+-keep class org.jdom.Document { *; }
+-keep class javaslang.collection.HashMap { *; }
+
 # for kdoc & dokka
 -keep class com.intellij.openapi.util.TextRange { *; }
 -keep class com.intellij.lang.impl.PsiBuilderImpl* {

@@ -1,0 +1,44 @@
+package org.jetbrains.kotlin.metadata.extension.contracts;
+
+import "core/metadata/src/metadata.proto";
+
+option java_outer_classname = "ContractsProtoBuf";
+option optimize_for = LITE_RUNTIME;
+
+enum ContextualEffectType {
+  UNKNOWN = 0;
+
+  CONTEXT_PROVIDER = 1;
+  CONTEXT_VERIFIER = 2;
+  CONTEXT_CLEANER = 3;
+  LAMBDA_CONTEXT_PROVIDER = 4;
+  LAMBDA_CONTEXT_VERIFIER = 5;
+  LAMBDA_CONTEXT_CLEANER = 6;
+
+}
+
+extend Effect {
+  optional ContextualEffectType contextualEffectType = 100;
+  optional string subpluginId = 101;
+  optional Expression owner = 102;
+  repeated Expression references = 103;
+
+  optional ContextProvider provider = 104;
+  optional ContextVerifier verifier = 105;
+  optional ContextCleaner cleaner = 106;
+}
+
+message ContextProvider {
+  optional string providerPluginId = 1;
+  extensions 100 to 999;
+}
+
+message ContextVerifier {
+  optional string verifierPluginId = 1;
+  extensions 100 to 999;
+}
+
+message ContextCleaner {
+  optional string cleanerPluginId = 1;
+  extensions 100 to 999;
+}
