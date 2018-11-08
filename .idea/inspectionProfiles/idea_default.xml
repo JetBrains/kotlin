@@ -112,6 +112,7 @@
           <Problem reference="com.intellij.execution.configurations.RunConfigurationBase" reason="Generalized in 183. Use RunConfigurationBaseAny instead in signatures." />
           <Problem reference="com.intellij.execution.configurations.LocatableConfigurationBase" reason="Generalized in 183. Use LocatableConfigurationBaseAny instead in signatures." />
           <Problem reference="com.intellij.execution.configurations.ModuleBasedConfiguration" reason="Generalized in 183. Use ModuleBasedConfigurationElement instead." />
+          <Problem reference="com.intellij.util.AstLoadingFilter" reason="Absent in 181. Almost all methods were renamed in 183. Use org.jetbrains.kotlin.util.AstLoadingFilter instead." />
         </list>
       </option>
     </inspection_tool>
