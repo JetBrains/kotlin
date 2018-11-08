@@ -21,7 +21,7 @@ fun <caret>castTextSpell(spell: String) {
 
 //INFO: <div class='definition'><pre><a href="psi_element://magic"><code>magic</code></a> <font color="808080"><i>Samples.kt</i></font><br>public fun <b>castTextSpell</b>(
 //INFO:     spell: String
-//INFO: ): Unit</pre></div><div class='content'></div><table class='sections'><tr><td valign='top' class='section'><p>Samples:</td><td valign='top'><p><a href="psi_element://Samples.sampleMagic"><code>Samples.sampleMagic</code></a><pre><code>
+//INFO: ): Unit</pre></div><div class='content'></div><table class='sections'><tr><td valign='top' class='section'><p>Samples:</td><td><p><a href="psi_element://Samples.sampleMagic"><code>Samples.sampleMagic</code></a><pre><code>
 //INFO: castTextSpell("[asd] [dse] [asz]")
 //INFO: </code></pre><p><a href="psi_element://sampleScroll"><code>sampleScroll</code></a><pre><code>
 //INFO: val reader = Scroll("[asd] [dse] [asz]").reader()

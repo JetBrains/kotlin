@@ -16,4 +16,4 @@ fun test() {
 //INFO: <div class='definition'><pre><font color="808080"><i>OnMethodUsageWithTypeParameter.kt</i></font><br>public fun &lt;T&gt; <b>testMethod</b>(
 //INFO:     a: Int,
 //INFO:     b: String
-//INFO: ): Unit</pre></div><div class='content'><p>Some documentation</p></div><table class='sections'><tr><td valign='top' class='section'><p>Params:</td><td valign='top'><p><code>T</code> - the type parameter<p><code>a</code> - Some int<p><code>b</code> - String</td></table>
+//INFO: ): Unit</pre></div><div class='content'><p>Some documentation</p></div><table class='sections'><tr><td valign='top' class='section'><p>Params:</td><td><p><code>T</code> - the type parameter<p><code>a</code> - Some int<p><code>b</code> - String</td></table>
