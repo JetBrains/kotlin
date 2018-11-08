@@ -93,4 +93,9 @@ public class MultiFileLocalInspectionTestGenerated extends AbstractMultiFileLoca
     public void testUnusedSymbol_inlineClassesImplInterface_InlineClassesImplInterface() throws Exception {
         runTest("idea/testData/multiFileLocalInspections/unusedSymbol/inlineClassesImplInterface/inlineClassesImplInterface.test");
     }
+
+    @TestMetadata("unusedSymbol/internalConstructorUsedInJava/internalConstructorUsedInJava.test")
+    public void testUnusedSymbol_internalConstructorUsedInJava_InternalConstructorUsedInJava() throws Exception {
+        runTest("idea/testData/multiFileLocalInspections/unusedSymbol/internalConstructorUsedInJava/internalConstructorUsedInJava.test");
+    }
 }
