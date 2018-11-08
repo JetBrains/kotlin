@@ -9,15 +9,16 @@ import com.intellij.codeInsight.FileModificationService
 import com.intellij.codeInspection.*
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElementVisitor
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.core.implicitVisibility
 import org.jetbrains.kotlin.idea.core.isInheritable
+import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.psi.KtClass
-import org.jetbrains.kotlin.psi.KtModifierListOwner
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.addRemoveModifier.addModifier
-import org.jetbrains.kotlin.psi.declarationVisitor
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.visibilityModifier
+import org.jetbrains.kotlin.types.typeUtil.isUnit
 
 class ProtectedInFinalInspection : AbstractKotlinInspection() {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean, session: LocalInspectionToolSession): PsiElementVisitor {
@@ -27,7 +28,8 @@ class ProtectedInFinalInspection : AbstractKotlinInspection() {
             if (modifierType == KtTokens.PROTECTED_KEYWORD) {
                 val parentClass = declaration.getParentOfType<KtClass>(true) ?: return
                 if (!parentClass.isInheritable() && !parentClass.isEnum() &&
-                    declaration.implicitVisibility() != KtTokens.PROTECTED_KEYWORD
+                    declaration.implicitVisibility() != KtTokens.PROTECTED_KEYWORD &&
+                    !declaration.isFinalizeMethod()
                 ) {
                     holder.registerProblem(
                         visibilityModifier,
@@ -39,6 +41,13 @@ class ProtectedInFinalInspection : AbstractKotlinInspection() {
                 }
             }
         })
+    }
+
+    private fun KtDeclaration.isFinalizeMethod(): Boolean {
+        val function = this as? KtNamedFunction ?: return false
+        return function.name == "finalize"
+                && function.valueParameters.isEmpty()
+                && (function.descriptor as? FunctionDescriptor)?.returnType?.isUnit() == true
     }
 
     class MakePrivateFix : LocalQuickFix {
