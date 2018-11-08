@@ -90,17 +90,20 @@ class NotPropertiesServiceImpl(private val project: Project) : NotPropertiesServ
 
     companion object {
 
-        val default = listOf(
+        private val atomicMethods = listOf(
+            "getAndIncrement", "getAndDecrement", "getAcquire", "getOpaque", "getPlain"
+        )
+
+        private val atomicClasses = listOf("AtomicInteger", "AtomicLong")
+
+        val default: List<String> = listOf(
             "java.net.Socket.getInputStream",
             "java.net.Socket.getOutputStream",
             "java.net.URLConnection.getInputStream",
-            "java.net.URLConnection.getOutputStream",
-            "java.util.concurrent.atomic.AtomicInteger.getAndIncrement",
-            "java.util.concurrent.atomic.AtomicInteger.getAndDecrement",
-            "java.util.concurrent.atomic.AtomicLong.getAndIncrement",
-            "java.util.concurrent.atomic.AtomicLong.getAndDecrement"
-        )
-
+            "java.net.URLConnection.getOutputStream"
+        ) + atomicClasses.flatMap { klass ->
+            atomicMethods.map { method -> "java.util.concurrent.atomic.$klass.$method" }
+        }
 
         val USE_PROPERTY_ACCESS_INSPECTION: Key<UsePropertyAccessSyntaxInspection> = Key.create("UsePropertyAccessSyntax")
     }
