@@ -762,7 +762,8 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
                 } else if (descriptor is FunctionDescriptor && valueParametersFromDescriptor.size == parameters.size) {
                     getNonErrorType(valueParametersFromDescriptor[index].type, METHOD_PARAMETER_TYPE,
                                     ktTypeProvider = {
-                                        (kaptContext.origins[method]?.element as? KtFunction)?.valueParameters?.get(index)?.typeReference
+                                        val sourceElement = kaptContext.origins[method]?.element as? KtFunction
+                                        sourceElement?.valueParameters?.getOrNull(index)?.typeReference
                                     },
                                     ifNonError = { lazyType() })
                 } else {
