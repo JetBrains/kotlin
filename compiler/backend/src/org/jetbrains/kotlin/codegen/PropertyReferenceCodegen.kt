@@ -256,7 +256,7 @@ class PropertyReferenceCodegen(
             }
             val declaration = DescriptorUtils.unwrapFakeOverride(accessor).original
             val method =
-                if (callable.containingDeclaration.isInlineClass())
+                if (callable.containingDeclaration.isInlineClass() && !declaration.isGetterOfUnderlyingPropertyOfInlineClass())
                     state.typeMapper.mapSignatureForInlineErasedClassSkipGeneric(declaration).asmMethod
                 else
                     state.typeMapper.mapAsmMethod(declaration)
