@@ -159,7 +159,7 @@ public class MockVirtualMachine implements VirtualMachine {
 
     @Override
     public String name() {
-        throw new UnsupportedOperationException();
+        return "JVM mock";
     }
 
     @Override
