@@ -250,7 +250,7 @@ class KotlinGenerateEqualsAndHashcodeAction : KotlinGenerateMemberActionBase<Kot
                 append("return true")
             }
 
-            equalsFun.bodyExpression!!.replace(KtPsiFactory(project).createBlock(bodyText))
+            equalsFun.replaceBody { KtPsiFactory(project).createBlock(bodyText) }
 
             return equalsFun
         }
@@ -311,7 +311,7 @@ class KotlinGenerateEqualsAndHashcodeAction : KotlinGenerateMemberActionBase<Kot
                 }.toString()
             } else "return $initialValue"
 
-            hashCodeFun.bodyExpression!!.replace(KtPsiFactory(project).createBlock(bodyText))
+            hashCodeFun.replaceBody { KtPsiFactory(project).createBlock(bodyText) }
 
             return hashCodeFun
         }

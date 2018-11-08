@@ -181,7 +181,9 @@ class KotlinGenerateToStringAction : KotlinGenerateMemberActionBase<KotlinGenera
     private fun generateToString(targetClass: KtClassOrObject, info: Info): KtNamedFunction? {
         val superToString = info.classDescriptor.getSuperClassOrAny().findDeclaredToString(true)!!
         return generateFunctionSkeleton(superToString, targetClass).apply {
-            bodyExpression!!.replace(KtPsiFactory(targetClass).createExpression("{\n${info.generator.generate(info)}\n}"))
+            replaceBody {
+                KtPsiFactory(targetClass).createExpression("{\n${info.generator.generate(info)}\n}")
+            }
         }
     }
 
