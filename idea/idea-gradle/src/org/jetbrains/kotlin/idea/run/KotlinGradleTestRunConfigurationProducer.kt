@@ -54,7 +54,7 @@ private fun getTestClass(leaf: PsiElement): PsiClass? {
 
 private fun getTestMethod(leaf: PsiElement): PsiMethod? {
     if (IS_JUNIT_ENABLED) {
-        KotlinJUnitRunConfigurationProducer.getTestMethodLocation(leaf)?.psiElement?.let { return it }
+        KotlinJUnitRunConfigurationProducer.getTestMethod(leaf)?.let { return it }
     }
     if (IS_TESTNG_ENABLED) {
         KotlinTestNgConfigurationProducer.getTestClassAndMethod(leaf)?.second?.let { return it }
