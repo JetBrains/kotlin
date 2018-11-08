@@ -107,7 +107,8 @@ class KotlinJUnitRunConfigurationProducer : RunConfigurationProducer<JUnitConfig
 
     override fun onFirstRun(fromContext: ConfigurationFromContext, context: ConfigurationContext, performRunnable: Runnable) {
         val leaf = fromContext.sourceElement
-        val sourceElement = getTestClass(leaf) ?: return super.onFirstRun(fromContext, context, performRunnable)
+        val sourceElement =
+            getTestMethod(leaf) as? PsiMember ?: getTestClass(leaf) ?: return super.onFirstRun(fromContext, context, performRunnable)
 
         val contextWithLightElement = createDelegatingContextWithLightElement(fromContext, sourceElement)
         // TODO: use TestClassConfigurationProducer when constructor becomes public
