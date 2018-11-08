@@ -25,6 +25,9 @@ import com.sun.tools.javac.tree.TreeMaker
 import com.sun.tools.javac.tree.TreeScanner
 import kotlinx.kapt.KaptIgnored
 import org.jetbrains.kotlin.base.kapt3.KaptFlag
+import org.jetbrains.kotlin.codegen.coroutines.CONTINUATION_PARAMETER_NAME
+import org.jetbrains.kotlin.codegen.needsExperimentalCoroutinesWrapper
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
@@ -46,6 +49,7 @@ import org.jetbrains.kotlin.load.java.sources.JavaSourceElement
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.DefaultValueArgument
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument
@@ -743,7 +747,8 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
     private fun extractMethodSignatureTypes(
         descriptor: CallableDescriptor,
         exceptionTypes: JavacList<JCExpression>,
-        jcReturnType: JCExpression?, method: MethodNode,
+        jcReturnType: JCExpression?,
+        method: MethodNode,
         parameters: JavacList<JCVariableDecl>,
         valueParametersFromDescriptor: List<ValueParameterDescriptor>
     ): Pair<SignatureParser.MethodGenericSignature, JCExpression?> {
@@ -760,12 +765,23 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
                                     },
                                     ifNonError = { lazyType() })
                 } else if (descriptor is FunctionDescriptor && valueParametersFromDescriptor.size == parameters.size) {
-                    getNonErrorType(valueParametersFromDescriptor[index].type, METHOD_PARAMETER_TYPE,
-                                    ktTypeProvider = {
-                                        val sourceElement = kaptContext.origins[method]?.element as? KtFunction
-                                        sourceElement?.valueParameters?.getOrNull(index)?.typeReference
-                                    },
-                                    ifNonError = { lazyType() })
+                    val parameterDescriptor = valueParametersFromDescriptor[index]
+                    val sourceElement = kaptContext.origins[method]?.element as? KtFunction
+
+                    getNonErrorType(
+                        parameterDescriptor.type, METHOD_PARAMETER_TYPE,
+                        ktTypeProvider = {
+                            if (sourceElement == null) return@getNonErrorType null
+
+                            if (sourceElement.hasDeclaredReturnType() && isContinuationParameter(parameterDescriptor)) {
+                                val continuationTypeFqName = getContinuationTypeFqName(descriptor)
+                                val functionReturnType = sourceElement.typeReference!!.text
+                                KtPsiFactory(kaptContext.project).createType("$continuationTypeFqName<$functionReturnType>")
+                            } else {
+                                sourceElement.valueParameters.getOrNull(index)?.typeReference
+                            }
+                        },
+                        ifNonError = { lazyType() })
                 } else {
                     lazyType()
                 }
@@ -788,7 +804,26 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
         return Pair(genericSignature, returnType)
     }
 
-    private inline fun <T : JCExpression?> getNonErrorType(
+    private fun isContinuationParameter(descriptor: ValueParameterDescriptor): Boolean {
+        val containingCallable = descriptor.containingDeclaration
+
+        return containingCallable.valueParameters.lastOrNull() == descriptor
+            && descriptor.name == CONTINUATION_PARAMETER_NAME
+            && descriptor.source == SourceElement.NO_SOURCE
+            && descriptor.type.constructor.declarationDescriptor?.fqNameSafe == getContinuationTypeFqName(containingCallable)
+    }
+
+    private fun getContinuationTypeFqName(descriptor: CallableDescriptor): FqName {
+        val areCoroutinesReleased = !descriptor.needsExperimentalCoroutinesWrapper()
+                && kaptContext.generationState.languageVersionSettings.supportsFeature(LanguageFeature.ReleaseCoroutines)
+
+        return when (areCoroutinesReleased) {
+            true -> DescriptorUtils.CONTINUATION_INTERFACE_FQ_NAME_RELEASE
+            false -> DescriptorUtils.CONTINUATION_INTERFACE_FQ_NAME_EXPERIMENTAL
+        }
+    }
+
+    private fun <T : JCExpression?> getNonErrorType(
         type: KotlinType?,
         kind: ErrorTypeCorrector.TypeKind,
         ktTypeProvider: () -> KtTypeReference?,

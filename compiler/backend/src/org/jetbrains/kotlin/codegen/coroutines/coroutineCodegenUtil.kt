@@ -122,6 +122,8 @@ val INITIAL_DESCRIPTOR_FOR_SUSPEND_FUNCTION = object : CallableDescriptor.UserDa
 @JvmField
 val INITIAL_SUSPEND_DESCRIPTOR_FOR_DO_RESUME = object : CallableDescriptor.UserDataKey<FunctionDescriptor> {}
 
+val CONTINUATION_PARAMETER_NAME = Name.identifier("continuation")
+
 // Resolved calls to suspension function contain descriptors as they visible within coroutines:
 // E.g. `fun <V> await(f: CompletableFuture<V>): V` instead of `fun <V> await(f: CompletableFuture<V>, machine: Continuation<V>): Unit`
 // See `createJvmSuspendFunctionView` and it's usages for clarification
@@ -258,7 +260,7 @@ fun <D : FunctionDescriptor> getOrCreateJvmSuspendFunctionView(
         original = null,
         index = function.valueParameters.size,
         annotations = Annotations.EMPTY,
-        name = Name.identifier("continuation"),
+        name = CONTINUATION_PARAMETER_NAME,
         // Add j.l.Object to invoke(), because that is the type of parameters we have in FunctionN+1
         outType = if (function.containingDeclaration.safeAs<ClassDescriptor>()?.defaultType?.isBuiltinFunctionalType == true)
             function.builtIns.nullableAnyType
