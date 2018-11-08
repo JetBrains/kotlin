@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ParameterDescriptor
 import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.extensions.ContractsExtension
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -49,6 +50,10 @@ interface PsiContractVariableParserDispatcher {
     fun parseKind(expression: KtExpression?): InvocationKind?
 }
 
+interface ExtensionParserDispatcher {
+    fun parseEffects(expression: KtExpression): Collection<EffectDeclaration>
+}
+
 class PsiContractParserDispatcher(
     private val collector: ContractParsingDiagnosticsCollector,
     private val callContext: ContractCallContext
@@ -61,6 +66,9 @@ class PsiContractParserDispatcher(
         CALLS_IN_PLACE_EFFECT to PsiCallsEffectParser(collector, callContext, this),
         CONDITIONAL_EFFECT to PsiConditionalEffectParser(collector, callContext, this)
     )
+    private val extensionParserDispatchers: Collection<ExtensionParserDispatcher> =
+        ContractsExtension.getInstances(callContext.contractCallExpression.project)
+            .map { it.getPsiParserDispatcher(collector, callContext, this) }
 
     fun parseContract(): ContractDescription? {
         // Must be non-null because of checks in 'checkContractAndRecordIfPresent', but actually is not, see EA-124365
@@ -91,8 +99,11 @@ class PsiContractParserDispatcher(
         val returnType = expression.getType(callContext.bindingContext) ?: return emptyList()
         val parser = effectsParsers[returnType.constructor.declarationDescriptor?.name]
         if (parser == null) {
-            collector.badDescription("unrecognized effect", expression)
-            return emptyList()
+            val extensionEffects = extensionParserDispatchers.flatMap { it.parseEffects(expression) }
+            if (extensionEffects.isEmpty()) {
+                collector.badDescription("unrecognized effect", expression)
+            }
+            return extensionEffects
         }
 
         return parser.tryParseEffect(expression)

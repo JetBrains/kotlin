@@ -20,14 +20,18 @@ import org.jetbrains.kotlin.contracts.model.Computation
 import org.jetbrains.kotlin.contracts.model.ESEffect
 import org.jetbrains.kotlin.contracts.model.Functor
 import org.jetbrains.kotlin.contracts.model.visitors.AdditionalReducer
+import org.jetbrains.kotlin.contracts.model.visitors.ExtensionReducerConstructor
 import org.jetbrains.kotlin.contracts.model.visitors.Reducer
 
 /**
  * Abstract implementation of Functor with some routine house-holding
  * automatically performed. *
  */
-abstract class AbstractReducingFunctor(additionalReducer: AdditionalReducer? = null) : Functor {
-    private val reducer = Reducer(additionalReducer)
+abstract class AbstractReducingFunctor(
+    additionalReducer: AdditionalReducer? = null,
+    extensionReducerConstructors: Collection<ExtensionReducerConstructor> = listOf()
+) : Functor {
+    private val reducer = Reducer(additionalReducer, extensionReducerConstructors)
 
     override fun invokeWithArguments(arguments: List<Computation>): List<ESEffect> = reducer.reduceEffects(doInvocation(arguments))
 

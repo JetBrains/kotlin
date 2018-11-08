@@ -43,5 +43,7 @@ class ConditionalEffect(val condition: ESExpression, val simpleEffect: SimpleEff
     override fun isImplies(other: ESEffect): Boolean? = null
 }
 
-
-
+/**
+ * Some effect came from plugin with effects
+ */
+abstract class ExtensionEffect : ESEffect()

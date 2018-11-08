@@ -50,5 +50,8 @@
                         interface="com.intellij.ide.util.projectWizard.ModuleBuilder"/>
         <extensionPoint qualifiedName="org.jetbrains.kotlin.renameHandler"
                         interface="com.intellij.refactoring.rename.RenameHandler"/>
+        <extensionPoint qualifiedName="org.jetbrains.kotlin.contractsExtension"
+                        interface="org.jetbrains.kotlin.extensions.ContractsExtension"
+                        area="IDEA_PROJECT"/>
     </extensionPoints>
 </idea-plugin>

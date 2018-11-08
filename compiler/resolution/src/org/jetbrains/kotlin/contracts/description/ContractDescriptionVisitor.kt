@@ -32,6 +32,8 @@ interface ContractDescriptionVisitor<out R, in D> {
     fun visitReturnsEffectDeclaration(returnsEffect: ReturnsEffectDeclaration, data: D): R = visitEffectDeclaration(returnsEffect, data)
     fun visitCallsEffectDeclaration(callsEffect: CallsEffectDeclaration, data: D): R = visitEffectDeclaration(callsEffect, data)
 
+    fun visitExtensionEffect(extensionEffect: ExtensionEffectDeclaration, data: D): R = visitEffectDeclaration(extensionEffect, data)
+
     // Expressions
     fun visitBooleanExpression(booleanExpression: BooleanExpression, data: D): R = visitContractDescriptionElement(booleanExpression, data)
 

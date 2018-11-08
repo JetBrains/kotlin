@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.contracts.parsing.isEqualsDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.ValueDescriptor
+import org.jetbrains.kotlin.extensions.ContractsExtension
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -77,7 +78,7 @@ class EffectsExtractingVisitor(
             )
             descriptor is FunctionDescriptor -> CallComputation(
                 descriptor.returnType,
-                descriptor.getFunctor()?.invokeWithArguments(arguments) ?: emptyList()
+                descriptor.getFunctor(element)?.invokeWithArguments(arguments) ?: emptyList()
             )
             else -> UNKNOWN_COMPUTATION
         }
@@ -177,10 +178,19 @@ class EffectsExtractingVisitor(
         )
     }
 
-    private fun FunctionDescriptor.getFunctor(): Functor? {
+    private fun FunctionDescriptor.getFunctor(element: KtElement): Functor? {
         trace[BindingContext.FUNCTOR, this]?.let { return it }
 
-        val functor = ContractInterpretationDispatcher().resolveFunctor(this, AdditionalReducerImpl()) ?: return null
+        val extensions = ContractsExtension.getInstances(element.project)
+        val extensionInterpretersConstructors = extensions.map { it.getEffectDeclarationInterpreterConstructor() }
+        val extensionSubstitutors = extensions.map { it.getExtensionSubstitutor() }
+        val extensionReducerConstructors = extensions.map { it.getExtensionReducerConstructor() }
+
+        val functor =
+            ContractInterpretationDispatcher(extensionInterpretersConstructors, extensionReducerConstructors, extensionSubstitutors)
+                .resolveFunctor(this, AdditionalReducerImpl())
+                ?: return null
+
         trace.record(BindingContext.FUNCTOR, this, functor)
         return functor
     }

@@ -45,3 +45,8 @@ interface BooleanExpression : ContractDescriptionElement {
     override fun <R, D> accept(contractDescriptionVisitor: ContractDescriptionVisitor<R, D>, data: D): R =
         contractDescriptionVisitor.visitBooleanExpression(this, data)
 }
+
+interface ExtensionEffectDeclaration : EffectDeclaration {
+    override fun <R, D> accept(contractDescriptionVisitor: ContractDescriptionVisitor<R, D>, data: D): R =
+        contractDescriptionVisitor.visitExtensionEffect(this, data)
+}

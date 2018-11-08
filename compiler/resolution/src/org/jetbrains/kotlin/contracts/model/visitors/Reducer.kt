@@ -24,7 +24,12 @@ import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
  * Reduces given list of effects by evaluating constant expressions,
  * throwing away senseless checks and infeasible clauses, etc.
  */
-class Reducer(private val additionalReducer: AdditionalReducer?) : ESExpressionVisitor<ESExpression?> {
+class Reducer(
+    private val additionalReducer: AdditionalReducer?,
+    extensionReducerConstructors: Collection<ExtensionReducerConstructor>
+) : ESExpressionVisitor<ESExpression?> {
+    private val extensionReducers = extensionReducerConstructors.map { it(this) }
+
     fun reduceEffects(schema: List<ESEffect>): List<ESEffect> =
         schema.mapNotNull { reduceEffect(it) }
 
@@ -43,6 +48,9 @@ class Reducer(private val additionalReducer: AdditionalReducer?) : ESExpressionV
                 // Leave everything else as is
                 return effect
             }
+
+            is ExtensionEffect -> return extensionReducers.fold(effect) { effect, extensionReducer -> extensionReducer.reduce(effect) }
+
             else -> return effect
         }
     }

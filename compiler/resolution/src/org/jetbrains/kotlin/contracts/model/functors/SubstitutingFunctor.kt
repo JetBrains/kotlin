@@ -22,16 +22,21 @@ import org.jetbrains.kotlin.contracts.model.structure.ESConstant
 import org.jetbrains.kotlin.contracts.model.structure.ESReturns
 import org.jetbrains.kotlin.contracts.model.structure.ESVariable
 import org.jetbrains.kotlin.contracts.model.visitors.AdditionalReducer
+import org.jetbrains.kotlin.contracts.model.visitors.ExtensionReducerConstructor
 import org.jetbrains.kotlin.contracts.model.visitors.Substitutor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ValueDescriptor
 import org.jetbrains.kotlin.utils.addIfNotNull
 
+typealias ExtensionSubstitutor = (ExtensionEffect, Substitutor) -> ESEffect?
+
 class SubstitutingFunctor(
     private val basicEffects: List<ESEffect>,
     private val ownerFunction: FunctionDescriptor,
-    additionalReducer: AdditionalReducer
-) : AbstractReducingFunctor(additionalReducer) {
+    additionalReducer: AdditionalReducer,
+    val extensionSubstitutors: Collection<ExtensionSubstitutor>,
+    extensionReducerConstructors: Collection<ExtensionReducerConstructor>
+) : AbstractReducingFunctor(additionalReducer, extensionReducerConstructors) {
     override fun doInvocation(arguments: List<Computation>): List<ESEffect> {
         if (basicEffects.isEmpty()) return emptyList()
 
@@ -56,6 +61,11 @@ class SubstitutingFunctor(
                 is ESCalls -> {
                     val substitutionForCallable = substitutions[effect.callable] as? ESValue ?: continue@effectsLoop
                     substitutedClauses += ESCalls(substitutionForCallable, effect.kind)
+                }
+
+                is ExtensionEffect -> {
+                    val extensionsEffects = extensionSubstitutors.mapNotNull { it(effect, substitutor) }
+                    substitutedClauses.addAll(extensionsEffects)
                 }
 
                 else -> substitutedClauses += effect
