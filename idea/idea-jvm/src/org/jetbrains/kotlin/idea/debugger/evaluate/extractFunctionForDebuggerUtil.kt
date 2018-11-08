@@ -335,7 +335,7 @@ private fun findElementBefore(contextElement: PsiElement): PsiElement? {
             wrapInLambdaCall(contextElement.bodyExpression!!)
         }
         contextElement is KtDeclarationWithBody && contextElement.hasBlockBody() -> {
-            val block = contextElement.bodyExpression as KtBlockExpression
+            val block = contextElement.bodyBlockExpression!!
             val last = block.statements.lastOrNull()
             last as? KtReturnExpression ?: block.rBrace
         }

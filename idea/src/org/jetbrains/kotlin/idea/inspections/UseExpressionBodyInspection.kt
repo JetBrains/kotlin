@@ -100,7 +100,7 @@ class UseExpressionBodyInspection(private val convertEmptyToUnit: Boolean) : Abs
 
     private fun KtDeclarationWithBody.blockExpression() = when (this) {
         is KtFunctionLiteral -> null
-        else -> if (!hasBlockBody()) null else bodyExpression as? KtBlockExpression
+        else -> if (!hasBlockBody()) null else bodyBlockExpression
     }
 
     private fun KtBlockExpression.findValueStatement(): KtExpression? {

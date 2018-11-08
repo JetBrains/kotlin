@@ -88,7 +88,7 @@ class ConvertFunctionToPropertyIntention : SelfTargetingIntention<KtNamedFunctio
                     getterExpression(originalFunction.bodyExpression!!.text, breakLine = originalFunction.typeReference != null)
                 }
                 else {
-                    (originalFunction.bodyExpression as? KtBlockExpression)?.let { body ->
+                    originalFunction.bodyBlockExpression?.let { body ->
                         transform {
                             append("\nget() ")
                             append(body.text)

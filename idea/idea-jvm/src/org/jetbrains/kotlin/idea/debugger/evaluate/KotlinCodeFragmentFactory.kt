@@ -144,7 +144,7 @@ class KotlinCodeFragmentFactory : CodeFragmentFactory() {
 
                 val fakeFile = createFakeFileWithJavaContextElement(fakeFunctionText, contextElement)
                 val fakeFunction = fakeFile.declarations.firstOrNull() as? KtFunction
-                val fakeContext = (fakeFunction?.bodyExpression as? KtBlockExpression)?.statements?.lastOrNull()
+                val fakeContext = fakeFunction?.bodyBlockExpression?.statements?.lastOrNull()
 
                 return@putCopyableUserData wrapContextIfNeeded(project, contextElement, fakeContext) ?: emptyFile
             })

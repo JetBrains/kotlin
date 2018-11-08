@@ -21,7 +21,7 @@ class SetterBackingFieldAssignmentInspection : AbstractKotlinInspection(), Clean
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean, session: LocalInspectionToolSession): PsiElementVisitor {
         return propertyAccessorVisitor(fun(accessor) {
             if (!accessor.isSetter) return
-            val bodyExpression = accessor.bodyExpression as? KtBlockExpression ?: return
+            val bodyExpression = accessor.bodyBlockExpression ?: return
 
             val property = accessor.property
             val propertyContext = property.analyze()
@@ -76,7 +76,7 @@ private class AssignBackingFieldFix : LocalQuickFix {
     override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
         val setter = descriptor.psiElement as? KtPropertyAccessor ?: return
         val parameter = setter.valueParameters.firstOrNull() ?: return
-        val bodyExpression = setter.bodyExpression as? KtBlockExpression ?: return
+        val bodyExpression = setter.bodyBlockExpression ?: return
         setter.hasBlockBody()
         bodyExpression.addBefore(
             KtPsiFactory(setter).createExpression("field = ${parameter.text}"),

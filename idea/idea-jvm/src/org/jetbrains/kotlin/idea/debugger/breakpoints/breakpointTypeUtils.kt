@@ -143,7 +143,7 @@ fun getLambdasAtLineIfAny(file: KtFile, line: Int): List<KtFunction> {
             .toSet()
 
     return allLiterals.filter {
-        val statement = (it.bodyExpression as? KtBlockExpression)?.statements?.firstOrNull() ?: it
+        val statement = it.bodyBlockExpression?.statements?.firstOrNull() ?: it
         statement.getLineNumber() == line && statement.getLineNumber(false) == line
     }
 }

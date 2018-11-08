@@ -237,7 +237,7 @@ fun definePackageAlias(name: String, varName: JsName, tag: String, parentRef: Js
 val PsiElement.finalElement: PsiElement
     get() = when (this) {
         is KtFunctionLiteral -> rBrace ?: this
-        is KtDeclarationWithBody -> (bodyExpression as? KtBlockExpression)?.rBrace ?: bodyExpression ?: this
+        is KtDeclarationWithBody -> bodyBlockExpression?.rBrace ?: bodyExpression ?: this
         is KtLambdaExpression -> bodyExpression?.rBrace ?: this
         else -> this
     }

@@ -437,7 +437,7 @@ object PositioningStrategies {
     @JvmField
     val DECLARATION_WITH_BODY: PositioningStrategy<KtDeclarationWithBody> = object : PositioningStrategy<KtDeclarationWithBody>() {
         override fun mark(element: KtDeclarationWithBody): List<TextRange> {
-            val lastBracketRange = (element.bodyExpression as? KtBlockExpression)?.lastBracketRange
+            val lastBracketRange = element.bodyBlockExpression?.lastBracketRange
             return if (lastBracketRange != null)
                 markRange(lastBracketRange)
             else
@@ -445,7 +445,7 @@ object PositioningStrategies {
         }
 
         override fun isValid(element: KtDeclarationWithBody): Boolean {
-            return super.isValid(element) && (element.bodyExpression as? KtBlockExpression)?.lastBracketRange != null
+            return super.isValid(element) && element.bodyBlockExpression?.lastBracketRange != null
         }
     }
 
