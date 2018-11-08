@@ -2284,6 +2284,15 @@
                      language="kotlin"
     />
 
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.WrapResourceWithUseCallInspection"
+                     displayName="Convert resource to use() call with prop"
+                     groupPath="Kotlin"
+                     groupName="Style issues"
+                     enabledByDefault="true"
+                     level="WEAK WARNING"
+                     language="kotlin"
+    />
+
     <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.ConvertTwoComparisonsToRangeCheckInspection"
                      displayName="Convert two comparisons to 'in'"
                      groupPath="Kotlin"
