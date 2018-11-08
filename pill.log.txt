@@ -1,0 +1,42 @@
+pill {
+pill {
+        register("pill-configurable") {
+            id = "pill-configurable"
+            implementationClass = "org.jetbrains.kotlin.pill.PillConfigurablePlugin"
+            implementationClass = "org.jetbrains.kotlin.pill.JpsCompatiblePlugin"
+    id("pill-configurable")
+pill {
+apply plugin: 'pill-configurable'
+pill {
+apply plugin: 'pill-configurable'
+pill {
+apply plugin: 'pill-configurable'
+pill {
+apply plugin: 'pill-configurable'
+pill {
+import org.jetbrains.kotlin.pill.PillExtension
+    id("pill-configurable")
+pill {
+apply plugin: 'pill-configurable'
+pill {
+apply plugin: 'pill-configurable'
+pill {
+apply plugin: 'pill-configurable'
+pill {
+apply plugin: 'pill-configurable'
+pill {
+apply plugin: 'pill-configurable'
+pill {
+apply plugin: 'pill-configurable'
+pill {
+apply plugin: 'pill-configurable'
+pill {
+pill {
+pill {
+pill {
+    compileOnly("org.apache.ivy:ivy:2.4.0") // for jps/pill
+apply plugin: 'pill-configurable'
+pill {
+import org.jetbrains.kotlin.pill.PillExtension.Variant
+    id("pill-configurable")
+    id("pill-configurable")
