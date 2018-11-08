@@ -9,5 +9,6 @@
 
   <extensions defaultExtensionNs="org.jetbrains.kotlin.contracts">
     <specificContractExtension implementation="org.jetbrains.kotlin.contracts.contextual.exceptions.ExceptionContract"/>
+    <specificContractExtension implementation="org.jetbrains.kotlin.contracts.contextual.safebuilders.CallContract"/>
   </extensions>
 </idea-plugin>
