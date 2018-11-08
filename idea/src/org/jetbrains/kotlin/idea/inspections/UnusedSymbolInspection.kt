@@ -46,6 +46,7 @@ import org.jetbrains.kotlin.idea.core.toDescriptor
 import org.jetbrains.kotlin.idea.findUsages.KotlinFindUsagesHandlerFactory
 import org.jetbrains.kotlin.idea.findUsages.handlers.KotlinFindClassUsagesHandler
 import org.jetbrains.kotlin.idea.imports.importableFqName
+import org.jetbrains.kotlin.idea.intentions.isFinalizeMethod
 import org.jetbrains.kotlin.idea.isMainFunction
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.quickfix.RemoveUnusedFunctionParameterFix
@@ -168,6 +169,7 @@ class UnusedSymbolInspection : AbstractKotlinInspection() {
             val descriptor = declaration.resolveToDescriptorIfAny() ?: return
             if (descriptor is FunctionDescriptor && descriptor.isOperator) return
             if (isEntryPoint(declaration)) return
+            if (declaration.isFinalizeMethod(descriptor)) return
             if (declaration is KtProperty && declaration.isSerializationImplicitlyUsedField()) return
             if (declaration is KtNamedFunction && declaration.isSerializationImplicitlyUsedMethod()) return
             // properties can be referred by component1/component2, which is too expensive to search, don't mark them as unused
@@ -283,7 +285,7 @@ class UnusedSymbolInspection : AbstractKotlinInspection() {
                         if (import.importedFqName != declaration.fqName) {
                             val importedDeclaration =
                                 import.importedReference?.getQualifiedElementSelector()?.mainReference?.resolve() as? KtNamedDeclaration
-                                        ?: return true
+                                    ?: return true
                             if (declaration is KtObjectDeclaration ||
                                 (declaration is KtClass && declaration.isEnum()) ||
                                 importedDeclaration.containingClassOrObject is KtObjectDeclaration
