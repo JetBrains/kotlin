@@ -19,8 +19,6 @@ package org.jetbrains.kotlin.resolve
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory3
-import org.jetbrains.kotlin.diagnostics.DiagnosticSink
-import org.jetbrains.kotlin.diagnostics.DiagnosticSink.DO_NOTHING
 import org.jetbrains.kotlin.diagnostics.Errors.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.types.TypeUtils
@@ -28,7 +26,7 @@ import org.jetbrains.kotlin.types.isError
 
 // Checker for all seven EXPOSED_* errors
 // All functions return true if everything is OK, or false in case of any errors
-class ExposedVisibilityChecker(private val trace: DiagnosticSink = DO_NOTHING) {
+class ExposedVisibilityChecker(private val trace: BindingTrace? = null) {
 
     private fun <E : PsiElement> reportExposure(
         diagnostic: DiagnosticFactory3<E, EffectiveVisibility, DescriptorWithRelation, EffectiveVisibility>,
@@ -36,7 +34,7 @@ class ExposedVisibilityChecker(private val trace: DiagnosticSink = DO_NOTHING) {
         elementVisibility: EffectiveVisibility,
         restrictingDescriptor: DescriptorWithRelation
     ) {
-        trace.report(diagnostic.on(element, elementVisibility, restrictingDescriptor, restrictingDescriptor.effectiveVisibility()))
+        trace?.report(diagnostic.on(element, elementVisibility, restrictingDescriptor, restrictingDescriptor.effectiveVisibility()))
     }
 
     // NB: does not check any members
@@ -99,7 +97,7 @@ class ExposedVisibilityChecker(private val trace: DiagnosticSink = DO_NOTHING) {
                     reportExposure(EXPOSED_PARAMETER_TYPE, valueParameter, functionVisibility, restricting)
                     result = false
                 } else if (functionDescriptor is ClassConstructorDescriptor && valueParameter.hasValOrVar()) {
-                    val propertyDescriptor = (trace as? BindingTrace)?.get(BindingContext.VALUE_PARAMETER_AS_PROPERTY, parameterDescriptor)
+                    val propertyDescriptor = trace?.get(BindingContext.VALUE_PARAMETER_AS_PROPERTY, parameterDescriptor)
                     val propertyOrClassVisibility = (propertyDescriptor ?: functionDescriptor.constructedClass).effectiveVisibility()
                     val restrictingByProperty = parameterDescriptor.type.leastPermissiveDescriptor(propertyOrClassVisibility)
                     if (restrictingByProperty != null) {
