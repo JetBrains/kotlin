@@ -1,0 +1,13 @@
+<idea-plugin>
+  <id>org.jetbrains.kotlin.contracts.contextual.subplugins</id>
+  <name>Kotlin contracts. Subplugins</name>
+  <version>0.1.0-SNAPSHOT</version>
+  <vendor email="dmitriy.novozhilov@jetbrains.com" url="http://jetbrains.com">JetBrains</vendor>
+  <depends>org.jetbrains.kotlin.contracts.contextual</depends>
+
+  <idea-version since-build="172"/>
+
+  <extensions defaultExtensionNs="org.jetbrains.kotlin.contracts">
+    <specificContractExtension implementation="org.jetbrains.kotlin.contracts.contextual.exceptions.ExceptionContract"/>
+  </extensions>
+</idea-plugin>
