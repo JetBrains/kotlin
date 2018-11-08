@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.idea.core.util.DescriptorMemberChooserObject
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
+import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
 import org.jetbrains.kotlin.psi.psiUtil.quoteIfNeeded
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
@@ -169,8 +170,10 @@ class KotlinGenerateToStringAction : KotlinGenerateMemberActionBase<KotlinGenera
             selectElements(memberChooserObjects)
         }
 
-        chooser.show()
-        if (chooser.exitCode != DialogWrapper.OK_EXIT_CODE) return null
+        if (!klass.hasExpectModifier()) {
+            chooser.show()
+            if (chooser.exitCode != DialogWrapper.OK_EXIT_CODE) return null
+        }
 
         return Info(classDescriptor,
                     chooser.selectedElements?.map { it.descriptor as VariableDescriptor } ?: emptyList(),
