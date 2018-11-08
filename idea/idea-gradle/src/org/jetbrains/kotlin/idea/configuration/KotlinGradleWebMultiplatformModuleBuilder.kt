@@ -91,7 +91,7 @@ class KotlinGradleWebMultiplatformModuleBuilder : KotlinGradleAbstractMultiplatf
                     actual val name: String = "JVM"
                 }
 
-                fun main(args: Array<String>) {
+                fun main() {
                     embeddedServer(Netty, port = 8080, host = "127.0.0.1") {
                         val currentDir = File(".").absoluteFile
                         environment.log.info("Current directory: ${"$"}currentDir")
