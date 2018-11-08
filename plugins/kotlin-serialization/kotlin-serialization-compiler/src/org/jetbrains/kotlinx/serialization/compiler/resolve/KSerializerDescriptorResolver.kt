@@ -57,9 +57,14 @@ object KSerializerDescriptorResolver {
 
     fun addSerializerSupertypes(classDescriptor: ClassDescriptor, supertypes: MutableList<KotlinType>) {
         val serializableClassDescriptor = getSerializableClassDescriptorBySerializer(classDescriptor) ?: return
-        if (supertypes.none(::isKSerializer)) {
-            supertypes.add(classDescriptor.createGeneratedSerializerTypeFor(serializableClassDescriptor.defaultType))
-        }
+        if (supertypes.any(::isKSerializer)) return
+
+        // Add GeneratedSerializer as superinterface for generated $serializer class, and KSerializer to all others
+        val fqName = if (classDescriptor.name == SerialEntityNames.SERIALIZER_CLASS_NAME)
+            SerialEntityNames.GENERATED_SERIALIZER_FQ
+        else
+            SerialEntityNames.KSERIALIZER_NAME_FQ
+        supertypes.add(classDescriptor.createSerializerTypeFor(serializableClassDescriptor.defaultType, fqName))
     }
 
     fun addSerialInfoImplClass(
@@ -196,7 +201,7 @@ object KSerializerDescriptorResolver {
         name: Name
     ): PropertyDescriptor {
         val typeParam = listOf(createProjection(classDescriptor.defaultType, Variance.INVARIANT, null))
-        val propertyFromSerializer = companionDescriptor.getKSerializerDescriptor().getMemberScope(typeParam)
+        val propertyFromSerializer = companionDescriptor.getGeneratedSerializerDescriptor().getMemberScope(typeParam)
             .getContributedVariables(name, NoLookupLocation.FROM_BUILTINS).single()
 
         val propertyDescriptor = PropertyDescriptorImpl.create(
@@ -236,7 +241,7 @@ object KSerializerDescriptorResolver {
             ?: throw AssertionError("Serializer does not implement ${SerialEntityNames.KSERIALIZER_CLASS}??")
 
         val typeParam = listOf(createProjection(serializableClassOnImplSite, Variance.INVARIANT, null))
-        val functionFromSerializer = companionDescriptor.getKSerializerDescriptor().getMemberScope(typeParam)
+        val functionFromSerializer = companionDescriptor.getGeneratedSerializerDescriptor().getMemberScope(typeParam)
             .getContributedFunctions(name, NoLookupLocation.FROM_BUILTINS).single()
 
         functionDescriptor.initialize(

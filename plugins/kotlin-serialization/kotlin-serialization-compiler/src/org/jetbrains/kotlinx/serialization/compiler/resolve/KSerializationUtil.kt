@@ -41,14 +41,16 @@ fun isKSerializer(type: KotlinType?): Boolean =
 fun isGeneratedKSerializer(type: KotlinType?): Boolean =
     type != null && KotlinBuiltIns.isConstructedFromGivenClass(type, SerialEntityNames.GENERATED_SERIALIZER_FQ)
 
-fun ClassDescriptor.getKSerializerDescriptor(): ClassDescriptor =
+fun ClassDescriptor.getGeneratedSerializerDescriptor(): ClassDescriptor =
     module.getClassFromInternalSerializationPackage(SerialEntityNames.GENERATED_SERIALIZER_CLASS.identifier)
 
 
-fun ClassDescriptor.createGeneratedSerializerTypeFor(argument: SimpleType): SimpleType {
+fun ClassDescriptor.createSerializerTypeFor(argument: SimpleType, baseSerializerInterface: FqName): SimpleType {
     val projectionType = Variance.INVARIANT
     val types = listOf(TypeProjectionImpl(projectionType, argument))
-    return KotlinTypeFactory.simpleNotNullType(Annotations.EMPTY, getKSerializerDescriptor(), types)
+    val descriptor = module.findClassAcrossModuleDependencies(ClassId.topLevel(baseSerializerInterface))
+        ?: throw IllegalArgumentException("Can't locate $baseSerializerInterface")
+    return KotlinTypeFactory.simpleNotNullType(Annotations.EMPTY, descriptor, types)
 }
 
 internal fun extractKSerializerArgumentFromImplementation(implementationClass: ClassDescriptor): KotlinType? {
