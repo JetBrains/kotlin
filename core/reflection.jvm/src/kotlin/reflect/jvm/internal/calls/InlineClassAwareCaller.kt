@@ -5,14 +5,13 @@
 
 package kotlin.reflect.jvm.internal.calls
 
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
-import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
+import org.jetbrains.kotlin.resolve.isGetterOfUnderlyingPropertyOfInlineClass
 import org.jetbrains.kotlin.resolve.isInlineClass
 import org.jetbrains.kotlin.resolve.isInlineClassType
+import org.jetbrains.kotlin.resolve.isUnderlyingPropertyOfInlineClass
 import org.jetbrains.kotlin.types.KotlinType
 import java.lang.reflect.Member
 import java.lang.reflect.Method
@@ -24,9 +23,9 @@ import kotlin.reflect.jvm.internal.toJavaClass
  * A caller that is used whenever the declaration has inline classes in its parameter types or return type.
  * Each argument of an inline class type is unboxed, and the return value (if it's of an inline class type) is boxed.
  */
-internal class InlineClassAwareCaller<out M : Member>(
+internal class InlineClassAwareCaller<out M : Member?>(
     private val descriptor: CallableMemberDescriptor,
-    private val caller: CallerImpl<M>,
+    private val caller: Caller<M>,
     private val isDefault: Boolean
 ) : Caller<M> {
     override val member: M
@@ -45,6 +44,15 @@ internal class InlineClassAwareCaller<out M : Member>(
     }
 
     private val data: BoxUnboxData by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        val box = descriptor.returnType!!.toInlineClass()?.getBoxMethod(descriptor)
+
+        if (descriptor.isGetterOfUnderlyingPropertyOfInlineClass()) {
+            // Getter of the underlying val of an inline class is always called on a boxed receiver,
+            // no argument boxing/unboxing is required.
+            // However, its result might require boxing if it is an inline class type.
+            return@lazy BoxUnboxData(IntRange.EMPTY, emptyArray(), box)
+        }
+
         val shift = when {
             caller is CallerImpl.Method.BoundStatic -> {
                 // Bound reference to a static method is only possible for a top level extension function/property,
@@ -107,8 +115,6 @@ internal class InlineClassAwareCaller<out M : Member>(
             } else null
         }
 
-        val box = descriptor.returnType!!.toInlineClass()?.getBoxMethod()
-
         BoxUnboxData(argumentRange, unbox, box)
     }
 
@@ -130,20 +136,15 @@ internal class InlineClassAwareCaller<out M : Member>(
 
         return box?.invoke(null, result) ?: result
     }
-
-    private fun Class<*>.getBoxMethod(): Method = try {
-        getDeclaredMethod("box" + JvmAbi.IMPL_SUFFIX_FOR_INLINE_CLASS_MEMBERS, getUnboxMethod(descriptor).returnType)
-    } catch (e: NoSuchMethodException) {
-        throw KotlinReflectionInternalError("No box method found in inline class: $this (calling $descriptor)")
-    }
 }
 
-internal fun <M : Member> CallerImpl<M>.createInlineClassAwareCallerIfNeeded(
+internal fun <M : Member?> Caller<M>.createInlineClassAwareCallerIfNeeded(
     descriptor: CallableMemberDescriptor,
     isDefault: Boolean = false
 ): Caller<M> {
-    val needsInlineAwareCaller =
-        descriptor.valueParameters.any { it.type.isInlineClassType() } ||
+    val needsInlineAwareCaller: Boolean =
+        descriptor.isGetterOfUnderlyingPropertyOfInlineClass() ||
+                descriptor.valueParameters.any { it.type.isInlineClassType() } ||
                 descriptor.returnType?.isInlineClassType() == true ||
                 this !is BoundCaller && descriptor.hasInlineClassReceiver()
 
@@ -153,22 +154,28 @@ internal fun <M : Member> CallerImpl<M>.createInlineClassAwareCallerIfNeeded(
 private fun CallableMemberDescriptor.hasInlineClassReceiver() =
     expectedReceiverType?.isInlineClassType() == true
 
-internal fun Class<*>.getUnboxMethod(descriptor: CallableMemberDescriptor): Method = try {
-    getDeclaredMethod("unbox" + JvmAbi.IMPL_SUFFIX_FOR_INLINE_CLASS_MEMBERS)
-} catch (e: NoSuchMethodException) {
-    throw KotlinReflectionInternalError("No unbox method found in inline class: $this (calling $descriptor)")
-}
-
-internal fun KotlinType.toInlineClass(): Class<*>? {
-    val descriptor = constructor.declarationDescriptor
-    if (descriptor is ClassDescriptor && descriptor.isInline) {
-        return descriptor.toJavaClass() ?: throw KotlinReflectionInternalError(
-            "Class object for the class ${descriptor.name} cannot be found (classId=${descriptor.classId})"
-        )
+internal fun Class<*>.getUnboxMethod(descriptor: CallableMemberDescriptor): Method =
+    try {
+        getDeclaredMethod("unbox" + JvmAbi.IMPL_SUFFIX_FOR_INLINE_CLASS_MEMBERS)
+    } catch (e: NoSuchMethodException) {
+        throw KotlinReflectionInternalError("No unbox method found in inline class: $this (calling $descriptor)")
     }
 
-    return null
-}
+internal fun Class<*>.getBoxMethod(descriptor: CallableMemberDescriptor): Method =
+    try {
+        getDeclaredMethod("box" + JvmAbi.IMPL_SUFFIX_FOR_INLINE_CLASS_MEMBERS, getUnboxMethod(descriptor).returnType)
+    } catch (e: NoSuchMethodException) {
+        throw KotlinReflectionInternalError("No box method found in inline class: $this (calling $descriptor)")
+    }
+
+internal fun KotlinType.toInlineClass(): Class<*>? =
+    constructor.declarationDescriptor.toInlineClass()
+
+internal fun DeclarationDescriptor?.toInlineClass(): Class<*>? =
+    if (this is ClassDescriptor && isInline)
+        toJavaClass() ?: throw KotlinReflectionInternalError("Class object for the class $name cannot be found (classId=$classId)")
+    else
+        null
 
 private val CallableMemberDescriptor.expectedReceiverType: KotlinType?
     get() {
@@ -183,6 +190,8 @@ private val CallableMemberDescriptor.expectedReceiverType: KotlinType?
     }
 
 internal fun Any?.coerceToExpectedReceiverType(descriptor: CallableMemberDescriptor): Any? {
+    if (descriptor is PropertyDescriptor && descriptor.isUnderlyingPropertyOfInlineClass()) return this
+
     val expectedReceiverType = descriptor.expectedReceiverType
     val unboxMethod = expectedReceiverType?.toInlineClass()?.getUnboxMethod(descriptor) ?: return this
 

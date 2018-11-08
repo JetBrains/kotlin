@@ -58,6 +58,9 @@ fun KotlinType.isNullableUnderlyingType(): Boolean {
     return TypeUtils.isNullableType(underlyingType)
 }
 
+fun CallableDescriptor.isGetterOfUnderlyingPropertyOfInlineClass() =
+    this is PropertyGetterDescriptor && correspondingProperty.isUnderlyingPropertyOfInlineClass()
+
 fun VariableDescriptor.isUnderlyingPropertyOfInlineClass(): Boolean {
     val containingDeclaration = this.containingDeclaration
     if (!containingDeclaration.isInlineClass()) return false

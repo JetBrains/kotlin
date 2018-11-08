@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.resolve.DescriptorFactory
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.isUnderlyingPropertyOfInlineClass
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPropertyDescriptor
 import org.jetbrains.kotlin.types.TypeUtils
 import java.lang.reflect.Field
@@ -226,9 +227,20 @@ private fun KPropertyImpl.Accessor<*, *>.computeCallerForAccessor(isGetter: Bool
             }
 
             when {
-                accessor == null -> computeFieldCaller(
-                    property.javaField ?: throw KotlinReflectionInternalError("No accessors or field is found for property $property")
-                )
+                accessor == null -> {
+                    if (property.descriptor.isUnderlyingPropertyOfInlineClass() &&
+                        property.descriptor.visibility == Visibilities.INTERNAL
+                    ) {
+                        val unboxMethod = property.descriptor.containingDeclaration.toInlineClass()?.getUnboxMethod(property.descriptor)
+                            ?: throw KotlinReflectionInternalError("Underlying property of inline class $property should have a field")
+                        if (isBound) InternalUnderlyingValOfInlineClass.Bound(unboxMethod, boundReceiver)
+                        else InternalUnderlyingValOfInlineClass.Unbound(unboxMethod)
+                    } else {
+                        val javaField = property.javaField
+                            ?: throw KotlinReflectionInternalError("No accessors or field is found for property $property")
+                        computeFieldCaller(javaField)
+                    }
+                }
                 !Modifier.isStatic(accessor.modifiers) ->
                     if (isBound) CallerImpl.Method.BoundInstance(accessor, boundReceiver)
                     else CallerImpl.Method.Instance(accessor)
