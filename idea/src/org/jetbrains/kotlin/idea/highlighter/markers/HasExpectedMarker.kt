@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.idea.core.toDescriptor
 import org.jetbrains.kotlin.idea.util.expectedDeclarationIfAny
 import org.jetbrains.kotlin.idea.util.hasDeclarationOf
 import org.jetbrains.kotlin.psi.KtDeclaration
-import java.awt.event.MouseEvent
 
 fun getExpectedDeclarationTooltip(declaration: KtDeclaration): String? {
     val descriptor = declaration.toDescriptor() as? MemberDescriptor ?: return null
@@ -43,7 +42,7 @@ fun KtDeclaration.navigateToExpectedTitle() = "Choose expected for $name"
 
 fun KtDeclaration.navigateToExpectedUsagesTitle() = "Expected for $name"
 
-fun buildNavigateToExpectedDeclarationsPopup(e: MouseEvent?, element: PsiElement?): NavigationPopupDescriptor? {
+fun buildNavigateToExpectedDeclarationsPopup(element: PsiElement?): NavigationPopupDescriptor? {
     return element?.markerDeclaration?.let {
         val navigatableExpectedDeclarations = it.allNavigatableExpectedDeclarations()
         if (navigatableExpectedDeclarations.isEmpty()) return null
