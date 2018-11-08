@@ -268,6 +268,14 @@ class JavaToJKTreeBuilder(var symbolProvider: JKSymbolProvider) {
             }
         }
 
+        fun PsiEnumConstant.toJK(): JKEnumConstant =
+            JKEnumConstantImpl(
+                JKNameIdentifierImpl(name),
+                with(expressionTreeMapper) { argumentList.toJK() },
+                JKTypeElementImpl(JKClassTypeImpl(symbolProvider.provideDirectSymbol(containingClass!!) as JKClassSymbol, emptyList())),
+                with(modifierMapper) { modifierList.toJK() }
+            )
+
         fun PsiField.toJK(): JKJavaField {
             return JKJavaFieldImpl(
                 with(modifierMapper) { modifierList.toJK(finalAsMutability = true) },
@@ -299,6 +307,7 @@ class JavaToJKTreeBuilder(var symbolProvider: JKSymbolProvider) {
         }
 
         fun PsiMember.toJK(): JKDeclaration? = when (this) {
+            is PsiEnumConstant -> this.toJK()
             is PsiField -> this.toJK()
             is PsiMethod -> this.toJK()
             else -> null
@@ -489,6 +498,10 @@ class JavaToJKTreeBuilder(var symbolProvider: JKSymbolProvider) {
 
         override fun visitField(field: PsiField) {
             resultElement = with(declarationMapper) { field.toJK() }
+        }
+
+        override fun visitEnumConstant(enumConstant: PsiEnumConstant) {
+            resultElement = with(declarationMapper) { enumConstant.toJK() }
         }
 
         override fun visitMethod(method: PsiMethod) {

@@ -469,5 +469,19 @@ class JKTypeParameterTypeImpl(
     override val nullability: Nullability = Nullability.Default
 ) : JKTypeParameterType
 
+class JKEnumConstantImpl(
+    name: JKNameIdentifier,
+    arguments: JKExpressionList,
+    type: JKTypeElement,
+    modifierList: JKModifierList
+) : JKEnumConstant, JKBranchElementBase(), PsiOwner by PsiOwnerImpl() {
+    override var name: JKNameIdentifier by child(name)
+    override val arguments: JKExpressionList by child(arguments)
+    override val type: JKTypeElement by child(type)
+    override var initializer: JKExpression by child(JKStubExpressionImpl())
+    override var modifierList: JKModifierList by child(modifierList)
+    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitEnumConstant(this, data)
+}
+
 fun JKTypeElement.present(): Boolean =
     type != JKNoTypeImpl

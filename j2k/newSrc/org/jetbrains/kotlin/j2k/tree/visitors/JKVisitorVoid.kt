@@ -123,6 +123,8 @@ interface JKVisitorVoid : JKVisitor<Unit, Nothing?> {
     override fun visitTypeParameter(typeParameter: JKTypeParameter, data: Nothing?) = visitTypeParameter(typeParameter)
     fun visitTypeParameterListOwner(typeParameterListOwner: JKTypeParameterListOwner) = visitTreeElement(typeParameterListOwner, null)
     override fun visitTypeParameterListOwner(typeParameterListOwner: JKTypeParameterListOwner, data: Nothing?) = visitTypeParameterListOwner(typeParameterListOwner)
+    fun visitEnumConstant(enumConstant: JKEnumConstant) = visitTreeElement(enumConstant, null)
+    override fun visitEnumConstant(enumConstant: JKEnumConstant, data: Nothing?) = visitEnumConstant(enumConstant)
     fun visitJavaField(javaField: JKJavaField) = visitField(javaField, null)
     override fun visitJavaField(javaField: JKJavaField, data: Nothing?) = visitJavaField(javaField)
     fun visitJavaMethod(javaMethod: JKJavaMethod) = visitMethod(javaMethod, null)

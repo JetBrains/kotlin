@@ -287,3 +287,7 @@ interface JKTypeParameter : JKTreeElement {
 interface JKTypeParameterListOwner : JKTreeElement {
     var typeParameterList: JKTypeParameterList
 }
+
+interface JKEnumConstant : JKField {
+    val arguments: JKExpressionList
+}

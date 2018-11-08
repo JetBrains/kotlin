@@ -63,6 +63,7 @@ interface JKVisitor<out R, in D> {
     fun visitTypeParameterList(typeParameterList: JKTypeParameterList, data: D): R = visitTreeElement(typeParameterList, data)
     fun visitTypeParameter(typeParameter: JKTypeParameter, data: D): R = visitTreeElement(typeParameter, data)
     fun visitTypeParameterListOwner(typeParameterListOwner: JKTypeParameterListOwner, data: D): R = visitTreeElement(typeParameterListOwner, data)
+    fun visitEnumConstant(enumConstant: JKEnumConstant, data: D): R = visitTreeElement(enumConstant, data)
     fun visitJavaField(javaField: JKJavaField, data: D): R = visitField(javaField, data)
     fun visitJavaMethod(javaMethod: JKJavaMethod, data: D): R = visitMethod(javaMethod, data)
     fun visitJavaMethodCallExpression(javaMethodCallExpression: JKJavaMethodCallExpression, data: D): R = visitMethodCallExpression(javaMethodCallExpression, data)

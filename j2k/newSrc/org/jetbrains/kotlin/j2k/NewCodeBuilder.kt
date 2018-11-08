@@ -219,13 +219,25 @@ class NewCodeBuilder {
 
             if (klass.declarationList.any { it !is JKKtPrimaryConstructor }) {
                 printer.block(multiline = true) {
-                    klass.declarationList.forEach {
-                        it.accept(this)
-                        printer.printlnWithNoIndent()
-                    }
+                    renderEnumConstants(klass.declarationList.filterIsInstance())
+                    renderNonEnumClassDeclarations(klass.declarationList.filterNot { it is JKEnumConstant })
                 }
             } else {
                 printer.println()
+            }
+        }
+
+        private fun renderEnumConstants(enumConstants: List<JKEnumConstant>) {
+            renderList(enumConstants) {
+                it.accept(this)
+            }
+
+        }
+
+        private fun renderNonEnumClassDeclarations(declarations: List<JKDeclaration>) {
+            declarations.forEach {
+                it.accept(this)
+                printer.printlnWithNoIndent()
             }
         }
 
@@ -241,6 +253,15 @@ class NewCodeBuilder {
             if (ktProperty.initializer !is JKStubExpression) {
                 printer.printWithNoIndent(" = ")
                 ktProperty.initializer.accept(this)
+            }
+        }
+
+        override fun visitEnumConstant(enumConstant: JKEnumConstant) {
+            enumConstant.name.accept(this)
+            if (enumConstant.arguments.expressions.isNotEmpty()) {
+                printer.par {
+                    enumConstant.arguments.accept(this)
+                }
             }
         }
 
