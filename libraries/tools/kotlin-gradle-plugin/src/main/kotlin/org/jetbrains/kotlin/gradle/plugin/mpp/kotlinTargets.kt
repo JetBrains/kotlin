@@ -108,6 +108,9 @@ abstract class AbstractKotlinTarget(
 
     override fun mavenPublication(action: Closure<Unit>) =
         mavenPublication(ConfigureUtil.configureUsing(action))
+
+    override var preset: KotlinTargetPreset<out KotlinTarget>? = null
+        internal set
 }
 
 internal fun KotlinTarget.disambiguateName(simpleName: String) =

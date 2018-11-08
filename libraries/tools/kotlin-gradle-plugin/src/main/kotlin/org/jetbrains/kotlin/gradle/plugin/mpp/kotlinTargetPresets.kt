@@ -42,6 +42,7 @@ abstract class KotlinOnlyTargetPreset<T : KotlinCompilation>(
         val result = KotlinOnlyTarget<T>(project, platformType).apply {
             targetName = name
             disambiguationClassifier = name
+            preset = this@KotlinOnlyTargetPreset
 
             val compilationFactory = createCompilationFactory(this)
             compilations = project.container(compilationFactory.itemClass, compilationFactory)
@@ -177,6 +178,7 @@ class KotlinAndroidTargetPreset(
     override fun createTarget(name: String): KotlinAndroidTarget {
         val result = KotlinAndroidTarget(name, project).apply {
             disambiguationClassifier = name
+            preset = this@KotlinAndroidTargetPreset
         }
 
         KotlinAndroidPlugin.applyToTarget(
@@ -204,6 +206,7 @@ class KotlinJvmWithJavaTargetPreset(
 
         val target = KotlinWithJavaTarget(project, KotlinPlatformType.jvm, name).apply {
             disambiguationClassifier = name
+            preset = this@KotlinJvmWithJavaTargetPreset
         }
 
         AbstractKotlinPlugin.configureTarget(target) { compilation ->
@@ -314,6 +317,7 @@ class KotlinNativeTargetPreset(
         val result = KotlinNativeTarget(project, konanTarget).apply {
             targetName = name
             disambiguationClassifier = name
+            preset = this@KotlinNativeTargetPreset
 
             val compilationFactory = KotlinNativeCompilationFactory(project, this)
             compilations = project.container(compilationFactory.itemClass, compilationFactory)
