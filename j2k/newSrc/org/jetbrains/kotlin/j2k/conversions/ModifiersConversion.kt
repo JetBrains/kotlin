@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.j2k.conversions
 import org.jetbrains.kotlin.j2k.ConversionContext
 import org.jetbrains.kotlin.j2k.ast.Mutability
 import org.jetbrains.kotlin.j2k.tree.*
+import org.jetbrains.kotlin.j2k.tree.impl.JKKtConstructorImpl
 import org.jetbrains.kotlin.j2k.tree.impl.JKKtModifierImpl
 import org.jetbrains.kotlin.j2k.tree.impl.mutability
 import org.jetbrains.kotlin.j2k.tree.impl.visibility
@@ -29,9 +30,16 @@ class ModifiersConversion(private val context: ConversionContext) : RecursiveApp
             if (element is JKParameter) {
                 convertParameterModifiers(element)
             }
+            if (element is JKKtConstructor) {
+                convertConstructorModifiers(element)
+            }
             element.sortModifiers()
         }
         return recurse(element)
+    }
+
+    private fun convertConstructorModifiers(constructor: JKKtConstructor) {
+        constructor.filterModifiers { it !is JKModalityModifier }
     }
 
     private fun convertParameterModifiers(jkParameter: JKParameter) {

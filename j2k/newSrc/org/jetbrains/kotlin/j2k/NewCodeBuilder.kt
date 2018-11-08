@@ -194,11 +194,10 @@ class NewCodeBuilder {
             builder.append(" ")
             printer.printWithNoIndent(klass.name.value)
             klass.typeParameterList.accept(this)
+            printer.printWithNoIndent(" ")
 
             val primaryConstructor = klass.primaryConstructor()
-            if (primaryConstructor != null && primaryConstructor.parameters.isNotEmpty()) {
-                renderParameterList(primaryConstructor.parameters)
-            }
+            primaryConstructor?.accept(this)
 
             if (klass.inheritance.inherit.isNotEmpty()) {
                 printer.printWithNoIndent(" : ")
@@ -217,10 +216,11 @@ class NewCodeBuilder {
             //TODO should it be here?
             renderExtraTypeParametersUpperBounds(klass.typeParameterList)
 
-            if (klass.declarationList.any { it !is JKKtPrimaryConstructor }) {
+            val declarationsToPrint = klass.declarationList.filterNot { it is JKKtPrimaryConstructor}
+            if (declarationsToPrint.isNotEmpty()) {
                 printer.block(multiline = true) {
-                    renderEnumConstants(klass.declarationList.filterIsInstance())
-                    renderNonEnumClassDeclarations(klass.declarationList.filterNot { it is JKEnumConstant })
+                    renderEnumConstants(declarationsToPrint.filterIsInstance())
+                    renderNonEnumClassDeclarations(declarationsToPrint.filterNot { it is JKEnumConstant })
                 }
             } else {
                 printer.println()
@@ -610,7 +610,19 @@ class NewCodeBuilder {
             }
         }
 
-        override fun visitKtPrimaryConstructor(ktPrimaryConstructor: JKKtPrimaryConstructor) {}
+        override fun visitKtPrimaryConstructor(ktPrimaryConstructor: JKKtPrimaryConstructor) {
+            val hasInitDeclaration =
+                (ktPrimaryConstructor.parent as JKClass).declarationList.any { it is JKKtInitDeclaration }
+            val hasAccessModifier =
+                ktPrimaryConstructor.modifierList.modifiers.any { it is JKAccessModifier }
+            if (hasAccessModifier && hasInitDeclaration && ktPrimaryConstructor.parameters.isNotEmpty()) {
+                ktPrimaryConstructor.modifierList.accept(this)
+                printer.printWithNoIndent(" constructor ")
+            }
+            if (ktPrimaryConstructor.parameters.isNotEmpty()) {
+                renderParameterList(ktPrimaryConstructor.parameters)
+            }
+        }
 
         private inline fun Printer.indented(block: () -> Unit) {
             this.pushIndent()
