@@ -9673,6 +9673,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             runTest("idea/testData/intentions/iterateExpression/nonOperatotExtensionIterator.kt");
         }
 
+        @TestMetadata("nothing.kt")
+        public void testNothing() throws Exception {
+            runTest("idea/testData/intentions/iterateExpression/nothing.kt");
+        }
+
         @TestMetadata("simple.kt")
         public void testSimple() throws Exception {
             runTest("idea/testData/intentions/iterateExpression/simple.kt");

@@ -21,6 +21,7 @@ import com.intellij.codeInsight.intention.HighPriorityAction
 import com.intellij.codeInsight.template.TemplateBuilderImpl
 import com.intellij.codeInsight.template.impl.ConstantNode
 import com.intellij.openapi.editor.Editor
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.core.*
@@ -51,6 +52,7 @@ class IterateExpressionIntention : SelfTargetingIntention<KtExpression>(KtExpres
         val resolutionFacade = expression.getResolutionFacade()
         val bindingContext = resolutionFacade.analyze(expression, BodyResolveMode.PARTIAL)
         val type = bindingContext.getType(expression) ?: return null
+        if (KotlinBuiltIns.isNothing(type)) return null
         val scope = expression.getResolutionScope(bindingContext, resolutionFacade)
         val detector = resolutionFacade.ideService<IterableTypesDetection>().createDetector(scope)
         val elementType = detector.elementType(type)?.type ?: return null
