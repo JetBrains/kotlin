@@ -66,6 +66,8 @@ dependencies {
     packedJars(project(":core:builtins", configuration = "builtins"))
     sideJars(project(":kotlin-script-runtime"))
     sideJars(project(":kotlin-stdlib"))
+    sideJars(project(":kotlin-stdlib-jdk7"))
+    sideJars(project(":kotlin-stdlib-jdk8"))
     sideJars(project(":kotlin-reflect"))
     sideJars(project(":kotlin-compiler-client-embeddable"))
     sideJars(commonDep("io.javaslang", "javaslang"))
