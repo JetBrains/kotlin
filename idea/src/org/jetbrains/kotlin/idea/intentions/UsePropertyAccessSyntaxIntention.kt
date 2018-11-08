@@ -243,7 +243,7 @@ class UsePropertyAccessSyntaxIntention :
         var callToConvert = callExpression
         if (callParent is KtDeclarationWithBody && call == callParent.bodyExpression) {
             ConvertToBlockBodyIntention.convert(callParent)
-            val firstStatement = (callParent.bodyExpression as? KtBlockExpression)?.statements?.first()
+            val firstStatement = callParent.bodyBlockExpression?.statements?.first()
             callToConvert = (firstStatement as? KtQualifiedExpression)?.selectorExpression as? KtCallExpression
                     ?: firstStatement as? KtCallExpression
                     ?: throw IllegalStateException("Unexpected contents of function after conversion: ${callParent.text}")

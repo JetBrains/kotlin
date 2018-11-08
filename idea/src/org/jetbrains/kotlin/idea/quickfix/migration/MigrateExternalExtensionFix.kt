@@ -188,7 +188,7 @@ class MigrateExternalExtensionFix(declaration: KtNamedDeclaration)
                 }
 
                 val setterStubProperty = ktPsiFactory.createProperty("val x: Unit set(value) { Unit }")
-                val block = setterStubProperty.setter!!.bodyExpression as KtBlockExpression
+                val block = setterStubProperty.setter!!.bodyBlockExpression!!
                 block.statements.single().replace(setterBody)
                 declaration.add(setterStubProperty.setter!!)
             }
