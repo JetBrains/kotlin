@@ -65,13 +65,13 @@ class NewCodeBuilder {
         }
 
         override fun visitKtTryExpression(ktTryExpression: JKKtTryExpression) {
-            printer.printlnWithNoIndent("try ")
+            printer.printWithNoIndent("try ")
             if (ktTryExpression.tryBlock != JKBodyStub) {
                 printer.block { ktTryExpression.tryBlock.accept(this) }
             }
             ktTryExpression.catchSections.forEach { it.accept(this) }
             if (ktTryExpression.finallyBlock != JKBodyStub) {
-                printer.printlnWithNoIndent("finally ")
+                printer.printWithNoIndent("finally ")
                 printer.block { ktTryExpression.finallyBlock.accept(this) }
             }
         }
@@ -96,7 +96,7 @@ class NewCodeBuilder {
         }
 
         override fun visitKtThrowExpression(ktThrowExpression: JKKtThrowExpression) {
-            printer.printlnWithNoIndent("throw ")
+            printer.printWithNoIndent("throw ")
             ktThrowExpression.exception.accept(this)
         }
 
@@ -219,7 +219,10 @@ class NewCodeBuilder {
 
             if (klass.declarationList.any { it !is JKKtPrimaryConstructor }) {
                 printer.block(multiline = true) {
-                    klass.declarationList.forEach { it.accept(this) }
+                    klass.declarationList.forEach {
+                        it.accept(this)
+                        printer.printlnWithNoIndent()
+                    }
                 }
             } else {
                 printer.println()
@@ -343,7 +346,7 @@ class NewCodeBuilder {
         override fun visitTypeParameter(typeParameter: JKTypeParameter) {
             typeParameter.name.accept(this)
             if (typeParameter.upperBounds.size == 1) {
-                printer.printlnWithNoIndent(" : ")
+                printer.printWithNoIndent(" : ")
                 typeParameter.upperBounds.single().accept(this)
             }
         }
@@ -537,13 +540,11 @@ class NewCodeBuilder {
         override fun visitExpressionStatement(expressionStatement: JKExpressionStatement) {
             printer.printIndent()
             expressionStatement.expression.accept(this)
-            printer.printlnWithNoIndent()
         }
 
         override fun visitReturnStatement(returnStatement: JKReturnStatement) {
             printer.print("return ")
             returnStatement.expression.accept(this)
-            printer.printlnWithNoIndent()
         }
 
         override fun visitFieldAccessExpression(fieldAccessExpression: JKFieldAccessExpression) {
