@@ -56,7 +56,7 @@ class FieldToPropertyConversion : RecursiveApplicableConversionBase() {
                     JKKtPropertyImpl(field.modifierList, field.type, field.name, field.initializer, JKBlockImpl(), JKBlockImpl())
 
                 declarations.remove(field)
-
+                property.modifierList.mutability = Mutability.NonMutable
                 val getter = info.getter
                 if (getter?.fieldFromGetter(field.name.value) == field) {
                     declarations.remove(getter)
