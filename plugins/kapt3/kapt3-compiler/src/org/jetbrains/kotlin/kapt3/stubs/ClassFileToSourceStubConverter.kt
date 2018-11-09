@@ -973,6 +973,15 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
         }
 
         fun tryParseTypeExpression(expression: KtExpression?): JCExpression? {
+            if (expression is KtReferenceExpression) {
+                val descriptor = kaptContext.bindingContext[BindingContext.REFERENCE_TARGET, expression]
+                if (descriptor is ClassDescriptor) {
+                    return treeMaker.FqName(descriptor.fqNameSafe)
+                } else if (descriptor is TypeAliasDescriptor) {
+                    descriptor.classDescriptor?.fqNameSafe?.let { return treeMaker.FqName(it) }
+                }
+            }
+
             return when (expression) {
                 is KtSimpleNameExpression -> treeMaker.SimpleName(expression.getReferencedName())
                 is KtDotQualifiedExpression -> {
