@@ -143,11 +143,13 @@ class TypeMappingMode private constructor(
         fun createWithConstantDeclarationSiteWildcardsMode(
             skipDeclarationSiteWildcards: Boolean,
             isForAnnotationParameter: Boolean,
+            needInlineClassWrapping: Boolean,
             fallbackMode: TypeMappingMode? = null
         ) = TypeMappingMode(
             isForAnnotationParameter = isForAnnotationParameter,
             skipDeclarationSiteWildcards = skipDeclarationSiteWildcards,
-            genericArgumentMode = fallbackMode
+            genericArgumentMode = fallbackMode,
+            needInlineClassWrapping = needInlineClassWrapping
         )
     }
 
