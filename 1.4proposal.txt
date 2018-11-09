@@ -1,0 +1,15 @@
+Such problems are often encountered in actual development.
+
+1. A method requires processing Int, Double, String at the same time. At this time, it can only be that either three methods are used to deal with them separately, or the type is set to Any and the runtime exception is checked when the incoming error type is thrown.
+2. Sequencing and serializing some data to hard disk requires that both Seriazable and Comparable be the type. There is no way to define any at this time, and then throw runtime exceptions when checking for incoming error types.
+3. A method needs to deal with the digital Number class, but does not want to receive the Byte byte class. At present, there is no way but to define it as Number, and then check that the runtime exception is thrown when the Byte is passed in.
+
+
+
+
+Expect 1.4 to introduce combination types to solve these problems.
+
+1. "or" type, A | B, A or B, manifestation: direct operation can only be the intersecting part, their unique functions need to determine the specific type first.
+The 
+2. "and" type, A&B, is both A class and B class. It can perform all functions of A and B directly.
+3. "Exclusion" type, A-B, belongs to category A but does not allow category B (parent-child class, etc.). It shows that only all functions of A can be operated directly.
