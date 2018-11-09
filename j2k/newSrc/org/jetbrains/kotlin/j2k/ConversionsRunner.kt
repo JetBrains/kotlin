@@ -54,6 +54,7 @@ object ConversionsRunner {
             +InstanceOfConversion()
             +ForConversion(context)
             +LabeledStatementConversion()
+            +SortClassMembersConversion()
         }
 
     fun doApply(trees: List<JKTreeElement>, context: ConversionContext) {
