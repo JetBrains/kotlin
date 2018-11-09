@@ -1,0 +1,61 @@
+package lib;
+
+public @interface Anno {
+
+    Class<?>[] impls() default {};
+}
+
+////////////////////
+
+package lib.impl;
+
+public class Impl {
+}
+
+////////////////////
+
+package test;
+
+import lib.Anno;
+import lib.impl.Impl;
+
+@kotlin.Metadata()
+@lib.Anno(impls = {lib.impl.Impl.class, ABC.class})
+public final class Bar {
+
+    public Bar() {
+        super();
+    }
+}
+
+////////////////////
+
+package test;
+
+import lib.Anno;
+import lib.impl.Impl;
+
+@kotlin.Metadata()
+@lib.Anno(impls = {lib.impl.Impl.class})
+public final class Boo {
+
+    public Boo() {
+        super();
+    }
+}
+
+////////////////////
+
+package test;
+
+import lib.Anno;
+import lib.impl.Impl;
+
+@kotlin.Metadata()
+@lib.Anno(impls = {lib.impl.Impl.class})
+public final class Foo {
+
+    public Foo() {
+        super();
+    }
+}
