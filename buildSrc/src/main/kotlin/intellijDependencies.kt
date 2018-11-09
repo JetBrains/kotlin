@@ -129,12 +129,16 @@ fun Project.runIdeTask(name: String, ideaPluginDir: File, ideaSandboxDir: File, 
 
         workingDir = File(intellijRootDir(), "bin")
 
+        // https://issuetracker.google.com/issues/119250571
+        var isInternal = true
+        Ide.AS33.orHigher { isInternal = false }
+
         jvmArgs(
             "-Xmx1250m",
             "-XX:ReservedCodeCacheSize=240m",
             "-XX:+HeapDumpOnOutOfMemoryError",
             "-ea",
-            "-Didea.is.internal=true",
+            "-Didea.is.internal=$isInternal",
             "-Didea.debug.mode=true",
             "-Didea.system.path=$ideaSandboxDir",
             "-Didea.config.path=$ideaSandboxConfigDir",
