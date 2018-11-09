@@ -36,7 +36,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.3'
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.4'
         classpath 'com.github.jengelman.gradle.plugins:shadow:4.0.0'
         classpath "com.gradle.publish:plugin-publish-plugin:0.10.0"
     }
@@ -50,22 +50,32 @@ apply plugin: 'com.jfrog.bintray'
 apply plugin: 'com.github.johnrengelman.shadow'
 apply plugin: "com.gradle.plugin-publish"
 
-group = 'org.jetbrains.kotlin'
+String determineVersion() {
+    // With Gradle 4.10 we are no longer able to depend on
+    // a 'shared' build included into the root one and use the KonanVersion API provided
+    // by it. So we have to manually construct the version.
+    // TODO: Remove this code when 'shared' is built separately (from a separate repo).
+    def meta = findProperty('konanMetaVersion') ?: 'dev'
+    def overriddenVersion = findProperty('pluginVersionOverride') as String
 
-// With Gradle 4.10 we are no longer able to depend on
-// a 'shared' build included into the root one and use the KonanVersion API provided
-// by it. So we have to manually construct the version.
-// TODO: Remove this code when 'shared' is built separately (from a separate repo).
-def meta = findProperty('konanMetaVersion') ?: 'dev'
-if (meta == 'release') {
-    version = kotlinVersion
-} else {
-    def buildNumber = findProperty("build.number")?.tokenize('-')?.get(2)
-    version = "$kotlinVersion-native-$konanVersion-$meta"
-    if (buildNumber != null) {
-        version += "-$buildNumber"
+    if (overriddenVersion != null && !overriddenVersion.empty) {
+        return overriddenVersion
+    }
+
+    if (meta == 'release') {
+        return kotlinVersion
+    } else {
+        def buildNumber = findProperty("build.number")?.tokenize('-')?.get(2)
+        def result = "$kotlinVersion-native-$konanVersion-$meta"
+        if (buildNumber != null) {
+            result += "-$buildNumber"
+        }
+        return result
     }
 }
+
+group = 'org.jetbrains.kotlin'
+version = determineVersion()
 
 repositories {
     mavenCentral()
@@ -88,7 +98,7 @@ configurations {
 }
 
 dependencies {
-    shadow "org.jetbrains.kotlin:kotlin-stdlib:0.9.1-native"
+    shadow "org.jetbrains.kotlin:kotlin-stdlib:1.3.0"
 
     // Bundle the serialization plugin into the final jar because we shade classes of the kotlin plugin
     // while the serialization one extends them.
