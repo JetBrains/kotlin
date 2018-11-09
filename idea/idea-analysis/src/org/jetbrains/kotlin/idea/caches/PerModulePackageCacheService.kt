@@ -66,7 +66,7 @@ class KotlinPackageContentModificationListener(private val project: Project) {
                         .filter(::isRelevant)
                         .filter {
                             val vFile = it.file!!
-                            vFile.isDirectory || FileTypeRegistry.getInstance().getFileTypeByFileName(vFile.name) == KotlinFileType.INSTANCE
+                            vFile.isDirectory || FileTypeRegistry.getInstance().getFileTypeByFileName(vFile.nameSequence) == KotlinFileType.INSTANCE
                         }
                         .forEach { event -> service.notifyPackageChange(event) }
                 }
