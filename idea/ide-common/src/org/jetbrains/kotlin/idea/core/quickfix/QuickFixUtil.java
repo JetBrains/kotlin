@@ -105,9 +105,9 @@ public class QuickFixUtil {
         return declaration instanceof KtParameter ? (KtParameter) declaration : null;
     }
 
-    private static boolean equalOrLastInThenOrElse(KtExpression thenOrElse, KtExpression expression) {
-        if (thenOrElse == expression) return true;
-        return thenOrElse instanceof KtBlockExpression && expression.getParent() == thenOrElse &&
+    private static boolean equalOrLastInBlock(KtExpression block, KtExpression expression) {
+        if (block == expression) return true;
+        return block instanceof KtBlockExpression && expression.getParent() == block &&
                PsiTreeUtil.getNextSiblingOfType(expression, KtExpression.class) == null;
     }
 
@@ -115,11 +115,28 @@ public class QuickFixUtil {
     public static KtIfExpression getParentIfForBranch(@Nullable KtExpression expression) {
         KtIfExpression ifExpression = PsiTreeUtil.getParentOfType(expression, KtIfExpression.class, true);
         if (ifExpression == null) return null;
-        if (equalOrLastInThenOrElse(ifExpression.getThen(), expression)
-            || equalOrLastInThenOrElse(ifExpression.getElse(), expression)) {
+        if (equalOrLastInBlock(ifExpression.getThen(), expression)
+            || equalOrLastInBlock(ifExpression.getElse(), expression)) {
             return ifExpression;
         }
         return null;
+    }
+
+    @Nullable
+    private static KtWhenExpression getParentWhenForBranch(@Nullable KtExpression expression) {
+        KtWhenEntry whenEntry = PsiTreeUtil.getParentOfType(expression, KtWhenEntry.class, true);
+        if (whenEntry == null) return null;
+        KtExpression whenEntryExpression = whenEntry.getExpression();
+        if (whenEntryExpression == null) return null;
+        if (!equalOrLastInBlock(whenEntryExpression, expression)) return null;
+        return PsiTreeUtil.getParentOfType(whenEntry, KtWhenExpression.class, true);
+    }
+
+    @Nullable
+    private static KtExpression getParentForBranch(@Nullable KtExpression expression) {
+        KtExpression parent = getParentIfForBranch(expression);
+        if (parent != null) return parent;
+        return getParentWhenForBranch(expression);
     }
 
     // Returns true iff parent's value always or sometimes is evaluable to child's value, e.g.
@@ -141,7 +158,7 @@ public class QuickFixUtil {
                 child = (KtExpression) childParent;
                 continue;
             }
-            child = getParentIfForBranch(child);
+            child = getParentForBranch(child);
             if (child == null) return false;
         }
         return true;

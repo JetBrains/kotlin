@@ -11843,6 +11843,21 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             runTest("idea/testData/quickfix/typeMismatch/unresolvableTypeParams.kt");
         }
 
+        @TestMetadata("when.kt")
+        public void testWhen() throws Exception {
+            runTest("idea/testData/quickfix/typeMismatch/when.kt");
+        }
+
+        @TestMetadata("when2.kt")
+        public void testWhen2() throws Exception {
+            runTest("idea/testData/quickfix/typeMismatch/when2.kt");
+        }
+
+        @TestMetadata("when3.kt")
+        public void testWhen3() throws Exception {
+            runTest("idea/testData/quickfix/typeMismatch/when3.kt");
+        }
+
         @TestMetadata("idea/testData/quickfix/typeMismatch/casts")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
