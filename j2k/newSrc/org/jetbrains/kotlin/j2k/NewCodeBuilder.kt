@@ -177,12 +177,14 @@ class NewCodeBuilder {
             )
         }
 
+        private inline fun <T> renderList(list: List<T>, separator: String = ", ", renderElement: (T) -> Unit) =
+            renderList(list, { printer.printWithNoIndent(separator) }, renderElement)
 
-        private inline fun <T> renderList(list: List<T>, separator: String = ", ", renderElement: (T) -> Unit) {
+        private inline fun <T> renderList(list: List<T>, separator: () -> Unit, renderElement: (T) -> Unit) {
             val (head, tail) = list.headTail()
             head?.let(renderElement) ?: return
             tail?.forEach {
-                builder.append(separator)
+                separator()
                 renderElement(it)
             }
         }
@@ -343,7 +345,7 @@ class NewCodeBuilder {
         private fun renderStatementOrBlock(statement: JKStatement, multiline: Boolean = false) {
             if (statement is JKBlockStatement) {
                 printer.block(multiline) {
-                    statement.block.statements.forEach { it.accept(this) }
+                    statement.block.accept(this)
                 }
             } else {
                 statement.accept(this)
