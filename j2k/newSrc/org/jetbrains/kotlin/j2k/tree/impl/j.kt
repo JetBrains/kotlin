@@ -126,6 +126,7 @@ fun JKJavaOperatorToken.toKtToken(): JKKtOperatorToken =
         JavaTokenType.PERC -> JKKtSingleValueOperatorToken(KtTokens.PERC)
 
         JavaTokenType.EQ -> JKKtSingleValueOperatorToken(KtTokens.EQ)
+        JavaTokenType.EQEQ -> JKKtSingleValueOperatorToken(KtTokens.EQEQ)
         JavaTokenType.NE -> JKKtSingleValueOperatorToken(KtTokens.EXCLEQ)
         JavaTokenType.PLUSEQ -> JKKtSingleValueOperatorToken(KtTokens.PLUSEQ)
         JavaTokenType.MINUSEQ -> JKKtSingleValueOperatorToken(KtTokens.MINUSEQ)
