@@ -485,3 +485,11 @@ class JKEnumConstantImpl(
 
 fun JKTypeElement.present(): Boolean =
     type != JKNoTypeImpl
+
+class JKForInStatementImpl(declaration: JKDeclaration, iterationExpression: JKExpression, body: JKStatement) :
+    JKForInStatement, JKBranchElementBase(), PsiOwner by PsiOwnerImpl() {
+    override var declaration: JKDeclaration by child(declaration)
+    override var iterationExpression: JKExpression by child(iterationExpression)
+    override var body: JKStatement by child(body)
+    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitForInStatement(this, data)
+}

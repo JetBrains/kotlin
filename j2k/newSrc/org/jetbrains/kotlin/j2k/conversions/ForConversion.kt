@@ -84,7 +84,7 @@ class ForConversion(private val context: ConversionContext) : RecursiveApplicabl
         }
     }
 
-    private fun convertToForeach(loopStatement: JKJavaForLoopStatement): JKKtForInStatement? {
+    private fun convertToForeach(loopStatement: JKJavaForLoopStatement): JKForInStatement? {
         val loopVar =
             (loopStatement.initializer as? JKDeclarationStatement)?.declaredStatements?.singleOrNull() as? JKLocalVariable ?: return null
         val loopVarPsi = loopVar.psi<PsiLocalVariable>() ?: return null
@@ -126,7 +126,7 @@ class ForConversion(private val context: ConversionContext) : RecursiveApplicabl
                     loopVar::name.detached(),
                     JKStubExpressionImpl()
                 )
-            return JKKtForInStatementImpl(
+            return JKForInStatementImpl(
                 loopVarDeclaration,
                 range,
                 loopStatement::body.detached()

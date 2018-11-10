@@ -291,3 +291,9 @@ interface JKTypeParameterListOwner : JKTreeElement {
 interface JKEnumConstant : JKField {
     val arguments: JKExpressionList
 }
+
+interface JKForInStatement : JKStatement {
+    var declaration: JKDeclaration
+    var iterationExpression: JKExpression
+    var body: JKStatement
+}

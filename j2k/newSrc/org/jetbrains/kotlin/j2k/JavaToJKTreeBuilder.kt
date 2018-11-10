@@ -362,6 +362,12 @@ class JavaToJKTreeBuilder(var symbolProvider: JKSymbolProvider) {
                 is PsiForStatement -> JKJavaForLoopStatementImpl(
                     initialization.toJK(), with(expressionTreeMapper) { condition.toJK() }, update.toJK(), body.toJK()
                 )
+                is PsiForeachStatement ->
+                    JKForInStatementImpl(
+                        iterationParameter.toJK(),
+                        with(expressionTreeMapper) { iteratedValue?.toJK() ?: JKStubExpressionImpl() },
+                        body?.toJK() ?: blockStatement()
+                    )
                 is PsiBlockStatement -> JKBlockStatementImpl(codeBlock.toJK())
                 is PsiWhileStatement -> JKWhileStatementImpl(with(expressionTreeMapper) { condition.toJK() }, body.toJK())
                 is PsiDoWhileStatement -> JKDoWhileStatementImpl(body.toJK(), with(expressionTreeMapper) { condition.toJK() })

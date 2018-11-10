@@ -78,12 +78,6 @@ interface JKKtInitDeclaration : JKDeclaration {
     var block: JKBlock
 }
 
-interface JKKtForInStatement : JKStatement {
-    var declaration: JKDeclaration
-    var iterationExpression: JKExpression
-    var body: JKStatement
-}
-
 interface JKKtOperatorExpression : JKExpression {
     var receiver: JKExpression
     var identifier: JKMethodSymbol
