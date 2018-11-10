@@ -135,3 +135,15 @@ fun JKClassSymbol.toKtType(symbolProvider: JKSymbolProvider): KotlinType {
     }
     return classDescriptor.defaultType
 }
+
+fun JKType.updateNullability(newNullability: Nullability): JKType =
+    if (nullability == newNullability) this
+    else when (this) {
+        is JKTypeParameterTypeImpl -> JKTypeParameterTypeImpl(name, newNullability)
+        is JKClassTypeImpl -> JKClassTypeImpl(classReference, parameters, newNullability)
+        is JKUnresolvedClassType -> JKUnresolvedClassType(name, parameters, newNullability)
+        is JKNoType -> this
+        is JKJavaVoidType -> this
+        is JKJavaPrimitiveType -> this
+        else -> TODO(this::class.toString())
+    }
