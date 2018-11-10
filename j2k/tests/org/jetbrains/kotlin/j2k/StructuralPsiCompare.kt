@@ -20,7 +20,9 @@ internal fun KtFile.dumpStructureText(): String {
                 return
             }
             if (element is PsiWhiteSpace) {
-                sb.append(" ")
+                if (sb.lastOrNull() != ' ') {
+                    sb.append(" ")
+                }
                 return
             }
             if (element is LeafPsiElement) {
