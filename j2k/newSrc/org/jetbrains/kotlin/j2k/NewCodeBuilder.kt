@@ -237,9 +237,8 @@ class NewCodeBuilder {
         }
 
         private fun renderNonEnumClassDeclarations(declarations: List<JKDeclaration>) {
-            declarations.forEach {
+            renderList(declarations, { printer.println() }) {
                 it.accept(this)
-                printer.printlnWithNoIndent()
             }
         }
 
@@ -271,7 +270,7 @@ class NewCodeBuilder {
             if (ktInitDeclaration.block.statements.isNotEmpty()) {
                 printer.print("init ")
                 printer.block(multiline = true) {
-                    ktInitDeclaration.block.statements.forEach { it.accept(this) }
+                    ktInitDeclaration.block.accept(this)
                 }
             }
         }
@@ -561,7 +560,9 @@ class NewCodeBuilder {
         }
 
         override fun visitBlock(block: JKBlock) {
-            block.acceptChildren(this)
+            renderList(block.statements, { printer.println() }) {
+                it.accept(this)
+            }
         }
 
         override fun visitExpressionStatement(expressionStatement: JKExpressionStatement) {
