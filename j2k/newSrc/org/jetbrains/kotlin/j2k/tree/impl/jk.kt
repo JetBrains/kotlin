@@ -493,3 +493,11 @@ class JKForInStatementImpl(declaration: JKDeclaration, iterationExpression: JKEx
     override var body: JKStatement by child(body)
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitForInStatement(this, data)
 }
+
+fun JKStatement.isEmpty(): Boolean =
+    when (this) {
+        is JKEmptyStatement -> true
+        is JKBlockStatement -> block is JKBodyStub || block.statements.isEmpty()
+        is JKExpressionStatement -> expression is JKStubExpression
+        else -> false
+    }

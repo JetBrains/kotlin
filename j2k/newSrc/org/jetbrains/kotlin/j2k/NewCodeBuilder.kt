@@ -86,13 +86,17 @@ class NewCodeBuilder {
             }
         }
 
-        override fun visitKtForInStatement(ktForInStatement: JKKtForInStatement) {
+        override fun visitForInStatement(forInStatement: JKForInStatement) {
             printer.printWithNoIndent("for (")
-            ktForInStatement.declaration.accept(this)
+            forInStatement.declaration.accept(this)
             printer.printWithNoIndent(" in ")
-            ktForInStatement.iterationExpression.accept(this)
+            forInStatement.iterationExpression.accept(this)
             printer.printWithNoIndent(") ")
-            ktForInStatement.body.accept(this)
+            if (forInStatement.body.isEmpty()) {
+                printer.printWithNoIndent(";")
+            } else {
+                forInStatement.body.accept(this)
+            }
         }
 
         override fun visitKtThrowExpression(ktThrowExpression: JKKtThrowExpression) {
@@ -477,11 +481,15 @@ class NewCodeBuilder {
             printer.print("while(")
             whileStatement.condition.accept(this)
             printer.printWithNoIndent(")")
-            renderStatementOrBlock(whileStatement.body, multiline = true)
+            if (whileStatement.body.isEmpty()) {
+                printer.printWithNoIndent(";")
+            } else {
+                renderStatementOrBlock(whileStatement.body, multiline = true)
+            }
         }
 
         override fun visitLocalVariable(localVariable: JKLocalVariable) {
-            if (localVariable.parent !is JKKtForInStatement) {
+            if (localVariable.parent !is JKForInStatement) {
                 if (localVariable.modifierList.modality == JKModalityModifier.Modality.FINAL) {
                     printer.print("val")
                 } else {
@@ -600,7 +608,8 @@ class NewCodeBuilder {
         }
 
         override fun visitKtConstructor(ktConstructor: JKKtConstructor) {
-            printer.print("constructor")
+            ktConstructor.modifierList.accept(this)
+            printer.print(" constructor")
             renderParameterList(ktConstructor.parameters)
             if (ktConstructor.delegationCall !is JKStubExpression) {
                 builder.append(" : ")
