@@ -4944,6 +4944,49 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @TestMetadata("idea/testData/inspectionsLocal/removeEmptyParenthesesFromAnnotationEntry")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class RemoveEmptyParenthesesFromAnnotationEntry extends AbstractLocalInspectionTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInRemoveEmptyParenthesesFromAnnotationEntry() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/removeEmptyParenthesesFromAnnotationEntry"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("allParameterHaveDefaults.kt")
+        public void testAllParameterHaveDefaults() throws Exception {
+            runTest("idea/testData/inspectionsLocal/removeEmptyParenthesesFromAnnotationEntry/allParameterHaveDefaults.kt");
+        }
+
+        @TestMetadata("annotatedExpr.kt")
+        public void testAnnotatedExpr() throws Exception {
+            runTest("idea/testData/inspectionsLocal/removeEmptyParenthesesFromAnnotationEntry/annotatedExpr.kt");
+        }
+
+        @TestMetadata("parenthesesWithWhitespace.kt")
+        public void testParenthesesWithWhitespace() throws Exception {
+            runTest("idea/testData/inspectionsLocal/removeEmptyParenthesesFromAnnotationEntry/parenthesesWithWhitespace.kt");
+        }
+
+        @TestMetadata("requiresArguments.kt")
+        public void testRequiresArguments() throws Exception {
+            runTest("idea/testData/inspectionsLocal/removeEmptyParenthesesFromAnnotationEntry/requiresArguments.kt");
+        }
+
+        @TestMetadata("simple.kt")
+        public void testSimple() throws Exception {
+            runTest("idea/testData/inspectionsLocal/removeEmptyParenthesesFromAnnotationEntry/simple.kt");
+        }
+
+        @TestMetadata("usingJavaAnnotation.kt")
+        public void testUsingJavaAnnotation() throws Exception {
+            runTest("idea/testData/inspectionsLocal/removeEmptyParenthesesFromAnnotationEntry/usingJavaAnnotation.kt");
+        }
+    }
+
     @TestMetadata("idea/testData/inspectionsLocal/removeRedundantBackticks")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
