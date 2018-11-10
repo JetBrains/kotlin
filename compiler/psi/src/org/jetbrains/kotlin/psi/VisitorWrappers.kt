@@ -335,6 +335,13 @@ fun referenceExpressionRecursiveVisitor(block: (KtReferenceExpression) -> Unit) 
         }
     }
 
+fun valueArgumentListVisitor(block: (KtValueArgumentList) -> Unit) =
+    object : KtVisitorVoid() {
+        override fun visitValueArgumentList(list: KtValueArgumentList) {
+            block(list)
+        }
+    }
+
 fun valueArgumentVisitor(block: (KtValueArgument) -> Unit) =
     object : KtVisitorVoid() {
         override fun visitArgument(valueArgument: KtValueArgument) {

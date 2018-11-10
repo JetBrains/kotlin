@@ -3030,6 +3030,15 @@
                      language="kotlin"
     />
 
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.RemoveEmptyParenthesesFromAnnotationEntryInspection"
+                     displayName="Remove unnecessary parentheses"
+                     groupPath="Kotlin"
+                     groupName="Style issues"
+                     enabledByDefault="true"
+                     level="WEAK WARNING"
+                     language="kotlin"
+    />
+
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.OptionalExpectationInspection"
                      displayName="Optionally expected annotation has no actual annotation"
                      groupPath="Kotlin"

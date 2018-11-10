@@ -1,0 +1,4 @@
+@MyJavaAnnotation(<caret>)
+fun test() {
+
+}
