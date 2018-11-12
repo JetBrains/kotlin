@@ -1,0 +1,6 @@
+package
+
+public fun test(): kotlin.String
+public inline fun kotlin.Any?.myRun(/*0*/ block: () -> kotlin.Unit): kotlin.Unit
+    CallsInPlace(block, EXACTLY_ONCE)
+
