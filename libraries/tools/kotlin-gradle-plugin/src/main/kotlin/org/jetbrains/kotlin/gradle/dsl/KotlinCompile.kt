@@ -18,21 +18,6 @@ package org.jetbrains.kotlin.gradle.dsl
 
 import groovy.lang.Closure
 import org.gradle.api.Task
-import org.gradle.api.tasks.Internal
-
-interface KotlinCompile<T : KotlinCommonOptions> : Task {
-    @get:Internal
-    val kotlinOptions: T
-
-    fun kotlinOptions(fn: T.() -> Unit) {
-        kotlinOptions.fn()
-    }
-
-    fun kotlinOptions(fn: Closure<*>) {
-        fn.delegate = kotlinOptions
-        fn.call()
-    }
-}
 
 interface KotlinJsCompile : KotlinCompile<KotlinJsOptions>
 
