@@ -1115,6 +1115,42 @@ class NewMultiplatformIT : BaseGradleIT() {
     }
 
     @Test
+    fun testDefaultSourceSetsDsl() = with(Project("sample-lib", gradleVersion, "new-mpp-lib-and-app")) {
+        setupWorkingDir()
+
+        val testOutputPrefix = "# default source set "
+        val testOutputRegex = Regex("${Regex.escape(testOutputPrefix)} (.*?) (.*?) (.*)")
+
+        gradleBuildScript().appendText(
+            "\n" + """
+            kotlin.targets.each { target ->
+                target.compilations.each { compilation ->
+                    println "$testOutputPrefix ${'$'}{target.name} ${'$'}{compilation.name} ${'$'}{compilation.defaultSourceSet.name}"
+                }
+            }
+            """.trimIndent()
+        )
+
+        build {
+            assertSuccessful()
+
+            val actualDefaultSourceSets = testOutputRegex.findAll(output).mapTo(mutableSetOf()) {
+                it.groupValues.let { (_, target, compilation, sourceSet) -> Triple(target, compilation, sourceSet) }
+            }
+
+            val expectedDefaultSourceSets = listOf(
+                "jvm6", "nodeJs", "wasm32", "mingw64", "linux64", "macos64"
+            ).flatMapTo(mutableSetOf()) { target ->
+                listOf("main", "test").map { compilation ->
+                    Triple(target, compilation, "$target${compilation.capitalize()}")
+                }
+            } + Triple("metadata", "main", "commonMain")
+
+            assertEquals(expectedDefaultSourceSets, actualDefaultSourceSets)
+        }
+    }
+
+    @Test
     fun testUnusedSourceSetsReport() = with(Project("sample-lib", gradleVersion, "new-mpp-lib-and-app")) {
         setupWorkingDir()
 
