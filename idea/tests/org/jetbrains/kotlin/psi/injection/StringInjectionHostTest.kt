@@ -104,6 +104,28 @@ class StringInjectionHostTest : KotlinTestWithEnvironment() {
         }
     }
 
+    fun testProvideOffsetsForDecodablePartOfUndecodableString() {
+        val undecodable = stringExpression(""""{\\d\}"""")
+        val escaper = undecodable.createLiteralTextEscaper()
+        val undecodableRange = undecodable.text.rangeOf("""\\d\""")
+
+        val decoded = StringBuilder()
+        assertFalse(escaper.decode(undecodableRange, decoded))
+        assertEquals("""\d""", decoded.toString())
+
+        val mapping = (0..undecodableRange.length).keysToMap { escaper.getOffsetInHost(it, undecodableRange) }
+        assertEquals(
+            mapOf(
+                0 to 2,
+                1 to 4,
+                2 to 5,
+                3 to -1,
+                4 to -1
+            ),
+            mapping
+        )
+    }
+
     private fun quoted(s: String): KtStringTemplateExpression {
         return stringExpression("\"$s\"")
     }
@@ -163,3 +185,5 @@ class StringInjectionHostTest : KotlinTestWithEnvironment() {
 
     override fun createEnvironment() = createEnvironmentWithMockJdk(ConfigurationKind.JDK_ONLY)
 }
+
+private fun String.rangeOf(inner: String): TextRange = indexOf(inner).let { TextRange.from(it, inner.length) }
