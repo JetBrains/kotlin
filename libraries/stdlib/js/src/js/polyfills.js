@@ -288,12 +288,27 @@ if (typeof ArrayBuffer.isView === "undefined") {
     }
 
     // Patch sort to work with TypedArrays if needed.
+    // TODO: consider to remove following function and replace it with `Kotlin.doubleCompareTo` (see misc.js)
+    var totalOrderComparator = function (a, b) {
+        if (a < b) return -1;
+        if (a > b) return 1;
+
+        if (a === b) {
+            if (a !== 0) return 0;
+
+            var ia = 1 / a;
+            return ia === 1 / b ? 0 : (ia < 0 ? -1 : 1);
+        }
+
+        return a !== a ? (b !== b ? 0 : 1) : -1
+    };
+
     for (var i = 0; i < arrays.length; ++i) {
         var TypedArray = arrays[i];
         if (typeof TypedArray.prototype.sort === "undefined") {
             Object.defineProperty(TypedArray.prototype, 'sort', {
                 value: function(compareFunction) {
-                    return Array.prototype.sort.call(this, compareFunction);
+                    return Array.prototype.sort.call(this, compareFunction || totalOrderComparator);
                 }
             });
         }

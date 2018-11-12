@@ -83,8 +83,14 @@ object ArrayOps : TemplateGroupBase() {
         }
 
         on(Platform.JS) {
-            annotation("""@library("arrayEquals")""")
-            body { "definedExternally" }
+            on(Backend.Legacy) {
+                annotation("""@library("arrayEquals")""")
+                body { "definedExternally" }
+            }
+
+            on(Backend.IR) {
+                body { "return contentEqualsInternal(other)" }
+            }
         }
     }
 
@@ -116,8 +122,14 @@ object ArrayOps : TemplateGroupBase() {
             }
         }
         on(Platform.JS) {
-            annotation("""@library("arrayDeepEquals")""")
-            body { "definedExternally" }
+            on(Backend.Legacy) {
+                annotation("""@library("arrayDeepEquals")""")
+                body { "definedExternally" }
+            }
+
+            on(Backend.IR) {
+                body { "return contentDeepEqualsImpl(other)" }
+            }
         }
     }
 
@@ -141,8 +153,13 @@ object ArrayOps : TemplateGroupBase() {
             body { "return java.util.Arrays.toString(this)" }
         }
         on(Platform.JS) {
-            annotation("""@library("arrayToString")""")
-            body { "definedExternally" }
+            on(Backend.Legacy) {
+                annotation("""@library("arrayToString")""")
+                body { "definedExternally" }
+            }
+            on(Backend.IR) {
+                body { "return arrayToString(this as Array<*>)" }
+            }
         }
     }
 
@@ -174,8 +191,13 @@ object ArrayOps : TemplateGroupBase() {
             }
         }
         on(Platform.JS) {
-            annotation("""@library("arrayDeepToString")""")
-            body { "definedExternally" }
+            on(Backend.Legacy) {
+                annotation("""@library("arrayDeepToString")""")
+                body { "definedExternally" }
+            }
+            on(Backend.IR) {
+                body { "return contentDeepToStringImpl()" }
+            }
         }
     }
 
@@ -196,8 +218,13 @@ object ArrayOps : TemplateGroupBase() {
             body { "return java.util.Arrays.hashCode(this)" }
         }
         on(Platform.JS) {
-            annotation("""@library("arrayHashCode")""")
-            body { "definedExternally" }
+            on(Backend.Legacy) {
+                annotation("""@library("arrayHashCode")""")
+                body { "definedExternally" }
+            }
+            on(Backend.IR) {
+                body { "return contentHashCodeInternal()" }
+            }
         }
     }
 
@@ -227,8 +254,13 @@ object ArrayOps : TemplateGroupBase() {
             }
         }
         on(Platform.JS) {
-            annotation("""@library("arrayDeepHashCode")""")
-            body { "definedExternally" }
+            on(Backend.Legacy) {
+                annotation("""@library("arrayDeepHashCode")""")
+                body { "definedExternally" }
+            }
+            on(Backend.IR) {
+                body { "return contentDeepHashCodeInternal()" }
+            }
         }
     }
 
@@ -756,8 +788,13 @@ object ArrayOps : TemplateGroupBase() {
             }
             specialFor(ArraysOfPrimitives) {
                 if (primitive != PrimitiveType.Long) {
-                    annotation("""@library("primitiveArraySort")""")
-                    body { "definedExternally" }
+                    on(Backend.Legacy) {
+                        annotation("""@library("primitiveArraySort")""")
+                        body { "definedExternally" }
+                    }
+                    on(Backend.IR) {
+                        body { "this.asDynamic().sort()" }
+                    }
                 }
             }
         }

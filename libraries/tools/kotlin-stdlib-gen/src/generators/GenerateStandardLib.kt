@@ -46,14 +46,16 @@ fun main(args: Array<String>) {
     val commonDir = baseDir.resolveExistingDir("libraries/stdlib/common/src/generated")
     val jvmDir = baseDir.resolveExistingDir("libraries/stdlib/jvm/src/generated")
     val jsDir = baseDir.resolveExistingDir("libraries/stdlib/js/src/generated")
+    val jsIrDir = baseDir.resolveExistingDir("libraries/stdlib/js/irRuntime/generated")
 
-    templateGroups.groupByFileAndWrite { (platform, source) ->
+    templateGroups.groupByFileAndWrite { (target, source) ->
         //        File("build/out/$platform/$source.kt")
-        when (platform) {
-            Platform.Common -> commonDir.resolve("_${source.name.capitalize()}.kt")
-            Platform.JVM -> jvmDir.resolve("_${source.name.capitalize()}Jvm.kt")
-            Platform.JS -> jsDir.resolve("_${source.name.capitalize()}Js.kt")
-            Platform.Native -> error("Native is unsupported yet")
+        when (target) {
+            KotlinTarget.Common -> commonDir.resolve("_${source.name.capitalize()}.kt")
+            KotlinTarget.JVM -> jvmDir.resolve("_${source.name.capitalize()}Jvm.kt")
+            KotlinTarget.JS -> jsDir.resolve("_${source.name.capitalize()}Js.kt")
+            KotlinTarget.JS_IR -> jsIrDir.resolve("_${source.name.capitalize()}Js.kt")
+            KotlinTarget.Native -> error("Native is unsupported yet")
         }
     }
 }

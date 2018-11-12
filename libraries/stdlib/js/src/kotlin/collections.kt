@@ -6,7 +6,6 @@
 package kotlin.collections
 
 import kotlin.comparisons.naturalOrder
-import kotlin.internal.InlineOnly
 import kotlin.random.Random
 
 /** Returns the array if it's not `null`, or an empty array otherwise. */
@@ -49,10 +48,6 @@ internal actual fun <T> copyToArrayImpl(collection: Collection<*>, array: Array<
     }
     return array
 }
-
-@library("arrayToString")
-@Suppress("UNUSED_PARAMETER")
-internal fun arrayToString(array: Array<*>): String = definedExternally
 
 /**
  * Returns an immutable list containing only the specified object [element].

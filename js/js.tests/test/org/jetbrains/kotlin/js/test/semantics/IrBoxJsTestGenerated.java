@@ -7558,6 +7558,11 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
             runTest("js/js.translator/testData/box/standardClasses/arraySize.kt");
         }
 
+        @TestMetadata("arraySort.kt")
+        public void testArraySort() throws Exception {
+            runTest("js/js.translator/testData/box/standardClasses/arraySort.kt");
+        }
+
         @TestMetadata("arraysIterator.kt")
         public void testArraysIterator() throws Exception {
             runTest("js/js.translator/testData/box/standardClasses/arraysIterator.kt");
