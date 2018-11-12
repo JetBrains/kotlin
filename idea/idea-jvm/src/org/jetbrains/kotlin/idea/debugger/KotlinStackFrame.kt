@@ -25,8 +25,7 @@ import org.jetbrains.kotlin.codegen.inline.isFakeLocalVariableForInline
 
 class KotlinStackFrame(frame: StackFrameProxyImpl) : JavaStackFrame(StackFrameDescriptorImpl(frame, MethodsTracker()), true) {
     override fun getVisibleVariables(): List<LocalVariableProxyImpl>? {
-        return super.getVisibleVariables().filter {
-            !isFakeLocalVariableForInline(it.name())
-        }
+        return super.getStackFrameProxy().visibleVariablesSafe()
+            .filter { !isFakeLocalVariableForInline(it.name()) }
     }
 }
