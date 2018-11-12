@@ -118,3 +118,14 @@ annotation class Outer(
 
 @Outer("value", nested = Nested(12, "nested value"))
 class WithNested
+
+// ==============================
+
+annotation class ArraysSpread(
+    vararg val ia: Int
+)
+
+@ArraysSpread(
+    *[1, 2, 3]
+)
+class WithSpreadOperatorArrays

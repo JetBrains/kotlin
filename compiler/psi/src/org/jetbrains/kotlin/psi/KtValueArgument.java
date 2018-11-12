@@ -19,24 +19,25 @@ package org.jetbrains.kotlin.psi;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
+import com.intellij.psi.stubs.IStubElementType;
 import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
-import org.jetbrains.kotlin.psi.stubs.elements.KtPlaceHolderStubElementType;
+import org.jetbrains.kotlin.psi.stubs.KotlinValueArgumentStub;
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes;
 
-public class KtValueArgument extends KtElementImplStub<KotlinPlaceHolderStub<? extends KtValueArgument>> implements ValueArgument {
+public class KtValueArgument extends KtElementImplStub<KotlinValueArgumentStub<? extends KtValueArgument>> implements ValueArgument {
     public KtValueArgument(@NotNull ASTNode node) {
         super(node);
     }
 
-    public KtValueArgument(@NotNull KotlinPlaceHolderStub<KtValueArgument> stub) {
+    public KtValueArgument(@NotNull KotlinValueArgumentStub<KtValueArgument> stub) {
         super(stub, KtStubElementTypes.VALUE_ARGUMENT);
     }
 
-    protected KtValueArgument(KotlinPlaceHolderStub<? extends KtValueArgument> stub, KtPlaceHolderStubElementType<?> nodeType) {
+    protected KtValueArgument(KotlinValueArgumentStub<? extends KtValueArgument> stub, IStubElementType nodeType) {
         super(stub, nodeType);
     }
 
@@ -96,8 +97,22 @@ public class KtValueArgument extends KtElementImplStub<KotlinPlaceHolderStub<? e
 
     @Override
     public LeafPsiElement getSpreadElement() {
+        KotlinValueArgumentStub stub = getStub();
+        if (stub != null && !stub.isSpread()) {
+            return null;
+        }
+
         ASTNode node = getNode().findChildByType(KtTokens.MUL);
         return node == null ? null : (LeafPsiElement) node.getPsi();
+    }
+
+    public boolean isSpread() {
+        KotlinValueArgumentStub stub = getStub();
+        if (stub != null) {
+            return stub.isSpread();
+        }
+
+        return getSpreadElement() != null;
     }
 
     @Override

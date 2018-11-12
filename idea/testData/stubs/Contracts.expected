@@ -7,7 +7,7 @@ PsiJetFileStubImpl[package=test]
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=Suppress]
       VALUE_ARGUMENT_LIST
-        VALUE_ARGUMENT
+        VALUE_ARGUMENT[isSpread=false]
           STRING_TEMPLATE
             LITERAL_STRING_TEMPLATE_ENTRY[text=INVISIBLE_MEMBER]
   PACKAGE_DIRECTIVE

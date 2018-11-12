@@ -60,6 +60,10 @@ interface KotlinObjectStub : KotlinClassOrObjectStub<KtObjectDeclaration> {
     fun isObjectLiteral(): Boolean
 }
 
+interface KotlinValueArgumentStub<T : KtValueArgument> : KotlinPlaceHolderStub<T> {
+    fun isSpread(): Boolean
+}
+
 interface KotlinAnnotationEntryStub : StubElement<KtAnnotationEntry> {
     fun getShortName(): String?
     fun hasValueArguments(): Boolean

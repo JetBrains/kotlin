@@ -6,13 +6,13 @@
 package org.jetbrains.kotlin.psi
 
 import com.intellij.lang.ASTNode
-import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub
+import org.jetbrains.kotlin.psi.stubs.KotlinValueArgumentStub
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 
 class KtLambdaArgument : KtValueArgument, LambdaArgument {
-    constructor(node: ASTNode) : super(node) {}
+    constructor(node: ASTNode) : super(node)
 
-    constructor(stub: KotlinPlaceHolderStub<KtLambdaArgument>) : super(stub, KtStubElementTypes.LAMBDA_ARGUMENT) {}
+    constructor(stub: KotlinValueArgumentStub<KtLambdaArgument>) : super(stub, KtStubElementTypes.LAMBDA_ARGUMENT) {}
 
     override fun getLambdaExpression(): KtLambdaExpression? = getArgumentExpression()?.unpackFunctionLiteral()
 }

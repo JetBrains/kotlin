@@ -104,11 +104,11 @@ public interface KtStubElementTypes {
     KtPlaceHolderStubElementType<KtValueArgumentList> VALUE_ARGUMENT_LIST =
             new KtValueArgumentListElementType("VALUE_ARGUMENT_LIST");
 
-    KtPlaceHolderStubElementType<KtValueArgument> VALUE_ARGUMENT =
-            new KtPlaceHolderStubElementType<>("VALUE_ARGUMENT", KtValueArgument.class);
+    KtValueArgumentElementType<KtValueArgument> VALUE_ARGUMENT =
+            new KtValueArgumentElementType<>("VALUE_ARGUMENT", KtValueArgument.class);
 
-    KtPlaceHolderStubElementType<KtLambdaArgument> LAMBDA_ARGUMENT =
-            new KtPlaceHolderStubElementType<>("LAMBDA_ARGUMENT", KtLambdaArgument.class);
+    KtValueArgumentElementType<KtLambdaArgument> LAMBDA_ARGUMENT =
+            new KtValueArgumentElementType<>("LAMBDA_ARGUMENT", KtLambdaArgument.class);
 
     KtPlaceHolderStubElementType<KtValueArgumentName> VALUE_ARGUMENT_NAME =
             new KtPlaceHolderStubElementType<>("VALUE_ARGUMENT_NAME", KtValueArgumentName.class);
