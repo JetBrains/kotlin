@@ -37,13 +37,14 @@ interface AdditionalGradleProperties {
 }
 
 fun generateKotlinGradleOptions(withPrinterToFile: (targetFile: File, Printer.()->Unit)->Unit) {
+    val apiSrcDir = File("libraries/tools/kotlin-gradle-plugin-api/src/main/kotlin")
     val srcDir = File("libraries/tools/kotlin-gradle-plugin/src/main/kotlin")
 
     // common interface
     val commonInterfaceFqName = FqName("org.jetbrains.kotlin.gradle.dsl.KotlinCommonToolOptions")
     val commonOptions =  gradleOptions<CommonToolArguments>()
     val additionalOptions = gradleOptions<AdditionalGradleProperties>()
-    withPrinterToFile(File(srcDir, commonInterfaceFqName)) {
+    withPrinterToFile(File(apiSrcDir, commonInterfaceFqName)) {
         generateInterface(commonInterfaceFqName,
                           commonOptions + additionalOptions)
     }
@@ -53,7 +54,7 @@ fun generateKotlinGradleOptions(withPrinterToFile: (targetFile: File, Printer.()
 
     val commonCompilerInterfaceFqName = FqName("org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions")
     val commonCompilerOptions = gradleOptions<CommonCompilerArguments>()
-    withPrinterToFile(File(srcDir, commonCompilerInterfaceFqName)) {
+    withPrinterToFile(File(apiSrcDir, commonCompilerInterfaceFqName)) {
         generateInterface(commonCompilerInterfaceFqName,
                           commonCompilerOptions,
                           parentType = commonInterfaceFqName)
