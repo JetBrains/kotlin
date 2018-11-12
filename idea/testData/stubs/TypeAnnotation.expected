@@ -34,7 +34,7 @@ PsiJetFileStubImpl[package=]
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=b]
                 VALUE_ARGUMENT_LIST
-                  VALUE_ARGUMENT
+                  VALUE_ARGUMENT[isSpread=false]
                     DOT_QUALIFIED_EXPRESSION
                       REFERENCE_EXPRESSION[referencedName=E]
                       REFERENCE_EXPRESSION[referencedName=E1]
@@ -55,7 +55,7 @@ PsiJetFileStubImpl[package=]
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=b]
             VALUE_ARGUMENT_LIST
-              VALUE_ARGUMENT
+              VALUE_ARGUMENT[isSpread=false]
                 DOT_QUALIFIED_EXPRESSION
                   REFERENCE_EXPRESSION[referencedName=E]
                   REFERENCE_EXPRESSION[referencedName=E2]
