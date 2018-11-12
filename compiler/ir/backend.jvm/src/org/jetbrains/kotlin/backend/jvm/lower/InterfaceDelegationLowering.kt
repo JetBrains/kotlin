@@ -33,7 +33,6 @@ import org.jetbrains.kotlin.ir.util.isInterface
 import org.jetbrains.kotlin.ir.util.resolveFakeOverride
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
-import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor
 import org.jetbrains.kotlin.name.Name
 
 class InterfaceDelegationLowering(val context: JvmBackendContext) : IrElementTransformerVoid(), ClassLoweringPass {
@@ -160,9 +159,7 @@ class InterfaceDelegationLowering(val context: JvmBackendContext) : IrElementTra
                 (valueParameters.size == 1 && name.asString() == "equals" && valueParameters[0].type == context.irBuiltIns.anyType))
 
     private fun IrSimpleFunction.isDefinitelyNotDefaultImplsMethod() =
-        resolveFakeOverride()?.let {
-            origin == IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB && descriptor is JavaCallableMemberDescriptor
-        } == true ||
+        resolveFakeOverride()?.let { origin == IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB } == true ||
                 hasAnnotation(PLATFORM_DEPENDENT_ANNOTATION_FQ_NAME)
 
     private fun IrClass.getNonPrivateInterfaceMethods(): List<Pair<IrSimpleFunction, IrSimpleFunction>> {

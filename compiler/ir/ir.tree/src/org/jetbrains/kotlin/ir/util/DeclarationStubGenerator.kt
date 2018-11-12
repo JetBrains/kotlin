@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
 import org.jetbrains.kotlin.ir.declarations.lazy.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrErrorExpressionImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrExpressionBodyImpl
+import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.hasBackingField
@@ -144,7 +145,10 @@ class DeclarationStubGenerator(
         val origin =
             if (descriptor.kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE)
                 IrDeclarationOrigin.FAKE_OVERRIDE
-            else origin
+            else if (origin == IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB && descriptor is JavaCallableMemberDescriptor)
+                IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB
+            else
+                origin
         return symbolTable.declareSimpleFunction(
             UNDEFINED_OFFSET, UNDEFINED_OFFSET,
             origin,
