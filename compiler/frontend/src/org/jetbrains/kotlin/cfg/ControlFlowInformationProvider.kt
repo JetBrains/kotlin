@@ -118,6 +118,29 @@ class ControlFlowInformationProvider private constructor(
         markAndCheckTailCalls()
     }
 
+    /**
+     * Collects returned expressions from current pseudocode.
+     *
+     * "Returned expression" here == "last expression" in *control-flow terms*. Intuitively,
+     * it considers all execution paths, takes last expression on each path and returns them.
+     *
+     * More specifically, this function starts from EXIT instruction, and performs DFS-search
+     * on reversed control-flow edges in a following manner:
+     * - if the current instruction is a Return-instruction, then add it's expression to result
+     * - if the current instruction is a Element-instruction, then add it's element to result
+     * - if the current instruction is a Jump-instruction, then process it's predecessors
+     *   recursively
+     *
+     * NB. The second case (Element-instruction) means that notion of "returned expression"
+     * here differs from what the language treats as "returned expression" (notably in the
+     * presence of Unit-coercion). Example:
+     *
+     *   fun foo() {
+     *       val x = 42
+     *       x.inc() // This call will be in a [returnedExpressions], even though this expression
+     *               // isn't actually returned
+     *   }
+     */
     private fun collectReturnExpressions(returnedExpressions: MutableCollection<KtElement>) {
         val instructions = pseudocode.instructions.toHashSet()
         val exitInstruction = pseudocode.exitInstruction
@@ -135,14 +158,16 @@ class ControlFlowInformationProvider private constructor(
                     }
                 }
 
-
-                override fun visitJump(instruction: AbstractJumpInstruction) {
-                    // Nothing
-                }
-
                 override fun visitUnconditionalJump(instruction: UnconditionalJumpInstruction) {
                     redirectToPrevInstructions(instruction)
                 }
+
+                override fun visitConditionalJump(instruction: ConditionalJumpInstruction) {
+                    redirectToPrevInstructions(instruction)
+                }
+
+                // Note that there's no need to overload `visitThrowException`, because
+                // it can never be a predecessor of EXIT (throwing always leads to ERROR)
 
                 private fun redirectToPrevInstructions(instruction: Instruction) {
                     for (redirectInstruction in instruction.previousInstructions) {
@@ -160,6 +185,9 @@ class ControlFlowInformationProvider private constructor(
 
                 override fun visitInstruction(instruction: Instruction) {
                     if (instruction is KtElementInstruction) {
+                        // Caveats:
+                        // - for empty block-bodies, read(Unit) is emitted and will be processed here
+                        // - for Unit-coerced blocks, last expression will be processed here
                         returnedExpressions.add(instruction.element)
                     } else {
                         throw IllegalStateException("$instruction precedes the exit point")

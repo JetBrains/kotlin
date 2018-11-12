@@ -14,4 +14,4 @@ fun test(): String {
     val x: String? = null
 
     x?.myRun { return "" }
-}
+<!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
