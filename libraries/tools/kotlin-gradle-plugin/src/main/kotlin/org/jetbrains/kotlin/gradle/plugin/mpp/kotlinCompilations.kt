@@ -80,6 +80,12 @@ abstract class AbstractKotlinCompilation<T : KotlinCommonOptions>(
 
     override val kotlinSourceSets: MutableSet<KotlinSourceSet> = mutableSetOf()
 
+    override val defaultSourceSet: KotlinSourceSet
+        get() = target.project.kotlinExtension.sourceSets.getByName(defaultSourceSetName)
+
+    override fun defaultSourceSet(configure: KotlinSourceSet.() -> Unit) =
+        configure(defaultSourceSet)
+
     override val output: KotlinCompilationOutput by lazy {
         DefaultKotlinCompilationOutput(
             target.project,
@@ -285,6 +291,16 @@ class KotlinCommonCompilation(
 ) : AbstractKotlinCompilation<KotlinMultiplatformCommonOptions>(target, name) {
     override val compileKotlinTask: KotlinCompileCommon
         get() = super.compileKotlinTask as KotlinCompileCommon
+
+    // TODO once we properly compile metadata for each source set, the default source sets will likely become just the source sets
+    // which are transformed to metadata
+    private val commonSourceSetName = when (compilationName) {
+        KotlinCompilation.MAIN_COMPILATION_NAME -> KotlinSourceSet.COMMON_MAIN_SOURCE_SET_NAME
+        else -> error("Custom metadata compilations are not supported yet")
+    }
+
+    override val defaultSourceSet: KotlinSourceSet
+        get() = target.project.kotlinExtension.sourceSets.getByName(commonSourceSetName)
 }
 
 class KotlinNativeCompilation(
