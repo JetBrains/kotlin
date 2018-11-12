@@ -134,7 +134,6 @@ class MoveCompanionObjectFieldsLowering(val context: CommonBackendContext) : Cla
                             parent = newParent
                             initializer = declaration.initializer
                             annotations.addAll(declaration.annotations)
-
                         }
                         variableMap[declaration] = newVariable
                         return super.visitVariable(newVariable)
