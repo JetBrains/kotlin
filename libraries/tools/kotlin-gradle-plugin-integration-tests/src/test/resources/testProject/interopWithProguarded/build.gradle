@@ -20,7 +20,7 @@ dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     compile "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
     testCompile 'junit:junit:4.12'
-    compile project(":lib")
+    compile project(path: ":lib", configuration: "proguarded")
 }
 
 compileKotlin {

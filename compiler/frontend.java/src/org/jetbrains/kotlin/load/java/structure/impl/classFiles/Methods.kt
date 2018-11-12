@@ -106,7 +106,14 @@ abstract class BinaryJavaMethodBase(
                 else -> 0
             }
 
-            return member to AnnotationsAndParameterCollectorMethodVisitor(member, parentContext, signatureParser, paramIgnoreCount)
+            return member to
+                    AnnotationsAndParameterCollectorMethodVisitor(
+                        member,
+                        parentContext,
+                        signatureParser,
+                        paramIgnoreCount,
+                        Type.getArgumentTypes(desc).size
+                    )
         }
 
         private fun parseMethodDescription(

@@ -1,7 +1,11 @@
 public class ClassWithReferenceToInner {
-    public void f1(Thread.State state) {}
+    public String f1(Thread.State state) {
+        return "OK"
+    }
 
-    public void f2(Outer.Nested nested) {}
+    public String f2(Outer.Nested nested) {
+        return "OK"
+    }
 }
 
 class Outer {
