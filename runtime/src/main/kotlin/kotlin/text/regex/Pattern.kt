@@ -63,7 +63,7 @@ internal class Pattern(val pattern: String, flags: Int = 0) {
         startNode = processExpression(-1, this.flags, null)
 
         if (!lexemes.isEmpty()) {
-            throw PatternSyntaxException()
+            throw PatternSyntaxException("Trailing characters", pattern, lexemes.curTokenIndex)
         }
 
         // Finalize compilation
@@ -309,7 +309,7 @@ internal class Pattern(val pattern: String, flags: Int = 0) {
             }
             lexemes.currentChar == Lexer.CHAR_RIGHT_PARENTHESIS -> {
                 if (last is FinalSet) {
-                    throw PatternSyntaxException()
+                    throw PatternSyntaxException("unmatched )", pattern, lexemes.curTokenIndex)
                 }
                 cur = EmptySet(last)
             }
@@ -472,7 +472,7 @@ internal class Pattern(val pattern: String, flags: Int = 0) {
             }
             term = processExpression(char and 0xff00ffff.toInt(), newFlags, last) // Remove flags from the token.
             if (lexemes.currentChar != Lexer.CHAR_RIGHT_PARENTHESIS) {
-                throw PatternSyntaxException()
+                throw PatternSyntaxException("unmatched (", pattern, lexemes.curTokenIndex)
             }
             lexemes.next()
         } else {
@@ -488,7 +488,7 @@ internal class Pattern(val pattern: String, flags: Int = 0) {
 
                     term = processRange(negative, last)
                     if (lexemes.currentChar != Lexer.CHAR_RIGHT_SQUARE_BRACKET) {
-                        throw PatternSyntaxException()
+                        throw PatternSyntaxException("unmatched [", pattern, lexemes.curTokenIndex)
                     }
                     lexemes.setModeWithReread(Lexer.Mode.PATTERN)
                     lexemes.next()
@@ -560,7 +560,7 @@ internal class Pattern(val pattern: String, flags: Int = 0) {
                         backRefs[number]!!.isBackReferenced = true
                         needsBackRefReplacement = true // And process back references in the second pass.
                     } else {
-                        throw PatternSyntaxException()  // Wrong group number.
+                        throw PatternSyntaxException("No such group yet exists at this point in the pattern", pattern, lexemes.curTokenIndex)
                     }
                 }
 
@@ -592,11 +592,14 @@ internal class Pattern(val pattern: String, flags: Int = 0) {
                         }
                         char == Lexer.CHAR_RIGHT_PARENTHESIS -> {
                             if (last is FinalSet) {
-                                throw PatternSyntaxException()
+                                throw PatternSyntaxException("unmatched )", pattern, lexemes.curTokenIndex)
                             }
                             term = EmptySet(last)
                         }
-                        else -> throw PatternSyntaxException()
+                        else -> {
+                            val current = if (lexemes.isSpecial) lexemes.curSpecialToken.toString() else char.toString()
+                            throw PatternSyntaxException("Dangling meta construction: $current", pattern, lexemes.curTokenIndex)
+                        }
                     }
                 }
             }
@@ -715,13 +718,13 @@ internal class Pattern(val pattern: String, flags: Int = 0) {
                                 }
                                 result.add(buffer, cur)
                             } catch (e: Exception) {
-                                throw PatternSyntaxException()
+                                throw PatternSyntaxException("Illegal character range", pattern, lexemes.curTokenIndex)
                             }
 
                             lexemes.next()
                             buffer = -1
                         } else {
-                            throw PatternSyntaxException()
+                            throw PatternSyntaxException("Illegal character range", pattern, lexemes.curTokenIndex)
                         }
                     }
                 }
@@ -761,7 +764,7 @@ internal class Pattern(val pattern: String, flags: Int = 0) {
             notClosed = lexemes.currentChar != Lexer.CHAR_RIGHT_SQUARE_BRACKET
         }
         if (notClosed) {
-            throw PatternSyntaxException()
+            throw PatternSyntaxException("Missing ']'", pattern, lexemes.curTokenIndex)
         }
         if (buffer >= 0) {
             result.add(buffer)

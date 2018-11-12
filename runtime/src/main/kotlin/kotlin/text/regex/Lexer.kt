@@ -110,10 +110,14 @@ internal class Lexer(val patternString: String, flags: Int) {
         private set
 
     // Indices in the pattern.
-    private var index = 0                   // Current char being processed index.
-    private var prevNonWhitespaceIndex = 0  // Previous non-whitespace character index.
-    private var curTokenIndex = 0           // Current token start index.
-    private var lookAheadTokenIndex = 0     // Next token index.
+    var index = 0                   // Current char being processed index.
+        private set
+    var prevNonWhitespaceIndex = 0  // Previous non-whitespace character index.
+        private set
+    var curTokenIndex = 0           // Current token start index.
+        private set
+    var lookAheadTokenIndex = 0     // Next token index.
+        private set
 
     init {
         var processedPattern = patternString
@@ -391,7 +395,7 @@ internal class Lexer(val patternString: String, flags: Int) {
                             when (char) {
                                 '!' -> {  lookAhead = CHAR_NEG_LOOKBEHIND; nextIndex() }
                                 '=' -> {  lookAhead = CHAR_POS_LOOKBEHIND; nextIndex() }
-                                else -> throw PatternSyntaxException()
+                                else -> throw PatternSyntaxException("Unknown look behind", patternString, curTokenIndex)
                             }
                         }
                     } while (isLookBehind)
@@ -427,7 +431,11 @@ internal class Lexer(val patternString: String, flags: Int) {
 
     /** Processes an escaped (\x) character in any mode. Returns whether we need to reread the character or not */
     private fun processEscapedChar() : Boolean {
-        lookAhead = if (index < pattern.size - 2) nextCodePoint() else throw PatternSyntaxException()
+        lookAhead = if (index < pattern.size - 2) {
+            nextCodePoint()
+        } else {
+            throw PatternSyntaxException("Trailing \\", patternString, curTokenIndex)
+        }
 
         // The current code point cannot be a surrogate pair because it is an escaped special one.
         // Cast it to char or just skip it as if we pass through the else branch of the when below.
@@ -479,8 +487,8 @@ internal class Lexer(val patternString: String, flags: Int) {
 
             // A literal: octal, hex, or hex unicode.
             '0' -> lookAhead = readOctals()
-            'x' -> lookAhead = readHex(2)
-            'u' -> lookAhead = readHex(4)
+            'x' -> lookAhead = readHex("hexadecimal", 2)
+            'u' -> lookAhead = readHex("Unicode", 4)
 
             // Special characters like EOL, EOI etc
             'b' -> lookAhead = CHAR_WORD_BOUND
@@ -493,15 +501,15 @@ internal class Lexer(val patternString: String, flags: Int) {
             // \cx - A control character corresponding to x.
             'c' -> {
                 if (index < pattern.size - 2) {
-                    //need not care about supplementary codepoints here
+                    // Need not care about supplementary codepoints here.
                     lookAhead = pattern[nextIndex()].toInt() and 0x1f
                 } else {
-                    // TODO: Add messages to the exceptions.
-                    throw PatternSyntaxException()
+                    throw PatternSyntaxException("Illegal control sequence", patternString, curTokenIndex)
                 }
             }
 
-            'C', 'E', 'F', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'R', 'T', 'U', 'V', 'X', 'Y', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'o', 'q', 'y' -> throw PatternSyntaxException()
+            'C', 'E', 'F', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'R', 'T', 'U', 'V', 'X', 'Y', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'o', 'q', 'y' ->
+                throw PatternSyntaxException("Illegal escape sequence", patternString, curTokenIndex)
         }
         return false
     }
@@ -514,16 +522,20 @@ internal class Lexer(val patternString: String, flags: Int) {
         var max = -1
 
         // Obtain a min value.
-        var char: Char = if (index < pattern.size) pattern[nextIndex()] else throw PatternSyntaxException()
+        var char: Char = if (index < pattern.size) {
+            pattern[nextIndex()]
+        } else {
+            throw PatternSyntaxException("Incorrect Quantifier Syntax", patternString, curTokenIndex)
+        }
         while (char != '}') {
 
             if (char == ',' && min < 0) {
                 try {
                     val minParsed = sb.toString().toInt()
-                    min = if (minParsed >= 0) minParsed else throw PatternSyntaxException()
+                    min = if (minParsed >= 0) minParsed else throw PatternSyntaxException("Incorrect Quantifier Syntax", patternString, curTokenIndex)
                     sb.setLength(0)
                 } catch (nfe: NumberFormatException) {
-                    throw PatternSyntaxException()
+                    throw PatternSyntaxException("Incorrect Quantifier Syntax", patternString, curTokenIndex)
                 }
             } else {
                 sb.append(char)
@@ -532,24 +544,24 @@ internal class Lexer(val patternString: String, flags: Int) {
         }
 
         if (char != '}') {
-            throw PatternSyntaxException()
+            throw PatternSyntaxException("Incorrect Quantifier Syntax", patternString, curTokenIndex)
         }
 
         // Obtain a max value, if it exists
         if (sb.isNotEmpty()) {
             try {
                 val maxParsed = sb.toString().toInt()
-                max = if (maxParsed >= 0) maxParsed else throw PatternSyntaxException()
+                max = if (maxParsed >= 0) maxParsed else throw PatternSyntaxException("Incorrect Quantifier Syntax", patternString, curTokenIndex)
                 if (min < 0) {
                     min = max
                 }
             } catch (nfe: NumberFormatException) {
-                throw PatternSyntaxException()
+                throw PatternSyntaxException("Incorrect Quantifier Syntax", patternString, curTokenIndex)
             }
         }
 
         if (min < 0 || max >=0 && max < min) {
-            throw PatternSyntaxException()
+            throw PatternSyntaxException("Incorrect Quantifier Syntax", patternString, curTokenIndex)
         }
 
         val mod = if (index < pattern.size) pattern[index] else '*'
@@ -572,7 +584,7 @@ internal class Lexer(val patternString: String, flags: Int) {
             when (char) {
                 '-' -> {
                     if (!positive) {
-                        throw PatternSyntaxException()
+                        throw PatternSyntaxException("Illegal inline construct", patternString, curTokenIndex)
                     }
                     positive = false
                 }
@@ -620,7 +632,7 @@ internal class Lexer(val patternString: String, flags: Int) {
             }
             nextIndex()
         }
-        throw PatternSyntaxException()
+        throw PatternSyntaxException("Illegal inline construct", patternString, curTokenIndex)
     }
 
     /** Parse character classes names and verifies correction of the syntax */
@@ -638,9 +650,9 @@ internal class Lexer(val patternString: String, flags: Int) {
                 sb.append(char)
                 char = pattern[nextIndex()]
             }
-            if (char != '}') throw PatternSyntaxException()
+            if (char != '}') throw PatternSyntaxException("Unclosed character family", patternString, curTokenIndex)
         }
-        if (sb.isEmpty()) throw PatternSyntaxException()
+        if (sb.isEmpty()) throw PatternSyntaxException("Empty character family", patternString, curTokenIndex)
 
         val res = sb.toString()
         return when {
@@ -651,7 +663,7 @@ internal class Lexer(val patternString: String, flags: Int) {
     }
 
     /** Process hexadecimal integer. */
-    private fun readHex(max: Int): Int {
+    private fun readHex(radixName: String, max: Int): Int {
         val builder = StringBuilder(max)
         val length = pattern.size - 2
         var i = 0
@@ -664,7 +676,7 @@ internal class Lexer(val patternString: String, flags: Int) {
                 return builder.toString().toInt(16)
             } catch (e: NumberFormatException) {}
         }
-        throw PatternSyntaxException()
+        throw PatternSyntaxException("Invalid $radixName escape sequence", patternString, curTokenIndex)
     }
 
     /** Process octal integer. */
@@ -673,7 +685,7 @@ internal class Lexer(val patternString: String, flags: Int) {
         var result = 0
         var digit = digitOf(pattern[index], 8)
         if (digit == -1) {
-            throw PatternSyntaxException()
+            throw PatternSyntaxException("Invalid octal escape sequence", patternString, curTokenIndex)
         }
         val max = if (digit > 3) 2 else 3
         var i = 0
