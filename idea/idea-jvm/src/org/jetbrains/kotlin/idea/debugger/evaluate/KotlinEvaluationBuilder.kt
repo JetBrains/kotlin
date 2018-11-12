@@ -150,15 +150,15 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
             val classLoaderRef = loadClassesSafely(context, compiledData.classes)
 
             val result = if (classLoaderRef != null) {
-                evaluateWithCompilation(context, compiledData, classLoaderRef) ?: runEval4j(context, compiledData)
+                evaluateWithCompilation(context, compiledData, classLoaderRef) ?: runEval4j(context, compiledData, classLoaderRef)
             }
             else {
-                runEval4j(context, compiledData)
+                runEval4j(context, compiledData, classLoaderRef)
             }
 
             // If bytecode was taken from cache and exception was thrown - recompile bytecode and run eval4j again
             if (isCompiledDataFromCache && result is ExceptionThrown && result.kind == ExceptionThrown.ExceptionKind.BROKEN_CODE) {
-                return runEval4j(context, extractAndCompile(codeFragment, sourcePosition, context)).toJdiValue(context)
+                return runEval4j(context, extractAndCompile(codeFragment, sourcePosition, context), classLoaderRef).toJdiValue(context)
             }
 
             return if (result is InterpreterResult) {
@@ -283,6 +283,11 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
                 val mainClassValue = (eval.loadClass(Type.getObjectType(mainClassAsmNode.name), classLoader) as? ObjectValue)
                 val mainClass = (mainClassValue?.value as? ClassObjectReference)?.reflectedType() as? ClassType ?: return null
 
+                // Preload all classes
+                compiledData.classes.asSequence()
+                    .filter { !it.isMainClass() }
+                    .forEach { eval.loadClass(Type.getObjectType(it.className), classLoader) }
+
                 return vm.executeWithBreakpointsDisabled {
                     // Prepare the main class
 
@@ -304,7 +309,11 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
             }
         }
 
-        private fun runEval4j(context: EvaluationContextImpl, compiledData: CompiledDataDescriptor): InterpreterResult {
+        private fun runEval4j(
+            context: EvaluationContextImpl,
+            compiledData: CompiledDataDescriptor,
+            classLoader: ClassLoaderReference?
+        ): InterpreterResult {
             val virtualMachine = context.debugProcess.virtualMachineProxy.virtualMachine
             var resultValue: InterpreterResult? = null
 
@@ -321,7 +330,7 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
                             override fun visitEnd() {
                                 virtualMachine.executeWithBreakpointsDisabled {
                                     val eval = JDIEval(virtualMachine,
-                                                       context.classLoader,
+                                                       classLoader ?: context.classLoader,
                                                        context.suspendContext.thread?.threadReference!!,
                                                        context.suspendContext.getInvokePolicy())
 
