@@ -47,7 +47,8 @@ open class KotlinProjectExtension {
 }
 
 open class KotlinSingleJavaTargetExtension : KotlinProjectExtension() {
-    internal lateinit var target: KotlinWithJavaTarget
+    // TODO define subtypes with proper type arguments for each of the option types once the new model is available in old projects
+    internal lateinit var target: KotlinWithJavaTarget<*>
 }
 
 open class KotlinJvmProjectExtension : KotlinSingleJavaTargetExtension() {

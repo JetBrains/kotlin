@@ -230,7 +230,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKo
 
     /** Registers the directory provided by the [provider] as attached, meaning that the directory should
      * be consumed as a friend classes directory by other tasks that have this task as a [friendTask]. */
-    fun attachClassesDir(provider: () -> File?) {
+    internal fun attachClassesDir(provider: () -> File?) {
         attachedClassesDirs += lazy(provider)
     }
 
@@ -305,7 +305,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKo
         setupPlugins(args)
     }
 
-    fun setupPlugins(compilerArgs: T) {
+    internal fun setupPlugins(compilerArgs: T) {
         compilerArgs.pluginClasspaths = pluginClasspath.toSortedPathsArray()
         compilerArgs.pluginOptions = pluginOptions.arguments.toTypedArray()
     }

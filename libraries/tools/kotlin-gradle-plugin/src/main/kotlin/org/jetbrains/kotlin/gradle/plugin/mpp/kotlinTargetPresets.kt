@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.compilerRunner.KotlinNativeProjectProperty
 import org.jetbrains.kotlin.compilerRunner.hasProperty
 import org.jetbrains.kotlin.compilerRunner.konanHome
 import org.jetbrains.kotlin.gradle.dsl.KotlinCompile
+import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptions
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.sources.applyLanguageSettingsToKotlinTask
@@ -28,7 +29,7 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
 import java.util.*
 
-abstract class KotlinOnlyTargetPreset<T : KotlinCompilation>(
+abstract class KotlinOnlyTargetPreset<T : KotlinCompilation<*>>(
     protected val project: Project,
     private val instantiator: Instantiator,
     private val fileResolver: FileResolver,
@@ -197,14 +198,14 @@ class KotlinAndroidTargetPreset(
 class KotlinJvmWithJavaTargetPreset(
     private val project: Project,
     private val kotlinPluginVersion: String
-) : KotlinTargetPreset<KotlinWithJavaTarget> {
+) : KotlinTargetPreset<KotlinWithJavaTarget<KotlinJvmOptions>> {
 
     override fun getName(): String = PRESET_NAME
 
-    override fun createTarget(name: String): KotlinWithJavaTarget {
+    override fun createTarget(name: String): KotlinWithJavaTarget<KotlinJvmOptions> {
         project.plugins.apply(JavaPlugin::class.java)
 
-        val target = KotlinWithJavaTarget(project, KotlinPlatformType.jvm, name).apply {
+        val target = KotlinWithJavaTarget<KotlinJvmOptions>(project, KotlinPlatformType.jvm, name).apply {
             disambiguationClassifier = name
             preset = this@KotlinJvmWithJavaTargetPreset
         }

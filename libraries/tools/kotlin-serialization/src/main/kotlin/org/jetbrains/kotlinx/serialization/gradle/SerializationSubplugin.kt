@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinGradleSubplugin
 import org.jetbrains.kotlin.gradle.plugin.SubpluginArtifact
 import org.jetbrains.kotlin.gradle.plugin.SubpluginOption
-import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 
 class SerializationGradleSubplugin : Plugin<Project> {
     companion object {
@@ -51,7 +50,7 @@ class SerializationKotlinGradleSubplugin : KotlinGradleSubplugin<AbstractCompile
         javaCompile: AbstractCompile?,
         variantData: Any?,
         androidProjectHandler: Any?,
-        kotlinCompilation: KotlinCompilation?
+        kotlinCompilation: KotlinCompilation<*>?
     ): List<SubpluginOption> {
         return emptyList()
     }

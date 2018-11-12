@@ -19,6 +19,7 @@ import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.util.ConfigureUtil
 import org.gradle.util.WrapUtil
+import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.*
@@ -138,7 +139,7 @@ open class KotlinAndroidTarget(
     }
 }
 
-open class KotlinWithJavaTarget(
+open class KotlinWithJavaTarget<KotlinOptionsType : KotlinCommonOptions>(
     project: Project,
     override val platformType: KotlinPlatformType,
     override val targetName: String
@@ -158,14 +159,15 @@ open class KotlinWithJavaTarget(
     override val artifactsTaskName: String
         get() = JavaPlugin.JAR_TASK_NAME
 
-    override val compilations: NamedDomainObjectContainer<KotlinWithJavaCompilation> =
+    override val compilations: NamedDomainObjectContainer<KotlinWithJavaCompilation<KotlinOptionsType>> =
+        @Suppress("UNCHECKED_CAST")
         project.container(
-            KotlinWithJavaCompilation::class.java,
+            KotlinWithJavaCompilation::class.java as Class<KotlinWithJavaCompilation<KotlinOptionsType>>,
             KotlinWithJavaCompilationFactory(project, this)
         )
 }
 
-open class KotlinOnlyTarget<T : KotlinCompilation>(
+open class KotlinOnlyTarget<T : KotlinCompilation<*>>(
     project: Project,
     override val platformType: KotlinPlatformType
 ) : AbstractKotlinTarget(project) {

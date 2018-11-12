@@ -26,7 +26,7 @@ internal open class KotlinTasksProvider(val targetName: String) {
     open fun createKotlinJVMTask(
         project: Project,
         name: String,
-        compilation: KotlinCompilation
+        compilation: KotlinCompilation<*>
     ): KotlinCompile {
         val properties = PropertiesProvider(project)
         val taskClass = taskOrWorkersTask<KotlinCompile, KotlinCompileWithWorkers>(properties)
@@ -35,7 +35,7 @@ internal open class KotlinTasksProvider(val targetName: String) {
         }
     }
 
-    fun createKotlinJSTask(project: Project, name: String, compilation: KotlinCompilation): Kotlin2JsCompile {
+    fun createKotlinJSTask(project: Project, name: String, compilation: KotlinCompilation<*>): Kotlin2JsCompile {
         val properties = PropertiesProvider(project)
         val taskClass = taskOrWorkersTask<Kotlin2JsCompile, Kotlin2JsCompileWithWorkers>(properties)
         return project.tasks.create(name, taskClass).apply {
@@ -43,8 +43,7 @@ internal open class KotlinTasksProvider(val targetName: String) {
         }
     }
 
-
-    fun createKotlinCommonTask(project: Project, name: String, compilation: KotlinCompilation): KotlinCompileCommon {
+    fun createKotlinCommonTask(project: Project, name: String, compilation: KotlinCompilation<*>): KotlinCompileCommon {
         val properties = PropertiesProvider(project)
         val taskClass = taskOrWorkersTask<KotlinCompileCommon, KotlinCompileCommonWithWorkers>(properties)
         return project.tasks.create(name, taskClass).apply {
@@ -56,7 +55,7 @@ internal open class KotlinTasksProvider(val targetName: String) {
         kotlinTask: AbstractKotlinCompile<*>,
         project: Project,
         propertiesProvider: PropertiesProvider,
-        compilation: KotlinCompilation
+        compilation: KotlinCompilation<*>
     ) {
         kotlinTask.sourceSetName = compilation.name
         kotlinTask.friendTaskName = taskToFriendTaskMapper[kotlinTask]
@@ -86,7 +85,7 @@ internal class AndroidTasksProvider(targetName: String) : KotlinTasksProvider(ta
         kotlinTask: AbstractKotlinCompile<*>,
         project: Project,
         propertiesProvider: PropertiesProvider,
-        compilation: KotlinCompilation
+        compilation: KotlinCompilation<*>
     ) {
         super.configure(kotlinTask, project, propertiesProvider, compilation)
         kotlinTask.useModuleDetection = true

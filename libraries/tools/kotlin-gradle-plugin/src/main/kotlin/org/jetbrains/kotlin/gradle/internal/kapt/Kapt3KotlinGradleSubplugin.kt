@@ -165,7 +165,7 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
         val javaCompile: AbstractCompile?,
         val kaptVariantData: KaptVariantData<*>?,
         val sourceSetName: String,
-        val kotlinCompilation: KotlinCompilation?,
+        val kotlinCompilation: KotlinCompilation<*>?,
         val kaptExtension: KaptExtension,
         val kaptClasspathConfigurations: List<Configuration>
     ) {
@@ -180,7 +180,7 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
         javaCompile: AbstractCompile?,
         variantData: Any?,
         androidProjectHandler: Any?,
-        kotlinCompilation: KotlinCompilation?
+        kotlinCompilation: KotlinCompilation<*>?
     ): List<SubpluginOption> {
         assert((variantData != null) xor (kotlinCompilation != null))
 

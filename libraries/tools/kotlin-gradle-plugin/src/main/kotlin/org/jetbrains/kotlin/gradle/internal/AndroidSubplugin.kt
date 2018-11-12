@@ -105,7 +105,7 @@ class AndroidSubplugin : KotlinGradleSubplugin<KotlinCompile> {
         javaCompile: AbstractCompile?,
         variantData: Any?,
         androidProjectHandler: Any?,
-        kotlinCompilation: KotlinCompilation?
+        kotlinCompilation: KotlinCompilation<*>?
     ): List<SubpluginOption> {
         val androidExtension = project.extensions.getByName("android") as? BaseExtension ?: return emptyList()
         val androidExtensionsExtension = project.extensions.getByType(AndroidExtensionsExtension::class.java)

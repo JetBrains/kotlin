@@ -8,9 +8,10 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.NamedDomainObjectFactory
 import org.gradle.api.Project
+import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 
-interface KotlinCompilationFactory<T : KotlinCompilation> : NamedDomainObjectFactory<T> {
+interface KotlinCompilationFactory<T : KotlinCompilation<*>> : NamedDomainObjectFactory<T> {
     val itemClass: Class<T>
 }
 
@@ -34,15 +35,16 @@ class KotlinJvmCompilationFactory(
         KotlinJvmCompilation(target, name)
 }
 
-class KotlinWithJavaCompilationFactory(
+class KotlinWithJavaCompilationFactory<KotlinOptionsType : KotlinCommonOptions>(
     val project: Project,
-    val target: KotlinWithJavaTarget
-) : KotlinCompilationFactory<KotlinWithJavaCompilation> {
+    val target: KotlinWithJavaTarget<KotlinOptionsType>
+) : KotlinCompilationFactory<KotlinWithJavaCompilation<KotlinOptionsType>> {
 
-    override val itemClass: Class<KotlinWithJavaCompilation>
-        get() = KotlinWithJavaCompilation::class.java
+    override val itemClass: Class<KotlinWithJavaCompilation<KotlinOptionsType>>
+        @Suppress("UNCHECKED_CAST")
+        get() = KotlinWithJavaCompilation::class.java as Class<KotlinWithJavaCompilation<KotlinOptionsType>>
 
-    override fun create(name: String): KotlinWithJavaCompilation {
+    override fun create(name: String): KotlinWithJavaCompilation<KotlinOptionsType> {
         val result = KotlinWithJavaCompilation(target, name)
         return result
     }
