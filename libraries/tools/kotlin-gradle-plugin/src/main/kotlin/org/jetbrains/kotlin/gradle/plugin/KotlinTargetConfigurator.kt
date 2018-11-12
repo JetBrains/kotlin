@@ -61,7 +61,7 @@ abstract class AbstractKotlinTargetConfigurator<KotlinTargetType : KotlinTarget>
 
     abstract fun configureArchivesAndComponent(target: KotlinTargetType)
 
-    private fun Project.registerOutputsForStaleOutputCleanup(kotlinCompilation: KotlinCompilation) {
+    private fun Project.registerOutputsForStaleOutputCleanup(kotlinCompilation: KotlinCompilation<*>) {
         val cleanTask = tasks.getByName(LifecycleBasePlugin.CLEAN_TASK_NAME) as Delete
         cleanTask.delete(kotlinCompilation.output.allOutputs)
     }
@@ -133,7 +133,7 @@ abstract class AbstractKotlinTargetConfigurator<KotlinTargetType : KotlinTarget>
     }
 
     protected fun configureResourceProcessing(
-        compilation: KotlinCompilationWithResources,
+        compilation: KotlinCompilationWithResources<*>,
         resourceSet: FileCollection
     ) {
         val project = compilation.target.project
@@ -144,7 +144,7 @@ abstract class AbstractKotlinTargetConfigurator<KotlinTargetType : KotlinTarget>
         resourcesTask.from(resourceSet)
     }
 
-    protected fun createLifecycleTask(compilation: KotlinCompilation) {
+    protected fun createLifecycleTask(compilation: KotlinCompilation<*>) {
         val project = compilation.target.project
 
         compilation.output.classesDirs.from(project.files().builtBy(compilation.compileAllTaskName))
@@ -189,7 +189,7 @@ abstract class AbstractKotlinTargetConfigurator<KotlinTargetType : KotlinTarget>
             usesPlatformOf(target)
         }
 
-        if (mainCompilation is KotlinCompilationToRunnableFiles) {
+        if (mainCompilation is KotlinCompilationToRunnableFiles<*>) {
             val runtimeElementsConfiguration = configurations.maybeCreate(target.runtimeElementsConfigurationName).apply {
                 description = "Elements of runtime for main."
                 isVisible = false
@@ -248,7 +248,7 @@ abstract class AbstractKotlinTargetConfigurator<KotlinTargetType : KotlinTarget>
         const val testTaskNameSuffix = "test"
 
         fun defineConfigurationsForCompilation(
-            compilation: KotlinCompilation,
+            compilation: KotlinCompilation<*>,
             target: KotlinTarget,
             configurations: ConfigurationContainer
         ) {
@@ -322,13 +322,13 @@ abstract class AbstractKotlinTargetConfigurator<KotlinTargetType : KotlinTarget>
     }
 }
 
-internal val KotlinCompilation.deprecatedCompileConfigurationName: String
+internal val KotlinCompilation<*>.deprecatedCompileConfigurationName: String
     get() = disambiguateName("compile")
 
-internal val KotlinCompilationToRunnableFiles.deprecatedRuntimeConfigurationName: String
+internal val KotlinCompilationToRunnableFiles<*>.deprecatedRuntimeConfigurationName: String
     get() = disambiguateName("runtime")
 
-open class KotlinTargetConfigurator<KotlinCompilationType : KotlinCompilation>(
+open class KotlinTargetConfigurator<KotlinCompilationType : KotlinCompilation<*>>(
     createDefaultSourceSets: Boolean,
     createTestCompilation: Boolean
 ) : AbstractKotlinTargetConfigurator<KotlinOnlyTarget<KotlinCompilationType>>(
@@ -359,7 +359,7 @@ open class KotlinTargetConfigurator<KotlinCompilationType : KotlinCompilation>(
 
                 addJar(apiElementsConfiguration, jarArtifact)
 
-                if (mainCompilation is KotlinCompilationToRunnableFiles) {
+                if (mainCompilation is KotlinCompilationToRunnableFiles<*>) {
                     val runtimeConfiguration = project.configurations.getByName(mainCompilation.deprecatedRuntimeConfigurationName)
                     val runtimeElementsConfiguration = project.configurations.getByName(target.runtimeElementsConfigurationName)
                     addJar(runtimeConfiguration, jarArtifact)

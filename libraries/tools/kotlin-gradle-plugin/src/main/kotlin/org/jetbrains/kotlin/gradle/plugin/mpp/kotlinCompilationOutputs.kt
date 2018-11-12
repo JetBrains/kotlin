@@ -32,7 +32,7 @@ class DefaultKotlinCompilationOutput(
 }
 
 class KotlinWithJavaCompilationOutput(
-    internal val compilation: KotlinWithJavaCompilation
+    internal val compilation: KotlinWithJavaCompilation<*>
 ) : KotlinCompilationOutput, Callable<FileCollection> {
 
     private val javaSourceSetOutput

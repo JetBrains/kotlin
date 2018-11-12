@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import groovy.lang.Closure
-import org.gradle.api.NamedDomainObjectCollection
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.attributes.Attribute
@@ -24,6 +23,7 @@ import org.gradle.internal.reflect.Instantiator
 import org.gradle.jvm.tasks.Jar
 import org.gradle.util.ConfigureUtil
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
+import org.jetbrains.kotlin.gradle.dsl.configureOrCreate
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultLanguageSettingsBuilder
@@ -42,17 +42,13 @@ class KotlinMultiplatformPlugin(
     private val featurePreviews: FeaturePreviews // TODO get rid of this internal API usage once we don't need it
 ) : Plugin<Project> {
 
-    private class TargetFromPresetExtension(val targetsContainer: NamedDomainObjectCollection<KotlinTarget>) {
+    private class TargetFromPresetExtension(val targetsContainer: KotlinTargetsContainerWithPresets) {
         fun <T : KotlinTarget> fromPreset(preset: KotlinTargetPreset<T>, name: String, configureClosure: Closure<*>): T =
-            fromPreset(preset, name, { ConfigureUtil.configure(configureClosure, this) })
+            fromPreset(preset, name) { ConfigureUtil.configure(configureClosure, this) }
 
         @JvmOverloads
-        fun <T : KotlinTarget> fromPreset(preset: KotlinTargetPreset<T>, name: String, configureAction: T.() -> Unit = { }): T {
-            val target = preset.createTarget(name)
-            targetsContainer.add(target)
-            target.run(configureAction)
-            return target
-        }
+        fun <T : KotlinTarget> fromPreset(preset: KotlinTargetPreset<T>, name: String, configureAction: T.() -> Unit = { }): T =
+            targetsContainer.configureOrCreate(name, preset, configureAction)
     }
 
     override fun apply(project: Project) {
@@ -60,9 +56,10 @@ class KotlinMultiplatformPlugin(
         SingleWarningPerBuild.show(project, "Kotlin Multiplatform Projects are an experimental feature.")
 
         val targetsContainer = project.container(KotlinTarget::class.java)
-        val targetsFromPreset = TargetFromPresetExtension(targetsContainer)
+        val kotlinMultiplatformExtension = project.extensions.getByType(KotlinMultiplatformExtension::class.java)
+        val targetsFromPreset = TargetFromPresetExtension(kotlinMultiplatformExtension)
 
-        project.extensions.getByType(KotlinMultiplatformExtension::class.java).apply {
+        kotlinMultiplatformExtension.apply {
             DslObject(targetsContainer).addConvention("fromPreset", targetsFromPreset)
 
             targets = targetsContainer
@@ -302,8 +299,8 @@ class KotlinMultiplatformPlugin(
 
 internal val KotlinTarget.defaultArtifactId get() = "${project.name}-${name.toLowerCase()}"
 
-internal fun compilationsBySourceSet(project: Project): Map<KotlinSourceSet, Set<KotlinCompilation>> =
-    HashMap<KotlinSourceSet, MutableSet<KotlinCompilation>>().also { result ->
+internal fun compilationsBySourceSet(project: Project): Map<KotlinSourceSet, Set<KotlinCompilation<*>>> =
+    HashMap<KotlinSourceSet, MutableSet<KotlinCompilation<*>>>().also { result ->
         for (target in project.multiplatformExtension!!.targets) {
             for (compilation in target.compilations) {
                 for (sourceSet in compilation.allKotlinSourceSets) {

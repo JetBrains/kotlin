@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.incremental.ChangedFiles
 import java.io.File
 
 @CacheableTask
-internal open class KotlinCompileCommon : AbstractKotlinCompile<K2MetadataCompilerArguments>(), KotlinCommonCompile {
+open class KotlinCompileCommon : AbstractKotlinCompile<K2MetadataCompilerArguments>(), KotlinCommonCompile {
 
     private val kotlinOptionsImpl = KotlinMultiplatformCommonOptionsImpl()
     override val kotlinOptions: KotlinMultiplatformCommonOptions

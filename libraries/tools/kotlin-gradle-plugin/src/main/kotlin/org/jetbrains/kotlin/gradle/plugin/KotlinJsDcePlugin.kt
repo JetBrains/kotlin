@@ -50,14 +50,14 @@ class KotlinJsDcePlugin : Plugin<Project> {
         }
     }
 
-    private fun processCompilation(project: Project, kotlinCompilation: KotlinCompilation) {
+    private fun processCompilation(project: Project, kotlinCompilation: KotlinCompilation<*>) {
         val kotlinTaskName = kotlinCompilation.compileKotlinTaskName
         val kotlinTask = project.tasks.findByName(kotlinTaskName) as? Kotlin2JsCompile ?: return
         val dceTaskName = lowerCamelCaseName(
             DCE_TASK_PREFIX,
             kotlinCompilation.target.disambiguationClassifier,
             kotlinCompilation.name.takeIf { it != KotlinCompilation.MAIN_COMPILATION_NAME },
-            if (kotlinCompilation.target is KotlinWithJavaTarget) TASK_SUFFIX else MPP_TASK_SUFFIX
+            if (kotlinCompilation.target is KotlinWithJavaTarget<*>) TASK_SUFFIX else MPP_TASK_SUFFIX
         )
         val dceTask = project.tasks.create(dceTaskName, KotlinJsDce::class.java).also {
             it.dependsOn(kotlinTask)

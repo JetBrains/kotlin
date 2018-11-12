@@ -14,19 +14,21 @@ import org.gradle.api.attributes.HasAttributes
 import org.gradle.api.component.SoftwareComponent
 import org.gradle.api.internal.component.UsageContext
 import org.gradle.api.publish.maven.MavenPublication
+import org.gradle.util.ConfigureUtil
+import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 
 interface KotlinTargetComponent : SoftwareComponent {
     val target: KotlinTarget
     val publishable: Boolean
 }
 
-interface KotlinTarget: Named, HasAttributes {
+interface KotlinTarget : Named, HasAttributes {
     val targetName: String
     val disambiguationClassifier: String? get() = targetName
 
     val platformType: KotlinPlatformType
 
-    val compilations: NamedDomainObjectContainer<out KotlinCompilation>
+    val compilations: NamedDomainObjectContainer<out KotlinCompilation<KotlinCommonOptions>>
 
     val project: Project
 

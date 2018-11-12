@@ -32,7 +32,7 @@ class ExampleSubplugin : KotlinGradleSubplugin<AbstractCompile> {
         javaCompile: AbstractCompile?,
         variantData: Any?,
         androidProjectHandler: Any?,
-        kotlinCompilation: KotlinCompilation?
+        kotlinCompilation: KotlinCompilation<*>?
     ): List<SubpluginOption> {
         println("ExampleSubplugin loaded")
         return listOf(SubpluginOption("exampleKey", "exampleValue"))

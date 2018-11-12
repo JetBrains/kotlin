@@ -123,7 +123,7 @@ class ScriptingKotlinGradleSubplugin : KotlinGradleSubplugin<AbstractCompile> {
         javaCompile: AbstractCompile?,
         variantData: Any?,
         androidProjectHandler: Any?,
-        kotlinCompilation: KotlinCompilation?
+        kotlinCompilation: KotlinCompilation<*>?
     ): List<SubpluginOption> {
         if (!ScriptingGradleSubplugin.isEnabled(project)) return emptyList()
 
