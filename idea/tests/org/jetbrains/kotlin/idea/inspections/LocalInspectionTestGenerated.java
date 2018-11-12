@@ -3959,6 +3959,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             runTest("idea/testData/inspectionsLocal/redundantElseInIf/empty.kt");
         }
 
+        @TestMetadata("inLambda.kt")
+        public void testInLambda() throws Exception {
+            runTest("idea/testData/inspectionsLocal/redundantElseInIf/inLambda.kt");
+        }
+
         @TestMetadata("noElse.kt")
         public void testNoElse() throws Exception {
             runTest("idea/testData/inspectionsLocal/redundantElseInIf/noElse.kt");
