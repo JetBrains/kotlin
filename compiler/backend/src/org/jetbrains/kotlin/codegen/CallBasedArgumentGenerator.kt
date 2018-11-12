@@ -31,10 +31,12 @@ class CallBasedArgumentGenerator(
     }
 
     override fun generateExpression(i: Int, argument: ExpressionValueArgument) {
-        val parameter = valueParameters[i]
-        val valueArgument = argument.valueArgument!!
-        val argumentExpression = valueArgument.getArgumentExpression() ?: error(valueArgument.asElement().text)
-        callGenerator.genValueAndPut(parameter, argumentExpression, if (isVarargInvoke) OBJECT_TYPE else valueParameterTypes[i], i)
+        callGenerator.genValueAndPut(
+            valueParameters[i],
+            argument.valueArgument!!.getArgumentExpression()!!,
+            if (isVarargInvoke) JvmKotlinType(OBJECT_TYPE) else getJvmKotlinType(i),
+            i
+        )
     }
 
     override fun generateDefault(i: Int, argument: DefaultValueArgument) {
@@ -64,5 +66,8 @@ class CallBasedArgumentGenerator(
     }
 
     private fun getJvmKotlinType(i: Int): JvmKotlinType =
-        JvmKotlinType(valueParameterTypes[i], valueParameters[i].original.type)
+        JvmKotlinType(valueParameterTypes[i], valueParameters[i].unsubstitutedType)
+
+    private val ValueParameterDescriptor.unsubstitutedType
+        get() = containingDeclaration.original.valueParameters[index].type
 }
