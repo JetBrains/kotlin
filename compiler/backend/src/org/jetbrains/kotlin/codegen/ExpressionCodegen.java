@@ -2401,12 +2401,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             return intrinsic.toCallable(fd, superCall, resolvedCall, this);
         }
 
-        return resolveToCallableMethod(fd, superCall);
-    }
-
-    @NotNull
-    private CallableMethod resolveToCallableMethod(@NotNull FunctionDescriptor fd, boolean superCall) {
-        return typeMapper.mapToCallableMethod(SamCodegenUtil.resolveSamAdapter(fd), superCall);
+        return typeMapper.mapToCallableMethod(SamCodegenUtil.resolveSamAdapter(fd), resolvedCall, superCall, null);
     }
 
     public void invokeMethodWithArguments(
@@ -4381,7 +4376,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             ResolvedCall<FunctionDescriptor> resolvedCall = isGetter ? resolvedGetCall : resolvedSetCall;
             assert resolvedCall != null : "No resolved call for " + operationDescriptor;
             Callable callable = resolveToCallable(accessibleFunctionDescriptor(resolvedCall), false, resolvedCall);
-            Callable callableMethod = resolveToCallableMethod(operationDescriptor, false);
+            Callable callableMethod = typeMapper.mapToCallableMethod(SamCodegenUtil.resolveSamAdapter(operationDescriptor), false);
             Type[] argumentTypes = callableMethod.getParameterTypes();
 
             StackValue.CollectionElementReceiver collectionElementReceiver = createCollectionElementReceiver(

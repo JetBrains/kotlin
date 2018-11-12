@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.codegen
 
+import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.resolve.calls.model.DefaultValueArgument
 import org.jetbrains.kotlin.resolve.calls.model.ExpressionValueArgument
@@ -22,8 +24,14 @@ class CallBasedArgumentGenerator(
     private val isVarargInvoke: Boolean =
         JvmCodegenUtil.isDeclarationOfBigArityFunctionInvoke(valueParameters.firstOrNull()?.containingDeclaration)
 
+    private val isPolymorphicSignature: Boolean =
+        codegen.state.languageVersionSettings.supportsFeature(LanguageFeature.PolymorphicSignature) &&
+        (valueParameters.firstOrNull()?.containingDeclaration as? FunctionDescriptor)?.let { function ->
+            JvmCodegenUtil.isPolymorphicSignature(function)
+        } == true
+
     init {
-        if (!isVarargInvoke) {
+        if (!isVarargInvoke && !isPolymorphicSignature) {
             assert(valueParameters.size == valueParameterTypes.size) {
                 "Value parameters and their types mismatch in sizes: ${valueParameters.size} != ${valueParameterTypes.size}"
             }
@@ -49,6 +57,15 @@ class CallBasedArgumentGenerator(
     }
 
     override fun generateVararg(i: Int, argument: VarargValueArgument) {
+        if (isPolymorphicSignature) {
+            for ((index, arg) in argument.arguments.withIndex()) {
+                val expression = arg.getArgumentExpression()!!
+                val type = JvmKotlinType(valueParameterTypes[index], codegen.kotlinType(expression))
+                callGenerator.genValueAndPut(null, expression, type, index)
+            }
+            return
+        }
+
         // Upper bound for type of vararg parameter should always have a form of 'Array<out T>',
         // while its lower bound may be Nothing-typed after approximation
         val lazyVararg = codegen.genVarargs(argument, valueParameters[i].type.upperIfFlexible())

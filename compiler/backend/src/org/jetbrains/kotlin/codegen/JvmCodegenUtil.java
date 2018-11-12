@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor;
 import org.jetbrains.kotlin.load.java.descriptors.JavaPropertyDescriptor;
 import org.jetbrains.kotlin.load.kotlin.ModuleVisibilityUtilsKt;
 import org.jetbrains.kotlin.metadata.jvm.deserialization.ModuleMapping;
+import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.Call;
 import org.jetbrains.kotlin.psi.KtFile;
@@ -383,5 +384,9 @@ public class JvmCodegenUtil {
         assert superClass != null || state.getClassBuilderMode() == ClassBuilderMode.LIGHT_CLASSES
                 : "ClassDescriptor should not be null:" + specifier.getText();
         return superClass;
+    }
+
+    public static boolean isPolymorphicSignature(@NotNull FunctionDescriptor descriptor) {
+        return descriptor.getAnnotations().hasAnnotation(new FqName("java.lang.invoke.MethodHandle.PolymorphicSignature"));
     }
 }
