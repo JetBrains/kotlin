@@ -1,4 +1,4 @@
-// WITH_UNSIGNED
+// WITH_RUNTIME
 
 fun uint(vararg us: UInt): UIntArray = us
 

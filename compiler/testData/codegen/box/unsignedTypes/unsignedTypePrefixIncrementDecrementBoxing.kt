@@ -1,4 +1,4 @@
-// WITH_UNSIGNED
+// WITH_REFLECT
 // IGNORE_BACKEND: JVM_IR
 
 fun prefixDecrementUByteLocal(): Any? {

@@ -1,4 +1,4 @@
-// WITH_UNSIGNED
+// WITH_RUNTIME
 // IGNORE_BACKEND: JVM_IR
 
 const val MAX_BYTE: UByte = 0xFFu

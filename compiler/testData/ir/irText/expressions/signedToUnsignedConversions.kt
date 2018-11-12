@@ -1,4 +1,4 @@
-// WITH_UNSIGNED
+// WITH_RUNTIME
 
 // FILE: signedToUnsignedConversions_annotation.kt
 

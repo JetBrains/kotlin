@@ -55,16 +55,12 @@ abstract class AbstractIrGeneratorTestCase : CodegenTestCase() {
         val javacOptions = ArrayList<String>(0)
         var addRuntime = false
         var addReflect = false
-        var addUnsigned = false
         for (file in files) {
             if (InTextDirectivesUtils.isDirectiveDefined(file.content, "WITH_RUNTIME")) {
                 addRuntime = true
             }
             if (InTextDirectivesUtils.isDirectiveDefined(file.content, "WITH_REFLECT")) {
                 addReflect = true
-            }
-            if (InTextDirectivesUtils.isDirectiveDefined(file.content, "WITH_UNSIGNED")) {
-                addUnsigned = true
             }
 
             javacOptions.addAll(InTextDirectivesUtils.findListWithPrefixes(file.content, "// JAVAC_OPTIONS:"))
@@ -73,7 +69,6 @@ abstract class AbstractIrGeneratorTestCase : CodegenTestCase() {
         val configurationKind = when {
             addReflect -> ConfigurationKind.ALL
             addRuntime -> ConfigurationKind.NO_KOTLIN_REFLECT
-            addUnsigned -> ConfigurationKind.WITH_UNSIGNED_TYPES
             else -> ConfigurationKind.JDK_ONLY
         }
 

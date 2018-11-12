@@ -198,12 +198,6 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
 
             Map<String, String> directives = KotlinTestUtils.parseDirectives(testFile.content);
 
-            if (InTextDirectivesUtils.isDirectiveDefined(testFile.content, "WITH_UNSIGNED")) {
-                assertDirectivesToNull(explicitLanguageVersionSettings, explicitLanguageVersion);
-                explicitLanguageVersion = LanguageVersion.KOTLIN_1_3;
-                directives.put(API_VERSION_DIRECTIVE, ApiVersion.KOTLIN_1_3.getVersionString());
-            }
-
             LanguageVersionSettings fileLanguageVersionSettings = parseLanguageVersionSettings(directives);
             if (fileLanguageVersionSettings != null) {
                 assertDirectivesToNull(explicitLanguageVersionSettings, null);
@@ -422,17 +416,11 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
         if (configurationKind.getWithReflection() && configurationKind.getWithCoroutines()) {
             classLoader = ForTestCompileRuntime.reflectAndCoroutinesJarClassLoader();
         }
-        else if (configurationKind.getWithUnsignedTypes() && configurationKind.getWithReflection()) {
-            classLoader = ForTestCompileRuntime.reflectAndUnsignedTypesJarClassLoader();
-        }
         else if (configurationKind.getWithReflection()) {
             classLoader = ForTestCompileRuntime.runtimeAndReflectJarClassLoader();
         }
         else if (configurationKind.getWithCoroutines()) {
             classLoader = ForTestCompileRuntime.runtimeAndCoroutinesJarClassLoader();
-        }
-        else if (configurationKind.getWithUnsignedTypes()) {
-            classLoader = ForTestCompileRuntime.runtimeAndUnsignedTypesJarClassLoader();
         }
         else {
             classLoader = ForTestCompileRuntime.runtimeJarClassLoader();
@@ -700,9 +688,6 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
             if (configurationKind.getWithCoroutines()) {
                 javaClasspath.add(ForTestCompileRuntime.coroutinesJarForTests().getPath());
             }
-            if (configurationKind.getWithUnsignedTypes()) {
-                javaClasspath.add(ForTestCompileRuntime.unsignedTypesJarForTests().getPath());
-            }
 
             javaClassesOutputDirectory = CodegenTestUtil.compileJava(
                     findJavaSourcesInDirectory(javaSourceDir), javaClasspath, javacOptions
@@ -715,7 +700,6 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
         boolean addRuntime = false;
         boolean addReflect = false;
         boolean addCoroutines = false;
-        boolean addUnsignedTypes = false;
         for (TestFile file : files) {
             if (InTextDirectivesUtils.isDirectiveDefined(file.content, "COMMON_COROUTINES_TEST") ||
                 InTextDirectivesUtils.isDirectiveDefined(file.content, "!LANGUAGE: +ReleaseCoroutines") ||
@@ -728,16 +712,11 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
             if (InTextDirectivesUtils.isDirectiveDefined(file.content, "WITH_REFLECT")) {
                 addReflect = true;
             }
-            if (InTextDirectivesUtils.isDirectiveDefined(file.content, "WITH_UNSIGNED")) {
-                addUnsignedTypes = true;
-            }
         }
 
-        return (addReflect && addCoroutines && addUnsignedTypes) ? ConfigurationKind.ALL :
-               (addReflect && addCoroutines) ? ConfigurationKind.WITH_COROUTINES_AND_REFLECT :
+        return (addReflect && addCoroutines) ? ConfigurationKind.ALL :
                addReflect ? ConfigurationKind.WITH_REFLECT :
                addCoroutines ? ConfigurationKind.WITH_COROUTINES :
-               addUnsignedTypes ? ConfigurationKind.WITH_UNSIGNED_TYPES :
                addRuntime ? ConfigurationKind.NO_KOTLIN_REFLECT :
                ConfigurationKind.JDK_ONLY;
     }

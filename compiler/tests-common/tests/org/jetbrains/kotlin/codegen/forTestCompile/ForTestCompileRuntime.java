@@ -139,29 +139,6 @@ public class ForTestCompileRuntime {
     }
 
     @NotNull
-    public static synchronized ClassLoader runtimeAndUnsignedTypesJarClassLoader() {
-        ClassLoader loader = unsignedTypesJarClassLoader.get();
-        if (loader == null) {
-            loader = createClassLoader(runtimeJarForTests(), unsignedTypesJarForTests(), scriptRuntimeJarForTests(), kotlinTestJarForTests());
-            unsignedTypesJarClassLoader = new SoftReference<>(loader);
-        }
-        return loader;
-    }
-
-    @NotNull
-    public static synchronized ClassLoader reflectAndUnsignedTypesJarClassLoader() {
-        ClassLoader loader = unsignedTypesAndReflectJarClassLoader.get();
-        if (loader == null) {
-            loader = createClassLoader(
-                    runtimeJarForTests(), reflectJarForTests(), unsignedTypesJarForTests(),
-                    scriptRuntimeJarForTests(), kotlinTestJarForTests()
-            );
-            unsignedTypesAndReflectJarClassLoader = new SoftReference<>(loader);
-        }
-        return loader;
-    }
-
-    @NotNull
     public static synchronized ClassLoader reflectAndCoroutinesJarClassLoader() {
         ClassLoader loader = coroutinesAndReflectJarClassLoader.get();
         if (loader == null) {

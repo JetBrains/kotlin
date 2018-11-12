@@ -1,4 +1,4 @@
-// WITH_UNSIGNED
+// WITH_RUNTIME
 // IGNORE_BACKEND: JVM_IR
 
 fun isZeroUInt(n: UInt?) = n == 0U
