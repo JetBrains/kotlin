@@ -20,8 +20,6 @@ public class ForTestCompileRuntime {
     private static volatile SoftReference<ClassLoader> reflectJarClassLoader = new SoftReference<>(null);
     private static volatile SoftReference<ClassLoader> runtimeJarClassLoader = new SoftReference<>(null);
     private static volatile SoftReference<ClassLoader> coroutinesJarClassLoader = new SoftReference<>(null);
-    private static volatile SoftReference<ClassLoader> unsignedTypesJarClassLoader = new SoftReference<>(null);
-    private static volatile SoftReference<ClassLoader> unsignedTypesAndReflectJarClassLoader = new SoftReference<>(null);
     private static volatile SoftReference<ClassLoader> coroutinesAndReflectJarClassLoader = new SoftReference<>(null);
 
     @NotNull
@@ -32,11 +30,6 @@ public class ForTestCompileRuntime {
     @NotNull
     public static File coroutinesJarForTests() {
         return assertExists(new File("dist/kotlin-stdlib-coroutines.jar"));
-    }
-
-    @NotNull
-    public static File unsignedTypesJarForTests() {
-        return assertExists(new File("dist/kotlin-stdlib-unsigned.jar"));
     }
 
     @NotNull
