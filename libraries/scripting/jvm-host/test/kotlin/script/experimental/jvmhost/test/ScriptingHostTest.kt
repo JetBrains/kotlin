@@ -5,7 +5,7 @@
 
 package kotlin.script.experimental.jvmhost.test
 
-import kotlinx.coroutines.experimental.runBlocking
+import kotlinx.coroutines.runBlocking
 import org.jetbrains.kotlin.daemon.common.toHexString
 import org.junit.Assert
 import org.junit.Test
