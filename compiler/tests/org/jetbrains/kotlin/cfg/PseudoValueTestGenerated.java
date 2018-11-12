@@ -817,6 +817,11 @@ public class PseudoValueTestGenerated extends AbstractPseudoValueTest {
                 runTest("compiler/testData/cfgWithStdLib/contracts/returnsAndCalls.kt");
             }
 
+            @TestMetadata("safeCallAndInPlaceReturn.kt")
+            public void testSafeCallAndInPlaceReturn() throws Exception {
+                runTest("compiler/testData/cfgWithStdLib/contracts/safeCallAndInPlaceReturn.kt");
+            }
+
             @TestMetadata("throwIfNotCalled.kt")
             public void testThrowIfNotCalled() throws Exception {
                 runTest("compiler/testData/cfgWithStdLib/contracts/throwIfNotCalled.kt");
