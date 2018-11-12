@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.test.ConfigurationKind
 
 abstract class AbstractDiagnosticsWithUnsignedTypes : AbstractDiagnosticsTest() {
     override fun getConfigurationKind(): ConfigurationKind {
-        return ConfigurationKind.WITH_UNSIGNED_TYPES
+        return ConfigurationKind.NO_KOTLIN_REFLECT
     }
 
     override fun defaultLanguageVersionSettings(): LanguageVersionSettings =

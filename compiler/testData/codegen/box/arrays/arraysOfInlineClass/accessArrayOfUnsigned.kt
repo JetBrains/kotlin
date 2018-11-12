@@ -1,4 +1,4 @@
-// WITH_UNSIGNED
+// WITH_RUNTIME
 // IGNORE_BACKEND: JVM_IR
 
 val xs = Array(2) { 42u }
