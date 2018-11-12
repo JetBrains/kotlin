@@ -737,13 +737,18 @@ class PsiInlineCodegen(
     }
 
     override fun genValueAndPut(
-        valueParameterDescriptor: ValueParameterDescriptor,
+        valueParameterDescriptor: ValueParameterDescriptor?,
         argumentExpression: KtExpression,
-        parameterType: Type,
+        parameterType: JvmKotlinType,
         parameterIndex: Int
     ) {
+        requireNotNull(valueParameterDescriptor) {
+            "Parameter descriptor can only be null in case a @PolymorphicSignature function is called, " +
+                    "which cannot be declared in Kotlin and thus be inline: $codegen"
+        }
+
         if (isInliningParameter(argumentExpression, valueParameterDescriptor)) {
-            val lambdaInfo = rememberClosure(argumentExpression, parameterType, valueParameterDescriptor)
+            val lambdaInfo = rememberClosure(argumentExpression, parameterType.type, valueParameterDescriptor)
 
             val receiverValue = getBoundCallableReferenceReceiver(argumentExpression)
             if (receiverValue != null) {
@@ -762,12 +767,7 @@ class PsiInlineCodegen(
             }
         } else {
             val value = codegen.gen(argumentExpression)
-            putValueIfNeeded(
-                JvmKotlinType(parameterType, valueParameterDescriptor.original.type),
-                value,
-                ValueKind.GENERAL,
-                valueParameterDescriptor.index
-            )
+            putValueIfNeeded(parameterType, value, ValueKind.GENERAL, parameterIndex)
         }
     }
 

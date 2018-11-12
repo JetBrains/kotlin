@@ -81,9 +81,9 @@ class InlineCodegenForDefaultBody(
     }
 
     override fun genValueAndPut(
-        valueParameterDescriptor: ValueParameterDescriptor,
+        valueParameterDescriptor: ValueParameterDescriptor?,
         argumentExpression: KtExpression,
-        parameterType: Type,
+        parameterType: JvmKotlinType,
         parameterIndex: Int
     ) {
         throw UnsupportedOperationException("Shouldn't be called")
