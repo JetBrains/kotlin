@@ -167,6 +167,7 @@ object NashornIrJsTestChecker : AbstractNashornJsTestChecker() {
 
         listOf(
             BasicBoxTest.TEST_DATA_DIR_PATH + "nashorn-polyfills.js",
+            "libraries/stdlib/js/src/js/polyfills.js",
             "js/js.translator/testData/out/irBox/testRuntime.js"
         ).forEach(engine::loadFile)
 

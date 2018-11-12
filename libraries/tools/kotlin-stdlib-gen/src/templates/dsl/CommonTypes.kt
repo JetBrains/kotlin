@@ -86,12 +86,26 @@ enum class Platform {
     Common,
     JVM,
     JS,
-    Native;
+    Native
+}
+
+enum class Backend {
+    Any,
+    Legacy,
+    IR
+}
+
+enum class KotlinTarget(val platform: Platform, val backend: Backend) {
+    Common(Platform.Common, Backend.Any),
+    JVM(Platform.JVM, Backend.Any),
+    JS(Platform.JS, Backend.Legacy),
+    JS_IR(Platform.JS, Backend.IR),
+    Native(Platform.Native, Backend.IR);
 
     val fullName get() = "Kotlin/$name"
 
     companion object {
-        val values = values().toList()
+        val values = KotlinTarget.values().toList()
     }
 }
 

@@ -25,7 +25,7 @@ private fun getDefaultSourceFile(f: Family): SourceFile = when (f) {
 @TemplateDsl
 class MemberBuilder(
         val allowedPlatforms: Set<Platform>,
-        val platform: Platform,
+        val target: KotlinTarget,
         var family: Family,
         var sourceFile: SourceFile = getDefaultSourceFile(family),
         var primitive: PrimitiveType? = null
@@ -143,11 +143,16 @@ class MemberBuilder(
 
     fun on(platform: Platform, action: () -> Unit) {
         require(platform in allowedPlatforms) { "Platform $platform is not in the list of allowed platforms $allowedPlatforms" }
-        if (this.platform == platform)
+        if (target.platform == platform)
             action()
         else {
             hasPlatformSpecializations = true
         }
+    }
+
+    fun on(backend: Backend, action: () -> Unit) {
+        require(target.platform == Platform.JS)
+        if (target.backend == backend) action()
     }
 
     fun specialFor(f: Family, action: () -> Unit) {
@@ -165,14 +170,14 @@ class MemberBuilder(
         val headerOnly: Boolean
         val isImpl: Boolean
         if (!legacyMode) {
-            headerOnly = platform == Platform.Common && hasPlatformSpecializations
-            isImpl = platform != Platform.Common && Platform.Common in allowedPlatforms
+            headerOnly = target.platform == Platform.Common && hasPlatformSpecializations
+            isImpl = target.platform != Platform.Common && Platform.Common in allowedPlatforms
         }
         else {
             // legacy mode when all is headerOnly + no_impl
             // except functions with optional parameters - they are common + no_impl
             val hasOptionalParams = signature.contains("=")
-            headerOnly =  platform == Platform.Common && !hasOptionalParams
+            headerOnly =  target.platform == Platform.Common && !hasOptionalParams
             isImpl = false
         }
 
@@ -376,7 +381,7 @@ class MemberBuilder(
 
         val body = (body ?:
                 deprecate?.replaceWith?.let { "return $it" } ?:
-                throw RuntimeException("$signature for ${platform.fullName}: no body specified for ${family to primitive}")
+                throw RuntimeException("$signature for ${target.fullName}: no body specified for ${family to primitive}")
                 ).trim('\n')
         val indent: Int = body.takeWhile { it == ' ' }.length
 
