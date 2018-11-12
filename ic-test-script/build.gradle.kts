@@ -1,6 +1,5 @@
 import de.undercouch.gradle.tasks.download.Download
 import org.gradle.api.Task
-import org.gradle.script.lang.kotlin.*
 import org.jetbrains.teamcity.rest.*
 import java.io.File
 
