@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import kotlin.reflect.KClass
+import kotlin.reflect.full.isSubclassOf
 
 interface CompilerPhase<in Context : BackendContext, Data> {
     val name: String
@@ -135,32 +136,27 @@ inline fun <reified Lowering : FileLoweringPass> makePhase(
             }.singleOrNull()
 
             val lowering = if (loweringConstructorWithContext != null) {
-                loweringConstructorWithContext.call(context, *args) as Lowering
+                loweringConstructorWithContext.call(context, *args)
             } else {
                 val loweringConstructorWithoutParameters = Lowering::class.constructors.filter { it.parameters.size == 0 }.singleOrNull()
                 loweringConstructorWithoutParameters?.call() as Lowering
             }
-            assert(lowering != null)
             lowering.lower(source)
             // `source` is modified in place
             return source
         }
     }
 
-fun KClass<*>.isSubclassOf(base: KClass<*>): Boolean =
-    if (this == base) true
-    else supertypes.mapNotNull { it.classifier as? KClass<*> }.any { it.isSubclassOf(base) }
-
 object IrFileStartPhase : CompilerPhase<BackendContext, IrFile> {
     override val name = "IrFileStart"
     override val description = "State at start of IrFile lowering"
     override val prerequisite = emptySet()
-    override fun invoke(_context: BackendContext, source: IrFile) = source
+    override fun invoke(context: BackendContext, source: IrFile) = source
 }
 
 object IrFileEndPhase : CompilerPhase<BackendContext, IrFile> {
     override val name = "IrFileEnd"
     override val description = "State at end of IrFile lowering"
     override val prerequisite = emptySet()
-    override fun invoke(_context: BackendContext, source: IrFile) = source
+    override fun invoke(context: BackendContext, source: IrFile) = source
 }
