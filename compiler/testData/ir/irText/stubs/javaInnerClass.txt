@@ -23,7 +23,7 @@ FILE fqName:<root> fileName:/javaInnerClass.kt
           FIELD IR_EXTERNAL_DECLARATION_STUB name:x type:kotlin.Int visibility:public flags:
     FUN FAKE_OVERRIDE name:bar visibility:public modality:OPEN <> ($this:J) returnType:kotlin.Unit flags:
       overridden:
-        FUN IR_EXTERNAL_DECLARATION_STUB name:bar visibility:public modality:OPEN <> ($this:J) returnType:kotlin.Unit flags:
+        FUN IR_EXTERNAL_JAVA_DECLARATION_STUB name:bar visibility:public modality:OPEN <> ($this:J) returnType:kotlin.Unit flags:
       $this: VALUE_PARAMETER name:<this> type:J flags:
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:
       overridden:
@@ -38,4 +38,3 @@ FILE fqName:<root> fileName:/javaInnerClass.kt
       overridden:
         FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
-
