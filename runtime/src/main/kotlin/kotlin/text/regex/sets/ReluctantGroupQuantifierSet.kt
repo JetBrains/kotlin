@@ -34,9 +34,17 @@ internal class ReluctantGroupQuantifierSet(
 ) : GroupQuantifierSet(quantifier, innerSet, next, type, setCounter) {
 
     override fun matches(startIndex: Int, testString: CharSequence, matchResult: MatchResultImpl): Int {
+        var enterCount = matchResult.enterCounters[groupQuantifierIndex]
+
+        fun matchNext(): Int {
+            matchResult.enterCounters[groupQuantifierIndex] = 0
+            val result = next.matches(startIndex, testString, matchResult)
+            matchResult.enterCounters[groupQuantifierIndex] = enterCount
+            return result
+        }
 
         if (!innerSet.hasConsumed(matchResult)) {
-            return next.matches(startIndex, testString, matchResult)
+            return matchNext()
         }
 
         // Fast case: '*' or {0, } - no need to count occurrences.
@@ -49,29 +57,22 @@ internal class ReluctantGroupQuantifierSet(
             }
         }
 
-        val enterCounter = matchResult.enterCounters[groupQuantifierIndex]
-
         // can't go inner set;
-        if (enterCounter >= max) {
-            matchResult.enterCounters[groupQuantifierIndex] = 0
-            return next.matches(startIndex, testString, matchResult)
+        if (max != Quantifier.INF && enterCount >= max) {
+            return matchNext()
         }
 
-        var nextIndex: Int
-        if (enterCounter >= min) {
-            nextIndex = next.matches(startIndex, testString, matchResult)
+        return if (enterCount >= min) {
+            val nextIndex = matchNext()
             if (nextIndex < 0) {
-                matchResult.enterCounters[groupQuantifierIndex]++
-                nextIndex = innerSet.matches(startIndex, testString, matchResult)
+                matchResult.enterCounters[groupQuantifierIndex] = ++enterCount
+                innerSet.matches(startIndex, testString, matchResult)
             } else {
-                matchResult.enterCounters[groupQuantifierIndex] = 0
-                return nextIndex
+                nextIndex
             }
         } else {
-            matchResult.enterCounters[groupQuantifierIndex]++
-            nextIndex = innerSet.matches(startIndex, testString, matchResult)
+            matchResult.enterCounters[groupQuantifierIndex] = ++enterCount
+            innerSet.matches(startIndex, testString, matchResult)
         }
-
-        return nextIndex
     }
 }

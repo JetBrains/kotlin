@@ -436,6 +436,29 @@ class MatchResultTest {
     }
 
     /**
+     * Regression test for https://github.com/JetBrains/kotlin-native/issues/2297
+     */
+    @Test fun test2297() {
+        assertTrue(Regex("^(:[0-5]?[0-9])+$").matches(":20:30"))
+        assertTrue(Regex("(.{1,}){2}").matches("aa"))
+
+        assertTrue(Regex("(.+b)+").matches("0b0b"))
+        assertTrue(Regex("(.+?b)+").matches("0b0b"))
+        assertTrue(Regex("(.?b)+").matches("0b0b"))
+        assertTrue(Regex("(.??b)+").matches("0b0b"))
+        assertTrue(Regex("(.*b)+").matches("0b0b"))
+        assertTrue(Regex("(.*?b)+").matches("0b0b"))
+        assertTrue(Regex("(.{1,2}b)+").matches("0b00b"))
+        assertTrue(Regex("(.{1,2}?b)+").matches("0b00b"))
+
+        assertTrue(Regex("([0]?[0]?)+").matches("0000"))
+        assertTrue(Regex("([0]?[0]?b)+").matches("00b00b"))
+        assertTrue(Regex("((b{2}){3})+").matches("bbbbbbbbbbbb"))
+
+        assertTrue(Regex("[^a]").matches("b"))
+    }
+
+    /**
      * Regression test for HARMONY-3360
      */
     @Test fun testGeneralPunctuationCategory() {
