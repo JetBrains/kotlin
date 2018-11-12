@@ -461,6 +461,7 @@ tasks {
     create("scriptingTest") {
         dependsOn("dist")
         dependsOn(":kotlin-script-util:test")
+        dependsOn(":kotlin-scripting-jvm-host:test")
     }
 
     create("compilerTest") {
