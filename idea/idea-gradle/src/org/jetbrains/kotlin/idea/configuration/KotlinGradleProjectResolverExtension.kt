@@ -139,6 +139,8 @@ class KotlinGradleProjectResolverExtension : AbstractProjectResolverExtension() 
 
                 while (toProcess.isNotEmpty()) {
                     val moduleNode = toProcess.pollFirst()
+                    if (processed.contains(moduleNode)) continue
+
                     processed.add(moduleNode)
 
                     val moduleNodeForGradleModel = if (useModulePerSourceSet()) {
