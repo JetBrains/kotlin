@@ -2250,7 +2250,7 @@
                      language="kotlin"
     />
 
-    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.WrapResourceWithUseCallInspection"
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.ConvertResourceToUseCallInspection"
                      displayName="Convert resource to use() call with prop"
                      groupPath="Kotlin"
                      groupName="Style issues"

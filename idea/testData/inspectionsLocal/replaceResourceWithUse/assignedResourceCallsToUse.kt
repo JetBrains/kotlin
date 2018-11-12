@@ -3,6 +3,6 @@ import java.io.File
 
 fun main(args: Array<String>) {
     val reader = File("hello-world.txt").bufferedReader()
-    <caret>reader.readLines()
-    reader.close
+    <caret>reader.readLine()
+    reader.close()
 }

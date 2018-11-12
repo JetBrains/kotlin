@@ -5434,6 +5434,34 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @TestMetadata("idea/testData/inspectionsLocal/replaceResourceWithUse")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ReplaceResourceWithUse extends AbstractLocalInspectionTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInReplaceResourceWithUse() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/replaceResourceWithUse"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("assignedResourceCallsToUse.kt")
+        public void testAssignedResourceCallsToUse() throws Exception {
+            runTest("idea/testData/inspectionsLocal/replaceResourceWithUse/assignedResourceCallsToUse.kt");
+        }
+
+        @TestMetadata("assignedResourceToUse.kt")
+        public void testAssignedResourceToUse() throws Exception {
+            runTest("idea/testData/inspectionsLocal/replaceResourceWithUse/assignedResourceToUse.kt");
+        }
+
+        @TestMetadata("callExpressionToUse.kt")
+        public void testCallExpressionToUse() throws Exception {
+            runTest("idea/testData/inspectionsLocal/replaceResourceWithUse/callExpressionToUse.kt");
+        }
+    }
+
     @TestMetadata("idea/testData/inspectionsLocal/replaceSingleLineLet")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

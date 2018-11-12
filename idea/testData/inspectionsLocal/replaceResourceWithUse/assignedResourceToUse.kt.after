@@ -3,6 +3,6 @@ import java.io.File
 
 fun main(args: Array<String>) {
     File("hello-world.txt").bufferedReader().use { reader ->
-        reader.close
+        reader.close()
     }
 }
