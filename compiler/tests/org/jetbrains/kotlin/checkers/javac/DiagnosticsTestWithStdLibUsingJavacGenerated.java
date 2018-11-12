@@ -971,6 +971,11 @@ public class DiagnosticsTestWithStdLibUsingJavacGenerated extends AbstractDiagno
                     runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/controlflow/flowInlining/nonReturningInlinedLambda.kt");
                 }
 
+                @TestMetadata("safeCallAndInPlaceReturn.kt")
+                public void testSafeCallAndInPlaceReturn() throws Exception {
+                    runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/controlflow/flowInlining/safeCallAndInPlaceReturn.kt");
+                }
+
                 @TestMetadata("severalJumpOutsFromInlinedLambda.kt")
                 public void testSeveralJumpOutsFromInlinedLambda() throws Exception {
                     runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/controlflow/flowInlining/severalJumpOutsFromInlinedLambda.kt");

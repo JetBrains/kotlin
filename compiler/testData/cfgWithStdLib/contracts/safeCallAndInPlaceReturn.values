@@ -1,0 +1,53 @@
+== myRun ==
+inline fun Any?.myRun(block: () -> Unit): Unit {
+    contract {
+        callsInPlace(block, InvocationKind.EXACTLY_ONCE)
+    }
+    return block()
+}
+---------------------
+                                                                                   <v0>: {<: () -> Unit}                   NEW: magic[FAKE_INITIALIZER](block: () -> Unit) -> <v0>
+{ callsInPlace(block, InvocationKind.EXACTLY_ONCE) }                               <v1>: {<: ContractBuilder.() -> Unit}   NEW: r({ callsInPlace(block, InvocationKind.EXACTLY_ONCE) }) -> <v1>
+contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) }                      <v2>: *                                 NEW: call(contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) }, contract|<v1>) -> <v2>
+block                                                                              <v3>: {<: () -> Unit}                   NEW: r(block) -> <v3>
+block()                                                                            <v4>: Unit                              NEW: call(block(), invoke|<v3>) -> <v4>
+return block()                                                                     !<v5>: *
+{ contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) } return block() }   !<v5>: *                                COPY
+=====================
+== anonymous_0 ==
+{
+        callsInPlace(block, InvocationKind.EXACTLY_ONCE)
+    }
+---------------------
+                                                   <v0>: {<: ContractBuilder}   NEW: magic[IMPLICIT_RECEIVER](callsInPlace(block, InvocationKind.EXACTLY_ONCE)) -> <v0>
+block                                              <v1>: {<: Function<Unit>}    NEW: r(block) -> <v1>
+EXACTLY_ONCE                                       <v2>: {<: InvocationKind}    NEW: r(EXACTLY_ONCE) -> <v2>
+InvocationKind.EXACTLY_ONCE                        <v2>: {<: InvocationKind}    COPY
+callsInPlace(block, InvocationKind.EXACTLY_ONCE)   <v3>: *                      NEW: call(callsInPlace(block, InvocationKind.EXACTLY_ONCE), callsInPlace|<v0>, <v1>, <v2>) -> <v3>
+callsInPlace(block, InvocationKind.EXACTLY_ONCE)   <v3>: *                      COPY
+=====================
+== test ==
+fun test(): String {
+    val x: String? = null
+
+    x?.myRun {
+        return ""
+    }
+}
+---------------------
+null                                               <v0>: {<: String?}      NEW: r(null) -> <v0>
+x                                                  <v1>: *                 NEW: r(x) -> <v1>
+{ return "" }                                      <v2>: {<: () -> Unit}   NEW: r({ return "" }) -> <v2>
+myRun { return "" }                                <v3>: *                 NEW: call(myRun { return "" }, myRun|<v1>, <v2>) -> <v3>
+x?.myRun { return "" }                             <v3>: *                 COPY
+{ val x: String? = null x?.myRun { return "" } }   <v3>: *                 COPY
+=====================
+== inlined anonymous_1 ==
+{
+        return ""
+    }
+---------------------
+""          <v0>: String   NEW: r("") -> <v0>
+return ""   !<v1>: *
+return ""   !<v1>: *       COPY
+=====================
