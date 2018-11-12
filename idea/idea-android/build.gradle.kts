@@ -76,10 +76,10 @@ dependencies {
 }
 
 sourceSets {
-    Ide.AS33.orHigher {
+    if (Ide.AS33.orHigher()) {
         "main" { }
         "test" { }
-    } ?: run {
+    } else {
         "main" { projectDefault() }
         "test" { projectDefault() }
     }
