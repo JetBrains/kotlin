@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.backend.common.lower
 
-import org.jetbrains.kotlin.backend.common.BackendContext
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.makePhase
 import org.jetbrains.kotlin.descriptors.ClassKind
@@ -18,7 +17,7 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.utils.addIfNotNull
 import java.util.*
 
-val PropertiesPhase = makePhase<PropertiesLowering, BackendContext>(
+val PropertiesPhase = makePhase<PropertiesLowering>(
     description = "move fields and accessors for properties to their classes"
 )
 

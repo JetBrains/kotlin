@@ -117,24 +117,30 @@ class CompilerPhaseManager<Context : BackendContext, Data>(
     }
 }
 
-inline fun <reified Lowering : FileLoweringPass, reified Context : BackendContext> makePhase(
+inline fun <reified Lowering : FileLoweringPass> makePhase(
+    vararg args: Any?,
     description: String,
     name: String = Lowering::class.simpleName!!,
-    prerequisite: Set<CompilerPhase<Context, *>> = emptySet()
+    prerequisite: Set<CompilerPhase<BackendContext, *>> = emptySet()
 ) =
-    object : CompilerPhase<Context, IrFile> {
+    object : CompilerPhase<BackendContext, IrFile> {
         override val name = name
         override val description = description
         override val prerequisite = prerequisite
 
-        override fun invoke(context: Context, source: IrFile): IrFile {
+        override fun invoke(context: BackendContext, source: IrFile): IrFile {
             val loweringConstructorWithContext = Lowering::class.constructors.filter {
-                it.parameters.size == 1 &&
-                        (it.parameters[0].type.classifier as? KClass<*>)?.isSubclassOf(Context::class) == true
+                it.parameters.size > 0 &&
+                        (it.parameters[0].type.classifier as? KClass<*>)?.isSubclassOf(BackendContext::class) == true
             }.singleOrNull()
-            val loweringConstructorWithoutParameters = Lowering::class.constructors.filter { it.parameters.size == 0 }.singleOrNull()
-            val lowering =
-                (loweringConstructorWithContext?.call(context) ?: loweringConstructorWithoutParameters?.call()) as Lowering
+
+            val lowering = if (loweringConstructorWithContext != null) {
+                loweringConstructorWithContext.call(context, *args) as Lowering
+            } else {
+                val loweringConstructorWithoutParameters = Lowering::class.constructors.filter { it.parameters.size == 0 }.singleOrNull()
+                loweringConstructorWithoutParameters?.call() as Lowering
+            }
+            assert(lowering != null)
             lowering.lower(source)
             // `source` is modified in place
             return source

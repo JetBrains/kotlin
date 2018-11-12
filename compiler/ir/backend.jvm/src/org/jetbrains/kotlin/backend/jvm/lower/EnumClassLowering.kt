@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.types.*
 import org.jetbrains.org.objectweb.asm.Opcodes
 import java.util.*
 
-val EnumClassPhase = makePhase<EnumClassLowering, JvmBackendContext>(
+val EnumClassPhase = makePhase<EnumClassLowering>(
     description = "Handle enum classes"
 )
 

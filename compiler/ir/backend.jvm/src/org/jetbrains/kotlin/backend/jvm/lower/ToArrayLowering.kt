@@ -43,7 +43,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.descriptorUtil.getAllSuperclassesWithoutAny
 import org.jetbrains.kotlin.types.Variance
 
-val ToArrayPhase = makePhase<ToArrayLowering, JvmBackendContext>(
+val ToArrayPhase = makePhase<ToArrayLowering>(
     description = "Handle toArray functions"
 )
 

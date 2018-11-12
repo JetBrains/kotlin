@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.ir.util.findDeclaration
 import org.jetbrains.kotlin.ir.util.isSubclassOf
 import org.jetbrains.kotlin.name.Name
 
-val FunctionNVarargInvokePhase = makePhase<FunctionNVarargInvokeLowering, JvmBackendContext>(
+val FunctionNVarargInvokePhase = makePhase<FunctionNVarargInvokeLowering>(
     description = "Handle invoke functions with large number of arguments"
 )
 

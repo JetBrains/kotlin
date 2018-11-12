@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.load.java.JvmAbi.JVM_FIELD_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
 
-val ConstAndJvmFieldPropertiesPhase = makePhase<ConstAndJvmFieldPropertiesLowering, CommonBackendContext>(
+val ConstAndJvmFieldPropertiesPhase = makePhase<ConstAndJvmFieldPropertiesLowering>(
     description = "Substitute calls to const and Jvm>Field properties with const/field access"
 )
 

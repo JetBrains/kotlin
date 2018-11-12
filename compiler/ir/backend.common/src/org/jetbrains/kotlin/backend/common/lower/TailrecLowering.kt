@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.ir.util.getArgumentsWithIr
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
-val TailrecPhase = makePhase<TailrecLowering, BackendContext>(
+val TailrecPhase = makePhase<TailrecLowering>(
     description = "Handle tailrec calls"
 )
 

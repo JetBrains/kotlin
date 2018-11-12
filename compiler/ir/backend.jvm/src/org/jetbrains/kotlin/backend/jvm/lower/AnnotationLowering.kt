@@ -5,14 +5,13 @@
 
 package org.jetbrains.kotlin.backend.jvm.lower
 
-import org.jetbrains.kotlin.backend.common.BackendContext
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.common.makePhase
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.util.isAnnotationClass
 
-val AnnotationPhase = makePhase<AnnotationLowering, BackendContext>(
+val AnnotationPhase = makePhase<AnnotationLowering>(
     description = "Remove constructors from annotation classes"
 )
 

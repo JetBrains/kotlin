@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
-val SingletonReferencesPhase = makePhase<SingletonReferencesLowering, JvmBackendContext>(
+val SingletonReferencesPhase = makePhase<SingletonReferencesLowering>(
     description = "HandleSingletonReferences"
 )
 

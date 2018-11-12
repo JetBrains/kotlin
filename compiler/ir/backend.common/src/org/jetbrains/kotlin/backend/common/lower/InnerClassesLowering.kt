@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import java.util.*
 
-val InnerClassesPhase = makePhase<InnerClassesLowering, BackendContext>(
+val InnerClassesPhase = makePhase<InnerClassesLowering>(
     description = "Move inner classes to toplevel"
 )
 
@@ -172,7 +172,7 @@ class InnerClassesLowering(val context: BackendContext) : ClassLoweringPass {
     }
 }
 
-val InnerClassConstructorCallsPhase = makePhase<InnerClassConstructorCallsLowering, BackendContext>(
+val InnerClassConstructorCallsPhase = makePhase<InnerClassConstructorCallsLowering>(
     description = "Handle constructor calls for inner classes"
 )
 

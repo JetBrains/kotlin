@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.backend.jvm.lower
 
-import org.jetbrains.kotlin.backend.common.BackendContext
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.DECLARATION_ORIGIN_FUNCTION_FOR_DEFAULT_PARAMETER
 import org.jetbrains.kotlin.backend.common.makePhase
@@ -27,7 +26,7 @@ import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 
-val StaticDefaultFunctionPhase = makePhase<StaticDefaultFunctionLowering, BackendContext>(
+val StaticDefaultFunctionPhase = makePhase<StaticDefaultFunctionLowering>(
     description = "Generate static functions for default parameters"
 )
 

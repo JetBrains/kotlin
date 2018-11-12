@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.impl.IrClassImpl
 import java.util.*
 
-val FileClassPhase = makePhase<FileClassLowering, JvmBackendContext>(
+val FileClassPhase = makePhase<FileClassLowering>(
     description = "Put file level function and property declaration into a class"
 )
 

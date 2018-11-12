@@ -61,7 +61,7 @@ import org.jetbrains.org.objectweb.asm.Opcodes.*
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.Method
 
-val BridgePhase = makePhase<BridgeLowering, JvmBackendContext>(
+val BridgePhase = makePhase<BridgeLowering>(
     description = "Generate bridges"
 )
 

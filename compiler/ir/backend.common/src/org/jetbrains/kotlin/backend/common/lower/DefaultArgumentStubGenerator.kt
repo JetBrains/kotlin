@@ -36,16 +36,10 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
 
-fun makeDefaultArgumentStubPhase(skipInlineMethods: Boolean) = object: CompilerPhase<CommonBackendContext, IrFile> {
-    override val name = DefaultArgumentStubGenerator::class.simpleName!!
-    override val description = "Generate synthetic stubs for functions with default parameter values"
-    override val prerequisite = emptySet()
-
-    override fun invoke(context: CommonBackendContext, source: IrFile): IrFile {
-        DefaultArgumentStubGenerator(context, skipInlineMethods).lower(source)
-        return source
-    }
-}
+fun makeDefaultArgumentStubPhase(skipInlineMethods: Boolean) = makePhase<DefaultArgumentStubGenerator>(
+    skipInlineMethods,
+    description = "Generate synthetic stubs for functions with default parameter values"
+)
 
 // TODO: fix expect/actual default parameters
 
@@ -172,7 +166,7 @@ private fun markerParameterDeclaration(function: IrFunction) =
     function.valueParameters.single { it.name == kConstructorMarkerName }
 
 // Populates `overriddenSymbols` for the newly created functions
-class DefaultParameterFakeOverrideCleanup(val context: CommonBackendContext): DeclarationContainerLoweringPass {
+class DefaultParameterFakeOverrideCleanup(val context: CommonBackendContext) : DeclarationContainerLoweringPass {
     override fun lower(irDeclarationContainer: IrDeclarationContainer) {
         for (func in irDeclarationContainer.declarations) {
             if (func !is IrSimpleFunction) continue

@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.isObject
 
-val ObjectClassPhase = makePhase<ObjectClassLowering, JvmBackendContext>(
+val ObjectClassPhase = makePhase<ObjectClassLowering>(
     description = "Handle object classes"
 )
 

@@ -34,16 +34,11 @@ import org.jetbrains.kotlin.ir.types.isPrimitiveType
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
-fun makeLateinitPhase(generateParameterNameInAssertion: Boolean) = object : CompilerPhase<CommonBackendContext, IrFile> {
-    override val name = LateinitLowering::class.simpleName!!
-    override val description = "Insert checks for lateinit field references"
-    override val prerequisite = emptySet()
-
-    override fun invoke(context: CommonBackendContext, source: IrFile): IrFile {
-        LateinitLowering(context, generateParameterNameInAssertion).lower(source)
-        return source
-    }
-}
+fun makeLateinitPhase(generateParameterNameInAssertion: Boolean) =
+    makePhase<LateinitLowering>(
+        generateParameterNameInAssertion,
+        description = "Insert checks for lateinit field references"
+    )
 
 class LateinitLowering(
     val context: CommonBackendContext,
