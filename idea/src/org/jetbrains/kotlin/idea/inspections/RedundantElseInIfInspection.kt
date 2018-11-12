@@ -29,8 +29,9 @@ import org.jetbrains.kotlin.types.typeUtil.isNothing
 class RedundantElseInIfInspection : AbstractKotlinInspection() {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor =
         ifExpressionVisitor(fun(ifExpression) {
-            if (ifExpression.isElseIf()) return
-            val elseKeyword = ifExpression.singleElseKeyword(true) ?: return
+            if (ifExpression.elseKeyword == null || ifExpression.isElseIf()) return
+            val elseKeyword = ifExpression.lastSingleElseKeyword() ?: return
+            if (!ifExpression.hasRedundantElse()) return
             val rangeInElement = elseKeyword.textRange?.shiftRight(-ifExpression.startOffset) ?: return
             holder.registerProblem(
                 holder.manager.createProblemDescriptor(
@@ -52,7 +53,7 @@ private class RemoveRedundantElseFix : LocalQuickFix {
 
     override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
         val ifExpression = descriptor.psiElement as? KtIfExpression ?: return
-        val elseKeyword = ifExpression.singleElseKeyword(false) ?: return
+        val elseKeyword = ifExpression.lastSingleElseKeyword() ?: return
         val elseExpression = elseKeyword.getStrictParentOfType<KtIfExpression>()?.`else` ?: return
 
         val copy = elseExpression.copy()
@@ -90,26 +91,26 @@ private class RemoveRedundantElseFix : LocalQuickFix {
     }
 }
 
-private fun KtIfExpression.singleElseKeyword(checkRedundant: Boolean): PsiElement? {
+private fun KtIfExpression.lastSingleElseKeyword(): PsiElement? {
     var ifExpression = this
-    val thenExpressions = mutableListOf<KtExpression?>()
     while (true) {
-        thenExpressions.add(ifExpression.then)
         ifExpression = ifExpression.`else` as? KtIfExpression ?: break
     }
-    val elseKeyword = ifExpression.elseKeyword ?: return null
-
-    if (checkRedundant) {
-        val context = analyze()
-        if (context[BindingContext.USED_AS_EXPRESSION, this] == true) return null
-        if (thenExpressions.any { !it.isReturnOrNothing(context) }) return null
-    }
-
-    return elseKeyword
+    return ifExpression.elseKeyword
 }
 
-private fun KtExpression?.isReturnOrNothing(context: BindingContext): Boolean {
-    if (this == null) return false
+private fun KtIfExpression.hasRedundantElse(): Boolean {
+    val context = analyze()
+    if (context[BindingContext.USED_AS_EXPRESSION, this] == true) return false
+    var ifExpression = this
+    while (true) {
+        if ((ifExpression.then)?.isReturnOrNothing(context) != true) return false
+        ifExpression = ifExpression.`else` as? KtIfExpression ?: break
+    }
+    return true
+}
+
+private fun KtExpression.isReturnOrNothing(context: BindingContext): Boolean {
     val lastExpression = (this as? KtBlockExpression)?.statements?.lastOrNull() ?: this
     return lastExpression is KtReturnExpression || context.getType(lastExpression)?.isNothing() == true
 }
