@@ -7,10 +7,12 @@ package org.jetbrains.kotlin.idea.debugger
 
 import com.intellij.debugger.engine.DebugProcessImpl
 import com.intellij.debugger.engine.DebuggerManagerThreadImpl
+import com.intellij.debugger.engine.evaluation.AbsentInformationEvaluateException
 import com.intellij.debugger.engine.events.DebuggerCommandImpl
 import com.intellij.debugger.impl.DebuggerContextImpl
 import com.intellij.debugger.impl.DebuggerUtilsEx
 import com.intellij.debugger.jdi.LocalVariableProxyImpl
+import com.intellij.debugger.jdi.StackFrameProxyImpl
 import com.intellij.psi.PsiElement
 import com.sun.jdi.*
 import com.sun.tools.jdi.LocalVariableImpl
@@ -29,6 +31,17 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import java.util.*
+
+fun StackFrameProxyImpl.visibleVariablesSafe(): List<LocalVariableProxyImpl> {
+    try {
+        return visibleVariables()
+    } catch (e: AbsentInformationEvaluateException) {
+        // Current implementation of visibleVariables() wraps an AbsentInformationException into EvaluateException
+        return emptyList()
+    } catch (e: AbsentInformationException) {
+        return emptyList()
+    }
+}
 
 fun Method.safeAllLineLocations(): List<Location> {
     return DebuggerUtilsEx.allLineLocations(this) ?: emptyList()
