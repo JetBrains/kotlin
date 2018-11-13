@@ -43,5 +43,6 @@ class JavaMethodToKotlinFunctionConversion : TransformerBasedConversion() {
                 it
             }
         }
+        klass.acceptChildren(this)
     }
 }
