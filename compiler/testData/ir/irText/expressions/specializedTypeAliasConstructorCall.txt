@@ -35,7 +35,7 @@ FILE fqName:<root> fileName:/specializedTypeAliasConstructorCall.kt
   FUN name:test visibility:public modality:FINAL <> () returnType:IntAlias /* = Cell<kotlin.Int> */ flags:
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='test(): IntAlias /* = Cell<Int> */'
-        CALL 'constructor Cell(Int)' type=Cell<kotlin.Int> origin=null
+        CALL 'constructor Cell(T)' type=Cell<kotlin.Int> origin=null
           <T>: kotlin.Int
           value: CONST Int type=kotlin.Int value=42
 

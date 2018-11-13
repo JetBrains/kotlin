@@ -35,7 +35,7 @@ FILE fqName:<root> fileName:/localDelegatedPropertiesWithAnnotations.kt
           CALL 'constructor A(String)' type=A origin=null
             x: CONST String type=kotlin.String value="foo/test"
         VAR DELEGATE name:test$delegate type:kotlin.Lazy<kotlin.Int> flags:val
-          CALL 'lazy(() -> Int): Lazy<Int>' type=kotlin.Lazy<kotlin.Int> origin=null
+          CALL 'lazy(() -> T): Lazy<T>' type=kotlin.Lazy<kotlin.Int> origin=null
             <T>: kotlin.Int
             initializer: BLOCK type=() -> kotlin.Int origin=LAMBDA
               FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Int flags:
@@ -46,7 +46,7 @@ FILE fqName:<root> fileName:/localDelegatedPropertiesWithAnnotations.kt
         FUN DELEGATED_PROPERTY_ACCESSOR name:<get-test> visibility:local modality:FINAL <> () returnType:kotlin.Int flags:
           BLOCK_BODY
             RETURN type=kotlin.Nothing from='<get-test>(): Int'
-              CALL 'getValue(Any?, KProperty<*>) on Lazy<Int>: Int' type=kotlin.Int origin=null
+              CALL 'getValue(Any?, KProperty<*>) on Lazy<T>: T' type=kotlin.Int origin=null
                 <T>: kotlin.Int
                 $receiver: GET_VAR '`test$delegate`: Lazy<Int>' type=kotlin.Lazy<kotlin.Int> origin=null
                 thisRef: CONST Null type=kotlin.Nothing? value=null

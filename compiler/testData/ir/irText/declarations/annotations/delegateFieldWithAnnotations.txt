@@ -20,7 +20,7 @@ FILE fqName:<root> fileName:/delegateFieldWithAnnotations.kt
       annotations:
         CALL 'constructor Ann()' type=Ann origin=null
       EXPRESSION_BODY
-        CALL 'lazy(() -> Int): Lazy<Int>' type=kotlin.Lazy<kotlin.Int> origin=null
+        CALL 'lazy(() -> T): Lazy<T>' type=kotlin.Lazy<kotlin.Int> origin=null
           <T>: kotlin.Int
           initializer: BLOCK type=() -> kotlin.Int origin=LAMBDA
             FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Int flags:
@@ -32,7 +32,7 @@ FILE fqName:<root> fileName:/delegateFieldWithAnnotations.kt
       correspondingProperty: PROPERTY name:test1 visibility:public modality:FINAL flags:delegated,val
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-test1>(): Int'
-          CALL 'getValue(Any?, KProperty<*>) on Lazy<Int>: Int' type=kotlin.Int origin=null
+          CALL 'getValue(Any?, KProperty<*>) on Lazy<T>: T' type=kotlin.Int origin=null
             <T>: kotlin.Int
             $receiver: GET_FIELD '`test1$delegate`: Lazy<Int>' type=kotlin.Lazy<kotlin.Int> origin=null
             thisRef: CONST Null type=kotlin.Nothing? value=null

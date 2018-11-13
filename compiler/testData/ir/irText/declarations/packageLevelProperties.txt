@@ -71,7 +71,7 @@ FILE fqName:<root> fileName:/packageLevelProperties.kt
   PROPERTY name:test7 visibility:public modality:FINAL flags:delegated,val
     FIELD DELEGATE name:test7$delegate type:kotlin.Lazy<kotlin.Int> visibility:private flags:final,static
       EXPRESSION_BODY
-        CALL 'lazy(() -> Int): Lazy<Int>' type=kotlin.Lazy<kotlin.Int> origin=null
+        CALL 'lazy(() -> T): Lazy<T>' type=kotlin.Lazy<kotlin.Int> origin=null
           <T>: kotlin.Int
           initializer: BLOCK type=() -> kotlin.Int origin=LAMBDA
             FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Int flags:
@@ -83,7 +83,7 @@ FILE fqName:<root> fileName:/packageLevelProperties.kt
       correspondingProperty: PROPERTY name:test7 visibility:public modality:FINAL flags:delegated,val
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-test7>(): Int'
-          CALL 'getValue(Any?, KProperty<*>) on Lazy<Int>: Int' type=kotlin.Int origin=null
+          CALL 'getValue(Any?, KProperty<*>) on Lazy<T>: T' type=kotlin.Int origin=null
             <T>: kotlin.Int
             $receiver: GET_FIELD '`test7$delegate`: Lazy<Int>' type=kotlin.Lazy<kotlin.Int> origin=null
             thisRef: CONST Null type=kotlin.Nothing? value=null
@@ -91,14 +91,14 @@ FILE fqName:<root> fileName:/packageLevelProperties.kt
   PROPERTY name:test8 visibility:public modality:FINAL flags:delegated,var
     FIELD DELEGATE name:test8$delegate type:kotlin.collections.HashMap<kotlin.String, kotlin.Int> /* = java.util.HashMap<kotlin.String, kotlin.Int> */ visibility:private flags:final,static
       EXPRESSION_BODY
-        CALL 'hashMapOf(): HashMap<String, Int> /* = HashMap<String, Int> */' type=kotlin.collections.HashMap<kotlin.String, kotlin.Int> /* = java.util.HashMap<kotlin.String, kotlin.Int> */ origin=null
+        CALL 'hashMapOf(): HashMap<K, V> /* = HashMap<K, V> */' type=kotlin.collections.HashMap<kotlin.String, kotlin.Int> /* = java.util.HashMap<kotlin.String, kotlin.Int> */ origin=null
           <K>: kotlin.String
           <V>: kotlin.Int
     FUN DELEGATED_PROPERTY_ACCESSOR name:<get-test8> visibility:public modality:FINAL <> () returnType:kotlin.Int flags:
       correspondingProperty: PROPERTY name:test8 visibility:public modality:FINAL flags:delegated,var
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-test8>(): Int'
-          CALL 'getValue(Any?, KProperty<*>) on MutableMap<in String, out Int>: Int' type=kotlin.Int origin=null
+          CALL 'getValue(Any?, KProperty<*>) on MutableMap<in String, out V>: V1' type=kotlin.Int origin=null
             <V>: kotlin.Int
             <V1 : V>: kotlin.Int
             $receiver: GET_FIELD '`test8$delegate`: HashMap<String, Int> /* = HashMap<String, Int> */' type=kotlin.collections.HashMap<kotlin.String, kotlin.Int> /* = java.util.HashMap<kotlin.String, kotlin.Int> */ origin=null
@@ -109,7 +109,7 @@ FILE fqName:<root> fileName:/packageLevelProperties.kt
       VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int flags:
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<set-test8>(Int): Unit'
-          CALL 'setValue(Any?, KProperty<*>, Int) on MutableMap<in String, in Int>: Unit' type=kotlin.Unit origin=null
+          CALL 'setValue(Any?, KProperty<*>, V) on MutableMap<in String, in V>: Unit' type=kotlin.Unit origin=null
             <V>: kotlin.Int
             $receiver: GET_FIELD '`test8$delegate`: HashMap<String, Int> /* = HashMap<String, Int> */' type=kotlin.collections.HashMap<kotlin.String, kotlin.Int> /* = java.util.HashMap<kotlin.String, kotlin.Int> */ origin=null
             thisRef: CONST Null type=kotlin.Nothing? value=null

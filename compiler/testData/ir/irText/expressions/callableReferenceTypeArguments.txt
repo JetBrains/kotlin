@@ -34,7 +34,7 @@ FILE fqName:<root> fileName:/callableReferenceTypeArguments.kt
   PROPERTY name:test1 visibility:public modality:FINAL flags:val
     FIELD PROPERTY_BACKING_FIELD name:test1 type:(kotlin.Int) -> kotlin.Unit visibility:public flags:final,static
       EXPRESSION_BODY
-        FUNCTION_REFERENCE 'topLevel1(Int): Unit' type=kotlin.reflect.KFunction1<@kotlin.ParameterName kotlin.Int, kotlin.Unit> origin=null
+        FUNCTION_REFERENCE 'topLevel1(T): Unit' type=kotlin.reflect.KFunction1<@kotlin.ParameterName kotlin.Int, kotlin.Unit> origin=null
           <reified T>: kotlin.Int
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test1> visibility:public modality:FINAL <> () returnType:(kotlin.Int) -> kotlin.Unit flags:
       correspondingProperty: PROPERTY name:test1 visibility:public modality:FINAL flags:val
@@ -44,7 +44,7 @@ FILE fqName:<root> fileName:/callableReferenceTypeArguments.kt
   PROPERTY name:test2 visibility:public modality:FINAL flags:val
     FIELD PROPERTY_BACKING_FIELD name:test2 type:(kotlin.collections.List<kotlin.String>) -> kotlin.Unit visibility:public flags:final,static
       EXPRESSION_BODY
-        FUNCTION_REFERENCE 'topLevel2(List<String>): Unit' type=kotlin.reflect.KFunction1<@kotlin.ParameterName kotlin.collections.List<kotlin.String>, kotlin.Unit> origin=null
+        FUNCTION_REFERENCE 'topLevel2(List<T>): Unit' type=kotlin.reflect.KFunction1<@kotlin.ParameterName kotlin.collections.List<kotlin.String>, kotlin.Unit> origin=null
           <reified T>: kotlin.String
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test2> visibility:public modality:FINAL <> () returnType:(kotlin.collections.List<kotlin.String>) -> kotlin.Unit flags:
       correspondingProperty: PROPERTY name:test2 visibility:public modality:FINAL flags:val
@@ -54,7 +54,7 @@ FILE fqName:<root> fileName:/callableReferenceTypeArguments.kt
   PROPERTY name:test3 visibility:public modality:FINAL flags:val
     FIELD PROPERTY_BACKING_FIELD name:test3 type:(kotlin.Int) -> kotlin.Unit visibility:public flags:final,static
       EXPRESSION_BODY
-        FUNCTION_REFERENCE 'objectMember(Int): Unit' type=kotlin.reflect.KFunction1<@kotlin.ParameterName kotlin.Int, kotlin.Unit> origin=null
+        FUNCTION_REFERENCE 'objectMember(T): Unit' type=kotlin.reflect.KFunction1<@kotlin.ParameterName kotlin.Int, kotlin.Unit> origin=null
           <reified T>: kotlin.Int
           $this: GET_OBJECT 'Host' type=Host
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test3> visibility:public modality:FINAL <> () returnType:(kotlin.Int) -> kotlin.Unit flags:

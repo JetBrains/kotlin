@@ -377,7 +377,7 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
             DECLARATION_RENDERER.renderDescriptor(this.descriptor)
 
         internal fun DeclarationDescriptor.ref(): String =
-            REFERENCE_RENDERER.renderDescriptor(this)
+            REFERENCE_RENDERER.renderDescriptor(this.original)
 
         internal fun KotlinType.render(): String =
             DECLARATION_RENDERER.renderType(this)

@@ -3,7 +3,7 @@ FILE fqName:<root> fileName:/localDelegatedProperties.kt
     BLOCK_BODY
       LOCAL_DELEGATED_PROPERTY name:x type:kotlin.Int flags:val
         VAR DELEGATE name:x$delegate type:kotlin.Lazy<kotlin.Int> flags:val
-          CALL 'lazy(() -> Int): Lazy<Int>' type=kotlin.Lazy<kotlin.Int> origin=null
+          CALL 'lazy(() -> T): Lazy<T>' type=kotlin.Lazy<kotlin.Int> origin=null
             <T>: kotlin.Int
             initializer: BLOCK type=() -> kotlin.Int origin=LAMBDA
               FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Int flags:
@@ -14,7 +14,7 @@ FILE fqName:<root> fileName:/localDelegatedProperties.kt
         FUN DELEGATED_PROPERTY_ACCESSOR name:<get-x> visibility:local modality:FINAL <> () returnType:kotlin.Int flags:
           BLOCK_BODY
             RETURN type=kotlin.Nothing from='<get-x>(): Int'
-              CALL 'getValue(Any?, KProperty<*>) on Lazy<Int>: Int' type=kotlin.Int origin=null
+              CALL 'getValue(Any?, KProperty<*>) on Lazy<T>: T' type=kotlin.Int origin=null
                 <T>: kotlin.Int
                 $receiver: GET_VAR '`x$delegate`: Lazy<Int>' type=kotlin.Lazy<kotlin.Int> origin=null
                 thisRef: CONST Null type=kotlin.Nothing? value=null
@@ -25,13 +25,13 @@ FILE fqName:<root> fileName:/localDelegatedProperties.kt
     BLOCK_BODY
       LOCAL_DELEGATED_PROPERTY name:x type:kotlin.Int flags:var
         VAR DELEGATE name:x$delegate type:kotlin.collections.HashMap<kotlin.String, kotlin.Int> /* = java.util.HashMap<kotlin.String, kotlin.Int> */ flags:val
-          CALL 'hashMapOf(): HashMap<String, Int> /* = HashMap<String, Int> */' type=kotlin.collections.HashMap<kotlin.String, kotlin.Int> /* = java.util.HashMap<kotlin.String, kotlin.Int> */ origin=null
+          CALL 'hashMapOf(): HashMap<K, V> /* = HashMap<K, V> */' type=kotlin.collections.HashMap<kotlin.String, kotlin.Int> /* = java.util.HashMap<kotlin.String, kotlin.Int> */ origin=null
             <K>: kotlin.String
             <V>: kotlin.Int
         FUN DELEGATED_PROPERTY_ACCESSOR name:<get-x> visibility:local modality:FINAL <> () returnType:kotlin.Int flags:
           BLOCK_BODY
             RETURN type=kotlin.Nothing from='<get-x>(): Int'
-              CALL 'getValue(Any?, KProperty<*>) on MutableMap<in String, out Int>: Int' type=kotlin.Int origin=null
+              CALL 'getValue(Any?, KProperty<*>) on MutableMap<in String, out V>: V1' type=kotlin.Int origin=null
                 <V>: kotlin.Int
                 <V1 : V>: kotlin.Int
                 $receiver: GET_VAR '`x$delegate`: HashMap<String, Int> /* = HashMap<String, Int> */' type=kotlin.collections.HashMap<kotlin.String, kotlin.Int> /* = java.util.HashMap<kotlin.String, kotlin.Int> */ origin=null
@@ -41,7 +41,7 @@ FILE fqName:<root> fileName:/localDelegatedProperties.kt
           VALUE_PARAMETER name:value index:0 type:kotlin.Int flags:
           BLOCK_BODY
             RETURN type=kotlin.Nothing from='<set-x>(Int): Unit'
-              CALL 'setValue(Any?, KProperty<*>, Int) on MutableMap<in String, in Int>: Unit' type=kotlin.Unit origin=null
+              CALL 'setValue(Any?, KProperty<*>, V) on MutableMap<in String, in V>: Unit' type=kotlin.Unit origin=null
                 <V>: kotlin.Int
                 $receiver: GET_VAR '`x$delegate`: HashMap<String, Int> /* = HashMap<String, Int> */' type=kotlin.collections.HashMap<kotlin.String, kotlin.Int> /* = java.util.HashMap<kotlin.String, kotlin.Int> */ origin=null
                 thisRef: CONST Null type=kotlin.Nothing? value=null

@@ -16,8 +16,8 @@ FILE fqName:<root> fileName:/variableAsFunctionCallWithGenerics.kt
     VALUE_PARAMETER name:x index:0 type:kotlin.String flags:
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='testGeneric1(String): String'
-        CALL 'invoke(): String' type=kotlin.String origin=INVOKE
-          $this: CALL '<get-gk>() on String: () -> String' type=() -> kotlin.String origin=GET_PROPERTY
+        CALL 'invoke(): R' type=kotlin.String origin=INVOKE
+          $this: CALL '<get-gk>() on T: () -> T' type=() -> kotlin.String origin=GET_PROPERTY
             <`0>: kotlin.String
             $receiver: GET_VAR 'value-parameter x: String' type=kotlin.String origin=null
   PROPERTY name:kt26531Val visibility:public modality:FINAL flags:val
@@ -36,7 +36,7 @@ FILE fqName:<root> fileName:/variableAsFunctionCallWithGenerics.kt
   FUN name:kt26531 visibility:public modality:FINAL <> () returnType:kotlin.Int flags:
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='kt26531(): Int'
-        CALL 'invoke(): Int' type=kotlin.Int origin=INVOKE
-          $this: CALL '<get-kt26531Val>() on Int: () -> Int' type=() -> kotlin.Int origin=GET_PROPERTY
+        CALL 'invoke(): R' type=kotlin.Int origin=INVOKE
+          $this: CALL '<get-kt26531Val>() on T: () -> T' type=() -> kotlin.Int origin=GET_PROPERTY
             <`0>: kotlin.Int
             $receiver: CONST Int type=kotlin.Int value=7

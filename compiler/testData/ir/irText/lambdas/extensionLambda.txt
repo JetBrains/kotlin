@@ -2,7 +2,7 @@ FILE fqName:<root> fileName:/extensionLambda.kt
   FUN name:test1 visibility:public modality:FINAL <> () returnType:kotlin.Int flags:
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='test1(): Int'
-        CALL 'run(String.() -> Int) on String: Int' type=kotlin.Int origin=null
+        CALL 'run(T.() -> R) on T: R' type=kotlin.Int origin=null
           <T>: kotlin.String
           <R>: kotlin.Int
           $receiver: CONST String type=kotlin.String value="42"

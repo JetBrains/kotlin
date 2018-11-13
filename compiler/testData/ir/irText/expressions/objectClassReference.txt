@@ -25,7 +25,7 @@ FILE fqName:<root> fileName:/objectClassReference.kt
         CLASS_REFERENCE 'A' type=kotlin.reflect.KClass<A>
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
         typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public flags: superTypes:[kotlin.Any]
-        CALL '<get-java>() on KClass<A>: Class<A>' type=java.lang.Class<A> origin=GET_PROPERTY
+        CALL '<get-java>() on KClass<T>: Class<T>' type=java.lang.Class<A> origin=GET_PROPERTY
           <`0>: A
           $receiver: CLASS_REFERENCE 'A' type=kotlin.reflect.KClass<A>
 

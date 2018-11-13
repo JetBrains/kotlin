@@ -34,12 +34,12 @@ FILE fqName:<root> fileName:/fixationOrder1.kt
   FUN name:test visibility:public modality:FINAL <> () returnType:Inv2<kotlin.String, kotlin.Int> flags:
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='test(): Inv2<String, Int>'
-        CALL 'check(String, Int, (String) -> Int): Inv2<String, Int>' type=Inv2<kotlin.String, kotlin.Int> origin=null
+        CALL 'check(T, R, (T) -> R): Inv2<T, R>' type=Inv2<kotlin.String, kotlin.Int> origin=null
           <T>: kotlin.String
           <R>: kotlin.Int
           x: CONST String type=kotlin.String value=""
           y: CONST Int type=kotlin.Int value=1
-          f: CALL 'foo(): (String) -> Int' type=(kotlin.String) -> kotlin.Int origin=null
+          f: CALL 'foo(): (X) -> Y' type=(kotlin.String) -> kotlin.Int origin=null
             <X>: kotlin.String
             <Y>: kotlin.Int
   FUN name:box visibility:public modality:FINAL <> () returnType:kotlin.String flags:
