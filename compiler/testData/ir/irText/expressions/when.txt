@@ -48,9 +48,9 @@ FILE fqName:<root> fileName:/when.kt
                   GET_VAR 'tmp0_subject: Any?' type=kotlin.Any? origin=null
               then: CONST String type=kotlin.String value="!Number"
             BRANCH
-              if: CALL 'contains(Number) on Iterable<Number>: Boolean' type=kotlin.Boolean origin=IN
+              if: CALL 'contains(T) on Iterable<T>: Boolean' type=kotlin.Boolean origin=IN
                 <T>: kotlin.Number
-                $receiver: CALL 'setOf(): Set<Nothing>' type=kotlin.collections.Set<kotlin.Nothing> origin=null
+                $receiver: CALL 'setOf(): Set<T>' type=kotlin.collections.Set<kotlin.Nothing> origin=null
                   <T>: kotlin.Nothing
                 element: TYPE_OP type=kotlin.Number origin=IMPLICIT_CAST typeOperand=kotlin.Number
                   typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Number modality:ABSTRACT visibility:public flags: superTypes:[kotlin.Any; java.io.Serializable]
@@ -85,9 +85,9 @@ FILE fqName:<root> fileName:/when.kt
               GET_VAR 'value-parameter x: Any?' type=kotlin.Any? origin=null
             then: CONST String type=kotlin.String value="!Number"
           BRANCH
-            if: CALL 'contains(Number) on Iterable<Number>: Boolean' type=kotlin.Boolean origin=IN
+            if: CALL 'contains(T) on Iterable<T>: Boolean' type=kotlin.Boolean origin=IN
               <T>: kotlin.Number
-              $receiver: CALL 'setOf(): Set<Nothing>' type=kotlin.collections.Set<kotlin.Nothing> origin=null
+              $receiver: CALL 'setOf(): Set<T>' type=kotlin.collections.Set<kotlin.Nothing> origin=null
                 <T>: kotlin.Nothing
               element: TYPE_OP type=kotlin.Number origin=IMPLICIT_CAST typeOperand=kotlin.Number
                 typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Number modality:ABSTRACT visibility:public flags: superTypes:[kotlin.Any; java.io.Serializable]

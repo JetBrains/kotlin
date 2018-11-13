@@ -87,7 +87,7 @@ FILE fqName:<root> fileName:/multipleImplicitReceivers.kt
     BLOCK_BODY
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
         typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public flags: superTypes:[kotlin.Any]
-        CALL 'with(A, A.() -> Int): Int' type=kotlin.Int origin=null
+        CALL 'with(T, T.() -> R): R' type=kotlin.Int origin=null
           <T>: A
           <R>: kotlin.Int
           receiver: GET_OBJECT 'A' type=A
@@ -96,7 +96,7 @@ FILE fqName:<root> fileName:/multipleImplicitReceivers.kt
               $receiver: VALUE_PARAMETER name:<this> type:A flags:
               BLOCK_BODY
                 RETURN type=kotlin.Nothing from='<anonymous>() on A: Int'
-                  CALL 'with(IFoo, IFoo.() -> Int): Int' type=kotlin.Int origin=null
+                  CALL 'with(T, T.() -> R): R' type=kotlin.Int origin=null
                     <T>: IFoo
                     <R>: kotlin.Int
                     receiver: GET_VAR 'value-parameter fooImpl: IFoo' type=IFoo origin=null
@@ -105,7 +105,7 @@ FILE fqName:<root> fileName:/multipleImplicitReceivers.kt
                         $receiver: VALUE_PARAMETER name:<this> type:IFoo flags:
                         BLOCK_BODY
                           RETURN type=kotlin.Nothing from='<anonymous>() on IFoo: Int'
-                            CALL 'with(IInvoke, IInvoke.() -> Int): Int' type=kotlin.Int origin=null
+                            CALL 'with(T, T.() -> R): R' type=kotlin.Int origin=null
                               <T>: IInvoke
                               <R>: kotlin.Int
                               receiver: GET_VAR 'value-parameter invokeImpl: IInvoke' type=IInvoke origin=null

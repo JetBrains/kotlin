@@ -80,7 +80,7 @@ FILE fqName:<root> fileName:/thisOfGenericOuterClass.kt
               FIELD PROPERTY_BACKING_FIELD name:xx type:kotlin.Int visibility:public flags:final
                 EXPRESSION_BODY
                   CALL 'plus(Int): Int' type=kotlin.Int origin=PLUS
-                    $this: CALL '<get-x>(): Int' type=kotlin.Int origin=GET_PROPERTY
+                    $this: CALL '<get-x>(): T' type=kotlin.Int origin=GET_PROPERTY
                       $this: GET_VAR 'this@test: Outer<Int>' type=Outer<kotlin.Int> origin=null
                     other: CALL '<get-y>(): Int' type=kotlin.Int origin=GET_PROPERTY
                       $this: GET_VAR 'this@<no name provided>: <no name provided>' type=test.<no name provided> origin=null

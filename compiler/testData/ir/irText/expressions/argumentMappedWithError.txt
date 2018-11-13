@@ -14,7 +14,7 @@ FILE fqName:<root> fileName:/argumentMappedWithError.kt
       VAR name:x type:kotlin.Int flags:val
         CONST Int type=kotlin.Int value=0
       CALL 'foo(Number): Unit' type=kotlin.Unit origin=null
-        arg: CALL 'convert() on Number: Number' type=kotlin.Number origin=null
+        arg: CALL 'convert() on Number: R' type=kotlin.Number origin=null
           <R : Number>: kotlin.Number
           $receiver: GET_VAR 'x: Int' type=kotlin.Int origin=null
 

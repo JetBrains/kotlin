@@ -225,7 +225,7 @@ FILE fqName:<root> fileName:/useImportedMember.kt
         BRANCH
           if: CALL 'NOT(Boolean): Boolean' type=kotlin.Boolean origin=EXCLEQ
             arg0: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EXCLEQ
-              arg0: CALL 'g1(String): String' type=kotlin.String origin=null
+              arg0: CALL 'g1(T): T' type=kotlin.String origin=null
                 <T>: kotlin.String
                 $this: GET_OBJECT 'C' type=C
                 t: CONST String type=kotlin.String value="7"
@@ -236,7 +236,7 @@ FILE fqName:<root> fileName:/useImportedMember.kt
         BRANCH
           if: CALL 'NOT(Boolean): Boolean' type=kotlin.Boolean origin=EXCLEQ
             arg0: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EXCLEQ
-              arg0: CALL '<get-g2>() on String: String' type=kotlin.String origin=GET_PROPERTY
+              arg0: CALL '<get-g2>() on T: T' type=kotlin.String origin=GET_PROPERTY
                 <`0>: kotlin.String
                 $this: GET_OBJECT 'C' type=C
                 $receiver: CONST String type=kotlin.String value="8"
@@ -247,7 +247,7 @@ FILE fqName:<root> fileName:/useImportedMember.kt
         BRANCH
           if: CALL 'NOT(Boolean): Boolean' type=kotlin.Boolean origin=EXCLEQ
             arg0: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EXCLEQ
-              arg0: CALL 'fromInterface() on Int: Int' type=kotlin.Int origin=null
+              arg0: CALL 'fromInterface() on T: T' type=kotlin.Int origin=null
                 <T>: kotlin.Int
                 $this: GET_OBJECT 'C' type=C
                 $receiver: CONST Int type=kotlin.Int value=9
@@ -258,7 +258,7 @@ FILE fqName:<root> fileName:/useImportedMember.kt
         BRANCH
           if: CALL 'NOT(Boolean): Boolean' type=kotlin.Boolean origin=EXCLEQ
             arg0: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EXCLEQ
-              arg0: CALL '<get-fromClass>() on String: String' type=kotlin.String origin=GET_PROPERTY
+              arg0: CALL '<get-fromClass>() on T: T' type=kotlin.String origin=GET_PROPERTY
                 <`0>: kotlin.String
                 $this: GET_OBJECT 'C' type=C
                 $receiver: CONST String type=kotlin.String value="10"

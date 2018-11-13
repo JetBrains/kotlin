@@ -13,19 +13,19 @@ FILE fqName:<root> fileName:/variableAsFunctionCall.kt
     VALUE_PARAMETER name:f index:0 type:() -> kotlin.Unit flags:
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='test1(() -> Unit): Unit'
-        CALL 'invoke(): Unit' type=kotlin.Unit origin=INVOKE
+        CALL 'invoke(): R' type=kotlin.Unit origin=INVOKE
           $this: GET_VAR 'value-parameter f: () -> Unit' type=() -> kotlin.Unit origin=VARIABLE_AS_FUNCTION
   FUN name:test2 visibility:public modality:FINAL <> (f:kotlin.String.() -> kotlin.Unit) returnType:kotlin.Unit flags:
     VALUE_PARAMETER name:f index:0 type:kotlin.String.() -> kotlin.Unit flags:
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='test2(String.() -> Unit): Unit'
-        CALL 'invoke(String): Unit' type=kotlin.Unit origin=INVOKE
+        CALL 'invoke(P1): R' type=kotlin.Unit origin=INVOKE
           $this: GET_VAR 'value-parameter f: String.() -> Unit' type=kotlin.String.() -> kotlin.Unit origin=VARIABLE_AS_FUNCTION
           p1: CONST String type=kotlin.String value="hello"
   FUN name:test3 visibility:public modality:FINAL <> () returnType:kotlin.String flags:
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='test3(): String'
-        CALL 'invoke(): String' type=kotlin.String origin=null
+        CALL 'invoke(): R' type=kotlin.String origin=null
           $this: CALL 'k() on String: () -> String' type=() -> kotlin.String origin=null
             $receiver: CONST String type=kotlin.String value="hello"
   FUN name:test4 visibility:public modality:FINAL <> (ns:kotlin.String?) returnType:kotlin.String? flags:
@@ -55,6 +55,6 @@ FILE fqName:<root> fileName:/variableAsFunctionCall.kt
               then: CONST Null type=kotlin.Nothing? value=null
             BRANCH
               if: CONST Boolean type=kotlin.Boolean value=true
-              then: CALL 'invoke(): String' type=kotlin.String origin=null
+              then: CALL 'invoke(): R' type=kotlin.String origin=null
                 $this: GET_VAR 'tmp1_safe_receiver: (() -> String)?' type=(() -> kotlin.String)? origin=null
 

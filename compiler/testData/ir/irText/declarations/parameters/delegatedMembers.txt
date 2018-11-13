@@ -46,11 +46,11 @@ FILE fqName:<root> fileName:/delegatedMembers.kt
       VALUE_PARAMETER name:t index:0 type:TT flags:
       VALUE_PARAMETER name:x index:1 type:X flags:
       BLOCK_BODY
-        CALL 'qux(TT, X): Unit' type=kotlin.Unit origin=null
+        CALL 'qux(T, X): Unit' type=kotlin.Unit origin=null
           <X>: X
           $this: GET_FIELD '`Test$IBase$delegate`: IBase<TT>' type=IBase<TT> origin=null
             receiver: GET_VAR 'this@Test: Test<TT>' type=Test<TT> origin=null
-          t: GET_VAR 'value-parameter t: TT' type=TT origin=null
+          t: GET_VAR 'value-parameter t: T' type=TT origin=null
           x: GET_VAR 'value-parameter x: X' type=X origin=null
     FUN DELEGATED_MEMBER name:foo visibility:public modality:OPEN <> ($this:Test<TT>, x:kotlin.Int) returnType:kotlin.Unit flags:
       overridden:

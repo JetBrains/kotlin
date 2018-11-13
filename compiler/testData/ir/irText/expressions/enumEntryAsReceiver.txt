@@ -142,6 +142,6 @@ FILE fqName:<root> fileName:/enumEntryAsReceiver.kt
   FUN name:box visibility:public modality:FINAL <> () returnType:kotlin.String flags:
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='box(): String'
-        CALL 'invoke(): String' type=kotlin.String origin=INVOKE
+        CALL 'invoke(): R' type=kotlin.String origin=INVOKE
           $this: CALL '<get-value>(): () -> String' type=() -> kotlin.String origin=GET_PROPERTY
             $this: GET_ENUM 'B' type=X
