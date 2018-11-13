@@ -28,14 +28,14 @@ class ReplaceNegatedIsEmptyWithIsNotEmptyInspection : AbstractKotlinInspection()
                     simpleNameExpression,
                     "Replace negated 'isEmpty' with 'isNotEmpty'",
                     ProblemHighlightType.INFORMATION,
-                    ReplaceIsEmptyWithIsNotEmptyNegationQuickFix()
+                    ReplaceNegatedIsEmptyWithIsNotEmptyQuickFix()
                 )
             }
         }
     }
 }
 
-class ReplaceIsEmptyWithIsNotEmptyNegationQuickFix : LocalQuickFix {
+class ReplaceNegatedIsEmptyWithIsNotEmptyQuickFix : LocalQuickFix {
     override fun getName() = "Replace negated 'isEmpty' with 'isNotEmpty'"
 
     override fun getFamilyName() = name
