@@ -80,6 +80,6 @@ fun confirmMemberRewrite(targetClass: KtClass, vararg descriptors: FunctionDescr
 
 fun generateFunctionSkeleton(descriptor: FunctionDescriptor, targetClass: KtClassOrObject): KtNamedFunction {
     return OverrideMemberChooserObject
-            .create(targetClass.project, descriptor, descriptor, OverrideMemberChooserObject.BodyType.EMPTY)
+            .create(targetClass.project, descriptor, descriptor, OverrideMemberChooserObject.BodyType.FROM_TEMPLATE)
             .generateMember(targetClass, false) as KtNamedFunction
 }

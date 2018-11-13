@@ -9,7 +9,8 @@ actual interface Interface {
     actual var status: Int
 
     actual class Nested {
-        actual fun bar() {}
+        actual fun bar() {
+        }
     }
 
 }

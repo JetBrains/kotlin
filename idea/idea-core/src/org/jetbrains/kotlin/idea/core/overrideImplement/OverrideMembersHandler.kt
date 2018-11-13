@@ -69,7 +69,7 @@ class OverrideMembersHandler(private val preferConstructorParameters: Boolean = 
                         descriptor.kind == ClassKind.INTERFACE && realSuper.builtIns.isMemberOfAny(realSuper) ->
                             OverrideMemberChooserObject.BodyType.NO_BODY
                         immediateSuperToUse.modality == Modality.ABSTRACT ->
-                            OverrideMemberChooserObject.BodyType.EMPTY
+                            OverrideMemberChooserObject.BodyType.FROM_TEMPLATE
                         realSupersToUse.size == 1 ->
                             OverrideMemberChooserObject.BodyType.SUPER
                         else ->

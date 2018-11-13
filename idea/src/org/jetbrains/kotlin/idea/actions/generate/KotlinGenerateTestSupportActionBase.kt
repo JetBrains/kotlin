@@ -184,7 +184,7 @@ abstract class KotlinGenerateTestSupportActionBase(
                 val functionDescriptor = functionInPlace.unsafeResolveToDescriptor() as FunctionDescriptor
                 val overriddenDescriptors = functionDescriptor.overriddenDescriptors
                 val bodyText = when (overriddenDescriptors.size) {
-                    0 -> generateUnsupportedOrSuperCall(project, functionDescriptor, BodyType.EMPTY)
+                    0 -> generateUnsupportedOrSuperCall(project, functionDescriptor, BodyType.FROM_TEMPLATE)
                     1 -> generateUnsupportedOrSuperCall(project, overriddenDescriptors.single(), BodyType.SUPER)
                     else -> generateUnsupportedOrSuperCall(project, overriddenDescriptors.first(), BodyType.QUALIFIED_SUPER)
                 }

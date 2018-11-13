@@ -4,5 +4,6 @@
 actual class My {
     actual constructor()
 
-    actual fun test() {}
+    actual fun test() {
+    }
 }

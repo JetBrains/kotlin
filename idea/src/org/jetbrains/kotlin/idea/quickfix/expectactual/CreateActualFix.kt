@@ -25,7 +25,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.JavaDirectoryService
 import com.intellij.psi.codeStyle.CodeStyleManager
 import org.jetbrains.kotlin.analyzer.ModuleInfo
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
@@ -36,10 +35,12 @@ import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.idea.caches.project.ModuleSourceInfo
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithContent
 import org.jetbrains.kotlin.idea.core.*
+import org.jetbrains.kotlin.idea.core.overrideImplement.OverrideMemberChooserObject
+import org.jetbrains.kotlin.idea.core.overrideImplement.generateActualMember
+import org.jetbrains.kotlin.idea.core.overrideImplement.generateTopLevelActual
 import org.jetbrains.kotlin.idea.quickfix.KotlinQuickFixAction
 import org.jetbrains.kotlin.idea.quickfix.KotlinSingleIntentionActionFactory
 import org.jetbrains.kotlin.idea.refactoring.createKotlinFile
-import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.actualsForExpected
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
@@ -192,7 +193,7 @@ class CreateActualPropertyFix(
     actualPlatform: MultiTargetPlatform.Specific
 ) : CreateActualFix<KtProperty>(property, actualModule, actualPlatform, { project, element ->
     val descriptor = element.toDescriptor() as? PropertyDescriptor
-    descriptor?.let { generateProperty(project, element, descriptor, actualNeeded = true) }
+    descriptor?.let { generateProperty(project, element, descriptor) }
 }) {
 
     override val elementType = "property"
@@ -204,7 +205,7 @@ class CreateActualFunctionFix(
     actualPlatform: MultiTargetPlatform.Specific
 ) : CreateActualFix<KtFunction>(function, actualModule, actualPlatform, { project, element ->
     val descriptor = element.toDescriptor() as? FunctionDescriptor
-    descriptor?.let { generateFunction(project, element, descriptor, actualNeeded = true) }
+    descriptor?.let { generateFunction(project, element, descriptor) }
 }) {
 
     override val elementType = "function"
@@ -294,6 +295,7 @@ internal fun KtPsiFactory.generateClassOrObjectByExpectedClass(
             }
         }
     }
+    actualClass.replaceExpectModifier(actualNeeded)
 
     declLoop@ for (expectedDeclaration in expectedClass.declarations.filter { !it.exists() }) {
         val descriptor = expectedDeclaration.toDescriptor() ?: continue
@@ -309,8 +311,8 @@ internal fun KtPsiFactory.generateClassOrObjectByExpectedClass(
                     continue@declLoop
                 }
                 when (expectedDeclaration) {
-                    is KtFunction -> generateFunction(project, expectedDeclaration, descriptor as FunctionDescriptor, actualNeeded = true)
-                    is KtProperty -> generateProperty(project, expectedDeclaration, descriptor as PropertyDescriptor, actualNeeded = true)
+                    is KtFunction -> generateFunction(project, expectedDeclaration, descriptor as FunctionDescriptor, actualClass)
+                    is KtProperty -> generateProperty(project, expectedDeclaration, descriptor as PropertyDescriptor, actualClass)
                     else -> continue@declLoop
                 }
             }
@@ -329,9 +331,7 @@ internal fun KtPsiFactory.generateClassOrObjectByExpectedClass(
         it.removeParameterDefaultValues()
     }
 
-    return actualClass.apply {
-        replaceExpectModifier(actualNeeded)
-    }
+    return actualClass
 }
 
 private val forbiddenAnnotationFqNames = setOf(
@@ -340,41 +340,20 @@ private val forbiddenAnnotationFqNames = setOf(
     ExperimentalUsageChecker.USE_EXPERIMENTAL_FQ_NAME
 )
 
-private fun KtPsiFactory.generateFunction(
+private fun generateFunction(
     project: Project,
     expectedFunction: KtFunction,
     descriptor: FunctionDescriptor,
-    actualNeeded: Boolean
+    targetClass: KtClassOrObject? = null
 ): KtFunction {
-    val returnType = descriptor.returnType
-    val body = run {
-        if (expectedFunction.hasBody()) {
-            ""
-        } else if (returnType != null && !KotlinBuiltIns.isUnit(returnType)) {
-            val delegation = getFunctionBodyTextFromTemplate(
-                project,
-                TemplateKind.FUNCTION,
-                descriptor.name.asString(),
-                IdeDescriptorRenderers.SOURCE_CODE.renderType(returnType)
-            )
-
-            "{$delegation\n}"
-        } else {
-            "{}"
-        }
-    }
-
-    return (if (expectedFunction is KtSecondaryConstructor) {
-        createSecondaryConstructor(expectedFunction.text + " " + body)
+    val memberChooserObject = OverrideMemberChooserObject.create(
+        expectedFunction, descriptor, descriptor, OverrideMemberChooserObject.BodyType.EMPTY_OR_TEMPLATE
+    )
+    return if (targetClass != null) {
+        memberChooserObject.generateActualMember(targetClass = targetClass, copyDoc = true)
     } else {
-        createFunction(expectedFunction.text + " " + body)
-    } as KtFunction).apply {
-        replaceExpectModifier(actualNeeded)
-        if (returnType != null && KotlinBuiltIns.isUnit(returnType)) {
-            typeReference = null
-        }
-        removeParameterDefaultValues()
-    }
+        memberChooserObject.generateTopLevelActual(copyDoc = true, project = project)
+    } as KtFunction
 }
 
 private fun KtFunction.removeParameterDefaultValues() {
@@ -387,27 +366,20 @@ private fun KtFunction.removeParameterDefaultValues() {
     }
 }
 
-private fun KtPsiFactory.generateProperty(
+private fun generateProperty(
     project: Project,
     expectedProperty: KtProperty,
     descriptor: PropertyDescriptor,
-    actualNeeded: Boolean
+    targetClass: KtClassOrObject? = null
 ): KtProperty {
-    val body = buildString {
-        append("\nget()")
-        append(" = ")
-        append(getFunctionBodyTextFromTemplate(
-            project,
-            TemplateKind.FUNCTION,
-            descriptor.name.asString(),
-            descriptor.returnType?.let { IdeDescriptorRenderers.SOURCE_CODE.renderType(it) } ?: ""
-        ))
-        if (descriptor.isVar) {
-            append("\nset(value) {}")
-        }
-    }
-    return createProperty(expectedProperty.text + " " + body).apply {
-        replaceExpectModifier(actualNeeded)
-    }
+    val memberChooserObject = OverrideMemberChooserObject.create(
+        expectedProperty, descriptor, descriptor, OverrideMemberChooserObject.BodyType.EMPTY_OR_TEMPLATE
+    )
+    return if (targetClass != null) {
+        memberChooserObject.generateActualMember(targetClass = targetClass, copyDoc = true)
+    } else {
+        memberChooserObject.generateTopLevelActual(copyDoc = true, project = project)
+    } as KtProperty
+
 }
 

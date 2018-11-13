@@ -126,7 +126,7 @@ abstract class ImplementAbstractMemberIntentionBase :
         val chooserObject = OverrideMemberChooserObject.create(member.project,
                                                                descriptorToImplement,
                                                                descriptorToImplement,
-                                                               OverrideMemberChooserObject.BodyType.EMPTY,
+                                                               OverrideMemberChooserObject.BodyType.FROM_TEMPLATE,
                                                                preferConstructorParameters)
         OverrideImplementMembersHandler.generateMembers(editor, targetClass, listOf(chooserObject), false)
     }

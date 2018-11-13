@@ -3,7 +3,8 @@
 
 actual class WithCompanion {
     actual companion object {
-        actual fun foo() {}
+        actual fun foo() {
+        }
     }
 
 }
