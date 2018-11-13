@@ -61,22 +61,19 @@ private fun Reader.parseNextArgument(): String? {
     while (r != null) {
         if (r.isWhitespace()) break
 
-        when (r) {
-            DOUBLE_QUOTE, SINGLE_QUOTE -> {
-                consumeRestOfEscapedSequence(sb, r)
-                return sb.toString()
-            }
-            BACKSLASH -> nextChar()?.apply(sb::append)
-            else -> sb.append(r)
+        if (r == DOUBLE_QUOTE || r == SINGLE_QUOTE) {
+            consumeRestOfQuotedSequence(sb, r)
+            return sb.toString()
         }
 
+        sb.append(r)
         r = nextChar()
     }
 
     return sb.toString().takeIf { it.isNotEmpty() }
 }
 
-private fun Reader.consumeRestOfEscapedSequence(sb: StringBuilder, quote: Char) {
+private fun Reader.consumeRestOfQuotedSequence(sb: StringBuilder, quote: Char) {
     var ch = nextChar()
     while (ch != null && ch != quote) {
         if (ch == BACKSLASH) nextChar()?.apply(sb::append) else sb.append(ch)
