@@ -21,10 +21,8 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.KtLambdaExpression
-import org.jetbrains.kotlin.psi.KtParameter
-import org.jetbrains.kotlin.psi.KtParameterList
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 
 class RemoveSingleLambdaParameterFix(element: KtParameter) : KotlinQuickFixAction<KtParameter>(element) {
     override fun getFamilyName() = "Remove single lambda parameter declaration"
@@ -47,7 +45,10 @@ class RemoveSingleLambdaParameterFix(element: KtParameter) : KotlinQuickFixActio
 
             if (parameterList.parameters.size != 1) return null
 
-            if (parameterList.parent.parent !is KtLambdaExpression) return null
+            val lambda = parameterList.parent.parent as? KtLambdaExpression ?: return null
+
+            val property = lambda.getStrictParentOfType<KtProperty>()
+            if (property != null && property.typeReference == null) return null
 
             return RemoveSingleLambdaParameterFix(parameter)
         }
