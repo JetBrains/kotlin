@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
+import org.jetbrains.kotlin.name.Name
 
 interface IrSymbolOwner : IrElement {
     val symbol: IrSymbol
@@ -47,5 +48,9 @@ interface IrOverridableDeclaration<S : IrSymbol> : IrDeclaration {
 
 interface IrDeclarationWithVisibility : IrDeclaration {
     val visibility: Visibility
+}
+
+interface IrDeclarationWithName : IrDeclaration {
+    val name: Name
 }
 

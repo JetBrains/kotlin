@@ -24,10 +24,12 @@ import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.name.Name
 
-interface IrClass : IrSymbolDeclaration<IrClassSymbol>, IrDeclarationWithVisibility, IrDeclarationContainer, IrTypeParametersContainer {
+interface IrClass :
+    IrSymbolDeclaration<IrClassSymbol>, IrDeclarationWithName, IrDeclarationWithVisibility,
+    IrDeclarationContainer, IrTypeParametersContainer {
+
     override val descriptor: ClassDescriptor
 
-    val name: Name
     val kind: ClassKind
     val modality: Modality
     val isCompanion: Boolean
