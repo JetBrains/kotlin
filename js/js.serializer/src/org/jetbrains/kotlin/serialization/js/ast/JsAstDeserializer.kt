@@ -56,7 +56,7 @@ class JsAstDeserializer(program: JsProgram, private val sourceRoots: Iterable<Fi
     }
 
     private fun deserialize(proto: Fragment): JsProgramFragment {
-        val fragment = JsProgramFragment(scope)
+        val fragment = JsProgramFragment(scope, proto.packageFqn)
 
         fragment.importedModules += proto.importedModuleList.map { importedModuleProto ->
              JsImportedModule(
@@ -95,6 +95,14 @@ class JsAstDeserializer(program: JsProgram, private val sourceRoots: Iterable<Fi
             if (nameBinding.key in fragment.imports) {
                 nameBinding.name.imported = true
             }
+        }
+
+        if (proto.hasTestsInvocation()) {
+            fragment.tests = deserialize(proto.testsInvocation)
+        }
+
+        if (proto.hasMainInvocation()) {
+            fragment.mainFunction = deserialize(proto.mainInvocation)
         }
 
         return fragment

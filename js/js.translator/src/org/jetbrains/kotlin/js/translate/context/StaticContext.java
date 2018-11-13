@@ -158,11 +158,12 @@ public final class StaticContext {
             @NotNull BindingTrace bindingTrace,
             @NotNull JsConfig config,
             @NotNull ModuleDescriptor moduleDescriptor,
-            @NotNull SourceFilePathResolver sourceFilePathResolver
+            @NotNull SourceFilePathResolver sourceFilePathResolver,
+            @NotNull String packageFqn
     ) {
         program = new JsProgram();
         JsFunction rootFunction = JsAstUtils.createFunctionWithEmptyBody(program.getScope());
-        fragment = new JsProgramFragment(rootFunction.getScope());
+        fragment = new JsProgramFragment(rootFunction.getScope(), packageFqn);
 
         this.bindingTrace = bindingTrace;
         this.namer = Namer.newInstance(program.getRootScope());

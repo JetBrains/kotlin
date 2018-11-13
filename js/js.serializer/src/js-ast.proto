@@ -385,6 +385,9 @@ message Fragment {
     repeated ClassModel class_model = 7;
     repeated Expression module_expression = 8;
     repeated InlineModule inline_module = 9;
+    optional string package_fqn = 10;
+    optional Statement tests_invocation = 11;
+    optional Statement main_invocation = 12;
 }
 
 message ImportedModule {

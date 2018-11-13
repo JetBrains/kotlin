@@ -34,6 +34,8 @@ class Merger(private val rootFunction: JsFunction, val internalModuleName: JsNam
     val importBlock = JsGlobalBlock()
     private val declarationBlock = JsGlobalBlock()
     private val initializerBlock = JsGlobalBlock()
+    private val testsMap = mutableMapOf<String, JsStatement>()
+    private var mainFn: Pair<String, JsStatement>? = null
     private val exportBlock = JsGlobalBlock()
     private val declaredImports = mutableSetOf<String>()
     private val classes = mutableMapOf<JsName, JsClassModel>()
@@ -55,9 +57,40 @@ class Merger(private val rootFunction: JsFunction, val internalModuleName: JsNam
 
         declarationBlock.statements += fragment.declarationBlock
         initializerBlock.statements += fragment.initializerBlock
+        fragment.tryUpdateTests()
+        fragment.tryUpdateMain()
         addExportStatements(fragment)
 
         classes += fragment.classes
+    }
+
+    private fun JsProgramFragment.tryUpdateTests() {
+        tests?.let { newTests ->
+            testsMap.putIfAbsent(packageFqn, newTests)?.let { oldTests ->
+                oldTests.decomposeTestInvocation()?.let {oldTestBody ->
+                    newTests.decomposeTestInvocation()?.let { newTestBody ->
+                        oldTestBody.statements += newTestBody.statements
+                    }
+                }
+            }
+        }
+    }
+
+    private fun JsStatement.decomposeTestInvocation(): JsBlock? {
+        return (this as? JsExpressionStatement)?.let {
+            (it.expression as? JsInvocation)?.let {
+                (it.arguments[2] as? JsFunction)?.body
+            }
+        }
+    }
+
+    private fun JsProgramFragment.tryUpdateMain() {
+        mainFunction?.let { m ->
+            val currentMainFqn = mainFn?.first
+            if (currentMainFqn == null || currentMainFqn > packageFqn) {
+                mainFn = packageFqn to m
+            }
+        }
     }
 
     val importedModules: List<JsImportedModule>
@@ -136,6 +169,9 @@ class Merger(private val rootFunction: JsFunction, val internalModuleName: JsNam
         fragment.classes += classes.map { it.name to it }
 
         fragment.inlineModuleMap.forEach { (_, value) -> rename(value) }
+
+        fragment.tests?.let { rename(it) }
+        fragment.mainFunction?.let { rename(it) }
     }
 
     private fun <T: JsNode> Map<JsName, JsName>.rename(rootNode: T): T {
@@ -174,6 +210,8 @@ class Merger(private val rootFunction: JsFunction, val internalModuleName: JsNam
             this += exportBlock.statements
             addClassPostDeclarations(this)
             this += initializerBlock.statements
+            this += testsMap.values
+            mainFn?.second?.let { this += it }
         }
     }
 

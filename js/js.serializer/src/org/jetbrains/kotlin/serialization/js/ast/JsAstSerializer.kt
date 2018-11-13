@@ -62,6 +62,8 @@ class JsAstSerializer(private val pathResolver: (File) -> String) {
     private fun serializeFragment(fragment: JsProgramFragment): Fragment {
         val fragmentBuilder = Fragment.newBuilder()
 
+        fragmentBuilder.packageFqn = fragment.packageFqn
+
         for (importedModule in fragment.importedModules) {
             val importedModuleBuilder = ImportedModule.newBuilder()
             importedModuleBuilder.externalNameId = serialize(importedModule.externalName)
@@ -100,6 +102,14 @@ class JsAstSerializer(private val pathResolver: (File) -> String) {
                 result
             }
             fragmentBuilder.addInlineModule(inlineModuleBuilder)
+        }
+
+        fragment.tests?.let {
+            fragmentBuilder.setTestsInvocation(serialize(it))
+        }
+
+        fragment.mainFunction?.let {
+            fragmentBuilder.setMainInvocation(serialize(it))
         }
 
         return fragmentBuilder.build()

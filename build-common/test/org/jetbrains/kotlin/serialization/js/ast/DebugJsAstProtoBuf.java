@@ -40342,6 +40342,46 @@ public final class DebugJsAstProtoBuf {
      */
     org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.InlineModuleOrBuilder getInlineModuleOrBuilder(
         int index);
+
+    /**
+     * <code>optional string package_fqn = 10;</code>
+     */
+    boolean hasPackageFqn();
+    /**
+     * <code>optional string package_fqn = 10;</code>
+     */
+    java.lang.String getPackageFqn();
+    /**
+     * <code>optional string package_fqn = 10;</code>
+     */
+    org.jetbrains.kotlin.protobuf.ByteString
+        getPackageFqnBytes();
+
+    /**
+     * <code>optional .org.jetbrains.kotlin.serialization.js.ast.Statement tests_invocation = 11;</code>
+     */
+    boolean hasTestsInvocation();
+    /**
+     * <code>optional .org.jetbrains.kotlin.serialization.js.ast.Statement tests_invocation = 11;</code>
+     */
+    org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.Statement getTestsInvocation();
+    /**
+     * <code>optional .org.jetbrains.kotlin.serialization.js.ast.Statement tests_invocation = 11;</code>
+     */
+    org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.StatementOrBuilder getTestsInvocationOrBuilder();
+
+    /**
+     * <code>optional .org.jetbrains.kotlin.serialization.js.ast.Statement main_invocation = 12;</code>
+     */
+    boolean hasMainInvocation();
+    /**
+     * <code>optional .org.jetbrains.kotlin.serialization.js.ast.Statement main_invocation = 12;</code>
+     */
+    org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.Statement getMainInvocation();
+    /**
+     * <code>optional .org.jetbrains.kotlin.serialization.js.ast.Statement main_invocation = 12;</code>
+     */
+    org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.StatementOrBuilder getMainInvocationOrBuilder();
   }
   /**
    * Protobuf type {@code org.jetbrains.kotlin.serialization.js.ast.Fragment}
@@ -40480,6 +40520,38 @@ public final class DebugJsAstProtoBuf {
                 mutable_bitField0_ |= 0x00000100;
               }
               inlineModule_.add(input.readMessage(org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.InlineModule.PARSER, extensionRegistry));
+              break;
+            }
+            case 82: {
+              org.jetbrains.kotlin.protobuf.ByteString bs = input.readBytes();
+              bitField0_ |= 0x00000008;
+              packageFqn_ = bs;
+              break;
+            }
+            case 90: {
+              org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.Statement.Builder subBuilder = null;
+              if (((bitField0_ & 0x00000010) == 0x00000010)) {
+                subBuilder = testsInvocation_.toBuilder();
+              }
+              testsInvocation_ = input.readMessage(org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.Statement.PARSER, extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom(testsInvocation_);
+                testsInvocation_ = subBuilder.buildPartial();
+              }
+              bitField0_ |= 0x00000010;
+              break;
+            }
+            case 98: {
+              org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.Statement.Builder subBuilder = null;
+              if (((bitField0_ & 0x00000020) == 0x00000020)) {
+                subBuilder = mainInvocation_.toBuilder();
+              }
+              mainInvocation_ = input.readMessage(org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.Statement.PARSER, extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom(mainInvocation_);
+                mainInvocation_ = subBuilder.buildPartial();
+              }
+              bitField0_ |= 0x00000020;
               break;
             }
           }
@@ -40813,6 +40885,90 @@ public final class DebugJsAstProtoBuf {
       return inlineModule_.get(index);
     }
 
+    public static final int PACKAGE_FQN_FIELD_NUMBER = 10;
+    private java.lang.Object packageFqn_;
+    /**
+     * <code>optional string package_fqn = 10;</code>
+     */
+    public boolean hasPackageFqn() {
+      return ((bitField0_ & 0x00000008) == 0x00000008);
+    }
+    /**
+     * <code>optional string package_fqn = 10;</code>
+     */
+    public java.lang.String getPackageFqn() {
+      java.lang.Object ref = packageFqn_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        org.jetbrains.kotlin.protobuf.ByteString bs = 
+            (org.jetbrains.kotlin.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        if (bs.isValidUtf8()) {
+          packageFqn_ = s;
+        }
+        return s;
+      }
+    }
+    /**
+     * <code>optional string package_fqn = 10;</code>
+     */
+    public org.jetbrains.kotlin.protobuf.ByteString
+        getPackageFqnBytes() {
+      java.lang.Object ref = packageFqn_;
+      if (ref instanceof java.lang.String) {
+        org.jetbrains.kotlin.protobuf.ByteString b = 
+            org.jetbrains.kotlin.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        packageFqn_ = b;
+        return b;
+      } else {
+        return (org.jetbrains.kotlin.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int TESTS_INVOCATION_FIELD_NUMBER = 11;
+    private org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.Statement testsInvocation_;
+    /**
+     * <code>optional .org.jetbrains.kotlin.serialization.js.ast.Statement tests_invocation = 11;</code>
+     */
+    public boolean hasTestsInvocation() {
+      return ((bitField0_ & 0x00000010) == 0x00000010);
+    }
+    /**
+     * <code>optional .org.jetbrains.kotlin.serialization.js.ast.Statement tests_invocation = 11;</code>
+     */
+    public org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.Statement getTestsInvocation() {
+      return testsInvocation_;
+    }
+    /**
+     * <code>optional .org.jetbrains.kotlin.serialization.js.ast.Statement tests_invocation = 11;</code>
+     */
+    public org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.StatementOrBuilder getTestsInvocationOrBuilder() {
+      return testsInvocation_;
+    }
+
+    public static final int MAIN_INVOCATION_FIELD_NUMBER = 12;
+    private org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.Statement mainInvocation_;
+    /**
+     * <code>optional .org.jetbrains.kotlin.serialization.js.ast.Statement main_invocation = 12;</code>
+     */
+    public boolean hasMainInvocation() {
+      return ((bitField0_ & 0x00000020) == 0x00000020);
+    }
+    /**
+     * <code>optional .org.jetbrains.kotlin.serialization.js.ast.Statement main_invocation = 12;</code>
+     */
+    public org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.Statement getMainInvocation() {
+      return mainInvocation_;
+    }
+    /**
+     * <code>optional .org.jetbrains.kotlin.serialization.js.ast.Statement main_invocation = 12;</code>
+     */
+    public org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.StatementOrBuilder getMainInvocationOrBuilder() {
+      return mainInvocation_;
+    }
+
     private void initFields() {
       importedModule_ = java.util.Collections.emptyList();
       importEntry_ = java.util.Collections.emptyList();
@@ -40823,6 +40979,9 @@ public final class DebugJsAstProtoBuf {
       classModel_ = java.util.Collections.emptyList();
       moduleExpression_ = java.util.Collections.emptyList();
       inlineModule_ = java.util.Collections.emptyList();
+      packageFqn_ = "";
+      testsInvocation_ = org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.Statement.getDefaultInstance();
+      mainInvocation_ = org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.Statement.getDefaultInstance();
     }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
@@ -40884,6 +41043,18 @@ public final class DebugJsAstProtoBuf {
           return false;
         }
       }
+      if (hasTestsInvocation()) {
+        if (!getTestsInvocation().isInitialized()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
+      }
+      if (hasMainInvocation()) {
+        if (!getMainInvocation().isInitialized()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
+      }
       memoizedIsInitialized = 1;
       return true;
     }
@@ -40917,6 +41088,15 @@ public final class DebugJsAstProtoBuf {
       }
       for (int i = 0; i < inlineModule_.size(); i++) {
         output.writeMessage(9, inlineModule_.get(i));
+      }
+      if (((bitField0_ & 0x00000008) == 0x00000008)) {
+        output.writeBytes(10, getPackageFqnBytes());
+      }
+      if (((bitField0_ & 0x00000010) == 0x00000010)) {
+        output.writeMessage(11, testsInvocation_);
+      }
+      if (((bitField0_ & 0x00000020) == 0x00000020)) {
+        output.writeMessage(12, mainInvocation_);
       }
       getUnknownFields().writeTo(output);
     }
@@ -40962,6 +41142,18 @@ public final class DebugJsAstProtoBuf {
       for (int i = 0; i < inlineModule_.size(); i++) {
         size += org.jetbrains.kotlin.protobuf.CodedOutputStream
           .computeMessageSize(9, inlineModule_.get(i));
+      }
+      if (((bitField0_ & 0x00000008) == 0x00000008)) {
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+          .computeBytesSize(10, getPackageFqnBytes());
+      }
+      if (((bitField0_ & 0x00000010) == 0x00000010)) {
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+          .computeMessageSize(11, testsInvocation_);
+      }
+      if (((bitField0_ & 0x00000020) == 0x00000020)) {
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+          .computeMessageSize(12, mainInvocation_);
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSerializedSize = size;
@@ -41081,6 +41273,8 @@ public final class DebugJsAstProtoBuf {
           getClassModelFieldBuilder();
           getModuleExpressionFieldBuilder();
           getInlineModuleFieldBuilder();
+          getTestsInvocationFieldBuilder();
+          getMainInvocationFieldBuilder();
         }
       }
       private static Builder create() {
@@ -41143,6 +41337,20 @@ public final class DebugJsAstProtoBuf {
         } else {
           inlineModuleBuilder_.clear();
         }
+        packageFqn_ = "";
+        bitField0_ = (bitField0_ & ~0x00000200);
+        if (testsInvocationBuilder_ == null) {
+          testsInvocation_ = org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.Statement.getDefaultInstance();
+        } else {
+          testsInvocationBuilder_.clear();
+        }
+        bitField0_ = (bitField0_ & ~0x00000400);
+        if (mainInvocationBuilder_ == null) {
+          mainInvocation_ = org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.Statement.getDefaultInstance();
+        } else {
+          mainInvocationBuilder_.clear();
+        }
+        bitField0_ = (bitField0_ & ~0x00000800);
         return this;
       }
 
@@ -41248,6 +41456,26 @@ public final class DebugJsAstProtoBuf {
           result.inlineModule_ = inlineModule_;
         } else {
           result.inlineModule_ = inlineModuleBuilder_.build();
+        }
+        if (((from_bitField0_ & 0x00000200) == 0x00000200)) {
+          to_bitField0_ |= 0x00000008;
+        }
+        result.packageFqn_ = packageFqn_;
+        if (((from_bitField0_ & 0x00000400) == 0x00000400)) {
+          to_bitField0_ |= 0x00000010;
+        }
+        if (testsInvocationBuilder_ == null) {
+          result.testsInvocation_ = testsInvocation_;
+        } else {
+          result.testsInvocation_ = testsInvocationBuilder_.build();
+        }
+        if (((from_bitField0_ & 0x00000800) == 0x00000800)) {
+          to_bitField0_ |= 0x00000020;
+        }
+        if (mainInvocationBuilder_ == null) {
+          result.mainInvocation_ = mainInvocation_;
+        } else {
+          result.mainInvocation_ = mainInvocationBuilder_.build();
         }
         result.bitField0_ = to_bitField0_;
         onBuilt();
@@ -41430,6 +41658,17 @@ public final class DebugJsAstProtoBuf {
             }
           }
         }
+        if (other.hasPackageFqn()) {
+          bitField0_ |= 0x00000200;
+          packageFqn_ = other.packageFqn_;
+          onChanged();
+        }
+        if (other.hasTestsInvocation()) {
+          mergeTestsInvocation(other.getTestsInvocation());
+        }
+        if (other.hasMainInvocation()) {
+          mergeMainInvocation(other.getMainInvocation());
+        }
         this.mergeUnknownFields(other.getUnknownFields());
         return this;
       }
@@ -41485,6 +41724,18 @@ public final class DebugJsAstProtoBuf {
         }
         for (int i = 0; i < getInlineModuleCount(); i++) {
           if (!getInlineModule(i).isInitialized()) {
+            
+            return false;
+          }
+        }
+        if (hasTestsInvocation()) {
+          if (!getTestsInvocation().isInitialized()) {
+            
+            return false;
+          }
+        }
+        if (hasMainInvocation()) {
+          if (!getMainInvocation().isInitialized()) {
             
             return false;
           }
@@ -43297,6 +43548,314 @@ public final class DebugJsAstProtoBuf {
           inlineModule_ = null;
         }
         return inlineModuleBuilder_;
+      }
+
+      private java.lang.Object packageFqn_ = "";
+      /**
+       * <code>optional string package_fqn = 10;</code>
+       */
+      public boolean hasPackageFqn() {
+        return ((bitField0_ & 0x00000200) == 0x00000200);
+      }
+      /**
+       * <code>optional string package_fqn = 10;</code>
+       */
+      public java.lang.String getPackageFqn() {
+        java.lang.Object ref = packageFqn_;
+        if (!(ref instanceof java.lang.String)) {
+          org.jetbrains.kotlin.protobuf.ByteString bs =
+              (org.jetbrains.kotlin.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          if (bs.isValidUtf8()) {
+            packageFqn_ = s;
+          }
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>optional string package_fqn = 10;</code>
+       */
+      public org.jetbrains.kotlin.protobuf.ByteString
+          getPackageFqnBytes() {
+        java.lang.Object ref = packageFqn_;
+        if (ref instanceof String) {
+          org.jetbrains.kotlin.protobuf.ByteString b = 
+              org.jetbrains.kotlin.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          packageFqn_ = b;
+          return b;
+        } else {
+          return (org.jetbrains.kotlin.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>optional string package_fqn = 10;</code>
+       */
+      public Builder setPackageFqn(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  bitField0_ |= 0x00000200;
+        packageFqn_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>optional string package_fqn = 10;</code>
+       */
+      public Builder clearPackageFqn() {
+        bitField0_ = (bitField0_ & ~0x00000200);
+        packageFqn_ = getDefaultInstance().getPackageFqn();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>optional string package_fqn = 10;</code>
+       */
+      public Builder setPackageFqnBytes(
+          org.jetbrains.kotlin.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  bitField0_ |= 0x00000200;
+        packageFqn_ = value;
+        onChanged();
+        return this;
+      }
+
+      private org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.Statement testsInvocation_ = org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.Statement.getDefaultInstance();
+      private org.jetbrains.kotlin.protobuf.SingleFieldBuilder<
+          org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.Statement, org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.Statement.Builder, org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.StatementOrBuilder> testsInvocationBuilder_;
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.js.ast.Statement tests_invocation = 11;</code>
+       */
+      public boolean hasTestsInvocation() {
+        return ((bitField0_ & 0x00000400) == 0x00000400);
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.js.ast.Statement tests_invocation = 11;</code>
+       */
+      public org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.Statement getTestsInvocation() {
+        if (testsInvocationBuilder_ == null) {
+          return testsInvocation_;
+        } else {
+          return testsInvocationBuilder_.getMessage();
+        }
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.js.ast.Statement tests_invocation = 11;</code>
+       */
+      public Builder setTestsInvocation(org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.Statement value) {
+        if (testsInvocationBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          testsInvocation_ = value;
+          onChanged();
+        } else {
+          testsInvocationBuilder_.setMessage(value);
+        }
+        bitField0_ |= 0x00000400;
+        return this;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.js.ast.Statement tests_invocation = 11;</code>
+       */
+      public Builder setTestsInvocation(
+          org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.Statement.Builder builderForValue) {
+        if (testsInvocationBuilder_ == null) {
+          testsInvocation_ = builderForValue.build();
+          onChanged();
+        } else {
+          testsInvocationBuilder_.setMessage(builderForValue.build());
+        }
+        bitField0_ |= 0x00000400;
+        return this;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.js.ast.Statement tests_invocation = 11;</code>
+       */
+      public Builder mergeTestsInvocation(org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.Statement value) {
+        if (testsInvocationBuilder_ == null) {
+          if (((bitField0_ & 0x00000400) == 0x00000400) &&
+              testsInvocation_ != org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.Statement.getDefaultInstance()) {
+            testsInvocation_ =
+              org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.Statement.newBuilder(testsInvocation_).mergeFrom(value).buildPartial();
+          } else {
+            testsInvocation_ = value;
+          }
+          onChanged();
+        } else {
+          testsInvocationBuilder_.mergeFrom(value);
+        }
+        bitField0_ |= 0x00000400;
+        return this;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.js.ast.Statement tests_invocation = 11;</code>
+       */
+      public Builder clearTestsInvocation() {
+        if (testsInvocationBuilder_ == null) {
+          testsInvocation_ = org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.Statement.getDefaultInstance();
+          onChanged();
+        } else {
+          testsInvocationBuilder_.clear();
+        }
+        bitField0_ = (bitField0_ & ~0x00000400);
+        return this;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.js.ast.Statement tests_invocation = 11;</code>
+       */
+      public org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.Statement.Builder getTestsInvocationBuilder() {
+        bitField0_ |= 0x00000400;
+        onChanged();
+        return getTestsInvocationFieldBuilder().getBuilder();
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.js.ast.Statement tests_invocation = 11;</code>
+       */
+      public org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.StatementOrBuilder getTestsInvocationOrBuilder() {
+        if (testsInvocationBuilder_ != null) {
+          return testsInvocationBuilder_.getMessageOrBuilder();
+        } else {
+          return testsInvocation_;
+        }
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.js.ast.Statement tests_invocation = 11;</code>
+       */
+      private org.jetbrains.kotlin.protobuf.SingleFieldBuilder<
+          org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.Statement, org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.Statement.Builder, org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.StatementOrBuilder> 
+          getTestsInvocationFieldBuilder() {
+        if (testsInvocationBuilder_ == null) {
+          testsInvocationBuilder_ = new org.jetbrains.kotlin.protobuf.SingleFieldBuilder<
+              org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.Statement, org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.Statement.Builder, org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.StatementOrBuilder>(
+                  getTestsInvocation(),
+                  getParentForChildren(),
+                  isClean());
+          testsInvocation_ = null;
+        }
+        return testsInvocationBuilder_;
+      }
+
+      private org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.Statement mainInvocation_ = org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.Statement.getDefaultInstance();
+      private org.jetbrains.kotlin.protobuf.SingleFieldBuilder<
+          org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.Statement, org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.Statement.Builder, org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.StatementOrBuilder> mainInvocationBuilder_;
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.js.ast.Statement main_invocation = 12;</code>
+       */
+      public boolean hasMainInvocation() {
+        return ((bitField0_ & 0x00000800) == 0x00000800);
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.js.ast.Statement main_invocation = 12;</code>
+       */
+      public org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.Statement getMainInvocation() {
+        if (mainInvocationBuilder_ == null) {
+          return mainInvocation_;
+        } else {
+          return mainInvocationBuilder_.getMessage();
+        }
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.js.ast.Statement main_invocation = 12;</code>
+       */
+      public Builder setMainInvocation(org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.Statement value) {
+        if (mainInvocationBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          mainInvocation_ = value;
+          onChanged();
+        } else {
+          mainInvocationBuilder_.setMessage(value);
+        }
+        bitField0_ |= 0x00000800;
+        return this;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.js.ast.Statement main_invocation = 12;</code>
+       */
+      public Builder setMainInvocation(
+          org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.Statement.Builder builderForValue) {
+        if (mainInvocationBuilder_ == null) {
+          mainInvocation_ = builderForValue.build();
+          onChanged();
+        } else {
+          mainInvocationBuilder_.setMessage(builderForValue.build());
+        }
+        bitField0_ |= 0x00000800;
+        return this;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.js.ast.Statement main_invocation = 12;</code>
+       */
+      public Builder mergeMainInvocation(org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.Statement value) {
+        if (mainInvocationBuilder_ == null) {
+          if (((bitField0_ & 0x00000800) == 0x00000800) &&
+              mainInvocation_ != org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.Statement.getDefaultInstance()) {
+            mainInvocation_ =
+              org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.Statement.newBuilder(mainInvocation_).mergeFrom(value).buildPartial();
+          } else {
+            mainInvocation_ = value;
+          }
+          onChanged();
+        } else {
+          mainInvocationBuilder_.mergeFrom(value);
+        }
+        bitField0_ |= 0x00000800;
+        return this;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.js.ast.Statement main_invocation = 12;</code>
+       */
+      public Builder clearMainInvocation() {
+        if (mainInvocationBuilder_ == null) {
+          mainInvocation_ = org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.Statement.getDefaultInstance();
+          onChanged();
+        } else {
+          mainInvocationBuilder_.clear();
+        }
+        bitField0_ = (bitField0_ & ~0x00000800);
+        return this;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.js.ast.Statement main_invocation = 12;</code>
+       */
+      public org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.Statement.Builder getMainInvocationBuilder() {
+        bitField0_ |= 0x00000800;
+        onChanged();
+        return getMainInvocationFieldBuilder().getBuilder();
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.js.ast.Statement main_invocation = 12;</code>
+       */
+      public org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.StatementOrBuilder getMainInvocationOrBuilder() {
+        if (mainInvocationBuilder_ != null) {
+          return mainInvocationBuilder_.getMessageOrBuilder();
+        } else {
+          return mainInvocation_;
+        }
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.js.ast.Statement main_invocation = 12;</code>
+       */
+      private org.jetbrains.kotlin.protobuf.SingleFieldBuilder<
+          org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.Statement, org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.Statement.Builder, org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.StatementOrBuilder> 
+          getMainInvocationFieldBuilder() {
+        if (mainInvocationBuilder_ == null) {
+          mainInvocationBuilder_ = new org.jetbrains.kotlin.protobuf.SingleFieldBuilder<
+              org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.Statement, org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.Statement.Builder, org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.StatementOrBuilder>(
+                  getMainInvocation(),
+                  getParentForChildren(),
+                  isClean());
+          mainInvocation_ = null;
+        }
+        return mainInvocationBuilder_;
       }
 
       // @@protoc_insertion_point(builder_scope:org.jetbrains.kotlin.serialization.js.ast.Fragment)
@@ -49795,7 +50354,7 @@ public final class DebugJsAstProtoBuf {
       "4.org.jetbrains.kotlin.serialization.js." +
       "ast.Parameter\022B\n\004body\030\002 \002(\01324.org.jetbra" +
       "ins.kotlin.serialization.js.ast.Statemen" +
-      "t\"\007\n\005Empty\"\327\005\n\010Fragment\022R\n\017imported_modu",
+      "t\"\007\n\005Empty\"\213\007\n\010Fragment\022R\n\017imported_modu",
       "le\030\001 \003(\01329.org.jetbrains.kotlin.serializ" +
       "ation.js.ast.ImportedModule\022G\n\014import_en" +
       "try\030\002 \003(\01321.org.jetbrains.kotlin.seriali" +
@@ -49813,43 +50372,47 @@ public final class DebugJsAstProtoBuf {
       "\010 \003(\01325.org.jetbrains.kotlin.serializati" +
       "on.js.ast.Expression\022N\n\rinline_module\030\t " +
       "\003(\01327.org.jetbrains.kotlin.serialization" +
-      ".js.ast.InlineModule\"\224\001\n\016ImportedModule\022" +
-      "\030\n\020external_name_id\030\001 \002(\005\022\030\n\020internal_na" +
-      "me_id\030\002 \002(\005\022N\n\017plain_reference\030\003 \001(\01325.o",
-      "rg.jetbrains.kotlin.serialization.js.ast" +
-      ".Expression\"i\n\006Import\022\024\n\014signature_id\030\001 " +
-      "\002(\005\022I\n\nexpression\030\002 \002(\01325.org.jetbrains." +
-      "kotlin.serialization.js.ast.Expression\"3" +
-      "\n\013NameBinding\022\024\n\014signature_id\030\001 \002(\005\022\016\n\006n" +
-      "ameId\030\002 \002(\005\"\247\001\n\nClassModel\022\017\n\007name_id\030\001 " +
-      "\002(\005\022\025\n\rsuper_name_id\030\002 \001(\005\022\031\n\021interface_" +
-      "name_id\030\004 \003(\005\022V\n\026post_declaration_block\030" +
-      "\003 \001(\01326.org.jetbrains.kotlin.serializati" +
-      "on.js.ast.GlobalBlock\";\n\014InlineModule\022\024\n",
-      "\014signature_id\030\001 \002(\005\022\025\n\rexpression_id\030\002 \002" +
-      "(\005\"\034\n\013StringTable\022\r\n\005entry\030\001 \003(\t\"K\n\tName" +
-      "Table\022>\n\005entry\030\001 \003(\0132/.org.jetbrains.kot" +
-      "lin.serialization.js.ast.Name\"\263\001\n\004Name\022\021" +
-      "\n\ttemporary\030\001 \002(\010\022\022\n\nidentifier\030\002 \001(\005\022\025\n" +
-      "\rlocal_name_id\030\003 \001(\005\022\027\n\010imported\030\004 \001(\010:\005" +
-      "false\022T\n\020special_function\030\005 \001(\0162:.org.je" +
-      "tbrains.kotlin.serialization.js.ast.Spec" +
-      "ialFunction\"\346\001\n\005Chunk\022L\n\014string_table\030\001 " +
-      "\002(\01326.org.jetbrains.kotlin.serialization",
-      ".js.ast.StringTable\022H\n\nname_table\030\002 \002(\0132" +
-      "4.org.jetbrains.kotlin.serialization.js." +
-      "ast.NameTable\022E\n\010fragment\030\003 \002(\01323.org.je" +
-      "tbrains.kotlin.serialization.js.ast.Frag" +
-      "ment*@\n\013SideEffects\022\021\n\rAFFECTS_STATE\020\001\022\024" +
-      "\n\020DEPENDS_ON_STATE\020\002\022\010\n\004PURE\020\003*?\n\016Inline" +
-      "Strategy\022\017\n\013AS_FUNCTION\020\000\022\014\n\010IN_PLACE\020\001\022" +
-      "\016\n\nNOT_INLINE\020\002*\327\001\n\017SpecialFunction\022\032\n\026D" +
-      "EFINE_INLINE_FUNCTION\020\001\022\021\n\rWRAP_FUNCTION" +
-      "\020\002\022\021\n\rTO_BOXED_CHAR\020\003\022\016\n\nUNBOX_CHAR\020\004\022\020\n",
-      "\014SUSPEND_CALL\020\005\022\024\n\020COROUTINE_RESULT\020\006\022\030\n" +
-      "\024COROUTINE_CONTROLLER\020\007\022\026\n\022COROUTINE_REC" +
-      "EIVER\020\010\022\030\n\024SET_COROUTINE_RESULT\020\tB\024B\022Deb" +
-      "ugJsAstProtoBuf"
+      ".js.ast.InlineModule\022\023\n\013package_fqn\030\n \001(" +
+      "\t\022N\n\020tests_invocation\030\013 \001(\01324.org.jetbra" +
+      "ins.kotlin.serialization.js.ast.Statemen",
+      "t\022M\n\017main_invocation\030\014 \001(\01324.org.jetbrai" +
+      "ns.kotlin.serialization.js.ast.Statement" +
+      "\"\224\001\n\016ImportedModule\022\030\n\020external_name_id\030" +
+      "\001 \002(\005\022\030\n\020internal_name_id\030\002 \002(\005\022N\n\017plain" +
+      "_reference\030\003 \001(\01325.org.jetbrains.kotlin." +
+      "serialization.js.ast.Expression\"i\n\006Impor" +
+      "t\022\024\n\014signature_id\030\001 \002(\005\022I\n\nexpression\030\002 " +
+      "\002(\01325.org.jetbrains.kotlin.serialization" +
+      ".js.ast.Expression\"3\n\013NameBinding\022\024\n\014sig" +
+      "nature_id\030\001 \002(\005\022\016\n\006nameId\030\002 \002(\005\"\247\001\n\nClas",
+      "sModel\022\017\n\007name_id\030\001 \002(\005\022\025\n\rsuper_name_id" +
+      "\030\002 \001(\005\022\031\n\021interface_name_id\030\004 \003(\005\022V\n\026pos" +
+      "t_declaration_block\030\003 \001(\01326.org.jetbrain" +
+      "s.kotlin.serialization.js.ast.GlobalBloc" +
+      "k\";\n\014InlineModule\022\024\n\014signature_id\030\001 \002(\005\022" +
+      "\025\n\rexpression_id\030\002 \002(\005\"\034\n\013StringTable\022\r\n" +
+      "\005entry\030\001 \003(\t\"K\n\tNameTable\022>\n\005entry\030\001 \003(\013" +
+      "2/.org.jetbrains.kotlin.serialization.js" +
+      ".ast.Name\"\263\001\n\004Name\022\021\n\ttemporary\030\001 \002(\010\022\022\n" +
+      "\nidentifier\030\002 \001(\005\022\025\n\rlocal_name_id\030\003 \001(\005",
+      "\022\027\n\010imported\030\004 \001(\010:\005false\022T\n\020special_fun" +
+      "ction\030\005 \001(\0162:.org.jetbrains.kotlin.seria" +
+      "lization.js.ast.SpecialFunction\"\346\001\n\005Chun" +
+      "k\022L\n\014string_table\030\001 \002(\01326.org.jetbrains." +
+      "kotlin.serialization.js.ast.StringTable\022" +
+      "H\n\nname_table\030\002 \002(\01324.org.jetbrains.kotl" +
+      "in.serialization.js.ast.NameTable\022E\n\010fra" +
+      "gment\030\003 \002(\01323.org.jetbrains.kotlin.seria" +
+      "lization.js.ast.Fragment*@\n\013SideEffects\022" +
+      "\021\n\rAFFECTS_STATE\020\001\022\024\n\020DEPENDS_ON_STATE\020\002",
+      "\022\010\n\004PURE\020\003*?\n\016InlineStrategy\022\017\n\013AS_FUNCT" +
+      "ION\020\000\022\014\n\010IN_PLACE\020\001\022\016\n\nNOT_INLINE\020\002*\327\001\n\017" +
+      "SpecialFunction\022\032\n\026DEFINE_INLINE_FUNCTIO" +
+      "N\020\001\022\021\n\rWRAP_FUNCTION\020\002\022\021\n\rTO_BOXED_CHAR\020" +
+      "\003\022\016\n\nUNBOX_CHAR\020\004\022\020\n\014SUSPEND_CALL\020\005\022\024\n\020C" +
+      "OROUTINE_RESULT\020\006\022\030\n\024COROUTINE_CONTROLLE" +
+      "R\020\007\022\026\n\022COROUTINE_RECEIVER\020\010\022\030\n\024SET_COROU" +
+      "TINE_RESULT\020\tB\024B\022DebugJsAstProtoBuf"
     };
     org.jetbrains.kotlin.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new org.jetbrains.kotlin.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -50138,7 +50701,7 @@ public final class DebugJsAstProtoBuf {
     internal_static_org_jetbrains_kotlin_serialization_js_ast_Fragment_fieldAccessorTable = new
       org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_org_jetbrains_kotlin_serialization_js_ast_Fragment_descriptor,
-        new java.lang.String[] { "ImportedModule", "ImportEntry", "DeclarationBlock", "ExportBlock", "InitializerBlock", "NameBinding", "ClassModel", "ModuleExpression", "InlineModule", });
+        new java.lang.String[] { "ImportedModule", "ImportEntry", "DeclarationBlock", "ExportBlock", "InitializerBlock", "NameBinding", "ClassModel", "ModuleExpression", "InlineModule", "PackageFqn", "TestsInvocation", "MainInvocation", });
     internal_static_org_jetbrains_kotlin_serialization_js_ast_ImportedModule_descriptor =
       getDescriptor().getMessageTypes().get(46);
     internal_static_org_jetbrains_kotlin_serialization_js_ast_ImportedModule_fieldAccessorTable = new

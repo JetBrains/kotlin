@@ -106,6 +106,11 @@ public class JsInliner extends JsVisitorWithContextImpl {
             inliner.existingNameBindings = CollectUtilsKt.collectNameBindings(Collections.singletonList(fragment));
 
             inliner.acceptStatement(fragment.getDeclarationBlock());
+            // Mostly for the sake of post-processor
+            // TODO are inline function marked with @Test possible?
+            if (fragment.getTests() != null) {
+                inliner.acceptStatement(fragment.getTests());
+            }
 
             // There can be inlined function in top-level initializers, we need to optimize them as well
             JsFunction fakeInitFunction = new JsFunction(JsDynamicScope.INSTANCE, fragment.getInitializerBlock(), "");

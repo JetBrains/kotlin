@@ -340,15 +340,21 @@ public final class Translation {
         for (TranslationUnit unit : units) {
             if (unit instanceof TranslationUnit.SourceFile) {
                 KtFile file = ((TranslationUnit.SourceFile) unit).getFile();
-                StaticContext staticContext = new StaticContext(bindingTrace, config, moduleDescriptor, sourceFilePathResolver);
+                StaticContext staticContext = new StaticContext(bindingTrace, config, moduleDescriptor, sourceFilePathResolver, file.getPackageFqName().asString());
                 TranslationContext context = TranslationContext.rootContext(staticContext);
                 List<DeclarationDescriptor> fileMemberScope = new ArrayList<>();
                 translateFile(context, file, fileMemberScope);
-                fragments.add(staticContext.getFragment());
-                newFragments.add(staticContext.getFragment());
-                fragmentMap.put(file, staticContext.getFragment());
+
+                JsProgramFragment fragment = staticContext.getFragment();
+
+                fragment.setTests(mayBeGenerateTests(context, file, fileMemberScope));
+                fragment.setMainFunction(maybeGenerateCallToMain(context, config, moduleDescriptor, fileMemberScope, mainCallParameters));
+
+                fragments.add(fragment);
+                newFragments.add(fragment);
+                fragmentMap.put(file, fragment);
                 fileMemberScopes.put(file, fileMemberScope);
-                merger.addFragment(staticContext.getFragment());
+                merger.addFragment(fragment);
             }
             else if (unit instanceof TranslationUnit.BinaryAst) {
                 byte[] astData = ((TranslationUnit.BinaryAst) unit).getData();
@@ -358,21 +364,7 @@ public final class Translation {
             }
         }
 
-        JsProgramFragment testFragment = mayBeGenerateTests(config, bindingTrace, moduleDescriptor, sourceFilePathResolver);
-        fragments.add(testFragment);
-        newFragments.add(testFragment);
-        merger.addFragment(testFragment);
         rootFunction.getParameters().add(new JsParameter(internalModuleName));
-
-        if (mainCallParameters.shouldBeGenerated()) {
-            JsProgramFragment mainCallFragment = generateCallToMain(
-                    bindingTrace, config, moduleDescriptor, sourceFilePathResolver, mainCallParameters.arguments());
-            if (mainCallFragment != null) {
-                fragments.add(mainCallFragment);
-                newFragments.add(mainCallFragment);
-                merger.addFragment(mainCallFragment);
-            }
-        }
 
         merger.merge();
 
@@ -447,30 +439,36 @@ public final class Translation {
         }
     }
 
-    @NotNull
-    private static JsProgramFragment mayBeGenerateTests(
-            @NotNull JsConfig config, @NotNull BindingTrace trace,
-            @NotNull ModuleDescriptor moduleDescriptor, @NotNull SourceFilePathResolver sourceFilePathResolver
+    @Nullable
+    private static JsStatement mayBeGenerateTests(
+            @NotNull TranslationContext context,
+            @NotNull KtFile file,
+            @NotNull List<DeclarationDescriptor> fileMemberScope
     ) {
-        StaticContext staticContext = new StaticContext(trace, config, moduleDescriptor, sourceFilePathResolver);
-        TranslationContext context = TranslationContext.rootContext(staticContext);
-
-        new JSTestGenerator(context).generateTestCalls(moduleDescriptor);
-
-        return staticContext.getFragment();
+        return new JSTestGenerator(context).generateTestCalls(file, fileMemberScope);
     }
 
     //TODO: determine whether should throw exception
     @Nullable
-    private static JsProgramFragment generateCallToMain(
-            @NotNull BindingTrace trace, @NotNull JsConfig config, @NotNull ModuleDescriptor moduleDescriptor,
-            @NotNull SourceFilePathResolver sourceFilePathResolver,
-            @NotNull List<String> arguments
+    private static JsStatement maybeGenerateCallToMain(
+            @NotNull TranslationContext context,
+            @NotNull JsConfig config,
+            @NotNull ModuleDescriptor moduleDescriptor,
+            @NotNull List<DeclarationDescriptor> fileMemberScope,
+            @NotNull MainCallParameters mainCallParameters
     ) {
-        StaticContext staticContext = new StaticContext(trace, config, moduleDescriptor, sourceFilePathResolver);
-        TranslationContext context = TranslationContext.rootContext(staticContext);
+        if (!mainCallParameters.shouldBeGenerated()) return null;
+
         MainFunctionDetector mainFunctionDetector = new MainFunctionDetector(context.bindingContext(), config.getLanguageVersionSettings());
-        FunctionDescriptor functionDescriptor = mainFunctionDetector.getMainFunction(moduleDescriptor);
+
+        FunctionDescriptor functionDescriptor = null;
+
+        for (DeclarationDescriptor d : fileMemberScope) {
+            if (mainFunctionDetector.isMain(d)) {
+                functionDescriptor = (FunctionDescriptor)d;
+            }
+        }
+
         if (functionDescriptor == null) {
             return null;
         }
@@ -480,7 +478,7 @@ public final class Translation {
 
         List<JsExpression> args = new ArrayList<>();
         if (parameterCount != 0) {
-            args.add(new JsArrayLiteral(toStringLiteralList(arguments)));
+            args.add(new JsArrayLiteral(toStringLiteralList(mainCallParameters.arguments())));
         }
 
         if (functionDescriptor.isSuspend()) {
@@ -492,7 +490,6 @@ public final class Translation {
         }
 
         JsExpression call = CallTranslator.INSTANCE.buildCall(context, functionDescriptor, args, null);
-        context.addTopLevelStatement(call.makeStmt());
-        return staticContext.getFragment();
+        return call.makeStmt();
     }
 }

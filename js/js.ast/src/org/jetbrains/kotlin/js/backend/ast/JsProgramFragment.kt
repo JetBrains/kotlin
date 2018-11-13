@@ -6,13 +6,15 @@ package org.jetbrains.kotlin.js.backend.ast
 
 import java.util.*
 
-class JsProgramFragment(val scope: JsScope) {
-    val importedModules: MutableList<JsImportedModule> = ArrayList()
+class JsProgramFragment(val scope: JsScope, val packageFqn: String) {
+    val importedModules = mutableListOf<JsImportedModule>()
     val imports: MutableMap<String, JsExpression> = LinkedHashMap()
     val declarationBlock = JsGlobalBlock()
     val exportBlock = JsGlobalBlock()
     val initializerBlock = JsGlobalBlock()
-    val nameBindings: MutableList<JsNameBinding> = ArrayList()
+    val nameBindings = mutableListOf<JsNameBinding>()
     val classes: MutableMap<JsName, JsClassModel> = LinkedHashMap()
     val inlineModuleMap: MutableMap<String, JsExpression> = LinkedHashMap()
+    var tests: JsStatement? = null
+    var mainFunction: JsStatement? = null
 }
