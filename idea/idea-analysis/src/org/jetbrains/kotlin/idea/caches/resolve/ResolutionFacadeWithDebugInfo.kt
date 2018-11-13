@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.idea.caches.project.getModuleInfo
+import org.jetbrains.kotlin.idea.caches.project.getNullableModuleInfo
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtElement
@@ -182,21 +182,29 @@ private fun StringBuilder.appendElement(element: PsiElement) {
     if (element is PsiFile) {
         info("containingFile.name", element.containingFile.name)
     }
-    val moduleInfo = ifIndexReady { element.getModuleInfo() }
-    info("moduleInfo", moduleInfo?.toString() ?: "<index not ready>")
+    val moduleInfoResult = ifIndexReady { element.getNullableModuleInfo() }
+    info("moduleInfo", moduleInfoResult?.let { it.result?.toString() ?: "null" } ?: "<index not ready>")
+
+    val moduleInfo = moduleInfoResult?.result
     if (moduleInfo != null) {
         info("moduleInfo.platform", moduleInfo.platform?.toString())
     }
+
     val virtualFile = element.containingFile?.virtualFile
+    info("virtualFile", virtualFile?.name)
+
     if (virtualFile != null) {
+        val moduleName = ifIndexReady { ModuleUtil.findModuleForFile(virtualFile, element.project)?.name ?: "null" }?.result
         info(
             "ideaModule",
-            ifIndexReady { ModuleUtil.findModuleForFile(virtualFile, element.project)?.name ?: "null" } ?: "<index not ready>")
+            moduleName ?: "<index not ready>")
     }
 }
 
-private fun <T : Any> ifIndexReady(body: () -> T): T? = try {
-    body()
+private class IndexResult<T>(val result: T)
+
+private fun <T> ifIndexReady(body: () -> T): IndexResult<T>? = try {
+    IndexResult(body())
 } catch (e: IndexNotReadyException) {
     null
 }
