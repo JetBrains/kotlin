@@ -57,7 +57,9 @@ class JavaToJKTreeBuilder(var symbolProvider: JKSymbolProvider) {
                 is PsiParenthesizedExpression -> toJK()
                 is PsiAssignmentExpression -> toJK()
                 is PsiInstanceOfExpression -> toJK()
-                is PsiThisExpression -> JKThisExpressionImpl()
+                is PsiThisExpression ->
+                    JKThisExpressionImpl(qualifier?.referenceName?.let { JKLabelTextImpl(JKNameIdentifierImpl(it)) }
+                                             ?: JKLabelEmptyImpl())
                 is PsiSuperExpression -> JKSuperExpressionImpl()
                 is PsiConditionalExpression -> JKIfElseExpressionImpl(
                     condition.toJK(), thenExpression.toJK(), elseExpression.toJK()
@@ -138,7 +140,7 @@ class JavaToJKTreeBuilder(var symbolProvider: JKSymbolProvider) {
             return if (referenceNameElement is PsiKeyword) {
                 val callee = when (referenceNameElement.tokenType) {
                     SUPER_KEYWORD -> JKSuperExpressionImpl()
-                    THIS_KEYWORD -> JKThisExpressionImpl()
+                    THIS_KEYWORD -> JKThisExpressionImpl(JKLabelEmptyImpl())
                     else -> error("Unknown keyword in callee position")
                 }
                 JKDelegationConstructorCallImpl(symbol, callee, argumentList.toJK())

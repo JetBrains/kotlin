@@ -309,7 +309,8 @@ class JKBlockStatementImpl(block: JKBlock) : JKBlockStatement, JKBranchElementBa
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitBlockStatement(this, data)
 }
 
-class JKThisExpressionImpl : JKThisExpression, JKElementBase(), PsiOwner by PsiOwnerImpl() {
+class JKThisExpressionImpl(qualifierLabel: JKLabel) : JKThisExpression, JKBranchElementBase(), PsiOwner by PsiOwnerImpl() {
+    override var qualifierLabel: JKLabel by child(qualifierLabel)
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitThisExpression(this, data)
 }
 

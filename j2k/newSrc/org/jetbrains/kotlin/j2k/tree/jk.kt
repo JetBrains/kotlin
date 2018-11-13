@@ -211,7 +211,9 @@ interface JKBlockStatement : JKStatement, JKBranchElement {
     var block: JKBlock
 }
 
-interface JKThisExpression : JKExpression
+interface JKThisExpression : JKExpression {
+    var qualifierLabel: JKLabel
+}
 
 interface JKSuperExpression : JKExpression
 

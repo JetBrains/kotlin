@@ -396,6 +396,7 @@ class NewCodeBuilder {
 
         override fun visitThisExpression(thisExpression: JKThisExpression) {
             printer.printWithNoIndent("this")
+            thisExpression.qualifierLabel.accept(this)
         }
 
         override fun visitSuperExpression(superExpression: JKSuperExpression) {
