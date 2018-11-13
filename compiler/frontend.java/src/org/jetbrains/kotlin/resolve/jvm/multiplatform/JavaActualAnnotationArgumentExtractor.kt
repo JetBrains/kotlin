@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.resolve.jvm.multiplatform
 
 import com.intellij.psi.PsiAnnotationMethod
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.load.java.components.JavaPropertyInitializerEvaluatorImpl
 import org.jetbrains.kotlin.load.java.structure.*
