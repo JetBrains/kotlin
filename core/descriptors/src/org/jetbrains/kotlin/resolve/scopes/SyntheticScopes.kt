@@ -36,6 +36,60 @@ interface SyntheticScope {
     fun getSyntheticConstructors(scope: ResolutionScope): Collection<FunctionDescriptor>
 
     fun getSyntheticConstructor(constructor: ConstructorDescriptor): ConstructorDescriptor?
+
+    open class Default : SyntheticScope {
+        override fun getSyntheticExtensionProperties(
+            receiverTypes: Collection<KotlinType>,
+            name: Name,
+            location: LookupLocation
+        ): Collection<PropertyDescriptor> {
+            return emptyList()
+        }
+
+        override fun getSyntheticMemberFunctions(
+            receiverTypes: Collection<KotlinType>,
+            name: Name,
+            location: LookupLocation
+        ): Collection<FunctionDescriptor> {
+            return emptyList()
+        }
+
+        override fun getSyntheticStaticFunctions(
+            scope: ResolutionScope,
+            name: Name,
+            location: LookupLocation
+        ): Collection<FunctionDescriptor> {
+            return emptyList()
+        }
+
+        override fun getSyntheticConstructors(
+            scope: ResolutionScope,
+            name: Name,
+            location: LookupLocation
+        ): Collection<FunctionDescriptor> {
+            return emptyList()
+        }
+
+        override fun getSyntheticExtensionProperties(receiverTypes: Collection<KotlinType>): Collection<PropertyDescriptor> {
+            return emptyList()
+        }
+
+        override fun getSyntheticMemberFunctions(receiverTypes: Collection<KotlinType>): Collection<FunctionDescriptor> {
+            return emptyList()
+        }
+
+        override fun getSyntheticStaticFunctions(scope: ResolutionScope): Collection<FunctionDescriptor> {
+            return emptyList()
+        }
+
+        override fun getSyntheticConstructors(scope: ResolutionScope): Collection<FunctionDescriptor> {
+            return emptyList()
+        }
+
+        override fun getSyntheticConstructor(constructor: ConstructorDescriptor): ConstructorDescriptor? {
+            return null
+        }
+    }
 }
 
 interface SyntheticScopes {
