@@ -180,6 +180,7 @@ fun writeIvyXml(moduleName: String, fileName: String, jarFiles: FileCollection, 
             addArtifact(
                 FileBasedIvyArtifact(sourcesJar, DefaultIvyPublicationIdentity(customDepsOrg, sourcesArtifactName, intellijVersion)).also {
                     it.conf = "sources"
+                    it.classifier = "sources"
                 }
             )
         }
