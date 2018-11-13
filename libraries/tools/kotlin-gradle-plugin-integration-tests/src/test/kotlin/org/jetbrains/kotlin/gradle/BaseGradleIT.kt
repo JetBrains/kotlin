@@ -22,7 +22,7 @@ abstract class BaseGradleIT {
 
     protected open fun defaultBuildOptions(): BuildOptions = BuildOptions(withDaemon = true)
 
-    protected open val defaultGradleVersion: GradleVersionRequired
+    open val defaultGradleVersion: GradleVersionRequired
         get() = GradleVersionRequired.None
 
     @Before
@@ -532,7 +532,14 @@ abstract class BaseGradleIT {
         createGradleCommand(wrapperDir, createGradleTailParameters(options, params))
 
     fun Project.gradleBuildScript(subproject: String? = null): File =
-        File(projectDir, subproject?.plus("/").orEmpty() + "build.gradle")
+        listOf("build.gradle", "build.gradle.kts").mapNotNull {
+            File(projectDir, subproject?.plus("/").orEmpty() + it).takeIf(File::exists)
+        }.single()
+
+    fun Project.gradleSettingsScript(): File =
+        listOf("settings.gradle", "settings.gradle.kts").mapNotNull {
+            File(projectDir, it).takeIf(File::exists)
+        }.single()
 
     private fun Project.createGradleTailParameters(options: BuildOptions, params: Array<out String> = arrayOf()): List<String> =
         params.toMutableList().apply {

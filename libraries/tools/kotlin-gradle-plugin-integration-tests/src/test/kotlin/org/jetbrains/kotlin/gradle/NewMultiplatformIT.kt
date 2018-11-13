@@ -35,10 +35,23 @@ class NewMultiplatformIT : BaseGradleIT() {
         classesDir(sourceSet = "$targetName/$sourceSetName")
 
     @Test
-    fun testLibAndApp() {
-        val libProject = Project("sample-lib", gradleVersion, "new-mpp-lib-and-app")
-        val appProject = Project("sample-app", gradleVersion, "new-mpp-lib-and-app")
-        val oldStyleAppProject = Project("sample-old-style-app", gradleVersion, "new-mpp-lib-and-app")
+    fun testLibAndApp() = doTestLibAndApp(
+        "sample-lib",
+        "sample-app",
+        gradleVersion
+    )
+
+    @Test
+    fun testLibAndAppWithGradleKotlinDsl() = doTestLibAndApp(
+        "sample-lib-gradle-kotlin-dsl",
+        "sample-app-gradle-kotlin-dsl",
+        GradleVersionRequired.AtLeast("4.10.2") // Using a SNAPSHOT version in the plugins DSL requires 4.10
+    )
+
+    fun doTestLibAndApp(libProjectName: String, appProjectName: String, gradleVersionRequired: GradleVersionRequired) {
+        val libProject = transformProjectWithPluginsDsl(libProjectName, gradleVersionRequired, "new-mpp-lib-and-app")
+        val appProject = transformProjectWithPluginsDsl(appProjectName, gradleVersionRequired, "new-mpp-lib-and-app")
+        val oldStyleAppProject = Project("sample-old-style-app", gradleVersionRequired, "new-mpp-lib-and-app")
 
         val compileTasksNames =
             listOf("Jvm6", "NodeJs", "Metadata", "Wasm32", nativeHostTargetName.capitalize()).map { ":compileKotlin$it" }
@@ -94,7 +107,7 @@ class NewMultiplatformIT : BaseGradleIT() {
 
         with(appProject) {
             setupWorkingDir()
-            gradleBuildScript().appendText("\nrepositories { maven { url '$libLocalRepoUri' } }")
+            gradleBuildScript().appendText("\nrepositories { maven { setUrl(\"$libLocalRepoUri\") } }")
 
             fun CompiledProject.checkAppBuild() {
                 assertSuccessful()
@@ -141,8 +154,12 @@ class NewMultiplatformIT : BaseGradleIT() {
 
             // Now run again with a project dependency instead of a module one:
             libProject.projectDir.copyRecursively(projectDir.resolve(libProject.projectDir.name))
-            projectDir.resolve("settings.gradle").appendText("\ninclude '${libProject.projectDir.name}'")
-            gradleBuildScript().modify { it.replace("'com.example:sample-lib:1.0'", "project(':${libProject.projectDir.name}')") }
+            gradleSettingsScript().appendText("\ninclude(\"${libProject.projectDir.name}\")")
+            gradleBuildScript().modify { it.replace("\"com.example:sample-lib:1.0\"", "project(\":${libProject.projectDir.name}\")") }
+
+            gradleBuildScript(libProjectName).takeIf { it.extension == "kts" }?.modify {
+                it.replace(Regex("""\.version\(.*\)"""), "")
+            }
 
             build("clean", "assemble", "--rerun-tasks") {
                 checkAppBuild()
