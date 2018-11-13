@@ -242,6 +242,9 @@ class JavaToJKTreeBuilder(var symbolProvider: JKSymbolProvider) {
             JKTypeParameterImpl(JKNameIdentifierImpl(name!!),
                                 extendsListTypes.map { JKTypeElementImpl(it.toJK(symbolProvider, Nullability.NotNull)) })
 
+        fun PsiPackageStatement.toJK(): JKPackageDeclaration =
+            JKPackageDeclarationImpl(JKNameIdentifierImpl(packageName))
+
         fun PsiClass.toJK(): JKClass {
             val classKind: JKClass.ClassKind = when {
                 isAnnotationType -> JKClass.ClassKind.ANNOTATION
@@ -504,6 +507,9 @@ class JavaToJKTreeBuilder(var symbolProvider: JKSymbolProvider) {
             resultElement = with(declarationMapper) { aClass.toJK() }
         }
 
+        override fun visitPackageStatement(statement: PsiPackageStatement) {
+            resultElement = with(declarationMapper) { statement.toJK() }
+        }
         override fun visitField(field: PsiField) {
             resultElement = with(declarationMapper) { field.toJK() }
         }

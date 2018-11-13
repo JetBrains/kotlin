@@ -120,6 +120,12 @@ class NewCodeBuilder {
             file.acceptChildren(this)
         }
 
+        override fun visitPackageDeclaration(packageDeclaration: JKPackageDeclaration) {
+            printer.printWithNoIndent("package ")
+            packageDeclaration.packageName.accept(this)
+            printer.printlnWithNoIndent()
+        }
+
         override fun visitBreakStatement(breakStatement: JKBreakStatement) {
             printer.printWithNoIndent("break")
         }

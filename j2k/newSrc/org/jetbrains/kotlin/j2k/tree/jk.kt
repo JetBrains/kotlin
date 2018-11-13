@@ -301,3 +301,7 @@ interface JKForInStatement : JKStatement {
     var iterationExpression: JKExpression
     var body: JKStatement
 }
+
+interface JKPackageDeclaration : JKDeclaration {
+    var packageName: JKNameIdentifier
+}

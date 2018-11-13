@@ -502,3 +502,8 @@ fun JKStatement.isEmpty(): Boolean =
         is JKExpressionStatement -> expression is JKStubExpression
         else -> false
     }
+
+class JKPackageDeclarationImpl(packageName: JKNameIdentifier) : JKPackageDeclaration, JKBranchElementBase() {
+    override var packageName: JKNameIdentifier by child(packageName)
+    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitPackageDeclaration(this, data)
+}
