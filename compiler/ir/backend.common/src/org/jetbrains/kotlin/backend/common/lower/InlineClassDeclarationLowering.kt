@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.descriptors.WrappedSimpleFunctionDescriptor
 import org.jetbrains.kotlin.backend.common.ir.copyTo
+import org.jetbrains.kotlin.backend.common.ir.copyTypeParametersFrom
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
@@ -227,11 +228,6 @@ class InlineClassLowering(val context: BackendContext) {
 
     private fun createStaticBodilessMethod(function: IrFunction): IrSimpleFunction {
         val descriptor = WrappedSimpleFunctionDescriptor()
-        val returnType = when (function) {
-            is IrSimpleFunction -> function.returnType
-            is IrConstructor -> function.parentAsClass.defaultType
-            else -> error("Unknown function type")
-        }
 
         return IrFunctionImpl(
             function.startOffset,
@@ -241,7 +237,7 @@ class InlineClassLowering(val context: BackendContext) {
             function.name.toInlineClassImplementationName(),
             function.visibility,
             Modality.FINAL,
-            returnType,
+            function.returnType,
             function.isInline,
             function.isExternal,
             (function is IrSimpleFunction && function.isTailrec),
