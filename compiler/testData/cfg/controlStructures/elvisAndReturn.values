@@ -1,0 +1,14 @@
+== foo ==
+fun foo(): String {
+    val x: String? = ""
+
+    x ?: return ""
+}
+---------------------
+""                                       <v0>: {<: String?}   NEW: r("") -> <v0>
+x                                        <v1>: Boolean        NEW: r(x) -> <v1>
+""                                       <v2>: String         NEW: r("") -> <v2>
+return ""                                !<v3>: *
+x ?: return ""                           <v4>: *              NEW: merge(x ?: return ""|<v1>, !<v3>) -> <v4>
+{ val x: String? = "" x ?: return "" }   <v4>: *              COPY
+=====================

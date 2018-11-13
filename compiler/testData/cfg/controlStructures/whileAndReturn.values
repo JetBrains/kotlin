@@ -1,0 +1,15 @@
+== foo ==
+fun foo(a: Boolean): String {
+    while (a) {
+        return ""
+    }
+}
+---------------------
+                              <v0>: Boolean   NEW: magic[FAKE_INITIALIZER](a: Boolean) -> <v0>
+a                             <v1>: Boolean   NEW: r(a) -> <v1>
+""                            <v2>: String    NEW: r("") -> <v2>
+return ""                     !<v3>: *
+{ return "" }                 !<v3>: *        COPY
+while (a) { return "" }       !<v4>: *
+{ while (a) { return "" } }   !<v4>: *        COPY
+=====================

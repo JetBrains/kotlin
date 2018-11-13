@@ -1,0 +1,34 @@
+== foo ==
+fun foo(a: Boolean): String {
+    while (a) {
+        return ""
+    }
+}
+---------------------
+L0:
+  1 <START>
+    v(a: Boolean)
+    magic[FAKE_INITIALIZER](a: Boolean) -> <v0>
+    w(a|<v0>)
+  2 mark({ while (a) { return "" } })
+L2 [loop entry point]:
+L6 [condition entry point]:
+    r(a) -> <v1>
+    mark(while (a) { return "" })
+    jf(L3|<v1>)                                    NEXT:[read (Unit), mark({ return "" })]
+L4 [body entry point]:
+  3 mark({ return "" })
+    mark("")
+    r("") -> <v2>
+    ret(*|<v2>) L1                                 NEXT:[<END>]
+- 2 jmp(L2)                                        NEXT:[r(a) -> <v1>]                                   PREV:[]
+L3 [loop exit point]:
+L5 [body exit point]:
+    read (Unit)                                    PREV:[jf(L3|<v1>)]
+L1:
+  1 <END>                                          NEXT:[<SINK>]                                         PREV:[ret(*|<v2>) L1, read (Unit)]
+error:
+    <ERROR>                                        PREV:[]
+sink:
+    <SINK>                                         PREV:[<ERROR>, <END>]
+=====================

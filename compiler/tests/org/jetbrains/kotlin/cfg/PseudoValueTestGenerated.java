@@ -177,6 +177,11 @@ public class PseudoValueTestGenerated extends AbstractPseudoValueTest {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/cfg/controlStructures"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
+            @TestMetadata("booleanChainAndReturn.kt")
+            public void testBooleanChainAndReturn() throws Exception {
+                runTest("compiler/testData/cfg/controlStructures/booleanChainAndReturn.kt");
+            }
+
             @TestMetadata("breakContinueInTryFinally.kt")
             public void testBreakContinueInTryFinally() throws Exception {
                 runTest("compiler/testData/cfg/controlStructures/breakContinueInTryFinally.kt");
@@ -200,6 +205,11 @@ public class PseudoValueTestGenerated extends AbstractPseudoValueTest {
             @TestMetadata("continueInWhile.kt")
             public void testContinueInWhile() throws Exception {
                 runTest("compiler/testData/cfg/controlStructures/continueInWhile.kt");
+            }
+
+            @TestMetadata("elvisAndReturn.kt")
+            public void testElvisAndReturn() throws Exception {
+                runTest("compiler/testData/cfg/controlStructures/elvisAndReturn.kt");
             }
 
             @TestMetadata("Finally.kt")
@@ -265,6 +275,11 @@ public class PseudoValueTestGenerated extends AbstractPseudoValueTest {
             @TestMetadata("whenExhaustive.kt")
             public void testWhenExhaustive() throws Exception {
                 runTest("compiler/testData/cfg/controlStructures/whenExhaustive.kt");
+            }
+
+            @TestMetadata("whileAndReturn.kt")
+            public void testWhileAndReturn() throws Exception {
+                runTest("compiler/testData/cfg/controlStructures/whileAndReturn.kt");
             }
         }
 

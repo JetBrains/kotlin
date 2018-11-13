@@ -1,0 +1,50 @@
+== andChain ==
+fun andChain(a: Boolean): String {
+    a && return ""
+}
+---------------------
+L0:
+  1 <START>
+    v(a: Boolean)
+    magic[FAKE_INITIALIZER](a: Boolean) -> <v0>
+    w(a|<v0>)
+  2 mark({ a && return "" })
+    r(a) -> <v1>
+    jf(L2|<v1>)                                       NEXT:[magic[AND](a && return ""|<v1>, !<v3>) -> <v4>, mark("")]
+    mark("")
+    r("") -> <v2>
+    ret(*|<v2>) L1                                    NEXT:[<END>]
+L2 [result of boolean operation]:
+    magic[AND](a && return ""|<v1>, !<v3>) -> <v4>    PREV:[jf(L2|<v1>)]
+L1:
+  1 <END>                                             NEXT:[<SINK>]                                                      PREV:[ret(*|<v2>) L1, magic[AND](a && return ""|<v1>, !<v3>) -> <v4>]
+error:
+    <ERROR>                                           PREV:[]
+sink:
+    <SINK>                                            PREV:[<ERROR>, <END>]
+=====================
+== orChain ==
+fun orChain(a: Boolean): String {
+    a || return ""
+}
+---------------------
+L0:
+  1 <START>
+    v(a: Boolean)
+    magic[FAKE_INITIALIZER](a: Boolean) -> <v0>
+    w(a|<v0>)
+  2 mark({ a || return "" })
+    r(a) -> <v1>
+    jt(L2|<v1>)                                      NEXT:[mark(""), magic[OR](a || return ""|<v1>, !<v3>) -> <v4>]
+    mark("")
+    r("") -> <v2>
+    ret(*|<v2>) L1                                   NEXT:[<END>]
+L2 [result of boolean operation]:
+    magic[OR](a || return ""|<v1>, !<v3>) -> <v4>    PREV:[jt(L2|<v1>)]
+L1:
+  1 <END>                                            NEXT:[<SINK>]                                                     PREV:[ret(*|<v2>) L1, magic[OR](a || return ""|<v1>, !<v3>) -> <v4>]
+error:
+    <ERROR>                                          PREV:[]
+sink:
+    <SINK>                                           PREV:[<ERROR>, <END>]
+=====================

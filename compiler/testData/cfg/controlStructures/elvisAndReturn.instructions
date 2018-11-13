@@ -1,0 +1,29 @@
+== foo ==
+fun foo(): String {
+    val x: String? = ""
+
+    x ?: return ""
+}
+---------------------
+L0:
+  1 <START>
+  2 mark({ val x: String? = "" x ?: return "" })
+    v(val x: String? = "")
+    mark("")
+    r("") -> <v0>
+    w(x|<v0>)
+    r(x) -> <v1>
+    mark(x ?: return "")
+    jt(L2|<v1>)                                     NEXT:[mark(""), merge(x ?: return ""|<v1>, !<v3>) -> <v4>]
+    mark("")
+    r("") -> <v2>
+    ret(*|<v2>) L1                                  NEXT:[<END>]
+L2 [after elvis operator]:
+    merge(x ?: return ""|<v1>, !<v3>) -> <v4>       PREV:[jt(L2|<v1>)]
+L1:
+  1 <END>                                           NEXT:[<SINK>]                                                 PREV:[ret(*|<v2>) L1, merge(x ?: return ""|<v1>, !<v3>) -> <v4>]
+error:
+    <ERROR>                                         PREV:[]
+sink:
+    <SINK>                                          PREV:[<ERROR>, <END>]
+=====================

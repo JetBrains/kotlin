@@ -1,0 +1,24 @@
+== andChain ==
+fun andChain(a: Boolean): String {
+    a && return ""
+}
+---------------------
+                     <v0>: Boolean   NEW: magic[FAKE_INITIALIZER](a: Boolean) -> <v0>
+a                    <v1>: Boolean   NEW: r(a) -> <v1>
+""                   <v2>: String    NEW: r("") -> <v2>
+return ""            !<v3>: *
+a && return ""       <v4>: *         NEW: magic[AND](a && return ""|<v1>, !<v3>) -> <v4>
+{ a && return "" }   <v4>: *         COPY
+=====================
+== orChain ==
+fun orChain(a: Boolean): String {
+    a || return ""
+}
+---------------------
+                     <v0>: Boolean   NEW: magic[FAKE_INITIALIZER](a: Boolean) -> <v0>
+a                    <v1>: Boolean   NEW: r(a) -> <v1>
+""                   <v2>: String    NEW: r("") -> <v2>
+return ""            !<v3>: *
+a || return ""       <v4>: *         NEW: magic[OR](a || return ""|<v1>, !<v3>) -> <v4>
+{ a || return "" }   <v4>: *         COPY
+=====================
