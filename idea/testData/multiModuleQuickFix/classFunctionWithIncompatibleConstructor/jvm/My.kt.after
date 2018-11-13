@@ -4,5 +4,6 @@
 actual class My actual constructor(a: Int, b: String) {
     actual constructor(b: String, a: Int)
 
-    actual fun test() {}
+    actual fun test() {
+    }
 }

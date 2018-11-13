@@ -19,13 +19,16 @@ package org.jetbrains.kotlin.idea.quickfix.expectactual
 import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
+import com.intellij.psi.codeStyle.CodeStyleManager
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
 import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.quickfix.KotlinQuickFixAction
 import org.jetbrains.kotlin.idea.quickfix.KotlinSingleIntentionActionFactory
 import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.psiUtil.createSmartPointer
@@ -53,7 +56,9 @@ class AddActualFix(
                     listOfNotNull(element.primaryConstructor)
         )
         for (declaration in pureActualClass.declarations) {
-            element.addDeclaration(declaration)
+            val actualDeclaration = element.addDeclaration(declaration)
+            val reformatted = CodeStyleManager.getInstance(project).reformat(actualDeclaration)
+            ShortenReferences.DEFAULT.process(reformatted as KtElement)
         }
         val primaryConstructor = pureActualClass.primaryConstructor
         if (element.primaryConstructor == null && primaryConstructor != null) {

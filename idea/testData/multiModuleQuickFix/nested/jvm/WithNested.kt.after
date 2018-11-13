@@ -5,11 +5,13 @@ actual class WithNested {
     }
 
     actual class Nested {
-        actual fun bar() {}
+        actual fun bar() {
+        }
     }
 
     actual inner class Inner {
-        actual fun baz() {}
+        actual fun baz() {
+        }
     }
 
 }

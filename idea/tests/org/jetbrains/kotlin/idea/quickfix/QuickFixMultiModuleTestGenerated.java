@@ -144,6 +144,11 @@ public class QuickFixMultiModuleTestGenerated extends AbstractQuickFixMultiModul
         runTest("idea/testData/multiModuleQuickFix/classWithIncompilableFunction/");
     }
 
+    @TestMetadata("classWithJdk")
+    public void testClassWithJdk() throws Exception {
+        runTest("idea/testData/multiModuleQuickFix/classWithJdk/");
+    }
+
     @TestMetadata("companionAbsence")
     public void testCompanionAbsence() throws Exception {
         runTest("idea/testData/multiModuleQuickFix/companionAbsence/");

@@ -3,4 +3,5 @@
 
 package test
 
-actual fun testHelper() {}
+actual fun testHelper() {
+}

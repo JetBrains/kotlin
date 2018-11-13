@@ -1,4 +1,5 @@
 // to be created
 actual class C {
-    actual fun f(p: Int) {}
+    actual fun f(p: Int) {
+    }
 }

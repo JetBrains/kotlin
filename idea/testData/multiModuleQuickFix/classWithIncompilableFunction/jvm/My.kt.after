@@ -2,6 +2,6 @@
 // DISABLE-ERRORS
 
 actual class My {
-    // Incompilable function
-    actual fun foo() {}
+    actual fun foo() {
+    }
 }
