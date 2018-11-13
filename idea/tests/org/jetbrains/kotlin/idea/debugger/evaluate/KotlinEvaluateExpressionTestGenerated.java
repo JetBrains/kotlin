@@ -136,6 +136,11 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
             runTest("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/extractVariablesFromCall.kt");
         }
 
+        @TestMetadata("fieldGetters.kt")
+        public void testFieldGetters() throws Exception {
+            runTest("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/fieldGetters.kt");
+        }
+
         @TestMetadata("fileWithError.kt")
         public void testFileWithError() throws Exception {
             runTest("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/fileWithError.kt");
