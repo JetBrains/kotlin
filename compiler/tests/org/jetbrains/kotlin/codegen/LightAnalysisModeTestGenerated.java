@@ -11665,6 +11665,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM, true);
         }
 
+        @TestMetadata("boundCallableReferencePassedToInlineFunction.kt")
+        public void testBoundCallableReferencePassedToInlineFunction() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/boundCallableReferencePassedToInlineFunction.kt");
+        }
+
         @TestMetadata("boxNullableValueOfInlineClassWithNonNullUnderlyingType.kt")
         public void testBoxNullableValueOfInlineClassWithNonNullUnderlyingType() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/boxNullableValueOfInlineClassWithNonNullUnderlyingType.kt");
