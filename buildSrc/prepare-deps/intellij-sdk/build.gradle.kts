@@ -165,15 +165,23 @@ fun writeIvyXml(moduleName: String, fileName: String, jarFiles: FileCollection, 
     with(IvyDescriptorFileGenerator(DefaultIvyPublicationIdentity(customDepsOrg, moduleName, intellijVersion))) {
         addConfiguration(DefaultIvyConfiguration("default"))
         addConfiguration(DefaultIvyConfiguration("sources"))
-        jarFiles.asFileTree.files.forEach {
-            if (it.isFile && it.extension == "jar") {
-                val relativeName = it.toRelativeString(baseDir).removeSuffix(".jar")
-                addArtifact(FileBasedIvyArtifact(it, DefaultIvyPublicationIdentity(customDepsOrg, relativeName, intellijVersion)).also { it.conf = "default" })
+        jarFiles.asFileTree.files.forEach { jarFile ->
+            if (jarFile.isFile && jarFile.extension == "jar") {
+                val relativeName = jarFile.toRelativeString(baseDir).removeSuffix(".jar")
+                addArtifact(
+                    FileBasedIvyArtifact(jarFile, DefaultIvyPublicationIdentity(customDepsOrg, relativeName, intellijVersion)).also {
+                        it.conf = "default"
+                    }
+                )
             }
         }
         if (sourcesJar != null) {
-            val sourcesArtifactName = sourcesJar.name.removeSuffix(".jar").substringBefore("-")
-            addArtifact(FileBasedIvyArtifact(sourcesJar, DefaultIvyPublicationIdentity(customDepsOrg, sourcesArtifactName, intellijVersion)).also { it.conf = "sources" })
+            val sourcesArtifactName = sourcesJar.name.substringBefore("-")
+            addArtifact(
+                FileBasedIvyArtifact(sourcesJar, DefaultIvyPublicationIdentity(customDepsOrg, sourcesArtifactName, intellijVersion)).also {
+                    it.conf = "sources"
+                }
+            )
         }
         writeTo(File(customDepsRepoModulesDir, "$fileName.ivy.xml"))
     }
