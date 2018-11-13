@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.ir.backend.js.lower.coroutines
 import org.jetbrains.kotlin.backend.common.*
 import org.jetbrains.kotlin.backend.common.descriptors.*
 import org.jetbrains.kotlin.backend.common.ir.copyParameterDeclarationsFrom
+import org.jetbrains.kotlin.backend.common.ir.copyTo
 import org.jetbrains.kotlin.backend.common.ir.isSuspend
 import org.jetbrains.kotlin.backend.common.lower.SymbolWithIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
@@ -507,8 +508,10 @@ internal class SuspendFunctionsLowering(val context: JsIrBackendContext): FileLo
                 descriptor.bind(declaration)
                 declaration.parent = coroutineClass
 
-                declaration.valueParameters += functionParameters.map {
-                    JsIrBuilder.buildValueParameter(it.name, it.index, it.type, it.origin).also { p -> p.parent = declaration }
+                declaration.valueParameters += functionParameters.mapIndexed { index: Int, parameter: IrValueParameter ->
+                    JsIrBuilder.buildValueParameter(parameter.name, index, parameter.type, parameter.origin).also { p ->
+                        p.parent = declaration
+                    }
                 }
                 declaration.valueParameters += JsIrBuilder.buildValueParameter(
                     completion.name,
@@ -637,7 +640,7 @@ internal class SuspendFunctionsLowering(val context: JsIrBackendContext): FileLo
                 descriptor.bind(declaration)
                 declaration.parent = coroutineClass
                 declaration.returnType = coroutineClass.defaultType
-                declaration.dispatchReceiverParameter = coroutineClassThis
+                declaration.dispatchReceiverParameter = coroutineClassThis.copyTo(declaration)
 
                 unboundArgs.mapIndexedTo(declaration.valueParameters) { i, p ->
                     JsIrBuilder.buildValueParameter(p.name, i, p.type, p.origin).also { it.parent = declaration }
@@ -656,7 +659,7 @@ internal class SuspendFunctionsLowering(val context: JsIrBackendContext): FileLo
                     declaration.overriddenSymbols += superFunctionDeclaration.symbol
                 }
 
-                val thisReceiver = coroutineClassThis
+                val thisReceiver = declaration.dispatchReceiverParameter!!
                 val irBuilder = context.createIrBuilder(symbol, irFunction.startOffset, irFunction.endOffset)
                 declaration.body = irBuilder.irBlockBody(irFunction.startOffset, irFunction.endOffset) {
                     +irReturn(
@@ -726,7 +729,7 @@ internal class SuspendFunctionsLowering(val context: JsIrBackendContext): FileLo
                 val resultSetter = context.coroutineImplResultSymbol.setter!!
                 val exceptionSetter = context.coroutineImplExceptionProperty.setter!!
 
-                val thisReceiver = coroutineClassThis
+                val thisReceiver = declaration.dispatchReceiverParameter!!
                 val irBuilder = context.createIrBuilder(symbol, irFunction.startOffset, irFunction.endOffset)
                 declaration.body = irBuilder.irBlockBody(irFunction.startOffset, irFunction.endOffset) {
                     val dispatchReceiverCall = irCall(createFunction).apply {
@@ -806,12 +809,12 @@ internal class SuspendFunctionsLowering(val context: JsIrBackendContext): FileLo
                     function.overriddenSymbols += doResumeFunction.symbol
                     function.parent = coroutineClass
                     function.returnType = context.irBuiltIns.anyNType
-                    function.dispatchReceiverParameter = coroutineClassThis
+                    function.dispatchReceiverParameter = coroutineClassThis.copyTo(function)
                     doResumeFunction.valueParameters.mapTo(function.valueParameters) {
                         JsIrBuilder.buildValueParameter(it.name, it.index, it.type, it.origin).also { p -> p.parent = function }
                     }
 
-                    val thisReceiver = JsIrBuilder.buildGetValue(coroutineClassThis.symbol)
+                    val thisReceiver = JsIrBuilder.buildGetValue(function.dispatchReceiverParameter!!.symbol)
                     suspendResult = JsIrBuilder.buildVar(
                         context.irBuiltIns.anyNType,
                         function,
