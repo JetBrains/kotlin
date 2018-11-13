@@ -41,6 +41,6 @@
     @20:10..23 VALUE_PARAMETER name:a index:0 type:() -> test.Host flags:
     @20:25..22:1 BLOCK_BODY
       @21:4..12 CALL 'plusAssign(Int): Unit' type=kotlin.Unit origin=PLUSEQ
-        @21:4..7 CALL 'invoke(): Host' type=test.Host origin=INVOKE
+        @21:4..7 CALL 'invoke(): R' type=test.Host origin=INVOKE
           @21:4..5 GET_VAR 'value-parameter a: () -> Host' type=() -> test.Host origin=VARIABLE_AS_FUNCTION
         @21:11..12 CONST Int type=kotlin.Int value=1

@@ -15,7 +15,7 @@ FILE fqName:<root> fileName:/extFunSafeInvoke.kt
               then: CONST Null type=kotlin.Nothing? value=null
             BRANCH
               if: CONST Boolean type=kotlin.Boolean value=true
-              then: CALL 'invoke(Any, Int, String): Unit' type=kotlin.Unit origin=INVOKE
+              then: CALL 'invoke(P1, P2, P3): R' type=kotlin.Unit origin=INVOKE
                 $this: GET_VAR 'value-parameter fn: Any.(Int, String) -> Unit' type=kotlin.Any.(kotlin.Int, kotlin.String) -> kotlin.Unit origin=VARIABLE_AS_FUNCTION
                 p1: GET_VAR 'tmp0_safe_receiver: Any?' type=kotlin.Any? origin=null
                 p2: CONST Int type=kotlin.Int value=42

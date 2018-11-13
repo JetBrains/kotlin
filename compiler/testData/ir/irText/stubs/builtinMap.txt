@@ -10,15 +10,15 @@ FILE fqName:<root> fileName:/builtinMap.kt
           BRANCH
             if: CALL 'isEmpty(): Boolean' type=kotlin.Boolean origin=null
               $this: GET_VAR 'this@plus: Map<out K1, V1>' type=kotlin.collections.Map<out K1, V1> origin=null
-            then: CALL 'mapOf(Pair<K1, V1>): Map<K1, V1>' type=kotlin.collections.Map<K1, V1> origin=null
+            then: CALL 'mapOf(Pair<K, V>): Map<K, V>' type=kotlin.collections.Map<K1, V1> origin=null
               <K>: K1
               <V>: V1
               pair: GET_VAR 'value-parameter pair: Pair<K1, V1>' type=kotlin.Pair<K1, V1> origin=null
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
-            then: CALL 'apply(LinkedHashMap<K1!, V1!> /* = LinkedHashMap<K1!, V1!> */.() -> Unit) on LinkedHashMap<K1!, V1!> /* = LinkedHashMap<K1!, V1!> */: LinkedHashMap<K1!, V1!> /* = LinkedHashMap<K1!, V1!> */' type=kotlin.collections.LinkedHashMap<K1!, V1!> /* = java.util.LinkedHashMap<K1!, V1!> */ origin=null
+            then: CALL 'apply(T.() -> Unit) on T: T' type=kotlin.collections.LinkedHashMap<K1!, V1!> /* = java.util.LinkedHashMap<K1!, V1!> */ origin=null
               <T>: kotlin.collections.LinkedHashMap<K1!, V1!> /* = java.util.LinkedHashMap<K1!, V1!> */
-              $receiver: CALL 'constructor LinkedHashMap((MutableMap<out K1!, out V1!>..Map<out K1!, V1!>?))' type=java.util.LinkedHashMap<K1!, V1!> origin=null
+              $receiver: CALL 'constructor LinkedHashMap((MutableMap<out K!, out V!>..Map<out K!, V!>?))' type=java.util.LinkedHashMap<K1!, V1!> origin=null
                 <K : Any!>: K1?
                 <V : Any!>: V1?
                 p0: GET_VAR 'this@plus: Map<out K1, V1>' type=kotlin.collections.Map<out K1, V1> origin=null
@@ -29,10 +29,10 @@ FILE fqName:<root> fileName:/builtinMap.kt
                     RETURN type=kotlin.Nothing from='<anonymous>() on LinkedHashMap<K1!, V1!> /* = LinkedHashMap<K1!, V1!> */: Unit'
                       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
                         typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public flags: superTypes:[kotlin.Any]
-                        CALL 'put(K1!, V1!): V1?' type=V1? origin=null
+                        CALL 'put(K, V): V?' type=V1? origin=null
                           $this: GET_VAR 'this@<anonymous>: LinkedHashMap<(K1..K1?), (V1..V1?)>' type=kotlin.collections.LinkedHashMap<K1!, V1!> /* = java.util.LinkedHashMap<K1!, V1!> */ origin=null
-                          key: CALL '<get-first>(): K1' type=K1 origin=GET_PROPERTY
+                          key: CALL '<get-first>(): A' type=K1 origin=GET_PROPERTY
                             $this: GET_VAR 'value-parameter pair: Pair<K1, V1>' type=kotlin.Pair<K1, V1> origin=null
-                          value: CALL '<get-second>(): V1' type=V1 origin=GET_PROPERTY
+                          value: CALL '<get-second>(): B' type=V1 origin=GET_PROPERTY
                             $this: GET_VAR 'value-parameter pair: Pair<K1, V1>' type=kotlin.Pair<K1, V1> origin=null
                 FUNCTION_REFERENCE '<anonymous>() on LinkedHashMap<K1!, V1!> /* = LinkedHashMap<K1!, V1!> */: Unit' type=kotlin.collections.LinkedHashMap<K1!, V1!> /* = java.util.LinkedHashMap<K1!, V1!> */.() -> kotlin.Unit origin=LAMBDA

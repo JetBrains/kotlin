@@ -45,7 +45,7 @@ FILE fqName:<root> fileName:/breakContinueInLoopHeader.kt
         body: BLOCK type=kotlin.Unit origin=null
           BLOCK type=kotlin.Unit origin=FOR_LOOP
             VAR FOR_LOOP_ITERATOR name:tmp1_iterator type:kotlin.collections.Iterator<kotlin.String> flags:val
-              CALL 'iterator(): Iterator<String>' type=kotlin.collections.Iterator<kotlin.String> origin=FOR_LOOP_ITERATOR
+              CALL 'iterator(): Iterator<E>' type=kotlin.collections.Iterator<kotlin.String> origin=FOR_LOOP_ITERATOR
                 $this: BLOCK type=kotlin.collections.List<kotlin.String> origin=ELVIS
                   VAR IR_TEMPORARY_VARIABLE name:tmp0_elvis_lhs type:kotlin.collections.List<kotlin.String>? flags:val
                     GET_VAR 'value-parameter ss: List<String>?' type=kotlin.collections.List<kotlin.String>? origin=null
@@ -63,7 +63,7 @@ FILE fqName:<root> fileName:/breakContinueInLoopHeader.kt
                 $this: GET_VAR 'tmp1_iterator: Iterator<String>' type=kotlin.collections.Iterator<kotlin.String> origin=null
               body: BLOCK type=kotlin.Unit origin=FOR_LOOP_INNER_WHILE
                 VAR FOR_LOOP_VARIABLE name:s type:kotlin.String flags:val
-                  CALL 'next(): String' type=kotlin.String origin=FOR_LOOP_NEXT
+                  CALL 'next(): T' type=kotlin.String origin=FOR_LOOP_NEXT
                     $this: GET_VAR 'tmp1_iterator: Iterator<String>' type=kotlin.collections.Iterator<kotlin.String> origin=null
   FUN name:test4 visibility:public modality:FINAL <> (ss:kotlin.collections.List<kotlin.String>?) returnType:kotlin.Unit flags:
     VALUE_PARAMETER name:ss index:0 type:kotlin.collections.List<kotlin.String>? flags:
@@ -73,7 +73,7 @@ FILE fqName:<root> fileName:/breakContinueInLoopHeader.kt
         body: BLOCK type=kotlin.Unit origin=null
           BLOCK type=kotlin.Unit origin=FOR_LOOP
             VAR FOR_LOOP_ITERATOR name:tmp1_iterator type:kotlin.collections.Iterator<kotlin.String> flags:val
-              CALL 'iterator(): Iterator<String>' type=kotlin.collections.Iterator<kotlin.String> origin=FOR_LOOP_ITERATOR
+              CALL 'iterator(): Iterator<E>' type=kotlin.collections.Iterator<kotlin.String> origin=FOR_LOOP_ITERATOR
                 $this: BLOCK type=kotlin.collections.List<kotlin.String> origin=ELVIS
                   VAR IR_TEMPORARY_VARIABLE name:tmp0_elvis_lhs type:kotlin.collections.List<kotlin.String>? flags:val
                     GET_VAR 'value-parameter ss: List<String>?' type=kotlin.collections.List<kotlin.String>? origin=null
@@ -91,7 +91,7 @@ FILE fqName:<root> fileName:/breakContinueInLoopHeader.kt
                 $this: GET_VAR 'tmp1_iterator: Iterator<String>' type=kotlin.collections.Iterator<kotlin.String> origin=null
               body: BLOCK type=kotlin.Unit origin=FOR_LOOP_INNER_WHILE
                 VAR FOR_LOOP_VARIABLE name:s type:kotlin.String flags:val
-                  CALL 'next(): String' type=kotlin.String origin=FOR_LOOP_NEXT
+                  CALL 'next(): T' type=kotlin.String origin=FOR_LOOP_NEXT
                     $this: GET_VAR 'tmp1_iterator: Iterator<String>' type=kotlin.collections.Iterator<kotlin.String> origin=null
   FUN name:test5 visibility:public modality:FINAL <> () returnType:kotlin.Unit flags:
     BLOCK_BODY

@@ -47,7 +47,7 @@ FILE fqName:<root> fileName:/augmentedAssignmentWithExpression.kt
     VALUE_PARAMETER name:a index:0 type:() -> Host flags:
     BLOCK_BODY
       CALL 'plusAssign(Int): Unit' type=kotlin.Unit origin=PLUSEQ
-        $this: CALL 'invoke(): Host' type=Host origin=INVOKE
+        $this: CALL 'invoke(): R' type=Host origin=INVOKE
           $this: GET_VAR 'value-parameter a: () -> Host' type=() -> Host origin=VARIABLE_AS_FUNCTION
         x: CONST Int type=kotlin.Int value=1
 

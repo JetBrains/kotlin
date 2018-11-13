@@ -4,7 +4,7 @@ FILE fqName:<root> fileName:/in.kt
     VALUE_PARAMETER name:x index:1 type:kotlin.collections.Collection<kotlin.Any> flags:
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='test1(Any, Collection<Any>): Boolean'
-        CALL 'contains(Any): Boolean' type=kotlin.Boolean origin=IN
+        CALL 'contains(E): Boolean' type=kotlin.Boolean origin=IN
           $this: GET_VAR 'value-parameter x: Collection<Any>' type=kotlin.collections.Collection<kotlin.Any> origin=null
           element: GET_VAR 'value-parameter a: Any' type=kotlin.Any origin=null
   FUN name:test2 visibility:public modality:FINAL <> (a:kotlin.Any, x:kotlin.collections.Collection<kotlin.Any>) returnType:kotlin.Boolean flags:
@@ -13,7 +13,7 @@ FILE fqName:<root> fileName:/in.kt
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='test2(Any, Collection<Any>): Boolean'
         CALL 'NOT(Boolean): Boolean' type=kotlin.Boolean origin=NOT_IN
-          arg0: CALL 'contains(Any): Boolean' type=kotlin.Boolean origin=NOT_IN
+          arg0: CALL 'contains(E): Boolean' type=kotlin.Boolean origin=NOT_IN
             $this: GET_VAR 'value-parameter x: Collection<Any>' type=kotlin.collections.Collection<kotlin.Any> origin=null
             element: GET_VAR 'value-parameter a: Any' type=kotlin.Any origin=null
   FUN name:test3 visibility:public modality:FINAL <T> (a:T, x:kotlin.collections.Collection<T>) returnType:kotlin.Boolean flags:
@@ -22,7 +22,7 @@ FILE fqName:<root> fileName:/in.kt
     VALUE_PARAMETER name:x index:1 type:kotlin.collections.Collection<T> flags:
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='test3(T, Collection<T>): Boolean'
-        CALL 'contains(T): Boolean' type=kotlin.Boolean origin=IN
+        CALL 'contains(E): Boolean' type=kotlin.Boolean origin=IN
           $this: GET_VAR 'value-parameter x: Collection<T>' type=kotlin.collections.Collection<T> origin=null
           element: GET_VAR 'value-parameter a: T' type=T origin=null
   FUN name:test4 visibility:public modality:FINAL <T> (a:T, x:kotlin.collections.Collection<T>) returnType:kotlin.Boolean flags:
@@ -32,7 +32,7 @@ FILE fqName:<root> fileName:/in.kt
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='test4(T, Collection<T>): Boolean'
         CALL 'NOT(Boolean): Boolean' type=kotlin.Boolean origin=NOT_IN
-          arg0: CALL 'contains(T): Boolean' type=kotlin.Boolean origin=NOT_IN
+          arg0: CALL 'contains(E): Boolean' type=kotlin.Boolean origin=NOT_IN
             $this: GET_VAR 'value-parameter x: Collection<T>' type=kotlin.collections.Collection<T> origin=null
             element: GET_VAR 'value-parameter a: T' type=T origin=null
 
