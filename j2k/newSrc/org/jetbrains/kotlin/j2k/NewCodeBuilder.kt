@@ -112,6 +112,10 @@ class NewCodeBuilder {
             printer.printWithNoIndent(")")
         }
 
+        override fun visitClassAccessExpression(classAccessExpression: JKClassAccessExpression) {
+            printer.printWithNoIndent(classAccessExpression.identifier.fqName)
+        }
+
         override fun visitFile(file: JKFile) {
             file.acceptChildren(this)
         }
