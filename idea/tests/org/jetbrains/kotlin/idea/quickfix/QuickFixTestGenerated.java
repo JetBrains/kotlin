@@ -9505,6 +9505,16 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             runTest("idea/testData/quickfix/removeSingleLambdaParameter/multiple.kt");
         }
 
+        @TestMetadata("propertyWithExplicitType.kt")
+        public void testPropertyWithExplicitType() throws Exception {
+            runTest("idea/testData/quickfix/removeSingleLambdaParameter/propertyWithExplicitType.kt");
+        }
+
+        @TestMetadata("propertyWithImplicitType.kt")
+        public void testPropertyWithImplicitType() throws Exception {
+            runTest("idea/testData/quickfix/removeSingleLambdaParameter/propertyWithImplicitType.kt");
+        }
+
         @TestMetadata("simple.kt")
         public void testSimple() throws Exception {
             runTest("idea/testData/quickfix/removeSingleLambdaParameter/simple.kt");
