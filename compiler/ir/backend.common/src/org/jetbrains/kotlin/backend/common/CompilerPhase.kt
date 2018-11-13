@@ -21,7 +21,7 @@ interface CompilerPhase<in Context : BackendContext, Data> {
 }
 
 private typealias AnyPhase = CompilerPhase<*, *>
-class CompilerPhases(val phaseList: List<AnyPhase>, config: CompilerConfiguration) {
+class CompilerPhases(private val phaseList: List<AnyPhase>, config: CompilerConfiguration) {
 
     val phases = phaseList.associate { it.name to it }
 
@@ -131,14 +131,14 @@ inline fun <reified Lowering : FileLoweringPass> makePhase(
 
         override fun invoke(context: BackendContext, source: IrFile): IrFile {
             val loweringConstructorWithContext = Lowering::class.constructors.filter {
-                it.parameters.size > 0 &&
+                it.parameters.isNotEmpty() &&
                         (it.parameters[0].type.classifier as? KClass<*>)?.isSubclassOf(BackendContext::class) == true
             }.singleOrNull()
 
             val lowering = if (loweringConstructorWithContext != null) {
                 loweringConstructorWithContext.call(context, *args)
             } else {
-                val loweringConstructorWithoutParameters = Lowering::class.constructors.filter { it.parameters.size == 0 }.singleOrNull()
+                val loweringConstructorWithoutParameters = Lowering::class.constructors.single { it.parameters.isEmpty() }
                 loweringConstructorWithoutParameters?.call() as Lowering
             }
             lowering.lower(source)

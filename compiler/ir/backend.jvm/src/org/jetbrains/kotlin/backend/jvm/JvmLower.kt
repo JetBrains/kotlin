@@ -44,7 +44,7 @@ val jvmPhases = listOf(
 
     InterfacePhase,
     InterfaceDelegationPhase,
-    SharedvariablesPhase,
+    SharedVariablesPhase,
 
     makePatchParentsPhase(1),
 

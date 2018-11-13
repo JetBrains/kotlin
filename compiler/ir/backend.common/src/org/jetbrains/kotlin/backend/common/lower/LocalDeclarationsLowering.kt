@@ -40,11 +40,13 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.parents
 import java.util.*
 
 val LocalDeclarationsPhase = makePhase<LocalDeclarationsLowering>(
-    description = "Move local declarations to classes"
+    description = "Move local declarations to classes",
+    prerequisite = setOf(SharedVariablesPhase)
 )
 
 val JvmLocalDeclarationsPhase = makePhase<JvmLocalDeclarationsLowering>(
-    description = "Move local declarations to classes"
+    description = "Move local declarations to classes",
+    prerequisite = setOf(SharedVariablesPhase)
 )
 
 interface LocalNameProvider {
