@@ -139,15 +139,11 @@ class KotlinGradleProjectResolverExtension : AbstractProjectResolverExtension() 
         } else listOf(ideModule)
 
         for (currentModuleNode in moduleNodesToProcess) {
-            val toProcess = LinkedList<DataNode<out ModuleData>>()
-            val processed = HashSet<DataNode<out ModuleData>>()
-            toProcess.add(currentModuleNode)
+            val toProcess = ArrayDeque<DataNode<out ModuleData>>().apply { add(currentModuleNode) }
+            val discovered = HashSet<DataNode<out ModuleData>>().apply { add(currentModuleNode) }
 
             while (toProcess.isNotEmpty()) {
                 val moduleNode = toProcess.pollLast()
-                if (processed.contains(moduleNode)) continue
-
-                processed.add(moduleNode)
 
                 val moduleNodeForGradleModel = if (useModulePerSourceSet()) {
                     ExternalSystemApiUtil.findParent(moduleNode, ProjectKeys.MODULE)
@@ -181,7 +177,8 @@ class KotlinGradleProjectResolverExtension : AbstractProjectResolverExtension() 
                 }
 
                 val dependencies = if (useModulePerSourceSet()) moduleNode.getDependencies(ideProject) else getDependencyModules(ideModule, gradleModule.project)
-                dependencies.filterTo(toProcess) { it !in processed }
+                // queue only those dependencies that haven't been discovered earlier
+                dependencies.filterTo(toProcess, discovered::add)
             }
         }
     }
