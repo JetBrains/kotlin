@@ -38,7 +38,7 @@ buildscript {
     dependencies {
         classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.4'
         classpath 'com.github.jengelman.gradle.plugins:shadow:4.0.0'
-        classpath "com.gradle.publish:plugin-publish-plugin:0.10.0"
+        classpath "com.gradle.publish:plugin-publish-plugin:0.9.10"
     }
 }
 
