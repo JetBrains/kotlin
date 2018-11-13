@@ -129,15 +129,17 @@ interface JKDeclarationStatement : JKStatement {
     val declaredStatements: List<JKDeclaration>
 }
 
-interface JKBinaryExpression : JKExpression {
-    var left: JKExpression
-    var right: JKExpression
+interface JKOperatorExpression : JKExpression {
     var operator: JKOperator
 }
 
-interface JKUnaryExpression : JKExpression {
+interface JKBinaryExpression : JKOperatorExpression {
+    var left: JKExpression
+    var right: JKExpression
+}
+
+interface JKUnaryExpression : JKOperatorExpression {
     var expression: JKExpression
-    var operator: JKOperator
 }
 
 interface JKPrefixExpression : JKUnaryExpression

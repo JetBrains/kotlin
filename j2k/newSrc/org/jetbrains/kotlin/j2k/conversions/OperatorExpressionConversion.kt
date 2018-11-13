@@ -16,16 +16,9 @@ import org.jetbrains.kotlin.j2k.tree.impl.toKtToken
 
 class OperatorExpressionConversion(private val context: ConversionContext) : RecursiveApplicableConversionBase() {
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
+        if (element !is JKOperatorExpression) return recurse(element)
         val operatorToken =
-            ((when (element) {
-                is JKBinaryExpression ->
-                    element.operator
-                is JKPrefixExpression ->
-                    element.operator
-                is JKPostfixExpression ->
-                    element.operator
-                else -> null
-            } as? JKJavaOperatorImpl)?.token)?.toKtToken() ?: return recurse(element)
+            (element.operator as? JKJavaOperatorImpl)?.token?.toKtToken() ?: return recurse(element)
 
         return when (element) {
             is JKBinaryExpression -> {
@@ -41,7 +34,7 @@ class OperatorExpressionConversion(private val context: ConversionContext) : Rec
                 val operand = applyToElement(element::expression.detached()) as JKExpression
                 recurse(kotlinPostfixExpression(operand, operatorToken, context))
             }
-            else -> recurse(element)
+            else -> TODO(element.javaClass.toString())
         }
     }
 }

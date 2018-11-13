@@ -28,16 +28,15 @@ import org.jetbrains.kotlin.j2k.kotlinTypeByName
 fun JKExpression.type(context: ConversionContext): JKType =
     when (this) {
         is JKLiteralExpression -> type.toJkType(context.symbolProvider)
-        is JKBinaryExpression -> {
+        is JKOperatorExpression -> {
+            if (operator !is JKKtOperatorImpl) {
+                error("Cannot get type of ${operator::class}, it should be first converted to KtOperator")
+            }
             val operatorSymbol = (operator as JKKtOperatorImpl).methodSymbol
             if (operatorSymbol.name == "compareTo") {
                 kotlinTypeByName("kotlin.Boolean", context.symbolProvider)
             } else operatorSymbol.returnType
         }
-        is JKPostfixExpressionImpl ->
-            (operator as JKKtOperatorImpl).methodSymbol.returnType
-        is JKPrefixExpression ->
-            (operator as JKKtOperatorImpl).methodSymbol.returnType
         is JKMethodCallExpression -> identifier.returnType
         is JKFieldAccessExpressionImpl -> identifier.fieldType
         is JKQualifiedExpressionImpl -> this.selector.type(context)
