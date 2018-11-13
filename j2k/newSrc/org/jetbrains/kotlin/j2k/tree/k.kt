@@ -42,6 +42,15 @@ interface JKKtAssignmentStatement : JKStatement {
 
 interface JKKtCall : JKMethodCallExpression
 
+interface JKKtModifier : JKModifier {
+    val type: KtModifierType
+
+    enum class KtModifierType {
+        ACTUAL, ABSTRACT, ANNOTATION, COMPANION, CONST, CROSSINLINE, DATA, ENUM, EXPECT, EXTERNAL, FINAL, INFIX, INLINE, INNER,
+        LATEINIT, NOINLINE, OPEN, OPERATOR, OUT, OVERRIDE, REIFIED, SEALED, SUSPEND, TAILREC, VARARG, PRIVATE, PROTECTED
+    }
+}
+
 interface JKKtMethodCallExpression : JKMethodCallExpression
 
 interface JKKtAlsoCallExpression : JKKtMethodCallExpression {

@@ -141,7 +141,8 @@ class NewCodeBuilder {
             printer.printWithNoIndent(
                 when (accessModifier.visibility) {
                     JKAccessModifier.Visibility.PUBLIC -> "public"
-                    JKAccessModifier.Visibility.PACKAGE_PRIVATE, JKAccessModifier.Visibility.INTERNAL -> "internal"
+                    JKAccessModifier.Visibility.INTERNAL -> "internal"
+                    JKAccessModifier.Visibility.PACKAGE_PRIVATE -> ""
 //                    JKAccessModifier.Visibility.PACKAGE_PRIVATE -> "internal /* package_local! */"
                     JKAccessModifier.Visibility.PROTECTED -> "protected"
                     JKAccessModifier.Visibility.PRIVATE -> "private"
@@ -174,7 +175,6 @@ class NewCodeBuilder {
         override fun visitKtModifier(ktModifier: JKKtModifier) {
             printer.printWithNoIndent(
                 when (ktModifier.type) {
-                    JKKtModifier.KtModifierType.INTERNAL -> "internal"
                     JKKtModifier.KtModifierType.ABSTRACT -> "abstract"
                     JKKtModifier.KtModifierType.INNER -> "inner"
                     JKKtModifier.KtModifierType.OPEN -> "open"

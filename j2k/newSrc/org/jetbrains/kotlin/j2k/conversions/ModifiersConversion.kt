@@ -8,10 +8,7 @@ package org.jetbrains.kotlin.j2k.conversions
 import org.jetbrains.kotlin.j2k.ConversionContext
 import org.jetbrains.kotlin.j2k.ast.Mutability
 import org.jetbrains.kotlin.j2k.tree.*
-import org.jetbrains.kotlin.j2k.tree.impl.JKKtConstructorImpl
-import org.jetbrains.kotlin.j2k.tree.impl.JKKtModifierImpl
-import org.jetbrains.kotlin.j2k.tree.impl.mutability
-import org.jetbrains.kotlin.j2k.tree.impl.visibility
+import org.jetbrains.kotlin.j2k.tree.impl.*
 
 class ModifiersConversion(private val context: ConversionContext) : RecursiveApplicableConversionBase() {
 
