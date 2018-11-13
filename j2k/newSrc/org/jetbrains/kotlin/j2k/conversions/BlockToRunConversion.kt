@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.j2k.conversions
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.j2k.ConversionContext
-import org.jetbrains.kotlin.j2k.ast.Nullability
 import org.jetbrains.kotlin.j2k.tree.JKBlock
 import org.jetbrains.kotlin.j2k.tree.JKBlockStatement
 import org.jetbrains.kotlin.j2k.tree.JKDeclaration
@@ -35,7 +34,6 @@ class BlockToRunConversion(private val context: ConversionContext) : RecursiveAp
         element.invalidate()
         val lambda = JKLambdaExpressionImpl(
             emptyList(),
-            JKTypeElementImpl(JKClassTypeImpl(unitType as JKClassSymbol, emptyList(), Nullability.NotNull)),
             JKBlockStatementImpl(element.block)
         )
         val call = JKKtCallExpressionImpl(runSymbol as JKMethodSymbol, JKExpressionListImpl(listOf(lambda)))
