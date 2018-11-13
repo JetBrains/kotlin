@@ -50,6 +50,10 @@
         <extensionPoint qualifiedName="org.jetbrains.kotlin.scriptDefinitionsProvider"
                         interface="kotlin.script.experimental.intellij.ScriptDefinitionsProvider"
                         area="IDEA_PROJECT"/>
+
+        <extensionPoint qualifiedName="org.jetbrains.kotlin.syntheticScopeProviderExtension"
+                        interface="org.jetbrains.kotlin.synthetic.SyntheticScopeProviderExtension"
+                        area="IDEA_PROJECT"/>
     </extensionPoints>
 
     <extensions defaultExtensionNs="org.jetbrains.kotlin">

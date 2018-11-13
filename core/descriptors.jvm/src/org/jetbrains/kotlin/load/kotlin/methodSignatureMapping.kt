@@ -79,7 +79,7 @@ internal val ClassDescriptor.internalName: String
         return computeInternalName(this, isIrBackend = false)
     }
 
-internal val ClassId.internalName: String
+val ClassId.internalName: String
     get() {
         return JvmClassName.byClassId(JavaToKotlinClassMap.mapKotlinToJava(asSingleFqName().toUnsafe()) ?: this).internalName
     }

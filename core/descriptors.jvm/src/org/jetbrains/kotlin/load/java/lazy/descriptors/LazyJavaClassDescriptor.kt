@@ -39,9 +39,9 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import java.util.*
 
 class LazyJavaClassDescriptor(
-        outerContext: LazyJavaResolverContext,
+        val outerContext: LazyJavaResolverContext,
         containingDeclaration: DeclarationDescriptor,
-        private val jClass: JavaClass,
+        val jClass: JavaClass,
         private val additionalSupertypeClassDescriptor: ClassDescriptor? = null
 ) : ClassDescriptorBase(outerContext.storageManager, containingDeclaration, jClass.name,
                         outerContext.components.sourceElementFactory.source(jClass),
