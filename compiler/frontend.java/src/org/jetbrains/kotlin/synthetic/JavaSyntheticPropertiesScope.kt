@@ -92,7 +92,7 @@ interface SyntheticJavaPropertyDescriptor : PropertyDescriptor, SyntheticPropert
     }
 }
 
-class JavaSyntheticPropertiesScope(storageManager: StorageManager, private val lookupTracker: LookupTracker) : SyntheticScope {
+class JavaSyntheticPropertiesScope(storageManager: StorageManager, private val lookupTracker: LookupTracker) : SyntheticScope.Default() {
     private val syntheticPropertyInClass =
         storageManager.createMemoizedFunction<Pair<ClassDescriptor, Name>, SyntheticPropertyHolder> { pair ->
             syntheticPropertyInClassNotCached(pair.first, pair.second)
@@ -204,18 +204,6 @@ class JavaSyntheticPropertiesScope(storageManager: StorageManager, private val l
             else -> result
         }
     }
-
-    override fun getSyntheticStaticFunctions(scope: ResolutionScope, name: Name, location: LookupLocation): Collection<FunctionDescriptor> =
-        emptyList()
-
-    override fun getSyntheticConstructors(scope: ResolutionScope, name: Name, location: LookupLocation): Collection<FunctionDescriptor> =
-        emptyList()
-
-    override fun getSyntheticStaticFunctions(scope: ResolutionScope): Collection<FunctionDescriptor> = emptyList()
-
-    override fun getSyntheticConstructors(scope: ResolutionScope): Collection<FunctionDescriptor> = emptyList()
-
-    override fun getSyntheticConstructor(constructor: ConstructorDescriptor): ConstructorDescriptor? = null
 
     private fun collectSyntheticPropertiesByName(
         result: SmartList<PropertyDescriptor>?,
