@@ -30,9 +30,21 @@ class ModifiersConversion(private val context: ConversionContext) : RecursiveApp
             if (element is JKKtConstructor) {
                 convertConstructorModifiers(element)
             }
+            if (element is JKClass) {
+                convertClassModifiers(element)
+            }
             element.sortModifiers()
         }
         return recurse(element)
+    }
+
+    private fun convertClassModifiers(klass: JKClass) {
+        val isPackagePrivate = klass.modifierList.visibility == JKAccessModifier.Visibility.PACKAGE_PRIVATE
+        val parentClassIsInternal =
+            (klass.parent as? JKClass)?.modifierList?.visibility == JKAccessModifier.Visibility.INTERNAL
+        if (isPackagePrivate || parentClassIsInternal) {
+            klass.modifierList.visibility = JKAccessModifier.Visibility.INTERNAL
+        }
     }
 
     private fun convertConstructorModifiers(constructor: JKKtConstructor) {
