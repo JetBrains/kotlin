@@ -22,34 +22,46 @@ fun kotlinTypeByName(name: String, symbolProvider: JKSymbolProvider): JKClassTyp
     return JKClassTypeImpl(symbol, emptyList())
 }
 
-private fun JKKtOperatorToken.methodSymbol(
+private fun JKType.classSymbol(symbolProvider: JKSymbolProvider) =
+    when (this) {
+        is JKClassType -> classReference as JKMultiverseKtClassSymbol
+        is JKJavaPrimitiveType -> {
+            val psiClass = resolveFqName(
+                ClassId.fromString(jvmPrimitiveType.primitiveType.typeFqName.asString()),
+                symbolProvider.symbolsByPsi.keys.first()
+            )!!
+            symbolProvider.provideDirectSymbol(psiClass) as JKMultiverseKtClassSymbol
+        }
+        else ->
+            TODO(this::class.java.toString())
+    }
+
+private fun JKKtOperatorToken.binaryExpressionMethodSymbol(
     leftType: JKType,
     rightType: JKType,
     symbolProvider: JKSymbolProvider
 ): JKMethodSymbol {
-    val classSymbol =
-        when (leftType) {
-            is JKClassType -> leftType.classReference as JKMultiverseKtClassSymbol
-            is JKJavaPrimitiveType -> {
-                val psiClass = resolveFqName(
-                    ClassId.fromString(leftType.jvmPrimitiveType.primitiveType.typeFqName.asString()),
-                    symbolProvider.symbolsByPsi.keys.first()
-                )!!
-                symbolProvider.provideDirectSymbol(psiClass) as JKMultiverseKtClassSymbol
-            }
-            else ->
-                TODO(leftType::class.java.toString())
-        }
     val operatorNames =
         if (operatorName == "equals") listOf("equals", "compareTo")
         else listOf(operatorName)
-    return classSymbol.target.declarations// todo look for extensions
+    return leftType.classSymbol(symbolProvider).target.declarations// todo look for extensions
         .asSequence()
         .filterIsInstance<KtNamedFunction>()
         .filter { it.name in operatorNames }
         .mapNotNull { symbolProvider.provideDirectSymbol(it) as? JKMethodSymbol }
         .firstOrNull { it.parameterTypes.singleOrNull()?.takeIf { it.isSubtypeOf(rightType, symbolProvider) } != null }!!
 }
+
+private fun JKKtOperatorToken.unaryExpressionMethodSymbol(
+    operandType: JKType,
+    symbolProvider: JKSymbolProvider
+): JKMethodSymbol =
+    operandType.classSymbol(symbolProvider).target.declarations// todo look for extensions
+        .asSequence()
+        .filterIsInstance<KtNamedFunction>()
+        .filter { it.name == operatorName }
+        .mapNotNull { symbolProvider.provideDirectSymbol(it) as? JKMethodSymbol }
+        .firstOrNull()!!
 
 
 fun kotlinBinaryExpression(
@@ -60,9 +72,31 @@ fun kotlinBinaryExpression(
 ): JKBinaryExpression? {
     val leftType = left.type(context)
     val rightType = right.type(context)
-    val methodSymbol = token.methodSymbol(leftType, rightType, context.symbolProvider)
+    val methodSymbol = token.binaryExpressionMethodSymbol(leftType, rightType, context.symbolProvider)
     return JKBinaryExpressionImpl(left, right, JKKtOperatorImpl(token, methodSymbol))
 }
+
+fun kotlinPrefixExpression(
+    operand: JKExpression,
+    token: JKKtOperatorToken,
+    context: ConversionContext
+): JKPrefixExpression {
+    val operandType = operand.type(context)
+    val methodSymbol = token.unaryExpressionMethodSymbol(operandType, context.symbolProvider)
+    return JKPrefixExpressionImpl(operand, JKKtOperatorImpl(token, methodSymbol))
+}
+
+fun kotlinPostfixExpression(
+    operand: JKExpression,
+    token: JKKtOperatorToken,
+    context: ConversionContext
+): JKPostfixExpression {
+    val operandType = operand.type(context)
+    val methodSymbol = token.unaryExpressionMethodSymbol(operandType, context.symbolProvider)
+    return JKPostfixExpressionImpl(operand, JKKtOperatorImpl(token, methodSymbol))
+}
+
+
 
 fun untilToExpression(
     from: JKExpression,

@@ -34,6 +34,10 @@ fun JKExpression.type(context: ConversionContext): JKType =
                 kotlinTypeByName("kotlin.Boolean", context.symbolProvider)
             } else operatorSymbol.returnType
         }
+        is JKPostfixExpressionImpl ->
+            (operator as JKKtOperatorImpl).methodSymbol.returnType
+        is JKPrefixExpression ->
+            (operator as JKKtOperatorImpl).methodSymbol.returnType
         is JKMethodCallExpression -> identifier.returnType
         is JKFieldAccessExpressionImpl -> identifier.fieldType
         is JKQualifiedExpressionImpl -> this.selector.type(context)

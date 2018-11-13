@@ -130,6 +130,8 @@ fun JKJavaOperatorToken.toKtToken(): JKKtOperatorToken =
         JavaTokenType.NE -> JKKtSingleValueOperatorToken(KtTokens.EXCLEQ)
         JavaTokenType.PLUSEQ -> JKKtSingleValueOperatorToken(KtTokens.PLUSEQ)
         JavaTokenType.MINUSEQ -> JKKtSingleValueOperatorToken(KtTokens.MINUSEQ)
+        JavaTokenType.PLUSPLUS -> JKKtSingleValueOperatorToken(KtTokens.PLUSPLUS)
+        JavaTokenType.MINUSMINUS -> JKKtSingleValueOperatorToken(KtTokens.MINUSMINUS)
 
         JavaTokenType.AND -> JKKtWordOperatorToken("and")
         JavaTokenType.OR -> JKKtWordOperatorToken("or")

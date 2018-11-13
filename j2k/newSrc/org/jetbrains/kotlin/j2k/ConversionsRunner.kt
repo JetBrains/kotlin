@@ -23,7 +23,7 @@ object ConversionsRunner {
 
     private fun createRootConversion(context: ConversionContext) =
         batchPipe {
-            +BinaryExpressionConversion(context)
+            +OperatorExpressionConversion(context)
             +ThrowStatementConversion()
             +ArrayInitializerConversion(context)
             +TryStatementConversion(context)
