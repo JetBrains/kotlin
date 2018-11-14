@@ -81,6 +81,7 @@ internal class DescriptorRendererOptionsImpl : DescriptorRendererOptions {
     override var enhancedTypes by property(false)
     override var normalizedVisibilities by property(false)
     override var renderDefaultVisibility by property(true)
+    override var renderDefaultModality by property(true)
     override var uninferredTypeParameterAsName by property(false)
     override var includePropertyConstant by property(false)
     override var withoutTypeParameters by property(false)

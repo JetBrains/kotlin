@@ -30,6 +30,11 @@ public class QuickFixMultiModuleTestGenerated extends AbstractQuickFixMultiModul
         runTest("idea/testData/multiModuleQuickFix/abstract/");
     }
 
+    @TestMetadata("abstractClassWithJdk")
+    public void testAbstractClassWithJdk() throws Exception {
+        runTest("idea/testData/multiModuleQuickFix/abstractClassWithJdk/");
+    }
+
     @TestMetadata("actualImplementAsConstructorParam")
     public void testActualImplementAsConstructorParam() throws Exception {
         runTest("idea/testData/multiModuleQuickFix/actualImplementAsConstructorParam/");
