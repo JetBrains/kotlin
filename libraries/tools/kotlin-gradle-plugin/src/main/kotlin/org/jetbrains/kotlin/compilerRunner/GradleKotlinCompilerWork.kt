@@ -17,13 +17,11 @@ import org.jetbrains.kotlin.gradle.plugin.kotlinDebug
 import org.jetbrains.kotlin.gradle.tasks.GradleMessageCollector
 import org.jetbrains.kotlin.gradle.tasks.clearLocalStateDirectories
 import org.jetbrains.kotlin.gradle.tasks.throwGradleExceptionIfError
+import org.jetbrains.kotlin.gradle.utils.stackTraceAsString
 import org.jetbrains.kotlin.incremental.ChangedFiles
 import org.jetbrains.kotlin.incremental.DELETE_MODULE_FILE_PROPERTY
 import org.slf4j.LoggerFactory
-import java.io.ByteArrayOutputStream
-import java.io.File
-import java.io.PrintStream
-import java.io.Serializable
+import java.io.*
 import java.net.URLClassLoader
 import java.rmi.RemoteException
 import javax.inject.Inject
@@ -155,8 +153,8 @@ internal class GradleKotlinCompilerWork @Inject constructor(
                     log.isDebugEnabled
                 )
             } catch (e: Throwable) {
-                log.warn("Caught an exception trying to connect to Kotlin Daemon")
-                e.printStackTrace()
+                log.error("Caught an exception trying to connect to Kotlin Daemon:")
+                log.error(e.stackTraceAsString())
                 null
             }
         if (connection == null) {
@@ -183,8 +181,8 @@ internal class GradleKotlinCompilerWork @Inject constructor(
             }
             exitCodeFromProcessExitCode(log, res.get())
         } catch (e: Throwable) {
-            log.warn("Compilation with Kotlin compile daemon was not successful")
-            e.printStackTrace()
+            log.error("Compilation with Kotlin compile daemon was not successful")
+            log.error(e.stackTraceAsString())
             null
         }
         // todo: can we clear cache on the end of session?
