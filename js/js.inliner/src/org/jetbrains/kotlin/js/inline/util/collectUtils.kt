@@ -230,7 +230,7 @@ fun collectAccessors(fragments: List<JsProgramFragment>): Map<String, FunctionWi
     return result
 }
 
-fun collectNameBindings(fragments: List<JsProgramFragment>): Map<JsName, String> {
+fun collectNameBindings(fragments: List<JsProgramFragment>): MutableMap<JsName, String> {
     val result = mutableMapOf<JsName, String>()
     for (fragment in fragments) {
         for (binding in fragment.nameBindings) {
