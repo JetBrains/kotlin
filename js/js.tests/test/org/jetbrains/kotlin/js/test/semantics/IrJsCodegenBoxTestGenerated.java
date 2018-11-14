@@ -17650,6 +17650,11 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
                 runTest("compiler/testData/codegen/box/reflection/mapping/functions.kt");
             }
 
+            @TestMetadata("inlineClassPrimaryVal.kt")
+            public void testInlineClassPrimaryVal() throws Exception {
+                runTest("compiler/testData/codegen/box/reflection/mapping/inlineClassPrimaryVal.kt");
+            }
+
             @TestMetadata("inlineReifiedFun.kt")
             public void testInlineReifiedFun() throws Exception {
                 runTest("compiler/testData/codegen/box/reflection/mapping/inlineReifiedFun.kt");
@@ -17776,6 +17781,11 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
                 @TestMetadata("inlineClassInSignature.kt")
                 public void testInlineClassInSignature() throws Exception {
                     runTest("compiler/testData/codegen/box/reflection/mapping/types/inlineClassInSignature.kt");
+                }
+
+                @TestMetadata("inlineClassPrimaryVal.kt")
+                public void testInlineClassPrimaryVal() throws Exception {
+                    runTest("compiler/testData/codegen/box/reflection/mapping/types/inlineClassPrimaryVal.kt");
                 }
 
                 @TestMetadata("innerGenericTypeArgument.kt")
