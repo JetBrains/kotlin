@@ -212,7 +212,7 @@ class JKJavaNewEmptyArrayImpl(initializer: List<JKExpression>, type: JKTypeEleme
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitJavaNewEmptyArray(this, data)
 }
 
-class JKJavaNewArrayImpl(initializer: List<JKExpression>, type: JKTypeElement) : JKJavaNewArray, JKBranchElementBase() {
+class JKJavaNewArrayImpl(initializer: List<JKExpression>, type: JKTypeElement) : JKJavaNewArray, JKBranchElementBase(), PsiOwner by PsiOwnerImpl() {
     override val type by child(type)
     override var initializer by children(initializer)
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitJavaNewArray(this, data)
