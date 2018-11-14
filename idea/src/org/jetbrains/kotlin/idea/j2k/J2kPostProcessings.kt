@@ -16,10 +16,12 @@
 
 package org.jetbrains.kotlin.idea.j2k
 
+import com.intellij.codeInsight.actions.OptimizeImportsProcessor
 import com.intellij.codeInspection.*
 import com.intellij.codeInspection.ex.LocalInspectionToolWrapper
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.search.LocalSearchScope
 import com.intellij.psi.search.searches.ReferencesSearch
@@ -113,6 +115,16 @@ object J2KPostProcessingRegistrar {
         registerInspectionBasedProcessing(SimplifyAssertNotNullInspection())
         registerIntentionBasedProcessing(RemoveRedundantCallsOfConversionMethodsIntention())
         registerInspectionBasedProcessing(JavaMapForEachInspection())
+
+        _processings.add(object : J2kPostProcessing {
+            override fun createAction(element: KtElement, diagnostics: Diagnostics): (() -> Unit)? =
+                {
+                    OptimizeImportsProcessor(element.project, element.containingKtFile).run()
+                    PsiDocumentManager.getInstance(element.project).commitAllDocuments()
+                }
+
+            override val writeActionNeeded: Boolean = true
+        })
 
         registerDiagnosticBasedProcessing<KtBinaryExpressionWithTypeRHS>(Errors.USELESS_CAST) { element, _ ->
             val expression = RemoveUselessCastFix.invoke(element)
