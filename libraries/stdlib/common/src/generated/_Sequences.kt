@@ -701,11 +701,11 @@ public fun <T> Sequence<T>.toHashSet(): HashSet<T> {
 }
 
 /**
- * Returns a [java.util.EnumSet] of all elements of [T].
+ * Returns a [EnumSet] of all elements of [T].
  */
 @kotlin.internal.InlineOnly
-public inline fun <reified T : Enum<T>> Sequence<T>.toEnumSet(): java.util.EnumSet<T> {
-    return toCollection(java.util.EnumSet.noneOf(T::class.java))
+public inline fun <reified T : Enum<T>> Sequence<T>.toEnumSet(): EnumSet<T> {
+    return toCollection(enumSetOf<T>())
 }
 
 /**
