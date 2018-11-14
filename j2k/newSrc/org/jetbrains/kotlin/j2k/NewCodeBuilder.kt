@@ -678,7 +678,7 @@ class NewCodeBuilder {
 
                 val statement = lambdaExpression.statement
                 if (statement is JKBlockStatement) {
-                    statement.block.statements.forEach { it.accept(this) }
+                    statement.block.accept(this)
                 } else {
                     statement.accept(this)
                 }
