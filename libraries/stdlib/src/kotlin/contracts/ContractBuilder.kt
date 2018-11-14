@@ -122,7 +122,7 @@ public enum class InvocationKind {
 }
 
 /**
- * Specifies the contact of a function.
+ * Specifies the contract of a function.
  *
  * The contract description must be at the beginning of a function and have at least one effect.
  *
