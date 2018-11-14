@@ -708,7 +708,9 @@ class NewCodeBuilder {
             ktWhenStatement.expression.accept(this)
             printer.printWithNoIndent(")")
             printer.block(multiline = true) {
-                ktWhenStatement.cases.forEach { it.accept(this) }
+                renderList(ktWhenStatement.cases, { printer.printlnWithNoIndent() }) {
+                    it.accept(this)
+                }
             }
         }
 
