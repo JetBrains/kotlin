@@ -298,8 +298,11 @@ class NewCodeBuilder {
 
         override fun visitParameter(parameter: JKParameter) {
             parameter.modifierList.accept(this)
-            printer.printWithNoIndent(" ", parameter.name.value, ": ")
-            parameter.type.accept(this)
+            printer.printWithNoIndent(" ", parameter.name.value)
+            if (parameter.type.present() && parameter.type.type !is JKContextType) {
+                printer.printWithNoIndent(":")
+                parameter.type.accept(this)
+            }
             if (parameter.initializer !is JKStubExpression) {
                 printer.printWithNoIndent(" = ")
                 parameter.initializer.accept(this)
