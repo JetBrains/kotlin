@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.quickfix.expectactual
 import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiElement
 import com.intellij.psi.codeStyle.CodeStyleManager
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
@@ -55,14 +56,18 @@ class AddActualFix(
                     element.primaryConstructor?.valueParameters?.filter { it.hasValOrVar() }.orEmpty() +
                     listOfNotNull(element.primaryConstructor)
         )
-        for (declaration in pureActualClass.declarations) {
-            val actualDeclaration = element.addDeclaration(declaration)
-            val reformatted = CodeStyleManager.getInstance(project).reformat(actualDeclaration)
+
+        fun PsiElement.clean() {
+            val reformatted = CodeStyleManager.getInstance(project).reformat(this)
             ShortenReferences.DEFAULT.process(reformatted as KtElement)
+        }
+
+        for (declaration in pureActualClass.declarations) {
+            element.addDeclaration(declaration).clean()
         }
         val primaryConstructor = pureActualClass.primaryConstructor
         if (element.primaryConstructor == null && primaryConstructor != null) {
-            element.addAfter(primaryConstructor, element.nameIdentifier)
+            element.addAfter(primaryConstructor, element.nameIdentifier).clean()
         }
     }
 
