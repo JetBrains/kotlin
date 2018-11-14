@@ -15,16 +15,17 @@ import java.lang.reflect.WildcardType
 import java.util.*
 import kotlin.coroutines.Continuation
 import kotlin.reflect.*
+import kotlin.reflect.jvm.internal.calls.Caller
 import kotlin.reflect.jvm.javaType
 
 internal abstract class KCallableImpl<out R> : KCallable<R> {
     abstract val descriptor: CallableMemberDescriptor
 
     // The instance which is used to perform a positional call, i.e. `call`
-    abstract val caller: FunctionCaller<*>
+    abstract val caller: Caller<*>
 
     // The instance which is used to perform a call "by name", i.e. `callBy`
-    abstract val defaultCaller: FunctionCaller<*>?
+    abstract val defaultCaller: Caller<*>?
 
     abstract val container: KDeclarationContainerImpl
 
@@ -39,12 +40,16 @@ internal abstract class KCallableImpl<out R> : KCallable<R> {
         val result = ArrayList<KParameter>()
         var index = 0
 
-        if (descriptor.dispatchReceiverParameter != null && !isBound) {
-            result.add(KParameterImpl(this, index++, KParameter.Kind.INSTANCE) { descriptor.dispatchReceiverParameter!! })
-        }
+        if (!isBound) {
+            val instanceReceiver = descriptor.instanceReceiverParameter
+            if (instanceReceiver != null) {
+                result.add(KParameterImpl(this, index++, KParameter.Kind.INSTANCE) { instanceReceiver })
+            }
 
-        if (descriptor.extensionReceiverParameter != null && !isBound) {
-            result.add(KParameterImpl(this, index++, KParameter.Kind.EXTENSION_RECEIVER) { descriptor.extensionReceiverParameter!! })
+            val extensionReceiver = descriptor.extensionReceiverParameter
+            if (extensionReceiver != null) {
+                result.add(KParameterImpl(this, index++, KParameter.Kind.EXTENSION_RECEIVER) { extensionReceiver })
+            }
         }
 
         for (i in descriptor.valueParameters.indices) {

@@ -1,0 +1,5 @@
+FILE: TwoDeclarationsInSameFile.kt
+    public? open class A() {
+    }
+    public? final class B() : R/p/A/ {
+    }

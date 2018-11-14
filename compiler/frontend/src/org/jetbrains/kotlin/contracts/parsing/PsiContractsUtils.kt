@@ -87,7 +87,7 @@ fun DeclarationDescriptor.isCallsInPlaceEffectDescriptor(): Boolean = equalsDslD
 fun DeclarationDescriptor.isInvocationKindEnum(): Boolean = equalsDslDescriptor(INVOCATION_KIND_ENUM)
 
 fun DeclarationDescriptor.isEqualsDescriptor(): Boolean =
-    this is FunctionDescriptor && this.name == Name.identifier("equals") && // fast checks
+    this is FunctionDescriptor && this.name == Name.identifier("equals") && dispatchReceiverParameter != null && // fast checks
             this.returnType?.isBoolean() == true && this.valueParameters.singleOrNull()?.type?.isNullableAny() == true // signature matches
 
 internal fun ResolvedCall<*>.firstArgumentAsExpressionOrNull(): KtExpression? =

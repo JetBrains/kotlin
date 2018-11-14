@@ -45,7 +45,7 @@ FILE fqName:<root> fileName:/arrayAugmentedAssignment2.kt
         VAR IR_TEMPORARY_VARIABLE name:tmp0_array type:IA flags:val
           GET_VAR 'value-parameter a: IA' type=IA origin=null
         VAR IR_TEMPORARY_VARIABLE name:tmp1_index0 type:kotlin.String flags:val
-          CONST String type=kotlin.String value=
+          CONST String type=kotlin.String value=""
         CALL 'set(String, Int) on IA: Unit' type=kotlin.Unit origin=PLUSEQ
           $this: GET_VAR 'this@test: IB' type=IB origin=null
           $receiver: GET_VAR 'tmp0_array: IA' type=IA origin=null

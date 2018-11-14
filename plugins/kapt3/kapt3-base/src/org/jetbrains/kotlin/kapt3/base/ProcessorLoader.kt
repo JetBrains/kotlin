@@ -45,7 +45,6 @@ class ProcessorLoader(
         return processors
     }
 
-
     private fun tryLoadProcessor(fqName: String, classLoader: ClassLoader): Processor? {
         val annotationProcessorClass = try {
             Class.forName(fqName, true, classLoader)
@@ -92,5 +91,6 @@ private fun clearJarURLCache() {
 
         clearMap(jarFileFactory.getDeclaredField("fileCache"))
         clearMap(jarFileFactory.getDeclaredField("urlCache"))
-    } catch (ignore: Exception) {}
+    } catch (ignore: Exception) {
+    }
 }

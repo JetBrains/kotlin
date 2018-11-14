@@ -24,7 +24,7 @@ fun @MyDsl A.baz5() {
     }
 }
 
-fun main(args: Array<String>) {
+fun main() {
     baz1 {
         baz2 {
             bar()

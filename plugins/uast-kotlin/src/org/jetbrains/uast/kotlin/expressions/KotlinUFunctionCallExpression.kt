@@ -43,9 +43,8 @@ class KotlinUFunctionCallExpression(
 
     constructor(psi: KtCallElement, uastParent: UElement?) : this(psi, uastParent, null)
 
-    private val resolvedCall by lz {
-        _resolvedCall ?: psi.getResolvedCall(psi.analyze())
-    }
+    private val resolvedCall
+        get() = _resolvedCall ?: psi.getResolvedCall(psi.analyze())
 
     override val receiverType by lz {
         val resolvedCall = this.resolvedCall ?: return@lz null

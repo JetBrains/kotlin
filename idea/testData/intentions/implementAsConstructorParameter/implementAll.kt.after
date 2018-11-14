@@ -1,14 +1,14 @@
 // WITH_RUNTIME
 // DISABLE-ERRORS
 interface T<X> {
-    val <caret>foo: X
+    val foo: X
 }
 
 class U(override val foo: String) : T<String> {
 
 }
 
-class V(override val foo: Int) : T<Int> {
+class V(override val foo: Int<caret>) : T<Int> {
 
 }
 

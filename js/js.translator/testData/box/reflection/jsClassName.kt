@@ -1,7 +1,8 @@
 // IGNORE_BACKEND: JS_IR
-// EXPECTED_REACHABLE_NODES: 1174
+// EXPECTED_REACHABLE_NODES: 1328
 package foo
 
+@Suppress("DEPRECATION_ERROR")
 fun testWithInstance() {
     assertEquals("A", A().jsClass.name)
     assertEquals("B", B().jsClass.name)
@@ -13,6 +14,7 @@ fun testWithInstance() {
     assertEquals("R", R().jsClass.name)
 }
 
+@Suppress("DEPRECATION_ERROR")
 fun testWithClassReference() {
     assertEquals("A", jsClass<A>().name)
     assertEquals("B", jsClass<B>().name)

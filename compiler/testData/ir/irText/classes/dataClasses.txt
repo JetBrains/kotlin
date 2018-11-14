@@ -86,19 +86,19 @@ FILE fqName:<root> fileName:/dataClasses.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='toString(): String'
           STRING_CONCATENATION type=kotlin.String
-            CONST String type=kotlin.String value=Test1(
-            CONST String type=kotlin.String value=x=
+            CONST String type=kotlin.String value="Test1("
+            CONST String type=kotlin.String value="x="
             CALL '<get-x>(): Int' type=kotlin.Int origin=GET_PROPERTY
               $this: GET_VAR 'this@Test1: Test1' type=Test1 origin=null
-            CONST String type=kotlin.String value=, 
-            CONST String type=kotlin.String value=y=
+            CONST String type=kotlin.String value=", "
+            CONST String type=kotlin.String value="y="
             CALL '<get-y>(): String' type=kotlin.String origin=GET_PROPERTY
               $this: GET_VAR 'this@Test1: Test1' type=Test1 origin=null
-            CONST String type=kotlin.String value=, 
-            CONST String type=kotlin.String value=z=
+            CONST String type=kotlin.String value=", "
+            CONST String type=kotlin.String value="z="
             CALL '<get-z>(): Any' type=kotlin.Any origin=GET_PROPERTY
               $this: GET_VAR 'this@Test1: Test1' type=Test1 origin=null
-            CONST String type=kotlin.String value=)
+            CONST String type=kotlin.String value=")"
     FUN GENERATED_DATA_CLASS_MEMBER name:hashCode visibility:public modality:OPEN <> ($this:Test1) returnType:kotlin.Int flags:
       overridden:
         FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int flags:
@@ -225,11 +225,11 @@ FILE fqName:<root> fileName:/dataClasses.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='toString(): String'
           STRING_CONCATENATION type=kotlin.String
-            CONST String type=kotlin.String value=Test2(
-            CONST String type=kotlin.String value=x=
+            CONST String type=kotlin.String value="Test2("
+            CONST String type=kotlin.String value="x="
             CALL '<get-x>(): Any?' type=kotlin.Any? origin=GET_PROPERTY
               $this: GET_VAR 'this@Test2: Test2' type=Test2 origin=null
-            CONST String type=kotlin.String value=)
+            CONST String type=kotlin.String value=")"
     FUN GENERATED_DATA_CLASS_MEMBER name:hashCode visibility:public modality:OPEN <> ($this:Test2) returnType:kotlin.Int flags:
       overridden:
         FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int flags:
@@ -400,23 +400,23 @@ FILE fqName:<root> fileName:/dataClasses.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='toString(): String'
           STRING_CONCATENATION type=kotlin.String
-            CONST String type=kotlin.String value=Test3(
-            CONST String type=kotlin.String value=d=
+            CONST String type=kotlin.String value="Test3("
+            CONST String type=kotlin.String value="d="
             CALL '<get-d>(): Double' type=kotlin.Double origin=GET_PROPERTY
               $this: GET_VAR 'this@Test3: Test3' type=Test3 origin=null
-            CONST String type=kotlin.String value=, 
-            CONST String type=kotlin.String value=dn=
+            CONST String type=kotlin.String value=", "
+            CONST String type=kotlin.String value="dn="
             CALL '<get-dn>(): Double?' type=kotlin.Double? origin=GET_PROPERTY
               $this: GET_VAR 'this@Test3: Test3' type=Test3 origin=null
-            CONST String type=kotlin.String value=, 
-            CONST String type=kotlin.String value=f=
+            CONST String type=kotlin.String value=", "
+            CONST String type=kotlin.String value="f="
             CALL '<get-f>(): Float' type=kotlin.Float origin=GET_PROPERTY
               $this: GET_VAR 'this@Test3: Test3' type=Test3 origin=null
-            CONST String type=kotlin.String value=, 
-            CONST String type=kotlin.String value=df=
+            CONST String type=kotlin.String value=", "
+            CONST String type=kotlin.String value="df="
             CALL '<get-df>(): Float?' type=kotlin.Float? origin=GET_PROPERTY
               $this: GET_VAR 'this@Test3: Test3' type=Test3 origin=null
-            CONST String type=kotlin.String value=)
+            CONST String type=kotlin.String value=")"
     FUN GENERATED_DATA_CLASS_MEMBER name:hashCode visibility:public modality:OPEN <> ($this:Test3) returnType:kotlin.Int flags:
       overridden:
         FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int flags:

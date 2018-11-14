@@ -1,2 +1,4 @@
 $TESTDATA_DIR$/kt19628_progressive.kt
--Xprogressive
+-progressive
+-d
+$TEMP_DIR$

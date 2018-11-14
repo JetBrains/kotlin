@@ -1,6 +1,6 @@
 // !LANGUAGE: +InlineClasses
 // WITH_RUNTIME
-// IGNORE_BACKEND: JVM_IR, JS_IR
+// IGNORE_BACKEND: JVM_IR
 
 inline class X(val x: String)
 inline class Y(val y: Number)

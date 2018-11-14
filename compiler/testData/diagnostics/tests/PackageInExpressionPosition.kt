@@ -13,7 +13,7 @@ val xsss = foo.<!NO_COMPANION_OBJECT!>X<!>
 val xssss = <!EXPRESSION_EXPECTED_PACKAGE_FOUND!>foo<!>
 val f = { <!NO_COMPANION_OBJECT!>System<!> }
 
-fun main(args : Array<String>) {
+fun main() {
     <!EXPRESSION_EXPECTED_PACKAGE_FOUND!>java<!> = null
     <!NO_COMPANION_OBJECT!>System<!> = null
     <!NO_COMPANION_OBJECT!>System<!>!!

@@ -154,6 +154,11 @@ public class JsLegacyPrimitiveArraysBoxTestGenerated extends AbstractJsLegacyPri
         runTest("compiler/testData/codegen/box/arrays/indicesChar.kt");
     }
 
+    @TestMetadata("inlineInitializer.kt")
+    public void testInlineInitializer() throws Exception {
+        runTest("compiler/testData/codegen/box/arrays/inlineInitializer.kt");
+    }
+
     @TestMetadata("iterator.kt")
     public void testIterator() throws Exception {
         runTest("compiler/testData/codegen/box/arrays/iterator.kt");

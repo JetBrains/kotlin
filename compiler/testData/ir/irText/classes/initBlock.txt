@@ -82,7 +82,7 @@ FILE fqName:<root> fileName:/initBlock.kt
     ANONYMOUS_INITIALIZER Test4
       BLOCK_BODY
         CALL 'println(Any?): Unit' type=kotlin.Unit origin=null
-          message: CONST String type=kotlin.String value=1
+          message: CONST String type=kotlin.String value="1"
     CONSTRUCTOR visibility:public <> () returnType:Test4 flags:
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
@@ -90,7 +90,7 @@ FILE fqName:<root> fileName:/initBlock.kt
     ANONYMOUS_INITIALIZER Test4
       BLOCK_BODY
         CALL 'println(Any?): Unit' type=kotlin.Unit origin=null
-          message: CONST String type=kotlin.String value=2
+          message: CONST String type=kotlin.String value="2"
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:
       overridden:
         FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:
@@ -113,7 +113,7 @@ FILE fqName:<root> fileName:/initBlock.kt
     ANONYMOUS_INITIALIZER Test5
       BLOCK_BODY
         CALL 'println(Any?): Unit' type=kotlin.Unit origin=null
-          message: CONST String type=kotlin.String value=1
+          message: CONST String type=kotlin.String value="1"
     CLASS CLASS name:TestInner modality:FINAL visibility:public flags:inner superTypes:[kotlin.Any]
       $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Test5.TestInner flags:
       CONSTRUCTOR visibility:public <> ($this:Test5) returnType:Test5.TestInner flags:primary
@@ -124,7 +124,7 @@ FILE fqName:<root> fileName:/initBlock.kt
       ANONYMOUS_INITIALIZER TestInner
         BLOCK_BODY
           CALL 'println(Any?): Unit' type=kotlin.Unit origin=null
-            message: CONST String type=kotlin.String value=2
+            message: CONST String type=kotlin.String value="2"
       FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:
         overridden:
           FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:

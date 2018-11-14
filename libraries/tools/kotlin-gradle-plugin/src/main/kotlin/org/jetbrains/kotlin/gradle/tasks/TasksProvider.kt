@@ -27,29 +27,40 @@ internal open class KotlinTasksProvider(val targetName: String) {
         project: Project,
         name: String,
         compilation: KotlinCompilation
-    ): KotlinCompile =
-        project.tasks.create(name, KotlinCompile::class.java).apply {
-            configure(this, project, compilation)
+    ): KotlinCompile {
+        val properties = PropertiesProvider(project)
+        val taskClass = taskOrWorkersTask<KotlinCompile, KotlinCompileWithWorkers>(properties)
+        return project.tasks.create(name, taskClass).apply {
+            configure(this, project, properties, compilation)
         }
+    }
 
-    fun createKotlinJSTask(project: Project, name: String, compilation: KotlinCompilation): Kotlin2JsCompile =
-        project.tasks.create(name, Kotlin2JsCompile::class.java).apply {
-            configure(this, project, compilation)
+    fun createKotlinJSTask(project: Project, name: String, compilation: KotlinCompilation): Kotlin2JsCompile {
+        val properties = PropertiesProvider(project)
+        val taskClass = taskOrWorkersTask<Kotlin2JsCompile, Kotlin2JsCompileWithWorkers>(properties)
+        return project.tasks.create(name, taskClass).apply {
+            configure(this, project, properties, compilation)
         }
+    }
 
-    fun createKotlinCommonTask(project: Project, name: String, compilation: KotlinCompilation): KotlinCompileCommon =
-        project.tasks.create(name, KotlinCompileCommon::class.java).apply {
-            configure(this, project, compilation)
+
+    fun createKotlinCommonTask(project: Project, name: String, compilation: KotlinCompilation): KotlinCompileCommon {
+        val properties = PropertiesProvider(project)
+        val taskClass = taskOrWorkersTask<KotlinCompileCommon, KotlinCompileCommonWithWorkers>(properties)
+        return project.tasks.create(name, taskClass).apply {
+            configure(this, project, properties, compilation)
         }
+    }
 
     open fun configure(
         kotlinTask: AbstractKotlinCompile<*>,
         project: Project,
+        propertiesProvider: PropertiesProvider,
         compilation: KotlinCompilation
     ) {
         kotlinTask.sourceSetName = compilation.name
         kotlinTask.friendTaskName = taskToFriendTaskMapper[kotlinTask]
-        mapKotlinTaskProperties(project, kotlinTask)
+        propertiesProvider.mapKotlinTaskProperties(kotlinTask)
 
         project.whenEvaluated {
             val languageSettings = project.kotlinExtension.sourceSets.findByName(compilation.defaultSourceSetName)?.languageSettings
@@ -62,14 +73,22 @@ internal open class KotlinTasksProvider(val targetName: String) {
 
     protected open val taskToFriendTaskMapper: TaskToFriendTaskMapper =
         RegexTaskToFriendTaskMapper.Default(targetName)
+
+    private inline fun <reified Task, reified WorkersTask : Task> taskOrWorkersTask(properties: PropertiesProvider): Class<out Task> =
+        if (properties.parallelTasksInProject != true) Task::class.java else WorkersTask::class.java
 }
 
 internal class AndroidTasksProvider(targetName: String) : KotlinTasksProvider(targetName) {
     override val taskToFriendTaskMapper: TaskToFriendTaskMapper =
         RegexTaskToFriendTaskMapper.Android(targetName)
 
-    override fun configure(kotlinTask: AbstractKotlinCompile<*>, project: Project, compilation: KotlinCompilation) {
-        super.configure(kotlinTask, project, compilation)
+    override fun configure(
+        kotlinTask: AbstractKotlinCompile<*>,
+        project: Project,
+        propertiesProvider: PropertiesProvider,
+        compilation: KotlinCompilation
+    ) {
+        super.configure(kotlinTask, project, propertiesProvider, compilation)
         kotlinTask.useModuleDetection = true
     }
 }

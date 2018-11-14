@@ -12,13 +12,13 @@ import org.jetbrains.kotlin.codegen.context.ConstructorContext;
 import org.jetbrains.kotlin.codegen.context.FieldOwnerContext;
 import org.jetbrains.kotlin.codegen.context.MethodContext;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
-import org.jetbrains.kotlin.codegen.state.InlineClassManglingUtilsKt;
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
+import org.jetbrains.kotlin.resolve.jvm.InlineClassManglingRulesKt;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKt;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind;
@@ -86,7 +86,7 @@ public class ConstructorCodegen {
         ClassConstructorDescriptor constructorDescriptor = descriptor.getUnsubstitutedPrimaryConstructor();
         if (constructorDescriptor == null) return;
 
-        ConstructorContext constructorContext = context.intoConstructor(constructorDescriptor);
+        ConstructorContext constructorContext = context.intoConstructor(constructorDescriptor, typeMapper);
 
         KtPrimaryConstructor primaryConstructor = myClass.getPrimaryConstructor();
         JvmDeclarationOrigin origin = JvmDeclarationOriginKt
@@ -106,8 +106,10 @@ public class ConstructorCodegen {
                                        }
         );
 
-        functionCodegen.generateDefaultIfNeeded(constructorContext, constructorDescriptor, OwnerKind.IMPLEMENTATION,
-                                                DefaultParameterValueLoader.DEFAULT, null);
+        OwnerKind ownerKindForDefault = context.getContextKind() == OwnerKind.ERASED_INLINE_CLASS
+                                        ? OwnerKind.ERASED_INLINE_CLASS
+                                        : OwnerKind.IMPLEMENTATION;
+        functionCodegen.generateDefaultIfNeeded(constructorContext, constructorDescriptor, ownerKindForDefault, DefaultParameterValueLoader.DEFAULT, null);
 
         registerAccessorForHiddenConstructorIfNeeded(constructorDescriptor);
 
@@ -115,7 +117,7 @@ public class ConstructorCodegen {
     }
 
     private void registerAccessorForHiddenConstructorIfNeeded(ClassConstructorDescriptor descriptor) {
-        if (!InlineClassManglingUtilsKt.shouldHideConstructorDueToInlineClassTypeValueParameters(descriptor)) return;
+        if (!InlineClassManglingRulesKt.shouldHideConstructorDueToInlineClassTypeValueParameters(descriptor)) return;
         context.getAccessor(descriptor, AccessorKind.NORMAL, null, null);
     }
 
@@ -125,7 +127,7 @@ public class ConstructorCodegen {
     ) {
         if (!canHaveDeclaredConstructors(descriptor)) return;
 
-        ConstructorContext constructorContext = context.intoConstructor(constructorDescriptor);
+        ConstructorContext constructorContext = context.intoConstructor(constructorDescriptor, typeMapper);
 
         KtSecondaryConstructor constructor = (KtSecondaryConstructor) descriptorToDeclaration(constructorDescriptor);
 
@@ -140,7 +142,10 @@ public class ConstructorCodegen {
                 }
         );
 
-        functionCodegen.generateDefaultIfNeeded(constructorContext, constructorDescriptor, OwnerKind.IMPLEMENTATION,
+        OwnerKind ownerKindForDefault = context.getContextKind() == OwnerKind.ERASED_INLINE_CLASS
+                                        ? OwnerKind.ERASED_INLINE_CLASS
+                                        : OwnerKind.IMPLEMENTATION;
+        functionCodegen.generateDefaultIfNeeded(constructorContext, constructorDescriptor, ownerKindForDefault,
                                                 DefaultParameterValueLoader.DEFAULT, null);
 
         new DefaultParameterValueSubstitutor(state).generateOverloadsIfNeeded(
@@ -286,7 +291,9 @@ public class ConstructorCodegen {
     private void generateClosureInitialization(@NotNull InstructionAdapter iv) {
         MutableClosure closure = context.closure;
         if (closure != null) {
-            List<FieldInfo> argsFromClosure = ClosureCodegen.calculateConstructorParameters(typeMapper, closure, classAsmType);
+            List<FieldInfo> argsFromClosure = ClosureCodegen.calculateConstructorParameters(
+                    typeMapper, state.getLanguageVersionSettings(), closure, classAsmType);
+
             int k = 1;
             for (FieldInfo info : argsFromClosure) {
                 k = AsmUtil.genAssignInstanceFieldFromParam(info, k, iv);

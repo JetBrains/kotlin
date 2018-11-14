@@ -50,9 +50,10 @@ inline fun IrBuilderWithScope.irLetS(
 fun <T : IrElement> IrStatementsBuilder<T>.irTemporary(
     value: IrExpression,
     nameHint: String? = null,
-    typeHint: KotlinType? = null
+    typeHint: KotlinType? = null,
+    irType: IrType? = null
 ): IrVariable {
-    val temporary = scope.createTemporaryVariable(value, nameHint, type = typeHint)
+    val temporary = scope.createTemporaryVariable(value, nameHint, type = typeHint, irType = irType)
     +temporary
     return temporary
 }

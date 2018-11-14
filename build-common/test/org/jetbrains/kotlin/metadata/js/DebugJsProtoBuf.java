@@ -14,6 +14,8 @@ public final class DebugJsProtoBuf {
     registry.add(org.jetbrains.kotlin.metadata.js.DebugJsProtoBuf.functionAnnotation);
     registry.add(org.jetbrains.kotlin.metadata.js.DebugJsProtoBuf.functionContainingFileId);
     registry.add(org.jetbrains.kotlin.metadata.js.DebugJsProtoBuf.propertyAnnotation);
+    registry.add(org.jetbrains.kotlin.metadata.js.DebugJsProtoBuf.propertyGetterAnnotation);
+    registry.add(org.jetbrains.kotlin.metadata.js.DebugJsProtoBuf.propertySetterAnnotation);
     registry.add(org.jetbrains.kotlin.metadata.js.DebugJsProtoBuf.compileTimeValue);
     registry.add(org.jetbrains.kotlin.metadata.js.DebugJsProtoBuf.propertyContainingFileId);
     registry.add(org.jetbrains.kotlin.metadata.js.DebugJsProtoBuf.enumEntryAnnotation);
@@ -4752,6 +4754,28 @@ public final class DebugJsProtoBuf {
           .newFileScopedGeneratedExtension(
         org.jetbrains.kotlin.metadata.DebugProtoBuf.Annotation.class,
         org.jetbrains.kotlin.metadata.DebugProtoBuf.Annotation.getDefaultInstance());
+  public static final int PROPERTY_GETTER_ANNOTATION_FIELD_NUMBER = 132;
+  /**
+   * <code>extend .org.jetbrains.kotlin.metadata.Property { ... }</code>
+   */
+  public static final
+    org.jetbrains.kotlin.protobuf.GeneratedMessage.GeneratedExtension<
+      org.jetbrains.kotlin.metadata.DebugProtoBuf.Property,
+      java.util.List<org.jetbrains.kotlin.metadata.DebugProtoBuf.Annotation>> propertyGetterAnnotation = org.jetbrains.kotlin.protobuf.GeneratedMessage
+          .newFileScopedGeneratedExtension(
+        org.jetbrains.kotlin.metadata.DebugProtoBuf.Annotation.class,
+        org.jetbrains.kotlin.metadata.DebugProtoBuf.Annotation.getDefaultInstance());
+  public static final int PROPERTY_SETTER_ANNOTATION_FIELD_NUMBER = 133;
+  /**
+   * <code>extend .org.jetbrains.kotlin.metadata.Property { ... }</code>
+   */
+  public static final
+    org.jetbrains.kotlin.protobuf.GeneratedMessage.GeneratedExtension<
+      org.jetbrains.kotlin.metadata.DebugProtoBuf.Property,
+      java.util.List<org.jetbrains.kotlin.metadata.DebugProtoBuf.Annotation>> propertySetterAnnotation = org.jetbrains.kotlin.protobuf.GeneratedMessage
+          .newFileScopedGeneratedExtension(
+        org.jetbrains.kotlin.metadata.DebugProtoBuf.Annotation.class,
+        org.jetbrains.kotlin.metadata.DebugProtoBuf.Annotation.getDefaultInstance());
   public static final int COMPILE_TIME_VALUE_FIELD_NUMBER = 131;
   /**
    * <code>extend .org.jetbrains.kotlin.metadata.Property { ... }</code>
@@ -4900,27 +4924,33 @@ public final class DebugJsProtoBuf {
       "ion\030\207\001 \001(\005:p\n\023property_annotation\022\'.org." +
       "jetbrains.kotlin.metadata.Property\030\202\001 \003(" +
       "\0132).org.jetbrains.kotlin.metadata.Annota" +
-      "tion:~\n\022compile_time_value\022\'.org.jetbrai" +
-      "ns.kotlin.metadata.Property\030\203\001 \001(\01328.org" +
-      ".jetbrains.kotlin.metadata.Annotation.Ar",
-      "gument.Value:M\n\033property_containing_file" +
-      "_id\022\'.org.jetbrains.kotlin.metadata.Prop" +
-      "erty\030\207\001 \001(\005:s\n\025enum_entry_annotation\022(.o" +
-      "rg.jetbrains.kotlin.metadata.EnumEntry\030\202" +
-      "\001 \003(\0132).org.jetbrains.kotlin.metadata.An" +
-      "notation:w\n\024parameter_annotation\022-.org.j" +
-      "etbrains.kotlin.metadata.ValueParameter\030" +
-      "\202\001 \003(\0132).org.jetbrains.kotlin.metadata.A" +
-      "nnotation:h\n\017type_annotation\022#.org.jetbr" +
-      "ains.kotlin.metadata.Type\030\202\001 \003(\0132).org.j",
-      "etbrains.kotlin.metadata.Annotation:{\n\031t" +
-      "ype_parameter_annotation\022,.org.jetbrains" +
-      ".kotlin.metadata.TypeParameter\030\202\001 \003(\0132)." +
-      "org.jetbrains.kotlin.metadata.Annotation" +
-      ":x\n\026package_fragment_files\022..org.jetbrai" +
-      "ns.kotlin.metadata.PackageFragment\030\202\001 \001(" +
-      "\0132\'.org.jetbrains.kotlin.metadata.js.Fil" +
-      "esB\021B\017DebugJsProtoBuf"
+      "tion:w\n\032property_getter_annotation\022\'.org" +
+      ".jetbrains.kotlin.metadata.Property\030\204\001 \003" +
+      "(\0132).org.jetbrains.kotlin.metadata.Annot",
+      "ation:w\n\032property_setter_annotation\022\'.or" +
+      "g.jetbrains.kotlin.metadata.Property\030\205\001 " +
+      "\003(\0132).org.jetbrains.kotlin.metadata.Anno" +
+      "tation:~\n\022compile_time_value\022\'.org.jetbr" +
+      "ains.kotlin.metadata.Property\030\203\001 \001(\01328.o" +
+      "rg.jetbrains.kotlin.metadata.Annotation." +
+      "Argument.Value:M\n\033property_containing_fi" +
+      "le_id\022\'.org.jetbrains.kotlin.metadata.Pr" +
+      "operty\030\207\001 \001(\005:s\n\025enum_entry_annotation\022(" +
+      ".org.jetbrains.kotlin.metadata.EnumEntry",
+      "\030\202\001 \003(\0132).org.jetbrains.kotlin.metadata." +
+      "Annotation:w\n\024parameter_annotation\022-.org" +
+      ".jetbrains.kotlin.metadata.ValueParamete" +
+      "r\030\202\001 \003(\0132).org.jetbrains.kotlin.metadata" +
+      ".Annotation:h\n\017type_annotation\022#.org.jet" +
+      "brains.kotlin.metadata.Type\030\202\001 \003(\0132).org" +
+      ".jetbrains.kotlin.metadata.Annotation:{\n" +
+      "\031type_parameter_annotation\022,.org.jetbrai" +
+      "ns.kotlin.metadata.TypeParameter\030\202\001 \003(\0132" +
+      ").org.jetbrains.kotlin.metadata.Annotati",
+      "on:x\n\026package_fragment_files\022..org.jetbr" +
+      "ains.kotlin.metadata.PackageFragment\030\202\001 " +
+      "\001(\0132\'.org.jetbrains.kotlin.metadata.js.F" +
+      "ilesB\021B\017DebugJsProtoBuf"
     };
     org.jetbrains.kotlin.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new org.jetbrains.kotlin.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -4972,13 +5002,15 @@ public final class DebugJsProtoBuf {
     functionAnnotation.internalInit(descriptor.getExtensions().get(4));
     functionContainingFileId.internalInit(descriptor.getExtensions().get(5));
     propertyAnnotation.internalInit(descriptor.getExtensions().get(6));
-    compileTimeValue.internalInit(descriptor.getExtensions().get(7));
-    propertyContainingFileId.internalInit(descriptor.getExtensions().get(8));
-    enumEntryAnnotation.internalInit(descriptor.getExtensions().get(9));
-    parameterAnnotation.internalInit(descriptor.getExtensions().get(10));
-    typeAnnotation.internalInit(descriptor.getExtensions().get(11));
-    typeParameterAnnotation.internalInit(descriptor.getExtensions().get(12));
-    packageFragmentFiles.internalInit(descriptor.getExtensions().get(13));
+    propertyGetterAnnotation.internalInit(descriptor.getExtensions().get(7));
+    propertySetterAnnotation.internalInit(descriptor.getExtensions().get(8));
+    compileTimeValue.internalInit(descriptor.getExtensions().get(9));
+    propertyContainingFileId.internalInit(descriptor.getExtensions().get(10));
+    enumEntryAnnotation.internalInit(descriptor.getExtensions().get(11));
+    parameterAnnotation.internalInit(descriptor.getExtensions().get(12));
+    typeAnnotation.internalInit(descriptor.getExtensions().get(13));
+    typeParameterAnnotation.internalInit(descriptor.getExtensions().get(14));
+    packageFragmentFiles.internalInit(descriptor.getExtensions().get(15));
     org.jetbrains.kotlin.metadata.DebugProtoBuf.getDescriptor();
   }
 

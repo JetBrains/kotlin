@@ -124,7 +124,7 @@ FILE fqName:<root> fileName:/constructor.kt
       VALUE_PARAMETER name:x index:0 type:kotlin.Int flags:
       VALUE_PARAMETER name:y index:1 type:kotlin.String flags:
         EXPRESSION_BODY
-          CONST String type=kotlin.String value=
+          CONST String type=kotlin.String value=""
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
         INSTANCE_INITIALIZER_CALL classDescriptor='Test3'

@@ -23,22 +23,25 @@ import com.intellij.codeInsight.completion.LightCompletionTestCase;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupManager;
 import com.intellij.codeInsight.lookup.impl.LookupImpl;
+import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.projectRoots.JavaSdk;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.psi.PsiFile;
 import com.intellij.util.ArrayUtil;
 import org.apache.commons.lang.SystemUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.completion.test.CompletionTestUtilKt;
-import org.jetbrains.kotlin.idea.test.RunnableWithException;
 import org.jetbrains.kotlin.idea.test.TestUtilsKt;
 import org.jetbrains.kotlin.test.InTextDirectivesUtils;
 
 import java.io.File;
+import java.lang.reflect.Method;
 import java.util.List;
 
 public class KotlinConfidenceTest extends LightCompletionTestCase {
     private static final String TYPE_DIRECTIVE_PREFIX = "// TYPE:";
+    private final ThreadLocal<Boolean> skipComplete = ThreadLocal.withInitial(() -> false);
 
     public void testCompleteOnDotOutOfRanges() {
         doTest();
@@ -86,35 +89,52 @@ public class KotlinConfidenceTest extends LightCompletionTestCase {
         TestUtilsKt.invalidateLibraryCache(getProject());
     }
 
-    @Override
-    protected void tearDown() throws Exception {
-        TestUtilsKt.doKotlinTearDown(getProject(), new RunnableWithException() {
-            @Override
-            public void run() throws Exception {
-                KotlinConfidenceTest.super.tearDown();
-            }
-        });
-    }
-
     protected void doTest() {
         boolean completeByChars = CodeInsightSettings.getInstance().SELECT_AUTOPOPUP_SUGGESTIONS_BY_CHARS;
 
         CodeInsightSettings.getInstance().SELECT_AUTOPOPUP_SUGGESTIONS_BY_CHARS = true;
 
         try {
-            configureByFile(getBeforeFileName());
-            String text = getEditor().getDocument().getText();
-            String typeText = getTypeText(text);
-            List<String> expectedElements = InTextDirectivesUtils.findLinesWithPrefixesRemoved(text, "// ELEMENT:");
-            boolean noLookup = InTextDirectivesUtils.isDirectiveDefined(text, "// NO_LOOKUP");
+            skipComplete.set(true);
+            try {
+                configureByFile(getBeforeFileName());
+            } finally {
+                skipComplete.set(false);
+            }
 
+            String text = getEditor().getDocument().getText();
+            boolean noLookup = InTextDirectivesUtils.isDirectiveDefined(text, "// NO_LOOKUP");
+            if (!noLookup) complete(); //This will cause NPE in case of absence of autopopup completion
+
+            List<String> expectedElements = InTextDirectivesUtils.findLinesWithPrefixesRemoved(text, "// ELEMENT:");
             assertFalse("Can't both expect lookup elements and no lookup", !expectedElements.isEmpty() && noLookup);
 
             if (noLookup) {
-                assertNull("Expected no lookup", getLookup());
+                try {
+                    Method m = null; //Looking for shouldSkipAutoPopup method (note, we can't use name because of scrambling in Ultimate)
+                    for (Method method : CodeCompletionHandlerBase.class.getDeclaredMethods()) {
+                        Class<?>[] parameterTypes = method.getParameterTypes();
+                        if (method.getReturnType().equals(Boolean.TYPE) &&
+                            parameterTypes.length == 2 &&
+                            parameterTypes[0].equals(Editor.class) &&
+                            parameterTypes[1].equals(PsiFile.class)) {
+                            assertNull("Only one method with such signature should exist", m);
+                            m = method;
+                        }
+                    }
+                    assertNotNull(m);
+                    m.setAccessible(true);
+                    Object o = m.invoke(null, getEditor(), getFile());
+                    assert o instanceof Boolean;
+                    assertTrue("Should skip autopopup completion", ((Boolean) o).booleanValue());
+                } catch (Throwable e) {
+                    throw new AssertionError(e);
+                }
                 return;
             }
-            else if (!expectedElements.isEmpty()) {
+
+            String typeText = getTypeText(text);
+            if (!expectedElements.isEmpty()) {
                 assertContainsItems(ArrayUtil.toStringArray(expectedElements));
                 return;
             }
@@ -127,8 +147,7 @@ public class KotlinConfidenceTest extends LightCompletionTestCase {
         }
     }
 
-    protected static String getTypeText(String text) {
-
+    private static String getTypeText(String text) {
         String[] directives = InTextDirectivesUtils.findArrayWithPrefixes(text, TYPE_DIRECTIVE_PREFIX);
         if (directives.length == 0) return null;
         assertEquals("One directive with \"" + TYPE_DIRECTIVE_PREFIX +"\" expected", 1, directives.length);
@@ -136,11 +155,11 @@ public class KotlinConfidenceTest extends LightCompletionTestCase {
         return StringUtil.unquoteString(directives[0]);
     }
 
-    protected String getBeforeFileName() {
+    private String getBeforeFileName() {
         return getTestName(false) + ".kt";
     }
 
-    protected String getAfterFileName() {
+    private String getAfterFileName() {
         return getTestName(false) + ".kt.after";
     }
 
@@ -157,6 +176,7 @@ public class KotlinConfidenceTest extends LightCompletionTestCase {
 
     @Override
     protected void complete() {
+        if (skipComplete.get()) return;
         new CodeCompletionHandlerBase(CompletionType.BASIC, false, true, true).invokeCompletion(
                 getProject(), getEditor(), 0, false, false);
 

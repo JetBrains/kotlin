@@ -94,6 +94,16 @@ abstract class KotlinCommonBlock(
 
     fun isLeaf(): Boolean = node.firstChildNode == null
 
+    fun isIncomplete(): Boolean {
+        if (isIncompleteInSuper()) {
+            return true
+        }
+
+        // An incomplete declaration is the reason when modifier list can become a class body child, otherwise
+        // it's going to be a declaration child.
+        return node.elementType == MODIFIER_LIST && node.treeParent?.elementType == CLASS_BODY
+    }
+
     fun buildChildren(): List<Block> {
         if (mySubBlocks != null) {
             return mySubBlocks!!
@@ -153,7 +163,15 @@ abstract class KotlinCommonBlock(
             operationBlock.requireNode(),
             subList(index, size),
             null, indent, wrap, spacingBuilder
-        ) { createSyntheticSpacingNodeBlock(it) }
+        ) {
+            val parent = it.treeParent ?: node
+            val skipOperationNodeParent = if (parent.elementType === KtNodeTypes.OPERATION_REFERENCE) {
+                parent.treeParent ?: parent
+            } else {
+                parent
+            }
+            createSyntheticSpacingNodeBlock(skipOperationNodeParent)
+        }
 
         return subList(0, index) + operationSyntheticBlock
     }
@@ -695,6 +713,13 @@ private val INDENT_RULES = arrayOf(
 
     strategy("Property initializer")
         .within(KtNodeTypes.PROPERTY)
+        .forElement {
+            it.psi is KtExpression
+        }
+        .continuationIf(KotlinCodeStyleSettings::CONTINUATION_INDENT_FOR_EXPRESSION_BODIES),
+
+    strategy("Destructuring declaration")
+        .within(KtNodeTypes.DESTRUCTURING_DECLARATION)
         .forElement {
             it.psi is KtExpression
         }

@@ -25,7 +25,6 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiNamedElement
 import com.intellij.psi.PsiReference
 import com.intellij.psi.search.GlobalSearchScope
-import com.intellij.psi.search.SearchScope
 import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.refactoring.BaseRefactoringProcessor
 import com.intellij.refactoring.move.MoveCallback
@@ -90,26 +89,36 @@ interface Mover : (KtNamedDeclaration, KtElement) -> KtNamedDeclaration {
             }
         }
     }
+}
 
-    object Idle : Mover {
-        override fun invoke(originalElement: KtNamedDeclaration, targetContainer: KtElement) = originalElement
+sealed class MoveSource {
+    abstract val elementsToMove: Collection<KtNamedDeclaration>
+
+    class Elements(override val elementsToMove: Collection<KtNamedDeclaration>) : MoveSource()
+
+    class File(val file: KtFile) : MoveSource() {
+        override val elementsToMove: Collection<KtNamedDeclaration>
+            get() = file.declarations.filterIsInstance<KtNamedDeclaration>()
     }
 }
 
+fun MoveSource(declaration: KtNamedDeclaration) = MoveSource.Elements(listOf(declaration))
+fun MoveSource(declarations: Collection<KtNamedDeclaration>) = MoveSource.Elements(declarations)
+fun MoveSource(file: KtFile) = MoveSource.File(file)
+
 class MoveDeclarationsDescriptor @JvmOverloads constructor(
-        val project: Project,
-        val elementsToMove: Collection<KtNamedDeclaration>,
-        val moveTarget: KotlinMoveTarget,
-        val delegate: MoveDeclarationsDelegate,
-        val searchInCommentsAndStrings: Boolean = true,
-        val searchInNonCode: Boolean = true,
-        val scanEntireFile: Boolean = false,
-        val deleteSourceFiles: Boolean = false,
-        val moveCallback: MoveCallback? = null,
-        val openInEditor: Boolean = false,
-        val allElementsToMove: List<PsiElement>? = null,
-        val analyzeConflicts: Boolean = true,
-        val searchReferences: Boolean = true
+    val project: Project,
+    val moveSource: MoveSource,
+    val moveTarget: KotlinMoveTarget,
+    val delegate: MoveDeclarationsDelegate,
+    val searchInCommentsAndStrings: Boolean = true,
+    val searchInNonCode: Boolean = true,
+    val deleteSourceFiles: Boolean = false,
+    val moveCallback: MoveCallback? = null,
+    val openInEditor: Boolean = false,
+    val allElementsToMove: List<PsiElement>? = null,
+    val analyzeConflicts: Boolean = true,
+    val searchReferences: Boolean = true
 )
 
 class ConflictUsageInfo(element: PsiElement, val messages: Collection<String>) : UsageInfo(element)
@@ -144,7 +153,8 @@ class MoveKotlinDeclarationsProcessor(
     val project get() = descriptor.project
 
     private var nonCodeUsages: Array<NonCodeUsageInfo>? = null
-    private val elementsToMove = descriptor.elementsToMove.filter { e -> e.parent != descriptor.moveTarget.getTargetPsiIfExists(e) }
+    private val moveEntireFile = descriptor.moveSource is MoveSource.File
+    private val elementsToMove = descriptor.moveSource.elementsToMove.filter { e -> e.parent != descriptor.moveTarget.getTargetPsiIfExists(e) }
     private val kotlinToLightElementsBySourceFile = elementsToMove
             .groupBy { it.containingKtFile }
             .mapValues { it.value.keysToMap { it.toLightElements().ifEmpty { listOf(it) } } }
@@ -238,7 +248,7 @@ class MoveKotlinDeclarationsProcessor(
             val internalUsages = LinkedHashSet<UsageInfo>()
             val externalUsages = LinkedHashSet<UsageInfo>()
 
-            if (descriptor.scanEntireFile) {
+            if (moveEntireFile) {
                 val changeInfo = ContainerChangeInfo(
                         ContainerInfo.Package(sourceFile.packageFqName),
                         descriptor.moveTarget.targetContainerFqName?.let { ContainerInfo.Package(it) } ?: ContainerInfo.UnknownPackage
@@ -277,6 +287,7 @@ class MoveKotlinDeclarationsProcessor(
             val targetContainer = moveTarget.getOrCreateTargetPsi(declaration)
                                   ?: throw AssertionError("Couldn't create Kotlin file for: ${declaration::class.java}: ${declaration.text}")
             descriptor.delegate.preprocessDeclaration(descriptor, declaration)
+            if (moveEntireFile) return declaration
             return mover(declaration, targetContainer).apply {
                 addToBeShortenedDescendantsToWaitingSet()
             }
@@ -321,7 +332,7 @@ class MoveKotlinDeclarationsProcessor(
                 }
             }
 
-            val internalUsageScopes: List<KtElement> = if (descriptor.scanEntireFile) {
+            val internalUsageScopes: List<KtElement> = if (moveEntireFile) {
                 newDeclarations.asSequence().map { it.containingKtFile }.distinct().toList()
             } else {
                 newDeclarations

@@ -21,10 +21,10 @@ import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.GroupingMessageCollector
 import org.jetbrains.kotlin.cli.common.repl.ReplEvalResult
+import org.jetbrains.kotlin.cli.common.repl.replUnescapeLineBreaks
 import org.jetbrains.kotlin.cli.jvm.repl.configuration.ConsoleReplConfiguration
 import org.jetbrains.kotlin.cli.jvm.repl.configuration.IdeReplConfiguration
 import org.jetbrains.kotlin.cli.jvm.repl.configuration.ReplConfiguration
-import org.jetbrains.kotlin.cli.jvm.repl.messages.unescapeLineBreaks
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import java.io.File
@@ -96,7 +96,7 @@ class ReplFromTerminal(
     private fun one(next: WhatNextAfterOneLine): WhatNextAfterOneLine {
         var line = replConfiguration.commandReader.readLine(next) ?: return WhatNextAfterOneLine.QUIT
 
-        line = unescapeLineBreaks(line)
+        line = line.replUnescapeLineBreaks()
 
         if (line.startsWith(":") && (line.length == 1 || line[1] != ':')) {
             val notQuit = oneCommand(line.substring(1))

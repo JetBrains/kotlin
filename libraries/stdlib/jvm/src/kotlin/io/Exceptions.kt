@@ -5,7 +5,6 @@
 
 package kotlin.io
 
-import kotlin.text.*
 import java.io.File
 import java.io.IOException
 

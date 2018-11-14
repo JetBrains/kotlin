@@ -58,4 +58,5 @@ public interface KotlinIcons {
 
     Icon JS = IconLoader.getIcon("/org/jetbrains/kotlin/idea/icons/kotlin_js.png");
     Icon MPP = IconLoader.getIcon("/org/jetbrains/kotlin/idea/icons/kotlin_multiplatform_project.png");
+    Icon NATIVE = IconLoader.getIcon("/org/jetbrains/kotlin/idea/icons/kotlin_native.svg");
 }

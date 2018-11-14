@@ -68,10 +68,13 @@ fun getLibraryPlatform(project: Project, library: Library): TargetPlatform {
 fun detectLibraryKind(roots: Array<VirtualFile>): PersistentLibraryKind<*>? {
     val jarFile = roots.firstOrNull() ?: return null
     if (jarFile.fileSystem is JarFileSystem) {
-        return when (jarFile.getLibraryKindForJar()) {
-            KnownLibraryKindForIndex.COMMON -> CommonLibraryKind
-            KnownLibraryKindForIndex.JS -> JSLibraryKind
-            KnownLibraryKindForIndex.UNKNOWN -> null
+        // TODO: Detect library kind for Jar file using IdePlatformKindResolution.
+        when (jarFile.getLibraryKindForJar()) {
+            KnownLibraryKindForIndex.COMMON -> return CommonLibraryKind
+            KnownLibraryKindForIndex.JS -> return JSLibraryKind
+            KnownLibraryKindForIndex.UNKNOWN -> {
+                /* Continue detection of library kind via IdePlatformKindResolution. */
+            }
         }
     }
 

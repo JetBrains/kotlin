@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrTypeParameterSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
@@ -176,7 +177,7 @@ object JsIrBuilder {
 
     fun buildVar(
         type: IrType,
-        parent: IrDeclarationParent,
+        parent: IrDeclarationParent?,
         name: String = "tmp",
         isVar: Boolean = false,
         isConst: Boolean = false,
@@ -197,7 +198,7 @@ object JsIrBuilder {
         ).also {
             descriptor.bind(it)
             it.initializer = initializer
-            it.parent = parent
+            if (parent != null) it.parent = parent
         }
     }
 
@@ -233,6 +234,10 @@ object JsIrBuilder {
     fun buildTypeOperator(type: IrType, operator: IrTypeOperator, argument: IrExpression, toType: IrType, symbol: IrClassifierSymbol) =
         IrTypeOperatorCallImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, type, operator, toType, symbol, argument)
 
+    fun buildImplicitCast(value: IrExpression, toType: IrType) =
+        JsIrBuilder.buildTypeOperator(toType, IrTypeOperator.IMPLICIT_CAST, value, toType, toType.classifierOrFail)
+
+
     fun buildNull(type: IrType) = IrConstImpl.constNull(UNDEFINED_OFFSET, UNDEFINED_OFFSET, type)
     fun buildBoolean(type: IrType, v: Boolean) = IrConstImpl.boolean(UNDEFINED_OFFSET, UNDEFINED_OFFSET, type, v)
     fun buildInt(type: IrType, v: Int) = IrConstImpl.int(UNDEFINED_OFFSET, UNDEFINED_OFFSET, type, v)
@@ -265,5 +270,3 @@ fun IrClass.simpleFunctions(): List<IrSimpleFunction> = this.declarations.flatMa
         else -> emptyList()
     }
 }
-
-

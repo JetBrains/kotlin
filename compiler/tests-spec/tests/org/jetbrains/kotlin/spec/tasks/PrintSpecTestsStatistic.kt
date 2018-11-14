@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.spec.tasks
 
-import org.jetbrains.kotlin.spec.SpecTestsStatElement
-import org.jetbrains.kotlin.spec.SpecTestsStatElementType
-import org.jetbrains.kotlin.spec.TestsStatisticCollector
+import org.jetbrains.kotlin.spec.utils.SpecTestsStatElement
+import org.jetbrains.kotlin.spec.utils.SpecTestsStatElementType
+import org.jetbrains.kotlin.spec.utils.TestsStatisticCollector
 import org.jetbrains.kotlin.spec.validators.SpecTestLinkedType
 
 const val PRINT_BASE_INDENT = "  "

@@ -5,8 +5,6 @@
 
 package templates
 
-import kotlin.coroutines.experimental.*
-
 @DslMarker
 annotation class TemplateDsl
 
@@ -184,7 +182,7 @@ class FamilyPrimitiveMemberDefinition : MemberTemplateDefinition<PrimitiveType?>
         }
     }
 
-    override fun parametrize(): Sequence<Pair<Family, PrimitiveType?>> = buildSequence {
+    override fun parametrize(): Sequence<Pair<Family, PrimitiveType?>> = sequence {
         for ((family, primitives) in familyPrimitives) {
             if (primitives.isEmpty())
                 yield(family to null)

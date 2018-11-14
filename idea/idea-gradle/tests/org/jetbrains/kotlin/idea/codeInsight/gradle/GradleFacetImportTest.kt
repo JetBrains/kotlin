@@ -1467,7 +1467,7 @@ compileTestKotlin {
 
             tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
                 kotlinOptions {
-                    freeCompilerArgs = ['-Xprogressive']
+                    freeCompilerArgs = ['-progressive']
                 }
             }
         """

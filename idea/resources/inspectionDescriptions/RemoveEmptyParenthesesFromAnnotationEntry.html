@@ -1,0 +1,14 @@
+<html>
+<body>
+This inspection reports unnecessary parentheses in annotation entries. For example:
+<br /><br />
+<pre>
+annotation class MyAnnotation
+
+@MyAnnotation<b>()</b> // There parentheses can be omitted
+fun test() {
+
+}
+</pre>
+</body>
+</html>

@@ -1,7 +1,7 @@
 public final class Test$Creator : java/lang/Object, android/os/Parcelable$Creator {
     public void <init>()
 
-    public final java.lang.Object createFromParcel(android.os.Parcel p0) {
+    public final java.lang.Object createFromParcel(android.os.Parcel in) {
         LABEL (L0)
           ALOAD (1)
           LDC (in)
@@ -25,7 +25,7 @@ public final class Test$Creator : java/lang/Object, android/os/Parcelable$Creato
         LABEL (L4)
     }
 
-    public final java.lang.Object[] newArray(int p0)
+    public final java.lang.Object[] newArray(int size)
 }
 
 public final class Test : java/lang/Object, android/os/Parcelable {
@@ -37,13 +37,13 @@ public final class Test : java/lang/Object, android/os/Parcelable {
 
     static void <clinit>()
 
-    public void <init>(android.util.Size p0, android.util.Size p1)
+    public void <init>(android.util.Size size, android.util.Size nullable)
 
     public final android.util.Size component1()
 
     public final android.util.Size component2()
 
-    public final Test copy(android.util.Size p0, android.util.Size p1)
+    public final Test copy(android.util.Size size, android.util.Size nullable)
 
     public static Test copy$default(Test p0, android.util.Size p1, android.util.Size p2, int p3, java.lang.Object p4)
 
@@ -59,7 +59,7 @@ public final class Test : java/lang/Object, android/os/Parcelable {
 
     public java.lang.String toString()
 
-    public void writeToParcel(android.os.Parcel p0, int p1) {
+    public void writeToParcel(android.os.Parcel parcel, int flags) {
         LABEL (L0)
           ALOAD (1)
           LDC (parcel)
@@ -91,7 +91,7 @@ public final class Test : java/lang/Object, android/os/Parcelable {
 public final class TestF$Creator : java/lang/Object, android/os/Parcelable$Creator {
     public void <init>()
 
-    public final java.lang.Object createFromParcel(android.os.Parcel p0) {
+    public final java.lang.Object createFromParcel(android.os.Parcel in) {
         LABEL (L0)
           ALOAD (1)
           LDC (in)
@@ -115,7 +115,7 @@ public final class TestF$Creator : java/lang/Object, android/os/Parcelable$Creat
         LABEL (L4)
     }
 
-    public final java.lang.Object[] newArray(int p0)
+    public final java.lang.Object[] newArray(int size)
 }
 
 public final class TestF : java/lang/Object, android/os/Parcelable {
@@ -127,13 +127,13 @@ public final class TestF : java/lang/Object, android/os/Parcelable {
 
     static void <clinit>()
 
-    public void <init>(android.util.SizeF p0, android.util.SizeF p1)
+    public void <init>(android.util.SizeF size, android.util.SizeF nullable)
 
     public final android.util.SizeF component1()
 
     public final android.util.SizeF component2()
 
-    public final TestF copy(android.util.SizeF p0, android.util.SizeF p1)
+    public final TestF copy(android.util.SizeF size, android.util.SizeF nullable)
 
     public static TestF copy$default(TestF p0, android.util.SizeF p1, android.util.SizeF p2, int p3, java.lang.Object p4)
 
@@ -149,7 +149,7 @@ public final class TestF : java/lang/Object, android/os/Parcelable {
 
     public java.lang.String toString()
 
-    public void writeToParcel(android.os.Parcel p0, int p1) {
+    public void writeToParcel(android.os.Parcel parcel, int flags) {
         LABEL (L0)
           ALOAD (1)
           LDC (parcel)

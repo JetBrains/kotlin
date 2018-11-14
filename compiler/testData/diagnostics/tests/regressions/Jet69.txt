@@ -1,6 +1,6 @@
 package
 
-public fun main(/*0*/ args: kotlin.Array<kotlin.String>): kotlin.Unit
+public fun main(): kotlin.Unit
 public fun parse(/*0*/ cmd: kotlin.String): Command?
 public fun kotlin.Any.equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
 

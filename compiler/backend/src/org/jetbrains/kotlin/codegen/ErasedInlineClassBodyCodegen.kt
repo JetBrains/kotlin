@@ -49,6 +49,7 @@ class ErasedInlineClassBodyCodegen(
     override fun generateSyntheticPartsAfterBody() {
         super.generateSyntheticPartsAfterBody()
 
+        generateDelegatesToDefaultImpl()
         generateUnboxMethod()
         generateFunctionsFromAny()
         generateSpecializedEqualsStub()

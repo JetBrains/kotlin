@@ -25,10 +25,10 @@ import javax.lang.model.element.NestingKind
 import javax.tools.JavaFileObject
 
 class KaptJavaFileObject(
-        val compilationUnit: JCTree.JCCompilationUnit,
-        val clazz: JCTree.JCClassDecl,
-        val file: File? = null,
-        val timestamp: Long = System.currentTimeMillis()
+    val compilationUnit: JCTree.JCCompilationUnit,
+    val clazz: JCTree.JCClassDecl,
+    val file: File? = null,
+    val timestamp: Long = System.currentTimeMillis()
 ) : JavaFileObject {
     override fun toString() = "${javaClass.simpleName}[$name]"
 

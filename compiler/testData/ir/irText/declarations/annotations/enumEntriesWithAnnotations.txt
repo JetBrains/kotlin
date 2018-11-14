@@ -37,17 +37,17 @@ FILE fqName:<root> fileName:/enumEntriesWithAnnotations.kt
     ENUM_ENTRY name:ENTRY1
       annotations:
         CALL 'constructor TestAnn(String)' type=TestAnn origin=null
-          x: CONST String type=kotlin.String value=ENTRY1
+          x: CONST String type=kotlin.String value="ENTRY1"
       init: ENUM_CONSTRUCTOR_CALL 'constructor TestEnum()'
     ENUM_ENTRY name:ENTRY2
       annotations:
         CALL 'constructor TestAnn(String)' type=TestAnn origin=null
-          x: CONST String type=kotlin.String value=ENTRY2
+          x: CONST String type=kotlin.String value="ENTRY2"
       init: ENUM_CONSTRUCTOR_CALL 'constructor ENTRY2()'
       class: CLASS ENUM_ENTRY name:ENTRY2 modality:FINAL visibility:public flags: superTypes:[TestEnum]
         annotations:
           CALL 'constructor TestAnn(String)' type=TestAnn origin=null
-            x: CONST String type=kotlin.String value=ENTRY2
+            x: CONST String type=kotlin.String value="ENTRY2"
         $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:TestEnum.ENTRY2 flags:
         CONSTRUCTOR visibility:private <> () returnType:TestEnum.ENTRY2 flags:primary
           BLOCK_BODY

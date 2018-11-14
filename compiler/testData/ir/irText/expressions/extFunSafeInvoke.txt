@@ -19,5 +19,4 @@ FILE fqName:<root> fileName:/extFunSafeInvoke.kt
                 $this: GET_VAR 'value-parameter fn: Any.(Int, String) -> Unit' type=kotlin.Any.(kotlin.Int, kotlin.String) -> kotlin.Unit origin=VARIABLE_AS_FUNCTION
                 p1: GET_VAR 'tmp0_safe_receiver: Any?' type=kotlin.Any? origin=null
                 p2: CONST Int type=kotlin.Int value=42
-                p3: CONST String type=kotlin.String value=Hello
-
+                p3: CONST String type=kotlin.String value="Hello"

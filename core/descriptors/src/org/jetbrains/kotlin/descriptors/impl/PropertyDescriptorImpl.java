@@ -522,8 +522,8 @@ public class PropertyDescriptorImpl extends VariableDescriptorWithInitializerImp
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public void setOverriddenDescriptors(@NotNull Collection<? extends CallableMemberDescriptor> overriddenDescriptors) {
-        //noinspection unchecked
         this.overriddenProperties = (Collection<? extends PropertyDescriptor>) overriddenDescriptors;
     }
 
@@ -545,5 +545,11 @@ public class PropertyDescriptorImpl extends VariableDescriptorWithInitializerImp
                 .setKind(kind)
                 .setCopyOverrides(copyOverrides)
                 .build();
+    }
+
+    @Nullable
+    @Override
+    public <V> V getUserData(UserDataKey<V> key) {
+        return null;
     }
 }

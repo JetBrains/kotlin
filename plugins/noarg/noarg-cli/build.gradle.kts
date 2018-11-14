@@ -13,8 +13,8 @@ dependencies {
     compileOnly(project(":compiler:util"))
     compileOnly(project(":compiler:plugin-api"))
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
-    compileOnly(intellijDep()) { includeJars("asm-all") }
-    runtime(projectDist(":kotlin-stdlib"))
+    compileOnly(intellijDep()) { includeJars("asm-all", rootProject = rootProject) }
+    runtime(project(":kotlin-stdlib"))
 
     testRuntimeOnly(projectRuntimeJar(":kotlin-compiler"))
     testCompile(project(":compiler:backend"))

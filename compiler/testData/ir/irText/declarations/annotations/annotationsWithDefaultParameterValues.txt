@@ -4,7 +4,7 @@ FILE fqName:<root> fileName:/annotationsWithDefaultParameterValues.kt
     CONSTRUCTOR visibility:public <> (x:kotlin.String, y:kotlin.Int) returnType:A flags:primary
       VALUE_PARAMETER name:x index:0 type:kotlin.String flags:
         EXPRESSION_BODY
-          CONST String type=kotlin.String value=
+          CONST String type=kotlin.String value=""
       VALUE_PARAMETER name:y index:1 type:kotlin.Int flags:
         EXPRESSION_BODY
           CONST Int type=kotlin.Int value=42
@@ -46,18 +46,18 @@ FILE fqName:<root> fileName:/annotationsWithDefaultParameterValues.kt
   FUN name:test1 visibility:public modality:FINAL <> () returnType:kotlin.Unit flags:
     annotations:
       CALL 'constructor A(String = ..., Int = ...)' type=A origin=null
-        x: CONST String type=kotlin.String value=abc
+        x: CONST String type=kotlin.String value="abc"
         y: CONST Int type=kotlin.Int value=123
     BLOCK_BODY
   FUN name:test2 visibility:public modality:FINAL <> () returnType:kotlin.Unit flags:
     annotations:
       CALL 'constructor A(String = ..., Int = ...)' type=A origin=null
-        x: CONST String type=kotlin.String value=def
+        x: CONST String type=kotlin.String value="def"
     BLOCK_BODY
   FUN name:test3 visibility:public modality:FINAL <> () returnType:kotlin.Unit flags:
     annotations:
       CALL 'constructor A(String = ..., Int = ...)' type=A origin=null
-        x: CONST String type=kotlin.String value=ghi
+        x: CONST String type=kotlin.String value="ghi"
     BLOCK_BODY
   FUN name:test4 visibility:public modality:FINAL <> () returnType:kotlin.Unit flags:
     annotations:

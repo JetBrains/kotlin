@@ -31,35 +31,35 @@ FILE fqName:<root> fileName:/propertyAccessorsWithAnnotations.kt
     FUN name:<get-test1> visibility:public modality:FINAL <> () returnType:kotlin.String flags:
       annotations:
         CALL 'constructor TestAnn(String)' type=TestAnn origin=null
-          x: CONST String type=kotlin.String value=test1.get
+          x: CONST String type=kotlin.String value="test1.get"
       correspondingProperty: PROPERTY name:test1 visibility:public modality:FINAL flags:val
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-test1>(): String'
-          CONST String type=kotlin.String value=
+          CONST String type=kotlin.String value=""
   PROPERTY name:test2 visibility:public modality:FINAL flags:var
     FUN name:<get-test2> visibility:public modality:FINAL <> () returnType:kotlin.String flags:
       annotations:
         CALL 'constructor TestAnn(String)' type=TestAnn origin=null
-          x: CONST String type=kotlin.String value=test2.get
+          x: CONST String type=kotlin.String value="test2.get"
       correspondingProperty: PROPERTY name:test2 visibility:public modality:FINAL flags:var
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-test2>(): String'
-          CONST String type=kotlin.String value=
+          CONST String type=kotlin.String value=""
     FUN name:<set-test2> visibility:public modality:FINAL <> (value:kotlin.String) returnType:kotlin.Unit flags:
       annotations:
         CALL 'constructor TestAnn(String)' type=TestAnn origin=null
-          x: CONST String type=kotlin.String value=test2.set
+          x: CONST String type=kotlin.String value="test2.set"
       correspondingProperty: PROPERTY name:test2 visibility:public modality:FINAL flags:var
       VALUE_PARAMETER name:value index:0 type:kotlin.String flags:
       BLOCK_BODY
   PROPERTY name:test3 visibility:public modality:FINAL flags:val
     FIELD PROPERTY_BACKING_FIELD name:test3 type:kotlin.String visibility:public flags:final,static
       EXPRESSION_BODY
-        CONST String type=kotlin.String value=
+        CONST String type=kotlin.String value=""
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test3> visibility:public modality:FINAL <> () returnType:kotlin.String flags:
       annotations:
         CALL 'constructor TestAnn(String)' type=TestAnn origin=null
-          x: CONST String type=kotlin.String value=test3.get
+          x: CONST String type=kotlin.String value="test3.get"
       correspondingProperty: PROPERTY name:test3 visibility:public modality:FINAL flags:val
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-test3>(): String'
@@ -67,11 +67,11 @@ FILE fqName:<root> fileName:/propertyAccessorsWithAnnotations.kt
   PROPERTY name:test4 visibility:public modality:FINAL flags:var
     FIELD PROPERTY_BACKING_FIELD name:test4 type:kotlin.String visibility:public flags:static
       EXPRESSION_BODY
-        CONST String type=kotlin.String value=
+        CONST String type=kotlin.String value=""
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test4> visibility:public modality:FINAL <> () returnType:kotlin.String flags:
       annotations:
         CALL 'constructor TestAnn(String)' type=TestAnn origin=null
-          x: CONST String type=kotlin.String value=test4.get
+          x: CONST String type=kotlin.String value="test4.get"
       correspondingProperty: PROPERTY name:test4 visibility:public modality:FINAL flags:var
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='<get-test4>(): String'
@@ -79,7 +79,7 @@ FILE fqName:<root> fileName:/propertyAccessorsWithAnnotations.kt
     FUN DEFAULT_PROPERTY_ACCESSOR name:<set-test4> visibility:public modality:FINAL <> (<set-?>:kotlin.String) returnType:kotlin.Unit flags:
       annotations:
         CALL 'constructor TestAnn(String)' type=TestAnn origin=null
-          x: CONST String type=kotlin.String value=test4.set
+          x: CONST String type=kotlin.String value="test4.set"
       correspondingProperty: PROPERTY name:test4 visibility:public modality:FINAL flags:var
       VALUE_PARAMETER name:<set-?> index:0 type:kotlin.String flags:
       BLOCK_BODY

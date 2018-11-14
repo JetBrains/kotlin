@@ -110,7 +110,13 @@ fun ClassifierDescriptor.toIrType(hasQuestionMark: Boolean = false, symbolTable:
     return IrSimpleTypeImpl(defaultType, symbol, hasQuestionMark, listOf(), listOf())
 }
 
-val IrTypeParameter.defaultType: IrType get() = symbol.owner.defaultType
+val IrTypeParameter.defaultType: IrType
+    get() = IrSimpleTypeImpl(
+        symbol,
+        hasQuestionMark = false,
+        arguments = emptyList(),
+        annotations = emptyList()
+    )
 
 fun IrClassifierSymbol.typeWith(vararg arguments: IrType): IrSimpleType = typeWith(arguments.toList())
 
@@ -145,6 +151,6 @@ fun KotlinType.toIrType(symbolTable: SymbolTable? = null): IrType? {
 // TODO: this function creates unbound symbol which is the great source of problems
 private fun ClassifierDescriptor.getSymbol(symbolTable: SymbolTable?): IrClassifierSymbol = when (this) {
     is ClassDescriptor -> symbolTable?.referenceClass(this) ?: IrClassSymbolImpl(this)
-    is TypeParameterDescriptor -> /*symbolTable?.referenceTypeParameter(this) ?: */IrTypeParameterSymbolImpl(this)
+    is TypeParameterDescriptor -> symbolTable?.referenceTypeParameter(this) ?: IrTypeParameterSymbolImpl(this)
     else -> TODO()
 }

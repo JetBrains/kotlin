@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
+import org.jetbrains.kotlin.psi.psiUtil.startOffsetSkippingComments
 import org.jetbrains.kotlin.psi2ir.deparenthesize
 import org.jetbrains.kotlin.psi2ir.intermediate.defaultLoad
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -45,7 +46,8 @@ class BranchingExpressionGenerator(statementGenerator: StatementGenerator) : Sta
 
         whenBranches@ while (true) {
             val irCondition = ktLastIf.condition!!.genExpr()
-            val irThenBranch = ktLastIf.then!!.genExpr()
+
+            val irThenBranch = ktLastIf.then?.genExpr() ?: generateEmptyBlockForMissingBranch(ktLastIf)
             irBranches.add(IrBranchImpl(irCondition, irThenBranch))
 
             val ktElse = ktLastIf.`else`?.deparenthesize()
@@ -63,6 +65,9 @@ class BranchingExpressionGenerator(statementGenerator: StatementGenerator) : Sta
         return createIrWhen(expression, irBranches, irElseBranch, resultType)
     }
 
+    private fun generateEmptyBlockForMissingBranch(ktLastIf: KtIfExpression) =
+        IrBlockImpl(ktLastIf.startOffset, ktLastIf.endOffset, context.irBuiltIns.nothingType, IrStatementOrigin.IF, listOf())
+
     private fun createIrWhen(
         ktIf: KtIfExpression,
         irBranches: List<IrBranch>,
@@ -71,12 +76,12 @@ class BranchingExpressionGenerator(statementGenerator: StatementGenerator) : Sta
     ): IrWhen {
         if (irBranches.size == 1) {
             val irBranch0 = irBranches[0]
-            return buildStatement(ktIf.startOffset, ktIf.endOffset) {
+            return buildStatement(ktIf.startOffsetSkippingComments, ktIf.endOffset) {
                 irIfThenMaybeElse(resultType, irBranch0.condition, irBranch0.result, irElseResult)
             }
         }
 
-        val irWhen = IrWhenImpl(ktIf.startOffset, ktIf.endOffset, resultType, IrStatementOrigin.WHEN)
+        val irWhen = IrWhenImpl(ktIf.startOffsetSkippingComments, ktIf.endOffset, resultType, IrStatementOrigin.WHEN)
 
         irWhen.branches.addAll(irBranches)
 
@@ -108,7 +113,7 @@ class BranchingExpressionGenerator(statementGenerator: StatementGenerator) : Sta
             else -> context.irBuiltIns.unitType
         }
 
-        val irWhen = IrWhenImpl(expression.startOffset, expression.endOffset, resultType, IrStatementOrigin.WHEN)
+        val irWhen = IrWhenImpl(expression.startOffsetSkippingComments, expression.endOffset, resultType, IrStatementOrigin.WHEN)
 
         for (ktEntry in expression.entries) {
             if (ktEntry.isElse) {
@@ -169,16 +174,16 @@ class BranchingExpressionGenerator(statementGenerator: StatementGenerator) : Sta
     private fun generateWhenBody(expression: KtWhenExpression, irSubject: IrVariable?, irWhen: IrWhen): IrExpression =
         if (irSubject == null) {
             if (irWhen.branches.isEmpty())
-                IrBlockImpl(expression.startOffset, expression.endOffset, context.irBuiltIns.unitType, IrStatementOrigin.WHEN)
+                IrBlockImpl(expression.startOffsetSkippingComments, expression.endOffset, context.irBuiltIns.unitType, IrStatementOrigin.WHEN)
             else
                 irWhen
         } else {
             if (irWhen.branches.isEmpty()) {
-                val irBlock = IrBlockImpl(expression.startOffset, expression.endOffset, context.irBuiltIns.unitType, IrStatementOrigin.WHEN)
+                val irBlock = IrBlockImpl(expression.startOffsetSkippingComments, expression.endOffset, context.irBuiltIns.unitType, IrStatementOrigin.WHEN)
                 irBlock.statements.add(irSubject)
                 irBlock
             } else {
-                val irBlock = IrBlockImpl(expression.startOffset, expression.endOffset, irWhen.type, IrStatementOrigin.WHEN)
+                val irBlock = IrBlockImpl(expression.startOffsetSkippingComments, expression.endOffset, irWhen.type, IrStatementOrigin.WHEN)
                 irBlock.statements.add(irSubject)
                 irBlock.statements.add(irWhen)
                 irBlock
@@ -206,7 +211,7 @@ class BranchingExpressionGenerator(statementGenerator: StatementGenerator) : Sta
         val irTypeOperand = typeOperand.toIrType()
         val typeSymbol = irTypeOperand.classifierOrNull ?: throw AssertionError("Not a classifier type: $typeOperand")
         val irInstanceOf = IrTypeOperatorCallImpl(
-            ktCondition.startOffset, ktCondition.endOffset,
+            ktCondition.startOffsetSkippingComments, ktCondition.endOffset,
             context.irBuiltIns.booleanType,
             IrTypeOperator.INSTANCEOF,
             irTypeOperand, typeSymbol,
@@ -214,7 +219,7 @@ class BranchingExpressionGenerator(statementGenerator: StatementGenerator) : Sta
         )
         return if (ktCondition.isNegated)
             IrUnaryPrimitiveImpl(
-                ktCondition.startOffset, ktCondition.endOffset,
+                ktCondition.startOffsetSkippingComments, ktCondition.endOffset,
                 context.irBuiltIns.booleanType,
                 IrStatementOrigin.EXCL, context.irBuiltIns.booleanNotSymbol,
                 irInstanceOf
@@ -233,7 +238,7 @@ class BranchingExpressionGenerator(statementGenerator: StatementGenerator) : Sta
                 irInCall
             IrStatementOrigin.NOT_IN ->
                 IrUnaryPrimitiveImpl(
-                    ktCondition.startOffset, ktCondition.endOffset,
+                    ktCondition.startOffsetSkippingComments, ktCondition.endOffset,
                     context.irBuiltIns.booleanType,
                     IrStatementOrigin.EXCL, context.irBuiltIns.booleanNotSymbol,
                     irInCall
@@ -246,7 +251,7 @@ class BranchingExpressionGenerator(statementGenerator: StatementGenerator) : Sta
         val ktExpression = ktCondition.expression
         val irExpression = ktExpression!!.genExpr()
         return OperatorExpressionGenerator(statementGenerator).generateEquality(
-            ktCondition.startOffset, ktCondition.endOffset, IrStatementOrigin.EQEQ,
+            ktCondition.startOffsetSkippingComments, ktCondition.endOffset, IrStatementOrigin.EQEQ,
             irSubject.defaultLoad(), irExpression,
             context.bindingContext[BindingContext.PRIMITIVE_NUMERIC_COMPARISON_INFO, ktExpression]
         )

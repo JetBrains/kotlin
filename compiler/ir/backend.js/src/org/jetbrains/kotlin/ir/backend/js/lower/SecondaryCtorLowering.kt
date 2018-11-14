@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.ir.backend.js.lower
 
 import org.jetbrains.kotlin.backend.common.DeclarationContainerLoweringPass
 import org.jetbrains.kotlin.backend.common.ir.copyTo
+import org.jetbrains.kotlin.backend.common.ir.copyTypeParametersFrom
 import org.jetbrains.kotlin.backend.common.runOnFilePostfix
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrElement
@@ -24,7 +25,7 @@ import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
 import org.jetbrains.kotlin.ir.util.defaultType
-import org.jetbrains.kotlin.ir.util.transformFlat
+import org.jetbrains.kotlin.ir.util.transformDeclarationsFlat
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
@@ -35,23 +36,36 @@ class SecondaryCtorLowering(val context: JsIrBackendContext) {
 
     private val oldCtorToNewMap = mutableMapOf<IrConstructorSymbol, ConstructorPair>()
 
-    fun getConstructorProcessorLowering() = object : DeclarationContainerLoweringPass {
+    val constructorProcessorLowering = object : DeclarationContainerLoweringPass {
         override fun lower(irDeclarationContainer: IrDeclarationContainer) {
-            irDeclarationContainer.declarations.transformFlat {
-                if (it is IrClass) {
-                    listOf(it) + lowerClass(it)
-                } else null
+            irDeclarationContainer.declarations.filterIsInstance<IrClass>().forEach {
+                if (!it.isInline)  // Inline classes are lowered separately
+                    lowerClass(it)
             }
         }
-    }::runOnFilePostfix
+    }
 
-    fun getConstructorRedirectorLowering() = object : DeclarationContainerLoweringPass {
+    val constructorRedirectorLowering = object : DeclarationContainerLoweringPass {
         override fun lower(irDeclarationContainer: IrDeclarationContainer) {
+            if (irDeclarationContainer is IrClass) {
+                if (!irDeclarationContainer.isInline)   // Inline classes are lowered separately
+                    updateConstructorDeclarations(irDeclarationContainer)
+            }
             for (it in irDeclarationContainer.declarations) {
                 it.accept(CallsiteRedirectionTransformer(), null)
             }
         }
-    }::runOnFilePostfix
+    }
+
+    private fun updateConstructorDeclarations(irClass: IrClass) {
+        irClass.transformDeclarationsFlat {
+            if (it is IrConstructor) {
+                oldCtorToNewMap[it.symbol]?.let { (newInit, newCreate) ->
+                    listOf(newInit.owner, newCreate.owner)
+                }
+            } else null
+        }
+    }
 
     private fun lowerClass(irClass: IrClass): List<IrSimpleFunction> {
         val className = irClass.name.asString()
@@ -90,8 +104,6 @@ class SecondaryCtorLowering(val context: JsIrBackendContext) {
                 newConstructors += newCreateConstructor
             }
         }
-
-        irClass.declarations.removeAll(oldConstructors)
 
         return newConstructors
     }
@@ -146,11 +158,10 @@ class SecondaryCtorLowering(val context: JsIrBackendContext) {
             val retStmt = JsIrBuilder.buildReturn(it.symbol, JsIrBuilder.buildGetValue(thisParam.symbol), context.irBuiltIns.nothingType)
             val statements = (declaration.body!!.deepCopyWithSymbols(it) as IrStatementContainer).statements
 
+            it.copyTypeParametersFrom(declaration)
+
             val newValueParameters = declaration.valueParameters.map { p -> p.copyTo(it) }
-
             it.valueParameters += (newValueParameters + thisParam)
-
-            it.typeParameters += declaration.typeParameters.map { p -> p.copyTo(it) }
 
             it.returnType = type
             it.parent = declaration.parent
@@ -180,8 +191,8 @@ class SecondaryCtorLowering(val context: JsIrBackendContext) {
             declaration.isInline,
             declaration.isExternal
         ).also {
+            it.copyTypeParametersFrom(declaration)
             it.valueParameters += declaration.valueParameters.map { p -> p.copyTo(it) }
-            it.typeParameters += declaration.typeParameters.map { p -> p.copyTo(it) }
             it.parent = declaration.parent
 
             it.returnType = type

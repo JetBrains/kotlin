@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.js.test
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.ir.backend.js.Result
 import org.jetbrains.kotlin.ir.backend.js.compile
+import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.config.JsConfig
 import org.jetbrains.kotlin.js.facade.MainCallParameters
 import org.jetbrains.kotlin.js.facade.TranslationUnit
@@ -15,16 +16,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.test.TargetBackend
 import java.io.File
 
-private val runtimeSources = listOfKtFilesFrom(
-    // TODO: share more coroutine code between JS BEs
-    // TODO: don't generate code for external declarations, until that:
-    //  it's important now than *H.kt files at the start since we generate code for them
-    //  and actual versions just will override them later.
-    "libraries/stdlib/coroutines-experimental/src/kotlin/coroutines/experimental/CoroutinesExperimentalH.kt",
-    "libraries/stdlib/coroutines-experimental/src/kotlin/coroutines/experimental/CoroutinesIntrinsicsExperimentalH.kt",
-    "libraries/stdlib/coroutines-experimental/src/kotlin/coroutines/experimental/SequenceBuilder.kt",
-    "libraries/stdlib/coroutines-experimental/src/kotlin/coroutines/experimental/Coroutines.kt",
-
+private val runtimeSourcesCommon = listOfKtFilesFrom(
     "core/builtins/src/kotlin",
     "libraries/stdlib/common/src",
     "libraries/stdlib/src/kotlin/",
@@ -41,6 +33,8 @@ private val runtimeSources = listOfKtFilesFrom(
     "core/builtins/native/kotlin/Iterator.kt",
     "core/builtins/native/kotlin/CharSequence.kt",
 
+    "core/builtins/src/kotlin/Unit.kt",
+
     BasicBoxTest.COMMON_FILES_DIR_PATH
 ) - listOfKtFilesFrom(
     "libraries/stdlib/common/src/kotlin/JvmAnnotationsH.kt",
@@ -48,9 +42,6 @@ private val runtimeSources = listOfKtFilesFrom(
 
     // TODO: Support Int.pow
     "libraries/stdlib/js/src/kotlin/random/PlatformRandom.kt",
-
-    // TODO: Unify exceptions
-    "libraries/stdlib/common/src/kotlin/ExceptionsH.kt",
 
     // Fails with: EXPERIMENTAL_IS_NOT_ENABLED
     "libraries/stdlib/common/src/kotlin/annotations/Annotations.kt",
@@ -68,20 +59,44 @@ private val runtimeSources = listOfKtFilesFrom(
     "libraries/stdlib/js/src/kotlin/dom",
     "libraries/stdlib/js/src/kotlin/browser",
 
-    // TODO: Unify exceptions
-    "libraries/stdlib/js/src/kotlin/exceptions.kt",
-
     // TODO: fix compilation issues in arrayPlusCollection
     // Replaced with irRuntime/kotlinHacks.kt
     "libraries/stdlib/js/src/kotlin/kotlin.kt",
 
+    "libraries/stdlib/js/src/kotlin/currentBeMisc.kt",
+
     // Full version is defined in stdlib
     // This file is useful for smaller subset of runtime sources
-    "libraries/stdlib/js/irRuntime/rangeExtensions.kt"
+    "libraries/stdlib/js/irRuntime/rangeExtensions.kt",
+
+    // Mostly array-specific stuff
+    "libraries/stdlib/js/src/kotlin/builtins.kt",
+
+    // Inlining of js fun doesn't update the variables inside
+    "libraries/stdlib/js/src/kotlin/jsTypeOf.kt",
+    "libraries/stdlib/js/src/kotlin/collections/utils.kt"
+)
+
+
+private val coroutine12Files = listOfKtFilesFrom(
+    "libraries/stdlib/js/irRuntime/coroutines_12"
+)
+
+private val coroutine13Files = listOfKtFilesFrom(
+    "libraries/stdlib/coroutines/common",
+    "libraries/stdlib/coroutines/js/src/kotlin/coroutines/SafeContinuationJs.kt",
+    "libraries/stdlib/coroutines/src",
+    // TODO: merge coroutines_13 with JS BE coroutines
+    "libraries/stdlib/js/irRuntime/coroutines_13"
 )
 
 private var runtimeResult: Result? = null
 private val runtimeFile = File("js/js.translator/testData/out/irBox/testRuntime.js")
+
+private val runtimeSources_12 = (runtimeSourcesCommon - coroutine13Files + coroutine12Files).distinct()
+private val runtimeSources_13 = (runtimeSourcesCommon - coroutine12Files + coroutine13Files).distinct()
+
+private val runtimeSources = runtimeSources_13
 
 abstract class BasicIrBoxTest(
     pathToTestDir: String,
@@ -99,7 +114,17 @@ abstract class BasicIrBoxTest(
     targetBackend = TargetBackend.JS_IR
 ) {
 
-    override var skipMinification = true
+    override val skipMinification = true
+
+    // TODO Design incremental compilation for IR and add test support
+    override val incrementalCompilationChecksEnabled = false
+
+    private val compilationCache = mutableMapOf<String, Result>()
+
+    override fun doTest(filePath: String, expectedResult: String, mainCallParameters: MainCallParameters, coroutinesPackage: String) {
+        compilationCache.clear()
+        super.doTest(filePath, expectedResult, mainCallParameters, coroutinesPackage)
+    }
 
     override fun translateFiles(
         units: List<TranslationUnit>,
@@ -128,22 +153,29 @@ abstract class BasicIrBoxTest(
                 LanguageFeature.MultiPlatformProjects to LanguageFeature.State.ENABLED
             ),
             analysisFlags = mapOf(
-                AnalysisFlag.useExperimental to listOf("kotlin.contracts.ExperimentalContracts", "kotlin.Experimental")
+                AnalysisFlags.useExperimental to listOf("kotlin.contracts.ExperimentalContracts", "kotlin.Experimental"),
+                AnalysisFlags.allowResultReturnType to true
             )
         )
-
 
         if (runtimeResult == null) {
             runtimeResult = compile(config.project, runtimeSources.map(::createPsiFile), runtimeConfiguration)
             runtimeFile.write(runtimeResult!!.generatedCode)
         }
 
+        val dependencyNames = config.configuration[JSConfigurationKeys.LIBRARIES]!!.map { File(it).name }
+        val dependencies = listOf(runtimeResult!!.moduleDescriptor) + dependencyNames.mapNotNull { compilationCache[it]?.moduleDescriptor }
+        val irDependencies = listOf(runtimeResult!!.moduleFragment) + compilationCache.values.map { it.moduleFragment }
+
         val result = compile(
             config.project,
             filesToCompile,
             config.configuration,
             FqName((testPackage?.let { "$it." } ?: "") + testFunction),
-            listOf(runtimeResult!!.moduleDescriptor))
+            dependencies,
+            irDependencies)
+
+        compilationCache[outputFile.name.replace(".js", ".meta.js")] = result
 
         outputFile.write(result.generatedCode)
     }

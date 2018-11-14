@@ -1,4 +1,4 @@
-// !LANGUAGE: +NestedClassesInAnnotations
+// !LANGUAGE: +NestedClassesInAnnotations +InlineClasses
 // !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE
 
 <!WRONG_ANNOTATION_TARGET!>@kotlin.jvm.JvmField<!>
@@ -128,3 +128,16 @@ object O {
 
 <!INAPPLICABLE_JVM_FIELD!>@JvmField<!>
 private val private = 3
+
+inline class Foo(val x: Int)
+
+object IObject {
+    <!INAPPLICABLE_JVM_FIELD!>@JvmField<!>
+    val c: Foo = Foo(42)
+
+    <!INAPPLICABLE_JVM_FIELD!>@JvmField<!>
+    val u = <!EXPERIMENTAL_UNSIGNED_LITERALS!>42u<!>
+
+    <!INAPPLICABLE_JVM_FIELD!>@JvmField<!>
+    private val r: Result<Int> = TODO()
+}

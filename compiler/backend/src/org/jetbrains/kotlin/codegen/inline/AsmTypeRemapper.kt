@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.codegen.inline
 
 import org.jetbrains.org.objectweb.asm.commons.Remapper
-import org.jetbrains.org.objectweb.asm.commons.RemappingSignatureAdapter
+import org.jetbrains.org.objectweb.asm.commons.SignatureRemapper
 import org.jetbrains.org.objectweb.asm.signature.SignatureReader
 import org.jetbrains.org.objectweb.asm.signature.SignatureVisitor
 
@@ -26,8 +26,8 @@ class AsmTypeRemapper(val typeRemapper: TypeRemapper, val result: InlineResult) 
         return typeRemapper.map(type)
     }
 
-    override fun createRemappingSignatureAdapter(v: SignatureVisitor?): SignatureVisitor {
-        return object : RemappingSignatureAdapter(v, this) {
+    override fun createSignatureRemapper(v: SignatureVisitor?): SignatureVisitor {
+        return object : SignatureRemapper(v, this) {
             override fun visitTypeVariable(name: String) {
                 /*TODO try to erase absent type variable*/
                 val mapping = typeRemapper.mapTypeParameter(name) ?: return super.visitTypeVariable(name)

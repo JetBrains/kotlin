@@ -29,8 +29,6 @@ abstract class KotlinScriptDefinitionAdapterFromNewAPIBase : KotlinScriptDefinit
 
     protected abstract val hostConfiguration: ScriptingHostConfiguration
 
-    abstract val scriptFileExtensionWithDot: String
-
     open val baseClass: KClass<*> by lazy(LazyThreadSafetyMode.PUBLICATION) {
         getScriptingClass(scriptCompilationConfiguration.getOrError(ScriptCompilationConfiguration.baseClass))
     }
@@ -43,11 +41,11 @@ abstract class KotlinScriptDefinitionAdapterFromNewAPIBase : KotlinScriptDefinit
     override val fileType: LanguageFileType = KotlinFileType.INSTANCE
 
     override fun isScript(fileName: String): Boolean =
-        fileName.endsWith(scriptFileExtensionWithDot)
+        fileName.endsWith(".$fileExtension")
 
     override fun getScriptName(script: KtScript): Name {
         val fileBasedName = NameUtils.getScriptNameForFile(script.containingKtFile.name)
-        return Name.identifier(fileBasedName.identifier.removeSuffix(scriptFileExtensionWithDot))
+        return Name.identifier(fileBasedName.identifier.removeSuffix(".$fileExtension"))
     }
 
     override val annotationsForSamWithReceivers: List<String>
@@ -78,11 +76,16 @@ abstract class KotlinScriptDefinitionAdapterFromNewAPIBase : KotlinScriptDefinit
         get() = scriptCompilationConfiguration[ScriptCompilationConfiguration.compilerOptions]
             .orEmpty()
 
-    override val scriptExpectedLocations: List<ScriptExpectedLocation> =
-        listOf(
-            ScriptExpectedLocation.SourcesOnly,
-            ScriptExpectedLocation.TestsOnly
-        )
+    override val scriptExpectedLocations: List<ScriptExpectedLocation>
+        get() = scriptCompilationConfiguration[ScriptCompilationConfiguration.ide.acceptedLocations]?.map {
+            when(it) {
+                ScriptAcceptedLocation.Sources -> ScriptExpectedLocation.SourcesOnly
+                ScriptAcceptedLocation.Tests -> ScriptExpectedLocation.TestsOnly
+                ScriptAcceptedLocation.Libraries -> ScriptExpectedLocation.Libraries
+                ScriptAcceptedLocation.Project -> ScriptExpectedLocation.Project
+                ScriptAcceptedLocation.Everywhere -> ScriptExpectedLocation.Everywhere
+            }
+        } ?: listOf(ScriptExpectedLocation.SourcesOnly, ScriptExpectedLocation.TestsOnly)
 
     private val scriptingClassGetter by lazy(LazyThreadSafetyMode.PUBLICATION) {
         hostConfiguration[ScriptingHostConfiguration.getScriptingClass]
@@ -105,6 +108,6 @@ class KotlinScriptDefinitionAdapterFromNewAPI(
 
     override val name: String get() = scriptCompilationConfiguration[ScriptCompilationConfiguration.displayName] ?: super.name
 
-    override val scriptFileExtensionWithDot =
-        "." + (scriptCompilationConfiguration[ScriptCompilationConfiguration.fileExtension] ?: "kts")
+    override val fileExtension: String
+        get() = scriptCompilationConfiguration[ScriptCompilationConfiguration.fileExtension] ?: super.fileExtension
 }

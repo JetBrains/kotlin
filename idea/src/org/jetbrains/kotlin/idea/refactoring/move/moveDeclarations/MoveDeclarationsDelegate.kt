@@ -79,7 +79,7 @@ sealed class MoveDeclarationsDelegate {
         }
 
         override fun findInternalUsages(descriptor: MoveDeclarationsDescriptor): List<UsageInfo> {
-            val classToMove = descriptor.elementsToMove.singleOrNull() as? KtClass ?: return emptyList()
+            val classToMove = descriptor.moveSource.elementsToMove.singleOrNull() as? KtClass ?: return emptyList()
             return collectOuterInstanceReferences(classToMove)
         }
 
@@ -152,7 +152,7 @@ sealed class MoveDeclarationsDelegate {
             if (outerInstanceParameterName == null) return
             val psiFactory = KtPsiFactory(descriptor.project)
             val newOuterInstanceRef = psiFactory.createExpression(outerInstanceParameterName)
-            val classToMove = descriptor.elementsToMove.singleOrNull() as? KtClass
+            val classToMove = descriptor.moveSource.elementsToMove.singleOrNull() as? KtClass
 
             for (usage in usages) {
                 if (usage is MoveRenameUsageInfo) {

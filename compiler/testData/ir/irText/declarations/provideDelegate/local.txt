@@ -84,7 +84,7 @@ FILE fqName:<root> fileName:/local.kt
         VAR DELEGATE name:testMember$delegate type:Delegate flags:val
           CALL 'provideDelegate(Any?, Any?): Delegate' type=Delegate origin=null
             $this: CALL 'constructor DelegateProvider(String)' type=DelegateProvider origin=null
-              value: CONST String type=kotlin.String value=OK
+              value: CONST String type=kotlin.String value="OK"
             thisRef: CONST Null type=kotlin.Nothing? value=null
             property: LOCAL_DELEGATED_PROPERTY_REFERENCE 'testMember: String' delegate='`testMember$delegate`: Delegate' getter='<get-testMember>(): String' setter=null type=kotlin.reflect.KProperty0<kotlin.String> origin=PROPERTY_REFERENCE_FOR_DELEGATE
         FUN DELEGATED_PROPERTY_ACCESSOR name:<get-testMember> visibility:local modality:FINAL <> () returnType:kotlin.String flags:

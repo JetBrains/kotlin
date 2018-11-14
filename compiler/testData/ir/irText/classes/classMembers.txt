@@ -84,13 +84,13 @@ FILE fqName:<root> fileName:/classMembers.kt
       $this: VALUE_PARAMETER name:<this> type:C flags:
       BLOCK_BODY
         CALL 'println(Any?): Unit' type=kotlin.Unit origin=null
-          message: CONST String type=kotlin.String value=1
+          message: CONST String type=kotlin.String value="1"
     FUN name:memberExtensionFunction visibility:public modality:FINAL <> ($this:C, $receiver:kotlin.Int) returnType:kotlin.Unit flags:
       $this: VALUE_PARAMETER name:<this> type:C flags:
       $receiver: VALUE_PARAMETER name:<this> type:kotlin.Int flags:
       BLOCK_BODY
         CALL 'println(Any?): Unit' type=kotlin.Unit origin=null
-          message: CONST String type=kotlin.String value=2
+          message: CONST String type=kotlin.String value="2"
     CLASS CLASS name:NestedClass modality:FINAL visibility:public flags: superTypes:[kotlin.Any]
       $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:C.NestedClass flags:
       CONSTRUCTOR visibility:public <> () returnType:C.NestedClass flags:primary
@@ -101,13 +101,13 @@ FILE fqName:<root> fileName:/classMembers.kt
         $this: VALUE_PARAMETER name:<this> type:C.NestedClass flags:
         BLOCK_BODY
           CALL 'println(Any?): Unit' type=kotlin.Unit origin=null
-            message: CONST String type=kotlin.String value=3
+            message: CONST String type=kotlin.String value="3"
       FUN name:memberExtensionFunction visibility:public modality:FINAL <> ($this:C.NestedClass, $receiver:kotlin.Int) returnType:kotlin.Unit flags:
         $this: VALUE_PARAMETER name:<this> type:C.NestedClass flags:
         $receiver: VALUE_PARAMETER name:<this> type:kotlin.Int flags:
         BLOCK_BODY
           CALL 'println(Any?): Unit' type=kotlin.Unit origin=null
-            message: CONST String type=kotlin.String value=4
+            message: CONST String type=kotlin.String value="4"
       FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:
         overridden:
           FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:

@@ -29,6 +29,7 @@ class KotlinPairMatcher : PairedBraceMatcher {
             // KotlinTypedHandler insert paired brace in this case
             false
         } else KtTokens.WHITE_SPACE_OR_COMMENT_BIT_SET.contains(contextType)
+                || contextType === KtTokens.COLON
                 || contextType === KtTokens.SEMICOLON
                 || contextType === KtTokens.COMMA
                 || contextType === KtTokens.RPAR

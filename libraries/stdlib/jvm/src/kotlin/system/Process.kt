@@ -6,14 +6,13 @@
 @file:kotlin.jvm.JvmName("ProcessKt")
 package kotlin.system
 
-import kotlin.*
-
 /**
- * Terminates the currently running Java Virtual Machine. The
- * argument serves as a status code; by convention, a nonzero status
- * code indicates abnormal termination.
+ * Terminates the currently running process.
  *
- * This method never returns normally.
+ * @param status serves as a status code; by convention,
+ * a nonzero status code indicates abnormal termination.
+ *
+ * @return This method never returns normally.
  */
 @kotlin.internal.InlineOnly
 public inline fun exitProcess(status: Int): Nothing {

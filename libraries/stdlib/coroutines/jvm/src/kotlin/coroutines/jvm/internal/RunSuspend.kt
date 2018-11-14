@@ -28,13 +28,13 @@ private class RunSuspend : Continuation<Unit> {
 
     override fun resumeWith(result: Result<Unit>) = synchronized(this) {
         this.result = result
-        (this as Object).notifyAll()
+        @Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN") (this as Object).notifyAll()
     }
 
     fun await() = synchronized(this) {
         while (true) {
             when (val result = this.result) {
-                null -> (this as Object).wait()
+                null -> @Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN") (this as Object).wait()
                 else -> {
                     result.getOrThrow() // throw up failure
                     return

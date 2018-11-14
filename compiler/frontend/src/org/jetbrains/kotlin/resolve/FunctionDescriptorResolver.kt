@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.getReceiverTypeFromFunctionType
 import org.jetbrains.kotlin.builtins.getValueParameterTypesFromFunctionType
 import org.jetbrains.kotlin.builtins.isBuiltinFunctionalType
-import org.jetbrains.kotlin.config.AnalysisFlag
+import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.contracts.description.ContractProviderKey
@@ -42,7 +42,6 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.hasActualModifier
 import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
-import org.jetbrains.kotlin.psi.psiUtil.isContractPresentPsiCheck
 import org.jetbrains.kotlin.resolve.DescriptorResolver.getDefaultModality
 import org.jetbrains.kotlin.resolve.DescriptorResolver.getDefaultVisibility
 import org.jetbrains.kotlin.resolve.DescriptorUtils.getDispatchReceiverParameterIfNeeded
@@ -68,6 +67,7 @@ import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils.isFunctionExpression
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils.isFunctionLiteral
 import org.jetbrains.kotlin.types.typeUtil.replaceAnnotations
+import org.jetbrains.kotlin.util.AstLoadingFilter
 import java.util.*
 
 class FunctionDescriptorResolver(
@@ -204,7 +204,7 @@ class FunctionDescriptorResolver(
         )
 
         val contractProvider = getContractProvider(functionDescriptor, trace, scope, dataFlowInfo, function)
-        val userData = mutableMapOf<FunctionDescriptor.UserDataKey<*>, Any>().apply {
+        val userData = mutableMapOf<CallableDescriptor.UserDataKey<*>, Any>().apply {
             if (contractProvider != null) {
                 put(ContractProviderKey, contractProvider)
             }
@@ -255,17 +255,19 @@ class FunctionDescriptorResolver(
         dataFlowInfo: DataFlowInfo,
         function: KtFunction
     ): LazyContractProvider? {
-        val provideByDeferredForceResolve = LazyContractProvider {
-            expressionTypingServices.getBodyExpressionType(trace, scope, dataFlowInfo, function, functionDescriptor)
-        }
+        if (function !is KtNamedFunction) return null
 
         val isContractsEnabled = languageVersionSettings.supportsFeature(LanguageFeature.AllowContractsForCustomFunctions) ||
                 // We need to enable contracts if we're compiling "kotlin"-package to be able to ship contracts in stdlib in 1.2
-                languageVersionSettings.getFlag(AnalysisFlag.allowKotlinPackage)
+                languageVersionSettings.getFlag(AnalysisFlags.allowKotlinPackage)
 
-        if (!isContractsEnabled || !function.isContractPresentPsiCheck()) return null
+        if (!isContractsEnabled || !function.mayHaveContract()) return null
 
-        return provideByDeferredForceResolve
+        return LazyContractProvider {
+            AstLoadingFilter.forceAllowTreeLoading(function.containingFile) {
+                expressionTypingServices.getBodyExpressionType(trace, scope, dataFlowInfo, function, functionDescriptor)
+            }
+        }
     }
 
     private fun createValueParameterDescriptors(

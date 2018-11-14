@@ -290,7 +290,7 @@ FILE fqName:<root> fileName:/delegatedImplementation.kt
     FIELD DELEGATE name:Test2$IOther$delegate type:IOther visibility:private flags:final
       EXPRESSION_BODY
         CALL 'otherImpl(String, Int): IOther' type=IOther origin=null
-          x0: CONST String type=kotlin.String value=
+          x0: CONST String type=kotlin.String value=""
           y0: CONST Int type=kotlin.Int value=42
     PROPERTY DELEGATED_MEMBER name:z1 visibility:public modality:OPEN flags:val
       FUN DELEGATED_MEMBER name:<get-z1> visibility:public modality:OPEN <> ($this:Test2, $receiver:kotlin.Byte) returnType:kotlin.Int flags:

@@ -1,5 +1,5 @@
 // !WITH_NEW_INFERENCE
-fun main(args : Array<String>) {
+fun main() {
     val a : Int? = null;
     var v = 1
     val <!UNUSED_VARIABLE!>b<!> : String = <!NI;TYPE_MISMATCH, TYPE_MISMATCH!>v<!>;

@@ -12,7 +12,7 @@ package kotlin.collections
 /**
  * Provides a skeletal implementation of the [MutableMap] interface.
  *
- * The implementor is required to implement the [entries] property, which should return mutable set of map entries, and the [put] function.
+ * The implementor is required to implement [entries] property, which should return mutable set of map entries, and [put] function.
  *
  * @param K the type of map keys. The map is invariant on its key type.
  * @param V the type of map values. The map is invariant on its value type.
@@ -41,12 +41,12 @@ public actual abstract class AbstractMutableMap<K, V> protected actual construct
 
     }
 
-    override fun clear() {
+    actual override fun clear() {
         entries.clear()
     }
 
     private var _keys: MutableSet<K>? = null
-    override val keys: MutableSet<K>
+    actual override val keys: MutableSet<K>
         get() {
             if (_keys == null) {
                 _keys = object : AbstractMutableSet<K>() {
@@ -82,14 +82,14 @@ public actual abstract class AbstractMutableMap<K, V> protected actual construct
 
     actual abstract override fun put(key: K, value: V): V?
 
-    override fun putAll(from: Map<out K, V>) {
+    actual override fun putAll(from: Map<out K, V>) {
         for ((key, value) in from) {
             put(key, value)
         }
     }
 
     private var _values: MutableCollection<V>? = null
-    override val values: MutableCollection<V>
+    actual override val values: MutableCollection<V>
         get() {
             if (_values == null) {
                 _values = object : AbstractMutableCollection<V>() {
@@ -122,10 +122,10 @@ public actual abstract class AbstractMutableMap<K, V> protected actual construct
             return _values!!
         }
 
-    override fun remove(key: K): V? {
+    actual override fun remove(key: K): V? {
         val iter = entries.iterator()
         while (iter.hasNext()) {
-            var entry = iter.next()
+            val entry = iter.next()
             val k = entry.key
             if (key == k) {
                 val value = entry.value

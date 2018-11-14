@@ -9,7 +9,6 @@ import test.assertStaticAndRuntimeTypeIs
 import kotlin.test.*
 import test.collections.behaviors.*
 import test.comparisons.STRING_CASE_INSENSITIVE_ORDER
-import kotlin.comparisons.*
 import kotlin.math.sin
 import kotlin.random.Random
 

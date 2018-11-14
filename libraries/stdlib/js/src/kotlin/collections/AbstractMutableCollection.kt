@@ -10,11 +10,11 @@ package kotlin.collections
  *
  * @param E the type of elements contained in the collection. The collection is invariant on its element type.
  */
-public abstract class AbstractMutableCollection<E> protected constructor() : AbstractCollection<E>(), MutableCollection<E> {
+public actual abstract class AbstractMutableCollection<E> protected actual constructor() : AbstractCollection<E>(), MutableCollection<E> {
 
-    abstract override fun add(element: E): Boolean
+    actual abstract override fun add(element: E): Boolean
 
-    override fun remove(element: E): Boolean {
+    actual override fun remove(element: E): Boolean {
         val iterator = iterator()
         while (iterator.hasNext()) {
             if (iterator.next() == element) {
@@ -25,7 +25,7 @@ public abstract class AbstractMutableCollection<E> protected constructor() : Abs
         return false
     }
 
-    override fun addAll(elements: Collection<E>): Boolean {
+    actual override fun addAll(elements: Collection<E>): Boolean {
         var modified = false
         for (element in elements) {
             if (add(element)) modified = true
@@ -33,10 +33,10 @@ public abstract class AbstractMutableCollection<E> protected constructor() : Abs
         return modified
     }
 
-    override fun removeAll(elements: Collection<E>): Boolean = (this as MutableIterable<E>).removeAll { it in elements }
-    override fun retainAll(elements: Collection<E>): Boolean = (this as MutableIterable<E>).removeAll { it !in elements }
+    actual override fun removeAll(elements: Collection<E>): Boolean = (this as MutableIterable<E>).removeAll { it in elements }
+    actual override fun retainAll(elements: Collection<E>): Boolean = (this as MutableIterable<E>).removeAll { it !in elements }
 
-    override fun clear(): Unit {
+    actual override fun clear(): Unit {
         val iterator = this.iterator()
         while (iterator.hasNext()) {
             iterator.next()

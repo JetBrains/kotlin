@@ -14,8 +14,8 @@ package
     @kotlin.jvm.JvmField public abstract val c: kotlin.Int
     @field:kotlin.jvm.JvmField public final val customGetter: kotlin.String = ""
     @field:kotlin.jvm.JvmField public final var customSetter: kotlin.String
-    @field:kotlin.jvm.JvmField public final val explicitDefaultAnnotatedGetter: kotlin.String = ""
-    @field:kotlin.jvm.JvmField public final var explicitDefaultAnnotatedSetter: kotlin.String
+    @field:kotlin.jvm.JvmField @get:DemoAnnotation public final val explicitDefaultAnnotatedGetter: kotlin.String = ""
+    @field:kotlin.jvm.JvmField @set:DemoAnnotation public final var explicitDefaultAnnotatedSetter: kotlin.String
     @field:kotlin.jvm.JvmField public final val explicitDefaultGetter: kotlin.String = ""
     @field:kotlin.jvm.JvmField public final var explicitDefaultSetter: kotlin.String
     @kotlin.jvm.JvmField public final val noBackingField: kotlin.String
@@ -31,6 +31,14 @@ public final annotation class DemoAnnotation : kotlin.Annotation {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final inline class Foo {
+    public constructor Foo(/*0*/ x: kotlin.Int)
+    public final val x: kotlin.Int
+    public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
 }
 
 public final class G {
@@ -60,6 +68,16 @@ public final class H {
 public interface I {
     @kotlin.jvm.JvmField public abstract val ai: kotlin.Int
     @kotlin.jvm.JvmField public open val bi: kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public object IObject {
+    private constructor IObject()
+    @field:kotlin.jvm.JvmField public final val c: Foo
+    @field:kotlin.jvm.JvmField private final val r: kotlin.Result<kotlin.Int>
+    @field:kotlin.jvm.JvmField public final val u: kotlin.UInt = 42.toUInt()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

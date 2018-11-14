@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.withScope
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
-import org.jetbrains.kotlin.psi.psiUtil.startOffset
+import org.jetbrains.kotlin.psi.psiUtil.startOffsetSkippingComments
 import org.jetbrains.kotlin.psi2ir.endOffsetOrUndefined
 import org.jetbrains.kotlin.psi2ir.pureEndOffsetOrUndefined
 import org.jetbrains.kotlin.psi2ir.pureStartOffsetOrUndefined
@@ -53,7 +53,7 @@ class DeclarationGenerator(override val context: GeneratorContext) : Generator {
                 generateTypeAliasDeclaration(ktDeclaration)
             else ->
                 IrErrorDeclarationImpl(
-                    ktDeclaration.startOffset, ktDeclaration.endOffset,
+                    ktDeclaration.startOffsetSkippingComments, ktDeclaration.endOffset,
                     getOrFail(BindingContext.DECLARATION_TO_DESCRIPTOR, ktDeclaration)
                 )
         }
@@ -82,7 +82,7 @@ class DeclarationGenerator(override val context: GeneratorContext) : Generator {
 
     private fun generateTypeAliasDeclaration(ktDeclaration: KtTypeAlias): IrDeclaration =
         IrTypeAliasImpl(
-            ktDeclaration.startOffset, ktDeclaration.endOffset, IrDeclarationOrigin.DEFINED,
+            ktDeclaration.startOffsetSkippingComments, ktDeclaration.endOffset, IrDeclarationOrigin.DEFINED,
             getOrFail(BindingContext.TYPE_ALIAS, ktDeclaration)
         )
 

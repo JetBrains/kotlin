@@ -64,18 +64,18 @@ import javax.annotation.processing.Processor
 import com.sun.tools.javac.util.List as JavacList
 
 class ClasspathBasedKapt3Extension(
-        paths: KaptPaths,
-        options: Map<String, String>,
-        javacOptions: Map<String, String>,
-        annotationProcessorFqNames: List<String>,
-        aptMode: AptMode,
-        val useLightAnalysis: Boolean,
-        correctErrorTypes: Boolean,
-        mapDiagnosticLocations: Boolean,
-        strictMode: Boolean,
-        pluginInitializedTime: Long,
-        logger: MessageCollectorBackedKaptLogger,
-        compilerConfiguration: CompilerConfiguration
+    paths: KaptPaths,
+    options: Map<String, String>,
+    javacOptions: Map<String, String>,
+    annotationProcessorFqNames: List<String>,
+    aptMode: AptMode,
+    private val useLightAnalysis: Boolean,
+    correctErrorTypes: Boolean,
+    mapDiagnosticLocations: Boolean,
+    strictMode: Boolean,
+    pluginInitializedTime: Long,
+    logger: MessageCollectorBackedKaptLogger,
+    compilerConfiguration: CompilerConfiguration
 ) : AbstractKapt3Extension(
     paths, options, javacOptions, annotationProcessorFqNames,
     aptMode, pluginInitializedTime, logger, correctErrorTypes, mapDiagnosticLocations, strictMode,
@@ -91,10 +91,10 @@ class ClasspathBasedKapt3Extension(
     }
 
     override fun analysisCompleted(
-            project: Project,
-            module: ModuleDescriptor,
-            bindingTrace: BindingTrace,
-            files: Collection<KtFile>
+        project: Project,
+        module: ModuleDescriptor,
+        bindingTrace: BindingTrace,
+        files: Collection<KtFile>
     ): AnalysisResult? {
         try {
             return super.analysisCompleted(project, module, bindingTrace, files)
@@ -105,17 +105,17 @@ class ClasspathBasedKapt3Extension(
 }
 
 abstract class AbstractKapt3Extension(
-        val paths: KaptPaths,
-        val options: Map<String, String>,
-        val javacOptions: Map<String, String>,
-        val annotationProcessorFqNames: List<String>,
-        val aptMode: AptMode,
-        val pluginInitializedTime: Long,
-        val logger: MessageCollectorBackedKaptLogger,
-        val correctErrorTypes: Boolean,
-        val mapDiagnosticLocations: Boolean,
-        val strictMode: Boolean,
-        val compilerConfiguration: CompilerConfiguration
+    val paths: KaptPaths,
+    private val options: Map<String, String>,
+    private val javacOptions: Map<String, String>,
+    val annotationProcessorFqNames: List<String>,
+    private val aptMode: AptMode,
+    private val pluginInitializedTime: Long,
+    val logger: MessageCollectorBackedKaptLogger,
+    val correctErrorTypes: Boolean,
+    val mapDiagnosticLocations: Boolean,
+    val strictMode: Boolean,
+    val compilerConfiguration: CompilerConfiguration
 ) : PartialAnalysisHandlerExtension() {
     private var annotationProcessingComplete = false
 
@@ -127,12 +127,12 @@ abstract class AbstractKapt3Extension(
     }
 
     override fun doAnalysis(
-            project: Project,
-            module: ModuleDescriptor,
-            projectContext: ProjectContext,
-            files: Collection<KtFile>,
-            bindingTrace: BindingTrace,
-            componentProvider: ComponentProvider
+        project: Project,
+        module: ModuleDescriptor,
+        projectContext: ProjectContext,
+        files: Collection<KtFile>,
+        bindingTrace: BindingTrace,
+        componentProvider: ComponentProvider
     ): AnalysisResult? {
         if (aptMode == APT_ONLY) {
             return AnalysisResult.EMPTY
@@ -142,14 +142,14 @@ abstract class AbstractKapt3Extension(
     }
 
     override fun analysisCompleted(
-            project: Project,
-            module: ModuleDescriptor,
-            bindingTrace: BindingTrace,
-            files: Collection<KtFile>
+        project: Project,
+        module: ModuleDescriptor,
+        bindingTrace: BindingTrace,
+        files: Collection<KtFile>
     ): AnalysisResult? {
         if (setAnnotationProcessingComplete()) return null
 
-        fun doNotGenerateCode() = AnalysisResult.Companion.success(BindingContext.EMPTY, module, shouldGenerateCode = false)
+        fun doNotGenerateCode() = AnalysisResult.success(BindingContext.EMPTY, module, shouldGenerateCode = false)
 
         logger.info { "Initial analysis took ${System.currentTimeMillis() - pluginInitializedTime} ms" }
 
@@ -201,10 +201,11 @@ abstract class AbstractKapt3Extension(
             doNotGenerateCode()
         } else {
             AnalysisResult.RetryWithAdditionalJavaRoots(
-                    bindingTrace.bindingContext,
-                    module,
-                    listOf(paths.sourcesOutputDir),
-                    addToEnvironment = true)
+                bindingTrace.bindingContext,
+                module,
+                listOf(paths.sourcesOutputDir),
+                addToEnvironment = true
+            )
         }
     }
 
@@ -222,24 +223,25 @@ abstract class AbstractKapt3Extension(
     }
 
     private fun contextForStubGeneration(
-            project: Project,
-            module: ModuleDescriptor,
-            bindingContext: BindingContext,
-            files: List<KtFile>
+        project: Project,
+        module: ModuleDescriptor,
+        bindingContext: BindingContext,
+        files: List<KtFile>
     ): KaptContextForStubGeneration {
         val builderFactory = OriginCollectingClassBuilderFactory(ClassBuilderMode.KAPT3)
 
         val targetId = TargetId(
-                name = compilerConfiguration[CommonConfigurationKeys.MODULE_NAME] ?: module.name.asString(),
-                type = "java-production")
+            name = compilerConfiguration[CommonConfigurationKeys.MODULE_NAME] ?: module.name.asString(),
+            type = "java-production"
+        )
 
         val generationState = GenerationState.Builder(
-                project,
-                builderFactory,
-                module,
-                bindingContext,
-                files,
-                compilerConfiguration
+            project,
+            builderFactory,
+            module,
+            bindingContext,
+            files,
+            compilerConfiguration
         ).targetId(targetId).build()
 
         val (classFilesCompilationTime) = measureTimeMillis {
@@ -294,29 +296,30 @@ abstract class AbstractKapt3Extension(
     }
 
     protected open fun saveIncrementalData(
-            kaptContext: KaptContextForStubGeneration,
-            messageCollector: MessageCollector,
-            converter: ClassFileToSourceStubConverter) {
+        kaptContext: KaptContextForStubGeneration,
+        messageCollector: MessageCollector,
+        converter: ClassFileToSourceStubConverter
+    ) {
         val incrementalDataOutputDir = paths.incrementalDataOutputDir ?: return
 
         val reportOutputFiles = kaptContext.generationState.configuration.getBoolean(CommonConfigurationKeys.REPORT_OUTPUT_FILES)
         kaptContext.generationState.factory.writeAll(
-                incrementalDataOutputDir,
-                if (!reportOutputFiles) null else fun(file: OutputFile, sources: List<File>, output: File) {
-                    val stubFileObject = converter.bindings[file.relativePath.substringBeforeLast(".class", missingDelimiterValue = "")]
-                    if (stubFileObject != null) {
-                        val stubFile = File(paths.stubsOutputDir, stubFileObject.name)
-                        val lineMappingsFile = File(stubFile.parentFile, stubFile.nameWithoutExtension + KAPT_METADATA_EXTENSION)
+            incrementalDataOutputDir,
+            if (!reportOutputFiles) null else fun(file: OutputFile, sources: List<File>, output: File) {
+                val stubFileObject = converter.bindings[file.relativePath.substringBeforeLast(".class", missingDelimiterValue = "")]
+                if (stubFileObject != null) {
+                    val stubFile = File(paths.stubsOutputDir, stubFileObject.name)
+                    val lineMappingsFile = File(stubFile.parentFile, stubFile.nameWithoutExtension + KAPT_METADATA_EXTENSION)
 
-                        for (file in listOf(stubFile, lineMappingsFile)) {
-                            if (file.exists()) {
-                                messageCollector.report(OUTPUT, OutputMessageUtil.formatOutputMessage(sources, file))
-                            }
+                    for (outputFile in listOf(stubFile, lineMappingsFile)) {
+                        if (outputFile.exists()) {
+                            messageCollector.report(OUTPUT, OutputMessageUtil.formatOutputMessage(sources, outputFile))
                         }
                     }
-
-                    messageCollector.report(OUTPUT, OutputMessageUtil.formatOutputMessage(sources, output))
                 }
+
+                messageCollector.report(OUTPUT, OutputMessageUtil.formatOutputMessage(sources, output))
+            }
         )
     }
 
@@ -346,7 +349,7 @@ private class PrettyWithWorkarounds(private val context: Context, val out: Write
     }
 }
 
-private inline fun <T> measureTimeMillis(block: () -> T) : Pair<Long, T> {
+private inline fun <T> measureTimeMillis(block: () -> T): Pair<Long, T> {
     val start = System.currentTimeMillis()
     val result = block()
     return Pair(System.currentTimeMillis() - start, result)

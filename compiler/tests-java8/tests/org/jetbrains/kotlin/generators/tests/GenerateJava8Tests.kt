@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.checkers.AbstractForeignJava8AnnotationsNoAnnotation
 import org.jetbrains.kotlin.checkers.AbstractForeignJava8AnnotationsNoAnnotationInClasspathWithFastClassReadingTest
 import org.jetbrains.kotlin.checkers.AbstractForeignJava8AnnotationsTest
 import org.jetbrains.kotlin.checkers.javac.AbstractJavacForeignJava8AnnotationsTest
-import org.jetbrains.kotlin.codegen.AbstractBlackBoxCodegenTest
 import org.jetbrains.kotlin.codegen.AbstractBytecodeTextTest
 import org.jetbrains.kotlin.codegen.AbstractCompileKotlinAgainstKotlinTest
 import org.jetbrains.kotlin.codegen.flags.AbstractWriteFlagsTest
@@ -34,10 +33,6 @@ fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
 
     testGroup("compiler/tests-java8/tests", "compiler/testData") {
-        testClass<AbstractBlackBoxCodegenTest>("BlackBoxWithJava8CodegenTestGenerated") {
-            model("codegen/java8/box")
-        }
-
         testClass<AbstractForeignJava8AnnotationsTest> {
             model("foreignAnnotationsJava8/tests")
         }
@@ -70,18 +65,6 @@ fun main(args: Array<String>) {
 
         testClass<AbstractEnhancedSignaturesResolvedCallsTest> {
             model("resolvedCalls/enhancedSignatures")
-        }
-
-        testClass<AbstractCompileKotlinAgainstKotlinTest> {
-            model("codegen/java8/compileKotlinAgainstKotlin")
-        }
-
-        testClass<AbstractWriteFlagsTest> {
-            model("codegen/java8/writeFlags")
-        }
-
-        testClass<AbstractBytecodeTextTest>("BytecodeTextJava8TestGenerated") {
-            model("codegen/java8/bytecodeText")
         }
     }
 }

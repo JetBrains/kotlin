@@ -5,8 +5,6 @@
 
 package kotlin.collections
 
-import kotlin.*
-
 internal fun checkWindowSizeStep(size: Int, step: Int) {
     require(size > 0 && step > 0) {
         if (size != step)
@@ -23,7 +21,7 @@ internal fun <T> Sequence<T>.windowedSequence(size: Int, step: Int, partialWindo
 
 internal fun <T> windowedIterator(iterator: Iterator<T>, size: Int, step: Int, partialWindows: Boolean, reuseBuffer: Boolean): Iterator<List<T>> {
     if (!iterator.hasNext()) return EmptyIterator
-    return buildIterator<List<T>> {
+    return iterator<List<T>> {
         val gap = step - size
         if (gap >= 0) {
             var buffer = ArrayList<T>(size)

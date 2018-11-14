@@ -179,7 +179,7 @@ class MemberDeserializer(private val c: DeserializationContext) {
         unsubstitutedReturnType: KotlinType?,
         modality: Modality?,
         visibility: Visibility,
-        userDataMap: Map<out FunctionDescriptor.UserDataKey<*>, *>,
+        userDataMap: Map<out CallableDescriptor.UserDataKey<*>, *>,
         isSuspend: Boolean
     ) {
         initialize(
@@ -284,7 +284,7 @@ class MemberDeserializer(private val c: DeserializationContext) {
             local.typeDeserializer.type(proto.returnType(c.typeTable)),
             ProtoEnumFlags.modality(Flags.MODALITY.get(flags)),
             ProtoEnumFlags.visibility(Flags.VISIBILITY.get(flags)),
-            emptyMap<FunctionDescriptor.UserDataKey<*>, Any?>(),
+            emptyMap<CallableDescriptor.UserDataKey<*>, Any?>(),
             Flags.IS_SUSPEND.get(flags)
         )
         function.isOperator = Flags.IS_OPERATOR.get(flags)

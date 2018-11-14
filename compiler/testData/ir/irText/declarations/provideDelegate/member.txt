@@ -89,7 +89,7 @@ FILE fqName:<root> fileName:/member.kt
         EXPRESSION_BODY
           CALL 'provideDelegate(Any?, Any?): Delegate' type=Delegate origin=null
             $this: CALL 'constructor DelegateProvider(String)' type=DelegateProvider origin=null
-              value: CONST String type=kotlin.String value=OK
+              value: CONST String type=kotlin.String value="OK"
             thisRef: GET_VAR 'this@Host: Host' type=Host origin=null
             property: PROPERTY_REFERENCE 'testMember: String' field=null getter='<get-testMember>(): String' setter=null type=kotlin.reflect.KProperty1<Host, kotlin.String> origin=PROPERTY_REFERENCE_FOR_DELEGATE
       FUN DELEGATED_PROPERTY_ACCESSOR name:<get-testMember> visibility:public modality:FINAL <> ($this:Host) returnType:kotlin.String flags:

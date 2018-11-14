@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
-import org.jetbrains.kotlin.psi.psiUtil.startOffset
+import org.jetbrains.kotlin.psi.psiUtil.startOffsetSkippingComments
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatch
@@ -74,7 +74,7 @@ fun MemberScope.findSingleFunction(name: Name): FunctionDescriptor =
 fun KotlinBuiltIns.findSingleFunction(name: Name): FunctionDescriptor =
     builtInsPackageScope.findSingleFunction(name)
 
-val PsiElement?.startOffsetOrUndefined get() = this?.startOffset ?: UNDEFINED_OFFSET
+val PsiElement?.startOffsetOrUndefined get() = this?.startOffsetSkippingComments ?: UNDEFINED_OFFSET
 val PsiElement?.endOffsetOrUndefined get() = this?.endOffset ?: UNDEFINED_OFFSET
 
 val PropertyDescriptor.unwrappedGetMethod: FunctionDescriptor?
@@ -83,5 +83,5 @@ val PropertyDescriptor.unwrappedGetMethod: FunctionDescriptor?
 val PropertyDescriptor.unwrappedSetMethod: FunctionDescriptor?
     get() = if (this is SyntheticPropertyDescriptor) this.setMethod else setter
 
-val KtPureElement?.pureStartOffsetOrUndefined get() = this?.psiOrParent?.startOffset ?: UNDEFINED_OFFSET
+val KtPureElement?.pureStartOffsetOrUndefined get() = this?.psiOrParent?.startOffsetSkippingComments ?: UNDEFINED_OFFSET
 val KtPureElement?.pureEndOffsetOrUndefined get() = this?.psiOrParent?.endOffset ?: UNDEFINED_OFFSET

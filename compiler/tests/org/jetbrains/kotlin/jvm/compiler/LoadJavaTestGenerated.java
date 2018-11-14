@@ -293,6 +293,11 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
                 runTest("compiler/testData/loadJava/compiledJava/annotations/AnnotatedMethod.java");
             }
 
+            @TestMetadata("AnnotatedParameterInInnerClassConstructor.java")
+            public void testAnnotatedParameterInInnerClassConstructor() throws Exception {
+                runTest("compiler/testData/loadJava/compiledJava/annotations/AnnotatedParameterInInnerClassConstructor.java");
+            }
+
             @TestMetadata("AnnotatedValueParameter.java")
             public void testAnnotatedValueParameter() throws Exception {
                 runTest("compiler/testData/loadJava/compiledJava/annotations/AnnotatedValueParameter.java");
@@ -1789,9 +1794,19 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
                     runTest("compiler/testData/loadJava/compiledKotlin/annotations/classMembers/Getter.kt");
                 }
 
+                @TestMetadata("HiddenConstructorWithInlineClassParameters.kt")
+                public void testHiddenConstructorWithInlineClassParameters() throws Exception {
+                    runTest("compiler/testData/loadJava/compiledKotlin/annotations/classMembers/HiddenConstructorWithInlineClassParameters.kt");
+                }
+
                 @TestMetadata("PropertyField.kt")
                 public void testPropertyField() throws Exception {
                     runTest("compiler/testData/loadJava/compiledKotlin/annotations/classMembers/PropertyField.kt");
+                }
+
+                @TestMetadata("PublishedApiAnnotationOnInlineClassCosntructor.kt")
+                public void testPublishedApiAnnotationOnInlineClassCosntructor() throws Exception {
+                    runTest("compiler/testData/loadJava/compiledKotlin/annotations/classMembers/PublishedApiAnnotationOnInlineClassCosntructor.kt");
                 }
 
                 @TestMetadata("Setter.kt")

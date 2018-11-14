@@ -61,7 +61,7 @@ FILE fqName:<root> fileName:/objectLiteralExpressions.kt
               $this: VALUE_PARAMETER name:<this> type:test2.<no name provided> flags:
               BLOCK_BODY
                 CALL 'println(Any?): Unit' type=kotlin.Unit origin=null
-                  message: CONST String type=kotlin.String value=foo
+                  message: CONST String type=kotlin.String value="foo"
             FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:
               overridden:
                 FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:
@@ -129,7 +129,7 @@ FILE fqName:<root> fileName:/objectLiteralExpressions.kt
                 $this: VALUE_PARAMETER name:<this> type:Outer.test3.<no name provided> flags:
                 BLOCK_BODY
                   CALL 'println(Any?): Unit' type=kotlin.Unit origin=null
-                    message: CONST String type=kotlin.String value=foo
+                    message: CONST String type=kotlin.String value="foo"
               FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:
                 overridden:
                   FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:
@@ -175,7 +175,7 @@ FILE fqName:<root> fileName:/objectLiteralExpressions.kt
               $this: VALUE_PARAMETER name:<this> type:test4.<no name provided> flags:
               BLOCK_BODY
                 CALL 'println(Any?): Unit' type=kotlin.Unit origin=null
-                  message: CONST String type=kotlin.String value=foo
+                  message: CONST String type=kotlin.String value="foo"
             FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:
               overridden:
                 FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:

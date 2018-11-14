@@ -16,16 +16,33 @@
 
 package org.jetbrains.kotlin.idea.highlighter.markers
 
-import com.intellij.codeInsight.daemon.impl.PsiElementListNavigator
 import com.intellij.ide.util.DefaultPsiElementCellRenderer
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.analyzer.ModuleInfo
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.idea.caches.project.ModuleSourceInfo
+import org.jetbrains.kotlin.idea.core.isAndroidModule
 import org.jetbrains.kotlin.idea.core.toDescriptor
 import org.jetbrains.kotlin.idea.util.actualsForExpected
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.resolve.MultiTargetPlatform
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.getMultiTargetPlatform
-import java.awt.event.MouseEvent
+
+private fun ModuleDescriptor?.getMultiTargetPlatformName(): String? {
+    if (this == null) return null
+    val moduleInfo = getCapability(ModuleInfo.Capability) as? ModuleSourceInfo
+    if (moduleInfo != null && moduleInfo.module.isAndroidModule()) {
+        return "Android"
+    }
+    val platform = getMultiTargetPlatform() ?: return null
+    return when (platform) {
+        is MultiTargetPlatform.Specific ->
+            platform.platform
+        MultiTargetPlatform.Common ->
+            "common"
+    }
+}
 
 fun getPlatformActualTooltip(declaration: KtDeclaration): String? {
     val actualDeclarations = declaration.actualsForExpected()
@@ -33,34 +50,38 @@ fun getPlatformActualTooltip(declaration: KtDeclaration): String? {
 
     return actualDeclarations.asSequence()
         .mapNotNull { it.toDescriptor()?.module }
-        .groupBy { it.getMultiTargetPlatform() }
+        .groupBy { it.getMultiTargetPlatformName() }
         .filter { (platform, _) -> platform != null }
         .entries
         .joinToString(prefix = "Has actuals in ") { (platform, modules) ->
             val modulesSuffix = if (modules.size <= 1) "" else " (${modules.size} modules)"
-            when (platform) {
-                is MultiTargetPlatform.Specific ->
-                    "${platform.platform}$modulesSuffix"
-                MultiTargetPlatform.Common ->
-                    "common$modulesSuffix"
-                null ->
-                    throw AssertionError("Platform should not be null")
+            if (platform == null) {
+                throw AssertionError("Platform should not be null")
             }
+            platform + modulesSuffix
         }
 }
 
-fun navigateToPlatformActual(e: MouseEvent?, declaration: KtDeclaration) {
-    val actualDeclarations = declaration.actualsForExpected()
-    if (actualDeclarations.isEmpty()) return
+fun KtDeclaration.allNavigatableActualDeclarations(): Set<KtDeclaration> =
+    actualsForExpected() + findMarkerBoundDeclarations().flatMap { it.actualsForExpected() }
 
-    val renderer = object : DefaultPsiElementCellRenderer() {
-        override fun getContainerText(element: PsiElement?, name: String?) = ""
+class ActualExpectedPsiElementCellRenderer : DefaultPsiElementCellRenderer() {
+    override fun getContainerText(element: PsiElement?, name: String?) = ""
+}
+
+fun KtDeclaration.navigateToActualTitle() = "Choose actual for $name"
+
+fun KtDeclaration.navigateToActualUsagesTitle() = "Actuals for $name"
+
+fun buildNavigateToActualDeclarationsPopup(element: PsiElement?): NavigationPopupDescriptor? {
+    return element?.markerDeclaration?.let {
+        val navigatableActualDeclarations = it.allNavigatableActualDeclarations()
+        if (navigatableActualDeclarations.isEmpty()) return null
+        return NavigationPopupDescriptor(
+            navigatableActualDeclarations,
+            it.navigateToActualTitle(),
+            it.navigateToActualUsagesTitle(),
+            ActualExpectedPsiElementCellRenderer()
+        )
     }
-    PsiElementListNavigator.openTargets(
-        e,
-        actualDeclarations.toTypedArray(),
-        "Choose actual for ${declaration.name}",
-        "Actuals for ${declaration.name}",
-        renderer
-    )
 }

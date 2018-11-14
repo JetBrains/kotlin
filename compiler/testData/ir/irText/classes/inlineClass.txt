@@ -24,11 +24,11 @@ FILE fqName:<root> fileName:/inlineClass.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='toString(): String'
           STRING_CONCATENATION type=kotlin.String
-            CONST String type=kotlin.String value=Test(
-            CONST String type=kotlin.String value=x=
+            CONST String type=kotlin.String value="Test("
+            CONST String type=kotlin.String value="x="
             CALL '<get-x>(): Int' type=kotlin.Int origin=GET_PROPERTY
               $this: GET_VAR 'this@Test: Test' type=Test origin=null
-            CONST String type=kotlin.String value=)
+            CONST String type=kotlin.String value=")"
     FUN GENERATED_INLINE_CLASS_MEMBER name:hashCode visibility:public modality:OPEN <> ($this:Test) returnType:kotlin.Int flags:
       overridden:
         FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int flags:

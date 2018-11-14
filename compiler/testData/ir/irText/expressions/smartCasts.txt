@@ -53,7 +53,7 @@ FILE fqName:<root> fileName:/smartCasts.kt
             typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:String modality:FINAL visibility:public flags: superTypes:[kotlin.Comparable<kotlin.String>; kotlin.CharSequence; java.io.Serializable]
             GET_VAR 'value-parameter x: Any' type=kotlin.Any origin=null
           then: RETURN type=kotlin.Nothing from='test2(Any): String'
-            CONST String type=kotlin.String value=
+            CONST String type=kotlin.String value=""
       RETURN type=kotlin.Nothing from='test2(Any): String'
         CALL 'overloaded(String): String' type=kotlin.String origin=null
           s: TYPE_OP type=kotlin.String origin=IMPLICIT_CAST typeOperand=kotlin.String
@@ -68,7 +68,7 @@ FILE fqName:<root> fileName:/smartCasts.kt
             typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:String modality:FINAL visibility:public flags: superTypes:[kotlin.Comparable<kotlin.String>; kotlin.CharSequence; java.io.Serializable]
             GET_VAR 'value-parameter x: Any' type=kotlin.Any origin=null
           then: RETURN type=kotlin.Nothing from='test3(Any): String'
-            CONST String type=kotlin.String value=
+            CONST String type=kotlin.String value=""
       RETURN type=kotlin.Nothing from='test3(Any): String'
         TYPE_OP type=kotlin.String origin=IMPLICIT_CAST typeOperand=kotlin.String
           typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:String modality:FINAL visibility:public flags: superTypes:[kotlin.Comparable<kotlin.String>; kotlin.CharSequence; java.io.Serializable]

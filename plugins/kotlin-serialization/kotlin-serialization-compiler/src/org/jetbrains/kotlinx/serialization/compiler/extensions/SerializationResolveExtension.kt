@@ -30,7 +30,7 @@ import org.jetbrains.kotlinx.serialization.compiler.resolve.*
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializationAnnotations.serialInfoFqName
 import java.util.*
 
-class SerializationResolveExtension : SyntheticResolveExtension {
+open class SerializationResolveExtension : SyntheticResolveExtension {
     override fun getSyntheticNestedClassNames(thisDescriptor: ClassDescriptor): List<Name> = when {
         thisDescriptor.annotations.hasAnnotation(serialInfoFqName) -> listOf(SerialEntityNames.IMPL_NAME)
         thisDescriptor.isInternalSerializable && !thisDescriptor.hasCompanionObjectAsSerializer ->
@@ -77,7 +77,7 @@ class SerializationResolveExtension : SyntheticResolveExtension {
         result: MutableCollection<SimpleFunctionDescriptor>
     ) {
         KSerializerDescriptorResolver.generateSerializerMethods(thisDescriptor, fromSupertypes, name, result)
-        KSerializerDescriptorResolver.generateCompanionObjectMethods(thisDescriptor, fromSupertypes, name, result)
+        KSerializerDescriptorResolver.generateCompanionObjectMethods(thisDescriptor, name, result)
     }
 
     override fun generateSyntheticProperties(
@@ -87,7 +87,7 @@ class SerializationResolveExtension : SyntheticResolveExtension {
         fromSupertypes: ArrayList<PropertyDescriptor>,
         result: MutableSet<PropertyDescriptor>
     ) {
-        KSerializerDescriptorResolver.generateDescriptorsForAnnotationImpl(thisDescriptor, name, fromSupertypes, result)
+        KSerializerDescriptorResolver.generateDescriptorsForAnnotationImpl(thisDescriptor, fromSupertypes, result)
         KSerializerDescriptorResolver.generateSerializerProperties(thisDescriptor, fromSupertypes, name, result)
     }
 }

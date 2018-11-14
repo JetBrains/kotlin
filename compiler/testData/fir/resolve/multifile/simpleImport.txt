@@ -1,0 +1,3 @@
+FILE: simpleImport.kt
+    public? final class YourClass() : R/b/MyClass/ {
+    }

@@ -34,8 +34,8 @@ import org.jetbrains.kotlin.types.TypeProjectionImpl
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.typeUtil.createProjection
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
-import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.SERIALIZER_CLASS_NAME
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.IMPL_NAME
+import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.SERIALIZER_CLASS_NAME
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.typeArgPrefix
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializationAnnotations.serialInfoFqName
 import java.util.*
@@ -61,7 +61,11 @@ object KSerializerDescriptorResolver {
         }
     }
 
-    fun addSerialInfoImplClass(interfaceDesc: ClassDescriptor, declarationProvider: ClassMemberDeclarationProvider, ctx: LazyClassContext): ClassDescriptor {
+    fun addSerialInfoImplClass(
+        interfaceDesc: ClassDescriptor,
+        declarationProvider: ClassMemberDeclarationProvider,
+        ctx: LazyClassContext
+    ): ClassDescriptor {
         val interfaceDecl = declarationProvider.correspondingClassOrObject!!
         val scope = ctx.declarationScopeProvider.getResolutionScopeForDeclaration(declarationProvider.ownerInfo!!.scopeAnchor)
 
@@ -69,17 +73,19 @@ object KSerializerDescriptorResolver {
         // if there is some properties, there will be a public synthetic constructor at the codegen phase
         val primaryCtorVisibility = if (props.isEmpty()) Visibilities.PUBLIC else Visibilities.PRIVATE
 
-        val descriptor = SyntheticClassOrObjectDescriptor(ctx,
-                                                interfaceDecl,
-                                                interfaceDesc,
-                                                IMPL_NAME,
-                                                interfaceDesc.source,
-                                                scope,
-                                                Modality.FINAL,
-                                                Visibilities.PUBLIC,
-                                                primaryCtorVisibility,
-                                                ClassKind.CLASS,
-                                                false)
+        val descriptor = SyntheticClassOrObjectDescriptor(
+            ctx,
+            interfaceDecl,
+            interfaceDesc,
+            IMPL_NAME,
+            interfaceDesc.source,
+            scope,
+            Modality.FINAL,
+            Visibilities.PUBLIC,
+            primaryCtorVisibility,
+            ClassKind.CLASS,
+            false
+        )
         descriptor.initialize()
         return descriptor
     }
@@ -111,20 +117,22 @@ object KSerializerDescriptorResolver {
         return serializerDescriptor
     }
 
-    fun generateSerializerProperties(thisDescriptor: ClassDescriptor,
-                                     fromSupertypes: ArrayList<PropertyDescriptor>,
-                                     name: Name,
-                                     result: MutableSet<PropertyDescriptor>) {
+    fun generateSerializerProperties(
+        thisDescriptor: ClassDescriptor,
+        fromSupertypes: ArrayList<PropertyDescriptor>,
+        name: Name,
+        result: MutableSet<PropertyDescriptor>
+    ) {
         val classDescriptor = getSerializableClassDescriptorBySerializer(thisDescriptor) ?: return
         if (name == SerialEntityNames.SERIAL_DESC_FIELD_NAME && result.none(thisDescriptor::checkSerializableClassPropertyResult) &&
-            fromSupertypes.none { thisDescriptor.checkSerializableClassPropertyResult(it) && it.modality == Modality.FINAL })
+            fromSupertypes.none { thisDescriptor.checkSerializableClassPropertyResult(it) && it.modality == Modality.FINAL }
+        )
             result.add(createSerializableClassPropertyDescriptor(thisDescriptor, classDescriptor))
 
     }
 
     fun generateCompanionObjectMethods(
         thisDescriptor: ClassDescriptor,
-        fromSupertypes: List<SimpleFunctionDescriptor>,
         name: Name,
         result: MutableCollection<SimpleFunctionDescriptor>
     ) {
@@ -135,61 +143,70 @@ object KSerializerDescriptorResolver {
         }
     }
 
-    fun generateSerializerMethods(thisDescriptor: ClassDescriptor,
-                                  fromSupertypes: List<SimpleFunctionDescriptor>,
-                                  name: Name,
-                                  result: MutableCollection<SimpleFunctionDescriptor>) {
+    fun generateSerializerMethods(
+        thisDescriptor: ClassDescriptor,
+        fromSupertypes: List<SimpleFunctionDescriptor>,
+        name: Name,
+        result: MutableCollection<SimpleFunctionDescriptor>
+    ) {
         val classDescriptor = getSerializableClassDescriptorBySerializer(thisDescriptor) ?: return
 
         fun shouldAddSerializerFunction(checkParameters: (FunctionDescriptor) -> Boolean): Boolean {
             // Add 'save' / 'load' iff there is no such declared member AND there is no such final member in supertypes
             return result.none(checkParameters) &&
-                   fromSupertypes.none { checkParameters(it) && it.modality == Modality.FINAL }
+                    fromSupertypes.none { checkParameters(it) && it.modality == Modality.FINAL }
         }
 
         if (name == SerialEntityNames.SAVE_NAME &&
-            shouldAddSerializerFunction { classDescriptor.checkSaveMethodParameters(it.valueParameters) }) {
-            result.add(createSaveFunctionDescriptor(thisDescriptor, classDescriptor))
+            shouldAddSerializerFunction { classDescriptor.checkSaveMethodParameters(it.valueParameters) }
+        ) {
+            result.add(createSaveFunctionDescriptor(thisDescriptor))
         }
 
         if (name == SerialEntityNames.LOAD_NAME &&
-            shouldAddSerializerFunction { classDescriptor.checkLoadMethodParameters(it.valueParameters) }) {
-            result.add(createLoadFunctionDescriptor(thisDescriptor, classDescriptor))
+            shouldAddSerializerFunction { classDescriptor.checkLoadMethodParameters(it.valueParameters) }
+        ) {
+            result.add(createLoadFunctionDescriptor(thisDescriptor))
         }
     }
 
-    fun createSerializableClassPropertyDescriptor(companionDescriptor: ClassDescriptor, classDescriptor: ClassDescriptor): PropertyDescriptor =
-            doCreateSerializerProperty(companionDescriptor, classDescriptor, SerialEntityNames.SERIAL_DESC_FIELD_NAME)
+    fun createSerializableClassPropertyDescriptor(
+        companionDescriptor: ClassDescriptor,
+        classDescriptor: ClassDescriptor
+    ): PropertyDescriptor =
+        doCreateSerializerProperty(companionDescriptor, classDescriptor, SerialEntityNames.SERIAL_DESC_FIELD_NAME)
 
-    fun createSaveFunctionDescriptor(companionDescriptor: ClassDescriptor, classDescriptor: ClassDescriptor): SimpleFunctionDescriptor =
-            doCreateSerializerFunction(companionDescriptor, classDescriptor, SerialEntityNames.SAVE_NAME)
+    fun createSaveFunctionDescriptor(companionDescriptor: ClassDescriptor): SimpleFunctionDescriptor =
+        doCreateSerializerFunction(companionDescriptor, SerialEntityNames.SAVE_NAME)
 
-    fun createLoadFunctionDescriptor(companionDescriptor: ClassDescriptor, classDescriptor: ClassDescriptor): SimpleFunctionDescriptor =
-            doCreateSerializerFunction(companionDescriptor, classDescriptor, SerialEntityNames.LOAD_NAME)
+    fun createLoadFunctionDescriptor(companionDescriptor: ClassDescriptor): SimpleFunctionDescriptor =
+        doCreateSerializerFunction(companionDescriptor, SerialEntityNames.LOAD_NAME)
 
     private fun doCreateSerializerProperty(
-            companionDescriptor: ClassDescriptor,
-            classDescriptor: ClassDescriptor,
-            name: Name
+        companionDescriptor: ClassDescriptor,
+        classDescriptor: ClassDescriptor,
+        name: Name
     ): PropertyDescriptor {
         val typeParam = listOf(createProjection(classDescriptor.defaultType, Variance.INVARIANT, null))
         val propertyFromSerializer = companionDescriptor.getKSerializerDescriptor().getMemberScope(typeParam)
-                .getContributedVariables(name, NoLookupLocation.FROM_BUILTINS).single()
+            .getContributedVariables(name, NoLookupLocation.FROM_BUILTINS).single()
 
         val propertyDescriptor = PropertyDescriptorImpl.create(
-                companionDescriptor, Annotations.EMPTY, Modality.OPEN, Visibilities.PUBLIC, false, name,
-                CallableMemberDescriptor.Kind.SYNTHESIZED, companionDescriptor.source, false, false, false, false, false, false
+            companionDescriptor, Annotations.EMPTY, Modality.OPEN, Visibilities.PUBLIC, false, name,
+            CallableMemberDescriptor.Kind.SYNTHESIZED, companionDescriptor.source, false, false, false, false, false, false
         )
 
         val extensionReceiverParameter: ReceiverParameterDescriptor? = null // kludge to disambiguate call
-        propertyDescriptor.setType(propertyFromSerializer.type,
-                                   propertyFromSerializer.typeParameters,
-                                   companionDescriptor.thisAsReceiverParameter,
-                                   extensionReceiverParameter)
+        propertyDescriptor.setType(
+            propertyFromSerializer.type,
+            propertyFromSerializer.typeParameters,
+            companionDescriptor.thisAsReceiverParameter,
+            extensionReceiverParameter
+        )
 
         val propertyGetter = PropertyGetterDescriptorImpl(
-                propertyDescriptor, Annotations.EMPTY, Modality.OPEN, Visibilities.PUBLIC, false, false, false,
-                CallableMemberDescriptor.Kind.SYNTHESIZED, null, companionDescriptor.source
+            propertyDescriptor, Annotations.EMPTY, Modality.OPEN, Visibilities.PUBLIC, false, false, false,
+            CallableMemberDescriptor.Kind.SYNTHESIZED, null, companionDescriptor.source
         )
 
         propertyGetter.initialize(propertyFromSerializer.type)
@@ -200,45 +217,44 @@ object KSerializerDescriptorResolver {
     }
 
     private fun doCreateSerializerFunction(
-            companionDescriptor: ClassDescriptor,
-            classDescriptor: ClassDescriptor,
-            name: Name
+        companionDescriptor: ClassDescriptor,
+        name: Name
     ): SimpleFunctionDescriptor {
         val functionDescriptor = SimpleFunctionDescriptorImpl.create(
-                companionDescriptor, Annotations.EMPTY, name, CallableMemberDescriptor.Kind.SYNTHESIZED, companionDescriptor.source
+            companionDescriptor, Annotations.EMPTY, name, CallableMemberDescriptor.Kind.SYNTHESIZED, companionDescriptor.source
         )
 
         val serializableClassOnImplSite = extractKSerializerArgumentFromImplementation(companionDescriptor)
-                ?: throw AssertionError("Serializer does not implement ${SerialEntityNames.KSERIALIZER_CLASS}??")
+            ?: throw AssertionError("Serializer does not implement ${SerialEntityNames.KSERIALIZER_CLASS}??")
 
         val typeParam = listOf(createProjection(serializableClassOnImplSite, Variance.INVARIANT, null))
         val functionFromSerializer = companionDescriptor.getKSerializerDescriptor().getMemberScope(typeParam)
-                .getContributedFunctions(name, NoLookupLocation.FROM_BUILTINS).single()
+            .getContributedFunctions(name, NoLookupLocation.FROM_BUILTINS).single()
 
         functionDescriptor.initialize(
-                null,
-                companionDescriptor.thisAsReceiverParameter,
-                functionFromSerializer.typeParameters,
-                functionFromSerializer.valueParameters.map { it.copy(functionDescriptor, it.name, it.index) },
-                functionFromSerializer.returnType,
-                Modality.OPEN,
-                Visibilities.PUBLIC
+            null,
+            companionDescriptor.thisAsReceiverParameter,
+            functionFromSerializer.typeParameters,
+            functionFromSerializer.valueParameters.map { it.copy(functionDescriptor, it.name, it.index) },
+            functionFromSerializer.returnType,
+            Modality.OPEN,
+            Visibilities.PUBLIC
         )
 
         return functionDescriptor
     }
 
     fun createLoadConstructorDescriptor(
-            classDescriptor: ClassDescriptor,
-            bindingContext: BindingContext
+        classDescriptor: ClassDescriptor,
+        bindingContext: BindingContext
     ): ClassConstructorDescriptor {
         if (!classDescriptor.isInternalSerializable) throw IllegalArgumentException()
 
         val functionDescriptor = ClassConstructorDescriptorImpl.createSynthesized(
-                classDescriptor,
-                Annotations.EMPTY,
-                false,
-                classDescriptor.source
+            classDescriptor,
+            Annotations.EMPTY,
+            false,
+            classDescriptor.source
         )
 
         val markerDesc = classDescriptor.getKSerializerConstructorMarker()
@@ -247,18 +263,30 @@ object KSerializerDescriptorResolver {
         val parameterDescsAsProps = SerializableProperties(classDescriptor, bindingContext).serializableProperties.map { it.descriptor }
         var i = 0
         val consParams = mutableListOf<ValueParameterDescriptor>()
-        consParams.add(ValueParameterDescriptorImpl(functionDescriptor, null, i++, Annotations.EMPTY, Name.identifier("seen"), functionDescriptor.builtIns.intType, false,
-                                                    false, false, null, functionDescriptor.source))
+        consParams.add(
+            ValueParameterDescriptorImpl(
+                functionDescriptor, null, i++, Annotations.EMPTY, Name.identifier("seen"), functionDescriptor.builtIns.intType, false,
+                false, false, null, functionDescriptor.source
+            )
+        )
         for (prop in parameterDescsAsProps) {
-            consParams.add(ValueParameterDescriptorImpl(functionDescriptor, null, i++, prop.annotations, prop.name, prop.type.makeNullableIfNotPrimitive(), false, false,
-                                                        false, null, functionDescriptor.source))
+            consParams.add(
+                ValueParameterDescriptorImpl(
+                    functionDescriptor, null, i++, prop.annotations, prop.name, prop.type.makeNullableIfNotPrimitive(), false, false,
+                    false, null, functionDescriptor.source
+                )
+            )
         }
-        consParams.add(ValueParameterDescriptorImpl(functionDescriptor, null, i++, Annotations.EMPTY, SerialEntityNames.dummyParamName, markerType, false,
-                                                    false, false, null, functionDescriptor.source))
+        consParams.add(
+            ValueParameterDescriptorImpl(
+                functionDescriptor, null, i, Annotations.EMPTY, SerialEntityNames.dummyParamName, markerType, false,
+                false, false, null, functionDescriptor.source
+            )
+        )
 
         functionDescriptor.initialize(
-                consParams,
-                Visibilities.PUBLIC
+            consParams,
+            Visibilities.PUBLIC
         )
 
         functionDescriptor.returnType = classDescriptor.defaultType
@@ -312,7 +340,7 @@ object KSerializerDescriptorResolver {
         val typeArgs = mutableListOf<TypeParameterDescriptor>()
         var i = 0
 
-        serializableClass.declaredTypeParameters.forEach { it ->
+        serializableClass.declaredTypeParameters.forEach { _ ->
             val targ = TypeParameterDescriptorImpl.createWithDefaultBound(
                 f, Annotations.EMPTY, false, Variance.INVARIANT,
                 Name.identifier("T$i"), i
@@ -356,12 +384,19 @@ object KSerializerDescriptorResolver {
             else this.makeNullable()
 
     fun createWriteSelfFunctionDescriptor(thisClass: ClassDescriptor): FunctionDescriptor {
-        val f = SimpleFunctionDescriptorImpl.create(thisClass, Annotations.EMPTY, SerialEntityNames.WRITE_SELF_NAME, CallableMemberDescriptor.Kind.SYNTHESIZED, thisClass.source)
+        val f = SimpleFunctionDescriptorImpl.create(
+            thisClass,
+            Annotations.EMPTY,
+            SerialEntityNames.WRITE_SELF_NAME,
+            CallableMemberDescriptor.Kind.SYNTHESIZED,
+            thisClass.source
+        )
         val returnType = f.builtIns.unitType
 
         val args = mutableListOf<ValueParameterDescriptor>()
         var i = 0
-        args.add(ValueParameterDescriptorImpl(
+        args.add(
+            ValueParameterDescriptorImpl(
                 f,
                 null,
                 i++,
@@ -372,10 +407,12 @@ object KSerializerDescriptorResolver {
                 false,
                 false,
                 null,
-                f.source)
+                f.source
+            )
         )
 
-        args.add(ValueParameterDescriptorImpl(
+        args.add(
+            ValueParameterDescriptorImpl(
                 f,
                 null,
                 i++,
@@ -386,7 +423,8 @@ object KSerializerDescriptorResolver {
                 false,
                 false,
                 null,
-                f.source)
+                f.source
+            )
         )
 
         val kSerialClassDesc = thisClass.getClassFromSerializationPackage(SerialEntityNames.KSERIALIZER_CLASS)
@@ -396,37 +434,51 @@ object KSerializerDescriptorResolver {
             val kSerialClass = KotlinTypeFactory.simpleNotNullType(Annotations.EMPTY, kSerialClassDesc, listOf(typeArgument))
 
 
-            args.add(ValueParameterDescriptorImpl(
+            args.add(
+                ValueParameterDescriptorImpl(
                     f,
                     null,
                     i++,
                     Annotations.EMPTY,
-                    Name.identifier("$typeArgPrefix${i-3}"),
+                    Name.identifier("$typeArgPrefix${i - 3}"),
                     kSerialClass,
                     false,
                     false,
                     false,
                     null,
                     f.source
-            ))
+                )
+            )
         }
 
         f.initialize(
-                null,
-                thisClass.thisAsReceiverParameter,
-                emptyList(),
-                args,
-                returnType,
-                Modality.OPEN,
-                Visibilities.PUBLIC
+            null,
+            thisClass.thisAsReceiverParameter,
+            emptyList(),
+            args,
+            returnType,
+            Modality.OPEN,
+            Visibilities.PUBLIC
         )
 
         return f
     }
 
-    fun generateDescriptorsForAnnotationImpl(thisDescriptor: ClassDescriptor, name: Name, fromSupertypes: List<PropertyDescriptor>, result: MutableCollection<PropertyDescriptor>) {
+    fun generateDescriptorsForAnnotationImpl(
+        thisDescriptor: ClassDescriptor,
+        fromSupertypes: List<PropertyDescriptor>,
+        result: MutableCollection<PropertyDescriptor>
+    ) {
         if (isSerialInfoImpl(thisDescriptor)) {
-            result.add(fromSupertypes[0].copy(thisDescriptor, Modality.FINAL, Visibilities.PUBLIC, CallableMemberDescriptor.Kind.SYNTHESIZED, true) as PropertyDescriptor)
+            result.add(
+                fromSupertypes[0].copy(
+                    thisDescriptor,
+                    Modality.FINAL,
+                    Visibilities.PUBLIC,
+                    CallableMemberDescriptor.Kind.SYNTHESIZED,
+                    true
+                ) as PropertyDescriptor
+            )
         }
     }
 }

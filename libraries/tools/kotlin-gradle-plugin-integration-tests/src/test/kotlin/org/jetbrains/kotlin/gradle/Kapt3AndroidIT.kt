@@ -13,7 +13,7 @@ class Kapt3WorkersAndroid32IT : Kapt3Android32IT() {
 
 open class Kapt3Android32IT : Kapt3AndroidIT() {
     override val androidGradlePluginVersion: String
-        get() = "3.2.0-beta01"
+        get() = "3.2.0"
 
     override val defaultGradleVersion: GradleVersionRequired
         get() = GradleVersionRequired.AtLeast("4.6")
@@ -154,10 +154,11 @@ open class Kapt3AndroidIT : Kapt3BaseIT() {
         val project = Project("android-databinding", directoryPrefix = "kapt2")
         setupDataBinding(project, "app")
 
-        project.build("assembleDebug") {
+        project.build("assembleDebug", "assembleAndroidTest") {
             assertSuccessful()
             assertKaptSuccessful()
             assertFileExists("app/build/generated/source/kapt/debug/com/example/databinding/BR.java")
+            assertFileExists("library/build/generated/source/kapt/debugAndroidTest/android/databinding/DataBinderMapperImpl.java")
 
             if (isLegacyAndroidGradleVersion(androidGradlePluginVersion)) {
                 assertFileExists("app/build/generated/source/kapt/debug/com/example/databinding/databinding/ActivityTestBinding.java")

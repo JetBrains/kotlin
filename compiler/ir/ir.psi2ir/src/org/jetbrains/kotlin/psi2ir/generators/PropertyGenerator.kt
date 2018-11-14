@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.psi2ir.generators
 
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrPropertyImpl
@@ -27,12 +26,11 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.util.declareFieldWithOverrides
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
-import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.psi2ir.pureEndOffsetOrUndefined
 import org.jetbrains.kotlin.psi2ir.pureStartOffsetOrUndefined
+import org.jetbrains.kotlin.psi.psiUtil.startOffsetSkippingComments
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.hasBackingField
-import org.jetbrains.kotlin.resolve.source.KotlinSourceElement
 
 class PropertyGenerator(declarationGenerator: DeclarationGenerator) : DeclarationGeneratorExtension(declarationGenerator) {
     fun generatePropertyDeclaration(ktProperty: KtProperty): IrProperty {
@@ -49,7 +47,7 @@ class PropertyGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
 
         val irPropertyType = propertyDescriptor.type.toIrType()
         return IrPropertyImpl(
-            ktParameter.startOffset, ktParameter.endOffset,
+            ktParameter.startOffsetSkippingComments, ktParameter.endOffset,
             IrDeclarationOrigin.DEFINED, false,
             propertyDescriptor
         ).also { irProperty ->
@@ -57,7 +55,7 @@ class PropertyGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
                     generatePropertyBackingField(ktParameter, propertyDescriptor) {
                         IrExpressionBodyImpl(
                             IrGetValueImpl(
-                                ktParameter.startOffset, ktParameter.endOffset,
+                                ktParameter.startOffsetSkippingComments, ktParameter.endOffset,
                                 irPropertyType,
                                 irValueParameter.symbol,
                                 IrStatementOrigin.INITIALIZE_PROPERTY_FROM_PARAMETER
@@ -85,7 +83,7 @@ class PropertyGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
         generateInitializer: (IrField) -> IrExpressionBody?
     ): IrField =
         context.symbolTable.declareField(
-            ktPropertyElement.startOffset, ktPropertyElement.endOffset,
+            ktPropertyElement.startOffsetSkippingComments, ktPropertyElement.endOffset,
             IrDeclarationOrigin.PROPERTY_BACKING_FIELD,
             propertyDescriptor, propertyDescriptor.type.toIrType()
         ).also {
@@ -103,7 +101,7 @@ class PropertyGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
 
     private fun generateSimpleProperty(ktProperty: KtProperty, propertyDescriptor: PropertyDescriptor): IrProperty =
         IrPropertyImpl(
-            ktProperty.startOffset, ktProperty.endOffset,
+            ktProperty.startOffsetSkippingComments, ktProperty.endOffset,
             IrDeclarationOrigin.DEFINED,
             false,
             propertyDescriptor
@@ -112,7 +110,16 @@ class PropertyGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
                     if (propertyDescriptor.hasBackingField(context.bindingContext))
                         generatePropertyBackingField(ktProperty, propertyDescriptor) { irField ->
                             ktProperty.initializer?.let { ktInitializer ->
-                                declarationGenerator.generateInitializerBody(irField.symbol, ktInitializer)
+                                val compileTimeConst = propertyDescriptor.compileTimeInitializer
+                                if (propertyDescriptor.isConst && compileTimeConst != null)
+                                    IrExpressionBodyImpl(
+                                        context.constantValueGenerator.generateConstantValueAsExpression(
+                                            ktInitializer.startOffsetSkippingComments, ktInitializer.endOffset,
+                                            compileTimeConst
+                                        )
+                                    )
+                                else
+                                    declarationGenerator.generateInitializerBody(irField.symbol, ktInitializer)
                             }
                         }
                     else

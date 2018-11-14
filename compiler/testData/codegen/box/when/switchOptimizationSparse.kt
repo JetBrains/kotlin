@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 // WITH_RUNTIME
 // CHECK_CASES_COUNT: function=sparse count=3
 // CHECK_IF_COUNT: function=sparse count=0

@@ -192,14 +192,17 @@ private fun FunctionDescriptor.wrap(): FunctionDescriptor {
 
 private fun generateProperty(project: Project, descriptor: PropertyDescriptor, bodyType: OverrideMemberChooserObject.BodyType): KtProperty {
     val newDescriptor = descriptor.wrap()
-    val body = buildString {
-        append("\nget()")
-        append(" = ")
-        append(generateUnsupportedOrSuperCall(project, descriptor, bodyType))
-        if (descriptor.isVar) {
-            append("\nset(value) {}")
-        }
-    }
+    val body =
+        if (bodyType != OverrideMemberChooserObject.BodyType.NO_BODY) {
+            buildString {
+                append("\nget()")
+                append(" = ")
+                append(generateUnsupportedOrSuperCall(project, descriptor, bodyType))
+                if (descriptor.isVar) {
+                    append("\nset(value) {}")
+                }
+            }
+        } else ""
     return KtPsiFactory(project).createProperty(OVERRIDE_RENDERER.render(newDescriptor) + body)
 }
 

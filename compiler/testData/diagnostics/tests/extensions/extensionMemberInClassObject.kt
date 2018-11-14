@@ -8,7 +8,7 @@ class Foo {
     companion object : JPAEntityClass<Foo>
 }
 
-fun main(args: Array<String>) {
+fun main() {
     with("", {
         Foo.<!UNRESOLVED_REFERENCE!>findByName<!>("")
     })

@@ -3,7 +3,7 @@ FILE fqName:<root> fileName:/fileWithAnnotations.kt
     @kotlin.jvm.JvmName(name = "FileWithAnnotations")
   annotations:
     CALL 'constructor JvmName(String)' type=kotlin.jvm.JvmName origin=null
-      name: CONST String type=kotlin.String value=FileWithAnnotations
+      name: CONST String type=kotlin.String value="FileWithAnnotations"
   FUN name:foo visibility:public modality:FINAL <> () returnType:kotlin.Unit flags:
     BLOCK_BODY
   PROPERTY name:bar visibility:public modality:FINAL flags:val

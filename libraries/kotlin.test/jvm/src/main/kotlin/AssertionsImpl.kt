@@ -32,14 +32,22 @@ private fun <T : Throwable> assertFailsWithImpl(exceptionClass: Class<T>, messag
 }
 
 
-/** Asserts that a [block] fails with a specific exception of type [exceptionClass] being thrown. */
+/**
+ * Asserts that a [block] fails with a specific exception of type [exceptionClass] being thrown.
+ *
+ * If the assertion fails, the specified [message] is used unless it is null as a prefix for the failure message.
+ *
+ * @return An exception of the expected exception type [T] that successfully caught.
+ * The returned exception can be inspected further, for example by asserting its property values.
+ */
 actual fun <T : Throwable> assertFailsWith(exceptionClass: KClass<T>, message: String?, block: () -> Unit): T =
     assertFailsWithImpl(exceptionClass.java, message, block)
 
 
 /**
- * Comments out a [block] of test code until it is implemented while keeping a link to the code
- * to implement in your unit test output
+ * Takes the given [block] of test code and _doesn't_ execute it.
+ *
+ * This keeps the code under test referenced, but doesn't actually test it until it is implemented.
  */
 @InlineOnly
 actual inline fun todo(@Suppress("UNUSED_PARAMETER") block: () -> Unit) {

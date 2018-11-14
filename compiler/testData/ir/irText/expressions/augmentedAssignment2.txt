@@ -53,39 +53,38 @@ FILE fqName:<root> fileName:/augmentedAssignment2.kt
         CALL 'constructor A()' type=A origin=null
       CALL 'plusAssign(String) on A: Unit' type=kotlin.Unit origin=PLUSEQ
         $receiver: GET_VAR 'a: A' type=A origin=PLUSEQ
-        s: CONST String type=kotlin.String value=+=
+        s: CONST String type=kotlin.String value="+="
       CALL 'minusAssign(String) on A: Unit' type=kotlin.Unit origin=MINUSEQ
         $receiver: GET_VAR 'a: A' type=A origin=MINUSEQ
-        s: CONST String type=kotlin.String value=-=
+        s: CONST String type=kotlin.String value="-="
       CALL 'timesAssign(String) on A: Unit' type=kotlin.Unit origin=MULTEQ
         $receiver: GET_VAR 'a: A' type=A origin=MULTEQ
-        s: CONST String type=kotlin.String value=*=
+        s: CONST String type=kotlin.String value="*="
       CALL 'divAssign(String) on A: Unit' type=kotlin.Unit origin=DIVEQ
         $receiver: GET_VAR 'a: A' type=A origin=DIVEQ
-        s: CONST String type=kotlin.String value=/=
+        s: CONST String type=kotlin.String value="/="
       CALL 'remAssign(String) on A: Unit' type=kotlin.Unit origin=PERCEQ
         $receiver: GET_VAR 'a: A' type=A origin=PERCEQ
-        s: CONST String type=kotlin.String value=*=
+        s: CONST String type=kotlin.String value="*="
   FUN name:testProperty visibility:public modality:FINAL <> () returnType:kotlin.Unit flags:
     BLOCK_BODY
       BLOCK type=kotlin.Unit origin=PLUSEQ
         CALL 'plusAssign(String) on A: Unit' type=kotlin.Unit origin=PLUSEQ
           $receiver: CALL '<get-p>(): A' type=A origin=PLUSEQ
-          s: CONST String type=kotlin.String value=+=
+          s: CONST String type=kotlin.String value="+="
       BLOCK type=kotlin.Unit origin=MINUSEQ
         CALL 'minusAssign(String) on A: Unit' type=kotlin.Unit origin=MINUSEQ
           $receiver: CALL '<get-p>(): A' type=A origin=MINUSEQ
-          s: CONST String type=kotlin.String value=-=
+          s: CONST String type=kotlin.String value="-="
       BLOCK type=kotlin.Unit origin=MULTEQ
         CALL 'timesAssign(String) on A: Unit' type=kotlin.Unit origin=MULTEQ
           $receiver: CALL '<get-p>(): A' type=A origin=MULTEQ
-          s: CONST String type=kotlin.String value=*=
+          s: CONST String type=kotlin.String value="*="
       BLOCK type=kotlin.Unit origin=DIVEQ
         CALL 'divAssign(String) on A: Unit' type=kotlin.Unit origin=DIVEQ
           $receiver: CALL '<get-p>(): A' type=A origin=DIVEQ
-          s: CONST String type=kotlin.String value=/=
+          s: CONST String type=kotlin.String value="/="
       BLOCK type=kotlin.Unit origin=PERCEQ
         CALL 'remAssign(String) on A: Unit' type=kotlin.Unit origin=PERCEQ
           $receiver: CALL '<get-p>(): A' type=A origin=PERCEQ
-          s: CONST String type=kotlin.String value=%=
-
+          s: CONST String type=kotlin.String value="%="

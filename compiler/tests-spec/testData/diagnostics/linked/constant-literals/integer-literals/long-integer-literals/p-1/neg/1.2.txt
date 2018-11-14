@@ -1,0 +1,6 @@
+package
+
+public val value_1: kotlin.Long = 0.toLong()
+public val value_2: kotlin.Int
+public val value_3: kotlin.Long = 564.toLong()
+public val value_4: kotlin.Long = 13671.toLong()

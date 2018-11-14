@@ -24,6 +24,7 @@ import com.intellij.openapi.roots.ProjectFileIndex
 import com.intellij.openapi.roots.ProjectRootModificationTracker
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.io.FileUtil
+import com.intellij.psi.PsiElement
 import com.intellij.psi.util.CachedValue
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
@@ -146,7 +147,7 @@ fun Project.getLanguageVersionSettings(
     }
 
     val extraAnalysisFlags = additionalArguments.configureAnalysisFlags(MessageCollector.NONE).apply {
-        if (jsr305State != null) put(AnalysisFlag.jsr305, jsr305State)
+        if (jsr305State != null) put(JvmAnalysisFlags.jsr305, jsr305State)
     }
 
     return LanguageVersionSettingsImpl(
@@ -248,7 +249,7 @@ fun MutableMap<LanguageFeature, LanguageFeature.State>.configureMultiplatformSup
 }
 
 
-val KtElement.languageVersionSettings: LanguageVersionSettings
+val PsiElement.languageVersionSettings: LanguageVersionSettings
     get() {
         if (ServiceManager.getService(project, ProjectFileIndex::class.java) == null) {
             return LanguageVersionSettingsImpl.DEFAULT

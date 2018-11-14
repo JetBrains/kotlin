@@ -14,7 +14,8 @@ public class KotlinNativeIdeInitializer implements ApplicationComponent {
 
     @Override
     public void initComponent() {
-        unregisterGroovyInspections();
+        // TODO: Move this to Kotlin/Native plugin for CLion and AppCode (see KT-26717):
+        //unregisterGroovyInspections();
     }
 
     // There are groovy local inspections which should not be loaded w/o groovy plugin enabled.

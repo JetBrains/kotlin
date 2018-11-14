@@ -305,7 +305,7 @@ class CodeInliner<TCallElement : KtElement>(
         val call = dotQualified.selectorExpression as? KtCallExpression ?: return
         val nameExpression = call.calleeExpression as? KtSimpleNameExpression ?: return
         val argument = call.valueArguments.singleOrNull() ?: return
-        if (argument.getArgumentName() != null) return
+        if (argument.isNamed()) return
         val argumentExpression = argument.getArgumentExpression() ?: return
         codeToInline.mainExpression = psiFactory.createExpressionByPattern("$0 ${nameExpression.text} $1", receiver, argumentExpression)
     }

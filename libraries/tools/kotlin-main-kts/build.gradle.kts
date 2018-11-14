@@ -38,6 +38,7 @@ dependencies {
         fatJarContents(project(it)) { isTransitive = false }
         testCompile(project(it))
     }
+    compileOnly("org.apache.ivy:ivy:2.4.0")
     runtime(project(":kotlin-compiler"))
     runtime(project(":kotlin-reflect"))
     fatJarContents("org.apache.ivy:ivy:2.4.0")
@@ -81,7 +82,6 @@ val proguard by task<ProGuardTask> {
     outputs.file(outputJar)
 
     libraryjars(mapOf("filter" to "!META-INF/versions/**"), proguardLibraryJars)
-    printconfiguration("$buildDir/compiler.pro.dump")
 }
 
 val pack = if (shrink) proguard else packJar
@@ -91,8 +91,12 @@ runtimeJarArtifactBy(pack, pack.outputs.files.singleFile) {
     classifier = ""
 }
 
+dist(
+    targetName = "$name.jar",
+    fromTask = pack
+)
+
 sourcesJar()
 javadocJar()
 
 publish()
-

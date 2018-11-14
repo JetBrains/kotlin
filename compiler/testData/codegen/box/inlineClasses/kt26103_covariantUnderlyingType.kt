@@ -1,6 +1,6 @@
 // !LANGUAGE: +InlineClasses
 // WITH_RUNTIME
-// IGNORE_BACKEND: JVM_IR, JS_IR
+// IGNORE_BACKEND: JVM_IR
 
 inline class GList<T>(val xs: List<T>)
 inline class GSList<T>(val ss: List<String>)

@@ -17,6 +17,16 @@ class LambdaImplicitHintsTest : KotlinLightCodeInsightFixtureTestCase() {
         myFixture.testInlays()
     }
 
+    fun testHintType() {
+        myFixture.checkHintType(
+            """
+            val x = listOf("").filter { <caret>
+            }
+            """,
+            HintType.LAMBDA_IMPLICIT_PARAMETER_RECEIVER
+        )
+    }
+
     fun testSimpleIt() {
         check(
             """

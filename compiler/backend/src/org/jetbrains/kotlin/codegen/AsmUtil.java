@@ -16,14 +16,17 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.builtins.PrimitiveType;
 import org.jetbrains.kotlin.codegen.binding.CalculatedClosure;
+import org.jetbrains.kotlin.codegen.binding.CodegenBinding;
 import org.jetbrains.kotlin.codegen.context.CodegenContext;
 import org.jetbrains.kotlin.codegen.intrinsics.HashCode;
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
-import org.jetbrains.kotlin.codegen.state.InlineClassManglingUtilsKt;
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
 import org.jetbrains.kotlin.config.JvmTarget;
+import org.jetbrains.kotlin.config.LanguageFeature;
+import org.jetbrains.kotlin.config.LanguageVersionSettings;
 import org.jetbrains.kotlin.descriptors.*;
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.load.java.JavaVisibilities;
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames;
@@ -31,17 +34,17 @@ import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil;
 import org.jetbrains.kotlin.metadata.jvm.serialization.JvmStringTable;
 import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.name.FqName;
+import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.protobuf.MessageLite;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
+import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.InlineClassDescriptorResolver;
 import org.jetbrains.kotlin.resolve.InlineClassesUtilsKt;
 import org.jetbrains.kotlin.resolve.checkers.ExpectedActualDeclarationChecker;
 import org.jetbrains.kotlin.resolve.inline.InlineUtil;
-import org.jetbrains.kotlin.resolve.jvm.AsmTypes;
-import org.jetbrains.kotlin.resolve.jvm.JvmClassName;
-import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType;
-import org.jetbrains.kotlin.resolve.jvm.RuntimeAssertionInfo;
+import org.jetbrains.kotlin.resolve.jvm.*;
+import org.jetbrains.kotlin.resolve.jvm.checkers.DalvikIdentifierUtils;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin;
 import org.jetbrains.kotlin.serialization.DescriptorSerializer;
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor;
@@ -61,8 +64,8 @@ import static org.jetbrains.kotlin.builtins.KotlinBuiltIns.isPrimitiveClass;
 import static org.jetbrains.kotlin.codegen.CodegenUtilKt.isToArrayFromCollection;
 import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isConstOrHasJvmFieldAnnotation;
 import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isJvmInterface;
-import static org.jetbrains.kotlin.descriptors.annotations.AnnotationUtilKt.isEffectivelyInlineOnly;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.*;
+import static org.jetbrains.kotlin.resolve.inline.InlineOnlyKt.isEffectivelyInlineOnly;
 import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.*;
 import static org.jetbrains.kotlin.resolve.jvm.annotations.JvmAnnotationUtilKt.hasJvmDefaultAnnotation;
 import static org.jetbrains.kotlin.resolve.jvm.annotations.JvmAnnotationUtilKt.hasJvmSyntheticAnnotation;
@@ -70,6 +73,9 @@ import static org.jetbrains.kotlin.types.TypeUtils.isNullableType;
 import static org.jetbrains.org.objectweb.asm.Opcodes.*;
 
 public class AsmUtil {
+
+    public static final boolean IS_BUILT_WITH_ASM6 = Opcodes.API_VERSION <= Opcodes.ASM6;
+
     private static final Set<Type> STRING_BUILDER_OBJECT_APPEND_ARG_TYPES = Sets.newHashSet(
             getType(String.class),
             getType(StringBuffer.class),
@@ -92,10 +98,23 @@ public class AsmUtil {
             .put(JavaVisibilities.PACKAGE_VISIBILITY, NO_FLAG_PACKAGE_PRIVATE)
             .build();
 
-    public static final String BOUND_REFERENCE_RECEIVER = "receiver";
-    public static final String RECEIVER_NAME = "$receiver";
-    public static final String CAPTURED_RECEIVER_FIELD = "receiver$0";
+    public static final String THIS = "this";
+
+    public static final String LABELED_THIS_FIELD = THIS + "_";
+
     public static final String CAPTURED_THIS_FIELD = "this$0";
+
+    public static final String RECEIVER_PARAMETER_NAME = "$receiver";
+
+    /*
+        This is basically an old convention. Starting from Kotlin 1.3, it was replaced with `$this_<label>`.
+        Note that it is still used for inlined callable references and anonymous callable extension receivers
+        even in 1.3.
+    */
+    public static final String CAPTURED_RECEIVER_FIELD = "receiver$0";
+
+    // For non-inlined callable references ('kotlin.jvm.internal.CallableReference' has a 'receiver' field)
+    public static final String BOUND_REFERENCE_RECEIVER = "receiver";
 
     private static final ImmutableMap<Integer, JvmPrimitiveType> primitiveTypeByAsmSort;
     private static final ImmutableMap<Type, Type> primitiveTypeByBoxedType;
@@ -113,6 +132,74 @@ public class AsmUtil {
     }
 
     private AsmUtil() {
+    }
+
+    @NotNull
+    public static String getCapturedFieldName(@NotNull String originalName) {
+        return "$" + originalName;
+    }
+
+    @NotNull
+    public static String getLabeledThisNameForReceiver(
+            @NotNull CallableDescriptor descriptor,
+            @NotNull BindingContext bindingContext,
+            @NotNull LanguageVersionSettings languageVersionSettings
+    ) {
+        if (!languageVersionSettings.supportsFeature(LanguageFeature.NewCapturedReceiverFieldNamingConvention)) {
+            return CAPTURED_RECEIVER_FIELD;
+        }
+
+        Name callableName = null;
+
+        if (descriptor instanceof FunctionDescriptor) {
+            String labelName = bindingContext.get(CodegenBinding.CALL_LABEL_FOR_LAMBDA_ARGUMENT, (FunctionDescriptor) descriptor);
+            if (labelName != null) {
+                return getLabeledThisName(labelName, CAPTURED_RECEIVER_FIELD);
+            }
+
+            if (descriptor instanceof VariableAccessorDescriptor) {
+                VariableAccessorDescriptor accessor = (VariableAccessorDescriptor) descriptor;
+                callableName = accessor.getCorrespondingVariable().getName();
+            }
+        }
+
+        if (callableName == null) {
+            callableName = descriptor.getName();
+        }
+
+        if (callableName.isSpecial()) {
+            return CAPTURED_RECEIVER_FIELD;
+        }
+
+        return getLabeledThisName(callableName.asString(), CAPTURED_RECEIVER_FIELD);
+    }
+
+    @NotNull
+    private static String getLabeledThisName(@NotNull String callableName, @NotNull String defaultName) {
+        if (!Name.isValidIdentifier(callableName)) {
+            return defaultName;
+        }
+
+        if (!DalvikIdentifierUtils.isValidDalvikIdentifier(callableName)) {
+            return LABELED_THIS_FIELD + mangleLabel(callableName);
+        }
+
+        return LABELED_THIS_FIELD + callableName;
+    }
+
+    private static String mangleLabel(String label) {
+        StringBuilder sb = new StringBuilder();
+
+        for (char c : label.toCharArray()) {
+            if (DalvikIdentifierUtils.isValidDalvikCharacter(c)) {
+                sb.append(c);
+                continue;
+            }
+
+            sb.append("_u").append(Integer.toHexString(c));
+        }
+
+        return sb.toString();
     }
 
     @NotNull
@@ -326,6 +413,9 @@ public class AsmUtil {
         if (ExpectedActualDeclarationChecker.isOptionalAnnotationClass(descriptor)) {
             return NO_FLAG_PACKAGE_PRIVATE;
         }
+        if (descriptor.getKind() == ClassKind.ENUM_ENTRY) {
+            return NO_FLAG_PACKAGE_PRIVATE;
+        }
         if (descriptor.getVisibility() == Visibilities.PUBLIC ||
             descriptor.getVisibility() == Visibilities.PROTECTED ||
             // TODO: should be package private, but for now Kotlin's reflection can't access members of such classes
@@ -398,6 +488,10 @@ public class AsmUtil {
         DeclarationDescriptor containingDeclaration = memberDescriptor.getContainingDeclaration();
         Visibility memberVisibility = memberDescriptor.getVisibility();
 
+        if (JvmCodegenUtil.isNonIntrinsicPrivateCompanionObjectInInterface(memberDescriptor)) {
+            return ACC_PUBLIC;
+        }
+
         if (memberDescriptor instanceof FunctionDescriptor &&
             isInlineClassWrapperConstructor((FunctionDescriptor) memberDescriptor, kind)) {
             return ACC_PRIVATE;
@@ -406,7 +500,7 @@ public class AsmUtil {
         if (kind != OwnerKind.ERASED_INLINE_CLASS &&
             memberDescriptor instanceof ConstructorDescriptor &&
             !(memberDescriptor instanceof AccessorForConstructorDescriptor) &&
-            InlineClassManglingUtilsKt.shouldHideConstructorDueToInlineClassTypeValueParameters((ConstructorDescriptor) memberDescriptor)
+            InlineClassManglingRulesKt.shouldHideConstructorDueToInlineClassTypeValueParameters((ConstructorDescriptor) memberDescriptor)
         ) {
             return ACC_PRIVATE;
         }
@@ -465,16 +559,8 @@ public class AsmUtil {
             return NO_FLAG_PACKAGE_PRIVATE;
         }
 
-        // the following code is only for PRIVATE visibility of member
-        if (memberDescriptor instanceof ConstructorDescriptor) {
-            if (isEnumEntry(containingDeclaration)) {
-                return NO_FLAG_PACKAGE_PRIVATE;
-            }
-            if (isEnumClass(containingDeclaration)) {
-                //TODO: should be ACC_PRIVATE
-                // see http://youtrack.jetbrains.com/issue/KT-2680
-                return ACC_PROTECTED;
-            }
+        if (memberDescriptor instanceof ConstructorDescriptor && isEnumEntry(containingDeclaration)) {
+            return NO_FLAG_PACKAGE_PRIVATE;
         }
 
         return null;
@@ -514,17 +600,23 @@ public class AsmUtil {
         v.athrow();
     }
 
-    public static void genClosureFields(@NotNull CalculatedClosure closure, ClassBuilder v, KotlinTypeMapper typeMapper) {
+    public static void genClosureFields(
+            @NotNull CalculatedClosure closure,
+            ClassBuilder v,
+            KotlinTypeMapper typeMapper,
+            @NotNull LanguageVersionSettings languageVersionSettings
+    ) {
         List<Pair<String, Type>> allFields = new ArrayList<>();
 
-        ClassifierDescriptor captureThis = closure.getCaptureThis();
+        ClassifierDescriptor captureThis = closure.getCapturedOuterClassDescriptor();
         if (captureThis != null) {
             allFields.add(Pair.create(CAPTURED_THIS_FIELD, typeMapper.mapType(captureThis)));
         }
 
-        KotlinType captureReceiverType = closure.getCaptureReceiverType();
+        KotlinType captureReceiverType = closure.getCapturedReceiverFromOuterContext();
         if (captureReceiverType != null && !CallableReferenceUtilKt.isForCallableReference(closure)) {
-            allFields.add(Pair.create(CAPTURED_RECEIVER_FIELD, typeMapper.mapType(captureReceiverType)));
+            String fieldName = closure.getCapturedReceiverFieldName(typeMapper.getBindingContext(), languageVersionSettings);
+            allFields.add(Pair.create(fieldName, typeMapper.mapType(captureReceiverType)));
         }
 
         allFields.addAll(closure.getRecordedFields());
@@ -552,10 +644,18 @@ public class AsmUtil {
     ) {
         assert !info.isStatic();
         Type fieldType = info.getFieldType();
+        KotlinType fieldKotlinType = info.getFieldKotlinType();
+        KotlinType nullableAny;
+        if (fieldKotlinType != null) {
+            nullableAny = fieldKotlinType.getConstructor().getBuiltIns().getNullableAnyType();
+        } else {
+            nullableAny = null;
+        }
+
         iv.load(ownerIndex, info.getOwnerType());//this
         if (cast) {
             iv.load(index, AsmTypes.OBJECT_TYPE); //param
-            StackValue.coerce(AsmTypes.OBJECT_TYPE, fieldType, iv);
+            StackValue.coerce(AsmTypes.OBJECT_TYPE, nullableAny, fieldType, fieldKotlinType, iv);
         } else {
             iv.load(index, fieldType); //param
         }
@@ -571,8 +671,23 @@ public class AsmUtil {
     }
 
     public static void genInvokeAppendMethod(@NotNull InstructionAdapter v, @NotNull Type type, @Nullable KotlinType kotlinType) {
+        genInvokeAppendMethod(v, type, kotlinType, null);
+    }
+
+    public static void genInvokeAppendMethod(
+            @NotNull InstructionAdapter v,
+            @NotNull Type type,
+            @Nullable KotlinType kotlinType,
+            @Nullable KotlinTypeMapper typeMapper
+    ) {
         Type appendParameterType;
-        if (kotlinType != null && InlineClassesUtilsKt.isInlineClassType(kotlinType)) {
+
+        CallableMethod specializedToString = getSpecializedToStringCallableMethodOrNull(kotlinType, typeMapper);
+        if (specializedToString != null) {
+            specializedToString.genInvokeInstruction(v);
+            appendParameterType = AsmTypes.JAVA_STRING_TYPE;
+        }
+        else if (kotlinType != null && InlineClassesUtilsKt.isInlineClassType(kotlinType)) {
             appendParameterType = OBJECT_TYPE;
             SimpleType nullableAnyType = kotlinType.getConstructor().getBuiltIns().getNullableAnyType();
             StackValue.coerce(type, kotlinType, appendParameterType, nullableAnyType, v);
@@ -587,9 +702,17 @@ public class AsmUtil {
     public static StackValue genToString(
             @NotNull StackValue receiver,
             @NotNull Type receiverType,
-            @Nullable KotlinType receiverKotlinType
+            @Nullable KotlinType receiverKotlinType,
+            @Nullable KotlinTypeMapper typeMapper
     ) {
         return StackValue.operation(JAVA_STRING_TYPE, v -> {
+            CallableMethod specializedToString = getSpecializedToStringCallableMethodOrNull(receiverKotlinType, typeMapper);
+            if (specializedToString != null) {
+                receiver.put(receiverType, receiverKotlinType, v);
+                specializedToString.genInvokeInstruction(v);
+                return null;
+            }
+
             Type type;
             KotlinType kotlinType;
             if (receiverKotlinType != null && InlineClassesUtilsKt.isInlineClassType(receiverKotlinType)) {
@@ -605,6 +728,36 @@ public class AsmUtil {
             v.invokestatic("java/lang/String", "valueOf", "(" + type.getDescriptor() + ")Ljava/lang/String;", false);
             return null;
         });
+    }
+
+    @Nullable
+    private static CallableMethod getSpecializedToStringCallableMethodOrNull(
+            @Nullable KotlinType receiverKotlinType,
+            @Nullable KotlinTypeMapper typeMapper
+    ) {
+        if (typeMapper == null) return null;
+
+        if (receiverKotlinType == null) return null;
+        if (!InlineClassesUtilsKt.isInlineClassType(receiverKotlinType)) return null;
+        if (receiverKotlinType.isMarkedNullable()) return null;
+
+        DeclarationDescriptor receiverTypeDescriptor = receiverKotlinType.getConstructor().getDeclarationDescriptor();
+        assert receiverTypeDescriptor instanceof ClassDescriptor && ((ClassDescriptor) receiverTypeDescriptor).isInline() :
+                "Inline class type expected: " + receiverKotlinType;
+        ClassDescriptor receiverClassDescriptor = (ClassDescriptor) receiverTypeDescriptor;
+        FunctionDescriptor toStringDescriptor = receiverClassDescriptor.getUnsubstitutedMemberScope()
+                .getContributedFunctions(Name.identifier("toString"), NoLookupLocation.FROM_BACKEND)
+                .stream()
+                .filter(
+                        f -> f.getValueParameters().size() == 0
+                             && KotlinBuiltIns.isString(f.getReturnType())
+                             && f.getDispatchReceiverParameter() != null
+                             && f.getExtensionReceiverParameter() == null
+                )
+                .findFirst()
+                .orElseThrow(() -> new AssertionError("'toString' not found in member scope of " + receiverClassDescriptor));
+
+        return typeMapper.mapToCallableMethod(toStringDescriptor, false, OwnerKind.ERASED_INLINE_CLASS);
     }
 
     static void genHashCode(MethodVisitor mv, InstructionAdapter iv, Type type, JvmTarget jvmTarget) {
@@ -675,8 +828,8 @@ public class AsmUtil {
         }
 
         return StackValue.operation(Type.BOOLEAN_TYPE, v -> {
-            left.put(leftType, v);
-            right.put(rightType, v);
+            left.put(AsmTypes.OBJECT_TYPE, left.kotlinType, v);
+            right.put(AsmTypes.OBJECT_TYPE, right.kotlinType, v);
             genAreEqualCall(v);
 
             if (opToken == KtTokens.EXCLEQ || opToken == KtTokens.EXCLEQEQEQ) {
@@ -740,7 +893,7 @@ public class AsmUtil {
         }
     }
 
-    public static void genNotNullAssertionsForParameters(
+    static void genNotNullAssertionsForParameters(
             @NotNull InstructionAdapter v,
             @NotNull GenerationState state,
             @NotNull FunctionDescriptor descriptor,
@@ -762,7 +915,7 @@ public class AsmUtil {
             if (descriptor.isOperator()) {
                 ReceiverParameterDescriptor receiverParameter = descriptor.getExtensionReceiverParameter();
                 if (receiverParameter != null) {
-                    genParamAssertion(v, state.getTypeMapper(), frameMap, receiverParameter, "$receiver", descriptor);
+                    genParamAssertion(v, state.getTypeMapper(), frameMap, receiverParameter, CAPTURED_RECEIVER_FIELD, descriptor);
                 }
             }
             return;
@@ -770,7 +923,7 @@ public class AsmUtil {
 
         ReceiverParameterDescriptor receiverParameter = descriptor.getExtensionReceiverParameter();
         if (receiverParameter != null) {
-            genParamAssertion(v, state.getTypeMapper(), frameMap, receiverParameter, "$receiver", descriptor);
+            genParamAssertion(v, state.getTypeMapper(), frameMap, receiverParameter, CAPTURED_RECEIVER_FIELD, descriptor);
         }
 
         for (ValueParameterDescriptor parameter : descriptor.getValueParameters()) {
@@ -820,19 +973,20 @@ public class AsmUtil {
         if (state.isCallAssertionsDisabled()) return stackValue;
         if (runtimeAssertionInfo == null || !runtimeAssertionInfo.getNeedNotNullAssertion()) return stackValue;
 
-        return new StackValue(stackValue.type) {
+        return new StackValue(stackValue.type, stackValue.kotlinType) {
 
             @Override
             public void putSelector(@NotNull Type type, @Nullable KotlinType kotlinType, @NotNull InstructionAdapter v) {
                 Type innerType = stackValue.type;
-                stackValue.put(innerType, v);
+                KotlinType innerKotlinType = stackValue.kotlinType;
+                stackValue.put(innerType, innerKotlinType, v);
                 if (innerType.getSort() == Type.OBJECT || innerType.getSort() == Type.ARRAY) {
                     v.dup();
                     v.visitLdcInsn(runtimeAssertionInfo.getMessage());
                     v.invokestatic(IntrinsicMethods.INTRINSICS_CLASS_NAME, "checkExpressionValueIsNotNull",
                                    "(Ljava/lang/Object;Ljava/lang/String;)V", false);
                 }
-                StackValue.coerce(innerType, type, v);
+                StackValue.coerce(innerType, innerKotlinType, type, kotlinType, v);
             }
         };
     }

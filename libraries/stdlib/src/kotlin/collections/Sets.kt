@@ -52,6 +52,7 @@ public inline fun <T> setOf(): Set<T> = emptySet()
  * Returns an empty new [MutableSet].
  *
  * The returned set preserves the element iteration order.
+ * @sample samples.collections.Collections.Sets.emptyMutableSet
  */
 @SinceKotlin("1.1")
 @kotlin.internal.InlineOnly
@@ -60,6 +61,7 @@ public inline fun <T> mutableSetOf(): MutableSet<T> = LinkedHashSet()
 /**
  * Returns a new [MutableSet] with the given elements.
  * Elements of the set are iterated in the order they were specified.
+ * @sample samples.collections.Collections.Sets.mutableSet
  */
 public fun <T> mutableSetOf(vararg elements: T): MutableSet<T> = elements.toCollection(LinkedHashSet(mapCapacity(elements.size)))
 

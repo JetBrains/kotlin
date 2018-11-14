@@ -32,6 +32,10 @@ interface KotlinFileStub : PsiFileStub<KtFile> {
 
 interface KotlinPlaceHolderStub<T : KtElement> : StubElement<T>
 
+interface KotlinPlaceHolderWithTextStub<T : KtElement> : KotlinPlaceHolderStub<T> {
+    fun text(): String
+}
+
 interface KotlinStubWithFqName<T : PsiNamedElement> : NamedStub<T> {
     fun getFqName(): FqName?
 }
@@ -122,6 +126,19 @@ interface KotlinCallableStubBase<TDeclaration : KtCallableDeclaration> : KotlinS
 interface KotlinTypeParameterStub : KotlinStubWithFqName<KtTypeParameter> {
     fun isInVariance(): Boolean
     fun isOutVariance(): Boolean
+}
+
+enum class ConstantValueKind {
+    NULL,
+    BOOLEAN_CONSTANT,
+    FLOAT_CONSTANT,
+    CHARACTER_CONSTANT,
+    INTEGER_CONSTANT
+}
+
+interface KotlinConstantExpressionStub : StubElement<KtConstantExpression> {
+    fun kind(): ConstantValueKind
+    fun value(): String
 }
 
 interface KotlinTypeProjectionStub : StubElement<KtTypeProjection> {

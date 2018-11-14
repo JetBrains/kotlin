@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 interface Base {
     fun bar(a: String = "abc"): String = a + " from interface"
 }

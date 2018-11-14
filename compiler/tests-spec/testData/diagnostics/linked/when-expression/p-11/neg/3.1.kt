@@ -3,7 +3,7 @@
 /*
  KOTLIN DIAGNOSTICS SPEC TEST (NEGATIVE)
 
- SECTION: when-expression
+ SECTIONS: when-expression
  PARAGRAPH: 11
  SENTENCE: [3] The bound expression is of type kotlin.Boolean and the conditions contain both:
  NUMBER: 1
@@ -11,22 +11,22 @@
  */
 
 // CASE DESCRIPTION: Checking for not exhaustive 'when' on the Boolean value (with only true branch).
-fun case_1(value: Boolean): String = <!NO_ELSE_IN_WHEN!>when<!>(value) {
+fun case_1(value_1: Boolean): String = <!NO_ELSE_IN_WHEN!>when<!>(value_1) {
     true -> ""
 }
 
 // CASE DESCRIPTION: Checking for not exhaustive 'when' on the Boolean value (with only false branch).
-fun case_2(value: Boolean): String = <!NO_ELSE_IN_WHEN!>when<!>(value) {
+fun case_2(value_1: Boolean): String = <!NO_ELSE_IN_WHEN!>when<!>(value_1) {
     false -> ""
 }
 
 // CASE DESCRIPTION: Checking for not exhaustive 'when' on the Boolean value (no branches).
-fun case_3(value: Boolean): Int = <!NO_ELSE_IN_WHEN!>when<!>(value) { }
+fun case_3(value_1: Boolean): Int = <!NO_ELSE_IN_WHEN!>when<!>(value_1) { }
 
 // CASE DESCRIPTION: Checking for not exhaustive 'when' without bound value on the Boolean.
-fun case_4(value: Boolean): String = <!NO_ELSE_IN_WHEN!>when<!> {
-    value == true -> ""
-    value == false -> ""
+fun case_4(value_1: Boolean): String = <!NO_ELSE_IN_WHEN!>when<!> {
+    value_1 == true -> ""
+    value_1 == false -> ""
 }
 
 /*
@@ -34,11 +34,11 @@ fun case_4(value: Boolean): String = <!NO_ELSE_IN_WHEN!>when<!> {
  DISCUSSION: maybe use const propagation here?
  ISSUES: KT-25265
  */
-fun case_5(value: Boolean): String {
+fun case_5(value_1: Boolean): String {
     val trueValue = true
     val falseValue = false
 
-    return <!NO_ELSE_IN_WHEN!>when<!> (value) {
+    return <!NO_ELSE_IN_WHEN!>when<!> (value_1) {
         trueValue -> ""
         falseValue -> ""
     }

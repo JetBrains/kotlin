@@ -19,15 +19,19 @@ open class JvmScriptingHostConfigurationBuilder : JvmScriptingHostConfigurationK
     companion object : JvmScriptingHostConfigurationKeys
 }
 
+@Deprecated("Unused")
 val JvmScriptingHostConfigurationKeys.javaHome by PropertiesCollection.key<File>(File(System.getProperty("java.home")))
+
+val JvmScriptingHostConfigurationKeys.jdkHome by PropertiesCollection.key<File>()
 
 @Suppress("unused")
 val ScriptingHostConfigurationKeys.jvm
     get() = JvmScriptingHostConfigurationBuilder()
 
-val defaultJvmScriptingHostConfiguration = ScriptingHostConfiguration {
-    getScriptingClass(JvmGetScriptingClass())
-}
+val defaultJvmScriptingHostConfiguration
+    get() = ScriptingHostConfiguration {
+        getScriptingClass(JvmGetScriptingClass())
+    }
 
 class JvmGetScriptingClass : GetScriptingClass {
 
@@ -52,7 +56,9 @@ class JvmGetScriptingClass : GetScriptingClass {
         if (dependencies == null) {
             dependencies = newDeps
         } else {
-            if (newDeps != dependencies) throw IllegalArgumentException("scripting configuration dependencies changed")
+            if (newDeps != dependencies) throw IllegalArgumentException(
+                "scripting configuration dependencies changed:\nold: ${dependencies?.joinToString { (it as? JvmDependency)?.classpath.toString() }}\nnew: ${newDeps?.joinToString { (it as? JvmDependency)?.classpath.toString() }}"
+            )
         }
 
         if (!baseClassLoaderIsInitialized) {

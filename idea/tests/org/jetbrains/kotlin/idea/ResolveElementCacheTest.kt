@@ -80,7 +80,7 @@ class C(param1: String = "", param2: Int = 0) {
         val klass = file.declarations.single() as KtClass
         val members = klass.declarations
         val function = members.first() as KtNamedFunction
-        val statements = (function.bodyExpression as KtBlockExpression).statements
+        val statements = function.bodyBlockExpression!!.statements
         return Data(file, klass, members, statements, KtPsiFactory(project))
     }
 
@@ -100,7 +100,7 @@ class C(param1: String = "", param2: Int = 0) {
         assert(aFunBodyContext3 === aFunBodyContext1)
 
         val bFun = members[1] as KtNamedFunction
-        val bBody = bFun.bodyExpression as KtBlockExpression
+        val bBody = bFun.bodyBlockExpression!!
         val bStatement = bBody.statements[0]
         val bFunBodyContext = bStatement.analyze(BodyResolveMode.FULL)
 
@@ -166,7 +166,7 @@ class C(param1: String = "", param2: Int = 0) {
 
             // modify body of "b()" via document
             val bFun = members[1] as KtNamedFunction
-            val bBody = bFun.bodyExpression as KtBlockExpression
+            val bBody = bFun.bodyBlockExpression!!
             document.insertString(bBody.lBrace!!.startOffset + 1, "x()")
             documentManager.commitAllDocuments()
 
@@ -427,7 +427,7 @@ class C(param1: String = "", param2: Int = 0) {
         val target = bindingContext[BindingContext.REFERENCE_TARGET, referenceExpr]
         TestCase.assertEquals("Ann", target?.importableFqName?.asString())
 
-        val statement = (function.bodyExpression as KtBlockExpression).statements[0]
+        val statement = function.bodyBlockExpression!!.statements[0]
         TestCase.assertEquals(null, bindingContext[BindingContext.PROCESSED, statement])
     }
 
@@ -465,17 +465,17 @@ class C(param1: String = "", param2: Int = 0) {
         val target = bindingContext[BindingContext.REFERENCE_TARGET, referenceExpr]
         TestCase.assertEquals("Ann", target?.importableFqName?.asString())
 
-        val statement = (constructor.bodyExpression as KtBlockExpression).statements[0]
+        val statement = constructor.bodyBlockExpression!!.statements[0]
         TestCase.assertEquals(null, bindingContext[BindingContext.PROCESSED, statement])
     }
 
     fun testFullResolveMultiple() {
         doTest {
-            val aBody = (members[0] as KtFunction).bodyExpression as KtBlockExpression
+            val aBody = (members[0] as KtFunction).bodyBlockExpression!!
             val statement1InFunA = aBody.statements[0]
             val statement2InFunA = aBody.statements[1]
-            val statementInFunB = ((members[1] as KtFunction).bodyExpression as KtBlockExpression).statements[0]
-            val statementInFunC = ((members[2] as KtFunction).bodyExpression as KtBlockExpression).statements[0]
+            val statementInFunB = ((members[1] as KtFunction).bodyBlockExpression)!!.statements[0]
+            val statementInFunC = ((members[2] as KtFunction).bodyBlockExpression)!!.statements[0]
 
             val bindingContext = checkResolveMultiple(BodyResolveMode.FULL, statement1InFunA, statementInFunB)
 
@@ -486,10 +486,10 @@ class C(param1: String = "", param2: Int = 0) {
 
     fun testPartialResolveMultiple() {
         doTest {
-            val aBody = (members[0] as KtFunction).bodyExpression as KtBlockExpression
+            val aBody = (members[0] as KtFunction).bodyBlockExpression!!
             val statement1InFunA = aBody.statements[0]
             val statement2InFunA = aBody.statements[1]
-            val statementInFunB = ((members[1] as KtFunction).bodyExpression as KtBlockExpression).statements[0]
+            val statementInFunB = ((members[1] as KtFunction).bodyBlockExpression)!!.statements[0]
             val constructorParameterDefault = klass.getPrimaryConstructor()!!.valueParameters[1].defaultValue!!
             val funC = members[2]
 
@@ -499,7 +499,7 @@ class C(param1: String = "", param2: Int = 0) {
 
     fun testPartialResolveMultipleInOneFunction() {
         doTest {
-            val aBody = (members[0] as KtFunction).bodyExpression as KtBlockExpression
+            val aBody = (members[0] as KtFunction).bodyBlockExpression!!
             val statement1InFunA = aBody.statements[0]
             val statement2InFunA = aBody.statements[1]
 

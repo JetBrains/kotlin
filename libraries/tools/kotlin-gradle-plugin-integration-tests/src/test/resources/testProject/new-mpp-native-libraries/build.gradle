@@ -21,12 +21,15 @@ repositories {
 
 kotlin {
     targets {
-        fromPreset(presets.macosX64, 'macos64')
+        fromPreset(presets.macosX64, 'macos64') {
+            compilations.main.outputKinds = [FRAMEWORK]
+        }
+
         fromPreset(presets.linuxX64, 'linux64')
         fromPreset(presets.mingwX64, 'mingw64')
 
         configure([linux64, mingw64, macos64]) {
-            compilations.main.outputKinds 'DYNAMIC', 'STATIC'
+            compilations.main.outputKinds += [DYNAMIC, STATIC]
         }
     }
 }

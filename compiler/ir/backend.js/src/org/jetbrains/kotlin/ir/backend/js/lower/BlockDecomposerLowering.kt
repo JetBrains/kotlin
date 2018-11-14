@@ -14,10 +14,12 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.util.transformDeclarationsFlat
 import org.jetbrains.kotlin.ir.util.transformFlat
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
+import org.jetbrains.kotlin.utils.addIfNotNull
 
 class BlockDecomposerLowering(context: JsIrBackendContext) : DeclarationContainerLoweringPass {
 
@@ -25,7 +27,7 @@ class BlockDecomposerLowering(context: JsIrBackendContext) : DeclarationContaine
     private val nothingType = context.irBuiltIns.nothingType
 
     override fun lower(irDeclarationContainer: IrDeclarationContainer) {
-        irDeclarationContainer.declarations.transformFlat { declaration ->
+        irDeclarationContainer.transformDeclarationsFlat { declaration ->
             when (declaration) {
                 is IrFunction -> {
                     lower(declaration)
@@ -38,7 +40,17 @@ class BlockDecomposerLowering(context: JsIrBackendContext) : DeclarationContaine
     }
 
     fun lower(irFunction: IrFunction) {
+        (irFunction.body as? IrExpressionBody)?.apply {
+            irFunction.body = toBlockBody(irFunction)
+        }
         irFunction.accept(decomposerTransformer, null)
+    }
+
+    private fun IrExpressionBody.toBlockBody(containingFunction: IrFunction): IrBlockBody {
+        val returnStatement = JsIrBuilder.buildReturn(containingFunction.symbol, expression, nothingType)
+        return IrBlockBodyImpl(expression.startOffset, expression.endOffset).apply {
+            statements += returnStatement
+        }
     }
 
     fun lower(irField: IrField, container: IrDeclarationContainer): List<IrDeclaration> {
@@ -48,17 +60,14 @@ class BlockDecomposerLowering(context: JsIrBackendContext) : DeclarationContaine
                 it.returnType = expression.type
             }
 
-            val returnStatement = JsIrBuilder.buildReturn(initFunction.symbol, expression, nothingType)
-            val newBody = IrBlockBodyImpl(expression.startOffset, expression.endOffset).apply {
-                statements += returnStatement
-            }
+            val newBody = toBlockBody(initFunction)
 
             initFunction.body = newBody
 
             lower(initFunction)
 
             val lastStatement = newBody.statements.last()
-            if (lastStatement != returnStatement || (lastStatement as IrReturn).value != expression) {
+            if (newBody.statements.size > 1 || lastStatement !is IrReturn || lastStatement.value != expression) {
                 expression = JsIrBuilder.buildCall(initFunction.symbol, expression.type)
                 return listOf(initFunction, irField)
             }
@@ -258,7 +267,7 @@ class BlockDecomposerTransformer(context: JsIrBackendContext) : IrElementTransfo
                 }
 
                 newLoopBody.statements += JsIrBuilder.buildIfElse(unitType, breakCond, thenBlock)
-                newLoopBody.statements += newBody!!
+                newLoopBody.statements.addIfNotNull(newBody)
 
                 return loop.apply {
                     condition = constTrue
@@ -286,16 +295,22 @@ class BlockDecomposerTransformer(context: JsIrBackendContext) : IrElementTransfo
         // } while (cond)
         //
         override fun visitDoWhileLoop(loop: IrDoWhileLoop): IrExpression {
-            val newBody = loop.body?.transform(statementTransformer, null)!!
+            val newBody = loop.body?.transform(statementTransformer, null)
             val newCondition = loop.condition.transform(expressionTransformer, null)
 
             if (newCondition is IrComposite) {
-                val innerLoop = IrDoWhileLoopImpl(loop.startOffset, loop.endOffset, unitType, loop.origin, newBody, constFalse).apply {
+                val innerLoop = IrDoWhileLoopImpl(loop.startOffset, loop.endOffset, unitType, loop.origin).apply {
+                    condition = constFalse
+                    body = newBody
                     label = makeLoopLabel()
                 }
 
                 val newLoopCondition = newCondition.statements.last() as IrExpression
-                val newLoopBody = IrBlockImpl(newCondition.startOffset, newBody.endOffset, newBody.type).apply {
+                val newLoopBody = IrBlockImpl(
+                    newCondition.startOffset,
+                    newBody?.endOffset ?: newCondition.endOffset,
+                    newBody?.type ?: unitType
+                ).apply {
                     statements += innerLoop
                     statements += newCondition.statements.run { subList(0, lastIndex) }
                 }
@@ -416,6 +431,8 @@ class BlockDecomposerTransformer(context: JsIrBackendContext) : IrElementTransfo
 
         override fun visitReturn(expression: IrReturn) = expression.asExpression(JsIrBuilder.buildCall(unreachableFunction.symbol, nothingType))
 
+        override fun visitVariable(declaration: IrVariable) = declaration.asExpression(unitValue)
+
         override fun visitStringConcatenation(expression: IrStringConcatenation): IrExpression {
             expression.transformChildrenVoid(expressionTransformer)
 
@@ -521,7 +538,7 @@ class BlockDecomposerTransformer(context: JsIrBackendContext) : IrElementTransfo
 
         override fun visitContainerExpression(expression: IrContainerExpression): IrExpression {
 
-            expression.run { if (statements.isEmpty()) return IrCompositeImpl(startOffset, endOffset, type, origin, emptyList()) }
+            expression.run { if (statements.isEmpty()) return IrCompositeImpl(startOffset, endOffset, type, origin, listOf(unitValue)) }
 
             val newStatements = mutableListOf<IrStatement>()
 

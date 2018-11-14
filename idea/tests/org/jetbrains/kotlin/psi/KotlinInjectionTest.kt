@@ -18,15 +18,12 @@ package org.jetbrains.kotlin.psi
 
 import com.intellij.codeInsight.completion.CompletionType
 import com.intellij.lang.html.HTMLLanguage
-import com.intellij.lang.injection.MultiHostInjector
 import com.intellij.openapi.fileTypes.PlainTextLanguage
 import org.intellij.lang.annotations.Language
 import org.intellij.lang.regexp.RegExpLanguage
 import org.intellij.plugins.intelliLang.Configuration
 import org.intellij.plugins.intelliLang.inject.config.BaseInjection
 import org.intellij.plugins.intelliLang.inject.config.InjectionPlace
-import org.jetbrains.kotlin.idea.injection.KotlinLanguageInjector
-import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 
 class KotlinInjectionTest : AbstractInjectionTest() {
     fun testInjectionOnJavaPredefinedMethodWithAnnotation() = doInjectionPresentTest(
@@ -605,10 +602,7 @@ class KotlinInjectionTest : AbstractInjectionTest() {
                 pattern,
                 "temp rule")
         customInjection.setInjectionPlaces(InjectionPlace(elementPattern, true))
-        val kotlinLanguageInjector = MultiHostInjector.MULTIHOST_INJECTOR_EP_NAME.getExtensions(project).firstIsInstance<KotlinLanguageInjector>()
-        val injectionsEnabled = kotlinLanguageInjector.annotationInjectionsEnabled
         try {
-            kotlinLanguageInjector.annotationInjectionsEnabled = true
             Configuration.getInstance().replaceInjections(listOf(customInjection), listOf(), true)
 
             doInjectionPresentTest(
@@ -619,7 +613,6 @@ class KotlinInjectionTest : AbstractInjectionTest() {
             additionalAsserts()
         }
         finally {
-            kotlinLanguageInjector.annotationInjectionsEnabled = injectionsEnabled
             Configuration.getInstance().replaceInjections(listOf(), listOf(customInjection), true)
         }
     }

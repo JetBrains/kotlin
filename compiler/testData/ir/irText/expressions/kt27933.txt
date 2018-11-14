@@ -1,0 +1,29 @@
+FILE fqName:<root> fileName:/kt27933.kt
+  FUN name:box visibility:public modality:FINAL <> () returnType:kotlin.String flags:
+    BLOCK_BODY
+      VAR name:r type:kotlin.String flags:var
+        CONST String type=kotlin.String value=""
+      WHEN type=kotlin.Unit origin=null
+        BRANCH
+          if: CALL 'NOT(Boolean): Boolean' type=kotlin.Boolean origin=EXCLEQ
+            arg0: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EXCLEQ
+              arg0: GET_VAR 'r: String' type=kotlin.String origin=null
+              arg1: CONST String type=kotlin.String value=""
+          then: BLOCK type=kotlin.Nothing origin=IF
+        BRANCH
+          if: CONST Boolean type=kotlin.Boolean value=true
+          then: SET_VAR 'r: String' type=kotlin.Unit origin=PLUSEQ
+            CALL 'plus(Any?): String' type=kotlin.String origin=PLUSEQ
+              $this: GET_VAR 'r: String' type=kotlin.String origin=PLUSEQ
+              other: CONST String type=kotlin.String value="O"
+      WHEN type=kotlin.Unit origin=null
+        BRANCH
+          if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
+            arg0: GET_VAR 'r: String' type=kotlin.String origin=null
+            arg1: CONST String type=kotlin.String value="O"
+          then: SET_VAR 'r: String' type=kotlin.Unit origin=PLUSEQ
+            CALL 'plus(Any?): String' type=kotlin.String origin=PLUSEQ
+              $this: GET_VAR 'r: String' type=kotlin.String origin=PLUSEQ
+              other: CONST String type=kotlin.String value="K"
+      RETURN type=kotlin.Nothing from='box(): String'
+        GET_VAR 'r: String' type=kotlin.String origin=null

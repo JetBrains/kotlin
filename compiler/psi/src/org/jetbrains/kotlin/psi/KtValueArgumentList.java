@@ -20,14 +20,19 @@ import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.KtNodeTypes;
 import org.jetbrains.kotlin.lexer.KtTokens;
+import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
+import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes;
 
 import java.util.List;
 
-public class KtValueArgumentList extends KtElementImpl {
+public class KtValueArgumentList extends KtElementImplStub<KotlinPlaceHolderStub<KtValueArgumentList>> {
     public KtValueArgumentList(@NotNull ASTNode node) {
         super(node);
+    }
+
+    public KtValueArgumentList(@NotNull KotlinPlaceHolderStub<KtValueArgumentList> stub) {
+        super(stub, KtStubElementTypes.VALUE_ARGUMENT_LIST);
     }
 
     @Override
@@ -37,7 +42,7 @@ public class KtValueArgumentList extends KtElementImpl {
 
     @NotNull
     public List<KtValueArgument> getArguments() {
-        return findChildrenByType(KtNodeTypes.VALUE_ARGUMENT);
+        return getStubOrPsiChildrenAsList(KtStubElementTypes.VALUE_ARGUMENT);
     }
 
     @Nullable

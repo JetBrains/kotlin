@@ -80,23 +80,46 @@ dependencies {
 
     fatJarContents(intellijCoreDep()) { includeJars("intellij-core") }
     fatJarContents(intellijDep()) { includeIntellijCoreJarDependencies(project, { !(it.startsWith("jdom") || it.startsWith("log4j")) }) }
-    fatJarContents(intellijDep()) { includeJars("jna-platform", "lz4-1.3.0") }
+    when {
+        Platform[173].orLower() -> {
+            fatJarContents(intellijDep()) { includeJars("jna-platform") }
+            fatJarContentsStripMetadata(intellijDep()) { includeJars("oromatcher", "jdom", "log4j") }
+        }
+        Platform[181].orLower() -> {
+            fatJarContents(intellijDep()) { includeJars("jna-platform", "lz4-java-1.3") }
+            fatJarContentsStripMetadata(intellijDep()) { includeJars("oro-2.0.8", "jdom", "log4j") }
+        }
+        else -> {
+            fatJarContents(intellijDep()) { includeJars("jna-platform", "lz4-1.3.0") }
+            fatJarContentsStripMetadata(intellijDep()) { includeJars("oro-2.0.8", "jdom", "log4j") }
+        }
+    }
     fatJarContentsStripServices(intellijDep("jps-standalone")) { includeJars("jps-model") }
-    fatJarContentsStripMetadata(intellijDep()) { includeJars("oro-2.0.8", "jdom", "log4j") }
 }
 
+noDefaultJar()
 
 val packCompiler by task<ShadowJar> {
     configurations = listOf(fatJar)
-    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    setDuplicatesStrategy(DuplicatesStrategy.EXCLUDE)
     destinationDir = File(buildDir, "libs")
 
     setupPublicJar(compilerBaseName, "before-proguard")
 
     from(fatJarContents)
-    afterEvaluate {
-        fatJarContentsStripServices.files.forEach { from(zipTree(it)) { exclude("META-INF/services/**") } }
-        fatJarContentsStripMetadata.files.forEach { from(zipTree(it)) { exclude("META-INF/jb/** META-INF/LICENSE") } }
+
+    dependsOn(fatJarContentsStripServices)
+    from {
+        fatJarContentsStripServices.files.map {
+            zipTree(it).matching { exclude("META-INF/services/**") }
+        }
+    }
+
+    dependsOn(fatJarContentsStripMetadata)
+    from {
+        fatJarContentsStripMetadata.files.map {
+            zipTree(it).matching { exclude("META-INF/jb/**", "META-INF/LICENSE") }
+        }
     }
 
     manifest.attributes["Class-Path"] = compilerManifestClassPath

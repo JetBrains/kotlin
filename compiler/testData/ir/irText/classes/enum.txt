@@ -155,7 +155,7 @@ FILE fqName:<root> fileName:/enum.kt
           $this: VALUE_PARAMETER name:<this> type:TestEnum3.TEST flags:
           BLOCK_BODY
             CALL 'println(Any?): Unit' type=kotlin.Unit origin=null
-              message: CONST String type=kotlin.String value=Hello, world!
+              message: CONST String type=kotlin.String value="Hello, world!"
         FUN FAKE_OVERRIDE name:clone visibility:protected modality:FINAL <> ($this:kotlin.Enum<TestEnum3>) returnType:kotlin.Any flags:
           overridden:
             FUN FAKE_OVERRIDE name:clone visibility:protected modality:FINAL <> ($this:kotlin.Enum<TestEnum3>) returnType:kotlin.Any flags:

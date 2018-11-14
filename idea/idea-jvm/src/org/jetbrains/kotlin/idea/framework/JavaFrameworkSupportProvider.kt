@@ -49,7 +49,8 @@ class JavaFrameworkSupportProvider : FrameworkSupportInModuleProvider() {
 
                 description!!.finishLibConfiguration(module, rootModel, false)
 
-                if (isInNewProject(module)) {
+                val isNewProject = model.project == null
+                if (isNewProject) {
                     ProjectCodeStyleImporter.apply(module.project, KotlinStyleGuideCodeStyle.INSTANCE)
                 }
             }

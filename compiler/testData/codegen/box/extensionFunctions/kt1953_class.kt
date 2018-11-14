@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 class A {
     private val sb: StringBuilder = StringBuilder()
 

@@ -13,7 +13,7 @@ import kotlin.test.assertTrue
 class KotlinModelBuilderTest {
     @Test
     fun testCanBuild() {
-        val modelBuilder = KotlinModelBuilder("version")
+        val modelBuilder = KotlinModelBuilder("version", null)
         assertTrue(modelBuilder.canBuild(KotlinProject::class.java.name))
         assertFalse(modelBuilder.canBuild("wrongModel"))
     }

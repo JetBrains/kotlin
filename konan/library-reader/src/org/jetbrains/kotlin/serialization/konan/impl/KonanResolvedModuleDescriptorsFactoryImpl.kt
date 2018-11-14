@@ -85,22 +85,8 @@ class KonanResolvedModuleDescriptorsFactoryImpl(
         val name = Name.special("<forward declarations>")
         val module = createDescriptorOptionalBuiltsIns(name, storageManager, builtIns, SyntheticModulesOrigin)
 
-        fun createPackage(fqName: FqName, supertypeName: String, classKind: ClassKind) =
-            ForwardDeclarationsPackageFragmentDescriptor(
-                storageManager,
-                module,
-                fqName,
-                Name.identifier(supertypeName),
-                classKind
-            )
-
-        val packageFragmentProvider = PackageFragmentProviderImpl(
-            listOf(
-                createPackage(ForwardDeclarationsFqNames.cNamesStructs, "COpaque", ClassKind.CLASS),
-                createPackage(ForwardDeclarationsFqNames.objCNamesClasses, "ObjCObjectBase", ClassKind.CLASS),
-                createPackage(ForwardDeclarationsFqNames.objCNamesProtocols, "ObjCObject", ClassKind.INTERFACE)
-            )
-        )
+        val packageFragmentProvider =
+            moduleDescriptorFactory.packageFragmentsFactory.createForwardDeclarationHackPackagePartProvider(storageManager, module)
 
         module.initialize(packageFragmentProvider)
         module.setDependencies(module)
@@ -142,54 +128,6 @@ class KonanResolvedModuleDescriptorsFactoryImpl(
             packageAccessedHandler,
             customCapabilities
         )
-}
-
-/**
- * Package fragment which creates descriptors for forward declarations on demand.
- */
-private class ForwardDeclarationsPackageFragmentDescriptor(
-    storageManager: StorageManager,
-    module: ModuleDescriptor,
-    fqName: FqName,
-    supertypeName: Name,
-    classKind: ClassKind
-) : PackageFragmentDescriptorImpl(module, fqName) {
-
-    private val memberScope = object : MemberScopeImpl() {
-
-        private val declarations = storageManager.createMemoizedFunction(this::createDeclaration)
-
-        private val supertype by storageManager.createLazyValue {
-            val descriptor = builtIns.builtInsModule.getPackage(ForwardDeclarationsFqNames.packageName)
-                .memberScope
-                .getContributedClassifier(supertypeName, NoLookupLocation.FROM_BACKEND) as ClassDescriptor
-
-            descriptor.defaultType
-        }
-
-        private fun createDeclaration(name: Name): ClassDescriptor {
-            return ClassDescriptorImpl(
-                this@ForwardDeclarationsPackageFragmentDescriptor,
-                name,
-                Modality.FINAL,
-                classKind,
-                listOf(supertype),
-                SourceElement.NO_SOURCE,
-                false,
-                LockBasedStorageManager.NO_LOCKS
-            ).apply {
-                this.initialize(MemberScope.Empty, emptySet(), null)
-            }
-        }
-
-        override fun getContributedClassifier(name: Name, location: LookupLocation) = declarations(name)
-
-        override fun printScopeStructure(p: Printer) {
-            p.println(this::class.java.simpleName, "{}")
-        }
-    }
-
-    override fun getMemberScope(): MemberScope = memberScope
 }
 
 // FIXME(ddol): decouple and move interop-specific logic back to Kotlin/Native.

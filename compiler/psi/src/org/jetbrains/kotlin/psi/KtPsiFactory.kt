@@ -276,7 +276,7 @@ class KtPsiFactory @JvmOverloads constructor(private val project: Project, val m
     }
 
     fun createDestructuringDeclaration(text: String): KtDestructuringDeclaration {
-        return (createFunction("fun foo() {$text}").bodyExpression as KtBlockExpression).statements.first() as KtDestructuringDeclaration
+        return createFunction("fun foo() {$text}").bodyBlockExpression!!.statements.first() as KtDestructuringDeclaration
     }
 
     fun createDestructuringParameter(text: String): KtParameter {
@@ -337,7 +337,7 @@ class KtPsiFactory @JvmOverloads constructor(private val project: Project, val m
     }
 
     fun createEmptyBody(): KtBlockExpression {
-        return createFunction("fun foo() {}").bodyExpression as KtBlockExpression
+        return createFunction("fun foo() {}").bodyBlockExpression!!
     }
 
     fun createAnonymousInitializer(): KtAnonymousInitializer {
@@ -402,6 +402,11 @@ class KtPsiFactory @JvmOverloads constructor(private val project: Project, val m
     fun createSimpleNameStringTemplateEntry(name: String): KtSimpleNameStringTemplateEntry {
         val stringTemplateExpression = createExpression("\"\$$name\"") as KtStringTemplateExpression
         return stringTemplateExpression.entries[0] as KtSimpleNameStringTemplateEntry
+    }
+
+    fun createLiteralStringTemplateEntry(literal: String): KtLiteralStringTemplateEntry {
+        val stringTemplateExpression = createExpression("\"$literal\"") as KtStringTemplateExpression
+        return stringTemplateExpression.entries[0] as KtLiteralStringTemplateEntry
     }
 
     fun createStringTemplate(content: String) = createExpression("\"$content\"") as KtStringTemplateExpression
@@ -816,13 +821,13 @@ class KtPsiFactory @JvmOverloads constructor(private val project: Project, val m
     }
 
     fun createBlock(bodyText: String): KtBlockExpression {
-        return createFunction("fun foo() {\n$bodyText\n}").bodyExpression as KtBlockExpression
+        return createFunction("fun foo() {\n$bodyText\n}").bodyBlockExpression!!
     }
 
     fun createSingleStatementBlock(statement: KtExpression, prevComment: String? = null, nextComment: String? = null): KtBlockExpression {
         val prev = if (prevComment == null) "" else " $prevComment "
         val next = if (nextComment == null) "" else " $nextComment "
-        return createDeclarationByPattern<KtNamedFunction>("fun foo() {\n$prev$0$next\n}", statement).bodyExpression as KtBlockExpression
+        return createDeclarationByPattern<KtNamedFunction>("fun foo() {\n$prev$0$next\n}", statement).bodyBlockExpression!!
     }
 
     fun createComment(text: String): PsiComment {

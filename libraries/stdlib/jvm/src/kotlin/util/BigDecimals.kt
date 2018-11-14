@@ -43,7 +43,7 @@ public inline operator fun BigDecimal.div(other: BigDecimal): BigDecimal = this.
  * Enables the use of the `%` operator for [BigDecimal] instances.
  */
 @kotlin.internal.InlineOnly
-@Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.WARNING)
+@Deprecated("Use rem(other) instead", ReplaceWith("rem(other)"), DeprecationLevel.ERROR)
 public inline operator fun BigDecimal.mod(other: BigDecimal): BigDecimal = this.remainder(other)
 
 /**

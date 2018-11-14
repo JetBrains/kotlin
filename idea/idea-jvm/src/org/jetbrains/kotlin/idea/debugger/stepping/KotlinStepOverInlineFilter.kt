@@ -58,7 +58,5 @@ class KotlinStepOverInlineFilter(val project: Project, val data: StepOverFilterD
         throw IllegalStateException() // Should not be called from Kotlin hint
     }
 
-    override fun getCallingExpressionLines(): Range<Int>? {
-        throw IllegalStateException() // Should not be called from Kotlin hint
-    }
+    override fun getCallingExpressionLines(): Range<Int>? = null
 }

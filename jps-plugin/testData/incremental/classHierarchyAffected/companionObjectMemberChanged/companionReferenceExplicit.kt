@@ -1,3 +1,3 @@
 fun explicitRef() {
-    A.AA.x.hashCode()
+    A.AA.x.length
 }

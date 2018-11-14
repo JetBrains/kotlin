@@ -14,19 +14,18 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ex.ProjectRootManagerEx
 import com.intellij.openapi.util.EmptyRunnable
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.util.ui.UIUtil
 import org.jetbrains.kotlin.idea.core.script.*
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.script.*
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.script.experimental.dependencies.AsyncDependenciesResolver
 import kotlin.script.experimental.dependencies.DependenciesResolver
-import kotlin.script.experimental.dependencies.ScriptDependencies
 
 abstract class ScriptDependenciesLoader(
     protected val file: VirtualFile,
     protected val scriptDef: KotlinScriptDefinition,
-    protected val project: Project,
-    private val shouldNotifyRootsChanged: Boolean
+    protected val project: Project
 ) {
     companion object {
         private val loaders = ConcurrentHashMap<VirtualFile, ScriptDependenciesLoader>()
@@ -34,8 +33,7 @@ abstract class ScriptDependenciesLoader(
         fun updateDependencies(
             file: VirtualFile,
             scriptDef: KotlinScriptDefinition,
-            project: Project,
-            shouldNotifyRootsChanged: Boolean
+            project: Project
         ) {
             val existingLoader = loaders[file]
             if (existingLoader != null) return existingLoader.updateDependencies()
@@ -43,7 +41,7 @@ abstract class ScriptDependenciesLoader(
             val newLoader = when (scriptDef.dependencyResolver) {
                 is AsyncDependenciesResolver,
                 is LegacyResolverWrapper -> AsyncScriptDependenciesLoader(file, scriptDef, project)
-                else -> SyncScriptDependenciesLoader(file, scriptDef, project, shouldNotifyRootsChanged)
+                else -> SyncScriptDependenciesLoader(file, scriptDef, project)
             }
             loaders.put(file, newLoader)
             newLoader.updateDependencies()
@@ -69,32 +67,49 @@ abstract class ScriptDependenciesLoader(
     protected val contentLoader = ScriptContentLoader(project)
     protected val cache: ScriptDependenciesCache = ServiceManager.getService(project, ScriptDependenciesCache::class.java)
 
+    private val reporter: ScriptReportSink = ServiceManager.getService(project, ScriptReportSink::class.java)
+
     protected fun processResult(result: DependenciesResolver.ResolveResult) {
         loaders.remove(file)
 
-        ServiceManager.getService(project, ScriptReportSink::class.java)?.attachReports(file, result.reports)
+        if (cache[file] == null) {
+            saveDependencies(result)
+            attachReportsIfChanged(result)
+            return
+        }
 
-        val newDependencies = result.dependencies?.adjustByDefinition(scriptDef) ?: return
+        val newDependencies = result.dependencies?.adjustByDefinition(scriptDef)
         if (cache[file] != newDependencies) {
-            if (shouldShowNotification() && cache[file] != null && !ApplicationManager.getApplication().isUnitTestMode) {
-                file.addScriptDependenciesNotificationPanel(newDependencies, project) {
-                    saveDependencies(newDependencies)
+            if (shouldShowNotification() && !ApplicationManager.getApplication().isUnitTestMode) {
+                file.addScriptDependenciesNotificationPanel(result, project) {
+                    saveDependencies(it)
+                    attachReportsIfChanged(it)
                 }
             } else {
-                saveDependencies(newDependencies)
+                saveDependencies(result)
+                attachReportsIfChanged(result)
             }
         } else {
+            attachReportsIfChanged(result)
+
             if (shouldShowNotification()) {
                 file.removeScriptDependenciesNotificationPanel(project)
             }
         }
     }
 
-    private fun saveDependencies(dependencies: ScriptDependencies) {
+    private fun attachReportsIfChanged(result: DependenciesResolver.ResolveResult) {
+        if (file.getUserData(IdeScriptReportSink.Reports) != result.reports.takeIf { it.isNotEmpty() }) {
+            reporter.attachReports(file, result.reports)
+        }
+    }
+
+    private fun saveDependencies(result: DependenciesResolver.ResolveResult) {
         if (shouldShowNotification()) {
             file.removeScriptDependenciesNotificationPanel(project)
         }
 
+        val dependencies = result.dependencies?.adjustByDefinition(scriptDef) ?: return
         val rootsChanged = cache.hasNotCachedRoots(dependencies)
         if (cache.save(file, dependencies)) {
             file.scriptDependencies = dependencies
@@ -107,8 +122,6 @@ abstract class ScriptDependenciesLoader(
 
     @Suppress("EXPERIMENTAL_FEATURE_WARNING")
     protected fun notifyRootsChanged() {
-        if (!shouldNotifyRootsChanged) return
-
         val doNotifyRootsChanged = Runnable {
             runWriteAction {
                 if (project.isDisposed) return@runWriteAction
@@ -119,7 +132,7 @@ abstract class ScriptDependenciesLoader(
         }
 
         if (ApplicationManager.getApplication().isUnitTestMode) {
-            doNotifyRootsChanged.run()
+            UIUtil.invokeLaterIfNeeded(doNotifyRootsChanged)
         } else {
             TransactionGuard.getInstance().submitTransactionLater(project, doNotifyRootsChanged)
         }

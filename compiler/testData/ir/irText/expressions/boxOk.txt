@@ -2,5 +2,4 @@ FILE fqName:<root> fileName:/boxOk.kt
   FUN name:box visibility:public modality:FINAL <> () returnType:kotlin.String flags:
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='box(): String'
-        CONST String type=kotlin.String value=OK
-
+        CONST String type=kotlin.String value="OK"

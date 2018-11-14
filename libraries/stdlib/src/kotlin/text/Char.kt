@@ -10,6 +10,8 @@ package kotlin.text
 
 /**
  * Concatenates this Char and a String.
+ *
+ * @sample samples.text.Chars.plus
  */
 @kotlin.internal.InlineOnly
 public inline operator fun Char.plus(other: String): String = this.toString() + other
@@ -23,6 +25,8 @@ public inline operator fun Char.plus(other: String): String = this.toString() + 
  *   - The two characters are the same (as compared by the == operator)
  *   - Applying the method [toUpperCase] to each character produces the same result
  *   - Applying the method [toLowerCase] to each character produces the same result
+ *
+ * @sample samples.text.Chars.equals
  */
 public fun Char.equals(other: Char, ignoreCase: Boolean = false): Boolean {
     if (this == other) return true

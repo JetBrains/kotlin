@@ -55,11 +55,10 @@ compileKotlinCommon {
                 "-module-name", project.name,
                 "-Xuse-experimental=kotlin.Experimental",
                 "-Xuse-experimental=kotlin.ExperimentalMultiplatform",
-                "-Xuse-experimental=kotlin.ExperimentalUnsignedTypes",
                 "-Xuse-experimental=kotlin.contracts.ExperimentalContracts",
                 "-XXLanguage:+InlineClasses",
-                "-XXLanguage:+ReleaseCoroutines",
-                "-Xallow-kotlin-package"
+                "-Xallow-kotlin-package",
+                "-Xallow-result-return-type"
         ]
     }
 }
@@ -71,8 +70,11 @@ compileCoroutinesKotlinCommon {
         freeCompilerArgs = [
                 "-module-name", project.name+"-coroutines",
                 "-Xuse-experimental=kotlin.contracts.ExperimentalContracts",
+                "-Xuse-experimental=kotlin.Experimental",
+                "-Xcoroutines=enable",
                 "-XXLanguage:-ReleaseCoroutines",
-                "-Xallow-kotlin-package"
+                "-Xallow-kotlin-package",
+                "-Xallow-result-return-type"
         ]
     }
 }
@@ -84,8 +86,6 @@ compileTestKotlinCommon {
         ]
     }
 }
-
-kotlin.experimental.coroutines 'enable'
 
 jar {
     manifestAttributes(manifest, project, 'Main')
@@ -118,6 +118,7 @@ artifacts {
 // TODO: call the "dist" task instead, once we need to publish kotlin-stdlib-common.jar with the compiler distribution
 task distCommon(type: Copy) {
     from(jar)
+    from(sourcesJar)
     into "$distDir/common"
     rename "-${java.util.regex.Pattern.quote(version)}", ''
 }

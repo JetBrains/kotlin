@@ -32,7 +32,7 @@ object JavaToKotlinClassMap : PlatformToKotlinClassMap {
         FunctionClassDescriptor.Kind.KSuspendFunction.packageFqName.toString() + "." + FunctionClassDescriptor.Kind.KSuspendFunction.classNamePrefix
 
     private val FUNCTION_N_CLASS_ID = ClassId.topLevel(FqName("kotlin.jvm.functions.FunctionN"))
-    private val FUNCTION_N_FQ_NAME = FUNCTION_N_CLASS_ID.asSingleFqName()
+    val FUNCTION_N_FQ_NAME = FUNCTION_N_CLASS_ID.asSingleFqName()
     private val K_FUNCTION_CLASS_ID = ClassId.topLevel(FqName("kotlin.reflect.KFunction"))
 
     private val javaToKotlin = HashMap<FqNameUnsafe, ClassId>()

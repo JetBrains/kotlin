@@ -16,8 +16,8 @@
 
 package org.jetbrains.kotlin.psi
 
-import com.intellij.psi.LiteralTextEscaper
 import com.intellij.openapi.util.TextRange
+import com.intellij.psi.LiteralTextEscaper
 import gnu.trove.TIntArrayList
 import org.jetbrains.kotlin.psi.psiUtil.getContentRange
 import org.jetbrains.kotlin.psi.psiUtil.isSingleQuoted
@@ -41,6 +41,9 @@ class KotlinStringLiteralTextEscaper(host: KtStringTemplateExpression) : Literal
                 is KtEscapeStringTemplateEntry -> {
                     if (!rangeInsideHost.contains(childRange)) {
                         //don't allow injection if its range starts or ends inside escaped sequence
+                        //but still process offsets for the already decoded part
+                        sourceOffsetsList.add(sourceOffset)
+                        sourceOffsets = sourceOffsetsList.toNativeArray()
                         return false
                     }
                     val unescaped = child.unescapedValue

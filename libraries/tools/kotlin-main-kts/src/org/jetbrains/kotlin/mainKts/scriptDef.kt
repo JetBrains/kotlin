@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.mainKts
 
+import org.jetbrains.kotlin.mainKts.impl.FilesAndIvyResolver
 import org.jetbrains.kotlin.script.util.DependsOn
-import org.jetbrains.kotlin.script.util.FilesAndIvyResolver
 import org.jetbrains.kotlin.script.util.Repository
 import java.io.File
 import kotlin.script.dependencies.ScriptContents
@@ -16,20 +16,19 @@ import kotlin.script.experimental.api.*
 import kotlin.script.experimental.jvm.JvmDependency
 import kotlin.script.experimental.jvm.compat.mapLegacyDiagnosticSeverity
 import kotlin.script.experimental.jvm.compat.mapLegacyScriptPosition
-import kotlin.script.experimental.jvm.dependenciesFromCurrentContext
+import kotlin.script.experimental.jvm.dependenciesFromClassContext
 import kotlin.script.experimental.jvm.jvm
 
 @Suppress("unused")
-@KotlinScript(extension = "main.kts", compilationConfiguration = MainKtsScriptDefinition::class)
+@KotlinScript(fileExtension = "main.kts", compilationConfiguration = MainKtsScriptDefinition::class)
 abstract class MainKtsScript(val args: Array<String>)
 
 object MainKtsScriptDefinition : ScriptCompilationConfiguration(
     {
         defaultImports(DependsOn::class, Repository::class)
         jvm {
-            dependenciesFromCurrentContext("kotlin-main-kts")
+            dependenciesFromClassContext(MainKtsScriptDefinition::class, "kotlin-main-kts")
         }
-        // variant: dependencies(collectDependenciesFromCurrentContext(...
         refineConfiguration {
             onAnnotations(DependsOn::class, Repository::class, handler = MainKtsConfigurator())
         }

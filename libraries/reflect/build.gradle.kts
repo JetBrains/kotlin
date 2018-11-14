@@ -39,6 +39,7 @@ val libsDir = property("libsDir")
 
 
 val proguardDeps by configurations.creating
+val proguardAdditionalInJars by configurations.creating
 val shadows by configurations.creating {
     isTransitive = false
 }
@@ -46,10 +47,10 @@ configurations.getByName("compileOnly").extendsFrom(shadows)
 val mainJar by configurations.creating
 
 dependencies {
-    compile(projectDist(":kotlin-stdlib"))
+    compile(project(":kotlin-stdlib"))
 
     proguardDeps(project(":kotlin-stdlib"))
-    proguardDeps(project(":kotlin-annotations-jvm"))
+    proguardAdditionalInJars(project(":kotlin-annotations-jvm"))
     proguardDeps(files(firstFromJavaHomeThatExists("jre/lib/rt.jar", "../Classes/classes.jar", jdkHome = File(property("JDK_16") as String))))
 
     shadows(project(":kotlin-reflect-api"))
@@ -108,7 +109,7 @@ class KotlinModuleShadowTransformer(private val logger: Logger) : Transformer {
 val reflectShadowJar by task<ShadowJar> {
     classifier = "shadow"
     version = null
-    callGroovy("manifestAttributes", manifest, project, "Main", true)
+    callGroovy("manifestAttributes", manifest, project, "Main" /*true*/)
 
     from(project(":core:descriptors.jvm").mainSourceSet.resources) {
         include("META-INF/services/**")
@@ -146,6 +147,7 @@ val proguard by task<ProGuardTask> {
     outputs.file(proguardOutput)
 
     injars(mapOf("filter" to "!META-INF/versions/**"), stripMetadata.outputs.files)
+    injars(mapOf("filter" to "!META-INF/**"), proguardAdditionalInJars)
     outjars(proguardOutput)
 
     libraryjars(mapOf("filter" to "!META-INF/versions/**"), proguardDeps)
@@ -189,6 +191,16 @@ val sourcesJar = sourcesJar(sourceSet = null) {
 val result by task<Jar> {
     dependsOn(proguard)
     from(zipTree(file(proguardOutput)))
+//    from(zipTree(reflectShadowJar.archivePath)) {
+//        include("META-INF/versions/**")
+//    }
+    callGroovy("manifestAttributes", manifest, project, "Main" /*true*/)
+}
+
+val modularJar by task<Jar> {
+    dependsOn(proguard)
+    classifier = "modular"
+    from(zipTree(file(proguardOutput)))
     from(zipTree(reflectShadowJar.archivePath)) {
         include("META-INF/versions/**")
     }
@@ -206,12 +218,13 @@ artifacts {
     val artifactJar = mapOf(
         "file" to result.outputs.files.single(),
         "builtBy" to result,
-        "name" to property("archivesBaseName")
+        "name" to base.archivesBaseName
     )
 
     add(mainJar.name, artifactJar)
     add("runtime", artifactJar)
     add("archives", artifactJar)
+    add("archives", modularJar)
 }
 
 javadocJar()

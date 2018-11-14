@@ -54,6 +54,7 @@ class CodegenTestsOnAndroidRunner private constructor(private val pathManager: P
                     rootSuite.addTest(this)
                 }
 
+                renameReport()
                 enableD8(true)
                 runTestsOnEmulator(gradleRunner, TestSuite("D8")).apply {
                     (0 until this.countTestCases()).forEach {
@@ -62,20 +63,16 @@ class CodegenTestsOnAndroidRunner private constructor(private val pathManager: P
                     }
                     rootSuite.addTest(this)
                 }
-            }
-            catch (e: RuntimeException) {
+            } catch (e: RuntimeException) {
                 e.printStackTrace()
                 throw e
-            }
-            finally {
+            } finally {
                 emulator.stopEmulator()
             }
-        }
-        catch (e: RuntimeException) {
+        } catch (e: RuntimeException) {
             e.printStackTrace()
             throw e
-        }
-        finally {
+        } finally {
             emulator.finishEmulatorProcesses()
         }
 
@@ -87,24 +84,28 @@ class CodegenTestsOnAndroidRunner private constructor(private val pathManager: P
         val lines = file.readLines().map {
             if (it.startsWith("android.enableD8=")) {
                 "android.enableD8=$enable"
-            }
-            else it
+            } else it
         }
         file.writeText(lines.joinToString("\n"))
     }
 
     private fun processReport(suite: TestSuite, resultOutput: String) {
-        val reportFolder = pathManager.tmpFolder + "/build/outputs/androidTest-results/connected"
+        val reportFolder = reportFolder()
         try {
             val testCases = parseSingleReportInFolder(reportFolder)
             testCases.forEach { aCase -> suite.addTest(aCase) }
             Assert.assertNotEquals("There is no test results in report", 0, testCases.size.toLong())
+        } catch (e: Exception) {
+            throw RuntimeException("Can't parse test results in $reportFolder\n$resultOutput", e)
         }
-        catch (e: Exception) {
-            throw RuntimeException("Can't parse test results in " + reportFolder + "\n" + resultOutput)
-        }
-
     }
+
+    private fun renameReport() {
+        val reportFolder = File(reportFolder())
+        reportFolder.renameTo(File(reportFolder.parentFile, reportFolder.name + "_dex"))
+    }
+
+    private fun reportFolder() = pathManager.tmpFolder + "/build/test/results/connected/"
 
     private fun runTestsOnEmulator(gradleRunner: GradleRunner, suite: TestSuite): TestSuite {
         val platformPrefixProperty = System.setProperty(PlatformUtils.PLATFORM_PREFIX_KEY, "Idea")
@@ -112,12 +113,10 @@ class CodegenTestsOnAndroidRunner private constructor(private val pathManager: P
             val resultOutput = gradleRunner.connectedDebugAndroidTest()
             processReport(suite, resultOutput)
             return suite
-        }
-        finally {
+        } finally {
             if (platformPrefixProperty != null) {
                 System.setProperty(PlatformUtils.PLATFORM_PREFIX_KEY, platformPrefixProperty)
-            }
-            else {
+            } else {
                 System.clearProperty(PlatformUtils.PLATFORM_PREFIX_KEY)
             }
         }
@@ -176,8 +175,7 @@ class CodegenTestsOnAndroidRunner private constructor(private val pathManager: P
 
                         }
                     }
-                }
-                else {
+                } else {
                     object : TestCase(name) {
                         @Throws(Throwable::class)
                         override fun runTest() {

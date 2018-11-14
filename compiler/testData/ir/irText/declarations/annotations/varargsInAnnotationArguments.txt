@@ -92,9 +92,9 @@ FILE fqName:<root> fileName:/varargsInAnnotationArguments.kt
           CONST Int type=kotlin.Int value=3
       CALL 'constructor A2(vararg String)' type=A2 origin=null
         xs: VARARG type=kotlin.Array<out kotlin.String> varargElementType=kotlin.String
-          CONST String type=kotlin.String value=a
-          CONST String type=kotlin.String value=b
-          CONST String type=kotlin.String value=c
+          CONST String type=kotlin.String value="a"
+          CONST String type=kotlin.String value="b"
+          CONST String type=kotlin.String value="c"
       CALL 'constructor AA(vararg A1)' type=AA origin=null
         xs: VARARG type=kotlin.Array<out A1> varargElementType=A1
           CALL 'constructor A1(vararg Int)' type=A1 origin=null
@@ -113,9 +113,9 @@ FILE fqName:<root> fileName:/varargsInAnnotationArguments.kt
           CONST Int type=kotlin.Int value=3
       CALL 'constructor A2(vararg String)' type=A2 origin=null
         xs: VARARG type=kotlin.Array<out kotlin.String> varargElementType=kotlin.String
-          CONST String type=kotlin.String value=a
-          CONST String type=kotlin.String value=b
-          CONST String type=kotlin.String value=c
+          CONST String type=kotlin.String value="a"
+          CONST String type=kotlin.String value="b"
+          CONST String type=kotlin.String value="c"
       CALL 'constructor AA(vararg A1)' type=AA origin=null
         xs: VARARG type=kotlin.Array<out A1> varargElementType=A1
           CALL 'constructor A1(vararg Int)' type=A1 origin=null
@@ -134,9 +134,9 @@ FILE fqName:<root> fileName:/varargsInAnnotationArguments.kt
           CONST Int type=kotlin.Int value=3
       CALL 'constructor A2(vararg String)' type=A2 origin=null
         xs: VARARG type=kotlin.Array<out kotlin.String> varargElementType=kotlin.String
-          CONST String type=kotlin.String value=a
-          CONST String type=kotlin.String value=b
-          CONST String type=kotlin.String value=c
+          CONST String type=kotlin.String value="a"
+          CONST String type=kotlin.String value="b"
+          CONST String type=kotlin.String value="c"
       CALL 'constructor AA(vararg A1)' type=AA origin=null
         xs: VARARG type=kotlin.Array<out A1> varargElementType=A1
           CALL 'constructor A1(vararg Int)' type=A1 origin=null

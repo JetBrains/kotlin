@@ -1,0 +1,11 @@
+@kotlin.Metadata
+public class Test {
+    private @org.jetbrains.annotations.NotNull field internalProperty: java.lang.String
+    private @org.jetbrains.annotations.NotNull field protectedProperty: java.lang.String
+    private @org.jetbrains.annotations.NotNull field publicProperty: java.lang.String
+    public method <init>(): void
+    public final @org.jetbrains.annotations.NotNull method getInternalProperty$test_module(): java.lang.String
+    protected final @org.jetbrains.annotations.NotNull method getProtectedProperty(): java.lang.String
+    public final @org.jetbrains.annotations.NotNull method getPublicProperty(): java.lang.String
+    public final method update(p0: int): void
+}

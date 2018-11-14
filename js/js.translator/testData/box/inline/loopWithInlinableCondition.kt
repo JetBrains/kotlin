@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 1122
+// EXPECTED_REACHABLE_NODES: 1288
 /*
 Modified test case from issue: https://youtrack.jetbrains.com/issue/KT-24542
  */

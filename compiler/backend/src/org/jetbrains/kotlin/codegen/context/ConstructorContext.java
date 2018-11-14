@@ -21,26 +21,45 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.codegen.OwnerKind;
 import org.jetbrains.kotlin.codegen.StackValue;
 import org.jetbrains.kotlin.codegen.binding.MutableClosure;
+import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
+import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor;
-
-import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE;
+import org.jetbrains.kotlin.resolve.jvm.AsmTypes;
+import org.jetbrains.kotlin.types.SimpleType;
+import org.jetbrains.org.objectweb.asm.Type;
 
 public class ConstructorContext extends MethodContext {
-    private static final StackValue LOCAL_1 = StackValue.local(1, OBJECT_TYPE);
     private boolean thisInitialized = false;
+    private final KotlinTypeMapper kotlinTypeMapper;
 
     public ConstructorContext(
             @NotNull ConstructorDescriptor contextDescriptor,
             @NotNull OwnerKind kind,
             @NotNull CodegenContext parent,
-            @Nullable MutableClosure closure
+            @Nullable MutableClosure closure,
+            @NotNull KotlinTypeMapper kotlinTypeMapper
     ) {
         super(contextDescriptor, kind, parent, closure, false);
+        this.kotlinTypeMapper = kotlinTypeMapper;
     }
 
     @Override
     public StackValue getOuterExpression(StackValue prefix, boolean ignoreNoOuter) {
-        StackValue stackValue = closure != null && closure.getCaptureThis() != null ? LOCAL_1 : null;
+        ClassDescriptor capturedOuterClassDescriptor = closure != null ? closure.getCapturedOuterClassDescriptor() : null;
+        StackValue stackValue;
+        if (capturedOuterClassDescriptor != null) {
+            if (capturedOuterClassDescriptor.isInline()) {
+                SimpleType outerClassKotlinType = capturedOuterClassDescriptor.getDefaultType();
+                Type outerClassType = kotlinTypeMapper.mapType(capturedOuterClassDescriptor);
+                stackValue = StackValue.local(1, outerClassType, outerClassKotlinType);
+            }
+            else {
+                stackValue = StackValue.local(1, AsmTypes.OBJECT_TYPE);
+            }
+        }
+        else {
+            stackValue = null;
+        }
         if (!ignoreNoOuter && stackValue == null) {
             throw new UnsupportedOperationException("Don't know how to generate outer expression for " + getContextDescriptor());
         }

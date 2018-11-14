@@ -32,10 +32,9 @@ import org.jetbrains.kotlin.android.quickfix.AbstractAndroidQuickFixMultiFileTes
 import org.jetbrains.kotlin.android.synthetic.test.AbstractAndroidBoxTest
 import org.jetbrains.kotlin.android.synthetic.test.AbstractAndroidBytecodeShapeTest
 import org.jetbrains.kotlin.android.synthetic.test.AbstractAndroidSyntheticPropertyDescriptorTest
-import org.jetbrains.kotlin.checkers.AbstractJavaAgainstKotlinBinariesCheckerTest
-import org.jetbrains.kotlin.checkers.AbstractJavaAgainstKotlinSourceCheckerTest
-import org.jetbrains.kotlin.checkers.AbstractJsCheckerTest
-import org.jetbrains.kotlin.checkers.AbstractPsiCheckerTest
+import org.jetbrains.kotlin.asJava.classes.AbstractUltraLightClassLoadingTest
+import org.jetbrains.kotlin.asJava.classes.AbstractUltraLightClassSanityTest
+import org.jetbrains.kotlin.checkers.*
 import org.jetbrains.kotlin.findUsages.AbstractFindUsagesTest
 import org.jetbrains.kotlin.findUsages.AbstractKotlinFindUsagesWithLibraryTest
 import org.jetbrains.kotlin.formatter.AbstractFormatterTest
@@ -133,6 +132,7 @@ import org.jetbrains.kotlin.idea.scratch.AbstractScratchRunActionTest
 import org.jetbrains.kotlin.idea.script.AbstractScriptConfigurationCompletionTest
 import org.jetbrains.kotlin.idea.script.AbstractScriptConfigurationHighlightingTest
 import org.jetbrains.kotlin.idea.script.AbstractScriptConfigurationNavigationTest
+import org.jetbrains.kotlin.idea.script.AbstractScriptDefinitionsOrderTest
 import org.jetbrains.kotlin.idea.slicer.AbstractSlicerLeafGroupingTest
 import org.jetbrains.kotlin.idea.slicer.AbstractSlicerNullnessGroupingTest
 import org.jetbrains.kotlin.idea.slicer.AbstractSlicerTreeTest
@@ -185,6 +185,11 @@ fun main(args: Array<String>) {
         }
 
         testClass<AbstractJavaAgainstKotlinSourceCheckerTest> {
+            model("kotlinAndJavaChecker/javaAgainstKotlin")
+            model("kotlinAndJavaChecker/javaWithKotlin")
+        }
+
+        testClass<AbstractJavaAgainstKotlinSourceCheckerWithUltraLightTest> {
             model("kotlinAndJavaChecker/javaAgainstKotlin")
             model("kotlinAndJavaChecker/javaWithKotlin")
         }
@@ -601,7 +606,7 @@ fun main(args: Array<String>) {
         }
 
         testClass<AbstractJvmOptimizeImportsTest> {
-            model("editor/optimizeImports/jvm", pattern = KT_WITHOUT_DOTS_IN_NAME)
+            model("editor/optimizeImports/jvm", pattern = KT_OR_KTS_WITHOUT_DOTS_IN_NAME)
             model("editor/optimizeImports/common", pattern = KT_WITHOUT_DOTS_IN_NAME)
         }
         testClass<AbstractJsOptimizeImportsTest> {
@@ -766,6 +771,10 @@ fun main(args: Array<String>) {
             model("script/definition/completion", extension = null, recursive = false)
         }
 
+        testClass<AbstractScriptDefinitionsOrderTest> {
+            model("script/definition/order", extension = null, recursive = false)
+        }
+
         testClass<AbstractNameSuggestionProviderTest> {
             model("refactoring/nameSuggestionProvider")
         }
@@ -818,6 +827,13 @@ fun main(args: Array<String>) {
 
         testClass<AbstractIdeLightClassTest> {
             model("asJava/lightClasses", excludeDirs = listOf("delegation"), pattern = KT_OR_KTS_WITHOUT_DOTS_IN_NAME)
+        }
+
+        testClass<AbstractUltraLightClassSanityTest> {
+            model("asJava/lightClasses", pattern = KT_OR_KTS)
+        }
+        testClass<AbstractUltraLightClassLoadingTest> {
+            model("asJava/ultraLightClasses", pattern = KT_OR_KTS)
         }
 
         testClass<AbstractIdeCompiledLightClassTest> {
@@ -940,21 +956,22 @@ fun main(args: Array<String>) {
         testClass<AbstractIncrementalJpsTest> {
             model("incremental/multiModule/common", extension = null, excludeParentDirs = true)
             model("incremental/multiModule/jvm", extension = null, excludeParentDirs = true)
+            model("incremental/multiModule/multiplatform/custom", extension = null, excludeParentDirs = true)
             model("incremental/pureKotlin", extension = null, recursive = false)
             model("incremental/withJava", extension = null, excludeParentDirs = true)
             model("incremental/inlineFunCallSite", extension = null, excludeParentDirs = true)
             model("incremental/classHierarchyAffected", extension = null, excludeParentDirs = true)
         }
 
-        actualizeMppJpsIncTestCaseDirs(testDataRoot, "incremental/multiplatform/multiModule")
+        actualizeMppJpsIncTestCaseDirs(testDataRoot, "incremental/multiModule/multiplatform/withGeneratedContent")
 
         testClass<AbstractIncrementalJsJpsTest> {
             model("incremental/multiModule/common", extension = null, excludeParentDirs = true)
         }
 
-        testClass<AbstractMultiplatformJpsTest> {
+        testClass<AbstractMultiplatformJpsTestWithGeneratedContent> {
             model(
-                "incremental/multiplatform/multiModule", extension = null, excludeParentDirs = true,
+                "incremental/multiModule/multiplatform/withGeneratedContent", extension = null, excludeParentDirs = true,
                 testClassName = "MultiplatformMultiModule", recursive = true
             )
         }
@@ -1020,10 +1037,10 @@ fun main(args: Array<String>) {
         }
 
         testClass<AbstractIncrementalMultiplatformJvmCompilerRunnerTest> {
-            model("incremental/multiplatform/singleModule", extension = null, excludeParentDirs = true)
+            model("incremental/singleModule/common", extension = null, excludeParentDirs = true)
         }
         testClass<AbstractIncrementalMultiplatformJsCompilerRunnerTest> {
-            model("incremental/multiplatform/singleModule", extension = null, excludeParentDirs = true)
+            model("incremental/singleModule/common", extension = null, excludeParentDirs = true)
         }
     }
 

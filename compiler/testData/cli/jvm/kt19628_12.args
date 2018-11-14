@@ -1,3 +1,5 @@
 $TESTDATA_DIR$/kt19628_12.kt
 -language-version
 1.2
+-d
+$TEMP_DIR$

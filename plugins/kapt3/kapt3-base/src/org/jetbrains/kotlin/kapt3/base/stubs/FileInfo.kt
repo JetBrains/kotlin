@@ -21,5 +21,5 @@ class FileInfo(private val lineInfo: LineInfoMap, private val signatureInfo: Map
     }
 
     fun getPositionFor(fqName: String) = lineInfo[fqName]
-    fun getMethodDescriptor(decl: JCTree.JCMethodDecl) = signatureInfo[decl.getJavacSignature()]
+    fun getMethodDescriptor(declaration: JCTree.JCMethodDecl) = signatureInfo[declaration.getJavacSignature()]
 }

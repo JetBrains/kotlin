@@ -6,11 +6,19 @@
 package org.jetbrains.kotlin.ir.util
 
 import org.jetbrains.kotlin.ir.declarations.IrTypeParametersContainer
+import org.jetbrains.kotlin.ir.expressions.IrCall
+import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.IrTypeProjection
+import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
+import org.jetbrains.kotlin.ir.types.impl.IrTypeProjectionImpl
+import org.jetbrains.kotlin.ir.types.impl.originalKotlinType
 
 class DeepCopyTypeRemapper(
     private val symbolRemapper: SymbolRemapper
 ) : TypeRemapper {
+
+    lateinit var deepCopy: DeepCopyIrTreeWithSymbols
 
     override fun enterScope(irTypeParametersContainer: IrTypeParametersContainer) {
         // TODO
@@ -20,6 +28,26 @@ class DeepCopyTypeRemapper(
         // TODO
     }
 
-    override fun remapType(type: IrType): IrType = type // TODO
+    // TODO This is a hack
+    override fun remapType(type: IrType): IrType {
+        if (type !is IrSimpleType) return type
+
+        val arguments = type.arguments.map {
+            if (it is IrTypeProjection) {
+                IrTypeProjectionImpl(this.remapType(it.type), it.variance)
+            } else {
+                it
+            }
+        }
+
+        val annotations = type.annotations.map { it.transform(deepCopy, null) as IrCall }
+
+        return IrSimpleTypeImpl(
+            type.originalKotlinType,
+            symbolRemapper.getReferencedClassifier(type.classifier),
+            type.hasQuestionMark,
+            arguments,
+            annotations)
+    }
 
 }

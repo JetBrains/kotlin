@@ -198,6 +198,11 @@ public class WriteSignatureTestGenerated extends AbstractWriteSignatureTest {
         public void testPropertyReferenceGet() throws Exception {
             runTest("compiler/testData/writeSignature/callableReference/propertyReferenceGet.kt");
         }
+
+        @TestMetadata("suspendFunctionReference.kt")
+        public void testSuspendFunctionReference() throws Exception {
+            runTest("compiler/testData/writeSignature/callableReference/suspendFunctionReference.kt");
+        }
     }
 
     @TestMetadata("compiler/testData/writeSignature/constructor")

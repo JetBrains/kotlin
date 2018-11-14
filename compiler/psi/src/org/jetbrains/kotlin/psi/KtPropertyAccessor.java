@@ -24,6 +24,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.stubs.KotlinPropertyAccessorStub;
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes;
+import org.jetbrains.kotlin.util.AstLoadingFilter;
 
 import java.util.Collections;
 import java.util.List;
@@ -86,7 +87,30 @@ public class KtPropertyAccessor extends KtDeclarationStub<KotlinPropertyAccessor
     @Nullable
     @Override
     public KtExpression getBodyExpression() {
-        return findChildByClass(KtExpression.class);
+        KotlinPropertyAccessorStub stub = getStub();
+        if (stub != null && !stub.hasBody()) {
+            return null;
+        }
+
+        return AstLoadingFilter.forceAllowTreeLoading(this.getContainingFile(), () ->
+                findChildByClass(KtExpression.class)
+        );
+    }
+
+    @Nullable
+    @Override
+    public KtBlockExpression getBodyBlockExpression() {
+        KotlinPropertyAccessorStub stub = getStub();
+        if (stub != null && !(stub.hasBlockBody() && stub.hasBody())) {
+            return null;
+        }
+
+        KtExpression bodyExpression = findChildByClass(KtExpression.class);
+        if (bodyExpression instanceof KtBlockExpression) {
+            return (KtBlockExpression) bodyExpression;
+        }
+
+        return null;
     }
 
     @Override

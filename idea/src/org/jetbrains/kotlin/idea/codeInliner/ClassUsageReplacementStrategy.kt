@@ -19,6 +19,9 @@ package org.jetbrains.kotlin.idea.codeInliner
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.core.replaced
+import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
+import org.jetbrains.kotlin.idea.references.mainReference
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelectorOrThis
 
@@ -55,13 +58,25 @@ class ClassUsageReplacementStrategy(
             is KtCallExpression -> {
                 if (usage != parent.calleeExpression) return null
                 when {
-//                    constructorReplacementStrategy != null -> return constructorReplacementStrategy.createReplacer(usage)
-                    constructorReplacementStrategy == null && typeReplacement != null -> return { replaceConstructorCallWithOtherTypeConstruction(parent) }
+                    constructorReplacementStrategy == null && typeReplacement != null -> return {
+                        replaceConstructorCallWithOtherTypeConstruction(parent)
+                    }
                     else -> return null
                 }
             }
 
-            else -> return null //TODO
+            else -> {
+                if (typeReplacement != null) {
+                    val fqNameStr = typeReplacement.text
+                    val fqName = FqName(fqNameStr)
+
+                    return {
+                        usage.mainReference.bindToFqName(fqName, KtSimpleNameReference.ShorteningMode.FORCED_SHORTENING) as? KtElement
+                    }
+                }
+
+                return null
+            }
         }
     }
 

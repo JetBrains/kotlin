@@ -15,6 +15,10 @@ class LambdaReturnValueHintsTest : KotlinLightCodeInsightFixtureTestCase() {
     fun check(text: String) {
         myFixture.configureByText("A.kt", text.trimIndent())
         myFixture.testInlays()
+
+        if (myFixture.editor.caretModel.offset != 0) {
+            myFixture.checkHintType(HintType.LAMBDA_RETURN_EXPRESSION)
+        }
     }
 
     fun testSimple() {
@@ -22,7 +26,7 @@ class LambdaReturnValueHintsTest : KotlinLightCodeInsightFixtureTestCase() {
             """
             val x = run {
                 println("foo")
-                <hint text="^run" />1
+                <caret><hint text="^run" />1
             }
             """
         )
@@ -48,6 +52,17 @@ class LambdaReturnValueHintsTest : KotlinLightCodeInsightFixtureTestCase() {
                 } else {
                     <hint text="^run" />0
                 }
+            }
+            """
+        )
+    }
+
+    fun testOneLineIf() {
+        check(
+            """
+            val x = run {
+                println(1)
+                <caret><hint text="^run"/>if (true) 1 else { 0 }
             }
             """
         )
@@ -173,6 +188,17 @@ class LambdaReturnValueHintsTest : KotlinLightCodeInsightFixtureTestCase() {
                     val files: Any? = null
                     <hint text="^run"/>run@12
                 }
+            }
+            """
+        )
+    }
+
+    fun testReturnFunctionType() {
+        check(
+            """
+            fun test() = run {
+                val a = 1
+                <hint text="^run"/>{ a }
             }
             """
         )

@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.parameterInfo
 import com.intellij.codeInsight.hints.InlayInfo
 import com.intellij.psi.PsiWhiteSpace
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.intentions.branchedTransformations.isOneLiner
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
@@ -15,7 +16,15 @@ import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsResultOfLambda
 
 fun provideLambdaReturnValueHints(expression: KtExpression): List<InlayInfo> {
-    if (expression is KtIfExpression || expression is KtWhenExpression || expression is KtBlockExpression) {
+    if (expression is KtWhenExpression || expression is KtBlockExpression) {
+        return emptyList()
+    }
+
+    if (expression is KtIfExpression && !expression.isOneLiner()) {
+        return emptyList()
+    }
+
+    if (expression.getParentOfType<KtIfExpression>(true)?.isOneLiner() == true) {
         return emptyList()
     }
 

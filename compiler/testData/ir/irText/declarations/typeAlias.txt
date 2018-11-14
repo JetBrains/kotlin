@@ -6,7 +6,7 @@ FILE fqName:<root> fileName:/typeAlias.kt
         annotations:
           CALL 'constructor Suppress(vararg String)' type=kotlin.Suppress origin=null
             names: VARARG type=kotlin.Array<out kotlin.String> varargElementType=kotlin.String
-              CONST String type=kotlin.String value=TOPLEVEL_TYPEALIASES_ONLY
+              CONST String type=kotlin.String value="TOPLEVEL_TYPEALIASES_ONLY"
   CLASS CLASS name:C modality:FINAL visibility:public flags: superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:C flags:
     CONSTRUCTOR visibility:public <> () returnType:C flags:primary
@@ -17,7 +17,7 @@ FILE fqName:<root> fileName:/typeAlias.kt
       annotations:
         CALL 'constructor Suppress(vararg String)' type=kotlin.Suppress origin=null
           names: VARARG type=kotlin.Array<out kotlin.String> varargElementType=kotlin.String
-            CONST String type=kotlin.String value=TOPLEVEL_TYPEALIASES_ONLY
+            CONST String type=kotlin.String value="TOPLEVEL_TYPEALIASES_ONLY"
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:
       overridden:
         FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:

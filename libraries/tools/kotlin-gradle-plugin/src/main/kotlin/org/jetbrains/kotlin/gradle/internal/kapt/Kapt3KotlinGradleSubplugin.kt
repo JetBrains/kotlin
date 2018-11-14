@@ -24,10 +24,10 @@ import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin.Companion.getKa
 import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin.Companion.getKaptGeneratedSourcesDir
 import org.jetbrains.kotlin.gradle.internal.Kapt3KotlinGradleSubplugin.Companion.KAPT_WORKER_DEPENDENCIES_CONFIGURATION_NAME
 import org.jetbrains.kotlin.gradle.model.builder.KaptModelBuilder
-import org.jetbrains.kotlin.gradle.tasks.isWorkerAPISupported
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.tasks.CompilerPluginOptions
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jetbrains.kotlin.gradle.tasks.isWorkerAPISupported
 import org.jetbrains.kotlin.gradle.utils.isGradleVersionAtLeast
 import java.io.ByteArrayOutputStream
 import java.io.File
@@ -42,15 +42,15 @@ class Kapt3GradleSubplugin @Inject internal constructor(private val registry: To
 
         @JvmStatic
         fun getKaptGeneratedClassesDir(project: Project, sourceSetName: String) =
-                File(project.project.buildDir, "tmp/kapt3/classes/$sourceSetName")
+            File(project.project.buildDir, "tmp/kapt3/classes/$sourceSetName")
 
         @JvmStatic
         fun getKaptGeneratedSourcesDir(project: Project, sourceSetName: String) =
-                File(project.project.buildDir, "generated/source/kapt/$sourceSetName")
+            File(project.project.buildDir, "generated/source/kapt/$sourceSetName")
 
         @JvmStatic
         fun getKaptGeneratedKotlinSourcesDir(project: Project, sourceSetName: String) =
-                File(project.project.buildDir, "generated/source/kaptKotlin/$sourceSetName")
+            File(project.project.buildDir, "generated/source/kaptKotlin/$sourceSetName")
     }
 
     override fun apply(project: Project) {
@@ -74,9 +74,10 @@ abstract class KaptVariantData<T>(val variantData: T) {
     abstract fun addJavaSourceFoldersToModel(generatedFilesDir: File)
     abstract val annotationProcessorOptions: Map<String, String>?
     abstract fun registerGeneratedJavaSource(
-            project: Project,
-            kaptTask: KaptTask,
-            javaTask: AbstractCompile)
+        project: Project,
+        kaptTask: KaptTask,
+        javaTask: AbstractCompile
+    )
 
     open val annotationProcessorOptionProviders: List<*>
         get() = emptyList<Any>()
@@ -127,12 +128,15 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
             val configurationName = Kapt3KotlinGradleSubplugin.getKaptConfigurationName(sourceSetName)
 
             project.configurations.findByName(configurationName)?.let { return it }
-            val aptConfiguration = project.configurations.create(configurationName)
+            val aptConfiguration = project.configurations.create(configurationName).apply {
+                // Should not be available for consumption from other projects during variant-aware dependency resolution:
+                isCanBeConsumed = false
+            }
 
             if (aptConfiguration.name != Kapt3KotlinGradleSubplugin.MAIN_KAPT_CONFIGURATION_NAME) {
                 // The main configuration can be created after the current one. We should handle this case
                 val mainConfiguration = findMainKaptConfiguration(project)
-                        ?: createAptConfigurationIfNeeded(project, SourceSet.MAIN_SOURCE_SET_NAME)
+                    ?: createAptConfigurationIfNeeded(project, SourceSet.MAIN_SOURCE_SET_NAME)
 
                 aptConfiguration.extendsFrom(mainConfiguration)
             }
@@ -198,8 +202,7 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
             }
 
             kaptVariantData.name
-        }
-        else {
+        } else {
             if (kotlinCompilation == null) error("In non-Android projects, Kotlin compilation should not be null")
 
             handleSourceSet(kotlinCompilation.compilationName)
@@ -208,11 +211,9 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
 
         val kaptExtension = project.extensions.getByType(KaptExtension::class.java)
 
-        val nonEmptyKaptConfigurations = kaptConfigurations.filter { it.dependencies.isNotEmpty() }
-
         val context = Kapt3SubpluginContext(
             project, kotlinCompile, javaCompile,
-            kaptVariantData, sourceSetName, kotlinCompilation, kaptExtension, nonEmptyKaptConfigurations
+            kaptVariantData, sourceSetName, kotlinCompilation, kaptExtension, kaptConfigurations
         )
 
         val kaptGenerateStubsTask = context.createKaptGenerateStubsTask()
@@ -406,8 +407,9 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
 
     private fun Kapt3SubpluginContext.createKaptGenerateStubsTask(): KaptGenerateStubsTask {
         val kaptTask = project.tasks.create(
-                getKaptTaskName("kaptGenerateStubs"),
-                KaptGenerateStubsTask::class.java)
+            getKaptTaskName("kaptGenerateStubs"),
+            KaptGenerateStubsTask::class.java
+        )
 
         kaptTask.sourceSetName = sourceSetName
         kaptTask.kotlinCompileTask = kotlinCompile
@@ -417,7 +419,7 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
         kaptTask.destinationDir = getKaptIncrementalDataDir()
         kaptTask.mapClasspath { kotlinCompile.classpath }
         kaptTask.generatedSourcesDir = sourcesOutputDir
-        mapKotlinTaskProperties(project, kaptTask)
+        PropertiesProvider(project).mapKotlinTaskProperties(kaptTask)
 
         kaptTask.kaptClasspathConfigurations = kaptClasspathConfigurations
         buildAndAddOptionsTo(kaptTask, kaptTask.pluginOptions, aptMode = "stubs")

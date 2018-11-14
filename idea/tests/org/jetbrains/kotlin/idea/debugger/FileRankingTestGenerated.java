@@ -29,6 +29,11 @@ public class FileRankingTestGenerated extends AbstractFileRankingTest {
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/debugger/fileRanking"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
     }
 
+    @TestMetadata("anonymousClasses.kt")
+    public void testAnonymousClasses() throws Exception {
+        runTest("idea/testData/debugger/fileRanking/anonymousClasses.kt");
+    }
+
     @TestMetadata("differentFlags.kt")
     public void testDifferentFlags() throws Exception {
         runTest("idea/testData/debugger/fileRanking/differentFlags.kt");

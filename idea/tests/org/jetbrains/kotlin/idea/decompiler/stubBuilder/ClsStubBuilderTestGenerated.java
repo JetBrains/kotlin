@@ -34,9 +34,24 @@ public class ClsStubBuilderTestGenerated extends AbstractClsStubBuilderTest {
         runTest("idea/testData/decompiler/stubBuilder/AnnotatedFlexibleTypes/");
     }
 
+    @TestMetadata("AnnotatedParameterInEnumConstructor")
+    public void testAnnotatedParameterInEnumConstructor() throws Exception {
+        runTest("idea/testData/decompiler/stubBuilder/AnnotatedParameterInEnumConstructor/");
+    }
+
+    @TestMetadata("AnnotatedParameterInInnerClassConstructor")
+    public void testAnnotatedParameterInInnerClassConstructor() throws Exception {
+        runTest("idea/testData/decompiler/stubBuilder/AnnotatedParameterInInnerClassConstructor/");
+    }
+
     @TestMetadata("AnnotationClass")
     public void testAnnotationClass() throws Exception {
         runTest("idea/testData/decompiler/stubBuilder/AnnotationClass/");
+    }
+
+    @TestMetadata("AnnotationValues")
+    public void testAnnotationValues() throws Exception {
+        runTest("idea/testData/decompiler/stubBuilder/AnnotationValues/");
     }
 
     @TestMetadata("Annotations")

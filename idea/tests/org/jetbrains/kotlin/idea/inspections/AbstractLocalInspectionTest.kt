@@ -31,6 +31,7 @@ import junit.framework.TestCase
 import org.jetbrains.kotlin.idea.test.DirectiveBasedActionUtils
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.configureCompilerOptions
+import org.jetbrains.kotlin.idea.test.rollbackCompilerOptions
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
@@ -90,35 +91,41 @@ abstract class AbstractLocalInspectionTest : KotlinLightCodeInsightFixtureTestCa
         val fileText = FileUtil.loadFile(mainFile, true)
         TestCase.assertTrue("\"<caret>\" is missing in file \"$mainFile\"", fileText.contains("<caret>"))
 
-        configureCompilerOptions(fileText, project, module)
+        val configured = configureCompilerOptions(fileText, project, module)
 
-        val minJavaVersion = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// MIN_JAVA_VERSION: ")
-        if (minJavaVersion != null && !SystemInfo.isJavaVersionAtLeast(minJavaVersion)) return
+        try {
+            val minJavaVersion = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// MIN_JAVA_VERSION: ")
+            if (minJavaVersion != null && !SystemInfo.isJavaVersionAtLeast(minJavaVersion)) return
 
-        if (file is KtFile && !InTextDirectivesUtils.isDirectiveDefined(fileText, "// SKIP_ERRORS_BEFORE")) {
-            DirectiveBasedActionUtils.checkForUnexpectedErrors(file as KtFile)
-        }
-
-        var i = 1
-        val extraFileNames = mutableListOf<String>()
-        extraFileLoop@ while (true) {
-            for (extension in EXTENSIONS) {
-                val extraFile = File(mainFile.parent, FileUtil.getNameWithoutExtension(mainFile) + "." + i + extension)
-                if (extraFile.exists()) {
-                    extraFileNames += extraFile.name
-                    i++
-                    continue@extraFileLoop
-                }
+            if (file is KtFile && !InTextDirectivesUtils.isDirectiveDefined(fileText, "// SKIP_ERRORS_BEFORE")) {
+                DirectiveBasedActionUtils.checkForUnexpectedErrors(file as KtFile)
             }
-            break
-        }
 
-        myFixture.configureByFiles(*(listOf(mainFile.name) + extraFileNames).toTypedArray()).first()
+            var i = 1
+            val extraFileNames = mutableListOf<String>()
+            extraFileLoop@ while (true) {
+                for (extension in EXTENSIONS) {
+                    val extraFile = File(mainFile.parent, FileUtil.getNameWithoutExtension(mainFile) + "." + i + extension)
+                    if (extraFile.exists()) {
+                        extraFileNames += extraFile.name
+                        i++
+                        continue@extraFileLoop
+                    }
+                }
+                break
+            }
 
-        doTestFor(mainFile.name, inspection, fileText)
+            myFixture.configureByFiles(*(listOf(mainFile.name) + extraFileNames).toTypedArray()).first()
 
-        if (file is KtFile && !InTextDirectivesUtils.isDirectiveDefined(fileText, "// SKIP_ERRORS_AFTER")) {
-            DirectiveBasedActionUtils.checkForUnexpectedErrors(file as KtFile)
+            doTestFor(mainFile.name, inspection, fileText)
+
+            if (file is KtFile && !InTextDirectivesUtils.isDirectiveDefined(fileText, "// SKIP_ERRORS_AFTER")) {
+                DirectiveBasedActionUtils.checkForUnexpectedErrors(file as KtFile)
+            }
+        } finally {
+            if (configured) {
+                rollbackCompilerOptions(project, module)
+            }
         }
     }
 

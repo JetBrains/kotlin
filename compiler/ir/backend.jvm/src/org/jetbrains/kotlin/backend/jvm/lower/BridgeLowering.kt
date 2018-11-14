@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.codegen.FunctionCodegen.isMethodOfAny
 import org.jetbrains.kotlin.codegen.FunctionCodegen.isThereOverriddenInKotlinClass
 import org.jetbrains.kotlin.codegen.JvmCodegenUtil.getDirectMember
 import org.jetbrains.kotlin.codegen.OwnerKind
-import org.jetbrains.kotlin.codegen.descriptors.FileClassDescriptor
 import org.jetbrains.kotlin.codegen.isToArrayFromCollection
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.config.JvmTarget
@@ -71,8 +70,6 @@ class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPass {
 
     override fun lower(irClass: IrClass) {
         val classDescriptor = irClass.descriptor
-        if (classDescriptor is FileClassDescriptor) return
-
         if (classDescriptor is DefaultImplsClassDescriptor) {
             return /*TODO?*/
         }

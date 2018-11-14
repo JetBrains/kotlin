@@ -22,6 +22,11 @@ public actual abstract class AbstractMutableList<E> protected actual constructor
     abstract override fun removeAt(index: Int): E
     abstract override fun set(index: Int, element: E): E
 
+    /**
+     * Adds the specified element to the end of this list.
+     *
+     * @return `true` because the list is always modified as the result of this operation.
+     */
     actual override fun add(element: E): Boolean {
         add(size, element)
         return true

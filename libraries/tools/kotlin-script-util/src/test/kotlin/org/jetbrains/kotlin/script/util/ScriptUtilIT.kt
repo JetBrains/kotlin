@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.script.KotlinScriptDefinition
 import org.jetbrains.kotlin.script.KotlinScriptDefinitionFromAnnotatedTemplate
 import org.jetbrains.kotlin.script.util.templates.BindingsScriptTemplateWithLocalResolving
-import org.jetbrains.kotlin.script.util.templates.StandardArgsScriptTemplateWithIvyResolving
 import org.jetbrains.kotlin.script.util.templates.StandardArgsScriptTemplateWithLocalResolving
 import org.jetbrains.kotlin.script.util.templates.StandardArgsScriptTemplateWithMavenResolving
 import org.jetbrains.kotlin.utils.PathUtil.getResourcePathForClass
@@ -98,23 +97,6 @@ done
         }
 
         val scriptClass = compileScript("args-junit-hello-world.kts", StandardArgsScriptTemplateWithMavenResolving::class)
-        if (scriptClass == null) {
-            System.err.println(classpathFromClassloader(Thread.currentThread().contextClassLoader)?.takeIfContainsAll(KOTLIN_JAVA_RUNTIME_JAR)?.joinToString())
-        }
-        Assert.assertNotNull(scriptClass)
-        captureOut {
-            scriptClass!!.getConstructor(Array<String>::class.java)!!.newInstance(arrayOf("a1"))
-        }.let {
-            Assert.assertEquals(argsHelloWorldOutput.linesSplitTrim(), it.linesSplitTrim())
-        }
-    }
-
-    @Test
-    fun testIvyResolveStdJUnitHelloWorld() {
-        val scriptClass = compileScript("args-junit-hello-world.kts", StandardArgsScriptTemplateWithIvyResolving::class)
-        if (scriptClass == null) {
-            System.err.println(classpathFromClassloader(Thread.currentThread().contextClassLoader)?.takeIfContainsAll(KOTLIN_JAVA_RUNTIME_JAR)?.joinToString())
-        }
         Assert.assertNotNull(scriptClass)
         captureOut {
             scriptClass!!.getConstructor(Array<String>::class.java)!!.newInstance(arrayOf("a1"))
@@ -144,7 +126,7 @@ done
         val rootDisposable = Disposer.newDisposable()
         try {
             val configuration = CompilerConfiguration().apply {
-                classpathFromClassloader(Thread.currentThread().contextClassLoader)?.takeIfContainsAll(KOTLIN_JAVA_RUNTIME_JAR)?.let {
+                scriptCompilationClasspathFromContextOrNull(KOTLIN_JAVA_RUNTIME_JAR)?.let {
                     addJvmClasspathRoots(it)
                 }
 

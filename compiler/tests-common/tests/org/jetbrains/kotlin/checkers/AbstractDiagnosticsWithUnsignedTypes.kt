@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.checkers
 
-import org.jetbrains.kotlin.config.AnalysisFlag
+import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.config.LanguageVersionSettings
@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.test.ConfigurationKind
 
 abstract class AbstractDiagnosticsWithUnsignedTypes : AbstractDiagnosticsTest() {
     override fun getConfigurationKind(): ConfigurationKind {
-        return ConfigurationKind.WITH_UNSIGNED_TYPES
+        return ConfigurationKind.NO_KOTLIN_REFLECT
     }
 
     override fun defaultLanguageVersionSettings(): LanguageVersionSettings =
@@ -21,6 +21,6 @@ abstract class AbstractDiagnosticsWithUnsignedTypes : AbstractDiagnosticsTest() 
             DEFAULT_DIAGNOSTIC_TESTS_FEATURES,
             ApiVersion.KOTLIN_1_3,
             LanguageVersion.KOTLIN_1_3,
-            mapOf(AnalysisFlag.useExperimental to listOf("kotlin.ExperimentalUnsignedTypes"))
+            mapOf(AnalysisFlags.useExperimental to listOf("kotlin.ExperimentalUnsignedTypes"))
         )
 }

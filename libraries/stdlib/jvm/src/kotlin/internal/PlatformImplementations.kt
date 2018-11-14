@@ -5,7 +5,6 @@
 
 package kotlin.internal
 
-import kotlin.*
 import java.util.regex.MatchResult
 import kotlin.random.FallbackThreadLocalRandom
 import kotlin.random.Random

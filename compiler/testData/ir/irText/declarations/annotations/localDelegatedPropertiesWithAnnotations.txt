@@ -33,7 +33,7 @@ FILE fqName:<root> fileName:/localDelegatedPropertiesWithAnnotations.kt
       LOCAL_DELEGATED_PROPERTY name:test type:kotlin.Int flags:val
         annotations:
           CALL 'constructor A(String)' type=A origin=null
-            x: CONST String type=kotlin.String value=foo/test
+            x: CONST String type=kotlin.String value="foo/test"
         VAR DELEGATE name:test$delegate type:kotlin.Lazy<kotlin.Int> flags:val
           CALL 'lazy(() -> Int): Lazy<Int>' type=kotlin.Lazy<kotlin.Int> origin=null
             <T>: kotlin.Int

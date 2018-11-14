@@ -42,11 +42,11 @@ FILE fqName:<root> fileName:/dataClassesGeneric.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='toString(): String'
           STRING_CONCATENATION type=kotlin.String
-            CONST String type=kotlin.String value=Test1(
-            CONST String type=kotlin.String value=x=
+            CONST String type=kotlin.String value="Test1("
+            CONST String type=kotlin.String value="x="
             CALL '<get-x>(): T' type=T origin=GET_PROPERTY
               $this: GET_VAR 'this@Test1: Test1<T>' type=Test1<T> origin=null
-            CONST String type=kotlin.String value=)
+            CONST String type=kotlin.String value=")"
     FUN GENERATED_DATA_CLASS_MEMBER name:hashCode visibility:public modality:OPEN <> ($this:Test1<T>) returnType:kotlin.Int flags:
       overridden:
         FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int flags:
@@ -150,11 +150,11 @@ FILE fqName:<root> fileName:/dataClassesGeneric.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='toString(): String'
           STRING_CONCATENATION type=kotlin.String
-            CONST String type=kotlin.String value=Test2(
-            CONST String type=kotlin.String value=x=
+            CONST String type=kotlin.String value="Test2("
+            CONST String type=kotlin.String value="x="
             CALL '<get-x>(): T' type=T origin=GET_PROPERTY
               $this: GET_VAR 'this@Test2: Test2<T>' type=Test2<T> origin=null
-            CONST String type=kotlin.String value=)
+            CONST String type=kotlin.String value=")"
     FUN GENERATED_DATA_CLASS_MEMBER name:hashCode visibility:public modality:OPEN <> ($this:Test2<T>) returnType:kotlin.Int flags:
       overridden:
         FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int flags:
@@ -247,11 +247,11 @@ FILE fqName:<root> fileName:/dataClassesGeneric.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='toString(): String'
           STRING_CONCATENATION type=kotlin.String
-            CONST String type=kotlin.String value=Test3(
-            CONST String type=kotlin.String value=x=
+            CONST String type=kotlin.String value="Test3("
+            CONST String type=kotlin.String value="x="
             CALL '<get-x>(): List<T>' type=kotlin.collections.List<T> origin=GET_PROPERTY
               $this: GET_VAR 'this@Test3: Test3<T>' type=Test3<T> origin=null
-            CONST String type=kotlin.String value=)
+            CONST String type=kotlin.String value=")"
     FUN GENERATED_DATA_CLASS_MEMBER name:hashCode visibility:public modality:OPEN <> ($this:Test3<T>) returnType:kotlin.Int flags:
       overridden:
         FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int flags:
@@ -342,11 +342,11 @@ FILE fqName:<root> fileName:/dataClassesGeneric.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='toString(): String'
           STRING_CONCATENATION type=kotlin.String
-            CONST String type=kotlin.String value=Test4(
-            CONST String type=kotlin.String value=x=
+            CONST String type=kotlin.String value="Test4("
+            CONST String type=kotlin.String value="x="
             CALL '<get-x>(): List<String>' type=kotlin.collections.List<kotlin.String> origin=GET_PROPERTY
               $this: GET_VAR 'this@Test4: Test4' type=Test4 origin=null
-            CONST String type=kotlin.String value=)
+            CONST String type=kotlin.String value=")"
     FUN GENERATED_DATA_CLASS_MEMBER name:hashCode visibility:public modality:OPEN <> ($this:Test4) returnType:kotlin.Int flags:
       overridden:
         FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int flags:

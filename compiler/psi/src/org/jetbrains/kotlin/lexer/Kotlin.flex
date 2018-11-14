@@ -215,7 +215,7 @@ LONELY_BACKTICK=`
         }
     }
 
-    .|{WHITE_SPACE_CHAR} {}
+    [\s\S] {}
 }
 
 // Mere mortals
@@ -314,7 +314,7 @@ LONELY_BACKTICK=`
 ">"          { return KtTokens.GT        ; }
 "?"          { return KtTokens.QUEST     ; }
 ":"          { return KtTokens.COLON     ; }
-";;"          { return KtTokens.DOUBLE_SEMICOLON;}
+";;"         { return KtTokens.DOUBLE_SEMICOLON;}
 ";"          { return KtTokens.SEMICOLON ; }
 "="          { return KtTokens.EQ        ; }
 ","          { return KtTokens.COMMA     ; }
@@ -324,7 +324,7 @@ LONELY_BACKTICK=`
 {LONELY_BACKTICK} { pushState(UNMATCHED_BACKTICK); return TokenType.BAD_CHARACTER; }
 
 // error fallback
-.            { return TokenType.BAD_CHARACTER; }
+[\s\S]       { return TokenType.BAD_CHARACTER; }
 // error fallback for exclusive states
 <STRING, RAW_STRING, SHORT_TEMPLATE_ENTRY, BLOCK_COMMENT, DOC_COMMENT> .
              { return TokenType.BAD_CHARACTER; }

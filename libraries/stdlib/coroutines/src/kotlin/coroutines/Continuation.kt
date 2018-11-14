@@ -17,7 +17,6 @@ public interface Continuation<in T> {
     /**
      * Context of the coroutine that corresponds to this continuation.
      */
-    // todo: shall we provide default impl with EmptyCoroutineContext?
     public val context: CoroutineContext
 
     /**

@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.types.expressions;
 import com.google.common.collect.Lists;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.StubBasedPsiElement;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -1187,8 +1188,9 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         KotlinType refinedType = KotlinBuiltIns.isNothingOrNullableNothing(receiver.getType()) ?
                                  components.builtIns.getNullableAnyType() :
                                  receiver.getType();
-        Collection<SimpleFunctionDescriptor> equalsMembers = refinedType.getMemberScope().getContributedFunctions(
-                OperatorNameConventions.EQUALS, new KotlinLookupLocation(expression.getOperationReference()));
+        Collection<? extends SimpleFunctionDescriptor> equalsMembers = refinedType.getMemberScope().getContributedFunctions(
+                OperatorNameConventions.EQUALS, new KotlinLookupLocation(expression.getOperationReference())
+        );
 
         return CollectionsKt.filter(equalsMembers, descriptor -> {
             if (ErrorUtils.isError(descriptor)) return true;
@@ -1574,6 +1576,10 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     }
 
     private static void checkLiteralPrefixAndSuffix(@NotNull PsiElement expression, ExpressionTypingContext context) {
+        if (expression instanceof StubBasedPsiElement && ((StubBasedPsiElement) expression).getStub() != null) {
+            return;
+        }
+
         checkLiteralPrefixOrSuffix(PsiTreeUtil.prevLeaf(expression), context);
         checkLiteralPrefixOrSuffix(PsiTreeUtil.nextLeaf(expression), context);
     }

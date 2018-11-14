@@ -13,7 +13,8 @@ import org.jetbrains.kotlin.context.ModuleContext
 import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.frontend.di.createContainerForLazyResolve
-import org.jetbrains.kotlin.ide.konan.createResolvedModuleDescriptors
+import org.jetbrains.kotlin.ide.konan.NativeLibraryInfo
+import org.jetbrains.kotlin.ide.konan.createPackageFragmentProvider
 import org.jetbrains.kotlin.resolve.BindingTraceContext
 import org.jetbrains.kotlin.resolve.TargetEnvironment
 import org.jetbrains.kotlin.resolve.TargetPlatform
@@ -21,9 +22,6 @@ import org.jetbrains.kotlin.resolve.konan.platform.KonanPlatform
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactoryService.Companion.createDeclarationProviderFactory
 
-/**
- * @author Alefas
- */
 object NativeAnalyzerFacade : ResolverForModuleFactory() {
     override val targetPlatform: TargetPlatform
         get() = KonanPlatform
@@ -43,7 +41,7 @@ object NativeAnalyzerFacade : ResolverForModuleFactory() {
             moduleContext.project,
             moduleContext.storageManager,
             moduleContent.syntheticFiles,
-            moduleContent.moduleContentScope!!,
+            moduleContent.moduleContentScope,
             moduleContent.moduleInfo
         )
 
@@ -57,16 +55,22 @@ object NativeAnalyzerFacade : ResolverForModuleFactory() {
             languageVersionSettings
         )
 
-        val moduleDescriptors = moduleContent.moduleInfo.createResolvedModuleDescriptors(
-            moduleContext.storageManager,
-            moduleContext.module.builtIns,
-            languageVersionSettings
-        )
-
         val packageFragmentProvider = container.get<ResolveSession>().packageFragmentProvider
         val fragmentProviders = mutableListOf(packageFragmentProvider)
-        moduleDescriptors.resolvedDescriptors.mapTo(fragmentProviders) { it.packageFragmentProvider }
-        fragmentProviders.add(moduleDescriptors.forwardDeclarationsModule.packageFragmentProvider)
+
+        val moduleInfo = moduleContent.moduleInfo
+
+        val konanLibrary = moduleInfo.getCapability(NativeLibraryInfo.NATIVE_LIBRARY_CAPABILITY)
+        if (konanLibrary != null) {
+            val libPackageFragmentProvider =
+                konanLibrary.createPackageFragmentProvider(
+                    moduleContext.storageManager,
+                    languageVersionSettings,
+                    moduleDescriptor
+                )
+
+            fragmentProviders.add(libPackageFragmentProvider)
+        }
 
         return ResolverForModule(CompositePackageFragmentProvider(fragmentProviders), container)
     }

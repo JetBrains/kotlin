@@ -59,6 +59,11 @@ public class ClassFileToSourceStubConverterTestGenerated extends AbstractClassFi
         runTest("plugins/kapt3/kapt3-compiler/testData/converter/annotations3.kt");
     }
 
+    @TestMetadata("annotationsWithTargets.kt")
+    public void testAnnotationsWithTargets() throws Exception {
+        runTest("plugins/kapt3/kapt3-compiler/testData/converter/annotationsWithTargets.kt");
+    }
+
     @TestMetadata("comments.kt")
     public void testComments() throws Exception {
         runTest("plugins/kapt3/kapt3-compiler/testData/converter/comments.kt");
@@ -89,6 +94,16 @@ public class ClassFileToSourceStubConverterTestGenerated extends AbstractClassFi
         runTest("plugins/kapt3/kapt3-compiler/testData/converter/errorLocationMapping.kt");
     }
 
+    @TestMetadata("errorSuperclass.kt")
+    public void testErrorSuperclass() throws Exception {
+        runTest("plugins/kapt3/kapt3-compiler/testData/converter/errorSuperclass.kt");
+    }
+
+    @TestMetadata("errorSuperclassCorrectErrorTypes.kt")
+    public void testErrorSuperclassCorrectErrorTypes() throws Exception {
+        runTest("plugins/kapt3/kapt3-compiler/testData/converter/errorSuperclassCorrectErrorTypes.kt");
+    }
+
     @TestMetadata("fileFacadeJvmName.kt")
     public void testFileFacadeJvmName() throws Exception {
         runTest("plugins/kapt3/kapt3-compiler/testData/converter/fileFacadeJvmName.kt");
@@ -97,6 +112,11 @@ public class ClassFileToSourceStubConverterTestGenerated extends AbstractClassFi
     @TestMetadata("functions.kt")
     public void testFunctions() throws Exception {
         runTest("plugins/kapt3/kapt3-compiler/testData/converter/functions.kt");
+    }
+
+    @TestMetadata("genericParameters.kt")
+    public void testGenericParameters() throws Exception {
+        runTest("plugins/kapt3/kapt3-compiler/testData/converter/genericParameters.kt");
     }
 
     @TestMetadata("genericRawSignatures.kt")
@@ -114,6 +134,11 @@ public class ClassFileToSourceStubConverterTestGenerated extends AbstractClassFi
         runTest("plugins/kapt3/kapt3-compiler/testData/converter/ignoredMembers.kt");
     }
 
+    @TestMetadata("implicitReturnTypes.kt")
+    public void testImplicitReturnTypes() throws Exception {
+        runTest("plugins/kapt3/kapt3-compiler/testData/converter/implicitReturnTypes.kt");
+    }
+
     @TestMetadata("importsForErrorTypes.kt")
     public void testImportsForErrorTypes() throws Exception {
         runTest("plugins/kapt3/kapt3-compiler/testData/converter/importsForErrorTypes.kt");
@@ -129,9 +154,19 @@ public class ClassFileToSourceStubConverterTestGenerated extends AbstractClassFi
         runTest("plugins/kapt3/kapt3-compiler/testData/converter/inheritanceSimple.kt");
     }
 
+    @TestMetadata("inlineClasses.kt")
+    public void testInlineClasses() throws Exception {
+        runTest("plugins/kapt3/kapt3-compiler/testData/converter/inlineClasses.kt");
+    }
+
     @TestMetadata("innerClassesWithTypeParameters.kt")
     public void testInnerClassesWithTypeParameters() throws Exception {
         runTest("plugins/kapt3/kapt3-compiler/testData/converter/innerClassesWithTypeParameters.kt");
+    }
+
+    @TestMetadata("interfaceImplementation.kt")
+    public void testInterfaceImplementation() throws Exception {
+        runTest("plugins/kapt3/kapt3-compiler/testData/converter/interfaceImplementation.kt");
     }
 
     @TestMetadata("invalidFieldName.kt")
@@ -224,6 +259,11 @@ public class ClassFileToSourceStubConverterTestGenerated extends AbstractClassFi
         runTest("plugins/kapt3/kapt3-compiler/testData/converter/kt25071.kt");
     }
 
+    @TestMetadata("kt27126.kt")
+    public void testKt27126() throws Exception {
+        runTest("plugins/kapt3/kapt3-compiler/testData/converter/kt27126.kt");
+    }
+
     @TestMetadata("leadingDollars.kt")
     public void testLeadingDollars() throws Exception {
         runTest("plugins/kapt3/kapt3-compiler/testData/converter/leadingDollars.kt");
@@ -302,6 +342,11 @@ public class ClassFileToSourceStubConverterTestGenerated extends AbstractClassFi
     @TestMetadata("propertyAnnotations.kt")
     public void testPropertyAnnotations() throws Exception {
         runTest("plugins/kapt3/kapt3-compiler/testData/converter/propertyAnnotations.kt");
+    }
+
+    @TestMetadata("recentlyNullable.kt")
+    public void testRecentlyNullable() throws Exception {
+        runTest("plugins/kapt3/kapt3-compiler/testData/converter/recentlyNullable.kt");
     }
 
     @TestMetadata("repeatableAnnotations.kt")

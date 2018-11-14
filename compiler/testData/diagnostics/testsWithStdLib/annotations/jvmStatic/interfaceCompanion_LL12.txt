@@ -14,9 +14,9 @@ public interface B {
         @kotlin.jvm.JvmStatic protected final var foo4: kotlin.Int
         @kotlin.jvm.JvmStatic protected final var foo5: kotlin.Int
         @kotlin.jvm.JvmStatic public final val foo6: kotlin.Int = 1
-        public final val foo7: kotlin.Int = 1
-        private final var foo8: kotlin.Int
-        public final var foo9: kotlin.Int
+        @get:kotlin.jvm.JvmStatic public final val foo7: kotlin.Int = 1
+        @set:kotlin.jvm.JvmStatic private final var foo8: kotlin.Int
+        @set:kotlin.jvm.JvmStatic public final var foo9: kotlin.Int
         @kotlin.jvm.JvmStatic public final fun a1(): kotlin.Unit
         @kotlin.jvm.JvmStatic private final fun a2(): kotlin.Unit
         @kotlin.jvm.JvmStatic protected final fun a3(): kotlin.Unit

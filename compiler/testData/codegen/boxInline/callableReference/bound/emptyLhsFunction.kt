@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 // FILE: 1.kt
 
 inline fun foo(a: String, b: String, f: (String, String) -> String): String {

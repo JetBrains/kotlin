@@ -26,7 +26,7 @@ dependencies {
     compileOnly(intellijDep())
     compileOnly(intellijPluginDep("android"))
 
-    testCompile(projectDist(":kotlin-test:kotlin-test-jvm"))
+    testCompile(project(":kotlin-test:kotlin-test-jvm"))
     testCompile(projectTests(":idea:idea-test-framework")) { isTransitive = false }
     testCompile(project(":plugins:lint")) { isTransitive = false }
     testCompile(project(":idea:idea-jvm"))
@@ -44,17 +44,21 @@ dependencies {
     testCompile(intellijPluginDep("properties"))
     testCompileOnly(intellijPluginDep("android"))
 
-    testRuntime(projectDist(":kotlin-reflect"))
+    testRuntime(project(":kotlin-reflect"))
     testRuntime(project(":plugins:android-extensions-ide"))
     testRuntime(project(":plugins:kapt3-idea"))
     testRuntime(project(":sam-with-receiver-ide-plugin"))
     testRuntime(project(":noarg-ide-plugin"))
     testRuntime(project(":allopen-ide-plugin"))
     testRuntime(project(":kotlin-scripting-idea"))
-    testRuntime(project(":kotlinx-serialization-compiler-plugin"))
+    testRuntime(project(":kotlinx-serialization-ide-plugin"))
 
     testRuntime(intellijPluginDep("android"))
-    testRuntime(intellijPluginDep("smali"))
+
+    (Platform[181].orHigher.or(Ide.AS31)) {
+        testRuntime(intellijPluginDep("smali"))
+    }
+
     testRuntime(intellijPluginDep("copyright"))
     testRuntime(intellijPluginDep("coverage"))
     testRuntime(intellijPluginDep("gradle"))
@@ -63,13 +67,22 @@ dependencies {
     testRuntime(intellijPluginDep("java-decompiler"))
     testRuntime(intellijPluginDep("java-i18n"))
     testRuntime(intellijPluginDep("junit"))
-    testRuntime(intellijPluginDep("maven"))
+
+    Ide.IJ {
+        testRuntime(intellijPluginDep("maven"))
+    }
+
     testRuntime(intellijPluginDep("testng"))
 }
 
 sourceSets {
-    "main" { projectDefault() }
-    "test" { projectDefault() }
+    if (Ide.AS33.orHigher()) {
+        "main" { }
+        "test" { }
+    } else {
+        "main" { projectDefault() }
+        "test" { projectDefault() }
+    }
 }
 
 projectTest {

@@ -1873,7 +1873,7 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
         literal.done(OBJECT_LITERAL);
     }
 
-    private void parseOneTokenExpression(KtNodeType type) {
+    private void parseOneTokenExpression(IElementType type) {
         PsiBuilder.Marker mark = mark();
         advance();
         mark.done(type);

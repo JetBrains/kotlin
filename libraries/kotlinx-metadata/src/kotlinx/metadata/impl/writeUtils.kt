@@ -10,6 +10,7 @@ import kotlinx.metadata.KmAnnotation
 import kotlinx.metadata.KmAnnotationArgument
 import kotlinx.metadata.isLocal
 import org.jetbrains.kotlin.metadata.ProtoBuf
+import org.jetbrains.kotlin.metadata.deserialization.Flags
 import org.jetbrains.kotlin.metadata.serialization.StringTable
 
 fun KmAnnotation.writeAnnotation(strings: StringTable): ProtoBuf.Annotation.Builder =
@@ -57,6 +58,26 @@ private fun KmAnnotationArgument<*>.writeAnnotationArgument(strings: StringTable
             is KmAnnotationArgument.BooleanValue -> {
                 this.type = ProtoBuf.Annotation.Argument.Value.Type.BOOLEAN
                 this.intValue = if (value) 1 else 0
+            }
+            is KmAnnotationArgument.UByteValue -> {
+                this.type = ProtoBuf.Annotation.Argument.Value.Type.BYTE
+                this.intValue = value.toLong()
+                this.flags = Flags.IS_UNSIGNED.toFlags(true)
+            }
+            is KmAnnotationArgument.UShortValue -> {
+                this.type = ProtoBuf.Annotation.Argument.Value.Type.SHORT
+                this.intValue = value.toLong()
+                this.flags = Flags.IS_UNSIGNED.toFlags(true)
+            }
+            is KmAnnotationArgument.UIntValue -> {
+                this.type = ProtoBuf.Annotation.Argument.Value.Type.INT
+                this.intValue = value.toLong()
+                this.flags = Flags.IS_UNSIGNED.toFlags(true)
+            }
+            is KmAnnotationArgument.ULongValue -> {
+                this.type = ProtoBuf.Annotation.Argument.Value.Type.LONG
+                this.intValue = value.toLong()
+                this.flags = Flags.IS_UNSIGNED.toFlags(true)
             }
             is KmAnnotationArgument.StringValue -> {
                 this.type = ProtoBuf.Annotation.Argument.Value.Type.STRING

@@ -41,5 +41,15 @@ public interface KtDeclarationWithBody extends KtDeclaration {
 
     @NotNull
     List<KtParameter> getValueParameters();
+
+    @Nullable
+    default KtBlockExpression getBodyBlockExpression() {
+        KtExpression bodyExpression = getBodyExpression();
+        if (bodyExpression instanceof KtBlockExpression) {
+            return (KtBlockExpression) bodyExpression;
+        }
+
+        return null;
+    }
 }
 

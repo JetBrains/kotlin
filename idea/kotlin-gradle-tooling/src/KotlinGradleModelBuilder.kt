@@ -103,7 +103,7 @@ class KotlinGradleModelBuilder : AbstractKotlinGradleModelBuilder() {
         return try {
             javaClass.getDeclaredMethod(methodName).invoke(this) as List<String>
         }
-        catch (e : NoSuchMethodException) {
+        catch (e : Exception) {
             // No argument accessor method is available
             emptyList()
         }

@@ -421,9 +421,12 @@ object ModifierCheckerCore {
         actualTargets: List<KotlinTarget>,
         languageVersionSettings: LanguageVersionSettings
     ) {
+        if (list.stub != null) return
+
         // It's a list of all nodes with error already reported
         // General strategy: report no more than one error but any number of warnings
         val incorrectNodes = hashSetOf<ASTNode>()
+
         val children = list.node.getChildren(MODIFIER_KEYWORD_SET)
         for (second in children) {
             for (first in children) {

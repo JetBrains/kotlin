@@ -229,6 +229,11 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
             runTest("compiler/testData/ir/irText/declarations/classLevelProperties.kt");
         }
 
+        @TestMetadata("constValInitializers.kt")
+        public void testConstValInitializers() throws Exception {
+            runTest("compiler/testData/ir/irText/declarations/constValInitializers.kt");
+        }
+
         @TestMetadata("defaultArguments.kt")
         public void testDefaultArguments() throws Exception {
             runTest("compiler/testData/ir/irText/declarations/defaultArguments.kt");
@@ -259,6 +264,11 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
             runTest("compiler/testData/ir/irText/declarations/interfaceProperties.kt");
         }
 
+        @TestMetadata("kt27005.kt")
+        public void testKt27005() throws Exception {
+            runTest("compiler/testData/ir/irText/declarations/kt27005.kt");
+        }
+
         @TestMetadata("localClassWithOverrides.kt")
         public void testLocalClassWithOverrides() throws Exception {
             runTest("compiler/testData/ir/irText/declarations/localClassWithOverrides.kt");
@@ -267,11 +277,6 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
         @TestMetadata("localDelegatedProperties.kt")
         public void testLocalDelegatedProperties() throws Exception {
             runTest("compiler/testData/ir/irText/declarations/localDelegatedProperties.kt");
-        }
-
-        @TestMetadata("localDelegatedPropertyWithSuspendOperators.kt")
-        public void testLocalDelegatedPropertyWithSuspendOperators() throws Exception {
-            runTest("compiler/testData/ir/irText/declarations/localDelegatedPropertyWithSuspendOperators.kt");
         }
 
         @TestMetadata("localVarInDoWhile.kt")
@@ -942,6 +947,16 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
             runTest("compiler/testData/ir/irText/expressions/kt23030.kt");
         }
 
+        @TestMetadata("kt27933.kt")
+        public void testKt27933() throws Exception {
+            runTest("compiler/testData/ir/irText/expressions/kt27933.kt");
+        }
+
+        @TestMetadata("kt28006.kt")
+        public void testKt28006() throws Exception {
+            runTest("compiler/testData/ir/irText/expressions/kt28006.kt");
+        }
+
         @TestMetadata("lambdaInCAO.kt")
         public void testLambdaInCAO() throws Exception {
             runTest("compiler/testData/ir/irText/expressions/lambdaInCAO.kt");
@@ -1145,6 +1160,11 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
         @TestMetadata("variableAsFunctionCall.kt")
         public void testVariableAsFunctionCall() throws Exception {
             runTest("compiler/testData/ir/irText/expressions/variableAsFunctionCall.kt");
+        }
+
+        @TestMetadata("variableAsFunctionCallWithGenerics.kt")
+        public void testVariableAsFunctionCallWithGenerics() throws Exception {
+            runTest("compiler/testData/ir/irText/expressions/variableAsFunctionCallWithGenerics.kt");
         }
 
         @TestMetadata("when.kt")
@@ -1393,6 +1413,11 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
         @TestMetadata("builtinMap.kt")
         public void testBuiltinMap() throws Exception {
             runTest("compiler/testData/ir/irText/stubs/builtinMap.kt");
+        }
+
+        @TestMetadata("constFromBuiltins.kt")
+        public void testConstFromBuiltins() throws Exception {
+            runTest("compiler/testData/ir/irText/stubs/constFromBuiltins.kt");
         }
 
         @TestMetadata("genericClassInDifferentModule.kt")

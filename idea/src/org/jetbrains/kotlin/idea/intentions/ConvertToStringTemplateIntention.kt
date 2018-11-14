@@ -120,6 +120,9 @@ open class ConvertToStringTemplateIntention : SelfTargetingOffsetIndependentInte
 
                 is KtNameReferenceExpression ->
                     return "$" + (if (forceBraces) "{$expressionText}" else expressionText)
+
+                is KtThisExpression ->
+                    return "$" + (if (forceBraces || expression.labelQualifier != null) "{$expressionText}" else expressionText)
             }
 
             return "\${$expressionText}"

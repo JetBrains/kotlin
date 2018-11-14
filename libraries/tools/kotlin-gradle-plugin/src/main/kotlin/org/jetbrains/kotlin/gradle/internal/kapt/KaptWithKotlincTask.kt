@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.internal
 
-import com.intellij.openapi.util.text.StringUtil
+import com.intellij.openapi.util.SystemInfo
 import org.gradle.api.GradleException
 import org.gradle.api.file.FileCollection
 import org.gradle.api.tasks.Classpath
@@ -15,12 +15,12 @@ import org.gradle.api.tasks.TaskAction
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.compilerRunner.GradleCompilerEnvironment
 import org.jetbrains.kotlin.compilerRunner.GradleCompilerRunner
+import org.jetbrains.kotlin.compilerRunner.GradleKotlinLogger
 import org.jetbrains.kotlin.compilerRunner.OutputItemsCollectorImpl
 import org.jetbrains.kotlin.gradle.plugin.PLUGIN_CLASSPATH_CONFIGURATION_NAME
 import org.jetbrains.kotlin.gradle.tasks.CompilerPluginOptions
 import org.jetbrains.kotlin.gradle.tasks.GradleMessageCollector
-import org.jetbrains.kotlin.gradle.tasks.clearOutputDirectories
-import org.jetbrains.kotlin.gradle.tasks.throwGradleExceptionIfError
+import org.jetbrains.kotlin.gradle.tasks.localStateDirectories
 import org.jetbrains.kotlin.gradle.utils.toSortedPathsArray
 
 open class KaptWithKotlincTask : KaptTask(), CompilerArgumentAwareWithInput<K2JVMCompilerArguments> {
@@ -30,7 +30,8 @@ open class KaptWithKotlincTask : KaptTask(), CompilerArgumentAwareWithInput<K2JV
     @get:Classpath
     @get:InputFiles
     @Suppress("unused")
-    internal val kotlinTaskPluginClasspaths get() = kotlinCompileTask.pluginClasspath
+    internal val kotlinTaskPluginClasspaths
+        get() = kotlinCompileTask.pluginClasspath
 
     @get:Classpath
     @get:InputFiles
@@ -54,21 +55,20 @@ open class KaptWithKotlincTask : KaptTask(), CompilerArgumentAwareWithInput<K2JV
     fun compile() {
         logger.debug("Running kapt annotation processing using the Kotlin compiler")
 
-        /** Delete everything inside generated sources and classes output directory
-         * (annotation processing is not incremental) */
-        clearOutputDirectories()
-
         val args = prepareCompilerArguments()
 
-        val messageCollector = GradleMessageCollector(logger)
+        val messageCollector = GradleMessageCollector(GradleKotlinLogger(logger))
         val outputItemCollector = OutputItemsCollectorImpl()
-        val environment = GradleCompilerEnvironment(compilerClasspath, messageCollector, outputItemCollector, args)
+        val environment = GradleCompilerEnvironment(
+            compilerClasspath, messageCollector, outputItemCollector,
+            localStateDirectories = localStateDirectories()
+        )
         if (environment.toolsJar == null && !isAtLeastJava9) {
             throw GradleException("Could not find tools.jar in system classpath, which is required for kapt to work")
         }
 
-        val compilerRunner = GradleCompilerRunner(project)
-        val exitCode = compilerRunner.runJvmCompiler(
+        val compilerRunner = GradleCompilerRunner(this)
+        compilerRunner.runJvmCompilerAsync(
             sourcesToCompile = emptyList(),
             commonSources = emptyList(),
             javaSourceRoots = javaSourceRoots,
@@ -76,11 +76,10 @@ open class KaptWithKotlincTask : KaptTask(), CompilerArgumentAwareWithInput<K2JV
             args = args,
             environment = environment
         )
-        throwGradleExceptionIfError(exitCode)
     }
 
     private val isAtLeastJava9: Boolean
-        get() = StringUtil.compareVersionNumbers(getJavaRuntimeVersion(), "9") >= 0
+        get() = SystemInfo.isJavaVersionAtLeast(9, 0, 0)
 
     private fun getJavaRuntimeVersion(): String {
         val rtVersion = System.getProperty("java.runtime.version")

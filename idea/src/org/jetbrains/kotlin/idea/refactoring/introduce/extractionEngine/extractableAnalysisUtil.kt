@@ -401,7 +401,7 @@ internal fun ExtractionData.createTemporaryCodeBlock(): KtBlockExpression {
     if (options.extractAsProperty) {
         return ((createTemporaryDeclaration("val = {\n$0\n}\n") as KtProperty).initializer as KtLambdaExpression).bodyExpression!!
     }
-    return (createTemporaryDeclaration("fun() {\n$0\n}\n") as KtNamedFunction).bodyExpression as KtBlockExpression
+    return (createTemporaryDeclaration("fun() {\n$0\n}\n") as KtNamedFunction).bodyBlockExpression!!
 }
 
 private fun KotlinType.collectReferencedTypes(processTypeArguments: Boolean): List<KotlinType> {

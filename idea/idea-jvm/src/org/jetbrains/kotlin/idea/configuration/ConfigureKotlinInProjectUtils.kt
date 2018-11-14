@@ -51,7 +51,7 @@ const val LAST_SNAPSHOT_VERSION = "1.3-SNAPSHOT"
 val SNAPSHOT_REPOSITORY = RepositoryDescription(
     "sonatype.oss.snapshots",
     "Sonatype OSS Snapshot Repository",
-    "http://oss.sonatype.org/content/repositories/snapshots",
+    "https://oss.sonatype.org/content/repositories/snapshots",
     null,
     isSnapshot = true
 )
@@ -59,7 +59,7 @@ val SNAPSHOT_REPOSITORY = RepositoryDescription(
 val EAP_REPOSITORY = RepositoryDescription(
     "bintray.kotlin.eap",
     "Bintray Kotlin EAP Repository",
-    "http://dl.bintray.com/kotlin/kotlin-eap",
+    "https://dl.bintray.com/kotlin/kotlin-eap",
     "https://bintray.com/kotlin/kotlin-eap/kotlin/",
     isSnapshot = false
 )
@@ -98,9 +98,9 @@ fun DependencyScope.toGradleCompileScope(isAndroidModule: Boolean) = when (this)
     else -> "compile"
 }
 
-fun RepositoryDescription.toGroovyRepositorySnippet() = "maven {\n    url '$url'\n}"
+fun RepositoryDescription.toGroovyRepositorySnippet() = "maven { url '$url' }"
 
-fun RepositoryDescription.toKotlinRepositorySnippet() = "maven {\n    setUrl(\"$url\")\n}"
+fun RepositoryDescription.toKotlinRepositorySnippet() = "maven { setUrl(\"$url\") }"
 
 fun getRepositoryForVersion(version: String): RepositoryDescription? = when {
     isSnapshot(version) -> SNAPSHOT_REPOSITORY

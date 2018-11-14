@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.resolve.calls
 
 import com.intellij.lang.ASTNode
+import com.intellij.openapi.util.ThrowableComputable
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
@@ -64,6 +65,7 @@ import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices
 import org.jetbrains.kotlin.types.expressions.KotlinTypeInfo
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.createTypeInfo
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.noTypeInfo
+import org.jetbrains.kotlin.util.AstLoadingFilter
 import javax.inject.Inject
 
 class CallExpressionResolver(
@@ -347,6 +349,11 @@ class CallExpressionResolver(
         val receiverDataFlowValue = (receiver as? ReceiverValue)?.let { dataFlowValueFactory.createDataFlowValue(it, context) }
         val receiverCanBeNull = receiverDataFlowValue != null &&
                 initialDataFlowInfoForArguments.getStableNullability(receiverDataFlowValue).canBeNull()
+
+        val callOperationNode = AstLoadingFilter.forceAllowTreeLoading(element.qualified.containingFile, ThrowableComputable {
+            element.node
+        })
+
         if (receiverDataFlowValue != null && element.safe) {
             // Additional "receiver != null" information should be applied if we consider a safe call
             if (receiverCanBeNull) {
@@ -354,12 +361,12 @@ class CallExpressionResolver(
                     receiverDataFlowValue, DataFlowValue.nullValue(builtIns), languageVersionSettings
                 )
             } else if (receiver is ReceiverValue) {
-                reportUnnecessarySafeCall(context.trace, receiver.type, element.node, receiver)
+                reportUnnecessarySafeCall(context.trace, receiver.type, callOperationNode, receiver)
             }
         }
 
         val selector = element.selector
-        var selectorTypeInfo = getUnsafeSelectorTypeInfo(receiver, element.node, selector, context, initialDataFlowInfoForArguments)
+        var selectorTypeInfo = getUnsafeSelectorTypeInfo(receiver, callOperationNode, selector, context, initialDataFlowInfoForArguments)
 
         if (receiver is Qualifier) {
             resolveDeferredReceiverInQualifiedExpression(receiver, selector, context)
@@ -428,7 +435,13 @@ class CallExpressionResolver(
         var branchPointDataFlowInfo = receiverTypeInfo.dataFlowInfo
 
         for (element in elementChain) {
-            val receiverType = receiverTypeInfo.type ?: ErrorUtils.createErrorType("Type for " + element.receiver.text)
+            val receiverType = receiverTypeInfo.type
+                ?: ErrorUtils.createErrorType(
+                    "Type for " + when (val receiver = element.receiver) {
+                        is KtNameReferenceExpression -> receiver.getReferencedName()
+                        else -> receiver.text
+                    }
+                )
 
             val receiver = trace.get(BindingContext.QUALIFIER, element.receiver)
                     ?: ExpressionReceiver.create(element.receiver, receiverType, trace.bindingContext)

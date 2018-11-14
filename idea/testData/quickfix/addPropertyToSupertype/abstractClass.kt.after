@@ -1,0 +1,8 @@
+// "Add 'abstract val hoge: Int' to 'Foo'" "true"
+abstract class Foo {
+    abstract val hoge: Int
+}
+
+class Bar: Foo() {
+    override val hoge = 3
+}

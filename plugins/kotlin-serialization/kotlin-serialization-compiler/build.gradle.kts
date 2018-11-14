@@ -10,21 +10,14 @@ jvmTarget = "1.6"
 
 dependencies {
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
-    compileOnly(intellijDep())
-    excludeInAndroidStudio(rootProject) { compileOnly(intellijPluginDep("maven")) }
-    compileOnly(project(":jps-plugin"))
-    compileOnly(project(":compiler:plugin-api"))
-    compileOnly(project(":compiler:frontend"))
-    compileOnly(project(":compiler:backend"))
-    compileOnly(project(":js:js.frontend"))
-    compileOnly(project(":js:js.translator"))
-    compileOnly(project(":idea"))
-    compileOnly(project(":idea:idea-jps-common"))
-    compileOnly(project(":idea:idea-gradle"))
-    compileOnly(project(":idea:idea-maven"))
 
-    runtime(projectRuntimeJar(":kotlin-compiler"))
-    runtime(projectDist(":kotlin-stdlib"))
+    compile(project(":compiler:plugin-api"))
+    compile(project(":compiler:frontend"))
+    compile(project(":compiler:backend"))
+    compile(project(":js:js.frontend"))
+    compile(project(":js:js.translator"))
+
+    runtime(project(":kotlin-stdlib"))
 }
 
 sourceSets {
@@ -38,6 +31,6 @@ val jar = runtimeJar {
 
 dist(targetName = the<BasePluginConvention>().archivesBaseName + ".jar")
 
-runtimeJar()
-
-ideaPlugin()
+ideaPlugin {
+    from(jar)
+}

@@ -460,7 +460,7 @@ fun PsiElement.canRefactor(): Boolean {
         this is KtElement ||
         this is PsiMember && language == JavaLanguage.INSTANCE ||
         this is PsiDirectory ->
-            ProjectRootsUtil.isInProjectSource(this) || ((containingFile as? KtFile)?.isScript() ?: false)
+            ProjectRootsUtil.isInProjectSource(this, includeScriptsOutsideSourceRoots = true)
         else ->
             false
     }

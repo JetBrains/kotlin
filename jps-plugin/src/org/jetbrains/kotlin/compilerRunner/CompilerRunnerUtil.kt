@@ -90,14 +90,14 @@ object CompilerRunnerUtil {
         environment: JpsCompilerEnvironment,
         out: PrintStream
     ): Any? = withCompilerClassloader(environment) { classLoader ->
-        val kompiler = Class.forName(compilerClassName, true, classLoader)
-        val exec = kompiler.getMethod(
+        val compiler = Class.forName(compilerClassName, true, classLoader)
+        val exec = compiler.getMethod(
             "execAndOutputXml",
             PrintStream::class.java,
             Class.forName("org.jetbrains.kotlin.config.Services", true, classLoader),
             Array<String>::class.java
         )
-        exec.invoke(kompiler.newInstance(), out, environment.services, arguments)
+        exec.invoke(compiler.newInstance(), out, environment.services, arguments)
     }
 
     fun invokeClassesFqNames(

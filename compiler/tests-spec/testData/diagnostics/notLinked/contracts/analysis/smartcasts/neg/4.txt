@@ -2,6 +2,7 @@ package
 
 public fun case_1(/*0*/ value_1: kotlin.Any?): kotlin.Unit
 public fun case_10(/*0*/ value_1: kotlin.Number?): kotlin.Unit
+public fun case_11(/*0*/ value_1: kotlin.Number?, /*1*/ value_2: kotlin.Number?): kotlin.Unit
 public fun case_2(/*0*/ value_1: kotlin.Number): kotlin.Unit
 public fun case_3(/*0*/ value_1: kotlin.String?, /*1*/ value_2: kotlin.String?): kotlin.Unit
 public fun case_4(/*0*/ value_1: kotlin.String?, /*1*/ value_2: kotlin.String?): kotlin.Unit
@@ -17,6 +18,12 @@ package contracts {
 
     public fun </*0*/ T : kotlin.Number?> T.case_10(): kotlin.Boolean?
         Returns(NOT_NULL) -> <this> == null
+
+    public fun </*0*/ T : kotlin.Number?> T.case_11_1(): kotlin.Boolean?
+        Returns(NULL) -> <this> != null
+
+    public fun </*0*/ T : kotlin.Number?> T.case_11_2(): kotlin.Boolean?
+        Returns(NULL) -> <this> != null
 
     public fun </*0*/ T : kotlin.Number> T.case_2(): kotlin.Unit
         Returns(WILDCARD) -> <this> !is Int

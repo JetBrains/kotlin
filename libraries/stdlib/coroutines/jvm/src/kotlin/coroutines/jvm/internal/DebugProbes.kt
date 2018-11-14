@@ -54,6 +54,7 @@ internal fun <T> probeCoroutineCreated(completion: Continuation<T>): Continuatio
  * parameter in this function is `Continuation<*>`. See [probeCoroutineCreated] for details.
  */
 @SinceKotlin("1.3")
+@Suppress("UNUSED_PARAMETER")
 internal fun probeCoroutineResumed(frame: Continuation<*>) {
     /** implementation of this function is replaced by debugger */
 }
@@ -69,6 +70,7 @@ internal fun probeCoroutineResumed(frame: Continuation<*>) {
  * parameter in this function is `Continuation<*>`. See [probeCoroutineCreated] for details.
  */
 @SinceKotlin("1.3")
+@Suppress("UNUSED_PARAMETER")
 internal fun probeCoroutineSuspended(frame: Continuation<*>) {
     /** implementation of this function is replaced by debugger */
 }

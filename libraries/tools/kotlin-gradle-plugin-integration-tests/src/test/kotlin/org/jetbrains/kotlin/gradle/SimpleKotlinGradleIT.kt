@@ -107,4 +107,11 @@ class SimpleKotlinGradleIT : BaseGradleIT() {
             assertNoSuchFile("build")
         }
     }
+
+    @Test
+    fun testGroovyInterop() {
+        Project("groovyInterop").build("build") {
+            assertSuccessful()
+        }
+    }
 }

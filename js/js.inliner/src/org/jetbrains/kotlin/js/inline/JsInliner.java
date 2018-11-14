@@ -10,7 +10,8 @@ import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.backend.common.CommonCoroutineCodegenUtilKt;
-import org.jetbrains.kotlin.config.*;
+import org.jetbrains.kotlin.config.CommonConfigurationKeysKt;
+import org.jetbrains.kotlin.config.LanguageVersionSettings;
 import org.jetbrains.kotlin.descriptors.CallableDescriptor;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
@@ -69,6 +70,8 @@ public class JsInliner extends JsVisitorWithContextImpl {
 
     private final List<JsNameBinding> additionalNameBindings = new ArrayList<>();
 
+    private final Set<JsName> inlinedModuleAliases = new HashSet<>();
+
     public static void process(
             @NotNull JsConfig.Reporter reporter,
             @NotNull JsConfig config,
@@ -94,9 +97,12 @@ public class JsInliner extends JsVisitorWithContextImpl {
             inliner.processImportStatement(statement);
         }
 
+        Map<JsName, JsImportedModule> moduleMap = fillModuleMap(buildModuleMap(fragments), fragmentsToProcess);
+
         for (JsProgramFragment fragment : fragmentsToProcess) {
             inliner.existingImports.clear();
             inliner.additionalNameBindings.clear();
+            inliner.inlinedModuleAliases.clear();
             inliner.existingNameBindings = CollectUtilsKt.collectNameBindings(Collections.singletonList(fragment));
 
             inliner.acceptStatement(fragment.getDeclarationBlock());
@@ -110,6 +116,7 @@ public class JsInliner extends JsVisitorWithContextImpl {
 
             fragment.getInitializerBlock().getStatements().addAll(0, initWrapper.getStatements());
             fragment.getNameBindings().addAll(inliner.additionalNameBindings);
+            inliner.addInlinedModules(fragment, moduleMap);
         }
 
         for (JsProgramFragment fragment : fragmentsToProcess) {
@@ -119,6 +126,29 @@ public class JsInliner extends JsVisitorWithContextImpl {
             RemoveUnusedFunctionDefinitionsKt.removeUnusedFunctionDefinitions(block, CollectUtilsKt.collectNamedFunctions(block));
         }
     }
+
+    private void addInlinedModules(JsProgramFragment fragment, Map<JsName, JsImportedModule> moduleMap) {
+        Set<JsName> localMap = buildModuleMap(Collections.singletonList(fragment)).keySet();
+        for (JsName inlinedModuleName : inlinedModuleAliases) {
+            if (!localMap.contains(inlinedModuleName)) {
+                fragment.getImportedModules().add(moduleMap.get(inlinedModuleName));
+            }
+        }
+    }
+
+    private static Map<JsName, JsImportedModule> buildModuleMap(List<JsProgramFragment> fragments) {
+        return fillModuleMap(new HashMap<>(), fragments);
+    }
+
+    private static Map<JsName, JsImportedModule> fillModuleMap(Map<JsName, JsImportedModule> map, List<JsProgramFragment> fragments) {
+        for (JsProgramFragment fragment : fragments) {
+            for (JsImportedModule module : fragment.getImportedModules()) {
+                map.put(module.getInternalName(), module);
+            }
+        }
+        return map;
+    }
+
 
     private JsInliner(
             @NotNull JsConfig config,
@@ -303,7 +333,9 @@ public class JsInliner extends JsVisitorWithContextImpl {
     @Override
     public void endVisit(@NotNull JsInvocation x, @NotNull JsContext ctx) {
         if (hasToBeInlined(x)) {
-            inline(x, ctx);
+            @SuppressWarnings("unchecked")
+            JsContext<JsNode> context = (JsContext) ctx;
+            inline(x, context);
         }
 
         JsCallInfo lastCallInfo = null;
@@ -315,6 +347,61 @@ public class JsInliner extends JsVisitorWithContextImpl {
         if (lastCallInfo != null && lastCallInfo.call == x) {
             inlineCallInfos.removeLast();
         }
+    }
+
+    @Override
+    public void endVisit(@NotNull JsExpressionStatement x, @NotNull JsContext ctx) {
+        JsExpression e = x.getExpression();
+        if (e instanceof JsBinaryOperation) {
+            JsBinaryOperation binOp = (JsBinaryOperation) e;
+            if (binOp.getOperator() == JsBinaryOperator.ASG) {
+                JsFunction splitSuspendInlineFunction = splitExportedSuspendInlineFunctionDeclarations(binOp.getArg2());
+                if (splitSuspendInlineFunction != null) {
+                    binOp.setArg2(splitSuspendInlineFunction);
+                }
+            }
+        }
+
+        super.endVisit(x, ctx);
+    }
+
+    @Override
+    public void endVisit(@NotNull JsVars.JsVar x, @NotNull JsContext ctx) {
+        JsFunction splitSuspendInlineFunction = splitExportedSuspendInlineFunctionDeclarations(x.getInitExpression());
+        if (splitSuspendInlineFunction != null) {
+            x.setInitExpression(splitSuspendInlineFunction);
+        }
+    }
+
+    @Nullable
+    private JsFunction splitExportedSuspendInlineFunctionDeclarations(@NotNull JsExpression expression) {
+        InlineMetadata inlineMetadata = InlineMetadata.decompose(expression);
+        if (inlineMetadata != null) {
+            FunctionWithWrapper functionWithWrapper = inlineMetadata.getFunction();
+            JsFunction originalFunction = functionWithWrapper.getFunction();
+            if (MetadataProperties.getCoroutineMetadata(originalFunction) != null) {
+                JsContext<JsStatement> statementContext = getLastStatementLevelContext();
+
+                // This function will be exported to JS
+                JsFunction function = originalFunction.deepCopy();
+
+                // Original function should be not be transformed into a state machine
+                originalFunction.setName(null);
+                MetadataProperties.setCoroutineMetadata(originalFunction, null);
+                MetadataProperties.setInlineableCoroutineBody(originalFunction, true);
+                if (functionWithWrapper.getWrapperBody() != null) {
+                    // Extract local declarations
+                    applyWrapper(functionWithWrapper.getWrapperBody(), function, originalFunction, new JsInliningContext(statementContext));
+                }
+
+                // Keep the `defineInlineFunction` for the inliner to find
+                statementContext.addNext(expression.makeStmt());
+
+                // Return the function body to be used without inlining.
+                return function;
+            }
+        }
+        return null;
     }
 
     @Override
@@ -335,7 +422,7 @@ public class JsInliner extends JsVisitorWithContextImpl {
         super.doAcceptStatementList(statements);
     }
 
-    private void inline(@NotNull JsInvocation call, @NotNull JsContext context) {
+    private void inline(@NotNull JsInvocation call, @NotNull JsContext<JsNode> context) {
         DeclarationDescriptor callDescriptor = MetadataProperties.getDescriptor(call);
         if (isSuspendWithCurrentContinuation(callDescriptor,
                                              CommonConfigurationKeysKt.getLanguageVersionSettings(config.getConfiguration()))) {
@@ -403,7 +490,7 @@ public class JsInliner extends JsVisitorWithContextImpl {
     ) {
         // Apparently we should avoid this trick when we implement fair support for crossinline
         Function<JsWrapperKey, Map<JsName, JsNameRef>> replacementGen = k -> {
-            JsContext ctx = k.context;
+            JsContext<JsStatement> ctx = k.context;
 
             Map<JsName, JsNameRef> newReplacements = new HashMap<>();
 
@@ -487,7 +574,7 @@ public class JsInliner extends JsVisitorWithContextImpl {
         }
     }
 
-    private static void replaceExpressionsWithLocalAliases(@NotNull JsStatement statement) {
+    private void replaceExpressionsWithLocalAliases(@NotNull JsStatement statement) {
         new JsVisitorWithContextImpl() {
             @Override
             public void endVisit(@NotNull JsNameRef x, @NotNull JsContext ctx) {
@@ -499,10 +586,13 @@ public class JsInliner extends JsVisitorWithContextImpl {
                 replaceIfNecessary(x, ctx);
             }
 
-            private void replaceIfNecessary(@NotNull JsExpression expression, @NotNull JsContext context) {
+            private void replaceIfNecessary(@NotNull JsExpression expression, @NotNull JsContext ctx) {
                 JsName alias = MetadataProperties.getLocalAlias(expression);
                 if (alias != null) {
+                    @SuppressWarnings("unchecked")
+                    JsContext<JsNode> context = (JsContext) ctx;
                     context.replaceMe(alias.makeRef());
+                    inlinedModuleAliases.add(alias);
                 }
             }
 
@@ -519,7 +609,7 @@ public class JsInliner extends JsVisitorWithContextImpl {
         );
     }
 
-    private void inlineSuspendWithCurrentContinuation(@NotNull JsInvocation call, @NotNull JsContext context) {
+    private void inlineSuspendWithCurrentContinuation(@NotNull JsInvocation call, @NotNull JsContext<JsNode> context) {
         JsExpression lambda = call.getArguments().get(0);
         JsExpression continuationArg = call.getArguments().get(call.getArguments().size() - 1);
 
@@ -632,10 +722,10 @@ public class JsInliner extends JsVisitorWithContextImpl {
     }
 
     static class JsWrapperKey {
-        final JsContext context;
+        final JsContext<JsStatement> context;
         private final JsFunction function;
 
-        public JsWrapperKey(@NotNull JsContext context, @NotNull JsFunction function) {
+        public JsWrapperKey(@NotNull JsContext<JsStatement> context, @NotNull JsFunction function) {
             this.context = context;
             this.function = function;
         }

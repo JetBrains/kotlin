@@ -30,7 +30,7 @@ FILE fqName:<root> fileName:/classesWithAnnotations.kt
   CLASS CLASS name:TestClass modality:FINAL visibility:public flags: superTypes:[kotlin.Any]
     annotations:
       CALL 'constructor TestAnn(String)' type=TestAnn origin=null
-        x: CONST String type=kotlin.String value=class
+        x: CONST String type=kotlin.String value="class"
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:TestClass flags:
     CONSTRUCTOR visibility:public <> () returnType:TestClass flags:primary
       BLOCK_BODY
@@ -52,7 +52,7 @@ FILE fqName:<root> fileName:/classesWithAnnotations.kt
   CLASS INTERFACE name:TestInterface modality:ABSTRACT visibility:public flags: superTypes:[kotlin.Any]
     annotations:
       CALL 'constructor TestAnn(String)' type=TestAnn origin=null
-        x: CONST String type=kotlin.String value=interface
+        x: CONST String type=kotlin.String value="interface"
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:TestInterface flags:
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:
       overridden:
@@ -70,7 +70,7 @@ FILE fqName:<root> fileName:/classesWithAnnotations.kt
   CLASS OBJECT name:TestObject modality:FINAL visibility:public flags: superTypes:[kotlin.Any]
     annotations:
       CALL 'constructor TestAnn(String)' type=TestAnn origin=null
-        x: CONST String type=kotlin.String value=object
+        x: CONST String type=kotlin.String value="object"
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:TestObject flags:
     CONSTRUCTOR visibility:private <> () returnType:TestObject flags:primary
       BLOCK_BODY
@@ -98,7 +98,7 @@ FILE fqName:<root> fileName:/classesWithAnnotations.kt
     CLASS OBJECT name:TestCompanion modality:FINAL visibility:public flags:companion superTypes:[kotlin.Any]
       annotations:
         CALL 'constructor TestAnn(String)' type=TestAnn origin=null
-          x: CONST String type=kotlin.String value=companion
+          x: CONST String type=kotlin.String value="companion"
       $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Host.TestCompanion flags:
       CONSTRUCTOR visibility:private <> () returnType:Host.TestCompanion flags:primary
         BLOCK_BODY
@@ -133,7 +133,7 @@ FILE fqName:<root> fileName:/classesWithAnnotations.kt
   CLASS ENUM_CLASS name:TestEnum modality:FINAL visibility:public flags: superTypes:[kotlin.Enum<TestEnum>]
     annotations:
       CALL 'constructor TestAnn(String)' type=TestAnn origin=null
-        x: CONST String type=kotlin.String value=enum
+        x: CONST String type=kotlin.String value="enum"
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:TestEnum flags:
     CONSTRUCTOR visibility:private <> () returnType:TestEnum flags:primary
       BLOCK_BODY
@@ -190,7 +190,7 @@ FILE fqName:<root> fileName:/classesWithAnnotations.kt
   CLASS ANNOTATION_CLASS name:TestAnnotation modality:FINAL visibility:public flags: superTypes:[kotlin.Annotation]
     annotations:
       CALL 'constructor TestAnn(String)' type=TestAnn origin=null
-        x: CONST String type=kotlin.String value=annotation
+        x: CONST String type=kotlin.String value="annotation"
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:TestAnnotation flags:
     CONSTRUCTOR visibility:public <> () returnType:TestAnnotation flags:primary
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:

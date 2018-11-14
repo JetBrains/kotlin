@@ -87,7 +87,7 @@ class KDocCommentKeeper(private val kaptContext: KaptContextForStubGeneration) {
             && descriptor is PropertyAccessorDescriptor
             && kaptContext.bindingContext[BindingContext.BACKING_FIELD_REQUIRED, descriptor.correspondingProperty] == true
         ) {
-            // Do not place the smae documentation on backing field and property accessors
+            // Do not place documentation on backing field and property accessors
             return
         }
 

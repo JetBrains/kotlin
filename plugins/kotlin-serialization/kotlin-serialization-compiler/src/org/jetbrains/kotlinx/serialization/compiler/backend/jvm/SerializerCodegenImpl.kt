@@ -49,11 +49,13 @@ class SerializerCodegenImpl(
 
     override fun generateGenericFieldsAndConstructor(typedConstructorDescriptor: ConstructorDescriptor) {
         serializableDescriptor.declaredTypeParameters.forEachIndexed { i, _ ->
-            codegen.v.newField(OtherOrigin(codegen.myClass.psiOrParent), ACC_PRIVATE or ACC_SYNTHETIC,
-                              "$typeArgPrefix$i", kSerializerType.descriptor, null, null )
+            codegen.v.newField(
+                OtherOrigin(codegen.myClass.psiOrParent), ACC_PRIVATE or ACC_SYNTHETIC,
+                "$typeArgPrefix$i", kSerializerType.descriptor, null, null
+            )
         }
 
-        codegen.generateMethod(typedConstructorDescriptor) { sig, exprCodegen ->
+        codegen.generateMethod(typedConstructorDescriptor) { _, _ ->
             load(0, serializerAsmType)
             invokespecial("java/lang/Object", "<init>", "()V", false)
             serializableDescriptor.declaredTypeParameters.forEachIndexed { i, _ ->
@@ -143,7 +145,7 @@ class SerializerCodegenImpl(
     }
 
     override fun generateSerializableClassProperty(property: PropertyDescriptor) {
-        codegen.generateMethod(property.getter!!) { signature, expressionCodegen ->
+        codegen.generateMethod(property.getter!!) { _, _ ->
             getstatic(serializerAsmType.internalName, serialDescField, descType.descriptor)
             areturn(descType)
         }
@@ -224,7 +226,7 @@ class SerializerCodegenImpl(
     override fun generateLoad(
             function: FunctionDescriptor
     ) {
-        codegen.generateMethod(function) { signature, expressionCodegen ->
+        codegen.generateMethod(function) { _, expressionCodegen ->
             // fun load(input: KInput): T
             val inputVar = 1
             val descVar = 2
@@ -309,13 +311,15 @@ class SerializerCodegenImpl(
                     }
 
                     fun produceCall(update: Boolean) {
-                        invokeinterface(kInputType.internalName,
+                        invokeinterface(
+                            kInputType.internalName,
                             (if (update) CallingConventions.update else CallingConventions.decode) + sti.elementMethodPrefix + (if (useSerializer) "Serializable" else "") + CallingConventions.elementPostfix,
-                                      "(" + descType.descriptor + "I" +
-                                      (if (useSerializer) kSerialLoaderType.descriptor else "")
-                                      + (if (unknownSer) AsmTypes.K_CLASS_TYPE.descriptor else "")
-                                      + (if (update) sti.type.descriptor else "")
-                                      + ")" + (if (sti.unit) "V" else sti.type.descriptor))
+                            "(" + descType.descriptor + "I" +
+                                    (if (useSerializer) kSerialLoaderType.descriptor else "")
+                                    + (if (unknownSer) AsmTypes.K_CLASS_TYPE.descriptor else "")
+                                    + (if (update) sti.type.descriptor else "")
+                                    + ")" + (if (sti.unit) "V" else sti.type.descriptor)
+                        )
                     }
 
                     if (useSerializer) {

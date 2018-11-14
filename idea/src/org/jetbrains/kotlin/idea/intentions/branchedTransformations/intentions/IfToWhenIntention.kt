@@ -121,19 +121,31 @@ class IfToWhenIntention : SelfTargetingRangeIntention<KtIfExpression>(KtIfExpres
         appendFixedText("\n")
     }
 
+    private fun KtIfExpression.topmostIfExpression(): KtIfExpression {
+        var target = this
+        while (true) {
+            val container = target.parent as? KtContainerNodeForControlStructureBody ?: break
+            val parent = container.parent as? KtIfExpression ?: break
+            if (parent.`else` != target) break
+            target = parent
+        }
+        return target
+    }
+
     override fun applyTo(element: KtIfExpression, editor: Editor?) {
-        val siblings = element.siblings()
-        val elementCommentSaver = CommentSaver(element)
-        val fullCommentSaver = CommentSaver(PsiChildRange(element, siblings.last()), saveLineBreaks = true)
+        val ifExpression = element.topmostIfExpression()
+        val siblings = ifExpression.siblings()
+        val elementCommentSaver = CommentSaver(ifExpression)
+        val fullCommentSaver = CommentSaver(PsiChildRange(ifExpression, siblings.last()), saveLineBreaks = true)
 
         val toDelete = ArrayList<PsiElement>()
         var applyFullCommentSaver = true
-        val loop = element.getStrictParentOfType<KtLoopExpression>()
+        val loop = ifExpression.getStrictParentOfType<KtLoopExpression>()
         val loopJumpVisitor = LabelLoopJumpVisitor(loop)
-        var whenExpression = KtPsiFactory(element).buildExpression {
+        var whenExpression = KtPsiFactory(ifExpression).buildExpression {
             appendFixedText("when {\n")
 
-            var currentIfExpression = element
+            var currentIfExpression = ifExpression
             var baseIfExpressionForSyntheticBranch = currentIfExpression
             var canPassThrough = false
             while (true) {
@@ -183,7 +195,8 @@ class IfToWhenIntention : SelfTargetingRangeIntention<KtIfExpression>(KtIfExpres
             whenExpression = whenExpression.introduceSubject()
         }
 
-        val result = element.replaced(whenExpression)
+        val result = ifExpression.replaced(whenExpression)
+        editor?.caretModel?.moveToOffset(result.startOffset)
 
         (if (applyFullCommentSaver) fullCommentSaver else elementCommentSaver).restore(result)
         toDelete.forEach(PsiElement::delete)

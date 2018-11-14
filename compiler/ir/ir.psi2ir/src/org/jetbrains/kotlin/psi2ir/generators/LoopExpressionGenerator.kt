@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
-import org.jetbrains.kotlin.psi.psiUtil.startOffset
+import org.jetbrains.kotlin.psi.psiUtil.startOffsetSkippingComments
 import org.jetbrains.kotlin.psi2ir.intermediate.VariableLValue
 import org.jetbrains.kotlin.psi2ir.intermediate.setExplicitReceiverValue
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 class LoopExpressionGenerator(statementGenerator: StatementGenerator) : StatementGeneratorExtension(statementGenerator) {
     fun generateWhileLoop(ktWhile: KtWhileExpression): IrExpression {
         val irLoop = IrWhileLoopImpl(
-            ktWhile.startOffset, ktWhile.endOffset,
+            ktWhile.startOffsetSkippingComments, ktWhile.endOffset,
             context.irBuiltIns.unitType, IrStatementOrigin.WHILE_LOOP
         )
 
@@ -54,7 +54,7 @@ class LoopExpressionGenerator(statementGenerator: StatementGenerator) : Statemen
 
     fun generateDoWhileLoop(ktDoWhile: KtDoWhileExpression): IrExpression {
         val irLoop = IrDoWhileLoopImpl(
-            ktDoWhile.startOffset, ktDoWhile.endOffset,
+            ktDoWhile.startOffsetSkippingComments, ktDoWhile.endOffset,
             context.irBuiltIns.unitType, IrStatementOrigin.DO_WHILE_LOOP
         )
 
@@ -71,21 +71,21 @@ class LoopExpressionGenerator(statementGenerator: StatementGenerator) : Statemen
 
         irLoop.label = getLoopLabel(ktDoWhile)
 
-        return IrBlockImpl(ktDoWhile.startOffset, ktDoWhile.endOffset, context.irBuiltIns.unitType).apply {
+        return IrBlockImpl(ktDoWhile.startOffsetSkippingComments, ktDoWhile.endOffset, context.irBuiltIns.unitType).apply {
             statements.add(irLoop)
         }
     }
 
     private fun generateWhileLoopBody(ktLoopBody: KtBlockExpression): IrExpression =
         IrBlockImpl(
-            ktLoopBody.startOffset, ktLoopBody.endOffset, context.irBuiltIns.unitType, null,
+            ktLoopBody.startOffsetSkippingComments, ktLoopBody.endOffset, context.irBuiltIns.unitType, null,
             ktLoopBody.statements.map { it.genStmt() }
         )
 
 
     private fun generateDoWhileLoopBody(ktLoopBody: KtBlockExpression): IrExpression =
         IrCompositeImpl(
-            ktLoopBody.startOffset, ktLoopBody.endOffset, context.irBuiltIns.unitType, null,
+            ktLoopBody.startOffsetSkippingComments, ktLoopBody.endOffset, context.irBuiltIns.unitType, null,
             ktLoopBody.statements.map { it.genStmt() }
         )
 
@@ -93,7 +93,7 @@ class LoopExpressionGenerator(statementGenerator: StatementGenerator) : Statemen
         val parentLoop = findParentLoop(ktBreak) ?: return ErrorExpressionGenerator(statementGenerator).generateErrorExpression(
             ktBreak, RuntimeException("Loop not found for break expression: ${ktBreak.text}")
         )
-        return IrBreakImpl(ktBreak.startOffset, ktBreak.endOffset, context.irBuiltIns.nothingType, parentLoop).apply {
+        return IrBreakImpl(ktBreak.startOffsetSkippingComments, ktBreak.endOffset, context.irBuiltIns.nothingType, parentLoop).apply {
             label = ktBreak.getLabelName()
         }
     }
@@ -102,7 +102,7 @@ class LoopExpressionGenerator(statementGenerator: StatementGenerator) : Statemen
         val parentLoop = findParentLoop(ktContinue) ?: return ErrorExpressionGenerator(statementGenerator).generateErrorExpression(
             ktContinue, RuntimeException("Loop not found for continue expression: ${ktContinue.text}")
         )
-        return IrContinueImpl(ktContinue.startOffset, ktContinue.endOffset, context.irBuiltIns.nothingType, parentLoop).apply {
+        return IrContinueImpl(ktContinue.startOffsetSkippingComments, ktContinue.endOffset, context.irBuiltIns.nothingType, parentLoop).apply {
             label = ktContinue.getLabelName()
         }
     }
@@ -154,7 +154,7 @@ class LoopExpressionGenerator(statementGenerator: StatementGenerator) : Statemen
 
         val callGenerator = CallGenerator(statementGenerator)
 
-        val startOffset = ktFor.startOffset
+        val startOffset = ktFor.startOffsetSkippingComments
         val endOffset = ktFor.endOffset
 
         val irForBlock = IrBlockImpl(startOffset, endOffset, context.irBuiltIns.unitType, IrStatementOrigin.FOR_LOOP)
@@ -185,7 +185,7 @@ class LoopExpressionGenerator(statementGenerator: StatementGenerator) : Statemen
             if (ktLoopParameter != null && ktLoopDestructuringDeclaration == null) {
                 val loopParameter = getOrFail(BindingContext.VALUE_PARAMETER, ktLoopParameter)
                 context.symbolTable.declareVariable(
-                    ktLoopParameter.startOffset, ktLoopParameter.endOffset, IrDeclarationOrigin.FOR_LOOP_VARIABLE,
+                    ktLoopParameter.startOffsetSkippingComments, ktLoopParameter.endOffset, IrDeclarationOrigin.FOR_LOOP_VARIABLE,
                     loopParameter, loopParameter.type.toIrType(),
                     irNextCall
                 )

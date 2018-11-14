@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter;
 import org.jetbrains.kotlin.codegen.signature.JvmSignatureWriter;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
+import org.jetbrains.kotlin.config.LanguageVersionSettings;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl;
@@ -36,6 +37,7 @@ import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKt;
 import org.jetbrains.kotlin.resolve.scopes.MemberScope;
 import org.jetbrains.kotlin.serialization.DescriptorSerializer;
 import org.jetbrains.kotlin.types.KotlinType;
+import org.jetbrains.kotlin.types.SimpleType;
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils;
 import org.jetbrains.kotlin.util.OperatorNameConventions;
 import org.jetbrains.org.objectweb.asm.MethodVisitor;
@@ -171,7 +173,7 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
             generateConstInstance(asmType, asmType);
         }
 
-        genClosureFields(closure, v, typeMapper);
+        genClosureFields(closure, v, typeMapper, state.getLanguageVersionSettings());
     }
 
     protected void generateClosureBody() {
@@ -389,8 +391,8 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
         DeclarationDescriptor container = descriptor.getContainingDeclaration();
 
         if (container instanceof ClassDescriptor) {
-            // TODO: getDefaultType() here is wrong and won't work for arrays
-            putJavaLangClassInstance(iv, state.getTypeMapper().mapType(((ClassDescriptor) container).getDefaultType()));
+            // TODO: would it work for arrays?
+            putJavaLangClassInstance(iv, state.getTypeMapper().mapClass((ClassDescriptor) container));
         }
         else if (container instanceof PackageFragmentDescriptor) {
             iv.aconst(state.getTypeMapper().mapOwner(descriptor));
@@ -425,7 +427,7 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
 
     @NotNull
     protected Method generateConstructor() {
-        List<FieldInfo> args = calculateConstructorParameters(typeMapper, closure, asmType);
+        List<FieldInfo> args = calculateConstructorParameters(typeMapper, state.getLanguageVersionSettings(), closure, asmType);
 
         Type[] argTypes = fieldListToTypeArray(args);
 
@@ -436,13 +438,25 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
             mv.visitCode();
             InstructionAdapter iv = new InstructionAdapter(mv);
 
-            Pair<Integer, Type> receiverIndexAndType =
+            Pair<Integer, FieldInfo> receiverIndexAndFieldInfo =
                     CallableReferenceUtilKt.generateClosureFieldsInitializationFromParameters(iv, closure, args);
-            if (shouldHaveBoundReferenceReceiver && receiverIndexAndType == null) {
+            if (shouldHaveBoundReferenceReceiver && receiverIndexAndFieldInfo == null) {
                 throw new AssertionError("No bound reference receiver in constructor parameters: " + args);
             }
-            int boundReferenceReceiverParameterIndex = shouldHaveBoundReferenceReceiver ? receiverIndexAndType.getFirst() : -1;
-            Type boundReferenceReceiverType = shouldHaveBoundReferenceReceiver ? receiverIndexAndType.getSecond() : null;
+
+            int boundReceiverParameterIndex;
+            Type boundReceiverType;
+            KotlinType boundReceiverKotlinType;
+            if (shouldHaveBoundReferenceReceiver) {
+                boundReceiverParameterIndex = receiverIndexAndFieldInfo.getFirst();
+                boundReceiverType = receiverIndexAndFieldInfo.getSecond().getFieldType();
+                boundReceiverKotlinType = receiverIndexAndFieldInfo.getSecond().getFieldKotlinType();
+            }
+            else {
+                boundReceiverParameterIndex = -1;
+                boundReceiverType = null;
+                boundReceiverKotlinType = null;
+            }
 
             iv.load(0, superClassAsmType);
 
@@ -452,7 +466,7 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
                 int arity = calculateArity();
                 iv.iconst(arity);
                 if (shouldHaveBoundReferenceReceiver) {
-                    CallableReferenceUtilKt.loadBoundReferenceReceiverParameter(iv, boundReferenceReceiverParameterIndex, boundReferenceReceiverType);
+                    CallableReferenceUtilKt.loadBoundReferenceReceiverParameter(iv, boundReceiverParameterIndex, boundReceiverType, boundReceiverKotlinType);
                     superClassConstructorDescriptor = "(ILjava/lang/Object;)V";
                 }
                 else {
@@ -482,18 +496,21 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
     @NotNull
     public static List<FieldInfo> calculateConstructorParameters(
             @NotNull KotlinTypeMapper typeMapper,
+            @NotNull LanguageVersionSettings languageVersionSettings,
             @NotNull CalculatedClosure closure,
             @NotNull Type ownerType
     ) {
         List<FieldInfo> args = Lists.newArrayList();
-        ClassDescriptor captureThis = closure.getCaptureThis();
+        ClassDescriptor captureThis = closure.getCapturedOuterClassDescriptor();
         if (captureThis != null) {
-            Type type = typeMapper.mapType(captureThis);
-            args.add(FieldInfo.createForHiddenField(ownerType, type, CAPTURED_THIS_FIELD));
+            SimpleType thisType = captureThis.getDefaultType();
+            Type type = typeMapper.mapType(thisType);
+            args.add(FieldInfo.createForHiddenField(ownerType, type, thisType, CAPTURED_THIS_FIELD));
         }
-        KotlinType captureReceiverType = closure.getCaptureReceiverType();
+        KotlinType captureReceiverType = closure.getCapturedReceiverFromOuterContext();
         if (captureReceiverType != null) {
-            args.add(FieldInfo.createForHiddenField(ownerType, typeMapper.mapType(captureReceiverType), CAPTURED_RECEIVER_FIELD));
+            String fieldName = closure.getCapturedReceiverFieldName(typeMapper.getBindingContext(), languageVersionSettings);
+            args.add(FieldInfo.createForHiddenField(ownerType, typeMapper.mapType(captureReceiverType), captureReceiverType, fieldName));
         }
 
         for (EnclosedValueDescriptor enclosedValueDescriptor : closure.getCaptureVariables().values()) {
@@ -502,7 +519,10 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
                 ExpressionTypingUtils.isLocalFunction(descriptor)) {
                 args.add(
                         FieldInfo.createForHiddenField(
-                                ownerType, enclosedValueDescriptor.getType(), enclosedValueDescriptor.getFieldName()
+                                ownerType,
+                                enclosedValueDescriptor.getType(),
+                                enclosedValueDescriptor.getKotlinType(),
+                                enclosedValueDescriptor.getFieldName()
                         )
                 );
             }

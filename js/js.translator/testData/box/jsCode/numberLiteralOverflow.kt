@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 1108
+// EXPECTED_REACHABLE_NODES: 1280
 fun box(): String {
     val a = js("0xff000000")
     if (a != 4278190080.0) return "fail1: $a"

@@ -4,7 +4,7 @@ public fun </*0*/ M2 : WithFoo> foo(/*0*/ delegateResolver: ResolverForProject<M
 
 public/*package*/ open class MyMap</*0*/ K : kotlin.Any!, /*1*/ V : kotlin.Any!> : java.util.AbstractMap<K!, V!> {
     public/*package*/ constructor MyMap</*0*/ K : kotlin.Any!, /*1*/ V : kotlin.Any!>()
-    public open override /*1*/ val entries: kotlin.collections.MutableSet<kotlin.collections.MutableMap.MutableEntry<K!, V!>>
+    @get:java.lang.Override public open override /*1*/ val entries: kotlin.collections.MutableSet<kotlin.collections.MutableMap.MutableEntry<K!, V!>>
     invisible_fake final override /*1*/ /*fake_override*/ var keySet: kotlin.collections.(Mutable)Set<K!>!
     public open override /*1*/ /*fake_override*/ val keys: kotlin.collections.MutableSet<K!>
     public open override /*1*/ /*fake_override*/ val size: kotlin.Int

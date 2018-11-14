@@ -1,5 +1,5 @@
 // IGNORE_BACKEND: JS_IR
-// EXPECTED_REACHABLE_NODES: 1119
+// EXPECTED_REACHABLE_NODES: 1289
 // FILE: a.kt
 @file:JsModule("lib")
 @file:JsNonModule

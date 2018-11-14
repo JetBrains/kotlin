@@ -40,7 +40,8 @@ class MetadataPackageFragmentProvider(
     finder: KotlinMetadataFinder,
     moduleDescriptor: ModuleDescriptor,
     notFoundClasses: NotFoundClasses,
-    private val metadataPartProvider: MetadataPartProvider
+    private val metadataPartProvider: MetadataPartProvider,
+    contractDeserializer: ContractDeserializer
 ) : AbstractDeserializedPackageFragmentProvider(storageManager, finder, moduleDescriptor) {
     init {
         components = DeserializationComponents(
@@ -56,7 +57,7 @@ class MetadataPackageFragmentProvider(
             FlexibleTypeDeserializer.ThrowException,
             emptyList(),
             notFoundClasses,
-            ContractDeserializer.DEFAULT,
+            contractDeserializer,
             AdditionalClassPartsProvider.None, PlatformDependentDeclarationFilter.All,
             BuiltInSerializerProtocol.extensionRegistry
         )

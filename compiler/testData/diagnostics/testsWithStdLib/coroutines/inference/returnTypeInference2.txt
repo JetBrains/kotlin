@@ -1,7 +1,7 @@
 package
 
 public val test1: Pair<kotlin.String, kotlin.Int>
-public fun </*0*/ T, /*1*/ R> generate(/*0*/ g: suspend Controller<T>.() -> R): Pair<T, R>
+public fun </*0*/ T, /*1*/ R> generate(/*0*/ @kotlin.BuilderInference g: suspend Controller<T>.() -> R): Pair<T, R>
 
 public final class Controller</*0*/ T> {
     public constructor Controller</*0*/ T>()

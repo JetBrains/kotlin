@@ -17,33 +17,6 @@ package kotlin
  */
 public inline fun <T> emptyArray(): Array<T> = js("[]")
 
-@library
-public fun <T> arrayOf(vararg elements: T): Array<T> = definedExternally
-
-@library
-public fun doubleArrayOf(vararg elements: Double): DoubleArray = definedExternally
-
-@library
-public fun floatArrayOf(vararg elements: Float): FloatArray = definedExternally
-
-@library
-public fun longArrayOf(vararg elements: Long): LongArray = definedExternally
-
-@library
-public fun intArrayOf(vararg elements: Int): IntArray = definedExternally
-
-@library
-public fun charArrayOf(vararg elements: Char): CharArray = definedExternally
-
-@library
-public fun shortArrayOf(vararg elements: Short): ShortArray = definedExternally
-
-@library
-public fun byteArrayOf(vararg elements: Byte): ByteArray = definedExternally
-
-@library
-public fun booleanArrayOf(vararg elements: Boolean): BooleanArray = definedExternally
-
 /**
  * Creates a new instance of the [Lazy] that uses the specified initialization function [initializer].
  */
@@ -67,35 +40,36 @@ internal fun fillFrom(src: dynamic, dst: dynamic): dynamic {
     val srcLen: Int = src.length
     val dstLen: Int = dst.length
     var index: Int = 0
-    while (index < srcLen && index < dstLen) dst[index] = src[index++]
+    val arr = dst.unsafeCast<Array<Any?>>()
+    while (index < srcLen && index < dstLen) arr[index] = src[index++]
     return dst
 }
 
 
 internal fun arrayCopyResize(source: dynamic, newSize: Int, defaultValue: Any?): dynamic {
-    val result = source.slice(0, newSize)
+    val result = source.slice(0, newSize).unsafeCast<Array<Any?>>()
     copyArrayType(source, result)
     var index: Int = source.length
     if (newSize > index) {
-        result.length = newSize
+        result.asDynamic().length = newSize
         while (index < newSize) result[index++] = defaultValue
     }
     return result
 }
 
 internal fun <T> arrayPlusCollection(array: dynamic, collection: Collection<T>): dynamic {
-    return TODO()
- //   val result = array.slice()
- //   result.length += collection.size
- //   copyArrayType(array, result)
- //   var index: Int = array.length
- //   for (element in collection) result[index++] = element
- //   return result
+    val result = array.slice().unsafeCast<Array<T>>()
+    result.asDynamic().length = result.size + collection.size
+    copyArrayType(array, result)
+    var index: Int = array.length
+    for (element in collection) result[index++] = element
+    return result
 }
 
 internal fun <T> fillFromCollection(dst: dynamic, startIndex: Int, collection: Collection<T>): dynamic {
     var index = startIndex
-    for (element in collection) dst[index++] = element
+    val arr = dst.unsafeCast<Array<T>>()
+    for (element in collection) arr[index++] = element
     return dst
 }
 

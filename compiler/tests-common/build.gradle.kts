@@ -10,6 +10,10 @@ dependencies {
     testCompile(project(":core:deserialization"))
     testCompile(project(":compiler:util"))
     testCompile(project(":compiler:backend"))
+    testCompile(project(":compiler:fir:tree"))
+    testCompile(project(":compiler:fir:psi2fir"))
+    testCompile(project(":compiler:fir:cones"))
+    testCompile(project(":compiler:fir:resolve"))
     testCompile(project(":compiler:ir.ir2cfg"))
     testCompile(project(":compiler:frontend"))
     testCompile(project(":compiler:frontend.java"))
@@ -24,14 +28,14 @@ dependencies {
     testCompile(project(":js:js.frontend"))
     testCompile(project(":js:js.translator"))
     testCompileOnly(project(":plugins:android-extensions-compiler"))
-    testCompile(projectDist(":kotlin-test:kotlin-test-jvm"))
+    testCompile(project(":kotlin-test:kotlin-test-jvm"))
     testCompile(projectTests(":compiler:tests-common-jvm6"))
     testCompileOnly(project(":kotlin-reflect-api"))
     testCompile(commonDep("junit:junit"))
     testCompile(androidDxJar()) { isTransitive = false }
-    testCompile(intellijCoreDep()) { includeJars("intellij-core"); isTransitive = false }
+    testCompileOnly(intellijCoreDep()) { includeJars("intellij-core") }
     testCompile(intellijDep()) {
-        includeJars("openapi", "platform-api", "platform-impl", "idea", "idea_rt", "guava", "trove4j", "picocontainer-1.2", "asm-all", "log4j", "jdom", "bootstrap", "annotations", rootProject = rootProject)
+        includeJars("openapi", "platform-api", "platform-impl", "idea", "idea_rt", "guava", "trove4j", "picocontainer", "asm-all", "log4j", "jdom", "bootstrap", "annotations", rootProject = rootProject)
         isTransitive = false
     }
 }

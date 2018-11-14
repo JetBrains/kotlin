@@ -15,6 +15,7 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.NonClasspathDirectoriesScope
 import com.intellij.util.containers.SLRUCache
 import org.jetbrains.kotlin.idea.core.script.ScriptDependenciesManager
+import org.jetbrains.kotlin.idea.core.script.dependencies.ScriptRelatedModulesProvider
 import org.jetbrains.kotlin.idea.stubindex.KotlinSourceFilterScope
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.script.KotlinScriptDefinition
@@ -35,18 +36,23 @@ data class ScriptModuleInfo(
     override val moduleOrigin: ModuleOrigin
         get() = ModuleOrigin.OTHER
 
-    val relatedModuleSourceInfo: ModuleSourceInfo?
-        get() = getScriptRelatedModuleInfo(project, scriptFile)
-
     override val name: Name = Name.special("<script ${scriptFile.name} ${scriptDefinition.name}>")
 
     override fun contentScope() = GlobalSearchScope.fileScope(project, scriptFile)
 
     override fun dependencies(): List<IdeaModuleInfo> {
         return arrayListOf<IdeaModuleInfo>(this).apply {
+            val scriptDependentModules = ScriptRelatedModulesProvider.getRelatedModules(scriptFile, project)
+            if (scriptDependentModules.isNotEmpty()) {
+                scriptDependentModules.mapNotNull { it.productionSourceInfo() ?: it.testSourceInfo() }.forEach {
+                    this@apply.add(it)
+                    this@apply.addAll(it.dependencies())
+                }
+            }
+
             val dependenciesInfo = ScriptDependenciesInfo.ForFile(project, scriptFile, scriptDefinition)
             add(dependenciesInfo)
-            relatedModuleSourceInfo?.let { addAll(it.dependencies()) }
+
             dependenciesInfo.sdk?.let { add(SdkInfo(project, it)) }
         }
     }

@@ -7,11 +7,9 @@ package org.jetbrains.kotlin.codegen.state
 
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.load.kotlin.getRepresentativeUpperBound
-import org.jetbrains.kotlin.resolve.DescriptorUtils.RESULT_FQ_NAME
 import org.jetbrains.kotlin.resolve.InlineClassDescriptorResolver
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
-import org.jetbrains.kotlin.resolve.isInlineClassType
+import org.jetbrains.kotlin.resolve.jvm.*
 import org.jetbrains.kotlin.types.KotlinType
 import java.security.MessageDigest
 import java.util.*
@@ -26,35 +24,11 @@ fun getInlineClassSignatureManglingSuffix(descriptor: CallableMemberDescriptor):
     return getInlineClassSignatureManglingSuffix(actualValueParameterTypes)
 }
 
-fun shouldHideConstructorDueToInlineClassTypeValueParameters(descriptor: CallableMemberDescriptor): Boolean {
-    if (descriptor !is ClassConstructorDescriptor) return false
-    if (Visibilities.isPrivate(descriptor.visibility)) return false
-    if (descriptor.constructedClass.isInline) return false
-
-    // TODO inner class in inline class
-
-    return descriptor.valueParameters.any { it.type.requiresFunctionNameMangling() }
-}
-
-fun getInlineClassSignatureManglingSuffix(valueParameterTypes: List<KotlinType>) =
-    if (valueParameterTypes.none { it.requiresFunctionNameMangling() })
-        null
-    else
+private fun getInlineClassSignatureManglingSuffix(valueParameterTypes: List<KotlinType>) =
+    if (requiresFunctionNameMangling(valueParameterTypes))
         "-" + md5base64(collectSignatureForMangling(valueParameterTypes))
-
-private fun KotlinType.requiresFunctionNameMangling() =
-    isInlineClassThatRequiresMangling() || isTypeParameterWithUpperBoundThatRequiresMangling()
-
-private fun KotlinType.isInlineClassThatRequiresMangling() =
-    isInlineClassType() && !isDontMangleClass(this.constructor.declarationDescriptor as ClassDescriptor)
-
-private fun isDontMangleClass(classDescriptor: ClassDescriptor) =
-    classDescriptor.fqNameSafe == RESULT_FQ_NAME
-
-private fun KotlinType.isTypeParameterWithUpperBoundThatRequiresMangling(): Boolean {
-    val descriptor = constructor.declarationDescriptor as? TypeParameterDescriptor ?: return false
-    return getRepresentativeUpperBound(descriptor).requiresFunctionNameMangling()
-}
+    else
+        null
 
 private fun collectSignatureForMangling(types: List<KotlinType>) =
     types.joinToString { getSignatureElementForMangling(it) }

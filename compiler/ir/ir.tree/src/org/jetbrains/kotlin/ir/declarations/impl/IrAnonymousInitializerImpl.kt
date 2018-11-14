@@ -29,7 +29,8 @@ class IrAnonymousInitializerImpl(
     startOffset: Int,
     endOffset: Int,
     origin: IrDeclarationOrigin,
-    override val symbol: IrAnonymousInitializerSymbol
+    override val symbol: IrAnonymousInitializerSymbol,
+    override val isStatic: Boolean = false
 ) : IrDeclarationBase(startOffset, endOffset, origin),
     IrAnonymousInitializer {
 
@@ -37,17 +38,19 @@ class IrAnonymousInitializerImpl(
         startOffset: Int,
         endOffset: Int,
         origin: IrDeclarationOrigin,
-        descriptor: ClassDescriptor
+        descriptor: ClassDescriptor,
+        isStatic: Boolean = false
     ) :
-            this(startOffset, endOffset, origin, IrAnonymousInitializerSymbolImpl(descriptor))
+            this(startOffset, endOffset, origin, IrAnonymousInitializerSymbolImpl(descriptor), isStatic)
 
     constructor(
         startOffset: Int,
         endOffset: Int,
         origin: IrDeclarationOrigin,
         descriptor: ClassDescriptor,
-        body: IrBlockBody
-    ) : this(startOffset, endOffset, origin, descriptor) {
+        body: IrBlockBody,
+        isStatic: Boolean = false
+    ) : this(startOffset, endOffset, origin, descriptor, isStatic) {
         this.body = body
     }
 

@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.jvm.compiler
 
 import com.intellij.openapi.util.io.FileUtil
+import org.jetbrains.kotlin.cli.AbstractCliTest
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
@@ -30,6 +31,7 @@ class Java9ModulesIntegrationTest : AbstractKotlinCompilerIntegrationTest() {
             name: String,
             modulePath: List<File> = emptyList(),
             addModules: List<String> = emptyList(),
+            additionalKotlinArguments: List<String> = emptyList(),
             manifest: Manifest? = null
     ): File {
         val paths = (modulePath + ForTestCompileRuntime.runtimeJarForTests()).joinToString(separator = File.pathSeparator) { it.path }
@@ -42,6 +44,7 @@ class Java9ModulesIntegrationTest : AbstractKotlinCompilerIntegrationTest() {
         if (addModules.isNotEmpty()) {
             kotlinOptions += "-Xadd-modules=${addModules.joinToString()}"
         }
+        kotlinOptions += additionalKotlinArguments
 
         return compileLibrary(
                 name,
@@ -236,5 +239,16 @@ class Java9ModulesIntegrationTest : AbstractKotlinCompilerIntegrationTest() {
 
     fun testDependencyOnReflect() {
         module("usage", listOf(ForTestCompileRuntime.reflectJarForTests()))
+    }
+
+    fun testWithBuildFile() {
+        // This test checks that module path is configured correctly when the compiler is invoked in the '-Xbuild-file' mode. Note that
+        // the "'-d' option is ignored" warning in this test is an artifact of the test infrastructure and is not a part of the test.
+        val buildFile = AbstractCliTest.replacePathsInBuildXml(
+            "-Xbuild-file=${File(testDataDirectory, "build.xml").path}",
+            testDataDirectory.absolutePath,
+            tmpdir.absolutePath
+        )
+        module("usage", additionalKotlinArguments = listOf("-no-stdlib", buildFile))
     }
 }

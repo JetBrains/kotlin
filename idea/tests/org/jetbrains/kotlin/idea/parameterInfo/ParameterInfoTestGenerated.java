@@ -167,6 +167,16 @@ public class ParameterInfoTestGenerated extends AbstractParameterInfoTest {
             runTest("idea/testData/parameterInfo/functionCall/Invoke.kt");
         }
 
+        @TestMetadata("lambdaArgument.kt")
+        public void testLambdaArgument() throws Exception {
+            runTest("idea/testData/parameterInfo/functionCall/lambdaArgument.kt");
+        }
+
+        @TestMetadata("lambdaArgument2.kt")
+        public void testLambdaArgument2() throws Exception {
+            runTest("idea/testData/parameterInfo/functionCall/lambdaArgument2.kt");
+        }
+
         @TestMetadata("LocalFunctionBug.kt")
         public void testLocalFunctionBug() throws Exception {
             runTest("idea/testData/parameterInfo/functionCall/LocalFunctionBug.kt");

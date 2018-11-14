@@ -12,9 +12,8 @@ import org.jetbrains.kotlin.script.KotlinScriptDefinition
 class SyncScriptDependenciesLoader(
     file: VirtualFile,
     scriptDef: KotlinScriptDefinition,
-    project: Project,
-    shouldNotifyRootsChanged: Boolean
-) : ScriptDependenciesLoader(file, scriptDef, project, shouldNotifyRootsChanged) {
+    project: Project
+) : ScriptDependenciesLoader(file, scriptDef, project) {
 
     override fun loadDependencies() {
         val result = contentLoader.loadContentsAndResolveDependencies(scriptDef, file)

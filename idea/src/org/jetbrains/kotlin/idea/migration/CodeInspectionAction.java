@@ -47,7 +47,7 @@ public class CodeInspectionAction extends BaseAnalysisAction {
         GlobalInspectionContextImpl inspectionContext = getGlobalInspectionContext(project);
 
         InspectionManagerEx managerEx = (InspectionManagerEx) InspectionManager.getInstance(project);
-        myExternalProfile = createMigrationProfile(managerEx, null);
+        myExternalProfile = createMigrationProfile(managerEx, null, null);
 
         inspectionContext.setExternalProfile(myExternalProfile);
         inspectionContext.setCurrentScope(scope);

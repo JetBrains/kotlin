@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.js.translate.callTranslator
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.isFunctionTypeOrSubtype
+import org.jetbrains.kotlin.builtins.isSuspendFunctionTypeOrSubtype
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
@@ -30,8 +31,6 @@ import org.jetbrains.kotlin.js.translate.reference.CallExpressionTranslator
 import org.jetbrains.kotlin.js.translate.utils.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.Call.CallType
-import org.jetbrains.kotlin.psi.KtExpression
-import org.jetbrains.kotlin.psi.KtWhenConditionInRange
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.isInvokeCallOnVariable
 import org.jetbrains.kotlin.resolve.calls.callUtil.isSafeCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
@@ -109,7 +108,7 @@ private fun translateCall(
     if (resolvedCall is VariableAsFunctionResolvedCall) {
         assert(explicitReceivers.extensionReceiver == null) { "VariableAsFunctionResolvedCall must have one receiver" }
         val variableCall = resolvedCall.variableCall
-        val isFunctionType = variableCall.resultingDescriptor.type.isFunctionTypeOrSubtype
+        val isFunctionType = variableCall.resultingDescriptor.type.run { isFunctionTypeOrSubtype || isSuspendFunctionTypeOrSubtype }
         val inlineCall = if (isFunctionType) variableCall else resolvedCall
 
         val newExplicitReceivers = if (variableCall.expectedReceivers()) {
@@ -149,9 +148,7 @@ private fun translateFunctionCall(
     var callExpression = callInfo.translateFunctionCall()
 
     if (CallExpressionTranslator.shouldBeInlined(inlineResolvedCall.resultingDescriptor, context)) {
-        val callElement = resolvedCall.call.callElement
-        val ktExpression = (callElement as? KtWhenConditionInRange)?.rangeExpression ?: callElement as KtExpression
-        setInlineCallMetadata(callExpression, ktExpression, inlineResolvedCall.resultingDescriptor, context)
+        setInlineCallMetadata(callExpression, resolvedCall.call.callElement, inlineResolvedCall.resultingDescriptor, context)
     }
 
     if (resolvedCall.resultingDescriptor.isSuspend) {
@@ -170,7 +167,6 @@ private fun translateFunctionCall(
     mayBeMarkByRangeMetadata(resolvedCall, callExpression)
     return callExpression
 }
-
 
 private fun mayBeMarkByRangeMetadata(resolvedCall: ResolvedCall<out FunctionDescriptor>, callExpression: JsExpression) {
     when (resolvedCall.resultingDescriptor.fqNameSafe) {

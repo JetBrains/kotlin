@@ -9,31 +9,30 @@ FILE fqName:<root> fileName:/whenReturn.kt
           BRANCH
             if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
               arg0: GET_VAR 'tmp0_subject: String' type=kotlin.String origin=null
-              arg1: CONST String type=kotlin.String value=A
+              arg1: CONST String type=kotlin.String value="A"
             then: RETURN type=kotlin.Nothing from='toString(String): String'
-              CONST String type=kotlin.String value=Excellent
+              CONST String type=kotlin.String value="Excellent"
           BRANCH
             if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
               arg0: GET_VAR 'tmp0_subject: String' type=kotlin.String origin=null
-              arg1: CONST String type=kotlin.String value=B
+              arg1: CONST String type=kotlin.String value="B"
             then: RETURN type=kotlin.Nothing from='toString(String): String'
-              CONST String type=kotlin.String value=Good
+              CONST String type=kotlin.String value="Good"
           BRANCH
             if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
               arg0: GET_VAR 'tmp0_subject: String' type=kotlin.String origin=null
-              arg1: CONST String type=kotlin.String value=C
+              arg1: CONST String type=kotlin.String value="C"
             then: RETURN type=kotlin.Nothing from='toString(String): String'
-              CONST String type=kotlin.String value=Mediocre
+              CONST String type=kotlin.String value="Mediocre"
           BRANCH
             if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
               arg0: GET_VAR 'tmp0_subject: String' type=kotlin.String origin=null
-              arg1: CONST String type=kotlin.String value=D
+              arg1: CONST String type=kotlin.String value="D"
             then: RETURN type=kotlin.Nothing from='toString(String): String'
-              CONST String type=kotlin.String value=Fair
+              CONST String type=kotlin.String value="Fair"
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
             then: RETURN type=kotlin.Nothing from='toString(String): String'
-              CONST String type=kotlin.String value=Failure
+              CONST String type=kotlin.String value="Failure"
       RETURN type=kotlin.Nothing from='toString(String): String'
-        CONST String type=kotlin.String value=???
-
+        CONST String type=kotlin.String value="???"

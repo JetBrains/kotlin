@@ -1,5 +1,5 @@
-// IGNORE_BACKEND: JVM_IR, JS_IR
-// WITH_UNSIGNED
+// IGNORE_BACKEND: JVM_IR
+// WITH_RUNTIME
 
 fun box(): String {
     val a = listOf(1u, 2u, 3u)

@@ -1,7 +1,7 @@
 // !LANGUAGE: +ReleaseCoroutines
 // !API_VERSION: 1.3
 // IGNORE_BACKEND: NATIVE
-// IGNORE_BACKEND: JS, JS_IR
+// IGNORE_BACKEND: JS
 // IGNORE_BACKEND: JVM_IR
 // NO_CHECK_LAMBDA_INLINING
 // FILE: test.kt
@@ -12,11 +12,12 @@ inline suspend fun foo(x: suspend () -> String) = x()
 // WITH_RUNTIME
 // WITH_COROUTINES
 
+import helpers.ContinuationAdapter
 import kotlin.coroutines.*
 import kotlin.coroutines.intrinsics.*
 
 fun builder(c: suspend () -> Unit) {
-    c.startCoroutine(object: helpers.ContinuationAdapter<Unit>() {
+    c.startCoroutine(object: ContinuationAdapter<Unit>() {
         override fun resume(value: Unit) {
         }
 

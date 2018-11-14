@@ -13,7 +13,9 @@ where advanced options include:
   -Xbuild-file=<path>        Path to the .xml build file to compile
   -Xcompile-java             Reuse javac analysis and compile Java source files
   -Xnormalize-constructor-calls={disable|enable}
-                             Normalize constructor calls (disable: don't normalize; enable: normalize), default is disable
+                             Normalize constructor calls (disable: don't normalize; enable: normalize),
+                             default is 'disable' in language version 1.2 and below,
+                             'enable' since language version 1.3
   -Xdump-declarations-to=<path> Path to JSON file to dump Java to Kotlin declaration mappings
   -Xdisable-default-scripting-plugin
                              Do not enable scripting plugin by default
@@ -52,14 +54,18 @@ where advanced options include:
   -Xskip-runtime-version-check Allow Kotlin runtime libraries of incompatible versions in the classpath
   -Xstrict-java-nullability-assertions
                              Generate nullability assertions for non-null Java expressions
+  -Xgenerate-strict-metadata-version
+                             Generate metadata with strict version semantics (see kdoc on Metadata.extraInt)
   -Xsupport-compatqual-checker-framework-annotations=enable|disable
                              Specify behavior for Checker Framework compatqual annotations (NullableDecl/NonNullDecl).
                              Default value is 'enable'
   -Xuse-ir                   Use the IR backend
   -Xuse-javac                Use javac for Java source and class files analysis
-  -Xuse-old-class-files-reading Use old class files reading implementation (may slow down the build and should be used in case of problems with the new implementation)
+  -Xuse-old-class-files-reading Use old class files reading implementation. This may slow down the build and cause problems with Groovy interop.
+                             Should be used in case of problems with the new implementation
   -Xuse-type-table           Use type table in metadata serialization
   -Xallow-kotlin-package     Allow compiling code in package 'kotlin' and allow not requiring kotlin.stdlib in module-info
+  -Xallow-result-return-type Allow compiling code when `kotlin.Result` is used as a return type
   -Xcommon-sources=<path>    Sources of the common module that need to be compiled together with this module in the multi-platform mode.
                              Should be a subset of sources passed as free arguments
   -Xcoroutines={enable|warn|error}
@@ -75,11 +81,6 @@ where advanced options include:
   -Xno-check-actual          Do not check presence of 'actual' modifier in multi-platform projects
   -Xno-inline                Disable method inlining
   -Xplugin=<path>            Load plugins from the given classpath
-  -Xprogressive              Enable compiler progressive mode.
-                             In this mode, deprecations and bug fixes for unstable code take effect immediately,
-                             instead of going through graceful migration cycle.
-                             Code, written in progressive mode is backward compatible; however, code written in
-                             non-progressive mode may cause compilation errors in progressive mode.
   -Xproper-ieee754-comparisons Generate proper IEEE 754 comparisons in all cases if values are statically known to be of primitive numeric types
   -Xread-deserialized-contracts Enable reading of contracts from metadata
   -Xreport-output-files      Report source to output files mapping

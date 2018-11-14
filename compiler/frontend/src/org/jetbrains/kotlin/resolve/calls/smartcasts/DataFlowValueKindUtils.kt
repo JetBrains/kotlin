@@ -86,7 +86,7 @@ internal fun VariableDescriptor.variableKind(
 }
 
 
-private fun hasNoWritersInClosures(
+fun hasNoWritersInClosures(
     variableContainingDeclaration: DeclarationDescriptor,
     writers: Set<AssignedVariablesSearcher.Writer>,
     bindingContext: BindingContext

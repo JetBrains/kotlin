@@ -65,7 +65,6 @@ import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.InTextDirectivesUtils.findStringWithPrefixes
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 import java.io.File
-import java.lang.AssertionError
 import javax.swing.SwingUtilities
 
 abstract class KotlinDebuggerTestBase : KotlinDebuggerTestCase() {
@@ -113,6 +112,8 @@ abstract class KotlinDebuggerTestBase : KotlinDebuggerTestCase() {
         debuggerSettings.SKIP_CLASSLOADERS = fileText.getValueForSetting("SKIP_CLASSLOADERS", oldSettings!!.SKIP_CLASSLOADERS)
         debuggerSettings.TRACING_FILTERS_ENABLED = fileText.getValueForSetting("TRACING_FILTERS_ENABLED", oldSettings!!.TRACING_FILTERS_ENABLED)
         debuggerSettings.SKIP_GETTERS = fileText.getValueForSetting("SKIP_GETTERS", oldSettings!!.SKIP_GETTERS)
+
+        DebuggerUtils.forceRanking = InTextDirectivesUtils.isDirectiveDefined(fileText, "FORCE_RANKING")
     }
 
     private fun String.getValueForSetting(name: String, defaultValue: Boolean): Boolean {
@@ -137,6 +138,8 @@ abstract class KotlinDebuggerTestBase : KotlinDebuggerTestCase() {
         debuggerSettings.SKIP_CLASSLOADERS = oldSettings!!.SKIP_CLASSLOADERS
         debuggerSettings.TRACING_FILTERS_ENABLED = oldSettings!!.TRACING_FILTERS_ENABLED
         debuggerSettings.SKIP_GETTERS = oldSettings!!.SKIP_GETTERS
+
+        DebuggerUtils.forceRanking = false
     }
 
     protected val dp: DebugProcessImpl

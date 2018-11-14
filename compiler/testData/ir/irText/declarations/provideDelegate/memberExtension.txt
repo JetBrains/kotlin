@@ -60,7 +60,7 @@ FILE fqName:<root> fileName:/memberExtension.kt
         EXPRESSION_BODY
           CALL 'provideDelegate(Any?, Any) on String: Host.StringDelegate' type=Host.StringDelegate origin=null
             $this: GET_VAR 'this@Host: Host' type=Host origin=null
-            $receiver: CONST String type=kotlin.String value=K
+            $receiver: CONST String type=kotlin.String value="K"
             host: GET_VAR 'this@Host: Host' type=Host origin=null
             p: PROPERTY_REFERENCE 'plusK: String on String' field=null getter='<get-plusK>() on String: String' setter=null type=kotlin.reflect.KProperty2<kotlin.String, Host, kotlin.String> origin=PROPERTY_REFERENCE_FOR_DELEGATE
       FUN DELEGATED_PROPERTY_ACCESSOR name:<get-plusK> visibility:public modality:FINAL <> ($this:Host, $receiver:kotlin.String) returnType:kotlin.String flags:
@@ -79,7 +79,7 @@ FILE fqName:<root> fileName:/memberExtension.kt
         EXPRESSION_BODY
           CALL '<get-plusK>() on String: String' type=kotlin.String origin=GET_PROPERTY
             $this: GET_VAR 'this@Host: Host' type=Host origin=null
-            $receiver: CONST String type=kotlin.String value=O
+            $receiver: CONST String type=kotlin.String value="O"
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-ok> visibility:public modality:FINAL <> ($this:Host) returnType:kotlin.String flags:
         correspondingProperty: PROPERTY name:ok visibility:public modality:FINAL flags:val
         $this: VALUE_PARAMETER name:<this> type:Host flags:

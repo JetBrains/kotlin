@@ -2,7 +2,7 @@
  * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
-@file:Suppress("DEPRECATION")
+@file:Suppress("DEPRECATION", "DEPRECATION_ERROR")
 package kotlin.math
 
 
@@ -10,7 +10,7 @@ import kotlin.internal.InlineOnly
 import kotlin.js.Math as nativeMath
 
 
-// ================ Double Math ========================================
+// region ================ Double Math ========================================
 
 /** Computes the sine of the angle [x] given in radians.
  *
@@ -543,10 +543,11 @@ public actual fun Double.roundToLong(): Long = when {
     else -> nativeMath.round(this).unsafeCast<Double>().toLong()
 }
 
+// endregion
 
 
 
-// ================ Float Math ========================================
+// region ================ Float Math ========================================
 
 /** Computes the sine of the angle [x] given in radians.
  *
@@ -1010,6 +1011,9 @@ public actual inline fun Float.roundToInt(): Int = toDouble().roundToInt()
 public actual inline fun Float.roundToLong(): Long = toDouble().roundToLong()
 
 
+// endregion
+
+// region ================ Integer Math ========================================
 
 
 /**
@@ -1116,3 +1120,4 @@ public actual val Long.sign: Int get() = when {
 }
 
 
+// endregion

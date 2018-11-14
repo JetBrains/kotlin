@@ -151,14 +151,7 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
         Map<String, String> directives = KotlinTestUtils.parseDirectives(content);
         LanguageVersionSettings languageVersionSettings = CompilerTestLanguageVersionSettingsKt.parseLanguageVersionSettings(directives);
         if (languageVersionSettings == null) {
-            if (InTextDirectivesUtils.isDirectiveDefined(content, "WITH_UNSIGNED")) {
-                languageVersionSettings = new CompilerTestLanguageVersionSettings(
-                        emptyMap(), ApiVersion.KOTLIN_1_3, LanguageVersion.KOTLIN_1_3, emptyMap()
-                );
-            }
-            else {
-                languageVersionSettings = CompilerTestLanguageVersionSettingsKt.defaultLanguageVersionSettings();
-            }
+            languageVersionSettings = CompilerTestLanguageVersionSettingsKt.defaultLanguageVersionSettings();
         }
 
         CommonConfigurationKeysKt.setLanguageVersionSettings(configuration, languageVersionSettings);

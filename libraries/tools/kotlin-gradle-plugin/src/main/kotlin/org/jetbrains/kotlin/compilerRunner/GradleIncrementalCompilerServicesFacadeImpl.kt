@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.compilerRunner
 
-import org.gradle.api.Project
-import org.gradle.api.logging.Logger
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.daemon.client.reportFromDaemon
 import org.jetbrains.kotlin.daemon.common.*
@@ -16,14 +14,12 @@ import java.rmi.Remote
 import java.rmi.server.UnicastRemoteObject
 
 internal open class GradleCompilerServicesFacadeImpl(
-        project: Project,
-        val compilerMessageCollector: MessageCollector,
-        port: Int = SOCKET_ANY_FREE_PORT
+    private val log: KotlinLogger,
+    private val compilerMessageCollector: MessageCollector,
+    port: Int = SOCKET_ANY_FREE_PORT
 ) : UnicastRemoteObject(port, LoopbackNetworkInterface.clientLoopbackSocketFactory, LoopbackNetworkInterface.serverLoopbackSocketFactory),
     CompilerServicesFacadeBase,
     Remote {
-
-    protected val log: Logger = project.logger
 
     override fun report(category: Int, severity: Int, message: String?, attachment: Serializable?) {
         when (ReportCategory.fromCode(category)) {
@@ -35,19 +31,20 @@ internal open class GradleCompilerServicesFacadeImpl(
             }
             else -> {
                 compilerMessageCollector.reportFromDaemon(
-                        outputsCollector = null,
-                        category = category,
-                        severity = severity,
-                        message = message,
-                        attachment = attachment)
+                    outputsCollector = null,
+                    category = category,
+                    severity = severity,
+                    message = message,
+                    attachment = attachment
+                )
             }
         }
     }
 }
 
 internal class GradleIncrementalCompilerServicesFacadeImpl(
-        project: Project,
-        environment: GradleIncrementalCompilerEnvironment,
-        port: Int = SOCKET_ANY_FREE_PORT
-) : GradleCompilerServicesFacadeImpl(project, environment.messageCollector, port),
+    log: KotlinLogger,
+    messageCollector: MessageCollector,
+    port: Int = SOCKET_ANY_FREE_PORT
+) : GradleCompilerServicesFacadeImpl(log, messageCollector, port),
     IncrementalCompilerServicesFacade

@@ -20,11 +20,11 @@ dependencies {
     compileOnly(intellijDep()) { includeJars("annotations") }
 
     testCompile(commonDep("junit:junit"))
-    testCompile(projectDist(":kotlin-test:kotlin-test-junit"))
-    testCompile(projectDist(":kotlin-stdlib"))
+    testCompile(project(":kotlin-test:kotlin-test-junit"))
+    testCompile(project(":kotlin-stdlib"))
     testCompile(projectTests(":kotlin-build-common"))
     testCompile(projectTests(":compiler:tests-common"))
-    testCompile(intellijCoreDep()) { includeJars("intellij-core") }
+    testCompileOnly(intellijCoreDep()) { includeJars("intellij-core") }
     testCompile(intellijDep()) { includeJars("annotations", "log4j", "jdom") }
 }
 

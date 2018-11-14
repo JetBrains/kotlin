@@ -74,47 +74,47 @@ import java.util.*
 
 object Kapt3ConfigurationKeys {
     val SOURCE_OUTPUT_DIR: CompilerConfigurationKey<String> =
-            CompilerConfigurationKey.create<String>(SOURCE_OUTPUT_DIR_OPTION.description)
+        CompilerConfigurationKey.create<String>(SOURCE_OUTPUT_DIR_OPTION.description)
 
     val CLASS_OUTPUT_DIR: CompilerConfigurationKey<String> =
-            CompilerConfigurationKey.create<String>(CLASS_OUTPUT_DIR_OPTION.description)
+        CompilerConfigurationKey.create<String>(CLASS_OUTPUT_DIR_OPTION.description)
 
     val STUBS_OUTPUT_DIR: CompilerConfigurationKey<String> =
-            CompilerConfigurationKey.create<String>(STUBS_OUTPUT_DIR_OPTION.description)
+        CompilerConfigurationKey.create<String>(STUBS_OUTPUT_DIR_OPTION.description)
 
     val INCREMENTAL_DATA_OUTPUT_DIR: CompilerConfigurationKey<String> =
-            CompilerConfigurationKey.create<String>(INCREMENTAL_DATA_OUTPUT_DIR_OPTION.description)
+        CompilerConfigurationKey.create<String>(INCREMENTAL_DATA_OUTPUT_DIR_OPTION.description)
 
     val ANNOTATION_PROCESSOR_CLASSPATH: CompilerConfigurationKey<List<String>> =
-            CompilerConfigurationKey.create<List<String>>(ANNOTATION_PROCESSOR_CLASSPATH_OPTION.description)
+        CompilerConfigurationKey.create<List<String>>(ANNOTATION_PROCESSOR_CLASSPATH_OPTION.description)
 
     val APT_OPTIONS: CompilerConfigurationKey<String> =
-            CompilerConfigurationKey.create<String>(APT_OPTIONS_OPTION.description)
+        CompilerConfigurationKey.create<String>(APT_OPTIONS_OPTION.description)
 
     val JAVAC_CLI_OPTIONS: CompilerConfigurationKey<String> =
-            CompilerConfigurationKey.create<String>(JAVAC_CLI_OPTIONS_OPTION.description)
+        CompilerConfigurationKey.create<String>(JAVAC_CLI_OPTIONS_OPTION.description)
 
     val ANNOTATION_PROCESSORS: CompilerConfigurationKey<List<String>> =
-            CompilerConfigurationKey.create<List<String>>(ANNOTATION_PROCESSORS_OPTION.description)
+        CompilerConfigurationKey.create<List<String>>(ANNOTATION_PROCESSORS_OPTION.description)
 
     val VERBOSE_MODE: CompilerConfigurationKey<String> =
-            CompilerConfigurationKey.create<String>(VERBOSE_MODE_OPTION.description)
+        CompilerConfigurationKey.create<String>(VERBOSE_MODE_OPTION.description)
 
     val INFO_AS_WARNINGS: CompilerConfigurationKey<String> =
-            CompilerConfigurationKey.create<String>(INFO_AS_WARNINGS_OPTION.description)
+        CompilerConfigurationKey.create<String>(INFO_AS_WARNINGS_OPTION.description)
 
     @Deprecated("Use APT_MODE instead.")
     val APT_ONLY: CompilerConfigurationKey<String> =
-            CompilerConfigurationKey.create<String>(APT_ONLY_OPTION.description)
+        CompilerConfigurationKey.create<String>(APT_ONLY_OPTION.description)
 
     val APT_MODE: CompilerConfigurationKey<String> =
-            CompilerConfigurationKey.create<String>(APT_MODE_OPTION.description)
+        CompilerConfigurationKey.create<String>(APT_MODE_OPTION.description)
 
     val USE_LIGHT_ANALYSIS: CompilerConfigurationKey<String> =
-            CompilerConfigurationKey.create<String>(USE_LIGHT_ANALYSIS_OPTION.description)
+        CompilerConfigurationKey.create<String>(USE_LIGHT_ANALYSIS_OPTION.description)
 
     val CORRECT_ERROR_TYPES: CompilerConfigurationKey<String> =
-            CompilerConfigurationKey.create<String>(CORRECT_ERROR_TYPES_OPTION.description)
+        CompilerConfigurationKey.create<String>(CORRECT_ERROR_TYPES_OPTION.description)
 
     val MAP_DIAGNOSTIC_LOCATIONS: CompilerConfigurationKey<String> =
         CompilerConfigurationKey.create<String>(MAP_DIAGNOSTIC_LOCATIONS_OPTION.description)
@@ -125,61 +125,81 @@ object Kapt3ConfigurationKeys {
 
 class Kapt3CommandLineProcessor : CommandLineProcessor {
     companion object {
-        val ANNOTATION_PROCESSING_COMPILER_PLUGIN_ID: String = "org.jetbrains.kotlin.kapt3"
+        const val ANNOTATION_PROCESSING_COMPILER_PLUGIN_ID: String = "org.jetbrains.kotlin.kapt3"
 
         val CONFIGURATION = CliOption("configuration", "<encoded>", "Encoded configuration", required = false)
 
         val SOURCE_OUTPUT_DIR_OPTION: CliOption =
-                CliOption("sources", "<path>", "Output path for the generated files", required = false)
+            CliOption("sources", "<path>", "Output path for the generated files", required = false)
 
         val CLASS_OUTPUT_DIR_OPTION: CliOption =
-                CliOption("classes", "<path>", "Output path for the class files", required = false)
+            CliOption("classes", "<path>", "Output path for the class files", required = false)
 
         val STUBS_OUTPUT_DIR_OPTION: CliOption =
-                CliOption("stubs", "<path>", "Output path for the Java stubs", required = false)
+            CliOption("stubs", "<path>", "Output path for the Java stubs", required = false)
 
         val INCREMENTAL_DATA_OUTPUT_DIR_OPTION: CliOption =
-                CliOption("incrementalData", "<path>", "Output path for the incremental data", required = false)
+            CliOption("incrementalData", "<path>", "Output path for the incremental data", required = false)
 
         val ANNOTATION_PROCESSOR_CLASSPATH_OPTION: CliOption =
-                CliOption("apclasspath", "<classpath>", "Annotation processor classpath",
-                          required = false, allowMultipleOccurrences = true)
+            CliOption(
+                "apclasspath", "<classpath>", "Annotation processor classpath",
+                required = false, allowMultipleOccurrences = true
+            )
 
         val APT_OPTIONS_OPTION: CliOption =
-                CliOption("apoptions", "options map", "Encoded annotation processor options",
-                          required = false, allowMultipleOccurrences = false)
+            CliOption(
+                "apoptions", "options map", "Encoded annotation processor options",
+                required = false, allowMultipleOccurrences = false
+            )
 
         val JAVAC_CLI_OPTIONS_OPTION: CliOption =
-                CliOption("javacArguments", "javac CLI options map", "Encoded javac CLI options",
-                          required = false, allowMultipleOccurrences = false)
+            CliOption(
+                "javacArguments", "javac CLI options map", "Encoded javac CLI options",
+                required = false, allowMultipleOccurrences = false
+            )
 
         val ANNOTATION_PROCESSORS_OPTION: CliOption =
-                CliOption("processors", "<fqname,[fqname2,...]>", "Annotation processor qualified names",
-                          required = false, allowMultipleOccurrences = true)
+            CliOption(
+                "processors", "<fqname,[fqname2,...]>", "Annotation processor qualified names",
+                required = false, allowMultipleOccurrences = true
+            )
 
         val VERBOSE_MODE_OPTION: CliOption =
-                CliOption("verbose", "true | false", "Enable verbose output", required = false)
+            CliOption("verbose", "true | false", "Enable verbose output", required = false)
 
         val INFO_AS_WARNINGS_OPTION: CliOption =
-                CliOption("infoAsWarnings", "true | false", "Show information messages as warnings", required = false)
+            CliOption("infoAsWarnings", "true | false", "Show information messages as warnings", required = false)
 
         @Deprecated("Use APT_MODE_OPTION instead.")
         val APT_ONLY_OPTION: CliOption =
-                CliOption("aptOnly", "true | false", "Run only annotation processing, do not compile Kotlin files", required = false)
+            CliOption("aptOnly", "true | false", "Run only annotation processing, do not compile Kotlin files", required = false)
 
         val APT_MODE_OPTION: CliOption =
-                CliOption("aptMode", "apt | stubs | stubsAndApt | compile",
-                          "Annotation processing mode: only apt, only stub generation, both, or with the subsequent compilation",
-                          required = false)
+            CliOption(
+                "aptMode", "apt | stubs | stubsAndApt | compile",
+                "Annotation processing mode: only apt, only stub generation, both, or with the subsequent compilation",
+                required = false
+            )
 
         val USE_LIGHT_ANALYSIS_OPTION: CliOption =
-                CliOption("useLightAnalysis", "true | false", "Do not analyze declaration bodies if can", required = false)
+            CliOption("useLightAnalysis", "true | false", "Do not analyze declaration bodies if can", required = false)
 
         val CORRECT_ERROR_TYPES_OPTION: CliOption =
-                CliOption("correctErrorTypes", "true | false", "Replace generated or error types with ones from the generated sources", required = false)
+            CliOption(
+                "correctErrorTypes",
+                "true | false",
+                "Replace generated or error types with ones from the generated sources",
+                required = false
+            )
 
         val MAP_DIAGNOSTIC_LOCATIONS_OPTION: CliOption =
-            CliOption("mapDiagnosticLocations", "true | false", "Map diagnostic reported on kapt stubs to original locations in Kotlin sources", required = false)
+            CliOption(
+                "mapDiagnosticLocations",
+                "true | false",
+                "Map diagnostic reported on kapt stubs to original locations in Kotlin sources",
+                required = false
+            )
 
         val STRICT_MODE_OPTION: CliOption =
             CliOption("strict", "true | false", "Show errors on incompatibilities during stub generation", required = false)
@@ -188,10 +208,12 @@ class Kapt3CommandLineProcessor : CommandLineProcessor {
     override val pluginId: String = ANNOTATION_PROCESSING_COMPILER_PLUGIN_ID
 
     override val pluginOptions: Collection<CliOption> =
-            listOf(SOURCE_OUTPUT_DIR_OPTION, ANNOTATION_PROCESSOR_CLASSPATH_OPTION, APT_OPTIONS_OPTION, JAVAC_CLI_OPTIONS_OPTION,
-                   CLASS_OUTPUT_DIR_OPTION, VERBOSE_MODE_OPTION, STUBS_OUTPUT_DIR_OPTION, APT_ONLY_OPTION, APT_MODE_OPTION,
-                   USE_LIGHT_ANALYSIS_OPTION, CORRECT_ERROR_TYPES_OPTION, ANNOTATION_PROCESSORS_OPTION, INCREMENTAL_DATA_OUTPUT_DIR_OPTION,
-                   CONFIGURATION, MAP_DIAGNOSTIC_LOCATIONS_OPTION, INFO_AS_WARNINGS_OPTION, STRICT_MODE_OPTION)
+        listOf(
+            SOURCE_OUTPUT_DIR_OPTION, ANNOTATION_PROCESSOR_CLASSPATH_OPTION, APT_OPTIONS_OPTION, JAVAC_CLI_OPTIONS_OPTION,
+            CLASS_OUTPUT_DIR_OPTION, VERBOSE_MODE_OPTION, STUBS_OUTPUT_DIR_OPTION, APT_ONLY_OPTION, APT_MODE_OPTION,
+            USE_LIGHT_ANALYSIS_OPTION, CORRECT_ERROR_TYPES_OPTION, ANNOTATION_PROCESSORS_OPTION, INCREMENTAL_DATA_OUTPUT_DIR_OPTION,
+            CONFIGURATION, MAP_DIAGNOSTIC_LOCATIONS_OPTION, INFO_AS_WARNINGS_OPTION, STRICT_MODE_OPTION
+        )
 
     override fun processOption(option: CliOption, value: String, configuration: CompilerConfiguration) {
         when (option) {
@@ -238,14 +260,13 @@ class Kapt3ComponentRegistrar : ComponentRegistrar {
     }
 
     override fun registerProjectComponents(project: MockProject, configuration: CompilerConfiguration) {
-        val aptMode = AptMode.parse(configuration.get(Kapt3ConfigurationKeys.APT_MODE) ?:
-                                    configuration.get(Kapt3ConfigurationKeys.APT_ONLY))
+        val aptMode = AptMode.parse(configuration.get(Kapt3ConfigurationKeys.APT_MODE) ?: configuration.get(Kapt3ConfigurationKeys.APT_ONLY))
 
         val isVerbose = configuration.get(Kapt3ConfigurationKeys.VERBOSE_MODE) == "true"
         val infoAsWarnings = configuration.get(Kapt3ConfigurationKeys.INFO_AS_WARNINGS) == "true"
         val strictMode = configuration.get(Kapt3ConfigurationKeys.STRICT_MODE) == "true"
         val messageCollector = configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
-                               ?: PrintingMessageCollector(System.err, MessageRenderer.PLAIN_FULL_PATHS, isVerbose)
+            ?: PrintingMessageCollector(System.err, MessageRenderer.PLAIN_FULL_PATHS, isVerbose)
         val logger = MessageCollectorBackedKaptLogger(isVerbose, infoAsWarnings, messageCollector)
 
         fun abortAnalysis() = AnalysisHandlerExtension.registerExtension(project, AbortAnalysisHandlerExtension())
@@ -365,7 +386,7 @@ class Kapt3ComponentRegistrar : ComponentRegistrar {
                 bindingTrace: BindingTrace,
                 files: Collection<KtFile>
         ): AnalysisResult? {
-            return AnalysisResult.Companion.success(bindingTrace.bindingContext, module, shouldGenerateCode = false)
+            return AnalysisResult.success(bindingTrace.bindingContext, module, shouldGenerateCode = false)
         }
     }
 }

@@ -3,6 +3,8 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
+package com.example.app.native
+
 import com.example.lib.*
 
 fun main(args: Array<String>) {

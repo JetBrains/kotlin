@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.ide.konan.index
 
 import com.intellij.util.indexing.FileBasedIndex
-import org.jetbrains.kotlin.ide.konan.decompiler.KotlinNativeDescriptorManager
+import org.jetbrains.kotlin.ide.konan.decompiler.KotlinNativeLoadingMetadataCache
 import org.jetbrains.kotlin.ide.konan.decompiler.KotlinNativeMetaFileType
 import org.jetbrains.kotlin.idea.vfilefinder.KotlinFileIndexBase
 import org.jetbrains.kotlin.name.FqName
@@ -26,7 +26,7 @@ object KotlinNativeMetaFileIndex : KotlinFileIndexBase<KotlinNativeMetaFileIndex
 
     /*todo: check version?!*/
     private val INDEXER = indexer { fileContent ->
-        val fragment = KotlinNativeDescriptorManager.getInstance().getCachedPackageFragment(fileContent.file)
+        val fragment = KotlinNativeLoadingMetadataCache.getInstance().getCachedPackageFragment(fileContent.file)
         FqName(fragment.fqName)
     }
 }

@@ -10,8 +10,6 @@ import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.lower.createFunctionAndMapVariables
 import org.jetbrains.kotlin.backend.jvm.lower.createStaticFunctionWithReceivers
 import org.jetbrains.kotlin.builtins.CompanionObjectMapping.isMappedIntrinsicCompanionObject
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.codegen.descriptors.FileClassDescriptor
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.descriptors.*
@@ -19,8 +17,6 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.ClassConstructorDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
-import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
-import org.jetbrains.kotlin.ir.SourceManager
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrClassImpl
@@ -33,22 +29,16 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.toIrType
 import org.jetbrains.kotlin.ir.types.toKotlinType
-import org.jetbrains.kotlin.ir.util.defaultType
-import org.jetbrains.kotlin.ir.util.dump
-import org.jetbrains.kotlin.ir.util.isInterface
-import org.jetbrains.kotlin.ir.util.parentAsClass
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.load.java.JavaVisibilities
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi2ir.PsiSourceManager
-import org.jetbrains.kotlin.resolve.source.KotlinSourceElement
 import org.jetbrains.org.objectweb.asm.Opcodes
 import java.util.*
 
 class JvmDeclarationFactory(
-    private val psiSourceManager: PsiSourceManager,
-    private val builtIns: KotlinBuiltIns,
-    private val state: GenerationState
+    private val state: GenerationState,
+    private val symbolTable: SymbolTable
 ) : DeclarationFactory {
     private val singletonFieldDeclarations = HashMap<IrSymbolOwner, IrField>()
     private val outerThisDeclarations = HashMap<IrClass, IrField>()
@@ -63,24 +53,11 @@ class JvmDeclarationFactory(
             IrFieldImpl(
                 enumEntry.startOffset,
                 enumEntry.endOffset,
-                JvmLoweredDeclarationOrigin.FIELD_FOR_ENUM_ENTRY,
+                IrDeclarationOrigin.FIELD_FOR_ENUM_ENTRY,
                 symbol,
                 type
             )
         }
-
-    fun createFileClassDescriptor(fileEntry: SourceManager.FileEntry, packageFragment: PackageFragmentDescriptor): FileClassDescriptor {
-        val ktFile = psiSourceManager.getKtFile(fileEntry as PsiSourceManager.PsiFileEntry)
-                ?: throw AssertionError("Unexpected file entry: $fileEntry")
-        val fileClassInfo = JvmFileClassUtil.getFileClassInfoNoResolve(ktFile)
-        val sourceElement = KotlinSourceElement(ktFile)
-        return FileClassDescriptorImpl(
-            fileClassInfo.fileClassFqName.shortName(), packageFragment,
-            listOf(builtIns.anyType),
-            sourceElement,
-            Annotations.EMPTY // TODO file annotations
-        )
-    }
 
     override fun getOuterThisField(innerClass: IrClass): IrField =
         if (!innerClass.isInner) throw AssertionError("Class is not inner: ${innerClass.dump()}")
@@ -140,7 +117,11 @@ class JvmDeclarationFactory(
                 if (i == 0) {
                     IrValueParameterImpl(
                         UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-                        JvmLoweredDeclarationOrigin.FIELD_FOR_OUTER_THIS, IrValueParameterSymbolImpl(v), outerThisType.toIrType()!!, null)
+                        JvmLoweredDeclarationOrigin.FIELD_FOR_OUTER_THIS,
+                        IrValueParameterSymbolImpl(v),
+                        outerThisType.toIrType(symbolTable)!!,
+                        null
+                    )
                 } else {
                     val oldParameter = oldConstructor.valueParameters[i - 1]
                     IrValueParameterImpl(
@@ -179,7 +160,7 @@ class JvmDeclarationFactory(
             return IrFieldImpl(
                 UNDEFINED_OFFSET,
                 UNDEFINED_OFFSET,
-                JvmLoweredDeclarationOrigin.FIELD_FOR_OBJECT_INSTANCE,
+                IrDeclarationOrigin.FIELD_FOR_OBJECT_INSTANCE,
                 symbol,
                 singleton.defaultType
             )
@@ -210,7 +191,9 @@ class JvmDeclarationFactory(
                 interfaceFun.descriptor.original,
                 interfaceFun.parentAsClass.descriptor,
                 state.typeMapper
-            ).createFunctionAndMapVariables(interfaceFun, origin = JvmLoweredDeclarationOrigin.DEFAULT_IMPLS)
+            ).createFunctionAndMapVariables(
+                interfaceFun, defaultImpls, symbolTable = symbolTable, origin = JvmLoweredDeclarationOrigin.DEFAULT_IMPLS
+            )
         }
     }
 
@@ -219,7 +202,9 @@ class JvmDeclarationFactory(
             IrClassImpl(
                 interfaceClass.startOffset, interfaceClass.endOffset, JvmLoweredDeclarationOrigin.DEFAULT_IMPLS,
                 createDefaultImplsClassDescriptor(interfaceClass.descriptor)
-            )
+            ).also {
+                it.parent = interfaceClass
+            }
         }
 
     companion object {

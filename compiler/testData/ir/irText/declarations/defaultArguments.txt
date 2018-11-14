@@ -6,7 +6,7 @@ FILE fqName:<root> fileName:/defaultArguments.kt
         CONST Int type=kotlin.Int value=0
     VALUE_PARAMETER name:z index:2 type:kotlin.String flags:
       EXPRESSION_BODY
-        CONST String type=kotlin.String value=abc
+        CONST String type=kotlin.String value="abc"
     BLOCK_BODY
       FUN name:local visibility:local modality:FINAL <> (xx:kotlin.Int, yy:kotlin.Int, zz:kotlin.String) returnType:kotlin.Unit flags:
         VALUE_PARAMETER name:xx index:0 type:kotlin.Int flags:

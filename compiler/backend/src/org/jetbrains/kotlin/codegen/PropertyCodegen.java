@@ -210,6 +210,12 @@ public class PropertyCodegen {
             return !isDefaultAccessor;
         }
 
+        // Non-private properties with private setter should not be generated for trivial properties
+        // as the class will use direct field access instead
+        if (accessor != null && accessor.isSetter() && Visibilities.isPrivate(descriptor.getSetter().getVisibility())) {
+            return !isDefaultAccessor;
+        }
+
         return true;
     }
 
@@ -266,7 +272,7 @@ public class PropertyCodegen {
         PropertyGetterDescriptor getter = descriptor.getGetter();
         assert getter != null : "Annotation property should have a getter: " + descriptor;
         v.getSerializationBindings().put(METHOD_FOR_FUNCTION, getter, asmMethod);
-        AnnotationCodegen.forMethod(mv, memberCodegen, typeMapper).genAnnotations(getter, asmMethod.getReturnType());
+        AnnotationCodegen.forMethod(mv, memberCodegen, state).genAnnotations(getter, asmMethod.getReturnType());
 
         KtExpression defaultValue = loadAnnotationArgumentDefaultValue(parameter, descriptor, expectedAnnotationConstructor);
         if (defaultValue != null) {
@@ -275,7 +281,7 @@ public class PropertyCodegen {
             assert !state.getClassBuilderMode().generateBodies || constant != null
                     : "Default value for annotation parameter should be compile time value: " + defaultValue.getText();
             if (constant != null) {
-                AnnotationCodegen annotationCodegen = AnnotationCodegen.forAnnotationDefaultValue(mv, memberCodegen, typeMapper);
+                AnnotationCodegen annotationCodegen = AnnotationCodegen.forAnnotationDefaultValue(mv, memberCodegen, state);
                 annotationCodegen.generateAnnotationDefaultValue(constant, descriptor.getType());
             }
         }
@@ -392,8 +398,8 @@ public class PropertyCodegen {
             modifiers |= ACC_SYNTHETIC;
         }
 
-        KotlinType kotlinType =
-                isDelegate ? getDelegateTypeForProperty((KtProperty) element, propertyDescriptor) : propertyDescriptor.getType();
+        KotlinType kotlinType = isDelegate ? getDelegateTypeForProperty((KtProperty) element, propertyDescriptor, bindingContext)
+                                           : propertyDescriptor.getType();
         Type type = typeMapper.mapType(kotlinType);
 
         ClassBuilder builder = v;
@@ -426,13 +432,17 @@ public class PropertyCodegen {
             );
 
             if (annotatedField != null) {
-                AnnotationCodegen.forField(fv, memberCodegen, typeMapper).genAnnotations(annotatedField, type);
+                AnnotationCodegen.forField(fv, memberCodegen, state).genAnnotations(annotatedField, type);
             }
         }
     }
 
     @NotNull
-    private KotlinType getDelegateTypeForProperty(@NotNull KtProperty p, @NotNull PropertyDescriptor propertyDescriptor) {
+    public static KotlinType getDelegateTypeForProperty(
+            @NotNull KtProperty p,
+            @NotNull PropertyDescriptor propertyDescriptor,
+            @NotNull BindingContext bindingContext
+    ) {
         KotlinType delegateType = null;
 
         ResolvedCall<FunctionDescriptor> provideDelegateResolvedCall =
@@ -605,10 +615,13 @@ public class PropertyCodegen {
             assert resolvedCall != null : "Resolve call should be recorded for delegate call " + signature.toString();
 
             PropertyDescriptor propertyDescriptor = propertyAccessorDescriptor.getCorrespondingProperty();
-            StackValue.Property receiver = codegen.intermediateValueForProperty(propertyDescriptor, true, null, StackValue.LOCAL_0);
-            StackValue lastValue = invokeDelegatedPropertyConventionMethod(codegen, resolvedCall, receiver, propertyDescriptor);
+            StackValue.Property property = codegen.intermediateValueForProperty(propertyDescriptor, true, null, StackValue.LOCAL_0);
+            StackValue.Property delegate = property.getDelegateOrNull();
+            assert delegate != null : "No delegate for delegated property: " + propertyDescriptor;
+            StackValue lastValue = invokeDelegatedPropertyConventionMethod(codegen, resolvedCall, delegate, propertyDescriptor);
             Type asmType = signature.getReturnType();
-            lastValue.put(asmType, v);
+            KotlinType kotlinReturnType = propertyAccessorDescriptor.getOriginal().getReturnType();
+            lastValue.put(asmType, kotlinReturnType, v);
             v.areturn(asmType);
         }
     }

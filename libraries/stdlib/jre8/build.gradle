@@ -27,12 +27,6 @@ sourceSets {
     test {
         kotlin {
             srcDir 'test'
-            if(!System.properties.'idea.active') {
-                srcDir '../jvm/test'
-                srcDir '../common/test'
-                srcDir '../test'
-                srcDir '../jre7/test'
-            }
         }
     }
 }
@@ -71,29 +65,9 @@ compileKotlin {
 }
 
 compileTestKotlin {
-    kotlinOptions.freeCompilerArgs = ["-Xallow-kotlin-package", "-Xnormalize-constructor-calls=enable", "-Xmulti-platform", "-XXLanguage:+ReleaseCoroutines", "-Xuse-experimental=kotlin.ExperimentalUnsignedTypes"]
+    kotlinOptions.freeCompilerArgs = ["-Xallow-kotlin-package", "-Xnormalize-constructor-calls=enable", "-Xmulti-platform", "-Xuse-experimental=kotlin.ExperimentalUnsignedTypes"]
 }
-
-kotlin.experimental.coroutines 'enable'
 
 test {
     executable = "$JDK_18/bin/java"
 }
-
-
-task testJre6Tests(type: Test) {
-    dependsOn(':kotlin-stdlib:testClasses')
-    group = "verification"
-
-    executable = "$JDK_18/bin/java"
-
-    doFirst {
-        testClassesDirs = project(':kotlin-stdlib').sourceSets.test.output
-        classpath = files(
-                testClassesDirs,
-                configurations.testCompile
-        )
-    }
-}
-
-check.dependsOn testJre6Tests

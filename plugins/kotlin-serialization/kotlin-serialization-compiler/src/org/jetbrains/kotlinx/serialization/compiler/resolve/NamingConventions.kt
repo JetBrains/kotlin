@@ -10,8 +10,12 @@ object SerializationPackages {
 }
 
 object SerializationAnnotations {
-    internal val serializableAnnotationFqName = FqName("kotlinx.serialization.Serializable")
-    internal val serializerAnnotationFqName = FqName("kotlinx.serialization.Serializer")
+    // When changing names for these annotations, please change
+    // org.jetbrains.kotlin.idea.caches.lightClasses.annotations.KOTLINX_SERIALIZABLE_FQ_NAME and
+    // org.jetbrains.kotlin.idea.caches.lightClasses.annotations.KOTLINX_SERIALIZER_FQ_NAME accordingly.
+    // Otherwise, there it might lead to exceptions from light classes when building them for serializer/serializable classes
+    val serializableAnnotationFqName = FqName("kotlinx.serialization.Serializable")
+    val serializerAnnotationFqName = FqName("kotlinx.serialization.Serializer")
     internal val serialNameAnnotationFqName = FqName("kotlinx.serialization.SerialName")
     internal val serialOptionalFqName = FqName("kotlinx.serialization.Optional")
     internal val serialTransientFqName = FqName("kotlinx.serialization.Transient")

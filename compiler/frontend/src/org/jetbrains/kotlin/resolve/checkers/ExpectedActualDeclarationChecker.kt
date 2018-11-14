@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.resolve.checkers
 
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.config.AnalysisFlag
+import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.Errors
@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.hasActualModifier
 import org.jetbrains.kotlin.resolve.*
+import org.jetbrains.kotlin.resolve.constants.ConstantValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.isAnnotationConstructor
 import org.jetbrains.kotlin.resolve.descriptorUtil.isPrimaryConstructorOfInlineClass
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
@@ -35,12 +36,15 @@ import org.jetbrains.kotlin.resolve.multiplatform.ExpectedActualResolver.Compati
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectedActualResolver.Compatibility.Compatible
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectedActualResolver.Compatibility.Incompatible
 import org.jetbrains.kotlin.resolve.source.PsiSourceFile
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.kotlin.utils.ifEmpty
 import java.io.File
 
-object ExpectedActualDeclarationChecker : DeclarationChecker {
-    val OPTIONAL_EXPECTATION_FQ_NAME = FqName("kotlin.OptionalExpectation")
+class ExpectedActualDeclarationChecker(val argumentExtractors: List<ActualAnnotationArgumentExtractor> = emptyList()) : DeclarationChecker {
+    interface ActualAnnotationArgumentExtractor {
+        fun extractActualValue(argument: PsiElement, expectedType: KotlinType): ConstantValue<*>?
+    }
 
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
         if (!context.languageVersionSettings.supportsFeature(LanguageFeature.MultiPlatformProjects)) return
@@ -51,7 +55,7 @@ object ExpectedActualDeclarationChecker : DeclarationChecker {
         if (descriptor.isExpect) {
             checkExpectedDeclarationHasActual(declaration, descriptor, context.trace, descriptor.module, context.expectActualTracker)
         } else {
-            val checkActual = !context.languageVersionSettings.getFlag(AnalysisFlag.multiPlatformDoNotCheckActual)
+            val checkActual = !context.languageVersionSettings.getFlag(AnalysisFlags.multiPlatformDoNotCheckActual)
             checkActualDeclarationHasExpected(declaration, descriptor, context.trace, checkActual)
         }
     }
@@ -92,27 +96,6 @@ object ExpectedActualDeclarationChecker : DeclarationChecker {
         }
     }
 
-    @JvmStatic
-    fun isOptionalAnnotationClass(descriptor: DeclarationDescriptor): Boolean =
-        descriptor is ClassDescriptor &&
-                descriptor.kind == ClassKind.ANNOTATION_CLASS &&
-                descriptor.isExpect &&
-                descriptor.annotations.hasAnnotation(OPTIONAL_EXPECTATION_FQ_NAME)
-
-    // TODO: move to some other place which is accessible both from backend-common and js.serializer
-    @JvmStatic
-    fun shouldGenerateExpectClass(descriptor: ClassDescriptor): Boolean {
-        assert(descriptor.isExpect) { "Not an expected class: $descriptor" }
-
-        if (ExpectedActualDeclarationChecker.isOptionalAnnotationClass(descriptor)) {
-            with(ExpectedActualResolver) {
-                return descriptor.findCompatibleActualForExpected(descriptor.module).isEmpty()
-            }
-        }
-
-        return false
-    }
-
     private fun ExpectActualTracker.reportExpectActual(expected: MemberDescriptor, actualMembers: Sequence<MemberDescriptor>) {
         if (this is ExpectActualTracker.DoNothing) return
 
@@ -128,9 +111,6 @@ object ExpectedActualDeclarationChecker : DeclarationChecker {
             .containingFile
             .safeAs<PsiSourceFile>()
             ?.run { VfsUtilCore.virtualToIoFile(psiFile.virtualFile) }
-
-    fun Map<out Compatibility, Collection<MemberDescriptor>>.allStrongIncompatibilities(): Boolean =
-        this.keys.all { it is Incompatible && it.kind == Compatibility.IncompatibilityKind.STRONG }
 
     private fun checkActualDeclarationHasExpected(
         reportOn: KtNamedDeclaration, descriptor: MemberDescriptor, trace: BindingTrace, checkActual: Boolean
@@ -253,15 +233,58 @@ object ExpectedActualDeclarationChecker : DeclarationChecker {
                 val actualParameter = DescriptorToSourceUtils.descriptorToDeclaration(actualParameterDescriptor)
 
                 val expectedValue = trace.bindingContext.get(BindingContext.COMPILE_TIME_VALUE, expectedParameter.defaultValue)
-                // TODO: support arguments coming from Java via typealias, see PsiAnnotationMethod.getDefaultValue()
-                val actualValue = (actualParameter as? KtParameter)?.let { parameter ->
-                    trace.bindingContext.get(BindingContext.COMPILE_TIME_VALUE, parameter.defaultValue)
-                }
+                    ?.toConstantValue(expectedParameterDescriptor.type)
+
+                val actualValue = getActualAnnotationParameterValue(actualParameter, trace.bindingContext, expectedParameterDescriptor.type)
                 if (expectedValue != actualValue) {
                     val target = (actualParameter as? KtParameter)?.defaultValue ?: (reportOn as? KtTypeAlias)?.nameIdentifier ?: reportOn
                     trace.report(Errors.ACTUAL_ANNOTATION_CONFLICTING_DEFAULT_ARGUMENT_VALUE.on(target, actualParameterDescriptor))
                 }
             }
         }
+    }
+
+    private fun getActualAnnotationParameterValue(
+        actualParameter: PsiElement?, bindingContext: BindingContext, expectedType: KotlinType
+    ): ConstantValue<*>? {
+        if (actualParameter is KtParameter) {
+            return bindingContext.get(BindingContext.COMPILE_TIME_VALUE, actualParameter.defaultValue)?.toConstantValue(expectedType)
+        }
+
+        if (actualParameter != null) {
+            for (extractor in argumentExtractors) {
+                extractor.extractActualValue(actualParameter, expectedType)?.let { return it }
+            }
+        }
+
+        return null
+    }
+
+    companion object {
+        val OPTIONAL_EXPECTATION_FQ_NAME = FqName("kotlin.OptionalExpectation")
+
+        @JvmStatic
+        fun isOptionalAnnotationClass(descriptor: DeclarationDescriptor): Boolean =
+            descriptor is ClassDescriptor &&
+                    descriptor.kind == ClassKind.ANNOTATION_CLASS &&
+                    descriptor.isExpect &&
+                    descriptor.annotations.hasAnnotation(OPTIONAL_EXPECTATION_FQ_NAME)
+
+        // TODO: move to some other place which is accessible both from backend-common and js.serializer
+        @JvmStatic
+        fun shouldGenerateExpectClass(descriptor: ClassDescriptor): Boolean {
+            assert(descriptor.isExpect) { "Not an expected class: $descriptor" }
+
+            if (isOptionalAnnotationClass(descriptor)) {
+                with(ExpectedActualResolver) {
+                    return descriptor.findCompatibleActualForExpected(descriptor.module).isEmpty()
+                }
+            }
+
+            return false
+        }
+
+        fun Map<out Compatibility, Collection<MemberDescriptor>>.allStrongIncompatibilities(): Boolean =
+            this.keys.all { it is Incompatible && it.kind == Compatibility.IncompatibilityKind.STRONG }
     }
 }

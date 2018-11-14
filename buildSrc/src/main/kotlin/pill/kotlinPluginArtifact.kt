@@ -173,7 +173,7 @@ fun generateKotlinPluginArtifactFile(rootProject: Project): PFile {
                         for (dependencyInfo in listOf(configuration).collectDependencies()) {
                             val dependency = (dependencyInfo as? DependencyInfo.ResolvedDependencyInfo)?.dependency ?: continue
 
-                            if (dependency.configuration == "runtimeElements") {
+                            if (dependency.isModuleDependency) {
                                 archiveForJar.add(ModuleOutput(dependency.moduleName + ".src"))
                             } else if (dependency.configuration == "tests-jar" || dependency.configuration == "jpsTest") {
                                 error("Test configurations are not allowed here")

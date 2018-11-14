@@ -178,7 +178,8 @@ abstract class BaseGradleIT {
         val kotlinDaemonDebugPort: Int? = null,
         val usePreciseJavaTracking: Boolean? = null,
         val withBuildCache: Boolean = false,
-        val kaptOptions: KaptOptions? = null
+        val kaptOptions: KaptOptions? = null,
+        val parallelTasksInProject: Boolean? = null
     )
 
     data class KaptOptions(val verbose: Boolean, val useWorkers: Boolean)
@@ -189,12 +190,15 @@ abstract class BaseGradleIT {
         directoryPrefix: String? = null,
         val minLogLevel: LogLevel = LogLevel.DEBUG
     ) {
+        internal val testCase = this@BaseGradleIT
+
         val resourceDirName = if (directoryPrefix != null) "$directoryPrefix/$projectName" else projectName
         open val resourcesRoot = File(resourcesRootFile, "testProject/$resourceDirName")
         val projectDir = File(workingDir.canonicalFile, projectName)
 
         open fun setupWorkingDir() {
-            copyRecursively(this.resourcesRoot, workingDir)
+            if (!projectDir.isDirectory || projectDir.listFiles().isEmpty())
+                copyRecursively(this.resourcesRoot, workingDir)
         }
 
         fun relativize(files: Iterable<File>): List<String> =
@@ -282,11 +286,18 @@ abstract class BaseGradleIT {
             setupWorkingDir()
         }
 
-        val connection = GradleConnector.newConnector().forProjectDirectory(projectDir).connect()
         val options = defaultBuildOptions()
         val arguments = mutableListOf("-Pkotlin_version=${options.kotlinVersion}")
         options.androidGradlePluginVersion?.let { arguments.add("-Pandroid_tools_version=$it") }
         val env = createEnvironmentVariablesMap(options)
+        val wrapperVersion = chooseWrapperVersionOrFinishTest()
+        prepareWrapper(wrapperVersion, env)
+
+        val connection = GradleConnector
+            .newConnector()
+            .useGradleVersion(wrapperVersion)
+            .forProjectDirectory(projectDir)
+            .connect()
         val model = connection.action(ModelFetcherBuildAction(modelType)).withArguments(arguments).setEnvironmentVariables(env).run()
         connection.close()
         return model
@@ -312,9 +323,9 @@ abstract class BaseGradleIT {
         return this
     }
 
-    fun CompiledProject.assertContains(vararg expected: String): CompiledProject {
+    fun CompiledProject.assertContains(vararg expected: String, ignoreCase: Boolean = false): CompiledProject {
         for (str in expected) {
-            assertTrue(output.contains(str.normalize()), "Output should contain '$str'")
+            assertTrue(output.contains(str.normalize(), ignoreCase), "Output should contain '$str'")
         }
         return this
     }
@@ -436,6 +447,18 @@ abstract class BaseGradleIT {
         assertTasksUpToDate(tasks.toList())
     }
 
+    fun CompiledProject.assertTasksSubmittedWork(vararg tasks: String) {
+        for (task in tasks) {
+            assertContains("Starting Kotlin compiler work from task '$task'")
+        }
+    }
+
+    fun CompiledProject.assertTasksDidNotSubmitWork(vararg tasks: String) {
+        for (task in tasks) {
+            assertNotContains("Starting Kotlin compiler work from task '$task'")
+        }
+    }
+
     fun CompiledProject.getOutputForTask(taskName: String): String {
         val taskOutputRegex = ("\\[LIFECYCLE] \\[class org\\.gradle(?:\\.internal\\.buildevents)?\\.TaskExecutionLogger] :$taskName" +
                 "([\\s\\S]+?)" +
@@ -555,6 +578,10 @@ abstract class BaseGradleIT {
             options.kaptOptions?.also { kaptOptions ->
                 add("-Pkapt.verbose=${kaptOptions.verbose}")
                 add("-Pkapt.use.worker.api=${kaptOptions.useWorkers}")
+            }
+
+            options.parallelTasksInProject?.let {
+                add("-Pkotlin.parallel.tasks.in.project=$it")
             }
 
             // Workaround: override a console type set in the user machine gradle.properties (since Gradle 4.3):

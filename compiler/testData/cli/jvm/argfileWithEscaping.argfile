@@ -1,4 +1,5 @@
--X"some escaped \" sequence \\"
+-X"double \' quote ' escaped \" sequence \\"
+-X'single \" quote " escaped \' sequence \\'
 $TESTDATA_DIR$/apiVersion.kt
 -d
 $TEMP_DIR$ -api-version 1.2 -language-version 1.3

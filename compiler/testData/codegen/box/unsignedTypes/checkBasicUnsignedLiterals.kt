@@ -1,5 +1,5 @@
-// WITH_UNSIGNED
-// IGNORE_BACKEND: JVM_IR, JS_IR
+// WITH_RUNTIME
+// IGNORE_BACKEND: JVM_IR
 
 fun box(): String {
     val good = 42.toUInt()

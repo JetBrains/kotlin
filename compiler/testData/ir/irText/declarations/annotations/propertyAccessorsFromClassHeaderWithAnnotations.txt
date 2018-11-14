@@ -42,7 +42,7 @@ FILE fqName:<root> fileName:/propertyAccessorsFromClassHeaderWithAnnotations.kt
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL <> ($this:C) returnType:kotlin.Int flags:
         annotations:
           CALL 'constructor A(String)' type=A origin=null
-            x: CONST String type=kotlin.String value=C.x.get
+            x: CONST String type=kotlin.String value="C.x.get"
         correspondingProperty: PROPERTY name:x visibility:public modality:FINAL flags:val
         $this: VALUE_PARAMETER name:<this> type:C flags:
         BLOCK_BODY
@@ -56,7 +56,7 @@ FILE fqName:<root> fileName:/propertyAccessorsFromClassHeaderWithAnnotations.kt
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-y> visibility:public modality:FINAL <> ($this:C) returnType:kotlin.Int flags:
         annotations:
           CALL 'constructor A(String)' type=A origin=null
-            x: CONST String type=kotlin.String value=C.y.get
+            x: CONST String type=kotlin.String value="C.y.get"
         correspondingProperty: PROPERTY name:y visibility:public modality:FINAL flags:var
         $this: VALUE_PARAMETER name:<this> type:C flags:
         BLOCK_BODY
@@ -66,7 +66,7 @@ FILE fqName:<root> fileName:/propertyAccessorsFromClassHeaderWithAnnotations.kt
       FUN DEFAULT_PROPERTY_ACCESSOR name:<set-y> visibility:public modality:FINAL <> ($this:C, <set-?>:kotlin.Int) returnType:kotlin.Unit flags:
         annotations:
           CALL 'constructor A(String)' type=A origin=null
-            x: CONST String type=kotlin.String value=C.y.set
+            x: CONST String type=kotlin.String value="C.y.set"
         correspondingProperty: PROPERTY name:y visibility:public modality:FINAL flags:var
         $this: VALUE_PARAMETER name:<this> type:C flags:
         VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int flags:

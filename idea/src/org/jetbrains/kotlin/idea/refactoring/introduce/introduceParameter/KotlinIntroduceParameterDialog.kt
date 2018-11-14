@@ -244,7 +244,7 @@ class KotlinIntroduceParameterDialog private constructor(
 
         project.executeCommand(commandName) {
             fun createLambdaForArgument(function: KtFunction): KtExpression {
-                val statement = (function.bodyExpression as KtBlockExpression).statements.single()
+                val statement = function.bodyBlockExpression!!.statements.single()
                 val space = if (statement.isMultiLine()) "\n" else " "
                 val parameters = function.valueParameters
                 val parametersText = if (parameters.isNotEmpty()) {

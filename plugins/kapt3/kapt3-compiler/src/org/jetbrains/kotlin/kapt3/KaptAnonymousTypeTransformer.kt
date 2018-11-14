@@ -9,19 +9,15 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithVisibility
 import org.jetbrains.kotlin.resolve.DeclarationSignatureAnonymousTypeTransformer
-import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.DescriptorUtils.isAnonymousObject
-import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
-import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
+import org.jetbrains.kotlin.resolve.DescriptorUtils.*
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeProjectionImpl
 import org.jetbrains.kotlin.types.replace
 import org.jetbrains.kotlin.types.typeUtil.builtIns
-import org.jetbrains.kotlin.types.typeUtil.isAnyOrNullableAny
 
 class KaptAnonymousTypeTransformer : DeclarationSignatureAnonymousTypeTransformer {
     override fun transformAnonymousType(descriptor: DeclarationDescriptorWithVisibility, type: KotlinType): KotlinType? {
-        if (DescriptorUtils.isLocal(descriptor))
+        if (isLocal(descriptor))
             return type
 
         return convertPossiblyAnonymousType(type)
@@ -41,7 +37,17 @@ class KaptAnonymousTypeTransformer : DeclarationSignatureAnonymousTypeTransforme
         }
 
         val actualType = when {
-            isAnonymousObject(declaration) -> findMostSuitableParentForAnonymousType(declaration)
+            isAnonymousObject(declaration) -> {
+                if (type.constructor.supertypes.size == 1) {
+                    type.constructor.supertypes.iterator().next()
+                } else {
+                    /*
+                        Frontend reports an error on public properties in this case,
+                        but we ignore errors when making stubs, so there should be a reasonable fallback.
+                     */
+                    type.builtIns.anyType
+                }
+            }
             else -> type
         }
 
@@ -55,19 +61,5 @@ class KaptAnonymousTypeTransformer : DeclarationSignatureAnonymousTypeTransforme
         }
 
         return actualType.replace(newArguments = arguments)
-    }
-
-    private fun findMostSuitableParentForAnonymousType(descriptor: ClassDescriptor): KotlinType {
-        descriptor.getSuperClassNotAny()?.let { return it.defaultType }
-
-        val sortedSuperTypes = descriptor.typeConstructor.supertypes
-            .sortedBy { it.constructor.declarationDescriptor?.name?.asString() ?: "" }
-
-        for (candidate in sortedSuperTypes) {
-            if (!candidate.isAnyOrNullableAny())
-                return candidate
-        }
-
-        return descriptor.builtIns.anyType
     }
 }

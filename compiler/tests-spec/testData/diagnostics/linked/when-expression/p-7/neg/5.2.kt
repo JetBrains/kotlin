@@ -1,7 +1,7 @@
 /*
  KOTLIN DIAGNOSTICS SPEC TEST (NEGATIVE)
 
- SECTION: when-expression
+ SECTIONS: when-expression
  PARAGRAPH: 7
  SENTENCE: [5] Any other expression.
  NUMBER: 2
@@ -9,9 +9,9 @@
  */
 
 // CASE DESCRIPTION: 'When' with break expression (without label).
-fun case_1(value: Int): String {
+fun case_1(value_1: Int): String {
     while (true) {
-        when (value) {
+        when (value_1) {
             <!BREAK_OR_CONTINUE_IN_WHEN!>break<!><!UNREACHABLE_CODE!><!> -> <!UNREACHABLE_CODE!>return ""<!>
         }
     }
@@ -20,9 +20,9 @@ fun case_1(value: Int): String {
 }
 
 // CASE DESCRIPTION: 'When' with continue expression (without label).
-fun case_2(value: Int): String {
+fun case_2(value_1: Int): String {
     while (true) {
-        when (value) {
+        when (value_1) {
             <!BREAK_OR_CONTINUE_IN_WHEN!>continue<!><!UNREACHABLE_CODE!><!> -> <!UNREACHABLE_CODE!>return ""<!>
         }
     }

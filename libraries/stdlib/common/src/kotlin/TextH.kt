@@ -47,6 +47,7 @@ expect class Regex {
      *
      * @param startIndex An index to start search with, by default 0. Must be not less than zero and not greater than `input.length()`
      * @return An instance of [MatchResult] if match was found or `null` otherwise.
+     * @sample samples.text.Regexps.find
      */
     fun find(input: CharSequence, startIndex: Int = 0): MatchResult?
 
@@ -176,8 +177,8 @@ expect fun String.compareTo(other: String, ignoreCase: Boolean = false): Int
 
 // From stringsCode.kt
 
-internal inline expect fun String.nativeIndexOf(ch: Char, fromIndex: Int): Int
-internal inline expect fun String.nativeLastIndexOf(ch: Char, fromIndex: Int): Int
+internal expect fun String.nativeIndexOf(ch: Char, fromIndex: Int): Int
+internal expect fun String.nativeLastIndexOf(ch: Char, fromIndex: Int): Int
 
 expect fun CharSequence.isBlank(): Boolean
 /**
@@ -220,6 +221,7 @@ expect fun String.toByte(): Byte
 /**
  * Parses the string as a signed [Byte] number and returns the result.
  * @throws NumberFormatException if the string is not a valid representation of a number.
+ * @throws IllegalArgumentException when [radix] is not a valid radix for string to number conversion.
  */
 expect fun String.toByte(radix: Int): Byte
 
@@ -233,6 +235,7 @@ expect fun String.toShort(): Short
 /**
  * Parses the string as a [Short] number and returns the result.
  * @throws NumberFormatException if the string is not a valid representation of a number.
+ * @throws IllegalArgumentException when [radix] is not a valid radix for string to number conversion.
  */
 expect fun String.toShort(radix: Int): Short
 
@@ -245,6 +248,7 @@ expect fun String.toInt(): Int
 /**
  * Parses the string as an [Int] number and returns the result.
  * @throws NumberFormatException if the string is not a valid representation of a number.
+ * @throws IllegalArgumentException when [radix] is not a valid radix for string to number conversion.
  */
 expect fun String.toInt(radix: Int): Int
 
@@ -257,6 +261,7 @@ expect fun String.toLong(): Long
 /**
  * Parses the string as a [Long] number and returns the result.
  * @throws NumberFormatException if the string is not a valid representation of a number.
+ * @throws IllegalArgumentException when [radix] is not a valid radix for string to number conversion.
  */
 expect fun String.toLong(radix: Int): Long
 

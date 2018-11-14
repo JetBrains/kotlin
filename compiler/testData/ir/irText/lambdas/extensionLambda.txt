@@ -5,7 +5,7 @@ FILE fqName:<root> fileName:/extensionLambda.kt
         CALL 'run(String.() -> Int) on String: Int' type=kotlin.Int origin=null
           <T>: kotlin.String
           <R>: kotlin.Int
-          $receiver: CONST String type=kotlin.String value=42
+          $receiver: CONST String type=kotlin.String value="42"
           block: BLOCK type=kotlin.String.() -> kotlin.Int origin=LAMBDA
             FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:kotlin.String) returnType:kotlin.Int flags:
               $receiver: VALUE_PARAMETER name:<this> type:kotlin.String flags:

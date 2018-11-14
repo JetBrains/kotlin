@@ -156,6 +156,9 @@ class Merger(private val rootFunction: JsFunction, val internalModuleName: JsNam
                         )
                     }
                 }
+                if (node is JsExpression) {
+                    node.localAlias = node.localAlias?.let { rename(it) }
+                }
             }
         })
         return rootNode

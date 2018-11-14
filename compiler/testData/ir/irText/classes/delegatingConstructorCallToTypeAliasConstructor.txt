@@ -39,7 +39,7 @@ FILE fqName:<root> fileName:/delegatingConstructorCallToTypeAliasConstructor.kt
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Cell(String)'
           <T>: kotlin.String
-          value: CONST String type=kotlin.String value=O
+          value: CONST String type=kotlin.String value="O"
         INSTANCE_INITIALIZER_CALL classDescriptor='C1'
     PROPERTY FAKE_OVERRIDE name:value visibility:public modality:FINAL flags:val
       FUN FAKE_OVERRIDE name:<get-value> visibility:public modality:FINAL <> ($this:Cell<kotlin.String>) returnType:kotlin.String flags:
@@ -66,7 +66,7 @@ FILE fqName:<root> fileName:/delegatingConstructorCallToTypeAliasConstructor.kt
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'constructor Cell(String)'
           <T>: kotlin.String
-          value: CONST String type=kotlin.String value=K
+          value: CONST String type=kotlin.String value="K"
         INSTANCE_INITIALIZER_CALL classDescriptor='C2'
     PROPERTY FAKE_OVERRIDE name:value visibility:public modality:FINAL flags:val
       FUN FAKE_OVERRIDE name:<get-value> visibility:public modality:FINAL <> ($this:Cell<kotlin.String>) returnType:kotlin.String flags:

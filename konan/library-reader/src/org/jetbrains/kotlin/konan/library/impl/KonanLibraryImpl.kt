@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.konan.properties.propertyList
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.util.defaultTargetSubstitutions
 import org.jetbrains.kotlin.konan.util.substitute
+import org.jetbrains.kotlin.metadata.konan.KonanProtoBuf
 
 internal class KonanLibraryImpl(
     override val libraryFile: File,
@@ -59,9 +60,27 @@ internal class KonanLibraryImpl(
 
     override val dataFlowGraph by lazy { layout.inPlace { it.dataFlowGraphFile.let { if (it.exists) it.readBytes() else null } } }
 
-    override val moduleHeaderData: ByteArray by lazy { layout.inPlace { metadataReader.loadSerializedModule(it) } }
+    override val moduleHeaderData: KonanProtoBuf.LinkDataLibrary by lazy { layout.inPlace { metadataReader.loadSerializedModule(it) } }
 
-    override fun packageMetadata(fqName: String) = layout.inPlace { metadataReader.loadSerializedPackageFragment(it, fqName) }
+    override fun packageMetadata(packageFqName: String, partName: String) =
+        layout.inPlace { metadataReader.loadSerializedPackageFragment(it, packageFqName, partName) }
+
+    override fun packageMetadataParts(fqName: String): Set<String> =
+        layout.inPlace { inPlaceLayout ->
+            val fileList =
+                inPlaceLayout.packageFragmentsDir(fqName)
+                    .listFiles
+                    .mapNotNull {
+                        it.name
+                            .substringBeforeLast(KLIB_METADATA_FILE_EXTENSION_WITH_DOT, missingDelimiterValue = "")
+                            .takeIf { it.isNotEmpty() }
+                    }
+
+            fileList.toSortedSet().also {
+                require(it.size == fileList.size) { "Duplicated names: ${fileList.groupingBy { it }.eachCount().filter { (_, count) -> count > 1 }}" }
+            }
+        }
+
 
     override fun toString() = "$libraryName[default=$isDefault]"
 }

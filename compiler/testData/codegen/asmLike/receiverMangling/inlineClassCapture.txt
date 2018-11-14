@@ -1,0 +1,40 @@
+public final class Foo$Bar : java/lang/Object {
+    final Foo this$0
+
+    public void <init>(Foo $outer) {
+        Local variables:
+            0 this: LFoo$Bar;
+            1 $outer: LFoo;
+    }
+
+    public final void bar() {
+        Local variables:
+            1 $i$a$1$block: I
+            2 $i$f$block: I
+            3 $i$a$1$block: I
+            4 $i$f$block: I
+            0 this: LFoo$Bar;
+    }
+}
+
+public final class Foo : java/lang/Object {
+    public void <init>() {
+        Local variables:
+            0 this: LFoo;
+    }
+
+    public final void foo() {
+        Local variables:
+            1 $i$a$1$block: I
+            2 $i$f$block: I
+            0 this: LFoo;
+    }
+}
+
+public final class InlineClassCaptureKt : java/lang/Object {
+    public final static void block(kotlin.jvm.functions.Function0 block) {
+        Local variables:
+            0 block: Lkotlin/jvm/functions/Function0;
+            1 $i$f$block: I
+    }
+}

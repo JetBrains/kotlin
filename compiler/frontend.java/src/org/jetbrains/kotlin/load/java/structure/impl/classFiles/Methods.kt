@@ -82,7 +82,7 @@ abstract class BinaryJavaMethodBase(
             val parameterTypes = info.valueParameterTypes
             val parameterList = ContainerUtil.newArrayList<BinaryJavaValueParameter>()
             val paramCount = parameterTypes.size
-            for (i in 0..paramCount - 1) {
+            for (i in 0 until paramCount) {
                 val type = parameterTypes[i]
                 val isEllipsisParam = isVarargs && i == paramCount - 1
 

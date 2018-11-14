@@ -1,0 +1,9 @@
+class Companion {
+    fun test() {
+        foo
+    }
+
+    companion object {
+        val foo = ""
+    }
+}

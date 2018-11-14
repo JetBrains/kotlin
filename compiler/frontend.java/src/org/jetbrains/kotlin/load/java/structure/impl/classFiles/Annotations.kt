@@ -60,7 +60,7 @@ internal class AnnotationsAndParameterCollectorMethodVisitor(
             )
 
     override fun visitParameterAnnotation(parameter: Int, desc: String, visible: Boolean): AnnotationVisitor? {
-        val index = parameter - parametersToSkipNumber
+        val index = if (Opcodes.API_VERSION <= Opcodes.ASM6) parameter - parametersToSkipNumber else parameter
         if (index < 0) return null
 
         val annotations =
@@ -168,7 +168,8 @@ class BinaryJavaAnnotationVisitor(
     }
 
     override fun visitEnum(name: String?, desc: String, value: String) {
-        addArgument(PlainJavaEnumValueAnnotationArgument(name, context.mapDescToClassId(desc), value))
+        val enumClassId = context.mapInternalNameToClassId(Type.getType(desc).internalName)
+        addArgument(PlainJavaEnumValueAnnotationArgument(name, enumClassId, value))
     }
 
     override fun visit(name: String?, value: Any?) {

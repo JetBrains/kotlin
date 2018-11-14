@@ -9,7 +9,7 @@ import org.jetbrains.jps.incremental.ModuleBuildTarget
 import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.config.VersionView
-import org.jetbrains.kotlin.incremental.storage.version.CacheStatus
+import org.jetbrains.kotlin.jps.incremental.CacheStatus
 import org.jetbrains.kotlin.jps.incremental.JpsIncrementalCache
 import org.jetbrains.kotlin.jps.incremental.getKotlinCache
 import org.jetbrains.kotlin.jps.model.kotlinCompilerArguments
@@ -46,15 +46,26 @@ class KotlinChunk internal constructor(val context: KotlinCompileContext, val ta
         }
     }
 
-    val compilerArguments = representativeTarget.jpsModuleBuildTarget.module.kotlinCompilerArguments
+    private val defaultLanguageVersion = VersionView.RELEASED_VERSION
+
+    val compilerArguments = representativeTarget.jpsModuleBuildTarget.module.kotlinCompilerArguments.also {
+        it.reportOutputFiles = true
+
+        // Always report the version to help diagnosing user issues if they submit the compiler output
+        it.version = true
+
+        if (it.languageVersion == null) it.languageVersion = defaultLanguageVersion.versionString
+    }
 
     val langVersion =
-        compilerArguments.languageVersion?.let { LanguageVersion.fromVersionString(it) } ?: VersionView.RELEASED_VERSION
+        compilerArguments.languageVersion?.let { LanguageVersion.fromVersionString(it) }
+            ?: defaultLanguageVersion // use default language version when version string is invalid (todo: report warning?)
 
     val apiVersion =
-        compilerArguments.apiVersion?.let { ApiVersion.parse(it) } ?: ApiVersion.createByLanguageVersion(
-            langVersion
-        )
+        compilerArguments.apiVersion?.let { ApiVersion.parse(it) }
+            ?: ApiVersion.createByLanguageVersion(langVersion) // todo: report version parse error?
+
+    val isEnabled: Boolean = representativeTarget.isEnabled(compilerArguments)
 
     fun shouldRebuild(): Boolean {
         val buildMetaInfo = representativeTarget.buildMetaInfoFactory.create(compilerArguments)
@@ -85,7 +96,7 @@ class KotlinChunk internal constructor(val context: KotlinCompileContext, val ta
         context.ensureLookupsCacheAttributesSaved()
 
         targets.forEach {
-            it.initialLocalCacheAttributesDiff.saveExpectedIfNeeded()
+            it.initialLocalCacheAttributesDiff.manager.writeVersion()
         }
 
         val serializedMetaInfo = representativeTarget.buildMetaInfoFactory.serializeToString(compilerArguments)

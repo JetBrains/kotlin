@@ -9,14 +9,10 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 import org.gradle.api.NamedDomainObjectFactory
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
-import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 
-interface KotlinCompilationFactory<T: KotlinCompilation> : NamedDomainObjectFactory<T> {
+interface KotlinCompilationFactory<T : KotlinCompilation> : NamedDomainObjectFactory<T> {
     val itemClass: Class<T>
 }
-
-private fun KotlinTarget.createCompilationOutput(name: String) =
-    KotlinCompilationOutput(project, project.buildDir.resolve("processedResources/$name"))
 
 class KotlinCommonCompilationFactory(
     val target: KotlinOnlyTarget<KotlinCommonCompilation>
@@ -25,7 +21,7 @@ class KotlinCommonCompilationFactory(
         get() = KotlinCommonCompilation::class.java
 
     override fun create(name: String): KotlinCommonCompilation =
-        KotlinCommonCompilation(target, name, target.createCompilationOutput(name))
+        KotlinCommonCompilation(target, name)
 }
 
 class KotlinJvmCompilationFactory(
@@ -35,7 +31,7 @@ class KotlinJvmCompilationFactory(
         get() = KotlinJvmCompilation::class.java
 
     override fun create(name: String): KotlinJvmCompilation =
-        KotlinJvmCompilation(target, name, target.createCompilationOutput(name))
+        KotlinJvmCompilation(target, name)
 }
 
 class KotlinWithJavaCompilationFactory(
@@ -61,7 +57,7 @@ class KotlinJvmAndroidCompilationFactory(
         get() = KotlinJvmAndroidCompilation::class.java
 
     override fun create(name: String): KotlinJvmAndroidCompilation =
-        KotlinJvmAndroidCompilation(target, name, target.createCompilationOutput(name))
+        KotlinJvmAndroidCompilation(target, name)
 }
 
 class KotlinJsCompilationFactory(
@@ -72,7 +68,7 @@ class KotlinJsCompilationFactory(
         get() = KotlinJsCompilation::class.java
 
     override fun create(name: String): KotlinJsCompilation =
-            KotlinJsCompilation(target, name, target.createCompilationOutput(name))
+        KotlinJsCompilation(target, name)
 }
 
 class KotlinNativeCompilationFactory(
@@ -84,8 +80,9 @@ class KotlinNativeCompilationFactory(
         get() = KotlinNativeCompilation::class.java
 
     override fun create(name: String): KotlinNativeCompilation =
-        KotlinNativeCompilation(target, name, target.createCompilationOutput(name)).apply {
+        KotlinNativeCompilation(target, name).apply {
             if (name == KotlinCompilation.TEST_COMPILATION_NAME) {
+                friendCompilationName = KotlinCompilation.MAIN_COMPILATION_NAME
                 outputKinds = mutableListOf(NativeOutputKind.EXECUTABLE)
                 buildTypes = mutableListOf(NativeBuildType.DEBUG)
                 isTestCompilation = true

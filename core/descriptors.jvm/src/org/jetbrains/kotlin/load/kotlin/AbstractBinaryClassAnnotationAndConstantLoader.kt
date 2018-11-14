@@ -221,9 +221,6 @@ abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C : Any>(
     }
 
     override fun loadPropertyConstant(container: ProtoContainer, proto: ProtoBuf.Property, expectedType: KotlinType): C? {
-        val signature = getCallableSignature(proto, container.nameResolver, container.typeTable, AnnotatedCallableKind.PROPERTY)
-                        ?: return null
-
         val specialCase = getSpecialCaseContainerClass(
             container,
             property = true,
@@ -232,6 +229,14 @@ abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C : Any>(
             isMovedFromInterfaceCompanion = JvmProtoBufUtil.isMovedFromInterfaceCompanion(proto)
         )
         val kotlinClass = findClassWithAnnotationsAndInitializers(container, specialCase) ?: return null
+
+        val requireHasFieldFlag = kotlinClass.classHeader.metadataVersion.isAtLeast(
+            DeserializedDescriptorResolver.KOTLIN_1_3_RC_METADATA_VERSION
+        )
+        val signature =
+            getCallableSignature(
+                proto, container.nameResolver, container.typeTable, AnnotatedCallableKind.PROPERTY, requireHasFieldFlag
+            ) ?: return null
 
         val constant = storage(kotlinClass).propertyConstants[signature] ?: return null
         return if (UnsignedTypes.isUnsignedType(expectedType)) transformToUnsignedConstant(constant) else constant
@@ -352,12 +357,14 @@ abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C : Any>(
             nameResolver: NameResolver,
             typeTable: TypeTable,
             field: Boolean = false,
-            synthetic: Boolean = false
+            synthetic: Boolean = false,
+            requireHasFieldFlagForField: Boolean = true
     ): MemberSignature? {
         val signature = proto.getExtensionOrNull(propertySignature) ?: return null
 
         if (field) {
-            val fieldSignature = JvmProtoBufUtil.getJvmFieldSignature(proto, nameResolver, typeTable) ?: return null
+            val fieldSignature =
+                JvmProtoBufUtil.getJvmFieldSignature(proto, nameResolver, typeTable, requireHasFieldFlagForField) ?: return null
             return MemberSignature.fromJvmMemberSignature(fieldSignature)
         }
         else if (synthetic && signature.hasSyntheticMethod()) {
@@ -371,7 +378,8 @@ abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C : Any>(
             proto: MessageLite,
             nameResolver: NameResolver,
             typeTable: TypeTable,
-            kind: AnnotatedCallableKind
+            kind: AnnotatedCallableKind,
+            requireHasFieldFlagForField: Boolean = false
     ): MemberSignature? {
         return when {
             proto is ProtoBuf.Constructor -> {
@@ -388,7 +396,7 @@ abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C : Any>(
                     AnnotatedCallableKind.PROPERTY_SETTER ->
                         if (signature.hasSetter()) MemberSignature.fromMethod(nameResolver, signature.setter) else null
                     AnnotatedCallableKind.PROPERTY ->
-                        getPropertySignature(proto, nameResolver, typeTable, true, true)
+                        getPropertySignature(proto, nameResolver, typeTable, true, true, requireHasFieldFlagForField)
                     else -> null
                 }
             }

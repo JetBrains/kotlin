@@ -30,6 +30,16 @@ public class QuickFixMultiModuleTestGenerated extends AbstractQuickFixMultiModul
         runTest("idea/testData/multiModuleQuickFix/abstract/");
     }
 
+    @TestMetadata("actualImplementAsConstructorParam")
+    public void testActualImplementAsConstructorParam() throws Exception {
+        runTest("idea/testData/multiModuleQuickFix/actualImplementAsConstructorParam/");
+    }
+
+    @TestMetadata("actualNoImplementAsConstructorParam")
+    public void testActualNoImplementAsConstructorParam() throws Exception {
+        runTest("idea/testData/multiModuleQuickFix/actualNoImplementAsConstructorParam/");
+    }
+
     @TestMetadata("actualWithoutExpect")
     public void testActualWithoutExpect() throws Exception {
         runTest("idea/testData/multiModuleQuickFix/actualWithoutExpect/");
@@ -247,6 +257,16 @@ public class QuickFixMultiModuleTestGenerated extends AbstractQuickFixMultiModul
     @TestMetadata("functionTypeReceiverToParameterByImpl")
     public void testFunctionTypeReceiverToParameterByImpl() throws Exception {
         runTest("idea/testData/multiModuleQuickFix/functionTypeReceiverToParameterByImpl/");
+    }
+
+    @TestMetadata("generateEqualsInExpect")
+    public void testGenerateEqualsInExpect() throws Exception {
+        runTest("idea/testData/multiModuleQuickFix/generateEqualsInExpect/");
+    }
+
+    @TestMetadata("generateHashCodeInExpect")
+    public void testGenerateHashCodeInExpect() throws Exception {
+        runTest("idea/testData/multiModuleQuickFix/generateHashCodeInExpect/");
     }
 
     @TestMetadata("implementAbstractExpectMemberInheritedFromInterface")

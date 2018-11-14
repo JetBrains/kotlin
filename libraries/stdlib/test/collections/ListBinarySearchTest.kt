@@ -6,7 +6,6 @@
 package test.collections.binarySearch
 
 import kotlin.test.*
-import kotlin.comparisons.*
 
 class ListBinarySearchTest {
 

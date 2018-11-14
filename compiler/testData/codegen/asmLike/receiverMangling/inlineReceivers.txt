@@ -1,0 +1,17 @@
+public final class InlineReceiversKt : java/lang/Object {
+    public final static void block(kotlin.jvm.functions.Function1 block) {
+        Local variables:
+            0 block: Lkotlin/jvm/functions/Function1;
+            1 $i$f$block: I
+    }
+
+    public final static void foo(java.lang.String $receiver, int $i$a$1$block) {
+        Local variables:
+            3 $receiver: J
+            5 $i$a$1$block: I
+            6 $i$f$block: I
+            2 x: Z
+            0 $receiver: Ljava/lang/String;
+            1 count: I
+    }
+}

@@ -68,7 +68,11 @@ class DifferentStdlibGradleVersionInspection : GradleBaseInspection() {
     companion object {
         private fun findLibraryStatement(closure: GrClosableBlock, libraryGroup: String, libraryIds: List<String>): GrCallExpression? {
             return GradleHeuristicHelper.findStatementWithPrefixes(closure, PRODUCTION_DEPENDENCY_STATEMENTS).firstOrNull { statement ->
-                libraryIds.any { it in statement.text } && statement.text.contains(libraryGroup)
+                libraryIds.any {
+                    val index = statement.text.indexOf(it)
+                    // This prevents detecting kotlin-stdlib inside kotlin-stdlib-common, -jdk8, etc.
+                    index != -1 && statement.text.getOrNull(index + it.length) != '-'
+                } && statement.text.contains(libraryGroup)
             }
         }
 

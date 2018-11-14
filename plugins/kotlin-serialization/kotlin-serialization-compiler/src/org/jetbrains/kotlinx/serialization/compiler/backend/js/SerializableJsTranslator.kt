@@ -55,6 +55,7 @@ class SerializableJsTranslator(
 
         val f = context.buildFunction(constructorDescriptor) { jsFun, context ->
             val thiz = jsFun.scope.declareName(Namer.ANOTHER_THIS_PARAMETER_NAME).makeRef()
+            @Suppress("NAME_SHADOWING")
             val context = context.innerContextWithAliased(serializableDescriptor.thisAsReceiverParameter, thiz)
 
             +JsVars(

@@ -86,10 +86,10 @@ public class JvmCodegenUtil {
     }
 
     public static boolean isConst(@NotNull CalculatedClosure closure) {
-        return closure.getCaptureThis() == null &&
-                    closure.getCaptureReceiverType() == null &&
-                    closure.getCaptureVariables().isEmpty() &&
-                    !closure.isSuspend();
+        return closure.getCapturedOuterClassDescriptor() == null &&
+               closure.getCapturedReceiverFromOuterContext() == null &&
+               closure.getCaptureVariables().isEmpty() &&
+               !closure.isSuspend();
     }
 
     private static boolean isCallInsideSameClassAsFieldRepresentingProperty(
@@ -197,8 +197,8 @@ public class JvmCodegenUtil {
         if (KotlinTypeMapper.isAccessor(property)) return false;
 
         CodegenContext context = contextBeforeInline.getFirstCrossInlineOrNonInlineContext();
-        // Inline functions or inline classes can't use direct access because a field may not be visible at the call site
-        if (context.isInlineMethodContext() || (context.getEnclosingClass() != null && context.getEnclosingClass().isInline())) {
+        // Inline functions can't use direct access because a field may not be visible at the call site
+        if (context.isInlineMethodContext()) {
             return false;
         }
 
@@ -244,10 +244,10 @@ public class JvmCodegenUtil {
         if (DescriptorPsiUtilsKt.hasBody(accessor)) return false;
 
         // If the accessor is private or final, it can't be overridden in the subclass and thus we can use direct access
-        return Visibilities.isPrivate(property.getVisibility()) || accessor.getModality() == FINAL;
+        return Visibilities.isPrivate(accessor.getVisibility()) || accessor.getModality() == FINAL;
     }
 
-    private static boolean isDebuggerContext(@NotNull CodegenContext context) {
+    public static boolean isDebuggerContext(@NotNull CodegenContext context) {
         KtFile file = DescriptorToSourceUtils.getContainingFile(context.getContextDescriptor());
         return file != null && CodeFragmentUtilKt.getSuppressDiagnosticsInDebugMode(file);
     }
@@ -259,7 +259,7 @@ public class JvmCodegenUtil {
     ) {
         //for compilation against sources
         if (closure != null) {
-            return closure.getCaptureThis();
+            return closure.getCapturedOuterClassDescriptor();
         }
 
         //for compilation against binaries
@@ -346,6 +346,11 @@ public class JvmCodegenUtil {
         return isCompanionObject(companionObject) &&
                isJvmInterface(companionObject.getContainingDeclaration()) &&
                !JvmAbi.isMappedIntrinsicCompanionObject((ClassDescriptor) companionObject);
+    }
+
+    public static boolean isNonIntrinsicPrivateCompanionObjectInInterface(@NotNull DeclarationDescriptorWithVisibility companionObject) {
+        return isCompanionObjectInInterfaceNotIntrinsic(companionObject) &&
+               Visibilities.isPrivate(companionObject.getVisibility());
     }
 
     public static boolean isDeclarationOfBigArityFunctionInvoke(@Nullable DeclarationDescriptor descriptor) {

@@ -311,6 +311,28 @@ class Collections {
             // but the sets with the same elements are equal no matter of order
             assertTrue(set1 == set2)
         }
+
+        @Sample
+        fun emptyMutableSet() {
+            val set = mutableSetOf<Int>()
+            assertTrue(set.isEmpty())
+
+            set.add(1)
+            set.add(2)
+            set.add(1)
+
+            assertPrints(set, "[1, 2]")
+        }
+
+        @Sample
+        fun mutableSet() {
+            val set = mutableSetOf(1, 2, 3)
+            assertPrints(set, "[1, 2, 3]")
+
+            set.remove(3)
+            set += listOf(4, 5)
+            assertPrints(set, "[1, 2, 4, 5]")
+        }
     }
 
     class Transformations {
@@ -347,17 +369,7 @@ class Collections {
             assertTrue(mutableNamesByTeam == namesByTeam)
         }
 
-        @Sample
-        fun groupingByEachCount() {
-            val words = "one two three four five six seven eight nine ten".split(' ')
-            val frequenciesByFirstChar = words.groupingBy { it.first() }.eachCount()
-            println("Counting first letters:")
-            assertPrints(frequenciesByFirstChar, "{o=1, t=3, f=2, s=2, e=1, n=1}")
 
-            val moreWords = "eleven twelve".split(' ')
-            val moreFrequencies = moreWords.groupingBy { it.first() }.eachCountTo(frequenciesByFirstChar.toMutableMap())
-            assertPrints(moreFrequencies, "{o=1, t=4, f=2, s=2, e=2, n=1}")
-        }
 
         @Sample
         fun joinTo() {
@@ -485,6 +497,62 @@ class Collections {
             val emptyList = emptyList<Int>()
             assertFalse(emptyList.any { true })
         }
+
+        @Sample
+        fun maxBy() {
+            val nameToAge = listOf("Alice" to 42, "Bob" to 28, "Carol" to 51)
+            val oldestPerson = nameToAge.maxBy { it.second }
+            assertPrints(oldestPerson, "(Carol, 51)")
+
+            val emptyList = emptyList<Pair<String, Int>>()
+            val emptyMax = emptyList.maxBy { it.second }
+            assertPrints(emptyMax, "null")
+        }
+
+        @Sample
+        fun minBy() {
+            val list = listOf("abcd", "abc", "ab", "abcde")
+            val shortestString = list.minBy { it.length }
+            assertPrints(shortestString, "ab")
+
+            val emptyList = emptyList<String>()
+            val emptyMin = emptyList.minBy { it.length }
+            assertPrints(emptyMin, "null")
+        }
     }
 
+    class Elements {
+        @Sample
+        fun elementAt() {
+            val list = listOf(1, 2, 3)
+            assertPrints(list.elementAt(0), "1")
+            assertPrints(list.elementAt(2), "3")
+            assertFailsWith<IndexOutOfBoundsException> { list.elementAt(3) }
+
+            val emptyList = emptyList<Int>()
+            assertFailsWith<IndexOutOfBoundsException> { emptyList.elementAt(0) }
+        }
+
+        @Sample
+        fun elementAtOrNull() {
+            val list = listOf(1, 2, 3)
+            assertPrints(list.elementAtOrNull(0), "1")
+            assertPrints(list.elementAtOrNull(2), "3")
+            assertPrints(list.elementAtOrNull(3), "null")
+
+            val emptyList = emptyList<Int>()
+            assertPrints(emptyList.elementAtOrNull(0), "null")
+        }
+
+        @Sample
+        fun elementAtOrElse() {
+            val list = listOf(1, 2, 3)
+            assertPrints(list.elementAtOrElse(0) { 42 }, "1")
+            assertPrints(list.elementAtOrElse(2) { 42 }, "3")
+            assertPrints(list.elementAtOrElse(3) { 42 }, "42")
+
+            val emptyList = emptyList<Int>()
+            assertPrints(emptyList.elementAtOrElse(0) { "no int" }, "no int")
+        }
+    }
 }
