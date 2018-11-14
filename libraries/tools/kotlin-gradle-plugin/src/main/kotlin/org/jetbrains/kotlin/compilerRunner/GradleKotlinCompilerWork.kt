@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.compilerRunner
 
 import org.gradle.api.Project
+import org.gradle.api.invocation.Gradle
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
@@ -24,7 +25,11 @@ import org.slf4j.LoggerFactory
 import java.io.*
 import java.net.URLClassLoader
 import java.rmi.RemoteException
+import java.util.concurrent.Callable
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executors
 import javax.inject.Inject
+import kotlin.concurrent.thread
 
 internal class ProjectFilesForCompilation(
     val projectRootFile: File,
@@ -247,6 +252,20 @@ internal class GradleKotlinCompilerWork @Inject constructor(
         runToolInSeparateProcess(compilerArgs, compilerClassName, compilerFullClasspath, log, loggingMessageCollector)
 
     private fun compileInProcess(): ExitCode {
+        // in-process compiler should always be run in a different thread
+        // to avoid leaking thread locals from compiler (see KT-28037)
+        val threadPool = Executors.newSingleThreadExecutor()
+        try {
+            val future = threadPool.submit(Callable {
+                compileInProcessImpl()
+            })
+            return future.get()
+        } finally {
+            threadPool.shutdown()
+        }
+    }
+
+    private fun compileInProcessImpl(): ExitCode {
         val stream = ByteArrayOutputStream()
         val out = PrintStream(stream)
         // todo: cache classloader?
