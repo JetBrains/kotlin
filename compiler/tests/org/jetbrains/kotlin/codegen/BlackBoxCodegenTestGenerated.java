@@ -11970,6 +11970,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             runTest("compiler/testData/codegen/box/inlineClasses/iterateOverListOfInlineClassValues.kt");
         }
 
+        @TestMetadata("javaClassIntrinsicOnInlineClasses.kt")
+        public void testJavaClassIntrinsicOnInlineClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/javaClassIntrinsicOnInlineClasses.kt");
+        }
+
         @TestMetadata("jvmFieldInInlineClassCompanion.kt")
         public void testJvmFieldInInlineClassCompanion() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/jvmFieldInInlineClassCompanion.kt");
