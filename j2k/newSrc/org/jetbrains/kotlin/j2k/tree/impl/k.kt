@@ -49,7 +49,8 @@ class JKKtFunctionImpl(
     parameters: List<JKParameter>,
     block: JKBlock,
     modifierList: JKModifierList,
-    typeParameterList: JKTypeParameterList
+    typeParameterList: JKTypeParameterList,
+    annotationList: JKAnnotationList
 ) : JKBranchElementBase(), JKKtFunction {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitKtFunction(this, data)
 
@@ -59,6 +60,7 @@ class JKKtFunctionImpl(
     override var block: JKBlock by child(block)
     override var modifierList: JKModifierList by child(modifierList)
     override var typeParameterList: JKTypeParameterList by child(typeParameterList)
+    override var annotationList: JKAnnotationList by child(annotationList)
 }
 
 sealed class JKKtQualifierImpl : JKQualifier, JKElementBase() {
@@ -169,6 +171,8 @@ class JKKtConstructorImpl(
     override var modifierList: JKModifierList by child(modifierList)
     override var delegationCall: JKExpression by child(delegationCall)
     override var typeParameterList: JKTypeParameterList by child(JKTypeParameterListImpl())
+    override var annotationList: JKAnnotationList by child(JKAnnotationListImpl())
+
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitKtConstructor(this, data)
 }
 
@@ -187,6 +191,7 @@ class JKKtPrimaryConstructorImpl(
     override var modifierList: JKModifierList by child(modifierList)
     override var delegationCall: JKExpression by child(delegationCall)
     override var typeParameterList: JKTypeParameterList by child(JKTypeParameterListImpl())
+    override var annotationList: JKAnnotationList by child(JKAnnotationListImpl())
 
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitKtPrimaryConstructor(this, data)
 }

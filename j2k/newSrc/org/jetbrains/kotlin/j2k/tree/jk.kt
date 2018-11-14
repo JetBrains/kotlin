@@ -62,7 +62,19 @@ interface JKInheritanceInfo : JKTreeElement, JKBranchElement {
     val inherit: List<JKTypeElement>
 }
 
-interface JKMethod : JKDeclaration, JKModifierListOwner, JKTypeParameterListOwner {
+interface JKAnnotationList : JKTreeElement {
+    var annotations: List<JKAnnotation>
+}
+
+interface JKAnnotation : JKTreeElement {
+    var name: JKNameIdentifier//TODO
+}
+
+interface JKAnnotationListOwner : JKTreeElement {
+    var annotationList: JKAnnotationList
+}
+
+interface JKMethod : JKDeclaration, JKModifierListOwner, JKTypeParameterListOwner, JKAnnotationListOwner {
     val name: JKNameIdentifier
     var parameters: List<JKParameter>
     val returnType: JKTypeElement
@@ -70,7 +82,7 @@ interface JKMethod : JKDeclaration, JKModifierListOwner, JKTypeParameterListOwne
 }
 
 interface JKField : JKDeclaration, JKModifierListOwner {
-    val type: JKTypeElement
+    var type: JKTypeElement
     var name: JKNameIdentifier
     var initializer: JKExpression
 }

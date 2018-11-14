@@ -311,6 +311,10 @@ class NewCodeBuilder {
 
         override fun visitKtFunction(ktFunction: JKKtFunction) {
             printer.printIndent()
+            if (ktFunction.annotationList.annotations.isNotEmpty()) {
+                ktFunction.annotationList.accept(this)
+                printer.printlnWithNoIndent(" ")
+            }
             ktFunction.modifierList.accept(this)
             printer.printWithNoIndent(" fun ")
             ktFunction.typeParameterList.accept(this)
@@ -712,6 +716,17 @@ class NewCodeBuilder {
                     it.accept(this)
                 }
             }
+        }
+
+        override fun visitAnnotationList(annotationList: JKAnnotationList) {
+            renderList(annotationList.annotations, " ") {
+                it.accept(this)
+            }
+        }
+
+        override fun visitAnnotation(annotation: JKAnnotation) {
+            printer.printWithNoIndent("@")
+            annotation.name.accept(this)
         }
 
         override fun visitKtWhenCase(ktWhenCase: JKKtWhenCase) {

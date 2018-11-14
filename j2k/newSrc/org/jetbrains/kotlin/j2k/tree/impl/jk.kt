@@ -273,7 +273,7 @@ class JKLocalVariableImpl(modifierList: JKModifierList, type: JKTypeElement, nam
     override var modifierList by child(modifierList)
     override var initializer by child(initializer)
     override var name by child(name)
-    override val type by child(type)
+    override var type by child(type)
 
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitLocalVariable(this, data)
 }
@@ -478,7 +478,7 @@ class JKEnumConstantImpl(
 ) : JKEnumConstant, JKBranchElementBase(), PsiOwner by PsiOwnerImpl() {
     override var name: JKNameIdentifier by child(name)
     override val arguments: JKExpressionList by child(arguments)
-    override val type: JKTypeElement by child(type)
+    override var type: JKTypeElement by child(type)
     override var initializer: JKExpression by child(JKStubExpressionImpl())
     override var modifierList: JKModifierList by child(modifierList)
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitEnumConstant(this, data)
@@ -506,4 +506,14 @@ fun JKStatement.isEmpty(): Boolean =
 class JKPackageDeclarationImpl(packageName: JKNameIdentifier) : JKPackageDeclaration, JKBranchElementBase() {
     override var packageName: JKNameIdentifier by child(packageName)
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitPackageDeclaration(this, data)
+}
+
+class JKAnnotationListImpl(annotations: List<JKAnnotation> = emptyList()) : JKAnnotationList, JKBranchElementBase() {
+    override var annotations: List<JKAnnotation> by children(annotations)
+    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitAnnotationList(this, data)
+}
+
+class JKAnnotationImpl(name: JKNameIdentifier) : JKAnnotation, JKBranchElementBase() {
+    override var name: JKNameIdentifier by child(name)
+    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitAnnotation(this, data)
 }

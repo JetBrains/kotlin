@@ -37,7 +37,8 @@ class JavaMethodToKotlinFunctionConversion : TransformerBasedConversion() {
                     it.parameters,
                     it.block,
                     it.modifierList,
-                    it.typeParameterList
+                    it.typeParameterList,
+                    it.annotationList
                 )
             } else {
                 it
