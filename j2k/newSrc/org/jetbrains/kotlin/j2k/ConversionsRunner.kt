@@ -54,6 +54,7 @@ object ConversionsRunner {
             +SwitchStatementConversion(context)
             +InstanceOfConversion()
             +ForConversion(context)
+            +ForInConversion()
             +LabeledStatementConversion()
             +SortClassMembersConversion()
         }
