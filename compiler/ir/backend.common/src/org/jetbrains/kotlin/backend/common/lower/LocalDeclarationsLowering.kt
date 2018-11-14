@@ -31,12 +31,8 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.ir.util.transformDeclarationsFlat
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
-import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
-import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
+import org.jetbrains.kotlin.ir.visitors.*
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.name.NameUtils
 import java.util.*
 
 interface LocalNameProvider {
@@ -768,6 +764,11 @@ class LocalDeclarationsLowering(
 
                     val localClassContext = LocalClassContext(declaration)
                     localClasses[declaration] = localClassContext
+                }
+
+                override fun visitLocalDelegatedProperty(declaration: IrLocalDelegatedProperty) {
+                    // Getter and setter of local delegated properties are special generated functions and don't have closure.
+                    declaration.delegate.initializer?.acceptVoid(this)
                 }
             })
         }

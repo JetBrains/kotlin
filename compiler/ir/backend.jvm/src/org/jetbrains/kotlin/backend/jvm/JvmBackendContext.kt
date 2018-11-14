@@ -76,6 +76,10 @@ class JvmBackendContext(
         return find(state.module.getPackage(fqName.parent()).memberScope, fqName.shortName())
     }
 
+    fun getIrClass(fqName: FqName): IrClassSymbol {
+        return ir.symbols.externalSymbolTable.referenceClass(getClass(fqName))
+    }
+
     override fun getInternalFunctions(name: String): List<FunctionDescriptor> {
         return when (name) {
             "ThrowUninitializedPropertyAccessException" ->
@@ -151,6 +155,8 @@ class JvmBackendContext(
             )
 
             val lambdaClass = calc { symbolTable.referenceClass(context.getInternalClass("Lambda")) }
+
+            fun getKFunction(parameterCount: Int) = symbolTable.referenceClass(reflectionTypes.getKFunction(parameterCount))
         }
 
 

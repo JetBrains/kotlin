@@ -11,8 +11,8 @@ import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.common.makePhase
 import org.jetbrains.kotlin.backend.common.runOnFilePostfix
 import org.jetbrains.kotlin.backend.jvm.lower.*
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithName
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.name.NameUtils
 
@@ -108,8 +108,8 @@ private val SharedVariablesPhase = makeJvmPhase(
 private val LocalDeclarationsPhase = makeJvmPhase(
     { context, data ->
         LocalDeclarationsLowering(context, object : LocalNameProvider {
-            override fun localName(descriptor: DeclarationDescriptor): String =
-                NameUtils.sanitizeAsJavaIdentifier(super.localName(descriptor))
+            override fun localName(declaration: IrDeclarationWithName): String =
+                NameUtils.sanitizeAsJavaIdentifier(super.localName(declaration))
         }, Visibilities.PUBLIC, true).lower(data)
     },
     name = "JvmLocalDeclarations",
