@@ -1,0 +1,7 @@
+import kotlin.random.Random
+
+// MyGenerator: to be implemented
+actual class MyGenerator actual constructor(r: Random) {
+    actual val i: Int
+        get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
+}
