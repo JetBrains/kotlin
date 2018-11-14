@@ -16,6 +16,8 @@
 
 package org.jetbrains.kotlin.j2k
 
+import com.intellij.psi.PsiMethod
+import org.jetbrains.kotlin.idea.refactoring.fqName.getKotlinFqName
 import org.jetbrains.kotlin.j2k.NewCodeBuilder.ParenthesisKind.*
 import org.jetbrains.kotlin.j2k.ast.Mutability
 import org.jetbrains.kotlin.j2k.ast.Nullability
@@ -23,6 +25,8 @@ import org.jetbrains.kotlin.j2k.tree.*
 import org.jetbrains.kotlin.j2k.tree.impl.*
 import org.jetbrains.kotlin.j2k.tree.visitors.JKVisitorVoid
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.psi.KtFunction
+import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
@@ -117,6 +121,11 @@ class NewCodeBuilder {
         }
 
         override fun visitFile(file: JKFile) {
+            val collectImportsVisitor = CollectImportsVisitor()
+            file.accept(collectImportsVisitor)
+            collectImportsVisitor.collectedFqNames.forEach {
+                printer.printlnWithNoIndent("import ", it.asString())
+            }
             file.acceptChildren(this)
         }
 
@@ -748,6 +757,31 @@ class NewCodeBuilder {
 
     private enum class ParenthesisKind(val open: String, val close: String) {
         ROUND("(", ")"), SQUARE("[", "]"), CURVED("{", "}"), CURVED_MULTILINE("{\n", "}\n"), INLINE_COMMENT("/*", "*/"), ANGLE("<", ">")
+    }
+
+    private class CollectImportsVisitor : JKVisitorVoid {
+        val collectedFqNames: MutableList<FqName> = mutableListOf()
+        override fun visitTreeElement(treeElement: JKTreeElement) {
+            treeElement.acceptChildren(this)
+        }
+
+        override fun visitJavaNewExpression(javaNewExpression: JKJavaNewExpression) {
+            val psiConstructor = javaNewExpression.constructorSymbol.target
+            val fqName = when (psiConstructor) {
+                is PsiMethod -> psiConstructor.containingClass?.getKotlinFqName()!!
+                is KtFunction -> psiConstructor.containingClassOrObject?.fqName!!
+                else -> TODO(psiConstructor::class.toString())
+            }
+            collectedFqNames.add(fqName)
+            javaNewExpression.acceptChildren(this)
+        }
+
+        override fun visitTypeElement(typeElement: JKTypeElement) {
+            val type = typeElement.type
+            if (type is JKClassType) {
+                collectedFqNames.add(FqName(type.classReference.fqName!!))
+            }
+        }
     }
 
     fun printCodeOut(root: JKTreeElement): String {
