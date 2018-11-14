@@ -93,8 +93,9 @@ test {
     executable = "$JDK_18/bin/java"
 }
 
-task testJdk6Tests(type: Test) {
+task testJdk6Tests(type: Test) { thisTask ->
     dependsOn(':kotlin-stdlib:testClasses')
+    check.dependsOn(thisTask)
     group = "verification"
 
     executable = "$JDK_18/bin/java"
@@ -108,4 +109,13 @@ task testJdk6Tests(type: Test) {
     }
 }
 
-check.dependsOn testJdk6Tests
+
+[9, 10, 11].forEach { v ->
+    task(type: Test, "jdk${v}Test") { thisTask ->
+        check.dependsOn(thisTask)
+        group = "verification"
+        executable = "${project.property("JDK_$v")}/bin/java"
+        if (v > 9)
+            enabled(file(executable).parentFile.isDirectory())
+    }
+}
