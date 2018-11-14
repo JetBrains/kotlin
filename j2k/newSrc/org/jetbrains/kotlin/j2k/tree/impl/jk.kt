@@ -498,7 +498,7 @@ class JKForInStatementImpl(declaration: JKDeclaration, iterationExpression: JKEx
 fun JKStatement.isEmpty(): Boolean =
     when (this) {
         is JKEmptyStatement -> true
-        is JKBlockStatement -> block is JKBodyStub || block.statements.isEmpty()
+        is JKBlockStatement -> block is JKBodyStub
         is JKExpressionStatement -> expression is JKStubExpression
         else -> false
     }
