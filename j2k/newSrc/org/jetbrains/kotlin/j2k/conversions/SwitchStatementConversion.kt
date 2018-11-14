@@ -25,10 +25,13 @@ class SwitchStatementConversion(private val context: ConversionContext) : Recurs
                 case.label.detach(case)
             }
         }
-        val cases = switchCasesToWhenCases(element.cases)
+        val cases = switchCasesToWhenCases(element.cases).moveElseCaseToTheEnd()
         val whenStatement = JKKtWhenStatementImpl(element.expression, cases)
         return recurse(whenStatement)
     }
+
+    private fun List<JKKtWhenCase>.moveElseCaseToTheEnd(): List<JKKtWhenCase> =
+        sortedBy { it.labels.any { it is JKKtElseWhenLabel } }
 
     private fun switchCasesToWhenCases(cases: List<JKJavaSwitchCase>): List<JKKtWhenCase> =
         if (cases.isEmpty()) emptyList()
