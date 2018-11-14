@@ -134,6 +134,7 @@ fun JKJavaOperatorToken.toKtToken(): JKKtOperatorToken =
         JavaTokenType.MINUSEQ -> JKKtSingleValueOperatorToken(KtTokens.MINUSEQ)
         JavaTokenType.PLUSPLUS -> JKKtSingleValueOperatorToken(KtTokens.PLUSPLUS)
         JavaTokenType.MINUSMINUS -> JKKtSingleValueOperatorToken(KtTokens.MINUSMINUS)
+        JavaTokenType.EXCL -> JKKtSingleValueOperatorToken(KtTokens.EXCL)
 
         JavaTokenType.AND -> JKKtWordOperatorToken("and")
         JavaTokenType.OR -> JKKtWordOperatorToken("or")
