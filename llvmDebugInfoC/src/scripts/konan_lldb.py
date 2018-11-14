@@ -272,6 +272,9 @@ class KonanProxyTypeProvider:
     def __getattr__(self, item):
         return getattr(self._proxy, item)
 
+def print_this_command(debugger, command, result, internal_dict):
+    pthis = lldb.frame.FindVariable('<this>')
+    print pthis
 
 def __lldb_init_module(debugger, _):
     __FACTORY['object'] = lambda x: KonanObjectSyntheticProvider(x)
@@ -292,3 +295,4 @@ def __lldb_init_module(debugger, _):
         --category Kotlin\
     ')
     debugger.HandleCommand('type category enable Kotlin')
+    debugger.HandleCommand('command script add -f {}.print_this_command print_this'.format(__name__))
