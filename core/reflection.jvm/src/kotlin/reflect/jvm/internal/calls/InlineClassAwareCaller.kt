@@ -24,7 +24,7 @@ import kotlin.reflect.jvm.internal.toJavaClass
  * Each argument of an inline class type is unboxed, and the return value (if it's of an inline class type) is boxed.
  */
 internal class InlineClassAwareCaller<out M : Member?>(
-    private val descriptor: CallableMemberDescriptor,
+    descriptor: CallableMemberDescriptor,
     private val caller: Caller<M>,
     private val isDefault: Boolean
 ) : Caller<M> {
@@ -43,14 +43,14 @@ internal class InlineClassAwareCaller<out M : Member?>(
         operator fun component3(): Method? = box
     }
 
-    private val data: BoxUnboxData by lazy(LazyThreadSafetyMode.PUBLICATION) {
+    private val data: BoxUnboxData = run {
         val box = descriptor.returnType!!.toInlineClass()?.getBoxMethod(descriptor)
 
         if (descriptor.isGetterOfUnderlyingPropertyOfInlineClass()) {
             // Getter of the underlying val of an inline class is always called on a boxed receiver,
             // no argument boxing/unboxing is required.
             // However, its result might require boxing if it is an inline class type.
-            return@lazy BoxUnboxData(IntRange.EMPTY, emptyArray(), box)
+            return@run BoxUnboxData(IntRange.EMPTY, emptyArray(), box)
         }
 
         val shift = when {

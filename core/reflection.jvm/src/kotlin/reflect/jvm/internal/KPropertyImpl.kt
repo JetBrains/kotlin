@@ -48,7 +48,7 @@ internal abstract class KPropertyImpl<out R> private constructor(
 
     override val isBound: Boolean get() = rawBoundReceiver != CallableReference.NO_RECEIVER
 
-    private val _javaField = ReflectProperties.lazySoft {
+    private val _javaField = ReflectProperties.lazy {
         val jvmSignature = RuntimeTypeMapper.mapPropertySignature(descriptor)
         when (jvmSignature) {
             is KotlinProperty -> {
@@ -152,7 +152,7 @@ internal abstract class KPropertyImpl<out R> private constructor(
             property.descriptor.getter ?: DescriptorFactory.createDefaultGetter(property.descriptor, Annotations.EMPTY)
         }
 
-        override val caller: Caller<*> by ReflectProperties.lazySoft {
+        override val caller: Caller<*> by ReflectProperties.lazy {
             computeCallerForAccessor(isGetter = true)
         }
     }
@@ -165,7 +165,7 @@ internal abstract class KPropertyImpl<out R> private constructor(
             property.descriptor.setter ?: DescriptorFactory.createDefaultSetter(property.descriptor, Annotations.EMPTY, Annotations.EMPTY)
         }
 
-        override val caller: Caller<*> by ReflectProperties.lazySoft {
+        override val caller: Caller<*> by ReflectProperties.lazy {
             computeCallerForAccessor(isGetter = false)
         }
     }
