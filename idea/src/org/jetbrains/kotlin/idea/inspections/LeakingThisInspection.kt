@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.idea.quickfix.AddModifierFix
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
+import org.jetbrains.kotlin.psi.psiUtil.getChildrenOfType
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.BindingContext.LEAKING_THIS
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
@@ -36,10 +37,17 @@ class LeakingThisInspection : AbstractKotlinInspection() {
                 if (leakingThisDescriptor.classOrObject != klass) continue@these
                 val description = when (leakingThisDescriptor) {
                     is NonFinalClass ->
-                        if (expression is KtThisExpression && expression.getStrictParentOfType<KtClassLiteralExpression>() == null)
-                            "Leaking 'this' in constructor of non-final class ${leakingThisDescriptor.klass.name}"
-                        else
+                        if (expression is KtThisExpression && expression.getStrictParentOfType<KtClassLiteralExpression>() == null) {
+                            if (klass.isEnum()) {
+                                val enumEntries = klass.body?.getChildrenOfType<KtEnumEntry>() ?: continue@these
+                                if (enumEntries.none { it.hasOverriddenMember() }) continue@these
+                                "Leaking 'this' in constructor of enum class ${leakingThisDescriptor.klass.name} (with overridable members)"
+                            } else {
+                                "Leaking 'this' in constructor of non-final class ${leakingThisDescriptor.klass.name}"
+                            }
+                        } else {
                             continue@these // Not supported yet
+                        }
                     is NonFinalProperty ->
                         "Accessing non-final property ${leakingThisDescriptor.property.name} in constructor"
                     is NonFinalFunction ->
@@ -75,6 +83,9 @@ class LeakingThisInspection : AbstractKotlinInspection() {
         }
     }
 
+    private fun KtEnumEntry.hasOverriddenMember(): Boolean {
+        return body?.getChildrenOfType<KtModifierListOwner>()?.any { it.hasModifier(KtTokens.OVERRIDE_KEYWORD) } == true
+    }
 
     companion object {
         private fun createMakeFinalFix(declaration: KtDeclaration?): IntentionWrapper? {
