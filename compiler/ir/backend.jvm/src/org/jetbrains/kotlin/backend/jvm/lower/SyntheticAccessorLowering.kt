@@ -36,7 +36,9 @@ import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 
-val SyntheticAccessorPhase = makePhase<SyntheticAccessorLowering>(
+val SyntheticAccessorPhase = makePhase(
+    ::SyntheticAccessorLowering,
+    name = "SyntheticAccessor",
     description = "Introduce synthetic accessors",
     prerequisite = setOf(ObjectClassPhase)
 )

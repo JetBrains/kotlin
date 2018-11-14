@@ -39,12 +39,16 @@ import org.jetbrains.kotlin.name.NameUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.parents
 import java.util.*
 
-val LocalDeclarationsPhase = makePhase<LocalDeclarationsLowering>(
+val LocalDeclarationsPhase = makePhase(
+    ::LocalDeclarationsLowering,
+    name = "LocalDeclarations",
     description = "Move local declarations to classes",
     prerequisite = setOf(SharedVariablesPhase)
 )
 
-val JvmLocalDeclarationsPhase = makePhase<JvmLocalDeclarationsLowering>(
+val JvmLocalDeclarationsPhase = makePhase(
+    ::JvmLocalDeclarationsLowering,
+    name = "JvmLocalDeclarations",
     description = "Move local declarations to classes",
     prerequisite = setOf(SharedVariablesPhase)
 )

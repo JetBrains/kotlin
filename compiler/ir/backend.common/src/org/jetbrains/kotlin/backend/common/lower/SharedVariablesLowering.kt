@@ -34,7 +34,9 @@ import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.visitors.*
 import java.util.*
 
-val SharedVariablesPhase = makePhase<SharedVariablesLowering>(
+val SharedVariablesPhase = makePhase(
+    ::SharedVariablesLowering,
+    name = "SharedVariables",
     description = "Transform shared variables"
 )
 

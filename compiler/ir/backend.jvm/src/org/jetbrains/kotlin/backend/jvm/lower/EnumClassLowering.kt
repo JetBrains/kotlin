@@ -33,7 +33,9 @@ import org.jetbrains.kotlin.types.*
 import org.jetbrains.org.objectweb.asm.Opcodes
 import java.util.*
 
-val EnumClassPhase = makePhase<EnumClassLowering>(
+val EnumClassPhase = makePhase(
+    ::EnumClassLowering,
+    name = "EnumClass",
     description = "Handle enum classes"
 )
 

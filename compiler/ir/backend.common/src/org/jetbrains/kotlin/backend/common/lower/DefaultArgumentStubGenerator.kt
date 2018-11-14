@@ -36,10 +36,15 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
 
-fun makeDefaultArgumentStubPhase(skipInlineMethods: Boolean) = makePhase<DefaultArgumentStubGenerator>(
-    skipInlineMethods,
-    description = "Generate synthetic stubs for functions with default parameter values"
-)
+fun makeDefaultArgumentStubPhase(skipInlineMethods: Boolean) = object : CompilerPhase<CommonBackendContext, IrFile> {
+    override val name = "DefaultArgumentsStubGenerator"
+    override val description = "Generate synthetic stubs for functions with default parameter values"
+
+    override fun invoke(context: CommonBackendContext, input: IrFile): IrFile {
+        DefaultArgumentStubGenerator(context, skipInlineMethods).lower(input)
+        return input
+    }
+}
 
 // TODO: fix expect/actual default parameters
 

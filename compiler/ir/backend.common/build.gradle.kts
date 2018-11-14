@@ -11,7 +11,6 @@ dependencies {
     compile(project(":compiler:backend-common"))
     compile(project(":compiler:ir.tree"))
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
-    compile(kotlin("reflect"))
 }
 
 sourceSets {

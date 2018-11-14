@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.backend.common.lower
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.CompilerPhase
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
-import org.jetbrains.kotlin.backend.common.makePhase
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
@@ -28,17 +27,20 @@ import org.jetbrains.kotlin.ir.expressions.IrBlock
 import org.jetbrains.kotlin.ir.expressions.impl.IrBlockBodyImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrBlockImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrExpressionBodyImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.isPrimitiveType
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
-fun makeLateinitPhase(generateParameterNameInAssertion: Boolean) =
-    makePhase<LateinitLowering>(
-        generateParameterNameInAssertion,
-        description = "Insert checks for lateinit field references"
-    )
+fun makeLateinitPhase(generateParameterNameInAssertion: Boolean) = object : CompilerPhase<CommonBackendContext, IrFile> {
+    override val name = "Lateinit"
+    override val description = "Insert checks for lateinit field references"
+
+    override fun invoke(context: CommonBackendContext, input: IrFile): IrFile {
+        LateinitLowering(context, generateParameterNameInAssertion).lower(input)
+        return input
+    }
+}
 
 class LateinitLowering(
     val context: CommonBackendContext,

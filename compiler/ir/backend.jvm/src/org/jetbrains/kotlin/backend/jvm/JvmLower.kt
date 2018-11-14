@@ -80,9 +80,9 @@ fun makePatchParentsPhase(number: Int) = object : CompilerPhase<BackendContext, 
     override val description: String = "Patch parent references in IrFile, pass $number"
     override val prerequisite: Set<CompilerPhase<BackendContext, *>> = emptySet()
 
-    override fun invoke(context: BackendContext, source: IrFile): IrFile {
-        source.acceptVoid(PatchDeclarationParentsVisitor())
-        return source
+    override fun invoke(context: BackendContext, input: IrFile): IrFile {
+        input.acceptVoid(PatchDeclarationParentsVisitor())
+        return input
     }
 }
 

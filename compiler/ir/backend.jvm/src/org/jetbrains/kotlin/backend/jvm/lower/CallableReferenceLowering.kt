@@ -60,7 +60,9 @@ import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 
-val CallableReferencePhase = makePhase<CallableReferenceLowering>(
+val CallableReferencePhase = makePhase(
+    ::CallableReferenceLowering,
+    name = "CallableReference",
     description = "Handle callable references"
 )
 

@@ -9,18 +9,18 @@ import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
 import org.jetbrains.kotlin.ir.declarations.IrFile
-import kotlin.reflect.KClass
-import kotlin.reflect.full.isSubclassOf
 
 interface CompilerPhase<in Context : BackendContext, Data> {
     val name: String
     val description: String
-    val prerequisite: Set<CompilerPhase<Context, *>>
+    val prerequisite: Set<CompilerPhase<*, *>>
+        get() = emptySet()
 
-    fun invoke(context: Context, source: Data): Data
+    fun invoke(context: Context, input: Data): Data
 }
 
 private typealias AnyPhase = CompilerPhase<*, *>
+
 class CompilerPhases(private val phaseList: List<AnyPhase>, config: CompilerConfiguration) {
 
     val phases = phaseList.associate { it.name to it }
@@ -118,45 +118,32 @@ class CompilerPhaseManager<Context : BackendContext, Data>(
     }
 }
 
-inline fun <reified Lowering : FileLoweringPass> makePhase(
-    vararg args: Any?,
+fun <Context : BackendContext> makePhase(
+    loweringConstructor: (Context) -> FileLoweringPass,
     description: String,
-    name: String = Lowering::class.simpleName!!,
-    prerequisite: Set<CompilerPhase<BackendContext, *>> = emptySet()
-) =
-    object : CompilerPhase<BackendContext, IrFile> {
-        override val name = name
-        override val description = description
-        override val prerequisite = prerequisite
+    name: String,
+    prerequisite: Set<CompilerPhase<*, *>> = emptySet()
+) = object : CompilerPhase<Context, IrFile> {
+    override val name = name
+    override val description = description
+    override val prerequisite = prerequisite
 
-        override fun invoke(context: BackendContext, source: IrFile): IrFile {
-            val loweringConstructorWithContext = Lowering::class.constructors.filter {
-                it.parameters.isNotEmpty() &&
-                        (it.parameters[0].type.classifier as? KClass<*>)?.isSubclassOf(BackendContext::class) == true
-            }.singleOrNull()
-
-            val lowering = if (loweringConstructorWithContext != null) {
-                loweringConstructorWithContext.call(context, *args)
-            } else {
-                val loweringConstructorWithoutParameters = Lowering::class.constructors.single { it.parameters.isEmpty() }
-                loweringConstructorWithoutParameters?.call() as Lowering
-            }
-            lowering.lower(source)
-            // `source` is modified in place
-            return source
-        }
+    override fun invoke(context: Context, input: IrFile): IrFile {
+        loweringConstructor(context).lower(input)
+        return input
     }
+}
 
 object IrFileStartPhase : CompilerPhase<BackendContext, IrFile> {
     override val name = "IrFileStart"
     override val description = "State at start of IrFile lowering"
     override val prerequisite = emptySet()
-    override fun invoke(context: BackendContext, source: IrFile) = source
+    override fun invoke(context: BackendContext, input: IrFile) = input
 }
 
 object IrFileEndPhase : CompilerPhase<BackendContext, IrFile> {
     override val name = "IrFileEnd"
     override val description = "State at end of IrFile lowering"
     override val prerequisite = emptySet()
-    override fun invoke(context: BackendContext, source: IrFile) = source
+    override fun invoke(context: BackendContext, input: IrFile) = input
 }
