@@ -49,7 +49,14 @@ class KotlinDirtySourceFilesHolder(
          * and during KotlinDirtySourceFilesHolder initialization.
          */
         internal fun _markDirty(file: File, root: JavaSourceRootDescriptor) {
-            _dirty[file.canonicalFile] = KotlinModuleBuildTarget.Source(file, root is KotlinIncludedModuleSourceRoot)
+            val isCrossCompiled = root is KotlinIncludedModuleSourceRoot
+            val old = _dirty.put(file.canonicalFile, KotlinModuleBuildTarget.Source(file, isCrossCompiled))
+
+            check(old == null || old.isCrossCompiled == isCrossCompiled) {
+                "`${file.canonicalFile}` already marked as dirty: " +
+                        "old is cross compiled: ${old!!.isCrossCompiled}, " +
+                        "new is cross compiled: $isCrossCompiled"
+            }
         }
     }
 
