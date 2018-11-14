@@ -725,8 +725,8 @@ internal class DescriptorRendererImpl(
         if (renderConstructorKeyword) {
             builder.append(renderKeyword("constructor"))
         }
+        val classDescriptor = constructor.containingDeclaration
         if (secondaryConstructorsAsPrimary) {
-            val classDescriptor = constructor.containingDeclaration
             if (renderConstructorKeyword) {
                 builder.append(" ")
             }
@@ -735,6 +735,19 @@ internal class DescriptorRendererImpl(
         }
 
         renderValueParameters(constructor.valueParameters, constructor.hasSynthesizedParameterNames(), builder)
+
+        if (renderConstructorDelegation && !constructor.isPrimary && classDescriptor is ClassDescriptor) {
+            val primaryConstructor = classDescriptor.unsubstitutedPrimaryConstructor
+            if (primaryConstructor != null) {
+                val parametersWithoutDefault = primaryConstructor.valueParameters.filter {
+                    !it.declaresDefaultValue() && it.varargElementType == null
+                }
+                if (parametersWithoutDefault.isNotEmpty()) {
+                    builder.append(" : ").append(renderKeyword("this"))
+                    builder.append(parametersWithoutDefault.joinToString(prefix = "(", postfix = ")", separator = ", ") { "" })
+                }
+            }
+        }
 
         if (secondaryConstructorsAsPrimary) {
             renderWhereSuffix(constructor.typeParameters, builder)

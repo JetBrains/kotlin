@@ -216,6 +216,7 @@ private val ACTUAL_RENDERER = OVERRIDE_RENDERER.withOptions {
     secondaryConstructorsAsPrimary = false
     renderDefaultVisibility = false
     renderDefaultModality = false
+    renderConstructorDelegation = true
     renderActualAnnotationPropertiesInPrimaryConstructor = true
 }
 

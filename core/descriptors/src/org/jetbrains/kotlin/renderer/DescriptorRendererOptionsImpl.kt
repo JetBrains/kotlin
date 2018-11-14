@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.renderer
 
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationWithTarget
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.types.KotlinType
 import java.lang.IllegalStateException
@@ -82,6 +81,7 @@ internal class DescriptorRendererOptionsImpl : DescriptorRendererOptions {
     override var normalizedVisibilities by property(false)
     override var renderDefaultVisibility by property(true)
     override var renderDefaultModality by property(true)
+    override var renderConstructorDelegation by property(false)
     override var renderActualAnnotationPropertiesInPrimaryConstructor by property(false)
     override var uninferredTypeParameterAsName by property(false)
     override var includePropertyConstant by property(false)
