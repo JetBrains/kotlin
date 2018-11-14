@@ -159,6 +159,11 @@ public class QuickFixMultiModuleTestGenerated extends AbstractQuickFixMultiModul
         runTest("idea/testData/multiModuleQuickFix/companionAbsence/");
     }
 
+    @TestMetadata("constructorWithDelegation")
+    public void testConstructorWithDelegation() throws Exception {
+        runTest("idea/testData/multiModuleQuickFix/constructorWithDelegation/");
+    }
+
     @TestMetadata("constructorWithJdk")
     public void testConstructorWithJdk() throws Exception {
         runTest("idea/testData/multiModuleQuickFix/constructorWithJdk/");
