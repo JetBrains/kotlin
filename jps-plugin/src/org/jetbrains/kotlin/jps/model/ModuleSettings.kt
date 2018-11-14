@@ -41,7 +41,7 @@ val JpsModule.expectedByModules: List<JpsModule>
 private fun JpsModule.findDependencies(moduleNames: List<String>?): List<JpsModule> {
     if (moduleNames == null || moduleNames.isEmpty()) return listOf()
 
-    val result = ArrayList<JpsModule>(moduleNames.size)
+    val result = mutableSetOf<JpsModule>()
 
     JpsJavaExtensionService.dependencies(this)
         .processModules {
@@ -51,7 +51,7 @@ private fun JpsModule.findDependencies(moduleNames: List<String>?): List<JpsModu
             }
         }
 
-    return result
+    return result.toList()
 }
 
 val JpsModule.productionOutputFilePath: String?
