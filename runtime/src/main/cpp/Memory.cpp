@@ -627,51 +627,66 @@ void ScanRoots(MemoryState*);
 void CollectRoots(MemoryState*);
 
 template<bool useColor>
-void MarkGray(ContainerHeader* container) {
-  if (useColor) {
-    if (container->color() == CONTAINER_TAG_GC_GRAY) return;
-  } else {
-    if (container->marked()) return;
-  }
-  if (useColor) {
-    container->setColor(CONTAINER_TAG_GC_GRAY);
-  } else {
-    container->mark();
-  }
-  traverseContainerReferredObjects(container, [](ObjHeader* ref) {
-    auto childContainer = ref->container();
-    RuntimeAssert(!isArena(childContainer), "A reference to local object is encountered");
+void MarkGray(ContainerHeader* start) {
+  ContainerHeaderDeque toVisit;
+  toVisit.push_back(start);
 
-    if (!childContainer->permanentOrFrozen()) {
-      childContainer->decRefCount<false>();
-      MarkGray<useColor>(childContainer);
+  while (!toVisit.empty()) {
+    auto container = toVisit.front();
+    toVisit.pop_front();
+    if (useColor) {
+      if (container->color() == CONTAINER_TAG_GC_GRAY) continue;
+    } else {
+       if (container->marked()) continue;
     }
-  });
+    if (useColor) {
+      container->setColor(CONTAINER_TAG_GC_GRAY);
+    } else {
+      container->mark();
+    }
+    traverseContainerReferredObjects(container, [&toVisit](ObjHeader* ref) {
+      auto childContainer = ref->container();
+      RuntimeAssert(!isArena(childContainer), "A reference to local object is encountered");
+
+      if (!childContainer->permanentOrFrozen()) {
+        childContainer->decRefCount<false>();
+        toVisit.push_front(childContainer);
+      }
+    });
+  }
 }
 
 void Scan(ContainerHeader* container);
 
 template<bool useColor>
-void ScanBlack(ContainerHeader* container) {
-  if (useColor) {
-    container->setColor(CONTAINER_TAG_GC_BLACK);
-  } else {
-    container->unMark();
-  }
-  traverseContainerReferredObjects(container, [](ObjHeader* ref) {
-    auto childContainer = ref->container();
-    RuntimeAssert(!isArena(childContainer), "A reference to local object is encountered");
-    if (!childContainer->permanentOrFrozen()) {
-      childContainer->incRefCount<false>();
-      if (useColor) {
-        if (childContainer->color() != CONTAINER_TAG_GC_BLACK)
-          ScanBlack<useColor>(childContainer);
-      } else {
-        if (childContainer->marked())
-          ScanBlack<useColor>(childContainer);
-      }
+void ScanBlack(ContainerHeader* start) {
+  ContainerHeaderDeque toVisit;
+  toVisit.push_back(start);
+
+  while (!toVisit.empty()) {
+    auto container = toVisit.front();
+    toVisit.pop_front();
+    if (useColor) {
+      container->setColor(CONTAINER_TAG_GC_BLACK);
+    } else {
+      container->unMark();
     }
-  });
+
+    traverseContainerReferredObjects(container, [&toVisit](ObjHeader* ref) {
+        auto childContainer = ref->container();
+        RuntimeAssert(!isArena(childContainer), "A reference to local object is encountered");
+        if (!childContainer->permanentOrFrozen()) {
+          childContainer->incRefCount<false>();
+          if (useColor) {
+            if (childContainer->color() != CONTAINER_TAG_GC_BLACK)
+              toVisit.push_front(childContainer);
+          } else {
+            if (childContainer->marked())
+              toVisit.push_front(childContainer);
+          }
+        }
+    });
+  }
 }
 
 void CollectWhite(MemoryState*, ContainerHeader* container);
@@ -735,23 +750,29 @@ void Scan(ContainerHeader* container) {
   });
 }
 
-void CollectWhite(MemoryState* state, ContainerHeader* container) {
-  if (container->color() != CONTAINER_TAG_GC_WHITE || container->buffered())
-    return;
-  container->setColor(CONTAINER_TAG_GC_BLACK);
-  traverseContainerObjectFields(container, [state](ObjHeader** location) {
-    auto ref = *location;
-    if (ref == nullptr) return;
-    auto childContainer = ref->container();
-    RuntimeAssert(!isArena(childContainer), "A reference to local object is encountered");
-    if (childContainer->permanentOrFrozen()) {
-      UpdateRef(location, nullptr);
-    } else {
-      CollectWhite(state, childContainer);
-    }
-  });
-  runDeallocationHooks(container);
-  scheduleDestroyContainer(state, container);
+void CollectWhite(MemoryState* state, ContainerHeader* start) {
+   ContainerHeaderDeque toVisit;
+   toVisit.push_back(start);
+
+   while (!toVisit.empty()) {
+     auto container = toVisit.front();
+     toVisit.pop_front();
+     if (container->color() != CONTAINER_TAG_GC_WHITE || container->buffered()) continue;
+     container->setColor(CONTAINER_TAG_GC_BLACK);
+     traverseContainerObjectFields(container, [state, &toVisit](ObjHeader** location) {
+        auto ref = *location;
+        if (ref == nullptr) return;
+        auto childContainer = ref->container();
+        RuntimeAssert(!isArena(childContainer), "A reference to local object is encountered");
+        if (childContainer->permanentOrFrozen()) {
+          UpdateRef(location, nullptr);
+        } else {
+          toVisit.push_front(childContainer);
+        }
+     });
+    runDeallocationHooks(container);
+    scheduleDestroyContainer(state, container);
+  }
 }
 #endif
 
