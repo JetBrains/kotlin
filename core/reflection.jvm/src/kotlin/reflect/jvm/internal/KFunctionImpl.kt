@@ -58,7 +58,7 @@ internal class KFunctionImpl private constructor(
 
     override val name: String get() = descriptor.name.asString()
 
-    override val caller: Caller<*> by ReflectProperties.lazySoft caller@{
+    override val caller: Caller<*> by ReflectProperties.lazy caller@{
         val jvmSignature = RuntimeTypeMapper.mapSignature(descriptor)
         val member: Member? = when (jvmSignature) {
             is KotlinConstructor -> {
@@ -90,7 +90,7 @@ internal class KFunctionImpl private constructor(
         }.createInlineClassAwareCallerIfNeeded(descriptor)
     }
 
-    override val defaultCaller: Caller<*>? by ReflectProperties.lazySoft defaultCaller@{
+    override val defaultCaller: Caller<*>? by ReflectProperties.lazy defaultCaller@{
         val jvmSignature = RuntimeTypeMapper.mapSignature(descriptor)
         val member: Member? = when (jvmSignature) {
             is KotlinFunction -> {
