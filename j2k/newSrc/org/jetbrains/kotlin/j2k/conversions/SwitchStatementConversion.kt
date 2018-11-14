@@ -89,15 +89,21 @@ class SwitchStatementConversion(private val context: ConversionContext) : Recurs
         all { it.fallsThrough() }
 
     private fun JKStatement.fallsThrough(): Boolean =
-        when (this) {
-            //TODO add support of this when will be added
-            // is JKThrowStatement || is JKContinueStatement -> false
-            is JKBreakStatement, is JKReturnStatement -> false
-            is JKBlockStatement -> block.statements.fallsThrough()
-            is JKIfStatement, is JKJavaSwitchStatement, is JKKtWhenStatement ->
+        when {
+            this.isThrowStatement() ||
+                    this is JKBreakStatement ||
+                    this is JKReturnStatement ||
+                    this is JKContinueStatement -> false
+            this is JKBlockStatement -> block.statements.fallsThrough()
+            this is JKIfStatement ||
+                    this is JKJavaSwitchStatement ||
+                    this is JKKtWhenStatement ->
                 this.psi!!.canCompleteNormally()
             else -> true
         }
+
+    private fun JKStatement.isThrowStatement(): Boolean =
+        (this as? JKExpressionStatement)?.expression is JKKtThrowExpression
 
     private fun PsiElement.canCompleteNormally(): Boolean {
         val controlFlow =
