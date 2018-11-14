@@ -105,9 +105,9 @@ class NewCodeBuilder {
         }
 
         override fun visitDoWhileStatement(doWhileStatement: JKDoWhileStatement) {
-            printer.printWithNoIndent("do")
+            printer.printWithNoIndent("do ")
             doWhileStatement.body.accept(this)
-            printer.printWithNoIndent("while (")
+            printer.printWithNoIndent(" while (")
             doWhileStatement.condition.accept(this)
             printer.printWithNoIndent(")")
         }
