@@ -478,8 +478,24 @@ internal class DescriptorRendererImpl(
         builder.append(renderKeyword(visibility.displayName)).append(" ")
     }
 
-    private fun renderModality(modality: Modality, builder: StringBuilder) {
+    private fun renderModality(modality: Modality, builder: StringBuilder, defaultModality: Modality) {
+        if (!renderDefaultModality && modality == defaultModality) return
         renderModifier(builder, DescriptorRendererModifier.MODALITY in modifiers, modality.name.toLowerCase())
+    }
+
+    private fun MemberDescriptor.implicitModalityWithoutExtensions(): Modality {
+        if (this is ClassDescriptor) {
+            return if (kind == ClassKind.INTERFACE) Modality.ABSTRACT else Modality.FINAL
+        }
+        val containingClassDescriptor = containingDeclaration as? ClassDescriptor ?: return Modality.FINAL
+        if (this !is CallableMemberDescriptor) return Modality.FINAL
+        if (this.overriddenDescriptors.isNotEmpty()) {
+            if (containingClassDescriptor.modality != Modality.FINAL) return Modality.OPEN
+        }
+        if (containingClassDescriptor.kind == ClassKind.INTERFACE && this.visibility != Visibilities.PRIVATE) {
+            return if (this.modality == Modality.ABSTRACT) Modality.ABSTRACT else Modality.OPEN
+        }
+        return Modality.FINAL
     }
 
     private fun renderModalityForCallable(callable: CallableMemberDescriptor, builder: StringBuilder) {
@@ -488,7 +504,7 @@ internal class DescriptorRendererImpl(
                 overridesSomething(callable)) {
                 return
             }
-            renderModality(callable.modality, builder)
+            renderModality(callable.modality, builder, callable.implicitModalityWithoutExtensions())
         }
     }
 
@@ -913,7 +929,7 @@ internal class DescriptorRendererImpl(
             }
             if (!(klass.kind == ClassKind.INTERFACE && klass.modality == Modality.ABSTRACT ||
                   klass.kind.isSingleton && klass.modality == Modality.FINAL)) {
-                renderModality(klass.modality, builder)
+                renderModality(klass.modality, builder, klass.implicitModalityWithoutExtensions())
             }
             renderMemberModifiers(klass, builder)
             renderModifier(builder, DescriptorRendererModifier.INNER in modifiers && klass.isInner, "inner")

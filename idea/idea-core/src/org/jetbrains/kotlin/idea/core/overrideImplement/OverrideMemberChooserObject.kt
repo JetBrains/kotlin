@@ -142,7 +142,7 @@ private fun OverrideMemberChooserObject.generateMember(
 
     val bodyType = when {
         targetClass?.hasExpectModifier() == true -> NO_BODY
-        descriptor.extensionReceiverParameter != null -> FROM_TEMPLATE
+        descriptor.extensionReceiverParameter != null && !forceActual -> FROM_TEMPLATE
         else -> bodyType
     }
 
@@ -211,27 +211,31 @@ private val OVERRIDE_RENDERER = DescriptorRenderer.withOptions {
 }
 
 private val ACTUAL_RENDERER = OVERRIDE_RENDERER.withOptions {
-    modifiers = setOf(DescriptorRendererModifier.ANNOTATIONS)
+    modifiers = DescriptorRendererModifier.ALL
     renderConstructorKeyword = true
     secondaryConstructorsAsPrimary = false
+    renderDefaultVisibility = false
+    renderDefaultModality = false
 }
 
-private fun PropertyDescriptor.wrap(): PropertyDescriptor {
-    val delegate = copy(containingDeclaration, Modality.OPEN, visibility, kind, true) as PropertyDescriptor
+private fun PropertyDescriptor.wrap(forceOverride: Boolean): PropertyDescriptor {
+    val delegate = copy(containingDeclaration, if (forceOverride) Modality.OPEN else modality, visibility, kind, true) as PropertyDescriptor
     val newDescriptor = object : PropertyDescriptor by delegate {
         override fun isExpect() = false
     }
-    newDescriptor.setSingleOverridden(this)
+    if (forceOverride) {
+        newDescriptor.setSingleOverridden(this)
+    }
     return newDescriptor
 }
 
-private fun FunctionDescriptor.wrap(): FunctionDescriptor {
+private fun FunctionDescriptor.wrap(forceOverride: Boolean, forceAbstract: Boolean): FunctionDescriptor {
     if (this is ClassConstructorDescriptor) return this.wrap()
     return object : FunctionDescriptor by this {
         override fun isExpect() = false
-        override fun getModality() = Modality.OPEN
+        override fun getModality() = if (forceAbstract) Modality.ABSTRACT else if (forceOverride) Modality.OPEN else this@wrap.modality
         override fun getReturnType() = this@wrap.returnType?.approximateFlexibleTypes(preferNotNull = true, preferStarForRaw = true)
-        override fun getOverriddenDescriptors() = listOf(this@wrap)
+        override fun getOverriddenDescriptors() = if (forceOverride) listOf(this@wrap) else emptyList()
         override fun <R : Any?, D : Any?> accept(visitor: DeclarationDescriptorVisitor<R, D>, data: D) =
             visitor.visitFunctionDescriptor(this, data)
     }
@@ -242,7 +246,7 @@ private fun ClassConstructorDescriptor.wrap(): ClassConstructorDescriptor {
         override fun isExpect() = false
         override fun getModality() = Modality.FINAL
         override fun getReturnType() = this@wrap.returnType.approximateFlexibleTypes(preferNotNull = true, preferStarForRaw = true)
-        override fun getOverriddenDescriptors() = listOf(this@wrap)
+        override fun getOverriddenDescriptors(): List<ClassConstructorDescriptor> = emptyList()
         override fun <R : Any?, D : Any?> accept(visitor: DeclarationDescriptorVisitor<R, D>, data: D) =
             visitor.visitConstructorDescriptor(this, data)
     }
@@ -254,7 +258,8 @@ private fun generateProperty(
     renderer: DescriptorRenderer,
     bodyType: OverrideMemberChooserObject.BodyType
 ): KtProperty {
-    val newDescriptor = descriptor.wrap()
+    val actualRendererUsed = renderer === ACTUAL_RENDERER
+    val newDescriptor = descriptor.wrap(forceOverride = !actualRendererUsed)
 
     val returnType = descriptor.returnType
     val returnsNotUnit = returnType != null && !KotlinBuiltIns.isUnit(returnType)
@@ -274,7 +279,8 @@ private fun generateProperty(
 }
 
 private fun generateConstructorParameter(project: Project, descriptor: PropertyDescriptor, renderer: DescriptorRenderer): KtParameter {
-    val newDescriptor = descriptor.wrap()
+    val actualRendererUsed = renderer === ACTUAL_RENDERER
+    val newDescriptor = descriptor.wrap(forceOverride = !actualRendererUsed)
     newDescriptor.setSingleOverridden(descriptor)
     return KtPsiFactory(project).createParameter(renderer.render(newDescriptor))
 }
@@ -285,7 +291,8 @@ private fun generateFunction(
     renderer: DescriptorRenderer,
     bodyType: OverrideMemberChooserObject.BodyType
 ): KtFunction {
-    val newDescriptor = descriptor.wrap()
+    val actualRendererUsed = renderer === ACTUAL_RENDERER
+    val newDescriptor = descriptor.wrap(forceAbstract = actualRendererUsed && bodyType == NO_BODY, forceOverride = !actualRendererUsed)
 
     val returnType = descriptor.returnType
     val returnsNotUnit = returnType != null && !KotlinBuiltIns.isUnit(returnType)

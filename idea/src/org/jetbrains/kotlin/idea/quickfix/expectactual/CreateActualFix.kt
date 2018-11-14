@@ -25,17 +25,16 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.JavaDirectoryService
 import com.intellij.psi.codeStyle.CodeStyleManager
 import org.jetbrains.kotlin.analyzer.ModuleInfo
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.idea.caches.project.ModuleSourceInfo
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithContent
 import org.jetbrains.kotlin.idea.core.*
-import org.jetbrains.kotlin.idea.core.overrideImplement.OverrideMemberChooserObject
+import org.jetbrains.kotlin.idea.core.overrideImplement.OverrideMemberChooserObject.BodyType.EMPTY_OR_TEMPLATE
+import org.jetbrains.kotlin.idea.core.overrideImplement.OverrideMemberChooserObject.BodyType.NO_BODY
+import org.jetbrains.kotlin.idea.core.overrideImplement.OverrideMemberChooserObject.Companion.create
 import org.jetbrains.kotlin.idea.core.overrideImplement.generateActualMember
 import org.jetbrains.kotlin.idea.core.overrideImplement.generateTopLevelActual
 import org.jetbrains.kotlin.idea.quickfix.KotlinQuickFixAction
@@ -252,7 +251,6 @@ internal fun KtPsiFactory.generateClassOrObjectByExpectedClass(
     } else {
         createClass(expectedText)
     }
-    val isInterface = expectedClass is KtClass && expectedClass.isInterface()
     actualClass.declarations.forEach {
         if (it.exists()) {
             it.delete()
@@ -261,16 +259,7 @@ internal fun KtPsiFactory.generateClassOrObjectByExpectedClass(
         when (it) {
             is KtEnumEntry -> return@forEach
             is KtClassOrObject -> it.delete()
-            is KtCallableDeclaration -> {
-                if (!isInterface && !it.hasModifier(KtTokens.ABSTRACT_KEYWORD)) {
-                    it.delete()
-                } else {
-                    it.addModifier(KtTokens.ACTUAL_KEYWORD)
-                    if (it is KtFunction) {
-                        it.removeParameterDefaultValues()
-                    }
-                }
-            }
+            is KtCallableDeclaration -> it.delete()
         }
     }
     val primaryConstructor = actualClass.primaryConstructor
@@ -307,9 +296,6 @@ internal fun KtPsiFactory.generateClassOrObjectByExpectedClass(
                     continue@declLoop
                 }
             is KtCallableDeclaration -> {
-                if (isInterface || expectedDeclaration.hasModifier(KtTokens.ABSTRACT_KEYWORD)) {
-                    continue@declLoop
-                }
                 when (expectedDeclaration) {
                     is KtFunction -> generateFunction(project, expectedDeclaration, descriptor as FunctionDescriptor, actualClass)
                     is KtProperty -> generateProperty(project, expectedDeclaration, descriptor as PropertyDescriptor, actualClass)
@@ -346,8 +332,9 @@ private fun generateFunction(
     descriptor: FunctionDescriptor,
     targetClass: KtClassOrObject? = null
 ): KtFunction {
-    val memberChooserObject = OverrideMemberChooserObject.create(
-        expectedFunction, descriptor, descriptor, OverrideMemberChooserObject.BodyType.EMPTY_OR_TEMPLATE
+    val memberChooserObject = create(
+        expectedFunction, descriptor, descriptor,
+        if (descriptor.modality == Modality.ABSTRACT) NO_BODY else EMPTY_OR_TEMPLATE
     )
     return if (targetClass != null) {
         memberChooserObject.generateActualMember(targetClass = targetClass, copyDoc = true)
@@ -372,14 +359,14 @@ private fun generateProperty(
     descriptor: PropertyDescriptor,
     targetClass: KtClassOrObject? = null
 ): KtProperty {
-    val memberChooserObject = OverrideMemberChooserObject.create(
-        expectedProperty, descriptor, descriptor, OverrideMemberChooserObject.BodyType.EMPTY_OR_TEMPLATE
+    val memberChooserObject = create(
+        expectedProperty, descriptor, descriptor,
+        if (descriptor.modality == Modality.ABSTRACT) NO_BODY else EMPTY_OR_TEMPLATE
     )
     return if (targetClass != null) {
         memberChooserObject.generateActualMember(targetClass = targetClass, copyDoc = true)
     } else {
         memberChooserObject.generateTopLevelActual(copyDoc = true, project = project)
     } as KtProperty
-
 }
 
