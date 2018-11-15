@@ -134,7 +134,8 @@ private fun isUnclearType(type: KotlinType, element: KtCallableDeclaration): Boo
             return false
         }
         if (resolvedDescriptor is ConstructorDescriptor &&
-            (resolvedDescriptor.constructedClass.declaredTypeParameters.isEmpty() || initializer.typeArgumentList != null)) {
+            (resolvedDescriptor.constructedClass.declaredTypeParameters.isEmpty() || initializer.typeArgumentList != null)
+        ) {
             return false
         }
     }
