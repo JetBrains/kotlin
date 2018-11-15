@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.caches.project.LibraryModuleInfo
 import org.jetbrains.kotlin.caches.resolve.resolution
 import org.jetbrains.kotlin.config.KotlinSourceRootType
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.util.enlargedSearchScope
 import org.jetbrains.kotlin.idea.configuration.BuildSystemType
 import org.jetbrains.kotlin.idea.configuration.getBuildSystemType
 import org.jetbrains.kotlin.idea.core.isInTestSourceContentKotlinAware
@@ -59,14 +60,6 @@ interface IdeaModuleInfo : org.jetbrains.kotlin.idea.caches.resolve.IdeaModuleIn
         get() = super.capabilities + mapOf(OriginCapability to moduleOrigin)
 
     override fun dependencies(): List<IdeaModuleInfo>
-}
-
-private fun enlargedSearchScope(searchScope: GlobalSearchScope, moduleFile: VirtualFile?): GlobalSearchScope {
-    if (moduleFile == null) return searchScope
-    return ResolveScopeEnlarger.EP_NAME.extensions.fold(searchScope) { scope, enlarger ->
-        val extra = enlarger.getAdditionalResolveScope(moduleFile, scope.project)
-        if (extra != null) scope.union(extra) else scope
-    }
 }
 
 private fun orderEntryToModuleInfo(project: Project, orderEntry: OrderEntry, forProduction: Boolean): List<IdeaModuleInfo> {
