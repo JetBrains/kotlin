@@ -312,18 +312,22 @@ class KtUltraLightClass(classOrObject: KtClassOrObject, private val support: Ult
 
     override fun getOwnMethods(): List<KtLightMethod> = if (tooComplex) super.getOwnMethods() else _ownMethods
 
-    private fun asJavaMethod(f: KtFunction, forceStatic: Boolean): KtLightMethod {
-        val isConstructor = f is KtConstructor<*>
-        val name = if (isConstructor) this.name else mangleIfNeeded(listOf(f), f.name ?: SpecialNames.NO_NAME_PROVIDED.asString())
-        val method = lightMethod(name.orEmpty(), f, forceStatic)
-        val wrapper = KtUltraLightMethod(method, f, support, this)
-        addReceiverParameter(f, wrapper)
-        for (parameter in f.valueParameters) {
+    private fun asJavaMethod(ktFunction: KtFunction, forceStatic: Boolean): KtLightMethod {
+        val isConstructor = ktFunction is KtConstructor<*>
+        val name =
+            if (isConstructor)
+                this.name
+            else mangleIfNeeded(listOf(ktFunction), ktFunction.name ?: SpecialNames.NO_NAME_PROVIDED.asString())
+
+        val method = lightMethod(name.orEmpty(), ktFunction, forceStatic)
+        val wrapper = KtUltraLightMethod(method, ktFunction, support, this)
+        addReceiverParameter(ktFunction, wrapper)
+        for (parameter in ktFunction.valueParameters) {
             method.addParameter(KtUltraLightParameter(parameter.name.orEmpty(), parameter, support, wrapper, null))
         }
         val returnType: PsiType? by lazyPub {
             if (isConstructor) null
-            else methodReturnType(f, wrapper)
+            else methodReturnType(ktFunction, wrapper)
         }
         method.setMethodReturnType { returnType }
         return wrapper
