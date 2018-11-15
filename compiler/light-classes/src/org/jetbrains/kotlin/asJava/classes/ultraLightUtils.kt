@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
 import org.jetbrains.kotlin.asJava.elements.KotlinLightTypeParameterListBuilder
 import org.jetbrains.kotlin.codegen.ClassBuilderMode
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter
+import org.jetbrains.kotlin.codegen.signature.JvmSignatureWriter
 import org.jetbrains.kotlin.codegen.state.IncompatibleClassTracker
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.config.JvmTarget
@@ -24,10 +25,8 @@ import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.ValueDescriptor
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.psi.KtDeclaration
-import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.KtTypeParameterListOwner
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.types.KotlinType
 import java.text.StringCharacterIterator
 
@@ -44,7 +43,7 @@ internal fun buildTypeParameterList(
                     KotlinLightReferenceListBuilder(manager, PsiReferenceList.Role.EXTENDS_BOUNDS_LIST)
                 if (ktParam.extendsBound != null || declaration.typeConstraints.isNotEmpty()) {
                     val boundTypes = (ktParam.resolve() as? TypeParameterDescriptor)?.upperBounds.orEmpty()
-                        .mapNotNull { it.asPsiType(ktParam, support, TypeMappingMode.DEFAULT, this) as? PsiClassType }
+                        .mapNotNull { it.asPsiType(support, TypeMappingMode.DEFAULT, this) as? PsiClassType }
                     val hasDefaultBound = boundTypes.size == 1 && boundTypes[0].equalsToText(CommonClassNames.JAVA_LANG_OBJECT)
                     if (!hasDefaultBound) {
                         boundTypes.forEach(boundList::addReference)
@@ -75,16 +74,19 @@ internal fun KtDeclaration.resolve() = LightClassGenerationSupport.getInstance(p
 
 // copy-pasted from kotlinInternalUastUtils.kt and post-processed
 internal fun KotlinType.asPsiType(
-    declaration: KtDeclaration,
     support: UltraLightSupport,
     mode: TypeMappingMode,
     psiContext: PsiElement
-): PsiType {
-    val typeFqName = constructor.declarationDescriptor?.fqNameSafe?.asString()
-    if (typeFqName == "kotlin.Unit" && declaration is KtFunction) return PsiType.VOID
+): PsiType = support.mapType(psiContext) { typeMapper, signatureWriter ->
+    typeMapper.mapType(this, signatureWriter, mode)
+}
 
+internal fun UltraLightSupport.mapType(
+    psiContext: PsiElement,
+    mapTypeToSignatureWriter: (KotlinTypeMapper, JvmSignatureWriter) -> Unit
+): PsiType {
     val signatureWriter = BothSignatureWriter(BothSignatureWriter.Mode.TYPE)
-    typeMapper(support).mapType(this, signatureWriter, mode)
+    mapTypeToSignatureWriter(typeMapper(this), signatureWriter)
     val signature = StringCharacterIterator(signatureWriter.toString())
 
     val javaType = SignatureParsing.parseTypeString(signature, StubBuildingVisitor.GUESSING_MAPPER)
