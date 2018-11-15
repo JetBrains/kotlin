@@ -1,0 +1,13 @@
+// My: to be implemented
+// DISABLE-ERRORS
+expect class My {
+    fun foo(param: String): Int
+    fun String.bar(y: Double): Boolean
+    fun baz()
+
+    constructor(flag: Boolean)
+
+    val isGood: Boolean
+    var status: Int
+
+}

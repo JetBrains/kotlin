@@ -22,7 +22,6 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
-import com.intellij.psi.JavaDirectoryService
 import com.intellij.psi.codeStyle.CodeStyleManager
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.descriptors.*
@@ -31,18 +30,17 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.idea.caches.project.ModuleSourceInfo
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithContent
-import org.jetbrains.kotlin.idea.core.*
+import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.core.overrideImplement.OverrideMemberChooserObject.BodyType.EMPTY_OR_TEMPLATE
 import org.jetbrains.kotlin.idea.core.overrideImplement.OverrideMemberChooserObject.BodyType.NO_BODY
 import org.jetbrains.kotlin.idea.core.overrideImplement.OverrideMemberChooserObject.Companion.create
 import org.jetbrains.kotlin.idea.core.overrideImplement.generateActualMember
 import org.jetbrains.kotlin.idea.core.overrideImplement.generateTopLevelActual
+import org.jetbrains.kotlin.idea.core.toDescriptor
 import org.jetbrains.kotlin.idea.quickfix.KotlinQuickFixAction
 import org.jetbrains.kotlin.idea.quickfix.KotlinSingleIntentionActionFactory
-import org.jetbrains.kotlin.idea.refactoring.createKotlinFile
 import org.jetbrains.kotlin.idea.util.actualsForExpected
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
-import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
@@ -110,37 +108,7 @@ sealed class CreateActualFix<out D : KtNamedDeclaration>(
                 return actualDeclaration.containingKtFile
             }
         }
-        val name = declaration.name ?: return null
-
-        val expectedDir = declaration.containingFile.containingDirectory
-        val expectedPackage = JavaDirectoryService.getInstance().getPackage(expectedDir)
-
-        val actualDirectory = findOrCreateDirectoryForPackage(
-            actualModule, expectedPackage?.qualifiedName ?: ""
-        ) ?: return null
-        return runWriteAction {
-            val fileName = "$name.kt"
-            val existingFile = actualDirectory.findFile(fileName)
-            val packageDirective = declaration.containingKtFile.packageDirective
-            val packageName =
-                if (packageDirective?.packageNameExpression == null) actualDirectory.getPackage()?.qualifiedName
-                else packageDirective.fqName.asString()
-            if (existingFile is KtFile) {
-                val existingPackageDirective = existingFile.packageDirective
-                if (existingFile.declarations.isNotEmpty() &&
-                    existingPackageDirective?.fqName != packageDirective?.fqName
-                ) {
-                    val newName = KotlinNameSuggester.suggestNameByName(name) {
-                        actualDirectory.findFile("$it.kt") == null
-                    } + ".kt"
-                    createKotlinFile(newName, actualDirectory, packageName)
-                } else {
-                    existingFile
-                }
-            } else {
-                createKotlinFile(fileName, actualDirectory, packageName)
-            }
-        }
+        return createFileForDeclaration(actualModule, declaration)
     }
 
     companion object : KotlinSingleIntentionActionFactory() {
@@ -171,19 +139,7 @@ class CreateActualClassFix(
     generateClassOrObjectByExpectedClass(project, element, actualNeeded = true)
 }) {
 
-    override val elementType = run {
-        val element = element
-        when (element) {
-            is KtObjectDeclaration -> "object"
-            is KtClass -> when {
-                element.isInterface() -> "interface"
-                element.isEnum() -> "enum class"
-                element.isAnnotation() -> "annotation class"
-                else -> "class"
-            }
-            else -> "class"
-        }
-    }
+    override val elementType = element.getTypeDescription()
 }
 
 class CreateActualPropertyFix(
@@ -242,16 +198,7 @@ internal fun KtPsiFactory.generateClassOrObjectByExpectedClass(
             }
         }
 
-    val expectedText = expectedClass.text
-    val actualClass = if (expectedClass is KtObjectDeclaration) {
-        if (expectedClass.isCompanion()) {
-            createCompanionObject(expectedText)
-        } else {
-            createObject(expectedText)
-        }
-    } else {
-        createClass(expectedText)
-    }
+    val actualClass = createClassCopyByText(expectedClass)
     actualClass.declarations.forEach {
         if (it.exists()) {
             it.delete()

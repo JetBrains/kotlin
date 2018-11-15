@@ -810,8 +810,8 @@ internal class DescriptorRendererImpl(
         renderModifier(builder, valueParameter.isNoinline, "noinline")
 
         val containingDeclaration = valueParameter.containingDeclaration
-        if (renderActualAnnotationPropertiesInPrimaryConstructor && containingDeclaration.isAnnotationConstructor()) {
-            renderModifier(builder, true, "actual")
+        if (renderAnnotationPropertiesInPrimaryConstructor && containingDeclaration.isAnnotationConstructor()) {
+            renderModifier(builder, actualPropertiesInPrimaryConstructor, "actual")
             renderModifier(builder, true, "val")
         }
 
