@@ -5,6 +5,9 @@
 
 package org.jetbrains.kotlin.idea.caches.resolve.util
 
+import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.psi.PsiFile
+import com.intellij.psi.ResolveScopeEnlarger
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.idea.caches.project.ModuleSourceInfo
 import org.jetbrains.kotlin.idea.caches.project.ScriptModuleInfo
@@ -29,8 +32,22 @@ fun getResolveScope(file: KtFile): GlobalSearchScope {
     }
 
     return when (file.getModuleInfo()) {
-        is ModuleSourceInfo -> KotlinSourceFilterScope.projectSourceAndClassFiles(file.resolveScope, file.project)
+        is ModuleSourceInfo -> enlargedSearchScope(KotlinSourceFilterScope.projectSourceAndClassFiles(file.resolveScope, file.project), file)
         is ScriptModuleInfo -> file.getModuleInfo().dependencies().map { it.contentScope() }.let { GlobalSearchScope.union(it.toTypedArray()) }
         else -> GlobalSearchScope.EMPTY_SCOPE
+    }
+}
+
+fun enlargedSearchScope(searchScope: GlobalSearchScope, psiFile: PsiFile?): GlobalSearchScope {
+    val virtualFile = psiFile?.originalFile?.virtualFile
+    return enlargedSearchScope(searchScope, virtualFile)
+}
+
+fun enlargedSearchScope(searchScope: GlobalSearchScope, moduleFile: VirtualFile?): GlobalSearchScope {
+    if (moduleFile == null) return searchScope
+
+    return ResolveScopeEnlarger.EP_NAME.extensions.fold(searchScope) { scope, enlarger ->
+        val extra = enlarger.getAdditionalResolveScope(moduleFile, scope.project)
+        if (extra != null) scope.union(extra) else scope
     }
 }
