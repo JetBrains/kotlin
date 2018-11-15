@@ -36,10 +36,7 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.ui.components.JBLabel
 import com.intellij.ui.components.JBTextField
 import com.intellij.uiDesigner.core.GridConstraints
-import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withTimeout
+import kotlinx.coroutines.*
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.caches.project.ModuleOrigin
 import org.jetbrains.kotlin.idea.caches.project.getNullableModuleInfo
@@ -61,7 +58,7 @@ abstract class AbstractCompletionBenchmarkAction : AnAction() {
         val benchmarkSink = CompletionBenchmarkSink.enableAndGet()
         val scenario = createBenchmarkScenario(project, benchmarkSink) ?: return
 
-        launch(EDT) {
+        GlobalScope.launch(EDT) {
             scenario.doBenchmark()
             CompletionBenchmarkSink.disable()
         }
