@@ -138,6 +138,10 @@ private fun <T> PsiElement.collectInfos(c: ModuleInfoCollector<T>): T {
         return this.processLightElement(c)
     }
 
+    collectModuleInfoByUserData(this).firstOrNull()?.let {
+        return c.onResult(it)
+    }
+
     val containingFile =
         containingFile ?: return c.onFailure("Analyzing element of type ${this::class.java} with no containing file\nText:\n$text")
 
@@ -205,6 +209,8 @@ private inline fun <T> collectInfosByVirtualFile(
     treatAsLibrarySource: Boolean,
     onOccurrence: (IdeaModuleInfo?) -> T
 ): T {
+    collectModuleInfoByUserData(project, virtualFile).map(onOccurrence)
+
     val moduleRelatedModuleInfo = getModuleRelatedModuleInfo(project, virtualFile)
     if (moduleRelatedModuleInfo != null) {
         onOccurrence(moduleRelatedModuleInfo)
