@@ -1431,6 +1431,10 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                 if (TypeIntersector.isIntersectionEmpty(leftType, rightType)) {
                     context.trace.report(EQUALITY_NOT_APPLICABLE.on(expression, expression.getOperationReference(), leftType, rightType));
                 }
+                else if (TypeIntersector.isIncompatibleEnums(leftType, rightType)) {
+                    context.trace.report(INCOMPATIBLE_ENUM_COMPARISON.on(expression, leftType, rightType));
+                }
+
                 SenselessComparisonChecker.checkSenselessComparisonWithNull(
                         expression, left, right, context,
                         expr -> facade.getTypeInfo(expr, context).getType(),
