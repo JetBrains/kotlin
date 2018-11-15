@@ -932,6 +932,11 @@ class ExperimentalPluginTests {
 
                 kotlin {
                     sourceSets {
+                        commonMain {
+                            dependencies {
+                                implementation 'org.jetbrains.kotlin:kotlin-stdlib-common'
+                            }
+                        }
                         wasmMain {
                             dependencies {
                                 implementation 'test:native-producer:1.0'
@@ -973,6 +978,8 @@ class ExperimentalPluginTests {
 
                 repositories {
                     maven { url '$repoPath' }
+                    maven { url "${MultiplatformSpecification.KOTLIN_REPO}" }
+                    jcenter()
                 }
 
                 sourceSets.main.component {

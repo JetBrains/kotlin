@@ -158,7 +158,9 @@ open class KotlinNativeCompile @Inject constructor(internal val binary: Abstract
 
             addAll(additionalCompilerOptions)
 
-            libraries.files.forEach {
+            libraries.files.filter {
+                it.extension == "klib"
+            }.forEach {
                 addArg("-l", it.absolutePath)
             }
 

@@ -108,7 +108,9 @@ open class CInteropTask @Inject constructor(val settings: CInteropSettingsImpl):
             addArgs("-copt", allHeadersDirs.map { "-I${it.absolutePath}" })
             addArgs("-headerFilterAdditionalSearchPrefix", headerFilterDirs.map { it.absolutePath })
 
-            libraries.files.forEach {
+            libraries.files.filter {
+                it.extension == "klib"
+            }.forEach {
                 addArg("-l", it.absolutePath)
             }
 
