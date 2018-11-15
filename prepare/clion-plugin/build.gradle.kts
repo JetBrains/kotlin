@@ -20,6 +20,8 @@ repositories {
     }
 }
 
+val kotlinVersion = rootProject.extra["kotlinVersion"] as String
+
 val cidrPluginDir: File by rootProject.extra
 val clionPluginDir: File by rootProject.extra
 val clionVersion = rootProject.extra["versions.clion"] as String
@@ -61,7 +63,12 @@ val kotlinPluginXml by tasks.creating {
 
 val preparePluginXml by task<Copy> {
     dependsOn(":kotlin-ultimate:clion-native:assemble")
-    inputs.property("versions.clion", clionVersion)
+
+    val cidrPluginVersion = project.findProperty("cidrPluginVersion") as String? ?: "beta-1"
+    val clionPluginVersion = "$kotlinVersion-CLion-$cidrPluginVersion-$clionVersion"
+
+    inputs.property("clionPluginVersion", clionPluginVersion)
+
     from(project(":kotlin-ultimate:clion-native").mainSourceSet.output.resourcesDir) { include(pluginXmlPath) }
     into(pluginXmlLocation)
 
@@ -70,8 +77,11 @@ val preparePluginXml by task<Copy> {
     val untilBuild = clionVersion.substring(0, clionVersion.lastIndexOf('.')) + ".*"
 
     filter {
-        it.replace("<!--version_placeholder-->",
-                   "<idea-version since-build=\"$sinceBuild\" until-build=\"$untilBuild\"/>")
+        it
+            .replace("<!--idea_version_placeholder-->",
+                     "<idea-version since-build=\"$sinceBuild\" until-build=\"$untilBuild\"/>")
+            .replace("<!--version_placeholder-->",
+                     "<version>$clionPluginVersion</version>")
     }
 }
 
