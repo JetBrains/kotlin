@@ -25,10 +25,10 @@ import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.completion.isAfterDot
 import org.jetbrains.kotlin.idea.completion.isArtificialImportAliasedDescriptor
+import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.core.completion.DeclarationLookupObject
 import org.jetbrains.kotlin.idea.util.CallTypeAndReceiver
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
-import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtNameReferenceExpression
@@ -53,7 +53,7 @@ object KotlinClassifierInsertHandler : BaseDeclarationInsertHandler() {
 
                 val lookupObject = item.`object` as DeclarationLookupObject
                 if (lookupObject.descriptor?.isArtificialImportAliasedDescriptor == true) return // never need to insert import or use qualified name for import-aliased class
-                
+
                 val qualifiedName = qualifiedName(lookupObject)
 
                 // first try to resolve short name for faster handling
@@ -62,7 +62,7 @@ object KotlinClassifierInsertHandler : BaseDeclarationInsertHandler() {
                 if (nameRef != null) {
                     val bindingContext = nameRef.analyze(BodyResolveMode.PARTIAL)
                     val target = bindingContext[BindingContext.SHORT_REFERENCE_TO_COMPANION_OBJECT, nameRef]
-                                 ?: bindingContext[BindingContext.REFERENCE_TARGET, nameRef] as? ClassDescriptor
+                        ?: bindingContext[BindingContext.REFERENCE_TARGET, nameRef] as? ClassDescriptor
                     if (target != null && IdeDescriptorRenderers.SOURCE_CODE.renderClassifierName(target) == qualifiedName) return
                 }
 
@@ -71,8 +71,7 @@ object KotlinClassifierInsertHandler : BaseDeclarationInsertHandler() {
                     // we insert space so that any preceding spaces inserted by formatter on reference shortening are deleted
                     // (but not for annotations where spaces are not allowed after @)
                     if (isAnnotation) "" else " "
-                }
-                else {
+                } else {
                     "$;val v:"  // if we have no reference in the current context we have a more complicated prefix to get one
                 }
                 val tempSuffix = ".xxx" // we add "xxx" after dot because of KT-9606
@@ -99,8 +98,7 @@ object KotlinClassifierInsertHandler : BaseDeclarationInsertHandler() {
     private fun qualifiedName(lookupObject: DeclarationLookupObject): String {
         return if (lookupObject.descriptor != null) {
             IdeDescriptorRenderers.SOURCE_CODE.renderClassifierName(lookupObject.descriptor as ClassifierDescriptor)
-        }
-        else {
+        } else {
             val qualifiedName = (lookupObject.psiElement as PsiClass).qualifiedName!!
             if (FqNameUnsafe.isValid(qualifiedName)) FqNameUnsafe(qualifiedName).render() else qualifiedName
         }
