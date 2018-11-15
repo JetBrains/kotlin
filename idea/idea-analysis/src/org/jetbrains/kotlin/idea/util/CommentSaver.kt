@@ -28,7 +28,10 @@ import java.util.*
 import kotlin.properties.Delegates
 
 class CommentSaver(originalElements: PsiChildRange, private val saveLineBreaks: Boolean = false/*TODO?*/) {
-    constructor(originalElement: PsiElement, saveLineBreaks: Boolean = false/*TODO?*/) : this(PsiChildRange.singleElement(originalElement), saveLineBreaks)
+    constructor(originalElement: PsiElement, saveLineBreaks: Boolean = false/*TODO?*/) : this(
+        PsiChildRange.singleElement(originalElement),
+        saveLineBreaks
+    )
 
     private val SAVED_TREE_KEY = Key<TreeElement>("SAVED_TREE")
     private val psiFactory = KtPsiFactory(originalElements.first!!)
@@ -234,15 +237,25 @@ class CommentSaver(originalElements: PsiChildRange, private val saveLineBreaks: 
         putNewElementIntoMap(newPsiElement, treeElement)
     }
 
-    fun restore(resultElement: PsiElement, isCommentBeneathSingleLine: Boolean, forceAdjustIndent: Boolean = false) {
-        restore(PsiChildRange.singleElement(resultElement), forceAdjustIndent, isCommentBeneathSingleLine)
+    fun restore(
+        resultElement: PsiElement,
+        isCommentBeneathSingleLine: Boolean,
+        isCommentInside: Boolean,
+        forceAdjustIndent: Boolean
+    ) {
+        restore(PsiChildRange.singleElement(resultElement), forceAdjustIndent, isCommentBeneathSingleLine, isCommentInside)
     }
 
     fun restore(resultElement: PsiElement, forceAdjustIndent: Boolean = false) {
         restore(PsiChildRange.singleElement(resultElement), forceAdjustIndent)
     }
 
-    fun restore(resultElements: PsiChildRange, forceAdjustIndent: Boolean = false, isCommentBeneathSingleLine: Boolean = false) {
+    fun restore(
+        resultElements: PsiChildRange,
+        forceAdjustIndent: Boolean = false,
+        isCommentBeneathSingleLine: Boolean = false,
+        isCommentInside: Boolean = false
+    ) {
         assert(!isFinished)
         assert(!resultElements.isEmpty)
 
@@ -264,7 +277,7 @@ class CommentSaver(originalElements: PsiChildRange, private val saveLineBreaks: 
                     })
                 }
 
-                restoreComments(resultElements, isCommentBeneathSingleLine)
+                restoreComments(resultElements, isCommentBeneathSingleLine, isCommentInside)
 
                 restoreLineBreaks()
 
@@ -295,7 +308,11 @@ class CommentSaver(originalElements: PsiChildRange, private val saveLineBreaks: 
         isFinished = true
     }
 
-    private fun restoreComments(resultElements: PsiChildRange, isCommentBeneathSingleLine: Boolean = false) {
+    private fun restoreComments(
+        resultElements: PsiChildRange,
+        isCommentBeneathSingleLine: Boolean = false,
+        isCommentInside: Boolean = false
+    ) {
         var putAbandonedCommentsAfter = resultElements.last!!
 
         for (commentTreeElement in commentsToRestore) {
@@ -333,6 +350,14 @@ class CommentSaver(originalElements: PsiChildRange, private val saveLineBreaks: 
                 }
             } else {
                 restored = putAbandonedCommentsAfter.parent.addBefore(comment, putAbandonedCommentsAfter) as PsiComment
+
+                if (isCommentInside) {
+                    val element = resultElements.first
+                    val innerExpression = element?.lastChild?.getPrevSiblingIgnoringWhitespace()
+                    innerExpression?.add(psiFactory.createWhiteSpace())
+                    innerExpression?.add(restored)
+                    restored.delete()
+                }
                 putAbandonedCommentsAfter = restored
             }
 
