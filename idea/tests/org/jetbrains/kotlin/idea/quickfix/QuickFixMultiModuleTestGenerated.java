@@ -109,6 +109,11 @@ public class QuickFixMultiModuleTestGenerated extends AbstractQuickFixMultiModul
         runTest("idea/testData/multiModuleQuickFix/classFunction/");
     }
 
+    @TestMetadata("classFunctionSameSignature")
+    public void testClassFunctionSameSignature() throws Exception {
+        runTest("idea/testData/multiModuleQuickFix/classFunctionSameSignature/");
+    }
+
     @TestMetadata("classFunctionWithConstructor")
     public void testClassFunctionWithConstructor() throws Exception {
         runTest("idea/testData/multiModuleQuickFix/classFunctionWithConstructor/");

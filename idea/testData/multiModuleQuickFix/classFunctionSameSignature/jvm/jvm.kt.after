@@ -1,0 +1,12 @@
+// "Add missing actual members" "true"
+// DISABLE-ERRORS
+
+actual object O {
+    fun <T> hello(): MutableMap<String, T> {
+        TODO("not implemented")
+    }
+
+    actual fun <T : Any> hello(): MutableMap<String, T> {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+}
