@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.idea.quickfix.KotlinQuickFixAction
 import org.jetbrains.kotlin.idea.refactoring.introduce.showErrorHint
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.idea.util.hasDeclarationOf
+import org.jetbrains.kotlin.idea.util.isEffectivelyActual
 import org.jetbrains.kotlin.idea.util.liftToExpected
 import org.jetbrains.kotlin.idea.util.module
 import org.jetbrains.kotlin.js.descriptorUtils.getJetTypeFqName
@@ -188,7 +189,6 @@ private fun KtPsiFactory.generateClassOrObjectByActualClass(
     val expectedClass = createClassCopyByText(actualClass)
     expectedClass.declarations.forEach {
         when (it) {
-            is KtEnumEntry -> return@forEach
             is KtClassOrObject -> it.delete()
             is KtCallableDeclaration -> it.delete()
             is KtAnonymousInitializer -> it.delete()
@@ -214,14 +214,11 @@ private fun KtPsiFactory.generateClassOrObjectByActualClass(
 
     declLoop@ for (actualDeclaration in actualClass.declarations) {
         val descriptor = actualDeclaration.toDescriptor() ?: continue
-        if (!actualDeclaration.hasActualModifier()) continue@declLoop
+        if (!actualDeclaration.isEffectivelyActual()) continue@declLoop
         val expectedDeclaration: KtDeclaration = when (actualDeclaration) {
-            is KtClassOrObject ->
-                if (actualDeclaration !is KtEnumEntry) {
-                    generateClassOrObjectByActualClass(project, actualDeclaration, outerExpectedClasses + expectedClass)
-                } else {
-                    continue@declLoop
-                }
+            is KtClassOrObject -> {
+                generateClassOrObjectByActualClass(project, actualDeclaration, outerExpectedClasses + expectedClass)
+            }
             is KtCallableDeclaration -> {
                 when (actualDeclaration) {
                     is KtFunction ->
