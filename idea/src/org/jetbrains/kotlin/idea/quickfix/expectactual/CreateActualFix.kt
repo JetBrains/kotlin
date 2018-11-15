@@ -223,7 +223,8 @@ internal fun KtPsiFactory.generateClassOrObjectByExpectedClass(
     project: Project,
     expectedClass: KtClassOrObject,
     actualNeeded: Boolean,
-    existingDeclarations: List<KtDeclaration> = emptyList()
+    // If null, all expect class declarations are missed (so none from them exists)
+    missedDeclarations: List<KtDeclaration>? = null
 ): KtClassOrObject {
     fun areCompatible(first: KtFunction, second: KtFunction) =
         first.valueParameters.size == second.valueParameters.size &&
@@ -232,7 +233,7 @@ internal fun KtPsiFactory.generateClassOrObjectByExpectedClass(
                 }
 
     fun KtDeclaration.exists() =
-        existingDeclarations.any {
+        missedDeclarations != null && missedDeclarations.none {
             name == it.name && when (this) {
                 is KtConstructor<*> -> it is KtConstructor<*> && areCompatible(this, it)
                 is KtNamedFunction -> it is KtNamedFunction && areCompatible(this, it)

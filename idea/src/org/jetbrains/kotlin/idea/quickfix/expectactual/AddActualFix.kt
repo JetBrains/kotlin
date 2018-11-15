@@ -28,19 +28,19 @@ import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.quickfix.KotlinQuickFixAction
 import org.jetbrains.kotlin.idea.quickfix.KotlinSingleIntentionActionFactory
-import org.jetbrains.kotlin.psi.KtClassOrObject
-import org.jetbrains.kotlin.psi.KtElement
-import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.KtPsiFactory
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.createSmartPointer
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 
 class AddActualFix(
     actualClassOrObject: KtClassOrObject,
-    expectedClassOrObject: KtClassOrObject
+    expectedClassOrObject: KtClassOrObject,
+    missedDeclarations: List<KtDeclaration>
 ) : KotlinQuickFixAction<KtClassOrObject>(actualClassOrObject) {
 
     private val expectedClassPointer = expectedClassOrObject.createSmartPointer()
+
+    private val missedDeclarationPointers = missedDeclarations.map { it.createSmartPointer() }
 
     override fun getFamilyName() = text
 
@@ -49,12 +49,12 @@ class AddActualFix(
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         val element = element ?: return
         val expectedClass = expectedClassPointer.element ?: return
+        val missedDeclarations = missedDeclarationPointers.mapNotNull { it.element }
+        if (missedDeclarations.isEmpty()) return
         val factory = KtPsiFactory(element)
         val pureActualClass = factory.generateClassOrObjectByExpectedClass(
             project, expectedClass, actualNeeded = true,
-            existingDeclarations = element.declarations +
-                    element.primaryConstructor?.valueParameters?.filter { it.hasValOrVar() }.orEmpty() +
-                    listOfNotNull(element.primaryConstructor)
+            missedDeclarations = missedDeclarations
         )
 
         fun PsiElement.clean() {
@@ -74,11 +74,20 @@ class AddActualFix(
     companion object : KotlinSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic): IntentionAction? {
             val incompatibleMap = DiagnosticFactory.cast(diagnostic, Errors.NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS).b
+
             val expectedClassDescriptor = incompatibleMap.firstOrNull()?.first?.containingDeclaration as? ClassDescriptor
                 ?: return null
             val expectedClassOrObject = DescriptorToSourceUtils.descriptorToDeclaration(expectedClassDescriptor) as? KtClassOrObject
                 ?: return null
-            return (diagnostic.psiElement as? KtClassOrObject)?.let { AddActualFix(it, expectedClassOrObject) }
+
+            val missedDeclarations = incompatibleMap.mapNotNull {
+                DescriptorToSourceUtils.descriptorToDeclaration(it.first) as? KtDeclaration
+            }
+            if (missedDeclarations.isEmpty()) return null
+
+            return (diagnostic.psiElement as? KtClassOrObject)?.let {
+                AddActualFix(it, expectedClassOrObject, missedDeclarations)
+            }
         }
     }
 }
