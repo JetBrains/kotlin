@@ -188,7 +188,8 @@ interface DescriptorRendererOptions {
     var renderDefaultVisibility: Boolean
     var renderDefaultModality: Boolean
     var renderConstructorDelegation: Boolean
-    var renderActualAnnotationPropertiesInPrimaryConstructor: Boolean
+    var renderAnnotationPropertiesInPrimaryConstructor: Boolean
+    var actualPropertiesInPrimaryConstructor: Boolean
     var uninferredTypeParameterAsName: Boolean
     var overrideRenderingPolicy: OverrideRenderingPolicy
     var valueParametersHandler: DescriptorRenderer.ValueParametersHandler

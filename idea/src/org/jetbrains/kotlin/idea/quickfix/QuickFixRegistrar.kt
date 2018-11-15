@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createVariable.CreateP
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createVariable.CreateParameterByRefActionFactory
 import org.jetbrains.kotlin.idea.quickfix.expectactual.AddActualFix
 import org.jetbrains.kotlin.idea.quickfix.expectactual.CreateActualFix
+import org.jetbrains.kotlin.idea.quickfix.expectactual.CreateExpectedFix
 import org.jetbrains.kotlin.idea.quickfix.migration.MigrateExternalExtensionFix
 import org.jetbrains.kotlin.idea.quickfix.migration.MigrateTypeParameterListFix
 import org.jetbrains.kotlin.idea.quickfix.replaceWith.DeprecatedSymbolUsageFix
@@ -510,6 +511,7 @@ class QuickFixRegistrar : QuickFixContributor {
         OVERLOADS_WITHOUT_DEFAULT_ARGUMENTS.registerFactory(RemoveAnnotationFix.JvmOverloads)
 
         ACTUAL_WITHOUT_EXPECT.registerFactory(RemoveModifierFix.createRemoveModifierFromListOwnerFactory(ACTUAL_KEYWORD))
+        ACTUAL_WITHOUT_EXPECT.registerFactory(CreateExpectedFix)
         NO_ACTUAL_FOR_EXPECT.registerFactory(CreateActualFix)
         NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS.registerFactory(AddActualFix)
 

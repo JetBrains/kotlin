@@ -1,0 +1,13 @@
+// DISABLE-ERRORS
+
+expect class My {
+    inner class Nested(s: String) {
+        fun hello(): String
+        var ss: String
+
+        class OtherNested(d: Double) {
+            val dd: Double
+        }
+
+    }
+}

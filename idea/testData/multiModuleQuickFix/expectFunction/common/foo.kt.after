@@ -1,0 +1,1 @@
+expect fun foo(i: Int, d: Double, s: String): Boolean
