@@ -17,16 +17,30 @@
 package org.jetbrains.kotlin.js.translate.general
 
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.serialization.js.ModuleKind
 
 class AstGenerationResult(
-        val program: JsProgram,
-        val innerModuleName: JsName,
-        val fragments: List<JsProgramFragment>,
-        val fragmentMap: Map<KtFile, JsProgramFragment>,
-        val newFragments: List<JsProgramFragment>,
-        val importStatements: List<JsStatement>,
-        val fileMemberScopes: Map<KtFile, List<DeclarationDescriptor>>,
-        val importedModuleList: List<JsImportedModule>
-)
+    val fragments: List<JsProgramFragment>,
+    val fragmentMap: Map<KtFile, JsProgramFragment>,
+    val newFragments: List<JsProgramFragment>,
+    val fileMemberScopes: Map<KtFile, List<DeclarationDescriptor>>,
+    private val program: JsProgram,
+    private val moduleDescriptor: ModuleDescriptor,
+    private val moduleId: String,
+    private val moduleKind: ModuleKind
+) {
+
+    val innerModuleName = program.getScope().declareName("_");
+
+    val importedModuleList: List<JsImportedModule>
+        get() = fragments.flatMap { it.importedModules }
+
+    fun buildProgram(): JsProgram {
+        val merger = Merger(program, innerModuleName, moduleDescriptor, moduleId, moduleKind)
+        fragments.forEach { merger.addFragment(it) }
+        return merger.buildProgram()
+    }
+}

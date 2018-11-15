@@ -324,10 +324,8 @@ public final class Translation {
             @NotNull JsConfig config,
             @NotNull SourceFilePathResolver sourceFilePathResolver
     ) {
+
         JsProgram program = new JsProgram();
-        JsFunction rootFunction = new JsFunction(program.getRootScope(), new JsBlock(), "root function");
-        JsName internalModuleName = program.getScope().declareName("_");
-        Merger merger = new Merger(rootFunction, internalModuleName, moduleDescriptor);
 
         Map<KtFile, JsProgramFragment> fragmentMap = new HashMap<>();
         List<JsProgramFragment> fragments = new ArrayList<>();
@@ -354,56 +352,22 @@ public final class Translation {
                 newFragments.add(fragment);
                 fragmentMap.put(file, fragment);
                 fileMemberScopes.put(file, fileMemberScope);
-                merger.addFragment(fragment);
             }
             else if (unit instanceof TranslationUnit.BinaryAst) {
                 byte[] astData = ((TranslationUnit.BinaryAst) unit).getData();
                 JsProgramFragment fragment = deserializer.deserialize(new ByteArrayInputStream(astData));
-                merger.addFragment(fragment);
                 fragments.add(fragment);
             }
         }
 
-        rootFunction.getParameters().add(new JsParameter(internalModuleName));
-
-        merger.merge();
-
-        JsBlock rootBlock = rootFunction.getBody();
-
-        List<JsStatement> statements = rootBlock.getStatements();
-
-        statements.add(0, new JsStringLiteral("use strict").makeStmt());
-        if (!isBuiltinModule(fragments)) {
-            defineModule(program, statements, config.getModuleId());
-        }
-
-        // Invoke function passing modules as arguments
-        // This should help minifier tool to recognize references to these modules as local variables and make them shorter.
-        List<JsImportedModule> importedModuleList = merger.getImportedModules();
-
-        for (JsImportedModule importedModule : importedModuleList) {
-            rootFunction.getParameters().add(new JsParameter(importedModule.getInternalName()));
-        }
-
-        statements.add(new JsReturn(internalModuleName.makeRef()));
-
-        JsBlock block = program.getGlobalBlock();
-        block.getStatements().addAll(wrapIfNecessary(config.getModuleId(), rootFunction, importedModuleList, program,
-                                                     config.getModuleKind()));
-
-        return new AstGenerationResult(program, internalModuleName, fragments, fragmentMap, newFragments,
-                                       merger.getImportBlock().getStatements(), fileMemberScopes, importedModuleList);
-    }
-
-    private static boolean isBuiltinModule(@NotNull List<JsProgramFragment> fragments) {
-        for (JsProgramFragment fragment : fragments) {
-            for (JsNameBinding nameBinding : fragment.getNameBindings()) {
-                if (nameBinding.getKey().equals(ENUM_SIGNATURE) && !fragment.getImports().containsKey(ENUM_SIGNATURE)) {
-                    return true;
-                }
-            }
-        }
-        return false;
+        return new AstGenerationResult(fragments,
+                                       fragmentMap,
+                                       newFragments,
+                                       fileMemberScopes,
+                                       program,
+                                       moduleDescriptor,
+                                       config.getModuleId(),
+                                       config.getModuleKind());
     }
 
     private static void translateFile(
@@ -427,15 +391,6 @@ public final class Translation {
         }
         catch (RuntimeException | AssertionError e) {
             throw new TranslationRuntimeException(file, e);
-        }
-    }
-
-    private static void defineModule(@NotNull JsProgram program, @NotNull List<JsStatement> statements, @NotNull String moduleId) {
-        JsName rootPackageName = program.getScope().findName(Namer.getRootPackageName());
-        if (rootPackageName != null) {
-            Namer namer = Namer.newInstance(program.getScope());
-            statements.add(new JsInvocation(namer.kotlin("defineModule"), new JsStringLiteral(moduleId),
-                                            rootPackageName.makeRef()).makeStmt());
         }
     }
 

@@ -26,12 +26,24 @@ import org.jetbrains.kotlin.js.translate.context.Namer
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 import org.jetbrains.kotlin.js.translate.utils.createPrototypeStatements
 import org.jetbrains.kotlin.js.translate.utils.definePackageAlias
+import org.jetbrains.kotlin.serialization.js.ModuleKind
 
-class Merger(private val rootFunction: JsFunction, val internalModuleName: JsName, val module: ModuleDescriptor) {
+class Merger(
+    val program: JsProgram,
+    val internalModuleName: JsName,
+    val module: ModuleDescriptor,
+    val moduleId: String,
+    val moduleKind: ModuleKind
+) {
+    private val rootFunction = JsFunction(program.rootScope, JsBlock(), "root function").also {
+        it.parameters.add(JsParameter(internalModuleName))
+    }
+
     // Maps unique signature (see generateSignature) to names
     private val nameTable = mutableMapOf<String, JsName>()
+
     private val importedModuleTable = mutableMapOf<JsImportedModuleKey, JsName>()
-    val importBlock = JsGlobalBlock()
+    private val importBlock = JsGlobalBlock()
     private val declarationBlock = JsGlobalBlock()
     private val initializerBlock = JsGlobalBlock()
     private val testsMap = mutableMapOf<String, JsStatement>()
@@ -43,25 +55,11 @@ class Merger(private val rootFunction: JsFunction, val internalModuleName: JsNam
     private val exportedPackages = mutableMapOf<String, JsName>()
     private val exportedTags = mutableSetOf<String>()
 
+    private val fragments = mutableListOf<JsProgramFragment>()
+
     // Add declaration and initialization statements from program fragment to resulting single program
     fun addFragment(fragment: JsProgramFragment) {
-        val nameMap = buildNameMap(fragment)
-        nameMap.rename(fragment)
-
-        for ((key, importExpr) in fragment.imports) {
-            if (declaredImports.add(key)) {
-                val name = nameTable[key]!!
-                importBlock.statements += JsAstUtils.newVar(name, importExpr)
-            }
-        }
-
-        declarationBlock.statements += fragment.declarationBlock
-        initializerBlock.statements += fragment.initializerBlock
-        fragment.tryUpdateTests()
-        fragment.tryUpdateMain()
-        addExportStatements(fragment)
-
-        classes += fragment.classes
+        fragments.add(fragment)
     }
 
     private fun JsProgramFragment.tryUpdateTests() {
@@ -205,8 +203,32 @@ class Merger(private val rootFunction: JsFunction, val internalModuleName: JsNam
         return rootNode
     }
 
+    private fun mergeNames() {
+        for (fragment in fragments) {
+            val nameMap = buildNameMap(fragment)
+            nameMap.rename(fragment)
+
+            for ((key, importExpr) in fragment.imports) {
+                if (declaredImports.add(key)) {
+                    val name = nameTable[key]!!
+                    importBlock.statements += JsAstUtils.newVar(name, importExpr)
+                }
+            }
+
+            declarationBlock.statements += fragment.declarationBlock
+            initializerBlock.statements += fragment.initializerBlock
+            fragment.tryUpdateTests()
+            fragment.tryUpdateMain()
+            addExportStatements(fragment)
+
+            classes += fragment.classes
+        }
+    }
+
     // Adds different boilerplate code (like imports, class prototypes, etc) to resulting program.
     fun merge() {
+        mergeNames()
+
         rootFunction.body.statements.apply {
             addImportForInlineDeclarationIfNecessary()
             this += importBlock.statements
@@ -218,6 +240,37 @@ class Merger(private val rootFunction: JsFunction, val internalModuleName: JsNam
             this += testsMap.values
             mainFn?.second?.let { this += it }
         }
+    }
+
+    fun buildProgram(): JsProgram {
+        merge()
+
+        val rootBlock = rootFunction.getBody()
+
+        val statements = rootBlock.getStatements()
+
+        statements.add(0, JsStringLiteral("use strict").makeStmt())
+        if (!isBuiltinModule(fragments)) {
+            defineModule(program, statements, moduleId)
+        }
+
+        // Invoke function passing modules as arguments
+        // This should help minifier tool to recognize references to these modules as local variables and make them shorter.
+        for (importedModule in importedModules) {
+            rootFunction.parameters.add(JsParameter(importedModule.internalName))
+        }
+
+        statements.add(JsReturn(internalModuleName.makeRef()))
+
+        val block = program.globalBlock
+        block.statements.addAll(
+            ModuleWrapperTranslation.wrapIfNecessary(
+                moduleId, rootFunction, importedModules, program,
+                moduleKind
+            )
+        )
+
+        return program
     }
 
     private fun MutableList<JsStatement>.addImportForInlineDeclarationIfNecessary() {
@@ -266,5 +319,35 @@ class Merger(private val rootFunction: JsFunction, val internalModuleName: JsNam
         cls.superName?.let { addClassPostDeclarations(it, visited, statements) }
         cls.interfaces.forEach { addClassPostDeclarations(it, visited, statements) }
         statements += cls.postDeclarationBlock.statements
+    }
+
+    companion object {
+        private val ENUM_SIGNATURE = "kotlin\$Enum"
+
+        // TODO is there no better way?
+        private fun isBuiltinModule(fragments: List<JsProgramFragment>): Boolean {
+            for (fragment in fragments) {
+                for (nameBinding in fragment.nameBindings) {
+                    if (nameBinding.key == ENUM_SIGNATURE && !fragment.imports.containsKey(ENUM_SIGNATURE)) {
+                        return true
+                    }
+                }
+            }
+            return false
+        }
+
+        private fun defineModule(program: JsProgram, statements: MutableList<JsStatement>, moduleId: String) {
+            val rootPackageName = program.scope.findName(Namer.getRootPackageName())
+            if (rootPackageName != null) {
+                val namer = Namer.newInstance(program.scope)
+                statements.add(
+                    JsInvocation(
+                        namer.kotlin("defineModule"),
+                        JsStringLiteral(moduleId),
+                        rootPackageName.makeRef()
+                    ).makeStmt()
+                )
+            }
+        }
     }
 }

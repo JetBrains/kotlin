@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.js.facade
 import com.intellij.openapi.vfs.VfsUtilCore
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.*
-import org.jetbrains.kotlin.incremental.js.IncrementalResultsConsumer
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.js.analyze.TopDownAnalyzerFacadeForJS
 import org.jetbrains.kotlin.js.analyzer.JsAnalysisResult
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
@@ -43,6 +43,11 @@ import java.io.IOException
 import java.util.ArrayList
 
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils.hasError
+import org.jetbrains.kotlin.js.backend.ast.JsGlobalBlock
+import org.jetbrains.kotlin.js.backend.ast.JsProgramFragment
+import org.jetbrains.kotlin.js.coroutine.transformCoroutines
+import org.jetbrains.kotlin.js.translate.general.AstGenerationResult
+import org.jetbrains.kotlin.resolve.BindingTrace
 
 /**
  * An entry point of translator.
@@ -74,7 +79,6 @@ class K2JSTranslator(private val config: JsConfig) {
         mainCallParameters: MainCallParameters,
         analysisResult: JsAnalysisResult? = null
     ): TranslationResult {
-        var analysisResult = analysisResult
         val files = ArrayList<KtFile>()
         for (unit in units) {
             if (unit is TranslationUnit.SourceFile) {
@@ -82,46 +86,93 @@ class K2JSTranslator(private val config: JsConfig) {
             }
         }
 
-        if (analysisResult == null) {
-            analysisResult = TopDownAnalyzerFacadeForJS.analyzeFiles(files, config)
-            ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
-        }
+        val actualAnalysisResult = analysisResult ?: TopDownAnalyzerFacadeForJS.analyzeFiles(files, config)
 
+        ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
+
+        return translate(reporter, files, units, mainCallParameters, actualAnalysisResult)
+    }
+
+    @Throws(TranslationException::class)
+    private fun translate(
+        reporter: JsConfig.Reporter,
+        files: List<KtFile>,
+        allUnits: List<TranslationUnit>,
+        mainCallParameters: MainCallParameters,
+        analysisResult: JsAnalysisResult
+    ): TranslationResult {
         val bindingTrace = analysisResult.bindingTrace
         TopDownAnalyzerFacadeForJS.checkForErrors(files, bindingTrace.bindingContext)
         val moduleDescriptor = analysisResult.moduleDescriptor
         val diagnostics = bindingTrace.bindingContext.diagnostics
-
         val pathResolver = SourceFilePathResolver.create(config)
 
-        val translationResult = Translation.generateAst(
-            bindingTrace, units, mainCallParameters, moduleDescriptor, config, pathResolver
-        )
-        ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
+        val translationResult = Translation.generateAst(bindingTrace, allUnits, mainCallParameters, moduleDescriptor, config, pathResolver)
         if (hasError(diagnostics)) return TranslationResult.Fail(diagnostics)
-
-        val newFragments = ArrayList(translationResult.newFragments)
-        val allFragments = ArrayList(translationResult.fragments)
+        checkCanceled()
 
         JsInliner.process(
-            reporter, config, analysisResult.bindingTrace, translationResult.innerModuleName,
-            allFragments, newFragments, translationResult.importStatements
+            reporter,
+            config,
+            analysisResult.bindingTrace,
+            translationResult
         )
-
-        LabeledBlockToDoWhileTransformation.apply(newFragments)
-
-        val coroutineTransformer = CoroutineTransformer()
-        for (fragment in newFragments) {
-            coroutineTransformer.accept(fragment.declarationBlock)
-            coroutineTransformer.accept(fragment.initializerBlock)
-        }
-        removeUnusedImports(translationResult.program)
-
-        ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
         if (hasError(diagnostics)) return TranslationResult.Fail(diagnostics)
+        checkCanceled()
 
-        expandIsCalls(newFragments)
+        transformLabeledBlockToDoWhile(translationResult.newFragments)
+        checkCanceled()
+
+        transformCoroutines(translationResult.newFragments)
+        checkCanceled()
+
+        expandIsCalls(translationResult.newFragments)
+        checkCanceled()
+
+        trySaveIncrementalData(files, translationResult, pathResolver, bindingTrace, moduleDescriptor)
+        checkCanceled()
+
+        // Global phases
+
+        val program = translationResult.buildProgram()
+
+        removeUnusedImports(program)
+        checkCanceled()
+
+        removeDuplicateImports(program)
+        checkCanceled()
+
+        program.resolveTemporaryNames()
+        checkCanceled()
+
+        return if (hasError(diagnostics)) {
+            TranslationResult.Fail(diagnostics)
+        } else {
+            TranslationResult.Success(
+                config,
+                files,
+                program,
+                diagnostics,
+                translationResult.importedModuleList.map { it.externalName },
+                moduleDescriptor,
+                bindingTrace.bindingContext
+            )
+        }
+    }
+
+    private fun checkCanceled() {
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
+    }
+
+    private fun trySaveIncrementalData(
+        files: List<KtFile>,
+        translationResult: AstGenerationResult,
+        pathResolver: SourceFilePathResolver,
+        bindingTrace: BindingTrace,
+        moduleDescriptor: ModuleDescriptor
+    ) {
+        if (incrementalResults == null) return
+
         val serializer = JsAstSerializer { file ->
             try {
                 pathResolver.getPathRelativeToSourceRoots(file)
@@ -130,45 +181,25 @@ class K2JSTranslator(private val config: JsConfig) {
             }
         }
 
-        if (incrementalResults != null) {
-            val serializationUtil = KotlinJavascriptSerializationUtil
+        for (file in files) {
+            val fragment = translationResult.fragmentMap[file] ?: error("Could not find AST for file: $file")
+            val output = ByteArrayOutputStream()
+            serializer.serialize(fragment, output)
+            val binaryAst = output.toByteArray()
 
-            for (file in files) {
-                val fragment = translationResult.fragmentMap[file] ?: error("Could not find AST for file: $file")
-                val output = ByteArrayOutputStream()
-                serializer.serialize(fragment, output)
-                val binaryAst = output.toByteArray()
+            val scope = translationResult.fileMemberScopes[file] ?: error("Could not find descriptors for file: $file")
+            val metadataVersion = config.configuration.get(CommonConfigurationKeys.METADATA_VERSION)
+            val packagePart = KotlinJavascriptSerializationUtil.serializeDescriptors(
+                bindingTrace.bindingContext, moduleDescriptor, scope, file.packageFqName,
+                config.configuration.languageVersionSettings,
+                metadataVersion ?: JsMetadataVersion.INSTANCE
+            )
 
-                val scope = translationResult.fileMemberScopes[file] ?: error("Could not find descriptors for file: $file")
-                val metadataVersion = config.configuration.get(CommonConfigurationKeys.METADATA_VERSION)
-                val packagePart = serializationUtil.serializeDescriptors(
-                    bindingTrace.bindingContext, moduleDescriptor, scope, file.packageFqName,
-                    config.configuration.languageVersionSettings,
-                    metadataVersion ?: JsMetadataVersion.INSTANCE
-                )
-
-                val ioFile = VfsUtilCore.virtualToIoFile(file.virtualFile)
-                incrementalResults.processPackagePart(ioFile, packagePart.toByteArray(), binaryAst)
-            }
-
-            val settings = config.configuration.languageVersionSettings
-            incrementalResults.processHeader(serializationUtil.serializeHeader(moduleDescriptor, null, settings).toByteArray())
+            val ioFile = VfsUtilCore.virtualToIoFile(file.virtualFile)
+            incrementalResults.processPackagePart(ioFile, packagePart.toByteArray(), binaryAst)
         }
 
-        removeDuplicateImports(translationResult.program)
-        translationResult.program.resolveTemporaryNames()
-
-        ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
-        if (hasError(diagnostics)) return TranslationResult.Fail(diagnostics)
-
-        val importedModules = ArrayList<String>()
-        for (module in translationResult.importedModuleList) {
-            importedModules.add(module.externalName)
-        }
-
-        return TranslationResult.Success(
-            config, files, translationResult.program, diagnostics, importedModules,
-            moduleDescriptor, bindingTrace.bindingContext
-        )
+        val settings = config.configuration.languageVersionSettings
+        incrementalResults.processHeader(KotlinJavascriptSerializationUtil.serializeHeader(moduleDescriptor, null, settings).toByteArray())
     }
 }

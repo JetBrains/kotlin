@@ -21,13 +21,6 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 import java.util.*
 
 object LabeledBlockToDoWhileTransformation {
-    fun apply(fragments: List<JsProgramFragment>) {
-        for (fragment in fragments) {
-            apply(fragment.declarationBlock)
-            apply(fragment.initializerBlock)
-        }
-    }
-
     fun apply(root: JsNode) {
         object : JsVisitorWithContextImpl() {
             val loopOrSwitchStack = Stack<JsStatement>()
@@ -118,5 +111,12 @@ object LabeledBlockToDoWhileTransformation {
                 super.endVisit(x, ctx)
             }
         }.accept(loopOrSwitch)
+    }
+}
+
+fun transformLabeledBlockToDoWhile(fragments: List<JsProgramFragment>) {
+    for (fragment in fragments) {
+        LabeledBlockToDoWhileTransformation.apply(fragment.declarationBlock)
+        LabeledBlockToDoWhileTransformation.apply(fragment.initializerBlock)
     }
 }

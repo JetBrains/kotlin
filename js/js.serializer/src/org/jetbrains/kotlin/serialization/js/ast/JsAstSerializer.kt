@@ -37,7 +37,7 @@ class JsAstSerializer(private val pathResolver: (File) -> String) {
     private val importedNames = mutableSetOf<JsName>()
 
     fun serialize(fragment: JsProgramFragment, output: OutputStream) {
-        val namesBySignature = fragment.nameBindings.associate { it.key to it.name }
+        val namesBySignature = fragment.nameBindings.associateTo(mutableMapOf()) { it.key to it.name }
         importedNames.clear()
         importedNames += fragment.imports.map { namesBySignature[it.key]!! }
         serialize(fragment).writeTo(output)

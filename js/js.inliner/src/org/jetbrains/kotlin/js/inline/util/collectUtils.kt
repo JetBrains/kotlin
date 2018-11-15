@@ -230,16 +230,6 @@ fun collectAccessors(fragments: List<JsProgramFragment>): Map<String, FunctionWi
     return result
 }
 
-fun collectNameBindings(fragments: List<JsProgramFragment>): MutableMap<JsName, String> {
-    val result = mutableMapOf<JsName, String>()
-    for (fragment in fragments) {
-        for (binding in fragment.nameBindings) {
-            result[binding.name] = binding.key
-        }
-    }
-    return result
-}
-
 fun extractFunction(expression: JsExpression) = when (expression) {
     is JsFunction -> FunctionWithWrapper(expression, null)
     else -> InlineMetadata.decompose(expression)?.function ?: InlineMetadata.tryExtractFunction(expression)

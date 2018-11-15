@@ -19,12 +19,6 @@ package org.jetbrains.kotlin.js.inline.context
 import org.jetbrains.kotlin.js.backend.ast.JsContext
 import org.jetbrains.kotlin.js.backend.ast.JsStatement
 
-interface InliningContext {
-    val statementContext: JsContext<JsStatement>
-
-    val statementContextBeforeCurrentFunction: JsContext<JsStatement>
-
-    val functionContext: FunctionContext
-
-    fun newNamingContext(): NamingContext
+class InliningContext(val statementContext: JsContext<JsStatement>) {
+    fun newNamingContext() = NamingContext(statementContext)
 }
