@@ -200,12 +200,7 @@ internal fun KtPsiFactory.generateClassOrObjectByExpectedClass(
 
     val actualClass = createClassCopyByText(expectedClass)
     actualClass.declarations.forEach {
-        if (it.exists()) {
-            it.delete()
-            return@forEach
-        }
         when (it) {
-            is KtEnumEntry -> return@forEach
             is KtClassOrObject -> it.delete()
             is KtCallableDeclaration -> it.delete()
         }
@@ -229,17 +224,16 @@ internal fun KtPsiFactory.generateClassOrObjectByExpectedClass(
             }
         }
     }
-    actualClass.replaceExpectModifier(actualNeeded)
+    if (actualClass !is KtEnumEntry) {
+        actualClass.replaceExpectModifier(actualNeeded)
+    }
 
     declLoop@ for (expectedDeclaration in expectedClass.declarations.filter { !it.exists() }) {
         val descriptor = expectedDeclaration.toDescriptor() ?: continue
         val actualDeclaration: KtDeclaration = when (expectedDeclaration) {
-            is KtClassOrObject ->
-                if (expectedDeclaration !is KtEnumEntry) {
-                    generateClassOrObjectByExpectedClass(project, expectedDeclaration, actualNeeded = true)
-                } else {
-                    continue@declLoop
-                }
+            is KtClassOrObject -> {
+                generateClassOrObjectByExpectedClass(project, expectedDeclaration, actualNeeded = true)
+            }
             is KtCallableDeclaration -> {
                 when (expectedDeclaration) {
                     is KtFunction -> generateFunction(project, expectedDeclaration, descriptor as FunctionDescriptor, actualClass)

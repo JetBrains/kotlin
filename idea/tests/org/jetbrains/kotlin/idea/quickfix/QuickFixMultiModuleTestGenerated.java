@@ -324,6 +324,11 @@ public class QuickFixMultiModuleTestGenerated extends AbstractQuickFixMultiModul
         runTest("idea/testData/multiModuleQuickFix/expectEnum/");
     }
 
+    @TestMetadata("expectEnumComplex")
+    public void testExpectEnumComplex() throws Exception {
+        runTest("idea/testData/multiModuleQuickFix/expectEnumComplex/");
+    }
+
     @TestMetadata("expectEnumEmpty")
     public void testExpectEnumEmpty() throws Exception {
         runTest("idea/testData/multiModuleQuickFix/expectEnumEmpty/");
