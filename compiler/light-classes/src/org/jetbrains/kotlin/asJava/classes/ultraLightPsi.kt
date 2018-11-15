@@ -81,7 +81,7 @@ class KtUltraLightClass(classOrObject: KtClassOrObject, private val support: Ult
         getDescriptor()?.typeConstructor?.supertypes.orEmpty().asSequence()
 
     private fun mapSupertype(supertype: KotlinType) =
-        supertype.asPsiType(classOrObject, support, TypeMappingMode.SUPER_TYPE, this) as? PsiClassType
+        supertype.asPsiType(support, TypeMappingMode.SUPER_TYPE, this) as? PsiClassType
 
     override fun createExtendsList(): PsiReferenceList? =
         if (tooComplex) super.createExtendsList()
@@ -336,15 +336,18 @@ class KtUltraLightClass(classOrObject: KtClassOrObject, private val support: Ult
         }
     }
 
-    private fun methodReturnType(f: KtDeclaration, wrapper: KtUltraLightMethod): PsiType {
-        val desc = f.resolve()?.let { if (it is PropertyDescriptor) it.getter else it }
-        val kotlinType = (desc as? FunctionDescriptor)?.returnType ?: return PsiType.NULL
-        val mode = when {
-            typeMapper(support).forceBoxedReturnType(desc) -> TypeMappingMode.RETURN_TYPE_BOXED
-            else -> TypeMappingMode.getOptimalModeForReturnType(kotlinType, false)
+    private fun methodReturnType(ktDeclaration: KtDeclaration, wrapper: KtUltraLightMethod): PsiType {
+        val desc =
+            ktDeclaration.resolve()?.getterIfProperty() as? FunctionDescriptor
+                ?: return PsiType.NULL
+
+        return support.mapType(wrapper) { typeMapper, signatureWriter ->
+            typeMapper.mapReturnType(desc, signatureWriter)
         }
-        return kotlinType.asPsiType(f, support, mode, wrapper)
     }
+
+    private fun DeclarationDescriptor.getterIfProperty() =
+        if (this@getterIfProperty is PropertyDescriptor) this@getterIfProperty.getter else this@getterIfProperty
 
     private fun lightMethod(name: String, declaration: KtDeclaration, forceStatic: Boolean): LightMethodBuilder {
         val accessedProperty = if (declaration is KtPropertyAccessor) declaration.property else null
@@ -535,7 +538,7 @@ private class KtUltraLightField(
                         val context = LightClassGenerationSupport.getInstance(project).analyze(declaration)
                         PropertyCodegen.getDelegateTypeForProperty(declaration, it, context)
                     }
-                    ?.let { it.asPsiType(declaration, support, TypeMappingMode.getOptimalModeForValueParameter(it), this) }
+                    ?.let { it.asPsiType(support, TypeMappingMode.getOptimalModeForValueParameter(it), this) }
                     ?.let(TypeConversionUtil::erasure)
                     ?: nonExistent()
             declaration is KtObjectDeclaration ->
@@ -547,7 +550,7 @@ private class KtUltraLightField(
                         (declaration.resolve() as? PropertyDescriptor)?.isVar == true -> TypeMappingMode.getOptimalModeForValueParameter(it)
                         else -> TypeMappingMode.getOptimalModeForReturnType(it, false)
                     }
-                    it.asPsiType(declaration, support, mode, this)
+                    it.asPsiType(support, mode, this)
                 } ?: PsiType.NULL
         }
     }
@@ -654,7 +657,7 @@ internal class KtUltraLightParameter(
         }
     }
     private val _type: PsiType by lazyPub {
-        kotlinType?.let { it.asPsiType(kotlinOrigin, support, TypeMappingMode.getOptimalModeForValueParameter(it), this) } ?: PsiType.NULL
+        kotlinType?.let { it.asPsiType(support, TypeMappingMode.getOptimalModeForValueParameter(it), this) } ?: PsiType.NULL
     }
 
     override fun getType(): PsiType = _type

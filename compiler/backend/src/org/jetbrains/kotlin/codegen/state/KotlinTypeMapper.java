@@ -388,7 +388,7 @@ public class KotlinTypeMapper {
     }
 
     @NotNull
-    private Type mapReturnType(@NotNull CallableDescriptor descriptor, @Nullable JvmSignatureWriter sw) {
+    public Type mapReturnType(@NotNull CallableDescriptor descriptor, @Nullable JvmSignatureWriter sw) {
         KotlinType returnType = descriptor.getReturnType();
         assert returnType != null : "Function has no return type: " + descriptor;
 
