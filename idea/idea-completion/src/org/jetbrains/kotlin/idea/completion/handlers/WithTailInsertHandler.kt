@@ -27,10 +27,12 @@ import org.jetbrains.kotlin.idea.completion.KEEP_OLD_ARGUMENT_LIST_ON_TAB_KEY
 import org.jetbrains.kotlin.idea.completion.smart.SmartCompletion
 import org.jetbrains.kotlin.idea.completion.tryGetOffset
 
-class WithTailInsertHandler(val tailText: String,
-                            val spaceBefore: Boolean,
-                            val spaceAfter: Boolean,
-                            val overwriteText: Boolean = true) : InsertHandler<LookupElement> {
+class WithTailInsertHandler(
+    val tailText: String,
+    val spaceBefore: Boolean,
+    val spaceAfter: Boolean,
+    val overwriteText: Boolean = true
+) : InsertHandler<LookupElement> {
     override fun handleInsert(context: InsertionContext, item: LookupElement) {
         item.handleInsert(context)
         postHandleInsert(context, item)
@@ -49,7 +51,7 @@ class WithTailInsertHandler(val tailText: String,
         var tailOffset = context.tailOffset
         if (completionChar == Lookup.REPLACE_SELECT_CHAR && item.getUserData(KEEP_OLD_ARGUMENT_LIST_ON_TAB_KEY) != null) {
             context.offsetMap.tryGetOffset(SmartCompletion.OLD_ARGUMENTS_REPLACEMENT_OFFSET)
-                    ?.let { tailOffset = it }
+                ?.let { tailOffset = it }
         }
 
         val moveCaret = context.editor.caretModel.offset == tailOffset

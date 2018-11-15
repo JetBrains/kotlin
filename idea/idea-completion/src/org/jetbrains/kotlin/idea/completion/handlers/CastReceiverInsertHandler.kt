@@ -21,14 +21,15 @@ import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.core.completion.DeclarationLookupObject
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
-import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.psi.*
 
 object CastReceiverInsertHandler {
     fun postHandleInsert(context: InsertionContext, item: LookupElement) {
-        val expression = PsiTreeUtil.findElementOfClassAtOffset(context.file, context.startOffset, KtSimpleNameExpression::class.java, false)
+        val expression =
+            PsiTreeUtil.findElementOfClassAtOffset(context.file, context.startOffset, KtSimpleNameExpression::class.java, false)
         val qualifiedExpression = PsiTreeUtil.getParentOfType(expression, KtQualifiedExpression::class.java, true)
         if (qualifiedExpression != null) {
             val receiver = qualifiedExpression.receiverExpression
@@ -36,7 +37,8 @@ object CastReceiverInsertHandler {
             val descriptor = (item.`object` as? DeclarationLookupObject)?.descriptor as CallableDescriptor
             val project = context.project
 
-            val thisObj = if (descriptor.extensionReceiverParameter != null) descriptor.extensionReceiverParameter else descriptor.dispatchReceiverParameter
+            val thisObj =
+                if (descriptor.extensionReceiverParameter != null) descriptor.extensionReceiverParameter else descriptor.dispatchReceiverParameter
             val fqName = IdeDescriptorRenderers.SOURCE_CODE.renderClassifierName(thisObj!!.type.constructor.declarationDescriptor!!)
 
             val parentCast = KtPsiFactory(project).createExpression("(expr as $fqName)") as KtParenthesizedExpression
