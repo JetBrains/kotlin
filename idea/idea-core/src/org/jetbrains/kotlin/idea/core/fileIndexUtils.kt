@@ -22,6 +22,19 @@ private val testRootTypes: Set<JpsModuleSourceRootType<*>> = setOf(
     KotlinResourceRootType.TestResource
 )
 
+private val sourceRootTypes = setOf<JpsModuleSourceRootType<*>>(
+    JavaSourceRootType.SOURCE,
+    JavaResourceRootType.RESOURCE,
+    KotlinSourceRootType.Source,
+    KotlinResourceRootType.Resource
+)
+
+fun JpsModuleSourceRootType<*>.getSourceType(): SourceType? = when(this) {
+    in sourceRootTypes -> SourceType.PRODUCTION
+    in testRootTypes -> SourceType.TEST
+    else -> null
+}
+
 fun FileIndex.isInTestSourceContentKotlinAware(fileOrDir: VirtualFile) = isUnderSourceRootOfType(fileOrDir, testRootTypes)
 
 fun FileIndex.getSourceType(fileOrDir: VirtualFile): SourceType? = when {
