@@ -19,10 +19,7 @@ package org.jetbrains.kotlin.idea.decompiler.navigation
 import com.intellij.psi.PsiElement
 import junit.framework.TestCase
 import org.jetbrains.kotlin.idea.KotlinFileType
-import org.jetbrains.kotlin.idea.test.KotlinCodeInsightTestCase
-import org.jetbrains.kotlin.idea.test.ModuleKind
-import org.jetbrains.kotlin.idea.test.closeAndDeleteProject
-import org.jetbrains.kotlin.idea.test.configureAs
+import org.jetbrains.kotlin.idea.test.*
 
 class NavigateToStdlibSourceTest : KotlinCodeInsightTestCase() {
 
@@ -47,6 +44,12 @@ class NavigateToStdlibSourceTest : KotlinCodeInsightTestCase() {
     private fun doTest(sourceFileName: String, mainModule: ModuleKind, additionalModule: ModuleKind? = null) {
         val navigationElement = configureAndResolve(FILE_TEXT, mainModule, additionalModule)
         TestCase.assertEquals(sourceFileName, navigationElement.containingFile.name)
+    }
+
+    override fun setUp() {
+        super.setUp()
+
+        PluginTestCaseBase.addJdk(testRootDisposable) { ProjectDescriptorWithStdlibSources.INSTANCE.sdk }
     }
 
     override fun tearDown() {
