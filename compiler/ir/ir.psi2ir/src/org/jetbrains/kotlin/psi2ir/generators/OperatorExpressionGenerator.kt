@@ -64,11 +64,12 @@ class OperatorExpressionGenerator(statementGenerator: StatementGenerator) : Stat
 
         return when (irOperator) {
             null -> throw AssertionError("Unexpected prefix operator: $ktOperator")
-            in INCREMENT_DECREMENT_OPERATORS -> AssignmentGenerator(statementGenerator).generatePrefixIncrementDecrement(
-                expression,
-                irOperator
-            )
+
+            in INCREMENT_DECREMENT_OPERATORS ->
+                AssignmentGenerator(statementGenerator).generatePrefixIncrementDecrement(expression, irOperator)
+
             in OPERATORS_DESUGARED_TO_CALLS -> generatePrefixOperatorAsCall(expression, irOperator)
+
             else -> createErrorExpression(expression, ktOperator.toString())
         }
     }
@@ -79,11 +80,12 @@ class OperatorExpressionGenerator(statementGenerator: StatementGenerator) : Stat
 
         return when (irOperator) {
             null -> throw AssertionError("Unexpected postfix operator: $ktOperator")
-            in INCREMENT_DECREMENT_OPERATORS -> AssignmentGenerator(statementGenerator).generatePostfixIncrementDecrement(
-                expression,
-                irOperator
-            )
+
+            in INCREMENT_DECREMENT_OPERATORS ->
+                AssignmentGenerator(statementGenerator).generatePostfixIncrementDecrement(expression, irOperator)
+
             IrStatementOrigin.EXCLEXCL -> generateExclExclOperator(expression, irOperator)
+
             else -> createErrorExpression(expression, ktOperator.toString())
         }
     }
