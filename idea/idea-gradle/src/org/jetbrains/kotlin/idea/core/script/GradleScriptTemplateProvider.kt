@@ -236,7 +236,7 @@ class GradleScriptDefinitionsContributor(private val project: Project) : ScriptD
 
     private class ErrorGradleScriptDefinition(message: String? = null) : KotlinScriptDefinitionAdapterFromNewAPIBase() {
         companion object {
-            private const val KOTLIN_DSL_SCRIPT_EXTENSION = ".gradle.kts"
+            private const val KOTLIN_DSL_SCRIPT_EXTENSION = "gradle.kts"
         }
 
         override val name: String = "Default Kotlin Gradle Script"
