@@ -32,7 +32,8 @@ import com.intellij.psi.PsiDocumentManager
 import com.intellij.ui.components.JBPanel
 import com.intellij.ui.components.JBTextField
 import com.intellij.uiDesigner.core.GridLayoutManager
-import kotlinx.coroutines.channels.ConflatedChannel
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.jetbrains.kotlin.idea.actions.internal.benchmark.AbstractCompletionBenchmarkAction.Companion.addBoxWithLabel
@@ -76,7 +77,7 @@ class HighlightingBenchmarkAction : AnAction() {
 
         val finishListener = DaemonFinishListener()
         connection.subscribe(DaemonCodeAnalyzer.DAEMON_EVENT_TOPIC, finishListener)
-        launch(EDT) {
+        GlobalScope.launch(EDT) {
             try {
                 delay(100)
                 ktFiles
@@ -98,7 +99,7 @@ class HighlightingBenchmarkAction : AnAction() {
     private data class Settings(val seed: Long, val files: Int, val lines: Int)
 
     private inner class DaemonFinishListener : DaemonCodeAnalyzer.DaemonListener {
-        val channel = ConflatedChannel<String>()
+        val channel = Channel<String>(capacity = Channel.CONFLATED)
 
         override fun daemonFinished() {
             channel.offer(SUCCESS)

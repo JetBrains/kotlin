@@ -79,7 +79,7 @@ class AsyncScriptDependenciesLoader(
         dispatcher: CoroutineDispatcher,
         currentTimeStamp: TimeStamp,
         doResolve: suspend () -> DependenciesResolver.ResolveResult
-    ): Job = launch(dispatcher + project.cancelOnDisposal) {
+    ): Job = GlobalScope.launch(dispatcher + project.cancelOnDisposal) {
         val result = try {
             doResolve()
         } catch (t: Throwable) {
