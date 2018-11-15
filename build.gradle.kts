@@ -101,8 +101,8 @@ val appcodeSandboxDir = "$commonLocalDataDir/appcodeSandbox"
 val ideaPluginDir = "$distDir/artifacts/ideaPlugin/Kotlin"
 val ideaUltimatePluginDir = "$distDir/artifacts/ideaUltimatePlugin/Kotlin"
 val cidrPluginDir = "$distDir/artifacts/cidrPlugin/Kotlin"
-val appcodePluginDir = "$distDir/artifacts/appcodePlugin/kotlinNative-appcode"
-val clionPluginDir = "$distDir/artifacts/clionPlugin/kotlinNative-clion"
+val appcodePluginDir = "$distDir/artifacts/appcodePlugin/Kotlin"
+val clionPluginDir = "$distDir/artifacts/clionPlugin/Kotlin"
 
 // TODO: use "by extra()" syntax where possible
 extra["distLibDir"] = project.file(distLibDir)
@@ -682,9 +682,11 @@ fun cidrPlugin(product: String, pluginDir: String) = tasks.creating(Copy::class.
     from(configurations[product.toLowerCase() + "KotlinPlugin"]) { into("lib") }
 }
 
-fun zipCidrPlugin(product: String) = tasks.creating(Zip::class.java) {
+fun zipCidrPlugin(product: String, productVersion: String) = tasks.creating(Zip::class.java) {
+    // Note: "cidrPluginVersion" has different format and semantics from "pluginVersion" used in IJ and AS plugins.
+    val cidrPluginVersion = project.findProperty("cidrPluginVersion") as String? ?: "beta-1"
     val destPath = project.findProperty("pluginZipPath") as String?
-            ?: "$distDir/artifacts/kotlinNative-plugin-$kotlinVersion-$product.zip"
+            ?: "$distDir/artifacts/kotlin-plugin-$kotlinVersion-$product-$cidrPluginVersion-$productVersion.zip"
     val destFile = File(destPath)
 
     destinationDir = destFile.parentFile
@@ -701,10 +703,12 @@ fun zipCidrPlugin(product: String) = tasks.creating(Zip::class.java) {
 
 if (includeCidr) {
     val appcodePlugin by cidrPlugin("AppCode", appcodePluginDir)
-    val zipAppCodePlugin by zipCidrPlugin("AppCode")
+    val appcodeVersion = extra["versions.appcode"] as String
+    val zipAppCodePlugin by zipCidrPlugin("AppCode", appcodeVersion)
 
     val clionPlugin by cidrPlugin("CLion", clionPluginDir)
-    val zipCLionPlugin by zipCidrPlugin("CLion")
+    val clionVersion = extra["versions.clion"] as String
+    val zipCLionPlugin by zipCidrPlugin("CLion", clionVersion)
 }
 
 configure<IdeaModel> {

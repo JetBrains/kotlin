@@ -20,11 +20,6 @@ dependencies {
 }
 
 val pluginXml by tasks.creating {
-    val kotlinVersion: String by rootProject.extra
-    val pluginFullVersionNumber = findProperty("pluginVersion") as? String
-        ?: "$kotlinVersion-CIDR"
-
-    inputs.property("pluginFullVersionNumber", pluginFullVersionNumber)
     inputs.files(kotlinPlugin)
     outputs.files(fileFrom(buildDir, name, pluginXmlPath))
 
@@ -37,6 +32,8 @@ val pluginXml by tasks.creating {
             """<!-- CIDR-PLUGIN-EXCLUDE-START -->(.*?)<!-- CIDR-PLUGIN-EXCLUDE-END -->""",
             RegexOption.DOT_MATCHES_ALL)
 
+        val ideaVersionRegex = Regex("""<idea-version[^/>]+/>""".trimMargin())
+
         val versionRegex = Regex("""<version>([^<]+)</version>""")
 
         zipTree(inputs.files.singleFile)
@@ -45,7 +42,8 @@ val pluginXml by tasks.creating {
             .readText()
             .replace(placeholderRegex, "<depends>com.intellij.modules.cidr.lang</depends>")
             .replace(excludeRegex, "")
-            .replace(versionRegex, "<version>$pluginFullVersionNumber</version>")
+            .replace(ideaVersionRegex, "") // IDEA version to be specified in CLion or AppCode plugin.xml file.
+            .replace(versionRegex, "") // Version to be specified in CLion or AppCode plugin.xml file.
             .also { pluginXmlText ->
                 outputs.files.singleFile.writeText(pluginXmlText)
             }
