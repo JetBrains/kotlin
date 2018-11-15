@@ -9,17 +9,11 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.script.KotlinScriptDefinition
 
-class SyncScriptDependenciesLoader(
-    file: VirtualFile,
-    scriptDef: KotlinScriptDefinition,
-    project: Project
-) : ScriptDependenciesLoader(file, scriptDef, project) {
-
-    override fun loadDependencies() {
+class SyncScriptDependenciesLoader internal constructor(project: Project) : ScriptDependenciesLoader(project) {
+    override fun loadDependencies(file: VirtualFile, scriptDef: KotlinScriptDefinition) {
         val result = contentLoader.loadContentsAndResolveDependencies(scriptDef, file)
-        processResult(result)
+        processResult(result, file, scriptDef)
     }
 
-    override fun shouldUseBackgroundThread(): Boolean = false
     override fun shouldShowNotification(): Boolean = false
 }
