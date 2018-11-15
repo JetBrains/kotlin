@@ -6853,6 +6853,16 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 runTest("compiler/testData/diagnostics/tests/enum/importEnumFromJava.kt");
             }
 
+            @TestMetadata("incompatibleEnumEntryClasses.kt")
+            public void testIncompatibleEnumEntryClasses() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/enum/incompatibleEnumEntryClasses.kt");
+            }
+
+            @TestMetadata("incompatibleEnums.kt")
+            public void testIncompatibleEnums() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/enum/incompatibleEnums.kt");
+            }
+
             @TestMetadata("inheritFromEnumEntry.kt")
             public void testInheritFromEnumEntry() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/enum/inheritFromEnumEntry.kt");
