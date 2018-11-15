@@ -16,31 +16,40 @@
 
 package org.jetbrains.kotlin.psi2ir.intermediate
 
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.impl.IrBlockImpl
 import org.jetbrains.kotlin.ir.expressions.impl.inlineStatement
 import org.jetbrains.kotlin.ir.expressions.isAssignmentOperatorWithResult
 import org.jetbrains.kotlin.psi2ir.generators.CallGenerator
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.types.KotlinType
-import java.lang.AssertionError
 
 class ArrayAccessAssignmentReceiver(
     private val irArray: IrExpression,
     private val irIndices: List<IrExpression>,
-    private val indexedGetCall: CallBuilder?,
-    private val indexedSetCall: CallBuilder?,
+    private val indexedGetResolvedCall: ResolvedCall<FunctionDescriptor>?,
+    private val indexedSetResolvedCall: ResolvedCall<FunctionDescriptor>?,
+    private val indexedGetCall: () -> CallBuilder?,
+    private val indexedSetCall: () -> CallBuilder?,
     private val callGenerator: CallGenerator,
     private val startOffset: Int,
     private val endOffset: Int,
     private val origin: IrStatementOrigin
 ) : AssignmentReceiver {
 
-    private val kotlinType: KotlinType =
-        indexedGetCall?.run { descriptor.returnType!! } ?: indexedSetCall?.run { descriptor.valueParameters.last().type }
-        ?: throw AssertionError("Array access should have either indexed-get call or indexed-set call")
+    private val descriptor =
+        indexedGetResolvedCall?.resultingDescriptor
+            ?: indexedSetResolvedCall?.resultingDescriptor
+            ?: throw AssertionError("Array access should have either indexed-get call or indexed-set call")
 
     override fun assign(withLValue: (LValue) -> IrExpression): IrExpression {
+        val kotlinType: KotlinType =
+            indexedGetResolvedCall?.run { resultingDescriptor.returnType!! }
+                ?: indexedSetResolvedCall?.run { resultingDescriptor.valueParameters.last().type }
+                ?: throw AssertionError("Array access should have either indexed-get call or indexed-set call")
+
         val hasResult = origin.isAssignmentOperatorWithResult()
         val resultType = if (hasResult) kotlinType else callGenerator.context.builtIns.unitType
         val irResultType = callGenerator.translateType(resultType)
@@ -52,11 +61,11 @@ class ArrayAccessAssignmentReceiver(
             callGenerator.scope.createTemporaryVariableInBlock(callGenerator.context, irIndex, irBlock, "index$i")
         }
 
-        indexedGetCall?.fillArrayAndIndexArguments(irArrayValue, irIndexValues)
-        indexedSetCall?.fillArrayAndIndexArguments(irArrayValue, irIndexValues)
         val irLValue = LValueWithGetterAndSetterCalls(
             callGenerator,
-            indexedGetCall, indexedSetCall,
+            descriptor,
+            { indexedGetCall()?.fillArrayAndIndexArguments(irArrayValue, irIndexValues) },
+            { indexedSetCall()?.fillArrayAndIndexArguments(irArrayValue, irIndexValues) },
             callGenerator.translateType(kotlinType),
             startOffset, endOffset, origin
         )
@@ -66,16 +75,16 @@ class ArrayAccessAssignmentReceiver(
     }
 
     override fun assign(value: IrExpression): IrExpression {
-        if (indexedSetCall == null) throw AssertionError("Array access without indexed-get call")
-        indexedSetCall.setExplicitReceiverValue(OnceExpressionValue(irArray))
+        val call = indexedSetCall() ?: throw AssertionError("Array access without indexed-get call")
+        call.setExplicitReceiverValue(OnceExpressionValue(irArray))
         irIndices.forEachIndexed { i, irIndex ->
-            indexedSetCall.irValueArgumentsByIndex[i] = irIndex
+            call.irValueArgumentsByIndex[i] = irIndex
         }
-        indexedSetCall.lastArgument = value
-        return callGenerator.generateCall(startOffset, endOffset, indexedSetCall, IrStatementOrigin.EQ)
+        call.lastArgument = value
+        return callGenerator.generateCall(startOffset, endOffset, call, IrStatementOrigin.EQ)
     }
 
-    private fun CallBuilder.fillArrayAndIndexArguments(arrayValue: IntermediateValue, indexValues: List<IntermediateValue>) {
+    private fun CallBuilder.fillArrayAndIndexArguments(arrayValue: IntermediateValue, indexValues: List<IntermediateValue>) = apply {
         setExplicitReceiverValue(arrayValue)
         indexValues.forEachIndexed { i, irIndexValue ->
             irValueArgumentsByIndex[i] = irIndexValue.load()
