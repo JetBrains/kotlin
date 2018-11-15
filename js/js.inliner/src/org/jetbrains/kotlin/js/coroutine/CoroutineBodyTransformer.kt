@@ -295,6 +295,7 @@ class CoroutineBodyTransformer(private val context: CoroutineTransformationConte
         // Handle finally node
         if (finallyNode != null) {
             currentBlock = finallyBlock
+            currentStatements += exceptionState(oldCatchBlock, x)
             finallyNode.statements.forEach { it.accept(this) }
             generateFinallyExit()
             hasFinallyBlocks = true
