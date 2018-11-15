@@ -263,19 +263,20 @@ class AssignmentGenerator(statementGenerator: StatementGenerator) : StatementGen
         ktLeft: KtArrayAccessExpression,
         origin: IrStatementOrigin
     ): ArrayAccessAssignmentReceiver {
-        val irArray = ktLeft.arrayExpression!!.genExpr()
-        val irIndexExpressions = ktLeft.indexExpressions.map { it.genExpr() }
-
         val indexedGetResolvedCall = get(BindingContext.INDEXED_LVALUE_GET, ktLeft)
-        val indexedGetCall = indexedGetResolvedCall?.let { statementGenerator.pregenerateCallReceivers(it) }
-
         val indexedSetResolvedCall = get(BindingContext.INDEXED_LVALUE_SET, ktLeft)
-        val indexedSetCall = indexedSetResolvedCall?.let { statementGenerator.pregenerateCallReceivers(it) }
 
         return ArrayAccessAssignmentReceiver(
-            irArray, irIndexExpressions, indexedGetCall, indexedSetCall,
+            ktLeft.arrayExpression!!.genExpr(),
+            ktLeft.indexExpressions.map { it.genExpr() },
+            indexedGetResolvedCall,
+            indexedSetResolvedCall,
+            { indexedGetResolvedCall?.let { statementGenerator.pregenerateCallReceivers(it) } },
+            { indexedSetResolvedCall?.let { statementGenerator.pregenerateCallReceivers(it) } },
             CallGenerator(statementGenerator),
-            ktLeft.startOffsetSkippingComments, ktLeft.endOffset, origin
+            ktLeft.startOffsetSkippingComments,
+            ktLeft.endOffset,
+            origin
         )
     }
 

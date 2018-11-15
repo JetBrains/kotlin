@@ -136,8 +136,18 @@ abstract class AbstractIrTextTestCase : AbstractIrGeneratorTestCase() {
             }
         }
 
+        private val elementsAreUniqueChecker = object : IrElementVisitorVoid {
+            private val elements = HashSet<IrElement>()
+
+            override fun visitElement(element: IrElement) {
+                require(elements.add(element)) { "Non-unique element: ${element.render()}" }
+                element.acceptChildrenVoid(this)
+            }
+        }
+
         fun verifyWithAssert(irFile: IrFile) {
             irFile.acceptChildrenVoid(this)
+            irFile.acceptChildrenVoid(elementsAreUniqueChecker)
             TestCase.assertFalse(errorsAsMessage + "\n\n\n" + irFile.dump(), hasErrors)
         }
 
