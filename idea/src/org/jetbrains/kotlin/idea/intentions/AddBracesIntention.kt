@@ -18,6 +18,8 @@ package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
 import com.intellij.psi.*
+import org.jetbrains.kotlin.idea.intentions.loopToCallChain.nextStatement
+import org.jetbrains.kotlin.idea.intentions.loopToCallChain.previousStatement
 import org.jetbrains.kotlin.idea.refactoring.getLineCount
 import org.jetbrains.kotlin.idea.refactoring.getLineNumber
 import org.jetbrains.kotlin.idea.util.CommentSaver
@@ -53,6 +55,7 @@ class AddBracesIntention : SelfTargetingIntention<KtElement>(KtElement::class.ja
         if (editor == null) throw IllegalArgumentException("This intention requires an editor")
         val expression = element.getTargetExpression(editor.caretModel.offset)!!
         var isCommentBeneath = false
+        var isCommentInside = false
         val psiFactory = KtPsiFactory(element)
 
         val semicolon = element.getNextSiblingIgnoringWhitespaceAndComments()?.takeIf { it.node.elementType == KtTokens.SEMICOLON }
@@ -79,12 +82,31 @@ class AddBracesIntention : SelfTargetingIntention<KtElement>(KtElement::class.ja
             }
         }
 
+        // Check for nested if/else
+        if (element is KtIfExpression && expression.isInSingleLine() && element.`else` != null &&
+            element.parent.nextSibling is PsiWhiteSpace &&
+            element.parent.nextSibling.nextSibling is PsiComment
+        ) {
+            isCommentInside = true
+        }
+
         val nextComment = when {
             element is KtDoWhileExpression -> null // bound to the closing while
             element is KtIfExpression && expression === element.then && element.`else` != null -> null // bound to else
             else -> element.getNextSiblingIgnoringWhitespace().takeIf { it is PsiComment }
         }
-        val saver = if (nextComment == null) CommentSaver(element) else CommentSaver(PsiChildRange(element, nextComment))
+
+        val saver = when {
+            isCommentInside -> {
+                CommentSaver(element.parent.nextSibling.nextSibling)
+            }
+            else -> if (nextComment == null) CommentSaver(element) else CommentSaver(PsiChildRange(element, nextComment))
+        }
+
+        if (isCommentInside) {
+            element.parent.nextSibling.nextSibling.delete()
+        }
+
         element.allChildren.filterIsInstance<PsiComment>().toList().forEach {
             it.delete()
         }
@@ -101,7 +123,7 @@ class AddBracesIntention : SelfTargetingIntention<KtElement>(KtElement::class.ja
         }
 
         // Check for single line expression with comment beneath.
-        saver.restore(result, isCommentBeneath, forceAdjustIndent = false)
+        saver.restore(result, isCommentBeneath, isCommentInside, forceAdjustIndent = false)
     }
 
     private fun KtElement.getTargetExpression(caretLocation: Int): KtExpression? {
