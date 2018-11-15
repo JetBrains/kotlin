@@ -263,7 +263,7 @@ private fun Matcher.matchEntire(input: CharSequence): MatchResult? {
 }
 
 private class MatcherMatchResult(private val matcher: Matcher, private val input: CharSequence) : MatchResult {
-    private val matchResult = matcher.toMatchResult()
+    private val matchResult: java.util.regex.MatchResult get() = matcher
     override val range: IntRange
         get() = matchResult.range()
     override val value: String
@@ -302,7 +302,7 @@ private class MatcherMatchResult(private val matcher: Matcher, private val input
 
     override fun next(): MatchResult? {
         val nextIndex = matchResult.end() + if (matchResult.end() == matchResult.start()) 1 else 0
-        return if (nextIndex <= input.length) matcher.findNext(nextIndex, input) else null
+        return if (nextIndex <= input.length) matcher.pattern().matcher(input).findNext(nextIndex, input) else null
     }
 }
 

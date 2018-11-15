@@ -14,12 +14,14 @@ import java.util.regex.Pattern
 class RegexJVMTest {
 
     @Test fun matchGroups() {
-        val input = "1a 2b 3c"
-        val regex = "(\\d)(\\w)".toRegex()
+        val input = "1a 2b 3"
+        val regex = "(\\d)(\\w)?".toRegex()
 
         val matches = regex.findAll(input).toList()
         assertTrue(matches.all { it.groups.size == 3 })
-        val m1 = matches[0]
+
+        val (m1, m2, m3) = matches
+
         assertEquals("1a", m1.groups[0]?.value)
         assertEquals(0..1, m1.groups[0]?.range)
         assertEquals("1", m1.groups[1]?.value)
@@ -27,13 +29,28 @@ class RegexJVMTest {
         assertEquals("a", m1.groups[2]?.value)
         assertEquals(1..1, m1.groups[2]?.range)
 
-        val m2 = matches[1]
         assertEquals("2", m2.groups[1]?.value)
         assertEquals(3..3, m2.groups[1]?.range)
         assertEquals("b", m2.groups[2]?.value)
         assertEquals(4..4, m2.groups[2]?.range)
+
+        assertEquals("3", m3.groups[1]?.value)
+        assertNull(m3.groups[2])
     }
 
+    @Test fun matchSequenceWithLookbehind() {
+        val input = "123_000 456 789"
+        val pattern = "(?<=^|\\s)\\d+_?".toRegex()
+
+        val matches = pattern.findAll(input)
+        val values = matches.map { it.value }
+        val expected = listOf("123_", "456", "789")
+        assertEquals(expected, values.toList())
+        assertEquals(expected, values.toList(), "running match sequence second time")
+        assertEquals(expected.drop(1), pattern.findAll(input, startIndex = 3).map { it.value }.toList())
+
+        assertEquals(listOf(0..3, 8..10, 12..14), matches.map { it.range }.toList())
+    }
 
     private fun compareRegex(expected: Regex, actual: Regex) = compare(expected, actual) {
         propertyEquals(Regex::pattern)
