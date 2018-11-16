@@ -349,10 +349,9 @@ fun getDataFlowAwareTypes(
     if (originalType == null) return emptyList()
     val dataFlowInfo = bindingContext.getDataFlowInfoAfter(expression)
     val dataFlowValueFactory = expression.getResolutionFacade().frontendService<DataFlowValueFactory>()
+    val expressionType = bindingContext.getType(expression) ?: return listOf(originalType)
     val dataFlowValue = dataFlowValueFactory.createDataFlowValue(
-            expression,
-            bindingContext.getType(expression)!!,
-            bindingContext, expression.getResolutionFacade().moduleDescriptor
+        expression, expressionType, bindingContext, expression.getResolutionFacade().moduleDescriptor
     )
     return dataFlowInfo.getCollectedTypes(dataFlowValue, expression.languageVersionSettings).ifEmpty { listOf(originalType) }
 }
