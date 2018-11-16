@@ -78,6 +78,11 @@ val ScriptCompilationConfigurationKeys.providedProperties by PropertiesCollectio
 val ScriptCompilationConfigurationKeys.defaultImports by PropertiesCollection.key<List<String>>()
 
 /**
+ * The list of script sources that should be compiled along with the script and imported into it
+ */
+val ScriptCompilationConfigurationKeys.importScripts by PropertiesCollection.key<List<SourceCode>>()
+
+/**
  * The list of script dependencies - platform specific
  */
 val ScriptCompilationConfigurationKeys.dependencies by PropertiesCollection.key<List<ScriptDependency>>()

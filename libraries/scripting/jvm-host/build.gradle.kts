@@ -15,6 +15,7 @@ dependencies {
     compileOnly(project(":compiler:cli"))
     compileOnly(intellijCoreDep())
     runtime(projectRuntimeJar(":kotlin-compiler"))
+    testCompile(projectTests(":compiler:tests-common"))
     testCompile(commonDep("junit"))
 }
 
@@ -27,3 +28,6 @@ standardPublicJars()
 
 publish()
 
+projectTest {
+    workingDir = rootDir
+}
