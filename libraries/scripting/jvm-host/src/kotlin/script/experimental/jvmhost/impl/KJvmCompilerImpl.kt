@@ -16,15 +16,13 @@ import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.cli.jvm.compiler.NoScopeRecordCliBindingTrace
-import org.jetbrains.kotlin.cli.jvm.compiler.TopDownAnalyzerFacadeForJVM
+import org.jetbrains.kotlin.cli.jvm.compiler.*
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.cli.jvm.config.JvmModulePathRoot
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
 import org.jetbrains.kotlin.cli.jvm.modules.CoreJrtFileSystem
 import org.jetbrains.kotlin.codegen.ClassBuilderFactories
+import org.jetbrains.kotlin.codegen.CompilationErrorHandler
 import org.jetbrains.kotlin.codegen.KotlinCodegenFacade
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.*
@@ -133,7 +131,9 @@ class KJvmCompilerImpl(val hostConfiguration: ScriptingHostConfiguration) : KJvm
             val psiFile: KtFile = psiFileFactory.trySetupPsiForFile(virtualFile, KotlinLanguage.INSTANCE, true, false) as KtFile?
                 ?: return failure("Unable to make PSI file from script".asErrorDiagnostics())
 
-            val sourceFiles = listOf(psiFile)
+            val sourceFiles = arrayListOf(psiFile).also {
+                it.addAll(collectRequiredSourcesFromDependencies(kotlinCompilerConfiguration, environment.project, it))
+            }
 
             analyzerWithCompilerReport.analyzeAndReport(sourceFiles) {
                 val project = environment.project
@@ -158,13 +158,7 @@ class KJvmCompilerImpl(val hostConfiguration: ScriptingHostConfiguration) : KJvm
                 sourceFiles,
                 kotlinCompilerConfiguration
             ).build()
-            generationState.beforeCompile()
-            KotlinCodegenFacade.generatePackage(
-                generationState,
-                psiFile.script!!.containingKtFile.packageFqName,
-                setOf(psiFile.script!!.containingKtFile),
-                org.jetbrains.kotlin.codegen.CompilationErrorHandler.THROW_EXCEPTION
-            )
+            KotlinCodegenFacade.compileCorrectFiles(generationState, CompilationErrorHandler.THROW_EXCEPTION)
 
             val res = KJvmCompiledScript<Any>(updatedConfiguration, generationState, scriptFileName.capitalize())
 
