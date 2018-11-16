@@ -37,6 +37,8 @@ import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.classes.shouldNotBeVisibleAsLightClass
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
 import org.jetbrains.kotlin.codegen.JvmCodegenUtil
+import org.jetbrains.kotlin.codegen.state.JVM_SUPPRESS_WILDCARDS_ANNOTATION_FQ_NAME
+import org.jetbrains.kotlin.codegen.state.JVM_WILDCARD_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
@@ -52,6 +54,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.annotations.JVM_STATIC_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.getAllSuperClassifiers
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
@@ -107,9 +110,18 @@ class IDELightClassGenerationSupport(private val project: Project) : LightClassG
     }
 
     private fun findTooComplexDeclaration(declaration: KtDeclaration): PsiElement? {
+        fun isNameOfUnsupportedJvmAnnotation(name: Name): Boolean {
+            if (!name.asString().startsWith("Jvm")) return false
+            if (name == JVM_STATIC_ANNOTATION_FQ_NAME.shortName()) return false
+            if (name == JVM_SUPPRESS_WILDCARDS_ANNOTATION_FQ_NAME.shortName()) return false
+            if (name == JVM_WILDCARD_ANNOTATION_FQ_NAME.shortName()) return false
+
+            return true
+        }
+
         fun KtAnnotationEntry.seemsNonTrivial(): Boolean {
             val name = shortName
-            return name == null || hasAlias(declaration, name) || name.asString().startsWith("Jvm") && name.asString() != "JvmStatic"
+            return name == null || hasAlias(declaration, name) || isNameOfUnsupportedJvmAnnotation(name)
         }
 
         if (declaration.hasExpectModifier() ||

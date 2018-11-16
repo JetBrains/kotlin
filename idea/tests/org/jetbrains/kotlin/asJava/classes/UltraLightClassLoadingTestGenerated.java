@@ -109,6 +109,11 @@ public class UltraLightClassLoadingTestGenerated extends AbstractUltraLightClass
         runTest("compiler/testData/asJava/ultraLightClasses/jvmOverloads.kt");
     }
 
+    @TestMetadata("jvmWildcardAnnotations.kt")
+    public void testJvmWildcardAnnotations() throws Exception {
+        runTest("compiler/testData/asJava/ultraLightClasses/jvmWildcardAnnotations.kt");
+    }
+
     @TestMetadata("lateinitProperty.kt")
     public void testLateinitProperty() throws Exception {
         runTest("compiler/testData/asJava/ultraLightClasses/lateinitProperty.kt");
@@ -137,5 +142,10 @@ public class UltraLightClassLoadingTestGenerated extends AbstractUltraLightClass
     @TestMetadata("typeAliases.kt")
     public void testTypeAliases() throws Exception {
         runTest("compiler/testData/asJava/ultraLightClasses/typeAliases.kt");
+    }
+
+    @TestMetadata("wildcardOptimization.kt")
+    public void testWildcardOptimization() throws Exception {
+        runTest("compiler/testData/asJava/ultraLightClasses/wildcardOptimization.kt");
     }
 }
