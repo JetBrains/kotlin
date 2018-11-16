@@ -46,14 +46,7 @@ import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import org.jetbrains.kotlin.utils.addToStdlib.sequenceOfLazyValues
 
 class KotlinShortNamesCache(private val project: Project) : PsiShortNamesCache() {
-    /**
-     * Return kotlin class names from project sources which should be visible from java.
-     */
-    override fun getAllClassNames(): Array<String> {
-        return CancelableArrayCollectProcessor<String>().also { processor ->
-            processAllClassNames(processor)
-        }.toArray(arrayOf())
-    }
+    //region Classes
 
     override fun processAllClassNames(processor: Processor<String>): Boolean {
         return KotlinClassShortNameIndex.getInstance().processAllKeys(project, processor) &&
@@ -61,11 +54,11 @@ class KotlinShortNamesCache(private val project: Project) : PsiShortNamesCache()
     }
 
     /**
-     * Return class names form kotlin sources in given scope which should be visible as Java classes.
+     * Return kotlin class names from project sources which should be visible from java.
      */
-    override fun getClassesByName(name: String, scope: GlobalSearchScope): Array<PsiClass> {
-        return CancelableArrayCollectProcessor<PsiClass>().also { processor ->
-            processClassesWithName(name, processor, scope, null)
+    override fun getAllClassNames(): Array<String> {
+        return CancelableArrayCollectProcessor<String>().also { processor ->
+            processAllClassNames(processor)
         }.toArray(arrayOf())
     }
 
@@ -118,6 +111,15 @@ class KotlinShortNamesCache(private val project: Project) : PsiShortNamesCache()
         }
     }
 
+    /**
+     * Return class names form kotlin sources in given scope which should be visible as Java classes.
+     */
+    override fun getClassesByName(name: String, scope: GlobalSearchScope): Array<PsiClass> {
+        return CancelableArrayCollectProcessor<PsiClass>().also { processor ->
+            processClassesWithName(name, processor, scope, null)
+        }.toArray(arrayOf())
+    }
+
     private fun kotlinDeclarationsVisibleFromJavaScope(scope: GlobalSearchScope): GlobalSearchScope {
         val noBuiltInsScope: GlobalSearchScope = object : GlobalSearchScope(project) {
             override fun isSearchInModuleContent(aModule: Module) = true
@@ -126,6 +128,29 @@ class KotlinShortNamesCache(private val project: Project) : PsiShortNamesCache()
             override fun contains(file: VirtualFile) = file.fileType != KotlinBuiltInFileType
         }
         return KotlinSourceFilterScope.sourceAndClassFiles(scope, project).intersectWith(noBuiltInsScope)
+    }
+    //endregion
+
+    //region Methods
+
+    override fun processAllMethodNames(processor: Processor<String>, scope: GlobalSearchScope, filter: IdFilter?): Boolean {
+        return processAllMethodNames(processor)
+    }
+
+    override fun getAllMethodNames(): Array<String> {
+        return CancelableArrayCollectProcessor<String>().also { processor ->
+            processAllMethodNames(processor)
+        }.toArray(arrayOf())
+    }
+
+    private fun processAllMethodNames(processor: Processor<String>): Boolean {
+        if (!KotlinFunctionShortNameIndex.getInstance().processAllKeys(project, processor)) {
+            return false
+        }
+
+        return KotlinPropertyShortNameIndex.getInstance().processAllKeys(project) { name ->
+            return@processAllKeys processor.process(JvmAbi.setterName(name)) && processor.process(JvmAbi.getterName(name))
+        }
     }
 
     override fun getMethodsByName(name: String, scope: GlobalSearchScope): Array<PsiMethod> {
@@ -161,26 +186,9 @@ class KotlinShortNamesCache(private val project: Project) : PsiShortNamesCache()
 
     override fun processMethodsWithName(name: String, scope: GlobalSearchScope, processor: Processor<PsiMethod>): Boolean =
         ContainerUtil.process(getMethodsByName(name, scope), processor)
+    //endregion
 
-    override fun getAllMethodNames(): Array<String> {
-        return CancelableArrayCollectProcessor<String>().also { processor ->
-            processAllMethodNames(processor)
-        }.toArray(arrayOf())
-    }
-
-    override fun processAllMethodNames(processor: Processor<String>, scope: GlobalSearchScope, filter: IdFilter?): Boolean {
-        return processAllMethodNames(processor)
-    }
-
-    private fun processAllMethodNames(processor: Processor<String>): Boolean {
-        if (!KotlinFunctionShortNameIndex.getInstance().processAllKeys(project, processor)) {
-            return false
-        }
-
-        return KotlinPropertyShortNameIndex.getInstance().processAllKeys(project) { name ->
-            return@processAllKeys processor.process(JvmAbi.setterName(name)) && processor.process(JvmAbi.getterName(name))
-        }
-    }
+    //region Fields
 
     override fun processAllFieldNames(processor: Processor<String>, scope: GlobalSearchScope, filter: IdFilter?): Boolean {
         return processAllFieldNames(processor)
@@ -237,6 +245,7 @@ class KotlinShortNamesCache(private val project: Project) : PsiShortNamesCache()
             )
         }.toArray(PsiField.EMPTY_ARRAY)
     }
+    //endregion
 
     private class CancelableArrayCollectProcessor<T> : Processor<T> {
         val troveSet = ContainerUtil.newTroveSet<T>()
