@@ -52,15 +52,14 @@ class ConvertCallChainIntoSequenceInspection : AbstractKotlinInspection() {
                 ProblemHighlightType.GENERIC_ERROR_OR_WARNING
             else
                 ProblemHighlightType.INFORMATION
-            holder.registerProblem(
-                holder.manager.createProblemDescriptor(
-                    qualified,
-                    rangeInElement,
-                    "Call chain on collection could be converted into 'Sequence' to improve performance",
-                    highlightType,
-                    isOnTheFly,
-                    ConvertCallChainIntoSequenceFix()
-                )
+
+            holder.registerProblemWithoutOfflineInformation(
+                qualified,
+                "Call chain on collection could be converted into 'Sequence' to improve performance",
+                isOnTheFly,
+                highlightType,
+                rangeInElement,
+                ConvertCallChainIntoSequenceFix()
             )
         })
 
