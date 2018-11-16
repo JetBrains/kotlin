@@ -9,11 +9,10 @@ import kotlin.collections.CollectionsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
-import org.jetbrains.kotlin.descriptors.ClassDescriptor;
-import org.jetbrains.kotlin.descriptors.ClassifierDescriptor;
-import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor;
+import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
+import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.scopes.MemberScope;
 import org.jetbrains.kotlin.types.typeUtil.TypeUtilsKt;
 import org.jetbrains.kotlin.utils.DFS;
@@ -153,7 +152,7 @@ public class CommonSupertypes {
                         .append("- DeclarationDescriptor class: ").append(classOfDeclarationDescriptor(type)).append('\n')
                         .append('\n');
             }
-            throw new IllegalStateException("There is no common supertype for: " + types + " \n" + info.toString());
+            throw new IllegalStateException("[Report version 3] There is no common supertype for: " + types + " \n" + info.toString());
         }
 
         // constructor of the supertype -> all of its instantiations occurring as supertypes
@@ -177,7 +176,13 @@ public class CommonSupertypes {
         }
 
         AbstractTypeConstructor abstractTypeConstructor = (AbstractTypeConstructor) typeConstructor;
-        return abstractTypeConstructor.renderAdditionalDebugInformation();
+        DeclarationDescriptor declarationDescriptor = abstractTypeConstructor.getDeclarationDescriptor();
+        String moduleDescriptorString = declarationDescriptor == null
+                                        ? "<no module for null descriptor>"
+                                        : Objects.toString(DescriptorUtils.getContainingModule(declarationDescriptor));
+        return "descriptor=" + declarationDescriptor + "@" + Integer.toHexString(Objects.hashCode(declarationDescriptor)) +
+               ", moduleDescriptor=" + moduleDescriptorString +
+               ", " + abstractTypeConstructor.renderAdditionalDebugInformation();
     }
 
     @Nullable
