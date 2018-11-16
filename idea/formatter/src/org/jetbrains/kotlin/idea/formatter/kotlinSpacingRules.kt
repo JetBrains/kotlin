@@ -588,6 +588,12 @@ fun createSpacingBuilder(settings: CodeStyleSettings, builderUtil: KotlinSpacing
                     createSpacing(spaces)
                 }
             }
+
+            inPosition(
+                parent = CLASS_BODY,
+                left = LBRACE,
+                right = ENUM_ENTRY
+            ).lineBreakIfLineBreakInParent(numSpacesOtherwise = 1)
         }
 
         simple {
