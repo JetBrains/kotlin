@@ -85,7 +85,7 @@ internal fun UltraLightSupport.mapType(
     psiContext: PsiElement,
     mapTypeToSignatureWriter: (KotlinTypeMapper, JvmSignatureWriter) -> Unit
 ): PsiType {
-    val signatureWriter = BothSignatureWriter(BothSignatureWriter.Mode.TYPE)
+    val signatureWriter = BothSignatureWriter(BothSignatureWriter.Mode.SKIP_CHECKS)
     mapTypeToSignatureWriter(typeMapper(this), signatureWriter)
     val signature = StringCharacterIterator(signatureWriter.toString())
 
