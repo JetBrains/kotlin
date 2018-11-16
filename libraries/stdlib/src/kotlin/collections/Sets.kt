@@ -73,17 +73,20 @@ public inline fun <T> hashSetOf(): HashSet<T> = HashSet()
 /** Returns a new [HashSet] with the given elements. */
 public fun <T> hashSetOf(vararg elements: T): HashSet<T> = elements.toCollection(HashSet(mapCapacity(elements.size)))
 
-/** Returns an empty new [EnumSet] of [T]. */
-@kotlin.internal.InlineOnly
-public expect inline fun <reified T : Enum<T>> enumSetOf(): EnumSet<T>
+/** Returns an empty new [EnumSet] of [E]. */
+public expect inline fun <reified E : Enum<E>> enumSetOf(): EnumSet<E>
 
-/** Returns a new [EnumSet] with the given [elements] of [T]. */
+/** Returns a new [EnumSet] with the specified [element] of [E]. */
 @kotlin.internal.InlineOnly
-public expect inline fun <reified T : Enum<T>> enumSetOf(vararg elements: T): EnumSet<T>
+public expect inline fun <reified E : Enum<E>> enumSetOf(element: E): EnumSet<E>
 
-/** Returns a filled new [EnumSet] of [T]. */
+/** Returns a new [EnumSet] with the given [elements] of [E]. */
 @kotlin.internal.InlineOnly
-public expect inline fun <reified T : Enum<T>> enumSetAllOf(): EnumSet<T>
+public expect inline fun <reified E : Enum<E>> enumSetOf(vararg elements: E): EnumSet<E>
+
+/** Returns a filled new [EnumSet] of [E]. */
+@kotlin.internal.InlineOnly
+public expect inline fun <reified E : Enum<E>> enumSetAllOf(): EnumSet<E>
 
 /** Returns an empty new [LinkedHashSet]. */
 @SinceKotlin("1.1")

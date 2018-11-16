@@ -92,3 +92,33 @@ public actual inline fun Float.toRawBits(): Int = java.lang.Float.floatToRawIntB
 @SinceKotlin("1.2")
 @kotlin.internal.InlineOnly
 public actual inline fun Float.Companion.fromBits(bits: Int): Float = java.lang.Float.intBitsToFloat(bits)
+
+/**
+ * Returns the number of one-bits in the two's complement binary representation of the specified [Int] value.
+ */
+@kotlin.internal.InlineOnly
+public actual inline fun Int.bits(): Int = java.lang.Integer.bitCount(this)
+
+/**
+ * Returns the number of one-bits in the two's complement binary representation of the specified [Long] value.
+ */
+@kotlin.internal.InlineOnly
+public actual inline fun Long.bits(): Int = java.lang.Long.bitCount(this)
+
+/**
+ * @return The number of zero bits following the lowest-order ("rightmost")
+ * one-bit in the two's complement binary representation of the specified [Int] value.
+ * Returns 32 if the specified value has no one-bits in its two's complement representation,
+ * in other words if it is equal to zero.
+ */
+@kotlin.internal.InlineOnly
+public actual inline fun Int.trailingZeros(): Int = java.lang.Integer.numberOfTrailingZeros(this)
+
+/**
+ * @return The number of zero bits following the lowest-order ("rightmost")
+ * one-bit in the two's complement binary representation of the specified [Long] value.
+ * Returns 64 if the specified value has no one-bits in its two's complement representation,
+ * in other words if it is equal to zero.
+ */
+@kotlin.internal.InlineOnly
+public actual inline fun Long.trailingZeros(): Int = java.lang.Long.numberOfTrailingZeros(this)

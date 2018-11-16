@@ -73,6 +73,31 @@ public expect fun Float.toRawBits(): Int
 @SinceKotlin("1.2")
 public expect fun Float.Companion.fromBits(bits: Int): Float
 
+/**
+ * Returns the number of one-bits in the two's complement binary representation of the specified [Int] value.
+ */
+public expect fun Int.bits(): Int
+
+/**
+ * Returns the number of one-bits in the two's complement binary representation of the specified [Long] value.
+ */
+public expect fun Long.bits(): Int
+
+/**
+ * @return The number of zero bits following the lowest-order ("rightmost")
+ * one-bit in the two's complement binary representation of the specified [Int] value.
+ * Returns 32 if the specified value has no one-bits in its two's complement representation,
+ * in other words if it is equal to zero.
+ */
+public expect fun Int.trailingZeros(): Int
+
+/**
+ * @return The number of zero bits following the lowest-order ("rightmost")
+ * one-bit in the two's complement binary representation of the specified [Long] value.
+ * Returns 64 if the specified value has no one-bits in its two's complement representation,
+ * in other words if it is equal to zero.
+ */
+public expect fun Long.trailingZeros(): Int
 
 // From concurrent.kt
 
