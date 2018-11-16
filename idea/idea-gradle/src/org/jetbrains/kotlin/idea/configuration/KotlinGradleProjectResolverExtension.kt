@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.gradle.KotlinGradleModelBuilder
 import org.jetbrains.kotlin.gradle.KotlinMPPGradleModel
 import org.jetbrains.kotlin.idea.inspections.gradle.getDependencyModules
 import org.jetbrains.kotlin.idea.util.CopyableDataNodeUserDataProperty
+import org.jetbrains.kotlin.idea.util.DataNodeUserDataProperty
 import org.jetbrains.kotlin.idea.util.NotNullableCopyableDataNodeUserDataProperty
 import org.jetbrains.plugins.gradle.model.ExternalProjectDependency
 import org.jetbrains.plugins.gradle.model.ExternalSourceSet
@@ -59,9 +60,8 @@ var DataNode<out ModuleData>.implementedModuleNames
         by NotNullableCopyableDataNodeUserDataProperty(Key.create<List<String>>("IMPLEMENTED_MODULE_NAME"), emptyList())
 // Project is usually the same during all import, thus keeping Map Project->Dependencies makes model a bit more complicated but allows to avoid future problems
 var DataNode<out ModuleData>.dependenciesCache
-        by NotNullableCopyableDataNodeUserDataProperty(
-            Key.create<MutableMap<DataNode<ProjectData>, Collection<DataNode<out ModuleData>>>>("MODULE_DEPENDENCIES_CACHE"),
-            HashMap()
+        by DataNodeUserDataProperty(
+            Key.create<MutableMap<DataNode<ProjectData>, Collection<DataNode<out ModuleData>>>>("MODULE_DEPENDENCIES_CACHE")
         )
 
 
@@ -97,8 +97,9 @@ class KotlinGradleProjectResolverExtension : AbstractProjectResolverExtension() 
         .singleOrNull()
 
     private fun DataNode<out ModuleData>.getDependencies(ideProject: DataNode<ProjectData>): Collection<DataNode<out ModuleData>> {
-        if (dependenciesCache.containsKey(ideProject)) {
-            return dependenciesCache[ideProject]!!
+        val cache = dependenciesCache ?: HashMap()
+        if (cache.containsKey(ideProject)) {
+            return cache[ideProject]!!
         }
         val outputToSourceSet = ideProject.getUserData(GradleProjectResolver.MODULES_OUTPUTS)
         val sourceSetByName = ideProject.getUserData(GradleProjectResolver.RESOLVED_SOURCE_SETS) ?: return emptySet()
@@ -123,7 +124,8 @@ class KotlinGradleProjectResolverExtension : AbstractProjectResolverExtension() 
                 else -> null
             }
         }
-        dependenciesCache[ideProject] = result
+        cache[ideProject] = result
+        dependenciesCache = cache
         return result
     }
 
