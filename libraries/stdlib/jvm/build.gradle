@@ -27,14 +27,21 @@ sourceSets {
             srcDir "../experimental"
         }
     }
-    coroutines {
+    coroutinesExperimental {
         kotlin {
             srcDir '../coroutines-experimental/jvm/src'
         }
     }
-    coroutinesTest {
+    coroutinesExperimentalTest {
         kotlin {
-            srcDir '../coroutines/jvm/test'
+            srcDir '../coroutines-experimental/jvm/test'
+        }
+    }
+    coroutinesExperimentalMigrationTest {
+        kotlin {
+            if(!System.properties.'idea.active') {
+                srcDir '../coroutines-experimental/jvm/test'
+            }
         }
     }
     test {
@@ -51,6 +58,8 @@ sourceSets {
 
 configurations {
     commonSources
+    coroutinesExperimentalTestCompile.extendsFrom(testCompile)
+    coroutinesExperimentalMigrationTestCompile.extendsFrom(coroutinesExperimentalTestCompile)
 }
 
 dependencies {
@@ -61,26 +70,24 @@ dependencies {
     compile group: 'org.jetbrains', name: 'annotations', version:'13.0'
 
     testCompile project(':kotlin-test:kotlin-test-junit')
-    testCompile sourceSets.coroutines.output
+    testCompile sourceSets.coroutinesExperimental.output
 
-    coroutinesCompile sourceSets.main.output
-
-    coroutinesTestCompile sourceSets.coroutines.output
-    coroutinesTestCompile project(':kotlin-test:kotlin-test-junit')
+    coroutinesExperimentalCompile sourceSets.main.output
+    coroutinesExperimentalTestCompile sourceSets.test.output
 }
 
 jar {
     manifestAttributes(manifest, project, 'Main' /*true*/)
     from("${rootDir}/dist/builtins")
     from sourceSets.experimental.output
-    from sourceSets.coroutines.output
+    from sourceSets.coroutinesExperimental.output
     // TODO: enable as soon as this doesn't cause D8/DX to crash
     // from sourceSets.java9.output
 }
 
 sourcesJar {
     from "${rootDir}/core/builtins/native"
-    from sourceSets.coroutines.kotlin
+    from sourceSets.coroutinesExperimental.kotlin
 }
 
 task distSourcesJar(type: Jar) {
@@ -172,9 +179,9 @@ compileExperimentalKotlin {
     }
 }
 
-compileJava9Sources(project, 'kotlin.stdlib', [sourceSets.main.output, sourceSets.coroutines.output])
+compileJava9Sources(project, 'kotlin.stdlib', [sourceSets.main.output, sourceSets.coroutinesExperimental.output])
 
-compileCoroutinesKotlin {
+compileCoroutinesExperimentalKotlin {
     kotlinOptions {
         languageVersion = "1.3"
         apiVersion = "1.3"
@@ -192,25 +199,37 @@ compileCoroutinesKotlin {
     }
 }
 
-compileCoroutinesTestKotlin {
+compileCoroutinesExperimentalTestKotlin {
     kotlinOptions {
-        languageVersion = "1.3"
-        apiVersion = "1.3"
+        languageVersion = "1.2"
+        apiVersion = "1.2"
         freeCompilerArgs = [
-                "-version",
-                "-Xallow-kotlin-package",
-                "-Xmultifile-parts-inherit",
-                "-module-name", "kotlin-stdlib-coroutines"
+                "-Xcoroutines=enable"
         ]
     }
 }
 
-task coroutinesTest(type: Test, dependsOn: coroutinesTestClasses) {
-    testClassesDirs = sourceSets.coroutinesTest.output.classesDirs
-    classpath = sourceSets.coroutinesTest.runtimeClasspath
+compileCoroutinesExperimentalMigrationTestKotlin {
+    kotlinOptions {
+        languageVersion = "1.3"
+        apiVersion = "1.3"
+        freeCompilerArgs = []
+    }
 }
 
-check.dependsOn(coroutinesTest)
+task coroutinesExperimentalTest(type: Test, dependsOn: coroutinesExperimentalTestClasses) {
+    group = "verification"
+    testClassesDirs = sourceSets.coroutinesExperimentalTest.output.classesDirs
+    classpath = sourceSets.coroutinesExperimentalTest.runtimeClasspath
+}
+task coroutinesExperimentalMigrationTest(type: Test, dependsOn: coroutinesExperimentalMigrationTestClasses) {
+    group = "verification"
+    testClassesDirs = sourceSets.coroutinesExperimentalMigrationTest.output.classesDirs
+    classpath = sourceSets.coroutinesExperimentalMigrationTest.runtimeClasspath
+}
+
+check.dependsOn(coroutinesExperimentalTest)
+check.dependsOn(coroutinesExperimentalMigrationTest)
 
 compileTestKotlin {
     kotlinOptions {
