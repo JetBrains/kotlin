@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.android.synthetic.res
 
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.ClearableLazyValue
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.android.synthetic.AndroidConst
 import org.jetbrains.kotlin.android.synthetic.descriptors.AndroidSyntheticPackageData
@@ -41,6 +40,12 @@ abstract class AndroidPackageFragmentProviderExtension : PackageFragmentProvider
 
     protected abstract fun isExperimental(moduleInfo: ModuleInfo?): Boolean
 
+    protected open fun <T> createLazyValue(value: () -> T): () -> T {
+        // The default (CLI) implementation is not lazy
+        val evaluatedValue = value()
+        return { evaluatedValue }
+    }
+
     override fun getPackageFragmentProvider(
             project: Project,
             module: ModuleDescriptor,
@@ -57,7 +62,7 @@ abstract class AndroidPackageFragmentProviderExtension : PackageFragmentProvider
 
         val lazyContext = LazySyntheticElementResolveContext(module, storageManager)
 
-        val packages = mutableMapOf<FqName, ClearableLazyValue<PackageFragmentDescriptor>>()
+        val packages = mutableMapOf<FqName, () -> PackageFragmentDescriptor>()
         val packagesToLookupInCompletion = mutableListOf<LazyAndroidExtensionsPackageFragmentDescriptor>()
 
         // Packages with synthetic properties
@@ -66,7 +71,7 @@ abstract class AndroidPackageFragmentProviderExtension : PackageFragmentProvider
                 fun createPackageFragment(fqNameString: String, forView: Boolean, isDeprecated: Boolean = false) {
                     val fqName = FqName(fqNameString)
 
-                    val lazyPackageDescriptor = ClearableLazyValue.create<PackageFragmentDescriptor> {
+                    val lazyPackageDescriptor = createLazyValue {
                         val packageData = AndroidSyntheticPackageData(moduleData, forView, isDeprecated) {
                             layoutXmlFileManager.extractResources(AndroidLayoutGroupData(layoutName, layouts), module)
                         }
@@ -90,14 +95,14 @@ abstract class AndroidPackageFragmentProviderExtension : PackageFragmentProvider
         // Empty middle packages
         AndroidConst.SYNTHETIC_SUBPACKAGES.forEachUntilLast { fqNameString ->
             val fqName = FqName(fqNameString)
-            packages[fqName] = ClearableLazyValue.create<PackageFragmentDescriptor> {
+            packages[fqName] = createLazyValue {
                 PredefinedPackageFragmentDescriptor(fqName, module, storageManager)
             }
         }
 
         for (variantData in moduleData.variants) {
             val fqName = FqName(AndroidConst.SYNTHETIC_PACKAGE + '.' + variantData.variant.name)
-            packages[fqName] = ClearableLazyValue.create<PackageFragmentDescriptor> {
+            packages[fqName] = createLazyValue {
                 PredefinedPackageFragmentDescriptor(fqName, module, storageManager)
             }
         }
@@ -105,7 +110,7 @@ abstract class AndroidPackageFragmentProviderExtension : PackageFragmentProvider
         // Package with clearFindViewByIdCache()
         AndroidConst.SYNTHETIC_SUBPACKAGES.last().let { fqNameString ->
             val fqName = FqName(fqNameString)
-            val lazyPackageDescriptor = ClearableLazyValue.create<PackageFragmentDescriptor> {
+            val lazyPackageDescriptor = createLazyValue {
                 PredefinedPackageFragmentDescriptor(fqName, module, storageManager, packagesToLookupInCompletion) { descriptor ->
                     val widgetReceivers = lazyContext().getWidgetReceivers(forView = false, isExperimental = isExperimental) +
                             lazyContext().getWidgetReceivers(forView = true, isExperimental = isExperimental)
@@ -125,9 +130,9 @@ abstract class AndroidPackageFragmentProviderExtension : PackageFragmentProvider
 }
 
 class AndroidSyntheticPackageFragmentProvider(
-    val packages: Map<FqName, ClearableLazyValue<PackageFragmentDescriptor>>
+    val packages: Map<FqName, () -> PackageFragmentDescriptor>
 ) : PackageFragmentProvider {
-    override fun getPackageFragments(fqName: FqName) = listOfNotNull(packages[fqName]?.value)
+    override fun getPackageFragments(fqName: FqName) = listOfNotNull(packages[fqName]?.invoke())
 
     override fun getSubPackagesOf(fqName: FqName, nameFilter: (Name) -> Boolean): List<FqName> {
         return packages.asSequence()
