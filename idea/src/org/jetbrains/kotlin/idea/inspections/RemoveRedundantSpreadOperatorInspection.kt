@@ -62,13 +62,17 @@ class RemoveRedundantSpreadOperatorQuickfix : LocalQuickFix {
         // Arguments under arrayOf or []
         val innerArgumentExpressions =
             when (spreadArgumentExpression) {
-                is KtCallExpression -> spreadArgumentExpression.valueArgumentList?.arguments?.map { it.getArgumentExpression() }
-                is KtCollectionLiteralExpression -> spreadArgumentExpression.getInnerExpressions()
+                is KtCallExpression -> spreadArgumentExpression.valueArgumentList?.arguments?.map {
+                    it.getArgumentExpression() to it.isSpread
+                }
+                is KtCollectionLiteralExpression -> spreadArgumentExpression.getInnerExpressions().map { it to false }
                 else -> null
             } ?: return
 
         val factory = KtPsiFactory(project)
-        innerArgumentExpressions.reversed().forEach { outerArgumentList.addArgumentAfter(factory.createArgument(it), spreadValueArgument) }
+        innerArgumentExpressions.reversed().forEach { (expression, isSpread) ->
+            outerArgumentList.addArgumentAfter(factory.createArgument(expression, isSpread = isSpread), spreadValueArgument)
+        }
         outerArgumentList.removeArgument(spreadValueArgument)
     }
 }
