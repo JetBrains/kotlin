@@ -29,7 +29,7 @@ sourceSets {
             srcDir 'test'
         }
     }
-    coroutines {
+    coroutinesExperimental {
         kotlin {
             srcDir '../coroutines-experimental/src'
         }
@@ -40,7 +40,7 @@ dependencies {
     testCompile project(":kotlin-test:kotlin-test-common")
     testCompile project(":kotlin-test:kotlin-test-annotations-common")
 
-    coroutinesCompile sourceSets.main.output
+    coroutinesExperimentalCompile sourceSets.main.output
 }
 
 compileKotlinCommon {
@@ -63,7 +63,7 @@ compileKotlinCommon {
     }
 }
 
-compileCoroutinesKotlinCommon {
+compileCoroutinesExperimentalKotlinCommon {
     kotlinOptions {
         languageVersion = "1.3"
         apiVersion = "1.3"
@@ -89,13 +89,13 @@ compileTestKotlinCommon {
 
 jar {
     manifestAttributes(manifest, project, 'Main')
-    from sourceSets.coroutines.output
+    from sourceSets.coroutinesExperimental.output
 }
 
 task sourcesJar(type: Jar, dependsOn: classes) {
     classifier = 'sources'
     from sourceSets.main.kotlin
-    from sourceSets.coroutines.kotlin
+    from sourceSets.coroutinesExperimental.kotlin
 }
 
 configurations {
