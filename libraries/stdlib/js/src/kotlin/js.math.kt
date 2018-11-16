@@ -46,7 +46,7 @@ public external object Math {
     public fun sqrt(value: Double): Double
     @Deprecated("Use kotlin.math.tan instead.", ReplaceWith("tan(value)", "kotlin.math.tan"), level = DeprecationLevel.ERROR)
     public fun tan(value: Double): Double
-    @Deprecated("Use kotlin.math.log instead.", ReplaceWith("log(value)", "kotlin.math.log"), level = DeprecationLevel.ERROR)
+    @Deprecated("Use kotlin.math.ln instead.", ReplaceWith("ln(value)", "kotlin.math.ln"), level = DeprecationLevel.ERROR)
     public fun log(value: Double): Double
     @Deprecated("Use kotlin.math.pow instead.", ReplaceWith("pow(base, exp)", "kotlin.math.pow"), level = DeprecationLevel.ERROR)
     public fun pow(base: Double, exp: Double): Double
