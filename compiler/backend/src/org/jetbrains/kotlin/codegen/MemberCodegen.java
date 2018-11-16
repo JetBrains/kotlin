@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.codegen.inline.ReifiedTypeParametersUsages;
 import org.jetbrains.kotlin.codegen.inline.SourceMapper;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
+import org.jetbrains.kotlin.codegen.state.TypeMapperUtilsKt;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotatedImpl;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
@@ -873,7 +874,9 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
                 functionDescriptor,
                 accessorDescriptor instanceof AccessorForCallableDescriptor &&
                 (((AccessorForCallableDescriptor) accessorDescriptor).getSuperCallTarget() != null ||
-                 ((AccessorForCallableDescriptor) accessorDescriptor).getAccessorKind() == AccessorKind.JVM_DEFAULT_COMPATIBILITY)
+                 ((AccessorForCallableDescriptor) accessorDescriptor).getAccessorKind() == AccessorKind.JVM_DEFAULT_COMPATIBILITY),
+                (accessorDescriptor != null && TypeMapperUtilsKt.isInlineClassConstructorAccessor(accessorDescriptor)
+                 ? OwnerKind.ERASED_INLINE_CLASS : null)
         );
 
         boolean isJvmStaticInObjectOrClass = CodegenUtilKt.isJvmStaticInObjectOrClassOrInterface(functionDescriptor);

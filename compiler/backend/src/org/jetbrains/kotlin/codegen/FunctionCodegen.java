@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.codegen.coroutines.SuspendFunctionGenerationStrategy
 import org.jetbrains.kotlin.codegen.coroutines.SuspendInlineFunctionGenerationStrategy;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
+import org.jetbrains.kotlin.codegen.state.TypeMapperUtilsKt;
 import org.jetbrains.kotlin.config.JvmDefaultMode;
 import org.jetbrains.kotlin.config.JvmTarget;
 import org.jetbrains.kotlin.config.LanguageFeature;
@@ -189,7 +190,9 @@ public class FunctionCodegen {
             @NotNull MethodContext methodContext,
             @NotNull FunctionGenerationStrategy strategy
     ) {
-        OwnerKind contextKind = methodContext.getContextKind();
+        OwnerKind contextKind = TypeMapperUtilsKt.isInlineClassConstructorAccessor(functionDescriptor)
+                                ? OwnerKind.ERASED_INLINE_CLASS
+                                : methodContext.getContextKind();
         DeclarationDescriptor containingDeclaration = functionDescriptor.getContainingDeclaration();
         if (isInterface(containingDeclaration) &&
             !processInterfaceMethod(functionDescriptor, contextKind, false, false, state.getJvmDefaultMode())) {

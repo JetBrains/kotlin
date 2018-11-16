@@ -12351,6 +12351,16 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 runTest("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/accessPrivateInlineClassCompanionMethod2.kt");
             }
 
+            @TestMetadata("accessPrivateInlineClassConstructorFromCompanion.kt")
+            public void testAccessPrivateInlineClassConstructorFromCompanion() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/accessPrivateInlineClassConstructorFromCompanion.kt");
+            }
+
+            @TestMetadata("accessPrivateInlineClassConstructorFromLambda.kt")
+            public void testAccessPrivateInlineClassConstructorFromLambda() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/accessPrivateInlineClassConstructorFromLambda.kt");
+            }
+
             @TestMetadata("accessPrivateInlineClassMethodFromCompanion.kt")
             public void testAccessPrivateInlineClassMethodFromCompanion() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/accessPrivateInlineClassMethodFromCompanion.kt");

@@ -862,7 +862,9 @@ public class KotlinTypeMapper {
                 }
             }
             else {
-                boolean toInlinedErasedClass = currentOwner.isInline() && !isAccessor(functionDescriptor);
+                boolean toInlinedErasedClass =
+                        currentOwner.isInline() &&
+                        (!isAccessor(functionDescriptor) || TypeMapperUtilsKt.isInlineClassConstructorAccessor(functionDescriptor));
                 if (toInlinedErasedClass) {
                     functionDescriptor = descriptor;
                 }
