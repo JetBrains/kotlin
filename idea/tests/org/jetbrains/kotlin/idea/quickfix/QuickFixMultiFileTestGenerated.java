@@ -2395,6 +2395,11 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
                 public void testAnnotation() throws Exception {
                     runTest("idea/testData/quickfix/deprecatedSymbolUsage/classUsages/wholeProject/annotation.before.Main.kt");
                 }
+
+                @TestMetadata("noParenthesesAnnotation.before.Main.kt")
+                public void testNoParenthesesAnnotation() throws Exception {
+                    runTest("idea/testData/quickfix/deprecatedSymbolUsage/classUsages/wholeProject/noParenthesesAnnotation.before.Main.kt");
+                }
             }
         }
 
