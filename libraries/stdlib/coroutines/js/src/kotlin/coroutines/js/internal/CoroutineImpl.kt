@@ -22,8 +22,8 @@ internal abstract class CoroutineImpl(private val resultContinuation: Continuati
 
     public fun intercepted(): Continuation<Any?> =
         intercepted_
-                ?: (context[ContinuationInterceptor]?.interceptContinuation(this) ?: this)
-                    .also { intercepted_ = it }
+            ?: (context[ContinuationInterceptor]?.interceptContinuation(this) ?: this)
+                .also { intercepted_ = it }
 
     override fun resumeWith(result: Result<Any?>) {
         var current = this

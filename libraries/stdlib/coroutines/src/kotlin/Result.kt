@@ -84,13 +84,15 @@ public inline class Result<out T> @PublishedApi internal constructor(
         /**
          * Returns an instance that encapsulates the given [value] as successful value.
          */
-        @InlineOnly public inline fun <T> success(value: T): Result<T> =
+        @InlineOnly
+        public inline fun <T> success(value: T): Result<T> =
             Result(value)
 
         /**
          * Returns an instance that encapsulates the given [exception] as failure.
          */
-        @InlineOnly public inline fun <T> failure(exception: Throwable): Result<T> =
+        @InlineOnly
+        public inline fun <T> failure(exception: Throwable): Result<T> =
             Result(createFailure(exception))
     }
 
@@ -181,7 +183,7 @@ public inline fun <R, T : R> Result<T>.getOrElse(onFailure: (exception: Throwabl
     contract {
         callsInPlace(onFailure, InvocationKind.AT_MOST_ONCE)
     }
-    return when(val exception = exceptionOrNull()) {
+    return when (val exception = exceptionOrNull()) {
         null -> value as T
         else -> onFailure(exception)
     }
@@ -216,7 +218,7 @@ public inline fun <R, T> Result<T>.fold(
         callsInPlace(onSuccess, InvocationKind.AT_MOST_ONCE)
         callsInPlace(onFailure, InvocationKind.AT_MOST_ONCE)
     }
-    return when(val exception = exceptionOrNull()) {
+    return when (val exception = exceptionOrNull()) {
         null -> onSuccess(value as T)
         else -> onFailure(exception)
     }
@@ -271,11 +273,11 @@ public inline fun <R, T> Result<T>.mapCatching(transform: (value: T) -> R): Resu
  */
 @InlineOnly
 @SinceKotlin("1.3")
-public inline fun <R, T: R> Result<T>.recover(transform: (exception: Throwable) -> R): Result<R> {
+public inline fun <R, T : R> Result<T>.recover(transform: (exception: Throwable) -> R): Result<R> {
     contract {
         callsInPlace(transform, InvocationKind.AT_MOST_ONCE)
     }
-    return when(val exception = exceptionOrNull()) {
+    return when (val exception = exceptionOrNull()) {
         null -> this
         else -> Result.success(transform(exception))
     }
@@ -291,9 +293,9 @@ public inline fun <R, T: R> Result<T>.recover(transform: (exception: Throwable) 
  */
 @InlineOnly
 @SinceKotlin("1.3")
-public inline fun <R, T: R> Result<T>.recoverCatching(transform: (exception: Throwable) -> R): Result<R> {
+public inline fun <R, T : R> Result<T>.recoverCatching(transform: (exception: Throwable) -> R): Result<R> {
     val value = value // workaround for inline classes BE bug
-    return when(val exception = exceptionOrNull()) {
+    return when (val exception = exceptionOrNull()) {
         null -> this
         else -> runCatching { transform(exception) }
     }
