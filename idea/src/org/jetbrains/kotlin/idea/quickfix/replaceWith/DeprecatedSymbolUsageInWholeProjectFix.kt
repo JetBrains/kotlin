@@ -58,6 +58,7 @@ class DeprecatedSymbolUsageInWholeProjectFix(
             is KtProperty -> referenceTarget
             is KtTypeAlias -> referenceTarget
             is KtConstructor<*> -> referenceTarget.getContainingClassOrObject() //TODO: constructor can be deprecated itself
+            is KtClass -> referenceTarget.takeIf { it.isAnnotation() }
             else -> null
         }
     }
