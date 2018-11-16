@@ -6,7 +6,6 @@
 package kotlin.script.experimental.jvmhost.test
 
 import kotlinx.coroutines.runBlocking
-import org.jetbrains.kotlin.daemon.common.toHexString
 import org.junit.Assert
 import org.junit.Test
 import java.io.*
@@ -177,6 +176,8 @@ private fun File.readCompiledScript(scriptCompilationConfiguration: ScriptCompil
         }
     }
 }
+
+private fun ByteArray.toHexString(): String = joinToString("", transform = { "%02x".format(it) })
 
 
 private class FileBasedScriptCache(val baseDir: File) : CompiledJvmScriptsCache {
