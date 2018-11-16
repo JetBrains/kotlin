@@ -43,7 +43,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
-import org.jetbrains.kotlin.utils.addToStdlib.sequenceOfLazyValues
+import org.jetbrains.kotlin.psi.KtNamedFunction
 
 class KotlinShortNamesCache(private val project: Project) : PsiShortNamesCache() {
     //region Classes
@@ -153,35 +153,75 @@ class KotlinShortNamesCache(private val project: Project) : PsiShortNamesCache()
         }
     }
 
-    override fun getMethodsByName(name: String, scope: GlobalSearchScope): Array<PsiMethod> {
-        return getMethodSequenceByName(name, scope).toList().toTypedArray()
+    override fun processMethodsWithName(
+        name: String,
+        processor: Processor<in PsiMethod>,
+        scope: GlobalSearchScope,
+        filter: IdFilter?
+    ): Boolean {
+        val allFunctionsProcessed = StubIndex.getInstance().processElements(
+            KotlinFunctionShortNameIndex.getInstance().key,
+            name,
+            project,
+            scope,
+            filter,
+            KtNamedFunction::class.java
+        ) { ktNamedFunction ->
+            val methods = LightClassUtil.getLightClassMethods(ktNamedFunction).filter { it.name == name }
+            return@processElements methods.all { method ->
+                processor.process(method)
+            }
+        }
+        if (!allFunctionsProcessed) {
+            return false
+        }
+
+        for (propertyName in getPropertyNamesCandidatesByAccessorName(Name.identifier(name))) {
+            val allProcessed = StubIndex.getInstance().processElements(
+                KotlinPropertyShortNameIndex.getInstance().key,
+                propertyName.asString(),
+                project,
+                scope,
+                filter,
+                KtNamedDeclaration::class.java
+            ) { ktNamedDeclaration ->
+                val methods = ktNamedDeclaration.getAccessorLightMethods()
+                    .asSequence()
+                    .filter { it.name == name }
+                    .map { it as? PsiMethod }
+                    .filterNotNull()
+
+                return@processElements methods.all { method ->
+                    processor.process(method)
+                }
+            }
+            if (!allProcessed) {
+                return false
+            }
+        }
+
+        return true
     }
 
-    private fun getMethodSequenceByName(name: String, scope: GlobalSearchScope): Sequence<PsiMethod> {
-        val propertiesIndex = KotlinPropertyShortNameIndex.getInstance()
-        val functionIndex = KotlinFunctionShortNameIndex.getInstance()
-
-        val kotlinFunctionsPsi = functionIndex.get(name, project, scope).asSequence()
-            .flatMap { LightClassUtil.getLightClassMethods(it).asSequence() }
-            .filter { it.name == name }
-
-        val propertyAccessorsPsi = sequenceOfLazyValues({ getPropertyNamesCandidatesByAccessorName(Name.identifier(name)) })
-            .flatMap { it.asSequence() }
-            .flatMap { propertiesIndex.get(it.asString(), project, scope).asSequence() }
-            .flatMap { it.getAccessorLightMethods().allDeclarations.asSequence() }
-            .filter { it.name == name }
-            .map { it as? PsiMethod }
-
-        return sequenceOfLazyValues({ kotlinFunctionsPsi }, { propertyAccessorsPsi }).flatMap { it }.filterNotNull()
+    override fun getMethodsByName(name: String, scope: GlobalSearchScope): Array<PsiMethod> {
+        return CancelableArrayCollectProcessor<PsiMethod>().also { processor ->
+            processMethodsWithName(name, processor, scope, null)
+        }.toArray(arrayOf())
     }
 
     override fun getMethodsByNameIfNotMoreThan(name: String, scope: GlobalSearchScope, maxCount: Int): Array<PsiMethod> {
         require(maxCount >= 0)
-        val psiMethods = getMethodSequenceByName(name, scope)
-        val limitedByMaxCount = psiMethods.take(maxCount).toList()
-        if (limitedByMaxCount.size == 0)
-            return PsiMethod.EMPTY_ARRAY
-        return limitedByMaxCount.toTypedArray()
+
+        return CancelableArrayCollectProcessor<PsiMethod>().also { processor ->
+            processMethodsWithName(
+                name,
+                { psiMethod ->
+                    processor.size != maxCount && processor.process(psiMethod)
+                },
+                scope,
+                null
+            )
+        }.toArray(PsiMethod.EMPTY_ARRAY)
     }
 
     override fun processMethodsWithName(name: String, scope: GlobalSearchScope, processor: Processor<PsiMethod>): Boolean =
