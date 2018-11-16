@@ -36,6 +36,7 @@ task buildSamplesWithPlatformLibs() {
     dependsOn ':workers:assemble'
 
     if (MPPTools.isMacos() || MPPTools.isLinux()) {
+        dependsOn ':curl:assemble'
         dependsOn ':nonBlockingEchoServer:assemble'
         dependsOn ':tensorflow:assemble'
     }
