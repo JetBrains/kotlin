@@ -125,7 +125,7 @@ internal abstract class ImportFixBase<T : KtExpression> protected constructor(
         }
     }
 
-    override fun startInWriteAction() = true
+    override fun startInWriteAction() = false
 
     fun isOutdated() = modificationCountOnCreate != PsiModificationTracker.SERVICE.getInstance(project).modificationCount
 
