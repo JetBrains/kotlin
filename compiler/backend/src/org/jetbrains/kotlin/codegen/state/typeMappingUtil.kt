@@ -125,5 +125,5 @@ private fun AnnotationDescriptor?.suppressWildcardsMode(): Boolean? {
     return (this ?: return null).allValueArguments.values.firstOrNull()?.value as? Boolean ?: true
 }
 
-private val JVM_SUPPRESS_WILDCARDS_ANNOTATION_FQ_NAME = FqName("kotlin.jvm.JvmSuppressWildcards")
-private val JVM_WILDCARD_ANNOTATION_FQ_NAME = FqName("kotlin.jvm.JvmWildcard")
+val JVM_SUPPRESS_WILDCARDS_ANNOTATION_FQ_NAME = FqName("kotlin.jvm.JvmSuppressWildcards")
+val JVM_WILDCARD_ANNOTATION_FQ_NAME = FqName("kotlin.jvm.JvmWildcard")
