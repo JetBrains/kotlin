@@ -31,11 +31,16 @@ public class BothSignatureWriter extends JvmSignatureWriter {
     public enum Mode {
         METHOD(CheckSignatureAdapter.METHOD_SIGNATURE),
         CLASS(CheckSignatureAdapter.CLASS_SIGNATURE),
-        TYPE(CheckSignatureAdapter.TYPE_SIGNATURE);
+        TYPE(CheckSignatureAdapter.TYPE_SIGNATURE),
+        // Expected to be used only from light classes for type mapping
+        // It's needed because CheckSignatureAdapter.TYPE_SIGNATURE doesn't allow V (void) types.
+        // They're only allowed with CheckSignatureAdapter.METHOD_SIGNATURE after calling `visitReturnType` while in light classes,
+        // we only need to map distinct types
+        SKIP_CHECKS(null);
 
-        private final int asmType;
+        private final Integer asmType;
 
-        Mode(int asmType) {
+        Mode(Integer asmType) {
             this.asmType = asmType;
         }
     }
@@ -46,7 +51,11 @@ public class BothSignatureWriter extends JvmSignatureWriter {
     private boolean generic = false;
 
     public BothSignatureWriter(@NotNull Mode mode) {
-        this.signatureVisitor = new CheckSignatureAdapter(mode.asmType, signatureWriter);
+        this.signatureVisitor =
+                mode.asmType != null
+                ? new CheckSignatureAdapter(mode.asmType, signatureWriter)
+                : signatureWriter
+        ;
     }
 
     private final Stack<SignatureVisitor> visitors = new Stack<>();
