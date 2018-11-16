@@ -5,17 +5,9 @@
 
 package test.collections
 
-import org.junit.Assume
-import org.junit.Test
 import kotlin.test.*
 
 class IndexOverflowJVMTest {
-
-    @BeforeTest
-    fun checkIsNotIgnored() {
-        Assume.assumeTrue(System.getProperty("kotlin.stdlib.test.long.sequences")?.toBoolean() ?: false)
-    }
-
 
     companion object {
         fun <T> repeatCounted(value: T, count: Long = Int.MAX_VALUE + 1L): Sequence<T> = Sequence {

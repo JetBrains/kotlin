@@ -48,6 +48,11 @@ sourceSets {
             srcDir 'test'
         }
     }
+    longRunningTest {
+        kotlin {
+            srcDir 'testLongRunning'
+        }
+    }
     java9 {
         java {
             srcDir 'java9'
@@ -59,6 +64,7 @@ configurations {
     commonSources
     coroutinesExperimentalTestCompile.extendsFrom(testCompile)
     coroutinesExperimentalMigrationTestCompile.extendsFrom(coroutinesExperimentalTestCompile)
+    longRunningTestCompile.extendsFrom(testCompile)
 }
 
 dependencies {
@@ -238,8 +244,12 @@ compileTestKotlin {
     }
 }
 
-test {
-    if (project.hasProperty("kotlin.stdlib.test.long.sequences")) {
-        systemProperty("kotlin.stdlib.test.long.sequences", "true")
-    }
+task longRunningTest(type: Test, dependsOn: longRunningTestClasses) {
+    group = "verification"
+    testClassesDirs = sourceSets.longRunningTest.output.classesDirs
+    classpath = sourceSets.longRunningTest.runtimeClasspath
+}
+
+if (project.hasProperty("kotlin.stdlib.test.long.running")) {
+    check.dependsOn(longRunningTest)
 }
