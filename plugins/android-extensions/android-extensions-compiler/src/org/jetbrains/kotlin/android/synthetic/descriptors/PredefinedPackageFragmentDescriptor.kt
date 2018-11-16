@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.android.synthetic.descriptors
 
-import com.intellij.openapi.util.ClearableLazyValue
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
@@ -38,7 +37,7 @@ class PredefinedPackageFragmentDescriptor(
         private val functions: (PredefinedPackageFragmentDescriptor) -> Collection<SimpleFunctionDescriptor> = { emptyList() }
 ) : PackageFragmentDescriptorImpl(module, fqName) {
     class LazyAndroidExtensionsPackageFragmentDescriptor(
-        val descriptor: ClearableLazyValue<PackageFragmentDescriptor>,
+        val descriptor: () -> PackageFragmentDescriptor,
         val isDeprecated: Boolean
     )
 
