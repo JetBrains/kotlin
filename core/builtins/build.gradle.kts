@@ -18,21 +18,23 @@ val clean by tasks.getting {
     }
 }
 
-val serialize by tasks.creating(JavaExec::class) {
+val JDK_18: String = rootProject.extra["JDK_18"] as String
+
+// We avoid using JavaExec task here due to IDEA-200192:
+// IDEA attaches debugger to all JavaExec tasks making our breakpoints trigger during irrelevant task execution
+val serialize by tasks.creating(Exec::class) {
     val outDir = builtinsSerialized
     val inDirs = arrayOf(builtinsSrc, builtinsNative)
     inDirs.forEach { inputs.dir(it) }
     outputs.dir(outDir)
 
-    classpath(rootProject.buildscript.configurations["bootstrapCompilerClasspath"])
-    main = "org.jetbrains.kotlin.serialization.builtins.RunKt"
-
-    doFirst {
-        // Reassign to remove debugger options. Workaround for IDEA-200192.
-        jvmArgs = listOf("-Didea.io.use.nio2=true")
-    }
-
-    args(outDir, *inDirs)
+    commandLine(
+        "$JDK_18/bin/java",
+        "-Didea.io.use.nio2=true",
+        "-cp", rootProject.buildscript.configurations["bootstrapCompilerClasspath"].asPath,
+        "org.jetbrains.kotlin.serialization.builtins.RunKt",
+        outDir, *inDirs
+    )
 }
 
 val builtinsJar by task<Jar> {
