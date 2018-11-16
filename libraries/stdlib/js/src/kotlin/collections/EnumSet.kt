@@ -1,8 +1,15 @@
+/*
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
+ */
+
 package kotlin.collections
 
-import kotlin.reflect.KClass
+actual abstract class EnumSet<E : Enum<E>>(
+    protected val clazz: JsClass<E>,
+    protected val universe: Array<E>
+) : MutableSet<E> {
 
-actual abstract class EnumSet<E : Enum<E>> protected actual constructor(clazz: KClass<E>, vararg universe: E) : MutableSet<E> {
     actual abstract override val size: Int
     actual abstract override fun isEmpty(): Boolean
     actual abstract override fun contains(element: @UnsafeVariance E): Boolean
@@ -14,19 +21,43 @@ actual abstract class EnumSet<E : Enum<E>> protected actual constructor(clazz: K
     actual abstract override fun removeAll(elements: Collection<E>): Boolean
     actual abstract override fun retainAll(elements: Collection<E>): Boolean
     actual abstract override fun clear()
+    abstract fun addAll()
+}
+
+fun <E : Enum<E>> enumSetOf(clazz: JsClass<E>, universe: Array<E>): EnumSet<E> = if (universe.size > 32) {
+    TODO() // implementation JumboEnumSet
+} else {
+    RegularEnumSet(clazz, universe)
 }
 
 @kotlin.internal.InlineOnly
-public actual inline fun <reified T : Enum<T>> enumSetOf(): EnumSet<T> {
-    TODO()
+public actual inline fun <reified E : Enum<E>> enumSetOf(): EnumSet<E> {
+    return enumSetOf(E::class.js, enumValues<E>())
 }
 
 @kotlin.internal.InlineOnly
-public actual inline fun <reified T : Enum<T>> enumSetOf(vararg elements: T): EnumSet<T> {
-    TODO()
+public actual inline fun <reified E : Enum<E>> enumSetOf(element: E): EnumSet<E> {
+    val result = enumSetOf(E::class.js, enumValues<E>())
+
+    result.add(element)
+
+    return result
 }
 
 @kotlin.internal.InlineOnly
-public actual inline fun <reified T : Enum<T>> enumSetAllOf(): EnumSet<T> {
-    TODO()
+public actual inline fun <reified E : Enum<E>> enumSetOf(vararg elements: E): EnumSet<E> {
+    val result = enumSetOf(E::class.js, enumValues<E>())
+
+    result.addAll(elements)
+
+    return result
+}
+
+@kotlin.internal.InlineOnly
+public actual inline fun <reified E : Enum<E>> enumSetAllOf(): EnumSet<E> {
+    val result = enumSetOf(E::class.js, enumValues<E>())
+
+    result.addAll()
+
+    return result
 }

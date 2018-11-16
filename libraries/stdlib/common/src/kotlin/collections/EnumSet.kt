@@ -1,12 +1,11 @@
 /*
- * Copyright in here? call @mirromutth on github
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package kotlin.collections
 
-import kotlin.reflect.KClass
-
-expect abstract class EnumSet<E : Enum<E>> protected constructor(clazz: KClass<E>, vararg universe: E) : MutableSet<E> {
+expect abstract class EnumSet<E : Enum<E>> : MutableSet<E> {
 
     // From Set
 

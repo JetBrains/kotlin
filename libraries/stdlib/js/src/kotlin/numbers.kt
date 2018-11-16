@@ -90,3 +90,69 @@ public actual fun Float.toRawBits(): Int = definedExternally
 @SinceKotlin("1.2")
 @kotlin.internal.InlineOnly
 public actual inline fun Float.Companion.fromBits(bits: Int): Float = js("Kotlin").floatFromBits(bits).unsafeCast<Float>()
+
+/**
+ * Returns the number of one-bits in the two's complement binary representation of the specified [Int] value.
+ */
+public actual fun Int.bits(): Int {
+    var i = this
+    i -= (i.ushr(1) and 0x55555555)
+    i = (i and 0x33333333) + (i.ushr(2) and 0x33333333)
+    i = (i + i.ushr(4)) and 0x0f0f0f0f
+    i += i.ushr(8)
+    i += i.ushr(16)
+    return i and 0x3f
+}
+
+/**
+ * Returns the number of one-bits in the two's complement binary representation of the specified [Long] value.
+ *
+ * TODO: kotlin stdlib-js should use `getHighBits` and `getLowBits` by internal method, not dynamic.
+ */
+public actual fun Long.bits(): Int = (this.asDynamic().getHighBits() as Int).bits() + (this.asDynamic().getLowBits() as Int).bits()
+
+/**
+ * @return The number of zero bits following the lowest-order ("rightmost")
+ * one-bit in the two's complement binary representation of the specified [Int] value.
+ * Returns 32 if the specified value has no one-bits in its two's complement representation,
+ * in other words if it is equal to zero.
+ */
+public actual fun Int.trailingZeros(): Int {
+    if (this == 0) {
+        return 32
+    }
+
+    var i = this
+    var n = 31
+    var j = 16
+    var y: Int
+
+    while (j > 1) {
+        y = i shl j
+        if (y != 0) {
+            n -= j
+            i = y
+        }
+        j = j ushr 1
+    }
+
+    return n - (i shl 1).ushr(31)
+}
+
+/**
+ * TODO: kotlin stdlib-js should use `getHighBits` and `getLowBits` by internal method, not dynamic.
+ *
+ * @return The number of zero bits following the lowest-order ("rightmost")
+ * one-bit in the two's complement binary representation of the specified [Long] value.
+ * Returns 64 if the specified value has no one-bits in its two's complement representation,
+ * in other words if it is equal to zero.
+ */
+public actual fun Long.trailingZeros(): Int {
+    val low = (this.asDynamic().getLowBits() as Int).trailingZeros()
+
+    return if (low < 32) {
+        low
+    } else { // is all zero-bits
+        (this.asDynamic().getHighBits() as Int).trailingZeros() + low
+    }
+}
