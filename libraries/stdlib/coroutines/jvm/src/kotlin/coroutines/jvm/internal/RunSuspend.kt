@@ -11,7 +11,7 @@ import kotlin.coroutines.EmptyCoroutineContext
 import kotlin.coroutines.startCoroutine
 
 /**
- * Wrapper for `suspend fun main` and `@Test suspend fun testXXX` functions. 
+ * Wrapper for `suspend fun main` and `@Test suspend fun testXXX` functions.
  */
 @SinceKotlin("1.3")
 internal fun runSuspend(block: suspend () -> Unit) {

@@ -67,7 +67,7 @@ internal abstract class BaseContinuationImpl(
         "Continuation at ${getStackTraceElement() ?: this::class.java.name}"
 
     // --- CoroutineStackFrame implementation
-    
+
     public override val callerFrame: CoroutineStackFrame?
         get() = completion as? CoroutineStackFrame
 
@@ -101,7 +101,7 @@ internal abstract class ContinuationImpl(
     constructor(completion: Continuation<Any?>?) : this(completion, completion?.context)
 
     public override val context: CoroutineContext
-        get() = _context!! 
+        get() = _context!!
 
     @Transient
     private var intercepted: Continuation<Any?>? = null

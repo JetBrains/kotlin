@@ -7,7 +7,6 @@ package kotlin.coroutines
 
 import kotlin.coroutines.intrinsics.*
 import kotlin.internal.InlineOnly
-import kotlin.jvm.JvmName
 
 /**
  * Interface representing a continuation after a suspension point that returns value of type `T`.
@@ -40,7 +39,8 @@ public annotation class RestrictsSuspension
  * Resumes the execution of the corresponding coroutine passing [value] as the return value of the last suspension point.
  */
 @SinceKotlin("1.3")
-@InlineOnly public inline fun <T> Continuation<T>.resume(value: T): Unit =
+@InlineOnly
+public inline fun <T> Continuation<T>.resume(value: T): Unit =
     resumeWith(Result.success(value))
 
 /**
@@ -48,7 +48,8 @@ public annotation class RestrictsSuspension
  * last suspension point.
  */
 @SinceKotlin("1.3")
-@InlineOnly public inline fun <T> Continuation<T>.resumeWithException(exception: Throwable): Unit =
+@InlineOnly
+public inline fun <T> Continuation<T>.resumeWithException(exception: Throwable): Unit =
     resumeWith(Result.failure(exception))
 
 
@@ -56,7 +57,8 @@ public annotation class RestrictsSuspension
  * Creates [Continuation] instance with a given [context] and a given implementation of [resumeWith] method.
  */
 @SinceKotlin("1.3")
-@InlineOnly public inline fun <T> Continuation(
+@InlineOnly
+public inline fun <T> Continuation(
     context: CoroutineContext,
     crossinline resumeWith: (Result<T>) -> Unit
 ): Continuation<T> =
