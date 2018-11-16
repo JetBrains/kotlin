@@ -900,7 +900,7 @@ class ExperimentalPluginTests {
                 version '1.0'
 
                 sourceSets.main.component {
-                    targets = ['wasm32']
+                    targets = ['wasm32', 'host']
                 }
 
                 publishing {
@@ -935,10 +935,6 @@ class ExperimentalPluginTests {
                         commonMain {
                             dependencies {
                                 implementation 'org.jetbrains.kotlin:kotlin-stdlib-common'
-                            }
-                        }
-                        wasmMain {
-                            dependencies {
                                 implementation 'test:native-producer:1.0'
                             }
                         }
@@ -974,7 +970,11 @@ class ExperimentalPluginTests {
             buildFile.writeText("""
                 plugins {
                     id 'kotlin-native'
+                    id 'maven-publish'
                 }
+
+                group 'test'
+                version '1.0'
 
                 repositories {
                     maven { url '$repoPath' }
@@ -989,20 +989,72 @@ class ExperimentalPluginTests {
                 dependencies {
                     implementation 'test:mpp:1.0'
                 }
+
+                publishing {
+                    repositories {
+                        maven { url = '$repoPath' }
+                    }
+                }
             """.trimIndent())
 
             settingsFile.appendText("enableFeaturePreview('GRADLE_METADATA')")
             generateSrcFile("consumer.kt", "fun consumer() = mpp()")
         }
 
+        val mppConsumer = KonanProject.createEmpty(tmpFolder.newFolder("mpp-consumer")).apply {
+            buildFile.writeText("""
+                plugins {
+                    id 'org.jetbrains.kotlin.multiplatform' version '${MultiplatformSpecification.KOTLIN_VERSION}'
+                }
+
+                group 'test'
+                version '1.0'
+
+                repositories {
+                    maven { url '$repoPath' }
+                    maven { url "${MultiplatformSpecification.KOTLIN_REPO}" }
+                    jcenter()
+                }
+
+                kotlin {
+                    sourceSets {
+                        commonMain.dependencies {
+                            implementation 'org.jetbrains.kotlin:kotlin-stdlib-common'
+                            implementation 'test:native-consumer:1.0'
+                        }
+                    }
+
+                    targets {
+                        fromPreset(presets.wasm32, 'wasm')
+                    }
+                }
+            """.trimIndent())
+
+            settingsFile.writeText("""
+                pluginManagement {
+                    repositories {
+                        maven { url "${MultiplatformSpecification.KOTLIN_REPO}" }
+                        jcenter()
+                    }
+                }
+                enableFeaturePreview('GRADLE_METADATA')
+            """.trimIndent())
+        }
+
         nativeProducer.createRunner().withArguments("publish").build()
         mpp.createRunner().withArguments("publish").build()
-        nativeConsumer.createRunner().withArguments("build").build()
+        mpp.createRunner().withArguments("dependencies").build().also {
+            assertFalse(it.output.contains("FAILED"))
+        }
+        nativeConsumer.createRunner().withArguments("publish").build()
+        mppConsumer.createRunner().withArguments("dependencies").build().also {
+            assertFalse(it.output.contains("FAILED"))
+        }
 
         val publishedFiles = listOf(
             "repo/test/native-producer/1.0/native-producer-1.0.module",
-            "repo/test/native-producer_debug/1.0/native-producer_debug-1.0.module",
-            "repo/test/native-producer_debug/1.0/native-producer_debug-1.0.klib",
+            "repo/test/native-producer_debug_wasm32/1.0/native-producer_debug_wasm32-1.0.module",
+            "repo/test/native-producer_debug_wasm32/1.0/native-producer_debug_wasm32-1.0.klib",
             "repo/test/mpp/1.0/mpp-1.0.module",
             "repo/test/mpp-wasm/1.0/mpp-wasm-1.0.module",
             "repo/test/mpp-wasm/1.0/mpp-wasm-1.0.klib"

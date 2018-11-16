@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.gradle.plugin.experimental.internal
 
 import org.gradle.api.Project
+import org.gradle.api.attributes.Usage
 import org.gradle.api.component.ComponentWithVariants
 import org.gradle.api.component.SoftwareComponent
 import org.gradle.api.internal.component.SoftwareComponentInternal
@@ -30,8 +31,11 @@ import org.gradle.internal.DisplayName
 import org.gradle.language.ProductionComponent
 import org.gradle.language.cpp.internal.NativeVariantIdentity
 import org.gradle.language.nativeplatform.internal.PublicationAwareComponent
+import org.jetbrains.kotlin.gradle.plugin.EXPECTED_BY_CONFIG_NAME
+import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.experimental.KotlinNativeBinary
 import org.jetbrains.kotlin.gradle.plugin.experimental.sourcesets.KotlinNativeSourceSetImpl
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import javax.inject.Inject
 
 open class KotlinNativeMainComponent @Inject constructor(
@@ -48,6 +52,13 @@ open class KotlinNativeMainComponent @Inject constructor(
 
     val outputKinds = LockableSetProperty(objectFactory.setProperty(OutputKind::class.java)).apply {
         set(mutableSetOf(OutputKind.KLIBRARY))
+    }
+
+    private val metadataDependencies = project.configurations.create(names.withPrefix("metadata")).apply {
+        isCanBeConsumed = false
+        attributes.attribute(Usage.USAGE_ATTRIBUTE, project.objects.named(Usage::class.java, KotlinUsages.KOTLIN_API))
+        attributes.attribute(KotlinPlatformType.attribute, KotlinPlatformType.common)
+        extendsFrom(getImplementationDependencies())
     }
 
     private val mainPublication = KotlinNativeVariant()
@@ -89,8 +100,8 @@ open class KotlinNativeMainComponent @Inject constructor(
 
         override fun getName(): String = this@KotlinNativeMainComponent.name
 
-        override fun getUsages(): Set<UsageContext> = emptySet()
-
+        override fun getUsages(): Set<UsageContext> =
+            setOf(MetadataUsageContext("metadata-api", project.objects, metadataDependencies))
     }
     // endregion
 
