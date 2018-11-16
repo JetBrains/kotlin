@@ -10,7 +10,7 @@ package kotlin.io
 
 import java.io.File
 import java.io.IOException
-import java.util.Stack
+import java.util.ArrayDeque
 
 /**
  * An enumeration to describe possible walk directions.
@@ -47,12 +47,12 @@ public class FileTreeWalk private constructor(
 
 
     /** Returns an iterator walking through files. */
-    override public fun iterator(): Iterator<File> = FileTreeWalkIterator()
+    override fun iterator(): Iterator<File> = FileTreeWalkIterator()
 
     /** Abstract class that encapsulates file visiting in some order, beginning from a given [root] */
     private abstract class WalkState(val root: File) {
         /** Call of this function proceeds to a next file for visiting and returns it */
-        abstract public fun step(): File?
+        public abstract fun step(): File?
     }
 
     /** Abstract class that encapsulates directory visiting in some order, beginning from a given [rootDir] */
@@ -66,17 +66,14 @@ public class FileTreeWalk private constructor(
     private inner class FileTreeWalkIterator : AbstractIterator<File>() {
 
         // Stack of directory states, beginning from the start directory
-        private val state = Stack<WalkState>()
+        private val state = ArrayDeque<WalkState>()
 
         init {
-            if (start.isDirectory) {
-                state.push(directoryState(start))
-            } else if (start.isFile) {
-                state.push(SingleFileState(start))
-            } else {
-                done()
+            when {
+                start.isDirectory -> state.push(directoryState(start))
+                start.isFile -> state.push(SingleFileState(start))
+                else -> done()
             }
-
         }
 
         override fun computeNext() {
@@ -95,14 +92,9 @@ public class FileTreeWalk private constructor(
             }
         }
 
-        tailrec private fun gotoNext(): File? {
-
-            if (state.empty()) {
-                // There is nothing in the state
-                return null
-            }
-            // Take next file from the top of the stack
-            val topState = state.peek()!!
+        private tailrec fun gotoNext(): File? {
+            // Take next file from the top of the stack or return if there's nothing left
+            val topState = state.peek() ?: return null
             val file = topState.step()
             if (file == null) {
                 // There is nothing more on the top of the stack, go back
@@ -133,7 +125,7 @@ public class FileTreeWalk private constructor(
             private var failed = false
 
             /** First all children, then root directory */
-            override public fun step(): File? {
+            override fun step(): File? {
                 if (!failed && fileList == null) {
                     if (onEnter?.invoke(root) == false) {
                         return null
@@ -170,7 +162,7 @@ public class FileTreeWalk private constructor(
             private var fileIndex = 0
 
             /** First root directory, then all children */
-            override public fun step(): File? {
+            override fun step(): File? {
                 if (!rootVisited) {
                     // First visit root
                     if (onEnter?.invoke(root) == false) {
