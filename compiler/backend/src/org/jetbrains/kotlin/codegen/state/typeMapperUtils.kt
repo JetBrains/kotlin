@@ -16,8 +16,10 @@
 
 package org.jetbrains.kotlin.codegen.state
 
+import org.jetbrains.kotlin.codegen.AccessorForConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.impl.TypeParameterDescriptorImpl
 import org.jetbrains.kotlin.name.Name
@@ -87,3 +89,7 @@ fun KotlinType.removeExternalProjections(): KotlinType {
     val newArguments = arguments.map { TypeProjectionImpl(Variance.INVARIANT, it.type) }
     return replace(newArguments)
 }
+
+fun isInlineClassConstructorAccessor(descriptor: FunctionDescriptor): Boolean =
+    descriptor is AccessorForConstructorDescriptor &&
+            descriptor.calleeDescriptor.constructedClass.isInline
