@@ -25,9 +25,11 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.synthetics.SyntheticClassOrObjectDescriptor
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
+import org.jetbrains.kotlin.resolve.isInlineClassType
 import org.jetbrains.kotlin.resolve.lazy.LazyClassContext
 import org.jetbrains.kotlin.resolve.lazy.declarations.ClassMemberDeclarationProvider
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyClassDescriptor
+import org.jetbrains.kotlin.resolve.unsubstitutedUnderlyingType
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.KotlinTypeFactory
 import org.jetbrains.kotlin.types.TypeProjectionImpl
@@ -270,9 +272,15 @@ object KSerializerDescriptorResolver {
             )
         )
         for (prop in parameterDescsAsProps) {
+            val type = if (prop.type.isInlineClassType()) {
+                prop.type.unsubstitutedUnderlyingType()!!
+            } else {
+                prop.type
+            }
+
             consParams.add(
                 ValueParameterDescriptorImpl(
-                    functionDescriptor, null, i++, prop.annotations, prop.name, prop.type.makeNullableIfNotPrimitive(), false, false,
+                    functionDescriptor, null, i++, prop.annotations, prop.name, type.makeNullableIfNotPrimitive(), false, false,
                     false, null, functionDescriptor.source
                 )
             )

@@ -160,6 +160,7 @@ import org.jetbrains.kotlin.search.AbstractAnnotatedMembersSearchTest
 import org.jetbrains.kotlin.search.AbstractInheritorsSearchTest
 import org.jetbrains.kotlin.shortenRefs.AbstractShortenRefsTest
 import org.jetbrains.kotlin.test.TargetBackend
+import org.jetbrains.kotlinx.serialization.compiler.AbstractBytecodeListingTestForSerialization
 
 fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
@@ -1133,6 +1134,12 @@ fun main(args: Array<String>) {
 
         testClass<AbstractParcelQuickFixTest> {
             model("android/parcel/quickfix", pattern = """^(\w+)\.((before\.Main\.\w+)|(test))$""", testMethod = "doTestWithExtraFile")
+        }
+    }
+
+    testGroup("plugins/kotlin-serialization/kotlin-serialization-compiler/test", "plugins/kotlin-serialization/kotlin-serialization-compiler/testData") {
+        testClass<AbstractBytecodeListingTestForSerialization> {
+            model("bytecodeListing", extension = "kt", targetBackend = TargetBackend.JVM)
         }
     }
 

@@ -1,0 +1,41 @@
+@kotlin.Metadata
+public final class Simple$$serializer {
+    private synthetic final static field $$serialDesc: kotlinx.serialization.SerialDescriptor
+    public final static field INSTANCE: Simple$$serializer
+    inner class Simple$$serializer
+    static method <clinit>(): void
+    private method <init>(): void
+    public @org.jetbrains.annotations.NotNull method deserialize(@org.jetbrains.annotations.NotNull p0: kotlinx.serialization.Decoder): Simple
+    public synthetic method deserialize(p0: kotlinx.serialization.Decoder): java.lang.Object
+    public @org.jetbrains.annotations.NotNull method getDescriptor(): kotlinx.serialization.SerialDescriptor
+    public @org.jetbrains.annotations.NotNull method patch(@org.jetbrains.annotations.NotNull p0: kotlinx.serialization.Decoder, @org.jetbrains.annotations.NotNull p1: Simple): Simple
+    public synthetic method patch(p0: kotlinx.serialization.Decoder, p1: java.lang.Object): java.lang.Object
+    public method serialize(@org.jetbrains.annotations.NotNull p0: kotlinx.serialization.Encoder, @org.jetbrains.annotations.NotNull p1: Simple): void
+    public synthetic method serialize(p0: kotlinx.serialization.Encoder, p1: java.lang.Object): void
+}
+
+@kotlin.Metadata
+public final class Simple$Companion {
+    inner class Simple$Companion
+    private method <init>(): void
+    public synthetic method <init>(p0: kotlin.jvm.internal.DefaultConstructorMarker): void
+    public final @org.jetbrains.annotations.NotNull method serializer(): kotlinx.serialization.KSerializer
+}
+
+@kotlinx.serialization.Serializable
+@kotlin.Metadata
+public final class Simple {
+    public final static field Companion: Simple$Companion
+    private final field arg: int
+    private final @org.jetbrains.annotations.NotNull field value: java.lang.String
+    inner class Simple$$serializer
+    inner class Simple$Companion
+    static method <clinit>(): void
+    public method <init>(@org.jetbrains.annotations.NotNull p0: java.lang.String, p1: int): void
+    public method <init>(p0: int, @org.jetbrains.annotations.Nullable p1: java.lang.String, @kotlinx.serialization.Optional p2: int, @org.jetbrains.annotations.Nullable p3: kotlinx.serialization.SerializationConstructorMarker): void
+    public synthetic method <init>(p0: java.lang.String, p1: int, p2: int, p3: kotlin.jvm.internal.DefaultConstructorMarker): void
+    public synthetic deprecated static @kotlinx.serialization.Optional method arg$annotations(): void
+    public final method getArg(): int
+    public final @org.jetbrains.annotations.NotNull method getValue(): java.lang.String
+    public method write$Self(@org.jetbrains.annotations.NotNull p0: kotlinx.serialization.CompositeEncoder, @org.jetbrains.annotations.NotNull p1: kotlinx.serialization.SerialDescriptor): void
+}
