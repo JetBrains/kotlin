@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.idea.quickfix.replaceWith
 import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
-import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.codeInliner.UsageReplacementStrategy
 import org.jetbrains.kotlin.idea.codeInliner.replaceUsagesInWholeProject
@@ -31,9 +30,9 @@ import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.renderer.ParameterNameRenderingPolicy
 
 class DeprecatedSymbolUsageInWholeProjectFix(
-        element: KtSimpleNameExpression,
-        replaceWith: ReplaceWith,
-        private val text: String
+    element: KtSimpleNameExpression,
+    replaceWith: ReplaceWith,
+    private val text: String
 ) : DeprecatedSymbolUsageFixBase(element, replaceWith) {
 
     override fun getFamilyName() = "Replace deprecated symbol usage in whole project"
@@ -77,9 +76,14 @@ class DeprecatedSymbolUsageInWholeProjectFix(
         }
 
         override fun createAction(diagnostic: Diagnostic): IntentionAction? {
-            val (nameExpression, replacement, descriptor) = DeprecatedSymbolUsageFixBase.extractDataFromDiagnostic(diagnostic) ?: return null
+            val (nameExpression, replacement, descriptor) =
+                    DeprecatedSymbolUsageFixBase.extractDataFromDiagnostic(diagnostic) ?: return null
             val descriptorName = RENDERER.render(descriptor)
-            return DeprecatedSymbolUsageInWholeProjectFix(nameExpression, replacement, "Replace usages of '$descriptorName' in whole project")
+            return DeprecatedSymbolUsageInWholeProjectFix(
+                nameExpression,
+                replacement,
+                "Replace usages of '$descriptorName' in whole project"
+            )
         }
     }
 }
