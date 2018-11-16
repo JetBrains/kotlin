@@ -1,0 +1,11 @@
+---
+// KT-28065
+struct StructWithConstFields {
+    int x;
+    const int y;
+};
+
+struct StructWithConstFields getStructWithConstFields() {
+    struct StructWithConstFields result = { 111, 222 };
+    return result;
+}

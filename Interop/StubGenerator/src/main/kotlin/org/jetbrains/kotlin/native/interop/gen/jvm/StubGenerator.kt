@@ -74,9 +74,6 @@ class StubGenerator(
         typedefNames.toSet()
     }
 
-    val StructDecl.isAnonymous: Boolean
-        get() = spelling.contains("(anonymous ") // TODO: it is a hack
-
     val anonymousStructKotlinNames = mutableMapOf<StructDecl, String>()
 
     /**
@@ -981,6 +978,7 @@ class StubGenerator(
     val libraryForCStubs = configuration.library.copy(
             includes = mutableListOf<String>().apply {
                 add("stdint.h")
+                add("string.h")
                 if (platform == KotlinPlatform.JVM) {
                     add("jni.h")
                 }

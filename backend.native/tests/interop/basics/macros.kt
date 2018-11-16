@@ -38,4 +38,11 @@ fun main(args: Array<String>) {
     assertEquals(42, INT_CALL)
     assertEquals(84, CALL_SUM)
     assertEquals(5, GLOBAL_VAR)
+
+    memScoped {
+        val counter = alloc<IntVar>()
+        counter.value = 42
+        increment(counter.ptr)
+        assertEquals(43, counter.value)
+    }
 }

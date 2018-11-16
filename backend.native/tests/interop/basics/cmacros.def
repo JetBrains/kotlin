@@ -58,3 +58,6 @@ int global_var = 5;
 #define BAD1 bar
 #define BAD2 5;
 #define BAD3 { foo(); }
+
+void increment(int* counter);
+#define increment(counter) { (*(counter))++; }

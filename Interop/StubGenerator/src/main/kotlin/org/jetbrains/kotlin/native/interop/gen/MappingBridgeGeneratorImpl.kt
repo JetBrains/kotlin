@@ -94,7 +94,10 @@ class MappingBridgeGeneratorImpl(
                     ""
                 }
                 is RecordType -> {
-                    out("*(${unwrappedReturnType.decl.spelling}*)${bridgeNativeValues.last()} = $nativeResult;")
+                    val kniStructResult = "kniStructResult"
+
+                    out("${unwrappedReturnType.decl.spelling} $kniStructResult = $nativeResult;")
+                    out("memcpy(${bridgeNativeValues.last()}, &$kniStructResult, sizeof($kniStructResult));")
                     ""
                 }
                 else -> {

@@ -2775,6 +2775,10 @@ kotlinNativeInterop {
         defFile 'interop/basics/cunsupported.def'
     }
 
+    cstructs {
+        defFile 'interop/basics/cstructs.def'
+    }
+
     if (isMac()) {
         objcSmoke {
             defFile 'interop/objc/objcSmoke.def'
@@ -2866,6 +2870,12 @@ task interop_unsupported(type: RunInteropKonanTest) {
     disabled = (project.testTarget == 'wasm32') // No interop for wasm yet.
     source = "interop/basics/unsupported.kt"
     interop = 'cunsupported'
+}
+
+task interop_structs(type: RunInteropKonanTest) {
+    disabled = (project.testTarget == 'wasm32') // No interop for wasm yet.
+    source = "interop/basics/structs.kt"
+    interop = 'cstructs'
 }
 
 task interop_echo_server(type: RunInteropKonanTest) {

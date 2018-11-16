@@ -27,4 +27,7 @@ fun main(args: Array<String>) {
     assert(g5[0] == 16)
 
     assert(g6 == g3.ptr)
+
+    assert(g8.toLong() == 0x1L)
+    assert(g9.toLong() == 0x2L)
 }

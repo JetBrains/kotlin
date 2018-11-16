@@ -188,7 +188,7 @@ sealed class TypeInfo {
 
     }
 
-    class Pointer(val pointee: KotlinType) : TypeInfo() {
+    class Pointer(val pointee: KotlinType, val cPointee: Type) : TypeInfo() {
         override fun argToBridged(expr: String) = "$expr.rawValue"
 
         override fun argFromBridged(expr: KotlinExpression, scope: KotlinScope, nativeBacked: NativeBacked) =
@@ -198,7 +198,7 @@ sealed class TypeInfo {
             get() = BridgedType.NATIVE_PTR
 
         override fun cFromBridged(expr: NativeExpression, scope: NativeScope, nativeBacked: NativeBacked) =
-                "(void*)$expr" // Note: required for JVM
+                "(${getPointerTypeStringRepresentation(cPointee)})$expr"
 
         override fun constructPointedType(valueType: KotlinType) = KotlinTypes.cPointerVarOf.typeWith(valueType)
     }
@@ -423,13 +423,13 @@ fun mirror(declarationMapper: DeclarationMapper, type: Type): TypeMirror = when 
         val pointeeType = type.pointeeType
         val unwrappedPointeeType = pointeeType.unwrapTypedefs()
         if (unwrappedPointeeType is VoidType) {
-            val info = TypeInfo.Pointer(KotlinTypes.cOpaque)
+            val info = TypeInfo.Pointer(KotlinTypes.cOpaque, pointeeType)
             TypeMirror.ByValue(KotlinTypes.cOpaquePointerVar, info, KotlinTypes.cOpaquePointer)
         } else if (unwrappedPointeeType is ArrayType) {
             mirror(declarationMapper, pointeeType)
         } else {
             val pointeeMirror = mirror(declarationMapper, pointeeType)
-            val info = TypeInfo.Pointer(pointeeMirror.pointedType)
+            val info = TypeInfo.Pointer(pointeeMirror.pointedType, pointeeType)
             TypeMirror.ByValue(
                     KotlinTypes.cPointerVar.typeWith(pointeeMirror.pointedType),
                     info,
@@ -444,7 +444,7 @@ fun mirror(declarationMapper: DeclarationMapper, type: Type): TypeMirror = when 
         if (type.elemType.unwrapTypedefs() is ArrayType) {
             elemTypeMirror
         } else {
-            val info = TypeInfo.Pointer(elemTypeMirror.pointedType)
+            val info = TypeInfo.Pointer(elemTypeMirror.pointedType, type.elemType)
             TypeMirror.ByValue(
                     KotlinTypes.cArrayPointerVar.typeWith(elemTypeMirror.pointedType),
                     info,

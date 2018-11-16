@@ -21,6 +21,9 @@ import org.jetbrains.kotlin.native.interop.indexer.*
 val EnumDef.isAnonymous: Boolean
     get() = spelling.contains("(anonymous ") // TODO: it is a hack
 
+val StructDecl.isAnonymous: Boolean
+    get() = spelling.contains("(anonymous ") // TODO: it is a hack
+
 /**
  * Returns the expression which could be used for this type in C code.
  * Note: the resulting string doesn't exactly represent this type, but it is enough for current purposes.
@@ -55,6 +58,24 @@ fun Type.getStringRepresentation(): String = when (this) {
     }
 
     else -> throw kotlin.NotImplementedError()
+}
+
+fun getPointerTypeStringRepresentation(pointee: Type): String =
+        (getStringRepresentationOfPointee(pointee) ?: "void") + "*"
+
+private fun getStringRepresentationOfPointee(type: Type): String? {
+    val unwrapped = type.unwrapTypedefs()
+
+    return when (unwrapped) {
+        is PrimitiveType -> unwrapped.getStringRepresentation()
+        is PointerType -> getStringRepresentationOfPointee(unwrapped.pointeeType)?.plus("*")
+        is RecordType -> if (unwrapped.decl.isAnonymous || unwrapped.decl.spelling == "struct __va_list_tag") {
+            null
+        } else {
+            unwrapped.decl.spelling
+        }
+        else -> null
+    }
 }
 
 private val ObjCQualifiedPointer.protocolQualifier: String
