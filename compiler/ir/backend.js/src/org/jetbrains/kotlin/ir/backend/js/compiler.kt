@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.js.analyze.TopDownAnalyzerFacadeForJS
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
@@ -29,16 +30,23 @@ fun compile(
     irDependencyModules: List<IrModuleFragment> = listOf()
 ): Result {
     val analysisResult =
-        TopDownAnalyzerFacadeForJS.analyzeFiles(files, project, configuration, dependencies.mapNotNull { it as? ModuleDescriptorImpl }, emptyList())
+        TopDownAnalyzerFacadeForJS.analyzeFiles(
+            files,
+            project,
+            configuration,
+            dependencies.mapNotNull { it as? ModuleDescriptorImpl },
+            emptyList()
+        )
 
     ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
 
     TopDownAnalyzerFacadeForJS.checkForErrors(files, analysisResult.bindingContext)
 
-    val psi2IrTranslator = Psi2IrTranslator(configuration.languageVersionSettings)
-    val psi2IrContext = psi2IrTranslator.createGeneratorContext(analysisResult.moduleDescriptor, analysisResult.bindingContext)
+    val symbolTable = SymbolTable()
+    irDependencyModules.forEach { symbolTable.loadModule(it)}
 
-    irDependencyModules.forEach { psi2IrContext.symbolTable.loadModule(it)}
+    val psi2IrTranslator = Psi2IrTranslator(configuration.languageVersionSettings)
+    val psi2IrContext = psi2IrTranslator.createGeneratorContext(analysisResult.moduleDescriptor, analysisResult.bindingContext, symbolTable)
 
     val moduleFragment = psi2IrTranslator.generateModuleFragment(psi2IrContext, files)
 

@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.*
 import org.jetbrains.kotlin.ir.declarations.lazy.IrLazySymbolTable
+import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.symbols.*
@@ -465,6 +466,17 @@ open class SymbolTable : ReferenceSymbolTable {
                 // What about scoped type parameters?
                 globalTypeParameterSymbolTable.descriptorToSymbol[declaration.descriptor] = declaration.symbol
                 super.visitTypeParameter(declaration)
+            }
+
+            override fun visitCall(expression: IrCall) {
+                expression.symbol.let {
+                    when (it) {
+                        is IrSimpleFunctionSymbol -> simpleFunctionSymbolTable.descriptorToSymbol[it.descriptor] = it
+                        is IrConstructorSymbol -> constructorSymbolTable.descriptorToSymbol[it.descriptor] = it
+                    }
+                }
+
+                super.visitCall(expression)
             }
         })
     }

@@ -37,7 +37,6 @@ import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.NameUtils
-import org.jetbrains.kotlin.resolve.descriptorUtil.parents
 import java.util.*
 
 interface LocalNameProvider {
@@ -73,13 +72,9 @@ class LocalDeclarationsLowering(
 
     override fun lower(irDeclarationContainer: IrDeclarationContainer) {
         if (irDeclarationContainer is IrDeclaration) {
+            val parents = irDeclarationContainer.parents
 
-            // TODO: in case of `crossinline` lambda the @containingDeclaration and @parent points to completely different locations
-//            val parentsDecl = irDeclarationContainer.parents
-            val parentsDesc = irDeclarationContainer.descriptor.parents
-
-            if (parentsDesc.any { it is CallableDescriptor }) {
-
+            if (parents.any { it is IrFunction || it is IrField }) {
                 // Lowering of non-local declarations handles all local declarations inside.
                 // This declaration is local and shouldn't be considered.
                 return
@@ -180,9 +175,9 @@ class LocalDeclarationsLowering(
         val oldParameterToNew: MutableMap<IrValueParameter, IrValueParameter> = mutableMapOf()
         val newParameterToCaptured: MutableMap<IrValueParameter, IrValueSymbol> = mutableMapOf()
 
-        fun lowerLocalDeclarations(): List<IrDeclaration>? {
+        fun lowerLocalDeclarations(): List<IrDeclaration> {
             collectLocalDeclarations()
-            if (localFunctions.isEmpty() && localClasses.isEmpty()) return null
+            if (localFunctions.isEmpty() && localClasses.isEmpty()) return listOf(memberDeclaration)
 
             collectClosures()
 
