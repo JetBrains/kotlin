@@ -5141,6 +5141,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         public void testShortArrayOf() throws Exception {
             runTest("idea/testData/inspectionsLocal/removeRedundantSpreadOperator/shortArrayOf.kt");
         }
+
+        @TestMetadata("spredOperatorArgument.kt")
+        public void testSpredOperatorArgument() throws Exception {
+            runTest("idea/testData/inspectionsLocal/removeRedundantSpreadOperator/spredOperatorArgument.kt");
+        }
     }
 
     @TestMetadata("idea/testData/inspectionsLocal/removeSetterParameterType")
