@@ -61,6 +61,7 @@ dependencies {
     compile group: 'org.jetbrains', name: 'annotations', version:'13.0'
 
     testCompile project(':kotlin-test:kotlin-test-junit')
+    testCompile sourceSets.coroutines.output
 
     coroutinesCompile sourceSets.main.output
 

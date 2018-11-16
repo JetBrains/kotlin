@@ -5,9 +5,9 @@
 
 @file:Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER", "CANNOT_OVERRIDE_INVISIBLE_MEMBER")
 
-package test.kotlin.coroutines
+package test.coroutines
 
-import org.junit.Test
+import kotlin.test.Test
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.EmptyCoroutineContext
 import kotlin.coroutines.jvm.internal.*
