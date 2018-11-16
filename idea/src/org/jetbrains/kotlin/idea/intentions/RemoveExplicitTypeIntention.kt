@@ -18,13 +18,17 @@ package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
+import org.jetbrains.kotlin.builtins.isExtensionFunctionType
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.refactoring.addTypeArgumentsIfNeeded
 import org.jetbrains.kotlin.idea.refactoring.getQualifiedTypeArgumentList
 import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 
 class RemoveExplicitTypeIntention : SelfTargetingRangeIntention<KtCallableDeclaration>(
@@ -76,7 +80,12 @@ class RemoveExplicitTypeIntention : SelfTargetingRangeIntention<KtCallableDeclar
         fun redundantTypeSpecification(element: KtCallableDeclaration, initializer: KtExpression?): Boolean {
             if (initializer == null) return true
             if (initializer !is KtLambdaExpression && initializer !is KtNamedFunction) return true
-            val functionType = element.typeReference?.typeElement as? KtFunctionType ?: return true
+            val typeReference = element.typeReference
+            val functionType = typeReference?.typeElement as? KtFunctionType ?: return true
+
+            val type = element.analyze(BodyResolveMode.PARTIAL)[BindingContext.TYPE, typeReference]
+            if (type?.isExtensionFunctionType == true) return false
+
             if (functionType.parameters.isEmpty()) return true
             val valueParameters = when (initializer) {
                 is KtLambdaExpression -> initializer.valueParameters

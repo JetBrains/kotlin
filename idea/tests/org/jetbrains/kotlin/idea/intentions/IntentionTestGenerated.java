@@ -13316,6 +13316,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             runTest("idea/testData/intentions/removeExplicitType/anonymousFunctionInitializer3.kt");
         }
 
+        @TestMetadata("extensionFunction.kt")
+        public void testExtensionFunction() throws Exception {
+            runTest("idea/testData/intentions/removeExplicitType/extensionFunction.kt");
+        }
+
         @TestMetadata("funNoBody.kt")
         public void testFunNoBody() throws Exception {
             runTest("idea/testData/intentions/removeExplicitType/funNoBody.kt");
