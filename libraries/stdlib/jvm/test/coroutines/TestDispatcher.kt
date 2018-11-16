@@ -3,7 +3,7 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
-package test.kotlin.coroutines
+package test.coroutines
 
 import java.io.Closeable
 import java.util.concurrent.ExecutorService

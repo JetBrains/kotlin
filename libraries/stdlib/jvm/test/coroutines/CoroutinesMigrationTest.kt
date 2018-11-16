@@ -3,9 +3,9 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
-@file:Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
+@file:Suppress("ObsoleteExperimentalCoroutines")
 
-package test.kotlin.coroutines.experimental.migration
+package test.coroutines.experimental.migration
 
 import kotlin.coroutines.experimental.buildSequence as experimentalBuildSequence
 import kotlin.coroutines.experimental.SequenceBuilder as ExperimentalSequenceBuilder

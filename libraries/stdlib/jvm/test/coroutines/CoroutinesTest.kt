@@ -3,11 +3,10 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
-package test.kotlin.coroutines
+@file:Suppress("ObsoleteExperimentalCoroutines")
 
-import java.io.Closeable
-import java.util.concurrent.ExecutorService
-import java.util.concurrent.Executors
+package test.coroutines
+
 import java.util.concurrent.Semaphore
 import kotlin.coroutines.*
 import kotlin.coroutines.experimental.startCoroutine
