@@ -37,18 +37,20 @@ class NewMultiplatformIT : BaseGradleIT() {
     @Test
     fun testLibAndApp() = doTestLibAndApp(
         "sample-lib",
-        "sample-app",
-        gradleVersion
+        "sample-app"
     )
 
     @Test
     fun testLibAndAppWithGradleKotlinDsl() = doTestLibAndApp(
         "sample-lib-gradle-kotlin-dsl",
         "sample-app-gradle-kotlin-dsl",
-        GradleVersionRequired.AtLeast("4.10.2") // Using a SNAPSHOT version in the plugins DSL requires 4.10
+        GradleVersionRequired.AtLeast("4.9") // earlier Gradle versions fail at accessors codegen
     )
 
-    fun doTestLibAndApp(libProjectName: String, appProjectName: String, gradleVersionRequired: GradleVersionRequired) {
+    private fun doTestLibAndApp(
+        libProjectName: String, appProjectName: String,
+        gradleVersionRequired: GradleVersionRequired = gradleVersion
+    ) {
         val libProject = transformProjectWithPluginsDsl(libProjectName, gradleVersionRequired, "new-mpp-lib-and-app")
         val appProject = transformProjectWithPluginsDsl(appProjectName, gradleVersionRequired, "new-mpp-lib-and-app")
         val oldStyleAppProject = Project("sample-old-style-app", gradleVersionRequired, "new-mpp-lib-and-app")
@@ -234,7 +236,9 @@ class NewMultiplatformIT : BaseGradleIT() {
             classesWithoutJava = getFilePathsSet("build/classes")
         }
 
-        gradleBuildScript().modify { it.replace("presets.jvm", "presets.jvmWithJava") }
+        gradleBuildScript().modify {
+            it.replace("presets.jvm", "presets.jvmWithJava").replace("jvm(", "targetFromPreset(presets.jvmWithJava, ")
+        }
 
         projectDir.resolve("src/main/java").apply {
             mkdirs()

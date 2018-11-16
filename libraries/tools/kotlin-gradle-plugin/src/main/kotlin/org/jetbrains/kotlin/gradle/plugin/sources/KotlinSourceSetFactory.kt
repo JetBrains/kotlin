@@ -18,7 +18,7 @@ import java.io.File
 internal abstract class KotlinSourceSetFactory<T : KotlinSourceSet> internal constructor(
     protected val fileResolver: FileResolver,
     protected val project: Project
-) : NamedDomainObjectFactory<T> {
+) : NamedDomainObjectFactory<KotlinSourceSet> {
 
     abstract val itemClass: Class<T>
 
