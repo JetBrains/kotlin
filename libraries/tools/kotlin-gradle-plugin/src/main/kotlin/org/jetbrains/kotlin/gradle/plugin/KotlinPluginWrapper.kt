@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.gradle.plugin
 
+import org.gradle.api.NamedDomainObjectFactory
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.internal.FeaturePreviews
@@ -28,7 +29,6 @@ import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMultiplatformPlugin
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSetFactory
-import org.jetbrains.kotlin.gradle.plugin.sources.KotlinSourceSetFactory
 import org.jetbrains.kotlin.gradle.tasks.KOTLIN_COMPILER_EMBEDDABLE
 import org.jetbrains.kotlin.gradle.tasks.KOTLIN_MODULE_GROUP
 import java.io.FileNotFoundException
@@ -44,7 +44,7 @@ abstract class KotlinBasePluginWrapper(
 
     open val projectExtensionClass: KClass<out KotlinProjectExtension> get() = KotlinProjectExtension::class
 
-    internal open fun kotlinSourceSetFactory(project: Project): KotlinSourceSetFactory<out KotlinSourceSet> =
+    internal open fun kotlinSourceSetFactory(project: Project): NamedDomainObjectFactory<KotlinSourceSet> =
         DefaultKotlinSourceSetFactory(project, fileResolver)
 
     override fun apply(project: Project) {
@@ -64,8 +64,8 @@ abstract class KotlinBasePluginWrapper(
         val kotlinGradleBuildServices = KotlinGradleBuildServices.getInstance(project.gradle)
 
         project.createKotlinExtension(projectExtensionClass).apply {
-            fun <T : KotlinSourceSet> kotlinSourceSetContainer(factory: KotlinSourceSetFactory<T>) =
-                project.container(factory.itemClass, factory)
+            fun kotlinSourceSetContainer(factory: NamedDomainObjectFactory<KotlinSourceSet>) =
+                project.container(KotlinSourceSet::class.java, factory)
 
             project.kotlinExtension.sourceSets = kotlinSourceSetContainer(kotlinSourceSetFactory(project))
         }

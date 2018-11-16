@@ -38,9 +38,9 @@ open class KotlinProjectExtension {
     val experimental: ExperimentalExtension
         get() = DslObject(this).extensions.getByType(ExperimentalExtension::class.java)
 
-    var sourceSets: NamedDomainObjectContainer<out KotlinSourceSet>
+    var sourceSets: NamedDomainObjectContainer<KotlinSourceSet>
         @Suppress("UNCHECKED_CAST")
-        get() = DslObject(this).extensions.getByName("sourceSets") as NamedDomainObjectContainer<out KotlinSourceSet>
+        get() = DslObject(this).extensions.getByName("sourceSets") as NamedDomainObjectContainer<KotlinSourceSet>
         internal set(value) {
             DslObject(this).extensions.add("sourceSets", value)
         }

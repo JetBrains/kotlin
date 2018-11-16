@@ -21,11 +21,11 @@ kotlin {
     macosX64("macos64")
       
     targets.all {
-        mavenPublication {
-            pom.withXml {
+        mavenPublication(Action<MavenPublication> {
+            pom.withXml(Action<XmlProvider> {
                 asNode().appendNode("name", "Sample MPP library")
-            }
-        }
+            })
+        })
     }
 
     sourceSets {
