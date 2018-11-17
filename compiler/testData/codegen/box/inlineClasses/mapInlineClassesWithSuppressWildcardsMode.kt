@@ -1,5 +1,5 @@
 // WITH_RUNTIME
-// IGNORE_BACKEND: JS, JS_IR
+// TARGET_BACKEND: JVM
 
 class Foo<T>(val x: Int)
 
