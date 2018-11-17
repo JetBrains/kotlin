@@ -77,13 +77,6 @@ jar {
     // from sourceSets.java9.output
 }
 
-task coroutinesJar(type: Jar) {
-    version = null
-    classifier = 'coroutines'
-    manifestAttributes(manifest, project, 'Main')
-    project.configure(manifest) { attributes 'Kotlin-Version': '1.3' }
-}
-
 sourcesJar {
     from "${rootDir}/core/builtins/native"
     from sourceSets.coroutines.kotlin
@@ -138,13 +131,6 @@ dist {
         include 'annotations*.jar'
     }
 }
-
-task experimentalJarsDist(type: Copy) {
-    from coroutinesJar
-    into distDir
-}
-
-dist.dependsOn experimentalJarsDist
 
 task dexMethodCount(type: DexMethodCount) {
     from jar
