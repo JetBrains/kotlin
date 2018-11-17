@@ -6,7 +6,7 @@
 package kotlin.collections
 
 /**
- * [EnumSet] private implementation class, for [Int.SIZE_BITS] or fewer constants enum types.
+ * [EnumSet] private implementation class, for enum types those with [Int.SIZE_BITS] or fewer elements.
  */
 internal class RegularEnumSet<E : Enum<E>>(type: JsClass<E>, universe: Array<E>) : EnumSet<E>(type, universe) {
 

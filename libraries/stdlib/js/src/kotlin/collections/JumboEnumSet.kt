@@ -5,6 +5,9 @@
 
 package kotlin.collections
 
+/**
+ * Private implementation class for EnumSet, for enum types those with more than [Int.SIZE_BITS] elements
+ */
 internal class JumboEnumSet<E : Enum<E>>(type: JsClass<E>, universe: Array<E>) : EnumSet<E>(type, universe) {
 
     private companion object {
