@@ -19,8 +19,6 @@ sourceSets {
             srcDir 'src'
             srcDir commonSrcDir
             srcDir '../unsigned/src'
-            srcDir '../coroutines/common/src'
-            srcDir '../coroutines/src'
         }
     }
     test {

@@ -19,7 +19,6 @@ sourceSets {
             srcDir "${rootDir}/core/builtins/src"
             srcDir 'runtime'
             srcDir 'src'
-            srcDir '../coroutines/jvm/src'
         }
     }
     experimental {
