@@ -3098,7 +3098,7 @@
                      groupPath="Kotlin"
                      groupName="Style issues"
                      enabledByDefault="true"
-                     level="INFORMATION"
+                     level="WEAK WARNING"
                      language="kotlin"
     />
 

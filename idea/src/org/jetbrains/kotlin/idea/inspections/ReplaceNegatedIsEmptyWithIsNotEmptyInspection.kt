@@ -27,7 +27,7 @@ class ReplaceNegatedIsEmptyWithIsNotEmptyInspection : AbstractKotlinInspection()
                 holder.registerProblem(
                     simpleNameExpression,
                     "Replace negated 'isEmpty' with 'isNotEmpty'",
-                    ProblemHighlightType.INFORMATION,
+                    ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
                     ReplaceNegatedIsEmptyWithIsNotEmptyQuickFix()
                 )
             }
