@@ -30,6 +30,7 @@ kotlin {
                             '-loleaut32',
                             '-lversion',
                             '-lwinmm',
+                            '-lsetupapi',
                             '-mwindows'
                     break
                 case presets.linuxArm32Hfp:
