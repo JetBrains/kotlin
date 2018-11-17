@@ -16,4 +16,4 @@ package kotlin.collections
 @SinceKotlin("1.1") public actual typealias LinkedHashSet<E> = java.util.LinkedHashSet<E>
 @SinceKotlin("1.1") public actual typealias HashSet<E> = java.util.HashSet<E>
 
-@SinceKotlin("1.3") public actual typealias EnumSet<E> = java.util.EnumSet<E>
+public actual typealias EnumSet<E> = java.util.EnumSet<E>

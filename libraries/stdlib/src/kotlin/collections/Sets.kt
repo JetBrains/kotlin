@@ -74,6 +74,7 @@ public inline fun <T> hashSetOf(): HashSet<T> = HashSet()
 public fun <T> hashSetOf(vararg elements: T): HashSet<T> = elements.toCollection(HashSet(mapCapacity(elements.size)))
 
 /** Returns an empty new [EnumSet] of [E]. */
+@kotlin.internal.InlineOnly
 public expect inline fun <reified E : Enum<E>> enumSetOf(): EnumSet<E>
 
 /** Returns a new [EnumSet] with the specified [element] of [E]. */
