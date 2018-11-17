@@ -136,6 +136,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             runTest("idea/testData/quickfix/abstract/makeEnumEntryAbstract.kt");
         }
 
+        @TestMetadata("makeInlineClassAbstract.kt")
+        public void testMakeInlineClassAbstract() throws Exception {
+            runTest("idea/testData/quickfix/abstract/makeInlineClassAbstract.kt");
+        }
+
         @TestMetadata("makeObjectMemberAbstract.kt")
         public void testMakeObjectMemberAbstract() throws Exception {
             runTest("idea/testData/quickfix/abstract/makeObjectMemberAbstract.kt");

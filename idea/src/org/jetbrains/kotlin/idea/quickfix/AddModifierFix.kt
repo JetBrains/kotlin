@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.idea.inspections.KotlinUniversalQuickFix
 import org.jetbrains.kotlin.idea.refactoring.canRefactor
 import org.jetbrains.kotlin.idea.util.runOnExpectAndAllActuals
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
+import org.jetbrains.kotlin.lexer.KtToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.psi.*
@@ -130,6 +131,10 @@ open class AddModifierFix(
                         if (parentClassOrObject is KtObjectDeclaration) return null
                         if (parentClassOrObject is KtEnumEntry) return null
                     }
+                    if (modifier == ABSTRACT_KEYWORD
+                        && modifierListOwner is KtClass
+                        && modifierListOwner.hasModifier(KtTokens.INLINE_KEYWORD)
+                    ) return null
                 }
                 INNER_KEYWORD -> {
                     if (modifierListOwner is KtObjectDeclaration) return null
