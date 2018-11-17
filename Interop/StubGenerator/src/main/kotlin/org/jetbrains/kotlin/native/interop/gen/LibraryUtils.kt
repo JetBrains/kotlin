@@ -38,7 +38,7 @@ internal fun argsToCompiler(staticLibraries: Array<String>, libraryPaths: Array<
 
 internal fun argsToCompiler(staticLibraries: List<String>, libraryPaths: List<String>) = 
     resolveLibraries(staticLibraries, libraryPaths)
-        .map { it -> listOf("-includeBinary", it) } 
+        .map { it -> listOf("-include-binary", it) }
         .flatten()
         .toTypedArray()
 
