@@ -699,7 +699,7 @@ class StubGenerator(
             val joinedKotlinParameters = kotlinParameters.joinToString { (name, type) ->
                 "$name: ${type.render(kotlinFile)}"
             }
-            this.header = "fun ${func.name}($joinedKotlinParameters): $returnType"
+            this.header = "fun ${func.name.asSimpleName()}($joinedKotlinParameters): $returnType"
 
             this.bodyLines = bodyGenerator.build()
         }
