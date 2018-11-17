@@ -6,12 +6,11 @@
 package kotlin.collections
 
 /**
- * [EnumSet] private implementation class, for 32 or fewer constants enum types.
+ * [EnumSet] private implementation class, for [Int.SIZE_BITS] or fewer constants enum types.
  */
-internal class RegularEnumSet<E : Enum<E>>(clazz: JsClass<E>, universe: Array<E>) : EnumSet<E>(clazz, universe) {
+internal class RegularEnumSet<E : Enum<E>>(type: JsClass<E>, universe: Array<E>) : EnumSet<E>(type, universe) {
 
     private var bits: Int = 0
-
     override val size: Int get() = bits.bits()
 
     override fun isEmpty(): Boolean = bits == 0
@@ -20,17 +19,15 @@ internal class RegularEnumSet<E : Enum<E>>(clazz: JsClass<E>, universe: Array<E>
 
     override fun containsAll(elements: Collection<E>): Boolean {
         if (elements !is RegularEnumSet<E>) {
-            return elements.all(::contains)
+            return super.containsAll(elements)
         }
 
-        if (clazz != elements.clazz) {
+        if (type != elements.type) {
             return elements.isEmpty() // any set always contains all elements of empty set
         }
 
         return (elements.bits and bits.inv()) == 0
     }
-
-    override fun iterator(): MutableIterator<E> = BitIterator()
 
     override fun add(element: E): Boolean {
         val oldBits = bits
@@ -38,30 +35,16 @@ internal class RegularEnumSet<E : Enum<E>>(clazz: JsClass<E>, universe: Array<E>
         return bits != oldBits
     }
 
-    override fun addAll() {
-        if (universe.isNotEmpty()) {
-            bits = (-1) ushr (-universe.size)
-        }
-    }
-
     override fun addAll(elements: Collection<E>): Boolean {
         if (elements !is RegularEnumSet<E>) {
-            var modified = false
-
-            for (e in elements) {
-                if (add(e)) {
-                    modified = true
-                }
-            }
-
-            return modified
+            return super.addAll(elements)
         }
 
-        if (clazz != elements.clazz) {
+        if (type != elements.type) {
             return if (elements.isEmpty()) {
                 false
             } else {
-                throw ClassCastException("${elements.clazz.name} != ${clazz.name}")
+                throw ClassCastException("${elements.type.name} != ${type.name}")
             }
         }
 
@@ -78,10 +61,10 @@ internal class RegularEnumSet<E : Enum<E>>(clazz: JsClass<E>, universe: Array<E>
 
     override fun removeAll(elements: Collection<E>): Boolean {
         if (elements !is RegularEnumSet<E>) {
-            return (this as MutableIterable<E>).removeAll { it in elements }
+            return super.removeAll(elements)
         }
 
-        if (clazz != elements.clazz) {
+        if (type != elements.type) {
             return false // we can not remove anything
         }
 
@@ -92,10 +75,10 @@ internal class RegularEnumSet<E : Enum<E>>(clazz: JsClass<E>, universe: Array<E>
 
     override fun retainAll(elements: Collection<E>): Boolean {
         if (elements !is RegularEnumSet<E>) {
-            return (this as MutableIterable<E>).removeAll { it !in elements }
+            return super.retainAll(elements)
         }
 
-        if (clazz != elements.clazz) { // no thing contains in [elements]
+        if (type != elements.type) { // no thing contains in [elements]
             val changed = bits != 0
             bits = 0
             return changed
@@ -106,14 +89,24 @@ internal class RegularEnumSet<E : Enum<E>>(clazz: JsClass<E>, universe: Array<E>
         return bits != oldBits
     }
 
+    override fun filledUp(): RegularEnumSet<E> {
+        if (universe.isNotEmpty()) {
+            bits = (-1) ushr -universe.size
+        }
+
+        return this
+    }
+
     override fun clear() {
         bits = 0
     }
 
+    override fun iterator(): MutableIterator<E> = BitIterator()
+
     private inner class BitIterator : MutableIterator<E> {
 
         private var unseen = bits
-        private var last = 0
+        private var lowBit = 0
 
         override fun hasNext(): Boolean = unseen != 0
 
@@ -122,19 +115,19 @@ internal class RegularEnumSet<E : Enum<E>>(clazz: JsClass<E>, universe: Array<E>
                 throw NoSuchElementException()
             }
 
-            last = unseen and -unseen // lowest one-bit (low bit)
-            unseen -= last
+            lowBit = unseen and -unseen
+            unseen -= lowBit
 
-            return universe[last.trailingZeros()]
+            return universe[lowBit.trailingZeros()]
         }
 
         override fun remove() {
-            if (last == 0) {
+            if (lowBit == 0) {
                 throw IllegalStateException()
             }
 
-            bits = bits and last.inv()
-            last = 0
+            bits = bits and lowBit.inv()
+            lowBit = 0
         }
     }
 }
