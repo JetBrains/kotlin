@@ -22,16 +22,16 @@ actual abstract class EnumSet<E : Enum<E>>(
     internal abstract fun filledUp(): EnumSet<E>
 }
 
-fun <E : Enum<E>> enumSetOf(clazz: JsClass<E>, universe: Array<E>): EnumSet<E> = if (universe.size > Int.SIZE_BITS) {
-    JumboEnumSet(clazz, universe)
+fun <E : Enum<E>> enumSetOf(type: JsClass<E>, universe: Array<E>): EnumSet<E> = if (universe.size > Int.SIZE_BITS) {
+    JumboEnumSet(type, universe)
 } else {
-    RegularEnumSet(clazz, universe)
+    RegularEnumSet(type, universe)
 }
 
-fun <E : Enum<E>> enumSetAllOf(clazz: JsClass<E>, universe: Array<E>): EnumSet<E> = if (universe.size > Int.SIZE_BITS) {
-    JumboEnumSet(clazz, universe).filledUp()
+fun <E : Enum<E>> enumSetAllOf(type: JsClass<E>, universe: Array<E>): EnumSet<E> = if (universe.size > Int.SIZE_BITS) {
+    JumboEnumSet(type, universe).filledUp()
 } else {
-    RegularEnumSet(clazz, universe).filledUp()
+    RegularEnumSet(type, universe).filledUp()
 }
 
 @kotlin.internal.InlineOnly

@@ -5,6 +5,17 @@
 
 package kotlin.collections
 
+/**
+ * A specialized [Set] for enum types those represented internally as
+ * bitmap (inaccurately speaking, bit-set). Bitmap is more compact and efficient than
+ * normal hash or binary search tree when a lot of read and write operations. It slower
+ * than `SingletonSet`, but `SingletonSet` is immutable and only have single element.
+ *
+ * All bulk operations should run very fast if their argument is also an [EnumSet],
+ * like [addAll], [containsAll] and [retainAll].
+ *
+ * It is NOT thread-safety.
+ */
 expect abstract class EnumSet<E : Enum<E>> : MutableSet<E> {
 
     // From Set

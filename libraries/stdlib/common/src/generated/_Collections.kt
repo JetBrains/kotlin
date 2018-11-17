@@ -1140,10 +1140,16 @@ public fun <T> Iterable<T>.toHashSet(): HashSet<T> {
 }
 
 /**
- * Returns a [EnumSet] of all elements of [T].
+ * Returns a [EnumSet] of all elements of [T], it should run very quickly if [this] is also an [EnumSet].
  */
 @kotlin.internal.InlineOnly
-public inline fun <reified T : Enum<T>> Iterable<T>.toEnumSet(): EnumSet<T> = toCollection(enumSetOf<T>())
+public inline fun <reified T : Enum<T>> Iterable<T>.toEnumSet(): EnumSet<T> = if (this is Collection) {
+    val result = enumSetOf<T>()
+    result.addAll(this)
+    result
+} else {
+    toCollection(enumSetOf<T>())
+}
 
 /**
  * Returns a [List] containing all elements.
