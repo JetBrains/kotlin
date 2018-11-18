@@ -6,8 +6,11 @@
 package kotlin.collections
 
 /**
- * Private implementation class for EnumSet, for enum types those with more than [Int.SIZE_BITS] elements
+ * Private implementation class for EnumSet, for enum types those with more than [Int.SIZE_BITS] elements.
+ *
+ * No hashCode override, use [AbstractSet.hashCode] in same consistent for other Sets.
  */
+@Suppress("EqualsOrHashCode")
 internal class JumboEnumSet<E : Enum<E>>(type: JsClass<E>, universe: Array<E>) : EnumSet<E>(type, universe) {
 
     private companion object {
@@ -141,6 +144,18 @@ internal class JumboEnumSet<E : Enum<E>>(type: JsClass<E>, universe: Array<E>) :
                 bits[i] = 0
             }
             size = 0
+        }
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (other !is JumboEnumSet<*>) {
+            return super.equals(other)
+        }
+
+        return if (type != other.type) {
+            size == 0 && 0 == other.size
+        } else {
+            bits.contentEquals(other.bits)
         }
     }
 

@@ -47,13 +47,8 @@ public actual inline fun <reified E : Enum<E>> enumSetOf(element: E): EnumSet<E>
 }
 
 @kotlin.internal.InlineOnly
-public actual inline fun <reified E : Enum<E>> enumSetOf(vararg elements: E): EnumSet<E> {
-    val result = enumSetOf(E::class.js, enumValues<E>())
-
-    result.addAll(elements)
-
-    return result
-}
+public actual inline fun <reified E : Enum<E>> enumSetOf(vararg elements: E): EnumSet<E> =
+    elements.toCollection(enumSetOf(E::class.js, enumValues<E>()))
 
 @kotlin.internal.InlineOnly
 public actual inline fun <reified E : Enum<E>> enumSetAllOf(): EnumSet<E> = enumSetAllOf(E::class.js, enumValues<E>())

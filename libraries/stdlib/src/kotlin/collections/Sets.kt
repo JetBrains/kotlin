@@ -85,7 +85,7 @@ public expect inline fun <reified E : Enum<E>> enumSetOf(element: E): EnumSet<E>
 @kotlin.internal.InlineOnly
 public expect inline fun <reified E : Enum<E>> enumSetOf(vararg elements: E): EnumSet<E>
 
-/** Returns a filled new [EnumSet] of [E]. */
+/** Returns a new [EnumSet] those filled up all elements of [E]. */
 @kotlin.internal.InlineOnly
 public expect inline fun <reified E : Enum<E>> enumSetAllOf(): EnumSet<E>
 

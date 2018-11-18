@@ -7609,10 +7609,12 @@ public fun <T> Array<out T>.toHashSet(): HashSet<T> {
 }
 
 /**
- * Returns a [EnumSet] of all elements of [T].
+ * Returns a [EnumSet] containing all elements of [this].
  */
 @kotlin.internal.InlineOnly
-public inline fun <reified T : Enum<T>> Array<T>.toEnumSet(): EnumSet<T> = enumSetOf<T>(*this)
+public inline fun <reified E : Enum<E>> Array<E>.toEnumSet(): EnumSet<E> {
+    return toCollection(enumSetOf<E>())
+}
 
 /**
  * Returns a [HashSet] of all elements.
