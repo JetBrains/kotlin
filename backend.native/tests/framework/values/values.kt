@@ -8,6 +8,7 @@
 
 package conversions
 
+import kotlin.native.concurrent.isFrozen
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
@@ -236,3 +237,6 @@ fun IC2?.getValueOrNull2() = this?.value
 
 fun IC3.getValue3() = value
 fun IC3?.getValueOrNull3() = this?.value
+
+fun isFrozen(obj: Any): Boolean = obj.isFrozen
+fun kotlinLambda(block: (Any) -> Any): Any = block

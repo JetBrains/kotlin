@@ -669,11 +669,16 @@ static const TypeInfo* createTypeInfo(
   TypeInfo* result = (TypeInfo*)konanAllocMemory(sizeof(TypeInfo) + vtable.size() * sizeof(void*));
   result->typeInfo_ = result;
 
+  result->flags_ = 0;
+
   MakeGlobalHash(nullptr, 0, &result->name_);
   result->instanceSize_ = superType->instanceSize_;
   result->superType_ = superType;
   result->objOffsets_ = superType->objOffsets_;
-  result->objOffsetsCount_ = superType->objOffsetsCount_;
+  result->objOffsetsCount_ = superType->objOffsetsCount_; // So TF_IMMUTABLE can also be inherited:
+  if ((superType->flags_ & TF_IMMUTABLE) != 0) {
+    result->flags_ |= TF_IMMUTABLE;
+  }
 
   KStdVector<const TypeInfo*> implementedInterfaces(
     superType->implementedInterfaces_, superType->implementedInterfaces_ + superType->implementedInterfacesCount_

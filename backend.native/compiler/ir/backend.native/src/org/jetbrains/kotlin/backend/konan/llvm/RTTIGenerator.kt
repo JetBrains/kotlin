@@ -19,7 +19,7 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
     private fun flagsFromClass(classDescriptor: ClassDescriptor): Int {
         var result = 0
         if (classDescriptor.isFrozen)
-           result = result or 1 /* TF_IMMUTABLE */
+           result = result or TF_IMMUTABLE
         return result
     }
 
@@ -291,7 +291,8 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
     // TODO: extract more code common with generate().
     fun generateSyntheticInterfaceImpl(
             descriptor: ClassDescriptor,
-            methodImpls: Map<FunctionDescriptor, ConstPointer>
+            methodImpls: Map<FunctionDescriptor, ConstPointer>,
+            immutable: Boolean = false
     ): ConstPointer {
         assert(descriptor.isInterface)
 
@@ -346,7 +347,7 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
                 fields = fieldsPtr, fieldsCount = fieldsCount,
                 packageName = reflectionInfo.packageName,
                 relativeName = reflectionInfo.relativeName,
-                flags = flagsFromClass(descriptor),
+                flags = flagsFromClass(descriptor) or (if (immutable) TF_IMMUTABLE else 0),
                 extendedInfo = NullPointer(runtime.extendedTypeInfoType),
                 writableTypeInfo = writableTypeInfo
               ), vtable)
@@ -376,3 +377,5 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
         }
     }
 }
+
+private const val TF_IMMUTABLE = 1

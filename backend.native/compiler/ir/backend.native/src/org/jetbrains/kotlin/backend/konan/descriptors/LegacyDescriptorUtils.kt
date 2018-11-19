@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.konan.descriptors
 
 import org.jetbrains.kotlin.backend.common.atMostOne
 import org.jetbrains.kotlin.backend.konan.binaryTypeIsReference
+import org.jetbrains.kotlin.backend.konan.isObjCClass
 import org.jetbrains.kotlin.backend.konan.serialization.isExported
 import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
 import org.jetbrains.kotlin.builtins.getFunctionalClassKind
@@ -241,8 +242,9 @@ private val frozenAnnotation = FqName("kotlin.native.internal.Frozen")
 
 internal val DeclarationDescriptor.isFrozen: Boolean
     get() = this.annotations.hasAnnotation(frozenAnnotation) ||
-            // RTTI is used for non-reference type box:
-            this is org.jetbrains.kotlin.descriptors.ClassDescriptor && !this.defaultType.binaryTypeIsReference()
+            (this is org.jetbrains.kotlin.descriptors.ClassDescriptor
+                    // RTTI is used for non-reference type box or Objective-C object wrapper:
+                    && (!this.defaultType.binaryTypeIsReference() || this.isObjCClass()))
 
 internal val FunctionDescriptor.isIntrinsic: Boolean
     get() = this.annotations.hasAnnotation(intrinsicAnnotation)

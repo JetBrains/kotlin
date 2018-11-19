@@ -26,6 +26,7 @@ interface ObjCClassOf<T : ObjCObject> : ObjCClass // TODO: T should be added to 
 typealias ObjCObjectMeta = ObjCClass
 
 @ExportTypeInfo("theForeignObjCObjectTypeInfo")
+@kotlin.native.internal.Frozen
 internal open class ForeignObjCObject : kotlin.native.internal.ObjCObjectWrapper
 
 abstract class ObjCObjectBase protected constructor() : ObjCObject {

@@ -420,6 +420,27 @@ func testInlineClasses() throws {
     try assertEquals(actual: ValuesKt.getValueOrNull3(ic3N), expected: nil)
 }
 
+class TestSharedIImpl : NSObject, I {
+    func iFun() -> String {
+        return "TestSharedIImpl::iFun"
+    }
+}
+
+func testShared() throws {
+    func assertFrozen(_ obj: AnyObject) throws {
+        try assertTrue(ValuesKt.isFrozen(obj: obj), "isFrozen(\(obj))")
+    }
+
+    func assertNotFrozen(_ obj: AnyObject) throws {
+        try assertFalse(ValuesKt.isFrozen(obj: obj), "isFrozen(\(obj))")
+    }
+
+    try assertFrozen(NSObject())
+    try assertFrozen(TestSharedIImpl())
+    try assertFrozen(ValuesKt.kotlinLambda(block: { return $0 }) as AnyObject)
+    try assertNotFrozen(FinalClassExtOpen())
+}
+
 // -------- Execution of the test --------
 
 class ValuesTests : TestProvider {
@@ -453,6 +474,7 @@ class ValuesTests : TestProvider {
             TestCase(name: "TestDataClass", method: withAutorelease(testDataClass)),
             TestCase(name: "TestCompanionObj", method: withAutorelease(testCompanionObj)),
             TestCase(name: "TestInlineClasses", method: withAutorelease(testInlineClasses)),
+            TestCase(name: "TestShared", method: withAutorelease(testShared)),
         ]
     }
 }

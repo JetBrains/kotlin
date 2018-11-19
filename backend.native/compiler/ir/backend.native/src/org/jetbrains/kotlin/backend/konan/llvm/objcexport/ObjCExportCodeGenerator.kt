@@ -403,7 +403,8 @@ private fun ObjCExportCodeGenerator.generateKotlinFunctionAdapterToBlock(numberO
 
     return rttiGenerator.generateSyntheticInterfaceImpl(
             irInterface,
-            mapOf(invokeMethod to invokeImpl)
+            mapOf(invokeMethod to invokeImpl),
+            immutable = true
     )
 }
 
