@@ -24,14 +24,12 @@ import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.impl.ClassDescriptorImpl;
-import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl;
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil;
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
-import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKt;
 import org.jetbrains.kotlin.storage.LockBasedStorageManager;
 import org.jetbrains.kotlin.types.KotlinType;
@@ -175,17 +173,7 @@ public class SamWrapperCodegen {
         // generate sam bridges
         // TODO: erasedInterfaceFunction is actually not an interface function, but function in generated class
         SimpleFunctionDescriptor originalInterfaceErased = samType.getOriginalAbstractMethod();
-        SimpleFunctionDescriptorImpl descriptorForBridges = SimpleFunctionDescriptorImpl
-                .create(erasedInterfaceFunction.getContainingDeclaration(), erasedInterfaceFunction.getAnnotations(), originalInterfaceErased.getName(),
-                        CallableMemberDescriptor.Kind.DECLARATION, erasedInterfaceFunction.getSource());
-
-        descriptorForBridges
-                .initialize(null, originalInterfaceErased.getDispatchReceiverParameter(), originalInterfaceErased.getTypeParameters(),
-                            originalInterfaceErased.getValueParameters(), originalInterfaceErased.getReturnType(),
-                            Modality.OPEN, originalInterfaceErased.getVisibility());
-
-        DescriptorUtilsKt.setSingleOverridden(descriptorForBridges, originalInterfaceErased);
-        codegen.generateBridges(descriptorForBridges);
+        ClosureCodegen.generateBridgesForSAM(originalInterfaceErased, erasedInterfaceFunction, codegen);
     }
 
     @NotNull
