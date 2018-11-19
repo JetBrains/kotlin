@@ -144,7 +144,5 @@ val Method.kotlinFunction: KFunction<*>?
  */
 val <T : Any> Constructor<T>.kotlinFunction: KFunction<T>?
     get() {
-        if (isSynthetic) return null
-
         return declaringClass.kotlin.constructors.firstOrNull { it.javaConstructor == this }
     }
