@@ -251,6 +251,17 @@ class UnusedSymbolInspection : AbstractKotlinInspection() {
             }
         } else useScope
 
+        if (declaration is KtTypeParameter) {
+            val containingClass = declaration.containingClass()
+            if (containingClass != null) {
+                val isOpenClass = containingClass.isInterface()
+                        || containingClass.hasModifier(KtTokens.ABSTRACT_KEYWORD)
+                        || containingClass.hasModifier(KtTokens.SEALED_KEYWORD)
+                        || containingClass.hasModifier(KtTokens.OPEN_KEYWORD)
+                if (isOpenClass && hasOverrides(containingClass, restrictedScope)) return true
+            }
+        }
+
         return (declaration is KtObjectDeclaration && declaration.isCompanion() &&
                 declaration.getBody()?.declarations?.isNotEmpty() == true) ||
                 hasReferences(declaration, descriptor, restrictedScope) ||
