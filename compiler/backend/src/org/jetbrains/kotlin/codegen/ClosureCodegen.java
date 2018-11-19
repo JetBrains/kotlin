@@ -210,19 +210,27 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
 
         //TODO: rewrite cause ugly hack
         if (samType != null) {
-            SimpleFunctionDescriptorImpl descriptorForBridges = SimpleFunctionDescriptorImpl
-                    .create(funDescriptor.getContainingDeclaration(), funDescriptor.getAnnotations(),
-                            erasedInterfaceFunction.getName(),
-                            CallableMemberDescriptor.Kind.DECLARATION, funDescriptor.getSource());
-
-            descriptorForBridges
-                    .initialize(null, erasedInterfaceFunction.getDispatchReceiverParameter(), erasedInterfaceFunction.getTypeParameters(),
-                                erasedInterfaceFunction.getValueParameters(), erasedInterfaceFunction.getReturnType(),
-                                Modality.OPEN, erasedInterfaceFunction.getVisibility());
-
-            DescriptorUtilsKt.setSingleOverridden(descriptorForBridges, erasedInterfaceFunction);
-            functionCodegen.generateBridges(descriptorForBridges);
+            generateBridgesForSAM(erasedInterfaceFunction, funDescriptor, functionCodegen);
         }
+    }
+
+    static void generateBridgesForSAM(
+            FunctionDescriptor erasedInterfaceFunction,
+            FunctionDescriptor descriptor,
+            FunctionCodegen codegen
+    ) {
+        SimpleFunctionDescriptorImpl descriptorForBridges = SimpleFunctionDescriptorImpl
+                .create(descriptor.getContainingDeclaration(), descriptor.getAnnotations(),
+                        erasedInterfaceFunction.getName(),
+                        CallableMemberDescriptor.Kind.DECLARATION, descriptor.getSource());
+
+        descriptorForBridges
+                .initialize(null, erasedInterfaceFunction.getDispatchReceiverParameter(), erasedInterfaceFunction.getTypeParameters(),
+                            erasedInterfaceFunction.getValueParameters(), erasedInterfaceFunction.getReturnType(),
+                            Modality.OPEN, erasedInterfaceFunction.getVisibility());
+
+        DescriptorUtilsKt.setSingleOverridden(descriptorForBridges, erasedInterfaceFunction);
+        codegen.generateBridges(descriptorForBridges);
     }
 
     @Override
