@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.impl.IrUninitializedType
 import org.jetbrains.kotlin.ir.util.transform
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
@@ -36,10 +37,18 @@ abstract class IrFunctionBase(
     override val name: Name,
     override val visibility: Visibility,
     override val isInline: Boolean,
-    override val isExternal: Boolean
+    override val isExternal: Boolean,
+    returnType: IrType
 ) :
     IrDeclarationBase(startOffset, endOffset, origin),
     IrFunction {
+
+    final override var returnType: IrType = returnType
+        get() = if (field === IrUninitializedType) {
+            error("Return type is not initialized")
+        } else {
+            field
+        }
 
     override val typeParameters: MutableList<IrTypeParameter> = SmartList()
 
@@ -48,8 +57,6 @@ abstract class IrFunctionBase(
     override val valueParameters: MutableList<IrValueParameter> = ArrayList()
 
     final override var body: IrBody? = null
-
-    final override lateinit var returnType: IrType
 
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
         typeParameters.forEach { it.accept(visitor, data) }

@@ -155,6 +155,7 @@ open class DeepCopyIrTreeWithSymbols(
             symbolRenamer.getFunctionName(declaration.symbol),
             declaration.visibility,
             declaration.modality,
+            declaration.returnType,
             declaration.isInline,
             declaration.isExternal,
             declaration.isTailrec,
@@ -173,6 +174,7 @@ open class DeepCopyIrTreeWithSymbols(
             symbolRemapper.getDeclaredConstructor(declaration.symbol),
             declaration.name,
             declaration.visibility,
+            declaration.returnType,
             declaration.isInline,
             declaration.isExternal,
             declaration.isPrimary

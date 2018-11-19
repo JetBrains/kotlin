@@ -130,10 +130,10 @@ class EnumClassLowering(val context: JvmBackendContext) : ClassLoweringPass {
             return IrConstructorImpl(
                 enumConstructor.startOffset, enumConstructor.endOffset, enumConstructor.origin,
                 loweredConstructorDescriptor,
+                loweredConstructorDescriptor.returnType.toIrType()!!,
                 enumConstructor.body!! // will be transformed later
             ).apply {
                 parent = enumClass
-                returnType = loweredConstructorDescriptor.returnType.toIrType()!!
                 createParameterDeclarations()
                 loweredEnumConstructors[constructorDescriptor] = this
                 constructorDescriptor.valueParameters.forEach {

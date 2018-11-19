@@ -67,17 +67,18 @@ class JvmOverloadsAnnotationLowering(val context: JvmBackendContext) : ClassLowe
             is IrConstructorSymbol -> IrConstructorImpl(
                 UNDEFINED_OFFSET, UNDEFINED_OFFSET,
                 JvmLoweredDeclarationOrigin.JVM_OVERLOADS_WRAPPER,
-                wrapperSymbol
+                wrapperSymbol,
+                returnType = target.returnType
             )
             is IrSimpleFunctionSymbol -> IrFunctionImpl(
                 UNDEFINED_OFFSET, UNDEFINED_OFFSET,
                 JvmLoweredDeclarationOrigin.JVM_OVERLOADS_WRAPPER,
-                wrapperSymbol
+                wrapperSymbol,
+                returnType = target.returnType
             )
             else -> error("expected IrConstructorSymbol or IrSimpleFunctionSymbol")
         }
 
-        wrapperIrFunction.returnType = target.returnType
         wrapperIrFunction.createParameterDeclarations()
 
         val call = if (target is IrConstructor)

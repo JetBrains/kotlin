@@ -39,3 +39,8 @@ val IrType.originalKotlinType: KotlinType?
 
 
 object IrStarProjectionImpl : IrStarProjection
+
+@Deprecated("Hack to temporary cover late type initialization")
+object IrUninitializedType : IrType {
+    override val annotations: List<IrCall> = emptyList()
+}

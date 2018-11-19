@@ -35,13 +35,14 @@ class IrConstructorImpl(
     override val symbol: IrConstructorSymbol,
     name: Name,
     visibility: Visibility,
+    returnType: IrType,
     isInline: Boolean,
     isExternal: Boolean,
     override val isPrimary: Boolean
 ) :
     IrFunctionBase(
         startOffset, endOffset, origin, name,
-        visibility, isInline, isExternal
+        visibility, isInline, isExternal, returnType
     ),
     IrConstructor {
 
@@ -50,11 +51,13 @@ class IrConstructorImpl(
         endOffset: Int,
         origin: IrDeclarationOrigin,
         symbol: IrConstructorSymbol,
+        returnType: IrType,
         body: IrBody? = null
     ) : this(
         startOffset, endOffset, origin, symbol,
         symbol.descriptor.name,
         symbol.descriptor.visibility,
+        returnType,
         symbol.descriptor.isInline,
         symbol.descriptor.isEffectivelyExternal(),
         symbol.descriptor.isPrimary
@@ -66,8 +69,9 @@ class IrConstructorImpl(
         startOffset: Int,
         endOffset: Int,
         origin: IrDeclarationOrigin,
-        descriptor: ClassConstructorDescriptor
-    ) : this(startOffset, endOffset, origin, IrConstructorSymbolImpl(descriptor))
+        descriptor: ClassConstructorDescriptor,
+        returnType: IrType
+    ) : this(startOffset, endOffset, origin, IrConstructorSymbolImpl(descriptor), returnType)
 
     @Deprecated("Use constructor which takes symbol instead of descriptor")
     constructor(
@@ -75,8 +79,9 @@ class IrConstructorImpl(
         endOffset: Int,
         origin: IrDeclarationOrigin,
         descriptor: ClassConstructorDescriptor,
+        returnType: IrType,
         body: IrBody?
-    ) : this(startOffset, endOffset, origin, descriptor) {
+    ) : this(startOffset, endOffset, origin, descriptor, returnType) {
         this.body = body
     }
 

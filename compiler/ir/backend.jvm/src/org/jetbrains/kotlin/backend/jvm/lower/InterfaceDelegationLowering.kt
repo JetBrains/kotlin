@@ -77,10 +77,9 @@ class InterfaceDelegationLowering(val context: JvmBackendContext) : IrElementTra
                 UNDEFINED_OFFSET,
                 IrDeclarationOrigin.DEFINED,
                 inheritedFun,
-                null
+                defaultImplFun.returnType
             ).also {
                 it.createParameterDeclarations()
-                it.returnType = defaultImplFun.returnType
             }
             else context.declarationFactory.getDefaultImplsFunction(
                 context.ir.symbols.externalSymbolTable.referenceSimpleFunction(

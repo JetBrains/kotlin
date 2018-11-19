@@ -63,13 +63,13 @@ class FunctionNVarargInvokeLowering(var context: JvmBackendContext) : ClassLower
             name = Name.identifier("invoke"),
             visibility = Visibilities.PUBLIC,
             modality = Modality.OPEN,
+            returnType = context.irBuiltIns.anyNType,
             isInline = false,
             isExternal = false,
             isTailrec = false,
             isSuspend = false
         ).apply {
             descriptor.bind(this)
-            returnType = context.irBuiltIns.anyNType
             dispatchReceiverParameter = irClass.thisReceiver
             val varargParameterDescriptor = WrappedValueParameterDescriptor()
             val varargParam = IrValueParameterImpl(

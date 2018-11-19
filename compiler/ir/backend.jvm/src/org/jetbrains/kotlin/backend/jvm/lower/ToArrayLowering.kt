@@ -87,13 +87,20 @@ class ToArrayLowering(private val context: JvmBackendContext) : ClassLoweringPas
             )
 
             val toArrayUtilDescriptor = createToArrayUtilDescriptor(builtIns, false)
+            val toArrayType = toArrayUtilDescriptor.returnType!!.toIrType()!!
 
-            val irFunction = IrFunctionImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, JvmLoweredDeclarationOrigin.TO_ARRAY, toArrayDescriptor)
+            val irFunction = IrFunctionImpl(
+                UNDEFINED_OFFSET,
+                UNDEFINED_OFFSET,
+                JvmLoweredDeclarationOrigin.TO_ARRAY,
+                toArrayDescriptor,
+                returnType = toArrayType
+            )
             irFunction.createParameterDeclarations()
 
             irFunction.body = context.createIrBuilder(irFunction.symbol).irBlockBody {
                 +irReturn(
-                    irCall(IrSimpleFunctionSymbolImpl(toArrayUtilDescriptor), toArrayUtilDescriptor.returnType!!.toIrType()!!).apply {
+                    irCall(IrSimpleFunctionSymbolImpl(toArrayUtilDescriptor), toArrayType).apply {
                         putValueArgument(
                             0,
                             IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, irFunction.dispatchReceiverParameter!!.symbol)
@@ -145,13 +152,20 @@ class ToArrayLowering(private val context: JvmBackendContext) : ClassLoweringPas
             )
 
             val toArrayUtilDescriptor = createToArrayUtilDescriptor(builtIns, true)
+            val toArrayType = toArrayUtilDescriptor.returnType!!.toIrType()!!
 
-            val irFunction = IrFunctionImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, JvmLoweredDeclarationOrigin.TO_ARRAY, toArrayDescriptor)
+            val irFunction = IrFunctionImpl(
+                UNDEFINED_OFFSET,
+                UNDEFINED_OFFSET,
+                JvmLoweredDeclarationOrigin.TO_ARRAY,
+                toArrayDescriptor,
+                toArrayType
+            )
             irFunction.createParameterDeclarations()
 
             irFunction.body = context.createIrBuilder(irFunction.symbol).irBlockBody {
                 +irReturn(
-                    irCall(IrSimpleFunctionSymbolImpl(toArrayUtilDescriptor), toArrayUtilDescriptor.returnType!!.toIrType()!!).apply {
+                    irCall(IrSimpleFunctionSymbolImpl(toArrayUtilDescriptor), toArrayType).apply {
                         putValueArgument(
                             0,
                             IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, irFunction.dispatchReceiverParameter!!.symbol)

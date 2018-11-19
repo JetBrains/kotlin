@@ -122,12 +122,11 @@ fun IrClass.addSimpleDelegatingConstructor(
     )
     constructorDescriptor.returnType = superConstructorDescriptor.returnType
 
-    return IrConstructorImpl(startOffset, endOffset, origin, constructorDescriptor).also { constructor ->
+    return IrConstructorImpl(startOffset, endOffset, origin, constructorDescriptor, this.defaultType).also { constructor ->
 
         assert(superConstructor.dispatchReceiverParameter == null) // Inner classes aren't supported.
 
         constructor.valueParameters += valueParameters
-        constructor.returnType = this.defaultType
 
         constructor.body = IrBlockBodyImpl(
                 startOffset, endOffset,

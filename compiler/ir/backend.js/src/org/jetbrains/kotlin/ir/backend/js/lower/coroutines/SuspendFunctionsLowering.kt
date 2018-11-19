@@ -498,6 +498,7 @@ internal class SuspendFunctionsLowering(val context: JsIrBackendContext): FileLo
                     symbol,
                     Name.special("<init>"),
                     irFunction.visibility,
+                    coroutineClass.defaultType,
                     false,
                     false,
                     false
@@ -505,7 +506,6 @@ internal class SuspendFunctionsLowering(val context: JsIrBackendContext): FileLo
 
                 descriptor.bind(declaration)
                 declaration.parent = coroutineClass
-                declaration.returnType = coroutineClass.defaultType
 
                 declaration.valueParameters += functionParameters.map {
                     JsIrBuilder.buildValueParameter(it.name, it.index, it.type, it.origin).also { p -> p.parent = declaration }
@@ -567,6 +567,7 @@ internal class SuspendFunctionsLowering(val context: JsIrBackendContext): FileLo
                         symbol,
                         Name.special("<init>"),
                         irFunction.visibility,
+                        coroutineClass.defaultType,
                         false,
                         false,
                         false
@@ -574,7 +575,6 @@ internal class SuspendFunctionsLowering(val context: JsIrBackendContext): FileLo
 
                     descriptor.bind(declaration)
                     declaration.parent = coroutineClass
-                    declaration.returnType = coroutineClass.defaultType
 
                     boundParams.mapIndexedTo(declaration.valueParameters) { i, p ->
                         JsIrBuilder.buildValueParameter(p.name, i, p.type, p.origin).also { it.parent = declaration }
@@ -627,6 +627,7 @@ internal class SuspendFunctionsLowering(val context: JsIrBackendContext): FileLo
                     Name.identifier("create"),
                     Visibilities.PRIVATE,
                     Modality.FINAL,
+                    coroutineClass.defaultType,
                     false,
                     false,
                     false,
@@ -703,6 +704,7 @@ internal class SuspendFunctionsLowering(val context: JsIrBackendContext): FileLo
                     Name.identifier("invoke"),
                     Visibilities.PRIVATE,
                     Modality.FINAL,
+                    irFunction.returnType,
                     false,
                     false,
                     false,
@@ -712,7 +714,7 @@ internal class SuspendFunctionsLowering(val context: JsIrBackendContext): FileLo
                 descriptor.bind(declaration)
                 declaration.parent = coroutineClass
                 declaration.returnType = irFunction.returnType
-                declaration.dispatchReceiverParameter = coroutineClassThis
+                declaration.dispatchReceiverParameter = coroutineClassThis.copyTo(declaration)
 
                 declaration.overriddenSymbols += suspendFunctionInvokeFunctionDeclaration.symbol
                 declaration.overriddenSymbols += functionInvokeFunctionDeclaration.symbol
@@ -793,6 +795,7 @@ internal class SuspendFunctionsLowering(val context: JsIrBackendContext): FileLo
                         doResumeFunction.name,
                         doResumeFunction.visibility,
                         Modality.FINAL,
+                        context.irBuiltIns.anyNType,
                         doResumeFunction.isInline,
                         doResumeFunction.isExternal,
                         doResumeFunction.isTailrec,

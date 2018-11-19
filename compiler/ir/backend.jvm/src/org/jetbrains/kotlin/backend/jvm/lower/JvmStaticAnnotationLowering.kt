@@ -102,9 +102,9 @@ private class CompanionObjectJvmStaticLowering(val context: JvmBackendContext) :
         val proxyIrFunction = IrFunctionImpl(
             UNDEFINED_OFFSET, UNDEFINED_OFFSET,
             JvmLoweredDeclarationOrigin.JVM_STATIC_WRAPPER,
-            proxyFunctionSymbol
+            proxyFunctionSymbol,
+            returnType = target.returnType
         )
-        proxyIrFunction.returnType = target.returnType
         proxyIrFunction.createParameterDeclarations()
 
         proxyIrFunction.body = createProxyBody(target, proxyIrFunction, companion)

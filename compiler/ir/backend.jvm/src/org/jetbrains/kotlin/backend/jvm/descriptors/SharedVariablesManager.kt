@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrConstructorSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.createFunctionSymbol
+import org.jetbrains.kotlin.ir.types.impl.IrUninitializedType
 import org.jetbrains.kotlin.ir.types.toIrType
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -163,7 +164,7 @@ class JvmSharedVariablesManager(
             primitiveRefDescriptorsProvider?.refConstructorSymbol ?: createFunctionSymbol(refConstructor) as IrConstructorSymbol
 
         val refConstructorDeclaration = if (refConstructorSymbol.isBound) refConstructorSymbol.owner else
-            IrConstructorImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, SHARED_VARIABLE_ORIGIN, refConstructorSymbol)
+            IrConstructorImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, SHARED_VARIABLE_ORIGIN, refConstructorSymbol, IrUninitializedType)
 
         val refConstructorTypeArguments =
             if (primitiveRefDescriptorsProvider != null) null

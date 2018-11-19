@@ -123,11 +123,11 @@ internal fun FunctionDescriptor.createFunctionAndMapVariables(
 ) =
     IrFunctionImpl(
         oldFunction.startOffset, oldFunction.endOffset, origin, IrSimpleFunctionSymbolImpl(this),
-        visibility = visibility
+        visibility = visibility,
+        returnType = oldFunction.returnType
     ).apply {
         parent = parentClass
         body = oldFunction.body
-        returnType = oldFunction.returnType
         createParameterDeclarations(symbolTable)
         // TODO: do we really need descriptor here? This workaround is about copying `dispatchReceiver` descriptor
         val mapping: Map<ValueDescriptor, IrValueParameter> =
