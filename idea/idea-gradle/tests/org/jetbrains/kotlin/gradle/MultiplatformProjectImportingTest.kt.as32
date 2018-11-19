@@ -30,6 +30,8 @@ import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.junit.Test
 
 class MultiplatformProjectImportingTest : GradleImportingTestCase() {
+
+    private fun legacyMode() = gradleVersion.split(".")[0].toInt() < 4
     private fun getDependencyLibraryUrls(moduleName: String) =
         getRootManager(moduleName)
             .orderEntries
@@ -96,19 +98,37 @@ class MultiplatformProjectImportingTest : GradleImportingTestCase() {
 
         assertModuleModuleDepScope("jvm-app", "common-app", DependencyScope.COMPILE)
         assertModuleModuleDepScope("jvm-app", "common-lib", DependencyScope.COMPILE)
-        assertModuleModuleDepScope(
-            "jvm-app",
-            "jvm-lib",
-            DependencyScope.COMPILE, DependencyScope.RUNTIME, DependencyScope.PROVIDED, DependencyScope.TEST
-        )
+        if (legacyMode()) {
+            assertModuleModuleDepScope(
+                "jvm-app",
+                "jvm-lib",
+                DependencyScope.COMPILE, DependencyScope.RUNTIME, DependencyScope.PROVIDED, DependencyScope.TEST
+            )
+        } else {
+            assertModuleModuleDepScope(
+                "jvm-app",
+                "jvm-lib",
+                DependencyScope.COMPILE
+            )
+        }
+
 
         assertModuleModuleDepScope("js-app", "common-app", DependencyScope.COMPILE)
         assertModuleModuleDepScope("js-app", "common-lib", DependencyScope.COMPILE)
-        assertModuleModuleDepScope(
-            "js-app",
-            "js-lib",
-            DependencyScope.COMPILE, DependencyScope.RUNTIME, DependencyScope.PROVIDED, DependencyScope.TEST
-        )
+        if (legacyMode()) {
+            assertModuleModuleDepScope(
+                "js-app",
+                "js-lib",
+                DependencyScope.COMPILE, DependencyScope.RUNTIME, DependencyScope.PROVIDED, DependencyScope.TEST
+            )
+        } else {
+            assertModuleModuleDepScope(
+                "js-app",
+                "js-lib",
+                DependencyScope.COMPILE
+            )
+        }
+
     }
 
     @Test
@@ -116,16 +136,34 @@ class MultiplatformProjectImportingTest : GradleImportingTestCase() {
         configureByFiles()
         importProject()
 
-        assertModuleModuleDepScope(
-            "jvm-app",
-            "jvm-lib2",
-            DependencyScope.COMPILE, DependencyScope.RUNTIME, DependencyScope.PROVIDED, DependencyScope.TEST
-        )
-        assertModuleModuleDepScope(
-            "jvm-app",
-            "jvm-lib1",
-            DependencyScope.COMPILE, DependencyScope.RUNTIME, DependencyScope.PROVIDED, DependencyScope.TEST
-        )
+        if (legacyMode()) {
+            assertModuleModuleDepScope(
+                "jvm-app",
+                "jvm-lib2",
+                DependencyScope.COMPILE, DependencyScope.RUNTIME, DependencyScope.PROVIDED, DependencyScope.TEST
+            )
+        } else {
+            assertModuleModuleDepScope(
+                "jvm-app",
+                "jvm-lib2",
+                DependencyScope.COMPILE
+            )
+        }
+
+        if (legacyMode()) {
+            assertModuleModuleDepScope(
+                "jvm-app",
+                "jvm-lib1",
+                DependencyScope.COMPILE, DependencyScope.RUNTIME, DependencyScope.PROVIDED, DependencyScope.TEST
+            )
+        } else {
+            assertModuleModuleDepScope(
+                "jvm-app",
+                "jvm-lib1",
+                DependencyScope.COMPILE
+            )
+        }
+
         assertModuleModuleDepScope("jvm-app","common-lib1", DependencyScope.COMPILE)
         assertModuleModuleDepScope("jvm-app", "common-lib2",DependencyScope.COMPILE)
     }
@@ -142,22 +180,40 @@ class MultiplatformProjectImportingTest : GradleImportingTestCase() {
 
             assertModuleModuleDepScope("project2", "project1", DependencyScope.COMPILE)
 
-            assertModuleModuleDepScope(
-                "project3",
-                "project2",
-                DependencyScope.COMPILE, DependencyScope.RUNTIME, DependencyScope.PROVIDED, DependencyScope.TEST
-            )
+            if (legacyMode()) {
+                assertModuleModuleDepScope(
+                    "project3",
+                    "project2",
+                    DependencyScope.COMPILE, DependencyScope.RUNTIME, DependencyScope.PROVIDED, DependencyScope.TEST
+                )
+            } else {
+                assertModuleModuleDepScope(
+                    "project3",
+                    "project2",
+                    DependencyScope.COMPILE
+                )
+            }
+
             assertModuleModuleDepScope("project3", "project1", DependencyScope.COMPILE)
 
             currentExternalProjectSettings.isResolveModulePerSourceSet = false
             importProject()
 
             assertModuleModuleDepScope("project2", "project1", DependencyScope.COMPILE)
-            assertModuleModuleDepScope(
-                "project3",
-                "project2",
-                DependencyScope.COMPILE, DependencyScope.RUNTIME, DependencyScope.PROVIDED, DependencyScope.TEST
-            )
+            if (legacyMode()) {
+                assertModuleModuleDepScope(
+                    "project3",
+                    "project2",
+                    DependencyScope.COMPILE, DependencyScope.RUNTIME, DependencyScope.PROVIDED, DependencyScope.TEST
+                )
+            } else {
+                assertModuleModuleDepScope(
+                    "project3",
+                    "project2",
+                    DependencyScope.COMPILE
+                )
+            }
+
             assertModuleModuleDepScope("project3", "project1", DependencyScope.COMPILE)
         } finally {
             currentExternalProjectSettings.isResolveModulePerSourceSet = isResolveModulePerSourceSet
@@ -272,7 +328,7 @@ class MultiplatformProjectImportingTest : GradleImportingTestCase() {
         importProject()
 
         TestCase.assertEquals(
-            projectPath + "/project2/build/classes/test/project2_test.js",
+            projectPath + "/project2/build/classes/${if (legacyMode()) "" else "kotlin/"}test/project2_test.js",
             PathUtil.toSystemIndependentName(KotlinFacet.get(getModule("project2"))!!.configuration.settings.testOutputPath)
         )
     }
@@ -283,7 +339,7 @@ class MultiplatformProjectImportingTest : GradleImportingTestCase() {
         importProject()
 
         TestCase.assertEquals(
-            projectPath + "/project2/build/classes/main/project2.js",
+            projectPath + "/project2/build/classes/${if (legacyMode()) "" else "kotlin/"}main/project2.js",
             PathUtil.toSystemIndependentName(KotlinFacet.get(getModule("project2"))!!.configuration.settings.productionOutputPath)
         )
     }
@@ -300,7 +356,7 @@ class MultiplatformProjectImportingTest : GradleImportingTestCase() {
         importProject()
 
         TestCase.assertEquals(
-            projectPath + "/project2/build/classes/test/project2_test.js",
+            projectPath + "/project2/build/classes/${if (legacyMode()) "" else "kotlin/"}test/project2_test.js",
             PathUtil.toSystemIndependentName(KotlinFacet.get(getModule("project2"))!!.configuration.settings.testOutputPath)
         )
     }
