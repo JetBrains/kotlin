@@ -115,6 +115,7 @@ class IDELightClassGenerationSupport(private val project: Project) : LightClassG
             if (name == JVM_STATIC_ANNOTATION_FQ_NAME.shortName()) return false
             if (name == JVM_SUPPRESS_WILDCARDS_ANNOTATION_FQ_NAME.shortName()) return false
             if (name == JVM_WILDCARD_ANNOTATION_FQ_NAME.shortName()) return false
+            if (name == JvmAbi.JVM_FIELD_ANNOTATION_FQ_NAME.shortName()) return false
 
             return true
         }
@@ -129,7 +130,8 @@ class IDELightClassGenerationSupport(private val project: Project) : LightClassG
             declaration.hasModifier(KtTokens.INLINE_KEYWORD) && declaration is KtClassOrObject ||
             declaration.hasModifier(KtTokens.DATA_KEYWORD) ||
             declaration.hasModifier(KtTokens.ENUM_KEYWORD) ||
-            declaration.hasModifier(KtTokens.SUSPEND_KEYWORD)) {
+            declaration.hasModifier(KtTokens.SUSPEND_KEYWORD)
+        ) {
             return declaration
         }
 

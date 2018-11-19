@@ -161,16 +161,19 @@ class KtUltraLightClass(classOrObject: KtClassOrObject, private val support: Ult
             )
 
             for (property in companion.declarations.filterIsInstance<KtProperty>()) {
-                if (isInterface && !property.hasModifier(CONST_KEYWORD)) continue
-
+                if (isInterface && !property.isConstOrJvmField()) continue
                 propertyField(property, ::generateUniqueName, true)?.let(result::add)
             }
         }
 
-        if (!isInterface &&
-            !(this.classOrObject is KtObjectDeclaration && this.classOrObject.isCompanion() && containingClass?.isInterface == false)
-        ) {
+        if (!isInterface) {
+            val isCompanion = this.classOrObject is KtObjectDeclaration && this.classOrObject.isCompanion()
             for (property in this.classOrObject.declarations.filterIsInstance<KtProperty>()) {
+                // All fields for companion object of classes are generated to the containing class
+                // For interfaces, only @JvmField-annotated properties are generated to the containing class
+                // Probably, the same should work for const vals but it doesn't at the moment (see KT-28294)
+                if (isCompanion && (containingClass?.isInterface == false || property.isJvmField())) continue
+
                 propertyField(property, ::generateUniqueName, forceStatic = this.classOrObject is KtObjectDeclaration)?.let(result::add)
             }
         }
@@ -200,11 +203,10 @@ class KtUltraLightClass(classOrObject: KtClassOrObject, private val support: Ult
 
         val visibility = when {
             property.hasModifier(PRIVATE_KEYWORD) -> PsiModifier.PRIVATE
-            property.hasModifier(LATEINIT_KEYWORD) -> {
+            property.hasModifier(LATEINIT_KEYWORD) || property.isConstOrJvmField() -> {
                 val declaration = property.setter ?: property
                 simpleVisibility(declaration)
             }
-            property.hasModifier(CONST_KEYWORD) -> PsiModifier.PUBLIC
             else -> PsiModifier.PRIVATE
         }
         val modifiers = hashSetOf(visibility)
@@ -433,8 +435,8 @@ class KtUltraLightClass(classOrObject: KtClassOrObject, private val support: Ult
     }
 
     private fun propertyAccessors(declaration: KtCallableDeclaration, mutable: Boolean, onlyJvmStatic: Boolean): List<KtLightMethod> {
-        val propertyName = declaration.name
-        if (declaration.hasModifier(CONST_KEYWORD) || propertyName == null) return emptyList()
+        val propertyName = declaration.name ?: return emptyList()
+        if (declaration.isConstOrJvmField()) return emptyList()
 
         val ktGetter = (declaration as? KtProperty)?.getter
         val ktSetter = (declaration as? KtProperty)?.setter
@@ -483,6 +485,11 @@ class KtUltraLightClass(classOrObject: KtClassOrObject, private val support: Ult
         }
         return result
     }
+
+    private fun KtCallableDeclaration.isConstOrJvmField() =
+        hasModifier(CONST_KEYWORD) || isJvmField()
+
+    private fun KtCallableDeclaration.isJvmField() = hasAnnotation(JvmAbi.JVM_FIELD_ANNOTATION_FQ_NAME)
 
     private fun isFinal(declaration: KtDeclaration): Boolean {
         if (declaration.hasModifier(FINAL_KEYWORD)) return true
