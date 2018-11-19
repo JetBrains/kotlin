@@ -8,10 +8,17 @@ public class A {
         }
     }
 
-    fun getFromCompanion() = Companion.getFromCompanion()
+    fun getFromLambda(): Boolean {
+        try {
+            val a = { str }()
+            return false
+        } catch (e: RuntimeException) {
+            return true
+        }
+    }
 
-    private companion object {
-        private lateinit var str: String
+    companion object {
+        lateinit var str: String
 
         fun getFromCompanion(): Boolean {
             try {
@@ -26,7 +33,8 @@ public class A {
 
 fun box(): String {
     if (!A().getFromClass()) return "Fail getFromClass"
-    if (!A().getFromCompanion()) return "Fail getFromCompanion"
+    if (!A().getFromLambda()) return "Fail getFromLambda"
+    if (!A.getFromCompanion()) return "Fail getFromCompanion"
 
     return "OK"
 }
