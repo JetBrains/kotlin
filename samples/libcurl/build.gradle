@@ -8,7 +8,7 @@ plugins {
 group 'org.jetbrains.kotlin.sample.native'
 version '1.0'
 
-def localRepo = rootProject.file('build/.m2-repo')
+def localRepo = rootProject.file('build/.m2-local')
 
 publishing {
     repositories {

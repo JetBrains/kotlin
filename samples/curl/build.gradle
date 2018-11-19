@@ -2,7 +2,7 @@ plugins {
     id 'kotlin-multiplatform'
 }
 
-def localRepo = rootProject.file('build/.m2-repo')
+def localRepo = rootProject.file('build/.m2-local')
 
 repositories {
     maven { url = "file://$localRepo" }

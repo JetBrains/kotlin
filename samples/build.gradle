@@ -18,6 +18,14 @@ allprojects {
     }
 }
 
+def localRepo = rootProject.file('build/.m2-local')
+
+task clean {
+    doLast {
+        delete(localRepo)
+    }
+}
+
 task buildSh(type: Exec) {
     errorOutput = System.out
     ignoreExitValue = true
