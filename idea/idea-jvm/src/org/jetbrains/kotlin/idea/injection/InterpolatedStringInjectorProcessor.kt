@@ -23,7 +23,11 @@ import com.intellij.psi.PsiLanguageInjectionHost
 import org.intellij.plugins.intelliLang.inject.InjectedLanguage
 import org.intellij.plugins.intelliLang.inject.InjectorUtils
 import org.intellij.plugins.intelliLang.inject.config.BaseInjection
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
+import org.jetbrains.kotlin.types.TypeUtils
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import java.util.*
 
 data class InjectionSplitResult(val isUnparsable: Boolean, val ranges: List<Trinity<PsiLanguageInjectionHost, InjectedLanguage, TextRange>>)
@@ -54,22 +58,25 @@ fun splitLiteralToInjectionParts(injection: BaseInjection, literal: KtStringTemp
         val child = children[i]
         val partOffsetInParent = child.startOffsetInParent
 
+        @Suppress("IMPLICIT_CAST_TO_ANY")
         val part = when (child) {
             is KtLiteralStringTemplateEntry, is KtEscapeStringTemplateEntry -> {
                 val partSize = children.subList(i, len).asSequence()
-                        .takeWhile { it is KtLiteralStringTemplateEntry || it is KtEscapeStringTemplateEntry }
-                        .count()
+                    .takeWhile { it is KtLiteralStringTemplateEntry || it is KtEscapeStringTemplateEntry }
+                    .count()
                 i += partSize - 1
                 children[i]
             }
-            is KtSimpleNameStringTemplateEntry -> {
-                unparsable = true
-                child.expression?.text ?: NO_VALUE_NAME
-            }
-            is KtBlockStringTemplateEntry -> {
-                unparsable = true
-                NO_VALUE_NAME
-            }
+            is KtSimpleNameStringTemplateEntry ->
+                tryEvaluateConstant(child.expression) ?: run {
+                    unparsable = true
+                    child.expression?.text ?: NO_VALUE_NAME
+                }
+            is KtBlockStringTemplateEntry ->
+                tryEvaluateConstant(child.expression) ?: run {
+                    unparsable = true
+                    NO_VALUE_NAME
+                }
             else -> {
                 unparsable = true
                 child
@@ -96,5 +103,13 @@ fun splitLiteralToInjectionParts(injection: BaseInjection, literal: KtStringTemp
 
     return InjectionSplitResult(unparsable, result)
 }
+
+private fun tryEvaluateConstant(ktExpression: KtExpression?) =
+    ktExpression?.let { expression ->
+        ConstantExpressionEvaluator.getConstant(expression, expression.analyze())
+            ?.takeUnless { it.isError }
+            ?.getValue(TypeUtils.NO_EXPECTED_TYPE)
+            ?.safeAs<String>()
+    }
 
 private val NO_VALUE_NAME = "missingValue"
