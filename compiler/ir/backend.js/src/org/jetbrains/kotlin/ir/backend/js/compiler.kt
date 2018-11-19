@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
 import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
+import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.js.analyze.TopDownAnalyzerFacadeForJS
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
@@ -101,6 +102,11 @@ private fun JsIrBackendContext.performInlining(moduleFragment: IrModuleFragment)
 }
 
 private fun JsIrBackendContext.lower(moduleFragment: IrModuleFragment, dependencies: List<IrModuleFragment>) {
+    val validateIr = {
+        val visitor = IrValidator(this, validatorConfig)
+        moduleFragment.acceptVoid(visitor)
+    }
+    validateIr()
     ThrowableSuccessorsLowering(this).lower(moduleFragment)
     TailrecLowering(this).runOnFilesPostfix(moduleFragment)
     UnitMaterializationLowering(this).lower(moduleFragment)
@@ -113,6 +119,7 @@ private fun JsIrBackendContext.lower(moduleFragment: IrModuleFragment, dependenc
     LocalDeclarationsLowering(this).runOnFilesPostfix(moduleFragment)
     InnerClassesLowering(this).runOnFilesPostfix(moduleFragment)
     InnerClassConstructorCallsLowering(this).runOnFilesPostfix(moduleFragment)
+    validateIr()
     SuspendFunctionsLowering(this).lower(moduleFragment)
     CallableReferenceLowering(this).lower(moduleFragment)
     DefaultArgumentStubGenerator(this).runOnFilesPostfix(moduleFragment)
@@ -134,14 +141,23 @@ private fun JsIrBackendContext.lower(moduleFragment: IrModuleFragment, dependenc
         inlineClassDeclarationLowering.runOnFilesPostfix(moduleFragment)
         inlineClassUsageLowering.lower(moduleFragment)
     }
+    validateIr()
     AutoboxingTransformer(this).lower(moduleFragment)
     BlockDecomposerLowering(this).runOnFilesPostfix(moduleFragment)
 
     ClassReferenceLowering(this).lower(moduleFragment)
     PrimitiveCompanionLowering(this).lower(moduleFragment)
     ConstLowering(this).lower(moduleFragment)
+    validateIr()
     CallsLowering(this).lower(moduleFragment)
 }
+
+val validatorConfig = IrValidatorConfig(
+    abortOnError = true,
+    ensureAllNodesAreDifferent = true,
+    checkTypes = false,
+    checkDescriptors = false
+)
 
 private fun FileLoweringPass.lower(moduleFragment: IrModuleFragment) = moduleFragment.files.forEach { lower(it) }
 

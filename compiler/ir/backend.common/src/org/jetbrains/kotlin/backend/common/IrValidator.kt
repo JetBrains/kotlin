@@ -24,18 +24,21 @@ import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 
 fun validateIrFile(context: CommonBackendContext, irFile: IrFile) {
-    val visitor = IrValidator(context, false)
+    val visitor = IrValidator(context, IrValidatorConfig(abortOnError = false, ensureAllNodesAreDifferent = false))
     irFile.acceptVoid(visitor)
 }
 
 fun validateIrModule(context: CommonBackendContext, irModule: IrModuleFragment) {
-    val visitor = IrValidator(context, true) // TODO: consider taking the boolean from settings.
+    val visitor = IrValidator(
+        context,
+        IrValidatorConfig(abortOnError = false, ensureAllNodesAreDifferent = true)
+    ) // TODO: consider taking the boolean from settings.
     irModule.acceptVoid(visitor)
 
     // TODO: also check that all referenced symbol targets are reachable.
 }
 
-private fun CommonBackendContext.reportIrValidationError(message: String, irFile: IrFile, irElement: IrElement) {
+private fun CommonBackendContext.reportIrValidationError(message: String, irFile: IrFile?, irElement: IrElement) {
     try {
         this.reportWarning("[IR VALIDATION] $message", irFile, irElement)
     } catch (e: Throwable) {
@@ -45,10 +48,17 @@ private fun CommonBackendContext.reportIrValidationError(message: String, irFile
     // TODO: throw an exception after fixing bugs leading to invalid IR.
 }
 
-private class IrValidator(val context: CommonBackendContext, performHeavyValidations: Boolean) : IrElementVisitorVoid {
+data class IrValidatorConfig(
+    val abortOnError: Boolean,
+    val ensureAllNodesAreDifferent: Boolean,
+    val checkTypes: Boolean = true,
+    val checkDescriptors: Boolean = true
+)
+
+class IrValidator(val context: CommonBackendContext, val config: IrValidatorConfig) : IrElementVisitorVoid {
 
     val builtIns = context.builtIns
-    lateinit var currentFile: IrFile
+    var currentFile: IrFile? = null
 
     override fun visitFile(declaration: IrFile) {
         currentFile = declaration
@@ -58,12 +68,17 @@ private class IrValidator(val context: CommonBackendContext, performHeavyValidat
     private fun error(element: IrElement, message: String) {
         // TODO: render all element's parents.
         context.reportIrValidationError(
-                "$message\n" +
-                        element.render(),
-                currentFile, element)
+            "$message\n" + element.render(),
+            currentFile,
+            element
+        )
+
+        if (config.abortOnError) {
+            error("Validation failed")
+        }
     }
 
-    private val elementChecker = CheckIrElementVisitor(builtIns, this::error, performHeavyValidations)
+    private val elementChecker = CheckIrElementVisitor(builtIns, this::error, config)
 
     override fun visitElement(element: IrElement) {
         element.acceptVoid(elementChecker)
