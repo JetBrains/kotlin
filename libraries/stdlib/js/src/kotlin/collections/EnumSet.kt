@@ -22,21 +22,11 @@ actual abstract class EnumSet<E : Enum<E>>(
     internal abstract fun filledUp(): EnumSet<E>
 }
 
-fun <E : Enum<E>> enumSetOf(type: JsClass<E>, universe: Array<E>): EnumSet<E> = if (universe.size > Int.SIZE_BITS) {
-    JumboEnumSet(type, universe)
-} else {
-    RegularEnumSet(type, universe)
-}
-
-fun <E : Enum<E>> enumSetAllOf(type: JsClass<E>, universe: Array<E>): EnumSet<E> = if (universe.size > Int.SIZE_BITS) {
-    JumboEnumSet(type, universe).filledUp()
-} else {
-    RegularEnumSet(type, universe).filledUp()
-}
-
+@Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
 @kotlin.internal.InlineOnly
 public actual inline fun <reified E : Enum<E>> enumSetOf(): EnumSet<E> = enumSetOf(E::class.js, enumValues<E>())
 
+@Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
 @kotlin.internal.InlineOnly
 public actual inline fun <reified E : Enum<E>> enumSetOf(element: E): EnumSet<E> {
     val result = enumSetOf(E::class.js, enumValues<E>())
@@ -46,9 +36,21 @@ public actual inline fun <reified E : Enum<E>> enumSetOf(element: E): EnumSet<E>
     return result
 }
 
+@Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
 @kotlin.internal.InlineOnly
 public actual inline fun <reified E : Enum<E>> enumSetOf(vararg elements: E): EnumSet<E> =
     elements.toCollection(enumSetOf(E::class.js, enumValues<E>()))
 
+@Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
 @kotlin.internal.InlineOnly
-public actual inline fun <reified E : Enum<E>> enumSetAllOf(): EnumSet<E> = enumSetAllOf(E::class.js, enumValues<E>())
+public actual inline fun <reified E : Enum<E>> enumSetAllOf(): EnumSet<E> = enumSetOf(E::class.js, enumValues<E>()).filledUp()
+
+@kotlin.internal.InlineOnly
+private inline fun <reified E : Enum<E>> enumSetOf(
+    type: JsClass<E>,
+    universe: Array<E>
+): EnumSet<E> = if (universe.size > Int.SIZE_BITS) {
+    JumboEnumSet(type, universe)
+} else {
+    RegularEnumSet(type, universe)
+}
