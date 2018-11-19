@@ -78,4 +78,8 @@ const void* Kotlin_Any_getTypeInfo(KConstRef obj) {
   return obj->type_info();
 }
 
+void Kotlin_CPointer_CopyMemory(KNativePtr to, KNativePtr from, KInt count) {
+  memcpy(to, from, count);
+}
+
 }  // extern "C"

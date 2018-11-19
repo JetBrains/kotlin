@@ -27,14 +27,16 @@ typedef enum {
   CONTAINER_TAG_NORMAL = 0,
   // Container is frozen, could only refer to other frozen objects.
   // Refcounter update is atomics.
-  CONTAINER_TAG_FROZEN = 1,
+  CONTAINER_TAG_FROZEN = 1 | 1,  // shareable
+  // Stack container, no need to free, children cleanup still shall be there.
+  CONTAINER_TAG_STACK = 2,
   // Those container tags shall not be refcounted.
   // Permanent container, cannot refer to non-permanent containers, so no need to cleanup those.
-  CONTAINER_TAG_PERMANENT = 2,
-  // Stack container, no need to free, children cleanup still shall be there.
-  CONTAINER_TAG_STACK = 3,
+  CONTAINER_TAG_PERMANENT = 3 | 1,  // shareable
+  // Atomic container, reference counter is atomically updated.
+  CONTAINER_TAG_ATOMIC = 5 | 1,  // shareable
   // Shift to get actual counter.
-  CONTAINER_TAG_SHIFT = 2,
+  CONTAINER_TAG_SHIFT = 3,
   // Actual value to increment/decrement container by. Tag is in lower bits.
   CONTAINER_TAG_INCREMENT = 1 << CONTAINER_TAG_SHIFT,
   // Mask for container type.
@@ -83,8 +85,16 @@ struct ContainerHeader {
     refCount_ = (refCount_ & ~CONTAINER_TAG_MASK) | CONTAINER_TAG_FROZEN;
   }
 
+  inline void makeShareable() {
+      refCount_ = (refCount_ & ~CONTAINER_TAG_MASK) | CONTAINER_TAG_ATOMIC;
+  }
+
   inline bool permanentOrFrozen() const {
     return tag() == CONTAINER_TAG_PERMANENT || tag() == CONTAINER_TAG_FROZEN;
+  }
+
+  inline bool shareable() const {
+      return (tag() & 1) != 0; // CONTAINER_TAG_PERMANENT || CONTAINER_TAG_FROZEN || CONTAINER_TAG_ATOMIC
   }
 
   inline bool stack() const {
