@@ -8,8 +8,7 @@ package org.jetbrains.kotlin.test
 enum class ConfigurationKind(
         val withRuntime: Boolean = false,
         val withMockRuntime: Boolean = false,
-        val withReflection: Boolean = false,
-        val withCoroutines: Boolean = false
+        val withReflection: Boolean = false
 ) {
     /** JDK without any kotlin runtime */
     JDK_NO_RUNTIME(),
@@ -17,10 +16,6 @@ enum class ConfigurationKind(
     JDK_ONLY(withMockRuntime = true),
     /** JDK + kotlin runtime but without reflection */
     NO_KOTLIN_REFLECT(withRuntime = true),
-    /** JDK + kotlin runtime + coroutines */
-    WITH_COROUTINES(withCoroutines = true, withRuntime = true),
     /** JDK + kotlin runtime + kotlin reflection */
-    WITH_REFLECT(withRuntime = true, withReflection = true),
-    /** JDK + kotlin runtime + kotlin reflection + coroutines */
-    ALL(withRuntime = true, withReflection = true, withCoroutines = true)
+    ALL(withRuntime = true, withReflection = true)
 }

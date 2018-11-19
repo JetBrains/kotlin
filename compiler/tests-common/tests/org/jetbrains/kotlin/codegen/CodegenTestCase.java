@@ -413,14 +413,8 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
     @NotNull
     protected GeneratedClassLoader createClassLoader() {
         ClassLoader classLoader;
-        if (configurationKind.getWithReflection() && configurationKind.getWithCoroutines()) {
-            classLoader = ForTestCompileRuntime.reflectAndCoroutinesJarClassLoader();
-        }
-        else if (configurationKind.getWithReflection()) {
+        if (configurationKind.getWithReflection()) {
             classLoader = ForTestCompileRuntime.runtimeAndReflectJarClassLoader();
-        }
-        else if (configurationKind.getWithCoroutines()) {
-            classLoader = ForTestCompileRuntime.runtimeAndCoroutinesJarClassLoader();
         }
         else {
             classLoader = ForTestCompileRuntime.runtimeJarClassLoader();
@@ -685,9 +679,6 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
             if (loadAndroidAnnotations) {
                 javaClasspath.add(ForTestCompileRuntime.androidAnnotationsForTests().getPath());
             }
-            if (configurationKind.getWithCoroutines()) {
-                javaClasspath.add(ForTestCompileRuntime.coroutinesJarForTests().getPath());
-            }
 
             javaClassesOutputDirectory = CodegenTestUtil.compileJava(
                     findJavaSourcesInDirectory(javaSourceDir), javaClasspath, javacOptions
@@ -714,10 +705,8 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
             }
         }
 
-        return (addReflect && addCoroutines) ? ConfigurationKind.ALL :
-               addReflect ? ConfigurationKind.WITH_REFLECT :
-               addCoroutines ? ConfigurationKind.WITH_COROUTINES :
-               addRuntime ? ConfigurationKind.NO_KOTLIN_REFLECT :
+        return addReflect ? ConfigurationKind.ALL :
+               (addRuntime || addCoroutines) ? ConfigurationKind.NO_KOTLIN_REFLECT :
                ConfigurationKind.JDK_ONLY;
     }
 

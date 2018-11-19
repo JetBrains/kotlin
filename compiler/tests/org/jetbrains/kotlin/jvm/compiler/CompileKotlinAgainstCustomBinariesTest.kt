@@ -530,7 +530,7 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
         compileKotlin(
             "release.kt",
             tmpdir,
-            listOf(library, ForTestCompileRuntime.coroutinesJarForTests()),
+            listOf(library),
             additionalOptions = listOf("-language-version", "1.3", "-api-version", "1.3")
         )
     }
