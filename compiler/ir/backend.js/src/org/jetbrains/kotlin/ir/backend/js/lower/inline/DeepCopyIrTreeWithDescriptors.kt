@@ -516,6 +516,7 @@ internal class DeepCopyIrTreeWithDescriptors(val targetDescriptor: FunctionDescr
                     endOffset = declaration.endOffset,
                     origin = mapDeclarationOrigin(declaration.origin),
                     descriptor = descriptor,
+                    returnType = declaration.returnType,
                     body = declaration.body?.transform(this@InlineCopyIr, null)
                 ).also {
                     it.setOverrides(context.symbolTable)

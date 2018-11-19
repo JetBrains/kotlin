@@ -227,6 +227,12 @@ class InlineClassLowering(val context: BackendContext) {
 
     private fun createStaticBodilessMethod(function: IrFunction): IrSimpleFunction {
         val descriptor = WrappedSimpleFunctionDescriptor()
+        val returnType = when (function) {
+            is IrSimpleFunction -> function.returnType
+            is IrConstructor -> function.parentAsClass.defaultType
+            else -> error("Unknown function type")
+        }
+
         return IrFunctionImpl(
             function.startOffset,
             function.endOffset,
@@ -235,18 +241,14 @@ class InlineClassLowering(val context: BackendContext) {
             function.name.toInlineClassImplementationName(),
             function.visibility,
             Modality.FINAL,
+            returnType,
             function.isInline,
             function.isExternal,
             (function is IrSimpleFunction && function.isTailrec),
             (function is IrSimpleFunction && function.isSuspend)
         ).apply {
             descriptor.bind(this)
-            returnType = when (function) {
-                is IrSimpleFunction -> function.returnType
-                is IrConstructor -> function.parentAsClass.defaultType
-                else -> error("Unknown function type")
-            }
-            typeParameters += function.typeParameters
+            copyTypeParametersFrom(function)
             annotations += function.annotations
             dispatchReceiverParameter = null
             extensionReceiverParameter = function.extensionReceiverParameter?.copyTo(this)

@@ -42,10 +42,9 @@ class IrMemberFunctionBuilder(
     lateinit var irFunction: IrFunction
 
     inline fun addToClass(body: IrMemberFunctionBuilder.(IrFunction) -> Unit): IrFunction {
-        irFunction = IrFunctionImpl(startOffset, endOffset, origin, function)
+        irFunction = IrFunctionImpl(startOffset, endOffset, origin, function, returnType)
         body(irFunction)
         irFunction.body = doBuild()
-        irFunction.returnType = returnType
         irClass.declarations.add(irFunction)
         return irFunction
     }

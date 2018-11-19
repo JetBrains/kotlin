@@ -348,10 +348,9 @@ class CallableReferenceLowering(val context: JvmBackendContext) : FileLoweringPa
                     startOffset = startOffset,
                     endOffset = endOffset,
                     origin = DECLARATION_ORIGIN_FUNCTION_REFERENCE_IMPL,
-                    symbol = symbol
-                ).apply {
+                    symbol = symbol,
                     returnType = symbol.descriptor.returnType.toIrType()!!
-
+                ).apply {
                     val irBuilder = context.createIrBuilder(this.symbol, startOffset, endOffset)
 
                     createParameterDeclarations()
@@ -432,12 +431,12 @@ class CallableReferenceLowering(val context: JvmBackendContext) : FileLoweringPa
                         startOffset = startOffset,
                         endOffset = endOffset,
                         origin = DECLARATION_ORIGIN_FUNCTION_REFERENCE_IMPL,
-                        symbol = ourSymbol
+                        symbol = ourSymbol,
+                        returnType = ourSymbol.descriptor.returnType!!.toIrType()!!
                     ).apply {
 
                         val function = this
                         val irBuilder = context.createIrBuilder(function.symbol, startOffset, endOffset)
-                        returnType = ourSymbol.descriptor.returnType!!.toIrType()!!
                         createParameterDeclarations()
 
                         body = irBuilder.irBlockBody(startOffset, endOffset) {
@@ -587,12 +586,12 @@ class CallableReferenceLowering(val context: JvmBackendContext) : FileLoweringPa
                         startOffset = startOffset,
                         endOffset = endOffset,
                         origin = DECLARATION_ORIGIN_FUNCTION_REFERENCE_IMPL,
-                        symbol = ourSymbol
+                        symbol = ourSymbol,
+                        returnType = ourSymbol.descriptor.returnType!!.toIrType()!!
                     ).apply {
 
                         val function = this
                         val irBuilder = context.createIrBuilder(function.symbol, startOffset, endOffset)
-                        returnType = ourSymbol.descriptor.returnType!!.toIrType()!!
 
                         createParameterDeclarations()
 
@@ -646,12 +645,12 @@ class CallableReferenceLowering(val context: JvmBackendContext) : FileLoweringPa
                         startOffset = startOffset,
                         endOffset = endOffset,
                         origin = DECLARATION_ORIGIN_FUNCTION_REFERENCE_IMPL,
-                        symbol = ourSymbol
+                        symbol = ourSymbol,
+                        returnType = ourSymbol.descriptor.returnType!!.toIrType()!!
                     ).apply {
 
                         val function = this
                         val irBuilder = context.createIrBuilder(function.symbol, startOffset, endOffset)
-                        returnType = ourSymbol.descriptor.returnType!!.toIrType()!!
 
                         createParameterDeclarations()
 
@@ -709,9 +708,9 @@ class CallableReferenceLowering(val context: JvmBackendContext) : FileLoweringPa
                         startOffset = startOffset,
                         endOffset = endOffset,
                         origin = DECLARATION_ORIGIN_FUNCTION_REFERENCE_IMPL,
-                        symbol = ourSymbol
-                    ).apply {
+                        symbol = ourSymbol,
                         returnType = symbol.descriptor.returnType!!.toIrType()!!
+                    ).apply {
                         val function = this
                         val irBuilder = context.createIrBuilder(function.symbol, startOffset, endOffset)
 

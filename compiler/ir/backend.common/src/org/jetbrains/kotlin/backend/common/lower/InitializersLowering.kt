@@ -137,10 +137,10 @@ class InitializersLowering(
             IrFunctionImpl(
                 irClass.startOffset, irClass.endOffset, declarationOrigin,
                 staticInitializerDescriptor,
+                context.irBuiltIns.unitType,
                 IrBlockBodyImpl(irClass.startOffset, irClass.endOffset,
                                 staticInitializerStatements.map { it.copy(irClass) })
             ).apply {
-                returnType = context.irBuiltIns.unitType
                 accept(SetDeclarationsParentVisitor, this)
             }
         )

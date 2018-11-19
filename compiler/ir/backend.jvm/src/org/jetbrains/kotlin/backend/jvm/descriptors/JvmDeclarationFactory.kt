@@ -110,10 +110,15 @@ class JvmDeclarationFactory(
             oldDescriptor.modality,
             oldDescriptor.visibility)
         val symbol = IrConstructorSymbolImpl(newDescriptor)
-        return IrConstructorImpl(oldConstructor.startOffset, oldConstructor.endOffset, oldConstructor.origin, symbol).also { constructor ->
+        return IrConstructorImpl(
+            oldConstructor.startOffset,
+            oldConstructor.endOffset,
+            oldConstructor.origin,
+            symbol,
+            oldConstructor.returnType
+        ).also { constructor ->
             newValueParameters.mapIndexedTo(constructor.valueParameters) { i, v ->
                 constructor.parent = oldConstructor.parent
-                constructor.returnType = oldConstructor.returnType
                 if (i == 0) {
                     IrValueParameterImpl(
                         UNDEFINED_OFFSET, UNDEFINED_OFFSET,

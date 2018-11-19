@@ -417,13 +417,13 @@ class EnumClassTransformer(val context: JsIrBackendContext, private val irClass:
             loweredConstructorSymbol,
             enumConstructor.name,
             enumConstructor.visibility,
+            enumConstructor.returnType,
             enumConstructor.isInline,
             enumConstructor.isExternal,
             enumConstructor.isPrimary
         ).apply {
             loweredConstructorDescriptor.bind(this)
             parent = enumClass
-            returnType = enumConstructor.returnType
             valueParameters += JsIrBuilder.buildValueParameter("name", 0, context.irBuiltIns.stringType).also { it.parent = this }
             valueParameters += JsIrBuilder.buildValueParameter("ordinal", 1, context.irBuiltIns.intType).also { it.parent = this }
             copyParameterDeclarationsFrom(enumConstructor)

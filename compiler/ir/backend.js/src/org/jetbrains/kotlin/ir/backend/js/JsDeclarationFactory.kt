@@ -95,13 +95,13 @@ class JsDeclarationFactory : DeclarationFactory {
             symbol,
             oldConstructor.name,
             oldConstructor.visibility,
+            oldConstructor.returnType,
             oldConstructor.isInline,
             oldConstructor.isExternal,
             oldConstructor.isPrimary
         ).also {
             descriptor.bind(it)
             it.parent = oldConstructor.parent
-            it.returnType = oldConstructor.returnType
         }
 
         newConstructor.copyTypeParametersFrom(oldConstructor)

@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
+import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.name.Name
 
 class JsSharedVariablesManager(val builtIns: IrBuiltIns, val implicitDeclarationsFile: IrFile) : SharedVariablesManager {
@@ -169,7 +170,7 @@ class JsSharedVariablesManager(val builtIns: IrBuiltIns, val implicitDeclaration
 
         val declaration = IrConstructorImpl(
             UNDEFINED_OFFSET, UNDEFINED_OFFSET, JsLoweredDeclarationOrigin.JS_CLOSURE_BOX_CLASS_DECLARATION, symbol,
-            Name.special("<init>"), Visibilities.PUBLIC, false, false, true
+            Name.special("<init>"), Visibilities.PUBLIC, closureBoxClassDeclaration.defaultType, false, false, true
         )
 
         descriptor.bind(declaration)

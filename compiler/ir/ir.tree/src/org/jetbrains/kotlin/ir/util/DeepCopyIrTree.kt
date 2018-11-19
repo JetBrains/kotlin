@@ -116,6 +116,7 @@ open class DeepCopyIrTree : IrElementTransformerVoid() {
             declaration.startOffset, declaration.endOffset,
             mapDeclarationOrigin(declaration.origin),
             mapFunctionDeclaration(declaration.descriptor),
+            declaration.returnType, // TODO
             declaration.body?.transform()
         ).transformParameters(declaration).apply {
             transformAnnotations(declaration)
@@ -126,7 +127,6 @@ open class DeepCopyIrTree : IrElementTransformerVoid() {
                 else
                     IrSimpleFunctionSymbolImpl(overriddenDescriptor.original)
             }
-            returnType = declaration.returnType // TODO
         }
 
     override fun visitConstructor(declaration: IrConstructor): IrConstructor =
@@ -134,10 +134,10 @@ open class DeepCopyIrTree : IrElementTransformerVoid() {
             declaration.startOffset, declaration.endOffset,
             mapDeclarationOrigin(declaration.origin),
             mapConstructorDeclaration(declaration.descriptor),
+            declaration.returnType, // TODO
             declaration.body?.transform()
         ).transformParameters(declaration).apply {
             transformAnnotations(declaration)
-            returnType = declaration.returnType // TODO
         }
 
     protected fun <T : IrTypeParametersContainer> T.transformTypeParameters(

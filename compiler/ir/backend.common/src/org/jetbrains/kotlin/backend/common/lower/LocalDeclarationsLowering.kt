@@ -536,6 +536,7 @@ open class LocalDeclarationsLowering(
                 // TODO: change to PRIVATE when issue with CallableReferenceLowering in Jvm BE is fixed
                 if (isJVM) Visibilities.PUBLIC else Visibilities.PRIVATE,
                 Modality.FINAL,
+                oldDeclaration.returnType,
                 oldDeclaration.isInline,
                 oldDeclaration.isExternal,
                 oldDeclaration.isTailrec,
@@ -546,7 +547,6 @@ open class LocalDeclarationsLowering(
             localFunctionContext.transformedDeclaration = newDeclaration
 
             newDeclaration.parent = memberOwner
-            newDeclaration.returnType = oldDeclaration.returnType
             newDeclaration.copyTypeParametersFrom(oldDeclaration)
             newDeclaration.dispatchReceiverParameter = newDispatchReceiverParameter
             newDeclaration.extensionReceiverParameter = oldDeclaration.extensionReceiverParameter?.run {
@@ -615,7 +615,7 @@ open class LocalDeclarationsLowering(
 
             val newDeclaration = IrConstructorImpl(
                 oldDeclaration.startOffset, oldDeclaration.endOffset, oldDeclaration.origin,
-                newSymbol, oldDeclaration.name, loweredConstructorVisibility, oldDeclaration.isInline,
+                newSymbol, oldDeclaration.name, loweredConstructorVisibility, oldDeclaration.returnType, oldDeclaration.isInline,
                 oldDeclaration.isExternal, oldDeclaration.isPrimary
             )
 
@@ -624,7 +624,6 @@ open class LocalDeclarationsLowering(
             constructorContext.transformedDeclaration = newDeclaration
 
             newDeclaration.parent = localClassContext.declaration
-            newDeclaration.returnType = oldDeclaration.returnType
             newDeclaration.copyTypeParametersFrom(oldDeclaration)
 
             // TODO: should dispatch receiver be copied?

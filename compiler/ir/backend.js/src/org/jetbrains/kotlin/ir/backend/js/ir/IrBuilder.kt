@@ -140,13 +140,13 @@ object JsIrBuilder {
             name,
             visibility,
             modality,
+            returnType,
             isInline,
             isExternal,
             isTailrec,
             isSuspend
         ).also {
             descriptor.bind(it)
-            it.returnType = returnType
             it.parent = parent
         }
     }
