@@ -1660,8 +1660,14 @@ public abstract class StackValue {
 
                 v.visitFieldInsn(isStaticPut ? GETSTATIC : GETFIELD,
                                  backingFieldOwner.getInternalName(), fieldName, this.type.getDescriptor());
-                if (!skipLateinitAssertion) {
-                    genNotNullAssertionForLateInitIfNeeded(v);
+                if (!skipLateinitAssertion && descriptor.isLateInit()) {
+                    CallableMemberDescriptor contextDescriptor = codegen.context.getContextDescriptor();
+                    boolean isCompanionAccessor =
+                            contextDescriptor instanceof AccessorForPropertyBackingField &&
+                            ((AccessorForPropertyBackingField) contextDescriptor).getAccessorKind() == AccessorKind.IN_CLASS_COMPANION;
+                    if (!isCompanionAccessor) {
+                        genNonNullAssertForLateinit(v, this.descriptor.getName().asString());
+                    }
                 }
                 coerceTo(type, kotlinType, v);
             }
@@ -1693,6 +1699,19 @@ public abstract class StackValue {
                 }
 
                 coerce(typeOfValueOnStack, kotlinTypeOfValueOnStack, type, kotlinType, v);
+
+                // For non-private lateinit properties in companion object, the assertion is generated in the public getFoo method
+                // in the companion and _not_ in the synthetic accessor access$getFoo$cp in the outer class. The reason is that this way,
+                // the synthetic accessor can be reused for isInitialized checks, which require there to be no assertion.
+                // For lateinit properties that are accessed via the backing field directly (or via the synthetic accessor, if the access
+                // is from a different context), the assertion will be generated on each access, see KT-28331.
+                if (descriptor instanceof AccessorForPropertyBackingField) {
+                    PropertyDescriptor property = ((AccessorForPropertyBackingField) descriptor).getCalleeDescriptor();
+                    if (!skipLateinitAssertion && property.isLateInit() && JvmAbi.isPropertyWithBackingFieldInOuterClass(property) &&
+                        !JvmCodegenUtil.couldUseDirectAccessToProperty(property, true, false, codegen.context, false)) {
+                        genNonNullAssertForLateinit(v, property.getName().asString());
+                    }
+                }
 
                 KotlinType returnType = descriptor.getReturnType();
                 if (returnType != null && KotlinBuiltIns.isNothing(returnType)) {
@@ -1730,12 +1749,6 @@ public abstract class StackValue {
             StackValue.constant(value, this.type, this.kotlinType).putSelector(type, kotlinType, v);
 
             return true;
-        }
-
-        private void genNotNullAssertionForLateInitIfNeeded(@NotNull InstructionAdapter v) {
-            if (!descriptor.isLateInit()) return;
-
-            StackValue.genNonNullAssertForLateinit(v, descriptor.getName().asString());
         }
 
         @Override
