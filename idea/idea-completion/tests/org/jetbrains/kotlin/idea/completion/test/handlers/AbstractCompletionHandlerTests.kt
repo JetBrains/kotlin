@@ -39,7 +39,7 @@ abstract class AbstractCompletionHandlerTest(private val defaultCompletionType: 
     protected open fun doTest(testPath: String) {
         setUpFixture(testPath)
 
-        val settingManager = CodeStyleSettingsManager.getInstance()
+        val settingManager = CodeStyleSettingsManager.getInstance(project)
         val tempSettings = settingManager.currentSettings.clone()
         settingManager.setTemporarySettings(tempSettings)
         try {
