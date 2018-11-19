@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.test.TargetBackend
 import java.io.File
 
-private val runtimeSourcesCommon = listOfKtFilesFrom(
+private val runtimeSources = listOfKtFilesFrom(
     "core/builtins/src/kotlin",
     "libraries/stdlib/common/src",
     "libraries/stdlib/src/kotlin/",
@@ -72,31 +72,19 @@ private val runtimeSourcesCommon = listOfKtFilesFrom(
     // Mostly array-specific stuff
     "libraries/stdlib/js/src/kotlin/builtins.kt",
 
+    // coroutines
+    // TODO: merge coroutines_13 with JS BE coroutines
+    "libraries/stdlib/js/src/kotlin/coroutines/intrinsics/IntrinsicsJs.kt",
+    "libraries/stdlib/js/src/kotlin/coroutines/CoroutineImpl.kt",
+
     // Inlining of js fun doesn't update the variables inside
     "libraries/stdlib/js/src/kotlin/jsTypeOf.kt",
     "libraries/stdlib/js/src/kotlin/collections/utils.kt"
 )
 
 
-private val coroutine12Files = listOfKtFilesFrom(
-    "libraries/stdlib/js/irRuntime/coroutines_12"
-)
-
-private val coroutine13Files = listOfKtFilesFrom(
-    "libraries/stdlib/coroutines/common",
-    "libraries/stdlib/coroutines/js/src/kotlin/coroutines/SafeContinuationJs.kt",
-    "libraries/stdlib/coroutines/src",
-    // TODO: merge coroutines_13 with JS BE coroutines
-    "libraries/stdlib/js/irRuntime/coroutines_13"
-)
-
 private var runtimeResult: Result? = null
 private val runtimeFile = File("js/js.translator/testData/out/irBox/testRuntime.js")
-
-private val runtimeSources_12 = (runtimeSourcesCommon - coroutine13Files + coroutine12Files).distinct()
-private val runtimeSources_13 = (runtimeSourcesCommon - coroutine12Files + coroutine13Files).distinct()
-
-private val runtimeSources = runtimeSources_13
 
 abstract class BasicIrBoxTest(
     pathToTestDir: String,
