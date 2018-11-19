@@ -17845,6 +17845,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                     KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/properties/lateinit/isInitializedAndDeinitialize"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM, true);
                 }
 
+                @TestMetadata("companionObjectField.kt")
+                public void testCompanionObjectField() throws Exception {
+                    runTest("compiler/testData/codegen/box/properties/lateinit/isInitializedAndDeinitialize/companionObjectField.kt");
+                }
+
                 @TestMetadata("emptyLhs.kt")
                 public void testEmptyLhs() throws Exception {
                     runTest("compiler/testData/codegen/box/properties/lateinit/isInitializedAndDeinitialize/emptyLhs.kt");
