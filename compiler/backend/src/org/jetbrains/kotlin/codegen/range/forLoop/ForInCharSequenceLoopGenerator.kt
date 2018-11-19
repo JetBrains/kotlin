@@ -81,8 +81,8 @@ class ForInCharSequenceLoopGenerator(
         v.load(charSequenceVar, charSequenceType)
         v.load(indexVar, Type.INT_TYPE)
         v.invokeCharSequenceMethod("charAt", "(I)C")
-        StackValue.onStack(Type.CHAR_TYPE).put(asmElementType, elementType, codegen.v)
-        v.store(loopParameterVar, asmElementType)
+        StackValue.onStack(Type.CHAR_TYPE).put(loopParameterType, loopParameterKotlinType, codegen.v)
+        v.store(loopParameterVar, loopParameterType)
     }
 
     override fun checkPostConditionAndIncrement(loopExit: Label) {
