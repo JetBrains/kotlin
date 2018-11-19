@@ -2084,10 +2084,19 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
                 couldUseDirectAccessToProperty(propertyDescriptor, false, isDelegatedProperty, context, state.getShouldInlineConstVals());
 
         if (fieldAccessorKind == AccessorKind.LATEINIT_INTRINSIC) {
-            skipPropertyAccessors = !isPrivateProperty || context.getClassOrPackageParentContext() == backingFieldContext;
+            skipPropertyAccessors =
+                    (!isPrivateProperty || context.getClassOrPackageParentContext() == backingFieldContext) &&
+                    !isBackingFieldMovedFromCompanion;
 
             if (!skipPropertyAccessors) {
-                propertyDescriptor = backingFieldContext.getAccessor(propertyDescriptor, fieldAccessorKind, delegateType, superCallTarget);
+                if (isBackingFieldMovedFromCompanion && context.getContextDescriptor() instanceof AccessorForPropertyBackingField) {
+                    propertyDescriptor = (PropertyDescriptor) backingFieldContext.getParentContext()
+                            .getAccessor(propertyDescriptor, AccessorKind.IN_CLASS_COMPANION, delegateType, superCallTarget);
+                }
+                else {
+                    propertyDescriptor =
+                            backingFieldContext.getAccessor(propertyDescriptor, fieldAccessorKind, delegateType, superCallTarget);
+                }
             }
             ownerDescriptor = propertyDescriptor;
         }
