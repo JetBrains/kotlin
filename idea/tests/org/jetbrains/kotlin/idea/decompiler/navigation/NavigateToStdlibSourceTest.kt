@@ -29,11 +29,11 @@ class NavigateToStdlibSourceTest : KotlinCodeInsightTestCase() {
     private val FILE_TEXT = "fun foo() { <caret>println() }"
 
     fun testRefToPrintlnWithJVM() {
-        doTest("ioH.kt", ModuleKind.KOTLIN_JVM_WITH_STDLIB_SOURCES)
+        doTest("Console.kt", ModuleKind.KOTLIN_JVM_WITH_STDLIB_SOURCES)
     }
 
     fun testRefToPrintlnWithJVMAndJS() {
-        doTest("ioH.kt", ModuleKind.KOTLIN_JVM_WITH_STDLIB_SOURCES, ModuleKind.KOTLIN_JAVASCRIPT)
+        doTest("Console.kt", ModuleKind.KOTLIN_JVM_WITH_STDLIB_SOURCES, ModuleKind.KOTLIN_JAVASCRIPT)
     }
 
     fun testRefToPrintlnWithJS() {
