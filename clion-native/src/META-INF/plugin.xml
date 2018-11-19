@@ -3,9 +3,10 @@
 
   <id>org.jetbrains.kotlin.native.clion</id>
   <name>Kotlin/Native for CLion</name>
+  <!--version_placeholder-->
   <vendor>JetBrains</vendor>
 
-  <!--version_placeholder-->
+  <!--idea_version_placeholder-->
 
   <description>Kotlin/Native support</description>
 
