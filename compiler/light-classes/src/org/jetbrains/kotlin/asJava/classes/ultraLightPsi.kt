@@ -41,10 +41,7 @@ import org.jetbrains.kotlin.resolve.constants.EnumValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.isPublishedApi
 import org.jetbrains.kotlin.resolve.inline.isInlineOnly
-import org.jetbrains.kotlin.resolve.jvm.annotations.STRICTFP_ANNOTATION_FQ_NAME
-import org.jetbrains.kotlin.resolve.jvm.annotations.SYNCHRONIZED_ANNOTATION_FQ_NAME
-import org.jetbrains.kotlin.resolve.jvm.annotations.TRANSIENT_ANNOTATION_FQ_NAME
-import org.jetbrains.kotlin.resolve.jvm.annotations.VOLATILE_ANNOTATION_FQ_NAME
+import org.jetbrains.kotlin.resolve.jvm.annotations.*
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.isAnyOrNullableAny
@@ -240,7 +237,7 @@ class KtUltraLightClass(classOrObject: KtClassOrObject, private val support: Ult
         for (declaration in this.classOrObject.declarations.filterNot { isHiddenByDeprecation(it) }) {
             if (declaration.hasModifier(PRIVATE_KEYWORD) && isInterface) continue
             when (declaration) {
-                is KtNamedFunction -> result.add(asJavaMethod(declaration, false))
+                is KtNamedFunction -> result.addAll(asJavaMethods(declaration, false))
                 is KtProperty -> result.addAll(propertyAccessors(declaration, declaration.isVar, false))
             }
         }
@@ -253,7 +250,7 @@ class KtUltraLightClass(classOrObject: KtClassOrObject, private val support: Ult
         this.classOrObject.companionObjects.firstOrNull()?.let { companion ->
             for (declaration in companion.declarations.filterNot { isHiddenByDeprecation(it) }) {
                 when (declaration) {
-                    is KtNamedFunction -> if (isJvmStatic(declaration)) result.add(asJavaMethod(declaration, true))
+                    is KtNamedFunction -> if (isJvmStatic(declaration)) result.addAll(asJavaMethods(declaration, true))
                     is KtProperty -> result.addAll(propertyAccessors(declaration, declaration.isVar, true))
                 }
             }
@@ -268,7 +265,7 @@ class KtUltraLightClass(classOrObject: KtClassOrObject, private val support: Ult
             result.add(defaultConstructor())
         }
         for (constructor in constructors.filterNot { isHiddenByDeprecation(it) }) {
-            result.add(asJavaMethod(constructor, false))
+            result.addAll(asJavaMethods(constructor, false))
         }
         val primary = classOrObject.primaryConstructor
         if (primary != null && shouldGenerateNoArgOverload(primary)) {
@@ -314,7 +311,22 @@ class KtUltraLightClass(classOrObject: KtClassOrObject, private val support: Ult
 
     override fun getOwnMethods(): List<KtLightMethod> = if (tooComplex) super.getOwnMethods() else _ownMethods
 
-    private fun asJavaMethod(ktFunction: KtFunction, forceStatic: Boolean): KtLightMethod {
+    private fun asJavaMethods(ktFunction: KtFunction, forceStatic: Boolean): Collection<KtLightMethod> {
+        val basicMethod = asJavaMethod(ktFunction, forceStatic)
+
+        if (!ktFunction.hasAnnotation(JVM_OVERLOADS_FQ_NAME)) return listOf(basicMethod)
+
+        val result = mutableListOf<KtLightMethod>()
+        val numberOfDefaultParameters = ktFunction.valueParameters.count(KtParameter::hasDefaultValue)
+        for (numberOfDefaultParametersToAdd in 0 until numberOfDefaultParameters) {
+            result.add(asJavaMethod(ktFunction, forceStatic, numberOfDefaultParametersToAdd))
+        }
+        result.add(basicMethod)
+
+        return result
+    }
+
+    private fun asJavaMethod(ktFunction: KtFunction, forceStatic: Boolean, numberOfDefaultParametersToAdd: Int = -1): KtLightMethod {
         val isConstructor = ktFunction is KtConstructor<*>
         val name =
             if (isConstructor)
@@ -324,7 +336,21 @@ class KtUltraLightClass(classOrObject: KtClassOrObject, private val support: Ult
         val method = lightMethod(name.orEmpty(), ktFunction, forceStatic)
         val wrapper = KtUltraLightMethod(method, ktFunction, support, this)
         addReceiverParameter(ktFunction, wrapper)
+
+
+        var remainingNumberOfDefaultParametersToAdd =
+            if (numberOfDefaultParametersToAdd >= 0)
+                numberOfDefaultParametersToAdd
+            else
+                // Just to avoid computing the actual number of default parameters, we use an upper bound
+                ktFunction.valueParameters.size
+
         for (parameter in ktFunction.valueParameters) {
+            if (parameter.hasDefaultValue()) {
+                if (remainingNumberOfDefaultParametersToAdd == 0) continue
+                remainingNumberOfDefaultParametersToAdd--
+            }
+
             method.addParameter(KtUltraLightParameter(parameter.name.orEmpty(), parameter, support, wrapper, null, ktFunction))
         }
         val returnType: PsiType? by lazyPub {
