@@ -51,7 +51,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
  */
 
 class MultipleCatchesLowering(val context: JsIrBackendContext) : FileLoweringPass {
-    val litTrue = JsIrBuilder.buildBoolean(context.irBuiltIns.booleanType, true)
+    val litTrue get() = JsIrBuilder.buildBoolean(context.irBuiltIns.booleanType, true)
     val unitType = context.irBuiltIns.unitType
     val nothingType = context.irBuiltIns.nothingType
 
@@ -70,7 +70,7 @@ class MultipleCatchesLowering(val context: JsIrBackendContext) : FileLoweringPas
                 val commonType = mergeTypes(aTry.catches.map { it.catchParameter.type })
 
                 val pendingExceptionDeclaration = JsIrBuilder.buildVar(commonType, data, "\$p")
-                val pendingException = JsIrBuilder.buildGetValue(pendingExceptionDeclaration.symbol)
+                val pendingException = { JsIrBuilder.buildGetValue(pendingExceptionDeclaration.symbol) }
 
                 val branches = mutableListOf<IrBranch>()
 
@@ -81,9 +81,9 @@ class MultipleCatchesLowering(val context: JsIrBackendContext) : FileLoweringPas
                     val typeSymbol = type.classifierOrNull
                     val castedPendingException = {
                         if (type !is IrDynamicType)
-                            buildImplicitCast(pendingException, type, typeSymbol!!)
+                            buildImplicitCast(pendingException(), type, typeSymbol!!)
                         else
-                            pendingException
+                            pendingException()
                     }
 
                     val catchBody = catch.result.transform(object : IrElementTransformer<IrValueSymbol> {
@@ -98,14 +98,14 @@ class MultipleCatchesLowering(val context: JsIrBackendContext) : FileLoweringPas
                         branches += IrElseBranchImpl(catch.startOffset, catch.endOffset, litTrue, catchBody)
                         break
                     } else {
-                        val typeCheck = buildIsCheck(pendingException, type, typeSymbol!!)
+                        val typeCheck = buildIsCheck(pendingException(), type, typeSymbol!!)
                         branches += IrBranchImpl(catch.startOffset, catch.endOffset, typeCheck, catchBody)
                     }
                 }
 
 
                 if (commonType !is IrDynamicType) {
-                    val throwStatement = JsIrBuilder.buildThrow(nothingType, pendingException)
+                    val throwStatement = JsIrBuilder.buildThrow(nothingType, pendingException())
                     branches += IrElseBranchImpl(litTrue, JsIrBuilder.buildBlock(nothingType, listOf(throwStatement)))
                 }
 

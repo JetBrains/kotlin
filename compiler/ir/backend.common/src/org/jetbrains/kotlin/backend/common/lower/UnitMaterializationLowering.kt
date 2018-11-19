@@ -19,10 +19,16 @@ import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
-class UnitMaterializationLowering(context: BackendContext): FileLoweringPass {
+class UnitMaterializationLowering(context: BackendContext) : FileLoweringPass {
 
     private val unitType = context.irBuiltIns.unitType
-    private val unitValue = IrGetObjectValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, unitType, unitType.classifierOrFail as IrClassSymbol)
+    private val unitValue
+        get() = IrGetObjectValueImpl(
+            UNDEFINED_OFFSET,
+            UNDEFINED_OFFSET,
+            unitType,
+            unitType.classifierOrFail as IrClassSymbol
+        )
 
     override fun lower(irFile: IrFile) {
         irFile.transformChildrenVoid(object : IrElementTransformerVoid() {

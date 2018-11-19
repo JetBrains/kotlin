@@ -96,7 +96,7 @@ private class ReturnableBlockTransformer(
         return super.visitDeclaration(declaration, data)
     }
 
-    private val constFalse = JsIrBuilder.buildBoolean(context.irBuiltIns.booleanType, false)
+    private val constFalse get() = JsIrBuilder.buildBoolean(context.irBuiltIns.booleanType, false)
 
     override fun visitContainerExpression(expression: IrContainerExpression, data: ReturnableBlockLoweringContext): IrExpression {
         if (expression !is IrReturnableBlock) return super.visitContainerExpression(expression, data)

@@ -28,6 +28,6 @@ interface IrExpression : IrStatement, IrVarargElement {
 }
 
 interface IrExpressionWithCopy : IrExpression {
-    fun copy(): IrExpression
+    fun copy(): IrExpressionWithCopy
 }
 

@@ -943,7 +943,7 @@ internal class SuspendFunctionsLowering(val context: JsIrBackendContext): FileLo
                 }
             }
 
-            function.transform(LiveLocalsTransformer(localToPropertyMap, JsIrBuilder.buildGetValue(thisReceiver), unit), null)
+            function.transform(LiveLocalsTransformer(localToPropertyMap, { JsIrBuilder.buildGetValue(thisReceiver) } , unit), null)
         }
 
         private fun computeLivenessAtSuspensionPoints(body: IrBody): Map<IrCall, List<IrValueDeclaration>> {
