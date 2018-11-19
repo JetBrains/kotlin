@@ -59,7 +59,7 @@ class FunctionReader(
         private val reporter: JsConfig.Reporter,
         private val config: JsConfig,
         private val currentModuleName: JsName,
-        fragments: List<JsProgramFragment>
+        private val moduleNameMap: Map<String, JsExpression>
 ) {
     /**
      * fileContent: .js file content, that contains this module definition.
@@ -144,20 +144,8 @@ class FunctionReader(
         result
     }
 
-    private val moduleNameMap: Map<String, JsExpression>
     private val shouldRemapPathToRelativeForm = config.shouldGenerateRelativePathsInSourceMap()
     private val relativePathCalculator = config.configuration[JSConfigurationKeys.OUTPUT_DIR]?.let { RelativePathCalculator(it) }
-
-    init {
-        moduleNameMap = buildModuleNameMap(fragments)
-    }
-
-    // Since we compile each source file in its own context (and we may loose these context when performing incremental compilation)
-    // we don't use contexts to generate proper names for modules. Instead, we generate all necessary information during
-    // translation and rely on it here.
-    private fun buildModuleNameMap(fragments: List<JsProgramFragment>): Map<String, JsExpression> {
-        return fragments.flatMap { it.inlineModuleMap.entries }.associate { (k, v) -> k to v }
-    }
 
     private fun rewindToIdentifierStart(text: String, index: Int): Int {
         var result = index

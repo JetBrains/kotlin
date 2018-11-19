@@ -20,7 +20,8 @@ import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.backend.ast.metadata.coroutineMetadata
 import org.jetbrains.kotlin.js.backend.ast.metadata.imported
 
-fun removeUnusedImports(root: JsNode) {
+// Returns used imports
+fun removeUnusedImports(root: JsNode): Set<JsName> {
     val collector = UsedImportsCollector()
     root.accept(collector)
     NodeRemover(JsVars::class.java) { statement ->
@@ -32,6 +33,8 @@ fun removeUnusedImports(root: JsNode) {
             false
         }
     }.accept(root)
+
+    return collector.usedImports
 }
 
 private class UsedImportsCollector : RecursiveJsVisitor() {

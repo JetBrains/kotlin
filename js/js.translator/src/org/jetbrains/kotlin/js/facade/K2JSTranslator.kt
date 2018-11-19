@@ -136,12 +136,6 @@ class K2JSTranslator(private val config: JsConfig) {
 
         val program = translationResult.buildProgram()
 
-        removeUnusedImports(program)
-        checkCanceled()
-
-        removeDuplicateImports(program)
-        checkCanceled()
-
         program.resolveTemporaryNames()
         checkCanceled()
 

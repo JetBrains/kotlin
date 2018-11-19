@@ -26,10 +26,15 @@ import org.jetbrains.kotlin.js.inline.util.*
 import org.jetbrains.kotlin.js.translate.context.Namer
 import org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils.getModuleName
 
-abstract class FunctionContext(private val functionReader: FunctionReader, private val config: JsConfig) {
-    protected abstract fun lookUpStaticFunction(functionName: JsName?): FunctionWithWrapper?
+class FunctionContext(
+    private val functionReader: FunctionReader,
+    private val config: JsConfig,
+    private val functions: Map<JsName, FunctionWithWrapper>,
+    private val accessors: Map<String, FunctionWithWrapper>
+) {
+    fun lookUpStaticFunction(functionName: JsName?): FunctionWithWrapper? = functions[functionName]
 
-    protected abstract fun lookUpStaticFunctionByTag(functionTag: String): FunctionWithWrapper?
+    fun lookUpStaticFunctionByTag(functionTag: String): FunctionWithWrapper? = accessors[functionTag]
 
     fun getFunctionDefinition(call: JsInvocation): FunctionWithWrapper {
         return getFunctionDefinitionImpl(call)!!
@@ -83,8 +88,7 @@ abstract class FunctionContext(private val functionReader: FunctionReader, priva
         /** remove ending `()` */
         val callQualifier: JsExpression = if (isCallInvocation(call)) {
             (call.qualifier as JsNameRef).qualifier!!
-        }
-        else {
+        } else {
             call.qualifier
         }
 
