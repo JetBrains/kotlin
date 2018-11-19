@@ -8,16 +8,16 @@ package org.jetbrains.kotlin.backend.konan.lower
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.descriptors.isExpectMember
+import org.jetbrains.kotlin.backend.konan.descriptors.propertyIfAccessor
 import org.jetbrains.kotlin.descriptors.MemberDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrGetValue
-import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
-import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
-import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
+import org.jetbrains.kotlin.ir.symbols.*
+import org.jetbrains.kotlin.ir.util.DeepCopyIrTreeWithSymbols
+import org.jetbrains.kotlin.ir.util.DeepCopySymbolRemapper
+import org.jetbrains.kotlin.ir.util.DeepCopyTypeRemapper
 import org.jetbrains.kotlin.ir.util.referenceFunction
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
@@ -73,8 +73,8 @@ internal class ExpectDeclarationsRemoving(val context: Context) : FileLoweringPa
         })
     }
 
-    private fun IrFunction.findActualForExpected(): IrFunction =
-            context.ir.symbols.symbolTable.referenceFunction(descriptor.findActualForExpect()).owner
+    private inline fun <reified T: IrFunction> T.findActualForExpected(): T =
+            context.ir.symbols.symbolTable.referenceFunction(descriptor.findActualForExpect()).owner as T
 
     private fun IrClass.findActualForExpected(): IrClass =
             context.ir.symbols.symbolTable.referenceClass(descriptor.findActualForExpect()).owner
@@ -88,22 +88,75 @@ internal class ExpectDeclarationsRemoving(val context: Context) : FileLoweringPa
     } as T
 
     private fun IrExpression.remapExpectValueSymbols(): IrExpression {
-        return this.transform(object : IrElementTransformerVoid() {
+        class SymbolRemapper : DeepCopySymbolRemapper() {
+            override fun getReferencedClass(symbol: IrClassSymbol) =
+                    if (symbol.descriptor.isExpect)
+                        symbol.owner.findActualForExpected().symbol
+                    else super.getReferencedClass(symbol)
 
-            override fun visitGetValue(expression: IrGetValue): IrExpression {
-                expression.transformChildrenVoid()
-                val newValue = remapExpectValue(expression.symbol)
-                        ?: return expression
+            override fun getReferencedClassOrNull(symbol: IrClassSymbol?) =
+                    symbol?.let { getReferencedClass(it) }
 
-                return IrGetValueImpl(
-                        expression.startOffset,
-                        expression.endOffset,
-                        newValue.type,
-                        newValue.symbol,
-                        expression.origin
-                )
+            override fun getReferencedClassifier(symbol: IrClassifierSymbol): IrClassifierSymbol = when (symbol) {
+                is IrClassSymbol -> getReferencedClass(symbol)
+                is IrTypeParameterSymbol -> remapExpectTypeParameter(symbol).symbol
+                else -> error("Unexpected symbol $symbol ${symbol.descriptor}")
             }
-        }, data = null)
+
+            override fun getReferencedConstructor(symbol: IrConstructorSymbol) =
+                    if (symbol.descriptor.isExpect)
+                        symbol.owner.findActualForExpected().symbol
+                    else super.getReferencedConstructor(symbol)
+
+            override fun getReferencedFunction(symbol: IrFunctionSymbol): IrFunctionSymbol = when (symbol) {
+                is IrSimpleFunctionSymbol -> getReferencedSimpleFunction(symbol)
+                is IrConstructorSymbol -> getReferencedConstructor(symbol)
+                else -> error("Unexpected symbol $symbol ${symbol.descriptor}")
+            }
+
+            override fun getReferencedSimpleFunction(symbol: IrSimpleFunctionSymbol) = when {
+                symbol.descriptor.isExpect -> symbol.owner.findActualForExpected().symbol
+
+                symbol.descriptor.propertyIfAccessor.isExpect -> {
+                    val property = symbol.owner.correspondingProperty!!
+                    val actualPropertyDescriptor = property.descriptor.findActualForExpect()
+                    val accessorDescriptor = when (symbol.owner) {
+                        property.getter -> actualPropertyDescriptor.getter!!
+                        property.setter -> actualPropertyDescriptor.setter!!
+                        else -> error("Unexpected accessor of $symbol ${symbol.descriptor}")
+                    }
+                    context.ir.symbols.symbolTable.referenceFunction(accessorDescriptor) as IrSimpleFunctionSymbol
+                }
+
+                else -> super.getReferencedSimpleFunction(symbol)
+            }
+
+            override fun getReferencedValue(symbol: IrValueSymbol) =
+                    remapExpectValue(symbol)?.symbol ?: super.getReferencedValue(symbol)
+        }
+
+        val symbolRemapper = SymbolRemapper()
+        acceptVoid(symbolRemapper)
+        return transform(DeepCopyIrTreeWithSymbols(symbolRemapper, DeepCopyTypeRemapper(symbolRemapper)), data = null)
+    }
+
+    private fun remapExpectTypeParameter(symbol: IrTypeParameterSymbol): IrTypeParameter {
+        val parameter = symbol.owner
+        val parent = parameter.parent
+
+        return when (parent) {
+            is IrClass ->
+                if (!parent.descriptor.isExpect)
+                    parameter
+                else parent.findActualForExpected().typeParameters[parameter.index]
+
+            is IrFunction ->
+                if (!parent.descriptor.isExpect)
+                    parameter
+                else parent.findActualForExpected().typeParameters[parameter.index]
+
+            else -> error(parent)
+        }
     }
 
     private fun remapExpectValue(symbol: IrValueSymbol): IrValueParameter? {
@@ -115,23 +168,25 @@ internal class ExpectDeclarationsRemoving(val context: Context) : FileLoweringPa
         val parent = parameter.parent
 
         return when (parent) {
-            is IrClass -> {
-                assert(parameter == parent.thisReceiver)
-                parent.findActualForExpected().thisReceiver!!
-            }
-
-            is IrFunction -> when {
-                parameter == parent.dispatchReceiverParameter ->
-                    parent.findActualForExpected().dispatchReceiverParameter!!
-
-                parameter == parent.extensionReceiverParameter ->
-                    parent.findActualForExpected().extensionReceiverParameter!!
-
-                else -> {
-                    assert(parent.valueParameters[parameter.index] == parameter)
-                    parent.findActualForExpected().valueParameters[parameter.index]
+            is IrClass ->
+                if (!parent.descriptor.isExpect)
+                    null
+                else {
+                    assert(parameter == parent.thisReceiver)
+                    parent.findActualForExpected().thisReceiver!!
                 }
-            }
+
+            is IrFunction ->
+                if (!parent.descriptor.isExpect)
+                    null
+                else when (parameter) {
+                    parent.dispatchReceiverParameter -> parent.findActualForExpected().dispatchReceiverParameter!!
+                    parent.extensionReceiverParameter -> parent.findActualForExpected().extensionReceiverParameter!!
+                    else -> {
+                        assert(parent.valueParameters[parameter.index] == parameter)
+                        parent.findActualForExpected().valueParameters[parameter.index]
+                    }
+                }
 
             else -> error(parent)
         }
