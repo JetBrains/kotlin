@@ -693,6 +693,8 @@ internal class KtUltraLightParameter(
 
     override fun getNavigationElement(): PsiElement = kotlinOrigin
 
+    override fun isValid() = parent.isValid
+
     private val kotlinType: KotlinType? by lazyPub {
         when {
             receiver != null -> (kotlinOrigin.resolve() as? CallableMemberDescriptor)?.extensionReceiverParameter?.type
