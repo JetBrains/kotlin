@@ -25,7 +25,6 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
-import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.containers.ConcurrentFactoryMap
 import org.jetbrains.kotlin.asJava.LightClassBuilder
 import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
@@ -53,7 +52,6 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
-import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.annotations.JVM_STATIC_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
@@ -157,9 +155,6 @@ class IDELightClassGenerationSupport(private val project: Project) : LightClassG
         }
         if (declaration is KtCallableDeclaration) {
             declaration.valueParameters.mapNotNull { findTooComplexDeclaration(it) }.firstOrNull()?.let { return it }
-            if (declaration.typeReference == null && (declaration as? KtFunction)?.hasBlockBody() != true) {
-                findPotentiallyReturnedAnonymousObject(declaration)?.let { return it }
-            }
             if (declaration.typeReference?.hasModifier(KtTokens.SUSPEND_KEYWORD) == true) {
                 return declaration.typeReference
             }
@@ -170,19 +165,6 @@ class IDELightClassGenerationSupport(private val project: Project) : LightClassG
 
         return null
 
-    }
-
-    private fun findPotentiallyReturnedAnonymousObject(declaration: KtDeclaration): KtObjectDeclaration? {
-        val spine = declaration.containingKtFile.stubbedSpine
-        for (i in 0 until spine.stubCount) {
-            if (spine.getStubType(i) == KtStubElementTypes.OBJECT_DECLARATION) {
-                val obj = spine.getStubPsi(i) as KtObjectDeclaration
-                if (obj.isObjectLiteral() && PsiTreeUtil.isContextAncestor(declaration, obj, true)) {
-                    return obj
-                }
-            }
-        }
-        return null
     }
 
     private fun implementsKotlinCollection(classOrObject: KtClassOrObject): Boolean {
@@ -222,7 +204,6 @@ class IDELightClassGenerationSupport(private val project: Project) : LightClassG
             )
         }
     }
-
 
     override fun createDataHolderForFacade(files: Collection<KtFile>, builder: LightClassBuilder): LightClassDataHolder.ForFacade {
         assert(!files.isEmpty()) { "No files in facade" }

@@ -10,6 +10,7 @@ import com.intellij.psi.PsiElement;
 import kotlin.Pair;
 import kotlin.Unit;
 import kotlin.collections.CollectionsKt;
+import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.BuiltInsPackageFragment;
@@ -89,6 +90,8 @@ public class KotlinTypeMapper {
     private final LanguageVersionSettings languageVersionSettings;
     private final boolean isReleaseCoroutines;
     private final boolean isIrBackend;
+    @Nullable
+    private final Function1<KotlinType, KotlinType> typePreprocessor;
 
     private final TypeMappingConfiguration<Type> typeMappingConfiguration = new TypeMappingConfiguration<Type>() {
         @NotNull
@@ -121,6 +124,13 @@ public class KotlinTypeMapper {
         public boolean releaseCoroutines() {
             return isReleaseCoroutines;
         }
+
+        @Nullable
+        @Override
+        public KotlinType preprocessType(@NotNull KotlinType kotlinType) {
+            if (typePreprocessor == null) return null;
+            return typePreprocessor.invoke(kotlinType);
+        }
     };
 
     private static final TypeMappingConfiguration<Type> staticTypeMappingConfiguration = new TypeMappingConfiguration<Type>() {
@@ -151,7 +161,34 @@ public class KotlinTypeMapper {
         public boolean releaseCoroutines() {
             return false;
         }
+
+        @Nullable
+        @Override
+        public KotlinType preprocessType(@NotNull KotlinType kotlinType) {
+            return null;
+        }
     };
+
+    public KotlinTypeMapper(
+            @NotNull BindingContext bindingContext,
+            @NotNull ClassBuilderMode classBuilderMode,
+            @NotNull IncompatibleClassTracker incompatibleClassTracker,
+            @NotNull String moduleName,
+            @NotNull JvmTarget jvmTarget,
+            @NotNull LanguageVersionSettings languageVersionSettings,
+            boolean isIrBackend,
+            @Nullable Function1<KotlinType, KotlinType> typePreprocessor
+    ) {
+        this.bindingContext = bindingContext;
+        this.classBuilderMode = classBuilderMode;
+        this.incompatibleClassTracker = incompatibleClassTracker;
+        this.moduleName = moduleName;
+        this.jvmTarget = jvmTarget;
+        this.languageVersionSettings = languageVersionSettings;
+        this.isReleaseCoroutines = languageVersionSettings.supportsFeature(LanguageFeature.ReleaseCoroutines);
+        this.isIrBackend = isIrBackend;
+        this.typePreprocessor = typePreprocessor;
+    }
 
     public KotlinTypeMapper(
             @NotNull BindingContext bindingContext,
@@ -162,14 +199,7 @@ public class KotlinTypeMapper {
             @NotNull LanguageVersionSettings languageVersionSettings,
             boolean isIrBackend
     ) {
-        this.bindingContext = bindingContext;
-        this.classBuilderMode = classBuilderMode;
-        this.incompatibleClassTracker = incompatibleClassTracker;
-        this.moduleName = moduleName;
-        this.jvmTarget = jvmTarget;
-        this.languageVersionSettings = languageVersionSettings;
-        this.isReleaseCoroutines = languageVersionSettings.supportsFeature(LanguageFeature.ReleaseCoroutines);
-        this.isIrBackend = isIrBackend;
+        this(bindingContext, classBuilderMode, incompatibleClassTracker, moduleName, jvmTarget, languageVersionSettings, isIrBackend, null);
     }
 
     /**

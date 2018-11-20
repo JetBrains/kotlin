@@ -1,22 +1,21 @@
-/** should load cls */
 class Prop {
     private val someProp = object { }
 }
 
 
-/** should load cls */
+
 class Fun {
     private fun someFun() = object { }
 }
 
-/** should load cls */
-class Array {
+
+class ArrayOfAnonymous {
     val a1 = arrayOf(
         object { val fy = "text"}
     )
 }
 
-/** should load cls */
+
 private class C(val y: Int) {
     val initChild = { ->
         object {
@@ -28,14 +27,34 @@ private class C(val y: Int) {
 }
 
 
-class Super {
-    val a: Any?
+abstract class Super {
+    abstract val a: Any?
 }
 
-/** should load cls */
-class Sub {
+
+class Sub : Super() {
     override val a = arrayOf(
         object { val fy = "text"}
     )
 
+}
+class ValidPublicSupertype {
+    val x = object : Runnable {
+        override fun run() {}
+    }
+
+    fun bar() = object : Runnable {
+        override fun run() {}
+    }
+}
+
+interface I
+class InvalidPublicSupertype {
+    val x = object : Runnable, I  {
+        override fun run() {}
+    }
+
+    fun bar() = object : Runnable, I {
+        override fun run() {}
+    }
 }
