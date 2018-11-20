@@ -74,6 +74,9 @@ class ArgsToParamsMatchingTest {
         assertParamMapsEquals(tryCreateCallableMappingFromNamedArgs(::notNullNumber, listOf(null to 42)),
                               "n" to 42)
         Assert.assertNull(tryCreateCallableMappingFromNamedArgs(::notNullNumber, listOf(null to "42")))
+
+        assertParamMapsEquals(tryCreateCallableMappingFromNamedArgs(::varargStrings, listOf("a", "b", "c").map { null to it }),
+                              "s" to arrayOf("a", "b", "c"))
     }
 }
 
