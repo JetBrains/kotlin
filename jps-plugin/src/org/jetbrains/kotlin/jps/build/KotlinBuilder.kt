@@ -405,7 +405,6 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         val start = System.nanoTime()
         val outputItemCollector = doCompileModuleChunk(
             kotlinChunk,
-            chunk,
             representativeTarget,
             kotlinChunk.compilerArguments,
             context,
@@ -496,7 +495,6 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
     // todo(1.2.80): introduce KotlinRoundCompileContext, move dirtyFilesHolder, fsOperations, environment to it
     private fun doCompileModuleChunk(
         kotlinChunk: KotlinChunk,
-        chunk: ModuleChunk,
         representativeTarget: KotlinModuleBuildTarget<*>,
         commonArguments: CommonCompilerArguments,
         context: CompileContext,
