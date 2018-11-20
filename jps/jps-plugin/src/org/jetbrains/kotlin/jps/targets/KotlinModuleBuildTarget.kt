@@ -27,11 +27,11 @@ import org.jetbrains.kotlin.incremental.ChangesCollector
 import org.jetbrains.kotlin.incremental.ExpectActualTrackerImpl
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
+import org.jetbrains.kotlin.jps.build.*
 import org.jetbrains.kotlin.jps.incremental.CacheAttributesDiff
+import org.jetbrains.kotlin.jps.incremental.JpsIncrementalCache
 import org.jetbrains.kotlin.jps.incremental.loadDiff
 import org.jetbrains.kotlin.jps.incremental.localCacheVersionManager
-import org.jetbrains.kotlin.jps.build.*
-import org.jetbrains.kotlin.jps.incremental.JpsIncrementalCache
 import org.jetbrains.kotlin.jps.model.productionOutputFilePath
 import org.jetbrains.kotlin.jps.model.testOutputFilePath
 import org.jetbrains.kotlin.modules.TargetId
@@ -246,13 +246,17 @@ abstract class KotlinModuleBuildTarget<BuildMetaInfoType : BuildMetaInfo> intern
     }
 
     open fun updateCaches(
+        dirtyFilesHolder: KotlinDirtySourceFilesHolder,
         jpsIncrementalCache: JpsIncrementalCache,
         files: List<GeneratedFile>,
         changesCollector: ChangesCollector,
         environment: JpsCompilerEnvironment
     ) {
+        val changedAndRemovedFiles = dirtyFilesHolder.getDirtyFiles(jpsModuleBuildTarget).keys +
+                dirtyFilesHolder.getRemovedFiles(jpsModuleBuildTarget)
         val expectActualTracker = environment.services[ExpectActualTracker::class.java] as ExpectActualTrackerImpl
-        jpsIncrementalCache.registerComplementaryFiles(expectActualTracker)
+
+        jpsIncrementalCache.updateComplementaryFiles(changedAndRemovedFiles,expectActualTracker)
     }
 
     open fun makeServices(
