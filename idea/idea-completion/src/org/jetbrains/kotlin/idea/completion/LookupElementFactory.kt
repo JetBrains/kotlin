@@ -21,7 +21,7 @@ import com.intellij.codeInsight.completion.InsertionContext
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementDecorator
 import com.intellij.codeInsight.lookup.LookupElementPresentation
-import com.intellij.codeInsight.lookup.impl.LookupCellRenderer
+import com.intellij.ui.JBColor
 import com.intellij.util.SmartList
 import org.jetbrains.kotlin.builtins.isBuiltinFunctionalType
 import org.jetbrains.kotlin.builtins.isFunctionType
@@ -272,6 +272,8 @@ class LookupElementFactory(
         return element
     }
 
+    private val castRequiredColor = JBColor(0x4E4040, 0x969696)
+
     private fun LookupElement.boldIfImmediate(weight: CallableWeight?): LookupElement {
         val style = when (weight?.enum) {
             CallableWeightEnum.thisClassMember, CallableWeightEnum.thisTypeExtension -> Style.BOLD
@@ -286,7 +288,7 @@ class LookupElementFactory(
                         presentation.isItemTextBold = true
                     }
                     else {
-                        presentation.itemTextForeground = LookupCellRenderer.getGrayedForeground(false)
+                        presentation.itemTextForeground = castRequiredColor
                         // gray all tail fragments too:
                         val fragments = presentation.tailFragments
                         presentation.clearTail()
