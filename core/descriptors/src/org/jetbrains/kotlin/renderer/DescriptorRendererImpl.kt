@@ -129,10 +129,14 @@ internal class DescriptorRendererImpl(
     private fun StringBuilder.renderNormalizedType(type: KotlinType) {
         val abbreviated = type.unwrap() as? AbbreviatedType
         if (abbreviated != null) {
-            // TODO nullability is lost for abbreviated type?
-            renderNormalizedTypeAsIs(abbreviated.abbreviation)
-            if (renderUnabbreviatedType) {
-                renderAbbreviatedTypeExpansion(abbreviated)
+            if (renderTypeExpansions) {
+                renderNormalizedTypeAsIs(abbreviated.expandedType)
+            } else {
+                // TODO nullability is lost for abbreviated type?
+                renderNormalizedTypeAsIs(abbreviated.abbreviation)
+                if (renderUnabbreviatedType) {
+                    renderAbbreviatedTypeExpansion(abbreviated)
+                }
             }
             return
         }
@@ -468,15 +472,16 @@ internal class DescriptorRendererImpl(
         }
     }
 
-    private fun renderVisibility(visibility: Visibility, builder: StringBuilder) {
+    private fun renderVisibility(visibility: Visibility, builder: StringBuilder): Boolean {
         @Suppress("NAME_SHADOWING")
         var visibility = visibility
-        if (DescriptorRendererModifier.VISIBILITY !in modifiers) return
+        if (DescriptorRendererModifier.VISIBILITY !in modifiers) return false
         if (normalizedVisibilities) {
             visibility = visibility.normalize()
         }
-        if (!renderDefaultVisibility && visibility == Visibilities.DEFAULT_VISIBILITY) return
+        if (!renderDefaultVisibility && visibility == Visibilities.DEFAULT_VISIBILITY) return false
         builder.append(renderKeyword(visibility.displayName)).append(" ")
+        return true
     }
 
     private fun renderModality(modality: Modality, builder: StringBuilder, defaultModality: Modality) {
@@ -719,15 +724,16 @@ internal class DescriptorRendererImpl(
 
     private fun renderConstructor(constructor: ConstructorDescriptor, builder: StringBuilder) {
         builder.renderAnnotations(constructor)
-        renderVisibility(constructor.visibility, builder)
+        val visibilityRendered = renderVisibility(constructor.visibility, builder)
         renderMemberKind(constructor, builder)
 
-        if (renderConstructorKeyword) {
+        val constructorKeywordRendered = renderConstructorKeyword || !constructor.isPrimary || visibilityRendered
+        if (constructorKeywordRendered) {
             builder.append(renderKeyword("constructor"))
         }
         val classDescriptor = constructor.containingDeclaration
         if (secondaryConstructorsAsPrimary) {
-            if (renderConstructorKeyword) {
+            if (constructorKeywordRendered) {
                 builder.append(" ")
             }
             renderName(classDescriptor, builder, true)
@@ -861,11 +867,11 @@ internal class DescriptorRendererImpl(
             if (!startFromDeclarationKeyword) {
                 renderPropertyAnnotations(property, builder)
                 renderVisibility(property.visibility, builder)
-                renderModifier(builder, property.isConst, "const")
+                renderModifier(builder, DescriptorRendererModifier.CONST in modifiers && property.isConst, "const")
                 renderMemberModifiers(property, builder)
                 renderModalityForCallable(property, builder)
                 renderOverride(property, builder)
-                renderModifier(builder, property.isLateInit, "lateinit")
+                renderModifier(builder, DescriptorRendererModifier.LATEINIT in modifiers && property.isLateInit, "lateinit")
                 renderMemberKind(property, builder)
             }
             renderValVarPrefix(property, builder)

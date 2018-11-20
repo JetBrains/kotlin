@@ -1,0 +1,10 @@
+// My: to be implemented
+// DISABLE-ERRORS
+
+annotation class CommonAnnotation
+expect class My {
+    tailrec fun foo(arg: Int): Int
+    var some: Boolean
+    fun initialize()
+
+}

@@ -116,6 +116,8 @@ internal class DescriptorRendererOptionsImpl : DescriptorRendererOptions {
 
     override var renderUnabbreviatedType: Boolean by property(true)
 
+    override var renderTypeExpansions: Boolean by property(false)
+
     override var includeAdditionalModifiers: Boolean by property(true)
 
     override var parameterNamesInFunctionalTypes: Boolean by property(true)
