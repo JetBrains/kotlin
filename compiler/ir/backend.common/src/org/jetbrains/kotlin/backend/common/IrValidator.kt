@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.backend.common
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.util.render
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
@@ -85,3 +86,32 @@ class IrValidator(val context: CommonBackendContext, val config: IrValidatorConf
         element.acceptChildrenVoid(this)
     }
 }
+
+fun IrModuleFragment.checkDeclarationParents() {
+    this.accept(CheckDeclarationParentsVisitor, null)
+}
+
+object CheckDeclarationParentsVisitor : IrElementVisitor<Unit, IrDeclarationParent?> {
+
+    override fun visitElement(element: IrElement, data: IrDeclarationParent?) {
+        element.acceptChildren(this, element as? IrDeclarationParent ?: data)
+    }
+
+    override fun visitDeclaration(declaration: IrDeclaration, data: IrDeclarationParent?) {
+        checkParent(declaration, data)
+        super.visitDeclaration(declaration, data)
+    }
+
+    private fun checkParent(declaration: IrDeclaration, expectedParent: IrDeclarationParent?) {
+        val parent = try {
+            declaration.parent
+        } catch (e: Throwable) {
+            error("$declaration for ${declaration.descriptor} has no parent")
+        }
+
+        if (parent != expectedParent) {
+            error("$declaration for ${declaration.descriptor} has unexpected parent $parent")
+        }
+    }
+}
+

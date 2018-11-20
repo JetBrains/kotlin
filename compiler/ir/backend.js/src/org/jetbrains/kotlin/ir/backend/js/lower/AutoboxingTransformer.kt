@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.ir.types.makeNotNull
 import org.jetbrains.kotlin.ir.util.getInlinedClass
 import org.jetbrains.kotlin.ir.util.isInlined
 import org.jetbrains.kotlin.ir.util.isNullable
+import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 
 
 // Copied and adapted from Kotlin/Native
@@ -24,6 +25,9 @@ import org.jetbrains.kotlin.ir.util.isNullable
 class AutoboxingTransformer(val context: JsIrBackendContext) : AbstractValueUsageTransformer(context.irBuiltIns), FileLoweringPass {
     override fun lower(irFile: IrFile) {
         irFile.transformChildrenVoid()
+
+        // TODO: Track & insert parents for temporary variables
+        irFile.patchDeclarationParents()
     }
 
     override fun IrExpression.useAs(type: IrType): IrExpression {
@@ -101,6 +105,7 @@ class AutoboxingTransformer(val context: JsIrBackendContext) : AbstractValueUsag
         if (!actualType.isNullable())
             return call(arg)
         return JsIrBuilder.run {
+            // TODO: Set parent of local variables
             val tmp = buildVar(actualType, parent = null, initializer = arg)
             val nullCheck = buildIfElse(
                 type = resultType,

@@ -29,8 +29,8 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.ir.util.transformDeclarationsFlat
-import org.jetbrains.kotlin.ir.util.transformFlat
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
@@ -215,7 +215,11 @@ open class LocalDeclarationsLowering(
 
             rewriteDeclarations()
 
-            return collectRewrittenDeclarations()
+            val rewrittenDeclarations = collectRewrittenDeclarations()
+            rewrittenDeclarations.forEach {
+                it.patchDeclarationParents(memberDeclaration.parent)
+            }
+            return rewrittenDeclarations
         }
 
         private fun collectRewrittenDeclarations(): ArrayList<IrDeclaration> =
