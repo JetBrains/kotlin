@@ -126,6 +126,10 @@ sealed class CreateExpectedFix<out D : KtNamedDeclaration>(
 
             val containingClass = declaration.containingClassOrObject
             val expectedContainingClass = containingClass?.liftToExpected() as? KtClassOrObject
+            if (containingClass != null && expectedContainingClass == null) {
+                // In this case fix should be invoked on containingClass
+                return emptyList()
+            }
             // If there is already an expected class, we suggest only for its module,
             // otherwise we suggest for all relevant expected modules
             val expectedModules = expectedContainingClass?.module?.let { listOf(it) }

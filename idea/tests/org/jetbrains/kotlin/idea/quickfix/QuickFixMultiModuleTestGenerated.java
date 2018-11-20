@@ -274,6 +274,11 @@ public class QuickFixMultiModuleTestGenerated extends AbstractQuickFixMultiModul
         runTest("idea/testData/multiModuleQuickFix/expectClassFunction/");
     }
 
+    @TestMetadata("expectClassNoAccessOnMember")
+    public void testExpectClassNoAccessOnMember() throws Exception {
+        runTest("idea/testData/multiModuleQuickFix/expectClassNoAccessOnMember/");
+    }
+
     @TestMetadata("expectClassProperty")
     public void testExpectClassProperty() throws Exception {
         runTest("idea/testData/multiModuleQuickFix/expectClassProperty/");
