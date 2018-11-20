@@ -385,6 +385,7 @@ class SerializerCodegenImpl(
                         genValidateProperty(index, ::bitMaskOff)
                         ificmpeq(readLabel)
                         load(propVar, propertyType)
+                        StackValue.coerce(propertyType, sti.type, this)
                         produceCall(true)
                         goTo(endL)
                         visitLabel(readLabel)
