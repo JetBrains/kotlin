@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
+import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import java.util.*
 
@@ -332,6 +333,9 @@ class EnumClassTransformer(val context: JsIrBackendContext, private val irClass:
         for ((entry, instanceVar) in enumEntries.zip(entryInstances)) {
             +irSetVar(instanceVar.symbol, entry.initializerExpression!!)
         }
+    }.also {
+        // entry.initializerExpression can have local declarations
+        it.acceptVoid(PatchDeclarationParentsVisitor(irClass))
     }
 
     private fun createEntryInstancesInitializedVar(): IrVariable {
@@ -429,6 +433,8 @@ class EnumClassTransformer(val context: JsIrBackendContext, private val irClass:
             copyParameterDeclarationsFrom(enumConstructor)
             body = enumConstructor.body
             loweredEnumConstructors[enumConstructor.symbol] = this
+
+            this.acceptVoid(PatchDeclarationParentsVisitor(enumClass))
         }
     }
 

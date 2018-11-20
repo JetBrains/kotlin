@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.backend.common.ir
 
 import org.jetbrains.kotlin.backend.common.DumpIrTreeWithDescriptorsVisitor
+import org.jetbrains.kotlin.backend.common.deepCopyWithVariables
 import org.jetbrains.kotlin.backend.common.descriptors.WrappedTypeParameterDescriptor
 import org.jetbrains.kotlin.backend.common.descriptors.WrappedValueParameterDescriptor
 import org.jetbrains.kotlin.descriptors.*
@@ -44,6 +45,7 @@ import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.ir.util.DumpIrTreeVisitor
 import org.jetbrains.kotlin.ir.util.defaultType
+import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.Name
 import java.io.StringWriter
@@ -164,13 +166,15 @@ fun IrValueParameter.copyTo(
 ): IrValueParameter {
     val descriptor = WrappedValueParameterDescriptor(symbol.descriptor.annotations, symbol.descriptor.source)
     val symbol = IrValueParameterSymbolImpl(descriptor)
+    val defaultValueCopy = defaultValue?.deepCopyWithVariables()
+    defaultValueCopy?.patchDeclarationParents(irFunction)
     return IrValueParameterImpl(
         startOffset, endOffset, origin, symbol,
         name, shift + index, type, varargElementType, isCrossinline, isNoinline
     ).also {
         descriptor.bind(it)
         it.parent = irFunction
-        it.defaultValue = defaultValue
+        it.defaultValue = defaultValueCopy
     }
 }
 

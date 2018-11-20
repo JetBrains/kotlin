@@ -258,8 +258,9 @@ internal class SuspendFunctionsLowering(val context: JsIrBackendContext): FileLo
                 })
             }
         }
-
-        return coroutine.coroutineClass
+        val coroutineClass = coroutine.coroutineClass
+        coroutineClass.patchDeclarationParents(coroutineClass.parent)
+        return coroutineClass
     }
 
     private class BuiltCoroutine(

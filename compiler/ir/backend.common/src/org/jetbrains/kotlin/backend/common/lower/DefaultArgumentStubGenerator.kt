@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
 import org.jetbrains.kotlin.ir.util.defaultType
+import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.ir.util.transformDeclarationsFlat
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
@@ -106,6 +107,7 @@ open class DefaultArgumentStubGenerator constructor(val context: CommonBackendCo
                     }, irInt(0))
 
                     val expressionBody = valueParameter.defaultValue!!
+                    expressionBody.patchDeclarationParents(newIrFunction)
 
                     expressionBody.transformChildrenVoid(object : IrElementTransformerVoid() {
                         override fun visitGetValue(expression: IrGetValue): IrExpression {
@@ -126,6 +128,7 @@ open class DefaultArgumentStubGenerator constructor(val context: CommonBackendCo
                 }
 
                 val temporaryVariable = irTemporary(argument, nameHint = parameter.name.asString())
+                temporaryVariable.parent = newIrFunction
 
                 params.add(temporaryVariable)
                 variables[valueParameter] = temporaryVariable

@@ -11,9 +11,9 @@ import org.jetbrains.kotlin.backend.common.utils.isSubtypeOf
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
+import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
 import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrBranchImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrCatchImpl
@@ -58,8 +58,9 @@ class MultipleCatchesLowering(val context: JsIrBackendContext) : FileLoweringPas
     override fun lower(irFile: IrFile) {
         irFile.transformChildren(object : IrElementTransformer<IrDeclarationParent> {
 
-            override fun visitFunction(declaration: IrFunction, data: IrDeclarationParent): IrStatement {
-                return super.visitFunction(declaration, declaration)
+            override fun visitDeclaration(declaration: IrDeclaration, data: IrDeclarationParent): IrStatement {
+                val parent = (declaration as? IrDeclarationParent) ?: data
+                return super.visitDeclaration(declaration, parent)
             }
 
             override fun visitTry(aTry: IrTry, data: IrDeclarationParent): IrExpression {

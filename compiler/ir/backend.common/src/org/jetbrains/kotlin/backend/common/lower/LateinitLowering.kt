@@ -111,6 +111,7 @@ class LateinitLowering(
                     val resultVar = scope.createTemporaryVariable(
                         irGetField(getter.dispatchReceiverParameter?.let { irGet(it) }, backingField)
                     )
+                    resultVar.parent = getter
                     body.statements.add(resultVar)
                     val throwIfNull = irIfThenElse(
                         context.irBuiltIns.nothingType,

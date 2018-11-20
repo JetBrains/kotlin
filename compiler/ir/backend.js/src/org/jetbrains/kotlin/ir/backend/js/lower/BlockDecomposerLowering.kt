@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.ir.util.transformDeclarationsFlat
 import org.jetbrains.kotlin.ir.util.transformFlat
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
@@ -47,6 +48,7 @@ class BlockDecomposerLowering(context: JsIrBackendContext) : DeclarationContaine
     }
 
     private fun IrExpressionBody.toBlockBody(containingFunction: IrFunction): IrBlockBody {
+        expression.patchDeclarationParents(containingFunction)
         val returnStatement = JsIrBuilder.buildReturn(containingFunction.symbol, expression, nothingType)
         return IrBlockBodyImpl(expression.startOffset, expression.endOffset).apply {
             statements += returnStatement
@@ -63,7 +65,7 @@ class BlockDecomposerLowering(context: JsIrBackendContext) : DeclarationContaine
             )
 
             val newBody = toBlockBody(initFunction)
-
+            newBody.patchDeclarationParents(initFunction)
             initFunction.body = newBody
 
             lower(initFunction)

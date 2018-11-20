@@ -105,6 +105,7 @@ private fun JsIrBackendContext.lower(moduleFragment: IrModuleFragment, dependenc
     val validateIr = {
         val visitor = IrValidator(this, validatorConfig)
         moduleFragment.acceptVoid(visitor)
+        moduleFragment.checkDeclarationParents()
     }
     validateIr()
     ThrowableSuccessorsLowering(this).lower(moduleFragment)
@@ -144,7 +145,8 @@ private fun JsIrBackendContext.lower(moduleFragment: IrModuleFragment, dependenc
     validateIr()
     AutoboxingTransformer(this).lower(moduleFragment)
     BlockDecomposerLowering(this).runOnFilesPostfix(moduleFragment)
-
+    // TODO: Fix BlockDecomposerLowering parents
+    moduleFragment.patchDeclarationParents()
     ClassReferenceLowering(this).lower(moduleFragment)
     PrimitiveCompanionLowering(this).lower(moduleFragment)
     ConstLowering(this).lower(moduleFragment)
