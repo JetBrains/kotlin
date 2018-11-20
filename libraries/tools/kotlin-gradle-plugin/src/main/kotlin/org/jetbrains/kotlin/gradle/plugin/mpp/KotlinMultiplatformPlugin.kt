@@ -162,9 +162,6 @@ class KotlinMultiplatformPlugin(
             val rootPublication = publishing.publications.create("kotlinMultiplatform", MavenPublication::class.java).apply {
                 from(kotlinSoftwareComponent)
                 (this as MavenPublicationInternal).publishWithOriginalFileName()
-                artifactId = project.name
-                groupId = project.group.toString()
-                version = project.version.toString()
             }
 
             // Publish the root publication only if Gradle metadata publishing is enabled:
@@ -186,8 +183,6 @@ class KotlinMultiplatformPlugin(
                     }
                     (this as MavenPublicationInternal).publishWithOriginalFileName()
                     artifactId = variant.target.defaultArtifactId
-                    groupId = project.group.toString()
-                    version = project.version.toString()
                 }
 
                 variant.publicationDelegate = variantPublication
