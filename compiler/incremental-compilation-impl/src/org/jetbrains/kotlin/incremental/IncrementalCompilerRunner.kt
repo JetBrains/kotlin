@@ -198,7 +198,7 @@ abstract class IncrementalCompilerRunner<
         var exitCode = ExitCode.OK
 
         while (dirtySources.any() || runWithNoDirtyKotlinSources(caches)) {
-            val complementaryFiles = caches.platformCache.clearComplementaryFilesMapping(dirtySources)
+            val complementaryFiles = caches.platformCache.getComplementaryFilesRecursive(dirtySources)
             dirtySources.addAll(complementaryFiles)
             caches.platformCache.markDirty(dirtySources)
             caches.inputsCache.removeOutputForSourceFiles(dirtySources)
@@ -237,7 +237,7 @@ abstract class IncrementalCompilerRunner<
                 }
             }
 
-            caches.platformCache.registerComplementaryFiles(expectActualTracker)
+            caches.platformCache.updateComplementaryFiles(dirtySources, expectActualTracker)
             caches.inputsCache.registerOutputForSourceFiles(generatedFiles)
             caches.lookupCache.update(lookupTracker, sourcesToCompile, removedKotlinSources)
             val changesCollector = ChangesCollector()

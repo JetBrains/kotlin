@@ -37,8 +37,8 @@ interface IncrementalCacheCommon {
     fun getSourceFileIfClass(fqName: FqName): File?
     fun markDirty(removedAndCompiledSources: Collection<File>)
     fun clearCacheForRemovedClasses(changesCollector: ChangesCollector)
-    fun clearComplementaryFilesMapping(dirtyFiles: Collection<File>): Collection<File>
-    fun registerComplementaryFiles(expectActualTracker: ExpectActualTrackerImpl)
+    fun getComplementaryFilesRecursive(dirtyFiles: Collection<File>): Collection<File>
+    fun updateComplementaryFiles(dirtyFiles: Collection<File>, expectActualTracker: ExpectActualTrackerImpl)
     fun dump(): String
 }
 
@@ -51,14 +51,17 @@ abstract class AbstractIncrementalCache<ClassName>(workingDir: File) : BasicMaps
         private val SUPERTYPES = "supertypes"
         private val CLASS_FQ_NAME_TO_SOURCE = "class-fq-name-to-source"
         private val COMPLEMENTARY_FILES = "complementary-files"
-        @JvmStatic protected val SOURCE_TO_CLASSES = "source-to-classes"
-        @JvmStatic protected val DIRTY_OUTPUT_CLASSES = "dirty-output-classes"
+        @JvmStatic
+        protected val SOURCE_TO_CLASSES = "source-to-classes"
+        @JvmStatic
+        protected val DIRTY_OUTPUT_CLASSES = "dirty-output-classes"
     }
 
     private val dependents = arrayListOf<AbstractIncrementalCache<ClassName>>()
     fun addDependentCache(cache: AbstractIncrementalCache<ClassName>) {
         dependents.add(cache)
     }
+
     override val thisWithDependentCaches: Iterable<AbstractIncrementalCache<ClassName>> by lazy {
         val result = arrayListOf(this)
         result.addAll(dependents)
@@ -83,10 +86,10 @@ abstract class AbstractIncrementalCache<ClassName>(workingDir: File) : BasicMaps
         files.flatMapTo(HashSet()) { sourceToClassesMap.getFqNames(it) }
 
     override fun getSubtypesOf(className: FqName): Sequence<FqName> =
-            subtypesMap[className].asSequence()
+        subtypesMap[className].asSequence()
 
     override fun getSourceFileIfClass(fqName: FqName): File? =
-            classFqNameToSourceMap[fqName]
+        classFqNameToSourceMap[fqName]
 
     override fun markDirty(removedAndCompiledSources: Collection<File>) {
         for (sourceFile in removedAndCompiledSources) {
@@ -102,8 +105,8 @@ abstract class AbstractIncrementalCache<ClassName>(workingDir: File) : BasicMaps
     protected fun addToClassStorage(proto: ProtoBuf.Class, nameResolver: NameResolver, srcFile: File) {
         val supertypes = proto.supertypes(TypeTable(proto.typeTable))
         val parents = supertypes.map { nameResolver.getClassId(it.className).asSingleFqName() }
-                .filter { it.asString() != "kotlin.Any" }
-                .toSet()
+            .filter { it.asString() != "kotlin.Any" }
+            .toSet()
         val child = nameResolver.getClassId(proto.fqName).asSingleFqName()
 
         parents.forEach { subtypesMap.add(it, child) }
@@ -150,13 +153,14 @@ abstract class AbstractIncrementalCache<ClassName>(workingDir: File) : BasicMaps
         removedFqNames.forEach { classFqNameToSourceMap.remove(it) }
     }
 
-    protected class ClassFqNameToSourceMap(storageFile: File) : BasicStringMap<String>(storageFile, EnumeratorStringDescriptor(), PathStringDescriptor) {
+    protected class ClassFqNameToSourceMap(storageFile: File) :
+        BasicStringMap<String>(storageFile, EnumeratorStringDescriptor(), PathStringDescriptor) {
         operator fun set(fqName: FqName, sourceFile: File) {
             storage[fqName.asString()] = sourceFile.canonicalPath
         }
 
         operator fun get(fqName: FqName): File? =
-                storage[fqName.asString()]?.let(::File)
+            storage[fqName.asString()]?.let(::File)
 
         fun remove(fqName: FqName) {
             storage.remove(fqName.asString())
@@ -165,18 +169,24 @@ abstract class AbstractIncrementalCache<ClassName>(workingDir: File) : BasicMaps
         override fun dumpValue(value: String) = value
     }
 
-    override fun clearComplementaryFilesMapping(dirtyFiles: Collection<File>): Collection<File> {
+    override fun getComplementaryFilesRecursive(dirtyFiles: Collection<File>): Collection<File> {
         val complementaryFiles = HashSet<File>()
         val filesQueue = ArrayDeque(dirtyFiles)
         while (filesQueue.isNotEmpty()) {
             val file = filesQueue.pollFirst()
-            complementaryFilesMap.remove(file).filterTo(filesQueue) { complementaryFiles.add(it) }
+            complementaryFilesMap[file].forEach {
+                if (complementaryFiles.add(it)) filesQueue.add(it)
+            }
         }
         complementaryFiles.removeAll(dirtyFiles)
         return complementaryFiles
     }
 
-    override fun registerComplementaryFiles(expectActualTracker: ExpectActualTrackerImpl) {
+    override fun updateComplementaryFiles(dirtyFiles: Collection<File>, expectActualTracker: ExpectActualTrackerImpl) {
+        dirtyFiles.forEach {
+            complementaryFilesMap.remove(it)
+        }
+
         val actualToExpect = hashMapOf<File, MutableSet<File>>()
         for ((expect, actuals) in expectActualTracker.expectToActualMap) {
             for (actual in actuals) {
