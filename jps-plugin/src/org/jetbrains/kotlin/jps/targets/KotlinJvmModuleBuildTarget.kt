@@ -254,12 +254,13 @@ class KotlinJvmModuleBuildTarget(kotlinContext: KotlinCompileContext, jpsModuleB
     }
 
     override fun updateCaches(
+        dirtyFilesHolder: KotlinDirtySourceFilesHolder,
         jpsIncrementalCache: JpsIncrementalCache,
         files: List<GeneratedFile>,
         changesCollector: ChangesCollector,
         environment: JpsCompilerEnvironment
     ) {
-        super.updateCaches(jpsIncrementalCache, files, changesCollector, environment)
+        super.updateCaches(dirtyFilesHolder, jpsIncrementalCache, files, changesCollector, environment)
 
         updateIncrementalCache(files, jpsIncrementalCache as IncrementalJvmCache, changesCollector, null)
     }

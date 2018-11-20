@@ -468,7 +468,13 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
 
             for ((target, files) in generatedFiles) {
                 val kotlinModuleBuilderTarget = kotlinContext.targetsBinding[target]!!
-                kotlinModuleBuilderTarget.updateCaches(incrementalCaches[kotlinModuleBuilderTarget]!!, files, changesCollector, environment)
+                kotlinModuleBuilderTarget.updateCaches(
+                    kotlinDirtyFilesHolder,
+                    incrementalCaches[kotlinModuleBuilderTarget]!!,
+                    files,
+                    changesCollector,
+                    environment
+                )
             }
 
             updateLookupStorage(lookupTracker, dataManager, kotlinDirtyFilesHolder)
@@ -512,7 +518,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
                 val targetDirtyFiles = dirtyFilesHolder.byTarget[jpsTarget]
 
                 if (cache != null && targetDirtyFiles != null) {
-                    val complementaryFiles = cache.clearComplementaryFilesMapping(
+                    val complementaryFiles = cache.getComplementaryFilesRecursive(
                         targetDirtyFiles.dirty.keys + targetDirtyFiles.removed
                     )
 

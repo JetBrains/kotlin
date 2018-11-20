@@ -211,12 +211,13 @@ class KotlinJsModuleBuildTarget(kotlinContext: KotlinCompileContext, jpsModuleBu
         JpsIncrementalJsCache(jpsModuleBuildTarget, paths)
 
     override fun updateCaches(
+        dirtyFilesHolder: KotlinDirtySourceFilesHolder,
         jpsIncrementalCache: JpsIncrementalCache,
         files: List<GeneratedFile>,
         changesCollector: ChangesCollector,
         environment: JpsCompilerEnvironment
     ) {
-        super.updateCaches(jpsIncrementalCache, files, changesCollector, environment)
+        super.updateCaches(dirtyFilesHolder, jpsIncrementalCache, files, changesCollector, environment)
 
         val incrementalResults = environment.services[IncrementalResultsConsumer::class.java] as IncrementalResultsConsumerImpl
 
