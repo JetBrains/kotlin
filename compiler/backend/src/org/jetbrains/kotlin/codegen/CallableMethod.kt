@@ -21,7 +21,7 @@ import org.jetbrains.org.objectweb.asm.util.Printer
 class CallableMethod(
     override val owner: Type,
     private val defaultImplOwner: Type?,
-    private val defaultMethodDesc: String,
+    computeDefaultMethodDesc: () -> String,
     private val signature: JvmMethodSignature,
     private val invokeOpcode: Int,
     override val dispatchReceiverType: Type?,
@@ -33,6 +33,8 @@ class CallableMethod(
     private val isInterfaceMethod: Boolean = Opcodes.INVOKEINTERFACE == invokeOpcode,
     private val isDefaultMethodInInterface: Boolean = false
 ) : Callable {
+    private val defaultMethodDesc: String by lazy(LazyThreadSafetyMode.PUBLICATION, computeDefaultMethodDesc)
+
     fun getValueParameters(): List<JvmMethodParameterSignature> =
         signature.valueParameters
 
@@ -44,7 +46,6 @@ class CallableMethod(
 
     override val parameterTypes: Array<Type>
         get() = getAsmMethod().argumentTypes
-
 
     override fun genInvokeInstruction(v: InstructionAdapter) {
         v.visitMethodInsn(

@@ -797,10 +797,9 @@ public class KotlinTypeMapper {
             JvmMethodSignature method = mapSignatureSkipGeneric(descriptor.getOriginal());
             Type owner = mapOwner(descriptor);
             FunctionDescriptor originalDescriptor = descriptor.getOriginal();
-            String defaultImplDesc = mapDefaultMethod(originalDescriptor, OwnerKind.IMPLEMENTATION).getDescriptor();
             return new CallableMethod(
-                    owner, owner, defaultImplDesc, method, INVOKESPECIAL,
-                    null, null, null, null, null, originalDescriptor.getReturnType(), false, false
+                    owner, owner, () -> mapDefaultMethod(originalDescriptor, OwnerKind.IMPLEMENTATION).getDescriptor(), method,
+                    INVOKESPECIAL, null, null, null, null, null, originalDescriptor.getReturnType(), false, false
             );
         }
 
@@ -956,11 +955,11 @@ public class KotlinTypeMapper {
             receiverParameterType = null;
         }
 
-        String defaultImplDesc = mapDefaultMethod(baseMethodDescriptor, getKindForDefaultImplCall(baseMethodDescriptor)).getDescriptor();
-
         return new CallableMethod(
-                owner, ownerForDefaultImpl, defaultImplDesc, signature, invokeOpcode,
-                thisClass, dispatchReceiverKotlinType, receiverParameterType, extensionReceiverKotlinType, calleeType, returnKotlinType,
+                owner, ownerForDefaultImpl,
+                () -> mapDefaultMethod(baseMethodDescriptor, getKindForDefaultImplCall(baseMethodDescriptor)).getDescriptor(),
+                signature, invokeOpcode, thisClass, dispatchReceiverKotlinType, receiverParameterType, extensionReceiverKotlinType,
+                calleeType, returnKotlinType,
                 jvmTarget.compareTo(JvmTarget.JVM_1_8) >= 0 ? isInterfaceMember : invokeOpcode == INVOKEINTERFACE,
                 isDefaultMethodInInterface
         );
