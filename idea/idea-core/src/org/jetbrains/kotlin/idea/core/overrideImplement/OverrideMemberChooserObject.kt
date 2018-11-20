@@ -256,11 +256,11 @@ private fun PropertyDescriptor.wrap(forceOverride: Boolean): PropertyDescriptor 
     return newDescriptor
 }
 
-private fun FunctionDescriptor.wrap(forceOverride: Boolean, forceAbstract: Boolean): FunctionDescriptor {
+private fun FunctionDescriptor.wrap(forceOverride: Boolean): FunctionDescriptor {
     if (this is ClassConstructorDescriptor) return this.wrap()
     return object : FunctionDescriptor by this {
         override fun isExpect() = false
-        override fun getModality() = if (forceAbstract) Modality.ABSTRACT else if (forceOverride) Modality.OPEN else this@wrap.modality
+        override fun getModality() = if (forceOverride) Modality.OPEN else this@wrap.modality
         override fun getReturnType() = this@wrap.returnType?.approximateFlexibleTypes(preferNotNull = true, preferStarForRaw = true)
         override fun getOverriddenDescriptors() = if (forceOverride) listOf(this@wrap) else this@wrap.overriddenDescriptors
         override fun <R : Any?, D : Any?> accept(visitor: DeclarationDescriptorVisitor<R, D>, data: D) =
@@ -316,9 +316,7 @@ private fun generateFunction(
     renderer: DescriptorRenderer,
     bodyType: OverrideMemberChooserObject.BodyType
 ): KtFunction {
-    val newDescriptor = descriptor.wrap(
-        forceAbstract = renderer === ACTUAL_RENDERER && bodyType == NO_BODY, forceOverride = renderer === OVERRIDE_RENDERER
-    )
+    val newDescriptor = descriptor.wrap(forceOverride = renderer === OVERRIDE_RENDERER)
 
     val returnType = descriptor.returnType
     val returnsNotUnit = returnType != null && !KotlinBuiltIns.isUnit(returnType)
