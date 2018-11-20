@@ -110,6 +110,14 @@ inline fun <reified T : CVariable> NativePlacement.alloc(): T =
         alloc(sizeOf<T>(), alignOf<T>()).reinterpret()
 
 /**
+ * Allocates variable of given type and initializes it applying given block.
+ *
+ * @param T must not be abstract
+ */
+inline fun <reified T : CVariable> NativePlacement.alloc(initialize: T.() -> Unit): T =
+        alloc<T>().also { it.initialize() }
+
+/**
  * Allocates C array of given elements type and length.
  *
  * @param T must not be abstract
@@ -224,6 +232,8 @@ fun <T : CVariable> zeroValue(size: Int, align: Int): CValue<T> = object : CValu
 
 inline fun <reified T : CVariable> zeroValue(): CValue<T> =
         zeroValue<T>(sizeOf<T>().toInt(), alignOf<T>())
+
+inline fun <reified T : CVariable> cValue(): CValue<T> = zeroValue<T>()
 
 private fun <T : CPointed> NativePlacement.placeBytes(bytes: ByteArray, align: Int): CPointer<T> {
     val result = this.alloc(size = bytes.size, align = align)
