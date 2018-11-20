@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.serialization.konan.impl
 
+import org.jetbrains.kotlin.contracts.ContractDeserializerImpl
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.ClassDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
@@ -118,7 +119,7 @@ internal object KonanDeserializedPackageFragmentsFactoryImpl : KonanDeserialized
             NullFlexibleTypeDeserializer,
             emptyList(),
             notFoundClasses,
-            ContractDeserializer.DEFAULT,
+            ContractDeserializerImpl(configuration),
             extensionRegistryLite = KonanSerializerProtocol.extensionRegistry
         )
 
