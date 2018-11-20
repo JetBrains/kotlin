@@ -194,6 +194,7 @@ class KtUltraLightClass(classOrObject: KtClassOrObject, private val support: Ult
 
     private fun propertyField(property: KtProperty, generateUniqueName: (String) -> String, forceStatic: Boolean): KtLightField? {
         if (!hasBackingField(property)) return null
+        if (property.hasAnnotation(JVM_SYNTHETIC_ANNOTATION_FQ_NAME)) return null
 
         val hasDelegate = property.hasDelegate()
         val fieldName = generateUniqueName((property.name ?: "") + (if (hasDelegate) "\$delegate" else ""))
@@ -312,6 +313,8 @@ class KtUltraLightClass(classOrObject: KtClassOrObject, private val support: Ult
     override fun getOwnMethods(): List<KtLightMethod> = if (tooComplex) super.getOwnMethods() else _ownMethods
 
     private fun asJavaMethods(ktFunction: KtFunction, forceStatic: Boolean): Collection<KtLightMethod> {
+        if (ktFunction.hasAnnotation(JVM_SYNTHETIC_ANNOTATION_FQ_NAME)) return emptyList()
+
         val basicMethod = asJavaMethod(ktFunction, forceStatic)
 
         if (!ktFunction.hasAnnotation(JVM_OVERLOADS_FQ_NAME)) return listOf(basicMethod)
@@ -475,7 +478,7 @@ class KtUltraLightClass(classOrObject: KtClassOrObject, private val support: Ult
                 if (declaration is KtProperty && declaration.hasDelegate()) {
                     return true
                 }
-                if (accessor?.hasModifier(PRIVATE_KEYWORD) == true) {
+                if (accessor?.hasModifier(PRIVATE_KEYWORD) == true || accessor?.hasAnnotation(JVM_SYNTHETIC_ANNOTATION_FQ_NAME) == true) {
                     return false
                 }
                 if (!isPrivate || accessor?.hasBody() == true) {
