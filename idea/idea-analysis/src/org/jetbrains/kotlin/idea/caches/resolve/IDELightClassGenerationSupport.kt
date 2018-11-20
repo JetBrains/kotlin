@@ -36,8 +36,6 @@ import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.classes.shouldNotBeVisibleAsLightClass
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
 import org.jetbrains.kotlin.codegen.JvmCodegenUtil
-import org.jetbrains.kotlin.codegen.state.JVM_SUPPRESS_WILDCARDS_ANNOTATION_FQ_NAME
-import org.jetbrains.kotlin.codegen.state.JVM_WILDCARD_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
@@ -47,18 +45,13 @@ import org.jetbrains.kotlin.idea.facet.KotlinFacet
 import org.jetbrains.kotlin.idea.resolve.frontendService
 import org.jetbrains.kotlin.idea.stubindex.KotlinTypeAliasShortNameIndex
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.annotations.JVM_STATIC_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.getAllSuperClassifiers
-import org.jetbrains.kotlin.resolve.jvm.annotations.JVM_OVERLOADS_FQ_NAME
-import org.jetbrains.kotlin.resolve.jvm.annotations.JVM_SYNTHETIC_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.lazy.NoDescriptorForDeclarationException
 import java.util.concurrent.ConcurrentMap
@@ -112,24 +105,6 @@ class IDELightClassGenerationSupport(private val project: Project) : LightClassG
     }
 
     private fun findTooComplexDeclaration(declaration: KtDeclaration): PsiElement? {
-        fun isNameOfUnsupportedJvmAnnotation(name: Name): Boolean {
-            if (!name.asString().startsWith("Jvm")) return false
-            if (name == JVM_STATIC_ANNOTATION_FQ_NAME.shortName()) return false
-            if (name == JVM_SUPPRESS_WILDCARDS_ANNOTATION_FQ_NAME.shortName()) return false
-            if (name == JVM_WILDCARD_ANNOTATION_FQ_NAME.shortName()) return false
-            if (name == JvmAbi.JVM_FIELD_ANNOTATION_FQ_NAME.shortName()) return false
-            if (name == JVM_OVERLOADS_FQ_NAME.shortName()) return false
-            if (name == JVM_SYNTHETIC_ANNOTATION_FQ_NAME.shortName()) return false
-            if (name == DescriptorUtils.JVM_NAME.shortName()) return false
-
-            return true
-        }
-
-        fun KtAnnotationEntry.seemsNonTrivial(): Boolean {
-            val name = shortName
-            return name == null || hasAlias(declaration, name) || isNameOfUnsupportedJvmAnnotation(name)
-        }
-
         if (declaration.hasExpectModifier() ||
             declaration.hasModifier(KtTokens.ANNOTATION_KEYWORD) ||
             declaration.hasModifier(KtTokens.INLINE_KEYWORD) && declaration is KtClassOrObject ||
@@ -140,7 +115,6 @@ class IDELightClassGenerationSupport(private val project: Project) : LightClassG
             return declaration
         }
 
-        declaration.annotationEntries.find(KtAnnotationEntry::seemsNonTrivial)?.let { return it }
 
         if (declaration is KtClassOrObject) {
             declaration.superTypeListEntries.find { it is KtDelegatedSuperTypeEntry }?.let { return it }
