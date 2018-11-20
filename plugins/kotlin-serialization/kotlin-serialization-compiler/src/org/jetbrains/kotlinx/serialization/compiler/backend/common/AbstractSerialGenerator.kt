@@ -14,7 +14,10 @@ import org.jetbrains.kotlin.resolve.constants.KClassValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.firstArgument
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.typeUtil.supertypes
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializationAnnotations
+import org.jetbrains.kotlinx.serialization.compiler.resolve.isKSerializer
+import org.jetbrains.kotlinx.serialization.compiler.resolve.toClassDescriptor
 
 abstract class AbstractSerialGenerator(val bindingContext: BindingContext, val currentDeclaration: ClassDescriptor) {
 
@@ -33,5 +36,16 @@ abstract class AbstractSerialGenerator(val bindingContext: BindingContext, val c
             SerializationAnnotations.contextualFqName,
             currentDeclaration
         ).toSet()
+    }
+
+    val additionalSerializersInScopeOfCurrentFile: Map<KotlinType, ClassDescriptor> by lazy {
+        getKClassListFromFileAnnotation(SerializationAnnotations.additionalSerializersFqName, currentDeclaration)
+            .associateBy(
+                {
+                    it.supertypes().find(::isKSerializer)?.arguments?.firstOrNull()?.type
+                        ?: throw AssertionError("Argument for ${SerializationAnnotations.additionalSerializersFqName} does not implement KSerializer")
+                },
+                { it.toClassDescriptor!! }
+            )
     }
 }

@@ -49,14 +49,18 @@ open class SerialTypeInfo(
     val unit: Boolean = false
 )
 
+fun AbstractSerialGenerator.findAddOnSerializer(propertyType: KotlinType): ClassDescriptor? =
+    additionalSerializersInScopeOfCurrentFile[propertyType]
+
 @Suppress("FunctionName", "LocalVariableName")
 fun AbstractSerialGenerator.getSerialTypeInfo(property: SerializableProperty): SerialTypeInfo {
     fun SerializableInfo(serializer: ClassDescriptor?) =
         SerialTypeInfo(property, if (property.type.isMarkedNullable) "Nullable" else "", serializer)
 
     val T = property.type
-    T.overridenSerializer?.toClassDescriptor?.let { return SerializableInfo(it) }
     property.serializableWith?.toClassDescriptor?.let { return SerializableInfo(it) }
+    T.overridenSerializer?.toClassDescriptor?.let { return SerializableInfo(it) }
+    findAddOnSerializer(T)?.let { return SerializableInfo(it) }
     return when {
         T.isTypeParameter() -> SerialTypeInfo(property, if (property.type.isMarkedNullable) "Nullable" else "", null)
         T.isPrimitiveNumberType() or T.isBoolean() -> SerialTypeInfo(
@@ -91,6 +95,7 @@ fun AbstractSerialGenerator.findTypeSerializerOrContext(
     annotations: Annotations = kType.annotations,
     sourceElement: PsiElement? = null
 ): ClassDescriptor? {
+    additionalSerializersInScopeOfCurrentFile[kType]?.let { return it }
     if (kType.isTypeParameter()) return null
     fun getContextualSerializer() =
         if (annotations.hasAnnotation(SerializationAnnotations.contextualFqName) || kType in contextualKClassListInCurrentFile)
