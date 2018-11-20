@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
 import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.idea.caches.project.implementedDescriptors
 import org.jetbrains.kotlin.idea.caches.project.implementedModules
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithContent
 import org.jetbrains.kotlin.idea.core.ShortenReferences
@@ -23,15 +24,24 @@ import org.jetbrains.kotlin.idea.core.overrideImplement.*
 import org.jetbrains.kotlin.idea.core.toDescriptor
 import org.jetbrains.kotlin.idea.quickfix.KotlinIntentionActionsFactory
 import org.jetbrains.kotlin.idea.quickfix.KotlinQuickFixAction
+import org.jetbrains.kotlin.idea.refactoring.introduce.showErrorHint
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
+import org.jetbrains.kotlin.idea.util.hasDeclarationOf
 import org.jetbrains.kotlin.idea.util.liftToExpected
 import org.jetbrains.kotlin.idea.util.module
+import org.jetbrains.kotlin.js.descriptorUtils.getJetTypeFqName
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.createSmartPointer
 import org.jetbrains.kotlin.psi.psiUtil.hasActualModifier
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.MultiTargetPlatform
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
+import org.jetbrains.kotlin.resolve.descriptorUtil.module
+import org.jetbrains.kotlin.resolve.getMultiTargetPlatform
+import org.jetbrains.kotlin.types.AbbreviatedType
+import org.jetbrains.kotlin.types.KotlinType
 
 sealed class CreateExpectedFix<out D : KtNamedDeclaration>(
     declaration: D,
@@ -57,7 +67,14 @@ sealed class CreateExpectedFix<out D : KtNamedDeclaration>(
         val targetExpectedClass = targetExpectedClassPointer?.element
         val expectedFile = targetExpectedClass?.containingKtFile ?: getOrCreateImplementationFile() ?: return
         DumbService.getInstance(project).runWhenSmart {
-            val generated = factory.generateIt(project, element) ?: return@runWhenSmart
+            val generated = try {
+                factory.generateIt(project, element) ?: return@runWhenSmart
+            } catch (e: KotlinTypeInaccessibleException) {
+                if (editor != null) {
+                    showErrorHint(project, editor, "Cannot generate expected $elementType: " + e.message, e.message)
+                }
+                return@runWhenSmart
+            }
 
             project.executeWriteCommand("Create expected declaration") {
                 if (expectedFile.packageDirective?.fqName != file.packageDirective?.fqName &&
@@ -129,7 +146,7 @@ class CreateExpectedClassFix(
     outerExpectedClass: KtClassOrObject?,
     commonModule: Module
 ) : CreateExpectedFix<KtClassOrObject>(klass, outerExpectedClass, commonModule, { project, element ->
-    generateClassOrObjectByActualClass(project, element, isNested = outerExpectedClass != null)
+    generateClassOrObjectByActualClass(project, element, listOfNotNull(outerExpectedClass))
 }) {
 
     override val elementType = element.getTypeDescription()
@@ -141,7 +158,7 @@ class CreateExpectedPropertyFix(
     commonModule: Module
 ) : CreateExpectedFix<KtNamedDeclaration>(property, targetExpectedClass, commonModule, { project, element ->
     val descriptor = element.toDescriptor() as? PropertyDescriptor
-    descriptor?.let { generateProperty(project, element, descriptor, targetExpectedClass) }
+    descriptor?.let { generateProperty(project, element, descriptor, targetExpectedClass, emptyList()) }
 }) {
 
     override val elementType = "property"
@@ -153,7 +170,7 @@ class CreateExpectedFunctionFix(
     commonModule: Module
 ) : CreateExpectedFix<KtFunction>(function, targetExpectedClass, commonModule, { project, element ->
     val descriptor = element.toDescriptor() as? FunctionDescriptor
-    descriptor?.let { generateFunction(project, element, descriptor, targetExpectedClass) }
+    descriptor?.let { generateFunction(project, element, descriptor, targetExpectedClass, emptyList()) }
 }) {
 
     override val elementType = "function"
@@ -162,7 +179,7 @@ class CreateExpectedFunctionFix(
 private fun KtPsiFactory.generateClassOrObjectByActualClass(
     project: Project,
     actualClass: KtClassOrObject,
-    isNested: Boolean
+    outerExpectedClasses: List<KtClassOrObject>
 ): KtClassOrObject {
     val expectedClass = createClassCopyByText(actualClass)
     expectedClass.declarations.forEach {
@@ -183,7 +200,7 @@ private fun KtPsiFactory.generateClassOrObjectByActualClass(
             expectedEntry.replace(createSuperTypeEntry(expectedEntry.typeReference!!.text))
         }
     }
-    if (!isNested) {
+    if (outerExpectedClasses.isEmpty()) {
         expectedClass.addModifier(KtTokens.EXPECT_KEYWORD)
     } else {
         expectedClass.makeNotActual()
@@ -195,15 +212,17 @@ private fun KtPsiFactory.generateClassOrObjectByActualClass(
         val expectedDeclaration: KtDeclaration = when (actualDeclaration) {
             is KtClassOrObject ->
                 if (actualDeclaration !is KtEnumEntry) {
-                    generateClassOrObjectByActualClass(project, actualDeclaration, isNested = true)
+                    generateClassOrObjectByActualClass(project, actualDeclaration, outerExpectedClasses + expectedClass)
                 } else {
                     continue@declLoop
                 }
             is KtCallableDeclaration -> {
                 if (!actualDeclaration.hasActualModifier()) continue@declLoop
                 when (actualDeclaration) {
-                    is KtFunction -> generateFunction(project, actualDeclaration, descriptor as FunctionDescriptor, expectedClass)
-                    is KtProperty -> generateProperty(project, actualDeclaration, descriptor as PropertyDescriptor, expectedClass)
+                    is KtFunction ->
+                        generateFunction(project, actualDeclaration, descriptor as FunctionDescriptor, expectedClass, outerExpectedClasses)
+                    is KtProperty ->
+                        generateProperty(project, actualDeclaration, descriptor as PropertyDescriptor, expectedClass, outerExpectedClasses)
                     else -> continue@declLoop
                 }
             }
@@ -215,7 +234,8 @@ private fun KtPsiFactory.generateClassOrObjectByActualClass(
         for (actualProperty in actualClass.primaryConstructorParameters) {
             if (!actualProperty.hasValOrVar() || !actualProperty.hasActualModifier()) continue
             val descriptor = actualProperty.toDescriptor() as? PropertyDescriptor ?: continue
-            val expectedProperty = generateProperty(project, actualProperty, descriptor, expectedClass)
+            val expectedProperty =
+                generateProperty(project, actualProperty, descriptor, expectedClass, outerExpectedClasses)
             expectedClass.addDeclaration(expectedProperty)
         }
     }
@@ -223,7 +243,8 @@ private fun KtPsiFactory.generateClassOrObjectByActualClass(
     if (expectedClass is KtClass && actualPrimaryConstructor != null) {
         val descriptor = actualPrimaryConstructor.toDescriptor()
         if (descriptor is FunctionDescriptor) {
-            val expectedPrimaryConstructor = generateFunction(project, actualPrimaryConstructor, descriptor, expectedClass)
+            val expectedPrimaryConstructor =
+                generateFunction(project, actualPrimaryConstructor, descriptor, expectedClass, outerExpectedClasses)
             expectedClass.createPrimaryConstructorIfAbsent().replace(expectedPrimaryConstructor)
         }
     }
@@ -235,8 +256,15 @@ private fun generateFunction(
     project: Project,
     actualFunction: KtFunction,
     descriptor: FunctionDescriptor,
-    targetClass: KtClassOrObject? = null
+    targetClass: KtClassOrObject?,
+    outerExpectedClasses: List<KtClassOrObject>
 ): KtFunction {
+    val accessibleClasses = outerExpectedClasses + listOfNotNull(targetClass)
+    descriptor.checkTypeParameterBoundsAccessibility(accessibleClasses)
+    descriptor.returnType?.checkAccessibility(accessibleClasses)
+    descriptor.valueParameters.forEach {
+        it.type.checkAccessibility(accessibleClasses)
+    }
     val memberChooserObject = OverrideMemberChooserObject.create(
         actualFunction, descriptor, descriptor,
         OverrideMemberChooserObject.BodyType.NO_BODY
@@ -252,8 +280,12 @@ private fun generateProperty(
     project: Project,
     actualProperty: KtNamedDeclaration,
     descriptor: PropertyDescriptor,
-    targetClass: KtClassOrObject? = null
+    targetClass: KtClassOrObject?,
+    outerExpectedClasses: List<KtClassOrObject>
 ): KtProperty {
+    val accessibleClasses = outerExpectedClasses + listOfNotNull(targetClass)
+    descriptor.checkTypeParameterBoundsAccessibility(accessibleClasses)
+    descriptor.type.checkAccessibility(accessibleClasses)
     val memberChooserObject = OverrideMemberChooserObject.create(
         actualProperty, descriptor, descriptor,
         OverrideMemberChooserObject.BodyType.NO_BODY
@@ -265,6 +297,47 @@ private fun generateProperty(
     } as KtProperty
 }
 
+private fun CallableMemberDescriptor.checkTypeParameterBoundsAccessibility(accessibleClasses: List<KtClassOrObject>) {
+    typeParameters.forEach { typeParameter ->
+        typeParameter.upperBounds.forEach { upperBound ->
+            upperBound.checkAccessibility(accessibleClasses)
+        }
+    }
+}
 
+private fun KotlinType.checkAccessibility(accessibleClasses: List<KtClassOrObject>) {
+    for (argument in arguments) {
+        if (argument.isStarProjection) continue
+        argument.type.checkAccessibility(accessibleClasses)
+    }
+    val classifierDescriptor = constructor.declarationDescriptor as? ClassifierDescriptorWithTypeParameters ?: return
+    val moduleDescriptor = classifierDescriptor.module
+    if (moduleDescriptor.getMultiTargetPlatform() == MultiTargetPlatform.Common) {
+        // Common classes are Ok
+        return
+    }
+    val implementedDescriptors = moduleDescriptor.implementedDescriptors
+    if (implementedDescriptors.isEmpty()) {
+        // This happens now if we are not in sources, in this case yet we cannot answer question about accessibility
+        // Very rude check about JDK classes
+        if (!classifierDescriptor.fqNameSafe.toString().startsWith("java.")) return
+    }
+    if (implementedDescriptors.any { it.hasDeclarationOf(classifierDescriptor) }) {
+        // Platform classes with expected class are also Ok
+        return
+    }
+    accessibleClasses.forEach {
+        if (classifierDescriptor.name == it.nameAsName) return
+    }
+    if (this is AbbreviatedType) {
+        // For type aliases without expected class, check expansions instead
+        expandedType.checkAccessibility(accessibleClasses)
+    } else {
+        throw KotlinTypeInaccessibleException(this)
+    }
+}
 
-
+class KotlinTypeInaccessibleException(val type: KotlinType) : Exception() {
+    override val message: String
+        get() = "Type ${type.getJetTypeFqName(true)} is not accessible from common code"
+}
