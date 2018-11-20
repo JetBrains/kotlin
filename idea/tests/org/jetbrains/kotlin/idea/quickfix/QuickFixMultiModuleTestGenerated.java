@@ -264,6 +264,11 @@ public class QuickFixMultiModuleTestGenerated extends AbstractQuickFixMultiModul
         runTest("idea/testData/multiModuleQuickFix/expectClass/");
     }
 
+    @TestMetadata("expectClassCommented")
+    public void testExpectClassCommented() throws Exception {
+        runTest("idea/testData/multiModuleQuickFix/expectClassCommented/");
+    }
+
     @TestMetadata("expectClassFunction")
     public void testExpectClassFunction() throws Exception {
         runTest("idea/testData/multiModuleQuickFix/expectClassFunction/");
@@ -279,14 +284,34 @@ public class QuickFixMultiModuleTestGenerated extends AbstractQuickFixMultiModul
         runTest("idea/testData/multiModuleQuickFix/expectClassPropertyInConstructor/");
     }
 
+    @TestMetadata("expectClassWithAliases")
+    public void testExpectClassWithAliases() throws Exception {
+        runTest("idea/testData/multiModuleQuickFix/expectClassWithAliases/");
+    }
+
     @TestMetadata("expectClassWithSupertype")
     public void testExpectClassWithSupertype() throws Exception {
         runTest("idea/testData/multiModuleQuickFix/expectClassWithSupertype/");
     }
 
+    @TestMetadata("expectDataClass")
+    public void testExpectDataClass() throws Exception {
+        runTest("idea/testData/multiModuleQuickFix/expectDataClass/");
+    }
+
     @TestMetadata("expectEnum")
     public void testExpectEnum() throws Exception {
         runTest("idea/testData/multiModuleQuickFix/expectEnum/");
+    }
+
+    @TestMetadata("expectEnumEmpty")
+    public void testExpectEnumEmpty() throws Exception {
+        runTest("idea/testData/multiModuleQuickFix/expectEnumEmpty/");
+    }
+
+    @TestMetadata("expectFunWithJdk")
+    public void testExpectFunWithJdk() throws Exception {
+        runTest("idea/testData/multiModuleQuickFix/expectFunWithJdk/");
     }
 
     @TestMetadata("expectFunction")
@@ -302,6 +327,21 @@ public class QuickFixMultiModuleTestGenerated extends AbstractQuickFixMultiModul
     @TestMetadata("expectProperty")
     public void testExpectProperty() throws Exception {
         runTest("idea/testData/multiModuleQuickFix/expectProperty/");
+    }
+
+    @TestMetadata("expectSealedClass")
+    public void testExpectSealedClass() throws Exception {
+        runTest("idea/testData/multiModuleQuickFix/expectSealedClass/");
+    }
+
+    @TestMetadata("expectTypeAlias")
+    public void testExpectTypeAlias() throws Exception {
+        runTest("idea/testData/multiModuleQuickFix/expectTypeAlias/");
+    }
+
+    @TestMetadata("expectWithAnnotations")
+    public void testExpectWithAnnotations() throws Exception {
+        runTest("idea/testData/multiModuleQuickFix/expectWithAnnotations/");
     }
 
     @TestMetadata("function")

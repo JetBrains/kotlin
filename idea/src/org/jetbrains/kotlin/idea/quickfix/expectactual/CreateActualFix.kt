@@ -282,7 +282,7 @@ private fun generateFunction(
     return if (targetClass != null) {
         memberChooserObject.generateActualMember(targetClass = targetClass, copyDoc = true)
     } else {
-        memberChooserObject.generateTopLevelActual(copyDoc = true, project = project)
+        memberChooserObject.generateTopLevelActual(project = project, copyDoc = true)
     } as KtFunction
 }
 
@@ -299,7 +299,7 @@ private fun generateProperty(
     return if (targetClass != null) {
         memberChooserObject.generateActualMember(targetClass = targetClass, copyDoc = true)
     } else {
-        memberChooserObject.generateTopLevelActual(copyDoc = true, project = project)
+        memberChooserObject.generateTopLevelActual(project = project, copyDoc = true)
     } as KtProperty
 }
 

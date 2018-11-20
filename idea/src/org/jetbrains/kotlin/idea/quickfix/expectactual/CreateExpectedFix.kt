@@ -188,6 +188,7 @@ private fun KtPsiFactory.generateClassOrObjectByActualClass(
     } else {
         expectedClass.makeNotActual()
     }
+    expectedClass.removeModifier(KtTokens.DATA_KEYWORD)
 
     declLoop@ for (actualDeclaration in actualClass.declarations) {
         val descriptor = actualDeclaration.toDescriptor() ?: continue
@@ -199,6 +200,7 @@ private fun KtPsiFactory.generateClassOrObjectByActualClass(
                     continue@declLoop
                 }
             is KtCallableDeclaration -> {
+                if (!actualDeclaration.hasActualModifier()) continue@declLoop
                 when (actualDeclaration) {
                     is KtFunction -> generateFunction(project, actualDeclaration, descriptor as FunctionDescriptor, expectedClass)
                     is KtProperty -> generateProperty(project, actualDeclaration, descriptor as PropertyDescriptor, expectedClass)
@@ -208,6 +210,14 @@ private fun KtPsiFactory.generateClassOrObjectByActualClass(
             else -> continue@declLoop
         }
         expectedClass.addDeclaration(expectedDeclaration)
+    }
+    if (!actualClass.isAnnotation()) {
+        for (actualProperty in actualClass.primaryConstructorParameters) {
+            if (!actualProperty.hasValOrVar() || !actualProperty.hasActualModifier()) continue
+            val descriptor = actualProperty.toDescriptor() as? PropertyDescriptor ?: continue
+            val expectedProperty = generateProperty(project, actualProperty, descriptor, expectedClass)
+            expectedClass.addDeclaration(expectedProperty)
+        }
     }
     val actualPrimaryConstructor = actualClass.primaryConstructor
     if (expectedClass is KtClass && actualPrimaryConstructor != null) {
@@ -234,7 +244,7 @@ private fun generateFunction(
     return if (targetClass != null) {
         memberChooserObject.generateExpectMember(targetClass = targetClass, copyDoc = true)
     } else {
-        memberChooserObject.generateTopLevelExpect(copyDoc = true, project = project)
+        memberChooserObject.generateTopLevelExpect(project = project, copyDoc = true)
     } as KtFunction
 }
 
@@ -251,7 +261,7 @@ private fun generateProperty(
     return if (targetClass != null) {
         memberChooserObject.generateExpectMember(targetClass = targetClass, copyDoc = true)
     } else {
-        memberChooserObject.generateTopLevelExpect(copyDoc = true, project = project)
+        memberChooserObject.generateTopLevelExpect(project = project, copyDoc = true)
     } as KtProperty
 }
 

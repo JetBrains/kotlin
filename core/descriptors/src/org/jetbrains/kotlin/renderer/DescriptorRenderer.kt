@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationWithTarget
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.name.Name
@@ -219,6 +218,7 @@ interface DescriptorRendererOptions {
     var alwaysRenderModifiers: Boolean
     var renderConstructorKeyword: Boolean
     var renderUnabbreviatedType: Boolean
+    var renderTypeExpansions: Boolean
     var includeAdditionalModifiers: Boolean
     var parameterNamesInFunctionalTypes: Boolean
     var renderFunctionContracts: Boolean
@@ -272,6 +272,8 @@ enum class DescriptorRendererModifier(val includeByDefault: Boolean) {
     INLINE(true),
     EXPECT(true),
     ACTUAL(true),
+    CONST(true),
+    LATEINIT(true),
     ;
 
     companion object {
