@@ -40,6 +40,9 @@ interface TypeMappingConfiguration<out T : Any> {
     fun getPredefinedTypeForClass(classDescriptor: ClassDescriptor): T?
     fun getPredefinedInternalNameForClass(classDescriptor: ClassDescriptor): String?
     fun processErrorType(kotlinType: KotlinType, descriptor: ClassDescriptor)
+    // returns null when type doesn't need to be preprocessed
+    fun preprocessType(kotlinType: KotlinType): KotlinType? = null
+
     fun releaseCoroutines(): Boolean
 }
 
@@ -54,6 +57,10 @@ fun <T : Any> mapType(
     writeGenericType: (KotlinType, T, TypeMappingMode) -> Unit = DO_NOTHING_3,
     isIrBackend: Boolean
 ): T {
+    typeMappingConfiguration.preprocessType(kotlinType)?.let { newType ->
+        return mapType(newType, factory, mode, typeMappingConfiguration, descriptorTypeWriter, writeGenericType, isIrBackend)
+    }
+
     if (kotlinType.isSuspendFunctionType) {
         return mapType(
             transformSuspendFunctionToRuntimeFunctionType(kotlinType, typeMappingConfiguration.releaseCoroutines()),

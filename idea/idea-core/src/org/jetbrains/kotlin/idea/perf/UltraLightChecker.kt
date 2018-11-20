@@ -110,7 +110,7 @@ object UltraLightChecker {
                 } +
                 ";"
 
-    private fun PsiClass.renderClass(): String {
+    fun PsiClass.renderClass(): String {
         val classWord = when {
             isAnnotationType -> "@interface"
             isInterface -> "interface"
