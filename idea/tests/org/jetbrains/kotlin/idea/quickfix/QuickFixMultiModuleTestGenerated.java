@@ -294,6 +294,11 @@ public class QuickFixMultiModuleTestGenerated extends AbstractQuickFixMultiModul
         runTest("idea/testData/multiModuleQuickFix/expectClassWithSupertype/");
     }
 
+    @TestMetadata("expectCompanion")
+    public void testExpectCompanion() throws Exception {
+        runTest("idea/testData/multiModuleQuickFix/expectCompanion/");
+    }
+
     @TestMetadata("expectDataClass")
     public void testExpectDataClass() throws Exception {
         runTest("idea/testData/multiModuleQuickFix/expectDataClass/");
@@ -307,6 +312,36 @@ public class QuickFixMultiModuleTestGenerated extends AbstractQuickFixMultiModul
     @TestMetadata("expectEnumEmpty")
     public void testExpectEnumEmpty() throws Exception {
         runTest("idea/testData/multiModuleQuickFix/expectEnumEmpty/");
+    }
+
+    @TestMetadata("expectFunWithAccessibleAlias")
+    public void testExpectFunWithAccessibleAlias() throws Exception {
+        runTest("idea/testData/multiModuleQuickFix/expectFunWithAccessibleAlias/");
+    }
+
+    @TestMetadata("expectFunWithAccessibleExpansion")
+    public void testExpectFunWithAccessibleExpansion() throws Exception {
+        runTest("idea/testData/multiModuleQuickFix/expectFunWithAccessibleExpansion/");
+    }
+
+    @TestMetadata("expectFunWithAccessibleParameter")
+    public void testExpectFunWithAccessibleParameter() throws Exception {
+        runTest("idea/testData/multiModuleQuickFix/expectFunWithAccessibleParameter/");
+    }
+
+    @TestMetadata("expectFunWithInaccessibleBounds")
+    public void testExpectFunWithInaccessibleBounds() throws Exception {
+        runTest("idea/testData/multiModuleQuickFix/expectFunWithInaccessibleBounds/");
+    }
+
+    @TestMetadata("expectFunWithInaccessibleParameter")
+    public void testExpectFunWithInaccessibleParameter() throws Exception {
+        runTest("idea/testData/multiModuleQuickFix/expectFunWithInaccessibleParameter/");
+    }
+
+    @TestMetadata("expectFunWithInaccessibleTypeParameter")
+    public void testExpectFunWithInaccessibleTypeParameter() throws Exception {
+        runTest("idea/testData/multiModuleQuickFix/expectFunWithInaccessibleTypeParameter/");
     }
 
     @TestMetadata("expectFunWithJdk")

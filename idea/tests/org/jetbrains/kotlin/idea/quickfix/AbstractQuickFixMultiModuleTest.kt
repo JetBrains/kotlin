@@ -9,6 +9,7 @@ import com.intellij.codeInsight.daemon.quickFix.ActionHint
 import com.intellij.codeInsight.daemon.quickFix.LightQuickFixTestCase
 import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.openapi.command.CommandProcessor
+import com.intellij.testFramework.UsefulTestCase
 import junit.framework.ComparisonFailure
 import junit.framework.TestCase
 import org.jetbrains.kotlin.idea.inspections.findExistingEditor
@@ -21,6 +22,7 @@ import org.jetbrains.kotlin.idea.test.findFileWithCaret
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.junit.Assert
 import java.io.File
 
 abstract class AbstractQuickFixMultiModuleTest : AbstractMultiModuleTest(), QuickFixTest {
@@ -42,6 +44,7 @@ abstract class AbstractQuickFixMultiModuleTest : AbstractMultiModuleTest(), Quic
         enableInspectionTools(*inspections)
 
         CommandProcessor.getInstance().executeCommand(project, {
+            var expectedErrorMessage: String = ""
             try {
                 val actionHint = ActionHint.parse(actionFile, actionFileText)
                 val text = actionHint.expectedText
@@ -52,24 +55,28 @@ abstract class AbstractQuickFixMultiModuleTest : AbstractMultiModuleTest(), Quic
                     DirectiveBasedActionUtils.checkForUnexpectedErrors(actionFile)
                 }
 
+                expectedErrorMessage = InTextDirectivesUtils.findStringWithPrefixes(actionFileText, "// SHOULD_FAIL_WITH: ") ?: ""
+
                 AbstractQuickFixMultiFileTest.doAction(
-                        text, file, editor, actionShouldBeAvailable, actionFileName, this::availableActions, this::doHighlighting,
-                        InTextDirectivesUtils.isDirectiveDefined(actionFile.text, "// SHOULD_BE_AVAILABLE_AFTER_EXECUTION")
+                    text, file, editor, actionShouldBeAvailable, actionFileName, this::availableActions, this::doHighlighting,
+                    InTextDirectivesUtils.isDirectiveDefined(actionFile.text, "// SHOULD_BE_AVAILABLE_AFTER_EXECUTION")
                 )
 
                 if (actionShouldBeAvailable) {
                     compareToExpected()
                 }
-            }
-            catch (e: ComparisonFailure) {
+                UsefulTestCase.assertEmpty(expectedErrorMessage)
+            } catch (e: ComparisonFailure) {
                 throw e
-            }
-            catch (e: AssertionError) {
+            } catch (e: AssertionError) {
                 throw e
-            }
-            catch (e: Throwable) {
-                e.printStackTrace()
-                TestCase.fail(getTestName(true))
+            } catch (e: Throwable) {
+                if (expectedErrorMessage.isEmpty()) {
+                    e.printStackTrace()
+                    TestCase.fail(getTestName(true))
+                } else {
+                    Assert.assertEquals("Wrong exception message", expectedErrorMessage, e.message)
+                }
             }
         }, "", "")
     }
