@@ -99,6 +99,11 @@ public class DiagnosticsTestWithStdLibUsingJavacGenerated extends AbstractDiagno
         runTest("compiler/testData/diagnostics/testsWithStdLib/javaForKClass.kt");
     }
 
+    @TestMetadata("kt8050.kt")
+    public void testKt8050() throws Exception {
+        runTest("compiler/testData/diagnostics/testsWithStdLib/kt8050.kt");
+    }
+
     @TestMetadata("kt9078.kt")
     public void testKt9078() throws Exception {
         runTest("compiler/testData/diagnostics/testsWithStdLib/kt9078.kt");

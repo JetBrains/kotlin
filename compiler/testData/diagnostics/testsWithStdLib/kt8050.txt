@@ -1,0 +1,19 @@
+package
+
+private operator fun X?.plus(/*0*/ p: kotlin.Int): X
+
+public final class C {
+    public constructor C()
+    private final val map: kotlin.collections.HashMap<kotlin.String, X> /* = java.util.HashMap<kotlin.String, X> */
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public final fun f(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+private final class X {
+    public constructor X()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
