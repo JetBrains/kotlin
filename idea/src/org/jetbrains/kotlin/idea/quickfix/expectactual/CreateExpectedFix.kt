@@ -55,7 +55,7 @@ sealed class CreateExpectedFix<out D : KtNamedDeclaration>(
 
     override fun getFamilyName() = text
 
-    protected abstract val elementType: String
+    protected val elementType: String = element.getTypeDescription()
 
     override fun getText() = "Create expected $elementType in common module ${commonModule.name}"
 
@@ -152,10 +152,7 @@ class CreateExpectedClassFix(
     commonModule: Module
 ) : CreateExpectedFix<KtClassOrObject>(klass, outerExpectedClass, commonModule, { project, element ->
     generateClassOrObjectByActualClass(project, element, listOfNotNull(outerExpectedClass))
-}) {
-
-    override val elementType = element.getTypeDescription()
-}
+})
 
 class CreateExpectedPropertyFix(
     property: KtNamedDeclaration,
@@ -164,10 +161,7 @@ class CreateExpectedPropertyFix(
 ) : CreateExpectedFix<KtNamedDeclaration>(property, targetExpectedClass, commonModule, { project, element ->
     val descriptor = element.toDescriptor() as? PropertyDescriptor
     descriptor?.let { generateProperty(project, element, descriptor, targetExpectedClass, emptyList()) }
-}) {
-
-    override val elementType = "property"
-}
+})
 
 class CreateExpectedFunctionFix(
     function: KtFunction,
@@ -176,10 +170,7 @@ class CreateExpectedFunctionFix(
 ) : CreateExpectedFix<KtFunction>(function, targetExpectedClass, commonModule, { project, element ->
     val descriptor = element.toDescriptor() as? FunctionDescriptor
     descriptor?.let { generateFunction(project, element, descriptor, targetExpectedClass, emptyList()) }
-}) {
-
-    override val elementType = "function"
-}
+})
 
 private fun KtPsiFactory.generateClassOrObjectByActualClass(
     project: Project,

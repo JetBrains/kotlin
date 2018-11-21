@@ -63,7 +63,7 @@ fun KtPsiFactory.createClassHeaderCopyByText(originalClass: KtClassOrObject): Kt
     }
 }
 
-fun KtClassOrObject?.getTypeDescription(): String = when (this) {
+fun KtNamedDeclaration?.getTypeDescription(): String = when (this) {
     is KtObjectDeclaration -> "object"
     is KtClass -> when {
         isInterface() -> "interface"
@@ -71,5 +71,7 @@ fun KtClassOrObject?.getTypeDescription(): String = when (this) {
         isAnnotation() -> "annotation class"
         else -> "class"
     }
-    else -> "class"
+    is KtProperty, is KtParameter -> "property"
+    is KtFunction -> "function"
+    else -> "declaration"
 }
