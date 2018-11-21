@@ -24,98 +24,7 @@ class NewMultiplatformProjectImportingTest : GradleImportingTestCase() {
 
     @Test
     fun testProjectDependency() {
-        createProjectSubFile(
-            "settings.gradle",
-            "include 'lib', 'app'"
-        )
-        createProjectSubFile(
-            "build.gradle",
-            """
-                buildscript {
-                    repositories {
-                        mavenLocal()
-                        jcenter()
-                        maven { url 'https://dl.bintray.com/kotlin/kotlin-dev' }
-                    }
-                    dependencies {
-                        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
-                    }
-                }
-
-                allprojects {
-                    repositories {
-                        mavenLocal()
-                        jcenter()
-                        maven { url 'https://dl.bintray.com/kotlin/kotlin-dev' }
-                    }
-                }
-            """.trimIndent()
-        )
-        createProjectSubFile(
-            "app/build.gradle",
-            """
-                apply plugin: 'kotlin-multiplatform'
-
-                kotlin {
-                    sourceSets {
-                        commonMain {
-                            dependencies {
-                                implementation 'org.jetbrains.kotlin:kotlin-stdlib-common'
-                                implementation project(':lib')
-                            }
-                        }
-                        main {
-                            dependencies {
-                                implementation 'org.jetbrains.kotlin:kotlin-stdlib'
-                            }
-                        }
-                        jsMain {
-                            dependencies {
-                                implementation 'org.jetbrains.kotlin:kotlin-stdlib-js'
-                            }
-                        }
-                    }
-                    targets {
-                        fromPreset(presets.jvmWithJava, 'jvm')
-                        fromPreset(presets.js, 'js')
-                    }
-                }
-
-                apply plugin: 'application'
-                mainClassName = 'com.example.app.JvmGreeterKt'
-            """.trimIndent()
-        )
-        createProjectSubFile(
-            "lib/build.gradle",
-            """
-                apply plugin: 'kotlin-multiplatform'
-
-                kotlin {
-                    sourceSets {
-                        commonMain {
-                            dependencies {
-                                implementation 'org.jetbrains.kotlin:kotlin-stdlib-common'
-                            }
-                        }
-                        jvmMain {
-                            dependencies {
-                                implementation 'org.jetbrains.kotlin:kotlin-stdlib'
-                            }
-                        }
-                        jsMain {
-                            dependencies {
-                                implementation 'org.jetbrains.kotlin:kotlin-stdlib-js'
-                            }
-                        }
-                    }
-                    targets {
-                        fromPreset(presets.jvm, 'jvm')
-                        fromPreset(presets.js, 'js')
-                    }
-                }
-            """.trimIndent()
-        )
-
+        configureByFiles()
         importProject()
 
         checkProjectStructure() {
@@ -285,45 +194,7 @@ class NewMultiplatformProjectImportingTest : GradleImportingTestCase() {
 
     @Test
     fun testFileCollectionDependency() {
-        createProjectSubFile(
-            "build.gradle",
-            """
-                buildscript {
-                    repositories {
-                        mavenLocal()
-                        jcenter()
-                        maven { url 'https://dl.bintray.com/kotlin/kotlin-dev' }
-                    }
-                    dependencies {
-                        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
-                    }
-                }
-
-                allprojects {
-                    repositories {
-                        mavenLocal()
-                        jcenter()
-                        maven { url 'https://dl.bintray.com/kotlin/kotlin-dev' }
-                    }
-                }
-
-                apply plugin: 'kotlin-multiplatform'
-
-                kotlin {
-                    sourceSets {
-                        jvmMain {
-                            dependencies {
-                                implementation files("a", "b")
-                            }
-                        }
-                    }
-                    targets {
-                        fromPreset(presets.jvmWithJava, 'jvm')
-                    }
-                }
-            """.trimIndent()
-        )
-
+        configureByFiles()
         importProject()
 
         checkProjectStructure(
@@ -341,45 +212,7 @@ class NewMultiplatformProjectImportingTest : GradleImportingTestCase() {
 
     @Test
     fun testUnresolvedDependency() {
-        createProjectSubFile(
-            "build.gradle",
-            """
-                buildscript {
-                    repositories {
-                        mavenLocal()
-                        jcenter()
-                        maven { url 'https://dl.bintray.com/kotlin/kotlin-dev' }
-                    }
-                    dependencies {
-                        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
-                    }
-                }
-
-                allprojects {
-                    repositories {
-                        mavenLocal()
-                        jcenter()
-                        maven { url 'https://dl.bintray.com/kotlin/kotlin-dev' }
-                    }
-                }
-
-                apply plugin: 'kotlin-multiplatform'
-
-                kotlin {
-                    sourceSets {
-                        jvmMain {
-                            dependencies {
-                                implementation 'my.lib:unresolved'
-                            }
-                        }
-                    }
-                    targets {
-                        fromPreset(presets.jvmWithJava, 'jvm')
-                    }
-                }
-            """.trimIndent()
-        )
-
+        configureByFiles()
         importProject()
 
         checkProjectStructure(
@@ -398,117 +231,11 @@ class NewMultiplatformProjectImportingTest : GradleImportingTestCase() {
 
     @Test
     fun testAndroidDependencyOnMPP() {
-        createProjectSubFile(
-            "settings.gradle",
-            """
-                include ':app'
-                include ':shared'
-            """.trimIndent()
-        )
-        createProjectSubFile(
-            "build.gradle",
-            """
-                buildscript {
-                    ext.kotlin_version = '$kotlinVersion'
-                    repositories {
-                        google()
-                        jcenter()
-                        maven { url 'https://dl.bintray.com/kotlin/kotlin-dev' }
-                    }
-                    dependencies {
-                        classpath 'com.android.tools.build:gradle:3.2.0'
-                        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${'$'}kotlin_version"
-                    }
-                }
-
-                allprojects {
-                    repositories {
-                        google()
-                        jcenter()
-                        maven { url 'https://dl.bintray.com/kotlin/kotlin-dev' }
-                    }
-                }
-
-                task clean(type: Delete) {
-                    delete rootProject.buildDir
-                }
-            """.trimIndent()
-        )
+        configureByFiles()
         createProjectSubFile(
             "local.properties",
             "sdk.dir=/${KotlinTestUtils.getAndroidSdkSystemIndependentPath()}"
         )
-        createProjectSubFile(
-            "shared/build.gradle",
-            """
-                apply plugin: 'kotlin-multiplatform'
-
-                kotlin {
-                    targets {
-                        fromPreset(presets.jvm, 'android')
-
-                        fromPreset(presets.iosArm64, 'iOS') {
-                            compilations.main.outputKinds('FRAMEWORK')
-                        }
-                    }
-
-                    sourceSets {
-                        commonMain.dependencies {
-                            api 'org.jetbrains.kotlin:kotlin-stdlib-common'
-                        }
-
-                        androidMain.dependencies {
-                            api 'org.jetbrains.kotlin:kotlin-stdlib'
-                        }
-                    }
-                }
-
-                configurations {
-                    compileClasspath
-                }
-            """.trimIndent()
-        )
-
-        createProjectSubFile(
-            "app/build.gradle",
-            """
-                apply plugin: 'com.android.application'
-
-                apply plugin: 'kotlin-android'
-
-                apply plugin: 'kotlin-android-extensions'
-
-                android {
-                    compileSdkVersion 26
-                    defaultConfig {
-                        applicationId "jetbrains.org.myapplication"
-                        minSdkVersion 15
-                        targetSdkVersion 26
-                        versionCode 1
-                        versionName "1.0"
-                        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-                    }
-                    buildTypes {
-                        release {
-                            minifyEnabled false
-                            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-                        }
-                    }
-                }
-
-                dependencies {
-                    implementation project(':shared')
-                    implementation fileTree(dir: 'libs', include: ['*.jar'])
-                    implementation"org.jetbrains.kotlin:kotlin-stdlib-jdk7:${'$'}kotlin_version"
-                    implementation 'com.android.support:appcompat-v7:27.1.1'
-                    implementation 'com.android.support.constraint:constraint-layout:1.1.3'
-                    testImplementation 'junit:junit:4.12'
-                    androidTestImplementation 'com.android.support.test:runner:1.0.2'
-                    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
-                }
-            """.trimIndent()
-        )
-
         importProject()
 
         checkProjectStructure {
@@ -604,93 +331,7 @@ class NewMultiplatformProjectImportingTest : GradleImportingTestCase() {
 
     @Test
     fun testNestedDependencies() {
-        createProjectSubFile(
-            "settings.gradle",
-            "include 'aaa', 'bbb', 'ccc'"
-        )
-        createProjectSubFile(
-            "build.gradle",
-            """
-                buildscript {
-                    repositories {
-                        mavenLocal()
-                        jcenter()
-                        maven { url 'https://dl.bintray.com/kotlin/kotlin-dev' }
-                    }
-                    dependencies {
-                        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
-                    }
-                }
-
-                allprojects {
-                    repositories {
-                        mavenLocal()
-                        jcenter()
-                        maven { url 'https://dl.bintray.com/kotlin/kotlin-dev' }
-                    }
-                }
-            """.trimIndent()
-        )
-        createProjectSubFile(
-            "aaa/build.gradle",
-            """
-                apply plugin: 'kotlin-multiplatform'
-
-                kotlin {
-                    sourceSets {
-                        commonMain {
-                            dependencies {
-                                implementation 'org.jetbrains.kotlin:kotlin-stdlib-common'
-                                api project(':bbb')
-                            }
-                        }
-                    }
-                    targets {
-                        fromPreset(presets.jvm, 'jvm')
-                    }
-                }
-            """.trimIndent()
-        )
-        createProjectSubFile(
-            "bbb/build.gradle",
-            """
-                apply plugin: 'kotlin-multiplatform'
-
-                kotlin {
-                    sourceSets {
-                        commonMain {
-                            dependencies {
-                                implementation 'org.jetbrains.kotlin:kotlin-stdlib-common'
-                                api project(':ccc')
-                            }
-                        }
-                    }
-                    targets {
-                        fromPreset(presets.jvm, 'jvm')
-                    }
-                }
-            """.trimIndent()
-        )
-        createProjectSubFile(
-            "ccc/build.gradle",
-            """
-                apply plugin: 'kotlin-multiplatform'
-
-                kotlin {
-                    sourceSets {
-                        commonMain {
-                            dependencies {
-                                implementation 'org.jetbrains.kotlin:kotlin-stdlib-common'
-                            }
-                        }
-                    }
-                    targets {
-                        fromPreset(presets.jvm, 'jvm')
-                    }
-                }
-            """.trimIndent()
-        )
-
+        configureByFiles()
         importProject()
 
         checkProjectStructure(exhaustiveSourceSourceRootList = false) {
@@ -795,10 +436,14 @@ class NewMultiplatformProjectImportingTest : GradleImportingTestCase() {
         }
     }
 
+    override fun testDataDirName(): String {
+        return "newMultiplatformImport"
+    }
+
     companion object {
         @Parameterized.Parameters(name = "{index}: with Gradle-{0}")
         @Throws(Throwable::class)
         @JvmStatic
-        fun data() = listOf(arrayOf("4.7"))
+        fun data() = listOf(arrayOf("4.8"))
     }
 }

@@ -1,0 +1,24 @@
+buildscript {
+    ext.kotlin_version = '1.3.0-rc-146'
+    repositories {
+        google()
+        jcenter()
+        maven { url 'https://dl.bintray.com/kotlin/kotlin-dev' }
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:3.2.0'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.3.0-rc-146"
+    }
+}
+
+allprojects {
+    repositories {
+        google()
+        jcenter()
+        maven { url 'https://dl.bintray.com/kotlin/kotlin-dev' }
+    }
+}
+
+task clean(type: Delete) {
+    delete rootProject.buildDir
+} 
