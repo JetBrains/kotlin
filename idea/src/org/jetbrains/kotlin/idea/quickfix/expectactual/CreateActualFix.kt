@@ -60,7 +60,7 @@ sealed class CreateActualFix<out D : KtNamedDeclaration>(
 
     override fun getFamilyName() = text
 
-    protected abstract val elementType: String
+    protected val elementType: String = element.getTypeDescription()
 
     override fun getText() = "Create actual $elementType for module ${actualModule.name} (${actualPlatform.platform})"
 
@@ -137,10 +137,7 @@ class CreateActualClassFix(
     actualPlatform: MultiTargetPlatform.Specific
 ) : CreateActualFix<KtClassOrObject>(klass, actualModule, actualPlatform, { project, element ->
     generateClassOrObjectByExpectedClass(project, element, actualNeeded = true)
-}) {
-
-    override val elementType = element.getTypeDescription()
-}
+})
 
 class CreateActualPropertyFix(
     property: KtProperty,
@@ -149,10 +146,7 @@ class CreateActualPropertyFix(
 ) : CreateActualFix<KtProperty>(property, actualModule, actualPlatform, { project, element ->
     val descriptor = element.toDescriptor() as? PropertyDescriptor
     descriptor?.let { generateProperty(project, element, descriptor) }
-}) {
-
-    override val elementType = "property"
-}
+})
 
 class CreateActualFunctionFix(
     function: KtFunction,
@@ -161,10 +155,7 @@ class CreateActualFunctionFix(
 ) : CreateActualFix<KtFunction>(function, actualModule, actualPlatform, { project, element ->
     val descriptor = element.toDescriptor() as? FunctionDescriptor
     descriptor?.let { generateFunction(project, element, descriptor) }
-}) {
-
-    override val elementType = "function"
-}
+})
 
 private fun KtModifierListOwner.replaceExpectModifier(actualNeeded: Boolean) {
     if (actualNeeded) {
