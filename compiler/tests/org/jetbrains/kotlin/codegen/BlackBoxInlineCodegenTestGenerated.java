@@ -2866,21 +2866,6 @@ public class BlackBoxInlineCodegenTestGenerated extends AbstractBlackBoxInlineCo
             runTest("compiler/testData/codegen/boxInline/smap/kt23369_3.kt");
         }
 
-        @TestMetadata("kt23369_E.kt")
-        public void testKt23369_E() throws Exception {
-            runTest("compiler/testData/codegen/boxInline/smap/kt23369_E.kt");
-        }
-
-        @TestMetadata("kt23369_F.kt")
-        public void testKt23369_F() throws Exception {
-            runTest("compiler/testData/codegen/boxInline/smap/kt23369_F.kt");
-        }
-
-        @TestMetadata("kt23369_L.kt")
-        public void testKt23369_L() throws Exception {
-            runTest("compiler/testData/codegen/boxInline/smap/kt23369_L.kt");
-        }
-
         @TestMetadata("oneFile.kt")
         public void testOneFile() throws Exception {
             runTest("compiler/testData/codegen/boxInline/smap/oneFile.kt");
