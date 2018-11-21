@@ -1,0 +1,25 @@
+apply plugin: 'kotlin-multiplatform'
+
+kotlin {
+    targets {
+        fromPreset(presets.jvm, 'android')
+
+        fromPreset(presets.iosArm64, 'iOS') {
+            compilations.main.outputKinds('FRAMEWORK')
+        }
+    }
+
+    sourceSets {
+        commonMain.dependencies {
+            api 'org.jetbrains.kotlin:kotlin-stdlib-common'
+        }
+
+        androidMain.dependencies {
+            api 'org.jetbrains.kotlin:kotlin-stdlib'
+        }
+    }
+}
+
+configurations {
+    compileClasspath
+} 
