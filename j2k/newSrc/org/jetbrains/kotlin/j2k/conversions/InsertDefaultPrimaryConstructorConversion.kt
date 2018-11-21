@@ -25,7 +25,7 @@ class InsertDefaultPrimaryConstructorConversion(private val context: ConversionC
             JKStubExpressionImpl()
         )
 
-        element.declarationList += constructor
+        element.classBody.declarations += constructor
 
         val superClassSymbol = element.inheritance.inherit.map { it.type }
             .filterIsInstance<JKClassType>()

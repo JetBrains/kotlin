@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 
 import org.jetbrains.kotlin.idea.caches.resolve.util.*
 import org.jetbrains.kotlin.j2k.kotlinTypeByName
+import org.jetbrains.kotlin.psi.KtNullableType
 
 fun JKExpression.type(context: ConversionContext): JKType =
     when (this) {
@@ -109,6 +110,8 @@ fun KtTypeElement.toJK(symbolProvider: JKSymbolProvider): JKType =
 
             JKClassTypeImpl(symbol, typeParameters)
         }
+        is KtNullableType ->
+            innerType!!.toJK(symbolProvider).updateNullability(Nullability.Nullable)
         else -> TODO(this::class.java.toString())
     }
 

@@ -241,7 +241,7 @@ fun JKClass.getOrCreateInitDeclaration(): JKKtInitDeclaration {
     val existingDeclaration = declarationList.filterIsInstance<JKKtInitDeclaration>().firstOrNull()
     if (existingDeclaration != null) return existingDeclaration
     val newDeclaration = JKKtInitDeclarationImpl(JKBlockImpl())
-    declarationList += newDeclaration
+    classBody.declarations += newDeclaration
     return newDeclaration
 }
 

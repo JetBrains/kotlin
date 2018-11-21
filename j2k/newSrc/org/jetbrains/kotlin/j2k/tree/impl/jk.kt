@@ -44,15 +44,16 @@ class JKClassImpl(
     name: JKNameIdentifier,
     inheritance: JKInheritanceInfo,
     override var classKind: JKClass.ClassKind,
-    typeParameterList: JKTypeParameterList
+    typeParameterList: JKTypeParameterList,
+    classBody: JKClassBody
 ) : JKClass, JKBranchElementBase(), PsiOwner by PsiOwnerImpl() {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitClass(this, data)
 
     override var name by child(name)
     override var modifierList by child(modifierList)
-    override var declarationList by children<JKDeclaration>()
     override val inheritance by child(inheritance)
     override var typeParameterList: JKTypeParameterList by child(typeParameterList)
+    override var classBody: JKClassBody by child(classBody)
 }
 
 class JKNameIdentifierImpl(override val value: String) : JKNameIdentifier, JKElementBase(), PsiOwner by PsiOwnerImpl() {

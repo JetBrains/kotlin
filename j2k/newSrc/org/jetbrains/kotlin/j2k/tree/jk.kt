@@ -50,13 +50,17 @@ interface JKClass : JKDeclaration, JKModifierListOwner, JKTypeParameterListOwner
 
     val inheritance: JKInheritanceInfo
 
-    var declarationList: List<JKDeclaration>
+    var classBody: JKClassBody
     var classKind: ClassKind
 
     enum class ClassKind {
         ANNOTATION, CLASS, ENUM, INTERFACE, OBJECT, COMPANION
     }
 }
+
+val JKClass.declarationList: List<JKDeclaration>
+    get() = classBody.declarations
+
 
 interface JKInheritanceInfo : JKTreeElement, JKBranchElement {
     val inherit: List<JKTypeElement>

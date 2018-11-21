@@ -21,8 +21,8 @@ class StaticsToCompanionExtractConversion : RecursiveApplicableConversionBase() 
         val companion = findOrCreateCompanion(element)
 
 
-        element.declarationList -= statics
-        companion.declarationList += statics.onEach { declaration ->
+        element.classBody.declarations -= statics
+        companion.classBody.declarations += statics.onEach { declaration ->
             (declaration as JKModifierListOwner)
             declaration.modifierList.modifiers =
                     declaration.modifierList.modifiers.filterNot { it is JKJavaModifier && it.type == JKJavaModifier.JavaModifierType.STATIC }
@@ -49,7 +49,8 @@ class StaticsToCompanionExtractConversion : RecursiveApplicableConversionBase() 
             JKNameIdentifierImpl(""),
             JKInheritanceInfoImpl(emptyList()),
             JKClass.ClassKind.COMPANION,
-            JKTypeParameterListImpl()
-        ).also { element.declarationList += it }
+            JKTypeParameterListImpl(),
+            JKClassBodyImpl()
+        ).also { element.classBody.declarations += it }
     }
 }

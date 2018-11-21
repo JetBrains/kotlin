@@ -192,13 +192,27 @@ class JKJavaMethodCallExpressionImpl(
     override var typeArgumentList: JKTypeArgumentList by child(typeArgumentList)
 }
 
+class JKClassBodyImpl(declarations: List<JKDeclaration> = emptyList()) : JKClassBody, JKBranchElementBase() {
+    override var declarations: List<JKDeclaration> by children(declarations)
+    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitClassBody(this, data)
+}
+
+class JKEmptyClassBodyImpl : JKEmptyClassBody, JKBranchElementBase() {
+    override var declarations: List<JKDeclaration> by children(emptyList())
+
+    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitEmptyClassBody(this, data)
+}
+
 class JKJavaNewExpressionImpl(
-    override var identifier: JKMethodSymbol,
+    override var classSymbol: JKClassSymbol,
     arguments: JKExpressionList,
-    typeArgumentList: JKTypeArgumentList
+    typeArgumentList: JKTypeArgumentList,
+    classBody: JKClassBody = JKEmptyClassBodyImpl()
 ) : JKJavaNewExpression, JKBranchElementBase(), PsiOwner by PsiOwnerImpl() {
-    override val arguments: JKExpressionList by child(arguments)
+    override var arguments: JKExpressionList by child(arguments)
     override var typeArgumentList: JKTypeArgumentList by child(typeArgumentList)
+    override var classBody: JKClassBody by child(classBody)
+
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitJavaNewExpression(this, data)
 }
 
@@ -292,12 +306,12 @@ class JKJavaPolyadicExpressionImpl(operands: List<JKExpression>, override var to
 }
 
 class JKJavaAssignmentExpressionImpl(
-    override var field: JKAssignableExpression,
+    field: JKAssignableExpression,
     expression: JKExpression,
     override var operator: JKOperator
 ) : JKBranchElementBase(), JKJavaAssignmentExpression, PsiOwner by PsiOwnerImpl() {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitJavaAssignmentExpression(this, data)
-
+    override var field: JKAssignableExpression by child(field)
     override var expression: JKExpression by child(expression)
 }
 

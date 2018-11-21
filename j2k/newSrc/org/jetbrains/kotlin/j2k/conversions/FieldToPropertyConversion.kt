@@ -1,7 +1,7 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
- */
+     * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+     * that can be found in the license/LICENSE.txt file.
+     */
 
 package org.jetbrains.kotlin.j2k.conversions
 
@@ -135,7 +135,7 @@ class FieldToPropertyConversion(private val context: ConversionContext) : Recurs
             }
         }
 
-        element.declarationList =
+        element.classBody.declarations =
                 declarations.mapNotNull { declaration ->
                     when (declaration) {
                         is JKJavaField -> propertyInfoFor(declaration.name.value).toKtProperty()

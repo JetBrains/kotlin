@@ -16,8 +16,9 @@
 
 package org.jetbrains.kotlin.j2k.tree
 
-import org.jetbrains.kotlin.j2k.tree.impl.JKClassSymbol
-import org.jetbrains.kotlin.j2k.tree.impl.JKMethodSymbol
+import org.jetbrains.kotlin.idea.search.usagesSearch.constructor
+import org.jetbrains.kotlin.j2k.tree.impl.*
+import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 
 interface JKJavaField : JKField, JKBranchElement
 
@@ -26,7 +27,32 @@ interface JKJavaMethod : JKMethod, JKBranchElement {
 
 interface JKJavaMethodCallExpression : JKMethodCallExpression
 
-interface JKJavaNewExpression : JKMethodCallExpression
+interface JKClassBody : JKTreeElement, JKBranchElement {
+    var declarations: List<JKDeclaration>
+}
+
+interface JKEmptyClassBody : JKClassBody
+
+interface JKJavaNewExpression : JKExpression, JKTypeArgumentListOwner {
+    val classSymbol: JKClassSymbol
+    var arguments: JKExpressionList
+    var classBody: JKClassBody
+}
+
+fun JKJavaNewExpression.isAnonymousClass() =
+    classBody !is JKEmptyClassBody
+
+fun JKJavaNewExpression.constructorIsPresent(): Boolean {
+    if (arguments.expressions.isNotEmpty()) return true
+    val symbol = classSymbol
+    return when (symbol) {
+        is JKMultiverseClassSymbol -> symbol.target.constructors.isNotEmpty()
+        is JKMultiverseKtClassSymbol -> symbol.target.constructor != null
+        is JKUniverseClassSymbol -> symbol.target.classBody.declarations.any { it is JKKtConstructor }
+        is JKUnresolvedClassSymbol -> true //TODO ???
+        else -> TODO(symbol::class.toString())
+    }
+}
 
 interface JKJavaDefaultNewExpression : JKExpression {
     val classSymbol: JKClassSymbol

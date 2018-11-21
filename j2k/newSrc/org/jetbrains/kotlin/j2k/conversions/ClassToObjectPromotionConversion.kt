@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.j2k.ConversionContext
 import org.jetbrains.kotlin.j2k.tree.JKClass
 import org.jetbrains.kotlin.j2k.tree.JKKtPrimaryConstructor
 import org.jetbrains.kotlin.j2k.tree.JKTreeElement
+import org.jetbrains.kotlin.j2k.tree.declarationList
 import org.jetbrains.kotlin.j2k.tree.impl.JKClassImpl
 import org.jetbrains.kotlin.j2k.tree.impl.psi
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
@@ -38,10 +39,9 @@ class ClassToObjectPromotionConversion(private val context: ConversionContext) :
                         element.name,
                         element.inheritance,
                         JKClass.ClassKind.OBJECT,
-                        element.typeParameterList
-                    ).apply {
-                        declarationList = companion.declarationList
-                    }
+                        element.typeParameterList,
+                        companion.classBody
+                    )
                 )
             }
         }

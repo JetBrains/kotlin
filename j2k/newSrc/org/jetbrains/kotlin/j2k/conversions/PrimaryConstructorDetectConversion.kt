@@ -24,7 +24,7 @@ class PrimaryConstructorDetectConversion(private val context: ConversionContext)
         val delegationCall = primaryConstructorCandidate.delegationCall as? JKDelegationConstructorCall
         if (delegationCall?.expression is JKThisExpression) return
 
-        element.declarationList -= primaryConstructorCandidate
+        element.classBody.declarations -= primaryConstructorCandidate
 
         primaryConstructorCandidate.invalidate()
 
@@ -39,7 +39,7 @@ class PrimaryConstructorDetectConversion(private val context: ConversionContext)
 
         context.symbolProvider.transferSymbol(primaryConstructor, primaryConstructorCandidate)
 
-        element.declarationList += primaryConstructor
+        element.classBody.declarations += primaryConstructor
     }
 
     private fun detectPrimaryConstructor(constructors: List<JKKtConstructor>): JKKtConstructor? {

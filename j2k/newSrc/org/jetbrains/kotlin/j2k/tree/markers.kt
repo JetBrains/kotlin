@@ -131,3 +131,6 @@ fun <T : JKElement> KProperty0<List<T>>.detached(): List<T> =
 
 fun <T : JKElement> T.detached(from: JKElement): T =
     also { it.detach(from) }
+
+fun <T : JKBranchElement> T.invalidated(): T =
+    also { it.invalidate() }

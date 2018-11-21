@@ -18,7 +18,7 @@ class FieldInitializersInPrimaryFromParamsConversion(private val context: Conver
         if (primaryConstructorConversion.initDeclarationStatements.isNotEmpty()) {
             element.getOrCreateInitDeclaration().block = JKBlockImpl(primaryConstructorConversion.initDeclarationStatements)
         }
-        element.declarationList -= primaryConstructorConversion.declarationsToRemove
+        element.classBody.declarations -= primaryConstructorConversion.declarationsToRemove
         return recurse(element)
     }
 

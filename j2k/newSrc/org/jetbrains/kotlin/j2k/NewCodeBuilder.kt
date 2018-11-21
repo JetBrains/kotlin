@@ -16,8 +16,6 @@
 
 package org.jetbrains.kotlin.j2k
 
-import com.intellij.psi.PsiMethod
-import org.jetbrains.kotlin.idea.refactoring.fqName.getKotlinFqName
 import org.jetbrains.kotlin.j2k.NewCodeBuilder.ParenthesisKind.*
 import org.jetbrains.kotlin.j2k.ast.Mutability
 import org.jetbrains.kotlin.j2k.ast.Nullability
@@ -25,8 +23,6 @@ import org.jetbrains.kotlin.j2k.tree.*
 import org.jetbrains.kotlin.j2k.tree.impl.*
 import org.jetbrains.kotlin.j2k.tree.visitors.JKVisitorVoid
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.psi.KtFunction
-import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
@@ -241,15 +237,7 @@ class NewCodeBuilder {
             //TODO should it be here?
             renderExtraTypeParametersUpperBounds(klass.typeParameterList)
 
-            val declarationsToPrint = klass.declarationList.filterNot { it is JKKtPrimaryConstructor}
-            if (declarationsToPrint.isNotEmpty()) {
-                printer.block(multiline = true) {
-                    renderEnumConstants(declarationsToPrint.filterIsInstance())
-                    renderNonEnumClassDeclarations(declarationsToPrint.filterNot { it is JKEnumConstant })
-                }
-            } else {
-                printer.println()
-            }
+            klass.classBody.accept(this)
         }
 
         private fun renderEnumConstants(enumConstants: List<JKEnumConstant>) {
@@ -619,12 +607,35 @@ class NewCodeBuilder {
         }
 
         override fun visitJavaNewExpression(javaNewExpression: JKJavaNewExpression) {
-            printer.printWithNoIndent(javaNewExpression.identifier.name)
+            if (javaNewExpression.isAnonymousClass()) {
+                printer.printWithNoIndent("object : ")
+            }
+            printer.printWithNoIndent(javaNewExpression.classSymbol.name)
             javaNewExpression.typeArgumentList.accept(this)
-            printer.par(ROUND) {
-                javaNewExpression.arguments.accept(this)
+            if (javaNewExpression.constructorIsPresent()) {
+                printer.par(ROUND) {
+                    javaNewExpression.arguments.accept(this)
+                }
+            }
+            if (javaNewExpression.isAnonymousClass()) {
+                javaNewExpression.classBody.accept(this)
             }
         }
+
+
+        override fun visitClassBody(classBody: JKClassBody) {
+            val declarationsToPrint = classBody.declarations.filterNot { it is JKKtPrimaryConstructor }
+            if (declarationsToPrint.isNotEmpty()) {
+                printer.block(multiline = true) {
+                    renderEnumConstants(declarationsToPrint.filterIsInstance())
+                    renderNonEnumClassDeclarations(declarationsToPrint.filterNot { it is JKEnumConstant })
+                }
+            } else {
+                printer.println()
+            }
+        }
+
+        override fun visitEmptyClassBody(emptyClassBody: JKEmptyClassBody) {}
 
         override fun visitTypeElement(typeElement: JKTypeElement) {
             renderType(typeElement.type)
@@ -687,7 +698,7 @@ class NewCodeBuilder {
 
         override fun visitKtPrimaryConstructor(ktPrimaryConstructor: JKKtPrimaryConstructor) {
             val hasInitDeclaration =
-                (ktPrimaryConstructor.parent as JKClass).declarationList.any { it is JKKtInitDeclaration }
+                (ktPrimaryConstructor.parent as JKClassBody).declarations.any { it is JKKtInitDeclaration }
             val hasAccessModifier =
                 ktPrimaryConstructor.modifierList.modifiers.any { it is JKAccessModifier }
             if (hasAccessModifier && hasInitDeclaration && ktPrimaryConstructor.parameters.isNotEmpty()) {
@@ -802,13 +813,7 @@ class NewCodeBuilder {
         }
 
         override fun visitJavaNewExpression(javaNewExpression: JKJavaNewExpression) {
-            val psiConstructor = javaNewExpression.identifier.target
-            val fqName = when (psiConstructor) {
-                is PsiMethod -> psiConstructor.containingClass?.getKotlinFqName()!!
-                is KtFunction -> psiConstructor.containingClassOrObject?.fqName!!
-                else -> TODO(psiConstructor::class.toString())
-            }
-            collectedFqNames.add(fqName)
+            collectedFqNames.add(FqName(javaNewExpression.classSymbol.fqName!!))
             javaNewExpression.acceptChildren(this)
         }
 
@@ -834,9 +839,9 @@ private inline fun <T> List<T>.headTail(): Pair<T?, List<T>?> {
     return head to tail
 }
 
-private inline fun JKClass.primaryConstructor(): JKKtPrimaryConstructor? {
-    return this.declarationList.firstIsInstanceOrNull()
-}
+private inline fun JKClass.primaryConstructor(): JKKtPrimaryConstructor? =
+    classBody.declarations.firstIsInstanceOrNull()
+
 
 private inline fun JKDelegationConstructorCall.isCallOfConstructorOf(type: JKType): Boolean {
     return when (type) {

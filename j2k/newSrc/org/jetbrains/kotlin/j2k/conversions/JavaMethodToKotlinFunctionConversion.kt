@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.j2k.conversions
 
 import org.jetbrains.kotlin.j2k.tree.JKClass
+import org.jetbrains.kotlin.j2k.tree.JKClassBody
 import org.jetbrains.kotlin.j2k.tree.JKJavaMethod
 import org.jetbrains.kotlin.j2k.tree.JKTreeElement
 import org.jetbrains.kotlin.j2k.tree.impl.JKKtFunctionImpl
@@ -26,9 +27,9 @@ class JavaMethodToKotlinFunctionConversion : TransformerBasedConversion() {
         element.acceptChildren(this, null)
     }
 
-    override fun visitClass(klass: JKClass) {
+    override fun visitClassBody(classBody: JKClassBody) {
         somethingChanged = true
-        klass.declarationList = klass.declarationList.map {
+        classBody.declarations = classBody.declarations.map {
             if (it is JKJavaMethod) {
                 it.invalidate()
                 JKKtFunctionImpl(
@@ -44,6 +45,6 @@ class JavaMethodToKotlinFunctionConversion : TransformerBasedConversion() {
                 it
             }
         }
-        klass.acceptChildren(this)
+        classBody.acceptChildren(this)
     }
 }

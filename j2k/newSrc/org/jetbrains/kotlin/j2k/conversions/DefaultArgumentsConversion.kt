@@ -68,7 +68,7 @@ class DefaultArgumentsConversion(private val context: ConversionContext) : Recur
                 parameter.initializer = remapParameterSymbol(defaultValue) as JKExpression
             }
 
-            element.declarationList -= method
+            element.classBody.declarations -= method
         }
 
         return recurse(element)

@@ -173,43 +173,43 @@ class JavaToJKTreeBuilder(var symbolProvider: JKSymbolProvider) {
 
         fun PsiNewExpression.toJK(): JKExpression {
             require(this is PsiNewExpressionImpl)
-            if (findChildByRole(ChildRole.LBRACKET) != null) {
-                return arrayInitializer?.toJK() ?: run {
-                    val dimensions = mutableListOf<PsiExpression?>()
-                    var child = firstChild
-                    while (child != null) {
-                        if (child.node.elementType == JavaTokenType.LBRACKET) {
-                            child = child.nextSibling
-                            dimensions += if (child.node.elementType == JavaTokenType.RBRACKET) {
-                                null
-                            } else {
-                                child as PsiExpression? //TODO
+            val newExpression =
+                if (findChildByRole(ChildRole.LBRACKET) != null) {
+                    arrayInitializer?.toJK() ?: run {
+                        val dimensions = mutableListOf<PsiExpression?>()
+                        var child = firstChild
+                        while (child != null) {
+                            if (child.node.elementType == JavaTokenType.LBRACKET) {
+                                child = child.nextSibling
+                                dimensions += if (child.node.elementType == JavaTokenType.RBRACKET) {
+                                    null
+                                } else {
+                                    child as PsiExpression? //TODO
+                                }
                             }
+                            child = child.nextSibling
                         }
-                        child = child.nextSibling
+                        JKJavaNewEmptyArrayImpl(
+                            dimensions.map { it?.toJK() ?: JKStubExpressionImpl() },
+                            JKTypeElementImpl(generateSequence(type?.toJK(symbolProvider)) { it.safeAs<JKJavaArrayType>()?.type }.last())
+                        ).also {
+                            it.psi = this
+                        }
                     }
-                    JKJavaNewEmptyArrayImpl(
-                        dimensions.map { it?.toJK() ?: JKStubExpressionImpl() },
-                        JKTypeElementImpl(generateSequence(type?.toJK(symbolProvider)) { it.safeAs<JKJavaArrayType>()?.type }.last())
-                    ).also {
-                        it.psi = this
-                    }
+                } else {
+                    val classSymbol =
+                        classOrAnonymousClassReference?.resolve()?.let {
+                            symbolProvider.provideDirectSymbol(it) as JKClassSymbol
+                        } ?: JKUnresolvedClassSymbol(classOrAnonymousClassReference!!.text)
+
+                    JKJavaNewExpressionImpl(
+                        classSymbol,
+                        argumentList.toJK(),
+                        typeArgumentList.toJK(),
+                        with(declarationMapper) { anonymousClass?.createClassBody() } ?: JKEmptyClassBodyImpl()
+                    )
                 }
-            }
-            val constructedClass = classOrAnonymousClassReference?.resolve()
-            val constructor = constructorFakeReference.resolve()
-            if (constructor == null && constructedClass != null) {
-                return JKJavaDefaultNewExpressionImpl(
-                    symbolProvider.provideDirectSymbol(constructedClass) as JKClassSymbol
-
-                )
-            }
-
-            return JKJavaNewExpressionImpl(
-                symbolProvider.provideDirectSymbol(constructor!!) as JKMethodSymbol,
-                argumentList.toJK(),
-                typeArgumentList.toJK()
-            )
+            return qualifier?.let { JKQualifiedExpressionImpl(it.toJK(), JKJavaQualifierImpl.DOT, newExpression) } ?: newExpression
         }
 
         fun PsiReferenceParameterList.toJK(): JKTypeArgumentList =
@@ -268,15 +268,21 @@ class JavaToJKTreeBuilder(var symbolProvider: JKSymbolProvider) {
                 JKNameIdentifierImpl(name!!),
                 JKInheritanceInfoImpl(extTypes + implTypes),
                 classKind,
-                typeParameterList?.toJK() ?: JKTypeParameterListImpl()
+                typeParameterList?.toJK() ?: JKTypeParameterListImpl(),
+                createClassBody()
             ).also { jkClassImpl ->
-                jkClassImpl.declarationList = children.mapNotNull {
-                    ElementVisitor().apply { it.accept(this) }.resultElement as? JKDeclaration
-                }
                 jkClassImpl.psi = this
                 symbolProvider.provideUniverseSymbol(this, jkClassImpl)
             }
         }
+
+        fun PsiClass.createClassBody() =
+            JKClassBodyImpl(
+                children.mapNotNull {
+                    ElementVisitor().apply { it.accept(this) }.resultElement as? JKDeclaration
+                }
+            )
+
 
         fun PsiEnumConstant.toJK(): JKEnumConstant =
             JKEnumConstantImpl(

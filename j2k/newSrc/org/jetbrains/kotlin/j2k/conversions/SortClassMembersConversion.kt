@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.j2k.tree.*
 class SortClassMembersConversion : RecursiveApplicableConversionBase() {
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
         if (element !is JKClass) return recurse(element)
-        element.declarationList = element.declarationList
+        element.classBody.declarations = element.declarationList
             .sortedByDescending { it is JKField }
         return recurse(element)
     }
