@@ -1,4 +1,4 @@
-/*
+ /*
  * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
@@ -37,23 +37,6 @@ internal fun KotlinCompilation<*>.composeName(prefix: String? = null, suffix: St
 
 internal val KotlinCompilation<*>.defaultSourceSetName: String
     get() = lowerCamelCaseName(target.disambiguationClassifier, compilationName)
-
-internal class DefaultKotlinDependencyHandler(
-    val parent: HasKotlinDependencies,
-    val project: Project
-) : KotlinDependencyHandler {
-    override fun api(dependencyNotation: Any) = addDependency(parent.apiConfigurationName, dependencyNotation)
-
-    override fun implementation(dependencyNotation: Any) = addDependency(parent.implementationConfigurationName, dependencyNotation)
-
-    override fun compileOnly(dependencyNotation: Any) = addDependency(parent.compileOnlyConfigurationName, dependencyNotation)
-
-    override fun runtimeOnly(dependencyNotation: Any) = addDependency(parent.runtimeOnlyConfigurationName, dependencyNotation)
-
-    private fun addDependency(configurationName: String, dependencyNotation: Any) {
-        project.dependencies.add(configurationName, dependencyNotation)
-    }
-}
 
 abstract class AbstractKotlinCompilation<T : KotlinCommonOptions>(
     target: KotlinTarget,

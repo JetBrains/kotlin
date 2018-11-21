@@ -31,18 +31,18 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                api("org.jetbrains.kotlin:kotlin-stdlib-common")
+                api(kotlin("stdlib-common"))
             }
         }
         jvm.compilations["main"].defaultSourceSet {
             dependencies {
-                api("org.jetbrains.kotlin:kotlin-stdlib")
+                api(kotlin("stdlib"))
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:0.23.4")
             }
         }
         js.compilations["main"].defaultSourceSet {
         	dependencies {
-                api("org.jetbrains.kotlin:kotlin-stdlib-js")
+                api(kotlin("stdlib-js"))
         		implementation("org.jetbrains.kotlinx:kotlinx-html-js:0.6.11")
         	}
         }

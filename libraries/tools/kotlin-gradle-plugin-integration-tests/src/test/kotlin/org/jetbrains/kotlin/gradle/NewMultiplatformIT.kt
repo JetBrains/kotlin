@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.gradle.plugin.sources.SourceSetConsistencyChecks
 import org.jetbrains.kotlin.gradle.util.checkBytecodeContains
 import org.jetbrains.kotlin.gradle.util.isWindows
 import org.jetbrains.kotlin.gradle.util.modify
+import org.jetbrains.kotlin.gradle.util.testResolveAllConfigurations
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.junit.Assert
@@ -1169,6 +1170,36 @@ class NewMultiplatformIT : BaseGradleIT() {
 
             assertEquals(expectedDefaultSourceSets, actualDefaultSourceSets)
         }
+    }
+
+    @Test
+    fun testDependenciesDsl() = with(transformProjectWithPluginsDsl("newMppDependenciesDsl", GradleVersionRequired.AtLeast("4.10"))) {
+        val originalBuildscriptContent = gradleBuildScript("app").readText()
+
+        fun testDependencies() = testResolveAllConfigurations("app") {
+            assertContains(">> :app:testNonTransitiveStringNotationApi --> junit-4.12.jar")
+            assertEquals(1, (Regex.escape(">> :app:testNonTransitiveStringNotationApi") + " .*").toRegex().findAll(output).count())
+
+            assertContains(">> :app:testNonTransitiveDependencyNotationApi --> kotlin-reflect-${defaultBuildOptions().kotlinVersion}.jar")
+            assertEquals(1, (Regex.escape(">> :app:testNonTransitiveStringNotationApi") + " .*").toRegex().findAll(output).count())
+
+            assertContains(">> :app:testExplicitKotlinVersionApi --> kotlin-reflect-1.3.0.jar")
+            assertContains(">> :app:testExplicitKotlinVersionImplementation --> kotlin-reflect-1.2.71.jar")
+            assertContains(">> :app:testExplicitKotlinVersionCompileOnly --> kotlin-reflect-1.2.70.jar")
+            assertContains(">> :app:testExplicitKotlinVersionRuntimeOnly --> kotlin-reflect-1.2.60.jar")
+
+            assertContains(">> :app:testProjectWithConfigurationApi --> output.txt")
+        }
+
+        testDependencies()
+
+        // Then run with Gradle Kotlin DSL; the build script needs only one correction to be a valid GK DSL script:
+        gradleBuildScript("app").run {
+            modify { originalBuildscriptContent.replace(": ", " = ") }
+            renameTo(projectDir.resolve("app/build.gradle.kts"))
+        }
+
+        testDependencies()
     }
 
     @Test
