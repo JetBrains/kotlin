@@ -117,12 +117,15 @@ class NewCodeBuilder {
         }
 
         override fun visitFile(file: JKFile) {
+            file.declarationList.find { it is JKPackageDeclaration }?.accept(this)
             val collectImportsVisitor = CollectImportsVisitor()
             file.accept(collectImportsVisitor)
             collectImportsVisitor.collectedFqNames.forEach {
                 printer.printlnWithNoIndent("import ", it.asString())
             }
-            file.acceptChildren(this)
+            file.declarationList.forEach {
+                if (it !is JKPackageDeclaration) it.accept(this)
+            }
         }
 
         override fun visitPackageDeclaration(packageDeclaration: JKPackageDeclaration) {
@@ -625,13 +628,9 @@ class NewCodeBuilder {
 
         override fun visitClassBody(classBody: JKClassBody) {
             val declarationsToPrint = classBody.declarations.filterNot { it is JKKtPrimaryConstructor }
-            if (declarationsToPrint.isNotEmpty()) {
-                printer.block(multiline = true) {
-                    renderEnumConstants(declarationsToPrint.filterIsInstance())
-                    renderNonEnumClassDeclarations(declarationsToPrint.filterNot { it is JKEnumConstant })
-                }
-            } else {
-                printer.println()
+            printer.block(multiline = true) {
+                renderEnumConstants(declarationsToPrint.filterIsInstance())
+                renderNonEnumClassDeclarations(declarationsToPrint.filterNot { it is JKEnumConstant })
             }
         }
 
