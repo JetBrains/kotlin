@@ -613,12 +613,12 @@ class NewCodeBuilder {
         }
 
         override fun visitJavaNewExpression(javaNewExpression: JKJavaNewExpression) {
-            printer.printWithNoIndent(FqName(javaNewExpression.constructorSymbol.fqName).shortName())//TODO import name somehow?
-            printer.printWithNoIndent("(")
-            renderList(javaNewExpression.arguments.expressions, ", ") {
-                it.accept(this)
+            printer.printWithNoIndent(FqName(javaNewExpression.constructorSymbol.fqName).shortName())
+            printer.par(ROUND) {
+                renderList(javaNewExpression.arguments.expressions, ", ") {
+                    it.accept(this)
+                }
             }
-            printer.printWithNoIndent(")")
         }
 
         override fun visitTypeElement(typeElement: JKTypeElement) {
