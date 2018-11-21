@@ -104,5 +104,6 @@ internal fun typeMapper(support: UltraLightSupport): KotlinTypeMapper = KotlinTy
     BindingContext.EMPTY, ClassBuilderMode.LIGHT_CLASSES,
     IncompatibleClassTracker.DoNothing, support.moduleName,
     JvmTarget.JVM_1_8,
-    true, false
+    KotlinTypeMapper.LANGUAGE_VERSION_SETTINGS_DEFAULT, // TODO use proper LanguageVersionSettings
+    false
 )

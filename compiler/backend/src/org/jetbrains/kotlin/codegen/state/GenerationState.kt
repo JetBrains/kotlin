@@ -192,7 +192,7 @@ class GenerationState private constructor(
         IncompatibleClassTrackerImpl(extraJvmDiagnosticsTrace),
         this.moduleName,
         target,
-        configuration.languageVersionSettings.supportsFeature(LanguageFeature.ReleaseCoroutines),
+        languageVersionSettings,
         isIrBackend
     )
     val intrinsics: IntrinsicMethods = run {
@@ -260,8 +260,7 @@ class GenerationState private constructor(
                 },
                 {
                     BuilderFactoryForDuplicateSignatureDiagnostics(
-                        it, this.bindingContext, diagnostics, this.moduleName,
-                        isReleaseCoroutines = languageVersionSettings.supportsFeature(LanguageFeature.ReleaseCoroutines),
+                        it, this.bindingContext, diagnostics, this.moduleName, this.languageVersionSettings,
                         shouldGenerate = { !shouldOnlyCollectSignatures(it) },
                         isIrBackend = isIrBackend
                     ).apply { duplicateSignatureFactory = this }
