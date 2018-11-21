@@ -213,6 +213,7 @@ private fun KtPsiFactory.generateClassOrObjectByActualClass(
 
     declLoop@ for (actualDeclaration in actualClass.declarations) {
         val descriptor = actualDeclaration.toDescriptor() ?: continue
+        if (!actualDeclaration.hasActualModifier()) continue@declLoop
         val expectedDeclaration: KtDeclaration = when (actualDeclaration) {
             is KtClassOrObject ->
                 if (actualDeclaration !is KtEnumEntry) {
@@ -221,7 +222,6 @@ private fun KtPsiFactory.generateClassOrObjectByActualClass(
                     continue@declLoop
                 }
             is KtCallableDeclaration -> {
-                if (!actualDeclaration.hasActualModifier()) continue@declLoop
                 when (actualDeclaration) {
                     is KtFunction ->
                         generateFunction(project, actualDeclaration, descriptor as FunctionDescriptor, expectedClass, outerExpectedClasses)
