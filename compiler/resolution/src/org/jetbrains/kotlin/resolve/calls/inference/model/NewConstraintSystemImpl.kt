@@ -289,11 +289,11 @@ class NewConstraintSystemImpl(
     }
 
     // PostponedArgumentsAnalyzer.Context
-    override fun hasUpperUnitConstraint(type: UnwrappedType): Boolean {
+    override fun hasUpperOrEqualUnitConstraint(type: UnwrappedType): Boolean {
         checkState(State.BUILDING, State.COMPLETION, State.FREEZED)
 
         val constraints = storage.notFixedTypeVariables[type.constructor]?.constraints ?: return false
 
-        return constraints.any { it.kind == ConstraintKind.UPPER && it.type.isUnit() }
+        return constraints.any { (it.kind == ConstraintKind.UPPER || it.kind == ConstraintKind.EQUALITY) && it.type.isUnit() }
     }
 }

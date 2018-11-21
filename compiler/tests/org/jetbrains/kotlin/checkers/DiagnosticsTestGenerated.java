@@ -9685,6 +9685,11 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     runTest("compiler/testData/diagnostics/tests/inference/coercionToUnit/coercionWithExpectedTypeAndBound.kt");
                 }
 
+                @TestMetadata("coercionWithExplicitTypeArgument.kt")
+                public void testCoercionWithExplicitTypeArgument() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/coercionToUnit/coercionWithExplicitTypeArgument.kt");
+                }
+
                 @TestMetadata("coercionWithoutExpectedType.kt")
                 public void testCoercionWithoutExpectedType() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/coercionToUnit/coercionWithoutExpectedType.kt");
