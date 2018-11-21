@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
 import org.jetbrains.kotlin.asJava.builder.LightClassData
 import org.jetbrains.kotlin.asJava.builder.LightMemberOriginForDeclaration
 import org.jetbrains.kotlin.asJava.elements.*
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.codegen.FunctionCodegen
 import org.jetbrains.kotlin.codegen.JvmCodegenUtil
 import org.jetbrains.kotlin.codegen.PropertyCodegen
@@ -90,10 +91,23 @@ class KtUltraLightClass(classOrObject: KtClassOrObject, private val support: Ult
             PsiReferenceList.Role.EXTENDS_LIST
         ).also { list ->
             allSuperTypes()
-                .filter { (isInterface || !JvmCodegenUtil.isJvmInterface(it)) && !it.isAnyOrNullableAny() }
+                .filter(this::isTypeForExtendsList)
                 .map(this::mapSupertype)
                 .forEach(list::addReference)
         }
+
+    private fun isTypeForExtendsList(supertype: KotlinType): Boolean {
+        // Do not add redundant "extends java.lang.Object" anywhere
+        if (supertype.isAnyOrNullableAny()) return false
+
+        // We don't have Enum among enums supertype in sources neither we do for decompiled class-files and light-classes
+        if (isEnum && KotlinBuiltIns.isEnum(supertype)) return false
+
+        // Interfaces have only extends lists
+        if (isInterface) return true
+
+        return !JvmCodegenUtil.isJvmInterface(supertype)
+    }
 
     override fun createImplementsList(): PsiReferenceList? =
         if (tooComplex) super.createImplementsList()
@@ -189,6 +203,18 @@ class KtUltraLightClass(classOrObject: KtClassOrObject, private val support: Ult
             )
         }
 
+        if (isEnum) {
+            for (ktEnumEntry in classOrObject.declarations.filterIsInstance<KtEnumEntry>()) {
+                val name = ktEnumEntry.name ?: continue
+                result.add(
+                    KtUltraLightEnumEntry(
+                        ktEnumEntry, name, this, support,
+                        setOf(PsiModifier.STATIC, PsiModifier.FINAL, PsiModifier.PUBLIC)
+                    )
+                )
+            }
+        }
+
         result
     }
 
@@ -268,7 +294,7 @@ class KtUltraLightClass(classOrObject: KtClassOrObject, private val support: Ult
             result.add(defaultConstructor())
         }
         for (constructor in constructors.filterNot { isHiddenByDeprecation(it) }) {
-            result.addAll(asJavaMethods(constructor, false))
+            result.addAll(asJavaMethods(constructor, false, forcePrivate = isEnum))
         }
         val primary = classOrObject.primaryConstructor
         if (primary != null && shouldGenerateNoArgOverload(primary)) {
@@ -279,7 +305,7 @@ class KtUltraLightClass(classOrObject: KtClassOrObject, private val support: Ult
 
     private fun shouldGenerateNoArgOverload(primary: KtPrimaryConstructor): Boolean {
         return !primary.hasModifier(PRIVATE_KEYWORD) &&
-                !classOrObject.hasModifier(INNER_KEYWORD) &&
+                !classOrObject.hasModifier(INNER_KEYWORD) && !isEnum &&
                 primary.valueParameters.isNotEmpty() &&
                 primary.valueParameters.all { it.defaultValue != null } &&
                 classOrObject.allConstructors.none { it.valueParameters.isEmpty() }
@@ -287,7 +313,7 @@ class KtUltraLightClass(classOrObject: KtClassOrObject, private val support: Ult
 
     private fun defaultConstructor(): KtUltraLightMethod {
         val visibility =
-            if (classOrObject is KtObjectDeclaration || classOrObject.hasModifier(SEALED_KEYWORD)) PsiModifier.PRIVATE
+            if (classOrObject is KtObjectDeclaration || classOrObject.hasModifier(SEALED_KEYWORD) || isEnum) PsiModifier.PRIVATE
             else PsiModifier.PUBLIC
         return noArgConstructor(visibility, classOrObject)
     }
@@ -314,31 +340,36 @@ class KtUltraLightClass(classOrObject: KtClassOrObject, private val support: Ult
 
     override fun getOwnMethods(): List<KtLightMethod> = if (tooComplex) super.getOwnMethods() else _ownMethods
 
-    private fun asJavaMethods(ktFunction: KtFunction, forceStatic: Boolean): Collection<KtLightMethod> {
+    private fun asJavaMethods(ktFunction: KtFunction, forceStatic: Boolean, forcePrivate: Boolean = false): Collection<KtLightMethod> {
         if (ktFunction.hasAnnotation(JVM_SYNTHETIC_ANNOTATION_FQ_NAME)) return emptyList()
 
-        val basicMethod = asJavaMethod(ktFunction, forceStatic)
+        val basicMethod = asJavaMethod(ktFunction, forceStatic, forcePrivate)
 
         if (!ktFunction.hasAnnotation(JVM_OVERLOADS_FQ_NAME)) return listOf(basicMethod)
 
         val result = mutableListOf<KtLightMethod>()
         val numberOfDefaultParameters = ktFunction.valueParameters.count(KtParameter::hasDefaultValue)
         for (numberOfDefaultParametersToAdd in 0 until numberOfDefaultParameters) {
-            result.add(asJavaMethod(ktFunction, forceStatic, numberOfDefaultParametersToAdd))
+            result.add(asJavaMethod(ktFunction, forceStatic, forcePrivate, numberOfDefaultParametersToAdd))
         }
         result.add(basicMethod)
 
         return result
     }
 
-    private fun asJavaMethod(ktFunction: KtFunction, forceStatic: Boolean, numberOfDefaultParametersToAdd: Int = -1): KtLightMethod {
+    private fun asJavaMethod(
+        ktFunction: KtFunction,
+        forceStatic: Boolean,
+        forcePrivate: Boolean,
+        numberOfDefaultParametersToAdd: Int = -1
+    ): KtLightMethod {
         val isConstructor = ktFunction is KtConstructor<*>
         val name =
             if (isConstructor)
                 this.name
             else computeMethodName(ktFunction, ktFunction.name ?: SpecialNames.NO_NAME_PROVIDED.asString())
 
-        val method = lightMethod(name.orEmpty(), ktFunction, forceStatic)
+        val method = lightMethod(name.orEmpty(), ktFunction, forceStatic, forcePrivate)
         val wrapper = KtUltraLightMethod(method, ktFunction, support, this)
         addReceiverParameter(ktFunction, wrapper)
 
@@ -384,7 +415,12 @@ class KtUltraLightClass(classOrObject: KtClassOrObject, private val support: Ult
     private fun DeclarationDescriptor.getterIfProperty() =
         if (this@getterIfProperty is PropertyDescriptor) this@getterIfProperty.getter else this@getterIfProperty
 
-    private fun lightMethod(name: String, declaration: KtDeclaration, forceStatic: Boolean): LightMethodBuilder {
+    private fun lightMethod(
+        name: String,
+        declaration: KtDeclaration,
+        forceStatic: Boolean,
+        forcePrivate: Boolean = false
+    ): LightMethodBuilder {
         val accessedProperty = if (declaration is KtPropertyAccessor) declaration.property else null
         val outer = accessedProperty ?: declaration
         return LightMethodBuilder(
@@ -393,7 +429,7 @@ class KtUltraLightClass(classOrObject: KtClassOrObject, private val support: Ult
             object : LightModifierList(manager, language) {
                 override fun hasModifierProperty(name: String): Boolean {
                     if (name == PsiModifier.PUBLIC || name == PsiModifier.PROTECTED || name == PsiModifier.PRIVATE) {
-                        if (declaration.isPrivate() || accessedProperty?.isPrivate() == true) {
+                        if (forcePrivate || declaration.isPrivate() || accessedProperty?.isPrivate() == true) {
                             return name == PsiModifier.PRIVATE
                         }
                         if (declaration.hasModifier(PROTECTED_KEYWORD) || accessedProperty?.hasModifier(PROTECTED_KEYWORD) == true) {
@@ -550,7 +586,7 @@ class KtUltraLightClass(classOrObject: KtClassOrObject, private val support: Ult
     override fun copy(): KtLightClassImpl = KtUltraLightClass(classOrObject.copy() as KtClassOrObject, support)
 }
 
-private class KtUltraLightField(
+private open class KtUltraLightField(
     private val declaration: KtNamedDeclaration,
     name: String,
     private val containingClass: KtUltraLightClass,
@@ -600,6 +636,11 @@ private class KtUltraLightField(
             declaration is KtObjectDeclaration ->
                 KtLightClassForSourceDeclaration.create(declaration)?.let { JavaPsiFacade.getElementFactory(project).createType(it) }
                     ?: nonExistent()
+            declaration is KtEnumEntry -> {
+                (containingClass.kotlinOrigin.resolve() as? ClassDescriptor)
+                    ?.defaultType?.asPsiType(support, TypeMappingMode.DEFAULT, this)
+                    ?: nonExistent()
+            }
             else -> {
                 val kotlinType = declaration.getKotlinType() ?: return@lazyPub PsiType.NULL
                 val descriptor = propertyDescriptor ?: return@lazyPub PsiType.NULL
@@ -638,6 +679,27 @@ private class KtUltraLightField(
 
     override fun setInitializer(initializer: PsiExpression?) = cannotModify()
 
+}
+
+private class KtUltraLightEnumEntry(
+    declaration: KtNamedDeclaration,
+    name: String,
+    containingClass: KtUltraLightClass,
+    support: UltraLightSupport,
+    modifiers: Set<String>
+) : KtUltraLightField(declaration, name, containingClass, support, modifiers), PsiEnumConstant {
+    override fun getInitializingClass(): PsiEnumConstantInitializer? = null
+    override fun getOrCreateInitializingClass(): PsiEnumConstantInitializer =
+        error("cannot create initializing class in light enum constant")
+
+    override fun getArgumentList(): PsiExpressionList? = null
+    override fun resolveMethod(): PsiMethod? = null
+    override fun resolveConstructor(): PsiMethod? = null
+
+    override fun resolveMethodGenerics(): JavaResolveResult = JavaResolveResult.EMPTY
+
+    override fun hasInitializer() = true
+    override fun computeConstantValue(visitedVars: MutableSet<PsiVariable>?) = this
 }
 
 internal class KtUltraLightMethod(

@@ -1105,6 +1105,10 @@ public abstract class KotlinBuiltIns {
         return classFqNameEquals(descriptor, FQ_NAMES._enum);
     }
 
+    public static boolean isEnum(@NotNull KotlinType type) {
+        return isConstructedFromGivenClassAndNotNullable(type, FQ_NAMES._enum);
+    }
+
     public static boolean isComparable(@NotNull ClassDescriptor descriptor) {
         return classFqNameEquals(descriptor, FQ_NAMES.comparable.toUnsafe());
     }
