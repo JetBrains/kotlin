@@ -21,6 +21,9 @@ import org.jetbrains.kotlin.incremental.testingUtils.ModifyContent
 import org.jetbrains.kotlin.jps.incremental.CacheVersionManager
 import org.jetbrains.kotlin.jps.targets.KotlinModuleBuildTarget
 
+/**
+ * @see [jps-plugin/testData/incremental/cacheVersionChanged/README.md]
+ */
 abstract class AbstractIncrementalCacheVersionChangedTest : AbstractIncrementalJpsTest(allowNoFilesWithSuffixInTestData = true) {
     override fun performAdditionalModifications(modifications: List<Modification>) {
         val modifiedFiles = modifications.filterIsInstance<ModifyContent>().map { it.path }
