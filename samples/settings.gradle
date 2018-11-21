@@ -21,19 +21,19 @@ enableFeaturePreview('GRADLE_METADATA')
  */
 if (MPPTools.isMacos() || MPPTools.isLinux() || MPPTools.isWindows()) {
     include ':csvparser'
+    include ':curl'
     include ':echoServer'
     include ':globalState'
     include ':html5Canvas'
+    include ':libcurl'
     include ':tetris'
     include ':videoplayer'
     include ':workers'
 }
 
 if (MPPTools.isMacos() || MPPTools.isLinux()) {
-    include ':curl'
     include ':gitchurn'
     include ':gtk'
-    include ':libcurl'
     include ':nonBlockingEchoServer'
     include ':tensorflow'
     include ':torch'

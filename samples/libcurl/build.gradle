@@ -21,7 +21,7 @@ task cleanLocalRepo(type: Delete) {
 }
 
 // Determine host preset.
-def hostPreset = MPPTools.defaultHostPreset(project, [kotlin.presets.macosX64, kotlin.presets.linuxX64])
+def hostPreset = MPPTools.defaultHostPreset(project, [kotlin.presets.macosX64, kotlin.presets.linuxX64, kotlin.presets.mingwX64])
 
 kotlin {
     targets {
@@ -34,6 +34,9 @@ kotlin {
                             break
                         case presets.linuxX64:
                             includeDirs.headerFilterOnly '/usr/include', '/usr/include/x86_64-linux-gnu'
+                            break
+                        case presets.mingwX64:
+                            includeDirs.headerFilterOnly "${MPPTools.mingwPath()}/include"
                             break
                     }
                 }

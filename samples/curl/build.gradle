@@ -9,13 +9,18 @@ repositories {
 }
 
 // Determine host preset.
-def hostPreset = MPPTools.defaultHostPreset(project, [kotlin.presets.macosX64, kotlin.presets.linuxX64])
+def hostPreset = MPPTools.defaultHostPreset(project, [kotlin.presets.macosX64, kotlin.presets.linuxX64, kotlin.presets.mingwX64])
 
 kotlin {
     targets {
         fromPreset(hostPreset, 'curl') {
             compilations.main.outputKinds 'EXECUTABLE'
             compilations.main.entryPoint 'sample.curl.main'
+
+            if (presets.mingwX64 == hostPreset) {
+                // Add lib path to `libcurl` and its dependencies:
+                compilations.main.linkerOpts "-L${MPPTools.mingwPath()}/lib"
+            }
         }
     }
 
@@ -29,6 +34,9 @@ kotlin {
 }
 
 MPPTools.createRunTask(project, 'runProgram', kotlin.targets.curl) {
+    if (kotlin.presets.mingwX64 == hostPreset) {
+        environment 'PATH': "${MPPTools.mingwPath()}/bin"
+    }
     args 'https://www.jetbrains.com/'
 }
 
