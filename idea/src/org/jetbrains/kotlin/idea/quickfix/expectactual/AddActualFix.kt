@@ -53,7 +53,7 @@ class AddActualFix(
         if (missedDeclarations.isEmpty()) return
         val factory = KtPsiFactory(element)
         val pureActualClass = factory.generateClassOrObjectByExpectedClass(
-            project, expectedClass, actualNeeded = true,
+            project, expectedClass,
             missedDeclarations = missedDeclarations
         )
 
