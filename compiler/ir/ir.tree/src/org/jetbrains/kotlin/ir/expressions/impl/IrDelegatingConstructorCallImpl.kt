@@ -54,6 +54,13 @@ class IrDelegatingConstructorCallImpl(
         startOffset: Int,
         endOffset: Int,
         type: IrType,
+        symbol: IrConstructorSymbol
+    ) : this(startOffset, endOffset, type, symbol, symbol.descriptor)
+
+    constructor(
+        startOffset: Int,
+        endOffset: Int,
+        type: IrType,
         symbol: IrConstructorSymbol,
         descriptor: ClassConstructorDescriptor,
         typeArgumentsCount: Int
