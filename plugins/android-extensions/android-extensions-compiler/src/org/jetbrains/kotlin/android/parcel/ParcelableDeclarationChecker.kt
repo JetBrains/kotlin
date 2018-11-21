@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.codegen.FrameMap
 import org.jetbrains.kotlin.codegen.state.IncompatibleClassTracker
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.config.JvmTarget
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
@@ -46,7 +47,8 @@ class ParcelableDeclarationChecker : DeclarationChecker {
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
         val trace = context.trace
         when (descriptor) {
-            is ClassDescriptor -> checkParcelableClass(descriptor, declaration, trace, trace.bindingContext)
+            is ClassDescriptor ->
+                checkParcelableClass(descriptor, declaration, trace, trace.bindingContext, context.languageVersionSettings)
             is SimpleFunctionDescriptor -> {
                 val containingClass = descriptor.containingDeclaration as? ClassDescriptor
                 val ktFunction = declaration as? KtFunction
@@ -113,7 +115,8 @@ class ParcelableDeclarationChecker : DeclarationChecker {
             descriptor: ClassDescriptor,
             declaration: KtDeclaration,
             diagnosticHolder: DiagnosticSink,
-            bindingContext: BindingContext
+            bindingContext: BindingContext,
+            languageVersionSettings: LanguageVersionSettings
     ) {
         if (!descriptor.isParcelize) return
 
@@ -181,7 +184,7 @@ class ParcelableDeclarationChecker : DeclarationChecker {
             IncompatibleClassTracker.DoNothing,
             descriptor.module.name.asString(),
             JvmTarget.DEFAULT,
-            KotlinTypeMapper.RELEASE_COROUTINES_DEFAULT,
+            languageVersionSettings,
             false
         )
 

@@ -25,6 +25,9 @@ import org.jetbrains.kotlin.codegen.signature.AsmTypeFactory;
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter;
 import org.jetbrains.kotlin.codegen.signature.JvmSignatureWriter;
 import org.jetbrains.kotlin.config.JvmTarget;
+import org.jetbrains.kotlin.config.LanguageFeature;
+import org.jetbrains.kotlin.config.LanguageVersionSettings;
+import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableAccessorDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor;
@@ -84,6 +87,7 @@ public class KotlinTypeMapper {
     private final IncompatibleClassTracker incompatibleClassTracker;
     private final String moduleName;
     private final JvmTarget jvmTarget;
+    private final LanguageVersionSettings languageVersionSettings;
     private final boolean isReleaseCoroutines;
     private final boolean isIrBackend;
 
@@ -156,7 +160,7 @@ public class KotlinTypeMapper {
             @NotNull IncompatibleClassTracker incompatibleClassTracker,
             @NotNull String moduleName,
             @NotNull JvmTarget jvmTarget,
-            boolean isReleaseCoroutines,
+            @NotNull LanguageVersionSettings languageVersionSettings,
             boolean isIrBackend
     ) {
         this.bindingContext = bindingContext;
@@ -164,11 +168,15 @@ public class KotlinTypeMapper {
         this.incompatibleClassTracker = incompatibleClassTracker;
         this.moduleName = moduleName;
         this.jvmTarget = jvmTarget;
-        this.isReleaseCoroutines = isReleaseCoroutines;
+        this.languageVersionSettings = languageVersionSettings;
+        this.isReleaseCoroutines = languageVersionSettings.supportsFeature(LanguageFeature.ReleaseCoroutines);
         this.isIrBackend = isIrBackend;
     }
 
-    public static final boolean RELEASE_COROUTINES_DEFAULT = false;
+    /**
+     * Use proper LanguageVersionSettings where possible.
+     */
+    public static final LanguageVersionSettings LANGUAGE_VERSION_SETTINGS_DEFAULT = LanguageVersionSettingsImpl.DEFAULT;
 
     @NotNull
     public BindingContext getBindingContext() {

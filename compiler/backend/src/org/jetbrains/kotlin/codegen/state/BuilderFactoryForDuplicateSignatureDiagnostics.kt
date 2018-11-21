@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.codegen.ClassBuilderFactory
 import org.jetbrains.kotlin.codegen.ClassBuilderMode
 import org.jetbrains.kotlin.codegen.SignatureCollectingClassBuilderFactory
 import org.jetbrains.kotlin.config.JvmTarget
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.DELEGATION
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.FAKE_OVERRIDE
@@ -48,7 +49,7 @@ class BuilderFactoryForDuplicateSignatureDiagnostics(
     bindingContext: BindingContext,
     private val diagnostics: DiagnosticSink,
     moduleName: String,
-    isReleaseCoroutines: Boolean,
+    languageVersionSettings: LanguageVersionSettings,
     shouldGenerate: (JvmDeclarationOrigin) -> Boolean,
     isIrBackend: Boolean
 ) : SignatureCollectingClassBuilderFactory(builderFactory, shouldGenerate) {
@@ -56,7 +57,7 @@ class BuilderFactoryForDuplicateSignatureDiagnostics(
     // Avoid errors when some classes are not loaded for some reason
     private val typeMapper = KotlinTypeMapper(
         bindingContext, ClassBuilderMode.LIGHT_CLASSES, IncompatibleClassTracker.DoNothing, moduleName, JvmTarget.DEFAULT,
-        isReleaseCoroutines, isIrBackend
+        languageVersionSettings, isIrBackend
     )
     private val reportDiagnosticsTasks = ArrayList<() -> Unit>()
 
