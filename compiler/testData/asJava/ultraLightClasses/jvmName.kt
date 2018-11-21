@@ -1,4 +1,3 @@
-/** should load cls */
 class C {
     var rwProp: Int
         @JvmName("get_rwProp")
@@ -8,4 +7,8 @@ class C {
 
     fun getRwProp(): Int = 123
     fun setRwProp(v: Int) {}
+
+    fun foo(x: List<String>) {}
+    @JvmName("fooInt")
+    fun foo(x: List<Int>) {}
 }
