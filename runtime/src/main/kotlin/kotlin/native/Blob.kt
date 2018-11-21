@@ -75,9 +75,10 @@ public fun ImmutableBlob.asUCPointer(offset: Int = 0): CPointer<UByteVar> =
 private external fun ImmutableBlob.asCPointerImpl(offset: Int): kotlin.native.internal.NativePtr
 
 /**
- * Creates ImmutableBlob out of compile-time constant data.
- * This method accepts Short type, so that values in range 0x80 .. 0xff can be
- * provided without toByte() cast or 'u' suffix.
+ * Creates [ImmutableBlob] out of compile-time constant data.
+ *
+ * This method accepts values of [Short] type in range `0x00..0xff`, other values are prohibited.
+ *
  * One element still represent one byte in the output data.
  * This is the only way to create ImmutableBlob for now.
  */
