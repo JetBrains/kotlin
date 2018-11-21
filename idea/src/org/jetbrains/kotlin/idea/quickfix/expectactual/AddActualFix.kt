@@ -52,8 +52,8 @@ class AddActualFix(
         val missedDeclarations = missedDeclarationPointers.mapNotNull { it.element }
         if (missedDeclarations.isEmpty()) return
         val factory = KtPsiFactory(element)
-        val pureActualClass = factory.generateClassOrObjectByExpectedClass(
-            project, expectedClass,
+        val pureActualClass = factory.generateClassOrObject(
+            project, false, expectedClass,
             missedDeclarations = missedDeclarations
         )
 

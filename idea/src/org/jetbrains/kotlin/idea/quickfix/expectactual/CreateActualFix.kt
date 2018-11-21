@@ -24,31 +24,21 @@ import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
 import com.intellij.psi.codeStyle.CodeStyleManager
 import org.jetbrains.kotlin.analyzer.ModuleInfo
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.idea.caches.project.ModuleSourceInfo
-import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithContent
 import org.jetbrains.kotlin.idea.core.ShortenReferences
-import org.jetbrains.kotlin.idea.core.overrideImplement.OverrideMemberChooserObject.BodyType.EMPTY_OR_TEMPLATE
-import org.jetbrains.kotlin.idea.core.overrideImplement.OverrideMemberChooserObject.BodyType.NO_BODY
-import org.jetbrains.kotlin.idea.core.overrideImplement.OverrideMemberChooserObject.Companion.create
-import org.jetbrains.kotlin.idea.core.overrideImplement.generateActualMember
-import org.jetbrains.kotlin.idea.core.overrideImplement.generateTopLevelActual
 import org.jetbrains.kotlin.idea.core.toDescriptor
 import org.jetbrains.kotlin.idea.quickfix.KotlinQuickFixAction
 import org.jetbrains.kotlin.idea.quickfix.KotlinSingleIntentionActionFactory
 import org.jetbrains.kotlin.idea.util.actualsForExpected
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
-import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
-import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.MultiTargetPlatform
-import org.jetbrains.kotlin.resolve.checkers.ExpectedActualDeclarationChecker
-import org.jetbrains.kotlin.resolve.checkers.ExperimentalUsageChecker
 import org.jetbrains.kotlin.resolve.getMultiTargetPlatform
 
 sealed class CreateActualFix<out D : KtNamedDeclaration>(
@@ -136,7 +126,7 @@ class CreateActualClassFix(
     actualModule: Module,
     actualPlatform: MultiTargetPlatform.Specific
 ) : CreateActualFix<KtClassOrObject>(klass, actualModule, actualPlatform, { project, element ->
-    generateClassOrObjectByExpectedClass(project, element)
+    generateClassOrObject(project, false, element)
 })
 
 class CreateActualPropertyFix(
@@ -145,7 +135,7 @@ class CreateActualPropertyFix(
     actualPlatform: MultiTargetPlatform.Specific
 ) : CreateActualFix<KtProperty>(property, actualModule, actualPlatform, { project, element ->
     val descriptor = element.toDescriptor() as? PropertyDescriptor
-    descriptor?.let { generateProperty(project, element, descriptor) }
+    descriptor?.let { generateProperty(project, false, element, descriptor) }
 })
 
 class CreateActualFunctionFix(
@@ -154,120 +144,6 @@ class CreateActualFunctionFix(
     actualPlatform: MultiTargetPlatform.Specific
 ) : CreateActualFix<KtFunction>(function, actualModule, actualPlatform, { project, element ->
     val descriptor = element.toDescriptor() as? FunctionDescriptor
-    descriptor?.let { generateFunction(project, element, descriptor) }
+    descriptor?.let { generateFunction(project, false, element, descriptor) }
 })
-
-internal fun KtPsiFactory.generateClassOrObjectByExpectedClass(
-    project: Project,
-    expectedClass: KtClassOrObject,
-    // If null, all expect class declarations are missed (so none from them exists)
-    missedDeclarations: List<KtDeclaration>? = null
-): KtClassOrObject {
-    fun areCompatible(first: KtFunction, second: KtFunction) =
-        first.valueParameters.size == second.valueParameters.size &&
-                first.valueParameters.zip(second.valueParameters).all { (firstParam, secondParam) ->
-                    firstParam.name == secondParam.name && firstParam.typeReference?.text == secondParam.typeReference?.text
-                }
-
-    fun KtDeclaration.exists() =
-        missedDeclarations != null && missedDeclarations.none {
-            name == it.name && when (this) {
-                is KtConstructor<*> -> it is KtConstructor<*> && areCompatible(this, it)
-                is KtNamedFunction -> it is KtNamedFunction && areCompatible(this, it)
-                is KtProperty -> it is KtProperty || it is KtParameter && it.hasValOrVar()
-                else -> this.javaClass == it.javaClass
-            }
-        }
-
-    val actualClass = createClassHeaderCopyByText(expectedClass)
-
-    val context = expectedClass.analyzeWithContent()
-    actualClass.superTypeListEntries.zip(expectedClass.superTypeListEntries).forEach { (actualEntry, expectedEntry) ->
-        if (actualEntry !is KtSuperTypeEntry) return@forEach
-        val superType = context[BindingContext.TYPE, expectedEntry.typeReference]
-        val superClassDescriptor = superType?.constructor?.declarationDescriptor as? ClassDescriptor ?: return@forEach
-        if (superClassDescriptor.kind == ClassKind.CLASS || superClassDescriptor.kind == ClassKind.ENUM_CLASS) {
-            actualEntry.replace(createSuperTypeCallEntry("${actualEntry.typeReference!!.text}()"))
-        }
-    }
-    if (actualClass.isAnnotation()) {
-        actualClass.annotationEntries.zip(expectedClass.annotationEntries).forEach { (actualEntry, expectedEntry) ->
-            val annotationDescriptor = context.get(BindingContext.ANNOTATION, expectedEntry) ?: return@forEach
-            if (annotationDescriptor.fqName in forbiddenAnnotationFqNames) {
-                actualEntry.delete()
-            }
-        }
-    }
-    if (actualClass !is KtEnumEntry) {
-        actualClass.addModifier(KtTokens.ACTUAL_KEYWORD)
-    }
-
-    declLoop@ for (expectedDeclaration in expectedClass.declarations.filter { !it.exists() }) {
-        val descriptor = expectedDeclaration.toDescriptor() ?: continue
-        val actualDeclaration: KtDeclaration = when (expectedDeclaration) {
-            is KtClassOrObject -> {
-                generateClassOrObjectByExpectedClass(project, expectedDeclaration)
-            }
-            is KtCallableDeclaration -> {
-                when (expectedDeclaration) {
-                    is KtFunction -> generateFunction(project, expectedDeclaration, descriptor as FunctionDescriptor, actualClass)
-                    is KtProperty -> generateProperty(project, expectedDeclaration, descriptor as PropertyDescriptor, actualClass)
-                    else -> continue@declLoop
-                }
-            }
-            else -> continue@declLoop
-        }
-        actualClass.addDeclaration(actualDeclaration)
-    }
-    val expectedPrimaryConstructor = expectedClass.primaryConstructor
-    if (actualClass is KtClass && expectedPrimaryConstructor?.exists() == false) {
-        val descriptor = expectedPrimaryConstructor.toDescriptor()
-        if (descriptor is FunctionDescriptor) {
-            val actualPrimaryConstructor = generateFunction(project, expectedPrimaryConstructor, descriptor, actualClass)
-            actualClass.createPrimaryConstructorIfAbsent().replace(actualPrimaryConstructor)
-        }
-    }
-
-    return actualClass
-}
-
-private val forbiddenAnnotationFqNames = setOf(
-    ExpectedActualDeclarationChecker.OPTIONAL_EXPECTATION_FQ_NAME,
-    FqName("kotlin.ExperimentalMultiplatform"),
-    ExperimentalUsageChecker.USE_EXPERIMENTAL_FQ_NAME
-)
-
-private fun generateFunction(
-    project: Project,
-    expectedFunction: KtFunction,
-    descriptor: FunctionDescriptor,
-    targetClass: KtClassOrObject? = null
-): KtFunction {
-    val memberChooserObject = create(
-        expectedFunction, descriptor, descriptor,
-        if (descriptor.modality == Modality.ABSTRACT) NO_BODY else EMPTY_OR_TEMPLATE
-    )
-    return if (targetClass != null) {
-        memberChooserObject.generateActualMember(targetClass = targetClass, copyDoc = true)
-    } else {
-        memberChooserObject.generateTopLevelActual(project = project, copyDoc = true)
-    } as KtFunction
-}
-
-private fun generateProperty(
-    project: Project,
-    expectedProperty: KtProperty,
-    descriptor: PropertyDescriptor,
-    targetClass: KtClassOrObject? = null
-): KtProperty {
-    val memberChooserObject = create(
-        expectedProperty, descriptor, descriptor,
-        if (descriptor.modality == Modality.ABSTRACT) NO_BODY else EMPTY_OR_TEMPLATE
-    )
-    return if (targetClass != null) {
-        memberChooserObject.generateActualMember(targetClass = targetClass, copyDoc = true)
-    } else {
-        memberChooserObject.generateTopLevelActual(project = project, copyDoc = true)
-    } as KtProperty
-}
 

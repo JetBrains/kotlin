@@ -119,32 +119,12 @@ interface OverrideMemberChooserObject : ClassMember {
     }
 }
 
-fun OverrideMemberChooserObject.generateTopLevelActual(
-    project: Project,
-    copyDoc: Boolean
-) = generateMember(null, copyDoc, project, forceActual = true, forceExpect = false)
-
-fun OverrideMemberChooserObject.generateActualMember(
-    targetClass: KtClassOrObject,
-    copyDoc: Boolean
-) = generateMember(targetClass, copyDoc, targetClass.project, forceActual = true, forceExpect = false)
-
-fun OverrideMemberChooserObject.generateTopLevelExpect(
-    project: Project,
-    copyDoc: Boolean
-) = generateMember(null, copyDoc, project, forceActual = false, forceExpect = true)
-
-fun OverrideMemberChooserObject.generateExpectMember(
-    targetClass: KtClassOrObject,
-    copyDoc: Boolean
-) = generateMember(targetClass, copyDoc, targetClass.project, forceActual = false, forceExpect = true)
-
 fun OverrideMemberChooserObject.generateMember(
     targetClass: KtClassOrObject,
     copyDoc: Boolean
 ) = generateMember(targetClass, copyDoc, targetClass.project, forceActual = false, forceExpect = false)
 
-private fun OverrideMemberChooserObject.generateMember(
+fun OverrideMemberChooserObject.generateMember(
     targetClass: KtClassOrObject?,
     copyDoc: Boolean,
     project: Project,
