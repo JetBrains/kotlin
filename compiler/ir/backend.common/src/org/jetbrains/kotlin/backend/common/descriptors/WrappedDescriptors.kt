@@ -490,9 +490,8 @@ open class WrappedClassDescriptor(
 
     override fun getThisAsReceiverParameter() = owner.thisReceiver?.descriptor as ReceiverParameterDescriptor
 
-    override fun getUnsubstitutedPrimaryConstructor(): ClassConstructorDescriptor? {
-        TODO("not implemented")
-    }
+    override fun getUnsubstitutedPrimaryConstructor() =
+        owner.declarations.filterIsInstance<IrConstructor>().singleOrNull { it.isPrimary }?.descriptor
 
     override fun getDeclaredTypeParameters() = owner.typeParameters.map { it.descriptor }
 

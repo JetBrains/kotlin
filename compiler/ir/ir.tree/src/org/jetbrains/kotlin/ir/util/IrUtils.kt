@@ -442,21 +442,6 @@ fun createField(
     return IrFieldImpl(startOffset, endOffset, origin, descriptor, type)
 }
 
-fun IrFunction.createDispatchReceiverParameter() {
-    assert(this.dispatchReceiverParameter == null)
-
-    val descriptor = this.descriptor.dispatchReceiverParameter ?: return
-
-    this.dispatchReceiverParameter = IrValueParameterImpl(
-        startOffset,
-        endOffset,
-        IrDeclarationOrigin.DEFINED,
-        descriptor,
-        this.parentAsClass.defaultType,
-        null
-    ).also { it.parent = this }
-}
-
 // In presence of `IrBlock`s, return the expression that actually serves as the value (the last one).
 tailrec fun IrExpression.removeBlocks(): IrExpression? = when (this) {
     is IrBlock -> (statements.last() as? IrExpression)?.removeBlocks()
