@@ -467,17 +467,18 @@ KInt Kotlin_NativePtrArray_getArrayLength(KConstRef thiz) {
   return array->count_;
 }
 
-OBJ_GETTER(Kotlin_ImmutableBlob_toByteArray, KConstRef thiz, KInt start, KInt count) {
-   const ArrayHeader* array = thiz->array();
-   if (start < 0 || count < 0 || start > array->count_ - count)  {
-        ThrowArrayIndexOutOfBoundsException();
-    }
-    ArrayHeader* result = AllocArrayInstance(
-          theByteArrayTypeInfo, count, OBJ_RESULT)->array();
-    memcpy(PrimitiveArrayAddressOfElementAt<KByte>(result, 0),
-           PrimitiveArrayAddressOfElementAt<KByte>(array, start),
-           count);
-    RETURN_OBJ(result->obj());
+OBJ_GETTER(Kotlin_ImmutableBlob_toByteArray, KConstRef thiz, KInt startIndex, KInt endIndex) {
+  const ArrayHeader* array = thiz->array();
+  if (startIndex < 0 || endIndex > array->count_ || startIndex > endIndex) {
+      ThrowArrayIndexOutOfBoundsException();
+  }
+  KInt count = endIndex - startIndex;
+  ArrayHeader* result = AllocArrayInstance(
+      theByteArrayTypeInfo, count, OBJ_RESULT)->array();
+  memcpy(PrimitiveArrayAddressOfElementAt<KByte>(result, 0),
+         PrimitiveArrayAddressOfElementAt<KByte>(array, startIndex),
+         count);
+  RETURN_OBJ(result->obj());
 }
 
 KNativePtr Kotlin_ImmutableBlob_asCPointerImpl(KRef thiz, KInt offset) {

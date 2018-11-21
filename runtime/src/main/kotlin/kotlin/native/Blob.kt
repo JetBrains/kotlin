@@ -42,19 +42,23 @@ private class ImmutableBlobIteratorImpl(val blob: ImmutableBlob) : ByteIterator(
 }
 
 /**
- * Allocates new [ByteArray] and copies the data from blob starting from [start]
- * and with [count] amount of bytes.
+ * Copies the data from this blob into a new [ByteArray].
+ *
+ * @param startIndex the beginning (inclusive) of the subrange to copy, 0 by default.
+ * @param endIndex the end (exclusive) of the subrange to copy, size of this blob by default.
  */
 @SymbolName("Kotlin_ImmutableBlob_toByteArray")
-public external fun ImmutableBlob.toByteArray(start: Int = 0, count: Int = size): ByteArray
+public external fun ImmutableBlob.toByteArray(startIndex: Int = 0, endIndex: Int = size): ByteArray
 
 /**
- * Allocates new [UByteArray] and copies the data from blob starting from [start]
- * and with [count] amount of bytes.
+ * Copies the data from this blob into a new [UByteArray].
+ *
+ * @param startIndex the beginning (inclusive) of the subrange to copy, 0 by default.
+ * @param endIndex the end (exclusive) of the subrange to copy, size of this blob by default.
  */
 @ExperimentalUnsignedTypes
 @SymbolName("Kotlin_ImmutableBlob_toByteArray")
-public external fun ImmutableBlob.toUByteArray(start: Int = 0, count: Int = size): UByteArray
+public external fun ImmutableBlob.toUByteArray(startIndex: Int = 0, endIndex: Int = size): UByteArray
 
 /**
  * Returns stable C pointer to data at certain [offset], useful as a way to pass resource
