@@ -32,13 +32,11 @@ class PatternTest2 {
 
         var testString = "foo123"
         assertTrue(regex.matches(testString))
-        assertTrue(regex.containsMatchIn(testString, 0))
-        assertTrue(regex.lookingAt(testString))
+        assertTrue(regex in testString)
 
         testString = "fox"
         assertFalse(regex.matches(testString))
-        assertFalse(regex.containsMatchIn(testString, 0))
-        assertFalse(regex.lookingAt(testString))
+        assertFalse(regex in testString)
 
         assertTrue(Regex("foo.*").matches("foo123"))
         assertFalse(Regex("foo.*").matches("fox"))
@@ -880,7 +878,7 @@ class PatternTest2 {
     @Test fun testCompile2() {
         val findString = "\\Qimport\\E"
         val regex = Regex(findString)
-        regex.containsMatchIn("import a.A;\n\n import b.B;\nclass C {}", 0)
+        assertTrue(regex in "import a.A;\n\n import b.B;\nclass C {}")
     }
 
     @Test fun testCompile3() {
