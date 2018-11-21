@@ -31,7 +31,7 @@ fun initJobs(count: Int) = Array<Job?>(count) { i -> Job(i, i * 2, i)}
     val futureSet = futures.toSet()
     var consumed = 0
     while (consumed < futureSet.size) {
-        val ready = futureSet.waitForMultipleFutures(10000)
+        val ready = waitForMultipleFutures(futureSet, 10000)
         ready.forEach {
             it.consume { job ->
                 assertEquals(job.index * 3, job.counter)

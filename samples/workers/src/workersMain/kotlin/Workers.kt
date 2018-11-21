@@ -29,7 +29,7 @@ fun main() {
         val futureSet = futures.toSet()
         var consumed = 0
         while (consumed < futureSet.size) {
-            val ready = futureSet.waitForMultipleFutures(10000)
+            val ready = waitForMultipleFutures(futureSet, 10000)
             ready.forEach {
                 it.consume { result ->
                     if (result.stringResult != "attempt $attempt result") throw Error("Unexpected $result")

@@ -63,28 +63,33 @@ public class Future<T> internal constructor(val id: Int) {
     override public fun toString(): String = "future $id"
 }
 
+
+@Deprecated("Use 'waitForMultipleFutures' top-level function instead", ReplaceWith("waitForMultipleFutures(this, millis)"), DeprecationLevel.ERROR)
+public fun <T> Collection<Future<T>>.waitForMultipleFutures(millis: Int): Set<Future<T>> = waitForMultipleFutures(this, millis)
+
+
 /**
  * Wait for availability of futures in the collection. Returns set with all futures which have
- * value available for the consumption, i.e. [FutureState.COMPUTED]
+ * value available for the consumption, i.e. [FutureState.COMPUTED].
  *
- * @param millis the amount of time to wait for the computed future
+ * @param timeoutMillis the amount of time in milliseconds to wait for the computed future
  */
-public fun <T> Collection<Future<T>>.waitForMultipleFutures(millis: Int): Set<Future<T>> {
+public fun <T> waitForMultipleFutures(futures: Collection<Future<T>>, timeoutMillis: Int): Set<Future<T>> {
     val result = mutableSetOf<Future<T>>()
 
     while (true) {
         val versionToken = versionToken()
-        for (future in this) {
+        for (future in futures) {
             if (future.state == FutureState.COMPUTED) {
                 result += future
             }
         }
         if (result.isNotEmpty()) return result
 
-        if (waitForAnyFuture(versionToken, millis)) break
+        if (waitForAnyFuture(versionToken, timeoutMillis)) break
     }
 
-    for (future in this) {
+    for (future in futures) {
         if (future.state == FutureState.COMPUTED) {
             result += future
         }
