@@ -19,7 +19,14 @@ fun BaseGradleIT.Project.testResolveAllConfigurations(
 ) = with(testCase) {
 
     setupWorkingDir()
-    gradleBuildScript(subproject).appendText("\n" + generateResolveAllConfigurationsTask(excludePredicate))
+    gradleBuildScript(subproject).run {
+        val taskCode = when (extension) {
+            "gradle" -> generateResolveAllConfigurationsTask(excludePredicate)
+            "kts" -> generateResolveAllConfigurationsTaskKts(excludePredicate)
+            else -> error("Unexpected build script extension $extension")
+        }
+        appendText("\n" + taskCode)
+    }
 
     build(RESOLVE_ALL_CONFIGURATIONS_TASK_NAME) {
         assertSuccessful()
@@ -48,6 +55,32 @@ private fun generateResolveAllConfigurationsTask(exclude: String) =
                                 ex = ex.cause
                             }
                             println '$UNRESOLVED_MARKER' + configuration.name + "\n"
+                        }
+                    }
+            }
+        }
+    """.trimIndent()
+
+private fun generateResolveAllConfigurationsTaskKts(exclude: String) =
+    """
+        tasks.create("$RESOLVE_ALL_CONFIGURATIONS_TASK_NAME") {
+            doFirst {
+                project.configurations
+                    .filter { it.isCanBeResolved }
+                    .filterNot { $exclude }
+                    .forEach { configuration ->
+                        val path = (configuration as org.gradle.api.internal.artifacts.configurations.ConfigurationInternal).path
+                        try {
+                            println("Resolving ${'$'}path")
+                            configuration.files.forEach { println(">> ${'$'}path --> ${'$'}{it.name}") }
+                            println("OK, resolved ${'$'}path\n")
+                        } catch (e: Throwable) {
+                            var ex = e as Throwable?
+                            while (ex != null) {
+                                println(ex.message)
+                                ex = ex.cause
+                            }
+                            println("$UNRESOLVED_MARKER ${'$'}{configuration.name}\n")
                         }
                     }
             }
