@@ -17,10 +17,10 @@ public final class ImmutableBlob private constructor() {
 
     // Data layout is the same as for ByteArray, so we can share native functions.
     @SymbolName("Kotlin_ByteArray_get")
-    external public operator fun get(index: Int): Byte
+    public external operator fun get(index: Int): Byte
 
     @SymbolName("Kotlin_ByteArray_getArrayLength")
-    external private fun getArrayLength(): Int
+    private external fun getArrayLength(): Int
 
     /** Creates an iterator over the elements of the array. */
     public operator fun iterator(): ByteIterator {
