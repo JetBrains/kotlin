@@ -54,7 +54,7 @@ class ClassGenerator(
 
     fun generateClass(ktClassOrObject: KtPureClassOrObject): IrClass {
         val classDescriptor = ktClassOrObject.findClassDescriptor(this.context.bindingContext)
-        val startOffset = ktClassOrObject.pureStartOffset
+        val startOffset = ktClassOrObject.getStartOffsetOfClassDeclarationKeywordOrNull() ?: ktClassOrObject.pureStartOffset
         val endOffset = ktClassOrObject.pureEndOffset
 
         return context.symbolTable.declareClass(
@@ -138,7 +138,7 @@ class ClassGenerator(
         val superType = getOrFail(BindingContext.TYPE, ktEntry.typeReference!!)
         val superTypeConstructorDescriptor = superType.constructor.declarationDescriptor
         val superClass = superTypeConstructorDescriptor as? ClassDescriptor
-                ?: throw AssertionError("Unexpected supertype constructor for delegation: $superTypeConstructorDescriptor")
+            ?: throw AssertionError("Unexpected supertype constructor for delegation: $superTypeConstructorDescriptor")
         val delegateDescriptor = IrImplementingDelegateDescriptorImpl(irClass.descriptor, delegateType, superType)
         val irDelegateField = context.symbolTable.declareField(
             ktDelegateExpression.startOffsetSkippingComments, ktDelegateExpression.endOffset,
