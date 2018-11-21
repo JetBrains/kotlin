@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.codegen.JvmCodegenUtil
 import org.jetbrains.kotlin.codegen.PropertyCodegen
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.annotations.Annotated
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.idea.KotlinLanguage
@@ -35,6 +36,7 @@ import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClass
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.annotations.JVM_STATIC_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.resolve.annotations.argumentValue
 import org.jetbrains.kotlin.resolve.constants.EnumValue
@@ -51,7 +53,7 @@ class KtUltraLightClass(classOrObject: KtClassOrObject, private val support: Ult
     companion object {
 
         // This property may be removed once IntelliJ versions earlier than 2018.3 become unsupported
-        // And usages of that property may be replaced with relevant registry change
+        // And usages of that property may be replaced with relevant registry key
         @Volatile
         @TestOnly
         var forceUsingUltraLightClasses = false
@@ -334,7 +336,7 @@ class KtUltraLightClass(classOrObject: KtClassOrObject, private val support: Ult
         val name =
             if (isConstructor)
                 this.name
-            else mangleIfNeeded(listOf(ktFunction), ktFunction.name ?: SpecialNames.NO_NAME_PROVIDED.asString())
+            else computeMethodName(ktFunction, ktFunction.name ?: SpecialNames.NO_NAME_PROVIDED.asString())
 
         val method = lightMethod(name.orEmpty(), ktFunction, forceStatic)
         val wrapper = KtUltraLightMethod(method, ktFunction, support, this)
@@ -437,19 +439,28 @@ class KtUltraLightClass(classOrObject: KtClassOrObject, private val support: Ult
         ).setConstructor(declaration is KtConstructor<*>)
     }
 
-    private fun mangleIfNeeded(declarations: List<KtDeclaration>, name: String): String {
-        for (declaration in declarations) {
-            if (declaration.hasModifier(PRIVATE_KEYWORD) ||
-                declaration.hasModifier(PROTECTED_KEYWORD) ||
-                declaration.hasModifier(PUBLIC_KEYWORD)
-            ) {
-                return name
-            }
-            if (isInternal(declaration) && declaration.resolve()?.isPublishedApi() != true) {
-                return KotlinTypeMapper.InternalNameMapper.mangleInternalName(name, support.moduleName)
-            }
+    private fun computeMethodName(declaration: KtDeclaration, name: String): String {
+        if (declaration.hasAnnotation(DescriptorUtils.JVM_NAME)) {
+            val newName = (declaration.resolve() as? Annotated)?.let(DescriptorUtils::getJvmName)
+            if (newName != null) return newName
         }
+
+        if (isInternalNonPublishedApi(declaration)) return KotlinTypeMapper.InternalNameMapper.mangleInternalName(name, support.moduleName)
         return name
+    }
+
+    private tailrec fun isInternalNonPublishedApi(declaration: KtDeclaration): Boolean {
+        if (declaration.hasModifier(PRIVATE_KEYWORD) ||
+            declaration.hasModifier(PROTECTED_KEYWORD) ||
+            declaration.hasModifier(PUBLIC_KEYWORD)
+        ) {
+            return false
+        }
+
+        if (isInternal(declaration) && declaration.resolve()?.isPublishedApi() != true) return true
+
+        val containingProperty = (declaration as? KtPropertyAccessor)?.property ?: return false
+        return isInternalNonPublishedApi(containingProperty)
     }
 
     private fun KtAnnotated.hasAnnotation(name: FqName) = support.findAnnotation(this, name) != null
@@ -491,7 +502,7 @@ class KtUltraLightClass(classOrObject: KtClassOrObject, private val support: Ult
         val result = arrayListOf<KtLightMethod>()
 
         if (needsAccessor(ktGetter)) {
-            val getterName = mangleIfNeeded(listOfNotNull(ktGetter, declaration), JvmAbi.getterName(propertyName))
+            val getterName = computeMethodName(ktGetter ?: declaration, JvmAbi.getterName(propertyName))
             val getterPrototype = lightMethod(getterName, ktGetter ?: declaration, onlyJvmStatic)
             val getterWrapper = KtUltraLightMethod(getterPrototype, declaration, support, this)
             val getterType: PsiType by lazyPub { methodReturnType(declaration, getterWrapper) }
@@ -501,7 +512,7 @@ class KtUltraLightClass(classOrObject: KtClassOrObject, private val support: Ult
         }
 
         if (mutable && needsAccessor(ktSetter)) {
-            val setterName = mangleIfNeeded(listOfNotNull(ktSetter, declaration), JvmAbi.setterName(propertyName))
+            val setterName = computeMethodName(ktSetter ?: declaration, JvmAbi.setterName(propertyName))
             val setterPrototype = lightMethod(setterName, ktSetter ?: declaration, onlyJvmStatic)
                 .setMethodReturnType(PsiType.VOID)
             val setterWrapper = KtUltraLightMethod(setterPrototype, declaration, support, this)

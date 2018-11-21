@@ -53,6 +53,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.annotations.JVM_STATIC_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.getAllSuperClassifiers
@@ -119,6 +120,7 @@ class IDELightClassGenerationSupport(private val project: Project) : LightClassG
             if (name == JvmAbi.JVM_FIELD_ANNOTATION_FQ_NAME.shortName()) return false
             if (name == JVM_OVERLOADS_FQ_NAME.shortName()) return false
             if (name == JVM_SYNTHETIC_ANNOTATION_FQ_NAME.shortName()) return false
+            if (name == DescriptorUtils.JVM_NAME.shortName()) return false
 
             return true
         }
