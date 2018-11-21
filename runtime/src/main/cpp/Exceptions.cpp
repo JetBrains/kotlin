@@ -190,11 +190,16 @@ void ThrowException(KRef exception) {
 #endif
 }
 
+void ReportUnhandledException(KRef e);
+
+RUNTIME_NORETURN void TerminateWithUnhandledException(KRef e) {
+  ReportUnhandledException(e);
+  konan::abort();
+}
+
 // Some libstdc++-based targets has limited support for std::current_exception and other C++11 functions.
 // This restriction can be lifted later when toolchains will be updated.
 #if KONAN_HAS_CXX11_EXCEPTION_FUNCTIONS
-
-void ReportUnhandledException(KRef e);
 
 static void (*oldTerminateHandler)() = nullptr;
 
@@ -208,8 +213,7 @@ static void KonanTerminateHandler() {
     try {
       std::rethrow_exception(currentException);
     } catch (ObjHolder& e) {
-      ReportUnhandledException(e.obj());
-      konan::abort();
+      TerminateWithUnhandledException(e.obj());
     } catch (...) {
       // Not a Kotlin exception.
       oldTerminateHandler();

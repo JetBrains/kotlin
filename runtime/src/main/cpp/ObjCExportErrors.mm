@@ -22,17 +22,41 @@
 
 #import "Exceptions.h"
 #import "ObjCExport.h"
+#import "Porting.h"
 #import "Runtime.h"
 #import "Utils.h"
 
 extern "C" OBJ_GETTER(Kotlin_Throwable_getMessage, KRef throwable);
 extern "C" OBJ_GETTER(Kotlin_ObjCExport_getWrappedError, KRef throwable);
-extern "C" void Kotlin_ObjCExport_abortIfUnchecked(KRef exception);
+extern "C" KBoolean Kotlin_ObjCExport_isUnchecked(KRef exception);
+
+static void printlnMessage(const char* message) {
+  konan::consolePrintf("%s\n", message);
+}
+
+static const char* uncheckedExceptionMessage =
+    "Instances of kotlin.Error, kotlin.RuntimeException and subclasses "
+    "aren't propagated from Kotlin to Objective-C/Swift.";
+
+extern "C" RUNTIME_NORETURN void Kotlin_ObjCExport_trapOnUndeclaredException(KRef exception) {
+  if (Kotlin_ObjCExport_isUnchecked(exception)) {
+    printlnMessage(uncheckedExceptionMessage);
+    printlnMessage("Other exceptions can be propagated as NSError if method has or inherits @Throws annotation.");
+  } else {
+    printlnMessage("Exceptions are propagated from Kotlin to Objective-C/Swift as NSError "
+            "only if method has or inherits @Throws annotation");
+  }
+
+  TerminateWithUnhandledException(exception);
+}
 
 static char kotlinExceptionOriginChar;
 
 extern "C" void Kotlin_ObjCExport_RethrowExceptionAsNSError(KRef exception, id* outError) {
-  Kotlin_ObjCExport_abortIfUnchecked(exception);
+  if (Kotlin_ObjCExport_isUnchecked(exception)) {
+    printlnMessage(uncheckedExceptionMessage);
+    TerminateWithUnhandledException(exception);
+  }
 
   if (outError == nullptr) {
     return;

@@ -281,35 +281,13 @@ class ObjCErrorException(
     override fun toString(): String = "NSError-based exception: $message"
 }
 
-private val uncheckedExceptionMessage: String
-    get() = "Instances of kotlin.Error, kotlin.RuntimeException and subclasses " +
-            "aren't propagated from Kotlin to Objective-C/Swift."
-
-private fun Throwable.isUncheckedException(): Boolean = this is kotlin.Error || this is kotlin.RuntimeException
-
 @ExportForCppRuntime
-private fun Kotlin_ObjCExport_abortIfUnchecked(exception: Throwable) {
-    if (exception.isUncheckedException()) {
-        println(uncheckedExceptionMessage)
-        ReportUnhandledException(exception)
-        kotlin.system.exitProcess(1)
-    }
-}
+private fun Kotlin_ObjCExport_isUnchecked(exception: Throwable): Boolean =
+        exception is kotlin.Error || exception is kotlin.RuntimeException
 
-@ExportForCompiler
-private fun trapOnUndeclaredException(exception: Throwable) {
-    if (exception.isUncheckedException()) {
-        println(uncheckedExceptionMessage)
-        println("Other exceptions can be propagated as NSError if method has or inherits @Throws annotation.")
-    } else {
-        println("Exceptions are propagated from Kotlin to Objective-C/Swift as NSError " +
-                "only if method has or inherits @Throws annotation")
-    }
-
-    ReportUnhandledException(exception)
-    kotlin.system.exitProcess(1)
-
-}
+@PublishedApi
+@SymbolName("Kotlin_ObjCExport_trapOnUndeclaredException")
+internal external fun trapOnUndeclaredException(exception: Throwable)
 
 @ExportForCppRuntime
 private fun Kotlin_Throwable_getMessage(throwable: Throwable): String? = throwable.message

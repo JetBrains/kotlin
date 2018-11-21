@@ -31,6 +31,8 @@ OBJ_GETTER(GetStackTraceStrings, KConstRef stackTrace);
 // Throws arbitrary exception.
 void ThrowException(KRef exception);
 
+RUNTIME_NORETURN void TerminateWithUnhandledException(KRef exception);
+
 void SetKonanTerminateHandler();
 
 // The functions below are implemented in Kotlin (at package kotlin.native.internal).
