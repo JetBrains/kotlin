@@ -1,19 +1,18 @@
 
 import java.util.function.*
 
-/** should load cls */
 enum class Direction {
     NORTH, SOUTH, WEST, EAST
 }
 
-/** should load cls */
-enum class Color(val rgb: Int) {
+enum class Color(val rgb: Int = 5) {
         RED(0xFF0000),
         GREEN(0x00FF00),
-        BLUE(0x0000FF)
+        BLUE("0x0000FF");
+
+        constructor(y: String) : this(y.toInt())
 }
 
-/** should load cls */
 enum class ProtocolState {
     WAITING {
         override fun signal() = TALKING
@@ -26,7 +25,6 @@ enum class ProtocolState {
     abstract fun signal(): ProtocolState
 }
 
-/** should load cls */
 enum class IntArithmetics : BinaryOperator<Int>, IntBinaryOperator {
     PLUS {
         override fun apply(t: Int, u: Int): Int = t + u
