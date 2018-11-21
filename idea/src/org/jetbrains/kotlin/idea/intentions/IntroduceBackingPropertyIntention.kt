@@ -40,6 +40,7 @@ class IntroduceBackingPropertyIntention : SelfTargetingIntention<KtProperty>(KtP
     companion object {
         fun canIntroduceBackingProperty(property: KtProperty): Boolean {
             val name = property.name ?: return false
+            if (property.hasModifier(KtTokens.CONST_KEYWORD)) return false
             if (property.hasJvmFieldAnnotation()) return false
 
             val bindingContext = property.getResolutionFacade().analyzeWithAllCompilerChecks(listOf(property)).bindingContext
@@ -61,8 +62,7 @@ class IntroduceBackingPropertyIntention : SelfTargetingIntention<KtProperty>(KtP
             val getter = property.getter
             if (getter == null) {
                 createGetter(property)
-            }
-            else {
+            } else {
                 replaceFieldReferences(getter, property.name!!)
             }
 
@@ -70,8 +70,7 @@ class IntroduceBackingPropertyIntention : SelfTargetingIntention<KtProperty>(KtP
                 val setter = property.setter
                 if (setter == null) {
                     createSetter(property)
-                }
-                else {
+                } else {
                     replaceFieldReferences(setter, property.name!!)
                 }
             }
