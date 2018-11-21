@@ -20,13 +20,30 @@ repositories {
 }
 
 kotlin {
+	// Check the new preset functions:
+	jvm('jvm6') { }
+    js('nodeJs')
+    targetFromPreset(presets.wasm32) { println targetName }
+    targetFromPreset(presets.jvm, 'jvm6') { println targetName } // access existing target
+    
     targets {
-        fromPreset(presets.jvm, 'jvm6')
-        fromPreset(presets.js, 'nodeJs')
-        fromPreset(presets.wasm32, 'wasm32')
+    	// Also check that the old DSL (fromPreset) works:
         fromPreset(presets.linuxX64, 'linux64')
         fromPreset(presets.mingwX64, 'mingw64')
         fromPreset(presets.macosX64, 'macos64')
+
+        // Check the DSL constructs in the Groovy DSL:
+        fromPreset(presets.jvm, 'jvm6') {
+        	println "Configuring $targetName"
+            compilations.main {
+                kotlinOptions {
+                    println "jvmTarget = " + jvmTarget
+                }
+                defaultSourceSet {
+                    println "Kotlin srcDirs: " + kotlin.srcDirs
+                }
+            }
+        }
 
         all {
             mavenPublication {

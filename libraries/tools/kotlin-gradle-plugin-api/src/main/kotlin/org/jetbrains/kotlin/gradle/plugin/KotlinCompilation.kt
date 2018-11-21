@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.plugin
 
+import groovy.lang.Closure
 import org.gradle.api.Named
 import org.gradle.api.attributes.HasAttributes
 import org.gradle.api.file.ConfigurableFileCollection
@@ -32,6 +33,7 @@ interface KotlinCompilation<out T : KotlinCommonOptions> : Named, HasAttributes,
     val defaultSourceSet: KotlinSourceSet
 
     fun defaultSourceSet(configure: KotlinSourceSet.() -> Unit)
+    fun defaultSourceSet(configure: Closure<*>) = defaultSourceSet { ConfigureUtil.configure(configure, this) }
 
     val compileDependencyConfigurationName: String
 
@@ -48,6 +50,7 @@ interface KotlinCompilation<out T : KotlinCommonOptions> : Named, HasAttributes,
     val kotlinOptions: T
 
     fun kotlinOptions(configure: T.() -> Unit)
+    fun kotlinOptions(configure: Closure<*>) = kotlinOptions { ConfigureUtil.configure(configure, this) }
 
     val compileAllTaskName: String
 
