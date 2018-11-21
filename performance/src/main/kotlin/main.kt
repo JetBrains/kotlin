@@ -17,12 +17,23 @@
 import org.jetbrains.ring.Launcher
 
 fun main(args: Array<String>) {
-    var numWarmIterations    =  0       // Should be 100000 for jdk based run
+    var numWarmIterations = 0       // Should be 100000 for jdk based run
+    var numberOfAttempts = 10
 
-    if (args.size == 1)
-        numWarmIterations    = args[0].toInt()
+    when (args.size) {
+        0 -> { }
+        1 -> numWarmIterations = args[0].toInt()
+        2 -> {
+            numWarmIterations = args[0].toInt()
+            numberOfAttempts = args[1].toInt()
+        }
+        else -> {
+            println("Usage: perf [# warmup iterations] [# attempts]")
+            return
+        }
+    }
 
     println("Ring starting")
     println("  warmup  iterations count: $numWarmIterations")
-    Launcher(numWarmIterations).runBenchmarks()
+    Launcher(numWarmIterations, numberOfAttempts).runBenchmarks()
 }

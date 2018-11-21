@@ -17,13 +17,14 @@
 package org.jetbrains.ring
 
 import octoTest
+import kotlin.math.sqrt
 import kotlin.system.measureNanoTime
 
 val BENCHMARK_SIZE = 100
 
 //-----------------------------------------------------------------------------//
 
-class Launcher(val numWarmIterations: Int) {
+class Launcher(val numWarmIterations: Int, val numberOfAttempts: Int) {
     class Results(val mean: Double, val variance: Double)
 
     val results = mutableMapOf<String, Results>()
@@ -48,8 +49,7 @@ class Launcher(val numWarmIterations: Int) {
             autoEvaluatedNumberOfMeasureIteration *= 2
         }
 
-        val attempts = 10
-        val samples = DoubleArray(attempts)
+        val samples = DoubleArray(numberOfAttempts)
         for (k in samples.indices) {
             i = autoEvaluatedNumberOfMeasureIteration
             val time = measureNanoTime {
@@ -60,8 +60,8 @@ class Launcher(val numWarmIterations: Int) {
             }
             samples[k] = time * 1.0 / autoEvaluatedNumberOfMeasureIteration
         }
-        val mean = samples.sum() / attempts
-        val variance = samples.indices.sumByDouble { (samples[it] - mean) * (samples[it] - mean) } / attempts
+        val mean = samples.sum() / numberOfAttempts
+        val variance = samples.indices.sumByDouble { (samples[it] - mean) * (samples[it] - mean) } / numberOfAttempts
 
         return Results(mean, variance)
     }
@@ -110,19 +110,24 @@ class Launcher(val numWarmIterations: Int) {
 
     //-------------------------------------------------------------------------//
 
+    private val zStar = 1.96 // For 95% confidence interval.
+
     fun printResultsNormalized() {
         var totalMean = 0.0
         var totalVariance = 0.0
         results.asSequence().sortedBy { it.key }.forEach {
             val niceName  = it.key.padEnd(50, ' ')
-            println("$niceName : ${it.value.mean.toString(9)} : ${kotlin.math.sqrt(it.value.variance).toString(9)}")
+            val mean = it.value.mean
+            val variance = it.value.variance
+            val confidenceInterval = sqrt(variance / numberOfAttempts) * zStar
+            println("$niceName : ${mean.toString(9)} : ${confidenceInterval.toString(9)}")
 
-            totalMean += it.value.mean
-            totalVariance += it.value.variance
+            totalMean += mean
+            totalVariance += variance
         }
         val averageMean = totalMean / results.size
-        val averageStdDev = kotlin.math.sqrt(totalVariance) / results.size
-        println("\nRingAverage: ${averageMean.toString(9)} : ${averageStdDev.toString(9)}")
+        val averageConfidenceInterval = sqrt(totalVariance / numberOfAttempts) * zStar / results.size
+        println("\nRingAverage: ${averageMean.toString(9)} : ${averageConfidenceInterval.toString(9)}")
     }
 
     //-------------------------------------------------------------------------//

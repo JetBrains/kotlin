@@ -26,6 +26,7 @@ repositories {
 //TODO: property
 def jvmWarmup = 10000
 def nativeWarmup = 10
+def attempts = 10
 
 ext."konan.home" = distDir
 
@@ -64,7 +65,7 @@ task jvmRun(type: JavaExec) {
     def output = new ByteArrayOutputStream()
     classpath sourceSets.main.runtimeClasspath
     main = "MainKt"
-    args "$jvmWarmup"
+    args "$jvmWarmup", "$attempts"
     standardOutput = output
     doLast {
         dumpReport('jvmReport', output)
@@ -80,7 +81,7 @@ private void dumpReport(String name, ByteArrayOutputStream output) {
 task konanRun(type: Exec) {
     dependsOn 'build'
     def output = new ByteArrayOutputStream()
-    commandLine konanArtifacts.Ring.getByTarget('host').artifact.absolutePath, "$nativeWarmup"
+    commandLine konanArtifacts.Ring.getByTarget('host').artifact.absolutePath, "$nativeWarmup", "$attempts"
     standardOutput = output
     doLast {
         dumpReport('konanReport', output)
@@ -105,11 +106,12 @@ task bench(type:DefaultTask) {
                 .each { k, v ->
             def konanValue = konanReport.report[k]
             def ratio = konanValue.mean / v.mean
+            // This is a hack since neither mean nor variance of ratio of two distributions is known.
             def minRatio = (konanValue.mean - konanValue.stdDev) / (v.mean + v.stdDev)
             def maxRatio = (konanValue.mean + konanValue.stdDev) / (v.mean - v.stdDev)
-            def ratioStdDev = Math.min(Math.abs(minRatio - ratio), Math.abs(maxRatio - ratio))
+            def ratioConfInt = Math.min(Math.abs(minRatio - ratio), Math.abs(maxRatio - ratio))
             def formattedKonanValue = String.format('%.4f us +- %.4f us', konanValue.mean / 1000, konanValue.stdDev / 1000)
-            def formattedRatio = String.format('%.2f +- %.2f', ratio, ratioStdDev)
+            def formattedRatio = String.format('%.2f +- %.2f', ratio, ratioConfInt)
             if (k == 'RingAverage') {
                 average = formattedRatio
                 absoluteAverage = formattedKonanValue
