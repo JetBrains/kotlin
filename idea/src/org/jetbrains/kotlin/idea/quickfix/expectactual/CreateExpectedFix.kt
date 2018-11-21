@@ -191,6 +191,7 @@ private fun KtPsiFactory.generateClassOrObjectByActualClass(
             is KtEnumEntry -> return@forEach
             is KtClassOrObject -> it.delete()
             is KtCallableDeclaration -> it.delete()
+            is KtAnonymousInitializer -> it.delete()
         }
     }
     expectedClass.primaryConstructor?.delete()
