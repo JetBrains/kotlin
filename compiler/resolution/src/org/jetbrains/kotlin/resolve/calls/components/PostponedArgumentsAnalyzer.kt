@@ -25,7 +25,7 @@ class PostponedArgumentsAnalyzer(
         // type can be proper if it not contains not fixed type variables
         fun canBeProper(type: UnwrappedType): Boolean
 
-        fun hasUpperUnitConstraint(type: UnwrappedType): Boolean
+        fun hasUpperOrEqualUnitConstraint(type: UnwrappedType): Boolean
 
         // mutable operations
         fun addOtherSystem(otherSystem: ConstraintStorage)
@@ -76,7 +76,7 @@ class PostponedArgumentsAnalyzer(
             c.canBeProper(rawReturnType) -> substitute(rawReturnType)
 
             // For Unit-coercion
-            c.hasUpperUnitConstraint(rawReturnType) -> lambda.returnType.builtIns.unitType
+            c.hasUpperOrEqualUnitConstraint(rawReturnType) -> lambda.returnType.builtIns.unitType
 
             else -> null
         }
