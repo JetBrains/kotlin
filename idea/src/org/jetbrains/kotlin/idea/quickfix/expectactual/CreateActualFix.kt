@@ -136,7 +136,7 @@ class CreateActualClassFix(
     actualModule: Module,
     actualPlatform: MultiTargetPlatform.Specific
 ) : CreateActualFix<KtClassOrObject>(klass, actualModule, actualPlatform, { project, element ->
-    generateClassOrObjectByExpectedClass(project, element, actualNeeded = true)
+    generateClassOrObjectByExpectedClass(project, element)
 })
 
 class CreateActualPropertyFix(
@@ -157,19 +157,9 @@ class CreateActualFunctionFix(
     descriptor?.let { generateFunction(project, element, descriptor) }
 })
 
-private fun KtModifierListOwner.replaceExpectModifier(actualNeeded: Boolean) {
-    if (actualNeeded) {
-        addModifier(KtTokens.ACTUAL_KEYWORD)
-    } else {
-        removeModifier(KtTokens.HEADER_KEYWORD)
-        removeModifier(KtTokens.EXPECT_KEYWORD)
-    }
-}
-
 internal fun KtPsiFactory.generateClassOrObjectByExpectedClass(
     project: Project,
     expectedClass: KtClassOrObject,
-    actualNeeded: Boolean,
     // If null, all expect class declarations are missed (so none from them exists)
     missedDeclarations: List<KtDeclaration>? = null
 ): KtClassOrObject {
@@ -209,14 +199,14 @@ internal fun KtPsiFactory.generateClassOrObjectByExpectedClass(
         }
     }
     if (actualClass !is KtEnumEntry) {
-        actualClass.replaceExpectModifier(actualNeeded)
+        actualClass.addModifier(KtTokens.ACTUAL_KEYWORD)
     }
 
     declLoop@ for (expectedDeclaration in expectedClass.declarations.filter { !it.exists() }) {
         val descriptor = expectedDeclaration.toDescriptor() ?: continue
         val actualDeclaration: KtDeclaration = when (expectedDeclaration) {
             is KtClassOrObject -> {
-                generateClassOrObjectByExpectedClass(project, expectedDeclaration, actualNeeded = true)
+                generateClassOrObjectByExpectedClass(project, expectedDeclaration)
             }
             is KtCallableDeclaration -> {
                 when (expectedDeclaration) {
