@@ -186,15 +186,7 @@ private fun KtPsiFactory.generateClassOrObjectByActualClass(
     actualClass: KtClassOrObject,
     outerExpectedClasses: List<KtClassOrObject>
 ): KtClassOrObject {
-    val expectedClass = createClassCopyByText(actualClass)
-    expectedClass.declarations.forEach {
-        when (it) {
-            is KtClassOrObject -> it.delete()
-            is KtCallableDeclaration -> it.delete()
-            is KtAnonymousInitializer -> it.delete()
-        }
-    }
-    expectedClass.primaryConstructor?.delete()
+    val expectedClass = createClassHeaderCopyByText(actualClass)
 
     val context = actualClass.analyzeWithContent()
     expectedClass.superTypeListEntries.zip(actualClass.superTypeListEntries).forEach { (expectedEntry, actualEntry) ->

@@ -47,7 +47,7 @@ fun createFileForDeclaration(module: Module, declaration: KtNamedDeclaration): K
     }
 }
 
-fun KtPsiFactory.createClassCopyByText(originalClass: KtClassOrObject): KtClassOrObject {
+fun KtPsiFactory.createClassHeaderCopyByText(originalClass: KtClassOrObject): KtClassOrObject {
     val text = originalClass.text
     return when (originalClass) {
         is KtObjectDeclaration -> if (originalClass.isCompanion()) {
@@ -57,6 +57,9 @@ fun KtPsiFactory.createClassCopyByText(originalClass: KtClassOrObject): KtClassO
         }
         is KtEnumEntry -> createEnumEntry(text)
         else -> createClass(text)
+    }.apply {
+        declarations.forEach(KtDeclaration::delete)
+        primaryConstructor?.delete()
     }
 }
 
