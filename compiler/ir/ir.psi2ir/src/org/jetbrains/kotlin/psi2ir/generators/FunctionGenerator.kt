@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.psi2ir.generators
 
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.expressions.IrBody
@@ -24,13 +25,9 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.util.declareSimpleFunctionWithOverrides
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.pureEndOffset
 import org.jetbrains.kotlin.psi.psiUtil.pureStartOffset
-import org.jetbrains.kotlin.psi.psiUtil.startOffsetSkippingComments
 import org.jetbrains.kotlin.psi2ir.isConstructorDelegatingToSuper
-import org.jetbrains.kotlin.psi2ir.pureEndOffsetOrUndefined
-import org.jetbrains.kotlin.psi2ir.pureStartOffsetOrUndefined
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -83,7 +80,9 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
         origin: IrDeclarationOrigin
     ): IrSimpleFunction =
         context.symbolTable.declareSimpleFunctionWithOverrides(
-            ktElement.pureStartOffset, ktElement.pureEndOffset, origin,
+            ktElement.getStartOffsetOfFunctionDeclarationKeywordOrNull() ?: ktElement.pureStartOffset,
+            ktElement.pureEndOffset,
+            origin,
             descriptor
         )
 
@@ -115,7 +114,7 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
                     if (ktBodyExpression != null)
                         createBodyGenerator(irAccessor.symbol).generateFunctionBody(ktBodyExpression)
                     else
-                        generateDefaultAccessorBody(ktProperty, descriptor, irAccessor)
+                        generateDefaultAccessorBody(descriptor, irAccessor)
         }
 
     fun generateDefaultAccessorForPrimaryConstructorParameter(
@@ -126,31 +125,33 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
             declarationGenerator.generateScopedTypeParameterDeclarations(irAccessor, descriptor.typeParameters)
             irAccessor.returnType = descriptor.returnType!!.toIrType()
             FunctionGenerator(declarationGenerator).generateSyntheticFunctionParameterDeclarations(irAccessor)
-            irAccessor.body = generateDefaultAccessorBody(ktParameter, descriptor, irAccessor)
+            irAccessor.body = generateDefaultAccessorBody(descriptor, irAccessor)
         }
 
-    private fun generateDefaultAccessorBody(ktProperty: KtElement, accessor: PropertyAccessorDescriptor, irAccessor: IrSimpleFunction) =
+    private fun generateDefaultAccessorBody(
+        accessor: PropertyAccessorDescriptor,
+        irAccessor: IrSimpleFunction
+    ) =
         if (accessor.modality == Modality.ABSTRACT)
             null
         else
             when (accessor) {
-                is PropertyGetterDescriptor -> generateDefaultGetterBody(ktProperty, accessor, irAccessor)
-                is PropertySetterDescriptor -> generateDefaultSetterBody(ktProperty, accessor, irAccessor)
+                is PropertyGetterDescriptor -> generateDefaultGetterBody(accessor, irAccessor)
+                is PropertySetterDescriptor -> generateDefaultSetterBody(accessor, irAccessor)
                 else -> throw AssertionError("Should be getter or setter: $accessor")
             }
 
     private fun generateDefaultGetterBody(
-        ktProperty: KtElement,
         getter: PropertyGetterDescriptor,
         irAccessor: IrSimpleFunction
     ): IrBlockBody {
         val property = getter.correspondingProperty
 
-        val startOffset = ktProperty.startOffsetSkippingComments
-        val endOffset = ktProperty.endOffset
+        val startOffset = irAccessor.startOffset
+        val endOffset = irAccessor.endOffset
         val irBody = IrBlockBodyImpl(startOffset, endOffset)
 
-        val receiver = generateReceiverExpressionForDefaultPropertyAccessor(ktProperty, property)
+        val receiver = generateReceiverExpressionForDefaultPropertyAccessor(property, irAccessor)
 
         irBody.statements.add(
             IrReturnImpl(
@@ -168,17 +169,16 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
     }
 
     private fun generateDefaultSetterBody(
-        ktProperty: KtElement,
         setter: PropertySetterDescriptor,
         irAccessor: IrSimpleFunction
     ): IrBlockBody {
         val property = setter.correspondingProperty
 
-        val startOffset = ktProperty.startOffsetSkippingComments
-        val endOffset = ktProperty.endOffset
+        val startOffset = irAccessor.startOffset
+        val endOffset = irAccessor.endOffset
         val irBody = IrBlockBodyImpl(startOffset, endOffset)
 
-        val receiver = generateReceiverExpressionForDefaultPropertyAccessor(ktProperty, property)
+        val receiver = generateReceiverExpressionForDefaultPropertyAccessor(property, irAccessor)
 
         val irValueParameter = irAccessor.valueParameters.single()
         irBody.statements.add(
@@ -193,13 +193,16 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
         return irBody
     }
 
-    private fun generateReceiverExpressionForDefaultPropertyAccessor(ktProperty: KtElement, property: PropertyDescriptor): IrExpression? {
+    private fun generateReceiverExpressionForDefaultPropertyAccessor(
+        property: PropertyDescriptor,
+        irAccessor: IrSimpleFunction
+    ): IrExpression? {
         val containingDeclaration = property.containingDeclaration
         return when (containingDeclaration) {
             is ClassDescriptor -> {
                 val thisAsReceiverParameter = containingDeclaration.thisAsReceiverParameter
                 IrGetValueImpl(
-                    ktProperty.startOffsetSkippingComments, ktProperty.endOffset,
+                    irAccessor.startOffset, irAccessor.endOffset,
                     thisAsReceiverParameter.type.toIrType(),
                     context.symbolTable.referenceValue(thisAsReceiverParameter)
                 )
@@ -246,7 +249,9 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
         generateBody: BodyGenerator.() -> IrBody?
     ): IrConstructor =
         context.symbolTable.declareConstructor(
-            ktConstructorElement.pureStartOffset, ktConstructorElement.pureEndOffset, IrDeclarationOrigin.DEFINED,
+            ktConstructorElement.getStartOffsetOfConstructorDeclarationKeywordOrNull() ?: ktConstructorElement.pureStartOffset,
+            ktConstructorElement.pureEndOffset,
+            IrDeclarationOrigin.DEFINED,
             constructorDescriptor
         ).buildWithScope { irConstructor ->
             generateValueParameterDeclarations(irConstructor, ktParametersElement, null)
@@ -268,17 +273,17 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
         val functionDescriptor = irFunction.descriptor
 
         irFunction.dispatchReceiverParameter = functionDescriptor.dispatchReceiverParameter?.let {
-            generateReceiverParameterDeclaration(it, ktParameterOwner)
+            generateReceiverParameterDeclaration(it, ktParameterOwner, irFunction)
         }
 
         irFunction.extensionReceiverParameter = functionDescriptor.extensionReceiverParameter?.let {
-            generateReceiverParameterDeclaration(it, ktReceiverParameterElement ?: ktParameterOwner)
+            generateReceiverParameterDeclaration(it, ktReceiverParameterElement ?: ktParameterOwner, irFunction)
         }
 
         val bodyGenerator = createBodyGenerator(irFunction.symbol)
         functionDescriptor.valueParameters.mapTo(irFunction.valueParameters) { valueParameterDescriptor ->
             val ktParameter = DescriptorToSourceUtils.getSourceFromDescriptor(valueParameterDescriptor) as? KtParameter
-            generateValueParameterDeclaration(valueParameterDescriptor, ktParameter, bodyGenerator, withDefaultValues)
+            generateValueParameterDeclaration(valueParameterDescriptor, ktParameter, bodyGenerator, withDefaultValues, irFunction)
         }
     }
 
@@ -286,11 +291,12 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
         valueParameterDescriptor: ValueParameterDescriptor,
         ktParameter: KtParameter?,
         bodyGenerator: BodyGenerator,
-        withDefaultValues: Boolean
+        withDefaultValues: Boolean,
+        irOwnerElement: IrElement
     ): IrValueParameter =
-        declareParameter(valueParameterDescriptor, ktParameter).also {
+        declareParameter(valueParameterDescriptor, ktParameter, irOwnerElement).also { irValueParameter ->
             if (withDefaultValues) {
-                it.defaultValue = ktParameter?.defaultValue?.let {
+                irValueParameter.defaultValue = ktParameter?.defaultValue?.let {
                     bodyGenerator.generateExpressionBody(it)
                 }
             }
@@ -298,13 +304,15 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
 
     private fun generateReceiverParameterDeclaration(
         receiverParameterDescriptor: ReceiverParameterDescriptor,
-        ktElement: KtPureElement?
+        ktElement: KtPureElement?,
+        irOwnerElement: IrElement
     ): IrValueParameter =
-        declareParameter(receiverParameterDescriptor, ktElement)
+        declareParameter(receiverParameterDescriptor, ktElement, irOwnerElement)
 
-    private fun declareParameter(descriptor: ParameterDescriptor, ktElement: KtPureElement?) =
+    private fun declareParameter(descriptor: ParameterDescriptor, ktElement: KtPureElement?, irOwnerElement: IrElement) =
         context.symbolTable.declareValueParameter(
-            ktElement.pureStartOffsetOrUndefined, ktElement.pureEndOffsetOrUndefined,
+            ktElement?.pureStartOffset ?: irOwnerElement.startOffset,
+            ktElement?.pureEndOffset ?: irOwnerElement.endOffset,
             IrDeclarationOrigin.DEFINED,
             descriptor, descriptor.type.toIrType(),
             (descriptor as? ValueParameterDescriptor)?.varargElementType?.toIrType()

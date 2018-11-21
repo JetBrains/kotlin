@@ -44,8 +44,61 @@ public class IrSourceRangesTestCaseGenerated extends AbstractIrSourceRangesTestC
         runTest("compiler/testData/ir/sourceRanges/kt17108.kt");
     }
 
-    @TestMetadata("synthesizedDataClassMembers.kt")
-    public void testSynthesizedDataClassMembers() throws Exception {
-        runTest("compiler/testData/ir/sourceRanges/synthesizedDataClassMembers.kt");
+    @TestMetadata("compiler/testData/ir/sourceRanges/declarations")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Declarations extends AbstractIrSourceRangesTestCase {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInDeclarations() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/ir/sourceRanges/declarations"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("classFuns.kt")
+        public void testClassFuns() throws Exception {
+            runTest("compiler/testData/ir/sourceRanges/declarations/classFuns.kt");
+        }
+
+        @TestMetadata("classProperties.kt")
+        public void testClassProperties() throws Exception {
+            runTest("compiler/testData/ir/sourceRanges/declarations/classProperties.kt");
+        }
+
+        @TestMetadata("classes.kt")
+        public void testClasses() throws Exception {
+            runTest("compiler/testData/ir/sourceRanges/declarations/classes.kt");
+        }
+
+        @TestMetadata("fakeOverrides.kt")
+        public void testFakeOverrides() throws Exception {
+            runTest("compiler/testData/ir/sourceRanges/declarations/fakeOverrides.kt");
+        }
+
+        @TestMetadata("primaryConstructors.kt")
+        public void testPrimaryConstructors() throws Exception {
+            runTest("compiler/testData/ir/sourceRanges/declarations/primaryConstructors.kt");
+        }
+
+        @TestMetadata("secondaryConstructors.kt")
+        public void testSecondaryConstructors() throws Exception {
+            runTest("compiler/testData/ir/sourceRanges/declarations/secondaryConstructors.kt");
+        }
+
+        @TestMetadata("synthesizedDataClassMembers.kt")
+        public void testSynthesizedDataClassMembers() throws Exception {
+            runTest("compiler/testData/ir/sourceRanges/declarations/synthesizedDataClassMembers.kt");
+        }
+
+        @TestMetadata("topLevelFuns.kt")
+        public void testTopLevelFuns() throws Exception {
+            runTest("compiler/testData/ir/sourceRanges/declarations/topLevelFuns.kt");
+        }
+
+        @TestMetadata("topLevelProperties.kt")
+        public void testTopLevelProperties() throws Exception {
+            runTest("compiler/testData/ir/sourceRanges/declarations/topLevelProperties.kt");
+        }
     }
 }

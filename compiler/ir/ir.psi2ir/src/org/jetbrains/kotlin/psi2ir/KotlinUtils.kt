@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.psi2ir
 
 import com.intellij.psi.PsiElement
+import com.intellij.psi.tree.TokenSet
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
@@ -32,7 +33,6 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
-import java.lang.Exception
 
 fun KotlinType.containsNull() =
     TypeUtils.isNullableType(this)
@@ -85,3 +85,5 @@ val PropertyDescriptor.unwrappedSetMethod: FunctionDescriptor?
 
 val KtPureElement?.pureStartOffsetOrUndefined get() = this?.psiOrParent?.startOffsetSkippingComments ?: UNDEFINED_OFFSET
 val KtPureElement?.pureEndOffsetOrUndefined get() = this?.psiOrParent?.endOffset ?: UNDEFINED_OFFSET
+
+fun KtElement.getChildTokenStartOffsetOrNull(tokenSet: TokenSet) = node.findChildByType(tokenSet)?.startOffset
