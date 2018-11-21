@@ -77,7 +77,7 @@ private class ObjCCategoryImpl(
     override val properties = mutableListOf<ObjCProperty>()
 }
 
-internal class NativeIndexImpl(val library: NativeLibrary) : NativeIndex() {
+internal class NativeIndexImpl(val library: NativeLibrary, val verbose: Boolean = false) : NativeIndex() {
 
     private sealed class DeclarationID {
         data class USR(val usr: String) : DeclarationID()
@@ -153,6 +153,12 @@ internal class NativeIndexImpl(val library: NativeLibrary) : NativeIndex() {
         get() = globalById.values
 
     override lateinit var includedHeaders: List<HeaderId>
+
+    private fun log(message: String) {
+        if (verbose) {
+            println(message)
+        }
+    }
 
     private fun getDeclarationId(cursor: CValue<CXCursor>): DeclarationID {
         val usr = clang_getCursorUSR(cursor).convertAndDispose()
@@ -618,6 +624,15 @@ internal class NativeIndexImpl(val library: NativeLibrary) : NativeIndex() {
         } else {
             val returnType = convertType(clang_getResultType(type))
             val numArgs = clang_getNumArgTypes(type)
+
+            // Ignore functions with long signatures since we have no basic class for such functional types in the stdlib.
+            // TODO: Remove this limitation when functional types with long signatures are supported.
+            if (numArgs > 22) {
+                log("Warning: cannot generate a Kotlin functional type for a pointer to a function with more than 22 parameters. " +
+                        "An opaque pointer will be used instead.")
+                return VoidType
+            }
+
             val paramTypes = (0..numArgs - 1).map {
                 convertType(clang_getArgType(type, it))
             }
@@ -902,8 +917,8 @@ internal class NativeIndexImpl(val library: NativeLibrary) : NativeIndex() {
 
 }
 
-fun buildNativeIndexImpl(library: NativeLibrary): NativeIndex {
-    val result = NativeIndexImpl(library)
+fun buildNativeIndexImpl(library: NativeLibrary, verbose: Boolean): NativeIndex {
+    val result = NativeIndexImpl(library, verbose)
     indexDeclarations(result)
     findMacros(result)
     return result

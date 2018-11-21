@@ -53,7 +53,7 @@ data class NativeLibrary(val includes: List<String>,
 /**
  * Retrieves the definitions from given C header file using given compiler arguments (e.g. defines).
  */
-fun buildNativeIndex(library: NativeLibrary): NativeIndex = buildNativeIndexImpl(library)
+fun buildNativeIndex(library: NativeLibrary, verbose: Boolean): NativeIndex = buildNativeIndexImpl(library, verbose)
 
 /**
  * This class describes the IR of definitions from C header file(s).

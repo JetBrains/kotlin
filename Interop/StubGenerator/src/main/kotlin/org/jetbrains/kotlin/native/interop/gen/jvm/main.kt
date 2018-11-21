@@ -241,7 +241,7 @@ private fun processCLib(args: Array<String>): Array<String>? {
             target = tool.target
     )
 
-    val nativeIndex = buildNativeIndex(library)
+    val nativeIndex = buildNativeIndex(library, verbose)
 
     val gen = StubGenerator(nativeIndex, configuration, libName, generateShims, verbose, flavor, imports)
 

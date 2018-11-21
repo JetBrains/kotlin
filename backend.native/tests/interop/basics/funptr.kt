@@ -7,6 +7,11 @@ import kotlinx.cinterop.*
 import cfunptr.*
 import kotlin.test.*
 
+typealias NotSoLongSignatureFunction = (
+    Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int,
+    Int, Int, Int, Int, Int, Int, Int, Int, Int, Int, Int
+) -> Int
+
 fun main(args: Array<String>) {
     val atoiPtr = getAtoiPtr()!!
 
@@ -31,6 +36,11 @@ fun main(args: Array<String>) {
     printIntPtr(isIntPositivePtr(-42).ifThenOneElseZero())
 
     assertEquals(getMaxUIntGetter()!!(), UInt.MAX_VALUE)
+
+    val longSignaturePtr: COpaquePointer? = getLongSignatureFunctionPtr()
+    val notSoLongSignaturePtr: CPointer<CFunction<NotSoLongSignatureFunction>>? = getNotSoLongSignatureFunctionPtr()
+    printIntPtr(notSoLongSignaturePtr!!.invoke(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0))
+    printIntPtr(notSoLongSignatureFunction(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0))
 }
 
 fun Boolean.ifThenOneElseZero() = if (this) 1 else 0
