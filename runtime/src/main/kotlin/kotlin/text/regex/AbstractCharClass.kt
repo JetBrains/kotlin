@@ -93,14 +93,16 @@ internal abstract class AbstractCharClass : SpecialToken() {
             surrogates_.value?.let {
                 return it
             }
+            val surrogates = lowHighSurrogates
             val result = object : AbstractCharClass() {
                 override fun contains(ch: Int): Boolean {
                     val index = ch - Char.MIN_SURROGATE.toInt()
 
-                    return if (index >= 0 && index < AbstractCharClass.SURROGATE_CARDINALITY)
-                        this.altSurrogates xor this@AbstractCharClass.lowHighSurrogates.get(index)
-                    else
+                    return if (index >= 0 && index < AbstractCharClass.SURROGATE_CARDINALITY) {
+                        this.altSurrogates xor surrogates[index]
+                    } else {
                         false
+                    }
                 }
             }
             result.setNegative(this.altSurrogates)
@@ -109,12 +111,10 @@ internal abstract class AbstractCharClass : SpecialToken() {
         }
 
 
-    private val withoutSurrogates_ = AtomicReference<AbstractCharClass?>(null)
+    // We cannot cache this class as we've done with surrogates above because
+    // here is a circular reference between it and AbstractCharClass.
     val withoutSurrogates: AbstractCharClass
         get() {
-            withoutSurrogates_.value?.let {
-                return it
-            }
             val result = object : AbstractCharClass() {
                 override fun contains(ch: Int): Boolean {
                     val index = ch - Char.MIN_SURROGATE.toInt()
@@ -129,10 +129,8 @@ internal abstract class AbstractCharClass : SpecialToken() {
             }
             result.setNegative(isNegative())
             result.mayContainSupplCodepoints = mayContainSupplCodepoints
-            withoutSurrogates_ .compareAndSet(null, result.freeze())
-            return withoutSurrogates_.value!!
+            return result
         }
-
 
     /**
      * Sets this CharClass to negative form, i.e. if they will add some characters and after that set this
