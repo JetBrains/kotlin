@@ -197,7 +197,7 @@ include ":kotlin-build-common",
         ":libraries:kotlin-prepush-hook",
         ":libraries:tools:mutability-annotations-compat",
         ":include:kotlin-compiler",
-        ":usages-statistics",
+        ":usage-statistics",
 
         // plugin markers:
         ':kotlin-gradle-plugin:plugin-marker',
@@ -335,7 +335,6 @@ project(':examples:scripting-jvm-embeddable-host').projectDir = "$rootDir/librar
 project(':pill:generate-all-tests').projectDir = "$rootDir/plugins/pill/generate-all-tests" as File
 project(':kotlin-imports-dumper-compiler-plugin').projectDir = "$rootDir/plugins/imports-dumper" as File
 project(':libraries:kotlin-prepush-hook').projectDir = "$rootDir/libraries/tools/kotlin-prepush-hook" as File
-project(':usages-statistics').projectDir = "$rootDir/usages-statistics" as File
 
 // plugin markers:
 project(':kotlin-gradle-plugin:plugin-marker').projectDir = file("$rootDir/libraries/tools/kotlin-gradle-plugin/plugin-marker")
@@ -346,4 +345,5 @@ project(':kotlinx-serialization-compiler-plugin').projectDir = file("$rootDir/pl
 project(':kotlinx-serialization-ide-plugin').projectDir = file("$rootDir/plugins/kotlin-serialization/kotlin-serialization-ide")
 project(':kotlin-serialization').projectDir = file("$rootDir/libraries/tools/kotlin-serialization")
 project(':kotlin-serialization-unshaded').projectDir = file("$rootDir/libraries/tools/kotlin-serialization-unshaded")
+project(':usage-statistics').projectDir = file("$rootDir/usage-statistics")
 project(':kotlin-idl2k').projectDir = file("$rootDir/libraries/tools/idl2k")

@@ -20,9 +20,11 @@ import com.intellij.codeInsight.FileModificationService
 import com.intellij.codeInsight.intention.HighPriorityAction
 import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.codeInsight.intention.LowPriorityAction
+import com.intellij.internal.statistic.service.fus.collectors.FUSApplicationUsageTrigger
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
+import org.jetbrains.kotlin.statistics.KotlinIdeQuickfixTrigger
 
 open class QuickFixWithDelegateFactory(
         private val delegateFactory: () -> IntentionAction?
@@ -53,6 +55,11 @@ open class QuickFixWithDelegateFactory(
         if (!FileModificationService.getInstance().prepareFileForWrite(file)) {
             return
         }
+
+        FUSApplicationUsageTrigger.getInstance().trigger(
+                KotlinIdeQuickfixTrigger::class.java,
+                this::class.java.simpleName
+        )
 
         val action = delegateFactory() ?: return
 

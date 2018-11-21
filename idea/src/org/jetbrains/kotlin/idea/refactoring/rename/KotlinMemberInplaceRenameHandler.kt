@@ -16,8 +16,11 @@
 
 package org.jetbrains.kotlin.idea.refactoring.rename
 
+import com.intellij.internal.statistic.service.fus.collectors.FUSApplicationUsageTrigger
 import com.intellij.lang.Language
+import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.project.Project
 import com.intellij.psi.*
 import com.intellij.refactoring.RefactoringActionHandler
 import com.intellij.refactoring.rename.inplace.MemberInplaceRenameHandler
@@ -27,6 +30,7 @@ import org.jetbrains.kotlin.idea.core.unquote
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import org.jetbrains.kotlin.psi.KtObjectDeclaration
 import org.jetbrains.kotlin.psi.KtPrimaryConstructor
+import org.jetbrains.kotlin.statistics.KotlinIdeRefactoringTrigger
 
 class KotlinMemberInplaceRenameHandler : MemberInplaceRenameHandler() {
     private class RenamerImpl(
@@ -85,5 +89,15 @@ class KotlinMemberInplaceRenameHandler : MemberInplaceRenameHandler() {
         if (!editor.settings.isVariableInplaceRenameEnabled) return false
         val currentElement = element?.substitute() as? KtNamedDeclaration ?: return false
         return currentElement.nameIdentifier != null && !KotlinVariableInplaceRenameHandler.isInplaceRenameAvailable(currentElement)
+    }
+
+    override fun invoke(project: Project, elements: Array<out PsiElement>, dataContext: DataContext) {
+        super.invoke(project, elements, dataContext)
+        FUSApplicationUsageTrigger.getInstance().trigger(KotlinIdeRefactoringTrigger::class.java, this.javaClass.simpleName)
+    }
+
+    override fun invoke(project: Project, editor: Editor?, file: PsiFile?, dataContext: DataContext?) {
+        super.invoke(project, editor, file, dataContext)
+        FUSApplicationUsageTrigger.getInstance().trigger(KotlinIdeRefactoringTrigger::class.java, this.javaClass.simpleName)
     }
 }

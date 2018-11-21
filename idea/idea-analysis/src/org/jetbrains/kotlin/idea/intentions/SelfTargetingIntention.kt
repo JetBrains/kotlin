@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.intentions
 import com.intellij.codeInsight.FileModificationService
 import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.codeInspection.IntentionWrapper
+import com.intellij.internal.statistic.service.fus.collectors.FUSApplicationUsageTrigger
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
@@ -33,6 +34,7 @@ import org.jetbrains.kotlin.psi.KtBlockExpression
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.psiUtil.containsInside
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
+import org.jetbrains.kotlin.statistics.KotlinIdeIntentionTrigger
 
 @Suppress("EqualsOrHashCode")
 abstract class SelfTargetingIntention<TElement : PsiElement>(
@@ -101,6 +103,10 @@ abstract class SelfTargetingIntention<TElement : PsiElement>(
 
     final override fun invoke(project: Project, editor: Editor?, file: PsiFile) {
         editor ?: return
+        FUSApplicationUsageTrigger.getInstance().trigger(
+                KotlinIdeIntentionTrigger::class.java,
+                this::class.java.simpleName
+        )
         PsiDocumentManager.getInstance(project).commitAllDocuments()
         val target = getTarget(editor, file) ?: return
         if (!FileModificationService.getInstance().preparePsiElementForWrite(target)) return
