@@ -2586,6 +2586,11 @@ task inline_localObjectReturnedFromWhen(type: RunKonanTest) {
     source = "codegen/inline/localObjectReturnedFromWhen.kt"
 }
 
+task inline_genericFunctionReference(type: RunKonanTest) {
+    goldValue = "0\n"
+    source = "codegen/inline/genericFunctionReference.kt"
+}
+
 task classDeclarationInsideInline(type: RunKonanTest) {
     source = "codegen/inline/classDeclarationInsideInline.kt"
     goldValue = "test1: 1.0\n1\ntest2\n"

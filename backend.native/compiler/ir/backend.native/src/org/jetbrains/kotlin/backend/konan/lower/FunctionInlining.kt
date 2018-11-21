@@ -359,6 +359,8 @@ private class Inliner(val globalSubstituteMap: MutableMap<DeclarationDescriptor,
                         }
                     }
                     assert(unboundIndex == valueParameters.size) { "Not all arguments of <invoke> are used" }
+                    for (index in 0 until functionArgument.typeArgumentsCount)
+                        putTypeArgument(index, functionArgument.getTypeArgument(index))
                 }
                 return owner.visitCall(super.visitCall(immediateCall) as IrCall, Ref(false))
             }
