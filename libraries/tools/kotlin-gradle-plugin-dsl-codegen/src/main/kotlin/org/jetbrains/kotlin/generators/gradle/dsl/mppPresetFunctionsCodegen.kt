@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.generators.gradle.dsl
 
+import groovy.lang.Closure
+import org.gradle.util.ConfigureUtil
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetsContainerWithPresets
 import java.io.File
 
@@ -19,7 +21,7 @@ private val presetsProperty = KotlinTargetsContainerWithPresets::presets.name
 private fun generateKotlinTargetContainerWithPresetFunctionsInterface() {
     // Generate KotlinMutliplatformExtension subclass with member functions for the presets:
     val functions = allPresetEntries.map {
-        generatePresetFunction(it, presetsProperty, "configureOrCreate")
+        generatePresetFunctions(it, presetsProperty, "configureOrCreate")
     }
 
     val parentInterfaceName =
@@ -31,6 +33,8 @@ private fun generateKotlinTargetContainerWithPresetFunctionsInterface() {
     val imports = allPresetEntries
         .flatMap { it.typeNames() }
         .plus(parentInterfaceName)
+        .plus(typeName(ConfigureUtil::class.java.canonicalName))
+        .plus(typeName(Closure::class.java.canonicalName))
         .filter { it.packageName() != className.packageName() }
         .flatMap { it.collectFqNames() }
         .toSortedSet()
@@ -52,21 +56,29 @@ private fun generateKotlinTargetContainerWithPresetFunctionsInterface() {
     targetFile.writeText(code)
 }
 
-private fun generatePresetFunction(
+private fun generatePresetFunctions(
     presetEntry: KotlinPresetEntry,
     getPresetsExpression: String,
     configureOrCreateFunctionName: String
-): String = """
-    fun ${presetEntry.presetName}(
-        name: String = "${presetEntry.presetName}",
+): String {
+    val presetName = presetEntry.presetName
+    return """
+    fun $presetName(
+        name: String = "$presetName",
         configure: ${presetEntry.targetType.renderShort()}.() -> Unit = { }
     ): ${presetEntry.targetType.renderShort()} =
         $configureOrCreateFunctionName(
             name,
-            $getPresetsExpression.getByName("${presetEntry.presetName}") as ${presetEntry.presetType.renderErased()},
+            $getPresetsExpression.getByName("$presetName") as ${presetEntry.presetType.renderErased()},
             configure
         )
+
+    fun $presetName() = $presetName("$presetName") { }
+    fun $presetName(name: String) = $presetName(name) { }
+    fun $presetName(name: String, configure: Closure<*>) = $presetName(name) { ConfigureUtil.configure(configure, this) }
+    fun $presetName(configure: Closure<*>) = $presetName { ConfigureUtil.configure(configure, this) }
 """.trimIndent()
+}
 
 private fun String.indented(nSpaces: Int = 4): String {
     val spaces = String(CharArray(nSpaces) { ' ' })

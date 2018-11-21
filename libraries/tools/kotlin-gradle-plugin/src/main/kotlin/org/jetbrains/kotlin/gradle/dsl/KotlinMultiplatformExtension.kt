@@ -5,8 +5,10 @@
 
 package org.jetbrains.kotlin.gradle.dsl
 
+import groovy.lang.Closure
 import org.gradle.api.InvalidUserCodeException
 import org.gradle.api.NamedDomainObjectCollection
+import org.gradle.util.ConfigureUtil
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetPreset
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetsContainerWithPresets
@@ -28,11 +30,20 @@ open class KotlinMultiplatformExtension : KotlinProjectExtension(), KotlinTarget
         @Suppress("UNCHECKED_CAST")
         (targets.getByName(KotlinMultiplatformPlugin.METADATA_TARGET_NAME) as KotlinOnlyTarget<KotlinCommonCompilation>).also(configure)
 
+    fun metadata(configure: Closure<*>) = metadata { ConfigureUtil.configure(configure, this) }
+
     fun <T : KotlinTarget> targetFromPreset(
         preset: KotlinTargetPreset<T>,
         name: String = preset.name,
         configure: T.() -> Unit = { }
     ): T = configureOrCreate(name, preset, configure)
+
+    fun targetFromPreset(preset: KotlinTargetPreset<*>, name: String, configure: Closure<*>) =
+        targetFromPreset(preset, name) { ConfigureUtil.configure(configure, this) }
+
+    fun targetFromPreset(preset: KotlinTargetPreset<*>) = targetFromPreset(preset, preset.name) { }
+    fun targetFromPreset(preset: KotlinTargetPreset<*>, name: String) = targetFromPreset(preset, name) { }
+    fun targetFromPreset(preset: KotlinTargetPreset<*>, configure: Closure<*>) = targetFromPreset(preset, preset.name, configure)
 }
 
 internal fun KotlinTarget.isProducedFromPreset(kotlinTargetPreset: KotlinTargetPreset<*>): Boolean =
