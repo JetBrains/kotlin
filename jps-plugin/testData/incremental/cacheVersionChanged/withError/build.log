@@ -1,4 +1,4 @@
-================ Step #1 =================
+================ Step #1 add file with compilation error to module1 =================
 
 Building module5
 Exit code: NOTHING_DONE
@@ -36,7 +36,7 @@ Exit code: ABORT
 COMPILATION FAILED
 Name expected
 
-================ Step #2 =================
+================ Step #2 fix compilation error in module1 =================
 
 Building module5
 Exit code: NOTHING_DONE
