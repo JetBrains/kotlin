@@ -231,6 +231,7 @@ class KotlinCompileContext(val jpsContext: CompileContext) {
                         "$target caches is cleared as not required anymore: ${target.initialLocalCacheAttributesDiff}"
                     )
                     testingLogger?.invalidOrUnusedCache(null, target, target.initialLocalCacheAttributesDiff)
+                    target.initialLocalCacheAttributesDiff.manager.writeVersion(null)
                     dataManager.getKotlinCache(target)?.clean()
                 }
             }
