@@ -1,5 +1,7 @@
 ================ Step #1 =================
 
+Marked as dirty by Kotlin:
+  src/A.kt
 Cleaning output files:
   out/production/module/META-INF/module.kotlin_module
   out/production/module/foo/A$Companion.class
