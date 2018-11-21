@@ -18,9 +18,20 @@ package org.jetbrains.kotlin.j2k.tree
 
 import org.jetbrains.kotlin.j2k.tree.impl.JKMethodSymbol
 
+interface JKKtGetterOrSetter : JKTreeElement, JKModifierListOwner, JKBranchElement {
+    var body: JKStatement
+    val kind: Kind
+
+    enum class Kind {
+        GETTER, SETTER
+    }
+}
+
+interface JKKtEmptyGetterOrSetter : JKKtGetterOrSetter
+
 interface JKKtProperty : JKField {
-    val getter: JKBlock
-    val setter: JKBlock
+    var getter: JKKtGetterOrSetter
+    var setter: JKKtGetterOrSetter
 }
 
 interface JKKtFunction : JKMethod {

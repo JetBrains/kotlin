@@ -93,6 +93,8 @@ interface JKVisitor<out R, in D> {
     fun visitJavaDefaultSwitchCase(javaDefaultSwitchCase: JKJavaDefaultSwitchCase, data: D): R = visitJavaSwitchCase(javaDefaultSwitchCase, data)
     fun visitJavaLabelSwitchCase(javaLabelSwitchCase: JKJavaLabelSwitchCase, data: D): R = visitJavaSwitchCase(javaLabelSwitchCase, data)
     fun visitJavaContinueStatement(javaContinueStatement: JKJavaContinueStatement, data: D): R = visitStatement(javaContinueStatement, data)
+    fun visitKtGetterOrSetter(ktGetterOrSetter: JKKtGetterOrSetter, data: D): R = visitTreeElement(ktGetterOrSetter, data)
+    fun visitKtEmptyGetterOrSetter(ktEmptyGetterOrSetter: JKKtEmptyGetterOrSetter, data: D): R = visitKtGetterOrSetter(ktEmptyGetterOrSetter, data)
     fun visitKtProperty(ktProperty: JKKtProperty, data: D): R = visitField(ktProperty, data)
     fun visitKtFunction(ktFunction: JKKtFunction, data: D): R = visitMethod(ktFunction, data)
     fun visitKtConstructor(ktConstructor: JKKtConstructor, data: D): R = visitDeclaration(ktConstructor, data)

@@ -278,6 +278,14 @@ class NewCodeBuilder {
                 printer.printWithNoIndent(" = ")
                 ktProperty.initializer.accept(this)
             }
+            if (ktProperty.getter !is JKKtEmptyGetterOrSetter) {
+                printer.printlnWithNoIndent()
+                ktProperty.getter.accept(this)
+            }
+            if (ktProperty.setter !is JKKtEmptyGetterOrSetter) {
+                printer.printlnWithNoIndent()
+                ktProperty.setter.accept(this)
+            }
         }
 
         override fun visitEnumConstant(enumConstant: JKEnumConstant) {
@@ -379,6 +387,29 @@ class NewCodeBuilder {
             } else {
                 statement.accept(this)
             }
+        }
+
+        override fun visitKtGetterOrSetter(ktGetterOrSetter: JKKtGetterOrSetter) {
+            printer.indented {
+                ktGetterOrSetter.modifierList.accept(this)
+                printer.printWithNoIndent(" ")
+                when (ktGetterOrSetter.kind) {
+                    JKKtGetterOrSetter.Kind.GETTER -> printer.printWithNoIndent("get")
+                    JKKtGetterOrSetter.Kind.SETTER -> printer.printWithNoIndent("set")
+                }
+                if (!ktGetterOrSetter.body.isEmpty()) {
+                    when (ktGetterOrSetter.kind) {
+                        JKKtGetterOrSetter.Kind.GETTER -> printer.printWithNoIndent("() ")
+                        JKKtGetterOrSetter.Kind.SETTER -> printer.printWithNoIndent("(value) ")
+                    }
+                    ktGetterOrSetter.body.accept(this)
+                }
+            }
+            printer.printlnWithNoIndent()
+        }
+
+        override fun visitKtEmptyGetterOrSetter(ktEmptyGetterOrSetter: JKKtEmptyGetterOrSetter) {
+
         }
 
         override fun visitBinaryExpression(binaryExpression: JKBinaryExpression) {

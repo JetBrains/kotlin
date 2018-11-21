@@ -30,8 +30,8 @@ class JKKtPropertyImpl(
     type: JKTypeElement,
     name: JKNameIdentifier,
     initializer: JKExpression,
-    getter: JKBlock,
-    setter: JKBlock
+    getter: JKKtGetterOrSetter,
+    setter: JKKtGetterOrSetter
 ) : JKBranchElementBase(), JKKtProperty {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitKtProperty(this, data)
 
@@ -39,8 +39,8 @@ class JKKtPropertyImpl(
     override var type by child(type)
     override var name: JKNameIdentifier by child(name)
     override var initializer: JKExpression by child(initializer)
-    override val getter: JKBlock by child(getter)
-    override val setter: JKBlock by child(setter)
+    override var getter: JKKtGetterOrSetter by child(getter)
+    override var setter: JKKtGetterOrSetter by child(setter)
 }
 
 class JKKtFunctionImpl(
