@@ -1,6 +1,7 @@
 ================ Step #1 =================
 
 Marked as dirty by Kotlin:
+  src/A.kt
   src/getACompanion.kt
   src/getACompanionShort.kt
   src/useACompanionImplicitly.kt
