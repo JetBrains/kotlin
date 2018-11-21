@@ -5728,8 +5728,43 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
         }
 
+        @TestMetadata("abstract.kt")
+        public void testAbstract() throws Exception {
+            runTest("idea/testData/intentions/convertNullablePropertyToLateinit/abstract.kt");
+        }
+
         public void testAllFilesPresentInConvertNullablePropertyToLateinit() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/convertNullablePropertyToLateinit"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("delegate.kt")
+        public void testDelegate() throws Exception {
+            runTest("idea/testData/intentions/convertNullablePropertyToLateinit/delegate.kt");
+        }
+
+        @TestMetadata("extension.kt")
+        public void testExtension() throws Exception {
+            runTest("idea/testData/intentions/convertNullablePropertyToLateinit/extension.kt");
+        }
+
+        @TestMetadata("getter.kt")
+        public void testGetter() throws Exception {
+            runTest("idea/testData/intentions/convertNullablePropertyToLateinit/getter.kt");
+        }
+
+        @TestMetadata("inlineClass.kt")
+        public void testInlineClass() throws Exception {
+            runTest("idea/testData/intentions/convertNullablePropertyToLateinit/inlineClass.kt");
+        }
+
+        @TestMetadata("int.kt")
+        public void testInt() throws Exception {
+            runTest("idea/testData/intentions/convertNullablePropertyToLateinit/int.kt");
+        }
+
+        @TestMetadata("local.kt")
+        public void testLocal() throws Exception {
+            runTest("idea/testData/intentions/convertNullablePropertyToLateinit/local.kt");
         }
 
         @TestMetadata("nonNullInitializer.kt")
@@ -5742,9 +5777,29 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             runTest("idea/testData/intentions/convertNullablePropertyToLateinit/nonNullable.kt");
         }
 
+        @TestMetadata("nullableUpperBound.kt")
+        public void testNullableUpperBound() throws Exception {
+            runTest("idea/testData/intentions/convertNullablePropertyToLateinit/nullableUpperBound.kt");
+        }
+
+        @TestMetadata("setter.kt")
+        public void testSetter() throws Exception {
+            runTest("idea/testData/intentions/convertNullablePropertyToLateinit/setter.kt");
+        }
+
         @TestMetadata("simple.kt")
         public void testSimple() throws Exception {
             runTest("idea/testData/intentions/convertNullablePropertyToLateinit/simple.kt");
+        }
+
+        @TestMetadata("topLevel.kt")
+        public void testTopLevel() throws Exception {
+            runTest("idea/testData/intentions/convertNullablePropertyToLateinit/topLevel.kt");
+        }
+
+        @TestMetadata("unsignedInt.kt")
+        public void testUnsignedInt() throws Exception {
+            runTest("idea/testData/intentions/convertNullablePropertyToLateinit/unsignedInt.kt");
         }
 
         @TestMetadata("val.kt")
