@@ -164,10 +164,17 @@ interface JKQualifiedExpression : JKExpression, JKAssignableExpression {
     var selector: JKExpression
 }
 
-interface JKMethodCallExpression : JKExpression, JKBranchElement {
+interface JKTypeArgumentList : JKTreeElement {
+    val typeArguments: List<JKTypeElement>
+}
+
+interface JKTypeArgumentListOwner : JKTreeElement {
+    var typeArgumentList: JKTypeArgumentList
+}
+
+interface JKMethodCallExpression : JKExpression, JKTypeArgumentListOwner, JKBranchElement {
     val identifier: JKMethodSymbol
     val arguments: JKExpressionList
-    var typeArguments: List<JKTypeElement>
 }
 
 interface JKFieldAccessExpression : JKAssignableExpression {

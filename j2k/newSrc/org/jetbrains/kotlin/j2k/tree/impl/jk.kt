@@ -396,12 +396,13 @@ class JKInheritanceInfoImpl(implements: List<JKTypeElement>) : JKInheritanceInfo
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitInheritanceInfo(this, data)
 }
 
+
 class JKDelegationConstructorCallImpl(
     override val identifier: JKMethodSymbol,
     expression: JKExpression,
     arguments: JKExpressionList
 ) : JKBranchElementBase(), JKDelegationConstructorCall, PsiOwner by PsiOwnerImpl() {
-    override var typeArguments by children(emptyList<JKTypeElement>())
+    override var typeArgumentList: JKTypeArgumentList by child(JKTypeArgumentListImpl())
     override val expression: JKExpression by child(expression)
     override val arguments: JKExpressionList by child(arguments)
 
@@ -516,4 +517,11 @@ class JKAnnotationListImpl(annotations: List<JKAnnotation> = emptyList()) : JKAn
 class JKAnnotationImpl(name: JKNameIdentifier) : JKAnnotation, JKBranchElementBase() {
     override var name: JKNameIdentifier by child(name)
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitAnnotation(this, data)
+}
+
+class JKTypeArgumentListImpl(typeArguments: List<JKTypeElement> = emptyList()) : JKTypeArgumentList, JKBranchElementBase(),
+    PsiOwner by PsiOwnerImpl() {
+    override val typeArguments: List<JKTypeElement> by children(typeArguments)
+    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitTypeArgumentList(this, data)
+
 }

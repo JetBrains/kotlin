@@ -44,7 +44,7 @@ class ArrayInitializerConversion(private val context: ConversionContext) : Recur
             return JKJavaMethodCallExpressionImpl(
                 methodOrConstructorReference,
                 JKExpressionListImpl(dimensions[0]),
-                if (type is JKJavaPrimitiveType) emptyList() else listOf(JKTypeElementImpl(type))
+                JKTypeArgumentListImpl(if (type is JKJavaPrimitiveType) emptyList() else listOf(JKTypeElementImpl(type)))
             )
         }
         if (dimensions[1] !is JKStubExpression) {
@@ -73,7 +73,7 @@ class ArrayInitializerConversion(private val context: ConversionContext) : Recur
         return JKJavaMethodCallExpressionImpl(
             context.symbolProvider.provideByFqName("kotlin/arrayOfNulls"),
             JKExpressionListImpl(dimensions[0]),
-            listOf(JKTypeElementImpl(resultType))
+            JKTypeArgumentListImpl(listOf(JKTypeElementImpl(resultType)))
         )
     }
 

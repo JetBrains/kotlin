@@ -145,7 +145,7 @@ class JavaToJKTreeBuilder(var symbolProvider: JKSymbolProvider) {
                 }
                 JKDelegationConstructorCallImpl(symbol, callee, argumentList.toJK())
             } else {
-                val call = JKJavaMethodCallExpressionImpl(symbol, argumentList.toJK())
+                val call = JKJavaMethodCallExpressionImpl(symbol, argumentList.toJK(), typeArgumentList.toJK())
                 if (method.findChildByRole(ChildRole.DOT) != null) {
                     JKQualifiedExpressionImpl((method.qualifier as PsiExpression).toJK(), JKJavaQualifierImpl.DOT, call)
                 } else {
@@ -207,9 +207,14 @@ class JavaToJKTreeBuilder(var symbolProvider: JKSymbolProvider) {
 
             return JKJavaNewExpressionImpl(
                 symbolProvider.provideDirectSymbol(constructor!!) as JKMethodSymbol,
-                argumentList.toJK()
+                argumentList.toJK(),
+                typeArgumentList.toJK()
             )
         }
+
+        fun PsiReferenceParameterList.toJK(): JKTypeArgumentList =
+            JKTypeArgumentListImpl(this.typeArguments.map { JKTypeElementImpl(it.toJK(symbolProvider)) })
+
 
         fun PsiArrayAccessExpression.toJK(): JKExpression {
             return JKArrayAccessExpressionImpl(arrayExpression.toJK(), indexExpression?.toJK() ?: TODO())

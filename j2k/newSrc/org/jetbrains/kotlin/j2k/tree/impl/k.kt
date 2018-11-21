@@ -71,12 +71,12 @@ sealed class JKKtQualifierImpl : JKQualifier, JKElementBase() {
 class JKKtCallExpressionImpl(
     override val identifier: JKMethodSymbol,
     arguments: JKExpressionList,
-    typeArguments: List<JKTypeElement> = emptyList()
+    typeArgumentList: JKTypeArgumentList = JKTypeArgumentListImpl()
 ) : JKKtMethodCallExpression, JKBranchElementBase() {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitKtMethodCallExpression(this, data)
 
     override var arguments: JKExpressionList by child(arguments)
-    override var typeArguments: List<JKTypeElement> by children(typeArguments)
+    override var typeArgumentList: JKTypeArgumentList by child(typeArgumentList)
 }
 
 class JKKtLiteralExpressionImpl(
@@ -115,7 +115,10 @@ class JKKtModifierImpl(override val type: JKKtModifier.KtModifierType) : JKKtMod
 }
 
 class JKKtAlsoCallExpressionImpl(
-    statement: JKStatement, override val identifier: JKMethodSymbol, override val parameterName: String = "it"
+    statement: JKStatement,
+    override val identifier: JKMethodSymbol,
+    override val parameterName: String = "it",
+    typeArgumentList: JKTypeArgumentList = JKTypeArgumentListImpl()
 ) : JKKtAlsoCallExpression, JKBranchElementBase() {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitKtAlsoCallExpression(this, data)
     override var statement
@@ -140,7 +143,7 @@ class JKKtAlsoCallExpressionImpl(
             )
         )
     )
-    override var typeArguments: List<JKTypeElement> by children(emptyList())
+    override var typeArgumentList: JKTypeArgumentList by child(typeArgumentList)
 }
 
 class JKKtAssignmentStatementImpl(
@@ -285,4 +288,22 @@ class JKKtTryCatchSectionImpl(
     override var parameter: JKParameter by child(parameter)
     override var block: JKBlock by child(block)
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitKtTryCatchSection(this, data)
+}
+
+class JKKtGetterOrSetterImpl(
+    body: JKStatement,
+    modifierList: JKModifierList,
+    override val kind: JKKtGetterOrSetter.Kind
+) : JKKtGetterOrSetter, JKBranchElementBase() {
+    override var body: JKStatement by child(body)
+    override var modifierList: JKModifierList by child(modifierList)
+    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitKtGetterOrSetter(this, data)
+}
+
+class JKKtEmptyGetterOrSetterImpl : JKKtEmptyGetterOrSetter, JKBranchElementBase() {
+    override var body: JKStatement by child(JKEmptyStatementImpl())
+    override var modifierList: JKModifierList by child(JKModifierListImpl())
+    override val kind: JKKtGetterOrSetter.Kind
+        get() = error("Cannot get kind of JKKtEmptyGetterOrSetter")
+    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitKtEmptyGetterOrSetter(this, data)
 }

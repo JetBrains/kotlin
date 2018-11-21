@@ -184,22 +184,22 @@ sealed class JKJavaQualifierImpl : JKQualifier {
 class JKJavaMethodCallExpressionImpl(
     override var identifier: JKMethodSymbol,
     arguments: JKExpressionList,
-    typeArguments: List<JKTypeElement> = emptyList()
+    typeArgumentList: JKTypeArgumentList = JKTypeArgumentListImpl()
 ) : JKJavaMethodCallExpression, JKBranchElementBase(), PsiOwner by PsiOwnerImpl() {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitJavaMethodCallExpression(this, data)
 
     override val arguments: JKExpressionList by child(arguments)
-    override var typeArguments: List<JKTypeElement> by children(typeArguments)
+    override var typeArgumentList: JKTypeArgumentList by child(typeArgumentList)
 }
 
-
 class JKJavaNewExpressionImpl(
-    override val constructorSymbol: JKMethodSymbol,
-    arguments: JKExpressionList
+    override var identifier: JKMethodSymbol,
+    arguments: JKExpressionList,
+    typeArgumentList: JKTypeArgumentList
 ) : JKJavaNewExpression, JKBranchElementBase(), PsiOwner by PsiOwnerImpl() {
+    override val arguments: JKExpressionList by child(arguments)
+    override var typeArgumentList: JKTypeArgumentList by child(typeArgumentList)
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitJavaNewExpression(this, data)
-
-    override var arguments by child(arguments)
 }
 
 class JKJavaDefaultNewExpressionImpl(

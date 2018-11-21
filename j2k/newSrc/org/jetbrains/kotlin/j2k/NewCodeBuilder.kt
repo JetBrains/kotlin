@@ -506,13 +506,19 @@ class NewCodeBuilder {
 
         override fun visitMethodCallExpression(methodCallExpression: JKMethodCallExpression) {
             printer.printWithNoIndent(FqName(methodCallExpression.identifier.fqName).shortName().asString())
-            if (methodCallExpression.typeArguments.isNotEmpty()) {
-                printer.par(ANGLE) {
-                    renderList(methodCallExpression.typeArguments) { it.accept(this) }
-                }
-            }
+            methodCallExpression.typeArgumentList.accept(this)
             printer.par {
                 methodCallExpression.arguments.accept(this)
+            }
+        }
+
+        override fun visitTypeArgumentList(typeArgumentList: JKTypeArgumentList) {
+            if (typeArgumentList.typeArguments.isNotEmpty()) {
+                printer.par(ANGLE) {
+                    renderList(typeArgumentList.typeArguments) {
+                        it.accept(this)
+                    }
+                }
             }
         }
 
@@ -613,11 +619,10 @@ class NewCodeBuilder {
         }
 
         override fun visitJavaNewExpression(javaNewExpression: JKJavaNewExpression) {
-            printer.printWithNoIndent(FqName(javaNewExpression.constructorSymbol.fqName).shortName())
+            printer.printWithNoIndent(javaNewExpression.identifier.name)
+            javaNewExpression.typeArgumentList.accept(this)
             printer.par(ROUND) {
-                renderList(javaNewExpression.arguments.expressions, ", ") {
-                    it.accept(this)
-                }
+                javaNewExpression.arguments.accept(this)
             }
         }
 
@@ -797,7 +802,7 @@ class NewCodeBuilder {
         }
 
         override fun visitJavaNewExpression(javaNewExpression: JKJavaNewExpression) {
-            val psiConstructor = javaNewExpression.constructorSymbol.target
+            val psiConstructor = javaNewExpression.identifier.target
             val fqName = when (psiConstructor) {
                 is PsiMethod -> psiConstructor.containingClass?.getKotlinFqName()!!
                 is KtFunction -> psiConstructor.containingClassOrObject?.fqName!!
