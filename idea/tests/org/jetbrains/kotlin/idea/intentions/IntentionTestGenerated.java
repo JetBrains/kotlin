@@ -9289,6 +9289,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             runTest("idea/testData/intentions/introduceBackingProperty/backingFieldRef.kt");
         }
 
+        @TestMetadata("const.kt")
+        public void testConst() throws Exception {
+            runTest("idea/testData/intentions/introduceBackingProperty/const.kt");
+        }
+
         @TestMetadata("inapplicableAbstractProperty.kt")
         public void testInapplicableAbstractProperty() throws Exception {
             runTest("idea/testData/intentions/introduceBackingProperty/inapplicableAbstractProperty.kt");
