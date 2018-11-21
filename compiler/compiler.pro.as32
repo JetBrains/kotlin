@@ -220,6 +220,9 @@ messages/**)
 
 # for kapt
 -keep class com.intellij.openapi.project.Project { *; }
+-keepclassmembers class com.intellij.util.PathUtil {
+    public static java.lang.String getJarPathForClass(java.lang.Class);
+}
 
 -keepclassmembers class com.intellij.util.PathUtil {
     public static java.lang.String getJarPathForClass(java.lang.Class);
