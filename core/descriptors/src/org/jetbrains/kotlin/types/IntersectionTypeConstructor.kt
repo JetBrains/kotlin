@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.resolve.scopes.TypeIntersectionScope
-
 import java.util.*
 
 class IntersectionTypeConstructor(typesToIntersect: Collection<KotlinType>) : TypeConstructor {
@@ -62,4 +61,23 @@ class IntersectionTypeConstructor(typesToIntersect: Collection<KotlinType>) : Ty
     }
 
     override fun hashCode(): Int = hashCode
+}
+
+inline fun IntersectionTypeConstructor.transformComponents(
+    predicate: (KotlinType) -> Boolean = { true },
+    transform: (KotlinType) -> KotlinType
+): IntersectionTypeConstructor? {
+    var changed = false
+    val newSupertypes = supertypes.map {
+        if (predicate(it)) {
+            changed = true
+            transform(it)
+        } else {
+            it
+        }
+    }
+
+    if (!changed) return null
+
+    return IntersectionTypeConstructor(newSupertypes)
 }

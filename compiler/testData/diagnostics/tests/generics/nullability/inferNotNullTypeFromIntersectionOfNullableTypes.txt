@@ -1,0 +1,27 @@
+package
+
+public fun anyAndNumberType(/*0*/ b: kotlin.Any?): kotlin.Unit
+public fun comparableAndNumberType(/*0*/ b: kotlin.Comparable<kotlin.Byte>?): kotlin.Unit
+public fun simpleTypeAndNumberType(/*0*/ b: kotlin.Comparable<*>?): kotlin.Unit
+public fun </*0*/ T> typeParmeterAndNumberType(/*0*/ b: T?): kotlin.Unit
+
+public object SeparateTypes {
+    private constructor SeparateTypes()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final fun separate(/*0*/ a: SeparateTypes.A?): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    public interface A {
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public interface B {
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open fun foo(): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

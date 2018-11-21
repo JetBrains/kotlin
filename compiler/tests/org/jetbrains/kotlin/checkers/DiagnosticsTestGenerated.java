@@ -8420,6 +8420,11 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     runTest("compiler/testData/diagnostics/tests/generics/nullability/functionalBound.kt");
                 }
 
+                @TestMetadata("inferNotNullTypeFromIntersectionOfNullableTypes.kt")
+                public void testInferNotNullTypeFromIntersectionOfNullableTypes() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/generics/nullability/inferNotNullTypeFromIntersectionOfNullableTypes.kt");
+                }
+
                 @TestMetadata("nullToGeneric.kt")
                 public void testNullToGeneric() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/generics/nullability/nullToGeneric.kt");

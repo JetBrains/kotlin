@@ -128,8 +128,12 @@ class ResultTypeResolver(
                         newSupertypes.add(supertype)
                 }
 
-                TypeUtils.getDefaultPrimitiveNumberType(numberSupertypes)?.let {
-                    newSupertypes.add(it.unwrap())
+
+                val representativeNumberType = TypeUtils.getDefaultPrimitiveNumberType(numberSupertypes)
+                if (representativeNumberType != null) {
+                    newSupertypes.add(representativeNumberType.unwrap())
+                } else {
+                    newSupertypes.addAll(numberSupertypes.map { it.unwrap() })
                 }
 
                 intersectTypes(newSupertypes).makeNullableAsSpecified(commonSuperType.isMarkedNullable)
