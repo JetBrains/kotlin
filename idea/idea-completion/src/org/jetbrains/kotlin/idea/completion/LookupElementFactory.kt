@@ -77,6 +77,8 @@ class LookupElementFactory(
             val parameter = descriptor.original.valueParameters.singleOrNull() ?: return false
             return parameter.type.isFunctionType
         }
+
+        val CAST_REQUIRED_COLOR = JBColor(0x4E4040, 0x969696)
     }
 
     val insertHandlerProvider = basicFactory.insertHandlerProvider
@@ -272,8 +274,6 @@ class LookupElementFactory(
         return element
     }
 
-    private val castRequiredColor = JBColor(0x4E4040, 0x969696)
-
     private fun LookupElement.boldIfImmediate(weight: CallableWeight?): LookupElement {
         val style = when (weight?.enum) {
             CallableWeightEnum.thisClassMember, CallableWeightEnum.thisTypeExtension -> Style.BOLD
@@ -288,7 +288,7 @@ class LookupElementFactory(
                         presentation.isItemTextBold = true
                     }
                     else {
-                        presentation.itemTextForeground = castRequiredColor
+                        presentation.itemTextForeground = CAST_REQUIRED_COLOR
                         // gray all tail fragments too:
                         val fragments = presentation.tailFragments
                         presentation.clearTail()
