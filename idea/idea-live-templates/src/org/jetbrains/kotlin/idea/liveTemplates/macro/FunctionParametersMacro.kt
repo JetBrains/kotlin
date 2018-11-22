@@ -16,10 +16,12 @@
 
 package org.jetbrains.kotlin.idea.liveTemplates.macro
 
-import com.intellij.codeInsight.template.*
+import com.intellij.codeInsight.template.Expression
+import com.intellij.codeInsight.template.ExpressionContext
+import com.intellij.codeInsight.template.Result
+import com.intellij.codeInsight.template.TextResult
 import com.intellij.psi.PsiDocumentManager
 import org.jetbrains.kotlin.psi.KtFunction
-import java.util.*
 
 class FunctionParametersMacro : KotlinMacro() {
     override fun getName() = "functionParameters"
@@ -36,11 +38,7 @@ class FunctionParametersMacro : KotlinMacro() {
         var place = file.findElementAt(offset)
         while (place != null) {
             if (place is KtFunction) {
-                val result = ArrayList<Result>()
-                for (param in place.valueParameters) {
-                    result.add(TextResult(param.name!!))
-                }
-                return ListResult(result)
+                return TextResult(place.valueParameters.joinToString(separator = ", ") { it.name!! })
             }
             place = place.parent
         }
