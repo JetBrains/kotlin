@@ -256,9 +256,17 @@ public actual class Regex internal constructor(internal val nativePattern: Patte
      *
      * @param replacement A replacement expression that can include substitutions.
      */
-    @Suppress("DEPRECATION_ERROR")
-    actual fun replaceFirst(input: CharSequence, replacement: String): String
-            = replaceFirst(input) { match -> processReplacement(match, replacement) }
+    actual fun replaceFirst(input: CharSequence, replacement: String): String {
+        val match = find(input) ?: return input.toString()
+        val length = input.length
+        val result = StringBuilder(length)
+        result.append(input, 0, match.range.start)
+        result.append(processReplacement(match, replacement))
+        if (match.range.endInclusive + 1 < length) {
+            result.append(input, match.range.endInclusive + 1, length)
+        }
+        return result.toString()
+    }
 
     /**
      * Splits the [input] CharSequence around matches of this regular expression.
@@ -296,30 +304,4 @@ public actual class Regex internal constructor(internal val nativePattern: Patte
      * and may match strings differently.
      */
     override fun toString(): String = nativePattern.toString()
-
-    // Native specific =================================================================================================
-    @Deprecated("The function is going to be removed from public API", level = DeprecationLevel.ERROR)
-    fun lookingAt(input: CharSequence): Boolean = doMatch(input, Mode.FIND) != null
-
-    /** Indicates whether the regular expression can find at least one match in the specified [input] starting with [index]. */
-    @Deprecated("The function is going to be removed from public API", level = DeprecationLevel.ERROR)
-    fun containsMatchIn(input: CharSequence, index: Int): Boolean = find(input, index) != null
-
-    /**
-     * Replaces the first occurrence of this regular expression in the specified [input] string with the result of calling
-     * the given function [transform] that takes a [MatchResult] representing the occurrence and returns a string to be used as a
-     * replacement for that occurrence.
-     */
-    @Deprecated("The function is going to be removed from public API", level = DeprecationLevel.ERROR)
-    fun replaceFirst(input: CharSequence, transform: (MatchResult) -> CharSequence): String {
-        val match = find(input) ?: return input.toString()
-        val length = input.length
-        val result = StringBuilder(length)
-        result.append(input, 0, match.range.start)
-        result.append(transform(match))
-        if (match.range.endInclusive + 1 < length) {
-            result.append(input, match.range.endInclusive + 1, length)
-        }
-        return result.toString()
-    }
 }

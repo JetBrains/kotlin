@@ -33,10 +33,12 @@ class PatternTest2 {
         var testString = "foo123"
         assertTrue(regex.matches(testString))
         assertTrue(regex in testString)
+        assertTrue(regex.find(testString) != null)
 
         testString = "fox"
         assertFalse(regex.matches(testString))
         assertFalse(regex in testString)
+        assertFalse(regex.find(testString) != null)
 
         assertTrue(Regex("foo.*").matches("foo123"))
         assertFalse(Regex("foo.*").matches("fox"))
