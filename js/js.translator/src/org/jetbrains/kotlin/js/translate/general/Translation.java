@@ -324,7 +324,7 @@ public final class Translation {
 
         Map<String, TranslationUnit> inlineFunctionTagMap = new HashMap<>();
 
-        Map<TranslationUnit.SourceFile, SourceFileTranslationResult> translatedSourceFiles = new HashMap<>();
+        Map<TranslationUnit.SourceFile, SourceFileTranslationResult> translatedSourceFiles = new LinkedHashMap<>();
 
         for (TranslationUnit unit : units) {
             if (unit instanceof TranslationUnit.SourceFile) {

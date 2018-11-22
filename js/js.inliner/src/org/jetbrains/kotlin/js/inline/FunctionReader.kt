@@ -36,7 +36,6 @@ import org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils.getModuleName
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 import org.jetbrains.kotlin.resolve.inline.InlineStrategy
 import org.jetbrains.kotlin.utils.JsLibraryUtils
-import org.jetbrains.kotlin.utils.sure
 import java.io.File
 import java.io.StringReader
 
@@ -58,8 +57,7 @@ private val SPECIAL_FUNCTION_PATTERN = Regex("var\\s+($JS_IDENTIFIER)\\s*=\\s*($
 class FunctionReader(
         private val reporter: JsConfig.Reporter,
         private val config: JsConfig,
-        private val currentModuleName: JsName,
-        private val moduleNameMap: Map<String, JsExpression>
+        private val currentModuleName: JsName
 ) {
     /**
      * fileContent: .js file content, that contains this module definition.
@@ -84,8 +82,8 @@ class FunctionReader(
         val offsetToSourceMapping by lazy(offsetToSourceMappingProvider)
 
         val wrapFunctionRegex = specialFunctions.entries
-                .singleOrNull { (_, v) -> v == SpecialFunction.WRAP_FUNCTION }?.key
-                ?.let { Regex("\\s*$it\\s*\\(\\s*").toPattern() }
+                .filter { (_, v) -> v == SpecialFunction.WRAP_FUNCTION } // TODO This is a hack! Investigate duplicates!
+                .map { Regex("\\s*${it.key}\\s*\\(\\s*").toPattern() }
     }
 
     private val moduleNameToInfo by lazy {
@@ -166,19 +164,20 @@ class FunctionReader(
         override fun toString() = text.substring(offset)
     }
 
-    private val emptyFunctionWrapper = FunctionWithWrapper(JsFunction(object : JsScope("") {}, ""), null)
+    private object NotFoundMarker : Any()
 
-    private val functionCache = object : SLRUCache<CallableDescriptor, FunctionWithWrapper>(50, 50) {
-        override fun createValue(descriptor: CallableDescriptor): FunctionWithWrapper =
-            readFunction(descriptor) ?: emptyFunctionWrapper
+    private val functionCache = object : SLRUCache<CallableDescriptor, Any>(50, 50) {
+        // LibraryInlineFunctionDefinition | NotFoundMarker
+        override fun createValue(key: CallableDescriptor): Any =
+            readFunction(key) ?: NotFoundMarker
     }
 
-    operator fun get(descriptor: CallableDescriptor): FunctionWithWrapper? {
+    operator fun get(descriptor: CallableDescriptor): LibraryInlineFunctionDefinition? {
         val existed = functionCache.get(descriptor)
-        return if (existed == emptyFunctionWrapper) null else existed
+        return if (existed === NotFoundMarker) null else existed as LibraryInlineFunctionDefinition
     }
 
-    private fun readFunction(descriptor: CallableDescriptor): FunctionWithWrapper? {
+    private fun readFunction(descriptor: CallableDescriptor): LibraryInlineFunctionDefinition? {
         val moduleName = getModuleName(descriptor)
 
         if (moduleName !in moduleNameToInfo.keys()) return null
@@ -191,7 +190,8 @@ class FunctionReader(
         return null
     }
 
-    private fun readFunctionFromSource(descriptor: CallableDescriptor, info: ModuleInfo): FunctionWithWrapper? {
+    // TODO move renamings to a proper place
+    private fun readFunctionFromSource(descriptor: CallableDescriptor, info: ModuleInfo): LibraryInlineFunctionDefinition? {
         val source = info.fileContent
         var tag = Namer.getFunctionTag(descriptor, config)
         val tagForModule = tag
@@ -213,16 +213,24 @@ class FunctionReader(
         }
 
         val sourcePart = ShallowSubSequence(source, offset, source.length)
-        val wrapFunctionMatcher = info.wrapFunctionRegex?.matcher(sourcePart)
-        val isWrapped = wrapFunctionMatcher?.lookingAt() == true
-        if (isWrapped) {
-            offset += wrapFunctionMatcher!!.end()
+        var isWrapped = false
+        for (regex in info.wrapFunctionRegex) {
+            val wrapFunctionMatcher = regex.matcher(sourcePart)
+            isWrapped = wrapFunctionMatcher.lookingAt() == true
+            if (isWrapped) {
+                offset += wrapFunctionMatcher!!.end()
+                break
+            }
         }
 
         val position = info.offsetToSourceMapping[offset]
         val jsScope = JsRootScope(JsProgram())
-        val functionExpr = parseFunction(source, info.filePath, position, offset, ThrowExceptionOnErrorReporter, jsScope) ?:
-                           return null
+        val functionExpr = try {
+            parseFunction(source, info.filePath, position, offset, ThrowExceptionOnErrorReporter, jsScope) ?:
+            return null
+        } catch (t: Throwable) {
+            throw Error("Exception while reading function '$tag' from ${info.filePath}", t)
+        }
         functionExpr.fixForwardNameReferences()
         val (function, wrapper) = if (isWrapped) {
             InlineMetadata.decomposeWrapper(functionExpr) ?: return null
@@ -230,7 +238,7 @@ class FunctionReader(
         else {
             FunctionWithWrapper(functionExpr, null)
         }
-        val moduleReference = moduleNameMap[tagForModule]?.deepCopy() ?: currentModuleName.makeRef()
+//        val moduleReference = moduleNameMap[tagForModule]?.deepCopy() ?: currentModuleName.makeRef()
         val wrapperStatements = wrapper?.statements?.filter { it !is JsReturn }
 
         val sourceMap = info.sourceMap
@@ -243,20 +251,22 @@ class FunctionReader(
         }
 
         val allDefinedNames = collectDefinedNamesInAllScopes(function)
-        val replacements = hashMapOf(info.moduleVariable to moduleReference,
-                                     info.kotlinVariable to Namer.kotlinObject())
-        replaceExternalNames(function, replacements, allDefinedNames)
-        wrapperStatements?.forEach { replaceExternalNames(it, replacements, allDefinedNames) }
+//        val replacements = hashMapOf(info.moduleVariable to moduleReference,
+//                                     info.kotlinVariable to Namer.kotlinObject())
+//        replaceExternalNames(function, replacements, allDefinedNames)
+//        wrapperStatements?.forEach { replaceExternalNames(it, replacements, allDefinedNames) }
+
         function.markInlineArguments(descriptor)
         markDefaultParams(function)
+        // TODO maybe move elsewhere?
         markSpecialFunctions(function, allDefinedNames, info, jsScope)
 
-        val namesWithoutSizeEffects = wrapperStatements.orEmpty().asSequence()
+        val namesWithoutSideEffects = wrapperStatements.orEmpty().asSequence()
                 .flatMap { collectDefinedNames(it).asSequence() }
                 .toSet()
         function.accept(object : RecursiveJsVisitor() {
             override fun visitNameRef(nameRef: JsNameRef) {
-                if (nameRef.name in namesWithoutSizeEffects && nameRef.qualifier == null) {
+                if (nameRef.name in namesWithoutSideEffects && nameRef.qualifier == null) {
                     nameRef.sideEffects = SideEffectKind.PURE
                 }
                 super.visitNameRef(nameRef)
@@ -269,7 +279,7 @@ class FunctionReader(
             }
         }
 
-        return FunctionWithWrapper(function, wrapper)
+        return LibraryInlineFunctionDefinition(tagForModule, FunctionWithWrapper(function, wrapper), info)
     }
 
     private fun markSpecialFunctions(function: JsFunction, allDefinedNames: Set<JsName>, info: ModuleInfo, scope: JsScope) {

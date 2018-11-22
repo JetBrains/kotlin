@@ -35,7 +35,7 @@ private constructor(
     private val invokedFunction: JsFunction
     val namingContext = inliningContext.newNamingContext()
     val body: JsBlock
-    var resultExpr: JsExpression? = null
+    var resultExpr: JsNameRef? = null
     private var resultName: JsName? = null
     var breakLabel: JsLabel? = null
     private val currentStatement = inliningContext.statementContext.currentNode
@@ -56,7 +56,7 @@ private constructor(
 
         namingContext.applyRenameTo(body)
         resultExpr = resultExpr?.let {
-            namingContext.applyRenameTo(it) as JsExpression
+            namingContext.applyRenameTo(it) as JsNameRef
         }
     }
 

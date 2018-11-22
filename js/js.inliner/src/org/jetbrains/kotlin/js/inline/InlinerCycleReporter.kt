@@ -7,10 +7,8 @@ package org.jetbrains.kotlin.js.inline
 
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.diagnostics.Errors
-import org.jetbrains.kotlin.js.backend.ast.JsBlock
 import org.jetbrains.kotlin.js.backend.ast.JsFunction
 import org.jetbrains.kotlin.js.backend.ast.JsInvocation
-import org.jetbrains.kotlin.js.backend.ast.JsName
 import org.jetbrains.kotlin.js.backend.ast.metadata.descriptor
 import org.jetbrains.kotlin.js.backend.ast.metadata.inlineStrategy
 import org.jetbrains.kotlin.js.backend.ast.metadata.psiElement
@@ -23,26 +21,17 @@ import org.jetbrains.kotlin.js.inline.util.refreshLabelNames
 import org.jetbrains.kotlin.resolve.inline.InlineStrategy
 import java.util.*
 
-class InlineDfsController(
+/**
+ *  There are two ways the inliner may arrive to an inline function declaration. Either the topmost visitor arrive to a declaration, which
+ *  has never been used before. Or it visits it's invocation, and has to obtain the inline function body. Current strategy is to processes
+ *  the inline function declaration before inlining it's invocation.
+ *
+ *  Thus the inliner effectively implements a DFS. InlinerCycleReporter manages the DFS state. Also it detects and reports cycles.
+ */
+class InlinerCycleReporter(
     val trace: DiagnosticSink,
-    val functions: Map<JsName, FunctionWithWrapper>,
-    val accessors: Map<String, FunctionWithWrapper>,
-    val functionContext: FunctionContext
+    private val functionContext: FunctionContext
 ) {
-
-    val functionsByWrapperNodes =
-        HashMap<JsBlock, FunctionWithWrapper>()
-    val functionsByFunctionNodes =
-        HashMap<JsFunction, FunctionWithWrapper>()
-
-    init {
-        (functions.values.asSequence() + accessors.values.asSequence()).forEach { f ->
-            functionsByFunctionNodes[f.function] = f
-            if (f.wrapperBody != null) {
-                functionsByWrapperNodes[f.wrapperBody] = f
-            }
-        }
-    }
 
     private val processedFunctions = IdentitySet<JsFunction>()
     private val inProcessFunctions = IdentitySet<JsFunction>()
@@ -51,6 +40,7 @@ class InlineDfsController(
 
     private val inlineCallInfos = LinkedList<JsCallInfo>()
 
+    // TODO This looks like a hack
     val currentNamedFunction: JsFunction?
         get() = if (namedFunctionsStack.empty()) null else namedFunctionsStack.peek()
 
@@ -59,18 +49,13 @@ class InlineDfsController(
         assert(!inProcessFunctions.contains(function)) { "Inliner has revisited function" }
         inProcessFunctions.add(function)
 
-        if (function in functionsByFunctionNodes.keys) {
+        if (function in functionContext.functionsByFunctionNodes.keys) {
             namedFunctionsStack.push(function)
         }
     }
 
     fun endFunction(function: JsFunction) {
-        refreshLabelNames(function.body, function.scope)
-
-        removeUnusedLocalFunctionDeclarations(function)
         processedFunctions.add(function)
-
-        FunctionPostProcessor(function).apply()
 
         assert(inProcessFunctions.contains(function))
         inProcessFunctions.remove(function)
@@ -82,17 +67,15 @@ class InlineDfsController(
 
 
     // Return true iff the definition should be visited by the inliner
-    fun visitCall(call: JsInvocation): Boolean {
-        val definition = functionContext.getFunctionDefinition(call)
+    fun shouldProcess(definition: FunctionWithWrapper, call: JsInvocation): Boolean {
 
         currentNamedFunction?.let {
             inlineCallInfos.add(JsCallInfo(call, it))
         }
 
-
-        if (inProcessFunctions.contains(definition.function)) {
+        if (definition.function in inProcessFunctions) {
             reportInlineCycle(call, definition.function)
-        } else if (!processedFunctions.contains(definition.function)) {
+        } else if (definition.function !in processedFunctions) {
             return true
         }
 

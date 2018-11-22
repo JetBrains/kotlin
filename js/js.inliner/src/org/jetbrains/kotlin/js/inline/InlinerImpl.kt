@@ -9,144 +9,84 @@ import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.backend.ast.metadata.forcedReturnVariable
 import org.jetbrains.kotlin.js.backend.ast.metadata.inlineStrategy
 import org.jetbrains.kotlin.js.backend.ast.metadata.synthetic
+import org.jetbrains.kotlin.js.inline.clean.FunctionPostProcessor
+import org.jetbrains.kotlin.js.inline.clean.removeUnusedLocalFunctionDeclarations
 import org.jetbrains.kotlin.js.inline.context.FunctionContext
 import org.jetbrains.kotlin.js.inline.context.InliningContext
-import org.jetbrains.kotlin.js.inline.util.FunctionWithWrapper
-import org.jetbrains.kotlin.js.inline.util.getImportTag
+import org.jetbrains.kotlin.js.inline.util.refreshLabelNames
 import org.jetbrains.kotlin.js.translate.declaration.transformSpecialFunctionsToCoroutineMetadata
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
-import java.util.ArrayList
-import java.util.HashMap
-import java.util.HashSet
 
+// TODO stateless?
 class InlinerImpl(
-    val existingNameBindings: MutableMap<JsName, String>,
-    val existingImports: MutableMap<String, JsName>,
-    val inlineFunctionDepth: Int,
-    val dfsController: InlineDfsController,
-    val inverseNameBindings: Map<JsName, String>,
+    val cycleReporter: InlinerCycleReporter,
     val functionContext: FunctionContext,
-    val addPrevious: (JsStatement) -> Unit
+    // TODO other way around? Need to find a correct inliner by function declaration.
+    val scope: InliningScope
 ) : JsVisitorWithContextImpl() {
-    val inlinedModuleAliases = HashSet<JsName>()
-
-    val replacementsInducedByWrappers: MutableMap<JsFunction, Map<JsName, JsNameRef>> = mutableMapOf()
-
-    val additionalNameBindings = ArrayList<JsNameBinding>()
-
-    val additionalImports = mutableListOf<Triple<String, JsExpression, JsName>>()
 
     override fun visit(function: JsFunction, context: JsContext<*>): Boolean {
-        val functionWithWrapper = dfsController.functionsByFunctionNodes[function]
-        if (functionWithWrapper != null) {
-            visit(functionWithWrapper)
+        functionContext.functionsByFunctionNodes[function]?.let { (function, wrapper) ->
+            visit(function, wrapper)
             return false
-        } else {
-            dfsController.startFunction(function)
-            return super.visit(function, context)
         }
-    }
-
-    override fun endVisit(function: JsFunction, context: JsContext<*>) {
-        super.endVisit(function, context)
-        if (!dfsController.functionsByFunctionNodes.containsKey(function)) {
-            dfsController.endFunction(function)
-        }
+        visit(function, null)
+        return true
     }
 
     override fun visit(x: JsBlock, ctx: JsContext<*>): Boolean {
-        val functionWithWrapper = dfsController.functionsByWrapperNodes[x]
-        if (functionWithWrapper != null) {
-            visit(functionWithWrapper)
+        // TODO Seems like a very roundabout way. Probably should reuse same approach as in CoroutineTransformer and ...Splitter
+        // TODO That approach might be missing inline properties. Check!
+        functionContext.functionsByWrapperNodes[x]?.let { (function, wrapper) ->
+            visit(function, wrapper)
             return false
         }
         return super.visit(x, ctx)
     }
 
-    private fun visit(functionWithWrapper: FunctionWithWrapper) {
-        dfsController.startFunction(functionWithWrapper.function)
+    private fun visit(function: JsFunction, wrapperBody: JsBlock?) {
+        cycleReporter.startFunction(function)
 
-        val wrapperBody = functionWithWrapper.wrapperBody
-        if (wrapperBody != null) {
-            val existingImports = HashMap<String, JsName>()
-
-            for (statement in wrapperBody.statements) {
-                if (statement is JsVars) {
-                    val tag = getImportTag(statement)
-                    if (tag != null) {
-                        existingImports[tag] = statement.vars[0].name
-                    }
-                }
-            }
-
-            val additionalStatements = mutableListOf<JsStatement>()
-            val innerInliner = InlinerImpl(
-                existingNameBindings,
-                existingImports,
-                inlineFunctionDepth + 1,
-                dfsController,
-                inverseNameBindings,
-                functionContext
-            ) {
-                additionalStatements.add(it)
-            }
-            for (statement in wrapperBody.statements) {
-                if (statement !is JsReturn) {
-                    innerInliner.acceptStatement(statement)
-                } else {
-                    innerInliner.accept((statement.expression as JsFunction).body)
-                }
-            }
-
-            val importStatements = innerInliner.additionalImports.map { (_, importExpr, name) ->
-                JsAstUtils.newVar(name, importExpr)
-            }
-
-            // TODO keep order
-            wrapperBody.statements.addAll(0, importStatements + additionalStatements)
+        // TODO Different visitors?
+        if (wrapperBody != null && scope is ProgramFragmentInliningScope) {
+            PublicInlineFunctionInliningScope(scope.fragment, cycleReporter, functionContext, function, wrapperBody).process()
         } else {
-            accept(functionWithWrapper.function.body)
+            // TODO this is still not super-clear
+            accept(function.body)
         }
 
-        dfsController.endFunction(functionWithWrapper.function)
+        // Cleanup
+        refreshLabelNames(function.body, function.scope)
+        removeUnusedLocalFunctionDeclarations(function)
+        FunctionPostProcessor(function).apply()
+
+        cycleReporter.endFunction(function)
     }
 
-    override fun visit(call: JsInvocation, context: JsContext<*>): Boolean {
-        if (!hasToBeInlined(call)) return true
+    override fun endVisit(call: JsInvocation, ctx: JsContext<JsNode>) {
+        if (hasToBeInlined(call)) {
 
-        if (dfsController.visitCall(call)) {
-            val definition = functionContext.getFunctionDefinition(call)
+            val definition = functionContext.getFunctionDefinition(call, scope)
 
-            for (i in 0 until call.arguments.size) {
-                val argument = call.arguments[i]
-                call.arguments[i] = accept(argument)
+            if (cycleReporter.shouldProcess(definition.functionWithWrapper, call)) {
+                definition.process()
             }
-            visit(definition)
 
-            return false
+            inline(call, definition, ctx)
         }
 
-        return true
+        cycleReporter.endVisit(call)
     }
 
-    override fun endVisit(x: JsInvocation, ctx: JsContext<JsNode>) {
-        if (hasToBeInlined(x)) {
-            inline(x, ctx)
-        }
-
-        dfsController.endVisit(x)
-    }
-
+    // TODO This could be extracted into a separate pass.
+    // TODO Don't forget to run it on the freshly inlined code!
     override fun doAcceptStatementList(statements: MutableList<JsStatement>) {
         var i = 0
 
         while (i < statements.size) {
-            val additionalStatements =
-                ExpressionDecomposer.preserveEvaluationOrder(statements[i]) { node ->
-                    node is JsInvocation && hasToBeInlined(
-                        node
-                    )
-                }
+            val additionalStatements = ExpressionDecomposer.preserveEvaluationOrder(statements[i]) { node ->
+                node is JsInvocation && hasToBeInlined(node)
+            }
             statements.addAll(i, additionalStatements)
             i += additionalStatements.size + 1
         }
@@ -154,61 +94,28 @@ class InlinerImpl(
         super.doAcceptStatementList(statements)
     }
 
-    private fun inline(call: JsInvocation, context: JsContext<JsNode>) {
-        var functionWithWrapper = functionContext.getFunctionDefinition(call)
+    // TODO a lot of code... Probably a bad sign
+    private fun inline(call: JsInvocation, definition: InlineFunctionDefinition, context: JsContext<JsNode>) {
 
-        // Since we could get functionWithWrapper as a simple function directly from staticRef (which always points on implementation)
-        // we should check if we have a known wrapper for it
-        dfsController.functionsByFunctionNodes[functionWithWrapper.function]?.let {
-            functionWithWrapper = it
-        }
+        // ---------------
+        // This should be isolated
 
-        val function = functionWithWrapper.function.deepCopy()
+        val function = scope.importFunctionDefinition(definition)
+        // TODO This should be done inside the importer
         function.body = transformSpecialFunctionsToCoroutineMetadata(function.body)
-        if (functionWithWrapper.wrapperBody != null) {
-            applyWrapper(
-                functionWithWrapper.wrapperBody!!,
-                function,
-                functionWithWrapper.function,
-                inlineFunctionDepth,
-                replacementsInducedByWrappers,
-                existingImports,
-                additionalImports,
-                existingNameBindings,
-                additionalNameBindings,
-                inlinedModuleAliases,
-                inverseNameBindings
-            ) {
-                addPrevious(accept(it))
-            }
-        }
 
-        val inliningContext = InliningContext(lastStatementLevelContext)
+        // -------------------
 
-        val inlineableResult =
-            FunctionInlineMutator.getInlineableCallReplacement(call, function, inliningContext)
+        val statementContext = lastStatementLevelContext
 
-        val inlineableBody = inlineableResult.inlineableBody
-        var resultExpression = inlineableResult.resultExpression
-        val statementContext = inliningContext.statementContext
+        val (inlineableBody, resultExpression) =
+                FunctionInlineMutator.getInlineableCallReplacement(call, function, InliningContext(statementContext))
+
         // body of inline function can contain call to lambdas that need to be inlined
         val inlineableBodyWithLambdasInlined = accept(inlineableBody)
         assert(inlineableBody === inlineableBodyWithLambdasInlined)
 
-        // Support non-local return from secondary constructor
-        // Returns from secondary constructors should return `$this` object.
-        // TODO This seems brittle
-        val currentFunction = dfsController.currentNamedFunction
-        if (currentFunction != null) {
-            val returnVariable = currentFunction.forcedReturnVariable
-            if (returnVariable != null) {
-                inlineableBody.accept(object : RecursiveJsVisitor() {
-                    override fun visitReturn(x: JsReturn) {
-                        x.expression = returnVariable.makeRef()
-                    }
-                })
-            }
-        }
+        patchReturnsFromSecondaryConstructor(inlineableBody)
 
         statementContext.addPrevious(JsAstUtils.flattenStatement(inlineableBody))
 
@@ -221,13 +128,28 @@ class InlinerImpl(
             return
         }
 
-        resultExpression = accept(resultExpression)
-        resultExpression.synthetic = true
-        context.replaceMe(resultExpression)
+        // TODO Why accept? Seems unnecessary... Some inline call in the qualifier? Shouldn't this be done along with the lambdas then?
+        accept(resultExpression)?.let {
+            it.synthetic = true
+            context.replaceMe(it)
+        }
+    }
+
+    private fun patchReturnsFromSecondaryConstructor(inlineableBody: JsStatement) {
+        // Support non-local return from secondary constructor
+        // Returns from secondary constructors should return `$this` object.
+        // TODO This seems brittle
+        cycleReporter.currentNamedFunction?.forcedReturnVariable?.let { returnVariable ->
+            inlineableBody.accept(object : RecursiveJsVisitor() {
+                override fun visitReturn(x: JsReturn) {
+                    x.expression = returnVariable.makeRef()
+                }
+            })
+        }
     }
 
     private fun hasToBeInlined(call: JsInvocation): Boolean {
         val strategy = call.inlineStrategy
-        return if (strategy == null || !strategy.isInline) false else functionContext.hasFunctionDefinition(call)
+        return if (strategy == null || !strategy.isInline) false else functionContext.hasFunctionDefinition(call, scope)
     }
 }

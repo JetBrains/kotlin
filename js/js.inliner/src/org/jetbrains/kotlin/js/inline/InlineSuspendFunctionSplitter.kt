@@ -9,25 +9,10 @@ import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.backend.ast.metadata.coroutineMetadata
 import org.jetbrains.kotlin.js.backend.ast.metadata.isInlineableCoroutineBody
 import org.jetbrains.kotlin.js.translate.expression.InlineMetadata
-import java.util.ArrayList
-import java.util.HashMap
-import java.util.HashSet
 
 class InlineSuspendFunctionSplitter(
-    val existingNameBindings: MutableMap<JsName, String>,
-    val existingImports: MutableMap<String, JsName>,
-    val inlineFunctionDepth: Int,
-    val inverseNameBindings: Map<JsName, String>,
-    val replacementsInducedByWrappers: MutableMap<JsFunction, Map<JsName, JsNameRef>>,
-    val addPrevious: (JsStatement) -> Unit
+    val scope: ProgramFragmentInliningScope
 ) : JsVisitorWithContextImpl() {
-
-    val inlinedModuleAliases = HashSet<JsName>()
-
-    val additionalNameBindings = ArrayList<JsNameBinding>()
-
-    val additionalImports = mutableListOf<Triple<String, JsExpression, JsName>>()
-
 
     override fun endVisit(x: JsExpressionStatement, ctx: JsContext<*>) {
         val e = x.expression
@@ -57,40 +42,24 @@ class InlineSuspendFunctionSplitter(
     private fun splitExportedSuspendInlineFunctionDeclarations(expression: JsExpression): JsFunction? {
         val inlineMetadata = InlineMetadata.decompose(expression)
         if (inlineMetadata != null) {
-            val (originalFunction, wrapperBody) = inlineMetadata.function
-            if (originalFunction.coroutineMetadata != null) {
-                val statementContext = lastStatementLevelContext
+            inlineMetadata.function.let { f ->
+                if (f.function.coroutineMetadata != null) {
+                    val statementContext = lastStatementLevelContext
 
-                // This function will be exported to JS
-                val function = originalFunction.deepCopy()
+                    // This function will be exported to JS
+                    val function = scope.importFunctionDefinition(PublicInlineFunctionDefinition(inlineMetadata.tag.value, inlineMetadata.function, scope.fragment, scope))
 
-                // Original function should be not be transformed into a state machine
-                originalFunction.setName(null)
-                originalFunction.coroutineMetadata = null
-                originalFunction.isInlineableCoroutineBody = true
-                if (wrapperBody != null) {
-                    // Extract local declarations
-                    applyWrapper(
-                        wrapperBody,
-                        function,
-                        originalFunction,
-                        inlineFunctionDepth,
-                        replacementsInducedByWrappers,
-                        existingImports,
-                        additionalImports,
-                        existingNameBindings,
-                        additionalNameBindings,
-                        inlinedModuleAliases,
-                        inverseNameBindings,
-                        addPrevious
-                    )
+                    // Original function should be not be transformed into a state machine
+                    f.function.setName(null)
+                    f.function.coroutineMetadata = null
+                    f.function.isInlineableCoroutineBody = true
+
+                    // Keep the `defineInlineFunction` for the inliner to find
+                    statementContext.addNext(expression.makeStmt())
+
+                    // Return the function body to be used without inlining.
+                    return function
                 }
-
-                // Keep the `defineInlineFunction` for the inliner to find
-                statementContext.addNext(expression.makeStmt())
-
-                // Return the function body to be used without inlining.
-                return function
             }
         }
         return null

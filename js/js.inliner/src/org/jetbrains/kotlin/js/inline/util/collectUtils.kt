@@ -225,7 +225,7 @@ fun collectAccessors(scope: JsNode): Map<String, FunctionWithWrapper> {
     return accessors
 }
 
-fun collectAccessors(fragments: List<JsProgramFragment>): Map<String, FunctionWithWrapper> {
+fun collectAccessors(fragments: Iterable<JsProgramFragment>): Map<String, FunctionWithWrapper> {
     val result = mutableMapOf<String, FunctionWithWrapper>()
     for (fragment in fragments) {
         result += collectAccessors(fragment.declarationBlock)

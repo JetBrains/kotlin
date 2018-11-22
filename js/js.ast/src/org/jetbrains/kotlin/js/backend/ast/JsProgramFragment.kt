@@ -17,4 +17,6 @@ class JsProgramFragment(val scope: JsScope, val packageFqn: String) {
     val inlineModuleMap: MutableMap<String, JsExpression> = LinkedHashMap()
     var tests: JsStatement? = null
     var mainFunction: JsStatement? = null
+    // TODO serialize/deserialize; teach Merger about this thing
+    val inlinedFunctionWrappers = mutableMapOf<String, JsGlobalBlock>()
 }

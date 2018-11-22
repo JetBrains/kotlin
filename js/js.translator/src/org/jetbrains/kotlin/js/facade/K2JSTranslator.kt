@@ -113,12 +113,12 @@ class K2JSTranslator(private val config: JsConfig) {
         if (hasError(diagnostics)) return TranslationResult.Fail(diagnostics)
         checkCanceled()
 
-        JsInliner.process(
+        JsInliner(
             reporter,
             config,
             analysisResult.bindingTrace,
             translationResult
-        )
+        ).process()
         if (hasError(diagnostics)) return TranslationResult.Fail(diagnostics)
         checkCanceled()
 

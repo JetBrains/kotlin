@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.js.inline.util.replaceNames
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 
 class NamingContext(private val statementContext: JsContext<JsStatement>) {
-    private val renamings = mutableMapOf<JsName, JsExpression>()
+    private val renamings = mutableMapOf<JsName, JsNameRef>()
     private val declarations = mutableListOf<JsVars>()
     private var addedDeclarations = false
 
@@ -35,7 +35,7 @@ class NamingContext(private val statementContext: JsContext<JsStatement>) {
         return replaceNames(target, renamings)
     }
 
-    fun replaceName(name: JsName, replacement: JsExpression) {
+    fun replaceName(name: JsName, replacement: JsNameRef) {
         assert(!renamings.containsKey(name)) { "$name has been renamed already" }
 
         renamings.put(name, replacement)

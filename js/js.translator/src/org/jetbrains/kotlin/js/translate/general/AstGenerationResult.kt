@@ -53,7 +53,7 @@ class AstGenerationResult(
     private val sourceRoots = config.sourceMapRoots.map { File(it) }
     private val deserializer = JsAstDeserializer(merger.program, sourceRoots)
 
-    fun translate(unit: TranslationUnit) =
+    fun translate(unit: TranslationUnit): FileTranslationResult =
         when (unit) {
             is TranslationUnit.SourceFile -> translatedSourceFiles[unit]!!
             is TranslationUnit.BinaryAst -> cache.getOrPut(unit) {
