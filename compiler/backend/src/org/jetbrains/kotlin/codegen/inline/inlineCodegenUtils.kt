@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.codegen.context.CodegenContextUtil
 import org.jetbrains.kotlin.codegen.context.InlineLambdaContext
 import org.jetbrains.kotlin.codegen.context.MethodContext
 import org.jetbrains.kotlin.codegen.coroutines.unwrapInitialDescriptorForSuspendFunction
-import org.jetbrains.kotlin.codegen.intrinsics.classId
 import org.jetbrains.kotlin.codegen.optimization.common.intConstant
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
@@ -75,7 +74,6 @@ private const val INLINE_MARKER_RETURNS_UNIT = 2
 private const val INLINE_MARKER_FAKE_CONTINUATION = 3
 private const val INLINE_MARKER_BEFORE_FAKE_CONTINUATION_CONSTRUCTOR_CALL = 4
 private const val INLINE_MARKER_AFTER_FAKE_CONTINUATION_CONSTRUCTOR_CALL = 5
-private val INTRINSIC_ARRAY_CONSTRUCTOR_TYPE = AsmUtil.asmTypeByClassId(classId)
 
 internal fun getMethodNode(
     classData: ByteArray,
@@ -133,11 +131,6 @@ internal fun getMethodNode(
 
     if (node == null) {
         return null
-    }
-
-    if (INTRINSIC_ARRAY_CONSTRUCTOR_TYPE == classType) {
-        // Don't load source map for intrinsic array constructors
-        debugInfo[0] = null
     }
 
     val smap = SMAPParser.parseOrCreateDefault(debugInfo[1], debugInfo[0], classType.internalName, lines[0], lines[1])

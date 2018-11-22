@@ -4834,12 +4834,7 @@ The "returned" value of try expression with no finally is either the last expres
             if (codegen != null) {
                 codegen.consumeReifiedOperationMarker(typeParameterDescriptor);
             }
-            v.iconst(operationKind.getId());
-            v.visitLdcInsn(typeParameterAndReificationArgument.getSecond().asString());
-            v.invokestatic(
-                    IntrinsicMethods.INTRINSICS_CLASS_NAME, ReifiedTypeInliner.REIFIED_OPERATION_MARKER_METHOD_NAME,
-                    Type.getMethodDescriptor(Type.VOID_TYPE, Type.INT_TYPE, Type.getType(String.class)), false
-            );
+            ReifiedTypeInliner.putReifiedOperationMarker(operationKind, typeParameterAndReificationArgument.getSecond(), v);
         }
     }
 

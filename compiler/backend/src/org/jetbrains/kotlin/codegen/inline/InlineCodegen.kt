@@ -7,13 +7,12 @@ package org.jetbrains.kotlin.codegen.inline
 
 import com.intellij.psi.PsiElement
 import com.intellij.util.ArrayUtil
-import org.jetbrains.kotlin.builtins.BuiltInsPackageFragment
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.AsmUtil.getMethodAsmFlags
 import org.jetbrains.kotlin.codegen.AsmUtil.isPrimitive
 import org.jetbrains.kotlin.codegen.context.ClosureContext
-import org.jetbrains.kotlin.codegen.intrinsics.bytecode
-import org.jetbrains.kotlin.codegen.intrinsics.classId
+import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicArrayConstructors
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.config.isReleaseCoroutines
@@ -520,9 +519,13 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
             asmMethod: Method
         ): SMAPAndMethodNode? {
             if (isBuiltInArrayIntrinsic(callableDescriptor)) {
-                val classId = classId
-                val bytes = state.inlineCache.classBytes.getOrPut(classId) { bytecode }
-                return getMethodNode(bytes, asmMethod.name, asmMethod.descriptor, AsmUtil.asmTypeByClassId(classId))
+                val body = when {
+                    callableDescriptor is FictitiousArrayConstructor -> IntrinsicArrayConstructors.generateArrayConstructorBody(asmMethod)
+                    callableDescriptor.name.asString() == "emptyArray" -> IntrinsicArrayConstructors.generateEmptyArrayBody(asmMethod)
+                    callableDescriptor.name.asString() == "arrayOf" -> IntrinsicArrayConstructors.generateArrayOfBody(asmMethod)
+                    else -> throw UnsupportedOperationException("Not an array intrinsic: $callableDescriptor")
+                }
+                return SMAPAndMethodNode(body, SMAP(listOf(FileMapping.SKIP)))
             }
 
             assert(callableDescriptor is DeserializedCallableMemberDescriptor) { "Not a deserialized function or proper: " + callableDescriptor }
@@ -552,7 +555,9 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
         private fun isBuiltInArrayIntrinsic(callableDescriptor: CallableMemberDescriptor): Boolean {
             if (callableDescriptor is FictitiousArrayConstructor) return true
             val name = callableDescriptor.name.asString()
-            return (name == "arrayOf" || name == "emptyArray") && callableDescriptor.containingDeclaration is BuiltInsPackageFragment
+            return (name == "arrayOf" || name == "emptyArray") && callableDescriptor.containingDeclaration.let { container ->
+                container is PackageFragmentDescriptor && container.fqName == KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME
+            }
         }
 
         /*descriptor is null for captured vars*/
