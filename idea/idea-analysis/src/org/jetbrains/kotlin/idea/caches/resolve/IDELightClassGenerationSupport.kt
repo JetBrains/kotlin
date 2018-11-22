@@ -92,7 +92,9 @@ class IDELightClassGenerationSupport(private val project: Project) : LightClassG
             }
 
             override fun findAnnotation(owner: KtAnnotated, fqName: FqName): Pair<KtAnnotationEntry, AnnotationDescriptor>? {
-                val candidates = owner.annotationEntries.filter { it.shortName == fqName.shortName() || hasAlias(owner, fqName.shortName()) }
+                val candidates = owner.annotationEntries.filter {
+                    it.shortName == fqName.shortName() || owner.containingKtFile.hasAlias(it.shortName)
+                }
                 for (entry in candidates) {
                     val descriptor = analyze(entry).get(BindingContext.ANNOTATION, entry)
                     if (descriptor?.fqName == fqName) {
@@ -152,7 +154,10 @@ class IDELightClassGenerationSupport(private val project: Project) : LightClassG
         } == true
     }
 
-    private fun hasAlias(element: KtElement, shortName: Name): Boolean = allAliases(element.containingKtFile)[shortName.asString()] == true
+    private fun KtFile.hasAlias(shortName: Name?): Boolean {
+        if (shortName == null) return false
+        return allAliases(this)[shortName.asString()] == true
+    }
 
     private fun allAliases(file: KtFile): ConcurrentMap<String, Boolean> = CachedValuesManager.getCachedValue(file) {
         val importAliases = file.importDirectives.mapNotNull { it.aliasName }.toSet()
