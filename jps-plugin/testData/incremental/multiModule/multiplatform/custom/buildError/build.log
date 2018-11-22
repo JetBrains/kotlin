@@ -8,8 +8,8 @@ Cleaning output files:
   out/production/pJs/pJs/root-package.kjsm
 End of files
 Compiling files:
-  c/src/a.kt
-  pJs/src/c.kt
+  c/src/f.kt
+  pJs/src/fJs.kt
 End of files
 Exit code: ABORT
 ------------------------------------------
@@ -22,8 +22,8 @@ COMPILATION FAILED
 Building c
 Building pJs
 Compiling files:
-  c/src/a.kt
-  pJs/src/c.kt
+  c/src/f.kt
+  pJs/src/fJs.kt
 End of files
 Exit code: OK
 ------------------------------------------
@@ -32,8 +32,8 @@ Cleaning output files:
   out/production/pJvm/META-INF/pJvm.kotlin_module
 End of files
 Compiling files:
-  c/src/a.kt
-  pJvm/src/c.kt
+  c/src/f.kt
+  pJvm/src/fJvm.kt
 End of files
 Exit code: OK
 ------------------------------------------
