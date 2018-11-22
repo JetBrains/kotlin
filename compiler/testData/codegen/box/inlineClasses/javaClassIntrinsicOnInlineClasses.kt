@@ -13,6 +13,10 @@ fun check(c: Class<*>, s: String) {
     if (c.toString() != s) error("Fail, expected: $s, actual: $c")
 }
 
+inline fun <reified T> reifiedCheck(asString: String) {
+    check(T::class.java, asString)
+}
+
 fun box(): String {
     val i = IcInt(0)
     val l = IcLong(0)
@@ -30,6 +34,12 @@ fun box(): String {
     check(a::class.java, "class root.IcAny")
     check(o::class.java, "class root.IcOverIc")
     check(1u::class.java, "class kotlin.UInt")
+
+    reifiedCheck<IcInt>("class root.IcInt")
+    reifiedCheck<IcLong>("class root.IcLong")
+    reifiedCheck<IcAny>("class root.IcAny")
+    reifiedCheck<IcOverIc>("class root.IcOverIc")
+    reifiedCheck<UInt>("class kotlin.UInt")
 
     val arrI = arrayOf(i)
     check(arrI[0].javaClass, "class root.IcInt")
