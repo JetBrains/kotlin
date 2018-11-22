@@ -436,6 +436,19 @@ class MatchResultTest {
     }
 
     /**
+     * Regression test for HARMONY-3360
+     */
+    @Test fun testGeneralPunctuationCategory() {
+        val s = arrayOf(",", "!", "\"", "#", "%", "&", "'", "(", ")", "-", ".", "/")
+        val regexp = "\\p{P}"
+
+        for (i in s.indices) {
+            val regex = Regex(regexp)
+            assertTrue(regex.containsMatchIn(s[i]))
+        }
+    }
+
+    /**
      * Regression test for https://github.com/JetBrains/kotlin-native/issues/2297
      */
     @Test fun test2297() {
@@ -458,16 +471,9 @@ class MatchResultTest {
         assertTrue(Regex("[^a]").matches("b"))
     }
 
-    /**
-     * Regression test for HARMONY-3360
-     */
-    @Test fun testGeneralPunctuationCategory() {
-        val s = arrayOf(",", "!", "\"", "#", "%", "&", "'", "(", ")", "-", ".", "/")
-        val regexp = "\\p{P}"
-
-        for (i in s.indices) {
-            val regex = Regex(regexp)
-            assertTrue(regex.containsMatchIn(s[i]))
-        }
+    @Test fun kt28158() {
+        val comment = "😃😃😃😃😃😃"
+        val regex = Regex("(.{3,})\\1+", RegexOption.IGNORE_CASE)
+        assertTrue(comment.contains(regex))
     }
 }

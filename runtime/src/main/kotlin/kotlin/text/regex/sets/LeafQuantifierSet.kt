@@ -88,7 +88,7 @@ open internal class LeafQuantifierSet(var quantifier: Quantifier,
         get() = super.innerSet
         set(innerSet) {
             if (innerSet !is LeafSet)
-                throw RuntimeException()
+                throw RuntimeException("Internal Error")
             super.innerSet = innerSet
         }
 }

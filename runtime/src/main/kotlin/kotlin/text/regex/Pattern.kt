@@ -58,7 +58,7 @@ internal class Pattern(val pattern: String, flags: Int = 0) {
     /** Compiles the given pattern */
     init {
         if (flags != 0 && flags or flagsBitMask != flagsBitMask) {
-            throw IllegalArgumentException()
+            throw IllegalArgumentException("Invalid match flags value")
         }
         startNode = processExpression(-1, this.flags, null)
 

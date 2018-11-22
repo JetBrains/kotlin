@@ -213,7 +213,7 @@ internal class CharClass(val ignoreCase: Boolean = false, negative: Boolean = fa
 
     fun add(start: Int, end: Int): CharClass {
         if (start > end)
-            throw IllegalArgumentException()
+            throw IllegalArgumentException("Incorrect range of symbols (start > end)")
         val minSurrogate = Char.MIN_SURROGATE.toInt()
         val maxSurrogate = Char.MAX_SURROGATE.toInt()
         if (ignoreCase) {
