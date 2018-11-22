@@ -19,28 +19,76 @@ package org.jetbrains.kotlin.js.translate.general
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.js.backend.ast.*
-import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.serialization.js.ModuleKind
+import org.jetbrains.kotlin.js.config.JsConfig
+import org.jetbrains.kotlin.js.facade.TranslationUnit
+import org.jetbrains.kotlin.protobuf.CodedInputStream
+import org.jetbrains.kotlin.serialization.js.ast.JsAstDeserializer
+import org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf
+import java.io.ByteArrayInputStream
+import java.io.File
+import java.util.HashSet
 
 class AstGenerationResult(
-    val fragments: List<JsProgramFragment>,
-    val fragmentMap: Map<KtFile, JsProgramFragment>,
-    val newFragments: List<JsProgramFragment>,
-    val fileMemberScopes: Map<KtFile, List<DeclarationDescriptor>>,
-    private val program: JsProgram,
-    private val moduleDescriptor: ModuleDescriptor,
-    private val moduleId: String,
-    private val moduleKind: ModuleKind
+    val units: Collection<TranslationUnit>,
+    val translatedSourceFiles: Map<TranslationUnit.SourceFile, SourceFileTranslationResult>,
+    val inlineFunctionTagMap: Map<String, TranslationUnit>,
+    moduleDescriptor: ModuleDescriptor,
+    config: JsConfig
 ) {
 
-    val innerModuleName = program.getScope().declareName("_");
+    // TODO remove
+    val newFragments = translatedSourceFiles.values.map { it.fragment }
 
+    // Only available after the merge
     val importedModuleList: List<JsImportedModule>
-        get() = fragments.flatMap { it.importedModules }
+        get() = merger.importedModules
+
+    val innerModuleName: JsName
+        get() = merger.internalModuleName
+
+    private val cache = mutableMapOf<TranslationUnit.BinaryAst, DeserializedFileTranslationResult>()
+
+    private val merger = Merger(moduleDescriptor, config.moduleId, config.moduleKind)
+
+    private val sourceRoots = config.sourceMapRoots.map { File(it) }
+    private val deserializer = JsAstDeserializer(merger.program, sourceRoots)
+
+    fun translate(unit: TranslationUnit) =
+        when (unit) {
+            is TranslationUnit.SourceFile -> translatedSourceFiles[unit]!!
+            is TranslationUnit.BinaryAst -> cache.getOrPut(unit) {
+                // TODO Don't deserialize header twice
+                val headerData = unit.header
+                val header = JsAstProtoBuf.Header.parseFrom(CodedInputStream.newInstance(headerData))
+
+                DeserializedFileTranslationResult(
+                    deserializer.deserialize(ByteArrayInputStream(unit.data)),
+                    HashSet(header.inlineFunctionTagsList)
+                )
+            }
+        }
 
     fun buildProgram(): JsProgram {
-        val merger = Merger(program, innerModuleName, moduleDescriptor, moduleId, moduleKind)
+        val fragments = units.map { translate(it).fragment }
         fragments.forEach { merger.addFragment(it) }
         return merger.buildProgram()
     }
 }
+
+sealed class FileTranslationResult {
+    abstract val fragment: JsProgramFragment
+
+    abstract val inlineFunctionTags: Set<String>
+}
+
+class SourceFileTranslationResult(
+    override val fragment: JsProgramFragment,
+    override val inlineFunctionTags: Set<String>,
+    val memberScope: List<DeclarationDescriptor>
+) : FileTranslationResult()
+
+class DeserializedFileTranslationResult(
+    override val fragment: JsProgramFragment,
+    override val inlineFunctionTags: Set<String>
+) : FileTranslationResult()
+

@@ -458,3 +458,10 @@ message Chunk {
     required NameTable name_table = 2;
     required Fragment fragment = 3;
 }
+
+// Header
+//
+
+message Header {
+    repeated string inline_function_tags = 1;
+}

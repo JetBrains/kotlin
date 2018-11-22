@@ -49831,6 +49831,505 @@ public final class DebugJsAstProtoBuf {
     // @@protoc_insertion_point(class_scope:org.jetbrains.kotlin.serialization.js.ast.Chunk)
   }
 
+  public interface HeaderOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:org.jetbrains.kotlin.serialization.js.ast.Header)
+      org.jetbrains.kotlin.protobuf.MessageOrBuilder {
+
+    /**
+     * <code>repeated string inline_function_tags = 1;</code>
+     */
+    org.jetbrains.kotlin.protobuf.ProtocolStringList
+        getInlineFunctionTagsList();
+    /**
+     * <code>repeated string inline_function_tags = 1;</code>
+     */
+    int getInlineFunctionTagsCount();
+    /**
+     * <code>repeated string inline_function_tags = 1;</code>
+     */
+    java.lang.String getInlineFunctionTags(int index);
+    /**
+     * <code>repeated string inline_function_tags = 1;</code>
+     */
+    org.jetbrains.kotlin.protobuf.ByteString
+        getInlineFunctionTagsBytes(int index);
+  }
+  /**
+   * Protobuf type {@code org.jetbrains.kotlin.serialization.js.ast.Header}
+   */
+  public static final class Header extends
+      org.jetbrains.kotlin.protobuf.GeneratedMessage implements
+      // @@protoc_insertion_point(message_implements:org.jetbrains.kotlin.serialization.js.ast.Header)
+      HeaderOrBuilder {
+    // Use Header.newBuilder() to construct.
+    private Header(org.jetbrains.kotlin.protobuf.GeneratedMessage.Builder<?> builder) {
+      super(builder);
+      this.unknownFields = builder.getUnknownFields();
+    }
+    private Header(boolean noInit) { this.unknownFields = org.jetbrains.kotlin.protobuf.UnknownFieldSet.getDefaultInstance(); }
+
+    private static final Header defaultInstance;
+    public static Header getDefaultInstance() {
+      return defaultInstance;
+    }
+
+    public Header getDefaultInstanceForType() {
+      return defaultInstance;
+    }
+
+    private final org.jetbrains.kotlin.protobuf.UnknownFieldSet unknownFields;
+    @java.lang.Override
+    public final org.jetbrains.kotlin.protobuf.UnknownFieldSet
+        getUnknownFields() {
+      return this.unknownFields;
+    }
+    private Header(
+        org.jetbrains.kotlin.protobuf.CodedInputStream input,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
+      initFields();
+      int mutable_bitField0_ = 0;
+      org.jetbrains.kotlin.protobuf.UnknownFieldSet.Builder unknownFields =
+          org.jetbrains.kotlin.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            default: {
+              if (!parseUnknownField(input, unknownFields,
+                                     extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+            case 10: {
+              org.jetbrains.kotlin.protobuf.ByteString bs = input.readBytes();
+              if (!((mutable_bitField0_ & 0x00000001) == 0x00000001)) {
+                inlineFunctionTags_ = new org.jetbrains.kotlin.protobuf.LazyStringArrayList();
+                mutable_bitField0_ |= 0x00000001;
+              }
+              inlineFunctionTags_.add(bs);
+              break;
+            }
+          }
+        }
+      } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException(
+            e.getMessage()).setUnfinishedMessage(this);
+      } finally {
+        if (((mutable_bitField0_ & 0x00000001) == 0x00000001)) {
+          inlineFunctionTags_ = inlineFunctionTags_.getUnmodifiableView();
+        }
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+    public static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.internal_static_org_jetbrains_kotlin_serialization_js_ast_Header_descriptor;
+    }
+
+    protected org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.internal_static_org_jetbrains_kotlin_serialization_js_ast_Header_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.Header.class, org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.Header.Builder.class);
+    }
+
+    public static org.jetbrains.kotlin.protobuf.Parser<Header> PARSER =
+        new org.jetbrains.kotlin.protobuf.AbstractParser<Header>() {
+      public Header parsePartialFrom(
+          org.jetbrains.kotlin.protobuf.CodedInputStream input,
+          org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
+        return new Header(input, extensionRegistry);
+      }
+    };
+
+    @java.lang.Override
+    public org.jetbrains.kotlin.protobuf.Parser<Header> getParserForType() {
+      return PARSER;
+    }
+
+    public static final int INLINE_FUNCTION_TAGS_FIELD_NUMBER = 1;
+    private org.jetbrains.kotlin.protobuf.LazyStringList inlineFunctionTags_;
+    /**
+     * <code>repeated string inline_function_tags = 1;</code>
+     */
+    public org.jetbrains.kotlin.protobuf.ProtocolStringList
+        getInlineFunctionTagsList() {
+      return inlineFunctionTags_;
+    }
+    /**
+     * <code>repeated string inline_function_tags = 1;</code>
+     */
+    public int getInlineFunctionTagsCount() {
+      return inlineFunctionTags_.size();
+    }
+    /**
+     * <code>repeated string inline_function_tags = 1;</code>
+     */
+    public java.lang.String getInlineFunctionTags(int index) {
+      return inlineFunctionTags_.get(index);
+    }
+    /**
+     * <code>repeated string inline_function_tags = 1;</code>
+     */
+    public org.jetbrains.kotlin.protobuf.ByteString
+        getInlineFunctionTagsBytes(int index) {
+      return inlineFunctionTags_.getByteString(index);
+    }
+
+    private void initFields() {
+      inlineFunctionTags_ = org.jetbrains.kotlin.protobuf.LazyStringArrayList.EMPTY;
+    }
+    private byte memoizedIsInitialized = -1;
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    public void writeTo(org.jetbrains.kotlin.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      getSerializedSize();
+      for (int i = 0; i < inlineFunctionTags_.size(); i++) {
+        output.writeBytes(1, inlineFunctionTags_.getByteString(i));
+      }
+      getUnknownFields().writeTo(output);
+    }
+
+    private int memoizedSerializedSize = -1;
+    public int getSerializedSize() {
+      int size = memoizedSerializedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      {
+        int dataSize = 0;
+        for (int i = 0; i < inlineFunctionTags_.size(); i++) {
+          dataSize += org.jetbrains.kotlin.protobuf.CodedOutputStream
+            .computeBytesSizeNoTag(inlineFunctionTags_.getByteString(i));
+        }
+        size += dataSize;
+        size += 1 * getInlineFunctionTagsList().size();
+      }
+      size += getUnknownFields().getSerializedSize();
+      memoizedSerializedSize = size;
+      return size;
+    }
+
+    private static final long serialVersionUID = 0L;
+    @java.lang.Override
+    protected java.lang.Object writeReplace()
+        throws java.io.ObjectStreamException {
+      return super.writeReplace();
+    }
+
+    public static org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.Header parseFrom(
+        org.jetbrains.kotlin.protobuf.ByteString data)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.Header parseFrom(
+        org.jetbrains.kotlin.protobuf.ByteString data,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.Header parseFrom(byte[] data)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.Header parseFrom(
+        byte[] data,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.Header parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input);
+    }
+    public static org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.Header parseFrom(
+        java.io.InputStream input,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input, extensionRegistry);
+    }
+    public static org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.Header parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return PARSER.parseDelimitedFrom(input);
+    }
+    public static org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.Header parseDelimitedFrom(
+        java.io.InputStream input,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseDelimitedFrom(input, extensionRegistry);
+    }
+    public static org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.Header parseFrom(
+        org.jetbrains.kotlin.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input);
+    }
+    public static org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.Header parseFrom(
+        org.jetbrains.kotlin.protobuf.CodedInputStream input,
+        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input, extensionRegistry);
+    }
+
+    public static Builder newBuilder() { return Builder.create(); }
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder(org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.Header prototype) {
+      return newBuilder().mergeFrom(prototype);
+    }
+    public Builder toBuilder() { return newBuilder(this); }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        org.jetbrains.kotlin.protobuf.GeneratedMessage.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * Protobuf type {@code org.jetbrains.kotlin.serialization.js.ast.Header}
+     */
+    public static final class Builder extends
+        org.jetbrains.kotlin.protobuf.GeneratedMessage.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:org.jetbrains.kotlin.serialization.js.ast.Header)
+        org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.HeaderOrBuilder {
+      public static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.internal_static_org_jetbrains_kotlin_serialization_js_ast_Header_descriptor;
+      }
+
+      protected org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.internal_static_org_jetbrains_kotlin_serialization_js_ast_Header_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.Header.class, org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.Header.Builder.class);
+      }
+
+      // Construct using org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.Header.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(
+          org.jetbrains.kotlin.protobuf.GeneratedMessage.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (org.jetbrains.kotlin.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
+        }
+      }
+      private static Builder create() {
+        return new Builder();
+      }
+
+      public Builder clear() {
+        super.clear();
+        inlineFunctionTags_ = org.jetbrains.kotlin.protobuf.LazyStringArrayList.EMPTY;
+        bitField0_ = (bitField0_ & ~0x00000001);
+        return this;
+      }
+
+      public Builder clone() {
+        return create().mergeFrom(buildPartial());
+      }
+
+      public org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.internal_static_org_jetbrains_kotlin_serialization_js_ast_Header_descriptor;
+      }
+
+      public org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.Header getDefaultInstanceForType() {
+        return org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.Header.getDefaultInstance();
+      }
+
+      public org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.Header build() {
+        org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.Header result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      public org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.Header buildPartial() {
+        org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.Header result = new org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.Header(this);
+        int from_bitField0_ = bitField0_;
+        if (((bitField0_ & 0x00000001) == 0x00000001)) {
+          inlineFunctionTags_ = inlineFunctionTags_.getUnmodifiableView();
+          bitField0_ = (bitField0_ & ~0x00000001);
+        }
+        result.inlineFunctionTags_ = inlineFunctionTags_;
+        onBuilt();
+        return result;
+      }
+
+      public Builder mergeFrom(org.jetbrains.kotlin.protobuf.Message other) {
+        if (other instanceof org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.Header) {
+          return mergeFrom((org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.Header)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.Header other) {
+        if (other == org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.Header.getDefaultInstance()) return this;
+        if (!other.inlineFunctionTags_.isEmpty()) {
+          if (inlineFunctionTags_.isEmpty()) {
+            inlineFunctionTags_ = other.inlineFunctionTags_;
+            bitField0_ = (bitField0_ & ~0x00000001);
+          } else {
+            ensureInlineFunctionTagsIsMutable();
+            inlineFunctionTags_.addAll(other.inlineFunctionTags_);
+          }
+          onChanged();
+        }
+        this.mergeUnknownFields(other.getUnknownFields());
+        return this;
+      }
+
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      public Builder mergeFrom(
+          org.jetbrains.kotlin.protobuf.CodedInputStream input,
+          org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.Header parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (org.jetbrains.kotlin.serialization.js.ast.DebugJsAstProtoBuf.Header) e.getUnfinishedMessage();
+          throw e;
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+      private int bitField0_;
+
+      private org.jetbrains.kotlin.protobuf.LazyStringList inlineFunctionTags_ = org.jetbrains.kotlin.protobuf.LazyStringArrayList.EMPTY;
+      private void ensureInlineFunctionTagsIsMutable() {
+        if (!((bitField0_ & 0x00000001) == 0x00000001)) {
+          inlineFunctionTags_ = new org.jetbrains.kotlin.protobuf.LazyStringArrayList(inlineFunctionTags_);
+          bitField0_ |= 0x00000001;
+         }
+      }
+      /**
+       * <code>repeated string inline_function_tags = 1;</code>
+       */
+      public org.jetbrains.kotlin.protobuf.ProtocolStringList
+          getInlineFunctionTagsList() {
+        return inlineFunctionTags_.getUnmodifiableView();
+      }
+      /**
+       * <code>repeated string inline_function_tags = 1;</code>
+       */
+      public int getInlineFunctionTagsCount() {
+        return inlineFunctionTags_.size();
+      }
+      /**
+       * <code>repeated string inline_function_tags = 1;</code>
+       */
+      public java.lang.String getInlineFunctionTags(int index) {
+        return inlineFunctionTags_.get(index);
+      }
+      /**
+       * <code>repeated string inline_function_tags = 1;</code>
+       */
+      public org.jetbrains.kotlin.protobuf.ByteString
+          getInlineFunctionTagsBytes(int index) {
+        return inlineFunctionTags_.getByteString(index);
+      }
+      /**
+       * <code>repeated string inline_function_tags = 1;</code>
+       */
+      public Builder setInlineFunctionTags(
+          int index, java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  ensureInlineFunctionTagsIsMutable();
+        inlineFunctionTags_.set(index, value);
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>repeated string inline_function_tags = 1;</code>
+       */
+      public Builder addInlineFunctionTags(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  ensureInlineFunctionTagsIsMutable();
+        inlineFunctionTags_.add(value);
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>repeated string inline_function_tags = 1;</code>
+       */
+      public Builder addAllInlineFunctionTags(
+          java.lang.Iterable<java.lang.String> values) {
+        ensureInlineFunctionTagsIsMutable();
+        org.jetbrains.kotlin.protobuf.AbstractMessageLite.Builder.addAll(
+            values, inlineFunctionTags_);
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>repeated string inline_function_tags = 1;</code>
+       */
+      public Builder clearInlineFunctionTags() {
+        inlineFunctionTags_ = org.jetbrains.kotlin.protobuf.LazyStringArrayList.EMPTY;
+        bitField0_ = (bitField0_ & ~0x00000001);
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>repeated string inline_function_tags = 1;</code>
+       */
+      public Builder addInlineFunctionTagsBytes(
+          org.jetbrains.kotlin.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  ensureInlineFunctionTagsIsMutable();
+        inlineFunctionTags_.add(value);
+        onChanged();
+        return this;
+      }
+
+      // @@protoc_insertion_point(builder_scope:org.jetbrains.kotlin.serialization.js.ast.Header)
+    }
+
+    static {
+      defaultInstance = new Header(true);
+      defaultInstance.initFields();
+    }
+
+    // @@protoc_insertion_point(class_scope:org.jetbrains.kotlin.serialization.js.ast.Header)
+  }
+
   private static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
     internal_static_org_jetbrains_kotlin_serialization_js_ast_Location_descriptor;
   private static
@@ -50106,6 +50605,11 @@ public final class DebugJsAstProtoBuf {
   private static
     org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
       internal_static_org_jetbrains_kotlin_serialization_js_ast_Chunk_fieldAccessorTable;
+  private static final org.jetbrains.kotlin.protobuf.Descriptors.Descriptor
+    internal_static_org_jetbrains_kotlin_serialization_js_ast_Header_descriptor;
+  private static
+    org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_org_jetbrains_kotlin_serialization_js_ast_Header_fieldAccessorTable;
 
   public static org.jetbrains.kotlin.protobuf.Descriptors.FileDescriptor
       getDescriptor() {
@@ -50403,8 +50907,9 @@ public final class DebugJsAstProtoBuf {
       "H\n\nname_table\030\002 \002(\01324.org.jetbrains.kotl" +
       "in.serialization.js.ast.NameTable\022E\n\010fra" +
       "gment\030\003 \002(\01323.org.jetbrains.kotlin.seria" +
-      "lization.js.ast.Fragment*@\n\013SideEffects\022" +
-      "\021\n\rAFFECTS_STATE\020\001\022\024\n\020DEPENDS_ON_STATE\020\002",
+      "lization.js.ast.Fragment\"&\n\006Header\022\034\n\024in" +
+      "line_function_tags\030\001 \003(\t*@\n\013SideEffects\022",
+      "\021\n\rAFFECTS_STATE\020\001\022\024\n\020DEPENDS_ON_STATE\020\002" +
       "\022\010\n\004PURE\020\003*?\n\016InlineStrategy\022\017\n\013AS_FUNCT" +
       "ION\020\000\022\014\n\010IN_PLACE\020\001\022\016\n\nNOT_INLINE\020\002*\327\001\n\017" +
       "SpecialFunction\022\032\n\026DEFINE_INLINE_FUNCTIO" +
@@ -50756,6 +51261,12 @@ public final class DebugJsAstProtoBuf {
       org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_org_jetbrains_kotlin_serialization_js_ast_Chunk_descriptor,
         new java.lang.String[] { "StringTable", "NameTable", "Fragment", });
+    internal_static_org_jetbrains_kotlin_serialization_js_ast_Header_descriptor =
+      getDescriptor().getMessageTypes().get(55);
+    internal_static_org_jetbrains_kotlin_serialization_js_ast_Header_fieldAccessorTable = new
+      org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_org_jetbrains_kotlin_serialization_js_ast_Header_descriptor,
+        new java.lang.String[] { "InlineFunctionTags", });
   }
 
   // @@protoc_insertion_point(outer_class_scope)

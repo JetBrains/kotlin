@@ -35,7 +35,6 @@ import org.jetbrains.kotlin.js.facade.exceptions.UnsupportedFeatureException;
 import org.jetbrains.kotlin.js.naming.NameSuggestion;
 import org.jetbrains.kotlin.js.sourceMap.SourceFilePathResolver;
 import org.jetbrains.kotlin.js.translate.callTranslator.CallTranslator;
-import org.jetbrains.kotlin.js.translate.context.Namer;
 import org.jetbrains.kotlin.js.translate.context.StaticContext;
 import org.jetbrains.kotlin.js.translate.context.TemporaryVariable;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
@@ -48,6 +47,7 @@ import org.jetbrains.kotlin.js.translate.utils.*;
 import org.jetbrains.kotlin.js.translate.utils.mutator.AssignToExpressionMutator;
 import org.jetbrains.kotlin.name.FqNameUnsafe;
 import org.jetbrains.kotlin.name.Name;
+import org.jetbrains.kotlin.protobuf.CodedInputStream;
 import org.jetbrains.kotlin.psi.KtDeclaration;
 import org.jetbrains.kotlin.psi.KtExpression;
 import org.jetbrains.kotlin.psi.KtFile;
@@ -58,17 +58,14 @@ import org.jetbrains.kotlin.resolve.bindingContextUtil.BindingContextUtilsKt;
 import org.jetbrains.kotlin.resolve.constants.*;
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator;
 import org.jetbrains.kotlin.resolve.scopes.MemberScope;
-import org.jetbrains.kotlin.serialization.js.ast.JsAstDeserializer;
+import org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.TypeUtils;
 import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
+import java.io.IOException;
 import java.util.*;
-import java.util.stream.Collectors;
 
-import static org.jetbrains.kotlin.js.translate.general.ModuleWrapperTranslation.wrapIfNecessary;
 import static org.jetbrains.kotlin.js.translate.utils.JsAstUtils.convertToStatement;
 import static org.jetbrains.kotlin.js.translate.utils.JsAstUtils.toStringLiteralList;
 import static org.jetbrains.kotlin.js.translate.utils.mutator.LastExpressionMutator.mutateLastExpression;
@@ -323,51 +320,43 @@ public final class Translation {
             @NotNull ModuleDescriptor moduleDescriptor,
             @NotNull JsConfig config,
             @NotNull SourceFilePathResolver sourceFilePathResolver
-    ) {
+    ) throws IOException {
 
-        JsProgram program = new JsProgram();
+        Map<String, TranslationUnit> inlineFunctionTagMap = new HashMap<>();
 
-        Map<KtFile, JsProgramFragment> fragmentMap = new HashMap<>();
-        List<JsProgramFragment> fragments = new ArrayList<>();
-        List<JsProgramFragment> newFragments = new ArrayList<>();
+        Map<TranslationUnit.SourceFile, SourceFileTranslationResult> translatedSourceFiles = new HashMap<>();
 
-        Map<KtFile, List<DeclarationDescriptor>> fileMemberScopes = new HashMap<>();
-
-        List<File> sourceRoots = config.getSourceMapRoots().stream().map(File::new).collect(Collectors.toList());
-        JsAstDeserializer deserializer = new JsAstDeserializer(program, sourceRoots);
         for (TranslationUnit unit : units) {
             if (unit instanceof TranslationUnit.SourceFile) {
-                KtFile file = ((TranslationUnit.SourceFile) unit).getFile();
+                TranslationUnit.SourceFile sourceFileUnit = ((TranslationUnit.SourceFile) unit);
+                KtFile file = sourceFileUnit.getFile();
                 StaticContext staticContext = new StaticContext(bindingTrace, config, moduleDescriptor, sourceFilePathResolver, file.getPackageFqName().asString());
                 TranslationContext context = TranslationContext.rootContext(staticContext);
                 List<DeclarationDescriptor> fileMemberScope = new ArrayList<>();
                 translateFile(context, file, fileMemberScope);
 
                 JsProgramFragment fragment = staticContext.getFragment();
+                for (String tag : staticContext.getInlineFunctionTags()) {
+                    inlineFunctionTagMap.put(tag, unit);
+                }
 
                 fragment.setTests(mayBeGenerateTests(context, file, fileMemberScope));
                 fragment.setMainFunction(maybeGenerateCallToMain(context, config, moduleDescriptor, fileMemberScope, mainCallParameters));
-
-                fragments.add(fragment);
-                newFragments.add(fragment);
-                fragmentMap.put(file, fragment);
-                fileMemberScopes.put(file, fileMemberScope);
+                translatedSourceFiles.put(sourceFileUnit, new SourceFileTranslationResult(fragment, staticContext.getInlineFunctionTags(), fileMemberScope));
             }
             else if (unit instanceof TranslationUnit.BinaryAst) {
-                byte[] astData = ((TranslationUnit.BinaryAst) unit).getData();
-                JsProgramFragment fragment = deserializer.deserialize(new ByteArrayInputStream(astData));
-                fragments.add(fragment);
+                byte[] headerData = ((TranslationUnit.BinaryAst) unit).getHeader();
+                JsAstProtoBuf.Header h = JsAstProtoBuf.Header.parseFrom(CodedInputStream.newInstance(headerData));
+                for (String tag : h.getInlineFunctionTagsList()) {
+                    inlineFunctionTagMap.put(tag, unit);
+                }
             }
         }
-
-        return new AstGenerationResult(fragments,
-                                       fragmentMap,
-                                       newFragments,
-                                       fileMemberScopes,
-                                       program,
+        return new AstGenerationResult(units,
+                                       translatedSourceFiles,
+                                       inlineFunctionTagMap,
                                        moduleDescriptor,
-                                       config.getModuleId(),
-                                       config.getModuleKind());
+                                       config);
     }
 
     private static void translateFile(

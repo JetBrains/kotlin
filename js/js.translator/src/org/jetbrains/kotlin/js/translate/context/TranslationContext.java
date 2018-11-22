@@ -958,4 +958,8 @@ public class TranslationContext {
     public LanguageVersionSettings getLanguageVersionSettings() {
         return CommonConfigurationKeysKt.getLanguageVersionSettings(staticContext.getConfig().getConfiguration());
     }
+
+    public void reportInlineFunctionTag(@NotNull String tag) {
+        staticContext.reportInlineFunctionTag(tag);
+    }
 }

@@ -95,7 +95,8 @@ class JsInliner private constructor(
 
     companion object {
 
-        // TODO decrypt
+        // TODO decrypt; Possibly error-prone due to late renaming
+        // TODO Possibly apply post-processing outside of FunctionReader?
         // Since we compile each source file in its own context (and we may loose these context when performing incremental compilation)
         // we don't use contexts to generate proper names for modules. Instead, we generate all necessary information during
         // translation and rely on it here.
@@ -110,20 +111,29 @@ class JsInliner private constructor(
             trace: DiagnosticSink,
             translationResult: AstGenerationResult
         ) {
-            val functions = collectNamedFunctionsAndWrappers(translationResult.newFragments)
-
-            val accessors = collectAccessors(translationResult.fragments)
-
-            val inverseNameBindings = inverseNameBindings(*translationResult.fragments.toTypedArray())
-
             val accessorInvocationTransformer = DummyAccessorInvocationTransformer()
             for (fragment in translationResult.newFragments) {
                 accessorInvocationTransformer.accept<JsGlobalBlock>(fragment.declarationBlock)
                 accessorInvocationTransformer.accept<JsGlobalBlock>(fragment.initializerBlock)
             }
-            val functionReader = FunctionReader(reporter, config, translationResult.innerModuleName, buildModuleNameMap(translationResult.fragments))
 
-            val moduleMap = translationResult.importedModuleList.associate { it.internalName to it }
+            val referencedInlineFunctionTags = collectInlineFunctionTags(config, translationResult.newFragments)
+            val fragments = referencedInlineFunctionTags.mapNotNull {
+                translationResult.inlineFunctionTagMap[it]?.let { unit ->
+                    translationResult.translate(unit).fragment
+                }
+            }
+
+            val functions = collectNamedFunctionsAndWrappers(translationResult.newFragments)
+
+            val accessors = collectAccessors(fragments)
+
+            // TODO update on fragment loading
+            val inverseNameBindings = inverseNameBindings(*fragments.toTypedArray())
+
+            val functionReader = FunctionReader(reporter, config, translationResult.innerModuleName, buildModuleNameMap(fragments))
+
+            val moduleMap = fragments.asSequence().flatMap { it.importedModules.asSequence() }.associate { it.internalName to it }
 
             val inliner = JsInliner(config, functionReader, functions, accessors, inverseNameBindings, moduleMap, trace)
             for (fragment in translationResult.newFragments) {
@@ -153,6 +163,5 @@ class JsInliner private constructor(
 
             return name2Tag
         }
-
     }
 }

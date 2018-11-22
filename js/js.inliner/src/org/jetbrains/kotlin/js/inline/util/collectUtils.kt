@@ -18,8 +18,11 @@ package org.jetbrains.kotlin.js.inline.util
 
 import org.jetbrains.kotlin.js.backend.JsToStringGenerationVisitor
 import org.jetbrains.kotlin.js.backend.ast.*
+import org.jetbrains.kotlin.js.backend.ast.metadata.descriptor
 import org.jetbrains.kotlin.js.backend.ast.metadata.imported
+import org.jetbrains.kotlin.js.config.JsConfig
 import org.jetbrains.kotlin.js.inline.util.collectors.InstanceCollector
+import org.jetbrains.kotlin.js.translate.context.Namer
 import org.jetbrains.kotlin.js.translate.expression.InlineMetadata
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 
@@ -233,6 +236,26 @@ fun collectAccessors(fragments: List<JsProgramFragment>): Map<String, FunctionWi
 fun extractFunction(expression: JsExpression) = when (expression) {
     is JsFunction -> FunctionWithWrapper(expression, null)
     else -> InlineMetadata.decompose(expression)?.function ?: InlineMetadata.tryExtractFunction(expression)
+}
+
+fun collectInlineFunctionTags(config: JsConfig, fragments: List<JsProgramFragment>): Set<String> {
+    val result = mutableSetOf<String>()
+    for (fragment in fragments) {
+        collectInlineFunctionTags(config, fragment.declarationBlock, result)
+        collectInlineFunctionTags(config, fragment.initializerBlock, result)
+    }
+    return result
+}
+
+private fun collectInlineFunctionTags(config: JsConfig, scope: JsNode, result: MutableSet<String>) {
+    scope.accept(object : RecursiveJsVisitor() {
+        override fun visitInvocation(invocation: JsInvocation) {
+            invocation.descriptor?.let {
+                result.add(Namer.getFunctionTag(it, config))
+            }
+            super.visitInvocation(invocation)
+        }
+    })
 }
 
 fun <T : JsNode> collectInstances(klass: Class<T>, scope: JsNode): List<T> {

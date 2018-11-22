@@ -124,9 +124,10 @@ open class CompilerCallbackServicesFacadeServer(
     override fun incrementalResultsConsumer_processPackagePart(
         sourceFilePath: String,
         packagePartMetadata: ByteArray,
-        binaryAst: ByteArray
+        binaryAst: ByteArray,
+        header: ByteArray
     ) {
-        incrementalResultsConsumer!!.processPackagePart(File(sourceFilePath), packagePartMetadata, binaryAst)
+        incrementalResultsConsumer!!.processPackagePart(File(sourceFilePath), packagePartMetadata, binaryAst, header)
     }
 
     override fun incrementalResultsConsumer_processInlineFunctions(functions: Collection<JsInlineFunctionHash>) {
@@ -139,6 +140,6 @@ open class CompilerCallbackServicesFacadeServer(
 
     override fun incrementalDataProvider_getCompiledPackageParts() =
         incrementalDataProvider!!.compiledPackageParts.entries.map {
-            CompiledPackagePart(it.key.path, it.value.metadata, it.value.binaryAst)
+            CompiledPackagePart(it.key.path, it.value.metadata, it.value.binaryAst, it.value.header)
         }
 }

@@ -107,7 +107,7 @@ interface CompilerCallbackServicesFacade : Remote {
     fun incrementalResultsConsumer_processHeader(headerMetadata: ByteArray)
 
     @Throws(RemoteException::class)
-    fun incrementalResultsConsumer_processPackagePart(sourceFilePath: String, packagePartMetadata: ByteArray, binaryAst: ByteArray)
+    fun incrementalResultsConsumer_processPackagePart(sourceFilePath: String, packagePartMetadata: ByteArray, binaryAst: ByteArray, header: ByteArray)
 
     @Throws(RemoteException::class)
     fun incrementalResultsConsumer_processInlineFunctions(functions: Collection<JsInlineFunctionHash>)
@@ -126,7 +126,7 @@ interface CompilerCallbackServicesFacade : Remote {
 
 class CompiledPackagePart(
     val filePath: String,
-    val metadata: ByteArray, val binaryAst: ByteArray
+    val metadata: ByteArray, val binaryAst: ByteArray, val header: ByteArray
 ) : Serializable
 
 class RmiFriendlyCompilationCanceledException : Exception(), Serializable {

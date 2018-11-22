@@ -518,6 +518,16 @@ public final class StaticContext {
         return localDescriptor != null && DescriptorUtils.getContainingModule(localDescriptor) == currentModule;
     }
 
+    private final Set<String> inlineFunctionTags = new HashSet<>();
+
+    @NotNull public Set<String> getInlineFunctionTags() {
+        return inlineFunctionTags;
+    }
+
+    public void reportInlineFunctionTag(@NotNull String tag) {
+        inlineFunctionTags.add(tag);
+    }
+
     private final class InnerNameGenerator extends Generator<JsName> {
         public InnerNameGenerator() {
             addRule(descriptor -> {

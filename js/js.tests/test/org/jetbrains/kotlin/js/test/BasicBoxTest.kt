@@ -382,7 +382,7 @@ abstract class BasicBoxTest(
             }
         }
         for ((sourceFile, data) in incrementalData.translatedFiles) {
-            sourceToTranslationUnit[sourceFile] = TranslationUnit.BinaryAst(data.binaryAst)
+            sourceToTranslationUnit[sourceFile] = TranslationUnit.BinaryAst(data.binaryAst, data.header)
         }
         val translationUnits = sourceToTranslationUnit.keys
                 .sortedBy { it.canonicalPath }

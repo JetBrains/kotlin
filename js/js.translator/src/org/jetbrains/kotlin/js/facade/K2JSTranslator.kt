@@ -47,7 +47,9 @@ import org.jetbrains.kotlin.js.backend.ast.JsGlobalBlock
 import org.jetbrains.kotlin.js.backend.ast.JsProgramFragment
 import org.jetbrains.kotlin.js.coroutine.transformCoroutines
 import org.jetbrains.kotlin.js.translate.general.AstGenerationResult
+import org.jetbrains.kotlin.metadata.js.JsProtoBuf
 import org.jetbrains.kotlin.resolve.BindingTrace
+import org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf
 
 /**
  * An entry point of translator.
@@ -129,7 +131,7 @@ class K2JSTranslator(private val config: JsConfig) {
         expandIsCalls(translationResult.newFragments)
         checkCanceled()
 
-        trySaveIncrementalData(files, translationResult, pathResolver, bindingTrace, moduleDescriptor)
+        trySaveIncrementalData(translationResult, pathResolver, bindingTrace, moduleDescriptor)
         checkCanceled()
 
         // Global phases
@@ -159,7 +161,6 @@ class K2JSTranslator(private val config: JsConfig) {
     }
 
     private fun trySaveIncrementalData(
-        files: List<KtFile>,
         translationResult: AstGenerationResult,
         pathResolver: SourceFilePathResolver,
         bindingTrace: BindingTrace,
@@ -175,13 +176,14 @@ class K2JSTranslator(private val config: JsConfig) {
             }
         }
 
-        for (file in files) {
-            val fragment = translationResult.fragmentMap[file] ?: error("Could not find AST for file: $file")
+        for ((sourceUnit, fileTranslationResult) in translationResult.translatedSourceFiles) {
+            val file = sourceUnit.file
+            val fragment = fileTranslationResult.fragment
             val output = ByteArrayOutputStream()
             serializer.serialize(fragment, output)
             val binaryAst = output.toByteArray()
 
-            val scope = translationResult.fileMemberScopes[file] ?: error("Could not find descriptors for file: $file")
+            val scope = fileTranslationResult.memberScope
             val metadataVersion = config.configuration.get(CommonConfigurationKeys.METADATA_VERSION)
             val packagePart = KotlinJavascriptSerializationUtil.serializeDescriptors(
                 bindingTrace.bindingContext, moduleDescriptor, scope, file.packageFqName,
@@ -189,11 +191,21 @@ class K2JSTranslator(private val config: JsConfig) {
                 metadataVersion ?: JsMetadataVersion.INSTANCE
             )
 
+            val header = serializeHeader(fileTranslationResult.inlineFunctionTags)
+
             val ioFile = VfsUtilCore.virtualToIoFile(file.virtualFile)
-            incrementalResults.processPackagePart(ioFile, packagePart.toByteArray(), binaryAst)
+            incrementalResults.processPackagePart(ioFile, packagePart.toByteArray(), binaryAst, header)
         }
 
         val settings = config.configuration.languageVersionSettings
         incrementalResults.processHeader(KotlinJavascriptSerializationUtil.serializeHeader(moduleDescriptor, null, settings).toByteArray())
+    }
+
+    fun serializeHeader(importedTags: Set<String>): ByteArray {
+        val output = ByteArrayOutputStream()
+        val headerBuilder = JsAstProtoBuf.Header.newBuilder()
+        headerBuilder.addAllInlineFunctionTags(importedTags)
+        headerBuilder.build().writeTo(output)
+        return output.toByteArray()
     }
 }

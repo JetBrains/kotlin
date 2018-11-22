@@ -143,7 +143,7 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
                 }
                 else {
                     TranslationResultValue translatedValue = compiledParts.get(allSources[i]);
-                    translationUnits.add(new TranslationUnit.BinaryAst(translatedValue.getBinaryAst()));
+                    translationUnits.add(new TranslationUnit.BinaryAst(translatedValue.getBinaryAst(), translatedValue.getHeader()));
                 }
             }
             return translator.translateUnits(reporter, translationUnits, mainCallParameters, jsAnalysisResult);

@@ -24,9 +24,9 @@ class RemoteIncrementalResultsConsumer(val facade: CompilerCallbackServicesFacad
         }
     }
 
-    override fun processPackagePart(sourceFile: File, packagePartMetadata: ByteArray, binaryAst: ByteArray) {
+    override fun processPackagePart(sourceFile: File, packagePartMetadata: ByteArray, binaryAst: ByteArray, header: ByteArray) {
         rpcProfiler.withMeasure(this) {
-            facade.incrementalResultsConsumer_processPackagePart(sourceFile.path, packagePartMetadata, binaryAst)
+            facade.incrementalResultsConsumer_processPackagePart(sourceFile.path, packagePartMetadata, binaryAst, header)
         }
     }
 

@@ -29,12 +29,14 @@ import org.jetbrains.kotlin.js.translate.utils.definePackageAlias
 import org.jetbrains.kotlin.serialization.js.ModuleKind
 
 class Merger(
-    val program: JsProgram,
-    val internalModuleName: JsName,
     val module: ModuleDescriptor,
     val moduleId: String,
     val moduleKind: ModuleKind
 ) {
+    val program: JsProgram = JsProgram()
+
+    val internalModuleName = program.scope.declareName("_")
+
     private val rootFunction = JsFunction(program.rootScope, JsBlock(), "root function").also {
         it.parameters.add(JsParameter(internalModuleName))
     }
