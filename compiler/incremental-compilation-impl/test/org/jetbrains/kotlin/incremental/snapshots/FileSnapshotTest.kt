@@ -1,13 +1,13 @@
 package org.jetbrains.kotlin.incremental.snapshots
 
 import org.jetbrains.kotlin.TestWithWorkingDir
-import org.junit.Assert.*
+import org.junit.Assert.assertNotEquals
 import org.junit.Test
 import java.io.*
 
 class FileSnapshotTest : TestWithWorkingDir() {
     private val fileSnapshotProvider: FileSnapshotProvider
-            get() = SimpleFileSnapshotProviderImpl()
+        get() = SimpleFileSnapshotProviderImpl()
 
     @Test
     fun testExternalizer() {
