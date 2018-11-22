@@ -46,6 +46,7 @@ object ConversionsRunner {
             +JavaMethodToKotlinFunctionConversion()
             +MainFunctionConversion()
             +LiteralConversion()
+            +AssertStatementConversion(context)
             +InnerClassConversion()
             +ModifiersConversion(context)
             +StaticsToCompanionExtractConversion()

@@ -170,3 +170,21 @@ fun useExpression(
         )
     return JKQualifiedExpressionImpl(receiver, JKKtQualifierImpl.DOT, methodCall)
 }
+
+inline fun <reified Symbol : JKSymbol> symbolByName(name: String, symbolProvider: JKSymbolProvider): Symbol =
+    symbolProvider
+        .provideDirectSymbol(
+            resolveFqName(
+                ClassId.fromString(name),
+                symbolProvider.symbolsByPsi.keys.first()
+            )!!
+        ) as Symbol
+
+fun kotlinAssert(assertion: JKExpression, message: JKExpression?, symbolProvider: JKSymbolProvider) =
+    JKKtCallExpressionImpl(
+        JKUnresolvedMethod(//TODO resolve assert
+            "assert",
+            kotlinTypeByName(KotlinBuiltIns.FQ_NAMES.unit.asString(), symbolProvider)
+        ),
+        JKExpressionListImpl(listOfNotNull(assertion, message))
+    )
