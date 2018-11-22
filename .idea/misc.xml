@@ -47,6 +47,8 @@
     </option>
   </component>
   <component name="NullableNotNullManager">
+    <option name="myDefaultNullable" value="org.jetbrains.annotations.Nullable" />
+    <option name="myDefaultNotNull" value="org.jetbrains.annotations.NotNull" />
     <option name="myNullables">
       <value>
         <list size="9">
@@ -83,6 +85,9 @@
   </component>
   <component name="ProjectRootManager" version="2" languageLevel="JDK_1_8" default="false" project-jdk-name="1.8" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/out" />
+  </component>
+  <component name="PsiViewerSettings">
+    <option name="splitDividerLocation" value="98" />
   </component>
   <component name="SuppressABINotification">
     <option name="modulesWithSuppressedNotConfigured">

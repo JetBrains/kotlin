@@ -22,6 +22,8 @@ import org.jetbrains.kotlin.j2k.ast.Nullability
 import org.jetbrains.kotlin.j2k.tree.*
 import org.jetbrains.kotlin.j2k.tree.impl.*
 import org.jetbrains.kotlin.j2k.tree.visitors.JKVisitorVoid
+import org.jetbrains.kotlin.lexer.KtKeywordToken
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
@@ -130,8 +132,12 @@ class NewCodeBuilder {
 
         override fun visitPackageDeclaration(packageDeclaration: JKPackageDeclaration) {
             printer.printWithNoIndent("package ")
-            packageDeclaration.packageName.accept(this)
-            printer.printlnWithNoIndent()
+            val packageNameEscaped =
+                packageDeclaration.packageName.value
+                    .split('.')
+                    .map { it.escaped() }
+                    .joinToString(".") { it }
+            printer.printlnWithNoIndent(packageNameEscaped)
         }
 
         override fun visitBreakStatement(breakStatement: JKBreakStatement) {
@@ -140,7 +146,7 @@ class NewCodeBuilder {
 
         override fun visitBreakWithLabelStatement(breakWithLabelStatement: JKBreakWithLabelStatement) {
             printer.printWithNoIndent("break@")
-            printer.printWithNoIndent(breakWithLabelStatement.label.value)
+            breakWithLabelStatement.label.accept(this)
         }
 
         override fun visitModifierList(modifierList: JKModifierList) {
@@ -216,7 +222,7 @@ class NewCodeBuilder {
             builder.append(" ")
             printer.print(classKindString(klass.classKind))
             builder.append(" ")
-            printer.printWithNoIndent(klass.name.value)
+            klass.name.accept(this)
             klass.typeParameterList.accept(this)
             printer.printWithNoIndent(" ")
 
@@ -260,7 +266,8 @@ class NewCodeBuilder {
         override fun visitKtProperty(ktProperty: JKKtProperty) {
             ktProperty.modifierList.accept(this)
 
-            printer.printWithNoIndent(" ", ktProperty.name.value)
+            printer.printWithNoIndent(" ")
+            ktProperty.name.accept(this)
             if (ktProperty.type.present()) {
                 printer.printWithNoIndent(":")
                 ktProperty.type.accept(this)
@@ -306,7 +313,8 @@ class NewCodeBuilder {
 
         override fun visitParameter(parameter: JKParameter) {
             parameter.modifierList.accept(this)
-            printer.printWithNoIndent(" ", parameter.name.value)
+            printer.printWithNoIndent(" ")
+            parameter.name.accept(this)
             if (parameter.type.present() && parameter.type.type !is JKContextType) {
                 printer.printWithNoIndent(":")
                 parameter.type.accept(this)
@@ -326,7 +334,8 @@ class NewCodeBuilder {
             ktFunction.modifierList.accept(this)
             printer.printWithNoIndent(" fun ")
             ktFunction.typeParameterList.accept(this)
-            printer.printWithNoIndent(ktFunction.name.value, "(")
+            ktFunction.name.accept(this)
+            printer.printWithNoIndent("(")
             renderList(ktFunction.parameters) {
                 it.accept(this)
             }
@@ -448,8 +457,9 @@ class NewCodeBuilder {
         }
 
         override fun visitContinueStatement(continueStatement: JKContinueStatement) {
-            printer.printWithNoIndent("continue ")
+            printer.printWithNoIndent("continue")
             continueStatement.label.accept(this)
+            printer.printlnWithNoIndent(" ")
         }
 
         override fun visitLabelEmpty(labelEmpty: JKLabelEmpty) {
@@ -471,7 +481,7 @@ class NewCodeBuilder {
         }
 
         override fun visitNameIdentifier(nameIdentifier: JKNameIdentifier) {
-            printer.printWithNoIndent(nameIdentifier.value)
+            printer.printWithNoIndent(nameIdentifier.value.escaped())
         }
 
         override fun visitPostfixExpression(postfixExpression: JKPostfixExpression) {
@@ -552,7 +562,8 @@ class NewCodeBuilder {
                 }
             }
 
-            printer.printWithNoIndent(" ", localVariable.name.value)
+            printer.printWithNoIndent(" ")
+            localVariable.name.accept(this)
             if (localVariable.type.present() && localVariable.type.type != JKContextType) {
                 printer.printWithNoIndent(": ")
                 localVariable.type.accept(this)
@@ -854,3 +865,8 @@ private inline fun JKDelegationConstructorCall.isCallOfConstructorOf(type: JKTyp
         else -> false
     }
 }
+private val KEYWORDS = KtTokens.KEYWORDS.types.map { (it as KtKeywordToken).value }.toSet()
+
+private fun String.escaped() =
+    if (this in KEYWORDS || '$' in this) "`$this`"
+    else this
