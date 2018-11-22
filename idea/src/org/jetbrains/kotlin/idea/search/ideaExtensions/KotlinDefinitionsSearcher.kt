@@ -50,7 +50,12 @@ class KotlinDefinitionsSearcher : QueryExecutor<PsiElement, DefinitionsScopedSea
 
         return when (element) {
             is KtClass -> {
-                processClassImplementations(element, consumer) && processActualDeclarations(element, consumer)
+                val isExpectEnum = runReadAction { element.isEnum() && element.isExpectDeclaration() }
+                if (isExpectEnum) {
+                    processActualDeclarations(element, consumer)
+                } else {
+                    processClassImplementations(element, consumer) && processActualDeclarations(element, consumer)
+                }
             }
 
             is KtObjectDeclaration -> {
