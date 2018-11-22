@@ -24,3 +24,6 @@ val String.isUnixStaticLib
 
 val String.isWindowsStaticLib
     get() = this.endsWith(".lib")
+
+val String.isBitcode
+    get() = this.endsWith(".bc")

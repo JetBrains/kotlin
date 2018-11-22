@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.konan
 import org.jetbrains.kotlin.konan.KonanExternalToolFailure
 import org.jetbrains.kotlin.konan.exec.Command
 import org.jetbrains.kotlin.konan.file.File
+import org.jetbrains.kotlin.konan.file.isBitcode
 import org.jetbrains.kotlin.konan.target.*
 
 typealias BitcodeFile = String
@@ -199,7 +200,7 @@ internal class LinkStage(val context: Context, val phaser: PhaseManager) {
 
     fun linkStage() {
         val bitcodeFiles = listOf(emitted) +
-                libraries.map { it.bitcodePaths }.flatten()
+                libraries.map { it.bitcodePaths }.flatten().filter { it.isBitcode }
 
         val includedBinaries =
                 libraries.map { it.includedPaths }.flatten()
