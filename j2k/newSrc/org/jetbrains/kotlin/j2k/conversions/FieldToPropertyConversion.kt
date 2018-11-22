@@ -94,7 +94,8 @@ class FieldToPropertyConversion(private val context: ConversionContext) : Recurs
             ktSetter
         ).also {
             it.modifierList.mutability =
-                    if (it.modifierList.visibilityOrNull() == JKAccessModifier.Visibility.PRIVATE && ktSetter is JKKtEmptyGetterOrSetter)
+                    if (it.modifierList.isFinal()) Mutability.NonMutable
+                    else if (it.modifierList.visibilityOrNull() == JKAccessModifier.Visibility.PRIVATE && ktSetter is JKKtEmptyGetterOrSetter)
                         Mutability.NonMutable
                     else Mutability.Mutable
 
