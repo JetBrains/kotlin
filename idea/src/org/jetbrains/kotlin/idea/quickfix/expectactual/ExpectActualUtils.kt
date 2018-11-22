@@ -19,16 +19,20 @@ import org.jetbrains.kotlin.idea.core.overrideImplement.OverrideMemberChooserObj
 import org.jetbrains.kotlin.idea.core.overrideImplement.OverrideMemberChooserObject.BodyType.NO_BODY
 import org.jetbrains.kotlin.idea.core.overrideImplement.OverrideMemberChooserObject.Companion.create
 import org.jetbrains.kotlin.idea.core.toDescriptor
+import org.jetbrains.kotlin.idea.project.platform
 import org.jetbrains.kotlin.idea.refactoring.createKotlinFile
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.idea.util.hasDeclarationOf
 import org.jetbrains.kotlin.idea.util.isEffectivelyActual
+import org.jetbrains.kotlin.idea.util.module
 import org.jetbrains.kotlin.js.descriptorUtils.getJetTypeFqName
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.platform.impl.isCommon
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.hasActualModifier
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.MultiTargetPlatform
 import org.jetbrains.kotlin.resolve.checkers.ExpectedActualDeclarationChecker
 import org.jetbrains.kotlin.resolve.checkers.ExperimentalUsageChecker
@@ -287,7 +291,12 @@ private fun KotlinType.checkAccessibility(accessibleClasses: List<KtClassOrObjec
     val classifierDescriptor = constructor.declarationDescriptor as? ClassifierDescriptorWithTypeParameters ?: return
     val moduleDescriptor = classifierDescriptor.module
     if (moduleDescriptor.getMultiTargetPlatform() == MultiTargetPlatform.Common) {
-        // Common classes are Ok
+        // Common classes are Ok; unfortunately this check does not work correctly for simple (non-expect) classes from common module
+        return
+    }
+    val declaration = DescriptorToSourceUtils.descriptorToDeclaration(classifierDescriptor)
+    if (declaration?.module?.platform?.kind?.isCommon == true) {
+        // Common classes are Ok again
         return
     }
     val implementedDescriptors = moduleDescriptor.implementedDescriptors

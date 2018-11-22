@@ -1,0 +1,3 @@
+class My
+
+expect fun foo(my: My)
