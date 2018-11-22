@@ -20,7 +20,7 @@ repositories {
 
 dependencies {
     testCompile("junit:junit:4.12")
-    compile(kotlin("stdlib-jdk8"))
+    implementation(kotlin("stdlib-jdk8"))
 }
 val compileKotlin: KotlinCompile by tasks
 compileKotlin.kotlinOptions {

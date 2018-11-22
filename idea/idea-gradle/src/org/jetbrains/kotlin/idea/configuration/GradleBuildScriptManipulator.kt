@@ -79,10 +79,9 @@ private fun gradleVersionFromFile(psiFile: PsiFile): GradleVersion? {
 
 val MIN_GRADLE_VERSION_FOR_NEW_PLUGIN_SYNTAX = GradleVersion.version("4.4")
 
-fun GradleBuildScriptManipulator<*>.useNewSyntax(kotlinPluginName: String): Boolean {
+fun GradleBuildScriptManipulator<*>.useNewSyntax(kotlinPluginName: String, gradleVersion: GradleVersion): Boolean {
     if (!preferNewSyntax) return false
 
-    val gradleVersion = fetchGradleVersion(scriptFile)
     if (gradleVersion < MIN_GRADLE_VERSION_FOR_NEW_PLUGIN_SYNTAX) return false
 
     if (isConfiguredWithOldSyntax(kotlinPluginName)) return false
@@ -91,4 +90,18 @@ fun GradleBuildScriptManipulator<*>.useNewSyntax(kotlinPluginName: String): Bool
     val hasOldApply = fileText.contains("apply plugin:")
 
     return !hasOldApply
+}
+
+private val MIN_GRADLE_VERSION_FOR_API_AND_IMPLEMENTATION = GradleVersion.version("3.4")
+
+fun GradleVersion.scope(directive: String): String {
+    if (this < MIN_GRADLE_VERSION_FOR_API_AND_IMPLEMENTATION) {
+        return when (directive) {
+            "implementation" -> "compile"
+            "testImplementation" -> "testCompile"
+            else -> throw IllegalArgumentException("Unknown directive `$directive`")
+        }
+    }
+
+    return directive
 }

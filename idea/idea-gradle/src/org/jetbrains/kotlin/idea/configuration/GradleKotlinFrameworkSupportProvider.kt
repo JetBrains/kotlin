@@ -81,7 +81,8 @@ abstract class GradleKotlinFrameworkSupportProvider(
             kotlinVersion = LAST_SNAPSHOT_VERSION
         }
 
-        val useNewSyntax = buildScriptData.gradleVersion >= MIN_GRADLE_VERSION_FOR_NEW_PLUGIN_SYNTAX
+        val gradleVersion = buildScriptData.gradleVersion
+        val useNewSyntax = gradleVersion >= MIN_GRADLE_VERSION_FOR_NEW_PLUGIN_SYNTAX
         if (useNewSyntax) {
             if (additionalRepository != null) {
                 val oneLineRepository = additionalRepository.toGroovyRepositorySnippet().replace('\n', ' ')
@@ -117,14 +118,16 @@ abstract class GradleKotlinFrameworkSupportProvider(
         buildScriptData.addRepositoriesDefinition("mavenCentral()")
 
         for (dependency in getDependencies(sdk)) {
-            buildScriptData.addDependencyNotation(KotlinWithGradleConfigurator.getGroovyDependencySnippet(dependency, "compile", !useNewSyntax))
+            buildScriptData.addDependencyNotation(
+                KotlinWithGradleConfigurator.getGroovyDependencySnippet(dependency, "implementation", !useNewSyntax, gradleVersion)
+            )
         }
         for (dependency in getTestDependencies()) {
             buildScriptData.addDependencyNotation(
                 if (":" in dependency)
-                    "testCompile \"$dependency\""
+                    "${gradleVersion.scope("testImplementation")} \"$dependency\""
                 else
-                    KotlinWithGradleConfigurator.getGroovyDependencySnippet(dependency, "testCompile", !useNewSyntax)
+                    KotlinWithGradleConfigurator.getGroovyDependencySnippet(dependency, "testImplementation", !useNewSyntax, gradleVersion)
             )
         }
 

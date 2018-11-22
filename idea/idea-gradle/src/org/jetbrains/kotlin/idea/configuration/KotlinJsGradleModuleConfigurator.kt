@@ -34,7 +34,9 @@ class KotlinJsGradleModuleConfigurator : KotlinWithGradleConfigurator() {
     override fun getStdlibArtifactName(sdk: Sdk?, version: String): String = MAVEN_JS_STDLIB_ID
 
     override fun addElementsToFile(file: PsiFile, isTopLevelProjectFile: Boolean, version: String): Boolean {
-        if (getManipulator(file).useNewSyntax(kotlinPluginName)) {
+        val gradleVersion = fetchGradleVersion(file)
+
+        if (getManipulator(file).useNewSyntax(kotlinPluginName, gradleVersion)) {
             val settingsPsiFile = if (isTopLevelProjectFile) {
                 file.module?.getTopLevelBuildScriptSettingsPsiFile()
             } else {

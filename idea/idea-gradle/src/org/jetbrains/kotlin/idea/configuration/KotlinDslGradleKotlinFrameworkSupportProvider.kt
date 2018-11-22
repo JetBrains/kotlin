@@ -121,7 +121,7 @@ class KotlinDslGradleKotlinJavaFrameworkSupportProvider :
     override fun getPluginDefinition() = "kotlin(\"jvm\")"
 
     override fun getRuntimeLibrary(rootModel: ModifiableRootModel, version: String?) =
-        "compile(${getKotlinModuleDependencySnippet(getStdlibArtifactId(rootModel.sdk, bundledRuntimeVersion()), version)})"
+        "implementation(${getKotlinModuleDependencySnippet(getStdlibArtifactId(rootModel.sdk, bundledRuntimeVersion()), version)})"
 
     override fun addSupport(
         projectId: ProjectId,
@@ -147,7 +147,7 @@ class KotlinDslGradleKotlinJSFrameworkSupportProvider :
     override fun getPluginDefinition(): String = "id(\"kotlin2js\")"
 
     override fun getRuntimeLibrary(rootModel: ModifiableRootModel, version: String?) =
-        "compile(${getKotlinModuleDependencySnippet(MAVEN_JS_STDLIB_ID.removePrefix("kotlin-"), version)})"
+        "implementation(${getKotlinModuleDependencySnippet(MAVEN_JS_STDLIB_ID.removePrefix("kotlin-"), version)})"
 
     override fun addSupport(
         projectId: ProjectId,
