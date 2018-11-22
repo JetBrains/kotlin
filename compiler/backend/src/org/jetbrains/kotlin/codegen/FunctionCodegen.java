@@ -1556,7 +1556,7 @@ public class FunctionCodegen {
             iv.load(2, returnType);
         }
         else {
-            StackValue.constant(typeSafeBarrierDescription.getDefaultValue(), returnType).put(returnType, iv);
+            StackValue.constant(typeSafeBarrierDescription.getDefaultValue(), returnType).put(iv);
         }
         iv.areturn(returnType);
 
@@ -1619,7 +1619,7 @@ public class FunctionCodegen {
 
                         InstructionAdapter iv = new InstructionAdapter(mv);
                         iv.load(0, OBJECT_TYPE);
-                        field.put(field.type, iv);
+                        field.put(iv);
                         for (int i = 0, reg = 1; i < argTypes.length; i++) {
                             StackValue.local(reg, argTypes[i]).put(originalArgTypes[i], iv);
                             //noinspection AssignmentToForLoopParameter

@@ -456,7 +456,7 @@ class ExpressionCodegen(
     override fun visitGetField(expression: IrGetField, data: BlockInfo): StackValue {
         expression.markLineNumber(startOffset = true)
         val value = generateFieldValue(expression, data)
-        value.put(value.type, mv)
+        value.put(mv)
         return onStack(value.type)
     }
 
@@ -511,7 +511,7 @@ class ExpressionCodegen(
 
     private fun generateLocal(symbol: IrSymbol, type: Type): StackValue {
         val index = findLocalIndex(symbol)
-        StackValue.local(index, type).put(type, mv)
+        StackValue.local(index, type).put(mv)
         return onStack(type)
     }
 
@@ -549,7 +549,7 @@ class ExpressionCodegen(
         expression.markLineNumber(startOffset = true)
         val value = expression.value
         val type = expression.asmType
-        StackValue.constant(value, type).put(type, mv)
+        StackValue.constant(value, type).put(mv)
         return expression.onStack
     }
 
@@ -643,7 +643,7 @@ class ExpressionCodegen(
             val elementKotlinType = classCodegen.context.builtIns.getArrayElementType(outType.toKotlinType()!!)
             for ((i, element) in expression.elements.withIndex()) {
                 mv.dup()
-                StackValue.constant(i).put(Type.INT_TYPE, mv)
+                StackValue.constant(i).put(mv)
                 val rightSide = gen(element, elementType, data)
                 StackValue
                     .arrayElement(
@@ -822,7 +822,7 @@ class ExpressionCodegen(
                 val type = boxType(asmType)
                 generateIsCheck(mv, expression.typeOperand.toKotlinType(), type, state.languageVersionSettings.isReleaseCoroutines())
                 if (IrTypeOperator.NOT_INSTANCEOF == expression.operator) {
-                    StackValue.not(StackValue.onStack(Type.BOOLEAN_TYPE)).put(Type.BOOLEAN_TYPE, mv)
+                    StackValue.not(StackValue.onStack(Type.BOOLEAN_TYPE)).put(mv)
                 }
             }
 

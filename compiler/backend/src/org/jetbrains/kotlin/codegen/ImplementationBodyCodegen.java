@@ -913,7 +913,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             if (state.getClassBuilderMode().generateBodies && info.defaultValue == null) {
                 ExpressionCodegen codegen = createOrGetClInitCodegen();
                 int companionObjectIndex = putCompanionObjectInLocalVar(codegen);
-                StackValue.local(companionObjectIndex, OBJECT_TYPE).put(OBJECT_TYPE, codegen.v);
+                StackValue.local(companionObjectIndex, OBJECT_TYPE).put(codegen.v);
                 copyFieldFromCompanionObject(property);
             }
         }

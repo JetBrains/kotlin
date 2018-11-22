@@ -103,12 +103,16 @@ public abstract class StackValue {
         put(type, kotlinType, v);
     }
 
-    public void put(@NotNull Type type, @Nullable KotlinType kotlinType, @NotNull InstructionAdapter v) {
-        put(type, kotlinType, v, false);
+    public void put(@NotNull InstructionAdapter v) {
+        put(type, null, v, false);
     }
 
     public void put(@NotNull Type type, @NotNull InstructionAdapter v) {
         put(type, null, v, false);
+    }
+
+    public void put(@NotNull Type type, @Nullable KotlinType kotlinType, @NotNull InstructionAdapter v) {
+        put(type, kotlinType, v, false);
     }
 
     public void put(@NotNull Type type, @Nullable KotlinType kotlinType, @NotNull InstructionAdapter v, boolean skipReceiver) {
