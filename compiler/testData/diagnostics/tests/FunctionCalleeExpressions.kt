@@ -59,7 +59,7 @@ fun main1() {
     {1}();
     (fun (x : Int) = x)(1)
     1.(fun Int.(x : Int) = x)(1);
-    <!OI;REDUNDANT_LABEL_WARNING!>l@<!>{1}()
+    <!REDUNDANT_LABEL_WARNING!>l@<!>{1}()
     1.((fun Int.() = 1))()
     1.(f())()
     1.if(true){f()}else{f()}()
