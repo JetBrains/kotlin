@@ -18,3 +18,10 @@ interface B {
         val a: Collection<*> = emptyList()
     }
 }
+
+class C(
+    @JvmField
+    val a: Collection<*> = emptyList(),
+    @JvmField
+    var b: Int = 1
+)

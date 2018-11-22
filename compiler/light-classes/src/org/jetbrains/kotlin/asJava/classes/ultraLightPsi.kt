@@ -154,12 +154,7 @@ class KtUltraLightClass(classOrObject: KtClassOrObject, private val support: Ult
 
 
         for (parameter in propertyParameters()) {
-            val modifiers = hashSetOf<String>()
-            modifiers.add(PsiModifier.PRIVATE)
-            if (!parameter.isMutable) {
-                modifiers.add(PsiModifier.FINAL)
-            }
-            result.add(KtUltraLightField(parameter, generateUniqueName(parameter.name.orEmpty()), this, support, modifiers))
+            propertyField(parameter, ::generateUniqueName, forceStatic = false)?.let(result::add)
         }
 
         this.classOrObject.companionObjects.firstOrNull()?.let { companion ->
@@ -220,32 +215,45 @@ class KtUltraLightClass(classOrObject: KtClassOrObject, private val support: Ult
 
     private fun isNamedObject() = classOrObject is KtObjectDeclaration && !classOrObject.isCompanion()
 
-    private fun propertyField(property: KtProperty, generateUniqueName: (String) -> String, forceStatic: Boolean): KtLightField? {
-        if (!hasBackingField(property)) return null
-        if (property.hasAnnotation(JVM_SYNTHETIC_ANNOTATION_FQ_NAME)) return null
+    private fun propertyField(
+        // KtProperty | KtParameter
+        variable: KtCallableDeclaration,
+        generateUniqueName: (String) -> String,
+        forceStatic: Boolean
+    ): KtLightField? {
+        val property = variable as? KtProperty
+        if (property != null && !hasBackingField(property)) return null
 
-        val hasDelegate = property.hasDelegate()
-        val fieldName = generateUniqueName((property.name ?: "") + (if (hasDelegate) "\$delegate" else ""))
+        if (variable.hasAnnotation(JVM_SYNTHETIC_ANNOTATION_FQ_NAME)) return null
+
+        val hasDelegate = property?.hasDelegate() == true
+        val fieldName = generateUniqueName((variable.name ?: "") + (if (hasDelegate) "\$delegate" else ""))
 
         val visibility = when {
-            property.hasModifier(PRIVATE_KEYWORD) -> PsiModifier.PRIVATE
-            property.hasModifier(LATEINIT_KEYWORD) || property.isConstOrJvmField() -> {
-                val declaration = property.setter ?: property
+            variable.hasModifier(PRIVATE_KEYWORD) -> PsiModifier.PRIVATE
+            variable.hasModifier(LATEINIT_KEYWORD) || variable.isConstOrJvmField() -> {
+                val declaration = property?.setter ?: variable
                 simpleVisibility(declaration)
             }
             else -> PsiModifier.PRIVATE
         }
         val modifiers = hashSetOf(visibility)
 
-        if (!property.isVar || property.hasModifier(CONST_KEYWORD) || hasDelegate) {
+        val isMutable = when (variable) {
+            is KtProperty -> variable.isVar
+            is KtParameter -> variable.isMutable
+            else -> error("Unexpected type of variable: ${variable::class.java}")
+        }
+
+        if (!isMutable || variable.hasModifier(CONST_KEYWORD) || hasDelegate) {
             modifiers.add(PsiModifier.FINAL)
         }
 
-        if (forceStatic || isNamedObject() && isJvmStatic(property)) {
+        if (forceStatic || isNamedObject() && isJvmStatic(variable)) {
             modifiers.add(PsiModifier.STATIC)
         }
 
-        return KtUltraLightField(property, fieldName, this, support, modifiers)
+        return KtUltraLightField(variable, fieldName, this, support, modifiers)
     }
 
     private fun hasBackingField(property: KtProperty): Boolean {
