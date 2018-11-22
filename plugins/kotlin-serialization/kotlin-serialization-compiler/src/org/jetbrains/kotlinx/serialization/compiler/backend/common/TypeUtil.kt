@@ -101,13 +101,13 @@ fun AbstractSerialGenerator.findTypeSerializerOrContext(
         if (annotations.hasAnnotation(SerializationAnnotations.contextualFqName) || kType in contextualKClassListInCurrentFile)
             module.getClassFromSerializationPackage(SpecialBuiltins.contextSerializer)
         else
-            throw CompilationException(
-                "Serializer for element of type $kType has not been found.\n" +
-                        "To use context serializer as fallback, explicitly annotate element with @ContextualSerializer",
-                null,
-                sourceElement
-            )
-    return findTypeSerializer(module, kType) ?: getContextualSerializer()
+            null
+    return getContextualSerializer() ?: findTypeSerializer(module, kType) ?: throw CompilationException(
+        "Serializer for element of type $kType has not been found.\n" +
+                "To use context serializer as fallback, explicitly annotate element with @ContextualSerializer",
+        null,
+        sourceElement
+    )
 }
 
 fun findTypeSerializer(module: ModuleDescriptor, kType: KotlinType): ClassDescriptor? {
