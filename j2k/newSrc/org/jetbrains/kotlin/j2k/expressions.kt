@@ -49,7 +49,7 @@ private fun JKKtOperatorToken.binaryExpressionMethodSymbol(
         .filterIsInstance<KtNamedFunction>()
         .filter { it.name in operatorNames }
         .mapNotNull { symbolProvider.provideDirectSymbol(it) as? JKMethodSymbol }
-        .firstOrNull { it.parameterTypes.singleOrNull()?.takeIf { it.isSubtypeOf(rightType, symbolProvider) } != null }!!
+        .firstOrNull { it.parameterTypes.singleOrNull()?.takeIf { rightType.isSubtypeOf(it, symbolProvider) } != null }!!
 }
 
 private fun JKKtOperatorToken.unaryExpressionMethodSymbol(
