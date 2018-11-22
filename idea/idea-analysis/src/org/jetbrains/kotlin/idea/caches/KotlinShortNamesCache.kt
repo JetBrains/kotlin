@@ -93,7 +93,7 @@ class KotlinShortNamesCache(private val project: Project) : PsiShortNamesCacheWr
             KotlinClassShortNameIndex.getInstance().key,
             name,
             project,
-            scope,
+            effectiveScope,
             filter,
             KtClassOrObject::class.java
         ) { ktClassOrObject ->
@@ -107,7 +107,7 @@ class KotlinShortNamesCache(private val project: Project) : PsiShortNamesCacheWr
             KotlinFileFacadeShortNameIndex.getInstance().key,
             name,
             project,
-            scope,
+            effectiveScope,
             filter,
             KtFile::class.java
         ) { ktFile ->
