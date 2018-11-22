@@ -32,7 +32,7 @@ class GradleInspectionTest : GradleImportingTestCase() {
     fun testDifferentStdlibGradleVersion() {
         val problems = getInspectionResultFromTestDataProject()
 
-        Assert.assertTrue(problems.size == 1)
+        Assert.assertEquals(1, problems.size)
         Assert.assertEquals("Plugin version (1.0.2) is not the same as library version (1.0.3)", problems.single())
     }
 
@@ -40,7 +40,7 @@ class GradleInspectionTest : GradleImportingTestCase() {
     fun testDifferentStdlibGradleVersionWithImplementation() {
         val problems = getInspectionResultFromTestDataProject()
 
-        Assert.assertTrue(problems.size == 1)
+        Assert.assertEquals(1, problems.size)
         Assert.assertEquals("Plugin version (1.0.2) is not the same as library version (1.0.3)", problems.single())
     }
 
@@ -48,7 +48,7 @@ class GradleInspectionTest : GradleImportingTestCase() {
     fun testDifferentStdlibJre7GradleVersion() {
         val problems = getInspectionResultFromTestDataProject()
 
-        Assert.assertTrue(problems.size == 1)
+        Assert.assertEquals(1, problems.size)
         Assert.assertEquals("Plugin version (1.1.0-beta-17) is not the same as library version (1.1.0-beta-22)", problems.single())
     }
 
@@ -56,7 +56,7 @@ class GradleInspectionTest : GradleImportingTestCase() {
     fun testDifferentStdlibJdk7GradleVersion() {
         val problems = getInspectionResultFromTestDataProject()
 
-        Assert.assertTrue(problems.size == 1)
+        Assert.assertEquals(1, problems.size)
         Assert.assertEquals("Plugin version (1.1.0-beta-17) is not the same as library version (1.1.0-beta-22)", problems.single())
     }
 
@@ -64,7 +64,7 @@ class GradleInspectionTest : GradleImportingTestCase() {
     fun testDifferentStdlibGradleVersionWithVariables() {
         val problems = getInspectionResultFromTestDataProject()
 
-        Assert.assertTrue(problems.size == 1)
+        Assert.assertEquals(1, problems.size)
         Assert.assertEquals("Plugin version (1.0.1) is not the same as library version (1.0.3)", problems.single())
     }
 
@@ -74,7 +74,7 @@ class GradleInspectionTest : GradleImportingTestCase() {
         tool.testVersionMessage = "\$PLUGIN_VERSION"
         val problems = getInspectionResultFromTestDataProject(tool)
 
-        Assert.assertTrue(problems.size == 1)
+        Assert.assertEquals(1, problems.size)
         Assert.assertEquals(
             "Kotlin version that is used for building with Gradle (1.0.1) differs from the one bundled into the IDE plugin (\$PLUGIN_VERSION)",
             problems.single()
@@ -84,15 +84,14 @@ class GradleInspectionTest : GradleImportingTestCase() {
     @Test
     fun testJreInOldVersion() {
         val problems = getInspectionResultFromTestDataProject()
-
-        Assert.assertTrue(problems.isEmpty())
+        Assert.assertTrue("The inspection result should be empty but contains the following elements: [$problems].", problems.isEmpty())
     }
 
     @Test
     fun testJreIsDeprecated() {
         val problems = getInspectionResultFromTestDataProject()
 
-        Assert.assertTrue(problems.size == 1)
+        Assert.assertEquals(1, problems.size)
         Assert.assertEquals(
             "kotlin-stdlib-jre7 is deprecated since 1.2.0 and should be replaced with kotlin-stdlib-jdk7",
             problems.single()
@@ -103,7 +102,7 @@ class GradleInspectionTest : GradleImportingTestCase() {
     fun testJreIsDeprecatedWithImplementation() {
         val problems = getInspectionResultFromTestDataProject()
 
-        Assert.assertTrue(problems.size == 1)
+        Assert.assertEquals(1, problems.size)
         Assert.assertEquals(
             "kotlin-stdlib-jre7 is deprecated since 1.2.0 and should be replaced with kotlin-stdlib-jdk7",
             problems.single()
@@ -115,7 +114,7 @@ class GradleInspectionTest : GradleImportingTestCase() {
     fun testJreIsDeprecatedWithoutImplicitVersion() {
         val problems = getInspectionResultFromTestDataProject()
 
-        Assert.assertTrue(problems.size == 1)
+        Assert.assertEquals(1, problems.size)
         Assert.assertEquals(
             "kotlin-stdlib-jre8 is deprecated since 1.2.0 and should be replaced with kotlin-stdlib-jdk8",
             problems.single()
@@ -126,14 +125,14 @@ class GradleInspectionTest : GradleImportingTestCase() {
     fun testNoDifferentStdlibCommonGradleVersion() {
         val problems = getInspectionResultFromTestDataProject()
 
-        Assert.assertTrue(problems.toString(), problems.isEmpty())
+        Assert.assertTrue("The inspection result should be empty but contains the following elements: [$problems].", problems.isEmpty())
     }
 
     @Test
     fun testNoDifferentStdlibJdk7GradleVersion() {
         val problems = getInspectionResultFromTestDataProject()
 
-        Assert.assertTrue(problems.toString(), problems.isEmpty())
+        Assert.assertTrue("The inspection result should be empty but contains the following elements: [$problems].", problems.isEmpty())
     }
 
     @Test
