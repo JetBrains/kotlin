@@ -88,49 +88,47 @@ internal abstract class AbstractCharClass : SpecialToken() {
 
 
     private val surrogates_ = AtomicReference<AbstractCharClass?>(null)
-    val surrogates: AbstractCharClass
-        get() {
-            surrogates_.value?.let {
-                return it
-            }
-            val surrogates = lowHighSurrogates
-            val result = object : AbstractCharClass() {
-                override fun contains(ch: Int): Boolean {
-                    val index = ch - Char.MIN_SURROGATE.toInt()
+    fun classWithSurrogates(): AbstractCharClass {
+        surrogates_.value?.let {
+            return it
+        }
+        val surrogates = lowHighSurrogates
+        val result = object : AbstractCharClass() {
+            override fun contains(ch: Int): Boolean {
+                val index = ch - Char.MIN_SURROGATE.toInt()
 
-                    return if (index >= 0 && index < AbstractCharClass.SURROGATE_CARDINALITY) {
-                        this.altSurrogates xor surrogates[index]
-                    } else {
-                        false
-                    }
+                return if (index >= 0 && index < AbstractCharClass.SURROGATE_CARDINALITY) {
+                    this.altSurrogates xor surrogates[index]
+                } else {
+                    false
                 }
             }
-            result.setNegative(this.altSurrogates)
-            surrogates_.compareAndSet(null, result.freeze())
-            return surrogates_.value!!
         }
+        result.setNegative(this.altSurrogates)
+        surrogates_.compareAndSet(null, result.freeze())
+        return surrogates_.value!!
+    }
 
 
     // We cannot cache this class as we've done with surrogates above because
     // here is a circular reference between it and AbstractCharClass.
-    val withoutSurrogates: AbstractCharClass
-        get() {
-            val result = object : AbstractCharClass() {
-                override fun contains(ch: Int): Boolean {
-                    val index = ch - Char.MIN_SURROGATE.toInt()
+    fun classWithoutSurrogates(): AbstractCharClass {
+        val result = object : AbstractCharClass() {
+            override fun contains(ch: Int): Boolean {
+                val index = ch - Char.MIN_SURROGATE.toInt()
 
-                    val containslHS = if (index >= 0 && index < AbstractCharClass.SURROGATE_CARDINALITY)
-                        this.altSurrogates xor this@AbstractCharClass.lowHighSurrogates.get(index)
-                    else
-                        false
+                val containslHS = if (index >= 0 && index < AbstractCharClass.SURROGATE_CARDINALITY)
+                    this.altSurrogates xor this@AbstractCharClass.lowHighSurrogates.get(index)
+                else
+                    false
 
-                    return this@AbstractCharClass.contains(ch) && !containslHS
-                }
+                return this@AbstractCharClass.contains(ch) && !containslHS
             }
-            result.setNegative(isNegative())
-            result.mayContainSupplCodepoints = mayContainSupplCodepoints
-            return result
         }
+        result.setNegative(isNegative())
+        result.mayContainSupplCodepoints = mayContainSupplCodepoints
+        return result
+    }
 
     /**
      * Sets this CharClass to negative form, i.e. if they will add some characters and after that set this

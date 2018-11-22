@@ -774,13 +774,13 @@ internal class Pattern(val pattern: String, flags: Int = 0) {
 
     private fun processRangeSet(charClass: AbstractCharClass): AbstractSet {
         if (charClass.hasLowHighSurrogates()) {
-            val lowHighSurrRangeSet = SurrogateRangeSet(charClass.surrogates)
+            val lowHighSurrRangeSet = SurrogateRangeSet(charClass.classWithSurrogates())
 
             if (charClass.mayContainSupplCodepoints) {
-                return CompositeRangeSet(SupplementaryRangeSet(charClass.withoutSurrogates, hasFlag(CASE_INSENSITIVE)), lowHighSurrRangeSet)
+                return CompositeRangeSet(SupplementaryRangeSet(charClass.classWithoutSurrogates(), hasFlag(CASE_INSENSITIVE)), lowHighSurrRangeSet)
             }
 
-            return CompositeRangeSet(RangeSet(charClass.withoutSurrogates, hasFlag(CASE_INSENSITIVE)), lowHighSurrRangeSet)
+            return CompositeRangeSet(RangeSet(charClass.classWithoutSurrogates(), hasFlag(CASE_INSENSITIVE)), lowHighSurrRangeSet)
         }
 
         if (charClass.mayContainSupplCodepoints) {
