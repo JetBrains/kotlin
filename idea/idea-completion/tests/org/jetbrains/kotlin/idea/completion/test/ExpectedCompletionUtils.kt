@@ -24,9 +24,9 @@ import com.google.gson.JsonParser
 import com.intellij.codeInsight.completion.CompletionType
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementPresentation
-import com.intellij.codeInsight.lookup.impl.LookupCellRenderer
 import com.intellij.ui.JBColor
 import com.intellij.util.ArrayUtil
+import org.jetbrains.kotlin.idea.completion.LookupElementFactory
 import org.jetbrains.kotlin.idea.core.completion.DeclarationLookupObject
 import org.jetbrains.kotlin.idea.test.AstAccessControl
 import org.jetbrains.kotlin.idea.util.module
@@ -346,7 +346,7 @@ object ExpectedCompletionUtils {
             }
             val foreground = presentation.itemTextForeground
             if (foreground != JBColor.foreground()) {
-                assert(foreground == LookupCellRenderer.getGrayedForeground(false))
+                assert(foreground == LookupElementFactory.CAST_REQUIRED_COLOR)
                 if (length > 0) append(" ")
                 append("grayed")
             }
