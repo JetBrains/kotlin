@@ -263,7 +263,10 @@ class KotlinJvmAndroidCompilation(
 class KotlinJsCompilation(
     target: KotlinTarget,
     name: String
-) : AbstractKotlinCompilationToRunnableFiles<KotlinJsOptions>(target, name) {
+) : AbstractKotlinCompilationToRunnableFiles<KotlinJsOptions>(target, name), KotlinCompilationWithResources<KotlinJsOptions> {
+    override val processResourcesTaskName: String
+        get() = disambiguateName("processResources")
+
     override val compileKotlinTask: Kotlin2JsCompile
         get() = super.compileKotlinTask as Kotlin2JsCompile
 }
