@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.descriptors.impl.SyntheticFieldDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.util.hasJvmFieldAnnotation
+import org.jetbrains.kotlin.idea.util.isExpectDeclaration
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
@@ -48,7 +49,8 @@ class IntroduceBackingPropertyIntention : SelfTargetingIntention<KtProperty>(KtP
             if (bindingContext.get(BindingContext.BACKING_FIELD_REQUIRED, descriptor) == false) return false
 
             val containingClass = property.getStrictParentOfType<KtClassOrObject>() ?: return false
-            return containingClass.declarations.none { it is KtProperty && it.name == "_" + name }
+            if (containingClass.isExpectDeclaration()) return false
+            return containingClass.declarations.none { it is KtProperty && it.name == "_$name" }
         }
 
         fun introduceBackingProperty(property: KtProperty) {
