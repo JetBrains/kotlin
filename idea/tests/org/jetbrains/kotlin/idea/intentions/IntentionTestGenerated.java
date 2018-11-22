@@ -12133,6 +12133,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             runTest("idea/testData/intentions/moveToCompanion/enumEntry.kt");
         }
 
+        @TestMetadata("expectClass.kt")
+        public void testExpectClass() throws Exception {
+            runTest("idea/testData/intentions/moveToCompanion/expectClass.kt");
+        }
+
         @TestMetadata("functionWithOverride.kt")
         public void testFunctionWithOverride() throws Exception {
             runTest("idea/testData/intentions/moveToCompanion/functionWithOverride.kt");

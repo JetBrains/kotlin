@@ -161,11 +161,11 @@ class MoveMemberToCompanionObjectIntention : SelfTargetingRangeIntention<KtNamed
         val javaCodeStyleManager = JavaCodeStyleManager.getInstance(project)
 
         val companionObject = containingClass.getOrCreateCompanionObject()
-        val companionLightClass = companionObject.toLightClass()!!
+        val companionLightClass = companionObject.toLightClass()
 
         val ktPsiFactory = KtPsiFactory(project)
         val javaPsiFactory = JavaPsiFacade.getInstance(project).elementFactory
-        val javaCompanionRef = javaPsiFactory.createReferenceExpression(companionLightClass)
+        val javaCompanionRef = companionLightClass?.let { javaPsiFactory.createReferenceExpression(it) }
         val ktCompanionRef = ktPsiFactory.createExpression(companionObject.fqName!!.asString())
 
         val elementsToShorten = SmartList<KtElement>()
@@ -217,10 +217,12 @@ class MoveMemberToCompanionObjectIntention : SelfTargetingRangeIntention<KtNamed
 
             when (usage) {
                 is JavaUsageInfo -> {
-                    (usageElement as? PsiReferenceExpression)
+                    if (javaCompanionRef != null) {
+                        (usageElement as? PsiReferenceExpression)
                             ?.qualifierExpression
                             ?.replace(javaCompanionRef)
                             ?.let { javaCodeStyleManager.shortenClassReferences(it) }
+                    }
                 }
 
                 is ExplicitReceiverUsageInfo -> {
