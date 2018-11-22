@@ -315,7 +315,7 @@ abstract class AbstractScriptConfigurationTest : KotlinCompletionTestCase() {
         if (script == null) {
             val target = File(project.basePath, scriptFile.name)
             scriptFile.copyTo(target)
-            script = LocalFileSystem.getInstance().findFileByPath(target.path)
+            script = VfsUtil.findFileByIoFile(target, true)
         }
 
         if (script == null) error("Test file with script couldn't be found in test project")
