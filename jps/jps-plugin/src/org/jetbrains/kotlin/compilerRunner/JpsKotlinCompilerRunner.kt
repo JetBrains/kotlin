@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.compilerRunner
 
 import com.intellij.util.xmlb.XmlSerializerUtil
+import org.jetbrains.annotations.TestOnly
 import org.jetbrains.jps.api.GlobalOptions
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY
@@ -52,16 +53,22 @@ class JpsKotlinCompilerRunner {
         @Volatile
         private var _jpsCompileServiceSession: CompileServiceSession? = null
 
+        @TestOnly
+        fun releaseCompileServiceSession() {
+            _jpsCompileServiceSession?.let {
+                try {
+                    it.compileService.releaseCompileSession(it.sessionId)
+                } catch (_: Throwable) {
+                }
+            }
+            _jpsCompileServiceSession = null
+        }
+
         @Synchronized
         private fun getOrCreateDaemonConnection(newConnection: () -> CompileServiceSession?): CompileServiceSession? {
             // TODO: consider adding state "ping" to the daemon interface
             if (_jpsCompileServiceSession == null || _jpsCompileServiceSession!!.compileService.getDaemonOptions() !is CompileService.CallResult.Good<DaemonOptions>) {
-                _jpsCompileServiceSession?.let {
-                    try {
-                        it.compileService.releaseCompileSession(it.sessionId)
-                    } catch (_: Throwable) {
-                    }
-                }
+                releaseCompileServiceSession()
                 _jpsCompileServiceSession = newConnection()
             }
 
@@ -180,7 +187,7 @@ class JpsKotlinCompilerRunner {
         compilerClassName: String,
         compilerArgs: CommonCompilerArguments,
         environment: JpsCompilerEnvironment
-    ) {
+    ): Int? {
         val targetPlatform = when (compilerClassName) {
             KotlinCompilerClass.JVM -> CompileService.TargetPlatform.JVM
             KotlinCompilerClass.JS -> CompileService.TargetPlatform.JS
@@ -196,7 +203,7 @@ class JpsKotlinCompilerRunner {
             reportSeverity(verbose),
             requestedCompilationResults = emptyArray()
         )
-        doWithDaemon(environment) { sessionId, daemon ->
+        return doWithDaemon(environment) { sessionId, daemon ->
             environment.withProgressReporter { progress ->
                 progress.compilationStarted()
                 daemon.compile(
@@ -265,7 +272,7 @@ class JpsKotlinCompilerRunner {
         environment: JpsCompilerEnvironment
     ) {
         if ("true" == System.getProperty("kotlin.jps.tests") && "true" == System.getProperty(FAIL_ON_FALLBACK_PROPERTY)) {
-            error("Fallback strategy is disabled in tests!")
+            error("Cannot compile with Daemon, see logs bellow. Fallback strategy is disabled in tests")
         }
 
         // otherwise fallback to in-process
