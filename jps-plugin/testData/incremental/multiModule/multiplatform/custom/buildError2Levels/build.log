@@ -8,9 +8,9 @@ Cleaning output files:
   out/production/pJs/pJs/root-package.kjsm
 End of files
 Compiling files:
-  c/src/a.kt
-  c/src/b.kt
-  pJs/src/c.kt
+  c/src/f.kt
+  c/src/g.kt
+  pJs/src/fg.kt
 End of files
 Exit code: ABORT
 ------------------------------------------
@@ -23,22 +23,22 @@ COMPILATION FAILED
 Building c
 Building pJs
 Compiling files:
-  c/src/a.kt
-  c/src/b.kt
-  pJs/src/c.kt
+  c/src/f.kt
+  c/src/g.kt
+  pJs/src/fg.kt
 End of files
 Exit code: OK
 ------------------------------------------
 Marked as dirty by Kotlin:
-  c/src/b.kt
+  c/src/g.kt
 Building pJvm
 Cleaning output files:
   out/production/pJvm/META-INF/pJvm.kotlin_module
 End of files
 Compiling files:
-  c/src/a.kt
-  c/src/b.kt
-  pJvm/src/c.kt
+  c/src/f.kt
+  c/src/g.kt
+  pJvm/src/fg.kt
 End of files
 Exit code: OK
 ------------------------------------------
