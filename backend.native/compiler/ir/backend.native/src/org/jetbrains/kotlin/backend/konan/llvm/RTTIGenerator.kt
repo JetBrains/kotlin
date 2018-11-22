@@ -6,27 +6,66 @@
 package org.jetbrains.kotlin.backend.konan.llvm
 
 import llvm.*
+import org.jetbrains.kotlin.backend.common.ir.ir2string
 import org.jetbrains.kotlin.backend.konan.Context
+import org.jetbrains.kotlin.backend.konan.computePrimitiveBinaryTypeOrNull
 import org.jetbrains.kotlin.backend.konan.descriptors.*
 import org.jetbrains.kotlin.backend.konan.irasdescriptors.*
 import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.IrProperty
+import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.util.isAnnotationClass
+import org.jetbrains.kotlin.ir.util.isInterface
 import org.jetbrains.kotlin.name.FqName
 
-
 internal class RTTIGenerator(override val context: Context) : ContextUtils {
+
+    private val acyclicCache = mutableMapOf<IrType, Boolean>()
+    private val safeAcyclicFieldTypes = setOf(
+            context.irBuiltIns.stringClass,
+            context.irBuiltIns.booleanClass, context.irBuiltIns.charClass,
+            context.irBuiltIns.byteClass, context.irBuiltIns.shortClass, context.irBuiltIns.intClass,
+            context.irBuiltIns.longClass,
+            context.irBuiltIns.floatClass,context.irBuiltIns.doubleClass) +
+            context.ir.symbols.primitiveArrays.values +
+            context.ir.symbols.unsignedArrays.values
+
+    // TODO: extend logic here by taking into account final acyclic classes.
+    private fun checkAcyclicFieldType(type: IrType): Boolean = acyclicCache.getOrPut(type) {
+        when {
+            type.isInterface() -> false
+            type.computePrimitiveBinaryTypeOrNull() != null -> true
+            else -> {
+                val classifier = type.classifierOrNull
+                (classifier != null && classifier in safeAcyclicFieldTypes)
+            }
+        }
+    }
+
+    private fun checkAcyclicClass(classDescriptor: ClassDescriptor): Boolean = when {
+        classDescriptor.symbol == context.ir.symbols.array -> false
+        classDescriptor.isArray -> true
+        context.llvmDeclarations.forClass(classDescriptor).fields.all { checkAcyclicFieldType(it.type) } -> true
+        else -> false
+    }
 
     private fun flagsFromClass(classDescriptor: ClassDescriptor): Int {
         var result = 0
         if (classDescriptor.isFrozen)
            result = result or TF_IMMUTABLE
+        // TODO: maybe perform deeper analysis to find surely acyclic types.
+        if (!classDescriptor.isInterface && !classDescriptor.isAbstract() && !classDescriptor.isAnnotationClass) {
+            if (checkAcyclicClass(classDescriptor)) {
+                result = result or TF_ACYCLIC
+            }
+        }
         return result
     }
 
-    private inner class FieldTableRecord(val nameSignature: LocalHash, val fieldOffset: Int) :
+    private inner class FieldTableRecord(val nameSignature: LocalHash, fieldOffset: Int) :
             Struct(runtime.fieldTableRecordType, nameSignature, Int32(fieldOffset))
 
-    inner class MethodTableRecord(val nameSignature: LocalHash, val methodEntryPoint: ConstPointer?) :
+    inner class MethodTableRecord(val nameSignature: LocalHash, methodEntryPoint: ConstPointer?) :
             Struct(runtime.methodTableRecordType, nameSignature, methodEntryPoint)
 
     private inner class TypeInfo(
@@ -379,3 +418,4 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
 }
 
 private const val TF_IMMUTABLE = 1
+private const val TF_ACYCLIC   = 2

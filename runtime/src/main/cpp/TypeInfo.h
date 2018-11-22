@@ -45,20 +45,21 @@ struct FieldTableRecord {
 // Type for runtime representation of Konan object.
 // Keep in sync with runtimeTypeMap in RTTIGenerator.
 enum Konan_RuntimeType {
-  RT_INVALID = 0,
-  RT_OBJECT = 1,
-  RT_INT8 = 2,
-  RT_INT16 = 3,
-  RT_INT32 = 4,
-  RT_INT64 = 5,
-  RT_FLOAT32 = 6,
-  RT_FLOAT64 = 7,
+  RT_INVALID    = 0,
+  RT_OBJECT     = 1,
+  RT_INT8       = 2,
+  RT_INT16      = 3,
+  RT_INT32      = 4,
+  RT_INT64      = 5,
+  RT_FLOAT32    = 6,
+  RT_FLOAT64    = 7,
   RT_NATIVE_PTR = 8,
-  RT_BOOLEAN = 9
+  RT_BOOLEAN    = 9
 };
 
 enum Konan_TypeFlags {
-  TF_IMMUTABLE = 1 << 0
+  TF_IMMUTABLE = 1 << 0,
+  TF_ACYCLIC   = 1 << 1
 };
 
 enum Konan_MetaFlags {

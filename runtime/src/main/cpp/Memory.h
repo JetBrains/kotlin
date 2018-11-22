@@ -30,11 +30,12 @@ typedef enum {
   CONTAINER_TAG_FROZEN = 1 | 1,  // shareable
   // Stack container, no need to free, children cleanup still shall be there.
   CONTAINER_TAG_STACK = 2,
-  // Those container tags shall not be refcounted.
-  // Permanent container, cannot refer to non-permanent containers, so no need to cleanup those.
-  CONTAINER_TAG_PERMANENT = 3 | 1,  // shareable
   // Atomic container, reference counter is atomically updated.
   CONTAINER_TAG_ATOMIC = 5 | 1,  // shareable
+  // Those container tags shall not be refcounted.
+  // Permanent container, cannot refer to non-permanent containers, so no need to cleanup those.
+  // Please check isFreeable() if changing the numeric value.
+  CONTAINER_TAG_PERMANENT = 7 | 1,  // shareable
   // Shift to get actual counter.
   CONTAINER_TAG_SHIFT = 3,
   // Actual value to increment/decrement container by. Tag is in lower bits.
@@ -44,19 +45,31 @@ typedef enum {
 
   // Those bit masks are applied to objectCount_ field.
   // Shift to get actual object count.
-  CONTAINER_TAG_GC_SHIFT = 5,
+  CONTAINER_TAG_GC_SHIFT     = 6,
   CONTAINER_TAG_GC_INCREMENT = 1 << CONTAINER_TAG_GC_SHIFT,
   // Color mask of a container.
-  CONTAINER_TAG_GC_COLOR_MASK = (1 << 2) - 1,
+  CONTAINER_TAG_COLOR_SHIFT   = 3,
+  CONTAINER_TAG_GC_COLOR_MASK = (1 << CONTAINER_TAG_COLOR_SHIFT) - 1,
   // Colors.
+  // In use or free.
   CONTAINER_TAG_GC_BLACK  = 0,
+  // Possible member of garbage cycle.
   CONTAINER_TAG_GC_GRAY   = 1,
+  // Member of garbage cycle.
   CONTAINER_TAG_GC_WHITE  = 2,
+  // Possible root of cycle.
   CONTAINER_TAG_GC_PURPLE = 3,
+  // Acyclic.
+  CONTAINER_TAG_GC_GREEN  = 4,
+  // Orange and red are currently unused.
+  // Candidate cycle awaiting epoch.
+  CONTAINER_TAG_GC_ORANGE = 5,
+  // Candidate cycle awaiting sigma computation.
+  CONTAINER_TAG_GC_RED    = 6,
   // Individual state bits used during GC and freezing.
-  CONTAINER_TAG_GC_MARKED = 1 << 2,
-  CONTAINER_TAG_GC_BUFFERED = 1 << 3,
-  CONTAINER_TAG_GC_SEEN = 1 << 4
+  CONTAINER_TAG_GC_MARKED   = 1 << CONTAINER_TAG_COLOR_SHIFT,
+  CONTAINER_TAG_GC_BUFFERED = 1 << (CONTAINER_TAG_COLOR_SHIFT + 1),
+  CONTAINER_TAG_GC_SEEN     = 1 << (CONTAINER_TAG_COLOR_SHIFT + 2)
 } ContainerTag;
 
 typedef uint32_t container_size_t;
@@ -152,8 +165,21 @@ struct ContainerHeader {
     return objectCount_ & CONTAINER_TAG_GC_COLOR_MASK;
   }
 
-  inline void setColor(unsigned color) {
+  inline void setColorAssertIfGreen(unsigned color) {
+    RuntimeAssert(this->color() != CONTAINER_TAG_GC_GREEN, "Must not be green");
+    setColorEvenIfGreen(color);
+  }
+
+  inline void setColorEvenIfGreen(unsigned color) {
+    // TODO: do we need atomic color update?
     objectCount_ = (objectCount_ & ~CONTAINER_TAG_GC_COLOR_MASK) | color;
+  }
+
+  inline void setColorUnlessGreen(unsigned color) {
+    // TODO: do we need atomic color update?
+    unsigned objectCount_ = objectCount_;
+    if ((objectCount_ & CONTAINER_TAG_GC_COLOR_MASK) != CONTAINER_TAG_GC_GREEN)
+        objectCount_ = (objectCount_ & ~CONTAINER_TAG_GC_COLOR_MASK) | color;
   }
 
   inline bool buffered() const {
@@ -281,6 +307,8 @@ class Container {
     // Take into account typeInfo's immutability for ARC strategy.
     if ((type_info->flags_ & TF_IMMUTABLE) != 0)
       header_->refCount_ |= CONTAINER_TAG_FROZEN;
+    if ((type_info->flags_ & TF_ACYCLIC) != 0)
+      header_->setColorEvenIfGreen(CONTAINER_TAG_GC_GREEN);
   }
 };
 
