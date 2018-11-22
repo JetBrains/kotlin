@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.incremental
 
 import com.intellij.testFramework.UsefulTestCase
-import com.intellij.util.containers.HashMap
 import org.jetbrains.kotlin.TestWithWorkingDir
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
