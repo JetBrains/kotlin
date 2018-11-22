@@ -349,6 +349,11 @@ public class QuickFixMultiModuleTestGenerated extends AbstractQuickFixMultiModul
         runTest("idea/testData/multiModuleQuickFix/expectFunWithAccessibleParameter/");
     }
 
+    @TestMetadata("expectFunWithAccessibleTypeFromCommon")
+    public void testExpectFunWithAccessibleTypeFromCommon() throws Exception {
+        runTest("idea/testData/multiModuleQuickFix/expectFunWithAccessibleTypeFromCommon/");
+    }
+
     @TestMetadata("expectFunWithInaccessibleBounds")
     public void testExpectFunWithInaccessibleBounds() throws Exception {
         runTest("idea/testData/multiModuleQuickFix/expectFunWithInaccessibleBounds/");
