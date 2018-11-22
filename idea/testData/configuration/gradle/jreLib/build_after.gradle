@@ -5,7 +5,7 @@ repositories {
     mavenCentral()
 }
 dependencies {
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jre8"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jre8"
 }
 compileKotlin {
     kotlinOptions {

@@ -25,6 +25,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
 import com.intellij.util.PathUtil
+import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.config.CoroutineSupport
 import org.jetbrains.kotlin.config.LanguageFeature
@@ -302,8 +303,12 @@ abstract class KotlinWithGradleConfigurator : KotlinProjectConfigurator {
         private val KOTLIN_BUILD_SCRIPT_NAME = "build.gradle.kts"
         private val KOTLIN_SETTINGS_SCRIPT_NAME = "settings.gradle.kts"
 
-        fun getGroovyDependencySnippet(artifactName: String, scope: String, withVersion: Boolean) =
-            "$scope \"org.jetbrains.kotlin:$artifactName${if (withVersion) ":\$kotlin_version" else ""}\""
+        fun getGroovyDependencySnippet(artifactName: String, scope: String, withVersion: Boolean, gradleVersion: GradleVersion): String {
+            val updatedScope = gradleVersion.scope(scope)
+            val versionStr = if (withVersion) ":\$kotlin_version" else ""
+
+            return "$updatedScope \"org.jetbrains.kotlin:$artifactName$versionStr\""
+        }
 
         fun getGroovyApplyPluginDirective(pluginName: String) = "apply plugin: '$pluginName'"
 

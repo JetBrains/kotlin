@@ -16,7 +16,7 @@ apply {
     plugin("kotlin")
 }
 dependencies {
-    compile(kotlinModule("stdlib-jre8", kotlin_version))
+    implementation(kotlinModule("stdlib-jre8", kotlin_version))
 }
 repositories {
     mavenCentral()

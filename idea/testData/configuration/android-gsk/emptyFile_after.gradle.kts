@@ -13,7 +13,7 @@ apply {
     plugin("kotlin-android")
 }
 dependencies {
-    compile(kotlinModule("stdlib-jdk7", kotlin_version))
+    implementation(kotlinModule("stdlib-jdk7", kotlin_version))
 }
 repositories {
     mavenCentral()
