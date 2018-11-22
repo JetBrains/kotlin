@@ -1,0 +1,13 @@
+versions.intellijSdk=181.5540.7
+versions.androidBuildTools=r23.0.1
+versions.idea.NodeJS=181.3494.12
+versions.jar.guava=21.0
+versions.jar.groovy-all=2.4.12
+versions.jar.lombok-ast=0.2.3
+versions.jar.swingx-core=1.6.2-2
+versions.jar.kxml2=2.3.0
+versions.jar.streamex=0.6.5
+versions.jar.gson=2.8.2
+versions.jar.oro=2.0.8
+versions.jar.snappy-in-java=0.5.1
+versions.gradle-api=4.4

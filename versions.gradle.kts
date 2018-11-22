@@ -1,8 +1,18 @@
-extra["versions.intellijSdk"] = "182.5107.16"
-extra["versions.androidBuildTools"] = "r23.0.1"
-extra["versions.idea.NodeJS"] = "181.3494.12"
-//extra["versions.androidStudioRelease"] = "3.1.0.5"
-//extra["versions.androidStudioBuild"] = "173.4506631"
+import java.util.*
+import java.io.*
+
+var propertiesFile = rootProject.file("versions.properties");
+if (!propertiesFile.exists()) {
+    //work-around for buildSrc
+    propertiesFile = rootProject.file("../versions.properties");
+}
+FileReader(propertiesFile).use {
+    val properties = Properties()
+    properties.load(it)
+    properties.forEach { (k, v) ->
+        extra[k.toString()] = v
+    }
+}
 
 val gradleJars = listOf(
     "gradle-api",
@@ -29,127 +39,9 @@ val platform = androidStudioVersion?.let { "AS$it" } ?: platformBaseVersion
 
 rootProject.extra["versions.platform"] = platform
 
-when (platform) {
-    "183" -> {
-        extra["versions.jar.guava"] = "25.1-jre"
-        extra["versions.jar.groovy-all"] = "2.4.15"
-        extra["versions.jar.lombok-ast"] = "0.2.3"
-        extra["versions.jar.swingx-core"] = "1.6.2-2"
-        extra["versions.jar.kxml2"] = "2.3.0"
-        extra["versions.jar.streamex"] = "0.6.7"
-        extra["versions.jar.gson"] = "2.8.4"
-        extra["versions.jar.oro"] = "2.0.8"
-        extra["versions.jar.picocontainer"] = "1.2"
-        for (jar in gradleJars) {
-            extra["versions.jar.$jar"] = "4.5.1"
-        }
 
-        extra["ignore.jar.snappy-in-java"] = true
-    }
-    "182" -> {
-        extra["versions.jar.guava"] = "23.6-jre"
-        extra["versions.jar.groovy-all"] = "2.4.15"
-        extra["versions.jar.lombok-ast"] = "0.2.3"
-        extra["versions.jar.swingx-core"] = "1.6.2-2"
-        extra["versions.jar.kxml2"] = "2.3.0"
-        extra["versions.jar.streamex"] = "0.6.5"
-        extra["versions.jar.gson"] = "2.8.4"
-        extra["versions.jar.oro"] = "2.0.8"
-        extra["versions.jar.picocontainer"] = "1.2"
-        for (jar in gradleJars) {
-            extra["versions.jar.$jar"] = "4.5.1"
-        }
-
-        extra["ignore.jar.snappy-in-java"] = true
-    }
-    "181" -> {
-        extra["versions.jar.guava"] = "21.0"
-        extra["versions.jar.groovy-all"] = "2.4.12"
-        extra["versions.jar.lombok-ast"] = "0.2.3"
-        extra["versions.jar.swingx-core"] = "1.6.2-2"
-        extra["versions.jar.kxml2"] = "2.3.0"
-        extra["versions.jar.streamex"] = "0.6.5"
-        extra["versions.jar.gson"] = "2.8.2"
-        extra["versions.jar.oro"] = "2.0.8"
-        extra["versions.jar.snappy-in-java"] = "0.5.1"
-        for (jar in gradleJars) {
-            extra["versions.jar.$jar"] = "4.4"
-        }
-    }
-    "173" -> {
-        extra["versions.jar.guava"] = "21.0"
-        extra["versions.jar.groovy-all"] = "2.4.12"
-        extra["versions.jar.lombok-ast"] = "0.2.3"
-        extra["versions.jar.swingx-core"] = "1.6.2"
-        extra["versions.jar.kxml2"] = "2.3.0"
-        extra["versions.jar.streamex"] = "0.6.5"
-        extra["versions.jar.gson"] = "2.8.2"
-        extra["versions.jar.snappy-in-java"] = "0.5.1"
-        for (jar in gradleJars) {
-            extra["versions.jar.$jar"] = "4.0"
-        }
-        extra["ignore.jar.lombok-ast-0.2.3"] = true
-    }
-    "172" -> {
-        extra["versions.jar.guava"] = "21.0"
-        extra["versions.jar.groovy-all"] = "2.4.6"
-        extra["versions.jar.lombok-ast"] = "0.2.3"
-        extra["versions.jar.swingx-core"] = "1.6.2"
-        extra["versions.jar.kxml2"] = "2.3.0"
-        extra["versions.jar.streamex"] = "0.6.2"
-        extra["versions.jar.gson"] = "2.5"
-        extra["versions.jar.snappy-in-java"] = "0.5.1"
-        for (jar in gradleJars) {
-            extra["versions.jar.$jar"] = "3.5"
-        }
-    }
-    "AS31" -> {
-        extra["versions.jar.guava"] = "21.0"
-        extra["versions.jar.groovy-all"] = "2.4.12"
-        extra["versions.jar.swingx-core"] = "1.6.2"
-        extra["versions.jar.kxml2"] = "2.3.0"
-        extra["versions.jar.streamex"] = "0.6.5"
-        extra["versions.jar.gson"] = "2.8.2"
-        extra["versions.jar.snappy-in-java"] = "0.5.1"
-        for (jar in gradleJars) {
-            extra["versions.jar.$jar"] = "4.0"
-        }
-
-        extra["ignore.jar.common"] = true
-        extra["ignore.jar.lombok-ast"] = true
-    }
-    "AS32" -> {
-        extra["versions.jar.guava"] = "21.0"
-        extra["versions.jar.groovy-all"] = "2.4.12"
-        extra["versions.jar.swingx-core"] = "1.6.2"
-        extra["versions.jar.kxml2"] = "2.3.0"
-        extra["versions.jar.streamex"] = "0.6.5"
-        extra["versions.jar.gson"] = "2.8.2"
-        extra["versions.jar.oro"] = "2.0.8"
-        extra["versions.jar.snappy-in-java"] = "0.5.1"
-        for (jar in gradleJars) {
-            extra["versions.jar.$jar"] = "4.4"
-        }
-
-        extra["ignore.jar.common"] = true
-        extra["ignore.jar.lombok-ast"] = true
-    }
-    "AS33" -> {
-        extra["versions.jar.guava"] = "21.0"
-        extra["versions.jar.groovy-all"] = "2.4.12"
-        extra["versions.jar.swingx-core"] = "1.6.2"
-        extra["versions.jar.kxml2"] = "2.3.0"
-        extra["versions.jar.streamex"] = "0.6.5"
-        extra["versions.jar.gson"] = "2.8.2"
-        extra["versions.jar.oro"] = "2.0.8"
-        extra["versions.jar.snappy-in-java"] = "0.5.1"
-        for (jar in gradleJars) {
-            extra["versions.jar.$jar"] = "4.4"
-        }
-
-        extra["ignore.jar.common"] = true
-        extra["ignore.jar.lombok-ast"] = true
-    }
+for (jar in gradleJars) {
+    extra["versions.jar.$jar"] = extra["versions.gradle-api"]
 }
 
 if (!extra.has("versions.androidStudioRelease")) {
