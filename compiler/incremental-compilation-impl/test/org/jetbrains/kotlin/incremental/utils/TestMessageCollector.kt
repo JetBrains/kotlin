@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.incremental.utils
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import java.util.ArrayList
+import java.util.*
 
 class TestMessageCollector : MessageCollector {
     val errors = ArrayList<String>()
@@ -35,5 +35,5 @@ class TestMessageCollector : MessageCollector {
     }
 
     override fun hasErrors(): Boolean =
-            errors.isNotEmpty()
+        errors.isNotEmpty()
 }

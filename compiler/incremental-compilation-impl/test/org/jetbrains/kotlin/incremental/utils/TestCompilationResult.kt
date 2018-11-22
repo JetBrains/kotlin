@@ -20,12 +20,12 @@ import org.jetbrains.kotlin.cli.common.ExitCode
 import java.io.File
 
 data class TestCompilationResult(
-        val exitCode: ExitCode,
-        val compiledSources: Iterable<File>,
-        val compileErrors: Collection<String>
+    val exitCode: ExitCode,
+    val compiledSources: Iterable<File>,
+    val compileErrors: Collection<String>
 ) {
     constructor(
-            icReporter: TestICReporter,
-            messageCollector: TestMessageCollector
+        icReporter: TestICReporter,
+        messageCollector: TestMessageCollector
     ) : this(icReporter.exitCode, icReporter.compiledSources, messageCollector.errors)
 }
