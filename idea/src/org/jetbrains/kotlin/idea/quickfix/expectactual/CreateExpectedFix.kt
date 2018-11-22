@@ -6,24 +6,17 @@
 package org.jetbrains.kotlin.idea.quickfix.expectactual
 
 import com.intellij.codeInsight.intention.IntentionAction
-import com.intellij.ide.util.EditorHelper
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.module.Module
-import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
-import com.intellij.psi.codeStyle.CodeStyleManager
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.idea.caches.project.implementedModules
-import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.core.toDescriptor
 import org.jetbrains.kotlin.idea.quickfix.KotlinIntentionActionsFactory
-import org.jetbrains.kotlin.idea.quickfix.KotlinQuickFixAction
-import org.jetbrains.kotlin.idea.refactoring.introduce.showErrorHint
-import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.idea.util.liftToExpected
 import org.jetbrains.kotlin.idea.util.module
 import org.jetbrains.kotlin.psi.*
@@ -31,77 +24,31 @@ import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.createSmartPointer
 import org.jetbrains.kotlin.psi.psiUtil.hasActualModifier
 
-sealed class CreateExpectedFix<out D : KtNamedDeclaration>(
+sealed class CreateExpectedFix<D : KtNamedDeclaration>(
     declaration: D,
     targetExpectedClass: KtClassOrObject?,
-    private val commonModule: Module,
-    private val generateIt: KtPsiFactory.(Project, D) -> D?
-) : KotlinQuickFixAction<D>(declaration) {
+    commonModule: Module,
+    generateIt: KtPsiFactory.(Project, D) -> D?
+) : AbstractCreateDeclarationFix<D>(declaration, commonModule, generateIt) {
 
     private val targetExpectedClassPointer = targetExpectedClass?.createSmartPointer()
 
-    override fun getFamilyName() = text
-
-    protected val elementType: String = element.getTypeDescription()
-
-    override fun getText() = "Create expected $elementType in common module ${commonModule.name}"
-
-    override fun startInWriteAction() = false
+    override fun getText() = "Create expected $elementType in common module ${module.name}"
 
     final override fun invoke(project: Project, editor: Editor?, file: KtFile) {
-        val element = element ?: return
-        val factory = KtPsiFactory(project)
-
         val targetExpectedClass = targetExpectedClassPointer?.element
         val expectedFile = targetExpectedClass?.containingKtFile ?: getOrCreateImplementationFile() ?: return
-        DumbService.getInstance(project).runWhenSmart {
-            val generated = try {
-                factory.generateIt(project, element) ?: return@runWhenSmart
-            } catch (e: KotlinTypeInaccessibleException) {
-                if (editor != null) {
-                    showErrorHint(project, editor, "Cannot generate expected $elementType: " + e.message, e.message)
-                }
-                return@runWhenSmart
-            }
-
-            project.executeWriteCommand("Create expected declaration") {
-                if (expectedFile.packageDirective?.fqName != file.packageDirective?.fqName &&
-                    expectedFile.declarations.isEmpty()
-                ) {
-                    val packageDirective = file.packageDirective
-                    packageDirective?.let {
-                        val oldPackageDirective = expectedFile.packageDirective
-                        val newPackageDirective = factory.createPackageDirective(it.fqName)
-                        if (oldPackageDirective != null) {
-                            oldPackageDirective.replace(newPackageDirective)
-                        } else {
-                            expectedFile.add(newPackageDirective)
-                        }
-                    }
-                }
-                val expectedDeclaration = when {
-                    targetExpectedClass != null -> targetExpectedClass.addDeclaration(generated as KtNamedDeclaration)
-                    else -> expectedFile.add(generated) as KtElement
-                }
-                val reformatted = CodeStyleManager.getInstance(project).reformat(expectedDeclaration)
-                val shortened = ShortenReferences.DEFAULT.process(reformatted as KtElement)
-                EditorHelper.openInEditor(shortened)?.caretModel?.moveToOffset(shortened.textRange.startOffset)
-            }
-        }
+        doGenerate(project, editor, originalFile = file, targetFile = expectedFile, targetClass = targetExpectedClass)
     }
 
-    private fun getOrCreateImplementationFile(): KtFile? {
-        val declaration = element as? KtNamedDeclaration ?: return null
-        val parent = declaration.parent
-        if (parent is KtFile) {
-            for (otherDeclaration in parent.declarations) {
-                if (otherDeclaration === declaration) continue
-                if (!otherDeclaration.hasActualModifier()) continue
-                val expectedDeclaration = otherDeclaration.liftToExpected() ?: continue
-                return expectedDeclaration.containingKtFile
-            }
+    override fun KtFile.getFileForGeneratingDeclaration(originalDeclaration: KtNamedDeclaration): KtFile? {
+        for (otherDeclaration in declarations) {
+            if (otherDeclaration === originalDeclaration) continue
+            if (!otherDeclaration.hasActualModifier()) continue
+            val expectedDeclaration = otherDeclaration.liftToExpected() ?: continue
+            return expectedDeclaration.containingKtFile
         }
-        return createFileForDeclaration(commonModule, declaration)
+        return null
     }
 
     companion object : KotlinIntentionActionsFactory() {

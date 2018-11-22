@@ -17,12 +17,9 @@
 package org.jetbrains.kotlin.idea.quickfix.expectactual
 
 import com.intellij.codeInsight.intention.IntentionAction
-import com.intellij.ide.util.EditorHelper
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.module.Module
-import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
-import com.intellij.psi.codeStyle.CodeStyleManager
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
@@ -30,75 +27,36 @@ import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.idea.caches.project.ModuleSourceInfo
-import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.core.toDescriptor
-import org.jetbrains.kotlin.idea.quickfix.KotlinQuickFixAction
 import org.jetbrains.kotlin.idea.quickfix.KotlinSingleIntentionActionFactory
 import org.jetbrains.kotlin.idea.util.actualsForExpected
-import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
 import org.jetbrains.kotlin.resolve.MultiTargetPlatform
 import org.jetbrains.kotlin.resolve.getMultiTargetPlatform
 
-sealed class CreateActualFix<out D : KtNamedDeclaration>(
+sealed class CreateActualFix<D : KtNamedDeclaration>(
     declaration: D,
-    private val actualModule: Module,
+    actualModule: Module,
     private val actualPlatform: MultiTargetPlatform.Specific,
-    private val generateIt: KtPsiFactory.(Project, D) -> D?
-) : KotlinQuickFixAction<D>(declaration) {
+    generateIt: KtPsiFactory.(Project, D) -> D?
+) : AbstractCreateDeclarationFix<D>(declaration, actualModule, generateIt) {
 
-    override fun getFamilyName() = text
-
-    protected val elementType: String = element.getTypeDescription()
-
-    override fun getText() = "Create actual $elementType for module ${actualModule.name} (${actualPlatform.platform})"
-
-    override fun startInWriteAction() = false
+    override fun getText() = "Create actual $elementType for module ${module.name} (${actualPlatform.platform})"
 
     final override fun invoke(project: Project, editor: Editor?, file: KtFile) {
-        val element = element ?: return
-        val factory = KtPsiFactory(project)
-
         val actualFile = getOrCreateImplementationFile() ?: return
-        DumbService.getInstance(project).runWhenSmart {
-            val generated = factory.generateIt(project, element) ?: return@runWhenSmart
-
-            project.executeWriteCommand("Create actual declaration") {
-                if (actualFile.packageDirective?.fqName != file.packageDirective?.fqName &&
-                    actualFile.declarations.isEmpty()
-                ) {
-                    val packageDirective = file.packageDirective
-                    packageDirective?.let {
-                        val oldPackageDirective = actualFile.packageDirective
-                        val newPackageDirective = factory.createPackageDirective(it.fqName)
-                        if (oldPackageDirective != null) {
-                            oldPackageDirective.replace(newPackageDirective)
-                        } else {
-                            actualFile.add(newPackageDirective)
-                        }
-                    }
-                }
-                val actualDeclaration = actualFile.add(generated) as KtElement
-                val reformatted = CodeStyleManager.getInstance(project).reformat(actualDeclaration)
-                val shortened = ShortenReferences.DEFAULT.process(reformatted as KtElement)
-                EditorHelper.openInEditor(shortened)?.caretModel?.moveToOffset(shortened.textRange.startOffset)
-            }
-        }
+        doGenerate(project, editor, originalFile = file, targetFile = actualFile, targetClass = null)
     }
 
-    private fun getOrCreateImplementationFile(): KtFile? {
-        val declaration = element as? KtNamedDeclaration ?: return null
-        val parent = declaration.parent
-        if (parent is KtFile) {
-            for (otherDeclaration in parent.declarations) {
-                if (otherDeclaration === declaration) continue
-                if (!otherDeclaration.hasExpectModifier()) continue
-                val actualDeclaration = otherDeclaration.actualsForExpected(actualModule).singleOrNull() ?: continue
-                return actualDeclaration.containingKtFile
-            }
+    override fun KtFile.getFileForGeneratingDeclaration(originalDeclaration: KtNamedDeclaration): KtFile? {
+        for (otherDeclaration in declarations) {
+            if (otherDeclaration === originalDeclaration) continue
+            if (!otherDeclaration.hasExpectModifier()) continue
+            val actualDeclaration = otherDeclaration.actualsForExpected(module).singleOrNull() ?: continue
+            return actualDeclaration.containingKtFile
         }
-        return createFileForDeclaration(actualModule, declaration)
+        return null
     }
 
     companion object : KotlinSingleIntentionActionFactory() {
