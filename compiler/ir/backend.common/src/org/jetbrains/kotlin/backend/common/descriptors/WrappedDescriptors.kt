@@ -88,6 +88,8 @@ abstract class WrappedCallableDescriptor<T : IrDeclaration>(
     override fun <V : Any?> getUserData(key: CallableDescriptor.UserDataKey<V>?): V? = null
 }
 
+// TODO: (Roman Artemev) do not create this kind of descriptor for dispatch receiver parameters
+// WrappedReceiverParameterDescriptor should be used instead
 open class WrappedValueParameterDescriptor(
     annotations: Annotations = Annotations.EMPTY,
     sourceElement: SourceElement = SourceElement.NO_SOURCE
