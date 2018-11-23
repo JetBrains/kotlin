@@ -6,29 +6,23 @@
 package org.jetbrains.kotlin.asJava.classes
 
 import com.google.common.annotations.VisibleForTesting
-import com.intellij.lang.Language
 import com.intellij.psi.*
 import com.intellij.psi.impl.PsiClassImplUtil
-import com.intellij.psi.impl.PsiImplUtil
 import com.intellij.psi.impl.PsiSuperMethodImplUtil
-import com.intellij.psi.impl.light.*
-import com.intellij.psi.util.TypeConversionUtil
-import org.jetbrains.annotations.NonNls
+import com.intellij.psi.impl.light.LightMethodBuilder
+import com.intellij.psi.impl.light.LightModifierList
+import com.intellij.psi.impl.light.LightParameterListBuilder
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
 import org.jetbrains.kotlin.asJava.builder.LightClassData
-import org.jetbrains.kotlin.asJava.builder.LightMemberOriginForDeclaration
-import org.jetbrains.kotlin.asJava.elements.*
+import org.jetbrains.kotlin.asJava.elements.KtLightField
+import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.codegen.FunctionCodegen
 import org.jetbrains.kotlin.codegen.JvmCodegenUtil
-import org.jetbrains.kotlin.codegen.PropertyCodegen
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotated
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
-import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
@@ -41,11 +35,12 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.annotations.JVM_STATIC_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.resolve.annotations.argumentValue
 import org.jetbrains.kotlin.resolve.constants.EnumValue
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.isPublishedApi
 import org.jetbrains.kotlin.resolve.inline.isInlineOnly
-import org.jetbrains.kotlin.resolve.jvm.annotations.*
-import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind
+import org.jetbrains.kotlin.resolve.jvm.annotations.JVM_OVERLOADS_FQ_NAME
+import org.jetbrains.kotlin.resolve.jvm.annotations.JVM_SYNTHETIC_ANNOTATION_FQ_NAME
+import org.jetbrains.kotlin.resolve.jvm.annotations.STRICTFP_ANNOTATION_FQ_NAME
+import org.jetbrains.kotlin.resolve.jvm.annotations.SYNCHRONIZED_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.isAnyOrNullableAny
 
@@ -592,247 +587,6 @@ class KtUltraLightClass(classOrObject: KtClassOrObject, private val support: Ult
 
     override fun getScope(): PsiElement? = if (tooComplex) super.getScope() else parent
     override fun copy(): KtLightClassImpl = KtUltraLightClass(classOrObject.copy() as KtClassOrObject, support)
-}
-
-private open class KtUltraLightField(
-    private val declaration: KtNamedDeclaration,
-    name: String,
-    private val containingClass: KtUltraLightClass,
-    private val support: UltraLightSupport,
-    modifiers: Set<String>
-) : LightFieldBuilder(name, PsiType.NULL, declaration), KtLightField {
-    private val modList = object : KtLightSimpleModifierList(this, modifiers) {
-        override fun hasModifierProperty(name: String): Boolean = when (name) {
-            PsiModifier.VOLATILE -> hasFieldAnnotation(VOLATILE_ANNOTATION_FQ_NAME)
-            PsiModifier.TRANSIENT -> hasFieldAnnotation(TRANSIENT_ANNOTATION_FQ_NAME)
-            else -> super.hasModifierProperty(name)
-        }
-
-        private fun hasFieldAnnotation(fqName: FqName): Boolean {
-            val annotation = support.findAnnotation(declaration, fqName)?.first ?: return false
-            val target = annotation.useSiteTarget?.getAnnotationUseSiteTarget() ?: return true
-            val expectedTarget =
-                if (declaration is KtProperty && declaration.hasDelegate()) AnnotationUseSiteTarget.PROPERTY_DELEGATE_FIELD
-                else AnnotationUseSiteTarget.FIELD
-            return target == expectedTarget
-        }
-    }
-
-    override fun getModifierList(): PsiModifierList = modList
-    override fun hasModifierProperty(name: String): Boolean =
-        modifierList.hasModifierProperty(name) //can be removed after IDEA platform does the same
-
-    override fun getLanguage(): Language = KotlinLanguage.INSTANCE
-
-    private val _type: PsiType by lazyPub {
-        fun nonExistent() = JavaPsiFacade.getElementFactory(project).createTypeFromText("error.NonExistentClass", declaration)
-
-        val propertyDescriptor: PropertyDescriptor? by lazyPub {
-            declaration.resolve() as? PropertyDescriptor
-        }
-
-        when {
-            declaration is KtProperty && declaration.hasDelegate() ->
-                propertyDescriptor
-                    ?.let {
-                        val context = LightClassGenerationSupport.getInstance(project).analyze(declaration)
-                        PropertyCodegen.getDelegateTypeForProperty(declaration, it, context)
-                    }
-                    ?.let { it.asPsiType(support, TypeMappingMode.getOptimalModeForValueParameter(it), this) }
-                    ?.let(TypeConversionUtil::erasure)
-                    ?: nonExistent()
-            declaration is KtObjectDeclaration ->
-                KtLightClassForSourceDeclaration.create(declaration)?.let { JavaPsiFacade.getElementFactory(project).createType(it) }
-                    ?: nonExistent()
-            declaration is KtEnumEntry -> {
-                (containingClass.kotlinOrigin.resolve() as? ClassDescriptor)
-                    ?.defaultType?.asPsiType(support, TypeMappingMode.DEFAULT, this)
-                    ?: nonExistent()
-            }
-            else -> {
-                val kotlinType = declaration.getKotlinType() ?: return@lazyPub PsiType.NULL
-                val descriptor = propertyDescriptor ?: return@lazyPub PsiType.NULL
-
-                support.mapType(this) { typeMapper, sw ->
-                    typeMapper.writeFieldSignature(kotlinType, descriptor, sw)
-                }
-            }
-        }
-    }
-
-    override fun getType(): PsiType = _type
-
-    override fun getParent() = containingClass
-    override fun getContainingClass() = containingClass
-    override fun getContainingFile(): PsiFile? = containingClass.containingFile
-
-    override fun computeConstantValue(): Any? =
-        if (hasModifierProperty(PsiModifier.FINAL) &&
-            (TypeConversionUtil.isPrimitiveAndNotNull(_type) || _type.equalsToText(CommonClassNames.JAVA_LANG_STRING))
-        )
-            (declaration.resolve() as? VariableDescriptor)?.compileTimeInitializer?.value
-        else null
-
-    override fun computeConstantValue(visitedVars: MutableSet<PsiVariable>?): Any? = computeConstantValue()
-
-    override val kotlinOrigin = declaration
-    override val clsDelegate: PsiField
-        get() = throw IllegalStateException("Cls delegate shouldn't be loaded for ultra-light PSI!")
-    override val lightMemberOrigin = LightMemberOriginForDeclaration(declaration, JvmDeclarationOriginKind.OTHER)
-
-    override fun setName(@NonNls name: String): PsiElement {
-        (kotlinOrigin as? KtNamedDeclaration)?.setName(name)
-        return this
-    }
-
-    override fun setInitializer(initializer: PsiExpression?) = cannotModify()
-
-}
-
-private class KtUltraLightEnumEntry(
-    declaration: KtNamedDeclaration,
-    name: String,
-    containingClass: KtUltraLightClass,
-    support: UltraLightSupport,
-    modifiers: Set<String>
-) : KtUltraLightField(declaration, name, containingClass, support, modifiers), PsiEnumConstant {
-    override fun getInitializingClass(): PsiEnumConstantInitializer? = null
-    override fun getOrCreateInitializingClass(): PsiEnumConstantInitializer =
-        error("cannot create initializing class in light enum constant")
-
-    override fun getArgumentList(): PsiExpressionList? = null
-    override fun resolveMethod(): PsiMethod? = null
-    override fun resolveConstructor(): PsiMethod? = null
-
-    override fun resolveMethodGenerics(): JavaResolveResult = JavaResolveResult.EMPTY
-
-    override fun hasInitializer() = true
-    override fun computeConstantValue(visitedVars: MutableSet<PsiVariable>?) = this
-}
-
-internal class KtUltraLightMethod(
-    internal val delegate: LightMethodBuilder,
-    originalElement: KtDeclaration,
-    private val support: UltraLightSupport,
-    containingClass: KtUltraLightClass
-) : KtLightMethodImpl({ delegate }, LightMemberOriginForDeclaration(originalElement, JvmDeclarationOriginKind.OTHER), containingClass) {
-
-    // These two overrides are necessary because ones from KtLightMethodImpl suppose that clsDelegate.returnTypeElement is valid
-    // While here we only set return type for LightMethodBuilder (see org.jetbrains.kotlin.asJava.classes.KtUltraLightClass.asJavaMethod)
-    override fun getReturnTypeElement(): PsiTypeElement? = null
-
-    override fun getReturnType(): PsiType? = clsDelegate.returnType
-
-    override fun buildParametersForList(): List<PsiParameter> = clsDelegate.parameterList.parameters.toList()
-
-    // should be in super
-    override fun isVarArgs() = PsiImplUtil.isVarArgs(this)
-
-    override fun buildTypeParameterList(): PsiTypeParameterList {
-        val origin = kotlinOrigin
-        return if (origin is KtFunction || origin is KtProperty)
-            buildTypeParameterList(origin as KtTypeParameterListOwner, this, support)
-        else LightTypeParameterListBuilder(manager, language)
-    }
-
-    private val _throwsList: PsiReferenceList by lazyPub {
-        val list = KotlinLightReferenceListBuilder(manager, language, PsiReferenceList.Role.THROWS_LIST)
-        (kotlinOrigin?.resolve() as? FunctionDescriptor)?.let {
-            for (ex in FunctionCodegen.getThrownExceptions(it)) {
-                list.addReference(ex.fqNameSafe.asString())
-            }
-        }
-        list
-    }
-
-    override fun getHierarchicalMethodSignature() = PsiSuperMethodImplUtil.getHierarchicalMethodSignature(this)
-
-    override fun getThrowsList(): PsiReferenceList = _throwsList
-}
-
-internal class KtUltraLightParameter(
-    name: String,
-    override val kotlinOrigin: KtDeclaration,
-    private val support: UltraLightSupport,
-    method: KtLightMethod,
-    private val receiver: KtTypeReference?,
-    private val containingFunction: KtCallableDeclaration
-) : org.jetbrains.kotlin.asJava.elements.LightParameter(
-    name,
-    PsiType.NULL,
-    method,
-    method.language
-),
-    KtLightDeclaration<KtDeclaration, PsiParameter> {
-
-    override val clsDelegate: PsiParameter
-        get() = throw IllegalStateException("Cls delegate shouldn't be loaded for ultra-light PSI!")
-
-    private val lightModifierList by lazyPub { KtLightSimpleModifierList(this, emptySet()) }
-
-    override fun isVarArgs(): Boolean =
-        kotlinOrigin is KtParameter && kotlinOrigin.isVarArg && method.parameterList.parameters.last() == this
-
-    override fun getModifierList(): PsiModifierList = lightModifierList
-
-    override fun getNavigationElement(): PsiElement = kotlinOrigin
-
-    override fun isValid() = parent.isValid
-
-    private val kotlinType: KotlinType? by lazyPub {
-        when {
-            receiver != null -> (kotlinOrigin.resolve() as? CallableMemberDescriptor)?.extensionReceiverParameter?.type
-            else -> kotlinOrigin.getKotlinType()
-        }
-    }
-    private val _type: PsiType by lazyPub {
-        val kotlinType = kotlinType ?: return@lazyPub PsiType.NULL
-        val containingDescriptor = containingFunction.resolve() as? CallableDescriptor ?: return@lazyPub PsiType.NULL
-        support.mapType(this) { typeMapper, sw ->
-            typeMapper.writeParameterType(sw, kotlinType, containingDescriptor)
-        }
-    }
-
-    override fun getType(): PsiType = _type
-
-    override fun setName(@NonNls name: String): PsiElement {
-        (kotlinOrigin as? KtVariableDeclaration)?.setName(name)
-        return this
-    }
-
-    override fun getContainingFile(): PsiFile = method.containingFile
-    override fun getParent(): PsiElement = method.parameterList
-
-    override fun equals(other: Any?): Boolean = other is KtUltraLightParameter && other.kotlinOrigin == this.kotlinOrigin
-    override fun hashCode(): Int = kotlinOrigin.hashCode()
-
-    internal fun annotatedOrigin(): KtAnnotated? {
-        if (receiver != null) return receiver
-
-        if (kotlinOrigin is KtProperty) {
-            return null // we're a setter of a property with no explicit declaration, so we don't have annotation
-        }
-        return kotlinOrigin
-    }
-
-    internal fun getTypeForNullability(): KotlinType? {
-        if (receiver != null) return kotlinType
-        if (kotlinOrigin is KtProperty) {
-            if (kotlinOrigin.setter?.hasModifier(PRIVATE_KEYWORD) == true) return null
-            return kotlinType
-        }
-        if (kotlinOrigin is KtParameter) {
-            val reference = kotlinOrigin.typeReference
-            if (kotlinOrigin.isVarArg && reference != null) {
-                LightClassGenerationSupport.getInstance(project).analyze(reference)[BindingContext.TYPE, reference]?.let { return it }
-            }
-            if (reference != null || kotlinOrigin.parent?.parent is KtPropertyAccessor) {
-                return kotlinType
-            }
-        }
-        return null
-    }
-
 }
 
 interface UltraLightSupport {
