@@ -8425,6 +8425,11 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     runTest("compiler/testData/diagnostics/tests/generics/nullability/inferNotNullTypeFromIntersectionOfNullableTypes.kt");
                 }
 
+                @TestMetadata("kt25182.kt")
+                public void testKt25182() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/generics/nullability/kt25182.kt");
+                }
+
                 @TestMetadata("nullToGeneric.kt")
                 public void testNullToGeneric() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/generics/nullability/nullToGeneric.kt");
