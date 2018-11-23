@@ -42,6 +42,7 @@ import com.intellij.psi.PsiErrorElement
 import com.intellij.psi.PsiJavaFile
 import com.intellij.psi.PsiManager
 import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.util.PlatformUtils
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.j2k.IdeaJavaToKotlinServices
 import org.jetbrains.kotlin.idea.j2k.J2kPostProcessor
@@ -202,10 +203,14 @@ class JavaToKotlinAction : AnAction() {
     }
 
     override fun update(e: AnActionEvent) {
-        val virtualFiles = e.getData(CommonDataKeys.VIRTUAL_FILE_ARRAY) ?: return
-        val project = e.project ?: return
+        if (PlatformUtils.isCidr()) {
+            e.presentation.isEnabledAndVisible = false
+        } else {
+            val virtualFiles = e.getData(CommonDataKeys.VIRTUAL_FILE_ARRAY) ?: return
+            val project = e.project ?: return
 
-        e.presentation.isEnabled = isAnyJavaFileSelected(project, virtualFiles)
+            e.presentation.isEnabled = isAnyJavaFileSelected(project, virtualFiles)
+        }
     }
 
     private fun isAnyJavaFileSelected(project: Project, files: Array<VirtualFile>): Boolean {
