@@ -217,6 +217,15 @@ struct ContainerHeader {
   inline void resetSeen() {
     objectCount_ &= ~CONTAINER_TAG_GC_SEEN;
   }
+
+  // We cannot use 'this' here, as it conflicts with aliasing analysis in clang.
+  inline void setNextLink(ContainerHeader* next) {
+    *reinterpret_cast<ContainerHeader**>(this + 1) = next;
+  }
+
+  inline ContainerHeader* nextLink() {
+    return *reinterpret_cast<ContainerHeader**>(this + 1);
+  }
 };
 
 struct ArrayHeader;

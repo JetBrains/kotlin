@@ -134,21 +134,6 @@ public:
   void incAlloc(size_t size, const ContainerHeader* header) {
     containerAllocs[toIndex(header)][0]++;
     ++(*allocationHistogram)[size];
-#if 0
-    auto queue = memoryState->finalizerQueue;
-    bool hit = false;
-    for (int i = 0; i < queue->size(); i++) {
-      auto container = (*queue)[i];
-      if (containerSize(container) == size) {
-        hit = true;
-        break;
-      }
-    }
-    if (hit)
-      allocCacheHit++;
-    else
-      allocCacheMiss++;
-#endif  // USE_GC
   }
 
   void incFree(const ContainerHeader* header) {
@@ -230,9 +215,10 @@ struct MemoryState {
 #endif
 
 #if USE_GC
-  // Finalizer queue.
-  ContainerHeaderDeque* finalizerQueue;
-
+  // Finalizer queue - linked list of containers scheduled for finalization.
+  ContainerHeader* finalizerQueue;
+  int finalizerQueueSize;
+  int finalizerQueueSuspendCount;
   /*
    * Typical scenario for GC is as following:
    * we have 90% of objects with refcount = 0 which will be deleted during
@@ -249,7 +235,6 @@ struct MemoryState {
   size_t gcThreshold;
   // If collection is in progress.
   bool gcInProgress;
-  int finalizerQueueSuspendCount;
 
 #if GC_ERGONOMICS
   uint64_t lastGcTimestamp;
@@ -509,9 +494,10 @@ inline ContainerHeader* markAsRemoved(ContainerHeader* container) {
 
 inline void processFinalizerQueue(MemoryState* state) {
   // TODO: reuse elements of finalizer queue for new allocations.
-  while (!state->finalizerQueue->empty()) {
-    auto container = memoryState->finalizerQueue->back();
-    state->finalizerQueue->pop_back();
+  while (state->finalizerQueue != nullptr) {
+    auto* container = state->finalizerQueue;
+    state->finalizerQueue = container->nextLink();
+    state->finalizerQueueSize--;
 #if TRACE_MEMORY
     state->containers->erase(container);
 #endif
@@ -519,15 +505,18 @@ inline void processFinalizerQueue(MemoryState* state) {
     konanFreeMemory(container);
     atomicAdd(&allocCount, -1);
   }
+  RuntimeAssert(state->finalizerQueueSize == 0, "Queue must be empty here");
 }
 #endif
 
-inline void scheduleDestroyContainer(
-    MemoryState* state, ContainerHeader* container) {
+inline void scheduleDestroyContainer(MemoryState* state, ContainerHeader* container) {
 #if USE_GC
-  state->finalizerQueue->push_front(container);
+  RuntimeAssert(container != nullptr, "Cannot destroy null container");
+  container->setNextLink(state->finalizerQueue);
+  state->finalizerQueue = container;
+  state->finalizerQueueSize++;
   // We cannot clean finalizer queue while in GC.
-  if (!state->gcInProgress && state->finalizerQueueSuspendCount == 0 && state->finalizerQueue->size() > 256) {
+  if (!state->gcInProgress && state->finalizerQueueSuspendCount == 0 && state->finalizerQueueSize > 256) {
     processFinalizerQueue(state);
   }
 #else
@@ -536,7 +525,6 @@ inline void scheduleDestroyContainer(
   konanFreeMemory(container);
 #endif
 }
-
 
 #if !USE_GC
 
@@ -1137,7 +1125,6 @@ MemoryState* InitMemory() {
   memoryState = konanConstructInstance<MemoryState>();
   INIT_EVENT(memoryState)
 #if USE_GC
-  memoryState->finalizerQueue = konanConstructInstance<ContainerHeaderDeque>();
   memoryState->toFree = konanConstructInstance<ContainerHeaderList>();
   memoryState->roots = konanConstructInstance<ContainerHeaderList>();
   memoryState->gcInProgress = false;
@@ -1155,8 +1142,8 @@ void DeinitMemory(MemoryState* memoryState) {
   konanDestructInstance(memoryState->toFree);
   konanDestructInstance(memoryState->roots);
 
-  konanDestructInstance(memoryState->finalizerQueue);
-  memoryState->finalizerQueue = nullptr;
+  RuntimeAssert(memoryState->finalizerQueue == nullptr, "Finalizer queue must be empty");
+  RuntimeAssert(memoryState->finalizerQueueSize == 0, "Finalizer queue must be empty");
 
 #endif // USE_GC
 
