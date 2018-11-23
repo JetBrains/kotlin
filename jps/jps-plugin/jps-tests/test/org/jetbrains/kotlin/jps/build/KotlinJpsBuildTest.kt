@@ -268,6 +268,13 @@ open class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
         return list.toTypedArray()
     }
 
+    fun testKotlinJavaScriptProjectNewSourceRootTypes() {
+        initProject(JS_STDLIB)
+        buildAllModules().assertSuccessful()
+
+        checkOutputFilesList()
+    }
+
     fun testKotlinJavaScriptProjectWithCustomOutputPaths() {
         initProject(JS_STDLIB)
         buildAllModules().assertSuccessful()
