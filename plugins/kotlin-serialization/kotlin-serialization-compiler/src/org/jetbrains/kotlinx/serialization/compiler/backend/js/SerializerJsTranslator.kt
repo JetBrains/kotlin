@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.js.translate.context.Namer
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
 import org.jetbrains.kotlin.js.translate.declaration.DeclarationBodyVisitor
 import org.jetbrains.kotlin.js.translate.declaration.DefaultPropertyTranslator
+import org.jetbrains.kotlin.js.translate.expression.ExpressionVisitor
 import org.jetbrains.kotlin.js.translate.general.Translation
 import org.jetbrains.kotlin.js.translate.intrinsic.functions.factories.TopLevelFIF.KOTLIN_EQUALS
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
@@ -277,7 +278,10 @@ class SerializerJsTranslator(descriptor: ClassDescriptor,
                                             .single { !unknownSer || (it.valueParameters.size == 3) }
                                             .let { context.getNameForDescriptor(it) }
                             val readArgs = mutableListOf(serialClassDescRef, JsIntLiteral(i))
-                            if (unknownSer) readArgs.add(createGetKClassExpression(property.type.toClassDescriptor!!))
+                            if (unknownSer) readArgs.add(ExpressionVisitor.getObjectKClass(
+                                this@SerializerJsTranslator.context,
+                                property.type.toClassDescriptor!!
+                            ))
                             JsInvocation(JsNameRef(readFunc, inputVar), readArgs)
                         }
                         else {
