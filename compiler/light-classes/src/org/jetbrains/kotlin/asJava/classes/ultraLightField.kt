@@ -1,0 +1,147 @@
+/*
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
+ */
+
+package org.jetbrains.kotlin.asJava.classes
+
+import com.intellij.lang.Language
+import com.intellij.psi.*
+import com.intellij.psi.impl.light.LightFieldBuilder
+import com.intellij.psi.util.TypeConversionUtil
+import org.jetbrains.annotations.NonNls
+import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
+import org.jetbrains.kotlin.asJava.builder.LightMemberOriginForDeclaration
+import org.jetbrains.kotlin.asJava.elements.KtLightField
+import org.jetbrains.kotlin.asJava.elements.KtLightSimpleModifierList
+import org.jetbrains.kotlin.codegen.PropertyCodegen
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.descriptors.VariableDescriptor
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
+import org.jetbrains.kotlin.idea.KotlinLanguage
+import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.psi.KtEnumEntry
+import org.jetbrains.kotlin.psi.KtNamedDeclaration
+import org.jetbrains.kotlin.psi.KtObjectDeclaration
+import org.jetbrains.kotlin.psi.KtProperty
+import org.jetbrains.kotlin.resolve.jvm.annotations.TRANSIENT_ANNOTATION_FQ_NAME
+import org.jetbrains.kotlin.resolve.jvm.annotations.VOLATILE_ANNOTATION_FQ_NAME
+import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind
+
+internal open class KtUltraLightField(
+    private val declaration: KtNamedDeclaration,
+    name: String,
+    private val containingClass: KtUltraLightClass,
+    private val support: UltraLightSupport,
+    modifiers: Set<String>
+) : LightFieldBuilder(name, PsiType.NULL, declaration), KtLightField {
+    private val modList = object : KtLightSimpleModifierList(this, modifiers) {
+        override fun hasModifierProperty(name: String): Boolean = when (name) {
+            PsiModifier.VOLATILE -> hasFieldAnnotation(VOLATILE_ANNOTATION_FQ_NAME)
+            PsiModifier.TRANSIENT -> hasFieldAnnotation(TRANSIENT_ANNOTATION_FQ_NAME)
+            else -> super.hasModifierProperty(name)
+        }
+
+        private fun hasFieldAnnotation(fqName: FqName): Boolean {
+            val annotation = support.findAnnotation(declaration, fqName)?.first ?: return false
+            val target = annotation.useSiteTarget?.getAnnotationUseSiteTarget() ?: return true
+            val expectedTarget =
+                if (declaration is KtProperty && declaration.hasDelegate()) AnnotationUseSiteTarget.PROPERTY_DELEGATE_FIELD
+                else AnnotationUseSiteTarget.FIELD
+            return target == expectedTarget
+        }
+    }
+
+    override fun getModifierList(): PsiModifierList = modList
+    override fun hasModifierProperty(name: String): Boolean =
+        modifierList.hasModifierProperty(name) //can be removed after IDEA platform does the same
+
+    override fun getLanguage(): Language = KotlinLanguage.INSTANCE
+
+    private val _type: PsiType by lazyPub {
+        fun nonExistent() = JavaPsiFacade.getElementFactory(project).createTypeFromText("error.NonExistentClass", declaration)
+
+        val propertyDescriptor: PropertyDescriptor? by lazyPub {
+            declaration.resolve() as? PropertyDescriptor
+        }
+
+        when {
+            declaration is KtProperty && declaration.hasDelegate() ->
+                propertyDescriptor
+                    ?.let {
+                        val context = LightClassGenerationSupport.getInstance(project).analyze(declaration)
+                        PropertyCodegen.getDelegateTypeForProperty(declaration, it, context)
+                    }
+                    ?.let { it.asPsiType(support, TypeMappingMode.getOptimalModeForValueParameter(it), this) }
+                    ?.let(TypeConversionUtil::erasure)
+                    ?: nonExistent()
+            declaration is KtObjectDeclaration ->
+                KtLightClassForSourceDeclaration.create(declaration)?.let { JavaPsiFacade.getElementFactory(project).createType(it) }
+                    ?: nonExistent()
+            declaration is KtEnumEntry -> {
+                (containingClass.kotlinOrigin.resolve() as? ClassDescriptor)
+                    ?.defaultType?.asPsiType(support, TypeMappingMode.DEFAULT, this)
+                    ?: nonExistent()
+            }
+            else -> {
+                val kotlinType = declaration.getKotlinType() ?: return@lazyPub PsiType.NULL
+                val descriptor = propertyDescriptor ?: return@lazyPub PsiType.NULL
+
+                support.mapType(this) { typeMapper, sw ->
+                    typeMapper.writeFieldSignature(kotlinType, descriptor, sw)
+                }
+            }
+        }
+    }
+
+    override fun getType(): PsiType = _type
+
+    override fun getParent() = containingClass
+    override fun getContainingClass() = containingClass
+    override fun getContainingFile(): PsiFile? = containingClass.containingFile
+
+    override fun computeConstantValue(): Any? =
+        if (hasModifierProperty(PsiModifier.FINAL) &&
+            (TypeConversionUtil.isPrimitiveAndNotNull(_type) || _type.equalsToText(CommonClassNames.JAVA_LANG_STRING))
+        )
+            (declaration.resolve() as? VariableDescriptor)?.compileTimeInitializer?.value
+        else null
+
+    override fun computeConstantValue(visitedVars: MutableSet<PsiVariable>?): Any? = computeConstantValue()
+
+    override val kotlinOrigin = declaration
+    override val clsDelegate: PsiField
+        get() = throw IllegalStateException("Cls delegate shouldn't be loaded for ultra-light PSI!")
+    override val lightMemberOrigin = LightMemberOriginForDeclaration(declaration, JvmDeclarationOriginKind.OTHER)
+
+    override fun setName(@NonNls name: String): PsiElement {
+        (kotlinOrigin as? KtNamedDeclaration)?.setName(name)
+        return this
+    }
+
+    override fun setInitializer(initializer: PsiExpression?) = cannotModify()
+
+}
+
+internal class KtUltraLightEnumEntry(
+    declaration: KtNamedDeclaration,
+    name: String,
+    containingClass: KtUltraLightClass,
+    support: UltraLightSupport,
+    modifiers: Set<String>
+) : KtUltraLightField(declaration, name, containingClass, support, modifiers), PsiEnumConstant {
+    override fun getInitializingClass(): PsiEnumConstantInitializer? = null
+    override fun getOrCreateInitializingClass(): PsiEnumConstantInitializer =
+        error("cannot create initializing class in light enum constant")
+
+    override fun getArgumentList(): PsiExpressionList? = null
+    override fun resolveMethod(): PsiMethod? = null
+    override fun resolveConstructor(): PsiMethod? = null
+
+    override fun resolveMethodGenerics(): JavaResolveResult = JavaResolveResult.EMPTY
+
+    override fun hasInitializer() = true
+    override fun computeConstantValue(visitedVars: MutableSet<PsiVariable>?) = this
+}
