@@ -1990,6 +1990,39 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/coroutines"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
         }
 
+        @TestMetadata("idea/testData/inspectionsLocal/coroutines/deferredIsResult")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class DeferredIsResult extends AbstractLocalInspectionTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            }
+
+            @TestMetadata("abstract.kt")
+            public void testAbstract() throws Exception {
+                runTest("idea/testData/inspectionsLocal/coroutines/deferredIsResult/abstract.kt");
+            }
+
+            public void testAllFilesPresentInDeferredIsResult() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/coroutines/deferredIsResult"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("complex.kt")
+            public void testComplex() throws Exception {
+                runTest("idea/testData/inspectionsLocal/coroutines/deferredIsResult/complex.kt");
+            }
+
+            @TestMetadata("rename.kt")
+            public void testRename() throws Exception {
+                runTest("idea/testData/inspectionsLocal/coroutines/deferredIsResult/rename.kt");
+            }
+
+            @TestMetadata("simple.kt")
+            public void testSimple() throws Exception {
+                runTest("idea/testData/inspectionsLocal/coroutines/deferredIsResult/simple.kt");
+            }
+        }
+
         @TestMetadata("idea/testData/inspectionsLocal/coroutines/directUseOfResultType")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
