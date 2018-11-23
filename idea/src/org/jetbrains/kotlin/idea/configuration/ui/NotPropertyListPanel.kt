@@ -21,7 +21,7 @@ import com.intellij.openapi.ui.NonEmptyInputValidator
 import com.intellij.ui.AddEditRemovePanel
 import org.jetbrains.kotlin.name.FqNameUnsafe
 
-class NotPropertyListPanel(data: List<FqNameUnsafe>) : AddEditRemovePanel<FqNameUnsafe>(MyTableModel(), data) {
+class NotPropertyListPanel(data: MutableList<FqNameUnsafe>) : AddEditRemovePanel<FqNameUnsafe>(MyTableModel(), data) {
 
     var modified = false
 
