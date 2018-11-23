@@ -249,7 +249,15 @@ public class KotlinTypedHandler extends TypedHandlerDelegate {
                 return Result.STOP;
             }
         }
-
+        else if (c == '|') {
+            if (autoIndentCase(editor, project, file, KtOperationReferenceExpression.class)) {
+                return Result.STOP;
+            }
+        } else if (c == '&') {
+            if (autoIndentCase(editor, project, file, KtOperationReferenceExpression.class)) {
+                return Result.STOP;
+            }
+        }
 
         return Result.CONTINUE;
     }
