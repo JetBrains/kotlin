@@ -1203,6 +1203,23 @@ class NewMultiplatformIT : BaseGradleIT() {
     }
 
     @Test
+    fun testMultipleTargetsSamePlatform() = with(Project("newMppMultipleTargetsSamePlatform", gradleVersion)) {
+        testResolveAllConfigurations("app") {
+            assertContains(">> :app:junitCompileClasspath --> lib-junit.jar")
+            assertContains(">> :app:junitCompileClasspath --> junit-4.12.jar")
+
+            assertContains(">> :app:mixedJunitCompileClasspath --> lib-junit.jar")
+            assertContains(">> :app:mixedJunitCompileClasspath --> junit-4.12.jar")
+
+            assertContains(">> :app:testngCompileClasspath --> lib-testng.jar")
+            assertContains(">> :app:testngCompileClasspath --> testng-6.14.3.jar")
+
+            assertContains(">> :app:mixedTestngCompileClasspath --> lib-testng.jar")
+            assertContains(">> :app:mixedTestngCompileClasspath --> testng-6.14.3.jar")
+        }
+    }
+
+    @Test
     fun testUnusedSourceSetsReport() = with(Project("sample-lib", gradleVersion, "new-mpp-lib-and-app")) {
         setupWorkingDir()
 

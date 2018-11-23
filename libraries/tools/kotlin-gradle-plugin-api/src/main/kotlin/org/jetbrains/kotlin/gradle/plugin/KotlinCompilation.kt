@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.plugin
 
 import groovy.lang.Closure
 import org.gradle.api.Named
+import org.gradle.api.attributes.AttributeContainer
 import org.gradle.api.attributes.HasAttributes
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.FileCollection
@@ -51,6 +52,9 @@ interface KotlinCompilation<out T : KotlinCommonOptions> : Named, HasAttributes,
 
     fun kotlinOptions(configure: T.() -> Unit)
     fun kotlinOptions(configure: Closure<*>) = kotlinOptions { ConfigureUtil.configure(configure, this) }
+
+    fun attributes(configure: AttributeContainer.() -> Unit) = configure(attributes)
+    fun attributes(configure: Closure<*>) = attributes { ConfigureUtil.configure(configure, this) }
 
     val compileAllTaskName: String
 
