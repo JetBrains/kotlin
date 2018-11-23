@@ -584,6 +584,26 @@ class TypedHandlerTest : LightCodeInsightTestCase() {
                 """)
     }
 
+    fun testContinueWithElvis() {
+        doCharTypeTest(
+            ':',
+            """
+                |fun test(): Any? = null
+                |fun some() {
+                |    test()
+                |    ?<caret>
+                |}
+            """,
+            """
+                |fun test(): Any? = null
+                |fun some() {
+                |    test()
+                |            ?:<caret>
+                |}
+            """
+        )
+    }
+
     fun testSpaceAroundRange() {
         doCharTypeTest(
                 '.',
