@@ -10,6 +10,7 @@ import org.gradle.api.Action
 import org.gradle.api.Named
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
+import org.gradle.api.attributes.AttributeContainer
 import org.gradle.api.attributes.HasAttributes
 import org.gradle.api.component.SoftwareComponent
 import org.gradle.api.internal.component.UsageContext
@@ -46,6 +47,9 @@ interface KotlinTarget : Named, HasAttributes {
 
     fun mavenPublication(action: Closure<Unit>)
     fun mavenPublication(action: Action<MavenPublication>)
+
+    fun attributes(configure: AttributeContainer.() -> Unit) = configure(attributes)
+    fun attributes(configure: Closure<*>) = attributes { ConfigureUtil.configure(configure, this) }
 
     val preset: KotlinTargetPreset<out KotlinTarget>?
 
