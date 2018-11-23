@@ -604,6 +604,42 @@ class TypedHandlerTest : LightCodeInsightTestCase() {
         )
     }
 
+    fun testContinueWithOr() {
+        doCharTypeTest(
+            '|',
+            """
+                |fun some() {
+                |    if (true
+                |    |<caret>)
+                |}
+            """,
+            """
+                |fun some() {
+                |    if (true
+                |            ||<caret>)
+                |}
+            """
+        )
+    }
+
+    fun testContinueWithAnd() {
+        doCharTypeTest(
+            '&',
+            """
+                |fun some() {
+                |    val test = true
+                |    &<caret>
+                |}
+            """,
+            """
+                |fun some() {
+                |    val test = true
+                |            &&<caret>
+                |}
+            """
+        )
+    }
+
     fun testSpaceAroundRange() {
         doCharTypeTest(
                 '.',
