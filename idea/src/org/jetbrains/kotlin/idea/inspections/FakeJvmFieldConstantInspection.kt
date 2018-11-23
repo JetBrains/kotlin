@@ -34,28 +34,39 @@ class FakeJvmFieldConstantInspection : AbstractKotlinInspection() {
 
                 for (attribute in list.attributes) {
                     val valueExpression = attribute.value as? PsiExpression ?: continue
-                    val resolvedLightField = (valueExpression as? PsiReference)?.resolve() as? KtLightFieldForDeclaration ?: continue
-                    val resolvedProperty = resolvedLightField.kotlinOrigin as? KtProperty ?: continue
-                    with(MayBeConstantInspection) {
-                        if (resolvedProperty.annotationEntries.isEmpty()) return@with
-                        val resolvedPropertyStatus = resolvedProperty.getStatus()
-                        if (resolvedPropertyStatus == JVM_FIELD_MIGHT_BE_CONST ||
-                            resolvedPropertyStatus == JVM_FIELD_MIGHT_BE_CONST_NO_INITIALIZER ||
-                            resolvedPropertyStatus == JVM_FIELD_MIGHT_BE_CONST_ERRONEOUS) {
-                            val fixes = mutableListOf<LocalQuickFix>()
-                            if (resolvedPropertyStatus == JVM_FIELD_MIGHT_BE_CONST) {
-                                fixes += IntentionWrapper(AddConstModifierFix(resolvedProperty), resolvedProperty.containingFile)
-                            }
-                            holder.registerProblem(
-                                    valueExpression,
-                                    "Use of @JvmField non-const Kotlin property as annotation argument is incorrect." +
-                                    " Will be forbidden in 1.3",
-                                    ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
-                                    *fixes.toTypedArray()
-                            )
-                        }
-                    }
+                    checkExpression(valueExpression, holder)
                 }
+            }
+
+            override fun visitSwitchLabelStatement(statement: PsiSwitchLabelStatement) {
+                super.visitSwitchLabelStatement(statement)
+
+                val valueExpression = statement.caseValue ?: return
+                checkExpression(valueExpression, holder)
+            }
+        }
+    }
+
+    private fun checkExpression(valueExpression: PsiExpression, holder: ProblemsHolder) {
+        val resolvedLightField = (valueExpression as? PsiReference)?.resolve() as? KtLightFieldForDeclaration ?: return
+        val resolvedProperty = resolvedLightField.kotlinOrigin as? KtProperty ?: return
+        with(MayBeConstantInspection) {
+            if (resolvedProperty.annotationEntries.isEmpty()) return@with
+            val resolvedPropertyStatus = resolvedProperty.getStatus()
+            if (resolvedPropertyStatus == JVM_FIELD_MIGHT_BE_CONST ||
+                resolvedPropertyStatus == JVM_FIELD_MIGHT_BE_CONST_NO_INITIALIZER ||
+                resolvedPropertyStatus == JVM_FIELD_MIGHT_BE_CONST_ERRONEOUS
+            ) {
+                val fixes = mutableListOf<LocalQuickFix>()
+                if (resolvedPropertyStatus == JVM_FIELD_MIGHT_BE_CONST) {
+                    fixes += IntentionWrapper(AddConstModifierFix(resolvedProperty), resolvedProperty.containingFile)
+                }
+                holder.registerProblem(
+                    valueExpression,
+                    "Use of non-const Kotlin property as Java constant is incorrect. Will be forbidden in 1.4",
+                    ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
+                    *fixes.toTypedArray()
+                )
             }
         }
     }
