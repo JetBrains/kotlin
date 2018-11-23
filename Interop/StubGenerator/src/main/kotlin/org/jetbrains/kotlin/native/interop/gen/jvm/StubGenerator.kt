@@ -925,6 +925,7 @@ class StubGenerator(
                 add("EXTENSION_SHADOWED_BY_MEMBER") // For Objective-C categories represented as extensions.
                 add("REDUNDANT_NULLABLE") // This warning appears due to Obj-C typedef nullability incomplete support.
                 add("DEPRECATION") // For uncheckedCast.
+                add("DEPRECATION_ERROR") // For initializers.
             }
         }
 

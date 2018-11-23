@@ -68,7 +68,7 @@ private val charactersAllowedInKotlinStringLiterals: Set<Char> = mutableSetOf<Ch
     addAll('a' .. 'z')
     addAll('A' .. 'Z')
     addAll('0' .. '9')
-    addAll(listOf('_', '@', ':', ';', '.', ',', '{', '}', '=', '[', ']', '^', '#', '*', ' '))
+    addAll(listOf('_', '@', ':', ';', '.', ',', '{', '}', '=', '[', ']', '^', '#', '*', ' ', '(', ')'))
 }
 
 fun block(header: String, lines: Iterable<String>) = block(header, lines.asSequence())

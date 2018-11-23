@@ -86,6 +86,14 @@ class ObjCMethodStub(private val stubGenerator: StubGenerator,
 
                     when (container) {
                         is ObjCClass -> {
+                            result.add(0,
+                                    deprecatedInit(
+                                            container.kotlinClassName(method.isClass),
+                                            kotlinParameters.map { it.name },
+                                            factory = false
+                                    )
+                            )
+
                             // TODO: consider generating non-designated initializers as factories.
                             val designated = isDesignatedInitializer ||
                                     stubGenerator.configuration.disableDesignatedInitializerChecks
@@ -95,12 +103,19 @@ class ObjCMethodStub(private val stubGenerator: StubGenerator,
                             result.add("constructor($parameters) {}")
                         }
                         is ObjCCategory -> {
-
                             assert(!method.isClass)
 
-                            val tBound = stubGenerator.declarationMapper
+                            val className = stubGenerator.declarationMapper
                                     .getKotlinClassFor(container.clazz, isMeta = false).type
                                     .render(kotlinScope)
+
+                            result.add(0,
+                                    deprecatedInit(
+                                            className,
+                                            kotlinParameters.map { it.name },
+                                            factory = true
+                                    )
+                            )
 
                             // TODO: add support for type parameters to [KotlinType] etc.
                             val receiver = kotlinScope.reference(KotlinTypes.objCClassOf) + "<T>"
@@ -115,7 +130,7 @@ class ObjCMethodStub(private val stubGenerator: StubGenerator,
 
                             result.add("")
                             result.add("@ObjCFactory".applyToStrings(bridgeName))
-                            result.add("external fun <T : $tBound> $receiver.create($parameters): $returnType")
+                            result.add("external fun <T : $className> $receiver.create($parameters): $returnType")
                         }
                         is ObjCProtocol -> {} // Nothing to do.
                     }
@@ -273,6 +288,19 @@ class ObjCMethodStub(private val stubGenerator: StubGenerator,
         is ObjCCategory -> ""
     }
 }
+
+private fun deprecatedInit(className: String, initParameterNames: List<String>, factory: Boolean): String {
+    val replacement = if (factory) "$className.create" else className
+    val replacementKind = if (factory) "factory method" else "constructor"
+    val replaceWith = "$replacement(${initParameterNames.joinToString()})"
+
+    return deprecated("Use $replacementKind instead", replaceWith)
+}
+
+private fun deprecated(message: String, replaceWith: String): String =
+        "@Deprecated(${message.quoteAsKotlinLiteral()}, " +
+                "ReplaceWith(${replaceWith.quoteAsKotlinLiteral()}), " +
+                "DeprecationLevel.ERROR)"
 
 private val ObjCContainer.classOrProtocol: ObjCClassOrProtocol
     get() = when (this) {
