@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 class RedundantAsyncInspection : AbstractCallChainChecker() {
 
-    private fun generateConversion(expression: KtQualifiedExpression): Conversion? {
+    fun generateConversion(expression: KtQualifiedExpression): Conversion? {
         var defaultContext: Boolean? = null
         var defaultStart: Boolean? = null
 
@@ -63,38 +63,42 @@ class RedundantAsyncInspection : AbstractCallChainChecker() {
         return conversion
     }
 
+    fun generateFix(conversion: Conversion): SimplifyCallChainFix {
+        val contextArgument = conversion.additionalArgument
+        return SimplifyCallChainFix(conversion, removeReceiverOfFirstCall = true, runOptimizeImports = true) { callExpression ->
+            if (contextArgument != null) {
+                val call = callExpression.resolveToCall()
+                if (call != null) {
+                    for (argument in callExpression.valueArguments) {
+                        val mapping = call.getArgumentMapping(argument) as? ArgumentMatch ?: continue
+                        if (mapping.valueParameter.name.asString() == CONTEXT_ARGUMENT_NAME) {
+                            val name = argument.getArgumentName()?.asName
+                            val expressionText = contextArgument + " + " + argument.getArgumentExpression()!!.text
+                            argument.replace(
+                                if (name == null) {
+                                    createArgument(expressionText)
+                                } else {
+                                    createArgument("$name = $expressionText")
+                                }
+                            )
+                            break
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean) =
         qualifiedExpressionVisitor(fun(expression) {
             val conversion = generateConversion(expression) ?: return
-            val contextArgument = conversion.additionalArgument
             val descriptor = holder.manager.createProblemDescriptor(
                 expression,
                 expression.firstCalleeExpression()!!.textRange.shiftRight(-expression.startOffset),
                 "Redundant 'async' call may be reduced to '${conversion.replacement}'",
                 ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
                 isOnTheFly,
-                SimplifyCallChainFix(conversion, removeReceiverOfFirstCall = true, runOptimizeImports = true) { callExpression ->
-                    if (contextArgument != null) {
-                        val call = callExpression.resolveToCall()
-                        if (call != null) {
-                            for (argument in callExpression.valueArguments) {
-                                val mapping = call.getArgumentMapping(argument) as? ArgumentMatch ?: continue
-                                if (mapping.valueParameter.name.asString() == CONTEXT_ARGUMENT_NAME) {
-                                    val name = argument.getArgumentName()?.asName
-                                    val expressionText = contextArgument + " + " + argument.getArgumentExpression()!!.text
-                                    argument.replace(
-                                        if (name == null) {
-                                            createArgument(expressionText)
-                                        } else {
-                                            createArgument("$name = $expressionText")
-                                        }
-                                    )
-                                    break
-                                }
-                            }
-                        }
-                    }
-                }
+                generateFix(conversion)
             )
             holder.registerProblem(descriptor)
         })
