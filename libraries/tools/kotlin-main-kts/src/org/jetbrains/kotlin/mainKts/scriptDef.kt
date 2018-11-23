@@ -32,6 +32,9 @@ object MainKtsScriptDefinition : ScriptCompilationConfiguration(
         refineConfiguration {
             onAnnotations(DependsOn::class, Repository::class, handler = MainKtsConfigurator())
         }
+        ide {
+            acceptedLocations(ScriptAcceptedLocation.Everywhere)
+        }
     })
 
 class MainKtsConfigurator : RefineScriptCompilationConfigurationHandler {
