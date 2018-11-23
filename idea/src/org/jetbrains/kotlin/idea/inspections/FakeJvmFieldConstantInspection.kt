@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.asJava.elements.KtLightFieldImpl.KtLightFieldForDecl
 import org.jetbrains.kotlin.idea.inspections.MayBeConstantInspection.Status.*
 import org.jetbrains.kotlin.idea.quickfix.AddConstModifierFix
 import org.jetbrains.kotlin.psi.KtProperty
+import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfType
 
 class FakeJvmFieldConstantInspection : AbstractKotlinInspection() {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
@@ -44,19 +45,52 @@ class FakeJvmFieldConstantInspection : AbstractKotlinInspection() {
                 val valueExpression = statement.caseValue ?: return
                 checkExpression(valueExpression, holder)
             }
+
+            override fun visitAssignmentExpression(expression: PsiAssignmentExpression) {
+                super.visitAssignmentExpression(expression)
+
+                if (expression.operationTokenType != JavaTokenType.EQ) return
+                val leftType = expression.lExpression.type as? PsiPrimitiveType ?: return
+                checkAssignmentChildren(expression.rExpression ?: return, leftType, holder)
+            }
+
+            override fun visitVariable(variable: PsiVariable) {
+                super.visitVariable(variable)
+
+                val leftType = variable.type as? PsiPrimitiveType ?: return
+                val initializer = variable.initializer ?: return
+                checkAssignmentChildren(initializer, leftType, holder)
+            }
         }
     }
 
-    private fun checkExpression(valueExpression: PsiExpression, holder: ProblemsHolder) {
+    private fun checkAssignmentChildren(right: PsiExpression, leftType: PsiPrimitiveType, holder: ProblemsHolder) {
+        if (leftType == PsiType.BOOLEAN || leftType == PsiType.CHAR || leftType == PsiType.VOID) return
+        right.forEachDescendantOfType<PsiExpression>(canGoInside = { parentElement ->
+            parentElement !is PsiCallExpression && parentElement !is PsiTypeCastExpression
+        }) { rightPart ->
+            checkExpression(rightPart, holder) { resolvedPropertyType ->
+                leftType != resolvedPropertyType && !leftType.isAssignableFrom(resolvedPropertyType)
+            }
+        }
+    }
+
+    private fun checkExpression(
+        valueExpression: PsiExpression,
+        holder: ProblemsHolder,
+        additionalTypeCheck: (PsiType) -> Boolean = { true }
+    ) {
         val resolvedLightField = (valueExpression as? PsiReference)?.resolve() as? KtLightFieldForDeclaration ?: return
         val resolvedProperty = resolvedLightField.kotlinOrigin as? KtProperty ?: return
         with(MayBeConstantInspection) {
-            if (resolvedProperty.annotationEntries.isEmpty()) return@with
+            if (resolvedProperty.annotationEntries.isEmpty()) return
             val resolvedPropertyStatus = resolvedProperty.getStatus()
             if (resolvedPropertyStatus == JVM_FIELD_MIGHT_BE_CONST ||
                 resolvedPropertyStatus == JVM_FIELD_MIGHT_BE_CONST_NO_INITIALIZER ||
                 resolvedPropertyStatus == JVM_FIELD_MIGHT_BE_CONST_ERRONEOUS
             ) {
+                val resolvedPropertyType = resolvedLightField.type
+                if (!additionalTypeCheck(resolvedPropertyType)) return
                 val fixes = mutableListOf<LocalQuickFix>()
                 if (resolvedPropertyStatus == JVM_FIELD_MIGHT_BE_CONST) {
                     fixes += IntentionWrapper(AddConstModifierFix(resolvedProperty), resolvedProperty.containingFile)
