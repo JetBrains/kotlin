@@ -122,7 +122,7 @@ public class DataFlowAnalyzer {
         TypeConstructor constructor = type.getConstructor();
         // Subtypes can override equals for non-final types
         if (!constructor.isFinal()) return false;
-        // check whether 'equals' is overriden
+        // check whether 'equals' is overridden
         return !typeHasOverriddenEquals(type, lookupElement);
     }
 
