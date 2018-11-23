@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.resolve.diagnostics.findPsi
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
+import org.jetbrains.kotlin.js.translate.expression.ExpressionVisitor
 import org.jetbrains.kotlin.js.translate.expression.translateAndAliasParameters
 import org.jetbrains.kotlin.js.translate.reference.ReferenceTranslator
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
@@ -147,14 +148,14 @@ internal fun SerializerJsTranslator.serializerInstance(
         return context.serializerObjectGetter(serializerClass)
     } else {
         var args = if (serializerClass.classId == enumSerializerId || serializerClass.classId == contextSerializerId)
-            listOf(createGetKClassExpression(kType.toClassDescriptor!!))
+            listOf(ExpressionVisitor.getObjectKClass(context, kType.toClassDescriptor!!))
         else kType.arguments.map {
             val argSer = findTypeSerializerOrContext(module, it.type, sourceElement = serializerClass.findPsi())
             val expr = serializerInstance(argSer, module, it.type, it.type.genericIndex) ?: return null
             if (it.type.isMarkedNullable) JsNew(nullableSerClass, listOf(expr)) else expr
         }
         if (serializerClass.classId == referenceArraySerializerId)
-            args = listOf(createGetKClassExpression(kType.arguments[0].type.toClassDescriptor!!)) + args
+            args = listOf(ExpressionVisitor.getObjectKClass(context, kType.arguments[0].type.toClassDescriptor!!)) + args
         val serializable = getSerializableClassDescriptorBySerializer(serializerClass)
         val ref = if (serializable?.declaredTypeParameters?.isNotEmpty() == true) {
             val desc = requireNotNull(
@@ -170,12 +171,6 @@ internal fun SerializerJsTranslator.serializerInstance(
         return ref
     }
 }
-
-internal fun SerializerJsTranslator.createGetKClassExpression(classDescriptor: ClassDescriptor): JsExpression =
-    JsInvocation(
-        context.namer().kotlin("getKClass"),
-        context.translateQualifiedReference(classDescriptor)
-    )
 
 fun TranslationContext.buildInitializersRemapping(forClass: KtPureClassOrObject): Map<PropertyDescriptor, KtExpression?> = forClass.run {
     (bodyPropertiesDescriptorsMap(bindingContext()).mapValues { it.value.delegateExpressionOrInitializer } +

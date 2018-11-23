@@ -122,9 +122,10 @@ fun <T, S> List<T>.splitToRanges(classifier: (T) -> S): List<Pair<List<T>, S>> {
     return result
 }
 
-fun getReferenceToJsClass(type: KotlinType, context: TranslationContext): JsExpression {
-    val classifierDescriptor = type.constructor.declarationDescriptor
+fun getReferenceToJsClass(type: KotlinType, context: TranslationContext): JsExpression =
+    getReferenceToJsClass(type.constructor.declarationDescriptor, context)
 
+fun getReferenceToJsClass(classifierDescriptor: ClassifierDescriptor?, context: TranslationContext): JsExpression {
     return when (classifierDescriptor) {
         is ClassDescriptor -> {
             ReferenceTranslator.translateAsTypeReference(classifierDescriptor, context)
@@ -135,10 +136,10 @@ fun getReferenceToJsClass(type: KotlinType, context: TranslationContext): JsExpr
             context.usageTracker()?.used(classifierDescriptor)
 
             context.captureTypeIfNeedAndGetCapturedName(classifierDescriptor)
-                    ?: context.getNameForDescriptor(classifierDescriptor).makeRef()
+                ?: context.getNameForDescriptor(classifierDescriptor).makeRef()
         }
         else -> {
-            throw IllegalStateException("Can't get reference for $type")
+            throw IllegalStateException("Can't get reference for $classifierDescriptor")
         }
     }
 }
