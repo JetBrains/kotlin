@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.fir.visitors.FirTransformer
 
 class FirTotalResolveTransformer {
 
-    private val transformers: List<FirTransformer<Nothing?>> = listOf(
+    val transformers: List<FirTransformer<Nothing?>> = listOf(
         FirImportResolveTransformer(),
         FirTypeResolveTransformer(),
         FirStatusResolveTransformer()
