@@ -18,7 +18,11 @@ dependencies {
     compile(project(":idea:idea-jps-common"))
     compileOnly(group = "org.jetbrains", name = "annotations", version = "13.0")
     compileOnly(intellijDep()) {
-        includeJars("jdom", "trove4j", "jps-model", "openapi", "platform-api", "util", "asm-all", rootProject = rootProject)
+        if (Platform[181].orHigher()) {
+            includeJars("jdom", "trove4j", "jps-model", "openapi", "platform-api", "util", "asm-all", rootProject = rootProject)
+        } else {
+            includeJars("jdom", "trove4j", "jps-model", "openapi", "util", "asm-all", rootProject = rootProject)
+        }
     }
     compileOnly(intellijDep("jps-standalone")) { includeJars("jps-builders", "jps-builders-6") }
     testCompileOnly(project(":kotlin-reflect-api"))
@@ -29,8 +33,14 @@ dependencies {
     testCompile(project(":kotlin-test:kotlin-test-jvm"))
     testCompile(projectTests(":kotlin-build-common"))
     testCompileOnly(intellijDep("jps-standalone")) { includeJars("jps-builders", "jps-builders-6") }
-    testCompileOnly(intellijDep()) { includeJars("openapi", "idea", "platform-api", "log4j") }
-    testCompile(intellijDep("devkit"))
+    Ide.IJ {
+        testCompile(intellijDep("devkit"))
+    }
+    if (Platform[181].orHigher()) {
+        testCompileOnly(intellijDep()) { includeJars("openapi", "idea", "platform-api", "log4j") }
+    } else {
+        testCompileOnly(intellijDep()) { includeJars("openapi", "idea", "log4j") }
+    }
     testCompile(intellijDep("jps-build-test"))
     compilerModules.forEach {
         testRuntime(project(it))
@@ -43,7 +53,9 @@ dependencies {
 sourceSets {
     "main" { projectDefault() }
     "test" {
-        java.srcDirs("jps-tests/test")
+        Ide.IJ {
+            java.srcDirs("jps-tests/test")
+        }
     }
 }
 

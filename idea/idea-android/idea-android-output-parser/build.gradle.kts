@@ -1,4 +1,3 @@
-
 plugins {
     kotlin("jvm")
 }
@@ -14,7 +13,13 @@ dependencies {
 }
 
 sourceSets {
-    "main" { projectDefault() }
+    if (Ide.IJ()) {
+        "main" {
+            projectDefault()
+        }
+    } else {
+        "main" {}
+    }
     "test" {}
 }
 
