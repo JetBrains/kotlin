@@ -9,5 +9,16 @@ public class JavaUser {
 
     // Safe
     @Ann(s = KotlinPropertiesKt.constantString)
-    public void baz() {}
+    public void baz(String z) {
+        switch (z) {
+            case KotlinPropertiesKt.constantString: // Safe
+                break;
+
+            case KotlinPropertiesKt.importantString: // Dangerous
+                break;
+
+            default:
+                break;
+        }
+    }
 }
