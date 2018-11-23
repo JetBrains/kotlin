@@ -60,19 +60,17 @@ class ScriptTemplatesFromDependenciesProvider(private val project: Project) : Sc
         val processedRoots = hashSetOf<VirtualFile>()
 
         fun addTemplatesFromRoot(vfile: VirtualFile): Boolean {
-            var newTemplatesFound = false
-            if (!processedRoots.contains(vfile)) {
-                processedRoots.add(vfile)
-                val root = JarFileSystem.getInstance().getJarRootForLocalFile(vfile) ?: vfile
-                if (root.isValid) {
-                    root.findFileByRelativePath(templatesPath)?.takeIf { it.isDirectory }?.children?.forEach {
-                        if (it.isValid && !it.isDirectory && templates.add(it.name)) {
-                            newTemplatesFound = true
-                        }
+            var templatesFound = false
+            val root = JarFileSystem.getInstance().getJarRootForLocalFile(vfile) ?: vfile
+            if (root.isValid) {
+                root.findFileByRelativePath(templatesPath)?.takeIf { it.isDirectory }?.children?.forEach {
+                    if (it.isValid && !it.isDirectory) {
+                        templates.add(it.name)
+                        templatesFound = true
                     }
                 }
             }
-            return newTemplatesFound
+            return templatesFound
         }
 
         // processing source roots from the same project first since the resources are copied to the classes roots only on compilation
