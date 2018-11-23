@@ -2,6 +2,7 @@ package org.jetbrains.kotlin.backend.konan.lower.matchers
 
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 
 
 internal interface IrCallMatcher : (IrCall) -> Boolean
@@ -25,6 +26,18 @@ internal class IrCallExtensionReceiverMatcher(
     override fun invoke(call: IrCall) = restriction(call.extensionReceiver)
 }
 
+internal class IrCallDispatchReceiverMatcher(
+        val restriction: (IrExpression?) -> Boolean
+) : IrCallMatcher {
+    override fun invoke(call: IrCall) = restriction(call.dispatchReceiver)
+}
+
+internal class IrCallOriginMatcher(
+        val restriction: (IrStatementOrigin?) -> Boolean
+) : IrCallMatcher {
+    override fun invoke(call: IrCall) = restriction(call.origin)
+}
+
 internal open class IrCallMatcherContainer : IrCallMatcher {
 
     private val matchers = mutableListOf<IrCallMatcher>()
@@ -36,9 +49,15 @@ internal open class IrCallMatcherContainer : IrCallMatcher {
     fun extensionReceiver(restriction: (IrExpression?) -> Boolean) =
             add(IrCallExtensionReceiverMatcher(restriction))
 
+    fun origin(restriction: (IrStatementOrigin?) -> Boolean) =
+            add(IrCallOriginMatcher(restriction))
+
     fun callee(restrictions: IrFunctionMatcherContainer.() -> Unit) {
         add(SimpleCalleeMatcher(restrictions))
     }
+
+    fun dispatchReceiver(restriction: (IrExpression?) -> Boolean) =
+            add(IrCallDispatchReceiverMatcher(restriction))
 
     override fun invoke(call: IrCall) = matchers.all { it(call) }
 }

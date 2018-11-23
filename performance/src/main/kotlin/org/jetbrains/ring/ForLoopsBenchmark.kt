@@ -54,7 +54,7 @@ class ForLoopsBenchmark {
 
     fun floatArrayLoop(): Double {
         var sum = 0.0
-        for (e in array) {
+        for (e in floatArray) {
             sum += e
         }
         return sum

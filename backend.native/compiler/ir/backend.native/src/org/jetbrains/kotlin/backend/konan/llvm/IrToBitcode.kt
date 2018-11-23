@@ -1247,7 +1247,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         val location = codegen.generateLocationInfo(locationInfo)
         val file = (currentCodeContext.fileScope() as FileScope).file.file()
         return when (element) {
-            is IrVariable -> if (element.origin != IrDeclarationOrigin.IR_TEMPORARY_VARIABLE) debugInfoLocalVariableLocation(
+            is IrVariable -> if (shouldGenerateDebugInfo(element)) debugInfoLocalVariableLocation(
                     builder       = context.debugInfo.builder,
                     functionScope = locationInfo.scope,
                     diType        = element.descriptor.type.diType(context, codegen.llvmTargetData),
@@ -1267,6 +1267,13 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
                     location      = location)
             else -> throw Error("Unsupported element type: ${ir2string(element)}")
         }
+    }
+
+    private fun shouldGenerateDebugInfo(variable: IrVariable) = when(variable.origin) {
+        IrDeclarationOrigin.FOR_LOOP_IMPLICIT_VARIABLE,
+        IrDeclarationOrigin.FOR_LOOP_ITERATOR,
+        IrDeclarationOrigin.IR_TEMPORARY_VARIABLE -> false
+        else -> true
     }
 
     private fun generateVariable(variable: IrVariable) {

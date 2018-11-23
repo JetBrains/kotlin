@@ -455,6 +455,41 @@ task codegen_controlflow_for_loops_call_order(type: RunKonanTest) {
     goldValue = "1234\n1234\n2134\n"
 }
 
+task codegen_controlflow_for_loops_array_indices(type: RunKonanTest) {
+    source = "codegen/controlflow/for_loops_array_indices.kt"
+    goldValue = "0123\n\n"
+}
+
+task codegen_controlflow_for_loops_array(type: RunKonanTest) {
+    source = "codegen/controlflow/for_loops_array.kt"
+    goldValue = "4035\n\n0\n0\n"
+}
+
+task codegen_controlflow_for_loops_array_nested(type: RunKonanTest) {
+    source = "codegen/controlflow/for_loops_array_nested.kt"
+    goldValue = "123\nHello\n\n12345678910\n"
+}
+
+task codegen_controlflow_for_loops_array_side_effects(type: RunKonanTest) {
+    source = "codegen/controlflow/for_loops_array_side_effects.kt"
+    goldValue = "side-effect\n4035\nside-effect\n\n"
+}
+
+task codegen_controlflow_for_loops_array_break_continue(type: RunKonanTest) {
+    source = "codegen/controlflow/for_loops_array_break_continue.kt"
+    goldValue = "403\n\n"
+}
+
+task codegen_controlflow_for_loops_array_mutation(type: RunKonanTest) {
+    source = "codegen/controlflow/for_loops_array_mutation.kt"
+    goldValue = "4000"
+}
+
+task codegen_controlflow_for_loops_array_nullable(type: RunKonanTest) {
+    source = "codegen/controlflow/for_loops_array_nullable.kt"
+    goldValue = "123"
+}
+
 task local_variable(type: RunKonanTest) {
     source = "codegen/basics/local_variable.kt"
 }

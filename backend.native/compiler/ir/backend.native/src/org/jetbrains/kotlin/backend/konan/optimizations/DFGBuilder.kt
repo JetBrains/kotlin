@@ -391,19 +391,21 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
         }
     }
 
+    private val symbols = context.ir.symbols
+
     private val invokeSuspendFunctionSymbol =
-            context.ir.symbols.baseContinuationImpl.owner.declarations
+            symbols.baseContinuationImpl.owner.declarations
                     .filterIsInstance<IrSimpleFunction>().single { it.name.asString() == "invokeSuspend" }.symbol
 
-    private val getContinuationSymbol = context.ir.symbols.getContinuation
+    private val getContinuationSymbol = symbols.getContinuation
     private val continuationType = getContinuationSymbol.owner.returnType
 
-    private val arrayGetSymbol = context.ir.symbols.arrayGet
-    private val arraySetSymbol = context.ir.symbols.arraySet
-    private val createUninitializedInstanceSymbol = context.ir.symbols.createUninitializedInstance
-    private val initInstanceSymbol = context.ir.symbols.initInstance
-    private val executeImplSymbol = context.ir.symbols.executeImpl
-    private val executeImplProducerClassSymbol = context.ir.symbols.functions[0]
+    private val arrayGetSymbol = symbols.arrayGet[symbols.array]
+    private val arraySetSymbol = symbols.arraySet[symbols.array]
+    private val createUninitializedInstanceSymbol = symbols.createUninitializedInstance
+    private val initInstanceSymbol = symbols.initInstance
+    private val executeImplSymbol = symbols.executeImpl
+    private val executeImplProducerClassSymbol = symbols.functions[0]
     private val executeImplProducerInvoke = executeImplProducerClassSymbol.owner.simpleFunctions()
             .single { it.name == OperatorNameConventions.INVOKE }
 
@@ -460,7 +462,7 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
             )
             val throwsNode = DataFlowIR.Node.Variable(
                     values = thrownValues.map { expressionToEdge(it) },
-                    type   = symbolTable.mapClassReferenceType(context.ir.symbols.throwable.owner),
+                    type   = symbolTable.mapClassReferenceType(symbols.throwable.owner),
                     kind   = DataFlowIR.VariableKind.Temporary
             )
             variables.forEach { descriptor, node ->
