@@ -10,4 +10,4 @@ versions.jar.streamex=0.6.5
 versions.jar.gson=2.8.2
 versions.jar.snappy-in-java=0.5.1
 ignore.jar.lombok-ast-0.2.3=true
-versions.jar.$jar=4.0
+versions.gradle-api=4.0
