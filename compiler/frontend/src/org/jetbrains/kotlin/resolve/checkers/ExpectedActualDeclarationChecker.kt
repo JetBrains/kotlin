@@ -49,6 +49,9 @@ class ExpectedActualDeclarationChecker(val argumentExtractors: List<ActualAnnota
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
         if (!context.languageVersionSettings.supportsFeature(LanguageFeature.MultiPlatformProjects)) return
 
+        // Note that this check is necessary, because for default accessors KtProperty is passed for KtDeclaration, so this
+        // case won't be covered by the next check (also, it accidentally fixes KT-28385)
+        if (descriptor is PropertyAccessorDescriptor) return
         if (declaration !is KtNamedDeclaration) return
         if (descriptor !is MemberDescriptor || DescriptorUtils.isEnumEntry(descriptor)) return
 
