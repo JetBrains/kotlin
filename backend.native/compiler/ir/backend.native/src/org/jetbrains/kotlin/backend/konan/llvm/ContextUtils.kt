@@ -5,10 +5,7 @@
 
 package org.jetbrains.kotlin.backend.konan.llvm
 
-import kotlinx.cinterop.allocArray
-import kotlinx.cinterop.cValuesOf
-import kotlinx.cinterop.get
-import kotlinx.cinterop.memScoped
+import kotlinx.cinterop.*
 import llvm.*
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.descriptors.findPackage
@@ -30,46 +27,52 @@ import kotlin.reflect.KProperty
 
 internal sealed class SlotType {
     // Frame local arena slot can be used.
-    object ARENA: SlotType()
+    object ARENA : SlotType()
+
     // Return slot can be used.
-    object RETURN: SlotType()
+    object RETURN : SlotType()
+
     // Return slot, if it is an arena, can be used.
-    object RETURN_IF_ARENA: SlotType()
+    object RETURN_IF_ARENA : SlotType()
+
     // Param slot, if it is an arena, can be used.
-    class PARAM_IF_ARENA(val parameter: Int): SlotType()
+    class PARAM_IF_ARENA(val parameter: Int) : SlotType()
+
     // Params slot, if it is an arena, can be used.
-    class PARAMS_IF_ARENA(val parameters: IntArray, val useReturnSlot: Boolean): SlotType()
+    class PARAMS_IF_ARENA(val parameters: IntArray, val useReturnSlot: Boolean) : SlotType()
+
     // Anonymous slot.
-    object ANONYMOUS: SlotType()
+    object ANONYMOUS : SlotType()
+
     // Unknown slot type.
-    object UNKNOWN: SlotType()
+    object UNKNOWN : SlotType()
 }
 
 // Lifetimes class of reference, computed by escape analysis.
 internal sealed class Lifetime(val slotType: SlotType) {
     // If reference is frame-local (only obtained from some call and never leaves).
-    object LOCAL: Lifetime(SlotType.ARENA) {
+    object LOCAL : Lifetime(SlotType.ARENA) {
         override fun toString(): String {
             return "LOCAL"
         }
     }
 
     // If reference is only returned.
-    object RETURN_VALUE: Lifetime(SlotType.RETURN) {
+    object RETURN_VALUE : Lifetime(SlotType.RETURN) {
         override fun toString(): String {
             return "RETURN_VALUE"
         }
     }
 
     // If reference is set as field of references of class RETURN_VALUE or INDIRECT_RETURN_VALUE.
-    object INDIRECT_RETURN_VALUE: Lifetime(SlotType.RETURN_IF_ARENA) {
+    object INDIRECT_RETURN_VALUE : Lifetime(SlotType.RETURN_IF_ARENA) {
         override fun toString(): String {
             return "INDIRECT_RETURN_VALUE"
         }
     }
 
     // If reference is stored to the field of an incoming parameters.
-    class PARAMETER_FIELD(val parameter: Int): Lifetime(SlotType.PARAM_IF_ARENA(parameter)) {
+    class PARAMETER_FIELD(val parameter: Int) : Lifetime(SlotType.PARAM_IF_ARENA(parameter)) {
         override fun toString(): String {
             return "PARAMETER_FIELD($parameter)"
         }
@@ -84,14 +87,14 @@ internal sealed class Lifetime(val slotType: SlotType) {
     }
 
     // If reference refers to the global (either global object or global variable).
-    object GLOBAL: Lifetime(SlotType.ANONYMOUS) {
+    object GLOBAL : Lifetime(SlotType.ANONYMOUS) {
         override fun toString(): String {
             return "GLOBAL"
         }
     }
 
     // If reference used to throw.
-    object THROW: Lifetime(SlotType.ANONYMOUS) {
+    object THROW : Lifetime(SlotType.ANONYMOUS) {
         override fun toString(): String {
             return "THROW"
         }
@@ -99,21 +102,21 @@ internal sealed class Lifetime(val slotType: SlotType) {
 
     // If reference used as an argument of outgoing function. Class can be improved by escape analysis
     // of called function.
-    object ARGUMENT: Lifetime(SlotType.ANONYMOUS) {
+    object ARGUMENT : Lifetime(SlotType.ANONYMOUS) {
         override fun toString(): String {
             return "ARGUMENT"
         }
     }
 
     // If reference class is unknown.
-    object UNKNOWN: Lifetime(SlotType.UNKNOWN) {
+    object UNKNOWN : Lifetime(SlotType.UNKNOWN) {
         override fun toString(): String {
             return "UNKNOWN"
         }
     }
 
     // If reference class is irrelevant.
-    object IRRELEVANT: Lifetime(SlotType.UNKNOWN) {
+    object IRRELEVANT : Lifetime(SlotType.UNKNOWN) {
         override fun toString(): String {
             return "IRRELEVANT"
         }
@@ -155,7 +158,7 @@ internal interface ContextUtils : RuntimeAware {
      */
     val FunctionDescriptor.llvmFunction: LLVMValueRef
         get() {
-            assert (this.isReal)
+            assert(this.isReal)
 
             return if (isExternal(this)) {
                 context.llvm.externalFunction(this.symbolName, getLlvmFunctionType(this),
@@ -245,6 +248,7 @@ internal val Name.localHash: LocalHash
 internal val FqName.localHash: LocalHash
     get() = this.toString().localHash
 
+
 internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) {
 
     private fun importFunction(name: String, otherModule: LLVMModuleRef): LLVMValueRef {
@@ -287,7 +291,7 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) {
         }
     }
 
-    private fun importMemset() : LLVMValueRef {
+    private fun importMemset(): LLVMValueRef {
         val parameterTypes = cValuesOf(int8TypePtr, int8Type, int32Type, int32Type, int1Type)
         val functionType = LLVMFunctionType(LLVMVoidType(), parameterTypes, 5, 0)
         return LLVMAddFunction(llvmModule, "llvm.memset.p0i8.i32", functionType)!!
@@ -298,11 +302,25 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) {
 
         val found = LLVMGetNamedFunction(llvmModule, name)
         if (found != null) {
-            assert (getFunctionType(found) == type)
-            assert (LLVMGetLinkage(found) == LLVMLinkage.LLVMExternalLinkage)
+            assert(getFunctionType(found) == type)
+            assert(LLVMGetLinkage(found) == LLVMLinkage.LLVMExternalLinkage)
             return found
         } else {
-            return LLVMAddFunction(llvmModule, name, type)!!
+            // As exported functions are written in C++ they assume sign extension for promoted types -
+            // mention that in attributes.
+            val function = LLVMAddFunction(llvmModule, name, type)!!
+            return memScoped {
+                val paramCount = LLVMCountParamTypes(type)
+                val paramTypes = allocArray<LLVMTypeRefVar>(paramCount)
+                LLVMGetParamTypes(type, paramTypes)
+                (0 until paramCount).forEach { index ->
+                    val paramType = paramTypes[index]
+                    addFunctionSignext(function, index + 1, paramType)
+                }
+                val returnType = LLVMGetReturnType(type)
+                addFunctionSignext(function, 0, returnType)
+                function
+            }
         }
     }
 
@@ -338,17 +356,18 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) {
                 .getFullList(TopologicalLibraryOrder)
     }
 
-    val librariesForLibraryManifest: List<KonanLibrary> get() {
-        // Note: library manifest should contain the list of all user libraries and frontend-used default libraries.
-        // However this would result into linking too many default libraries into the application which uses current
-        // library. This problem should probably be fixed by adding different kind of dependencies to library
-        // manifest.
-        // Currently the problem is workarounded like this:
-        return this.librariesToLink
-        // This list contains all user libraries and the default libraries required for link (not frontend).
-        // That's why the workaround doesn't work only in very special cases, e.g. when `-nodefaultlibs` is enabled
-        // when compiling the application, while the library API uses types from default libs.
-    }
+    val librariesForLibraryManifest: List<KonanLibrary>
+        get() {
+            // Note: library manifest should contain the list of all user libraries and frontend-used default libraries.
+            // However this would result into linking too many default libraries into the application which uses current
+            // library. This problem should probably be fixed by adding different kind of dependencies to library
+            // manifest.
+            // Currently the problem is workarounded like this:
+            return this.librariesToLink
+            // This list contains all user libraries and the default libraries required for link (not frontend).
+            // That's why the workaround doesn't work only in very special cases, e.g. when `-nodefaultlibs` is enabled
+            // when compiling the application, while the library API uses types from default libs.
+        }
 
     val staticData = StaticData(context)
 
@@ -410,11 +429,9 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) {
 
     val tlsMode by lazy {
         when (target) {
-            KonanTarget.WASM32, 
-            is KonanTarget.ZEPHYR 
-                -> LLVMThreadLocalMode.LLVMNotThreadLocal
-            else 
-                -> LLVMThreadLocalMode.LLVMGeneralDynamicTLSModel
+            KonanTarget.WASM32,
+            is KonanTarget.ZEPHYR -> LLVMThreadLocalMode.LLVMNotThreadLocal
+            else -> LLVMThreadLocalMode.LLVMGeneralDynamicTLSModel
         }
     }
 

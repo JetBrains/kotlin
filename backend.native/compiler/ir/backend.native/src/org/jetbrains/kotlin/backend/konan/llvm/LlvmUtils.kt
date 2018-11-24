@@ -267,8 +267,14 @@ fun parseBitcodeFile(path: String): LLVMModuleRef = memScoped {
     }
 }
 
-private val nounwindAttrKindId: Int
-    get() = getAttributeKindId("nounwind")
+private val nounwindAttrKindId by lazy {
+    getAttributeKindId("nounwind")
+}
+
+private val signextAttrKindId by lazy {
+    getAttributeKindId("signext")
+}
+
 
 fun isFunctionNoUnwind(function: LLVMValueRef): Boolean {
 
@@ -287,6 +293,13 @@ private fun getAttributeKindId(attributeName: String): Int {
 fun setFunctionNoUnwind(function: LLVMValueRef) {
     val attribute = LLVMCreateEnumAttribute(LLVMGetTypeContext(function.type), nounwindAttrKindId, 0)!!
     LLVMAddAttributeAtIndex(function, LLVMAttributeFunctionIndex, attribute)
+}
+
+fun addFunctionSignext(function: LLVMValueRef, index: Int, type: LLVMTypeRef?) {
+    if (type == int1Type || type == int8Type || type == int16Type) {
+        val attribute = LLVMCreateEnumAttribute(LLVMGetTypeContext(function.type), signextAttrKindId, 0)!!
+        LLVMAddAttributeAtIndex(function, index, attribute)
+    }
 }
 
 internal fun String.mdString() = LLVMMDString(this, this.length)!!
