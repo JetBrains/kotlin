@@ -556,7 +556,7 @@ public class SupportAnnotationDetector extends Detector implements Detector.Uast
 
     /**
      * Visitor which looks through a method, up to a given call (the one requiring a
-     * permission) and checks whether it's preceeded by a call to checkPermission or
+     * permission) and checks whether it's preceded by a call to checkPermission or
      * checkCallingPermission or enforcePermission etc.
      * <p>
      * Currently it only looks for the presence of this check; it does not perform
