@@ -21,7 +21,7 @@ class Outer<E> {
 fun factoryString(): Outer<String>.Inner<String> = null!!
 
 fun <T, Y> infer(x: T, y: Y): Outer<T>.Inner<Y> = null!!
-val infered = infer("", 1)
+val inferred = infer("", 1)
 
 fun main() {
     val outer = Outer<String>()

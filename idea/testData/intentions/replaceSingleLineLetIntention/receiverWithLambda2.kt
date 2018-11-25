@@ -1,6 +1,6 @@
 // WITH_RUNTIME
 // IS_APPLICABLE: false
-// This should be reported. However, in order to avoid too complecate logic, the intention ignore this case.
+// This should be reported. However, in order to avoid too complicate logic, the intention ignore this case.
 
 import java.util.*
 

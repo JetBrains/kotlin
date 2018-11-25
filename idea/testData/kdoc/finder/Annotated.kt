@@ -1,5 +1,5 @@
 class Foo() {
-    @Supress("unused")
+    @Suppress("unused")
     /** Doc for method xyzzy */
     fun xyzzy(): Int = 0
 }

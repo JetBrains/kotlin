@@ -1,7 +1,7 @@
 inline fun a(l: () -> Unit) {
     b(l)
 
-    //check taht nested not recognized as cycle
+    //check that nested not recognized as cycle
     c {
         c {
 
