@@ -35,13 +35,14 @@ import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
 import org.jetbrains.kotlin.kapt.base.test.JavaKaptContextTest
-import org.jetbrains.kotlin.kapt3.*
 import org.jetbrains.kotlin.kapt3.Kapt3ComponentRegistrar.KaptComponentContributor
+import org.jetbrains.kotlin.kapt3.KaptContextForStubGeneration
 import org.jetbrains.kotlin.kapt3.base.KaptContext
 import org.jetbrains.kotlin.kapt3.base.doAnnotationProcessing
 import org.jetbrains.kotlin.kapt3.base.javac.KaptJavaLog
 import org.jetbrains.kotlin.kapt3.base.parseJavaFiles
 import org.jetbrains.kotlin.kapt3.javac.KaptJavaFileObject
+import org.jetbrains.kotlin.kapt3.prettyPrint
 import org.jetbrains.kotlin.kapt3.stubs.ClassFileToSourceStubConverter
 import org.jetbrains.kotlin.kapt3.util.MessageCollectorBackedKaptLogger
 import org.jetbrains.kotlin.psi.KtFile
@@ -204,7 +205,7 @@ abstract class AbstractKotlinKapt3Test : CodegenTestCase() {
                 val actualFile = File(tree.sourceFile.toUri())
 
                 // By default, JavaFileObject.getName() returns the absolute path to the file.
-                // In our test, such a path will be temporary, so the comparision against it will lead to flaky tests.
+                // In our test, such a path will be temporary, so the comparison against it will lead to flaky tests.
                 tree.sourcefile = KaptJavaFileObject(tree, tree.defs.firstIsInstance(), actualFile)
             }
 

@@ -173,7 +173,7 @@ object KotlinJars {
                             ?: classpathFromClassloader(Thread.currentThread().contextClassLoader)?.takeIf { it.isNotEmpty() }
                             ?: classpathFromClasspathProperty()
                            )?.filter { f -> kotlinBaseJars.any { f.matchMaybeVersionedFile(it) } }?.takeIf { it.isNotEmpty() }
-        // if autodetected, additionaly check for presense of the compiler jars
+        // if autodetected, additionally check for presence of the compiler jars
         if (classpath == null || (explicitCompilerClasspath == null && classpath.none { f -> kotlinCompilerJars.any { f.matchMaybeVersionedFile(it) } })) {
             throw FileNotFoundException("Cannot find kotlin compiler jar, set kotlin.compiler.classpath property to proper location")
         }

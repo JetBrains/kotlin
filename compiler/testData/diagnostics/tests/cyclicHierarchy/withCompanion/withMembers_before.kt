@@ -50,7 +50,7 @@ object WithPropertyInBaseDifferentOrder {
     class Data
 
     public class C {
-        // Now it is succesfully resolved (vs. ErrorType like in the previous case)
+        // Now it is successfully resolved (vs. ErrorType like in the previous case)
         val data: Data = Data()
 
         open class <!CYCLIC_SCOPES_WITH_COMPANION!>Base<!>() {
