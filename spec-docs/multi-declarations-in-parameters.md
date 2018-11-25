@@ -226,7 +226,7 @@ TODO
 - what is the Java name of this parameter: `(a, b): Pair<A, B>`?
   - maybe `a_b`
 - make components available in default parameter values
-- create locals for components, assign values (on nested decompositions, avoid calling smae component twice)
+- create locals for components, assign values (on nested decompositions, avoid calling the same component twice)
 - make sure that function expressions are inlined as well as lambda expressions
 
 ## IDE Changes
