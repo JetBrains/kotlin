@@ -7,7 +7,7 @@ public final enum class A : kotlin.Enum<A> {
 
     enum entry THREE
 
-    enum entry FOURTY_TWO
+    enum entry FORTY_TWO
 
     private constructor A()
     private constructor A(/*0*/ c: kotlin.Int)
