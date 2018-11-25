@@ -1488,7 +1488,7 @@ public class TokenStream {
     public boolean treatKeywordAsIdentifier;
 
     // Set this to an initial non-null value so that the Parser has
-    // something to retrieve even if an error has occured and no
+    // something to retrieve even if an error has occurred and no
     // string is found.  Fosters one class of error, but saves lots of
     // code.
     private String string = "";

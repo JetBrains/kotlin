@@ -66,7 +66,7 @@ class FindImplicitNothingAction : AnAction() {
         val progressIndicator = ProgressManager.getInstance().progressIndicatorNullable
         val found = ArrayList<KtCallExpression>()
         for ((i, file) in files.withIndex()) {
-            progressIndicator?.text = "Scanning files: $i of ${files.size} file. ${found.size} occurences found"
+            progressIndicator?.text = "Scanning files: $i of ${files.size} file. ${found.size} occurrences found"
             progressIndicator?.text2 = file.virtualFile.path
 
             val resolutionFacade = file.getResolutionFacade()
