@@ -70,7 +70,8 @@ interface JKAnnotationList : JKTreeElement {
 }
 
 interface JKAnnotation : JKTreeElement {
-    var name: JKNameIdentifier//TODO
+    val classSymbol: JKClassSymbol
+    var arguments: JKExpressionList
 }
 
 interface JKAnnotationListOwner : JKTreeElement {
@@ -382,4 +383,15 @@ interface JKForInStatement : JKStatement {
 
 interface JKPackageDeclaration : JKDeclaration {
     var packageName: JKNameIdentifier
+}
+
+interface JKClassLiteralExpression : JKExpression {
+    val classType: JKTypeElement
+    val literalType: LiteralType
+
+    enum class LiteralType {
+        KOTLIN_CLASS,
+        JAVA_CLASS,
+        JAVA_PRIMITIVE_CLASS
+    }
 }

@@ -484,8 +484,11 @@ class JKAnnotationListImpl(annotations: List<JKAnnotation> = emptyList()) : JKAn
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitAnnotationList(this, data)
 }
 
-class JKAnnotationImpl(name: JKNameIdentifier) : JKAnnotation, JKBranchElementBase() {
-    override var name: JKNameIdentifier by child(name)
+class JKAnnotationImpl(
+    override val classSymbol: JKClassSymbol,
+    arguments: JKExpressionList
+) : JKAnnotation, JKBranchElementBase() {
+    override var arguments: JKExpressionList by child(arguments)
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitAnnotation(this, data)
 }
 
@@ -494,4 +497,13 @@ class JKTypeArgumentListImpl(typeArguments: List<JKTypeElement> = emptyList()) :
     override val typeArguments: List<JKTypeElement> by children(typeArguments)
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitTypeArgumentList(this, data)
 
+}
+
+class JKClassLiteralExpressionImpl(
+    classType: JKTypeElement,
+    override var literalType: JKClassLiteralExpression.LiteralType
+) : JKClassLiteralExpression, JKBranchElementBase(), PsiOwner by PsiOwnerImpl() {
+    override val classType: JKTypeElement by child(classType)
+
+    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitClassLiteralExpression(this, data)
 }

@@ -64,12 +64,22 @@ class JavaToJKTreeBuilder(var symbolProvider: JKSymbolProvider) {
                 )
                 is PsiArrayInitializerExpression -> toJK()
                 is PsiLambdaExpression -> toJK()
+                is PsiClassObjectAccessExpressionImpl -> toJK()
                 else -> {
                     throw RuntimeException("Not supported: ${this::class}")
                 }
             }.also {
                 if (this != null) (it as PsiOwner).psi = this
             }
+        }
+
+        fun PsiClassObjectAccessExpressionImpl.toJK(): JKClassLiteralExpression {
+            val type = operand.toJK()
+            return JKClassLiteralExpressionImpl(
+                type,
+                if (type.type is JKJavaPrimitiveType) JKClassLiteralExpression.LiteralType.JAVA_PRIMITIVE_CLASS
+                else JKClassLiteralExpression.LiteralType.JAVA_CLASS
+            )
         }
 
         fun PsiInstanceOfExpression.toJK(): JKJavaInstanceOfExpression {

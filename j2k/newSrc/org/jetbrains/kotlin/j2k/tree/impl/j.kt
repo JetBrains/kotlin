@@ -62,6 +62,7 @@ class JKJavaMethodImpl(
     override var block: JKBlock by child(block)
     override var typeParameterList: JKTypeParameterList by child(typeParameterList)
     override var annotationList: JKAnnotationList by child(annotationList)
+    override var throwsList: List<JKTypeElement> by children(throwsList)
 }
 
 class JKJavaLiteralExpressionImpl(

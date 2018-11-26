@@ -743,7 +743,22 @@ class NewCodeBuilder {
 
         override fun visitAnnotation(annotation: JKAnnotation) {
             printer.printWithNoIndent("@")
-            annotation.name.accept(this)
+            printer.printWithNoIndent(annotation.classSymbol.name)
+            if (annotation.arguments.expressions.isNotEmpty()) {
+                printer.par {
+                    annotation.arguments.accept(this)
+                }
+            }
+        }
+
+        override fun visitClassLiteralExpression(classLiteralExpression: JKClassLiteralExpression) {
+            renderType(classLiteralExpression.classType.type.updateNullability(Nullability.NotNull))
+            printer.printWithNoIndent("::")
+            when (classLiteralExpression.literalType) {
+                JKClassLiteralExpression.LiteralType.KOTLIN_CLASS -> printer.printWithNoIndent("class")
+                JKClassLiteralExpression.LiteralType.JAVA_CLASS -> printer.printWithNoIndent("class.java")
+                JKClassLiteralExpression.LiteralType.JAVA_PRIMITIVE_CLASS -> printer.printWithNoIndent("class.javaPrimitiveType")
+            }
         }
 
         override fun visitKtWhenCase(ktWhenCase: JKKtWhenCase) {
@@ -778,10 +793,21 @@ class NewCodeBuilder {
             javaNewExpression.acceptChildren(this)
         }
 
-        override fun visitTypeElement(typeElement: JKTypeElement) {
-            val type = typeElement.type
+//        override fun visitTypeElement(typeElement: JKTypeElement, data: Nothing?) {
+//            val classType = typeElement.type as? JKClassType ?: return
+//            collectedFqNames.add(FqName(classType.classReference.fqName!!))
+//        }
+
+        override fun visitClassLiteralExpression(classLiteralExpression: JKClassLiteralExpression) {
+            val type = classLiteralExpression.classType.type
             if (type is JKClassType) {
-                collectedFqNames.add(FqName(type.classReference.fqName!!))
+                val fqName = type.classReference.fqName!!
+                val isDefaultImport = fqName.split('.').let {
+                    it.size == 2 && it.first() == "kotlin"
+                }
+                if (!isDefaultImport) {
+                    collectedFqNames.add(FqName(fqName))
+                }
             }
         }
     }

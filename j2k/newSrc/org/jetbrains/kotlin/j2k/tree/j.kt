@@ -24,6 +24,7 @@ interface JKField : JKVariable, JKVisibilityOwner, JKMutabilityOwner, JKModality
 interface JKJavaField : JKField, JKBranchElement
 
 interface JKJavaMethod : JKMethod, JKBranchElement {
+    var throwsList: List<JKTypeElement>
 }
 
 interface JKJavaMethodCallExpression : JKMethodCallExpression

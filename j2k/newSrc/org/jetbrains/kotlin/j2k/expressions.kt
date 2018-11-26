@@ -188,3 +188,13 @@ fun kotlinAssert(assertion: JKExpression, message: JKExpression?, symbolProvider
         ),
         JKExpressionListImpl(listOfNotNull(assertion, message))
     )
+
+fun throwAnnotation(throws: List<JKType>, symbolProvider: JKSymbolProvider) =
+    JKAnnotationImpl(
+        symbolProvider.provideByFqName("kotlin.jvm.Throws"),
+        JKExpressionListImpl(
+            throws.map {
+                JKClassLiteralExpressionImpl(JKTypeElementImpl(it), JKClassLiteralExpression.LiteralType.KOTLIN_CLASS)
+            }
+        )
+    )
