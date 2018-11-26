@@ -11899,6 +11899,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             runTest("idea/testData/intentions/moveOutOfCompanion/companionAsImplicitReceiver.kt");
         }
 
+        @TestMetadata("hasJvmFieldInInterface.kt")
+        public void testHasJvmFieldInInterface() throws Exception {
+            runTest("idea/testData/intentions/moveOutOfCompanion/hasJvmFieldInInterface.kt");
+        }
+
         @TestMetadata("moveAndDropCompanion.kt")
         public void testMoveAndDropCompanion() throws Exception {
             runTest("idea/testData/intentions/moveOutOfCompanion/moveAndDropCompanion.kt");
