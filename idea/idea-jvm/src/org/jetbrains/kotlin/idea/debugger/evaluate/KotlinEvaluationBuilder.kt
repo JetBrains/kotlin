@@ -55,6 +55,7 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.findClassAcrossModuleDependencies
+import org.jetbrains.kotlin.descriptors.impl.SyntheticFieldDescriptor
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.diagnostics.Severity
@@ -67,6 +68,7 @@ import org.jetbrains.kotlin.idea.debugger.evaluate.KotlinDebuggerCaches.Compiled
 import org.jetbrains.kotlin.idea.debugger.evaluate.KotlinDebuggerCaches.ParametersDescriptor
 import org.jetbrains.kotlin.idea.debugger.evaluate.classLoading.ClassToLoad
 import org.jetbrains.kotlin.idea.debugger.evaluate.compilingEvaluator.loadClassesSafely
+import org.jetbrains.kotlin.idea.debugger.getBackingFieldName
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.ExtractionResult
 import org.jetbrains.kotlin.idea.runInReadActionWithWriteActionPriorityWithPCE
 import org.jetbrains.kotlin.idea.util.application.runReadAction
@@ -80,6 +82,7 @@ import org.jetbrains.kotlin.psi.psiUtil.quoteIfNeeded
 import org.jetbrains.kotlin.resolve.AnalyzingUtils
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTrace
+import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.org.objectweb.asm.*
 import org.jetbrains.org.objectweb.asm.Opcodes.ASM5
@@ -223,7 +226,7 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
             val extractionResult = getFunctionForExtractedFragment(codeFragment, sourcePosition.file, sourcePosition.line)
                                    ?: throw IllegalStateException("Code fragment cannot be extracted to function: ${codeFragment.text}")
             val (parametersDescriptor, extractedFunction) = try {
-                extractionResult.getParametersForDebugger(codeFragment) to extractionResult.declaration as KtNamedFunction
+                extractionResult.getParametersForDebugger(codeFragment, context) to extractionResult.declaration as KtNamedFunction
             } finally {
                 Disposer.dispose(extractionResult)
             }
@@ -407,7 +410,10 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
             return sharedVar?.asJdiValue(vm, sharedVar.asmType) ?: jdiValue.asJdiValue(vm, jdiValue.asmType)
         }
 
-        private fun ExtractionResult.getParametersForDebugger(fragment: KtCodeFragment): ParametersDescriptor {
+        private fun ExtractionResult.getParametersForDebugger(
+            fragment: KtCodeFragment,
+            context: EvaluationContextImpl
+        ): ParametersDescriptor {
             return runReadAction {
                 val valuesForLabels = HashMap<String, Value>()
 
@@ -435,23 +441,47 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
                         param.argumentText.startsWith("::") -> param.argumentText.substring(2)
                         else -> param.argumentText
                     }
+
+                    val paramDescriptor = param.originalDescriptor
+                    if (paramDescriptor is SyntheticFieldDescriptor) {
+                        val backingFieldName = paramDescriptor.propertyDescriptor.getBackingFieldName()
+                        if (backingFieldName != null) {
+                            val thisObject = context.suspendContext.frameProxy?.thisObject()
+                            val field = thisObject?.referenceType()?.fieldByName(backingFieldName)
+
+                            if (thisObject != null && field != null) {
+                                parameters.add(backingFieldName, param.getParameterType(true), thisObject.getValue(field).asValue())
+                            } else {
+                                parameters.add(
+                                    backingFieldName, paramDescriptor.builtIns.unitType, null,
+                                    EvaluateException("Can't find a backing field for property ${paramDescriptor.name}")
+                                )
+                            }
+
+                            continue
+                        }
+                    }
+
                     parameters.add(paramName, param.getParameterType(true), valuesForLabels[paramName])
                 }
+
                 parameters
             }
         }
 
-        private fun EvaluationContextImpl.getArgumentsForEval4j(parameters: ParametersDescriptor, parameterTypes: Array<Type>): List<Value> {
+        private fun EvaluationContextImpl.getArgumentsForEval4j(
+            parameters: ParametersDescriptor,
+            parameterTypes: Array<Type>
+        ): List<Value> {
             val frameVisitor = FrameVisitor(this)
-            return parameters.zip(parameterTypes).map {
-                val result = if (it.first.value != null) {
-                    it.first.value!!
-                }
-                else {
-                    frameVisitor.findValue(it.first.callText, it.second, checkType = false, failIfNotFound = true)!!
-                }
+            return parameters.zip(parameterTypes).map { (parameter, type) ->
+                parameter.error?.let { throw it }
+
+                val result = parameter.value
+                    ?: frameVisitor.findValue(parameter.callText, type, checkType = false, failIfNotFound = true)!!
+
                 if (LOG.isDebugEnabled) {
-                    LOG.debug("Parameter for eval4j: name = ${it.first.callText}, type = ${it.second}, value = $result")
+                    LOG.debug("Parameter for eval4j: name = ${parameter.callText}, type = $type, value = $result")
                 }
                 result
             }
