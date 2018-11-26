@@ -22,7 +22,7 @@ fun CodeBuilder.appendWithPrefix(element: Element, prefix: String): CodeBuilder 
 fun CodeBuilder.appendWithSuffix(element: Element, suffix: String): CodeBuilder = if (!element.isEmpty) this append element append suffix else this
 
 fun CodeBuilder.appendOperand(expression: Expression, operand: Expression, parenthesisForSamePrecedence: Boolean = false): CodeBuilder {
-    val parentPrecedence = expression.precedence() ?: throw IllegalArgumentException("Unknown precendence for $expression")
+    val parentPrecedence = expression.precedence() ?: throw IllegalArgumentException("Unknown precedence for $expression")
     val operandPrecedence = operand.precedence()
     val needParenthesis = operandPrecedence != null &&
             (parentPrecedence < operandPrecedence || parentPrecedence == operandPrecedence && parenthesisForSamePrecedence)
