@@ -213,5 +213,10 @@ public class JavaAgainstKotlinSourceCheckerTestGenerated extends AbstractJavaAga
         public void testNoNotNullOnParameterInOverride() throws Exception {
             runTest("idea/testData/kotlinAndJavaChecker/javaWithKotlin/NoNotNullOnParameterInOverride.kt");
         }
+
+        @TestMetadata("OverrideInEnumEntry.kt")
+        public void testOverrideInEnumEntry() throws Exception {
+            runTest("idea/testData/kotlinAndJavaChecker/javaWithKotlin/OverrideInEnumEntry.kt");
+        }
     }
 }

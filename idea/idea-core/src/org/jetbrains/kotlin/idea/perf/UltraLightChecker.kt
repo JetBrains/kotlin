@@ -110,6 +110,16 @@ object UltraLightChecker {
                 } +
                 ";"
 
+    private fun PsiEnumConstant.renderEnumConstant(): String {
+        val initializingClass = initializingClass ?: return name
+
+        return buildString {
+            appendln("$name {")
+            append(initializingClass.renderMembers())
+            append("}")
+        }
+    }
+
     fun PsiClass.renderClass(): String {
         val classWord = when {
             isAnnotationType -> "@interface"
@@ -118,18 +128,51 @@ object UltraLightChecker {
             else -> "class"
         }
 
-        return renderModifiers() +
-                classWord + " " +
-                name + " /* " + qualifiedName + "*/" +
-                renderTypeParams() +
-                extendsList.renderRefList("extends") +
-                implementsList.renderRefList("implements") +
-                " {\n" +
-                (if (isEnum) fields.filterIsInstance<PsiEnumConstant>().joinToString(",\n") { it.name } + ";\n\n" else "") +
-                fields.filterNot { it is PsiEnumConstant }.map { it.renderVar().prependIndent("  ") + ";\n\n" }.sorted().joinToString("") +
-                methods.map { it.renderMethod().prependIndent("  ") + "\n\n" }.sorted().joinToString("") +
-                innerClasses.map { "class ${it.name} ...\n\n".prependIndent("  ") }.sorted().joinToString("") +
-                "}"
+        return buildString {
+            append(renderModifiers())
+            append("$classWord ")
+            append("$name /* $qualifiedName*/")
+            append(renderTypeParams())
+            append(extendsList.renderRefList("extends"))
+            append(implementsList.renderRefList("implements"))
+            appendln(" {")
+
+            if (isEnum) {
+                append(
+                    fields
+                        .filterIsInstance<PsiEnumConstant>()
+                        .joinToString(",\n") { it.renderEnumConstant() }.prependDefaultIndent()
+                )
+                append(";\n\n")
+            }
+
+            append(renderMembers())
+            append("}")
+        }
     }
 
+    private fun PsiClass.renderMembers(): String {
+        return buildString {
+            appendSorted(
+                fields
+                    .filterNot { it is PsiEnumConstant }
+                    .map { it.renderVar().prependDefaultIndent() + ";\n\n" }
+            )
+
+            appendSorted(
+                methods
+                    .map { it.renderMethod().prependDefaultIndent() + "\n\n" }
+            )
+
+            appendSorted(
+                innerClasses.map { "class ${it.name} ...\n\n".prependDefaultIndent() }
+            )
+        }
+    }
+
+    private fun StringBuilder.appendSorted(list: List<String>) {
+        append(list.sorted().joinToString(""))
+    }
+
+    private fun String.prependDefaultIndent() = prependIndent("  ")
 }
