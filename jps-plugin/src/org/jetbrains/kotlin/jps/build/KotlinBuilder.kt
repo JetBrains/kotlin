@@ -336,6 +336,14 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         val kotlinContext = context.kotlin
         val kotlinChunk = chunk.toKotlinChunk(context)!!
 
+        if (!kotlinChunk.haveSameCompiler) {
+            messageCollector.report(
+                ERROR,
+                "Cyclically dependent modules ${kotlinChunk.presentableModulesToCompilersList} should have same compiler."
+            )
+            return ABORT
+        }
+
         if (representativeTarget is KotlinUnsupportedModuleBuildTarget) {
             val msg = "${representativeTarget.kind} is not yet supported in IDEA internal build system. " +
                     "Please use Gradle to build ${kotlinChunk.presentableShortName}."
