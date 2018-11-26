@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.resolve.jvm.annotations.VOLATILE_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind
 
 internal open class KtUltraLightField(
-    private val declaration: KtNamedDeclaration,
+    protected val declaration: KtNamedDeclaration,
     name: String,
     private val containingClass: KtUltraLightClass,
     private val support: UltraLightSupport,
@@ -126,15 +126,24 @@ internal open class KtUltraLightField(
 }
 
 internal class KtUltraLightEnumEntry(
-    declaration: KtNamedDeclaration,
+    declaration: KtEnumEntry,
     name: String,
     containingClass: KtUltraLightClass,
     support: UltraLightSupport,
     modifiers: Set<String>
 ) : KtUltraLightField(declaration, name, containingClass, support, modifiers), PsiEnumConstant {
-    override fun getInitializingClass(): PsiEnumConstantInitializer? = null
+    private val enumEntry get() = declaration as KtEnumEntry
+
+    private val _initializingClass by lazyPub {
+        if (enumEntry.body != null)
+            KtUltraLightClassForEnumEntry(enumEntry, containingClass.support, this)
+        else
+            null
+    }
+
+    override fun getInitializingClass(): PsiEnumConstantInitializer? = _initializingClass
     override fun getOrCreateInitializingClass(): PsiEnumConstantInitializer =
-        error("cannot create initializing class in light enum constant")
+        _initializingClass ?: error("cannot create initializing class in light enum constant")
 
     override fun getArgumentList(): PsiExpressionList? = null
     override fun resolveMethod(): PsiMethod? = null
@@ -144,4 +153,32 @@ internal class KtUltraLightEnumEntry(
 
     override fun hasInitializer() = true
     override fun computeConstantValue(visitedVars: MutableSet<PsiVariable>?) = this
+}
+
+internal class KtUltraLightClassForEnumEntry(
+    enumEntry: KtEnumEntry, support: UltraLightSupport,
+    private val enumConstant: PsiEnumConstant
+) : KtUltraLightClass(enumEntry, support), PsiEnumConstantInitializer {
+
+    private val baseClassReferenceAndType: Pair<PsiJavaCodeReferenceElement, PsiClassType> by lazyPub {
+        // It should not be null for not-too-complex classes and that is not the case because
+        // the containing class is not too complex (since we created KtUltraLightClassForEnumEntry instance)
+        val extendsList =
+            super.getExtendsList() ?: error("KtUltraLightClass::getExtendsList is null for ${enumEntry.fqName}")
+
+        Pair(
+            extendsList.referenceElements.getOrNull(0) ?: error("No referenceElements found for ${enumEntry.fqName}"),
+            extendsList.referencedTypes.getOrNull(0) ?: error("No referencedTypes found for ${enumEntry.fqName}")
+        )
+    }
+
+    override fun getBaseClassType() = baseClassReferenceAndType.second
+
+    override fun getBaseClassReference() = baseClassReferenceAndType.first
+
+    override fun getArgumentList(): PsiExpressionList? = null
+
+    override fun getEnumConstant() = enumConstant
+
+    override fun isInQualifiedNew() = false
 }

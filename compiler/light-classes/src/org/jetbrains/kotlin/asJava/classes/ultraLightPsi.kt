@@ -44,7 +44,7 @@ import org.jetbrains.kotlin.resolve.jvm.annotations.SYNCHRONIZED_ANNOTATION_FQ_N
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.isAnyOrNullableAny
 
-class KtUltraLightClass(classOrObject: KtClassOrObject, private val support: UltraLightSupport) :
+open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val support: UltraLightSupport) :
     KtLightClassImpl(classOrObject) {
     companion object {
 
@@ -316,8 +316,11 @@ class KtUltraLightClass(classOrObject: KtClassOrObject, private val support: Ult
 
     private fun defaultConstructor(): KtUltraLightMethod {
         val visibility =
-            if (classOrObject is KtObjectDeclaration || classOrObject.hasModifier(SEALED_KEYWORD) || isEnum) PsiModifier.PRIVATE
-            else PsiModifier.PUBLIC
+            when {
+                classOrObject is KtObjectDeclaration || classOrObject.hasModifier(SEALED_KEYWORD) || isEnum -> PsiModifier.PRIVATE
+                classOrObject is KtEnumEntry -> PsiModifier.PACKAGE_LOCAL
+                else -> PsiModifier.PUBLIC
+            }
         return noArgConstructor(visibility, classOrObject)
     }
 
