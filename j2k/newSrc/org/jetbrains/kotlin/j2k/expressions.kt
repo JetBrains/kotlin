@@ -55,13 +55,18 @@ private fun JKKtOperatorToken.binaryExpressionMethodSymbol(
 private fun JKKtOperatorToken.unaryExpressionMethodSymbol(
     operandType: JKType,
     symbolProvider: JKSymbolProvider
-): JKMethodSymbol =
-    operandType.classSymbol(symbolProvider).target.declarations// todo look for extensions
-        .asSequence()
-        .filterIsInstance<KtNamedFunction>()
-        .filter { it.name == operatorName }
-        .mapNotNull { symbolProvider.provideDirectSymbol(it) as? JKMethodSymbol }
-        .firstOrNull()!!
+): JKMethodSymbol {
+    val classSymbol = operandType.classSymbol(symbolProvider)
+    return when (classSymbol) {
+        is JKMultiverseKtClassSymbol ->// todo look for extensions
+            classSymbol.target.declarations.asSequence()
+                .filterIsInstance<KtNamedFunction>()
+                .filter { it.name == operatorName }
+                .mapNotNull { symbolProvider.provideDirectSymbol(it) as? JKMethodSymbol }
+                .firstOrNull()!!
+        else -> TODO(classSymbol::class.toString())
+    }
+}
 
 
 fun kotlinBinaryExpression(
