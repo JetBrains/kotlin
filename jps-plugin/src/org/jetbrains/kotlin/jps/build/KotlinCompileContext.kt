@@ -12,10 +12,12 @@ import org.jetbrains.jps.incremental.GlobalContextKey
 import org.jetbrains.jps.incremental.fs.CompilationRound
 import org.jetbrains.jps.incremental.messages.BuildMessage
 import org.jetbrains.jps.incremental.messages.CompilerMessage
+import org.jetbrains.kotlin.config.CompilerRunnerConstants
 import org.jetbrains.kotlin.incremental.LookupSymbol
 import org.jetbrains.kotlin.jps.incremental.*
 import org.jetbrains.kotlin.jps.targets.KotlinTargetsIndex
 import org.jetbrains.kotlin.jps.targets.KotlinTargetsIndexBuilder
+import org.jetbrains.kotlin.jps.targets.KotlinUnsupportedModuleBuildTarget
 import java.io.File
 import java.util.concurrent.atomic.AtomicBoolean
 
@@ -249,4 +251,50 @@ class KotlinCompileContext(val jpsContext: CompileContext) {
         return targetsIndex.chunksByJpsRepresentativeTarget[rawRepresentativeTarget]
             ?: error("Kotlin binding for chunk $this is not loaded at build start")
     }
+
+    fun reportUnsupportedTargets() {
+        // group all KotlinUnsupportedModuleBuildTarget by kind
+        // only representativeTarget will be added
+        val byKind = mutableMapOf<String?, MutableList<KotlinUnsupportedModuleBuildTarget>>()
+
+        targetsIndex.chunks.forEach {
+            val target = it.representativeTarget
+            if (target is KotlinUnsupportedModuleBuildTarget) {
+                if (target.sourceFiles.isNotEmpty()) {
+                    byKind.getOrPut(target.kind) { mutableListOf() }.add(target)
+                }
+            }
+        }
+
+        byKind.forEach { (kind, targets) ->
+            targets.sortBy { it.module.name }
+            val chunkNames = targets.map { it.chunk.presentableShortName }
+            val presentableChunksListString = chunkNames.joinToReadableString()
+
+            val msg =
+                if (kind == null) {
+                    "$presentableChunksListString is not yet supported in IDEA internal build system. " +
+                            "Please use Gradle to build them (enable 'Delegate IDE build/run actions to Gradle' in Settings)."
+                } else {
+                    "$kind is not yet supported in IDEA internal build system. " +
+                            "Please use Gradle to build $presentableChunksListString (enable 'Delegate IDE build/run actions to Gradle' in Settings)."
+                }
+
+            testingLogger?.addCustomMessage(msg)
+            jpsContext.processMessage(
+                CompilerMessage(
+                    CompilerRunnerConstants.KOTLIN_COMPILER_NAME,
+                    BuildMessage.Kind.WARNING,
+                    msg
+                )
+            )
+        }
+    }
+}
+
+fun List<String>.joinToReadableString(): String = when {
+    size > 5 -> take(5).joinToString() + " and ${size - 5} more"
+    size > 1 -> dropLast(1).joinToString() + " and ${last()}"
+    size == 1 -> single()
+    else -> ""
 }

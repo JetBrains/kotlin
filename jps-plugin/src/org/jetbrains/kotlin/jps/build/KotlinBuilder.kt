@@ -143,6 +143,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
             }
 
             kotlinContext.cleanupCaches()
+            kotlinContext.reportUnsupportedTargets()
         }
 
         LOG.info("Total Kotlin global compile context initialization time: $time ms")
@@ -342,16 +343,6 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
                 "Cyclically dependent modules ${kotlinChunk.presentableModulesToCompilersList} should have same compiler."
             )
             return ABORT
-        }
-
-        if (representativeTarget is KotlinUnsupportedModuleBuildTarget) {
-            val msg = "${representativeTarget.kind} is not yet supported in IDEA internal build system. " +
-                    "Please use Gradle to build ${kotlinChunk.presentableShortName}."
-
-            kotlinContext.testingLogger?.addCustomMessage(msg)
-            messageCollector.report(STRONG_WARNING, msg)
-
-            return NOTHING_DONE
         }
 
         if (!kotlinChunk.isEnabled) {
