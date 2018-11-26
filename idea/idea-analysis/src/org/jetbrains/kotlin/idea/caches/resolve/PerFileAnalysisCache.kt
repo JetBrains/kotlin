@@ -23,7 +23,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.analyzer.AnalysisResult
-import org.jetbrains.kotlin.analyzer.ModuleInfo
+import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.container.ComponentProvider
 import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.context.GlobalContext
@@ -35,11 +35,11 @@ import org.jetbrains.kotlin.frontend.di.createContainerForLazyBodyResolve
 import org.jetbrains.kotlin.idea.caches.project.getModuleInfo
 import org.jetbrains.kotlin.idea.compiler.IDELanguageSettingsProvider
 import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
-import org.jetbrains.kotlin.idea.project.jvmTarget
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.resolve.*
+import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import java.util.*
@@ -188,8 +188,10 @@ private object KotlinResolveDataProvider {
             val moduleInfo = analyzableElement.containingKtFile.getModuleInfo()
 
             val targetPlatform = moduleInfo.platform ?: TargetPlatformDetector.getPlatform(analyzableElement.containingKtFile)
+            val targetPlatformVersion = IDELanguageSettingsProvider.getTargetPlatform(moduleInfo, project).let {
+                if (targetPlatform == JvmPlatform && it !is JvmTarget) JvmTarget.DEFAULT else it
+            }
 
-            val targetPlatformVersion = IDELanguageSettingsProvider.getTargetPlatform(moduleInfo, project)
             val lazyTopDownAnalyzer = createContainerForLazyBodyResolve(
                 //TODO: should get ModuleContext
                 globalContext.withProject(project).withModule(moduleDescriptor),
