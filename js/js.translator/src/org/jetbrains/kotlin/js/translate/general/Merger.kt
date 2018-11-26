@@ -66,8 +66,15 @@ class Merger(private val rootFunction: JsFunction, val internalModuleName: JsNam
 
     private fun JsProgramFragment.tryUpdateTests() {
         tests?.let { newTests ->
-            testsMap.putIfAbsent(packageFqn, newTests)?.let { oldTests ->
-                oldTests.decomposeTestInvocation()?.let {oldTestBody ->
+            testsMap.computeIfAbsent(packageFqn) {
+                // Copying is needed to prevent adding tests from another fragment into this one.
+                // The statements have to be original so that they are affected by the optimizations
+                // This is a temporary workaround which becomes obsolete when program construction is postponed until after IC serialization.
+                newTests.deepCopy().also {
+                    it.decomposeTestInvocation()?.statements?.clear()
+                }
+            }.let { oldTests ->
+                oldTests.decomposeTestInvocation()?.let { oldTestBody ->
                     newTests.decomposeTestInvocation()?.let { newTestBody ->
                         oldTestBody.statements += newTestBody.statements
                     }
@@ -79,7 +86,7 @@ class Merger(private val rootFunction: JsFunction, val internalModuleName: JsNam
     private fun JsStatement.decomposeTestInvocation(): JsBlock? {
         return (this as? JsExpressionStatement)?.let {
             (it.expression as? JsInvocation)?.let {
-                (it.arguments[2] as? JsFunction)?.body
+                (it.arguments.getOrNull(2) as? JsFunction)?.body
             }
         }
     }
@@ -133,12 +140,10 @@ class Merger(private val rootFunction: JsFunction, val internalModuleName: JsNam
                 if (exportedPackage in exportedPackages) {
                     nameMap[localName] = exportedPackages[exportedPackage]!!
                     continue
-                }
-                else {
+                } else {
                     exportedPackages[exportedPackage] = localName
                 }
-            }
-            else if (statement is JsExpressionStatement) {
+            } else if (statement is JsExpressionStatement) {
                 val exportedTag = statement.exportedTag
                 if (exportedTag != null && !exportedTags.add(exportedTag)) continue
             }
@@ -174,7 +179,7 @@ class Merger(private val rootFunction: JsFunction, val internalModuleName: JsNam
         fragment.mainFunction?.let { rename(it) }
     }
 
-    private fun <T: JsNode> Map<JsName, JsName>.rename(rootNode: T): T {
+    private fun <T : JsNode> Map<JsName, JsName>.rename(rootNode: T): T {
         rootNode.accept(object : RecursiveJsVisitor() {
             override fun visitElement(node: JsNode) {
                 super.visitElement(node)
@@ -187,8 +192,8 @@ class Merger(private val rootFunction: JsFunction, val internalModuleName: JsNam
                     val coroutineMetadata = node.coroutineMetadata
                     if (coroutineMetadata != null) {
                         node.coroutineMetadata = coroutineMetadata.copy(
-                                baseClassRef = rename(coroutineMetadata.baseClassRef),
-                                suspendObjectRef = rename(coroutineMetadata.suspendObjectRef)
+                            baseClassRef = rename(coroutineMetadata.baseClassRef),
+                            suspendObjectRef = rename(coroutineMetadata.suspendObjectRef)
                         )
                     }
                 }
@@ -217,8 +222,10 @@ class Merger(private val rootFunction: JsFunction, val internalModuleName: JsNam
 
     private fun MutableList<JsStatement>.addImportForInlineDeclarationIfNecessary() {
         val importsForInlineName = nameTable[Namer.IMPORTS_FOR_INLINE_PROPERTY] ?: return
-        this += definePackageAlias(Namer.IMPORTS_FOR_INLINE_PROPERTY, importsForInlineName, Namer.IMPORTS_FOR_INLINE_PROPERTY,
-                                   JsNameRef(Namer.getRootPackageName()))
+        this += definePackageAlias(
+            Namer.IMPORTS_FOR_INLINE_PROPERTY, importsForInlineName, Namer.IMPORTS_FOR_INLINE_PROPERTY,
+            JsNameRef(Namer.getRootPackageName())
+        )
     }
 
     private fun addClassPrototypes(statements: MutableList<JsStatement>) {
@@ -229,9 +236,9 @@ class Merger(private val rootFunction: JsFunction, val internalModuleName: JsNam
     }
 
     private fun addClassPrototypes(
-            name: JsName,
-            visited: MutableSet<JsName>,
-            statements: MutableList<JsStatement>
+        name: JsName,
+        visited: MutableSet<JsName>,
+        statements: MutableList<JsStatement>
     ) {
         if (!visited.add(name)) return
         val cls = classes[name] ?: return
@@ -250,9 +257,9 @@ class Merger(private val rootFunction: JsFunction, val internalModuleName: JsNam
     }
 
     private fun addClassPostDeclarations(
-            name: JsName,
-            visited: MutableSet<JsName>,
-            statements: MutableList<JsStatement>
+        name: JsName,
+        visited: MutableSet<JsName>,
+        statements: MutableList<JsStatement>
     ) {
         if (!visited.add(name)) return
         val cls = classes[name] ?: return

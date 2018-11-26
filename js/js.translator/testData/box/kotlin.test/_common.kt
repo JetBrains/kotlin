@@ -1,3 +1,5 @@
+package common
+
 import kotlin.test.FrameworkAdapter
 
 private val context = TestContext()
@@ -98,10 +100,14 @@ class TestContext {
     private fun optionalIgnore(ignored: Boolean) = if (ignored) ", true" else ""
 }
 
-fun checkLog(body: TestContext.() -> Unit): String {
+fun checkLog(wrapInEmptySuite: Boolean = true, body: TestContext.() -> Unit): String {
     val expectedContext = TestContext()
-    expectedContext.suite("") {
-        body()
+    if (wrapInEmptySuite) {
+        expectedContext.suite("") {
+            body()
+        }
+    } else {
+        expectedContext.body()
     }
     if (context.log != expectedContext.log) {
         return "Failed test structure check. Expected: ${expectedContext.log}; actual: ${context.log}."

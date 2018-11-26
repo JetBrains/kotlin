@@ -10,6 +10,7 @@ expect class PlatformTest {
 }
 
 // FILE: main.kt
+import common.*
 import kotlin.test.Test
 
 actual class PlatformTest {

@@ -1,5 +1,6 @@
 // IGNORE_BACKEND: JS_IR
 // EXPECTED_REACHABLE_NODES: 1367
+import common.*
 import kotlin.test.Test
 
 class Outer {
