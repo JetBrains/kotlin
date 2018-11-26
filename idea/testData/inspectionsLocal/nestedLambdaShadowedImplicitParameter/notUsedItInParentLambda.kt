@@ -1,12 +1,11 @@
-// FIX: Add explicit parameter name to outer lambda
+// PROBLEM: none
 
 fun foo(f: (String) -> Unit) {}
 fun bar(s: String) {}
 
 fun test() {
     foo {
-        bar(it)
-        foo { s ->
+        foo {
             foo {
                 bar(it<caret>)
             }

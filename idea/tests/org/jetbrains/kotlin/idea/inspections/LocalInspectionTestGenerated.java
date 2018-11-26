@@ -3800,6 +3800,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             runTest("idea/testData/inspectionsLocal/nestedLambdaShadowedImplicitParameter/notUseParameter.kt");
         }
 
+        @TestMetadata("notUsedItInParentLambda.kt")
+        public void testNotUsedItInParentLambda() throws Exception {
+            runTest("idea/testData/inspectionsLocal/nestedLambdaShadowedImplicitParameter/notUsedItInParentLambda.kt");
+        }
+
         @TestMetadata("receiver.kt")
         public void testReceiver() throws Exception {
             runTest("idea/testData/inspectionsLocal/nestedLambdaShadowedImplicitParameter/receiver.kt");

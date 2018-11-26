@@ -5,6 +5,7 @@ fun bar(s: String) {}
 
 fun test() {
     foo {
+        bar(it)
         foo { it1 ->
             bar(it1)
             bar(it1)
