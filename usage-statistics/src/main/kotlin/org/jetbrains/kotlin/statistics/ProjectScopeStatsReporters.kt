@@ -6,10 +6,6 @@
 package org.jetbrains.kotlin.statistics
 
 import com.intellij.internal.statistic.service.fus.collectors.ApplicationUsageTriggerCollector
-import javax.annotation.processing.AbstractProcessor
-import javax.annotation.processing.Processor
-import javax.annotation.processing.RoundEnvironment
-import javax.lang.model.element.TypeElement
 
 open class KotlinStatisticsTrigger(private val groupIdSufix: String) : ApplicationUsageTriggerCollector() {
     override fun getGroupId() = "statistics.kotlin.$groupIdSufix"
@@ -23,7 +19,7 @@ class KotlinVersionTrigger : KotlinGradlePluginStatisticsTrigger("kotlin_version
 
 class KotlinProjectLibraryUsageTrigger : KotlinGradlePluginStatisticsTrigger("library")
 
-open class KotlinIdeActionTrigger(groupIdSufix: String? = null) : KotlinIdeStatisticsTrigger("action" + (groupIdSufix?.let { ".$it" } ?: ""))
+open class KotlinIdeActionTrigger(groupIdSufix: String? = null) : KotlinIdeStatisticsTrigger("action" + (if (groupIdSufix != null) ".$groupIdSufix" else ""))
 
 class KotlinIdeUndoTrigger : KotlinIdeActionTrigger("undo")
 
