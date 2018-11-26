@@ -24,16 +24,15 @@ fun kotlinTypeByName(name: String, symbolProvider: JKSymbolProvider): JKClassTyp
 
 private fun JKType.classSymbol(symbolProvider: JKSymbolProvider) =
     when (this) {
-        is JKClassType -> classReference as JKMultiverseKtClassSymbol
+        is JKClassType -> classReference
         is JKJavaPrimitiveType -> {
             val psiClass = resolveFqName(
                 ClassId.fromString(jvmPrimitiveType.primitiveType.typeFqName.asString()),
                 symbolProvider.symbolsByPsi.keys.first()
             )!!
-            symbolProvider.provideDirectSymbol(psiClass) as JKMultiverseKtClassSymbol
+            symbolProvider.provideDirectSymbol(psiClass) as JKClassSymbol
         }
-        else ->
-            TODO(this::class.java.toString())
+        else -> TODO(this::class.java.toString())
     }
 
 private fun JKKtOperatorToken.binaryExpressionMethodSymbol(
@@ -44,12 +43,17 @@ private fun JKKtOperatorToken.binaryExpressionMethodSymbol(
     val operatorNames =
         if (operatorName == "equals") listOf("equals", "compareTo")
         else listOf(operatorName)
-    return leftType.classSymbol(symbolProvider).target.declarations// todo look for extensions
-        .asSequence()
-        .filterIsInstance<KtNamedFunction>()
-        .filter { it.name in operatorNames }
-        .mapNotNull { symbolProvider.provideDirectSymbol(it) as? JKMethodSymbol }
-        .firstOrNull { it.parameterTypes.singleOrNull()?.takeIf { rightType.isSubtypeOf(it, symbolProvider) } != null }!!
+    val classSymbol = leftType.classSymbol(symbolProvider)
+    return when (classSymbol) {
+        is JKMultiverseKtClassSymbol ->
+            classSymbol.target.declarations
+                .asSequence()
+                .filterIsInstance<KtNamedFunction>()
+                .filter { it.name in operatorNames }
+                .mapNotNull { symbolProvider.provideDirectSymbol(it) as? JKMethodSymbol }
+                .firstOrNull { it.parameterTypes.singleOrNull()?.takeIf { rightType.isSubtypeOf(it, symbolProvider) } != null }!!
+        else -> TODO(classSymbol::class.toString())
+    }
 }
 
 private fun JKKtOperatorToken.unaryExpressionMethodSymbol(
