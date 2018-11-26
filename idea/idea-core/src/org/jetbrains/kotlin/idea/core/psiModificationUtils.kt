@@ -310,7 +310,10 @@ fun KtModifierListOwner.canBeProtected(): Boolean {
     }
 }
 
-fun KtModifierListOwner.canBeInternal(): Boolean = !isAnnotationClassPrimaryConstructor()
+fun KtModifierListOwner.canBeInternal(): Boolean {
+    if (containingClass()?.isInterface() == true && hasJvmFieldAnnotation()) return false
+    return !isAnnotationClassPrimaryConstructor()
+}
 
 private fun KtModifierListOwner.isAnnotationClassPrimaryConstructor(): Boolean =
     this is KtPrimaryConstructor && (this.parent as? KtClass)?.hasModifier(KtTokens.ANNOTATION_KEYWORD) ?: false
