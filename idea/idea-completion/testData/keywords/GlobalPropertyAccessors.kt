@@ -32,7 +32,7 @@ var a : Int
 // EXIST:  operator
 // EXIST:  infix
 // EXIST:  sealed class
-// EXIST:  data
+// EXIST:  data class
 // EXIST:  inline
 // EXIST:  tailrec
 // EXIST:  external
