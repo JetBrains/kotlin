@@ -83,13 +83,14 @@ internal fun BaseGradleIT.transformProjectWithPluginsDsl(
     result.projectDir.walkTopDown()
         .filter { it.isFile && (it.name == "build.gradle" || it.name == "build.gradle.kts") }
         .forEach { buildGradle ->
-            buildGradle.modify { text ->
-                text.replace(PLUGIN_MARKER_VERSION_PLACEHOLDER, KOTLIN_VERSION)
-            }
+            buildGradle.modify(::transformBuildScriptWithPluginsDsl)
         }
 
     return result
 }
+
+internal fun transformBuildScriptWithPluginsDsl(buildScriptContent: String): String =
+    buildScriptContent.replace(PLUGIN_MARKER_VERSION_PLACEHOLDER, KOTLIN_VERSION)
 
 /** Copies the logic of Gradle [`mavenLocal()`](https://docs.gradle.org/3.4.1/dsl/org.gradle.api.artifacts.dsl.RepositoryHandler.html#org.gradle.api.artifacts.dsl.RepositoryHandler:mavenLocal())
  */
