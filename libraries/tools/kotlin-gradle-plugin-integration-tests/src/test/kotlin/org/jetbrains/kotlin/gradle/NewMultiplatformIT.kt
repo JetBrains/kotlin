@@ -301,7 +301,18 @@ class NewMultiplatformIT : BaseGradleIT() {
     }
 
     @Test
-    fun testLibWithTests() = with(Project("new-mpp-lib-with-tests", gradleVersion)) {
+    fun testLibWithTests() = doTestLibWithTests(Project("new-mpp-lib-with-tests", gradleVersion))
+
+    @Test
+    fun testLibWithTestsKotlinDsl() = with(Project("new-mpp-lib-with-tests", gradleVersion)) {
+        setupWorkingDir()
+        gradleBuildScript().delete()
+        projectDir.resolve("build.gradle.kts.alternative").renameTo(projectDir.resolve("build.gradle.kts"))
+        gradleBuildScript().modify(::transformBuildScriptWithPluginsDsl)
+        doTestLibWithTests(this)
+    }
+
+    private fun doTestLibWithTests(project: Project) = with(project) {
         build("check") {
             assertSuccessful()
             assertTasksExecuted(
