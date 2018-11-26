@@ -219,20 +219,10 @@ class KotlinDebuggerCaches(project: Project) {
     }
 
     data class CompiledDataDescriptor(
-            val classes: List<ClassToLoad>,
-            val sourcePosition: SourcePosition,
-            val parameters: ParametersDescriptor
+        val classes: List<ClassToLoad>,
+        val sourcePosition: SourcePosition,
+        val parameters: List<Parameter>
     )
-
-    class ParametersDescriptor : Iterable<Parameter> {
-        private val list = ArrayList<Parameter>()
-
-        fun add(name: String, jetType: KotlinType, value: Value? = null, error: EvaluateException? = null) {
-            list.add(Parameter(name, jetType, value, error))
-        }
-
-        override fun iterator() = list.iterator()
-    }
 
     data class Parameter(val callText: String, val type: KotlinType, val value: Value? = null, val error: EvaluateException? = null)
 

@@ -64,8 +64,7 @@ import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.caches.resolve.util.getJavaClassDescriptor
 import org.jetbrains.kotlin.idea.core.quoteSegmentsIfNeeded
 import org.jetbrains.kotlin.idea.debugger.DebuggerUtils
-import org.jetbrains.kotlin.idea.debugger.evaluate.KotlinDebuggerCaches.CompiledDataDescriptor
-import org.jetbrains.kotlin.idea.debugger.evaluate.KotlinDebuggerCaches.ParametersDescriptor
+import org.jetbrains.kotlin.idea.debugger.evaluate.KotlinDebuggerCaches.*
 import org.jetbrains.kotlin.idea.debugger.evaluate.classLoading.ClassToLoad
 import org.jetbrains.kotlin.idea.debugger.evaluate.compilingEvaluator.loadClassesSafely
 import org.jetbrains.kotlin.idea.debugger.getBackingFieldName
@@ -413,7 +412,7 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
         private fun ExtractionResult.getParametersForDebugger(
             fragment: KtCodeFragment,
             context: EvaluationContextImpl
-        ): ParametersDescriptor {
+        ): List<Parameter> {
             return runReadAction {
                 val valuesForLabels = HashMap<String, Value>()
 
@@ -429,10 +428,10 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
                     })
                 }
 
-                val parameters = ParametersDescriptor()
+                val parameters = mutableListOf<Parameter>()
                 val receiver = config.descriptor.receiverParameter
                 if (receiver != null) {
-                    parameters.add(THIS_NAME, receiver.getParameterType(true))
+                    parameters += Parameter(THIS_NAME, receiver.getParameterType(true))
                 }
 
                 for (param in config.descriptor.parameters) {
@@ -449,20 +448,21 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
                             val thisObject = context.suspendContext.frameProxy?.thisObject()
                             val field = thisObject?.referenceType()?.fieldByName(backingFieldName)
 
-                            if (thisObject != null && field != null) {
-                                parameters.add(backingFieldName, param.getParameterType(true), thisObject.getValue(field).asValue())
+                            val parameter = if (thisObject != null && field != null) {
+                                Parameter(backingFieldName, param.getParameterType(true), thisObject.getValue(field).asValue())
                             } else {
-                                parameters.add(
-                                    backingFieldName, paramDescriptor.builtIns.unitType, null,
-                                    EvaluateException("Can't find a backing field for property ${paramDescriptor.name}")
+                                Parameter(
+                                    backingFieldName, paramDescriptor.builtIns.unitType,
+                                    error = EvaluateException("Can't find a backing field for property ${paramDescriptor.name}")
                                 )
                             }
 
+                            parameters += parameter
                             continue
                         }
                     }
 
-                    parameters.add(paramName, param.getParameterType(true), valuesForLabels[paramName])
+                    parameters += Parameter(paramName, param.getParameterType(true), valuesForLabels[paramName])
                 }
 
                 parameters
@@ -470,7 +470,7 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
         }
 
         private fun EvaluationContextImpl.getArgumentsForEval4j(
-            parameters: ParametersDescriptor,
+            parameters: List<Parameter>,
             parameterTypes: Array<Type>
         ): List<Value> {
             val frameVisitor = FrameVisitor(this)
@@ -491,7 +491,7 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
                 codeFragment: KtCodeFragment,
                 extractedFunction: KtNamedFunction,
                 context: EvaluationContextImpl,
-                parameters: ParametersDescriptor
+                parameters: List<Parameter>
         ): ClassFileFactory {
             return runReadAction {
                 val fileForDebugger = createFileForDebugger(codeFragment, extractedFunction)
