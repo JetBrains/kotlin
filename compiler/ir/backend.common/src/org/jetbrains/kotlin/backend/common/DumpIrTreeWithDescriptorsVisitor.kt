@@ -22,7 +22,7 @@ class RenderIrElementWithDescriptorsVisitor : IrElementVisitor<String, Nothing?>
             "MODULE_FRAGMENT ${declaration.descriptor}"
 
     override fun visitFile(declaration: IrFile, data: Nothing?): String =
-            "FILE ${declaration.name}"
+            "FILE ${declaration.path}"
 
     override fun visitFunction(declaration: IrFunction, data: Nothing?): String =
             "FUN ${declaration.descriptor}"

@@ -132,8 +132,8 @@ open class DefaultArgumentStubGenerator constructor(val context: CommonBackendCo
                     symbol = irFunction.symbol, descriptor = irFunction.symbol.descriptor,
                     typeArgumentsCount = irFunction.typeParameters.size
                 ).apply {
-                    (0 until typeArgumentsCount).forEach { i ->
-                        putTypeArgument(i, newIrFunction.typeParameters[i].defaultType)
+                    newIrFunction.typeParameters.forEachIndexed { i, param ->
+                        putTypeArgument(i, param.defaultType)
                     }
                     dispatchReceiver = newIrFunction.dispatchReceiverParameter?.let { irGet(it) }
 
@@ -141,8 +141,8 @@ open class DefaultArgumentStubGenerator constructor(val context: CommonBackendCo
                 }
             } else {
                 +irReturn(irCall(irFunction).apply {
-                    (0 until typeArgumentsCount).forEach { i ->
-                        putTypeArgument(i, newIrFunction.typeParameters[i].defaultType)
+                    newIrFunction.typeParameters.forEachIndexed { i, param ->
+                        putTypeArgument(i, param.defaultType)
                     }
                     dispatchReceiver = newIrFunction.dispatchReceiverParameter?.let { irGet(it) }
                     extensionReceiver = newIrFunction.extensionReceiverParameter?.let { irGet(it) }
