@@ -1,8 +1,11 @@
 ================ Step #1 create new service =================
 
 Building c
-Building pNative
-Native is not yet supported in IDEA internal build system. Please use Gradle to build pNative.
+Building pNative2
+Native is not yet supported in IDEA internal build system. Please use Gradle to build pNative1 and pNative2 (enable 'Delegate IDE build/run actions to Gradle' in Settings).
+Exit code: NOTHING_DONE
+------------------------------------------
+Building pNative1
 Exit code: NOTHING_DONE
 ------------------------------------------
 Building pJs
@@ -21,8 +24,11 @@ Exit code: OK
 ================ Step #2 edit new service =================
 
 Building c
-Building pNative
-Native is not yet supported in IDEA internal build system. Please use Gradle to build pNative.
+Building pNative2
+Native is not yet supported in IDEA internal build system. Please use Gradle to build pNative1 and pNative2 (enable 'Delegate IDE build/run actions to Gradle' in Settings).
+Exit code: NOTHING_DONE
+------------------------------------------
+Building pNative1
 Exit code: NOTHING_DONE
 ------------------------------------------
 Building pJs
@@ -50,8 +56,11 @@ Exit code: OK
 ================ Step #3 delete new service =================
 
 Building c
-Building pNative
-Native is not yet supported in IDEA internal build system. Please use Gradle to build pNative.
+Building pNative2
+Native is not yet supported in IDEA internal build system. Please use Gradle to build pNative1 and pNative2 (enable 'Delegate IDE build/run actions to Gradle' in Settings).
+Exit code: NOTHING_DONE
+------------------------------------------
+Building pNative1
 Exit code: NOTHING_DONE
 ------------------------------------------
 Cleaning output files:

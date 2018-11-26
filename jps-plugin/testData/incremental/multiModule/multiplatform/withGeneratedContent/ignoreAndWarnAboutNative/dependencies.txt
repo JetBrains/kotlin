@@ -6,5 +6,8 @@ pJvm -> c [include]
 pJs [compilationAndSourceSetHolder, js]
 pJs -> c [include]
 
-pNative [compilationAndSourceSetHolder, native]
-pNative -> c [include]
+pNative1 [compilationAndSourceSetHolder, native]
+pNative1 -> c [include]
+
+pNative2 [compilationAndSourceSetHolder, native]
+pNative2 -> c [include]
