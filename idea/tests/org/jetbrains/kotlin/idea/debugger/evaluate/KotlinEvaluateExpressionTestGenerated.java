@@ -876,6 +876,11 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
             runTest("idea/testData/debugger/tinyApp/src/evaluate/multipleBreakpoints/extensionMemberProperty.kt");
         }
 
+        @TestMetadata("fieldVariable.kt")
+        public void testFieldVariable() throws Exception {
+            runTest("idea/testData/debugger/tinyApp/src/evaluate/multipleBreakpoints/fieldVariable.kt");
+        }
+
         @TestMetadata("funFromOuterClassInLamdba.kt")
         public void testFunFromOuterClassInLamdba() throws Exception {
             runTest("idea/testData/debugger/tinyApp/src/evaluate/multipleBreakpoints/funFromOuterClassInLamdba.kt");
