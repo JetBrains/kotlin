@@ -384,7 +384,13 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
                     "RUNTIME" -> "getRuntimeElementsConfigurationName"
                     else -> return@getOrPut listOf(dependency)
                 }
-                val targets = project.rootProject.getChildProjectByPath(dependency.projectPath)?.getTargets() ?: return@getOrPut listOf(dependency)
+                val dependencyProject =
+                    if (project.rootProject.path == dependency.projectPath)
+                        project.rootProject
+                    else
+                        project.rootProject.getChildProjectByPath(dependency.projectPath)
+
+                val targets = dependencyProject?.getTargets() ?: return@getOrPut listOf(dependency)
                 val gradleTarget = targets.firstOrNull {
                     val getter = it.javaClass.getMethodOrNull(taskGetterName) ?: return@firstOrNull false
                     getter(it) == artifactConfiguration
