@@ -5,13 +5,10 @@
 
 package org.jetbrains.kotlin.j2k.conversions
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.j2k.*
 import org.jetbrains.kotlin.j2k.ast.Nullability
 import org.jetbrains.kotlin.j2k.tree.*
 import org.jetbrains.kotlin.j2k.tree.impl.*
-import org.jetbrains.kotlin.name.ClassId
-import java.util.*
 
 
 class TryStatementConversion(private val context: ConversionContext) : RecursiveApplicableConversionBase() {
@@ -72,8 +69,7 @@ class TryStatementConversion(private val context: ConversionContext) : Recursive
         }.map {
             val parameter = JKParameterImpl(
                 JKTypeElementImpl(it.updateNullability(Nullability.NotNull)),
-                javaCatchSection.parameter.name.copyTreeAndDetach(),
-                JKModifierListImpl()
+                javaCatchSection.parameter.name.copyTreeAndDetach()
             )
             JKKtTryCatchSectionImpl(
                 parameter,

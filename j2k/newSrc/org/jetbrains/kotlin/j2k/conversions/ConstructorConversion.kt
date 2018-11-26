@@ -18,10 +18,17 @@ class ConstructorConversion(private val context: ConversionContext) : RecursiveA
         element.invalidate()
         val delegationCall = lookupDelegationCall(element.block) ?: JKStubExpressionImpl()
 
-        return JKKtConstructorImpl(element.name, element.parameters, element.block, element.modifierList, delegationCall)
-            .also {
-                context.symbolProvider.transferSymbol(it, element)
-            }
+        return JKKtConstructorImpl(
+            element.name,
+            element.parameters,
+            element.block,
+            delegationCall,
+            element.extraModifiers,
+            element.visibility,
+            element.modality
+        ).also {
+            context.symbolProvider.transferSymbol(it, element)
+        }
     }
 
     private fun lookupDelegationCall(block: JKBlock): JKDelegationConstructorCall? {

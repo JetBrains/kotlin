@@ -16,33 +16,44 @@
 
 package org.jetbrains.kotlin.j2k.conversions
 
-import org.jetbrains.kotlin.j2k.tree.JKClass
-import org.jetbrains.kotlin.j2k.tree.JKClassBody
-import org.jetbrains.kotlin.j2k.tree.JKJavaMethod
-import org.jetbrains.kotlin.j2k.tree.JKTreeElement
+import org.jetbrains.kotlin.j2k.ConversionContext
+import org.jetbrains.kotlin.j2k.throwAnnotation
+import org.jetbrains.kotlin.j2k.tree.*
 import org.jetbrains.kotlin.j2k.tree.impl.JKKtFunctionImpl
 
-class JavaMethodToKotlinFunctionConversion : TransformerBasedConversion() {
+class JavaMethodToKotlinFunctionConversion(private val context: ConversionContext) : TransformerBasedConversion() {
     override fun visitTreeElement(element: JKTreeElement) {
         element.acceptChildren(this, null)
     }
 
     override fun visitClassBody(classBody: JKClassBody) {
         somethingChanged = true
-        classBody.declarations = classBody.declarations.map {
-            if (it is JKJavaMethod) {
-                it.invalidate()
+
+        classBody.declarations = classBody.declarations.map { declaration ->
+            if (declaration is JKJavaMethod) {
+                declaration.invalidate()
+
                 JKKtFunctionImpl(
-                    it.returnType,
-                    it.name,
-                    it.parameters,
-                    it.block,
-                    it.modifierList,
-                    it.typeParameterList,
-                    it.annotationList
+                    declaration.returnType,
+                    declaration.name,
+                    declaration.parameters,
+                    declaration.block,
+                    declaration.typeParameterList,
+                    declaration.annotationList.also {
+                        if (declaration.throwsList.isNotEmpty()) {
+                            it.annotations +=
+                                    throwAnnotation(
+                                        declaration.throwsList.map { it.type },
+                                        context.symbolProvider
+                                    )
+                        }
+                    },
+                    declaration.extraModifiers,
+                    declaration.visibility,
+                    declaration.modality
                 )
             } else {
-                it
+                declaration
             }
         }
         classBody.acceptChildren(this)

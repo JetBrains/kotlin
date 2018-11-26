@@ -24,7 +24,7 @@ internal fun resolveFqName(classId: ClassId, contextElement: JKTreeElement, cont
     return resolveFqName(classId, element)
 }
 
-internal fun resolveFqName(classId: ClassId, element: PsiElement): PsiElement? {
+fun resolveFqName(classId: ClassId, element: PsiElement): PsiElement? {
     return constructImportDirectiveWithContext(classId, element)
         .getChildOfType<KtDotQualifiedExpression>()
         ?.selectorExpression

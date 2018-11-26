@@ -13,8 +13,8 @@ class StaticsToCompanionExtractConversion : RecursiveApplicableConversionBase() 
         if (element !is JKClass) return recurse(element)
         if (element.classKind == JKClass.ClassKind.COMPANION || element.classKind == JKClass.ClassKind.OBJECT) return element
         val statics = element.declarationList.filter { declaration ->
-            declaration is JKModifierListOwner &&
-                    declaration.modifierList.modifiers.any { it is JKJavaModifier && it.type == JKJavaModifier.JavaModifierType.STATIC }
+            declaration is JKExtraModifiersOwner &&
+                    declaration.extraModifiers.any { it == ExtraModifier.STATIC }
         }
 
         if (statics.isEmpty()) return recurse(element)
@@ -23,9 +23,8 @@ class StaticsToCompanionExtractConversion : RecursiveApplicableConversionBase() 
 
         element.classBody.declarations -= statics
         companion.classBody.declarations += statics.onEach { declaration ->
-            (declaration as JKModifierListOwner)
-            declaration.modifierList.modifiers =
-                    declaration.modifierList.modifiers.filterNot { it is JKJavaModifier && it.type == JKJavaModifier.JavaModifierType.STATIC }
+            (declaration as JKExtraModifiersOwner)
+            declaration.extraModifiers -= ExtraModifier.STATIC
         }
 
         return recurse(element)
@@ -40,17 +39,14 @@ class StaticsToCompanionExtractConversion : RecursiveApplicableConversionBase() 
         if (companion != null) return companion
 
         return JKClassImpl(
-            JKModifierListImpl(
-                listOf(
-                    JKAccessModifierImpl(JKAccessModifier.Visibility.PUBLIC),
-                    JKModalityModifierImpl(JKModalityModifier.Modality.FINAL)
-                )
-            ),
             JKNameIdentifierImpl(""),
             JKInheritanceInfoImpl(emptyList()),
             JKClass.ClassKind.COMPANION,
             JKTypeParameterListImpl(),
-            JKClassBodyImpl()
+            JKClassBodyImpl(),
+            emptyList(),
+            Visibility.PUBLIC,
+            Modality.FINAL
         ).also { element.classBody.declarations += it }
     }
 }

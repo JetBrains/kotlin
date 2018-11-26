@@ -26,16 +26,18 @@ import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.utils.addToStdlib.cast
 
 class JKKtPropertyImpl(
-    modifierList: JKModifierList,
     type: JKTypeElement,
     name: JKNameIdentifier,
     initializer: JKExpression,
     getter: JKKtGetterOrSetter,
-    setter: JKKtGetterOrSetter
+    setter: JKKtGetterOrSetter,
+    override var extraModifiers: List<ExtraModifier>,
+    override var visibility: Visibility,
+    override var modality: Modality,
+    override var mutability: Mutability
 ) : JKBranchElementBase(), JKKtProperty {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitKtProperty(this, data)
 
-    override var modifierList: JKModifierList by child(modifierList)
     override var type by child(type)
     override var name: JKNameIdentifier by child(name)
     override var initializer: JKExpression by child(initializer)
@@ -48,9 +50,11 @@ class JKKtFunctionImpl(
     name: JKNameIdentifier,
     parameters: List<JKParameter>,
     block: JKBlock,
-    modifierList: JKModifierList,
     typeParameterList: JKTypeParameterList,
-    annotationList: JKAnnotationList
+    annotationList: JKAnnotationList,
+    override var extraModifiers: List<ExtraModifier>,
+    override var visibility: Visibility,
+    override var modality: Modality
 ) : JKBranchElementBase(), JKKtFunction {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitKtFunction(this, data)
 
@@ -58,7 +62,6 @@ class JKKtFunctionImpl(
     override var name: JKNameIdentifier by child(name)
     override var parameters: List<JKParameter> by children(parameters)
     override var block: JKBlock by child(block)
-    override var modifierList: JKModifierList by child(modifierList)
     override var typeParameterList: JKTypeParameterList by child(typeParameterList)
     override var annotationList: JKAnnotationList by child(annotationList)
 }
@@ -110,10 +113,6 @@ class JKKtOperatorImpl(override val token: JKKtOperatorToken, val methodSymbol: 
 }
 
 
-class JKKtModifierImpl(override val type: JKKtModifier.KtModifierType) : JKKtModifier, JKElementBase() {
-    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitKtModifier(this, data)
-}
-
 class JKKtAlsoCallExpressionImpl(
     statement: JKStatement,
     override val identifier: JKMethodSymbol,
@@ -135,8 +134,7 @@ class JKKtAlsoCallExpressionImpl(
                     listOf(
                         JKParameterImpl(
                             JKTypeElementImpl(JKJavaVoidType),
-                            JKNameIdentifierImpl(parameterName),
-                            JKModifierListImpl()
+                            JKNameIdentifierImpl(parameterName)
                         )
                     ), statement
                 )
@@ -163,15 +161,16 @@ class JKKtConstructorImpl(
     name: JKNameIdentifier,
     parameters: List<JKParameter>,
     block: JKBlock,
-    modifierList: JKModifierList,
-    delegationCall: JKExpression
+    delegationCall: JKExpression,
+    override var extraModifiers: List<ExtraModifier>,
+    override var visibility: Visibility,
+    override var modality: Modality
 ) : JKBranchElementBase(), JKKtConstructor {
     override val returnType: JKTypeElement get() = TODO("!")
 
     override var name: JKNameIdentifier by child(name)
     override var parameters: List<JKParameter> by children(parameters)
     override var block: JKBlock by child(block)
-    override var modifierList: JKModifierList by child(modifierList)
     override var delegationCall: JKExpression by child(delegationCall)
     override var typeParameterList: JKTypeParameterList by child(JKTypeParameterListImpl())
     override var annotationList: JKAnnotationList by child(JKAnnotationListImpl())
@@ -182,16 +181,16 @@ class JKKtConstructorImpl(
 class JKKtPrimaryConstructorImpl(
     name: JKNameIdentifier,
     parameters: List<JKParameter>,
-    block: JKBlock,
-    modifierList: JKModifierList,
-    delegationCall: JKExpression
+    delegationCall: JKExpression,
+    override var extraModifiers: List<ExtraModifier>,
+    override var visibility: Visibility,
+    override var modality: Modality
 ) : JKBranchElementBase(), JKKtPrimaryConstructor {
     override val returnType: JKTypeElement get() = TODO("!")
 
     override var name: JKNameIdentifier by child(name)
     override var parameters: List<JKParameter> by children(parameters)
     override var block: JKBlock by child(block)
-    override var modifierList: JKModifierList by child(modifierList)
     override var delegationCall: JKExpression by child(delegationCall)
     override var typeParameterList: JKTypeParameterList by child(JKTypeParameterListImpl())
     override var annotationList: JKAnnotationList by child(JKAnnotationListImpl())
@@ -292,18 +291,18 @@ class JKKtTryCatchSectionImpl(
 
 class JKKtGetterOrSetterImpl(
     body: JKStatement,
-    modifierList: JKModifierList,
-    override val kind: JKKtGetterOrSetter.Kind
+    override val kind: JKKtGetterOrSetter.Kind,
+    override var visibility: Visibility
 ) : JKKtGetterOrSetter, JKBranchElementBase() {
     override var body: JKStatement by child(body)
-    override var modifierList: JKModifierList by child(modifierList)
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitKtGetterOrSetter(this, data)
 }
 
 class JKKtEmptyGetterOrSetterImpl : JKKtEmptyGetterOrSetter, JKBranchElementBase() {
+    override var visibility: Visibility = Visibility.PUBLIC
     override var body: JKStatement by child(JKEmptyStatementImpl())
-    override var modifierList: JKModifierList by child(JKModifierListImpl())
     override val kind: JKKtGetterOrSetter.Kind
         get() = error("Cannot get kind of JKKtEmptyGetterOrSetter")
+
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitKtEmptyGetterOrSetter(this, data)
 }

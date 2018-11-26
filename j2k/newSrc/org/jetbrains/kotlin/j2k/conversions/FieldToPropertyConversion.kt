@@ -6,8 +6,6 @@
 package org.jetbrains.kotlin.j2k.conversions
 
 import org.jetbrains.kotlin.j2k.ConversionContext
-import org.jetbrains.kotlin.j2k.ast.Mutability
-import org.jetbrains.kotlin.j2k.copyTreeAndDetach
 import org.jetbrains.kotlin.j2k.tree.*
 import org.jetbrains.kotlin.j2k.tree.impl.*
 import org.jetbrains.kotlin.load.java.JvmAbi
@@ -44,10 +42,13 @@ class FieldToPropertyConversion(private val context: ConversionContext) : Recurs
                 ?.takeIf { propertyNameFromGet(it) != null }
                 ?.let {
                     JKJavaFieldImpl(
-                        JKModifierListImpl(),
                         JKTypeElementImpl(it.returnType.type),
                         JKNameIdentifierImpl(propertyNameFromGet(it)!!),
-                        JKStubExpressionImpl()
+                        JKStubExpressionImpl(),
+                        emptyList(),
+                        Visibility.PRIVATE,
+                        Modality.OPEN,
+                        Mutability.UNKNOWN
                     )
                 }
             ?: return null
@@ -58,13 +59,13 @@ class FieldToPropertyConversion(private val context: ConversionContext) : Recurs
             JKKtGetterOrSetterImpl(
                 JKBlockStatementImpl(block)
                     .renamed(propertyField.name.value, "field", propertyField.type.type, RenameType.RENAME_FIELD_ACCESS),
-                JKModifierListImpl(JKAccessModifierImpl(method.modifierList.visibility)),
-                JKKtGetterOrSetter.Kind.GETTER
+                JKKtGetterOrSetter.Kind.GETTER,
+                method.visibility
             )
         } ?: JKKtGetterOrSetterImpl(
             JKBlockStatementImpl(JKBodyStub),
-            JKModifierListImpl(JKAccessModifierImpl(propertyField.modifierList.visibility)),
-            JKKtGetterOrSetter.Kind.GETTER
+            JKKtGetterOrSetter.Kind.GETTER,
+            propertyField.visibility
         )
 
         val ktSetter = setter?.let {
@@ -79,32 +80,35 @@ class FieldToPropertyConversion(private val context: ConversionContext) : Recurs
                         RenameType.RENAME_PARAMETER_ACCESS
                     )
                     .renamed(propertyField.name.value, "field", propertyField.type.type, RenameType.RENAME_FIELD_ACCESS),
-                JKModifierListImpl(JKAccessModifierImpl(method.modifierList.visibility)),
-                JKKtGetterOrSetter.Kind.SETTER
+                JKKtGetterOrSetter.Kind.SETTER,
+                method.visibility
             )
         } ?: JKKtEmptyGetterOrSetterImpl()
         propertyField.invalidate()
 
+        val mutability =
+            if (propertyField.modality == Modality.FINAL) Mutability.IMMUTABLE
+            else if (propertyField.visibility == Visibility.PRIVATE && ktSetter is JKKtEmptyGetterOrSetter)
+                Mutability.IMMUTABLE
+            else Mutability.MUTABLE
+
+        val visibility =
+            listOf(
+                ktGetter.visibility,
+                ktGetter.visibility
+            ).min() ?: Visibility.PUBLIC
+
         return JKKtPropertyImpl(
-            propertyField.modifierList,
             propertyField.type,
             propertyField.name,
             propertyField.initializer,
             ktGetter,
-            ktSetter
-        ).also {
-            it.modifierList.mutability =
-                    if (it.modifierList.isFinal()) Mutability.NonMutable
-                    else if (it.modifierList.visibilityOrNull() == JKAccessModifier.Visibility.PRIVATE && ktSetter is JKKtEmptyGetterOrSetter)
-                        Mutability.NonMutable
-                    else Mutability.Mutable
-
-            it.modifierList.visibility =
-                    listOf(
-                        ktGetter.modifierList.visibility,
-                        ktGetter.modifierList.visibility
-                    ).min() ?: JKAccessModifier.Visibility.PUBLIC
-        }
+            ktSetter,
+            propertyField.extraModifiers,
+            visibility,
+            propertyField.modality,
+            mutability
+        )
     }
 
     private fun JKJavaMethod.isGetterOrSetter() =

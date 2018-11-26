@@ -6,8 +6,6 @@
 package org.jetbrains.kotlin.j2k.conversions
 
 import org.jetbrains.kotlin.j2k.tree.*
-import org.jetbrains.kotlin.j2k.tree.JKKtModifier.KtModifierType.INNER
-import org.jetbrains.kotlin.j2k.tree.impl.JKKtModifierImpl
 
 class InnerClassConversion : RecursiveApplicableConversionBase() {
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
@@ -22,13 +20,15 @@ class InnerClassConversion : RecursiveApplicableConversionBase() {
     private fun applyArmed(element: JKTreeElement, outer: JKClass): JKTreeElement {
         if (element !is JKClass) return recurseArmed(element, outer)
 
-        val static = element.modifierList.modifiers.find { it is JKJavaModifier && it.type == JKJavaModifier.JavaModifierType.STATIC }
+        val static = element.extraModifiers.find { it == ExtraModifier.STATIC }
         if (static != null) {
-            element.modifierList.modifiers -= static
-        } else if (element.classKind != JKClass.ClassKind.INTERFACE && outer.classKind != JKClass.ClassKind.INTERFACE) {
-            element.modifierList.modifiers += JKKtModifierImpl(INNER)
+            element.extraModifiers -= static
+        } else if (element.classKind != JKClass.ClassKind.INTERFACE &&
+            outer.classKind != JKClass.ClassKind.INTERFACE &&
+            element.classKind != JKClass.ClassKind.ENUM
+        ) {
+            element.extraModifiers += ExtraModifier.INNER
         }
         return recurseArmed(element, element)
     }
-
 }

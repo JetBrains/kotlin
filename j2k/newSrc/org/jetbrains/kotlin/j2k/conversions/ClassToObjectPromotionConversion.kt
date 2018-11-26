@@ -6,12 +6,8 @@
 package org.jetbrains.kotlin.j2k.conversions
 
 import org.jetbrains.kotlin.j2k.ConversionContext
-import org.jetbrains.kotlin.j2k.tree.JKClass
-import org.jetbrains.kotlin.j2k.tree.JKKtPrimaryConstructor
-import org.jetbrains.kotlin.j2k.tree.JKTreeElement
-import org.jetbrains.kotlin.j2k.tree.declarationList
-import org.jetbrains.kotlin.j2k.tree.impl.JKClassImpl
-import org.jetbrains.kotlin.j2k.tree.impl.psi
+import org.jetbrains.kotlin.j2k.tree.*
+import org.jetbrains.kotlin.j2k.tree.impl.*
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
 class ClassToObjectPromotionConversion(private val context: ConversionContext) : RecursiveApplicableConversionBase() {
@@ -35,18 +31,32 @@ class ClassToObjectPromotionConversion(private val context: ConversionContext) :
                 element.invalidate()
                 return recurse(
                     JKClassImpl(
-                        element.modifierList,
                         element.name,
                         element.inheritance,
                         JKClass.ClassKind.OBJECT,
                         element.typeParameterList,
-                        companion.classBody
+                        companion.classBody.also {
+                            it.handleDeclarationsModifiers()
+                        },
+                        element.extraModifiers,
+                        element.visibility,
+                        Modality.FINAL
                     )
                 )
             }
         }
 
         return recurse(element)
+    }
+
+    private fun JKClassBody.handleDeclarationsModifiers() {
+        for (declaration in declarations) {
+            if (declaration !is JKVisibilityOwner) continue
+            if (declaration.visibility == Visibility.PROTECTED) {
+                //in old j2k it is internal. should it be private instead?
+                declaration.visibility = Visibility.INTERNAL
+            }
+        }
     }
 
     private fun JKClass.hasInheritors() =

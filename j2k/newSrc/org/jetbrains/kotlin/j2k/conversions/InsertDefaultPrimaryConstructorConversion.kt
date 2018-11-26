@@ -7,22 +7,24 @@ package org.jetbrains.kotlin.j2k.conversions
 
 import org.jetbrains.kotlin.j2k.ConversionContext
 import org.jetbrains.kotlin.j2k.tree.*
-import org.jetbrains.kotlin.j2k.tree.JKModalityModifier.Modality.*
 import org.jetbrains.kotlin.j2k.tree.impl.*
 
 
 class InsertDefaultPrimaryConstructorConversion(private val context: ConversionContext) : RecursiveApplicableConversionBase() {
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
         if (element !is JKClass) return recurse(element)
-        if (element.classKind != JKClass.ClassKind.CLASS && element.declarationList.any { it is JKKtConstructor }) return recurse(element)
+        if (element.classKind != JKClass.ClassKind.CLASS) return recurse(element)
+        if (element.declarationList.any { it is JKKtConstructor }) return recurse(element)
 
         val constructor = JKKtPrimaryConstructorImpl(
-            JKNameIdentifierImpl(element.name.value), emptyList(), JKBodyStub,
-            JKModifierListImpl().also {
-                it.modality = FINAL
-                it.visibility = JKAccessModifier.Visibility.PUBLIC
-            },
-            JKStubExpressionImpl()
+            JKNameIdentifierImpl(element.name.value),
+            emptyList(),
+            JKBodyStub,
+            JKStubExpressionImpl(),
+            emptyList(),
+            Visibility.PUBLIC,
+            Modality.FINAL
+
         )
 
         element.classBody.declarations += constructor

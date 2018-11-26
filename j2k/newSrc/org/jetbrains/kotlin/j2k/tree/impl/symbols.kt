@@ -129,12 +129,12 @@ class JKMultiverseFunctionSymbol(override val target: KtNamedFunction, private v
         get() = target.name!! // TODO("Fix this")
 }
 
-class JKUniverseFieldSymbol : JKFieldSymbol, JKUniverseSymbol<JKField> {
+class JKUniverseFieldSymbol : JKFieldSymbol, JKUniverseSymbol<JKVariable> {
     override val fieldType: JKType
         get() = target.type.type
     override val name: String
         get() = target.name.value
-    override lateinit var target: JKField
+    override lateinit var target: JKVariable
     override val declaredIn: JKSymbol
         get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
     override val fqName: String

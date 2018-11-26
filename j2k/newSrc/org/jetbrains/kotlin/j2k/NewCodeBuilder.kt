@@ -149,60 +149,10 @@ class NewCodeBuilder {
             breakWithLabelStatement.label.accept(this)
         }
 
-        override fun visitModifierList(modifierList: JKModifierList) {
-            modifierList.modifiers.firstOrNull()?.accept(this)
-            for (i in 1..modifierList.modifiers.lastIndex) {
-                printer.printWithNoIndent(" ")
-                modifierList.modifiers[i].accept(this)
+        private fun renderModifiersList(modifiersList: JKModifiersListOwner) {
+            renderList(modifiersList.modifiers(), " ") {
+                printer.printWithNoIndent(it.text)
             }
-        }
-
-        override fun visitAccessModifier(accessModifier: JKAccessModifier) {
-            printer.printWithNoIndent(
-                when (accessModifier.visibility) {
-                    JKAccessModifier.Visibility.PUBLIC -> "public"
-                    JKAccessModifier.Visibility.INTERNAL -> "internal"
-                    JKAccessModifier.Visibility.PACKAGE_PRIVATE -> ""
-//                    JKAccessModifier.Visibility.PACKAGE_PRIVATE -> "internal /* package_local! */"
-                    JKAccessModifier.Visibility.PROTECTED -> "protected"
-                    JKAccessModifier.Visibility.PRIVATE -> "private"
-                }
-            )
-        }
-
-        override fun visitModalityModifier(modalityModifier: JKModalityModifier) {
-            val containingDeclaration = modalityModifier.parent?.parent
-            //TODO: merge with bottom one
-            if (modalityModifier.modality == JKModalityModifier.Modality.ABSTRACT && containingDeclaration is JKClass) {
-                if (containingDeclaration.classKind != JKClass.ClassKind.CLASS) return
-            }
-
-            printer.printWithNoIndent(
-                when (modalityModifier.modality) {
-                    JKModalityModifier.Modality.OPEN -> "open"
-                    JKModalityModifier.Modality.FINAL -> "final"
-                    JKModalityModifier.Modality.ABSTRACT -> "abstract"
-                    JKModalityModifier.Modality.OVERRIDE -> "override"
-                }
-            )
-        }
-
-        override fun visitMutabilityModifier(mutabilityModifier: JKMutabilityModifier) {
-            if (mutabilityModifier.mutability == Mutability.NonMutable) printer.print("val")
-            else printer.print("var")
-        }
-
-        override fun visitKtModifier(ktModifier: JKKtModifier) {
-            printer.printWithNoIndent(
-                when (ktModifier.type) {
-                    JKKtModifier.KtModifierType.ABSTRACT -> "abstract"
-                    JKKtModifier.KtModifierType.INNER -> "inner"
-                    JKKtModifier.KtModifierType.OPEN -> "open"
-                    JKKtModifier.KtModifierType.PRIVATE -> "private"
-                    JKKtModifier.KtModifierType.PROTECTED -> "protected"
-                    else -> ktModifier.type.toString()
-                }
-            )
         }
 
         private inline fun <T> renderList(list: List<T>, separator: String = ", ", renderElement: (T) -> Unit) =
@@ -218,7 +168,7 @@ class NewCodeBuilder {
         }
 
         override fun visitClass(klass: JKClass) {
-            klass.modifierList.accept(this)
+            renderModifiersList(klass)
             builder.append(" ")
             printer.print(classKindString(klass.classKind))
             builder.append(" ")
@@ -264,7 +214,7 @@ class NewCodeBuilder {
 
 
         override fun visitKtProperty(ktProperty: JKKtProperty) {
-            ktProperty.modifierList.accept(this)
+            renderModifiersList(ktProperty)
 
             printer.printWithNoIndent(" ")
             ktProperty.name.accept(this)
@@ -310,9 +260,8 @@ class NewCodeBuilder {
             ktIsExpression.type.accept(this)
         }
 
-
         override fun visitParameter(parameter: JKParameter) {
-            parameter.modifierList.accept(this)
+            renderModifiersList(parameter)
             printer.printWithNoIndent(" ")
             parameter.name.accept(this)
             if (parameter.type.present() && parameter.type.type !is JKContextType) {
@@ -325,13 +274,21 @@ class NewCodeBuilder {
             }
         }
 
+        override fun visitForLoopVariable(forLoopVariable: JKForLoopVariable) {
+            forLoopVariable.name.accept(this)
+            if (forLoopVariable.type.present() && forLoopVariable.type.type !is JKContextType) {
+                printer.printWithNoIndent(": ")
+                forLoopVariable.type.accept(this)
+            }
+        }
+
         override fun visitKtFunction(ktFunction: JKKtFunction) {
             printer.printIndent()
             if (ktFunction.annotationList.annotations.isNotEmpty()) {
                 ktFunction.annotationList.accept(this)
                 printer.printlnWithNoIndent(" ")
             }
-            ktFunction.modifierList.accept(this)
+            renderModifiersList(ktFunction)
             printer.printWithNoIndent(" fun ")
             ktFunction.typeParameterList.accept(this)
             ktFunction.name.accept(this)
@@ -391,7 +348,7 @@ class NewCodeBuilder {
 
         override fun visitKtGetterOrSetter(ktGetterOrSetter: JKKtGetterOrSetter) {
             printer.indented {
-                ktGetterOrSetter.modifierList.accept(this)
+                renderModifiersList(ktGetterOrSetter)
                 printer.printWithNoIndent(" ")
                 when (ktGetterOrSetter.kind) {
                     JKKtGetterOrSetter.Kind.GETTER -> printer.printWithNoIndent("get")
@@ -554,14 +511,14 @@ class NewCodeBuilder {
         }
 
         override fun visitLocalVariable(localVariable: JKLocalVariable) {
-            if (localVariable.parent !is JKForInStatement) {
-                if (localVariable.modifierList.modality == JKModalityModifier.Modality.FINAL) {
-                    printer.print("val")
-                } else {
-                    printer.print("var")
-                }
-            }
-
+//            if (localVariable.parent !is JKForInStatement) {
+//                if (localVariable.modifierList.modality == JKModifierTokens.FINAL) {
+//                    printer.print("val")
+//                } else {
+//                    printer.print("var")
+//                }
+//            }
+            renderModifiersList(localVariable)
             printer.printWithNoIndent(" ")
             localVariable.name.accept(this)
             if (localVariable.type.present() && localVariable.type.type != JKContextType) {
@@ -692,7 +649,7 @@ class NewCodeBuilder {
         }
 
         override fun visitKtConstructor(ktConstructor: JKKtConstructor) {
-            ktConstructor.modifierList.accept(this)
+            renderModifiersList(ktConstructor)
             printer.print(" constructor")
             renderParameterList(ktConstructor.parameters)
             if (ktConstructor.delegationCall !is JKStubExpression) {
@@ -707,14 +664,8 @@ class NewCodeBuilder {
         }
 
         override fun visitKtPrimaryConstructor(ktPrimaryConstructor: JKKtPrimaryConstructor) {
-            val hasInitDeclaration =
-                (ktPrimaryConstructor.parent as JKClassBody).declarations.any { it is JKKtInitDeclaration }
-            val hasAccessModifier =
-                ktPrimaryConstructor.modifierList.modifiers.any { it is JKAccessModifier }
-            if (hasAccessModifier && hasInitDeclaration && ktPrimaryConstructor.parameters.isNotEmpty()) {
-                ktPrimaryConstructor.modifierList.accept(this)
-                printer.printWithNoIndent(" constructor ")
-            }
+            renderModifiersList(ktPrimaryConstructor)
+            printer.printWithNoIndent(" constructor ")
             if (ktPrimaryConstructor.parameters.isNotEmpty()) {
                 renderParameterList(ktPrimaryConstructor.parameters)
             }

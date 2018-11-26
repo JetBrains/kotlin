@@ -18,7 +18,8 @@ package org.jetbrains.kotlin.j2k.tree
 
 import org.jetbrains.kotlin.idea.search.usagesSearch.constructor
 import org.jetbrains.kotlin.j2k.tree.impl.*
-import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
+
+interface JKField : JKVariable, JKVisibilityOwner, JKMutabilityOwner, JKModalityOwner, JKExtraModifiersOwner
 
 interface JKJavaField : JKField, JKBranchElement
 
@@ -58,13 +59,6 @@ interface JKJavaDefaultNewExpression : JKExpression {
     val classSymbol: JKClassSymbol
 }
 
-interface JKJavaModifier : JKModifier {
-    val type: JavaModifierType
-
-    enum class JavaModifierType {
-        NATIVE, STATIC, STRICTFP, SYNCHRONIZED, TRANSIENT, VOLATILE
-    }
-}
 
 interface JKJavaNewEmptyArray : JKExpression {
     val type: JKTypeElement

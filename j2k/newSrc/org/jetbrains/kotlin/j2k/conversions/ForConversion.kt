@@ -120,8 +120,7 @@ class ForConversion(private val context: ConversionContext) : RecursiveApplicabl
 //                JKJavaPrimitiveTypeImpl.INT
 //            else null
             val loopVarDeclaration =
-                JKLocalVariableImpl(
-                    JKModifierListImpl(JKModalityModifierImpl(JKModalityModifier.Modality.FINAL)),
+                JKForLoopVariableImpl(
                     JKTypeElementImpl(JKNoTypeImpl),
                     loopVar::name.detached(),
                     JKStubExpressionImpl()

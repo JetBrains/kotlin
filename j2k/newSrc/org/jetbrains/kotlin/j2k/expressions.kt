@@ -157,7 +157,7 @@ fun useExpression(
                 )!!
             ) as JKMethodSymbol
     val lambdaParameter =
-        JKParameterImpl(JKTypeElementImpl(JKNoTypeImpl), variableIdentifier, JKModifierListImpl())
+        JKParameterImpl(JKTypeElementImpl(JKNoTypeImpl), variableIdentifier)
 
     val lambda = JKLambdaExpressionImpl(
         listOf(lambdaParameter),

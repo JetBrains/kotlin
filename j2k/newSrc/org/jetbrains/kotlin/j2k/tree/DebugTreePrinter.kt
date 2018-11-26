@@ -36,15 +36,11 @@ private class DebugTreePrinter : JKVisitorVoid {
         printer.println(nameIdentifier.describe(), "(\"", nameIdentifier.value, "\")")
     }
 
-    override fun visitJavaModifier(javaModifier: JKJavaModifier) {
-        printer.println(javaModifier.describe(), "(", javaModifier.type, ")")
-    }
-
     override fun visitJavaMethod(javaMethod: JKJavaMethod) {
+        printer.print(javaMethod.modifiers().joinToString(" ") { it.text })
         printer.println(javaMethod.describe(), " [")
         printer.indented {
             javaMethod.block.accept(this, null)
-            javaMethod.modifierList.accept(this, null)
             javaMethod.parameters.forEach { it.accept(this, null) }
         }
         printer.println("]")

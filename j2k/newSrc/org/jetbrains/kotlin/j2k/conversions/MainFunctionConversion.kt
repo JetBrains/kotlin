@@ -5,16 +5,15 @@
 
 package org.jetbrains.kotlin.j2k.conversions
 
+import org.jetbrains.kotlin.j2k.ConversionContext
 import org.jetbrains.kotlin.j2k.ast.Nullability
 import org.jetbrains.kotlin.j2k.tree.*
-import org.jetbrains.kotlin.j2k.tree.impl.JKAnnotationImpl
-import org.jetbrains.kotlin.j2k.tree.impl.JKClassTypeImpl
-import org.jetbrains.kotlin.j2k.tree.impl.JKNameIdentifierImpl
-import org.jetbrains.kotlin.j2k.tree.impl.JKTypeElementImpl
+import org.jetbrains.kotlin.j2k.tree.impl.*
+import org.jetbrains.kotlin.util.collectionUtils.concatInOrder
 
 
 //TODO temporary
-class MainFunctionConversion : RecursiveApplicableConversionBase() {
+class MainFunctionConversion(private val context: ConversionContext) : RecursiveApplicableConversionBase() {
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
         if (element !is JKKtFunction) return recurse(element)
         if (element.isMainFunctionDeclaration()) {
@@ -29,7 +28,11 @@ class MainFunctionConversion : RecursiveApplicableConversionBase() {
                     )
                 type = JKTypeElementImpl(newType)
             }
-            element.annotationList.annotations += JKAnnotationImpl(JKNameIdentifierImpl("JvmStatic"))
+            element.annotationList.annotations +=
+                    JKAnnotationImpl(
+                        context.symbolProvider.provideByFqName("kotlin.jvm.JvmStatic"),
+                        JKExpressionListImpl()
+                    )
         }
         return recurse(element)
     }

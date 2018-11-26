@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.j2k.tree.impl.JKKtPrimaryConstructorImpl
 
 class PrimaryConstructorDetectConversion(private val context: ConversionContext) : RecursiveApplicableConversionBase() {
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
-        if (element is JKClass) {
+        if (element is JKClass && element.classKind == JKClass.ClassKind.CLASS) {
             processClass(element)
         }
         return recurse(element)
@@ -33,8 +33,10 @@ class PrimaryConstructorDetectConversion(private val context: ConversionContext)
                 primaryConstructorCandidate.name,
                 primaryConstructorCandidate.parameters,
                 primaryConstructorCandidate.block,
-                primaryConstructorCandidate.modifierList,
-                primaryConstructorCandidate.delegationCall
+                primaryConstructorCandidate.delegationCall,
+                primaryConstructorCandidate.extraModifiers,
+                primaryConstructorCandidate.visibility,
+                primaryConstructorCandidate.modality
             )
 
         context.symbolProvider.transferSymbol(primaryConstructor, primaryConstructorCandidate)

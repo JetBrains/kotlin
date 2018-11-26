@@ -21,11 +21,7 @@ import com.intellij.psi.*
 import com.intellij.psi.JavaTokenType.SUPER_KEYWORD
 import com.intellij.psi.JavaTokenType.THIS_KEYWORD
 import com.intellij.psi.impl.source.tree.ChildRole
-import com.intellij.psi.impl.source.tree.java.PsiLabeledStatementImpl
-import com.intellij.psi.impl.source.tree.java.PsiLiteralExpressionImpl
-import com.intellij.psi.impl.source.tree.java.PsiNewExpressionImpl
-import com.intellij.psi.impl.source.tree.java.PsiReferenceExpressionImpl
-import org.jetbrains.kotlin.j2k.ast.Mutability
+import com.intellij.psi.impl.source.tree.java.*
 import org.jetbrains.kotlin.j2k.ast.Nullability
 import org.jetbrains.kotlin.j2k.tree.*
 import org.jetbrains.kotlin.j2k.tree.JKLiteralExpression.LiteralType.*
@@ -38,8 +34,6 @@ class JavaToJKTreeBuilder(var symbolProvider: JKSymbolProvider) {
     private val expressionTreeMapper = ExpressionTreeMapper()
 
     private val declarationMapper = DeclarationMapper(expressionTreeMapper)
-
-    private val modifierMapper = ModifierMapper()
 
     private inner class ExpressionTreeMapper {
         fun PsiExpression?.toJK(): JKExpression {
@@ -264,12 +258,14 @@ class JavaToJKTreeBuilder(var symbolProvider: JKSymbolProvider) {
             val implTypes = this.implementsList?.mapTypes().orEmpty()
             val extTypes = this.extendsList?.mapTypes().orEmpty()
             return JKClassImpl(
-                with(modifierMapper) { modifierList.toJK() },
                 JKNameIdentifierImpl(name!!),
                 JKInheritanceInfoImpl(extTypes + implTypes),
                 classKind,
                 typeParameterList?.toJK() ?: JKTypeParameterListImpl(),
-                createClassBody()
+                createClassBody(),
+                modifiers(),
+                visibility(),
+                modality()
             ).also { jkClassImpl ->
                 jkClassImpl.psi = this
                 symbolProvider.provideUniverseSymbol(this, jkClassImpl)
@@ -292,12 +288,58 @@ class JavaToJKTreeBuilder(var symbolProvider: JKSymbolProvider) {
                 with(modifierMapper) { modifierList.toJK() }
             )
 
+        fun PsiMember.modality() =
+            when {
+                modifierList == null -> Modality.OPEN
+                hasModifierProperty(PsiModifier.FINAL) -> Modality.FINAL
+                hasModifierProperty(PsiModifier.ABSTRACT) -> Modality.ABSTRACT
+                else -> Modality.OPEN
+            }
+
+        fun PsiMember.visibility() =
+            when {
+                modifierList == null -> Visibility.PACKAGE_PRIVATE
+                hasModifierProperty(PsiModifier.PACKAGE_LOCAL) -> Visibility.PACKAGE_PRIVATE
+                hasModifierProperty(PsiModifier.PRIVATE) -> Visibility.PRIVATE
+                hasModifierProperty(PsiModifier.PROTECTED) -> Visibility.PROTECTED
+                hasModifierProperty(PsiModifier.PUBLIC) -> Visibility.PUBLIC
+                else -> Visibility.PACKAGE_PRIVATE
+            }
+
+        fun PsiMember.modifiers() =
+            if (modifierList == null) emptyList()
+            else
+                PsiModifier.MODIFIERS
+                    .filter { this.modifierList!!.hasExplicitModifier(it) }
+                    .mapNotNull {
+                        when (it) {
+                            PsiModifier.NATIVE -> ExtraModifier.NATIVE
+                            PsiModifier.STATIC -> ExtraModifier.STATIC
+                            PsiModifier.STRICTFP -> ExtraModifier.STRICTFP
+                            PsiModifier.SYNCHRONIZED -> ExtraModifier.SYNCHRONIZED
+                            PsiModifier.TRANSIENT -> ExtraModifier.TRANSIENT
+                            PsiModifier.VOLATILE -> ExtraModifier.VOLATILE
+
+                            PsiModifier.PROTECTED -> null
+                            PsiModifier.PUBLIC -> null
+                            PsiModifier.PRIVATE -> null
+                            PsiModifier.FINAL -> null
+                            PsiModifier.ABSTRACT -> null
+
+                            else -> TODO("Not yet supported")
+                        }
+                    }
+
+
         fun PsiField.toJK(): JKJavaField {
             return JKJavaFieldImpl(
-                with(modifierMapper) { modifierList.toJK(finalAsMutability = true) },
                 with(expressionTreeMapper) { typeElement?.toJK() } ?: JKTypeElementImpl(JKNoTypeImpl),
                 JKNameIdentifierImpl(name),
-                with(expressionTreeMapper) { initializer.toJK() }
+                with(expressionTreeMapper) { initializer.toJK() },
+                modifiers(),
+                visibility(),
+                modality(),
+                Mutability.UNKNOWN
             ).also {
                 symbolProvider.provideUniverseSymbol(this, it)
                 it.psi = this
@@ -306,7 +348,6 @@ class JavaToJKTreeBuilder(var symbolProvider: JKSymbolProvider) {
 
         fun PsiMethod.toJK(): JKJavaMethod {
             return JKJavaMethodImpl(
-                with(modifierMapper) { modifierList.toJK() },
                 with(expressionTreeMapper) {
                     returnTypeElement?.toJK()
                             ?: JKTypeElementImpl(JKJavaVoidType).takeIf { isConstructor }
@@ -316,7 +357,11 @@ class JavaToJKTreeBuilder(var symbolProvider: JKSymbolProvider) {
                 parameterList.parameters.map { it.toJK() },
                 body?.toJK() ?: JKBodyStub,
                 typeParameterList?.toJK() ?: JKTypeParameterListImpl(),
-                JKAnnotationListImpl()//TODO get real annotations
+                JKAnnotationListImpl(),//TODO get real annotations
+                throwsList.referencedTypes.map { JKTypeElementImpl(it.toJK(symbolProvider)) },
+                modifiers(),
+                visibility(),
+                modality()
             ).also {
                 it.psi = this
                 symbolProvider.provideUniverseSymbol(this, it)
@@ -331,9 +376,10 @@ class JavaToJKTreeBuilder(var symbolProvider: JKSymbolProvider) {
         }
 
         fun PsiParameter.toJK(): JKParameter {
-            return JKParameterImpl(with(expressionTreeMapper) { typeElement?.toJK() } ?: TODO(),
-                                   JKNameIdentifierImpl(name!!),
-                                   with(modifierMapper) { modifierList.toJK() }).also {
+            return JKParameterImpl(
+                with(expressionTreeMapper) { typeElement?.toJK() } ?: TODO(),
+                JKNameIdentifierImpl(name!!)
+            ).also {
                 symbolProvider.provideUniverseSymbol(this, it)
                 it.psi = this
             }
@@ -353,10 +399,10 @@ class JavaToJKTreeBuilder(var symbolProvider: JKSymbolProvider) {
 
         fun PsiLocalVariable.toJK(): JKLocalVariable =
             JKLocalVariableImpl(
-                with(modifierMapper) { modifierList.toJK() },
                 with(expressionTreeMapper) { typeElement.toJK() },
                 JKNameIdentifierImpl(this.name ?: TODO()),
-                with(expressionTreeMapper) { initializer.toJK() }
+                with(expressionTreeMapper) { initializer.toJK() },
+                Mutability.UNKNOWN
             ).also { i ->
                 symbolProvider.provideUniverseSymbol(this, i)
                 i.psi = this
@@ -456,64 +502,7 @@ class JavaToJKTreeBuilder(var symbolProvider: JKSymbolProvider) {
         }.last()
 
 
-    private inner class ModifierMapper {
-        fun PsiModifierList?.toJK(finalAsMutability: Boolean = false): JKModifierList {
-
-            val modifiers = if (this == null) mutableListOf()
-            else PsiModifier.MODIFIERS.filter { hasExplicitModifier(it) }.mapNotNull { modifierToJK(it, finalAsMutability) }.toMutableList()
-
-            modifiers += extractAccess()
-            modifiers += extractModality()
-
-            return JKModifierListImpl(
-                modifiers
-            )
-        }
-
-        fun PsiModifierList?.extractModality(): JKModalityModifier {
-            val modality = when {
-                this == null -> JKModalityModifier.Modality.OPEN
-                hasModifierProperty(PsiModifier.FINAL) -> JKModalityModifier.Modality.FINAL
-                hasModifierProperty(PsiModifier.ABSTRACT) -> JKModalityModifier.Modality.ABSTRACT
-                else -> JKModalityModifier.Modality.OPEN
-            }
-            return JKModalityModifierImpl(modality)
-        }
-
-
-        fun PsiModifierList?.extractAccess(): JKAccessModifier {
-            val visibility = when {
-                this == null -> JKAccessModifier.Visibility.PACKAGE_PRIVATE
-                hasModifierProperty(PsiModifier.PACKAGE_LOCAL) -> JKAccessModifier.Visibility.PACKAGE_PRIVATE
-                hasModifierProperty(PsiModifier.PRIVATE) -> JKAccessModifier.Visibility.PRIVATE
-                hasModifierProperty(PsiModifier.PROTECTED) -> JKAccessModifier.Visibility.PROTECTED
-                hasModifierProperty(PsiModifier.PUBLIC) -> JKAccessModifier.Visibility.PUBLIC
-                else -> JKAccessModifier.Visibility.PACKAGE_PRIVATE
-            }
-            return JKAccessModifierImpl(visibility)
-        }
-
-        fun modifierToJK(name: String, finalAsMutability: Boolean): JKModifier? = when (name) {
-            PsiModifier.NATIVE -> JKJavaModifierImpl(JKJavaModifier.JavaModifierType.NATIVE)
-            PsiModifier.STATIC -> JKJavaModifierImpl(JKJavaModifier.JavaModifierType.STATIC)
-            PsiModifier.STRICTFP -> JKJavaModifierImpl(JKJavaModifier.JavaModifierType.STRICTFP)
-            PsiModifier.SYNCHRONIZED -> JKJavaModifierImpl(JKJavaModifier.JavaModifierType.SYNCHRONIZED)
-            PsiModifier.TRANSIENT -> JKJavaModifierImpl(JKJavaModifier.JavaModifierType.TRANSIENT)
-            PsiModifier.VOLATILE -> JKJavaModifierImpl(JKJavaModifier.JavaModifierType.VOLATILE)
-
-            PsiModifier.PROTECTED -> null
-            PsiModifier.PUBLIC -> null
-            PsiModifier.PRIVATE -> null
-
-            PsiModifier.FINAL -> if (finalAsMutability) JKMutabilityModifierImpl(Mutability.NonMutable) else null
-            PsiModifier.ABSTRACT -> null
-
-            else -> TODO("Not yet supported")
-        }
-
-    }
-
-    private inner class ElementVisitor : JavaElementVisitor() {
+       private inner class ElementVisitor : JavaElementVisitor() {
 
         var resultElement: JKTreeElement? = null
 

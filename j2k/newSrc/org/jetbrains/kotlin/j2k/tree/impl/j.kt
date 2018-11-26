@@ -27,28 +27,35 @@ import org.jetbrains.kotlin.j2k.tree.visitors.JKVisitor
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
 
-class JKJavaFieldImpl(modifierList: JKModifierList, type: JKTypeElement, name: JKNameIdentifier, initializer: JKExpression) : JKJavaField,
+class JKJavaFieldImpl(
+    type: JKTypeElement, name: JKNameIdentifier, initializer: JKExpression,
+    override var extraModifiers: List<ExtraModifier>,
+    override var visibility: Visibility,
+    override var modality: Modality,
+    override var mutability: Mutability
+) : JKJavaField,
     JKBranchElementBase(), PsiOwner by PsiOwnerImpl() {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitJavaField(this, data)
 
     override var initializer: JKExpression by child(initializer)
-    override var modifierList: JKModifierList by child(modifierList)
     override var type by child(type)
     override var name: JKNameIdentifier by child(name)
 }
 
 class JKJavaMethodImpl(
-    modifierList: JKModifierList,
     returnType: JKTypeElement,
     name: JKNameIdentifier,
     parameters: List<JKParameter>,
     block: JKBlock,
     typeParameterList: JKTypeParameterList,
-    annotationList: JKAnnotationList
+    annotationList: JKAnnotationList,
+    throwsList: List<JKTypeElement>,
+    override var extraModifiers: List<ExtraModifier>,
+    override var visibility: Visibility,
+    override var modality: Modality
 ) : JKJavaMethod, JKBranchElementBase(), PsiOwner by PsiOwnerImpl() {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitJavaMethod(this, data)
 
-    override var modifierList: JKModifierList by child(modifierList)
     override var returnType: JKTypeElement by child(returnType)
     override var name: JKNameIdentifier by child(name)
     override var parameters: List<JKParameter> by children(parameters)
@@ -68,9 +75,6 @@ class JKJavaLiteralExpressionImpl(
     }
 }
 
-class JKJavaModifierImpl(override val type: JKJavaModifier.JavaModifierType) : JKJavaModifier, JKElementBase(), PsiOwner by PsiOwnerImpl() {
-    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitJavaModifier(this, data)
-}
 
 class JKJavaOperatorToken(val psiToken: IElementType) : JKOperatorToken {
     override val text: String

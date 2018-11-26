@@ -7,10 +7,7 @@ package org.jetbrains.kotlin.j2k
 
 import com.intellij.psi.*
 import org.jetbrains.kotlin.j2k.conversions.resolveFqName
-import org.jetbrains.kotlin.j2k.tree.JKClass
-import org.jetbrains.kotlin.j2k.tree.JKDeclaration
-import org.jetbrains.kotlin.j2k.tree.JKField
-import org.jetbrains.kotlin.j2k.tree.JKMethod
+import org.jetbrains.kotlin.j2k.tree.*
 import org.jetbrains.kotlin.j2k.tree.impl.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.KtClassOrObject
@@ -53,7 +50,7 @@ class JKSymbolProvider {
     fun provideUniverseSymbol(psi: PsiElement, jk: JKDeclaration): JKSymbol = provideUniverseSymbol(psi).also {
         when (it) {
             is JKUniverseClassSymbol -> it.target = jk as JKClass
-            is JKUniverseFieldSymbol -> it.target = jk as JKField
+            is JKUniverseFieldSymbol -> it.target = jk as JKVariable
             is JKUniverseMethodSymbol -> it.target = jk as JKMethod
         }
         symbolsByJK[jk] = it
@@ -78,7 +75,7 @@ class JKSymbolProvider {
         JKUniverseClassSymbol().also { it.target = jk }
     } as JKClassSymbol
 
-    fun provideUniverseSymbol(jk: JKField): JKFieldSymbol = symbolsByJK.getOrPut(jk) {
+    fun provideUniverseSymbol(jk: JKVariable): JKFieldSymbol = symbolsByJK.getOrPut(jk) {
         JKUniverseFieldSymbol().also { it.target = jk }
     } as JKFieldSymbol
 

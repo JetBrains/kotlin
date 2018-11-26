@@ -52,10 +52,6 @@ interface JKBranchElement : JKElement {
     fun invalidate()
 }
 
-interface JKModifierListOwner {
-    var modifierList: JKModifierList
-}
-
 interface JKType {
     val nullability: Nullability
 }

@@ -19,9 +19,7 @@ package org.jetbrains.kotlin.j2k.tree.impl
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.j2k.ConversionContext
 import org.jetbrains.kotlin.j2k.JKSymbolProvider
-import org.jetbrains.kotlin.j2k.ast.Mutability
 import org.jetbrains.kotlin.j2k.ast.Nullability
 import org.jetbrains.kotlin.j2k.conversions.resolveFqName
 import org.jetbrains.kotlin.j2k.tree.*
@@ -40,17 +38,18 @@ class JKFileImpl : JKFile, JKBranchElementBase(), PsiOwner by PsiOwnerImpl() {
 }
 
 class JKClassImpl(
-    modifierList: JKModifierList,
     name: JKNameIdentifier,
     inheritance: JKInheritanceInfo,
     override var classKind: JKClass.ClassKind,
     typeParameterList: JKTypeParameterList,
-    classBody: JKClassBody
+    classBody: JKClassBody,
+    override var extraModifiers: List<ExtraModifier>,
+    override var visibility: Visibility,
+    override var modality: Modality
 ) : JKClass, JKBranchElementBase(), PsiOwner by PsiOwnerImpl() {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitClass(this, data)
 
     override var name by child(name)
-    override var modifierList by child(modifierList)
     override val inheritance by child(inheritance)
     override var typeParameterList: JKTypeParameterList by child(typeParameterList)
     override var classBody: JKClassBody by child(classBody)
@@ -60,46 +59,26 @@ class JKNameIdentifierImpl(override val value: String) : JKNameIdentifier, JKEle
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitNameIdentifier(this, data)
 }
 
-class JKModifierListImpl(
-    modifiers: List<JKModifier> = emptyList()
-) : JKModifierList, JKBranchElementBase(), PsiOwner by PsiOwnerImpl() {
-    constructor(vararg modifiers: JKModifier) : this(modifiers.asList())
+class JKForLoopVariableImpl(
+    type: JKTypeElement,
+    name: JKNameIdentifier,
+    initializer: JKExpression
+) : JKForLoopVariable, JKBranchElementBase() {
+    override var initializer by child(initializer)
+    override var name by child(name)
+    override var type by child(type)
 
-    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitModifierList(this, data)
-
-    override var modifiers: List<JKModifier> by children(modifiers)
+    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitForLoopVariable(this, data)
 }
 
-
-var JKModifierList.modality
-    get() = modifiers.filterIsInstance<JKModalityModifier>().first().modality
-    set(value) {
-        modifiers = modifiers.filterNot { it is JKModalityModifier } + JKModalityModifierImpl(value)
-    }
-
-var JKModifierList.visibility
-    get() = modifiers.filterIsInstance<JKAccessModifier>().first().visibility
-    set(value) {
-        modifiers = modifiers.filterNot { it is JKAccessModifier } + JKAccessModifierImpl(value)
-    }
-
-var JKModifierList.mutability
-    get() = modifiers.filterIsInstance<JKMutabilityModifier>().firstOrNull()?.mutability ?: Mutability.Default
-    set(value) {
-        modifiers = modifiers.filterNot { it is JKMutabilityModifier } +
-                listOfNotNull(if (value != Mutability.Default) JKMutabilityModifierImpl(value) else null)
-    }
 
 class JKParameterImpl(
     type: JKTypeElement,
     name: JKNameIdentifier,
-    modifierList: JKModifierList,
     initializer: JKExpression = JKStubExpressionImpl()
-
 ) : JKParameter, JKBranchElementBase(), PsiOwner by PsiOwnerImpl() {
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitParameter(this, data)
 
-    override var modifierList by child(modifierList)
     override var initializer by child(initializer)
     override var name by child(name)
     override var type by child(type)
@@ -269,9 +248,12 @@ fun JKLiteralExpression.LiteralType.toJkType(symbolProvider: JKSymbolProvider): 
     }
 }
 
-class JKLocalVariableImpl(modifierList: JKModifierList, type: JKTypeElement, name: JKNameIdentifier, initializer: JKExpression) :
-    JKLocalVariable, JKBranchElementBase(), PsiOwner by PsiOwnerImpl() {
-    override var modifierList by child(modifierList)
+class JKLocalVariableImpl(
+    type: JKTypeElement,
+    name: JKNameIdentifier,
+    initializer: JKExpression,
+    override var mutability: Mutability
+) : JKLocalVariable, JKBranchElementBase(), PsiOwner by PsiOwnerImpl() {
     override var initializer by child(initializer)
     override var name by child(name)
     override var type by child(type)
@@ -368,21 +350,9 @@ class JKClassAccessExpressionImpl(override var identifier: JKClassSymbol) : JKCl
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitClassAccessExpression(this, data)
 }
 
-class JKModalityModifierImpl(override val modality: JKModalityModifier.Modality) : JKModalityModifier, JKElementBase(), PsiOwner by PsiOwnerImpl() {
-    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitModalityModifier(this, data)
-}
-
-class JKAccessModifierImpl(override val visibility: JKAccessModifier.Visibility) : JKAccessModifier, JKElementBase(), PsiOwner by PsiOwnerImpl() {
-    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitAccessModifier(this, data)
-}
-
-class JKMutabilityModifierImpl(override val mutability: Mutability) : JKMutabilityModifier, JKElementBase(), PsiOwner by PsiOwnerImpl() {
-    override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitMutabilityModifier(this, data)
-}
-
 class JKLambdaExpressionImpl(
     parameters: List<JKParameter> = listOf(
-        JKParameterImpl(JKTypeElementImpl(JKJavaVoidType), JKNameIdentifierImpl("it"), JKModifierListImpl())
+        JKParameterImpl(JKTypeElementImpl(JKJavaVoidType), JKNameIdentifierImpl("it"))
     ), statement: JKStatement, returnType: JKTypeElement = JKTypeElementImpl(JKContextType)
 ) : JKLambdaExpression, JKBranchElementBase(), PsiOwner by PsiOwnerImpl() {
     override var statement by child(statement)
@@ -475,14 +445,13 @@ class JKTypeParameterTypeImpl(
 class JKEnumConstantImpl(
     name: JKNameIdentifier,
     arguments: JKExpressionList,
-    type: JKTypeElement,
-    modifierList: JKModifierList
+    type: JKTypeElement
 ) : JKEnumConstant, JKBranchElementBase(), PsiOwner by PsiOwnerImpl() {
     override var name: JKNameIdentifier by child(name)
     override val arguments: JKExpressionList by child(arguments)
     override var type: JKTypeElement by child(type)
     override var initializer: JKExpression by child(JKStubExpressionImpl())
-    override var modifierList: JKModifierList by child(modifierList)
+
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitEnumConstant(this, data)
 }
 

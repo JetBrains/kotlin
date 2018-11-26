@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.j2k.tree
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.j2k.ast.Mutability
 import org.jetbrains.kotlin.j2k.tree.impl.JKClassSymbol
 import org.jetbrains.kotlin.j2k.tree.impl.JKFieldSymbol
 import org.jetbrains.kotlin.j2k.tree.impl.JKMethodSymbol
@@ -45,7 +44,7 @@ interface JKFile : JKTreeElement, JKBranchElement {
     var declarationList: List<JKDeclaration>
 }
 
-interface JKClass : JKDeclaration, JKModifierListOwner, JKTypeParameterListOwner, JKBranchElement {
+interface JKClass : JKDeclaration, JKVisibilityOwner, JKExtraModifiersOwner, JKModalityOwner, JKTypeParameterListOwner, JKBranchElement {
     val name: JKNameIdentifier
 
     val inheritance: JKInheritanceInfo
@@ -78,46 +77,104 @@ interface JKAnnotationListOwner : JKTreeElement {
     var annotationList: JKAnnotationList
 }
 
-interface JKMethod : JKDeclaration, JKModifierListOwner, JKTypeParameterListOwner, JKAnnotationListOwner {
+interface JKMethod : JKDeclaration, JKVisibilityOwner, JKModalityOwner, JKExtraModifiersOwner, JKTypeParameterListOwner,
+    JKAnnotationListOwner {
     val name: JKNameIdentifier
     var parameters: List<JKParameter>
     val returnType: JKTypeElement
     var block: JKBlock
 }
 
-interface JKField : JKDeclaration, JKModifierListOwner {
+interface JKVariable : JKDeclaration {
     var type: JKTypeElement
     var name: JKNameIdentifier
     var initializer: JKExpression
 }
 
-interface JKLocalVariable : JKField
+interface JKForLoopVariable : JKVariable
 
-interface JKModifier : JKTreeElement
+interface JKLocalVariable : JKVariable, JKMutabilityOwner
 
-interface JKModifierList : JKTreeElement {
-    var modifiers: List<JKModifier>
+interface JKExtraModifiersOwner : JKModifiersListOwner {
+    var extraModifiers: List<ExtraModifier>
 }
 
-interface JKAccessModifier : JKModifier {
-    enum class Visibility {
-        PUBLIC, INTERNAL, PACKAGE_PRIVATE, PROTECTED, PRIVATE
-    }
-
-    val visibility: Visibility
+interface Modifier {
+    val text: String
 }
 
-interface JKModalityModifier : JKModifier {
-    enum class Modality {
-        OPEN, FINAL, ABSTRACT, OVERRIDE
-    }
+enum class ExtraModifier(override val text: String) : Modifier {
+    ACTUAL("actual"),
+    ANNOTATION("annotation"),
+    COMPANION("companion"),
+    CONST("const"),
+    CROSSINLINE("crossinline"),
+    DATA("data"),
+    EXPECT("expect"),
+    EXTERNAL("external"),
+    INFIX("infix"),
+    INLINE("inline"),
+    INNER("inner"),
+    LATEINIT("lateinit"),
+    NOINLINE("noinline"),
+    OPERATOR("operator"),
+    OUT("out"),
+    REIFIED("reified"),
+    SEALED("sealed"),
+    SUSPEND("suspend"),
+    TAILREC("tailrec"),
+    VARARG("vararg"),
 
-    val modality: Modality
+    NATIVE("native"),
+    STATIC("static"),
+    STRICTFP("strictfp"),
+    SYNCHRONIZED("synchronized"),
+    TRANSIENT("transient"),
+    VOLATILE("volatile")
 }
 
-interface JKMutabilityModifier : JKModifier {
-    val mutability: Mutability
+interface JKVisibilityOwner : JKModifiersListOwner{
+    var visibility: Visibility
 }
+
+enum class Visibility(override val text: String) : Modifier {
+    PUBLIC("public"),
+    INTERNAL("internal"),
+    PACKAGE_PRIVATE(""),
+    PROTECTED("protected"),
+    PRIVATE("private")
+}
+
+interface JKModalityOwner : JKModifiersListOwner {
+    var modality: Modality
+}
+
+
+enum class Modality(override val text: String) : Modifier {
+    OPEN("open"),
+    FINAL("final"),
+    ABSTRACT("abstract"),
+    OVERRIDE("override")
+}
+
+interface JKMutabilityOwner : JKModifiersListOwner {
+    var mutability: Mutability
+}
+
+enum class Mutability(override val text: String) : Modifier {
+    MUTABLE("var"),
+    IMMUTABLE("val"),
+    UNKNOWN("var")//TODO ???
+}
+
+interface JKModifiersListOwner : JKTreeElement
+
+fun JKModifiersListOwner.modifiers(): List<Modifier> =
+    listOfNotNull((this as? JKVisibilityOwner)?.visibility) +
+            (this as? JKExtraModifiersOwner)?.extraModifiers.orEmpty() +
+            listOfNotNull((this as? JKModalityOwner)?.modality) +
+            listOfNotNull((this as? JKMutabilityOwner)?.mutability)
+
 
 interface JKTypeElement : JKTreeElement {
     val type: JKType
@@ -216,9 +273,7 @@ interface JKLiteralExpression : JKExpression {
     }
 }
 
-interface JKParameter : JKField {
-
-}
+interface JKParameter : JKVariable, JKModifiersListOwner
 
 interface JKStringLiteralExpression : JKLiteralExpression {
     val text: String
@@ -315,7 +370,7 @@ interface JKTypeParameterListOwner : JKTreeElement {
     var typeParameterList: JKTypeParameterList
 }
 
-interface JKEnumConstant : JKField {
+interface JKEnumConstant : JKVariable {
     val arguments: JKExpressionList
 }
 

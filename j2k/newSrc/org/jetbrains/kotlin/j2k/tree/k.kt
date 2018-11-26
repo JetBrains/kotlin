@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.j2k.tree
 
 import org.jetbrains.kotlin.j2k.tree.impl.JKMethodSymbol
 
-interface JKKtGetterOrSetter : JKTreeElement, JKModifierListOwner, JKBranchElement {
+interface JKKtGetterOrSetter : JKTreeElement, JKVisibilityOwner, JKBranchElement {
     var body: JKStatement
     val kind: Kind
 
@@ -34,10 +34,12 @@ interface JKKtProperty : JKField {
     var setter: JKKtGetterOrSetter
 }
 
+
+
 interface JKKtFunction : JKMethod {
 }
 
-interface JKKtConstructor : JKDeclaration, JKModifierListOwner, JKMethod, JKBranchElement {
+interface JKKtConstructor : JKDeclaration, JKExtraModifiersOwner, JKMethod, JKBranchElement {
     override var name: JKNameIdentifier
     override var parameters: List<JKParameter>
     var delegationCall: JKExpression
@@ -52,15 +54,6 @@ interface JKKtAssignmentStatement : JKStatement {
 }
 
 interface JKKtCall : JKMethodCallExpression
-
-interface JKKtModifier : JKModifier {
-    val type: KtModifierType
-
-    enum class KtModifierType {
-        ACTUAL, ABSTRACT, ANNOTATION, COMPANION, CONST, CROSSINLINE, DATA, ENUM, EXPECT, EXTERNAL, FINAL, INFIX, INLINE, INNER,
-        LATEINIT, NOINLINE, OPEN, OPERATOR, OUT, OVERRIDE, REIFIED, SEALED, SUSPEND, TAILREC, VARARG, PRIVATE, PROTECTED
-    }
-}
 
 interface JKKtMethodCallExpression : JKMethodCallExpression
 
