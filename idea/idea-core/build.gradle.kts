@@ -17,6 +17,7 @@ dependencies {
     compile(project(":j2k"))
     compile(project(":idea:ide-common"))
     compile(project(":idea:idea-jps-common"))
+    compile(project(":usage-statistics"))
     compile(project(":plugins:android-extensions-compiler"))
     compile(project(":kotlin-scripting-compiler"))
     compile(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-core")) { isTransitive = false }
