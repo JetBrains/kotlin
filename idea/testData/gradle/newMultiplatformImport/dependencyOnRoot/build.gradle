@@ -1,0 +1,24 @@
+buildscript {
+	repositories {
+		mavenLocal()
+		jcenter()
+	}
+	dependencies {
+		classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin:1.3.10'
+	}
+}
+
+allprojects {
+    repositories {
+        mavenLocal()
+        jcenter()
+    }
+}
+
+apply plugin: 'kotlin-multiplatform'
+
+kotlin {
+	targets {
+		fromPreset(presets.jvm, 'jvm')
+	}
+}
