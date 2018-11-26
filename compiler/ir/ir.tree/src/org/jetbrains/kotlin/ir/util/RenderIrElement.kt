@@ -49,7 +49,7 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
         "EXTERNAL_PACKAGE_FRAGMENT fqName:${declaration.fqName}"
 
     override fun visitFile(declaration: IrFile, data: Nothing?): String =
-        "FILE fqName:${declaration.fqName} fileName:${declaration.name}"
+        "FILE fqName:${declaration.fqName} fileName:${declaration.path}"
 
     override fun visitFunction(declaration: IrFunction, data: Nothing?): String =
         "FUN ${declaration.renderOriginIfNonTrivial()}${declaration.renderDeclared()}"

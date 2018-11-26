@@ -9,24 +9,24 @@ import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.common.makePhase
 import org.jetbrains.kotlin.backend.common.descriptors.WrappedSimpleFunctionDescriptor
 import org.jetbrains.kotlin.backend.common.ir.copyParameterDeclarationsFrom
+import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
-import org.jetbrains.kotlin.backend.jvm.JvmLoweredStatementOrigin
 import org.jetbrains.kotlin.backend.jvm.codegen.isJvmInterface
 import org.jetbrains.kotlin.codegen.OwnerKind
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.deserialization.PLATFORM_DEPENDENT_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
+import org.jetbrains.kotlin.ir.builders.irBlockBody
+import org.jetbrains.kotlin.ir.builders.irCall
+import org.jetbrains.kotlin.ir.builders.irGet
+import org.jetbrains.kotlin.ir.builders.irReturn
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrBlockBodyImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrReturnImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.util.isInterface
@@ -53,31 +53,32 @@ class InterfaceDelegationLowering(val context: JvmBackendContext) : IrElementTra
         } else {
             Pair(irClass, false)
         }
-        for ((interfaceFun, value) in actualClass.getNonPrivateInterfaceMethods()) {
-            //skip java 8 default methods
-            if (!interfaceFun.isDefinitelyNotDefaultImplsMethod() && !interfaceFun.isMethodOfAny()) {
-                generateDelegationToDefaultImpl(irClass, interfaceFun, value, isDefaultImplsGeneration)
+
+        val newDeclarations = mutableListOf<IrFunction>()
+        for (function in actualClass.declarations) {
+            if (function !is IrSimpleFunction) continue
+            if (function.origin !== IrDeclarationOrigin.FAKE_OVERRIDE) continue
+
+            val implementation = function.resolveFakeOverride() ?: continue
+            if (!implementation.hasInterfaceParent() ||
+                Visibilities.isPrivate(implementation.visibility) ||
+                implementation.visibility === Visibilities.INVISIBLE_FAKE ||
+                implementation.isDefinitelyNotDefaultImplsMethod() || implementation.isMethodOfAny()
+            ) {
+                continue
             }
+
+            newDeclarations.add(generateDelegationToDefaultImpl(implementation, function, isDefaultImplsGeneration))
         }
 
-//        CodegenUtil.getNonPrivateTraitMethods(actualClass.descriptor, !isDefaultImplsGeneration)) {
-//            //skip java 8 default methods
-//            if (!interfaceFun.isDefinitelyNotDefaultImplsMethod() && !FunctionCodegen.isMethodOfAny(interfaceFun)) {
-//                generateDelegationToDefaultImpl(
-//                    irClass, context.ir.symbols.externalSymbolTable.referenceSimpleFunction(
-//                        interfaceFun.original
-//                    ).owner, value, isDefaultImplsGeneration
-//                )
-//            }
-//        }
+        irClass.declarations.addAll(newDeclarations)
     }
 
     private fun generateDelegationToDefaultImpl(
-        irClass: IrClass,
-        interfaceFun: IrFunction,
+        interfaceFun: IrSimpleFunction,
         inheritedFun: IrSimpleFunction,
         isDefaultImplsGeneration: Boolean
-    ) {
+    ): IrFunction {
         val defaultImplFun = context.declarationFactory.getDefaultImplsFunction(interfaceFun)
 
         val irFunction =
@@ -109,54 +110,29 @@ class InterfaceDelegationLowering(val context: JvmBackendContext) : IrElementTra
                     copyParameterDeclarationsFrom(inheritedFun)
                 }
             } else context.declarationFactory.getDefaultImplsFunction(inheritedFun)
-        val irBody = IrBlockBodyImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET)
-        irFunction.body = irBody
-        irClass.declarations.add(irFunction)
 
-        val irCallImpl =
-            IrCallImpl(
-                UNDEFINED_OFFSET,
-                UNDEFINED_OFFSET,
-                defaultImplFun.returnType,
-                defaultImplFun.symbol,
-                defaultImplFun.descriptor,
-                origin = JvmLoweredStatementOrigin.DEFAULT_IMPLS_DELEGATION
-            )
-        irBody.statements.add(
-            IrReturnImpl(
-                UNDEFINED_OFFSET,
-                UNDEFINED_OFFSET,
-                irFunction.returnType,
-                irFunction.symbol,
-                irCallImpl
-            )
-        )
-
-        var offset = 0
-        irFunction.dispatchReceiverParameter?.let {
-            irCallImpl.putValueArgument(
-                offset,
-                IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, it.symbol)
-            )
-            offset++
+        context.createIrBuilder(irFunction.symbol, UNDEFINED_OFFSET, UNDEFINED_OFFSET).apply {
+            irFunction.body = irBlockBody {
+                +irReturn(
+                    irCall(defaultImplFun.symbol, irFunction.returnType).apply {
+                        var offset = 0
+                        irFunction.dispatchReceiverParameter?.let { putValueArgument(offset++, irGet(it)) }
+                        irFunction.extensionReceiverParameter?.let { putValueArgument(offset++, irGet(it)) }
+                        irFunction.valueParameters.mapIndexed { i, parameter -> putValueArgument(i + offset, irGet(parameter)) }
+                    }
+                )
+            }
         }
 
-        irFunction.extensionReceiverParameter?.let {
-            irCallImpl.putValueArgument(
-                offset,
-                IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, it.symbol)
-            )
-            offset++
-        }
-
-        irFunction.valueParameters.mapIndexed { i, parameter ->
-            irCallImpl.putValueArgument(i + offset, IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, parameter.symbol, null))
-        }
+        return irFunction
     }
 
     private fun IrSimpleFunction.isMethodOfAny() =
         ((valueParameters.size == 0 && name.asString() in setOf("hashCode", "toString")) ||
                 (valueParameters.size == 1 && name.asString() == "equals" && valueParameters[0].type == context.irBuiltIns.anyType))
+
+    private fun IrSimpleFunction.hasInterfaceParent() =
+        (parent as? IrClass)?.isInterface == true
 
     private fun IrSimpleFunction.isDefinitelyNotDefaultImplsMethod() =
         resolveFakeOverride()?.let { origin == IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB } == true ||

@@ -100,7 +100,7 @@ internal fun createStaticFunctionWithReceivers(
             index = offset++
         )
         valueParameters.addAll(listOfNotNull(dispatchReceiver, extensionReceiver) +
-                                       oldFunction.valueParameters.map { it.copyTo(this, shift = offset) }
+                                       oldFunction.valueParameters.map { it.copyTo(this, index = it.index + offset) }
         )
 
         val mapping: Map<IrValueParameter, IrValueParameter> =

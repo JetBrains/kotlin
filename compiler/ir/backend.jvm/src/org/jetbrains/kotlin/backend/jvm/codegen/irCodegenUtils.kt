@@ -53,12 +53,11 @@ fun JvmBackendContext.getSourceMapper(declaration: IrClass): DefaultSourceMapper
     //       whole file the class is declared in rather than the class only.
     // TODO: revise
     val endLineNumber = fileEntry.getSourceRangeInfo(0, fileEntry.maxOffset).endLineNumber
-    val shortName = File(declaration.fileParent.name).name
     return DefaultSourceMapper(
         SourceInfo.createInfoForIr(
             endLineNumber + 1,
             this.state.typeMapper.mapType(declaration.descriptor).internalName,
-            shortName
+            declaration.fileParent.name
         )
     )
 }

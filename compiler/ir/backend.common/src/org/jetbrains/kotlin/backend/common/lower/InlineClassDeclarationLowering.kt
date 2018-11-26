@@ -255,10 +255,10 @@ class InlineClassLowering(val context: BackendContext) {
             dispatchReceiverParameter = null
             extensionReceiverParameter = function.extensionReceiverParameter?.copyTo(this)
             if (function is IrSimpleFunction) {
-                valueParameters.add(function.dispatchReceiverParameter!!.copyTo(this, shift = 1))
-                valueParameters += function.valueParameters.map { p -> p.copyTo(this, shift = 1) }
+                valueParameters.add(function.dispatchReceiverParameter!!.let { p -> p.copyTo(this, index = p.index + 1) })
+                valueParameters += function.valueParameters.map { p -> p.copyTo(this, index = p.index + 1) }
             } else {
-                valueParameters += function.valueParameters.map { p -> p.copyTo(this, shift = 0) }
+                valueParameters += function.valueParameters.map { p -> p.copyTo(this) }
             }
             parent = function.parent
             assert(isStaticMethodOfClass)

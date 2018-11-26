@@ -554,7 +554,7 @@ class LocalDeclarationsLowering(
             }
 
             oldDeclaration.valueParameters.mapTo(this) { v ->
-                v.copyTo(newDeclaration, capturedValues.size).also {
+                v.copyTo(newDeclaration, index = v.index + capturedValues.size).also {
                     newParameterToOld.putAbsentOrSame(it, v)
                 }
             }
