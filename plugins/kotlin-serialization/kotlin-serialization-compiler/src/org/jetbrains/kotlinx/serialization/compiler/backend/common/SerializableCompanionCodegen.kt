@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlinx.serialization.compiler.backend.common
 
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
@@ -34,10 +35,15 @@ abstract class SerializableCompanionCodegen(
         val serializerGetterDescriptor = companionDescriptor.unsubstitutedMemberScope.getContributedFunctions(
             SERIALIZER_PROVIDER_NAME,
             NoLookupLocation.FROM_BACKEND
-        ).first { func ->
-            func.valueParameters.size == serializableDescriptor.declaredTypeParameters.size &&
-                    func.valueParameters.all { isKSerializer(it.type) }
-        }
+        ).firstOrNull {
+            it.valueParameters.size == serializableDescriptor.declaredTypeParameters.size
+                    && it.kind == CallableMemberDescriptor.Kind.SYNTHESIZED
+                    && it.valueParameters.all { p -> isKSerializer(p.type) }
+                    && it.returnType != null && isKSerializer(it.returnType)
+        } ?: throw IllegalStateException(
+            "Can't find synthesized 'Companion.serializer()' function to generate, " +
+                    "probably clash with user-defined function has occurred"
+        )
         generateSerializerGetter(serializerGetterDescriptor)
     }
 

@@ -56,7 +56,7 @@ class SerializableCompanionJsTranslator(
     companion object {
         fun translate(declaration: KtPureClassOrObject, descriptor: ClassDescriptor, translator: DeclarationBodyVisitor, context: TranslationContext) {
             val serializableClass = getSerializableClassDescriptorByCompanion(descriptor) ?: return
-            if (serializableClass.isInternalSerializable)
+            if (serializableClass.shouldHaveGeneratedMethodsInCompanion)
                 SerializableCompanionJsTranslator(descriptor, translator, context).generate()
         }
     }

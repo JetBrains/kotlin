@@ -18,10 +18,12 @@ package org.jetbrains.kotlinx.serialization.compiler.backend.jvm
 
 import org.jetbrains.kotlin.codegen.ImplementationBodyCodegen
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.SerializableCompanionCodegen
-import org.jetbrains.kotlinx.serialization.compiler.resolve.*
+import org.jetbrains.kotlinx.serialization.compiler.resolve.classSerializer
+import org.jetbrains.kotlinx.serialization.compiler.resolve.getSerializableClassDescriptorByCompanion
+import org.jetbrains.kotlinx.serialization.compiler.resolve.shouldHaveGeneratedMethodsInCompanion
+import org.jetbrains.kotlinx.serialization.compiler.resolve.toClassDescriptor
 
 class SerializableCompanionCodegenImpl(private val codegen: ImplementationBodyCodegen) :
         SerializableCompanionCodegen(codegen.descriptor, codegen.bindingContext) {
@@ -29,7 +31,7 @@ class SerializableCompanionCodegenImpl(private val codegen: ImplementationBodyCo
     companion object {
         fun generateSerializableExtensions(codegen: ImplementationBodyCodegen) {
             val serializableClass = getSerializableClassDescriptorByCompanion(codegen.descriptor) ?: return
-            if (serializableClass.isInternalSerializable)
+            if (serializableClass.shouldHaveGeneratedMethodsInCompanion)
                 SerializableCompanionCodegenImpl(codegen).generate()
         }
     }

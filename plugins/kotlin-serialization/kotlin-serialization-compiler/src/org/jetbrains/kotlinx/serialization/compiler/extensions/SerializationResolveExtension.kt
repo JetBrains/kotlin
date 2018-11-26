@@ -61,7 +61,7 @@ open class SerializationResolveExtension : SyntheticResolveExtension {
     }
 
     override fun getSyntheticCompanionObjectNameIfNeeded(thisDescriptor: ClassDescriptor): Name? =
-        if (thisDescriptor.isInternalSerializable) SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT
+        if (thisDescriptor.shouldHaveGeneratedMethodsInCompanion) SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT
         else null
 
     override fun addSyntheticSupertypes(thisDescriptor: ClassDescriptor, supertypes: MutableList<KotlinType>) {

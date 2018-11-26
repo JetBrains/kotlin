@@ -97,6 +97,8 @@ val KotlinType?.toClassDescriptor: ClassDescriptor?
     @JvmName("toClassDescriptor")
     get() = this?.constructor?.declarationDescriptor as? ClassDescriptor
 
+internal val ClassDescriptor.shouldHaveGeneratedMethodsInCompanion: Boolean
+    get() = this.kind == ClassKind.CLASS && annotations.hasAnnotation(SerializationAnnotations.serializableAnnotationFqName)
 
 val ClassDescriptor.isInternalSerializable: Boolean //todo normal checking
     get() {
@@ -159,7 +161,7 @@ val KotlinType.genericIndex: Int?
 fun getSerializableClassDescriptorByCompanion(thisDescriptor: ClassDescriptor): ClassDescriptor? {
     if (!thisDescriptor.isCompanionObject) return null
     val classDescriptor = (thisDescriptor.containingDeclaration as? ClassDescriptor) ?: return null
-    if (!classDescriptor.isInternalSerializable) return null
+    if (!classDescriptor.shouldHaveGeneratedMethodsInCompanion) return null
     return classDescriptor
 }
 
