@@ -3560,6 +3560,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/changeVisibility/internal"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
             }
 
+            @TestMetadata("hasJvmFieldInInterface.kt")
+            public void testHasJvmFieldInInterface() throws Exception {
+                runTest("idea/testData/intentions/changeVisibility/internal/hasJvmFieldInInterface.kt");
+            }
+
             @TestMetadata("notForAnnotationClassPrimaryConstructor.kt")
             public void testNotForAnnotationClassPrimaryConstructor() throws Exception {
                 runTest("idea/testData/intentions/changeVisibility/internal/notForAnnotationClassPrimaryConstructor.kt");
