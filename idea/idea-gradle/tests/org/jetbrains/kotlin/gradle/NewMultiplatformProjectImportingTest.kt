@@ -330,6 +330,50 @@ class NewMultiplatformProjectImportingTest : GradleImportingTestCase() {
     }
 
     @Test
+    fun testDependencyOnRoot() {
+        configureByFiles()
+        importProject()
+        checkProjectStructure(exhaustiveSourceSourceRootList = false) {
+
+            module("project")
+            module("project_commonMain")
+            module("project_commonTest") {
+                moduleDependency("project_commonMain", DependencyScope.TEST)
+            }
+            module("project_jvmMain") {
+                moduleDependency("project_commonMain", DependencyScope.COMPILE)
+            }
+            module("project_jvmTest") {
+                moduleDependency("project_commonMain", DependencyScope.TEST)
+                moduleDependency("project_commonTest", DependencyScope.TEST)
+                moduleDependency("project_jvmMain", DependencyScope.TEST)
+            }
+
+            module("subproject")
+            module("subproject_commonMain") {
+                moduleDependency("project_commonMain", DependencyScope.COMPILE)
+            }
+            module("subproject_commonTest") {
+                moduleDependency("project_commonMain", DependencyScope.TEST)
+                moduleDependency("subproject_commonMain", DependencyScope.TEST)
+            }
+            module("subproject_jvmMain") {
+                moduleDependency("project_commonMain", DependencyScope.COMPILE)
+                moduleDependency("subproject_commonMain", DependencyScope.COMPILE)
+                moduleDependency("project_jvmMain", DependencyScope.COMPILE)
+            }
+            module("subproject_jvmTest") {
+                moduleDependency("project_commonMain", DependencyScope.TEST)
+                moduleDependency("subproject_commonMain", DependencyScope.TEST)
+                moduleDependency("subproject_commonTest", DependencyScope.TEST)
+                moduleDependency("project_jvmMain", DependencyScope.TEST)
+                moduleDependency("subproject_jvmMain", DependencyScope.TEST)
+            }
+        }
+
+    }
+
+    @Test
     fun testNestedDependencies() {
         configureByFiles()
         importProject()
