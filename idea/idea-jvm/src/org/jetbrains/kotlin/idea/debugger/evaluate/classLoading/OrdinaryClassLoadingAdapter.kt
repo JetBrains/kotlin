@@ -25,8 +25,11 @@ import com.intellij.openapi.projectRoots.JavaSdkVersion
 import com.intellij.openapi.util.SystemInfo
 import com.sun.jdi.ClassLoaderReference
 import com.sun.jdi.ClassType
-import org.jetbrains.kotlin.idea.debugger.evaluate.CompilingEvaluatorUtils
 import org.jetbrains.kotlin.idea.debugger.isDexDebug
+import org.jetbrains.org.objectweb.asm.ClassReader
+import org.jetbrains.org.objectweb.asm.ClassVisitor
+import org.jetbrains.org.objectweb.asm.ClassWriter
+import org.jetbrains.org.objectweb.asm.Opcodes
 
 class OrdinaryClassLoadingAdapter : ClassLoadingAdapter {
     private companion object {
@@ -35,6 +38,30 @@ class OrdinaryClassLoadingAdapter : ClassLoadingAdapter {
         // to load its superclass. It will succeed, probably with the help of some parent class loader, and the subsequent attempt to define
         // the patched version of that superclass will fail with LinkageError (cannot redefine class)
         private val LAMBDA_SUPERCLASSES = listOf(ClassBytes("kotlin.jvm.internal.Lambda"))
+
+        // Copied from com.intellij.debugger.ui.impl.watch.CompilingEvaluator.changeSuperToMagicAccessor
+        fun changeSuperToMagicAccessor(bytes: ByteArray): ByteArray {
+            val classWriter = ClassWriter(0)
+            val classVisitor = object : ClassVisitor(Opcodes.API_VERSION, classWriter) {
+                override fun visit(
+                    version: Int,
+                    access: Int,
+                    name: String,
+                    signature: String?,
+                    superName: String?,
+                    interfaces: Array<String>?
+                ) {
+                    var newSuperName = superName
+                    if ("java/lang/Object" == newSuperName) {
+                        newSuperName = "sun/reflect/MagicAccessorImpl"
+                    }
+
+                    super.visit(version, access, name, signature, newSuperName, interfaces)
+                }
+            }
+            ClassReader(bytes).accept(classVisitor, 0)
+            return classWriter.toByteArray()
+        }
     }
 
     override fun isApplicable(context: EvaluationContextImpl, info: ClassLoadingAdapter.Companion.ClassInfoForEvaluator) = with(info) {
@@ -93,7 +120,7 @@ class OrdinaryClassLoadingAdapter : ClassLoadingAdapter {
         }
 
         for ((className, _, bytes) in classesToLoad) {
-            val patchedBytes = CompilingEvaluatorUtils.changeSuperToMagicAccessor(bytes)
+            val patchedBytes = changeSuperToMagicAccessor(bytes)
             defineClass(className, patchedBytes, context, process, classLoader)
         }
     }
