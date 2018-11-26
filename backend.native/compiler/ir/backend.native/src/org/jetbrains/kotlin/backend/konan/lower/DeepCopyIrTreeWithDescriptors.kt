@@ -114,7 +114,7 @@ internal class DeepCopyIrTreeWithSymbolsForInliner(val context: Context,
         override fun getFileName(symbol: IrFileSymbol) = symbol.owner.fqName
         override fun getExternalPackageFragmentName(symbol: IrExternalPackageFragmentSymbol) = symbol.owner.fqName
         override fun getEnumEntryName(symbol: IrEnumEntrySymbol) = symbol.owner.name
-        override fun getVariableName(symbol: IrVariableSymbol) = map.getOrPut(symbol) { generateCopyName(symbol.owner.name) }
+        override fun getVariableName(symbol: IrVariableSymbol) = symbol.owner.name
         override fun getTypeParameterName(symbol: IrTypeParameterSymbol) = symbol.owner.name
         override fun getValueParameterName(symbol: IrValueParameterSymbol) = symbol.owner.name
     }
@@ -464,12 +464,6 @@ internal class DeepCopyIrTreeWithDescriptors(val targetDescriptor: FunctionDescr
 
         //--- Copy descriptors ------------------------------------------------//
 
-        private fun generateCopyName(name: Name): Name {
-            val declarationName = name.toString()                                           // Name of declaration
-            val indexStr        = (nameIndex++).toString()                                  // Unique for inline target index
-            return Name.identifier(declarationName + "_" + indexStr)
-        }
-
         //---------------------------------------------------------------------//
 
         private fun copyVariableDescriptor(oldDescriptor: VariableDescriptor): VariableDescriptor {
@@ -477,7 +471,7 @@ internal class DeepCopyIrTreeWithDescriptors(val targetDescriptor: FunctionDescr
             val newContainingDeclaration = descriptorSubstituteMap.getOrDefault(oldContainingDeclaration, oldContainingDeclaration)
             return IrTemporaryVariableDescriptorImpl(
                     containingDeclaration = newContainingDeclaration,
-                    name                  = generateCopyName(oldDescriptor.name),
+                    name                  = oldDescriptor.name,
                     outType               = substituteType(oldDescriptor.type)!!,
                     isMutable             = oldDescriptor.isVar
             )
