@@ -35,8 +35,13 @@ abstract class SerializerCodegen(
     protected val properties = SerializableProperties(serializableDescriptor, bindingContext)
     protected val orderedProperties = properties.serializableProperties
 
+    private fun checkSerializability() {
+        check(properties.isExternallySerializable) {
+            "Class ${serializableDescriptor.name} have constructor parameters which are not properties and therefore it is not serializable automatically"
+        }
+    }
+
     fun generate() {
-        check(properties.isExternallySerializable) { "Class ${serializableDescriptor.name} is not externally serializable" }
         val prop = generateSerializableClassPropertyIfNeeded()
         if (prop)
             generateSerialDesc()
@@ -98,31 +103,38 @@ abstract class SerializerCodegen(
 
     private fun generateSerializableClassPropertyIfNeeded(): Boolean {
         val property = generatedSerialDescPropertyDescriptor
-                       ?: return false
+            ?: return false
+        checkSerializability()
         generateSerializableClassProperty(property)
         return true
     }
 
     private fun generateSaveIfNeeded(): Boolean {
-        val function = getMemberToGenerate(serializerDescriptor, SerialEntityNames.SAVE,
-                                           serializerDescriptor::checkSaveMethodResult, serializerDescriptor::checkSaveMethodParameters)
-                       ?: return false
+        val function = getMemberToGenerate(
+            serializerDescriptor, SerialEntityNames.SAVE,
+            serializerDescriptor::checkSaveMethodResult, serializerDescriptor::checkSaveMethodParameters
+        )
+            ?: return false
+        checkSerializability()
         generateSave(function)
         return true
     }
 
     private fun generateLoadIfNeeded(): Boolean {
-        val function = getMemberToGenerate(serializerDescriptor, SerialEntityNames.LOAD,
-                                           serializerDescriptor::checkLoadMethodResult, serializerDescriptor::checkLoadMethodParameters)
-                       ?: return false
+        val function = getMemberToGenerate(
+            serializerDescriptor, SerialEntityNames.LOAD,
+            serializerDescriptor::checkLoadMethodResult, serializerDescriptor::checkLoadMethodParameters
+        )
+            ?: return false
+        checkSerializability()
         generateLoad(function)
         return true
     }
 
-    fun getPropertyToGenerate(
-            classDescriptor: ClassDescriptor,
-            name: String,
-            isReturnTypeOk: (PropertyDescriptor) -> Boolean
+    private fun getPropertyToGenerate(
+        classDescriptor: ClassDescriptor,
+        name: String,
+        isReturnTypeOk: (PropertyDescriptor) -> Boolean
     ): PropertyDescriptor? = getProperty(
         classDescriptor,
         name,
@@ -131,7 +143,7 @@ abstract class SerializerCodegen(
         kind == CallableMemberDescriptor.Kind.SYNTHESIZED || kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE
     }
 
-    fun getProperty(
+    private fun getProperty(
         classDescriptor: ClassDescriptor,
         name: String,
         isReturnTypeOk: (PropertyDescriptor) -> Boolean,
@@ -147,5 +159,5 @@ abstract class SerializerCodegen(
         }
 
     protected fun ClassDescriptor.getFuncDesc(funcName: String): Sequence<FunctionDescriptor> =
-            unsubstitutedMemberScope.getDescriptorsFiltered { it == Name.identifier(funcName) }.asSequence().filterIsInstance<FunctionDescriptor>()
+        unsubstitutedMemberScope.getDescriptorsFiltered { it == Name.identifier(funcName) }.asSequence().filterIsInstance<FunctionDescriptor>()
 }
