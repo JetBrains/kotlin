@@ -13,7 +13,6 @@ import com.intellij.openapi.roots.ex.ProjectRootManagerEx
 import com.intellij.openapi.util.EmptyRunnable
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.containers.SLRUMap
-import com.intellij.util.ui.UIUtil
 import org.jetbrains.kotlin.idea.core.script.*
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.script.KotlinScriptDefinition
@@ -102,7 +101,7 @@ abstract class ScriptDependenciesLoader(protected val project: Project) {
         }
 
         if (ApplicationManager.getApplication().isUnitTestMode) {
-            UIUtil.invokeLaterIfNeeded(doNotifyRootsChanged)
+            TransactionGuard.submitTransaction(project, doNotifyRootsChanged)
         } else {
             TransactionGuard.getInstance().submitTransactionLater(project, doNotifyRootsChanged)
         }
