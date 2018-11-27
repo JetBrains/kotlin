@@ -22,6 +22,7 @@ import com.intellij.psi.PsiFile
 import com.intellij.refactoring.RefactoringFactory
 import com.intellij.refactoring.move.moveFilesOrDirectories.MoveFilesOrDirectoriesProcessor
 import com.intellij.util.ActionRunner
+import org.jetbrains.kotlin.idea.core.script.ScriptDependenciesManager
 import org.jetbrains.kotlin.idea.run.script.standalone.KotlinStandaloneScriptRunConfiguration
 import org.jetbrains.kotlin.idea.search.allScope
 import org.jetbrains.kotlin.idea.stubindex.KotlinScriptFqnIndex
@@ -74,6 +75,9 @@ class StandaloneScriptRunConfigurationTest : KotlinCodeInsightTestCase() {
 
     fun testOnFileMoveWithDefaultWorkingDir() {
         configureByFile("move/script.kts")
+
+        ScriptDependenciesManager.updateScriptDependenciesSynchronously(myFile.virtualFile, project)
+
         val script = KotlinScriptFqnIndex.instance.get("foo.Script", project, project.allScope()).single()
         val runConfiguration = createConfigurationFromElement(script, save = true) as KotlinStandaloneScriptRunConfiguration
 
