@@ -20,6 +20,7 @@ import com.intellij.debugger.engine.DebugProcessImpl
 import com.intellij.debugger.engine.evaluation.EvaluateException
 import com.intellij.debugger.engine.evaluation.EvaluationContextImpl
 import com.intellij.debugger.impl.ClassLoadingUtils
+import com.intellij.debugger.impl.DebuggerUtilsEx
 import com.intellij.openapi.projectRoots.JavaSdkVersion
 import com.intellij.openapi.util.SystemInfo
 import com.sun.jdi.ClassLoaderReference
@@ -110,7 +111,7 @@ class OrdinaryClassLoadingAdapter : ClassLoadingAdapter {
             val defineMethod = classLoaderType.concreteMethodByName("defineClass", "(Ljava/lang/String;[BII)Ljava/lang/Class;")
             val nameObj = vm.mirrorOf(name)
 
-            context.keep(nameObj)
+            DebuggerUtilsEx.keep(nameObj, context)
 
             process.invokeMethod(
                     context, classLoader, defineMethod,
