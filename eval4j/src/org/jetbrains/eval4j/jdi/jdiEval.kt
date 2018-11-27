@@ -16,6 +16,7 @@
 
 package org.jetbrains.eval4j.jdi
 
+import com.intellij.openapi.util.text.StringUtil
 import com.sun.jdi.*
 import org.jetbrains.eval4j.*
 import org.jetbrains.eval4j.Value
@@ -47,6 +48,8 @@ class JDIEval(
             Type.FLOAT_TYPE.className to vm.mirrorOf(1.0f).type(),
             Type.DOUBLE_TYPE.className to vm.mirrorOf(1.0).type()
     )
+
+    private val isJava8OrLater = StringUtil.compareVersionNumbers(vm.version(), "1.8") >= 0
 
     override fun loadClass(classType: Type): Value {
         return loadClass(classType, defaultClassLoader)
@@ -251,17 +254,33 @@ class JDIEval(
         if (!method.isStatic) {
             throwBrokenCodeException(NoSuchMethodError("Method is not static: $methodDesc"))
         }
-        val _class = method.declaringType()
-        if (_class !is ClassType) throwBrokenCodeException(NoSuchMethodError("Static method is a non-class type: $method"))
-
+        val declaringType = method.declaringType()
         val args = mapArguments(arguments, method.safeArgumentTypes())
 
         if (shouldInvokeMethodWithReflection(method, args)) {
-            return invokeMethodWithReflection(_class.asType(), NULL_VALUE, args, methodDesc)
+            return invokeMethodWithReflection(declaringType.asType(), NULL_VALUE, args, methodDesc)
         }
 
         args.disableCollection()
-        val result = mayThrow { _class.invokeMethod(thread, method, args, invokePolicy) }.ifFail(method)
+
+        val result = mayThrow {
+            when (declaringType) {
+                is ClassType -> declaringType.invokeMethod(thread, method, args, invokePolicy)
+                is InterfaceType -> {
+                    if (!isJava8OrLater) {
+                        val message = "Calling interface static methods is not supported in JVM ${vm.version()} ($method)"
+                        throwBrokenCodeException(NoSuchMethodError(message))
+                    }
+
+                    declaringType.invokeMethod(thread, method, args, invokePolicy)
+                }
+                else -> {
+                    val message = "Calling static methods is only supported for classes and interfaces ($method)"
+                    throwBrokenCodeException(NoSuchMethodError(message))
+                }
+            }
+        }.ifFail(method)
+
         args.enableCollection()
         return result.asValue()
     }
