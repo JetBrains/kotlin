@@ -31,21 +31,18 @@ public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
     protected void doMultiFileTest(
         @NotNull File wholeFile,
         @NotNull List<TestFile> files,
-        @Nullable File javaFilesDir,
-        boolean reportFailures
+        @Nullable File javaFilesDir
     ) throws Exception {
         try {
-            compile(files, javaFilesDir, reportFailures);
-            blackBox(reportFailures);
+            compile(files, javaFilesDir);
+            blackBox();
         }
         catch (Throwable t) {
-            if (reportFailures) {
-                try {
-                    // To create .txt file in case of failure
-                    doBytecodeListingTest(wholeFile);
-                }
-                catch (Throwable ignored) {
-                }
+            try {
+                // To create .txt file in case of failure
+                doBytecodeListingTest(wholeFile);
+            }
+            catch (Throwable ignored) {
             }
 
             throw t;
@@ -92,9 +89,9 @@ public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
         assertEqualsToFile(expectedFile, text, s -> s.replace("COROUTINES_PACKAGE", coroutinesPackage));
     }
 
-    protected void blackBox(boolean reportProblems) {
+    protected void blackBox() {
         // If there are many files, the first 'box(): String' function will be executed.
-        GeneratedClassLoader generatedClassLoader = generateAndCreateClassLoader(reportProblems);
+        GeneratedClassLoader generatedClassLoader = generateAndCreateClassLoader();
         for (KtFile firstFile : myFiles.getPsiFiles()) {
             String className = getFacadeFqName(firstFile, classFileFactory.getGenerationState().getBindingContext());
             if (className == null) continue;
@@ -107,9 +104,7 @@ public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
                 }
             }
             catch (Throwable e) {
-                if (reportProblems) {
-                    System.out.println(generateToText());
-                }
+                System.out.println(generateToText());
                 throw ExceptionUtilsKt.rethrow(e);
             }
             finally {

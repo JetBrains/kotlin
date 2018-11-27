@@ -19,17 +19,15 @@ package org.jetbrains.kotlin.codegen
 import java.io.File
 
 abstract class AbstractBlackBoxInlineCodegenTest : AbstractBlackBoxCodegenTest() {
-    override fun doMultiFileTest(wholeFile: File, files: List<TestFile>, javaFilesDir: File?, reportFailures: Boolean) {
-        super.doMultiFileTest(wholeFile, files, javaFilesDir, reportFailures)
+    override fun doMultiFileTest(wholeFile: File, files: List<TestFile>, javaFilesDir: File?) {
+        super.doMultiFileTest(wholeFile, files, javaFilesDir)
         try {
             InlineTestUtil.checkNoCallsToInline(initializedClassLoader.allGeneratedFiles.filterClassFiles(), myFiles.psiFiles)
             SMAPTestUtil.checkSMAP(files, generateClassesInFile().getClassFiles(), false)
         }
         catch (e: Throwable) {
-            if (reportFailures) {
-                println(generateToText())
-                throw e
-            }
+            println(generateToText())
+            throw e
         }
     }
 }
