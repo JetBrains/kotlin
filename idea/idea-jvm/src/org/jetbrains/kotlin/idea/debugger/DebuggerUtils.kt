@@ -75,41 +75,27 @@ object DebuggerUtils {
         if (!isKotlinSourceFile(fileName)) return null
         if (DumbService.getInstance(project).isDumb) return null
 
-        val filesWithExactName = scopes.findFirstNotEmpty { findFilesByNameInPackage(className, fileName, project, it) } ?: return null
-
-        if (filesWithExactName.isEmpty()) return null
-
-        if (filesWithExactName.size == 1 && !forceRanking) {
-            return filesWithExactName.single()
-        }
-
-        // Static facade or inner class of such facade?
         val partFqName = className.fqNameForClassNameWithoutDollars
-        val filesForPart = scopes.findFirstNotEmpty { StaticFacadeIndexUtil.findFilesForFilePart(partFqName, it, project) } ?: return null
-        if (!filesForPart.isEmpty()) {
-            for (file in filesForPart) {
-                if (file.name == fileName) {
-                    return file
-                }
+
+        for (scope in scopes) {
+            val files = findFilesByNameInPackage(className, fileName, project, scope)
+
+            if (files.isEmpty()) {
+                continue
             }
-            // Do not fall back to decompiled files (which have different name).
-            return null
+
+            if (files.size == 1 && !forceRanking || location == null) {
+                return files.first()
+            }
+
+            StaticFacadeIndexUtil.findFilesForFilePart(partFqName, scope, project)
+                .singleOrNull { it.name == fileName }
+                ?.let { return it }
+
+            return FileRankingCalculatorForIde.findMostAppropriateSource(files, location)
         }
 
-        if (location != null) {
-            return FileRankingCalculatorForIde.findMostAppropriateSource(filesWithExactName, location)
-        }
-
-        return filesWithExactName.first()
-    }
-
-    private fun <T, R> Collection<T>.findFirstNotEmpty(predicate: (T) -> Collection<R>): Collection<R>? {
-        var result: Collection<R> = emptyList()
-        for (e in this) {
-            result = predicate(e)
-            if (result.isNotEmpty()) break
-        }
-        return result
+        return null
     }
 
     private fun findFilesByNameInPackage(
