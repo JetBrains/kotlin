@@ -111,13 +111,6 @@ val reflectShadowJar by task<ShadowJar> {
     version = null
     callGroovy("manifestAttributes", manifest, project, "Main" /*true*/)
 
-    from(project(":core:descriptors.jvm").mainSourceSet.resources) {
-        include("META-INF/services/**")
-    }
-    from(project(":core:deserialization").mainSourceSet.resources) {
-        include("META-INF/services/**")
-    }
-
     exclude("**/*.proto")
 
     transform(KotlinModuleShadowTransformer(logger))
