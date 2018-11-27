@@ -434,9 +434,14 @@ abstract class KotlinCommonBlock(
         val childNodes = when {
             overrideChildren != null -> overrideChildren.asSequence()
             node.elementType == KtNodeTypes.BINARY_EXPRESSION -> {
-                val binaryExpressionChildren = mutableListOf<ASTNode>()
-                collectBinaryExpressionChildren(node, binaryExpressionChildren)
-                binaryExpressionChildren.asSequence()
+                val binaryExpression = node.psi as? KtBinaryExpression
+                if (binaryExpression != null && ALL_ASSIGNMENTS.contains(binaryExpression.operationToken)) {
+                    node.children()
+                } else {
+                    val binaryExpressionChildren = mutableListOf<ASTNode>()
+                    collectBinaryExpressionChildren(node, binaryExpressionChildren)
+                    binaryExpressionChildren.asSequence()
+                }
             }
             else -> node.children()
         }
@@ -725,6 +730,21 @@ private val INDENT_RULES = arrayOf(
         }
         .continuationIf(KotlinCodeStyleSettings::CONTINUATION_INDENT_FOR_EXPRESSION_BODIES),
 
+    strategy("Assignment expressions")
+        .within(KtNodeTypes.BINARY_EXPRESSION)
+        .within {
+            val binaryExpression = it.psi as? KtBinaryExpression
+                ?: return@within false
+
+            return@within KtTokens.ALL_ASSIGNMENTS.contains(binaryExpression.operationToken)
+        }
+        .forElement {
+            val psi = it.psi
+            val binaryExpression = psi?.parent as? KtBinaryExpression
+            binaryExpression?.right == psi
+        }
+        .continuationIf(KotlinCodeStyleSettings::CONTINUATION_INDENT_FOR_EXPRESSION_BODIES),
+
     strategy("Indent for parts")
         .within(KtNodeTypes.PROPERTY, KtNodeTypes.FUN, KtNodeTypes.DESTRUCTURING_DECLARATION, KtNodeTypes.SECONDARY_CONSTRUCTOR)
         .notForType(
@@ -755,7 +775,9 @@ private val INDENT_RULES = arrayOf(
 
     strategy("Binary expressions")
         .within(BINARY_EXPRESSIONS)
-        .forElement { node -> !node.suppressBinaryExpressionIndent() }
+        .forElement { node ->
+            !node.suppressBinaryExpressionIndent()
+        }
         .set(Indent.getContinuationWithoutFirstIndent(false)),
 
     strategy("Parenthesized expression")

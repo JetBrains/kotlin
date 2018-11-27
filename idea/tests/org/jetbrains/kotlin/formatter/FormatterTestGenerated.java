@@ -171,6 +171,11 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
             runTest("idea/testData/formatter/CommentInFunctionLiteral.after.kt");
         }
 
+        @TestMetadata("ContinuationIndentInAssigments.after.kt")
+        public void testContinuationIndentInAssigments() throws Exception {
+            runTest("idea/testData/formatter/ContinuationIndentInAssigments.after.kt");
+        }
+
         @TestMetadata("ContinuationIndentInParameterLists.after.kt")
         public void testContinuationIndentInParameterLists() throws Exception {
             runTest("idea/testData/formatter/ContinuationIndentInParameterLists.after.kt");
@@ -1134,6 +1139,11 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
         @TestMetadata("ContinuationIndentForExpressionBodies.after.inv.kt")
         public void testContinuationIndentForExpressionBodies() throws Exception {
             runTest("idea/testData/formatter/ContinuationIndentForExpressionBodies.after.inv.kt");
+        }
+
+        @TestMetadata("ContinuationIndentInAssigments.after.inv.kt")
+        public void testContinuationIndentInAssigments() throws Exception {
+            runTest("idea/testData/formatter/ContinuationIndentInAssigments.after.inv.kt");
         }
 
         @TestMetadata("DelegationList.after.inv.kt")
