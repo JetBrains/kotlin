@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
 
@@ -15,6 +15,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.builtins.PrimitiveType;
+import org.jetbrains.kotlin.codegen.binding.CodegenBinding;
 import org.jetbrains.kotlin.codegen.coroutines.CoroutineCodegenUtilKt;
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods;
 import org.jetbrains.kotlin.codegen.pseudoInsns.PseudoInsnsKt;
@@ -49,6 +50,8 @@ import java.util.List;
 import java.util.function.Consumer;
 
 import static org.jetbrains.kotlin.codegen.AsmUtil.*;
+import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.CLASS_FOR_CALLABLE;
+import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.RECURSIVE_SUSPEND_CALLABLE_REFERENCE;
 import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.*;
 import static org.jetbrains.org.objectweb.asm.Opcodes.*;
 
@@ -850,12 +853,7 @@ public abstract class StackValue {
                     SimpleFunctionDescriptor initial =
                             CoroutineCodegenUtilKt.unwrapInitialDescriptorForSuspendFunction((SimpleFunctionDescriptor) descriptor);
                     if (initial != null && initial.isSuspend()) {
-                        StackValue value = codegen.findLocalOrCapturedValue(initial.getOriginal());
-                        assert value != null : "Local suspend fun should be found in locals or in captured params: " +
-                                               descriptor +
-                                               " initial local suspend fun: " +
-                                               initial;
-                        return value;
+                        return putLocalSuspendFunctionOnStack(codegen, initial.getOriginal());
                     }
                 }
                 StackValue value = codegen.findLocalOrCapturedValue(descriptor.getOriginal());
@@ -871,6 +869,48 @@ public abstract class StackValue {
             return receiver;
         }
         return none();
+    }
+
+    private static StackValue putLocalSuspendFunctionOnStack(
+            @NotNull ExpressionCodegen codegen,
+            SimpleFunctionDescriptor callee
+    ) {
+        // There can be three types of suspend local function calls:
+        // 1) normal call: we first define it as a closure and then call it
+        // 2) call using callable reference: in this case it is not local, but rather captured value
+        // 3) recursive call: we are in the middle of defining it, but, thankfully, we can simply call `this.invoke` to
+        // create new coroutine
+
+        // First, check whether this is a normal call
+        int index = codegen.lookupLocalIndex(callee);
+        if (index >= 0) {
+            // This is a normal local call
+            return local(index, OBJECT_TYPE);
+        }
+
+        // Then check for call inside a callable reference
+        BindingContext bindingContext = codegen.getBindingContext();
+        Type calleeType = CodegenBinding.asmTypeForAnonymousClass(bindingContext, callee);
+        if (codegen.context.hasThisDescriptor()) {
+            ClassDescriptor thisDescriptor = codegen.context.getThisDescriptor();
+            if (thisDescriptor instanceof SyntheticClassDescriptorForLambda &&
+                ((SyntheticClassDescriptorForLambda) thisDescriptor).isCallableReference()) {
+                // Call is inside a callable reference
+                // if it is call to recursive local, just return this$0
+                Boolean isRecursive = bindingContext.get(RECURSIVE_SUSPEND_CALLABLE_REFERENCE, thisDescriptor);
+                if (isRecursive != null && isRecursive) {
+                    ClassDescriptor classDescriptor =
+                            bindingContext.get(CLASS_FOR_CALLABLE, callee);
+                    assert classDescriptor != null : "No CLASS_FOR_CALLABLE" + callee;
+                    return thisOrOuter(codegen, classDescriptor, false, false);
+                }
+                // Otherwise, just call constructor of the closure
+                return codegen.findCapturedValue(callee);
+            }
+        }
+        // Recursive suspend local function, just call invoke on this, it will create new coroutine automatically
+        codegen.v.visitVarInsn(ALOAD, 0);
+        return onStack(calleeType);
     }
 
     private static StackValue platformStaticCallIfPresent(@NotNull StackValue resultReceiver, @NotNull CallableDescriptor descriptor) {

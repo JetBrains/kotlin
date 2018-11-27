@@ -7311,6 +7311,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                     runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/localFunctions/named/nestedLocals.kt", "kotlin.coroutines");
                 }
 
+                @TestMetadata("rec.kt")
+                public void testRec() throws Exception {
+                    runTest("compiler/testData/codegen/box/coroutines/localFunctions/named/rec.kt");
+                }
+
                 @TestMetadata("simpleSuspensionPoint.kt")
                 public void testSimpleSuspensionPoint_1_2() throws Exception {
                     runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/localFunctions/named/simpleSuspensionPoint.kt", "kotlin.coroutines.experimental");
