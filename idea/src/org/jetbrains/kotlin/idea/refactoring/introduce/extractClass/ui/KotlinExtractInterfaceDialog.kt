@@ -52,7 +52,8 @@ class KotlinExtractInterfaceDialog(
     override fun createMemberInfoModel(): MemberInfoModelBase {
         val extractableMemberInfos = extractClassMembers(originalClass).filterNot {
             val member = it.member
-            member is KtClass && member.hasModifier(KtTokens.INNER_KEYWORD)
+            member is KtClass && member.hasModifier(KtTokens.INNER_KEYWORD) ||
+                    member is KtParameter && member.hasModifier(KtTokens.PRIVATE_KEYWORD)
         }
         extractableMemberInfos.forEach { it.isToAbstract = true }
         return object : MemberInfoModelBase(
