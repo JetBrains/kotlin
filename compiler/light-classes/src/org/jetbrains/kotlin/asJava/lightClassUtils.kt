@@ -32,6 +32,9 @@ import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.isExtensionDeclaration
 
+/**
+ * Can be null in scripts and for elements from non-jvm modules.
+ */
 fun KtClassOrObject.toLightClass(): KtLightClass? = KotlinAsJavaSupport.getInstance(project).getLightClass(this)
 
 fun KtClassOrObject.toLightClassWithBuiltinMapping(): PsiClass? {
