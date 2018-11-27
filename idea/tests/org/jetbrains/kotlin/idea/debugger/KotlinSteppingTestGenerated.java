@@ -272,6 +272,11 @@ public class KotlinSteppingTestGenerated extends AbstractKotlinSteppingTest {
             runTest("idea/testData/debugger/tinyApp/src/stepping/stepInto/samAdapter.kt");
         }
 
+        @TestMetadata("sameFileNames.kt")
+        public void testSameFileNames() throws Exception {
+            runTest("idea/testData/debugger/tinyApp/src/stepping/stepInto/sameFileNames.kt");
+        }
+
         @TestMetadata("siSuspendFun.kt")
         public void testSiSuspendFun() throws Exception {
             runTest("idea/testData/debugger/tinyApp/src/stepping/stepInto/siSuspendFun.kt");
