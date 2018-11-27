@@ -1,0 +1,35 @@
+FILE fqName:<root> fileName:/kt28456a.kt
+  CLASS CLASS name:A modality:FINAL visibility:public flags: superTypes:[kotlin.Any]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:A flags:
+    CONSTRUCTOR visibility:public <> () returnType:A flags:primary
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
+        INSTANCE_INITIALIZER_CALL classDescriptor='A'
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:
+      overridden:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int flags:
+      overridden:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:
+      overridden:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+  FUN name:set visibility:public modality:FINAL <> ($receiver:A, i:kotlin.IntArray, v:kotlin.Int) returnType:kotlin.Unit flags:
+    $receiver: VALUE_PARAMETER name:<this> type:A flags:
+    VALUE_PARAMETER name:i index:0 type:kotlin.IntArray varargElementType:kotlin.Int flags:vararg
+    VALUE_PARAMETER name:v index:1 type:kotlin.Int flags:
+    BLOCK_BODY
+  FUN name:testSimpleAssignment visibility:public modality:FINAL <> (a:A) returnType:kotlin.Unit flags:
+    VALUE_PARAMETER name:a index:0 type:A flags:
+    BLOCK_BODY
+      CALL 'set(vararg Int, Int) on A: Unit' type=kotlin.Unit origin=EQ
+        $receiver: GET_VAR 'value-parameter a: A' type=A origin=null
+        i: VARARG type=kotlin.IntArray varargElementType=kotlin.Int
+          CONST Int type=kotlin.Int value=1
+          CONST Int type=kotlin.Int value=2
+          CONST Int type=kotlin.Int value=3
+        v: CONST Int type=kotlin.Int value=0
