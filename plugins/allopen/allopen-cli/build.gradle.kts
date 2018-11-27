@@ -13,6 +13,9 @@ dependencies {
 
     runtime(project(":kotlin-stdlib"))
 
+    testRuntimeOnly(intellijDep()) {
+        includeJars("guava", rootProject = rootProject)
+    }
     testRuntimeOnly(projectRuntimeJar(":kotlin-compiler"))
 
     testCompile(project(":compiler:backend"))
