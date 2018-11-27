@@ -23,14 +23,14 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.resolve.frontendService
 import org.jetbrains.kotlin.idea.util.*
+import org.jetbrains.kotlin.incremental.KotlinLookupLocation
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.js.resolve.diagnostics.findPsi
+import org.jetbrains.kotlin.load.kotlin.toSourceElement
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi.KtDeclaration
-import org.jetbrains.kotlin.psi.KtExpression
-import org.jetbrains.kotlin.psi.KtSimpleNameExpression
-import org.jetbrains.kotlin.psi.KtVariableDeclaration
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfoBefore
@@ -43,6 +43,7 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ClassQualifier
 import org.jetbrains.kotlin.resolve.scopes.utils.collectAllFromMeAndParent
 import org.jetbrains.kotlin.resolve.scopes.utils.collectDescriptorsFiltered
 import org.jetbrains.kotlin.resolve.scopes.utils.memberScopeAsImportingScope
+import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.expressions.DoubleColonLHS
@@ -415,7 +416,10 @@ class ReferenceVariantsHelper(
 
         val syntheticScopes = resolutionFacade.getFrontendService(SyntheticScopes::class.java)
         if (kindFilter.acceptsKinds(DescriptorKindFilter.VARIABLES_MASK)) {
-            for (extension in syntheticScopes.collectSyntheticExtensionProperties(receiverTypes)) {
+            val lookupLocation = (scope.ownerDescriptor.toSourceElement.getPsi() as? KtElement)?.let { KotlinLookupLocation(it) }
+                ?: NoLookupLocation.FROM_IDE
+
+            for (extension in syntheticScopes.collectSyntheticExtensionProperties(receiverTypes, lookupLocation)) {
                 process(extension)
             }
         }

@@ -227,7 +227,10 @@ class JavaSyntheticPropertiesScope(storageManager: StorageManager, private val l
         return result
     }
 
-    override fun getSyntheticExtensionProperties(receiverTypes: Collection<KotlinType>): Collection<PropertyDescriptor> {
+    override fun getSyntheticExtensionProperties(
+        receiverTypes: Collection<KotlinType>,
+        location: LookupLocation
+    ): Collection<PropertyDescriptor> {
         val result = ArrayList<PropertyDescriptor>()
         val processedTypes = HashSet<TypeConstructor>()
         receiverTypes.forEach { result.collectSyntheticProperties(it.constructor, processedTypes) }
