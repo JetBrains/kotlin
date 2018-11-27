@@ -23,7 +23,10 @@ import kotlin.sequences.SequencesKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
-import org.jetbrains.kotlin.test.*;
+import org.jetbrains.kotlin.test.CompilerTestUtil;
+import org.jetbrains.kotlin.test.ConfigurationKind;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.TestJdkKind;
 
 import java.io.File;
 import java.util.Collections;
@@ -31,7 +34,7 @@ import java.util.List;
 
 public abstract class AbstractTopLevelMembersInvocationTest extends AbstractBytecodeTextTest {
     @Override
-    public void doTest(@NotNull String filename, TargetBackend targetBackend, boolean reportFailures) throws Exception {
+    public void doTest(@NotNull String filename) throws Exception {
         File root = new File(filename);
         List<String> sourceFiles = SequencesKt.toList(SequencesKt.map(
                 SequencesKt.filter(FilesKt.walkTopDown(root).maxDepth(1), File::isFile),
