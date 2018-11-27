@@ -44,13 +44,13 @@ class ForConversion(private val context: ConversionContext) : RecursiveApplicabl
     }
 
     private fun createWhileBody(loopStatement: JKJavaForLoopStatement): JKStatement {
-        if (loopStatement.updater is JKEmptyStatement) return loopStatement::body.detached()
+        if (loopStatement.updaters.singleOrNull() is JKEmptyStatement) return loopStatement::body.detached()
         val continueStatementConverter = object : RecursiveApplicableConversionBase() {
             override fun applyToElement(element: JKTreeElement): JKTreeElement {
                 if (element !is JKContinueStatement) return recurse(element)
                 val elementPsi = element.psi<PsiContinueStatement>()!!
                 if (elementPsi.findContinuedStatement()?.toContinuedLoop() != loopStatement.psi<PsiForStatement>()) return recurse(element)
-                val statements = listOf(loopStatement.updater, element)
+                val statements = loopStatement.updaters + element
                 return recurse(JKBlockStatementImpl(JKBlockImpl(statements)))
             }
 
@@ -72,14 +72,14 @@ class ForConversion(private val context: ConversionContext) : RecursiveApplicabl
             val statements =
                 if (hasNameConflict) {
 
-                    listOf(continueStatementConverter.applyToElement(body) as JKStatement, loopStatement::updater.detached())
+                    listOf(continueStatementConverter.applyToElement(body) as JKStatement) + loopStatement::updaters.detached()
                 } else {
-                    body.block::statements.detached() + loopStatement::updater.detached()
+                    body.block::statements.detached() + loopStatement::updaters.detached()
                 }
             return JKBlockStatementImpl(JKBlockImpl(statements))
         } else {
             val statements =
-                listOf(continueStatementConverter.applyToElement(body) as JKStatement, loopStatement::updater.detached())
+                listOf(continueStatementConverter.applyToElement(body) as JKStatement) + loopStatement::updaters.detached()
             return JKBlockStatementImpl(JKBlockImpl(statements))
         }
     }
@@ -98,7 +98,7 @@ class ForConversion(private val context: ConversionContext) : RecursiveApplicabl
             if (left.identifier.target != loopVar) return null
             val start = loopVar::initializer.detached()
             val operationType =
-                (loopStatement.updater as? JKExpressionStatement)?.expression?.isVariableIncrementOrDecrement(loopVar)
+                (loopStatement.updaters.singleOrNull() as? JKExpressionStatement)?.expression?.isVariableIncrementOrDecrement(loopVar)
             val reversed = when (operationType?.token?.text) {
                 "++" -> false
                 "--" -> true
@@ -233,6 +233,8 @@ class ForConversion(private val context: ConversionContext) : RecursiveApplicabl
 
     private fun indicesByCollectionSize(javaSizeCall: JKQualifiedExpression): JKQualifiedExpression? {
         val methodCall = javaSizeCall.selector as? JKMethodCallExpression ?: return null
+        val receiverType = javaSizeCall.receiver.type(context) as? JKClassType ?: return null
+
         //TODO check if receiver type is Collection
         if (methodCall.identifier.name == "size" && methodCall.arguments.expressions.isEmpty()) {
             return toIndicesCall(javaSizeCall)
@@ -243,7 +245,6 @@ class ForConversion(private val context: ConversionContext) : RecursiveApplicabl
     private fun indicesByArrayLength(javaSizeCall: JKQualifiedExpression): JKQualifiedExpression? {
         val methodCall = javaSizeCall.selector as? JKFieldAccessExpression ?: return null
         val receiverType = javaSizeCall.receiver.type(context)
-        //TODO check if receiver type is kotlin.array
         if (methodCall.identifier.name == "length" && receiverType is JKJavaArrayType) {
             return toIndicesCall(javaSizeCall)
         }

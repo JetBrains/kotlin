@@ -85,7 +85,7 @@ interface JKJavaAssertStatement : JKStatement {
 interface JKJavaForLoopStatement : JKLoopStatement {
     var initializer: JKStatement
     var condition: JKExpression
-    var updater: JKStatement
+    var updaters: List<JKStatement>
 }
 
 interface JKJavaInstanceOfExpression : JKExpression {

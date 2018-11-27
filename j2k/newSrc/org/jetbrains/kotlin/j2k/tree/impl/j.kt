@@ -281,10 +281,10 @@ class JKJavaAssertStatementImpl(condition: JKExpression, description: JKExpressi
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitJavaAssertStatement(this, data)
 }
 
-class JKJavaForLoopStatementImpl(initializer: JKStatement, condition: JKExpression, updater: JKStatement, body: JKStatement) :
+class JKJavaForLoopStatementImpl(initializer: JKStatement, condition: JKExpression, updaters: List<JKStatement>, body: JKStatement) :
     JKJavaForLoopStatement, JKBranchElementBase(), PsiOwner by PsiOwnerImpl() {
     override var body by child(body)
-    override var updater by child(updater)
+    override var updaters by children(updaters)
     override var condition by child(condition)
     override var initializer by child(initializer)
 
