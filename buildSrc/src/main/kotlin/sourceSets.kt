@@ -32,9 +32,7 @@ val SourceSet.projectDefault: Project.() -> Unit
         when (this@projectDefault.name) {
             "main" -> {
                 java.srcDirs("src")
-                val processResources = tasks.getByName(processResourcesTaskName) as ProcessResources
-                processResources.from("resources") { include("**") }
-                processResources.from("src") { include("META-INF/**", "**/*.properties") }
+                this@projectDefault.resources.srcDir("resources")
             }
             "test" -> {
                 java.srcDirs("test", "tests")
