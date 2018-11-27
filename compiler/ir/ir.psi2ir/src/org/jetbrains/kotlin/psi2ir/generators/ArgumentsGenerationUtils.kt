@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrExpressionWithCopy
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffsetSkippingComments
 import org.jetbrains.kotlin.psi2ir.intermediate.*
@@ -38,7 +39,6 @@ import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.scopes.receivers.*
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeSubstitutor
-import java.lang.AssertionError
 
 fun StatementGenerator.generateReceiverOrNull(ktDefaultElement: KtElement, receiver: ReceiverValue?): IntermediateValue? =
     receiver?.let { generateReceiver(ktDefaultElement, receiver) }
@@ -209,9 +209,10 @@ private fun StatementGenerator.generateReceiverForCalleeImportedFromObject(
     }
 }
 
-fun StatementGenerator.generateVarargExpression(
+fun StatementGenerator.generateVarargExpressionUsing(
     varargArgument: VarargValueArgument,
-    valueParameter: ValueParameterDescriptor
+    valueParameter: ValueParameterDescriptor,
+    generateArgumentExpression: (KtExpression) -> IrExpression?
 ): IrExpression? {
     if (varargArgument.arguments.isEmpty()) {
         return null
@@ -232,14 +233,16 @@ fun StatementGenerator.generateVarargExpression(
     for (argument in varargArgument.arguments) {
         val ktArgumentExpression = argument.getArgumentExpression()
             ?: throw AssertionError("No argument expression for vararg element ${argument.asElement().text}")
+        val irArgumentExpression = generateArgumentExpression(ktArgumentExpression)
+            ?: throw AssertionError("'generateArgumentExpression' should return non-null for vararg element ${ktArgumentExpression.text}")
         val irVarargElement =
             if (argument.getSpreadElement() != null)
                 IrSpreadElementImpl(
                     ktArgumentExpression.startOffsetSkippingComments, ktArgumentExpression.endOffset,
-                    generateExpression(ktArgumentExpression)
+                    irArgumentExpression
                 )
             else
-                generateExpression(ktArgumentExpression)
+                irArgumentExpression
 
         irVararg.addElement(irVarargElement)
     }
@@ -247,17 +250,23 @@ fun StatementGenerator.generateVarargExpression(
     return irVararg
 }
 
-fun StatementGenerator.generateValueArgument(
+private fun StatementGenerator.generateValueArgument(
     valueArgument: ResolvedValueArgument,
     valueParameter: ValueParameterDescriptor
+) = generateValueArgumentUsing(valueArgument, valueParameter) { generateExpression(it) }
+
+fun StatementGenerator.generateValueArgumentUsing(
+    valueArgument: ResolvedValueArgument,
+    valueParameter: ValueParameterDescriptor,
+    generateArgumentExpression: (KtExpression) -> IrExpression?
 ): IrExpression? =
     when (valueArgument) {
         is DefaultValueArgument ->
             null
         is ExpressionValueArgument ->
-            generateExpression(valueArgument.valueArgument!!.getArgumentExpression()!!)
+            generateArgumentExpression(valueArgument.valueArgument!!.getArgumentExpression()!!)
         is VarargValueArgument ->
-            generateVarargExpression(valueArgument, valueParameter)
+            generateVarargExpressionUsing(valueArgument, valueParameter, generateArgumentExpression)
         else ->
             TODO("Unexpected valueArgument: ${valueArgument::class.java.simpleName}")
     }
@@ -357,9 +366,19 @@ private fun ResolvedCall<*>.isExtensionInvokeCall(): Boolean {
 }
 
 private fun StatementGenerator.pregenerateValueArguments(call: CallBuilder, resolvedCall: ResolvedCall<*>) {
+    pregenerateValueArgumentsUsing(call, resolvedCall) {
+        generateExpression(it)
+    }
+}
+
+fun StatementGenerator.pregenerateValueArgumentsUsing(
+    call: CallBuilder,
+    resolvedCall: ResolvedCall<*>,
+    generateArgumentExpression: (KtExpression) -> IrExpression?
+) {
     resolvedCall.valueArgumentsByIndex!!.forEachIndexed { index, valueArgument ->
         val valueParameter = call.descriptor.valueParameters[index]
-        call.irValueArgumentsByIndex[index] = generateValueArgument(valueArgument, valueParameter)
+        call.irValueArgumentsByIndex[index] = generateValueArgumentUsing(valueArgument, valueParameter, generateArgumentExpression)
     }
 }
 

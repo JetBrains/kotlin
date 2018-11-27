@@ -268,6 +268,7 @@ class AssignmentGenerator(statementGenerator: StatementGenerator) : StatementGen
 
         return ArrayAccessAssignmentReceiver(
             ktLeft.arrayExpression!!.genExpr(),
+            ktLeft.indexExpressions,
             ktLeft.indexExpressions.map { it.genExpr() },
             indexedGetResolvedCall,
             indexedSetResolvedCall,

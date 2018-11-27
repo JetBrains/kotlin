@@ -1,0 +1,85 @@
+FILE fqName:<root> fileName:/kt28456.kt
+  CLASS CLASS name:A modality:FINAL visibility:public flags: superTypes:[kotlin.Any]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:A flags:
+    CONSTRUCTOR visibility:public <> () returnType:A flags:primary
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
+        INSTANCE_INITIALIZER_CALL classDescriptor='A'
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:
+      overridden:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int flags:
+      overridden:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:
+      overridden:
+        FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
+  FUN name:get visibility:public modality:FINAL <> ($receiver:A, xs:kotlin.IntArray) returnType:kotlin.Int flags:
+    $receiver: VALUE_PARAMETER name:<this> type:A flags:
+    VALUE_PARAMETER name:xs index:0 type:kotlin.IntArray varargElementType:kotlin.Int flags:vararg
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='get(vararg Int) on A: Int'
+        CONST Int type=kotlin.Int value=0
+  FUN name:set visibility:public modality:FINAL <> ($receiver:A, i:kotlin.Int, j:kotlin.Int, v:kotlin.Int) returnType:kotlin.Unit flags:
+    $receiver: VALUE_PARAMETER name:<this> type:A flags:
+    VALUE_PARAMETER name:i index:0 type:kotlin.Int flags:
+    VALUE_PARAMETER name:j index:1 type:kotlin.Int flags:
+    VALUE_PARAMETER name:v index:2 type:kotlin.Int flags:
+    BLOCK_BODY
+  FUN name:testSimpleAssignment visibility:public modality:FINAL <> (a:A) returnType:kotlin.Unit flags:
+    VALUE_PARAMETER name:a index:0 type:A flags:
+    BLOCK_BODY
+      CALL 'set(Int, Int, Int) on A: Unit' type=kotlin.Unit origin=EQ
+        $receiver: GET_VAR 'value-parameter a: A' type=A origin=null
+        i: CONST Int type=kotlin.Int value=1
+        j: CONST Int type=kotlin.Int value=2
+        v: CONST Int type=kotlin.Int value=0
+  FUN name:testPostfixIncrement visibility:public modality:FINAL <> (a:A) returnType:kotlin.Int flags:
+    VALUE_PARAMETER name:a index:0 type:A flags:
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='testPostfixIncrement(A): Int'
+        BLOCK type=kotlin.Int origin=POSTFIX_INCR
+          VAR IR_TEMPORARY_VARIABLE name:tmp0_array type:A flags:val
+            GET_VAR 'value-parameter a: A' type=A origin=null
+          VAR IR_TEMPORARY_VARIABLE name:tmp1_index0 type:kotlin.Int flags:val
+            CONST Int type=kotlin.Int value=1
+          VAR IR_TEMPORARY_VARIABLE name:tmp2_index1 type:kotlin.Int flags:val
+            CONST Int type=kotlin.Int value=2
+          VAR IR_TEMPORARY_VARIABLE name:tmp3 type:kotlin.Int flags:val
+            CALL 'get(vararg Int) on A: Int' type=kotlin.Int origin=POSTFIX_INCR
+              $receiver: GET_VAR 'tmp0_array: A' type=A origin=null
+              xs: VARARG type=kotlin.IntArray varargElementType=kotlin.Int
+                GET_VAR 'tmp1_index0: Int' type=kotlin.Int origin=null
+                GET_VAR 'tmp2_index1: Int' type=kotlin.Int origin=null
+          CALL 'set(Int, Int, Int) on A: Unit' type=kotlin.Unit origin=POSTFIX_INCR
+            $receiver: GET_VAR 'tmp0_array: A' type=A origin=null
+            i: GET_VAR 'tmp1_index0: Int' type=kotlin.Int origin=null
+            j: GET_VAR 'tmp2_index1: Int' type=kotlin.Int origin=null
+            v: CALL 'inc(): Int' type=kotlin.Int origin=POSTFIX_INCR
+              $this: GET_VAR 'tmp3: Int' type=kotlin.Int origin=null
+          GET_VAR 'tmp3: Int' type=kotlin.Int origin=null
+  FUN name:testCompoundAssignment visibility:public modality:FINAL <> (a:A) returnType:kotlin.Unit flags:
+    VALUE_PARAMETER name:a index:0 type:A flags:
+    BLOCK_BODY
+      BLOCK type=kotlin.Unit origin=PLUSEQ
+        VAR IR_TEMPORARY_VARIABLE name:tmp0_array type:A flags:val
+          GET_VAR 'value-parameter a: A' type=A origin=null
+        VAR IR_TEMPORARY_VARIABLE name:tmp1_index0 type:kotlin.Int flags:val
+          CONST Int type=kotlin.Int value=1
+        VAR IR_TEMPORARY_VARIABLE name:tmp2_index1 type:kotlin.Int flags:val
+          CONST Int type=kotlin.Int value=2
+        CALL 'set(Int, Int, Int) on A: Unit' type=kotlin.Unit origin=PLUSEQ
+          $receiver: GET_VAR 'tmp0_array: A' type=A origin=null
+          i: GET_VAR 'tmp1_index0: Int' type=kotlin.Int origin=null
+          j: GET_VAR 'tmp2_index1: Int' type=kotlin.Int origin=null
+          v: CALL 'plus(Int): Int' type=kotlin.Int origin=PLUSEQ
+            $this: CALL 'get(vararg Int) on A: Int' type=kotlin.Int origin=PLUSEQ
+              $receiver: GET_VAR 'tmp0_array: A' type=A origin=null
+              xs: VARARG type=kotlin.IntArray varargElementType=kotlin.Int
+                GET_VAR 'tmp1_index0: Int' type=kotlin.Int origin=null
+                GET_VAR 'tmp2_index1: Int' type=kotlin.Int origin=null
+            other: CONST Int type=kotlin.Int value=10
