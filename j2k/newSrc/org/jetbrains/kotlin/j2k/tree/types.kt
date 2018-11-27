@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.util.*
 import org.jetbrains.kotlin.j2k.kotlinTypeByName
 import org.jetbrains.kotlin.psi.KtNullableType
 
-fun JKExpression.type(context: ConversionContext): JKType =
+fun JKExpression.type(context: ConversionContext): JKType? =
     when (this) {
         is JKLiteralExpression -> type.toJkType(context.symbolProvider)
         is JKOperatorExpression -> {
@@ -42,6 +42,7 @@ fun JKExpression.type(context: ConversionContext): JKType =
         is JKFieldAccessExpressionImpl -> identifier.fieldType
         is JKQualifiedExpressionImpl -> this.selector.type(context)
         is JKKtThrowExpression -> kotlinTypeByName(KotlinBuiltIns.FQ_NAMES.nothing.asString(), context.symbolProvider)
+        is JKClassAccessExpression -> null
         else -> TODO(this::class.java.toString())
     }
 

@@ -24,17 +24,17 @@ class OperatorExpressionConversion(private val context: ConversionContext) : Rec
             is JKBinaryExpression -> {
                 val left = applyToElement(element::left.detached()) as JKExpression
                 val right = applyToElement(element::right.detached()) as JKExpression
-                recurse(kotlinBinaryExpression(left, right, operatorToken, context)!!)
+                kotlinBinaryExpression(left, right, operatorToken, context)?.let { recurse(it) }
             }
             is JKPrefixExpression -> {
                 val operand = applyToElement(element::expression.detached()) as JKExpression
-                recurse(kotlinPrefixExpression(operand, operatorToken, context))
+                kotlinPrefixExpression(operand, operatorToken, context)?.let { recurse(it) }
             }
             is JKPostfixExpression -> {
                 val operand = applyToElement(element::expression.detached()) as JKExpression
-                recurse(kotlinPostfixExpression(operand, operatorToken, context))
+                kotlinPostfixExpression(operand, operatorToken, context)?.let { recurse(it) }
             }
             else -> TODO(element.javaClass.toString())
-        }
+        } ?: recurse(element)
     }
 }

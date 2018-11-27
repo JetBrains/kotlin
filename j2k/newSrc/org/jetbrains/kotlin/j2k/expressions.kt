@@ -79,8 +79,8 @@ fun kotlinBinaryExpression(
     token: JKKtOperatorToken,
     context: ConversionContext
 ): JKBinaryExpression? {
-    val leftType = left.type(context)
-    val rightType = right.type(context)
+    val leftType = left.type(context) ?: return null
+    val rightType = right.type(context) ?: return null
     val methodSymbol = token.binaryExpressionMethodSymbol(leftType, rightType, context.symbolProvider)
     return JKBinaryExpressionImpl(left, right, JKKtOperatorImpl(token, methodSymbol))
 }
@@ -89,8 +89,8 @@ fun kotlinPrefixExpression(
     operand: JKExpression,
     token: JKKtOperatorToken,
     context: ConversionContext
-): JKPrefixExpression {
-    val operandType = operand.type(context)
+): JKPrefixExpression? {
+    val operandType = operand.type(context) ?: return null
     val methodSymbol = token.unaryExpressionMethodSymbol(operandType, context.symbolProvider)
     return JKPrefixExpressionImpl(operand, JKKtOperatorImpl(token, methodSymbol))
 }
@@ -99,8 +99,8 @@ fun kotlinPostfixExpression(
     operand: JKExpression,
     token: JKKtOperatorToken,
     context: ConversionContext
-): JKPostfixExpression {
-    val operandType = operand.type(context)
+): JKPostfixExpression? {
+    val operandType = operand.type(context) ?: return null
     val methodSymbol = token.unaryExpressionMethodSymbol(operandType, context.symbolProvider)
     return JKPostfixExpressionImpl(operand, JKKtOperatorImpl(token, methodSymbol))
 }
